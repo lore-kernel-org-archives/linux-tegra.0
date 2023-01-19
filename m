@@ -2,151 +2,201 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8166BC00A5A
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 13:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB42C46467
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Jan 2023 13:11:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbjASNCn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Jan 2023 08:02:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
+        id S230354AbjASNL1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Jan 2023 08:11:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230348AbjASNCH (ORCPT
+        with ESMTP id S230396AbjASNLF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Jan 2023 08:02:07 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FC27929F;
-        Thu, 19 Jan 2023 05:01:40 -0800 (PST)
-Received: from [192.168.2.218] (109-252-117-89.nat.spd-mgts.ru [109.252.117.89])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 98A3D6600869;
-        Thu, 19 Jan 2023 13:01:37 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1674133298;
-        bh=fjUaht6DPGtzehSfi1kenXnsEEFgFtJ1Jb/3qy0Vx2U=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=azaiCvD3FzN4KWRBkluCI07EtjI1o7ek8bp69iHSYLlcgS/TGcLrqOYkaq74ETHRI
-         gXqbe6Tu7hOU70g/PHJGzrxpDTq6p8ADIr69y8cy1C0AVGZZmcnLKA3P2A4SyhSmsn
-         uH1aTmAkaZ7zmu8gynVBhNshnRBWfwK4LDiL/aSL4YNoOGN12dgpGY5639ti+EzW8Y
-         apNLjR7j3/FhMNWJ5OzCDP+Nqd00yTnCcoRjKi53fB4xZRZPn3T3EnNrXeeDakF/xl
-         Ulka15dWFSGGKU2Zi5XtDuNlGbRt5VxH6w2/YYf1faHldEWvkxyKjH0G6bzn3VFoDg
-         eyaPjV+yZS6gQ==
-Message-ID: <65e596c9-a472-d0b8-ec2f-6935d647ddb2@collabora.com>
-Date:   Thu, 19 Jan 2023 16:01:34 +0300
+        Thu, 19 Jan 2023 08:11:05 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 155497E698;
+        Thu, 19 Jan 2023 05:09:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=yxvZRuDgdikFRbFohfPeXUHNucrqEQrrcSHLXLhGx5M=; b=pdwcZbTBVlxfZAqOGr7GGCgL+i
+        WgW7WYE0epvjb79N2y/a1lUQqx15OlOBplsaYuXVhGqP4CeK1CsCCybkIlxElOBZu2GN2BRcOrBnl
+        jO4bfOTcaX8WVXbZ855ybtzJDTtZGrqhRurrApdstsCUp6uarJRzTphR4KERTzCWACYcpBlGfFeYM
+        8LfF3iqftlKeLK+2ccJEevhs6Y5s5UbAz3E5WW8q/g1RWLG6uWe0yK1gumTEniaNURkskFjEfQN20
+        46lIjccFirWjgTwscxZt5hb+OwVP6pSE0gD9UsHYPHz7rlLyzU0LjaBaBW3ogV23o+46L77V0ODgS
+        cuUd2QBw==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1pIUfe-000zLh-Mx; Thu, 19 Jan 2023 15:09:34 +0200
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] gpu: host1x: Implement syncpoint wait using DMA fences
+Date:   Thu, 19 Jan 2023 15:09:18 +0200
+Message-Id: <20230119130921.1882602-1-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [Patch v1 08/10] cpufreq: tegra194: add OPP support and set
- bandwidth
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sumit Gupta <sumitg@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>, treding@nvidia.com,
-        krzysztof.kozlowski@linaro.org, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        sanjayc@nvidia.com, ksitaraman@nvidia.com, ishah@nvidia.com,
-        bbasu@nvidia.com, Rajkumar Kasirajan <rkasirajan@nvidia.com>
-References: <20221220160240.27494-1-sumitg@nvidia.com>
- <20221220160240.27494-9-sumitg@nvidia.com>
- <4e3e4485-ba22-eb47-fb95-e8d626160bc6@gmail.com>
- <8e6d7dd3-1bdc-ee4b-0c1e-1ae9cd8e4f29@nvidia.com>
- <8bd5cf36-e1fb-305c-08c5-3bbc80204866@collabora.com> <Y8kay0/AmjqhU2jO@orome>
-Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <Y8kay0/AmjqhU2jO@orome>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 1/19/23 13:26, Thierry Reding wrote:
-> On Mon, Jan 16, 2023 at 03:16:48PM +0300, Dmitry Osipenko wrote:
->> On 1/13/23 16:50, Sumit Gupta wrote:
->>>
->>>
->>> On 22/12/22 21:16, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 20.12.2022 19:02, Sumit Gupta пишет:
->>>>> Add support to use OPP table from DT in Tegra194 cpufreq driver.
->>>>> Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
->>>>> Cross check the OPP's present in DT against the LUT from BPMP-FW
->>>>> and enable only those DT OPP's which are present in LUT also.
->>>>>
->>>>> The OPP table in DT has CPU Frequency to bandwidth mapping where
->>>>> the bandwidth value is per MC channel. DRAM bandwidth depends on the
->>>>> number of MC channels which can vary as per the boot configuration.
->>>>> This per channel bandwidth from OPP table will be later converted by
->>>>> MC driver to final bandwidth value by multiplying with number of
->>>>> channels before sending the request to BPMP-FW.
->>>>>
->>>>> If OPP table is not present in DT, then use the LUT from BPMP-FW directy
->>>>> as the frequency table and not do the DRAM frequency scaling which is
->>>>> same as the current behavior.
->>>>>
->>>>> Now, as the CPU Frequency table is being controlling through OPP table
->>>>> in DT. Keeping fewer entries in the table will create less frequency
->>>>> steps and scale fast to high frequencies if required.
->>>>
->>>> It's not exactly clear what you're doing here. Are you going to scale
->>>> memory BW based on CPU freq? If yes, then this is wrong because CPU freq
->>>> is independent from the memory subsystem.
->>>>
->>>> All Tegra30+ SoCs have ACTMON hardware unit that monitors CPU memory
->>>> activity and CPU memory BW should be scaled based on CPU memory events
->>>> counter. We have ACTMON devfreq driver for older SoCs. I have no clue
->>>> how ACTMON can be accessed on T186+, perhaps there should be a BPMP FW
->>>> API for that.
->>>>
->>>
->>> Yes, scaling the memory BW based on CPU freq.
->>> Referred below patch set for previous generation of Tegra Soc's which
->>> you mentioned and tried to trace the history.
->>>
->>> https://patchwork.ozlabs.org/project/linux-tegra/patch/1418719298-25314-3-git-send-email-tomeu.vizoso@collabora.com/
->>>
->>> In new Tegra Soc's, actmon counter control and usage has been moved to
->>> BPMP-FW where only 'MCALL' counter is used and 'MCCPU is not being used.
->>> Using the actmon counter was a reactive way to scale the frequency which
->>> is less effective due to averaging over a time period.
->>> We are now using the proactive way where clients tell their bandwidth
->>> needs to help achieve better performance.
->>
->> You don't know what bandwidth CPU needs, you trying to guess it.
->>
->> It should be a bad decision to use cpufreq for memory bandwidth scaling.
->> You'll be wasting memory power 90% of time because cpufreq doesn't have
->> relation to the DRAM, your heuristics will be wrong and won't do
->> anything good compared to using ACTMON. The L2 CPU cache + memory
->> prefetching hides memory from CPU. And cpufreq should be less reactive
->> than ACTMON in general.
->>
->> Scaling memory freq based on cpufreq is what downstream NV kernel did
->> 10+ years ago for the oldest Tegra generations. Today upstream has all
->> the necessary infrastructure for doing memory bandwidth scaling properly
->> and we even using h/w memory counters on T20. It's strange that you want
->> to bring the downstream archaity to the modern upstream for the latest
->> Tegra generations.
->>
->> If you can skip the BPMP-FW and use ACTMON directly from kernel, then
->> that's what I suggest to do.
-> 
-> After talking to a few people, it turns out that BPMP is already using
-> ACTMON internally to do the actual scaling of the EMC frequency (or the
-> CPUs contribution to that). So BPMP will use ACTMON counters to monitor
-> the effective memory load of the CPU and adjust the EMC frequency. The
-> bandwidth request that we generate from the cpufreq driver is more of a
-> guideline for the maximum bandwidth we might consume.
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Our kernel ACTMON driver uses cpufreq for guiding the EMC freq. Driving
-EMC rate solely based on cpufreq would be a not good decision. So does
-it mean you're now going to extend the ACTMON driver with the BPMP support?
+In anticipation of removal of the intr API, move host1x_syncpt_wait
+to use DMA fences instead. As of this patch, this means that waits
+have a 30 second maximum timeout because of the implicit timeout
+we have with fences, but that will be lifted in a follow-up patch.
 
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/syncpt.c | 96 ++++++++-----------------------------
+ 1 file changed, 20 insertions(+), 76 deletions(-)
+
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index f87a8705f518..75f58ec2ae23 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/device.h>
++#include <linux/dma-fence.h>
+ #include <linux/slab.h>
+ 
+ #include <trace/events/host1x.h>
+@@ -209,17 +210,6 @@ int host1x_syncpt_incr(struct host1x_syncpt *sp)
+ }
+ EXPORT_SYMBOL(host1x_syncpt_incr);
+ 
+-/*
+- * Updated sync point form hardware, and returns true if syncpoint is expired,
+- * false if we may need to wait
+- */
+-static bool syncpt_load_min_is_expired(struct host1x_syncpt *sp, u32 thresh)
+-{
+-	host1x_hw_syncpt_load(sp->host, sp);
+-
+-	return host1x_syncpt_is_expired(sp, thresh);
+-}
+-
+ /**
+  * host1x_syncpt_wait() - wait for a syncpoint to reach a given value
+  * @sp: host1x syncpoint
+@@ -230,10 +220,10 @@ static bool syncpt_load_min_is_expired(struct host1x_syncpt *sp, u32 thresh)
+ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ 		       u32 *value)
+ {
+-	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+-	void *ref;
+-	struct host1x_waitlist *waiter;
+-	int err = 0, check_count = 0;
++	struct dma_fence *fence;
++	long wait_err;
++
++	host1x_hw_syncpt_load(sp->host, sp);
+ 
+ 	if (value)
+ 		*value = host1x_syncpt_load(sp);
+@@ -241,73 +231,27 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ 	if (host1x_syncpt_is_expired(sp, thresh))
+ 		return 0;
+ 
+-	if (!timeout) {
+-		err = -EAGAIN;
+-		goto done;
+-	}
+-
+-	/* allocate a waiter */
+-	waiter = kzalloc(sizeof(*waiter), GFP_KERNEL);
+-	if (!waiter) {
+-		err = -ENOMEM;
+-		goto done;
+-	}
+-
+-	/* schedule a wakeup when the syncpoint value is reached */
+-	err = host1x_intr_add_action(sp->host, sp, thresh,
+-				     HOST1X_INTR_ACTION_WAKEUP_INTERRUPTIBLE,
+-				     &wq, waiter, &ref);
+-	if (err)
+-		goto done;
+-
+-	err = -EAGAIN;
+-	/* Caller-specified timeout may be impractically low */
+ 	if (timeout < 0)
+ 		timeout = LONG_MAX;
++	else if (timeout == 0)
++		return -EAGAIN;
+ 
+-	/* wait for the syncpoint, or timeout, or signal */
+-	while (timeout) {
+-		long check = min_t(long, SYNCPT_CHECK_PERIOD, timeout);
+-		int remain;
+-
+-		remain = wait_event_interruptible_timeout(wq,
+-				syncpt_load_min_is_expired(sp, thresh),
+-				check);
+-		if (remain > 0 || host1x_syncpt_is_expired(sp, thresh)) {
+-			if (value)
+-				*value = host1x_syncpt_load(sp);
++	fence = host1x_fence_create(sp, thresh);
++	if (IS_ERR(fence))
++		return PTR_ERR(fence);
+ 
+-			err = 0;
++	wait_err = dma_fence_wait_timeout(fence, true, timeout);
++	dma_fence_put(fence);
+ 
+-			break;
+-		}
+-
+-		if (remain < 0) {
+-			err = remain;
+-			break;
+-		}
+-
+-		timeout -= check;
+-
+-		if (timeout && check_count <= MAX_STUCK_CHECK_COUNT) {
+-			dev_warn(sp->host->dev,
+-				"%s: syncpoint id %u (%s) stuck waiting %d, timeout=%ld\n",
+-				 current->comm, sp->id, sp->name,
+-				 thresh, timeout);
+-
+-			host1x_debug_dump_syncpts(sp->host);
+-
+-			if (check_count == MAX_STUCK_CHECK_COUNT)
+-				host1x_debug_dump(sp->host);
+-
+-			check_count++;
+-		}
+-	}
+-
+-	host1x_intr_put_ref(sp->host, sp->id, ref, true);
++	if (value)
++		*value = host1x_syncpt_load(sp);
+ 
+-done:
+-	return err;
++	if (wait_err == 0)
++		return -EAGAIN;
++	else if (wait_err < 0)
++		return wait_err;
++	else
++		return 0;
+ }
+ EXPORT_SYMBOL(host1x_syncpt_wait);
+ 
 -- 
-Best regards,
-Dmitry
+2.39.0
 
