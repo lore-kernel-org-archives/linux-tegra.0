@@ -2,112 +2,76 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85C3C25B4E
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 10:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B6DC25B50
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 11:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbjATKJx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Jan 2023 05:09:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
+        id S230024AbjATLBq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Jan 2023 06:01:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjATKJw (ORCPT
+        with ESMTP id S229524AbjATLBp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Jan 2023 05:09:52 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 370148B326;
-        Fri, 20 Jan 2023 02:09:48 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B9B2C61F09;
-        Fri, 20 Jan 2023 10:09:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA804C433D2;
-        Fri, 20 Jan 2023 10:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1674209387;
-        bh=QQh8ShqbKc4vcCYjUJJI+sW3w3r+3sanu/vPZ2IyzTw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rMYgPKw1pGl3FwPpK4PFmTlmFnpTnyZ7ux/Z8gB+BTQu8ad2dbnHGdmqSUUh9QAo3
-         C+u0IUTCPhPJwzafpGLLSfvLo60WsvNwXWf3AIb1nv8SUA+shDrhHnhPjsEK+wxt8Q
-         HF3ooQ8AjjaEe2zCmeFagpTzLf/Qp8lQOOmYtGYc=
-Date:   Fri, 20 Jan 2023 11:09:43 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc:     broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, jic23@kernel.org, tudor.ambarus@microchip.com,
-        pratyush@kernel.org, sanju.mehta@amd.com,
-        chin-ting_kuo@aspeedtech.com, clg@kaod.org, kdasu.kdev@gmail.com,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        eajames@linux.ibm.com, olteanv@gmail.com, han.xu@nxp.com,
-        john.garry@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        narmstrong@baylibre.com, khilman@baylibre.com,
-        matthias.bgg@gmail.com, haibo.chen@nxp.com,
-        linus.walleij@linaro.org, daniel@zonque.org,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, andi@etezian.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
-        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
-        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
-        kvalo@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        skomatineni@nvidia.com, sumit.semwal@linaro.org,
-        christian.koenig@amd.com, j.neuschaefer@gmx.net,
-        vireshk@kernel.org, rmfrfs@gmail.com, johan@kernel.org,
-        elder@kernel.org, git@amd.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@jms.id.au, andrew@aj.id.au,
-        radu_nicolae.pirea@upb.ro, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
-        alim.akhtar@samsung.com, ldewangan@nvidia.com,
-        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-mtd@lists.infradead.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        michael@walle.cc, palmer@dabbelt.com,
-        linux-riscv@lists.infradead.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, greybus-dev@lists.linaro.org,
-        linux-staging@lists.linux.dev, amitrkcian2002@gmail.com
-Subject: Re: [PATCH v2 06/13] staging: Replace all spi->chip_select and
- spi->cs_gpiod references with function call
-Message-ID: <Y8poZ1wN8/dAO3H/@kroah.com>
-References: <20230119185342.2093323-1-amit.kumar-mahapatra@amd.com>
- <20230119185342.2093323-7-amit.kumar-mahapatra@amd.com>
+        Fri, 20 Jan 2023 06:01:45 -0500
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [IPv6:2001:690:2100:1::15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09ED67DFBE
+        for <linux-tegra@vger.kernel.org>; Fri, 20 Jan 2023 03:01:43 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 72EB16008831;
+        Fri, 20 Jan 2023 11:01:40 +0000 (WET)
+X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
+        tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
+        with LMTP id eLDPNgrUboXv; Fri, 20 Jan 2023 11:01:38 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id C4E06600878D;
+        Fri, 20 Jan 2023 11:01:37 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
+        s=mail; t=1674212498;
+        bh=3kHMJnBnNEz2slwBXbeYeNe7cYi7P2wxrpHtDtGqrjc=;
+        h=From:To:Cc:Subject:Date;
+        b=hO7SklZG3CjVTA+vN48yDBXH6PDjlcezPeOdYBsx1ur7Vl72gJhukaNsF81cjCC/x
+         /7DOfwC9x6tn53Z0ZK3CPPs/m/dyFrOMU5c++DVO6TYC53j7NYicBK+0ZM+MsHKx1D
+         V9ovCHHPDyNLU7abNOynqTfV/M2yEoefFbzLBMOE=
+Received: from wslaptop.lan (unknown [IPv6:2001:818:dcb5:dc00:d990:b664:f16:4cb2])
+        (Authenticated sender: ist187313)
+        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 103DE36008A;
+        Fri, 20 Jan 2023 11:01:37 +0000 (WET)
+From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To:     diogo.ivo@tecnico.ulisboa.pt, thierry.reding@gmail.com,
+        airlied@redhat.com, daniel@ffwll.ch, jonathanh@nvidia.com
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 0/2] drm/tegra: handle implicit scanout modifiers
+Date:   Fri, 20 Jan 2023 10:58:56 +0000
+Message-Id: <20230120105858.214440-1-diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230119185342.2093323-7-amit.kumar-mahapatra@amd.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jan 20, 2023 at 12:23:35AM +0530, Amit Kumar Mahapatra wrote:
-> Supporting multi-cs in spi drivers would require the chip_select & cs_gpiod
-> members of struct spi_device to be an array. But changing the type of these
-> members to array would break the spi driver functionality. To make the
-> transition smoother introduced four new APIs to get/set the
-> spi->chip_select & spi->cs_gpiod and replaced all spi->chip_select and
-> spi->cs_gpiod references with get or set API calls.
-> While adding multi-cs support in further patches the chip_select & cs_gpiod
-> members of the spi_device structure would be converted to arrays & the
-> "idx" parameter of the APIs would be used as array index i.e.,
-> spi->chip_select[idx] & spi->cs_gpiod[idx] respectively.
-> 
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Hello!
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This patch series adds support for correctly displaying tiled
+framebuffers when no modifiers are reported by userspace.
+
+Patch 1 adds the sector_layout parameter to the SET/GET_TILING
+IOCTLs so that userspace can set this field appropriately.
+
+Patch 2 adds handling of the case where the buffer object
+passed to create a framebuffer is allocated with non-linear
+tiling but no modifier is reported.
+
+Diogo Ivo (2):
+  drm/tegra: add sector layout to SET/GET_TILING IOCTLs
+  drm/tegra: add scanout support for implicit tiling parameters
+
+ drivers/gpu/drm/tegra/drm.c  | 29 ++++++++++++++++++
+ drivers/gpu/drm/tegra/fb.c   | 59 ++++++++++++++++++++++++++++++++++--
+ include/uapi/drm/tegra_drm.h | 16 ++++++----
+ 3 files changed, 96 insertions(+), 8 deletions(-)
+
+-- 
+2.39.1
+
