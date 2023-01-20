@@ -2,146 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BFAC25B4E
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 13:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C58DC05027
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 17:31:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbjATN0z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Jan 2023 08:26:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42742 "EHLO
+        id S230219AbjATRbT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Jan 2023 12:31:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjATN0y (ORCPT
+        with ESMTP id S230184AbjATRbR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Jan 2023 08:26:54 -0500
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2044.outbound.protection.outlook.com [40.107.244.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9691188;
-        Fri, 20 Jan 2023 05:26:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ph+EPyjQbiAtHYEGzrjHPMyg8ocqs0RC5jzgxsM4C4DJXkwoi0G+9tlBtRzLQcSVNc2B9hYbrtxdsZMe/ufLwHqtw8lO/w+3wby/WtRabaPiUQUpuvi1hzN+LEB31VEux3GGHJKjT5UdaGyLAVSPI7MOjq3gui7zSAqeGatsdREvlkl3YB4bjPaxl1qMgNhYc2CZDLAyiYxcKCgqaFo/5yp1RgzXe7HeQy8/91Yam/hcVqn7Zq2s5OMIjPx3Q/CzpXfFzUfapDiU+K718Uy+XuhnUh9PMWChA32+5UPbHywuPuMKjJMQK/yRivPyN7F4Klb/Xvb/YvqOLWWLSA722Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0tqRKmPNHG+n+m/eZhwNAbDmnxgrhL9dAuM2Moc9x+k=;
- b=KH9N/ZFHxonXzr6dt46z3r2YKFyPH0CllJ+2zf2yvlG5WmpQXo4zR0FofUwCcgXADyqtXNSAyZXDEX+4B+hX4f8GtcgNArMTTFnfMUFB+j8I7AbVnsGL3139xJzenXRS+ZRVYNEJ9WRc5iT7N/2UIHmsDZSn9AN+kogmcat9V6+MdHnRCsGlKLPDjbT7n6sAjl5QV5rFNBmA53oAbN6oXsLAsWF+ShKeUWscBnLXmJQ5y/JsEKOxQtkljeCOZcv1RCMwBn6iPkPnXL/KXwmgcC2cKNkVWCf2Fn6dJKsy6e0tq/L3NY4NQEGmGyQbh5etNoa1KAocHPLi15jObaQhZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0tqRKmPNHG+n+m/eZhwNAbDmnxgrhL9dAuM2Moc9x+k=;
- b=Alf4mtEZtecru2gFr8IKyx1NVqp9sopF5haCCUuLADMbrMRQB0YiyFAk7z+N9CcKbX4InYZZkhNcLBduDwdknz1r36oUR2Qvymlp3tTsXoCwRe8jdfO0GldctpafLcwxbhcTZr2JXnV5ahRKMNPscsbtaeU8mv4WX8lGs20TCD+hDnjyxmcuETNQnCxHKuuHK1FeW+ELUYwUwE+T+pzSvHX1F6MFXdWdnXIg2xgtw3CvcZDYoMsWIqhQjPDkwYTo1MqYoGwrj5bOMHE2i8BowgNb9c2UHMGNPq9CSXH0vVVeU/e/GUXyUXUUAGnNsxkeP7wPqGtyYwCb75988O3bjQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- DM4PR12MB7550.namprd12.prod.outlook.com (2603:10b6:8:10e::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6002.27; Fri, 20 Jan 2023 13:26:52 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::f1be:5d:f297:e2f]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::f1be:5d:f297:e2f%8]) with mapi id 15.20.6002.027; Fri, 20 Jan 2023
- 13:26:52 +0000
-Message-ID: <114679dd-f42b-5a91-e5d4-0efc786fd8f4@nvidia.com>
-Date:   Fri, 20 Jan 2023 13:20:12 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH V6 5/6] usb: typec: ucsi_ccg: Remove ccgx,firmware-build
- property
-Content-Language: en-US
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20230119121639.226729-1-jonathanh@nvidia.com>
- <20230119121639.226729-6-jonathanh@nvidia.com>
- <Y8pgGTNwSRZ8VaGW@kuha.fi.intel.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <Y8pgGTNwSRZ8VaGW@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0277.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:195::12) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        Fri, 20 Jan 2023 12:31:17 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E08DBC2;
+        Fri, 20 Jan 2023 09:31:08 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id e19-20020a05600c439300b003db1cac0c1fso4853517wmn.5;
+        Fri, 20 Jan 2023 09:31:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3J2itS20NIBDGH/TBRDy55yDYk5wIxakW5Tg51bklwk=;
+        b=f8QV4K1CueLOuxG1BRAcVEg+o1sf+kM3UZm8E6LZwxKNzHQweK0Njm/dZSHmV9ZXjP
+         1E8qH4ixP6I/knBUajC7iD+7C8LKMIuv0fCuio1+7iASciPTeaE30/GsRVFxAOEYFyvk
+         mrLGnA/fDfAGqCKL3iBku9fR5tfEjRi+Z8TRd6ocoo5Wg5qHcEmC+lzDBPJMmyYoSoOE
+         /GW28q3PipJ6tsFdvbpidevzpSJw6YPlfygDqwsCtcPHRfpxc+KqJqXMEhNqjK6blug0
+         9/akTg4V7MG4/NwGjdSvr08Efe5YdE+RwB3KWZ5APBFhz+/TfOZfAwpI4CTZVIls7mVT
+         GoNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3J2itS20NIBDGH/TBRDy55yDYk5wIxakW5Tg51bklwk=;
+        b=7SfPnbMyHxZs52spdNzQXUEphnF0L+SVzpkpxDXUdLKglvNgZdkq8QJzv5g/y8JJcO
+         O24zhJlSS/o2RSbeHCnTkcIvkXq/Sq0wIu0Ok/sy6AsrDtUqlz5xEN7D23Q4oJs0FgL0
+         KzlunLsoF2stXxi7BgAMNhwmZTT2NdUSD5dSIQas4acmR/tOHOaUIaxaG6OaMGOq42ig
+         CwbL81hbC6Pdeh6Tjq5I4GVj+M/WTNMeqUSnawdfI1FpmjuPsaDGtHIRk/woiT4JfIp2
+         aboC1i6BRaO79r/5EMZ/mj97DyGuJMP7RcA3+1uzASSlCbgnT785joD4al4UOhy2bzIK
+         pT7A==
+X-Gm-Message-State: AFqh2krmlOENsoUkoVsbNRX7rkWki/FLm9A2fzTZZ7M1Qt7l8tpKyq0D
+        dZH5q19eX9cI2/ZaZfQhf6o=
+X-Google-Smtp-Source: AMrXdXv/lsHkVq/gvQchmsnaCVqu+Na5fPQU6wvRtzuyU+0iN0+HqEm7rUpVxgO0TnsXAQPRn9aLgA==
+X-Received: by 2002:a05:600c:3b91:b0:3d3:5c9e:6b27 with SMTP id n17-20020a05600c3b9100b003d35c9e6b27mr11441903wms.12.1674235866759;
+        Fri, 20 Jan 2023 09:31:06 -0800 (PST)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id d22-20020a1c7316000000b003db0dbbea53sm2818758wmb.30.2023.01.20.09.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jan 2023 09:31:06 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 0/8] drm/simpledrm: Support system memory framebuffers
+Date:   Fri, 20 Jan 2023 18:30:55 +0100
+Message-Id: <20230120173103.4002342-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DM4PR12MB7550:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9cbd9648-48e4-4aef-dfb4-08dafae9fdcc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ChDgSg+atmEAxZI+lLGg+7n8iopJhKMSoDEFpnl1KG+W7xhlpqgk+LebfYZQeleaQ8X052cjfyD2jLWKNDTlMihOB0Ch69g0keDmOaJfJFBAz9rcV3zzNzAIy2SxhISpie9ONNRO5WXoxIu02m4vZtGwCQZdnp2YGBrFHRTlqq1qEySFIuLgRSRK6eEoaoa3mHz63EuEPBsllfoe7Zsjfz8/TG+OL/NIZFX2wOVYIDjKxUQqC0gBCwKZxuDs34CUNkyrcd33d6Xqn6qtsbqTVOn8esjF21X2ef0Jc/fEo5wrIjQPIKKgfhai8k8rnUeOWRdc95dC0EbPgWM0PnXrJPt/aCzoxz07YmOg1023KNhbY8lRqDFojhtXDUglK5FFpQjtuyI78MY6Q3o1XbcUay61+DnSWpiJbI48XeALh7NigkKBWLfaePQ/CXF8OqthM1O0/h+w7alqruJpeVnfDwwxnQ8NMGff/sksVaba8Q6eBbk+hvD8IFJxG/bJlP1fCxXgsCpYwTi8qwzdiIN+m59KsHneyYwNiA/Hva+DkJRSplg03uYRRJ20zpzyLlufThSOXm3NAqiRz0Bnq6AiY2qzfMrOXD+EvhKuirfMXfX5u+kAFKYzGsydriYThNYKCHn93FO3yRMDlp7rciLjDLqqjUsd0Ur2j0Whw1hA9rROqz5/BWBXNtsjcB2R3+mIpUMBLQ+LcGeaj/xA8H8V9ozY20/cJlJe4LVDYwVqD94=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(366004)(376002)(396003)(346002)(451199015)(4744005)(5660300002)(8936002)(31686004)(4326008)(66556008)(66476007)(8676002)(66946007)(6916009)(31696002)(38100700002)(6666004)(107886003)(53546011)(55236004)(6506007)(6512007)(26005)(186003)(2906002)(54906003)(6486002)(36756003)(478600001)(316002)(2616005)(83380400001)(41300700001)(86362001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dFo5b1Q3OUxyZ1RySytTUmZYMnpwc0lRMngvQ2d6WllVUUcwb0UrNVEwOFYv?=
- =?utf-8?B?QzZTdGxsUWw0N1c1ZHdLRFkzeXNGa0x3L0VHeXlIblBjZ0craW9makw3UnNN?=
- =?utf-8?B?K25OOGVCNlRBckhKUDZjaU1hOGFuZkJRSDNGVFZvWWdkWUJNdTVtTUxyK1VB?=
- =?utf-8?B?eENQZVlpamtjUDBmKzhxcGd1NXEyWi83c0J0MEZqSlNOeEtwUTBVRldhTXFv?=
- =?utf-8?B?SDRCTk1SRzhaWmdYeWcwMU1UV0RCRFA1WlgxOTVCL3FCVVBTSmE4N04rSWlB?=
- =?utf-8?B?MllJd1JuNVRSYTJJU3ozZzlNazFzMzFYRkdxc1RzNE5uZ1I3TEZzQnFxVG1w?=
- =?utf-8?B?dEZmVXhWbGV1by9XRUU3Y3h6N2hVdnZuUVRaQzlvS1IvV1dUYXJzWW5pSHFH?=
- =?utf-8?B?ZGR1SitVSnN1YWVnK2E2OWpSSkNZRWczVHMyQ3pJQUpOZGxNVTRmS2VQdlJC?=
- =?utf-8?B?cVBvN3RaQ1NLcTk5MWt1TWpVSkhHRU4wL3d2L1pDV0V4K00wUEtlKzloaktI?=
- =?utf-8?B?ckF5Y0pJUzRnZUg1MU13cXUzZXNUMzFEZ2VMNXIrWU1sajJib0JHa3haNkhi?=
- =?utf-8?B?cndybFV1OUJRTm0xOXpUMzZaTkFtNzZrQlNFV2RxaVE5QVMxZ1pIcHppbGVQ?=
- =?utf-8?B?bU5lNmNVUHpxQmhiMHhXVzQvaGVMZ0VZYlRpL2Z3cXQweVJhZXZ2c2tnOHhG?=
- =?utf-8?B?KzgyTkxITzZpM01Vb2VJK01xcWhkUExZVWErUjE2R2laTURtVHZVc3F4aW1S?=
- =?utf-8?B?QzkzYkc3cVJrRENma1k0YTEveklXaHJJaVU2ajE5OG9UbUdIMG5pTkgyNGgv?=
- =?utf-8?B?SWdZYkJHckdjdmh5ZEt6VWFsMzV5ZyswUFd2cy9yTm5Od3RkSGFrR0VIZUND?=
- =?utf-8?B?WWdkS2wxV3lXRXU1NkFFbGhVcHR2STdUK0RSNWZGeFVUUXJSVEZKaWZ1QUFo?=
- =?utf-8?B?TGVqbE56bEliNWo0UmpYRERqSGtFZU81WUJHTmh0Q2V4d3dpVUdBRWZ4UWlT?=
- =?utf-8?B?TlVjbVJuMi9SSkt6L0ErOGhMYTZtZDdBRDFrRVlSaEdxMWhPY1JIRjVGUTFC?=
- =?utf-8?B?ak5ZNG1iWkZ2L1NYc3poVnErODdEd1dtSm9KbzBSeElRVndEb3NJN091Mmlj?=
- =?utf-8?B?SW81TTN5Z2xDcUgwSEtPUENpR1RRbHFkdmVCTEhIbXdDTkNGaUVNdGN2bXJX?=
- =?utf-8?B?ZW9iZ2VYLzhVdnFBajB1RytzY3ZzYS9FTThuQitQUE9CZzBXRk1SV0dlOVU2?=
- =?utf-8?B?ZG9tMzBNUVdwWVprcVcyOWVxYStldTVRaURlYXZUUXJabDIwd2dkcVlCSlph?=
- =?utf-8?B?WUxGUThwYkNXYWJzRTV0RVUyeXRmTjlmY0lDbmNKNXlJMWp5K3M0MFF5WlJS?=
- =?utf-8?B?cWFycCtyNjFVUWhraGZLTVliY1Z3YXpWU003RlZOSTBRYXk2eXF6VHdLajZr?=
- =?utf-8?B?YUdiWG54bXJnSHZSdFFqRS92STExQnF0Nkl5Y3Y5Yml5bmZqUTd2ZStWazRt?=
- =?utf-8?B?b3RmNzRHOG1yZkhKYW4wOHpQWnhwOVZSVkd2Z1ZucE5ZNCs0aDYxc1ZzZi9j?=
- =?utf-8?B?T0w1ZXNIbEpLREVBKy9NeVpaNlFreFNud0p6UXhmd3lCN1BwS09mZVYrRGF0?=
- =?utf-8?B?MEtvbjZxcGVsWFIzQ2N5cW01eUhmK21tMW5nV1R3NjJHK2duLy9PdGpmdmFj?=
- =?utf-8?B?T280cTFhbU5CbEtmZzRZZ3REK0JYeHJMeFIvT0Z0ajNHNVVwdWVNVzBPaWUw?=
- =?utf-8?B?SjFvUG1leityQVhCeC9EUmRZZHhqN3pvNDN1RS9jUXA3SldsVE1IbysrdDdk?=
- =?utf-8?B?TkxDNi95cENua0hDWmhVdzdmNS9XUmRiUDhlNFdHRGZ4TkZuYnBJVHM1NFFM?=
- =?utf-8?B?MWQrOUlMQzh1Yk52Um5sVC92bkJ2UHJoa1VUU2R1SlY0Y2QyWU5oUTU3MnhQ?=
- =?utf-8?B?WkNZUyszbU1lVzJDYjhEcUI1bzNKWkgzNGY4OXlVOENiRTJBc1c4bFd3L2NL?=
- =?utf-8?B?cnhlYkxLaWpMOEpWamFCU2Z1RVczNDN6d3N6VmFWU2hlTHNxNWtJNzFubnpI?=
- =?utf-8?B?TVJ3c2lKdGVrV1pkWm9kZkNqZjNTRHRpTDVpU2dRSUJCKy9pRENjL3BLSjdX?=
- =?utf-8?B?Y2I3bTBwQWkvK2JzMlZ1Z2FnQWhGbVNBWnF2d001RXI3RjlOM3c0S1ZZSUQ0?=
- =?utf-8?B?bFE9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cbd9648-48e4-4aef-dfb4-08dafae9fdcc
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2023 13:26:52.1232
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6uz8miqBDyMDZAMcf/fQSba8jupfGyqKbbRyB8FeRZXxvjp5F2Ze6aKQVqPzpJoGLBKA4+x2Mg0RtZbsIEqDCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7550
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
+Hi,
 
-On 20/01/2023 09:34, Heikki Krogerus wrote:
-> On Thu, Jan 19, 2023 at 12:16:38PM +0000, Jon Hunter wrote:
->> From: Wayne Chang <waynec@nvidia.com>
->>
->> Remove the property 'ccgx,firmware-build' now we have migrated devices
->> to using the 'firmware-name' property.
-> 
-> Ah, so just do this in the patch 3/6.
+this series of patches adds support for framebuffers residing in system
+memory to the simple-framebuffer DRM driver. To do this, the DT bindings
+are extended do accept the memory-region property in addition to the reg
+property for specifying the framebuffer memory. This is done because the
+framebuffer memory will typically also need to be marked as reserved so
+that the operating system will not reuse it and the memory-region
+property is the standard property to reference reserved memory regions.
 
-ACK. This was deliberate because I was unclear if AMD needed this and so 
-if it turned out they needed this, we could just drop this patch. I see 
-Sanket has confirmed now and so I will squash this as suggested.
+A new compatible string is documented to annotate the framebuffer memory
+regions and the simpledrm driver has code added to bind such annotated
+regions to the simple-framebuffer device.
 
-Jon
+The second half of the series then adds support for the XB24 and AB24
+formats and ties it all together to provide a simple-framebuffer on
+Jetson Xavier NX. It should be noted, though, that the Jetson Xavier NX
+device tree nodes are placeholders only and it is expected that firmware
+or a bootloader will fill these in at runtime, due to the variable
+nature of the values that they contain.
+
+This example also uses (but doesn't depend on) the iommu-addresses
+property that has been proposed and which will hopefully be merged soon.
+
+Version 3 of these patches can be found here:
+
+	https://lore.kernel.org/all/20221117184039.2291937-1-thierry.reding@gmail.com/
+
+Changes in v4:
+- rebase onto latest format helper changes, add back AB24 support
+- use drm_dbg() instead of drm_info() for some messages
+- use consistent name for iosys_map structures
+- collect Reviewed-bys from v3
+
+Changes in v3:
+- add new formats into conv_from_xrgb8888[] array to make it work after
+  commit 6fdaed8c7988 ("drm/format-helper: Only advertise supported
+  formats for conversion")
+- extract iosys_map fix into a separate patch
+- fix bogus increments in struct iosys_map usage
+- simplify memory code
+
+Changes in v2:
+- DT fields are now cleared so that they can be filled in at runtime
+- add XB24 support and treat AB24 the same (alpha bits are unused)
+- consistently use struct iosys_map
+- fix issues with DT bindings
+
+I've tested these with a simple UEFI implementation that will fill in
+the placeholder values and set the simple-framebuffer's status property
+to "okay".
+
+Thierry
+
+Thierry Reding (8):
+  dt-bindings: display: simple-framebuffer: Support system memory
+    framebuffers
+  dt-bindings: display: simple-framebuffer: Document 32-bit BGR format
+  dt-bindings: reserved-memory: Support framebuffer reserved memory
+  drm/simpledrm: Use struct iosys_map consistently
+  drm/simpledrm: Add support for system memory framebuffers
+  drm/format-helper: Support the AB24/XB24 formats
+  drm/simpledrm: Support the XB24/AB24 format
+  arm64: tegra: Add simple framebuffer on Jetson Xavier NX
+
+ .../bindings/display/simple-framebuffer.yaml  |   7 ++
+ .../bindings/reserved-memory/framebuffer.yaml |  52 +++++++++
+ .../nvidia/tegra194-p3509-0000+p3668-0001.dts |  43 +++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |   2 +-
+ drivers/gpu/drm/drm_format_helper.c           |  66 +++++++++++
+ drivers/gpu/drm/tiny/simpledrm.c              | 110 +++++++++++++-----
+ include/linux/platform_data/simplefb.h        |   1 +
+ 7 files changed, 251 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
 
 -- 
-nvpublic
+2.39.0
+
