@@ -2,101 +2,142 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77F0C05027
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 09:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E988C05027
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 09:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbjATJh6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Jan 2023 04:37:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60798 "EHLO
+        id S229929AbjATJjN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Jan 2023 04:39:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229953AbjATJh4 (ORCPT
+        with ESMTP id S229657AbjATJjN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Jan 2023 04:37:56 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B7946D7E;
-        Fri, 20 Jan 2023 01:37:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674207475; x=1705743475;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XVVkBMYnQRqLirM24LyyrxLMNLI4qCGB0Gu2kS3dLM4=;
-  b=M52d6Gc+IVRvBzNdygT9zvtCT2kvVBruTCvQq/Y7t3MK6F3HhQPurZMf
-   qabG+PqoukkCVgj3ehQlEg4V6FNZydEu8WgrWG+/SWmrn7j12hhqtdDY5
-   kV7QcB6LcmV265AAp1iYBOAJqMYGkzlO16GqdYjUNE4+OmMmupnctjKiu
-   h+zF/LEDlMMgWfUhLOgUN1up5AsB/Vz7VIdB1S/i8ZqC9rk9keXF22w7g
-   BwJKVSWcZcPzZpPvyaE280L4u99ZEhhMyesIhKd8OUyTLu9VI9W3q1g0V
-   rKUCA7fLqFrta+MMQxOBRpKmPALT2gyUVwnaksvvR6Njs45gjCnIJ1c+3
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="411775923"
-X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
-   d="scan'208";a="411775923"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 01:37:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="803019701"
-X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
-   d="scan'208";a="803019701"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmsmga001.fm.intel.com with SMTP; 20 Jan 2023 01:37:50 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 20 Jan 2023 11:37:49 +0200
-Date:   Fri, 20 Jan 2023 11:37:49 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 20 Jan 2023 04:39:13 -0500
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D51544BC6;
+        Fri, 20 Jan 2023 01:39:10 -0800 (PST)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1pInrA-0002gP-SZ; Fri, 20 Jan 2023 10:38:44 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-Subject: Re: [PATCH V6 4/6] i2c: nvidia-gpu: Remove ccgx,firmware-build
- property
-Message-ID: <Y8pg7ZN1sbOBJbaf@kuha.fi.intel.com>
-References: <20230119121639.226729-1-jonathanh@nvidia.com>
- <20230119121639.226729-5-jonathanh@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Tony Huang <tonyhuang.sunplus@gmail.com>,
+        Li-hao Kuo <lhjeff911@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Markus Pargmann <mpa@pengutronix.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 2/2] dt-bindings: mmc: correct pwrseq node names
+Date:   Fri, 20 Jan 2023 10:38:43 +0100
+Message-ID: <2138388.Mh6RI2rZIc@diego>
+In-Reply-To: <20230120085722.171965-2-krzysztof.kozlowski@linaro.org>
+References: <20230120085722.171965-1-krzysztof.kozlowski@linaro.org>
+ <20230120085722.171965-2-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230119121639.226729-5-jonathanh@nvidia.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jan 19, 2023 at 12:16:37PM +0000, Jon Hunter wrote:
-> From: Wayne Chang <waynec@nvidia.com>
+Am Freitag, 20. Januar 2023, 09:57:22 CET schrieb Krzysztof Kozlowski:
+> Node names should be generic and should not contain underscores.
 > 
-> Now the Cypress CCG driver has been updated to support the
-> 'firmware-name' property to align with device-tree, remove the
-> 'ccgx,firmware-build' property as this is no longer needed.
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> V6: no changes
-> V5: Added this patch from V3
+>  Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml   | 2 +-
+>  Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml | 2 +-
+>  Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 > 
->  drivers/i2c/busses/i2c-nvidia-gpu.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml
+> index 911a5996e099..588be73168fa 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.yaml
+> @@ -41,7 +41,7 @@ additionalProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/gpio/gpio.h>
+> -    sdhci0_pwrseq {
+> +    pwrseq {
+
+[applicable for all 3 examples]
+
+hmm, power-sequences are not necessarily tied to an address and I guess
+it will be very much a common case to have multiple ones on a system.
+
+So might it be better to follow other patterns (like leds) to number them
+or suggest a "foo-pwrseq" / "pwrseq-foo"?
+
+
+Heiko
+
+
+>        compatible = "mmc-pwrseq-emmc";
+>        reset-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml
+> index 3397dbff88c2..b35e00e8c65e 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml
+> @@ -35,7 +35,7 @@ additionalProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/gpio/gpio.h>
+> -    wifi_pwrseq: wifi_pwrseq {
+> +    pwrseq {
+>        compatible = "mmc-pwrseq-sd8787";
+>        powerdown-gpios = <&twl_gpio 0 GPIO_ACTIVE_LOW>;
+>        reset-gpios = <&twl_gpio 1 GPIO_ACTIVE_LOW>;
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
+> index 64e3644eefeb..00feaafc1063 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml
+> @@ -55,7 +55,7 @@ additionalProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/gpio/gpio.h>
+> -    sdhci0_pwrseq {
+> +    pwrseq {
+>        compatible = "mmc-pwrseq-simple";
+>        reset-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+>        clocks = <&clk_32768_ck>;
 > 
-> diff --git a/drivers/i2c/busses/i2c-nvidia-gpu.c b/drivers/i2c/busses/i2c-nvidia-gpu.c
-> index 6d81ea530a83..a8b99e7f6262 100644
-> --- a/drivers/i2c/busses/i2c-nvidia-gpu.c
-> +++ b/drivers/i2c/busses/i2c-nvidia-gpu.c
-> @@ -259,8 +259,7 @@ static const struct pci_device_id gpu_i2c_ids[] = {
->  MODULE_DEVICE_TABLE(pci, gpu_i2c_ids);
->  
->  static const struct property_entry ccgx_props[] = {
-> -	/* Use FW built for NVIDIA (nv) only */
-> -	PROPERTY_ENTRY_U16("ccgx,firmware-build", ('n' << 8) | 'v'),
-> +	/* Use FW built for NVIDIA GPU only */
->  	PROPERTY_ENTRY_STRING("firmware-name", "nvidia,gpu"),
->  	{ }
->  };
 
-This patch is fine, and it's in the right place, but you need to
-squash 5/6 into 3/6.
 
-thanks,
 
--- 
-heikki
+
