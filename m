@@ -2,203 +2,114 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DA0C25B4E
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 08:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CE2C25B50
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 08:46:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbjATIc7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Jan 2023 03:32:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52422 "EHLO
+        id S229583AbjATIqO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Jan 2023 03:46:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbjATIc5 (ORCPT
+        with ESMTP id S229458AbjATIqN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Jan 2023 03:32:57 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63D6EFA3
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Jan 2023 00:32:55 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id r9so4153659wrw.4
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Jan 2023 00:32:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mkaAqFgb4it3mvCkd7k8jnjh+xQ0D3T2hXPLsObnTt0=;
-        b=pZAEN5+ecunvFCuVUgLp7l0Ll+h/58xzFsashP6zVAw0a/+r6g3O1n4ZCdq75PBB8L
-         BUDI1ToDwEk1v624ldzp+ahYK6JROS1Jb5g0s8NydrszlhqEMaex9Si2W2uvFMlbA5pC
-         LvuRJqqZcd/55TcgXhNt5VtMtH9o7O6ZdU9ErOPX66Uc7LBg9fzkn6BG3iVcdtZJttSR
-         UnXqpRvAmxbTvPT2ogprhtY/vjFsnr+6MFvArpfPk6nqqSF9VdsiJxAc751BcRh2XUyM
-         8o5W4WrGRi9KVqT016O5VDPu+yhcKI6H5y8OxwtlRkQVC9CaXf28yqvRnbJyMuJq74F5
-         QaPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mkaAqFgb4it3mvCkd7k8jnjh+xQ0D3T2hXPLsObnTt0=;
-        b=7mbcDumNLH2rzxgB3oJydok5FNni9nwWYVaCtVPyvLxkqq4oTuqzsSeRhm0m8gUVou
-         nIv63yvXn1qsjtwcbBObqvqukwfbqpIolPhLOCOynkpNyYZpmLxthJlFzAQ5UFow0a7f
-         pkJ3WyVGd4iduyWJgnWDb/It5ktbXD6XWQetg6QA19YbbD4tmPEI3WjNR62plT/dTa8o
-         2JSNkQV4JkOShNzLOjV0q/VTh9IHsCdTMjzbVV1sNxC+dB1IcXYBdQPHh/n4iBLk9d6I
-         AT9H7LxdDhSksKgvbxMJFEET2QXOK+zfg80yAonizvSd5VSrgwxBvHioVNCVlAit8i9n
-         8NDA==
-X-Gm-Message-State: AFqh2kotdkenMPLhS1VAC/apWDBcKDjw0psqZYXJ8kvC2OtdVDPAUD1K
-        IBqWmT+pwz/ZO8To3D4Q1x3ErQ==
-X-Google-Smtp-Source: AMrXdXvProHmH8bClV23f+0uvhBTkuhYKijSSiN/0rHM+HjEEdUwyEGeElL57QkmwgdfdhcvLE/+zA==
-X-Received: by 2002:a5d:5c0b:0:b0:2bd:15ef:fe7 with SMTP id cc11-20020a5d5c0b000000b002bd15ef0fe7mr9651179wrb.3.1674203574136;
-        Fri, 20 Jan 2023 00:32:54 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id c8-20020a5d4148000000b002bdd21f25ebsm20901473wrq.71.2023.01.20.00.32.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jan 2023 00:32:53 -0800 (PST)
-Message-ID: <2789cf94-60b4-7e35-50f8-e21b564a1dfb@linaro.org>
-Date:   Fri, 20 Jan 2023 09:32:48 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V6 1/6] dt-bindings: usb: Add Cypress cypd4226 Type-C
- controller
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Fri, 20 Jan 2023 03:46:13 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46CAB8534B;
+        Fri, 20 Jan 2023 00:46:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1674204372; x=1705740372;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=tk8qj1rZrJvPEgK6EDY0l3oMB6o9yW6VyS0SSpwW99k=;
+  b=VTkgQmIAbYv6v65ti0IaJt2jyolf0KYDh/K0yQO/Wbmwcw//M3tIBVuT
+   Ozp35OnOKwpbxMhfelcaWj6XFZ7RPa1C4CtZZG14nGEKiunZZ2V/SXnMt
+   5ZImuyOyh9w/zlkpV1R5V4IT7ptCx1ND58BZvvqHw0cn8hqTNVZauvIgV
+   1A0WAxMggvi+Twxb/8RB3ItKsVBtosPkOSV//r4c5dva2ufqqrhmmmEjn
+   uughwgQgpPxH6u0ErJWm8BDbXlgqr/fpdNxy16/wYy6j1jq1EDu51BTUw
+   r4cf/BvT/Y343E6gNGA9wmYSLZ97gOTKRJXhsRUgUq7QjlwoYAy/uSNyj
+   w==;
+X-IronPort-AV: E=Sophos;i="5.97,231,1669100400"; 
+   d="scan'208";a="196667348"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Jan 2023 01:46:11 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Fri, 20 Jan 2023 01:46:10 -0700
+Received: from den-dk-m31857.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.16 via Frontend Transport; Fri, 20 Jan 2023 01:46:05 -0700
+Message-ID: <08d8b47f8acc1fc51da2eee7eab3a55f0f678907.camel@microchip.com>
+Subject: Re: [PATCH 3/7] net: lan966x: Convert to devm_of_phy_optional_get()
+From:   Steen Hegelund <steen.hegelund@microchip.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        <UNGLinuxDriver@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20230119121639.226729-1-jonathanh@nvidia.com>
- <20230119121639.226729-2-jonathanh@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230119121639.226729-2-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        "Russell King" <linux@armlinux.org.uk>
+CC:     <netdev@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>
+Date:   Fri, 20 Jan 2023 09:46:05 +0100
+In-Reply-To: <a8673e0ed97d41721bb9718d3338fa6957a7f0f7.1674036164.git.geert+renesas@glider.be>
+References: <cover.1674036164.git.geert+renesas@glider.be>
+         <a8673e0ed97d41721bb9718d3338fa6957a7f0f7.1674036164.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.3 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 19/01/2023 13:16, Jon Hunter wrote:
-> From: Wayne Chang <waynec@nvidia.com>
-> 
-> Add the device-tree binding documentation for Cypress cypd4226 dual
-> Type-C controller.
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> V5 -> V6: no changes
-> V4 -> V5: updated subject and updated binding to use 'firmware-name'.
-> V3 -> V4: no changes
-> V2 -> V3: fix additionalProperties warning on new schema
-> V1 -> V2: based on the review comments. Fix some addressed issues on
-> 
->  .../bindings/usb/cypress,cypd4226.yaml        | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
-> new file mode 100644
-> index 000000000000..5d87c9f09913
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/cypress,cypd4226.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Cypress cypd4226 Type-C Controller
-> +
-> +maintainers:
-> +  - Wayne Chang <waynec@nvidia.com>
-> +
-> +description:
-> +  The Cypress cypd4226 is a dual Type-C controller that is controlled
-> +  via an I2C interface.
-> +
-> +properties:
-> +  compatible:
-> +    const: cypress,cypd4226
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  reg:
-> +    const: 0x08
-> +
-> +  interrupts:
-> +    items:
-> +      - description: cypd4226 host interrupt
-> +
-> +  firmware-name:
-> +    enum:
-> +      - nvidia,gpu
-> +      - nvidia,jetson-agx-xavier
-> +    description: |
-> +      The name of the CCGx firmware built for product series.
-> +      should be set one of following:
-> +      - "nvidia,gpu" for the NVIDIA RTX product series
-> +      - "nvidia,jetson-agx-xavier" for the NVIDIA Jetson product series
-> +
-> +patternProperties:
-> +  '^connector@[0-1]+$':
-> +    $ref: /schemas/connector/usb-connector.yaml#
-
-On this level:
-unevaluatedProperties: false
-
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/tegra194-gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      #interrupt-cells = <2>;
-
-Drop, does not look like relevant or used here.
-
-> +
-> +      ucsi-ccg@8 {
-
-Node names should be generic.
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-> +        compatible = "cypress,cypd4226";
-> +        reg = <0x08>;
-> +        interrupt-parent = <&gpio_aon>;
-> +        interrupts = <TEGRA194_AON_GPIO(BB, 2) IRQ_TYPE_LEVEL_LOW>;
-> +        firmware-name = "nvidia,jetson-agx-xavier";
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        ccg_typec_con0: connector@0 {
-> +          compatible = "usb-c-connector";
-> +          reg = <0>;
-> +          label = "USB-C";
-> +          data-role = "dual";
-> +          port {
-> +            ucsi_ccg_p0: endpoint {
-> +              remote-endpoint = <&usb_role_switch0>;
-> +            };
-> +          };
-> +        };
-> +      };
-> +    };
-
-Best regards,
-Krzysztof
+SGkgR2VlcnQsCgpUaGlzIGxvb2tzIGdvb2QgdG8gbWUuCgpCUgpTdGVlbgoKUmV2aWV3ZWQtYnk6
+IFN0ZWVuIEhlZ2VsdW5kIDxTdGVlbi5IZWdlbHVuZEBtaWNyb2NoaXAuY29tPgoKT24gV2VkLCAy
+MDIzLTAxLTE4IGF0IDExOjE1ICswMTAwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6Cj4gRVhU
+RVJOQUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVz
+cyB5b3Uga25vdyB0aGUKPiBjb250ZW50IGlzIHNhZmUKPiAKPiBVc2UgdGhlIG5ldyBkZXZtX29m
+X3BoeV9vcHRpb25hbF9nZXQoKSBoZWxwZXIgaW5zdGVhZCBvZiBvcGVuLWNvZGluZyB0aGUKPiBz
+YW1lIG9wZXJhdGlvbi4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdl
+ZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPgo+IC0tLQo+IMKgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWlj
+cm9jaGlwL2xhbjk2NngvbGFuOTY2eF9tYWluLmMgfCA1ICsrLS0tCj4gwqAxIGZpbGUgY2hhbmdl
+ZCwgMiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuOTY2eC9sYW45NjZ4X21haW4uYwo+IGIvZHJp
+dmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjk2NngvbGFuOTY2eF9tYWluLmMKPiBpbmRl
+eCBjYWRkZTIwNTA1YmEwNjg5Li5kNjRhNTI1Y2RjOWVhMThiIDEwMDY0NAo+IC0tLSBhL2RyaXZl
+cnMvbmV0L2V0aGVybmV0L21pY3JvY2hpcC9sYW45NjZ4L2xhbjk2NnhfbWFpbi5jCj4gKysrIGIv
+ZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjk2NngvbGFuOTY2eF9tYWluLmMKPiBA
+QCAtMTE0Nyw5ICsxMTQ3LDggQEAgc3RhdGljIGludCBsYW45NjZ4X3Byb2JlKHN0cnVjdCBwbGF0
+Zm9ybV9kZXZpY2UgKnBkZXYpCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGxhbjk2
+NngtPnBvcnRzW3BdLT5jb25maWcucG9ydG1vZGUgPSBwaHlfbW9kZTsKPiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgbGFuOTY2eC0+cG9ydHNbcF0tPmZ3bm9kZSA9IGZ3bm9kZV9oYW5k
+bGVfZ2V0KHBvcnRucCk7Cj4gCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2VyZGVz
+ID0gZGV2bV9vZl9waHlfZ2V0KGxhbjk2NngtPmRldiwgdG9fb2Zfbm9kZShwb3J0bnApLAo+IE5V
+TEwpOwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChQVFJfRVJSKHNlcmRlcykg
+PT0gLUVOT0RFVikKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgc2VyZGVzID0gTlVMTDsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzZXJkZXMg
+PSBkZXZtX29mX3BoeV9vcHRpb25hbF9nZXQobGFuOTY2eC0+ZGV2LAo+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdG9fb2Zfbm9kZShwb3J0bnApLCBOVUxMKTsKPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKElTX0VSUihzZXJkZXMpKSB7Cj4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlcnIgPSBQVFJfRVJS
+KHNlcmRlcyk7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBnb3RvIGNsZWFudXBfcG9ydHM7Cj4gLS0KPiAyLjM0LjEKPiAKCg==
 
