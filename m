@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BC1C27C7C
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 17:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5249C25B4E
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 17:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbjATRba (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Jan 2023 12:31:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46040 "EHLO
+        id S230340AbjATRbc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Jan 2023 12:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230217AbjATRbX (ORCPT
+        with ESMTP id S230222AbjATRbY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Jan 2023 12:31:23 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6950AC63BE;
-        Fri, 20 Jan 2023 09:31:15 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id h16so5455079wrz.12;
-        Fri, 20 Jan 2023 09:31:15 -0800 (PST)
+        Fri, 20 Jan 2023 12:31:24 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C4ADBD8;
+        Fri, 20 Jan 2023 09:31:16 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id r9so5484964wrw.4;
+        Fri, 20 Jan 2023 09:31:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nZwFqfU6/YlqXS0KBaaVZd4JCQGAwP0xqxEd37sKS24=;
-        b=ZraDywh9d7ehyDd9uKX3TzphmkT+E5LNT1jeGuMQiAwElzDgSj32j/nA8VVs53vtxb
-         DIs82zif+vzWKP7v+s/OuPziFrvvXXt5szsSjD4j8FsDTLrZ9AHKuRco4wHJCbA4+Bw3
-         S0b00m67OTdztpqXchCIY5nc5ds0HV7jYmvtNersWalRGSREGllMl9GGvvgboBCuXGg5
-         kWld85tqFRFu2sNSSKSG1wnTGsiDFSRSpivVwHyTkp1TLGxBbim8VlO/2ecc745x+bnu
-         sBusHCcwNWB7nLCGGeS+nvF0ciOEfBkGaw+Vvxbgjy302bRCbIpJk/dEigJ2Y5zKCAIM
-         z7Ig==
+        bh=kXw2j+x/kse2yPakxaPEW51TbrZ6J1HBieALff4c+rE=;
+        b=HxB+Fql78ZELN8ESqJE0nr2QjjtSelDWlhBG63jeCWznR746a2arSU5WR3Dewrng8J
+         hpKPCB/+XGVCnjaTSb1hBPnnCks1ywfdHU+gPv3prNvf2m9uSypF49PArI3DIbh+dhY7
+         4nVMQ4nvctMibIveBehx3EiUs32eAwRfj6lK57zOYWSAtKFH4lWEpBYZGqeGbe9KSThS
+         04EFH383Mi+M8yIjSXIltHW3DxMU4XvnnpWXjQ0sSXERqs9JfRb2KWddyQcV84rKHvjs
+         bMNZ0JF7OgQ40n613YIyLOzpeSBfnd7bwq5wCtQ1EbPLfPanVxxa+hjUM/JnY9bEAgX/
+         bhoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nZwFqfU6/YlqXS0KBaaVZd4JCQGAwP0xqxEd37sKS24=;
-        b=OdtJubQY7stBt26Mbq0vdYJ4QIvLqOhLtbjjKRIdvGSubH43kBI3ji26bdeco3wErK
-         Y7acmfTMbv4q1XjkHYP0fUPuT7hRRmOYyeahQUv0vilwp9Akdd0r9NW/gRgmIyGDYfKR
-         OPY3P2NkJp+/cqIOZWirD+2Z8DDsTJLQzUq4Luw7eNDNZTduwP79EIFcFGrJycuuTSzw
-         UhcBHo3W0msL26j2lYahw43pXCFjzAmPfOUX+b1zJIbtpvT5aILbyrNj3aXEHuVfXOJC
-         xrPR79H8MQwoGfSDeFwBLfLVRmCmWG8aIipwNNLPhoqV4iS1ij8N3/roAFgUL8NYTeWT
-         ySFA==
-X-Gm-Message-State: AFqh2kqLJeGDy4hY0DpUwFrHVY4HWPztUHNjQRT8rg59dgZXmyei3l8l
-        bHkp5S4JSAqRdBp7aEJgj8bxo0BabdI=
-X-Google-Smtp-Source: AMrXdXvjz/KDGIlKl769j7Os1enZRYBV2a7KiNGRFtoo8j34hnu9C0I3CKnEFtbtc2qSZ9NCcV11hg==
-X-Received: by 2002:adf:ec88:0:b0:256:ff7d:2346 with SMTP id z8-20020adfec88000000b00256ff7d2346mr13712276wrn.51.1674235873809;
-        Fri, 20 Jan 2023 09:31:13 -0800 (PST)
+        bh=kXw2j+x/kse2yPakxaPEW51TbrZ6J1HBieALff4c+rE=;
+        b=T5Mf6zdstogWfCFhB85vhzecHRi/Ar90oI2+U1wAEDsm1fbedkEma4gERBT4ZyrLal
+         3VKNmC3GoHq2P1XxtXAN8VMtRj25K+S3oDtWPJO8f0RZFJZbUYoC7Uoc1rOEwjOOP8om
+         Rqlan0kollQnvNPETCT0/2mXBm9j1y0XrIlaHx9ps1A7nm9hci2djU04pNP4oA11mOtz
+         3Qz9KJ6L5B4vpwPf/4Fkjugd+RBFIXMutgcxat0ykdsyKZEryxSVe1qGFF992k6WoE9K
+         VFrEO9TbGw5atCUl2MGC5AovK26GlBhmAgYvACVOmOHbhwGnY7AvGCw0lh/esxXt+BBs
+         XSjA==
+X-Gm-Message-State: AFqh2koO1TDv/2Y2mkT2c/s3c8ypRWn/2o8wLbHjerpQJDyWOeHoc86y
+        Cnr+igC7mvmCpAsyt794pcU=
+X-Google-Smtp-Source: AMrXdXsb64RJIKDpmJTAga1GYyceTGETa/aMFyd6rGzsds7lxOLOWxwF53TLNJ7Cy29mMswL5rWqhA==
+X-Received: by 2002:adf:ce90:0:b0:2bb:edc7:504 with SMTP id r16-20020adfce90000000b002bbedc70504mr14353213wrn.26.1674235874883;
+        Fri, 20 Jan 2023 09:31:14 -0800 (PST)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g11-20020a5d488b000000b002bc7e5a1171sm29510955wrq.116.2023.01.20.09.31.13
+        by smtp.gmail.com with ESMTPSA id z12-20020adfd0cc000000b002bdff778d87sm13470524wrh.34.2023.01.20.09.31.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 09:31:13 -0800 (PST)
+        Fri, 20 Jan 2023 09:31:14 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
         Thomas Zimmermann <tzimmermann@suse.de>
@@ -57,9 +57,9 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v4 7/8] drm/simpledrm: Support the XB24/AB24 format
-Date:   Fri, 20 Jan 2023 18:31:02 +0100
-Message-Id: <20230120173103.4002342-8-thierry.reding@gmail.com>
+Subject: [PATCH v4 8/8] arm64: tegra: Add simple framebuffer on Jetson Xavier NX
+Date:   Fri, 20 Jan 2023 18:31:03 +0100
+Message-Id: <20230120173103.4002342-9-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230120173103.4002342-1-thierry.reding@gmail.com>
 References: <20230120173103.4002342-1-thierry.reding@gmail.com>
@@ -71,33 +71,85 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add XB24 and AB24 to the list of supported formats. The format helpers
-support conversion to these formats and they are documented in the
-simple-framebuffer device tree bindings.
+Add the framebuffer carveout reserved memory node as well as a simple-
+framebuffer node that is used to bind to the framebuffer that the
+bootloader has set up.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v4:
-- rebase on top of latest drm-format-helper rework
-
 Changes in v2:
-- treat AB24 as XB24 and support both at the same time
+- clear out dynamic fields and leave it up to firmware to fill them in
+- mark simple-framebuffer node as disabled by default
 
- include/linux/platform_data/simplefb.h | 1 +
- 1 file changed, 1 insertion(+)
+ .../nvidia/tegra194-p3509-0000+p3668-0001.dts | 43 +++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  2 +-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/platform_data/simplefb.h b/include/linux/platform_data/simplefb.h
-index 27ea99af6e1d..4f94d52ac99f 100644
---- a/include/linux/platform_data/simplefb.h
-+++ b/include/linux/platform_data/simplefb.h
-@@ -22,6 +22,7 @@
- 	{ "r8g8b8", 24, {16, 8}, {8, 8}, {0, 8}, {0, 0}, DRM_FORMAT_RGB888 }, \
- 	{ "x8r8g8b8", 32, {16, 8}, {8, 8}, {0, 8}, {0, 0}, DRM_FORMAT_XRGB8888 }, \
- 	{ "a8r8g8b8", 32, {16, 8}, {8, 8}, {0, 8}, {24, 8}, DRM_FORMAT_ARGB8888 }, \
-+	{ "x8b8g8r8", 32, {0, 8}, {8, 8}, {16, 8}, {0, 0}, DRM_FORMAT_XBGR8888 }, \
- 	{ "a8b8g8r8", 32, {0, 8}, {8, 8}, {16, 8}, {24, 8}, DRM_FORMAT_ABGR8888 }, \
- 	{ "x2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {0, 0}, DRM_FORMAT_XRGB2101010 }, \
- 	{ "a2r10g10b10", 32, {20, 10}, {10, 10}, {0, 10}, {30, 2}, DRM_FORMAT_ARGB2101010 }, \
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts
+index 238fd98e8e45..85b4aaa2ad4e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts
+@@ -7,4 +7,47 @@
+ / {
+ 	model = "NVIDIA Jetson Xavier NX Developer Kit (eMMC)";
+ 	compatible = "nvidia,p3509-0000+p3668-0001", "nvidia,tegra194";
++
++	chosen {
++		framebuffer {
++			compatible = "simple-framebuffer";
++			status = "disabled";
++			memory-region = <&fb>;
++			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
++			clocks = <&bpmp TEGRA194_CLK_SOR1_REF>,
++				 <&bpmp TEGRA194_CLK_SOR1_OUT>,
++				 <&bpmp TEGRA194_CLK_SOR1_PAD_CLKOUT>,
++				 <&bpmp TEGRA194_CLK_PLLD2>,
++				 <&bpmp TEGRA194_CLK_PLLDP>,
++				 <&bpmp TEGRA194_CLK_NVDISPLAY_DISP>,
++				 <&bpmp TEGRA194_CLK_NVDISPLAYHUB>,
++				 <&bpmp TEGRA194_CLK_NVDISPLAY_P0>;
++			width = <0>;
++			height = <0>;
++			stride = <0>;
++			format = "x8b8g8r8";
++		};
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		fb: framebuffer@0,0 {
++			compatible = "framebuffer";
++			reg = <0x0 0x0 0x0 0x0>;
++			iommu-addresses = <&dc0 0x0 0x0 0x0 0x0>;
++		};
++	};
++
++	bus@0 {
++		host1x@13e00000 {
++			display-hub@15200000 {
++				display@15200000 {
++					memory-region = <&fb>;
++				};
++			};
++		};
++	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 5ce2650128b1..e0ce54eae17d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1975,7 +1975,7 @@ display-hub@15200000 {
+ 				#size-cells = <2>;
+ 				ranges = <0x0 0x15200000 0x0 0x15200000 0x0 0x40000>;
+ 
+-				display@15200000 {
++				dc0: display@15200000 {
+ 					compatible = "nvidia,tegra194-dc";
+ 					reg = <0x0 0x15200000 0x0 0x10000>;
+ 					interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.39.0
 
