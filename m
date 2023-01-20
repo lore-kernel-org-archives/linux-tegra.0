@@ -2,208 +2,145 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC308C05027
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 17:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F628C52D77
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Jan 2023 17:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjATRot (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Jan 2023 12:44:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33178 "EHLO
+        id S230466AbjATRyA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Jan 2023 12:54:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbjATRoq (ORCPT
+        with ESMTP id S229813AbjATRx6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Jan 2023 12:44:46 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1C0270E;
-        Fri, 20 Jan 2023 09:44:45 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id vw16so15773178ejc.12;
-        Fri, 20 Jan 2023 09:44:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vzb4x08rONaBPBHIhhbhW5ohbXZ5cJXrWYA/At79tyw=;
-        b=LPd/gTfKunhmGKiURJuHX9NJhqp3/bnZ4ltlgKjqY9O95iNKqEkuXkieP47CAgwIVk
-         4DxWAXrpQdNVJqH+WXu5MDsXaUu60Vt7tv0aLaqRP7cb2J/c1OZbUgBJcfqjO8fhTuTB
-         X3jPnXDipwTwUuNNJw0odTM68Whsnxs8v3vcZvFfwf8tsHIdwjkUnD1UVIKRmkt9A8Zx
-         iD1QHuPmKpnBs07BE45ddNQGG0tcUOShz7FkKl7Ljk69lnkoC37xj6/l1hAjGNS2np8l
-         pOd2FDamgXTCzaXibeCyhd9yS+dQv3Q1k/5bDseDWQRjOvOo3tmOhenlYzqUcNv6DG74
-         RTrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vzb4x08rONaBPBHIhhbhW5ohbXZ5cJXrWYA/At79tyw=;
-        b=525IctQLM/cicaAm/nON4nYVH9zd9wbvDkVvw2IJzvbQ+ZQc9eytl9UnHBAA56+wBB
-         GJKQXUuW7FyxlkUCViJ/WqQsCI8hTwZSKzILjEPv7LLSEyIa49SsJ9aT5P3eCxCO5obj
-         5kne90S6TCL4Pm77JdlKwY5iHWvNVTH2et6E0Ql1SOAUz2lDy1Mn/zEeWBmXjTpvICDX
-         zfiOz3REnjkGAT4wp6I6mMbEMrCvnPw7waFu4BTS1o8dn5XWxNBoSIWVX7D5zUKtlxXn
-         IMQiad7W4WjDR1yv0OXN1cvRsWx4DqJrcwk4xI5Rp23NMV4xJ4yYWLxQi6HdvoDqwYuk
-         jmIg==
-X-Gm-Message-State: AFqh2kqRZfhkqDy7TJVNkgYFc8b9vI9VQn6CiBRhnnMf+RRtGvLkpgrE
-        zfPZwmruhWbUY4diFs/6XE0=
-X-Google-Smtp-Source: AMrXdXvzA9GOPZrGKAIM9iXmf52TVAZdwrrFDq0+5sdCJlH+MjWz7qmxZfsTuYvnZavJe6vZgDmCGw==
-X-Received: by 2002:a17:907:a586:b0:86a:316:d107 with SMTP id vs6-20020a170907a58600b0086a0316d107mr18250916ejc.72.1674236683436;
-        Fri, 20 Jan 2023 09:44:43 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id sa37-20020a1709076d2500b00870ebda9479sm7340014ejc.100.2023.01.20.09.44.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 09:44:43 -0800 (PST)
-Date:   Fri, 20 Jan 2023 18:44:41 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Janne Grunau <j@jannau.net>, Sameer Pujar <spujar@nvidia.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH v12 0/4] iommu: Support mappings/reservations in
- reserved-memory regions
-Message-ID: <Y8rTCeEvYG/Cx75S@orome>
-References: <20221117185424.2359687-1-thierry.reding@gmail.com>
- <Y8rRDyFxx5KQSwD3@orome>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YcfcTRnmgAM6V3Ln"
+        Fri, 20 Jan 2023 12:53:58 -0500
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9727402F6;
+        Fri, 20 Jan 2023 09:53:42 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jKwTwhEOI2/vKWprvfhYxukFWV1hORC3apUFwJDo2g4NIv8TZQR2gqf6s3KkVYoU30eS9qBIwLLblyVbvAV34UqOoaQSs5reamaYvzE350fm/62IWhVgr2GTNpEdwqmPq2Fkwa6vE+JcM2FgrsIvNXjJkXML/wbRFpj/YsBnjasmbQNWKCiiMnUvN1mgdbE2q6JTD1tiBnWQSxkM/55cMvEpebfScKSYJ6lJdxFUxY5+YM1YoZVi+ihjeAOvlTH6FVT16KMNJ9qGg3ZH/GkUDDCeoYQFzLVMKDVcDh5ll6wiMpbC95ZFTvkW4cWZ9Z9Vs/vUENvyC5MU6RXNlXrRAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cXFt93pMtQTD3Nr5BElncWhLzk/oOeSjayXm6n79zuw=;
+ b=i7BF2hVOIQ3YlJNTULTu2B68T5G+R9CjuSqjvagzh4tBs5GmNsLXx51wkll2UYfRWgBeZdCtkIsaiehqzR3ybXVvbF6QTRjydo9VYW0NZ1mUrHNuJ/1U3/UhHTLv3mdTlM0uq64naoHMyaH+sTVBvgXTruaFJ8bL7CPe2m4rF+p9oEn/8q+8UKJZNBSZN9J2tkGk3zpnfuknK/pwmIISXc6rtyLKDvmSg5WNsJec89HOQn5S/bYSr0UT1d3zyFGugJVoEPAgkT9quPW7U4W68Gfycm4QrMGYt+MmTZdMQWm6hqM9o9zjm+Rhbr5EltuClgYAeHuP8VtaK6KbKyVkKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cXFt93pMtQTD3Nr5BElncWhLzk/oOeSjayXm6n79zuw=;
+ b=DrF3k+K+897Yq50c0abDAZ6YHYeB9xWUTjXZ0pCSws1N29HXJ3TDUxMxQNvFNz0yZNTVu/YOje/Gco99n0OaPgWEu8q221L3VpCSTqzbrsYfCk8iwiHYKoE0CU/dKNE89cHW9mKyy1FNkbVi5iQaA3ZVqLoqbrP6T9a0QIZIW/QhYWh6AIxhw8IJZcD5bvRvc77NqNoP5eTbkUBbk1bYpETUgWFNKPg5T/rPrGDUfTNJjWox3goggBJGPbG8rK8Op1PDykN6zHDEhA6QmZrXnodKunBw5SR+v1Zuk2Wr7G2byH3knDOdQ1hYP+XXZ7KD7eaWwT9Jhsvipo96YZP2+g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by DM6PR12MB4076.namprd12.prod.outlook.com (2603:10b6:5:213::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13; Fri, 20 Jan
+ 2023 17:53:41 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f8b0:df13:5f8d:12a]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f8b0:df13:5f8d:12a%9]) with mapi id 15.20.6002.013; Fri, 20 Jan 2023
+ 17:53:41 +0000
+Date:   Fri, 20 Jan 2023 13:53:40 -0400
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 1/8] iommu: Add a gfp parameter to iommu_map()
+Message-ID: <Y8rVJGyTKAjXjLwV@nvidia.com>
+References: <1-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com>
+ <4fd1b194-29ef-621d-4059-a8336058f217@arm.com>
+ <Y7hZOwerwljDKoQq@nvidia.com>
+ <Y8pd50mdNShTyVRX@8bytes.org>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y8rRDyFxx5KQSwD3@orome>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+In-Reply-To: <Y8pd50mdNShTyVRX@8bytes.org>
+X-ClientProxiedBy: MN2PR03CA0029.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::34) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DM6PR12MB4076:EE_
+X-MS-Office365-Filtering-Correlation-Id: e29fdfc1-a93a-4424-19c0-08dafb0f440c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: f6qU6mqG7QQPIANewSeV3NY/O6fs4qOmTSfk9eK3ubu9AyrR1Anxe0vmSpG10K3DWpbZ9mn+/9wXZJpPWZoiR3md3epyfFdJkMwD1B82Vxq/js99fWzuIYoJr0hqGfRlVJZagOwxyNI8B5ViK6l5TINHNSnIInltEgJF5u0Td0xURxNGpW1euuiQ3iG4Vd7ceq1JbqIqu1ZSCd2E3BJBjCxMulhP140Uk/sqYRtAyRh/r42qK0XuwQlsNUt+b+dshRTT6FbbxsYSvGhtnkCIEyEJLPu3+4D5mNxyJaRTDJS3iTO7qwX4G0GZ9co6/dfeE6XjqxfhOfra918zxu8u6ageYBix5Sl8VpC8GAiOpHNk5wZWKW/qdKPjhxAjNkbayedJLlvQvCtoDj/iAxrXYzu2bQfVL3bl1ZiHruNyOi+doxL6tK5URthNNG1Yl1W5mOqTHCRY/mNQxhTIYoBY1vpva13nNn7zHx9wmQu/ZQpA0ggvaBd2Eh6cDP0EjTifOK83jDHVb/byllW0dqkJud1whWIvZO0Cm+Aj1/3AypijWJuan/nUdJB7EFvXhxmnxkUgKcybKWtThY0SCEcLN5Qx1N4xjVYP7esNJOJNAToXJJgQwW7eaOt+QMqocAyMZL6dyzhbQxscA64t1BBRxA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(39860400002)(366004)(136003)(376002)(451199015)(66476007)(38100700002)(66556008)(5660300002)(478600001)(86362001)(316002)(8936002)(66946007)(4744005)(7416002)(2906002)(4326008)(6916009)(41300700001)(8676002)(26005)(186003)(2616005)(54906003)(6506007)(36756003)(6512007)(6486002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8v1EMXBN73/TrR2ymZ61ASZdsthvduOnp0JZ6UJItEqeJepd8eAVU6K1Jhnt?=
+ =?us-ascii?Q?mDjxgkEMVIrj/bjh1Zx1u3DnlsOIM9XXW7xCNzCVWBO2u3D2wUEHzzQg0Su1?=
+ =?us-ascii?Q?3zcQmxgFb/nj04eBQbjW060wF60MXYY9vBiZXDehCKAClS+HXaC9vRs/lHES?=
+ =?us-ascii?Q?IxKQfymRS/3DeIQmQNfe91HTd6raseBBLXhfKYqZN6cRiu5hq6Vkwep+xCJO?=
+ =?us-ascii?Q?r3qquSbMNLcjCtC3oiXaE/WmOM4G1gxafA9NrA+Y0Z/ibN174RqAOi5lMBNH?=
+ =?us-ascii?Q?5cXjgxxPwdFA5Jyniahx0ScHEiG6VR+vYQzQC6KSIdvzoAK4cx3U11F6O+oD?=
+ =?us-ascii?Q?PpXytuzURAysCVMqDnsEuzxVb5zg722xy1wvxzetAN6mkbGq20uzkzXlxehV?=
+ =?us-ascii?Q?oTaTmK2KHHOt8mgFusxeAF68eQt7+9hwgqx34QLSbUBvVTvRsugWslELuOuj?=
+ =?us-ascii?Q?1Vf49DLhosezcSprLKncMfDiOB+lliDnuT9qVWlc/Y2/1UIidUxk6HIgjm8x?=
+ =?us-ascii?Q?pTn3z4O+5JWfK3wwV5NoJyBUr+2NUWVbGifatEsJF++/mN6hwBesHJyZwmsb?=
+ =?us-ascii?Q?5vdZg426Hwx/FgYlWhZv6kzihSqj6JtaKxwHlZkinOBOL9lwrbThQKdkg1XC?=
+ =?us-ascii?Q?5zsRIl/FA0StWJ3gJ46tAxlNvcUb4zSVxU5Jt1Pwo9XuzOdJeOavoD5w9q3z?=
+ =?us-ascii?Q?aVe36csh7yNtT1j8fB05xnfJHDXPxrPciW7hm7aieWst4InpWdFBkqPdfiGF?=
+ =?us-ascii?Q?s/lH/xFfWRIM4GNKBQtkbvhdlHVYDG8Rr6IXrsGhZHDFTchwZKj8m+qKlrW3?=
+ =?us-ascii?Q?XduIzE8+DUvWoroATR1hXDj4jcqXRwela2x9fRT0pGMM7ofM2T4CKv1cEI4r?=
+ =?us-ascii?Q?tfs9NX1aaIqBhNnUHIq6T5KvXNTQ5ryETOgfGH1NBQlagFFVT3y6rt9oACpS?=
+ =?us-ascii?Q?jwOu5HfZc1CxlvU5gqELhJuzU74vo4FQAwNZV59kE0b3BmTAVrkLjqh+Ds0/?=
+ =?us-ascii?Q?2RFa8zX7HQaPd+S6tu5tXc/xoP+vn4xmjAaRo4Ki4avXBXGz3oHdzTQCKa2P?=
+ =?us-ascii?Q?FnPJ/OCZc9Yw822T2tKpQy7lci+6Sy1ojeBobphKiyLIYI/eKvr5t5TFA97Q?=
+ =?us-ascii?Q?kBymkNkxj7KaXpR5YVs/0V75LTJfv2BXQ0EFcc667lVWlz0kx4EvcxyUjKMu?=
+ =?us-ascii?Q?vUjniN7MEp02WN5wMPozpgXPajQ6HKnYSvdI2BLsbGTOh5UGfc4q+l6hKbTV?=
+ =?us-ascii?Q?l9RmF4ZpepGbEIO0d2dPQjod8n6H/QaWv39uFP+GuUmXiaVxyFuUOPgZzKjS?=
+ =?us-ascii?Q?o/bOuYLizTog3+p1x+72B3/+uJFPVzu4eIpRJXDdB8V/RPkxrDTtJgGagv0w?=
+ =?us-ascii?Q?OWXbno3cNXWjxDpi3VhDIP+hqbu/Frrx/1T/cyPd4gcm1FZhAyUrt47TQeAs?=
+ =?us-ascii?Q?huM7u5pF9aW+fZcW24foaSJGN7v04Y7sAM3R/ccJ6/qzyrHw9gFLTh/Vfsz+?=
+ =?us-ascii?Q?tj8rPV9vW2RoSsDRwsvvP4bZvkxmJeqRMsBVjoGqQf5gkUkN3uwrZQ3L4EiF?=
+ =?us-ascii?Q?3q+iP4mIYpeIHLdhp1oYXyWlrMgO3yUnR6KcLSVL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e29fdfc1-a93a-4424-19c0-08dafb0f440c
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2023 17:53:41.3258
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S/ShNRiahaTIoIB6a/UQRktiU0bLbxGlrw3I9KvaFFDMptah/1bC4Sxj+oCgwfl+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4076
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Jan 20, 2023 at 10:24:55AM +0100, Joerg Roedel wrote:
+> On Fri, Jan 06, 2023 at 01:24:11PM -0400, Jason Gunthorpe wrote:
+> > I think it is just better to follow kernel convention and have
+> > allocation functions include the GFP because it is a clear signal to
+> > the user that there is an allocation hidden inside the API. The whole
+> > point of gfp is not to have multitudes of every function for every
+> > allocation mode.
+> 
+> Well, having GFP parameters is not a strict kernel convention. There are
+> places doing it differently and have sleeping and atomic variants of
+> APIs. I have to say I like the latter more. But given that this leads to
+> an invasion of API functions here which all do the same under the hood, I
+> agree it is better to go with a GFP parameter here.
 
---YcfcTRnmgAM6V3Ln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 20, 2023 at 06:36:15PM +0100, Thierry Reding wrote:
-> On Thu, Nov 17, 2022 at 07:54:20PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Hi,
-> >=20
-> > This version is a minor update to the previous v11, which can be found
-> > here:
-> >=20
-> >   https://lore.kernel.org/all/20221111161806.630527-1-thierry.reding@gm=
-ail.com/
-> >=20
-> > The only change here is that the #dma-{address,size}-cells is dropped.
-> > It turns out to be much simpler to just update #{address,size}-cells to
-> > what they should be rather than add extra complexity for the DMA work-
-> > around. There's a minor update to the DT binding so that it can now
-> > properly validate cases where we have both reg and iommu-addresses
-> > properties.
-> >=20
-> > An example is included in the DT bindings, but here is an extract of
-> > what I've used to test this:
-> >=20
-> >         reserved-memory {
-> >                 #address-cells =3D <2>;
-> >                 #size-cells =3D <2>;
-> >                 ranges;
-> >=20
-> >                 /*
-> >                  * Creates an identity mapping for the framebuffer that
-> >                  * the firmware has setup to scan out a bootsplash from.
-> >                  */
-> >                 fb: framebuffer@92cb2000 {
-> >                         reg =3D <0x0 0x92cb2000 0x0 0x00800000>;
-> >                         iommu-addresses =3D <&dc0 0x0 0x92cb2000 0x0 0x=
-00800000>;
-> >                 };
-> >=20
-> >                 /*
-> >                  * Creates a reservation in the IOVA space to prevent
-> >                  * any buffers from being mapped to that region. Note
-> >                  * that on Tegra the range is actually quite different
-> >                  * from this, but it would conflict with the display
-> >                  * driver that I tested this against, so this is just
-> >                  * a dummy region for testing.
-> >                  */
-> >                 adsp: reservation-adsp {
-> >                         iommu-addresses =3D <&dc0 0x0 0x90000000 0x0 0x=
-00010000>;
-> >                 };
-> >         };
-> >=20
-> >         host1x@50000000 {
-> >                 dc@54200000 {
-> >                         memory-region =3D <&fb>, <&adsp>;
-> >                 };
-> >         };
-> >=20
-> > This is abbreviated a little to focus on the essentials. Note also that
-> > the ADSP reservation is not actually used on this device and the driver
-> > for this doesn't exist yet, but I wanted to include this variant for
-> > testing, because we'll want to use these bindings for the reservation
-> > use-case as well at some point.
-> >=20
-> > I've also been able to make use of this binding and the IOMMU code in
-> > conjunction with the simple-framebuffer driver to hand over a display
-> > configuration set up by UEFI to the Linux kernel.
-> >=20
-> > Janne has confirmed[0] this to be suitable for indirect mappings as
-> > well, though these patches don't implement that feature yet. Potential
-> > extensions to this have been discussed but are not yet included at this
-> > time to not further complicate things.
-> >=20
-> > Thierry
-> >=20
-> > [0]: https://lore.kernel.org/all/20220909144504.GA4024@jannau.net/
-> >=20
-> > Thierry Reding (4):
-> >   of: Introduce of_translate_dma_region()
-> >   dt-bindings: reserved-memory: Document iommu-addresses
-> >   iommu: Implement of_iommu_get_resv_regions()
-> >   iommu: dma: Use of_iommu_get_resv_regions()
->=20
-> Hi Joerg,
->=20
-> I think this has all the Acked-by's and Reviewed-by's that it needs. Can
-> you pick this up? I'd really like to see this go into v6.3.
->=20
-> If there's anything that you'd like to see addressed, please let me
-> know.
-
-Joerg,
-
-I just noticed that this no longer applies on v6.2-rc4, so I just sent
-out a v13 which is really only a rebase with the tags from v12 applied,
-no further changes.
-
-Again, let me know if there's anything else you think this needs before
-it can be picked up.
+Ok, I think we are done with this series, I'll stick it in linux-next
+for a bit and send you a PR so the trees stay in sync
 
 Thanks,
-Thierry
-
---YcfcTRnmgAM6V3Ln
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPK0wkACgkQ3SOs138+
-s6F6WxAAnUP8cHSS7eoxrCpbXmpTBFaE8xdvwJ1mMKCVoUk1FTggU5ErCU1ON1Q/
-eEYAARrKx3ii9oVummkwsCINQGzA4QwiVSA9mUn8apTI/HtUS2Pt+q46MvzCdVqS
-mCphLLuR/wgp+brHA0NPPYMqXpvWMO/tcR09ZXsqOEYtezBsi7en/Ff6TLz9Ftd7
-RsoBacAdAR9sulS2/BZTCS4y25cgqqz0PUG0urKKdES+MkOR/ZW3a2SMJ0P1uLm6
-DZzlQpTHWXPVKGXWGiy+Rb/XpzOkT0CYYYpjJAAY8pPRjRDC/H0K8qbfEGJ0v060
-K66j1oQpCJLS2yMR7qqVfN/K6mJfs4oNn6WH6X0QFENFPqjsxlYjwcshSsMuqcMt
-s1JtjhI671BYiD4BgB27jUJ6DchorC69/PoidhZxNOvxKEgyczVPuoFywntPXgcf
-GXaPJOgnXi+3vT9959uQYeTv0Kt1/HBiopjXV/F7nYU6KXpsXn5Q2bQ1LPFJm7UM
-6FACXb/uSVZst3NJ++bCFFUfcksWXs/9jbjILCwhHf7hm2CzXPk+qVZRqpEzcAX2
-SNb7BNUvzNPP300XVm3iEIFpKmwtAgG8NXUWyVnM7s9yQp4gVdIh7iEd54ldG0Ok
-JVzM4aWSpZxKWLSFSmAZCvh7cfYQPyrofQYgzaZPQOD/BDiNbAA=
-=D6IK
------END PGP SIGNATURE-----
-
---YcfcTRnmgAM6V3Ln--
+Jason
