@@ -2,149 +2,85 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB96CC05027
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 09:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26516C61D97
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 10:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231784AbjAWJRA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Jan 2023 04:17:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55776 "EHLO
+        id S231629AbjAWKAX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Jan 2023 05:00:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231777AbjAWJQ7 (ORCPT
+        with ESMTP id S231560AbjAWKAV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Jan 2023 04:16:59 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8FCAF75A;
-        Mon, 23 Jan 2023 01:16:57 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Mon, 23 Jan 2023 05:00:21 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1F5178A72;
+        Mon, 23 Jan 2023 01:59:53 -0800 (PST)
+Received: from 8bytes.org (p5b006afb.dip0.t-ipconnect.de [91.0.106.251])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 70C3E341F5;
-        Mon, 23 Jan 2023 09:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1674465416; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=80r1f0rQn7nrpu7IF0YQeoGPriIYd2yInVPCwHFzhMo=;
-        b=xRsEAaZJMrmW/Il0mYVgIkJ1rWW2HMf8+ihXjFXFQflbS2YBHFNVY7JEZeJc4a322gxFWM
-        BX4V4JBwcivC/MfCcaGnN5GJ3lDDf/aDCDtCZAt5R+t3qHbfpnnIr3m9xK8Jlau0rFYeCN
-        zV9uEOmvnnG1P3foYCVdJ7/H0SBMZYA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1674465416;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=80r1f0rQn7nrpu7IF0YQeoGPriIYd2yInVPCwHFzhMo=;
-        b=ME0eYPeR/0lQ0c4HAoB9Xg8ZkPrDjBCM7wxt0AdQOK2+ojv+t7Y5QRNMTvlY/K2r6z0bEe
-        aocInHq5kFeEMTAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3AAA1134F5;
-        Mon, 23 Jan 2023 09:16:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id KPxtDYhQzmNEcAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 23 Jan 2023 09:16:56 +0000
-Message-ID: <1f372af0-9220-9a98-3495-08dca7729e7e@suse.de>
-Date:   Mon, 23 Jan 2023 10:16:55 +0100
+        by mail.8bytes.org (Postfix) with ESMTPSA id 9A316262C2B;
+        Mon, 23 Jan 2023 10:59:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1674467975;
+        bh=0KQBObUcnpg5GrqXq3hC5RyjGf2zS6TIXg2zcVgFWn0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Tr3JGNsZMXVI480xgKW5iIBnC2CS9vyEqh9gWSstha079Y/cRMHa9gi+uxnReHb5d
+         fwek2sY7wwUJnFwFFwIvWemH12HdN0YbgdSZ2RWwC0269UqDUwGwB35CRDyXhq60AT
+         USyIwI3wP05/5oGtUOpS94M53A08jNcPckKA5ZXpZIPRaNJ96Q+BFkTkmpgSNGCPm5
+         YogHT95t/tBdYhxC9Y35A2TokJihCUBd4VwOl8Pa35zfKfyCatWPy6AY7P+apvfw5a
+         T/W6TQnG+GLz390G6KRQWUX8KnoKg77Sxn7JUzcugID6/sS1m397rjmidCEXxQK2Lj
+         1j8HX1fY4eNAw==
+Date:   Mon, 23 Jan 2023 10:59:32 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 1/8] iommu: Add a gfp parameter to iommu_map()
+Message-ID: <Y85ahCk3sRTVAU8O@8bytes.org>
+References: <1-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com>
+ <4fd1b194-29ef-621d-4059-a8336058f217@arm.com>
+ <Y7hZOwerwljDKoQq@nvidia.com>
+ <Y8pd50mdNShTyVRX@8bytes.org>
+ <Y8rVJGyTKAjXjLwV@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v4 7/8] drm/simpledrm: Support the XB24/AB24 format
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
-References: <20230120173103.4002342-1-thierry.reding@gmail.com>
- <20230120173103.4002342-8-thierry.reding@gmail.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20230120173103.4002342-8-thierry.reding@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------3pJHEkH4fBLlvcwgXeyRpNRi"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y8rVJGyTKAjXjLwV@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------3pJHEkH4fBLlvcwgXeyRpNRi
-Content-Type: multipart/mixed; boundary="------------ZGBuJ2cTk5xBkmY0i0QRYMjt";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Thierry Reding <thierry.reding@gmail.com>,
- David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- Robin Murphy <robin.murphy@arm.com>, dri-devel@lists.freedesktop.org,
- Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1f372af0-9220-9a98-3495-08dca7729e7e@suse.de>
-Subject: Re: [PATCH v4 7/8] drm/simpledrm: Support the XB24/AB24 format
-References: <20230120173103.4002342-1-thierry.reding@gmail.com>
- <20230120173103.4002342-8-thierry.reding@gmail.com>
-In-Reply-To: <20230120173103.4002342-8-thierry.reding@gmail.com>
+On Fri, Jan 20, 2023 at 01:53:40PM -0400, Jason Gunthorpe wrote:
+> > Well, having GFP parameters is not a strict kernel convention. There are
+> > places doing it differently and have sleeping and atomic variants of
+> > APIs. I have to say I like the latter more. But given that this leads to
+> > an invasion of API functions here which all do the same under the hood, I
+> > agree it is better to go with a GFP parameter here.
+> 
+> Ok, I think we are done with this series, I'll stick it in linux-next
+> for a bit and send you a PR so the trees stay in sync
 
---------------ZGBuJ2cTk5xBkmY0i0QRYMjt
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+This series mostly touches parts outside of IOMMUFD, so we should follow
+the process here and let this reach linux-next via the IOMMU tree.
+Please send me a new version and I will put it into a separate branch
+where you can pull it from.
 
-SGkNCg0KQW0gMjAuMDEuMjMgdW0gMTg6MzEgc2NocmllYiBUaGllcnJ5IFJlZGluZzoNCj4g
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4gDQo+IEFkZCBY
-QjI0IGFuZCBBQjI0IHRvIHRoZSBsaXN0IG9mIHN1cHBvcnRlZCBmb3JtYXRzLiBUaGUgZm9y
-bWF0IGhlbHBlcnMNCj4gc3VwcG9ydCBjb252ZXJzaW9uIHRvIHRoZXNlIGZvcm1hdHMgYW5k
-IHRoZXkgYXJlIGRvY3VtZW50ZWQgaW4gdGhlDQo+IHNpbXBsZS1mcmFtZWJ1ZmZlciBkZXZp
-Y2UgdHJlZSBiaW5kaW5ncy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5n
-IDx0cmVkaW5nQG52aWRpYS5jb20+DQoNClJldmlld2VkLWJ5OiBUaG9tYXMgWmltbWVybWFu
-biA8dHppbW1lcm1hbm5Ac3VzZS5kZT4NCg0KPiAtLS0NCj4gQ2hhbmdlcyBpbiB2NDoNCj4g
-LSByZWJhc2Ugb24gdG9wIG9mIGxhdGVzdCBkcm0tZm9ybWF0LWhlbHBlciByZXdvcmsNCj4g
-DQo+IENoYW5nZXMgaW4gdjI6DQo+IC0gdHJlYXQgQUIyNCBhcyBYQjI0IGFuZCBzdXBwb3J0
-IGJvdGggYXQgdGhlIHNhbWUgdGltZQ0KPiANCj4gICBpbmNsdWRlL2xpbnV4L3BsYXRmb3Jt
-X2RhdGEvc2ltcGxlZmIuaCB8IDEgKw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
-bigrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9z
-aW1wbGVmYi5oIGIvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL3NpbXBsZWZiLmgNCj4g
-aW5kZXggMjdlYTk5YWY2ZTFkLi40Zjk0ZDUyYWM5OWYgMTAwNjQ0DQo+IC0tLSBhL2luY2x1
-ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9zaW1wbGVmYi5oDQo+ICsrKyBiL2luY2x1ZGUvbGlu
-dXgvcGxhdGZvcm1fZGF0YS9zaW1wbGVmYi5oDQo+IEBAIC0yMiw2ICsyMiw3IEBADQo+ICAg
-CXsgInI4ZzhiOCIsIDI0LCB7MTYsIDh9LCB7OCwgOH0sIHswLCA4fSwgezAsIDB9LCBEUk1f
-Rk9STUFUX1JHQjg4OCB9LCBcDQo+ICAgCXsgIng4cjhnOGI4IiwgMzIsIHsxNiwgOH0sIHs4
-LCA4fSwgezAsIDh9LCB7MCwgMH0sIERSTV9GT1JNQVRfWFJHQjg4ODggfSwgXA0KPiAgIAl7
-ICJhOHI4ZzhiOCIsIDMyLCB7MTYsIDh9LCB7OCwgOH0sIHswLCA4fSwgezI0LCA4fSwgRFJN
-X0ZPUk1BVF9BUkdCODg4OCB9LCBcDQo+ICsJeyAieDhiOGc4cjgiLCAzMiwgezAsIDh9LCB7
-OCwgOH0sIHsxNiwgOH0sIHswLCAwfSwgRFJNX0ZPUk1BVF9YQkdSODg4OCB9LCBcDQo+ICAg
-CXsgImE4YjhnOHI4IiwgMzIsIHswLCA4fSwgezgsIDh9LCB7MTYsIDh9LCB7MjQsIDh9LCBE
-Uk1fRk9STUFUX0FCR1I4ODg4IH0sIFwNCj4gICAJeyAieDJyMTBnMTBiMTAiLCAzMiwgezIw
-LCAxMH0sIHsxMCwgMTB9LCB7MCwgMTB9LCB7MCwgMH0sIERSTV9GT1JNQVRfWFJHQjIxMDEw
-MTAgfSwgXA0KPiAgIAl7ICJhMnIxMGcxMGIxMCIsIDMyLCB7MjAsIDEwfSwgezEwLCAxMH0s
-IHswLCAxMH0sIHszMCwgMn0sIERSTV9GT1JNQVRfQVJHQjIxMDEwMTAgfSwgXA0KDQotLSAN
-ClRob21hcyBaaW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNv
-ZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7D
-vHJuYmVyZywgR2VybWFueQ0KKEhSQiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0
-c2bDvGhyZXI6IEl2byBUb3Rldg0K
+Regards,
 
---------------ZGBuJ2cTk5xBkmY0i0QRYMjt--
-
---------------3pJHEkH4fBLlvcwgXeyRpNRi
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmPOUIcFAwAAAAAACgkQlh/E3EQov+Ca
-MhAAwaEyc2xd8WCFNqAjiJx+En3vCcw1lC0+bevl4eFZmTp7iSaSdZ8swPUOaJ8Yyaxg3V3Cx0R3
-bQZQLPybBx6t9MzzjcqJZHVEl3p/3nhGq+k++SpENZpCd2fXKb0IWD5nilqF37OoXTw/KugRx/Ln
-szhItffcN0je1xZlhYM0VPChAF83LYOu1R5r6Mu1Z+xEawyc4xdXrEBY8e0HP1o1meU8QwKmo0tv
-E4Bgs0S4kD+Q6RCKW3Y7QqtAWfa3ffhuz5/2uPwtSZKNKyFcefhsJZVUcf/Yu9jYhX7y2/iGcxuo
-AAVcNTsxxwsZUndDmr9XH5sDxa14jkZr4mh687uFLr4ilyrbTh02R+M81ceYkQM8YRflbZnYI4wy
-xTkzOkN9HeB2uuqpAKbunXD0sNWgxeDRx8Yst33n76qhMep2EiEOub+w8eJtsAYwII+2+8D27q0t
-X5UqikZ6oSfUt6iwDDzHV2oBCjoSVP8lUo/uQiKqoDTdZvILB9BlDev3nTYw+MVSElzjpO95eYkA
-A8jnVm2SApoX3KnN84VWHtaYbNhFkCN2j4FFcZJYrjXplVz2p/lDqtYvHfTEh3JK/ibAUvt9Kva+
-EGxdQ60uy6U4NhGzvV0kMUxRnFYdw6/fpXC2XllDl6o9KaQ3lBNdLkJGhaE8FLNc24rgyGFZApk1
-43s=
-=fHau
------END PGP SIGNATURE-----
-
---------------3pJHEkH4fBLlvcwgXeyRpNRi--
+	Joerg
