@@ -2,135 +2,206 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8399CC05027
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 15:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B79C61D9D
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 17:17:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232801AbjAWPyb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Jan 2023 10:54:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59998 "EHLO
+        id S233570AbjAWRRy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Jan 2023 12:17:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231849AbjAWPyb (ORCPT
+        with ESMTP id S233558AbjAWRRq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Jan 2023 10:54:31 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679C635B8
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Jan 2023 07:54:28 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so8935479wmq.0
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Jan 2023 07:54:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sWhsZS74+Dvjyfzik5/nC+Ev2mJ9IDMei/KC6GCemqY=;
-        b=TT+l75Q3a2+t2PvAy6nHsS+q1ZUp/sKbhf5T64RkZ9ddDppwuYZeXMANpq/6o/mj+A
-         yMJgop3GLTikdPYq98Wm9+bmbsmcgeRyrpDOH5wvGMevQKJW5Gz1hGCIDPVqiptM7gPI
-         GkruSFbxWZZPi7Ast7916sM4U7Txk25klxq/bRBHnH/qFQ8shdnm+okdCP4opcfnLSnt
-         AmddDMghG+aDGpq1cc/hRVyVU6vh0zcKxyIw8pA3LjwiOzhMEecd1cE3e6OaThw3+hQj
-         h2JXVEgDPlVEVY5qgPjmA5r40jPMP0VZglCL3lbfUWvDHlWwOllnrSJV/ipOUyi7L6R4
-         gw9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sWhsZS74+Dvjyfzik5/nC+Ev2mJ9IDMei/KC6GCemqY=;
-        b=ggF/UsYucGYq90BVRaxGwfTBpdmv6tDPUOufCNvYettrLOFYKKIgzRhk4lCpm8TWio
-         TMJArpftQ0oj+PVfz3gFePrBGwpN28B8/x1CHEMhiCAHnSVkNIvCCIYNM+5Sv9qnmBz2
-         FRzNfU2V0kegiMnZeroWsO9+1LjsTq1qtpPN4vnVWGbprxNR/GUu/KPrhK8DYuOC0JC6
-         Lwx02WXh/vFy3mj0EHym0UWr2hUzux24ntxuPS7sGH7W1XiI12TTq7948Ve8gYvpkBph
-         iJtVz2pZzBku8xPjFKq0dqVFM9IR222z02tHaHKjyArR1hWrDqsKWlIBdEVF1RWVUQwh
-         nTcQ==
-X-Gm-Message-State: AFqh2krP44jwPeBPG3/VO42z1E+9/J1KsBSlncFco1tkdoH2NmoIp4ve
-        TwDOR8J9bBQ5OzueisAsRps/J6m68nVTvQCj
-X-Google-Smtp-Source: AMrXdXud0tQooneMXSQQVIEYXsQAZXqN6E4Gkaz9JfIa1aRRHlSWR2a6cT0AuUF0CvwyFs2RKMFDuw==
-X-Received: by 2002:a05:600c:5116:b0:3db:1a8:c041 with SMTP id o22-20020a05600c511600b003db01a8c041mr24615039wms.17.1674489266958;
-        Mon, 23 Jan 2023 07:54:26 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id m31-20020a05600c3b1f00b003dafadd2f77sm12126036wms.1.2023.01.23.07.54.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jan 2023 07:54:26 -0800 (PST)
-Message-ID: <b86ed174-811a-023f-4a65-4bc0b10cf710@linaro.org>
-Date:   Mon, 23 Jan 2023 16:54:25 +0100
+        Mon, 23 Jan 2023 12:17:46 -0500
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CBB930182;
+        Mon, 23 Jan 2023 09:17:14 -0800 (PST)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30NEJN7P009518;
+        Mon, 23 Jan 2023 18:16:41 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=R1aMUGjTbxhxY6hkyKRGBk4zxbzWjzxiNcedON6udFo=;
+ b=Zm5ggXoNZruq7Bb3b8N1qmVGlQxdkRIHa80INaPpZBBpXyjLW8eCZLOi26l5A6+RB5/w
+ Z+PZ3/cL4Va46yqtmJi5PORwYTY46FioxWKylbeuPxm436newkRnSC7hmZnYsKWHL2Kb
+ E8O4kMxS5/CdwDsQ4mM0v4xIMFleF1b25tB/cNt2YL3f/fwzgGAIWdrLxxMD8SuKdWQu
+ cPFgMv67SOjqXrPKNSoqvl1+YjTlQbFYmJvNya7GzzdG/j6Oyh9icv6JPWXR/j9Hrm2V
+ cNegJauCMm20Z1Gl+nUL+NtrY2i2G1zVxWNtOmY+nTZipz1phWQlTPi0LXd8tXF5+ztP QA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3n89epk4d1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Jan 2023 18:16:41 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 995FC100038;
+        Mon, 23 Jan 2023 18:16:37 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 89E49228A2B;
+        Mon, 23 Jan 2023 18:16:37 +0100 (CET)
+Received: from [10.201.21.26] (10.201.21.26) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Mon, 23 Jan
+ 2023 18:16:34 +0100
+Message-ID: <e068c541-b492-a513-6212-fd698e4fc9c4@foss.st.com>
+Date:   Mon, 23 Jan 2023 18:16:33 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V6 1/6] dt-bindings: usb: Add Cypress cypd4226 Type-C
- controller
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v2 02/13] spi: Replace all spi->chip_select and
+ spi->cs_gpiod references with function call
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
+        <broonie@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <jic23@kernel.org>,
+        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
+        <sanju.mehta@amd.com>, <chin-ting_kuo@aspeedtech.com>,
+        <clg@kaod.org>, <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
+        <john.garry@huawei.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
+        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
+        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
+        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
+        <robert.jarzmik@free.fr>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
+        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
+        <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <l.stelmach@samsung.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
+        <kvalo@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <skomatineni@nvidia.com>,
+        <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+        <j.neuschaefer@gmx.net>, <vireshk@kernel.org>, <rmfrfs@gmail.com>,
+        <johan@kernel.org>, <elder@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
+        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
+        <ldewangan@nvidia.com>, <michal.simek@amd.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <libertas-dev@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
+        <palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <greybus-dev@lists.linaro.org>, <linux-staging@lists.linux.dev>,
+        <amitrkcian2002@gmail.com>
+References: <20230119185342.2093323-1-amit.kumar-mahapatra@amd.com>
+ <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
 Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20230119121639.226729-1-jonathanh@nvidia.com>
- <20230119121639.226729-2-jonathanh@nvidia.com>
- <2789cf94-60b4-7e35-50f8-e21b564a1dfb@linaro.org>
- <e39c0b6b-6265-b419-a7aa-18f930bb3a9f@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <e39c0b6b-6265-b419-a7aa-18f930bb3a9f@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.201.21.26]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-23_12,2023-01-23_01,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 23/01/2023 15:28, Jon Hunter wrote:
-> 
-> On 20/01/2023 08:32, Krzysztof Kozlowski wrote:
-> 
-> ...
-> 
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/gpio/tegra194-gpio.h>
->>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +    i2c {
->>> +      #address-cells = <1>;
->>> +      #size-cells = <0>;
->>> +      #interrupt-cells = <2>;
->>
->> Drop, does not look like relevant or used here.
-> 
-> 
-> Without the above I get ...
+Hi Amit
 
-Didn't you drop too much? I meant only that one line above my comment,
-so only interrupt-cells.
-
+On 1/19/23 19:53, Amit Kumar Mahapatra wrote:
+> Supporting multi-cs in spi drivers would require the chip_select & cs_gpiod
+> members of struct spi_device to be an array. But changing the type of these
+> members to array would break the spi driver functionality. To make the
+> transition smoother introduced four new APIs to get/set the
+> spi->chip_select & spi->cs_gpiod and replaced all spi->chip_select and
+> spi->cs_gpiod references with get or set API calls.
+> While adding multi-cs support in further patches the chip_select & cs_gpiod
+> members of the spi_device structure would be converted to arrays & the
+> "idx" parameter of the APIs would be used as array index i.e.,
+> spi->chip_select[idx] & spi->cs_gpiod[idx] respectively.
 > 
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dts:25.13-26: Warning (reg_format): /example-0/i2c/typec-controller@8:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dts:22.13-43.11: Warning (i2c_bus_bridge): /example-0/i2c: incorrect #address-cells for I2C bus
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dts:22.13-43.11: Warning (i2c_bus_bridge): /example-0/i2c: incorrect #size-cells for I2C bus
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'i2c_bus_bridge'
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dts:23.30-42.13: Warning (avoid_default_addr_size): /example-0/i2c/typec-controller@8: Relying on default #address-cells value
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dts:23.30-42.13: Warning (avoid_default_addr_size): /example-0/i2c/typec-controller@8: Relying on default #size-cells value
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: typec-controller@8: interrupts: [[10], [8]] is too long
-> 
->>
->>> +
->>> +      ucsi-ccg@8 {
->>
->> Node names should be generic.
->> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> 
-> Thanks. I don't see anything there is would fit here, so would 'typec-controller' for the node name be OK?
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+> ---
 
-Yeah, pretty often we miss a generic example. Can be just "typec".
+[...]
 
+>  drivers/spi/spi-stm32-qspi.c      | 12 ++++++------
 
-> 
+[...]
 
-Best regards,
-Krzysztof
+> diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
+> index 9131660c1afb..b9e61372dcfb 100644
+> --- a/drivers/spi/spi-stm32-qspi.c
+> +++ b/drivers/spi/spi-stm32-qspi.c
+> @@ -359,7 +359,7 @@ static int stm32_qspi_get_mode(u8 buswidth)
+>  static int stm32_qspi_send(struct spi_device *spi, const struct spi_mem_op *op)
+>  {
+>  	struct stm32_qspi *qspi = spi_controller_get_devdata(spi->master);
+> -	struct stm32_qspi_flash *flash = &qspi->flash[spi->chip_select];
+> +	struct stm32_qspi_flash *flash = &qspi->flash[spi_get_chipselect(spi, 0)];
+>  	u32 ccr, cr;
+>  	int timeout, err = 0, err_poll_status = 0;
+>  
+> @@ -564,7 +564,7 @@ static int stm32_qspi_transfer_one_message(struct spi_controller *ctrl,
+>  	struct spi_mem_op op;
+>  	int ret = 0;
+>  
+> -	if (!spi->cs_gpiod)
+> +	if (!spi_get_csgpiod(spi, 0))
+>  		return -EOPNOTSUPP;
+>  
+>  	ret = pm_runtime_resume_and_get(qspi->dev);
+> @@ -573,7 +573,7 @@ static int stm32_qspi_transfer_one_message(struct spi_controller *ctrl,
+>  
+>  	mutex_lock(&qspi->lock);
+>  
+> -	gpiod_set_value_cansleep(spi->cs_gpiod, true);
+> +	gpiod_set_value_cansleep(spi_get_csgpiod(spi, 0), true);
+>  
+>  	list_for_each_entry(transfer, &msg->transfers, transfer_list) {
+>  		u8 dummy_bytes = 0;
+> @@ -626,7 +626,7 @@ static int stm32_qspi_transfer_one_message(struct spi_controller *ctrl,
+>  	}
+>  
+>  end_of_transfer:
+> -	gpiod_set_value_cansleep(spi->cs_gpiod, false);
+> +	gpiod_set_value_cansleep(spi_get_csgpiod(spi, 0), false);
+>  
+>  	mutex_unlock(&qspi->lock);
+>  
+> @@ -669,8 +669,8 @@ static int stm32_qspi_setup(struct spi_device *spi)
+>  
+>  	presc = DIV_ROUND_UP(qspi->clk_rate, spi->max_speed_hz) - 1;
+>  
+> -	flash = &qspi->flash[spi->chip_select];
+> -	flash->cs = spi->chip_select;
+> +	flash = &qspi->flash[spi_get_chipselect(spi, 0)];
+> +	flash->cs = spi_get_chipselect(spi, 0);
+>  	flash->presc = presc;
+>  
+>  	mutex_lock(&qspi->lock);
 
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+
+Thanks
+Patrice
