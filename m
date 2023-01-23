@@ -2,167 +2,144 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CA5C05027
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 20:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD12C25B50
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 20:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231752AbjAWUSA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Jan 2023 15:18:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47570 "EHLO
+        id S232526AbjAWUTb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Jan 2023 15:19:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbjAWUR7 (ORCPT
+        with ESMTP id S232623AbjAWUTV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Jan 2023 15:17:59 -0500
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5198416AF7;
-        Mon, 23 Jan 2023 12:17:55 -0800 (PST)
-Received: by mail-oi1-f180.google.com with SMTP id s66so11422829oib.7;
-        Mon, 23 Jan 2023 12:17:55 -0800 (PST)
+        Mon, 23 Jan 2023 15:19:21 -0500
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3887367F7;
+        Mon, 23 Jan 2023 12:18:52 -0800 (PST)
+Received: by mail-oi1-f178.google.com with SMTP id n8so11479352oih.0;
+        Mon, 23 Jan 2023 12:18:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EY7We4I2hSyd2pZ0VulkHT4dyOP0LEqk/GnlS4AQK4k=;
-        b=I1EpZJhxYsdr/XJM2UfLcn95KJVWpQ4fOzT35SNJJf36aewU2iA2bMy8Ahu47THh4L
-         yromRPH7qvmkdp0Tt01W5oj3GfRbciO/1A8wBU1u4kVquEImqLaO6afnOU3ywCYlXyEP
-         54jGu/8TdSEfq0nh8NtXUnOfeeTu/RFx3/yzM0RoauOr9CGUEFhP2jz4DDFsL6ZciIM9
-         v+Ucdx45UZAT/Og4DPW2+KuiqLXIleVJ6G95Id9rufUuR5z3jnQWPgcS/GJ8odnU44Zo
-         jS09gJRA/88XVktotZYSsrTwhR9eCAtf02fJUqImYtuZlP36UFZck2WH2Z5TZgl7Odzx
-         IaxA==
-X-Gm-Message-State: AFqh2kr4DHZb7Th1sv9Xb6eEbbkzMH8bmSams/8U6NJlhN8HySUmKotr
-        9FcJdQnTVkH9ri01/tlbrA==
-X-Google-Smtp-Source: AMrXdXuvPUKWyC8RGNKpvhdFpfXGmbs7xnQ1zVyMxDHfPRH77j6ghKDaBa0O8cM4huncdcgY7ZWv7g==
-X-Received: by 2002:a05:6808:f14:b0:364:e9f4:9dd with SMTP id m20-20020a0568080f1400b00364e9f409ddmr15059505oiw.47.1674505074502;
-        Mon, 23 Jan 2023 12:17:54 -0800 (PST)
+        bh=A9TsVviuOODJWqPa0qVN9YfAyBsPjmf84LKhNhzNHe4=;
+        b=ikg+WXLpXUW9owNV6qT++Lvoumtehu90i7SOkg1TPkJ+zxUmd1FSdZc3bnJ/7+OIp6
+         QDSqUlHbOE4u+D8eBE6PMsi0FvMPtkhotjRW6+/bohnz+qy66CAG29ssxZ/yMDMSoiaL
+         2q54ujx3m0XS6A3E+5MQw8OkvNbEw3v0gtIm81T8hoY8dYrQjjFTUgViqOBPdYuTZQOz
+         jSBJmR+Vrsqw70qg+H1S50Yritt37vHXi586Q6CTMhL4GUGZ3yOc+GcT0iI1HXBHjQ69
+         mQ5Olz2VeR82RTvlftXy/KV2lee2R9iR5jbTK9v/9Hcdv40J69ud0mcBNHcDhsHZVPIY
+         RjzQ==
+X-Gm-Message-State: AFqh2kpDUSiND4ZSMwbn5dYVD3HWG4NrDCZ1XWmyG12PVqLZ0anB1Iwi
+        NzfLrYkk2mwZzlPy1xFTwA==
+X-Google-Smtp-Source: AMrXdXt5T2+J150uc85qX/a/e7OoRAT8w8CmhGAUYbfvTzt6sNah2y7/iS9iRApYVIYYdn6OfeHWPg==
+X-Received: by 2002:a05:6808:280b:b0:36e:c24b:85f5 with SMTP id et11-20020a056808280b00b0036ec24b85f5mr5096100oib.22.1674505131237;
+        Mon, 23 Jan 2023 12:18:51 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id i11-20020aca2b0b000000b00369a721732asm124660oik.41.2023.01.23.12.17.51
+        by smtp.gmail.com with ESMTPSA id g16-20020a9d6490000000b00684e09b43bdsm105528otl.13.2023.01.23.12.18.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 12:17:54 -0800 (PST)
-Received: (nullmailer pid 2454148 invoked by uid 1000);
-        Mon, 23 Jan 2023 20:17:51 -0000
-Date:   Mon, 23 Jan 2023 14:17:51 -0600
+        Mon, 23 Jan 2023 12:18:50 -0800 (PST)
+Received: (nullmailer pid 2455776 invoked by uid 1000);
+        Mon, 23 Jan 2023 20:18:48 -0000
+Date:   Mon, 23 Jan 2023 14:18:48 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, Han Xu <han.xu@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Yogesh Gaur <yogeshgaur.83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Li-hao Kuo <lhjeff911@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+Cc:     =?UTF-8?B?77+9ZXI=?= <povik+lin@cutebit.org>,
+        linux-mediatek@lists.infradead.org,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        =?UTF-8?B?77+9ZWNraQ==?= <rafal@milecki.pl>,
-        Vaishnav Achath <vaishnav.a@ti.com>,
-        Parshuram Thombare <pthombar@cadence.com>,
-        Leilk Liu <leilk.liu@mediatek.com>,
-        Gabor Juhos <juhosg@openwrt.org>,
-        Bert Vermeulen <bert@biot.com>,
+        linux-sunxi@lists.linux.dev,
+        Bjorn Andersson <andersson@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Long Cheng <long.cheng@mediatek.com>,
+        Green Wan <green.wan@sifive.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-tegra@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Palmer Debbelt <palmer@sifive.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
-        Marek Vasut <marex@denx.de>,
-        Birger Koblitz <mail@birger-koblitz.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Kuldeep Singh <singh.kuldeep87k@gmail.com>,
-        Pragnesh Patel <pragnesh.patel@sifive.com>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Erwan Leray <erwan.leray@foss.st.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 2/2] spi: dt-bindings: cleanup examples - indentation,
- lowercase hex
-Message-ID: <20230123201751.GA2450665-robh@kernel.org>
-References: <20230118173932.358153-1-krzysztof.kozlowski@linaro.org>
- <20230118173932.358153-2-krzysztof.kozlowski@linaro.org>
+        linux-arm-kernel@lists.infradead.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Hector Martin <marcan@marcan.st>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Peng Fan <peng.fan@nxp.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        devicetree@vger.kernel.org,
+        Olivier Dautricourt <olivierdautricourt@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        - <chuanhua.lei@intel.com>, Rajesh Gumasta <rgumasta@nvidia.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        dmaengine@vger.kernel.org, linux-actions@lists.infradead.org,
+        Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Stefan Roese <sr@denx.de>, linux-riscv@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        asahi@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-arm-msm@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Sven Peter <sven@svenpeter.dev>, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: dma: drop unneeded quotes
+Message-ID: <167450512824.2455711.11173604781836638882.robh@kernel.org>
+References: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230118173932.358153-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 06:39:32PM +0100, Krzysztof Kozlowski wrote:
-> Cleanup examples:
->  - use 4-space indentation (for cases when it is neither 4 not 2 space),
->  - drop redundant blank lines,
->  - use lowercase hex.
-> 
+
+On Wed, 18 Jan 2023 19:01:43 +0100, Krzysztof Kozlowski wrote:
+> Cleanup by removing unneeded quotes from refs and redundant blank lines.
 > No functional impact except adjusting to preferred coding style.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../bindings/spi/amlogic,meson-gx-spicc.yaml  |  26 +--
->  .../bindings/spi/amlogic,meson6-spifc.yaml    |  22 +--
->  .../bindings/spi/aspeed,ast2600-fmc.yaml      |  24 +--
->  .../bindings/spi/brcm,spi-bcm-qspi.yaml       | 156 +++++++++---------
->  .../bindings/spi/cdns,qspi-nor.yaml           |   4 +-
->  .../bindings/spi/nvidia,tegra210-quad.yaml    |  42 ++---
->  .../bindings/spi/qcom,spi-qcom-qspi.yaml      |   1 -
->  .../devicetree/bindings/spi/renesas,rspi.yaml |  22 +--
->  .../bindings/spi/spi-sunplus-sp7021.yaml      |   4 +-
->  .../devicetree/bindings/spi/st,stm32-spi.yaml |   1 -
->  10 files changed, 150 insertions(+), 152 deletions(-)
-
-[...]
-
-> diff --git a/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml b/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml
-> index d35c6f7e2dd5..18afdaab946d 100644
-> --- a/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml
-> @@ -95,7 +95,6 @@ examples:
->               <&dmamux1 1 40 0x400 0x05>;
->        dma-names = "rx", "tx";
->        cs-gpios = <&gpioa 11 0>;
-
-Looks like the indentation needs adjusting here.
-
-> -
->      };
->  
->  ...
-> -- 
-> 2.34.1
+>  .../devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml        | 2 +-
+>  .../devicetree/bindings/dma/allwinner,sun50i-a64-dma.yaml       | 2 +-
+>  .../devicetree/bindings/dma/allwinner,sun6i-a31-dma.yaml        | 2 +-
+>  Documentation/devicetree/bindings/dma/altr,msgdma.yaml          | 2 +-
+>  Documentation/devicetree/bindings/dma/apple,admac.yaml          | 2 +-
+>  Documentation/devicetree/bindings/dma/arm-pl08x.yaml            | 2 +-
+>  Documentation/devicetree/bindings/dma/dma-controller.yaml       | 2 +-
+>  Documentation/devicetree/bindings/dma/dma-router.yaml           | 2 +-
+>  Documentation/devicetree/bindings/dma/fsl,edma.yaml             | 2 +-
+>  Documentation/devicetree/bindings/dma/ingenic,dma.yaml          | 2 +-
+>  Documentation/devicetree/bindings/dma/intel,ldma.yaml           | 2 +-
+>  Documentation/devicetree/bindings/dma/mediatek,uart-dma.yaml    | 2 +-
+>  .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml        | 2 +-
+>  Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml | 2 +-
+>  Documentation/devicetree/bindings/dma/owl-dma.yaml              | 2 +-
+>  Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml         | 2 +-
+>  Documentation/devicetree/bindings/dma/qcom,gpi.yaml             | 2 +-
+>  Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml    | 2 +-
+>  Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml      | 2 +-
+>  Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml  | 2 +-
+>  Documentation/devicetree/bindings/dma/renesas,usb-dmac.yaml     | 2 +-
+>  .../devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml         | 2 +-
+>  Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml   | 2 +-
+>  Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml     | 2 +-
+>  .../devicetree/bindings/dma/socionext,uniphier-mio-dmac.yaml    | 2 +-
+>  .../devicetree/bindings/dma/socionext,uniphier-xdmac.yaml       | 2 +-
+>  Documentation/devicetree/bindings/dma/st,stm32-dma.yaml         | 2 +-
+>  Documentation/devicetree/bindings/dma/st,stm32-dmamux.yaml      | 2 +-
+>  Documentation/devicetree/bindings/dma/st,stm32-mdma.yaml        | 2 +-
+>  Documentation/devicetree/bindings/dma/stericsson,dma40.yaml     | 2 +-
+>  30 files changed, 30 insertions(+), 30 deletions(-)
 > 
+
+Acked-by: Rob Herring <robh@kernel.org>
