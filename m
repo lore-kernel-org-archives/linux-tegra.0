@@ -2,119 +2,188 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C68C38142
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 15:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C19FC38142
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 15:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232719AbjAWPVA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Jan 2023 10:21:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49116 "EHLO
+        id S232735AbjAWPiL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Jan 2023 10:38:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232362AbjAWPUs (ORCPT
+        with ESMTP id S232742AbjAWPiF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Jan 2023 10:20:48 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8E62B616;
-        Mon, 23 Jan 2023 07:20:10 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id ud5so31425072ejc.4;
-        Mon, 23 Jan 2023 07:20:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jcQHb+Xis0HFaF9zQWyFF2vDw/LddSgp/iWOO9NEfRo=;
-        b=gGOOXtlyfKqU+9EL6K4/Qk3WMyw/wSj7x2rjpLhe7qFrdNh0i8iQfSR11N5rSts5KF
-         ihlXDNpuLZQTMD+o1q+wP0UecKRdglEsXeJk+7YCkJaPcvtpstA8uvSRQlQr/XFBlKRX
-         MK6cttRj9naxZzIa5VyswIEaHjtAU/Ab4NF9bPqWGg/6VGhDyyUAtM7A9St1i1rvyY3f
-         rrBVk6z+QgwSBgUIJ6ZuYCgXjkugah9VLq43O98BY72YlvikmfexdcFEWlZLc8rLe5F9
-         1tV7p1nJnB05jxhu2vhzFdwzHx/K4wnXobecGcEIbkgi7eMGj0vS18zBwqUSV/FPlek/
-         fZkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jcQHb+Xis0HFaF9zQWyFF2vDw/LddSgp/iWOO9NEfRo=;
-        b=kw3WvZqKY+h82TttXBKoaM4XG/dTbPjDzO1BSCgswox/RGFePsXJcVf0APAGRjengl
-         RrL59PbTs0cjaJ4G8z+SQLqRB/jheLa3ENDbpoXZKNjDDFMxohkh1ljddE3ZZX3Z3ZC6
-         8EdAhi/3M38J1ktheuI/VLhqYUIbjVnVZl8B9UUc7SZcpNvHo6sjgTiEJ6mbyvpTGq7M
-         Mex2SRQi872lvYpV96lu3URLhQ2YHt6XMmNQMz918Dpr+3jhWScv2+dCoaySTDtarx9A
-         Hcak0xS9nsXlbnXVLMIhFesH69EfIWMQGLrhphD9nHO7CBxIHeCcbORZPFZjB0uJuRqt
-         J/3Q==
-X-Gm-Message-State: AFqh2krQdDMQwh02sG74aUz/lodRaJeIOOAXxtY9mkke/crsmUQJ+mbx
-        WtNmmXhcJUPrY5mr+wKBHWw=
-X-Google-Smtp-Source: AMrXdXv/sGl698DWK4gVf5kM7ZasaqHiJ6vQc3QuHpwPFZpSnClicyeQDanLVHMbjK2j1+bIUUkVFA==
-X-Received: by 2002:a17:906:1995:b0:871:32e7:79ac with SMTP id g21-20020a170906199500b0087132e779acmr24352244ejd.5.1674487164889;
-        Mon, 23 Jan 2023 07:19:24 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 9-20020a170906318900b0080c433a9eeesm22225943ejy.182.2023.01.23.07.19.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 07:19:24 -0800 (PST)
-Date:   Mon, 23 Jan 2023 16:19:22 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     David Airlie <airlied@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 7/8] drm/simpledrm: Support the XB24/AB24 format
-Message-ID: <Y86lemXHHRt1x6UR@orome>
-References: <20230120173103.4002342-1-thierry.reding@gmail.com>
- <20230120173103.4002342-8-thierry.reding@gmail.com>
- <1f372af0-9220-9a98-3495-08dca7729e7e@suse.de>
+        Mon, 23 Jan 2023 10:38:05 -0500
+X-Greylist: delayed 4193 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Jan 2023 07:38:03 PST
+Received: from 6.mo552.mail-out.ovh.net (6.mo552.mail-out.ovh.net [188.165.49.222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7659D10402
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Jan 2023 07:38:03 -0800 (PST)
+Received: from mxplan5.mail.ovh.net (unknown [10.109.143.167])
+        by mo552.mail-out.ovh.net (Postfix) with ESMTPS id 731DB2B568;
+        Mon, 23 Jan 2023 13:10:17 +0000 (UTC)
+Received: from kaod.org (37.59.142.109) by DAG4EX2.mxp5.local (172.16.2.32)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16; Mon, 23 Jan
+ 2023 14:10:10 +0100
+Authentication-Results: garm.ovh; auth=pass (GARM-109S0035e8cf7e5-490b-4306-97b9-26c7bcdb01f8,
+                    A67B952EB2D8D9A0A9F9E7F867E869D975DF4B5D) smtp.auth=clg@kaod.org
+X-OVh-ClientIp: 82.64.250.170
+Message-ID: <d1743abc-3d9f-cdf4-dfbe-67aac4b1b8cd@kaod.org>
+Date:   Mon, 23 Jan 2023 14:10:05 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZKjs7fCUe5qcsz+4"
-Content-Disposition: inline
-In-Reply-To: <1f372af0-9220-9a98-3495-08dca7729e7e@suse.de>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2 02/13] spi: Replace all spi->chip_select and
+ spi->cs_gpiod references with function call
+Content-Language: en-US
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
+        <broonie@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <jic23@kernel.org>,
+        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
+        <sanju.mehta@amd.com>, <chin-ting_kuo@aspeedtech.com>,
+        <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
+        <john.garry@huawei.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
+        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
+        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
+        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
+        <robert.jarzmik@free.fr>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
+        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
+        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
+        <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <l.stelmach@samsung.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
+        <kvalo@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <skomatineni@nvidia.com>,
+        <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+        <j.neuschaefer@gmx.net>, <vireshk@kernel.org>, <rmfrfs@gmail.com>,
+        <johan@kernel.org>, <elder@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
+        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
+        <ldewangan@nvidia.com>, <michal.simek@amd.com>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <libertas-dev@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
+        <palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <greybus-dev@lists.linaro.org>, <linux-staging@lists.linux.dev>,
+        <amitrkcian2002@gmail.com>
+References: <20230119185342.2093323-1-amit.kumar-mahapatra@amd.com>
+ <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+In-Reply-To: <20230119185342.2093323-3-amit.kumar-mahapatra@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [37.59.142.109]
+X-ClientProxiedBy: DAG6EX2.mxp5.local (172.16.2.52) To DAG4EX2.mxp5.local
+ (172.16.2.32)
+X-Ovh-Tracer-GUID: d8c081e3-7749-496f-b92b-664d73f13c17
+X-Ovh-Tracer-Id: 9743537793859029808
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedruddukedgfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgihesthekredttdefjeenucfhrhhomhepveorughrihgtucfnvgcuifhorghtvghruceotghlgheskhgrohgurdhorhhgqeenucggtffrrghtthgvrhhnpeffudefleeiudejfeffhfejffeigffhhffhvdekieejheelvdeufffhjedtheeggeenucfkphepuddvjedrtddrtddruddpfeejrdehledrudegvddruddtleenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoegtlhhgsehkrghougdrohhrgheqpdhnsggprhgtphhtthhopedupdhrtghpthhtoheprghmihhtrdhkuhhmrghrqdhmrghhrghprghtrhgrsegrmhgurdgtohhmpdhkohhnrhgrugdrugihsggtihhosehsohhmrghinhhlihhnvgdrohhrghdphihoghgvshhhghgruhhrrdekfeesghhmrghilhdrtghomhdpsggvnhhjrghmihhnfhgrihhrsehgohhoghhlvgdrtghomhdphihuvghnnhesghhoohhglhgvrdgtohhmpdhvvghnthhurhgvsehgohhoghhlvgdrtghomhdpthgrlhhirdhpvghrrhihudesghhmrghilhdrtghomhdpthhmrghimhhonhejjeesghhmrghilhdrtg
+ homhdprghvihhfihhshhhmrghnjedtsehgmhgrihhlrdgtohhmpdhmrghrthhinhdrsghluhhmvghnshhtihhnghhlsehgohhoghhlvghmrghilhdrtghomhdplhhinhhugidqihhmgiesnhigphdrtghomhdpfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdgrlhhimhdrrghkhhhtrghrsehsrghmshhunhhgrdgtohhmpdhkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggvpdgstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdgtlhgruhguihhurdgsvgiinhgvrgesmhhitghrohgthhhiphdrtghomhdprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhhitgholhgrshdrfhgvrhhrvgesmhhitghrohgthhhiphdrtghomhdprhgrughupghnihgtohhlrggvrdhpihhrvggrsehuphgsrdhrohdprghnughrvgifsegrjhdrihgurdgruhdpjhhovghlsehjmhhsrdhiugdrrghupdhlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqshhpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdpghhithesrghmugdrtghomhdpghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhfrghntggvrhdrlhgrnhgtvghrsehgmhgrihhlrdgtohhmpdhluggvfigrnhhgrghnsehnvhhiughirgdrtghomhdpmhhitghhrghlrdhsihhmvghksegrmhgurdgtohhmpdhlihhnuhigqdgrshhpvggvuge
+ slhhishhtshdrohiilhgrsghsrdhorhhgpdhgrhgvhigsuhhsqdguvghvsehlihhsthhsrdhlihhnrghrohdrohhrghdpughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdpphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhmihgthhgrvghlseifrghllhgvrdgttgdplhhinhhugidqihhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdpofhitghhrggvlhdrjfgvnhhnvghrihgthhesrghnrghlohhgrdgtohhmpdhlrghrshesmhgvthgrfhhoohdruggvpdhlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhlihhnuhigqdifihhrvghlvghsshesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhisggvrhhtrghsqdguvghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhlihhnuhigqdifphgrnhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhsuhhngihisehlihhsthhsrdhlihhnuhigrdguvghvpdhlihhnuhigqdhsthhmfedvsehsthdqmhguqdhmrghilhhmrghnrdhsthhorhhmrhgvphhlhidrtghomhdplhhinhhugidqshgrmhhsuhhn
+ ghdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqrhhotghktghhihhpsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhmvgguihgrthgvkheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqrghmlhhoghhitgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqrhhpihdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdpohhpvghnsghmtgeslhhishhtshdrohiilhgrsghsrdhorhhgpdgvlhguvghrsehkvghrnhgvlhdrohhrghdplhhinhhugidqshhtrghgihhngheslhhishhtshdrlhhinhhugidruggvvhdpjhhohhgrnheskhgvrhhnvghlrdhorhhgpdhvihhrvghshhhksehkvghrnhgvlhdrohhrghdphhgrohhjihgrnhdriihhuhgrnhhgsehgmhgrihhlrdgtohhmpdgurghnihgvlhesiihonhhquhgvrdhorhhgpdhlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdphhgrihgsohdrtghhvghnsehngihprdgtohhmpdhmrghtthhhihgrshdrsghgghesghhmrghilhdrtghomhdpshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhjohhhnhdrghgrr
+ hhrhieshhhurgifvghirdgtohhmpdhhrghnrdiguhesnhigphdrtghomhdpohhlthgvrghnvhesghhmrghilhdrtghomhdpvggrjhgrmhgvsheslhhinhhugidrihgsmhdrtghomhdprhhosggvrhhtrdhjrghriihmihhksehfrhgvvgdrfhhrpdhssghrrghnuggvnhessghrohgruggtohhmrdgtohhmpdhfrdhfrghinhgvlhhlihesghhmrghilhdrtghomhdpkhgurghsuhdrkhguvghvsehgmhgrihhlrdgtohhmpdgthhhinhdqthhinhhgpghkuhhosegrshhpvggvughtvggthhdrtghomhdpshgrnhhjuhdrmhgvhhhtrgesrghmugdrtghomhdpphhrrghthihushhhsehkvghrnhgvlhdrohhrghdpthhuughorhdrrghmsggrrhhushesmhhitghrohgthhhiphdrtghomhdpjhhitgdvfeeskhgvrhhnvghlrdhorhhgpdhvihhgnhgvshhhrhesthhirdgtohhmpdhrihgthhgrrhgusehnohgurdgrthdpmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrjhhuihessghrohgruggtohhmrdgtohhmpdgrghhrohhssheskhgvrhhnvghlrdhorhhgpdgsjhhorhhnrdgrnhguvghrshhsohhnsehlihhnrghrohdrohhrghdphhgvihhkohesshhnthgvtghhrdguvgdpjhdrnhgvuhhstghhrggvfhgvrhesghhmgidrnhgvthdptghhrhhishhtihgrnhdrkhhovghnihhgsegrmhgurdgtohhmpdhsuhhmihhtrdhsvghmfigrlheslhhinhgrrhhordhorhhgpdhskh
+ homhgrthhinhgvnhhisehnvhhiughirgdrtghomhdpjhhonhgrthhhrghnhhesnhhvihguihgrrdgtohhmpdhthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdpkhhvrghloheskhgvrhhnvghlrdhorhhgpdhsthgvfhgrnhesuggrthgvnhhfrhgvihhhrghfvghnrdhorhhgpdgrlhgvgidrrghrihhnghesghhmrghilhdrtghomhdpphgrsggvnhhisehrvgguhhgrthdrtghomhdpkhhusggrsehkvghrnhgvlhdrohhrghdpvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdpuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdplhdrshhtvghlmhgrtghhsehsrghmshhunhhgrdgtohhmpdhmihhnghhosehrvgguhhgrthdrtghomhdprhhoshhtvgguthesghhoohgumhhishdrohhrghdpjhgrshifihhnuggvrhdrshhinhhghheslhhinhgrrhhordhorhhgpdhmrghsrghhihhsrgdrkhhojhhimhgrsehlihhnrghrohdrohhrghdpshgrmhhuvghlsehshhholhhlrghnugdrohhrghdpjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdifvghnshestghsihgvrdhorhhgpdgrlhgvgigrnhgurhgvrdhtohhrghhuvgesfhhoshhsrdhsthdrtghomhdpmhgtohhquhgvlhhinhdrshhtmhefvdesghhmrghilhdrtghomhdprghnughisegvthgviihirghnrdhorhhgpdhkrhiihihsiihtohhfrdhkohiilhhofihskhhisehlihhnrghrohdrohhrghdprhhmfhhrfhhssehgmhgrihhlrdgtohhmpdg
+ rmhhithhrkhgtihgrnhdvtddtvdesghhmrghilhdrtghomhdpoffvtefjohhsthepmhhoheehvddpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 1/19/23 19:53, Amit Kumar Mahapatra wrote:
+> diff --git a/drivers/spi/spi-aspeed-smc.c b/drivers/spi/spi-aspeed-smc.c
+> index 873ff2cf72c9..b7a9ec550ba1 100644
+> --- a/drivers/spi/spi-aspeed-smc.c
+> +++ b/drivers/spi/spi-aspeed-smc.c
+> @@ -296,7 +296,7 @@ static const struct aspeed_spi_data ast2400_spi_data;
+>   static int do_aspeed_spi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+>   {
+>   	struct aspeed_spi *aspi = spi_controller_get_devdata(mem->spi->master);
+> -	struct aspeed_spi_chip *chip = &aspi->chips[mem->spi->chip_select];
+> +	struct aspeed_spi_chip *chip = &aspi->chips[spi_get_chipselect(mem->spi, 0)];
+>   	u32 addr_mode, addr_mode_backup;
+>   	u32 ctl_val;
+>   	int ret = 0;
+> @@ -377,7 +377,8 @@ static const char *aspeed_spi_get_name(struct spi_mem *mem)
+>   	struct aspeed_spi *aspi = spi_controller_get_devdata(mem->spi->master);
+>   	struct device *dev = aspi->dev;
+>   
+> -	return devm_kasprintf(dev, GFP_KERNEL, "%s.%d", dev_name(dev), mem->spi->chip_select);
+> +	return devm_kasprintf(dev, GFP_KERNEL, "%s.%d", dev_name(dev),
+> +			      spi_get_chipselect(mem->spi, 0));
+>   }
+>   
+>   struct aspeed_spi_window {
+> @@ -553,7 +554,7 @@ static int aspeed_spi_do_calibration(struct aspeed_spi_chip *chip);
+>   static int aspeed_spi_dirmap_create(struct spi_mem_dirmap_desc *desc)
+>   {
+>   	struct aspeed_spi *aspi = spi_controller_get_devdata(desc->mem->spi->master);
+> -	struct aspeed_spi_chip *chip = &aspi->chips[desc->mem->spi->chip_select];
+> +	struct aspeed_spi_chip *chip = &aspi->chips[spi_get_chipselect(desc->mem->spi, 0)];
+>   	struct spi_mem_op *op = &desc->info.op_tmpl;
+>   	u32 ctl_val;
+>   	int ret = 0;
+> @@ -620,7 +621,7 @@ static ssize_t aspeed_spi_dirmap_read(struct spi_mem_dirmap_desc *desc,
+>   				      u64 offset, size_t len, void *buf)
+>   {
+>   	struct aspeed_spi *aspi = spi_controller_get_devdata(desc->mem->spi->master);
+> -	struct aspeed_spi_chip *chip = &aspi->chips[desc->mem->spi->chip_select];
+> +	struct aspeed_spi_chip *chip = &aspi->chips[spi_get_chipselect(desc->mem->spi, 0)];
+>   
+>   	/* Switch to USER command mode if mapping window is too small */
+>   	if (chip->ahb_window_size < offset + len) {
+> @@ -670,7 +671,7 @@ static int aspeed_spi_setup(struct spi_device *spi)
+>   {
+>   	struct aspeed_spi *aspi = spi_controller_get_devdata(spi->master);
+>   	const struct aspeed_spi_data *data = aspi->data;
+> -	unsigned int cs = spi->chip_select;
+> +	unsigned int cs = spi_get_chipselect(spi, 0);
+>   	struct aspeed_spi_chip *chip = &aspi->chips[cs];
+>   
+>   	chip->aspi = aspi;
+> @@ -697,7 +698,7 @@ static int aspeed_spi_setup(struct spi_device *spi)
+>   static void aspeed_spi_cleanup(struct spi_device *spi)
+>   {
+>   	struct aspeed_spi *aspi = spi_controller_get_devdata(spi->master);
+> -	unsigned int cs = spi->chip_select;
+> +	unsigned int cs = spi_get_chipselect(spi, 0);
+>   
+>   	aspeed_spi_chip_enable(aspi, cs, false);
+>   
 
---ZKjs7fCUe5qcsz+4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For the Aspeed driver,
 
-On Mon, Jan 23, 2023 at 10:16:55AM +0100, Thomas Zimmermann wrote:
-> Hi
->=20
-> Am 20.01.23 um 18:31 schrieb Thierry Reding:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Add XB24 and AB24 to the list of supported formats. The format helpers
-> > support conversion to these formats and they are documented in the
-> > simple-framebuffer device tree bindings.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
 
-Thanks. This was the last missing Reviewed-by and builds are successful,
-so I've pushed patches 1-7 to drm-misc-next.
+Thanks,
 
-Thierry
-
---ZKjs7fCUe5qcsz+4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPOpXoACgkQ3SOs138+
-s6Hf4Q//Xm5JbfMl+psy+M/odlkdHkfzrSjjbNnIrjxHkcrxgFNr34apRKlEJhgj
-Hhm7e5QYa1uhWoftt8QqeSuUKurbC6Vp8hG0V8uakOZK64iw9L9vZ0gjmHmjX4JR
-FHc3eyiqp7fg+9SpJNW2PLyXh2JUZSNBWEzMM4h94JVTDsx2JvFqSt1Zm4/mxV0x
-klhg+abyXrrVwYeZxrOY7gDXv0FrXIE1UKe/zAunNMEplop3nqcy5WG4pzc2z9OS
-ExAqNkenx0nRINoa3xan8DukIG8pOzALYJNDac5Eoc/D0kRpPjqrDFl/JNv7LsuX
-LuGz9U8HdXzTAw8RO/diJ3CEp/CmsW8SHneGS/u1snA9uo5hLGUWpNsIphVJTsIG
-OabipmnbmcC6WPMDZPMbgbKh7kqSN43PbKw/JkQkBsJuWLeCiUsrOmitUGsnITJA
-8QO2ndHnQlStDIYQoPZnZ4qzx1dIS0AZixnhzQ0omJ62pJ+EUVEh1MuIM+/iWI6f
-TROFExQIR1uH4VkmmjOenMYtw+5Ltt1lUyR7toTcinhrKjPtZ2Pv6TNgCYF4Fm0h
-0UD7usn18oH8lYJqvLRzcmOA6sVq44Wy6+TlBDAz9A++G18txWf3fasOprik47jq
-9Ls8efy6CsGtm0P1CGm8P/s9Euo1pl6DEcYpPT//kU0cj4lkK2k=
-=VSHR
------END PGP SIGNATURE-----
-
---ZKjs7fCUe5qcsz+4--
+C.
