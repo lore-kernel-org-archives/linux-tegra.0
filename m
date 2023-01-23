@@ -2,112 +2,121 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECACAC54EED
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 21:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83287C25B50
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Jan 2023 22:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232083AbjAWVUo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Jan 2023 16:20:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49326 "EHLO
+        id S232042AbjAWWEV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Jan 2023 17:04:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbjAWVUm (ORCPT
+        with ESMTP id S229777AbjAWWEV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Jan 2023 16:20:42 -0500
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E011ABF0;
-        Mon, 23 Jan 2023 13:20:39 -0800 (PST)
-Received: by mail-oi1-f169.google.com with SMTP id p185so11596935oif.2;
-        Mon, 23 Jan 2023 13:20:39 -0800 (PST)
+        Mon, 23 Jan 2023 17:04:21 -0500
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 531EE4489;
+        Mon, 23 Jan 2023 14:04:20 -0800 (PST)
+Received: by mail-oi1-f173.google.com with SMTP id r9so11651174oie.13;
+        Mon, 23 Jan 2023 14:04:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UJETK3OSsznW7YVJ84aqO5Pm3VovO6KPLRPmFaeGzU8=;
-        b=xo+j1wWbOAgopWBLhc2RMVlS/ylXH0Wj93ImWz3bu2v221bkDTP20QwlqSkcF/pk7G
-         7VBbNIcuGG1t7vOaQnnKFkROtVqIDvkN8gzcS46ndjbBELjbqa1SbKLrdKlmvldNCreo
-         NHGfU2Mogp9hgt5vEeZlAofa5iODky+NI6s3YC4w1xr7pK8NYTzT4Vtbs8em+hxXneYu
-         9u3IkXf9HXPsiVkLnZqDDsB3xXX9f250ayy3wtvPK5LQwZ6Wr0XgOkZ6lOpsTFTzuSMV
-         oTPZ1dbLBiWMgAQh5YS2l356hr5ZgIst2gntqWOcQAWinUTRaTGORjJ+6Tiz52Cot7xZ
-         1BtQ==
-X-Gm-Message-State: AFqh2krf8zqL9WOcL+/z0pcsKV4PNYjsaYkbZBpr1r2lXV2aoj78Vuhx
-        O66QItm53tqYBrMtMfdxAg==
-X-Google-Smtp-Source: AMrXdXtJ9Hc6xSNFXIXyN/NZ/8XRuK8JDpzti/x/t7iLm86yGhXfW5m3KZ4+rQbjzmzC3AT4qN3p0g==
-X-Received: by 2002:a05:6808:404b:b0:36c:cc25:8bc4 with SMTP id cz11-20020a056808404b00b0036ccc258bc4mr9393700oib.26.1674508838860;
-        Mon, 23 Jan 2023 13:20:38 -0800 (PST)
+        bh=fpuxLyhBst2nOzeGBnZjMCF3/gd2HElPUlYwXSvlCHQ=;
+        b=XAWPeFQnPUi/8xV8vvsULRen/GOjlpqCCvHxp7gzmIeJpVhrh9aa9YoeZmDHK0qpPg
+         HVNzeLdfOgw0WnapElD5P6LvtHHgzzFOcatOVL+h0eKlUhJWVK0m5lMGS5TXhFMesnj2
+         RDIIAzX/28cDoOz/m7gaLBXWrMMhuuEN7/+m7xe7EXuGwXl7Bhou081oyx0U6+IqX7Xi
+         kNTKXOraT0++Cj0Spn9x+Va6zbJEJZ866ldezDoVvbXEimJphvRpMzBFNEplUkNJQMqt
+         zlZZDR5PiU1X/MvuiPoHIj7bBcvUg9tD97+rD32iOsFqcRWjR8OY0UM6Ciaz8k1QnXex
+         7Jag==
+X-Gm-Message-State: AFqh2krY/D04ECzlDbmnqxQctZBsLMgPJB0vVraF9b6MOhJXCpm+acEW
+        sRkhpYXH39kOGSNEqhrE9w==
+X-Google-Smtp-Source: AMrXdXvgQ12re4a3YxVwTSF0Qz/NX5WxqeUHb2/GhWU5TZhVunu5BYf8mwhHnwtYWmXTwGSj1UfgUA==
+X-Received: by 2002:aca:b882:0:b0:35e:d30c:e918 with SMTP id i124-20020acab882000000b0035ed30ce918mr10351484oif.39.1674511459544;
+        Mon, 23 Jan 2023 14:04:19 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o8-20020a0568080bc800b003646062e83bsm218464oik.29.2023.01.23.13.20.37
+        by smtp.gmail.com with ESMTPSA id j88-20020a9d17e1000000b00684ccbfe012sm184800otj.27.2023.01.23.14.04.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 13:20:38 -0800 (PST)
-Received: (nullmailer pid 2659455 invoked by uid 1000);
-        Mon, 23 Jan 2023 21:20:37 -0000
-Date:   Mon, 23 Jan 2023 15:20:37 -0600
+        Mon, 23 Jan 2023 14:04:19 -0800 (PST)
+Received: (nullmailer pid 2719397 invoked by uid 1000);
+        Mon, 23 Jan 2023 22:04:17 -0000
+Date:   Mon, 23 Jan 2023 16:04:17 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?utf-8?q?=2C?=linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+Cc:     Steen Hegelund <Steen.Hegelund@microchip.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>,
-        freedreno@lists.freedesktop.org, linux-pm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        devicetree@vger.kernel.org,
+        Daniel Machon <daniel.machon@microchip.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ", Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Markus Pargmann <mpa@pengutronix.de>,
+        UNGLinuxDriver@microchip.com, linux-tegra@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        "linux-rockchip@lists.infradead.org , Tony Huang" 
+        <tonyhuang.sunplus@gmail.com>, Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-actions@lists.infradead.org,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, Li-hao Kuo <lhjeff911@gmail.com>,
+        linux-amlogic@lists.infradead.org,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        ", Kevin Hilman" <khilman@kernel.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH] dt-bindings: drop type for operating-points-v2
-Message-ID: <167450883575.2659375.17323544164739111670.robh@kernel.org>
-References: <20230119131033.117324-1-krzysztof.kozlowski@linaro.org>
+        linux-samsung-soc@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] dt-bindings: mmc: drop unneeded quotes
+Message-ID: <167451145691.2719339.9543782878107648705.robh@kernel.org>
+References: <20230120085722.171965-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230119131033.117324-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230120085722.171965-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On Thu, 19 Jan 2023 14:10:33 +0100, Krzysztof Kozlowski wrote:
-> The type for operating-points-v2 property is coming from dtschema
-> (/schemas/opp/opp.yaml), so individual bindings can just use simple
-> "true".
+On Fri, 20 Jan 2023 09:57:21 +0100, Krzysztof Kozlowski wrote:
+> Cleanup by removing unneeded quotes from refs and redundant blank lines.
+> No functional impact except adjusting to preferred coding style.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
 > ---
-> 
-> This depends on my pull request, at least logically:
-> https://github.com/devicetree-org/dt-schema/pull/95
-> 
-> Patch could be applied in parallel but only if above PULL is
-> accepted/correct.
-> ---
->  .../devicetree/bindings/display/msm/dp-controller.yaml         | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml   | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml  | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml  | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.yaml | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml | 3 +--
->  .../bindings/display/tegra/nvidia,tegra20-host1x.yaml          | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml  | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-tvo.yaml  | 3 +--
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml   | 3 +--
->  .../devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml          | 3 +--
->  .../devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml          | 3 +--
->  Documentation/devicetree/bindings/power/power-domain.yaml      | 3 ---
->  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml  | 3 +--
->  15 files changed, 14 insertions(+), 31 deletions(-)
+>  .../bindings/mmc/allwinner,sun4i-a10-mmc.yaml |  2 +-
+>  .../bindings/mmc/amlogic,meson-mx-sdhc.yaml   |  2 +-
+>  .../devicetree/bindings/mmc/arasan,sdhci.yaml |  6 ++--
+>  .../devicetree/bindings/mmc/cdns,sdhci.yaml   | 22 ++++++------
+>  .../bindings/mmc/fsl-imx-esdhc.yaml           |  4 +--
+>  .../devicetree/bindings/mmc/fsl-imx-mmc.yaml  |  2 +-
+>  .../mmc/microchip,dw-sparx5-sdhci.yaml        |  4 +--
+>  .../devicetree/bindings/mmc/mmc-spi-slot.yaml |  2 +-
+>  .../devicetree/bindings/mmc/mxs-mmc.yaml      |  2 +-
+>  .../bindings/mmc/nvidia,tegra20-sdhci.yaml    | 36 +++++++++----------
+>  .../devicetree/bindings/mmc/owl-mmc.yaml      |  2 +-
+>  .../bindings/mmc/renesas,mmcif.yaml           |  2 +-
+>  .../devicetree/bindings/mmc/renesas,sdhi.yaml |  6 ++--
+>  .../bindings/mmc/rockchip-dw-mshc.yaml        |  2 +-
+>  .../bindings/mmc/samsung,exynos-dw-mshc.yaml  |  2 +-
+>  .../devicetree/bindings/mmc/sunplus,mmc.yaml  |  2 +-
+>  .../bindings/mmc/synopsys-dw-mshc-common.yaml |  2 +-
+>  17 files changed, 50 insertions(+), 50 deletions(-)
 > 
 
-Applied, thanks!
+Acked-by: Rob Herring <robh@kernel.org>
