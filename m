@@ -2,118 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C33CC25B4E
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B35C54E94
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 14:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234111AbjAXN7U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Jan 2023 08:59:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33922 "EHLO
+        id S233417AbjAXOZ0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Jan 2023 09:25:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234173AbjAXN7N (ORCPT
+        with ESMTP id S233640AbjAXOZZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Jan 2023 08:59:13 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4236458BA;
-        Tue, 24 Jan 2023 05:58:50 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id tz11so39310028ejc.0;
-        Tue, 24 Jan 2023 05:58:50 -0800 (PST)
+        Tue, 24 Jan 2023 09:25:25 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E16147EE3
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Jan 2023 06:25:13 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id mg12so39443543ejc.5
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Jan 2023 06:25:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tyS09iPK0DCYeu1k2np/Lw2q5U8sfGkE7o+j/ZBbbEk=;
-        b=hSXMxqIUVw0YXLEHAnflcYzGaJVjbxV4NQamcSVrGsQ1mTw+cbiCbG3rRQBj7tRHcp
-         yC+t1RJpsL8lAm2fHl/MHrxT833aOGHp9Mz95pmI4IaqNbTTeXnSNGTMOYOcktfHdakn
-         kuGhQRJ29eii7k6Adg+mRxppLuw3P7K2+Qi+IimCoTj2TLr7On55DE+6hUB1XHOVO5ej
-         pzi0FjkH8F6mZhuYfjedFB5eQZwqV4ymVbBN5xTOgg6lRycaRcoNmn8YBzM3VOSUPslL
-         2p/oXTlURzXB+arTIWV6wnGw+6lb9zJZWeptF5+oTB/BU0OCzpPw9qmLFqk5/KFtInWs
-         J81w==
+        bh=sIMyErG+OVIh5p0fgULl+rOlC1Su3gu7uJSu2roAbGU=;
+        b=WZ3Yqhc3WZmVM59o/HzJp/LG1ClvnjEt3flFxZQah1PpPu8iHc79QRxNj4Fmiuz22Y
+         Rx2ppJX04oSxQ/kD/P/hGJ/zls0BP4WL+T119YF5NjGU5qpBLGgx1VsbwwtdCJnlG9Yu
+         6GA2XChc1k3fNtveNFRfurdqgM7C74giWq3rROLHfO2Hi7w6aBiHxLm7rxEHaaPLkjQd
+         zDdlzD3f7bMmILAXO3ToPARYbwnBr6K/AHJVXHB7BzitBepYit9olDYfZ0/1wJbK6Hn3
+         gVLmTglNCGtPs/WDEY8u9ZDpJRbfYZIx3DKjxed4BXcHfX0VC1qTuGCzvReRZ3+Lmhxo
+         UEdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tyS09iPK0DCYeu1k2np/Lw2q5U8sfGkE7o+j/ZBbbEk=;
-        b=gjVaCuveWfzzJkd23ALWenyxtvIYM4rf+Ox6BUmXzhWFB+X18K8hOlX6wOpt6Rtev7
-         hxaoJPfldlg6+dU9WewheR11eY5x6fcwoOvZqjqgwpEmEVsZFR1P4i1LdlBzBPbfjNt+
-         RNUiIAbuipUKvuFPeCHFT4gBtgkPOkzLPn6PVE7Pfrvtpju34WinoZzklG5LRzi7sl1d
-         TBq2ZY3agidx2jMNTIAu04JAj4OblPSUDeE3bNbUGRDkIFg8p/uce53M3YdPmoZLYyt2
-         lb2oOA4Unkxp8c7CkhytSu6vJShd9yHBD9VAJxE0xavhUqQVs1kcoWHAkVNJy1mSGbJ8
-         qT4A==
-X-Gm-Message-State: AFqh2kqBJlsgQS4x3X6crneuPyXfFueExfq/CLUU8Diq/asoP5PWqL/F
-        Lyor/eam+1d6I9FMIl3eyZTNMSPQwiA=
-X-Google-Smtp-Source: AMrXdXs9x6lO7pLRpVdQQlG8xcWqKVa0Z5bVOV6s5bdZ3jagKcjIg7Bc+TBoGhyzB1xZjrkGLXjcfQ==
-X-Received: by 2002:a17:906:762a:b0:7c0:be5d:59a9 with SMTP id c10-20020a170906762a00b007c0be5d59a9mr39013379ejn.20.1674568728913;
-        Tue, 24 Jan 2023 05:58:48 -0800 (PST)
+        bh=sIMyErG+OVIh5p0fgULl+rOlC1Su3gu7uJSu2roAbGU=;
+        b=UmairpYZjQwA7YSJN13k/Bs0PuPHQEhAp0sGYRWCEuNixAOyFGaJm//eqy05dwdgpF
+         uAmeuToANCyL4H+npSGFhIGcAE4XcPy7zKjhzzrGUBGD1BYUo41yJA8+i9R0GPwNiDgM
+         QtAQb6WtDHkm1C4jdRmM38qKZy4nek/F4+aU1UITDW8cXtb3dWdZv/hntKvgaCj8Zi1B
+         bnBabfZc9NStgg07lhjpKwLYiYoqH7JC9/gK+WLN/+PihyCL7Rj+1GUBb51wj1v5b7EK
+         R53WkKrwT3NMkB1W2pcTKBrAJYRZ7M7dIHhyEgG0EJMQK1nITEnHXs50LUjBaL2/kCuf
+         5kow==
+X-Gm-Message-State: AFqh2kq+XT6xNLdAblsSbZdwffXlt5hZgfrLB9kp2XsdXlc3oprwzADO
+        LfqejolDBA0x1IeuURUmy4uCE1MpXbQ=
+X-Google-Smtp-Source: AMrXdXs8JKABBjaVVUebXdjIIN41uhyKPWyVnAAPELdp0ZMB+qqLWvqQyI8nH/RNlIFI4COoaYZWFw==
+X-Received: by 2002:a17:906:bc5a:b0:871:ed54:60a3 with SMTP id s26-20020a170906bc5a00b00871ed5460a3mr31874640ejv.23.1674570311925;
+        Tue, 24 Jan 2023 06:25:11 -0800 (PST)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v1-20020a17090690c100b007a4e02e32ffsm945743ejw.60.2023.01.24.05.58.48
+        by smtp.gmail.com with ESMTPSA id xa4-20020a170907b9c400b008762e2b7004sm939156ejc.208.2023.01.24.06.25.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 05:58:48 -0800 (PST)
-Date:   Tue, 24 Jan 2023 14:58:46 +0100
+        Tue, 24 Jan 2023 06:25:11 -0800 (PST)
+Date:   Tue, 24 Jan 2023 15:25:09 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Sing-Han Chen <singhanc@nvidia.com>,
-        Wayne Chang <waynec@nvidia.com>
-Subject: Re: [PATCH V5 4/5] usb: gadget: tegra-xudc: Add Tegra234 support
-Message-ID: <Y8/kFh1La2p0uYAI@orome>
-References: <20230119104208.28726-1-jonathanh@nvidia.com>
- <20230119104208.28726-5-jonathanh@nvidia.com>
+To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc:     airlied@redhat.com, daniel@ffwll.ch, jonathanh@nvidia.com,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 0/2] drm/tegra: handle implicit scanout modifiers
+Message-ID: <Y8/qRSBm715P3EnB@orome>
+References: <20230120105858.214440-1-diogo.ivo@tecnico.ulisboa.pt>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tv4pc/YfO+eURpsY"
+        protocol="application/pgp-signature"; boundary="00AUL/KaA0KSyTwk"
 Content-Disposition: inline
-In-Reply-To: <20230119104208.28726-5-jonathanh@nvidia.com>
+In-Reply-To: <20230120105858.214440-1-diogo.ivo@tecnico.ulisboa.pt>
 User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---tv4pc/YfO+eURpsY
+--00AUL/KaA0KSyTwk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 19, 2023 at 10:42:07AM +0000, Jon Hunter wrote:
-> From: Sing-Han Chen <singhanc@nvidia.com>
+On Fri, Jan 20, 2023 at 10:58:56AM +0000, Diogo Ivo wrote:
+> Hello!
 >=20
-> This commit adds support for XUSB device mode controller support on
-> Tegra234 SoC. This is very similar to the existing Tegra194 XUDC.
+> This patch series adds support for correctly displaying tiled
+> framebuffers when no modifiers are reported by userspace.
 >=20
-> Signed-off-by: Sing-Han Chen <singhanc@nvidia.com>
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> V1 -> V5: nothing has changed
+> Patch 1 adds the sector_layout parameter to the SET/GET_TILING
+> IOCTLs so that userspace can set this field appropriately.
 >=20
->  drivers/usb/gadget/udc/tegra-xudc.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> Patch 2 adds handling of the case where the buffer object
+> passed to create a framebuffer is allocated with non-linear
+> tiling but no modifier is reported.
+>=20
+> Diogo Ivo (2):
+>   drm/tegra: add sector layout to SET/GET_TILING IOCTLs
+>   drm/tegra: add scanout support for implicit tiling parameters
+>=20
+>  drivers/gpu/drm/tegra/drm.c  | 29 ++++++++++++++++++
+>  drivers/gpu/drm/tegra/fb.c   | 59 ++++++++++++++++++++++++++++++++++--
+>  include/uapi/drm/tegra_drm.h | 16 ++++++----
+>  3 files changed, 96 insertions(+), 8 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+We really don't want to use SET_TILING and GET_TILING IOCTLs anymore.
+These only exist for backwards compatibility with very old userspace.
+New code should use standard DRM/KMS mechanisms to deal with
+framebuffer modifiers.
 
---tv4pc/YfO+eURpsY
+Thierry
+
+--00AUL/KaA0KSyTwk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPP5BYACgkQ3SOs138+
-s6Gfcw//bnh2FIbYTcyAxHQPZAYQLo2296iB8u8nUhqjHIbIH7scC1KyGQ8IpEDR
-oWw2yvkBY5Kf5Da6EptK8JhEBsqAURXHm6H143mDpRUU4Wq+hrZj4jr90/6kkFGY
-0qW3ERQS3pVhGZvmMUdqlfg1zPBu+mZcxOujpYILR5h5sIkf7eTDuKSWj2zB4HAY
-EPTwwvW2S7HlCj8pWPjQH+iPwNSCH2UZldAbZNMrwMj7iknL4hgQemFN76YygmOT
-aY1R3n5x+dISxUi/iYZuX6Oz/a0FGByJIb9awp57v/xzA7QBscYC5/Lh7knbTrtj
-/gAvt9eP2x/VHIzAzNDuqCNr4eclgPoIx0S67gV6HAqCDtu/x/MmuX/2j05g3Sa3
-qZwLlPiwNamqj63tnszn5cKz9LAfyLycRQYLMmIUphW5goNortB0rD0TyAig7QOH
-PLtDy9kQGLdBaG2OeUoHVK8Op4O6SUuKHPiyjUSH8FqbN+v1XMYUNYpNVWQUNNr4
-+yQIn9l0GtLR6/5ck58qjEQU8kihTTUbjtGz2vguzaHhyITDw/vsiz3vn2X76vsG
-pI94ER9JjDEyOipeILgfE+myQf6MhzZ29F6kKcWplkaOME5s7zYsL+VR5YVvjRcl
-JfsEV7a3DXsUgCy/KAFMtZQGLuD0S5AyB5OKvOkmlkPCjyEaNQg=
-=z+Kl
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPP6kMACgkQ3SOs138+
+s6Hr4w//feZUk45lhbHhtpvjHRVcxs/T5+FWY2LO73MKXxH1doa3XOqx4HWQ2d0n
+v5r+xLI7ueoZONt1LKTjVdV/z2wd/BQdkScxZIoJvKXWQieT+wlSNxVaXaR87slg
+7yPE29aBc5pCgwjtOz7GQRnOmjeETbPKqMDUijpA8Dbk8dHM02JruXHjj/vPTGSu
+r9OyeGFOqjUrJuPtjln2ZqnTKqHZ5ED78/aJ5qo88ibE5epDee0i+TJe2fPI9MHJ
+pGXR+MqptINMkIg3++zd40W0j29WYFUPxR1xQSv87O1yNNkqU7Br1iE7eT/H1oM5
+9We/4w2szEQelkOvt6og7fFWFyD39+1QpLYXhTBggq5p+LntX1vdnw/YBLI/5htG
+bqxkz4+8GMYI54kaknHMeRz0SxoWDyzKOLxLARnPoJdR5WPzUSI1hD6brhrmfu7M
+jzDRVGtlRpGmjsqwJW2GIsYzgvPcpPzeZod+y0pjwid/UDuyA5q1oOY98EAGwVwu
+p1tMkxItkn+voPSvGRZo4EZ6DHWrsAOPquKpQkSIVEH/LimGwXmoN5mI2cEHApjf
+kDY6EPm67I1UdN7CLDc/kFhBV3izuzu/wgrQqtj3r05jFf1rfboxdZu4/2SMBkGp
+jf9CRtJTntHtVZ4nRrWgHYtolEApolWPoBJqb7hVJpD+tGEVYKg=
+=3UOd
 -----END PGP SIGNATURE-----
 
---tv4pc/YfO+eURpsY--
+--00AUL/KaA0KSyTwk--
