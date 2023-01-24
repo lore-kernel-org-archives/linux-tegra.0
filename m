@@ -2,185 +2,117 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293EAC64EC3
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDB9C54EAA
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234236AbjAXNkV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Jan 2023 08:40:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59680 "EHLO
+        id S234515AbjAXNuq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Jan 2023 08:50:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234240AbjAXNkR (ORCPT
+        with ESMTP id S234987AbjAXNuQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Jan 2023 08:40:17 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1993F37B4D;
-        Tue, 24 Jan 2023 05:40:16 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9FA9D21888;
-        Tue, 24 Jan 2023 13:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1674567614; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=umu1oYNzuXuDKuOEF0oRXjztfv6/2EpKs/EPAOugwHA=;
-        b=0Y5Hvj6232/XrFnj7bJLQREWGtx7luGnOjUPrtFrXTZ7Gpf9++5V3DS/jUGFXH2OE6J5Bg
-        QldnPy1qLE94XgxtclhdkvFFcGhYl3Bu4AuyTbpcbL6m4Ahv7aJvlMyAWA+7XarQILWn65
-        xp5wiB8PJciZpvE6maR+uD08n9kMb9k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1674567614;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=umu1oYNzuXuDKuOEF0oRXjztfv6/2EpKs/EPAOugwHA=;
-        b=dGScla0Sl1YZ81J810UQ+K9PbplCn5jC/erVivNYFUTB0LUbcdRRZqiqFTISxyAFX36xek
-        +0HUDq5HWLe5DtBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5F08613487;
-        Tue, 24 Jan 2023 13:40:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 2B9WFr7fz2PWZgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Tue, 24 Jan 2023 13:40:14 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 10/10] drm/fbdev-generic: Rename struct fb_info 'fbi' to 'info'
-Date:   Tue, 24 Jan 2023 14:40:10 +0100
-Message-Id: <20230124134010.30263-11-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230124134010.30263-1-tzimmermann@suse.de>
-References: <20230124134010.30263-1-tzimmermann@suse.de>
-MIME-Version: 1.0
+        Tue, 24 Jan 2023 08:50:16 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B1B2410B;
+        Tue, 24 Jan 2023 05:47:53 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id s124so13332193oif.1;
+        Tue, 24 Jan 2023 05:47:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dgVu7me6sU+em3VIV4aC+WPji/mlX6JtCE66fSnGyn4=;
+        b=eZTY5qRZxf4KEh7UCsslELdpi8xX5rElv9c5C1SnxNhllNviqfDr2t08gHjt9m1vkL
+         C5Uw69FgV2uDGnGgl7gSz2w2nKfu5cmTYLmPoPq0cuWKKPPOzXuarM7+m5StM1EGtWko
+         EminHAvJH+hQhzCSAyVGVgcuH1ERWbBTONGkYewi2IZp4TK3THPFPZAcQxA4amFIF1+F
+         Mivo3P/Zefm16N4mXhZUiFFgI4cF0DnbbB4rmbwIBaQ808JG0vBfIpNsDsmzSTVkpoEI
+         5QMa/CMmqy33gWcRduML3nZJQlUsLpU4SVRD7aLIGz6hoTu1SU8sMlWHGGBWSmtU7ADF
+         W26w==
+X-Gm-Message-State: AFqh2kq2Ooi1SH+YvL8ld8CIo97j3EmBvLDkz7iaoQu3aTuBtPsLSCzI
+        K8aAMOsCr1MEuanWIfrfqw==
+X-Google-Smtp-Source: AMrXdXt9hoqjLN2to+csT0/dkCRVXxuqN6eTU/E0qsd4wp8ozPy7l2VcYEeNOSS3tFpgIz0nCJaK1Q==
+X-Received: by 2002:aca:de89:0:b0:367:6c7:baf9 with SMTP id v131-20020acade89000000b0036706c7baf9mr11467889oig.8.1674567940590;
+        Tue, 24 Jan 2023 05:45:40 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id i10-20020a056808030a00b0036a97066646sm1020354oie.8.2023.01.24.05.45.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jan 2023 05:45:40 -0800 (PST)
+Received: (nullmailer pid 637757 invoked by uid 1000);
+        Tue, 24 Jan 2023 13:45:39 -0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-usb@vger.kernel.org,
+        Wayne Chang <waynec@nvidia.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-tegra@vger.kernel.org
+In-Reply-To: <20230124114318.18345-2-jonathanh@nvidia.com>
+References: <20230124114318.18345-1-jonathanh@nvidia.com>
+ <20230124114318.18345-2-jonathanh@nvidia.com>
+Message-Id: <167456749036.611215.16155554024148748452.robh@kernel.org>
+Subject: Re: [PATCH V7 1/6] dt-bindings: usb: Add Cypress cypd4226 Type-C controller
+Date:   Tue, 24 Jan 2023 07:45:39 -0600
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The generic fbdev emulation names variables of type struct fb_info
-both 'fbi' and 'info'. The latter seems to be more common in fbdev
-code, so name fbi accordingly.
 
-Also replace the duplicate variable in drm_fbdev_fb_destroy().
+On Tue, 24 Jan 2023 11:43:13 +0000, Jon Hunter wrote:
+> From: Wayne Chang <waynec@nvidia.com>
+> 
+> Add the device-tree binding documentation for Cypress cypd4226 dual
+> Type-C controller.
+> 
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> V6 -> V7: updated example to use 'typec' for the node name
+> V5 -> V6: no changes
+> V4 -> V5: updated subject and updated binding to use 'firmware-name'.
+> V3 -> V4: no changes
+> V2 -> V3: fix additionalProperties warning on new schema
+> V1 -> V2: based on the review comments. Fix some addressed issues on
+> 
+>  .../bindings/usb/cypress,cypd4226.yaml        | 88 +++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> 
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/drm_fbdev_generic.c | 47 ++++++++++++++---------------
- 1 file changed, 23 insertions(+), 24 deletions(-)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index 13b31a95d434..b6565c1e3531 100644
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -46,16 +46,15 @@ static int drm_fbdev_fb_release(struct fb_info *info, int user)
- static void drm_fbdev_fb_destroy(struct fb_info *info)
- {
- 	struct drm_fb_helper *fb_helper = info->par;
--	struct fb_info *fbi = fb_helper->info;
- 	void *shadow = NULL;
- 
- 	if (!fb_helper->dev)
- 		return;
- 
--	if (fbi->fbdefio)
--		fb_deferred_io_cleanup(fbi);
-+	if (info->fbdefio)
-+		fb_deferred_io_cleanup(info);
- 	if (drm_fbdev_use_shadow_fb(fb_helper))
--		shadow = fbi->screen_buffer;
-+		shadow = info->screen_buffer;
- 
- 	drm_fb_helper_fini(fb_helper);
- 
-@@ -171,7 +170,7 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
- 	struct drm_device *dev = fb_helper->dev;
- 	struct drm_client_buffer *buffer;
- 	struct drm_framebuffer *fb;
--	struct fb_info *fbi;
-+	struct fb_info *info;
- 	u32 format;
- 	struct iosys_map map;
- 	int ret;
-@@ -190,35 +189,35 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
- 	fb_helper->fb = buffer->fb;
- 	fb = buffer->fb;
- 
--	fbi = drm_fb_helper_alloc_info(fb_helper);
--	if (IS_ERR(fbi))
--		return PTR_ERR(fbi);
-+	info = drm_fb_helper_alloc_info(fb_helper);
-+	if (IS_ERR(info))
-+		return PTR_ERR(info);
- 
--	fbi->fbops = &drm_fbdev_fb_ops;
--	fbi->screen_size = sizes->surface_height * fb->pitches[0];
--	fbi->fix.smem_len = fbi->screen_size;
--	fbi->flags = FBINFO_DEFAULT;
-+	info->fbops = &drm_fbdev_fb_ops;
-+	info->screen_size = sizes->surface_height * fb->pitches[0];
-+	info->fix.smem_len = info->screen_size;
-+	info->flags = FBINFO_DEFAULT;
- 
--	drm_fb_helper_fill_info(fbi, fb_helper, sizes);
-+	drm_fb_helper_fill_info(info, fb_helper, sizes);
- 
- 	if (drm_fbdev_use_shadow_fb(fb_helper)) {
--		fbi->screen_buffer = vzalloc(fbi->screen_size);
--		if (!fbi->screen_buffer)
-+		info->screen_buffer = vzalloc(info->screen_size);
-+		if (!info->screen_buffer)
- 			return -ENOMEM;
--		fbi->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
-+		info->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
- 
--		fbi->fbdefio = &drm_fbdev_defio;
--		fb_deferred_io_init(fbi);
-+		info->fbdefio = &drm_fbdev_defio;
-+		fb_deferred_io_init(info);
- 	} else {
- 		/* buffer is mapped for HW framebuffer */
- 		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
- 		if (ret)
- 			return ret;
- 		if (map.is_iomem) {
--			fbi->screen_base = map.vaddr_iomem;
-+			info->screen_base = map.vaddr_iomem;
- 		} else {
--			fbi->screen_buffer = map.vaddr;
--			fbi->flags |= FBINFO_VIRTFB;
-+			info->screen_buffer = map.vaddr;
-+			info->flags |= FBINFO_VIRTFB;
- 		}
- 
- 		/*
-@@ -227,10 +226,10 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
- 		 * case.
- 		 */
- #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
--		if (fb_helper->hint_leak_smem_start && fbi->fix.smem_start == 0 &&
-+		if (fb_helper->hint_leak_smem_start && info->fix.smem_start == 0 &&
- 		    !drm_WARN_ON_ONCE(dev, map.is_iomem))
--			fbi->fix.smem_start =
--				page_to_phys(virt_to_page(fbi->screen_buffer));
-+			info->fix.smem_start =
-+				page_to_phys(virt_to_page(info->screen_buffer));
- #endif
- 	}
- 
--- 
-2.39.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml: More than one condition true in oneOf schema:
+	{'description': 'Either unevaluatedProperties or additionalProperties '
+	                'must be present',
+	 'oneOf': [{'required': ['unevaluatedProperties']},
+	           {'required': ['additionalProperties']}]}
+	hint: Either unevaluatedProperties or additionalProperties must be present
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230124114318.18345-2-jonathanh@nvidia.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
