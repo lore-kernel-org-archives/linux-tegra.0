@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FE7C636BD
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BBCC61DB3
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:40:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234243AbjAXNkS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Jan 2023 08:40:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59660 "EHLO
+        id S233392AbjAXNkR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Jan 2023 08:40:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234230AbjAXNkP (ORCPT
+        with ESMTP id S233934AbjAXNkO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Jan 2023 08:40:15 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A7B237B48;
-        Tue, 24 Jan 2023 05:40:14 -0800 (PST)
+        Tue, 24 Jan 2023 08:40:14 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9150E3754A;
+        Tue, 24 Jan 2023 05:40:13 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2CB131FDED;
-        Tue, 24 Jan 2023 13:40:13 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 44AC12187C;
+        Tue, 24 Jan 2023 13:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1674567613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1674567612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mHNXQj920Mp49rolvcUr11B4LETXxMqwdnjXrBs6lqg=;
-        b=16xnC3qEktqsq+aRntrn/d1ScKqaWYQZMtxTPtm/S6BMfzYXt+lSkx2W81aYhaKELLA9Fh
-        x7N9nMwkbh08rJIKECG9/oMe6fSi6zkam9vMkwOLiKODnbIO0v83OUCAi9Dm96YOZw/vHA
-        pHmrXCw0PQpREDrtV6Ksg23l8zXDRLk=
+        bh=Eo0f0ziBdtPN9cBdDtmQB+JADnGJzSFyqXzDLQUPm/A=;
+        b=0zjZSeeIiKnDLsONC7QfuWog3HHelQyQVKjRllqhFixFsSj7m9hNGZDcNa5GPpHKCVK9sD
+        LtmSiXhDDdwF39KYiWojFsrTLbL8bEBYecX5cwQ2UWgh7uG6yeBDRqbPCIMnX4Sae3jYAx
+        E7Al4o7LulEg4TCWlfdkj3SB5ybEin0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1674567613;
+        s=susede2_ed25519; t=1674567612;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mHNXQj920Mp49rolvcUr11B4LETXxMqwdnjXrBs6lqg=;
-        b=2t5VyELYo2xzGMStdJCIQmdZSY3K46QbD0wREcAD7flf6K5R2dMyhssq5uu8qvm2s6Tbz5
-        akV5cOY54bNrZbAA==
+        bh=Eo0f0ziBdtPN9cBdDtmQB+JADnGJzSFyqXzDLQUPm/A=;
+        b=G31XWDRMxbO4uAuovcxnZpj/k+CfC/cj0SlkJw2m7Fu5z4fZsqXZVdCUA0h9v0Cc/4JaRZ
+        MAo4PojcuqQI3FBQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DB31D13487;
-        Tue, 24 Jan 2023 13:40:12 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F35CE139FF;
+        Tue, 24 Jan 2023 13:40:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id aApyNLzfz2PWZgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Tue, 24 Jan 2023 13:40:12 +0000
+        id 8AN8Orvfz2PWZgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Tue, 24 Jan 2023 13:40:11 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@gmail.com, daniel@ffwll.ch,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
@@ -59,9 +59,9 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 05/10] drm/fb-helper: Remove preferred_bpp parameter from fbdev internals
-Date:   Tue, 24 Jan 2023 14:40:05 +0100
-Message-Id: <20230124134010.30263-6-tzimmermann@suse.de>
+Subject: [PATCH v2 02/10] drm/client: Add hotplug_failed flag
+Date:   Tue, 24 Jan 2023 14:40:02 +0100
+Message-Id: <20230124134010.30263-3-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230124134010.30263-1-tzimmermann@suse.de>
 References: <20230124134010.30263-1-tzimmermann@suse.de>
@@ -71,122 +71,75 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Store the console's preferred BPP value in struct drm_fb_helper
-and remove the respective function parameters from the internal
-fbdev code.
+Signal failed hotplugging with a flag in struct drm_client_dev. If set,
+the client helpers will not further try to set up the fbdev display.
 
-The BPP value is only required as a fallback and will now always
-be available in the fb-helper instance.
+This used to be signalled with a combination of cleared pointers in
+struct drm_fb_helper, which prevents us from initializing these pointers
+early after allocation.
 
-No functional changes.
+The change also harmonizes behavior among DRM clients. Additional DRM
+clients will now handle failed hotplugging like fbdev does.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/drm_fb_helper.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/drm_client.c        | 5 +++++
+ drivers/gpu/drm/drm_fbdev_generic.c | 4 ----
+ include/drm/drm_client.h            | 8 ++++++++
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 4379bcd7718b..258103d317ac 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -1786,7 +1786,7 @@ static uint32_t drm_fb_helper_find_color_mode_format(struct drm_fb_helper *fb_he
- 	return drm_fb_helper_find_format(fb_helper, formats, format_count, bpp, depth);
- }
+diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+index 09ac191c202d..009e7b10455c 100644
+--- a/drivers/gpu/drm/drm_client.c
++++ b/drivers/gpu/drm/drm_client.c
+@@ -208,8 +208,13 @@ void drm_client_dev_hotplug(struct drm_device *dev)
+ 		if (!client->funcs || !client->funcs->hotplug)
+ 			continue;
  
--static int __drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper, int preferred_bpp,
-+static int __drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper,
- 				      struct drm_fb_helper_surface_size *sizes)
- {
- 	struct drm_client_dev *client = &fb_helper->client;
-@@ -1831,7 +1831,7 @@ static int __drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper, int prefe
- 		surface_format = drm_fb_helper_find_color_mode_format(fb_helper,
- 								      plane->format_types,
- 								      plane->format_count,
--								      preferred_bpp);
-+								      fb_helper->preferred_bpp);
- 		if (surface_format != DRM_FORMAT_INVALID)
- 			break; /* found supported format */
- 	}
-@@ -1903,7 +1903,7 @@ static int __drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper, int prefe
- 	return 0;
- }
- 
--static int drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper, int preferred_bpp,
-+static int drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper,
- 				    struct drm_fb_helper_surface_size *sizes)
- {
- 	struct drm_client_dev *client = &fb_helper->client;
-@@ -1912,7 +1912,7 @@ static int drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper, int preferr
- 	int ret;
- 
- 	mutex_lock(&client->modeset_mutex);
--	ret = __drm_fb_helper_find_sizes(fb_helper, preferred_bpp, sizes);
-+	ret = __drm_fb_helper_find_sizes(fb_helper, sizes);
- 	mutex_unlock(&client->modeset_mutex);
- 
- 	if (ret)
-@@ -1934,15 +1934,14 @@ static int drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper, int preferr
-  * Allocates the backing storage and sets up the fbdev info structure through
-  * the ->fb_probe callback.
-  */
--static int drm_fb_helper_single_fb_probe(struct drm_fb_helper *fb_helper,
--					 int preferred_bpp)
-+static int drm_fb_helper_single_fb_probe(struct drm_fb_helper *fb_helper)
- {
- 	struct drm_client_dev *client = &fb_helper->client;
- 	struct drm_device *dev = fb_helper->dev;
- 	struct drm_fb_helper_surface_size sizes;
- 	int ret;
- 
--	ret = drm_fb_helper_find_sizes(fb_helper, preferred_bpp, &sizes);
-+	ret = drm_fb_helper_find_sizes(fb_helper, &sizes);
- 	if (ret) {
- 		/* First time: disable all crtc's.. */
- 		if (!fb_helper->deferred_setup)
-@@ -2125,8 +2124,7 @@ static void drm_setup_crtcs_fb(struct drm_fb_helper *fb_helper)
- 
- /* Note: Drops fb_helper->lock before returning. */
- static int
--__drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper *fb_helper,
--					  int bpp_sel)
-+__drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper *fb_helper)
- {
- 	struct drm_device *dev = fb_helper->dev;
- 	struct fb_info *info;
-@@ -2137,10 +2135,9 @@ __drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper *fb_helper,
- 	height = dev->mode_config.max_height;
- 
- 	drm_client_modeset_probe(&fb_helper->client, width, height);
--	ret = drm_fb_helper_single_fb_probe(fb_helper, bpp_sel);
-+	ret = drm_fb_helper_single_fb_probe(fb_helper);
- 	if (ret < 0) {
- 		if (ret == -EAGAIN) {
--			fb_helper->preferred_bpp = bpp_sel;
- 			fb_helper->deferred_setup = true;
- 			ret = 0;
- 		}
-@@ -2231,8 +2228,10 @@ int drm_fb_helper_initial_config(struct drm_fb_helper *fb_helper, int bpp_sel)
- 	if (!drm_fbdev_emulation)
- 		return 0;
- 
-+	fb_helper->preferred_bpp = bpp_sel;
++		if (client->hotplug_failed)
++			continue;
 +
- 	mutex_lock(&fb_helper->lock);
--	ret = __drm_fb_helper_initial_config_and_unlock(fb_helper, bpp_sel);
-+	ret = __drm_fb_helper_initial_config_and_unlock(fb_helper);
- 
- 	return ret;
- }
-@@ -2268,8 +2267,7 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper)
- 
- 	mutex_lock(&fb_helper->lock);
- 	if (fb_helper->deferred_setup) {
--		err = __drm_fb_helper_initial_config_and_unlock(fb_helper,
--				fb_helper->preferred_bpp);
-+		err = __drm_fb_helper_initial_config_and_unlock(fb_helper);
- 		return err;
+ 		ret = client->funcs->hotplug(client);
+ 		drm_dbg_kms(dev, "%s: ret=%d\n", client->name, ret);
++		if (ret)
++			client->hotplug_failed = true;
  	}
+ 	mutex_unlock(&dev->clientlist_mutex);
+ }
+diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+index 3d455a2e3fb5..135d58b8007b 100644
+--- a/drivers/gpu/drm/drm_fbdev_generic.c
++++ b/drivers/gpu/drm/drm_fbdev_generic.c
+@@ -382,10 +382,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
+ 	struct drm_device *dev = client->dev;
+ 	int ret;
  
+-	/* Setup is not retried if it has failed */
+-	if (!fb_helper->dev && fb_helper->funcs)
+-		return 0;
+-
+ 	if (dev->fb_helper)
+ 		return drm_fb_helper_hotplug_event(dev->fb_helper);
+ 
+diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
+index 4fc8018eddda..39482527a775 100644
+--- a/include/drm/drm_client.h
++++ b/include/drm/drm_client.h
+@@ -106,6 +106,14 @@ struct drm_client_dev {
+ 	 * @modesets: CRTC configurations
+ 	 */
+ 	struct drm_mode_set *modesets;
++
++	/**
++	 * @hotplug failed:
++	 *
++	 * Set by client hotplug helpers if the hotplugging failed
++	 * before. It is usually not tried again.
++	 */
++	bool hotplug_failed;
+ };
+ 
+ int drm_client_init(struct drm_device *dev, struct drm_client_dev *client,
 -- 
 2.39.0
 
