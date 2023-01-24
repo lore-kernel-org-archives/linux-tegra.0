@@ -2,93 +2,203 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A32E1C54EAA
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 07:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC74AC38142
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 07:52:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232292AbjAXH1r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Jan 2023 02:27:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53474 "EHLO
+        id S232776AbjAXHwu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Jan 2023 02:52:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbjAXH1q (ORCPT
+        with ESMTP id S232226AbjAXHwt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Jan 2023 02:27:46 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABF311F
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Jan 2023 23:27:42 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so10220198wms.2
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Jan 2023 23:27:42 -0800 (PST)
+        Tue, 24 Jan 2023 02:52:49 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC6BD9
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Jan 2023 23:52:42 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id q10-20020a1cf30a000000b003db0edfdb74so443029wmq.1
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Jan 2023 23:52:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=SY2Uu2YYyK8Y1xrm2tU570aO+JE1QrmVMEXXdVaDEOI=;
-        b=sw74HFM06bEsfSXq4nrCyuxjly4jRqTFONPn5+xcQWEq6HLTV3xGbfvVdlE2nGlYFJ
-         DL3gVNtWyTfzG350cJlnb7sbyTVJd27hk+ilbCY4oR6+7qGIjai3G287xsMQuqM3V4A/
-         ulDEH8x9MLwBIvt/KIVWyxAkjGwxNSN/xuRD3ZgzZIX3IdNNrdCLDGgr5nQl8CXX58Rd
-         VxvrtpWvszJmOMs3qo6fp/hXbEgznjj23B1TQFKC9O+SRNAh+538QaAnpOnJrh+7xulf
-         MqxBzF1O+5361JWePjs502T11b1S7IC5+2jCY4pSvrEan2pvW1n1eBdirkA6GQ0pROL1
-         3KTw==
+        bh=BAe2WJH+upW322dDk1bEGZ4cZcCC0V7GrzqFfjdJrMg=;
+        b=hGPTxpSwZUv2ubxuT/5nHbDe+A30AqGBmtvji/Iv7jd9BR1eURErdOE+Ld8kUkcKcV
+         KBpMd+yZB0HVRMSv788IXaCQQxdg9P9UVfVih3M/pen+O2tI+hvtR5R6cbWPe7F48Hqb
+         ExACdlVSsYE6TI+k3v/pOyJomrx6/HBSc4EsF3l9xMz8Uj2+xwf7DVxSUixIp9lITiFV
+         6yOGgpOTV+n/yLZlsoLSx3vLvV/ml+6ZI023vAbywjGDGOjFDrxp+r82czeY0Jb8dexv
+         CP5uWx6pW85Lp7lztlLRVLu4x+/zCR5SutP5JmJbQ2uCG/SEL2XnmQFMRKINlPjQweee
+         wnsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SY2Uu2YYyK8Y1xrm2tU570aO+JE1QrmVMEXXdVaDEOI=;
-        b=6GLVf31A07bueWn9wSgDRp6RJIcIVuN6EWXsCiZ1d6qw464HCfYw2X85SmmJjZ/WaQ
-         eqPhegMeRP3DElr0uVAnIYEv37fJ38dM+j+c9CrpNSwnstxoygHRJMZuxVaazDm3QuJN
-         h8Rib/G4KAJVZB8NG25snvsFdpIH79RdcIrGj0jnoYlCr9+PyVxVBObGjhSFapIFtq9w
-         VqtK3gMBVW8rp6193HOwa3TUPy/stjdHBG4m82KqfYeKI9PGNrKdccEdDBvW2w78A1HR
-         kS1Fg4CjcRbo/UGd+ueQ/GY1QxEGGsgKZUgEU3Ccp0D/67Mwmu4QnfD5Jig6XRYr5cPF
-         9Q4A==
-X-Gm-Message-State: AFqh2kphoh3nR05iHup1Cg5no5U4JWyOXe6dHzPeSyitfEKFhOgFBMbQ
-        uoFFlR8pC+l3+YZJBEsScKtTIw==
-X-Google-Smtp-Source: AMrXdXvGo1RZOMT3nHmhJnZ69ybbOlDpzor4orbpkRbTdPNz0soJjirQieVO7ARS2baNdEO8AW7+Og==
-X-Received: by 2002:a05:600c:255:b0:3da:f9b7:74c7 with SMTP id 21-20020a05600c025500b003daf9b774c7mr25467863wmj.13.1674545261402;
-        Mon, 23 Jan 2023 23:27:41 -0800 (PST)
+        bh=BAe2WJH+upW322dDk1bEGZ4cZcCC0V7GrzqFfjdJrMg=;
+        b=wzU16bAg718UgrHI8fqigwDZ7866OYcSoAlIGRk30CSsZU3KmMblznwQIkcmRWOO1r
+         1riHjxJi0/9RqpoAHeib3qHuvNuwRNWUj1dDPJNwhu4/jWaO+l1mAPSP7OzyTSWR4HjH
+         Vl/Nio5h1OOC0qKmov6vkWSJdZCEhgYOBd9I/kfmCBVy0e3y4MRLyndGARraU82OHdqO
+         +kLpTpnhZ75yuGiVFMbzdWtJlQHr5lybYe+1emU/Be0zA2CTUtSaJwm4FHWmU6tkAKP5
+         cBcvFqsTx/ld4n69SyY20HM9xlLozmsInmp2yCME70sX5iuSZ8mMvhuoTmeXSWmiwJqu
+         PBtQ==
+X-Gm-Message-State: AFqh2krOip8qzp1SefbkyBGCmyctTKJlwbDgBJ49In8NGykG3SVlBZC+
+        3r7uwMsnnJq2qdIA2yxaUNZFdg==
+X-Google-Smtp-Source: AMrXdXtUIbnTklwYfp0Ur7d3WG5zlOuPOMpIoOKsMyOMySKmH3lI7Ra+GFxs1Sh1FysqHT0LgtpI4A==
+X-Received: by 2002:a05:600c:3488:b0:3d2:370b:97f4 with SMTP id a8-20020a05600c348800b003d2370b97f4mr34735239wmq.16.1674546760714;
+        Mon, 23 Jan 2023 23:52:40 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id o24-20020a05600c511800b003d9de0c39fasm16814781wms.36.2023.01.23.23.27.40
+        by smtp.gmail.com with ESMTPSA id m26-20020a7bcb9a000000b003db2dede1a2sm12401412wmi.26.2023.01.23.23.52.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jan 2023 23:27:41 -0800 (PST)
-Message-ID: <8d7f4a8d-a6ca-f66c-413a-ed5fecec2c9f@linaro.org>
-Date:   Tue, 24 Jan 2023 08:27:39 +0100
+        Mon, 23 Jan 2023 23:52:40 -0800 (PST)
+Message-ID: <b88bacbb-9da2-2175-3f59-7156c3aad4e3@linaro.org>
+Date:   Tue, 24 Jan 2023 08:52:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH V6 1/6] dt-bindings: usb: Add Cypress cypd4226 Type-C
- controller
+Subject: Re: [PATCH 2/2] dt-bindings: dma: cleanup examples - indentation,
+ lowercase hex
 Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh@kernel.org>
+Cc:     Vinod Koul <vkoul@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20230119121639.226729-1-jonathanh@nvidia.com>
- <20230119121639.226729-2-jonathanh@nvidia.com>
- <2789cf94-60b4-7e35-50f8-e21b564a1dfb@linaro.org>
- <e39c0b6b-6265-b419-a7aa-18f930bb3a9f@nvidia.com>
- <b86ed174-811a-023f-4a65-4bc0b10cf710@linaro.org>
- <392b05ef-0ac3-dca6-05f1-7201f4f647f6@nvidia.com>
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Olivier Dautricourt <olivierdautricourt@gmail.com>,
+        Stefan Roese <sr@denx.de>, Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Green Wan <green.wan@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        =?UTF-8?B?77+9ZXI=?= <povik+lin@cutebit.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        - <chuanhua.lei@intel.com>, Long Cheng <long.cheng@mediatek.com>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Palmer Debbelt <palmer@sifive.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org
+References: <20230118180144.364756-1-krzysztof.kozlowski@linaro.org>
+ <20230118180144.364756-2-krzysztof.kozlowski@linaro.org>
+ <20230123202010.GA2455859-robh@kernel.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <392b05ef-0ac3-dca6-05f1-7201f4f647f6@nvidia.com>
+In-Reply-To: <20230123202010.GA2455859-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 23/01/2023 23:16, Jon Hunter wrote:
-> Per the above if we remove interrupt-cells, then we get ...
+On 23/01/2023 21:20, Rob Herring wrote:
+> On Wed, Jan 18, 2023 at 07:01:44PM +0100, Krzysztof Kozlowski wrote:
+>> Cleanup examples:
+>>  - use 4-space indentation (for cases when it is neither 4 not 2 space),
+>>  - use lowercase hex.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  .../bindings/dma/snps,dw-axi-dmac.yaml        | 36 +++++++++----------
+>>  .../bindings/dma/stericsson,dma40.yaml        |  4 +--
+>>  2 files changed, 20 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
+>> index 2bedab1f74e0..d34d0fa62ab5 100644
+>> --- a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
+>> +++ b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.yaml
+>> @@ -113,21 +113,21 @@ additionalProperties: false
+>>  
+>>  examples:
+>>    - |
+>> -     #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> -     #include <dt-bindings/interrupt-controller/irq.h>
+>> -     /* example with snps,dw-axi-dmac */
+>> -     dmac: dma-controller@80000 {
+>> -         compatible = "snps,axi-dma-1.01a";
+>> -         reg = <0x80000 0x400>;
+>> -         clocks = <&core_clk>, <&cfgr_clk>;
+>> -         clock-names = "core-clk", "cfgr-clk";
+>> -         interrupt-parent = <&intc>;
+>> -         interrupts = <27>;
+>> -         #dma-cells = <1>;
+>> -         dma-channels = <4>;
+>> -         snps,dma-masters = <2>;
+>> -         snps,data-width = <3>;
+>> -         snps,block-size = <4096 4096 4096 4096>;
+>> -         snps,priority = <0 1 2 3>;
+>> -         snps,axi-max-burst-len = <16>;
+>> -     };
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    /* example with snps,dw-axi-dmac */
+>> +    dmac: dma-controller@80000 {
 > 
-> Documentation/devicetree/bindings/usb/cypress,cypd4226.example.dtb: typec@8: interrupts: [[10], [8]] is too long
->  From schema: /home/jonathanh/workdir/tegra/korg-linux-next.git/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
+> Drop unused labels while you are here.
+
+Ack
+
 > 
-> So it seems that we need this as well.
->
-Indeed.
+>> +        compatible = "snps,axi-dma-1.01a";
+>> +        reg = <0x80000 0x400>;
+>> +        clocks = <&core_clk>, <&cfgr_clk>;
+>> +        clock-names = "core-clk", "cfgr-clk";
+>> +        interrupt-parent = <&intc>;
+>> +        interrupts = <27>;
+>> +        #dma-cells = <1>;
+>> +        dma-channels = <4>;
+>> +        snps,dma-masters = <2>;
+>> +        snps,data-width = <3>;
+>> +        snps,block-size = <4096 4096 4096 4096>;
+>> +        snps,priority = <0 1 2 3>;
+>> +        snps,axi-max-burst-len = <16>;
+>> +    };
+>> diff --git a/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml b/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
+>> index 664ee61a00d8..57395a810719 100644
+>> --- a/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
+>> +++ b/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
+>> @@ -147,9 +147,9 @@ examples:
+>>      #include <dt-bindings/interrupt-controller/irq.h>
+>>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>      #include <dt-bindings/mfd/dbx500-prcmu.h>
+>> -    dma-controller@801C0000 {
+>> +    dma-controller@801c0000 {
+>>        compatible = "stericsson,db8500-dma40", "stericsson,dma40";
+>> -      reg = <0x801C0000 0x1000>, <0x40010000 0x800>;
+>> +      reg = <0x801c0000 0x1000>, <0x40010000 0x800>;
+>>        reg-names = "base", "lcpa";
+>>        interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+>>        #dma-cells = <3>;
+> 
+> Indentation?
+
+Ack
 
 Best regards,
 Krzysztof
