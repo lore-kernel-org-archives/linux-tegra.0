@@ -2,135 +2,115 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A3BC38142
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7D7C25B4E
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:58:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233813AbjAXN60 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Jan 2023 08:58:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
+        id S233370AbjAXN6k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Jan 2023 08:58:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234012AbjAXN6Y (ORCPT
+        with ESMTP id S233977AbjAXN6i (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Jan 2023 08:58:24 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD48245F45;
-        Tue, 24 Jan 2023 05:58:04 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id ud5so39249268ejc.4;
-        Tue, 24 Jan 2023 05:58:04 -0800 (PST)
+        Tue, 24 Jan 2023 08:58:38 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A9E40FE;
+        Tue, 24 Jan 2023 05:58:15 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id bk15so39141345ejb.9;
+        Tue, 24 Jan 2023 05:58:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C8ITfvJMUbAB9n/WNUOpYEt4kZtbu9A4WESFL60Ocvw=;
-        b=ZCtu7IpZipWMzHYjJD0NrrG0vXhqkl79/l3MyZHXQK1Cs6QvbiCxwtznkmkbsqvGbJ
-         jreeqva9ctlonoJJCob2KEpQjuNJfsV0epWdPYXMQICW2/osZ71WEMNLHnh4+yzFvV0S
-         tn9JLmrWHSRzo3sQWlJvMyHXUGvpKRkAsxv3LaMegoLvFB74IBKM6gJ5VyYnxtIz4+zJ
-         /wEGRsE7IfqbRiB1UDRtdhNvM8wmQf/ds580YLZsEwCbRboOgDWR59Bq3/DEhrFINwm3
-         SQNFpNrNNBJhR5dE4SG4VSbwmFJfVP7UOcA1ET1I+Jp5dEP4oHJ1ast5WB/yjM+B5S04
-         zbJQ==
+        bh=EsE8LAxbmcbJ8Rh9c45zJHgSKEw3j1IDQef94+hEZn8=;
+        b=ERcsHbTxkmAGcUFsnWBLecWkyzZDcgK2pztKG0dmxEGdG0CR/8QSdDdGNC2L7HY7Bk
+         cNYG08EnEmFa6jo/fZRzgbFdI2w5SYfWirsxevTACycubyVlzHtDjU1cZOhEOzAU5PRX
+         UWXq06VPmijoCaqeQVHJObNcRzVwg3Ne8kudBGqykrCcFPAeljTchl7rIqYtVZgFcyIT
+         gKu0E5MThC53FXO4VdySU0TX8slzU+2tnXbACq3IornNM36wg0iBhBVillwvEr79UKUc
+         DYQtvSMbp6dyDNS2itSmZOeQfqkYV8PiKh9vJeqcExXdD1CUadi6hoORGuw1GN5xr0Te
+         /yiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C8ITfvJMUbAB9n/WNUOpYEt4kZtbu9A4WESFL60Ocvw=;
-        b=6MWaVPMSMF/8ud3UYT+INatCR2sj69juwqsSRbjtKMe23E2NiSDDb68qWaPR6lBtNI
-         vYRPz42ekcX8ttQzQRNJe8okfMVWNRO/GhQT+H1+fU8cRn9L7Z0XA+WPSyHQxDox7FwJ
-         eNt832cCldn0Y4OZSMQUwKEorsEMydJCfDw1twZb1h7puKbC6ki9ug5Lz1PWOv7RpoWU
-         4I88riaXk1aeGn9U3+6LllxrDZWdgM3C4y8kGfJRZmGYYqDUMi7FEhdx0ImGoVCmfBxB
-         WDWTNJHioAcJXhhSw1L9dwVbhAhUq5tRCU6XbeBI5F8BXq7Lah9m+G6aGrJZV8sQHmWi
-         8yQQ==
-X-Gm-Message-State: AFqh2kqwJZ3jyddT5fCadkljWquH7QG9YizHum01Os/iNW+9fkpnW9yL
-        mPCW44ErFgz6w07Tpe6QmGaDlFrZD0I=
-X-Google-Smtp-Source: AMrXdXvHVx3+V2x2vQ/cKtaZnanXiKGMRWRB+3IJ86B/PWOPlcnH+ESdWYf7R+bBQDGuUb+6lQp5QQ==
-X-Received: by 2002:a17:906:c02:b0:83f:cbc0:1b30 with SMTP id s2-20020a1709060c0200b0083fcbc01b30mr30097434ejf.10.1674568662510;
-        Tue, 24 Jan 2023 05:57:42 -0800 (PST)
+        bh=EsE8LAxbmcbJ8Rh9c45zJHgSKEw3j1IDQef94+hEZn8=;
+        b=Ptrj4YJiHEEhuhKcWw+u0oaVM9UHWzLgYvGRgbv8nBHWF8NWKbj3VA0CKvtgmhbZh5
+         V6KQHAWKqTMlts/qqk3jOXAimSGufdiRqPP6LgUeFBLDZJOpVHgqK/XI78/KMHWxOLh1
+         xRBM92e5JdXtdiok/KZnqYdLGOE3/6FKXRnfyiEPoRGBcmKO3XytYHARq+9LwLrH0VPg
+         u5z6FAkjlMVibjf9jtCNkZz32Dka7ZX4k2G9VjPr96CqvvIqpmeUr/7/Vw4WFfy4tT5+
+         vSQoqj7HZEFg1SuurWeWNELkCyd/+X10EGrU4Brrr/8D0SwuhAIplq2amkJRTFP9wJCT
+         TARQ==
+X-Gm-Message-State: AFqh2krT8WnCsSmjHT++mIzmEfYBI5q5OJFQqhILLKIdJXsf60MA07oB
+        yJVdsNhHi/+eslIadMpi1xE=
+X-Google-Smtp-Source: AMrXdXsyq7toRa5W56MK7Pcofn3IR3CQf5VXhEAxy8VmJkn5cj7/wgxqMb9W3ZpWOrkfJhSgDBCsmA==
+X-Received: by 2002:a17:906:af8f:b0:7c1:5098:9074 with SMTP id mj15-20020a170906af8f00b007c150989074mr25993652ejb.0.1674568687780;
+        Tue, 24 Jan 2023 05:58:07 -0800 (PST)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ck1-20020a0564021c0100b004835bd8dfe5sm1090288edb.35.2023.01.24.05.57.41
+        by smtp.gmail.com with ESMTPSA id t15-20020a1709066bcf00b00877ff0c2bb0sm237151ejs.166.2023.01.24.05.58.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 05:57:41 -0800 (PST)
-Date:   Tue, 24 Jan 2023 14:57:40 +0100
+        Tue, 24 Jan 2023 05:58:07 -0800 (PST)
+Date:   Tue, 24 Jan 2023 14:58:05 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V5 0/5] Tegra USB device support updates
-Message-ID: <Y8/j1HBwgEdd4Mp2@orome>
+Subject: Re: [PATCH V5 1/5] dt-bindings: usb: tegra-xudc: Add dma-coherent
+ for Tegra194
+Message-ID: <Y8/j7Q1NPPsGjs5P@orome>
 References: <20230119104208.28726-1-jonathanh@nvidia.com>
+ <20230119104208.28726-2-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lZx75aZqCyuqNaGg"
+        protocol="application/pgp-signature"; boundary="n9EIHA5MKRYXq+mq"
 Content-Disposition: inline
-In-Reply-To: <20230119104208.28726-1-jonathanh@nvidia.com>
+In-Reply-To: <20230119104208.28726-2-jonathanh@nvidia.com>
 User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---lZx75aZqCyuqNaGg
+--n9EIHA5MKRYXq+mq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 19, 2023 at 10:42:03AM +0000, Jon Hunter wrote:
-> This series adds USB device support for Tegra234. 3/5 patches were
-> originally part of the series to add both USB host and device support
-> for Tegra234 [0]. However, the series was getting quite large and so I
-> have split this into a separate series but calling it 'V4' to indicate
-> that this is not completely new either.
+On Thu, Jan 19, 2023 at 10:42:04AM +0000, Jon Hunter wrote:
+> DMA operations for XUSB device controller are coherent for Tegra194 and
+> so update the device-tree binding to add this property.
 >=20
-> I have added two more patches in this version to fix DMA coherency for
-> Tegra194.
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> V5: Dropped fixes tag
+> V4: This is new in this version
 >=20
-> [0] https://lore.kernel.org/linux-tegra/20221114124053.1873316-1-waynec@n=
-vidia.com/
->=20
-> Jon Hunter (3):
->   dt-bindings: usb: tegra-xudc: Add dma-coherent for Tegra194
->   arm64: tegra: Add dma-coherent property for Tegra194 XUDC
->   arm64: tegra: Populate the XUDC node for Tegra234
->=20
-> Sing-Han Chen (1):
->   usb: gadget: tegra-xudc: Add Tegra234 support
->=20
-> Wayne Chang (1):
->   dt-bindings: usb: tegra-xudc: Add Tegra234 XUDC support
->=20
->  .../bindings/usb/nvidia,tegra-xudc.yaml       | 15 ++++++++++++
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  1 +
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 23 +++++++++++++++++++
->  drivers/usb/gadget/udc/tegra-xudc.c           | 17 ++++++++++++++
->  4 files changed, 56 insertions(+)
+>  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml   | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
-I've picked up patches 2 and 5 of this series into the Tegra tree. Greg,
-can you pick up patches 1, 3 and 4?
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thanks,
-Thierry
-
---lZx75aZqCyuqNaGg
+--n9EIHA5MKRYXq+mq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPP49QACgkQ3SOs138+
-s6EjWxAAiwl3LlrF8B0u2Tsd2ejPHnkYfVryWSQsA6npc4Qwdks5Quo+LeaqJkDr
-BORwAJLaFSBXbRoBfdE8DG0VgqJsS2a5Hej+kDUocMpfm6XDyuGm5QxcRvmnKO0S
-HYgpt+3K2dZMLZx4Ah+XpYOsk78HBmH5ZqXtyYJTby59dtryILvHCwCgGqCfedob
-wgW6khfeho+ejVsTJ9TvE7Jfy4BaqzwovOcmbNOqmRwwgeCvdsE/mpD6jBQhiE4q
-TKNoUz1EsalEORT/1Op1FBgYHdKJ47O+1cJ0umuLJEXucFlpnFJFt9W9nOHyFwZJ
-Y4U5ss84CNtf/LQwHPNkZTus3ITpHGb70kdEF2XeqDvPBd4rDa5fs1icplTqTvKG
-ds6PQeBeKZwq9Z8je2U/WZ4d2cjb3+4vIXHWcxCjZjQqSJ9ch1CowPzpHyetQx4o
-XeWsp3W+v7x9+C44KY02/G7snziCmiv6/d34ksYxRphtuHGGn+jlqEHS+2MabsB2
-JVPDwztnSF8v8tOsu2/iHcLQktAiCR2hrcOD69ZcXEbS9RKnFxdHfpX6BHqv/VMw
-veqR/YXY7bdVUnpeU1KTqBIce4RFOBXPwD8SVO85YjTzrT+BvuXN5hIT3Taf0Txb
-aGhuA2TdwJLvH36DQNycDv8zbR6jlhRnynZioe496PAMidFvY9o=
-=fzSZ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPP4+0ACgkQ3SOs138+
+s6FQhA//Z8xJ8POz2V/1ENyhFPZ5ezbUKTPd0c//NQJKL8ZyBoxgtwAUXvsyMsSw
+ooKN0DfsODsNLJNW4YApMDCI6a7VT/e49kNGZhHMWEXDv8RKjNY7sPVj+wGcy06P
+KOHmaGKf2+AIVbuVu5cyPXidIjWYsTRbgK+zLLQL50B0ZrNFs7UQTBr5jQXAjo6v
+cjpnCU8wwQibXuDiSz5Hrml4hVnYC/or4HDU5jRWOCo0LSISFrwatxNjrUwoxf4V
+MPfqSCtB58rfeC65IQG+EbZjlAwgrtXG62dwRxaYGujwg7j0enaTROAhnVOgZ3Vr
+CN8JkgM596AG2sgsPD6MniZrADucitTutUiRcrS8Uqu7gJmRcbweTSl61AENlIST
+uj3GcyPR0dXBwdP+AORbxe8VBbbM2JJPQ26EAnnySkrVJELzhn4dkF8H09JRWDfT
+3g0F5bXdU1JwHhVMexKiLZGilIbrHitzrjGfr4IlzWo0ySdK0iip2KtFSNu1L1FE
+9w/wBWKRKPNR5KFC9TYhMkNTs+pk/+zzungs/hZhsVJvDVJqXjuxlpJBsUcZ8jXF
+aq1C0baSCaEj87hN4uaCV6YSMgM2nHbi/VzO9fGIL2YBG1wRk71s8g9vll/qUrqG
+Bqj2q69R4S4p9k2wCIRPV+uCR34exbkPWBGvbNXKitucrWbZNZk=
+=gsd+
 -----END PGP SIGNATURE-----
 
---lZx75aZqCyuqNaGg--
+--n9EIHA5MKRYXq+mq--
