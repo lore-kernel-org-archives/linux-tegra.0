@@ -2,117 +2,135 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDB9C54EAA
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A3BC38142
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Jan 2023 13:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234515AbjAXNuq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Jan 2023 08:50:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44404 "EHLO
+        id S233813AbjAXN60 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Jan 2023 08:58:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234987AbjAXNuQ (ORCPT
+        with ESMTP id S234012AbjAXN6Y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Jan 2023 08:50:16 -0500
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B1B2410B;
-        Tue, 24 Jan 2023 05:47:53 -0800 (PST)
-Received: by mail-oi1-x233.google.com with SMTP id s124so13332193oif.1;
-        Tue, 24 Jan 2023 05:47:53 -0800 (PST)
+        Tue, 24 Jan 2023 08:58:24 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD48245F45;
+        Tue, 24 Jan 2023 05:58:04 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id ud5so39249268ejc.4;
+        Tue, 24 Jan 2023 05:58:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C8ITfvJMUbAB9n/WNUOpYEt4kZtbu9A4WESFL60Ocvw=;
+        b=ZCtu7IpZipWMzHYjJD0NrrG0vXhqkl79/l3MyZHXQK1Cs6QvbiCxwtznkmkbsqvGbJ
+         jreeqva9ctlonoJJCob2KEpQjuNJfsV0epWdPYXMQICW2/osZ71WEMNLHnh4+yzFvV0S
+         tn9JLmrWHSRzo3sQWlJvMyHXUGvpKRkAsxv3LaMegoLvFB74IBKM6gJ5VyYnxtIz4+zJ
+         /wEGRsE7IfqbRiB1UDRtdhNvM8wmQf/ds580YLZsEwCbRboOgDWR59Bq3/DEhrFINwm3
+         SQNFpNrNNBJhR5dE4SG4VSbwmFJfVP7UOcA1ET1I+Jp5dEP4oHJ1ast5WB/yjM+B5S04
+         zbJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dgVu7me6sU+em3VIV4aC+WPji/mlX6JtCE66fSnGyn4=;
-        b=eZTY5qRZxf4KEh7UCsslELdpi8xX5rElv9c5C1SnxNhllNviqfDr2t08gHjt9m1vkL
-         C5Uw69FgV2uDGnGgl7gSz2w2nKfu5cmTYLmPoPq0cuWKKPPOzXuarM7+m5StM1EGtWko
-         EminHAvJH+hQhzCSAyVGVgcuH1ERWbBTONGkYewi2IZp4TK3THPFPZAcQxA4amFIF1+F
-         Mivo3P/Zefm16N4mXhZUiFFgI4cF0DnbbB4rmbwIBaQ808JG0vBfIpNsDsmzSTVkpoEI
-         5QMa/CMmqy33gWcRduML3nZJQlUsLpU4SVRD7aLIGz6hoTu1SU8sMlWHGGBWSmtU7ADF
-         W26w==
-X-Gm-Message-State: AFqh2kq2Ooi1SH+YvL8ld8CIo97j3EmBvLDkz7iaoQu3aTuBtPsLSCzI
-        K8aAMOsCr1MEuanWIfrfqw==
-X-Google-Smtp-Source: AMrXdXt9hoqjLN2to+csT0/dkCRVXxuqN6eTU/E0qsd4wp8ozPy7l2VcYEeNOSS3tFpgIz0nCJaK1Q==
-X-Received: by 2002:aca:de89:0:b0:367:6c7:baf9 with SMTP id v131-20020acade89000000b0036706c7baf9mr11467889oig.8.1674567940590;
-        Tue, 24 Jan 2023 05:45:40 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id i10-20020a056808030a00b0036a97066646sm1020354oie.8.2023.01.24.05.45.39
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C8ITfvJMUbAB9n/WNUOpYEt4kZtbu9A4WESFL60Ocvw=;
+        b=6MWaVPMSMF/8ud3UYT+INatCR2sj69juwqsSRbjtKMe23E2NiSDDb68qWaPR6lBtNI
+         vYRPz42ekcX8ttQzQRNJe8okfMVWNRO/GhQT+H1+fU8cRn9L7Z0XA+WPSyHQxDox7FwJ
+         eNt832cCldn0Y4OZSMQUwKEorsEMydJCfDw1twZb1h7puKbC6ki9ug5Lz1PWOv7RpoWU
+         4I88riaXk1aeGn9U3+6LllxrDZWdgM3C4y8kGfJRZmGYYqDUMi7FEhdx0ImGoVCmfBxB
+         WDWTNJHioAcJXhhSw1L9dwVbhAhUq5tRCU6XbeBI5F8BXq7Lah9m+G6aGrJZV8sQHmWi
+         8yQQ==
+X-Gm-Message-State: AFqh2kqwJZ3jyddT5fCadkljWquH7QG9YizHum01Os/iNW+9fkpnW9yL
+        mPCW44ErFgz6w07Tpe6QmGaDlFrZD0I=
+X-Google-Smtp-Source: AMrXdXvHVx3+V2x2vQ/cKtaZnanXiKGMRWRB+3IJ86B/PWOPlcnH+ESdWYf7R+bBQDGuUb+6lQp5QQ==
+X-Received: by 2002:a17:906:c02:b0:83f:cbc0:1b30 with SMTP id s2-20020a1709060c0200b0083fcbc01b30mr30097434ejf.10.1674568662510;
+        Tue, 24 Jan 2023 05:57:42 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ck1-20020a0564021c0100b004835bd8dfe5sm1090288edb.35.2023.01.24.05.57.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 05:45:40 -0800 (PST)
-Received: (nullmailer pid 637757 invoked by uid 1000);
-        Tue, 24 Jan 2023 13:45:39 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-usb@vger.kernel.org,
-        Wayne Chang <waynec@nvidia.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 24 Jan 2023 05:57:41 -0800 (PST)
+Date:   Tue, 24 Jan 2023 14:57:40 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-In-Reply-To: <20230124114318.18345-2-jonathanh@nvidia.com>
-References: <20230124114318.18345-1-jonathanh@nvidia.com>
- <20230124114318.18345-2-jonathanh@nvidia.com>
-Message-Id: <167456749036.611215.16155554024148748452.robh@kernel.org>
-Subject: Re: [PATCH V7 1/6] dt-bindings: usb: Add Cypress cypd4226 Type-C controller
-Date:   Tue, 24 Jan 2023 07:45:39 -0600
+Subject: Re: [PATCH V5 0/5] Tegra USB device support updates
+Message-ID: <Y8/j1HBwgEdd4Mp2@orome>
+References: <20230119104208.28726-1-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lZx75aZqCyuqNaGg"
+Content-Disposition: inline
+In-Reply-To: <20230119104208.28726-1-jonathanh@nvidia.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On Tue, 24 Jan 2023 11:43:13 +0000, Jon Hunter wrote:
-> From: Wayne Chang <waynec@nvidia.com>
-> 
-> Add the device-tree binding documentation for Cypress cypd4226 dual
-> Type-C controller.
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> V6 -> V7: updated example to use 'typec' for the node name
-> V5 -> V6: no changes
-> V4 -> V5: updated subject and updated binding to use 'firmware-name'.
-> V3 -> V4: no changes
-> V2 -> V3: fix additionalProperties warning on new schema
-> V1 -> V2: based on the review comments. Fix some addressed issues on
-> 
->  .../bindings/usb/cypress,cypd4226.yaml        | 88 +++++++++++++++++++
->  1 file changed, 88 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml
-> 
+--lZx75aZqCyuqNaGg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+On Thu, Jan 19, 2023 at 10:42:03AM +0000, Jon Hunter wrote:
+> This series adds USB device support for Tegra234. 3/5 patches were
+> originally part of the series to add both USB host and device support
+> for Tegra234 [0]. However, the series was getting quite large and so I
+> have split this into a separate series but calling it 'V4' to indicate
+> that this is not completely new either.
+>=20
+> I have added two more patches in this version to fix DMA coherency for
+> Tegra194.
+>=20
+> [0] https://lore.kernel.org/linux-tegra/20221114124053.1873316-1-waynec@n=
+vidia.com/
+>=20
+> Jon Hunter (3):
+>   dt-bindings: usb: tegra-xudc: Add dma-coherent for Tegra194
+>   arm64: tegra: Add dma-coherent property for Tegra194 XUDC
+>   arm64: tegra: Populate the XUDC node for Tegra234
+>=20
+> Sing-Han Chen (1):
+>   usb: gadget: tegra-xudc: Add Tegra234 support
+>=20
+> Wayne Chang (1):
+>   dt-bindings: usb: tegra-xudc: Add Tegra234 XUDC support
+>=20
+>  .../bindings/usb/nvidia,tegra-xudc.yaml       | 15 ++++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  1 +
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 23 +++++++++++++++++++
+>  drivers/usb/gadget/udc/tegra-xudc.c           | 17 ++++++++++++++
+>  4 files changed, 56 insertions(+)
 
-yamllint warnings/errors:
+I've picked up patches 2 and 5 of this series into the Tegra tree. Greg,
+can you pick up patches 1, 3 and 4?
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/cypress,cypd4226.yaml: More than one condition true in oneOf schema:
-	{'description': 'Either unevaluatedProperties or additionalProperties '
-	                'must be present',
-	 'oneOf': [{'required': ['unevaluatedProperties']},
-	           {'required': ['additionalProperties']}]}
-	hint: Either unevaluatedProperties or additionalProperties must be present
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+Thanks,
+Thierry
 
-doc reference errors (make refcheckdocs):
+--lZx75aZqCyuqNaGg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230124114318.18345-2-jonathanh@nvidia.com
+-----BEGIN PGP SIGNATURE-----
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPP49QACgkQ3SOs138+
+s6EjWxAAiwl3LlrF8B0u2Tsd2ejPHnkYfVryWSQsA6npc4Qwdks5Quo+LeaqJkDr
+BORwAJLaFSBXbRoBfdE8DG0VgqJsS2a5Hej+kDUocMpfm6XDyuGm5QxcRvmnKO0S
+HYgpt+3K2dZMLZx4Ah+XpYOsk78HBmH5ZqXtyYJTby59dtryILvHCwCgGqCfedob
+wgW6khfeho+ejVsTJ9TvE7Jfy4BaqzwovOcmbNOqmRwwgeCvdsE/mpD6jBQhiE4q
+TKNoUz1EsalEORT/1Op1FBgYHdKJ47O+1cJ0umuLJEXucFlpnFJFt9W9nOHyFwZJ
+Y4U5ss84CNtf/LQwHPNkZTus3ITpHGb70kdEF2XeqDvPBd4rDa5fs1icplTqTvKG
+ds6PQeBeKZwq9Z8je2U/WZ4d2cjb3+4vIXHWcxCjZjQqSJ9ch1CowPzpHyetQx4o
+XeWsp3W+v7x9+C44KY02/G7snziCmiv6/d34ksYxRphtuHGGn+jlqEHS+2MabsB2
+JVPDwztnSF8v8tOsu2/iHcLQktAiCR2hrcOD69ZcXEbS9RKnFxdHfpX6BHqv/VMw
+veqR/YXY7bdVUnpeU1KTqBIce4RFOBXPwD8SVO85YjTzrT+BvuXN5hIT3Taf0Txb
+aGhuA2TdwJLvH36DQNycDv8zbR6jlhRnynZioe496PAMidFvY9o=
+=fzSZ
+-----END PGP SIGNATURE-----
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--lZx75aZqCyuqNaGg--
