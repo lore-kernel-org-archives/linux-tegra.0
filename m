@@ -2,136 +2,159 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7DFC64EC5
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 20:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0801BC54EED
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 20:05:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236196AbjAYUE2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 15:04:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
+        id S235876AbjAYUFq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 15:05:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236198AbjAYUEW (ORCPT
+        with ESMTP id S235525AbjAYUFp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Jan 2023 15:04:22 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F1B38B75;
-        Wed, 25 Jan 2023 12:04:21 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3CD3521C89;
-        Wed, 25 Jan 2023 20:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1674677059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=e08ONuN0TCqslXy4RigVWp3ixbi2nOSyqtwWMRMhRNs=;
-        b=ToVWTEMnv7pEkk4/B7wCok9NwUHypVeEX+dylfZLP81ZR/Pug74NIqqAt0oM9RoYiNvThZ
-        mz1ijJa8jSlhvNSKxX2E0jnewA702YUA0ajYjiftEDp3DEo5vIb51CGEKDZt6e1nYJIEWQ
-        yf29+GneExLQBtLK9kvC5xtPvjX5v70=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1674677059;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=e08ONuN0TCqslXy4RigVWp3ixbi2nOSyqtwWMRMhRNs=;
-        b=wZ3G+lpiRcCn4/sbyKXXwQumzE++p8isH5Do6a7X2atbZ+QMmAJCWbxS4eosTeXdrMsvLh
-        rvC5z0u/cCI2GPCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 01B381339E;
-        Wed, 25 Jan 2023 20:04:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id qHc7O0KL0WMDeAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 25 Jan 2023 20:04:18 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com
-Cc:     dri-devel@lists.freedesktop.org,
+        Wed, 25 Jan 2023 15:05:45 -0500
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810CB12587;
+        Wed, 25 Jan 2023 12:05:43 -0800 (PST)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-15b9c93848dso22813893fac.1;
+        Wed, 25 Jan 2023 12:05:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kqCnvG5HfBYMdFzmIrllsGYjZVwDWefqF05Cmky4HA=;
+        b=1MkdHccN4sTH4t9xBZvyUQIxoYOq7j8fZzdGNnazpcF2mE85RiQc+0HFSP1Z/3DKYS
+         WnIb0QEc4RdWG7FAw0qbFSsXDZ4+cdo45vccV7EDix/1G4+hKJ4kgikaoUfV5SE+FbKM
+         X+ALhCtuuwtE+QlexxVkbkhd5lOVr3PED0pDep9hs0Gm94/DVYEnW4XINdP6GDm9co/q
+         9scVxhpfpOADKuIe6EchvP4EjwDM4tqzgGAJSwjA/oEiZA6qmNhdief8rcSc8kJdV9pv
+         3lq5+h28KgV2C/kVO0K9hc8rYCvHxMoaqqFD2DdS2r3v3MJAkGxsSNF15sT012OVOVg4
+         sBVg==
+X-Gm-Message-State: AO0yUKUD5ZeFxQsUh/9oHbyjsD9L9fqTzkpbEq6ZlOwuB1mr7ICd3rNx
+        W2JLtY3BMbx45vM3aVctOQ==
+X-Google-Smtp-Source: AK7set+KlYA9hOhKxY3yXbw1+jJFui+axb/K8qUGpNYSrXD6fL93Qjufe/ZRHNh9bIxZbHxYbUPr4A==
+X-Received: by 2002:a05:6870:14d5:b0:163:45a2:e276 with SMTP id l21-20020a05687014d500b0016345a2e276mr684576oab.9.1674677142691;
+        Wed, 25 Jan 2023 12:05:42 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id n20-20020a056870559400b0010d7242b623sm2325869oao.21.2023.01.25.12.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jan 2023 12:05:42 -0800 (PST)
+Received: (nullmailer pid 2768672 invoked by uid 1000);
+        Wed, 25 Jan 2023 20:05:39 -0000
+Date:   Wed, 25 Jan 2023 14:05:39 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-sunxi@lists.linux.dev, openbmc@lists.ozlabs.org,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Li-hao Kuo <lhjeff911@gmail.com>, Han Xu <han.xu@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Yogesh Gaur <yogeshgaur.83@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Birger Koblitz <mail@birger-koblitz.de>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        ", Bert Vermeulen" <bert@biot.com>, Marek Vasut <marex@denx.de>,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        ", Christophe Kerello" <christophe.kerello@foss.st.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 08/10] drm/fbdev-generic: Minimize client unregistering
-Date:   Wed, 25 Jan 2023 21:04:13 +0100
-Message-Id: <20230125200415.14123-9-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230125200415.14123-1-tzimmermann@suse.de>
-References: <20230125200415.14123-1-tzimmermann@suse.de>
+        Haibo Chen <haibo.chen@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-arm-msm@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Vaishnav Achath <vaishnav.a@ti.com>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        ", Broadcom internal kernel review list" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-spi@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Pragnesh Patel <pragnesh.patel@sifive.com>,
+        linux-riscv@lists.infradead.org,
+        Leilk Liu <leilk.liu@mediatek.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        =?UTF-8?B?77+9ZWNraQ==?= <rafal@milecki.pl>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        linux-aspeed@lists.ozlabs.org, Gabor Juhos <juhosg@openwrt.org>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Erwan Leray <erwan.leray@foss.st.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Kuldeep Singh <singh.kuldeep87k@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Parshuram Thombare <pthombar@cadence.com>,
+        ", Fabio Estevam" <festevam@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v2 2/2] spi: dt-bindings: cleanup examples - indentation,
+ lowercase hex
+Message-ID: <167467713905.2768614.7865748447151198568.robh@kernel.org>
+References: <20230124083342.34869-1-krzysztof.kozlowski@linaro.org>
+ <20230124083342.34869-2-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230124083342.34869-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-For uninitialized framebuffers, only release the DRM client and
-free the fbdev memory. Do not attempt to clean up the framebuffer.
 
-DRM fbdev clients have a two-step initialization: first create
-the DRM client; then create the framebuffer device on the first
-successful hotplug event. In cases where the client never creates
-the framebuffer, only the client state needs to be released. We
-can detect which case it is, full or client-only cleanup, by
-looking at the presence of fb_helper's info field.
+On Tue, 24 Jan 2023 09:33:42 +0100, Krzysztof Kozlowski wrote:
+> Cleanup examples:
+>  - use 4-space indentation (for cases when it is neither 4 not 2 space),
+>  - drop redundant blank lines,
+>  - use lowercase hex.
+> 
+> No functional impact except adjusting to preferred coding style.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au> # aspeed
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org> # meson
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Adjust indentation in two more examples (cdns,qspi-nor, st,stm32-spi)
+> 2. Add tags
+> ---
+>  .../bindings/spi/amlogic,meson-gx-spicc.yaml  |  26 +--
+>  .../bindings/spi/amlogic,meson6-spifc.yaml    |  22 +--
+>  .../bindings/spi/aspeed,ast2600-fmc.yaml      |  24 +--
+>  .../bindings/spi/brcm,spi-bcm-qspi.yaml       | 156 +++++++++---------
+>  .../bindings/spi/cdns,qspi-nor.yaml           |  34 ++--
+>  .../bindings/spi/nvidia,tegra210-quad.yaml    |  42 ++---
+>  .../bindings/spi/qcom,spi-qcom-qspi.yaml      |   1 -
+>  .../devicetree/bindings/spi/renesas,rspi.yaml |  22 +--
+>  .../bindings/spi/spi-sunplus-sp7021.yaml      |   4 +-
+>  .../devicetree/bindings/spi/st,stm32-spi.yaml |  23 ++-
+>  10 files changed, 176 insertions(+), 178 deletions(-)
+> 
 
-v3:
-	* fix typo in commit message (Javier)
-	* release client before unpreparing fbdev
-v2:
-	* remove test for (fbi != NULL) in drm_fbdev_cleanup() (Sam)
-
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
----
- drivers/gpu/drm/drm_fbdev_generic.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index dd8be5e0f271..a9c519001019 100644
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -51,12 +51,10 @@ static void drm_fbdev_cleanup(struct drm_fb_helper *fb_helper)
- 	if (!fb_helper->dev)
- 		return;
- 
--	if (fbi) {
--		if (fbi->fbdefio)
--			fb_deferred_io_cleanup(fbi);
--		if (drm_fbdev_use_shadow_fb(fb_helper))
--			shadow = fbi->screen_buffer;
--	}
-+	if (fbi->fbdefio)
-+		fb_deferred_io_cleanup(fbi);
-+	if (drm_fbdev_use_shadow_fb(fb_helper))
-+		shadow = fbi->screen_buffer;
- 
- 	drm_fb_helper_fini(fb_helper);
- 
-@@ -362,11 +360,13 @@ static void drm_fbdev_client_unregister(struct drm_client_dev *client)
- {
- 	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
- 
--	if (fb_helper->info)
--		/* drm_fbdev_fb_destroy() takes care of cleanup */
-+	if (fb_helper->info) {
- 		drm_fb_helper_unregister_info(fb_helper);
--	else
--		drm_fbdev_release(fb_helper);
-+	} else {
-+		drm_client_release(&fb_helper->client);
-+		drm_fb_helper_unprepare(fb_helper);
-+		kfree(fb_helper);
-+	}
- }
- 
- static int drm_fbdev_client_restore(struct drm_client_dev *client)
--- 
-2.39.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
