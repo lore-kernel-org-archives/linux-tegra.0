@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFAEC27C76
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 20:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65331C636CC
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 20:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235506AbjAYUEW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 15:04:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
+        id S236195AbjAYUEX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 15:04:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235303AbjAYUEU (ORCPT
+        with ESMTP id S236176AbjAYUEU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Wed, 25 Jan 2023 15:04:20 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 116E63A870;
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F2712587;
         Wed, 25 Jan 2023 12:04:19 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A7DD11FE94;
-        Wed, 25 Jan 2023 20:04:17 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2E6FA21BC2;
+        Wed, 25 Jan 2023 20:04:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1674677057; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1674677058; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uCpLaX1oHpxByqh6QHj2bOLOrRtwHkCMazI2xMmVWyI=;
-        b=NR//PvvwSYoCghCIGG8RQHxMnY6YdwArQ+QOofHLys/9ET35jsG4h0rwo6nWgF3gvMykxY
-        PUySK/27ygXFcRwZb+u9l/67WXDozo8mI4+wclgN4aAfqT+UERwoMMFeHb7M4mKFZg8lEO
-        5nhR7QgRfzmQMa99x4RSuvlwjFT+sO4=
+        bh=T5Sbzsv89EKEkrOe/wPvSqXndeo3WhAF853jHk6ZLI8=;
+        b=ChhXTFJaFJBKqWIraYGI6roExZjLpdQI9WuePjTTgmUDEbllJuc8+RFjdemPZfVdQCZRpM
+        QtJW65VWdX2QbGWszEVd335ZCChuZpzA9NNNp43AXrGfhmp9V4HykHAT4h++RFSRqjpAPX
+        T1IdwpG9YXN9IdoPXgoYsgwk2KaAo8w=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1674677057;
+        s=susede2_ed25519; t=1674677058;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uCpLaX1oHpxByqh6QHj2bOLOrRtwHkCMazI2xMmVWyI=;
-        b=2hjxKN8bZ1NtccW76VLCPW7N2XXDDTGRdm7QHm8qovgS6fmeCa3Jfo7XzP2unSIjdCIfzp
-        nSe8V3mwWUPEoiAw==
+        bh=T5Sbzsv89EKEkrOe/wPvSqXndeo3WhAF853jHk6ZLI8=;
+        b=QVFieepnUZSrJoO/X4spqT5UJ6oEbINiIoYEnytL2gvkWvgsGp0x5RdffK0fvv/5zjix8C
+        wvowuAUxe18eCFDg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6B54C1339E;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E675A1339E;
         Wed, 25 Jan 2023 20:04:17 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id WJd5GUGL0WMDeAAAMHmgww
+        id 6Cl6N0GL0WMDeAAAMHmgww
         (envelope-from <tzimmermann@suse.de>); Wed, 25 Jan 2023 20:04:17 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@gmail.com, daniel@ffwll.ch,
@@ -59,9 +59,9 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 02/10] drm/client: Add hotplug_failed flag
-Date:   Wed, 25 Jan 2023 21:04:07 +0100
-Message-Id: <20230125200415.14123-3-tzimmermann@suse.de>
+Subject: [PATCH v3 04/10] drm/fbdev-generic: Initialize fb-helper structure in generic setup
+Date:   Wed, 25 Jan 2023 21:04:09 +0100
+Message-Id: <20230125200415.14123-5-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230125200415.14123-1-tzimmermann@suse.de>
 References: <20230125200415.14123-1-tzimmermann@suse.de>
@@ -71,76 +71,57 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Signal failed hotplugging with a flag in struct drm_client_dev. If set,
-the client helpers will not further try to set up the fbdev display.
-
-This used to be signalled with a combination of cleared pointers in
-struct drm_fb_helper, which prevents us from initializing these pointers
-early after allocation.
-
-The change also harmonizes behavior among DRM clients. Additional DRM
-clients will now handle failed hotplugging like fbdev does.
+Initialize the fb-helper structure immediately after its allocation
+in drm_fbdev_generic_setup(). That will make it easier to fill it with
+driver-specific values, such as the preferred BPP.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 ---
- drivers/gpu/drm/drm_client.c        | 5 +++++
- drivers/gpu/drm/drm_fbdev_generic.c | 4 ----
- include/drm/drm_client.h            | 8 ++++++++
- 3 files changed, 13 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_fbdev_generic.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-index 09ac191c202d..009e7b10455c 100644
---- a/drivers/gpu/drm/drm_client.c
-+++ b/drivers/gpu/drm/drm_client.c
-@@ -208,8 +208,13 @@ void drm_client_dev_hotplug(struct drm_device *dev)
- 		if (!client->funcs || !client->funcs->hotplug)
- 			continue;
- 
-+		if (client->hotplug_failed)
-+			continue;
-+
- 		ret = client->funcs->hotplug(client);
- 		drm_dbg_kms(dev, "%s: ret=%d\n", client->name, ret);
-+		if (ret)
-+			client->hotplug_failed = true;
- 	}
- 	mutex_unlock(&dev->clientlist_mutex);
- }
 diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index 3d455a2e3fb5..135d58b8007b 100644
+index 135d58b8007b..63f66325a8a5 100644
 --- a/drivers/gpu/drm/drm_fbdev_generic.c
 +++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -382,10 +382,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
- 	struct drm_device *dev = client->dev;
- 	int ret;
- 
--	/* Setup is not retried if it has failed */
--	if (!fb_helper->dev && fb_helper->funcs)
--		return 0;
--
+@@ -385,8 +385,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
  	if (dev->fb_helper)
  		return drm_fb_helper_hotplug_event(dev->fb_helper);
  
-diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-index 4fc8018eddda..39482527a775 100644
---- a/include/drm/drm_client.h
-+++ b/include/drm/drm_client.h
-@@ -106,6 +106,14 @@ struct drm_client_dev {
- 	 * @modesets: CRTC configurations
- 	 */
- 	struct drm_mode_set *modesets;
-+
-+	/**
-+	 * @hotplug failed:
-+	 *
-+	 * Set by client hotplug helpers if the hotplugging failed
-+	 * before. It is usually not tried again.
-+	 */
-+	bool hotplug_failed;
- };
+-	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
+-
+ 	ret = drm_fb_helper_init(dev, fb_helper);
+ 	if (ret)
+ 		goto err;
+@@ -456,12 +454,12 @@ void drm_fbdev_generic_setup(struct drm_device *dev,
+ 	fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
+ 	if (!fb_helper)
+ 		return;
++	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
  
- int drm_client_init(struct drm_device *dev, struct drm_client_dev *client,
+ 	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
+ 	if (ret) {
+-		kfree(fb_helper);
+ 		drm_err(dev, "Failed to register client: %d\n", ret);
+-		return;
++		goto err_drm_client_init;
+ 	}
+ 
+ 	/*
+@@ -484,5 +482,12 @@ void drm_fbdev_generic_setup(struct drm_device *dev,
+ 		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+ 
+ 	drm_client_register(&fb_helper->client);
++
++	return;
++
++err_drm_client_init:
++	drm_fb_helper_unprepare(fb_helper);
++	kfree(fb_helper);
++	return;
+ }
+ EXPORT_SYMBOL(drm_fbdev_generic_setup);
 -- 
 2.39.0
 
