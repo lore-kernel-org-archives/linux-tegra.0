@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1F2C61DA0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADE8C61D9D
 	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 20:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236185AbjAYUEU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 15:04:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36274 "EHLO
+        id S235331AbjAYUEV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 15:04:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235331AbjAYUET (ORCPT
+        with ESMTP id S236175AbjAYUEU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Jan 2023 15:04:19 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE43B27D5F;
-        Wed, 25 Jan 2023 12:04:18 -0800 (PST)
+        Wed, 25 Jan 2023 15:04:20 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40CA5298EF;
+        Wed, 25 Jan 2023 12:04:19 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 6731C1FEEF;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E1E6821B80;
         Wed, 25 Jan 2023 20:04:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
         t=1674677057; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QJtIsR15ya/zOdpbRDRKT1AjPR2mO3ErJsacdSl2nec=;
-        b=dilHervAW672AjuMzkbk6TnatEI7s9Say4dNdAHD41lvaDzbz9NFY54l+WR+bwDssNDPpy
-        abTCMqyHPCU3IP59xIU5sifAbKgSL95+ziGLW3AoHDAmQSHNEU070dTxyQJEy/Krt7HsjZ
-        A1o/Znp8vrJwgD8ZX6QaiFr36EzQnac=
+        bh=WhdE2M5zn4/MKgwBvX3WXtrBqldU9porz9r1vGCJMT4=;
+        b=BQEpa3QWTs7km2Iwl1SWuPd4jwDYfkegPuRiTf2Zgvz7wjGhaOjvD09/lElSBxzVTfXl1D
+        bmSHpQiaP6ai0wNUPSlgo0IjXpNw/vmEKqvF8Nt1KtnLyWDsFagTVPlEA/6BuM1f2mRg+B
+        EgciDfwWdYVAtrpoTnDLBmX4K623Psg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
         s=susede2_ed25519; t=1674677057;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QJtIsR15ya/zOdpbRDRKT1AjPR2mO3ErJsacdSl2nec=;
-        b=En1Dwej8pLIbFHqoX8fkuEeisHVKgFin/ZdCjW3f3pOPVe4oW51hBfdSOWxJcaQRmjNeNV
-        P7TqfZugl4TOgeAA==
+        bh=WhdE2M5zn4/MKgwBvX3WXtrBqldU9porz9r1vGCJMT4=;
+        b=JS+3ACRHPBij17coQtUCBHTadO69mnvhgJMiW1m0ntPW4V0C1CD4hFTsy2cuRV0CYdjc7B
+        +FPYU3qCcHT7mwDg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2736813A06;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A9FFF13A06;
         Wed, 25 Jan 2023 20:04:17 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id sPypCEGL0WMDeAAAMHmgww
+        id 2JK8KEGL0WMDeAAAMHmgww
         (envelope-from <tzimmermann@suse.de>); Wed, 25 Jan 2023 20:04:17 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@gmail.com, daniel@ffwll.ch,
@@ -59,9 +59,9 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 01/10] drm/client: Test for connectors before sending hotplug event
-Date:   Wed, 25 Jan 2023 21:04:06 +0100
-Message-Id: <20230125200415.14123-2-tzimmermann@suse.de>
+Subject: [PATCH v3 03/10] drm/fb-helper: Introduce drm_fb_helper_unprepare()
+Date:   Wed, 25 Jan 2023 21:04:08 +0100
+Message-Id: <20230125200415.14123-4-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230125200415.14123-1-tzimmermann@suse.de>
 References: <20230125200415.14123-1-tzimmermann@suse.de>
@@ -71,49 +71,74 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Test for connectors in the client code and remove a similar test
-from the generic fbdev emulation. Do nothing if the test fails.
-Not having connectors indicates a driver bug.
+Move the fb-helper clean-up code into drm_fb_helper_unprepare(). No
+functional changes.
+
+v2:
+	* declare as static inline (kernel test robot)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 ---
- drivers/gpu/drm/drm_client.c        | 5 +++++
- drivers/gpu/drm/drm_fbdev_generic.c | 5 -----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_fb_helper.c | 14 +++++++++++++-
+ include/drm/drm_fb_helper.h     |  5 +++++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-index 262ec64d4397..09ac191c202d 100644
---- a/drivers/gpu/drm/drm_client.c
-+++ b/drivers/gpu/drm/drm_client.c
-@@ -198,6 +198,11 @@ void drm_client_dev_hotplug(struct drm_device *dev)
- 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
- 		return;
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index c5c13e192b64..4379bcd7718b 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -435,6 +435,18 @@ void drm_fb_helper_prepare(struct drm_device *dev, struct drm_fb_helper *helper,
+ }
+ EXPORT_SYMBOL(drm_fb_helper_prepare);
  
-+	if (!dev->mode_config.num_connector) {
-+		drm_dbg_kms(dev, "No connectors found, will not send hotplug events!\n");
-+		return;
-+	}
++/**
++ * drm_fb_helper_unprepare - clean up a drm_fb_helper structure
++ * @fb_helper: driver-allocated fbdev helper structure to set up
++ *
++ * Cleans up the framebuffer helper. Inverse of drm_fb_helper_prepare().
++ */
++void drm_fb_helper_unprepare(struct drm_fb_helper *fb_helper)
++{
++	mutex_destroy(&fb_helper->lock);
++}
++EXPORT_SYMBOL(drm_fb_helper_unprepare);
 +
- 	mutex_lock(&dev->clientlist_mutex);
- 	list_for_each_entry(client, &dev->clientlist, list) {
- 		if (!client->funcs || !client->funcs->hotplug)
-diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index 0a4c160e0e58..3d455a2e3fb5 100644
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -389,11 +389,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
- 	if (dev->fb_helper)
- 		return drm_fb_helper_hotplug_event(dev->fb_helper);
+ /**
+  * drm_fb_helper_init - initialize a &struct drm_fb_helper
+  * @dev: drm device
+@@ -561,7 +573,7 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
+ 	}
+ 	mutex_unlock(&kernel_fb_helper_lock);
  
--	if (!dev->mode_config.num_connector) {
--		drm_dbg_kms(dev, "No connectors found, will not create framebuffer!\n");
--		return 0;
--	}
--
- 	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
+-	mutex_destroy(&fb_helper->lock);
++	drm_fb_helper_unprepare(fb_helper);
  
- 	ret = drm_fb_helper_init(dev, fb_helper);
+ 	if (!fb_helper->client.funcs)
+ 		drm_client_release(&fb_helper->client);
+diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+index f443e1f11654..39710c570a04 100644
+--- a/include/drm/drm_fb_helper.h
++++ b/include/drm/drm_fb_helper.h
+@@ -230,6 +230,7 @@ drm_fb_helper_from_client(struct drm_client_dev *client)
+ #ifdef CONFIG_DRM_FBDEV_EMULATION
+ void drm_fb_helper_prepare(struct drm_device *dev, struct drm_fb_helper *helper,
+ 			   const struct drm_fb_helper_funcs *funcs);
++void drm_fb_helper_unprepare(struct drm_fb_helper *fb_helper);
+ int drm_fb_helper_init(struct drm_device *dev, struct drm_fb_helper *helper);
+ void drm_fb_helper_fini(struct drm_fb_helper *helper);
+ int drm_fb_helper_blank(int blank, struct fb_info *info);
+@@ -296,6 +297,10 @@ static inline void drm_fb_helper_prepare(struct drm_device *dev,
+ {
+ }
+ 
++static inline void drm_fb_helper_unprepare(struct drm_fb_helper *fb_helper)
++{
++}
++
+ static inline int drm_fb_helper_init(struct drm_device *dev,
+ 		       struct drm_fb_helper *helper)
+ {
 -- 
 2.39.0
 
