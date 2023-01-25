@@ -2,124 +2,130 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B76FC27C76
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 05:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF28C27C76
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 08:31:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230252AbjAYFPK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 00:15:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48748 "EHLO
+        id S235115AbjAYIbb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 03:31:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229758AbjAYFPI (ORCPT
+        with ESMTP id S235123AbjAYIba (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Jan 2023 00:15:08 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C515E30C1;
-        Tue, 24 Jan 2023 21:15:05 -0800 (PST)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 30P5DFVr110850;
-        Tue, 24 Jan 2023 23:13:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1674623595;
-        bh=re1yuXRG1QzWfbml926PUa+KfAnb805uYLtXy/6QWZ0=;
-        h=Date:CC:Subject:To:References:From:In-Reply-To;
-        b=NDsjfut0T3p7vR3aO6ByE4gg3fZjdYpYkxKVaFHEcN9DDymNkY7sXGQtuQde/NpN+
-         s1DBVVXRJ/7e2buVzRva7Rka8C40zLivnm/eYg6QS5go1r5KUVx0c2umJXiMSl8r0b
-         npSY3OTjeIyWPydyJhIPNy0X5L+qrfNUJ7i83FYU=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 30P5DFDk056971
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Jan 2023 23:13:15 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 24
- Jan 2023 23:13:15 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Tue, 24 Jan 2023 23:13:15 -0600
-Received: from [172.24.145.61] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 30P5D6Wo061117;
-        Tue, 24 Jan 2023 23:13:07 -0600
-Message-ID: <c2626bd5-93bb-690d-6c19-d32e40f55dc0@ti.com>
-Date:   Wed, 25 Jan 2023 10:43:06 +0530
+        Wed, 25 Jan 2023 03:31:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CCE648A05
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Jan 2023 00:30:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674635447;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kr0S8akD6qUBjK/SM2fF6lu+0ihmEwSHU9fQtaMUMNo=;
+        b=c82vQHfGvl69RfAXVYFrW2N0W8Ijsjsjpnjk1bowJm/pXrJxdkxGqIuUhU5SsgTTLLfChe
+        WCLgudtbd4i2a67T5yUtWti3Rrnvc7tjBjBAa2DISqSv0KJPjNuKUh2mamIk8uLrVTgKsh
+        45QcAOaKX2KrCFHZDN0PbyR4zQgJDHI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-594-uIsWFzY1O0axITtuu9vtHw-1; Wed, 25 Jan 2023 03:30:45 -0500
+X-MC-Unique: uIsWFzY1O0axITtuu9vtHw-1
+Received: by mail-wr1-f69.google.com with SMTP id v15-20020adfe4cf000000b002bf9413bc50so2196563wrm.16
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Jan 2023 00:30:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kr0S8akD6qUBjK/SM2fF6lu+0ihmEwSHU9fQtaMUMNo=;
+        b=3uZEjNB9Gj79mohBlAd7JVmiGn1U0ahIP3m6da2U2Kzo0fPhT6XDVfSGezd0PKCX49
+         02/ZCOUT3zyLW3u/gXy8lhyPVAsgznBSb7acbX5KEKfvVGaZC2ChqkovGxuUhYE5kDM6
+         zUslDRDavR6caZt3J5V19RL1RMwdViLs5mHENkt7MXg77t5mbrrohownBnWN+tmlSk1h
+         kimTYIVRI32nme9Z+iBfi6syaxK2dvWGMOfEMVACazK1JgveXmae5SzuGDEnGaP+R3C7
+         U/TrY+BLV9lv/fhRxNbSB4K59cQLqoJsit9QVR0CfvMNunGa4ERjTYXxaSjeU/78ybVb
+         0+Tw==
+X-Gm-Message-State: AFqh2krvNXvyRLveLJWf0UKAfp+8GNvRn7LqutQ38QE21BAHWoYhtNVl
+        tJwV1lZ1XSC6M8oUihuvlYlBOJjctJm3V/p89Umg+c+VS0bzSkm8D3Al3LuVlMUXBAm7qnyKoR4
+        SOVjF4g3BlU+uBW5SWhHOWq0=
+X-Received: by 2002:a05:6000:388:b0:2bc:7ec3:8b2 with SMTP id u8-20020a056000038800b002bc7ec308b2mr29736121wrf.68.1674635444579;
+        Wed, 25 Jan 2023 00:30:44 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXvJXEPl3F4VP/2Wui1NMuiLkn1RDtzF7t2lLspd9Qgz+v3EiIOxwRmTCt+QhhFH4DIAkfWI6g==
+X-Received: by 2002:a05:6000:388:b0:2bc:7ec3:8b2 with SMTP id u8-20020a056000038800b002bc7ec308b2mr29736083wrf.68.1674635444065;
+        Wed, 25 Jan 2023 00:30:44 -0800 (PST)
+Received: from [192.168.1.130] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id n17-20020a5d67d1000000b002425be3c9e2sm3716862wrw.60.2023.01.25.00.30.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jan 2023 00:30:43 -0800 (PST)
+Message-ID: <296bcff0-9d75-3d6b-e101-dddb26edadf1@redhat.com>
+Date:   Wed, 25 Jan 2023 09:30:42 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-CC:     <linux-phy@lists.infradead.org>, <linux-doc@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <s-vadapalli@ti.com>
-Subject: Re: [PATCH v2 6/9] net: ethernet: ti: am65-cpsw: Convert to
- devm_of_phy_optional_get()
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2 01/10] drm/client: Test for connectors before sending
+ hotplug event
 Content-Language: en-US
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        <UNGLinuxDriver@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Russell King <linux@armlinux.org.uk>
-References: <cover.1674584626.git.geert+renesas@glider.be>
- <3d612c95031cf5c6d5af4ec35f40121288a2c1c6.1674584626.git.geert+renesas@glider.be>
-From:   Siddharth Vadapalli <s-vadapalli@ti.com>
-In-Reply-To: <3d612c95031cf5c6d5af4ec35f40121288a2c1c6.1674584626.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+To:     Thomas Zimmermann <tzimmermann@suse.de>, airlied@gmail.com,
+        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20230124134010.30263-1-tzimmermann@suse.de>
+ <20230124134010.30263-2-tzimmermann@suse.de>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+In-Reply-To: <20230124134010.30263-2-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hello Thomas,
 
+On 1/24/23 14:40, Thomas Zimmermann wrote:
+> Test for connectors in the client code and remove a similar test
+> from the generic fbdev emulation. Do nothing if the test fails.
+> Not having connectors indicates a driver bug.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
 
-On 25/01/23 00:07, Geert Uytterhoeven wrote:
-> Use the new devm_of_phy_optional_get() helper instead of open-coding the
-> same operation.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Rebase on top of commit 854617f52ab42418 ("net: ethernet: ti:
->     am65-cpsw: Handle -EPROBE_DEFER for Serdes PHY") in net-next
->     (next-20230123 and later).
-> ---
->  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> index c696da89962f1ae3..794f228c8d632f7a 100644
-> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> @@ -1460,11 +1460,9 @@ static int am65_cpsw_init_serdes_phy(struct device *dev, struct device_node *por
->  	struct phy *phy;
->  	int ret;
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+
+but I've a question below.
+
+>  drivers/gpu/drm/drm_client.c        | 5 +++++
+>  drivers/gpu/drm/drm_fbdev_generic.c | 5 -----
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+
+[...]
+
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -389,11 +389,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
+>  	if (dev->fb_helper)
+>  		return drm_fb_helper_hotplug_event(dev->fb_helper);
 >  
-> -	phy = devm_of_phy_get(dev, port_np, name);
-> -	if (PTR_ERR(phy) == -ENODEV)
+> -	if (!dev->mode_config.num_connector) {
+> -		drm_dbg_kms(dev, "No connectors found, will not create framebuffer!\n");
 > -		return 0;
-> -	if (IS_ERR(phy))
-> -		return PTR_ERR(phy);
-> +	phy = devm_of_phy_optional_get(dev, port_np, name);
-> +	if (IS_ERR_OR_NULL(phy))
-> +		return PTR_ERR_OR_ZERO(phy);
+> -	}
+> -
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+What about the following code snippet:
 
-Regards,
-Siddharth.
+	if (!drm_drv_uses_atomic_modeset(dev))
+		drm_helper_disable_unused_functions(dev);
+
+that seems to be something that should be in the core client dev hotplug
+as well, since it isn't specific to the fbdev emulation client ?
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
