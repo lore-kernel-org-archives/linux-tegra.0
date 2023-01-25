@@ -2,159 +2,107 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0801BC54EED
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 20:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF44CC54EED
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 20:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235876AbjAYUFq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 15:05:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37960 "EHLO
+        id S236250AbjAYU0s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 15:26:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235525AbjAYUFp (ORCPT
+        with ESMTP id S235286AbjAYU0r (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Jan 2023 15:05:45 -0500
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810CB12587;
-        Wed, 25 Jan 2023 12:05:43 -0800 (PST)
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-15b9c93848dso22813893fac.1;
-        Wed, 25 Jan 2023 12:05:43 -0800 (PST)
+        Wed, 25 Jan 2023 15:26:47 -0500
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B6138EAC;
+        Wed, 25 Jan 2023 12:26:47 -0800 (PST)
+Received: by mail-oi1-f179.google.com with SMTP id r205so17309871oib.9;
+        Wed, 25 Jan 2023 12:26:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8kqCnvG5HfBYMdFzmIrllsGYjZVwDWefqF05Cmky4HA=;
-        b=1MkdHccN4sTH4t9xBZvyUQIxoYOq7j8fZzdGNnazpcF2mE85RiQc+0HFSP1Z/3DKYS
-         WnIb0QEc4RdWG7FAw0qbFSsXDZ4+cdo45vccV7EDix/1G4+hKJ4kgikaoUfV5SE+FbKM
-         X+ALhCtuuwtE+QlexxVkbkhd5lOVr3PED0pDep9hs0Gm94/DVYEnW4XINdP6GDm9co/q
-         9scVxhpfpOADKuIe6EchvP4EjwDM4tqzgGAJSwjA/oEiZA6qmNhdief8rcSc8kJdV9pv
-         3lq5+h28KgV2C/kVO0K9hc8rYCvHxMoaqqFD2DdS2r3v3MJAkGxsSNF15sT012OVOVg4
-         sBVg==
-X-Gm-Message-State: AO0yUKUD5ZeFxQsUh/9oHbyjsD9L9fqTzkpbEq6ZlOwuB1mr7ICd3rNx
-        W2JLtY3BMbx45vM3aVctOQ==
-X-Google-Smtp-Source: AK7set+KlYA9hOhKxY3yXbw1+jJFui+axb/K8qUGpNYSrXD6fL93Qjufe/ZRHNh9bIxZbHxYbUPr4A==
-X-Received: by 2002:a05:6870:14d5:b0:163:45a2:e276 with SMTP id l21-20020a05687014d500b0016345a2e276mr684576oab.9.1674677142691;
-        Wed, 25 Jan 2023 12:05:42 -0800 (PST)
+        bh=uUCUxnM4fltCEjdbRgGnFoZ2FChxWtP2zRjR6RLOGZE=;
+        b=GS4WT/gfIzEZL5lduTpFehG52leEMioY5uhvNGFpEbxWrKe8aiu73rshq4Srqjy0xz
+         qmbJ0cEH3jyQrABvznIl0Fbl9pvI+ZYq52oW4HK4y5A4GoHVbGqpG7qxnAeK05zzO+zw
+         iaxFXeaDxPUQwEYdOnYuOyW90Txy6zo7/HdBdyLnkhsl1nlkUenpus94/nx9FKBzPZaz
+         EJ4C+3+IpRSxmChgfpffm5WMVC1U/ew5xwzHvookz2XMJuRkWHmBr+RM/04MA2w3a/U8
+         UWh5UPYQXofecEmVMjIqc5xlU72Neb3AiMvFT1fia38XsXqYPTFh414QGImB+k5kbz0W
+         y+kg==
+X-Gm-Message-State: AFqh2kqplt979XqMcXdQV70E1Cu60VIALnxe0Gvc9b/3rcoKikGRxrHS
+        CpVvDOYFmzNU+ubWLEVO781edA7QdA==
+X-Google-Smtp-Source: AMrXdXumTIhX79Oul+xZZxS/Cos8KzC0UI7XemfDhG7X855afR2V108W9pBkZExx/R7qA1AI/eWOAQ==
+X-Received: by 2002:aca:2b13:0:b0:355:1e71:768 with SMTP id i19-20020aca2b13000000b003551e710768mr14816982oik.39.1674678406357;
+        Wed, 25 Jan 2023 12:26:46 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n20-20020a056870559400b0010d7242b623sm2325869oao.21.2023.01.25.12.05.39
+        by smtp.gmail.com with ESMTPSA id l1-20020a056830154100b006619533d1ddsm2531782otp.76.2023.01.25.12.26.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jan 2023 12:05:42 -0800 (PST)
-Received: (nullmailer pid 2768672 invoked by uid 1000);
-        Wed, 25 Jan 2023 20:05:39 -0000
-Date:   Wed, 25 Jan 2023 14:05:39 -0600
+        Wed, 25 Jan 2023 12:26:45 -0800 (PST)
+Received: (nullmailer pid 2851915 invoked by uid 1000);
+        Wed, 25 Jan 2023 20:26:45 -0000
+Date:   Wed, 25 Jan 2023 14:26:45 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-sunxi@lists.linux.dev, openbmc@lists.ozlabs.org,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Li-hao Kuo <lhjeff911@gmail.com>, Han Xu <han.xu@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Yogesh Gaur <yogeshgaur.83@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Birger Koblitz <mail@birger-koblitz.de>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        ", Bert Vermeulen" <bert@biot.com>, Marek Vasut <marex@denx.de>,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        ", Christophe Kerello" <christophe.kerello@foss.st.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-arm-msm@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Vaishnav Achath <vaishnav.a@ti.com>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        ", Broadcom internal kernel review list" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-spi@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Pragnesh Patel <pragnesh.patel@sifive.com>,
-        linux-riscv@lists.infradead.org,
-        Leilk Liu <leilk.liu@mediatek.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Shawn Guo <shawnguo@kernel.org>,
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        =?UTF-8?B?77+9ZWNraQ==?= <rafal@milecki.pl>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        linux-aspeed@lists.ozlabs.org, Gabor Juhos <juhosg@openwrt.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Erwan Leray <erwan.leray@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Kuldeep Singh <singh.kuldeep87k@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Parshuram Thombare <pthombar@cadence.com>,
-        ", Fabio Estevam" <festevam@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 2/2] spi: dt-bindings: cleanup examples - indentation,
- lowercase hex
-Message-ID: <167467713905.2768614.7865748447151198568.robh@kernel.org>
-References: <20230124083342.34869-1-krzysztof.kozlowski@linaro.org>
- <20230124083342.34869-2-krzysztof.kozlowski@linaro.org>
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Yi-Wei Wang <yiweiw@nvidia.com>
+Subject: Re: [PATCH 1/2] dt-bindings: thermal: Add Tegra234 BPMP thermal zones
+Message-ID: <20230125202645.GA2849386-robh@kernel.org>
+References: <20230124115119.21451-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230124083342.34869-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230124115119.21451-1-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On Tue, 24 Jan 2023 09:33:42 +0100, Krzysztof Kozlowski wrote:
-> Cleanup examples:
->  - use 4-space indentation (for cases when it is neither 4 not 2 space),
->  - drop redundant blank lines,
->  - use lowercase hex.
+On Tue, Jan 24, 2023 at 11:51:18AM +0000, Jon Hunter wrote:
+> From: Yi-Wei Wang <yiweiw@nvidia.com>
 > 
-> No functional impact except adjusting to preferred coding style.
+> Add BPMP thermal zone definitions for Tegra234.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au> # aspeed
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org> # meson
-> 
+> Signed-off-by: Yi-Wei Wang <yiweiw@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
-> 
-> Changes since v1:
-> 1. Adjust indentation in two more examples (cdns,qspi-nor, st,stm32-spi)
-> 2. Add tags
-> ---
->  .../bindings/spi/amlogic,meson-gx-spicc.yaml  |  26 +--
->  .../bindings/spi/amlogic,meson6-spifc.yaml    |  22 +--
->  .../bindings/spi/aspeed,ast2600-fmc.yaml      |  24 +--
->  .../bindings/spi/brcm,spi-bcm-qspi.yaml       | 156 +++++++++---------
->  .../bindings/spi/cdns,qspi-nor.yaml           |  34 ++--
->  .../bindings/spi/nvidia,tegra210-quad.yaml    |  42 ++---
->  .../bindings/spi/qcom,spi-qcom-qspi.yaml      |   1 -
->  .../devicetree/bindings/spi/renesas,rspi.yaml |  22 +--
->  .../bindings/spi/spi-sunplus-sp7021.yaml      |   4 +-
->  .../devicetree/bindings/spi/st,stm32-spi.yaml |  23 ++-
->  10 files changed, 176 insertions(+), 178 deletions(-)
-> 
+>  .../thermal/tegra234-bpmp-thermal.h           | 19 +++++++++++++++++++
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Match the compatible name please.
+
+>  1 file changed, 19 insertions(+)
+>  create mode 100644 include/dt-bindings/thermal/tegra234-bpmp-thermal.h
+> 
+> diff --git a/include/dt-bindings/thermal/tegra234-bpmp-thermal.h b/include/dt-bindings/thermal/tegra234-bpmp-thermal.h
+> new file mode 100644
+> index 000000000000..41a5efebcc7a
+> --- /dev/null
+> +++ b/include/dt-bindings/thermal/tegra234-bpmp-thermal.h
+> @@ -0,0 +1,19 @@
+
+License? Dual please.
+
+> +/*
+> + * This header provides constants for binding nvidia,tegra234-bpmp-thermal.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_THERMAL_TEGRA234_BPMP_THERMAL_H
+> +#define _DT_BINDINGS_THERMAL_TEGRA234_BPMP_THERMAL_H
+> +
+> +#define TEGRA234_THERMAL_ZONE_CPU	0
+> +#define TEGRA234_THERMAL_ZONE_GPU	1
+> +#define TEGRA234_THERMAL_ZONE_CV0	2
+> +#define TEGRA234_THERMAL_ZONE_CV1	3
+> +#define TEGRA234_THERMAL_ZONE_CV2	4
+> +#define TEGRA234_THERMAL_ZONE_SOC0	5
+> +#define TEGRA234_THERMAL_ZONE_SOC1	6
+> +#define TEGRA234_THERMAL_ZONE_SOC2	7
+> +#define TEGRA234_THERMAL_ZONE_TJ_MAX	8
+> +#define TEGRA234_THERMAL_ZONE_COUNT	9
+> +
+> +#endif
+> -- 
+> 2.25.1
+> 
