@@ -2,42 +2,42 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61F5C54EED
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 21:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D637C54E94
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 21:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236662AbjAYVDj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 16:03:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59178 "EHLO
+        id S236688AbjAYVJm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 16:09:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236602AbjAYVDi (ORCPT
+        with ESMTP id S236686AbjAYVJS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Jan 2023 16:03:38 -0500
-Received: from mailrelay1-1.pub.mailoutpod2-cph3.one.com (mailrelay1-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:400::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19DF518FE
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Jan 2023 13:03:36 -0800 (PST)
+        Wed, 25 Jan 2023 16:09:18 -0500
+Received: from mailrelay2-1.pub.mailoutpod2-cph3.one.com (mailrelay2-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:401::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55A2961D40
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Jan 2023 13:08:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ravnborg.org; s=rsa2;
         h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
          from:date:from;
-        bh=r06bpllZ30BN5nw2fF6dgAcQNrEN0bwvs34HHHR0x90=;
-        b=lOQASzRXku++3L0Tc0qGb+h+Kx1uKtws9h+yo98f2FqVui9YPs/BU5za90WVZqmk22FxAUilW2LwI
-         a56mgtI/giS56adFnV7EoQRJidS3r4Gw4lG15tc+AwUuoacTh8Hm/96giQ7urIM75LFn1mDImgA47a
-         q91TUHD+n3M1Bxdfe1KnxeLqUSQpHx6b3g1EVPdAkeAFF42LsocUiVxEFUlWglsW5n+z515fhFUErp
-         jRFMiqID41LwjVEyogv+u9qGVFwC1X5v9Oa65UucrN7nswugetyGFgIM6pTn/RrsxQgWlOErx2fseC
-         /hMlDR8Ef/u6uF4pup1cKYqqpRcEN0g==
+        bh=/NbmLZPfTUBNuvwpuIq7jzdYXjOyhys3va43pns/wME=;
+        b=fXzCVuKRusidZBn0C8DUfgcuqFi/xH4Dq66tyHbKA0oEuRzZuyoIBOiLjsOwSvr+XkS5Aj6/8FjfS
+         f1d19b3n2z0KUneSoilCiaNmzUWxDKPyG6eKXAoW0igFvtDQo9SGKXCtGVlpoN0OfqSLgAw+CIbCVN
+         csYcffChBpGi6AJIHGSwJinq5tjrmRtv6oc2CdNm9Q7TFsLahoU5Ms05Lebn4W0llb1eVofn1EdPxe
+         GpcepYkR9FhzvhXT8jy0QE5+B9n5nSxXE3HPA8K05S/hpAQso901xLBhlv7iXHZHbmXbLK3ua9aUzv
+         Z0NFaunagWqq8MfE3TtCNIwsrOjBVtg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
         d=ravnborg.org; s=ed2;
         h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
          from:date:from;
-        bh=r06bpllZ30BN5nw2fF6dgAcQNrEN0bwvs34HHHR0x90=;
-        b=avkE8s1HkDYg7ZYMXlQ4Kw3Z5qWwXIas79ZgkelIohpjH/sdW5NrDzL2tNM4PRL45JRGjMmKhtUx9
-         UUPvgWECg==
-X-HalOne-ID: ba1794f8-9cf3-11ed-908c-11abd97b9443
+        bh=/NbmLZPfTUBNuvwpuIq7jzdYXjOyhys3va43pns/wME=;
+        b=H0mcFvUdtrxvOtOWjFbsUaf7rnbOCi8U9iXjFrJBOzDccJr1E5qa1ZOuQ3ZOe3mcbAztOHHM8l8/s
+         V3o0dAlBQ==
+X-HalOne-ID: 24b509b3-9cf2-11ed-a537-3df7d73157c4
 Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay1 (Halon) with ESMTPSA
-        id ba1794f8-9cf3-11ed-908c-11abd97b9443;
-        Wed, 25 Jan 2023 21:03:34 +0000 (UTC)
-Date:   Wed, 25 Jan 2023 22:03:33 +0100
+        by mailrelay2 (Halon) with ESMTPSA
+        id 24b509b3-9cf2-11ed-a537-3df7d73157c4;
+        Wed, 25 Jan 2023 20:52:16 +0000 (UTC)
+Date:   Wed, 25 Jan 2023 21:52:14 +0100
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Thomas Zimmermann <tzimmermann@suse.de>
 Cc:     airlied@gmail.com, daniel@ffwll.ch,
@@ -47,90 +47,73 @@ Cc:     airlied@gmail.com, daniel@ffwll.ch,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 04/10] drm/fbdev-generic: Initialize fb-helper
- structure in generic setup
-Message-ID: <Y9GZJcRKbaK0cYGo@ravnborg.org>
+Subject: Re: [PATCH v3 01/10] drm/client: Test for connectors before sending
+ hotplug event
+Message-ID: <Y9GWfi4EiCDPa6BJ@ravnborg.org>
 References: <20230125200415.14123-1-tzimmermann@suse.de>
- <20230125200415.14123-5-tzimmermann@suse.de>
+ <20230125200415.14123-2-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230125200415.14123-5-tzimmermann@suse.de>
+In-Reply-To: <20230125200415.14123-2-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 Hi Thomas,
 
-On Wed, Jan 25, 2023 at 09:04:09PM +0100, Thomas Zimmermann wrote:
-> Initialize the fb-helper structure immediately after its allocation
-> in drm_fbdev_generic_setup(). That will make it easier to fill it with
-> driver-specific values, such as the preferred BPP.
+On Wed, Jan 25, 2023 at 09:04:06PM +0100, Thomas Zimmermann wrote:
+> Test for connectors in the client code and remove a similar test
+> from the generic fbdev emulation. Do nothing if the test fails.
+> Not having connectors indicates a driver bug.
 > 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 > Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 > ---
->  drivers/gpu/drm/drm_fbdev_generic.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/drm_client.c        | 5 +++++
+>  drivers/gpu/drm/drm_fbdev_generic.c | 5 -----
+>  2 files changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-> index 135d58b8007b..63f66325a8a5 100644
-> --- a/drivers/gpu/drm/drm_fbdev_generic.c
-> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
-> @@ -385,8 +385,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
->  	if (dev->fb_helper)
->  		return drm_fb_helper_hotplug_event(dev->fb_helper);
+> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+> index 262ec64d4397..09ac191c202d 100644
+> --- a/drivers/gpu/drm/drm_client.c
+> +++ b/drivers/gpu/drm/drm_client.c
+> @@ -198,6 +198,11 @@ void drm_client_dev_hotplug(struct drm_device *dev)
+>  	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>  		return;
 >  
-> -	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
-> -
->  	ret = drm_fb_helper_init(dev, fb_helper);
->  	if (ret)
->  		goto err;
+> +	if (!dev->mode_config.num_connector) {
+> +		drm_dbg_kms(dev, "No connectors found, will not send hotplug events!\n");
+> +		return;
+This deserves a more visible logging - if a driver fails here it would
+be good to spot it in the normal kernel log.
+drm_info or drm_notice?
 
-From the documentation:
-The drm_fb_helper_prepare()
-helper must be called first to initialize the minimum required to make
-hotplug detection work.
-...
-To finish up the fbdev helper initialization, the
-drm_fb_helper_init() function is called.
-
-So this change do not follow the documentation as drm_fb_helper_init()
-is now called before drm_fb_helper_prepare()
-
-I did not follow all the code - but my gut feeling is that the
-documentation is right.
+The original code had this on the debug level, but when moving the log
+level could also be updated.
 
 	Sam
 
-
-> @@ -456,12 +454,12 @@ void drm_fbdev_generic_setup(struct drm_device *dev,
->  	fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
->  	if (!fb_helper)
->  		return;
-> +	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
->  
->  	ret = drm_client_init(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
->  	if (ret) {
-> -		kfree(fb_helper);
->  		drm_err(dev, "Failed to register client: %d\n", ret);
-> -		return;
-> +		goto err_drm_client_init;
->  	}
->  
->  	/*
-> @@ -484,5 +482,12 @@ void drm_fbdev_generic_setup(struct drm_device *dev,
->  		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
->  
->  	drm_client_register(&fb_helper->client);
+> +	}
 > +
-> +	return;
-> +
-> +err_drm_client_init:
-> +	drm_fb_helper_unprepare(fb_helper);
-> +	kfree(fb_helper);
-> +	return;
->  }
->  EXPORT_SYMBOL(drm_fbdev_generic_setup);
+>  	mutex_lock(&dev->clientlist_mutex);
+>  	list_for_each_entry(client, &dev->clientlist, list) {
+>  		if (!client->funcs || !client->funcs->hotplug)
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 0a4c160e0e58..3d455a2e3fb5 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -389,11 +389,6 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
+>  	if (dev->fb_helper)
+>  		return drm_fb_helper_hotplug_event(dev->fb_helper);
+>  
+> -	if (!dev->mode_config.num_connector) {
+> -		drm_dbg_kms(dev, "No connectors found, will not create framebuffer!\n");
+> -		return 0;
+> -	}
+> -
+>  	drm_fb_helper_prepare(dev, fb_helper, &drm_fb_helper_generic_funcs);
+>  
+>  	ret = drm_fb_helper_init(dev, fb_helper);
 > -- 
 > 2.39.0
