@@ -2,155 +2,139 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7C0C61D9D
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 12:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BE5C27C76
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 13:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235408AbjAYMNG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 07:13:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
+        id S235045AbjAYN7a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 08:59:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235387AbjAYMNF (ORCPT
+        with ESMTP id S234997AbjAYN73 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Jan 2023 07:13:05 -0500
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D079614E8C;
-        Wed, 25 Jan 2023 04:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674648782; x=1706184782;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BlYL5ZWxfpIGJfWCOvZGguBgymIDRUM5a8fZph+HpbU=;
-  b=IVms/xwalWAAxbxSySt4IZtjNoJfVX+X4bN6bFWWFIeJC4tNGsBhus6Y
-   Bv+2jVbRe75jnV0o+m4bmtbRLZcaGpu/aKmB9ifJLs/MYpqRiAXS82j6v
-   2yGtPPHHqWH9vcaEY/JhBdH5KyxGqlswSO9FK7ctcEtjVDUz6MWGAF0lQ
-   TMABESVcDhXcoGhriDVw8iG32Uw5qchAasm6RGwVX0HbF1GTJHd9fz//v
-   ZOxLM86mF/3lzcLlB2y4KYCTNUTt8IVaSEWRKWGYQYruBM80FzwSi4qP+
-   XFh5tmLm9GpeV9g4CS6GoAJU9FXKhubop6iSwOf+7AXcMA4ljDyq4sGG1
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="391044966"
-X-IronPort-AV: E=Sophos;i="5.97,245,1669104000"; 
-   d="scan'208";a="391044966"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2023 04:13:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10600"; a="725833858"
-X-IronPort-AV: E=Sophos;i="5.97,245,1669104000"; 
-   d="scan'208";a="725833858"
-Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Jan 2023 04:12:57 -0800
-Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pKee9-0007He-0L;
-        Wed, 25 Jan 2023 12:12:57 +0000
-Date:   Wed, 25 Jan 2023 20:12:30 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>, airlied@gmail.com,
-        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, javierm@redhat.com
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [Intel-gfx] [PATCH v2 06/10] drm/fb-helper: Initialize
- fb-helper's preferred BPP in prepare function
-Message-ID: <202301252016.vm7ksFra-lkp@intel.com>
-References: <20230124134010.30263-7-tzimmermann@suse.de>
+        Wed, 25 Jan 2023 08:59:29 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57E646167;
+        Wed, 25 Jan 2023 05:59:28 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AnBejNmxhmaKoDMZQNOPVEZbHsVwfu3zfmeGhruGuny7VgeUKT/6EW0PBbINyuspLMD0eGscFYzQBp6cPwvRXTQRsiXZCi/AfNYQWS+hu9FsQ6uOhwACVrmQQ0Lr7fn90amu5eg6sC/j9/Wd1GByG/Y2owQXUyVoqhQe8aKeYtPntE32y0xyJi3R0UAC5PWFo+Bkmr9Az8+hpLRbAABlKU4Gei9rrS5QR5pfvnkauTHQQOqYMerVPlV246Fv1z0cRh+bX8ydUNYJeLr5qRJ6S7S2mWIFSA4ptzuaxSThXJovTmy1YD9Td2VspGxWgXt35N7C/+2F3pSxJbO71QnbXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G0C92cg69NYaHSmZk+tOYWVfykMcPe+MU6akvrHPjmA=;
+ b=X6xMaYeSCpZqSalGGqY31B65V3m3gngNOOnFNdM9rEdSGEFfB9bQXPFMdPmAeFA/M9r34mlunFkXjIkVcIi6WdgPexyFWEERteck4u/LRhRbxatxkWAEhlVGUVm8sb10Mhm5OxUpENcFbngCWIrb87+d1xqBgsasqbFAnAMM/aDEPjBjfEgf+MW3cnDWI+kRqMxIan3MMiwWfP6ETRB5ykl+c7A9NojDPXLz80N7iRHh99ze7wpDysqCtJe70ixcxTMKuZwPEsbI3VRltqraHU9eylXtX8AvbcwP+y9S5H3FfX8naL9zOORJFMTdWuuQtLC4gHYvO5ZnYvyFigZWIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G0C92cg69NYaHSmZk+tOYWVfykMcPe+MU6akvrHPjmA=;
+ b=iuZ4jafiUdM7SZXP8h3dZvHc+TeAG9QYn2CjcaDYWrjYbjIIxwTteJ9m85rCOsgucbFe5KiwmEg9xPtBTR3RoASB0iS1lmZSo+5QLjdce/Qpd1GJSk8v1yJEzPryUbDQgHnS272AdH5XYDxRfqGtuwfohmOMSVgxYFtk4NrtxxlYeMjw3v/5LBMkwWFrX87gG7eZpWYDNo9joeD/4AmGdUKySJfNbdgu7XE9XnhMYRvLfvhQHCF4PWppa0onPyNCD7hnrVL0sDBjv+SMdLR80ct1ctdusR13zn+hngOxkMC4R7xrJAsujpzeREsWHpiSyhwmPGX3lXZ1+EniLNosSg==
+Received: from DM6PR21CA0014.namprd21.prod.outlook.com (2603:10b6:5:174::24)
+ by IA1PR12MB6018.namprd12.prod.outlook.com (2603:10b6:208:3d6::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.33; Wed, 25 Jan
+ 2023 13:59:26 +0000
+Received: from DM6NAM11FT039.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:174:cafe::d7) by DM6PR21CA0014.outlook.office365.com
+ (2603:10b6:5:174::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.3 via Frontend
+ Transport; Wed, 25 Jan 2023 13:59:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DM6NAM11FT039.mail.protection.outlook.com (10.13.172.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6023.16 via Frontend Transport; Wed, 25 Jan 2023 13:59:26 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 25 Jan
+ 2023 05:59:20 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 25 Jan
+ 2023 05:59:20 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Wed, 25 Jan 2023 05:59:19 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/25] 4.14.304-rc1 review
+In-Reply-To: <20230122150217.788215473@linuxfoundation.org>
+References: <20230122150217.788215473@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230124134010.30263-7-tzimmermann@suse.de>
+Message-ID: <7b8da7ec-9016-4918-ac8e-53bd3385c457@rnnvmail202.nvidia.com>
+Date:   Wed, 25 Jan 2023 05:59:19 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT039:EE_|IA1PR12MB6018:EE_
+X-MS-Office365-Filtering-Correlation-Id: 39341fd1-ed0e-4214-579d-08dafedc5eef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4vWh2TS/gX4XvMKUfoeDqx1TmkRYmbpMkuHyuEEEkivdZAb4bejYOVw8H28572wbxEacO+RHxZusvL0l0NAF2FT/B9z5Ee5PlMTu05ZShCC54RhXhiWRW3sQhwKuGX8vXsh1r4XOByvy4PdErXoZIh32f8b1Q9yy+LkxG4nnXsAyzm1qpXH2i/j7G44H7zwi2FgqWC+57OTy2A2/tLOZkLzo7IG+QdSbkqPwmEhDmD9+M8kol7yCg9k0TJ5Nh/71oTuJHoL7mZOG7VWSbQZGGGnQ8DRq719ZqpZj97aoU7VNuXqVcUMIgHotkdWA6NGWuNtmQtyPcUrinLCFxUAe4nE/o01sTuMbb1qJ7X98Vor+vONhavZxBwQmM/SR9FYGPUDOamIhxUgr3y+hVFey1GhXabAOaJbRvNx0DjMJDaYWiejSoT0oUqEiDYYqQHD+AuQyH+K2uIjk9NNz+fTaaiudJwcgFZMJn53ocYlph3I3l4jCxoXfqHOkG1PYVBxUJtFJsl15lmSzLOVl6boNs0qmb66nyAs+KZpfV5uFuV270ruSy9sbh1x5UhBON5N2AJwUtXa3EfylpItfye88N1uRRaksy42epCrnBQHCfx3W7zXQ/2nPiLNzuCNft6rvpUwPuJ+seQGLznaXmBD8X00tB/7ID9HMKIRzV1s+jDzgz16dQ2Jo9P9hOdefWg/37KQ12/FIfcr5SEzjA/izaDMfwfJUtLRBuBmjvZSP8wUyamm6ep9RqENH+1k0VwgCwiaD17vi8gI+G7dWyRB8s7LCWK0cdKKZIhFDOLNBjoY=
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(39860400002)(396003)(136003)(346002)(451199018)(36840700001)(40470700004)(46966006)(336012)(54906003)(316002)(4326008)(426003)(8676002)(70206006)(47076005)(70586007)(6916009)(5660300002)(7416002)(41300700001)(2906002)(356005)(31686004)(26005)(966005)(478600001)(186003)(36860700001)(7636003)(40460700003)(31696002)(8936002)(82310400005)(40480700001)(86362001)(82740400003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2023 13:59:26.3788
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39341fd1-ed0e-4214-579d-08dafedc5eef
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT039.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6018
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thomas,
+On Sun, 22 Jan 2023 16:04:00 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.304 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 24 Jan 2023 15:02:08 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.304-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I love your patch! Yet something to improve:
+All tests passing for Tegra ...
 
-[auto build test ERROR on 7d3e7f64a42d66ba8da6e7b66a8d85457ef84570]
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/drm-client-Test-for-connectors-before-sending-hotplug-event/20230124-214220
-base:   7d3e7f64a42d66ba8da6e7b66a8d85457ef84570
-patch link:    https://lore.kernel.org/r/20230124134010.30263-7-tzimmermann%40suse.de
-patch subject: [Intel-gfx] [PATCH v2 06/10] drm/fb-helper: Initialize fb-helper's preferred BPP in prepare function
-config: x86_64-randconfig-a014-20230123 (https://download.01.org/0day-ci/archive/20230125/202301252016.vm7ksFra-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/70e38534e74e4d12bb02b3b352bba2aed417f541
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Thomas-Zimmermann/drm-client-Test-for-connectors-before-sending-hotplug-event/20230124-214220
-        git checkout 70e38534e74e4d12bb02b3b352bba2aed417f541
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/gpu/drm/gma500/
+Linux version:	4.14.304-rc1-ged199ef62346
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/drm/gma500/framebuffer.c:412:44: error: too many arguments to function call, expected 3, have 4
-           drm_fb_helper_prepare(dev, fb_helper, 32, &psb_fb_helper_funcs);
-           ~~~~~~~~~~~~~~~~~~~~~                     ^~~~~~~~~~~~~~~~~~~~
-   include/drm/drm_fb_helper.h:295:20: note: 'drm_fb_helper_prepare' declared here
-   static inline void drm_fb_helper_prepare(struct drm_device *dev,
-                      ^
->> drivers/gpu/drm/gma500/framebuffer.c:421:46: error: too few arguments to function call, expected 2, have 1
-           ret = drm_fb_helper_initial_config(fb_helper);
-                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~          ^
-   include/drm/drm_fb_helper.h:459:19: note: 'drm_fb_helper_initial_config' declared here
-   static inline int drm_fb_helper_initial_config(struct drm_fb_helper *fb_helper,
-                     ^
-   2 errors generated.
-
-
-vim +412 drivers/gpu/drm/gma500/framebuffer.c
-
-   397	
-   398	int psb_fbdev_init(struct drm_device *dev)
-   399	{
-   400		struct drm_fb_helper *fb_helper;
-   401		struct drm_psb_private *dev_priv = to_drm_psb_private(dev);
-   402		int ret;
-   403	
-   404		fb_helper = kzalloc(sizeof(*fb_helper), GFP_KERNEL);
-   405		if (!fb_helper) {
-   406			dev_err(dev->dev, "no memory\n");
-   407			return -ENOMEM;
-   408		}
-   409	
-   410		dev_priv->fb_helper = fb_helper;
-   411	
- > 412		drm_fb_helper_prepare(dev, fb_helper, 32, &psb_fb_helper_funcs);
-   413	
-   414		ret = drm_fb_helper_init(dev, fb_helper);
-   415		if (ret)
-   416			goto free;
-   417	
-   418		/* disable all the possible outputs/crtcs before entering KMS mode */
-   419		drm_helper_disable_unused_functions(dev);
-   420	
- > 421		ret = drm_fb_helper_initial_config(fb_helper);
-   422		if (ret)
-   423			goto fini;
-   424	
-   425		return 0;
-   426	
-   427	fini:
-   428		drm_fb_helper_fini(fb_helper);
-   429	free:
-   430		kfree(fb_helper);
-   431		return ret;
-   432	}
-   433	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Jon
