@@ -2,183 +2,211 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 359D5C05027
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 12:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77871C61D97
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 12:56:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjAZMpz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Jan 2023 07:45:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
+        id S236001AbjAZM4Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Jan 2023 07:56:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjAZMpx (ORCPT
+        with ESMTP id S236426AbjAZM4X (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Jan 2023 07:45:53 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87CA53C29E;
-        Thu, 26 Jan 2023 04:45:49 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id me3so4698969ejb.7;
-        Thu, 26 Jan 2023 04:45:49 -0800 (PST)
+        Thu, 26 Jan 2023 07:56:23 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD516952B;
+        Thu, 26 Jan 2023 04:55:56 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id v6so4787930ejg.6;
+        Thu, 26 Jan 2023 04:55:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+FCFYtWUQP7YZSD2bSYpnKSDHJhXLIcuGKjaBrblv/o=;
-        b=HwOb5ekyj/73Vrq1+CmBjw79letwxYvL1tvjqzYGgtzCXgt+GZSCMtv6TWci31lTpi
-         TCOQt/8T0ur+bEZvcsJSWMLLvwhnNV9gDRcB9YOZczFmnQh01K2gqjQvYv69fNErsYzk
-         hW+3Zqpv9yYGBkagqp0OmYlXQ4zjgalEubTy9kxJThNU7zjzukiZ4ivAT8VaHSBDArV7
-         5jVqZwRZuhLplSZdJDoGGLXeeR+95v9cylD8iX+g0m1H653FBhmgs5bSC/0PZLP+8sN2
-         u6mqNhJgKQgnQOdHQoYwoBe32enp0ZGOlaDr42bhyxBzbDNFakaTy5UNXsJNEWJLlYQ+
-         6HDQ==
+        bh=dOHjVOgAZUX0rRLXe2h9UYJji2SuNMNcGeYAyIod1qY=;
+        b=L1uyLtyXQoje6+jhddxHqy6spvTqXhZmDlWGR1FGBeqikj/BElV5p5oMAF+0nXzFqg
+         YJ6EU0bx4h/H3ACfThwfp+KfoaI3NBfrvOi3+qnkJTnYBVCdIfDPTJmZSTHNfpsH+Bpl
+         YUIY9HhRzgyL7H1V6ZMp/Grx3R8mUbMZC+L+sImzx3XkjwYX9VG46L+1i5MroXv+K/O5
+         1wFYU5aLv1eQwwlaEQYuHS8ZFShAiO9gYS7jhO7qhkTi0d7AVOnUY52r00LwhnVh3NBb
+         0ayj7qJ8z6gH12TvYbh5tmPoaC8141wYBkmCBLlVGVs+RszAr1sjONlkROn9BRa6p505
+         jG1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+FCFYtWUQP7YZSD2bSYpnKSDHJhXLIcuGKjaBrblv/o=;
-        b=WrRnf09WHFQ9wsIybU2vHi919/M4LeALWcvzbhxdCDtUEW4CqG07rczu615whWDQ6g
-         7thspNoF+w9dFYy7rcbeLes530OP69TU4q4A99bdaC12UKGjdc39jzFWVNvepGReBmSU
-         kWjhwMlPbqJa+TxcyXhhq8dFYirZtcNant2ab5cqDP5USNMPIKGPkyHAbWVXE+M1TPVN
-         MJCLinilw92P4Uk9SIf0Noi1hD1bqjxNXQ1wP9X8ckSm+ZL9OJfxQiO5zVa4QV2tiYoB
-         qOT82PsBGgS74UwdyhPs/rASOZHqTzR4P3V5hAkxOgiBnyna6cIMOPUvJJ3ocLuQfR3R
-         BYmA==
-X-Gm-Message-State: AO0yUKU036bn0KSrs071NKgVCz+5mBQOwNJuRpd/agkKUgwqdy1wCWx7
-        edLxQ5UwpOYGeziu2475P61Aceuinzs=
-X-Google-Smtp-Source: AK7set9rnQmxqteLXa/LHEOon567larfBCk2A34cacOe8q4briCydO6nBpdandlx7Lg6SELaY2rdVw==
-X-Received: by 2002:a17:906:d0c2:b0:878:5fdc:3850 with SMTP id bq2-20020a170906d0c200b008785fdc3850mr2119869ejb.48.1674737147805;
-        Thu, 26 Jan 2023 04:45:47 -0800 (PST)
+        bh=dOHjVOgAZUX0rRLXe2h9UYJji2SuNMNcGeYAyIod1qY=;
+        b=onI9TCX3JID0a9HOGIasV0uNqUeUtQNgcqu2Oh1/rNGJJb0DuQ6KT/HCqfinQ94GUd
+         jruLTlTsKcwuJpUPTmqOefnmbozFX3SKdbGOm3v2Kwhom0JAbJOc4aSNKlQkezFvQa/v
+         6Uu8fDE3aLinmcSLtmg4WJZxiBLhf84sla4Jf3fIvDNO0LSu0Kc0UIEVh6U7i6peZIL0
+         oKgasqINqmzF3apy5pfesXndicJzCA/k9E47VMRoV4XYF6+KfdDEXDSD/od7tknpLDBc
+         n3BvxEemOY0Pn+XGJJjSDamyraA1BLw5SRStdMMM5PbhFFuXrtekLkwpuZRc+TqeaiFJ
+         WzXw==
+X-Gm-Message-State: AFqh2kpaLknwaXzlXn3/vD6mpYNM3eBnSQIkpI6fqhLx/9n+V/8qaSvz
+        dsqjVajRdsXhRkmEMptKrlHHzRZ2PPY=
+X-Google-Smtp-Source: AMrXdXv1qtoWxCvb7UPySKi4Cz07AO2uqjYmCsCuDFvI7KPz5yoPXz54F+eB4UAqkcbPLT+k2eEcwg==
+X-Received: by 2002:a17:907:674c:b0:7c4:fe36:5b80 with SMTP id qm12-20020a170907674c00b007c4fe365b80mr39044656ejc.62.1674737754680;
+        Thu, 26 Jan 2023 04:55:54 -0800 (PST)
 Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id gn19-20020a1709070d1300b0087862f45a29sm545286ejc.174.2023.01.26.04.45.46
+        by smtp.gmail.com with ESMTPSA id cm20-20020a170907939400b00871cb1b8f63sm564099ejc.26.2023.01.26.04.55.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 04:45:47 -0800 (PST)
-Date:   Thu, 26 Jan 2023 13:45:45 +0100
+        Thu, 26 Jan 2023 04:55:54 -0800 (PST)
+Date:   Thu, 26 Jan 2023 13:55:52 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Tom Rix <trix@redhat.com>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, jonathanh@nvidia.com,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: tegra186: remove unneeded loop in
- tegra186_gpio_init_route_mapping()
-Message-ID: <Y9J1+fEErNzaN0fq@orome>
-References: <20230125212631.749094-1-trix@redhat.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Johan Hovold <johan@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>
+Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
+ usage
+Message-ID: <Y9J4WAFyXyV/nqlG@orome>
+References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hpFkZqyqoVYLb6Bp"
+        protocol="application/pgp-signature"; boundary="A9WxDdyRC/ykeBGC"
 Content-Disposition: inline
-In-Reply-To: <20230125212631.749094-1-trix@redhat.com>
+In-Reply-To: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
 User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---hpFkZqyqoVYLb6Bp
+--A9WxDdyRC/ykeBGC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 25, 2023 at 01:26:31PM -0800, Tom Rix wrote:
-> Reviewing the j loop over num_irqs_per_bank, in the code previous
-> to the fixes: commit, every j was used. now only when j =3D=3D 0.
-> If only j =3D=3D 0 is used, there is no need for the loop.
+On Tue, Jan 24, 2023 at 08:57:23PM +0100, Daniel Lezcano wrote:
 >=20
-> Fixes: 210386804745 ("gpio: tegra186: Support multiple interrupts per ban=
-k")
-> Signed-off-by: Tom Rix <trix@redhat.com>
-> ---
->  drivers/gpio/gpio-tegra186.c | 40 ++++++++++++++++--------------------
->  1 file changed, 18 insertions(+), 22 deletions(-)
+> Hi,
 >=20
-> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> index 9941f35af823..14c872b6ad05 100644
-> --- a/drivers/gpio/gpio-tegra186.c
-> +++ b/drivers/gpio/gpio-tegra186.c
-> @@ -677,7 +677,7 @@ static const struct of_device_id tegra186_pmc_of_matc=
-h[] =3D {
->  static void tegra186_gpio_init_route_mapping(struct tegra_gpio *gpio)
->  {
->  	struct device *dev =3D gpio->gpio.parent;
-> -	unsigned int i, j;
-> +	unsigned int i;
->  	u32 value;
-> =20
->  	for (i =3D 0; i < gpio->soc->num_ports; i++) {
-> @@ -699,27 +699,23 @@ static void tegra186_gpio_init_route_mapping(struct=
- tegra_gpio *gpio)
->  			 * On Tegra194 and later, each pin can be routed to one or more
->  			 * interrupts.
->  			 */
-> -			for (j =3D 0; j < gpio->num_irqs_per_bank; j++) {
-> -				dev_dbg(dev, "programming default interrupt routing for port %s\n",
-> -					port->name);
-> -
-> -				offset =3D TEGRA186_GPIO_INT_ROUTE_MAPPING(p, j);
-> -
-> -				/*
-> -				 * By default we only want to route GPIO pins to IRQ 0. This works
-> -				 * only under the assumption that we're running as the host kernel
-> -				 * and hence all GPIO pins are owned by Linux.
-> -				 *
-> -				 * For cases where Linux is the guest OS, the hypervisor will have
-> -				 * to configure the interrupt routing and pass only the valid
-> -				 * interrupts via device tree.
-> -				 */
-> -				if (j =3D=3D 0) {
-> -					value =3D readl(base + offset);
-> -					value =3D BIT(port->pins) - 1;
-> -					writel(value, base + offset);
-> -				}
-> -			}
-> +			dev_dbg(dev, "programming default interrupt routing for port %s\n",
-> +				port->name);
+> does anyone know what is the purpose of the get_thermal_instance() usage =
+in
+> this code:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tree/dr=
+ivers/thermal/tegra/soctherm.c?h=3Dthermal/linux-next#n623
+>=20
+> The driver is using a function which is reserved for the thermal core. It
+> should not.
+>=20
+> Is the following change ok ?
+>=20
+> diff --git a/drivers/thermal/tegra/soctherm.c
+> b/drivers/thermal/tegra/soctherm.c
+> index 220873298d77..5f552402d987 100644
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -620,9 +620,8 @@ static int tegra_thermctl_set_trip_temp(struct
+> thermal_zone_device *tz, int trip
+>  				continue;
+>=20
+>  			cdev =3D ts->throt_cfgs[i].cdev;
+> -			if (get_thermal_instance(tz, cdev, trip_id))
+> -				stc =3D find_throttle_cfg_by_name(ts, cdev->type);
+> -			else
+> +			stc =3D find_throttle_cfg_by_name(ts, cdev->type);
+> +			if (!stc)
+>  				continue;
+>=20
+>  			return throttrip_program(dev, sg, stc, temp);
+> @@ -768,9 +767,9 @@ static int tegra_soctherm_set_hwtrips(struct device
+> *dev,
+>  			continue;
+>=20
+>  		cdev =3D ts->throt_cfgs[i].cdev;
+> -		if (get_thermal_instance(tz, cdev, trip))
+> -			stc =3D find_throttle_cfg_by_name(ts, cdev->type);
+> -		else
 > +
-> +			offset =3D TEGRA186_GPIO_INT_ROUTE_MAPPING(p, 0);
-> +
-> +			/*
-> +			 * By default we only want to route GPIO pins to IRQ 0. This works
-> +			 * only under the assumption that we're running as the host kernel
-> +			 * and hence all GPIO pins are owned by Linux.
-> +			 *
-> +			 * For cases where Linux is the guest OS, the hypervisor will have
-> +			 * to configure the interrupt routing and pass only the valid
-> +			 * interrupts via device tree.
-> +			 */
-> +			value =3D readl(base + offset);
-> +			value =3D BIT(port->pins) - 1;
-> +			writel(value, base + offset);
+> +		stc =3D find_throttle_cfg_by_name(ts, cdev->type);
+> +		if (!stc)
+>  			continue;
+>=20
+>  		ret =3D throttrip_program(dev, sg, stc, temperature);
 
-This was supposed to be a placeholder so that a more complex routing
-could be added later on. Maybe adding "j" to the debug message would
-have made that a bit clearer.
+There's a small difference in behavior after applying this patch. Prior
+to this I get (on Tegra210):
 
-Anyway, no complex routing has been needed so far, so I don't have a
-strong objection to this. We can always add it back if we ever need it.
+	[   12.354091] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips,=
+ will use critical trips as shut down temp
+	[   12.379009] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when cpu reaches 102500 mC
+	[   12.388882] tegra_soctherm 700e2000.thermal-sensor: programming throttl=
+e for cpu to 102500
+	[   12.401007] tegra_soctherm 700e2000.thermal-sensor: throttrip: will thr=
+ottle when cpu reaches 102500 mC
+	[   12.471041] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when gpu reaches 103000 mC
+	[   12.482852] tegra_soctherm 700e2000.thermal-sensor: programming throttl=
+e for gpu to 103000
+	[   12.482860] tegra_soctherm 700e2000.thermal-sensor: throttrip: will thr=
+ottle when gpu reaches 103000 mC
+	[   12.485357] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when pll reaches 103000 mC
+	[   12.501774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when mem reaches 103000 mC
 
-On the other hand, we don't do much in the loop, so leaving it as-is
-wouldn't be harmful either.
+and after these changes, it turns into:
 
-I'll leave it up to Linus and Bartosz to decide. If they want to pick it
-up:
+	[   12.447113] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips,=
+ will use critical trips as shut down temp
+	[   12.472300] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when cpu reaches 102500 mC
+	[   12.481789] tegra_soctherm 700e2000.thermal-sensor: programming throttl=
+e for cpu to 102500
+	[   12.495447] tegra_soctherm 700e2000.thermal-sensor: throttrip: will thr=
+ottle when cpu reaches 102500 mC
+	[   12.496514] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when gpu reaches 103000 mC
+	[   12.510353] tegra_soctherm 700e2000.thermal-sensor: programming throttl=
+e for gpu to 103000
+	[   12.526856] tegra_soctherm 700e2000.thermal-sensor: throttrip: will thr=
+ottle when gpu reaches 103000 mC
+	[   12.528774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when pll reaches 103000 mC
+	[   12.569352] tegra_soctherm 700e2000.thermal-sensor: programming throttl=
+e for pll to 103000
+	[   12.577635] tegra_soctherm 700e2000.thermal-sensor: throttrip: will thr=
+ottle when pll reaches 103000 mC
+	[   12.590952] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shu=
+t down when mem reaches 103000 mC
+	[   12.600783] tegra_soctherm 700e2000.thermal-sensor: programming throttl=
+e for mem to 103000
+	[   12.609204] tegra_soctherm 700e2000.thermal-sensor: throttrip: will thr=
+ottle when mem reaches 103000 mC
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+The "programming throttle ..." messages are something I've added locally
+to trace what gets called. So it looks like for "pll" and "mem" thermal
+zones, we now program trip points whereas we previously didn't.
 
---hpFkZqyqoVYLb6Bp
+I'll take a closer look to see if we can replace the calls to
+get_thermal_instance() by something else.
+
+Thierry
+
+--A9WxDdyRC/ykeBGC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPSdfYACgkQ3SOs138+
-s6GpZw/+Kc64MG4sQ0jny86UO9mDaWC1dXVlfbAZNtpjFUPZyD4bGTjl59O5cuO+
-qvo7GDjGKLEZVNstArWRbhcscIdorCaHAzH5tnfHdx2DLUJxOeXcFsxKt3/gDpao
-00Xi0TSipXG9I4Vd7LkejT/21IU60s+DU01y5nzFZ1CVziz2R3C9/sDWmCs+jU7O
-8WHKU6dmxYz0ahG0x9v+7D5ol3Ha/0fF8h15jnjGquYeq0poZQXk7d0gBi+xjWvY
-xEp9HiOt+PDvdxEuNwSecC8hqQHtpU87WDCFm18dC7vzsmgNc4DNi4X+f+G7kg0z
-GoS6+xOdb+vtbAdX00v/kIpsqRsYCx1qBVNB3F2qrpEz7mplV+DUcn5apXcQ/yCh
-9wO9rAPrla9m/xDRsz/RScMtnihbR3ZMIw5nk7lXSIuZ8L3siBMCAfZa4FnSK6Gq
-c/wopq6HF1Y8ZS1BMBTjtDS9n9Vyb797nNhTUH+SAcpj8xfbwiMpGtzfPs390gWF
-MDeW11BFnPOsJVaO4BN9jus7Km7UJr4D3lIkuL8tFg7eFO9zUMHnz0gAMlQndOWL
-FK9eOuRhRf1NDlE7AlUboCAt1AspD9P8ReIWXv8h9FZcKu+NkLfmKJl3lo4E1iwP
-MSmkTNSO8cRq5wZ/L72Utoe0POzUruc33/LXeXWslWkzZRw1+hY=
-=Azhb
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPSeFUACgkQ3SOs138+
+s6EqwxAAtLTapa6oayggK4aPNTYkNjnKTeqLxhazJHvW8NNNf3KjMBoOwFEkzv2Q
+LQFmlqfSqfeTEBkVA6U1b8qQedI2xxOfww+i9KCv47FBF2jfKjFAjQBzrffZjulr
+ixPfacly61f/a/8nvsrLcjamhQ5TlqIriMyYpnL5ASQXZ1Ao3VW2G7Sl+Hw6YpWc
++r+5OXLe+EGAhOT7k66djDDl9X9q33vB6opp+fF4SbM07KQv5nunSK5FOISG9vpy
+gYZLn7bq2AMcwRf9G7+1tGIgA9ROjFO6zjSow/QOTngywuUa/yfYX0okFmn4HSgU
+uEdpcSbyderE0ZlM51lv/Ro1P4I3eSbfK4WUUei0bWFD8/+sb01yut+sowZmrdB6
+sH8QW0VhqnK2NdjKn9H4phaJOymo/EF9qwQ1WryqtukNeGDhiWjQZsZPzZIiR3AF
+qpM+H+FIwrqoosovwsfeGoyZ2q+f3wmzc8DA/WEp74BUQJCmr5Zysq8mVjp8oA2q
+waKStPprkRtL3f/gS/x+lQd7wVw30xcRvvFRPnr9gzKQIguXTT1HmNXFSWUlTNWP
+B2pj1zsHUrKg1CKMJlxGzBjMPkfyS49Cn5ieKYHpc/LlV5FpwbC0TrQYgOobnN+J
+tEzQitYy3nNMzoeWT5x37MfSWjKhI5jpfoYK84BlKuMgN1gGL5w=
+=iYA1
 -----END PGP SIGNATURE-----
 
---hpFkZqyqoVYLb6Bp--
+--A9WxDdyRC/ykeBGC--
