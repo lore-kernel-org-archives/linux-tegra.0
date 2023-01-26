@@ -2,124 +2,163 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6407C54E94
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 16:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FED3C54EED
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 16:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232566AbjAZQHL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Jan 2023 11:07:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45016 "EHLO
+        id S232686AbjAZQ0R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Jan 2023 11:26:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230328AbjAZQHJ (ORCPT
+        with ESMTP id S232717AbjAZQ0F (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Jan 2023 11:07:09 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6303C1E1C7
-        for <linux-tegra@vger.kernel.org>; Thu, 26 Jan 2023 08:07:07 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so1470497wmq.0
-        for <linux-tegra@vger.kernel.org>; Thu, 26 Jan 2023 08:07:07 -0800 (PST)
+        Thu, 26 Jan 2023 11:26:05 -0500
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE3B36FD32
+        for <linux-tegra@vger.kernel.org>; Thu, 26 Jan 2023 08:25:31 -0800 (PST)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-4ff1fa82bbbso29893347b3.10
+        for <linux-tegra@vger.kernel.org>; Thu, 26 Jan 2023 08:25:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xuNSzJtmpNsY7bVQ5+k2qAox3kBv/qeRlb42lxnZEE0=;
-        b=dyVE5P0xpqEy9/ySS9hzcdskGDW4H7vI1B/vMwlm4ME+vReu5RKWSYXchoTHvvI2Ep
-         kHw7OVSOt9vlr6gcLJtRCD4WkVNc+RhoaqURbsBvLwk6HNushOvf6HPk6i8VaUHchzbr
-         1YlrPpkodjvwpZ0b3aRx06y8O4SwN/4LR3ihhJ+ifY7CU9YBwuvvVeGZRYprdUIzjTT5
-         Xzn5VMgqGmMt9SETGW0YgeUeHgP8DJ1oZKI3voXu77pBhvLwUKV4b8IAiWy4KSSFI9zR
-         wUJtTDR0gcfLUv5nw+aGlyZKbzpblSIwOg7r05TYRV3fn75tvwRgmiBNfppkUxhwWkc/
-         WAvA==
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rUFKXit/Slxp5jNkRtm2qJfbudUdkwg/5ym9L9/2xFg=;
+        b=BrNExWGHbV1NeR+vu2Js5zAqwDKTAmFhHgoWjYZ0a3qbH7rru8W3QViuclznskZkVo
+         6Q5eqrGX7jMOOdvE9K9lsVmJpHX9roidNQoqd4ah6qpZ3z5AR/LzfumpWsF7qxr+L/L7
+         2EeJAw9MATGkA5VBf2UwOc7KCg21F0CUspP8pGqPmL78PHbmYrJgHGcDXuiJf+tpyEq5
+         mYd3qiJmdB/mmqbT25mkgF6e/9yHOLIF4ZmJU2qiUjSg09+a1L9BOQF70sP/z/t1hEtG
+         N3QguNCw23qX8RL/9XVLJb/vAzwIwx19tcG6Myly1SJ+d6fdbBsCbrW+Wp9iSE9SLjFe
+         r7Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xuNSzJtmpNsY7bVQ5+k2qAox3kBv/qeRlb42lxnZEE0=;
-        b=oRpPsGkgJNnH5tZFA+RqwZQn6T7bfbK2AJQPLTknUHErgQV8q04heB7KowXV6NVNk7
-         Aw60MjxwrWBSXBqVXYvZ0Ua/WerJXyn5eivSmPLvS/kbkGUAxK6mNgG4w0mJip6qlv7G
-         QU7st02O/wG1ylrZlAObDmtVjIa0Z932TUY2nQFtGC3Q17CsnGXV1UzGA5Ii+rAeDiPx
-         s4yW3WNR2vU8YTnlmhWlO3fdjn5gX3ESpxL1KEaZNIVGgn/06w/YMGmWCbjOADlNfc25
-         nXfOC81tw47WvB0hQfML6sGWSWasQOfoj4Pp00a3peHv3aU6rU7b4q1jvA1xWA3sGutv
-         J0tA==
-X-Gm-Message-State: AFqh2krdwDA78FdJdOy5fxRBUY1um17EvcButyzn8vSfN6ZWI3uo8xBf
-        EtMaXRr+yFF5Y5zWi3AztGhjcQ==
-X-Google-Smtp-Source: AMrXdXsh8bwR247dixXSDi95M6c+w18jjNkqcOsvdu0ypYDTZLSo61S6PgzKwemSZph29yFcRWvhSA==
-X-Received: by 2002:a05:600c:4f42:b0:3db:2e62:1d69 with SMTP id m2-20020a05600c4f4200b003db2e621d69mr25732257wmq.31.1674749225851;
-        Thu, 26 Jan 2023 08:07:05 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id p22-20020a1c5456000000b003da286f8332sm1808472wmi.18.2023.01.26.08.07.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 08:07:05 -0800 (PST)
-Message-ID: <e716eda4-edfc-5946-4e6f-42aab5f73b0f@linaro.org>
-Date:   Thu, 26 Jan 2023 17:07:04 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rUFKXit/Slxp5jNkRtm2qJfbudUdkwg/5ym9L9/2xFg=;
+        b=isoeWH8f3ZJ1rwZ3Dk+ldEM5Kw3XSRKORk9VP3gCLGOigFExZxSucnxkFtylR7Ofyl
+         lrIr3CsVNJ/TbqVYHk13wO3CK4mnLqDeiFOs8mMsOOqUuxKYG7xcHL0ttkfvHYoT+zA8
+         7GkruBtgog6COvxgkM4tdf2fNlQSjiEom6OaKpSJDWp6mgLOMeUwZmSSNVt0O4bK2v7j
+         PoshYOsJmUzzcSZ1opMTGfGIxd60PHMI4XeDn6Jb9s/W3KvR+CNgv7LbG20oYl/FHy0K
+         pIWgdxul4EW3wsd2W/RPsWD9jU44N40dr4k36TrUbR32izx+cVVKVPbxSA5HhztpxBvV
+         h+YA==
+X-Gm-Message-State: AFqh2kpg/tFwqPkBIZ8WkoL1YkcvzzQmIguuV54rHJO/vC0FmB28E3bp
+        3wmguvNGf+/5n2XtyeYHa2PAKOobvOCqP64ZeVdPQw==
+X-Google-Smtp-Source: AMrXdXvRVLeaIi85wIrJBS5zRkOyr5/BQ66PCe0y1aLe9hmWIu7jqHBlhyy2SYPoXbE9x4WotKo1j1aRHLVU6Hd1LsI=
+X-Received: by 2002:a81:1b8b:0:b0:4ff:774b:7ffb with SMTP id
+ b133-20020a811b8b000000b004ff774b7ffbmr3541685ywb.218.1674750315051; Thu, 26
+ Jan 2023 08:25:15 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] thermal: tegra-bpmp: Check if BPMP supports trip points
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20221129153914.2699041-1-cyndis@kapsi.fi>
- <Y9KTrO+WqJJwuEDf@orome> <a08355e1-c393-2b2e-4a44-360e08607bb9@linaro.org>
- <Y9KfcSwYt7utbcg5@orome>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <Y9KfcSwYt7utbcg5@orome>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20230125083851.27759-1-surenb@google.com> <20230125083851.27759-2-surenb@google.com>
+ <Y9JFFYjfJf9uDijE@kernel.org> <Y9KTUw/04FmBVplw@kernel.org> <Y9KXjLaFFUvqqdd4@casper.infradead.org>
+In-Reply-To: <Y9KXjLaFFUvqqdd4@casper.infradead.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 26 Jan 2023 08:25:03 -0800
+Message-ID: <CAJuCfpHs4wvQpitiAYc+PQX3LnitF=wvm=zVX7CzMozzmnbcnw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] mm: introduce vma->vm_flags modifier functions
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mike Rapoport <rppt@kernel.org>, akpm@linux-foundation.org,
+        michel@lespinasse.org, jglisse@google.com, mhocko@suse.com,
+        vbabka@suse.cz, hannes@cmpxchg.org, mgorman@techsingularity.net,
+        dave@stgolabs.net, liam.howlett@oracle.com, peterz@infradead.org,
+        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
+        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
+        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
+        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
+        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
+        jannh@google.com, shakeelb@google.com, tatashin@google.com,
+        edumazet@google.com, gthelen@google.com, gurua@google.com,
+        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
+        leewalsh@google.com, posk@google.com, will@kernel.org,
+        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
+        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        qianweili@huawei.com, wangzhou1@hisilicon.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, l.stach@pengutronix.de,
+        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com,
+        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
+        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
+        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
+        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
+        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
+        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
+        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, miklos@szeredi.hu,
+        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
+        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
+        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
+        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
+        loongarch@lists.linux.dev, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
+        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, kexec@lists.infradead.org,
+        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
+        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 26/01/2023 16:42, Thierry Reding wrote:
-> On Thu, Jan 26, 2023 at 04:08:03PM +0100, Daniel Lezcano wrote:
->>
->> Hi Thierry,
->>
->> On 26/01/2023 15:52, Thierry Reding wrote:
->>> On Tue, Nov 29, 2022 at 05:39:14PM +0200, Mikko Perttunen wrote:
->>>> From: Mikko Perttunen <mperttunen@nvidia.com>
->>>>
->>>> Check if BPMP supports thermal trip points, and if not,
->>>> do not expose the .set_trips callback to the thermal core
->>>> framework. This can happen in virtualized environments
->>>> where asynchronous communication with VM BPMP drivers is not
->>>> available.
->>>>
->>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>> ---
->>>>    drivers/thermal/tegra/tegra-bpmp-thermal.c | 52 +++++++++++++++++++++-
->>>>    1 file changed, 51 insertions(+), 1 deletion(-)
->>>
->>> Applied, thanks.
->>
->> I prefer you provide an Acked-by and I take the thermal related patches.
->> Especially in this period where we are reworking the framework with the
->> thermal trip points ;)
-> 
-> Sorry, my bad. I misread this as belonging to drivers/firmware/tegra
-> which goes in via ARM SoC.
+On Thu, Jan 26, 2023 at 7:09 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Jan 26, 2023 at 04:50:59PM +0200, Mike Rapoport wrote:
+> > On Thu, Jan 26, 2023 at 11:17:09AM +0200, Mike Rapoport wrote:
+> > > On Wed, Jan 25, 2023 at 12:38:46AM -0800, Suren Baghdasaryan wrote:
+> > > > +/* Use when VMA is not part of the VMA tree and needs no locking */
+> > > > +static inline void init_vm_flags(struct vm_area_struct *vma,
+> > > > +                          unsigned long flags)
+> > >
+> > > I'd suggest to make it vm_flags_init() etc.
+> >
+> > Thinking more about it, it will be even clearer to name these vma_flags_xyz()
+>
+> Perhaps vma_VERB_flags()?
+>
+> vma_init_flags()
+> vma_reset_flags()
+> vma_set_flags()
+> vma_clear_flags()
+> vma_mod_flags()
 
-No worries ;)
+Due to excessive email bouncing I posted the v3 of this patchset using
+the original per-VMA patchset's distribution list. That might have
+dropped Mike from the list. Sorry about that Mike, I'll add you to my
+usual list of suspects :)
+The v3 is here:
+https://lore.kernel.org/all/20230125233554.153109-1-surenb@google.com/
+and Andrew did suggest the same renames, so I'll be posting v4 with
+those changes later today.
+Thanks for the feedback!
 
-> I'll drop this from the Tegra tree. Feel free
-> to pick this up:
-
-Ok, thanks
-
-> Acked-by: Thierry Reding <treding@nvidia.com>
-
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+>
