@@ -2,130 +2,183 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BACC05027
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 11:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359D5C05027
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 12:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237278AbjAZLgc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Jan 2023 06:36:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46410 "EHLO
+        id S229473AbjAZMpz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Jan 2023 07:45:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237280AbjAZLgb (ORCPT
+        with ESMTP id S229491AbjAZMpx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Jan 2023 06:36:31 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0365A808
-        for <linux-tegra@vger.kernel.org>; Thu, 26 Jan 2023 03:36:30 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so924515wms.2
-        for <linux-tegra@vger.kernel.org>; Thu, 26 Jan 2023 03:36:30 -0800 (PST)
+        Thu, 26 Jan 2023 07:45:53 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87CA53C29E;
+        Thu, 26 Jan 2023 04:45:49 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id me3so4698969ejb.7;
+        Thu, 26 Jan 2023 04:45:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hl/a8BXil34Dd1xmwlklcoeX/6IXUtWITBfuvXQCOXo=;
-        b=UxNvHxJMBwh9M4Dtwp7Fvn1E5vPF//Oip1Q4ccpMftVAQhfZE8XwAaZUatATbf4uSh
-         OuvkCAyo58p2LmKMIsqYQF7YulYinmWnFtYx/I3ta3s3T+uxJc2KEmS4N8/1jtmyoZYi
-         Vhr+obNcrRVaGoCnKKBzZcmKy0iI+MUoXFl2khK01qpPRzupdJKKk+JhjOPMC8oPJhNC
-         wEQMoPFcffayl5fq+MAf74pU/7vu+DYFU5wHoYBYFHPuNs5hAg9/x21G28PzkgiOAzoV
-         /+UZz25AKpQ7NQOfuMHN2ZMCnyVfZdobYawmsA+x1ykw7TXm8njjZosST5L89oBCVH33
-         IDJQ==
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+FCFYtWUQP7YZSD2bSYpnKSDHJhXLIcuGKjaBrblv/o=;
+        b=HwOb5ekyj/73Vrq1+CmBjw79letwxYvL1tvjqzYGgtzCXgt+GZSCMtv6TWci31lTpi
+         TCOQt/8T0ur+bEZvcsJSWMLLvwhnNV9gDRcB9YOZczFmnQh01K2gqjQvYv69fNErsYzk
+         hW+3Zqpv9yYGBkagqp0OmYlXQ4zjgalEubTy9kxJThNU7zjzukiZ4ivAT8VaHSBDArV7
+         5jVqZwRZuhLplSZdJDoGGLXeeR+95v9cylD8iX+g0m1H653FBhmgs5bSC/0PZLP+8sN2
+         u6mqNhJgKQgnQOdHQoYwoBe32enp0ZGOlaDr42bhyxBzbDNFakaTy5UNXsJNEWJLlYQ+
+         6HDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hl/a8BXil34Dd1xmwlklcoeX/6IXUtWITBfuvXQCOXo=;
-        b=xXOeeedoTtlhl8PIhcEp9oWkBgXrXgo0OAgQai0YMWgnXM3o7rmGvS9q0CIrZ9CL8i
-         N/kaBFqH0APbrATpDMNUdFajVtrmL2kAYMjQdJmOq4zOwwNRT2gH43Brn5JWIfQFNxLc
-         QklPeRqWoDzRZ3HA1YR2DexdkncjIRO8mZA7bFgPW2iFXK9QioiiiHCu/1rniQw8v39M
-         wRJPtsngmHah86FSxOrOGN5rBJk4WqvKTN7JEK9Azx+gMSEg0BTjNAmhLgi3/xwyglX+
-         TLfSnCPdmKxnZ13QR10V47YjGVaSJRMoUwufMuNreyWGJCgnoym+b8pEXXx2Hjr3GFtw
-         FBBQ==
-X-Gm-Message-State: AFqh2kr0qcwQWGCGNy5XfmHTGyLjU0ENS48SyUGz0EpA10nr0/zZhx6V
-        Vc5G4sBWgeZ7TLBHUXlVRehU7A==
-X-Google-Smtp-Source: AMrXdXvSPs5FOKaLoPa9AO/U0s8GP2Wme9+5u2/mv0T/gk3FOCViIO+fX1jSNuS5BRtkpjgFYxkhbg==
-X-Received: by 2002:a05:600c:3ca6:b0:3d1:caf1:3f56 with SMTP id bg38-20020a05600c3ca600b003d1caf13f56mr42994645wmb.9.1674732988825;
-        Thu, 26 Jan 2023 03:36:28 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id i21-20020a05600c071500b003db1ca20170sm1174394wmn.37.2023.01.26.03.36.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 03:36:28 -0800 (PST)
-Message-ID: <db7646a3-330f-b9cb-161a-ddf31dc679d5@linaro.org>
-Date:   Thu, 26 Jan 2023 12:36:26 +0100
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+FCFYtWUQP7YZSD2bSYpnKSDHJhXLIcuGKjaBrblv/o=;
+        b=WrRnf09WHFQ9wsIybU2vHi919/M4LeALWcvzbhxdCDtUEW4CqG07rczu615whWDQ6g
+         7thspNoF+w9dFYy7rcbeLes530OP69TU4q4A99bdaC12UKGjdc39jzFWVNvepGReBmSU
+         kWjhwMlPbqJa+TxcyXhhq8dFYirZtcNant2ab5cqDP5USNMPIKGPkyHAbWVXE+M1TPVN
+         MJCLinilw92P4Uk9SIf0Noi1hD1bqjxNXQ1wP9X8ckSm+ZL9OJfxQiO5zVa4QV2tiYoB
+         qOT82PsBGgS74UwdyhPs/rASOZHqTzR4P3V5hAkxOgiBnyna6cIMOPUvJJ3ocLuQfR3R
+         BYmA==
+X-Gm-Message-State: AO0yUKU036bn0KSrs071NKgVCz+5mBQOwNJuRpd/agkKUgwqdy1wCWx7
+        edLxQ5UwpOYGeziu2475P61Aceuinzs=
+X-Google-Smtp-Source: AK7set9rnQmxqteLXa/LHEOon567larfBCk2A34cacOe8q4briCydO6nBpdandlx7Lg6SELaY2rdVw==
+X-Received: by 2002:a17:906:d0c2:b0:878:5fdc:3850 with SMTP id bq2-20020a170906d0c200b008785fdc3850mr2119869ejb.48.1674737147805;
+        Thu, 26 Jan 2023 04:45:47 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id gn19-20020a1709070d1300b0087862f45a29sm545286ejc.174.2023.01.26.04.45.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jan 2023 04:45:47 -0800 (PST)
+Date:   Thu, 26 Jan 2023 13:45:45 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Tom Rix <trix@redhat.com>
+Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, jonathanh@nvidia.com,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: tegra186: remove unneeded loop in
+ tegra186_gpio_init_route_mapping()
+Message-ID: <Y9J1+fEErNzaN0fq@orome>
+References: <20230125212631.749094-1-trix@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V8 1/6] dt-bindings: usb: Add Cypress cypd4226 Type-C
- controller
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Wayne Chang <waynec@nvidia.com>
-References: <20230125204211.63680-1-jonathanh@nvidia.com>
- <20230125204211.63680-2-jonathanh@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230125204211.63680-2-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hpFkZqyqoVYLb6Bp"
+Content-Disposition: inline
+In-Reply-To: <20230125212631.749094-1-trix@redhat.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25/01/2023 21:42, Jon Hunter wrote:
-> From: Wayne Chang <waynec@nvidia.com>
-> 
-> Add the device-tree binding documentation for Cypress cypd4226 dual
-> Type-C controller.
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
+--hpFkZqyqoVYLb6Bp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 25, 2023 at 01:26:31PM -0800, Tom Rix wrote:
+> Reviewing the j loop over num_irqs_per_bank, in the code previous
+> to the fixes: commit, every j was used. now only when j =3D=3D 0.
+> If only j =3D=3D 0 is used, there is no need for the loop.
+>=20
+> Fixes: 210386804745 ("gpio: tegra186: Support multiple interrupts per ban=
+k")
+> Signed-off-by: Tom Rix <trix@redhat.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 40 ++++++++++++++++--------------------
+>  1 file changed, 18 insertions(+), 22 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index 9941f35af823..14c872b6ad05 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -677,7 +677,7 @@ static const struct of_device_id tegra186_pmc_of_matc=
+h[] =3D {
+>  static void tegra186_gpio_init_route_mapping(struct tegra_gpio *gpio)
+>  {
+>  	struct device *dev =3D gpio->gpio.parent;
+> -	unsigned int i, j;
+> +	unsigned int i;
+>  	u32 value;
+> =20
+>  	for (i =3D 0; i < gpio->soc->num_ports; i++) {
+> @@ -699,27 +699,23 @@ static void tegra186_gpio_init_route_mapping(struct=
+ tegra_gpio *gpio)
+>  			 * On Tegra194 and later, each pin can be routed to one or more
+>  			 * interrupts.
+>  			 */
+> -			for (j =3D 0; j < gpio->num_irqs_per_bank; j++) {
+> -				dev_dbg(dev, "programming default interrupt routing for port %s\n",
+> -					port->name);
+> -
+> -				offset =3D TEGRA186_GPIO_INT_ROUTE_MAPPING(p, j);
+> -
+> -				/*
+> -				 * By default we only want to route GPIO pins to IRQ 0. This works
+> -				 * only under the assumption that we're running as the host kernel
+> -				 * and hence all GPIO pins are owned by Linux.
+> -				 *
+> -				 * For cases where Linux is the guest OS, the hypervisor will have
+> -				 * to configure the interrupt routing and pass only the valid
+> -				 * interrupts via device tree.
+> -				 */
+> -				if (j =3D=3D 0) {
+> -					value =3D readl(base + offset);
+> -					value =3D BIT(port->pins) - 1;
+> -					writel(value, base + offset);
+> -				}
+> -			}
+> +			dev_dbg(dev, "programming default interrupt routing for port %s\n",
+> +				port->name);
 > +
-> +  firmware-name:
-> +    enum:
-> +      - nvidia,gpu
-> +      - nvidia,jetson-agx-xavier
-> +    description: |
-> +      The name of the CCGx firmware built for product series.
-> +      should be set one of following:
-> +      - "nvidia,gpu" for the NVIDIA RTX product series
-> +      - "nvidia,jetson-agx-xavier" for the NVIDIA Jetson product series
+> +			offset =3D TEGRA186_GPIO_INT_ROUTE_MAPPING(p, 0);
 > +
-> +patternProperties:
-> +  '^connector@[0-1]+$':
-> +    $ref: /schemas/connector/usb-connector.yaml#
+> +			/*
+> +			 * By default we only want to route GPIO pins to IRQ 0. This works
+> +			 * only under the assumption that we're running as the host kernel
+> +			 * and hence all GPIO pins are owned by Linux.
+> +			 *
+> +			 * For cases where Linux is the guest OS, the hypervisor will have
+> +			 * to configure the interrupt routing and pass only the valid
+> +			 * interrupts via device tree.
+> +			 */
+> +			value =3D readl(base + offset);
+> +			value =3D BIT(port->pins) - 1;
+> +			writel(value, base + offset);
 
-No improvements here
+This was supposed to be a placeholder so that a more complex routing
+could be added later on. Maybe adding "j" to the debug message would
+have made that a bit clearer.
 
-This is a friendly reminder during the review process.
+Anyway, no complex routing has been needed so far, so I don't have a
+strong objection to this. We can always add it back if we ever need it.
 
-It seems my previous comments were not fully addressed. Maybe my
-feedback got lost between the quotes, maybe you just forgot to apply it.
-Please go back to the previous discussion and either implement all
-requested changes or keep discussing them.
+On the other hand, we don't do much in the loop, so leaving it as-is
+wouldn't be harmful either.
 
-Thank you.
+I'll leave it up to Linus and Bartosz to decide. If they want to pick it
+up:
 
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +unevaluatedProperties: false
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-This goes after required: block
+--hpFkZqyqoVYLb6Bp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPSdfYACgkQ3SOs138+
+s6GpZw/+Kc64MG4sQ0jny86UO9mDaWC1dXVlfbAZNtpjFUPZyD4bGTjl59O5cuO+
+qvo7GDjGKLEZVNstArWRbhcscIdorCaHAzH5tnfHdx2DLUJxOeXcFsxKt3/gDpao
+00Xi0TSipXG9I4Vd7LkejT/21IU60s+DU01y5nzFZ1CVziz2R3C9/sDWmCs+jU7O
+8WHKU6dmxYz0ahG0x9v+7D5ol3Ha/0fF8h15jnjGquYeq0poZQXk7d0gBi+xjWvY
+xEp9HiOt+PDvdxEuNwSecC8hqQHtpU87WDCFm18dC7vzsmgNc4DNi4X+f+G7kg0z
+GoS6+xOdb+vtbAdX00v/kIpsqRsYCx1qBVNB3F2qrpEz7mplV+DUcn5apXcQ/yCh
+9wO9rAPrla9m/xDRsz/RScMtnihbR3ZMIw5nk7lXSIuZ8L3siBMCAfZa4FnSK6Gq
+c/wopq6HF1Y8ZS1BMBTjtDS9n9Vyb797nNhTUH+SAcpj8xfbwiMpGtzfPs390gWF
+MDeW11BFnPOsJVaO4BN9jus7Km7UJr4D3lIkuL8tFg7eFO9zUMHnz0gAMlQndOWL
+FK9eOuRhRf1NDlE7AlUboCAt1AspD9P8ReIWXv8h9FZcKu+NkLfmKJl3lo4E1iwP
+MSmkTNSO8cRq5wZ/L72Utoe0POzUruc33/LXeXWslWkzZRw1+hY=
+=Azhb
+-----END PGP SIGNATURE-----
 
+--hpFkZqyqoVYLb6Bp--
