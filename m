@@ -2,97 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38019C61DA2
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 14:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD39DC636D6
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 14:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229639AbjAZOhY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Jan 2023 09:37:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45540 "EHLO
+        id S232157AbjAZOtA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Jan 2023 09:49:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231542AbjAZOhX (ORCPT
+        with ESMTP id S229473AbjAZOsz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Jan 2023 09:37:23 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90DE2529E;
-        Thu, 26 Jan 2023 06:37:22 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id me3so5555443ejb.7;
-        Thu, 26 Jan 2023 06:37:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ojoaU79vsM9d6gnnSHhz/j9TBcg9S6MfuddKc11zkQI=;
-        b=Qvk6hlDc1Y7T+h5eZC3/WtyiiG6rpVH0bci43kDVCCpE/XcXipEi4dTXtMkPl3jHCl
-         Zua9JThVPpbqtgtqjvAjeLu8lA82Zd1tVi3kTA2zDuiYTXnlv2Y+RBZrJ7CTkpr9AtlV
-         Uvwc74o1vvTQjbo82+RROoFCMPaEPzcG9VZoGxvAkXYqltOcfXGnVsMmoX4Wn6FVRnbV
-         nd/qjdSgnDT9Y0naJmUTI4pRvVRwvXJE+C7AqbHKUfsut0kO+M+o4K6NXJ+gOqI7WrYH
-         W2G4w3FxuOCCw0L/EVVBcx35Wh+ShQT5G6FEr9+iRTdEjGoHDTwh9rPkoUmo7QPV06IP
-         0xxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ojoaU79vsM9d6gnnSHhz/j9TBcg9S6MfuddKc11zkQI=;
-        b=XRc92XtVjqRv8pYz/cG3mSrc8pocXA3kr+/shm4hTNPIfHUW6EwOSZ5H8N4QPIXjNq
-         HcGoBCc2nEkHntg29ts2Z3cfyrUWkEnF6GT2ATp9G+Pem21jG/6SllQ+wDJ4eNqtcJOW
-         4yo7ebfkPcVP9iV3oLLpgvjC0d3tvQ8ZjM5vC36Aw/BQAvR4otMXVokjr5u7MRZySBjI
-         G7Y3q6N8/hFYsE0HLVqRv8wSlGp9/3E+NNc8X9gu2nD1cRwxmlCvdCYY8UY310VV96m+
-         h2S3voQR7SS9kNX5vwiUqtJwI5T9xdaDToBbP2BepXWTItaWnRnrjD6gvH7BNti/VBB8
-         cp9Q==
-X-Gm-Message-State: AO0yUKVGX7Io2PQ3BlO+moEig7cM638YIqYs0ST5X9YQSCawtesOaTiG
-        aFKfZFmDFCs1L/+CZSqCYS8=
-X-Google-Smtp-Source: AK7set8dbBqhWX+8vueaZet6qki7SVYHve2oRacn2VrEua6nci8+6sOuxk2m//pfsWPfpmCMkPjwDw==
-X-Received: by 2002:a17:906:4b13:b0:878:5e84:e1da with SMTP id y19-20020a1709064b1300b008785e84e1damr2699504eju.27.1674743841116;
-        Thu, 26 Jan 2023 06:37:21 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id rh16-20020a17090720f000b0084c7029b24dsm674327ejb.151.2023.01.26.06.37.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jan 2023 06:37:20 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 1/4] gpu: host1x: Implement syncpoint wait using DMA fences
-Date:   Thu, 26 Jan 2023 15:37:16 +0100
-Message-Id: <167474380848.1640957.3846713642023225990.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230119130921.1882602-1-cyndis@kapsi.fi>
-References: <20230119130921.1882602-1-cyndis@kapsi.fi>
+        Thu, 26 Jan 2023 09:48:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 606A94489;
+        Thu, 26 Jan 2023 06:48:53 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EE0DA61856;
+        Thu, 26 Jan 2023 14:48:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05241C4339B;
+        Thu, 26 Jan 2023 14:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674744532;
+        bh=WNohoknU9nLfbwIXeO77neZ4yMyv64MASZK2UIAfOfc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OyaVsT5ePzTFS76R1FH5KLxOUgzscan6sLv55lgf+totKkalpj5P4hTJ0CFzpg2nB
+         FjnAcEI6WBL0tfwF/TTw8b+wwY6a9pfQDEoFaNDhDzv4Bx4E//TKL2HIis05iqFTqA
+         6cWnwUhcKJagQmydnhE9MWdKN98RZA7QH0/g2op6Qc+WX5kkWc6P8AxP1IQok4d4Iv
+         rC+rDq5bfpCpp87TX2zmlNbavkxhh4pjEZT5VQ1/5GQQQR5j3P3SiDxYUla0TLmDmY
+         tHoanGw9DWG+oAt/RnrhsxsQ7gltrsJN75kvWssUX4MOKayClNcjWM9UluK5fqquNs
+         P9OGQuC06AeFQ==
+Date:   Thu, 26 Jan 2023 16:48:04 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, michel@lespinasse.org,
+        jglisse@google.com, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, mgorman@techsingularity.net, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, peterz@infradead.org,
+        ldufour@linux.ibm.com, paulmck@kernel.org, luto@kernel.org,
+        songliubraving@fb.com, peterx@redhat.com, david@redhat.com,
+        dhowells@redhat.com, hughd@google.com, bigeasy@linutronix.de,
+        kent.overstreet@linux.dev, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, peterjung1337@gmail.com, rientjes@google.com,
+        axelrasmussen@google.com, joelaf@google.com, minchan@google.com,
+        jannh@google.com, shakeelb@google.com, tatashin@google.com,
+        edumazet@google.com, gthelen@google.com, gurua@google.com,
+        arjunroy@google.com, soheil@google.com, hughlynch@google.com,
+        leewalsh@google.com, posk@google.com, will@kernel.org,
+        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
+        chenhuacai@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        qianweili@huawei.com, wangzhou1@hisilicon.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, l.stach@pengutronix.de,
+        krzysztof.kozlowski@linaro.org, patrik.r.jakobsson@gmail.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com,
+        quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
+        tomba@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
+        ray.huang@amd.com, kraxel@redhat.com, sre@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
+        dimitri.sivanich@hpe.com, zhangfei.gao@linaro.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        dgilbert@interlog.com, hdegoede@redhat.com, mst@redhat.com,
+        jasowang@redhat.com, alex.williamson@redhat.com, deller@gmx.de,
+        jayalk@intworks.biz, viro@zeniv.linux.org.uk, nico@fluxnic.net,
+        xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, miklos@szeredi.hu,
+        mike.kravetz@oracle.com, muchun.song@linux.dev, bhe@redhat.com,
+        andrii@kernel.org, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
+        kuba@kernel.org, pabeni@redhat.com, perex@perex.cz, tiwai@suse.com,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com,
+        linux-ia64@vger.kernel.org, linux-arch@vger.kernel.org,
+        loongarch@lists.linux.dev, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sgx@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+        linux-crypto@vger.kernel.org, nvdimm@lists.linux.dev,
+        dmaengine@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-accelerators@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        target-devel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, kexec@lists.infradead.org,
+        linux-xfs@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kasan-dev@googlegroups.com,
+        selinux@vger.kernel.org, alsa-devel@alsa-project.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v2 6/6] mm: export dump_mm()
+Message-ID: <Y9KSpNJ4y0GMwkrW@kernel.org>
+References: <20230125083851.27759-1-surenb@google.com>
+ <20230125083851.27759-7-surenb@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230125083851.27759-7-surenb@google.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
-
-On Thu, 19 Jan 2023 15:09:18 +0200, Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+On Wed, Jan 25, 2023 at 12:38:51AM -0800, Suren Baghdasaryan wrote:
+> mmap_assert_write_locked() is used in vm_flags modifiers. Because
+> mmap_assert_write_locked() uses dump_mm() and vm_flags are sometimes
+> modified from from inside a module, it's necessary to export
+> dump_mm() function.
 > 
-> In anticipation of removal of the intr API, move host1x_syncpt_wait
-> to use DMA fences instead. As of this patch, this means that waits
-> have a 30 second maximum timeout because of the implicit timeout
-> we have with fences, but that will be lifted in a follow-up patch.
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+
+Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
+
+> ---
+>  mm/debug.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> [...]
-
-Applied, thanks!
-
-[1/4] gpu: host1x: Implement syncpoint wait using DMA fences
-      commit: 10b8db9244e3545d7278016ffb878d5bfe3201fe
-[2/4] gpu: host1x: Implement job tracking using DMA fences
-      commit: caf0f8e3e318c7e1c687072293518c42befcea68
-[3/4] gpu: host1x: Rewrite syncpoint interrupt handling
-      commit: ba9218b16428dbfcdd167899f7e54c5c6a081c07
-[4/4] gpu: host1x: External timeout/cancellation for fences
-      commit: 93d08ca7ed728bf3bf70aa78caacdfb7011d6d03
-
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+> diff --git a/mm/debug.c b/mm/debug.c
+> index 9d3d893dc7f4..96d594e16292 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -215,6 +215,7 @@ void dump_mm(const struct mm_struct *mm)
+>  		mm->def_flags, &mm->def_flags
+>  	);
+>  }
+> +EXPORT_SYMBOL(dump_mm);
+>  
+>  static bool page_init_poisoning __read_mostly = true;
+>  
+> -- 
+> 2.39.1
+> 
