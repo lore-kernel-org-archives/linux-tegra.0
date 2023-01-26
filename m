@@ -2,142 +2,153 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D66C27C76
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Jan 2023 21:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA5FC54E94
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Jan 2023 00:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236917AbjAYV2Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Jan 2023 16:28:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
+        id S236108AbjAZA00 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Jan 2023 19:26:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236918AbjAYV2K (ORCPT
+        with ESMTP id S236144AbjAZA0N (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Jan 2023 16:28:10 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 846465D114
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Jan 2023 13:26:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674682003;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=sOoHsm7MS2bdA393wRj32TqJ4i4jAbnYJ0SnvWhXtHw=;
-        b=K6qYgMotXzCME9RbypNzgKrdr2U4aZ72eVpplR95r6yZEGukNbqnOpUPXDF3lL3xAFIoK4
-        iQzSVqx4HclanFluvq42Q8KVO6VCzVQii6gR8vQTqJoZdk2j/v0I/v7GwX6DxF+a3Aw4Dk
-        GjwQCSIHdcIC1OajrlgjgAmJyfRI4Bc=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-108-ctTcs_V-Ph-q3r3fK1fpqg-1; Wed, 25 Jan 2023 16:26:42 -0500
-X-MC-Unique: ctTcs_V-Ph-q3r3fK1fpqg-1
-Received: by mail-qt1-f198.google.com with SMTP id m7-20020ac807c7000000b003b80b35c136so57865qth.5
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Jan 2023 13:26:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sOoHsm7MS2bdA393wRj32TqJ4i4jAbnYJ0SnvWhXtHw=;
-        b=Ufe+hCglQ+IpBsmqGJT8QQ9VbTq4yyQDU6OlGSozh4M7pVD96JMpyEPMOvDYm6E/Pm
-         yIolPZ8LoiafK9GP7rQz0BlohgHWIdlIWCBf9zXNVLjJkU64sPrQ3MzZobJIHeMVJxr3
-         Vi2nOx4Kv5qxHzAIFgoebxXfS0u2IpL479XVnOQ5r02O2ky1WJ75KoIq0ctXaFMzFSpT
-         gYwXLN6HFtsXXa5ke7V0t+GplTJhPe85raagYPM+7KsToy5UPDJ1l8+kcrQ6zmWwYg8H
-         VUWq1S+KVWD4VgaFwk+hBfbgWkQCYS3OgVMZjvCci6NcYdGOu0tHet1262dm2rHCoyir
-         r4oA==
-X-Gm-Message-State: AFqh2koOO+t1hkeTxPhc/b2hBU2CwX5s5rnhPk8omZ3Gwrreylkeeusc
-        21oSVTFQhMJVine/hqG0Oi+5me6kwSxG/XwkEAEP3qYYJPvz2aXpwim6KpdaKOQGUPE5PcW8Fhu
-        7J85iVzusMJ05bkOcPNRErqI=
-X-Received: by 2002:a0c:aa07:0:b0:531:9e7a:6778 with SMTP id d7-20020a0caa07000000b005319e7a6778mr72020813qvb.1.1674682001456;
-        Wed, 25 Jan 2023 13:26:41 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXuJA9ZbWt2pH5x/49GeXNlvIod0ok2NhUl785oS3p0fPE6WFT7R+8daehKb2LTqGaIqJAbHpA==
-X-Received: by 2002:a0c:aa07:0:b0:531:9e7a:6778 with SMTP id d7-20020a0caa07000000b005319e7a6778mr72020792qvb.1.1674682001182;
-        Wed, 25 Jan 2023 13:26:41 -0800 (PST)
-Received: from localhost.localdomain.com (024-205-208-113.res.spectrum.com. [24.205.208.113])
-        by smtp.gmail.com with ESMTPSA id z17-20020ae9c111000000b00706284b74b5sm4173350qki.52.2023.01.25.13.26.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jan 2023 13:26:40 -0800 (PST)
-From:   Tom Rix <trix@redhat.com>
-To:     linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com,
-        jonathanh@nvidia.com
-Cc:     linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tom Rix <trix@redhat.com>
-Subject: [PATCH] gpio: tegra186: remove unneeded loop in tegra186_gpio_init_route_mapping()
-Date:   Wed, 25 Jan 2023 13:26:31 -0800
-Message-Id: <20230125212631.749094-1-trix@redhat.com>
-X-Mailer: git-send-email 2.26.3
+        Wed, 25 Jan 2023 19:26:13 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4AD862D08;
+        Wed, 25 Jan 2023 16:25:52 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ADD55B81C65;
+        Thu, 26 Jan 2023 00:25:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39A33C433D2;
+        Thu, 26 Jan 2023 00:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674692736;
+        bh=rcUgsNadKKTYCHHFUAWb2M6WYShRxFqUqgbGPO0Ctyo=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=USfPHSeVEkf75rA9BZhlvuBgt3C7xXOJz8CoJRO6VnKLCjKvOAvSuVOAAHVjwSZuH
+         JX2uNAzawrEKpN+IqKJBN8lZGMGtxJCIlcga2OR/Jokxood0zP+0bznprQUUG8DKwD
+         QQ4K8QcBAABfVqaYdZkX1GDNvLDUpOqo8lT76FcMgCjtCOTzSgIuGkJP+fXUzUf6dD
+         100h5T1y3ypmPfXHYY5ic0/FD44fBeYBRbgvrs6b+RGsQdN+Y9IGXhlnFK4zWS8fRh
+         7XQZeHxve4rzsEvNEN1VoemmfZArPIZ/VVHfPgRMbQaX3uomO1YRRPxzlGNr8JKnr3
+         01bMP8uE6lW7Q==
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
+        =?utf-8?q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>, Han Xu <han.xu@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Haibo Chen <haibo.chen@nxp.com>,
+        Yogesh Gaur <yogeshgaur.83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Li-hao Kuo <lhjeff911@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        =?utf-8?q?=EF=BF=BDecki?= <rafal@milecki.pl>,
+        Vaishnav Achath <vaishnav.a@ti.com>,
+        Parshuram Thombare <pthombar@cadence.com>,
+        Leilk Liu <leilk.liu@mediatek.com>,
+        Gabor Juhos <juhosg@openwrt.org>,
+        Bert Vermeulen <bert@biot.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Marek Vasut <marex@denx.de>,
+        Birger Koblitz <mail@birger-koblitz.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Kuldeep Singh <singh.kuldeep87k@gmail.com>,
+        Pragnesh Patel <pragnesh.patel@sifive.com>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Erwan Leray <erwan.leray@foss.st.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>
+In-Reply-To: <20230124083342.34869-1-krzysztof.kozlowski@linaro.org>
+References: <20230124083342.34869-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/2] spi: dt-bindings: drop unneeded quotes
+Message-Id: <167469271489.2661317.15374060752399847689.b4-ty@kernel.org>
+Date:   Thu, 26 Jan 2023 00:25:14 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Reviewing the j loop over num_irqs_per_bank, in the code previous
-to the fixes: commit, every j was used. now only when j == 0.
-If only j == 0 is used, there is no need for the loop.
+On Tue, 24 Jan 2023 09:33:41 +0100, Krzysztof Kozlowski wrote:
+> Cleanup by removing unneeded quotes from refs and redundant blank lines.
+> No functional impact except adjusting to preferred coding style.
+> 
+> 
 
-Fixes: 210386804745 ("gpio: tegra186: Support multiple interrupts per bank")
-Signed-off-by: Tom Rix <trix@redhat.com>
----
- drivers/gpio/gpio-tegra186.c | 40 ++++++++++++++++--------------------
- 1 file changed, 18 insertions(+), 22 deletions(-)
+Applied to
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 9941f35af823..14c872b6ad05 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -677,7 +677,7 @@ static const struct of_device_id tegra186_pmc_of_match[] = {
- static void tegra186_gpio_init_route_mapping(struct tegra_gpio *gpio)
- {
- 	struct device *dev = gpio->gpio.parent;
--	unsigned int i, j;
-+	unsigned int i;
- 	u32 value;
- 
- 	for (i = 0; i < gpio->soc->num_ports; i++) {
-@@ -699,27 +699,23 @@ static void tegra186_gpio_init_route_mapping(struct tegra_gpio *gpio)
- 			 * On Tegra194 and later, each pin can be routed to one or more
- 			 * interrupts.
- 			 */
--			for (j = 0; j < gpio->num_irqs_per_bank; j++) {
--				dev_dbg(dev, "programming default interrupt routing for port %s\n",
--					port->name);
--
--				offset = TEGRA186_GPIO_INT_ROUTE_MAPPING(p, j);
--
--				/*
--				 * By default we only want to route GPIO pins to IRQ 0. This works
--				 * only under the assumption that we're running as the host kernel
--				 * and hence all GPIO pins are owned by Linux.
--				 *
--				 * For cases where Linux is the guest OS, the hypervisor will have
--				 * to configure the interrupt routing and pass only the valid
--				 * interrupts via device tree.
--				 */
--				if (j == 0) {
--					value = readl(base + offset);
--					value = BIT(port->pins) - 1;
--					writel(value, base + offset);
--				}
--			}
-+			dev_dbg(dev, "programming default interrupt routing for port %s\n",
-+				port->name);
-+
-+			offset = TEGRA186_GPIO_INT_ROUTE_MAPPING(p, 0);
-+
-+			/*
-+			 * By default we only want to route GPIO pins to IRQ 0. This works
-+			 * only under the assumption that we're running as the host kernel
-+			 * and hence all GPIO pins are owned by Linux.
-+			 *
-+			 * For cases where Linux is the guest OS, the hypervisor will have
-+			 * to configure the interrupt routing and pass only the valid
-+			 * interrupts via device tree.
-+			 */
-+			value = readl(base + offset);
-+			value = BIT(port->pins) - 1;
-+			writel(value, base + offset);
- 		}
- 	}
- }
--- 
-2.26.3
+   broonie/spi.git for-next
+
+Thanks!
+
+[1/2] spi: dt-bindings: drop unneeded quotes
+      commit: 99a7fa0e75a3a595a577fb5efa4b84a491f664a2
+[2/2] spi: dt-bindings: cleanup examples - indentation, lowercase hex
+      commit: ee8d422c91d87ebe230769b2cb89f087e56b560a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
