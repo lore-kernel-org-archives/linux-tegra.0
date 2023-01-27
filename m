@@ -2,75 +2,169 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931F9C38142
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 10:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43160C61DA4
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 14:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232721AbjA0KOd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Jan 2023 05:14:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
+        id S233049AbjA0OOM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Jan 2023 09:14:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230493AbjA0KOd (ORCPT
+        with ESMTP id S233907AbjA0ONx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Jan 2023 05:14:33 -0500
-X-Greylist: delayed 2107 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 27 Jan 2023 02:14:26 PST
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D6176B3;
-        Fri, 27 Jan 2023 02:14:26 -0800 (PST)
-Received: from [167.98.27.226] (helo=rainbowdash)
-        by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-        id 1pLLCR-000onR-8B; Fri, 27 Jan 2023 09:39:11 +0000
-Received: from ben by rainbowdash with local (Exim 4.96)
-        (envelope-from <ben@rainbowdash>)
-        id 1pLLCR-001msw-1I;
-        Fri, 27 Jan 2023 09:39:11 +0000
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] arm64: tegra: dts: add vccmq on p3310 TX2 SoM
-Date:   Fri, 27 Jan 2023 09:39:10 +0000
-Message-Id: <20230127093910.426233-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.39.0
+        Fri, 27 Jan 2023 09:13:53 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979AA39BB8;
+        Fri, 27 Jan 2023 06:13:52 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 48BE32205E;
+        Fri, 27 Jan 2023 14:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1674828831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Xnty0YewjjZGntfA5Jezh1stOqjzMINOZh3MNW1NGRE=;
+        b=XILFmXDhp2Rkm3Gt877yc+9GZnJqZCsgfbsIdjM1dV/FG2uTDvUxt8XOjlNNCRjr4Six1J
+        SsvVjSV3PtGynLAuTblPJndStDJir8dFn/tOZtXUMn+Agp1eaMeT5UgXg+lM5h0lqmajpA
+        pqe6dqMaDqdDs/bUiTO/GpLk9M7GYBQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1674828831;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Xnty0YewjjZGntfA5Jezh1stOqjzMINOZh3MNW1NGRE=;
+        b=jutVM9bPYO31A6tbeYAXpAfj4PSLyPGa8PWW6ZJzmfKvcHn/lBJlgvTOG5wJP1dXtL0OBx
+        YEKvcx1sYQCvGKCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 16CB9138E3;
+        Fri, 27 Jan 2023 14:13:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id txeIBB/c02NCPAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 27 Jan 2023 14:13:51 +0000
+Message-ID: <bf1aa950-3b58-3e33-4849-2ee7fbefcfcc@suse.de>
+Date:   Fri, 27 Jan 2023 15:13:50 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v3 01/10] drm/client: Test for connectors before sending
+ hotplug event
+Content-Language: en-US
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     freedreno@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, javierm@redhat.com,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230125200415.14123-1-tzimmermann@suse.de>
+ <20230125200415.14123-2-tzimmermann@suse.de> <Y9GWfi4EiCDPa6BJ@ravnborg.org>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <Y9GWfi4EiCDPa6BJ@ravnborg.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------5rxgPFJ3j2KL4oJ65FD8FXSd"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The TX2 SoM's SDIO WiFI card is connected via mmc@3440000 however it does
-not look like the upstream kernel is even bothering to power this (and
-the regulator framework shuts down this power rail post kernel init).
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------5rxgPFJ3j2KL4oJ65FD8FXSd
+Content-Type: multipart/mixed; boundary="------------heOeejt6LNNDwxF4fkjBknOr";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: freedreno@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, javierm@redhat.com,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <bf1aa950-3b58-3e33-4849-2ee7fbefcfcc@suse.de>
+Subject: Re: [PATCH v3 01/10] drm/client: Test for connectors before sending
+ hotplug event
+References: <20230125200415.14123-1-tzimmermann@suse.de>
+ <20230125200415.14123-2-tzimmermann@suse.de> <Y9GWfi4EiCDPa6BJ@ravnborg.org>
+In-Reply-To: <Y9GWfi4EiCDPa6BJ@ravnborg.org>
 
-The issue seems to be a missing link for vccq from the MAX77620 PMIC's LDO5
-which is labeled vddio_sdmmc3 (and not used anywhere else) to the mmc@3440000
-node to ensure there is at leasr bus power.
+--------------heOeejt6LNNDwxF4fkjBknOr
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Note this does not fix the WiFi issue on upstream kernels, there is still
-something else missing that gets the BCM WiFi device to detect properly.
+SGkNCg0KQW0gMjUuMDEuMjMgdW0gMjE6NTIgc2NocmllYiBTYW0gUmF2bmJvcmc6DQo+IEhp
+IFRob21hcywNCj4gDQo+IE9uIFdlZCwgSmFuIDI1LCAyMDIzIGF0IDA5OjA0OjA2UE0gKzAx
+MDAsIFRob21hcyBaaW1tZXJtYW5uIHdyb3RlOg0KPj4gVGVzdCBmb3IgY29ubmVjdG9ycyBp
+biB0aGUgY2xpZW50IGNvZGUgYW5kIHJlbW92ZSBhIHNpbWlsYXIgdGVzdA0KPj4gZnJvbSB0
+aGUgZ2VuZXJpYyBmYmRldiBlbXVsYXRpb24uIERvIG5vdGhpbmcgaWYgdGhlIHRlc3QgZmFp
+bHMuDQo+PiBOb3QgaGF2aW5nIGNvbm5lY3RvcnMgaW5kaWNhdGVzIGEgZHJpdmVyIGJ1Zy4N
+Cj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5A
+c3VzZS5kZT4NCj4+IFJldmlld2VkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGph
+dmllcm1AcmVkaGF0LmNvbT4NCj4+IC0tLQ0KPj4gICBkcml2ZXJzL2dwdS9kcm0vZHJtX2Ns
+aWVudC5jICAgICAgICB8IDUgKysrKysNCj4+ICAgZHJpdmVycy9ncHUvZHJtL2RybV9mYmRl
+dl9nZW5lcmljLmMgfCA1IC0tLS0tDQo+PiAgIDIgZmlsZXMgY2hhbmdlZCwgNSBpbnNlcnRp
+b25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZHJtX2NsaWVudC5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9jbGllbnQuYw0KPj4g
+aW5kZXggMjYyZWM2NGQ0Mzk3Li4wOWFjMTkxYzIwMmQgMTAwNjQ0DQo+PiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZHJtX2NsaWVudC5jDQo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJt
+X2NsaWVudC5jDQo+PiBAQCAtMTk4LDYgKzE5OCwxMSBAQCB2b2lkIGRybV9jbGllbnRfZGV2
+X2hvdHBsdWcoc3RydWN0IGRybV9kZXZpY2UgKmRldikNCj4+ICAgCWlmICghZHJtX2NvcmVf
+Y2hlY2tfZmVhdHVyZShkZXYsIERSSVZFUl9NT0RFU0VUKSkNCj4+ICAgCQlyZXR1cm47DQo+
+PiAgIA0KPj4gKwlpZiAoIWRldi0+bW9kZV9jb25maWcubnVtX2Nvbm5lY3Rvcikgew0KPj4g
+KwkJZHJtX2RiZ19rbXMoZGV2LCAiTm8gY29ubmVjdG9ycyBmb3VuZCwgd2lsbCBub3Qgc2Vu
+ZCBob3RwbHVnIGV2ZW50cyFcbiIpOw0KPj4gKwkJcmV0dXJuOw0KPiBUaGlzIGRlc2VydmVz
+IGEgbW9yZSB2aXNpYmxlIGxvZ2dpbmcgLSBpZiBhIGRyaXZlciBmYWlscyBoZXJlIGl0IHdv
+dWxkDQo+IGJlIGdvb2QgdG8gc3BvdCBpdCBpbiB0aGUgbm9ybWFsIGtlcm5lbCBsb2cuDQo+
+IGRybV9pbmZvIG9yIGRybV9ub3RpY2U/DQoNCkJ1dCBpcyB0aGF0IHJlYWxseSBub3Rld29y
+dGh5PyBBRkFJSywgdGhpcyBzaXR1YXRpb24gY2FuIGxlZ2FsbHkgaGFwcGVuLiANClNvIGlm
+IGl0J3MgZXhwZWN0ZWQsIHdoeSBzaG91bGQgd2UgcHJpbnQgYSBtZXNzYWdlIGFib3V0IGl0
+Pw0KDQpCZXN0IHJlZ2FyZHMNClRob21hcw0KDQo+IA0KPiBUaGUgb3JpZ2luYWwgY29kZSBo
+YWQgdGhpcyBvbiB0aGUgZGVidWcgbGV2ZWwsIGJ1dCB3aGVuIG1vdmluZyB0aGUgbG9nDQo+
+IGxldmVsIGNvdWxkIGFsc28gYmUgdXBkYXRlZC4NCj4gDQo+IAlTYW0NCj4gDQo+PiArCX0N
+Cj4+ICsNCj4+ICAgCW11dGV4X2xvY2soJmRldi0+Y2xpZW50bGlzdF9tdXRleCk7DQo+PiAg
+IAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGNsaWVudCwgJmRldi0+Y2xpZW50bGlzdCwgbGlzdCkg
+ew0KPj4gICAJCWlmICghY2xpZW50LT5mdW5jcyB8fCAhY2xpZW50LT5mdW5jcy0+aG90cGx1
+ZykNCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiZGV2X2dlbmVyaWMu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJkZXZfZ2VuZXJpYy5jDQo+PiBpbmRleCAwYTRj
+MTYwZTBlNTguLjNkNDU1YTJlM2ZiNSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9kcm1fZmJkZXZfZ2VuZXJpYy5jDQo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2Zi
+ZGV2X2dlbmVyaWMuYw0KPj4gQEAgLTM4OSwxMSArMzg5LDYgQEAgc3RhdGljIGludCBkcm1f
+ZmJkZXZfY2xpZW50X2hvdHBsdWcoc3RydWN0IGRybV9jbGllbnRfZGV2ICpjbGllbnQpDQo+
+PiAgIAlpZiAoZGV2LT5mYl9oZWxwZXIpDQo+PiAgIAkJcmV0dXJuIGRybV9mYl9oZWxwZXJf
+aG90cGx1Z19ldmVudChkZXYtPmZiX2hlbHBlcik7DQo+PiAgIA0KPj4gLQlpZiAoIWRldi0+
+bW9kZV9jb25maWcubnVtX2Nvbm5lY3Rvcikgew0KPj4gLQkJZHJtX2RiZ19rbXMoZGV2LCAi
+Tm8gY29ubmVjdG9ycyBmb3VuZCwgd2lsbCBub3QgY3JlYXRlIGZyYW1lYnVmZmVyIVxuIik7
+DQo+PiAtCQlyZXR1cm4gMDsNCj4+IC0JfQ0KPj4gLQ0KPj4gICAJZHJtX2ZiX2hlbHBlcl9w
+cmVwYXJlKGRldiwgZmJfaGVscGVyLCAmZHJtX2ZiX2hlbHBlcl9nZW5lcmljX2Z1bmNzKTsN
+Cj4+ICAgDQo+PiAgIAlyZXQgPSBkcm1fZmJfaGVscGVyX2luaXQoZGV2LCBmYl9oZWxwZXIp
+Ow0KPj4gLS0gDQo+PiAyLjM5LjANCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhp
+Y3MgRHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBH
+bWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkNCihIUkIgMzY4
+MDksIEFHIE7DvHJuYmVyZykNCkdlc2Now6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCg==
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Note, probably a candidate for stable.
----
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+--------------heOeejt6LNNDwxF4fkjBknOr--
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index aff857df25cf..3fd34d3d912a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -145,6 +145,7 @@ mmc@3400000 {
- 	/* SDMMC3 (SDIO) */
- 	mmc@3440000 {
- 		status = "okay";
-+		vqmmc-supply = <&vddio_sdmmc3>;
- 	};
- 
- 	/* SDMMC4 (eMMC) */
--- 
-2.39.0
+--------------5rxgPFJ3j2KL4oJ65FD8FXSd
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmPT3B4FAwAAAAAACgkQlh/E3EQov+Dc
+WxAAon9oAW+n4SDkB6P3CQ+G/JHDXSh26ifvSOw9Psr06ZvDnaHGytExuF+cXV6Re7SQiz4rCCc4
+0c4AKQqvMnCKdO2p8CPHkBjE2MdrNhsqQGCrhDWP3DRSnzjB3MmBPZMhaz3INiURYod42cTLnxG1
+EeyarMIBH8k0nTor7oczo2a7HVvUuA3K3I0n7gCOn4seaocvvG7MM0RmhFmhF4lAfjnUQ2sOOLFy
+LUVq20J4bVRB2ftF7C/xXoiTnoH+Vaht3o1D06Px0FGU0+e0sEMkkjPudg0mdZ3Kpf9xLQiQwGNo
+dkF/BZSQS7SiXso4zu3T0BOMFK5uYizhc9fQfn3AAhPuDWhB+wqz9dQuDhwQB08NShXGhIQrJ/MW
+q5I26mgWBcpOe5DNgI2l+Wefw/MrYrRvvzEbkuOXG6efMvnpmTL5BMYOPH3sKT8gl855v+ezShTq
+hiYijcXkkaPNrFesBVG81zHnUOgi/HM0JDGDfhcFUde8YYpRcE0LptKMtOfRwkdZTxPPCXGp+aRJ
+3bglCykbu7UpwF/gu8ywHCYDPRU06emQYWJCRr6BpzWDxxTLdsVn9Gd6Z3q5PYgrRbZkDlRxmgO+
+qLxO7GNYcXpt34MiyUWdOaSc0M04I1SBTgVp0qExDLnwEcrf2EAQyGGuU5N2GDuPsnYKMQX2nYa+
+v7c=
+=Q75b
+-----END PGP SIGNATURE-----
+
+--------------5rxgPFJ3j2KL4oJ65FD8FXSd--
