@@ -2,101 +2,75 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E34BCC38142
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 09:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931F9C38142
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 10:14:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232524AbjA0Jkt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Jan 2023 04:40:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54656 "EHLO
+        id S232721AbjA0KOd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Jan 2023 05:14:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbjA0Jks (ORCPT
+        with ESMTP id S230493AbjA0KOd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Jan 2023 04:40:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 067F31B9;
-        Fri, 27 Jan 2023 01:40:47 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A8A4CB81FFC;
-        Fri, 27 Jan 2023 09:40:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126B7C433D2;
-        Fri, 27 Jan 2023 09:40:39 +0000 (UTC)
-Message-ID: <019f6407-a7ca-3129-d4cb-2cfed7519369@xs4all.nl>
-Date:   Fri, 27 Jan 2023 10:40:38 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v4 0/9] media: dt-bindings: common CEC properties
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        Fri, 27 Jan 2023 05:14:33 -0500
+X-Greylist: delayed 2107 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 27 Jan 2023 02:14:26 PST
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D6176B3;
+        Fri, 27 Jan 2023 02:14:26 -0800 (PST)
+Received: from [167.98.27.226] (helo=rainbowdash)
+        by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+        id 1pLLCR-000onR-8B; Fri, 27 Jan 2023 09:39:11 +0000
+Received: from ben by rainbowdash with local (Exim 4.96)
+        (envelope-from <ben@rainbowdash>)
+        id 1pLLCR-001msw-1I;
+        Fri, 27 Jan 2023 09:39:11 +0000
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, Joe Tessler <jrt@google.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-tegra@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-media@vger.kernel.org, Jeff Chase <jnchase@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20221208103115.25512-1-krzysztof.kozlowski@linaro.org>
- <cd803c70-faf0-963e-fca3-0edd13fa8a29@linaro.org>
- <c092c11f-870f-6520-ad89-001468ed59dc@xs4all.nl>
- <7e941a2d-25d9-44e0-7438-13225c87d8ac@linaro.org>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <7e941a2d-25d9-44e0-7438-13225c87d8ac@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] arm64: tegra: dts: add vccmq on p3310 TX2 SoM
+Date:   Fri, 27 Jan 2023 09:39:10 +0000
+Message-Id: <20230127093910.426233-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27/01/2023 10:37, Krzysztof Kozlowski wrote:
-> On 13/01/2023 10:04, Hans Verkuil wrote:
->> Hi Krzysztof,
->>
->> On 13/01/2023 09:59, Krzysztof Kozlowski wrote:
->>> On 08/12/2022 11:31, Krzysztof Kozlowski wrote:
->>>> Hi,
->>>>
->>>> Changes since v3
->>>> ================
->>>> 1. cec-gpio: Add missing SPDX.
->>>> 2. nvidia,tegra114-cec: Correct path in maintainers.
->>>>
->>>
->>>
->>> Mauro (and maybe Hans?), any comments here. Can you apply the patchset?
->>
->> No comments yet. I plan to review and likely merge this next week.
-> 
-> Hi Hans,
-> 
-> I hope they didn't get forgotten and you still have a plan to look at
-> these. Patchwork shows they are waiting for review:
-> https://patchwork.kernel.org/project/linux-media/patch/20221208103115.25512-2-krzysztof.kozlowski@linaro.org/
-> 
-> Best regards,
-> Krzysztof
-> 
+The TX2 SoM's SDIO WiFI card is connected via mmc@3440000 however it does
+not look like the upstream kernel is even bothering to power this (and
+the regulator framework shuts down this power rail post kernel init).
 
-They are on my todo list :-)
+The issue seems to be a missing link for vccq from the MAX77620 PMIC's LDO5
+which is labeled vddio_sdmmc3 (and not used anywhere else) to the mmc@3440000
+node to ensure there is at leasr bus power.
 
-I hope to get to it next week.
+Note this does not fix the WiFi issue on upstream kernels, there is still
+something else missing that gets the BCM WiFi device to detect properly.
 
-Regards,
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Note, probably a candidate for stable.
+---
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-	Hans
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+index aff857df25cf..3fd34d3d912a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -145,6 +145,7 @@ mmc@3400000 {
+ 	/* SDMMC3 (SDIO) */
+ 	mmc@3440000 {
+ 		status = "okay";
++		vqmmc-supply = <&vddio_sdmmc3>;
+ 	};
+ 
+ 	/* SDMMC4 (eMMC) */
+-- 
+2.39.0
+
