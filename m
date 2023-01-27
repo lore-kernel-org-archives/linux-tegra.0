@@ -2,66 +2,66 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E04C38142
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 20:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 009B0C61DB3
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 20:06:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230513AbjA0UG1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Jan 2023 15:06:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49860 "EHLO
+        id S230058AbjA0UGa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Jan 2023 15:06:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231193AbjA0UGG (ORCPT
+        with ESMTP id S232340AbjA0UGJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Jan 2023 15:06:06 -0500
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2089.outbound.protection.outlook.com [40.107.95.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 149D913D52;
-        Fri, 27 Jan 2023 12:05:06 -0800 (PST)
+        Fri, 27 Jan 2023 15:06:09 -0500
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A3D1968D;
+        Fri, 27 Jan 2023 12:05:10 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j/oJ/mjzoVJ9LYtmtKqnBfT6ykKG6CCwPi1fhWIWV/ECm6Fh5Lr1nZzkAHoV4zICg9oi91ydGHYOH7ofPw7SgDDCanVZF6KTOCf1ZAYMn5X7zwDjk0CadjtxpqGvOK1+qcbJmhZzoQW7ss9249YUM8O5Kw84JDFLKdrTMEUNdTt8Hdc6YLYTW4fDSbE8eGuukPyl7rUXV6AyinsiG+t+/migr5ZcjUt8ktGi+4/pbt9xlZhu426bp1XaMpj/91O5TxcvlBCkFGrjuPP4gFGONMzRcb3gCwEJC9ZFSLbTeoUtq/ss+NMIpKeiHKKx0j0QZqISQHiEnOJFBstJEraYOw==
+ b=oMfodoEU980tWnqGZN2AU8MKrGdxJlYaWUMIDjKEFE7SCwyNojfv0t5HwQe2Hs4eaD5yXkQqNs/fT8nNzbQIhuKq1c8a97li3hzgYKQH7V0elh3KDgLB26MMCIVuJA9FFOIMvjJt88wKWkA6OvfhQpNxJoBX7AUroqSy1dXKmCmD1rW6fEiBDQZjP6fmdOfeu2W7OJwN3/Ukibd5RFMwZlbM5Yy85FubAjSIy1VQfAf0oPrgAa7U9bEhZbDcV2Xdsr5Gw6CU3xvvc2/vdi5TkDE3vUuDGq+RRgabM1HjoimxhhDcgpMfzW89WIim67APtL7JO/Myk7A7GbSMfe3ukg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VZh7ZQsu6wXe71RiKkNG/LgBAOZ30KFVhwYqOJyWR/U=;
- b=ScnWR7Ko1/BRa3pJ4uQpM4pFy0H8DiFMmwgtlbmUaIPxLddQ0/sg0kG73us0Pw1rbeSFnAb4S17HdTIVkkq9xyZJsXwWTCqQlYkDvqx5njARdMI7erFm8c7S/hCtkXiK1t7nABgfZ1/g/HIJMk8sG+It9K10o03OVWmXSwEKBVEbGHNrvqJKI7CAcOGCplgBqVPfH5ZnRbRruNAGQ3YEEnHOx5W56Wbi+bq0ayqGLUmgnMi2jM9yS7+rf9U1PyoFL6mIWTqtiYVjm3s2Tz62wgkgglfj8Uv9mg1jARTLx966lE/tGtOg7PdjQ74PRGr+gvMvfP7nLfz58f8MD2hpLg==
+ bh=XgM+cev+ndotYYDg9UlvyDRsKaHnb3mMoVsLfQwtZhc=;
+ b=Gvxoq8JCmcMDcf69IELBw2pGn0IJCQuU5mU9W/Xc2xRmVE7dlUsNHAxuJCULa8it9oGi6t/ruFN0etbWrrAphLW/p8JtCZkxpPwlK0GJPmv82JVJBFzkb4h4GKG7lSADqij38Z5Rm0e17fdSk6g3FATwWaqt2haW3KlkpQr9kVbiicYBc8Lze2rIwXQaqAMgJImysX8cvpj+/Defrf63uEZL58N9R4P1zGfuWdj3RWtiOX8gWmGku6Yjev60e0UMW9YFZKg7xn9Svn1fCyzwuRqdA3iAGaLcOLiny4sTPpIPhi80Oq1FV08vp+98/+UkgCfH/JHzco0K5eaBDhoGZg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=lists.infradead.org
+ 216.228.117.160) smtp.rcpttodomain=lists.infradead.org
  smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
  header.from=nvidia.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VZh7ZQsu6wXe71RiKkNG/LgBAOZ30KFVhwYqOJyWR/U=;
- b=ltVJGMly3csqZVMRnGuY1uGZbqFe5nFJ+c5K3UaSRuAcr+15gWbt27HHYFgQIDDUu/AG/Yu+oAVs4bTu3N5yBcMWMUvXppNG9L053v8JmPWnK3hfG1PRatZ/icnZL/zoF2FTfTdpkcGLUrWmvNWURmCewHEJWa330iHFHLk3fELr0L4W33tmhlV+yEbCqE5QHRmOu+cgi9UwIWUBm2nLWvRFX5spYvm2qP/rcUfa3XBN1wIy8vNPwDL7n9fmleAlAisdfqvbLqrnedShjun+qfNQRXXZAN3Fod3uNqq71yJTYJ80gLyVninyue4BGI8OgbXYyKbIzLX3owM9OdsZXw==
-Received: from BN1PR10CA0003.namprd10.prod.outlook.com (2603:10b6:408:e0::8)
- by SJ1PR12MB6243.namprd12.prod.outlook.com (2603:10b6:a03:456::13) with
+ bh=XgM+cev+ndotYYDg9UlvyDRsKaHnb3mMoVsLfQwtZhc=;
+ b=jCRApkrqceox9F7WbzC6U9JBSlOJAYdA+YcatUtsl5Qh4HXIxnhHX+MM9h0QP1XgCYmUiIN50K+rGEtQs1nQfORg15/LdlhNQQRAaC4G1UEvp4juhin7erWKzBhX+ksGALAzWWiJL8v9HugGpJnLPwCsuhivjpVHlzviKNSHiXfZNgfIF5P3j8+n0njjIA1kSaV1T7pAEFafyKyThFIbWJDOAEpSiO/oLCwH0Yyj/4jMQmZJyFbg/kK4dSo9MZOw+/T/iM3QLDqiDFJZT2/jdemwFjH+AlfL3YRUob0xEv26azpibc2N+O3g0Xq/OadIMwcbvpALVBZxUDTWaqo/lg==
+Received: from BN0PR04CA0131.namprd04.prod.outlook.com (2603:10b6:408:ed::16)
+ by DM6PR12MB4417.namprd12.prod.outlook.com (2603:10b6:5:2a4::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.25; Fri, 27 Jan
- 2023 20:05:04 +0000
-Received: from BN8NAM11FT110.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e0:cafe::b6) by BN1PR10CA0003.outlook.office365.com
- (2603:10b6:408:e0::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.22 via Frontend
- Transport; Fri, 27 Jan 2023 20:05:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.22; Fri, 27 Jan
+ 2023 20:05:09 +0000
+Received: from BN8NAM11FT112.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ed:cafe::f9) by BN0PR04CA0131.outlook.office365.com
+ (2603:10b6:408:ed::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.25 via Frontend
+ Transport; Fri, 27 Jan 2023 20:05:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT110.mail.protection.outlook.com (10.13.176.156) with Microsoft SMTP
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN8NAM11FT112.mail.protection.outlook.com (10.13.176.210) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6043.22 via Frontend Transport; Fri, 27 Jan 2023 20:05:03 +0000
+ 15.20.6043.22 via Frontend Transport; Fri, 27 Jan 2023 20:05:08 +0000
 Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 27 Jan
- 2023 12:04:55 -0800
+ 2023 12:04:58 -0800
 Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 27 Jan
- 2023 12:04:54 -0800
+ 2023 12:04:58 -0800
 Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
  (10.129.68.10) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Fri, 27 Jan 2023 12:04:53 -0800
+ Transport; Fri, 27 Jan 2023 12:04:56 -0800
 From:   Nicolin Chen <nicolinc@nvidia.com>
 To:     <jgg@nvidia.com>, <kevin.tian@intel.com>, <robin.murphy@arm.com>,
         <joro@8bytes.org>, <will@kernel.org>, <agross@kernel.org>,
@@ -75,79 +75,61 @@ CC:     <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
         <linux-mediatek@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <kvm@vger.kernel.org>
-Subject: [PATCH 0/4] iommu: Reject drivers with broken_unmanaged_domain
-Date:   Fri, 27 Jan 2023 12:04:16 -0800
-Message-ID: <cover.1674849118.git.nicolinc@nvidia.com>
+Subject: [PATCH 2/4] iommu/dma: Do not init domain if broken_unmanaged_domain
+Date:   Fri, 27 Jan 2023 12:04:18 -0800
+Message-ID: <451e7beb57ec6de66ee0da5b38886105436f53d7.1674849118.git.nicolinc@nvidia.com>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <cover.1674849118.git.nicolinc@nvidia.com>
+References: <cover.1674849118.git.nicolinc@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT110:EE_|SJ1PR12MB6243:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9962505-562e-442e-2012-08db00a1c760
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT112:EE_|DM6PR12MB4417:EE_
+X-MS-Office365-Filtering-Correlation-Id: e581f0a5-0c46-48b6-6296-08db00a1ca63
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: E56bWi9f2cQ9RTOZidH+rfkRzUPcbmeNr4SvrFn/2bblSjf69HFQnSPr95Bg6wZU733fOHOoTi5mrGsOV6ulaVSeISYTUc1qb6vDsUXfdQncNDZNHr4y5biUb4W/sWtlXRwXkhpxNbmO/D/PPl6/3/fitpdbHtPA8c3Wa0t1xVifKdbkELSfQkj9IPU1XODtSEpyVN3R9JyfGxXaZCOMzQTZWlnBYDsyvXgLutcmMfIfprYlbXxqIN94WsXw1aNlLqEpt5pBGnGCCe9IU6C4utzkC71oJRRBsiULmcO3EsG2E0iDOUtrKKJznON4KkAn3YBF8FV7+etSjw2xVbBwoNZbEbqLIDjvCgiRR2CF23Dah759h1HU3QJgmkfAqbDUhNN7ZYI4/Py2QD7uSefvxrrjeTHe+6wpDZ62kbPeDfcGd2DJ5lxTypmYFZ3mOzhFUwe7lVpyHx2ansA18zkVktJ1kUwbwK0+rWmIb2q2X4vmzHnG0j60rG0IbVkW3KjoOPY3OOkPjybpXwUHRNCTHG4Fy0C5No6wnDltKnsO6LhCrOWdAB5WRBqKwVOo/wARLkiTq2Qf/EfeSwt6A3ycJ2xIlQzYv5PHYVccqGmX4wJrFSR9YxHcfIEY4xJLcFajzm/XkaIp0IE6XOAt78Bp7t7gVpzTmflx8QXPfe7ySzfzMUDpAYb2c4qR72YcgVmhl0d78CUl4hm8j9L3EsAFGVl/c6b4CkEkyInG9Tudn7K5eOIOePo8yGtvL9pC+T1Gv8ZQr9u54mu661I7khRBsGkxE5dOcAz63T3TYH9XpTrimc2MWvWwlfccpZi/hA0I
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(136003)(376002)(396003)(346002)(451199018)(40470700004)(46966006)(36840700001)(7696005)(26005)(186003)(6666004)(478600001)(2616005)(2906002)(336012)(966005)(47076005)(426003)(4326008)(110136005)(316002)(83380400001)(70586007)(8676002)(70206006)(54906003)(41300700001)(7416002)(8936002)(5660300002)(36860700001)(356005)(40460700003)(7636003)(82740400003)(921005)(82310400005)(86362001)(36756003)(40480700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: UaK1xkoUUrGEuWZFGoqIBoZwuwzxYLdXg3xkYOXTcjv0zILchFA7HtkIiLrHu5xJCWsjekGyoFIC3gEpzutRqdpcbA+F3KO4VHnVSwJ4m7EPTtIJu8wdByaTNY5aDzhy7/SjtHDvno+xqrg4z9mew06TfeQiLGiBHYs4jsflvNJwwaHaMfeSEESdOEChHET9I7WnYasbLrpLNVOY3vRNml8ToWHla8vAveo3Bp9N5NV265hpS+V1ivchGqOGCIzo4Q47zadRoAHMsNfuirw1IK34Sjl5gl5vs0VIqR+7sFvodtgi6V20wSfwmZXPbHIKtyBQCPTsVK4A3Z7QqHG4OeUWGQIXLpjCp9HnUr1XR4Fewxahk7dsVyLylzhoHmYzYWh17dM6rZi3ytaCKCLOFnbqLgDBEKBvPZrkyPP75kaI9QHwNTtgm7tIcwENUtlwfx/sQZ//vH8hssR6jsPFWbwEdsQOGrUe7zbDE89utGqABt7NYO/mALb+Lng4yiOETQ93vSdTGAGb5Cr/Ywgbyoj5aErCDIkgzFza/uSzRyg7UmYqsLhdpWDU4HTrA8vLeyfNXpyQP/gAJW5oih/oxtXIHLHhtswytyWRa7EgFn5Y2tPABz4lY8Po/C7SYI+dNgTzNodUp1p/qfBcnHWUonOuW/i00TXDGXW8agtUdjnqQm8VqEz1O5yb7+Iv29Ko4C6UxH4zlwKOtRZV+JKQpJrLe7/bzh1zhipHjWPSKCY=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(39860400002)(346002)(396003)(136003)(451199018)(40470700004)(36840700001)(46966006)(2906002)(5660300002)(7416002)(4744005)(41300700001)(36860700001)(426003)(47076005)(6666004)(26005)(8936002)(336012)(186003)(478600001)(2616005)(70206006)(36756003)(356005)(40460700003)(82740400003)(921005)(7636003)(70586007)(86362001)(316002)(4326008)(40480700001)(7696005)(8676002)(82310400005)(54906003)(110136005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2023 20:05:03.5726
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2023 20:05:08.6271
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9962505-562e-442e-2012-08db00a1c760
+X-MS-Exchange-CrossTenant-Network-Message-Id: e581f0a5-0c46-48b6-6296-08db00a1ca63
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT110.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT112.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6243
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4417
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi all,
+Add a sanity of the broken_unmanaged_domain flag to reject the use of
+dma-iommu in the early stage, if the flag is set by the iommu driver.
 
-Both IOMMU_DOMAIN_UNMANAGED and IOMMU_DOMAIN_DMA require the support
-of __IOMMU_DOMAIN_PAGING capability, i.e. iommu_map/unmap. However,
-some older iommu drivers do not fully support that, and these drivers
-also do not advertise support for dma-iommu.c via IOMMU_DOMAIN_DMA,
-or use arm_iommu_create_mapping(), so largely their implementations
-of IOMMU_DOMAIN_UNMANAGED are untested. This means that a user like
-vfio/iommufd does not likely work with them.
+Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+ drivers/iommu/dma-iommu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thus, mark all these drivers as having "broken" UNAMANGED domains and
-add a new device_iommu_unmanaged_supported() API for vfio/iommufd and
-dma-iommu to refuse to work with these drivers.
-
-These are preparatory changes for a new IOMMU API that will be used by
-iommufd. Having this flag allows us to prevent any use of the new API
-in iommufd, to keep things clean.
-
-You can also find this series on Github:
-https://github.com/nicolinc/iommufd/commits/broken_unmanaged_domain
-
-Thank you
-Nicolin Chen
-
-Nicolin Chen (4):
-  iommu: Add a broken_unmanaged_domain flag in iommu_ops
-  iommu/dma: Do not init domain if broken_unmanaged_domain
-  iommufd: Do not allocate device object if broken_unmanaged_domain
-  vfio: Do not allocate domain if broken_unmanaged_domain
-
- drivers/iommu/dma-iommu.c       |  3 +++
- drivers/iommu/fsl_pamu_domain.c |  1 +
- drivers/iommu/iommu.c           | 24 ++++++++++++++++++++++++
- drivers/iommu/iommufd/device.c  |  3 +++
- drivers/iommu/msm_iommu.c       |  1 +
- drivers/iommu/mtk_iommu_v1.c    |  1 +
- drivers/iommu/omap-iommu.c      |  1 +
- drivers/iommu/tegra-gart.c      |  1 +
- drivers/iommu/tegra-smmu.c      |  1 +
- drivers/vfio/vfio_iommu_type1.c |  5 ++++-
- include/linux/iommu.h           | 11 +++++++++++
- 11 files changed, 51 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index f798c44e0903..f1e8d952b17d 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -545,6 +545,9 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+ 	if (!cookie || cookie->type != IOMMU_DMA_IOVA_COOKIE)
+ 		return -EINVAL;
+ 
++	if (WARN_ON(!device_iommu_unmanaged_supported(dev)))
++		return -EINVAL;
++
+ 	iovad = &cookie->iovad;
+ 
+ 	/* Use the smallest supported page size for IOVA granularity */
 -- 
 2.39.1
 
