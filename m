@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBC5C61DB3
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 16:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A88ABC636BD
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 16:37:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233726AbjA0QhY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Jan 2023 11:37:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34156 "EHLO
+        id S234970AbjA0Qh0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Jan 2023 11:37:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234970AbjA0QhY (ORCPT
+        with ESMTP id S234971AbjA0Qh0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Jan 2023 11:37:24 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF57B31E3F
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Jan 2023 08:37:22 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id v13so5202745eda.11
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Jan 2023 08:37:22 -0800 (PST)
+        Fri, 27 Jan 2023 11:37:26 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E466A53
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Jan 2023 08:37:23 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id m12so5230822edq.5
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Jan 2023 08:37:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zCCAhjEj/wQuIkscpSC6P99O36fA8Kgf9ACNlg6MuGA=;
-        b=EMTBGGv7Q3hRuONlL9HHrk7EGXajxLq9bs1/PoyYUUPw2UQdyvSGS54NtpQKojDmOF
-         0uhQIBY4cNlymGuDVYADEA3i5QJ4VvidIQXLaT7kjyrjUPfMndPi5K7BHIRWOHOphNPH
-         ES8zKIO1jLbWjnlUxAoSskDbNNKbIDxnG9WaaJXDcPm1GC1jYiSi4JcJ6SqbSqMdhAtH
-         jSRHgGX4Qd495MVMA931JkcyyT1fo0Ijtxdb/JVXeaSzaUxzHid8/a3/TJuJ2T6uQbmi
-         kTlhBWYxkDRNBNiynqbzArOQadshZ9daOlCf7BRvcXR0ae4bKdN4/QbitAjsJHunRVlp
-         f6EA==
+        bh=+qslg5XG8mE+piCZm0kfzf1q3jxWT8RdGIOugoI0ncw=;
+        b=lvdfNB4yM7Kplu5m48DXESFlhmMLCOc/2Qz01MDeVn8aczXb1Ov7fro9GAG+xez5Z3
+         cLBshrHaVlyt1tUm5wWKDKc0TfeCc7Iqy47SBiRsFS7X3K7WxRLwSONOwPgEfGYbppNB
+         R5GI/M8S9V/DO2PYFEnTsuf6/m7NoHx5KKYPLl5JH38FqU8CRmqLNoRLerZ1IK0VXZX3
+         TtypQtrAi+6szDqykDsbxUqXCt41jdVF+tgkzBeVqUguPgkFVGO9J4klfdReO6nfrSvP
+         axYu03cZ//IJhgsXaKULM627jctIaDAaBAJ7Ud62BQH0s3rtFBgpgNCI7VqJPM0aIWzN
+         qYjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zCCAhjEj/wQuIkscpSC6P99O36fA8Kgf9ACNlg6MuGA=;
-        b=5KqFjrBmj2YzFR0NZ/G0oYkzo7g29heD2jMm+LCZXgB68j8OyM4h8vYh6df66kYqnp
-         rpvJCSozBCBkSX32rxlC/KfxJK64rrVOq1qhfz/Bic72g5GbepekXRvmCMDowz2bG4On
-         5Gi42GHQicHF/rJz3pm3mz6Xhy83U8ZVz/JxmViCrp3ArX1xh0TmuuKrj9mXSgIZ9xeQ
-         xK6GFrO8k+EcILrXsLjb2iJR/L2J3T0mGi4sXcs3REfJ4j1/cUPzITO+VbCR25VLt3Yx
-         9rWz9Iel9KT56ufDUB2InFbVOSTfjHL10weGA0JiBdc7FEBTBqf8KXNzVHRMDLHfDacE
-         O+sg==
-X-Gm-Message-State: AFqh2ko9xGzq38FgksueCBiABqoovT7E9EzITZlWxw5UeQqjIXba3Tgc
-        F/Gh1JJsV1IdYNPaKQk0kSk=
-X-Google-Smtp-Source: AMrXdXtboPe9IUAV41X1srXQPhtpVBNYEiYSQenBQ61SkhgYTcUkgmhn2cWHgcFgSkug0W6cejREMQ==
-X-Received: by 2002:a05:6402:174d:b0:494:eb9:54c4 with SMTP id v13-20020a056402174d00b004940eb954c4mr36951020edx.19.1674837441457;
-        Fri, 27 Jan 2023 08:37:21 -0800 (PST)
+        bh=+qslg5XG8mE+piCZm0kfzf1q3jxWT8RdGIOugoI0ncw=;
+        b=40igPGoXDmEXv4HpEtPbEtNpIGPq2Dd/oopIXzRVxUbzo6hKPNeVlszNe2d1rcxZ8E
+         Ig8jjwQrGEd5EJ45UaBgddywQjQn2vG3sr3wxb4fug+YJrSCiwJ2wvDIPHWnaDbNj5Mo
+         SHsc+6oAMFlKM1E5tTb8oqfXOZWihPAon3QpC7RnyJr1dIcq9lGmmIBqVZwCv4WHLcVo
+         ohvZigd/ARnavPd7jhnbMQNQHFN68MNTmwTSQMyXTD31ZOU1CVtx92G5XtXyc3OlzWfM
+         zsnG/L+Tzw4cooOsxFdKnlDMjWvZX5iJpT2JqG36kvUGLur2ravHb1+FjhpCRmX+qmdu
+         ZTRQ==
+X-Gm-Message-State: AO0yUKUXiAEI6+MexwL0kzTGktFmntJ/lS2Uwr8Mw0e++lhv0m78OKRR
+        TSabjunkMxRTXutow/gQVy0=
+X-Google-Smtp-Source: AK7set8OSXFFJtZkqitX+KkkfAYs0f3mNZlMlTAWoqc1e9KtysDoig5HUJG7US4JaeR88x62m3nehg==
+X-Received: by 2002:a05:6402:1a5c:b0:4a0:8ea1:cce with SMTP id bf28-20020a0564021a5c00b004a08ea10ccemr13895721edb.25.1674837442296;
+        Fri, 27 Jan 2023 08:37:22 -0800 (PST)
 Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id y8-20020a056402134800b004610899742asm2549100edw.13.2023.01.27.08.37.21
+        by smtp.gmail.com with ESMTPSA id bd16-20020a056402207000b004a1166a631dsm1956837edb.94.2023.01.27.08.37.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 27 Jan 2023 08:37:21 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
@@ -55,9 +55,9 @@ To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 2/3] ARM: tegra: Device tree changes for v6.3-rc1
-Date:   Fri, 27 Jan 2023 17:37:18 +0100
-Message-Id: <20230127163719.460954-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/3] arm64: tegra: Device tree changes for v6.3-rc1
+Date:   Fri, 27 Jan 2023 17:37:19 +0100
+Message-Id: <20230127163719.460954-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230127163719.460954-1-thierry.reding@gmail.com>
 References: <20230127163719.460954-1-thierry.reding@gmail.com>
@@ -76,72 +76,73 @@ The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.3-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.3-arm64-dt
 
-for you to fetch changes up to d1e34a8abfd6c5ac196f278ac2c5633e3e35ee22:
+for you to fetch changes up to 682e1c498ae793ad90587171c93c1f7ec87aa208:
 
-  ARM: tegra: Sort nodes by unit-address, then alphabetically (2023-01-23 12:07:15 +0100)
+  arm64: tegra: Drop I2C iommus and dma-coherent properties (2023-01-27 17:08:58 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v6.3-rc1
+arm64: tegra: Device tree changes for v6.3-rc1
 
-Just a single patch to properly sort nodes and make the DTS files easier
-to read.
+There are two big changes in this: one is to bump the #address-cells and
+the #size-cells properties to 2 so that bus address translations work
+correctly and another to sort nodes according to a scheme that we've
+been trying to follow, but where some inconsistencies have accumulated
+over the years.
+
+As for the rest, this adds mostly new things on Tegra234, such as USB
+host and device support and identification EEPROMs found on Jetson AGX
+Orin.
+
+Some cleanups are also included, such as the removal of unneeded
+properties or duplicated nodes.
 
 ----------------------------------------------------------------
-Thierry Reding (1):
-      ARM: tegra: Sort nodes by unit-address, then alphabetically
+Jon Hunter (4):
+      arm64: tegra: Populate address/size cells for Tegra234 I2C
+      arm64: tegra: Populate Jetson AGX Orin EEPROMs
+      arm64: tegra: Add dma-coherent property for Tegra194 XUDC
+      arm64: tegra: Populate the XUDC node for Tegra234
 
- arch/arm/boot/dts/tegra114-asus-tf701t.dts         | 240 +++---
- arch/arm/boot/dts/tegra114-dalmore.dts             |  26 +-
- arch/arm/boot/dts/tegra124-apalis-emc.dtsi         |  14 +-
- arch/arm/boot/dts/tegra124-apalis-eval.dts         |  20 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts    |  20 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |  60 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi             |  60 +-
- arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     |  15 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi       |  27 +-
- arch/arm/boot/dts/tegra124-nyan-big.dts            |  22 +-
- arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi     |  19 +-
- arch/arm/boot/dts/tegra124-nyan-blaze.dts          |  14 +-
- arch/arm/boot/dts/tegra124-nyan.dtsi               |  71 +-
- arch/arm/boot/dts/tegra124.dtsi                    |  20 +-
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts    | 877 +++++++++++----------
- arch/arm/boot/dts/tegra20-asus-tf101.dts           | 114 +--
- arch/arm/boot/dts/tegra20-colibri-eval-v3.dts      |  38 +-
- arch/arm/boot/dts/tegra20-colibri-iris.dts         |  12 +-
- arch/arm/boot/dts/tegra20-colibri.dtsi             |  60 +-
- arch/arm/boot/dts/tegra20-medcom-wide.dts          |   8 +-
- arch/arm/boot/dts/tegra20-paz00.dts                | 130 +--
- arch/arm/boot/dts/tegra20-seaboard.dts             |  72 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi            |  58 +-
- arch/arm/boot/dts/tegra20-trimslice.dts            |  20 +-
- arch/arm/boot/dts/tegra20-ventana.dts              |  58 +-
- arch/arm/boot/dts/tegra20.dtsi                     |  70 +-
- arch/arm/boot/dts/tegra30-apalis-eval.dts          |  20 +-
- arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts     |  20 +-
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |  20 +-
- arch/arm/boot/dts/tegra30-apalis.dtsi              |  20 +-
- arch/arm/boot/dts/tegra30-asus-lvds-display.dtsi   |   2 +
- .../dts/tegra30-asus-nexus7-grouper-common.dtsi    |  82 +-
- .../tegra30-asus-nexus7-grouper-maxim-pmic.dtsi    |  14 +-
- ...tegra30-asus-nexus7-grouper-memory-timings.dtsi |  20 +-
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi |  28 +-
- arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi |  32 +-
- arch/arm/boot/dts/tegra30-asus-tf201.dts           |  34 +-
- arch/arm/boot/dts/tegra30-asus-tf300t.dts          |  24 +-
- arch/arm/boot/dts/tegra30-asus-tf300tg.dts         |  20 +-
- arch/arm/boot/dts/tegra30-asus-tf700t.dts          |  52 +-
- .../boot/dts/tegra30-asus-transformer-common.dtsi  |  54 +-
- arch/arm/boot/dts/tegra30-beaver.dts               |  44 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi              |  54 +-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts      |   2 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi             |  30 +-
- arch/arm/boot/dts/tegra30-ouya.dts                 | 207 +++--
- arch/arm/boot/dts/tegra30-pegatron-chagall.dts     | 130 +--
- arch/arm/boot/dts/tegra30.dtsi                     |  88 +--
- 49 files changed, 1580 insertions(+), 1570 deletions(-)
+Mikko Perttunen (1):
+      arm64: tegra: Mark host1x as dma-coherent on Tegra194/234
+
+Thierry Reding (6):
+      arm64: tegra: Fix typo in gpio-ranges property
+      arm64: tegra: Fix duplicate regulator on Jetson TX1
+      arm64: tegra: Sort includes
+      arm64: tegra: Bump #address-cells and #size-cells
+      arm64: tegra: Sort nodes by unit-address, then alphabetically
+      arm64: tegra: Drop I2C iommus and dma-coherent properties
+
+Wayne Chang (1):
+      arm64: tegra: Enable XUSB host function on Jetson AGX Orin
+
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts     |   16 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |  232 +-
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 2548 ++++++++++----------
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |   86 +-
+ .../dts/nvidia/tegra186-p3509-0000+p3636-0001.dts  | 1176 ++++-----
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  486 ++--
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   36 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 2324 +++++++++---------
+ .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi | 2445 +++++++++----------
+ arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi     |   36 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 1623 +++++++------
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   66 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  278 +--
+ arch/arm64/boot/dts/nvidia/tegra210-p2595.dtsi     |    3 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |    5 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi     |   86 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  384 +--
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   66 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  310 +--
+ .../arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi |  130 +-
+ .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  | 1943 ++++++++-------
+ .../arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi |   24 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           | 2097 ++++++++--------
+ 23 files changed, 8367 insertions(+), 8033 deletions(-)
