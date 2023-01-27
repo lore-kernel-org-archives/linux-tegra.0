@@ -2,82 +2,101 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C08FAC54EAA
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 22:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4836FC54EAA
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Jan 2023 22:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231615AbjA0WAZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Jan 2023 17:00:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37534 "EHLO
+        id S231701AbjA0WOZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Jan 2023 17:14:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231928AbjA0WAY (ORCPT
+        with ESMTP id S231439AbjA0WOY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Jan 2023 17:00:24 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DB2E17EFEC;
-        Fri, 27 Jan 2023 14:00:05 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78E222F4;
-        Fri, 27 Jan 2023 14:00:47 -0800 (PST)
-Received: from [10.57.88.221] (unknown [10.57.88.221])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1C5A3F5A1;
-        Fri, 27 Jan 2023 14:00:01 -0800 (PST)
-Message-ID: <89da64c8-fef4-2cea-f15c-86264073500c@arm.com>
-Date:   Fri, 27 Jan 2023 21:59:50 +0000
+        Fri, 27 Jan 2023 17:14:24 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CA384942;
+        Fri, 27 Jan 2023 14:14:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 933BF61DA1;
+        Fri, 27 Jan 2023 22:14:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024A6C433D2;
+        Fri, 27 Jan 2023 22:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674857663;
+        bh=o/wZZ1uzmJ7qFEw1pt+mcU/ptJZ13hgGGF/CULyoMJ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mLoGepRJuyf4fEgFO26waiEfOSuAf6TdWVpNp3P2k9Gc2tm2E3uR46Xo/hjAvRSet
+         3/zhelAgl+1nCivDb+TKA7OZqmbagmtWbCHwESGfWG3n6+6mPt3Y41FkJzxMH/y4i6
+         7R5cvH3+cCuaZFsIzs9zYOaayHTfpDbb3GGIAmlyJNQ4Nu3GmPEnSL1vSMF3yZt5Ca
+         PFtEYg4t2SqqTqfrm/8ZNtyys6xN4qqm3mQZN6v75bG26CdYnVl2TeLfkTZjvXrvJc
+         giocRsVf3XzUHNtQbHmKuK8DvM1Ek1/x5K0wyYtasolTEg7/2qB6aGjQp00vFKNL5Y
+         zt+Sp8L7RVdGg==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: [PATCH] gpu: host1x: fix uninitialized variable use
+Date:   Fri, 27 Jan 2023 23:14:00 +0100
+Message-Id: <20230127221418.2522612-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 2/4] iommu/dma: Do not init domain if
- broken_unmanaged_domain
-Content-Language: en-GB
-To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
-        kevin.tian@intel.com, joro@8bytes.org, will@kernel.org,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        yong.wu@mediatek.com, matthias.bgg@gmail.com,
-        thierry.reding@gmail.com, alex.williamson@redhat.com,
-        cohuck@redhat.com
-Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <cover.1674849118.git.nicolinc@nvidia.com>
- <451e7beb57ec6de66ee0da5b38886105436f53d7.1674849118.git.nicolinc@nvidia.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <451e7beb57ec6de66ee0da5b38886105436f53d7.1674849118.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023-01-27 20:04, Nicolin Chen wrote:
-> Add a sanity of the broken_unmanaged_domain flag to reject the use of
-> dma-iommu in the early stage, if the flag is set by the iommu driver.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Realistically, iommu-dma will never be enabled on PPC32, let alone used. 
-It will not be enabled on ARM until I've fixed any drivers which need 
-fixing to work with it. We don't need to add dead code here.
+The error handling for platform_get_irq() failing no longer
+works after a recent change, clang now points this out with
+a warning:
 
-Thanks,
-Robin.
+drivers/gpu/host1x/dev.c:520:6: error: variable 'syncpt_irq' is uninitialized when used here [-Werror,-Wuninitialized]
+        if (syncpt_irq < 0)
+            ^~~~~~~~~~
 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->   drivers/iommu/dma-iommu.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index f798c44e0903..f1e8d952b17d 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -545,6 +545,9 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
->   	if (!cookie || cookie->type != IOMMU_DMA_IOVA_COOKIE)
->   		return -EINVAL;
->   
-> +	if (WARN_ON(!device_iommu_unmanaged_supported(dev)))
-> +		return -EINVAL;
-> +
->   	iovad = &cookie->iovad;
->   
->   	/* Use the smallest supported page size for IOVA granularity */
+Fix this by removing the variable and checking the correct
+error status.
+
+Fixes: 625d4ffb438c ("gpu: host1x: Rewrite syncpoint interrupt handling")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/host1x/dev.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 4872d183d860..aae2efeef503 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -487,7 +487,6 @@ static int host1x_get_resets(struct host1x *host)
+ static int host1x_probe(struct platform_device *pdev)
+ {
+ 	struct host1x *host;
+-	int syncpt_irq;
+ 	int err;
+ 
+ 	host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
+@@ -517,8 +516,8 @@ static int host1x_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	host->syncpt_irq = platform_get_irq(pdev, 0);
+-	if (syncpt_irq < 0)
+-		return syncpt_irq;
++	if (host->syncpt_irq < 0)
++		return host->syncpt_irq;
+ 
+ 	mutex_init(&host->devices_lock);
+ 	INIT_LIST_HEAD(&host->devices);
+-- 
+2.39.0
+
