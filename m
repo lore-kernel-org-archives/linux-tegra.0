@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0553DC636D3
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B43DC636D0
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:19:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237509AbjA3OTS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Jan 2023 09:19:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60738 "EHLO
+        id S237658AbjA3OTV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Jan 2023 09:19:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237626AbjA3OSl (ORCPT
+        with ESMTP id S237633AbjA3OS4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Jan 2023 09:18:41 -0500
+        Mon, 30 Jan 2023 09:18:56 -0500
 Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8727EC6;
-        Mon, 30 Jan 2023 06:17:50 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F00686AE;
+        Mon, 30 Jan 2023 06:17:53 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 8C948100026;
-        Mon, 30 Jan 2023 14:17:38 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 4B36C100009;
+        Mon, 30 Jan 2023 14:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675088263;
+        t=1675088271;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+JiyEr0aLb/Un5/rTb5g/3dOFycMN8fKhuwYurKD+kM=;
-        b=Q2alLPKSjV0u7YeUhE92cBuyDDiYgGZ7rMrYJGcejPWB7xpuhP6BH6iz2N1D224W89yPZz
-        ZpY0k3YzZHEIUgfjaECAczCALAUPv3CULq+Vvzh97qKIRzA+htqowbdV0Ki/v2UhTEcpXf
-        QWWRxMAi4jxRCGCg4SaAB+t8T3Q5AfCupY0taQUYJ97HQh8YBpVBhpcIU38viNvLAb7gHJ
-        +7UcguIMwPQg8cy9LfV9+z7ObS5OjepPKeawpPp1fV395S31HMcGprROuA17/xObLA821l
-        0jXzdg/4fFBHo1ADNOnDaeULOgN05Otv6A342tdsWeDzKYVPmYOmTUmtQwRySg==
+        bh=W/OR7OgnmlOPfrWXLXRWbh6OKG8j6mLzoFN0/Tk8wec=;
+        b=f6dnGhWWi2yTxfpnVtHrV1hA+zfhqtgdZ7SyYQWl8itrh2hIgU56R+ggF6MMAOI0WCqHzN
+        63sqALvxJJlZn+3d34aEnYxwLLmmCiJXXdMuZOvnARd/HLFbryeifsp/CB/9/c5zgjt35u
+        RNcNKo1UXhehVUaCBX5EXsunSBpBjsAvivq6pDrKFZgHi87W8BWJ584+ebppBkm6lBNKVA
+        +5afKBqCRbvKwYSUsbbM8kMw5+X8CTCS0i2luoQMqwRCT2BbmaqzxHR+2AT/+U0+nrfpNQ
+        +IYAOArKdSaNcDqA0vGsdDngu3dDG8LhbtjjNA5aUqcyXhtXww1QUdiI4U6REw==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -50,9 +50,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH v4 16/21] staging: media: tegra-video: add a per-soc enable/disable op
-Date:   Mon, 30 Jan 2023 15:15:58 +0100
-Message-Id: <20230130141603.323221-17-luca.ceresoli@bootlin.com>
+Subject: [PATCH v4 18/21] staging: media: tegra-video: add syncpts for Tegra20 to struct tegra_vi
+Date:   Mon, 30 Jan 2023 15:16:00 +0100
+Message-Id: <20230130141603.323221-19-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
 References: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
@@ -62,8 +62,8 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra20 VI needs an additional operation to enable the VI, add an
-operation for that.
+In preparation to implement Tegra20 parallel video capture, add a variable
+to hold the required syncpt and document all the syncpt variables.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -73,69 +73,42 @@ Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Changed in v4:
  - Added review tags
 
-No changes in v3
+Changed in v3:
+ - recycle mw_ack_sp[0] instead of adding out_sp
+
 No changes in v2
 ---
- drivers/staging/media/tegra-video/vi.c | 7 +++++++
- drivers/staging/media/tegra-video/vi.h | 4 ++++
- 2 files changed, 11 insertions(+)
+ drivers/staging/media/tegra-video/vi.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index a26eb1ca869f..22f6d6478d3e 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -1853,6 +1853,9 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 	vi->client.ops = &vi_client_ops;
- 	vi->client.dev = &pdev->dev;
- 
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, true);
-+
- 	ret = host1x_client_register(&vi->client);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev,
-@@ -1863,6 +1866,8 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 	return 0;
- 
- rpm_disable:
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, false);
- 	pm_runtime_disable(&pdev->dev);
- 	return ret;
- }
-@@ -1879,6 +1884,8 @@ static int tegra_vi_remove(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, false);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
 diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 879547073371..851c4f3fcb91 100644
+index 8fadca33bcc9..d5e1ed4217e0 100644
 --- a/drivers/staging/media/tegra-video/vi.h
 +++ b/drivers/staging/media/tegra-video/vi.h
-@@ -37,8 +37,11 @@ enum tegra_vi_pg_mode {
- 	TEGRA_VI_PG_PATCH,
- };
+@@ -117,11 +117,13 @@ struct tegra_vi {
+  * @vi: Tegra video input device structure
+  * @frame_start_sp: host1x syncpoint pointer to synchronize programmed capture
+  *		start condition with hardware frame start events through host1x
+- *		syncpoint counters.
++ *		syncpoint counters. (Tegra210)
+  * @mw_ack_sp: host1x syncpoint pointer to synchronize programmed memory write
+  *		ack trigger condition with hardware memory write done at end of
+- *		frame through host1x syncpoint counters.
++ *		frame through host1x syncpoint counters (On Tegra20 used for the
++ *              OUT_1 syncpt)
+  * @sp_incr_lock: protects cpu syncpoint increment.
++ * @next_out_sp_idx: next expected value for mw_ack_sp[0], i.e. OUT_1 (Tegra20)
+  *
+  * @kthread_start_capture: kthread to start capture of single frame when
+  *		vb buffer is available. This thread programs VI CSI hardware
+@@ -173,6 +175,7 @@ struct tegra_vi_channel {
+ 	struct host1x_syncpt *mw_ack_sp[GANG_PORTS_MAX];
+ 	/* protects the cpu syncpoint increment */
+ 	spinlock_t sp_incr_lock[GANG_PORTS_MAX];
++	u32 next_out_sp_idx;
  
-+struct tegra_vi;
-+
- /**
-  * struct tegra_vi_ops - Tegra VI operations
-+ * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
-  * @vi_fmt_align: modify `pix` to fit the hardware alignment
-  *		requirements and fill image geometry
-  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
-@@ -48,6 +51,7 @@ enum tegra_vi_pg_mode {
-  *		back any queued buffers.
-  */
- struct tegra_vi_ops {
-+	int (*vi_enable)(struct tegra_vi *vi, bool on);
- 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
- 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
- 	void (*vi_stop_streaming)(struct vb2_queue *vq);
+ 	struct task_struct *kthread_start_capture;
+ 	wait_queue_head_t start_wait;
 -- 
 2.34.1
 
