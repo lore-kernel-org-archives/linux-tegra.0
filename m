@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5B3C61DA4
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0553DC636D3
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237539AbjA3OTC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Jan 2023 09:19:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60644 "EHLO
+        id S237509AbjA3OTS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Jan 2023 09:19:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237604AbjA3OSe (ORCPT
+        with ESMTP id S237626AbjA3OSl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Jan 2023 09:18:34 -0500
+        Mon, 30 Jan 2023 09:18:41 -0500
 Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64E23D089;
-        Mon, 30 Jan 2023 06:17:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8727EC6;
+        Mon, 30 Jan 2023 06:17:50 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 0BDA610000B;
-        Mon, 30 Jan 2023 14:17:26 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 8C948100026;
+        Mon, 30 Jan 2023 14:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675088251;
+        t=1675088263;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8x6ANxKmlQRR8yGJcgQ569q5zpdBXVx3vBAjyJdMrk4=;
-        b=TNgP327GTC98tUC+BcpTCv9ipYhjJ9ZPTeRziv4Yt6NTRcp/KRDrLHj65SPKvUy87324CJ
-        /jB75ABQkNl+XhOMcSsARGf1ofR5cohyXAkaW6ZUVcG2NLKLt9YHIzi18RFUCr11UDQGAa
-        kEqFGPsYu4N6wlUCyG9vcoFLa+xL6YdKrE0e12ck7xWBdbbZ68kopQXcrvD8JHAWR8151H
-        spZ/06aJY8MTXJFcrKG1z0x1MBWjV6FMyqTQBNCDQxuZ8D3Lc3zersJs4JEHHoa8yl3eyW
-        mI7e5AGTIzWtOOzJbhRij0+vqHW+5xiu6wl6LTtwdHbR57zfMkj1H95vLVISMQ==
+        bh=+JiyEr0aLb/Un5/rTb5g/3dOFycMN8fKhuwYurKD+kM=;
+        b=Q2alLPKSjV0u7YeUhE92cBuyDDiYgGZ7rMrYJGcejPWB7xpuhP6BH6iz2N1D224W89yPZz
+        ZpY0k3YzZHEIUgfjaECAczCALAUPv3CULq+Vvzh97qKIRzA+htqowbdV0Ki/v2UhTEcpXf
+        QWWRxMAi4jxRCGCg4SaAB+t8T3Q5AfCupY0taQUYJ97HQh8YBpVBhpcIU38viNvLAb7gHJ
+        +7UcguIMwPQg8cy9LfV9+z7ObS5OjepPKeawpPp1fV395S31HMcGprROuA17/xObLA821l
+        0jXzdg/4fFBHo1ADNOnDaeULOgN05Otv6A342tdsWeDzKYVPmYOmTUmtQwRySg==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -50,9 +50,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH v4 14/21] staging: media: tegra-video: move default format to soc-specific data
-Date:   Mon, 30 Jan 2023 15:15:56 +0100
-Message-Id: <20230130141603.323221-15-luca.ceresoli@bootlin.com>
+Subject: [PATCH v4 16/21] staging: media: tegra-video: add a per-soc enable/disable op
+Date:   Mon, 30 Jan 2023 15:15:58 +0100
+Message-Id: <20230130141603.323221-17-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
 References: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
@@ -62,15 +62,8 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra_default_format in vi.c is specific to Tegra210 CSI.
-
-In preparation for adding Tegra20 VIP support, move the default format to a
-new field in the soc-specific `struct tegra_vi_soc`. Instead of an entire
-format struct, only store a pointer to an item in the existing format
-array.
-
-No functional changes. The format pointed to is the same that used to be in
-vi.c.
+The Tegra20 VI needs an additional operation to enable the VI, add an
+operation for that.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -83,75 +76,66 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/tegra210.c |  2 ++
- drivers/staging/media/tegra-video/vi.c       | 11 +----------
- drivers/staging/media/tegra-video/vi.h       |  2 ++
- 3 files changed, 5 insertions(+), 10 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 7 +++++++
+ drivers/staging/media/tegra-video/vi.h | 4 ++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index 71483d0c19bf..28d3d05c12c4 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -771,8 +771,10 @@ const struct tegra_vi_soc tegra210_vi_soc = {
- 	.hw_revision = 3,
- 	.vi_max_channels = 6,
- #if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
-+	.default_video_format = &tegra210_video_formats[0],
- 	.vi_max_clk_hz = 499200000,
- #else
-+	.default_video_format = &tegra210_video_formats[4],
- 	.vi_max_clk_hz = 998400000,
- #endif
- };
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index a76cad0e3026..3762fd273514 100644
+index a26eb1ca869f..22f6d6478d3e 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -44,15 +44,6 @@ struct tegra_vi_graph_entity {
- 	struct v4l2_subdev *subdev;
- };
+@@ -1853,6 +1853,9 @@ static int tegra_vi_probe(struct platform_device *pdev)
+ 	vi->client.ops = &vi_client_ops;
+ 	vi->client.dev = &pdev->dev;
  
--static const struct tegra_video_format tegra_default_format = {
--	.img_dt = TEGRA_IMAGE_DT_RAW10,
--	.bit_width = 10,
--	.code = MEDIA_BUS_FMT_SRGGB10_1X10,
--	.bpp = 2,
--	.img_fmt = TEGRA_IMAGE_FORMAT_DEF,
--	.fourcc = V4L2_PIX_FMT_SRGGB10,
--};
--
- static inline struct tegra_vi *
- host1x_client_to_vi(struct host1x_client *client)
- {
-@@ -1111,7 +1102,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- 	init_waitqueue_head(&chan->done_wait);
++	if (vi->ops->vi_enable)
++		vi->ops->vi_enable(vi, true);
++
+ 	ret = host1x_client_register(&vi->client);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev,
+@@ -1863,6 +1866,8 @@ static int tegra_vi_probe(struct platform_device *pdev)
+ 	return 0;
  
- 	/* initialize the video format */
--	chan->fmtinfo = &tegra_default_format;
-+	chan->fmtinfo = chan->vi->soc->default_video_format;
- 	chan->format.pixelformat = chan->fmtinfo->fourcc;
- 	chan->format.colorspace = V4L2_COLORSPACE_SRGB;
- 	chan->format.field = V4L2_FIELD_NONE;
+ rpm_disable:
++	if (vi->ops->vi_enable)
++		vi->ops->vi_enable(vi, false);
+ 	pm_runtime_disable(&pdev->dev);
+ 	return ret;
+ }
+@@ -1879,6 +1884,8 @@ static int tegra_vi_remove(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	if (vi->ops->vi_enable)
++		vi->ops->vi_enable(vi, false);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	return 0;
 diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 1021c730b595..879547073371 100644
+index 879547073371..851c4f3fcb91 100644
 --- a/drivers/staging/media/tegra-video/vi.h
 +++ b/drivers/staging/media/tegra-video/vi.h
-@@ -58,6 +58,7 @@ struct tegra_vi_ops {
-  *
-  * @video_formats: supported video formats
-  * @nformats: total video formats
-+ * @default_video_format: default video format (pointer to a @video_formats item)
-  * @ops: vi operations
-  * @hw_revision: VI hw_revision
-  * @vi_max_channels: supported max streaming channels
-@@ -66,6 +67,7 @@ struct tegra_vi_ops {
- struct tegra_vi_soc {
- 	const struct tegra_video_format *video_formats;
- 	const unsigned int nformats;
-+	const struct tegra_video_format *default_video_format;
- 	const struct tegra_vi_ops *ops;
- 	u32 hw_revision;
- 	unsigned int vi_max_channels;
+@@ -37,8 +37,11 @@ enum tegra_vi_pg_mode {
+ 	TEGRA_VI_PG_PATCH,
+ };
+ 
++struct tegra_vi;
++
+ /**
+  * struct tegra_vi_ops - Tegra VI operations
++ * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
+  * @vi_fmt_align: modify `pix` to fit the hardware alignment
+  *		requirements and fill image geometry
+  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
+@@ -48,6 +51,7 @@ enum tegra_vi_pg_mode {
+  *		back any queued buffers.
+  */
+ struct tegra_vi_ops {
++	int (*vi_enable)(struct tegra_vi *vi, bool on);
+ 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
+ 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
+ 	void (*vi_stop_streaming)(struct vb2_queue *vq);
 -- 
 2.34.1
 
