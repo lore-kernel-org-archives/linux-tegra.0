@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2907DC54EAA
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C868BC54EAA
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237437AbjA3OTt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Jan 2023 09:19:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33238 "EHLO
+        id S237468AbjA3OUD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Jan 2023 09:20:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237378AbjA3OT3 (ORCPT
+        with ESMTP id S237493AbjA3OTn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Jan 2023 09:19:29 -0500
+        Mon, 30 Jan 2023 09:19:43 -0500
 Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49F653CE38;
-        Mon, 30 Jan 2023 06:18:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1903C3E0B5;
+        Mon, 30 Jan 2023 06:18:31 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 8E59210000F;
-        Mon, 30 Jan 2023 14:17:31 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 7E9A9100010;
+        Mon, 30 Jan 2023 14:17:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675088258;
+        t=1675088268;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MDyvqcJLnh/rRPLNU2ZPgLh5AYWNHTEkdgruIRNFhf4=;
-        b=FSvtoqvq0sDvSJ7euCGRUD4rVS8CKHdigGz/0Xhfls5rBeRcDBg/nUowihz324NuImPRfr
-        NKd9IUWFEyDizu/uSlBmw7Q6OUNn7XFI01nWgPjc33CVJGW8qjjBqMyZMAyjpzyI+FQtOj
-        lN6maVGVUADiFm7dcGWUQHXGWi4Vvzg81frK8SiSQSKOY/N81O3E+hm15Bwm0Re1UJ4xBM
-        EhOSIJ+I6CAGosPvIOc0LraADAggxFCveR5jKviiQHeycKYENvo/13tBJmI8jRoiPurlnn
-        74b6RNiwEi89tieRUc7zLPOUrNtld+IMP3DcfAwx81EDt0GI4r0M9urvDepNow==
+        bh=eAvKkQlWuYYr6YxU/goHqRoXYfDwpGVohln81j6K6R8=;
+        b=UI5cnFCfIUjT/GqMYeurMP35jPOrRVhgACTwSEZpn6bkTpE0pf9cbwz+F+spd17y/iyMAF
+        4IFq750N/q61DeGfq283uhNgrFalgBLm5o3rKtW/Mgy83LjhEF51H33eowojW/jp0VE3vS
+        WV+fsvnHsMwqAAZ4cMZWR9XUft0B5+sOz0vf0ouK/saDXWcQLJ+iV0C5xx1He7a3SxQinK
+        e1S5jSPfQuDMXZI49eLjEcU5Qy4ZBBvM2Rze7Mdk5L1OMTsRlOxsyWsuS4ZnlogJkAEDk5
+        joLhXdvzFsEGIsYCmaxqggg4SfrXGlpzw7eafpiYkSk8b2KgUM3+riuDpI7qOA==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -50,9 +50,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH v4 15/21] staging: media: tegra-video: move MIPI calibration calls from VI to CSI
-Date:   Mon, 30 Jan 2023 15:15:57 +0100
-Message-Id: <20230130141603.323221-16-luca.ceresoli@bootlin.com>
+Subject: [PATCH v4 17/21] staging: media: tegra-video: move syncpt init/free to a per-soc op
+Date:   Mon, 30 Jan 2023 15:15:59 +0100
+Message-Id: <20230130141603.323221-18-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
 References: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
@@ -62,22 +62,15 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The CSI module does not handle all the MIPI lane calibration procedure,
-leaving a small part of it to the VI module. In doing this,
-tegra_channel_enable_stream() (vi.c) manipulates the private data of the
-upstream subdev casting it to struct 'tegra_csi_channel', which will be
-wrong after introducing a VIP (parallel video input) channel.
+tegra_channel_host1x_syncpt_init() gets the host1x syncpts needed for the
+Tegra210 implementation, and tegra_channel_host1x_syncpts_free() puts
+them.
 
-This prevents adding support for the VIP module.  It also breaks the
-logical isolation between modules.
+Tegra20 needs to get and put a different syncpt. In preparation for adding
+Tegra20 support, move these functions to new ops in the soc-specific
+`struct tegra_vi_ops` .
 
-Since the lane calibration requirement does not exist in the parallel input
-module, moving the calibration function to a per-module op is not
-optimal. Instead move the calibration procedure in the CSI module, together
-with the rest of the calibration procedures. After this change,
-tegra_channel_enable_stream() just calls v4l2_subdev_call() to ask for a
-stream start/stop to the CSI module, which in turn knows all the
-CSI-specific details to implement it.
+No functional changes.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -90,159 +83,196 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/csi.c | 44 ++++++++++++++++++++
- drivers/staging/media/tegra-video/vi.c  | 54 ++-----------------------
- 2 files changed, 48 insertions(+), 50 deletions(-)
+ drivers/staging/media/tegra-video/tegra210.c | 52 ++++++++++++++++++++
+ drivers/staging/media/tegra-video/vi.c       | 52 ++------------------
+ drivers/staging/media/tegra-video/vi.h       |  5 ++
+ 3 files changed, 60 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-index 9a03d5ccdf3c..b93fc879ef3a 100644
---- a/drivers/staging/media/tegra-video/csi.c
-+++ b/drivers/staging/media/tegra-video/csi.c
-@@ -328,12 +328,42 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
- 	}
- 
- 	csi_chan->pg_mode = chan->pg_mode;
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index 28d3d05c12c4..d47ba79bac75 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -179,6 +179,56 @@ static u32 vi_csi_read(struct tegra_vi_channel *chan, u8 portno,
+ /*
+  * Tegra210 VI channel capture operations
+  */
 +
-+	/*
-+	 * Tegra CSI receiver can detect the first LP to HS transition.
-+	 * So, start the CSI stream-on prior to sensor stream-on and
-+	 * vice-versa for stream-off.
-+	 */
- 	ret = csi->ops->csi_start_streaming(csi_chan);
- 	if (ret < 0)
- 		goto finish_calibration;
- 
-+	if (csi_chan->mipi) {
-+		struct v4l2_subdev *src_subdev;
-+		/*
-+		 * TRM has incorrectly documented to wait for done status from
-+		 * calibration logic after CSI interface power on.
-+		 * As per the design, calibration results are latched and applied
-+		 * to the pads only when the link is in LP11 state which will happen
-+		 * during the sensor stream-on.
-+		 * CSI subdev stream-on triggers start of MIPI pads calibration.
-+		 * Wait for calibration to finish here after sensor subdev stream-on.
-+		 */
-+		src_subdev = tegra_channel_get_remote_source_subdev(chan);
-+		ret = v4l2_subdev_call(src_subdev, video, s_stream, true);
-+		err = tegra_mipi_finish_calibration(csi_chan->mipi);
++static int tegra210_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
++{
++	struct tegra_vi *vi = chan->vi;
++	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
++	struct host1x_syncpt *fs_sp;
++	struct host1x_syncpt *mw_sp;
++	int ret, i;
 +
-+		if (ret < 0 && ret != -ENOIOCTLCMD)
-+			goto disable_csi_stream;
++	for (i = 0; i < chan->numgangports; i++) {
++		fs_sp = host1x_syncpt_request(&vi->client, flags);
++		if (!fs_sp) {
++			dev_err(vi->dev, "failed to request frame start syncpoint\n");
++			ret = -ENOMEM;
++			goto free_syncpts;
++		}
 +
-+		if (err < 0)
-+			dev_warn(csi->dev, "MIPI calibration failed: %d\n", err);
++		mw_sp = host1x_syncpt_request(&vi->client, flags);
++		if (!mw_sp) {
++			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
++			host1x_syncpt_put(fs_sp);
++			ret = -ENOMEM;
++			goto free_syncpts;
++		}
++
++		chan->frame_start_sp[i] = fs_sp;
++		chan->mw_ack_sp[i] = mw_sp;
++		spin_lock_init(&chan->sp_incr_lock[i]);
 +	}
 +
- 	return 0;
- 
-+disable_csi_stream:
-+	csi->ops->csi_stop_streaming(csi_chan);
- finish_calibration:
- 	if (csi_chan->mipi)
- 		tegra_mipi_finish_calibration(csi_chan->mipi);
-@@ -352,10 +382,24 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
- 
- static int tegra_csi_disable_stream(struct v4l2_subdev *subdev)
++	return 0;
++
++free_syncpts:
++	for (i = 0; i < chan->numgangports; i++) {
++		host1x_syncpt_put(chan->mw_ack_sp[i]);
++		host1x_syncpt_put(chan->frame_start_sp[i]);
++	}
++	return ret;
++}
++
++static void tegra210_channel_host1x_syncpt_free(struct tegra_vi_channel *chan)
++{
++	int i;
++
++	for (i = 0; i < chan->numgangports; i++) {
++		host1x_syncpt_put(chan->mw_ack_sp[i]);
++		host1x_syncpt_put(chan->frame_start_sp[i]);
++	}
++}
++
+ static void tegra210_fmt_align(struct v4l2_pix_format *pix, unsigned int bpp)
  {
-+	struct tegra_vi_channel *chan = v4l2_get_subdev_hostdata(subdev);
- 	struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
- 	struct tegra_csi *csi = csi_chan->csi;
- 	int err;
+ 	unsigned int min_bpl;
+@@ -758,6 +808,8 @@ static const struct tegra_video_format tegra210_video_formats[] = {
  
-+	/*
-+	 * Stream-off subdevices in reverse order to stream-on.
-+	 * Remote source subdev in TPG mode is same as CSI subdev.
-+	 */
-+	if (csi_chan->mipi) {
-+		struct v4l2_subdev *src_subdev;
-+
-+		src_subdev = tegra_channel_get_remote_source_subdev(chan);
-+		err = v4l2_subdev_call(src_subdev, video, s_stream, false);
-+		if (err < 0 && err != -ENOIOCTLCMD)
-+			dev_err_probe(csi->dev, err, "source subdev stream off failed\n");
-+	}
-+
- 	csi->ops->csi_stop_streaming(csi_chan);
- 
- 	if (csi_chan->mipi) {
+ /* Tegra210 VI operations */
+ static const struct tegra_vi_ops tegra210_vi_ops = {
++	.channel_host1x_syncpt_init = tegra210_channel_host1x_syncpt_init,
++	.channel_host1x_syncpt_free = tegra210_channel_host1x_syncpt_free,
+ 	.vi_fmt_align = tegra210_fmt_align,
+ 	.vi_start_streaming = tegra210_vi_start_streaming,
+ 	.vi_stop_streaming = tegra210_vi_stop_streaming,
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 3762fd273514..a26eb1ca869f 100644
+index 22f6d6478d3e..760606c65a97 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -187,49 +187,15 @@ tegra_channel_get_remote_source_subdev(struct tegra_vi_channel *chan)
- 
- static int tegra_channel_enable_stream(struct tegra_vi_channel *chan)
- {
--	struct v4l2_subdev *csi_subdev, *src_subdev;
--	struct tegra_csi_channel *csi_chan;
--	int ret, err;
-+	struct v4l2_subdev *subdev;
-+	int ret;
- 
--	/*
--	 * Tegra CSI receiver can detect the first LP to HS transition.
--	 * So, start the CSI stream-on prior to sensor stream-on and
--	 * vice-versa for stream-off.
--	 */
--	csi_subdev = tegra_channel_get_remote_csi_subdev(chan);
--	ret = v4l2_subdev_call(csi_subdev, video, s_stream, true);
-+	subdev = tegra_channel_get_remote_csi_subdev(chan);
-+	ret = v4l2_subdev_call(subdev, video, s_stream, true);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
- 		return ret;
- 
--	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
--		return 0;
--
--	csi_chan = v4l2_get_subdevdata(csi_subdev);
--	/*
--	 * TRM has incorrectly documented to wait for done status from
--	 * calibration logic after CSI interface power on.
--	 * As per the design, calibration results are latched and applied
--	 * to the pads only when the link is in LP11 state which will happen
--	 * during the sensor stream-on.
--	 * CSI subdev stream-on triggers start of MIPI pads calibration.
--	 * Wait for calibration to finish here after sensor subdev stream-on.
--	 */
--	src_subdev = tegra_channel_get_remote_source_subdev(chan);
--	ret = v4l2_subdev_call(src_subdev, video, s_stream, true);
--	err = tegra_mipi_finish_calibration(csi_chan->mipi);
--
--	if (ret < 0 && ret != -ENOIOCTLCMD)
--		goto err_disable_csi_stream;
--
--	if (err < 0)
--		dev_warn(csi_chan->csi->dev,
--			 "MIPI calibration failed: %d\n", err);
--
+@@ -973,21 +973,11 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
  	return 0;
--
--err_disable_csi_stream:
--	v4l2_subdev_call(csi_subdev, video, s_stream, false);
--	return ret;
  }
  
- static int tegra_channel_disable_stream(struct tegra_vi_channel *chan)
-@@ -237,18 +203,6 @@ static int tegra_channel_disable_stream(struct tegra_vi_channel *chan)
- 	struct v4l2_subdev *subdev;
- 	int ret;
+-static void tegra_channel_host1x_syncpts_free(struct tegra_vi_channel *chan)
+-{
+-	int i;
+-
+-	for (i = 0; i < chan->numgangports; i++) {
+-		host1x_syncpt_put(chan->mw_ack_sp[i]);
+-		host1x_syncpt_put(chan->frame_start_sp[i]);
+-	}
+-}
+-
+ static void tegra_channel_cleanup(struct tegra_vi_channel *chan)
+ {
+ 	v4l2_ctrl_handler_free(&chan->ctrl_handler);
+ 	media_entity_cleanup(&chan->video.entity);
+-	tegra_channel_host1x_syncpts_free(chan);
++	chan->vi->ops->channel_host1x_syncpt_free(chan);
+ 	mutex_destroy(&chan->video_lock);
+ }
  
--	/*
--	 * Stream-off subdevices in reverse order to stream-on.
--	 * Remote source subdev in TPG mode is same as CSI subdev.
--	 */
--	subdev = tegra_channel_get_remote_source_subdev(chan);
--	ret = v4l2_subdev_call(subdev, video, s_stream, false);
--	if (ret < 0 && ret != -ENOIOCTLCMD)
--		return ret;
+@@ -1005,42 +995,6 @@ void tegra_channels_cleanup(struct tegra_vi *vi)
+ 	}
+ }
+ 
+-static int tegra_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
+-{
+-	struct tegra_vi *vi = chan->vi;
+-	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
+-	struct host1x_syncpt *fs_sp;
+-	struct host1x_syncpt *mw_sp;
+-	int ret, i;
 -
--	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
--		return 0;
+-	for (i = 0; i < chan->numgangports; i++) {
+-		fs_sp = host1x_syncpt_request(&vi->client, flags);
+-		if (!fs_sp) {
+-			dev_err(vi->dev, "failed to request frame start syncpoint\n");
+-			ret = -ENOMEM;
+-			goto free_syncpts;
+-		}
 -
- 	subdev = tegra_channel_get_remote_csi_subdev(chan);
- 	ret = v4l2_subdev_call(subdev, video, s_stream, false);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
+-		mw_sp = host1x_syncpt_request(&vi->client, flags);
+-		if (!mw_sp) {
+-			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
+-			host1x_syncpt_put(fs_sp);
+-			ret = -ENOMEM;
+-			goto free_syncpts;
+-		}
+-
+-		chan->frame_start_sp[i] = fs_sp;
+-		chan->mw_ack_sp[i] = mw_sp;
+-		spin_lock_init(&chan->sp_incr_lock[i]);
+-	}
+-
+-	return 0;
+-
+-free_syncpts:
+-	tegra_channel_host1x_syncpts_free(chan);
+-	return ret;
+-}
+-
+ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ {
+ 	struct tegra_vi *vi = chan->vi;
+@@ -1066,7 +1020,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ 	chan->format.sizeimage = chan->format.bytesperline * TEGRA_DEF_HEIGHT;
+ 	vi->ops->vi_fmt_align(&chan->format, chan->fmtinfo->bpp);
+ 
+-	ret = tegra_channel_host1x_syncpt_init(chan);
++	ret = vi->ops->channel_host1x_syncpt_init(chan);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1129,7 +1083,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ cleanup_media:
+ 	media_entity_cleanup(&chan->video.entity);
+ free_syncpts:
+-	tegra_channel_host1x_syncpts_free(chan);
++	vi->ops->channel_host1x_syncpt_free(chan);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
+index 851c4f3fcb91..8fadca33bcc9 100644
+--- a/drivers/staging/media/tegra-video/vi.h
++++ b/drivers/staging/media/tegra-video/vi.h
+@@ -38,10 +38,13 @@ enum tegra_vi_pg_mode {
+ };
+ 
+ struct tegra_vi;
++struct tegra_vi_channel;
+ 
+ /**
+  * struct tegra_vi_ops - Tegra VI operations
+  * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
++ * @channel_host1x_syncpt_init: initialize synchronization points
++ * @channel_host1x_syncpt_free: free all synchronization points
+  * @vi_fmt_align: modify `pix` to fit the hardware alignment
+  *		requirements and fill image geometry
+  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
+@@ -52,6 +55,8 @@ struct tegra_vi;
+  */
+ struct tegra_vi_ops {
+ 	int (*vi_enable)(struct tegra_vi *vi, bool on);
++	int (*channel_host1x_syncpt_init)(struct tegra_vi_channel *chan);
++	void (*channel_host1x_syncpt_free)(struct tegra_vi_channel *chan);
+ 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
+ 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
+ 	void (*vi_stop_streaming)(struct vb2_queue *vq);
 -- 
 2.34.1
 
