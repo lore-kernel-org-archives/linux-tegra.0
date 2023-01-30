@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B585C54EAA
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5B3C61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237455AbjA3OSn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Jan 2023 09:18:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60498 "EHLO
+        id S237539AbjA3OTC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Jan 2023 09:19:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237589AbjA3OSO (ORCPT
+        with ESMTP id S237604AbjA3OSe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Jan 2023 09:18:14 -0500
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D1873D93D;
-        Mon, 30 Jan 2023 06:17:31 -0800 (PST)
+        Mon, 30 Jan 2023 09:18:34 -0500
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64E23D089;
+        Mon, 30 Jan 2023 06:17:41 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 26558100012;
-        Mon, 30 Jan 2023 14:17:10 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 0BDA610000B;
+        Mon, 30 Jan 2023 14:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675088237;
+        t=1675088251;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DdRp15j/k4XeYmQe3luSEncUUhUk/h4Frh9ooM2yWbA=;
-        b=Q8WhROlthGHK/2AZ/i9Yxfprq74k23Aw3p/ev/bgICcHm8+IXTYFujWp+udaF95h2AJTJo
-        K3hHqwGX0335uwRjxG8k2h+AXBIpBNwuptu93KaVsn1+g4uEEN4+r5M9JW5GC0eWODHwMi
-        VS5pJnq6FSQkKxPpmClPX73vzk77D5EOwzOrHZc2tDzjGe+n0zvdnYPC2+pd0RVpBNCx9c
-        xCeOLuN7HupLMVQISVI4eObb1nVkyCPGQfbn8Rhu5k/LS3l53FpMmm3+amQ7KQaiL+TqU+
-        psolECL52lrzwL+2By+JLS7W846v0d5xTJGHWfbh6VndDAEKPiBVUPpbS0ccXA==
+        bh=8x6ANxKmlQRR8yGJcgQ569q5zpdBXVx3vBAjyJdMrk4=;
+        b=TNgP327GTC98tUC+BcpTCv9ipYhjJ9ZPTeRziv4Yt6NTRcp/KRDrLHj65SPKvUy87324CJ
+        /jB75ABQkNl+XhOMcSsARGf1ofR5cohyXAkaW6ZUVcG2NLKLt9YHIzi18RFUCr11UDQGAa
+        kEqFGPsYu4N6wlUCyG9vcoFLa+xL6YdKrE0e12ck7xWBdbbZ68kopQXcrvD8JHAWR8151H
+        spZ/06aJY8MTXJFcrKG1z0x1MBWjV6FMyqTQBNCDQxuZ8D3Lc3zersJs4JEHHoa8yl3eyW
+        mI7e5AGTIzWtOOzJbhRij0+vqHW+5xiu6wl6LTtwdHbR57zfMkj1H95vLVISMQ==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -50,9 +50,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH v4 11/21] staging: media: tegra-video: remove unneeded include
-Date:   Mon, 30 Jan 2023 15:15:53 +0100
-Message-Id: <20230130141603.323221-12-luca.ceresoli@bootlin.com>
+Subject: [PATCH v4 14/21] staging: media: tegra-video: move default format to soc-specific data
+Date:   Mon, 30 Jan 2023 15:15:56 +0100
+Message-Id: <20230130141603.323221-15-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
 References: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
@@ -62,8 +62,15 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-There is only a pointer reference to struct tegra_vi in video.h, thus vi.h
-is not needed.
+The tegra_default_format in vi.c is specific to Tegra210 CSI.
+
+In preparation for adding Tegra20 VIP support, move the default format to a
+new field in the soc-specific `struct tegra_vi_soc`. Instead of an entire
+format struct, only store a pointer to an item in the existing format
+array.
+
+No functional changes. The format pointed to is the same that used to be in
+vi.c.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -76,21 +83,75 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/video.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/media/tegra-video/tegra210.c |  2 ++
+ drivers/staging/media/tegra-video/vi.c       | 11 +----------
+ drivers/staging/media/tegra-video/vi.h       |  2 ++
+ 3 files changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/video.h b/drivers/staging/media/tegra-video/video.h
-index fadaf2189dc9..1e9be1474a9c 100644
---- a/drivers/staging/media/tegra-video/video.h
-+++ b/drivers/staging/media/tegra-video/video.h
-@@ -12,7 +12,6 @@
- #include <media/v4l2-device.h>
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index 71483d0c19bf..28d3d05c12c4 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -771,8 +771,10 @@ const struct tegra_vi_soc tegra210_vi_soc = {
+ 	.hw_revision = 3,
+ 	.vi_max_channels = 6,
+ #if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
++	.default_video_format = &tegra210_video_formats[0],
+ 	.vi_max_clk_hz = 499200000,
+ #else
++	.default_video_format = &tegra210_video_formats[4],
+ 	.vi_max_clk_hz = 998400000,
+ #endif
+ };
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index a76cad0e3026..3762fd273514 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -44,15 +44,6 @@ struct tegra_vi_graph_entity {
+ 	struct v4l2_subdev *subdev;
+ };
  
- #include "vi.h"
--#include "csi.h"
+-static const struct tegra_video_format tegra_default_format = {
+-	.img_dt = TEGRA_IMAGE_DT_RAW10,
+-	.bit_width = 10,
+-	.code = MEDIA_BUS_FMT_SRGGB10_1X10,
+-	.bpp = 2,
+-	.img_fmt = TEGRA_IMAGE_FORMAT_DEF,
+-	.fourcc = V4L2_PIX_FMT_SRGGB10,
+-};
+-
+ static inline struct tegra_vi *
+ host1x_client_to_vi(struct host1x_client *client)
+ {
+@@ -1111,7 +1102,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ 	init_waitqueue_head(&chan->done_wait);
  
- struct tegra_video_device {
- 	struct v4l2_device v4l2_dev;
+ 	/* initialize the video format */
+-	chan->fmtinfo = &tegra_default_format;
++	chan->fmtinfo = chan->vi->soc->default_video_format;
+ 	chan->format.pixelformat = chan->fmtinfo->fourcc;
+ 	chan->format.colorspace = V4L2_COLORSPACE_SRGB;
+ 	chan->format.field = V4L2_FIELD_NONE;
+diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
+index 1021c730b595..879547073371 100644
+--- a/drivers/staging/media/tegra-video/vi.h
++++ b/drivers/staging/media/tegra-video/vi.h
+@@ -58,6 +58,7 @@ struct tegra_vi_ops {
+  *
+  * @video_formats: supported video formats
+  * @nformats: total video formats
++ * @default_video_format: default video format (pointer to a @video_formats item)
+  * @ops: vi operations
+  * @hw_revision: VI hw_revision
+  * @vi_max_channels: supported max streaming channels
+@@ -66,6 +67,7 @@ struct tegra_vi_ops {
+ struct tegra_vi_soc {
+ 	const struct tegra_video_format *video_formats;
+ 	const unsigned int nformats;
++	const struct tegra_video_format *default_video_format;
+ 	const struct tegra_vi_ops *ops;
+ 	u32 hw_revision;
+ 	unsigned int vi_max_channels;
 -- 
 2.34.1
 
