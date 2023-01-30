@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C868BC54EAA
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6691AC54EED
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Jan 2023 14:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237468AbjA3OUD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Jan 2023 09:20:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33134 "EHLO
+        id S237595AbjA3OUF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Jan 2023 09:20:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237493AbjA3OTn (ORCPT
+        with ESMTP id S237677AbjA3OTp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Jan 2023 09:19:43 -0500
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1903C3E0B5;
-        Mon, 30 Jan 2023 06:18:31 -0800 (PST)
+        Mon, 30 Jan 2023 09:19:45 -0500
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11DDB3D908;
+        Mon, 30 Jan 2023 06:18:32 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 7E9A9100010;
-        Mon, 30 Jan 2023 14:17:43 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 1830310000D;
+        Mon, 30 Jan 2023 14:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675088268;
+        t=1675088275;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=eAvKkQlWuYYr6YxU/goHqRoXYfDwpGVohln81j6K6R8=;
-        b=UI5cnFCfIUjT/GqMYeurMP35jPOrRVhgACTwSEZpn6bkTpE0pf9cbwz+F+spd17y/iyMAF
-        4IFq750N/q61DeGfq283uhNgrFalgBLm5o3rKtW/Mgy83LjhEF51H33eowojW/jp0VE3vS
-        WV+fsvnHsMwqAAZ4cMZWR9XUft0B5+sOz0vf0ouK/saDXWcQLJ+iV0C5xx1He7a3SxQinK
-        e1S5jSPfQuDMXZI49eLjEcU5Qy4ZBBvM2Rze7Mdk5L1OMTsRlOxsyWsuS4ZnlogJkAEDk5
-        joLhXdvzFsEGIsYCmaxqggg4SfrXGlpzw7eafpiYkSk8b2KgUM3+riuDpI7qOA==
+        bh=5GVBn/5Ejaf5yDv/899F9oxQ2OpzgLGi/GDA/rDDcis=;
+        b=LMTJmjFgbB6hd3xy+cEeoP+lNePyOW/NJeFHVaG70MjLcwHwZzMwSAHoMQ1a/2kbzrLqGz
+        81fpmv3ZKnUR+K2rV+eW28UMihXNBSu1Q9e/qd8du7Yt8qZyLbGCHOxmG7hPLneHkLgZIk
+        s7jQfdwJl8g40x3uenTZE//wc/en85JILCpf8XNtDfk5uBQSM6YLJflZ9zZ2lyGMJcomuE
+        3l5wHDa31g6yXcLpBlhCJNyw6Ln165WRRHS2/oKW5g0MW9yfe1jTov7tSbxZj7qcd1s2NB
+        +BdsnehBqUtK5n/7NQlRv8J/RHpkh+rRImtrBSnMF2kM2v0IqfLQFDpI6Q9MYg==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -50,9 +50,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH v4 17/21] staging: media: tegra-video: move syncpt init/free to a per-soc op
-Date:   Mon, 30 Jan 2023 15:15:59 +0100
-Message-Id: <20230130141603.323221-18-luca.ceresoli@bootlin.com>
+Subject: [PATCH v4 19/21] staging: media: tegra-video: add hooks for planar YUV and H/V flip
+Date:   Mon, 30 Jan 2023 15:16:01 +0100
+Message-Id: <20230130141603.323221-20-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
 References: <20230130141603.323221-1-luca.ceresoli@bootlin.com>
@@ -62,15 +62,20 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-tegra_channel_host1x_syncpt_init() gets the host1x syncpts needed for the
-Tegra210 implementation, and tegra_channel_host1x_syncpts_free() puts
-them.
+Tegra20 supports planar YUV422 capture, which can be implemented by writing
+U and V base address registers in addition to the "main" base buffer
+address register.
 
-Tegra20 needs to get and put a different syncpt. In preparation for adding
-Tegra20 support, move these functions to new ops in the soc-specific
-`struct tegra_vi_ops` .
+It also supports H and V flip, which among others requires to write the
+start address (i.e. the 1st offset to write, at the end of the buffer or
+line) in more registers for Y and, for planar formats, U and V.
 
-No functional changes.
+Add minimal hooks in VI to allow per-SoC optional support to those
+features:
+
+ - variables in struct tegra_vi for the U and V buffer base offsets
+ - variables in struct tegra_vi for the Y, U and V buffer start offsets
+ - an optional per-soc VI operation to compute those values on queue setup
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -83,196 +88,78 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/tegra210.c | 52 ++++++++++++++++++++
- drivers/staging/media/tegra-video/vi.c       | 52 ++------------------
- drivers/staging/media/tegra-video/vi.h       |  5 ++
- 3 files changed, 60 insertions(+), 49 deletions(-)
+ drivers/staging/media/tegra-video/vi.c |  4 ++++
+ drivers/staging/media/tegra-video/vi.h | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index 28d3d05c12c4..d47ba79bac75 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -179,6 +179,56 @@ static u32 vi_csi_read(struct tegra_vi_channel *chan, u8 portno,
- /*
-  * Tegra210 VI channel capture operations
-  */
-+
-+static int tegra210_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
-+{
-+	struct tegra_vi *vi = chan->vi;
-+	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
-+	struct host1x_syncpt *fs_sp;
-+	struct host1x_syncpt *mw_sp;
-+	int ret, i;
-+
-+	for (i = 0; i < chan->numgangports; i++) {
-+		fs_sp = host1x_syncpt_request(&vi->client, flags);
-+		if (!fs_sp) {
-+			dev_err(vi->dev, "failed to request frame start syncpoint\n");
-+			ret = -ENOMEM;
-+			goto free_syncpts;
-+		}
-+
-+		mw_sp = host1x_syncpt_request(&vi->client, flags);
-+		if (!mw_sp) {
-+			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
-+			host1x_syncpt_put(fs_sp);
-+			ret = -ENOMEM;
-+			goto free_syncpts;
-+		}
-+
-+		chan->frame_start_sp[i] = fs_sp;
-+		chan->mw_ack_sp[i] = mw_sp;
-+		spin_lock_init(&chan->sp_incr_lock[i]);
-+	}
-+
-+	return 0;
-+
-+free_syncpts:
-+	for (i = 0; i < chan->numgangports; i++) {
-+		host1x_syncpt_put(chan->mw_ack_sp[i]);
-+		host1x_syncpt_put(chan->frame_start_sp[i]);
-+	}
-+	return ret;
-+}
-+
-+static void tegra210_channel_host1x_syncpt_free(struct tegra_vi_channel *chan)
-+{
-+	int i;
-+
-+	for (i = 0; i < chan->numgangports; i++) {
-+		host1x_syncpt_put(chan->mw_ack_sp[i]);
-+		host1x_syncpt_put(chan->frame_start_sp[i]);
-+	}
-+}
-+
- static void tegra210_fmt_align(struct v4l2_pix_format *pix, unsigned int bpp)
- {
- 	unsigned int min_bpl;
-@@ -758,6 +808,8 @@ static const struct tegra_video_format tegra210_video_formats[] = {
- 
- /* Tegra210 VI operations */
- static const struct tegra_vi_ops tegra210_vi_ops = {
-+	.channel_host1x_syncpt_init = tegra210_channel_host1x_syncpt_init,
-+	.channel_host1x_syncpt_free = tegra210_channel_host1x_syncpt_free,
- 	.vi_fmt_align = tegra210_fmt_align,
- 	.vi_start_streaming = tegra210_vi_start_streaming,
- 	.vi_stop_streaming = tegra210_vi_stop_streaming,
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 22f6d6478d3e..760606c65a97 100644
+index 760606c65a97..4a066b61ab8e 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -973,21 +973,11 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+@@ -92,6 +92,7 @@ tegra_get_format_by_fourcc(struct tegra_vi *vi, u32 fourcc)
+ /*
+  * videobuf2 queue operations
+  */
++
+ static int tegra_channel_queue_setup(struct vb2_queue *vq,
+ 				     unsigned int *nbuffers,
+ 				     unsigned int *nplanes,
+@@ -107,6 +108,9 @@ static int tegra_channel_queue_setup(struct vb2_queue *vq,
+ 	sizes[0] = chan->format.sizeimage;
+ 	alloc_devs[0] = chan->vi->dev;
+ 
++	if (chan->vi->ops->channel_queue_setup)
++		chan->vi->ops->channel_queue_setup(chan);
++
  	return 0;
  }
  
--static void tegra_channel_host1x_syncpts_free(struct tegra_vi_channel *chan)
--{
--	int i;
--
--	for (i = 0; i < chan->numgangports; i++) {
--		host1x_syncpt_put(chan->mw_ack_sp[i]);
--		host1x_syncpt_put(chan->frame_start_sp[i]);
--	}
--}
--
- static void tegra_channel_cleanup(struct tegra_vi_channel *chan)
- {
- 	v4l2_ctrl_handler_free(&chan->ctrl_handler);
- 	media_entity_cleanup(&chan->video.entity);
--	tegra_channel_host1x_syncpts_free(chan);
-+	chan->vi->ops->channel_host1x_syncpt_free(chan);
- 	mutex_destroy(&chan->video_lock);
- }
- 
-@@ -1005,42 +995,6 @@ void tegra_channels_cleanup(struct tegra_vi *vi)
- 	}
- }
- 
--static int tegra_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
--{
--	struct tegra_vi *vi = chan->vi;
--	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
--	struct host1x_syncpt *fs_sp;
--	struct host1x_syncpt *mw_sp;
--	int ret, i;
--
--	for (i = 0; i < chan->numgangports; i++) {
--		fs_sp = host1x_syncpt_request(&vi->client, flags);
--		if (!fs_sp) {
--			dev_err(vi->dev, "failed to request frame start syncpoint\n");
--			ret = -ENOMEM;
--			goto free_syncpts;
--		}
--
--		mw_sp = host1x_syncpt_request(&vi->client, flags);
--		if (!mw_sp) {
--			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
--			host1x_syncpt_put(fs_sp);
--			ret = -ENOMEM;
--			goto free_syncpts;
--		}
--
--		chan->frame_start_sp[i] = fs_sp;
--		chan->mw_ack_sp[i] = mw_sp;
--		spin_lock_init(&chan->sp_incr_lock[i]);
--	}
--
--	return 0;
--
--free_syncpts:
--	tegra_channel_host1x_syncpts_free(chan);
--	return ret;
--}
--
- static int tegra_channel_init(struct tegra_vi_channel *chan)
- {
- 	struct tegra_vi *vi = chan->vi;
-@@ -1066,7 +1020,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- 	chan->format.sizeimage = chan->format.bytesperline * TEGRA_DEF_HEIGHT;
- 	vi->ops->vi_fmt_align(&chan->format, chan->fmtinfo->bpp);
- 
--	ret = tegra_channel_host1x_syncpt_init(chan);
-+	ret = vi->ops->channel_host1x_syncpt_init(chan);
- 	if (ret)
- 		return ret;
- 
-@@ -1129,7 +1083,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- cleanup_media:
- 	media_entity_cleanup(&chan->video.entity);
- free_syncpts:
--	tegra_channel_host1x_syncpts_free(chan);
-+	vi->ops->channel_host1x_syncpt_free(chan);
- 	return ret;
- }
- 
 diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 851c4f3fcb91..8fadca33bcc9 100644
+index d5e1ed4217e0..0503eb678556 100644
 --- a/drivers/staging/media/tegra-video/vi.h
 +++ b/drivers/staging/media/tegra-video/vi.h
-@@ -38,10 +38,13 @@ enum tegra_vi_pg_mode {
- };
- 
- struct tegra_vi;
-+struct tegra_vi_channel;
- 
- /**
-  * struct tegra_vi_ops - Tegra VI operations
-  * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
-+ * @channel_host1x_syncpt_init: initialize synchronization points
-+ * @channel_host1x_syncpt_free: free all synchronization points
+@@ -47,6 +47,7 @@ struct tegra_vi_channel;
+  * @channel_host1x_syncpt_free: free all synchronization points
   * @vi_fmt_align: modify `pix` to fit the hardware alignment
   *		requirements and fill image geometry
++ * @channel_queue_setup: additional operations at the end of vb2_ops::queue_setup
   * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
-@@ -52,6 +55,8 @@ struct tegra_vi;
-  */
- struct tegra_vi_ops {
- 	int (*vi_enable)(struct tegra_vi *vi, bool on);
-+	int (*channel_host1x_syncpt_init)(struct tegra_vi_channel *chan);
-+	void (*channel_host1x_syncpt_free)(struct tegra_vi_channel *chan);
+  *		VI for capture and runs capture start and capture finish
+  *		kthreads for capturing frames to buffer and returns them back.
+@@ -58,6 +59,7 @@ struct tegra_vi_ops {
+ 	int (*channel_host1x_syncpt_init)(struct tegra_vi_channel *chan);
+ 	void (*channel_host1x_syncpt_free)(struct tegra_vi_channel *chan);
  	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
++	void (*channel_queue_setup)(struct tegra_vi_channel *chan);
  	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
  	void (*vi_stop_streaming)(struct vb2_queue *vq);
+ };
+@@ -148,6 +150,12 @@ struct tegra_vi {
+  * @queue: vb2 buffers queue
+  * @sequence: V4L2 buffers sequence number
+  *
++ * @addr_offset_u: U plane base address, relative to buffer base address (only for planar)
++ * @addr_offset_v: V plane base address, relative to buffer base address (only for planar)
++ * @start_offset:   1st Y byte to write, relative to buffer base address (for H/V flip)
++ * @start_offset_u: 1st U byte to write, relative to buffer base address (for H/V flip)
++ * @start_offset_v: 1st V byte to write, relative to buffer base address (for H/V flip)
++ *
+  * @capture: list of queued buffers for capture
+  * @start_lock: protects the capture queued list
+  * @done: list of capture done queued buffers
+@@ -187,6 +195,12 @@ struct tegra_vi_channel {
+ 	struct vb2_queue queue;
+ 	u32 sequence;
+ 
++	unsigned int addr_offset_u;
++	unsigned int addr_offset_v;
++	unsigned int start_offset;
++	unsigned int start_offset_u;
++	unsigned int start_offset_v;
++
+ 	struct list_head capture;
+ 	/* protects the capture queued list */
+ 	spinlock_t start_lock;
 -- 
 2.34.1
 
