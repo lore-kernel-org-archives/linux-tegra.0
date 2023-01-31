@@ -2,299 +2,141 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC348C38142
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Jan 2023 13:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A8AC636CC
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 Jan 2023 13:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232235AbjAaNdQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 Jan 2023 08:33:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45358 "EHLO
+        id S232001AbjAaNl1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 Jan 2023 08:41:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232270AbjAaNdL (ORCPT
+        with ESMTP id S229651AbjAaNl1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 Jan 2023 08:33:11 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4B56C176;
-        Tue, 31 Jan 2023 05:33:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1675171981; x=1706707981;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mUK7D/U+8m6Bb2XIMJI03erNm6ros1fVSyKoc3cCQO0=;
-  b=nU+spZGqlv+31VgWMb8thd8Q158NkIhsttTz4Cv2XK/OjviMMRwzkohO
-   ps++aQrSmt65QAJsV2FuuN9xanhA5BtCpBJyBcD/gpH88bj3DVeXMgPoe
-   Qoq70EuU67kzZb1V4LcyTww6iXAPMHBvINKFoR/lgbpE7AuTolxj9GZEh
-   Vka/X728ZKy17OlHqg9j97GjLK6Y9eHUgHZoYglVRvcKRYMje+minl8xH
-   96mPwCJsKncmF629lZzT/j6FwXaTJCBb4SitP+vqHh6xI7ol0JFoNJavz
-   UeYPSYH2xmGGbJl3YvQySXd04NK5rH7M5l5oArCpz7PK5Km4pIDP002Ak
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10606"; a="325537304"
-X-IronPort-AV: E=Sophos;i="5.97,261,1669104000"; 
-   d="scan'208";a="325537304"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2023 05:33:00 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10606"; a="694942600"
-X-IronPort-AV: E=Sophos;i="5.97,261,1669104000"; 
-   d="scan'208";a="694942600"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.47.218])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2023 05:32:53 -0800
-Message-ID: <28d3348d-82ec-988f-718a-2d73bce585f3@intel.com>
-Date:   Tue, 31 Jan 2023 15:32:50 +0200
+        Tue, 31 Jan 2023 08:41:27 -0500
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2088.outbound.protection.outlook.com [40.107.244.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F7D14AA6D;
+        Tue, 31 Jan 2023 05:41:26 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PQVfGEnUhjq6ypJB4MjbqgiXp462vEAf1c3O3eb5EcYoCsWuHNh85RttHhy0vyyJWFluD1nIpv1kj6m37+IkVzKGAQOsCsr35jqTm59GOBMkfq2agZ5oxy4XQg7fzxP+TQwkU7D46iMz2LUBimEL8gQUzReNXHq9blEpaJAgUcCmGv1idnpPineOAC/4kb/U0mx8pLeUcQ2TkBecGIXqUai+/gHirwiOrjLUpRL/tZJWYsUc4u6anTnF1lFz8jLa0BHpM66BjgJV2iJpq1B7NFrlKDRzwQQlXLvn3Cu/udWt59x2upO5osNKuifKOQ9jWNIYGa3+Gh6s+9Qtbx7lbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Il7ASnQ0uPADU8HGpgDtmF19wor7b0WPL0T36W19wGg=;
+ b=OZ/IWe4BGGu6U96Uym+xL/5evGJ5Tuu6W5y3oUhDVdPf6wMx/3WXBykANh+l/oAvNnj0jjBp2m3XoSvwEx57SGe1vZbrsNwahhqOkrtPOewlQB5ode2MC94DrxPqmFxJswn3xwhvA8Xpkkt/4TFo5+lO6zrVO4397v8kPPypg9tRUf7H/HIjXppbxAYbSVWXs11lfC1hUKzaflGHJc444EU5pBnOibaQQlFXpSDNDq87Rj6VcdVGHH6HQREHL0EUdOj4a/fpfpTbKHsbtyZaWpy4H0cCCuU8KBZPFB0vHj4LyY90IwhI1qPYle8Py8OpKCF8VzNP53NO0vZKIza4+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Il7ASnQ0uPADU8HGpgDtmF19wor7b0WPL0T36W19wGg=;
+ b=JEInr2vp2jZVAl/tjKpZf0N+44wyI0lh2atyhW7Nz46yjjZhZpTmObQkLigvlL6AqVKgyTIQ6P+0Bz/xc+/R300MndpffYOYb1F9sMWKG/0uDTGIN7EW7uiVwNF0eAwCs15SenEUkYmrLeUv4LG6KkBUjwEW7W4HaO3u8WgC4rexmufrSqkjy7eNeyEBVIjp7caIUuVUBmbAcWO74JhqrWjRmM1cW6Ey/4+gFKxMRWQA1XGWDKQqFjn1vqoiY2k/KePwLerczU6hM6AKM9yR4DU5kJGkKGJL0saKUV5tSXQQPhBHndKJyM4YZ3qc5RASWWYN/yg/q2HvOU+M3qT0BA==
+Received: from MW4PR03CA0011.namprd03.prod.outlook.com (2603:10b6:303:8f::16)
+ by CH3PR12MB7593.namprd12.prod.outlook.com (2603:10b6:610:141::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.38; Tue, 31 Jan
+ 2023 13:41:24 +0000
+Received: from CO1NAM11FT027.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8f:cafe::82) by MW4PR03CA0011.outlook.office365.com
+ (2603:10b6:303:8f::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.36 via Frontend
+ Transport; Tue, 31 Jan 2023 13:41:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT027.mail.protection.outlook.com (10.13.174.224) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6043.22 via Frontend Transport; Tue, 31 Jan 2023 13:41:24 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 31 Jan
+ 2023 05:41:18 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 31 Jan
+ 2023 05:41:18 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Tue, 31 Jan 2023 05:41:17 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/143] 5.10.166-rc1 review
+In-Reply-To: <20230130134306.862721518@linuxfoundation.org>
+References: <20230130134306.862721518@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.7.1
-Subject: Re: [PATCH] mmc:mmc-cqhci:support interrupt coalescing
-Content-Language: en-US
-To:     Michael Wu <michael@allwinnertech.com>, riteshh@codeaurora.org,
-        asutoshd@codeaurora.org, ulf.hansson@linaro.org,
-        chaotian.jing@mediatek.com, matthias.bgg@gmail.com,
-        kdasu.kdev@gmail.com, alcooperx@gmail.com, f.fainelli@gmail.com,
-        haibo.chen@nxp.com, shawnguo@kernel.org, agross@kernel.org,
-        andersson@kernel.org, michal.simek@xilinx.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     bcm-kernel-feedback-list@broadcom.com, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, konrad.dybcio@linaro.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20230130064656.106793-1-michael@allwinnertech.com>
- <2463a92b-c180-87d4-0c96-2f549a397164@intel.com>
- <610b5f73-f9e3-deb2-2754-e8939ed00ec3@allwinnertech.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <610b5f73-f9e3-deb2-2754-e8939ed00ec3@allwinnertech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <70b0fdac-299c-4356-81df-ce3d16503536@rnnvmail201.nvidia.com>
+Date:   Tue, 31 Jan 2023 05:41:17 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT027:EE_|CH3PR12MB7593:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0265bdc3-fe87-4d85-dc55-08db0390d88f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: UT7VBOpsc6opSXgBX8MHmQPNg+N20XV3o69c29Ape6aGtFWTT8Ywd3hOIomalfm86gcHDU8u78EE4YpM0dp5Li9FPE3SErvv3k3t72T+ne+KrqJQrK+XbReob4vIIUp/IR3WHn86x3copBDrjBFcMrHWD3/anwfgHR9vOQoTuUbsZ/3nFHfodMVyHiHzPbcX/3cbcX8dRV9yR2tL5bdjFoYCisOLflIdgnkXOVDqDdZKycoUY1mZNdip37Fr9tBspi/F2P+7/HumSMs32yxg7/pE/3eda9PMg0dSF8HRYEt8PRUBctukBlUl9W8ZbashKx9jZPJDzUmJQuIPqlEKLs92TI11qE9ypam5lUCdb+khLfxM8drjrftzSHY3suCh9zvlakLfGE4nV63mx/We7kS1qdjoT/KAdea8yjl+MyVsUeMuvLnuzA+rVLQDLJ7BWQDqMc1GKlfH/NARzMwebX1WlLhBu1X9pZVBXC/pgaM2Lxfwviz9DjB6vax51Z5LCJHYZdTXXoDr62lOyDOqBYH13OXjEmM4SIH8s6sLVlyUo5Wmwnsh6B0MfagN78TEEXuqUceDLQVrb5IGkuVPStOLd0RV8Qk5xbxbdFMy8HsPRwGSutxAZMqzllDpUvAwvaanRGSX1qjijgFZnK+rWrkemDxPin+BCp88fFJUL6VTM8M3HtEsOgw2fNnrl6G30C/fBJDeP+Qxjx5mdtwJiYYSYSAB0g5njclUr1Fy3mAPGt4oJv9fwySwWgTTHLxzZx1jrQyCN5EVgGBGQ0ESA6Q8METSUMd6/Az5bmhu1Gc=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(39860400002)(346002)(136003)(396003)(451199018)(36840700001)(46966006)(40470700004)(31686004)(41300700001)(6916009)(70206006)(316002)(54906003)(82310400005)(8676002)(4326008)(5660300002)(7416002)(8936002)(70586007)(86362001)(356005)(31696002)(7636003)(82740400003)(36860700001)(186003)(966005)(26005)(336012)(426003)(40480700001)(2906002)(40460700003)(47076005)(478600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2023 13:41:24.5444
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0265bdc3-fe87-4d85-dc55-08db0390d88f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT027.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7593
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 31/01/23 15:12, Michael Wu wrote:
-> Dear Adrian，
+On Mon, 30 Jan 2023 14:50:57 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.166 release.
+> There are 143 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On 2023/1/30 23:59, Adrian Hunter wrote:
->> On 30/01/23 08:46, Michael Wu wrote:
->>> Support interrupt coalescing to reduce the frequency of mmc interrupts
->>
->> There doesn't seem to be any users.  The new parameter to
->> cqhci_init() is always false.  New features are not usually
->> accepted without users.
+> Responses should be made by Wed, 01 Feb 2023 13:42:39 +0000.
+> Anything received after that time might be too late.
 > 
-> At present, I have only supported this feature on the Allwinner platform because I have not get enough information about other vendors.
->>
->> There needs to be an explanation of why the change is being made.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.166-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> I consider reducing the number of interrupt context switches. Can you tell me why the community does not support this feature? I wonder whether I'm doing is correct. If it's correct, i will improve this patch and incorporate it
+> thanks,
+> 
+> greg k-h
 
-AFAIK the community has not made any comment on supporting interrupt coalescing for CQHCI, one way or another.
-However, it is generally expected that new features will only be added if they demonstrate some benefit.
-Just assuming that there is a benefit is not enough.
+All tests passing for Tegra ...
 
->>
->> Also there doesn't seem to be any configuration of the CQIC
->> register.
-> 
-> At present, I am working on the hook function .cqe_enable that the ICCTH of CQIC is set in enable
->>
->>>
->>> Signed-off-by: Michael Wu <michael@allwinnertech.com>
->>> ---
->>>   drivers/mmc/host/cqhci-core.c      | 20 +++++++++++++++-----
->>>   drivers/mmc/host/cqhci.h           |  5 ++++-
->>>   drivers/mmc/host/mtk-sd.c          |  2 +-
->>>   drivers/mmc/host/sdhci-brcmstb.c   |  2 +-
->>>   drivers/mmc/host/sdhci-esdhc-imx.c |  2 +-
->>>   drivers/mmc/host/sdhci-msm.c       |  2 +-
->>>   drivers/mmc/host/sdhci-of-arasan.c |  2 +-
->>>   drivers/mmc/host/sdhci-pci-core.c  |  2 +-
->>>   drivers/mmc/host/sdhci-pci-gli.c   |  2 +-
->>>   drivers/mmc/host/sdhci-tegra.c     |  2 +-
->>>   drivers/mmc/host/sdhci_am654.c     |  2 +-
->>>   11 files changed, 28 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
->>> index b3d7d6d8d654..f9cdf9f04bfc 100644
->>> --- a/drivers/mmc/host/cqhci-core.c
->>> +++ b/drivers/mmc/host/cqhci-core.c
->>> @@ -420,7 +420,7 @@ static void cqhci_disable(struct mmc_host *mmc)
->>>   }
->>>     static void cqhci_prep_task_desc(struct mmc_request *mrq,
->>> -                 struct cqhci_host *cq_host, int tag)
->>> +                 struct cqhci_host *cq_host, int tag, int intr)
->>>   {
->>>       __le64 *task_desc = (__le64 __force *)get_desc(cq_host, tag);
->>>       u32 req_flags = mrq->data->flags;
->>> @@ -428,7 +428,7 @@ static void cqhci_prep_task_desc(struct mmc_request *mrq,
->>>         desc0 = CQHCI_VALID(1) |
->>>           CQHCI_END(1) |
->>> -        CQHCI_INT(1) |
->>> +        CQHCI_INT(intr) |
->>>           CQHCI_ACT(0x5) |
->>>           CQHCI_FORCED_PROG(!!(req_flags & MMC_DATA_FORCED_PRG)) |
->>>           CQHCI_DATA_TAG(!!(req_flags & MMC_DATA_DAT_TAG)) |
->>> @@ -621,7 +621,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
->>>       }
->>>         if (mrq->data) {
->>> -        cqhci_prep_task_desc(mrq, cq_host, tag);
->>> +        cqhci_prep_task_desc(mrq, cq_host, tag, (cq_host->intr_clsc ? 0 : 1));
->>>             err = cqhci_prep_tran_desc(mrq, cq_host, tag);
->>>           if (err) {
->>> @@ -812,7 +812,7 @@ static void cqhci_finish_mrq(struct mmc_host *mmc, unsigned int tag)
->>>   irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
->>>                 int data_error)
->>>   {
->>> -    u32 status;
->>> +    u32 status, rval;
->>>       unsigned long tag = 0, comp_status;
->>>       struct cqhci_host *cq_host = mmc->cqe_private;
->>>   @@ -856,6 +856,15 @@ irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
->>>           spin_unlock(&cq_host->lock);
->>>       }
->>>   +    if (cq_host->intr_clsc) {
->>> +        rval = cqhci_readl(cq_host, CQHCI_IC);
->>> +        rval |= CQHCI_IC_RESET;
->>> +        cqhci_writel(cq_host, rval, CQHCI_IC);
->>> +        rval = cqhci_readl(cq_host, CQHCI_IC);
->>> +        rval &= (~CQHCI_IC_RESET);
->>> +        cqhci_writel(cq_host, rval, CQHCI_IC);
->>> +    }
->>> +
->>>       if (status & CQHCI_IS_TCL)
->>>           wake_up(&cq_host->wait_queue);
->>>   @@ -1172,11 +1181,12 @@ static unsigned int cqhci_ver_minor(struct cqhci_host *cq_host)
->>>   }
->>>     int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc,
->>> -          bool dma64)
->>> +          bool dma64, bool intr_clsc)
->>>   {
->>>       int err;
->>>         cq_host->dma64 = dma64;
->>> +    cq_host->intr_clsc = intr_clsc;
->>>       cq_host->mmc = mmc;
->>>       cq_host->mmc->cqe_private = cq_host;
->>>   diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
->>> index ba9387ed90eb..acf90773c30a 100644
->>> --- a/drivers/mmc/host/cqhci.h
->>> +++ b/drivers/mmc/host/cqhci.h
->>> @@ -227,6 +227,9 @@ struct cqhci_host {
->>>         /* 64 bit DMA */
->>>       bool dma64;
->>> +
->>> +    /* interrupt coalescing*/
->>> +    bool intr_clsc;
->>>       int num_slots;
->>>       int qcnt;
->>>   @@ -312,7 +315,7 @@ struct platform_device;
->>>     irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
->>>                 int data_error);
->>> -int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dma64);
->>> +int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dma64, bool intr_clsc);
->>>   struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev);
->>>   int cqhci_deactivate(struct mmc_host *mmc);
->>>   static inline int cqhci_suspend(struct mmc_host *mmc)
->>> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
->>> index edade0e54a0c..2c18f954d4b8 100644
->>> --- a/drivers/mmc/host/mtk-sd.c
->>> +++ b/drivers/mmc/host/mtk-sd.c
->>> @@ -2796,7 +2796,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
->>>           host->cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>           host->cq_host->mmio = host->base + 0x800;
->>>           host->cq_host->ops = &msdc_cmdq_ops;
->>> -        ret = cqhci_init(host->cq_host, mmc, true);
->>> +        ret = cqhci_init(host->cq_host, mmc, true, false);
->>>           if (ret)
->>>               goto host_free;
->>>           mmc->max_segs = 128;
->>> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
->>> index f2cf3d70db79..4aeaeddbbf25 100644
->>> --- a/drivers/mmc/host/sdhci-brcmstb.c
->>> +++ b/drivers/mmc/host/sdhci-brcmstb.c
->>> @@ -231,7 +231,7 @@ static int sdhci_brcmstb_add_host(struct sdhci_host *host,
->>>           cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>       }
->>>   -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>       if (ret)
->>>           goto cleanup;
->>>   diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
->>> index 9e73c34b6401..7aef7abe71f1 100644
->>> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
->>> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
->>> @@ -1712,7 +1712,7 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
->>>           cq_host->mmio = host->ioaddr + ESDHC_CQHCI_ADDR_OFFSET;
->>>           cq_host->ops = &esdhc_cqhci_ops;
->>>   -        err = cqhci_init(cq_host, host->mmc, false);
->>> +        err = cqhci_init(cq_host, host->mmc, false, false);
->>>           if (err)
->>>               goto disable_ahb_clk;
->>>       }
->>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->>> index 4ac8651d0b29..b6549d1e43ec 100644
->>> --- a/drivers/mmc/host/sdhci-msm.c
->>> +++ b/drivers/mmc/host/sdhci-msm.c
->>> @@ -2153,7 +2153,7 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
->>>       if (ret)
->>>           goto cleanup;
->>>   -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>       if (ret) {
->>>           dev_err(&pdev->dev, "%s: CQE init: failed (%d)\n",
->>>                   mmc_hostname(host->mmc), ret);
->>> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
->>> index 89c431a34c43..811f8686532d 100644
->>> --- a/drivers/mmc/host/sdhci-of-arasan.c
->>> +++ b/drivers/mmc/host/sdhci-of-arasan.c
->>> @@ -1610,7 +1610,7 @@ static int sdhci_arasan_add_host(struct sdhci_arasan_data *sdhci_arasan)
->>>       if (dma64)
->>>           cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>   -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>       if (ret)
->>>           goto cleanup;
->>>   diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
->>> index c359f867df0a..6f6cae6355a7 100644
->>> --- a/drivers/mmc/host/sdhci-pci-core.c
->>> +++ b/drivers/mmc/host/sdhci-pci-core.c
->>> @@ -964,7 +964,7 @@ static int glk_emmc_add_host(struct sdhci_pci_slot *slot)
->>>       if (dma64)
->>>           cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>   -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>       if (ret)
->>>           goto cleanup;
->>>   diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
->>> index 633a8ee8f8c5..6917ba339aa9 100644
->>> --- a/drivers/mmc/host/sdhci-pci-gli.c
->>> +++ b/drivers/mmc/host/sdhci-pci-gli.c
->>> @@ -908,7 +908,7 @@ static int gl9763e_add_host(struct sdhci_pci_slot *slot)
->>>       if (dma64)
->>>           cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>   -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>       if (ret)
->>>           goto cleanup;
->>>   diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
->>> index bff084f178c9..f98a468e8f43 100644
->>> --- a/drivers/mmc/host/sdhci-tegra.c
->>> +++ b/drivers/mmc/host/sdhci-tegra.c
->>> @@ -1620,7 +1620,7 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
->>>       if (dma64)
->>>           cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>   -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>       if (ret)
->>>           goto cleanup;
->>>   diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
->>> index 7ef828942df3..8e7fbee70e16 100644
->>> --- a/drivers/mmc/host/sdhci_am654.c
->>> +++ b/drivers/mmc/host/sdhci_am654.c
->>> @@ -568,7 +568,7 @@ static int sdhci_am654_cqe_add_host(struct sdhci_host *host)
->>>         host->mmc->caps2 |= MMC_CAP2_CQE;
->>>   -    return cqhci_init(cq_host, host->mmc, 1);
->>> +    return cqhci_init(cq_host, host->mmc, 1, false);
->>>   }
->>>     static int sdhci_am654_get_otap_delay(struct sdhci_host *host,
-> 
+Test results for stable-v5.10:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    75 tests:	75 pass, 0 fail
 
+Linux version:	5.10.166-rc1-g930bc29c79c4
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
