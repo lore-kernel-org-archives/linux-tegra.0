@@ -2,38 +2,38 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5ABC6FD1E
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Feb 2023 10:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F91C6FA95
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Feb 2023 10:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232398AbjBAKRL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Feb 2023 05:17:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51954 "EHLO
+        id S232283AbjBAKRN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Feb 2023 05:17:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232018AbjBAKQf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Feb 2023 05:16:35 -0500
+        with ESMTP id S230430AbjBAKQg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Feb 2023 05:16:36 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81E994E533;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C284F36F;
         Wed,  1 Feb 2023 02:16:34 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DA34261756;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2ABE061753;
+        Wed,  1 Feb 2023 10:16:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F27C4FE03;
         Wed,  1 Feb 2023 10:16:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E55CAC4323E;
-        Wed,  1 Feb 2023 10:16:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1675246593;
-        bh=DopQjRozUlqLm8kLLOiYmoJfcthKaCplFrQrtxG3j4o=;
+        bh=0m8gstcsjAXKkZ3q2p9aNR2mJM0JHgPPjx74c1l8cI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y3t6mpcRXV0ZYGmIgJ8VKte6Xf6yMsefLMGHNVd5cR9LNCLofo3+VpLIGQ58jUjrQ
-         kuyZhPev32rK9pmni6WgCf0cM4c6ZWGM3xQlaZQ+PD9UWhEYlRexFN4RXtf+t/16rV
-         A9N+IR+FAU9CVOiZ79EX4GmkS/mHvmN1QfJ558IL52g5btRJaPXSAdhKxOAsynt0qH
-         SEW0tLvqwzmqQrgIOJIC00K3fChnSvlvsJMFrmmSBSCjC0dbeAFj4/HuVYoA/Wj7L1
-         8lUSVJGAj1covok8bXtFis5xVMvInuJEqCbxps55aSQu7j/wlVL4z4X500Opk8zzw5
-         gBlsNepeoN3ow==
+        b=eCMI8uXF/3vctbgf7q2GxhrLQtBbH/VJSdgU6kRcOZYJk6w1zND0LltlmGXMpu5r2
+         GVjX2U9TEyhcbCTGv68EyJBQZLoJR45HCd00Xx2/Rreo9DP3652aLKLEAJZTa5P1ZR
+         PoqUB4+BvpCTM4je2Wbfzs2YWRPZ0CTOFbY3JYn9GqaasgZapVhY4GjzfQbPYB+pnw
+         YcA1Rjr5+JXstyjwU6E09Wkb0GBmD0CKPQ1ulM/5kYTqt3imJh5qIGjEpdAOVpexP7
+         j5m7NZn0teGWSBDX0agvbbR0Jh2HgCqEreB7PMeUYuro7SIGrR2Dxf9oj9SOSGZQPS
+         5dHo+4LzWQpMw==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pNAAg-00044D-4G; Wed, 01 Feb 2023 11:16:54 +0100
+        id 1pNAAh-00044i-1D; Wed, 01 Feb 2023 11:16:55 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
@@ -53,11 +53,10 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH 13/23] interconnect: qcom: sm8550: fix registration race
-Date:   Wed,  1 Feb 2023 11:15:49 +0100
-Message-Id: <20230201101559.15529-14-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 23/23] interconnect: drop unused icc_link_destroy() interface
+Date:   Wed,  1 Feb 2023 11:15:59 +0100
+Message-Id: <20230201101559.15529-24-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230201101559.15529-1-johan+linaro@kernel.org>
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
@@ -67,87 +66,96 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The current interconnect provider registration interface is inherently
-racy as nodes are not added until the after adding the provider. This
-can specifically cause racing DT lookups to fail.
+Now that the link array is deallocated when destroying nodes and the
+explicit link removal has been dropped from the exynos driver there are
+no further users of and no need for the icc_link_destroy() interface.
 
-Switch to using the new API where the provider is not registered until
-after it has been fully initialised.
-
-Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
-Cc: Abel Vesa <abel.vesa@linaro.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/interconnect/qcom/sm8550.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/interconnect/core.c           | 46 ---------------------------
+ include/linux/interconnect-provider.h |  6 ----
+ 2 files changed, 52 deletions(-)
 
-diff --git a/drivers/interconnect/qcom/sm8550.c b/drivers/interconnect/qcom/sm8550.c
-index 54fa027ab961..7ab492ca8fe0 100644
---- a/drivers/interconnect/qcom/sm8550.c
-+++ b/drivers/interconnect/qcom/sm8550.c
-@@ -2197,9 +2197,10 @@ static int qnoc_probe(struct platform_device *pdev)
- 	provider->pre_aggregate = qcom_icc_pre_aggregate;
- 	provider->aggregate = qcom_icc_aggregate;
- 	provider->xlate_extended = qcom_icc_xlate_extended;
--	INIT_LIST_HEAD(&provider->nodes);
- 	provider->data = data;
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 8cca5e9a9d5f..d40b35bdc6ef 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -859,52 +859,6 @@ int icc_link_create(struct icc_node *node, const int dst_id)
+ }
+ EXPORT_SYMBOL_GPL(icc_link_create);
  
-+	icc_provider_init(provider);
-+
- 	qp->dev = &pdev->dev;
- 	qp->bcms = desc->bcms;
- 	qp->num_bcms = desc->num_bcms;
-@@ -2208,12 +2209,6 @@ static int qnoc_probe(struct platform_device *pdev)
- 	if (IS_ERR(qp->voter))
- 		return PTR_ERR(qp->voter);
- 
--	ret = icc_provider_add(provider);
--	if (ret) {
--		dev_err_probe(&pdev->dev, ret,
--			      "error adding interconnect provider\n");
--		return ret;
+-/**
+- * icc_link_destroy() - destroy a link between two nodes
+- * @src: pointer to source node
+- * @dst: pointer to destination node
+- *
+- * Return: 0 on success, or an error code otherwise
+- */
+-int icc_link_destroy(struct icc_node *src, struct icc_node *dst)
+-{
+-	struct icc_node **new;
+-	size_t slot;
+-	int ret = 0;
+-
+-	if (IS_ERR_OR_NULL(src))
+-		return -EINVAL;
+-
+-	if (IS_ERR_OR_NULL(dst))
+-		return -EINVAL;
+-
+-	mutex_lock(&icc_lock);
+-
+-	for (slot = 0; slot < src->num_links; slot++)
+-		if (src->links[slot] == dst)
+-			break;
+-
+-	if (WARN_ON(slot == src->num_links)) {
+-		ret = -ENXIO;
+-		goto out;
 -	}
- 
- 	for (i = 0; i < qp->num_bcms; i++)
- 		qcom_icc_bcm_init(qp->bcms[i], &pdev->dev);
-@@ -2227,7 +2222,7 @@ static int qnoc_probe(struct platform_device *pdev)
- 		node = icc_node_create(qnodes[i]->id);
- 		if (IS_ERR(node)) {
- 			ret = PTR_ERR(node);
--			goto err;
-+			goto err_remove_nodes;
- 		}
- 
- 		node->name = qnodes[i]->name;
-@@ -2241,12 +2236,17 @@ static int qnoc_probe(struct platform_device *pdev)
- 	}
- 	data->num_nodes = num_nodes;
- 
-+	ret = icc_provider_register(provider);
-+	if (ret)
-+		goto err_remove_nodes;
-+
- 	platform_set_drvdata(pdev, qp);
- 
- 	return 0;
--err:
-+
-+err_remove_nodes:
- 	icc_nodes_remove(provider);
--	icc_provider_del(provider);
-+
- 	return ret;
+-
+-	src->links[slot] = src->links[--src->num_links];
+-
+-	new = krealloc(src->links, src->num_links * sizeof(*src->links),
+-		       GFP_KERNEL);
+-	if (new)
+-		src->links = new;
+-	else
+-		ret = -ENOMEM;
+-
+-out:
+-	mutex_unlock(&icc_lock);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(icc_link_destroy);
+-
+ /**
+  * icc_node_add() - add interconnect node to interconnect provider
+  * @node: pointer to the interconnect node
+diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
+index b9af9016a95e..e6d8aca6886d 100644
+--- a/include/linux/interconnect-provider.h
++++ b/include/linux/interconnect-provider.h
+@@ -118,7 +118,6 @@ int icc_std_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+ struct icc_node *icc_node_create(int id);
+ void icc_node_destroy(int id);
+ int icc_link_create(struct icc_node *node, const int dst_id);
+-int icc_link_destroy(struct icc_node *src, struct icc_node *dst);
+ void icc_node_add(struct icc_node *node, struct icc_provider *provider);
+ void icc_node_del(struct icc_node *node);
+ int icc_nodes_remove(struct icc_provider *provider);
+@@ -150,11 +149,6 @@ static inline int icc_link_create(struct icc_node *node, const int dst_id)
+ 	return -ENOTSUPP;
  }
  
-@@ -2254,8 +2254,8 @@ static int qnoc_remove(struct platform_device *pdev)
+-static inline int icc_link_destroy(struct icc_node *src, struct icc_node *dst)
+-{
+-	return -ENOTSUPP;
+-}
+-
+ static inline void icc_node_add(struct icc_node *node, struct icc_provider *provider)
  {
- 	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
- 
-+	icc_provider_deregister(&qp->provider);
- 	icc_nodes_remove(&qp->provider);
--	icc_provider_del(&qp->provider);
- 
- 	return 0;
  }
 -- 
 2.39.1
