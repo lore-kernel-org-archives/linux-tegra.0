@@ -2,37 +2,29 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7B6C636D4
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Feb 2023 21:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB08C636D7
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Feb 2023 21:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbjBAVsa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Feb 2023 16:48:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
+        id S229770AbjBAVs5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Feb 2023 16:48:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbjBAVs3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Feb 2023 16:48:29 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA54014E85;
-        Wed,  1 Feb 2023 13:48:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5E53CB822A5;
-        Wed,  1 Feb 2023 21:48:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 738FDC433D2;
-        Wed,  1 Feb 2023 21:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675288096;
-        bh=nohq72nSV2jjLhRpAk5UnpL5hktV2vDmaMQZtyMyLso=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PgZc9JCFB69COcAUIfdI2TbWdXKtRMSgHcQkUb97miR0FTFvEtDz80vfxp+LE6nYm
-         1/y7r5uBJ0lP7tn8tp2ipO57L1+Nx4pDtaZQD3y8TxNaydlddeHaeHI+gyCQ1JSsaz
-         HPdL7r6Te9zXG2InIEgGmOHTeqqj0XHke+OdxARVxdibyX1zbYa0GxjiO/bZ3sFq8e
-         Do13N6YA5gNa0jIZaknJUokUB9WRXyGxWwEokR8vb+KhUXfulIqzlDphkWQEWvfZoE
-         Q4zYEYFkH7E9EUttfNnRck7S+pWw1vNFSTcvhGIbQwk9gwGPY2BxrvOAWPAJD0AA+R
-         sZYzbrM18JGMw==
-Date:   Wed, 1 Feb 2023 22:48:13 +0100
-From:   Wolfram Sang <wsa@kernel.org>
+        with ESMTP id S231200AbjBAVsy (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Feb 2023 16:48:54 -0500
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18470125B1
+        for <linux-tegra@vger.kernel.org>; Wed,  1 Feb 2023 13:48:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=hubGEZf4ZraTDuQsrcF8EsKr65EW
+        qd8xY4s6J5P/QNY=; b=xW3XxxjZGI5PQb8/hyJ4JyKS6jDj/KBzVMbtDcPWBEtn
+        mEvs4jdEonsXZW0Xg6M6loeWu+VZIj1ZwppJ+exexVvv1cx5KbtUBzjMiiLFO1MY
+        eheSqTI60lVTea8JKTN6wmazbpHP+MI/N4nWJtq0EaFhtJiygvfU3jQoSl0YrWY=
+Received: (qmail 2393229 invoked from network); 1 Feb 2023 22:48:32 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Feb 2023 22:48:32 +0100
+X-UD-Smtp-Session: l3s3148p1@jMTRaKrzzOUujnsO
+Date:   Wed, 1 Feb 2023 22:48:31 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     Ajay Gupta <ajayg@nvidia.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
@@ -44,10 +36,10 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         Wayne Chang <waynec@nvidia.com>
-Subject: Re: [PATCH V10 2/6] i2c: nvidia-gpu: Add ACPI property to align with
- device-tree
-Message-ID: <Y9reHZDeRWDRZG7e@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+Subject: Re: [PATCH V10 4/6] i2c: nvidia-gpu: Remove ccgx,firmware-build
+ property
+Message-ID: <Y9reL0BBF9Po0Yam@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ajay Gupta <ajayg@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
@@ -60,50 +52,53 @@ Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         Wayne Chang <waynec@nvidia.com>
 References: <20230131175748.256423-1-jonathanh@nvidia.com>
- <20230131175748.256423-3-jonathanh@nvidia.com>
- <db53d28c-119b-90c5-de47-bf7a3561552b@nvidia.com>
- <Y9qZsTQK8G8gW6+h@ninjato>
- <b7576f93-45e5-7d5c-29e1-e95a2e58f118@nvidia.com>
- <DM4PR12MB5770C83B3ED79401558B15E6DCD19@DM4PR12MB5770.namprd12.prod.outlook.com>
+ <20230131175748.256423-5-jonathanh@nvidia.com>
+ <936488c6-f86d-3552-1a35-1039eca55c00@nvidia.com>
+ <00059af2-dc99-0771-4d30-b7dd94ce1150@nvidia.com>
+ <DM4PR12MB577082ABC3CE4731E06E4963DCD19@DM4PR12MB5770.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ifa7/+Xth6NipKW0"
+        protocol="application/pgp-signature"; boundary="MjmHH0M0XfhIaQAP"
 Content-Disposition: inline
-In-Reply-To: <DM4PR12MB5770C83B3ED79401558B15E6DCD19@DM4PR12MB5770.namprd12.prod.outlook.com>
+In-Reply-To: <DM4PR12MB577082ABC3CE4731E06E4963DCD19@DM4PR12MB5770.namprd12.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---ifa7/+Xth6NipKW0
+--MjmHH0M0XfhIaQAP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-> > Adding Ajay.
+> > >> Now the Cypress CCG driver has been updated to support the
+> > >> 'firmware-name' property to align with device-tree, remove the
+> > >> 'ccgx,firmware-build' property as this is no longer needed.
+>=20
 > Acked-by: Ajay Gupta <ajayg@nvidia.com>
 
 Acked-by: Wolfram Sang <wsa@kernel.org>
 
 
---ifa7/+Xth6NipKW0
+--MjmHH0M0XfhIaQAP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmPa3hkACgkQFA3kzBSg
-KbZmsRAAsq7JPvFWKh2Rvxhs+zXvhAkaS+TH1fPUBOOe27RntRVEEVtB0gLxFGe+
-GSjM3853USxGXXRXovWqNbzGzzjvsNgHaYQ3mpONJU2KhyETuiabG+U+PRq+8rQW
-Lyz8mMUrx/g/yM2OcWGGxsV2SvuyAnIZrAKLMdWHjzz16el7SJ8M+PJgPOTAIQwl
-jkC+3BrAUxknNjh893c2o9bRqI9gs+nMKrTupNt+2itgp8v0Q2jYqGvo91xHAcxM
-XvOedjU8k12dGP2eQzXusUahcJ0AfrHh7ZCTZoHo2+30bo0ma9P1EePvM8li2orZ
-B3rJmad/v610QLA8lj3feQMlAouvmnqoEGfB8uW8RisEYQu2iuRGt6O1Tco4K1Ct
-VJZ8tzxZZeCM1jKnPusHELNTtgKGz9N7YYVQx4FSSSNVwqi03631sD49+m+UrQA1
-gr2bY4o48mTBbitOLYDqx8iZr/2PQcE8zpja5R/5Q8IY3aa/tuZ57e8fbTEmosVI
-2VBGDnskPxzOgTDkXkJSAXzdYQJqOvwp7IeCmK6KkdGLCW8rmBT4DU0s6bi2+Zxv
-xVog/CrH1RwLiQzEUCCh8gIEngx95Z9ouTo5rtWP1oyPWCAZuzzTOflBjxdTfmIr
-T+QewxYAMelZKgkcxgLArssgkSas8WKs9DmuVLBfKGEt/x/UOgs=
-=EuyP
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmPa3i8ACgkQFA3kzBSg
+KbZSYA/+K7njFaUeK0bxDYLNUiVKOdYHpDIFuzJZa/eOxmNaf4SAyspFVWNa9c89
+jYqglT+ZHZ5zptZd0yp3bT3lvUbQfO5g3wX9fhme3qN7mzPprWBqY3LFks5wKxVr
+iArQBIfBTZ5ulMrOkdS7UaLnEBiitwL9dQpY4GtV2xJY/yr8soX3IWK6verSJOuo
+CHpn0XfIgr+O9Yslu/bNEmRH4GJPFWNY/fSAJFKiDg9Zt3e6pW2xHiAB7ljjvTLq
+g8gwqNHX1TYAOUx7Y4qp8XlLUQkukIkn50fvMHrZaiJRbKSu6W3PG6u36fEo6fBI
+Moy4rtBOJRBz6EbVGm75xozzIqd1elhwQzKlbZaQSJCWb70bhkSZjBil35/LzDix
+l3odfAsxxpFwPKyRYw3BNilh7MfybbCw5Mc5OM+8nCwpTof+19O+RpC+tMNQxzVX
+0tw+9JCgPZkutXdId9xa24WBsLMXAN1n3qTVk1YYuXz7RcTsCAbnIejaA3dWp+nz
+HAWTAERv3z9IGNpcFyYHbqjKkU/b5mE2HXxyXVtBVs1YKo1wcL+W5fyZ8ZwUaKLN
+FxYXILXJPneZ2djaQsHe1+I1HCpxPArpBlvhAf3UBFcMzeiRBQemKeIIX/78CqI9
+LtaxuiCD1KhAO/iRIrVnMql61AbmTt67GPmJFFDcOw0r5sjsKYU=
+=2M82
 -----END PGP SIGNATURE-----
 
---ifa7/+Xth6NipKW0--
+--MjmHH0M0XfhIaQAP--
