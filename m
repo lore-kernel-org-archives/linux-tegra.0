@@ -2,107 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AACC636D4
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 12:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604C1C64EC3
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 15:03:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232142AbjBBMVe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Feb 2023 07:21:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53078 "EHLO
+        id S231438AbjBBPDl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Feb 2023 10:03:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbjBBMVd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 07:21:33 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C3438D627
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 04:21:24 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso1231954wms.4
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 04:21:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v/4U8p8He8nf0F/Q+zKUZ6JAva9Y3IADx+ImOxMwVjs=;
-        b=DZVRTdZJ2TGTimuGoUq+e4aS2CgltVg9zGenQm3Q6L3Qknfq09JAq2Lk3bI3Ep+Xra
-         Y2YuJxGUB2Kj/j3uYg9GzAL0M4YVqii/ci1/1/VWgJA/yCTWEm10VkgqDYP8ZzckDPwx
-         dWYaVTrOnasI9nlHPfhiNudTvvBX6OLMXo1gcGVofXKgBGSPx5s904/ha6KiVkVW/eDn
-         0uZvqYUOxnXOXfj1ObF/PkqJiBf7w5apOEU/BviWew69ZimqYRHHwopcPUojTLBsJp9K
-         KBjoxfKoXTlrIGVRnyfocC5+Xj1BerZ6skEYjfON7I7uM7h3/WlsCnasF+OQojWp3oEv
-         EULA==
+        with ESMTP id S229972AbjBBPDk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 10:03:40 -0500
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1BE1715E;
+        Thu,  2 Feb 2023 07:03:15 -0800 (PST)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-163bd802238so2805495fac.1;
+        Thu, 02 Feb 2023 07:03:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/4U8p8He8nf0F/Q+zKUZ6JAva9Y3IADx+ImOxMwVjs=;
-        b=ji6CZqDo9Z0T05gqCbQBBz31dPbFn5lpfAeEXjeHoH8e3LpbCHpkzbliaBvzumwy/f
-         ifKD+KAbsURfu0WQmLk2St3ETZUHvqO+BP5PcWYpQNWTYaFmkT5HSrxkPgR3eudJjhUQ
-         vcFvu4LWEalCL903TA4RWDsEVLy4COL8m/MhK0d39fakOLXuLhJbWJM1fZJog/Ko8MFR
-         69Y/r9EZVAlhPIuzheeiGNb6AhNAvbmDp+FASlk8qhFPNPR1AOtJxNOMWldj6E/VOUzm
-         uMa0QKcWiT7z/T88MoXKaQEbrnmMCrEE631OzUKZoR1pi3cL6RXmv+PLgbjb6ejvaEpK
-         yD4w==
-X-Gm-Message-State: AO0yUKUXr1xwd/fNTomaGgL0CdDyDQw4q+o4CN2q+Eu/oMZx1ga1XjYk
-        LIj7l8C8eCePfxsKpgC6IO0YBQ==
-X-Google-Smtp-Source: AK7set8gVqTsm/vSxOdXJguhERmSsywifTBAe6FbEDkp0QG4XpfNm6PCN3fFrU/+InV20PS1v4kD7w==
-X-Received: by 2002:a05:600c:19c6:b0:3db:2647:a012 with SMTP id u6-20020a05600c19c600b003db2647a012mr6298917wmq.40.1675340482770;
-        Thu, 02 Feb 2023 04:21:22 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id i22-20020a1c5416000000b003dc3f3d77e3sm4824975wmb.7.2023.02.02.04.21.20
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yOafWoNIBGU3Q76qlhkVuk+ht5BzMZtDb+TwP4LrI+s=;
+        b=7SxN6CsChFi5CsO8BdujQhNA/maxiN0bWxxXhoWdm5A6m7yQlMHyBtpBPTDKt5RtZB
+         GxO3XulvBXey/LiZakCjF5UgHjDQL3MxMhzeCDJl2+qgCwVoUXiC/l6HGEpuocw8pSKL
+         ZRL2mkLBjDBw5MVj+5xB4bjZW2GzsTRu7foHfGBz0pzYWJhxaRoGuLeHu0voWnA+IOow
+         2NwgNOi6wVerN4nl8x5yKvPRiof1UBDPtFJ4dSoCRAi5TmWcD0o+UpKUMFuhqvXfWPsY
+         yRs7U0IzCyr04h+BGAgpJTnjOxp9P79qOBMp8NW7GNvVDSartGam4huphLKdEseQ5JvL
+         nq+g==
+X-Gm-Message-State: AO0yUKUUt45JuYS2f4r/EmiRbsZ9QORZ5bxUVV0fcioOWI4HZPkB21hb
+        n4PsE5d14T9TNJRYd+uYFbsA3kcnGuW50Q==
+X-Google-Smtp-Source: AK7set/jqRpSpKwOVgmd0hRVvLflEu/ZJ53kNj+Z0g73c5pb0/FJd/Mx0loSgB+vzVz/aKrqVxiwDg==
+X-Received: by 2002:a05:6870:d184:b0:163:88f7:d947 with SMTP id a4-20020a056870d18400b0016388f7d947mr3037186oac.43.1675350169477;
+        Thu, 02 Feb 2023 07:02:49 -0800 (PST)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id o4-20020a05620a0d4400b006ea7f9d8644sm14344458qkl.96.2023.02.02.07.02.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 04:21:22 -0800 (PST)
-Message-ID: <78155653-62ff-e367-e243-eb546ec285d1@linaro.org>
-Date:   Thu, 2 Feb 2023 13:21:19 +0100
+        Thu, 02 Feb 2023 07:02:49 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id 74so2238008ybl.12;
+        Thu, 02 Feb 2023 07:02:49 -0800 (PST)
+X-Received: by 2002:a25:fc1c:0:b0:80b:8602:f3fe with SMTP id
+ v28-20020a25fc1c000000b0080b8602f3femr916791ybd.36.1675349832295; Thu, 02 Feb
+ 2023 06:57:12 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 20/23] memory: tegra30-emc: fix interconnect registration
- race
-Content-Language: en-US
-To:     Johan Hovold <johan+linaro@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+References: <cover.1674584626.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1674584626.git.geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 2 Feb 2023 15:57:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhY9OtW2Pa+LmY0qOvbxLiuyNYEQr5WnPgO1xD=5M1AQ@mail.gmail.com>
+Message-ID: <CAMuHMdWhY9OtW2Pa+LmY0qOvbxLiuyNYEQr5WnPgO1xD=5M1AQ@mail.gmail.com>
+Subject: Re: [PATCH treewide v2 0/9] phy: Add devm_of_phy_optional_get() helper
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
         Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-21-johan+linaro@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230201101559.15529-21-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-phy@lists.infradead.org, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 01/02/2023 11:15, Johan Hovold wrote:
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
-> 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
-> 
-> Fixes: d5ef16ba5fbe ("memory: tegra20: Support interconnect framework")
-> Cc: stable@vger.kernel.org      # 5.11
-> Cc: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
+Hi Vinod,
 
+On Tue, Jan 24, 2023 at 7:37 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> While there exist several optional_get() PHY helper functions, there is
+> no optional variant of devm_of_phy_get(), leading to several drivers
+> implementing this theirselves, sometimes in buggy ways.
+>
+> Hence this series, after two cleanup patches, introduces a
+> devm_of_phy_optional_get() helper(), and converts existing users of
+> devm_of_phy_get() where appropriate.
+>
+> Changes compared to v1[1]:
+>   - Incorporate "[PATCH v2 1/9] phy: Remove unused phy_optional_get()",
+>     as it touches the same documentation,
+>   - New patch "[PATCH v2 2/9] doc: phy: Document devm_of_phy_get()",
+>   - Print an error message in case of failure, as requested by RobH,
+>   - Update Documentation,
+>   - Clarify removed checks for -ENODEV and -ENOSYS,
+>   - Remove error printing in case of real failures from callers,
+>   - Rebase am65-cpsw change on top of commit 854617f52ab42418 ("net:
+>     ethernet: ti: am65-cpsw: Handle -EPROBE_DEFER for Serdes PHY") in
+>     net-next (next-20230123 and later),
+>   - Add Reviewed-by, Acked-by.
+>
+> Most of this series been compile-tested only, but the new helper itself
+> has been tested with a new user[2].
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Are you happy with this?  This series (at least patch 3) is a dependency
+for [2], and in [3] you said you could apply it and create an immutable
+branch.
 
-Best regards,
-Krzysztof
+Thanks!
 
+> [1] "[PATCH treewide 0/7] phy: Add devm_of_phy_optional_get() helper"
+>     https://lore.kernel.org/r/cover.1674036164.git.geert+renesas@glider.be
+> [2] "[PATCH 12/12] can: rcar_canfd: Add transceiver support"
+>     https://lore.kernel.org/r/e825b50a843ffe40e33f34e4d858c07c1b2ff259.1674499048.git.geert+renesas@glider.be
+
+[3] https://lore.kernel.org/all/Y8kmG+jB%2Fs7stebA@matsya
+
+>
+> Geert Uytterhoeven (9):
+>   phy: Remove unused phy_optional_get()
+>   doc: phy: Document devm_of_phy_get()
+>   phy: Add devm_of_phy_optional_get() helper
+>   net: fman: memac: Convert to devm_of_phy_optional_get()
+>   net: lan966x: Convert to devm_of_phy_optional_get()
+>   net: ethernet: ti: am65-cpsw: Convert to devm_of_phy_optional_get()
+>   PCI: tegra: Convert to devm_of_phy_optional_get()
+>   usb: host: ehci-exynos: Convert to devm_of_phy_optional_get()
+>   usb: host: ohci-exynos: Convert to devm_of_phy_optional_get()
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
