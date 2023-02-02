@@ -2,59 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6891C64EC5
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 12:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CED2C61DA4
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 12:21:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232059AbjBBMVS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Feb 2023 07:21:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52588 "EHLO
+        id S232118AbjBBMVc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Feb 2023 07:21:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232090AbjBBMVQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 07:21:16 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF3F8B30B
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 04:21:14 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id m5-20020a05600c4f4500b003db03b2559eso1230658wmq.5
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 04:21:13 -0800 (PST)
+        with ESMTP id S229633AbjBBMV2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 07:21:28 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CA78D42D
+        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 04:21:19 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so1250205wms.2
+        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 04:21:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jVnSNVLkirZsOOObippIbZpPHleUf0e9ALdESsHrof8=;
-        b=X4SauV9pfzQyRwWA4Res88+GNk8Xtwyd1WbWCrEu26RllMSrfRF3mFlAtqOWyPsmW7
-         1J+6s0V9bJ9GAsx6/TCDeM2v2o0KyqV35fMXpj9jiSnOoAS5H8mYKPBAzXFaZkjCX2ox
-         BlKhVlg33sIZlU1NjR9kjG4Y7KhFuXkjjncO6RtFfCmht3S/WdI/B9LujvNe11kqxYbF
-         3H/PdkoqbcU6gHEG8sBS9EuGb582wMk1UOKTffkxGrQfKjBL45M7IEhEfhDr2tB7irC5
-         r58DPr0FKrhwYMwADpdEXEGdONm7Ht25MxmUU969BTeMm10oSKZpaBZqjx1Eb4nK/zPt
-         RNbA==
+        bh=HXw3bt4I3cMvPHyqkA7MenjqrJEIYl3h0G0pbW0M5Ds=;
+        b=gqGOGYaMFQpHdvDSBJgq/0n0DQypu8Nga3v8ip8IlMbPsR+gp1tGjvP2cskBHWGqrp
+         HCHYfcqUVaFltTAICWUfEIVPucuHJoHKiN+4VF/j1+Enj4E7R/w6QWfgUogeH+MwEknv
+         OIkmA2R/bS+//l9vbWL6WQuz+U2R8g8SDX9nl/3Z5uOgM2JuA3nZNNu4F3VHv+6dzL9m
+         tOrezE3HComLyaN1E7cqcVi1Wtpe/ikv6Ii3OWPp2AhqKPSQ+6ctrbmqQ2ZPRaV9J0qj
+         T4sgcumS75tMK1HG5ybChyZOCfDhIbFCU9D0a2VAQt8xytn26WVDuB5HeZsAqE22VbdA
+         yvYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jVnSNVLkirZsOOObippIbZpPHleUf0e9ALdESsHrof8=;
-        b=OffebqwFgiu+lIi+JzhlwvOlGFHrbokT0ha0sp04lM3JHuNqQz9QvSbHMdKP/5qOIj
-         jVJuclboRSH57QyDos0lHvGODhHL7ySL0n4A/h5YTCrN7asgWLcpAp6Kbq930cO2B0VR
-         LxX4OluiL1aC7QSZOwBhUHsp5ayzpajwdmkyoFMCHOQ5VdiIg4NMKXAFS/ib1YG8uFFb
-         u/1jwNo5yWA/ExrVT2qhXaP7T0qnV4AY0jlfOifYFwr64ErVonPig178xIaCA9DQEw9Q
-         fOhZ8Hm/LtC7JEp9R6YDquOGfRSs0igiRZTMF+fBklCVnQehyxUIr96kJQ2bmHIigTBP
-         zctA==
-X-Gm-Message-State: AO0yUKU5du5ZQg5sr+PpTI8/mPdLuO5SrNGKc16uQMU6rrSg42XwsS40
-        DKledLCgOd1py5yzn5B6iybYfA==
-X-Google-Smtp-Source: AK7set9WJgJis6imdCs93B5K6NXjwk3h+rbbbfDsad+kqWlyUv7u3ip81PwxkuOb/FNsWPRiheFahA==
-X-Received: by 2002:a1c:f603:0:b0:3df:dea7:8ec with SMTP id w3-20020a1cf603000000b003dfdea708ecmr1445503wmc.20.1675340472474;
-        Thu, 02 Feb 2023 04:21:12 -0800 (PST)
+        bh=HXw3bt4I3cMvPHyqkA7MenjqrJEIYl3h0G0pbW0M5Ds=;
+        b=QtYxmObRx/B1JQ8md2CieMHh5BX1HyN6jpGkbXw0Zfd8JroyLXImlj3ONORBjVKr+P
+         OG4uUIyOdhuFhAjVzffpakje3PlKt1vSbEqdNA/AuZbkM+QgfMHabxNUs12pNbGHi5KN
+         V6QPJ6FDpbqzTVNtuQAgRvunkrSbFl0/qnSvY7WsTylKnEFHVssAJnfvUcW9dcnZkO8N
+         5KQtvXXo3dYnS9SsDdB0ffMmVdoi+D+3MRaCFN6GUvScPwOJ0Lcdy5OC45NV+0zXkCqp
+         z2uUXhI5M6lTlhgIm5UQAjVMlQE7zFPo3e50Q8v94YPld/bA9Cj0vpofanNTUgQO8MIS
+         XmeA==
+X-Gm-Message-State: AO0yUKUut6hkEc6YmjsqEaQZWbG6oO62smfJpc81R0qNAI+xYJCx9pIE
+        Ii8Ilko+l8iC+ry6KyGeoRVxgA==
+X-Google-Smtp-Source: AK7set89gD0s2fUw5qHWrT4EWVSzstvSKSvqzBxtcRO9Es9fSPJEB70Tfsmw6HkifxmtJXAo552uIA==
+X-Received: by 2002:a05:600c:4f53:b0:3dd:97d6:8f2a with SMTP id m19-20020a05600c4f5300b003dd97d68f2amr5761886wmq.33.1675340477334;
+        Thu, 02 Feb 2023 04:21:17 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r38-20020a05600c322600b003dd7edcc960sm4312412wmp.45.2023.02.02.04.21.09
+        by smtp.gmail.com with ESMTPSA id o9-20020a05600c4fc900b003dc1300eab0sm5115509wmq.33.2023.02.02.04.21.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 04:21:12 -0800 (PST)
-Message-ID: <6c423a53-2df0-4802-099e-c0de6ac7b60b@linaro.org>
-Date:   Thu, 2 Feb 2023 13:21:09 +0100
+        Thu, 02 Feb 2023 04:21:16 -0800 (PST)
+Message-ID: <eb6a352b-1131-922f-4318-56a277b46dcf@linaro.org>
+Date:   Thu, 2 Feb 2023 13:21:14 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 18/23] memory: tegra124-emc: fix interconnect registration
+Subject: Re: [PATCH 19/23] memory: tegra20-emc: fix interconnect registration
  race
 Content-Language: en-US
 To:     Johan Hovold <johan+linaro@kernel.org>,
@@ -77,9 +77,9 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-19-johan+linaro@kernel.org>
+ <20230201101559.15529-20-johan+linaro@kernel.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230201101559.15529-19-johan+linaro@kernel.org>
+In-Reply-To: <20230201101559.15529-20-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -94,11 +94,10 @@ On 01/02/2023 11:15, Johan Hovold wrote:
 > Switch to using the new API where the provider is not registered until
 > after it has been fully initialised.
 > 
-> Fixes: 380def2d4cf2 ("memory: tegra124: Support interconnect framework")
-> Cc: stable@vger.kernel.org      # 5.12
+> Fixes: d5ef16ba5fbe ("memory: tegra20: Support interconnect framework")
+> Cc: stable@vger.kernel.org      # 5.11
 > Cc: Dmitry Osipenko <digetx@gmail.com>
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
 
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
