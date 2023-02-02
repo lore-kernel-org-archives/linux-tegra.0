@@ -2,58 +2,126 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE647C61DA4
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 11:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DB9C636D3
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 12:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231207AbjBBLQa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Feb 2023 06:16:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45916 "EHLO
+        id S230287AbjBBMRK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Feb 2023 07:17:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232071AbjBBLQO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 06:16:14 -0500
-X-Greylist: delayed 4199 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 02 Feb 2023 03:15:53 PST
-Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309BD89FBE
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 03:15:52 -0800 (PST)
-Received: by mail.corrib.pl (Postfix, from userid 1001)
-        id D0826A4007; Wed,  1 Feb 2023 09:11:16 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
-        t=1675242679; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
-        h=Date:From:To:Subject:From;
-        b=Ie7uLRIWE5Rg72XKlb7sq1ISpXnkXTyYDbFUzowYR04+NGTj2lvgXwCwhpim5fM+x
-         qDMK8y/E81XOYZJhFoO7VFgTnSObWZxA3mn4z5UUe7TqPhnYomAlLGdHdtk+BUVy5O
-         9Ea4CDnMi/qzLOK42Z8XQWkrG5w9PnQNqbLjijZU5JgcRE1xCw5G27GotogCG/huj5
-         PR8Xn/mA9XNM+USvJddTtRKMiySZ14xKRerI2SNrg3It4sE/zCWF+Zc5E4ZV07/Z4+
-         PZNZii2nSUsKMJpOvo/yu+Vq0g8D8PQah2APQvl8ADo4rpcgf/tL0C5UihiZPl3Gi/
-         3ZvIgUPrFf/6Q==
-Received: by mail.corrib.pl for <linux-tegra@vger.kernel.org>; Wed,  1 Feb 2023 09:11:14 GMT
-Message-ID: <20230201074500-0.1.58.fiot.0.r8k35boq3w@corrib.pl>
-Date:   Wed,  1 Feb 2023 09:11:14 GMT
-From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
-        <szczepan.kielbasa@corrib.pl>
-To:     <linux-tegra@vger.kernel.org>
-Subject: Faktoring
-X-Mailer: mail.corrib.pl
+        with ESMTP id S229848AbjBBMRJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 07:17:09 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B476FD38;
+        Thu,  2 Feb 2023 04:17:08 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 42DF461AF9;
+        Thu,  2 Feb 2023 12:17:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95437C433EF;
+        Thu,  2 Feb 2023 12:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675340227;
+        bh=kXuVYOYprEDAERc9ptWyMD0dUfVOl7wsMQbwhSMi7eU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OEfzBbqOC8Hqklq9IWsxlHAenMXr143GgEE5GC9FLVByvD6w1OGp/BLIRQJPl2zKP
+         RggMPeisymcQZCUneIu57XG3OcHTXx2kc2kK5Ui9PJENo8x0zJxUhniILVKlK1eYKa
+         rZ1nov43rLlcQLG6F5iPV76qXesHS70hea+0Wv2i6C1gDLfDtshPHM2StvWUZzRgSi
+         WTjuJ7xer7xYwz6L954tuYZCRhrXZ0VuZCX+FYEeWHUQTDqXdvbJW7BK166IrAqeUQ
+         FRzV48SorFgR73bQnAmPJE1wUylAP6HohDjXIV+Oqqk25lSkzQCJyrA909aw9CKgSw
+         PW4i3J7MnChhQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1pNYWw-0001UF-Bx; Thu, 02 Feb 2023 13:17:31 +0100
+Date:   Thu, 2 Feb 2023 13:17:30 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Johan Hovold <johan+linaro@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 15/23] interconnect: exynos: fix registration race
+Message-ID: <Y9up2gKUpZXhI+J8@hovoldconsulting.com>
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-16-johan+linaro@kernel.org>
+ <e706bb89-bb79-33e3-f319-268ec4695015@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e706bb89-bb79-33e3-f319-268ec4695015@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Thu, Feb 02, 2023 at 12:04:49PM +0100, Krzysztof Kozlowski wrote:
+> On 01/02/2023 11:15, Johan Hovold wrote:
 
-rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
-ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
-wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
+> > @@ -98,12 +98,13 @@ static int exynos_generic_icc_remove(struct platform_device *pdev)
+> >  	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
+> >  	struct icc_node *parent_node, *node = priv->node;
+> >  
+> > +	icc_provider_deregister(&priv->provider);
+> > +
+> >  	parent_node = exynos_icc_get_parent(priv->dev->parent->of_node);
+> >  	if (parent_node && !IS_ERR(parent_node))
+> >  		icc_link_destroy(node, parent_node);
+> >  
+> >  	icc_nodes_remove(&priv->provider);
+> > -	icc_provider_del(&priv->provider);
+> >  
+> >  	return 0;
+> >  }
+> > @@ -132,15 +133,11 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+> >  	provider->inter_set = true;
+> >  	provider->data = priv;
+> >  
+> > -	ret = icc_provider_add(provider);
+> > -	if (ret < 0)
+> > -		return ret;
+> > +	icc_provider_init(provider);
+> >  
+> >  	icc_node = icc_node_create(pdev->id);
+> > -	if (IS_ERR(icc_node)) {
+> > -		ret = PTR_ERR(icc_node);
+> > -		goto err_prov_del;
+> > -	}
+> > +	if (IS_ERR(icc_node))
+> > +		return PTR_ERR(icc_node);
+> >  
+> >  	priv->node = icc_node;
+> >  	icc_node->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn",
+> > @@ -171,14 +168,17 @@ static int exynos_generic_icc_probe(struct platform_device *pdev)
+> >  			goto err_pmqos_del;
+> >  	}
+> >  
+> > +	ret = icc_provider_register(provider);
+> > +	if (ret < 0)
+> > +		goto err_pmqos_del;
+> 
+> If I understand correctly there is no need for icc_link_destroy() in
+> error path here, right? Even in case of probe retry (defer or whatever
+> reason) - the link will be removed with icc_nodes_remove()?
 
-Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
-stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
-z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
- kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
-adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
-Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
+Correct, it is no longer needed after the first patch in this series.
 
+The exynos driver was the only driver that bothered to remove links
+explicitly, all the others expected the interconnect framework to do so
+when destroying nodes even if that was not case until now.
 
-Pozdrawiam
-Szczepan Kie=C5=82basa
+Johan
