@@ -2,139 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F28C61DA4
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 08:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC7AC61DA4
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 10:59:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231971AbjBBIfG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Feb 2023 03:35:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50638 "EHLO
+        id S232222AbjBBK67 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Feb 2023 05:58:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231835AbjBBIfF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 03:35:05 -0500
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0851987167
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 00:34:20 -0800 (PST)
-Received: by mail-vs1-xe32.google.com with SMTP id j7so1028643vsl.11
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 00:34:19 -0800 (PST)
+        with ESMTP id S230233AbjBBK66 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 05:58:58 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9AF4712CB
+        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 02:58:55 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so1059640wms.2
+        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 02:58:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JvtsncsIkvDTPY0jE9MmEEDZESoCNPgo52emg1byeqY=;
-        b=ZXPQcL55tEJFFBDxaSofDg5SA3eMC10OVo/tZa8i6XtTXajdTe2SXtEOTWSabTC79q
-         54VMKo4aW+TKdJd890QsUUE61Ks9L7FS0FjxEOOlYkp0cDlaj6Cw7F7GK8olrtEFWckL
-         dhZVlfD40jQt30b6Gs7LRBjxMqDdxkzj0PWqcpdVQN+fo/srM1IFbnM24El+bcVwZrBY
-         tFVr1tEsbAWy5SxlYycoEZBxu/CJgLoTm+VzP72II2YJ3TsriV5qxJjLmmjVI03/LUrb
-         5BdXI671CWyHQUeZhLy7VVXwP3YZKjPyuXQQqxQPvnl8vwMJYSkUxSowV3P2XyMA6Htq
-         RvIQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UVC3BbCIKGwKEURboffcV34GlxCVIjCwQdv8Aw/FvBc=;
+        b=NSlTIDIuXmr9NgzQl2ljftdQqscbgLmM96D3y9V9sYNrZSiu7WXdyrOZf1aaNeVxXJ
+         CuunDZjDr09/Cn+xmJ6lxD49d4UDmurgZv+j8P8UFRDkZmjyQ/Sc0yTJ3sXCCUv56pYy
+         bfDiIHEvJGj0Z0iIOpv03yIbxpVwUUUbRU4mvE5KjVQzts5vFFju1ZuCUmuBwhJzzfMQ
+         uFl8/km3hcqaTjZ3oh7N3c9q1FB/k10A+v1QatIqEXQQqZKnuDt/pk2iDp0M8oZkKqlH
+         C9uzeMyVPZ0ag98zy3c8OHcROza1M1HLe5QiFdnu6cFEaLoJBIkOT1Cjb+R+W+AsoTtz
+         HHsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JvtsncsIkvDTPY0jE9MmEEDZESoCNPgo52emg1byeqY=;
-        b=c+sVKmm/TbtPPbCarXUVhxf8lcDBjTS1hkhv6nOgQhOsetHHwQfY+xDAMoSCY8teRd
-         IbigDXnVkQZgBo08fw2p+lKTZZ1shN3Rd/922EppD0Soiqi30/I7LGu5rQ0alYHoeIG8
-         r3zWxQnkIgjat9Cg8u0opJmJK3d1uCCpHQGgwJwS9sKCdG/dk4fQvKjlRg1SANiUNtLx
-         IkI/l3SyFdf/FB0y0UQ//+4IxkpdLRnw07BJ8J+3FuhTrXKUKrvaQka7+rVVyLiGLugF
-         GprCGYBpAKjz/Bv44sMuSipZHAGvjMgEXC3cfb0dmn18XDsRNajiTM5yNhRHDzFlJRQK
-         mCqw==
-X-Gm-Message-State: AO0yUKWbXGPezi6aQaMuQCPJDPEk24wYeVmjve6eNnlm365+MRZtka/a
-        j/k8Nmg+h/tf2nmM7YwN+lTfElWjKXQNiQt/pT5cdQ==
-X-Google-Smtp-Source: AK7set9jAXkCm3Ol0NBP3fEdyURHk9ju/tk/alXv1YIEXTN1Rkv0L8SWWv8mzIerQz084ji4l3MGe97fcY5WnPFD9+w=
-X-Received: by 2002:a67:c11b:0:b0:3f2:58c2:5358 with SMTP id
- d27-20020a67c11b000000b003f258c25358mr1052172vsj.62.1675326851633; Thu, 02
- Feb 2023 00:34:11 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVC3BbCIKGwKEURboffcV34GlxCVIjCwQdv8Aw/FvBc=;
+        b=V2yoaS5MP91eWA6uKJ0YdfLxAHa93M+NWoAX4bTHYK7X2FFT4HSagFAOmG0CNKSoQg
+         EQ+MjsaIxQ1KjzJ6XlWkVledR4z2/zCEmuzySjD+L6hC1A4KmMQrrX+Qpu9QoEdETl+L
+         8KuEAAf6urTyu2ZwpBuyV+J4dOXHaYcDpYANUiyIDRkZttyv7h9KybS0YBEnV9kYZj8I
+         NRA+KF9T0ALMbewaHnLUm/GDZdUREQ98nhpshiAa5bXN8pgN44e7yS1UcHqzszBr0hxn
+         pESqKo1mjiFjfvkhJAxOyFMbdatw3IhhFZkodvW281Ms3iuYBvcTW7lHOh1XH4m24Jh8
+         91Ow==
+X-Gm-Message-State: AO0yUKUr5bjiYuy+0/ou+HGkVDEkr8upnxfATaw6KWiO/CdOn8QB0yUP
+        Y3l/DcX9L2KlwHpAKXFtt9dBbw==
+X-Google-Smtp-Source: AK7set83lIl4nGCVu7Pf1aCB5oUVzv4rO6WDAnBXErPnHSfhSs/9z3OqQW47YCDl+K02oT7+vlDn0w==
+X-Received: by 2002:a05:600c:4f41:b0:3d7:889:7496 with SMTP id m1-20020a05600c4f4100b003d708897496mr5231407wmq.17.1675335534471;
+        Thu, 02 Feb 2023 02:58:54 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id n6-20020a7bcbc6000000b003d237d60318sm4322832wmi.2.2023.02.02.02.58.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Feb 2023 02:58:53 -0800 (PST)
+Message-ID: <d006ea43-6aa1-89d9-ec6a-a44810d31bff@linaro.org>
+Date:   Thu, 2 Feb 2023 11:58:51 +0100
 MIME-Version: 1.0
-References: <20230125212631.749094-1-trix@redhat.com>
-In-Reply-To: <20230125212631.749094-1-trix@redhat.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 2 Feb 2023 09:34:00 +0100
-Message-ID: <CAMRc=MeXm8TCJVL+3n=aEi87wowu4AaiqmO5VY3T0vhb7m+ZDQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: tegra186: remove unneeded loop in tegra186_gpio_init_route_mapping()
-To:     Tom Rix <trix@redhat.com>
-Cc:     linus.walleij@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 14/23] interconnect: exynos: fix node leak in probe PM QoS
+ error path
+Content-Language: en-US
+To:     Johan Hovold <johan+linaro@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-15-johan+linaro@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230201101559.15529-15-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 25, 2023 at 10:26 PM Tom Rix <trix@redhat.com> wrote:
->
-> Reviewing the j loop over num_irqs_per_bank, in the code previous
-> to the fixes: commit, every j was used. now only when j == 0.
-> If only j == 0 is used, there is no need for the loop.
->
-> Fixes: 210386804745 ("gpio: tegra186: Support multiple interrupts per bank")
-> Signed-off-by: Tom Rix <trix@redhat.com>
+On 01/02/2023 11:15, Johan Hovold wrote:
+> Make sure to add the newly allocated interconnect node to the provider
+> before adding the PM QoS request so that the node is freed on errors.
+> 
+> Fixes: 2f95b9d5cf0b ("interconnect: Add generic interconnect driver for Exynos SoCs")
+> Cc: stable@vger.kernel.org      # 5.11
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
->  drivers/gpio/gpio-tegra186.c | 40 ++++++++++++++++--------------------
->  1 file changed, 18 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> index 9941f35af823..14c872b6ad05 100644
-> --- a/drivers/gpio/gpio-tegra186.c
-> +++ b/drivers/gpio/gpio-tegra186.c
-> @@ -677,7 +677,7 @@ static const struct of_device_id tegra186_pmc_of_match[] = {
->  static void tegra186_gpio_init_route_mapping(struct tegra_gpio *gpio)
->  {
->         struct device *dev = gpio->gpio.parent;
-> -       unsigned int i, j;
-> +       unsigned int i;
->         u32 value;
->
->         for (i = 0; i < gpio->soc->num_ports; i++) {
-> @@ -699,27 +699,23 @@ static void tegra186_gpio_init_route_mapping(struct tegra_gpio *gpio)
->                          * On Tegra194 and later, each pin can be routed to one or more
->                          * interrupts.
->                          */
-> -                       for (j = 0; j < gpio->num_irqs_per_bank; j++) {
-> -                               dev_dbg(dev, "programming default interrupt routing for port %s\n",
-> -                                       port->name);
-> -
-> -                               offset = TEGRA186_GPIO_INT_ROUTE_MAPPING(p, j);
-> -
-> -                               /*
-> -                                * By default we only want to route GPIO pins to IRQ 0. This works
-> -                                * only under the assumption that we're running as the host kernel
-> -                                * and hence all GPIO pins are owned by Linux.
-> -                                *
-> -                                * For cases where Linux is the guest OS, the hypervisor will have
-> -                                * to configure the interrupt routing and pass only the valid
-> -                                * interrupts via device tree.
-> -                                */
-> -                               if (j == 0) {
-> -                                       value = readl(base + offset);
-> -                                       value = BIT(port->pins) - 1;
-> -                                       writel(value, base + offset);
-> -                               }
-> -                       }
-> +                       dev_dbg(dev, "programming default interrupt routing for port %s\n",
-> +                               port->name);
-> +
-> +                       offset = TEGRA186_GPIO_INT_ROUTE_MAPPING(p, 0);
-> +
-> +                       /*
-> +                        * By default we only want to route GPIO pins to IRQ 0. This works
-> +                        * only under the assumption that we're running as the host kernel
-> +                        * and hence all GPIO pins are owned by Linux.
-> +                        *
-> +                        * For cases where Linux is the guest OS, the hypervisor will have
-> +                        * to configure the interrupt routing and pass only the valid
-> +                        * interrupts via device tree.
-> +                        */
-> +                       value = readl(base + offset);
-> +                       value = BIT(port->pins) - 1;
-> +                       writel(value, base + offset);
->                 }
->         }
->  }
-> --
-> 2.26.3
->
+>  drivers/interconnect/samsung/exynos.c | 6 +++---
 
-Applied, thanks!
 
-Bart
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
