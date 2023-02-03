@@ -2,102 +2,119 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63199C636D4
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Feb 2023 04:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2508FC61DA4
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Feb 2023 05:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232036AbjBCEHE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Feb 2023 23:07:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43560 "EHLO
+        id S231755AbjBCF1f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Feb 2023 00:27:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230140AbjBCEHD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 23:07:03 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64246392AE
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 20:07:01 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id a9so2355345ljr.13
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 20:07:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EdXrl6jFXUFLX/Fs8Y8vVeX1SCyz5eISp65do85FsLM=;
-        b=giRO/0Lr8QjY/NuoJqnrqZWr0LmwzOD3jmpWfjm5JbisDUMhfSppPvF2poel/JwAng
-         z4I+JYUG7niuOyibxKh4v/3DLvyOThvU/qNORVgp+KVuoz54UqGmtwi7Phws3zAMdMLT
-         2wtKpfMfkLkWzEntG6phV1GBOsNd1jIgusi5Q9a4MXoBpD5I/ivxHpW0RFF0tZBcadWU
-         5yAfyHKkkwfKmtyGy3xvsOivT7CzvDAxKI6UujeqXBQNYK4w5nf92OBQGRxUwJuQW47o
-         vuQb8gkyWXKJ9ThQKaYAH2nv/31pRGdD1fz3VyK0Py5zaedLNB6D0HYgVCkxL2LMTXat
-         FYxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EdXrl6jFXUFLX/Fs8Y8vVeX1SCyz5eISp65do85FsLM=;
-        b=JPjhQZKCce/rbRyBBERxue5ieVLN4+xBZazGLZWhU6eUpevRfipo3nBEPLmhPKtBC7
-         x8qYjm/RG3lwhCxxzSYIVLm30TuRZF2WYRiu4FpO5h7Ja/ct4r43OY9owoaGxFv6eDJA
-         tJ91eYfiYjRIzj8sv1DsszYUVJVnKj+QA99XueNIVGEv0xx8kkwqnpPT2zsRLX75RBUs
-         SZsRIfUj2MCpe5MjnN0ZzJs2Yc6RwglSevMLivAhoSf2PAe7MgL0Iu27NpSQNfdP7TRp
-         K9GJ31gvmFx6UGzrFNW+Jp0UwYQPRnCxqZW8odaYN9YeMb8nmx/ecIPx+6UW9QuNQ9lV
-         MC9g==
-X-Gm-Message-State: AO0yUKVKyMkdJFwNeKgs9LpcwFvN1730m7A8N0DJWWxeCL/CdU4M66nA
-        gH0Jb1Lu7VUdqSERbOEzJRit5WHrH38Gup7MnaUQUg==
-X-Google-Smtp-Source: AK7set8ePtCHM1Iq3qNLDJDujeHBggdkNrTSmEo6kURlW1fNmHwpxqtfcCcjPvkRToDgjzFMlniM4/dhmf794eZbSl0=
-X-Received: by 2002:a2e:a4c3:0:b0:28e:92b2:a04a with SMTP id
- p3-20020a2ea4c3000000b0028e92b2a04amr1366705ljm.34.1675397219676; Thu, 02 Feb
- 2023 20:06:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20230201101559.15529-1-johan+linaro@kernel.org> <20230201101559.15529-9-johan+linaro@kernel.org>
-In-Reply-To: <20230201101559.15529-9-johan+linaro@kernel.org>
-From:   Jun Nie <jun.nie@linaro.org>
-Date:   Fri, 3 Feb 2023 12:06:57 +0800
-Message-ID: <CABymUCMgmyLRGo+b4ZiVJacxc=hnfo7iiYBNj2i5UPrq3XL0nQ@mail.gmail.com>
-Subject: Re: [PATCH 08/23] interconnect: qcom: rpm: fix registration race
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        with ESMTP id S230230AbjBCF1d (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Feb 2023 00:27:33 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982381F5C1;
+        Thu,  2 Feb 2023 21:27:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 327FF61D0D;
+        Fri,  3 Feb 2023 05:27:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D55C433EF;
+        Fri,  3 Feb 2023 05:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675402051;
+        bh=fHq9IkxqxVUwz3GGvOE/Mwt4EK7elXIC9jlHvqcrh8s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b8aDl1NIsRsl5BjZTgbUD7FGwU0exrjPdV5CSous9UsW/GkGSVWtwdmywNbhtc1vP
+         qD9wUxbxs4lj9ObsBx32KTRRww8VYUVzr6hON2oshLd7CP5vusl+YUfCsiAkfcSbSw
+         7Z6mei8DcZOM3Ehye2TfF33alKtXhQjfgRng4kstNIvCyfoPX98cySlNoZWzbVFS2d
+         cor3Ij5NklP1JiZI+8k/udVX0Y6uJoq2kDnY3bYNBFzIO3aheHu2zWc5I9WQSve3bl
+         0dJycH5YhwSy/+uaptRsgK8hnl4CyBZ+y01J2rNUqcZt8yXiLMgEcbaeqXlcGIi7ry
+         TS2czWrz8ECfQ==
+Date:   Fri, 3 Feb 2023 10:57:26 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-phy@lists.infradead.org, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 6/9] net: ethernet: ti: am65-cpsw: Convert to
+ devm_of_phy_optional_get()
+Message-ID: <Y9ybPmWub43JpMUb@matsya>
+References: <cover.1674584626.git.geert+renesas@glider.be>
+ <3d612c95031cf5c6d5af4ec35f40121288a2c1c6.1674584626.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d612c95031cf5c6d5af4ec35f40121288a2c1c6.1674584626.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Johan Hovold <johan+linaro@kernel.org> =E4=BA=8E2023=E5=B9=B42=E6=9C=881=E6=
-=97=A5=E5=91=A8=E4=B8=89 18:16=E5=86=99=E9=81=93=EF=BC=9A
->
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
->
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
->
-> Fixes: 62feb14ee8a3 ("interconnect: qcom: Consolidate interconnect RPM su=
-pport")
-> Fixes: 30c8fa3ec61a ("interconnect: qcom: Add MSM8916 interconnect provid=
-er driver")
-> Cc: stable@vger.kernel.org      # 5.7
-> Cc: Jun Nie <jun.nie@linaro.org>
-> Cc: Georgi Djakov <georgi.djakov@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On 24-01-23, 19:37, Geert Uytterhoeven wrote:
+> Use the new devm_of_phy_optional_get() helper instead of open-coding the
+> same operation.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/interconnect/qcom/icc-rpm.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
->
-Reviewed-by: Jun Nie <jun.nie@linaro.org>
+> v2:
+>   - Rebase on top of commit 854617f52ab42418 ("net: ethernet: ti:
+>     am65-cpsw: Handle -EPROBE_DEFER for Serdes PHY") in net-next
+>     (next-20230123 and later).
+
+I was trying to apply this on rc1, so ofcourse this fails for me? How do
+we resolve this?
+
+I can skip this patch, provide a tag for this to be pulled into -net
+tree
+
+> ---
+>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> index c696da89962f1ae3..794f228c8d632f7a 100644
+> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> @@ -1460,11 +1460,9 @@ static int am65_cpsw_init_serdes_phy(struct device *dev, struct device_node *por
+>  	struct phy *phy;
+>  	int ret;
+>  
+> -	phy = devm_of_phy_get(dev, port_np, name);
+> -	if (PTR_ERR(phy) == -ENODEV)
+> -		return 0;
+> -	if (IS_ERR(phy))
+> -		return PTR_ERR(phy);
+> +	phy = devm_of_phy_optional_get(dev, port_np, name);
+> +	if (IS_ERR_OR_NULL(phy))
+> +		return PTR_ERR_OR_ZERO(phy);
+>  
+>  	/* Serdes PHY exists. Store it. */
+>  	port->slave.serdes_phy = phy;
+> -- 
+> 2.34.1
+
+-- 
+~Vinod
