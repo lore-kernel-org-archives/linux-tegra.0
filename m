@@ -2,81 +2,101 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 734D4C61DA4
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Feb 2023 13:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310B5C636D6
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Feb 2023 16:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231205AbjBCNhN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 3 Feb 2023 08:37:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52132 "EHLO
+        id S232648AbjBCQBh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Feb 2023 11:01:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232891AbjBCNhM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Feb 2023 08:37:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C71885F0;
-        Fri,  3 Feb 2023 05:37:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B47C061F20;
-        Fri,  3 Feb 2023 13:37:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44020C433D2;
-        Fri,  3 Feb 2023 13:37:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675431423;
-        bh=ZZx3nGqH4qzHtCTP7gc5u4gXwhafYjW64wFE9xehQZI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PC8VNj+wZkDfbJoqNkderv9knz5Oo+pT3sfm3c1cr77Ubyjs3yab0Mav8a2YbJY6k
-         jtpvCnCaaokAr5EWzY1ykc0vHUHVXMKsc0ycKRc/iRKUvLCGFXt0IMzaa0uBP3dgNv
-         FXJkGaYYb9Aw3ZUGbMEgz94uHmKcGarBi78/BLR8/aI2/t+6ZmVV6F4yJsg3P8AORq
-         vspHZ51eKSajiXxbw2vZTv8NlI0QdrLKoAxh1XB+3/GAIQE7IcDzpY7u0c/XMPvrww
-         yongZFEgBem0zD3pu82swgRGLsa4ByrzeEAB6xQFtaHAhivstR5Bft9aRFXKNbFBGV
-         Sc407wctcLSEw==
-Date:   Fri, 3 Feb 2023 19:06:58 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-phy@lists.infradead.org,
-        waynec@nvidia.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH V6 2/6] dt-bindings: phy: tegra-xusb: Add support for
- Tegra234
-Message-ID: <Y90N+v0Qo0zdYdNS@matsya>
-References: <20230111110450.24617-1-jonathanh@nvidia.com>
- <20230111110450.24617-3-jonathanh@nvidia.com>
- <Y9P6PJ9xPVst/um2@orome>
+        with ESMTP id S231347AbjBCQBf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Feb 2023 11:01:35 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E369EE2;
+        Fri,  3 Feb 2023 08:01:33 -0800 (PST)
+Received: from booty (unknown [37.161.147.43])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 3BEFB20007;
+        Fri,  3 Feb 2023 16:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1675440091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GqeUY2vjR4owbFhVMWqoG7ucu+A1MAbmXZFL/6Sqg14=;
+        b=Jm4+ERkEbhZiOGPRq71beJ/tzWo6Iqj308bxlDj8fSmPnNbOy6peySNR03AVqCv50vRbSr
+        JUmdDAgDjynjXjd9tOGE8PpvfPfRbmQMm5o3L8GNhbCsXVXQ7141efCaqiy1BICPnH8hKX
+        O/rJDzgU8LbYXpqI0cyzspnrHctWxd+9jn84cmuuNp2wXEYCCAvAC4j9JeEBvZFYc8O6tW
+        J3mUNloNtXLKjQbKBlkuDeeqgzonx/FUaIaNivaqo1U0YGyHo6s0o6KkBGcbK9lYZj8Jjx
+        lGjLlDrr6I0va7ekmfUKLE3bBx5f1gp433QFlCfQ5il1wTG9+3GpK+8ApFTppQ==
+Date:   Fri, 3 Feb 2023 17:01:21 +0100
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Johan Hovold <johan+linaro@kernel.org>
+Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Alexandre Bailon <abailon@baylibre.com>
+Subject: Re: [PATCH 04/23] interconnect: imx: fix registration race
+Message-ID: <20230203170121.187108bd@booty>
+In-Reply-To: <20230201101559.15529-5-johan+linaro@kernel.org>
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+        <20230201101559.15529-5-johan+linaro@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y9P6PJ9xPVst/um2@orome>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27-01-23, 17:22, Thierry Reding wrote:
-> On Wed, Jan 11, 2023 at 11:04:46AM +0000, Jon Hunter wrote:
-> > Add the compatible string for the Tegra234 XUSB PHY.
-> > 
-> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
-> > V5 -> V6: Added Krzysztof's ACK 
-> > V3 -> V5: Fixed compatible string
-> > V3 -> V4: Added patch
-> > 
-> >  .../devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml  | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> Hi Vinod,
-> 
-> can you pick this up into your tree? This applies on top of the
-> conversion patch ("dt-bindings: phy: tegra-xusb: Convert to
-> json-schema") that's aready in your next branch.
+Hello Johan,
 
-Applied now, thanks for pinging
+On Wed,  1 Feb 2023 11:15:40 +0100
+Johan Hovold <johan+linaro@kernel.org> wrote:
+
+> The current interconnect provider registration interface is inherently
+> racy as nodes are not added until the after adding the provider. This
+> can specifically cause racing DT lookups to fail.
+> 
+> Switch to using the new API where the provider is not registered until
+> after it has been fully initialised.
+> 
+> Fixes: f0d8048525d7 ("interconnect: Add imx core driver")
+> Cc: stable@vger.kernel.org      # 5.8
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: Alexandre Bailon <abailon@baylibre.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+
+Georgi pointed me to this series after I reported a bug yesterday [0],
+that I found on iMX8MP. So I ran some tests with my original, failing
+tree, minus one patch with my debugging code to hunt for the bug, plus
+patches 1-4 of this series.
+
+The original code was failing approx 5~10% of the times. With your 4
+patches applied it ran 139 times with zero errors, which looks great! I
+won't be able to do more testing until next Monday to be extra sure.
+
+[0]
+https://lore.kernel.org/linux-arm-kernel/20230202175525.3dba79a7@booty/T/#u
 
 -- 
-~Vinod
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
