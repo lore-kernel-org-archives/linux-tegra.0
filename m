@@ -2,71 +2,71 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDAFC636D3
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Feb 2023 23:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E854C63797
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Feb 2023 02:49:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231322AbjBBXOl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Feb 2023 18:14:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38768 "EHLO
+        id S231478AbjBCCtQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Feb 2023 21:49:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233033AbjBBXOk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 18:14:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 818C983051
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 15:13:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675379629;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kXVHvL7Zc9SvpXlyodElHL/El9p9PH7Vp09KDuKNQ7k=;
-        b=Cuto8m/GTif1qbdKin9pJFm4D/PWvd98G6hpppXldkGxSa6ux5b7FhNEiWD0JoHFlOMk7p
-        oD44iiCNXZW5fB7l1qrZkp5sL7GEuYsSXu4gGfFvtkQSzpXZBvXHUotlx3gObU5i6+vSST
-        6hBwBOBszHrzsHmf1XIgpQMIAc5ICJE=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-230-CWowoSiZP_uQqHKNw1erUg-1; Thu, 02 Feb 2023 18:13:46 -0500
-X-MC-Unique: CWowoSiZP_uQqHKNw1erUg-1
-Received: by mail-io1-f69.google.com with SMTP id r11-20020a6b8f0b000000b0071853768168so2043060iod.23
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 15:13:45 -0800 (PST)
+        with ESMTP id S231964AbjBCCtG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 21:49:06 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48593820FB
+        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 18:48:52 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id m2so11680303ejb.8
+        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 18:48:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ssp0tYsGiD2wY3B3DGIo6QkUzze0YWa6hi7rXepDkb4=;
+        b=spkM/U5VoThD/brvY9ju/nMSYtv5QRq/KCCflZYFuQNLBWe3jtI+hjcvxUwoQCByE1
+         VR5eZmIYxtNYeGPKFulbHvnGN/0JFucqiP4uyABqW0n9PZ+tIQzft24GfjPyiL2koXeD
+         U3e9asI4QaAxfFUFXZeN+FgAoK+bvOPBr1Y4JawYJMXKz7/Ip8vFaJob05v7w1a9m1JK
+         KI9yaWTYSnByYpxu2QVQAeEFQxiDWcrCONp+t+HOlVbAtNA36e5fxxTKcWB2Oo0YEBWa
+         V1V3aBMM31BcieD3rdbCToqUWX201WMWj2RlAcoqEaJ72XWJ5pKcltCjtgySFqKOIjbv
+         n+rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kXVHvL7Zc9SvpXlyodElHL/El9p9PH7Vp09KDuKNQ7k=;
-        b=XQTZfXTy/6b5pBTxtG2F96Fn9ZhC5mphatyYWpLEY/SUDAriOZQemQQn7Qroy2+bDc
-         HMu+3XqdGHMWMIOPvpaezP1aiHHcEoqhjNs++dSwd1PzwqPTDtet8M/+8/uJO3uHGwD5
-         d9VDt131e/wLaz74jPw/kRp1jMv3HQDG+BkiiXs3NoYnqRXTqoSkzytFYyipimZWCrBv
-         NC9giaobGiqr4dtyIeNiFXq+iz6Go12+p7sXi5mlPl6f/q8ISuwyzCCxQOjh4dgBaCwO
-         zjF3pW+ULTDIhDu5lRC3SYNPSGo31AMJj5GMKt9914xT3cvvfei2E+K7ITq4ZOWE43O5
-         7NSw==
-X-Gm-Message-State: AO0yUKX3Y7GC9zfFMleVlgZF0+/t78qqs8CLYWwA2iFGd7famg2Xjuy/
-        w9dik5RCJpIBRRsiQT62kFoxyn6BsXiBjTylsfff+7kjXjZV8zlBbSGjmtqSLq4cuhBCEFJoTBr
-        RrCFzA13VYNwpHzxYu2hLtWw=
-X-Received: by 2002:a05:6602:2dc2:b0:707:d9c9:458e with SMTP id l2-20020a0566022dc200b00707d9c9458emr3293873iow.1.1675379625357;
-        Thu, 02 Feb 2023 15:13:45 -0800 (PST)
-X-Google-Smtp-Source: AK7set8MFntk5bjnEw1nbcEwPglzwxtEbs/VR6tLktByEWuRryxfTh9CCM+W/HuYuBK+h7W/qw1aLw==
-X-Received: by 2002:a05:6602:2dc2:b0:707:d9c9:458e with SMTP id l2-20020a0566022dc200b00707d9c9458emr3293860iow.1.1675379625133;
-        Thu, 02 Feb 2023 15:13:45 -0800 (PST)
-Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
-        by smtp.gmail.com with ESMTPSA id a7-20020a5e8e07000000b007192441e5e6sm274085ion.45.2023.02.02.15.13.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Feb 2023 15:13:44 -0800 (PST)
-Date:   Thu, 2 Feb 2023 18:13:41 -0500
-From:   Brian Masney <bmasney@redhat.com>
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ssp0tYsGiD2wY3B3DGIo6QkUzze0YWa6hi7rXepDkb4=;
+        b=BTLSGVQMC+FjswBRMyRk20lpwblU5cuA0IrwcuIrIrGaxMj6vNQ5H2U58W3zprCcjW
+         xSGZ7LqebF2sMP1k4zMYaBEGbd/B4+fxXTtoir9ZlD5HtuLfB5d7gLA8tqCtVkFI/OAk
+         CDvfEe46dRGJ3efccCp8nezX4PDXvF+OZ4Va+u0zzdg3nWr4jQkI5G0RBFGwRWAWrX3C
+         lfMvgg43m1kncmOO+abCVhEW+YpZj+a/n3j+xO7jR/g0omfJvKF/98uLR7+iUQxFvt9+
+         oSCmtSAdI6T1bQsmXNKnJg/GHphdXLS1dGEnciL545EZ7uL6sypmf5GwUsH4LWK8WWs6
+         hvig==
+X-Gm-Message-State: AO0yUKXMDLS76MZBMG8LZkhUIPWVSpABoT5CGTRloK2RPQLfj4by7fvq
+        kJu0D+uN0eApewmYmP4K37MrSQ==
+X-Google-Smtp-Source: AK7set+whWb0bDbuWGa8nmgHnP15jP1PhF9qSUmyaBXg2Yk7Dw+pIOxVTOaw5W3axnbzV5RnBpnLQw==
+X-Received: by 2002:a17:906:c411:b0:889:14ec:21ae with SMTP id u17-20020a170906c41100b0088914ec21aemr8874834ejz.32.1675392530811;
+        Thu, 02 Feb 2023 18:48:50 -0800 (PST)
+Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
+        by smtp.gmail.com with ESMTPSA id s13-20020a170906c30d00b0088842b00241sm657296ejz.114.2023.02.02.18.48.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Feb 2023 18:48:50 -0800 (PST)
+Message-ID: <b57730e5-e12a-e06e-a82b-9eddc5bdd8c7@linaro.org>
+Date:   Fri, 3 Feb 2023 03:48:47 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 03/23] interconnect: fix provider registration API
+Content-Language: en-US
+To:     Johan Hovold <johan+linaro@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -75,31 +75,158 @@ Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH 11/23] interconnect: qcom: msm8974: fix registration race
-Message-ID: <Y9xDpSxL+3Iny+hF@x1>
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-12-johan+linaro@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230201101559.15529-12-johan+linaro@kernel.org>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+ <20230201101559.15529-4-johan+linaro@kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230201101559.15529-4-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Feb 01, 2023 at 11:15:47AM +0100, Johan Hovold wrote:
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
+
+
+On 1.02.2023 11:15, Johan Hovold wrote:
+> The current interconnect provider interface is inherently racy as
+> providers are expected to be added before being fully initialised.
 > 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
+> Specifically, nodes are currently not added and the provider data is not
+> initialised until after registering the provider which can cause racing
+> DT lookups to fail.
 > 
-> Fixes: 4e60a9568dc6 ("interconnect: qcom: add msm8974 driver")
-> Cc: stable@vger.kernel.org      # 5.5
-> Cc: Brian Masney <bmasney@redhat.com>
+> Add a new provider API which will be used to fix up the interconnect
+> drivers.
+> 
+> The old API is reimplemented using the new interface and will be removed
+> once all drivers have been fixed.
+> 
+> Fixes: 11f1ceca7031 ("interconnect: Add generic on-chip interconnect API")
+> Fixes: 87e3031b6fbd ("interconnect: Allow endpoints translation via DT")
+> Cc: stable@vger.kernel.org      # 5.1
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-
+Konrad
+>  drivers/interconnect/core.c           | 52 +++++++++++++++++++--------
+>  include/linux/interconnect-provider.h | 12 +++++++
+>  2 files changed, 50 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index 43c5c8503ee8..93d27ff8eef6 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -1030,44 +1030,68 @@ int icc_nodes_remove(struct icc_provider *provider)
+>  EXPORT_SYMBOL_GPL(icc_nodes_remove);
+>  
+>  /**
+> - * icc_provider_add() - add a new interconnect provider
+> - * @provider: the interconnect provider that will be added into topology
+> + * icc_provider_init() - initialize a new interconnect provider
+> + * @provider: the interconnect provider to initialize
+> + *
+> + * Must be called before adding nodes to the provider.
+> + */
+> +void icc_provider_init(struct icc_provider *provider)
+> +{
+> +	WARN_ON(!provider->set);
+> +
+> +	INIT_LIST_HEAD(&provider->nodes);
+> +}
+> +EXPORT_SYMBOL_GPL(icc_provider_init);
+> +
+> +/**
+> + * icc_provider_register() - register a new interconnect provider
+> + * @provider: the interconnect provider to register
+>   *
+>   * Return: 0 on success, or an error code otherwise
+>   */
+> -int icc_provider_add(struct icc_provider *provider)
+> +int icc_provider_register(struct icc_provider *provider)
+>  {
+> -	if (WARN_ON(!provider->set))
+> -		return -EINVAL;
+>  	if (WARN_ON(!provider->xlate && !provider->xlate_extended))
+>  		return -EINVAL;
+>  
+>  	mutex_lock(&icc_lock);
+> -
+> -	INIT_LIST_HEAD(&provider->nodes);
+>  	list_add_tail(&provider->provider_list, &icc_providers);
+> -
+>  	mutex_unlock(&icc_lock);
+>  
+> -	dev_dbg(provider->dev, "interconnect provider added to topology\n");
+> +	dev_dbg(provider->dev, "interconnect provider registered\n");
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(icc_provider_add);
+> +EXPORT_SYMBOL_GPL(icc_provider_register);
+>  
+>  /**
+> - * icc_provider_del() - delete previously added interconnect provider
+> - * @provider: the interconnect provider that will be removed from topology
+> + * icc_provider_deregister() - deregister an interconnect provider
+> + * @provider: the interconnect provider to deregister
+>   */
+> -void icc_provider_del(struct icc_provider *provider)
+> +void icc_provider_deregister(struct icc_provider *provider)
+>  {
+>  	mutex_lock(&icc_lock);
+>  	WARN_ON(provider->users);
+> -	WARN_ON(!list_empty(&provider->nodes));
+>  
+>  	list_del(&provider->provider_list);
+>  	mutex_unlock(&icc_lock);
+>  }
+> +EXPORT_SYMBOL_GPL(icc_provider_deregister);
+> +
+> +int icc_provider_add(struct icc_provider *provider)
+> +{
+> +	icc_provider_init(provider);
+> +
+> +	return icc_provider_register(provider);
+> +}
+> +EXPORT_SYMBOL_GPL(icc_provider_add);
+> +
+> +void icc_provider_del(struct icc_provider *provider)
+> +{
+> +	WARN_ON(!list_empty(&provider->nodes));
+> +
+> +	icc_provider_deregister(provider);
+> +}
+>  EXPORT_SYMBOL_GPL(icc_provider_del);
+>  
+>  static const struct of_device_id __maybe_unused ignore_list[] = {
+> diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
+> index cd5c5a27557f..d12cd18aab3f 100644
+> --- a/include/linux/interconnect-provider.h
+> +++ b/include/linux/interconnect-provider.h
+> @@ -122,6 +122,9 @@ int icc_link_destroy(struct icc_node *src, struct icc_node *dst);
+>  void icc_node_add(struct icc_node *node, struct icc_provider *provider);
+>  void icc_node_del(struct icc_node *node);
+>  int icc_nodes_remove(struct icc_provider *provider);
+> +void icc_provider_init(struct icc_provider *provider);
+> +int icc_provider_register(struct icc_provider *provider);
+> +void icc_provider_deregister(struct icc_provider *provider);
+>  int icc_provider_add(struct icc_provider *provider);
+>  void icc_provider_del(struct icc_provider *provider);
+>  struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec);
+> @@ -167,6 +170,15 @@ static inline int icc_nodes_remove(struct icc_provider *provider)
+>  	return -ENOTSUPP;
+>  }
+>  
+> +static inline void icc_provider_init(struct icc_provider *provider) { }
+> +
+> +static inline int icc_provider_register(struct icc_provider *provider)
+> +{
+> +	return -ENOTSUPP;
+> +}
+> +
+> +static inline void icc_provider_deregister(struct icc_provider *provider) { }
+> +
+>  static inline int icc_provider_add(struct icc_provider *provider)
+>  {
+>  	return -ENOTSUPP;
