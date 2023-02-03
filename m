@@ -2,60 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE82C61DA4
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Feb 2023 02:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2097C636D4
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Feb 2023 02:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbjBCCx1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Feb 2023 21:53:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
+        id S232000AbjBCCyJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Feb 2023 21:54:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232001AbjBCCx0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 21:53:26 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC63139292
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 18:53:24 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id k4so11780708eje.1
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 18:53:24 -0800 (PST)
+        with ESMTP id S230047AbjBCCyH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Feb 2023 21:54:07 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A29C8A7ED
+        for <linux-tegra@vger.kernel.org>; Thu,  2 Feb 2023 18:53:58 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id mc11so11669921ejb.10
+        for <linux-tegra@vger.kernel.org>; Thu, 02 Feb 2023 18:53:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yo+aFZ5QQ/uWL3CjrlBOZYca0lCKb40QkSx1ezLfSE0=;
-        b=wcAcqY5ez42orIdT32m5UGvNP+MeAv1kQxgWXE+7fkka8v/GEf93dc63kHXEwmF1Fn
-         7qJhnQICRHjIhb6iiDGBaTCbCSBULc391n8QNo8ftx/gfqUnLNI+kg5sP1w1DZuk9CTQ
-         Q75Q0BViDWR9ANc3VKUMViHrW+tj0Ikxoa48/+7vDj3e8Lnd+u6KBri/SvOUN3jzfII5
-         znHBzviIiY1iNplQccryYRBf1303YWGjctCzwbxXT0qXHEUTKhR0W1sDXwAAtBuqRs3L
-         TNFX16bworCUKOK/lZId3U/3xqs5pW3cZpal8mbciRRVr/AbXxRFuY2JmnjWvSXaMMFa
-         dxmA==
+        bh=/gjAdjMgntSc2V+0JCh5W3UQ5YtCxuSW7UX1/RImx9U=;
+        b=r2/ojgy3wlbssfealO65rOyentvFfKc8Xc2q5F6Gawxe2muvitDP3D/qinUOSurCEE
+         GdYWGgJwNKR4rLcIHwkqfsloahAJkbz7K33id165R9BHg5qGAROmo3pVLOqNE97wNbuB
+         DzQrqzZLZtlTX090m9uR7vWaML4wvc3LZtnNQGEJuVVmMeUUUf86/nxZbpoa5/Mc3wFJ
+         mS2Bx/FFieIx9jCC1QRcBWueb4N3FNzNuoQfpT9+R5IRWi9uf6KI1EPiBLLf/96PuR9k
+         2hTsQw1ZWwXxRs1UV+1jsic2DTFBPf+4DbCkbjT/VGiH7oB1O9XCfpnGnhIA35SwD1rn
+         8QDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yo+aFZ5QQ/uWL3CjrlBOZYca0lCKb40QkSx1ezLfSE0=;
-        b=x4hSzbUn4qWZlEmEWOLeq/ItmH7TaqGBfXg6+JcxvNfwCMqt5dzaSHDdFVTx45s8zK
-         7qqW16JqzZSJKJ96+8AtPc7CGI7qZZpDez6YEOKsLd8p47qNdWdyhBrNCO1QwsGrP/wF
-         VovRVh6O2S+7ahugrNFC3vki0f61GVnHuaXooUbeSFJKAOwc5IRN9AnV8evIc8SkiWJP
-         zphI4Sn7CpD70/VKsr1oEcb8YPe/ngh/Sae0vdhT8qYv1aP7ak6veXGI2++khe6hhYhI
-         aGEaYtj5JK2wYSYih4bXpXJXT84X9zflC9dnx8PTNt+4EwTdZmfILq6xba2jnPgrG1yg
-         1NtQ==
-X-Gm-Message-State: AO0yUKX9ILs2+hbNOOE7yC6zwCO/nU6oLqPKLlS6YcTr1dECrmHluP3D
-        LkPTSFPJ4vVuXEgBudOR3r9fTw==
-X-Google-Smtp-Source: AK7set/sHUB0PJ4zCstfU+8ieheHljg0vLSu0D2o+FGVahwziH+j7dZ//ypkczHXcZbYmyJJEAWyAQ==
-X-Received: by 2002:a17:907:3d87:b0:88f:9c29:d232 with SMTP id he7-20020a1709073d8700b0088f9c29d232mr46757ejc.57.1675392803241;
-        Thu, 02 Feb 2023 18:53:23 -0800 (PST)
+        bh=/gjAdjMgntSc2V+0JCh5W3UQ5YtCxuSW7UX1/RImx9U=;
+        b=CtiMk3km58UHBEXNRIhH0rtYJPEa0M1Rwc+atQqo8AFNeQNRBaYbY+80WmghgJErI6
+         eqP0GmWjFdKyBDdUMbbZGr0/4ZWHXkkQfaN0287Iur6y2bQueq0s6sCqjdBgEpbe8sC3
+         98Yp2QBHMrdPvan2dTR8uZjBeyIP5rrs0SUHyX8DecGN2eZ8DYWCNCPQEiJiw67TRCEP
+         OVY0BXkl8aKMkXV6h+QFGGlQc+w/vYcCR3ZYvWPPdsDEPZt8EiDCgstU2OeB8LpG8hf+
+         fMgKiY7z/z3qCR58EfCtgSH/+Bk8t64V8Lx3IlkBgdHyw/RunWleDL/UydoUlgeRqYq7
+         9SJQ==
+X-Gm-Message-State: AO0yUKVGUKsKrroz6tZb8Dw1Onfi4Va5MtM2zIMQYi8vkzDSlGwfmFWP
+        nayRhNrZlFqDt8fPNdbmJ5Z/tg==
+X-Google-Smtp-Source: AK7set+exeVHhx5lH4QHq60LJIjL4PJsX/fg5A7/SPoAayXl6UnezMk0KP2iYWt4w2IOyrwX9gLBrw==
+X-Received: by 2002:a17:907:3e82:b0:885:8f79:d6d7 with SMTP id hs2-20020a1709073e8200b008858f79d6d7mr11541664ejc.61.1675392836850;
+        Thu, 02 Feb 2023 18:53:56 -0800 (PST)
 Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id lv3-20020a170906bc8300b00883410a786csm642358ejb.207.2023.02.02.18.53.21
+        by smtp.gmail.com with ESMTPSA id r5-20020a170906a20500b008710789d85fsm665313ejy.156.2023.02.02.18.53.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 18:53:22 -0800 (PST)
-Message-ID: <33cff77a-1967-e902-6a49-3ebf6b80f1ec@linaro.org>
-Date:   Fri, 3 Feb 2023 03:53:20 +0100
+        Thu, 02 Feb 2023 18:53:56 -0800 (PST)
+Message-ID: <92cbad8e-6e18-4ecf-17a7-3d40a429cad9@linaro.org>
+Date:   Fri, 3 Feb 2023 03:53:54 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH 07/23] interconnect: qcom: rpm: fix probe PM domain error
- handling
+Subject: Re: [PATCH 08/23] interconnect: qcom: rpm: fix registration race
 Content-Language: en-US
 To:     Johan Hovold <johan+linaro@kernel.org>,
         Georgi Djakov <djakov@kernel.org>
@@ -75,11 +74,12 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Yassine Oudjana <y.oudjana@protonmail.com>
+        stable@vger.kernel.org, Jun Nie <jun.nie@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
 References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-8-johan+linaro@kernel.org>
+ <20230201101559.15529-9-johan+linaro@kernel.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230201101559.15529-8-johan+linaro@kernel.org>
+In-Reply-To: <20230201101559.15529-9-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -89,52 +89,97 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 
 On 1.02.2023 11:15, Johan Hovold wrote:
-> Make sure to disable clocks also in case attaching the power domain
-> fails.
+> The current interconnect provider registration interface is inherently
+> racy as nodes are not added until the after adding the provider. This
+> can specifically cause racing DT lookups to fail.
 > 
-> Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
-> Cc: stable@vger.kernel.org      # 5.17
-> Cc: Yassine Oudjana <y.oudjana@protonmail.com>
+> Switch to using the new API where the provider is not registered until
+> after it has been fully initialised.
+> 
+> Fixes: 62feb14ee8a3 ("interconnect: qcom: Consolidate interconnect RPM support")
+> Fixes: 30c8fa3ec61a ("interconnect: qcom: Add MSM8916 interconnect provider driver")
+> Cc: stable@vger.kernel.org	# 5.7
+> Cc: Jun Nie <jun.nie@linaro.org>
+> Cc: Georgi Djakov <georgi.djakov@linaro.org>
 > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+>  drivers/interconnect/qcom/icc-rpm.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
 > 
 > diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-> index 91778cfcbc65..da595059cafd 100644
+> index da595059cafd..4d0997b210f7 100644
 > --- a/drivers/interconnect/qcom/icc-rpm.c
 > +++ b/drivers/interconnect/qcom/icc-rpm.c
-> @@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
->  
->  	if (desc->has_bus_pd) {
->  		ret = dev_pm_domain_attach(dev, true);
-> -		if (ret)
-> -			return ret;
-> +		goto err_disable_clks;
+> @@ -502,7 +502,6 @@ int qnoc_probe(struct platform_device *pdev)
 >  	}
 >  
 >  	provider = &qp->provider;
-> @@ -514,8 +513,7 @@ int qnoc_probe(struct platform_device *pdev)
->  	ret = icc_provider_add(provider);
->  	if (ret) {
->  		dev_err(dev, "error adding interconnect provider: %d\n", ret);
-> -		clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
-> -		return ret;
-> +		goto err_disable_clks;
->  	}
+> -	INIT_LIST_HEAD(&provider->nodes);
+>  	provider->dev = dev;
+>  	provider->set = qcom_icc_set;
+>  	provider->pre_aggregate = qcom_icc_pre_bw_aggregate;
+> @@ -510,11 +509,7 @@ int qnoc_probe(struct platform_device *pdev)
+>  	provider->xlate_extended = qcom_icc_xlate_extended;
+>  	provider->data = data;
+>  
+> -	ret = icc_provider_add(provider);
+> -	if (ret) {
+> -		dev_err(dev, "error adding interconnect provider: %d\n", ret);
+> -		goto err_disable_clks;
+> -	}
+> +	icc_provider_init(provider);
 >  
 >  	for (i = 0; i < num_nodes; i++) {
-> @@ -550,8 +548,9 @@ int qnoc_probe(struct platform_device *pdev)
->  	return 0;
->  err:
->  	icc_nodes_remove(provider);
-> -	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
->  	icc_provider_del(provider);
-> +err_disable_clks:
-> +	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+>  		size_t j;
+> @@ -522,7 +517,7 @@ int qnoc_probe(struct platform_device *pdev)
+>  		node = icc_node_create(qnodes[i]->id);
+>  		if (IS_ERR(node)) {
+>  			ret = PTR_ERR(node);
+> -			goto err;
+> +			goto err_remove_nodes;
+>  		}
 >  
->  	return ret;
+>  		node->name = qnodes[i]->name;
+> @@ -536,19 +531,25 @@ int qnoc_probe(struct platform_device *pdev)
+>  	}
+>  	data->num_nodes = num_nodes;
+>  
+> +	ret = icc_provider_register(provider);
+> +	if (ret)
+> +		goto err_remove_nodes;
+> +
+>  	platform_set_drvdata(pdev, qp);
+>  
+>  	/* Populate child NoC devices if any */
+>  	if (of_get_child_count(dev->of_node) > 0) {
+>  		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+>  		if (ret)
+> -			goto err;
+> +			goto err_deregister_provider;
+>  	}
+>  
+>  	return 0;
+> -err:
+> +
+> +err_deregister_provider:
+> +	icc_provider_deregister(provider);
+> +err_remove_nodes:
+>  	icc_nodes_remove(provider);
+> -	icc_provider_del(provider);
+>  err_disable_clks:
+>  	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+>  
+> @@ -560,9 +561,9 @@ int qnoc_remove(struct platform_device *pdev)
+>  {
+>  	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
+>  
+> +	icc_provider_deregister(&qp->provider);
+>  	icc_nodes_remove(&qp->provider);
+>  	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+> -	icc_provider_del(&qp->provider);
+>  
+>  	return 0;
 >  }
