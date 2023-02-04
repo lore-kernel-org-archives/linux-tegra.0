@@ -2,287 +2,169 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C215C636CD
-	for <linux-tegra@archiver.kernel.org>; Sat,  4 Feb 2023 06:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE7CC61DA4
+	for <linux-tegra@archiver.kernel.org>; Sat,  4 Feb 2023 09:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232000AbjBDGFh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Feb 2023 01:05:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49068 "EHLO
+        id S233155AbjBDJsq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 4 Feb 2023 04:48:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjBDGFg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Feb 2023 01:05:36 -0500
-Received: from out28-73.mail.aliyun.com (out28-73.mail.aliyun.com [115.124.28.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854AE5D92C;
-        Fri,  3 Feb 2023 22:05:31 -0800 (PST)
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436261|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0126545-0.000114283-0.987231;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047213;MF=michael@allwinnertech.com;NM=1;PH=DS;RN=27;RT=27;SR=0;TI=SMTPD_---.RAX9iuY_1675490723;
-Received: from 192.168.220.144(mailfrom:michael@allwinnertech.com fp:SMTPD_---.RAX9iuY_1675490723)
-          by smtp.aliyun-inc.com;
-          Sat, 04 Feb 2023 14:05:25 +0800
-Message-ID: <33ffa97c-5994-d6ac-da06-f998ee0071d8@allwinnertech.com>
-Date:   Sat, 4 Feb 2023 14:05:23 +0800
+        with ESMTP id S233143AbjBDJsp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Feb 2023 04:48:45 -0500
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA32B3800A;
+        Sat,  4 Feb 2023 01:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675504123; x=1707040123;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vxN9Bf20URGxek3+/6jCLwHL5JDiPApDEdSYAgzw+pc=;
+  b=CuwpSXZAd0wJcO0Uj1c4fvke/qbtZW3v74IwqecbQ6302uHHSJxs1Qut
+   xqUtbAm50YG3UBC1WnhWB1rZjtZxUK/XgBK7PhWb67r8l6TtRssvlKeaX
+   M+2SapkqvSHMUR/HsbAIz304ZZnS61UeCGiDLdlCHA4ZpTXHoxZO676zv
+   xGhpoToIp4MwoMj8PeR9/Emq19Ny6Gm2XnKfXARTAWtCPpGFilACjEigL
+   wQOlQ9syyEXcfoxFwoiAtgfo19InYatOKoBwuEfCbVNsW4G07UZSuWXBF
+   lIfpqqpjeGKA337mj794JU0i7R0woJU2/arCNsvyQvveDrjR9zvtQH6vK
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10610"; a="391326583"
+X-IronPort-AV: E=Sophos;i="5.97,272,1669104000"; 
+   d="scan'208";a="391326583"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2023 01:48:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10610"; a="789955489"
+X-IronPort-AV: E=Sophos;i="5.97,272,1669104000"; 
+   d="scan'208";a="789955489"
+Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2023 01:48:39 -0800
+Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pOF9z-0001DE-0L;
+        Sat, 04 Feb 2023 09:48:39 +0000
+Date:   Sat, 4 Feb 2023 17:48:13 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>, robh+dt@kernel.org,
+        broonie@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: Re: [Patch V2 2/4] tpm: tegra: Support SPI tpm wait state detect
+Message-ID: <202302041737.v2JywR8Y-lkp@intel.com>
+References: <20230203130133.32901-3-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] mmc:mmc-cqhci:support interrupt coalescing
-Content-Language: en-US
-To:     Adrian Hunter <adrian.hunter@intel.com>, riteshh@codeaurora.org,
-        asutoshd@codeaurora.org, ulf.hansson@linaro.org,
-        chaotian.jing@mediatek.com, matthias.bgg@gmail.com,
-        kdasu.kdev@gmail.com, alcooperx@gmail.com, f.fainelli@gmail.com,
-        haibo.chen@nxp.com, shawnguo@kernel.org, agross@kernel.org,
-        andersson@kernel.org, michal.simek@xilinx.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     bcm-kernel-feedback-list@broadcom.com, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, konrad.dybcio@linaro.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20230130064656.106793-1-michael@allwinnertech.com>
- <2463a92b-c180-87d4-0c96-2f549a397164@intel.com>
- <610b5f73-f9e3-deb2-2754-e8939ed00ec3@allwinnertech.com>
- <28d3348d-82ec-988f-718a-2d73bce585f3@intel.com>
-From:   Michael Wu <michael@allwinnertech.com>
-In-Reply-To: <28d3348d-82ec-988f-718a-2d73bce585f3@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230203130133.32901-3-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dear Adrian,
+Hi Krishna,
 
-On 2023/1/31 21:32, Adrian Hunter wrote:
-> On 31/01/23 15:12, Michael Wu wrote:
->> Dear Adrian，
->>
->> On 2023/1/30 23:59, Adrian Hunter wrote:
->>> On 30/01/23 08:46, Michael Wu wrote:
->>>> Support interrupt coalescing to reduce the frequency of mmc interrupts
->>>
->>> There doesn't seem to be any users.  The new parameter to
->>> cqhci_init() is always false.  New features are not usually
->>> accepted without users.
->>
->> At present, I have only supported this feature on the Allwinner platform because I have not get enough information about other vendors.
->>>
->>> There needs to be an explanation of why the change is being made.
->>
->> I consider reducing the number of interrupt context switches. Can you tell me why the community does not support this feature? I wonder whether I'm doing is correct. If it's correct, i will improve this patch and incorporate it
-> 
-> AFAIK the community has not made any comment on supporting interrupt coalescing for CQHCI, one way or another.
-> However, it is generally expected that new features will only be added if they demonstrate some benefit.
-> Just assuming that there is a benefit is not enough.
-> 
+Thank you for the patch! Perhaps something to improve:
 
-Okay,  I'll provide the performance data soon.
+[auto build test WARNING on char-misc/char-misc-testing]
+[also build test WARNING on char-misc/char-misc-next char-misc/char-misc-linus broonie-spi/for-next robh/for-next linus/master v6.2-rc6 next-20230203]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->>>
->>> Also there doesn't seem to be any configuration of the CQIC
->>> register.
->>
->> At present, I am working on the hook function .cqe_enable that the ICCTH of CQIC is set in enable
->>>
->>>>
->>>> Signed-off-by: Michael Wu <michael@allwinnertech.com>
->>>> ---
->>>>    drivers/mmc/host/cqhci-core.c      | 20 +++++++++++++++-----
->>>>    drivers/mmc/host/cqhci.h           |  5 ++++-
->>>>    drivers/mmc/host/mtk-sd.c          |  2 +-
->>>>    drivers/mmc/host/sdhci-brcmstb.c   |  2 +-
->>>>    drivers/mmc/host/sdhci-esdhc-imx.c |  2 +-
->>>>    drivers/mmc/host/sdhci-msm.c       |  2 +-
->>>>    drivers/mmc/host/sdhci-of-arasan.c |  2 +-
->>>>    drivers/mmc/host/sdhci-pci-core.c  |  2 +-
->>>>    drivers/mmc/host/sdhci-pci-gli.c   |  2 +-
->>>>    drivers/mmc/host/sdhci-tegra.c     |  2 +-
->>>>    drivers/mmc/host/sdhci_am654.c     |  2 +-
->>>>    11 files changed, 28 insertions(+), 15 deletions(-)
->>>>
->>>> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
->>>> index b3d7d6d8d654..f9cdf9f04bfc 100644
->>>> --- a/drivers/mmc/host/cqhci-core.c
->>>> +++ b/drivers/mmc/host/cqhci-core.c
->>>> @@ -420,7 +420,7 @@ static void cqhci_disable(struct mmc_host *mmc)
->>>>    }
->>>>      static void cqhci_prep_task_desc(struct mmc_request *mrq,
->>>> -                 struct cqhci_host *cq_host, int tag)
->>>> +                 struct cqhci_host *cq_host, int tag, int intr)
->>>>    {
->>>>        __le64 *task_desc = (__le64 __force *)get_desc(cq_host, tag);
->>>>        u32 req_flags = mrq->data->flags;
->>>> @@ -428,7 +428,7 @@ static void cqhci_prep_task_desc(struct mmc_request *mrq,
->>>>          desc0 = CQHCI_VALID(1) |
->>>>            CQHCI_END(1) |
->>>> -        CQHCI_INT(1) |
->>>> +        CQHCI_INT(intr) |
->>>>            CQHCI_ACT(0x5) |
->>>>            CQHCI_FORCED_PROG(!!(req_flags & MMC_DATA_FORCED_PRG)) |
->>>>            CQHCI_DATA_TAG(!!(req_flags & MMC_DATA_DAT_TAG)) |
->>>> @@ -621,7 +621,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
->>>>        }
->>>>          if (mrq->data) {
->>>> -        cqhci_prep_task_desc(mrq, cq_host, tag);
->>>> +        cqhci_prep_task_desc(mrq, cq_host, tag, (cq_host->intr_clsc ? 0 : 1));
->>>>              err = cqhci_prep_tran_desc(mrq, cq_host, tag);
->>>>            if (err) {
->>>> @@ -812,7 +812,7 @@ static void cqhci_finish_mrq(struct mmc_host *mmc, unsigned int tag)
->>>>    irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
->>>>                  int data_error)
->>>>    {
->>>> -    u32 status;
->>>> +    u32 status, rval;
->>>>        unsigned long tag = 0, comp_status;
->>>>        struct cqhci_host *cq_host = mmc->cqe_private;
->>>>    @@ -856,6 +856,15 @@ irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
->>>>            spin_unlock(&cq_host->lock);
->>>>        }
->>>>    +    if (cq_host->intr_clsc) {
->>>> +        rval = cqhci_readl(cq_host, CQHCI_IC);
->>>> +        rval |= CQHCI_IC_RESET;
->>>> +        cqhci_writel(cq_host, rval, CQHCI_IC);
->>>> +        rval = cqhci_readl(cq_host, CQHCI_IC);
->>>> +        rval &= (~CQHCI_IC_RESET);
->>>> +        cqhci_writel(cq_host, rval, CQHCI_IC);
->>>> +    }
->>>> +
->>>>        if (status & CQHCI_IS_TCL)
->>>>            wake_up(&cq_host->wait_queue);
->>>>    @@ -1172,11 +1181,12 @@ static unsigned int cqhci_ver_minor(struct cqhci_host *cq_host)
->>>>    }
->>>>      int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc,
->>>> -          bool dma64)
->>>> +          bool dma64, bool intr_clsc)
->>>>    {
->>>>        int err;
->>>>          cq_host->dma64 = dma64;
->>>> +    cq_host->intr_clsc = intr_clsc;
->>>>        cq_host->mmc = mmc;
->>>>        cq_host->mmc->cqe_private = cq_host;
->>>>    diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
->>>> index ba9387ed90eb..acf90773c30a 100644
->>>> --- a/drivers/mmc/host/cqhci.h
->>>> +++ b/drivers/mmc/host/cqhci.h
->>>> @@ -227,6 +227,9 @@ struct cqhci_host {
->>>>          /* 64 bit DMA */
->>>>        bool dma64;
->>>> +
->>>> +    /* interrupt coalescing*/
->>>> +    bool intr_clsc;
->>>>        int num_slots;
->>>>        int qcnt;
->>>>    @@ -312,7 +315,7 @@ struct platform_device;
->>>>      irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
->>>>                  int data_error);
->>>> -int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dma64);
->>>> +int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dma64, bool intr_clsc);
->>>>    struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev);
->>>>    int cqhci_deactivate(struct mmc_host *mmc);
->>>>    static inline int cqhci_suspend(struct mmc_host *mmc)
->>>> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
->>>> index edade0e54a0c..2c18f954d4b8 100644
->>>> --- a/drivers/mmc/host/mtk-sd.c
->>>> +++ b/drivers/mmc/host/mtk-sd.c
->>>> @@ -2796,7 +2796,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
->>>>            host->cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>>            host->cq_host->mmio = host->base + 0x800;
->>>>            host->cq_host->ops = &msdc_cmdq_ops;
->>>> -        ret = cqhci_init(host->cq_host, mmc, true);
->>>> +        ret = cqhci_init(host->cq_host, mmc, true, false);
->>>>            if (ret)
->>>>                goto host_free;
->>>>            mmc->max_segs = 128;
->>>> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
->>>> index f2cf3d70db79..4aeaeddbbf25 100644
->>>> --- a/drivers/mmc/host/sdhci-brcmstb.c
->>>> +++ b/drivers/mmc/host/sdhci-brcmstb.c
->>>> @@ -231,7 +231,7 @@ static int sdhci_brcmstb_add_host(struct sdhci_host *host,
->>>>            cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>>        }
->>>>    -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>>        if (ret)
->>>>            goto cleanup;
->>>>    diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
->>>> index 9e73c34b6401..7aef7abe71f1 100644
->>>> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
->>>> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
->>>> @@ -1712,7 +1712,7 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
->>>>            cq_host->mmio = host->ioaddr + ESDHC_CQHCI_ADDR_OFFSET;
->>>>            cq_host->ops = &esdhc_cqhci_ops;
->>>>    -        err = cqhci_init(cq_host, host->mmc, false);
->>>> +        err = cqhci_init(cq_host, host->mmc, false, false);
->>>>            if (err)
->>>>                goto disable_ahb_clk;
->>>>        }
->>>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->>>> index 4ac8651d0b29..b6549d1e43ec 100644
->>>> --- a/drivers/mmc/host/sdhci-msm.c
->>>> +++ b/drivers/mmc/host/sdhci-msm.c
->>>> @@ -2153,7 +2153,7 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
->>>>        if (ret)
->>>>            goto cleanup;
->>>>    -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>>        if (ret) {
->>>>            dev_err(&pdev->dev, "%s: CQE init: failed (%d)\n",
->>>>                    mmc_hostname(host->mmc), ret);
->>>> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
->>>> index 89c431a34c43..811f8686532d 100644
->>>> --- a/drivers/mmc/host/sdhci-of-arasan.c
->>>> +++ b/drivers/mmc/host/sdhci-of-arasan.c
->>>> @@ -1610,7 +1610,7 @@ static int sdhci_arasan_add_host(struct sdhci_arasan_data *sdhci_arasan)
->>>>        if (dma64)
->>>>            cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>>    -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>>        if (ret)
->>>>            goto cleanup;
->>>>    diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
->>>> index c359f867df0a..6f6cae6355a7 100644
->>>> --- a/drivers/mmc/host/sdhci-pci-core.c
->>>> +++ b/drivers/mmc/host/sdhci-pci-core.c
->>>> @@ -964,7 +964,7 @@ static int glk_emmc_add_host(struct sdhci_pci_slot *slot)
->>>>        if (dma64)
->>>>            cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>>    -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>>        if (ret)
->>>>            goto cleanup;
->>>>    diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
->>>> index 633a8ee8f8c5..6917ba339aa9 100644
->>>> --- a/drivers/mmc/host/sdhci-pci-gli.c
->>>> +++ b/drivers/mmc/host/sdhci-pci-gli.c
->>>> @@ -908,7 +908,7 @@ static int gl9763e_add_host(struct sdhci_pci_slot *slot)
->>>>        if (dma64)
->>>>            cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>>    -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>>        if (ret)
->>>>            goto cleanup;
->>>>    diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
->>>> index bff084f178c9..f98a468e8f43 100644
->>>> --- a/drivers/mmc/host/sdhci-tegra.c
->>>> +++ b/drivers/mmc/host/sdhci-tegra.c
->>>> @@ -1620,7 +1620,7 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
->>>>        if (dma64)
->>>>            cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
->>>>    -    ret = cqhci_init(cq_host, host->mmc, dma64);
->>>> +    ret = cqhci_init(cq_host, host->mmc, dma64, false);
->>>>        if (ret)
->>>>            goto cleanup;
->>>>    diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
->>>> index 7ef828942df3..8e7fbee70e16 100644
->>>> --- a/drivers/mmc/host/sdhci_am654.c
->>>> +++ b/drivers/mmc/host/sdhci_am654.c
->>>> @@ -568,7 +568,7 @@ static int sdhci_am654_cqe_add_host(struct sdhci_host *host)
->>>>          host->mmc->caps2 |= MMC_CAP2_CQE;
->>>>    -    return cqhci_init(cq_host, host->mmc, 1);
->>>> +    return cqhci_init(cq_host, host->mmc, 1, false);
->>>>    }
->>>>      static int sdhci_am654_get_otap_delay(struct sdhci_host *host,
->>
+url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-Yarlagadda/dt-bindings-tpm-Add-compatible-for-Tegra-TPM/20230203-210314
+patch link:    https://lore.kernel.org/r/20230203130133.32901-3-kyarlagadda%40nvidia.com
+patch subject: [Patch V2 2/4] tpm: tegra: Support SPI tpm wait state detect
+config: loongarch-buildonly-randconfig-r003-20230204 (https://download.01.org/0day-ci/archive/20230204/202302041737.v2JywR8Y-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/825363f7e8d0d426c45bbba6cb3c5d9b79b7e6aa
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Krishna-Yarlagadda/dt-bindings-tpm-Add-compatible-for-Tegra-TPM/20230203-210314
+        git checkout 825363f7e8d0d426c45bbba6cb3c5d9b79b7e6aa
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=loongarch olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=loongarch SHELL=/bin/bash drivers/char/tpm/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/char/tpm/tpm_tis_spi_tegra.c:23:5: warning: no previous prototype for 'tpm_tis_spi_tegra_transfer' [-Wmissing-prototypes]
+      23 | int tpm_tis_spi_tegra_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/tpm_tis_spi_tegra_transfer +23 drivers/char/tpm/tpm_tis_spi_tegra.c
+
+    22	
+  > 23	int tpm_tis_spi_tegra_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+    24				       u8 *in, const u8 *out)
+    25	{
+    26		struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
+    27		int ret = 0;
+    28		struct spi_message m;
+    29		struct spi_transfer spi_xfer[3];
+    30		u8 transfer_len;
+    31	
+    32		spi_bus_lock(phy->spi_device->master);
+    33	
+    34		while (len) {
+    35			transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
+    36	
+    37			spi_message_init(&m);
+    38			phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
+    39			phy->iobuf[1] = 0xd4;
+    40			phy->iobuf[2] = addr >> 8;
+    41			phy->iobuf[3] = addr;
+    42	
+    43			memset(&spi_xfer, 0, sizeof(spi_xfer));
+    44	
+    45			spi_xfer[0].tx_buf = phy->iobuf;
+    46			spi_xfer[0].len = 1;
+    47			spi_message_add_tail(&spi_xfer[0], &m);
+    48	
+    49			spi_xfer[1].tx_buf = phy->iobuf + 1;
+    50			spi_xfer[1].len = 3;
+    51			spi_message_add_tail(&spi_xfer[1], &m);
+    52	
+    53			if (out) {
+    54				spi_xfer[2].tx_buf = &phy->iobuf[4];
+    55				spi_xfer[2].rx_buf = NULL;
+    56				memcpy(&phy->iobuf[4], out, transfer_len);
+    57				out += transfer_len;
+    58			}
+    59			if (in) {
+    60				spi_xfer[2].tx_buf = NULL;
+    61				spi_xfer[2].rx_buf = &phy->iobuf[4];
+    62			}
+    63			spi_xfer[2].len = transfer_len;
+    64			spi_message_add_tail(&spi_xfer[2], &m);
+    65	
+    66			reinit_completion(&phy->ready);
+    67			ret = spi_sync_locked(phy->spi_device, &m);
+    68			if (ret < 0)
+    69				goto exit;
+    70	
+    71			if (in) {
+    72				memcpy(in, &phy->iobuf[4], transfer_len);
+    73				in += transfer_len;
+    74			}
+    75	
+    76			len -= transfer_len;
+    77		}
+    78	
+    79	exit:
+    80		spi_bus_unlock(phy->spi_device->master);
+    81		return ret;
+    82	}
+    83	
 
 -- 
-Regards,
-Michael Wu
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
