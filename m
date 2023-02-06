@@ -2,127 +2,355 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C532EC636D3
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 16:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D4CC6379F
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 17:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231693AbjBFQLF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Feb 2023 11:11:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47944 "EHLO
+        id S229607AbjBFRBb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Feb 2023 12:01:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231508AbjBFQLD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 11:11:03 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC9EA2FCCB;
-        Mon,  6 Feb 2023 08:10:37 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id hx15so35543815ejc.11;
-        Mon, 06 Feb 2023 08:10:37 -0800 (PST)
+        with ESMTP id S229775AbjBFRB3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 12:01:29 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FA32BEE6
+        for <linux-tegra@vger.kernel.org>; Mon,  6 Feb 2023 09:00:56 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id v13so12300884eda.11
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Feb 2023 09:00:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fTVXWY/3o1UVrqV9BfluzW+BNUpKYmiwJBEQxgZXRDY=;
-        b=jG5bBZ3jwgVV9gOXxq1uA9c51oU4ENW3ZO7iCwd+OpDAI/oASQHItsnq2g2LfDwQWM
-         ts4X+8Xtqnk/jbgs5gCc00r7HjgJ2qbNsCb7Ozl40yguxG5nXoxSgONLNgNNyMyVlCvR
-         kBvUeOSXx0iNvyEC3jVFxltsI3CAayHrUSFdG/D2fuUzZkHGks5eGwmq1ru59in9yb7o
-         3xmTqZCxLb3xAxmKxRy+fkZBTGvsfAfEZo//Y5XUIdxTQWFvuzM9oZ4BGdR64dfPNq63
-         gW0rih+7neqgojzkapyFG5dLwbewE1oL99PCCkcOHPofTPvY+257y1tMBawfOvSmCuyl
-         I69A==
+        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a6q/V+E4w1GCT3UIo80p/1jk/eyzfrAH7kZCB3dF6EI=;
+        b=uCfTnrbkPsLAWL6gOh5JY9TMsdhSIK82e1NiuB7IshsdmrWsM5Hjr6FwUqZDOfVwE5
+         pvNIBn/sDzqqN32lvfDoOmAh45PK1wSUkPZLuoc6AEvpCgbhlvhcegjr+D6AEUDXeYYW
+         crvJhRIWcpDQskPdi0OoQGliNpJBpBY6VIzwBot4iZgUgiUf3fIUlETRkLbLODtr4PhJ
+         3TWSPMBYPdaLTxs1wac12U00iQXUDjiSDIkJN5Elr/OcQAIapmSRlT2ChNGZoaEjoLvI
+         /JAvT3ybEZlwj5jOQ0L0qHFxsB/XJq0OisD0eI8mYh3MtxQWHtEUbqVsfi2Ox0lT3Rd+
+         Q6tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fTVXWY/3o1UVrqV9BfluzW+BNUpKYmiwJBEQxgZXRDY=;
-        b=hZvi9u1LHjWVBX4bR9csPKS4Y15GauNXMH9hXgxbobrvRl2QvGWootMIPvjn6MPOCB
-         0L5DA1sGvx+Afj8xE9rvPmatbiiGACQ5MpwWeHHNZzQhlIS2uCUiISugxyQTiFleCIYH
-         RiqNNnB+jbc1jRD9H2xwhiMGiNZmwMX5fHJ8PAwzt+cM4Jbza/v29vj4MXCR+gI2mMJ0
-         W4Jq245P4fbqTg1lZMAZkuaeU9N9xFxzXgEigBU5hDOmFV2VW5j9maQ9N4bGsqcucEcO
-         73Ynz7DLCneDjuatvf9v595ShzYr6DKx144UmjdNyUoNQfooUnNL2Jm8gq4pnG1svmS5
-         M/Fw==
-X-Gm-Message-State: AO0yUKVnJcMKYyCoTFZva5i1xv/uQ7Xj2IbOTYNZa2aKwhjudBxOCmPb
-        f6ntnQBqXvVyTL73O+MbRlLQD89XG7o=
-X-Google-Smtp-Source: AK7set/lb2BzEgpyfL820itMLTe9P2w3fF+hOe578hznyyeQ+ArUiDbrjOIGiBd3TgJ7iHSP3ZBz+g==
-X-Received: by 2002:a17:907:8dcd:b0:87b:db29:61af with SMTP id tg13-20020a1709078dcd00b0087bdb2961afmr21406723ejc.24.1675699835284;
-        Mon, 06 Feb 2023 08:10:35 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p10-20020aa7cc8a000000b004a21c620266sm5293620edt.83.2023.02.06.08.10.34
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a6q/V+E4w1GCT3UIo80p/1jk/eyzfrAH7kZCB3dF6EI=;
+        b=xo0/6FW1wKmzNOgPbvC6xTZk7Lf4tZu+7E6p+Ir711jPurYuW1sYMYTiIspZZm1EdK
+         6t18/YJGKwXJVIOo7okNumyct0l/gdy824oMG4MVsfXBzVXF3+aAPnvje9vgAdMEOvbS
+         8IcKzEKe+XqMzYcWxA6kVlmvk5fbjOE6b39RAmr0xsWV8JCIq8OkXeY366P+wfy6R4iS
+         sdXAJmSG3dfCwmECMZKXBc2+IPhrGmS7Zsl3PuHGh9KaXGL1sPE85XOlaEiKP7e91rol
+         j298vnEz9bxqZUXIW28lRvxqT8Egq8UPmwYXrDrEsaL0tQ8jq7HijBbATMZ4q3YTlUgw
+         oZsQ==
+X-Gm-Message-State: AO0yUKX6pwQkQz8D48MGGHkW0Zb1N/hHYGOgmHPsCT2pTE/74tK7YOD2
+        IKXxWR/NDQB+VOVPP1fTVDhvHw==
+X-Google-Smtp-Source: AK7set9cQX60hct3CmrqQYLoS0zKl3hJEZ9KOOgC/H19Hq6SMdqrMyY4g16B+aPSjyDEPbDCn8cC1A==
+X-Received: by 2002:a50:9ea9:0:b0:4a0:e323:d59c with SMTP id a38-20020a509ea9000000b004a0e323d59cmr246400edf.20.1675702854925;
+        Mon, 06 Feb 2023 09:00:54 -0800 (PST)
+Received: from localhost (h-46-59-89-207.A463.priv.bahnhof.se. [46.59.89.207])
+        by smtp.gmail.com with ESMTPSA id c5-20020a50d645000000b004aaa656887esm2668878edj.96.2023.02.06.09.00.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 08:10:34 -0800 (PST)
-Date:   Mon, 6 Feb 2023 17:10:32 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        robh+dt@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com
-Subject: Re: [Patch V2 2/4] tpm: tegra: Support SPI tpm wait state detect
-Message-ID: <Y+EmeP3ccaxxaBHX@orome>
-References: <20230203130133.32901-1-kyarlagadda@nvidia.com>
- <20230203130133.32901-3-kyarlagadda@nvidia.com>
- <d356a20f-629c-a534-7a80-b96d0940056d@molgen.mpg.de>
- <Y+D+SHT63awKdC4H@sirena.org.uk>
+        Mon, 06 Feb 2023 09:00:54 -0800 (PST)
+Date:   Mon, 6 Feb 2023 18:00:53 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
+Message-ID: <Y+EyRb9klmwwHGjn@oden.dyn.berto.se>
+References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4jMQNYXv9g85GIdj"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Y+D+SHT63awKdC4H@sirena.org.uk>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Daniel,
 
---4jMQNYXv9g85GIdj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your work.
 
-On Mon, Feb 06, 2023 at 01:19:04PM +0000, Mark Brown wrote:
-> On Mon, Feb 06, 2023 at 12:02:56PM +0100, Paul Menzel wrote:
-> > Am 03.02.23 um 14:01 schrieb Krishna Yarlagadda:
->=20
-> > > +	/* If the SPI device has an IRQ then use that */
-> > > +	if (dev->irq > 0)
-> > > +		irq =3D dev->irq;
-> > > +	else
-> > > +		irq =3D -1;
->=20
-> > Use ternary operator?
->=20
-> >     irq =3D dev->irq > 0 ? dev->irq : -1;
->=20
-> No, please write the code using normal conditional instructions.  This
-> isn't the IOCCC and the ternery operator is rarely a legibility aid.
+On 2023-02-06 16:34:29 +0100, Daniel Lezcano wrote:
+> As the name states "thermal_core.h" is the header file for the core
+> components of the thermal framework.
+> 
+> Too many drivers are including it. Hopefully the recent cleanups
+> helped to self encapsulate the code a bit more and prevented the
+> drivers to need this header.
+> 
+> Remove this inclusion in every place where it is possible.
+> 
+> Some other drivers did a confusion with the core header and the one
+> exported in linux/thermal.h. They include the former instead of the
+> latter. The changes also fix this.
+> 
+> The tegra/soctherm driver still remains as it uses an internal
+> function which need to be replaced.
+> 
+> The Intel HFI driver uses the netlink internal framework core and
+> should be changed to prevent to deal with the internals.
+> 
+> No functional changes
+> 
+> [ Applies to thermal/linux-next or linux-pm/linux-next ]
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/thermal/amlogic_thermal.c           | 1 -
+>  drivers/thermal/armada_thermal.c            | 2 --
+>  drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
+>  drivers/thermal/hisi_thermal.c              | 3 +--
+>  drivers/thermal/imx8mm_thermal.c            | 1 -
+>  drivers/thermal/imx_sc_thermal.c            | 1 -
+>  drivers/thermal/intel/intel_hfi.c           | 3 ++-
+>  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
+>  drivers/thermal/qoriq_thermal.c             | 1 -
+>  drivers/thermal/rcar_gen3_thermal.c         | 1 -
 
-Looks like the SPI core sets dev->irq =3D 0 for any error other than
--EPROBE_DEFER and the TPM TIS core checks for irq !=3D 0 before trying to
-setup that IRQ, so seems like we can just skip this altogether and pass
-in dev->irq directly.
+For R-Car,
 
-Thierry
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
---4jMQNYXv9g85GIdj
-Content-Type: application/pgp-signature; name="signature.asc"
+>  drivers/thermal/samsung/exynos_tmu.c        | 3 +--
+>  drivers/thermal/st/stm_thermal.c            | 1 -
+>  drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
+>  drivers/thermal/uniphier_thermal.c          | 2 --
+>  14 files changed, 4 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
+> index d30cb791e63c..9235fda4ec1e 100644
+> --- a/drivers/thermal/amlogic_thermal.c
+> +++ b/drivers/thermal/amlogic_thermal.c
+> @@ -28,7 +28,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define TSENSOR_CFG_REG1			0x4
+> diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+> index 83a4080bffc7..36653f692c80 100644
+> --- a/drivers/thermal/armada_thermal.c
+> +++ b/drivers/thermal/armada_thermal.c
+> @@ -19,8 +19,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/interrupt.h>
+>  
+> -#include "thermal_core.h"
+> -
+>  /* Thermal Manager Control and Status Register */
+>  #define PMU_TDC0_SW_RST_MASK		(0x1 << 1)
+>  #define PMU_TM_DISABLE_OFFS		0
+> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+> index 3d0710c6e004..23918bb76ae6 100644
+> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
+> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+> @@ -18,7 +18,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  #define BCM2835_TS_TSENSCTL			0x00
+> diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+> index 45226cab466e..62c67942293e 100644
+> --- a/drivers/thermal/hisi_thermal.c
+> +++ b/drivers/thermal/hisi_thermal.c
+> @@ -16,8 +16,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/io.h>
+>  #include <linux/of_device.h>
+> -
+> -#include "thermal_core.h"
+> +#include <linux/thermal.h>
+>  
+>  #define HI6220_TEMP0_LAG			(0x0)
+>  #define HI6220_TEMP0_TH				(0x4)
+> diff --git a/drivers/thermal/imx8mm_thermal.c b/drivers/thermal/imx8mm_thermal.c
+> index d247b48696cb..72b5d6f319c1 100644
+> --- a/drivers/thermal/imx8mm_thermal.c
+> +++ b/drivers/thermal/imx8mm_thermal.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define TER			0x0	/* TMU enable */
+> diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
+> index 378f574607f7..f32e59e74623 100644
+> --- a/drivers/thermal/imx_sc_thermal.c
+> +++ b/drivers/thermal/imx_sc_thermal.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define IMX_SC_MISC_FUNC_GET_TEMP	13
+> diff --git a/drivers/thermal/intel/intel_hfi.c b/drivers/thermal/intel/intel_hfi.c
+> index 6e604bda2b93..c69db6c90869 100644
+> --- a/drivers/thermal/intel/intel_hfi.c
+> +++ b/drivers/thermal/intel/intel_hfi.c
+> @@ -40,10 +40,11 @@
+>  
+>  #include <asm/msr.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "intel_hfi.h"
+>  #include "thermal_interrupt.h"
+>  
+> +#include "../thermal_netlink.h"
+> +
+>  /* Hardware Feedback Interface MSR configuration bits */
+>  #define HW_FEEDBACK_PTR_VALID_BIT		BIT(0)
+>  #define HW_FEEDBACK_CONFIG_HFI_ENABLE_BIT	BIT(0)
+> diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+> index e2429676d0d2..101c75d0e13f 100644
+> --- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+> +++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  #define QPNP_TM_REG_DIG_MAJOR		0x01
+> diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+> index d111e218f362..431c29c0898a 100644
+> --- a/drivers/thermal/qoriq_thermal.c
+> +++ b/drivers/thermal/qoriq_thermal.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/thermal.h>
+>  #include <linux/units.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  #define SITES_MAX		16
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> index 4ef927437842..0fd2fd077638 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/sys_soc.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+>  #include "thermal_hwmon.h"
+>  
+>  /* Register offsets */
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 37465af59262..527d1eb0663a 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -20,11 +20,10 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/thermal.h>
+>  
+>  #include <dt-bindings/thermal/thermal_exynos.h>
+>  
+> -#include "../thermal_core.h"
+> -
+>  /* Exynos generic registers */
+>  #define EXYNOS_TMU_REG_TRIMINFO		0x0
+>  #define EXYNOS_TMU_REG_CONTROL		0x20
+> diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
+> index e7834ccc7976..735401958f01 100644
+> --- a/drivers/thermal/st/stm_thermal.c
+> +++ b/drivers/thermal/st/stm_thermal.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  /* DTS register offsets */
+> diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
+> index 0ffe37ce7df7..b3218b71b6d9 100644
+> --- a/drivers/thermal/tegra/tegra30-tsensor.c
+> +++ b/drivers/thermal/tegra/tegra30-tsensor.c
+> @@ -28,7 +28,6 @@
+>  
+>  #include <soc/tegra/fuse.h>
+>  
+> -#include "../thermal_core.h"
+>  #include "../thermal_hwmon.h"
+>  
+>  #define TSENSOR_SENSOR0_CONFIG0				0x0
+> diff --git a/drivers/thermal/uniphier_thermal.c b/drivers/thermal/uniphier_thermal.c
+> index f8ab2ca76184..47801841b3f5 100644
+> --- a/drivers/thermal/uniphier_thermal.c
+> +++ b/drivers/thermal/uniphier_thermal.c
+> @@ -17,8 +17,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/thermal.h>
+>  
+> -#include "thermal_core.h"
+> -
+>  /*
+>   * block registers
+>   * addresses are the offset from .block_base
+> -- 
+> 2.34.1
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPhJngACgkQ3SOs138+
-s6GN1RAAraD6eFc9I0Ex4Xp09TLqgcmofp+GytuozfmFph+0j8hBhoCgH7meAK4X
-v6Yj81wPmpX63ZK6wl2x8imrF3m/WbQalC/VHkHBOaEAwqcIQgxXuejPyFhdHUKH
-4sp9kx1b/5wuCJRiQvw1w9OA70/tlBBpoA88y/03ErNrIcPskLB0DfrA38DgP3Nf
-hDFwa95atSXIJpkY87QnGjRuDNWxdu0tfrDohWzqenaBiZ83u98oKSBPE19bc2+7
-x5quKfv3t295OF2BSXJeVn5ktNlfsMHYlTIA5YEIkKtIKnfPz+LoUVwn2blTka29
-ofqnDjAyEyyqZN8NdV71iZCGyUklN+rrahD/MQ7edGQePSPvX8DBnb9Y6MucRGHo
-5EVdlmGBh+/Rqs5kdHZ1dqJjR3O7crR8DyrnfUuimMmRUGn0e6bEgx0NJ5z0K1VL
-xth70QQ8wiie3VqC601OA57yQTPWzPL7sLfvGgA031jKDLKfuhKsG6DR260pRTRY
-RnHz4NkACoO0Lso2M4GJVu14BvSKjBU2deUjws2Q2wZezgqADhJnoCepFqu2N1NO
-7rXKeVGowUQCiFUIDql3+PATanYtwG1zYhZgMLFMUpBSKMoji/k0dUG6/IulZLYb
-EYL4rxMYCHaazO+O9tXBZn4LSaZSyKdjpHBDHHij21fNLVpmD40=
-=C7QB
------END PGP SIGNATURE-----
-
---4jMQNYXv9g85GIdj--
+-- 
+Kind Regards,
+Niklas Söderlund
