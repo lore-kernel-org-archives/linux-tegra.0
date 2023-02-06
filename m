@@ -2,126 +2,335 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C92C61DA4
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 14:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED50CC05027
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 15:37:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbjBFOu3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Feb 2023 09:50:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35882 "EHLO
+        id S231272AbjBFPhT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Feb 2023 10:37:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbjBFOu2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 09:50:28 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EACFB25BAF
-        for <linux-tegra@vger.kernel.org>; Mon,  6 Feb 2023 06:50:25 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id j32-20020a05600c1c2000b003dc4fd6e61dso10946060wms.5
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Feb 2023 06:50:25 -0800 (PST)
+        with ESMTP id S231283AbjBFPhB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 10:37:01 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78FDFF3A
+        for <linux-tegra@vger.kernel.org>; Mon,  6 Feb 2023 07:35:50 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id ba1so6700648wrb.5
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Feb 2023 07:35:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xj5rghWD9HHvdaDeOxD1ymwL8XZWcK1ZvSHaDd4etb4=;
-        b=OzPSK6luNf4eYVfUJKBlBnZtjGvgbGVjvrk5hXAR7Pd82Qp6uOsyoSgOOAHZtIbF1x
-         uo6Fn2JB5LSEfXZ7u2Idd/yosFnGV5za0Hybhy9W8uzT5st3/rgJCWJ18aBgyv4w7Xsu
-         2bkzgz2ip1mp5uqLEgxlbRg7W8EIZL2NNWwL0B9pHfeaqabD0sX0TwMW6I+Ai+z+ky61
-         uqh2qAQM9aMR1nZEag/1uw9hRmkbTHkQhe2lfQhUTCyPw3gQn5QqR8kkG4hOb59ANhHS
-         LAODPoLih+Hd4gTY6JbsErx9EVkyhKAmxkDcqdLzBBSXDaL+BdAF+Q0/bGB6tJkFd+Ul
-         Le5g==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7HjN4TzQBq2ZZA76IO3M8MJUDcxOHaJ2gZPxRuGZEM=;
+        b=lBPxmxlGU8fXgZEHTO0EE4dPwW1BhWuWnRA1kq0u1rwRukE654nexeKjDe8i554Nb5
+         /FqT7ZDXOA9tpzoFofMgM1evs8OaLAh9gOqtxXNDvjkflbB7L9t9ycnkEceeas6BY/4T
+         xPBarlNgk0miyUUsa7afXR8FsMDAAvsfZfkZ5/bX71oYYx7QYE6TxT92vb84nlHoTpiy
+         EhSsE5c7Mzk0THZ8+CaIQoH+w+RAK2i9kLYtygveAs4CNWPaHlq5codHe2FkuxZVTst2
+         4FFA0Odfv/klllyfbBxj6OYya8S5erlP9Td1/h4blF9Y2FCVAew913DqNGNgJQIN5SNb
+         Rjbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xj5rghWD9HHvdaDeOxD1ymwL8XZWcK1ZvSHaDd4etb4=;
-        b=d/dJ7VjlJ9SewDiOQ0zYKkOStEfDnkj1IDqW9tYBLcechTjpQ3Khk9jE8CXqBN67o6
-         +Ppf6LCg4PzoJpTiCZCPZnU36iBOMxMFgN0SuHwXlQUg2f93haRlUrCqC/Q2EyfRPaHe
-         OpeNHsdTfXHeV3bL2sXqq115uabYXUvLayhoNM7NrtHkunhaEgd0kbCcKcbsVYnFutTP
-         JsIXNDNOvMLEGkF0MeraHosI27CWJXAKSYK17TSXAotQr74/rJEH3DAYGx/iU5GA4YTo
-         5OWtcNF1Wo9TIugPSj+5eh0FGk4B87C75A+lb3o/dWCkVcxpLv/RQNjxhPlvohCpYGph
-         Zk3A==
-X-Gm-Message-State: AO0yUKV+YsDUiqLJxOnuZLrvDFYzRoD738athwj3pAzIPiv0JWXJjU46
-        OkoNyfRhyvPjYsyaFyz9uPCJx+fegAMH77JN
-X-Google-Smtp-Source: AK7set+GTdygKvnYzpFQzeoj2zGAMebxHRR3Ax/eELQQ9kpUcI1S38whsNzBhVq47acAQ0IldgXA8g==
-X-Received: by 2002:a05:600c:2143:b0:3df:85d2:c768 with SMTP id v3-20020a05600c214300b003df85d2c768mr17217899wml.26.1675695024478;
-        Mon, 06 Feb 2023 06:50:24 -0800 (PST)
-Received: from [172.17.59.64] (wifi-eduroam-trans.univ-tlse3.fr. [195.220.58.237])
-        by smtp.googlemail.com with ESMTPSA id k24-20020a05600c0b5800b003cfa622a18asm16406813wmr.3.2023.02.06.06.50.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Feb 2023 06:50:23 -0800 (PST)
-Message-ID: <f626967e-d6e6-817f-abeb-4aed89856c66@linaro.org>
-Date:   Mon, 6 Feb 2023 15:50:22 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
- usage
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Johan Hovold <johan@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
- <Y9J4WAFyXyV/nqlG@orome>
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j7HjN4TzQBq2ZZA76IO3M8MJUDcxOHaJ2gZPxRuGZEM=;
+        b=T1V46y0QILXs3s4xObp84zCzhnenK81mFg2OIVriGw463Q4QYwDHVmBUzLzYHEHz0P
+         JgttCVjY/ytw9hgXXofDzdaVR7Fpm6HH2JLAOrjYVuoTJa53tsrZ+LH15Ljkj9dcfsIc
+         gs8l7RTdibPA7k9xZACr36Vj2kz06nTqlAlqIcKfV9s3RV8lsFrzZ1l2TGv/PZNXtOqR
+         GVU3bAmBSOYXNdgnrGaMZbuQR0I7wZdHUsYHRm3WORWV8CaExHDZxhL4q3BPmgT1PAAh
+         g2fYfvzZZ+tL3zA+McSfTKWuJM52djmfitm7n5CI/6IUJ3XZtsTk5cSlz6iQfMlg1Gzd
+         inxQ==
+X-Gm-Message-State: AO0yUKVaE+XIR0WtvY8Fa6QCIkXHtJx3Dk+RmcdekU0AGMNIYYEikEtU
+        d+wGGYb+kezrr9Nx+t+uCvsynw==
+X-Google-Smtp-Source: AK7set9mPQd0MhkTQkAz8wEqWB2fDfP1ODpQprC+1QK0YualSEn/XjJWrwROk16wMPdL1WpD4j4sHw==
+X-Received: by 2002:adf:cc84:0:b0:2c3:e5d5:5d77 with SMTP id p4-20020adfcc84000000b002c3e5d55d77mr5118903wrj.68.1675697688552;
+        Mon, 06 Feb 2023 07:34:48 -0800 (PST)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id a4-20020a5d5084000000b002c3db0eec5fsm7386805wrt.62.2023.02.06.07.34.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Feb 2023 07:34:48 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <Y9J4WAFyXyV/nqlG@orome>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     daniel.lezcano@linaro.org, rafael.j.wysocki@intel.com
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        linux-amlogic@lists.infradead.org (open list:THERMAL DRIVER FOR AMLOGIC
+        SOCS),
+        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
+        BCM2711/BCM2835 ARM ARCHITECTURE),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM
+        BCM2711/BCM2835 ARM ARCHITECTURE),
+        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
+        linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR THERMAL
+        DRIVERS),
+        linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
+        linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32
+        ARCHITECTURE),
+        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
+Subject: [PATCH] thermal: Remove core header inclusion from drivers
+Date:   Mon,  6 Feb 2023 16:34:29 +0100
+Message-Id: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+As the name states "thermal_core.h" is the header file for the core
+components of the thermal framework.
 
-Hi Thierry,
+Too many drivers are including it. Hopefully the recent cleanups
+helped to self encapsulate the code a bit more and prevented the
+drivers to need this header.
 
-did you have the time to look at the get_thermal_instance() removal ?
+Remove this inclusion in every place where it is possible.
 
+Some other drivers did a confusion with the core header and the one
+exported in linux/thermal.h. They include the former instead of the
+latter. The changes also fix this.
 
-On 26/01/2023 13:55, Thierry Reding wrote:
+The tegra/soctherm driver still remains as it uses an internal
+function which need to be replaced.
 
-> 	[   12.354091] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
-> 	[   12.379009] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
-> 	[   12.388882] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
-> 	[   12.401007] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
-> 	[   12.471041] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
-> 	[   12.482852] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
-> 	[   12.482860] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
-> 	[   12.485357] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
-> 	[   12.501774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
-> 
-> and after these changes, it turns into:
-> 
-> 	[   12.447113] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
-> 	[   12.472300] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
-> 	[   12.481789] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
-> 	[   12.495447] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
-> 	[   12.496514] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
-> 	[   12.510353] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
-> 	[   12.526856] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
-> 	[   12.528774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
-> 	[   12.569352] tegra_soctherm 700e2000.thermal-sensor: programming throttle for pll to 103000
-> 	[   12.577635] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when pll reaches 103000 mC
-> 	[   12.590952] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
-> 	[   12.600783] tegra_soctherm 700e2000.thermal-sensor: programming throttle for mem to 103000
-> 	[   12.609204] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when mem reaches 103000 mC
-> 
-> The "programming throttle ..." messages are something I've added locally
-> to trace what gets called. So it looks like for "pll" and "mem" thermal
-> zones, we now program trip points whereas we previously didn't.
-> 
-> I'll take a closer look to see if we can replace the calls to
-> get_thermal_instance() by something else.
-> 
-> Thierry
+The Intel HFI driver uses the netlink internal framework core and
+should be changed to prevent to deal with the internals.
 
+No functional changes
+
+[ Applies to thermal/linux-next or linux-pm/linux-next ]
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/thermal/amlogic_thermal.c           | 1 -
+ drivers/thermal/armada_thermal.c            | 2 --
+ drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
+ drivers/thermal/hisi_thermal.c              | 3 +--
+ drivers/thermal/imx8mm_thermal.c            | 1 -
+ drivers/thermal/imx_sc_thermal.c            | 1 -
+ drivers/thermal/intel/intel_hfi.c           | 3 ++-
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
+ drivers/thermal/qoriq_thermal.c             | 1 -
+ drivers/thermal/rcar_gen3_thermal.c         | 1 -
+ drivers/thermal/samsung/exynos_tmu.c        | 3 +--
+ drivers/thermal/st/stm_thermal.c            | 1 -
+ drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
+ drivers/thermal/uniphier_thermal.c          | 2 --
+ 14 files changed, 4 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
+index d30cb791e63c..9235fda4ec1e 100644
+--- a/drivers/thermal/amlogic_thermal.c
++++ b/drivers/thermal/amlogic_thermal.c
+@@ -28,7 +28,6 @@
+ #include <linux/regmap.h>
+ #include <linux/thermal.h>
+ 
+-#include "thermal_core.h"
+ #include "thermal_hwmon.h"
+ 
+ #define TSENSOR_CFG_REG1			0x4
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index 83a4080bffc7..36653f692c80 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -19,8 +19,6 @@
+ #include <linux/regmap.h>
+ #include <linux/interrupt.h>
+ 
+-#include "thermal_core.h"
+-
+ /* Thermal Manager Control and Status Register */
+ #define PMU_TDC0_SW_RST_MASK		(0x1 << 1)
+ #define PMU_TM_DISABLE_OFFS		0
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index 3d0710c6e004..23918bb76ae6 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -18,7 +18,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/thermal.h>
+ 
+-#include "../thermal_core.h"
+ #include "../thermal_hwmon.h"
+ 
+ #define BCM2835_TS_TSENSCTL			0x00
+diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+index 45226cab466e..62c67942293e 100644
+--- a/drivers/thermal/hisi_thermal.c
++++ b/drivers/thermal/hisi_thermal.c
+@@ -16,8 +16,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/of_device.h>
+-
+-#include "thermal_core.h"
++#include <linux/thermal.h>
+ 
+ #define HI6220_TEMP0_LAG			(0x0)
+ #define HI6220_TEMP0_TH				(0x4)
+diff --git a/drivers/thermal/imx8mm_thermal.c b/drivers/thermal/imx8mm_thermal.c
+index d247b48696cb..72b5d6f319c1 100644
+--- a/drivers/thermal/imx8mm_thermal.c
++++ b/drivers/thermal/imx8mm_thermal.c
+@@ -17,7 +17,6 @@
+ #include <linux/slab.h>
+ #include <linux/thermal.h>
+ 
+-#include "thermal_core.h"
+ #include "thermal_hwmon.h"
+ 
+ #define TER			0x0	/* TMU enable */
+diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
+index 378f574607f7..f32e59e74623 100644
+--- a/drivers/thermal/imx_sc_thermal.c
++++ b/drivers/thermal/imx_sc_thermal.c
+@@ -13,7 +13,6 @@
+ #include <linux/slab.h>
+ #include <linux/thermal.h>
+ 
+-#include "thermal_core.h"
+ #include "thermal_hwmon.h"
+ 
+ #define IMX_SC_MISC_FUNC_GET_TEMP	13
+diff --git a/drivers/thermal/intel/intel_hfi.c b/drivers/thermal/intel/intel_hfi.c
+index 6e604bda2b93..c69db6c90869 100644
+--- a/drivers/thermal/intel/intel_hfi.c
++++ b/drivers/thermal/intel/intel_hfi.c
+@@ -40,10 +40,11 @@
+ 
+ #include <asm/msr.h>
+ 
+-#include "../thermal_core.h"
+ #include "intel_hfi.h"
+ #include "thermal_interrupt.h"
+ 
++#include "../thermal_netlink.h"
++
+ /* Hardware Feedback Interface MSR configuration bits */
+ #define HW_FEEDBACK_PTR_VALID_BIT		BIT(0)
+ #define HW_FEEDBACK_CONFIG_HFI_ENABLE_BIT	BIT(0)
+diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+index e2429676d0d2..101c75d0e13f 100644
+--- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
++++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+@@ -15,7 +15,6 @@
+ #include <linux/regmap.h>
+ #include <linux/thermal.h>
+ 
+-#include "../thermal_core.h"
+ #include "../thermal_hwmon.h"
+ 
+ #define QPNP_TM_REG_DIG_MAJOR		0x01
+diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+index d111e218f362..431c29c0898a 100644
+--- a/drivers/thermal/qoriq_thermal.c
++++ b/drivers/thermal/qoriq_thermal.c
+@@ -13,7 +13,6 @@
+ #include <linux/thermal.h>
+ #include <linux/units.h>
+ 
+-#include "thermal_core.h"
+ #include "thermal_hwmon.h"
+ 
+ #define SITES_MAX		16
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 4ef927437842..0fd2fd077638 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -17,7 +17,6 @@
+ #include <linux/sys_soc.h>
+ #include <linux/thermal.h>
+ 
+-#include "thermal_core.h"
+ #include "thermal_hwmon.h"
+ 
+ /* Register offsets */
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 37465af59262..527d1eb0663a 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -20,11 +20,10 @@
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/thermal.h>
+ 
+ #include <dt-bindings/thermal/thermal_exynos.h>
+ 
+-#include "../thermal_core.h"
+-
+ /* Exynos generic registers */
+ #define EXYNOS_TMU_REG_TRIMINFO		0x0
+ #define EXYNOS_TMU_REG_CONTROL		0x20
+diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
+index e7834ccc7976..735401958f01 100644
+--- a/drivers/thermal/st/stm_thermal.c
++++ b/drivers/thermal/st/stm_thermal.c
+@@ -19,7 +19,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/thermal.h>
+ 
+-#include "../thermal_core.h"
+ #include "../thermal_hwmon.h"
+ 
+ /* DTS register offsets */
+diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
+index 0ffe37ce7df7..b3218b71b6d9 100644
+--- a/drivers/thermal/tegra/tegra30-tsensor.c
++++ b/drivers/thermal/tegra/tegra30-tsensor.c
+@@ -28,7 +28,6 @@
+ 
+ #include <soc/tegra/fuse.h>
+ 
+-#include "../thermal_core.h"
+ #include "../thermal_hwmon.h"
+ 
+ #define TSENSOR_SENSOR0_CONFIG0				0x0
+diff --git a/drivers/thermal/uniphier_thermal.c b/drivers/thermal/uniphier_thermal.c
+index f8ab2ca76184..47801841b3f5 100644
+--- a/drivers/thermal/uniphier_thermal.c
++++ b/drivers/thermal/uniphier_thermal.c
+@@ -17,8 +17,6 @@
+ #include <linux/regmap.h>
+ #include <linux/thermal.h>
+ 
+-#include "thermal_core.h"
+-
+ /*
+  * block registers
+  * addresses are the offset from .block_base
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.34.1
 
