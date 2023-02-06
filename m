@@ -2,111 +2,140 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77530C636D3
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 08:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9A2C61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 08:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbjBFIJY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Feb 2023 03:09:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41986 "EHLO
+        id S229778AbjBFI44 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Feb 2023 03:56:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjBFIJX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 03:09:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8445665A6;
-        Mon,  6 Feb 2023 00:09:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2756460C7C;
-        Mon,  6 Feb 2023 08:09:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7556AC433D2;
-        Mon,  6 Feb 2023 08:09:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675670961;
-        bh=7To9ndX5DYRSorrgvB+E9BrgmwiQP7ZmPzgErIA/JBQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZOJtPm65eUnxYkUD5jLv1uB5b/01sUtZzEarQIEi7aGVKwKW5sVJzFx4gA5+Fcti5
-         XnJxEGioz4FgaUudU65hpYsgK3r7nmxeshNS+cPH/NqSy9rEJ0BYaNxN8L9tiv7Qhq
-         NyyGeHEdTmj0eZcGJh56PD0t8qEtnMq1rvYHs6E0DSgABHxx2jCy8Pm1evruHzLAxU
-         KPFRyXJfysD4ylCP41hK2gswWzUNFFu5hhVQSiJ7pQkzuLSiFZVGuCQpt6BsYyePD5
-         5/NSMzktrd9WAHwEE+57F/JK0rA7sGck2aKAP5Wot9u5ZDTOjQ8SU8Y/f3DRW6qz1d
-         uXK6K+1CQK4CQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1pOwZS-0003cC-Sy; Mon, 06 Feb 2023 09:09:50 +0100
-Date:   Mon, 6 Feb 2023 09:09:50 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc:     Johan Hovold <johan+linaro@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Alexandre Bailon <abailon@baylibre.com>
-Subject: Re: [PATCH 04/23] interconnect: imx: fix registration race
-Message-ID: <Y+C1zpn3PvRc+6uf@hovoldconsulting.com>
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-5-johan+linaro@kernel.org>
- <20230203170121.187108bd@booty>
+        with ESMTP id S229489AbjBFI4z (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 03:56:55 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE79A4C1E;
+        Mon,  6 Feb 2023 00:56:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NQEllHLbHxEYteM4J+HKtYWwcL1ayFGuS9L/R8uXjKkXAy+gPEvz/ggdbHGJfwbpXnUuKrIKqWntw9RhjHtmK8L5bcG/aSZbnrF7eD97CJf8DZPqXEYvIejx36djrmSH9qDM2iIsJnkfcqh6tGOfiAep/3CGEcMMFN/nUz+6uE0mf5t62esRfFheBmX2/MuMFqI69whdb4Aoo9w5dWWtPppVSyjWbVNZm1/OT93Xy6jt+HYKIjymzTgD1vwKxKzAAdRIMO5qq/MK2bbRNis05CjLMHu0k9KecxynPJ5NOC/rpHJKXUHsSDNwmuyQHVEkY/KVSPNXKcuOEo3r7D4FvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G4O4bPJqfnHMr2he+EqBswZIggkGGIjuL2Ztd1QjCjk=;
+ b=BEoVbRa++RYc6NbUDhjWB0KbH6abWBvuiHRANNofHJ4mtH7UmhJG0br53OVJMk0SKQlCfaehKa0q4/xmmH2eJaLm1zf+Sny828GYw3cNUofT9+xGFtFoVwszXcxbydjvbGwk7Z2YDfj2qPzmNWhHAu4dmd3HFmAdR64aQcKSH/cH4+/ne0WfgSThmFQ1wMv51mNGo6QfUh3EMJbSgAL3KeRcX5X1Z6fo2GetsT/AoT9AyiufKs9Fpmifi6oLz3b4lmMGOm8bDDwA7NUaF6zg3QyMP2OLEOSeEjpbvqCeoDKOvDHNXv7uMZIAX4IiKt/aTJQan7WRyec/vaCahYuOXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G4O4bPJqfnHMr2he+EqBswZIggkGGIjuL2Ztd1QjCjk=;
+ b=OrH/Gy+itQc/X8JmV2AJhSCZ3QEEON+8xQshlPCVwxiqYC8IcVj19j7N0d+ij7YIsQYgCKqPytPInYDxlCR7iknJb9svz0FLPtN4St7NL1N26Af+N/zFsmxqMyRxxCLR6+PZChMpA3GvVE5MYpc2cmOClxTDYz7vuaj7ZJjePO10/3z0gSR7LFxjNMq/B76LAFUHmIp7SavenzIJBCsnhgXDzhRWJ4Amp/RclB1fNu457QtCS+9KHQKlrcnCT8neD0GWGDGR983BH5hTxjLCPMKUNTWh27P4SKbR6jjbbUwqMruf/xoOwgr8sDOUk8gi2E3Z3f74k84aly6ulrYJsw==
+Received: from MW4PR04CA0379.namprd04.prod.outlook.com (2603:10b6:303:81::24)
+ by MW3PR12MB4394.namprd12.prod.outlook.com (2603:10b6:303:54::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.31; Mon, 6 Feb
+ 2023 08:56:52 +0000
+Received: from CO1NAM11FT072.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:81:cafe::5f) by MW4PR04CA0379.outlook.office365.com
+ (2603:10b6:303:81::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.34 via Frontend
+ Transport; Mon, 6 Feb 2023 08:56:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1NAM11FT072.mail.protection.outlook.com (10.13.174.106) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6064.34 via Frontend Transport; Mon, 6 Feb 2023 08:56:51 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 6 Feb 2023
+ 00:56:48 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Mon, 6 Feb 2023 00:56:48 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Mon, 6 Feb 2023 00:56:48 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/134] 5.4.231-rc2 review
+In-Reply-To: <20230204143608.813973353@linuxfoundation.org>
+References: <20230204143608.813973353@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230203170121.187108bd@booty>
+Message-ID: <cd45e983-880d-4261-81d3-52c2f4db4af5@drhqmail201.nvidia.com>
+Date:   Mon, 6 Feb 2023 00:56:48 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT072:EE_|MW3PR12MB4394:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e2b57f7-37d0-44a7-b399-08db082016e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: o4rwz4fq6JZXDTrSVm8wnGKvvsBmkd3h2+bqoOqQm8YfcI2JOBppsqBo3aPP7MMKfy/WO0R6wnkuWx6B8mAM+f9q+Wu9kYX79tILfJqV2qCs8g/5LmcXzKWKxlUdb8FC+YY2P48DK5Zw1BIrmxAaptkr2cW5fOiVmrjCrniTyL3v15MO2en9azXbM2+BovPyy8/eBuq5HM0CoVLJbAiS7w3yy6Xh24nJn4QYhdJHd/H0Gcy/e3rdUUSYSEB9K0bkxwQbEOxzdfeSO3SDbPV0mVVCOUULiFLjfjLtamTMmI3vpb7MxbnVKpSNavYKq6vDbeWoaG372q1rGC74PJQZ73iEgwiJHFVZvlc/Kk5k6FqTUlK4Dh+kMiEulkkj46XYHZ1dg1OnDyXEuavnCehHqDzaDMgslDMPB3fE740e8kfJtEZnmF/EkTehlqM6n4gmxQNPRZMWm5oZ7T1OjWG7Swro1heUGCc8lVamxyKyEuEWJV7w4u7faurLEtr5Q/Y/Xxf4o0Odz1fVSh+yGQpJXJfvaXtwQIYB2/swgKXOKGHqnSK/1zZhge2IM/q4FX/ABSO07DZATKoi7PIBRESt4Tvn5Tj/tlj7500qH0/Ujcsb2+t3eI/AsooRoM97T2H2Ac0svFqNh/1RE7WvTLbhk9D+mcW6At22kA6XexVtJAUH24xnlgYjNDh2Ohu1efKMvMPHozfyGGPIPguX2HDDE3OcNhW7b1Ve8jmIXTamQMFoFXa2SFttIuhGHwf8j6UDuehCgGvM8C4EfT+TsBndvqP8P9pyijr0eSWWtYoGaQo=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(136003)(346002)(396003)(39860400002)(376002)(451199018)(40470700004)(46966006)(36840700001)(31686004)(2906002)(5660300002)(7416002)(426003)(47076005)(36860700001)(41300700001)(8936002)(966005)(478600001)(26005)(186003)(336012)(7636003)(82740400003)(40480700001)(356005)(86362001)(40460700003)(31696002)(6916009)(8676002)(70206006)(316002)(4326008)(70586007)(82310400005)(54906003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2023 08:56:51.8353
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2b57f7-37d0-44a7-b399-08db082016e9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT072.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4394
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Feb 03, 2023 at 05:01:21PM +0100, Luca Ceresoli wrote:
-> Hello Johan,
+On Sat, 04 Feb 2023 15:42:39 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.231 release.
+> There are 134 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Wed,  1 Feb 2023 11:15:40 +0100
-> Johan Hovold <johan+linaro@kernel.org> wrote:
+> Responses should be made by Mon, 06 Feb 2023 14:35:41 +0000.
+> Anything received after that time might be too late.
 > 
-> > The current interconnect provider registration interface is inherently
-> > racy as nodes are not added until the after adding the provider. This
-> > can specifically cause racing DT lookups to fail.
-> > 
-> > Switch to using the new API where the provider is not registered until
-> > after it has been fully initialised.
-> > 
-> > Fixes: f0d8048525d7 ("interconnect: Add imx core driver")
-> > Cc: stable@vger.kernel.org      # 5.8
-> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> > Cc: Alexandre Bailon <abailon@baylibre.com>
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.231-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> Georgi pointed me to this series after I reported a bug yesterday [0],
-> that I found on iMX8MP. So I ran some tests with my original, failing
-> tree, minus one patch with my debugging code to hunt for the bug, plus
-> patches 1-4 of this series.
+> thanks,
 > 
-> The original code was failing approx 5~10% of the times. With your 4
-> patches applied it ran 139 times with zero errors, which looks great! I
-> won't be able to do more testing until next Monday to be extra sure.
+> greg k-h
 
-Thanks for testing.
+All tests passing for Tegra ...
 
-It indeed looks like you're hitting the same race, and as the imx
-interconnect driver also initialises the provider data num_nodes count
-before adding the nodes it results in that NULL-deref (where the qcom
-driver failed a bit more gracefully).
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
-Johan
+Linux version:	5.4.231-rc2-g9d36c855cb4a
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-> [0]
-> https://lore.kernel.org/linux-arm-kernel/20230202175525.3dba79a7@booty/T/#u
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
