@@ -2,77 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4013AC61DA4
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 12:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A2CC05027
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Feb 2023 13:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbjBFMK4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Feb 2023 07:10:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47132 "EHLO
+        id S229759AbjBFNUy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Feb 2023 08:20:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbjBFMKz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 07:10:55 -0500
+        with ESMTP id S229536AbjBFNUh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Feb 2023 08:20:37 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E2E4EF8;
-        Mon,  6 Feb 2023 04:10:54 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD0EF6E93;
+        Mon,  6 Feb 2023 05:19:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 422D260EBC;
-        Mon,  6 Feb 2023 12:10:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED6F3C433D2;
-        Mon,  6 Feb 2023 12:10:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 38CFE60ED1;
+        Mon,  6 Feb 2023 13:19:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D1F2C4339B;
+        Mon,  6 Feb 2023 13:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675685453;
-        bh=MhW4f27C98PgGme9ON5ZgsCE3bB8QMRFivqHw0Wod5E=;
+        s=k20201202; t=1675689550;
+        bh=2saXlK97w5WyWBp0YUX7n3tw1FpuVsWIsWJjLCYY7iA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sniiiH5oHDcUIqxuALv9KJlhS0cJPFwQ3ntn1pYZZX1DmxLjRBzKV9J/XoYkVMg3H
-         RWYDqEfatDv/UBeXAlYQ/jWW6qMbzkAgDTb7Kkl485iVzI/nyCOzBT4FprdqARdivp
-         ucotwMxXWEaY6aDAxjcOWvGFA8kRNH+YPNLi9JP+9z4ZWuqENBm2XjMaUnFo2+mikg
-         5tZZ+6D6TRMbe3W/SEo2fKrZu3WBKdfnA8DehIiMdF1+IWU07URooHpo0BFtDWpnXo
-         YyvS/AZ1IG1pV2gc4DBGU+q4jFP6LGBRbVUvMVMpgtkGcOrPjGv4kNQYquZrhR87oH
-         M+Hmmq9MgwtTg==
-Date:   Mon, 6 Feb 2023 17:40:49 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 12/23] interconnect: qcom: sm8450: fix registration race
-Message-ID: <Y+DuSd1NdWswskyx@matsya>
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-13-johan+linaro@kernel.org>
+        b=i/JTBcx1HvSuzfy9kiR4E+ppPynHRJl6VR28pjn86PRasXMXc+ifp3QJ5rGI6Kig4
+         TFqOpX9UUGjV2KLWUSF9qgNHtHAJUVKk0rH3dOMwaFuMtDv9O5CE6km6YMXjURnwt9
+         z6MpS4jPKQRXcMAv6zhZw2NvD3BcqBFr5ADEk/lKNzG2yp/TRmHaRlMKygcWBlgYko
+         ssuApSzuQKhXuN9AXiHDtRXmMSayla7iuYmefM/mQ/SexWZDbB3vz5BWMIu3h9TJzs
+         XlBppeldaX2sCy9GHJgAxeJokMesQJH0E/xSJTTDFQP9d+drsyGhnyK5terAxjQ9tZ
+         TUHdEOrBZIh4g==
+Date:   Mon, 6 Feb 2023 13:19:04 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     Krishna Yarlagadda <kyarlagadda@nvidia.com>, robh+dt@kernel.org,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jarkko@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com
+Subject: Re: [Patch V2 2/4] tpm: tegra: Support SPI tpm wait state detect
+Message-ID: <Y+D+SHT63awKdC4H@sirena.org.uk>
+References: <20230203130133.32901-1-kyarlagadda@nvidia.com>
+ <20230203130133.32901-3-kyarlagadda@nvidia.com>
+ <d356a20f-629c-a534-7a80-b96d0940056d@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VPK3WbWBcseP0sJC"
 Content-Disposition: inline
-In-Reply-To: <20230201101559.15529-13-johan+linaro@kernel.org>
+In-Reply-To: <d356a20f-629c-a534-7a80-b96d0940056d@molgen.mpg.de>
+X-Cookie: Hope is a waking dream.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 01-02-23, 11:15, Johan Hovold wrote:
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
-> 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+--VPK3WbWBcseP0sJC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-~Vinod
+On Mon, Feb 06, 2023 at 12:02:56PM +0100, Paul Menzel wrote:
+> Am 03.02.23 um 14:01 schrieb Krishna Yarlagadda:
+
+> > +	/* If the SPI device has an IRQ then use that */
+> > +	if (dev->irq > 0)
+> > +		irq = dev->irq;
+> > +	else
+> > +		irq = -1;
+
+> Use ternary operator?
+
+>     irq = dev->irq > 0 ? dev->irq : -1;
+
+No, please write the code using normal conditional instructions.  This
+isn't the IOCCC and the ternery operator is rarely a legibility aid.
+
+--VPK3WbWBcseP0sJC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPg/kcACgkQJNaLcl1U
+h9AGMQf/Wh2xXfFbQOIcvVB8NuEwAdA+/T+Qejo7UuRQlAII246c6s5rHu2KlaWh
+fNVz9+ElmgrkfkOEsB5ptnv8fgJsKY4aJOueP0mLqPcKyPWlXTILkXRLzxEwKUfu
+ZxHjVtzTA8ffxKF5kNm1uklIZoPMPeEVnMzDFXLO4prfN4hRX7YsbT53omOqmj8P
+rejanMUrXQjcVZzvWweuGM7U2rSZnjo5MrJOaKCqZ7rjEUGZjqRHocwlXKvCA/wZ
+e4jI3cCSVoDtjaH5OKcR65/lkgnYhfAKVeM9Ab8Q+oqJTWySJd+jXqw0981ejGNW
+PzVoNfqIxIdVP/VNJuy17+x20tkheA==
+=0C39
+-----END PGP SIGNATURE-----
+
+--VPK3WbWBcseP0sJC--
