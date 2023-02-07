@@ -2,122 +2,82 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE14C636CC
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Feb 2023 15:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2D8C636D3
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Feb 2023 19:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232147AbjBGPdr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Feb 2023 10:33:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41306 "EHLO
+        id S229699AbjBGTT7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Feb 2023 14:19:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232050AbjBGPdq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Feb 2023 10:33:46 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B3630B00
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Feb 2023 07:33:45 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id g6so5961401wrv.1
-        for <linux-tegra@vger.kernel.org>; Tue, 07 Feb 2023 07:33:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PTnY0wGmTO1uqiMJf9qy9bUafhmq6LzH9wwHhH9NEok=;
-        b=xuiCfwYjBYOISV3VyvsuSIpS/9F7mNBcjbuEmnfneAYJ0l8iXURunS/AaF0fnr/8ll
-         QYMtWG4JtV343LYmf5CSEDEY3JnIgsKTkKRdZWJ0q/hsqFT2mLvuHb5BNr4boZ+dzDGX
-         EJ3A7F9jpJuPYVKjTH8wMcrMpv4lg2k4KR7f5gEwJEPF7QWzuh6fbscYqX7dvSlh+5+g
-         HY9euVHuxVs5j4Z9SlFcQ7eB+5iN6VG2+2/plEDlPL4/l+D4Z36olwdG9AqF+6ggN6aq
-         F+YKnUi5Q20oUGHlA9f7Hl+aWqgxjB17JN+C9D5p6zOzZ4VmBwlyHaf/yxsSrix9wYpy
-         6MuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PTnY0wGmTO1uqiMJf9qy9bUafhmq6LzH9wwHhH9NEok=;
-        b=TAP93f8PlNSZPwU94wcfBCCWhjuTO99H1w84oxgNfpT0Elw4bNCtGPzjgWFAKmOHOo
-         UX4OPSmiYLdL8ZFlWFas5hZ/zr5k5naSz7XFIeD4yvBPDPUtDGpWtiYwhrHPdzrVhLq9
-         iEN0Zk+mcDc9uI7NlnAWreergVUqXTlAx4NFsOyM9WICcHOVjluglviUmN28OiRCrY+Z
-         063HJF/QAg1rko0Yy4V4Yk57CMsqbtQReU+sp7CsERpPHf/NW/S1lZvqNkfdVgX+YHqt
-         pJHsn5ymgO/XF0QfWT6Fgtf2Nz9MsDE5eSke9EXfHFNalzampD8iq8qWKONDlZpJA+NA
-         8TTg==
-X-Gm-Message-State: AO0yUKULF6jFyh04d/R0RQZGVouTScfLWqSWkdjzdcu274xJzLpto+b4
-        iXAnicR6BkkWpZmtG8lgTB3ZQw==
-X-Google-Smtp-Source: AK7set/49aX7LC3tNb/jBWKWFYYtSGRExKUvmpYmP8IdPPbiYRpLqUVNC1SO9TRuJd40mrBTJ571Cw==
-X-Received: by 2002:adf:f18a:0:b0:2c3:24f3:8b47 with SMTP id h10-20020adff18a000000b002c324f38b47mr3401668wro.31.1675784024026;
-        Tue, 07 Feb 2023 07:33:44 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id d16-20020adffbd0000000b002c3ea5ebc73sm4908655wrs.101.2023.02.07.07.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 07:33:43 -0800 (PST)
-Message-ID: <f0d58e5b-74df-26cf-592e-302a00d08eee@linaro.org>
-Date:   Tue, 7 Feb 2023 16:33:42 +0100
+        with ESMTP id S229457AbjBGTT7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Feb 2023 14:19:59 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671532798F
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Feb 2023 11:19:54 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pPTVE-0008RO-Dk; Tue, 07 Feb 2023 20:19:40 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pPTV7-003Lv6-9E; Tue, 07 Feb 2023 20:19:34 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pPTV7-001ew5-M9; Tue, 07 Feb 2023 20:19:33 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Geoff Levand <geoff@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     alsa-devel@alsa-project.org, kernel@pengutronix.de,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 0/3] ALSA: core: Make some functions return void
+Date:   Tue,  7 Feb 2023 20:19:04 +0100
+Message-Id: <20230207191907.467756-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 3/3] arm64: tegra: Add Tegra234 pinmux device
-Content-Language: en-US
-To:     Prathamesh Shete <pshete@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linus.walleij@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     smangipudi@nvidia.com
-References: <20230207115617.12088-1-pshete@nvidia.com>
- <20230207115617.12088-3-pshete@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230207115617.12088-3-pshete@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=808; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fiHwx1QeMPt+DsYxhkk7Rh8I9hMhkeRIK9B2EQA/e1o=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBj4qQba27+3E/GrUTCtoY8yibTKJga/4v6pQi9yw9y 8kw05T+JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCY+KkGwAKCRDB/BR4rcrsCSE8B/ kB3nfLGneK7JgKBpkJOKm715kZQQMwmDYOvxE2w1QqfLmP6AizVyYscXzABq7ILR8Xvn+9/h9qV+T3 ijinLE8JYkwqFju+23tc63hZO/R2W2qsf+ktqWxUKhM7dtuCeN4k/rLBlxQosqp3Y2p15xbyVF8C7B o+n6nRReddxVoFQY8y39Ur2YlPP9tVYke+5oTGtDBp2+ZqCWQKShnKAB28Qlz4skEmLHud/nMyZ64n iZU//pEqdZ+gEUZ8QWhYb53qfmyx2vNA0epaqPcjdEx8byNHVz6xvRMNUt/kcj7NIOjfMqAZupVZAY mf7oYTZ0vibp7ftk9H6/st8cosaCe7
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 07/02/2023 12:56, Prathamesh Shete wrote:
-> This change adds pinmux node for Tegra234.
-> 
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> index eaf05ee9acd1..c91b88bc56d1 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> @@ -701,6 +701,13 @@
->  			interrupt-controller;
->  			#gpio-cells = <2>;
->  			gpio-controller;
-> +			gpio-ranges = <&pinmux 0 0 164>;
-> +		};
-> +
-> +		pinmux: pinmux@2430000 {
-> +			compatible = "nvidia,tegra234-pinmux";
-> +			reg = <0x2430000 0x19100>;
-> +			status = "okay";
+Hello,
 
-Why? Anything disabled it?
+while checking in which cases hda_tegra_remove() can return a non-zero value, I
+found that actually cannot happen. This series makes the involved functions
+return void to make this obvious.
 
->  		};
->  
->  		mc: memory-controller@2c00000 {
-> @@ -1664,6 +1671,13 @@
->  			interrupt-controller;
->  			#gpio-cells = <2>;
->  			gpio-controller;
-> +			gpio-range = <&pinmux_aon 0 0 32>;
-> +		};
-> +
-> +		pinmux_aon: pinmux@c300000 {
-> +			compatible = "nvidia,tegra234-pinmux-aon";
-> +			reg = <0xc300000 0x4000>;
-> +			status = "okay";
+This is a preparation for making platform_driver::remove return void, too.
 
-Also why?
+Best regards
+Uwe
 
->  		};
->  
->  		pwm4: pwm@c340000 {
+Uwe Kleine-König (3):
+  ALSA: core: Make snd_card_disconnect() return void
+  ALSA: core: Make snd_card_free_when_closed() return void
+  ALSA: core: Make snd_card_free() return void
 
-Best regards,
-Krzysztof
+ include/sound/core.h      |  6 +++---
+ sound/core/init.c         | 40 ++++++++++++++-------------------------
+ sound/pci/hda/hda_tegra.c |  6 ++----
+ sound/ppc/snd_ps3.c       |  4 +---
+ 4 files changed, 20 insertions(+), 36 deletions(-)
+
+
+base-commit: 05ecb680708a1dbe6554d6fc17e5d9a8a7cb5e6a
+-- 
+2.39.0
 
