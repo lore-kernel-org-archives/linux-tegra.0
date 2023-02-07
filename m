@@ -2,181 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991DFC636CC
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Feb 2023 13:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438C3C636CD
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Feb 2023 14:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232180AbjBGNde (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Feb 2023 08:33:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
+        id S230480AbjBGORu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Feb 2023 09:17:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232235AbjBGNdc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Feb 2023 08:33:32 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D923132503
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Feb 2023 05:33:22 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id ba1so9500711wrb.5
-        for <linux-tegra@vger.kernel.org>; Tue, 07 Feb 2023 05:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Gnj8mx6BQv+P/VZTc2ZRvZ4cPWBzn/d/g1R6N3t1SY=;
-        b=sywB6VKP5uMO4iMwIfYWNewUXqdyUmfAHNyhyo3OrdI4w9hMA/do0JdT6XDgbayfL+
-         hioKOeqNB9gmBTeOJ+GEqRzkacs91bBLXr18APnsVAUBpOFSSsRR/mPgDw2PAZiSngST
-         GHN3F7C6RRw0zyStZrcDu6HUwZTZEJW9//HKZNnFr8pbdBYO0ZeQTSQ1wJUc9qr39WDw
-         RAZprI560qB9/D7SJ2L2mhHzMzvqn4IkElOgb3RhfyiCRKxMOqVm8can1xTMfSUuQzTl
-         3d/Otz4g9TJG3uwzIfUqVNKE0lVe3mXM4bFnaRqiGH/VF2JhF06rxIQG2kcu+KI3CJbC
-         UTcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Gnj8mx6BQv+P/VZTc2ZRvZ4cPWBzn/d/g1R6N3t1SY=;
-        b=mYDc7y7BbQjmyLwfnD77IdG+zLH4wMBEniUapJkcV7V4gBx2CZtJ2PpBRoD9SGDUt4
-         ZG+vqYw7Y0xyRYU0tkSXWghvfcTTzsDNOukbO8+nuFxqmbJaLjZVWFFqzga7Ik7cOyvm
-         7pSqsCU/aKXu1VCboIVzzcUiSRprp5H0Ay3fHET8QtgPKvudRsUlzs5lWe+eS+sOvcAS
-         7LpdM/UbIovSRFbfyCxdPZZpb8sKWEBkzupmK0fEDsm8ZE04CSrKgvdYIjXhyTyFBXzk
-         47+MRLir83uvUCvvK0KncWHKD+euSmxMjf8OxKAqijGTBFZaKxOFc8lXd7NOOGlc5jMf
-         iY5Q==
-X-Gm-Message-State: AO0yUKXKfnMSW5NI1uWWKlR3hfHESGKADbbLRigIxEaYEsjOB9XRRslZ
-        H3kM0IAQhklQjR7pZLeVZ7CGtA==
-X-Google-Smtp-Source: AK7set9tflq7m2WGhWzU48ho/FGtJPjdoU4DUvNTQOyFDfwfzYJ/cgrUGOgVxSNmGa0o1E+FD6YRHA==
-X-Received: by 2002:a05:6000:1b0f:b0:2c3:ea4d:3f01 with SMTP id f15-20020a0560001b0f00b002c3ea4d3f01mr2338118wrz.27.1675776801421;
-        Tue, 07 Feb 2023 05:33:21 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:c58c:fc5c:67d6:e5f3? ([2a01:e0a:982:cbb0:c58c:fc5c:67d6:e5f3])
-        by smtp.gmail.com with ESMTPSA id t1-20020a5d4601000000b002bdfe3aca17sm11241983wrq.51.2023.02.07.05.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 05:33:21 -0800 (PST)
-Message-ID: <e8e983a7-5dac-507d-414e-0fdc1082644a@linaro.org>
-Date:   Tue, 7 Feb 2023 14:33:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        rafael.j.wysocki@intel.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        with ESMTP id S229441AbjBGORu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Feb 2023 09:17:50 -0500
+X-Greylist: delayed 1254 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 07 Feb 2023 06:17:47 PST
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E933C2884A;
+        Tue,  7 Feb 2023 06:17:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Zrg3IByCp0PW4pKucv9m4DlG3g7aMkiLevmwDY/gzvE=; b=Yv381XU684DE4Rs0fSCgJIYiYj
+        3laAxXmTYSWyMYdozopx/SZwY9ye8H4r05BjptXLZDstz13Jt64EHOxhQH8kAuufolwfpyFLx3gwk
+        BMP/M4KDj/3O+5bjybx4oOGz1BBcQNPbO9lLQRUAB24sKL+vutxmYd4Q/PIPa+U572nGOFCbnxa2b
+        A+Zv5rYx9C8njUZ6DaLPs6H2ExlketAqxVD3mOjjhEVkazHiuPnIvkfQ8KJ7ZRp08dnVV1iw0+lvN
+        INHBTZTIeyjTr0wq/LGEWdLwPTZtfwc1KQ8FKNNAXYM3kfCouJxos1jV9CDHO1MN/smeq0G7zySQW
+        wFT4UIAA==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1pPOSV-002qTL-Tk; Tue, 07 Feb 2023 15:56:31 +0200
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Amit Kucheria <amitk@kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Organization: Linaro Developer Services
-In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Srikar Srimath Tirumala <srikars@nvidia.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Timo Alho <talho@nvidia.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] thermal: tegra-bpmp: Always (re)program trip temperatures
+Date:   Tue,  7 Feb 2023 15:56:09 +0200
+Message-Id: <20230207135610.3100865-2-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230207135610.3100865-1-cyndis@kapsi.fi>
+References: <20230207135610.3100865-1-cyndis@kapsi.fi>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 06/02/2023 16:34, Daniel Lezcano wrote:
-> As the name states "thermal_core.h" is the header file for the core
-> components of the thermal framework.
-> 
-> Too many drivers are including it. Hopefully the recent cleanups
-> helped to self encapsulate the code a bit more and prevented the
-> drivers to need this header.
-> 
-> Remove this inclusion in every place where it is possible.
-> 
-> Some other drivers did a confusion with the core header and the one
-> exported in linux/thermal.h. They include the former instead of the
-> latter. The changes also fix this.
-> 
-> The tegra/soctherm driver still remains as it uses an internal
-> function which need to be replaced.
-> 
-> The Intel HFI driver uses the netlink internal framework core and
-> should be changed to prevent to deal with the internals.
-> 
-> No functional changes
-> 
-> [ Applies to thermal/linux-next or linux-pm/linux-next ]
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->   drivers/thermal/amlogic_thermal.c           | 1 -
->   drivers/thermal/armada_thermal.c            | 2 --
->   drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
->   drivers/thermal/hisi_thermal.c              | 3 +--
->   drivers/thermal/imx8mm_thermal.c            | 1 -
->   drivers/thermal/imx_sc_thermal.c            | 1 -
->   drivers/thermal/intel/intel_hfi.c           | 3 ++-
->   drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
->   drivers/thermal/qoriq_thermal.c             | 1 -
->   drivers/thermal/rcar_gen3_thermal.c         | 1 -
->   drivers/thermal/samsung/exynos_tmu.c        | 3 +--
->   drivers/thermal/st/stm_thermal.c            | 1 -
->   drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
->   drivers/thermal/uniphier_thermal.c          | 2 --
->   14 files changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
-> index d30cb791e63c..9235fda4ec1e 100644
-> --- a/drivers/thermal/amlogic_thermal.c
-> +++ b/drivers/thermal/amlogic_thermal.c
-> @@ -28,7 +28,6 @@
->   #include <linux/regmap.h>
->   #include <linux/thermal.h>
->   
-> -#include "thermal_core.h"
->   #include "thermal_hwmon.h"
->   
->   #define TSENSOR_CFG_REG1			0x4
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-For Amlogic:
+In the rare case that calculation of trip temperatures would result
+in the same trip temperatures that were previously programmed, the
+thermal core skips calling .set_trips. However, presently, if it is
+not called, we may end up with no trip temperatures programmed at all.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+To avoid this, make set_trips a no-op and in places where it would be
+called, instead unconditionally program trip temperatures to the last
+specified temperatures.
 
-<snip>
+This also fixes the situation where a trip is triggered between
+registering a thermal zone and registering the trip MRQ handler, in
+which case we would also get stuck.
+
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/thermal/tegra/tegra-bpmp-thermal.c | 33 +++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/thermal/tegra/tegra-bpmp-thermal.c b/drivers/thermal/tegra/tegra-bpmp-thermal.c
+index 628b18818ae9..9f69dbe1c7d4 100644
+--- a/drivers/thermal/tegra/tegra-bpmp-thermal.c
++++ b/drivers/thermal/tegra/tegra-bpmp-thermal.c
+@@ -67,9 +67,8 @@ static int tegra_bpmp_thermal_get_temp(struct thermal_zone_device *tz, int *out_
+ 	return __tegra_bpmp_thermal_get_temp(tz->devdata, out_temp);
+ }
+ 
+-static int tegra_bpmp_thermal_set_trips(struct thermal_zone_device *tz, int low, int high)
++static int tegra_bpmp_thermal_program_trips(struct tegra_bpmp_thermal_zone *zone)
+ {
+-	struct tegra_bpmp_thermal_zone *zone = tz->devdata;
+ 	struct mrq_thermal_host_to_bpmp_request req;
+ 	struct tegra_bpmp_message msg;
+ 	int err;
+@@ -78,8 +77,10 @@ static int tegra_bpmp_thermal_set_trips(struct thermal_zone_device *tz, int low,
+ 	req.type = CMD_THERMAL_SET_TRIP;
+ 	req.set_trip.zone = zone->idx;
+ 	req.set_trip.enabled = true;
+-	req.set_trip.low = low;
+-	req.set_trip.high = high;
++	mutex_lock(&zone->tzd->lock);
++	req.set_trip.low = zone->tzd->prev_low_trip;
++	req.set_trip.high = zone->tzd->prev_high_trip;
++	mutex_unlock(&zone->tzd->lock);
+ 
+ 	memset(&msg, 0, sizeof(msg));
+ 	msg.mrq = MRQ_THERMAL;
+@@ -95,14 +96,31 @@ static int tegra_bpmp_thermal_set_trips(struct thermal_zone_device *tz, int low,
+ 	return 0;
+ }
+ 
++static int tegra_bpmp_thermal_set_trips(struct thermal_zone_device *tz, int low, int high)
++{
++	return 0;
++}
++
+ static void tz_device_update_work_fn(struct work_struct *work)
+ {
+ 	struct tegra_bpmp_thermal_zone *zone;
++	int err;
+ 
+ 	zone = container_of(work, struct tegra_bpmp_thermal_zone,
+ 			    tz_device_update_work);
+ 
++	/* Recalculates trip temperatures. */
+ 	thermal_zone_device_update(zone->tzd, THERMAL_TRIP_VIOLATED);
++
++	/*
++	 * Program trip temperatures. We must do this outside `set_trips`
++	 * since thermal core may skip calling it if the trip temperatures
++	 * are unchanged.
++	 */
++	err = tegra_bpmp_thermal_program_trips(zone);
++	if (err)
++		dev_err(zone->tegra->dev, "failed to update trip temperatures for zone '%s': %d\n",
++			zone->tzd->type, err);
+ }
+ 
+ static void bpmp_mrq_thermal(unsigned int mrq, struct tegra_bpmp_channel *ch,
+@@ -293,6 +311,13 @@ static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	for (i = 0; i < tegra->num_zones; i++) {
++		err = tegra_bpmp_thermal_program_trips(tegra->zones[i]);
++		if (err)
++			dev_err(&pdev->dev, "failed to set trip temperatures for zone '%s': %d\n",
++				tzd->type, err);
++	}
++
+ 	platform_set_drvdata(pdev, tegra);
+ 
+ 	return 0;
+-- 
+2.39.0
 
