@@ -2,181 +2,181 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE25C636CC
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Feb 2023 12:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991DFC636CC
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Feb 2023 13:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231857AbjBGMiX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Feb 2023 07:38:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59412 "EHLO
+        id S232180AbjBGNde (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Feb 2023 08:33:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231428AbjBGMiV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Feb 2023 07:38:21 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4000D37F00
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Feb 2023 04:38:12 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id bg5-20020a05600c3c8500b003e00c739ce4so2695970wmb.5
-        for <linux-tegra@vger.kernel.org>; Tue, 07 Feb 2023 04:38:12 -0800 (PST)
+        with ESMTP id S232235AbjBGNdc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Feb 2023 08:33:32 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D923132503
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Feb 2023 05:33:22 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id ba1so9500711wrb.5
+        for <linux-tegra@vger.kernel.org>; Tue, 07 Feb 2023 05:33:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bjX43tPjyQgYMIRsVphYkIRYTqv2MGWOxukjyWTB4L8=;
-        b=wpvxuIA72wU5YS0siGtDxNL1lJp9lNrW8KPE3vGxzO3S0dHhFT92GO/6SaI3o9PGUa
-         uvomvti6QjRle4rVnMOSDoLbov8500sL7woPD250Es9WrSIeMc3GFWYc8lxjSmUilnVS
-         6//5UNqvwr1OGB+J2pOqiuMwHhH2WLJI2wFjNjJyfNX9aRQbMli2MjRMDEZUFuZJi6ZX
-         G8aWfZVyWAWyoyZe7tODmJJImH4atT+UtyRfBZbDddYuhTJaspcQnSnT4xJ7EdewWtOJ
-         bjYxLMf7VRjrhf5EfT7qg3feIwKJmK6uy7ZZw0+4vdN//pgrYugv/h2kT7IVhKtQP9ub
-         y5Gg==
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:reply-to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Gnj8mx6BQv+P/VZTc2ZRvZ4cPWBzn/d/g1R6N3t1SY=;
+        b=sywB6VKP5uMO4iMwIfYWNewUXqdyUmfAHNyhyo3OrdI4w9hMA/do0JdT6XDgbayfL+
+         hioKOeqNB9gmBTeOJ+GEqRzkacs91bBLXr18APnsVAUBpOFSSsRR/mPgDw2PAZiSngST
+         GHN3F7C6RRw0zyStZrcDu6HUwZTZEJW9//HKZNnFr8pbdBYO0ZeQTSQ1wJUc9qr39WDw
+         RAZprI560qB9/D7SJ2L2mhHzMzvqn4IkElOgb3RhfyiCRKxMOqVm8can1xTMfSUuQzTl
+         3d/Otz4g9TJG3uwzIfUqVNKE0lVe3mXM4bFnaRqiGH/VF2JhF06rxIQG2kcu+KI3CJbC
+         UTcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjX43tPjyQgYMIRsVphYkIRYTqv2MGWOxukjyWTB4L8=;
-        b=a7a6e29+akYBjSyO8TzroIs0d5ZZU6m+O00rQElJX0mJzK+ocS7gBVraSs8N2fu40v
-         dlnGaV+0/43xGpqX99zqzYlyR60z80s/GOLKg/tPP4meE469SNX0prrVV/wKfdhntQl6
-         FCSCK+jashQ6P4E3OrlyXCfUo34R8tC9iKog1o341Yzq832X85HsDCxVpKg9tNJx04Zm
-         4Mmea88ZZNbBBAW77duBfViLbHiBRFXY6Gro1tuCdj39P9ry+HrlemKCW3O3oRJ4aozf
-         apx6Yvb735ZeJO4Z2o+E7dSMUCvfa94IoNfiOIJXAA7vqoO4IJDIzuLt1yg+hM56QNaN
-         sykw==
-X-Gm-Message-State: AO0yUKWarOKPwhUsqyqdTUrrCtTTChUHlxCOWMuRJtoEKd6BkjF/Ovbl
-        jrLAFfO0N3ZZ3ho3MKmkzCjCnA==
-X-Google-Smtp-Source: AK7set91MeFt34cNHdf9bwLSKaNBRcpXcERwWPWBekKD/X2PJ4CC+RRoFHQ4aMVVG374EGFMb1jvPA==
-X-Received: by 2002:a05:600c:1613:b0:3df:b5ae:5289 with SMTP id m19-20020a05600c161300b003dfb5ae5289mr2925734wmn.8.1675773490627;
-        Tue, 07 Feb 2023 04:38:10 -0800 (PST)
-Received: from [172.17.59.64] (wifi-eduroam-trans.univ-tlse3.fr. [195.220.58.237])
-        by smtp.googlemail.com with ESMTPSA id s15-20020a05600c45cf00b003e00c453447sm3512080wmo.48.2023.02.07.04.38.08
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:reply-to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Gnj8mx6BQv+P/VZTc2ZRvZ4cPWBzn/d/g1R6N3t1SY=;
+        b=mYDc7y7BbQjmyLwfnD77IdG+zLH4wMBEniUapJkcV7V4gBx2CZtJ2PpBRoD9SGDUt4
+         ZG+vqYw7Y0xyRYU0tkSXWghvfcTTzsDNOukbO8+nuFxqmbJaLjZVWFFqzga7Ik7cOyvm
+         7pSqsCU/aKXu1VCboIVzzcUiSRprp5H0Ay3fHET8QtgPKvudRsUlzs5lWe+eS+sOvcAS
+         7LpdM/UbIovSRFbfyCxdPZZpb8sKWEBkzupmK0fEDsm8ZE04CSrKgvdYIjXhyTyFBXzk
+         47+MRLir83uvUCvvK0KncWHKD+euSmxMjf8OxKAqijGTBFZaKxOFc8lXd7NOOGlc5jMf
+         iY5Q==
+X-Gm-Message-State: AO0yUKXKfnMSW5NI1uWWKlR3hfHESGKADbbLRigIxEaYEsjOB9XRRslZ
+        H3kM0IAQhklQjR7pZLeVZ7CGtA==
+X-Google-Smtp-Source: AK7set9tflq7m2WGhWzU48ho/FGtJPjdoU4DUvNTQOyFDfwfzYJ/cgrUGOgVxSNmGa0o1E+FD6YRHA==
+X-Received: by 2002:a05:6000:1b0f:b0:2c3:ea4d:3f01 with SMTP id f15-20020a0560001b0f00b002c3ea4d3f01mr2338118wrz.27.1675776801421;
+        Tue, 07 Feb 2023 05:33:21 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:c58c:fc5c:67d6:e5f3? ([2a01:e0a:982:cbb0:c58c:fc5c:67d6:e5f3])
+        by smtp.gmail.com with ESMTPSA id t1-20020a5d4601000000b002bdfe3aca17sm11241983wrq.51.2023.02.07.05.33.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 04:38:10 -0800 (PST)
-Message-ID: <e6b4c6a9-0e35-e3b2-c8e8-01e5326bdba1@linaro.org>
-Date:   Tue, 7 Feb 2023 13:38:08 +0100
+        Tue, 07 Feb 2023 05:33:21 -0800 (PST)
+Message-ID: <e8e983a7-5dac-507d-414e-0fdc1082644a@linaro.org>
+Date:   Tue, 7 Feb 2023 14:33:19 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
- usage
+ Thunderbird/102.7.1
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
 Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Johan Hovold <johan@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
- <Y9J4WAFyXyV/nqlG@orome> <f626967e-d6e6-817f-abeb-4aed89856c66@linaro.org>
- <Y+JBk5g65WkOkke7@orome>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <Y+JBk5g65WkOkke7@orome>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        rafael.j.wysocki@intel.com
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Organization: Linaro Developer Services
+In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 07/02/2023 13:18, Thierry Reding wrote:
-> On Mon, Feb 06, 2023 at 03:50:22PM +0100, Daniel Lezcano wrote:
->>
->> Hi Thierry,
->>
->> did you have the time to look at the get_thermal_instance() removal ?
->>
->>
->> On 26/01/2023 13:55, Thierry Reding wrote:
->>
->>> 	[   12.354091] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
->>> 	[   12.379009] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
->>> 	[   12.388882] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
->>> 	[   12.401007] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
->>> 	[   12.471041] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
->>> 	[   12.482852] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
->>> 	[   12.482860] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
->>> 	[   12.485357] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
->>> 	[   12.501774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
->>>
->>> and after these changes, it turns into:
->>>
->>> 	[   12.447113] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
->>> 	[   12.472300] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
->>> 	[   12.481789] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
->>> 	[   12.495447] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
->>> 	[   12.496514] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
->>> 	[   12.510353] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
->>> 	[   12.526856] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
->>> 	[   12.528774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
->>> 	[   12.569352] tegra_soctherm 700e2000.thermal-sensor: programming throttle for pll to 103000
->>> 	[   12.577635] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when pll reaches 103000 mC
->>> 	[   12.590952] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
->>> 	[   12.600783] tegra_soctherm 700e2000.thermal-sensor: programming throttle for mem to 103000
->>> 	[   12.609204] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when mem reaches 103000 mC
->>>
->>> The "programming throttle ..." messages are something I've added locally
->>> to trace what gets called. So it looks like for "pll" and "mem" thermal
->>> zones, we now program trip points whereas we previously didn't.
+On 06/02/2023 16:34, Daniel Lezcano wrote:
+> As the name states "thermal_core.h" is the header file for the core
+> components of the thermal framework.
 > 
-> My diagnosis above wasn't entirely correct. We're not actually skipping
-> trip point programming for PLL and MEM thermal zones in the current
-> code. Instead, we skip throttle programming. As far as I can tell this
-> is a mechanism built into ACTMON to allow it to automatically throttle
-> when a zone reaches a certain temperature.
+> Too many drivers are including it. Hopefully the recent cleanups
+> helped to self encapsulate the code a bit more and prevented the
+> drivers to need this header.
 > 
-> This is modelled as a cooling device, but internally it's actually done
-> automatically, which is why we have this code that programs the throttle
-> at driver probe time, rather than the on-demand programming that typical
-> cooling device would do (such as a fan).
+> Remove this inclusion in every place where it is possible.
 > 
-> The reason why we have get_thermal_instance() here is to check if this
-> built-in cooling device has been configured for the "hot" trip point. If
-> not, we don't want the throttle programming to happen. This adds the
-> added flexibility of explicitly disabling the automatic throttling by
-> ACTMON and using another cooling device (or none at all) if that's what
-> is needed.
+> Some other drivers did a confusion with the core header and the one
+> exported in linux/thermal.h. They include the former instead of the
+> latter. The changes also fix this.
 > 
-> Dropping just the call to get_thermal_instance() and relying on the
-> find_throttle_cfg_by_name() function will always return a valid throttle
-> configuration. This is slightly obfuscated because of this:
+> The tegra/soctherm driver still remains as it uses an internal
+> function which need to be replaced.
 > 
-> 	cdev = ts->throt_cfgs[i].cdev;
-> 	if (get_thermal_instance(tz, cdev, trip_id))
-> 		stc = find_throttle_cfg_by_name(ts, cdev->type);
+> The Intel HFI driver uses the netlink internal framework core and
+> should be changed to prevent to deal with the internals.
 > 
-> As far as I can tell this will always return &ts->throt_cfgs[i], so the
-> find_throttle_cfg_by_name() call is a bit redundant here. I'll look into
-> fixing that.
+> No functional changes
 > 
-> In any case, the important thing is that it would always find a valid
-> throttle configuration and therefore program the throttle, even if we
-> may not want to.
+> [ Applies to thermal/linux-next or linux-pm/linux-next ]
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>   drivers/thermal/amlogic_thermal.c           | 1 -
+>   drivers/thermal/armada_thermal.c            | 2 --
+>   drivers/thermal/broadcom/bcm2835_thermal.c  | 1 -
+>   drivers/thermal/hisi_thermal.c              | 3 +--
+>   drivers/thermal/imx8mm_thermal.c            | 1 -
+>   drivers/thermal/imx_sc_thermal.c            | 1 -
+>   drivers/thermal/intel/intel_hfi.c           | 3 ++-
+>   drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
+>   drivers/thermal/qoriq_thermal.c             | 1 -
+>   drivers/thermal/rcar_gen3_thermal.c         | 1 -
+>   drivers/thermal/samsung/exynos_tmu.c        | 3 +--
+>   drivers/thermal/st/stm_thermal.c            | 1 -
+>   drivers/thermal/tegra/tegra30-tsensor.c     | 1 -
+>   drivers/thermal/uniphier_thermal.c          | 2 --
+>   14 files changed, 4 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
+> index d30cb791e63c..9235fda4ec1e 100644
+> --- a/drivers/thermal/amlogic_thermal.c
+> +++ b/drivers/thermal/amlogic_thermal.c
+> @@ -28,7 +28,6 @@
+>   #include <linux/regmap.h>
+>   #include <linux/thermal.h>
+>   
+> -#include "thermal_core.h"
+>   #include "thermal_hwmon.h"
+>   
+>   #define TSENSOR_CFG_REG1			0x4
 
-Why not rely on the thermal framework mechanism to set the hwtrpis ?
+For Amlogic:
 
-thermal_zone_device_register() calls thermal_zone_device_update(). This 
-one calls thermal_zone_set_trips() which programs the hardware trip point.
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-When we suspend/resume, the PM notifiers are calling 
-thermal_zone_device_update() which in turn sets the hw trip points.
-
-May be I'm missing something but isn't enough for the sensor ?
-
-
-> Possibly we could work around that by removing this fiddly special case
-> and instead add a new callback for the cooling devices that can be run
-> when they are bound to a thermal zone. This would allow the throttle
-> programming to be initiated from within the thermal core rather than
-> "bolted on" like it is now and should allow us to achieve the same
-> effect but without calling into get_thermal_instance().
-> 
-> I'll try and prototype this, but feel free to suggest anything better if
-> you can think of something.
-> 
-> Thierry
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+<snip>
 
