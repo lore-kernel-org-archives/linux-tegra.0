@@ -2,172 +2,160 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7225C636CC
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 16:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE64DC64EC5
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 17:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbjBHQOK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Feb 2023 11:14:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57784 "EHLO
+        id S232041AbjBHReT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Feb 2023 12:34:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230262AbjBHQOK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 11:14:10 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B30FB4A206;
-        Wed,  8 Feb 2023 08:14:08 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id gr7so52403096ejb.5;
-        Wed, 08 Feb 2023 08:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rYG5PD7dbKaNKYs/ubsHHBhPjaWtLkpK6btkRG/jkM0=;
-        b=DDMt3dOpyFyyVI2WTGlfQaz9N/WCY+1lI2SHnzeIfeSAiqqYzxl01kZpB5DNCcLseA
-         TisUEkz6tjW7a0g1spZmcZ/EX2/H+UYbf20Is589WqAa9jxVTNeeAVvsrRFHmpmE0v5p
-         R6S0BqRzHQTz9Uc1Q10rUSdDgT9hVJLoCXdWBzAdwibk2mrkWSzNeIwzKwKa/K90qt6n
-         /OTkIzTZigzwU2aTkFfUitHrsqlScuZ86RWaZNWuRHQXiicbDAGjWrAAThi7xMH/IDTN
-         Jud1flYcNi3gGuvnTrb9BvWkrD/EPmYFvPGMCxT+ktCjK9fWhNHVIdCIfDARDR7OON85
-         7RHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rYG5PD7dbKaNKYs/ubsHHBhPjaWtLkpK6btkRG/jkM0=;
-        b=pWhp686Qp2M4KcAtvN8nBRV+4xYxqps6/1FdWN+ooX+hwBaY2sg16msN8ayuXHjebW
-         m25cnDtS28zWqHcO3q5urnTM+5wbCvTHXINwn1I8LJ+sTWkCJoJSmMwg2LHOeT9TA8AS
-         ++c4y3VGjBknVJxamu7aW2G78ly+is5K4gPlWyLYETCFk5OpKmMgkhvC25jx/1rJZZto
-         3VlMszmJ4DBHZcZuf9VGVG7LDKcHqxBhKSzzdHDSV9Qj/M/yX16NStUWmiBp+2Yn4el4
-         C/alIWLxw1KCrsW5rKjONVV0pgzlkIzz6MPkOt1s/iPk0LdPP4bZmh1NDTkQxwsXF/PB
-         +Blg==
-X-Gm-Message-State: AO0yUKXVc7iqL9wc2w1WBiiIb+EKN2F2WgMI+6V1ECHZTlNiwSAZF81r
-        6nz9KNGEpD0cI9PYoJMmXhc=
-X-Google-Smtp-Source: AK7set+401vwRKb0yki0/knYX8QgRvAvUQe8tTdDwJhTuerst/mRXgHfimD/UV/0cGJBD4kB1q9diA==
-X-Received: by 2002:a17:906:ca0f:b0:8a6:93a4:c897 with SMTP id jt15-20020a170906ca0f00b008a693a4c897mr8841126ejb.33.1675872847254;
-        Wed, 08 Feb 2023 08:14:07 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b21-20020a170906195500b008779b5c7db6sm8448605eje.107.2023.02.08.08.14.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 08:14:06 -0800 (PST)
-Date:   Wed, 8 Feb 2023 17:14:04 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc:     bhelgaas@google.com, petlozup@nvidia.com,
-        rafael.j.wysocki@intel.com, lpieralisi@kernel.org, robh@kernel.org,
-        jeffy.chen@rock-chips.com, krzysztof.kozlowski+dt@linaro.org,
-        jonathanh@nvidia.com, dmitry.osipenko@collabora.com,
-        viresh.kumar@linaro.org, gregkh@linuxfoundation.org,
-        steven.price@arm.com, kw@linux.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        vidyas@nvidia.com
-Subject: Re: [RFC,v14 4/5] arm64: tegra: Add PCIe port node with PCIe WAKE#
- for C1 controller
-Message-ID: <Y+PKTNEAuPHBdwqX@orome>
-References: <20230208111645.3863534-1-mmaddireddy@nvidia.com>
- <20230208111645.3863534-5-mmaddireddy@nvidia.com>
- <Y+OJaGY6mcxM0JOF@orome>
- <1b24e9f5-539a-dd0f-6485-5dbf3757ef27@nvidia.com>
+        with ESMTP id S231912AbjBHReF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 12:34:05 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E26F485B7;
+        Wed,  8 Feb 2023 09:34:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675877642; x=1707413642;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=4IQLDrOahYJ8lFlzrwNEYRM9qJTE1X0tQcaYGhsJEHc=;
+  b=G2Ko6LLEX419EYXpdWaN8RhlyDnSogCqqhneGWnR2JAwN2RFyqDNHUDI
+   rN1ajcGYE5yfWTt6trWdCVWJm28p3xUt1m0UBsEjsElQw3NJfoDXbaTpT
+   w0zI3lhnm2+j6yUlWucFcTZ345Hh6o1MJpOzb1WXVDPb0gQPgsrncN6j6
+   GlzouI9RtGDe+qv280oaHs/fRMoI9HLhgnuA6D+aK5IOfYVKq7boyu4Zz
+   by00KfscW3lKUEvpUVH7SOfU9HzS168qOVBtfWT/RPqVLlNHNCHpImf7I
+   AQR2TlKJvvFWDFLulGgORzUDErVCruG+g+ORPef1JRE9RcJNtyrf5jhhD
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="310225303"
+X-IronPort-AV: E=Sophos;i="5.97,281,1669104000"; 
+   d="scan'208";a="310225303"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2023 09:33:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="697722979"
+X-IronPort-AV: E=Sophos;i="5.97,281,1669104000"; 
+   d="scan'208";a="697722979"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 08 Feb 2023 09:33:15 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 9FC47210; Wed,  8 Feb 2023 19:33:47 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Michael Walle <michael@walle.cc>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>,
+        Russell King <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH v4 03/18] hte: tegra-194: Use proper includes
+Date:   Wed,  8 Feb 2023 19:33:28 +0200
+Message-Id: <20230208173343.37582-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
+References: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/k1dyoR/zukO1rxq"
-Content-Disposition: inline
-In-Reply-To: <1b24e9f5-539a-dd0f-6485-5dbf3757ef27@nvidia.com>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Linus Walleij <linus.walleij@linaro.org>
 
---/k1dyoR/zukO1rxq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The test driver uses the gpiod consumer API so include the right
+<linux/gpio/consumer.h> header. This may cause a problem with
+struct of_device_id being implcitly pulled in by the legacy
+header <linux/gpio.h> so include <linux/mod_devicetable.h>
+explicitly as well.
 
-On Wed, Feb 08, 2023 at 05:43:35PM +0530, Manikanta Maddireddy wrote:
->=20
-> On 2/8/2023 5:07 PM, Thierry Reding wrote:
-> > On Wed, Feb 08, 2023 at 04:46:44PM +0530, Manikanta Maddireddy wrote:
-> > > Add PCIe port node under the PCIe controller-1 device tree node to su=
-pport
-> > > PCIe WAKE# interrupt for WiFi.
-> > >=20
-> > > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> > > ---
-> > >=20
-> > > Changes in v14:
-> > > New patch in the series to support PCIe WAKE# in NVIDIA Jetson AGX Or=
-in.
-> > >=20
-> > >   .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts     | 11 ++++++++=
-+++
-> > >   1 file changed, 11 insertions(+)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-000=
-0.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-> > > index 8a9747855d6b..9c89be263141 100644
-> > > --- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-> > > +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-> > > @@ -2147,6 +2147,17 @@ pcie@14100000 {
-> > >   			phys =3D <&p2u_hsio_3>;
-> > >   			phy-names =3D "p2u-0";
-> > > +
-> > > +			pci@0,0 {
-> > > +				reg =3D <0x0000 0 0 0 0>;
-> > > +				#address-cells =3D <3>;
-> > > +				#size-cells =3D <2>;
-> > > +				ranges;
-> > > +
-> > > +				interrupt-parent =3D <&gpio>;
-> > > +				interrupts =3D <TEGRA234_MAIN_GPIO(L, 2) IRQ_TYPE_LEVEL_LOW>;
-> > > +				interrupt-names =3D "wakeup";
-> > > +			};
-> > Don't we need to wire this to the PMC interrupt controller and the wake
-> > event corresponding to the L2 GPIO? Otherwise none of the wake logic in
-> > PMC will get invoked.
-> >=20
-> > Thierry
-> PCIe wake is gpio based not pmc, only wake support is provided by PMC
-> controller.
-> I verified this patch and able to wake up Tegra from suspend.
-> Petlozu, correct me if my understanding is wrong.
+While at it, drop explicit moduleparam.h (it's included with module.h)
+and sort the headers.
 
-The way that this usually works is that you need to use something like
-this:
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/hte/hte-tegra194-test.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-	interrupt-parent =3D <&pmc>;
-	interrupts =3D <1 IRQ_TYPE_LEVEL_LOW>;
-	interrupt-names =3D "wakeup";
+diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
+index 5d776a185bd6..358d4a10c6a1 100644
+--- a/drivers/hte/hte-tegra194-test.c
++++ b/drivers/hte/hte-tegra194-test.c
+@@ -6,14 +6,14 @@
+  */
+ 
+ #include <linux/err.h>
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
++#include <linux/gpio/consumer.h>
++#include <linux/hte.h>
+ #include <linux/interrupt.h>
+-#include <linux/gpio.h>
+-#include <linux/timer.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/timer.h>
+ #include <linux/workqueue.h>
+-#include <linux/hte.h>
+ 
+ /*
+  * This sample HTE GPIO test driver demonstrates HTE API usage by enabling
+-- 
+2.39.1
 
-This will then cause the PMC's interrupt chip callbacks to setup all the
-wake-related interrupts and use the internal wake event tables to
-forward the GPIO/IRQ corresponding to the PMC wake event to the GPIO
-controller or GIC, respectively.
-
-If you use &gpio as the interrupt parent, none of the PMC logic will be
-invoked, so unless this is somehow set up correctly by default, the PMC
-wouldn't be able to wake up the system.
-
-Thierry
-
---/k1dyoR/zukO1rxq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPjykwACgkQ3SOs138+
-s6HZGA//TdSXsFLTgVmkZ6PXU0yOasPm2tuDlJGey7FwCCVqzKyQ/dbdqrnfl/Vj
-JRcbXKKomD+oVLvRepvBSVk5HfDeL60Kf4N4iyectGJ+31UjRLMucnM/YMqgOoi2
-yQPfcd8B9rJ5l1R9nVlLlP8jfLGusaUixSvdC2TaqsNzJmmtPaCgD3UXcHEMMI00
-wrsVdK0TinpV7EqD93j9crNZkGoXl+8qjczoHeMLzf5XRac+ff6Js9120FJAfAbq
-y5BPEYRsIyDDVG/iYz55t8YoS2xR4Hc5gcPR/euxwFk6QrnN0CnuULhWO4Ihfa66
-h/NYwuBt477NY0Za/EbH/X1w3k7TzFUSxch1wkIhMirQYWrwDptcgg5T1C46sw0r
-LHi1F553vy7QIjprEKLzpT9iEyjfzqRsNvXttNONXZK3zA83CMGaatqSK8UYcOxx
-8i7t8E9ZKzOzattJ0X7hXrfGsRfE5hJP7HmQql91RPoOcHxFA2WWWKWYQoE3/Qp5
-qHl0tQQB8qtMmg//kzrxoC2s4557786dRjcATnkOt4NbrniHTdSDTWe+7WjFT+sU
-Mj7FVyIrnrbfj9qSngbZVmzwvaqysxPYfLWXZ/kBSdRiZ2WSWF7dQs32hVn0TsLK
-0i1WObI5YyF/sSl+uxbfXoPea5Pc61EelCRKdeQXzLtU+RYyMj0=
-=P8ai
------END PGP SIGNATURE-----
-
---/k1dyoR/zukO1rxq--
