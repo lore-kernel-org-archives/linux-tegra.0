@@ -2,216 +2,148 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DE7C636CC
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 11:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8F1C636CC
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 11:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbjBHLvE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Feb 2023 06:51:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42096 "EHLO
+        id S231208AbjBHL54 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Feb 2023 06:57:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230360AbjBHLvD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 06:51:03 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2732F49038;
-        Wed,  8 Feb 2023 03:51:00 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id fi26so20054665edb.7;
-        Wed, 08 Feb 2023 03:51:00 -0800 (PST)
+        with ESMTP id S230379AbjBHL5z (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 06:57:55 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780AE4900B
+        for <linux-tegra@vger.kernel.org>; Wed,  8 Feb 2023 03:57:53 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id j32-20020a05600c1c2000b003dc4fd6e61dso1249027wms.5
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Feb 2023 03:57:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VpzLHah2ZL4c5hmmwr1CJtR3jb4Zb36OkgfZKd35lY4=;
-        b=RkVmwtEhaN7N5woOejLRThyE/j23ltCWLsvZ0Na/roneLm0C+KY2q3ke9VAsMJSbcN
-         fIwCf2rEoZQOUnbMK0SusHW+qzHDkE61Gvas6LchiTNkftVlV5X3f2AbXDrf//jbZ9Jk
-         MDFzwowVoWFalfFFtBXNiuA969ATZU2nmKjnTVDveaJ39EleF2zUGEgc0HosDqxwvZtg
-         2XhPcA0Ple80nC9J+pCRTj9EHEMxARKD9MVtyUjhHoPaa65u9kYd4CPS0iz3NEqLm+sO
-         kpO9gmoNCtWqhLKQOjsfl6BaqvOTePAFHtmdXbaeFLxbikD90sFPG2L5ThC3AOTEjQEV
-         GrYQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Os5EeAhOwAZRzentDp9ToOzfsCfsH4W7jIuEYSHVgak=;
+        b=y0KiKEAwymREB5G/oHcJbBjDEJTOmrJHi6PAYsrniCHSA8HuQ6Hgn660IKAQhdPKag
+         wsIHNpH1I9ybpgaFbHTqNWDCne0XkDM9IAqrv2toi9mc1vroSeQwML80fHgjIcPHuQb9
+         lVRLnuofn0LZAaxho0ebZDd1AWIjanb/qRmSCKF8MYakyPy9cTPVteIJbwfrX1xzJFT2
+         ZL5JIoMe6JFHMedH6McYBF17gCmOfvk8kG1LMEIQ766wS/Hyus31/3RZ85CjC7gXIEzJ
+         OfIFJ7Wfcx7lsk17BOv7No9/0m/edxLCw88rKhmrbKA6IUpdZO34VqiS89HT7em86dZR
+         8NBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VpzLHah2ZL4c5hmmwr1CJtR3jb4Zb36OkgfZKd35lY4=;
-        b=g6gcahPBICevUBYiV8bDpDs9ub5MdtE+QIKwfbEr67w4/sN9Ia1lDMSAgt3yGmcE9H
-         3JiGpyDnAKWdQvVAGRe8phx60+GbsVfXcMr87kT6UjlVtyrXQ/K/YsZBrGgBiEZ+1EIS
-         xpCM+z3/QtnMV2ryFYaPDFBbeKQ7YJU+yJMT9JSLf7kcA8FpvvgTBS8g1ijaAnnF54dD
-         xmxL4jkvOIm+8gAARCVB4XUDvbgi9VLehqXVhSQZiD7qWzo/b/wX/rBAlBu2mIZg7qi/
-         u08+WIyZDxOzRya9iCjtzHvfydxfOyDR7DoyVpqpgIOgBsAGKzmxUs5F10ifXxstf141
-         LTLA==
-X-Gm-Message-State: AO0yUKX68ZyHh0qcdwTbeO6sxva4CFiCmJ+Q4/PphDVmPS9h3o6BnsTH
-        F1V6+gAyz+8PRcWKjpIp8Sc=
-X-Google-Smtp-Source: AK7set9T3VrnWt1+Yy67oP/ix7PQzAEgXSPYqdjZBvU9LNpcaEVF5ZsF/CPXcyNhqswJYKvanqmrbw==
-X-Received: by 2002:a50:ccc6:0:b0:4aa:c4bb:2372 with SMTP id b6-20020a50ccc6000000b004aac4bb2372mr7548080edj.32.1675857058573;
-        Wed, 08 Feb 2023 03:50:58 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id y12-20020a056402270c00b0049668426aa6sm7737717edd.24.2023.02.08.03.50.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 03:50:58 -0800 (PST)
-Date:   Wed, 8 Feb 2023 12:50:56 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc:     bhelgaas@google.com, petlozup@nvidia.com,
-        rafael.j.wysocki@intel.com, lpieralisi@kernel.org, robh@kernel.org,
-        jeffy.chen@rock-chips.com, krzysztof.kozlowski+dt@linaro.org,
-        jonathanh@nvidia.com, dmitry.osipenko@collabora.com,
-        viresh.kumar@linaro.org, gregkh@linuxfoundation.org,
-        steven.price@arm.com, kw@linux.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        vidyas@nvidia.com
-Subject: Re: [RFC,v14 3/5] PCI / PM: Add support for the PCIe WAKE# signal
- for OF
-Message-ID: <Y+OMoKOfduwj2PYp@orome>
-References: <20230208111645.3863534-1-mmaddireddy@nvidia.com>
- <20230208111645.3863534-4-mmaddireddy@nvidia.com>
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Os5EeAhOwAZRzentDp9ToOzfsCfsH4W7jIuEYSHVgak=;
+        b=vT6xTNWTLg1n0D2eSb40+fBxBiZKcAIJAs/UVS2GRfJS5SjQ1R6aHFcn0JJ3Zq0oFN
+         KuUR0oH0f6sGPY3IIpAdbruLSUA6KGwXsIEEv3xoqI3zoamzLEQZUYHM4yjVunl3pTSP
+         mJoFWSTbHpL89axg5JS8Sk4RFRlal4gEWEdXSJmbQ/o8aC3OhonzFAEEvhYUpW0LAeYZ
+         yf1jaDQA5O5OcPKvtZiqRxS9si7/rpZzsnnV9OqKXqZgLwcORRFIkb3cvGbU9qRuWfA3
+         g/bQx2ThQulgR6Q9W7PfLVgsEP+iJeshj+jaEDMBsBPztDyBHzr1mgPvIJ2SAaWjPVRv
+         OzvQ==
+X-Gm-Message-State: AO0yUKVlLm9yIDT9EHqitUglEw63GIA694Pp5gTXNh/rJkYAVln7Weyz
+        3p8nPeJUN40Xy2UxKJFCuTFI3g==
+X-Google-Smtp-Source: AK7set/ooFp2421xqMkR0fa63StmM5ni5yPRn4jighJqF3WIg0OE06QgA+hnr5NJpVuBQ9Rm6ayz6w==
+X-Received: by 2002:a05:600c:4496:b0:3dc:de85:5007 with SMTP id e22-20020a05600c449600b003dcde855007mr6258599wmo.21.1675857471998;
+        Wed, 08 Feb 2023 03:57:51 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id k21-20020a05600c1c9500b003dc43a10fa5sm1819426wms.13.2023.02.08.03.57.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Feb 2023 03:57:51 -0800 (PST)
+Message-ID: <9e7e1762-1c2e-28cd-c7a7-b0577addf51e@linaro.org>
+Date:   Wed, 8 Feb 2023 12:57:50 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1q5Qd0tqx26fwrBX"
-Content-Disposition: inline
-In-Reply-To: <20230208111645.3863534-4-mmaddireddy@nvidia.com>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT binding doc
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Prathamesh Shete <pshete@nvidia.com>, jonathanh@nvidia.com,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        smangipudi@nvidia.com
+References: <20230207115617.12088-1-pshete@nvidia.com>
+ <a1395eb2-da3a-e080-fa6b-50f20d879655@linaro.org> <Y+OGdMFQkL9Dtaq/@orome>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <Y+OGdMFQkL9Dtaq/@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 08/02/2023 12:24, Thierry Reding wrote:
+> On Tue, Feb 07, 2023 at 04:33:08PM +0100, Krzysztof Kozlowski wrote:
 
---1q5Qd0tqx26fwrBX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 08, 2023 at 04:46:43PM +0530, Manikanta Maddireddy wrote:
-> From: Jeffy Chen <jeffy.chen@rock-chips.com>
->=20
-> Add of_pci_setup_wake_irq() to parse the PCIe WAKE# interrupt from the
-> device tree and set the wake irq. Add of_pci_teardown_wake_irq() to clear
-> the wake irq.
->=20
-> Call of_pci_setup_wake_irq() in pci_device_probe() to setup PCIe WAKE#
-> interrupt during PCIe Endpoint enumeration.
->=20
-> Enable or disable PCIe WAKE# interrupt in platform_pci_set_wakeup().
->=20
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> ---
->=20
-> Changes in v14:
-> pci_platform_pm_ops structure is removed in latest kernel, so dropped
-> pci-of driver. Instead, enable wake in platform_pci_set_wakeup().
->=20
-> Changes in v13:
-> Fix compiler error reported by kbuild test robot <fengguang.wu@intel.com>
->=20
-> Changes in v12:
-> Enable the wake irq in noirq stage to avoid possible irq storm.
->=20
-> Changes in v11:
-> Only support 1-per-device PCIe WAKE# pin as suggested.
->=20
-> Changes in v10:
-> Use device_set_wakeup_capable() instead of device_set_wakeup_enable(),
-> since dedicated wakeirq will be lost in device_set_wakeup_enable(false).
->=20
-> Changes in v9:
-> Fix check error in .cleanup().
-> Move dedicated wakeirq setup to setup() callback and use
-> device_set_wakeup_enable() to enable/disable.
->=20
-> Changes in v8:
-> Add pci-of.c and use platform_pm_ops to handle the PCIe WAKE# signal.
->=20
-> Changes in v7:
-> Move PCIE_WAKE handling into pci core.
->=20
-> Changes in v6:
-> Fix device_init_wake error handling, and add some comments.
->=20
-> Changes in v5:
-> Rebase.
->=20
-> Changes in v3:
-> Fix error handling.
->=20
-> Changes in v2:
-> Use dev_pm_set_dedicated_wake_irq.
->=20
->  drivers/pci/of.c         | 49 ++++++++++++++++++++++++++++++++++++++++
->  drivers/pci/pci-driver.c | 10 ++++++++
->  drivers/pci/pci.c        |  7 ++++++
->  drivers/pci/pci.h        |  8 +++++++
->  4 files changed, 74 insertions(+)
->=20
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index ff897c40ed71..1c348e63f175 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -13,6 +13,7 @@
->  #include <linux/of_irq.h>
->  #include <linux/of_address.h>
->  #include <linux/of_pci.h>
-> +#include <linux/pm_wakeirq.h>
->  #include "pci.h"
-> =20
->  #ifdef CONFIG_PCI
-> @@ -705,3 +706,51 @@ u32 of_pci_get_slot_power_limit(struct device_node *=
-node,
->  	return slot_power_limit_mw;
->  }
->  EXPORT_SYMBOL_GPL(of_pci_get_slot_power_limit);
-> +
-> +int of_pci_setup_wake_irq(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *ppdev;
+>>> +          type: object
+>>> +          additionalProperties:
+>>> +            properties:
+>>> +              nvidia,pins:
+>>> +                description: An array of strings. Each string contains the name
+>>> +                  of a pin or group. Valid values for these names are listed
+>>> +                  below.
+>>
+>> Define properties in top level, which points to the complexity of your
+>> if-else, thus probably this should be split into two bindings. Dunno,
+>> your other bindings repeat this pattern :(
+> 
+> The property itself is already defined in the common schema found in
+> nvidia,tegra-pinmux-common.yaml and we're overriding this here for each
+> instance since each has its own set of pins.
+> 
+> This was a compromise to avoid too many bindings. Originally I attempted
+> to roll all Tegra pinctrl bindings into a single dt-schema, but that
+> turned out truly horrible =) Splitting this into per-SoC bindings is
+> already causing a lot of duplication in these files, 
 
-Perhaps "parent" since that's what it is referring to? ppdev is a bit
-vague.
+What would be duplicated? Almost eveerything should be coming from
+shared binding, so you will have only compatible,
+patternProperties(pinmux) and nvidia,pins. And an example. Maybe I miss
+something but I would say this would create many but very easy to read
+bindings, referencing common pieces.
 
-> +	struct device_node *dn;
-> +	int ret, irq;
-> +
-> +	/* Get the pci_dev of our parent. Hopefully it's a port. */
-> +	ppdev =3D pdev->bus->self;
-> +	/* Nope, it's a host bridge. */
-> +	if (!ppdev)
-> +		return 0;
-> +
-> +	dn =3D pci_device_to_OF_node(ppdev);
-> +	if (!dn)
-> +		return 0;
-> +
-> +	irq =3D of_irq_get_byname(dn, "wakeup");
-> +	if (irq =3D=3D -EPROBE_DEFER) {
-> +		return irq;
-> +	} else if (irq < 0) {
-> +		/* Ignore other errors, since a missing wakeup is non-fatal. */
-> +		dev_info(&pdev->dev, "cannot get wakeup interrupt: %d\n", irq);
+> though splitting
+> off the common bits into nvidi,tegra-pinmux-common.yaml helps a bit with
+> that already. Splitting this into per-instance bindings would
+> effectively duplicate everything but the pin array here, so we kind of
+> settled on this compromise for Tegra194.
 
-dev_dbg() maybe? As it is this would add an annoying info message for
-basically every PCI controller on every DT-based board out there.
+OK, but are you sure it is now readable? You have if:then: with
+patternProperties: with additionalProperties: with properties: with
+nvidia,pins.
 
-Thierry
+> 
+> We're taking a bit of a shortcut here already, since technically not all
+> pins support all the functions listed above. On the other hand, fully
+> accurately describing per-pin functions would make this a total mess, so
+> again, we use this simplified representation as a compromise.
 
---1q5Qd0tqx26fwrBX
-Content-Type: application/pgp-signature; name="signature.asc"
+That's okay, many platforms do the same way.
 
------BEGIN PGP SIGNATURE-----
+(...)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPjjKAACgkQ3SOs138+
-s6Gc1g//QDcPcTt+z4P1/kQA57KiH2zlcgzNOHcfKJtNlVguNQSSAG5ebtfi2RMP
-ZuKRK6HIBVEV7ar3yse0qNIZoYLldgL8x4vSsyPJsZu0GBwZEF+B181I/2KJ9gk9
-qM72LtQb7vc3HAoqSxmYT8JWSlQfsBVOEtEQoMphev34JXNivf5HsasEm2umzjnf
-lCP+jiCyBDiK+RWGckOuYtNTfIUussbHFt1oMbSHomRpEKr4nLlhYrfGbUiCB4wz
-MTecWQI1y4o6LYG/CUDYM/2mepNPmmcjBUA4Xn/eI+lRrX+SKFmsSx5bkZUikHFl
-6lfJwuPYiAjwcPUa88+LdvKb1l6/OuVgmk0H6ei/FBqEBWDmf8GQbH7V9H/UhWxP
-BnSpsrI5U2/eaLGwWC/Di/79rdQbkw2XdjaJqjKPL8UfBoeGRNSRP3QHrnoTXyus
-33VXhRrgVKL71a37tt3j0ZUzrwJwERg+TeY7WhoCn1+pjIwLUq9lFpQYFyDjc0Sw
-qK9Haxrs9jsjpI2M+AEb6DtkBw7u76sYyU3De9Yc5QILcFnj+mtfLbsLS9wlOhZY
-EEonuEpDhRkGFqHp5Wd4Ff0Qjm04QcPd5/zwDCu5F3WG/7H7RphNlrTKSqsDkF7a
-bgHtdYdeHec0rSwIIbHG1wMUFKkyuLIYJrChvR8pcFkAi0V4XbA=
-=ULUl
------END PGP SIGNATURE-----
+>>> +
+>>> +        pex_rst_c5_out_state: pinmux-pex-rst-c5-out {
+>>> +            pex_rst {
+>>
+>> Underscores are not valid in node names.
+> 
+> We have supported underscore in older bindings for historical reasons.
+> But I suppose for these newer bindings we could disallow them.
+> 
+> Some of the older DTs have a large number of underscores, so I'm not
+> sure it makes sense to go back and fix those. Maybe something to keep in
+> mind for when we're done with all the conversions...
 
---1q5Qd0tqx26fwrBX--
+I understand, up to you. I think that if such older platform is still
+supported/maintained/used, then such cleanups are positive. Underscores
+are reported by dtc at W=2, so it is not that critical. But many other
+nits like generic node names are being enforced by dtschema, thus if you
+want to achieve 0-warning state, at some point you will need to address
+these. Of course different question is on what tasks you want to spend
+your time. :)
+
+Best regards,
+Krzysztof
+
