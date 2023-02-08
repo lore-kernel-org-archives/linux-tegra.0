@@ -2,124 +2,128 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC996C05027
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 15:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361E8C636CC
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 15:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbjBHPgD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Feb 2023 10:36:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56904 "EHLO
+        id S231316AbjBHPqi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Feb 2023 10:46:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231488AbjBHPgC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 10:36:02 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA3C402F3;
-        Wed,  8 Feb 2023 07:36:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Uh03leLsKgN2MDpFdcAW1yHdKgXLcqsQSRml3Fthvko=; b=AQ+4/DNw5QH5YEywk5DN7WMC70
-        Z+/rFYmcpAdxcVcP9vuK/7yW5CeaUOKWN6nMzjKijXyze6u5XRx/FwV8lzE74n3JH3pSG9Vgt9RtK
-        BldvnI8+uABeY5W9+bMYXb3azZjt+5iZhJBTA8GKuj3xveKpK7T0Qe3TH/0G0tD6etxzvnQE+nhdb
-        tz3OlVSmQhzTgtKrlRcOwuNQdC0f5fQtVgMqwNcCyb/0QreF9wwqJayzAmdo7d5wbltN1/V0f7mQB
-        qk2oH22Yx+yDD2Gseh2APhJbzfV64K0F51C9F39tZcFYDqkbdpxsNkIuaTbEfYwiGZo5U5iOL5M1b
-        P7C271tw==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1pPmU9-007ztn-4r; Wed, 08 Feb 2023 17:35:49 +0200
-Message-ID: <706b3e2d-7097-356b-b96e-dd917ce048ea@kapsi.fi>
-Date:   Wed, 8 Feb 2023 17:35:48 +0200
+        with ESMTP id S231187AbjBHPqg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 10:46:36 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B837BAA;
+        Wed,  8 Feb 2023 07:46:31 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id bg26so13644271wmb.0;
+        Wed, 08 Feb 2023 07:46:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QU2t04Vz0L4YBcL3LbO96riKtXp80tCkHBnfxGNCEIU=;
+        b=pEbS3Me0KO689JUNk9hXzyEDagcWuorGVsaPjPMzRcCp/8R9MjQzAkS17PvvYwQFj8
+         LJj3rOnowahYQHDNwvPjaOnG1FGvuFc8dLIFa0GxuJbhi3UMqm4q4FmVwdmKVnQD9GHe
+         jto5qCK/KxqcVR9lGwA1JXPc9bdkQ5nwmmcuel7T3BZIZTNesZxidKWo54sWB6j58HUr
+         i8LK+UctQo5Zy2ooHtJNTN5aU+vdF1fCy9iNivxyKvvskM1JT2Wnb6lnQRIHQGjzmp4u
+         9DYeqMu04CxR7qWJX7U3gANfSMxNfljyZNQ8Sseb7UDUlc2Eus/goaasMRQS5CUrn0YX
+         ohNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QU2t04Vz0L4YBcL3LbO96riKtXp80tCkHBnfxGNCEIU=;
+        b=0+v5PBmxB4h+hJ++TZHbj5sQ1pTDGKxU39MKxDSRfpttkXt5RIy2vEA35bqcLV3qBA
+         GnHLioe5pRZq6J7nNSmmCuSxp3d2R4ZQCH205sICF7+yUKkXmNdnPSm9M2+tPaE4yi8L
+         Xvh4US+S5+7XEF7MHVPi9Cg6lEgx6sMofOWgV/8RhbfDsm2+5MMsDPohk8errhGXo8bk
+         Cv1QfBmbzQY9JL5gxmGYUCVl1UqV5RI69lBrTV2OeANuu7ARnB8frwOJzwqgTAEegR0u
+         3PM58hgd6wqwzR4LWcnDaCGIN7JVZSYSROzPeNgfO+WIPvZF/q06XuRpe5N4ZOV/nHq+
+         n9JQ==
+X-Gm-Message-State: AO0yUKUc7VoUOnIC4iuqh89wdje+vnyBz04MTftmsl5JLhmqFbeRqX19
+        iySjcG69U2+5tSzjEOwoKNU=
+X-Google-Smtp-Source: AK7set9PpKIxdxDU92yb5BTSfyg4MbnoxWJ8jiFk8RIH6B+9+Ow5++VbYuslJwDrpp27azxbKudn/g==
+X-Received: by 2002:a05:600c:1898:b0:3df:f7ba:14e1 with SMTP id x24-20020a05600c189800b003dff7ba14e1mr7732827wmp.8.1675871190204;
+        Wed, 08 Feb 2023 07:46:30 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id j37-20020a05600c1c2500b003daf6e3bc2fsm6368834wms.1.2023.02.08.07.46.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Feb 2023 07:46:29 -0800 (PST)
+Date:   Wed, 8 Feb 2023 16:46:28 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Prathamesh Shete <pshete@nvidia.com>, jonathanh@nvidia.com,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        smangipudi@nvidia.com
+Subject: Re: [PATCH 3/3] arm64: tegra: Add Tegra234 pinmux device
+Message-ID: <Y+PD1M6eC1QqEq7o@orome>
+References: <20230207115617.12088-1-pshete@nvidia.com>
+ <20230207115617.12088-3-pshete@nvidia.com>
+ <f0d58e5b-74df-26cf-592e-302a00d08eee@linaro.org>
+ <Y+OAthBgds9InvKp@orome>
+ <7bb3e201-954d-c8eb-9430-19626c43fe75@linaro.org>
+ <1dc0589b-2434-47c5-a1d2-d253b06d3a67@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH 1/2] thermal: tegra-bpmp: Handle offline zones
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Srikar Srimath Tirumala <srikars@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Timo Alho <talho@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230207135610.3100865-1-cyndis@kapsi.fi>
- <Y+N5+w8ePTVaZiIB@orome>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <Y+N5+w8ePTVaZiIB@orome>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kznfj9f1arh8i+uH"
+Content-Disposition: inline
+In-Reply-To: <1dc0589b-2434-47c5-a1d2-d253b06d3a67@linaro.org>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/8/23 12:31, Thierry Reding wrote:
-> On Tue, Feb 07, 2023 at 03:56:08PM +0200, Mikko Perttunen wrote:
->> From: Mikko Perttunen <mperttunen@nvidia.com>
->>
->> Thermal zones located in power domains may not be accessible when
->> the domain is powergated. In this situation, reading the temperature
->> will return -BPMP_EFAULT and the temperature is considered to be
->> -256C for calculating trips.
-> 
-> Where's that -256C being set? I only see THERMAL_TEMP_INVALID being set
-> as the default for a zone, but that's not -274C, not -256C. If that's
-> the temperature that you're referring to, it might be better to state
-> that we rely on the default temperature rather than any specific number.
-> 
-> Thierry
 
-It is based on BPMP's internal behavior.
+--kznfj9f1arh8i+uH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Mikko
+On Wed, Feb 08, 2023 at 01:06:02PM +0100, Krzysztof Kozlowski wrote:
+> On 08/02/2023 13:01, Krzysztof Kozlowski wrote:
+> >> I wonder if there's a good way to detect these. We'd have to run checks
+> >> on the DT source files, so that's a bit difficult. I do have an
+> >> experimental script that tries to capture some common pitfalls on
+> >> sources but it's quite ugly and slow, but I guess I could add something
+> >> like this. But perhaps there are better ways?
+> >=20
+> > One way to easy spot them is to override always by label, thus every
+> > node defined like above is a new node. However I think we talked about
+> > this and you do not follow this practice, thus there is no way to tell -
+> > is the status reasonable or not.
+> >=20
+> > Automated tools could help here as well - run fdtdump on DTB and look
+> > for status=3Dokay.
+>=20
+> Eh, obviously it won't work - every node which was disabled in DTSI and
+> enabled in DTS will have the status=3Dokay...
 
-> 
->>
->> For smooth operation, for offline zones, return -EAGAIN when reading
->> the temperature and allow registration of zones even if they are
->> offline during probe.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/thermal/tegra/tegra-bpmp-thermal.c | 9 ++++++++-
->>   1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/thermal/tegra/tegra-bpmp-thermal.c b/drivers/thermal/tegra/tegra-bpmp-thermal.c
->> index c76e1ea62c8a..628b18818ae9 100644
->> --- a/drivers/thermal/tegra/tegra-bpmp-thermal.c
->> +++ b/drivers/thermal/tegra/tegra-bpmp-thermal.c
->> @@ -52,6 +52,8 @@ static int __tegra_bpmp_thermal_get_temp(struct tegra_bpmp_thermal_zone *zone,
->>   	err = tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
->>   	if (err)
->>   		return err;
->> +	if (msg.rx.ret == -BPMP_EFAULT)
->> +		return -EAGAIN;
->>   	if (msg.rx.ret)
->>   		return -EINVAL;
->>   
->> @@ -257,7 +259,12 @@ static int tegra_bpmp_thermal_probe(struct platform_device *pdev)
->>   		zone->tegra = tegra;
->>   
->>   		err = __tegra_bpmp_thermal_get_temp(zone, &temp);
->> -		if (err < 0) {
->> +
->> +		/*
->> +		 * Sensors in powergated domains may temporarily fail to be read
->> +		 * (-EAGAIN), but will become accessible when the domain is powered on.
->> +		 */
->> +		if (err < 0 && err != -EAGAIN) {
->>   			devm_kfree(&pdev->dev, zone);
->>   			continue;
->>   		}
->> -- 
->> 2.39.0
->>
+Yeah, I was originally thinking along the same lines, but when things
+are overridden that check no longer works. I suppose DTC could be taught
+to check for this when it merges nodes.
 
+Thierry
+
+--kznfj9f1arh8i+uH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPjw9QACgkQ3SOs138+
+s6GkwRAAkRn3zAbCODESQbqwSh+94YN9rvV18HbC7A5VXcR2IVetIFWim6Pvsh1F
+UHk7bwvlJqfsxmRnMr17UIVfIfhGzYB0QDj2Bynvb5nk2tYdSripecGq95mbtIPV
+d1wjzcHn+UkpFKP8hYzWqDn8w2fOHWqfllMVV/4z2j9zIAzcFatTQ/oYyKlPBSd1
+SDur8hIQ+VzXFuPGFlJKlqOPq7jwacZq123MoNzYo4Fye2kjJHyKZ7tHA4FEkUdi
+x2GxRg0b/nCkeTMWGxk0l/A9+nGqhQBpkovPUnwu+0i1jscQ9kDTqyu8OM85JitU
+fk3XwtM4o2kN996MPkNGiZGpIae0RtTDiM2W90MF7MR1Bo6B2Oez8an5918Gr5ao
+2GHxC12UTwLbLUcsrKB0YbHokaavoFglYbFelJ0bvmFhI9yRnBoFPcgEjBMCEoYe
+8oTUpZ6K6hXrJ9tpf9uD2XfrtcXHrIVQZMjevNAlQ4tY6IVreuBs1C4xE/URpJWv
+y34sVLqu6Eum/R360fXt/iENuaF4ynF9lX+P38fRzHZuQ5m7QXy5Xt9Yl8zUjmk/
+1uj00qrbQ+GQiD8VVt+gYVadXNZPUOrEXogcmt9grQ/6RHY/6uR+j4CxGn3pQhy/
+l3+3AsaUEUF5uXLmtWjyuPjRpDDl6lXqQWE+2x1diASq4/2bxxw=
+=sh86
+-----END PGP SIGNATURE-----
+
+--kznfj9f1arh8i+uH--
