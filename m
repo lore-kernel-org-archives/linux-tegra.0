@@ -2,44 +2,44 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE64DC64EC5
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 17:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725E2C678D5
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 17:34:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232041AbjBHReT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Feb 2023 12:34:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39762 "EHLO
+        id S232053AbjBHReU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Feb 2023 12:34:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231912AbjBHReF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 12:34:05 -0500
+        with ESMTP id S231648AbjBHRd7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 12:33:59 -0500
 Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E26F485B7;
-        Wed,  8 Feb 2023 09:34:02 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC4B3A879;
+        Wed,  8 Feb 2023 09:33:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1675877642; x=1707413642;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4IQLDrOahYJ8lFlzrwNEYRM9qJTE1X0tQcaYGhsJEHc=;
-  b=G2Ko6LLEX419EYXpdWaN8RhlyDnSogCqqhneGWnR2JAwN2RFyqDNHUDI
-   rN1ajcGYE5yfWTt6trWdCVWJm28p3xUt1m0UBsEjsElQw3NJfoDXbaTpT
-   w0zI3lhnm2+j6yUlWucFcTZ345Hh6o1MJpOzb1WXVDPb0gQPgsrncN6j6
-   GlzouI9RtGDe+qv280oaHs/fRMoI9HLhgnuA6D+aK5IOfYVKq7boyu4Zz
-   by00KfscW3lKUEvpUVH7SOfU9HzS168qOVBtfWT/RPqVLlNHNCHpImf7I
-   AQR2TlKJvvFWDFLulGgORzUDErVCruG+g+ORPef1JRE9RcJNtyrf5jhhD
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="310225303"
+  t=1675877636; x=1707413636;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sDFh6JeR2XcTkYhVvLPcaBAq4Ze0UO0qz9+CSTh3saw=;
+  b=JbPfNKlaEydECMI6+evwBtvDm6bjbLxL+YElsZTG2IE7x/yyWy5y8lrK
+   5L7ngYhPKO4/SC0nrWOkifHpGnVF/2n16wW6CQaPDwTSu+ELs/UIedzmH
+   +/9uywjUWRqFc0uaveUh1peuOp5+huPD6+lrwxdbewoBW2g6TvyqAR5Aw
+   AKC8yPoE27mBasgbZiQBIxK7EUUkRTP2ve4yyzbQcbawjQ7szQK2ks7Az
+   n8cQsy0wHvw2NZnVilqgnHVnyeJNSS79YloFiprywi6hF2enSluO6xFHV
+   tuzpj8etp3f/dPrrMdTitJjQ1xZD/+a9Z4oE80/kC9uN8FCU8nh2KAPbk
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="310225204"
 X-IronPort-AV: E=Sophos;i="5.97,281,1669104000"; 
-   d="scan'208";a="310225303"
+   d="scan'208";a="310225204"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2023 09:33:21 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2023 09:33:15 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="697722979"
+X-IronPort-AV: E=McAfee;i="6500,9779,10615"; a="697722955"
 X-IronPort-AV: E=Sophos;i="5.97,281,1669104000"; 
-   d="scan'208";a="697722979"
+   d="scan'208";a="697722955"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 08 Feb 2023 09:33:15 -0800
+  by orsmga008.jf.intel.com with ESMTP; 08 Feb 2023 09:33:08 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9FC47210; Wed,  8 Feb 2023 19:33:47 +0200 (EET)
+        id 6543F1A6; Wed,  8 Feb 2023 19:33:47 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -103,59 +103,132 @@ Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
         Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH v4 03/18] hte: tegra-194: Use proper includes
-Date:   Wed,  8 Feb 2023 19:33:28 +0200
-Message-Id: <20230208173343.37582-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 00/18] gpiolib cleanups
+Date:   Wed,  8 Feb 2023 19:33:25 +0200
+Message-Id: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
-References: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+These are some older patches Arnd did last year, rebased to
+linux-next-20230208. On top there are Andy's patches regarding
+similar topic. The series starts with Linus Walleij's patches.
 
-The test driver uses the gpiod consumer API so include the right
-<linux/gpio/consumer.h> header. This may cause a problem with
-struct of_device_id being implcitly pulled in by the legacy
-header <linux/gpio.h> so include <linux/mod_devicetable.h>
-explicitly as well.
+The main goal is to remove some of the legacy bits of the gpiolib
+interfaces, where the corner cases are easily avoided or replaced
+with gpio descriptor based interfaces.
 
-While at it, drop explicit moduleparam.h (it's included with module.h)
-and sort the headers.
+The idea is to get an immutable branch and route the whole series
+via GPIO tree.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/hte/hte-tegra194-test.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Changes in v4:
+- incorporated Linus Walleij's patches
+- reworked touchscreen patch to have bare minimum changes (Dmitry)
+- described changes in gpio-aggregator in full (Geert)
+- addressed compilation errors (LKP)
+- added tags (Geert, Lee, Vincenzo)
 
-diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
-index 5d776a185bd6..358d4a10c6a1 100644
---- a/drivers/hte/hte-tegra194-test.c
-+++ b/drivers/hte/hte-tegra194-test.c
-@@ -6,14 +6,14 @@
-  */
- 
- #include <linux/err.h>
--#include <linux/module.h>
--#include <linux/moduleparam.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/hte.h>
- #include <linux/interrupt.h>
--#include <linux/gpio.h>
--#include <linux/timer.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/timer.h>
- #include <linux/workqueue.h>
--#include <linux/hte.h>
- 
- /*
-  * This sample HTE GPIO test driver demonstrates HTE API usage by enabling
+Changes in v3:
+- reworked touchscreen patch in accordance with Dmitry's comments
+- rebased on the latest Linux Next
+- added on top Andy's series
+
+Changes in v2:
+- dropped patch 8 after Andy's identical patch was merged
+- rebase on latest gpio tree
+- leave unused gpio_cansleep() in place for now
+- address feedback from Andy Shevchenko
+
+Andy Shevchenko (7):
+  gpio: aggregator: Add missing header(s)
+  gpio: reg: Add missing header(s)
+  gpio: regmap: Add missing header(s)
+  gpiolib: Drop unused forward declaration from driver.h
+  gpiolib: Deduplicate forward declarations in consumer.h
+  gpiolib: Group forward declarations in consumer.h
+  gpiolib: Clean up headers
+
+Arnd Bergmann (7):
+  gpiolib: remove empty asm/gpio.h files
+  gpiolib: coldfire: remove custom asm/gpio.h
+  gpiolib: remove asm-generic/gpio.h
+  gpiolib: remove gpio_set_debounce()
+  gpiolib: remove legacy gpio_export()
+  gpiolib: split linux/gpio/driver.h out of linux/gpio.h
+  gpiolib: split of_mm_gpio_chip out of linux/of_gpio.h
+
+Linus Walleij (4):
+  ARM: orion/gpio: Use the right include
+  ARM: s3c24xx: Use the right include
+  hte: tegra-194: Use proper includes
+  gpiolib: Make the legacy <linux/gpio.h> consumer-only
+
+ Documentation/admin-guide/gpio/sysfs.rst      |   2 +-
+ Documentation/driver-api/gpio/legacy.rst      |  23 ---
+ .../zh_CN/driver-api/gpio/legacy.rst          |  20 ---
+ Documentation/translations/zh_TW/gpio.txt     |  19 ---
+ MAINTAINERS                                   |   1 -
+ arch/arm/Kconfig                              |   1 -
+ arch/arm/include/asm/gpio.h                   |  21 ---
+ arch/arm/mach-omap1/irq.c                     |   1 +
+ arch/arm/mach-omap2/pdata-quirks.c            |   9 +-
+ arch/arm/mach-orion5x/board-rd88f5182.c       |   1 +
+ arch/arm/mach-s3c/s3c64xx.c                   |   2 +-
+ arch/arm/mach-sa1100/assabet.c                |   1 +
+ arch/arm/plat-orion/gpio.c                    |   5 +-
+ arch/m68k/Kconfig.cpu                         |   1 -
+ arch/m68k/include/asm/gpio.h                  |  95 -----------
+ arch/m68k/include/asm/mcfgpio.h               |   2 +-
+ arch/powerpc/platforms/44x/Kconfig            |   1 +
+ arch/powerpc/platforms/4xx/gpio.c             |   2 +-
+ arch/powerpc/platforms/8xx/Kconfig            |   1 +
+ arch/powerpc/platforms/8xx/cpm1.c             |   2 +-
+ arch/powerpc/platforms/Kconfig                |   2 +
+ arch/powerpc/sysdev/cpm_common.c              |   2 +-
+ arch/sh/Kconfig                               |   1 -
+ arch/sh/boards/board-magicpanelr2.c           |   1 +
+ arch/sh/boards/mach-ap325rxa/setup.c          |   7 +-
+ arch/sh/include/asm/gpio.h                    |  45 ------
+ drivers/gpio/Kconfig                          |  19 ++-
+ drivers/gpio/TODO                             |  15 +-
+ drivers/gpio/gpio-aggregator.c                |   9 +-
+ drivers/gpio/gpio-altera.c                    |   2 +-
+ drivers/gpio/gpio-davinci.c                   |   2 -
+ drivers/gpio/gpio-mm-lantiq.c                 |   2 +-
+ drivers/gpio/gpio-mpc5200.c                   |   2 +-
+ drivers/gpio/gpio-reg.c                       |  12 +-
+ drivers/gpio/gpio-regmap.c                    |  12 +-
+ drivers/gpio/gpiolib-acpi.c                   |  10 +-
+ drivers/gpio/gpiolib-acpi.h                   |   1 -
+ drivers/gpio/gpiolib-of.c                     |   9 +-
+ drivers/gpio/gpiolib-of.h                     |   1 -
+ drivers/gpio/gpiolib-swnode.c                 |   5 +-
+ drivers/gpio/gpiolib-sysfs.c                  |  25 ++-
+ drivers/gpio/gpiolib.c                        |   9 +-
+ drivers/hte/hte-tegra194-test.c               |  10 +-
+ drivers/input/touchscreen/ads7846.c           |   5 +-
+ drivers/media/pci/sta2x11/sta2x11_vip.c       |  10 +-
+ drivers/net/ieee802154/ca8210.c               |   3 +-
+ .../broadcom/brcm80211/brcmsmac/led.c         |   1 +
+ drivers/pinctrl/core.c                        |   1 -
+ drivers/soc/fsl/qe/gpio.c                     |   2 +-
+ include/asm-generic/gpio.h                    | 147 ------------------
+ include/linux/gpio.h                          | 104 ++++++++-----
+ include/linux/gpio/consumer.h                 |  24 +--
+ include/linux/gpio/driver.h                   |  31 +++-
+ .../legacy-of-mm-gpiochip.h}                  |  33 +---
+ include/linux/mfd/ucb1x00.h                   |   1 +
+ include/linux/of_gpio.h                       |  21 ---
+ 56 files changed, 240 insertions(+), 556 deletions(-)
+ delete mode 100644 arch/arm/include/asm/gpio.h
+ delete mode 100644 arch/m68k/include/asm/gpio.h
+ delete mode 100644 arch/sh/include/asm/gpio.h
+ delete mode 100644 include/asm-generic/gpio.h
+ copy include/linux/{of_gpio.h => gpio/legacy-of-mm-gpiochip.h} (50%)
+
 -- 
 2.39.1
 
