@@ -2,51 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85230C636D7
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 14:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64F0C05027
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Feb 2023 15:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbjBHOz0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Feb 2023 09:55:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33116 "EHLO
+        id S231488AbjBHPfn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Feb 2023 10:35:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbjBHOzW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 09:55:22 -0500
-X-Greylist: delayed 1652 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Feb 2023 06:55:19 PST
+        with ESMTP id S229895AbjBHPfm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Feb 2023 10:35:42 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817B99EEF;
-        Wed,  8 Feb 2023 06:55:19 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D263644C;
+        Wed,  8 Feb 2023 07:35:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=fCFps57B15FHQdPwPAyYnuvFWFV7vmGjGgHCpF0YfPQ=; b=ZNpFSrutA/LVslSvywVTmsYuUS
-        HxdBpw8mBvCIWUPdrSElruwMdklqvrmEzTtLTftDHdqLEJTP70gBrqDfqR8XGj1kzJg45K8ev4ygr
-        VnJYZ3Z9PBoi2j8CBDkFWL9/iy3I2teSMPWUNRW5ty4m04vKLVQoKTSFh2h2Sx7AT+t2A0QsSIHxP
-        box+u66pJoKLV0MCsc+RcBIeuXF+c2KDDY92v71oZj+aDETWDpvqiV3zs09pFyMSPktpMYRkK+PfH
-        xiRE1T9fVGaZKCj9HzuLbfDqJ0UHEBQ0SAHLeUfo7jfIRYWHemUBuvISuN0xu8csc4i+Hvysad3G+
-        YfQiHq5g==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=q9g0YumBHPrmwtZpj+oYc2ptwRNiT+Wulg1WoQ0QQtA=; b=XkY0Z4fGlO+ZrWb1lfh7LV5kap
+        rHuzPm+Us75nMR0NYy3zWJikseoNeVZ7ze5iRfXi/+yrRR7aDRBStc2wliaDpHfWw/EQItuf61E0/
+        tUXWJgwVCI3niF4K3ycYiQKyl0IGFCYAbUZIJAtB6v2VuL6UO77sPYD2NLyoksMTCsKeJbCw6Evc0
+        AUOt468t4hs0jQ0me/mqqJXC3cgXk5yIN1cwYU+s4bRyurvcuLhGIme95akFNLr6N0BipwuMYZ6js
+        d3YTihEJhabMUbd1Oqip6/OGlDC7ScEhYZMHUp8YBhg/2H8p/ChE2h9y2M+77WDE868gBRNPglEv0
+        WWzCLHqw==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.94.2)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1pPlQA-007jjc-Uv; Wed, 08 Feb 2023 16:27:38 +0200
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-To:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] PCI: tegra194: Handle errors in BPMP response
-Date:   Wed,  8 Feb 2023 16:27:35 +0200
-Message-Id: <20230208142735.3218707-1-cyndis@kapsi.fi>
-X-Mailer: git-send-email 2.39.0
+        id 1pPmTj-007zoT-Cr; Wed, 08 Feb 2023 17:35:23 +0200
+Message-ID: <d6a2a1d5-fc3b-2510-e5e8-e3f36f1652d5@kapsi.fi>
+Date:   Wed, 8 Feb 2023 17:35:22 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH 2/2] thermal: tegra-bpmp: Always (re)program trip
+ temperatures
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Srikar Srimath Tirumala <srikars@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Timo Alho <talho@nvidia.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230207135610.3100865-1-cyndis@kapsi.fi>
+ <20230207135610.3100865-2-cyndis@kapsi.fi> <Y+N8uMO3V5+YNm2E@orome>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <Y+N8uMO3V5+YNm2E@orome>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-SA-Exim-Connect-IP: 91.158.25.70
 X-SA-Exim-Mail-From: cyndis@kapsi.fi
 X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
@@ -54,68 +62,86 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+On 2/8/23 12:43, Thierry Reding wrote:
+> On Tue, Feb 07, 2023 at 03:56:09PM +0200, Mikko Perttunen wrote:
+>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>>
+>> In the rare case that calculation of trip temperatures would result
+>> in the same trip temperatures that were previously programmed, the
+>> thermal core skips calling .set_trips.
+> 
+> That seems like an appropriate optimization.
+> 
+>> However, presently, if it is not called, we may end up with no trip
+>> temperatures programmed at all.
+> 
+> I have a hard time understanding when this would happen. prev_low_trip
+> and prev_high_trip are -INT_MAX and INT_MAX, respectively, so these are
+> unlikely to be the result of anything we compute at runtime, based on
+> temperatures specified in DT, for example.
 
-The return value from tegra_bpmp_transfer indicates the success or
-failure of the IPC transaction with BPMP. If the transaction
-succeeded, we also need to check the actual command's result code.
-Add code to do this.
+Consider:
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+Temperature is 45C.
+set_trips is called with low=40C high=50C. We program accordingly.
+Temperature goes to 55C. Trip point triggers.
+Before execution gets to CPU, temperature returns to 45C.
+CPU gets the MRQ, calls into thermal core to update.
+Thermal core notices that temperature is 45C and sets again the same 
+low=40C high=50C trip points, does not call set_trips.
+No trip point is programmed to BPMP and we never get trips again.
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 02d78a12b6e7..cf5fd1c2efd3 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1200,6 +1200,7 @@ static int tegra_pcie_bpmp_set_ctrl_state(struct tegra_pcie_dw *pcie,
- 	struct mrq_uphy_response resp;
- 	struct tegra_bpmp_message msg;
- 	struct mrq_uphy_request req;
-+	int err;
- 
- 	/*
- 	 * Controller-5 doesn't need to have its state set by BPMP-FW in
-@@ -1222,7 +1223,13 @@ static int tegra_pcie_bpmp_set_ctrl_state(struct tegra_pcie_dw *pcie,
- 	msg.rx.data = &resp;
- 	msg.rx.size = sizeof(resp);
- 
--	return tegra_bpmp_transfer(pcie->bpmp, &msg);
-+	err = tegra_bpmp_transfer(pcie->bpmp, &msg);
-+	if (err)
-+		return err;
-+	if (msg.rx.ret)
-+		return -EINVAL;
-+
-+	return 0;
- }
- 
- static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
-@@ -1231,6 +1238,7 @@ static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
- 	struct mrq_uphy_response resp;
- 	struct tegra_bpmp_message msg;
- 	struct mrq_uphy_request req;
-+	int err;
- 
- 	memset(&req, 0, sizeof(req));
- 	memset(&resp, 0, sizeof(resp));
-@@ -1250,7 +1258,13 @@ static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
- 	msg.rx.data = &resp;
- 	msg.rx.size = sizeof(resp);
- 
--	return tegra_bpmp_transfer(pcie->bpmp, &msg);
-+	err = tegra_bpmp_transfer(pcie->bpmp, &msg);
-+	if (err)
-+		return err;
-+	if (msg.rx.ret)
-+		return -EINVAL;
-+
-+	return 0;
- }
- 
- static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
--- 
-2.39.0
+The above, of course, is rather unlikely to happen, but theoretically 
+possible nevertheless.
 
+Alternatively, where I discovered the issue originally, was the issue 
+described in the last paragraph of the commit message; see below.
+
+> 
+> So I would expect ->set_trips() to get called at least once when the
+> thermal zones are first registered. Are you saying there are cases where
+> ->set_trips() doesn't get called at all?
+
+No, not saying that. It will get called when registering the zone 
+initially, but see below.
+
+> 
+>> To avoid this, make set_trips a no-op and in places where it would be
+>> called, instead unconditionally program trip temperatures to the last
+>> specified temperatures.
+> 
+> Again, this seems more like a workaround for an issue that exists
+> elsewhere. If ->set_trips() doesn't always get called when it should be,
+> then that's what we should fix.
+
+I think it depends on what the interpretation is with set_trips. If the 
+interpretation is that the the trips configured in the hardware are 
+persistent (not disabled when a trip occurs), then the current 
+implementation and this patch make sense. Otherwise a change in the 
+thermal core would make sense.
+
+> 
+>> This also fixes the situation where a trip is triggered between
+>> registering a thermal zone and registering the trip MRQ handler, in
+>> which case we would also get stuck.
+> 
+> Could this be fixed by requesting the MRQ prior to registering the
+> zones? That seems like the more appropriate fix for this issue. It's
+> similar to how we typically register IRQ handlers before enabling a
+> device to make sure we don't miss any interrupts.
+
+I considered that -- there are two reasons I didn't go for it:
+
+1. It doesn't solve the race condition described in the first part of 
+the message
+2. To handle the incoming MRQ, zone->tzd needs to be set. But we only 
+get tzd from the zone registration call, and already before that call 
+returns, set_trips has been called and we might have received an MRQ. I 
+tested using a completion object to block in the MRQ handler until the 
+initialization completes, but that's pretty ugly as well.
+
+> 
+> Thierry
+
+Thanks,
+Mikko
