@@ -2,143 +2,137 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF42BC64EC4
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 14:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04301C05027
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 14:38:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbjBIObR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Feb 2023 09:31:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
+        id S229764AbjBIOiI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Feb 2023 09:38:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbjBIObC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 09:31:02 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CF85D3DF;
-        Thu,  9 Feb 2023 06:30:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 7D695CE24F3;
-        Thu,  9 Feb 2023 14:30:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C41C433EF;
-        Thu,  9 Feb 2023 14:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675953052;
-        bh=n5q92jtNB++4BoYIauYygzacB4DdXZvQYlYHsoaQZHo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L4cNRE4MQxZhPNyBF/08CXXf/FWNQlzUwcRLG/0S65J/4ZChTqeAH+gdyIm7+puo/
-         e1NMfqyqjToGWx/m2stUfU7oe9VJ+8njI+o0jyklZ6aQ10e0wIfN7idp96BYLv9Fv3
-         QhfxNouUc0qZTgyD3UIjJF1eoI/sa7sYlEflw9jIrrOTdIfoFZo0OmH5vYc0Tjwjlg
-         7k/6gJhmjkwo6pEOCZrEJ5FmUMlxfm8y1s7LLhR+jeJXraVBKucJ1jUqjs66gKI0qH
-         XjavWBRymrRU2MvlL95tjkP7Fwb0aTwHP4DAbOFosKC6AT8CudX5DVtLZ+LDNj9wE2
-         dDufUua3aqd7w==
-Date:   Thu, 9 Feb 2023 14:30:29 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc:     miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        jic23@kernel.org, tudor.ambarus@microchip.com, pratyush@kernel.org,
-        sanju.mehta@amd.com, chin-ting_kuo@aspeedtech.com, clg@kaod.org,
-        kdasu.kdev@gmail.com, f.fainelli@gmail.com, rjui@broadcom.com,
-        sbranden@broadcom.com, eajames@linux.ibm.com, olteanv@gmail.com,
-        han.xu@nxp.com, john.garry@huawei.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, narmstrong@baylibre.com,
-        khilman@baylibre.com, matthias.bgg@gmail.com, haibo.chen@nxp.com,
-        linus.walleij@linaro.org, daniel@zonque.org,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, andi@etezian.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
-        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
-        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
-        kvalo@kernel.org, git@amd.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@jms.id.au, andrew@aj.id.au,
-        radu_nicolae.pirea@upb.ro, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
-        alim.akhtar@samsung.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-mtd@lists.infradead.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        michael@walle.cc, palmer@dabbelt.com,
-        linux-riscv@lists.infradead.org, amitrkcian2002@gmail.com,
-        Dhruva Gole <d-gole@ti.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        William Zhang <william.zhang@broadcom.com>
-Subject: Re: [PATCH v3 01/13] spi: Replace all spi->chip_select and
- spi->cs_gpiod references with function call
-Message-ID: <Y+UDhWK6u9NkMTxv@sirena.org.uk>
-References: <20230202152258.512973-1-amit.kumar-mahapatra@amd.com>
- <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
+        with ESMTP id S229789AbjBIOiG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 09:38:06 -0500
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2069.outbound.protection.outlook.com [40.107.244.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 065CDC646;
+        Thu,  9 Feb 2023 06:37:42 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gv2VDPSC4PRsW18k88FmpStB8t1u4WeNLMs1oM2av2A4YU1bWIUCtMiHHiFljCivBW9Wlz29TR2OGW2gXaiKuH2dK/7iFT/hWlIJwt8/UaHWmg9XxtkXKs7pTCdhuMycZ0nIYUHyRjXdAfhmGqqnzQHFXCyeCwXmWM3g44Co/N+uhu9WNH9eUK+sM1WbTXQdE/lHpchNufYuFECgpfPnALWirsiSqdJPRZW8n/1zsWHOaA34vhRZzdmxIrKvTqi/x+golvmBcbxKK3GlbDdPHzv5EI39jy9eOuTe3U4Vp33ARML1orhqDv1YAjWmGnT7AtdZxHQ1Ysa6IkU0TUkRWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A1Vrw+KmgrBuYN8RiEbxbcp9/YV4AyN28BkvaDqU5xc=;
+ b=bNX0IvwRHV4ifnabgWbJwRP+Ylg0XWBaXIeOLxI/dUT3XYefeWX+8BTyN0L7mUeyq4tgyPSkzwUdkEhaajrFqenXHYdrZ4CpQbwZqPCcHic8bAW2HeXmOzTMrpMjCxyzzTWr4BS2NtuqeC90KqLgTcNEg1O0hm0QjSd+E34jMyPA+zbFhjrSBj/+eFz7TkhVh8Ng6bnkz8YQw1oNnOAobA8XffToVcB6d4CjSsJMhIFn74fSD5ULkg2jKNSMq3l5Nso4xPk6KUdg8CEmvRLn2AK5xXZn4pnYmMHKjoUidlrbU/iBYCXAfHnmd0TjS6y8XC7jvbfciYLZavbsra/CLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A1Vrw+KmgrBuYN8RiEbxbcp9/YV4AyN28BkvaDqU5xc=;
+ b=qXB609MiCbwpRWdYluKU5AQhTjQnFDdWULxzn/Sg3zR61f5RyqGX51OPf1qQUd1BJm3JYmVKVazwIeE/nU2tgwf3MF7ooaqNuF/Y/W0aKkIlXy1AjEJwuxpb7mtQ4ESmD5WmJ2hY+w90XcJ8q5PzFKKu4eJuCFbEkYhj+w1lvzQrGyWLK/afZX6DcbIVxh/+vg9mX4RizPvTXQ3WlGHElKGYysIc4T9+h7D2OjoZ37hVizTKFwTNMovwOM5yqcjtEh+teaO60xHzXRVdrr1X1H6Hf/wkuu3DxpE0Gq1GfPzdvUnAIDy3KCU5TZ1ofJqTuWXpmXfLR4u56SlSKVjBZQ==
+Received: from MW4PR04CA0253.namprd04.prod.outlook.com (2603:10b6:303:88::18)
+ by CH2PR12MB4103.namprd12.prod.outlook.com (2603:10b6:610:7e::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.17; Thu, 9 Feb
+ 2023 14:37:34 +0000
+Received: from CO1NAM11FT081.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:88:cafe::cb) by MW4PR04CA0253.outlook.office365.com
+ (2603:10b6:303:88::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.19 via Frontend
+ Transport; Thu, 9 Feb 2023 14:37:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT081.mail.protection.outlook.com (10.13.174.80) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6086.19 via Frontend Transport; Thu, 9 Feb 2023 14:37:34 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
+ 06:37:29 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
+ 06:37:29 -0800
+Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Thu, 9 Feb 2023 06:37:25 -0800
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <oder_chiou@realtek.com>, <broonie@kernel.org>
+CC:     <perex@perex.cz>, <tiwai@suse.com>, <lgirdwood@gmail.com>,
+        <kuninori.morimoto.gx@renesas.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH 1/2] ASoC: rt5640: Update MCLK rate in set_sysclk()
+Date:   Thu, 9 Feb 2023 20:06:56 +0530
+Message-ID: <1675953417-8686-2-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1675953417-8686-1-git-send-email-spujar@nvidia.com>
+References: <1675953417-8686-1-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="iWU3nY956KPhZko1"
-Content-Disposition: inline
-In-Reply-To: <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
-X-Cookie: Androphobia:
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT081:EE_|CH2PR12MB4103:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4da1e8e1-5550-4743-6739-08db0aab2f06
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: h3mdkD8plsMGpl9ihB9tw46/F778T+AMFCXUMv3XEtj2EAI4G/Fl6bYW1sBFirSi+jQcJ/gBxPKObl/vTctc6C9UWDvAv8dhnmRojpUOaHEVB/yeM3LUb8j5URV6LwjQ4n+765Ckw+DVZHXwm6O2FZoqKGb4dFfWmiEmlKZBu4PPMutAs8nYXxtIZee1NhEssdiG7gGhuqRqtyojs3f3SJSiGcwPVmtTtA7vTvBAhVTijTqZbMdDWL47B+vq8OJ4F3xqY9wdvi78BjOkWIG6o55R0AjH9MNgiQNWSmGVPptnchwXDD/FxUJyMuKj+EIgBOvLjMQQz0hLG9okeUuxZhTqszS6epTPysOmHiyy+aMpUOVMHmqy4uWYhSKNz0Fg1tq7eKoZd4a27yFaQG6IGYsW9U6k5Foezxy26usAsh8Tl9fhxCGvXrRWlUzy4aqnpjUIBwJtpmnbqljCsSZ4tb/Vqh8jo28uTKtoON7e9kvxBqNgMZDdQC39xX08yQVp5Mblh9nNM9uHnjKV8nOl2ZPMfDlq3nnF8sBSdnpscxRKZFaPedB5o2SzsMPt3qJTzi0ScPZ9F8wcFGL7hxTNgh6QI4+Si9ZUPMcruN5C8jbDIFje2RXkY+FDfV12euZWPFv10/xeaFA4tGzcY009nIUt6yPskVQLXkmSpuDywanXmUGy5SnUrUGuVsc4hDXPlV8yyGeTf+iLzjskWt1hQg==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(39860400002)(346002)(136003)(396003)(451199018)(46966006)(36840700001)(40470700004)(186003)(26005)(2906002)(15650500001)(36756003)(6666004)(107886003)(7416002)(5660300002)(356005)(478600001)(82740400003)(82310400005)(8936002)(41300700001)(7696005)(40480700001)(2616005)(47076005)(8676002)(36860700001)(336012)(70586007)(70206006)(4326008)(83380400001)(86362001)(426003)(110136005)(54906003)(40460700003)(316002)(7636003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2023 14:37:34.6597
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4da1e8e1-5550-4743-6739-08db0aab2f06
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT081.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4103
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Simple-card/audio-graph-card drivers do not handle MCLK clock when it
+is specified in the codec device node. The expectation here is that,
+the codec should actually own up the MCLK clock and do necessary setup
+in the driver.
 
---iWU3nY956KPhZko1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is inspired from,
+commit dbf54a953435 ("ASoC: rt5659: Update MCLK rate in set_sysclk()").
 
-On Thu, Feb 02, 2023 at 08:52:46PM +0530, Amit Kumar Mahapatra wrote:
-> Supporting multi-cs in spi drivers would require the chip_select & cs_gpi=
-od
-> members of struct spi_device to be an array. But changing the type of the=
-se
-> members to array would break the spi driver functionality. To make the
-> transition smoother introduced four new APIs to get/set the
+Cc: Oder Chiou <oder_chiou@realtek.com>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ sound/soc/codecs/rt5640.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-This break an arm multi_v7_defconfig build:
+diff --git a/sound/soc/codecs/rt5640.c b/sound/soc/codecs/rt5640.c
+index 9e6341a..1392570 100644
+--- a/sound/soc/codecs/rt5640.c
++++ b/sound/soc/codecs/rt5640.c
+@@ -1838,9 +1838,14 @@ static int rt5640_set_dai_sysclk(struct snd_soc_dai *dai,
+ 	struct rt5640_priv *rt5640 = snd_soc_component_get_drvdata(component);
+ 	unsigned int reg_val = 0;
+ 	unsigned int pll_bit = 0;
++	int ret;
+ 
+ 	switch (clk_id) {
+ 	case RT5640_SCLK_S_MCLK:
++		ret = clk_set_rate(rt5640->mclk, freq);
++		if (ret)
++			return ret;
++
+ 		reg_val |= RT5640_SCLK_SRC_MCLK;
+ 		break;
+ 	case RT5640_SCLK_S_PLL1:
+-- 
+2.7.4
 
-/build/stage/linux/drivers/spi/spi-pl022.c: In function =E2=80=98pl022_tran=
-sfer_one_message=E2=80=99:
-/build/stage/linux/drivers/spi/spi-pl022.c:1592:31: error: =E2=80=98struct =
-spi_message=E2=80=99 has no member named =E2=80=98spi_get_csgpiod=E2=80=99
- 1592 |         pl022->cur_gpiod =3D msg->spi_get_csgpiod(spi, 0);
-      |                               ^~
-/build/stage/linux/drivers/spi/spi-pl022.c:1592:49: error: =E2=80=98spi=E2=
-=80=99 undeclared (first use in this function)
- 1592 |         pl022->cur_gpiod =3D msg->spi_get_csgpiod(spi, 0);
-      |                                                 ^~~
-/build/stage/linux/drivers/spi/spi-pl022.c:1592:49: note: each undeclared i=
-dentifier is reported only once for each function it appears in
-
---iWU3nY956KPhZko1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPlA4QACgkQJNaLcl1U
-h9Ai+wf+IWbvrI/uIEjinXzailRkkSP40/uzdnv8AAKF5zA3laimeZYZPCoKfD4X
-GzBSQEjiZOJmPZ0wBaHHFFaxHSBlL6rtUoA6r+EEktjzWc6vOsmoUVRt74R+ZMHw
-1FyvWR07nFAstJD2rPfPhIZ5bt4yiRX/CmA2SxN1qW74IwjKYAy6jLvbpSAZ4byY
-KRnij11f/xqUuiao0L/PTya+dYLUOBEQvXm5JBAIqhZaQVH4G7Ppov0MR15cEMug
-OG9oMzu197RFh7WgO6lj8rI9Cssl4vvj6+3owDZ/nK+LFq62Z6AvBGbaP7SoHOOI
-Xcz8JdTcCAH0XAgza9flmPUQME9cmQ==
-=4wBC
------END PGP SIGNATURE-----
-
---iWU3nY956KPhZko1--
