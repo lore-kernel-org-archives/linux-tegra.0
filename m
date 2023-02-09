@@ -2,337 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA029C61DA4
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 16:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B5FC6379F
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 18:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbjBIQgF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Feb 2023 11:36:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44238 "EHLO
+        id S229777AbjBISge (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Feb 2023 13:36:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjBIQgE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 11:36:04 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77B15D1D5;
-        Thu,  9 Feb 2023 08:36:02 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id d40so1348168eda.8;
-        Thu, 09 Feb 2023 08:36:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7EOfW6T6B8QOW9L3wKVd9xNkr96frILN3seTzII1LVE=;
-        b=ZX+JqMWS64npOfK7R0bse7BLwv4cU1g674tUkbUzAY/HvZUneDmABSMLL90+m2PPoY
-         4aBPZzc2ZRRR9+bVz8G3rtWCH41NEEPNdJgeWHE6ZDxPD1ZTraA/ls1GybbIpcnVFB/Q
-         +baxlHAXkLGnQ+lXV3em9PbwhVG34doUzTqdtrXW8/eaEKD2qX8AHP7i6Zb/DCouX2fF
-         N5IxwZ/zBllT6zeGi/SOd1cXy0GyzodcTsfpiJM2/RRdj5lsvnsudge6r4R9Uv8PMw6T
-         dwgUdw5Xl3YqJoXL2yUSTIrCePDfFgtG5su6ABBhiU8a49RO3xeOvhJsyU4lXFQzVvkS
-         BoDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7EOfW6T6B8QOW9L3wKVd9xNkr96frILN3seTzII1LVE=;
-        b=psbU04tSMKnr5PbS2BfePKv+THkyhjQ/QXZO3Rm2ey3FyP58HR8aYKO/37NGUSc61l
-         7IEcVLxEOWsLUfsOS9gw/cW4NpccBY9pVISJZdRPJi2MrCa4UINr0j/OiZMi4VXX4WCR
-         EjjpluCWGwwJ3xQB5Gt6FqOth1cxv5laK1gE6vPxJIhVFcwxzLyComIzKPV3Jlgs5mFP
-         1nh9vX4b6mvvOYp9hcbRI1MT2K3D7rRpoA7A4ORLdUmbcdgTyg4Pe4FpHskTmaTtmCoo
-         shC2smCtkt/lwFzwbmFR5pRXZ1ztLPuJ8TiU89nzu/dTz4F00+KCt2p2g/CSI0SITqPK
-         NNng==
-X-Gm-Message-State: AO0yUKWEzKhcfAZQUmt5RVYX5530ps5WBTPHQ49GPEuH4vITARs7NIdJ
-        1XQfRCKsOtcTOtJhptxhZMs=
-X-Google-Smtp-Source: AK7set88/Eyc2sOI0OXNCjP7sJ6JivBs3kJhEHYp65G7aJvUHGA2D2mY4wMVPRpsUrF0msUNUPOtzA==
-X-Received: by 2002:a50:cdc2:0:b0:4ab:1793:1254 with SMTP id h2-20020a50cdc2000000b004ab17931254mr4113459edj.13.1675960561165;
-        Thu, 09 Feb 2023 08:36:01 -0800 (PST)
-Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id e12-20020a50ec8c000000b0046b471596e6sm959335edr.57.2023.02.09.08.36.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 08:36:00 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] thermal: tegra: Implement bind/unbind for cooling device
-Date:   Thu,  9 Feb 2023 17:35:55 +0100
-Message-Id: <20230209163555.1993557-2-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230209163555.1993557-1-thierry.reding@gmail.com>
-References: <20230209163555.1993557-1-thierry.reding@gmail.com>
+        with ESMTP id S229819AbjBISga (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 13:36:30 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D81763136;
+        Thu,  9 Feb 2023 10:36:29 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2656861B80;
+        Thu,  9 Feb 2023 18:36:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE69BC4339B;
+        Thu,  9 Feb 2023 18:36:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675967788;
+        bh=m3VjIjkXjpczEE/UKggPWCZa7ltciaHAVYcIm/gP1Mw=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=n2kUP7FO4eMwJ3xUqLKBncdTLjfyZEf/gQC4otqY7i/XBwWsByQW/Xd4pL2W4BirR
+         OcYEelgbeJ9Wx1UL8/MnHFFJjXSFu0YblgXQcDlpgulw1To93dG2kloxEc4hvqvvoD
+         lvbzO6Gmue47PyqPkA5zPOw5WEOKE0hJsR57LfBvjMTv+AQDBzG7U/pnnM/jTo8CHs
+         TIAKzs0Mq5op+OfP76353a3u9r4rTSuFdlqSd5+fvk9TFnBgikQSk9qbPV4TTv9GJr
+         nSrO04ax3DKmArkf7AFz5rLo1nrNH434BjzoReYzAqCDguW256rsI51QIqgthS5IOJ
+         96RgDokh+ayWQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        oder_chiou@realtek.com, Sameer Pujar <spujar@nvidia.com>
+Cc:     perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com,
+        kuninori.morimoto.gx@renesas.com, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+In-Reply-To: <1675953417-8686-1-git-send-email-spujar@nvidia.com>
+References: <1675953417-8686-1-git-send-email-spujar@nvidia.com>
+Subject: Re: (subset) [PATCH 0/2] Codec support on Jetson AGX Orin
+Message-Id: <167596778569.879652.2944492731365735456.b4-ty@kernel.org>
+Date:   Thu, 09 Feb 2023 18:36:25 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, 09 Feb 2023 20:06:55 +0530, Sameer Pujar wrote:
+> Jetson AGX Orin has onboard RT5640 audio codec and uses I2S1 interface.
+> Add DT bindings to enable codec support. Series also contains a clock
+> fix in the codec driver.
+> 
+> Sameer Pujar (2):
+>   ASoC: rt5640: Update MCLK rate in set_sysclk()
+>   arm64: tegra: Audio codec support on Jetson AGX Orin
+> 
+> [...]
 
-The SOCTHERM hardware found on Tegra implements a way of throttling the
-CPU and GPU when a given temperature threshold is reached. As opposed to
-traditional cooling devices, the programming for this happens during the
-initialization stage rather than dynamically at runtime when the thermal
-framework gets notified of thresholds being crossed.
+Applied to
 
-Use the newly introduced ->bind() and ->unbind() operations to make sure
-the SOCTHERM programming happens at the right time. This allows us to
-get rid of calls to the get_thermal_instance() helper which is not
-supposed to be accessed by drivers.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/thermal/tegra/soctherm.c | 146 ++++++++++++++-----------------
- 1 file changed, 67 insertions(+), 79 deletions(-)
+Thanks!
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 220873298d77..cdc8764e88aa 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -303,6 +303,8 @@ struct tegra_thermctl_zone {
- 	struct tegra_soctherm *ts;
- 	struct thermal_zone_device *tz;
- 	const struct tegra_tsensor_group *sg;
-+	/* instance of an internal throttle cooling device */
-+	struct thermal_cooling_device *cdev;
- };
- 
- struct soctherm_oc_cfg {
-@@ -315,6 +317,7 @@ struct soctherm_oc_cfg {
- };
- 
- struct soctherm_throt_cfg {
-+	struct tegra_soctherm *soctherm;
- 	const char *name;
- 	unsigned int id;
- 	u8 priority;
-@@ -585,10 +588,10 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
- static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip_id, int temp)
- {
- 	struct tegra_thermctl_zone *zone = tz->devdata;
--	struct tegra_soctherm *ts = zone->ts;
--	struct thermal_trip trip;
- 	const struct tegra_tsensor_group *sg = zone->sg;
-+	struct tegra_soctherm *ts = zone->ts;
- 	struct device *dev = zone->dev;
-+	struct thermal_trip trip;
- 	int ret;
- 
- 	if (!tz)
-@@ -610,26 +613,14 @@ static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz, int trip
- 			return 0;
- 
- 	} else if (trip.type == THERMAL_TRIP_HOT) {
--		int i;
--
--		for (i = 0; i < THROTTLE_SIZE; i++) {
--			struct thermal_cooling_device *cdev;
--			struct soctherm_throt_cfg *stc;
--
--			if (!ts->throt_cfgs[i].init)
--				continue;
--
--			cdev = ts->throt_cfgs[i].cdev;
--			if (get_thermal_instance(tz, cdev, trip_id))
--				stc = find_throttle_cfg_by_name(ts, cdev->type);
--			else
--				continue;
-+		if (zone->cdev) {
-+			struct soctherm_throt_cfg *stc = zone->cdev->devdata;
- 
- 			return throttrip_program(dev, sg, stc, temp);
- 		}
- 	}
- 
--	return 0;
-+	return ret;
- }
- 
- static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
-@@ -687,26 +678,6 @@ static const struct thermal_zone_device_ops tegra_of_thermal_ops = {
- 	.set_trips = tegra_thermctl_set_trips,
- };
- 
--static int get_hot_temp(struct thermal_zone_device *tz, int *trip_id, int *temp)
--{
--	int i, ret;
--	struct thermal_trip trip;
--
--	for (i = 0; i < thermal_zone_get_num_trips(tz); i++) {
--
--		ret = thermal_zone_get_trip(tz, i, &trip);
--		if (ret)
--			return -EINVAL;
--
--		if (trip.type == THERMAL_TRIP_HOT) {
--			*trip_id = i;
--			return 0;
--		}
--	}
--
--	return -EINVAL;
--}
--
- /**
-  * tegra_soctherm_set_hwtrips() - set HW trip point from DT data
-  * @dev: struct device * of the SOC_THERM instance
-@@ -736,8 +707,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- 				      struct thermal_zone_device *tz)
- {
- 	struct tegra_soctherm *ts = dev_get_drvdata(dev);
--	struct soctherm_throt_cfg *stc;
--	int i, trip, temperature, ret;
-+	int temperature, ret;
- 
- 	/* Get thermtrips. If missing, try to get critical trips. */
- 	temperature = tsensor_group_thermtrip_get(ts, sg->id);
-@@ -754,42 +724,6 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- 	dev_info(dev, "thermtrip: will shut down when %s reaches %d mC\n",
- 		 sg->name, temperature);
- 
--	ret = get_hot_temp(tz, &trip, &temperature);
--	if (ret) {
--		dev_info(dev, "throttrip: %s: missing hot temperature\n",
--			 sg->name);
--		return 0;
--	}
--
--	for (i = 0; i < THROTTLE_OC1; i++) {
--		struct thermal_cooling_device *cdev;
--
--		if (!ts->throt_cfgs[i].init)
--			continue;
--
--		cdev = ts->throt_cfgs[i].cdev;
--		if (get_thermal_instance(tz, cdev, trip))
--			stc = find_throttle_cfg_by_name(ts, cdev->type);
--		else
--			continue;
--
--		ret = throttrip_program(dev, sg, stc, temperature);
--		if (ret) {
--			dev_err(dev, "throttrip: %s: error during enable\n",
--				sg->name);
--			return ret;
--		}
--
--		dev_info(dev,
--			 "throttrip: will throttle when %s reaches %d mC\n",
--			 sg->name, temperature);
--		break;
--	}
--
--	if (i == THROTTLE_SIZE)
--		dev_info(dev, "throttrip: %s: missing throttle cdev\n",
--			 sg->name);
--
- 	return 0;
- }
- 
-@@ -1497,6 +1431,55 @@ static int soctherm_clk_enable(struct platform_device *pdev, bool enable)
- 	return 0;
- }
- 
-+static int throt_bind(struct thermal_cooling_device *cdev,
-+		      struct thermal_zone_device *tz, int trip_id,
-+		      unsigned long upper, unsigned long lower,
-+		      unsigned int weight)
-+{
-+	struct tegra_thermctl_zone *zone = tz->devdata;
-+	struct device *dev = &cdev->device;
-+	struct thermal_trip trip;
-+	int err;
-+
-+	err = thermal_zone_get_trip(tz, trip_id, &trip);
-+	if (err < 0)
-+		return err;
-+
-+	if (trip.type == THERMAL_TRIP_HOT) {
-+		struct soctherm_throt_cfg *stc = cdev->devdata;
-+
-+		err = throttrip_program(zone->dev, zone->sg, stc, trip.temperature);
-+		if (err < 0) {
-+			dev_err(dev, "throttrip: %s: error during enable\n",
-+				zone->sg->name);
-+			return err;
-+		}
-+
-+		dev_info(dev, "throttrip: will throttle when %s reaches %d mC\n",
-+			 zone->sg->name, trip.temperature);
-+
-+		/* keep a reference to this for ->set_trip_temp() */
-+		zone->cdev = cdev;
-+	}
-+
-+	return 0;
-+}
-+
-+static void throt_unbind(struct thermal_cooling_device *cdev,
-+			 struct thermal_zone_device *tz, int trip_id)
-+{
-+	struct tegra_thermctl_zone *zone = tz->devdata;
-+	struct thermal_trip trip;
-+	int err;
-+
-+	err = __thermal_zone_get_trip(tz, trip_id, &trip);
-+	if (err < 0)
-+		return;
-+
-+	if (trip.type == THERMAL_TRIP_HOT)
-+		zone->cdev = NULL;
-+}
-+
- static int throt_get_cdev_max_state(struct thermal_cooling_device *cdev,
- 				    unsigned long *max_state)
- {
-@@ -1507,7 +1490,8 @@ static int throt_get_cdev_max_state(struct thermal_cooling_device *cdev,
- static int throt_get_cdev_cur_state(struct thermal_cooling_device *cdev,
- 				    unsigned long *cur_state)
- {
--	struct tegra_soctherm *ts = cdev->devdata;
-+	struct soctherm_throt_cfg *stc = cdev->devdata;
-+	struct tegra_soctherm *ts = stc->soctherm;
- 	u32 r;
- 
- 	r = readl(ts->regs + THROT_STATUS);
-@@ -1526,6 +1510,8 @@ static int throt_set_cdev_state(struct thermal_cooling_device *cdev,
- }
- 
- static const struct thermal_cooling_device_ops throt_cooling_ops = {
-+	.bind = throt_bind,
-+	.unbind = throt_unbind,
- 	.get_max_state = throt_get_cdev_max_state,
- 	.get_cur_state = throt_get_cdev_cur_state,
- 	.set_cur_state = throt_set_cdev_state,
-@@ -1576,8 +1562,8 @@ static int soctherm_thermtrips_parse(struct platform_device *pdev)
- }
- 
- static void soctherm_oc_cfg_parse(struct device *dev,
--				struct device_node *np_oc,
--				struct soctherm_throt_cfg *stc)
-+				  struct device_node *np_oc,
-+				  struct soctherm_throt_cfg *stc)
- {
- 	u32 val;
- 
-@@ -1694,13 +1680,15 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
- 		if (err)
- 			continue;
- 
-+		stc->soctherm = ts;
-+
- 		if (stc->id >= THROTTLE_OC1) {
- 			soctherm_oc_cfg_parse(dev, np_stcc, stc);
- 			stc->init = true;
- 		} else {
- 
- 			tcd = thermal_of_cooling_device_register(np_stcc,
--							 (char *)name, ts,
-+							 (char *)name, stc,
- 							 &throt_cooling_ops);
- 			if (IS_ERR_OR_NULL(tcd)) {
- 				dev_err(dev,
--- 
-2.39.1
+[1/2] ASoC: rt5640: Update MCLK rate in set_sysclk()
+      commit: 9f138bb2eaf661788df459dfcaf38feb080af41f
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
