@@ -2,65 +2,65 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994DDC05027
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 14:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9182C61DA4
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 14:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231189AbjBIOiP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Feb 2023 09:38:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
+        id S230333AbjBIOiZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Feb 2023 09:38:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbjBIOiL (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 09:38:11 -0500
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2072.outbound.protection.outlook.com [40.107.223.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650476032D;
-        Thu,  9 Feb 2023 06:37:47 -0800 (PST)
+        with ESMTP id S230457AbjBIOiY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 09:38:24 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2049.outbound.protection.outlook.com [40.107.237.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224CA6033D;
+        Thu,  9 Feb 2023 06:37:55 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yqwq2daZqbw2xoVElPMHJI8WnnIpcyzs+ZXLZBc3vd25HdfGB4E5jH2/1BUtRe2IjOm9OFG2cfRElt5SBVi4xtfgg6Rk3cxR5cjZAvpJk7w4Hv2IYzp38T+p+z1f4JUUj17wWStI6nVr0KSgmdFC8L4pkgdJz6fWrXKUlhf4vSDm+ztAzEfPnRxfylTaorN5zhHqwHa9YInoWMvv4v5O34OKv6cFFowasyZImMeb5P80cHnBbCdq5ubZIuTbZ9RtQLG3Te5n5hQ/7icPhHKQRhGE4QeJPKdeRStjmYunk5P89gTJvIINs7hrFnU5kBnLh7wk49SBhnLCmfgVVCTs2g==
+ b=NapcCZADFb8j+vx/N1Vc5L17AJ/K4suDQQls/kbYQEJSnESbaf4xPd53MHof5w+5UPhVIXLQdj5CB9T4ir01qQG13MvrOSxWoLZPrabsPINpgNjGkF8MblgPGkoGgZCo0DbK9/3pHD06OOOWPzv3BTp7k4SaZxczUNqU/M+XxcVyeoeyiwMDz7n8DxlnsyWjtWkqD5MHaSa7ssjTkp52uk4mXsNsItD1PULRKg59FZIBOCBqQDTSqqTDmyLFPQ+6EvflE2rZw9pDoKpUYMgk5o6N8ote97vu7wyQ7n68OSpU3vuMREpv+2+EPurJO2AKWkcWrlDhys/nkJLktIQP8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YMdaSqPKE55bR7qk1vw7VG/3FkD/erVs22Kw0FyP3VI=;
- b=fGDk+JRs3Ob7N1mpXoUFMd+1tjTCptKPAupw/kw59wT07r5GTmpqgb+pUC8BElmWTdJAd0NpEiri0cACNpcomdKZjWRoijwamlVNgtC+K/ZT51hqyCZ7L62n4Lf2dAl40V39+IeLr7fvpl8Z1594Ev7d0vkZkrwAWL3/jNAlP+ofY+IN3di7IPWIcXJMcVATqOzMo+VgIHoLSMbWyf2TA2rhcHjmABJYdP9KEPBNTVpgik+fVuiK7mHLW9+SwGCtMqVwka0vLJvpuQx6CLvUxkZHKS8tdXKUyUxp3Mu/WFihOcCu9rIWPfwsHVSz0EeAIIBKp/tYTSJkNybeBEG+3Q==
+ bh=8ckuwIPY2NfACh0tyapv5v43z8gJvjALcrkaX0Cfrac=;
+ b=fOv01aekiFJo+n3cIOPc+vbEf3EoRPplDPb4XqVMt23F1rF+Rd1a5WSJ/5e32YMZ+jn8lWuYVhSbbe5LVHqHlwFg1W5jzFWFfiTBPHkVtjiNoTOJviTtRupvGqJ5FsFy5O1rBhKifu9n+EJ2duuraUUSosbPQq3lXf1+3uvt9xaFr70O8cE1Wn54GAbE4kfBcPx2Ou9DUfsmqsqvNPd2q8zfjT1C2nqwR3P3hbEgcE56USb63jD+qNlrqAu8GY+OG83464fRjz/M6Ycmlc+8SClQuftDETjxKvwgS6ldTXe7NLfnG5sbUTeye/qkIJbgoBLm4xSrGLZBt21REa0nmw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YMdaSqPKE55bR7qk1vw7VG/3FkD/erVs22Kw0FyP3VI=;
- b=XWgDWsnDBq8PCTC3290W/cOO2vosIIw6wC0fzUKr2MeGvF1Wugq5O4QIQXHQ9GOuVtAZ7a6gYh+JpaIIt24u3+UiUTJ2ChHpC/UNdcsGvAw3IDK66WMGQFb1xlj7X+oMN7MhNazYaS8mLd8GtuYIXrY5GtrxMfsQLHFeHRnGo1m9JGi22nRva9KBr2q8NfSsSwJtzcRh+9oIfrsIa2uzJCHYoRYdlN17dNGsCZFgqgDQDeG8g94QHy37IIxv41Gg/SiiZ4rN18oVYLjWowwlcxCAzwZykyRoHAkwacYV8SJxb9YUCbPzHsRVjOhut4CKL7H2m6Wk9IbQRqAxcWMlbQ==
-Received: from BN0PR03CA0035.namprd03.prod.outlook.com (2603:10b6:408:e7::10)
- by MN2PR12MB4357.namprd12.prod.outlook.com (2603:10b6:208:262::19) with
+ bh=8ckuwIPY2NfACh0tyapv5v43z8gJvjALcrkaX0Cfrac=;
+ b=cafumfHvAZ1aiLJfZQOk0CC9CtAag1R4mOs1lz3HnkhI11Uj3lOs2VaBGRw7TLPzcRs8gicBPtDBp51J3xI/j+ZKWoMXCcCd0Cj4PuN3KyswEQ307ofexSxSE4AO7+6Hs9Oe4s/qjXfEjKqjIXBaVDmN2ioPQ5evJoo8LqsiWiI9haiU6luNqT12SG9WxanUdO/X/ufNgvvPV/78feAr4C2IodCeEO9Bu0fyedvoOFsTbO4kPOx65rjlDVPHSK2KtvdyFkHYKw6mJaduTMGhSrcxWT4jfAFlbzLjof617Hkt537XBHlcfgzNaIenjLrX/aypYeSE3xqoKIMKmiGehQ==
+Received: from MW4PR04CA0270.namprd04.prod.outlook.com (2603:10b6:303:88::35)
+ by DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.19; Thu, 9 Feb
- 2023 14:37:37 +0000
-Received: from BN8NAM11FT069.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e7:cafe::f2) by BN0PR03CA0035.outlook.office365.com
- (2603:10b6:408:e7::10) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 14:37:41 +0000
+Received: from CO1NAM11FT081.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:88:cafe::30) by MW4PR04CA0270.outlook.office365.com
+ (2603:10b6:303:88::35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.19 via Frontend
- Transport; Thu, 9 Feb 2023 14:37:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ Transport; Thu, 9 Feb 2023 14:37:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT069.mail.protection.outlook.com (10.13.176.152) with Microsoft SMTP
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT081.mail.protection.outlook.com (10.13.174.80) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6086.19 via Frontend Transport; Thu, 9 Feb 2023 14:37:36 +0000
+ 15.20.6086.19 via Frontend Transport; Thu, 9 Feb 2023 14:37:41 +0000
 Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
- 06:37:25 -0800
+ 06:37:34 -0800
 Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
- 06:37:24 -0800
+ 06:37:33 -0800
 Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com
  (10.129.68.10) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Thu, 9 Feb 2023 06:37:20 -0800
+ Transport; Thu, 9 Feb 2023 06:37:29 -0800
 From:   Sameer Pujar <spujar@nvidia.com>
 To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
@@ -69,47 +69,123 @@ CC:     <perex@perex.cz>, <tiwai@suse.com>, <lgirdwood@gmail.com>,
         <kuninori.morimoto.gx@renesas.com>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <alsa-devel@alsa-project.org>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 0/2] Codec support on Jetson AGX Orin
-Date:   Thu, 9 Feb 2023 20:06:55 +0530
-Message-ID: <1675953417-8686-1-git-send-email-spujar@nvidia.com>
+Subject: [PATCH 2/2] arm64: tegra: Audio codec support on Jetson AGX Orin
+Date:   Thu, 9 Feb 2023 20:06:57 +0530
+Message-ID: <1675953417-8686-3-git-send-email-spujar@nvidia.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1675953417-8686-1-git-send-email-spujar@nvidia.com>
+References: <1675953417-8686-1-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT069:EE_|MN2PR12MB4357:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8dc4222-2731-4003-8124-08db0aab3064
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT081:EE_|DS7PR12MB6095:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96e75efd-8b3e-4c34-3bba-08db0aab32da
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YuPsamz+Z+gprN3hFIcS9iYrMX+aV0oY48JfrsY3xIvSTLdSzBKutAcNtDVwKPH2zhbEkQv77hRZCG7sJ0JjG25fA6IFU4BHyCFEjPbUMk2wMMlbk4Aal/qVB6C6Z3AXApC9bPxsFD6Dx5jmE4W52NXH4yZ4qxQLGL20Bhj9FyxszIkPVNZwS/77ycyQa+7RV2DxEcGnmqDZmdBV1hJEYKLR64KiLC1WJJtgisjvVm6AKNygNOMZ/9eq3BX1kFt7n8lH0IXNvxTi0iPewrnSYltOYwSQiYu3u/SySRhzWrjtMFl8pCa+HFMzKgy+D9MR1aeW+5+EfafzLp19AOChbbOQbEnY4TaqiHDyLO4L8ls4FKo3uqJYHg7VQvRjz0oZ0ZuXGfL6Dv16ukd1WipquXxbUkG8HoBiEBZ8FG1U9vuZXRJsNgLdiXIB4qtWUNHQ6rukGJr8PSJF8AEkfbG94hsBKAVsRei7nFInXhmloqskGJsNXN68ZJyZVBIgBrEB7GTJhXAYgGy+zUPcawmfeDISoR3BkX6wbxwQ9qdDpjwVx+WPOz7OsOAw7dDQ4tifPjaDubWUKz6hdLXEdKMkV5tn9V/hXawJZoVzzJz2mjjW0pbFwqE0NeaRW2yTbTkbw26mpl+rkBwifqMvA/TtJdKyw2VuSrRgPM4aZsL+ILmJ+7av6S+THup08/aOZ4tGmQVJ+Fu41VFVNtNr7Cl0xw==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(136003)(396003)(346002)(39860400002)(376002)(451199018)(36840700001)(46966006)(40470700004)(36756003)(2906002)(82310400005)(40480700001)(478600001)(36860700001)(26005)(7696005)(2616005)(336012)(186003)(83380400001)(47076005)(426003)(8676002)(6666004)(4326008)(40460700003)(107886003)(41300700001)(70206006)(70586007)(4744005)(86362001)(7416002)(5660300002)(8936002)(7636003)(82740400003)(316002)(356005)(54906003)(110136005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: XMrLu864+HTJWalmmPGn9xtClq3B6ZzhlaCp1MCYpTxAlWXk/ZsHsW4+x9dgC2sYK0Z20ri5byveA2XzyqP8ah52xDWcT7A0WXgsQp2WL/Iq2r8aNSDpiYQkLggxVCLD9JOYGnfmx2bIJCfNLTTLdKMUR7Boxnudy5objZt8N1DDVbvrTCBpoiD+/99SPjl2R9yx3pdj0+0HcUwiBa94TIFRGfjA6bd6K/odaxeCfAjmwTkqH5HcNqzmoHzwdH/hQUpUXvluBtGSvpmbRcj5rq1dfvpO/pA3HgkhO4UkHrvRpsuIyUGRSIQjfGYGvX+16SSeddPNnHLwb+sXChN7Rsd2GLL/ZFsegr3ogO/wsgBcBxlVCMx5esaulLOuYMERlHSa3w1mOOu4t4E9075tKwNDSU8eCFaie2qG24QDfK3L7tWWElDRW7LxO3gMN2NEWGggB37xwLAbhWlNceXq9w9rF2iKyXJWYCndT9O65SRupwHOWOqtXoHb3GJu8b9NeTW4TNkuAq485i9uMEyoo/uijiyAGEX3YUeeQRtoFZL245wO/DtmP9TthP+kdtUJroHe7MbDNqTa1zpIu8wnzLopBAKrpmCeokUM7LY8vpGXyP3rjd4N1EJ47+uQaSy6Yhry6Ba23bBtt0+q5+oQjLBZwiHSoGw++8CJtfHyf0VcXRT1RBxUZgBEDI5t9jFm3cZ/gR9z+iVDp2tFB9l7KQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(346002)(376002)(39860400002)(136003)(396003)(451199018)(46966006)(40470700004)(36840700001)(6666004)(26005)(107886003)(186003)(82740400003)(86362001)(36860700001)(82310400005)(356005)(36756003)(70206006)(70586007)(316002)(8676002)(7416002)(7696005)(54906003)(110136005)(426003)(336012)(83380400001)(47076005)(478600001)(40480700001)(40460700003)(4326008)(41300700001)(2906002)(2616005)(7636003)(5660300002)(8936002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2023 14:37:36.8604
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2023 14:37:41.0968
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8dc4222-2731-4003-8124-08db0aab3064
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96e75efd-8b3e-4c34-3bba-08db0aab32da
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT069.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT081.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4357
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6095
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Jetson AGX Orin has onboard RT5640 audio codec and uses I2S1 interface.
-Add DT bindings to enable codec support. Series also contains a clock
-fix in the codec driver.
+Jetson AGX Orin has onboard RT5640 audio codec. This patch adds the
+codec device node and the bindings to I2S1 interface.
 
-Sameer Pujar (2):
-  ASoC: rt5640: Update MCLK rate in set_sysclk()
-  arm64: tegra: Audio codec support on Jetson AGX Orin
-
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
  .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  | 47 +++++++++++++++++++++-
- sound/soc/codecs/rt5640.c                          |  5 +++
- 2 files changed, 51 insertions(+), 1 deletion(-)
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+index 8a97478..5881fbf 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+@@ -3,6 +3,7 @@
+ 
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/input/gpio-keys.h>
++#include <dt-bindings/sound/rt5640.h>
+ 
+ #include "tegra234-p3701-0000.dtsi"
+ #include "tegra234-p3737-0000.dtsi"
+@@ -49,7 +50,7 @@
+ 
+ 							i2s1_dap: endpoint {
+ 								dai-format = "i2s";
+-								/* placeholder for external codec */
++								remote-endpoint = <&rt5640_ep>;
+ 							};
+ 						};
+ 					};
+@@ -2017,6 +2018,32 @@
+ 			status = "okay";
+ 		};
+ 
++		i2c@31e0000 {
++			status = "okay";
++
++			audio-codec@1c {
++				status = "okay";
++
++				compatible = "realtek,rt5640";
++				reg = <0x1c>;
++				interrupt-parent = <&gpio>;
++				interrupts = <TEGRA234_MAIN_GPIO(AC, 5) GPIO_ACTIVE_HIGH>;
++				clocks = <&bpmp TEGRA234_CLK_AUD_MCLK>;
++				clock-names = "mclk";
++				realtek,dmic1-data-pin = <RT5640_DMIC1_DATA_PIN_NONE>;
++				realtek,dmic2-data-pin = <RT5640_DMIC2_DATA_PIN_NONE>;
++				realtek,jack-detect-source = <RT5640_JD_SRC_HDA_HEADER>;
++				sound-name-prefix = "CVB-RT";
++
++				port {
++					rt5640_ep: endpoint {
++						remote-endpoint = <&i2s1_dap>;
++						mclk-fs = <256>;
++					};
++				};
++			};
++		};
++
+ 		pwm@32a0000 {
+ 			assigned-clocks = <&bpmp TEGRA234_CLK_PWM3>;
+ 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
+@@ -2293,5 +2320,23 @@
+ 		       <&dmic3_port>;
+ 
+ 		label = "NVIDIA Jetson AGX Orin APE";
++
++		widgets = "Microphone",	"CVB-RT MIC Jack",
++			  "Microphone",	"CVB-RT MIC",
++			  "Headphone",	"CVB-RT HP Jack",
++			  "Speaker",	"CVB-RT SPK";
++
++		routing = /* I2S1 <-> RT5640 */
++			  "CVB-RT AIF1 Playback",	"I2S1 DAP-Playback",
++			  "I2S1 DAP-Capture",		"CVB-RT AIF1 Capture",
++			  /* RT5640 codec controls */
++			  "CVB-RT HP Jack",		"CVB-RT HPOL",
++			  "CVB-RT HP Jack",		"CVB-RT HPOR",
++			  "CVB-RT IN1P",		"CVB-RT MIC Jack",
++			  "CVB-RT IN2P",		"CVB-RT MIC Jack",
++			  "CVB-RT SPK",			"CVB-RT SPOLP",
++			  "CVB-RT SPK",			"CVB-RT SPORP",
++			  "CVB-RT DMIC1",		"CVB-RT MIC",
++			  "CVB-RT DMIC2",		"CVB-RT MIC";
+ 	};
+ };
 -- 
 2.7.4
 
