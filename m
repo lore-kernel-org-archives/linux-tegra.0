@@ -2,137 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9470EC05027
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 12:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF42BC64EC4
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Feb 2023 14:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbjBIMxr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Feb 2023 07:53:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57180 "EHLO
+        id S230416AbjBIObR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Feb 2023 09:31:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjBIMxo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 07:53:44 -0500
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAD15A9E6;
-        Thu,  9 Feb 2023 04:53:42 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xdcz6e0LuhYvDgYpsEQePqfvD+JA0ATZIp74X2arRgqH+BauqLZN5WMPizTE66IJ7rgiJWllbFqTE6+ZJpTKzdWwVPXiFDZeJpkzvkKROK6qdw+uGG4pOTfw1doo7C6qcGraHK0V3UmS13iweRHdygphQZpi72Y8kDOHgL0MKE45yKn1dxx3w+DD+8IlVLasPx7lK7JDtqzuWGmt0csDVH8X4Q7i2Mq4gbizqmu+5ym7PDMnLE6Flcvh12b8i4fkAtxqxSuYWIKBnW8kIUlRuu+H4WRFntFUwT4ICQ9rfAtM1xLKesnr2EYaltHVUp8GEMMA+xcYbf43QOzpWhtjmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uNWJmQuOIWF+yExhdo5VyG87VdMBXaMUfNLXx0B13a4=;
- b=GziUhZNwnpj2BxrM55t1t9Grq47S6gHpPkwvGyEsv6o9zO/BsCIkPw65REyAaIfMux8fIjs9T41chNfnxw5xHqN5vVknsNPiFCuyyVdbqKjN9b2H301kMMFCHZWeUrvm25vPKtX35p6C4GER/k7PsNQvsUFC+uwdu3wokN8bL3UGdDHY/DycMqpIj7wwmA/xXN7CKTe4wBdShpVHz0GY099AoQgLQ+DzUzZ3G5rKtzQsafiFLwxg9dl01YMH0dxOE5vcdDvq983Ww/lfelt3Y2tt46P2kPEn/Pe/b+Y9ZNW3WEpSHK99E40Gx3FKQCI8aSFyKPgqq45/SsxdHqIZZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uNWJmQuOIWF+yExhdo5VyG87VdMBXaMUfNLXx0B13a4=;
- b=e80FdHPxJNC/2DfS/BAUUsfyPv0LIB7O5ghAgzVS7ryekXrUg4w4bIBDEbJgN8U7TGSuWVhILaTOEBsgQZPS2cInYnLiWvv9v0XD/iq8Oofjjp5PhnkDc4kZOf7IBS1mpSfOC6JkXti4ZS9g6DpLYkSTCbDxNSndYhzm77h9IB2wVsgyi1azfSMnllzF2Veyr7eQT0AmnWsmhDrYumrVKTQTAfyADqZIBKjPmbbJSDVvPz6cmr1ZktBkYWaOUXEO7PmOqIPlYERh1q5/RN2VVFXpFqZ88Zy+Gxnc0yk3aUEjSP8DT8HMXYhN3teLl0dYrabOPvHFy5U74Bphxbs/RA==
-Received: from BN9PR03CA0157.namprd03.prod.outlook.com (2603:10b6:408:f4::12)
- by BL0PR12MB4916.namprd12.prod.outlook.com (2603:10b6:208:1ce::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.17; Thu, 9 Feb
- 2023 12:53:41 +0000
-Received: from BN8NAM11FT043.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:f4:cafe::bf) by BN9PR03CA0157.outlook.office365.com
- (2603:10b6:408:f4::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.19 via Frontend
- Transport; Thu, 9 Feb 2023 12:53:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN8NAM11FT043.mail.protection.outlook.com (10.13.177.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6086.19 via Frontend Transport; Thu, 9 Feb 2023 12:53:41 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
- 04:53:25 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 9 Feb 2023
- 04:53:25 -0800
-Received: from moonraker.home (10.127.8.14) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server id 15.2.986.36 via Frontend Transport; Thu, 9 Feb
- 2023 04:53:23 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3 2/2] usb: gadget: u_ether: Don't warn in gether_setup_name_default()
-Date:   Thu, 9 Feb 2023 12:53:19 +0000
-Message-ID: <20230209125319.18589-2-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230209125319.18589-1-jonathanh@nvidia.com>
-References: <20230209125319.18589-1-jonathanh@nvidia.com>
+        with ESMTP id S230515AbjBIObC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Feb 2023 09:31:02 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CF85D3DF;
+        Thu,  9 Feb 2023 06:30:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 7D695CE24F3;
+        Thu,  9 Feb 2023 14:30:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C41C433EF;
+        Thu,  9 Feb 2023 14:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675953052;
+        bh=n5q92jtNB++4BoYIauYygzacB4DdXZvQYlYHsoaQZHo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L4cNRE4MQxZhPNyBF/08CXXf/FWNQlzUwcRLG/0S65J/4ZChTqeAH+gdyIm7+puo/
+         e1NMfqyqjToGWx/m2stUfU7oe9VJ+8njI+o0jyklZ6aQ10e0wIfN7idp96BYLv9Fv3
+         QhfxNouUc0qZTgyD3UIjJF1eoI/sa7sYlEflw9jIrrOTdIfoFZo0OmH5vYc0Tjwjlg
+         7k/6gJhmjkwo6pEOCZrEJ5FmUMlxfm8y1s7LLhR+jeJXraVBKucJ1jUqjs66gKI0qH
+         XjavWBRymrRU2MvlL95tjkP7Fwb0aTwHP4DAbOFosKC6AT8CudX5DVtLZ+LDNj9wE2
+         dDufUua3aqd7w==
+Date:   Thu, 9 Feb 2023 14:30:29 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc:     miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        jic23@kernel.org, tudor.ambarus@microchip.com, pratyush@kernel.org,
+        sanju.mehta@amd.com, chin-ting_kuo@aspeedtech.com, clg@kaod.org,
+        kdasu.kdev@gmail.com, f.fainelli@gmail.com, rjui@broadcom.com,
+        sbranden@broadcom.com, eajames@linux.ibm.com, olteanv@gmail.com,
+        han.xu@nxp.com, john.garry@huawei.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, narmstrong@baylibre.com,
+        khilman@baylibre.com, matthias.bgg@gmail.com, haibo.chen@nxp.com,
+        linus.walleij@linaro.org, daniel@zonque.org,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
+        krzysztof.kozlowski@linaro.org, andi@etezian.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
+        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
+        kvalo@kernel.org, git@amd.com, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@jms.id.au, andrew@aj.id.au,
+        radu_nicolae.pirea@upb.ro, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
+        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
+        alim.akhtar@samsung.com, ldewangan@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-mtd@lists.infradead.org, lars@metafoo.de,
+        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+        michael@walle.cc, palmer@dabbelt.com,
+        linux-riscv@lists.infradead.org, amitrkcian2002@gmail.com,
+        Dhruva Gole <d-gole@ti.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        William Zhang <william.zhang@broadcom.com>
+Subject: Re: [PATCH v3 01/13] spi: Replace all spi->chip_select and
+ spi->cs_gpiod references with function call
+Message-ID: <Y+UDhWK6u9NkMTxv@sirena.org.uk>
+References: <20230202152258.512973-1-amit.kumar-mahapatra@amd.com>
+ <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT043:EE_|BL0PR12MB4916:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c2b72fd-0249-40f6-4734-08db0a9cab9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XNk4Rx8xZs0PtWU2e9oZNZR/JA97lAHj5HyfpybVbknc7ZLwQVC9fDgXBjOF80vcby2wspz4oeM2kDn7BM/3BIQB7nSj2xEpFERrEkgtLJe0uP6F/XcBFer6Hq35MLVZD/LHAXJzTtYTOVM4IYMYaPT6f4J6YxsPYGwczzBFzyyJNdmr2gNjbqzJbe6tFVtfEy4M3jTPKF+JAmx2OH1N1c75ZKeDCpauH5S0twaBSTVE7Flg/L2lhJk3YP2Bin5wMLo/jbIw96WuOnDx4yJl4yif44MODC4EVGx9Gyegz9sBnOdjyZOENPMndOQ+nvQ9VXux64xqMfXRcO2PG+Ovc7gAfjk/n/h9UOJk0L/LTA5f0l+Ic6JV/XH5XqtmsoymWQ8gZajahxfid7CVo3nW8oomSuSUU6bOjMvViL8qu7eesSEKx7ieoZS/CDWEMsP8lqFuYRprI7gIYqrba0a0xA/bA470hHtY/gXCfbByO9EjZs6hDGJdAlTAPv3dDUEgz9+2TwAZXTEFHI3cjcjdTEMEzWnQjKp6V2m9uMOa8m3Pc8LkT+8M+d5558IWiPXlq7yy35R0SMrTlCeLL13gI+1VJ0D5YlUDiCW3Jp28ZvnC1KLzuuH1fqeTieiGVclzI8bqJBfDSozWBmCkRH3uCmQkzn45Eqe/FZAEFZI5vNY=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(396003)(39860400002)(346002)(136003)(376002)(451199018)(36840700001)(46966006)(4326008)(6916009)(8676002)(426003)(70586007)(70206006)(47076005)(41300700001)(336012)(82310400005)(2616005)(82740400003)(7636003)(36860700001)(26005)(186003)(2906002)(40480700001)(478600001)(1076003)(356005)(107886003)(316002)(6666004)(8936002)(86362001)(5660300002)(54906003)(83380400001)(36756003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2023 12:53:41.1544
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c2b72fd-0249-40f6-4734-08db0a9cab9f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT043.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4916
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="iWU3nY956KPhZko1"
+Content-Disposition: inline
+In-Reply-To: <20230202152258.512973-2-amit.kumar-mahapatra@amd.com>
+X-Cookie: Androphobia:
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The function gether_setup_name_default() is called by various USB
-ethernet gadget drivers. Calling this function will select a random
-host and device MAC addresses. A properly working driver should be
-silent and not warn the user about default MAC addresses selection.
-Given that the MAC addresses are also printed when the function
-gether_register_netdev() is called, remove these unnecessary warnings.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-V3: Updated patch to remove the prints completely.
-V2: Changed print to debug instead of info.
+--iWU3nY956KPhZko1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/usb/gadget/function/u_ether.c | 2 --
- 1 file changed, 2 deletions(-)
+On Thu, Feb 02, 2023 at 08:52:46PM +0530, Amit Kumar Mahapatra wrote:
+> Supporting multi-cs in spi drivers would require the chip_select & cs_gpi=
+od
+> members of struct spi_device to be an array. But changing the type of the=
+se
+> members to array would break the spi driver functionality. To make the
+> transition smoother introduced four new APIs to get/set the
 
-diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-index 740331882e8d..953d936fbae6 100644
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -811,13 +811,11 @@ struct net_device *gether_setup_name_default(const char *netname)
- 	snprintf(net->name, sizeof(net->name), "%s%%d", netname);
- 
- 	eth_random_addr(dev->dev_mac);
--	pr_warn("using random %s ethernet address\n", "self");
- 
- 	/* by default we always have a random MAC address */
- 	net->addr_assign_type = NET_ADDR_RANDOM;
- 
- 	eth_random_addr(dev->host_mac);
--	pr_warn("using random %s ethernet address\n", "host");
- 
- 	net->netdev_ops = &eth_netdev_ops;
- 
--- 
-2.34.1
+This break an arm multi_v7_defconfig build:
 
+/build/stage/linux/drivers/spi/spi-pl022.c: In function =E2=80=98pl022_tran=
+sfer_one_message=E2=80=99:
+/build/stage/linux/drivers/spi/spi-pl022.c:1592:31: error: =E2=80=98struct =
+spi_message=E2=80=99 has no member named =E2=80=98spi_get_csgpiod=E2=80=99
+ 1592 |         pl022->cur_gpiod =3D msg->spi_get_csgpiod(spi, 0);
+      |                               ^~
+/build/stage/linux/drivers/spi/spi-pl022.c:1592:49: error: =E2=80=98spi=E2=
+=80=99 undeclared (first use in this function)
+ 1592 |         pl022->cur_gpiod =3D msg->spi_get_csgpiod(spi, 0);
+      |                                                 ^~~
+/build/stage/linux/drivers/spi/spi-pl022.c:1592:49: note: each undeclared i=
+dentifier is reported only once for each function it appears in
+
+--iWU3nY956KPhZko1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPlA4QACgkQJNaLcl1U
+h9Ai+wf+IWbvrI/uIEjinXzailRkkSP40/uzdnv8AAKF5zA3laimeZYZPCoKfD4X
+GzBSQEjiZOJmPZ0wBaHHFFaxHSBlL6rtUoA6r+EEktjzWc6vOsmoUVRt74R+ZMHw
+1FyvWR07nFAstJD2rPfPhIZ5bt4yiRX/CmA2SxN1qW74IwjKYAy6jLvbpSAZ4byY
+KRnij11f/xqUuiao0L/PTya+dYLUOBEQvXm5JBAIqhZaQVH4G7Ppov0MR15cEMug
+OG9oMzu197RFh7WgO6lj8rI9Cssl4vvj6+3owDZ/nK+LFq62Z6AvBGbaP7SoHOOI
+Xcz8JdTcCAH0XAgza9flmPUQME9cmQ==
+=4wBC
+-----END PGP SIGNATURE-----
+
+--iWU3nY956KPhZko1--
