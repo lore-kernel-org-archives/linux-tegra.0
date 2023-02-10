@@ -2,340 +2,178 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A9EC05027
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Feb 2023 15:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3D5C636CD
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Feb 2023 17:32:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232160AbjBJPMl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Feb 2023 10:12:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40610 "EHLO
+        id S232781AbjBJRcz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Feb 2023 12:32:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231882AbjBJPMk (ORCPT
+        with ESMTP id S232400AbjBJRcx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Feb 2023 10:12:40 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF1D8211DC;
-        Fri, 10 Feb 2023 07:12:38 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id m2so16660782ejb.8;
-        Fri, 10 Feb 2023 07:12:38 -0800 (PST)
+        Fri, 10 Feb 2023 12:32:53 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A8E078D6C;
+        Fri, 10 Feb 2023 09:32:51 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31AFO8pW031086;
+        Fri, 10 Feb 2023 17:32:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references :
+ content-transfer-encoding : content-type : mime-version; s=corp-2022-7-12;
+ bh=K0rtXJOevCeTy9zI9iNUy8835YavGLlPvGKFGX0sJdQ=;
+ b=eCZ2PvJWuWoqhWTmaSE1WuC+xUJkjafgWj4iV4NDp9pKODTW5TftorGJpaFFlSWjlONh
+ 3S0YNqPVEtrNdUv2X2p2FwQ4BfT3viyJEfI268TZ4z1fT3d/WKSbfJI7Nn34hKmKWx3O
+ YImaWTg5kS48EAEaCdguT8b80nOGY4qbftX7gy/na5Zgz/iW240YyldV1RDSI50W/WrD
+ WSQgnOUfXuCBk7lHTeKt0STo6mONKQfIXxOSQs20EOMIqthLL6ZQtN4kI+uHfderoQ+S
+ P129nvyHiPqdLYC70W68IK4XFaSJhr+qihHVk5pw1V+zhgFfuNDWcNrgveq12kHvo9jv Dw== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3nheyu5w5x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Feb 2023 17:32:38 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 31AFx7Gt013675;
+        Fri, 10 Feb 2023 17:32:37 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3nhdtahe44-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Feb 2023 17:32:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=THHWYai+l6C1dUDMdVdmj86QVpkivsfK2pSDlFmmQWrNa/WHrSx5kvdKZTcb9qyy0GLKV8u1MnztGEEv2HzbhO7VITcAtX3PS9lnRCWDY5zeN5oij3UkvnCEt6OfeenqaL7K06ok1hIs/QvVo6GQ26vufA/YJIZsSlYUY7bgVps3uy3j4xycME+y/J126gHBiuAZXgAJ4XcgZ41oPKP3UXWqMoP7wlj/4kl1hURqtd5vu51g1zhQrnKTEqj4TmXNYCKBSG6Ht+cHGzCMDqzjvGHiEj0ikhM4P1N8NdyqK9Fm3A9YO9oKZhBTB4DKYnK2Qq8zact6eV6fzx30JC+tSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K0rtXJOevCeTy9zI9iNUy8835YavGLlPvGKFGX0sJdQ=;
+ b=Kh6T9VYtv96ODU/dWX0eX0PbevUKqmG51ZD2V/QgnEpq9vTtCN4g7tBadbriJLPSIwFf2CKAzFOZSYLHXx4rTDIKkpzuTpz5WGBmt7Ekd8PWtdfCJ74mnT5iSxPggbwrXxIs7VgwR/Dto9/dfxSgg/Cq4aKheMLx7lOtpyODXZ4lFbduxMt0jt35PtU+EZixI6vYeba8k2/x4frvVQvaW6v7XlARoAde8ESQPNgnJvcfmaRgLbkgLlaTaBDbiWcafIK9zb0l70HFEfcGtoZPubczTWhE7sWAT8ghPuvLtJZVzwJQnrEqy4q8YSZ9D6aX7dNChjJsTVByWML5PexBhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1A+uesByqCs0ybnziWaHlVRhSkDkrI54gGo+LelIbN8=;
-        b=NcxhqzvhKnQBHRu7vDSI/EtzGftenCxn6fM4tdD9qWC1A+QBJCKveLuRtV7LBvRa1X
-         GtJebkk99Je9xTzDWk8oVQ6GVQi57aVRooIO1yb5kJb8Z8CS5fPU2Hzn+ammy+BBMa6b
-         Ljy45m+vuDGfFka0aJ5Bu3nU5F4tHrxQCV1jAGw0wMk9vz/x1Xy117FTQTuIzbTS/bEn
-         OOD4xSjFbuBVqMhKyH6e8XESSSOEn07YICRuBhvAXy353NksaMNG8W5drTLbN/7Abhwd
-         aW8ZBQu9OFwHH7xFiXqogDstKeYr5hKayE7XveSvxFw1B4G7r1sc5DKHA3Q+XtY67lJi
-         7YPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1A+uesByqCs0ybnziWaHlVRhSkDkrI54gGo+LelIbN8=;
-        b=Ll05A5ZgJHVHVvkBShZ2WP//ESQ1liDBHTlFHkQu3ydg3ko5b7ZzLHYYwLSE9abGe9
-         aPPFtLw5WU063LBvCh4fY0vkJH4YiH4SP/nbEdoL1QWJRd4ijVSPHH7jDiNz6+/ppZXQ
-         N+slLVYUcgSUoiAeJei/HFj8gPpHLJ/s+GqHlnXDyYWf2VdSmFa6ghkQf+e9Q2btl3i3
-         IdfscbCHIXUngZegaisBinLVwJgvZxbloxcTofMk2qicMLAejFhs7hlsOa5gm2lUIg/o
-         JkxMACA9P7BClSDQxdDILzAnmQaRJLYHcipcGSoidEYbPxhMe2pTJFaakhTW8/X/vqzI
-         2rVw==
-X-Gm-Message-State: AO0yUKWuMXKHoG2zs5AsDGOVI1inFdcLAS7ILLWW1H96Br2labE023x5
-        k3NEN6cNhjwT11ZEVubnp14=
-X-Google-Smtp-Source: AK7set9iTftYpF+BDslaKxYNqhbD69QGZFv+LHJY1PPCosR1059K4W/cpvwRhkJF7gayU8SO3yD6pA==
-X-Received: by 2002:a17:907:d2a:b0:8af:3922:ace6 with SMTP id gn42-20020a1709070d2a00b008af3922ace6mr8959544ejc.40.1676041957041;
-        Fri, 10 Feb 2023 07:12:37 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id mb20-20020a170906eb1400b0087bdb44bbc0sm2466930ejb.32.2023.02.10.07.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 07:12:36 -0800 (PST)
-Date:   Fri, 10 Feb 2023 16:12:34 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Johan Hovold <johan@kernel.org>,
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K0rtXJOevCeTy9zI9iNUy8835YavGLlPvGKFGX0sJdQ=;
+ b=VWs3TwisEhWYgnvDOEIv6R6eOIb+yPJZDGVvO/lPg0WNcnPqQBJbei1ktnlW7ribH2JTKuS2Yf85PGY8Ob16vM+cmd7hUXjPGpOAZmNMcDeai7mTvPc1cHN920HxLAgvroJOC6z3ISl2mJtbZmr5wgGYGAabm8d0Av7/ncE+giU=
+Received: from DS0PR10MB6798.namprd10.prod.outlook.com (2603:10b6:8:13c::20)
+ by CH3PR10MB6809.namprd10.prod.outlook.com (2603:10b6:610:141::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.19; Fri, 10 Feb
+ 2023 17:32:35 +0000
+Received: from DS0PR10MB6798.namprd10.prod.outlook.com
+ ([fe80::b30f:e3aa:6ba:5c8d]) by DS0PR10MB6798.namprd10.prod.outlook.com
+ ([fe80::b30f:e3aa:6ba:5c8d%5]) with mapi id 15.20.6086.019; Fri, 10 Feb 2023
+ 17:32:35 +0000
+From:   Nick Alcock <nick.alcock@oracle.com>
+To:     mcgrof@kernel.org
+Cc:     linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
- usage
-Message-ID: <Y+Ze4tAM6Jpszq/3@orome>
-References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
- <Y9J4WAFyXyV/nqlG@orome>
- <20230210131703.GF175687@linaro.org>
- <Y+ZQC85TM+O8p8gQ@orome>
- <365c469b-22f6-fb26-1872-5e9a5079af5d@linaro.org>
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: [PATCH 3/8] kbuild, ARM: tegra: comment out MODULE_LICENSE in non-modules
+Date:   Fri, 10 Feb 2023 16:47:44 +0000
+Message-Id: <20230210164749.368998-4-nick.alcock@oracle.com>
+X-Mailer: git-send-email 2.39.1.268.g9de2f9a303
+In-Reply-To: <20230210164749.368998-1-nick.alcock@oracle.com>
+References: <20230210164749.368998-1-nick.alcock@oracle.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0267.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:37c::7) To DS0PR10MB6798.namprd10.prod.outlook.com
+ (2603:10b6:8:13c::20)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JIDgmFM8RuLhVr6d"
-Content-Disposition: inline
-In-Reply-To: <365c469b-22f6-fb26-1872-5e9a5079af5d@linaro.org>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB6798:EE_|CH3PR10MB6809:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22cade77-60b5-48e5-091d-08db0b8ccc34
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7KUCz/ZW2qrlQKiV86inVmHkfyFEQPCE21rTbW7rR4/2j+QYzbjOo5N1Yqf6c4pdzCgdRPk9kFd6yZH+Y5NRJAKjATRy/7XrjDMwcY+XLUEXmsQ6+dioGhNewWu2rvWuK8tgZo76yOh7x6bAqU7Vlth9yBBNSy1Dq35dYPiZRMa8MhD5I3UDOjKQs9o0wP+PLif2mLLETIZq1xwLa4Q3yxGR4nbhgL4+3RCdSfapgK6XuCLHz6tREPBha8NNxUuoWqMYt8G1zBgxebmWGmhaA/FJqiKJTS5CxsMpWMp4egKad4oZqdB42KIiEWU06m9G7iyIYvzHZEHJ2aG8TFGJgYyq0AaXd4nFSTQiZ3utci1FUEY5MmiL6tUgo81kDTq6mhrg1NtjB+LHLxopvNacl/IShVwFmiYnMl0VlN8I16QbpPLSFpX0QE85V5DWzZ5STRkbdEWNz7vgD0k+7FO2QqHYrUhnrD/9yDgOmTBhNnQy5JV64m33Vh+Gnmx1zRs6OFCucqtN8boTGWvdVldCjnt8tvxsx65MMN2yweOeI94+Rmm7Byw8E14yLgMR4vtXFZY8UkhR2stvdovIMfc34/pT0mLOMXNDtAieodgVQ6RTRtxA6Ch7T7NWMrdozc5d0+V0L+bWK8ZCkfd5zUvz3w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6798.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(366004)(39860400002)(346002)(136003)(396003)(376002)(451199018)(6666004)(41300700001)(6916009)(8676002)(66946007)(4326008)(66476007)(66556008)(83380400001)(86362001)(38100700002)(6506007)(1076003)(44832011)(36756003)(2616005)(186003)(8936002)(5660300002)(26005)(6486002)(478600001)(316002)(2906002)(6512007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0tz//CR4436HU3STDCx7j8ZwWXh0WoUz/P889N0P2GVo3Bb4mL3rAy99vXKd?=
+ =?us-ascii?Q?AQYKSSYPjne8TMKznSuSaCLgsVyE415LHI5O5reWYDfGMjshTjayxr4v5MkY?=
+ =?us-ascii?Q?jZID6d1CkkD4ACHI2fmrlXDcAkc43Pcr/f8o7XQIU/gjjDk/6PlZwW5ERMfQ?=
+ =?us-ascii?Q?hRjb7vFTGnKWGBxY/Pbi8/n2X23f7yvRlk2br6PqtxRBWPhYpPzgq7Cfpjd0?=
+ =?us-ascii?Q?wXKTj5rHU/TBB67jjjRco5qPUZKButN00p2InqEk5li7zmM9Viiwy5btQR5j?=
+ =?us-ascii?Q?eO/Igq7NSmOf0hWlZSvpMMHZt0nsaiAzgaPQTCfpSuiUriW7oNqg7xpLJB43?=
+ =?us-ascii?Q?HpcTwgGpdWiubsmk5qYIE85X7ZpaLiXXVeOBCP12Iy6PvLw1yU3E8TxL+B1q?=
+ =?us-ascii?Q?hjeP6bhoUocPRsbN3l/e7ygWVwPcsh+HF+d4xrltgBu1miVomq0/Fy/vh8QZ?=
+ =?us-ascii?Q?HhaXb1uMRPx+U2zkbPOPHIjeUYdlg2+/pO/4fbwwOzKct0twC8iKd/JE/t72?=
+ =?us-ascii?Q?0f1op+DcY+D42Vu/0SoQGAPlCE6MaYrQTaYIqxT4hhC445EH0zB/GElgleBo?=
+ =?us-ascii?Q?ZWSgpvLCkk4Qy0peoM92UCVQY+pWE6fIpMDJ8w1iaZVKdPUyIb6m0ch7PmEb?=
+ =?us-ascii?Q?4Z6JaIY3NjoS+BnWJtvb1l1eLsomLvGSNUgFTueDtxd6buY/WuBzssL3+Rtz?=
+ =?us-ascii?Q?LxBjdlgX/RXjgnlxbDl3Ej2oIWs8DNkOy5wqaICDzVWuG4XYpqlG9rNSAsWx?=
+ =?us-ascii?Q?Aako4WAYJBP0eNXWTjH86+8dHBBVilgBSIhuPFJAm3zKjKQWIHN6md/lpxib?=
+ =?us-ascii?Q?FdZeqa1w+wMlRDiubo+/6YrSgVhOiOpsY+uaLFPT4CAVmckHFNO6NOgOY+Tw?=
+ =?us-ascii?Q?ttOYPirMfgtxy1VHQnw91MB72bEaeofMUtkjoS9GBZLnH72YpggSiqFT+i9z?=
+ =?us-ascii?Q?wyhQGAos8dK6kg05P9Pqfjpz4umOKJ8jNnn5T1omooXZEQThkGdjpQ4ydq3n?=
+ =?us-ascii?Q?ZC/Fanq5eGQCSgeEQTy6+9Ra1Mc2Z7mcRL0gvPeSrI1+4pDyy3CEY+GMtR2E?=
+ =?us-ascii?Q?5RwXwb0L2DDPs7/mMHrGmKi4HxqetDktuwG6A1tClNs6wnpsQDp4+L9MSwoT?=
+ =?us-ascii?Q?h+ZLAzKNMsjCSI3Jjxa96Rbz/RnObfwmvdnHD3GjY2+COatWU4NfajtctfN0?=
+ =?us-ascii?Q?Zs61ghaDFp0bsbJK6+jFSxPjmlinXgDj9syK4dldCakYwxje2rSetLEpycG9?=
+ =?us-ascii?Q?Jsb7n0+8pPZW5yiWVMfPc4cH6lSnLh1tuk6SbRp8YuS5+oLiiVY9GxH/9mMm?=
+ =?us-ascii?Q?31RtQ5CFaH5PxOpKJi1899W+zSKcp4/Lw8rA5AxxpjEpy9q0f6FyBj25Qt2M?=
+ =?us-ascii?Q?VbUZ38UxmlIiRelhc2Y4xGdqYDvz8+wdVjO0N+w1XYhyEVZUc+8EbHw5h5N4?=
+ =?us-ascii?Q?fIuwvFVn3TIbcg5U2b0OvlIzvkcyu1k/2Ngh6PzEWpoeOqwDGR5lPJK3XYe3?=
+ =?us-ascii?Q?A5x/rOTxhZvUd4TrxW7Aetfbh1GAtBP3/xc8wVgSMsU3M6X0ndww3Tevd2hf?=
+ =?us-ascii?Q?cgz0fey6LFYqUUip/ym/9X9dijNMqmEVQXyJf+5s2q+LXdiD/GDCPV08d88a?=
+ =?us-ascii?Q?gw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Brk2xETjXJQ8gAcWcw1LlRyjG+HdGEBc5Rc9VWu6v0iEhxjX94d46MRDegiIhqIwdrFNKUYvgOMBA4J4o8Px3MZagmg2retbMrzRjz8a+SzN9wY5opMvoks/XDDbHtjFt2GUFVGCGn2sBXiF/567j7Gcm+/4I6E8573izEAVc02DBBzbckG7UJ4kfhfJ9GGv8Y8lzcj4k2eIk3y4Ijuf3y/mwF+3rD1jFlLIvOtdtiLGKVSXPi2CTg2vENJhy7TZuR6ZhkvaHzt4vsAu21AQql0g8B5r3oNjSy8ACaZONKsgjejJOw9AYHY+c4OzQhZ/YyDGwkTb6Es7o3/6GmmQ76qL2nsuY9yRwjIo0kLPj8JG3mW1b0W9BWHweHQ8q0j68aYjdY5OVQIGWOhBkJXfsF4i/JGnUTNwZ+uVJXW6VjZEGUMiZ+g1Qbhgx8XFTvCoV2jd42CIPXCnEjIjRIzcN2hv02JFULyAU39/Vn10SX2T6Jar3daS4JJjF4LVGqFoviFcC8LvvpD89J257yppO+G5Fjg/X2nRvWxcC7SLiBpiRF20bOcRoYdVAeCbzhG/A7o3mQBzGc2mFiXKkuEF+5K6v5SgCU0s/nb9dMfxsZEe5DV9G4BFiFlKRu8Qva5V3Mh/GmFZMld0P5XPjUhcObAsJtqfLfKR5DghJOudnyrb4Q8FD6abtoB9bmkYKtf98X2j6VnQm/+z37PRBbQqq16T6KqW5iiGywMqyyQvaFJvomPrMX0GYqPGoGd0lxpiAQzKDcBSS8eCe9ePXRhoaxKavfa0OLBYMtRJR9lxZ7FnvLdxJTvALMu+gNokEH3eTswrGjq6CBt6M4/FLQlIxg==
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22cade77-60b5-48e5-091d-08db0b8ccc34
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6798.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2023 17:32:35.3752
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0MjUtOIhW77NQqj3R6snJ/Hl5qEkHem7LvdiRY/KWY0L7kekoAi/N7FkB45Mz4Q8C5PfewFJoeA6fGXtbljfdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6809
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-10_12,2023-02-09_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302100145
+X-Proofpoint-GUID: jTs4Txu9ocAbe3pmHnB87Zdfc2V7MN_-
+X-Proofpoint-ORIG-GUID: jTs4Txu9ocAbe3pmHnB87Zdfc2V7MN_-
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Since commit 8b41fc4454e ("kbuild: create modules.builtin without
+Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+are used to identify modules. As a consequence, uses of the macro
+in non-modules will cause modprobe to misidentify their containing
+object file as a module when it is not (false positives), and modprobe
+might succeed rather than failing with a suitable error message.
 
---JIDgmFM8RuLhVr6d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So comment out all uses of MODULE_LICENSE that are not in real modules
+(the license declaration is left in as documentation).
 
-On Fri, Feb 10, 2023 at 03:36:59PM +0100, Daniel Lezcano wrote:
-> On 10/02/2023 15:09, Thierry Reding wrote:
-> > On Fri, Feb 10, 2023 at 02:17:03PM +0100, Daniel Lezcano wrote:
-> > > Hi Thierry,
-> > >=20
-> > > On Thu, Jan 26, 2023 at 01:55:52PM +0100, Thierry Reding wrote:
-> > > > On Tue, Jan 24, 2023 at 08:57:23PM +0100, Daniel Lezcano wrote:
-> > > > >=20
-> > > > > Hi,
-> > > > >=20
-> > > > > does anyone know what is the purpose of the get_thermal_instance(=
-) usage in
-> > > > > this code:
-> > > > >=20
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git=
-/tree/drivers/thermal/tegra/soctherm.c?h=3Dthermal/linux-next#n623
-> > > > >=20
-> > > > > The driver is using a function which is reserved for the thermal =
-core. It
-> > > > > should not.
-> > > > >=20
-> > > > > Is the following change ok ?
-> > > > >=20
-> > > > > diff --git a/drivers/thermal/tegra/soctherm.c
-> > > > > b/drivers/thermal/tegra/soctherm.c
-> > > > > index 220873298d77..5f552402d987 100644
-> > > > > --- a/drivers/thermal/tegra/soctherm.c
-> > > > > +++ b/drivers/thermal/tegra/soctherm.c
-> > > > > @@ -620,9 +620,8 @@ static int tegra_thermctl_set_trip_temp(struct
-> > > > > thermal_zone_device *tz, int trip
-> > > > >   				continue;
-> > > > >=20
-> > > > >   			cdev =3D ts->throt_cfgs[i].cdev;
-> > > > > -			if (get_thermal_instance(tz, cdev, trip_id))
-> > > > > -				stc =3D find_throttle_cfg_by_name(ts, cdev->type);
-> > > > > -			else
-> > > > > +			stc =3D find_throttle_cfg_by_name(ts, cdev->type);
-> > > > > +			if (!stc)
-> > > > >   				continue;
-> > > > >=20
-> > > > >   			return throttrip_program(dev, sg, stc, temp);
-> > > > > @@ -768,9 +767,9 @@ static int tegra_soctherm_set_hwtrips(struct =
-device
-> > > > > *dev,
-> > > > >   			continue;
-> > > > >=20
-> > > > >   		cdev =3D ts->throt_cfgs[i].cdev;
-> > > > > -		if (get_thermal_instance(tz, cdev, trip))
-> > > > > -			stc =3D find_throttle_cfg_by_name(ts, cdev->type);
-> > > > > -		else
-> > > > > +
-> > > > > +		stc =3D find_throttle_cfg_by_name(ts, cdev->type);
-> > > > > +		if (!stc)
-> > > > >   			continue;
-> > > > >=20
-> > > > >   		ret =3D throttrip_program(dev, sg, stc, temperature);
-> > > >=20
-> > > > There's a small difference in behavior after applying this patch. P=
-rior
-> > > > to this I get (on Tegra210):
-> > > >=20
-> > > > 	[   12.354091] tegra_soctherm 700e2000.thermal-sensor: missing the=
-rmtrips, will use critical trips as shut down temp
-> > > > 	[   12.379009] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when cpu reaches 102500 mC
-> > > > 	[   12.388882] tegra_soctherm 700e2000.thermal-sensor: programming=
- throttle for cpu to 102500
-> > > > 	[   12.401007] tegra_soctherm 700e2000.thermal-sensor: throttrip: =
-will throttle when cpu reaches 102500 mC
-> > > > 	[   12.471041] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when gpu reaches 103000 mC
-> > > > 	[   12.482852] tegra_soctherm 700e2000.thermal-sensor: programming=
- throttle for gpu to 103000
-> > > > 	[   12.482860] tegra_soctherm 700e2000.thermal-sensor: throttrip: =
-will throttle when gpu reaches 103000 mC
-> > > > 	[   12.485357] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when pll reaches 103000 mC
-> > > > 	[   12.501774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when mem reaches 103000 mC
-> > > >=20
-> > > > and after these changes, it turns into:
-> > > >=20
-> > > > 	[   12.447113] tegra_soctherm 700e2000.thermal-sensor: missing the=
-rmtrips, will use critical trips as shut down temp
-> > > > 	[   12.472300] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when cpu reaches 102500 mC
-> > > > 	[   12.481789] tegra_soctherm 700e2000.thermal-sensor: programming=
- throttle for cpu to 102500
-> > > > 	[   12.495447] tegra_soctherm 700e2000.thermal-sensor: throttrip: =
-will throttle when cpu reaches 102500 mC
-> > > > 	[   12.496514] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when gpu reaches 103000 mC
-> > > > 	[   12.510353] tegra_soctherm 700e2000.thermal-sensor: programming=
- throttle for gpu to 103000
-> > > > 	[   12.526856] tegra_soctherm 700e2000.thermal-sensor: throttrip: =
-will throttle when gpu reaches 103000 mC
-> > > > 	[   12.528774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when pll reaches 103000 mC
-> > > > 	[   12.569352] tegra_soctherm 700e2000.thermal-sensor: programming=
- throttle for pll to 103000
-> > > > 	[   12.577635] tegra_soctherm 700e2000.thermal-sensor: throttrip: =
-will throttle when pll reaches 103000 mC
-> > > > 	[   12.590952] tegra_soctherm 700e2000.thermal-sensor: thermtrip: =
-will shut down when mem reaches 103000 mC
-> > > > 	[   12.600783] tegra_soctherm 700e2000.thermal-sensor: programming=
- throttle for mem to 103000
-> > > > 	[   12.609204] tegra_soctherm 700e2000.thermal-sensor: throttrip: =
-will throttle when mem reaches 103000 mC
-> > > >=20
-> > > > The "programming throttle ..." messages are something I've added lo=
-cally
-> > > > to trace what gets called. So it looks like for "pll" and "mem" the=
-rmal
-> > > > zones, we now program trip points whereas we previously didn't.
-> > >=20
-> > > The DT descriptioni (tegra210.dtsi) says one thing and the implementa=
-tion says
-> > > something else.
-> > >=20
-> > > If we refer to the PLL description, there is one 'hot' trip point and
-> > > one 'critical' trip point. No polling delay at all, so we need the
-> > > interrupts.
-> > >=20
-> > > Logically, we should set the 'hot' trip point first, when the trip
-> > > point is crossed, we setup the next trip point, which is the critical.
-> > >=20
-> > > With these two trip points, the first one will send a notification to
-> > > the userspace and the second one will force a shutdown of the
-> > > system. For both, no cooling device is expected.
-> >=20
-> > I think the intention here is to use the soctherm's built-in throttling
-> > mechanism as a last resort measure to try and cool the system down. I
-> > suppose that could count as "passive" cooling, so specifying it as the
-> > cooling device for the "passive" trip point may be more appropriate.
-> >=20
-> > The throttling that happens here is quite severe, so we don't want it to
-> > happen too early. I would expect that our "passive" trip point shouldn't
-> > be a lot less than the "hot" temperature. I suspect that's the reason
-> > why the "hot" trip point was reused for this.
-> >=20
-> > I'm also beginning to think that we should just not expose the soctherm
-> > throttling as a cooling device and instead keep it internal to the
-> > soctherm driver entirely.
->=20
-> Yes, and perhaps separate it from the sensor driver.
->=20
-> There is a similar hardware limiter for the qcom platform [1]. The
-> description in the device tree is separated from the sensor and the bindi=
-ng
-> has temperatures to begin the mitigation [2].
+Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
+Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-modules@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+---
+ drivers/pci/controller/pci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The hardware throttling is controlled using registers that are part of
-the SOCTHERM block, so we can't separate it from the sensor driver. I
-don't think that's much of a problem, though. The code for this already
-exists in the current soctherm driver, so it's just a matter of removing
-the cooling device registration code.
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 929f9363e94b..aab1497411c4 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2814,4 +2814,4 @@ static struct platform_driver tegra_pcie_driver = {
+ 	.remove = tegra_pcie_remove,
+ };
+ module_platform_driver(tegra_pcie_driver);
+-MODULE_LICENSE("GPL");
++/* MODULE_LICENSE("GPL"); */
+-- 
+2.39.1.268.g9de2f9a303
 
->=20
-> There is no trip point associated as those are related to the in-kernel
-> mitigation.
->=20
-> If this mitigation is a heavy mitigation, above what the kernel is able to
-> do with a passive cooling device. It would make sense to just have
-> configured outside of the thermal zone.
->=20
-> So the configuration would be something like:
->=20
-> myperformance_limite {
-> 	@ =3D <0x...>
-> 	temperature_limit =3D 95000;
-> };
->=20
-> thermal_zone {
->=20
-> 	cpu : {
-> 		trips {
-> 			alert {
-> 			temperature =3D 90000;
-> 			hysteresis =3D 2000;
-> 			type =3D passive;
-> 			};
->=20
-> 			hot {
-> 			temperature =3D 97000;
-> 			type =3D hot;
-> 			};
->=20
-> 			critical {
-> 			temperature =3D 100000;
-> 			hysteresis =3D 2000;
-> 			type =3D critical;
-> 			};
->=20
-> 			cooling-maps =3D <&cpu NO_LIMIT NO_LIMIT>;
-> 		};
-> 	}
-> };
->=20
-> The behavior will be a passive mitigation, if it fails the hardware limit=
-er
-> will take over, if that fails then hot sends a notification to the usersp=
-ace
-> (giving the opportunity to hotplug a cpu or kill a task or suspend), if t=
-hat
-> fails then shutdown.
-
-Yeah, that's exactly what I had in mind.
-
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tre=
-e/drivers/thermal/qcom/lmh.c?h=3Dthermal/bleeding-edge
->=20
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tre=
-e/arch/arm64/boot/dts/qcom/sdm845.dtsi?h=3Dthermal/bleeding-edge#n3922
->=20
-> [ ... ]
->=20
-> > On the DT side, I think most of the cooling maps can be cleaned up. We
-> > can remove the entries for "critical" and "hot" trip points if the
-> > driver unconditionally programs the automated throttling.
->=20
-> You may want to keep the critical trip points at least. Even if the hardw=
-are
-> limiter is certainly very effective, having the critical point is another
-> fail safe allowing to gracefully shutdown the system before a wild hardwa=
-re
-> reset.
-
-Yeah. What I meant was to remove only the cooling map entries for
-critical and hot since they would be unused. We absolutely want to
-keep the trip points themselves around to make sure the system will
-forcefully shutdown as a last resort.
-
-Thierry
-
---JIDgmFM8RuLhVr6d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPmXuIACgkQ3SOs138+
-s6E70g//SZakR92FgARoCs1Tvvl43y7WhezvnE4SIRYQBbKlq1VB+sm3TNbX2z3T
-telPoTjq5rEfejY1fQ67Eqd7EfWmH5FJxTaaqhR4+oVwJyxTQhb2tCXKtuUzqPtQ
-JueUak0KK1hdtVCDZapCLmJHoThPVakQvzDiPouVZ0ZZjdi/VwTatJngod6lkAhR
-rqu1OSqjggldjx/iMWOycTb3AQ1XfSsVb4w4q5bq3bntIpIyhSpwiZB/tMwGQsCn
-LKIsMFJ2MvXr85l1m426pjWdr6aqZMxwU+hUyvTb3deP6XBMgGvYtP7ouaS7dE8Q
-hawWwQdv2eA2/loxDV2PvqM9hsmT/0ZFeQlcH3oMucf0LzxsFxpbnabASSIdmou8
-DEEaJ4Kdr+AtiQQmXkEdTqKs8i7tQ0i3aZJTYrbzQjMklDdQaH0KTRW9VQCXmPev
-OsgkcZiNjNrfHbYyA5wP6o3TplZouIhN9dUDHh3YMyJ9V1JEK1gsAuEHlWrHe6Bn
-JbtyDDksaE48LWNDob1C5l0QCJcVfvwSAQzZjJMhomUpmtXAOpgX4ZmVQpsbVHdT
-pO1So70fP5fpXypmj8fQdV4Dddsi9Qyu9zUhq1pSjeSMW4f2KAPdCEraMh6sxlbQ
-lCZGSDilnLwFpsMGQNf12sQPbhJwhTJ56VLXTcyV9iQplR41uBA=
-=EWv3
------END PGP SIGNATURE-----
-
---JIDgmFM8RuLhVr6d--
