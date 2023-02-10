@@ -2,151 +2,90 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092D0C6379F
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Feb 2023 09:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7778C636CD
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Feb 2023 12:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231577AbjBJJlI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Feb 2023 04:41:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38586 "EHLO
+        id S231490AbjBJMcD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Feb 2023 07:32:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231496AbjBJJlH (ORCPT
+        with ESMTP id S231400AbjBJMcC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Feb 2023 04:41:07 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA4175C4B9
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Feb 2023 01:41:04 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id az4-20020a05600c600400b003dff767a1f1so3610117wmb.2
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Feb 2023 01:41:04 -0800 (PST)
+        Fri, 10 Feb 2023 07:32:02 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2820A34F64
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Feb 2023 04:32:00 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id n13so3701374wmr.4
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Feb 2023 04:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=FXtJIM3du57xUfV949O/wulNn8qW+AxKoWuOnlA8Zs8=;
-        b=Q4I+nSXtzNQtYSSBlK1tnkNWOBobkj//fQnII73nliusIFWbS4CyMXwv790TWVzaIR
-         XeJFKMr09KxD6VEIwh0GADzS0KBeXwSd/Z2PuYcBx5wrwvwYKnpwCDcrhxRlRw1DIemu
-         MShr1vbHI1OaKEdj393Dhbfx1croPFoH/IAHV4O1JI2sVfq1pnRj8CyYMXARz/VHSfkB
-         +G0O6Aj1djeAFoK6kGfSCNq92z0a1Be0RoRQsmFaFkAFFZi/8jacKoA+8TQepXSM+Kfj
-         3xzyBztnswh5ZMW2uGJwfNW1lkjNA2TL5EfxLYmohtuFUIh9ADwLNXuqvunAKu5Ksdr8
-         LJyw==
+        bh=457K0OQcFU+Mf/NlBJdllWWKxYfOeLEOLKqEjT+jQjg=;
+        b=ishE2imgqGch/Bo9yb6+PzaIL8KrOoC824wjuHY/Aofe5uO2ORN9X7DCB//gEtIpwy
+         M7g3UDPDmuZ3thsJaSRLPrZ6g5LZYT6Ogp01txJfy5+i/R1WA4TDHBXodb8YV4+B7Q2a
+         iKmFxAfB/NPO/fAuRJseiYdtTdgzHhQxLw0c0YYB+bpBFlozcw05bd7jfpCuYeU30hyD
+         fAo/3iAOzAKn1xtYl91wxopsNaILwVHCt/873LK/1WKX+kZI7GlagUQ6ZJKba98ZX3PJ
+         XBMTXw559wKgf5LKQMtmfbfs4Zxpwd1AWy7ucKDmBHnYsAxtzO8x01jBESVdWUfvpU+X
+         PhZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FXtJIM3du57xUfV949O/wulNn8qW+AxKoWuOnlA8Zs8=;
-        b=4IQXkr1OtvlgLi11VLIONkn3vMGy7mwo7k90/RngwkYitY/Mwf+8rIyXZCDjPFiX9i
-         43iKNmRyuZ0cTj02X82IFH6BEUnnHZILWGeUGRVlJbVTgB51/Fi+AhE0YlqcdiK8D993
-         tqkaw29IOiu9sUjiIkKmeJZYdwMklbzjjA5tIfQSkSQR4MGxsOCQxTNrNwRAVc1bMqRN
-         bLx64+oTYUkMbZ1x8RithTXlN9RVLHka0IJwZ0NCST01EuOzJa1ysfIhozfp+8Edq/wA
-         RZLBUAMexw7XFQeaBH0/MmTL2OCZV6N436KFlgUev13DvQgfkPKyGh/DDVuNNn18rSVB
-         i17w==
-X-Gm-Message-State: AO0yUKURwOkwhtr0qR6W+oj4LhoOra0GiQ2Ak/FGmbQ2/vfgSW/nDNDm
-        7BtpgWq1+2lK8LbtXcdkr0TWYg==
-X-Google-Smtp-Source: AK7set9g8UOPh4E6E2LgZ5q7toZT7ywT9NslTSP9dH/BzqJlUMVqwQWZGYqb6Lx8fO9DrtqztHmmEQ==
-X-Received: by 2002:a05:600c:3317:b0:3e0:111:28a9 with SMTP id q23-20020a05600c331700b003e0011128a9mr12224837wmp.22.1676022063255;
-        Fri, 10 Feb 2023 01:41:03 -0800 (PST)
+        bh=457K0OQcFU+Mf/NlBJdllWWKxYfOeLEOLKqEjT+jQjg=;
+        b=xb304kpPgNNuhtLzwz+bLVrGvx05LPevsVsbhheJzS3IabNLEgLVpBq1ZPQ97BtzgK
+         FSytHKjfVjqPZL7AazWImVs5zvoFxt0EtXKFMnNNW9EDSJECu1WjPgTzGqLO07n/1Iaz
+         ss4vwMb6/9ZMAKJJOOcep1YWz++ZyeFC+Olbrqdmp4rwX15qmVI1eWirOYN9aVgYA1eR
+         Vgrq2Y7jjM3ooje46zp+qQq525Myl9K+H3MJo/UTw2wYQ3wMKcuXRJjsKCiHpTGM0Ura
+         hFdvTcZumBl8difbwKPhWpAxpAObBpXcNUy5JeCc88OSs8ga+HBFTSUizgne4/CP9VEd
+         r6xg==
+X-Gm-Message-State: AO0yUKVGmtpzOLScr2yucejNZ0LGyjrRiMiuvlku//Jk1IFs9yVQPcY8
+        LsjLiLH+cYb+DCnK2ChQrEdMyg==
+X-Google-Smtp-Source: AK7set8ovpVxLHos403TsEJL64cbVUGXv9tSiZl66sZgluZFqUbnuuU6j49IceJzvVVdKxy2dm4Tiw==
+X-Received: by 2002:a05:600c:a695:b0:3da:1f6a:7b36 with SMTP id ip21-20020a05600ca69500b003da1f6a7b36mr16719972wmb.0.1676032318637;
+        Fri, 10 Feb 2023 04:31:58 -0800 (PST)
 Received: from linaro.org (wifi-eduroam-trans.univ-tlse3.fr. [195.220.58.237])
-        by smtp.gmail.com with ESMTPSA id f3-20020a056000128300b002c3e600d1a8sm3208693wrx.95.2023.02.10.01.40.58
+        by smtp.gmail.com with ESMTPSA id i3-20020adffc03000000b002c53d69a8easm3011056wrr.92.2023.02.10.04.31.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 01:41:02 -0800 (PST)
-Date:   Fri, 10 Feb 2023 10:40:56 +0100
+        Fri, 10 Feb 2023 04:31:58 -0800 (PST)
+Date:   Fri, 10 Feb 2023 13:31:56 +0100
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rafael.j.wysocki@intel.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
         Amit Kucheria <amitk@kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Message-ID: <20230210094056.GC175687@linaro.org>
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] thermal: Add support for cooling device bind/unbind
+ operations
+Message-ID: <20230210123156.GE175687@linaro.org>
+References: <20230209163555.1993557-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
+In-Reply-To: <20230209163555.1993557-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Rafael,
-
-On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
-> As the name states "thermal_core.h" is the header file for the core
-> components of the thermal framework.
+On Thu, Feb 09, 2023 at 05:35:54PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Too many drivers are including it. Hopefully the recent cleanups
-> helped to self encapsulate the code a bit more and prevented the
-> drivers to need this header.
-> 
-> Remove this inclusion in every place where it is possible.
-> 
-> Some other drivers did a confusion with the core header and the one
-> exported in linux/thermal.h. They include the former instead of the
-> latter. The changes also fix this.
-> 
-> The tegra/soctherm driver still remains as it uses an internal
-> function which need to be replaced.
-> 
-> The Intel HFI driver uses the netlink internal framework core and
-> should be changed to prevent to deal with the internals.
-> 
-> No functional changes
+> Drivers for cooling devices can implement these operations when they
+> need to perform extra work at the time when a cooling device is bound to
+> a given thermal zone.
 
-Are you ok if I take this patch ?
+The approach is not correct.
 
-Thanks
+I'll react to the initial email:
 
-  -- Daniel
+Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance() usage
 
+https://lore.kernel.org/all/Y9J4WAFyXyV%2FnqlG@orome/
 
--- 
 
  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
