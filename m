@@ -2,129 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0156FC64EC7
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Feb 2023 15:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10649C64EC7
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Feb 2023 09:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230132AbjBMPie (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Feb 2023 10:38:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
+        id S231657AbjBNJMC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Feb 2023 04:12:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbjBMPic (ORCPT
+        with ESMTP id S231845AbjBNJLj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Feb 2023 10:38:32 -0500
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75A5A193EC;
-        Mon, 13 Feb 2023 07:38:30 -0800 (PST)
-Received: by mail-ed1-f47.google.com with SMTP id u21so13495240edv.3;
-        Mon, 13 Feb 2023 07:38:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/87Mt+OfWS54SLniYHSHhoF1OzMVcQInuz6lOAm1ITI=;
-        b=12PeChOFvadL61YN+kpNPivvcI+AupHwBRLOyFGuRGU9WPRrmJfLbCrUIqvcAtydQn
-         nni504tZApnMh1JEAq16k6PMcJ3OngZPjKAFhbrzA/bmE10YKzHVXAWUlcIkDdQVQi35
-         Jo6cOkyJrvALCSFb2QcZz5r9APvgkV1FSk2IeaeY5hlSWf5O0fHP0J4aR+GsIEfkm06J
-         f1spg7De5BBvXyXKFalB5iDV8XyeaX0snOvq5l9BbqoRVRpiUxzmgQDGVIukIFhbDTDP
-         deEHz9xf+2tk7gJCn7zHasHUomZK7NsNyC+def3Mas1fBYaHF5howDm2R+V3oLUs6MFR
-         Fwig==
-X-Gm-Message-State: AO0yUKXVNIdUt6/RVekPN69YXjtX5DAIYaS2AuDaYKInMI8BgVav5EEv
-        s1hAc3z1ebzj4w5xr+izMy4oNWQvL9no4YUnPtk=
-X-Google-Smtp-Source: AK7set/gPlIC2eOAY2XqGE6GdihDj9jHSedBktD5q34/c7R5wMsZ0nx0m0yQIbiWvGC7F0L1/Il/JyPSJjgkmU9F/oY=
-X-Received: by 2002:a50:baab:0:b0:4ac:cdd9:1c97 with SMTP id
- x40-20020a50baab000000b004accdd91c97mr1078170ede.6.1676302708989; Mon, 13 Feb
- 2023 07:38:28 -0800 (PST)
+        Tue, 14 Feb 2023 04:11:39 -0500
+Received: from mail.workercentrum.pl (mail.workercentrum.pl [51.89.166.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE48F23C62
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Feb 2023 01:10:05 -0800 (PST)
+Received: by mail.workercentrum.pl (Postfix, from userid 1002)
+        id 10112AF01A; Fri, 10 Feb 2023 09:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=workercentrum.pl;
+        s=mail; t=1676020917;
+        bh=DQrvNxV4sbMtkGDNj/C7a2f11q8dNrBm5UPp1jE5GkY=;
+        h=Date:From:To:Subject:From;
+        b=RtMV1HeUqso1a0bi53owfZ9Gz7Bo5uHBJDu4+U0qQEi1PCqC+b2Kc6hOvu3ytU+1P
+         bBjgBqu+kPx2y6bzXB9f1aagh4Xr73ryariiwj/aCiCvgBkC5tXXZESfgtY/sT+DXs
+         t7NfJfWbyWQX2TKWACeXJU286KeL64PdVYokuJ/r2ycviyFZTdAU4PfSbRbFw/BHWQ
+         KrvFQbOnVDD8mBNNi3pSMdBAjyrq1/bSPVc/YRphhy1th6wNmBkMxcC5YIeZ6fpssN
+         5+KenJuMvVCyphWeIRQIKPS47NNM/MJUdyEfKI8Ojs7nT55KUc7JiPOi+lgXPKZ3rB
+         iqKeK/keC3tog==
+Received: by mail.workercentrum.pl for <linux-tegra@vger.kernel.org>; Fri, 10 Feb 2023 09:10:56 GMT
+Message-ID: <20230210074500-0.1.7d.lz8w.0.mhsax1ahnj@workercentrum.pl>
+Date:   Fri, 10 Feb 2023 09:10:56 GMT
+From:   "Piotr Werner" <piotr.werner@workercentrum.pl>
+To:     <linux-tegra@vger.kernel.org>
+Subject: Panele fotowaltaiczne
+X-Mailer: mail.workercentrum.pl
 MIME-Version: 1.0
-References: <20230206153432.1017282-1-daniel.lezcano@linaro.org> <20230210094056.GC175687@linaro.org>
-In-Reply-To: <20230210094056.GC175687@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 13 Feb 2023 16:38:17 +0100
-Message-ID: <CAJZ5v0iEYtFJAh94w+K-T90PXLRDzyUgvb_OPL9aOvphTH2CGg@mail.gmail.com>
-Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Haowen Bai <baihaowen@meizu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 10:41 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> Hi Rafael,
->
-> On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
-> > As the name states "thermal_core.h" is the header file for the core
-> > components of the thermal framework.
-> >
-> > Too many drivers are including it. Hopefully the recent cleanups
-> > helped to self encapsulate the code a bit more and prevented the
-> > drivers to need this header.
-> >
-> > Remove this inclusion in every place where it is possible.
-> >
-> > Some other drivers did a confusion with the core header and the one
-> > exported in linux/thermal.h. They include the former instead of the
-> > latter. The changes also fix this.
-> >
-> > The tegra/soctherm driver still remains as it uses an internal
-> > function which need to be replaced.
-> >
-> > The Intel HFI driver uses the netlink internal framework core and
-> > should be changed to prevent to deal with the internals.
-> >
-> > No functional changes
->
-> Are you ok if I take this patch ?
+Dzie=C5=84 dobry,
 
-Well, you've already done that.
+Jeste=C5=9Bmy firm=C4=85 z wieloletnim do=C5=9Bwiadczeniem, kt=C3=B3ra sp=
+rawnie przygotuje dla Pa=C5=84stwa ofert=C4=99 i wszelkie formalno=C5=9Bc=
+i. Sam monta=C5=BC zaplanujemy na wiosn=C4=99.
+
+O samych plusach fotowoltaiki czy pompach ciep=C5=82a na pewno ju=C5=BC P=
+a=C5=84stwo s=C5=82yszeli, dlatego teraz prosimy o zostawienie kontaktu, =
+aby nasz specjalista m=C3=B3g=C5=82 przedstawi=C4=87 ofert=C4=99 zgodn=C4=
+=85 z Waszymi potrzebami.
+
+Kiedy mogliby=C5=9Bmy z Pa=C5=84stwem um=C3=B3wi=C4=87 si=C4=99 na rozmow=
+=C4=99 w celu zbadania potrzeb?
+
+
+Pozdrawiam,
+Piotr Werner
