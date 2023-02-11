@@ -2,62 +2,47 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77141C636D4
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Feb 2023 07:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31262C6379F
+	for <linux-tegra@archiver.kernel.org>; Sat, 11 Feb 2023 16:33:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229455AbjBKHx2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Feb 2023 02:53:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50244 "EHLO
+        id S229793AbjBKQdN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Feb 2023 11:33:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjBKHx1 (ORCPT
+        with ESMTP id S229491AbjBKQdM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Feb 2023 02:53:27 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67F3B2
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Feb 2023 23:53:24 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id y1so7350353wru.2
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Feb 2023 23:53:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JdyJlJsLe7UYj3HkIh5IqELvu3xeVrpcZYgePszZnTM=;
-        b=GLB3/AzmYk9r6d1M8HG+Xa6zUYiLBVeTfksz30BKXtFLjMOZAJt3SBE6RyR0tbn5MS
-         DD4H3wi9V/SDQuDV3tGPPSl8qpypTSQsfCfK9egDFUGuj9TX5Bg/7M3aEj2dHPApTycE
-         iVMMPBpYzZd0VtnU+lA9CnOYU9IA+UskmGMUMP/allk6UxbMwLl0hBxkiWxnQmmDhNk0
-         Bz8WSmwAI5ueU77V8JEpyzEs5FhACjZuwfsvwtP+cMXV+L1AwI+vifHHRly2zvJG0jsk
-         5IC2zBZPyhqDHEfyrpQvPJ1em2+wFTVJbqpatXgKrf7ezzHV/rk2Pm3qw34jJSH51cPz
-         XCmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JdyJlJsLe7UYj3HkIh5IqELvu3xeVrpcZYgePszZnTM=;
-        b=01wwOAzBF7wE4jPTcAmAH6vCNf4Yc4xIG/1Nbia9x4Q5fZvSWRuEx+yt5dnGlRD+vu
-         sAGhFbHhxmwO5M7VunzsoVROE5EAmEKCJGY1itykLxfj3t6bsM1ss75HxKBtd/iKeiBP
-         3UoVklx+QqYCj1UZPU6a9F5oIQ+HBrLuLrD/qH3AI0N3UqONUyA8E5eQ82YAIgZxMVBc
-         z6q+N1tILg8tsqlyNIISsup4L6fmkNxVOA4hqiVBDvM57QseRmP8t/vyGyRmMX9n3GiT
-         zW6N0MGJHNLfbHyv9RGcvdErvfsrE3+WZPdLEe4SnJRb5gS4dOZ7YyarcGW4RNqRAvws
-         VllQ==
-X-Gm-Message-State: AO0yUKVKMiZyl54nEJQ5WOJ7obJo+cS3vwSAROTQLKya//bMVI+j8a6f
-        lPCN+Pd5bG0dC455fdgULVL+Gg==
-X-Google-Smtp-Source: AK7set8ejeEopWyNZYhHew3TugHJmthNV0eduJzyC9rqBpPCVupmvHmzId1Mb4lViYTHg0iv3ePIXA==
-X-Received: by 2002:a05:6000:8:b0:2bf:b5e4:cd63 with SMTP id h8-20020a056000000800b002bfb5e4cd63mr15123447wrx.8.1676102003159;
-        Fri, 10 Feb 2023 23:53:23 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id q4-20020a05600000c400b002c54737e908sm3787502wrx.91.2023.02.10.23.53.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 23:53:22 -0800 (PST)
-Message-ID: <9a121d43-b6d9-fe99-1e4c-498dac2e6b17@linaro.org>
-Date:   Sat, 11 Feb 2023 08:53:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
+        Sat, 11 Feb 2023 11:33:12 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B9726CF4;
+        Sat, 11 Feb 2023 08:33:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1676133187; x=1707669187;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=OMMsvl+bUPjHIfFs5mz9bCDS3SOP8YrQweMO/MZJftc=;
+  b=M9Tw8Zfr5iNEXR6swL1rEe0ss6Mc7Ijg5vAuC2ytMosBF7dNUF5tug2z
+   W1p+eJaHXOxgEOtPGP6j0XvGent/VMaDxO3+TEX/eny/h2DQsVP9XgxRg
+   O5xGPalkGIj/bkvsoSDV4r+n9oDNOFAz9hKJKt9QT0vdsnMvm5ueC7jvR
+   JQoHMmrLnuuAEZ3RdT8r9HtKFFv+KEO59DMf/pJ6iN2T/uNzDg2xQW+kE
+   behILSFf0+vo/4DJB+eZlYb8ididTWi53zuUEBLi3N3ItLDqeQfsRrmVl
+   mNOdi7cM8udj65NwSXKdTtPitB9sMMdbOVwcc3p2aA3gGXA/c4MZ5f6I+
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10618"; a="314267315"
+X-IronPort-AV: E=Sophos;i="5.97,290,1669104000"; 
+   d="scan'208";a="314267315"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2023 08:33:06 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10618"; a="732029288"
+X-IronPort-AV: E=Sophos;i="5.97,290,1669104000"; 
+   d="scan'208";a="732029288"
+Received: from ajaymv-mobl1.gar.corp.intel.com ([10.215.205.181])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2023 08:32:51 -0800
+Message-ID: <258dedb542d4dcb73e9ec903d205ba64639c9f0a.camel@linux.intel.com>
 Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
-Content-Language: en-US
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+From:   srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Guillaume La Roque <glaroque@baylibre.com>,
@@ -79,7 +64,8 @@ Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
         Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -90,7 +76,6 @@ Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         ye xingchen <ye.xingchen@zte.com.cn>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
         Haowen Bai <baihaowen@meizu.com>,
         Minghao Chi <chi.minghao@zte.com.cn>,
         "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
@@ -107,54 +92,72 @@ Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
         "moderated list:ARM/STM32 ARCHITECTURE" 
         <linux-stm32@st-md-mailman.stormreply.com>,
         "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Date:   Sat, 11 Feb 2023 08:32:48 -0800
+In-Reply-To: <9a121d43-b6d9-fe99-1e4c-498dac2e6b17@linaro.org>
 References: <20230206153432.1017282-1-daniel.lezcano@linaro.org>
- <20230211021023.GA13306@ranerica-svr.sc.intel.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20230211021023.GA13306@ranerica-svr.sc.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+         <20230211021023.GA13306@ranerica-svr.sc.intel.com>
+         <9a121d43-b6d9-fe99-1e4c-498dac2e6b17@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu1 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/02/2023 03:10, Ricardo Neri wrote:
-> On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
->> As the name states "thermal_core.h" is the header file for the core
->> components of the thermal framework.
->>
->> Too many drivers are including it. Hopefully the recent cleanups
->> helped to self encapsulate the code a bit more and prevented the
->> drivers to need this header.
->>
->> Remove this inclusion in every place where it is possible.
->>
->> Some other drivers did a confusion with the core header and the one
->> exported in linux/thermal.h. They include the former instead of the
->> latter. The changes also fix this.
->>
->> The tegra/soctherm driver still remains as it uses an internal
->> function which need to be replaced.
->>
->> The Intel HFI driver uses the netlink internal framework core and
->> should be changed to prevent to deal with the internals.
-> 
-> I don't see any of the thermal netlink functionality exposed. Is
-> there any work in progress?
+On Sat, 2023-02-11 at 08:53 +0100, Daniel Lezcano wrote:
+> On 11/02/2023 03:10, Ricardo Neri wrote:
+> > On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
+> > > As the name states "thermal_core.h" is the header file for the
+> > > core
+> > > components of the thermal framework.
+> > >=20
+> > > Too many drivers are including it. Hopefully the recent cleanups
+> > > helped to self encapsulate the code a bit more and prevented the
+> > > drivers to need this header.
+> > >=20
+> > > Remove this inclusion in every place where it is possible.
+> > >=20
+> > > Some other drivers did a confusion with the core header and the
+> > > one
+> > > exported in linux/thermal.h. They include the former instead of
+> > > the
+> > > latter. The changes also fix this.
+> > >=20
+> > > The tegra/soctherm driver still remains as it uses an internal
+> > > function which need to be replaced.
+> > >=20
+> > > The Intel HFI driver uses the netlink internal framework core and
+> > > should be changed to prevent to deal with the internals.
+> >=20
+> > I don't see any of the thermal netlink functionality exposed. Is
+> > there any work in progress?
+>=20
+> commit bd30cdfd9bd73b68e4977ce7c5540aa7b14c25cd
+> Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0 thermal: intel: hfi: Notify user space for HFI e=
+vents
+>=20
+This is already exposed and we use it in user space.
+thermal_genl_cpu_capability_event() is called from intel_hfi driver to
+send the cpu capabilities.
 
-commit bd30cdfd9bd73b68e4977ce7c5540aa7b14c25cd
-Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Not sure what do you mean by  "don't see netlink functionality
+exposed"?
 
-     thermal: intel: hfi: Notify user space for HFI events
+thermal_genl_cpu_caps struct and thermal_genl_cpu_capability_event()
+are defined in drivers/thermal/thermal_netlink.h.
 
 
-> FWIW, Acked-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Thanks,
+Srinivas
 
-Thanks!
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>=20
+> > FWIW, Acked-by: Ricardo Neri
+> > <ricardo.neri-calderon@linux.intel.com>
+>=20
+> Thanks!
+>=20
 
