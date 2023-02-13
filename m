@@ -2,149 +2,129 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE4FC636D4
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Feb 2023 13:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0156FC64EC7
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Feb 2023 15:38:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbjBMNuC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Feb 2023 08:50:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52768 "EHLO
+        id S230132AbjBMPie (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Feb 2023 10:38:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231129AbjBMNt5 (ORCPT
+        with ESMTP id S229896AbjBMPic (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Feb 2023 08:49:57 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45B221BADC;
-        Mon, 13 Feb 2023 05:49:51 -0800 (PST)
-Received: from [192.168.0.192] (unknown [194.146.248.75])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: andrzej.p)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BC57266018CF;
-        Mon, 13 Feb 2023 13:49:49 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676296190;
-        bh=XiD9OByqHK9do+PqpCf1DqzfoDEHH76nlh+pxGnhaGg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=WHhr2vwDOBN5R6Zl/353Iv5qjYlePv0Eh7dySXr4COAFX8kt1rPlZwOjzp4V58e3d
-         bJ5zzppDsacdsEd6A5JWK6xj/wq+5R8Xs4h5FgrRBZFTunPxXyMSwjHblC+kUbJw3R
-         2hMIvek3WlOKjRK8b2ZLr5ISAfr3sz9Fw7rOJHf7ko8662B/4p6tq5UWwgN3k5WOsD
-         pUo1zQTEoAAahZ3xhIrkH9HssmjN7pVdNwZiHrSVdmKo2L+yX47wvQClyCETMa4bWl
-         q0Sb+WI8+BR2fqaJytBfZRcbJ5vCsPMWSmTTpvlvMmTDSubqjvAEv/YoaDTdrL32nn
-         U7NiNvkuoYCSg==
-Message-ID: <bcbf9d22-c90a-a4d1-2931-0da43bc7371e@collabora.com>
-Date:   Mon, 13 Feb 2023 14:49:46 +0100
+        Mon, 13 Feb 2023 10:38:32 -0500
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75A5A193EC;
+        Mon, 13 Feb 2023 07:38:30 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id u21so13495240edv.3;
+        Mon, 13 Feb 2023 07:38:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/87Mt+OfWS54SLniYHSHhoF1OzMVcQInuz6lOAm1ITI=;
+        b=12PeChOFvadL61YN+kpNPivvcI+AupHwBRLOyFGuRGU9WPRrmJfLbCrUIqvcAtydQn
+         nni504tZApnMh1JEAq16k6PMcJ3OngZPjKAFhbrzA/bmE10YKzHVXAWUlcIkDdQVQi35
+         Jo6cOkyJrvALCSFb2QcZz5r9APvgkV1FSk2IeaeY5hlSWf5O0fHP0J4aR+GsIEfkm06J
+         f1spg7De5BBvXyXKFalB5iDV8XyeaX0snOvq5l9BbqoRVRpiUxzmgQDGVIukIFhbDTDP
+         deEHz9xf+2tk7gJCn7zHasHUomZK7NsNyC+def3Mas1fBYaHF5howDm2R+V3oLUs6MFR
+         Fwig==
+X-Gm-Message-State: AO0yUKXVNIdUt6/RVekPN69YXjtX5DAIYaS2AuDaYKInMI8BgVav5EEv
+        s1hAc3z1ebzj4w5xr+izMy4oNWQvL9no4YUnPtk=
+X-Google-Smtp-Source: AK7set/gPlIC2eOAY2XqGE6GdihDj9jHSedBktD5q34/c7R5wMsZ0nx0m0yQIbiWvGC7F0L1/Il/JyPSJjgkmU9F/oY=
+X-Received: by 2002:a50:baab:0:b0:4ac:cdd9:1c97 with SMTP id
+ x40-20020a50baab000000b004accdd91c97mr1078170ede.6.1676302708989; Mon, 13 Feb
+ 2023 07:38:28 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH V3 1/2] usb: gadget: u_ether: Convert prints to device
- prints
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20230209125319.18589-1-jonathanh@nvidia.com>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-In-Reply-To: <20230209125319.18589-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20230206153432.1017282-1-daniel.lezcano@linaro.org> <20230210094056.GC175687@linaro.org>
+In-Reply-To: <20230210094056.GC175687@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 13 Feb 2023 16:38:17 +0100
+Message-ID: <CAJZ5v0iEYtFJAh94w+K-T90PXLRDzyUgvb_OPL9aOvphTH2CGg@mail.gmail.com>
+Subject: Re: [PATCH] thermal: Remove core header inclusion from drivers
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rafael.j.wysocki@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Haowen Bai <baihaowen@meizu.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/STM32 ARCHITECTURE" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jon,
+On Fri, Feb 10, 2023 at 10:41 AM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> Hi Rafael,
+>
+> On Mon, Feb 06, 2023 at 04:34:29PM +0100, Daniel Lezcano wrote:
+> > As the name states "thermal_core.h" is the header file for the core
+> > components of the thermal framework.
+> >
+> > Too many drivers are including it. Hopefully the recent cleanups
+> > helped to self encapsulate the code a bit more and prevented the
+> > drivers to need this header.
+> >
+> > Remove this inclusion in every place where it is possible.
+> >
+> > Some other drivers did a confusion with the core header and the one
+> > exported in linux/thermal.h. They include the former instead of the
+> > latter. The changes also fix this.
+> >
+> > The tegra/soctherm driver still remains as it uses an internal
+> > function which need to be replaced.
+> >
+> > The Intel HFI driver uses the netlink internal framework core and
+> > should be changed to prevent to deal with the internals.
+> >
+> > No functional changes
+>
+> Are you ok if I take this patch ?
 
-W dniu 9.02.2023 o 13:53, Jon Hunter pisze:
-> The USB ethernet gadget driver implements its own print macros which
-> call printk. Device drivers should use the device prints that print the
-> device name. Fortunately, the same macro names are defined in the header
-> file 'linux/usb/composite.h' and these use the device prints. Therefore,
-> remove the local definitions in the USB ethernet gadget driver and use
-> those in 'linux/usb/composite.h'. The only difference is that now the
-> device name is printed instead of the ethernet interface name.
-> 
-> Tested using ethernet gadget on Jetson AGX Orin.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> V3: Added this patch and dropped the patch in V2 that improved some of
->      the prints.
-> 
->   drivers/usb/gadget/function/u_ether.c | 36 +--------------------------
->   1 file changed, 1 insertion(+), 35 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-> index 8f12f3f8f6ee..740331882e8d 100644
-> --- a/drivers/usb/gadget/function/u_ether.c
-> +++ b/drivers/usb/gadget/function/u_ether.c
-> @@ -17,6 +17,7 @@
->   #include <linux/etherdevice.h>
->   #include <linux/ethtool.h>
->   #include <linux/if_vlan.h>
-> +#include <linux/usb/composite.h>
->   
->   #include "u_ether.h"
->   
-> @@ -103,41 +104,6 @@ static inline int qlen(struct usb_gadget *gadget, unsigned qmult)
->   
->   /*-------------------------------------------------------------------------*/
->   
-> -/* REVISIT there must be a better way than having two sets
-> - * of debug calls ...
-> - */
-> -
-> -#undef DBG
-> -#undef VDBG
-> -#undef ERROR
-> -#undef INFO
-> -
-> -#define xprintk(d, level, fmt, args...) \
-> -	printk(level "%s: " fmt , (d)->net->name , ## args)
-> -
-> -#ifdef DEBUG
-> -#undef DEBUG
-> -#define DBG(dev, fmt, args...) \
-> -	xprintk(dev , KERN_DEBUG , fmt , ## args)
-> -#else
-> -#define DBG(dev, fmt, args...) \
-> -	do { } while (0)
-> -#endif /* DEBUG */
-
-Actually there are more (at least hypothetical) changes than the declared
-change of printed device name.
-
-If DEBUG is not set there can be _more_ messages printed
-when your patch is applied as-is (i.e. all DBG() invocations will
-expand into some dev_dbg(), whereas before the patch is applied
-they compile into nothing).
-
-> -
-> -#ifdef VERBOSE_DEBUG
-> -#define VDBG	DBG
-> -#else
-> -#define VDBG(dev, fmt, args...) \
-> -	do { } while (0)
-> -#endif /* DEBUG */
-
-In the same spirit, the above block could be considered valid.
-
-Not sure, how much of an issue it is, though.
-
-Regards,
-
-Andrzej
-
-> -
-> -#define ERROR(dev, fmt, args...) \
-> -	xprintk(dev , KERN_ERR , fmt , ## args)
-> -#define INFO(dev, fmt, args...) \
-> -	xprintk(dev , KERN_INFO , fmt , ## args)
-> -
-> -/*-------------------------------------------------------------------------*/
-> -
->   /* NETWORK DRIVER HOOKUP (to the layer above this driver) */
->   
->   static void eth_get_drvinfo(struct net_device *net, struct ethtool_drvinfo *p)
-
+Well, you've already done that.
