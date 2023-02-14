@@ -2,129 +2,108 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16199C61DA4
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Feb 2023 13:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F08AC05027
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Feb 2023 14:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231796AbjBNNUs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:20:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58464 "EHLO
+        id S231784AbjBNOF4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Feb 2023 09:05:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231834AbjBNNUr (ORCPT
+        with ESMTP id S231608AbjBNOFz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Feb 2023 08:20:47 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F30274A0;
-        Tue, 14 Feb 2023 05:20:30 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5B30161637;
-        Tue, 14 Feb 2023 13:20:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68356C4339C;
-        Tue, 14 Feb 2023 13:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1676380829;
-        bh=KdANFRR4PRJ9kp/ABO4FSUJAPI+iM5+P01yw4+tRecg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n64qKUh3kEFPlUcR6itG132XR7uCD164NatKPKbJDotAvNNKJEU5TWRBollm43lEm
-         psw9zw3RqbkLzEsjoFvYTfmPXbSAQ47KutKvbz+UDmXT9ChDMuGCiR+iJ2wUYmkORv
-         +uLIW7eiAWsRPLOigveURHt33QWGBQbURgiuLAvw=
-Date:   Tue, 14 Feb 2023 14:20:27 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] usb: gadget: u_ether: Convert prints to device
- prints
-Message-ID: <Y+uKmxD+QLNSMx8e@kroah.com>
-References: <20230209125319.18589-1-jonathanh@nvidia.com>
- <bcbf9d22-c90a-a4d1-2931-0da43bc7371e@collabora.com>
- <3dc8575e-050c-5e04-ae7c-af380801a227@nvidia.com>
+        Tue, 14 Feb 2023 09:05:55 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913FA9EC5
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Feb 2023 06:05:54 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id gn39so2036220ejc.8
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Feb 2023 06:05:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vp3AulvepOS2fc3bpY733hiALNG2cjKxWZTuQcyLEOQ=;
+        b=GU2cGUNNiOzKAeuObf42lev8Vxh0jwMMuuii/RwqrZDW2hcNVA4hIYqgC45oM897XB
+         kA1s5xXyZyoL/vR/dJIMcjnENLpPnAl32jqxDiDbs29BqSkJncLi8gHA/NRTNBIIize9
+         cLkPk8OeDhlPAEMvokQUdU+gcwTfk1031SOIIvPtunX3X98JB4BIO1G4Tbe/ayGwFQLU
+         0xiajI7bfbl0lTxFsxitjjeQ3/4BLD0bYXX1y5A8e/IA+N/JXWLktukoTLfMKu0bG/7k
+         W1XgmPn/5cA6g7h+dFnAB64PGwX8PBxdm9lTCf/T/z9pZYmafVk0mPbxRxcasFjX/HXj
+         QPbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vp3AulvepOS2fc3bpY733hiALNG2cjKxWZTuQcyLEOQ=;
+        b=XWUc6pGhBkQ8sV1p7nq7xKrX3sLOkgyE/O3Tqo/ZdGimvPGcTlQEoTmfLGfJ00zd12
+         xV8Qk45fbaMesThUV3i/ZUEIFchqtELkjpoIQ+cz0VYO9tjMFhZJ6T2JsDVHacAYbBLc
+         OGm4ZXvRaCL3nL+EQKajcszD7PlFZ2nkgDarc/UiQ+lqM6yvy8XXIebCGjg8FYd61HJy
+         UJfXCq/BTeNijlA8a0NjNdjrQ4Qecu0u16QkxJLUKiLgwYE913AvzisnubLHvbBvZPpE
+         h7lFe8T0ihcG88nqXPjsfCzb7C+oN/bkTFVRb0t4NsTLCRi3b1sOYBnueSRCW3fnVfsA
+         BDKg==
+X-Gm-Message-State: AO0yUKUyKyMaaee7nW6aK1EO0LS7duV0vD4UjC8F7qdh2dy6M9kvyOLT
+        EhS5Rr80T6FOORaebWnvMbuCigVbOY0=
+X-Google-Smtp-Source: AK7set9LYE/RW4SuCmMRdrbul2Vc/g/xuQeHhXyRde+pIzMMTcuUzgccr4Ma+y3Q4TpCO1ABHOCNRA==
+X-Received: by 2002:a17:906:bcee:b0:8af:391e:e4c4 with SMTP id op14-20020a170906bcee00b008af391ee4c4mr2488809ejb.41.1676383553065;
+        Tue, 14 Feb 2023 06:05:53 -0800 (PST)
+Received: from localhost (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id y21-20020a1709060a9500b008b1315bff9fsm764771ejf.148.2023.02.14.06.05.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 06:05:52 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: tegra: Bump CBB ranges property on Tegra194 and Tegra234
+Date:   Tue, 14 Feb 2023 15:05:49 +0100
+Message-Id: <20230214140549.3340395-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3dc8575e-050c-5e04-ae7c-af380801a227@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 11:55:56AM +0000, Jon Hunter wrote:
-> 
-> On 13/02/2023 13:49, Andrzej Pietrasiewicz wrote:
-> > Hi Jon,
-> > 
-> > W dniu 9.02.2023 o 13:53, Jon Hunter pisze:
-> > > The USB ethernet gadget driver implements its own print macros which
-> > > call printk. Device drivers should use the device prints that print the
-> > > device name. Fortunately, the same macro names are defined in the header
-> > > file 'linux/usb/composite.h' and these use the device prints. Therefore,
-> > > remove the local definitions in the USB ethernet gadget driver and use
-> > > those in 'linux/usb/composite.h'. The only difference is that now the
-> > > device name is printed instead of the ethernet interface name.
-> > > 
-> > > Tested using ethernet gadget on Jetson AGX Orin.
-> > > 
-> > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > > Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> > > ---
-> > > V3: Added this patch and dropped the patch in V2 that improved some of
-> > >      the prints.
-> > > 
-> > >   drivers/usb/gadget/function/u_ether.c | 36 +--------------------------
-> > >   1 file changed, 1 insertion(+), 35 deletions(-)
-> > > 
-> > > diff --git a/drivers/usb/gadget/function/u_ether.c
-> > > b/drivers/usb/gadget/function/u_ether.c
-> > > index 8f12f3f8f6ee..740331882e8d 100644
-> > > --- a/drivers/usb/gadget/function/u_ether.c
-> > > +++ b/drivers/usb/gadget/function/u_ether.c
-> > > @@ -17,6 +17,7 @@
-> > >   #include <linux/etherdevice.h>
-> > >   #include <linux/ethtool.h>
-> > >   #include <linux/if_vlan.h>
-> > > +#include <linux/usb/composite.h>
-> > >   #include "u_ether.h"
-> > > @@ -103,41 +104,6 @@ static inline int qlen(struct usb_gadget
-> > > *gadget, unsigned qmult)
-> > > /*-------------------------------------------------------------------------*/
-> > > -/* REVISIT there must be a better way than having two sets
-> > > - * of debug calls ...
-> > > - */
-> > > -
-> > > -#undef DBG
-> > > -#undef VDBG
-> > > -#undef ERROR
-> > > -#undef INFO
-> > > -
-> > > -#define xprintk(d, level, fmt, args...) \
-> > > -    printk(level "%s: " fmt , (d)->net->name , ## args)
-> > > -
-> > > -#ifdef DEBUG
-> > > -#undef DEBUG
-> > > -#define DBG(dev, fmt, args...) \
-> > > -    xprintk(dev , KERN_DEBUG , fmt , ## args)
-> > > -#else
-> > > -#define DBG(dev, fmt, args...) \
-> > > -    do { } while (0)
-> > > -#endif /* DEBUG */
-> > 
-> > Actually there are more (at least hypothetical) changes than the declared
-> > change of printed device name.
-> > 
-> > If DEBUG is not set there can be _more_ messages printed
-> > when your patch is applied as-is (i.e. all DBG() invocations will
-> > expand into some dev_dbg(), whereas before the patch is applied
-> > they compile into nothing).
-> 
-> So dev_dbg() messages will only be printed if DEBUG is defined or if dynamic
-> debug is enabled and the prints are enabled.
-> 
-> Greg, let me know what your thoughts on this version are?
+From: Thierry Reding <treding@nvidia.com>
 
-Looks good to me, let me queue it up now.
+Both Xavier (Tegra194) and Orin (Tegra234) support a 40-bit address map,
+so bump the CBB ranges property to cover all of the 1 TiB address space.
+This fixes an issue where some of the PCIe regions could not be remapped
+because of they were outside the memory specified by the CBB's ranges
+property.
 
-thanks,
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 133dbe5b429d..7096b999b33f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -22,7 +22,7 @@ bus@0 {
+ 
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+-		ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>;
++		ranges = <0x0 0x0 0x0 0x0 0x100 0x0>;
+ 
+ 		apbmisc: misc@100000 {
+ 			compatible = "nvidia,tegra194-misc";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 8fe8eda7654d..f1748cff8a33 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -20,7 +20,7 @@ bus@0 {
+ 
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+-		ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>;
++		ranges = <0x0 0x0 0x0 0x0 0x100 0x0>;
+ 
+ 		misc@100000 {
+ 			compatible = "nvidia,tegra234-misc";
+-- 
+2.39.1
+
