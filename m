@@ -2,98 +2,79 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BD1C636D4
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Feb 2023 07:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB04EC636D4
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Feb 2023 09:18:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230500AbjBOHrj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Feb 2023 02:47:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34210 "EHLO
+        id S229625AbjBOJSY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Feb 2023 04:18:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233703AbjBOHrf (ORCPT
+        with ESMTP id S233817AbjBOJSS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Feb 2023 02:47:35 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11EC622DD8
-        for <linux-tegra@vger.kernel.org>; Tue, 14 Feb 2023 23:47:35 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pSCVp-0006se-BM; Wed, 15 Feb 2023 08:47:33 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pSCVn-0053mC-38; Wed, 15 Feb 2023 08:47:32 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pSCVn-003giY-Jn; Wed, 15 Feb 2023 08:47:31 +0100
-Date:   Wed, 15 Feb 2023 08:47:31 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, Sumit Gupta <sumitg@nvidia.com>
-Subject: Re: [PATCH 3/3] soc: tegra: cbb: Drop empty platform remove function
-Message-ID: <20230215074731.xsfqkmtzrer7sfuj@pengutronix.de>
-References: <20221212222549.3779846-1-u.kleine-koenig@pengutronix.de>
- <20221212222549.3779846-4-u.kleine-koenig@pengutronix.de>
- <20230112215511.gjmplw4kcq55g6zy@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dqinbp6fhph7umcv"
-Content-Disposition: inline
-In-Reply-To: <20230112215511.gjmplw4kcq55g6zy@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+        Wed, 15 Feb 2023 04:18:18 -0500
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17EEB36681;
+        Wed, 15 Feb 2023 01:18:16 -0800 (PST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4PGstt5G6Qz8R04C;
+        Wed, 15 Feb 2023 17:18:14 +0800 (CST)
+Received: from xaxapp03.zte.com.cn ([10.88.97.17])
+        by mse-fl2.zte.com.cn with SMTP id 31F9I1Vd089562;
+        Wed, 15 Feb 2023 17:18:01 +0800 (+08)
+        (envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+        by mapi (Zmail) with MAPI id mid31;
+        Wed, 15 Feb 2023 17:18:03 +0800 (CST)
+Date:   Wed, 15 Feb 2023 17:18:03 +0800 (CST)
+X-Zmail-TransId: 2af963eca34bffffffffa6fb6077
+X-Mailer: Zmail v1.0
+Message-ID: <202302151718036138529@zte.com.cn>
+Mime-Version: 1.0
+From:   <ye.xingchen@zte.com.cn>
+To:     <thierry.reding@gmail.com>
+Cc:     <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBzb2MvdGVncmE6IGZsb3djdHJsOiBVc2XCoGRldm1fcGxhdGZvcm1fZ2V0X2FuZF9pb3JlbWFwX3Jlc291cmNlKCk=?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl2.zte.com.cn 31F9I1Vd089562
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 63ECA356.001 by FangMail milter!
+X-FangMail-Envelope: 1676452694/4PGstt5G6Qz8R04C/63ECA356.001/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<ye.xingchen@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 63ECA356.001/4PGstt5G6Qz8R04C
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Ye Xingchen <ye.xingchen@zte.com.cn>
 
---dqinbp6fhph7umcv
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Convert platform_get_resource(), devm_ioremap_resource() to a single
+call to devm_platform_get_and_ioremap_resource(), as this is exactly
+what this function does.
 
-Hello,
+Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
+---
+ drivers/soc/tegra/flowctrl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-[adding Sumit Gupta to Cc who authored all commits to this driver so
-far, context available at
-https://lore.kernel.org/r/20221212222549.3779846-4-u.kleine-koenig@pengutro=
-nix.de]
+diff --git a/drivers/soc/tegra/flowctrl.c b/drivers/soc/tegra/flowctrl.c
+index 5db919d96aba..221202db3313 100644
+--- a/drivers/soc/tegra/flowctrl.c
++++ b/drivers/soc/tegra/flowctrl.c
+@@ -156,10 +156,8 @@ void flowctrl_cpu_suspend_exit(unsigned int cpuid)
+ static int tegra_flowctrl_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base = tegra_flowctrl_base;
+-	struct resource *res;
 
-On Thu, Jan 12, 2023 at 10:55:11PM +0100, Uwe Kleine-K=F6nig wrote:
-> On Mon, Dec 12, 2022 at 11:25:49PM +0100, Uwe Kleine-K=F6nig wrote:
-> > A remove callback just returning 0 is equivalent to no remove callback
-> > at all. So drop the useless function.
->=20
-> the other two patches in this series were applied individually to their
-> matching trees. For this one I didn't get feedback yet.
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	tegra_flowctrl_base = devm_ioremap_resource(&pdev->dev, res);
++	tegra_flowctrl_base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+ 	if (IS_ERR(tegra_flowctrl_base))
+ 		return PTR_ERR(tegra_flowctrl_base);
 
-Did this patch fell through the cracks? Is it just -ENOMAINTAINERTIME?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---dqinbp6fhph7umcv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmPsjhAACgkQwfwUeK3K
-7Alwngf/fUXHd6rry3K+acBZQ+FyczcRZzJpvDrczWKTb5w+aCnqiiK1uh3Gc1vD
-uN6bf24jkFykbqrBPiyut9kx/i31M617WS9mltkZ/mcGflhqIzenNs3nq6g0uRCN
-SFSPYxoZpz0sXxvC9FjaMt2sjBlFQJA6kvyKS5ar4nhtyWy7FIaaKpd6Apwb/kYz
-ajH70K/WEClnRqdGGylI2uRtyzHTJRsXsAhueM16HQOqZT2RNHsLJl1jst2svVc5
-s0PmO4zTvofvTW9hdNvE/cRJk823DIk8jHUuBZHY7KNnPeNZ+oSMKSCPcwO8TOOP
-0EX4fuigNroU4+11nBGotlOS252Hpg==
-=hRjx
------END PGP SIGNATURE-----
-
---dqinbp6fhph7umcv--
+-- 
+2.25.1
