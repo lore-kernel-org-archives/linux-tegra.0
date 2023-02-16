@@ -2,284 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC3EC64EC4
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 14:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE783C636CC
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 14:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbjBPOGZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Feb 2023 09:06:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41940 "EHLO
+        id S229532AbjBPORs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Feb 2023 09:17:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjBPOGZ (ORCPT
+        with ESMTP id S229704AbjBPORr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Feb 2023 09:06:25 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A80CDE9;
-        Thu, 16 Feb 2023 06:06:23 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 16 Feb 2023 09:17:47 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC83BBBBC;
+        Thu, 16 Feb 2023 06:17:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3670122365;
-        Thu, 16 Feb 2023 14:06:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1676556382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=hS7qvXtpo1Ba5h/0QjOYVZ9usgy4SFdpWrd3thmWU3k=;
-        b=KshOud0Skj64WdBjDXfEMuJMKWxD7vsQCDmy5ZGfPoHNepAk6MR3RXeggbMmi/e8/PGno2
-        2iIIz3JyMT1juA8s3xIyRFqMSM+RkFmRzn0lQ5kw8/6N9A6rndGx0UajUrfcwy+8Mn+Vhh
-        4i50+MCwWPbLXDxWJ1GimsUaZQsIMOM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1676556382;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=hS7qvXtpo1Ba5h/0QjOYVZ9usgy4SFdpWrd3thmWU3k=;
-        b=Fy7nhs8Ft4rIvOcjGQgTOq/TIU5lZU+9eeaNgXWZURSuEj/Qjr6j5kvtJiTk46lqgYiFou
-        ZJ27DUX6IXXW73DQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E4C51131FD;
-        Thu, 16 Feb 2023 14:06:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 1aEYN1047mMGbQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 16 Feb 2023 14:06:21 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from drm_fb_helper_fini()
-Date:   Thu, 16 Feb 2023 15:06:20 +0100
-Message-Id: <20230216140620.17699-1-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.39.1
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 581C360EC4;
+        Thu, 16 Feb 2023 14:17:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA7FC433EF;
+        Thu, 16 Feb 2023 14:17:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676557065;
+        bh=msau/2K38eSyS0QwdkrUAtAJXdcgOWtGHzcKJ1Q6qLA=;
+        h=Date:Subject:To:References:From:In-Reply-To:From;
+        b=YClAdZH0sHW2m6gPD+IhbEqbVY7ZRtsHvQbv0rKFQWSe9yqxlTdylkMHArEEBaGly
+         46dojse6vdz3dti93+mXI1V0axFEzRdmdp9bw7h3oCeXsAP0o14SG/uF9M5DliniWW
+         rTng24YEdcmORe02wayAef6shn5KWkUxyj4OduDFDqEgNkXjONwgKeSsWFM6hZBcFY
+         sQg01jkgYLCW3Svj/HCCtyPqVT5/1fCijyE1LY9aGwSBM+ePMQQO8JCpa537b05mvE
+         GdOe/WxfdMioa6kNV1NcPycYIBrUF+ylYmr8QGmjD1KLdJmfaeYoIwlcunw+Om5adx
+         94v8odGqc4Y9g==
+Message-ID: <3c0ad963-ce69-bd5b-20cd-888e5fbdecaf@kernel.org>
+Date:   Thu, 16 Feb 2023 15:17:40 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH V2 4/6] dt-bindings: timestamp: Add Tegra234 support
+Content-Language: en-US
+To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org, robh+dt@kernel.org,
+        timestamp@lists.linux.dev
+References: <20230214115553.10416-1-dipenp@nvidia.com>
+ <20230214115553.10416-5-dipenp@nvidia.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20230214115553.10416-5-dipenp@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
-calling fbdev implementation. Avoids a possible stale mutex with
-generic fbdev code.
+On 14/02/2023 12:55, Dipen Patel wrote:
+> Added timestamp provider support for the Tegra234 in devicetree
+> bindings.
 
-As indicated by its name, drm_fb_helper_prepare() prepares struct
-drm_fb_helper before setting up the fbdev support with a call to
-drm_fb_helper_init(). In legacy fbdev emulation, this happens next
-to each other. If successful, drm_fb_helper_fini() later tear down
-the fbdev device and also unprepare via drm_fb_helper_unprepare().
+1. Your commit does much more. You need to explain it why you drop some
+property.
 
-Generic fbdev emulation prepares struct drm_fb_helper immediately
-after allocating the instance. It only calls drm_fb_helper_init()
-as part of processing a hotplug event. If the hotplug-handling fails,
-it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
-and the next hotplug event runs on stale data.
+2. Bindings go before its usage (in the patchset).
 
-Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
-into the fbdev implementations. Call it right before freeing the
-fb-helper instance.
+3. Please use scripts/get_maintainers.pl to get a list of necessary
+people and lists to CC.  It might happen, that command when run on an
+older kernel, gives you outdated entries.  Therefore please be sure you
+base your patches on recent Linux kernel.
 
-Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/armada/armada_fbdev.c      | 3 +++
- drivers/gpu/drm/drm_fb_helper.c            | 2 --
- drivers/gpu/drm/drm_fbdev_generic.c        | 2 ++
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c  | 3 ++-
- drivers/gpu/drm/gma500/framebuffer.c       | 2 ++
- drivers/gpu/drm/i915/display/intel_fbdev.c | 1 +
- drivers/gpu/drm/msm/msm_fbdev.c            | 2 ++
- drivers/gpu/drm/omapdrm/omap_fbdev.c       | 2 ++
- drivers/gpu/drm/radeon/radeon_fb.c         | 2 ++
- drivers/gpu/drm/tegra/fb.c                 | 1 +
- 10 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+> v2:
+> - Removed nvidia,slices property
+> - Added nvidia,gpio-controller based on review comments from Thierry,
+>   this will help simplify the  hte provider driver.
+> 
+>  .../timestamp/nvidia,tegra194-hte.yaml        | 30 ++++++++++++-------
+>  1 file changed, 19 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> index c31e207d1652..d0f4ed75baee 100644
+> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/timestamp/nvidia,tegra194-hte.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Tegra194 on chip generic hardware timestamping engine (HTE)
+> +title: Tegra on chip generic hardware timestamping engine (HTE) provider
+>  
+>  maintainers:
+>    - Dipen Patel <dipenp@nvidia.com>
+> @@ -23,6 +23,8 @@ properties:
+>      enum:
+>        - nvidia,tegra194-gte-aon
+>        - nvidia,tegra194-gte-lic
+> +      - nvidia,tegra234-gte-aon
+> +      - nvidia,tegra234-gte-lic
+>  
+>    reg:
+>      maxItems: 1
+> @@ -38,14 +40,11 @@ properties:
+>      minimum: 1
+>      maximum: 256
+>  
+> -  nvidia,slices:
+> -    $ref: /schemas/types.yaml#/definitions/uint32
+> +  nvidia,gpio-controller:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+>      description:
+> -      HTE lines are arranged in 32 bit slice where each bit represents different
+> -      line/signal that it can enable/configure for the timestamp. It is u32
+> -      property and depends on the HTE instance in the chip. The value 3 is for
+> -      GPIO GTE and 11 for IRQ GTE.
+> -    enum: [3, 11]
+> +      The phandle to AON gpio controller instance. This is required to handle
+> +      namespace conversion between GPIO and GTE.
+>  
+>    '#timestamp-cells':
+>      description:
+> @@ -55,11 +54,21 @@ properties:
+>        mentioned in the nvidia GPIO device tree binding document.
+>      const: 1
+>  
+> +if:
 
-diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-index 07e410c62b7a..0e44f53e9fa4 100644
---- a/drivers/gpu/drm/armada/armada_fbdev.c
-+++ b/drivers/gpu/drm/armada/armada_fbdev.c
-@@ -147,6 +147,7 @@ int armada_fbdev_init(struct drm_device *dev)
-  err_fb_setup:
- 	drm_fb_helper_fini(fbh);
-  err_fb_helper:
-+	drm_fb_helper_unprepare(fbh);
- 	priv->fbdev = NULL;
- 	return ret;
- }
-@@ -164,6 +165,8 @@ void armada_fbdev_fini(struct drm_device *dev)
- 		if (fbh->fb)
- 			fbh->fb->funcs->destroy(fbh->fb);
- 
-+		drm_fb_helper_unprepare(fbh);
-+
- 		priv->fbdev = NULL;
- 	}
- }
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 28c428e9c530..a39998047f8a 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -590,8 +590,6 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
- 	}
- 	mutex_unlock(&kernel_fb_helper_lock);
- 
--	drm_fb_helper_unprepare(fb_helper);
--
- 	if (!fb_helper->client.funcs)
- 		drm_client_release(&fb_helper->client);
- }
-diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index 365f80717fa1..4d6325e91565 100644
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -65,6 +65,8 @@ static void drm_fbdev_fb_destroy(struct fb_info *info)
- 
- 	drm_client_framebuffer_delete(fb_helper->buffer);
- 	drm_client_release(&fb_helper->client);
-+
-+	drm_fb_helper_unprepare(fb_helper);
- 	kfree(fb_helper);
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index b89e33af8da8..4929ffe5a09a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -183,8 +183,8 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
- 
- err_setup:
- 	drm_fb_helper_fini(helper);
--
- err_init:
-+	drm_fb_helper_unprepare(helper);
- 	private->fb_helper = NULL;
- 	kfree(fbdev);
- 
-@@ -219,6 +219,7 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
- 	fbdev = to_exynos_fbdev(private->fb_helper);
- 
- 	exynos_drm_fbdev_destroy(dev, private->fb_helper);
-+	drm_fb_helper_unprepare(private->fb_helper);
- 	kfree(fbdev);
- 	private->fb_helper = NULL;
- }
-diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-index 1f04c07ee180..f471e0cb7298 100644
---- a/drivers/gpu/drm/gma500/framebuffer.c
-+++ b/drivers/gpu/drm/gma500/framebuffer.c
-@@ -427,6 +427,7 @@ int psb_fbdev_init(struct drm_device *dev)
- fini:
- 	drm_fb_helper_fini(fb_helper);
- free:
-+	drm_fb_helper_unprepare(fb_helper);
- 	kfree(fb_helper);
- 	return ret;
- }
-@@ -439,6 +440,7 @@ static void psb_fbdev_fini(struct drm_device *dev)
- 		return;
- 
- 	psb_fbdev_destroy(dev, dev_priv->fb_helper);
-+	drm_fb_helper_unprepare(dev_priv->fb_helper);
- 	kfree(dev_priv->fb_helper);
- 	dev_priv->fb_helper = NULL;
- }
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index 6113d7627d45..98029059f701 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-@@ -352,6 +352,7 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
- 	if (ifbdev->fb)
- 		drm_framebuffer_remove(&ifbdev->fb->base);
- 
-+	drm_fb_helper_unprepare(&ifbdev->helper);
- 	kfree(ifbdev);
- }
- 
-diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-index 915b213f3a5c..c804e5ba682a 100644
---- a/drivers/gpu/drm/msm/msm_fbdev.c
-+++ b/drivers/gpu/drm/msm/msm_fbdev.c
-@@ -170,6 +170,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
- fini:
- 	drm_fb_helper_fini(helper);
- fail:
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 	return NULL;
- }
-@@ -196,6 +197,7 @@ void msm_fbdev_free(struct drm_device *dev)
- 		drm_framebuffer_remove(fbdev->fb);
- 	}
- 
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 
- 	priv->fbdev = NULL;
-diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-index fc5f52d567c6..84429728347f 100644
---- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-@@ -256,6 +256,7 @@ void omap_fbdev_init(struct drm_device *dev)
- fini:
- 	drm_fb_helper_fini(helper);
- fail:
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 
- 	dev_warn(dev->dev, "omap_fbdev_init failed\n");
-@@ -286,6 +287,7 @@ void omap_fbdev_fini(struct drm_device *dev)
- 	if (fbdev->fb)
- 		drm_framebuffer_remove(fbdev->fb);
- 
-+	drm_fb_helper_unprepare(helper);
- 	kfree(fbdev);
- 
- 	priv->fbdev = NULL;
-diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
-index 6e5eed0e157c..c4807f0c43bc 100644
---- a/drivers/gpu/drm/radeon/radeon_fb.c
-+++ b/drivers/gpu/drm/radeon/radeon_fb.c
-@@ -367,6 +367,7 @@ int radeon_fbdev_init(struct radeon_device *rdev)
- fini:
- 	drm_fb_helper_fini(&rfbdev->helper);
- free:
-+	drm_fb_helper_unprepare(&rfbdev->helper);
- 	kfree(rfbdev);
- 	return ret;
- }
-@@ -377,6 +378,7 @@ void radeon_fbdev_fini(struct radeon_device *rdev)
- 		return;
- 
- 	radeon_fbdev_destroy(rdev->ddev, rdev->mode_info.rfbdev);
-+	drm_fb_helper_unprepare(&rdev->mode_info.rfbdev->helper);
- 	kfree(rdev->mode_info.rfbdev);
- 	rdev->mode_info.rfbdev = NULL;
- }
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 153c39c32c71..bfebe2786d61 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -315,6 +315,7 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
- 
- static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
- {
-+	drm_fb_helper_unprepare(&fbdev->base);
- 	kfree(fbdev);
- }
- 
--- 
-2.39.1
+Keep it under allOf (so you no need to re-indent it on next if statement
+in the future) and put entire allOf after "required:".
+
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - nvidia,tegra194-gte-aon
+
+This is an ABI break. Does your driver handle it?
+
+> +          - nvidia,tegra234-gte-aon
+> +then:
+> +  required:
+> +    - nvidia,gpio-controller
+> +
+>  required:
+>    - compatible
+>    - reg
+>    - interrupts
+> -  - nvidia,slices
+>    - "#timestamp-cells"
+
+
+Best regards,
+Krzysztof
 
