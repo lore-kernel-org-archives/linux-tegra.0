@@ -2,202 +2,316 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C21FC64ED6
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 15:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7957EC6379F
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 20:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjBPPZD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Feb 2023 10:25:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56896 "EHLO
+        id S229561AbjBPUL7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Feb 2023 15:11:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbjBPPZB (ORCPT
+        with ESMTP id S229462AbjBPUL7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Feb 2023 10:25:01 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC7D552AC;
-        Thu, 16 Feb 2023 07:24:53 -0800 (PST)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31GFOCCh017535;
-        Thu, 16 Feb 2023 15:24:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references :
- content-transfer-encoding : content-type : mime-version; s=corp-2022-7-12;
- bh=c6IWbJBVBiEgHMSoA1b+eIxi+5LF797eyAAPIr9/w4Q=;
- b=f3LxeezeN1PFWeoms8XT0EIjxpXMmNM6RY0Rgc1EBpnIPPqIdcMr5tit4GpUmaHMkxdn
- MGL2hse/TjSZW2hxKVy8//D0etRBc9JRbQHH0nvAmA/aBG7MKWC7yuNgycMRzpYK/MKB
- RtOJPkEyokgmCEgZ7n8Z7ELB0cofCrNYIBlQ2QJmrw4UcCb8ALHstjjW098atwI3z65A
- wSk5csu+uGT5u0KXDRp3UaQlU379Q7ZNY206P7oE7Ph91KbfQ7AmEcd0AAMqkrDcCgRx
- L7pHmbZpH+Go89ocLePNCsAxlEIqJQ6x842lX63iVNDbX3czz1PUEnGcfmazFogUbWw6 Aw== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3np1edkbfu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Feb 2023 15:24:43 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 31GEeeIp015108;
-        Thu, 16 Feb 2023 15:24:42 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3np1f8rrym-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Feb 2023 15:24:42 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KXPOvgwwUl3wXg4ng1xTKYzn3sUkHXRmV1vgLQ2N5j0SGLu3rsFqffFeYW5jpm/FgS5EX8PiuvWmQoKK4zelMpm3F+Gu7z2ikvXSUjefjTWW2EVjBKDkA+LVF7Ozu6upNixMAV9xk/0xObl1wsJFTLrOLRnKosaqMN0opJVU1Fib3q28r9aFw7OgcMLXZHEbmi2xCZn8YOE9OvMwvyIDf42GKgc6phoWfJmnsOajBwqnzZOhU4yOvHCwwMmjzC+umb+Z2wdGcU+m/S7+do++xi6guBaXasdJMBYEPUcJ6A323nq1fjCJXx+hXMoKyU4UTbR7uT/GbI72fywvM9wgrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c6IWbJBVBiEgHMSoA1b+eIxi+5LF797eyAAPIr9/w4Q=;
- b=PY/Kbwa3/zsyXF/e29ulkTjoHgvdPT65758XojCrATDAXevxiICbE1msKXF3nj5jeo+yISafQ0F8cW+YnOWlAKaQ4YU1216jcY+Hd/D6a2VU2lurMZxX42CWxraKh7Gt7iixlI6MPeLdVO3JwktawObPbOCeXg+TtsanrnFsD47FlJpmbcsSwePYaZ/uo88T840t9obWWAp8FuGf/pNA6qRb9Z461x8x1mIjpftENfmv5X1Zoq6SclBEQp/Lev264iok2EP2BpFC1SqXN5E759Y/Aq4Ey9hSfi6kDSYWRBjSzlEHjb4vIYCDXzVYl/8wriyOCphKkFM4ToPW/XQByg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Thu, 16 Feb 2023 15:11:59 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96D204BE88
+        for <linux-tegra@vger.kernel.org>; Thu, 16 Feb 2023 12:11:56 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id v30so1774350wrv.3
+        for <linux-tegra@vger.kernel.org>; Thu, 16 Feb 2023 12:11:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c6IWbJBVBiEgHMSoA1b+eIxi+5LF797eyAAPIr9/w4Q=;
- b=ENhUKKj7fnrZt+bfTWiz/JitlR1f5xQxlVVAgEYcyW7VvN5Ss8lFipBEhfdWvb7dHfEW8bnqu0jCdZNAujqpKeT0fbAtpDzfZoWGAO1UCCCihf7IuaeZfH7Z4BicGG4hY22VpoQg4mjuNfAGvFSandCW/WOdqx7tkiqDGyvIm1E=
-Received: from DS0PR10MB6798.namprd10.prod.outlook.com (2603:10b6:8:13c::20)
- by DM4PR10MB6183.namprd10.prod.outlook.com (2603:10b6:8:8b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.6; Thu, 16 Feb
- 2023 15:24:40 +0000
-Received: from DS0PR10MB6798.namprd10.prod.outlook.com
- ([fe80::d0f7:e4fd:bd4:b760]) by DS0PR10MB6798.namprd10.prod.outlook.com
- ([fe80::d0f7:e4fd:bd4:b760%3]) with mapi id 15.20.6134.006; Thu, 16 Feb 2023
- 15:24:40 +0000
-From:   Nick Alcock <nick.alcock@oracle.com>
-To:     mcgrof@kernel.org
-Cc:     linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: [PATCH v2 3/7] kbuild, PCI: tegra: remove MODULE_LICENSE in non-modules
-Date:   Thu, 16 Feb 2023 15:24:06 +0000
-Message-Id: <20230216152410.4312-4-nick.alcock@oracle.com>
-X-Mailer: git-send-email 2.39.1.268.g9de2f9a303
-In-Reply-To: <20230216152410.4312-1-nick.alcock@oracle.com>
-References: <20230216152410.4312-1-nick.alcock@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO3P123CA0007.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:ba::12) To DS0PR10MB6798.namprd10.prod.outlook.com
- (2603:10b6:8:13c::20)
+        d=ffwll.ch; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KmsCXE1cc+kjYkXP7Av8+g/i6Xiae0+2FF4SyY/8c1Y=;
+        b=Z9/TpqTt2w1EyzDy+hgxyZZdv0XE+fU06DflDuxaxXsm04CxinixVlqeu8znsQttuk
+         GIO1OONphJIuGmb3iSZ7CEdUen26WffWPdu6dgO16g8fJa2l6FIn6aiVDuHrA9kpO/9o
+         P8y7zjNCb1eyevJNupis21d6YvG64TQOomKOQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KmsCXE1cc+kjYkXP7Av8+g/i6Xiae0+2FF4SyY/8c1Y=;
+        b=wmc1MnIl7oHR28E74NCh33Zr/NtjTpQcfhicq9j9RPc6geWyivfygEF5BTvEkV+yYC
+         rJ9O7xg7OJ64bm9CZySO4PNQcBa4iV8pQ49a+KYu2Ju7OuimOOWH2jpaqioT+KCmBxmW
+         fckx318jrvauHKjqqRXUZsaOl7Yt4/rB7WvD1PCwd6nq3/W2OleVZ+dnryF4iJnXyWzP
+         iqB6fL05USxcudddrK78Z2q8zHWGTRFOcsCDhxLl0KB4qKIRU1rIti1HmC9WsbQ+fsZ2
+         uEUvnxT2c3dVjXMKyB4LfnrvHocgm5/uj0xxP0pOjggslf/EJC1JDeIqeT+kh9rqkVNM
+         OcsQ==
+X-Gm-Message-State: AO0yUKVCQtlyVFLLMv2LwLplt0gtEdoQI1st8d0D94IaJ46vvvp0ePxw
+        ZFQpcSaG1dAB1/XQAw59LsXJ4g==
+X-Google-Smtp-Source: AK7set9SaGzBuaVjPNmI5K6tL/a+m6AYcw8bkZU23dWsn9A1+haGPZXOjfFCDUkIWccpGoPjBGtWGQ==
+X-Received: by 2002:adf:fd92:0:b0:2c5:60e2:ed68 with SMTP id d18-20020adffd92000000b002c560e2ed68mr4742497wrr.0.1676578314980;
+        Thu, 16 Feb 2023 12:11:54 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id h9-20020a5d6e09000000b002c56af32e8csm2365195wrz.35.2023.02.16.12.11.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Feb 2023 12:11:54 -0800 (PST)
+Date:   Thu, 16 Feb 2023 21:11:52 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
+ drm_fb_helper_fini()
+Message-ID: <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
+References: <20230216140620.17699-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB6798:EE_|DM4PR10MB6183:EE_
-X-MS-Office365-Filtering-Correlation-Id: 98efe9ac-59b7-4e68-4761-08db1031ebe3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Lhg3sC8TGUNwFoyAWXXXkUit3y12TgJvFzhy5oaZo+HlzyFdJ7sLLOSJyvw6EoHndrf3X0kgX1Ni7FtKQfipLn3IJJNbD76tH/ujIIjc8J1xs69FmdgfySMzsHrJqz9zWmqFYQMN1aXshhusw4V6mWnTm3NIX0vnTmh+3Mq6AC9kZWUNJ+ZtTknyLM2PdZIvh3c++61HhWW73tCTZnCQMp7rnUkxJHYUTaYGNm4FarhzUnO1OuGJhAA/YgQ+qZTSLVzpTUXkgoLOY/M2Yq+XHd0PFriTYzDsuZms2jW4qeJJSgV8Tt+2PLSEmHP99wOqXh9ttFf80tTHDhsTud2amVvlISaeQj1ly36It5EkDTSYBTX6KO2kyFtL1AP3XVpVNXFXGW3LVvSeyO6VPg7Dc7GYH47lkpI1EFiXrEzXf7zoCfI8M7VieA+ROCFvSZrP92/3dftXpAnh4o+o1+lMI6jI4hyrIndclme0XB4Ye8V40avR4nond1J9QpBpQs87hjX4MOevqJiOiVuELOr2y3Au0bTW7ln11FI3z7peOnhIzobcuZyo286Qq+m7pmRH0yGzp9+hqPwWoloUXpLMLQgfTkePJeC9uaqUUXlzHK11UB9t/NDTbsgTCI/wZlrg4UTDac0IYHFBbfwSG02LbQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6798.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(136003)(366004)(346002)(376002)(39860400002)(396003)(451199018)(5660300002)(7416002)(66556008)(8936002)(44832011)(54906003)(2906002)(316002)(6916009)(4326008)(478600001)(8676002)(66946007)(66476007)(41300700001)(36756003)(2616005)(83380400001)(38100700002)(6486002)(6506007)(6512007)(186003)(1076003)(6666004)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nAh15wdTRp/JCiH6kSO5WXTwwPHwwJK+xQbi3XDtOL3I2bsAOK9GMlTLIYmo?=
- =?us-ascii?Q?KfU8uqXV/pDJ0Jkl9ZBhGeOnz0210YzJDHipdqWoob0zqKJpAvSF9RP1S1mt?=
- =?us-ascii?Q?wYyjo1WY2VwVwXMcOvjHOd/luH4pBCY6eV/Bvg2cXiwZdcxiUxGOpvM+AEel?=
- =?us-ascii?Q?YQS9O7pgDu+6ROC+vNkYq7bBGTkX1ln6QS6tvf6Q4WY9nvty16aWRQMBzHTQ?=
- =?us-ascii?Q?800fXsQk9Ur2Ff0cS4UPKpf5EIx83Vr4V+1OEz+8flX0O5sKbEHoosprm1hf?=
- =?us-ascii?Q?QBFN0vPb3oIjYaIVpMFhMfZrPV4IYt1fujs8DfznlVWS8r2RtaMwusCMyBvq?=
- =?us-ascii?Q?H/iCVpsMFncjZfTVPB/+ZiLhodjJWXUP85Qq7c290s9ZE+SUswbOtdCJFXiE?=
- =?us-ascii?Q?CSbm4LrbHgsFDuJHW8pAn9S/nEIoYx65RQpWVVC7d5baulFkmYwvg40tpm5O?=
- =?us-ascii?Q?jvVyzrNfd3m6J2V5y5lm3byLxer+Cw7wBKyqWABCd/Ya1sU2VLoUkT0mwqLv?=
- =?us-ascii?Q?AYjsxGctlHXThraxS2ccJhlu2xwZh8KVNIxzTlXatwaQpke3cmZjsg6z3NkG?=
- =?us-ascii?Q?i31HO1b/oTGq9Mx9zp9LComx4OX4yGO1coehOZAiHvmuRXY5ItHb71NVIqsN?=
- =?us-ascii?Q?uECvwrFdheinKXB7RMHEn9GtCN5b0ciehWnj6xwe+hlijIw6qOLMHzyUOxya?=
- =?us-ascii?Q?+af3hs12tZDYI5q4UgOzA/UkOS+j52se6ZrzOZ7CtFcS35P0ryb6Qe/gAXBt?=
- =?us-ascii?Q?Ut6qW+Dn9qREXMfdW3QAO4McYP6WQQ6LO5nZdUUCHYc3kZsPDdN2/pnGkFrK?=
- =?us-ascii?Q?pzaVNk8i0sFXgKMQleI86R9AILtZ+o84eRHJ8aKEHfXlXn+MX2yYHMxSoYMn?=
- =?us-ascii?Q?OAeeP5XBVPfjwUjKYVMTJI2kwJRW8lquYMQCpMlWG16pcCzazqMXC7CwqV3C?=
- =?us-ascii?Q?Qy3KpZb9hxiWeWhR656Llr6Uhw5/vS+TkliFAm+yvNGrJsuBr7dj7LYvEk+I?=
- =?us-ascii?Q?yHXF4dLMjfwKR+noi09k2mbqtE4yNy3u5kWVAQyYELfgcruOD/ptOqCU5s1v?=
- =?us-ascii?Q?wwrqp1sk1pnNooxZW5TdEQCFS4BaBzmrI+OP8l6N/ghZnM+repUIBYqS+slK?=
- =?us-ascii?Q?kkeLfLMc+r1X0dYIJFmxRYlbe4VpBFxV1fihcKdbgQ/HwKNb3f+lOoiJS8Wn?=
- =?us-ascii?Q?SYu7a0Rw0aSOi7mLb3SXP9anqFm5zyuvfFY38Cf1BcnLEJODi1iMgtCYH2E6?=
- =?us-ascii?Q?nPfOpkmu2SyoMF77gZIrXKmP93Du1kEC/8nL2X2kGtiq8W7lr6xC7/prGMtg?=
- =?us-ascii?Q?Mh8a3PoS8vUtV2HR8FTP9qIAObR6jrfwAJ5IEJ7ZKzhdNeB4arxFL6r6DVWa?=
- =?us-ascii?Q?tUxsgrD4AHppc5x9S7dIyhe8L/EsH9AeuB80agbntoaCHdhQc1T2UWaC+zg6?=
- =?us-ascii?Q?uoWJPepK0Xn65X2UrtjetwPvfmcsjlcHRXgcRF90eUog3MmxiU0T2X+/FgEg?=
- =?us-ascii?Q?yDbZv4r65uqChL6QAL8NBI5ZvtF7zDEy+5dpUfou2geQg//Q29BoXTrQkVs3?=
- =?us-ascii?Q?hiX0yg61KkqIhLDVmDDRdaGnYO/OK5zUpbFwoEZBJ25I6A8YmKRreaXb2hM7?=
- =?us-ascii?Q?+Q=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?xPZISJPR6ExZ9cOFTUuoDLgyMwJiMgtce+yvoQrJKZwfDjGqeiUmBfSLL7n0?=
- =?us-ascii?Q?GvZvXy0Xvt9PkrtMpCeoVaGhP5yG+Pl9oX2jyfP+tvOgw7ic0XZ5J7YOcjrb?=
- =?us-ascii?Q?aKZu+LrvB0mu3yK+zigPwnFpPizHP9Y2l3sMGCaUdbftUlDuAp1uNlONWnjU?=
- =?us-ascii?Q?3OmB2TdkW5pE/6F6TKq6rNqhmQQxvS74lgCIEfeglGjBOZ3IrO49SOZO45Qd?=
- =?us-ascii?Q?babzkHuyBZF0PbEgKTJ8gKs1qpH29FRno6agesK8BPZYwKd4msEvDAOnIe5R?=
- =?us-ascii?Q?hhye5ocshvthUSh4nwniO+u9p/cjd6+lzSm7Tim6ItNNPO/tfLbmxPH5Em8z?=
- =?us-ascii?Q?Gpoolqn+3scgT0FrKebmux+hrpmYuAK9oB3VjgPF6l68qHAE1RqNLYNTZx/4?=
- =?us-ascii?Q?GIQzt613z4+lfqm2Pf33fLlXDcO8qdHA6Dcb6M+HONKaUVTQEMcLBWEtPs6g?=
- =?us-ascii?Q?lrlCPlXutnUKCfhBS6sEx/eYXkvciEICPJWMXkENEAK+jKohmcykK0EG9e5q?=
- =?us-ascii?Q?LalJ1UsJkb9cfjuxrVUgcgu0Pv6z7IRMYAd50fSWYmz6z4r5C8H8d+zOZs3z?=
- =?us-ascii?Q?6uo9htFL2Ud04tfb8Rz/p6LpPAk7u7/wVlIfI8MfI+/g4slsITsoddbOrGzX?=
- =?us-ascii?Q?dSC8fZvLWjLoJ/qbQxn3Yhtkzd0Pe7PK6LrPUhu/Hgu96Y8C6TL8c3IyB5SK?=
- =?us-ascii?Q?KGIxse3y5ZuJQcuvap9VCqfG/UwaqesisF+eMkROAtNQHaBf/YqTfRS8y2Yv?=
- =?us-ascii?Q?s54ejes4H6HniMmXZuojizaUsFiyDduHZSidP+kD8/WMfYNqcH0814baq7kN?=
- =?us-ascii?Q?nph8RL+cdK8wUDOBJYaMA6cwW2poBcm4/MbtTL4mzfBTFeMfgp9vxhIaPnnq?=
- =?us-ascii?Q?WxCxGoI6jAZdB0mAxV8PVSngHmWaoJAcqUFW3PHxLh2+AkyzivlujFy4l1sp?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98efe9ac-59b7-4e68-4761-08db1031ebe3
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6798.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2023 15:24:40.1289
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hRZIZC+MqYVOWQiGlPW9OG3eFxlfcrKCIyToucJbXyayMklRjiKniWLkBjJCzhK8rb+Hs/+gvvyXWFDkhbGPcg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6183
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-16_11,2023-02-16_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 mlxscore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2302160133
-X-Proofpoint-GUID: enJkJhdIoMnu7dpQPYDYtELRCK4ly4X3
-X-Proofpoint-ORIG-GUID: enJkJhdIoMnu7dpQPYDYtELRCK4ly4X3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230216140620.17699-1-tzimmermann@suse.de>
+X-Operating-System: Linux phenom 5.19.0-2-amd64 
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Since commit 8b41fc4454e ("kbuild: create modules.builtin without
-Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
-are used to identify modules. As a consequence, uses of the macro
-in non-modules will cause modprobe to misidentify their containing
-object file as a module when it is not (false positives), and modprobe
-might succeed rather than failing with a suitable error message.
+On Thu, Feb 16, 2023 at 03:06:20PM +0100, Thomas Zimmermann wrote:
+> Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
+> calling fbdev implementation. Avoids a possible stale mutex with
+> generic fbdev code.
+> 
+> As indicated by its name, drm_fb_helper_prepare() prepares struct
+> drm_fb_helper before setting up the fbdev support with a call to
+> drm_fb_helper_init(). In legacy fbdev emulation, this happens next
+> to each other. If successful, drm_fb_helper_fini() later tear down
+> the fbdev device and also unprepare via drm_fb_helper_unprepare().
+> 
+> Generic fbdev emulation prepares struct drm_fb_helper immediately
+> after allocating the instance. It only calls drm_fb_helper_init()
+> as part of processing a hotplug event. If the hotplug-handling fails,
+> it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
+> and the next hotplug event runs on stale data.
+> 
+> Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
+> into the fbdev implementations. Call it right before freeing the
+> fb-helper instance.
+> 
+> Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Javier Martinez Canillas <javierm@redhat.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: dri-devel@lists.freedesktop.org
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-So remove it in the files in this commit, none of which can be built as
-modules.
+This reminds me of an old patch I just recently stumbled over again:
 
-Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
-Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: linux-modules@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
----
- drivers/pci/controller/pci-tegra.c | 1 -
- 1 file changed, 1 deletion(-)
+https://lore.kernel.org/dri-devel/Y3St2VHJ7jEmcNFw@phenom.ffwll.local/
 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 929f9363e94b..5bb05564d6f8 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2814,4 +2814,3 @@ static struct platform_driver tegra_pcie_driver = {
- 	.remove = tegra_pcie_remove,
- };
- module_platform_driver(tegra_pcie_driver);
--MODULE_LICENSE("GPL");
+Should I resurrect that one maybe and send it out? I think that also ties
+a bit into your story here.
+
+> ---
+>  drivers/gpu/drm/armada/armada_fbdev.c      | 3 +++
+>  drivers/gpu/drm/drm_fb_helper.c            | 2 --
+>  drivers/gpu/drm/drm_fbdev_generic.c        | 2 ++
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c  | 3 ++-
+>  drivers/gpu/drm/gma500/framebuffer.c       | 2 ++
+>  drivers/gpu/drm/i915/display/intel_fbdev.c | 1 +
+>  drivers/gpu/drm/msm/msm_fbdev.c            | 2 ++
+>  drivers/gpu/drm/omapdrm/omap_fbdev.c       | 2 ++
+>  drivers/gpu/drm/radeon/radeon_fb.c         | 2 ++
+>  drivers/gpu/drm/tegra/fb.c                 | 1 +
+>  10 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
+> index 07e410c62b7a..0e44f53e9fa4 100644
+> --- a/drivers/gpu/drm/armada/armada_fbdev.c
+> +++ b/drivers/gpu/drm/armada/armada_fbdev.c
+> @@ -147,6 +147,7 @@ int armada_fbdev_init(struct drm_device *dev)
+>   err_fb_setup:
+>  	drm_fb_helper_fini(fbh);
+>   err_fb_helper:
+> +	drm_fb_helper_unprepare(fbh);
+>  	priv->fbdev = NULL;
+>  	return ret;
+>  }
+> @@ -164,6 +165,8 @@ void armada_fbdev_fini(struct drm_device *dev)
+>  		if (fbh->fb)
+>  			fbh->fb->funcs->destroy(fbh->fb);
+>  
+> +		drm_fb_helper_unprepare(fbh);
+> +
+>  		priv->fbdev = NULL;
+>  	}
+>  }
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 28c428e9c530..a39998047f8a 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -590,8 +590,6 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
+
+I think it would be good to update the kerneldoc of _init() and _fini()
+here to mention each another like we usually do with these pairs. Same
+with prepare/unprepare() although the latter rerfences _prepare() already.
+
+>  	}
+>  	mutex_unlock(&kernel_fb_helper_lock);
+>  
+> -	drm_fb_helper_unprepare(fb_helper);
+> -
+>  	if (!fb_helper->client.funcs)
+>  		drm_client_release(&fb_helper->client);
+>  }
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 365f80717fa1..4d6325e91565 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -65,6 +65,8 @@ static void drm_fbdev_fb_destroy(struct fb_info *info)
+>  
+>  	drm_client_framebuffer_delete(fb_helper->buffer);
+>  	drm_client_release(&fb_helper->client);
+> +
+> +	drm_fb_helper_unprepare(fb_helper);
+>  	kfree(fb_helper);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index b89e33af8da8..4929ffe5a09a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -183,8 +183,8 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
+>  
+>  err_setup:
+>  	drm_fb_helper_fini(helper);
+> -
+>  err_init:
+> +	drm_fb_helper_unprepare(helper);
+>  	private->fb_helper = NULL;
+>  	kfree(fbdev);
+>  
+> @@ -219,6 +219,7 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+>  	fbdev = to_exynos_fbdev(private->fb_helper);
+>  
+>  	exynos_drm_fbdev_destroy(dev, private->fb_helper);
+> +	drm_fb_helper_unprepare(private->fb_helper);
+>  	kfree(fbdev);
+>  	private->fb_helper = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+> index 1f04c07ee180..f471e0cb7298 100644
+> --- a/drivers/gpu/drm/gma500/framebuffer.c
+> +++ b/drivers/gpu/drm/gma500/framebuffer.c
+> @@ -427,6 +427,7 @@ int psb_fbdev_init(struct drm_device *dev)
+>  fini:
+>  	drm_fb_helper_fini(fb_helper);
+>  free:
+> +	drm_fb_helper_unprepare(fb_helper);
+>  	kfree(fb_helper);
+>  	return ret;
+>  }
+> @@ -439,6 +440,7 @@ static void psb_fbdev_fini(struct drm_device *dev)
+>  		return;
+>  
+>  	psb_fbdev_destroy(dev, dev_priv->fb_helper);
+> +	drm_fb_helper_unprepare(dev_priv->fb_helper);
+>  	kfree(dev_priv->fb_helper);
+>  	dev_priv->fb_helper = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
+> index 6113d7627d45..98029059f701 100644
+> --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
+> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
+> @@ -352,6 +352,7 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
+>  	if (ifbdev->fb)
+>  		drm_framebuffer_remove(&ifbdev->fb->base);
+>  
+> +	drm_fb_helper_unprepare(&ifbdev->helper);
+>  	kfree(ifbdev);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+> index 915b213f3a5c..c804e5ba682a 100644
+> --- a/drivers/gpu/drm/msm/msm_fbdev.c
+> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
+> @@ -170,6 +170,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
+>  fini:
+>  	drm_fb_helper_fini(helper);
+>  fail:
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  	return NULL;
+>  }
+> @@ -196,6 +197,7 @@ void msm_fbdev_free(struct drm_device *dev)
+>  		drm_framebuffer_remove(fbdev->fb);
+>  	}
+>  
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  
+>  	priv->fbdev = NULL;
+> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> index fc5f52d567c6..84429728347f 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> @@ -256,6 +256,7 @@ void omap_fbdev_init(struct drm_device *dev)
+>  fini:
+>  	drm_fb_helper_fini(helper);
+>  fail:
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  
+>  	dev_warn(dev->dev, "omap_fbdev_init failed\n");
+> @@ -286,6 +287,7 @@ void omap_fbdev_fini(struct drm_device *dev)
+>  	if (fbdev->fb)
+>  		drm_framebuffer_remove(fbdev->fb);
+>  
+> +	drm_fb_helper_unprepare(helper);
+>  	kfree(fbdev);
+>  
+>  	priv->fbdev = NULL;
+> diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
+> index 6e5eed0e157c..c4807f0c43bc 100644
+> --- a/drivers/gpu/drm/radeon/radeon_fb.c
+> +++ b/drivers/gpu/drm/radeon/radeon_fb.c
+> @@ -367,6 +367,7 @@ int radeon_fbdev_init(struct radeon_device *rdev)
+>  fini:
+>  	drm_fb_helper_fini(&rfbdev->helper);
+>  free:
+> +	drm_fb_helper_unprepare(&rfbdev->helper);
+>  	kfree(rfbdev);
+>  	return ret;
+>  }
+> @@ -377,6 +378,7 @@ void radeon_fbdev_fini(struct radeon_device *rdev)
+>  		return;
+>  
+>  	radeon_fbdev_destroy(rdev->ddev, rdev->mode_info.rfbdev);
+> +	drm_fb_helper_unprepare(&rdev->mode_info.rfbdev->helper);
+>  	kfree(rdev->mode_info.rfbdev);
+>  	rdev->mode_info.rfbdev = NULL;
+>  }
+> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> index 153c39c32c71..bfebe2786d61 100644
+> --- a/drivers/gpu/drm/tegra/fb.c
+> +++ b/drivers/gpu/drm/tegra/fb.c
+> @@ -315,6 +315,7 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
+>  
+>  static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
+>  {
+> +	drm_fb_helper_unprepare(&fbdev->base);
+
+Ok this one tegra change was a bit tricky, drivers really should just use
+drmm_/devm_ for everything :-)
+
+With the kerneldoc augmented:
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+>  	kfree(fbdev);
+>  }
+>  
+> -- 
+> 2.39.1
+> 
+
 -- 
-2.39.1.268.g9de2f9a303
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
