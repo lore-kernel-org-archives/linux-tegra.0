@@ -2,152 +2,117 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55056C678D5
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Feb 2023 16:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E903C636CC
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 00:54:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbjBOQAH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Feb 2023 11:00:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
+        id S229487AbjBPAyI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Feb 2023 19:54:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjBOQAD (ORCPT
+        with ESMTP id S229517AbjBPAyH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Feb 2023 11:00:03 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594FA3A86E;
-        Wed, 15 Feb 2023 07:59:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1676476790; x=1708012790;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rFzlPJjklUrRYXlztiXxbWF4vZTLJe24dy5KZSKBFTU=;
-  b=a2QbX3wd6aUC0XQJ2qfsU00tzCVvCSv9F3xqk4Z83a8t6xUnXvoVdf4i
-   NBxzdPdWCGWw2G0+a2FRuc48aS6+5zJjMUsAUU4x7VaRvR1kt0dzcZeE4
-   jHo1zYFgV07HaGAbi4BPBks+qZO9fn82e64Aa8yl7lKBMwgcsv+zV9IxW
-   OiuiwgzZBscUVew/h/YbZuv2dJSiEXos8iy5r5aT66TiKYAAe654m+i11
-   7/wVHEjSAu+ZufvrTjIJdAAaHjX6IYCkPCwqy3u3/8UDxpT3SMTZUn4cD
-   5pGtrG081KVPyAUVsBJtZcBo/nzky/lMvsHKB6yLBlnvLINeQJm0/k0wE
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10622"; a="331461160"
-X-IronPort-AV: E=Sophos;i="5.97,300,1669104000"; 
-   d="scan'208";a="331461160"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2023 07:59:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10622"; a="700017813"
-X-IronPort-AV: E=Sophos;i="5.97,300,1669104000"; 
-   d="scan'208";a="700017813"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga008.jf.intel.com with ESMTP; 15 Feb 2023 07:59:31 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pSKBp-007KF7-0b;
-        Wed, 15 Feb 2023 17:59:25 +0200
-Date:   Wed, 15 Feb 2023 17:59:24 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Michael Walle <michael@walle.cc>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>,
-        Russell King <linux@armlinux.org.uk>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wed, 15 Feb 2023 19:54:07 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7A22CFCE;
+        Wed, 15 Feb 2023 16:54:06 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id cq19so715785edb.5;
+        Wed, 15 Feb 2023 16:54:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:user-agent:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/Gw9QX7RE3l11rZTdHQJ4q7TrnGKJ9yItj3rNg7/Cyw=;
+        b=hmtJYth4qv8Dfpo2jd+z7ds8pPh8okO2eUjGAMrBaBGyHjqY14W79EBGUldzkRZ98W
+         ct8sIe6UtKRRpeOl+AzFtV0GYaz8I4DIdYGC19wkhAX/VpTEA/bYOxzoWzheghbFcDz/
+         Nb7KrpwGg1lslNbOghY/TBIar5IT26XpzIVqabW5zx9AHE/o74L6h7y9QCFWL3I41FUg
+         fr9UTsJbbHVv14V0SYsQ3GMzp1Cv6IDB8OyIWbgRw6re353Vh0qum/8gEmEGpDzE2HI/
+         HeRbNZQqm/kb6cWQ6aaBoTKoilQTFMl2gO59TWf5JBZvUUAhXNroTR6aD6ch7kWJ2amd
+         XAQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:user-agent:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Gw9QX7RE3l11rZTdHQJ4q7TrnGKJ9yItj3rNg7/Cyw=;
+        b=rSD3S69HLb1KUVqzFBBdrOb6k7yfWesRgtCQ/1Cso04pmMqnPoNLQ9fPjkclFrcUIg
+         scNOtbeKFPZSrTLTwKZCG8focO8uTOR0KzIkyWaEqHUaJFkPuEf6niNIN5XtgOmi3zU3
+         5OHmjPgyDUGZlrrfx0O7tLGxHFUehQKhdjAe2kkmspiDe6O46QmXIGjg+g2cVoim/eHb
+         umqkjcrc2YplWxQ8htaZPqba4b3g+ruenfWd+RnClVcRe1DMo+AeyMctGj+1VbzSThgp
+         zY25sWOxmpFe89KCyCkMX5np4vV08MJofZ2v0aAIWVu5TUbb/cjlcabYvLfgvwiHmaem
+         gzqQ==
+X-Gm-Message-State: AO0yUKVsHdZGcYvqShSzGxe+JNF3OHHa25sNTgKsOGYnaS7opkPcNWC7
+        ZA0NdmGf1i6ewYY4JIHbp8RGQUUTA9XIqCHY
+X-Google-Smtp-Source: AK7set8x+9HjUcBC8t/4D8jsSIBwRWqVTGMwWlPjYPaaoJaen5OZmOBk2Fpwg7dU81Mn6wH+NOPloQ==
+X-Received: by 2002:aa7:d9c5:0:b0:4aa:a9c7:4224 with SMTP id v5-20020aa7d9c5000000b004aaa9c74224mr4007856eds.30.1676508845188;
+        Wed, 15 Feb 2023 16:54:05 -0800 (PST)
+Received: from smurf (80.71.142.58.ipv4.parknet.dk. [80.71.142.58])
+        by smtp.gmail.com with ESMTPSA id i5-20020a50c3c5000000b004aad8d2158dsm111897edf.66.2023.02.15.16.54.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Feb 2023 16:54:04 -0800 (PST)
+Date:   Thu, 16 Feb 2023 01:53:42 +0100 (CET)
+From:   Jesper Juhl <jesperjuhl76@gmail.com>
+To:     linux-kernel@vger.kernel.org
+cc:     linux-tegra@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexander Aring <alex.aring@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Kalle Valo <kvalo@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v4 00/18] gpiolib cleanups
-Message-ID: <Y+0BXGLf2n+dAi4v@smile.fi.intel.com>
-References: <20230208173343.37582-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=MdsCZKh12QcqdWk+Zht5UDpA_G1+rx6+_3dzwjDYe6L+Q@mail.gmail.com>
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [Patch] [tegra] Remove unneeded version.h includes pointed out by
+ 'make versioncheck'
+Message-ID: <8611b610-a21b-6037-52ad-9439c4f44995@gmail.com>
+User-Agent: Alpine 2.26 (LNX 649 2022-06-02)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdsCZKh12QcqdWk+Zht5UDpA_G1+rx6+_3dzwjDYe6L+Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Feb 15, 2023 at 04:52:29PM +0100, Bartosz Golaszewski wrote:
-> On Wed, Feb 8, 2023 at 6:34 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > These are some older patches Arnd did last year, rebased to
-> > linux-next-20230208. On top there are Andy's patches regarding
-> > similar topic. The series starts with Linus Walleij's patches.
-> >
-> > The main goal is to remove some of the legacy bits of the gpiolib
-> > interfaces, where the corner cases are easily avoided or replaced
-> > with gpio descriptor based interfaces.
-> >
-> > The idea is to get an immutable branch and route the whole series
-> > via GPIO tree.
-> 
-> Andy,
-> 
-> looks like this series has all the acks it needs but I decided to not
-> send it in the upcoming merge window, I'd prefer it gets some time in
-> next so I'll let it sit until the next release cycle.
+From 7264ec7d00ece4b56fe9fafa3237d4870cbe6785 Mon Sep 17 00:00:00 2001
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Mon, 13 Feb 2023 02:49:50 +0100
+Subject: [PATCH 04/12] [tegra] Remove unneeded version.h includes pointed out
+  by 'make versioncheck'
 
-Ah, I forgot to mention that this is for the next cycle (v6.4).
-Hence it's fine. (Moreover it's based on Linux Next, so it will
-fail compilation in any certain tree except that one.)
+Signed-off-by: Jesper Juhl <jesperjuhl76@gmail.com>
+---
+  drivers/soc/tegra/cbb/tegra-cbb.c    | 1 -
+  drivers/soc/tegra/cbb/tegra194-cbb.c | 1 -
+  drivers/soc/tegra/cbb/tegra234-cbb.c | 1 -
+  3 files changed, 3 deletions(-)
 
-I will create an immutable branch after v6.3-rc1 is out.
+diff --git a/drivers/soc/tegra/cbb/tegra-cbb.c b/drivers/soc/tegra/cbb/tegra-cbb.c
+index a8566b9dd8de..bd96204a68ee 100644
+--- a/drivers/soc/tegra/cbb/tegra-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra-cbb.c
+@@ -16,7 +16,6 @@
+  #include <linux/of_address.h>
+  #include <linux/interrupt.h>
+  #include <linux/ioport.h>
+-#include <linux/version.h>
+  #include <soc/tegra/fuse.h>
+  #include <soc/tegra/tegra-cbb.h>
+
+diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+index d4112b683f00..a05fc2caff3b 100644
+--- a/drivers/soc/tegra/cbb/tegra194-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+@@ -23,7 +23,6 @@
+  #include <linux/of_address.h>
+  #include <linux/interrupt.h>
+  #include <linux/ioport.h>
+-#include <linux/version.h>
+  #include <soc/tegra/fuse.h>
+  #include <soc/tegra/tegra-cbb.h>
+
+diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
+index f33d094e5ea6..e23e8acfd7c7 100644
+--- a/drivers/soc/tegra/cbb/tegra234-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
+@@ -24,7 +24,6 @@
+  #include <linux/of_address.h>
+  #include <linux/interrupt.h>
+  #include <linux/ioport.h>
+-#include <linux/version.h>
+  #include <soc/tegra/fuse.h>
+  #include <soc/tegra/tegra-cbb.h>
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.2
 
