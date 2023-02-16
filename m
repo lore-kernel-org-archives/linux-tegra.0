@@ -2,61 +2,62 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E903C636CC
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 00:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 819A7C636D4
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 01:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjBPAyI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Feb 2023 19:54:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48282 "EHLO
+        id S229728AbjBPBju (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Feb 2023 20:39:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjBPAyH (ORCPT
+        with ESMTP id S229739AbjBPBjt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Feb 2023 19:54:07 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7A22CFCE;
-        Wed, 15 Feb 2023 16:54:06 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id cq19so715785edb.5;
-        Wed, 15 Feb 2023 16:54:06 -0800 (PST)
+        Wed, 15 Feb 2023 20:39:49 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCC81460BE;
+        Wed, 15 Feb 2023 17:39:16 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id dr8so1491361ejc.12;
+        Wed, 15 Feb 2023 17:39:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:user-agent:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=/Gw9QX7RE3l11rZTdHQJ4q7TrnGKJ9yItj3rNg7/Cyw=;
-        b=hmtJYth4qv8Dfpo2jd+z7ds8pPh8okO2eUjGAMrBaBGyHjqY14W79EBGUldzkRZ98W
-         ct8sIe6UtKRRpeOl+AzFtV0GYaz8I4DIdYGC19wkhAX/VpTEA/bYOxzoWzheghbFcDz/
-         Nb7KrpwGg1lslNbOghY/TBIar5IT26XpzIVqabW5zx9AHE/o74L6h7y9QCFWL3I41FUg
-         fr9UTsJbbHVv14V0SYsQ3GMzp1Cv6IDB8OyIWbgRw6re353Vh0qum/8gEmEGpDzE2HI/
-         HeRbNZQqm/kb6cWQ6aaBoTKoilQTFMl2gO59TWf5JBZvUUAhXNroTR6aD6ch7kWJ2amd
-         XAQg==
+        bh=baCgf247aKa2TbgJPaFGuC/xQDQ/fJaWhZ2ZJNR1qUI=;
+        b=NVAZhArqamb6Vu5aWK4HGmDcgxpj6Ds4yBBzsiezVZeOz8wvpA+MsvkFLc9bXSVJKB
+         ToZFSZlfkrd5ODpUten0X32c+/3L+eY/FpKT/70bns1K1rWF/BwRrazUbL/J0lfQDN3l
+         tcL1TvS0d7aHGjQcP2Y+nkt7NeJfujdPfzQEedE6lwSOHK8/AuGEYwWC3VmigAvfZfqK
+         uZP27zQNCqDRiw8fsRZelUbTxd6/zzH8B4IvdRchCoVaXR/hWRH5fOim0MNOLXLT9Wv+
+         Mix79QsLpLdS+LG7mcOo486cBTJdHsfC7ZKxTYHleWOU+KrdomROEf5WuYIwej3KqU2x
+         7XSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=mime-version:user-agent:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Gw9QX7RE3l11rZTdHQJ4q7TrnGKJ9yItj3rNg7/Cyw=;
-        b=rSD3S69HLb1KUVqzFBBdrOb6k7yfWesRgtCQ/1Cso04pmMqnPoNLQ9fPjkclFrcUIg
-         scNOtbeKFPZSrTLTwKZCG8focO8uTOR0KzIkyWaEqHUaJFkPuEf6niNIN5XtgOmi3zU3
-         5OHmjPgyDUGZlrrfx0O7tLGxHFUehQKhdjAe2kkmspiDe6O46QmXIGjg+g2cVoim/eHb
-         umqkjcrc2YplWxQ8htaZPqba4b3g+ruenfWd+RnClVcRe1DMo+AeyMctGj+1VbzSThgp
-         zY25sWOxmpFe89KCyCkMX5np4vV08MJofZ2v0aAIWVu5TUbb/cjlcabYvLfgvwiHmaem
-         gzqQ==
-X-Gm-Message-State: AO0yUKVsHdZGcYvqShSzGxe+JNF3OHHa25sNTgKsOGYnaS7opkPcNWC7
-        ZA0NdmGf1i6ewYY4JIHbp8RGQUUTA9XIqCHY
-X-Google-Smtp-Source: AK7set8x+9HjUcBC8t/4D8jsSIBwRWqVTGMwWlPjYPaaoJaen5OZmOBk2Fpwg7dU81Mn6wH+NOPloQ==
-X-Received: by 2002:aa7:d9c5:0:b0:4aa:a9c7:4224 with SMTP id v5-20020aa7d9c5000000b004aaa9c74224mr4007856eds.30.1676508845188;
-        Wed, 15 Feb 2023 16:54:05 -0800 (PST)
+        bh=baCgf247aKa2TbgJPaFGuC/xQDQ/fJaWhZ2ZJNR1qUI=;
+        b=dMaEQRRuqCGJPlGEJbLbrrSUB+ik+ogA2To0UHcj00F7EFHeVO2YmlOvfrjiPItKTa
+         KVevBXHe2kc70Nw1UiF7uyhJe58dAGjoEPi9nW3JoAwx1xhtMifP0rinsR62uNKbUnU1
+         HuwK8pIKqYVl7pm4PmPxnaxvZ+2kJldVKz1FkuhFjvUNbLeZDYOL63ZA7N9HNvIi+kYb
+         D5+bwhPyAOMfeYrjtZw90JEFSRkHi9x2cebtnTsgfhp0LsT+anxYglMoNUaR9tdTlKu7
+         BxGbAJvmZcaIIgwAdLB1BnCUePWfevTrJPjYjhGXgjEoeNeJOm6pCx9GBQPHTmvmxxYH
+         Bntg==
+X-Gm-Message-State: AO0yUKXfUp4i9nmhYc5wFEGFxwLfp+mDSsfO4K6Jf74Y1vUpfeJRU0Kd
+        bMH0i4zXWye8LlU1z+6HInVYvn+Y3RSDqNlH
+X-Google-Smtp-Source: AK7set8eCDLr8j3KGb/GwZNd0CjttI/ZuImTr7X4gxOdiX8Gl2eEzzbYHTgljlxU1SU0IXobKMT5Ag==
+X-Received: by 2002:a17:906:f1d4:b0:8aa:c0d5:166d with SMTP id gx20-20020a170906f1d400b008aac0d5166dmr5027724ejb.71.1676511462256;
+        Wed, 15 Feb 2023 17:37:42 -0800 (PST)
 Received: from smurf (80.71.142.58.ipv4.parknet.dk. [80.71.142.58])
-        by smtp.gmail.com with ESMTPSA id i5-20020a50c3c5000000b004aad8d2158dsm111897edf.66.2023.02.15.16.54.04
+        by smtp.gmail.com with ESMTPSA id k2-20020a508ac2000000b004aac44175e7sm152937edk.12.2023.02.15.17.37.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Feb 2023 16:54:04 -0800 (PST)
-Date:   Thu, 16 Feb 2023 01:53:42 +0100 (CET)
+        Wed, 15 Feb 2023 17:37:41 -0800 (PST)
+Date:   Thu, 16 Feb 2023 02:37:15 +0100 (CET)
 From:   Jesper Juhl <jesperjuhl76@gmail.com>
 To:     linux-kernel@vger.kernel.org
-cc:     linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [Patch] [tegra] Remove unneeded version.h includes pointed out by
- 'make versioncheck'
-Message-ID: <8611b610-a21b-6037-52ad-9439c4f44995@gmail.com>
+cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] Don't test for NULL firmware before releasing
+Message-ID: <1af763de-dbb8-a6f8-1a8a-2d76610d8776@gmail.com>
 User-Agent: Alpine 2.26 (LNX 649 2022-06-02)
 MIME-Version: 1.0
 Content-Type: text/plain; format=flowed; charset=US-ASCII
@@ -64,55 +65,33 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From 7264ec7d00ece4b56fe9fafa3237d4870cbe6785 Mon Sep 17 00:00:00 2001
+From 4fe34831e2e7677b1c9616356f0a2e0a36ec092f Mon Sep 17 00:00:00 2001
 From: Jesper Juhl <jesperjuhl76@gmail.com>
-Date: Mon, 13 Feb 2023 02:49:50 +0100
-Subject: [PATCH 04/12] [tegra] Remove unneeded version.h includes pointed out
-  by 'make versioncheck'
+Date: Thu, 16 Feb 2023 02:33:05 +0100
+Subject: [PATCH] Don't test for NULL firmware before releasing
+
+release_firmware() tests for a NULL pointer itself, no need to do it up-front.
 
 Signed-off-by: Jesper Juhl <jesperjuhl76@gmail.com>
+
 ---
-  drivers/soc/tegra/cbb/tegra-cbb.c    | 1 -
-  drivers/soc/tegra/cbb/tegra194-cbb.c | 1 -
-  drivers/soc/tegra/cbb/tegra234-cbb.c | 1 -
-  3 files changed, 3 deletions(-)
+  drivers/gpu/drm/tegra/falcon.c | 3 +--
+  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/cbb/tegra-cbb.c b/drivers/soc/tegra/cbb/tegra-cbb.c
-index a8566b9dd8de..bd96204a68ee 100644
---- a/drivers/soc/tegra/cbb/tegra-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra-cbb.c
-@@ -16,7 +16,6 @@
-  #include <linux/of_address.h>
-  #include <linux/interrupt.h>
-  #include <linux/ioport.h>
--#include <linux/version.h>
-  #include <soc/tegra/fuse.h>
-  #include <soc/tegra/tegra-cbb.h>
+diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
+index c0d85463eb1a..ae599441f031 100644
+--- a/drivers/gpu/drm/tegra/falcon.c
++++ b/drivers/gpu/drm/tegra/falcon.c
+@@ -153,8 +153,7 @@ int falcon_init(struct falcon *falcon)
 
-diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
-index d4112b683f00..a05fc2caff3b 100644
---- a/drivers/soc/tegra/cbb/tegra194-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
-@@ -23,7 +23,6 @@
-  #include <linux/of_address.h>
-  #include <linux/interrupt.h>
-  #include <linux/ioport.h>
--#include <linux/version.h>
-  #include <soc/tegra/fuse.h>
-  #include <soc/tegra/tegra-cbb.h>
+  void falcon_exit(struct falcon *falcon)
+  {
+-	if (falcon->firmware.firmware)
+-		release_firmware(falcon->firmware.firmware);
++       	release_firmware(falcon->firmware.firmware);
+  }
 
-diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-index f33d094e5ea6..e23e8acfd7c7 100644
---- a/drivers/soc/tegra/cbb/tegra234-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-@@ -24,7 +24,6 @@
-  #include <linux/of_address.h>
-  #include <linux/interrupt.h>
-  #include <linux/ioport.h>
--#include <linux/version.h>
-  #include <soc/tegra/fuse.h>
-  #include <soc/tegra/tegra-cbb.h>
-
+  int falcon_boot(struct falcon *falcon)
 -- 
 2.39.2
 
