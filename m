@@ -2,316 +2,305 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7957EC6379F
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Feb 2023 20:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD11C636D6
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Feb 2023 08:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbjBPUL7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Feb 2023 15:11:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35308 "EHLO
+        id S229522AbjBQIS7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Feb 2023 03:18:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbjBPUL7 (ORCPT
+        with ESMTP id S229461AbjBQIS6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Feb 2023 15:11:59 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96D204BE88
-        for <linux-tegra@vger.kernel.org>; Thu, 16 Feb 2023 12:11:56 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id v30so1774350wrv.3
-        for <linux-tegra@vger.kernel.org>; Thu, 16 Feb 2023 12:11:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KmsCXE1cc+kjYkXP7Av8+g/i6Xiae0+2FF4SyY/8c1Y=;
-        b=Z9/TpqTt2w1EyzDy+hgxyZZdv0XE+fU06DflDuxaxXsm04CxinixVlqeu8znsQttuk
-         GIO1OONphJIuGmb3iSZ7CEdUen26WffWPdu6dgO16g8fJa2l6FIn6aiVDuHrA9kpO/9o
-         P8y7zjNCb1eyevJNupis21d6YvG64TQOomKOQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KmsCXE1cc+kjYkXP7Av8+g/i6Xiae0+2FF4SyY/8c1Y=;
-        b=wmc1MnIl7oHR28E74NCh33Zr/NtjTpQcfhicq9j9RPc6geWyivfygEF5BTvEkV+yYC
-         rJ9O7xg7OJ64bm9CZySO4PNQcBa4iV8pQ49a+KYu2Ju7OuimOOWH2jpaqioT+KCmBxmW
-         fckx318jrvauHKjqqRXUZsaOl7Yt4/rB7WvD1PCwd6nq3/W2OleVZ+dnryF4iJnXyWzP
-         iqB6fL05USxcudddrK78Z2q8zHWGTRFOcsCDhxLl0KB4qKIRU1rIti1HmC9WsbQ+fsZ2
-         uEUvnxT2c3dVjXMKyB4LfnrvHocgm5/uj0xxP0pOjggslf/EJC1JDeIqeT+kh9rqkVNM
-         OcsQ==
-X-Gm-Message-State: AO0yUKVCQtlyVFLLMv2LwLplt0gtEdoQI1st8d0D94IaJ46vvvp0ePxw
-        ZFQpcSaG1dAB1/XQAw59LsXJ4g==
-X-Google-Smtp-Source: AK7set9SaGzBuaVjPNmI5K6tL/a+m6AYcw8bkZU23dWsn9A1+haGPZXOjfFCDUkIWccpGoPjBGtWGQ==
-X-Received: by 2002:adf:fd92:0:b0:2c5:60e2:ed68 with SMTP id d18-20020adffd92000000b002c560e2ed68mr4742497wrr.0.1676578314980;
-        Thu, 16 Feb 2023 12:11:54 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id h9-20020a5d6e09000000b002c56af32e8csm2365195wrz.35.2023.02.16.12.11.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 12:11:54 -0800 (PST)
-Date:   Thu, 16 Feb 2023 21:11:52 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch,
+        Fri, 17 Feb 2023 03:18:58 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 939981729;
+        Fri, 17 Feb 2023 00:18:56 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 346B41FDB1;
+        Fri, 17 Feb 2023 08:18:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1676621935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ch+F+7eCo/PJGNudGtuNAN+c7OQK5KCwKOoUgQiycZc=;
+        b=Um7qp+R9bXGMH3qsem5no/UR+u7A6YJrgHOnwGVmgR6r14VlKw/rfYo26vhDg/fUIsfKDI
+        T+OBNIy3p4tR5U4Qatft0oLt5AOQgnR/ocM/D8AeB8asMnrj2CxmBLBLseLjbCJ6/EfrP1
+        qzZxS4LiOkCFDmCSnB8m7+LfvQ/CKCA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1676621935;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ch+F+7eCo/PJGNudGtuNAN+c7OQK5KCwKOoUgQiycZc=;
+        b=ciGJES4GUVkE2im1ezAnrOwj8Ha5EgY1LIszG6Sot4j0D9tAvXjqTESqTDGckEJixT7hMA
+        0S0Tdnb72q6dlOAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E5F3113274;
+        Fri, 17 Feb 2023 08:18:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id LvU2N24472PkeQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 17 Feb 2023 08:18:54 +0000
+Message-ID: <a9a85066-6f48-5cc5-550f-b6f301a16b00@suse.de>
+Date:   Fri, 17 Feb 2023 09:18:54 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
+ drm_fb_helper_fini()
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     javierm@redhat.com, airlied@gmail.com,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
- drm_fb_helper_fini()
-Message-ID: <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
 References: <20230216140620.17699-1-tzimmermann@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230216140620.17699-1-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.19.0-2-amd64 
+ <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
+Content-Language: en-US
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------PB0l0H7GsZYN00xVZ8W6EuRY"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Feb 16, 2023 at 03:06:20PM +0100, Thomas Zimmermann wrote:
-> Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
-> calling fbdev implementation. Avoids a possible stale mutex with
-> generic fbdev code.
-> 
-> As indicated by its name, drm_fb_helper_prepare() prepares struct
-> drm_fb_helper before setting up the fbdev support with a call to
-> drm_fb_helper_init(). In legacy fbdev emulation, this happens next
-> to each other. If successful, drm_fb_helper_fini() later tear down
-> the fbdev device and also unprepare via drm_fb_helper_unprepare().
-> 
-> Generic fbdev emulation prepares struct drm_fb_helper immediately
-> after allocating the instance. It only calls drm_fb_helper_init()
-> as part of processing a hotplug event. If the hotplug-handling fails,
-> it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
-> and the next hotplug event runs on stale data.
-> 
-> Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
-> into the fbdev implementations. Call it right before freeing the
-> fb-helper instance.
-> 
-> Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Javier Martinez Canillas <javierm@redhat.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: dri-devel@lists.freedesktop.org
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------PB0l0H7GsZYN00xVZ8W6EuRY
+Content-Type: multipart/mixed; boundary="------------M4H0F7TbJNxCTGnxSAcxT4xQ";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: javierm@redhat.com, airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org
+Message-ID: <a9a85066-6f48-5cc5-550f-b6f301a16b00@suse.de>
+Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
+ drm_fb_helper_fini()
+References: <20230216140620.17699-1-tzimmermann@suse.de>
+ <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
+In-Reply-To: <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
 
-This reminds me of an old patch I just recently stumbled over again:
+--------------M4H0F7TbJNxCTGnxSAcxT4xQ
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-https://lore.kernel.org/dri-devel/Y3St2VHJ7jEmcNFw@phenom.ffwll.local/
+SGkNCg0KQW0gMTYuMDIuMjMgdW0gMjE6MTEgc2NocmllYiBEYW5pZWwgVmV0dGVyOg0KPiBP
+biBUaHUsIEZlYiAxNiwgMjAyMyBhdCAwMzowNjoyMFBNICswMTAwLCBUaG9tYXMgWmltbWVy
+bWFubiB3cm90ZToNCj4+IE1vdmUgZHJtX2ZiX2hlbHBlcl91bnByZXBhcmUoKSBmcm9tIGRy
+bV9mYl9oZWxwZXJfZmluaSgpIGludG8gdGhlDQo+PiBjYWxsaW5nIGZiZGV2IGltcGxlbWVu
+dGF0aW9uLiBBdm9pZHMgYSBwb3NzaWJsZSBzdGFsZSBtdXRleCB3aXRoDQo+PiBnZW5lcmlj
+IGZiZGV2IGNvZGUuDQo+Pg0KPj4gQXMgaW5kaWNhdGVkIGJ5IGl0cyBuYW1lLCBkcm1fZmJf
+aGVscGVyX3ByZXBhcmUoKSBwcmVwYXJlcyBzdHJ1Y3QNCj4+IGRybV9mYl9oZWxwZXIgYmVm
+b3JlIHNldHRpbmcgdXAgdGhlIGZiZGV2IHN1cHBvcnQgd2l0aCBhIGNhbGwgdG8NCj4+IGRy
+bV9mYl9oZWxwZXJfaW5pdCgpLiBJbiBsZWdhY3kgZmJkZXYgZW11bGF0aW9uLCB0aGlzIGhh
+cHBlbnMgbmV4dA0KPj4gdG8gZWFjaCBvdGhlci4gSWYgc3VjY2Vzc2Z1bCwgZHJtX2ZiX2hl
+bHBlcl9maW5pKCkgbGF0ZXIgdGVhciBkb3duDQo+PiB0aGUgZmJkZXYgZGV2aWNlIGFuZCBh
+bHNvIHVucHJlcGFyZSB2aWEgZHJtX2ZiX2hlbHBlcl91bnByZXBhcmUoKS4NCj4+DQo+PiBH
+ZW5lcmljIGZiZGV2IGVtdWxhdGlvbiBwcmVwYXJlcyBzdHJ1Y3QgZHJtX2ZiX2hlbHBlciBp
+bW1lZGlhdGVseQ0KPj4gYWZ0ZXIgYWxsb2NhdGluZyB0aGUgaW5zdGFuY2UuIEl0IG9ubHkg
+Y2FsbHMgZHJtX2ZiX2hlbHBlcl9pbml0KCkNCj4+IGFzIHBhcnQgb2YgcHJvY2Vzc2luZyBh
+IGhvdHBsdWcgZXZlbnQuIElmIHRoZSBob3RwbHVnLWhhbmRsaW5nIGZhaWxzLA0KPj4gaXQg
+cnVucyBkcm1fZmJfaGVscGVyX2ZpbmkoKS4gVGhpcyB1bnByZXBhcmVzIHRoZSBmYi1oZWxw
+ZXIgaW5zdGFuY2UNCj4+IGFuZCB0aGUgbmV4dCBob3RwbHVnIGV2ZW50IHJ1bnMgb24gc3Rh
+bGUgZGF0YS4NCj4+DQo+PiBTb2x2ZSB0aGlzIGJ5IG1vdmluZyBkcm1fZmJfaGVscGVyX3Vu
+cHJlcGFyZSgpIGZyb20gZHJtX2ZiX2hlbHBlcl9maW5pKCkNCj4+IGludG8gdGhlIGZiZGV2
+IGltcGxlbWVudGF0aW9ucy4gQ2FsbCBpdCByaWdodCBiZWZvcmUgZnJlZWluZyB0aGUNCj4+
+IGZiLWhlbHBlciBpbnN0YW5jZS4NCj4+DQo+PiBGaXhlczogNDgyNTc5N2MzNmRhICgiZHJt
+L2ZiLWhlbHBlcjogSW50cm9kdWNlIGRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKCkiKQ0KPj4g
+Q2M6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPg0KPj4gQ2M6IEph
+dmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVybUByZWRoYXQuY29tPg0KPj4gQ2M6IE1h
+YXJ0ZW4gTGFua2hvcnN0IDxtYWFydGVuLmxhbmtob3JzdEBsaW51eC5pbnRlbC5jb20+DQo+
+PiBDYzogTWF4aW1lIFJpcGFyZCA8bXJpcGFyZEBrZXJuZWwub3JnPg0KPj4gQ2M6IERhdmlk
+IEFpcmxpZSA8YWlybGllZEBnbWFpbC5jb20+DQo+PiBDYzogRGFuaWVsIFZldHRlciA8ZGFu
+aWVsQGZmd2xsLmNoPg0KPj4gQ2M6IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcN
+Cj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5A
+c3VzZS5kZT4NCj4gDQo+IFRoaXMgcmVtaW5kcyBtZSBvZiBhbiBvbGQgcGF0Y2ggSSBqdXN0
+IHJlY2VudGx5IHN0dW1ibGVkIG92ZXIgYWdhaW46DQo+IA0KPiBodHRwczovL2xvcmUua2Vy
+bmVsLm9yZy9kcmktZGV2ZWwvWTNTdDJWSEo3akVtY05Gd0BwaGVub20uZmZ3bGwubG9jYWwv
+DQo+IA0KPiBTaG91bGQgSSByZXN1cnJlY3QgdGhhdCBvbmUgbWF5YmUgYW5kIHNlbmQgaXQg
+b3V0PyBJIHRoaW5rIHRoYXQgYWxzbyB0aWVzDQo+IGEgYml0IGludG8geW91ciBzdG9yeSBo
+ZXJlLg0KDQpJIGRvbid0IHRoaW5rIGl0IHdpbGwgYmUgbmVjZXNzYXJ5LiBJIGJlZ2FuIHRv
+IGNvbnZlcnQgdGhlIGV4aXN0aW5nIA0KZmJkZXYgZW11bGF0aW9uIHRvIG1ha2UgdXNlIG9m
+IGRybV9jbGllbnQsIHdoaWNoIHNob3VsZCByZXNvdmUgYSBudW1iZXIgDQpvZiBwcm9ibGVt
+cy4gSSBleHBlY3QgdG8gcG9zdCB0aGlzIGFmdGVyIHRoZSB2YXJpb3VzIHRyZWVzIGhhdmUg
+bWVyZ2VkIA0KdGhlIHJlY2VudCBjaGFuZ2VzIHRvIGZiZGV2IGhlbHBlcnMuDQoNCkJlc3Qg
+cmVnYXJkcw0KVGhvbWFzDQoNCj4gDQo+PiAtLS0NCj4+ICAgZHJpdmVycy9ncHUvZHJtL2Fy
+bWFkYS9hcm1hZGFfZmJkZXYuYyAgICAgIHwgMyArKysNCj4+ICAgZHJpdmVycy9ncHUvZHJt
+L2RybV9mYl9oZWxwZXIuYyAgICAgICAgICAgIHwgMiAtLQ0KPj4gICBkcml2ZXJzL2dwdS9k
+cm0vZHJtX2ZiZGV2X2dlbmVyaWMuYyAgICAgICAgfCAyICsrDQo+PiAgIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jICB8IDMgKystDQo+PiAgIGRyaXZlcnMv
+Z3B1L2RybS9nbWE1MDAvZnJhbWVidWZmZXIuYyAgICAgICB8IDIgKysNCj4+ICAgZHJpdmVy
+cy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRlbF9mYmRldi5jIHwgMSArDQo+PiAgIGRyaXZl
+cnMvZ3B1L2RybS9tc20vbXNtX2ZiZGV2LmMgICAgICAgICAgICB8IDIgKysNCj4+ICAgZHJp
+dmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9mYmRldi5jICAgICAgIHwgMiArKw0KPj4gICBk
+cml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9mYi5jICAgICAgICAgfCAyICsrDQo+PiAg
+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jICAgICAgICAgICAgICAgICB8IDEgKw0KPj4g
+ICAxMCBmaWxlcyBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0K
+Pj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9mYmRl
+di5jIGIvZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZmJkZXYuYw0KPj4gaW5kZXgg
+MDdlNDEwYzYyYjdhLi4wZTQ0ZjUzZTlmYTQgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vYXJtYWRhL2FybWFkYV9mYmRldi5jDQo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+YXJtYWRhL2FybWFkYV9mYmRldi5jDQo+PiBAQCAtMTQ3LDYgKzE0Nyw3IEBAIGludCBhcm1h
+ZGFfZmJkZXZfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQ0KPj4gICAgZXJyX2ZiX3Nl
+dHVwOg0KPj4gICAJZHJtX2ZiX2hlbHBlcl9maW5pKGZiaCk7DQo+PiAgICBlcnJfZmJfaGVs
+cGVyOg0KPj4gKwlkcm1fZmJfaGVscGVyX3VucHJlcGFyZShmYmgpOw0KPj4gICAJcHJpdi0+
+ZmJkZXYgPSBOVUxMOw0KPj4gICAJcmV0dXJuIHJldDsNCj4+ICAgfQ0KPj4gQEAgLTE2NCw2
+ICsxNjUsOCBAQCB2b2lkIGFybWFkYV9mYmRldl9maW5pKHN0cnVjdCBkcm1fZGV2aWNlICpk
+ZXYpDQo+PiAgIAkJaWYgKGZiaC0+ZmIpDQo+PiAgIAkJCWZiaC0+ZmItPmZ1bmNzLT5kZXN0
+cm95KGZiaC0+ZmIpOw0KPj4gICANCj4+ICsJCWRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKGZi
+aCk7DQo+PiArDQo+PiAgIAkJcHJpdi0+ZmJkZXYgPSBOVUxMOw0KPj4gICAJfQ0KPj4gICB9
+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYyBiL2Ry
+aXZlcnMvZ3B1L2RybS9kcm1fZmJfaGVscGVyLmMNCj4+IGluZGV4IDI4YzQyOGU5YzUzMC4u
+YTM5OTk4MDQ3ZjhhIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9o
+ZWxwZXIuYw0KPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYw0KPj4g
+QEAgLTU5MCw4ICs1OTAsNiBAQCB2b2lkIGRybV9mYl9oZWxwZXJfZmluaShzdHJ1Y3QgZHJt
+X2ZiX2hlbHBlciAqZmJfaGVscGVyKQ0KPiANCj4gSSB0aGluayBpdCB3b3VsZCBiZSBnb29k
+IHRvIHVwZGF0ZSB0aGUga2VybmVsZG9jIG9mIF9pbml0KCkgYW5kIF9maW5pKCkNCj4gaGVy
+ZSB0byBtZW50aW9uIGVhY2ggYW5vdGhlciBsaWtlIHdlIHVzdWFsbHkgZG8gd2l0aCB0aGVz
+ZSBwYWlycy4gU2FtZQ0KPiB3aXRoIHByZXBhcmUvdW5wcmVwYXJlKCkgYWx0aG91Z2ggdGhl
+IGxhdHRlciByZXJmZW5jZXMgX3ByZXBhcmUoKSBhbHJlYWR5Lg0KPiANCj4+ICAgCX0NCj4+
+ICAgCW11dGV4X3VubG9jaygma2VybmVsX2ZiX2hlbHBlcl9sb2NrKTsNCj4+ICAgDQo+PiAt
+CWRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKGZiX2hlbHBlcik7DQo+PiAtDQo+PiAgIAlpZiAo
+IWZiX2hlbHBlci0+Y2xpZW50LmZ1bmNzKQ0KPj4gICAJCWRybV9jbGllbnRfcmVsZWFzZSgm
+ZmJfaGVscGVyLT5jbGllbnQpOw0KPj4gICB9DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2RybV9mYmRldl9nZW5lcmljLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiZGV2
+X2dlbmVyaWMuYw0KPj4gaW5kZXggMzY1ZjgwNzE3ZmExLi40ZDYzMjVlOTE1NjUgMTAwNjQ0
+DQo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiZGV2X2dlbmVyaWMuYw0KPj4gKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYmRldl9nZW5lcmljLmMNCj4+IEBAIC02NSw2ICs2
+NSw4IEBAIHN0YXRpYyB2b2lkIGRybV9mYmRldl9mYl9kZXN0cm95KHN0cnVjdCBmYl9pbmZv
+ICppbmZvKQ0KPj4gICANCj4+ICAgCWRybV9jbGllbnRfZnJhbWVidWZmZXJfZGVsZXRlKGZi
+X2hlbHBlci0+YnVmZmVyKTsNCj4+ICAgCWRybV9jbGllbnRfcmVsZWFzZSgmZmJfaGVscGVy
+LT5jbGllbnQpOw0KPj4gKw0KPj4gKwlkcm1fZmJfaGVscGVyX3VucHJlcGFyZShmYl9oZWxw
+ZXIpOw0KPj4gICAJa2ZyZWUoZmJfaGVscGVyKTsNCj4+ICAgfQ0KPj4gICANCj4+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jDQo+PiBpbmRleCBiODll
+MzNhZjhkYTguLjQ5MjlmZmU1YTA5YSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jDQo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYw0KPj4gQEAgLTE4Myw4ICsxODMsOCBAQCBpbnQg
+ZXh5bm9zX2RybV9mYmRldl9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpDQo+PiAgIA0K
+Pj4gICBlcnJfc2V0dXA6DQo+PiAgIAlkcm1fZmJfaGVscGVyX2ZpbmkoaGVscGVyKTsNCj4+
+IC0NCj4+ICAgZXJyX2luaXQ6DQo+PiArCWRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKGhlbHBl
+cik7DQo+PiAgIAlwcml2YXRlLT5mYl9oZWxwZXIgPSBOVUxMOw0KPj4gICAJa2ZyZWUoZmJk
+ZXYpOw0KPj4gICANCj4+IEBAIC0yMTksNiArMjE5LDcgQEAgdm9pZCBleHlub3NfZHJtX2Zi
+ZGV2X2Zpbmkoc3RydWN0IGRybV9kZXZpY2UgKmRldikNCj4+ICAgCWZiZGV2ID0gdG9fZXh5
+bm9zX2ZiZGV2KHByaXZhdGUtPmZiX2hlbHBlcik7DQo+PiAgIA0KPj4gICAJZXh5bm9zX2Ry
+bV9mYmRldl9kZXN0cm95KGRldiwgcHJpdmF0ZS0+ZmJfaGVscGVyKTsNCj4+ICsJZHJtX2Zi
+X2hlbHBlcl91bnByZXBhcmUocHJpdmF0ZS0+ZmJfaGVscGVyKTsNCj4+ICAgCWtmcmVlKGZi
+ZGV2KTsNCj4+ICAgCXByaXZhdGUtPmZiX2hlbHBlciA9IE5VTEw7DQo+PiAgIH0NCj4+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZ21hNTAwL2ZyYW1lYnVmZmVyLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZ21hNTAwL2ZyYW1lYnVmZmVyLmMNCj4+IGluZGV4IDFmMDRjMDdlZTE4
+MC4uZjQ3MWUwY2I3Mjk4IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2dtYTUw
+MC9mcmFtZWJ1ZmZlci5jDQo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZ21hNTAwL2ZyYW1l
+YnVmZmVyLmMNCj4+IEBAIC00MjcsNiArNDI3LDcgQEAgaW50IHBzYl9mYmRldl9pbml0KHN0
+cnVjdCBkcm1fZGV2aWNlICpkZXYpDQo+PiAgIGZpbmk6DQo+PiAgIAlkcm1fZmJfaGVscGVy
+X2ZpbmkoZmJfaGVscGVyKTsNCj4+ICAgZnJlZToNCj4+ICsJZHJtX2ZiX2hlbHBlcl91bnBy
+ZXBhcmUoZmJfaGVscGVyKTsNCj4+ICAgCWtmcmVlKGZiX2hlbHBlcik7DQo+PiAgIAlyZXR1
+cm4gcmV0Ow0KPj4gICB9DQo+PiBAQCAtNDM5LDYgKzQ0MCw3IEBAIHN0YXRpYyB2b2lkIHBz
+Yl9mYmRldl9maW5pKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpDQo+PiAgIAkJcmV0dXJuOw0K
+Pj4gICANCj4+ICAgCXBzYl9mYmRldl9kZXN0cm95KGRldiwgZGV2X3ByaXYtPmZiX2hlbHBl
+cik7DQo+PiArCWRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKGRldl9wcml2LT5mYl9oZWxwZXIp
+Ow0KPj4gICAJa2ZyZWUoZGV2X3ByaXYtPmZiX2hlbHBlcik7DQo+PiAgIAlkZXZfcHJpdi0+
+ZmJfaGVscGVyID0gTlVMTDsNCj4+ICAgfQ0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9pOTE1L2Rpc3BsYXkvaW50ZWxfZmJkZXYuYyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1
+L2Rpc3BsYXkvaW50ZWxfZmJkZXYuYw0KPj4gaW5kZXggNjExM2Q3NjI3ZDQ1Li45ODAyOTA1
+OWY3MDEgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9kaXNwbGF5L2lu
+dGVsX2ZiZGV2LmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2Rpc3BsYXkvaW50
+ZWxfZmJkZXYuYw0KPj4gQEAgLTM1Miw2ICszNTIsNyBAQCBzdGF0aWMgdm9pZCBpbnRlbF9m
+YmRldl9kZXN0cm95KHN0cnVjdCBpbnRlbF9mYmRldiAqaWZiZGV2KQ0KPj4gICAJaWYgKGlm
+YmRldi0+ZmIpDQo+PiAgIAkJZHJtX2ZyYW1lYnVmZmVyX3JlbW92ZSgmaWZiZGV2LT5mYi0+
+YmFzZSk7DQo+PiAgIA0KPj4gKwlkcm1fZmJfaGVscGVyX3VucHJlcGFyZSgmaWZiZGV2LT5o
+ZWxwZXIpOw0KPj4gICAJa2ZyZWUoaWZiZGV2KTsNCj4+ICAgfQ0KPj4gICANCj4+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9mYmRldi5jIGIvZHJpdmVycy9ncHUv
+ZHJtL21zbS9tc21fZmJkZXYuYw0KPj4gaW5kZXggOTE1YjIxM2YzYTVjLi5jODA0ZTViYTY4
+MmEgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9mYmRldi5jDQo+
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbXNtL21zbV9mYmRldi5jDQo+PiBAQCAtMTcwLDYg
+KzE3MCw3IEBAIHN0cnVjdCBkcm1fZmJfaGVscGVyICptc21fZmJkZXZfaW5pdChzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZGV2KQ0KPj4gICBmaW5pOg0KPj4gICAJZHJtX2ZiX2hlbHBlcl9maW5p
+KGhlbHBlcik7DQo+PiAgIGZhaWw6DQo+PiArCWRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKGhl
+bHBlcik7DQo+PiAgIAlrZnJlZShmYmRldik7DQo+PiAgIAlyZXR1cm4gTlVMTDsNCj4+ICAg
+fQ0KPj4gQEAgLTE5Niw2ICsxOTcsNyBAQCB2b2lkIG1zbV9mYmRldl9mcmVlKHN0cnVjdCBk
+cm1fZGV2aWNlICpkZXYpDQo+PiAgIAkJZHJtX2ZyYW1lYnVmZmVyX3JlbW92ZShmYmRldi0+
+ZmIpOw0KPj4gICAJfQ0KPj4gICANCj4+ICsJZHJtX2ZiX2hlbHBlcl91bnByZXBhcmUoaGVs
+cGVyKTsNCj4+ICAgCWtmcmVlKGZiZGV2KTsNCj4+ICAgDQo+PiAgIAlwcml2LT5mYmRldiA9
+IE5VTEw7DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9m
+YmRldi5jIGIvZHJpdmVycy9ncHUvZHJtL29tYXBkcm0vb21hcF9mYmRldi5jDQo+PiBpbmRl
+eCBmYzVmNTJkNTY3YzYuLjg0NDI5NzI4MzQ3ZiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9vbWFwZHJtL29tYXBfZmJkZXYuYw0KPj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L29tYXBkcm0vb21hcF9mYmRldi5jDQo+PiBAQCAtMjU2LDYgKzI1Niw3IEBAIHZvaWQgb21h
+cF9mYmRldl9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpDQo+PiAgIGZpbmk6DQo+PiAg
+IAlkcm1fZmJfaGVscGVyX2ZpbmkoaGVscGVyKTsNCj4+ICAgZmFpbDoNCj4+ICsJZHJtX2Zi
+X2hlbHBlcl91bnByZXBhcmUoaGVscGVyKTsNCj4+ICAgCWtmcmVlKGZiZGV2KTsNCj4+ICAg
+DQo+PiAgIAlkZXZfd2FybihkZXYtPmRldiwgIm9tYXBfZmJkZXZfaW5pdCBmYWlsZWRcbiIp
+Ow0KPj4gQEAgLTI4Niw2ICsyODcsNyBAQCB2b2lkIG9tYXBfZmJkZXZfZmluaShzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZGV2KQ0KPj4gICAJaWYgKGZiZGV2LT5mYikNCj4+ICAgCQlkcm1fZnJh
+bWVidWZmZXJfcmVtb3ZlKGZiZGV2LT5mYik7DQo+PiAgIA0KPj4gKwlkcm1fZmJfaGVscGVy
+X3VucHJlcGFyZShoZWxwZXIpOw0KPj4gICAJa2ZyZWUoZmJkZXYpOw0KPj4gICANCj4+ICAg
+CXByaXYtPmZiZGV2ID0gTlVMTDsNCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+cmFkZW9uL3JhZGVvbl9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fZmIu
+Yw0KPj4gaW5kZXggNmU1ZWVkMGUxNTdjLi5jNDgwN2YwYzQzYmMgMTAwNjQ0DQo+PiAtLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9mYi5jDQo+PiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9mYi5jDQo+PiBAQCAtMzY3LDYgKzM2Nyw3IEBAIGlu
+dCByYWRlb25fZmJkZXZfaW5pdChzdHJ1Y3QgcmFkZW9uX2RldmljZSAqcmRldikNCj4+ICAg
+ZmluaToNCj4+ICAgCWRybV9mYl9oZWxwZXJfZmluaSgmcmZiZGV2LT5oZWxwZXIpOw0KPj4g
+ICBmcmVlOg0KPj4gKwlkcm1fZmJfaGVscGVyX3VucHJlcGFyZSgmcmZiZGV2LT5oZWxwZXIp
+Ow0KPj4gICAJa2ZyZWUocmZiZGV2KTsNCj4+ICAgCXJldHVybiByZXQ7DQo+PiAgIH0NCj4+
+IEBAIC0zNzcsNiArMzc4LDcgQEAgdm9pZCByYWRlb25fZmJkZXZfZmluaShzdHJ1Y3QgcmFk
+ZW9uX2RldmljZSAqcmRldikNCj4+ICAgCQlyZXR1cm47DQo+PiAgIA0KPj4gICAJcmFkZW9u
+X2ZiZGV2X2Rlc3Ryb3kocmRldi0+ZGRldiwgcmRldi0+bW9kZV9pbmZvLnJmYmRldik7DQo+
+PiArCWRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKCZyZGV2LT5tb2RlX2luZm8ucmZiZGV2LT5o
+ZWxwZXIpOw0KPj4gICAJa2ZyZWUocmRldi0+bW9kZV9pbmZvLnJmYmRldik7DQo+PiAgIAly
+ZGV2LT5tb2RlX2luZm8ucmZiZGV2ID0gTlVMTDsNCj4+ICAgfQ0KPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Zi
+LmMNCj4+IGluZGV4IDE1M2MzOWMzMmM3MS4uYmZlYmUyNzg2ZDYxIDEwMDY0NA0KPj4gLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9mYi5jDQo+PiBAQCAtMzE1LDYgKzMxNSw3IEBAIHN0YXRpYyBzdHJ1Y3QgdGVn
+cmFfZmJkZXYgKnRlZ3JhX2ZiZGV2X2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtKQ0K
+Pj4gICANCj4+ICAgc3RhdGljIHZvaWQgdGVncmFfZmJkZXZfZnJlZShzdHJ1Y3QgdGVncmFf
+ZmJkZXYgKmZiZGV2KQ0KPj4gICB7DQo+PiArCWRybV9mYl9oZWxwZXJfdW5wcmVwYXJlKCZm
+YmRldi0+YmFzZSk7DQo+IA0KPiBPayB0aGlzIG9uZSB0ZWdyYSBjaGFuZ2Ugd2FzIGEgYml0
+IHRyaWNreSwgZHJpdmVycyByZWFsbHkgc2hvdWxkIGp1c3QgdXNlDQo+IGRybW1fL2Rldm1f
+IGZvciBldmVyeXRoaW5nIDotKQ0KPiANCj4gV2l0aCB0aGUga2VybmVsZG9jIGF1Z21lbnRl
+ZDoNCj4gDQo+IFJldmlld2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGZm
+d2xsLmNoPg0KPiANCj4+ICAgCWtmcmVlKGZiZGV2KTsNCj4+ICAgfQ0KPj4gICANCj4+IC0t
+IA0KPj4gMi4zOS4xDQo+Pg0KPiANCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhp
+Y3MgRHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBH
+bWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkNCihIUkIgMzY4
+MDksIEFHIE7DvHJuYmVyZykNCkdlc2Now6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCg==
 
-Should I resurrect that one maybe and send it out? I think that also ties
-a bit into your story here.
+--------------M4H0F7TbJNxCTGnxSAcxT4xQ--
 
-> ---
->  drivers/gpu/drm/armada/armada_fbdev.c      | 3 +++
->  drivers/gpu/drm/drm_fb_helper.c            | 2 --
->  drivers/gpu/drm/drm_fbdev_generic.c        | 2 ++
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c  | 3 ++-
->  drivers/gpu/drm/gma500/framebuffer.c       | 2 ++
->  drivers/gpu/drm/i915/display/intel_fbdev.c | 1 +
->  drivers/gpu/drm/msm/msm_fbdev.c            | 2 ++
->  drivers/gpu/drm/omapdrm/omap_fbdev.c       | 2 ++
->  drivers/gpu/drm/radeon/radeon_fb.c         | 2 ++
->  drivers/gpu/drm/tegra/fb.c                 | 1 +
->  10 files changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-> index 07e410c62b7a..0e44f53e9fa4 100644
-> --- a/drivers/gpu/drm/armada/armada_fbdev.c
-> +++ b/drivers/gpu/drm/armada/armada_fbdev.c
-> @@ -147,6 +147,7 @@ int armada_fbdev_init(struct drm_device *dev)
->   err_fb_setup:
->  	drm_fb_helper_fini(fbh);
->   err_fb_helper:
-> +	drm_fb_helper_unprepare(fbh);
->  	priv->fbdev = NULL;
->  	return ret;
->  }
-> @@ -164,6 +165,8 @@ void armada_fbdev_fini(struct drm_device *dev)
->  		if (fbh->fb)
->  			fbh->fb->funcs->destroy(fbh->fb);
->  
-> +		drm_fb_helper_unprepare(fbh);
-> +
->  		priv->fbdev = NULL;
->  	}
->  }
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index 28c428e9c530..a39998047f8a 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -590,8 +590,6 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
+--------------PB0l0H7GsZYN00xVZ8W6EuRY
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
-I think it would be good to update the kerneldoc of _init() and _fini()
-here to mention each another like we usually do with these pairs. Same
-with prepare/unprepare() although the latter rerfences _prepare() already.
+-----BEGIN PGP SIGNATURE-----
 
->  	}
->  	mutex_unlock(&kernel_fb_helper_lock);
->  
-> -	drm_fb_helper_unprepare(fb_helper);
-> -
->  	if (!fb_helper->client.funcs)
->  		drm_client_release(&fb_helper->client);
->  }
-> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-> index 365f80717fa1..4d6325e91565 100644
-> --- a/drivers/gpu/drm/drm_fbdev_generic.c
-> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
-> @@ -65,6 +65,8 @@ static void drm_fbdev_fb_destroy(struct fb_info *info)
->  
->  	drm_client_framebuffer_delete(fb_helper->buffer);
->  	drm_client_release(&fb_helper->client);
-> +
-> +	drm_fb_helper_unprepare(fb_helper);
->  	kfree(fb_helper);
->  }
->  
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index b89e33af8da8..4929ffe5a09a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -183,8 +183,8 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
->  
->  err_setup:
->  	drm_fb_helper_fini(helper);
-> -
->  err_init:
-> +	drm_fb_helper_unprepare(helper);
->  	private->fb_helper = NULL;
->  	kfree(fbdev);
->  
-> @@ -219,6 +219,7 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
->  	fbdev = to_exynos_fbdev(private->fb_helper);
->  
->  	exynos_drm_fbdev_destroy(dev, private->fb_helper);
-> +	drm_fb_helper_unprepare(private->fb_helper);
->  	kfree(fbdev);
->  	private->fb_helper = NULL;
->  }
-> diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-> index 1f04c07ee180..f471e0cb7298 100644
-> --- a/drivers/gpu/drm/gma500/framebuffer.c
-> +++ b/drivers/gpu/drm/gma500/framebuffer.c
-> @@ -427,6 +427,7 @@ int psb_fbdev_init(struct drm_device *dev)
->  fini:
->  	drm_fb_helper_fini(fb_helper);
->  free:
-> +	drm_fb_helper_unprepare(fb_helper);
->  	kfree(fb_helper);
->  	return ret;
->  }
-> @@ -439,6 +440,7 @@ static void psb_fbdev_fini(struct drm_device *dev)
->  		return;
->  
->  	psb_fbdev_destroy(dev, dev_priv->fb_helper);
-> +	drm_fb_helper_unprepare(dev_priv->fb_helper);
->  	kfree(dev_priv->fb_helper);
->  	dev_priv->fb_helper = NULL;
->  }
-> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> index 6113d7627d45..98029059f701 100644
-> --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> @@ -352,6 +352,7 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
->  	if (ifbdev->fb)
->  		drm_framebuffer_remove(&ifbdev->fb->base);
->  
-> +	drm_fb_helper_unprepare(&ifbdev->helper);
->  	kfree(ifbdev);
->  }
->  
-> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-> index 915b213f3a5c..c804e5ba682a 100644
-> --- a/drivers/gpu/drm/msm/msm_fbdev.c
-> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
-> @@ -170,6 +170,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
->  fini:
->  	drm_fb_helper_fini(helper);
->  fail:
-> +	drm_fb_helper_unprepare(helper);
->  	kfree(fbdev);
->  	return NULL;
->  }
-> @@ -196,6 +197,7 @@ void msm_fbdev_free(struct drm_device *dev)
->  		drm_framebuffer_remove(fbdev->fb);
->  	}
->  
-> +	drm_fb_helper_unprepare(helper);
->  	kfree(fbdev);
->  
->  	priv->fbdev = NULL;
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> index fc5f52d567c6..84429728347f 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -256,6 +256,7 @@ void omap_fbdev_init(struct drm_device *dev)
->  fini:
->  	drm_fb_helper_fini(helper);
->  fail:
-> +	drm_fb_helper_unprepare(helper);
->  	kfree(fbdev);
->  
->  	dev_warn(dev->dev, "omap_fbdev_init failed\n");
-> @@ -286,6 +287,7 @@ void omap_fbdev_fini(struct drm_device *dev)
->  	if (fbdev->fb)
->  		drm_framebuffer_remove(fbdev->fb);
->  
-> +	drm_fb_helper_unprepare(helper);
->  	kfree(fbdev);
->  
->  	priv->fbdev = NULL;
-> diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
-> index 6e5eed0e157c..c4807f0c43bc 100644
-> --- a/drivers/gpu/drm/radeon/radeon_fb.c
-> +++ b/drivers/gpu/drm/radeon/radeon_fb.c
-> @@ -367,6 +367,7 @@ int radeon_fbdev_init(struct radeon_device *rdev)
->  fini:
->  	drm_fb_helper_fini(&rfbdev->helper);
->  free:
-> +	drm_fb_helper_unprepare(&rfbdev->helper);
->  	kfree(rfbdev);
->  	return ret;
->  }
-> @@ -377,6 +378,7 @@ void radeon_fbdev_fini(struct radeon_device *rdev)
->  		return;
->  
->  	radeon_fbdev_destroy(rdev->ddev, rdev->mode_info.rfbdev);
-> +	drm_fb_helper_unprepare(&rdev->mode_info.rfbdev->helper);
->  	kfree(rdev->mode_info.rfbdev);
->  	rdev->mode_info.rfbdev = NULL;
->  }
-> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-> index 153c39c32c71..bfebe2786d61 100644
-> --- a/drivers/gpu/drm/tegra/fb.c
-> +++ b/drivers/gpu/drm/tegra/fb.c
-> @@ -315,6 +315,7 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
->  
->  static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
->  {
-> +	drm_fb_helper_unprepare(&fbdev->base);
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmPvOG4FAwAAAAAACgkQlh/E3EQov+AU
+Ew//cPBpy7htvHETpgKImsD5EjANgrVrVfxin+UV63Iqhuho3ueqffLIZhCVyV3OgOOFllNwM52e
+mYnNlZ7Fb5y5UzhtGn30yeKsB7rDC20AN+ksE7dE/UPpkF4UzLw53ulzBevF7DJXVx9X4dmx7nA1
+slrGZp9Ri9hvuWNK8O3Hrp8pZjXVfZm20QJfcANsw9nl4vqLnSvPJ65xOR2eW9Lh54NneE5smAXj
+HX75Be/aOfXkdDluT03HeyMFbJdOgOOvcWCHJT8YvTwUMWHexUBxskkNiAsLXZAxLuN5ifXZmjhX
+karofl2M8k0B7qOdwcqCaKxTwbINA3eD8IiRyG/ilR0H1fodt81ZipBCzFUiNI+4eaDSiTP5gegY
+qDvd56Z5dSd8FKQrVfOTN+SOgKEgHu8y4KVUcmPcNDWVjwn6dvkUmcUOY4JyLS5DO1GKi372Y/ap
+eklEO6HDUqALE+e+u2dzQHXvngC6KpBZ7TnjHBinQ7UOylEyNA5hKsFca3n3UpbVzp+L8Id9onWK
+zid2tPEwuNT/nZMGQ2HiIeRTLqzbRxJ8Iy1XiRfAWSYJ9VR5XYTlZbacC8++B/DsFvUolVCOstrE
+pituSkNp+obK2ErB4gtohtwzz425nFeMWFOZlzJwUi++RJUbahtofb0iZDxyBJrOCGlbhqJgJ9GC
+hVw=
+=F1do
+-----END PGP SIGNATURE-----
 
-Ok this one tegra change was a bit tricky, drivers really should just use
-drmm_/devm_ for everything :-)
-
-With the kerneldoc augmented:
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
->  	kfree(fbdev);
->  }
->  
-> -- 
-> 2.39.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+--------------PB0l0H7GsZYN00xVZ8W6EuRY--
