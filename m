@@ -2,335 +2,344 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ECDC64ED8
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Feb 2023 19:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4197CC05027
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Feb 2023 14:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbjBQTs4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Feb 2023 14:48:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34394 "EHLO
+        id S230104AbjBSOh3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 19 Feb 2023 09:37:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjBQTsz (ORCPT
+        with ESMTP id S230103AbjBSOh2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Feb 2023 14:48:55 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321004FCA7
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Feb 2023 11:48:52 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id x12-20020a05600c21cc00b003e00c739ce4so1604765wmj.5
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Feb 2023 11:48:52 -0800 (PST)
+        Sun, 19 Feb 2023 09:37:28 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D252E07A
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Feb 2023 06:37:26 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id b11so1185643wrw.5
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Feb 2023 06:37:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1676663330;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/zzagqI4o594ye+P8sZFJ7FPrOCINhJemYJfNna1EwQ=;
-        b=CmVs0IfX5GquuEp/qSlMfvMLPxqa4lGm/hiU1GGpSUULRFbHeRrlgTDOaOSdfCbRtZ
-         8nlkYmDNIdz5g71y5xoXuFs4Xma+tM4Se1Q2LAAOj6rSYYMZ4RvDkt4uqHUmF0bbHhNZ
-         Ivd3bs7Rgs0D8Db94FgVWEoJp23So4xz1g77w=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pnsqbAY13Isy9Q4vAmb7bu7Jt4464vvs/IoNIYDr6xU=;
+        b=hSKy+u5AgwaR/pjI3BVInARul9SXO0sQyw0n7yjY6yRDSg8BEuFLd5I5qrTlEpimNM
+         Xjpl9UAbCCo9nok1y4IpVJ9MLE2XeHXG98wOfKu2d3NCxoPBH32UMAye1vooyYx1ErnD
+         ricWKv9mPs3ba1qo4onNdonbsz4f+fGKOjQzVkGBoYVRHfTNp0sTV4wutDcxSYtnm8CH
+         pxpYUDxS0coiNJcCa7tzwePTrwb9jeloVabBqo+ddLL3pZ7VUpIfX0IhEiKOfXtx1d/8
+         1rUFK2J6S7yGqO9Iwiv++xzaS+2n7XjMuTbyAivc3fVQKvuBI/RXADB6caPXI29TjPRh
+         O0eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676663330;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/zzagqI4o594ye+P8sZFJ7FPrOCINhJemYJfNna1EwQ=;
-        b=8CcjyvFmsII7jsCRqWuqLu3YJBC1Lz8loICYKIfFv5F9jaO8CQgVKU3P3wGcv9dKSP
-         QMYEB+Ui0i5s8/lM1QUzFW3igj7H4xZvy1hFe6u5NfX3w/p6+HNzUoj4um9t3UdUBW/W
-         gXTno5iSS5R4W4stJudVDQb4r8j8MwL6WuOpmQvpiOOuIE237kH+t/37EBeRD/Uedm9t
-         iTqHxI6Bg1BG2gImYUSK/Qn5g2pi+U8XmQsyYhV3bSUtkfHc6a7230QkYkKFh+HCIAQl
-         FppGmge+1warX6WH4FkJ1T3dm2+OnbohO5SjOFoHRiGpgwsvychN3uYEbtNOQsUXxPbe
-         I5DA==
-X-Gm-Message-State: AO0yUKU7rFcEdiIayVwWxLy8DE2hjnQwO5Wh7qjwAt9NqokigaZMQlri
-        d1K/+eAqR0srHn6YlaSwutuvpQ==
-X-Google-Smtp-Source: AK7set+42TuXYqWItQsdnhDJWmmDQB8Kje8i13BYU8HP4LBloz41BYhA5DIurBdRU6JcW7NjyvbfdA==
-X-Received: by 2002:a05:600c:1e0f:b0:3dc:3b1a:5d2d with SMTP id ay15-20020a05600c1e0f00b003dc3b1a5d2dmr2223673wmb.0.1676663330637;
-        Fri, 17 Feb 2023 11:48:50 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 12-20020a05600c020c00b003dc3f3d77e3sm5996834wmi.7.2023.02.17.11.48.49
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pnsqbAY13Isy9Q4vAmb7bu7Jt4464vvs/IoNIYDr6xU=;
+        b=b0RQrtGRCQw8JtWmKa0eyn5/nck2Fjf6qTiohEEBUQ0ZvQTJ3obXOxzm6sJM7FYZwK
+         6GjW0FtKchSDUPCEr8fP7uZfndZtQfn0LNxt6CdXr6S3zdHyruJGcWe4gf5tVzICRGBP
+         jafmCmhhBtU9es/2UZDJWwHHWq96nDBcElY6VVYxXeATLVJ/qLTKXw44pum/CBj3sd+t
+         D/+FaBYd0B+NibpDsRg3T/Ip3iOffI3pG8e7zMqgc6rwhRQoCi+WPgPPK1IxrwQ+Gkrf
+         CjWUCuo+HTnsqrO02iQS7dgD4iB5/yWQV3N2J4rFVO6Tl0/iF9BV7dNta+ktkbtCZgt/
+         950Q==
+X-Gm-Message-State: AO0yUKWb9plkLJ5YuWo+Wl6OE6XHA2KzyEohQAgV+kjat3WqMN70m7iB
+        NkUG+lEOMsoI+8YMcfTLQGsBqw==
+X-Google-Smtp-Source: AK7set9gXafURZgOj1Yem7EqSUruiomk29jrLU507lTzAdGLNHnFcqKBP+ki22tLjJJTUzMVG5WPYw==
+X-Received: by 2002:adf:f84e:0:b0:2c5:5048:8a6a with SMTP id d14-20020adff84e000000b002c550488a6amr1432164wrq.60.1676817444373;
+        Sun, 19 Feb 2023 06:37:24 -0800 (PST)
+Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:6f43:b92:7670:463])
+        by smtp.gmail.com with ESMTPSA id a18-20020adfe5d2000000b002be505ab59asm86176wrn.97.2023.02.19.06.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 11:48:50 -0800 (PST)
-Date:   Fri, 17 Feb 2023 20:48:48 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, javierm@redhat.com,
-        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
- drm_fb_helper_fini()
-Message-ID: <Y+/aIGoP13k0MhYG@phenom.ffwll.local>
-References: <20230216140620.17699-1-tzimmermann@suse.de>
- <Y+6OCAJ9wyE1PfAw@phenom.ffwll.local>
- <a9a85066-6f48-5cc5-550f-b6f301a16b00@suse.de>
+        Sun, 19 Feb 2023 06:37:23 -0800 (PST)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rafael@kernel.org, daniel.lezcano@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Ido Schimmel <idosch@nvidia.com>,
+        Petr Machata <petrm@nvidia.com>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Talel Shenhar <talel@amazon.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-acpi@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-input@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH v1 00/17] Self-encapsulate the thermal zone device structure
+Date:   Sun, 19 Feb 2023 15:36:40 +0100
+Message-Id: <20230219143657.241542-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9a85066-6f48-5cc5-550f-b6f301a16b00@suse.de>
-X-Operating-System: Linux phenom 6.0.0-6-amd64 
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Feb 17, 2023 at 09:18:54AM +0100, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 16.02.23 um 21:11 schrieb Daniel Vetter:
-> > On Thu, Feb 16, 2023 at 03:06:20PM +0100, Thomas Zimmermann wrote:
-> > > Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
-> > > calling fbdev implementation. Avoids a possible stale mutex with
-> > > generic fbdev code.
-> > > 
-> > > As indicated by its name, drm_fb_helper_prepare() prepares struct
-> > > drm_fb_helper before setting up the fbdev support with a call to
-> > > drm_fb_helper_init(). In legacy fbdev emulation, this happens next
-> > > to each other. If successful, drm_fb_helper_fini() later tear down
-> > > the fbdev device and also unprepare via drm_fb_helper_unprepare().
-> > > 
-> > > Generic fbdev emulation prepares struct drm_fb_helper immediately
-> > > after allocating the instance. It only calls drm_fb_helper_init()
-> > > as part of processing a hotplug event. If the hotplug-handling fails,
-> > > it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
-> > > and the next hotplug event runs on stale data.
-> > > 
-> > > Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
-> > > into the fbdev implementations. Call it right before freeing the
-> > > fb-helper instance.
-> > > 
-> > > Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
-> > > Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> > > Cc: Javier Martinez Canillas <javierm@redhat.com>
-> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > Cc: Maxime Ripard <mripard@kernel.org>
-> > > Cc: David Airlie <airlied@gmail.com>
-> > > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > > Cc: dri-devel@lists.freedesktop.org
-> > > 
-> > > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > 
-> > This reminds me of an old patch I just recently stumbled over again:
-> > 
-> > https://lore.kernel.org/dri-devel/Y3St2VHJ7jEmcNFw@phenom.ffwll.local/
-> > 
-> > Should I resurrect that one maybe and send it out? I think that also ties
-> > a bit into your story here.
-> 
-> I don't think it will be necessary. I began to convert the existing fbdev
-> emulation to make use of drm_client, which should resove a number of
-> problems. I expect to post this after the various trees have merged the
-> recent changes to fbdev helpers.
+The exported thermal headers expose the thermal core structure while those
+should be private to the framework. The initial idea was the thermal sensor
+drivers use the thermal zone device structure pointer to pass it around from
+the ops to the thermal framework API like a handler.
 
-The only version the patch is fixing is the client one, the old one is
-unfixable (I think at least, hence just the comments). Note that the link
-is pre-splitting, I do have a rebased version here.
+Unfortunately, different drivers are using and abusing the internals of this
+structure to hook the associated struct device, read the internals values, take
+the lock, etc ...
 
-I'll just send that out and head into vacations :-)
--Daniel
+rn order to fix this situation, let's encapsulate the structure leaking the
+more in the different drivers: the thermal_zone_device structure.
 
-> 
-> Best regards
-> Thomas
-> 
-> > 
-> > > ---
-> > >   drivers/gpu/drm/armada/armada_fbdev.c      | 3 +++
-> > >   drivers/gpu/drm/drm_fb_helper.c            | 2 --
-> > >   drivers/gpu/drm/drm_fbdev_generic.c        | 2 ++
-> > >   drivers/gpu/drm/exynos/exynos_drm_fbdev.c  | 3 ++-
-> > >   drivers/gpu/drm/gma500/framebuffer.c       | 2 ++
-> > >   drivers/gpu/drm/i915/display/intel_fbdev.c | 1 +
-> > >   drivers/gpu/drm/msm/msm_fbdev.c            | 2 ++
-> > >   drivers/gpu/drm/omapdrm/omap_fbdev.c       | 2 ++
-> > >   drivers/gpu/drm/radeon/radeon_fb.c         | 2 ++
-> > >   drivers/gpu/drm/tegra/fb.c                 | 1 +
-> > >   10 files changed, 17 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-> > > index 07e410c62b7a..0e44f53e9fa4 100644
-> > > --- a/drivers/gpu/drm/armada/armada_fbdev.c
-> > > +++ b/drivers/gpu/drm/armada/armada_fbdev.c
-> > > @@ -147,6 +147,7 @@ int armada_fbdev_init(struct drm_device *dev)
-> > >    err_fb_setup:
-> > >   	drm_fb_helper_fini(fbh);
-> > >    err_fb_helper:
-> > > +	drm_fb_helper_unprepare(fbh);
-> > >   	priv->fbdev = NULL;
-> > >   	return ret;
-> > >   }
-> > > @@ -164,6 +165,8 @@ void armada_fbdev_fini(struct drm_device *dev)
-> > >   		if (fbh->fb)
-> > >   			fbh->fb->funcs->destroy(fbh->fb);
-> > > +		drm_fb_helper_unprepare(fbh);
-> > > +
-> > >   		priv->fbdev = NULL;
-> > >   	}
-> > >   }
-> > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> > > index 28c428e9c530..a39998047f8a 100644
-> > > --- a/drivers/gpu/drm/drm_fb_helper.c
-> > > +++ b/drivers/gpu/drm/drm_fb_helper.c
-> > > @@ -590,8 +590,6 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
-> > 
-> > I think it would be good to update the kerneldoc of _init() and _fini()
-> > here to mention each another like we usually do with these pairs. Same
-> > with prepare/unprepare() although the latter rerfences _prepare() already.
-> > 
-> > >   	}
-> > >   	mutex_unlock(&kernel_fb_helper_lock);
-> > > -	drm_fb_helper_unprepare(fb_helper);
-> > > -
-> > >   	if (!fb_helper->client.funcs)
-> > >   		drm_client_release(&fb_helper->client);
-> > >   }
-> > > diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-> > > index 365f80717fa1..4d6325e91565 100644
-> > > --- a/drivers/gpu/drm/drm_fbdev_generic.c
-> > > +++ b/drivers/gpu/drm/drm_fbdev_generic.c
-> > > @@ -65,6 +65,8 @@ static void drm_fbdev_fb_destroy(struct fb_info *info)
-> > >   	drm_client_framebuffer_delete(fb_helper->buffer);
-> > >   	drm_client_release(&fb_helper->client);
-> > > +
-> > > +	drm_fb_helper_unprepare(fb_helper);
-> > >   	kfree(fb_helper);
-> > >   }
-> > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > > index b89e33af8da8..4929ffe5a09a 100644
-> > > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > > @@ -183,8 +183,8 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
-> > >   err_setup:
-> > >   	drm_fb_helper_fini(helper);
-> > > -
-> > >   err_init:
-> > > +	drm_fb_helper_unprepare(helper);
-> > >   	private->fb_helper = NULL;
-> > >   	kfree(fbdev);
-> > > @@ -219,6 +219,7 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
-> > >   	fbdev = to_exynos_fbdev(private->fb_helper);
-> > >   	exynos_drm_fbdev_destroy(dev, private->fb_helper);
-> > > +	drm_fb_helper_unprepare(private->fb_helper);
-> > >   	kfree(fbdev);
-> > >   	private->fb_helper = NULL;
-> > >   }
-> > > diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-> > > index 1f04c07ee180..f471e0cb7298 100644
-> > > --- a/drivers/gpu/drm/gma500/framebuffer.c
-> > > +++ b/drivers/gpu/drm/gma500/framebuffer.c
-> > > @@ -427,6 +427,7 @@ int psb_fbdev_init(struct drm_device *dev)
-> > >   fini:
-> > >   	drm_fb_helper_fini(fb_helper);
-> > >   free:
-> > > +	drm_fb_helper_unprepare(fb_helper);
-> > >   	kfree(fb_helper);
-> > >   	return ret;
-> > >   }
-> > > @@ -439,6 +440,7 @@ static void psb_fbdev_fini(struct drm_device *dev)
-> > >   		return;
-> > >   	psb_fbdev_destroy(dev, dev_priv->fb_helper);
-> > > +	drm_fb_helper_unprepare(dev_priv->fb_helper);
-> > >   	kfree(dev_priv->fb_helper);
-> > >   	dev_priv->fb_helper = NULL;
-> > >   }
-> > > diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> > > index 6113d7627d45..98029059f701 100644
-> > > --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-> > > +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-> > > @@ -352,6 +352,7 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
-> > >   	if (ifbdev->fb)
-> > >   		drm_framebuffer_remove(&ifbdev->fb->base);
-> > > +	drm_fb_helper_unprepare(&ifbdev->helper);
-> > >   	kfree(ifbdev);
-> > >   }
-> > > diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-> > > index 915b213f3a5c..c804e5ba682a 100644
-> > > --- a/drivers/gpu/drm/msm/msm_fbdev.c
-> > > +++ b/drivers/gpu/drm/msm/msm_fbdev.c
-> > > @@ -170,6 +170,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
-> > >   fini:
-> > >   	drm_fb_helper_fini(helper);
-> > >   fail:
-> > > +	drm_fb_helper_unprepare(helper);
-> > >   	kfree(fbdev);
-> > >   	return NULL;
-> > >   }
-> > > @@ -196,6 +197,7 @@ void msm_fbdev_free(struct drm_device *dev)
-> > >   		drm_framebuffer_remove(fbdev->fb);
-> > >   	}
-> > > +	drm_fb_helper_unprepare(helper);
-> > >   	kfree(fbdev);
-> > >   	priv->fbdev = NULL;
-> > > diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> > > index fc5f52d567c6..84429728347f 100644
-> > > --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> > > +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> > > @@ -256,6 +256,7 @@ void omap_fbdev_init(struct drm_device *dev)
-> > >   fini:
-> > >   	drm_fb_helper_fini(helper);
-> > >   fail:
-> > > +	drm_fb_helper_unprepare(helper);
-> > >   	kfree(fbdev);
-> > >   	dev_warn(dev->dev, "omap_fbdev_init failed\n");
-> > > @@ -286,6 +287,7 @@ void omap_fbdev_fini(struct drm_device *dev)
-> > >   	if (fbdev->fb)
-> > >   		drm_framebuffer_remove(fbdev->fb);
-> > > +	drm_fb_helper_unprepare(helper);
-> > >   	kfree(fbdev);
-> > >   	priv->fbdev = NULL;
-> > > diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
-> > > index 6e5eed0e157c..c4807f0c43bc 100644
-> > > --- a/drivers/gpu/drm/radeon/radeon_fb.c
-> > > +++ b/drivers/gpu/drm/radeon/radeon_fb.c
-> > > @@ -367,6 +367,7 @@ int radeon_fbdev_init(struct radeon_device *rdev)
-> > >   fini:
-> > >   	drm_fb_helper_fini(&rfbdev->helper);
-> > >   free:
-> > > +	drm_fb_helper_unprepare(&rfbdev->helper);
-> > >   	kfree(rfbdev);
-> > >   	return ret;
-> > >   }
-> > > @@ -377,6 +378,7 @@ void radeon_fbdev_fini(struct radeon_device *rdev)
-> > >   		return;
-> > >   	radeon_fbdev_destroy(rdev->ddev, rdev->mode_info.rfbdev);
-> > > +	drm_fb_helper_unprepare(&rdev->mode_info.rfbdev->helper);
-> > >   	kfree(rdev->mode_info.rfbdev);
-> > >   	rdev->mode_info.rfbdev = NULL;
-> > >   }
-> > > diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-> > > index 153c39c32c71..bfebe2786d61 100644
-> > > --- a/drivers/gpu/drm/tegra/fb.c
-> > > +++ b/drivers/gpu/drm/tegra/fb.c
-> > > @@ -315,6 +315,7 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
-> > >   static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
-> > >   {
-> > > +	drm_fb_helper_unprepare(&fbdev->base);
-> > 
-> > Ok this one tegra change was a bit tricky, drivers really should just use
-> > drmm_/devm_ for everything :-)
-> > 
-> > With the kerneldoc augmented:
-> > 
-> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > 
-> > >   	kfree(fbdev);
-> > >   }
-> > > -- 
-> > > 2.39.1
-> > > 
-> > 
-> 
-> -- 
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Software Solutions Germany GmbH
-> Maxfeldstr. 5, 90409 Nürnberg, Germany
-> (HRB 36809, AG Nürnberg)
-> Geschäftsführer: Ivo Totev
+This series revisit the existing drivers using the thermal zone private
+structure internals to change the access to something else. For instance, the
+get_temp() ops is using the tz->dev to write a debug trace. Despite the trace
+is not helpful, we can check the return value for the get_temp() ops in the
+call site and show the message in this place.
+
+With this set of changes, the thermal_zone_device is almost self-encapsulated.
+As usual, the acpi driver needs a more complex changes, so that will come in a
+separate series along with the structure moved the private core headers.
+
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Samuel Holland <samuel@sholland.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Raju Rangoju <rajur@chelsio.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Ido Schimmel <idosch@nvidia.com>
+Cc: Petr Machata <petrm@nvidia.com>
+Cc: Gregory Greenman <gregory.greenman@intel.com>
+Cc: Kalle Valo <kvalo@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Amit Kucheria <amitk@kernel.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: Markus Mayer <mmayer@broadcom.com>
+Cc: Support Opensource <support.opensource@diasemi.com>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>
+Cc: "Niklas SÃ¶derlund" <niklas.soderlund@ragnatech.se>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Orson Zhai <orsonzhai@gmail.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Yangtao Li <tiny.windzz@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Talel Shenhar <talel@amazon.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Zheng Yongjun <zhengyongjun3@huawei.com>
+Cc: Yang Li <yang.lee@linux.alibaba.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Daniel Golle <daniel@makrotopia.org>
+Cc: Balsam CHIHI <bchihi@baylibre.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-acpi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-ide@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-hwmon@vger.kernel.org
+Cc: linux-iio@vger.kernel.org
+Cc: linux-sunxi@lists.linux.dev
+Cc: linux-input@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-mediatek@lists.infradead.org
 
 
+Daniel Lezcano (17):
+  thermal/core: Add a thermal zone 'devdata' accessor
+  thermal/core: Show a debug message when get_temp() fails
+  thermal: Remove debug or error messages in get_temp() ops
+  thermal/hwmon: Do not set no_hwmon before calling
+    thermal_add_hwmon_sysfs()
+  thermal/hwmon: Use the right device for devm_thermal_add_hwmon_sysfs()
+  thermal: Don't use 'device' internal thermal zone structure field
+  thermal/hwmon: Use the thermal API instead tampering the internals
+  thermal/drivers/spear: Don't use tz->device but pdev->dev
+  thermal: Add a thermal zone id accessor
+  thermal: Do not access 'type' field, use the tz id instead
+  thermal/drivers/da9062: Don't access the thermal zone device fields
+  thermal/hwmon: Use the thermal_core.h header
+  thermal/drivers/tegra: Remove unneeded lock when setting a trip point
+  thermal/tegra: Do not enable the thermal zone, it is already enabled
+  thermal/drivers/acerhdf: Make interval setting only at module load
+    time
+  thermal/drivers/acerhdf: Remove pointless governor test
+  thermal/traces: Replace the thermal zone structure parameter with the
+    field value
 
+ drivers/acpi/thermal.c                        | 18 +++----
+ drivers/ata/ahci_imx.c                        |  2 +-
+ drivers/hwmon/hwmon.c                         |  4 +-
+ drivers/hwmon/pmbus/pmbus_core.c              |  2 +-
+ drivers/hwmon/scmi-hwmon.c                    |  4 +-
+ drivers/hwmon/scpi-hwmon.c                    |  2 +-
+ drivers/iio/adc/sun4i-gpadc-iio.c             |  2 +-
+ drivers/input/touchscreen/sun4i-ts.c          |  2 +-
+ .../ethernet/chelsio/cxgb4/cxgb4_thermal.c    |  2 +-
+ .../ethernet/mellanox/mlxsw/core_thermal.c    | 18 +++----
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c   |  4 +-
+ drivers/platform/x86/acerhdf.c                | 19 ++------
+ drivers/power/supply/power_supply_core.c      |  2 +-
+ drivers/regulator/max8973-regulator.c         |  2 +-
+ drivers/thermal/amlogic_thermal.c             |  2 +-
+ drivers/thermal/armada_thermal.c              | 14 ++----
+ drivers/thermal/broadcom/bcm2711_thermal.c    |  3 +-
+ drivers/thermal/broadcom/bcm2835_thermal.c    |  3 +-
+ drivers/thermal/broadcom/brcmstb_thermal.c    |  8 ++--
+ drivers/thermal/broadcom/ns-thermal.c         |  2 +-
+ drivers/thermal/broadcom/sr-thermal.c         |  2 +-
+ drivers/thermal/da9062-thermal.c              | 13 +++--
+ drivers/thermal/dove_thermal.c                |  7 +--
+ drivers/thermal/gov_fair_share.c              |  2 +-
+ drivers/thermal/gov_power_allocator.c         |  4 +-
+ drivers/thermal/gov_step_wise.c               |  2 +-
+ drivers/thermal/hisi_thermal.c                |  5 +-
+ drivers/thermal/imx8mm_thermal.c              |  4 +-
+ drivers/thermal/imx_sc_thermal.c              |  9 ++--
+ drivers/thermal/imx_thermal.c                 | 47 +++++--------------
+ drivers/thermal/intel/intel_pch_thermal.c     |  2 +-
+ drivers/thermal/intel/intel_soc_dts_iosf.c    | 13 ++---
+ drivers/thermal/intel/x86_pkg_temp_thermal.c  |  4 +-
+ drivers/thermal/k3_bandgap.c                  |  4 +-
+ drivers/thermal/k3_j72xx_bandgap.c            |  2 +-
+ drivers/thermal/kirkwood_thermal.c            |  7 +--
+ drivers/thermal/max77620_thermal.c            |  6 +--
+ drivers/thermal/mediatek/auxadc_thermal.c     |  4 +-
+ drivers/thermal/mediatek/lvts_thermal.c       |  9 ++--
+ drivers/thermal/qcom/qcom-spmi-adc-tm5.c      |  6 +--
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c   |  6 +--
+ drivers/thermal/qcom/tsens.c                  |  4 +-
+ drivers/thermal/qoriq_thermal.c               |  4 +-
+ drivers/thermal/rcar_gen3_thermal.c           |  5 +-
+ drivers/thermal/rcar_thermal.c                |  8 +---
+ drivers/thermal/rockchip_thermal.c            |  8 +---
+ drivers/thermal/rzg2l_thermal.c               |  3 +-
+ drivers/thermal/samsung/exynos_tmu.c          |  4 +-
+ drivers/thermal/spear_thermal.c               | 10 ++--
+ drivers/thermal/sprd_thermal.c                |  2 +-
+ drivers/thermal/st/st_thermal.c               |  2 -
+ drivers/thermal/sun8i_thermal.c               |  4 +-
+ drivers/thermal/tegra/tegra-bpmp-thermal.c    |  6 ++-
+ drivers/thermal/tegra/tegra30-tsensor.c       | 31 ++++++------
+ drivers/thermal/thermal-generic-adc.c         |  7 ++-
+ drivers/thermal/thermal_core.c                | 17 ++++++-
+ drivers/thermal/thermal_helpers.c             |  3 ++
+ drivers/thermal/thermal_hwmon.c               | 19 +++-----
+ drivers/thermal/thermal_hwmon.h               |  4 +-
+ drivers/thermal/thermal_mmio.c                |  2 +-
+ .../ti-soc-thermal/ti-thermal-common.c        | 10 ++--
+ drivers/thermal/uniphier_thermal.c            |  2 +-
+ include/linux/thermal.h                       |  4 ++
+ include/trace/events/thermal.h                | 24 +++++-----
+ .../trace/events/thermal_power_allocator.h    | 12 ++---
+ 65 files changed, 203 insertions(+), 265 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.34.1
+
