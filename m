@@ -2,57 +2,63 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8570C05027
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Feb 2023 15:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC925C64ED9
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Feb 2023 17:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbjBSPH2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 19 Feb 2023 10:07:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57364 "EHLO
+        id S231143AbjBSRHs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 19 Feb 2023 12:07:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbjBSPH1 (ORCPT
+        with ESMTP id S231129AbjBSRHq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 19 Feb 2023 10:07:27 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A341117E
-        for <linux-tegra@vger.kernel.org>; Sun, 19 Feb 2023 07:07:24 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id z28so681735ljq.9
-        for <linux-tegra@vger.kernel.org>; Sun, 19 Feb 2023 07:07:24 -0800 (PST)
+        Sun, 19 Feb 2023 12:07:46 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3D8E047
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Feb 2023 09:07:43 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id o9-20020a05600c510900b003ddca7a2bcbso670560wms.3
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Feb 2023 09:07:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vfvHBPjFD3fnJEXsEdcPBmeh9w1ZDPtCXMtTzNwUMP4=;
-        b=2MT453GERnVCOXc+pZDXjhNske3WayAQFfKvKJjkTaSXaH9ypTF1xoFmHts7lcs6Tu
-         8awMK4Po/ABZ5dh9w4kEV1FldjJxMrBZVoiOQuoO90QinuTnKOP01zHiWmaOtrj+nQvd
-         F+ZaO4uYXLhJM+VztPHntmkaf7c2ZT1Q0aPQ00s5xppJj7swa9G6CIbKQNlCxZ/w13pb
-         K749pLo5Tg+B9AZJIM2QgMhbSb1PATOb59v0crPXiX4ae6edrBvt+0E1yX/NUh/mJvXP
-         jtQvKiAA2OdtGon53LBFrgDiJMJWAudwD546mUhHoHUTb6TiVX8ddk95TiBrWGbr05LD
-         zGSQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6KxNFzRgs/0vUNP2uZncHosd2KHSBPqfvZ7J555gKlI=;
+        b=TqDmxeCqgjX/SCT0zS+PF6AfR/9dCo1FpS5mnG9j01BFC1+VD4Q7ubhlQfXhrmE083
+         0WYN1f0bIbo21XRTWifbJwcYTr2X1HSPBzZM87/35szohbgwJWtwst3ZB/Uyku+BZ1GT
+         fdjOk5jg86fdGhZQivHhMX1dUtyEtd0zEYACMvag1QVVQXdQ7R5c7aIxveMhWwkz75hR
+         8chbsS6v67DndN4W12l84nsUdBhyOjwMW1hwOqBmE6eyqzuIM8WMLxP7V5DN4UAzCAZX
+         vqLCw8gjWfj/gz3br1kNLOjZCJGA+sAEn8LyDTAn692JW1B2MJS3YSi60TU4KXtLsjqR
+         Lx/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfvHBPjFD3fnJEXsEdcPBmeh9w1ZDPtCXMtTzNwUMP4=;
-        b=GMTekXj2K+llYnVpS9NeSPzHgqsJ4a4XIozQ2ud+eAH5jZpIOT+k3PNVAnTe/NU0S3
-         m2DOTAwucSxAVvs/cBo0eQA76WcihnkEDAoY0V47lL3jyELorNmioMcN3S+Ukh15WL12
-         HcON0llFq7mp0tk4AZyz5Qkn+vh+zwzsTO0bkDYQXAh8Crgwrr58vyYLnMbi4QXNWEma
-         1MjiJsZeYQWMiN4tu7fCR1w7oisrsK/+fmgQjrIKdTAb++EHhsJvdTRzcNnHyl12hv3Y
-         t30sC06y75l7+YjdYs98gJm04ZULZUZF41rZVhAPBON2jEWRphyC8QEm9yboGTg841IN
-         K8NQ==
-X-Gm-Message-State: AO0yUKVjb9CoBK5X2/e7Wstu6mP+5rWAH6LxA4ondjLAkZzi6fUGJW2/
-        RFa6M+es18xw20Umyl/OxGmSPw==
-X-Google-Smtp-Source: AK7set9/3IywPw1ycXkXfjTE1BOHzIfMRekgiKErVRCZRj2jjMurZbyZpbHyyTOgbRvkntf1piSbOg==
-X-Received: by 2002:a05:651c:1541:b0:293:14c8:f588 with SMTP id y1-20020a05651c154100b0029314c8f588mr403194ljp.27.1676819242130;
-        Sun, 19 Feb 2023 07:07:22 -0800 (PST)
-Received: from localhost (h-46-59-89-207.A463.priv.bahnhof.se. [46.59.89.207])
-        by smtp.gmail.com with ESMTPSA id f23-20020a2e9517000000b0029355185926sm1245807ljh.137.2023.02.19.07.07.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Feb 2023 07:07:21 -0800 (PST)
-Date:   Sun, 19 Feb 2023 16:07:20 +0100
-From:   Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+        bh=6KxNFzRgs/0vUNP2uZncHosd2KHSBPqfvZ7J555gKlI=;
+        b=idWbuGrup6vIbBGr1hLhmMG3N16Kqz8PHxq1SBEJCfMO+i3m2IxNxrEEzeLNdBylgF
+         UIfqisH2l5H+LAshYGRc1T6rkW8VX7I8lCnzhkiCx6JbL3J1rQz28LnsJkbjRSHoRLWw
+         TTs2aP2+JFSPCZTneyqVR/S84kdurG5otrFAwUWOpQe43rLPiEl+UVxVecO9YPDbR8Ox
+         WgYvxlF5A5NUNu7dD7wxh+m9BpxVe9QNAVJ9VWSAXFY0rl/DdJSTVmJAdkOEKTgN4Zs/
+         srW/f/QFeO9FtjGbf4uqYYDKV/xyPnbV1VxhYUpd+EXyz4zXsPVBvZcL+K2e4PDsw1dM
+         lNog==
+X-Gm-Message-State: AO0yUKXyiqyod7MpMV0LMfwswC7Wq9sR7QxBSaL50XnbaJQYnLtIniLj
+        tTd9meHDdoVlmZfOKZwlasrEWg==
+X-Google-Smtp-Source: AK7set83h6bWbda4YvPCa+ZBjfPRZ/9UdfQCE1sEN23gN10rONUKibwH121WMa44Jr/M6QZ46vWaSg==
+X-Received: by 2002:a05:600c:198e:b0:3e2:1f00:bff7 with SMTP id t14-20020a05600c198e00b003e21f00bff7mr7646707wmq.12.1676826461464;
+        Sun, 19 Feb 2023 09:07:41 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:6f43:b92:7670:463? ([2a05:6e02:1041:c10:6f43:b92:7670:463])
+        by smtp.googlemail.com with ESMTPSA id n27-20020a05600c3b9b00b003e206cc7237sm15155832wms.24.2023.02.19.09.07.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Feb 2023 09:07:40 -0800 (PST)
+Message-ID: <4d8f1e68-8d2c-b70f-69c7-a1137ac4b05f@linaro.org>
+Date:   Sun, 19 Feb 2023 18:07:36 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v1 01/17] thermal/core: Add a thermal zone 'devdata'
+ accessor
+Content-Language: en-US
+To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
 Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
         Len Brown <lenb@kernel.org>,
@@ -155,74 +161,99 @@ Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
         <linux-omap@vger.kernel.org>,
         "moderated list:ARM/Mediatek SoC support" 
         <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v1 01/17] thermal/core: Add a thermal zone 'devdata'
- accessor
-Message-ID: <Y/I7KA2Uqqk7ib6L@oden.dyn.berto.se>
 References: <20230219143657.241542-1-daniel.lezcano@linaro.org>
  <20230219143657.241542-2-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+ <Y/I7KA2Uqqk7ib6L@oden.dyn.berto.se>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <Y/I7KA2Uqqk7ib6L@oden.dyn.berto.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230219143657.241542-2-daniel.lezcano@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Daniel,
-
-Thanks for your work.
-
-On 2023-02-19 15:36:41 +0100, Daniel Lezcano wrote:
-> The thermal zone device structure is exposed to the different drivers
-> and obviously they access the internals while that should be
-> restricted to the core thermal code.
+On 19/02/2023 16:07, Niklas Söderlund wrote:
+> Hi Daniel,
 > 
-> In order to self-encapsulate the thermal core code, we need to prevent
-> the drivers accessing directly the thermal zone structure and provide
-> accessor functions to deal with.
+> Thanks for your work.
 > 
-> Provide an accessor to the 'devdata' structure and make use of it in
-> the different drivers.
+> On 2023-02-19 15:36:41 +0100, Daniel Lezcano wrote:
+>> The thermal zone device structure is exposed to the different drivers
+>> and obviously they access the internals while that should be
+>> restricted to the core thermal code.
+>>
+>> In order to self-encapsulate the thermal core code, we need to prevent
+>> the drivers accessing directly the thermal zone structure and provide
+>> accessor functions to deal with.
+>>
+>> Provide an accessor to the 'devdata' structure and make use of it in
+>> the different drivers.
+>>
+>> No functional changes intended.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
 > 
-> No functional changes intended.
+> ...
 > 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
+>>   drivers/thermal/rcar_gen3_thermal.c              |  4 ++--
+>>   drivers/thermal/rcar_thermal.c                   |  3 +--
+> 
+> For R-Car,
+> 
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> ...
+> 
+> 
+>> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+>> index 2bb4bf33f4f3..724b95662da9 100644
+>> --- a/include/linux/thermal.h
+>> +++ b/include/linux/thermal.h
+>> @@ -365,6 +365,8 @@ thermal_zone_device_register_with_trips(const char *, struct thermal_trip *, int
+>>   					void *, struct thermal_zone_device_ops *,
+>>   					struct thermal_zone_params *, int, int);
+>>   
+>> +void *thermal_zone_device_get_data(struct thermal_zone_device *tzd);
+>> +
+> 
+> bikeshedding:
+> 
+> Would it make sens to name this thermal_zone_device_get_priv_data(),
+> thermal_zone_device_get_priv() or something like that? To make it more
+> explicitly when reading the driver code this fetches the drivers private
+> data, and not some data belonging to the zone itself.
 
-...
+In the headers files, there are more occurrences with _name_priv():
 
->  drivers/thermal/rcar_gen3_thermal.c              |  4 ++--
->  drivers/thermal/rcar_thermal.c                   |  3 +--
+# _name_priv()
+git grep priv include/linux/ | grep "priv(" | grep -v get | wc -l
+52
 
-For R-Car,
+# _name_private()
+git grep priv include/linux/ | grep "private(" | grep -v get | wc -l
+33
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+# _name_get_private()
+git grep priv include/linux/ | grep "private(" | grep get | wc -l
+12
 
-...
+# _name_get_priv()
+git grep priv include/linux/ | grep "priv(" | grep get | wc -l
+4
 
 
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index 2bb4bf33f4f3..724b95662da9 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -365,6 +365,8 @@ thermal_zone_device_register_with_trips(const char *, struct thermal_trip *, int
->  					void *, struct thermal_zone_device_ops *,
->  					struct thermal_zone_params *, int, int);
->  
-> +void *thermal_zone_device_get_data(struct thermal_zone_device *tzd);
-> +
+What about thermal_zone_device_priv() ?
 
-bikeshedding:
 
-Would it make sens to name this thermal_zone_device_get_priv_data(), 
-thermal_zone_device_get_priv() or something like that? To make it more 
-explicitly when reading the driver code this fetches the drivers private 
-data, and not some data belonging to the zone itself.
 
->  int thermal_zone_bind_cooling_device(struct thermal_zone_device *, int,
->  				     struct thermal_cooling_device *,
+
+
 
 -- 
-Kind Regards,
-Niklas Söderlund
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
