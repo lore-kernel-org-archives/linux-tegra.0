@@ -2,218 +2,243 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E3BC636CC
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Feb 2023 14:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CB3C6FA9E
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Feb 2023 14:48:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231582AbjBTOKK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Feb 2023 09:10:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35280 "EHLO
+        id S232234AbjBTOs5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Feb 2023 09:48:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbjBTOKI (ORCPT
+        with ESMTP id S229671AbjBTOsv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Feb 2023 09:10:08 -0500
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648321E9EF;
-        Mon, 20 Feb 2023 06:09:28 -0800 (PST)
+        Mon, 20 Feb 2023 09:48:51 -0500
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2116.outbound.protection.outlook.com [40.107.114.116])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0731A958;
+        Mon, 20 Feb 2023 06:48:49 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NvTGhxEKEXv6vwfIBdc5C7FQIeN2TXqpXrmzn8lbb7goyFQ5zIgyRPIgHG5P3Bb839lFu6lf+Drz2qdU1Ry+2YzyxY144qC3FwgWu7Bgfp9kxLXN1LvqxeAVIzA8uB+5TBcw9TSlg5Ycpl+Mp+IQ/jsKTuW/Ymp0Ni2xYh0RvYEgJDctXX1YKdgaTw9l6WHmDJGU/c54lM4+WFrBJpwYvD+Z0UGSVRvONEZTt3NVLDV0vnf9yrM69oMPhsZuPVo25bHLcaXJOYLU+t3KfW9O4mwKAXNnncGg/u1NdYy5a6p9Q6f5lKwfGdYLgNQQoDAUIShHHVBPLOqqFFXBPo6XmA==
+ b=SKHpUCwNtL8Yo6xoXTncMgZfUXexGKt9xv2MpK1LMxMgNpEpLHaYS8Bhss7gSW9wnrnriuv8qOBBjklIbm9A8MDnRXMfMIXlnujynY3rXQJS8GeRWGRi3/Tx0i/9akkJS7P5Ux3m5nD/D+76xRCmRSwy5beLayKCbNKNVV7/8z+RkLngJnlT+BtT7bf0fK1csJLiLTF0+ctYY+V9Ff6sa3id0ltI/6A7B5qgjB3uk8N/x+7BX7RE2c3dD9HFT+gVECWqKiEifY+YtFw15IGoHs/xcRPoZju4/DFY4QSx4+Q8YvQC+zpWygXVXVSmuOrM0dS4dPfMHdWvODo2Fi/8PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zl/Zq3udnXoPPmPhp/uzEpbABsNB15gy+KqjcHFYdzA=;
- b=EWm9U1o79tyWz/YgutfkwXCnYZ0x6ZNQ5cD66UcRBaYQG4bRpciwwo9xKYEocUu21PUuISrOK99ykVXJi8CYCrVvwUiVjoIy6nTsPUZcfh+yIDKAY2OXou6+UKvcVsgTMbiUo+ZJRHrsAJmmeUnjz9b6AhzXSuj7yncphqB4JYulPCI9/YcGbzK/hja3MgSjzI+OQ65VkK4CiY0Sd/Ea6VzHVGgfdSqLewy9Kc+eMn8wmNlCNX9VsXwSgvZDshuTKv4OhjMJEPGlyE8PfKUH7GEDxN0tKYABIHh0p39XS6hq+Qb0AdECEbva7okp8r28dCxNbeXQSqCZo5tb54ABNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=pIuTBnLnQIudgCtj2bdotjgMlU4s0gBzV2WiGo0mugA=;
+ b=TLqCvU5k5iCk0ooF1PaLp5T2QnM4gc6z7AgyqMU/ZKGzXXkmOGS6fmS6MdozHE67J+FMrj6phN0WpcaFvKWnFkkWm+RNBpzMUarLrkoLx5qvfHQgoPYvsOzVvEgZYxa5bQehyxs2xvJIpecIbTeviFL+d+we3AJizflFbc0CK+JaUUe9lZPbFkxGnl8Q3fzIO6wAgMXvCLAal/X/gYz/J7fycJ39OrgKrVGBKVNA+jcTQKQ6Mgya0IblegNqiBKPhSXz7KO5ZjD+JUirc+JevsAoiRptgcspxkLMGVhJvgdEy2vsgo/2FGN0FeCxaIpTGWI8FqMw4FLnfbck5X5yaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dm.renesas.com; dmarc=pass action=none
+ header.from=dm.renesas.com; dkim=pass header.d=dm.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dm.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zl/Zq3udnXoPPmPhp/uzEpbABsNB15gy+KqjcHFYdzA=;
- b=TxGnZjBmyrsY1wtwmOyTGNoWYYolKTDzWzQZD/JwFRDDIxmRZC/6+fAq0u4Wd1dSENdLhGE89SOKZvZ3KdE6gK843WqLunNa1k8nrdTYE+fRjF+KobTN2zuCYiXjyNSfcffNE1YqzVbTvurJMzkZKZyb/BfM5OU4R1PCb70CcNKvxftspfJRRDOemxxcw1st6AvFzQEHZvhoMxU4yjVKQgx2rXGeNAjT/xhvS1fC+W6GEE0+RWMC6Iw3zEK3n2RLRfJw9Tj3fjNkoxfRnv8evMZ3TLrP4Frg1m0KZSWRj2U4rdJUtVOQr4ufP5emLDQtNyXF07MA38ONn50yPHjNaQ==
-Received: from MN2PR03CA0003.namprd03.prod.outlook.com (2603:10b6:208:23a::8)
- by CH0PR12MB5252.namprd12.prod.outlook.com (2603:10b6:610:d3::24) with
+ bh=pIuTBnLnQIudgCtj2bdotjgMlU4s0gBzV2WiGo0mugA=;
+ b=ZazSW/8J76Ah2Ux5EbY+YVr8JSKweCxBpPv90CjPPdnrWZbWp8QJRZw9Fvu5RNHsce5Vi0PzWi9xcmoz0DvDJW2gq8nJ9czmGVTf4mAz6nvyPWbuItiyGKFSzdBPZsAxs4lpKe0EWKZGxnEhcWv78sMs+A37buoqXfSPEL8/Vuo=
+Received: from OS3PR01MB8460.jpnprd01.prod.outlook.com (2603:1096:604:197::13)
+ by OSZPR01MB8687.jpnprd01.prod.outlook.com (2603:1096:604:15e::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.20; Mon, 20 Feb
- 2023 14:08:58 +0000
-Received: from BL02EPF0000C404.namprd05.prod.outlook.com
- (2603:10b6:208:23a:cafe::48) by MN2PR03CA0003.outlook.office365.com
- (2603:10b6:208:23a::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.20 via Frontend
- Transport; Mon, 20 Feb 2023 14:08:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0000C404.mail.protection.outlook.com (10.167.241.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6134.14 via Frontend Transport; Mon, 20 Feb 2023 14:08:57 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 20 Feb
- 2023 06:08:44 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 20 Feb
- 2023 06:08:43 -0800
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Mon, 20 Feb 2023 06:08:38 -0800
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <treding@nvidia.com>, <krzysztof.kozlowski@linaro.org>,
-        <dmitry.osipenko@collabora.com>, <viresh.kumar@linaro.org>,
-        <rafael@kernel.org>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <lpieralisi@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
-        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
-        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
-        <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [Patch v2 9/9] PCI: tegra194: add interconnect support in Tegra234
-Date:   Mon, 20 Feb 2023 19:35:59 +0530
-Message-ID: <20230220140559.28289-10-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230220140559.28289-1-sumitg@nvidia.com>
-References: <20230220140559.28289-1-sumitg@nvidia.com>
-X-NVConfidentiality: public
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.19; Mon, 20 Feb
+ 2023 14:48:44 +0000
+Received: from OS3PR01MB8460.jpnprd01.prod.outlook.com
+ ([fe80::e332:554a:7:7135]) by OS3PR01MB8460.jpnprd01.prod.outlook.com
+ ([fe80::e332:554a:7:7135%5]) with mapi id 15.20.6111.019; Mon, 20 Feb 2023
+ 14:48:44 +0000
+From:   DLG Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        DLG Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>
+CC:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Ido Schimmel <idosch@nvidia.com>,
+        Petr Machata <petrm@nvidia.com>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?= 
+        <niklas.soderlund@ragnatech.se>, Heiko Stuebner <heiko@sntech.de>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Talel Shenhar <talel@amazon.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Tim Zimmermann <tim@linux4.de>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Jiang Jian <jiangjian@cdjrlc.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "open list:ACPI THERMAL DRIVER" <linux-acpi@vger.kernel.org>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        "open list:ARM/Allwinner sunXi SoC support" 
+        <linux-sunxi@lists.linux.dev>,
+        "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." 
+        <linux-input@vger.kernel.org>,
+        "open list:CXGB4 ETHERNET DRIVER (CXGB4)" <netdev@vger.kernel.org>,
+        "open list:INTEL WIRELESS WIFI LINK (iwlwifi)" 
+        <linux-wireless@vger.kernel.org>,
+        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:RENESAS R-CAR THERMAL DRIVERS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        "open list:TI BANDGAP AND THERMAL DRIVER" 
+        <linux-omap@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Subject: RE: [PATCH v1 01/17] thermal/core: Add a thermal zone 'devdata'
+ accessor
+Thread-Topic: [PATCH v1 01/17] thermal/core: Add a thermal zone 'devdata'
+ accessor
+Thread-Index: AQHZRG/HAV0yCC5B/ky2ximBKy+xBK7Xm3swgAAmkQCAACChEA==
+Date:   Mon, 20 Feb 2023 14:48:44 +0000
+Message-ID: <OS3PR01MB8460AADEFC7EA2F60936555AC2A49@OS3PR01MB8460.jpnprd01.prod.outlook.com>
+References: <20230219143657.241542-1-daniel.lezcano@linaro.org>
+ <20230219143657.241542-2-daniel.lezcano@linaro.org>
+ <OS3PR01MB8460E7C2D1F9EEEDDC579FFEC2A49@OS3PR01MB8460.jpnprd01.prod.outlook.com>
+ <CAMuHMdWFn+LbKE=77mRBfGqSu3x5qsk3X-pQVeu3uZXEejyRRg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWFn+LbKE=77mRBfGqSu3x5qsk3X-pQVeu3uZXEejyRRg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=dm.renesas.com;
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB8460:EE_|OSZPR01MB8687:EE_
+x-ms-office365-filtering-correlation-id: 1f3bfd92-71c7-42fb-6a8c-08db135190d2
+x-ms-exchange-sharedmailbox-routingagent-processed: True
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Cur/nBWMflxuJyDQwWiXhvh0FhzYT77uoFNzRlEMOfrYZafOn1k73aRP9DQQVviRaF1Ts/Whb/lA5w+jEqPOp4Nt2nwsv+TwXtKlv+fBqZXLTvkGOpvEd3CrB0KAsdGuL7bbZH9bFfe2hqeYIAhsWVdvr4QRDRnI+87uF69KUny+cQd/0X72ppJJszuUrhoIs+vknNmFQFa+5DxmwTJCZLaetn8nnptm4mfZDoHCypscHqL6cgKIo5lp53gJfmHQ0oIPfR5hGumCDolg06UUoA82pOBwyLCAjDN8fqHFmuRh5BZi4GOe7hpKZHi4+UEXQulXVkL/AxA5mj0kGFZfaoDBf7s2vdBGY6+wBwg9t54aV+h+0WkrsVuLxYk836luU5x36v+LtSvqPGGJyDLbyXwqoY6yNmM1QNZ77riZb2gl52u3f4WHgTtwo45MpFR9s8twTCBCFC5f7V7PBshNY6s4r8qOUk1L5HMXso2eZY6TO6bgaC0fDiaMJgnw4qJzOJ/ZV6nk5K4xphbC745Y3Wr9/WATz2kg9pEmYn74iguFTHV+1BpMqquEDIcUHxIqKD8uJ/B/pVU+glT7rfbV2elvxM5A56pu2b1TcxzmmRhWzSiOVaAGzMUpQxwIU4gmra1y3YlCWZpaPWcloCxrjzCTBa8aQq3MgR0z2JwhMC7iOZnRZaYlrWJwrLFoNMT3
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8460.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(376002)(39860400002)(396003)(346002)(136003)(451199018)(54906003)(478600001)(110136005)(71200400001)(122000001)(38100700002)(86362001)(2906002)(4744005)(33656002)(38070700005)(316002)(41300700001)(52536014)(5660300002)(7336002)(7406005)(7366002)(83380400001)(8936002)(7416002)(55016003)(66446008)(4326008)(66556008)(8676002)(64756008)(66476007)(66946007)(66899018)(76116006)(26005)(186003)(53546011)(55236004)(966005)(6506007)(7696005)(9686003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aWEva2ZEelNuT01DN0p5YWN4b2hFRFZPenB1T0dSdjhSViszWndKQkJpNFk3?=
+ =?utf-8?B?bHBTS0VGMVFJTzQ3RU9LbWx5S2I0eWtLWkt1Nzl5Mkh0MEhJK3dXLytaLys5?=
+ =?utf-8?B?Ny9sNy9rVSs4RlpYcG9zSCtGNzRYNjl3U2NkTGR3MEVuZE9QWkJIcC8zSWZv?=
+ =?utf-8?B?UDQvUEJVckhwWVNFSkpuMnB1c1lUNW9iWGxRS0plOHJmTFN4MXZpbGlkMFUy?=
+ =?utf-8?B?WkRqL3hPVTNRUXBNZW5VTTN2NXJZWkNueVIvZTZRd2dENTQ2OExaS25sQ2NV?=
+ =?utf-8?B?ZHZCMlJDUHhiQit5VG0wZ3Z2MXVUTHJTRVhXcUxYTjJXUUQyZXM4S0lrbDRT?=
+ =?utf-8?B?NTlqdk9JQXlrKzVkc3JxRmlSUUNnYnBTaEx0Q1d2UHd0dXBMYXhaZnFTNFJi?=
+ =?utf-8?B?dG1oUE9zeUxiWHF1VXJvZU52M3FBM3orN0RIa2V5U2tnZ2U4N0hZVzhabWp6?=
+ =?utf-8?B?b1ZMdnowUFVxZXI3QXJ4NG5remIzdWxsd2RJcnZnVmhvRFBhVTBTUHAzemVv?=
+ =?utf-8?B?SENHb2xodTFLd3dnK0xnT3dST2ZaaDRxS2pBbzFsaEZ1OFFWV1JpSnE0QjhP?=
+ =?utf-8?B?UmlBT1lSeTBiWndWeEpLSTVMSHA5akFGRE5wSUhIQkpGRzc0anQ3Nys5MUgv?=
+ =?utf-8?B?NDNPeFFmYWc1RTZZMTN6Mlp4QkVqVmNlaWwxaTVCS3p6bzBLYWpnT3E0Qjha?=
+ =?utf-8?B?dW56UWNkUUVJL3VUamJpdUlnZVBSdXVmb1NJYWhQQldzYjROZnEvWWVpTnA4?=
+ =?utf-8?B?Mis3U2h1SDBYekJYV0JudW1MbXdkdkJ4aTV4TVd1NnhEcVI5YUFTK0hYMGpR?=
+ =?utf-8?B?OXYrR0N1Z21JeDNTaFJydU9WN09SVlpRZC84WHVvQTd6YWt6NWxoZ0g5OUgv?=
+ =?utf-8?B?OEErRkVxcDhMUkp4UDZKK3g5US9DUUJKdHFNWkxlc051Q3R0TklabXg1bWxC?=
+ =?utf-8?B?T1Z2Q1ViSVNadFdIVFp1ZUN4VWtLcEVzQVdiTVo4ZHRUOUt4Rk9Sd3cwbVRF?=
+ =?utf-8?B?YTU0WDF1cEdqbGhDVzdnQnBvTEdNTGlkOEpmS3lFcUhOeHJWYmYyeXlrenlK?=
+ =?utf-8?B?L0hZRFdLTUlFTnVnS2t3ODlTcXowcjE3MG9vdi9SSXRvc1hIVlZiN2N3MkhM?=
+ =?utf-8?B?WEl3Nkh2a0trOHFuMmRuUzFDVE9TUlBTZWFWcWM3bXhRNzQ5QUF4MVphcVhS?=
+ =?utf-8?B?V2xKMHlqQ3ZnV1cwZzh6QjcrQTdLaVJQOE44eFhjcVBRS0J2eGVUcXllOHZZ?=
+ =?utf-8?B?UEUvdFJIdjFPSHhsQ3BMQTVSTGY2YXRkZjY5aGd5dS9lYS9CN3BScUlMcm16?=
+ =?utf-8?B?N2J6emhvcldTZmVnbFUvZEdjMWVqOTJuZ24veDM0MUo5VEI0K1NqUGpyUyth?=
+ =?utf-8?B?NnpEc0xYSVBoUUFVVmh1bDFRejVFeXJuclljQVI3d0dXUjVBM1dDZHp6R2VC?=
+ =?utf-8?B?TXJKbmpwRzNXQlRRUFVPQ0RyS3JiNXBQMDBYUXFiYlF6aWg3NE5COEdXRlZS?=
+ =?utf-8?B?RnFXRFdTa3lpWFdsekxnakhMMDBGSkhCNmlrOXhvaGF5czJOUG9nZnNBZmJv?=
+ =?utf-8?B?d1pCSnZobG8yc29mbWY1bUMxVHlJVWw1eExDZFBWcDBtTW9yWHZYV1ZGSmpa?=
+ =?utf-8?B?WUxkd0x1amRwN3VIR2xwNHlnN3MxM01idGh1Wk4yUE5seVhQbVh2RU5pdkh4?=
+ =?utf-8?B?emgxd2k2RnNuNW9qeVFkYkhVUjVyR01lWStIMFgwVG8yamxWSXZnMDlWTHlS?=
+ =?utf-8?B?TG1sNXJmUU5VdVk5VFFJUmhILzBiaGFGelgzZXRRYzBNMzJ0NkNxT3lnYzh0?=
+ =?utf-8?B?c3R1amRsZldhV3FFdkkvTmpWZUtXbS8vRVRLNHpuRUlRaXptbTgwN0lkVGVt?=
+ =?utf-8?B?N0l5RGR2b3d4UjZoTTE5YjJxaTFlVzVPcEc4bjdacmh5V1EwZCswUkpyV2lV?=
+ =?utf-8?B?eVRaWE9mZjZxQ2hMRE9hdUFSM1lmMCtTaVFMaks2TkZOZEJEbWg4aDZueEFj?=
+ =?utf-8?B?Z1ZHT1VYZHZIb2RnZVZudUhFazN0SEM3aTFtYTV6NERweDJubG9GMEZ5TXBY?=
+ =?utf-8?B?Vm9SemJKUGJsaEQ2RXMrYkcwTHh0UTJPYzVPSnVwbVNMUVZSN1FaZ0ZjS3kw?=
+ =?utf-8?B?WWxlQVpVRnlQZkltcjJGazMzMjR4RW1wWHBZYjEvTTVPODZxTUg1KzRDWmRN?=
+ =?utf-8?B?dmc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0000C404:EE_|CH0PR12MB5252:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1aa3a2a0-6350-4c8f-557c-08db134c0268
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IxAmTWWS0zyN63XqIqEJM5rtubWOPO/c2Yr6ONvnoNkfcBTOYHy2CeIw0HgK+MB2wAN3kFr8YcmXA86Hj1NklYBAxSnz+N2w/UsKXZ57LaDcxjs+Wdwy0Duse159fxOC2SSysBU79dJf8zwcgYagblQXLdo+2+6aKjOrtxj8xAm8JLQPEfNKkOdAKqXhz4N/0u1Lj5S+vciSetXYyFPnzBvE2qAfgg5sGxKiv+5+zZl0hW64qcJVT6kAz/0NIjzaal34bIODO4Uwfa5+xilzzOECGGwWKjgwM8GZzxXrvltvoYr7Cg/Z6h0uimH6uRru9BozK8Y8Bcs5trl1x05bGmSJZfUmWxVDnlB8H4cKEHtXsH60HScdUrpH0rnJiTQBWczSCWMclH8gfXdzbNEm0hki59e1xISzp42VnXNk+8R0KZlyvU082lrzgV9JL/2gOaYzLz3CqxC4GOgrsqSeuZtb/FkbfmwrF1OnK329FXC6/5ghkW/hpv6BOCleB/LwW+IY450gIad0Z+mpx25FAD5AMkXw+9C7o1JDixdDyCsj/pHvrYkfaikBYna/dkSEXN7ofZa0L7+AHWwPHgNuypBLkxuBp1xA5DhMBoRDMcvuKDrnC8kd4UdXgt1b5G6LKnwV0c/UusOHDziWgN1dEzhm0VK3C/BSaX7URmr2PzY8n0r4dzXPFyxqf/xt1M6eQjnfDX6hhYovlamjQ7iz8Q==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(376002)(346002)(396003)(136003)(451199018)(46966006)(36840700001)(40470700004)(40480700001)(40460700003)(7696005)(8936002)(83380400001)(5660300002)(7416002)(47076005)(41300700001)(426003)(86362001)(6666004)(186003)(26005)(54906003)(1076003)(107886003)(70206006)(2906002)(4326008)(8676002)(70586007)(336012)(316002)(2616005)(478600001)(110136005)(356005)(36860700001)(36756003)(82310400005)(7636003)(82740400003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2023 14:08:57.9860
+X-OriginatorOrg: dm.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8460.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f3bfd92-71c7-42fb-6a8c-08db135190d2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2023 14:48:44.5887
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1aa3a2a0-6350-4c8f-557c-08db134c0268
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0000C404.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5252
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XfGxfM+UvC7CceENOIaJ/wR0OogqGKQ2KvAhEXad9O1zZdROdMNjnsdjHedjxZpXXCRN9aHKE08DjA9zqFNu/M0yZY58laD5tT3c12AELiQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8687
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add support to request DRAM bandwidth with Memory Interconnect
-in Tegra234 SoC. The DRAM BW required for different modes depends
-on speed (Gen-1/2/3/4) and width/lanes (x1/x2/x4/x8).
-
-Suggested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 40 +++++++++++++++++-----
- 1 file changed, 32 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 09825b4a075e..d2513c9d3feb 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -15,6 +15,7 @@
- #include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
-+#include <linux/interconnect.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -287,6 +288,7 @@ struct tegra_pcie_dw {
- 	unsigned int pex_rst_irq;
- 	int ep_state;
- 	long link_status;
-+	struct icc_path *icc_path;
- };
- 
- static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
-@@ -309,6 +311,24 @@ struct tegra_pcie_soc {
- 	enum dw_pcie_device_mode mode;
- };
- 
-+static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
-+{
-+	struct dw_pcie *pci = &pcie->pci;
-+	u32 val, speed, width;
-+
-+	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
-+
-+	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
-+	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
-+
-+	val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
-+
-+	if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
-+		dev_err(pcie->dev, "can't set bw[%u]\n", val);
-+
-+	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-+}
-+
- static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-@@ -452,14 +472,12 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
- 	struct tegra_pcie_dw *pcie = arg;
- 	struct dw_pcie_ep *ep = &pcie->pci.ep;
- 	struct dw_pcie *pci = &pcie->pci;
--	u32 val, speed;
-+	u32 val;
- 
- 	if (test_and_clear_bit(0, &pcie->link_status))
- 		dw_pcie_ep_linkup(ep);
- 
--	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
--		PCI_EXP_LNKSTA_CLS;
--	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-+	tegra_pcie_icc_set(pcie);
- 
- 	if (pcie->of_data->has_ltr_req_fix)
- 		return IRQ_HANDLED;
-@@ -945,9 +963,9 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 
- static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
- {
--	u32 val, offset, speed, tmp;
- 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
- 	struct dw_pcie_rp *pp = &pci->pp;
-+	u32 val, offset, tmp;
- 	bool retry = true;
- 
- 	if (pcie->of_data->mode == DW_PCIE_EP_TYPE) {
-@@ -1018,9 +1036,7 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
- 		goto retry_link;
- 	}
- 
--	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
--		PCI_EXP_LNKSTA_CLS;
--	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-+	tegra_pcie_icc_set(pcie);
- 
- 	tegra_pcie_enable_interrupts(pp);
- 
-@@ -2224,6 +2240,14 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pcie);
- 
-+	pcie->icc_path = devm_of_icc_get(&pdev->dev, "write");
-+	ret = PTR_ERR_OR_ZERO(pcie->icc_path);
-+	if (ret) {
-+		tegra_bpmp_put(pcie->bpmp);
-+		dev_err_probe(&pdev->dev, ret, "failed to get write interconnect\n");
-+		return ret;
-+	}
-+
- 	switch (pcie->of_data->mode) {
- 	case DW_PCIE_RC_TYPE:
- 		ret = devm_request_irq(dev, pp->irq, tegra_pcie_rp_irq_handler,
--- 
-2.17.1
-
+T24gMjAvMDIvMjAyMyAxMjoxOSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KDQo+TG9va3Mg
+bGlrZSBEYW5pZWwgaGFzIGZvdW5kIHRoZSBuZXcgRGlhbG9nIG1haW50YWluZXIgaGUgd2FzIGxv
+b2tpbmcgZm9yPyANCg0KTm90IHF1aXRlOyBJJ20ganVzdCBmaWxsaW5nIGluIGZvciBhIHdoaWxl
+LCBhbG9uZ3NpZGUgb3RoZXIgZHV0aWVzLg0KDQo+VGltZSB0byB1cGRhdGUgTUFJTlRBSU5FUlM/
+DQoNCldlbGwsIGluIG91ciBkZWZlbmNlLCBhbiBhdHRlbXB0IHdhcyBtYWRlIC0gYnV0IHByYWdt
+YXRpc20gbG9zdCBvdXQgdG8gaWRlYWxpc206DQpodHRwczovL2xrbWwub3JnL2xrbWwvMjAyMi84
+LzEvMjY0DQpGb3J0dW5hdGVseSwgdGhlIG9yaWdpbmFsIG1haWxpbmcgbGlzdCB3YXMgc3VzdGFp
+bmVkIHRodXMgZmFyLi4uDQoNCkNoYW5nZXMgYXJlIHNldHRsaW5nIGRvd24gbm93LCBzbyB5ZXMs
+IGEgcGF0Y2ggdG8gc3BsaXQgc3VwcG9ydCBieSBkZXZpY2UsIGFuZCBwcm92aWRlIG5hbWVzIGlu
+IGFkZGl0aW9uIHRvIHRoZSBuZXcgbWFpbGluZyBsaXN0LCBpcyBpbmRlZWQgcGVuZGluZy4NCg0K
+UmVnYXJkcywNCkFkYW0NCg0K
