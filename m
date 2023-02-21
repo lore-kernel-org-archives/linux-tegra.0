@@ -2,45 +2,44 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF17C6379F
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 13:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11FAC61DA3
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 14:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234194AbjBUN6T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 08:58:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47898 "EHLO
+        id S234396AbjBUOUV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 09:20:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234167AbjBUN6M (ORCPT
+        with ESMTP id S234393AbjBUOUU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 08:58:12 -0500
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04hn2032a.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8d::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC8281E9E8;
-        Tue, 21 Feb 2023 05:57:59 -0800 (PST)
+        Tue, 21 Feb 2023 09:20:20 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11hn2218.outbound.protection.outlook.com [52.100.173.218])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181891E5C4;
+        Tue, 21 Feb 2023 06:20:19 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SRUiwnzxdaOt7kdz0mcfaq3ND/0z82c0EerIGPz++nBquRwu141Jbsn7V1sLMR5uLj/d8lm47bPDb7I24kyIxj6AWcnTdCTmynhauOCn5Oo+6bHGSvM/SWty473LfOp62dzbWtJekskGJxmhOuUkf5GG4cFVwqIQx0NAqIjCU3DtcnHCwCM3F3Xy17Nl8HoT7ua2vI8Bk7ilpQBrQXaNtKMhrgrqxXR4gctcRQzOH/5DDWMU968XplDb2b+b25VarL2KJsRy1ZkFrl++s5Q3i+VkpoIfltbs+HXQ7Du/DNQqXov2hpWRIwuM+Obkz9UXUKMv7T1j2mx1Yuy5ctR6ag==
+ b=j+ClPzZco5sOJTn79bIQEYY+FhQeE/6+e+KgnaibthwUANGXMl7irwy4WQQ2Jdy550sD/QpLN0pLeQ/F+KavRkx9DIkphrussptGVrqEt/xAGUk0Nyqv/1Ud41/xR3nPpV10SqzmrGFkYT/e7e8VgZMuTxxL+5+8PR47DurEdOCtZzzILQQmuBkBNz3FOz9KpHyYoK8RetEMeur4icYUo1nnRujm9urEJ8CFU4umcBsCSMA3+hWEvOBon2go6DOOfXnM8X8mHsex2YobbZf+rqynGmqCrBYny6MUSMxaYT8YHArnjO8bUiI9xK5OZT54ApjV9sxaly4ZNB1NY7tIVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HZlHYuze7mMYAIhN8+82W6GWGsZ3Ot99Joa1ab+RqWE=;
- b=Vo49HPG2BcpR/iMUvHPl2AtnvSum/sMNevJHfAvUoGtMXIGVFuJxSPHMjy7649n0jpZL0kGGXBVdC1vmA8s/GPJMEB08OjyisfvefKOUbuDeB1duHRZfz7ZOJt82e6Xaj8yANV1uKpZriqmD5hnf6XfmVkHM76wrDGrpc/CyigW7+VIgqQ4AUQCNypIny3fjSZdWe580CxdLRwQJbCAaqMpuqeVdwXmcVp0MU80VuOvzeQMwC39/nDKJT38wWXyrMScI7dYubSm3fKThe7v1KU7zYmcmwQ7Ko7KjspeDvhJrvwf9MbSEDlMEEq104HX20myLJDVIRJjClJr0gvjVIQ==
+ bh=99Hdf3qpUCf07tU+iMDuIgN7/BrsU1D5fxpR5sgtvW8=;
+ b=RiMbHEAzaB0gY43PWSS2yS9udR4Kv66xRYhSkRAX7L0ixsVh1DtisubHBeUdw9fNQItM8ylgVruxO/PsSFLhzWdQfTm9IKSB9kAT6LUeq4DeFLDBl3nW/rMj2poPdhUOEkrh3GnefeOLYRmfCPoAIdRxzQYiTbLEkdyO+JWJQ8B5M5sKG2EWc4tXAXJthVb4Ecldciegj0Sgh2/nK0qJx4yfvsQdF4mQ9fXPkO2ibnZKNv9aSAQrhBWp9z2NPZAOhmDjUpNX93N4/u8X5YWW6htjpUDPVcz6pU7tcrgfhEpwJfYb5JpDp28xBTe+h4KbyCqpZdCdBSymul0S0nX9xA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZlHYuze7mMYAIhN8+82W6GWGsZ3Ot99Joa1ab+RqWE=;
- b=HdlvpxOQGdIUVpSymU9ca8HiYBNcV/yIIhULFIsqe/XDHqXLWHMln32aGGRXjuKsojyMCjmC8q/kQBqj/pViHjEJ3W4qmhUr+j8G0jap0UVIytBdHhhBVGJzSj1ZMlmD2YwltTD86gQXYmM5N42v4nwb99x8I5w/6KAaN5LIQnsfvT8SfW3sETl6+g2Jk3U8R7MV5MnuCNTLLDXqjRwsi5S9JYpYf6ZnL0t+J6Qe+CFi22bFUclT5a9u0jMISZ9mMj1dRq5y+2itMh5gJJBw8yx3zIMmJTFAbAgGHn2myuY671Gjm8A8U6uU2j8aI0krQeOhwaq0ez2C/gc1UUPUJg==
-Received: from MWH0EPF000554DF.namprd21.prod.outlook.com
- (2603:10b6:30f:fff2:0:1:0:4) by PH8PR12MB7350.namprd12.prod.outlook.com
- (2603:10b6:510:216::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.19; Tue, 21 Feb
- 2023 13:57:55 +0000
-Received: from CO1NAM11FT085.eop-nam11.prod.protection.outlook.com
- (2a01:111:f400:7eab::205) by MWH0EPF000554DF.outlook.office365.com
- (2603:1036:d20::b) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.5 via Frontend
- Transport; Tue, 21 Feb 2023 13:57:55 +0000
+ bh=99Hdf3qpUCf07tU+iMDuIgN7/BrsU1D5fxpR5sgtvW8=;
+ b=Rjl8lXhhNP5kFITTFRaMqH7486fhBHfUldEWigcWfZ0/tiQKTdJCHu64Q7R06CKEVPJpAVsL1QZtQY3j/nlLa/jc0lRZ8AywhAsuTSaNfXNtHLi5d0a7VpJZVIKZgBJ6mzucrAXKh2zyDd8hFAtQeIgJKXUcOPwJVKOx63nBumCPzkrdXKam1MsDKSTyYn2iM4KX7I/QGbyeBal9i/tabi4uoLTkld/9aM2w1W0prNTBwyusHWQCrgvdJGfDqOm0DGb2b7MYAl7A5/Kun42jGW88X06OB5Q/FemLmY1BcXTsFnVPIqJwEd9/A4c1DTAgNIScWlrEy2SmyS2Q3nZWXg==
+Received: from BN9PR03CA0628.namprd03.prod.outlook.com (2603:10b6:408:106::33)
+ by DS7PR12MB8275.namprd12.prod.outlook.com (2603:10b6:8:da::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6111.21; Tue, 21 Feb 2023 14:20:17 +0000
+Received: from BN8NAM11FT018.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:106:cafe::b8) by BN9PR03CA0628.outlook.office365.com
+ (2603:10b6:408:106::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.21 via Frontend
+ Transport; Tue, 21 Feb 2023 14:20:16 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,192 +47,95 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT085.mail.protection.outlook.com (10.13.174.137) with Microsoft SMTP
+ BN8NAM11FT018.mail.protection.outlook.com (10.13.176.89) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6134.18 via Frontend Transport; Tue, 21 Feb 2023 13:57:55 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ 15.20.6111.20 via Frontend Transport; Tue, 21 Feb 2023 14:20:16 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 21 Feb
- 2023 05:57:47 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 06:20:04 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 21 Feb
- 2023 05:57:46 -0800
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Tue, 21 Feb 2023 05:57:42 -0800
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <christian.koenig@amd.com>, <digetx@gmail.com>,
-        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <sumit.semwal@linaro.org>,
-        <thierry.reding@gmail.com>, <wsa@kernel.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH] i2c: tegra: Share same DMA channel for Rx and Tx
-Date:   Tue, 21 Feb 2023 19:27:26 +0530
-Message-ID: <20230221135726.40720-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+ 2023 06:20:04 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
+ Transport; Tue, 21 Feb 2023 06:20:03 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/156] 5.4.232-rc1 review
+In-Reply-To: <20230220133602.515342638@linuxfoundation.org>
+References: <20230220133602.515342638@linuxfoundation.org>
 X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <116c468a-5b1f-4596-bc1c-83abb3e16a61@rnnvmail205.nvidia.com>
+Date:   Tue, 21 Feb 2023 06:20:03 -0800
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT085:EE_|PH8PR12MB7350:EE_
-X-MS-Office365-Filtering-Correlation-Id: f373f086-bd11-481a-5b0d-08db1413a201
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT018:EE_|DS7PR12MB8275:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1d97f0a-8176-4a7f-56db-08db1416c143
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xQlCRU4hBb/cpjNhDbSeIrbjNRoCGwcLUwbOEE5gxtiAbkRRnTcShzUNs2OfvhUyQ4KZ6De/VBeni9p4D5uSmCt5AwFxsX5XA8QVriFYP3/QbZ4Js2hZLd3KA2RwvYp+/90w6oCyLYdvfYlFpI0Na5wrD9jlt0Izu8tIWN0e/947au0c5r4FIDrcWwtHbzTbnk4i0FTG8S+QXveh8hW3WU920pAwv3jNqOOIuQK+/YmmmC10TowsiC+Km/4MNZh71edhVXZONTDgnyszBZtRa6cuZmb8VZTLROVqOYUUd0y7MUI23y6yFvP6Hcs3lsU7l6boK/LkRMgFMz0738h1YbAIHLYk5m8oKe+GCFn8bGRPxzq0TrRHsZ+1CORYNqyaVj9VWTgD++Fv1Bi/fSl8tOLhJ7hfMzb2+luM4v9q49MTP7qaq8JMusmkLCLTfoZwwo2hYBaMMXrTRHGbQUXN/eAWiKJawc3eK55wxHE+vM9Yg1T8V2YrvNTAr8MtK2rMyjEtILC8vf8aAaRCA9JgEfAlya6kmqXddQbQAq7wi2NWtrVyj1YVOaiGnTTe/p8i5K3sqiRhaROwRyv+WKffZ2axL5M0nPyqOekj2fwFVJKwwh2+BUxMx7vzFWZT/7qMpQYUEdaycnqfmIApz18jcWVDeI+dI1PIU91lYJOke6oCfE7S3hJ+YLmwey+IRvwusPuqTaO20D44oVR7K5ysv3A85E8n5D7wnEaav1hlyz/Xqj3zWk48JIKrnG+R9CmHhFhccBu7IxqCnA9N6ss1g5JPGNXrOY2HuWmxNmiI8ObszeWZ/o2o6W2HR8ztoh9SRblAzvE4KxSTX+0EQvsKtA==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(396003)(39860400002)(136003)(346002)(5400799012)(451199018)(40470700004)(36840700001)(46966006)(40460700003)(316002)(83380400001)(5660300002)(8936002)(107886003)(7416002)(70206006)(2616005)(6666004)(41300700001)(4326008)(1076003)(8676002)(70586007)(82310400005)(186003)(26005)(426003)(478600001)(47076005)(110136005)(336012)(921005)(7696005)(40480700001)(356005)(36756003)(2906002)(34070700002)(36860700001)(82740400003)(7636003)(86362001)(2101003)(83996005)(12100799015);DIR:OUT;SFP:1501;
+X-Microsoft-Antispam-Message-Info: vP0LQY3W8wtzu/vqvpnHMQhyfhTjUYi2cllHX4Tz9L58JukF2wJ2xHiErr8usKA0NXFYVkGSibG3fcJe2rPotDXZemq29HyB06A680ga4Jynu6n59fwgxHIlKII6TLdSWCtvtEA9qNo2NVLdiHIVW2vOHkke0qYMmBUE5EhNj7cAdkEV6DqV0AXrkQM65cRS21FEAVYTY7TFGXa97268U1vGRhYDdMCb1kKaGPrOnnUtzqKJZ2ja4+nwuxG5LbkFV4zhZbEi8AM2SRj1Pf8ZVRztJNdysalOZDLxYWyfVEZun+0SuRsA+zSTqk0Bx3ayQVJT0kBJUpUhZ4uQCIlMYIgrw47esOcwW1vevyUgB6+l5YZvtLpbH6Blb2/9I5EWkXvborOKfDch+REUNe4OqoL/E4vXJ9h1ukBNBIiYzuLCiXcX6FLyWWMJBp9IwyuqHBpT5QDKxOrpSYkFtaMLJR01VbRFagLgoAllLf1n3FyZktpjaRst/UIvw5bIJ7QrE0yQVaSc8nmIp4wHR52WR9pUn2mE+ta7nBGVRvbuxLFB6ejPS8Bag+UBruv/QqTPhTskLt4994BFeeK2JyyLE6G3ucDIPpA9K0PHR6q+lVXGZJvZLw8+6pKpQ2wI53YLh0pXgUW02KYSRs+wGrSIjHp5uW1yXpypmGIGm3HH6olxpNCqeIPUdj8kynUoTvO/x1MKjre8dD/qfiO+JBAES/V1uXlmzPAmd8QBkH2CWn4w77Vza77xOeqwE525lSyEmrFL0I5/b25KYs6uiBMD7jG/47eNUD9ZlnK/6HukR9N5cvfrxAlEvSpfLClZR4UJ
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(136003)(376002)(396003)(346002)(39860400002)(5400799012)(451199018)(36840700001)(46966006)(40470700004)(316002)(40480700001)(186003)(966005)(31686004)(26005)(356005)(47076005)(478600001)(426003)(336012)(54906003)(86362001)(7416002)(31696002)(40460700003)(6916009)(4326008)(70206006)(70586007)(8676002)(8936002)(41300700001)(82310400005)(82740400003)(5660300002)(34070700002)(36860700001)(2906002)(7636003)(12100799015);DIR:OUT;SFP:1501;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2023 13:57:55.6426
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2023 14:20:16.5277
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f373f086-bd11-481a-5b0d-08db1413a201
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1d97f0a-8176-4a7f-56db-08db1416c143
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT085.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT018.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7350
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8275
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Allocate only one DMA channel for I2C and share it for both Tx and Rx.
-Since I2C supports only half duplex, there is no impact on perf with
-this.
+On Mon, 20 Feb 2023 14:34:04 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.232 release.
+> There are 156 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 22 Feb 2023 13:35:35 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.232-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 51 ++++++++++------------------------
- 1 file changed, 15 insertions(+), 36 deletions(-)
+All tests passing for Tegra ...
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 6aab84c8d22b..c0a7057d4f0a 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -248,8 +248,7 @@ struct tegra_i2c_hw_feature {
-  * @msg_read: indicates that the transfer is a read access
-  * @timings: i2c timings information like bus frequency
-  * @multimaster_mode: indicates that I2C controller is in multi-master mode
-- * @tx_dma_chan: DMA transmit channel
-- * @rx_dma_chan: DMA receive channel
-+ * @dma_chan: DMA channel
-  * @dma_phys: handle to DMA resources
-  * @dma_buf: pointer to allocated DMA buffer
-  * @dma_buf_size: DMA buffer size
-@@ -281,8 +280,7 @@ struct tegra_i2c_dev {
- 	u8 *msg_buf;
- 
- 	struct completion dma_complete;
--	struct dma_chan *tx_dma_chan;
--	struct dma_chan *rx_dma_chan;
-+	struct dma_chan *dma_chan;
- 	unsigned int dma_buf_size;
- 	struct device *dma_dev;
- 	dma_addr_t dma_phys;
-@@ -398,7 +396,7 @@ static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
- 	reinit_completion(&i2c_dev->dma_complete);
- 
- 	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
--	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
-+	chan = i2c_dev->dma_chan;
- 
- 	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
- 					       len, dir, DMA_PREP_INTERRUPT |
-@@ -426,14 +424,9 @@ static void tegra_i2c_release_dma(struct tegra_i2c_dev *i2c_dev)
- 		i2c_dev->dma_buf = NULL;
- 	}
- 
--	if (i2c_dev->tx_dma_chan) {
--		dma_release_channel(i2c_dev->tx_dma_chan);
--		i2c_dev->tx_dma_chan = NULL;
--	}
--
--	if (i2c_dev->rx_dma_chan) {
--		dma_release_channel(i2c_dev->rx_dma_chan);
--		i2c_dev->rx_dma_chan = NULL;
-+	if (i2c_dev->dma_chan) {
-+		dma_release_channel(i2c_dev->dma_chan);
-+		i2c_dev->dma_chan = NULL;
- 	}
- }
- 
-@@ -457,21 +450,17 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 		return 0;
- 	}
- 
--	chan = dma_request_chan(i2c_dev->dev, "rx");
--	if (IS_ERR(chan)) {
--		err = PTR_ERR(chan);
--		goto err_out;
--	}
--
--	i2c_dev->rx_dma_chan = chan;
--
-+	/* The same channel will be used for both Rx and Tx.
-+	 * Keeping the name as tx for backward compatibility with
-+	 * existing devicetrees.
-+	 */
- 	chan = dma_request_chan(i2c_dev->dev, "tx");
- 	if (IS_ERR(chan)) {
- 		err = PTR_ERR(chan);
- 		goto err_out;
- 	}
- 
--	i2c_dev->tx_dma_chan = chan;
-+	i2c_dev->dma_chan = chan;
- 
- 	WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
- 	i2c_dev->dma_dev = chan->device->dev;
-@@ -974,11 +963,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
- 	if (i2c_dev->dma_mode) {
--		if (i2c_dev->msg_read)
--			dmaengine_terminate_async(i2c_dev->rx_dma_chan);
--		else
--			dmaengine_terminate_async(i2c_dev->tx_dma_chan);
--
-+		dmaengine_terminate_async(i2c_dev->dma_chan);
- 		complete(&i2c_dev->dma_complete);
- 	}
- 
-@@ -1008,8 +993,8 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
- 		else
- 			dma_burst = 8;
- 
-+		chan = i2c_dev->dma_chan;
- 		if (i2c_dev->msg_read) {
--			chan = i2c_dev->rx_dma_chan;
- 			reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_RX_FIFO);
- 
- 			slv_config.src_addr = i2c_dev->base_phys + reg_offset;
-@@ -1021,7 +1006,6 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
- 			else
- 				val = I2C_FIFO_CONTROL_RX_TRIG(dma_burst);
- 		} else {
--			chan = i2c_dev->tx_dma_chan;
- 			reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_TX_FIFO);
- 
- 			slv_config.dst_addr = i2c_dev->base_phys + reg_offset;
-@@ -1333,13 +1317,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		 * performs synchronization after the transfer's termination
- 		 * and we want to get a completion if transfer succeeded.
- 		 */
--		dmaengine_synchronize(i2c_dev->msg_read ?
--				      i2c_dev->rx_dma_chan :
--				      i2c_dev->tx_dma_chan);
--
--		dmaengine_terminate_sync(i2c_dev->msg_read ?
--					 i2c_dev->rx_dma_chan :
--					 i2c_dev->tx_dma_chan);
-+		dmaengine_synchronize(i2c_dev->dma_chan);
-+		dmaengine_terminate_sync(i2c_dev->dma_chan);
- 
- 		if (!time_left && !completion_done(&i2c_dev->dma_complete)) {
- 			dev_err(i2c_dev->dev, "DMA transfer timed out\n");
--- 
-2.17.1
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
+Linux version:	5.4.232-rc1-g01caaff11184
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
