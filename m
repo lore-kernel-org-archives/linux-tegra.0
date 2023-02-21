@@ -2,203 +2,98 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35FAC61DA3
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 17:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2EFC61DA3
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 17:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234145AbjBURmi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 12:42:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        id S233693AbjBURyS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 12:54:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233564AbjBURmh (ORCPT
+        with ESMTP id S232613AbjBURyQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 12:42:37 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F462D14C;
-        Tue, 21 Feb 2023 09:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1677001355; x=1708537355;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kBBoBZu1FD2rTBEFA0gVprbFv3kOigQKo3h0nWRaWas=;
-  b=KhIkTaDcYBT9+GpneMVNXU5+ZjF7kVksUuBPAsWJhY9enhTdgzYVzO4V
-   bTNnqSK4mYd0lY5kwRovdAA0jWRNe9xynHg74p2cD7Rox+MWJGMV5dMj8
-   kOdwBULFCS5VkgLDW02AuW4EXDr9Nwx5bDmrzV6jIQ16L8Urzha/i4rbc
-   554o69dkgl4PMFMd9auHzHtt+2pbMSYHNYyiHXD7GsZJgv6d0qcC+HtYH
-   oKiRrrLwtnkxwiqWGnLx/aoyRpwLh+ivyxha6Bj35zdoF2/JJ06u0T83h
-   zurbMlUIsDKQ25A1syMBjaiPO/Ly0qUoA0aADjzzoOPJlu3qbXGvJk5ej
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10628"; a="320839368"
-X-IronPort-AV: E=Sophos;i="5.97,315,1669104000"; 
-   d="scan'208";a="320839368"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2023 09:42:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10628"; a="1000689706"
-X-IronPort-AV: E=Sophos;i="5.97,315,1669104000"; 
-   d="scan'208";a="1000689706"
-Received: from lkp-server01.sh.intel.com (HELO eac18b5d7d93) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2023 09:42:31 -0800
-Received: from kbuild by eac18b5d7d93 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pUWes-00005l-2S;
-        Tue, 21 Feb 2023 17:42:30 +0000
-Date:   Wed, 22 Feb 2023 01:41:56 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Akhil R <akhilrajeev@nvidia.com>, christian.koenig@amd.com,
-        digetx@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sumit.semwal@linaro.org,
-        thierry.reding@gmail.com, wsa@kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, akhilrajeev@nvidia.com
-Subject: Re: [PATCH] i2c: tegra: Share same DMA channel for Rx and Tx
-Message-ID: <202302220130.flKenlan-lkp@intel.com>
-References: <20230221135726.40720-1-akhilrajeev@nvidia.com>
+        Tue, 21 Feb 2023 12:54:16 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8488427D5E;
+        Tue, 21 Feb 2023 09:54:14 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id eg37so16753832edb.12;
+        Tue, 21 Feb 2023 09:54:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=46MKtm0kEaNdnFxLw+ZVHv2iv3ITk3WR03ilOnM6pwU=;
+        b=Kd+69eaZ2bJTiRkyKmAigUMZCBdzCQD2rVVxf9CPntK22hwx9suVaCXJLY7pJzCGJ7
+         /r1CY3HbkOKPd2os0QifPWgd3MNc9b5uQgORUWUBkUoLxF6e2+WxyzZlh0aN7fIeGT12
+         d1xJTPJErkh1PPwm+kBjxOHC6Usoesl71sPdc9fg1Cv+FWPGOO0Wxf85HIC6oNo8heSA
+         WK03Uzxz3k1Y+iS8fxFoO7gqo2wCRyN6kkV5prhtwH9XRV3nb9I3PFEOsCKvzFM28zht
+         RfoWU3nQrlDO4SjH/k1/4Bs88LjtJRU6eEYiUqIvKjsR6gnaK3emDWfsqznz0g5615ID
+         nhUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=46MKtm0kEaNdnFxLw+ZVHv2iv3ITk3WR03ilOnM6pwU=;
+        b=ShY0Zm9FCqDTlTUrDL5CfPb7lIwt/SQXRkuKjIrzPm6Rb5/7u/2pMBpDTvDWwinVZy
+         vygP8pYkkT+mg65j18VFDqOs+CgSpNlasydXxcwxj9SHptOBdTY+USpQgHVzBnTdLxw4
+         GK4qmDfRzKjj6FRDvPpPjhTnD4n9IFNNAvBV3KlujfTp3ah3CkWKU8v09rNXnGQCWora
+         5g14iIOZdYaAdGIP3xqqCtq+bPoQh5YTsjJqF21FOToYKYFpceNjNPcAmaAy1pJnma7U
+         jqSsj2wFPZr3TD4FT+/hsIO4RCZZJ8tSPEV9GvQonwiR4SrUzWxI5WOa3+CLZyMq5pp+
+         TK0w==
+X-Gm-Message-State: AO0yUKV1IC1+dD4/mYhUrQY21osQHlEyyLWXGbHqWBQJdXvTuwQBTcu5
+        WbV0rPMv2+pGtSyegzXg8pKJU6tMt4g=
+X-Google-Smtp-Source: AK7set+kfU5i6pU775JGjcMKazmOfY2wNZ3dsTzE9nZckGPyQ7xnFbfyyUVq+VMoTwoEcpgfz2tvGA==
+X-Received: by 2002:a17:906:847a:b0:885:6a2e:f941 with SMTP id hx26-20020a170906847a00b008856a2ef941mr11858743ejc.54.1677002052882;
+        Tue, 21 Feb 2023 09:54:12 -0800 (PST)
+Received: from xeon.. ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id b3-20020a170906660300b008e493b7bb61sm236357ejp.153.2023.02.21.09.54.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Feb 2023 09:54:12 -0800 (PST)
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/5] Tegra DTS improvements
+Date:   Tue, 21 Feb 2023 19:53:43 +0200
+Message-Id: <20230221175348.15681-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230221135726.40720-1-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Akhil,
+Patches add labels into t30 and t114 dtsi for easier
+node referencing. Quotes for mmc devices are replaced
+with labels for better tree comprehension. Fixed 
+accelerometer mount matrix for TF101. Added 266.5MHz
+peripheral opp node for devices which may need it.
 
-Thank you for the patch! Yet something to improve:
+Anton Bambura (1):
+  ARM: tegra: Add labels to tegra114.dtsi
 
-[auto build test ERROR on tegra/for-next]
-[also build test ERROR on linus/master v6.2 next-20230221]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Michał Mirosław (1):
+  ARM: tegra: Add labels to tegra30.dtsi
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/i2c-tegra-Share-same-DMA-channel-for-Rx-and-Tx/20230221-215924
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20230221135726.40720-1-akhilrajeev%40nvidia.com
-patch subject: [PATCH] i2c: tegra: Share same DMA channel for Rx and Tx
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20230222/202302220130.flKenlan-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/643ca30fdac50b54b2ee65f97e6e2eda9974dd3c
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Akhil-R/i2c-tegra-Share-same-DMA-channel-for-Rx-and-Tx/20230221-215924
-        git checkout 643ca30fdac50b54b2ee65f97e6e2eda9974dd3c
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash drivers/i2c/
+Svyatoslav Ryhel (3):
+  ARM: tegra: transformer: use labels for mmc in aliases
+  ARM: tegra: asus-tf101: fix accelerometer mount matrix
+  tegra30: peripherals: add 266.5MHz nodes
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202302220130.flKenlan-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/m68k/include/asm/bug.h:32,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/m68k/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:78,
-                    from arch/m68k/include/asm/irqflags.h:6,
-                    from include/linux/irqflags.h:16,
-                    from arch/m68k/include/asm/atomic.h:6,
-                    from include/linux/atomic.h:7,
-                    from include/linux/cpumask.h:13,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/mutex.h:17,
-                    from include/linux/kernfs.h:11,
-                    from include/linux/sysfs.h:16,
-                    from include/linux/kobject.h:20,
-                    from include/linux/of.h:17,
-                    from include/linux/irqdomain.h:36,
-                    from include/linux/acpi.h:13,
-                    from drivers/i2c/busses/i2c-tegra.c:9:
-   drivers/i2c/busses/i2c-tegra.c: In function 'tegra_i2c_init_dma':
->> drivers/i2c/busses/i2c-tegra.c:465:26: error: 'struct tegra_i2c_dev' has no member named 'tx_dma_chan'; did you mean 'dma_chan'?
-     465 |         WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
-         |                          ^~~~~~~~~~~
-   include/asm-generic/bug.h:122:32: note: in definition of macro 'WARN_ON'
-     122 |         int __ret_warn_on = !!(condition);                              \
-         |                                ^~~~~~~~~
->> drivers/i2c/busses/i2c-tegra.c:465:58: error: 'struct tegra_i2c_dev' has no member named 'rx_dma_chan'; did you mean 'dma_chan'?
-     465 |         WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
-         |                                                          ^~~~~~~~~~~
-   include/asm-generic/bug.h:122:32: note: in definition of macro 'WARN_ON'
-     122 |         int __ret_warn_on = !!(condition);                              \
-         |                                ^~~~~~~~~
-
-
-vim +465 drivers/i2c/busses/i2c-tegra.c
-
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  432  
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  433  static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  434  {
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  435  	struct dma_chan *chan;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  436  	dma_addr_t dma_phys;
-89e3748acd0bf6 Dmitry Osipenko     2020-09-30  437  	u32 *dma_buf;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  438  	int err;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  439  
-48cb6356fae125 Akhil R             2022-09-06  440  	if (i2c_dev->is_vi)
-89328b1b81858f Jonathan Hunter     2019-02-21  441  		return 0;
-89328b1b81858f Jonathan Hunter     2019-02-21  442  
-48cb6356fae125 Akhil R             2022-09-06  443  	if (!i2c_dev->hw->has_apb_dma) {
-89328b1b81858f Jonathan Hunter     2019-02-21  444  		if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
-48cb6356fae125 Akhil R             2022-09-06  445  			dev_dbg(i2c_dev->dev, "APB DMA support not enabled\n");
-48cb6356fae125 Akhil R             2022-09-06  446  			return 0;
-48cb6356fae125 Akhil R             2022-09-06  447  		}
-48cb6356fae125 Akhil R             2022-09-06  448  	} else if (!IS_ENABLED(CONFIG_TEGRA186_GPC_DMA)) {
-48cb6356fae125 Akhil R             2022-09-06  449  		dev_dbg(i2c_dev->dev, "GPC DMA support not enabled\n");
-89328b1b81858f Jonathan Hunter     2019-02-21  450  		return 0;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  451  	}
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  452  
-643ca30fdac50b Akhil R             2023-02-21  453  	/* The same channel will be used for both Rx and Tx.
-643ca30fdac50b Akhil R             2023-02-21  454  	 * Keeping the name as tx for backward compatibility with
-643ca30fdac50b Akhil R             2023-02-21  455  	 * existing devicetrees.
-643ca30fdac50b Akhil R             2023-02-21  456  	 */
-79e4be2c08bbbf Peter Ujfalusi      2019-11-13  457  	chan = dma_request_chan(i2c_dev->dev, "tx");
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  458  	if (IS_ERR(chan)) {
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  459  		err = PTR_ERR(chan);
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  460  		goto err_out;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  461  	}
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  462  
-643ca30fdac50b Akhil R             2023-02-21  463  	i2c_dev->dma_chan = chan;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  464  
-cdbf26251d3b35 Thierry Reding      2022-10-20 @465  	WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
-cdbf26251d3b35 Thierry Reding      2022-10-20  466  	i2c_dev->dma_dev = chan->device->dev;
-cdbf26251d3b35 Thierry Reding      2022-10-20  467  
-55c52f16a017ca Dmitry Osipenko     2020-09-30  468  	i2c_dev->dma_buf_size = i2c_dev->hw->quirks->max_write_len +
-55c52f16a017ca Dmitry Osipenko     2020-09-30  469  				I2C_PACKET_HEADER_SIZE;
-55c52f16a017ca Dmitry Osipenko     2020-09-30  470  
-cdbf26251d3b35 Thierry Reding      2022-10-20  471  	dma_buf = dma_alloc_coherent(i2c_dev->dma_dev, i2c_dev->dma_buf_size,
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  472  				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  473  	if (!dma_buf) {
-76d06443cc5b37 Dmitry Osipenko     2020-09-30  474  		dev_err(i2c_dev->dev, "failed to allocate DMA buffer\n");
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  475  		err = -ENOMEM;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  476  		goto err_out;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  477  	}
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  478  
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  479  	i2c_dev->dma_buf = dma_buf;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  480  	i2c_dev->dma_phys = dma_phys;
-c886a4a03a0155 Dmitry Osipenko     2020-09-30  481  
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  482  	return 0;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  483  
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  484  err_out:
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  485  	tegra_i2c_release_dma(i2c_dev);
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  486  	if (err != -EPROBE_DEFER) {
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  487  		dev_err(i2c_dev->dev, "cannot use DMA: %d\n", err);
-bb0e9b1d2a1f93 Colin Ian King      2019-02-15  488  		dev_err(i2c_dev->dev, "falling back to PIO\n");
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  489  		return 0;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  490  	}
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  491  
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  492  	return err;
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  493  }
-86c92b9965ff17 Sowjanya Komatineni 2019-02-12  494  
+ arch/arm/boot/dts/tegra114.dtsi               | 48 +++++++++----------
+ arch/arm/boot/dts/tegra20-asus-tf101.dts      |  6 +--
+ .../dts/tegra30-asus-transformer-common.dtsi  |  6 +--
+ .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 20 ++++++++
+ arch/arm/boot/dts/tegra30.dtsi                | 36 +++++++-------
+ 5 files changed, 68 insertions(+), 48 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.37.2
+
