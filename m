@@ -2,128 +2,171 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21F2C64EC4
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 10:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE6FC6379F
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 12:23:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232692AbjBUK1z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 05:27:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57730 "EHLO
+        id S233719AbjBUMX2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 07:23:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233284AbjBUK1y (ORCPT
+        with ESMTP id S234152AbjBUMX1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 05:27:54 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E8523C51
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Feb 2023 02:27:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676975224;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Tue, 21 Feb 2023 07:23:27 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444D91ABEC;
+        Tue, 21 Feb 2023 04:23:14 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id DFBF55C5B6;
+        Tue, 21 Feb 2023 12:23:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1676982192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=hiLmjzvpE18Y20gNAl/hePHswT74MZjZpMb0h3yOJZI=;
-        b=Z3Q2Zi10hlCQa8ofLpOaS/vu8JtkMnrh3kDnXKizOX/mg6G5FLLWq73mBvf6MGA7FhSMVj
-        oiNBjAa3sBBpgRw2KWrBBOB4K/9Ji2bW4D0n/nKN0CMRPnIRUjSC/Fsydcvh8PU2ulluVK
-        U6tGIbwjzWCNXaVxo6NRKHjlRHdwydQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-390-4nUdBnNQM-ekNwFlSpIvJA-1; Tue, 21 Feb 2023 05:27:03 -0500
-X-MC-Unique: 4nUdBnNQM-ekNwFlSpIvJA-1
-Received: by mail-wr1-f71.google.com with SMTP id n14-20020a5d67ce000000b002bfc2f61048so924571wrw.23
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Feb 2023 02:27:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hiLmjzvpE18Y20gNAl/hePHswT74MZjZpMb0h3yOJZI=;
-        b=HoXzlrGA1/mgxPAFwcj45QJPohi4/Ej7gUQWHWRNtCC9+ogWt2HrU1ztWxUtx/a81b
-         5YI/2UvSnFtiH78HHW24VAuGrQfX0tGUuIEgIbUBn8Na2QYyRkBCRJiWQt780UBV6W8l
-         y87ExXF02U2c61APGvfMYXGpj4qTwuZdM0QdVz32vKIxFDRyLfgcOcCYrxBBX7V0Kx/w
-         G3RroIjjLEhRfztO0PQPAZ3r7f1+6M4bCxIl6hDwG5LSJMaSxjY2ym9hyUXCE97LUJwI
-         A1uZp7AA33hNEGQZeILfMh7pBYZcukA39Iw+EyH1mwH6pqAIRJpfbcuhg0gJiUJrlroL
-         uWzQ==
-X-Gm-Message-State: AO0yUKW7hSo/8LQgxhfLJNXVEiVMt79QoBKxANhNfMCSezDcZrNikd2g
-        fCUQMBK9kRyTqNRTWk0lCD8eOczH4a/JAoKwkh6QNYnmGmIEngV0QwXrAietjRI16n4iHJ89N8g
-        ubUtTwse61wm1/8ZYBcbuggE=
-X-Received: by 2002:a05:600c:1887:b0:3e2:918:ecd4 with SMTP id x7-20020a05600c188700b003e20918ecd4mr2997470wmp.37.1676975222125;
-        Tue, 21 Feb 2023 02:27:02 -0800 (PST)
-X-Google-Smtp-Source: AK7set/cKnMX/kNp3d4wm95Jc/vSbL62QyA9ckz6jygZFZOsNWWFJ1UBaXn9HDaaIXMU9JLf5j495Q==
-X-Received: by 2002:a05:600c:1887:b0:3e2:918:ecd4 with SMTP id x7-20020a05600c188700b003e20918ecd4mr2997460wmp.37.1676975221852;
-        Tue, 21 Feb 2023 02:27:01 -0800 (PST)
-Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id 1-20020a05600c274100b003dfe549da4fsm4700968wmw.18.2023.02.21.02.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Feb 2023 02:27:01 -0800 (PST)
-From:   Javier Martinez Canillas <javierm@redhat.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>, airlied@gmail.com,
+        bh=bVogKeiYJl46fE6Q0XH+sR2jo+peJbifE+YPYJKeGh0=;
+        b=DC6KNE8tXoZxcaKWvIIpm/1f6ZYkOnX/PS2E8hDSsq9kvTTk/+vrcFWhXbAfgeXXzyHqmu
+        sdwBv6wuQwO9hkQC5rSHe8kszMRA2t3NcSzaeLH0yNO9n/BFDeq8SUP3p+Lcow54zPvUu8
+        as5F6CfusAfLpJtUTSDQVrab7j5s21A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1676982192;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bVogKeiYJl46fE6Q0XH+sR2jo+peJbifE+YPYJKeGh0=;
+        b=NOJWInHK8cUqJl0kCbN9ekfxIS3KtImgsMX2ahiBRlYIBaKwFQrE2kK8TnK/JMxSmRgr91
+        mROgNbItxdCGAyAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9EC2213223;
+        Tue, 21 Feb 2023 12:23:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id C5nnJbC39GPhDQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Tue, 21 Feb 2023 12:23:12 +0000
+Message-ID: <95ea4783-8eb4-63e5-767b-3b7feece955d@suse.de>
+Date:   Tue, 21 Feb 2023 13:23:11 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
+ drm_fb_helper_fini()
+To:     Javier Martinez Canillas <javierm@redhat.com>, airlied@gmail.com,
         daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
         mripard@kernel.org
 Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
- drm_fb_helper_fini()
-In-Reply-To: <20230216140620.17699-1-tzimmermann@suse.de>
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
 References: <20230216140620.17699-1-tzimmermann@suse.de>
-Date:   Tue, 21 Feb 2023 11:27:00 +0100
-Message-ID: <87y1orxqiz.fsf@minerva.mail-host-address-is-not-set>
-MIME-Version: 1.0
-Content-Type: text/plain
+ <87y1orxqiz.fsf@minerva.mail-host-address-is-not-set>
+Content-Language: en-US
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <87y1orxqiz.fsf@minerva.mail-host-address-is-not-set>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------gQcEHzXT0TlEBfedgKN7FskG"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Thomas Zimmermann <tzimmermann@suse.de> writes:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------gQcEHzXT0TlEBfedgKN7FskG
+Content-Type: multipart/mixed; boundary="------------5XDQIKa00bWVBDsjXVbbbSYS";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Javier Martinez Canillas <javierm@redhat.com>, airlied@gmail.com,
+ daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Message-ID: <95ea4783-8eb4-63e5-767b-3b7feece955d@suse.de>
+Subject: Re: [PATCH] drm/fb-helper: Remove drm_fb_helper_unprepare() from
+ drm_fb_helper_fini()
+References: <20230216140620.17699-1-tzimmermann@suse.de>
+ <87y1orxqiz.fsf@minerva.mail-host-address-is-not-set>
+In-Reply-To: <87y1orxqiz.fsf@minerva.mail-host-address-is-not-set>
 
-> Move drm_fb_helper_unprepare() from drm_fb_helper_fini() into the
-> calling fbdev implementation. Avoids a possible stale mutex with
-> generic fbdev code.
->
-> As indicated by its name, drm_fb_helper_prepare() prepares struct
-> drm_fb_helper before setting up the fbdev support with a call to
-> drm_fb_helper_init(). In legacy fbdev emulation, this happens next
-> to each other. If successful, drm_fb_helper_fini() later tear down
-> the fbdev device and also unprepare via drm_fb_helper_unprepare().
->
-> Generic fbdev emulation prepares struct drm_fb_helper immediately
-> after allocating the instance. It only calls drm_fb_helper_init()
-> as part of processing a hotplug event. If the hotplug-handling fails,
-> it runs drm_fb_helper_fini(). This unprepares the fb-helper instance
-> and the next hotplug event runs on stale data.
->
-> Solve this by moving drm_fb_helper_unprepare() from drm_fb_helper_fini()
-> into the fbdev implementations. Call it right before freeing the
-> fb-helper instance.
->
-> Fixes: 4825797c36da ("drm/fb-helper: Introduce drm_fb_helper_unprepare()")
+--------------5XDQIKa00bWVBDsjXVbbbSYS
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-I think this should be Fixes: 032116bbe152 ("drm/fbdev-generic: Minimize
-client unregistering") instead? Because commit 4825797c36da just added a
-wrapper function for mutex_destroy(&fb_helper->lock), but it was commit
-032116bbe152 that made drm_fbdev_cleanup() to call that helper function.
+SGkNCg0KQW0gMjEuMDIuMjMgdW0gMTE6Mjcgc2NocmllYiBKYXZpZXIgTWFydGluZXogQ2Fu
+aWxsYXM6DQo+IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPiB3cml0
+ZXM6DQo+IA0KPj4gTW92ZSBkcm1fZmJfaGVscGVyX3VucHJlcGFyZSgpIGZyb20gZHJtX2Zi
+X2hlbHBlcl9maW5pKCkgaW50byB0aGUNCj4+IGNhbGxpbmcgZmJkZXYgaW1wbGVtZW50YXRp
+b24uIEF2b2lkcyBhIHBvc3NpYmxlIHN0YWxlIG11dGV4IHdpdGgNCj4+IGdlbmVyaWMgZmJk
+ZXYgY29kZS4NCj4+DQo+PiBBcyBpbmRpY2F0ZWQgYnkgaXRzIG5hbWUsIGRybV9mYl9oZWxw
+ZXJfcHJlcGFyZSgpIHByZXBhcmVzIHN0cnVjdA0KPj4gZHJtX2ZiX2hlbHBlciBiZWZvcmUg
+c2V0dGluZyB1cCB0aGUgZmJkZXYgc3VwcG9ydCB3aXRoIGEgY2FsbCB0bw0KPj4gZHJtX2Zi
+X2hlbHBlcl9pbml0KCkuIEluIGxlZ2FjeSBmYmRldiBlbXVsYXRpb24sIHRoaXMgaGFwcGVu
+cyBuZXh0DQo+PiB0byBlYWNoIG90aGVyLiBJZiBzdWNjZXNzZnVsLCBkcm1fZmJfaGVscGVy
+X2ZpbmkoKSBsYXRlciB0ZWFyIGRvd24NCj4+IHRoZSBmYmRldiBkZXZpY2UgYW5kIGFsc28g
+dW5wcmVwYXJlIHZpYSBkcm1fZmJfaGVscGVyX3VucHJlcGFyZSgpLg0KPj4NCj4+IEdlbmVy
+aWMgZmJkZXYgZW11bGF0aW9uIHByZXBhcmVzIHN0cnVjdCBkcm1fZmJfaGVscGVyIGltbWVk
+aWF0ZWx5DQo+PiBhZnRlciBhbGxvY2F0aW5nIHRoZSBpbnN0YW5jZS4gSXQgb25seSBjYWxs
+cyBkcm1fZmJfaGVscGVyX2luaXQoKQ0KPj4gYXMgcGFydCBvZiBwcm9jZXNzaW5nIGEgaG90
+cGx1ZyBldmVudC4gSWYgdGhlIGhvdHBsdWctaGFuZGxpbmcgZmFpbHMsDQo+PiBpdCBydW5z
+IGRybV9mYl9oZWxwZXJfZmluaSgpLiBUaGlzIHVucHJlcGFyZXMgdGhlIGZiLWhlbHBlciBp
+bnN0YW5jZQ0KPj4gYW5kIHRoZSBuZXh0IGhvdHBsdWcgZXZlbnQgcnVucyBvbiBzdGFsZSBk
+YXRhLg0KPj4NCj4+IFNvbHZlIHRoaXMgYnkgbW92aW5nIGRybV9mYl9oZWxwZXJfdW5wcmVw
+YXJlKCkgZnJvbSBkcm1fZmJfaGVscGVyX2ZpbmkoKQ0KPj4gaW50byB0aGUgZmJkZXYgaW1w
+bGVtZW50YXRpb25zLiBDYWxsIGl0IHJpZ2h0IGJlZm9yZSBmcmVlaW5nIHRoZQ0KPj4gZmIt
+aGVscGVyIGluc3RhbmNlLg0KPj4NCj4+IEZpeGVzOiA0ODI1Nzk3YzM2ZGEgKCJkcm0vZmIt
+aGVscGVyOiBJbnRyb2R1Y2UgZHJtX2ZiX2hlbHBlcl91bnByZXBhcmUoKSIpDQo+IA0KPiBJ
+IHRoaW5rIHRoaXMgc2hvdWxkIGJlIEZpeGVzOiAwMzIxMTZiYmUxNTIgKCJkcm0vZmJkZXYt
+Z2VuZXJpYzogTWluaW1pemUNCj4gY2xpZW50IHVucmVnaXN0ZXJpbmciKSBpbnN0ZWFkPyBC
+ZWNhdXNlIGNvbW1pdCA0ODI1Nzk3YzM2ZGEganVzdCBhZGRlZCBhDQo+IHdyYXBwZXIgZnVu
+Y3Rpb24gZm9yIG11dGV4X2Rlc3Ryb3koJmZiX2hlbHBlci0+bG9jayksIGJ1dCBpdCB3YXMg
+Y29tbWl0DQo+IDAzMjExNmJiZTE1MiB0aGF0IG1hZGUgZHJtX2ZiZGV2X2NsZWFudXAoKSB0
+byBjYWxsIHRoYXQgaGVscGVyIGZ1bmN0aW9uLg0KDQpHb29kIHBvaW50LiBBZnRlciBsb29r
+aW5nIHRocm91Z2ggdGhlIHJlY2VudCBmYmRldiBjb21taXRzLCBJJ2xsIHVzZSANCmNvbW1p
+dCA2NDMyMzFiMjgzODAgKCJkcm0vZmJkZXYtZ2VuZXJpYzogTWluaW1pemUgaG90cGx1ZyBl
+cnJvciANCmhhbmRsaW5nIikgZm9yIHRoZSB0YWcuIFRoaXMgaXMgdGhlIG9uZSB0aGF0IGFk
+ZGVkIHRoZSBjYWxsIHRvIA0KZHJtX2ZiX2hlbHBlcl9maW5pKCkgdG8gdGhlIGNsaWVudCdz
+IGhvdHBsdWcgaGFuZGxlci4gQW5kIF9maW5pKCkgDQpjdXJyZW50bHkgZG9lcyB0aGUgX3Vu
+cHJlcGFyZSgpLCB3aGVuIGl0IHNob3VsZG4ndC4NCg0KPiANCj4+IENjOiBUaG9tYXMgWmlt
+bWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4NCj4+IENjOiBKYXZpZXIgTWFydGluZXog
+Q2FuaWxsYXMgPGphdmllcm1AcmVkaGF0LmNvbT4NCj4+IENjOiBNYWFydGVuIExhbmtob3Jz
+dCA8bWFhcnRlbi5sYW5raG9yc3RAbGludXguaW50ZWwuY29tPg0KPj4gQ2M6IE1heGltZSBS
+aXBhcmQgPG1yaXBhcmRAa2VybmVsLm9yZz4NCj4+IENjOiBEYXZpZCBBaXJsaWUgPGFpcmxp
+ZWRAZ21haWwuY29tPg0KPj4gQ2M6IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4N
+Cj4+IENjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQo+Pg0KPj4gU2lnbmVk
+LW9mZi1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+DQo+PiAt
+LS0NCj4gDQo+IFRoZSBjaGFuZ2UgaXRzZWxmIGxvb2tzIGdvb2QgdG8gbWUuDQo+IA0KPiBS
+ZXZpZXdlZC1ieTogSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIDxqYXZpZXJtQHJlZGhhdC5j
+b20+DQo+IA0KDQpUaGFua3MgYSBsb3QuDQoNCkJlc3QgcmVnYXJkcw0KVGhvbWFzDQoNCg0K
+LS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVsb3Blcg0KU1VT
+RSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQw
+OSBOw7xybmJlcmcsIEdlcm1hbnkNCihIUkIgMzY4MDksIEFHIE7DvHJuYmVyZykNCkdlc2No
+w6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCg==
 
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Javier Martinez Canillas <javierm@redhat.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: dri-devel@lists.freedesktop.org
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
+--------------5XDQIKa00bWVBDsjXVbbbSYS--
 
-The change itself looks good to me.
+--------------gQcEHzXT0TlEBfedgKN7FskG
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Best regards,
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmP0t68FAwAAAAAACgkQlh/E3EQov+DZ
+QA//VoXz82PV55b8Lfi8ZzTLbB7Rq3P6Sqzn2O0XZys952VSpOLISegHR8uKg3sa3QEY+4OswGR+
+bE3lycMHCpHXXhl9N/z4NWY9uhlxt4iYSkpeGh3vbyxxAG3CmjqgyenaUbx+XNkbWspqqYdTNhQF
+hzTDmIna+u5d1GU08Otg+V3CoJpH18PjkfkJO6ANTdYS5P69dNzSRYme7R2D0DhnTnWgqQTTya7F
+I8qP543IGpEtTUEcI/HkUzD7rKM6gruL5zhQL1isrnRbfopxSa3HnDMy3rNKqhDVTmHb7BfrLnd4
+bjzzPfWJwyAAg19Szw9HOzGCA1f7nyB/l755M6WlLl9qW2TX+9MjRnGTXE5XGsS74Sl85DvW3kkV
+WSViGzmJ9tb/df1UeaouSCTFvkGgB1SHRCi4OHwZ70tTCqvM+uPBymh3f8VukMBDs7BliCROk00a
+xZUrTbQuKZhw8/bE8FCueAetmfL9PCVaokhfODjP+MxF9NMBrEBQiApYNvb+ElxKg0AgVtfa2Whq
+ozaQifZoqjn7D4zO6WSwtl8TcGF1bsFxyNhCBc5aUk7pTuKJUrQvcQTFMIUR+yEMBhsHeQLQAxUB
+QMKWkk5i5NNrcnl4/R+CuJSFz7dN8y7qMUOmDVTA20T0Ra+JQvy3hR1xR1svuC5zy45Ui2Wky9no
+OsQ=
+=1Qbn
+-----END PGP SIGNATURE-----
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+--------------gQcEHzXT0TlEBfedgKN7FskG--
