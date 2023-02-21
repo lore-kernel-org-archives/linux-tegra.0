@@ -2,37 +2,37 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B23E0C61DA3
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 22:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969C7C6379F
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 22:41:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbjBUW1I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 17:27:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50872 "EHLO
+        id S230354AbjBUWlz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 17:41:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbjBUW1H (ORCPT
+        with ESMTP id S230324AbjBUWly (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 17:27:07 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EFB131E08;
-        Tue, 21 Feb 2023 14:27:04 -0800 (PST)
+        Tue, 21 Feb 2023 17:41:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C7823858;
+        Tue, 21 Feb 2023 14:41:50 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D18B0B810D5;
-        Tue, 21 Feb 2023 22:27:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A4B7C433EF;
-        Tue, 21 Feb 2023 22:27:00 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C41E611F8;
+        Tue, 21 Feb 2023 22:41:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B47C433EF;
+        Tue, 21 Feb 2023 22:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677018421;
-        bh=P06SrSSCbTF2Xgb/8rAJuCEF9liIHWSGJ4BAANKNp1s=;
+        s=k20201202; t=1677019309;
+        bh=0jWSrZiIEN4x32uRTklDrYs3W6jpjgamnp/3khg4KpM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Tf1Ivc7RJbuxndkFsSDprYpWOJFuUVMUrixHOsDLE0cIAeW11Lhkoai/L+JMqFc1j
-         G3IRZ5K26SpWw4f6vFEsYb7fITg6VWoekVGOZ5K5XC6RF4MERwBYvKmhht8wf7ekz2
-         BWM9sYFEHYoFi0C+jtVXHOH0OoTAyjBn6f9B3hndiH8mut1OYojq8r+XWBcW6R/h1o
-         6ORgkSSWbfE+vg3yiBi/rKu0qjTapANCjQ2YJDmlhLK+xmxlv8Bt1leQ9X42ckYZ0a
-         XQPqkaNhx3qwfBIPUIPap4mCKK9bywYWS0ts6FDNFAxvCDWEPcZdrOHfOE9/A84pq5
-         WrXqpa2zYfkgQ==
-Date:   Tue, 21 Feb 2023 22:26:58 +0000
+        b=a8Cw740x+y9QfrLGKgcC2J8j48ETLPsHL6ZB57DG9jiyQejRF3aPx3uXfKG+AU76M
+         hnEJ0G5VrTVkQ15o8E626ubweoVSpx19c1CYVkf/krW0rlN98dt/3C0pgS7KX/tEG3
+         7oWCM/2NtObu8QWigvFXcAeaOLQ6sAo3Ic+2IJLuQhbQq9c8LuzZJUvfg9LfSDQF3U
+         8vlM3KCInnerWHFqeQcH6FNaC2JdIu+9jVf3T36nMAsvVHrZgK/IbyY4PnpSWqxE6l
+         2FVrtdTK+JWX33aOgsPTLmQVrrQX7OJXBzfQATXkeyxcFA5Vg/EkntAj9oOuZvNN+9
+         vekCI7YvuWHfw==
+Date:   Tue, 21 Feb 2023 22:41:41 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Svyatoslav Ryhel <clamor95@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -47,48 +47,50 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v1 07/10] ARM: tegra: transformers: update bindings of
- sound graph
-Message-ID: <Y/VFMl5Darm7YEK1@sirena.org.uk>
+Subject: Re: [PATCH v1 09/10] staging: dsp: add support for Fortemedia FM34NE
+ DSP
+Message-ID: <Y/VIpVwFu5gUUcsz@sirena.org.uk>
 References: <20230221183211.21964-1-clamor95@gmail.com>
- <20230221183211.21964-8-clamor95@gmail.com>
+ <20230221183211.21964-10-clamor95@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yuk3nqAxVaP3OTyz"
+        protocol="application/pgp-signature"; boundary="t+XYRlFjbWnfVnHi"
 Content-Disposition: inline
-In-Reply-To: <20230221183211.21964-8-clamor95@gmail.com>
+In-Reply-To: <20230221183211.21964-10-clamor95@gmail.com>
 X-Cookie: Serving suggestion.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---yuk3nqAxVaP3OTyz
+--t+XYRlFjbWnfVnHi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Feb 21, 2023 at 08:32:08PM +0200, Svyatoslav Ryhel wrote:
-> - fix headset detection in common device tree;
+On Tue, Feb 21, 2023 at 08:32:10PM +0200, Svyatoslav Ryhel wrote:
+> FM34NE is digital sound processing chip used for active
+> noise suppression mainly on ASUS Transformers.
 
-At least this should probably be split out as a separate change
-so it can be backported as a fix.
+This looks like it should be fairly straightforward to support
+within ASoC without too much work, and since it's in the audio
+path it should probably be referenced from the sound card it'll
+end up having an ABI impact on the card.  Take a look at wm9090
+for a moderately complex example of an analogue only device
+(which this appears to be in terms of system integration).
 
-> - diverge control and detect elements for mic;
-> - use GPIO mic detection on wm8903 devices;
-
---yuk3nqAxVaP3OTyz
+--t+XYRlFjbWnfVnHi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmP1RTEACgkQJNaLcl1U
-h9A4OAf8DMi/om6e4mm8TBFtglGASJyWKbwfRlPfnmHfZe9NRFocDsboQo+U6XFK
-qxHu7nNOMUpIioEO5BEmw8UI1d3UWv28a2FLvEZODA08cBKmg2G0OPiUTQtb5kUc
-eG2PvDWMskSVbzr0eSZBWObIXM4rn/83gvsLwdFJM6PYkUHPgsDtW0wTK+S8dIWK
-BwyeF5IodplgwhhC9LQDH5rjGbXHWZIWOBCIQO4d4nhKQH/qDou2CXoENIAmZk0W
-fvrnmz/hqv6IgLI81L9Teh7Q+eko/opWAJa9r4I9SCOMW/MLlveyc2oDA0zlI93p
-fku7U+Z2zBKL5qyGRIRbhQTNPzUsXQ==
-=ZxfP
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmP1SKQACgkQJNaLcl1U
+h9DDVwf+K70Y1qVzg5TOp77al5H538FgUpnrUexBgtqevxsnf2pfTG1u1FhzAIPx
+ailEywGHqikGuQiQnRlJ7QJ/nq2PVnZ48f+yjdRrvE5Y6gPfuVAVaXMUlO0cVF+g
+gHuBj6tIxjz+ovqg9plyLwp0+6Pq2hkBOfMgRLU5YrfK2uUa991io9enHztwPJ1K
+EDBwItdOm7Z7rA3eYR6SYwDaA/DrGoqcrZkj4JCsOYi6yxHUyoXWeRKUQUcC9G8b
+KBTABkNAykYsDQpp1ePy5k3DNPeTzWCTlnp6FkEeVI2CSbiCO2WCNUamZR+LPS9o
+DHJiBUmskQVX14bLBWBufAXsfXgFsw==
+=ItYQ
 -----END PGP SIGNATURE-----
 
---yuk3nqAxVaP3OTyz--
+--t+XYRlFjbWnfVnHi--
