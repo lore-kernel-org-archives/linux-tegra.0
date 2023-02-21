@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1BDC636D7
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 18:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D93CC636D7
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 18:32:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbjBUSc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 13:32:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57088 "EHLO
+        id S230213AbjBUScf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 13:32:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229767AbjBUSc2 (ORCPT
+        with ESMTP id S229767AbjBUScd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 13:32:28 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 902D32F7A3;
-        Tue, 21 Feb 2023 10:32:25 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id cq23so20729285edb.1;
-        Tue, 21 Feb 2023 10:32:25 -0800 (PST)
+        Tue, 21 Feb 2023 13:32:33 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E8ED30289;
+        Tue, 21 Feb 2023 10:32:28 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id cq23so20729753edb.1;
+        Tue, 21 Feb 2023 10:32:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wVgROdQULqVTm5cZsK90w6/mn8hCbHN5YbVIzDSMgeI=;
-        b=XthLSfsJ3sDWeedA3vMFgH+nYyTWffN3ykvdKMIgZCII5Lp0jEbv1STD7zYnHiAXsu
-         HbvRZ0JONBH3SVuVB+D0CU+OjLkg8WrvZOXAe8YXc7Xs3p4civ1HOb80g6Tv3mnRfP95
-         9sDvNh3FXGQz+/yu7FB5/GsOZLhL+JO0XCqNK3uF8VLDnB+TJ8TX/6mn2YAqLu0HIxIX
-         vr7d7tzQV75/NlCycYQmnXfYXZPj+dE/8KeQcg69mWpegtRdxTHv4Pr/act1AhAqOqY7
-         cgGIryvz4WE5E7Q5hzUSNbz7aYTdhQBOuwDn4qbY+NnweeqjJBM0oFLTCbhT/5SFR52S
-         VNBA==
+        bh=NH8T3uIDsMsshselwDvDLZiGP6dvAgAvE+M69z4Yx3w=;
+        b=H/CTM8eqll4oT5mdFcfpaEYryD5fvk1h+y1Tbx39YEVekGOVolmb/0uTeQLtxZE1fl
+         nDKd8uCmSKwbzkevYopP8oOoFWbX2MXvWsA+tthPw6mCF7xFgwJQ6ewYSQWOnIpFuEp0
+         usH3bVyQ8WsYbQNcJKdo4W66lYT+ccTnrksgYnsj25QXX8kAA6kb7EjfloCTaMMZbNj4
+         qEDw4FB3oxyV9Tde9ie1Giv02lSDCDtlfinG12y6McC7sJDtCpXccNxQH57lziAcFRC8
+         Pi1gP8ynmxlLGKRC1nrgyosthPKS7dQQve9gmYtWzxYIsSWDWD41OQDvf9v+PnrIDjL0
+         4yYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wVgROdQULqVTm5cZsK90w6/mn8hCbHN5YbVIzDSMgeI=;
-        b=8JxMBFfRsLKZ3IhFyDWYQ7u0Hg10P7KJvUAXQddzBxYwWRVkXCMSpED3Vpg2hpvbGF
-         oB7OJOQdySaRtXl3VDtgLbD6tOMKzCkfIbffdle3Xfoq26Q6ulegSPXmQayihHQQuqTd
-         Nky5bfUJbIBJovA+X5sDxQUmZp4ZTkq0rmA2u63rsUQh2XqM4hJpC5uY/6/1x4l40NJx
-         WFIY3JHEFs1SbsKcT/w5dMW8yQQ1Mg/G78COGKzZN4+wNSXr2MemhKCq0ZLv/A4Hnj7W
-         d8SZsHAP9INfG7HqDB2crCKs0i9VQ2wtAjPidwD3MHspc1cqsHu08Xk0eC/GkkSekyV+
-         rLDA==
-X-Gm-Message-State: AO0yUKUrgop5uOjVZNJkXv5xZv9G+sZnYbA7uFtJdWPabrSdxrIDNjUP
-        PqXZ2CK73VZepmS+xUZIVnM=
-X-Google-Smtp-Source: AK7set+jQ+9BvsQ5gp+9b4ZiiTcgH/+mt6qbyEDN5u7cOiJ5nhFbV8IA7F8K4+TrBiJSTmaG8DqX7Q==
-X-Received: by 2002:a05:6402:406:b0:4ac:b8eb:e398 with SMTP id q6-20020a056402040600b004acb8ebe398mr4582455edv.6.1677004343982;
-        Tue, 21 Feb 2023 10:32:23 -0800 (PST)
+        bh=NH8T3uIDsMsshselwDvDLZiGP6dvAgAvE+M69z4Yx3w=;
+        b=EHx8vFrGbWsID4deej76ZP77U8d2yryibh7fMmOPRRzRDMCTzSTFyFFPM5Cwu1sbSS
+         V0hat0JFwhdDNAHbJGWZSJhNkSJDS61OARaOWg3lXsAv50YCsuFgcjRulAtAEZv3fBRP
+         aMOgDnSEyxMWUH05vuSllPWY+zO8o4NLBf3yQSl5aMgpSTaU/bErk2KYNYZIQnxPrHzs
+         v+UF+HZQMRrHuSyOKoCqR/hqS433OKrB1I3ikXayNc3s5YeBE7QNQdP9VGMWiZAfAcIY
+         WdUNe19Ug+cwLuXPmmo4rloYvb6R+bsh1R2OCw+EonMaI4f9L0+9pu87SthALW7BZHkH
+         75pw==
+X-Gm-Message-State: AO0yUKXqSioXf+B5V4zsCMlzjN367KOfxJCUVBNUfpkzeTM/XkBenSyY
+        TwEruqIatpjHAQkLS8pIs4QuH0apitgdpw==
+X-Google-Smtp-Source: AK7set9MPFA7PiA4Qwf584jP14HcozBU036cScKVnlwHTZJuOfvIsNU4rUdHRJDpVcT91NlLdpB80w==
+X-Received: by 2002:aa7:c055:0:b0:4ac:bbd8:d04a with SMTP id k21-20020aa7c055000000b004acbbd8d04amr6237682edo.5.1677004346521;
+        Tue, 21 Feb 2023 10:32:26 -0800 (PST)
 Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id i3-20020a50c3c3000000b004af5aa16fcasm169102edf.66.2023.02.21.10.32.22
+        by smtp.gmail.com with ESMTPSA id i3-20020a50c3c3000000b004af5aa16fcasm169102edf.66.2023.02.21.10.32.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Feb 2023 10:32:23 -0800 (PST)
+        Tue, 21 Feb 2023 10:32:26 -0800 (PST)
 From:   Svyatoslav Ryhel <clamor95@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-staging@lists.linux.dev
-Subject: [PATCH v1 01/10] dt-bindings: sound: nvidia,tegra-audio-common: add new property
-Date:   Tue, 21 Feb 2023 20:32:02 +0200
-Message-Id: <20230221183211.21964-2-clamor95@gmail.com>
+Subject: [PATCH v1 03/10] dt-bindings: sound: nvidia,tegra-audio: add RT5631 CODEC
+Date:   Tue, 21 Feb 2023 20:32:04 +0200
+Message-Id: <20230221183211.21964-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230221183211.21964-1-clamor95@gmail.com>
 References: <20230221183211.21964-1-clamor95@gmail.com>
@@ -78,27 +78,110 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add nvidia,coupled-mic-hp-det property to use Mic detect GPIO only
-if HP GPIO is in active state.
+From: David Heidelberg <david@ixit.cz>
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Add dt-binding for RT5631 CODEC.
+
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- .../devicetree/bindings/sound/nvidia,tegra-audio-common.yaml  | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../sound/nvidia,tegra-audio-rt5631.yaml      | 88 +++++++++++++++++++
+ 1 file changed, 88 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5631.yaml
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml
-index 82801b4f46dd..7c1e9895ce85 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml
-@@ -80,4 +80,8 @@ properties:
-     type: boolean
-     description: The Mic Jack represents state of the headset microphone pin
- 
-+  nvidia,coupled-mic-hp-det:
-+    type: boolean
-+    description: The Mic detect GPIO is viable only if HP detect GPIO is active
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5631.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5631.yaml
+new file mode 100644
+index 000000000000..b347f34c47f2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5631.yaml
+@@ -0,0 +1,88 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-rt5631.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- additionalProperties: true
++title: NVIDIA Tegra audio complex with RT5631 CODEC
++
++maintainers:
++  - Jon Hunter <jonathanh@nvidia.com>
++  - Thierry Reding <thierry.reding@gmail.com>
++
++allOf:
++  - $ref: nvidia,tegra-audio-common.yaml#
++
++properties:
++  compatible:
++    items:
++      - pattern: '^[a-z0-9]+,tegra-audio-rt5631(-[a-z0-9]+)+$'
++      - const: nvidia,tegra-audio-rt5631
++
++  nvidia,audio-routing:
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++    description: |
++      A list of the connections between audio components.
++      Each entry is a pair of strings, the first being the connection's sink,
++      the second being the connection's source. Valid names for sources and
++      sinks are the pins (documented in the binding document),
++      and the jacks on the board.
++    minItems: 2
++    items:
++      enum:
++        # Board Connectors
++        - "Int Spk"
++        - "Headphone Jack"
++        - "Mic Jack"
++        - "Int Mic"
++
++        # CODEC Pins
++        - MIC1
++        - MIC2
++        - AXIL
++        - AXIR
++        - MONOIN_RXN
++        - MONOIN_RXP
++        - DMIC
++        - MIC Bias1
++        - MIC Bias2
++        - MONO_IN
++        - AUXO1
++        - AUXO2
++        - SPOL
++        - SPOR
++        - HPOL
++        - HPOR
++        - MONO
++
++required:
++  - nvidia,i2s-controller
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra30-car.h>
++    #include <dt-bindings/soc/tegra-pmc.h>
++    sound {
++        compatible = "asus,tegra-audio-rt5631-tf700t",
++                     "nvidia,tegra-audio-rt5631";
++        nvidia,model = "Asus Transformer Infinity TF700T RT5631";
++
++        nvidia,audio-routing =
++                "Headphone Jack", "HPOL",
++                "Headphone Jack", "HPOR",
++                "Int Spk", "SPOL",
++                "Int Spk", "SPOR",
++                "MIC1", "MIC Bias1",
++                "MIC Bias1", "Mic Jack",
++                "DMIC", "Int Mic";
++
++        nvidia,i2s-controller = <&tegra_i2s1>;
++        nvidia,audio-codec = <&rt5631>;
++
++        clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
++                 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
++                 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
++        clock-names = "pll_a", "pll_a_out0", "mclk";
++    };
 -- 
 2.37.2
 
