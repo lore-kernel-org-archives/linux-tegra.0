@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A27F5C64ED9
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 18:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B43DC64ED6
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 18:32:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230397AbjBUSco (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 13:32:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57432 "EHLO
+        id S230307AbjBUScq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 13:32:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230232AbjBUSch (ORCPT
+        with ESMTP id S230327AbjBUScn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 13:32:37 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720412E0F7;
-        Tue, 21 Feb 2023 10:32:30 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id h16so21178562edz.10;
-        Tue, 21 Feb 2023 10:32:30 -0800 (PST)
+        Tue, 21 Feb 2023 13:32:43 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A2D303C9;
+        Tue, 21 Feb 2023 10:32:32 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id eg37so17184565edb.12;
+        Tue, 21 Feb 2023 10:32:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7mbS3PQtaiGcPdHVmHK5KHmqLpEohCcTweQJ5EgXuiY=;
-        b=Ku08TnoYik5za8z9qvRzVXLT6c1xZUixmrWodB6t+suqVat/3n0Jrtzr2IhboiCRAY
-         5FMHqXM69Wqmuv37UIZs9hnkJDlSU5NXr8q/eTdNH6ijCZ14qZDxT5F0MjOKYzrCqedA
-         ZgN/y+y2CWqj8Dvo0DImcvd1Cwzz2/uU9y22Coi3WqQPRw72Hc07WlrlD6Xu4ESJznPF
-         53etHxCFf0ql6+sX4Dc8LbjYpRLpFA3qEdH6Ca5ytApvCVqCXWjN7OTBrGS9d3jahpq7
-         EoMseFH8UTUkyIFmVLW1cA8Ae76cpFEXGNlY7Yo4U14vWM1R1Pke0ywsLllqLCT5uNSF
-         B/AQ==
+        bh=L9otEBsT6k51szcPeR0kTauQC7TYJHg3vZcCUlJI+pc=;
+        b=P2rP1loDB9zDzKlPh8AUJXtkTwSG1jgp86DgcAWNlj14I1aKsyb/hY0cEu1mK/Em6v
+         2VbL/pm9rgAIQGZXIqeZ3VRz3/sRqwnBOLwwjX6tj+LYaVa31idu512iPJmBe75R5Wy0
+         SHMkE1qGCiJBrg2Gf02BCmoBRxVgHAlWM1zJlC9JnTXYn3+P4Ampb59c7Zzw/5cdbBag
+         sJ4RJNxoRZC1or0mkhU6Ufi0LxIV6RMY7a/dQtOaww8wdtsMTPuVABcsplPD6FOlKXZa
+         /9gYkT7e7/zI/eXBoS6cOqF3OfzoOGvRFtUgI6rucRtMP366vsS7/8HpZkIzrMF96XuD
+         o77Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7mbS3PQtaiGcPdHVmHK5KHmqLpEohCcTweQJ5EgXuiY=;
-        b=hlOEI/cMl/MhnhXNiXrXelh95TOOrUYwijZ2e7BYmdaBztsa1I/xLJu0jiCkRh+8mk
-         xNz5tRd+0YB5uYczlp6DkqM8L9eGgv1+niOnXWc6nnoN09Hg1DzOUkg0IkHzuDRwa1xA
-         yoZy4UDeHPQC394GuGfCWx3hKpnIjljXOTVMFifJlRklFcfgTXg4k1SBv48aoxsmoQzJ
-         evI2gkPxSuCwiRUgJUQU0HMlmJ7NCs7ES9YzFb/HNu9ak7BbEMgLe2A5MW1+w8SjTze3
-         GgzOs8suGx7WxkEIXl/pMRiqj+UAcDzPrxr39Bjwm1aprzhV6+pWGRmnM4r7K6eLu7Mu
-         dtBw==
-X-Gm-Message-State: AO0yUKXSr1hGC7uqHZvAnR8SF0EmFciyLyXawrNrGeHTixIDSJdm0Tu3
-        6Hio5ImlTXZo327ukdOeX5HEI4aNeOGUSg==
-X-Google-Smtp-Source: AK7set/LteK3qpbAq1LKdw+rlpbLWNJhpurzLhgxg23pB6vb+FQgCIHXqCxN3v958CVxug40jX9oFw==
-X-Received: by 2002:a50:ee01:0:b0:4ae:eb0f:892e with SMTP id g1-20020a50ee01000000b004aeeb0f892emr5579895eds.20.1677004348983;
-        Tue, 21 Feb 2023 10:32:28 -0800 (PST)
+        bh=L9otEBsT6k51szcPeR0kTauQC7TYJHg3vZcCUlJI+pc=;
+        b=0AfFP6dEVC6U7vvIGI4gBEhFxxKll9Rz7gMqcUjCQrOIyagHdBbuYnMqYpJ7xnWrXH
+         sZqD/WRar+vGD68dEl2ov0gdlN7d0kncfiVOyc4Cz8WJdksrCtRrUR99IKWcFsILayZU
+         tYiOMogcYzEYu/ng1CXyIaMZSIUIUZvxaNYP5cLTzRSh4nH3Dd0VjEAOWR5Ruoh3zc0x
+         aCcPQyqREW8w8UoU7KqgFQMrHak7zLR6RwWN7XohECtgJQShJDQcjPgpwF5X/RyBEKLT
+         4icFxNZREVTU8hcmfEpdei3bvjJnSuxO83suLSbHLije55Qt6LH/9mA5R4C/hG2t2TVu
+         nDaQ==
+X-Gm-Message-State: AO0yUKUQLqo9EUevruStdC+DTZXJ/rrqA/PuPqpdD+8BOllECQAo4iyt
+        Wv8HCNcpJ3KoSSUwMpXJ5+E=
+X-Google-Smtp-Source: AK7set9t015eh91cqytauqJuSGOe9dRZJXr9U0AD04dYgH1iSSbPBCvAVw0DCAFgr2PSjfdFh6Zvnw==
+X-Received: by 2002:a05:6402:164c:b0:4ad:7c30:25a3 with SMTP id s12-20020a056402164c00b004ad7c3025a3mr6436926edx.1.1677004350203;
+        Tue, 21 Feb 2023 10:32:30 -0800 (PST)
 Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id i3-20020a50c3c3000000b004af5aa16fcasm169102edf.66.2023.02.21.10.32.27
+        by smtp.gmail.com with ESMTPSA id i3-20020a50c3c3000000b004af5aa16fcasm169102edf.66.2023.02.21.10.32.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Feb 2023 10:32:28 -0800 (PST)
+        Tue, 21 Feb 2023 10:32:29 -0800 (PST)
 From:   Svyatoslav Ryhel <clamor95@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-staging@lists.linux.dev
-Subject: [PATCH v1 05/10] dt-bindings: sound: nvidia,tegra-audio: add MAX9808x CODEC
-Date:   Tue, 21 Feb 2023 20:32:06 +0200
-Message-Id: <20230221183211.21964-6-clamor95@gmail.com>
+Subject: [PATCH v1 06/10] ASoC: tegra: Support MAX9808x by machine driver
+Date:   Tue, 21 Feb 2023 20:32:07 +0200
+Message-Id: <20230221183211.21964-7-clamor95@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230221183211.21964-1-clamor95@gmail.com>
 References: <20230221183211.21964-1-clamor95@gmail.com>
@@ -78,113 +78,127 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add dt-binding for MAX9808x CODEC.
+Add Maxim MAX9808x codec support to the Tegra ASoC machine driver.
+This codec is found on LG T30 devices like Optimus 4X HD and
+Optimus Vu.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../sound/nvidia,tegra-audio-max9808x.yaml    | 93 +++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
+ sound/soc/tegra/Kconfig              |  9 ++++++
+ sound/soc/tegra/tegra_asoc_machine.c | 46 +++++++++++++++++++++++++---
+ 2 files changed, 51 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
-new file mode 100644
-index 000000000000..256ca4ad081e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
-@@ -0,0 +1,93 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-max9808x.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index ff905e5dcd86..950f490b8d54 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -263,6 +263,15 @@ config SND_SOC_TEGRA_MAX98090
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+ 	  boards using the MAX98090 codec, such as Venice2.
+ 
++config SND_SOC_TEGRA_MAX98088
++	tristate "SoC Audio support for Tegra boards using a MAX9808x codec"
++	depends on I2C && GPIOLIB
++	select SND_SOC_TEGRA_MACHINE_DRV
++	select SND_SOC_MAX98088
++	help
++	  Say Y or M here if you want to add support for SoC audio on Tegra
++	  boards using the MAX98088 codec, such as LG X3.
 +
-+title: NVIDIA Tegra audio complex with MAX9808x CODEC
+ config SND_SOC_TEGRA_RT5677
+ 	tristate "SoC Audio support for Tegra boards using a RT5677 codec"
+ 	depends on I2C && GPIOLIB
+diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
+index 607800ec07a6..fa0627ea20d7 100644
+--- a/sound/soc/tegra/tegra_asoc_machine.c
++++ b/sound/soc/tegra/tegra_asoc_machine.c
+@@ -86,11 +86,11 @@ static int tegra_machine_event(struct snd_soc_dapm_widget *w,
+ 		gpiod_set_value_cansleep(machine->gpiod_spkr_en,
+ 					 SND_SOC_DAPM_EVENT_ON(event));
+ 
+-	if (!strcmp(w->name, "Mic Jack"))
++	if (!strcmp(w->name, "Mic Jack") || !strcmp(w->name, "Headset Mic"))
+ 		gpiod_set_value_cansleep(machine->gpiod_ext_mic_en,
+ 					 SND_SOC_DAPM_EVENT_ON(event));
+ 
+-	if (!strcmp(w->name, "Int Mic"))
++	if (!strcmp(w->name, "Int Mic") || !strcmp(w->name, "Internal Mic 2"))
+ 		gpiod_set_value_cansleep(machine->gpiod_int_mic_en,
+ 					 SND_SOC_DAPM_EVENT_ON(event));
+ 
+@@ -108,11 +108,12 @@ static const struct snd_soc_dapm_widget tegra_machine_dapm_widgets[] = {
+ 	SND_SOC_DAPM_HP("Headphones", NULL),
+ 	SND_SOC_DAPM_SPK("Speakers", tegra_machine_event),
+ 	SND_SOC_DAPM_SPK("Int Spk", tegra_machine_event),
++	SND_SOC_DAPM_SPK("Earpiece", NULL),
+ 	SND_SOC_DAPM_MIC("Int Mic", tegra_machine_event),
+ 	SND_SOC_DAPM_MIC("Mic Jack", tegra_machine_event),
+ 	SND_SOC_DAPM_MIC("Internal Mic 1", NULL),
+-	SND_SOC_DAPM_MIC("Internal Mic 2", NULL),
+-	SND_SOC_DAPM_MIC("Headset Mic", NULL),
++	SND_SOC_DAPM_MIC("Internal Mic 2", tegra_machine_event),
++	SND_SOC_DAPM_MIC("Headset Mic", tegra_machine_event),
+ 	SND_SOC_DAPM_MIC("Digital Mic", NULL),
+ 	SND_SOC_DAPM_MIC("Mic", NULL),
+ 	SND_SOC_DAPM_LINE("Line In Jack", NULL),
+@@ -123,6 +124,7 @@ static const struct snd_soc_dapm_widget tegra_machine_dapm_widgets[] = {
+ static const struct snd_kcontrol_new tegra_machine_controls[] = {
+ 	SOC_DAPM_PIN_SWITCH("Speakers"),
+ 	SOC_DAPM_PIN_SWITCH("Int Spk"),
++	SOC_DAPM_PIN_SWITCH("Earpiece"),
+ 	SOC_DAPM_PIN_SWITCH("Int Mic"),
+ 	SOC_DAPM_PIN_SWITCH("Headset Mic"),
+ 	SOC_DAPM_PIN_SWITCH("Internal Mic 1"),
+@@ -713,6 +715,40 @@ static const struct tegra_asoc_data tegra_max98090_data = {
+ 	.add_hp_jack = true,
+ };
+ 
++/* MAX98088 machine */
 +
-+maintainers:
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Thierry Reding <thierry.reding@gmail.com>
++SND_SOC_DAILINK_DEFS(max98088_hifi,
++	DAILINK_COMP_ARRAY(COMP_EMPTY()),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "HiFi")),
++	DAILINK_COMP_ARRAY(COMP_EMPTY()));
 +
-+allOf:
-+  - $ref: nvidia,tegra-audio-common.yaml#
++static struct snd_soc_dai_link tegra_max98088_dai = {
++	.name = "MAX98088",
++	.stream_name = "MAX98088 PCM",
++	.init = tegra_asoc_machine_init,
++	.dai_fmt = SND_SOC_DAIFMT_I2S |
++		   SND_SOC_DAIFMT_NB_NF |
++		   SND_SOC_DAIFMT_CBS_CFS,
++	SND_SOC_DAILINK_REG(max98088_hifi),
++};
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - pattern: '^[a-z0-9]+,tegra-audio-max98088(-[a-z0-9]+)+$'
-+          - const: nvidia,tegra-audio-max98088
-+      - items:
-+          - pattern: '^[a-z0-9]+,tegra-audio-max98089(-[a-z0-9]+)+$'
-+          - const: nvidia,tegra-audio-max98089
++static struct snd_soc_card snd_soc_tegra_max98088 = {
++	.components = "codec:max98088",
++	.dai_link = &tegra_max98088_dai,
++	.num_links = 1,
++	.fully_routed = true,
++};
 +
-+  nvidia,audio-routing:
-+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-+    description: |
-+      A list of the connections between audio components.
-+      Each entry is a pair of strings, the first being the connection's sink,
-+      the second being the connection's source. Valid names for sources and
-+      sinks are the pins (documented in the binding document),
-+      and the jacks on the board.
-+    minItems: 2
-+    items:
-+      enum:
-+        # Board Connectors
-+        - "Int Spk"
-+        - "Headphone Jack"
-+        - "Earpiece"
-+        - "Headset Mic"
-+        - "Internal Mic 1"
-+        - "Internal Mic 2"
++static const struct tegra_asoc_data tegra_max98088_data = {
++	.mclk_rate = tegra_machine_mclk_rate_12mhz,
++	.card = &snd_soc_tegra_max98088,
++	.add_common_dapm_widgets = true,
++	.add_common_controls = true,
++	.add_common_snd_ops = true,
++	.add_mic_jack = true,
++	.add_hp_jack = true,
++};
 +
-+        # CODEC Pins
-+        - HPL
-+        - HPR
-+        - SPKL
-+        - SPKR
-+        - RECL
-+        - RECR
-+        - INA1
-+        - INA2
-+        - INB1
-+        - INB2
-+        - MIC1
-+        - MIC2
-+        - MICBIAS
-+
-+required:
-+  - nvidia,i2s-controller
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra30-car.h>
-+    #include <dt-bindings/soc/tegra-pmc.h>
-+    sound {
-+        compatible = "lge,tegra-audio-max98089-p895",
-+                     "nvidia,tegra-audio-max98089";
-+        nvidia,model = "LG Optimus Vu MAX98089";
-+
-+        nvidia,audio-routing =
-+            "Headphone Jack", "HPL",
-+            "Headphone Jack", "HPR",
-+            "Int Spk", "SPKL",
-+            "Int Spk", "SPKR",
-+            "Earpiece", "RECL",
-+            "Earpiece", "RECR",
-+            "INA1", "Headset Mic",
-+            "MIC1", "MICBIAS",
-+            "MICBIAS", "Internal Mic 1",
-+            "MIC2", "Internal Mic 2";
-+
-+        nvidia,i2s-controller = <&tegra_i2s0>;
-+        nvidia,audio-codec = <&codec>;
-+
-+        clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
-+                 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+                 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+        clock-names = "pll_a", "pll_a_out0", "mclk";
-+    };
+ /* SGTL5000 machine */
+ 
+ SND_SOC_DAILINK_DEFS(sgtl5000_hifi,
+@@ -941,6 +977,8 @@ static const struct tegra_asoc_data tegra_rt5631_data = {
+ static const struct of_device_id tegra_machine_of_match[] = {
+ 	{ .compatible = "nvidia,tegra-audio-trimslice", .data = &tegra_trimslice_data },
+ 	{ .compatible = "nvidia,tegra-audio-max98090", .data = &tegra_max98090_data },
++	{ .compatible = "nvidia,tegra-audio-max98088", .data = &tegra_max98088_data },
++	{ .compatible = "nvidia,tegra-audio-max98089", .data = &tegra_max98088_data },
+ 	{ .compatible = "nvidia,tegra-audio-sgtl5000", .data = &tegra_sgtl5000_data },
+ 	{ .compatible = "nvidia,tegra-audio-wm9712", .data = &tegra_wm9712_data },
+ 	{ .compatible = "nvidia,tegra-audio-wm8753", .data = &tegra_wm8753_data },
 -- 
 2.37.2
 
