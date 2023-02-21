@@ -2,35 +2,55 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3413C636D7
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 19:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE9EC61DA3
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 19:32:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbjBUT1w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 14:27:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46568 "EHLO
+        id S229622AbjBUTc5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 14:32:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjBUT1v (ORCPT
+        with ESMTP id S229609AbjBUTcw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 14:27:51 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57EE23ABA;
-        Tue, 21 Feb 2023 11:27:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 182A7B810A1;
-        Tue, 21 Feb 2023 19:27:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD5BC433EF;
-        Tue, 21 Feb 2023 19:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1677007666;
-        bh=CW0TrnVYPmqzjtnakRU/aIYasnOG7MQ3x8BrFO+nk5E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q7O14rMgHPWK3ZL38sH6QN80+YfXUDY2bDXIlMYF0KJDtmtgzZg8jBegZT0X1wjc2
-         WPmb+F3Hn/55y/CyX/z+nSiTTXc+bjOjWjvGE422HatRrB1X93br7LSuJeGW7kGsqC
-         z6DsevUunCbLnOIrR7W2jMDDz8w8Maex76wL2SKo=
-Date:   Tue, 21 Feb 2023 20:27:44 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Tue, 21 Feb 2023 14:32:52 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79A921BE5;
+        Tue, 21 Feb 2023 11:32:50 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id o4so5630557wrs.4;
+        Tue, 21 Feb 2023 11:32:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z1BKzb50vau0QIAXVcTGeHLKNWSnhlGapYli6cdXKzI=;
+        b=VQjwqdLmqVCn6kaX2voaXpTvFU81kOgGm15ZqXT792b1eaYJMq0twiAJWUS6oW0cBp
+         YrYwSGCjB8a4Pe0m5cXLvsl1WnefnzR2dnUQTg2UhL92ELk4rhWo87Sr0fJIquTrkpcP
+         T3ZCTmD2A5hEL1h7/r1yg6aPaZ4D9M0FpyLoEvRbxDcPoMZqrZXn5MNDHElDNgpTLaMH
+         lus4Un6rqzqA4naeAHeXdcUolbrqYAtaoGAhPLr03xH5QjnlmeNXSyYBezeeuWXvCsr8
+         QsomYq+PX3UznzPmv/BOnxbQw9oHXGTQNiNLUdC11gouh+zuHeK94PtpUEIXCWSgf8IS
+         NoXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z1BKzb50vau0QIAXVcTGeHLKNWSnhlGapYli6cdXKzI=;
+        b=xxWVUweKjVPocgTrwqqb5Cw7SjmhrSiNmY5pPV7ntpesdTtM/44f6XkEJ7vtkpB1NH
+         kKK4dfBr4Rwu/kcO5vLAQSm3J6QX8zBHi/+AokijlZNgW4F6J33biQ1+SZn65m40VECH
+         TULovgpFq+aLfKn9xY2XPyMYI1V8Bg4F1yFwRpWzGrtP4YyYQTs4gpn+4vwyPeYGNiju
+         8VslUkUnE18qveBvdGEfmJdpKzQ7IolKtgabuLfI6EiBbsEtnQDQPkAyDowJgz/uvg70
+         fN3UJiP8Aq/svQv8xjBLHebzbBYfXhihwqkL5Ge5F3lTd2dH6dulHDhFGLpuUkv2wev0
+         hHkA==
+X-Gm-Message-State: AO0yUKUxGsQj5E24yWGCXsEZAPblZ8FPJSZkT3meq+WAiAvV5OZcvjJ7
+        q+U9k2DWSQYXkMbZOwHLua8=
+X-Google-Smtp-Source: AK7set81qqkpf6ljR3tBGipC+kP/rYvPLJGM4XwsvqdTfos+aVHiNmd2lGCE1Z2uiPE+maz3/n5NEw==
+X-Received: by 2002:a5d:4a86:0:b0:2c5:6cfe:aab4 with SMTP id o6-20020a5d4a86000000b002c56cfeaab4mr4773550wrq.12.1677007968809;
+        Tue, 21 Feb 2023 11:32:48 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id t13-20020a05600001cd00b002c6d0462163sm4106685wrx.100.2023.02.21.11.32.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Feb 2023 11:32:48 -0800 (PST)
+Date:   Tue, 21 Feb 2023 22:32:44 +0300
+From:   Dan Carpenter <error27@gmail.com>
 To:     Svyatoslav Ryhel <clamor95@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -38,55 +58,53 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Brown <broonie@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
         Maxim Schwalm <maxim.schwalm@gmail.com>,
         Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v1 09/10] staging: dsp: add support for Fortemedia FM34NE
- DSP
-Message-ID: <Y/UbMH5tXDgsvSbD@kroah.com>
+Subject: Re: [PATCH v1 04/10] ASoC: tegra: Support RT5631 by machine driver
+Message-ID: <Y/UcXNueAmrrhWG0@kadam>
 References: <20230221183211.21964-1-clamor95@gmail.com>
- <20230221183211.21964-10-clamor95@gmail.com>
+ <20230221183211.21964-5-clamor95@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230221183211.21964-10-clamor95@gmail.com>
+In-Reply-To: <20230221183211.21964-5-clamor95@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Feb 21, 2023 at 08:32:10PM +0200, Svyatoslav Ryhel wrote:
-> FM34NE is digital sound processing chip used for active
-> noise suppression mainly on ASUS Transformers.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/staging/Kconfig          |   2 +
->  drivers/staging/Makefile         |   1 +
->  drivers/staging/dsp/Kconfig      |   7 +
->  drivers/staging/dsp/Makefile     |   2 +
->  drivers/staging/dsp/dsp-fm34ne.c | 364 +++++++++++++
->  drivers/staging/dsp/dsp-fm34ne.h | 845 +++++++++++++++++++++++++++++++
->  6 files changed, 1221 insertions(+)
->  create mode 100644 drivers/staging/dsp/Kconfig
->  create mode 100644 drivers/staging/dsp/Makefile
->  create mode 100644 drivers/staging/dsp/dsp-fm34ne.c
->  create mode 100644 drivers/staging/dsp/dsp-fm34ne.h
+On Tue, Feb 21, 2023 at 08:32:05PM +0200, Svyatoslav Ryhel wrote:
+> diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
+> index 78faa8bcae27..607800ec07a6 100644
+> --- a/sound/soc/tegra/tegra_asoc_machine.c
+> +++ b/sound/soc/tegra/tegra_asoc_machine.c
+> @@ -51,6 +51,17 @@ static struct snd_soc_jack_gpio tegra_machine_headset_jack_gpio = {
+>  };
+>  
+>  /* Mic Jack */
 
+This comment doesn't make sense now.  It was never super useful, though.
+Just delete it.
 
-Sorry, but why is this going into drivers/staging/ at all?  What is
-needed to be done to get this out of staging?  Why not do that work
-right now?  At the least, we need a TODO file in the directory that
-lists what needs to be done and who is responsible for it.
+> +static int headset_check(void *data)
+> +{
+> +	struct tegra_machine *machine = (struct tegra_machine *)data;
+> +
+> +	/* Detect mic insertion only if 3.5 jack is in */
+> +	if (gpiod_get_value_cansleep(machine->gpiod_hp_det) &&
+> +	    gpiod_get_value_cansleep(machine->gpiod_mic_det))
+> +		return SND_JACK_MICROPHONE;
+> +
+> +	return 0;
+> +}
+>  
+>  static struct snd_soc_jack tegra_machine_mic_jack;
+>  
+> @@ -183,8 +194,15 @@ int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
 
-But again, just do the work now, it's faster and simpler to do it before
-you submit it instead of waiting until after it is merged.
-
-Also, no need for a .h file when you only have one .c file.  Just put
-them all together into one file please.
-
-thanks,
-
-greg k-h
+regards,
+dan carpenter
