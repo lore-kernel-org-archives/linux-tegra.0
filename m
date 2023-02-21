@@ -2,53 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3957C61DA3
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 18:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1121FC64ED6
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 18:32:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbjBUSc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 13:32:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57074 "EHLO
+        id S230035AbjBUSca (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 13:32:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjBUSc2 (ORCPT
+        with ESMTP id S229436AbjBUSc3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 13:32:28 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D6622FCED;
-        Tue, 21 Feb 2023 10:32:24 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id o12so21423849edb.9;
-        Tue, 21 Feb 2023 10:32:24 -0800 (PST)
+        Tue, 21 Feb 2023 13:32:29 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B12301B7;
+        Tue, 21 Feb 2023 10:32:26 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id ee7so5924244edb.2;
+        Tue, 21 Feb 2023 10:32:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0EeJlO8QUl1DZMAlcd+EODPEJDc+DBbZZnZ+JDzoEdg=;
-        b=kWq4ecHFuWXMSQZOzGBaSB3TZctWJCNGUWIu8P3VK24KihWheD/Hkgnz3BhcjBm+Ov
-         z8eahBqmrp2SwL0wBFOCTd+8Knk4Nx90ZwYEY03DeTfn6M/VqR6QPOqhy5+242r9yDzt
-         Ebj1teN7A4oA8YgIQe8byK5O6YanmP4Rk4ZeqmJR7xKaFSbu8E7tfn3utJjUFoZ988os
-         QEbB2xHc3wW1X2WPp4qC8P+OOaY4c9nDtBXBo3LdSxRv8OmHfXrfBf1SVw9icnA4wePn
-         SA8PnAH5xFwF8CR18LYgwYpvbCp28OMh9f4PgaM5DxNZ/D9Fk68DmsvDr2FtOiXzVAsJ
-         Jbqg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IAXecBgeRkHu8ZmrGSEh+xC8pZ8csJk/gLQuqMv+ZEI=;
+        b=n5P5sUEHLppfy1KRySapcmLr3VmalIXip2527iBV1pCY+xwS8ywbsnb6vBwPteurfH
+         Ou9heSahzhfGJVOnzPjla6C+JQo2VGd0yOCOpw4k/pjtCPDEpRrjpZLdpNF66Pi1DKH9
+         WLP3xJQVbHYcEVJ7Wy9+73EuPBfWRbCokMg00ejhFAjQXjTyfePQrZKDmFkJzrRKuLnx
+         e3M1VTGBwW93NFqHDNrX3XzJJqgBFJMitGzKukSDLzjuw8aKsmEHHiVsL6l5ARdcTx7Z
+         NB5lKQ8K6GmD8sZRwzyMJ4RNTwnljCCDwYAzGsGxScbfzvJvZWnorpAYlZQpX1l6rhMw
+         Ad/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0EeJlO8QUl1DZMAlcd+EODPEJDc+DBbZZnZ+JDzoEdg=;
-        b=haj3XIK9QmQYf397q3VNAnMiKOI9SppFXpCrNZdMY1XGktlxx3rQ/krFkgsI7gEgQC
-         R9YrtgCRpiJE3hH4wKWUSzFTBlc4QV4sv9/+MXsEaFwIVi7qH+SHmNCvDle+qLXAGRQj
-         g6JIEk1L+4t7O9EcEsh9TsXq3B3QlUGKz0TP8j/AdhrFJO8++zFRx/YMfsSl1WVHm1Vj
-         7BBcQ0J28+geKX9a1HGJ+uKSzzXbCXUyvGdaJ6AQ2/NkvrPMyt9Q7ooYQzT6o0gBbpo5
-         FjxRbPoOuTPX14XD/JSBuP4lZ4C9ze59EPUgUtY33EMmaGnN1n38LEINvPqQ5AImCZs9
-         KxCQ==
-X-Gm-Message-State: AO0yUKXvgzHCGnOPIicAWWXOzzY+digl3Of82Qw+sWihRKxphmJV6Hx/
-        73NohiDQfNngYiNtEpZUfGE=
-X-Google-Smtp-Source: AK7set86GBsI14U6VEaKmjm3BNimI8/ZzoK6Ek4xMuPyAJKltWK2m8xRKjLbpVGkaLUsc2k/7+79Yw==
-X-Received: by 2002:a05:6402:215:b0:4af:515d:5658 with SMTP id t21-20020a056402021500b004af515d5658mr2968051edv.35.1677004342754;
-        Tue, 21 Feb 2023 10:32:22 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IAXecBgeRkHu8ZmrGSEh+xC8pZ8csJk/gLQuqMv+ZEI=;
+        b=eEMkHVnlP+9/FwLPwFDhGRd+8cARCgDM/uj+nvUEO1gBsjYg4J2ArRluwsBwWT+tGC
+         9M9QxZDrOXbkJ7vPytF1jx1nZIWkQ66J+spAyCW/SkvRFpKtMQU+xNksOexZvh7naf+I
+         voF2GL14rDxoNUwKZl9hG53kavJWXlDJPmgKIiAKX2uOoAlvAoN6BPMY7KCoDi1CWFpv
+         0YJXkSh3dJMQmU8rsYMwlf8oPBAAOPRT4hh1ETU7uoIue4fAWFZ2o104bJdew1wcEhb5
+         2vqRw/uctoMe8PIScF91Duvfayow2dPbqv3VRxMkRbfvFRbtUE+kTVtmXMk9mhv0tuyh
+         sV6g==
+X-Gm-Message-State: AO0yUKVDV/km3+m3obeKLZnuszjmbeZDaeFcWSeZ8soyN0E2DPUA5EGs
+        tOAwLbpjftDZV1nFV2LdUZQ=
+X-Google-Smtp-Source: AK7set9zWlurnl/3CRZ7DTez58dz2jKnck1MAztIosG4p1jWNb1dZJz3bfbLFRpOyeGB3qiJQ4VlZQ==
+X-Received: by 2002:aa7:ca56:0:b0:4ae:e5ab:46d7 with SMTP id j22-20020aa7ca56000000b004aee5ab46d7mr3752692edt.8.1677004345190;
+        Tue, 21 Feb 2023 10:32:25 -0800 (PST)
 Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id i3-20020a50c3c3000000b004af5aa16fcasm169102edf.66.2023.02.21.10.32.21
+        by smtp.gmail.com with ESMTPSA id i3-20020a50c3c3000000b004af5aa16fcasm169102edf.66.2023.02.21.10.32.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Feb 2023 10:32:22 -0800 (PST)
+        Tue, 21 Feb 2023 10:32:24 -0800 (PST)
 From:   Svyatoslav Ryhel <clamor95@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -65,66 +66,38 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-staging@lists.linux.dev
-Subject: [PATCH v1 00/10] Fix sound on ASUS Transformers
-Date:   Tue, 21 Feb 2023 20:32:01 +0200
-Message-Id: <20230221183211.21964-1-clamor95@gmail.com>
+Subject: [PATCH v1 02/10] sound: soc: jack: allow multiple interrupt per gpio
+Date:   Tue, 21 Feb 2023 20:32:03 +0200
+Message-Id: <20230221183211.21964-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230221183211.21964-1-clamor95@gmail.com>
+References: <20230221183211.21964-1-clamor95@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-- add quirk for headset detection used by some T30 devices
-  (ASUS Transformers, LG Optimus 4X HD and Vu);
-- add RT5631 and MAX9808x machine drivers
-- add Fortemedia FM34NE DSP driver used by ASUS Transformers
-  and mandatory for correct sound work
-- bind everything into working configuration
+This feature is required for coupled hp-mic quirk used
+by some Nvidia Tegra 3 based devices work properly.
 
-David Heidelberg (1):
-  dt-bindings: sound: nvidia,tegra-audio: add RT5631 CODEC
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+---
+ sound/soc/soc-jack.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Svyatoslav Ryhel (9):
-  dt-bindings: sound: nvidia,tegra-audio-common: add new property
-  sound: soc: jack: allow multiple interrupt per gpio
-  ASoC: tegra: Support RT5631 by machine driver
-  dt-bindings: sound: nvidia,tegra-audio: add MAX9808x CODEC
-  ASoC: tegra: Support MAX9808x by machine driver
-  ARM: tegra: transformers: update bindings of sound graph
-  dt-bindings: dsp: add Fortemedia FM34 DSP
-  staging: dsp: add support for Fortemedia FM34NE DSP
-  ARM: tegra: transformers: bind FM34NE DSP on supported devices
-
- .../bindings/dsp/fortemedia,dsp.yaml          |  95 ++
- .../sound/nvidia,tegra-audio-common.yaml      |   4 +
- .../sound/nvidia,tegra-audio-max9808x.yaml    |  93 ++
- .../sound/nvidia,tegra-audio-rt5631.yaml      |  88 ++
- arch/arm/boot/dts/tegra20-asus-tf101.dts      |  22 +-
- arch/arm/boot/dts/tegra30-asus-tf201.dts      |  46 +
- arch/arm/boot/dts/tegra30-asus-tf300t.dts     |  34 +-
- arch/arm/boot/dts/tegra30-asus-tf300tg.dts    |  36 +
- arch/arm/boot/dts/tegra30-asus-tf700t.dts     |  36 +
- .../dts/tegra30-asus-transformer-common.dtsi  |   9 +-
- .../arm/boot/dts/tegra30-pegatron-chagall.dts |  29 +-
- drivers/staging/Kconfig                       |   2 +
- drivers/staging/Makefile                      |   1 +
- drivers/staging/dsp/Kconfig                   |   7 +
- drivers/staging/dsp/Makefile                  |   2 +
- drivers/staging/dsp/dsp-fm34ne.c              | 364 ++++++++
- drivers/staging/dsp/dsp-fm34ne.h              | 845 ++++++++++++++++++
- sound/soc/soc-jack.c                          |   1 +
- sound/soc/tegra/Kconfig                       |  18 +
- sound/soc/tegra/tegra_asoc_machine.c          | 120 ++-
- 20 files changed, 1837 insertions(+), 15 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dsp/fortemedia,dsp.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5631.yaml
- create mode 100644 drivers/staging/dsp/Kconfig
- create mode 100644 drivers/staging/dsp/Makefile
- create mode 100644 drivers/staging/dsp/dsp-fm34ne.c
- create mode 100644 drivers/staging/dsp/dsp-fm34ne.h
-
+diff --git a/sound/soc/soc-jack.c b/sound/soc/soc-jack.c
+index fcece5ca38c6..f951acb2ce36 100644
+--- a/sound/soc/soc-jack.c
++++ b/sound/soc/soc-jack.c
+@@ -367,6 +367,7 @@ int snd_soc_jack_add_gpios(struct snd_soc_jack *jack, int count,
+ 
+ 		ret = request_any_context_irq(gpiod_to_irq(gpios[i].desc),
+ 					      gpio_handler,
++					      IRQF_SHARED |
+ 					      IRQF_TRIGGER_RISING |
+ 					      IRQF_TRIGGER_FALLING,
+ 					      gpios[i].name,
 -- 
 2.37.2
 
