@@ -2,141 +2,203 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2339BC6379F
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 14:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35FAC61DA3
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 17:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233506AbjBUOV3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 09:21:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45116 "EHLO
+        id S234145AbjBURmi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 12:42:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233944AbjBUOV0 (ORCPT
+        with ESMTP id S233564AbjBURmh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 09:21:26 -0500
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2066.outbound.protection.outlook.com [40.107.244.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC9412B61A;
-        Tue, 21 Feb 2023 06:20:58 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I7opcA2Tkkvfy754T4tcT5EfVWEvtSplvZICGVyIXAQME3u6fjCpYWhU4hateHlxHMnQkkN0R59nfHCGwIP0A3NuCvs2U8WQxpQy3vpwfdRkNFQoiz9KOQCFVDaw94P6FzxVb8NwXe0cxi/SSCicl1r4HuCT0K875AfFb56x9f2xsV5jpCBloBaaF8KJD0H1toPDOV/ttnO1FrjjIWx/7+vm+cMsSUMp2MGVO3UXT9lB1dCmW7S72okEyJ6GObbsPBQG9V/RAGGcBmbccEk/f5jviY4d10Bv9pV7s2VaJTJrySGOzwyzP1YI+MAV3/5RDh93oyw4Jr1XgW21YGYssA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Csa5VaSUFyB3nkmpzRp/CL5iX88xIjB2lUGXVsitlsI=;
- b=HeUg4yrLIqNlJx5/zxx/09FmKdTljWUNnT6bJJJnIGDwaPKACDqImJdcS+AXJ5eV2Yc5pVMWNA7p8ok3tIcVJBg1PicCCWK+scqwk90URkrjlAxFOPdwi9YWVv/RQFj5oaVjReMWlM0gIm1+fxQhXDtIXa79tRVNd+oEqGEpNlnSZ8s/0H9EkUyoIBEfiKX/NloP+YBulNigsJT8W3veR1jbmyPQPDH3DsmNxeHeHq1R9pyQf2aXRgx3cf4dyaGrBnpU+0Ud7WrlQxU4U870xNgq/dFtpXcW9Dazve1fWKCSZj6v8WxJU+MA2DW58PCIrTK45gbsMLiXc7RrGjpzjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Csa5VaSUFyB3nkmpzRp/CL5iX88xIjB2lUGXVsitlsI=;
- b=KkUEwjtLKiWMrwgLMZHJ22t9k/rIdxB8OzeB0Nod2m23Nf543oYV/NnzwX+XSHZmZWyl+NapHEHy8T7YFjz/yKwtS6Gxfs85aaEFpUmRxmSzQ+eqcinqvMVg5pgTGWvpOoex3uyOQAvtj9FBzvngYMpdEz+2CxfmyGioz5Fibx5xLNdJlFV/4rh94O5voZmc2l3srvgfM3l+s0jQVhYttZknO8vh3JuXFLJ13UEmNJG8UWBFvbS6HDeeRc04M4lF8uDuiHZFviGydjk1XwSEZCbAVthNNxAj1aGK9mzSK10174O5BwC5ZHfP9b0GNPjKewyeF+JeF1HW37GtJqzLqg==
-Received: from BL1PR13CA0273.namprd13.prod.outlook.com (2603:10b6:208:2bc::8)
- by PH7PR12MB5904.namprd12.prod.outlook.com (2603:10b6:510:1d8::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.21; Tue, 21 Feb
- 2023 14:20:56 +0000
-Received: from BL02EPF0000C404.namprd05.prod.outlook.com
- (2603:10b6:208:2bc:cafe::ff) by BL1PR13CA0273.outlook.office365.com
- (2603:10b6:208:2bc::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.17 via Frontend
- Transport; Tue, 21 Feb 2023 14:20:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0000C404.mail.protection.outlook.com (10.167.241.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6134.14 via Frontend Transport; Tue, 21 Feb 2023 14:20:55 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 21 Feb
- 2023 06:20:38 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 21 Feb
- 2023 06:20:38 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36 via Frontend
- Transport; Tue, 21 Feb 2023 06:20:37 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/118] 6.1.13-rc1 review
-In-Reply-To: <20230220133600.368809650@linuxfoundation.org>
-References: <20230220133600.368809650@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 21 Feb 2023 12:42:37 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F462D14C;
+        Tue, 21 Feb 2023 09:42:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1677001355; x=1708537355;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kBBoBZu1FD2rTBEFA0gVprbFv3kOigQKo3h0nWRaWas=;
+  b=KhIkTaDcYBT9+GpneMVNXU5+ZjF7kVksUuBPAsWJhY9enhTdgzYVzO4V
+   bTNnqSK4mYd0lY5kwRovdAA0jWRNe9xynHg74p2cD7Rox+MWJGMV5dMj8
+   kOdwBULFCS5VkgLDW02AuW4EXDr9Nwx5bDmrzV6jIQ16L8Urzha/i4rbc
+   554o69dkgl4PMFMd9auHzHtt+2pbMSYHNYyiHXD7GsZJgv6d0qcC+HtYH
+   oKiRrrLwtnkxwiqWGnLx/aoyRpwLh+ivyxha6Bj35zdoF2/JJ06u0T83h
+   zurbMlUIsDKQ25A1syMBjaiPO/Ly0qUoA0aADjzzoOPJlu3qbXGvJk5ej
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10628"; a="320839368"
+X-IronPort-AV: E=Sophos;i="5.97,315,1669104000"; 
+   d="scan'208";a="320839368"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2023 09:42:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10628"; a="1000689706"
+X-IronPort-AV: E=Sophos;i="5.97,315,1669104000"; 
+   d="scan'208";a="1000689706"
+Received: from lkp-server01.sh.intel.com (HELO eac18b5d7d93) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2023 09:42:31 -0800
+Received: from kbuild by eac18b5d7d93 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pUWes-00005l-2S;
+        Tue, 21 Feb 2023 17:42:30 +0000
+Date:   Wed, 22 Feb 2023 01:41:56 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Akhil R <akhilrajeev@nvidia.com>, christian.koenig@amd.com,
+        digetx@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, sumit.semwal@linaro.org,
+        thierry.reding@gmail.com, wsa@kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, akhilrajeev@nvidia.com
+Subject: Re: [PATCH] i2c: tegra: Share same DMA channel for Rx and Tx
+Message-ID: <202302220130.flKenlan-lkp@intel.com>
+References: <20230221135726.40720-1-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-Message-ID: <89060917-e8b4-4753-a6e5-b6e5a0e0d410@rnnvmail203.nvidia.com>
-Date:   Tue, 21 Feb 2023 06:20:37 -0800
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0000C404:EE_|PH7PR12MB5904:EE_
-X-MS-Office365-Filtering-Correlation-Id: bfd1d36e-1c62-4265-432d-08db1416d8ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: x5N14Jf9ktZW7K0709wH+vaZVZ+kde66BzEJuQbjqGQYkOdYhMKv7NhM9jxTmoHirIBf2TnJOYj0N29xT26y1FaDKWlTfbmTMUPtUkL1l/tkptwSNrU+xC2QyrWNx/gmawgx0hivwKrHrEQI5jDa5RQ5XW6/ywXucsqI1G+mWxmdXXZxZFo+V+SIl6A0mSpMCvIyl0udxlflwmB6+NKIMgNkV1ZMAKvJyWWV2uhtr7/w7TRpMxy09GKJDqdyn48iTzJd1cBpH95mq+wyRLNcXlIwNfMf3ZrktWjMCYHoywSGYQKg2qrS9ud0LR5ptebPpBawCkDTggzuQPlOBYtcF7M/MAfuEt31xzkcNQNgVsugQ/kxQvPz6Bp0JUFHaxSOLVYqd3BeJwRLa/hE5tMwxeseIRGLoYiegEECfpkrzbyVqMdLPe4uln8qRrNTHq517WR34UfeaAEF+pOYMtIR3iXJrs4XESE6L190jbEd5g/WV3FegN0d1Ewyq3FM9cuGuCAS8IenMtOtB7vCczM4d0MgTupFDPnnLEECqph67VCfAK0Jk3KhpomQiXUZz6GPZB59+jgcovyyPhITPYhyWgxiCoVcA8JCZxNhneTBwAFkSDwXlB8vuqwpo6rWQyZER40H5uyvPh8CgY8ocnl3hXnlPpbz5PBMEF/OB3Wkv7niRqer9rLwth5KJ9J9fY9eP96epfZajFa4WdWv9R7UeDCJfL3iFBwMxZPqveOXxoNn0R3rS4GqFC4wCu2ACcHT
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(346002)(39860400002)(376002)(396003)(136003)(451199018)(36840700001)(46966006)(40470700004)(336012)(31686004)(966005)(5660300002)(36860700001)(7416002)(26005)(186003)(426003)(47076005)(478600001)(316002)(356005)(8676002)(6916009)(41300700001)(8936002)(40480700001)(4326008)(40460700003)(70206006)(70586007)(7636003)(54906003)(82310400005)(86362001)(31696002)(82740400003)(2906002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2023 14:20:55.7964
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bfd1d36e-1c62-4265-432d-08db1416d8ab
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0000C404.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5904
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230221135726.40720-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 20 Feb 2023 14:35:16 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.13 release.
-> There are 118 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 22 Feb 2023 13:35:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.13-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Akhil,
 
-All tests passing for Tegra ...
+Thank you for the patch! Yet something to improve:
 
-Test results for stable-v6.1:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on linus/master v6.2 next-20230221]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Linux version:	6.1.13-rc1-gfc84fcf24fda
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/i2c-tegra-Share-same-DMA-channel-for-Rx-and-Tx/20230221-215924
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20230221135726.40720-1-akhilrajeev%40nvidia.com
+patch subject: [PATCH] i2c: tegra: Share same DMA channel for Rx and Tx
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20230222/202302220130.flKenlan-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/643ca30fdac50b54b2ee65f97e6e2eda9974dd3c
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Akhil-R/i2c-tegra-Share-same-DMA-channel-for-Rx-and-Tx/20230221-215924
+        git checkout 643ca30fdac50b54b2ee65f97e6e2eda9974dd3c
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash drivers/i2c/
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202302220130.flKenlan-lkp@intel.com/
 
-Jon
+All errors (new ones prefixed by >>):
+
+   In file included from arch/m68k/include/asm/bug.h:32,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/m68k/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:78,
+                    from arch/m68k/include/asm/irqflags.h:6,
+                    from include/linux/irqflags.h:16,
+                    from arch/m68k/include/asm/atomic.h:6,
+                    from include/linux/atomic.h:7,
+                    from include/linux/cpumask.h:13,
+                    from include/linux/smp.h:13,
+                    from include/linux/lockdep.h:14,
+                    from include/linux/mutex.h:17,
+                    from include/linux/kernfs.h:11,
+                    from include/linux/sysfs.h:16,
+                    from include/linux/kobject.h:20,
+                    from include/linux/of.h:17,
+                    from include/linux/irqdomain.h:36,
+                    from include/linux/acpi.h:13,
+                    from drivers/i2c/busses/i2c-tegra.c:9:
+   drivers/i2c/busses/i2c-tegra.c: In function 'tegra_i2c_init_dma':
+>> drivers/i2c/busses/i2c-tegra.c:465:26: error: 'struct tegra_i2c_dev' has no member named 'tx_dma_chan'; did you mean 'dma_chan'?
+     465 |         WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
+         |                          ^~~~~~~~~~~
+   include/asm-generic/bug.h:122:32: note: in definition of macro 'WARN_ON'
+     122 |         int __ret_warn_on = !!(condition);                              \
+         |                                ^~~~~~~~~
+>> drivers/i2c/busses/i2c-tegra.c:465:58: error: 'struct tegra_i2c_dev' has no member named 'rx_dma_chan'; did you mean 'dma_chan'?
+     465 |         WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
+         |                                                          ^~~~~~~~~~~
+   include/asm-generic/bug.h:122:32: note: in definition of macro 'WARN_ON'
+     122 |         int __ret_warn_on = !!(condition);                              \
+         |                                ^~~~~~~~~
+
+
+vim +465 drivers/i2c/busses/i2c-tegra.c
+
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  432  
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  433  static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  434  {
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  435  	struct dma_chan *chan;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  436  	dma_addr_t dma_phys;
+89e3748acd0bf6 Dmitry Osipenko     2020-09-30  437  	u32 *dma_buf;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  438  	int err;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  439  
+48cb6356fae125 Akhil R             2022-09-06  440  	if (i2c_dev->is_vi)
+89328b1b81858f Jonathan Hunter     2019-02-21  441  		return 0;
+89328b1b81858f Jonathan Hunter     2019-02-21  442  
+48cb6356fae125 Akhil R             2022-09-06  443  	if (!i2c_dev->hw->has_apb_dma) {
+89328b1b81858f Jonathan Hunter     2019-02-21  444  		if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
+48cb6356fae125 Akhil R             2022-09-06  445  			dev_dbg(i2c_dev->dev, "APB DMA support not enabled\n");
+48cb6356fae125 Akhil R             2022-09-06  446  			return 0;
+48cb6356fae125 Akhil R             2022-09-06  447  		}
+48cb6356fae125 Akhil R             2022-09-06  448  	} else if (!IS_ENABLED(CONFIG_TEGRA186_GPC_DMA)) {
+48cb6356fae125 Akhil R             2022-09-06  449  		dev_dbg(i2c_dev->dev, "GPC DMA support not enabled\n");
+89328b1b81858f Jonathan Hunter     2019-02-21  450  		return 0;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  451  	}
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  452  
+643ca30fdac50b Akhil R             2023-02-21  453  	/* The same channel will be used for both Rx and Tx.
+643ca30fdac50b Akhil R             2023-02-21  454  	 * Keeping the name as tx for backward compatibility with
+643ca30fdac50b Akhil R             2023-02-21  455  	 * existing devicetrees.
+643ca30fdac50b Akhil R             2023-02-21  456  	 */
+79e4be2c08bbbf Peter Ujfalusi      2019-11-13  457  	chan = dma_request_chan(i2c_dev->dev, "tx");
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  458  	if (IS_ERR(chan)) {
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  459  		err = PTR_ERR(chan);
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  460  		goto err_out;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  461  	}
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  462  
+643ca30fdac50b Akhil R             2023-02-21  463  	i2c_dev->dma_chan = chan;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  464  
+cdbf26251d3b35 Thierry Reding      2022-10-20 @465  	WARN_ON(i2c_dev->tx_dma_chan->device != i2c_dev->rx_dma_chan->device);
+cdbf26251d3b35 Thierry Reding      2022-10-20  466  	i2c_dev->dma_dev = chan->device->dev;
+cdbf26251d3b35 Thierry Reding      2022-10-20  467  
+55c52f16a017ca Dmitry Osipenko     2020-09-30  468  	i2c_dev->dma_buf_size = i2c_dev->hw->quirks->max_write_len +
+55c52f16a017ca Dmitry Osipenko     2020-09-30  469  				I2C_PACKET_HEADER_SIZE;
+55c52f16a017ca Dmitry Osipenko     2020-09-30  470  
+cdbf26251d3b35 Thierry Reding      2022-10-20  471  	dma_buf = dma_alloc_coherent(i2c_dev->dma_dev, i2c_dev->dma_buf_size,
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  472  				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  473  	if (!dma_buf) {
+76d06443cc5b37 Dmitry Osipenko     2020-09-30  474  		dev_err(i2c_dev->dev, "failed to allocate DMA buffer\n");
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  475  		err = -ENOMEM;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  476  		goto err_out;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  477  	}
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  478  
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  479  	i2c_dev->dma_buf = dma_buf;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  480  	i2c_dev->dma_phys = dma_phys;
+c886a4a03a0155 Dmitry Osipenko     2020-09-30  481  
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  482  	return 0;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  483  
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  484  err_out:
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  485  	tegra_i2c_release_dma(i2c_dev);
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  486  	if (err != -EPROBE_DEFER) {
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  487  		dev_err(i2c_dev->dev, "cannot use DMA: %d\n", err);
+bb0e9b1d2a1f93 Colin Ian King      2019-02-15  488  		dev_err(i2c_dev->dev, "falling back to PIO\n");
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  489  		return 0;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  490  	}
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  491  
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  492  	return err;
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  493  }
+86c92b9965ff17 Sowjanya Komatineni 2019-02-12  494  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
