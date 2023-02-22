@@ -2,64 +2,63 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7915CC61DA4
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 07:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59559C64EC4
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 08:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbjBVH4P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Feb 2023 02:56:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43574 "EHLO
+        id S230360AbjBVIBN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Feb 2023 03:01:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231264AbjBVH4H (ORCPT
+        with ESMTP id S229687AbjBVIBM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Feb 2023 02:56:07 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 774DD36FF2;
-        Tue, 21 Feb 2023 23:56:05 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id s26so26789248edw.11;
-        Tue, 21 Feb 2023 23:56:05 -0800 (PST)
+        Wed, 22 Feb 2023 03:01:12 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB77367F9;
+        Wed, 22 Feb 2023 00:01:11 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id h16so27052848edz.10;
+        Wed, 22 Feb 2023 00:01:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pgFg4u82TvD5fQ/qkOIk8bqnfcsUdnb5ri794YsSIUk=;
-        b=We04ug736s7NZz1w+LsI1A/zzq9lsygNQuEg8sDER1ENddmP57YgH0DhF73Y+JWZxv
-         /tQkKOc1NJciSK2RTuI9V9ykmKhcLNUXLPp/odXiLkvoEmpFg1DYZ6WAbYX1lMB+Vf0J
-         HcdpcRJElLHrax2orAiwALCfMsmsxddxsg5PxDti9agbKf9O3aUf+DX3mnCPOx2VQdwU
-         rrC7HM5M6bmAn942zaRhuBMnqlQfiDp1aEDZDCT2xhX3XyxQwrWeoVwvSeeVGPaFnIEx
-         trrHweLwcgvBvDHgxmGZBfzpruBbrGfw59+rgvrHdp6HzT4NvbsiB7MDDLsQZdulvBF5
-         gAOg==
+        bh=dlCUWg0V7l7YUSFlT2P4WSzL8o1xqPnxClcbe1tdHhY=;
+        b=Rl94logtw4OVPqPkZoH4YHWPBNT3fyRn557I+IuZXOjTQ6+SNRJv/yPjxTH7tqT/cX
+         XqdgxXSF/K1SIOSpT5NOUEsjlxlfJTVryaZ8b3sFcDTPV9o8Fs3G8E/p3Din+nmvhwqG
+         jnsU1pAYzmwAb3+YnPpteyIFwj2G9PbmIyBN0Zb+8u7c3TOF3sEdQo9R9UMBzdZJ4AHm
+         kIwc732yOVbngdGgQ7+OnHhqc5PeGrLNBbQ5NP6yJPKA1628qh2WKYMJRKCktkL09INm
+         1UypSen/+pfeV4QsLVudfBjaayKL7+Zuwo3lWCdZRQU+jfGd4vfDBM+byg01SzdluKKV
+         wZKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pgFg4u82TvD5fQ/qkOIk8bqnfcsUdnb5ri794YsSIUk=;
-        b=7oIPLip7ZcX/4QkDw68r9j3XQIdi16zzvSOfZakZTAjDWG4lX6V15ZeYEARtYTlEzD
-         9PLIckzJiyBOT4K7gKYK8gBrhTxM1Cht9c4Ozyy2NtS/im3GKdjc4uamonPxDmyO0APi
-         KgiW7G6hCaWxi+QrLUjBs+j4fd22AUmZp4LjHymjWO1YLw0YP/CfNBzw7ZIGPfQd2s1D
-         gGsqHETwZxtcfm4nJY+CzLkHaLOPynCvEn5P2FIdeS84xrsWpW1wJQds4/dQwwMDO8v0
-         oUUxyfLB553kQ+uWFrGcS/vLUUQZpgQgNxSimBpEH9Wb+DN3mmWlV9/Q6T8Z4F3zCxC7
-         C+5Q==
-X-Gm-Message-State: AO0yUKVX2OgblWmiw4jdMKuiIEAvXrKh1Axov0AAzMQ8gD1ZNBtSyEvN
-        OGJoh2cOMqK1XLPhhpqUWu4XQc0AXnf5nfeVN38=
-X-Google-Smtp-Source: AK7set86EqLJbVtLPn+eFpQhyilCpoGiEYS+jNbNtWWgWpm5ic8N1YNya+4HDkYqa1aZTpjG14F9tumdchiAIzrcXZo=
-X-Received: by 2002:a50:9f08:0:b0:4ab:4b85:a6a8 with SMTP id
- b8-20020a509f08000000b004ab4b85a6a8mr3408901edf.4.1677052563525; Tue, 21 Feb
- 2023 23:56:03 -0800 (PST)
+        bh=dlCUWg0V7l7YUSFlT2P4WSzL8o1xqPnxClcbe1tdHhY=;
+        b=rOKJz8bgO4C5MmTQWzotNm+I0p4hiya5f1KE/mnybuyyDzpWDICXpBPwJ3cR0w1nkp
+         dsfiCqIn/50x6vIoWTkhUWkJnFNzBZJwcDn5UeZqfY2W5Tpa8VH6IuvWos6euWROOQFD
+         reHmOUq7HCgOogcVnp9taJaQdaOFGQrkGD2CWVxdzF2O+RrRy+Zyj++k9xXTq5RKl+Om
+         P0VMW2g6AXwNZgLHsglma6XHgu7xyDFAYWijlAV+B+G4CPMpYdCsR1ZB9fJB5dFpdQZk
+         lBZjUaAOr4T1sZGJ/bUU9eYAciNyw7Y2/LHEnySCCojtEqNFFQ0s9KY8lp4opoo+IJxg
+         tE9w==
+X-Gm-Message-State: AO0yUKVSBrLlNMIY37zWSKVLQZ71JroEyAYvxGwZjTfj879tXq06eOAk
+        XYDoWjZmIzD3+z23Eyb/y+6PCww8zN8pNI3v51U=
+X-Google-Smtp-Source: AK7set8xj9lBdPeX62Xma1nch2YV8vlnSz2QDZ40dpKo54vg1GEVrx1VOsdhxrUMU5EtCKQf3KkPFyAZRbFUahGuKdI=
+X-Received: by 2002:a17:906:4c49:b0:87b:fa21:7953 with SMTP id
+ d9-20020a1709064c4900b0087bfa217953mr7243891ejw.8.1677052869804; Wed, 22 Feb
+ 2023 00:01:09 -0800 (PST)
 MIME-Version: 1.0
 References: <20230221183211.21964-1-clamor95@gmail.com> <20230221183211.21964-5-clamor95@gmail.com>
- <Y/UcXNueAmrrhWG0@kadam>
-In-Reply-To: <Y/UcXNueAmrrhWG0@kadam>
+ <Y/VEUaOIE1mk1utt@sirena.org.uk>
+In-Reply-To: <Y/VEUaOIE1mk1utt@sirena.org.uk>
 From:   Svyatoslav Ryhel <clamor95@gmail.com>
-Date:   Wed, 22 Feb 2023 09:55:52 +0200
-Message-ID: <CAPVz0n01YWQ6FY9RDsa1rw_36n=NKpRLokFiVTxLsMDpQEd4YA@mail.gmail.com>
+Date:   Wed, 22 Feb 2023 10:00:58 +0200
+Message-ID: <CAPVz0n1kkXQDNhzFoa8xwqaFErNDTHSaqM07TDUHRPSnH+PvkQ@mail.gmail.com>
 Subject: Re: [PATCH v1 04/10] ASoC: tegra: Support RT5631 by machine driver
-To:     Dan Carpenter <error27@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -75,43 +74,55 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-=D0=B2=D1=82, 21 =D0=BB=D1=8E=D1=82. 2023 =D1=80. =D0=BE 21:32 Dan Carpente=
-r <error27@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+=D1=81=D1=80, 22 =D0=BB=D1=8E=D1=82. 2023 =D1=80. =D0=BE 00:23 Mark Brown <=
+broonie@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
 > On Tue, Feb 21, 2023 at 08:32:05PM +0200, Svyatoslav Ryhel wrote:
-> > diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/teg=
-ra_asoc_machine.c
-> > index 78faa8bcae27..607800ec07a6 100644
-> > --- a/sound/soc/tegra/tegra_asoc_machine.c
-> > +++ b/sound/soc/tegra/tegra_asoc_machine.c
-> > @@ -51,6 +51,17 @@ static struct snd_soc_jack_gpio tegra_machine_headse=
-t_jack_gpio =3D {
-> >  };
-> >
-> >  /* Mic Jack */
 >
-> This comment doesn't make sense now.  It was never super useful, though.
-> Just delete it.
+> > Add Realtek ALC5631/RT5631 codec support to the Tegra ASoC machine driv=
+er.
+> > The RT5631 codec is found on devices like ASUS Transformer TF201, TF700=
+T
+> > and other Tegra-based Android tablets.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > Signed-off-by: Ion Agorria <ion@agorria.com>
+>
+> Your signoff should be last if you're the one sending this.
 
-It does. Headset is Mic Jack + Headphones combined. headset_check function
-performs check for a Mic Jack component in plugged Jack 3.5
+Thanks
 
-> > +static int headset_check(void *data)
+> > +static unsigned int tegra_machine_mclk_rate_6mhz(unsigned int srate)
 > > +{
-> > +     struct tegra_machine *machine =3D (struct tegra_machine *)data;
+> > +     unsigned int mclk;
 > > +
-> > +     /* Detect mic insertion only if 3.5 jack is in */
-> > +     if (gpiod_get_value_cansleep(machine->gpiod_hp_det) &&
-> > +         gpiod_get_value_cansleep(machine->gpiod_mic_det))
-> > +             return SND_JACK_MICROPHONE;
-> > +
-> > +     return 0;
-> > +}
-> >
-> >  static struct snd_soc_jack tegra_machine_mic_jack;
-> >
-> > @@ -183,8 +194,15 @@ int tegra_asoc_machine_init(struct snd_soc_pcm_run=
-time *rtd)
+> > +     switch (srate) {
+> > +     case 64000:
+> > +     case 88200:
+> > +     case 96000:
+> > +             mclk =3D 128 * srate;
+> > +             break;
+> > +     default:
+> > +             mclk =3D 256 * srate;
+> > +             break;
+> > +     }
+> > +     /* FIXME: Codec only requires >=3D 3MHz if OSR=3D=3D0 */
+> > +     while (mclk < 6000000)
+> > +             mclk *=3D 2;
 >
-> regards,
-> dan carpenter
+> It feels like this is complicated enough and looks like the
+> clocking is flexible enough that it might be easier to just have
+> a table of values or otherwise enumerate standard rates, seeing
+> the code I feel like I need to worry about what happens if we
+> pick a clock rate over 6MHz (the loop could give a value over
+> that), and it's not clear why we have the switch statement rather
+> than just starting at a multiple of 128 and looping an extra time.
+>
+> I suspect there's going to be no meaningful downside for having
+> the clock held at over 3MHz on a tablet form factor, the usual
+> issue would be power consumption but between the larger battery
+> size you tend to have on a tablet and the power draw of the
+> screen if that's on it's likely to be into the noise practially
+> speaking.
+
+This is how downstream handled mclk rate for RT5631.
