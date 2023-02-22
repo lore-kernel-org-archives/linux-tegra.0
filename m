@@ -2,64 +2,63 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0286C61DA4
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 08:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B0EC64EC4
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 08:14:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbjBVIGi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Feb 2023 03:06:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56254 "EHLO
+        id S231264AbjBVIOU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Feb 2023 03:14:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbjBVIGh (ORCPT
+        with ESMTP id S231168AbjBVIOT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Feb 2023 03:06:37 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CF228222;
-        Wed, 22 Feb 2023 00:06:36 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id h16so27100627edz.10;
-        Wed, 22 Feb 2023 00:06:36 -0800 (PST)
+        Wed, 22 Feb 2023 03:14:19 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6DB1B540;
+        Wed, 22 Feb 2023 00:14:14 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id cq23so26721998edb.1;
+        Wed, 22 Feb 2023 00:14:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YPMa5Qux65YRcCMublZr2rs9cvXhmKdyVQIJVbnVWT4=;
-        b=QIeyGVdiU5LBwkf9RJSeOssfXCPXfc+n9snEgrYXKBb8NenyI0boW/xxfZU1R+DpMj
-         l2cBJRA3pB8DbWMZCWxOcwyP72h+4cDxOZZ06qwWke++yReExxdF91Ugu+NzpSO3KJRz
-         hW2zewosI9BBVJw8iV1jvyR7C1mdJ7xVk78WBEyesMuuZbuq76C9I/JUQiXNfftVgniZ
-         S41iZXacxL29FrSsyHP7uyUI+owC4ehc/4NiLAftGjYdMI1jnYk5vA4WyZbipApXOi/L
-         bvOQNg1aVvCCCqR7E14zVk2b8mJcr0l06UV/tRgkkxzscxKfY7+1fFTP2N3lETJuF/g3
-         TtsA==
+        bh=xj/6AyELfHI0tKgaBGNk0fyFVeR5csP7/YL61ZGE4Xk=;
+        b=eyrVUqnER8VYc2JyypJRTTLZWi2RuVoKQT8Xm298bWSpuBvRedvo6MZEcHXbdwUJdD
+         FP94ARAJ4ey3XJTfTaXLkh8GTSxTzplteXVI6Xt8JmkeEtqo/8BLFl77N/WA7QX5P5wF
+         FmXN6+J0VeqrYXjgwL7DsIf1jXDwluv2alBbRanVpC7TDD4KHhlPy0WZCGtl2BXNrMmY
+         DIyqE7xqBqsjACJfjzzmMRXX5Zl/ID+U+olV3MwR91v+7TMOFTcq8V791ZEzfPTmn0QC
+         f8kKfXcHcdwlkUoVe4sjjYh6b5HZ9xbCbn/aGfpiZv8cz1eKOD1lPfl2q4lYfmix7q+I
+         G5Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YPMa5Qux65YRcCMublZr2rs9cvXhmKdyVQIJVbnVWT4=;
-        b=jqHiR+MG/c23KEfBoKHj3Q7uS0fIgf+vrVnl5phRUpl8++aSvcXMG8uVGtxdk7lxc/
-         wwniiatIW/pEQDAoSwyclCuy3RFkrZOkIqgcqfWJYKZ+aLlaXLHs8Xo1tpZUZWBK/dSy
-         xvtxkLUufBGCgMKrrJoOEqoIrS6z1zqM806OH91L7sOl/k2fQ26tr6kO8vqGPHWweCWX
-         AkUe/QA+3jyCnpeePzyYcAk3Qf2WwrqnEfkkEljearv/1wdSCrsb4GAujDTj+oLAZLGo
-         +FBwQRdZvNW3TpRZUuCLgGX3IsX54QjLw0SWb6E+KekzJc0kDwomlKMCRc53hfVL41BE
-         cCyQ==
-X-Gm-Message-State: AO0yUKUE+I8U3bGZhd2JizMyxcAp5A3dIm0p5LpdKmKRughCf1cgIlEp
-        /yJdz5mfv//xGfLKZVeDxewdBRY7H8RSpAv7WB/KifYBAH4=
-X-Google-Smtp-Source: AK7set/+WSzCMMWSjAe/irqAayrxMoHG+PYHghqCVMxKunpmYfeihdWw0Wggr/PON9OUA12Vev6VplAxdW0pvv4Z/hA=
-X-Received: by 2002:a17:906:4c49:b0:87b:fa21:7953 with SMTP id
- d9-20020a1709064c4900b0087bfa217953mr7250522ejw.8.1677053194946; Wed, 22 Feb
- 2023 00:06:34 -0800 (PST)
+        bh=xj/6AyELfHI0tKgaBGNk0fyFVeR5csP7/YL61ZGE4Xk=;
+        b=47j4kvxko3eJR7Y3tgxGgEkOydTPH4ek5uWLpLWbN5M0BBBN/wYZ49Dnnepho77W43
+         czk51Bgc8JElMC951iZAQVA4EgEMpkoFzqBfeOyZ6wK0akan7Fa/aRmW7kxRfZOkDDvk
+         2muLM3TSdqIvXYUSsfpWsla/hVulqFmife/9mIY5cMKr/nuJhhMg4nORSRcAtWt6M3Yw
+         WZWk9NyNn2TCh4LmIGCsH3XrIHli1CzV1/oO4rNPuWW6HhZQDB/lxXKMDk9RISCgqSf7
+         HIRLPt/17kk8sXevYir4pKkzjHI/bktpelHzbesXTclw/56eBqrjlbXNZdla+JAWB6WQ
+         wXrA==
+X-Gm-Message-State: AO0yUKU0F3UNNJaAMnjY3CQjeZo1WejwHjVQUdbui4SFgIQS1OUctzGF
+        WWbCK1VYMdEXHHNIw2gEBhl8xxV1IzLNn5ke5h0=
+X-Google-Smtp-Source: AK7set+vh8ZSYnSuxrULngtfrZiKENvscmdFhJ7qS/OrAXSltDPmE4QBQ5fNy+vQLDfu9owooRq4qarjYjxuDzJnk08=
+X-Received: by 2002:a50:9fa8:0:b0:4ac:b8aa:3ffc with SMTP id
+ c37-20020a509fa8000000b004acb8aa3ffcmr3264891edf.4.1677053653220; Wed, 22 Feb
+ 2023 00:14:13 -0800 (PST)
 MIME-Version: 1.0
 References: <20230221183211.21964-1-clamor95@gmail.com> <20230221183211.21964-10-clamor95@gmail.com>
- <Y/Ud1bn+LExxLb/Q@kadam>
-In-Reply-To: <Y/Ud1bn+LExxLb/Q@kadam>
+ <Y/VIpVwFu5gUUcsz@sirena.org.uk>
+In-Reply-To: <Y/VIpVwFu5gUUcsz@sirena.org.uk>
 From:   Svyatoslav Ryhel <clamor95@gmail.com>
-Date:   Wed, 22 Feb 2023 10:06:23 +0200
-Message-ID: <CAPVz0n3T-SiTbDyQTTE4L==OGkpSQrfBAP5gRjEevt4ozZLB-g@mail.gmail.com>
+Date:   Wed, 22 Feb 2023 10:14:02 +0200
+Message-ID: <CAPVz0n34MMs-AeHfuxpC3dL=0MKSqrSn3zgrCHbjozR183CWnA@mail.gmail.com>
 Subject: Re: [PATCH v1 09/10] staging: dsp: add support for Fortemedia FM34NE DSP
-To:     Dan Carpenter <error27@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -75,191 +74,26 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-=D0=B2=D1=82, 21 =D0=BB=D1=8E=D1=82. 2023 =D1=80. =D0=BE 21:39 Dan Carpente=
-r <error27@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+=D1=81=D1=80, 22 =D0=BB=D1=8E=D1=82. 2023 =D1=80. =D0=BE 00:41 Mark Brown <=
+broonie@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
 > On Tue, Feb 21, 2023 at 08:32:10PM +0200, Svyatoslav Ryhel wrote:
-> > +static int fm34ne_dsp_set_config(struct fm34ne_dsp_data *fm34, int sta=
-te)
-> > +{
-> > +     struct device *dev =3D &fm34->client->dev;
-> > +
-> > +     const u8 *enable_ns_parameter =3D fm34->data->enable_noise_suppre=
-ssion;
-> > +     int enable_ns_length =3D fm34->data->enable_ns_length;
-> > +
-> > +     const u8 *disable_ns_parameter =3D fm34->data->disable_noise_supp=
-ression;
-> > +     int disable_ns_length =3D fm34->data->disable_ns_length;
-> > +
-> > +     int ret;
-> > +
-> > +     gpiod_set_value_cansleep(fm34->bypass_gpio, 1);
-> > +     msleep(20);
-> > +
-> > +     switch (state) {
-> > +     case FM34NE_NS_ENABLE:
-> > +             ret =3D fm34ne_dsp_write_config(fm34->client, enable_para=
-meter,
-> > +                                           sizeof(enable_parameter));
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to set DSP enable with %d\n"=
-, ret);
-> > +                     goto exit;
-> > +             }
-> > +
-> > +             ret =3D fm34ne_dsp_write_config(fm34->client, enable_ns_p=
-arameter,
-> > +                                           enable_ns_length);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to enable DSP noise suppress=
-ion with %d\n", ret);
-> > +                     goto exit;
-> > +             }
-> > +
-> > +             dev_info(dev, "noise suppression enable DSP parameter wri=
-tten\n");
+> > FM34NE is digital sound processing chip used for active
+> > noise suppression mainly on ASUS Transformers.
 >
-> Delete this type of debug code.
->
-> > +             break;
-> > +
-> > +     case FM34NE_NS_DISABLE:
-> > +             ret =3D fm34ne_dsp_write_config(fm34->client, enable_para=
-meter,
-> > +                                           sizeof(enable_parameter));
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to set DSP enable with %d\n"=
-, ret);
-> > +                     goto exit;
-> > +             }
-> > +
-> > +             ret =3D fm34ne_dsp_write_config(fm34->client, disable_ns_=
-parameter,
-> > +                                           disable_ns_length);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to disable DSP noise suppres=
-sion with %d\n", ret);
-> > +                     goto exit;
-> > +             }
-> > +
-> > +             dev_info(dev, "noise suppression disable DSP parameter wr=
-itten\n");
->
-> Same etc.
->
-> > +             break;
-> > +
-> > +     case FM34NE_BYPASS:
-> > +     default:
-> > +             ret =3D fm34ne_dsp_write_config(fm34->client, bypass_para=
-meter,
-> > +                                           sizeof(bypass_parameter));
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to set DSP bypass with %d\n"=
-, ret);
-> > +                     goto exit;
-> > +             }
-> > +
-> > +             dev_info(dev, "bypass DSP parameter written\n");
-> > +             break;
-> > +     }
-> > +
-> > +exit:
-> > +     gpiod_set_value_cansleep(fm34->bypass_gpio, 0);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int fm34ne_dsp_set_hw(struct fm34ne_dsp_data *fm34)
-> > +{
-> > +     struct device *dev =3D &fm34->client->dev;
-> > +     int ret;
-> > +
-> > +     ret =3D clk_prepare_enable(fm34->dap_mclk);
-> > +     if (ret) {
-> > +             dev_err(dev, "failed to enable the DSP MCLK: %d\n", ret);
-> > +             return ret;
-> > +     }
-> > +
-> > +     ret =3D regulator_enable(fm34->vdd_supply);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "failed to enable vdd power supply\n");
->
-> clk_disable_unprepare(fm34->dap_mclk);
+> This looks like it should be fairly straightforward to support
+> within ASoC without too much work, and since it's in the audio
+> path it should probably be referenced from the sound card it'll
+> end up having an ABI impact on the card.  Take a look at wm9090
 
-No, dap_mclk has to be on, else there will be no sound on the device.
+wm9090 is a sound codec, like rt5631 or wm8903 while fm34 is NOT a
+sound codec. It is sound processing device which must be active only
+when DMIC is used. In all other cases it has to be bypassed. At the same ti=
+me,
+it has to be set up because else there will be no sound on the actual devic=
+e.
+In the current state the driver sets up DSP and sets in constant bypass mod=
+e.
 
-> > +             return ret;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void fm34ne_dsp_reset(struct fm34ne_dsp_data *fm34)
-> > +{
-> > +     gpiod_set_value_cansleep(fm34->reset_gpio, 1);
-> > +     msleep(20);
-> > +
-> > +     gpiod_set_value_cansleep(fm34->reset_gpio, 0);
-> > +     msleep(100);
-> > +}
-> > +
-> > +static int fm34ne_dsp_init_chip(struct fm34ne_dsp_data *fm34)
-> > +{
-> > +     const u8 *input_parameter =3D fm34->data->input_parameter;
-> > +     int input_parameter_length =3D fm34->data->input_parameter_length=
-;
-> > +     int ret;
-> > +
-> > +     ret =3D fm34ne_dsp_set_hw(fm34);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     fm34ne_dsp_reset(fm34);
-> > +
-> > +     gpiod_set_value_cansleep(fm34->bypass_gpio, 1);
-> > +     msleep(20);
-> > +
-> > +     ret =3D i2c_smbus_write_byte(fm34->client, FM34NE_I2C_CHECK);
-> > +     if (ret < 0) {
-> > +             dev_info(&fm34->client->dev, "initial write failed\n");
->
-> dev_warn()?
->
-> > +             msleep(50);
-> > +
-> > +             fm34ne_dsp_reset(fm34);
-> > +             gpiod_set_value_cansleep(fm34->bypass_gpio, 0);
-> > +
-> > +             return ret;
-> > +     }
-> > +
-> > +     ret =3D fm34ne_dsp_write_config(fm34->client, input_parameter,
-> > +                                   input_parameter_length);
-> > +     if (ret < 0)
-> > +             return -EINVAL;
->
-> Why not propagate the error code from fm34ne_dsp_write_config()?
->
-> > +
-> > +     msleep(100);
-> > +     gpiod_set_value_cansleep(fm34->bypass_gpio, 0);
-> > +
-> > +     dev_info(&fm34->client->dev, "%s detected\n", fm34->data->model);
-> > +
-> > +     /* Constantly set DSP to bypass mode for now */
-> > +     ret =3D fm34ne_dsp_set_config(fm34, FM34NE_BYPASS);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return 0;
-> > +}
->
-> regards,
-> dan carpenter
-
-All other notes are reasonable. Thanks
-
-Best regards,
-Svyatoslav R.
+> for a moderately complex example of an analogue only device
+> (which this appears to be in terms of system integration).
