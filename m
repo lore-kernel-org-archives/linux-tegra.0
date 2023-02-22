@@ -2,106 +2,116 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A439AC6379F
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 09:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EA1C678DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 09:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229935AbjBVJVK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Feb 2023 04:21:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37918 "EHLO
+        id S231600AbjBVJgA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Feb 2023 04:36:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231448AbjBVJVJ (ORCPT
+        with ESMTP id S232442AbjBVJf1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Feb 2023 04:21:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F4528D1B;
-        Wed, 22 Feb 2023 01:21:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 22 Feb 2023 04:35:27 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9973B3DD;
+        Wed, 22 Feb 2023 01:33:32 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 55B74B811FF;
-        Wed, 22 Feb 2023 09:21:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE8BC433EF;
-        Wed, 22 Feb 2023 09:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1677057665;
-        bh=TgIaH9NMwPd4IhHNqQrT8ss2+K0UDdLN1lq1CLdEZCQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w1SvIo8TA/ZkeGpPbu4v1va1H22ECi2GS/Kb6d3Y+5sxapIw0kZYFBUWTzJetBkwd
-         qXnzkkqXCQzjsCwmS+UnCzOapWwSpROaY3AUeTHvlaAurUoVyye5MREZkerH8Z06Pe
-         XxsAVLaZoKjjjgDSX6y81ebjN5UrdKXW6QZ8Oqss=
-Date:   Wed, 22 Feb 2023 10:21:02 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B776866021B5;
+        Wed, 22 Feb 2023 09:31:59 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1677058321;
+        bh=ypc2TjbNSU7dsJCUFEveVUwkvQ3RanGmsWbkzF7sWgo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=FNUVhOeaDNZZVi6pZQ6VK2lEs7a/M+4teR0YM9KUip7qVBhKutdX2Zy5nYfzcsOw/
+         djyt2EwIP5Di/RZRdmEMzeMePbU80C0D67C7pzmY3I+ERCTLfaiuXS0VslS+F5WaQf
+         fjBUKZFaOPp8MNRri82Y6HG0SawCtkD28MTQdNV3Ngc9lm+Y7QvVyAYXZkPONKGGR3
+         //lqrmT+fnoduRyAOcor6oP/m+ktaSMj/YwcK6jU0HJ5AVhr5fHJkV6I6p37l2uCTI
+         uK1G4sXntFRI6/e2q9TLw+v7lgGy9Qq0NJ20hPk63AyJ776C9yOMTdEfDrBHBaptWP
+         uWZWkFvCBsZtA==
+Message-ID: <fce7ef68-8145-75ae-4ca2-35560e334cfc@collabora.com>
+Date:   Wed, 22 Feb 2023 10:31:57 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 05/16] thermal/hwmon: Use the right device for
+ devm_thermal_add_hwmon_sysfs()
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v1 09/10] staging: dsp: add support for Fortemedia FM34NE
- DSP
-Message-ID: <Y/Xefn/76JW1C03d@kroah.com>
-References: <20230221183211.21964-1-clamor95@gmail.com>
- <20230221183211.21964-10-clamor95@gmail.com>
- <Y/UbMH5tXDgsvSbD@kroah.com>
- <CAPVz0n2-giCF9Z9fMimTFQnGk73HAdfU4SitGn58iZapLjeuTQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n2-giCF9Z9fMimTFQnGk73HAdfU4SitGn58iZapLjeuTQ@mail.gmail.com>
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/Allwinner sunXi SoC support" 
+        <linux-sunxi@lists.linux.dev>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        "open list:TI BANDGAP AND THERMAL DRIVER" 
+        <linux-omap@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+References: <20230221180710.2781027-1-daniel.lezcano@linaro.org>
+ <20230221180710.2781027-6-daniel.lezcano@linaro.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230221180710.2781027-6-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Feb 22, 2023 at 10:19:47AM +0200, Svyatoslav Ryhel wrote:
-> вт, 21 лют. 2023 р. о 21:27 Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> пише:
-> >
-> > On Tue, Feb 21, 2023 at 08:32:10PM +0200, Svyatoslav Ryhel wrote:
-> > > FM34NE is digital sound processing chip used for active
-> > > noise suppression mainly on ASUS Transformers.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  drivers/staging/Kconfig          |   2 +
-> > >  drivers/staging/Makefile         |   1 +
-> > >  drivers/staging/dsp/Kconfig      |   7 +
-> > >  drivers/staging/dsp/Makefile     |   2 +
-> > >  drivers/staging/dsp/dsp-fm34ne.c | 364 +++++++++++++
-> > >  drivers/staging/dsp/dsp-fm34ne.h | 845 +++++++++++++++++++++++++++++++
-> > >  6 files changed, 1221 insertions(+)
-> > >  create mode 100644 drivers/staging/dsp/Kconfig
-> > >  create mode 100644 drivers/staging/dsp/Makefile
-> > >  create mode 100644 drivers/staging/dsp/dsp-fm34ne.c
-> > >  create mode 100644 drivers/staging/dsp/dsp-fm34ne.h
-> >
-> >
-> > Sorry, but why is this going into drivers/staging/ at all?  What is
-> > needed to be done to get this out of staging?  Why not do that work
-> > right now?  At the least, we need a TODO file in the directory that
-> > lists what needs to be done and who is responsible for it.
+Il 21/02/23 19:06, Daniel Lezcano ha scritto:
+> The devres variant of thermal_add_hwmon_sysfs() only takes the thermal
+> zone structure pointer as parameter.
 > 
-> Because this driver sets up fm34 and switches it to bypass mode allowing
-> sound to work on the device. There is no dsp framework in kernel which could
-> be called to operate dsp from the actual sound codec. (If there is, I
-> would be glad
-> if you show me). Fm34 must be active only on DMIC use, all other cases require
-> it to be in bypass.
+> Actually, it uses the tz->device to add it in the devres list.
+> 
+> It is preferable to use the device registering the thermal zone
+> instead of the thermal zone device itself. That prevents the driver
+> accessing the thermal zone structure internals and it is from my POV
+> more correct regarding how devm_ is used.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com> #amlogic_thermal
 
-That does not explain at all why this needs to go into drivers/staging/
-and not the normal portion of the kernel.  Why this specific location?
-What is wrong with it that requires it to go here?
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> 
+#MediaTek auxadc
 
-In other words, you need to document _WHY_ it must go here as it is not
-obvious at all.
 
-thanks,
-
-greg k-h
