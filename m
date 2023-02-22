@@ -2,79 +2,106 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9977FC6379F
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 08:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A439AC6379F
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 09:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231206AbjBVI4e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Feb 2023 03:56:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        id S229935AbjBVJVK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Feb 2023 04:21:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230363AbjBVI4c (ORCPT
+        with ESMTP id S231448AbjBVJVJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Feb 2023 03:56:32 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F15F35267;
-        Wed, 22 Feb 2023 00:56:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pB5Qy6H1AhIW+S+MO2gVETFQyOAVmkGRdB/dvJDyZDU=; b=yFPXld4rvdDBkR/0AGehU7LhZw
-        4oDXus3nhp1JozzKFM9rGvlttKFMLiGOUlgM07gSG+DEw/o21xcUgg1sBxF3LFvAmwYoFvswe914P
-        sg3usOgRF5y5etSZw0E3bzwUVHAYY241Z8U9g9W0kA/KkvY+J91ClcvGKCKk+JjO+vbRgVo9KsG3/
-        MjX3B/JCZqtfUFCs/+6aqrzO3lR4SSqwxvgETy+UK382d2HAVqzQvgm8pUsLhST8BqabNA8dviLXS
-        mCzQtVemVRJiWpe4GciHhsaggLyzQGMJog8A1NEX3oPUX9uR5Gu7BGZUtjzMghY1iLpWzqyInLrs2
-        c/pmcvkw==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1pUkvH-00Gon5-So; Wed, 22 Feb 2023 10:56:23 +0200
-Message-ID: <50e64bd0-00cc-fd2f-b45e-e7268cd371b8@kapsi.fi>
-Date:   Wed, 22 Feb 2023 10:56:23 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH v1 1/5] ARM: tegra: Add labels to tegra30.dtsi
-Content-Language: en-US
-To:     Svyatoslav Ryhel <clamor95@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 22 Feb 2023 04:21:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F4528D1B;
+        Wed, 22 Feb 2023 01:21:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 55B74B811FF;
+        Wed, 22 Feb 2023 09:21:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE8BC433EF;
+        Wed, 22 Feb 2023 09:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1677057665;
+        bh=TgIaH9NMwPd4IhHNqQrT8ss2+K0UDdLN1lq1CLdEZCQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=w1SvIo8TA/ZkeGpPbu4v1va1H22ECi2GS/Kb6d3Y+5sxapIw0kZYFBUWTzJetBkwd
+         qXnzkkqXCQzjsCwmS+UnCzOapWwSpROaY3AUeTHvlaAurUoVyye5MREZkerH8Z06Pe
+         XxsAVLaZoKjjjgDSX6y81ebjN5UrdKXW6QZ8Oqss=
+Date:   Wed, 22 Feb 2023 10:21:02 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
         Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230221175348.15681-1-clamor95@gmail.com>
- <20230221175348.15681-2-clamor95@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20230221175348.15681-2-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v1 09/10] staging: dsp: add support for Fortemedia FM34NE
+ DSP
+Message-ID: <Y/Xefn/76JW1C03d@kroah.com>
+References: <20230221183211.21964-1-clamor95@gmail.com>
+ <20230221183211.21964-10-clamor95@gmail.com>
+ <Y/UbMH5tXDgsvSbD@kroah.com>
+ <CAPVz0n2-giCF9Z9fMimTFQnGk73HAdfU4SitGn58iZapLjeuTQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+In-Reply-To: <CAPVz0n2-giCF9Z9fMimTFQnGk73HAdfU4SitGn58iZapLjeuTQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/21/23 19:53, Svyatoslav Ryhel wrote:
-> From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+On Wed, Feb 22, 2023 at 10:19:47AM +0200, Svyatoslav Ryhel wrote:
+> вт, 21 лют. 2023 р. о 21:27 Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> пише:
+> >
+> > On Tue, Feb 21, 2023 at 08:32:10PM +0200, Svyatoslav Ryhel wrote:
+> > > FM34NE is digital sound processing chip used for active
+> > > noise suppression mainly on ASUS Transformers.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/staging/Kconfig          |   2 +
+> > >  drivers/staging/Makefile         |   1 +
+> > >  drivers/staging/dsp/Kconfig      |   7 +
+> > >  drivers/staging/dsp/Makefile     |   2 +
+> > >  drivers/staging/dsp/dsp-fm34ne.c | 364 +++++++++++++
+> > >  drivers/staging/dsp/dsp-fm34ne.h | 845 +++++++++++++++++++++++++++++++
+> > >  6 files changed, 1221 insertions(+)
+> > >  create mode 100644 drivers/staging/dsp/Kconfig
+> > >  create mode 100644 drivers/staging/dsp/Makefile
+> > >  create mode 100644 drivers/staging/dsp/dsp-fm34ne.c
+> > >  create mode 100644 drivers/staging/dsp/dsp-fm34ne.h
+> >
+> >
+> > Sorry, but why is this going into drivers/staging/ at all?  What is
+> > needed to be done to get this out of staging?  Why not do that work
+> > right now?  At the least, we need a TODO file in the directory that
+> > lists what needs to be done and who is responsible for it.
 > 
-> Add phandle names for memory/I2C/SPI/USB/SDMMC controller nodes to allow
-> for cleaner device descriptions.
-> 
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+> Because this driver sets up fm34 and switches it to bypass mode allowing
+> sound to work on the device. There is no dsp framework in kernel which could
+> be called to operate dsp from the actual sound codec. (If there is, I
+> would be glad
+> if you show me). Fm34 must be active only on DMIC use, all other cases require
+> it to be in bypass.
 
-Hi!
+That does not explain at all why this needs to go into drivers/staging/
+and not the normal portion of the kernel.  Why this specific location?
+What is wrong with it that requires it to go here?
 
-Patches 1 and 2 are missing your Signed-off-by. But also, I'd only add 
-labels as they are needed instead of adding them all in one go.
+In other words, you need to document _WHY_ it must go here as it is not
+obvious at all.
 
-Mikko
+thanks,
 
+greg k-h
