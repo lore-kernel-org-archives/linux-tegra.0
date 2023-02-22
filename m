@@ -2,37 +2,37 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB62C61DA4
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 12:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EDAC6379F
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 12:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231895AbjBVMS3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Feb 2023 07:18:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35502 "EHLO
+        id S231837AbjBVMUU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Feb 2023 07:20:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232012AbjBVMSG (ORCPT
+        with ESMTP id S231823AbjBVMUS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Feb 2023 07:18:06 -0500
+        Wed, 22 Feb 2023 07:20:18 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F133A091;
-        Wed, 22 Feb 2023 04:17:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6244939BAA;
+        Wed, 22 Feb 2023 04:19:30 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2DE86140F;
-        Wed, 22 Feb 2023 12:16:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E0EC433EF;
-        Wed, 22 Feb 2023 12:16:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CC26261338;
+        Wed, 22 Feb 2023 12:17:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D750CC433EF;
+        Wed, 22 Feb 2023 12:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677068171;
-        bh=f4AqES9u89TU5lnKVaH/Dh6alXUUeZYcLZDLaamkE8w=;
+        s=k20201202; t=1677068270;
+        bh=9GmlRFeLaq0xJqlHCBlxHmEflw/cjNCvQ8EomYvQCy0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pXP1mDpUHpJnbTn/t9XShYZs4yvoJP3zXr+BUx8UDw2sdscYRajov5NnaqzrPfT/3
-         KbqbVpVtmEp8UhQLcZ18TsupFKw62WwVfHACsCN6IDacwT8VA/r/P04p4lvoIcgKX6
-         yNId43Jxp9MIXkEnzpeodyOdR8+ZDJyZOtzvqa6m4JdekpVT3WtDIDT2p9othQ78DG
-         TNHlZOntinsbvyvGS46exQQoaDkgk8mKt7v/AkLC57TM+2B1TTYodbaoluCJRnUre6
-         isIPqnNFWM2wWoStBvlgt0DS7No4/KlJWDurbpbwPRfNJ96tKWqu4Ljij58s+7pQYB
-         9Qrw3uFiKl3SA==
-Date:   Wed, 22 Feb 2023 12:16:02 +0000
+        b=CwiNeLZFsPjnrK4I+Cu2ffSonN5hQxzvPUEPiaLXEonn7wSrFU9RUcpneslt9wZDp
+         d2jOWJQfQNjjWouQ/O0dtu0YQxZYBDTl2cIjd1IM+fnBntIOn3xoJeAh3LZHQ983cH
+         cLQnRQFlH73ykE/SIXs0fjnJt6ArAeuPZVN7PWRUGvuyH8NyD1xkgLCk4SHLrktU0H
+         JpMOwiWf1pvq4ul7ATU2wI9PMJ3Ox8QDapE26fFVLX4x2xjW8iGEpnuRUO3IooI0rZ
+         U/E9SjSEshbI8TxP8VnWsikub+Ipciqm39stdS5OfZ8LLqA8HATdsG2+Mvo1O/mlqR
+         ymUiXch60Q1PQ==
+Date:   Wed, 22 Feb 2023 12:17:41 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Svyatoslav Ryhel <clamor95@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -47,61 +47,64 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v1 02/10] sound: soc: jack: allow multiple interrupt per
- gpio
-Message-ID: <Y/YHgn72PI4CQ4jg@sirena.org.uk>
+Subject: Re: [PATCH v1 04/10] ASoC: tegra: Support RT5631 by machine driver
+Message-ID: <Y/YH5eqUgZ53vwnc@sirena.org.uk>
 References: <20230221183211.21964-1-clamor95@gmail.com>
- <20230221183211.21964-3-clamor95@gmail.com>
- <Y/VA3HK/jGVPbrqb@sirena.org.uk>
- <CAPVz0n2cHvKfez6=ydR8HQfAfM_bipmAzav76Gxmp6pF4wLuhw@mail.gmail.com>
+ <20230221183211.21964-5-clamor95@gmail.com>
+ <Y/VEUaOIE1mk1utt@sirena.org.uk>
+ <CAPVz0n1kkXQDNhzFoa8xwqaFErNDTHSaqM07TDUHRPSnH+PvkQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Pf0Zmmq6YW6dHegE"
+        protocol="application/pgp-signature"; boundary="NGrKRoeMMLtTRJ90"
 Content-Disposition: inline
-In-Reply-To: <CAPVz0n2cHvKfez6=ydR8HQfAfM_bipmAzav76Gxmp6pF4wLuhw@mail.gmail.com>
+In-Reply-To: <CAPVz0n1kkXQDNhzFoa8xwqaFErNDTHSaqM07TDUHRPSnH+PvkQ@mail.gmail.com>
 X-Cookie: My LESLIE GORE record is BROKEN ...
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Pf0Zmmq6YW6dHegE
+--NGrKRoeMMLtTRJ90
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 22, 2023 at 09:53:28AM +0200, Svyatoslav Ryhel wrote:
-> =D1=81=D1=80, 22 =D0=BB=D1=8E=D1=82. 2023 =D1=80. =D0=BE 00:08 Mark Brown=
+On Wed, Feb 22, 2023 at 10:00:58AM +0200, Svyatoslav Ryhel wrote:
+> =D1=81=D1=80, 22 =D0=BB=D1=8E=D1=82. 2023 =D1=80. =D0=BE 00:23 Mark Brown=
  <broonie@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 
-> > On Tue, Feb 21, 2023 at 08:32:03PM +0200, Svyatoslav Ryhel wrote:
-> > > This feature is required for coupled hp-mic quirk used
-> > > by some Nvidia Tegra 3 based devices work properly.
+> > It feels like this is complicated enough and looks like the
+> > clocking is flexible enough that it might be easier to just have
+> > a table of values or otherwise enumerate standard rates, seeing
+> > the code I feel like I need to worry about what happens if we
+> > pick a clock rate over 6MHz (the loop could give a value over
+> > that), and it's not clear why we have the switch statement rather
+> > than just starting at a multiple of 128 and looping an extra time.
 
-> > Please submit this separately, there's no meaningful dependency
-> > on the rest of the series.
+> > I suspect there's going to be no meaningful downside for having
+> > the clock held at over 3MHz on a tablet form factor, the usual
+> > issue would be power consumption but between the larger battery
+> > size you tend to have on a tablet and the power draw of the
+> > screen if that's on it's likely to be into the noise practially
+> > speaking.
 
-> RT5631 by machine driver commit contains a coupled hp-mic quirk which
-> requires this commit to work properly. In v2 RT5631 machine driver bringup
-> and coupled hp-mic quirk may be split into separate commits.
+> This is how downstream handled mclk rate for RT5631.
 
-This is needed to get the machine driver to work at runtime but that
-doesn't block getting this merged, and there's no build time dependency
-in the other direction either.
+That doesn't mean it shouldn't be fixed or improved.
 
---Pf0Zmmq6YW6dHegE
+--NGrKRoeMMLtTRJ90
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmP2B4EACgkQJNaLcl1U
-h9DRsgf/RCG23nPnnVRzCrfVLyrHStlD/EEOzmGlpWMsUNpfGf+dZao8XLMsRngw
-mV2nXT0E1siPYCKxTk06KWPpSF1+MGYAO7yXsPkJWSWSzWuuh3ZuIU3OcoVMAWsC
-VV8DbcqSXrovVbVIDgFcwIAmrVXWrNLogCiZeZqwJO6lSyPSXtVHjaH6DRpQ+/m2
-2XfxdKoG7ecQTv1U6whNGZ47bEplT9XaDFAyEjHQTNYJhwzsPzl+Wo2oDzUe4uVK
-v2OUOWUXhHTWlhIDORfFiiQ0GI4JMB8AbdQ6/rDAbvJ42QkS6A2anaXsIvtdU5Ta
-F6DhUvXU+I+8SkE0Lia8hkm2nIo8CQ==
-=9wj7
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmP2B+QACgkQJNaLcl1U
+h9AD1ggAgGEXkKHQTxxtVxDQMk02dT4bJ/dorByL9oNrnCr19ruII/5BBJ9hmnsw
+J6iCIEvHYDaaFGATbUGWfKylQjgepRI6bTsnsOkpnvzlK6kn/tGxKBhZ5/sxWu+n
+ngzW35tcAX9l66cPsi3J3TpACmNzlehJobYqPtPLCq8+GHwRjqCPp3MxlDKw35lA
+46nf76vZCfp34GIZ9VqOni9GKvQjudaKcOUKu3xN3IjNQd+nKElWsWwLh8b7X4Ji
+1LPnwP+Xhze3ow0OpoCPsJGN4Kz8INyKEqrOaWEIcq23N83FNX7l8huDzWNVFkEk
+AygpzBLJacRRd1otNcxO7BxXYAE+TA==
+=QGGQ
 -----END PGP SIGNATURE-----
 
---Pf0Zmmq6YW6dHegE--
+--NGrKRoeMMLtTRJ90--
