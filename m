@@ -2,95 +2,99 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969C7C6379F
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Feb 2023 22:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAA8C64EC7
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 04:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230354AbjBUWlz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 17:41:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38474 "EHLO
+        id S229612AbjBVEDZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Feb 2023 23:03:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230324AbjBUWly (ORCPT
+        with ESMTP id S229589AbjBVEDY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 17:41:54 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C7823858;
-        Tue, 21 Feb 2023 14:41:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C41E611F8;
-        Tue, 21 Feb 2023 22:41:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B47C433EF;
-        Tue, 21 Feb 2023 22:41:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677019309;
-        bh=0jWSrZiIEN4x32uRTklDrYs3W6jpjgamnp/3khg4KpM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a8Cw740x+y9QfrLGKgcC2J8j48ETLPsHL6ZB57DG9jiyQejRF3aPx3uXfKG+AU76M
-         hnEJ0G5VrTVkQ15o8E626ubweoVSpx19c1CYVkf/krW0rlN98dt/3C0pgS7KX/tEG3
-         7oWCM/2NtObu8QWigvFXcAeaOLQ6sAo3Ic+2IJLuQhbQq9c8LuzZJUvfg9LfSDQF3U
-         8vlM3KCInnerWHFqeQcH6FNaC2JdIu+9jVf3T36nMAsvVHrZgK/IbyY4PnpSWqxE6l
-         2FVrtdTK+JWX33aOgsPTLmQVrrQX7OJXBzfQATXkeyxcFA5Vg/EkntAj9oOuZvNN+9
-         vekCI7YvuWHfw==
-Date:   Tue, 21 Feb 2023 22:41:41 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v1 09/10] staging: dsp: add support for Fortemedia FM34NE
- DSP
-Message-ID: <Y/VIpVwFu5gUUcsz@sirena.org.uk>
-References: <20230221183211.21964-1-clamor95@gmail.com>
- <20230221183211.21964-10-clamor95@gmail.com>
+        Tue, 21 Feb 2023 23:03:24 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A27F5BDDA
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Feb 2023 20:03:20 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id h31so3582957pgl.6
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Feb 2023 20:03:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QuI/VvwDNYNNazJWSsosiKrPGXGOzC0MjV/AUA+0Y18=;
+        b=nCQyd6hFnx68A0tFIWYPEgBjsOibWoTXo/smz+3gYmBRuFPBPE4pSywkfCdKUgkvpA
+         2hEWf1fS6sHfJJXEu8DWcYvgIJnpq7iCy2lvMkzx+HoVbnLXGhDO3iOZBooeJGtaR0Pd
+         PIZdAXgjwX/QLrf6b4kb2lhJNJ1j/mPGS3Ik1K0eu/3Wy4urzl1+NUghMtTwh0O3P7VO
+         XwlRUrcPNrxw9hmttzjw+mE8ECx7oXM2WAMltKMJ6Ph5wzLKVBrlFjqFfJs7uN86eaQv
+         wJJXhF1XzUfKegtHqxyQWMa88wL+GMAeFpaouHVUjOmGIQMWTqRQH3o2TN5f/VRX0YMW
+         7WDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QuI/VvwDNYNNazJWSsosiKrPGXGOzC0MjV/AUA+0Y18=;
+        b=D9FuKIo3JLzzfAt0Fzui2cjDV/c9gzTAzSJAksl5rI4gsD+cLi+dKyFo5qGeMHZONf
+         Q8JDM96Qjgy/3/JOjiJhI9KAm5Nnv5EyNjOBmN6TODkvyzF4pUbyHuYaDA8up9/4pEJx
+         BG6EzM5/rK9xmOTIBd3qD66saIq9kBy/YC4ngwHEhlIkP4GCKofl5bnLMPirctCgZMUX
+         uzfDxpsG/KPTmyO6KL1KThOPGDFykalaP2gH52V0XjndLw+IOdvsiHHHJktZfl8Xhk8N
+         t7VyCrDHpXx2BL1jy6JDpYg9ZzKvKXl+lSEvkwGAgG2D+jfbAHbuImWQOrh8uKvU5CS3
+         8r8A==
+X-Gm-Message-State: AO0yUKW6sgbAFZZ03sa8JhU0yA5jC79TvPj3J6SNHBdeqqMLckJyB8ZB
+        2TIJBauGHWIKIVxOHDILuq1nNg==
+X-Google-Smtp-Source: AK7set+j5AzguT+wPMqJTKHp23ybKVMqcUGOXK1UT3NyydZuoWzKn02WTplOAHKPGXm8wetjgNETZA==
+X-Received: by 2002:aa7:96d0:0:b0:5a8:515a:eba4 with SMTP id h16-20020aa796d0000000b005a8515aeba4mr6768719pfq.10.1677038600006;
+        Tue, 21 Feb 2023 20:03:20 -0800 (PST)
+Received: from localhost ([122.172.83.155])
+        by smtp.gmail.com with ESMTPSA id h5-20020a62b405000000b005ae8e94b0d5sm6764079pfn.107.2023.02.21.20.03.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Feb 2023 20:03:19 -0800 (PST)
+Date:   Wed, 22 Feb 2023 09:33:17 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
+        dmitry.osipenko@collabora.com, rafael@kernel.org,
+        jonathanh@nvidia.com, robh+dt@kernel.org, lpieralisi@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
+        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch v2 7/9] cpufreq: tegra194: add OPP support and set
+ bandwidth
+Message-ID: <20230222040317.r2p6zlbumazymluc@vireshk-i7>
+References: <20230220140559.28289-1-sumitg@nvidia.com>
+ <20230220140559.28289-8-sumitg@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t+XYRlFjbWnfVnHi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230221183211.21964-10-clamor95@gmail.com>
-X-Cookie: Serving suggestion.
+In-Reply-To: <20230220140559.28289-8-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 20-02-23, 19:35, Sumit Gupta wrote:
+> +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
+> +{
+> +	struct dev_pm_opp *opp;
+> +	struct device *dev;
+> +	int ret;
+> +
+> +	dev = get_cpu_device(policy->cpu);
+> +	if (!dev)
+> +		return -ENODEV;
+> +
+> +	opp = dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true);
+> +	if (IS_ERR(opp))
+> +		return PTR_ERR(opp);
+> +
+> +	ret = dev_pm_opp_set_opp(dev, opp);
+> +	dev_pm_opp_put(opp);
 
---t+XYRlFjbWnfVnHi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What about dev_pm_opp_set_rate() instead ?
 
-On Tue, Feb 21, 2023 at 08:32:10PM +0200, Svyatoslav Ryhel wrote:
-> FM34NE is digital sound processing chip used for active
-> noise suppression mainly on ASUS Transformers.
+> +	return ret;
+> +}
 
-This looks like it should be fairly straightforward to support
-within ASoC without too much work, and since it's in the audio
-path it should probably be referenced from the sound card it'll
-end up having an ABI impact on the card.  Take a look at wm9090
-for a moderately complex example of an analogue only device
-(which this appears to be in terms of system integration).
-
---t+XYRlFjbWnfVnHi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmP1SKQACgkQJNaLcl1U
-h9DDVwf+K70Y1qVzg5TOp77al5H538FgUpnrUexBgtqevxsnf2pfTG1u1FhzAIPx
-ailEywGHqikGuQiQnRlJ7QJ/nq2PVnZ48f+yjdRrvE5Y6gPfuVAVaXMUlO0cVF+g
-gHuBj6tIxjz+ovqg9plyLwp0+6Pq2hkBOfMgRLU5YrfK2uUa991io9enHztwPJ1K
-EDBwItdOm7Z7rA3eYR6SYwDaA/DrGoqcrZkj4JCsOYi6yxHUyoXWeRKUQUcC9G8b
-KBTABkNAykYsDQpp1ePy5k3DNPeTzWCTlnp6FkEeVI2CSbiCO2WCNUamZR+LPS9o
-DHJiBUmskQVX14bLBWBufAXsfXgFsw==
-=ItYQ
------END PGP SIGNATURE-----
-
---t+XYRlFjbWnfVnHi--
+-- 
+viresh
