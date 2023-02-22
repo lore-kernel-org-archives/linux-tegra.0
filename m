@@ -2,99 +2,94 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAA8C64EC7
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 04:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094C8C64EC4
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Feb 2023 07:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbjBVEDZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Feb 2023 23:03:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48630 "EHLO
+        id S229674AbjBVHxr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Feb 2023 02:53:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbjBVEDY (ORCPT
+        with ESMTP id S229673AbjBVHxq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Feb 2023 23:03:24 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A27F5BDDA
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Feb 2023 20:03:20 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id h31so3582957pgl.6
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Feb 2023 20:03:20 -0800 (PST)
+        Wed, 22 Feb 2023 02:53:46 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31AAE2BEF3;
+        Tue, 21 Feb 2023 23:53:41 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id s26so26769408edw.11;
+        Tue, 21 Feb 2023 23:53:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QuI/VvwDNYNNazJWSsosiKrPGXGOzC0MjV/AUA+0Y18=;
-        b=nCQyd6hFnx68A0tFIWYPEgBjsOibWoTXo/smz+3gYmBRuFPBPE4pSywkfCdKUgkvpA
-         2hEWf1fS6sHfJJXEu8DWcYvgIJnpq7iCy2lvMkzx+HoVbnLXGhDO3iOZBooeJGtaR0Pd
-         PIZdAXgjwX/QLrf6b4kb2lhJNJ1j/mPGS3Ik1K0eu/3Wy4urzl1+NUghMtTwh0O3P7VO
-         XwlRUrcPNrxw9hmttzjw+mE8ECx7oXM2WAMltKMJ6Ph5wzLKVBrlFjqFfJs7uN86eaQv
-         wJJXhF1XzUfKegtHqxyQWMa88wL+GMAeFpaouHVUjOmGIQMWTqRQH3o2TN5f/VRX0YMW
-         7WDA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s85ej20o57EVIAZFbWgvrgnN0SkPXWj9xUiifHsTHZg=;
+        b=AFb76RWl0qx095lTG9TFJYrGSOSHsEId33Ft2ZTbU4DUX7kfqyIOv+8xnezBuHPYa1
+         yCDyIMnOZridhY9SjLWjr1yuNZYnjaiDKIytq7JCdL+N8e506wpoMBmPQ+Nx2YMRsLCu
+         RRtl75WuqhpLkXGr0F0kndHrxQhk2RMlFm7xAokmbPGAm3S9VcVvTGXs8s0X7W6B3quc
+         iBAczBLHfa2OGqN+whJaqLMPDVyvjY+Rz82MsXi7wcio17ZKeVdqIP/uP8fX/9ulnnZo
+         UmNtML76sovEkZBCTsHM6GkdL1/9B01pBEx4vUno8bi3hdeCaOdoTyfq6hkTa34gmft4
+         03oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QuI/VvwDNYNNazJWSsosiKrPGXGOzC0MjV/AUA+0Y18=;
-        b=D9FuKIo3JLzzfAt0Fzui2cjDV/c9gzTAzSJAksl5rI4gsD+cLi+dKyFo5qGeMHZONf
-         Q8JDM96Qjgy/3/JOjiJhI9KAm5Nnv5EyNjOBmN6TODkvyzF4pUbyHuYaDA8up9/4pEJx
-         BG6EzM5/rK9xmOTIBd3qD66saIq9kBy/YC4ngwHEhlIkP4GCKofl5bnLMPirctCgZMUX
-         uzfDxpsG/KPTmyO6KL1KThOPGDFykalaP2gH52V0XjndLw+IOdvsiHHHJktZfl8Xhk8N
-         t7VyCrDHpXx2BL1jy6JDpYg9ZzKvKXl+lSEvkwGAgG2D+jfbAHbuImWQOrh8uKvU5CS3
-         8r8A==
-X-Gm-Message-State: AO0yUKW6sgbAFZZ03sa8JhU0yA5jC79TvPj3J6SNHBdeqqMLckJyB8ZB
-        2TIJBauGHWIKIVxOHDILuq1nNg==
-X-Google-Smtp-Source: AK7set+j5AzguT+wPMqJTKHp23ybKVMqcUGOXK1UT3NyydZuoWzKn02WTplOAHKPGXm8wetjgNETZA==
-X-Received: by 2002:aa7:96d0:0:b0:5a8:515a:eba4 with SMTP id h16-20020aa796d0000000b005a8515aeba4mr6768719pfq.10.1677038600006;
-        Tue, 21 Feb 2023 20:03:20 -0800 (PST)
-Received: from localhost ([122.172.83.155])
-        by smtp.gmail.com with ESMTPSA id h5-20020a62b405000000b005ae8e94b0d5sm6764079pfn.107.2023.02.21.20.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Feb 2023 20:03:19 -0800 (PST)
-Date:   Wed, 22 Feb 2023 09:33:17 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
-        dmitry.osipenko@collabora.com, rafael@kernel.org,
-        jonathanh@nvidia.com, robh+dt@kernel.org, lpieralisi@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
-        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
-        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v2 7/9] cpufreq: tegra194: add OPP support and set
- bandwidth
-Message-ID: <20230222040317.r2p6zlbumazymluc@vireshk-i7>
-References: <20230220140559.28289-1-sumitg@nvidia.com>
- <20230220140559.28289-8-sumitg@nvidia.com>
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s85ej20o57EVIAZFbWgvrgnN0SkPXWj9xUiifHsTHZg=;
+        b=Kzl0AoT/KDL6l7nOeF5hIf9uLcqJpp982BAgCGq9CQ9nTDB4L17bbbCRwxM2v/MOo2
+         Kum28dTlKfDRCNZbLUfcZr140wc931/hPDuAb6jx2WbM8O7AtdqdA5c24ttBuV5XEhC2
+         OUaQkkC4ml3gIKU5UWYFDsld9ljQGNQ052uuViq7n7+PLvGQEHStdWtUpVpdlNii12tQ
+         1EibAJDJhA5tAvjaQ6cqMs3Dc/IOYtyeMMGN8q9zdc0WagwoL+N2oR2mJ8hnUUV1riix
+         kvDWN5Du3Eg7Z5NnqT2SXdm3/NOuhSZCvCfgP/W8pE9k0oe1jMxIc2pyPg4kpR1JwEQ6
+         pXHw==
+X-Gm-Message-State: AO0yUKVbrffgVicY0NAsC40ySbv/nTuZp/oGFLRrXbG/HleTxE+I05cB
+        Cr7i8XspyBfhIlfWoMeSYw88sR9l/GzqotPVnKM=
+X-Google-Smtp-Source: AK7set+0c5IFVbo5S3RjC5aOGFuL8Zs9WlbR6blsKJepl2XbT7Oc5hgv5WTV0x4z8gzWNJGZhNesPqm9d1b5s6s1HSQ=
+X-Received: by 2002:a17:907:6025:b0:877:7480:c568 with SMTP id
+ fs37-20020a170907602500b008777480c568mr6954732ejc.8.1677052419551; Tue, 21
+ Feb 2023 23:53:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230220140559.28289-8-sumitg@nvidia.com>
+References: <20230221183211.21964-1-clamor95@gmail.com> <20230221183211.21964-3-clamor95@gmail.com>
+ <Y/VA3HK/jGVPbrqb@sirena.org.uk>
+In-Reply-To: <Y/VA3HK/jGVPbrqb@sirena.org.uk>
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+Date:   Wed, 22 Feb 2023 09:53:28 +0200
+Message-ID: <CAPVz0n2cHvKfez6=ydR8HQfAfM_bipmAzav76Gxmp6pF4wLuhw@mail.gmail.com>
+Subject: Re: [PATCH v1 02/10] sound: soc: jack: allow multiple interrupt per gpio
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 20-02-23, 19:35, Sumit Gupta wrote:
-> +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
-> +{
-> +	struct dev_pm_opp *opp;
-> +	struct device *dev;
-> +	int ret;
-> +
-> +	dev = get_cpu_device(policy->cpu);
-> +	if (!dev)
-> +		return -ENODEV;
-> +
-> +	opp = dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	ret = dev_pm_opp_set_opp(dev, opp);
-> +	dev_pm_opp_put(opp);
+=D1=81=D1=80, 22 =D0=BB=D1=8E=D1=82. 2023 =D1=80. =D0=BE 00:08 Mark Brown <=
+broonie@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tue, Feb 21, 2023 at 08:32:03PM +0200, Svyatoslav Ryhel wrote:
+> > This feature is required for coupled hp-mic quirk used
+> > by some Nvidia Tegra 3 based devices work properly.
+>
+> Please submit this separately, there's no meaningful dependency
+> on the rest of the series.
 
-What about dev_pm_opp_set_rate() instead ?
+RT5631 by machine driver commit contains a coupled hp-mic quirk which
+requires this commit to work properly. In v2 RT5631 machine driver bringup
+and coupled hp-mic quirk may be split into separate commits.
 
-> +	return ret;
-> +}
-
--- 
-viresh
+> Please submit patches using subject lines reflecting the style for the
+> subsystem, this makes it easier for people to identify relevant patches.
+> Look at what existing commits in the area you're changing are doing and
+> make sure your subject lines visually resemble what they're doing.
+> There's no need to resubmit to fix this alone.
