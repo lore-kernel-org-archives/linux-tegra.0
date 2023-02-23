@@ -2,122 +2,127 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2E8C636D6
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Feb 2023 16:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CCBC61DA4
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Feb 2023 17:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229477AbjBWQ25 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Feb 2023 11:28:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35182 "EHLO
+        id S229744AbjBWRTF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Feb 2023 12:19:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234612AbjBWQ2x (ORCPT
+        with ESMTP id S229731AbjBWRTE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Feb 2023 11:28:53 -0500
+        Thu, 23 Feb 2023 12:19:04 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFD71732;
-        Thu, 23 Feb 2023 08:28:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A1A16302;
+        Thu, 23 Feb 2023 09:19:03 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A9C3661752;
-        Thu, 23 Feb 2023 16:28:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD26C433EF;
-        Thu, 23 Feb 2023 16:28:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 38A076170B;
+        Thu, 23 Feb 2023 17:19:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0384FC433D2;
+        Thu, 23 Feb 2023 17:18:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677169710;
-        bh=QNtwL+3aQI5NX8KHQuxRVNJuJdxCfz9xgbVF4PuC1B4=;
+        s=k20201202; t=1677172742;
+        bh=aZu6ntK+R/n0LBJGGEpFgcMMTDGBBpmpfVg/f1+RK30=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ecOScmMnD4FY54PQcTo/sUh3wM/bq5x1gw2ldgd1gw3GsMiqGMHcx0hQYQ6U4hBej
-         JmDyZ/Tx/1Qq6N0Hg17t9W2gweAb3BddapdcI/ALIUxvRBHfrvLcAJBSsOWAbu0fnC
-         W14+vs8BlJ71JMPpCahFLIAWbKCnPLUmMkEAtp5w6825yBsUda4LMq9B4bG9xNMfcw
-         CVVgYVBhmI4PeoxciEBACllNI08VRVitgE7xwwY2RSeLpNshH0H6Q/1qGVi8gTEhuA
-         qunB88ExeofQLMfkFWy/9ZOpGNkuYSTulZCZOf2e0uu2yRzsX+EEqYlLb/zFlYUlnW
-         2q/C8GezC7vtw==
-Date:   Thu, 23 Feb 2023 09:28:28 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] gpu: host1x: fix uninitialized variable use
-Message-ID: <Y/eULFO4jbivQ679@dev-arch.thelio-3990X>
-References: <20230127221418.2522612-1-arnd@kernel.org>
+        b=UX1oaKX1mIA/ZgsOM53jj21anheNjYm8fQL2pMg4sEg9IwL9m1G5bUbp7L1KTr10y
+         vbqx0ThlabpbAVYmk8BqIk4/sDk91aRrGSQ6vXpNOMI44hTNqyKj5OPZkIikNyJHxs
+         ceuErG78iFZk8LGF85v4+AGsmFs/t/60tK3DlyP1fY6ZhOoDRx+TrwOHl+cJCD9BlB
+         qA2yMfWv7ThH8HrFDGGZiPRHIeKhr5RjYo+e5LC2DyDb36GxVrySMuJIILVi44k/Pu
+         GabcD9LSvpGHxQHXcI5WnMXTc2VUUbSCkSAimm1/JcEgHmRzTbCa0ezciVaGwYWt4q
+         NwRF/I8fnEPbg==
+Date:   Thu, 23 Feb 2023 17:18:56 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     robh+dt@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        skomatineni@nvidia.com, ldewangan@nvidia.com
+Subject: Re: [Patch V3 1/3] tpm_tis-spi: Support hardware wait polling
+Message-ID: <Y/egACRAp6nKZWdN@sirena.org.uk>
+References: <20230223162635.19747-1-kyarlagadda@nvidia.com>
+ <20230223162635.19747-2-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jD9PyuoFogP+Kbsz"
 Content-Disposition: inline
-In-Reply-To: <20230127221418.2522612-1-arnd@kernel.org>
+In-Reply-To: <20230223162635.19747-2-kyarlagadda@nvidia.com>
+X-Cookie: Hindsight is an exact science.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thierry, Daniel, and David,
 
-On Fri, Jan 27, 2023 at 11:14:00PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The error handling for platform_get_irq() failing no longer
-> works after a recent change, clang now points this out with
-> a warning:
-> 
-> drivers/gpu/host1x/dev.c:520:6: error: variable 'syncpt_irq' is uninitialized when used here [-Werror,-Wuninitialized]
->         if (syncpt_irq < 0)
->             ^~~~~~~~~~
-> 
-> Fix this by removing the variable and checking the correct
-> error status.
-> 
-> Fixes: 625d4ffb438c ("gpu: host1x: Rewrite syncpoint interrupt handling")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/host1x/dev.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> index 4872d183d860..aae2efeef503 100644
-> --- a/drivers/gpu/host1x/dev.c
-> +++ b/drivers/gpu/host1x/dev.c
-> @@ -487,7 +487,6 @@ static int host1x_get_resets(struct host1x *host)
->  static int host1x_probe(struct platform_device *pdev)
->  {
->  	struct host1x *host;
-> -	int syncpt_irq;
->  	int err;
->  
->  	host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
-> @@ -517,8 +516,8 @@ static int host1x_probe(struct platform_device *pdev)
->  	}
->  
->  	host->syncpt_irq = platform_get_irq(pdev, 0);
-> -	if (syncpt_irq < 0)
-> -		return syncpt_irq;
-> +	if (host->syncpt_irq < 0)
-> +		return host->syncpt_irq;
->  
->  	mutex_init(&host->devices_lock);
->  	INIT_LIST_HEAD(&host->devices);
-> -- 
-> 2.39.0
-> 
+--jD9PyuoFogP+Kbsz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Apologies if this has been reported already or has a solution in
-progress but mainline is now broken because this change got separated
-from the change it is fixing:
+On Thu, Feb 23, 2023 at 09:56:33PM +0530, Krishna Yarlagadda wrote:
 
-https://github.com/ClangBuiltLinux/continuous-integration2/actions/runs/4249931209/jobs/7391912774
-https://storage.tuxsuite.com/public/clangbuiltlinux/continuous-integration2/builds/2M7y9HpiXB13qiC2mkHMyeZOcLW/build.log
+> +       spi_bus_lock(phy->spi_device->master);
+> +
+> +       while (len) {
 
-I see this change sitting in the drm-tegra tree [1], which is getting
-merged into -next, so it is fixed there, which is why we did not notice
-any issues until the drm-next tree was merged into mainline. Can this be
-fast tracked to Linus to unbreak clang builds with -Werror?
+Why?
 
-[1]: https://gitlab.freedesktop.org/drm/tegra/-/commit/b9930311641cf2ed905a84aabe27e8f3868aee4a
+> +		spi_xfer[0].tx_buf = phy->iobuf;
+> +		spi_xfer[0].len = 1;
+> +		spi_message_add_tail(&spi_xfer[0], &m);
+> +
+> +		spi_xfer[1].tx_buf = phy->iobuf + 1;
+> +		spi_xfer[1].len = 3;
+> +		spi_message_add_tail(&spi_xfer[1], &m);
 
-Cheers,
-Nathan
+Why would we make these two separate transfers?
+
+> +		if (out) {
+> +			spi_xfer[2].tx_buf = &phy->iobuf[4];
+> +			spi_xfer[2].rx_buf = NULL;
+> +			memcpy(&phy->iobuf[4], out, transfer_len);
+> +			out += transfer_len;
+> +		}
+> +
+> +		if (in) {
+> +			spi_xfer[2].tx_buf = NULL;
+> +			spi_xfer[2].rx_buf = &phy->iobuf[4];
+> +		}
+
+This will use the same buffer for rx and tx if some bug manages to leave
+them both set.  That shouldn't be an issue but it's an alarm bell
+reading the code.
+
+> index 988aabc31871..b88494e31239 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -184,8 +184,9 @@ struct spi_device {
+>  	u8			chip_select;
+>  	u8			bits_per_word;
+>  	bool			rt;
+> -#define SPI_NO_TX	BIT(31)		/* No transmit wire */
+> -#define SPI_NO_RX	BIT(30)		/* No receive wire */
+> +#define SPI_NO_TX		BIT(31)		/* No transmit wire */
+> +#define SPI_NO_RX		BIT(30)		/* No receive wire */
+> +#define SPI_TPM_HW_FLOW		BIT(29)		/* TPM flow control */
+
+Additions to the SPI API should be a separate commit for SPI rather than
+merged into a driver change.
+
+--jD9PyuoFogP+Kbsz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmP3n/8ACgkQJNaLcl1U
+h9CRtAf9FFsG6QfCTNSairafqsZ3vz7HSuZQD2JqZrR15XiModR6Vy+VZVPY8CZX
+202aKZVbykOJWqUuYHa2peCZzZzEbPJwCJCTebUK10mNNOuVZimWm6bgM+CjeK1v
+FXO9+inTecIXDuaOWQAyuPcLZ/RzX+Yslb3oG/QdWrdnDlCdOrpHbcdj4UzMO1Us
+3rYWvFeznoJuIG/KPs0T8rVW7f+Ayofa+gzAMdX+nJLNM8+weCX0G1ygPZlr0YMa
+PAV3Kmxex68xxsRxbN4nSPaPEh42oTsRHUfeIRPEBWGjh1rw6oipkgrB4fr1ziXY
+7yma0+7zY30UX8NsLhsSzAobhEI2rA==
+=rA+v
+-----END PGP SIGNATURE-----
+
+--jD9PyuoFogP+Kbsz--
