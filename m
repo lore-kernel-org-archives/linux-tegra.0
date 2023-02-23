@@ -2,212 +2,159 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8439EC64ED8
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Feb 2023 09:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B54C61DA4
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Feb 2023 09:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233810AbjBWJDY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Feb 2023 04:03:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60200 "EHLO
+        id S233336AbjBWJhi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Feb 2023 04:37:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233799AbjBWJDX (ORCPT
+        with ESMTP id S233738AbjBWJh3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Feb 2023 04:03:23 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 442F24FA95;
-        Thu, 23 Feb 2023 01:03:21 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id f13so39103348edz.6;
-        Thu, 23 Feb 2023 01:03:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TD+8GeanCE/x70uegO9U5MTQbLl+734GZzOwj0hQ4pc=;
-        b=mBD1BQ37iIDR7JWXX/OlXKvNa8NVaHt1sKz+6t6eagPmuzwSpIqozkFoQL9xibTUeN
-         3fC98PAzmuSCFN4uVDugWglgh9ZFCbprkbnk/HgZzNcPy5Huhtt0QJWw1RPYKXXur4cK
-         +HAym9Bz/wfblPBHSOhXPxjJuaX78FsDr+BYgJtMDtKxHNZE7gfIAvlE2nSR6CXR+wwc
-         Mv+2mycXUCH3tu7Ybl2pKGWT1+cIJj6ZrSYn9k7mCzXsqPeJjQs1COycHwtlzYY4Ra6b
-         sXB0vmOmHGpThhwfR4G96Dcq6EU0tq+PKyatlmxBBpDd+4aVumxQQH/rX8+lPgn+9Hu6
-         dlHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TD+8GeanCE/x70uegO9U5MTQbLl+734GZzOwj0hQ4pc=;
-        b=0e+NX9NGqvBKLWRgerkCH0ydggIExM1uuuEw5Z06skOvTML6kd3mUjvlI9gDkHnN9w
-         JstECEQkbPHasjH+KpkfhpaxyVsiUnb0ko8X7FMclx2NEFWML6TJqlpcM3eXHuuzBd5z
-         17lTZggcxy557WXEIg3kIERd+XZCnCTaXo6RC2LB35sp/uwEHbzrh/uq0L6uye8bokq7
-         zp3GcqhZ4deJdAcLY/D+UHTQ7y6EA5E2w5Xaf+Y19xHyxHkPGHJ0F8jEY57fMJEht19g
-         RIJz2a3B4bMxPW5MqVKWt95d57uUG66AekO4WFp3jrGJS7OfrdDZvC1u2RG1nBTZADQT
-         oPmg==
-X-Gm-Message-State: AO0yUKWQkBBHApuTZ9NgZ3THKdbUj5s8bZ87WbBhRKDoURJSXOAEs1T0
-        U/aVsJ+ioGIe+SNbc0Q/3NA=
-X-Google-Smtp-Source: AK7set86PvyMLRzK9dDTPURDEy4nuoWHHr4XakacxhoLyoAJkDCWB6Fov3n50dy0+RO0ic4uWzJuwg==
-X-Received: by 2002:aa7:d74a:0:b0:4ad:7481:c2fe with SMTP id a10-20020aa7d74a000000b004ad7481c2femr9298095eds.22.1677142999215;
-        Thu, 23 Feb 2023 01:03:19 -0800 (PST)
-Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n27-20020a50935b000000b0049ef70a2894sm4139786eda.38.2023.02.23.01.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Feb 2023 01:03:18 -0800 (PST)
-Date:   Thu, 23 Feb 2023 10:03:16 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     christian.koenig@amd.com, digetx@gmail.com, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        sumit.semwal@linaro.org, wsa@kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: tegra: Share same DMA channel for Rx and Tx
-Message-ID: <Y/cr1EKI7R6rtg+O@orome>
-References: <20230222102759.23165-1-akhilrajeev@nvidia.com>
+        Thu, 23 Feb 2023 04:37:29 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64354515FB;
+        Thu, 23 Feb 2023 01:37:17 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BvOooXi0wf9JZACdz7bKi4cgnAG1iQ6nS/ZTzdrgf1Qs9QEbRb+OIODzcX3Eq3H9206PuHYnd3bcm/KfNGm4KTRwpq9xn+j9teN7EPXpF887LxuxFWlyoa/znf6xPL7SyAP0/BrFhAwa2N18aInkCdcsxgpSQ1Mhqi/ygNxu+H9T5T3QhIq/pkr+zIaYavDl1356rgBoWWr+heLX6tNEB0i4FMcDn2kh2RfLTEUH7v8R8zu8qKWh1AlSYG76UVwLaRrkJvkDmqpfxyt+AoizUUS/yWp8rvHISqKYBMGwdcWYQob4I99WhY54QSMrajKZH0vg9+in+z8nXakkCIqJUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fRFftHCpj9jXdf/LDmklQhW9elWlSEauDRrd7aZAt4k=;
+ b=T8X1ac/jhdcKv93z6icJ9ZSmlBf6mHwkHEtynAxKae4HCXzM6yDCVzNIk9odYmkvtLw7O0N3/JGaPuIsyjCyGuZANzCsZ0KFDeHQn0o0oXR65q023qFgFJn46aOJNOxcgq+2JefOYTUHdMJWIoE27iSLt8+xTpVfsw/S9Rs5ELrylgevQbLPBNcLEO+gHDoPCrXTy952Dq6KikpF1JVJLAbPTfbaSwchIwZVHXBbj6CStL4Ir7bbM4/EqfWbQ4VaAFw2h1W412widAW5ghcFvzMDQ7JypFhC4U9B1YFGze+JCePndXJhLFfJn73dTHWfv7mSrfpo8z+xqNl5AajJBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fRFftHCpj9jXdf/LDmklQhW9elWlSEauDRrd7aZAt4k=;
+ b=MRz/7trTtXZMI3heH4KUQwokNV966b53h+9YCOAv/V388BWrrYGkTzKrgv4JEiJ7CmgaYe3FDma+i9l6tnBMX/ZUhde67JsEZvbUsiw9jmenExyJUcv1eWElOhJXMwXgrAfOPvAH+oCoDPBfOOyFHlw8NA94ffo6o5PLXDE53oYtT/YQ8NtbiLCfyPAkssh4qFmcs+d/BXz9AmZwAMcoNifoi5uT0JIKUhjIq4GI+GZWJy4/KMBBbjDZziAr+bsNWS6+hIYWncBEnoOoAjfemLvdvjBiDRoUTOnng69Ft6x9zdO7+01dn2NXGZkdhX1LQXuR3d6BcncRgUSKWg616A==
+Received: from DM6PR11CA0016.namprd11.prod.outlook.com (2603:10b6:5:190::29)
+ by CY8PR12MB7145.namprd12.prod.outlook.com (2603:10b6:930:5f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.21; Thu, 23 Feb
+ 2023 09:36:48 +0000
+Received: from DM6NAM11FT064.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:190:cafe::b3) by DM6PR11CA0016.outlook.office365.com
+ (2603:10b6:5:190::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.21 via Frontend
+ Transport; Thu, 23 Feb 2023 09:36:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DM6NAM11FT064.mail.protection.outlook.com (10.13.172.234) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6134.21 via Frontend Transport; Thu, 23 Feb 2023 09:36:48 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 23 Feb
+ 2023 01:36:37 -0800
+Received: from [10.41.21.79] (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 23 Feb
+ 2023 01:36:30 -0800
+Message-ID: <df054fae-5195-1ef8-c72e-e5afe8d901d3@nvidia.com>
+Date:   Thu, 23 Feb 2023 15:06:26 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HaVAMW8fbvrZJ5yn"
-Content-Disposition: inline
-In-Reply-To: <20230222102759.23165-1-akhilrajeev@nvidia.com>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [Patch v2 7/9] cpufreq: tegra194: add OPP support and set
+ bandwidth
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <treding@nvidia.com>, <krzysztof.kozlowski@linaro.org>,
+        <dmitry.osipenko@collabora.com>, <rafael@kernel.org>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+        <lpieralisi@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <mmaddireddy@nvidia.com>, <kw@linux.com>, <bhelgaas@google.com>,
+        <vidyas@nvidia.com>, <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>,
+        <ishah@nvidia.com>, <bbasu@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>
+References: <20230220140559.28289-1-sumitg@nvidia.com>
+ <20230220140559.28289-8-sumitg@nvidia.com>
+ <20230222040317.r2p6zlbumazymluc@vireshk-i7>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <20230222040317.r2p6zlbumazymluc@vireshk-i7>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT064:EE_|CY8PR12MB7145:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c6763b8-7424-4fea-a971-08db15817c50
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vieRK5rQRrMRd9S1aQkI6SY4REc5M5EUPRWgPEqf9HsDgSKnmHX+bgHp330u8MJfeQKJpBQkjQd+vM0EtvDPmCH/YYAQgEq5zSvlO5Ttw+BJxkhtjKf7OboH7EF3duDjNuWdXcfCqm9yrGr3U098Qe1DgCyNrSxMUuTDCsNgc2rWs9+ZyzK3A6NDucox/pTX5zR7GzybIjK74fe7n5ZQXTHpuJ24RKVGHdLtPVBzXWuhhnpv26xohVlv8CJFIe2S3bC8GF1EXVHVn6VKYJHn1gPY/+5iYI/40WLnBZZMvwIn6HWHVjcGeBwdEX8TmbZ71JuZ0uIIa5ml1mHntm+5x/A0p2rIzrs0UfPVa7cvl/BJQ4Jpqtt/gEoHuU5Vp7DRN0swPsLwfXYtafvfj5e1sOy90M0jDfh93tOdDpK+GYn/MKQvKHqAnhNVSxszzvqfd7syuaQPwZyDPU4at3sFyldDUtjapfeqjL7NVxwiJUJx8hUeorcmihR3GTn+SbnYP1op/fAhDoCDusOOmTPFNPxmQdAm/jS7vBIq8MH6QuWsBAnbS6hUfb5EB54blpn97m9RgYx1Le61qdhWIqRSiU8p9F7PGpGhHdCEkrcft8YbSq1s6uFsQp8rAB7sF5Y0b3JZXGlSWG+0kVkdf+wED0qRgHHI352quzScwnHOZJtZ/2Jt310Ms3poAGEpH8Po34PvvDmfgMJwzmTKHQY7egEZAooqzXMkMcYbCnvDQpUIMOhpFGp3E/vWf+EZxvZ0HnGL4QXe8McoKqyatqbTTQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(396003)(136003)(376002)(346002)(451199018)(46966006)(40470700004)(36840700001)(336012)(16526019)(31696002)(36756003)(186003)(26005)(82310400005)(31686004)(6666004)(2616005)(6916009)(478600001)(86362001)(426003)(47076005)(16576012)(83380400001)(70206006)(8676002)(70586007)(53546011)(107886003)(54906003)(316002)(4326008)(41300700001)(8936002)(7416002)(5660300002)(36860700001)(34020700004)(82740400003)(2906002)(40480700001)(7636003)(40460700003)(356005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2023 09:36:48.2120
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c6763b8-7424-4fea-a971-08db15817c50
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT064.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7145
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---HaVAMW8fbvrZJ5yn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 22, 2023 at 03:57:59PM +0530, Akhil R wrote:
-> Allocate only one DMA channel for I2C and share it for both Tx and Rx.
-> Since I2C supports only half duplex, there is no impact on perf with
-> this.
->=20
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
-> v1->v2: Remove WARN_ON for DMA channel mismatch. There is only one
-> channel in use with this change.
->=20
->  drivers/i2c/busses/i2c-tegra.c | 54 ++++++++++------------------------
->  1 file changed, 15 insertions(+), 39 deletions(-)
+On 22/02/23 09:33, Viresh Kumar wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 20-02-23, 19:35, Sumit Gupta wrote:
+>> +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
+>> +{
+>> +     struct dev_pm_opp *opp;
+>> +     struct device *dev;
+>> +     int ret;
+>> +
+>> +     dev = get_cpu_device(policy->cpu);
+>> +     if (!dev)
+>> +             return -ENODEV;
+>> +
+>> +     opp = dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true);
+>> +     if (IS_ERR(opp))
+>> +             return PTR_ERR(opp);
+>> +
+>> +     ret = dev_pm_opp_set_opp(dev, opp);
+>> +     dev_pm_opp_put(opp);
+> 
+> What about dev_pm_opp_set_rate() instead ?
+> 
+>> +     return ret;
+>> +}
+> 
+> --
+> viresh
 
-I'm a little confused by this. All device trees already list the very
-same reference for both TX and RX DMA channels in the I2C nodes, so
-these channels are already effectively shared, aren't they?
+Tried using it and got below crash. It seems to be coming because we 
+don't have clocks property within CPU node for SoC's having BPMP-FW.
 
-So all this does is to get rid of the duplicated pointer? In practice,
-is the DMA channel pointer going to point to the exact same memory or
-are these separate objects that happen to point to the same hardware
-resource?
+  Unable to handle kernel NULL pointer dereference at virtual address 
+000000000000002e
+  ....
+  Call trace:
+   clk_round_rate+0x38/0xd8
+   dev_pm_opp_set_rate+0xe4/0x1a8
+   tegra194_cpufreq_set_target+0x74/0x88
+   __cpufreq_driver_target+0x154/0x250
+   cpufreq_online+0x7b4/0x9ac
 
-In either case, I think the commit message should clarify that. Also, a
-few minor nits below...
-
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 6aab84c8d22b..f52b835f1700 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -248,8 +248,7 @@ struct tegra_i2c_hw_feature {
->   * @msg_read: indicates that the transfer is a read access
->   * @timings: i2c timings information like bus frequency
->   * @multimaster_mode: indicates that I2C controller is in multi-master m=
-ode
-> - * @tx_dma_chan: DMA transmit channel
-> - * @rx_dma_chan: DMA receive channel
-> + * @dma_chan: DMA channel
->   * @dma_phys: handle to DMA resources
->   * @dma_buf: pointer to allocated DMA buffer
->   * @dma_buf_size: DMA buffer size
-> @@ -281,8 +280,7 @@ struct tegra_i2c_dev {
->  	u8 *msg_buf;
-> =20
->  	struct completion dma_complete;
-> -	struct dma_chan *tx_dma_chan;
-> -	struct dma_chan *rx_dma_chan;
-> +	struct dma_chan *dma_chan;
->  	unsigned int dma_buf_size;
->  	struct device *dma_dev;
->  	dma_addr_t dma_phys;
-> @@ -398,7 +396,7 @@ static int tegra_i2c_dma_submit(struct tegra_i2c_dev =
-*i2c_dev, size_t len)
->  	reinit_completion(&i2c_dev->dma_complete);
-> =20
->  	dir =3D i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
-> -	chan =3D i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_cha=
-n;
-> +	chan =3D i2c_dev->dma_chan;
-
-Is there any point in keeping around the local variable? It doesn't
-serve any purpose anymore.
-
-> =20
->  	dma_desc =3D dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
->  					       len, dir, DMA_PREP_INTERRUPT |
-> @@ -426,14 +424,9 @@ static void tegra_i2c_release_dma(struct tegra_i2c_d=
-ev *i2c_dev)
->  		i2c_dev->dma_buf =3D NULL;
->  	}
-> =20
-> -	if (i2c_dev->tx_dma_chan) {
-> -		dma_release_channel(i2c_dev->tx_dma_chan);
-> -		i2c_dev->tx_dma_chan =3D NULL;
-> -	}
-> -
-> -	if (i2c_dev->rx_dma_chan) {
-> -		dma_release_channel(i2c_dev->rx_dma_chan);
-> -		i2c_dev->rx_dma_chan =3D NULL;
-> +	if (i2c_dev->dma_chan) {
-> +		dma_release_channel(i2c_dev->dma_chan);
-> +		i2c_dev->dma_chan =3D NULL;
->  	}
->  }
-> =20
-> @@ -457,25 +450,18 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev =
-*i2c_dev)
->  		return 0;
->  	}
-> =20
-> -	chan =3D dma_request_chan(i2c_dev->dev, "rx");
-> -	if (IS_ERR(chan)) {
-> -		err =3D PTR_ERR(chan);
-> -		goto err_out;
-> -	}
-> -
-> -	i2c_dev->rx_dma_chan =3D chan;
-> -
-> +	/* The same channel will be used for both Rx and Tx.
-> +	 * Keeping the name as tx for backward compatibility with
-> +	 * existing devicetrees.
-> +	 */
-
-Block comments should have the starting /* on a line of its own. Also,
-s/Rx/RX/ and s/Tx/TX/ for consistency. Looks like you also used "Rx" and
-"Tx" in the commit message. The driver uses "RX" and "TX" elsewhere, so
-better switch to that in both this comment and the commit message.
-
-Also, perhaps quote the "tx" reference above to highlight that it's the
-literal string in DT that you're referring to.
-
-Thierry
-
---HaVAMW8fbvrZJ5yn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmP3K9IACgkQ3SOs138+
-s6GUoxAAudDGSGiO3PEE4ksIGRgrtEcXb9K/XuoFrT8ULh2NOTqG8JmhnNWwYeER
-UrujHgnAP3o0OKiv1VBmygpiNawKSccuf3ztFr3ZsiFiobbscutexweT1hbXviWs
-H7+FMfA1x7H1vbRQl6wP1/HMXQwbqWPZFd1AGGwaJaOtkLr4l83Tr3K2GZ074tI+
-Zspl7vc29lHhgOuQ7T2eYeJVDRkHG7ikE55ROJVyp+ZlV+nbvGXnInmOj4Vfg0Is
-0YHobXhgJ97rBi5RXbZS+fRFGZyJpsGedk1WvzaZ8lTpHVYHSRw3Ozav/Yygl6WQ
-JpY+XEIxLBV1fIhhZpaINulc59K4oHh4tQrlZDIQP/xjgA6IJpflfFz6LVSZBOta
-fQ8r2GIpq0RrOdWR1EyyIHw+BUH3yT0SaavCdkoOtjV70PHEByCGBYvF2EWvfONw
-M//DXdV10RzKpuaNO1CkaKcDWn+0umeyHn3aBW9OzMksPHoui4yP5ud8fSyzxx2d
-CwIn6eZwT5cXujN5/AKeZcNzr4zdw4MyDi2+/NifGv42kSl1Ji5CldWKwJxTWRGF
-yrmndC7ZxzOtZvdRV/iSyBdSVlt4MxXnwFle6ovqJrgjV5t+oEROaPFhFfaCbPZD
-Ej2AUVdjj1WMWNvqsBBifDPb97jrjIRHQcM+eMsq9/DLzKroN90=
-=kWnv
------END PGP SIGNATURE-----
-
---HaVAMW8fbvrZJ5yn--
+Thanks,
+Sumit
