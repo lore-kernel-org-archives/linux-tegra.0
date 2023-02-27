@@ -2,114 +2,120 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CB7C7EE2E
-	for <linux-tegra@archiver.kernel.org>; Sun, 26 Feb 2023 22:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BB2C64ED8
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Feb 2023 09:08:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbjBZW4A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 26 Feb 2023 17:56:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34008 "EHLO
+        id S229842AbjB0JIh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Feb 2023 04:08:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbjBZWzw (ORCPT
+        with ESMTP id S229840AbjB0JIR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 26 Feb 2023 17:55:52 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9010D18B22
-        for <linux-tegra@vger.kernel.org>; Sun, 26 Feb 2023 14:55:21 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id p23-20020a05600c1d9700b003ead4835046so3371721wms.0
-        for <linux-tegra@vger.kernel.org>; Sun, 26 Feb 2023 14:55:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C2s/AS9OMV5i6t0w60QjnkUP8k7sKtqb93EMncEZug0=;
-        b=RrXcIqzcrWf2lNRMsPY+D8nUU5rGWSM/ctrK4w2nFXbnQIS281ZCN9hQiySwkMaUmg
-         upw/yejus11mTRnMf9kyQ8gqoPpRUayc7Le6DAYr8ShIyNEV8dg63GJFOplB+8exl3wJ
-         Em6nycsPTYfFl+zDoWh5qQ9+mHwo48EJhqJK0rjys+U3DHccFifM5dHgsYx+C/EWFYRc
-         cbKjrnTFV1f9nQ4eHFai6JIqCKWyRn/dQWMKYr/8MrIJLqCcfaP4SlVyfdiQOaLEvGGb
-         cVnH3W/4JRlsSbhTSaUAhTampVjDhPKyEAtrQ7rClYMgA3/L96CQykGpc6QpVg+ie+VQ
-         ICRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C2s/AS9OMV5i6t0w60QjnkUP8k7sKtqb93EMncEZug0=;
-        b=AACmbtclgzQjw/ZueqvNfUm5Gy61sVVtWRAcuXnwjISdtWzWtUk0SscVj7Va6dfM+t
-         rzeb5gH3yyC6Hi3Z6BFxSCRqQNEOH57JG4O9uVZdygZ5DoUek6ALHN30swx8w7QW00Qt
-         Lo6JzdXgh9OhyTS869YCVJpSmVWhwl3+O1VzDXrNldlXp9fKq31mfgiYwcFTDyUwzBhI
-         MFy2MAVjnlXTG9aW2CXq9TTP/rTC/x+SUjIv/ufS6y/m9LVBgEOLH03ZXD4+olEYrB2e
-         KVBeoTt0V0VSZ04x3W5GCD4FdM/83jXgsWwSowuIhWXI2O6D5YhHNycqLNXD+7duc6zr
-         NHAw==
-X-Gm-Message-State: AO0yUKUGYHuNByoy8NHT65qg1idfRbOE0m05lGF8+iHDRfFAzVqGhBwa
-        i2JCB9aZ3WT0Wb1rm4Fvnw7CZA==
-X-Google-Smtp-Source: AK7set/kFC/e3JlZYmMRVlzQDE+2UMKDg2IK1WyToa9A8POY4T7GJ/bhhVXjg1e/yJdRr/Fu6abtUw==
-X-Received: by 2002:a05:600c:3089:b0:3eb:29fe:734a with SMTP id g9-20020a05600c308900b003eb29fe734amr6436608wmn.39.1677452121129;
-        Sun, 26 Feb 2023 14:55:21 -0800 (PST)
-Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:8baa:6b32:391b:62de])
-        by smtp.gmail.com with ESMTPSA id d10-20020a05600c3aca00b003eb369abd92sm6138074wms.2.2023.02.26.14.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Feb 2023 14:55:20 -0800 (PST)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rafael@kernel.org, daniel.lezcano@linaro.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+        Mon, 27 Feb 2023 04:08:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0BAB2DE71;
+        Mon, 27 Feb 2023 00:59:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D46FCB80CAF;
+        Mon, 27 Feb 2023 08:59:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18BEEC433EF;
+        Mon, 27 Feb 2023 08:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677488362;
+        bh=1tHIKd104QyfvtA3q/kKbEIMUdEcyl2i2c8bvAcFeJM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Kw5Zqn3DimaluDdXJOPEW3TIh2enf/BL6FWitZ2pgqn32NU8fyQBiFD9SWkcBm7qN
+         +emkN8tvZ/4iESvOQ/UtudrbbXa/LWWs6KiVoxtoVZAyqPCMSCoTsgt0Bn7u+0nQA9
+         XWtBYwPhn+52wPffdcA5meTR6EeB13RrAhvxDZlRO4Yp3isQHC/Pdc0u8ZSQnYTVuY
+         jMm5tZBNmigDFqPMsheWS9xEQiLqfv7JzVNYQYBKYaVGxX0n4oXiVY+hdnmAJzCzmy
+         rlWMljaC521Ik8QRNFNo0NpDy5oOVp8S9l9khz4Iny/Kbxq44BeHeaiWbAJgJEpgBS
+         hBRrx2DZF805g==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH v3 17/20] thermal/tegra: Do not enable the thermal zone, it is already enabled
-Date:   Sun, 26 Feb 2023 23:54:03 +0100
-Message-Id: <20230226225406.979703-18-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230226225406.979703-1-daniel.lezcano@linaro.org>
-References: <20230226225406.979703-1-daniel.lezcano@linaro.org>
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Miaoqian Lin <linmq006@gmail.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: tegra20: fix gcc-7 constant overflow warning
+Date:   Mon, 27 Feb 2023 09:59:10 +0100
+Message-Id: <20230227085914.2560984-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The code enables the thermal zone after setting it up. But the thermal
-zone is already enabled by thermal_of_zone_register() function.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Older gcc versions get confused by comparing a u32 value to a negative
+constant in a switch()/case block:
+
+drivers/clk/tegra/clk-tegra20.c: In function 'tegra20_clk_measure_input_freq':
+drivers/clk/tegra/clk-tegra20.c:581:2: error: case label does not reduce to an integer constant
+  case OSC_CTRL_OSC_FREQ_12MHZ:
+  ^~~~
+drivers/clk/tegra/clk-tegra20.c:593:2: error: case label does not reduce to an integer constant
+  case OSC_CTRL_OSC_FREQ_26MHZ:
+
+Make the constants unsigned instead.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/thermal/tegra/tegra30-tsensor.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-index 3506c3f3c474..e38902abf207 100644
---- a/drivers/thermal/tegra/tegra30-tsensor.c
-+++ b/drivers/thermal/tegra/tegra30-tsensor.c
-@@ -346,7 +346,7 @@ static int tegra_tsensor_enable_hw_channel(const struct tegra_tsensor *ts,
- {
- 	const struct tegra_tsensor_channel *tsc = &ts->ch[id];
- 	struct thermal_zone_device *tzd = tsc->tzd;
--	int err, hot_trip = 0, crit_trip = 0;
-+	int hot_trip = 0, crit_trip = 0;
- 	u32 val;
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 422d78247553..dcacc5064d33 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -21,24 +21,24 @@
+ #define MISC_CLK_ENB 0x48
  
- 	if (!tzd) {
-@@ -401,12 +401,6 @@ static int tegra_tsensor_enable_hw_channel(const struct tegra_tsensor *ts,
- 	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG0_INTR_THERMAL_RST_EN, 1);
- 	writel_relaxed(val, tsc->regs + TSENSOR_SENSOR0_CONFIG0);
- 
--	err = thermal_zone_device_enable(tzd);
--	if (err) {
--		dev_err(ts->dev, "ch%u: failed to enable zone: %d\n", id, err);
--		return err;
--	}
+ #define OSC_CTRL 0x50
+-#define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+-#define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+-#define OSC_CTRL_OSC_FREQ_19_2MHZ (1<<30)
+-#define OSC_CTRL_OSC_FREQ_12MHZ (2<<30)
+-#define OSC_CTRL_OSC_FREQ_26MHZ (3<<30)
+-#define OSC_CTRL_MASK (0x3f2 | OSC_CTRL_OSC_FREQ_MASK)
 -
- 	return 0;
- }
+-#define OSC_CTRL_PLL_REF_DIV_MASK (3<<28)
+-#define OSC_CTRL_PLL_REF_DIV_1		(0<<28)
+-#define OSC_CTRL_PLL_REF_DIV_2		(1<<28)
+-#define OSC_CTRL_PLL_REF_DIV_4		(2<<28)
++#define OSC_CTRL_OSC_FREQ_MASK (3u<<30)
++#define OSC_CTRL_OSC_FREQ_13MHZ (0u<<30)
++#define OSC_CTRL_OSC_FREQ_19_2MHZ (1u<<30)
++#define OSC_CTRL_OSC_FREQ_12MHZ (2u<<30)
++#define OSC_CTRL_OSC_FREQ_26MHZ (3u<<30)
++#define OSC_CTRL_MASK (0x3f2u | OSC_CTRL_OSC_FREQ_MASK)
++
++#define OSC_CTRL_PLL_REF_DIV_MASK	(3u<<28)
++#define OSC_CTRL_PLL_REF_DIV_1		(0u<<28)
++#define OSC_CTRL_PLL_REF_DIV_2		(1u<<28)
++#define OSC_CTRL_PLL_REF_DIV_4		(2u<<28)
+ 
+ #define OSC_FREQ_DET 0x58
+-#define OSC_FREQ_DET_TRIG (1<<31)
++#define OSC_FREQ_DET_TRIG (1u<<31)
+ 
+ #define OSC_FREQ_DET_STATUS 0x5c
+-#define OSC_FREQ_DET_BUSY (1<<31)
+-#define OSC_FREQ_DET_CNT_MASK 0xFFFF
++#define OSC_FREQ_DET_BUSYu (1<<31)
++#define OSC_FREQ_DET_CNT_MASK 0xFFFFu
+ 
+ #define TEGRA20_CLK_PERIPH_BANKS	3
  
 -- 
-2.34.1
+2.39.2
 
