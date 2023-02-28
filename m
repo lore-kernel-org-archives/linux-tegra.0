@@ -2,124 +2,106 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB537C7EE2E
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Feb 2023 01:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 673CAC64ED6
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Feb 2023 02:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbjB1BSp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Feb 2023 20:18:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58888 "EHLO
+        id S229950AbjB1C2Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Feb 2023 21:28:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjB1BSi (ORCPT
+        with ESMTP id S229955AbjB1C2O (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Feb 2023 20:18:38 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4928310AA3
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Feb 2023 17:18:36 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id i5so7102513pla.2
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Feb 2023 17:18:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=45w/ePZnYI0/2LLjqhHdpOHZZUZkx2HLxk5IVIXVOTY=;
-        b=VksYiCrOuvmy2dWTmHyMVmqEos+eA1XMxT2L2aN3ljFOVVsxuvyZX737HBCHBuzGwU
-         WXbuaQi59qraaKUR2e7KybHK49lyNip4DeuT7isI+1zMex7x/o8Sbv+ghueRcpGz3kUE
-         ThiBxGrAP0LUjOlTeObA6T+BQo5nCQlwvVV1jDL40gEEjo2Tl7Ga9Exi9kyHrUFhYJkW
-         wQvnijgcJvSRZURNTPIDbcUGBqj46uL73qL49SOO2tqpFD2TZEAsgJsneN06H/E86E/u
-         Tj1GrTRFWXbXhd2zQxa4JaFho16/TZXR5JDLtlbs6Zr/qKbTvRW1/uiZTZf/+6L1iwdE
-         Qvng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=45w/ePZnYI0/2LLjqhHdpOHZZUZkx2HLxk5IVIXVOTY=;
-        b=s5BLHef2E9NGTGIGPMd1R8EG565GvDuiceA3wHCv3HK2I6VY9jy9Kl5xS6V+9Qose5
-         oapD/NtDbAXWa0yrcyJJRgmHhjj5va8Nb5cc2o9ff3BSv+bYzNGDho3qGqMjw3hjJho+
-         wDp4oXZRLEamY0tGdCAygcR9qpDUEaV9ha2+ohHolzL/EOiEwNIMI+sdSm0n9OsspS3v
-         rBR5qR8igSNi0dEuaQfG3c9XY4L8I00uyQSe5adJb0kiMC+IuNDSgmAiM2+LCorOcrVR
-         zEWGzhkLW2RBOjmxXRPhsVa3OHPqUjLPK1N5H2GFgjPovyHSZm2Ku6m1o5M2+px0aimg
-         876w==
-X-Gm-Message-State: AO0yUKVrFnR1wFkf7kR9mKZID677Ro7sVRkEkkPwA7VlU0M4qD4qRK/e
-        5+CXykdCaDMsRUS4tGKzk2StJg==
-X-Google-Smtp-Source: AK7set+5jx3+Ceo66EApE8SUSKzeARSdv7Ab+Hou1uZOcwtSBj41Kn2dD79VgcqMPUmiRkMYFH+5gg==
-X-Received: by 2002:a17:90b:4b10:b0:230:81e9:ebb4 with SMTP id lx16-20020a17090b4b1000b0023081e9ebb4mr1247690pjb.10.1677547115601;
-        Mon, 27 Feb 2023 17:18:35 -0800 (PST)
-Received: from localhost ([122.172.83.155])
-        by smtp.gmail.com with ESMTPSA id q11-20020a17090a2e0b00b002372107fc3fsm4911667pjd.0.2023.02.27.17.18.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 17:18:34 -0800 (PST)
-Date:   Tue, 28 Feb 2023 06:48:32 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Thierry Reding <treding@nvidia.com>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, krzysztof.kozlowski@linaro.org,
-        dmitry.osipenko@collabora.com, rafael@kernel.org,
-        jonathanh@nvidia.com, robh+dt@kernel.org, lpieralisi@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
-        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
-        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v2 7/9] cpufreq: tegra194: add OPP support and set
- bandwidth
-Message-ID: <20230228011832.2h6rfsju4qnwu5oj@vireshk-i7>
-References: <20230220140559.28289-1-sumitg@nvidia.com>
- <20230220140559.28289-8-sumitg@nvidia.com>
- <20230222040317.r2p6zlbumazymluc@vireshk-i7>
- <df054fae-5195-1ef8-c72e-e5afe8d901d3@nvidia.com>
- <Y/ylpaJLMOE6zY8C@orome>
+        Mon, 27 Feb 2023 21:28:14 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADE2EC66F;
+        Mon, 27 Feb 2023 18:28:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C920B60F21;
+        Tue, 28 Feb 2023 02:28:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CED0C433D2;
+        Tue, 28 Feb 2023 02:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677551290;
+        bh=z12K60BiOqqYNSlh0VQ0mkOy6DWR6l2dvzQwf+Fx43A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZwsOO0QGU2YgpNQHcnVbn9b0wxmB4TiH9LZurY7XYL6IpclqesY3DDxXZwlWyiySr
+         OVuC9SP2vwUTam2IqPZeFujBeWSCdoK9lXAB/R1oSjkm1XVAwBcleLlTYFTLT4myWL
+         HHxzDF3ZBZiawmUl5z1ZGkjC8Zo+1/pTkwkC2ysbhBfqJbydgDeVpU98yJEoRDX/VL
+         zypBfigGaiqzlpxXw4RlWuuGqzBN/P/ZAvdS5dE/sbeNRzTeZgby0GbgJqpFheYqy2
+         skThCtOZxdTnnAKN7ndUMBJr7lnGQimkVrDHqyMenPS3OPJOle0wO2ISrnuO+5RSNi
+         KzC/MN/0A1UZg==
+Date:   Tue, 28 Feb 2023 04:28:06 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
+        jgg@ziepe.ca, krzysztof.kozlowski+dt@linaro.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        skomatineni@nvidia.com, ldewangan@nvidia.com
+Subject: Re: [Patch V5 0/3] Tegra TPM driver with HW flow control
+Message-ID: <Y/1mtnSAg0TrVH2H@kernel.org>
+References: <20230227120702.13180-1-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y/ylpaJLMOE6zY8C@orome>
+In-Reply-To: <20230227120702.13180-1-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27-02-23, 13:44, Thierry Reding wrote:
-> On Thu, Feb 23, 2023 at 03:06:26PM +0530, Sumit Gupta wrote:
-> > On 22/02/23 09:33, Viresh Kumar wrote:
-> > Tried using it and got below crash. It seems to be coming because we don't
-> > have clocks property within CPU node for SoC's having BPMP-FW.
-> > 
-> >  Unable to handle kernel NULL pointer dereference at virtual address
-> > 000000000000002e
-> >  ....
-> >  Call trace:
-> >   clk_round_rate+0x38/0xd8
-> >   dev_pm_opp_set_rate+0xe4/0x1a8
-> >   tegra194_cpufreq_set_target+0x74/0x88
-> >   __cpufreq_driver_target+0x154/0x250
-> >   cpufreq_online+0x7b4/0x9ac
+On Mon, Feb 27, 2023 at 05:36:59PM +0530, Krishna Yarlagadda wrote:
+> TPM interface spec defines flow control where TPM device would drive
+> MISO at same cycle as last address bit sent by controller on MOSI. This
+> state of wait can be detected by software reading the MISO line or
+> by controller hardware. Support sending transfers to controller in
+> single message and handle flow control in hardware. Half duplex
+> controllers have to support flow control in hardware.
 > 
-> Can you try to find out what exactly is happening here? The clock
-> framework should be able to deal with NULL clock pointers just fine.
-> Although, looking at the OPP table code, it seems like we don't use
-> clk_get_optional(), so opp_table->clk may end up being a pointer-
-> encoded error. Perhaps we need something like this:
+> Tegra234 and Tegra241 chips have QSPI controller that supports TPM
+> Interface Specification (TIS) flow control.
+> Since the controller only supports half duplex, SW wait polling
+> (flow control using full duplex transfers) method implemented in
+> tpm_tis_spi_main.c will not work and have to us HW flow control.
 > 
-> --- >8 ---
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index e87567dbe99f..d7baeb6ac697 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1397,6 +1397,7 @@ static struct opp_table *_update_opp_table_clk(struct device *dev,
->  		 * frequency in opp->rates and also parse the entries in DT.
->  		 */
->  		opp_table->clk_count = 1;
-> +		opp_table->clk = NULL;
->  
->  		dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__, ret);
->  		return opp_table;
+> Updates in this patchset 
+>  - Tegra QSPI identifies itself as half duplex.
+>  - TPM TIS SPI driver skips flow control for half duplex and send
+>    transfers in single message for controller to handle it.
+>  - TPM device identifies as TPM device for controller to detect and
+>    enable HW TPM wait poll feature.
+> 
+> Verified with a TPM device on Tegra241 ref board using TPM2 tools.
+> 
+> V5:
+>  - No SPI bus locking.
+> V4:
+>  - Split api change to different patch.
+>  - Describe TPM HW flow control.
+> V3:
+>  - Use SPI device mode flag and SPI controller flags.
+>  - Drop usage of device tree flags.
+>  - Generic TPM half duplex controller handling.
+>  - HW & SW flow control for TPM. Drop additional driver.
+> V2:
+>  - Fix dt schema errors.
+> 
+> Krishna Yarlagadda (3):
+>   spi: Add TPM HW flow flag
+>   tpm_tis-spi: Support hardware wait polling
+>   spi: tegra210-quad: Enable TPM wait polling
+> 
+>  drivers/char/tpm/tpm_tis_spi_main.c | 92 ++++++++++++++++++++++++++++-
+>  drivers/spi/spi-tegra210-quad.c     | 21 +++++++
+>  include/linux/spi/spi.h             |  7 ++-
+>  3 files changed, 115 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
 
-I didn't reply earlier as I had nothing more to say and Sumit's
-initial approach was correct. Maybe I should have I have clarified
-this then.
+Funny that this is already in v5, I'm seeing this for the very first time.
 
-The OPP core supports dev_pm_opp_set_rate() only for devices that can
-set the rate, for everything else dev_pm_opp_set_opp() is the right
-choice. I suggested dev_pm_opp_set_rate() earlier as I thought rate is
-supported here.
-
--- 
-viresh
+BR, Jarkko
