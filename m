@@ -2,103 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3DAC678D4
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Mar 2023 21:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F66EC7EE23
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Mar 2023 22:43:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbjCAVBE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Mar 2023 16:01:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
+        id S229752AbjCAWns (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Mar 2023 17:43:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjCAVBC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Mar 2023 16:01:02 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12EDD521CD;
-        Wed,  1 Mar 2023 13:01:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BD885B80EE1;
-        Wed,  1 Mar 2023 21:00:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742DBC4339E;
-        Wed,  1 Mar 2023 21:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677704458;
-        bh=Ijy28NfIAolHq1kijXKPv1A9Prn6Z4PgPnz0SF2ZvmE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qwnNOgDopWNiUb4dKzA0Y6sT0gASegFoNl0l1oHhxaeFwidRVACqKvo9Zw4Lq2uLa
-         DkRPAf51+Vr8EEyQ7IwC/Bj5H1tJVAjANsJyJLagfb6dQBIR+9OsGjhNPWRat2SOtH
-         5jiteysKnyeBDdmsXExcQfoBUuLwKJRarM2/PpsDCzlFSlDaYiuiIN6Yn50f7C1yat
-         Kl5hMVdu4kXvgesUhxebkvb/oOudYsbAKXyirkpGD3xB/LvTXAtTlhB/h40wU7a9WI
-         X+6tPt1WSw58XL3OkDSeUjRPC3OEETL51n26pr7wfG3C7UJmYklBJjZHN6oNtzMzrG
-         H1pgP6Xi9fu0w==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-53852143afcso389451967b3.3;
-        Wed, 01 Mar 2023 13:00:58 -0800 (PST)
-X-Gm-Message-State: AO0yUKUkNco2rq4K5o5XxG7Qrs1MolodYnCt0+yadl9+JyNaMT4qDo7m
-        2DczIbGS4CB2Hvw33a1Rv2MKLhdYuXOfAeUKqg==
-X-Google-Smtp-Source: AK7set/B7w4SIUVUY+fuTrfn39/aDxu+LSL+nDi5aDHHQnm81UFIS2ScAXvxaj+SUvgnwt845OQ2PIVb1st0BjISJs0=
-X-Received: by 2002:a05:6102:3ca9:b0:41e:bccf:5669 with SMTP id
- c41-20020a0561023ca900b0041ebccf5669mr6637793vsv.2.1677704437053; Wed, 01 Mar
- 2023 13:00:37 -0800 (PST)
+        with ESMTP id S229494AbjCAWnr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Mar 2023 17:43:47 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 762971A66B;
+        Wed,  1 Mar 2023 14:43:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1677710623; x=1709246623;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QcM62RcTYi5zvoGJymyxGLnQj3e1/GlbLkfJR0EShdo=;
+  b=AULRsfYdZyqxS0WG/ztpDuMe+RLMHl48R8BfLqGyDFI6H5TaPYd8R67V
+   Z95mlpIGr4Mye76jPSe45/f1eozgGTnl/FwyIHdnpIxiKqlph5yfh/lYn
+   AoQGjGx5meNOqXdL4Lwh9zQ/KlWsLImCVvMcf9uq4NiGmbQFKij7K0oHo
+   BTWMT7ftL+APcPI+NB1YWPHNod3pK4IJ9V/+gwun/cmAXVCY1rOP0+IMS
+   e3Xq9S9KnAkhNbXY2ttis8QN7vLj5ScYhwm6H9IrgRXOdUZDECzu1x+yt
+   7q2Bi/gTk9kPXGq/nXbyEJFcli9OT82dLrOCkUApe7RnhBQd0ICFdLqei
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10636"; a="334571891"
+X-IronPort-AV: E=Sophos;i="5.98,225,1673942400"; 
+   d="scan'208";a="334571891"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2023 14:43:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10636"; a="848838873"
+X-IronPort-AV: E=Sophos;i="5.98,225,1673942400"; 
+   d="scan'208";a="848838873"
+Received: from lkp-server01.sh.intel.com (HELO 3895f5c55ead) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 01 Mar 2023 14:43:37 -0800
+Received: from kbuild by 3895f5c55ead with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pXVAe-0006TP-38;
+        Wed, 01 Mar 2023 22:43:36 +0000
+Date:   Thu, 2 Mar 2023 06:43:03 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>, robh+dt@kernel.org,
+        broonie@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: Re: [Patch V7 2/3] tpm_tis-spi: Add hardware wait polling
+Message-ID: <202303020622.v3NqL5mg-lkp@intel.com>
+References: <20230301173353.28673-3-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-References: <20230301185209.274134-1-jjhiblot@traphandler.com> <20230301185209.274134-4-jjhiblot@traphandler.com>
-In-Reply-To: <20230301185209.274134-4-jjhiblot@traphandler.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 1 Mar 2023 15:00:25 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJvYnBtaOwaRbNo5Eqp51yxhJpnSYQWEGfKjtZKjm7R4g@mail.gmail.com>
-Message-ID: <CAL_JsqJvYnBtaOwaRbNo5Eqp51yxhJpnSYQWEGfKjtZKjm7R4g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] of: irq: release the node after looking up for "interrupts-extended"
-To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Cc:     saravanak@google.com, clement.leger@bootlin.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        zajec5@gmail.com, Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Marc Zyngier <maz@kernel.org>, afaerber@suse.de,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Nishanth Menon <nm@ti.com>, ssantosh@kernel.org,
-        mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-wireless@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230301173353.28673-3-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Mar 1, 2023 at 12:53=E2=80=AFPM Jean-Jacques Hiblot
-<jjhiblot@traphandler.com> wrote:
->
-> When of_parse_phandle_with_args() succeeds, a get() is performed on
-> out_irq->np. And another get() is performed in of_irq_parse_raw(),
-> resulting in the refcount being incremented twice.
-> Fixing this by calling put() after of_irq_parse_raw().
+Hi Krishna,
 
-This looks like a band-aid to me. It only makes sense that the caller
-of of_irq_parse_raw() already holds a ref to out_irq->np. So the first
-of_node_get() in it looks wrong. It looks like the refcounting was
-originally balanced, but commit 2f53a713c4b6 ("of/irq: Fix device_node
-refcount in of_irq_parse_raw()") dropped the put on exit after 'got
-it!'. I'm not sure if just adding it back would be correct or not
-though.
+Thank you for the patch! Perhaps something to improve:
 
-All this needs some test cases to be sure we get things right...
+[auto build test WARNING on broonie-spi/for-next]
+[also build test WARNING on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.2 next-20230301]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Rob
+url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-Yarlagadda/spi-Add-TPM-HW-flow-flag/20230302-013628
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20230301173353.28673-3-kyarlagadda%40nvidia.com
+patch subject: [Patch V7 2/3] tpm_tis-spi: Add hardware wait polling
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230302/202303020622.v3NqL5mg-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/d47344c6b9ab634483742457f6692b01f02c4698
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Krishna-Yarlagadda/spi-Add-TPM-HW-flow-flag/20230302-013628
+        git checkout d47344c6b9ab634483742457f6692b01f02c4698
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash drivers/char/tpm/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303020622.v3NqL5mg-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/char/tpm/tpm_tis_spi_main.c:335:36: warning: 'acpi_tis_spi_match' defined but not used [-Wunused-const-variable=]
+     335 | static const struct acpi_device_id acpi_tis_spi_match[] = {
+         |                                    ^~~~~~~~~~~~~~~~~~
+   drivers/char/tpm/tpm_tis_spi_main.c: In function 'tpm_tis_spi_probe':
+>> drivers/char/tpm/tpm_tis_spi_main.c:263:42: warning: 'phy' is used uninitialized [-Wuninitialized]
+     263 |         struct spi_controller *ctlr = phy->spi_device->controller;
+         |                                       ~~~^~~~~~~~~~~~
+   drivers/char/tpm/tpm_tis_spi_main.c:262:33: note: 'phy' was declared here
+     262 |         struct tpm_tis_spi_phy *phy;
+         |                                 ^~~
+
+
+vim +/phy +263 drivers/char/tpm/tpm_tis_spi_main.c
+
+   259	
+   260	static int tpm_tis_spi_probe(struct spi_device *dev)
+   261	{
+   262		struct tpm_tis_spi_phy *phy;
+ > 263		struct spi_controller *ctlr = phy->spi_device->controller;
+   264		int irq;
+   265	
+   266		phy = devm_kzalloc(&dev->dev, sizeof(struct tpm_tis_spi_phy),
+   267				   GFP_KERNEL);
+   268		if (!phy)
+   269			return -ENOMEM;
+   270	
+   271		phy->flow_control = tpm_tis_spi_flow_control;
+   272	
+   273		if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX)
+   274			phy->spi_device->mode |= SPI_TPM_HW_FLOW;
+   275	
+   276		/* If the SPI device has an IRQ then use that */
+   277		if (dev->irq > 0)
+   278			irq = dev->irq;
+   279		else
+   280			irq = -1;
+   281	
+   282		init_completion(&phy->ready);
+   283		return tpm_tis_spi_init(dev, phy, irq, &tpm_spi_phy_ops);
+   284	}
+   285	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
