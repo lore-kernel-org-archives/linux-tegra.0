@@ -2,239 +2,333 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21265C678D4
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Mar 2023 23:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DD4C7EE23
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 00:13:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjCAXRz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Mar 2023 18:17:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50372 "EHLO
+        id S229670AbjCBANJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Mar 2023 19:13:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbjCAXRx (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Mar 2023 18:17:53 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED0B6457C6;
-        Wed,  1 Mar 2023 15:17:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 672A7B81183;
-        Wed,  1 Mar 2023 23:17:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC06C433EF;
-        Wed,  1 Mar 2023 23:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677712668;
-        bh=a5p54BH4pGYiXavR+aIFVBU1D29SfcQwo6GgaAoUoPs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mOl4c0nj89BA+58NY0R4VkaRxweQOYPTE2GLtYsVclHreqQI7Sz8bow96o4iJ8c0P
-         BY2xw5HYPD6pcP0yh87GJB5CVhPRjxR2MPBLfDRkZxsyX1l5aqcMJ/RlTRLNi66vxI
-         Bl8Xkg5JXdTXf3hdAfJ36j3wgKCPqw9JZ1YFDLA0RtlpxMagsJRIkLVR8TbkR3eZ2I
-         KvZNASV+1/+txQRmRNq4WjYukUnNawYKuQi9Px4epadSZ4M/MVbAY9s68/ZpF0DxTJ
-         C4veeSY7QrLKEZf3FvTiq3cxEUEfF0mANlcKCfC3mcCqCMbaS2bi/AQJ8eqSLyZyAg
-         4SSOAmrasF1+g==
-Date:   Thu, 2 Mar 2023 01:17:45 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [Patch V5 2/3] tpm_tis-spi: Support hardware wait polling
-Message-ID: <Y//dGe+uXnvNjkvn@kernel.org>
-References: <20230227120702.13180-1-kyarlagadda@nvidia.com>
- <20230227120702.13180-3-kyarlagadda@nvidia.com>
- <Y/1oqr0RfD7KVA4y@kernel.org>
- <DM4PR12MB5769BCBCD410C75DF3EB26FBC3AC9@DM4PR12MB5769.namprd12.prod.outlook.com>
+        with ESMTP id S229589AbjCBANI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Mar 2023 19:13:08 -0500
+Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8158610A9D;
+        Wed,  1 Mar 2023 16:13:05 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.109.156.120])
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id 92F4C21D7D;
+        Wed,  1 Mar 2023 18:53:00 +0000 (UTC)
+Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
+ (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Wed, 1 Mar
+ 2023 19:52:58 +0100
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To:     <saravanak@google.com>, <clement.leger@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        <zajec5@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Marc Zyngier <maz@kernel.org>, <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Nishanth Menon <nm@ti.com>, <ssantosh@kernel.org>,
+        <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <linux-renesas-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-wireless@vger.kernel.org>,
+        <linux-actions@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: [PATCH 2/3] of: irq: make callers of of_irq_parse_one() release the device node
+Date:   Wed, 1 Mar 2023 19:52:08 +0100
+Message-ID: <20230301185209.274134-3-jjhiblot@traphandler.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230301185209.274134-1-jjhiblot@traphandler.com>
+References: <20230301185209.274134-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM4PR12MB5769BCBCD410C75DF3EB26FBC3AC9@DM4PR12MB5769.namprd12.prod.outlook.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [88.161.25.233]
+X-ClientProxiedBy: DAG3EX2.emp2.local (172.16.2.22) To DAG1EX1.emp2.local
+ (172.16.2.1)
+X-Ovh-Tracer-Id: 11460535152860871036
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrudelhedguddutdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeduteevleevvefggfdvueffffejhfehheeuiedtgedtjeeghfehueduudegfeefueenucfkphepuddvjedrtddrtddruddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqpdhnsggprhgtphhtthhopedupdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhnmhesthhirdgtohhmpdhsshgrnhhtohhshheskhgvrhhnvghlrdhorhhgpdhmrghthhhirghsrdhnhihmrghnsehinhhtvghlrdgtohhmpdhgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdpthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhmpdhjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdplhhinhhugi
+ dqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdgrtghtihhonhhssehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhlihhnuhigqdhsuhhngihisehlihhsthhsrdhlihhnuhigrdguvghvpdguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdpsghhvghlghgrrghssehgohhoghhlvgdrtghomhdpfhhrohifrghnugdrlhhishhtsehgmhgrihhlrdgtohhmpdhrohgshhdoughtsehkvghrnhgvlhdrohhrghdpshgrmhhuvghlsehshhholhhlrghnugdrohhrghdptghlvghmvghnthdrlhgvghgvrhessghoohhtlhhinhdrtghomhdpghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdpmhgrghhnuhhsrdgurghmmhesghhmrghilhdrtghomhdplhhinhhugiesrghrmhhlihhnuhigrdh
+ orhhgrdhukhdpmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhnphhighhgihhnsehgmhgrihhlrdgtohhmpdgthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdiirghjvggtheesghhmrghilhdrtghomhdplhhinhhugidqthgvghhrrgesvhhgvghrrdhkvghrnhgvlhdrohhrghdpuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdptghlrghuughiuhdrsggviihnvggrsehmihgtrhhotghhihhprdgtohhmpdhmrgiisehkvghrnhgvlhdrohhrghdprghfrggvrhgsvghrsehsuhhsvgdruggvpdhmrghniheskhgvrhhnvghlrdhorhhgpdhprghlmhgvrhesuggrsggsvghlthdrtghomhdpphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdifvghnshestghsihgvrdhorhhgpdhjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdpthhglhigsehlihhnuhhtrhhonhhigidruggvpdfovfetjfhoshhtpehmohehvdekpdhmohguvgepshhmthhpohhuth
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 03:32:24AM +0000, Krishna Yarlagadda wrote:
-> > -----Original Message-----
-> > From: Jarkko Sakkinen <jarkko@kernel.org>
-> > Sent: 28 February 2023 08:06
-> > To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> > Cc: robh+dt@kernel.org; broonie@kernel.org; peterhuewe@gmx.de;
-> > jgg@ziepe.ca; krzysztof.kozlowski+dt@linaro.org; linux-spi@vger.kernel.org;
-> > linux-tegra@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; thierry.reding@gmail.com; Jonathan Hunter
-> > <jonathanh@nvidia.com>; Sowjanya Komatineni
-> > <skomatineni@nvidia.com>; Laxman Dewangan <ldewangan@nvidia.com>
-> > Subject: Re: [Patch V5 2/3] tpm_tis-spi: Support hardware wait polling
-> > 
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Mon, Feb 27, 2023 at 05:37:01PM +0530, Krishna Yarlagadda wrote:
-> > > TPM devices raise wait signal on last addr cycle. This can be detected
-> > > by software driver by reading MISO line on same clock which requires
-> > > full duplex support. In case of half duplex controllers wait detection
-> > > has to be implemented in HW.
-> > > Support hardware wait state detection by sending entire message and let
-> > > controller handle flow control.
-> > 
-> > When a is started sentence with the word "support" it translates to "I'm
-> > too lazy to write a proper and verbose description of the implementation"
-> > :-)
-> > 
-> > It has some abstract ideas of the implementation, I give you that, but do
-> > you think anyone ever will get any value of reading that honestly? A bit
-> > more concrette description of the change helps e.g. when bisecting bugs.
-> > 
-> I presented why we are making the change. Will add explanation on how
-> it is implemented as well.
+of_irq_parse_one() does a get() on the device node returned in out_irq->np.
+Callers of of_irq_parse_one() must do a put() when they are done with it.
 
-OK, cool, thank you.
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+---
+ .../mach-shmobile/regulator-quirk-rcar-gen2.c |  1 +
+ arch/powerpc/sysdev/mpic_msi.c                |  1 +
+ drivers/clocksource/timer-clint.c             |  1 +
+ drivers/irqchip/irq-mchp-eic.c                |  1 +
+ drivers/irqchip/irq-owl-sirq.c                |  1 +
+ drivers/irqchip/irq-renesas-rzg2l.c           |  1 +
+ drivers/irqchip/irq-sifive-plic.c             |  1 +
+ drivers/irqchip/irq-sun6i-r.c                 |  2 ++
+ drivers/of/irq.c                              | 22 ++++++++++++++-----
+ drivers/of/unittest.c                         |  7 ++++++
+ drivers/pci/of.c                              |  6 ++++-
+ drivers/soc/ti/knav_qmss_queue.c              |  3 +++
+ drivers/usb/host/xhci-tegra.c                 |  1 +
+ 13 files changed, 42 insertions(+), 6 deletions(-)
 
-> 
-> > > QSPI controller in Tegra236 & Tegra241 implement TPM wait polling.
-> > >
-> > > Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> > > ---
-> > >  drivers/char/tpm/tpm_tis_spi_main.c | 92
-> > ++++++++++++++++++++++++++++-
-> > >  1 file changed, 90 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm_tis_spi_main.c
-> > b/drivers/char/tpm/tpm_tis_spi_main.c
-> > > index a0963a3e92bd..5f66448ee09e 100644
-> > > --- a/drivers/char/tpm/tpm_tis_spi_main.c
-> > > +++ b/drivers/char/tpm/tpm_tis_spi_main.c
-> > > @@ -71,8 +71,74 @@ static int tpm_tis_spi_flow_control(struct
-> > tpm_tis_spi_phy *phy,
-> > >       return 0;
-> > >  }
-> > >
-> > > -int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> > > -                      u8 *in, const u8 *out)
-> > > +/*
-> > > + * Half duplex controller with support for TPM wait state detection like
-> > > + * Tegra241 need cmd, addr & data sent in single message to manage HW
-> > flow
-> > > + * control. Each phase sent in different transfer for controller to idenity
-> > > + * phase.
-> > > + */
-> > > +int tpm_tis_spi_hw_flow_transfer(struct tpm_tis_data *data, u32 addr,
-> > u16 len,
-> > > +                              u8 *in, const u8 *out)
-> > > +{
-> > > +     struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> > > +     struct spi_transfer spi_xfer[3];
-> > > +     struct spi_message m;
-> > > +     u8 transfer_len;
-> > > +     int ret;
-> > > +
-> > > +     while (len) {
-> > > +             transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
-> > > +
-> > > +             spi_message_init(&m);
-> > > +             phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
-> > > +             phy->iobuf[1] = 0xd4;
-> > > +             phy->iobuf[2] = addr >> 8;
-> > > +             phy->iobuf[3] = addr;
-> > > +
-> > > +             memset(&spi_xfer, 0, sizeof(spi_xfer));
-> > > +
-> > > +             spi_xfer[0].tx_buf = phy->iobuf;
-> > > +             spi_xfer[0].len = 1;
-> > > +             spi_message_add_tail(&spi_xfer[0], &m);
-> > > +
-> > > +             spi_xfer[1].tx_buf = phy->iobuf + 1;
-> > > +             spi_xfer[1].len = 3;
-> > > +             spi_message_add_tail(&spi_xfer[1], &m);
-> > > +
-> > > +             if (out) {
-> > > +                     spi_xfer[2].tx_buf = &phy->iobuf[4];
-> > > +                     spi_xfer[2].rx_buf = NULL;
-> > > +                     memcpy(&phy->iobuf[4], out, transfer_len);
-> > > +                     out += transfer_len;
-> > > +             }
-> > > +
-> > > +             if (in) {
-> > > +                     spi_xfer[2].tx_buf = NULL;
-> > > +                     spi_xfer[2].rx_buf = &phy->iobuf[4];
-> > > +             }
-> > > +
-> > > +             spi_xfer[2].len = transfer_len;
-> > > +             spi_message_add_tail(&spi_xfer[2], &m);
-> > > +
-> > > +             reinit_completion(&phy->ready);
-> > > +
-> > > +             ret = spi_sync_locked(phy->spi_device, &m);
-> > > +             if (ret < 0)
-> > > +                     return ret;
-> > > +
-> > > +             if (in) {
-> > > +                     memcpy(in, &phy->iobuf[4], transfer_len);
-> > > +                     in += transfer_len;
-> > > +             }
-> > > +
-> > > +             len -= transfer_len;
-> > > +     }
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > > +int tpm_tis_spi_sw_flow_transfer(struct tpm_tis_data *data, u32 addr,
-> > u16 len,
-> > > +                              u8 *in, const u8 *out)
-> > >  {
-> > >       struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> > >       int ret = 0;
-> > > @@ -140,6 +206,28 @@ int tpm_tis_spi_transfer(struct tpm_tis_data
-> > *data, u32 addr, u16 len,
-> > >       return ret;
-> > >  }
-> > >
-> > > +int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> > > +                      u8 *in, const u8 *out)
-> > > +{
-> > > +     struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> > > +     struct spi_controller *ctlr = phy->spi_device->controller;
-> > > +
-> > > +     /*
-> > > +      * TPM flow control over SPI requires full duplex support.
-> > > +      * Send entire message to a half duplex controller to handle
-> > > +      * wait polling in controller.
-> > > +      * Set TPM HW flow control flag..
-> > > +      */
-> > > +     if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX) {
-> > > +             phy->spi_device->mode |= SPI_TPM_HW_FLOW;
-> > > +             return tpm_tis_spi_hw_flow_transfer(data, addr, len, in,
-> > > +                                                 out);
-> > > +     } else {
-> > > +             return tpm_tis_spi_sw_flow_transfer(data, addr, len, in,
-> > > +                                                 out);
-> > > +     }
-> > > +}
-> > > +
-> > >  static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
-> > >                                 u16 len, u8 *result, enum tpm_tis_io_mode io_mode)
-> > >  {
-> > > --
-> > > 2.17.1
-> > >
-> > 
-> > Looking pretty good but do you really want to export
-> > tpm_tis_spi_{hw,sw}_flow_transfer?
-> > 
-> > BR, Jarkko
-> No need to export tpm_tis_spi_{hw,sw}_flow_transfer as well.
-> I will update this in next version.
+diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+index 117e7b07995b9..af1c04f0705aa 100644
+--- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+@@ -184,6 +184,7 @@ static int __init rcar_gen2_regulator_quirk(void)
+ 			kfree(quirk);
+ 			continue;
+ 		}
++		of_node_put(argsa->np);
+ 
+ 		list_for_each_entry(pos, &quirk_list, list) {
+ 			argsb = &pos->irq_args;
+diff --git a/arch/powerpc/sysdev/mpic_msi.c b/arch/powerpc/sysdev/mpic_msi.c
+index 34246c8e01c2b..bac8b12291a87 100644
+--- a/arch/powerpc/sysdev/mpic_msi.c
++++ b/arch/powerpc/sysdev/mpic_msi.c
+@@ -63,6 +63,7 @@ static int __init mpic_msi_reserve_u3_hwirqs(struct mpic *mpic)
+ 			ops->xlate(mpic->irqhost, NULL, oirq.args,
+ 						oirq.args_count, &hwirq, &flags);
+ 			msi_bitmap_reserve_hwirq(&mpic->msi_bitmap, hwirq);
++			of_node_put(oirq.np);
+ 		}
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-clint.c b/drivers/clocksource/timer-clint.c
+index 6cfe2ab73eb0c..126912674610c 100644
+--- a/drivers/clocksource/timer-clint.c
++++ b/drivers/clocksource/timer-clint.c
+@@ -175,6 +175,7 @@ static int __init clint_timer_init_dt(struct device_node *np)
+ 		    oirq.args[0] == RV_IRQ_TIMER &&
+ 		    irq_find_host(oirq.np))
+ 			clint_timer_irq = irq_of_parse_and_map(np, i);
++		of_node_put(oirq.np);
+ 	}
+ 
+ 	/* If CLINT timer irq not found then fail */
+diff --git a/drivers/irqchip/irq-mchp-eic.c b/drivers/irqchip/irq-mchp-eic.c
+index c726a19837d29..f020d28efc6a4 100644
+--- a/drivers/irqchip/irq-mchp-eic.c
++++ b/drivers/irqchip/irq-mchp-eic.c
+@@ -239,6 +239,7 @@ static int mchp_eic_init(struct device_node *node, struct device_node *parent)
+ 		ret = of_irq_parse_one(node, i, &irq);
+ 		if (ret)
+ 			goto clk_unprepare;
++		of_node_put(irq.np);
+ 
+ 		if (WARN_ON(irq.args_count != 3)) {
+ 			ret = -EINVAL;
+diff --git a/drivers/irqchip/irq-owl-sirq.c b/drivers/irqchip/irq-owl-sirq.c
+index 6e4127465094f..1ac31acb8e792 100644
+--- a/drivers/irqchip/irq-owl-sirq.c
++++ b/drivers/irqchip/irq-owl-sirq.c
+@@ -311,6 +311,7 @@ static int __init owl_sirq_init(const struct owl_sirq_params *params,
+ 			pr_err("%pOF: failed to parse interrupt %d\n", node, i);
+ 			goto out_unmap;
+ 		}
++		of_node_put(irq.np);
+ 
+ 		if (WARN_ON(irq.args_count != 3)) {
+ 			ret = -EINVAL;
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index 25fd8ee66565b..095d2263e2dac 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -310,6 +310,7 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2l_irqc_priv *priv,
+ 			return ret;
+ 		of_phandle_args_to_fwspec(np, map.args, map.args_count,
+ 					  &priv->fwspec[i]);
++		of_node_put(map.np);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index ff47bd0dec455..1a863ab2abd60 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -420,6 +420,7 @@ static int __init __plic_init(struct device_node *node,
+ 				irq_set_chained_handler(plic_parent_irq,
+ 							plic_handle_irq);
+ 		}
++		of_node_put(parent.np);
+ 
+ 		/*
+ 		 * When running in M-mode we need to ignore the S-mode handler.
+diff --git a/drivers/irqchip/irq-sun6i-r.c b/drivers/irqchip/irq-sun6i-r.c
+index a01e440494154..29e5917d1fc9d 100644
+--- a/drivers/irqchip/irq-sun6i-r.c
++++ b/drivers/irqchip/irq-sun6i-r.c
+@@ -317,6 +317,8 @@ static int __init sun6i_r_intc_init(struct device_node *node,
+ 	ret = of_irq_parse_one(node, 0, &nmi_parent);
+ 	if (ret)
+ 		return ret;
++	of_node_put(nmi_parent.np);
++
+ 	if (nmi_parent.args_count < 3 ||
+ 	    nmi_parent.args[0] != GIC_SPI ||
+ 	    nmi_parent.args[2] != IRQ_TYPE_LEVEL_HIGH)
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index e9bf5236ed892..95da943fcf075 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -35,12 +35,16 @@
+  */
+ unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
+ {
++	unsigned int res;
+ 	struct of_phandle_args oirq;
+ 
+ 	if (of_irq_parse_one(dev, index, &oirq))
+ 		return 0;
+ 
+-	return irq_create_of_mapping(&oirq);
++	res = irq_create_of_mapping(&oirq);
++	of_node_put(oirq.np);
++
++	return res;
+ }
+ EXPORT_SYMBOL_GPL(irq_of_parse_and_map);
+ 
+@@ -438,10 +442,16 @@ int of_irq_get(struct device_node *dev, int index)
+ 		return rc;
+ 
+ 	domain = irq_find_host(oirq.np);
+-	if (!domain)
+-		return -EPROBE_DEFER;
++	if (!domain) {
++		rc = -EPROBE_DEFER;
++		goto out;
++	}
+ 
+-	return irq_create_of_mapping(&oirq);
++	rc = irq_create_of_mapping(&oirq);
++
++out:
++	of_node_put(oirq.np);
++	return rc;
+ }
+ EXPORT_SYMBOL_GPL(of_irq_get);
+ 
+@@ -478,8 +488,10 @@ int of_irq_count(struct device_node *dev)
+ 	struct of_phandle_args irq;
+ 	int nr = 0;
+ 
+-	while (of_irq_parse_one(dev, nr, &irq) == 0)
++	while (of_irq_parse_one(dev, nr, &irq) == 0) {
+ 		nr++;
++		of_node_put(irq.np);
++	}
+ 
+ 	return nr;
+ }
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index bc0f1e50a4bee..801a42c20fc79 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -1021,6 +1021,8 @@ static void __init of_unittest_parse_interrupts(void)
+ 
+ 		memset(&args, 0, sizeof(args));
+ 		rc = of_irq_parse_one(np, i, &args);
++		if (!rc)
++			of_node_put(args.np);
+ 
+ 		passed &= !rc;
+ 		passed &= (args.args_count == 1);
+@@ -1028,6 +1030,7 @@ static void __init of_unittest_parse_interrupts(void)
+ 
+ 		unittest(passed, "index %i - data error on node %pOF rc=%i\n",
+ 			 i, args.np, rc);
++
+ 	}
+ 	of_node_put(np);
+ 
+@@ -1042,6 +1045,8 @@ static void __init of_unittest_parse_interrupts(void)
+ 
+ 		memset(&args, 0, sizeof(args));
+ 		rc = of_irq_parse_one(np, i, &args);
++		if (!rc)
++			of_node_put(args.np);
+ 
+ 		/* Test the values from tests-phandle.dtsi */
+ 		switch (i) {
+@@ -1098,6 +1103,8 @@ static void __init of_unittest_parse_interrupts_extended(void)
+ 
+ 		memset(&args, 0, sizeof(args));
+ 		rc = of_irq_parse_one(np, i, &args);
++		if (!rc)
++			of_node_put(args.np);
+ 
+ 		/* Test the values from tests-phandle.dtsi */
+ 		switch (i) {
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index 196834ed44fe8..a3a047f57e439 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -535,7 +535,11 @@ int of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+ 	if (ret)
+ 		return 0; /* Proper return code 0 == NO_IRQ */
+ 
+-	return irq_create_of_mapping(&oirq);
++	ret = irq_create_of_mapping(&oirq);
++
++	of_node_put(oirq.np);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(of_irq_parse_and_map_pci);
+ #endif	/* CONFIG_OF_IRQ */
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 8fb76908be704..0ac4a0f219127 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -1240,6 +1240,9 @@ static int knav_setup_queue_range(struct knav_device *kdev,
+ 			break;
+ 
+ 		range->irqs[i].irq = irq_create_of_mapping(&oirq);
++
++		of_node_put(oirq.np);
++
+ 		if (range->irqs[i].irq == IRQ_NONE)
+ 			break;
+ 
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index bdb776553826b..538eedac1c71e 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1458,6 +1458,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	/* Older device-trees don't have padctrl interrupt */
+ 	err = of_irq_parse_one(np, 0, &args);
+ 	if (!err) {
++		of_node_put(args.np);
+ 		tegra->padctl_irq = of_irq_get(np, 0);
+ 		if (tegra->padctl_irq <= 0) {
+ 			err = (tegra->padctl_irq == 0) ? -ENODEV : tegra->padctl_irq;
+-- 
+2.25.1
 
-Great.
-
-BR, Jarkko
