@@ -2,251 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE81C7EE36
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Mar 2023 16:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0358AC6FA9D
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Mar 2023 17:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbjCAQWf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Mar 2023 11:22:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41920 "EHLO
+        id S229915AbjCAReQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Mar 2023 12:34:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbjCAQWd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Mar 2023 11:22:33 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C28302BE;
-        Wed,  1 Mar 2023 08:22:32 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 321GKeV8065246;
-        Wed, 1 Mar 2023 10:20:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1677687640;
-        bh=eJOulfBTO406+XJwSAbUrw3TOVKL7z76SdXOdRRvd8g=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=oITlJuKJL0Igo+Zp8Mw3to8q1ph1GEIt/d3yESZ3cer2ebuhWbdbMI3A5SmJvB3FN
-         V+iCTjreym1r6VJb2vPdvJYz95D6QkQDjk525lQPej2NRTUvuqozcO2ayatgFg+2/r
-         1bTPhJR/a6fqQcqeL9vlm4O3gnX/VFyNSv0aWTr0=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 321GKeZv003448
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 1 Mar 2023 10:20:40 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 1
- Mar 2023 10:20:40 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Wed, 1 Mar 2023 10:20:40 -0600
-Received: from [10.250.235.39] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 321GKE84054644;
-        Wed, 1 Mar 2023 10:20:15 -0600
-Message-ID: <2493cf75-f78c-993a-01e6-8f89556973f0@ti.com>
-Date:   Wed, 1 Mar 2023 21:50:14 +0530
+        with ESMTP id S229674AbjCAReP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Mar 2023 12:34:15 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2048.outbound.protection.outlook.com [40.107.92.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCDC22782;
+        Wed,  1 Mar 2023 09:34:13 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Tc8eKmINbzOZJK4awpuARWoh5XmgTVagOIh0kE2t0XQhXMiU8qGt+txXuCKT1+5gYJWyL3K0OBweQCy0XbPivoZkaCkqcJnqWT4L7cgXpn2JttvWlx7oeb9SpMSTiH/sAuUmD57B79yRG0S2ck36CZhV6MkrpRlYwCcWwrLkacp7yeugz8PCx54aztBLIJV001YJRMtBPSylrKNGNhy9tarfdK8n98DAtKIS59sNbQplJawXeLeqo3YuSskkKMVHSx+yymFhckjiAvnWPxZmE30NqDxFJ00gxggcd0Eh7aI/vN/dJZjEBKLGnRO5luS9RCRhHhkWxo97q53a5WFzhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wBpqDaMkEVmKXySxVI+2HjWfAB6R2pwtHL+AmuLzPW0=;
+ b=V1y5mFQSTxiAmB+zI6QEuGUdt74xlFSx8aUW6UbfJ5ZNYl4s+NFfAtUm+Su/TcqYenFVZJvr8DDcTObmoMAPLkOxYtNy5BhBfPenvZPAH+CKqZeiSMw9gRoyROFuN57PNksQ8w8QlQ0bP8Dfr1zCrZ45bSm53Tzuha9rsCVSCC1Wvt29d11y8fLJ9P8XARVkF+LBL/5YLiCFUQ8I36e4kq3YAPdUbH6hTRhqSZus68c3srY9OZoufUPT1HAVWvSdf7okObtEeK6eLESHZcnZTEcRF18yy7SgevC0I9Dx+nakv261Xwwzc5Webl1EnD/32H7ngRlkfMQIYh2ET4SPOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wBpqDaMkEVmKXySxVI+2HjWfAB6R2pwtHL+AmuLzPW0=;
+ b=gBX/oeiJoxq1rNNtd9gZ5mWrPZzo+ZFNN/iMXMyU5nV4oAVjTKsDqCzw+B83lVi5VLHGk8AHQ9CJ1fJxaEfOC2YaAmrIw9OSpZjym3cWBGzRX95kDu/7xXWa0yL2o2F963TURVQo4sYRwuPUp98nLJTOKoBR9FsSahivwrU8IIussu/0EdGvbgQ3lM6VH4y+6CKrsQsnRmSZTvDD4u0ayw37sJ6F3QJZ4dQZCx2MhT9CZ90TJPbC+flXWUMkVmhd/hd2GwJ+reW5dk9zi+EWYyAxlSv4jwTHSwpaq5yHEIgUg/egtHuBu7exLGkuuInBHfhI/PEJ8h/ycwH182uxgg==
+Received: from BN0PR04CA0166.namprd04.prod.outlook.com (2603:10b6:408:eb::21)
+ by DM6PR12MB4402.namprd12.prod.outlook.com (2603:10b6:5:2a5::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.18; Wed, 1 Mar
+ 2023 17:34:12 +0000
+Received: from BL02EPF00010206.namprd05.prod.outlook.com
+ (2603:10b6:408:eb:cafe::af) by BN0PR04CA0166.outlook.office365.com
+ (2603:10b6:408:eb::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.18 via Frontend
+ Transport; Wed, 1 Mar 2023 17:34:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL02EPF00010206.mail.protection.outlook.com (10.167.241.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6156.12 via Frontend Transport; Wed, 1 Mar 2023 17:34:11 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 1 Mar 2023
+ 09:34:00 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Wed, 1 Mar 2023 09:34:00 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.986.5 via Frontend
+ Transport; Wed, 1 Mar 2023 09:33:56 -0800
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     <robh+dt@kernel.org>, <broonie@kernel.org>, <peterhuewe@gmx.de>,
+        <jgg@ziepe.ca>, <jarkko@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [Patch V7 0/3] Tegra TPM driver with HW flow control
+Date:   Wed, 1 Mar 2023 23:03:50 +0530
+Message-ID: <20230301173353.28673-1-kyarlagadda@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v4 02/19] thermal/core: Use the thermal zone 'devdata'
- accessor in thermal located drivers
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, <rafael@kernel.org>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Mark Brown <broonie@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Talel Shenhar <talel@amazon.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Tim Zimmermann <tim@linux4.de>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Jiang Jian <jiangjian@cdjrlc.com>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "open list:THERMAL DRIVER FOR AMLOGIC SOCS" 
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:QUALCOMM TSENS THERMAL DRIVER" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR THERMAL DRIVERS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:ARM/Allwinner sunXi SoC support" 
-        <linux-sunxi@lists.linux.dev>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        "open list:TI BANDGAP AND THERMAL DRIVER" 
-        <linux-omap@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>
-References: <20230228112238.2312273-1-daniel.lezcano@linaro.org>
- <20230228112238.2312273-3-daniel.lezcano@linaro.org>
-From:   "Gole, Dhruva" <d-gole@ti.com>
-Organization: Texas Instruments Incorporated
-In-Reply-To: <20230228112238.2312273-3-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00010206:EE_|DM6PR12MB4402:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc5fa5b4-b4f6-41db-a7fa-08db1a7b2ba8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QdyGX/Bw6aAI1euTKcTOhXpWYyA1oVM5Tlb2YdtP6B3buYvqVCkZYphMvnBu7ashzeL3DvMvzrWGgbvi2wAgtOMjjT+1u5yVQWMFEDR8277K7Edxi59iieqf2m4SRlaJS9Iu7QOQp8Y6ZVqRoDZZv2mIofTkkNseOSDDsS2ov7QqM/wNfsuJQDPmfmblMJqYjWvtbVWlOgebjPG+Yv40guxuiZSJ+rS9Y9gR+sh9Poq6ddqrwvD1R1NpJsJWJtM+ySaVjS3n8aEVswaghqXkerBPwQGra97mXau+2EkcEVociyX3FMKTgaR9oil+yGYdx/5G5tirwQu9qxYBGPcc1KIitJOeJJVdg1pZ7e73wx3lJxRjGMhvlG5rWPnElTyliHPDuRWyeI4Bsbfqha85SLGg0jpSXSqSTD4vzWVPMpWkhFmnBTGw09m6lvQI1Z/q7HCvWiC7WhJDLDRornurZ0VKdgIRWcBCXBw2BcMcRZIH6/mQhV9OTTOIh7gnKk/Wy4qZweJ9IVfjDXYaQOpSEmb5TbkLHmwOVBCmnqNCO6XwK3aL8x1YpyVBkO+T+JcecPZPmjW6wrwgZJ2UgJcydZqjJlRMCQL7zpGFIrCSG0mOclTPPxAToFOSKoi/EYBux3k5bHtU+a9oEEWSbEO/5Swsll9S4woLnXL3VguadezRbpOYYJ90SEvXs66HMDJ3TTaubq0Trwmersh7wlpwyDkizPXNU+V1AO4XCrMWjFwS14vfWqzUfFUWoMCqsJTav2JgrEuIL9r96BboIx7Pnw==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(396003)(346002)(376002)(136003)(451199018)(40470700004)(36840700001)(46966006)(36756003)(82310400005)(54906003)(336012)(426003)(110136005)(478600001)(316002)(83380400001)(47076005)(107886003)(7696005)(186003)(2616005)(1076003)(40460700003)(26005)(6666004)(7416002)(8936002)(41300700001)(2906002)(921005)(356005)(86362001)(70586007)(5660300002)(70206006)(36860700001)(40480700001)(4326008)(7636003)(8676002)(82740400003)(83996005)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2023 17:34:11.6955
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc5fa5b4-b4f6-41db-a7fa-08db1a7b2ba8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL02EPF00010206.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4402
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+TPM devices may insert wait state on last clock cycle of ADDR phase.
+For SPI controllers that support full-duplex transfers, this can be
+detected using software by reading the MISO line. For SPI controllers
+that only support half-duplex transfers, such as the Tegra QSPI, it is
+not possible to detect the wait signal from software. The QSPI
+controller in Tegra234 and Tegra241 implement hardware detection of the
+wait signal which can be enabled in the controller for TPM devices.
 
-On 2/28/2023 4:52 PM, Daniel Lezcano wrote:
-> The thermal zone device structure is exposed to the different drivers
-> and obviously they access the internals while that should be
-> restricted to the core thermal code.
->
-> In order to self-encapsulate the thermal core code, we need to prevent
-> the drivers accessing directly the thermal zone structure and provide
-> accessor functions to deal with.
->
-> Use the devdata accessor introduced in the previous patch.
->
-> No functional changes intended.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se> #R-Car
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> #MediaTek auxadc and lvts
-> Reviewed-by: Balsam CHIHI <bchihi@baylibre.com> #Mediatek lvts
-> Reviewed-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com> #da9062
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>  #spread
-> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com> #sun8i_thermal
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Acked-by: Florian Fainelli <f.fainelli@gmail.com> #Broadcom
-> ---
->  drivers/thermal/amlogic_thermal.c                   |  2 +-
->  drivers/thermal/armada_thermal.c                    |  4 ++--
->  drivers/thermal/broadcom/bcm2711_thermal.c          |  2 +-
->  drivers/thermal/broadcom/bcm2835_thermal.c          |  2 +-
->  drivers/thermal/broadcom/brcmstb_thermal.c          |  4 ++--
->  drivers/thermal/broadcom/ns-thermal.c               |  2 +-
->  drivers/thermal/broadcom/sr-thermal.c               |  2 +-
->  drivers/thermal/da9062-thermal.c                    |  2 +-
->  drivers/thermal/db8500_thermal.c                    |  2 +-
->  drivers/thermal/dove_thermal.c                      |  2 +-
->  drivers/thermal/hisi_thermal.c                      |  2 +-
->  drivers/thermal/imx8mm_thermal.c                    |  2 +-
->  drivers/thermal/imx_sc_thermal.c                    |  2 +-
->  drivers/thermal/imx_thermal.c                       |  6 +++---
->  .../thermal/intel/int340x_thermal/int3400_thermal.c |  2 +-
->  .../intel/int340x_thermal/int340x_thermal_zone.c    |  4 ++--
->  .../int340x_thermal/processor_thermal_device_pci.c  |  4 ++--
->  drivers/thermal/intel/intel_pch_thermal.c           |  2 +-
->  drivers/thermal/intel/intel_quark_dts_thermal.c     |  6 +++---
->  drivers/thermal/intel/intel_soc_dts_iosf.c          | 13 +++++--------
->  drivers/thermal/intel/x86_pkg_temp_thermal.c        |  4 ++--
->  drivers/thermal/k3_bandgap.c                        |  2 +-
->  drivers/thermal/k3_j72xx_bandgap.c                  |  2 +-
-> [...]
->  
-> diff --git a/drivers/thermal/k3_bandgap.c b/drivers/thermal/k3_bandgap.c
-> index 22c9bcb899c3..b5cd2c85e0c3 100644
-> --- a/drivers/thermal/k3_bandgap.c
-> +++ b/drivers/thermal/k3_bandgap.c
-> @@ -141,7 +141,7 @@ static int k3_bgp_read_temp(struct k3_thermal_data *devdata,
->  
->  static int k3_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
->  {
-> -	struct k3_thermal_data *data = tz->devdata;
-> +	struct k3_thermal_data *data = thermal_zone_device_priv(tz);
+Add HW flow control in TIS driver and a flag in SPI data to indicate
+wait detection is required in HW. SPI controller driver determines if
+this is supported. Add HW detection in Tegra QSPI controller.
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Updates in this patch set 
+ - Tegra QSPI identifies itself as half duplex.
+ - TPM TIS SPI driver skips flow control for half duplex and send
+   transfers in single message for controller to handle it.
+ - TPM device identifies as TPM device for controller to detect and
+   enable HW TPM wait poll feature.
 
+Verified with a TPM device on Tegra241 ref board using TPM2 tools.
 
->  	int ret = 0;
->  
->  	ret = k3_bgp_read_temp(data, temp);
-> diff --git a/drivers/thermal/k3_j72xx_bandgap.c b/drivers/thermal/k3_j72xx_bandgap.c
-> index 031ea1091909..5be1f09eeb2c 100644
-> --- a/drivers/thermal/k3_j72xx_bandgap.c
-> +++ b/drivers/thermal/k3_j72xx_bandgap.c
-> @@ -248,7 +248,7 @@ static inline int k3_bgp_read_temp(struct k3_thermal_data *devdata,
->  /* Get temperature callback function for thermal zone */
->  static int k3_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
->  {
-> -	return k3_bgp_read_temp(tz->devdata, temp);
-> +	return k3_bgp_read_temp(thermal_zone_device_priv(tz), temp);
->  }
->  
->  static const struct thermal_zone_device_ops k3_of_thermal_ops = {
-> diff --git a/drivers/thermal/kirkwood_thermal.c b/drivers/thermal/kirkwood_thermal.c
-> index bec7ec20e79d..92b3ce426b9d 100644
-> --- a/drivers/thermal/kirkwood_thermal.c
-> +++ b/drivers/thermal/kirkwood_thermal.c
-> @@ -27,7 +27,7 @@ static int kirkwood_get_temp(struct thermal_zone_device *thermal,
->  			  int *temp)
->  {
->  	unsigned long reg;
-> -	struct kirkwood_thermal_priv *priv = thermal->devdata;
-> +	struct kirkwood_thermal_priv *priv = thermal_zone_device_priv(thermal);
->  
->  	reg = readl_relaxed(priv->sensor);
->  
-> [...]
+V7:
+ - updated patch description.
+ - TPM flag set in probe.
+ - minor comments.
+V6:
+ - Fix typo in chip name Tegra234.
+ - Debug logs change skipped to be sent later.
+ - Consistent usage of soc flag.
+V5:
+ - No SPI bus locking.
+V4:
+ - Split api change to different patch.
+ - Describe TPM HW flow control.
+V3:
+ - Use SPI device mode flag and SPI controller flags.
+ - Drop usage of device tree flags.
+ - Generic TPM half duplex controller handling.
+ - HW & SW flow control for TPM. Drop additional driver.
+V2:
+ - Fix dt schema errors.
+
+Krishna Yarlagadda (3):
+  spi: Add TPM HW flow flag
+  tpm_tis-spi: Add hardware wait polling
+  spi: tegra210-quad: Enable TPM wait polling
+
+ drivers/char/tpm/tpm_tis_spi_main.c | 96 ++++++++++++++++++++++++++++-
+ drivers/spi/spi-tegra210-quad.c     | 14 +++++
+ include/linux/spi/spi.h             | 16 ++++-
+ 3 files changed, 121 insertions(+), 5 deletions(-)
 
 -- 
-Regards,
-Dhruva Gole <d-gole@ti.com>
+2.17.1
 
