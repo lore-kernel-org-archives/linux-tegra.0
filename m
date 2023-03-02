@@ -2,140 +2,131 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881CFC6FA8E
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 07:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B83C678D4
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 07:50:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbjCBH2S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Mar 2023 02:28:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45692 "EHLO
+        id S229612AbjCBHud convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Mar 2023 02:50:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbjCBH2R (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Mar 2023 02:28:17 -0500
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11hn2214.outbound.protection.outlook.com [52.100.173.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7772B5B80;
-        Wed,  1 Mar 2023 23:27:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YvgvTA0liqrYe6Xj06ldVXYvrhMa+sWcT+EHeSPfbFKk4imXUX6z2IFyRrv2mmPxRcchPlvxQGcxeiW1oQZD1lohNYqcp6cjMOO9jGZJ69anUAhTm7YNoEtPyrtaas00liQIHnrvd5WZ+okW0HnayQKJFCMZ/XCAaaN+MoKCuUVK/bKcV4+n6o5VcNgYTqvaWTk/U0rE0s4vT6RkXtkEV/0FK8TR9JrH+6PQgf520zC6ilrEeGkpDPNndldaV0Zmt9yPOh8tt5R9PPaZSnGDGXhFh1Gl8FhbysPnfuLrUxYfrQYlwAD471XtUkwTiiZLOWIp17qnXvGWtAbF6NhsMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l2CmDHvQsRc66mi0HfzUcS/djPjayb0Xk8QT8CEwWH0=;
- b=Mr4qKMS6h6Qh4aBhRdTFwuhYjbaCN+euoM2cxRmzz/kPrTyzCGVFKesFlSuY4FNghMnldGaYRPIKzORlgZwCLvz3jMhPvHIsShJdJwzfFdsKnvzyxKiIUCIvNUVLsV4MQxRmph5CH3SYsYlrVfqXYhfXb6PVfx4zpBEQALzGWorwhhz5CLBhCh8fYe6/Yy5WCIYPpakK/VpYxH52rxIDWBVQUx1on0JRTrK5+TZChQONMQ1aOVu9xVaYpfphVDpP5DpDwfIwf3ze4vhJTZpPlo0wj9BECJr1uBmbXh1+6tWLmZFiBwsPnsYmE9lVOohEcWc+rsK6FKH3Tu1X3vzHxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l2CmDHvQsRc66mi0HfzUcS/djPjayb0Xk8QT8CEwWH0=;
- b=YzHlefPaiYXKAxonJsFP/46RfM3g1/y6ScdcLEJBwX0Cx+lGGfnIAaO0H4a5PkrYtYQ8awrvZvjqGaa11WPFlUhBqIVOwJRfKx9MUIQVlPc8SLMlN3FF+TZkunhaCkCzOzUYcVnU3kfF+gzkVLokcny9sexrpzco3KpavvDSti02f6wIm5AixClaReavLI9ZnvuGM6pry/aENGv7mNh7LEQKL0q3od7jkLh6cCDWA6KQUFtOePsvuji1QR4y8YBy01xLYaqCCchcI4Tw8GdTS7hwL7DGhpjQv2eo8db77hI9+i5bKmpE25xCCCsooZQ9LaVna41Bq8xDrpTZATjyJw==
-Received: from DS7PR05CA0100.namprd05.prod.outlook.com (2603:10b6:8:56::23) by
- PH8PR12MB7375.namprd12.prod.outlook.com (2603:10b6:510:215::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.18; Thu, 2 Mar
- 2023 07:27:51 +0000
-Received: from DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:56:cafe::39) by DS7PR05CA0100.outlook.office365.com
- (2603:10b6:8:56::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.7 via Frontend
- Transport; Thu, 2 Mar 2023 07:27:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DM6NAM11FT025.mail.protection.outlook.com (10.13.172.197) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6156.19 via Frontend Transport; Thu, 2 Mar 2023 07:27:50 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 1 Mar 2023
- 23:27:43 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 1 Mar 2023
- 23:27:43 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5 via Frontend
- Transport; Wed, 1 Mar 2023 23:27:42 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.1 00/42] 6.1.15-rc1 review
-In-Reply-To: <20230301180657.003689969@linuxfoundation.org>
-References: <20230301180657.003689969@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229591AbjCBHuc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Mar 2023 02:50:32 -0500
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE95303DD;
+        Wed,  1 Mar 2023 23:50:18 -0800 (PST)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-172afa7bee2so17227289fac.6;
+        Wed, 01 Mar 2023 23:50:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m9NdTpfDEMV32UTE9lZbQp6kQQhUJVdsU2kqbFsl+ZA=;
+        b=tsmDfvCtJ9Aqml+rjvoBdolA55BW0s8ZxrfanyNdpKTbzx1b/2Gsc8g4BBBxCwTmMS
+         88/CyZgPpGniroEjeZ1nCocMcTRvhWbvuWWh1vEsYYJyn+I4htZfeJ8+l6ak7IPwnrMN
+         OUzUoTrAj0Rzu9/0c9ZS+SbZ00patwiEPYFtlMNoPdK4VsyKmtxnPvo7FJhuGn9sLVat
+         y5udvpN/0cLELUluNjR8NoyxRdGchGRGSDg0Tbx3VDViXK3/qOBD/zHmbsWYtdqeuuN2
+         o4/GSVWrZy+/khK7H7Ui+NZd5fZqkVLkDkvbRCuo1egOZhmGpGi+4l5MeRkXLOHBQ8X+
+         vbFQ==
+X-Gm-Message-State: AO0yUKWYxhaabFvVMNGMkZvySXZPceWN1bCFyoRhm/wNQlwNP5eh/nGp
+        DPR1VKuKS2qDF61WvVyW440ORCh+1zV3kQ==
+X-Google-Smtp-Source: AK7set8c9joX8ey0qbKnqu7pgCE8rSUDqWoyXNHH1uUotJKnAAQXnNfkwOhnn6pSu88jbBpjT8w8EA==
+X-Received: by 2002:a05:6870:d202:b0:176:4a5b:10a6 with SMTP id g2-20020a056870d20200b001764a5b10a6mr655719oac.24.1677743418034;
+        Wed, 01 Mar 2023 23:50:18 -0800 (PST)
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
+        by smtp.gmail.com with ESMTPSA id eg41-20020a05687098a900b001724742cfcesm5170181oab.38.2023.03.01.23.50.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Mar 2023 23:50:17 -0800 (PST)
+Received: by mail-oi1-f173.google.com with SMTP id q15so12854064oiw.11;
+        Wed, 01 Mar 2023 23:50:17 -0800 (PST)
+X-Received: by 2002:a81:ad1b:0:b0:52f:1c23:ef1 with SMTP id
+ l27-20020a81ad1b000000b0052f1c230ef1mr5784211ywh.5.1677743396691; Wed, 01 Mar
+ 2023 23:49:56 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <587de425-88cf-46e5-a92f-8c05f671e3d5@rnnvmail203.nvidia.com>
-Date:   Wed, 1 Mar 2023 23:27:42 -0800
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT025:EE_|PH8PR12MB7375:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ae3d0b9-b71f-471f-7c57-08db1aefa169
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qpGRXpIaq0dE+0/6y9ttYA28d1/t+eHS4rF/MzwPGRzcbgpxUAdWSjtG+v1Oqm5HtxPcX+FxYy4GlEVtpaKo25ULTJ/8SJOgZjOXQw4dyTm2J9jxavc/ysmCVemL9oItLA/e/mmZ/KvTI2LKkio4jCORO1CMlUdUlhKQlqehbuAGzGsJI+UHBPMXQhfiiwO4t6o/S1VwzpU70X9+aDr18ZxHEphllRkFXOfwrfhNI/8ty5fwEcwZQpvZjU2hPYiYszVHW9v2MtYGglHnxdES+WIP4xDDxuG2Ocl/VGJ5ZQ1/Jt/8FmPNUc4CXamdo/7GFRMNV5I+UsKIbtlV+hit4zWt5vJuxHvsnhP6WJp+QxvEYS5KfJrDp8nVaq4B6g4bTbA/9dqF0I9bFK5OFqm/E9De6112JAUcgRYE1WR/hDwHC2EsaKtCwsEfH5ZKJvkbByhOl46MHcPF086GnOLZdfk7IbcYNXHUS49F+ox9YYJdKh3IGa1w8/+jmCXcM8H5MAovqaC6mXGGtp0rX3WnauUTvZzW1yJWkhcsGHbvJ661PFjc8o+OxmnsClewHiNFwNl9PzRYE3bDvHnBtBFDbc5bEx/2Y7JWk+RlaCpf5viLYH8Ispsg4YkJYS/pFO/syYuv0+D8SfM5RUhZXNj6joDc+Wp46LuexRZdT/eUFwlYz663wnFpe9UXvV2sbUBH07Xnr8qrw0y3exAj2RXxoYrK258irKrfnzvky/Q459mo0CkUpZu4UvFtW9xUMTZzbCmhs1y6yofsdyXZsYKMk4fAermcntf4CgfhN+TgjdfC6UYaJCnjU2UcxuzEXWFq
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(346002)(396003)(39860400002)(136003)(376002)(451199018)(5400799012)(40470700004)(46966006)(36840700001)(70206006)(8676002)(8936002)(34020700004)(7636003)(70586007)(82740400003)(6916009)(4326008)(478600001)(7416002)(31686004)(5660300002)(40460700003)(82310400005)(356005)(2906002)(41300700001)(336012)(54906003)(966005)(36860700001)(86362001)(31696002)(47076005)(40480700001)(316002)(426003)(186003)(26005)(12100799018);DIR:OUT;SFP:1501;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2023 07:27:50.9045
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ae3d0b9-b71f-471f-7c57-08db1aefa169
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7375
+References: <20230301185209.274134-1-jjhiblot@traphandler.com> <20230301185209.274134-3-jjhiblot@traphandler.com>
+In-Reply-To: <20230301185209.274134-3-jjhiblot@traphandler.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 2 Mar 2023 08:49:44 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
+Message-ID: <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] of: irq: make callers of of_irq_parse_one() release
+ the device node
+To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Cc:     saravanak@google.com, clement.leger@bootlin.com,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        zajec5@gmail.com, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Marc Zyngier <maz@kernel.org>, afaerber@suse.de,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Nishanth Menon <nm@ti.com>, ssantosh@kernel.org,
+        mathias.nyman@intel.com, gregkh@linuxfoundation.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-wireless@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 01 Mar 2023 19:08:21 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.15 release.
-> There are 42 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 03 Mar 2023 18:06:43 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.15-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Jean-Jacques,
 
-All tests passing for Tegra ...
+Thanks for your patch!
 
-Test results for stable-v6.1:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+On Wed, Mar 1, 2023 at 7:53 PM Jean-Jacques Hiblot
+<jjhiblot@traphandler.com> wrote:
+> of_irq_parse_one() does a get() on the device node returned in out_irq->np.
+> Callers of of_irq_parse_one() must do a put() when they are done with it.
 
-Linux version:	6.1.15-rc1-gb6150251d4dd
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+What does "be done with it" really mean here?
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-Jon
+> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> @@ -184,6 +184,7 @@ static int __init rcar_gen2_regulator_quirk(void)
+>                         kfree(quirk);
+>                         continue;
+>                 }
+> +               of_node_put(argsa->np);
+
+The quirk object, which is a container of argsa, is still used below,
+and stored in a linked list.  I agree argsa->np is not dereferenced,
+but the pointer itself is still compared to other pointers.
+IIUIC, calling of_node_put() might cause the reference count to drop to
+zero, and the underlying struct node object to be deallocated.
+So when a future reference to the same DT node will be taken, a new
+struct node object will be allocated, and the pointer comparison below
+will fail?
+
+Or am I missing something?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
