@@ -2,129 +2,83 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27609C7EE30
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 10:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE44C678D4
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 12:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbjCBKLc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Mar 2023 05:11:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32768 "EHLO
+        id S229665AbjCBMB5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Mar 2023 07:01:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230057AbjCBKLb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Mar 2023 05:11:31 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C782711EB3
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Mar 2023 02:11:29 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id h11so4216381wrm.5
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Mar 2023 02:11:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1677751888;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=94soxuvv9weTj14EUenx4LGqDvReRutwCU3Hh0oH1RU=;
-        b=wTSzRGaMzs2MJ8NdB54pig9Z7LYrG7AED2xx7sCab+Ktsh3ppzWX1E1QhLE2MmEHtw
-         FqSP04+i3a0DBkwO6D7fd6xh8+NODsZwV6E3QmH9Vj1oKhpoxIplP0um9y3WXQpoaqYa
-         Ler2y114ZBIYaAkj3du4Bxmr1/pza/1J5+QHCz8BCqgsfFMrphPYAa5bo/sfDvdQY5Dz
-         C69F/vCEdISUO0Csr2dh2/I0H+VqXMmB0Rp+VeE2/z8UgLWnUh3PsAhymuSfFjkjpMsw
-         DK9vYuljCM18N2jGnI+tYsloor+92Vn6A19+C9lmlnwRppkYpS/oZD7/8IUQlabg35jb
-         JcLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677751888;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=94soxuvv9weTj14EUenx4LGqDvReRutwCU3Hh0oH1RU=;
-        b=SnMbnAxrMZ9dukFXWcFLXZPVUrjkI04MdcaQFy3i2cH8MegP/W/3HoGHmeM6jSji04
-         Tp+rN/ZTZey7WH1jA1FTooTVMvlKMEJbnpZkd2jgqS883RvMJP+7fcxSz0Hl1L5px3fC
-         JoUMJEst7zx1ktnq1oxsr+6rpQYwzuqOA3jb3TETXd+FGMBdHn/gZX0vo/SmtdgOQkNn
-         qxzkDFdrJp/L0chbq+h4z1u8F3KSyk51n3cPYc/OeZJS20GILT1zfMTkK67LTMykmIHR
-         sLSG5UHu9qteJqzsdOQ0jr676O6qRkdebibzEw3kRGrR1mS2VoA070T59IWq6MkJkvR0
-         JxXw==
-X-Gm-Message-State: AO0yUKXt/pinBwDtX0jR3TaXtId12zG6U2WTlLUhNyUQH9Jl/AWqtakb
-        FT6wd6DG/Eyi8AoRMi1ZSgdcYw==
-X-Google-Smtp-Source: AK7set/f6DaunEW+qsu0USPsRajcEqVogfO5w8Xw2rlafpKuhapTBM1EKBnJBGGQGK1pzbCzwxUE+A==
-X-Received: by 2002:a5d:4292:0:b0:2cd:f2c6:5d31 with SMTP id k18-20020a5d4292000000b002cdf2c65d31mr823851wrq.11.1677751888033;
-        Thu, 02 Mar 2023 02:11:28 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:9a21:3c01:c6c8:757f? ([2a05:6e02:1041:c10:9a21:3c01:c6c8:757f])
-        by smtp.googlemail.com with ESMTPSA id p1-20020a056000018100b002c54fb024b2sm15073479wrx.61.2023.03.02.02.11.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Mar 2023 02:11:27 -0800 (PST)
-Message-ID: <9c4d092c-6291-e9fc-6288-c9e365f30f29@linaro.org>
-Date:   Thu, 2 Mar 2023 11:11:26 +0100
+        with ESMTP id S229449AbjCBMB5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Mar 2023 07:01:57 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 71220A261;
+        Thu,  2 Mar 2023 04:01:55 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73D731FB;
+        Thu,  2 Mar 2023 04:02:38 -0800 (PST)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 026B73F587;
+        Thu,  2 Mar 2023 04:01:53 -0800 (PST)
+Message-ID: <7db8f057-e1d8-101d-19f4-1d4efb900f1f@arm.com>
+Date:   Thu, 2 Mar 2023 12:01:52 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH v4 16/19] thermal/drivers/tegra: Remove unneeded lock when
- setting a trip point
+Subject: Re: [PATCH] perf: arm_cspmu: Fix compiler warning
 Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20230228112238.2312273-1-daniel.lezcano@linaro.org>
- <20230228112238.2312273-17-daniel.lezcano@linaro.org>
- <Y/9eohV9h26hPuFn@orome> <e5a4aaf1-af0a-aac4-6f77-94c3c9bfcc67@linaro.org>
- <ZABwJdBk/Z1NHc12@orome>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <ZABwJdBk/Z1NHc12@orome>
+To:     Besar Wicaksono <bwicaksono@nvidia.com>, catalin.marinas@arm.com,
+        will@kernel.org, mark.rutland@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, vsethi@nvidia.com
+References: <20230301225657.30211-1-bwicaksono@nvidia.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20230301225657.30211-1-bwicaksono@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 02/03/2023 10:45, Thierry Reding wrote:
-
-[ ... ]
-
->>>> +	/*
->>>> +	 * Disable the interrupt so set_trips() can not be called
->>>> +	 * while we are setting up the register
->>>> +	 * TSENSOR_SENSOR0_CONFIG1. With this we close a potential
->>>> +	 * race window where we are setting up the TH2 and the
->>>> +	 * temperature hits TH1 resulting to an update of the
->>>> +	 * TSENSOR_SENSOR0_CONFIG1 register in the ISR.
->>>> +	 */
->>>> +	disable_irq(irq);
->>>> +
->>>>    	for (i = 0; i < ARRAY_SIZE(ts->ch); i++) {
->>>>    		err = tegra_tsensor_enable_hw_channel(ts, i);
->>>>    		if (err)
->>>>    			return err;
->>>>    	}
->>>> +	enable_irq(irq);
->>>
->>> Instead of disabling and reenabling the interrupt, could we simply move
->>> the channel enabling code a couple of lines above, before the IRQ
->>> request call? If enabling the channels were to trigger an interrupt, it
->>> should get triggered right after requesting the IRQ.
->>
->> Won't we have a spurious interrupt if that situation happen ?
+On 01/03/2023 22:56, Besar Wicaksono wrote:
+> Fix following compiler warning message
+>    | smatch warnings:
+>    | drivers/perf/arm_cspmu/arm_cspmu.c:1075 arm_cspmu_find_cpu_container()
+>    |    warn: variable dereferenced before check 'cpu_dev' (see line 1073)
 > 
-> It wouldn't be a spurious interrupt, but rather something that we want
-> to react to. It's ultimately the same result as your patch. In your
-> variant we basically request the IRQ (which automatically enables it),
-> then immediately disable it, enable the HW channels and then reenable
-> the interrupt. If enabling the HW channels were to trigger an interrupt,
-> that interrupt would be raised immediately after enable_irq() as well,
-> as far as I can tell.
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <error27@gmail.com>
+> Link: https://lore.kernel.org/r/202302191227.kc0V8fM7-lkp@intel.com/
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
-I see, thanks for the clarification
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-   -- Daniel
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> ---
+>   drivers/perf/arm_cspmu/arm_cspmu.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index e31302ab7e37..a3f1c410b417 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -1078,12 +1078,14 @@ static int arm_cspmu_request_irq(struct arm_cspmu *cspmu)
+>   static inline int arm_cspmu_find_cpu_container(int cpu, u32 container_uid)
+>   {
+>   	u32 acpi_uid;
+> -	struct device *cpu_dev = get_cpu_device(cpu);
+> -	struct acpi_device *acpi_dev = ACPI_COMPANION(cpu_dev);
+> +	struct device *cpu_dev;
+> +	struct acpi_device *acpi_dev;
+>   
+> +	cpu_dev = get_cpu_device(cpu);
+>   	if (!cpu_dev)
+>   		return -ENODEV;
+>   
+> +	acpi_dev = ACPI_COMPANION(cpu_dev);
+>   	while (acpi_dev) {
+>   		if (!strcmp(acpi_device_hid(acpi_dev),
+>   			    ACPI_PROCESSOR_CONTAINER_HID) &&
+> 
+> base-commit: 7f7a8831520f12a3cf894b0627641fad33971221
 
