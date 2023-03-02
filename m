@@ -2,131 +2,90 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B83C678D4
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 07:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637B3C6FA8E
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 09:34:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbjCBHud convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Mar 2023 02:50:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33706 "EHLO
+        id S229453AbjCBJeB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Mar 2023 04:34:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjCBHuc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Mar 2023 02:50:32 -0500
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE95303DD;
-        Wed,  1 Mar 2023 23:50:18 -0800 (PST)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-172afa7bee2so17227289fac.6;
-        Wed, 01 Mar 2023 23:50:18 -0800 (PST)
+        with ESMTP id S229675AbjCBJeA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Mar 2023 04:34:00 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04D2514EA2;
+        Thu,  2 Mar 2023 01:33:59 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id g3so9565068eda.1;
+        Thu, 02 Mar 2023 01:33:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677749637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKDeRQ/4JLfwuQ8OdxmCXpTuWBhIo0gbvATYdHXRLEQ=;
+        b=ih++S7fnHJ04ORwtbMTVqTpMuwCk2PKSX2FYJZwPgekoz7g0cQPGQzc2nhQYXcNM1v
+         yM0FkuIfoR8tOZyrmx6Pp/yrRPgiaEz1AHO+m19e5GGmN4dewrMcdVlP5jxv4yg0h2eD
+         klBXvzpL9bq2zdKggZSWOzM8B/36dLcB52UpSzmfBqusi2bniiXUoJTSlbFrZYxioOu7
+         jtCk2NwWb66fhIThXaxfCJ5wUNXGM/LLaOETMXEtxr9DicP+Ha6NBTPSdsfXGDGqVA0X
+         oLRDaQueRbp6Wu4NRvW4E/1Kpa17NlSZpZGDmxTScoTpiNvWalxJ42fQjP8icKBv+6D8
+         J+Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m9NdTpfDEMV32UTE9lZbQp6kQQhUJVdsU2kqbFsl+ZA=;
-        b=tsmDfvCtJ9Aqml+rjvoBdolA55BW0s8ZxrfanyNdpKTbzx1b/2Gsc8g4BBBxCwTmMS
-         88/CyZgPpGniroEjeZ1nCocMcTRvhWbvuWWh1vEsYYJyn+I4htZfeJ8+l6ak7IPwnrMN
-         OUzUoTrAj0Rzu9/0c9ZS+SbZ00patwiEPYFtlMNoPdK4VsyKmtxnPvo7FJhuGn9sLVat
-         y5udvpN/0cLELUluNjR8NoyxRdGchGRGSDg0Tbx3VDViXK3/qOBD/zHmbsWYtdqeuuN2
-         o4/GSVWrZy+/khK7H7Ui+NZd5fZqkVLkDkvbRCuo1egOZhmGpGi+4l5MeRkXLOHBQ8X+
-         vbFQ==
-X-Gm-Message-State: AO0yUKWYxhaabFvVMNGMkZvySXZPceWN1bCFyoRhm/wNQlwNP5eh/nGp
-        DPR1VKuKS2qDF61WvVyW440ORCh+1zV3kQ==
-X-Google-Smtp-Source: AK7set8c9joX8ey0qbKnqu7pgCE8rSUDqWoyXNHH1uUotJKnAAQXnNfkwOhnn6pSu88jbBpjT8w8EA==
-X-Received: by 2002:a05:6870:d202:b0:176:4a5b:10a6 with SMTP id g2-20020a056870d20200b001764a5b10a6mr655719oac.24.1677743418034;
-        Wed, 01 Mar 2023 23:50:18 -0800 (PST)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
-        by smtp.gmail.com with ESMTPSA id eg41-20020a05687098a900b001724742cfcesm5170181oab.38.2023.03.01.23.50.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Mar 2023 23:50:17 -0800 (PST)
-Received: by mail-oi1-f173.google.com with SMTP id q15so12854064oiw.11;
-        Wed, 01 Mar 2023 23:50:17 -0800 (PST)
-X-Received: by 2002:a81:ad1b:0:b0:52f:1c23:ef1 with SMTP id
- l27-20020a81ad1b000000b0052f1c230ef1mr5784211ywh.5.1677743396691; Wed, 01 Mar
- 2023 23:49:56 -0800 (PST)
+        d=1e100.net; s=20210112; t=1677749637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pKDeRQ/4JLfwuQ8OdxmCXpTuWBhIo0gbvATYdHXRLEQ=;
+        b=5N24SeAA7Dy2t/l/Q3UdYWo3eGoLcTZ9PrZpQ28KGZnBaQc4iVTg8l9GYeDPyg+yWK
+         usiFApinLOuZCS9xdej9y1l58Cx2rruW5HoadOPAxpXfwTv8ovheOA2YKGmLlUuxMLrW
+         J/pdkJxJYuozZZmpCn7VR+y1rPrXGrnY6fZVWeEwMMHXAl2Bi/eg4R1VBTNXg+x1Xb/c
+         29oD3YfMdlL46XhIVxieeTAyXqbcdw95aSelos42kKoZ1WLEkntugWyOduQSMfhcS8NT
+         4L3+v7UH8oKJ/xU76o+JIW71jBRjXRQkLYW2hF5LFB6K80ylPYpM1GNoPZTDNxi/eiHn
+         Eezw==
+X-Gm-Message-State: AO0yUKVEEVTbsI6yWv7XncJjb/qrJnUBX+JOagdDZJh2Ge1Qtfw+nkyU
+        YrkJ3NjqUUSVsgD29s29+4E=
+X-Google-Smtp-Source: AK7set+SvI+Kkueg3IpSyU/iRjuqghNL9lpO9dAXmgvOIQ7kroCKqlb02D4T9ERKJu+x7FPQuyiGZw==
+X-Received: by 2002:a05:6402:416:b0:4ad:7c30:2599 with SMTP id q22-20020a056402041600b004ad7c302599mr11097738edv.13.1677749637208;
+        Thu, 02 Mar 2023 01:33:57 -0800 (PST)
+Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id b44-20020a509f2f000000b004bf76fdfdb3sm868339edf.26.2023.03.02.01.33.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 01:33:56 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/4] dt-bindings: tegra: Document Jetson Orin NX
+Date:   Thu,  2 Mar 2023 10:33:50 +0100
+Message-Id: <20230302093353.3873247-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-References: <20230301185209.274134-1-jjhiblot@traphandler.com> <20230301185209.274134-3-jjhiblot@traphandler.com>
-In-Reply-To: <20230301185209.274134-3-jjhiblot@traphandler.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 2 Mar 2023 08:49:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
-Message-ID: <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] of: irq: make callers of of_irq_parse_one() release
- the device node
-To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Cc:     saravanak@google.com, clement.leger@bootlin.com,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        zajec5@gmail.com, Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Marc Zyngier <maz@kernel.org>, afaerber@suse.de,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Nishanth Menon <nm@ti.com>, ssantosh@kernel.org,
-        mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-wireless@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jean-Jacques,
+From: Thierry Reding <treding@nvidia.com>
 
-Thanks for your patch!
+The Jetson Orin NX is the latest iteration in the NX family of Jetson
+products. Document the compatible strings used for these devices.
 
-On Wed, Mar 1, 2023 at 7:53 PM Jean-Jacques Hiblot
-<jjhiblot@traphandler.com> wrote:
-> of_irq_parse_one() does a get() on the device node returned in out_irq->np.
-> Callers of of_irq_parse_one() must do a put() when they are done with it.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ Documentation/devicetree/bindings/arm/tegra.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-What does "be done with it" really mean here?
-
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-
-> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-> @@ -184,6 +184,7 @@ static int __init rcar_gen2_regulator_quirk(void)
->                         kfree(quirk);
->                         continue;
->                 }
-> +               of_node_put(argsa->np);
-
-The quirk object, which is a container of argsa, is still used below,
-and stored in a linked list.  I agree argsa->np is not dereferenced,
-but the pointer itself is still compared to other pointers.
-IIUIC, calling of_node_put() might cause the reference count to drop to
-zero, and the underlying struct node object to be deallocated.
-So when a future reference to the same DT node will be taken, a new
-struct node object will be allocated, and the pointer comparison below
-will fail?
-
-Or am I missing something?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+index 939a77c767bb..6c13d5e5719a 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -213,5 +213,9 @@ properties:
+           - const: nvidia,p3737-0000+p3701-0000
+           - const: nvidia,p3701-0000
+           - const: nvidia,tegra234
++      - description: Jetson Orin NX
++        items:
++          - const: nvidia,p3767-0000
++          - const: nvidia,tegra234
+ 
+ additionalProperties: true
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
