@@ -2,130 +2,47 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E43C7EE2D
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Mar 2023 18:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A214C64EC4
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Mar 2023 18:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbjCCSnI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 3 Mar 2023 13:43:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46916 "EHLO
+        id S231946AbjCCSzW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Mar 2023 13:55:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231458AbjCCSnH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Mar 2023 13:43:07 -0500
+        with ESMTP id S231866AbjCCSzV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Mar 2023 13:55:21 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3558F10426
-        for <linux-tegra@vger.kernel.org>; Fri,  3 Mar 2023 10:42:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 019151ADCA
+        for <linux-tegra@vger.kernel.org>; Fri,  3 Mar 2023 10:55:08 -0800 (PST)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pYAJT-0004Q1-Rf; Fri, 03 Mar 2023 19:39:27 +0100
+        id 1pYAYa-0006PA-Cw; Fri, 03 Mar 2023 19:55:04 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pYAJF-001cS4-A2; Fri, 03 Mar 2023 19:39:13 +0100
+        id 1pYAYZ-001cVC-JB; Fri, 03 Mar 2023 19:55:03 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pYAJE-001ug1-Il; Fri, 03 Mar 2023 19:39:12 +0100
-Date:   Fri, 3 Mar 2023 19:39:09 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Mark Brown <broonie@kernel.org>,
-        Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-        =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Radu Pirea <radu_nicolae.pirea@upb.ro>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        William Zhang <william.zhang@broadcom.com>,
-        Kursad Oney <kursad.oney@broadcom.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Anand Gore <anand.gore@broadcom.com>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>, Han Xu <han.xu@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Jay Fang <f.fangjian@huawei.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Li-hao Kuo <lhjeff911@gmail.com>,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Cc:     linux-aspeed@lists.ozlabs.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-riscv@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Benjamin Fair <benjaminfair@google.com>,
-        linux-rockchip@lists.infradead.org, openbmc@lists.ozlabs.org,
-        Nancy Yuen <yuenn@google.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-sunxi@lists.linux.dev, linux-xtensa@linux-xtensa.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Patrick Venture <venture@google.com>,
-        linux-spi@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yogesh Gaur <yogeshgaur.83@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 00/87] spi: Convert to platform remove callback returning
- void
-Message-ID: <20230303183909.65uqvaznntwmfwht@pengutronix.de>
-References: <20230303172041.2103336-1-u.kleine-koenig@pengutronix.de>
+        id 1pYAYY-001ulF-ED; Fri, 03 Mar 2023 19:55:02 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     kernel@pengutronix.de, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 26/30] pwm: tegra: Convert to platform remove callback returning void
+Date:   Fri,  3 Mar 2023 19:54:41 +0100
+Message-Id: <20230303185445.2112695-27-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230303185445.2112695-1-u.kleine-koenig@pengutronix.de>
+References: <20230303185445.2112695-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="v6z3e2z4afz7ipyr"
-Content-Disposition: inline
-In-Reply-To: <20230303172041.2103336-1-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1700; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=Hb55anhnO38PV0SBYU/sABiE7lIwGdy/JXcXyRuEONA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkAkJeeLHtNSVt3V9gRI2ztB1xarxIUHZ6cJc4N Z2EioOguraJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZAJCXgAKCRDB/BR4rcrs CdCqB/9QCBRTjz925V5ciuYtQryEnjrjQ262hv8LY1+AvAdjlPi2dxWBWcKckMOyvSPiYkoKDJX 7yqg8B1ATah+8fevJWUNU4aam4ftR5o8NiiidG+LiZ5tZqv3Y8jarbP9ZgF7Mm7sjRQdmTtsHSz phvYR+P7yMR6NzhC78sfoj1exIFCI7ngkNhc64UR7IajNb9OGMKsLhtHVnPv8qQJrR2c/qcqm0D Rh0jQBr/0JS7WAJNaFMrJ82vlNOCrq+REWTAOEu6BbTkXLXl5aWFbWjpe6WBhJ+8RBO8wa34TWw UdJxe6JxXQU9lNPtNDmId078fYEBwnyoIffd8XEGic55EW9E
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
 X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
@@ -134,58 +51,53 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
---v6z3e2z4afz7ipyr
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Hello,
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-tegra.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On Fri, Mar 03, 2023 at 06:19:14PM +0100, Uwe Kleine-K=F6nig wrote:
-> this patch series adapts the platform drivers below drivers/spi
-> to use the .remove_new() callback. Compared to the traditional .remove()
-> callback .remove_new() returns no value. This is a good thing because
-> the driver core doesn't (and cannot) cope for errors during remove. The
-> only effect of a non-zero return value in .remove() is that the driver
-> core emits a warning. The device is removed anyhow and an early return
-> from .remove() usually yields a resource leak.
->=20
-> By changing the remove callback to return void driver authors cannot
-> reasonably assume any more that there is some kind of cleanup later.
->=20
-> All drivers touched here returned zero unconditionally in their remove
-> callback, so they could all be converted trivially to .remove_new().
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 249dc0193297..5810abf66e2a 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -350,7 +350,7 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int tegra_pwm_remove(struct platform_device *pdev)
++static void tegra_pwm_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_pwm_chip *pc = platform_get_drvdata(pdev);
+ 
+@@ -359,8 +359,6 @@ static int tegra_pwm_remove(struct platform_device *pdev)
+ 	reset_control_assert(pc->rst);
+ 
+ 	pm_runtime_force_suspend(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ static int __maybe_unused tegra_pwm_runtime_suspend(struct device *dev)
+@@ -434,7 +432,7 @@ static struct platform_driver tegra_pwm_driver = {
+ 		.pm = &tegra_pwm_pm_ops,
+ 	},
+ 	.probe = tegra_pwm_probe,
+-	.remove = tegra_pwm_remove,
++	.remove_new = tegra_pwm_remove,
+ };
+ 
+ module_platform_driver(tegra_pwm_driver);
+-- 
+2.39.1
 
-One thing I failed to mention here (because my coccinelle patch to
-detect that was suboptimal) is: There are 6 drivers---namely
-atmel-quadspi.c, spi-imx.c, spi-mt65xx.c, spi-qup.c, spi-sprd.c, and
-spi-ti-qspi.c---that might return a non-zero value in their remove
-function. Note that this is exactly the problem that I target to rub out
-with the effort to change .remove() to return void.
-
-I'll address them separately.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---v6z3e2z4afz7ipyr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQCPsoACgkQwfwUeK3K
-7AnE5wf/f9JfZvlhsMW5lUYY1iF+TtcOqAj1YniGiXQoKsm+C+jWJHYOZHCCzymg
-UQ5G8rDRrzTjzXz8vR2ZoeyNaMKy/WfN5PBBn8qc795Gqt8Z4wr9Fi0hyfto/6Ic
-fpzjUOQGdtgTfm/BiPYD61484JFMRNw7SPzUGCDBsvWNmUQdmLu7jbqtTCLk/DjY
-2VO+r2QB8TYqj/9xZQcl6RJC6c3qj5gHKYZIquIIHc/3Ug4eesZlWHWt2FNVTbX7
-n4hcyTMeV8iCsDN1/FgwNnOJW3UubunsqIIDqyPS7wreu6eK3QeUoR26ZFOKW19L
-9QoJp1TuDkcr0Cccg7l24GxflQoqgA==
-=LoPr
------END PGP SIGNATURE-----
-
---v6z3e2z4afz7ipyr--
