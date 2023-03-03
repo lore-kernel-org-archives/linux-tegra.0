@@ -2,104 +2,71 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4CBC6FA8E
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Mar 2023 21:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10057C678D4
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Mar 2023 08:49:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbjCBVCp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Mar 2023 16:02:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56568 "EHLO
+        id S229685AbjCCIts (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Mar 2023 03:49:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjCBVCp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Mar 2023 16:02:45 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FFBD2DE61;
-        Thu,  2 Mar 2023 13:02:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=KhVHEoAb9JfdAO2DxL948x9Ihcm4qsbUc5kdCrwD8u8=; b=WhSAR761ty2OjAg8YyLpdRDhaH
-        Naamu6793d2nTTdzrrkTgYTO5dwD9VyUW0Pir8DDLItM8dwaAMuKq9nN0hkZla7PoZuv8oiX/MLKQ
-        HYRmmgVqPInORzair0b/kr2gPGZm/iKZUErPau2XL6+9Ov/DzE2opH8E0iAGKGVRno7oHtYQl5PrI
-        QyOASTAvv7ezMIYAPY2HCIp8VLK0m610yDL2TwjxJxzt0NXnPPcHm9Ulbd0a+CBKDeMqIMLwy0101
-        j3OhsulzlNaYUnw91t6AfZiC/h7y/n2m+EMY31UKn8aLaQ+PFBKLW17kJdetTQRiG94qispzLs+1a
-        jPzSj21Q==;
-Received: from [2601:1c2:980:9ec0::df2f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pXq4W-003JoZ-4L; Thu, 02 Mar 2023 21:02:40 +0000
-Message-ID: <2e5bb985-782b-db43-b555-dabee885a737@infradead.org>
-Date:   Thu, 2 Mar 2023 13:02:39 -0800
+        with ESMTP id S230232AbjCCItm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Mar 2023 03:49:42 -0500
+X-Greylist: delayed 529 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Mar 2023 00:49:40 PST
+Received: from mail.amblevebiz.com (mail.amblevebiz.com [80.211.239.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0513928C
+        for <linux-tegra@vger.kernel.org>; Fri,  3 Mar 2023 00:49:40 -0800 (PST)
+Received: by mail.amblevebiz.com (Postfix, from userid 1002)
+        id 6B4AC83887; Fri,  3 Mar 2023 09:40:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=amblevebiz.com;
+        s=mail; t=1677832849;
+        bh=mG5KF9rXIT2hCcIXZaMY449X9Ndwb1czFhgZLlqDg7A=;
+        h=Date:From:To:Subject:From;
+        b=o7FxvgJCyvA7gHcwFOvOoS3ZjXcXKIsvhRtwPmJhUZ+NaHLjPAT5oj9CxNIH/W4Sb
+         mjjL53UD1IrnI5gfWMNd01NWkwFclCAnY5Pnmz5dQIF9t9T/EeWDE5TDc2APBlVpFl
+         AlTSGpCVdB8L2oA+WvzzYKszwLEgmL7uyzzcIRSPOSa329WlgFLflrrN6qQs8I9CMB
+         72/Hv8xnwFf73sP1t/cHukf7JNF4Ptc8tOd5QjUWC8UjMY7X7pGUaOtglgPkhD1leZ
+         xotDNGd9xncbfDT0T7oTuhbOtpC+Sr2+J0lyy7HIGifSRanNkm8VZGZhNs5PVheTCi
+         RXYaqf1MHONJw==
+Received: by mail.amblevebiz.com for <linux-tegra@vger.kernel.org>; Fri,  3 Mar 2023 08:40:32 GMT
+Message-ID: <20230303084500-0.1.h.uus.0.p05k2iafu9@amblevebiz.com>
+Date:   Fri,  3 Mar 2023 08:40:32 GMT
+From:   =?UTF-8?Q? "Luk=C3=A1=C5=A1_Horv=C3=A1th" ?= 
+        <lukas.horvath@amblevebiz.com>
+To:     <linux-tegra@vger.kernel.org>
+Subject: =?UTF-8?Q?Technick=C3=BD_audit_podlah?=
+X-Mailer: mail.amblevebiz.com
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2] perf: arm_cspmu: Fix variable dereference warning
-Content-Language: en-US
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, suzuki.poulose@arm.com,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, vsethi@nvidia.com
-References: <20230302205701.35323-1-bwicaksono@nvidia.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20230302205701.35323-1-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Dobr=C3=A9 r=C3=A1no,
+
+uva=C5=BEujete o bezesp=C3=A1rov=C3=A9 podlaze pro v=C3=BDrobn=C3=AD prov=
+oz?
+
+Jako sv=C4=9Btov=C3=BD l=C3=ADdr ve v=C3=BDrob=C4=9B a pokl=C3=A1dce podl=
+ah =C5=99e=C5=A1=C3=ADme probl=C3=A9my vypl=C3=BDvaj=C3=ADc=C3=AD z vlivu=
+ chemick=C3=BDch slou=C4=8Denin, ot=C4=9Bru, n=C3=A1raz=C5=AF, vlhkosti n=
+ebo n=C3=A1hl=C3=BDch zm=C4=9Bn teplot - na=C5=A1e podlahov=C3=A9 syst=C3=
+=A9my jsou p=C5=99izp=C5=AFsobeny nejt=C4=9B=C5=BE=C5=A1=C3=ADm podm=C3=AD=
+nk=C3=A1m prost=C5=99ed=C3=AD.
+
+Garantujeme v=C3=A1m =C5=99e=C5=A1en=C3=AD, kter=C3=A1 jsou =C5=A1etrn=C3=
+=A1 k =C5=BEivotn=C3=ADmu prost=C5=99ed=C3=AD, odoln=C3=A1 a snadno se =C4=
+=8Dist=C3=AD, hygienick=C3=A1, protiskluzov=C3=A1 a bezpe=C4=8Dn=C3=A1 pr=
+o zam=C4=9Bstnance.
+
+Poskytujeme kr=C3=A1tkou dobu instalace a nep=C5=99etr=C5=BEit=C3=BD prov=
+oz i o v=C3=ADkendech a sv=C3=A1tc=C3=ADch, =C4=8D=C3=ADm=C5=BE eliminuje=
+me riziko prostoj=C5=AF.
+
+Mohu V=C3=A1m zdarma nab=C3=ADdnout technick=C3=BD audit podlah s komplex=
+n=C3=ADm rozborem podkladu.
+
+M=C5=AF=C5=BEeme pro v=C3=A1s mluvit o =C5=99e=C5=A1en=C3=ADch?
 
 
-On 3/2/23 12:57, Besar Wicaksono wrote:
-> Fix warning message from smatch tool:
->   | smatch warnings:
->   | drivers/perf/arm_cspmu/arm_cspmu.c:1075 arm_cspmu_find_cpu_container()
->   |    warn: variable dereferenced before check 'cpu_dev' (see line 1073)
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <error27@gmail.com>
-> Link: https://lore.kernel.org/r/202302191227.kc0V8fM7-lkp@intel.com/
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
-> 
-> Changes from v1:
->  * Update commit subject and description
->  * Added Reviewed-by from Suzuki
-> v1: https://lore.kernel.org/linux-arm-kernel/20230301225657.30211-1-bwicaksono@nvidia.com/T/#u
-> 
-> ---
->  drivers/perf/arm_cspmu/arm_cspmu.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> index e31302ab7e37..a3f1c410b417 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -1078,12 +1078,14 @@ static int arm_cspmu_request_irq(struct arm_cspmu *cspmu)
->  static inline int arm_cspmu_find_cpu_container(int cpu, u32 container_uid)
->  {
->  	u32 acpi_uid;
-> -	struct device *cpu_dev = get_cpu_device(cpu);
-> -	struct acpi_device *acpi_dev = ACPI_COMPANION(cpu_dev);
-> +	struct device *cpu_dev;
-> +	struct acpi_device *acpi_dev;
->  
-> +	cpu_dev = get_cpu_device(cpu);
->  	if (!cpu_dev)
->  		return -ENODEV;
->  
-> +	acpi_dev = ACPI_COMPANION(cpu_dev);
->  	while (acpi_dev) {
->  		if (!strcmp(acpi_device_hid(acpi_dev),
->  			    ACPI_PROCESSOR_CONTAINER_HID) &&
-> 
-> base-commit: 7f7a8831520f12a3cf894b0627641fad33971221
-
--- 
-~Randy
+Luk=C3=A1=C5=A1 Horv=C3=A1th
