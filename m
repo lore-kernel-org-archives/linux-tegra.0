@@ -2,120 +2,129 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA0EC6FA9E
-	for <linux-tegra@archiver.kernel.org>; Sat,  4 Mar 2023 08:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC8FC678DB
+	for <linux-tegra@archiver.kernel.org>; Sat,  4 Mar 2023 10:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229718AbjCDInv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Mar 2023 03:43:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55220 "EHLO
+        id S229636AbjCDKes (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 4 Mar 2023 05:34:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbjCDIns (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Mar 2023 03:43:48 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109C716336;
-        Sat,  4 Mar 2023 00:43:47 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id by8so4644079ljb.7;
-        Sat, 04 Mar 2023 00:43:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677919425;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=syuBBfuFNqUVEt5myTUHBWQU/zXBUecumwT+b6a2b1M=;
-        b=e+btXyhqbjOa0x6eHPe5KW5QJ2cuywCOU3Tc2MdVx0PVc8L5mnzddv8lwSroxdM9mH
-         ZDvo7KBOu7cKh99s7eHy0ISDkDtCybCl7jvzG3Yii2cCCIXiGgEXU2kiQjC1bmMOuWYx
-         hFxbn8AxaBdlZPlJ8+OrtQFJNk/5BtA4VTgMeQ679fn7hM3nmaSegPftXeRqymwoBV9/
-         LjRCI1kzJWGTd4mqtwtQY3ckP81JmdnXwWWKI2HguIAU21oZ1Pk2gvpI4eKg9WN2pqM7
-         u5ArRmYeqbenkZY1TumiDdO2DeSifog2KOuY/ByZv3x/4lTdR6pbXRnmGp82otP6lIrb
-         XSpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677919425;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=syuBBfuFNqUVEt5myTUHBWQU/zXBUecumwT+b6a2b1M=;
-        b=a3IxR2RvJ9OQAo/TtnVr51w3UUDd9/aZJ5EtG8MZTVeszMCMT+/Lej7RGYLVl+mSKQ
-         YUNHSiEbjWUKHUqH2l4SmkhboSs3GBW7Gnu4V1TfEE8+ZI6mzcGn4iXYKww+RVqsal1n
-         lv8vMSxnQmjUo5O5m60U0gmjyLLK20TP+zpCywqxL+3HSKxN3t0UQjrLr8N9RhnkX8VS
-         4BPHlo70wLnePjRsnfW/qXRbkn1Q/eqqExhu3peilXbNtcx0VBKwHDw/8KahktM6Lkp8
-         Yn5nOQpt1xQq4qOdPY+Nko21HptS3UZ6fG0Qupg7AY8C/cC5H5bnwYaexKLeB2QVvlAo
-         PSMQ==
-X-Gm-Message-State: AO0yUKU47tnQnKKea4btOBVn99zGcqX2GjbVx+iu2tQzc4YxzEqQGr3Q
-        NkHYu8khytg+R6kAggOafaM=
-X-Google-Smtp-Source: AK7set9dnpRA1GA84poLDXX/AlDqn51g5tB5Ob33S3w5J4OzPvLSmU0E5pJ2EPFQ6md4S+3D43NptA==
-X-Received: by 2002:a2e:b94a:0:b0:293:1565:4353 with SMTP id 10-20020a2eb94a000000b0029315654353mr1335543ljs.10.1677919425459;
-        Sat, 04 Mar 2023 00:43:45 -0800 (PST)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id u5-20020a2ea165000000b00293cc5f83b4sm693575ljl.27.2023.03.04.00.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Mar 2023 00:43:45 -0800 (PST)
-From:   Svyatoslav Ryhel <clamor95@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] tegra30: peripherals: add 266.5MHz nodes
-Date:   Sat,  4 Mar 2023 10:43:19 +0200
-Message-Id: <20230304084319.18424-6-clamor95@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230304084319.18424-1-clamor95@gmail.com>
-References: <20230304084319.18424-1-clamor95@gmail.com>
+        with ESMTP id S229500AbjCDKer (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Mar 2023 05:34:47 -0500
+Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 101D910AB8;
+        Sat,  4 Mar 2023 02:34:45 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.108.20.84])
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id BF00C20CD4;
+        Sat,  4 Mar 2023 10:34:40 +0000 (UTC)
+Received: from [192.168.1.41] (88.161.25.233) by DAG1EX1.emp2.local
+ (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Sat, 4 Mar
+ 2023 11:34:39 +0100
+Message-ID: <7fa7f07f-d1e1-1e43-992c-4981c5810284@traphandler.com>
+Date:   Sat, 4 Mar 2023 11:34:39 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 2/3] of: irq: make callers of of_irq_parse_one() release
+ the device node
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     <saravanak@google.com>, <clement.leger@bootlin.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        <zajec5@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Marc Zyngier <maz@kernel.org>, <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Nishanth Menon <nm@ti.com>, <ssantosh@kernel.org>,
+        <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-wireless@vger.kernel.org>,
+        <linux-actions@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <20230301185209.274134-1-jjhiblot@traphandler.com>
+ <20230301185209.274134-3-jjhiblot@traphandler.com>
+ <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+In-Reply-To: <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [88.161.25.233]
+X-ClientProxiedBy: CAS2.emp2.local (172.16.1.2) To DAG1EX1.emp2.local
+ (172.16.2.1)
+X-Ovh-Tracer-Id: 2216615445481994549
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvddtuddgudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgihesthekredttdefjeenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepvdefkedugeekueeuvdeuueevjefftddvtefhleekhfefffdtteetffeigfdvtdeinecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdpsghhvghlghgrrghssehgohhoghhlvgdrtghomhdpnhhmsehtihdrtghomhdpshhsrghnthhoshhhsehkvghrnhgvlhdrohhrghdpmhgrthhhihgrshdrnhihmhgrnhesihhnthgvlhdrtghomhdpghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdpjhhonhgrthhhrg
+ hnhhesnhhvihguihgrrdgtohhmpdhlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigphhptgdquggvvheslhhishhtshdrohiilhgrsghsrdhorhhgpdhlihhnuhigqdifihhrvghlvghsshesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqrggtthhiohhnsheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdplhhinhhugidqshhunhigiheslhhishhtshdrlhhinhhugidruggvvhdpuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhptghisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhfrhhofigrnhgurdhlihhsthesghhmrghilhdrtghomhdplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhhosghhodgutheskhgvrhhnvghlrdhorhhgpdhjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdpshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdgtlhgvmhgvnhhtrdhlvghgvghrsegsohhothhlihhnrdgtohhmpdhmrghgnhhushdruggrmhhmsehgmhgrihhlrdgtohhmpdhlihhnuhigsegrrhhmlhhinhhugid
+ rohhrghdruhhkpdhmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdpnhhpihhgghhinhesghhmrghilhdrtghomhdptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdpiigrjhgvtgehsehgmhgrihhlrdgtohhmpdgurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhtghhlgieslhhinhhuthhrohhnihigrdguvgdptghlrghuughiuhdrsggviihnvggrsehmihgtrhhotghhihhprdgtohhmpdhmrgiisehkvghrnhgvlhdrohhrghdprghfrggvrhgsvghrsehsuhhsvgdruggvpdhmrghniheskhgvrhhnvghlrdhorhhgpdhprghlmhgvrhesuggrsggsvghlthdrtghomhdpphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdifvghnshestghsihgvrdhorhhgpdhsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehvdekpdhmohguvgepshhmthhpohhuth
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Some devices may require this entry for proper work.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
-index d100a1a8b705..a2d557155114 100644
---- a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
-+++ b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
-@@ -210,6 +210,20 @@ opp-204000000-1250 {
- 			opp-suspend;
- 		};
- 
-+		opp-266500000-1000 {
-+			opp-microvolt = <1000000 1000000 1350000>;
-+			opp-hz = /bits/ 64 <266500000>;
-+			opp-supported-hw = <0x0007>;
-+			required-opps = <&core_opp_1000>;
-+		};
-+
-+		opp-266500000-1250 {
-+			opp-microvolt = <1250000 1250000 1350000>;
-+			opp-hz = /bits/ 64 <266500000>;
-+			opp-supported-hw = <0x0008>;
-+			required-opps = <&core_opp_1250>;
-+		};
-+
- 		opp-333500000-1000 {
- 			opp-microvolt = <1000000 1000000 1350000>;
- 			opp-hz = /bits/ 64 <333500000>;
-@@ -424,6 +438,12 @@ opp-204000000 {
- 			opp-suspend;
- 		};
- 
-+		opp-266500000 {
-+			opp-hz = /bits/ 64 <266500000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <2132000>;
-+		};
-+
- 		opp-333500000 {
- 			opp-hz = /bits/ 64 <333500000>;
- 			opp-supported-hw = <0x000F>;
--- 
-2.37.2
+On 02/03/2023 08:49, Geert Uytterhoeven wrote:
+> Hi Jean-Jacques,
+> 
+> Thanks for your patch!
+> 
+> On Wed, Mar 1, 2023 at 7:53 PM Jean-Jacques Hiblot
+> <jjhiblot@traphandler.com> wrote:
+>> of_irq_parse_one() does a get() on the device node returned in out_irq->np.
+>> Callers of of_irq_parse_one() must do a put() when they are done with it.
+> 
+> What does "be done with it" really mean here?
+> 
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+> 
+>> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+>> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+>> @@ -184,6 +184,7 @@ static int __init rcar_gen2_regulator_quirk(void)
+>>                          kfree(quirk);
+>>                          continue;
+>>                  }
+>> +               of_node_put(argsa->np);
+> 
+> The quirk object, which is a container of argsa, is still used below,
+> and stored in a linked list.  I agree argsa->np is not dereferenced,
+> but the pointer itself is still compared to other pointers.
+Hi Geert,
 
+I fail to see when the pointers are compared. It looks to me that only 
+the args are compared. Am I missing something ?
+In any case, looking more closely at the code, I guess that indeed the
+of_node_put() shouldn't be added here because this code expects that the
+nodes never go away. That is probably a good assertion in case of PMICs
+
+JJ
+> IIUIC, calling of_node_put() might cause the reference count to drop to
+> zero, and the underlying struct node object to be deallocated.
+> So when a future reference to the same DT node will be taken, a new
+> struct node object will be allocated, and the pointer comparison below
+> will fail?
+> 
+> Or am I missing something?
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
