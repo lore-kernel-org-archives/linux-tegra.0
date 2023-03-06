@@ -2,183 +2,305 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A74C61DA4
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 19:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C58FC64EC4
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 19:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229896AbjCFTE7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 14:04:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52810 "EHLO
+        id S229743AbjCFT2r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 14:28:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230269AbjCFTEw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 14:04:52 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21B1219B4;
-        Mon,  6 Mar 2023 11:04:49 -0800 (PST)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 326GweoN018546;
-        Mon, 6 Mar 2023 17:13:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : references : date : in-reply-to : message-id : content-type :
- mime-version; s=corp-2022-7-12;
- bh=athDG0ii40dbiAOBzQSObc/DVFrdeX1htQmxdrJ5B9M=;
- b=Sv9GqHOWshPPJQcBj0MQHg3FBxoi8jDmN1DGdcPKgkywd1cVkY1QhzL/8FQlDYwwI/0D
- VAp3+Cd59gN1oJ0qCZy0JDyr7Sr25e1Z1k8oXB31aN0lQOCeO06ABX6oit+kpeF92CiI
- ha7MKq/H3ucf2nkG1gD2G8UAMdzF4CwvJviUtVb1hUzaPu8/Thlj8+cUTNo/0T5m++bg
- scJmkDF8qDcS2U0qZslAjhgkcbdkpom/x7qQyRodspGvtInALrMA5ERiPamNrYHmyK0X
- X1wJ2Cj8wudkkwbD9+Qegs4XnK1THyVA/n7apMd9SIxG8+1BxPZDz7jQmCaPwLTY3p2i BA== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3p415hugb4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 Mar 2023 17:13:13 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 326HAP3x008836;
-        Mon, 6 Mar 2023 17:13:13 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2175.outbound.protection.outlook.com [104.47.56.175])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3p4u2ghmwy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 06 Mar 2023 17:13:13 +0000
+        with ESMTP id S229542AbjCFT2q (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 14:28:46 -0500
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2048.outbound.protection.outlook.com [40.107.244.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEC76DE;
+        Mon,  6 Mar 2023 11:28:44 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g4dX6+fhWkWh3ETO1KCXQtc9s56DVoOHFT+aKE+crOAicBXuJeP8QFC25jf9KmtRh9xgyaD/OnatwnrpV5rlsv8nVcDmzWC7eTbe5SXAdfwDQBlGns8Oop1SxikoqJsJOKaQXEe4hxTAXuOjRevW+uFCa2S3ikokCnFmGl/bt6LC06kQ1G9PpJ9jtz8aRBO8saqgOX8XT6IkiaetXMmqoixujlDxvsayxSqzqqe2/DuTO1i6D93yZoyTDWtw27ubObYlF+62EsQA/uYARrYMKhO4yLw1/lERrNtjy1TBKzAEeQEnVFZ/LnVqD0+h083CSCLkrLPyvjSmscdx70udjw==
+ b=f1VlOv5IGXdxJZLfYcmPG/ZewS6qP8L7MEm3ELRmYGCuKxby1gYjFf4u/g8t82la9gXQl6aRtg5JAhjlvnMDoG82TznsnAXBh3ItuEt7CUXNKrEkJLTaRsGjvogKRp+nrPPq+B8HbHI8L72qmTK8g03twXYeGcOfjGh/6YjlrpccHSTBJZ8qr+uEnsInXyaxAKp4TgaQATNQBqlYyKLL5f+iwvH05tdb/v5yVG1dT8kzfEck+Bhn/T7fXEl5PcPHmFj6gtsmYEpzVppff2lkMVDEXXYi5qA84JBZyGMa3e1rAxAsc7mlLjL7HUn1/Diam6e/TcFEFaNrO2amll55yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=athDG0ii40dbiAOBzQSObc/DVFrdeX1htQmxdrJ5B9M=;
- b=M4XTyZZn5CNvswcqX9Ai5DtEmpiotZWhOHrWZH2rx01Yhw4h5irpb1qWb9tIhOpiQMr0p7Ev1Vf2SXXpxKW1VZkdKADbjF/wvUDM/IE9Xjm+XskhQj+LxX0G7bfbrQe5ARA12Eidvb3bmlAfycduqJAU5iyAPTqCK1vEBtfeiXptU2UUjRXXWUt+m3sg9tLpzJK1EM51ntoSOL4ISmcvQi+ux0AUq5Ep3OAKRPh3R6vPTrZ03X2zducooNAT0jPWGNKfKp3kV95g4HwhCsPeB99tzA4zPY8w5MtGfON6xupw8paD3Vew/6HjEJWPjKpRQvYSoW+EiUw6pDvZqJ6Eww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=eLTQjpcInUfjQtAk997dvDS58SXdAsdEarvSAcw8XRE=;
+ b=BJjuCDRTcWdATq0sEDDkzstIcJvzqa3Sv1zB+S1HdhJA2BMwEEw3jj/FlH887OjuY2/CbQTnBHlweCrLAi931xn4ecibAMn1yVDyVT9tgJG1S0bJEuedpaR2SrFo4iYEm3cZht+dC+M82rYkcI8IsfD56PkRlH7Ap3StQzjOE2iBgHdX18bRXZAdRI0ud01suyVk9VcNPwuHPZvEQCSjVNEABa9yZcfXsGXwIqIicsi2sOLRrUVCx85tviq+mkxzyTqLSeNMhRIXqmvbzboxHZg7Q8owogj4SbIqGFNsOwdjlP60Tpk74YaYUSu1El9X1Uj3V+3bkhY9vcG0/SfDgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=athDG0ii40dbiAOBzQSObc/DVFrdeX1htQmxdrJ5B9M=;
- b=qvXhWBuuX6JJ8T3IIxdqcP9nAEF43GmFNGXYS/k9aCJXQXaMUN0xTnZDvHVk+2KmoIIznkSOdm0toXM96yDLDPC/p4E74fC619GEf9L32xjukGM0KsKGYIDNJf3L4iVxtzBp1tWEbsSlRLMnLsg3lBQjqOrMSpStwCp4bOglbtg=
-Received: from DS0PR10MB6798.namprd10.prod.outlook.com (2603:10b6:8:13c::20)
- by CY8PR10MB6468.namprd10.prod.outlook.com (2603:10b6:930:60::5) with
+ bh=eLTQjpcInUfjQtAk997dvDS58SXdAsdEarvSAcw8XRE=;
+ b=sZct3P4gQebt8WQf9d2RJqoYB5ARId22B8WxVqYRpS/ibFSfxXV249xOnw7YXJdswkKWBXDOMoV+wKZQCJljUfMa3RJIsG96eK7PCAJa3IqLW3qJkztMm9ElUil+uc0SZb+IoTVWkK0cNtoj6m0M7NVoCW2syCCNW9kEYZG2h7NVRNgKmePe4yAdyjEyAyIjEqomkTwwgCt8gfXXjv3suapU7BGXcmI0aVMfHnmtzXGNPhnZSEqBZXuIBK8pHfcHBic6mYq+5pCtvyvU2SBCOtRTx0Vt8Fre9yo4xsl8mRyFoUSOJ11Sfq9q/n3WHl2212gI26aNSwML8AG69V9sTw==
+Received: from BN9PR03CA0308.namprd03.prod.outlook.com (2603:10b6:408:112::13)
+ by DM6PR12MB4513.namprd12.prod.outlook.com (2603:10b6:5:2ad::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.18; Mon, 6 Mar
- 2023 17:13:10 +0000
-Received: from DS0PR10MB6798.namprd10.prod.outlook.com
- ([fe80::d0f7:e4fd:bd4:b760]) by DS0PR10MB6798.namprd10.prod.outlook.com
- ([fe80::d0f7:e4fd:bd4:b760%4]) with mapi id 15.20.6156.027; Mon, 6 Mar 2023
- 17:13:10 +0000
-From:   Nick Alcock <nick.alcock@oracle.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     mcgrof@kernel.org, linux-modules@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 15/27] memory: tegra: remove MODULE_LICENSE in non-modules
-References: <20230224150811.80316-1-nick.alcock@oracle.com>
-        <20230224150811.80316-16-nick.alcock@oracle.com>
-        <c6f39365-e840-d782-8ec0-e34ec3681b98@linaro.org>
-        <acc27e8f-73ce-39ee-3666-461f5c72d39d@linaro.org>
-Emacs:  the answer to the world surplus of CPU cycles.
-Date:   Mon, 06 Mar 2023 17:13:06 +0000
-In-Reply-To: <acc27e8f-73ce-39ee-3666-461f5c72d39d@linaro.org> (Krzysztof
-        Kozlowski's message of "Mon, 6 Mar 2023 16:45:31 +0100")
-Message-ID: <87h6ux7qhp.fsf@esperi.org.uk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.1.91 (gnu/linux)
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0491.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:13a::16) To DS0PR10MB6798.namprd10.prod.outlook.com
- (2603:10b6:8:13c::20)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Mon, 6 Mar
+ 2023 19:28:42 +0000
+Received: from BN8NAM11FT022.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:112:cafe::df) by BN9PR03CA0308.outlook.office365.com
+ (2603:10b6:408:112::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28 via Frontend
+ Transport; Mon, 6 Mar 2023 19:28:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN8NAM11FT022.mail.protection.outlook.com (10.13.176.112) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6156.19 via Frontend Transport; Mon, 6 Mar 2023 19:28:41 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 6 Mar 2023
+ 11:28:26 -0800
+Received: from [10.41.21.79] (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 6 Mar 2023
+ 11:28:21 -0800
+Message-ID: <841dd7b5-98b2-e1a5-2387-a48d7abf4f38@nvidia.com>
+Date:   Tue, 7 Mar 2023 00:58:19 +0530
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [Patch v1 01/10] memory: tegra: add interconnect support for DRAM
+ scaling in Tegra234
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <treding@nvidia.com>, <dmitry.osipenko@collabora.com>,
+        <viresh.kumar@linaro.org>, <rafael@kernel.org>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC:     <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
+        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <20221220160240.27494-1-sumitg@nvidia.com>
+ <20221220160240.27494-2-sumitg@nvidia.com>
+ <b4777025-0220-b1e4-f6f3-00d75ec8f0be@linaro.org>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <b4777025-0220-b1e4-f6f3-00d75ec8f0be@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB6798:EE_|CY8PR10MB6468:EE_
-X-MS-Office365-Filtering-Correlation-Id: 48863e4d-b45a-4002-7b58-08db1e661004
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT022:EE_|DM6PR12MB4513:EE_
+X-MS-Office365-Filtering-Correlation-Id: faf5ffa6-fff2-4530-dacd-08db1e78fe7b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8jEowmeT1Gt3DTtONWlAowNh57zg6EMxkpDRBA8U+4alZE6RnuycxSQ2YsVWuRTXJSKiW4vrL2BEP/7bGBn7U3ZvE/8PSxfG515ZcejtsCuBofTIP1ztQHfVJIABqiz4BnhTSEoQgVPsxw/41Dqp6N+2LklTsVpjutLtCs2uF+XESzA2ZsQc51TVrzbEeEguyzl4ivTrfb0sXKb3leRYoAUH1U57ROPs5LtDxLqquUUYZbeHdwVsSbNi/dZoF/hM7GlaqIt16rN/CC3GNQzbs/Mn2Y70BJ6llTkaNksBWYnp+ColdtclpphyVh8fe9RZ2yFJhZIsE/6ZdprlsRXni3nYzvbxA7pFKwmGZrRTWdXVCFDU7enNvPAJ0tCBlLMUagXSgEynKhVTELpHWfWH/9DyQ2GSDvCJO8XWJk12Fb2ns325iNCEB1NtBvUJAZJzxBe8ERWzkMHr8uabEbdT2zib97ypgV1YeSJX8Z4AH8WaSN6RMHU27t0waWpm+HMu2RSKcOPZGbEbh55tt5IEBzmE9sRwp0eJrr+5ZCy2rCb2PzRnRAOkWU9+a61a/ek55KagGFBDgFwfJSoqeUZzOTU+qqGy930QX5fJ1caDt/39ilLY2Q4nCH6dak6sYpOxYgOIwysfDkiK9jH23EGhFg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6798.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(366004)(136003)(396003)(39860400002)(376002)(346002)(451199018)(6666004)(186003)(9686003)(38100700002)(6486002)(478600001)(66946007)(4326008)(6916009)(8676002)(66556008)(66476007)(54906003)(83380400001)(53546011)(316002)(6512007)(6506007)(41300700001)(8936002)(5660300002)(44832011)(2906002)(36756003)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?o0WTZrQjNqxy8FCm93DypZms3hS6e4lj8wNes32wpn+iSnsgSFUVKRRKR8nf?=
- =?us-ascii?Q?3kXxtlUrkV2FS2+gGAiF0I3nxzB1SdIHTXIDUS3/9EwBumvHGSBicBmlnRjU?=
- =?us-ascii?Q?FkaS8HuYYkE4+FEaVoSEVP7Z5ZsL3X5/FfngeIjqAAZ3pmZreGgSQgefvWO8?=
- =?us-ascii?Q?ZiJj7ILHgTRh1p6F3DRsZ4lcrgD9358Mw8uRoA8545y7eDPw0FewyJz5HwNs?=
- =?us-ascii?Q?MCnNHkg832Fkwz91/005uCo9SUViFE8Sr3T7sG03UgFZD8lC52J75Xe4Tkl6?=
- =?us-ascii?Q?xeJio3Re9zJkrE/ZVw63EuMAJqJgx7nyN0955U/hnTdcCiY3i+f75y4DqUR7?=
- =?us-ascii?Q?w+vKDe+v4ubCPHCnqo1znKa+nTQLUaEqI5JhiJ7ffP5NtA89EGA9r2zHvJRc?=
- =?us-ascii?Q?HQ4jkdcREvu/8fQtEziGaszZ5+MbogM1XkNTOAgyZjl+Rd2h+P9BQlpMXIRo?=
- =?us-ascii?Q?MxTnVWFow6pnvjy32Sl/Wg0J+ihJRt720p6tDzk7N2p6yzB314bzoNOr1P+t?=
- =?us-ascii?Q?fLs93g82au93Rl5Byr5nQsDf5H7VIv37UcavJoM+V5GsRRn7SEslYqigC3Pu?=
- =?us-ascii?Q?/vMHoJTZf9N2vTwqLvYoQTVCwsLDqUF1a05kYLy7wMffsYagrkB0f7xsf/+F?=
- =?us-ascii?Q?F9KRYX+u8nQC5j1nccovmrwKVabrOpYwl28wrTTnudWdDQ63VcASWX2ajP9C?=
- =?us-ascii?Q?v0/ItRkJDMQOz2UyceIt78tjhSXWsgRoilg7zsF1+yHFVf7rzlMS+bdVZJ/p?=
- =?us-ascii?Q?+LjlG1BZLGgDxrrfr8qNmUG0SpPO22mf5wAI/u175LKawL7VlgDF+/bgiUw9?=
- =?us-ascii?Q?kFpu3LXwZL2kHldUjuCDHHDyFMDYokLZqIgwrulZzhp8VQIldLfhpHREBS8p?=
- =?us-ascii?Q?DcBZfFy5pA+jgRzJo+2yoef5o+1so8KCzauvQijdpDjoY9KkUTGStHAiOaHh?=
- =?us-ascii?Q?oP6V1C7P0KfDCEdG92QmWRYeXrAaPnHne+hE26AKQy2RTwhiqcSU+KVyTC5R?=
- =?us-ascii?Q?a3I4e5yKCmpZAdFQKyhDLgW21/6/hyBdaH6oTWZSkFqeuQ+B7MYOmanC3GpV?=
- =?us-ascii?Q?rJzLbjUcrFZ8cSJ0/mTq/iA5MfKnmYUIG9tYUxAxJcV6xmYUN8RZgvnU5mfO?=
- =?us-ascii?Q?9oBOsBjIr0j4XmTjDNVqFgTzz1Oe8iav95BU2jDdZ7PWAUL89bgHbf9crRbs?=
- =?us-ascii?Q?Xk+14tqdvTHAWSgG5qxPeUIp/BmDcWiE/vI0/Btpm61LsN80b1EI5i8a8Qh0?=
- =?us-ascii?Q?DAeH4vE9MIKuzXaSHvf1k6JK+qLXEJLhE8JOC0gnwVGiwQ2zOnwtRaqJA0Dh?=
- =?us-ascii?Q?4SkDbsucwmmpICROFoxz8QD94GkqiBSZHImlG6A3CGSDXWV4uTn/m5o7v87s?=
- =?us-ascii?Q?1asNdJbsz2DOHnecgIoFXQlh3xcj43AYcOybFKmWQoV/z8+7QSnJJYwq9Dfi?=
- =?us-ascii?Q?Yxdh9lw3WTS8ECQBOXr6XvFBcOqb6xWtn7ndvC200S7olbo68YVcW/cG9rhR?=
- =?us-ascii?Q?ah2ZKeNhisbkK7Nh6T2Z8QmXnCEbyMeZSamrwcKdfL/WgST4iVMYtuxKbZad?=
- =?us-ascii?Q?o4tzE3u/iXc8Q7b1lJ/B+d96MwwEvtcs1vvPb/sHH7x9jUn/ej7HW/UwiqtC?=
- =?us-ascii?Q?eA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: KHGluWR9fKnu2q0pqEqkfEoqZan7+/J588HeZowqRLUC00GdFiquLjeuB4jtUb7m/+XdA2BBHRcs0BB9Dje0ofXcemEx/Z8N+3mcyKPQGeXFFvIcBNyhvBc56BPhtY+a0MQ5ywRvuvv+UT/b36h40ywEHm2KW3fFY0NOu8Eau2GDsRs3UIUOHslJgBhmcWH0QN+Ww+IsHd4ZwrdhxMNSpSbHc0IpOU4ssPCb0XvD6kbuhb0pGjkRoXwOTMJMnbDa/MCAC7t+MwGGkyKlGmlBWSuuo1Sp3GxxDuCCgzkKAKsewZehyx3XG0EneYbNYz4vtJXtGyKbc9DJJsrJ5xzAWcL7Nkk+ViZSX8g8Lh1h7V2ecwOeWurMTfJ+79bXH8+k2EMe2BVTRRAGLCWhk+Zp+IWrPw69G4RGALvYFl4KFLZ4czx2rysVwySwT4zb2aBStAQxHWzCwvkzsaxctRGGnYxNQES8SfYLunPDw+FbiJ+X8P1eeXbWlxKec0w03fNX5JhGA/klHNvLKiSLJh4fzNW9JlSjuTPJfhFH+p6EaAefeK2/g85drmIjaWH4dAocXsrjlo5nO+669P/vExVoTFS/RZq/O8gziicj8jclkxXBhr2ptZgOD0PZ2YMDFwSr9b7b95fP4OALuldsZfyAq37xWk5/dw9Zfz80m3Sl3STuafDt8PtbAS8st2zQWG1AZKwzf6DYpEfVO1On5+ZqtVw+enxLevc2BsGAxJS3ByJyMdWT2G32JXqAd9sARqKjMSyoSy2+G1sm58Zy78Bi0KZmerhvMy2tYSEqBTivkISdCPkNpdALWa02v+/2j3PlLYYAAy1YzNKA8e86zt+aXscPfRLYj5KfOCNbrHLWVGdVmykEn00EWAtzQVUJjwtjortho6qtejMwLx93o2HcyA==
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48863e4d-b45a-4002-7b58-08db1e661004
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6798.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 17:13:10.8065
+X-Microsoft-Antispam-Message-Info: JrDUCTXBgdx9cNy3VoPBa5uX/q8E3CT5CPjfdWnQJraDV2O2Lg8tOjdcuuh7Ddpr2MFIzXeD5LuO81FiHQYldzxyMBV+EQ0TLUOx1pjFdlm+leCZL4GtquuncFe8/mV6KIpqMPz58XWEDdLYYJrmURFjk0S5pA3qyYW1fBftoNdcCGOpgjZOvNSrdHhhnKo6XRQQ5NrrBsLMhHZmqSS4ii0BYE0ULL7wgrBWyaj7Mt4VzpxhsPO3oMv0IxSsS561Z+ugm8JGXi8lsl9DjWjTBv0EQ9e3s7l7X1DRhiHWIFRMSh3VwhmsmG1Px/yAtkmWuo11dDCXugCDJloxzTJWneQIBIaz16QKvZvzz6ovPQSKbSUd9Arm0ZYy+oziWiIlqcHFH4qIUo1ygZ/Zqd5k8konGdhz5TeYlM9+CoQAm7V22kcoCCIk6AAE8QWg86cGLpP+oU4SWAPGp+pLAoqYh6ynPWdMPDi5C5Uc5Ib4vN4uY0Wc0Nzgn+ItcAmu1t+g0IpTCuSj59aDWj756x8VgHKpXbhi2iSNhdbH0F+Bp0olmrHUVXgSZvEG50OJyjhTdw4raSJbLpIih+nNwsFi4xWKBH8qV7MbkUYbq4m+4dRl7BlVLpVeo0CHsakUV3/9hzRNbwUwsEbAqDjI85tDfbptQFv8OE9P4cNvJu3mSd84j9nt7GNQbNcV/yfCp+zyE32c3Si9V3r8AfOLrgPoq5U/rSx+hOH1J5FoRKXEB1HN6QdTDbmCs+RqUSLkU1ih
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(346002)(376002)(39860400002)(396003)(136003)(451199018)(36840700001)(40470700004)(46966006)(110136005)(54906003)(36756003)(316002)(16576012)(83380400001)(40480700001)(82310400005)(86362001)(31696002)(336012)(31686004)(16526019)(40460700003)(186003)(2906002)(82740400003)(5660300002)(4326008)(70206006)(70586007)(8936002)(36860700001)(41300700001)(8676002)(53546011)(478600001)(47076005)(26005)(107886003)(2616005)(426003)(356005)(921005)(7636003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 19:28:41.5464
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N7Q2ScH3x/4QBhEXj5Nmi+3RZXmVhQ1nda2ACwOPWhoA6Gp3pvh3gy6Q17HPnGb03B5qhjQLTbLgPjofS0RtfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6468
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-06_10,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=786 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303060153
-X-Proofpoint-GUID: G3D3GXejIZZUsYj95IpmxUeARq1Lq6CK
-X-Proofpoint-ORIG-GUID: G3D3GXejIZZUsYj95IpmxUeARq1Lq6CK
+X-MS-Exchange-CrossTenant-Network-Message-Id: faf5ffa6-fff2-4530-dacd-08db1e78fe7b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT022.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4513
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6 Mar 2023, Krzysztof Kozlowski told this:
 
-> On 06/03/2023 15:30, Krzysztof Kozlowski wrote:
->> On 24/02/2023 16:07, Nick Alcock wrote:
->>> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
->>> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
->>> are used to identify modules. As a consequence, uses of the macro
->>> in non-modules will cause modprobe to misidentify their containing
->>> object file as a module when it is not (false positives), and modprobe
->>> might succeed rather than failing with a suitable error message.
->>>
->>> So remove it in the files in this commit, none of which can be built as
->>> modules.
->> 
->> Applied as well. Squashed with next one. Same subject messes with b4, so
->> prefix should be corrected if these were to stay as separate patches.
->
-> And all dropped. Run checkpatch before sending patches.
 
-So... which of the 27 patches n this series is being dropped? It would
-also be nice to know what the checkpatch problems were, because all I
-can see from checkpatch is one error per patch, an apparent false
-positive:
+On 22/12/22 17:02, Krzysztof Kozlowski wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 20/12/2022 17:02, Sumit Gupta wrote:
+>> Adding Interconnect framework support to dynamically set the DRAM
+>> bandwidth from different clients. Both the MC and EMC drivers are
+>> added as ICC providers. The path for any request will be:
+>>   MC-Client[1-n] -> MC -> EMC -> EMEM/DRAM
+>>
+>> MC clients will request for bandwidth to the MC driver which will
+>> pass the tegra icc node having current request info to the EMC driver.
+>> The EMC driver will send the BPMP Client ID, Client type and bandwidth
+>> request info to the BPMP-FW where the final DRAM freq for achieving the
+>> requested bandwidth is set based on the passed parameters.
+>>
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   drivers/memory/tegra/mc.c           |  18 ++-
+>>   drivers/memory/tegra/tegra186-emc.c | 166 ++++++++++++++++++++++++++++
+>>   drivers/memory/tegra/tegra234.c     | 101 ++++++++++++++++-
+>>   include/soc/tegra/mc.h              |   7 ++
+>>   include/soc/tegra/tegra-icc.h       |  72 ++++++++++++
+>>   5 files changed, 362 insertions(+), 2 deletions(-)
+>>   create mode 100644 include/soc/tegra/tegra-icc.h
+>>
+>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>> index 592907546ee6..ff887fb03bce 100644
+>> --- a/drivers/memory/tegra/mc.c
+>> +++ b/drivers/memory/tegra/mc.c
+>> @@ -17,6 +17,7 @@
+>>   #include <linux/sort.h>
+>>
+>>   #include <soc/tegra/fuse.h>
+>> +#include <soc/tegra/tegra-icc.h>
+>>
+>>   #include "mc.h"
+>>
+>> @@ -779,6 +780,7 @@ const char *const tegra_mc_error_names[8] = {
+>>    */
+>>   static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>>   {
+>> +     struct tegra_icc_node *tnode;
+>>        struct icc_node *node;
+>>        unsigned int i;
+>>        int err;
+>> @@ -792,7 +794,11 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>>        mc->provider.data = &mc->provider;
+>>        mc->provider.set = mc->soc->icc_ops->set;
+>>        mc->provider.aggregate = mc->soc->icc_ops->aggregate;
+>> -     mc->provider.xlate_extended = mc->soc->icc_ops->xlate_extended;
+>> +     mc->provider.get_bw = mc->soc->icc_ops->get_bw;
+>> +     if (mc->soc->icc_ops->xlate)
+>> +             mc->provider.xlate = mc->soc->icc_ops->xlate;
+>> +     if (mc->soc->icc_ops->xlate_extended)
+>> +             mc->provider.xlate_extended = mc->soc->icc_ops->xlate_extended;
+>>
+>>        err = icc_provider_add(&mc->provider);
+>>        if (err)
+>> @@ -814,6 +820,10 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>>                goto remove_nodes;
+>>
+>>        for (i = 0; i < mc->soc->num_clients; i++) {
+>> +             tnode = kzalloc(sizeof(*tnode), GFP_KERNEL);
+>> +             if (!tnode)
+>> +                     return -ENOMEM;
+>> +
+>>                /* create MC client node */
+>>                node = icc_node_create(mc->soc->clients[i].id);
+>>                if (IS_ERR(node)) {
+>> @@ -828,6 +838,12 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
+>>                err = icc_link_create(node, TEGRA_ICC_MC);
+>>                if (err)
+>>                        goto remove_nodes;
+>> +
+>> +             node->data = tnode;
+> 
+> Where is it freed?
+> 
+> 
+> (...)
+> 
+Have removed 'struct tegra_icc_node' in v2. Instead 'node->data'
+now points to the entry of MC client in the static table 
+'tegra234_mc_clients' as below. So, the old alloc of 'struct 
+tegra_icc_node' is not required now.
 
-ERROR: Please use git commit description style 'commit <12+ chars of sha1> ("<title line>")' - ie: 'commit 8b41fc4454e3 ("kbuild: create modules.builtin without Makefile.modbuiltin or tristate.conf")'
+  + node->data = (char *)&(mc->soc->clients[i]);
 
-The commit message says:
+>>
+>>   struct tegra_mc_ops {
+>> @@ -238,6 +243,8 @@ struct tegra_mc {
+>>        struct {
+>>                struct dentry *root;
+>>        } debugfs;
+>> +
+>> +     struct tegra_icc_node *curr_tnode;
+>>   };
+>>
+>>   int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate);
+>> diff --git a/include/soc/tegra/tegra-icc.h b/include/soc/tegra/tegra-icc.h
+>> new file mode 100644
+>> index 000000000000..3855d8571281
+>> --- /dev/null
+>> +++ b/include/soc/tegra/tegra-icc.h
+> 
+> Why not in linux?
+> 
+Moved the file to 'include/linux/tegra-icc.h' in v2.
 
-> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
-> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+>> @@ -0,0 +1,72 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2022-2023 NVIDIA CORPORATION.  All rights reserved.
+>> + */
+>> +
+>> +#ifndef MEMORY_TEGRA_ICC_H
+> 
+> This does not match the path/name.
+> 
+Have changed path name to below in v2.
 
-... which unless I am seeing things is precisely what checkpatch.pl is
-asking for. Perhaps it can't handle wrapped lines, but not wrapping a
-git commit log line *also* (correctly) elicits a checkpatch error...
+   +#ifndef LINUX_TEGRA_ICC_H
+   +#define LINUX_TEGRA_ICC_H
+
+>> +#define MEMORY_TEGRA_ICC_H
+>> +
+>> +enum tegra_icc_client_type {
+>> +     TEGRA_ICC_NONE,
+>> +     TEGRA_ICC_NISO,
+>> +     TEGRA_ICC_ISO_DISPLAY,
+>> +     TEGRA_ICC_ISO_VI,
+>> +     TEGRA_ICC_ISO_AUDIO,
+>> +     TEGRA_ICC_ISO_VIFAL,
+>> +};
+>> +
+>> +struct tegra_icc_node {
+>> +     struct icc_node *node;
+>> +     struct tegra_mc *mc;
+>> +     u32 bpmp_id;
+>> +     u32 type;
+>> +};
+>> +
+>> +/* ICC ID's for MC client's used in BPMP */
+>> +#define TEGRA_ICC_BPMP_DEBUG         1
+>> +#define TEGRA_ICC_BPMP_CPU_CLUSTER0  2
+>> +#define TEGRA_ICC_BPMP_CPU_CLUSTER1  3
+>> +#define TEGRA_ICC_BPMP_CPU_CLUSTER2  4
+>> +#define TEGRA_ICC_BPMP_GPU           5
+>> +#define TEGRA_ICC_BPMP_CACTMON               6
+>> +#define TEGRA_ICC_BPMP_DISPLAY               7
+>> +#define TEGRA_ICC_BPMP_VI            8
+>> +#define TEGRA_ICC_BPMP_EQOS          9
+>> +#define TEGRA_ICC_BPMP_PCIE_0                10
+>> +#define TEGRA_ICC_BPMP_PCIE_1                11
+>> +#define TEGRA_ICC_BPMP_PCIE_2                12
+>> +#define TEGRA_ICC_BPMP_PCIE_3                13
+>> +#define TEGRA_ICC_BPMP_PCIE_4                14
+>> +#define TEGRA_ICC_BPMP_PCIE_5                15
+>> +#define TEGRA_ICC_BPMP_PCIE_6                16
+>> +#define TEGRA_ICC_BPMP_PCIE_7                17
+>> +#define TEGRA_ICC_BPMP_PCIE_8                18
+>> +#define TEGRA_ICC_BPMP_PCIE_9                19
+>> +#define TEGRA_ICC_BPMP_PCIE_10               20
+>> +#define TEGRA_ICC_BPMP_DLA_0         21
+>> +#define TEGRA_ICC_BPMP_DLA_1         22
+>> +#define TEGRA_ICC_BPMP_SDMMC_1               23
+>> +#define TEGRA_ICC_BPMP_SDMMC_2               24
+>> +#define TEGRA_ICC_BPMP_SDMMC_3               25
+>> +#define TEGRA_ICC_BPMP_SDMMC_4               26
+>> +#define TEGRA_ICC_BPMP_NVDEC         27
+>> +#define TEGRA_ICC_BPMP_NVENC         28
+>> +#define TEGRA_ICC_BPMP_NVJPG_0               29
+>> +#define TEGRA_ICC_BPMP_NVJPG_1               30
+>> +#define TEGRA_ICC_BPMP_OFAA          31
+>> +#define TEGRA_ICC_BPMP_XUSB_HOST     32
+>> +#define TEGRA_ICC_BPMP_XUSB_DEV              33
+>> +#define TEGRA_ICC_BPMP_TSEC          34
+>> +#define TEGRA_ICC_BPMP_VIC           35
+>> +#define TEGRA_ICC_BPMP_APE           36
+>> +#define TEGRA_ICC_BPMP_APEDMA                37
+>> +#define TEGRA_ICC_BPMP_SE            38
+>> +#define TEGRA_ICC_BPMP_ISP           39
+>> +#define TEGRA_ICC_BPMP_HDA           40
+>> +#define TEGRA_ICC_BPMP_VIFAL         41
+>> +#define TEGRA_ICC_BPMP_VI2FAL                42
+>> +#define TEGRA_ICC_BPMP_VI2           43
+>> +#define TEGRA_ICC_BPMP_RCE           44
+>> +#define TEGRA_ICC_BPMP_PVA           45
+>> +
+>> +#endif /* MEMORY_TEGRA_ICC_H */
+> 
+> Best regards,
+> Krzysztof
+> 
