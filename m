@@ -2,170 +2,153 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0113BC6FD1D
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 20:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BA8C6FD1B
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 20:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230176AbjCFUBV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 15:01:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
+        id S229890AbjCFUT7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 15:19:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjCFUBO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 15:01:14 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3EC67024;
-        Mon,  6 Mar 2023 12:00:56 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id qa18-20020a17090b4fd200b0023750b675f5so14280355pjb.3;
-        Mon, 06 Mar 2023 12:00:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678132856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
-        b=o6hZefnQYEnFw3COvoTdyyoXo9Zv4P0LTShB301lkw0/gGr+x1ou0XeYCSdcXXLXoz
-         Ie/lwSIsRhh9vBh4c56fFPeCbh1Mg/u0f+SLHuOsNnA01L3iQxuD6tKvCodPDyUeqcUA
-         ipzyAtvRXWR1nR5U0W8m7xh6fPIYtpAYIZVYRkCJb0GTxixFtDSEeec8W6O4TIR9SFvb
-         8TyLwk+heXtYmzhntJcZ54SphmylZPrikYFa1PRdJ8V5j+VefclzJKcG1hcN/EBRiJ2z
-         A5LjdstbOHhVHAVRXA7o2dTcBNuVBc27QoVtU1tjX+Yepbtmilj428R4Os2Xd6WiLWnA
-         Of4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678132856;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
-        b=aXlIsS33Jjsuul+qMNL2sbI/Xqukq2wbEWP7Zdwtlj7bv64XyL7zxFEoY23RZ0YQor
-         Bqbh5zVr8LntGonP2exW1FvIEe3AwE9XlYZmNS8BKWTAWJs46K5D88Cz1tVysYW6l+vP
-         FlMoMohxRfMxV4J+TUf+f7Bz1HpG6jA9mHubAYpMaJGTADnDWXZk6nHVD+RgpSfy8wnl
-         /+/YGrN5IjCieKDYZ32gkewHxI34PwOi60E7Fm7h+ZsDbXdaNQooMMjB7VEGiEr6rL0+
-         lQojxCgDm1YNLkaokb9PWqj3WmVVVML7lZp7/PlVkSmU5avaYieldMHSE8tJs0W+SvaY
-         B+Qw==
-X-Gm-Message-State: AO0yUKXAbIFP23mAPtL3C28xLpxvoISrBRzI+Kq+PG803rUuLclFekw1
-        m8OB/pmYca24tx4TYBNZYeUG77vaa6Wk3reLCVE=
-X-Google-Smtp-Source: AK7set/DxZtiZhO+z+A0Is7yokDniYYkETavBEcleYa7IPSvIEQBIV7zty9Y+UWe1CWFM73JZ5CBgh34wQSFC4iK+eg=
-X-Received: by 2002:a17:90a:5993:b0:233:b520:1544 with SMTP id
- l19-20020a17090a599300b00233b5201544mr6625621pji.0.1678132856231; Mon, 06 Mar
- 2023 12:00:56 -0800 (PST)
+        with ESMTP id S230016AbjCFUTu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 15:19:50 -0500
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5054AFE1;
+        Mon,  6 Mar 2023 12:19:34 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iPAlIYEaIUTdK44HEuKDd4W2orF7JZPPXPBGV9e1agtXMhJLnzH75G5J3MAHPJzU/yBy5XC/o/N1kPyo5NffmcyrXOli2AulmhgRLvnNcsEj1967GKPYiRCaDsiM61izM7BvDDG6XExlY+Q9L0Ac/oCUnusvA8iQEg2zmaCS2ndKG9v9TZcviM5EBbR3cYp/YS1dt0nOObeGbDB6PBtLxR7GrdSTdZXl605VKCykoX6AeFLCYwYKITf8/evPTfw+ZpxAPSgcPjj6sdDuFHjHUCuwizeNaSTgh1p/1pWqaG5FdaqBl+mRitRxVSXpoZwhuevBYnn5ulunpBAwz3UGoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vAlcgVn4Hm9unMJbm71XlCCzJFOKDbFzfDZNu0qMl2I=;
+ b=SCYQHsAtz/FhlSbIbSTEi9Z4UdlOsIdOLYS4mVE5Nt9dtdxLUYLp/dWdtMkCa3ROdd5vG/uj89lbr2Uco6PuOmSmcv7CIt+68k322zkTczTCCujkqm6TY8dcgjA4DJyN6entsQfaaiO/p2Zc0i/vMeKo7RQSZVQ9FfqKGojxYKJhpb6Bd1cfgaK9pXwebJNkAbgqG0Jy0gxxbn6nEko4KDqdw+KD2noKG/2kykUJt4IA5Kc30DuUYaCgZgsv3EAAPBmboIPaclsD504hRj8MTmyJ1CunS5YMtwCQFgO/s8eHKAl9orfC2BByPL2fKRVA52lAZQjxbynw9QcyH8zK7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vAlcgVn4Hm9unMJbm71XlCCzJFOKDbFzfDZNu0qMl2I=;
+ b=BwFwdPtXzontXI8ueNa18veYu6aXs/uakp0SlXcJpNchYZajM2Bh0rdvggdTLr7SBDg8nrw2avG1BZCNlo2PqBdCN74B3Bpg6MahM5KYvAVlVkYWe1gjiDSFkejOQsJ24YIpDjZUBHzCJkGej1EM0NmWqYzRJ6pJvH366VmZV3Kod0ytVH6tePkvdmS9RTKbJzt4LjjvnAEvgXgJLbmBV8TLHe/MvoKK/bCsHyKMpMk7QR8IYyEydo8RmFUNdQOPyt5gmuhTS5hnvQZl/UVbl9eTueMVGSyxrIlYN9eLWC39TZ1cMvLFLKUkefhhzHO3El52VWvmtojMWuOIUjiWjA==
+Received: from DS7PR03CA0015.namprd03.prod.outlook.com (2603:10b6:5:3b8::20)
+ by CH0PR12MB5314.namprd12.prod.outlook.com (2603:10b6:610:d5::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Mon, 6 Mar
+ 2023 20:19:32 +0000
+Received: from DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b8:cafe::fb) by DS7PR03CA0015.outlook.office365.com
+ (2603:10b6:5:3b8::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28 via Frontend
+ Transport; Mon, 6 Mar 2023 20:19:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT052.mail.protection.outlook.com (10.13.172.111) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6178.15 via Frontend Transport; Mon, 6 Mar 2023 20:19:32 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 6 Mar 2023
+ 12:19:25 -0800
+Received: from [10.41.21.79] (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 6 Mar 2023
+ 12:19:19 -0800
+Message-ID: <beb3ce07-b431-11e9-744e-bb632c2069db@nvidia.com>
+Date:   Tue, 7 Mar 2023 01:49:17 +0530
 MIME-Version: 1.0
-References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com> <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
-In-Reply-To: <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Mon, 6 Mar 2023 21:00:44 +0100
-Message-ID: <CAOiHx=nmsAh3ADL3s0eZKpEZJqCB_POi=8YjfxrHYLEbjRfwHg@mail.gmail.com>
-Subject: Re: [PATCH V5 09/15] spi: Add stacked and parallel memories support
- in SPI core
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc:     broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com, jic23@kernel.org, tudor.ambarus@microchip.com,
-        pratyush@kernel.org, Sanju.Mehta@amd.com,
-        chin-ting_kuo@aspeedtech.com, clg@kaod.org, kdasu.kdev@gmail.com,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        eajames@linux.ibm.com, olteanv@gmail.com, han.xu@nxp.com,
-        john.garry@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        narmstrong@baylibre.com, khilman@baylibre.com,
-        matthias.bgg@gmail.com, haibo.chen@nxp.com,
-        linus.walleij@linaro.org, daniel@zonque.org,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, andi@etezian.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
-        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
-        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
-        kvalo@kernel.org, james.schulman@cirrus.com,
-        david.rhodes@cirrus.com, tanureal@opensource.cirrus.com,
-        rf@opensource.cirrus.com, perex@perex.cz, tiwai@suse.com,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
-        oss@buserror.net, windhl@126.com, yangyingliang@huawei.com,
-        william.zhang@broadcom.com, kursad.oney@broadcom.com,
-        anand.gore@broadcom.com, rafal@milecki.pl, git@amd.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@jms.id.au, andrew@aj.id.au, radu_nicolae.pirea@upb.ro,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
-        alim.akhtar@samsung.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-mtd@lists.infradead.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        michael@walle.cc, palmer@dabbelt.com,
-        linux-riscv@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
-        amitrkcian2002@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [Patch v2 0/9] Tegra234 Memory interconnect support
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <treding@nvidia.com>, <dmitry.osipenko@collabora.com>,
+        <viresh.kumar@linaro.org>, <rafael@kernel.org>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+        <lpieralisi@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
+        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
+        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
+        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <20230220140559.28289-1-sumitg@nvidia.com>
+ <c8cf2435-8b18-7af7-c751-267021142f5a@linaro.org>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <c8cf2435-8b18-7af7-c751-267021142f5a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT052:EE_|CH0PR12MB5314:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04b85422-98c3-4192-7ab4-08db1e8018f6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jLlZVTskmBeBAsN+gMyHjfdK8llT8K7NBAS1nMAxIlDXiJyKcMBK3D7Dwu8R5a1ZZH9kRnAGs9WOYZheUM+yukAlbmWuLoZPygaihnF5LweWGmKXWIu0kexa2RcHKN+Ze1tk+c2IsTuVN62zN/Pht262Q+rsGaR+gBlp44txLQxzfOYTDNlfAD8/JqLqnxaAa+GqdUaOqfja6xhV33t3EGLR9IQ1UTK7RXs42Vf5k1Q67mQjpI6PEh6aPaMgPooLaAyHx3KaP6kEz8NcCEnVyzssQ7mdXg5YVLxcF1LfOXutzJRaDr+HtSB6ZIkJgOiEataqMXejx0ggjJwkhiHt7U7gZA7m0S8Lk3ulym1gcG5THBZ5sqXQ0/A5JKEK3R+OjQoFXKHaMGA1SYqpLAAHqa0eDiSccSCOO0Bu3+8AJsaj7Jmof94jqSXTpi1F4CQ0/5Z5lRT46CmIS138GiGKSUM6wzRkv5/BVdJ6bduo7dCLqHm7Jd8tBBaxigNEcPVnICnpttYB0JgSO3HsvLJ0OyRPrGz0DBYYgZnaVxJGUfvTkf2oU859qnWh1qA8rkH+wu7qKjxfbr5gAQkGS2oNUvl475wbbklFYT1SMZ9ymTgYtRkPB85sC8rGwpKQiG35VTOZCigFojgNgqRjg+DHe1N/NhaqAJ+H8jiy83n2K/SO11BzpZvFJ8veqc8VGnOZsLtI7GbqW+k0WO6jSxQ0a0nYdP5g802J/By48P2b/Eg=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(346002)(396003)(39860400002)(136003)(376002)(451199018)(36840700001)(40470700004)(46966006)(36756003)(83380400001)(426003)(47076005)(82740400003)(36860700001)(107886003)(53546011)(186003)(41300700001)(26005)(16526019)(336012)(40460700003)(2616005)(5660300002)(70586007)(8936002)(31696002)(40480700001)(86362001)(4326008)(8676002)(70206006)(2906002)(7416002)(110136005)(316002)(356005)(16576012)(478600001)(54906003)(7636003)(31686004)(82310400005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 20:19:32.5104
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04b85422-98c3-4192-7ab4-08db1e8018f6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5314
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
 
-On Mon, 6 Mar 2023 at 18:26, Amit Kumar Mahapatra
-<amit.kumar-mahapatra@amd.com> wrote:
->
-> For supporting multiple CS the SPI device need to be aware of all the CS
-> values. So, the "chip_select" member in the spi_device structure is now an
-> array that holds all the CS values.
->
-> spi_device structure now has a "cs_index_mask" member. This acts as an
-> index to the chip_select array. If nth bit of spi->cs_index_mask is set
-> then the driver would assert spi->chip_select[n].
->
-> In parallel mode all the chip selects are asserted/de-asserted
-> simultaneously and each byte of data is stored in both devices, the even
-> bits in one, the odd bits in the other. The split is automatically handled
-> by the GQSPI controller. The GQSPI controller supports a maximum of two
-> flashes connected in parallel mode. A "multi-cs-cap" flag is added in the
-> spi controntroller data, through ctlr->multi-cs-cap the spi core will make
-> sure that the controller is capable of handling multiple chip selects at
-> once.
->
-> For supporting multiple CS via GPIO the cs_gpiod member of the spi_device
-> structure is now an array that holds the gpio descriptor for each
-> chipselect.
->
-> Multi CS support using GPIO is not tested due to unavailability of
-> necessary hardware setup.
->
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-> ---
->  drivers/spi/spi.c       | 213 +++++++++++++++++++++++++++-------------
->  include/linux/spi/spi.h |  34 +++++--
->  2 files changed, 173 insertions(+), 74 deletions(-)
->
-> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> index 5866bf5813a4..8ec7f58fa111 100644
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -613,7 +613,8 @@ static int spi_dev_check(struct device *dev, void *data)
->         struct spi_device *new_spi = data;
->
->         if (spi->controller == new_spi->controller &&
-> -           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0))
-> +           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0) &&
-> +           spi_get_chipselect(spi, 1) == spi_get_chipselect(new_spi, 1))
->                 return -EBUSY;
 
-This will only reject new devices if both chip selects are identical,
-but not if they only share one, e.g. CS 1 + 2 vs 1 + 3, or 1 + 2 vs
-only 2, or if the order is different (1 + 2 vs 2 + 1 - haven't read
-the code too close to know if this is allowed/possible).
+On 06/03/23 20:35, Krzysztof Kozlowski wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 20/02/2023 15:05, Sumit Gupta wrote:
+>> This patch series adds memory interconnect support for Tegra234 SoC.
+>> It is used to dynamically scale DRAM Frequency as per the bandwidth
+>> requests from different Memory Controller (MC) clients.
+>> MC Clients use ICC Framework's icc_set_bw() api to dynamically request
+>> for the DRAM bandwidth (BW). As per path, the request will be routed
+>> from MC to the EMC driver. MC driver passes the request info like the
+>> Client ID, type, and frequency request info to the BPMP-FW which will
+>> set the final DRAM freq considering all exisiting requests.
+>>
+>> MC and EMC are the ICC providers. Nodes in path for a request will be:
+>>       Client[1-n] -> MC -> EMC -> EMEM/DRAM
+>>
+>> The patch series also adds interconnect support in below client drivers:
+>> 1) CPUFREQ driver for scaling bandwidth with CPU frequency. For that,
+>>     added per cluster OPP table which will be used in the CPUFREQ driver
+>>     by requesting the minimum BW respective to the given CPU frequency in
+>>     the OPP table of given cluster.
+>> 2) PCIE driver to request BW required for different modes.
+> 
+> No dependencies or ordering written, so I am free to take memory
+> controller bits, I assume.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Regards,
-Jonas
+Apologies for not mentioning the order in cover letter. The patches are 
+divided into below groups.
+  Patch [9]: Memory Interconnect support in PCI (MC client)
+  Patch [4-8]: Memory Interconnect support in CPUFREQ (MC client)
+  Patch [1-3]: Memory Interconnect base support
+
+Both the Memory Controller (MC) client patches are dependent on the 
+'Memory Interconnect base support patch [1-3]'.
+
+Thanks,
+Sumit
