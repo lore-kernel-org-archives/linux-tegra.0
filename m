@@ -2,209 +2,124 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F97C6FD1B
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 17:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3801CC61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 18:26:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230461AbjCFRgL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 12:36:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        id S230203AbjCFS0Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 13:26:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230496AbjCFRgC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 12:36:02 -0500
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on20611.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e89::611])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E4B937569;
-        Mon,  6 Mar 2023 09:35:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AIN69o9oBiVAT3VNV3ZHy8Sx8JTGTGBWrhhUUbatp0K+QWxGmn1imFd5PRFQvubiZhDlDwzhfK5Hsn6xut34uiX9EvTkc4XhbzmlHRZ+oi+N5nVMDIooXTCiSE8jOBCtDORhE93re7FX2GfsdwX0JfftfjaPoVIIi0uOwtLMy+iX3KkULg7LaM3fKCRJAJ6xHpeZZuRXKom3z3p0t7luRCPZuZvseYAaJdUe6F9PbrVPG/PXszdd4SJKHlmyemw7u0WbDwdOL4BiQ56MhKXLsbUBuyKbAEdUX2GjAomLrGTIl+f/wTDzvI1N7LBvGwFcOAb3KtV66cnfKEs/oynHFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SAhIOHKu4HJGlav21Dv/GMi46fbF1Mnp5ITBekjHuvY=;
- b=Tfk95eLD00TMfzdxkjXbbuGX97NZUQ/qVp9F4flB9JBQ0YawHkcUlXMTxeQ0o1/ViiZKX31iSiF8YYGYN4GEfNXQai/WhaK34GCAb76OAeoubwGt7EVbO1xx4jsSx3HwNvqo2UBhcl6VeLx67A2kfvFvKjHxl3Z+vo0hwIxDV9xqn9u55A7YzB8PfhlqXommTK7CY7Y4sAfQOG0XkkJJDPyuDZhh6RZjDjMSi76RaUrVls1kwt/DOj7eJcyVcWSxJkP+B9+XD1HylAcFWwFIx/eFyD2ddHjKTrFwiBLFFFh7IF///TfB7wV0A6VQmUKq6AgsZcIgKVorJq+pg3xXzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SAhIOHKu4HJGlav21Dv/GMi46fbF1Mnp5ITBekjHuvY=;
- b=FF+PhqyQct0vzVRiLc7t9NZ/76RfrsygXf9klSr1SWz62z3pEYTfaSWwCB4oBNA1I9nHwzA/EtIPrqPbP5YJU6JeaKDJ8jEQyum0kXZMDyhxrVauyI7z6QZNMv7vXcxrH2lUt/95IiC8JGXpfhkS9vrLKGR7ZMJSW2Afzjwjs94=
-Received: from BN1PR13CA0012.namprd13.prod.outlook.com (2603:10b6:408:e2::17)
- by DM6PR12MB4529.namprd12.prod.outlook.com (2603:10b6:5:2ab::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Mon, 6 Mar
- 2023 17:28:48 +0000
-Received: from BN8NAM11FT098.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e2:cafe::ca) by BN1PR13CA0012.outlook.office365.com
- (2603:10b6:408:e2::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.15 via Frontend
- Transport; Mon, 6 Mar 2023 17:28:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN8NAM11FT098.mail.protection.outlook.com (10.13.177.196) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6178.15 via Frontend Transport; Mon, 6 Mar 2023 17:28:47 +0000
-Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 6 Mar
- 2023 11:28:45 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB08.amd.com
- (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 6 Mar
- 2023 09:28:44 -0800
-Received: from xhdsneeli40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Mon, 6 Mar 2023 11:28:17 -0600
-From:   Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-To:     <broonie@kernel.org>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <vigneshr@ti.com>, <jic23@kernel.org>,
-        <tudor.ambarus@microchip.com>, <pratyush@kernel.org>,
-        <Sanju.Mehta@amd.com>, <chin-ting_kuo@aspeedtech.com>,
-        <clg@kaod.org>, <kdasu.kdev@gmail.com>, <f.fainelli@gmail.com>,
-        <rjui@broadcom.com>, <sbranden@broadcom.com>,
-        <eajames@linux.ibm.com>, <olteanv@gmail.com>, <han.xu@nxp.com>,
-        <john.garry@huawei.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <narmstrong@baylibre.com>,
-        <khilman@baylibre.com>, <matthias.bgg@gmail.com>,
-        <haibo.chen@nxp.com>, <linus.walleij@linaro.org>,
-        <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
-        <robert.jarzmik@free.fr>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <heiko@sntech.de>,
-        <krzysztof.kozlowski@linaro.org>, <andi@etezian.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <wens@csie.org>, <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
-        <masahisa.kojima@linaro.org>, <jaswinder.singh@linaro.org>,
-        <rostedt@goodmis.org>, <mingo@redhat.com>,
-        <l.stelmach@samsung.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <alex.aring@gmail.com>, <stefan@datenfreihafen.org>,
-        <kvalo@kernel.org>, <james.schulman@cirrus.com>,
-        <david.rhodes@cirrus.com>, <tanureal@opensource.cirrus.com>,
-        <rf@opensource.cirrus.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
-        <mpe@ellerman.id.au>, <oss@buserror.net>, <windhl@126.com>,
-        <yangyingliang@huawei.com>, <william.zhang@broadcom.com>,
-        <kursad.oney@broadcom.com>, <jonas.gorski@gmail.com>,
-        <anand.gore@broadcom.com>, <rafal@milecki.pl>
-CC:     <git@amd.com>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <joel@jms.id.au>,
-        <andrew@aj.id.au>, <radu_nicolae.pirea@upb.ro>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <claudiu.beznea@microchip.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <fancer.lancer@gmail.com>,
-        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <yogeshgaur.83@gmail.com>,
-        <konrad.dybcio@somainline.org>, <alim.akhtar@samsung.com>,
-        <ldewangan@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <michal.simek@amd.com>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
-        <libertas-dev@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <linux-iio@vger.kernel.org>, <michael@walle.cc>,
-        <palmer@dabbelt.com>, <linux-riscv@lists.infradead.org>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <amitrkcian2002@gmail.com>,
-        <amit.kumar-mahapatra@amd.com>
-Subject: [PATCH V5 13/15] spi: spi-zynqmp-gqspi: Add stacked memories support in GQSPI driver
-Date:   Mon, 6 Mar 2023 22:51:07 +0530
-Message-ID: <20230306172109.595464-14-amit.kumar-mahapatra@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com>
-References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com>
+        with ESMTP id S229929AbjCFS0K (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 13:26:10 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6777C65C49
+        for <linux-tegra@vger.kernel.org>; Mon,  6 Mar 2023 10:25:30 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id k10so18625141edk.13
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Mar 2023 10:25:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678127128;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nQzsrijClWNNzU3MRuhrnrc1rJRiQBgGk6WQ0sbFW3w=;
+        b=hOraMv8H7Cyz5xH6F7BK/KyRTvjXIZqXW9MxDPz7cE2clNcvKPVAVWnMOGnD8OCJYt
+         bbnDcAlBA40qUUqzWql2ZfFMYGK87mnXjnQEzZBq2+FV2TugN15eYHqXRWiV5tJTi0nV
+         0Iu0OfdTHVYuVav3UMc4jZGk9SRBfCuI4QuE+qTuuRfEmxH4frYRr4qH2QhVDc4KSAXo
+         iV063p5qOo5CAFYkLs5heOtOof1RMogLbiJGS0ePSKgOsgiiLMbBI7mgvgy+5zb0Mj7j
+         rgIZV7el8QgPYEic7w2QZdqobAOpKz8CQloM07aqIjjny0rfbWGGq7tBaVeMpDf9LWiD
+         JfhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678127128;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nQzsrijClWNNzU3MRuhrnrc1rJRiQBgGk6WQ0sbFW3w=;
+        b=O11blS4V6hNULnLB9GxpxDr2ethF5lPOzmd4JDsOh2pvioVeiCkSZ850Fr9vTjysr0
+         ynIJH5FIIPfc+BHM3+UPs8MDuMjIKw7c45Df/RSYL3TyzzZEcv7CVzk5SvL/kIx/uAIj
+         1fsjJxgM8YgCMiRkcke5dvXCuRaLMDW7S5yxTsvR216MnZKuIUetKIJKr966Ru2DIAcm
+         brXqYyIOgBCGA/WFSRQ429KutpGemkC0DEAmhbDTKrzslnT/jDj4QQyndtN7hKbETDVs
+         SZNTLOcOVZNg28J7zvBdLmOci2QFKP7pCCX2NuNXjZZzOJUURU2StuI6OqGBU9hqYSGM
+         9xoQ==
+X-Gm-Message-State: AO0yUKVl9WE6YWdRgyt1UizAojuyf4XLAEG2nQ6E8XUY7l4lvMrvCiYi
+        vyv5rBOTH2bPdhc8P44ciCWTsg==
+X-Google-Smtp-Source: AK7set9JT2Nj4Pw013wQ3FbV4jgAzrH9Kxatn5KcWt4QQiYFaLHZ4DdRvS6lee8MRRyNPFu8gIV/1A==
+X-Received: by 2002:aa7:c44e:0:b0:4af:502b:54a8 with SMTP id n14-20020aa7c44e000000b004af502b54a8mr9877761edr.6.1678127128376;
+        Mon, 06 Mar 2023 10:25:28 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:dcb0:1567:5d06:3be8? ([2a02:810d:15c0:828:dcb0:1567:5d06:3be8])
+        by smtp.gmail.com with ESMTPSA id x20-20020a50d614000000b004aeeb476c5bsm4816005edi.24.2023.03.06.10.25.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Mar 2023 10:25:28 -0800 (PST)
+Message-ID: <16bee433-0088-d651-9592-96a2bb827b7f@linaro.org>
+Date:   Mon, 6 Mar 2023 19:25:26 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT098:EE_|DM6PR12MB4529:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e543323-77a1-40d0-fe52-08db1e683e99
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wNN0f5aBHSJGYW/4EONAHS2DiM1o/bERWIV1enovAdVhAjbae1kdi6cjrWFS7OoCNEJryfmS+5M3XWOgyRrqX1IdVb3zeHXZIUqLiS6B86hV1K2chC0ViKQrhM9fTPb9DHoR1PXz6rZfFX+jq07oC/lF7FKiXPLtG1UtuQg3YRYKNiK/H3oaOIzBNskUUQuTc5p8iIjoSEwMxFzIhWm2TtXjXOr8zuGAG53jhZNQ6AnjDlY72hRbBBhCnYrRU+FIVZ+xDQtyo93Rn/ECCSf/jbFFtLR3uI/obIpcRWvpSLMZu0zMoNqxRpaoPfhYy08ROrWQ+1FjOhfcfHm/bocuq61pozOIjAmO6R85Zhd3xHxLNJrX2CUB0zDB04mWCiOocFxOurk7bk7ZpyNqgBCKDfdiLoYOd/HtE4HAgujsmTQqHy8q82Y84Gp4SdNVQIzrQOCg9yIB5/Tkpj56cjyOW9g6WwZKHnR9GGC3o/4xO/mPuwsI/ywAWdg3OntATl34XMr0TWRsN95p/OHN0a+rXfjSA6Bn8TmEgWAgY1F6dofX94uxI9uMuZW5rVQxAeroQefZIx4OnlUcCY7TR0AL+fO9G+CK4ARdzkUxMONDAS/OdKm2ac4tDyo25U+J9mz6+hBvBwyfJ1C4NqG+mUh88NmPmF6NyFqYRMkYrcrheNfMIYTRq1SDSDVEVC/oAyphefcvdXJK2fQ0XV0mtqP5vg1lXSASSUz5/9UBosLBd3+Jf23Ruj4dzxWGPDx9MzoSzM4TAoKODIPaIGg40B0yc60mb8uLPHE8AVxBEo6p4bGrb8LT1yKaTAggyzaziUuvIRy4ng7ddqMOSN5YFt4LLuH4rKCxvfEe4F4WmkvLu6c=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(396003)(376002)(136003)(346002)(39860400002)(451199018)(36840700001)(46966006)(40470700004)(36860700001)(86362001)(356005)(82740400003)(81166007)(921005)(36756003)(7336002)(7276002)(5660300002)(7366002)(7406005)(2906002)(70206006)(40480700001)(4326008)(70586007)(8936002)(8676002)(7416002)(41300700001)(82310400005)(1191002)(336012)(2616005)(186003)(26005)(83380400001)(47076005)(426003)(40460700003)(110136005)(54906003)(478600001)(316002)(1076003)(6666004)(84006005)(41080700001)(2101003)(83996005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 17:28:47.7362
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e543323-77a1-40d0-fe52-08db1e683e99
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT098.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4529
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 15/27] memory: tegra: remove MODULE_LICENSE in non-modules
+Content-Language: en-US
+To:     Nick Alcock <nick.alcock@oracle.com>
+Cc:     mcgrof@kernel.org, linux-modules@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org
+References: <20230224150811.80316-1-nick.alcock@oracle.com>
+ <20230224150811.80316-16-nick.alcock@oracle.com>
+ <c6f39365-e840-d782-8ec0-e34ec3681b98@linaro.org>
+ <acc27e8f-73ce-39ee-3666-461f5c72d39d@linaro.org>
+ <87h6ux7qhp.fsf@esperi.org.uk>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <87h6ux7qhp.fsf@esperi.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-GQSPI supports two chip select CS0 & CS1. Update the driver to
-assert/de-assert the appropriate chip select as per the bits set in
-qspi->cs_index_mask.
+On 06/03/2023 18:13, Nick Alcock wrote:
+> On 6 Mar 2023, Krzysztof Kozlowski told this:
+> 
+>> On 06/03/2023 15:30, Krzysztof Kozlowski wrote:
+>>> On 24/02/2023 16:07, Nick Alcock wrote:
+>>>> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
+>>>> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+>>>> are used to identify modules. As a consequence, uses of the macro
+>>>> in non-modules will cause modprobe to misidentify their containing
+>>>> object file as a module when it is not (false positives), and modprobe
+>>>> might succeed rather than failing with a suitable error message.
+>>>>
+>>>> So remove it in the files in this commit, none of which can be built as
+>>>> modules.
+>>>
+>>> Applied as well. Squashed with next one. Same subject messes with b4, so
+>>> prefix should be corrected if these were to stay as separate patches.
+>>
+>> And all dropped. Run checkpatch before sending patches.
+> 
+> So... which of the 27 patches n this series is being dropped? It would
+> also be nice to know what the checkpatch problems were, because all I
+> can see from checkpatch is one error per patch, an apparent false
 
-Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
----
- drivers/spi/spi-zynqmp-gqspi.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+The ones I responded that I applied - so the memory controller ones.
 
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 319cdd5a0bdc..4759f704bf5c 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -156,6 +156,9 @@
- #define GQSPI_FREQ_100MHZ	100000000
- #define GQSPI_FREQ_150MHZ	150000000
- 
-+#define GQSPI_SELECT_LOWER_CS  BIT(0)
-+#define GQSPI_SELECT_UPPER_CS  BIT(1)
-+
- #define SPI_AUTOSUSPEND_TIMEOUT		3000
- enum mode_type {GQSPI_MODE_IO, GQSPI_MODE_DMA};
- 
-@@ -467,15 +470,17 @@ static void zynqmp_qspi_chipselect(struct spi_device *qspi, bool is_high)
- 
- 	genfifoentry |= GQSPI_GENFIFO_MODE_SPI;
- 
-+	if (qspi->cs_index_mask & GQSPI_SELECT_UPPER_CS) {
-+		zynqmp_gqspi_selectslave(xqspi,
-+					 GQSPI_SELECT_FLASH_CS_UPPER,
-+					 GQSPI_SELECT_FLASH_BUS_LOWER);
-+	} else if (qspi->cs_index_mask & GQSPI_SELECT_LOWER_CS) {
-+		zynqmp_gqspi_selectslave(xqspi,
-+					 GQSPI_SELECT_FLASH_CS_LOWER,
-+					 GQSPI_SELECT_FLASH_BUS_LOWER);
-+	}
-+	genfifoentry |= xqspi->genfifobus;
- 	if (!is_high) {
--		if (!spi_get_chipselect(qspi, 0)) {
--			xqspi->genfifobus = GQSPI_GENFIFO_BUS_LOWER;
--			xqspi->genfifocs = GQSPI_GENFIFO_CS_LOWER;
--		} else {
--			xqspi->genfifobus = GQSPI_GENFIFO_BUS_UPPER;
--			xqspi->genfifocs = GQSPI_GENFIFO_CS_UPPER;
--		}
--		genfifoentry |= xqspi->genfifobus;
- 		genfifoentry |= xqspi->genfifocs;
- 		genfifoentry |= GQSPI_GENFIFO_CS_SETUP;
- 	} else {
--- 
-2.25.1
+
+> positive:
+> 
+> ERROR: Please use git commit description style 'commit <12+ chars of sha1> ("<title line>")' - ie: 'commit 8b41fc4454e3 ("kbuild: create modules.builtin without Makefile.modbuiltin or tristate.conf")'
+> 
+> The commit message says:
+> 
+>> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
+>> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+> 
+> ... which unless I am seeing things is precisely what checkpatch.pl is
+> asking for. Perhaps it can't handle wrapped lines, but not wrapping a
+> git commit log line *also* (correctly) elicits a checkpatch error...
+
+It's not a false positive, but an error I am asking fix (assuming there
+are no more ones) There is no problem with wrapping lines - checkpatch
+handles it.
+
+Best regards,
+Krzysztof
 
