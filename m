@@ -2,38 +2,38 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E08C6FD1E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670F7C74A5B
 	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 07:58:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbjCFH6J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 02:58:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
+        id S230008AbjCFH6M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 02:58:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbjCFH5l (ORCPT
+        with ESMTP id S229813AbjCFH5l (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 02:57:41 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDFB51F5FF;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9B961F901;
         Sun,  5 Mar 2023 23:57:39 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BE4960C50;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6445460C66;
         Mon,  6 Mar 2023 07:57:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CAF4C4332C;
-        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E12C4317D;
+        Mon,  6 Mar 2023 07:57:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678089456;
-        bh=anovdmL3aAHVJRDfMh2hiULmvFOGTgCUrSJmOs8aado=;
+        s=k20201202; t=1678089457;
+        bh=xXcie4/hvIuxdJWZ67pfzwNMUbfrrwMYXcQLn79s3b0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m1cZgflFUTaLPjzJmbTYmkLU7kURsoNxkRt6ywFFPd+ZpaogP2CCQKMcBVVvRW9y9
-         QnukezqHBu0zKu9uhIZt3SGtY7OvJ2/gUETuD6vP76+v+doBq9JpT55k1IhQkd44vy
-         xZh6pn0l7gSY89duAXMFDWwxd4sld95XS41knyGTs3GZreDfvmzJapV+zhP32t3GHG
-         GaJWIQvNeM0rAtDRKSzNCyVxU0Og+3dhMjLbA4DReCLWVQqjDee5TfppKWPo0GoMEH
-         JhIszz/BXKL+qAcyeL0BiVj0LZPFhMmZNMrL4hqalMUcluTRYdCjwLAZMSS0rK2sw1
-         77q+QvKBhVfJw==
+        b=ey+xO0uQK5UqyUVLV/3dQpJ0Rc7+Tj6fAIEaqUC2n6gwgN3lruZHObTmwGpVcgVGP
+         +LpEE0sErLn7f9v8Ou8fz9dAKarEbKu5jfFBlSg3HMBehFS+yBwplrtWDI0+H7pV8D
+         gWwiJaUhT63fPjCmKDX1Z8zzwIpMddaWU8R8qmwc9HS8HLo6Z1n5WgCiQqN3WvJv2U
+         Or80RAI6TfNR6OhagaA2FUZm4iXdzi1JqNM+ZbqBD7tq+hO1XQGo+eNksKyNcrdy1a
+         StvTTbwRv7adY7KhxmXmyavUT1D85OiAGZ681K/qaCgVBdGXjAJzJOzHPV3bHFmadQ
+         CMnNE7XEkdQsw==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pZ5jc-0000i9-GE; Mon, 06 Mar 2023 08:58:16 +0100
+        id 1pZ5jd-0000io-Gc; Mon, 06 Mar 2023 08:58:17 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     "Shawn Guo" <shawnguo@kernel.org>,
@@ -54,10 +54,10 @@ Cc:     "Shawn Guo" <shawnguo@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org,
-        Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH v2 09/23] interconnect: qcom: rpmh: fix probe child-node error handling
-Date:   Mon,  6 Mar 2023 08:56:37 +0100
-Message-Id: <20230306075651.2449-10-johan+linaro@kernel.org>
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v2 20/23] memory: tegra30-emc: fix interconnect registration race
+Date:   Mon,  6 Mar 2023 08:56:48 +0100
+Message-Id: <20230306075651.2449-21-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
 References: <20230306075651.2449-1-johan+linaro@kernel.org>
@@ -67,36 +67,61 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Make sure to clean up and release resources properly also in case probe
-fails when populating child devices.
+The current interconnect provider registration interface is inherently
+racy as nodes are not added until the after adding the provider. This
+can specifically cause racing DT lookups to fail.
 
-Fixes: 57eb14779dfd ("interconnect: qcom: icc-rpmh: Support child NoC device probe")
-Cc: stable@vger.kernel.org      # 6.0
-Cc: Luca Weiss <luca.weiss@fairphone.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Switch to using the new API where the provider is not registered until
+after it has been fully initialised.
+
+Fixes: d5ef16ba5fbe ("memory: tegra20: Support interconnect framework")
+Cc: stable@vger.kernel.org      # 5.11
+Cc: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/interconnect/qcom/icc-rpmh.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
-index fd17291c61eb..5168bbf3d92f 100644
---- a/drivers/interconnect/qcom/icc-rpmh.c
-+++ b/drivers/interconnect/qcom/icc-rpmh.c
-@@ -235,8 +235,11 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, qp);
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 77706e9bc543..c91e9b7e2e01 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -1533,15 +1533,13 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+ 	emc->provider.aggregate = soc->icc_ops->aggregate;
+ 	emc->provider.xlate_extended = emc_of_icc_xlate_extended;
  
- 	/* Populate child NoC devices if any */
--	if (of_get_child_count(dev->of_node) > 0)
--		return of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	if (of_get_child_count(dev->of_node) > 0) {
-+		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-+		if (ret)
-+			goto err;
-+	}
+-	err = icc_provider_add(&emc->provider);
+-	if (err)
+-		goto err_msg;
++	icc_provider_init(&emc->provider);
  
+ 	/* create External Memory Controller node */
+ 	node = icc_node_create(TEGRA_ICC_EMC);
+ 	if (IS_ERR(node)) {
+ 		err = PTR_ERR(node);
+-		goto del_provider;
++		goto err_msg;
+ 	}
+ 
+ 	node->name = "External Memory Controller";
+@@ -1562,12 +1560,14 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+ 	node->name = "External Memory (DRAM)";
+ 	icc_node_add(node, &emc->provider);
+ 
++	err = icc_provider_register(&emc->provider);
++	if (err)
++		goto remove_nodes;
++
  	return 0;
- err:
+ 
+ remove_nodes:
+ 	icc_nodes_remove(&emc->provider);
+-del_provider:
+-	icc_provider_del(&emc->provider);
+ err_msg:
+ 	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
+ 
 -- 
 2.39.2
 
