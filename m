@@ -2,93 +2,58 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A8FC678D4
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 09:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 067F2C678D4
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 09:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230430AbjCGJnw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Mar 2023 04:43:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37472 "EHLO
+        id S230346AbjCGJwW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Mar 2023 04:52:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbjCGJnp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 04:43:45 -0500
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70E1F8A39E;
-        Tue,  7 Mar 2023 01:43:32 -0800 (PST)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id EF9851C0005;
-        Tue,  7 Mar 2023 09:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678182210;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=01+uAnOiSLbTM0wZcSQJcnuJqtQP5yT5es3lE/RNx8s=;
-        b=W0FOXboaN+ZfaE1tOFAvB0nH9CZUt2e57a9f90MZdoalOOiRKe0aTlMaeJ30NwVZqfyo7Z
-        E7WglxyOR0vU8/phJe7AxiQe+XKeN5p2ay7pUIouDSX2Ay0fBGasMnn9/cSzAtIjyXvIQJ
-        Rh4itmk/epniRXUBvtOCitKQ2WBfhBnYYLsISU4V8mS/NeEvdFBoWqyCIlFUXbetFBE4qd
-        nqOOcIBvSesXGNQcH5WFlReYR0+9moZA4Qmn1GzlWA6Do6HpxR0cQvHIqFwiQwhzrl9oR6
-        prAQn9sFF5bs4Bnu/mh0mzYOUwG2LOouY+sy65380JLuYEXYQye9zegYfMJQrw==
-Date:   Tue, 7 Mar 2023 10:43:24 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Georgi Djakov <djakov@kernel.org>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "Andy Gross" <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
-        Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        "Alim Akhtar" <alim.akhtar@samsung.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        "Jonathan Hunter" <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Alexandre Bailon <abailon@baylibre.com>
-Subject: Re: [PATCH v2 04/23] interconnect: imx: fix registration race
-Message-ID: <20230307104324.121166d1@booty>
-In-Reply-To: <20230306075651.2449-5-johan+linaro@kernel.org>
-References: <20230306075651.2449-1-johan+linaro@kernel.org>
-        <20230306075651.2449-5-johan+linaro@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S230287AbjCGJwT (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 04:52:19 -0500
+X-Greylist: delayed 86760 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 07 Mar 2023 01:51:54 PST
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF9F61A6
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Mar 2023 01:51:54 -0800 (PST)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id 0806DA4660; Mon,  6 Mar 2023 09:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1678093369; bh=KHux3km3Civcx5ChslOYQZwQRBjoJa4kWJfGcMIuN6w=;
+        h=Date:From:To:Subject:From;
+        b=fxjDSoG5HotXoriE+4UzCWie3DKJZcF88R4T6eNQ117URXDM8MzKLRZelEOQOzBsv
+         lINa03MjNLGU/0nowVqqfTblwbk3tHJjz2JTFuoUFLjjfuwNsEgsAyk8khICMsY1tG
+         jKx5nj0V2a884Xpn9UUS/D/Q1k7HAy1D9CB/gRzjUZxyMMJlKYIXnHa/sN7ip7htCD
+         A/+mRH05D5ZV4XkQA9jCEg2QqeHJUFu0u+YPzRicTh7IwwniYfhflY1ZAJSEnES3QI
+         B17IdkFEs48nvqciFShLzP8r1RLJYF4z/D9bVBbPfDbL5xImDern+mIwPugQWBWSDL
+         KDhtUJ/Y+4kqg==
+Received: by mail.ettrick.pl for <linux-tegra@vger.kernel.org>; Mon,  6 Mar 2023 09:00:53 GMT
+Message-ID: <20230306074500-0.1.97.36z2v.0.xky7qcxh3b@ettrick.pl>
+Date:   Mon,  6 Mar 2023 09:00:53 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
+To:     <linux-tegra@vger.kernel.org>
+Subject: Fotowoltaika - nowe warunki
+X-Mailer: mail.ettrick.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon,  6 Mar 2023 08:56:32 +0100
-Johan Hovold <johan+linaro@kernel.org> wrote:
+Dzie=C5=84 dobry,
 
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
-> 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
-> 
-> Fixes: f0d8048525d7 ("interconnect: Add imx core driver")
-> Cc: stable@vger.kernel.org      # 5.8
-> Cc: Alexandre Bailon <abailon@baylibre.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+chcia=C5=82bym poinformowa=C4=87, i=C5=BC mog=C4=85 Pa=C5=84stwo uzyska=C4=
+=87 dofinansowanie na systemy fotowoltaiczne w ramach nowej edycji progra=
+mu M=C3=B3j Pr=C4=85d.
 
-v2 works just as well, so my Tested-by is confirmed. Maybe it's useful
-mentioning the hardware used for testing so:
+Program zapewnia 6000 z=C5=82 dofinansowania na instalacj=C4=99 paneli i =
+16 000 z=C5=82 na magazyn energii, ni=C5=BCsze cen pr=C4=85du i mo=C5=BCl=
+iwo=C5=9B=C4=87 odliczenia koszt=C3=B3w zwi=C4=85zanych z instalacj=C4=85=
+ fotowoltaiki w ramach rozliczenia PIT (tzw. ulga termomodernizacyjna).
 
-[Tested on i.MX8MP using an MSC SM2-MB-EP1 Board]
-Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+
+Pozdrawiam,
+Norbert Karecki
