@@ -2,96 +2,181 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1349C61DA4
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 15:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05649C61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 15:59:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231211AbjCFPqM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 10:46:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52974 "EHLO
+        id S229528AbjCFP7B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 10:59:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230180AbjCFPqK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 10:46:10 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A79E367DF
-        for <linux-tegra@vger.kernel.org>; Mon,  6 Mar 2023 07:45:36 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id cw28so40454823edb.5
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Mar 2023 07:45:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678117533;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WrfA7cGIcNNdeqNajhEP8dKzmgloaq6OtPDo7wgZVaI=;
-        b=bW7x/xPS+G9jqqhtHpGcDCEkI/ezYVZZm3Vkgo7nYCAh+tBhalRJHADE5pCN3lRtLv
-         BsTZpwR4qppxxTrZ8n/IsoK4iuP9bflkbr0eP5oLlA6WWVjgps535dlgXwwPufIF8zaw
-         JIDcImVuDCBYwazn/gn84Yw9D8cNbxuJKeP1szawzvweKd7Xoh3y91YWylII7sta+D9/
-         H5nnjbGi9JpjBTmRyZxngm1t47kTw+ys3/XR5XHkWfuLdJZrOIZMZ0Fn5VR+lS24mp7v
-         WZBi3OgLea9GKlznbXAoy+E4QskDT4Pto2OFmvU26YHDIhgQKWalGlsCqHq+7C5UIQtH
-         QgYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678117533;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WrfA7cGIcNNdeqNajhEP8dKzmgloaq6OtPDo7wgZVaI=;
-        b=mUgvTnA2XI9Tr+trhz+IwjMjj2ToVwgKMmXd3M6DTyjo6f8BYg17fY3C++FQTK+0IL
-         mw/q7Hx3uYsg9Ip7+yw0JTvxH1P/jdgnDkfNY5b5u/eGSm69oKi64QiicMzhmdibJ+Zm
-         pJOYO3YATAOUSM9Gb9NuT8Q/X7ON57jJpqBDqtVAKxMhcPbzC+jw2H73kpVbF3gRd8Xw
-         vjGn/295fhL4JWp/Cl1tlXAybggQt4y8/deuCzvkj+KJIXIwcBXnKXi9+yBExcKqz4oF
-         NnAnRhtmPUgrYeF9iLmcnUsM6p+QosN7xhizBTnDJ23+T/MEalZO/cXJi0tfSuXY7RNO
-         SMvA==
-X-Gm-Message-State: AO0yUKW1Hi2OzLkscK3epptzRFUD2aLp/8iF5KiqpuM998NWcfXYEN4M
-        60hB+4J4CiSD5vli0/Q2NefFng==
-X-Google-Smtp-Source: AK7set/a2B5e0ljGelJHCwhPgnWdbKU/pwrgWd0NMnsDxrI2L46OW4FT8atm+KqG87eYloJI78knXA==
-X-Received: by 2002:a17:906:4783:b0:8b1:fc:d737 with SMTP id cw3-20020a170906478300b008b100fcd737mr16748722ejc.19.1678117533148;
-        Mon, 06 Mar 2023 07:45:33 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:c1e7:5006:98ac:f57? ([2a02:810d:15c0:828:c1e7:5006:98ac:f57])
-        by smtp.gmail.com with ESMTPSA id p14-20020a170906a00e00b008b1b644c9fbsm4719705ejy.103.2023.03.06.07.45.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Mar 2023 07:45:32 -0800 (PST)
-Message-ID: <acc27e8f-73ce-39ee-3666-461f5c72d39d@linaro.org>
-Date:   Mon, 6 Mar 2023 16:45:31 +0100
-MIME-Version: 1.0
+        with ESMTP id S230215AbjCFP6s (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 10:58:48 -0500
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2080.outbound.protection.outlook.com [40.107.95.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93257211C2;
+        Mon,  6 Mar 2023 07:58:46 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I4KK/ulWZY7dOWdpcYj8QVpWWnUXaOWaOC8qsH63LcSr+yq7nJdeN/AKgzwchnm+15Xe68zPuhEOTQpkA/GSoz+KvAHNi9C8Xz5W7Km5T2ZGlSnWUcruLNw+Ohk5UjZ74K/m0MRAcOg/DWVSFVAg3XtvVdQWdfzi5m0DeBucGCBqkjCNFtoZmhnJld0XaHXhcw6zbxI1oPi++L7WKZDqZBdhNtuRGlTnV5NrOaodOnDWsb6bt8n2IZVKD4QtAAi4FgIUAtJ8pffUXzccQIDf48Pgg3hIylvYLim9KdDIbNVjOixTLrDqmBixQ4bxuSM4h8mMqQYYUZGa0vVC3viPNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HdKyKNemNXuFMxaOPYy2UxalAxI9Y4j8dgoIJRlLF/I=;
+ b=jT7gyxZoF1EMWQEIO5deNCyEcbsEShf16wEhLBX6av7IMOjqmzVYIIUXQ3zj1qc99a5ksfXMAiWYQpCrVMnapZ51HXsr5ZpPTsJ3w2/JGY34SpqaPdFkg/CmdOVayU04twMjK7WxylElHSo+A3SnxlNNU3xtw6yxNMfoF2VdSdNwl4JPq6SrOK27PDBSbg9ANbMpUI+aFXExwF0cScNXV+DfsmOcHVoRTArVY4BBBRDnOMrmLi7NiaMec6RjDx0gxZKIxhnY62vDOpwb55wRBxdSpMu0ZGeLeLcC7exS6Y8I1Tgr8w2F0tyAg6dntyuATPZupjnuns3fXs46tICAFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HdKyKNemNXuFMxaOPYy2UxalAxI9Y4j8dgoIJRlLF/I=;
+ b=X1iJ7S06bx5P2XK4cot+0eZzFl9Sq2m/Gjh2zvp101g7CRhaRiPlTdgu7s6Jp9Cl+Qv9kd269XQewX1XtX+iGrpR/2KXEKNJo8fRFTmP+m7BsWuf1yLlUMJXOPeaQMokTAPdpE2TGBtRq1cbdUrfB9wMfLPKCr6Tm4A59ac+ipq2S5lTvMDfifIDbhOqyfKDhZMGQhsIv/HbwILxM+Qc11wua5HTWYul6nlomiLkUEDWUpluIV4JJ3QCEM+p+xzAtV4OaR5/bDFT3kqq3jqPsxpEggCIbGMwc/wUN8guCiGm34CBp5mYVbDZIb2tNmY0BnK1OAI2rt/fHG6cUXTD7w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY8PR12MB8195.namprd12.prod.outlook.com (2603:10b6:930:77::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6156.28; Mon, 6 Mar 2023 15:58:44 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5464:997b:389:4b07]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5464:997b:389:4b07%8]) with mapi id 15.20.6156.028; Mon, 6 Mar 2023
+ 15:58:44 +0000
+Message-ID: <3c1354b2-831e-d523-a539-904135fe34f4@nvidia.com>
+Date:   Mon, 6 Mar 2023 15:58:38 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 15/27] memory: tegra: remove MODULE_LICENSE in non-modules
+ Thunderbird/102.7.1
+Subject: Re: [PATCH] soc/tegra: cbb: remove linux/version.h
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Nick Alcock <nick.alcock@oracle.com>, mcgrof@kernel.org
-Cc:     linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-References: <20230224150811.80316-1-nick.alcock@oracle.com>
- <20230224150811.80316-16-nick.alcock@oracle.com>
- <c6f39365-e840-d782-8ec0-e34ec3681b98@linaro.org>
-In-Reply-To: <c6f39365-e840-d782-8ec0-e34ec3681b98@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230303130346.2062989-1-usama.anjum@collabora.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20230303130346.2062989-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0073.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2bd::6) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CY8PR12MB8195:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5f40f67-fd30-4fd9-4fac-08db1e5ba9f9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wB21IPeWv1XM2PGbxXOy0eIQ3PpxPjnGQMeGsLEyj9s7Mshj9csAXFrWGDocMhC1Y02QHU3uG43OxALuMYbIPKr++3zCC2KZj0xsElelg/oSBPC+PpteUpqAmhn6dLtu1S50UYTjAwpZgOPEOqwJFB9puxzqKJ7Qtfh2LF3E+WttzkngNeCuCJ/vlfWbrdYm+YNHSUTAV3dr2lZDUSkTSnhXgUsHaldA48vJNI7N8pBPVzqkaLh9ygdmXjo86KUCKdocpUwxLJuKewkHEaz4MMxZSim+U2eR8cN304gi0sBdckbDXrSnE3F7GHQaugQryqhfBhdCLlbXLJuQlfmHHIVY/AvmM6z2UdO+D1b7SM/e/S1uiwni3hqKa3nu5hqF/4IPz38RhWzXuha0nlEpOhOj4BiZSQGGK36HRH/AgXPU56YHaGcZGcQ2x+iDbFKMKLYP9EUfehK2/Y14lT8h5Kz2pvUZ39piUFzxQDogHTETwAisl2EfEKm0LwJb76RM7J2S3ssSXfRLfllHQaLzMTLJfgxkqPrsfppdzKcR9/iq6Vt0Wcy3PDzDFrwgbDj35b6bpTlRlmQlMaNFPqISiJjMa0VGGvtyNIxSbXh6e5EGCVxOpZo+mWjEa3CpKcYJ7rj9kCpcGTfbPkm38Q0cAKCii8A2r+qoI/CRMubd3LW8RK0W1daoD5lWsllJUh1Z6Q1aPnbRbeCtvHEP53eRu9bs/fSAb8N9O6iaD4J51tk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(396003)(39860400002)(366004)(136003)(346002)(376002)(451199018)(6506007)(6512007)(53546011)(6486002)(6666004)(36756003)(83380400001)(31696002)(86362001)(38100700002)(186003)(2616005)(41300700001)(66946007)(66556008)(4326008)(8676002)(2906002)(66476007)(8936002)(31686004)(5660300002)(316002)(110136005)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VjJxeDhwaTdyeXFGbThTSXowK21QdDlHM3A2N0hYbG9kR0QxSzJpR0dNVnYw?=
+ =?utf-8?B?Q2pRS1kxbVM0V1pUc3NjdXdUMWswTmJuMzljOXN4d0FyMUZneGl6RFZLQS9q?=
+ =?utf-8?B?OVRLajR1NGozS2Yvd041U3h3Q1V3dzZjRjVmWmVqL1JCd1RXY1VlUmQ0RHZB?=
+ =?utf-8?B?MUF0VUJvcUt2TTB2OWIvaHNIWkJWTlN4cUIxNnIrYWpNVk5jRlQ2Q2xQZ1dO?=
+ =?utf-8?B?ZlpWSWVTYmpmdnQ4UXNaL0FNS3ViRkhsV1haSG1RWkZnS2hxb1FpMWhQeGZG?=
+ =?utf-8?B?d3VGRHhqS3BvMUZhUDdGS2ZocTJidGt5eENqWUN2blU5dDR6WmFHMmxnMmh1?=
+ =?utf-8?B?UnZqZXcxZ2ZsZFlxdGd2c3lOZXhQUHU5ME0rUndyR202WWxEL0lCSVlGUXFP?=
+ =?utf-8?B?Z0x4OHBOTkUyMGVuaDNHMG5iRm5YRUZLcTd2bm95MzJETEM4MjVkdGdRejd6?=
+ =?utf-8?B?aGFPYXBkeVBsTzFWSzZ5MktPNXh2VkU2TXYybjF2R3Z0aFpFYlRSM05Jczh6?=
+ =?utf-8?B?Um9sMllpQmlPcVh0UmdmVFF2bm5uTFlxalpILzNOUFlXcHRVL20xaDNIenRZ?=
+ =?utf-8?B?ODdRV3ZjRVRINktUbHFwTzBhZ0hXa0owWFpOanpCODRuVWtvMkh4Y2tsQzhX?=
+ =?utf-8?B?cmpsaHI4bUtyVzY2dnJXWTlYaXArUE5BaVg2TEg1YktTS2ZLeWppdHVjczRT?=
+ =?utf-8?B?UUZNdytLbXhpcUVPMW1oZFZHR0FQNWdwbTZGUGtGRHgrT3JWWnR1aXZsQ3E2?=
+ =?utf-8?B?V3BKUTMwVVNYcmlLUThqS2tQRmpSbkZxY3d3dlBNeWNQNnd6djZ1NXVuRW5x?=
+ =?utf-8?B?ZUJqSHFhby90L29LamprRkR5Z3VrRStIOWJtVXZwU3VTRTMvWDc2N2RFaGRa?=
+ =?utf-8?B?OVgxblJHaWtWK3JYUXFNRU94alZTaUp1anFjaGlwR3Bodld0V3p2Vy9LWEhv?=
+ =?utf-8?B?Q3prODRnUmo5MEVaNkMyUUI0SXlLOTIydWRmaTVzMk1CcXpzdVlpZVpNaEhZ?=
+ =?utf-8?B?NExQU1pQbFJVQ0tyeENKR0RlQWdSdmR3MXoxeGhOcU83anJtTjVFOTdwSTN5?=
+ =?utf-8?B?djhvOGtCN2ZOSEZ6ZU9Fa2YyMjhqOTVkNVlRcFljWTA2b3ZHbzdWdVdXSEJQ?=
+ =?utf-8?B?eHVURXFmVWVIOGdHYXNjcS9qa3BQVkdtalRKSDVYYWJxMlErcStnNkNmYytX?=
+ =?utf-8?B?em8xdlhHbXAyQldCeHVwYmRweTB3Ulp4NXliNUk0YWppdjlya0ZaT2gzZHd1?=
+ =?utf-8?B?RjZkL0hDbE1QWWswd0UxdzRZL29UQ3RWODZkOHd2RHdrekNoWGhUTkFzSnJS?=
+ =?utf-8?B?NHN4a05lQisreXBIc3lVUWwrcG5XQm0xZFVENWdDNE1reTFveGFhanIyS25J?=
+ =?utf-8?B?S21sYVprTmJtQkVKTWhtenZIMVRzeHBrTlVVL1AwZ3lFTkdMOC8wVDBCeU9K?=
+ =?utf-8?B?RTdndW93VGp3V0h4QXpZZkN6YVdxYmtIZ1VaUVhHZkNxREhITzU0dURIc2lX?=
+ =?utf-8?B?enEvbmUwdnE0UEx2bFUzdmtFTkxwTTl2ZmVpVlZQOXR0NmlrU3pucVAvMHdX?=
+ =?utf-8?B?UkNJc0cyQXo1eTZPcVlzbUt6dEgrblZ4SzlGTnpPa3Z6akRXZGtMSk1jd3Zr?=
+ =?utf-8?B?eGJsUXNzM3dFRTJ2SUQ0eDdkbTc3Ny8vWlJYak9ra1dweDQ3V1gzSDNqZDJT?=
+ =?utf-8?B?S3BkTjlwcUNHOFowTzRJTEhQclFWcWFWZFJpUEVOS1BNZjk0eWMybTlVR3ZJ?=
+ =?utf-8?B?ZFB3ZXdBZlU2VURSUEVtakszY2lzY2JlZjVQdEliL0RTNE5Nam82TGJ4aTJS?=
+ =?utf-8?B?eVFQbGo3TEJGRElLSmRycUFBdnIrbEZDNk0ydzZSNUE0eEtqRWo1UWg5WlU5?=
+ =?utf-8?B?QXdsRVVpQ1p5eDd6eXFHYkI4cnRhYWl6bjdHR2J0dXZmTUFZa3lnbWNYZ0tG?=
+ =?utf-8?B?YVBtOXZPRXIwekZlUXBqbVd0MURsNlo3QWlQNG9XOGFScnVXYTdISHNwc0h6?=
+ =?utf-8?B?a2xWajhZTGpjM0RySlQxNi9VUm1MVnFLY1FsMlh2OS9NZTlOMGhCVHUycDFE?=
+ =?utf-8?B?MHNvRU9xWlA0TmtXamVWSnhLK0Q3MWtYK1dLTnc0a2wyWWVBTVVHb2tnN0gw?=
+ =?utf-8?B?aThHYTBzUGdEdXZOUjZBSTh2ekxDSk0vcDM1WmtQZ0pCMGxZcUZOQlJEdFkw?=
+ =?utf-8?B?LzZCek52aFJydnZEM0hNcExWQmxGa3pWSXI1Z2RGV2NZSUdjeXJQbVpMUDJr?=
+ =?utf-8?B?ejhFdDhHMWRoK2hKWFdJVHBvU1lRPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5f40f67-fd30-4fd9-4fac-08db1e5ba9f9
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 15:58:44.8114
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7w3irN1toy3DD96yOEagZMwse4evES/KHkJQ16ax4mS65kYdhsSb+pm6FZscq5/x1c+jh/YkCN7mjuXmPj0Inw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8195
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 06/03/2023 15:30, Krzysztof Kozlowski wrote:
-> On 24/02/2023 16:07, Nick Alcock wrote:
->> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
->> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
->> are used to identify modules. As a consequence, uses of the macro
->> in non-modules will cause modprobe to misidentify their containing
->> object file as a module when it is not (false positives), and modprobe
->> might succeed rather than failing with a suitable error message.
->>
->> So remove it in the files in this commit, none of which can be built as
->> modules.
->>
+
+On 03/03/2023 13:03, Muhammad Usama Anjum wrote:
+> make versioncheck reports the following:
+> ./drivers/soc/tegra/cbb/tegra-cbb.c: 19 linux/version.h not needed.
+> ./drivers/soc/tegra/cbb/tegra194-cbb.c: 26 linux/version.h not needed.
+> ./drivers/soc/tegra/cbb/tegra234-cbb.c: 27 linux/version.h not needed.
 > 
-> Applied as well. Squashed with next one. Same subject messes with b4, so
-> prefix should be corrected if these were to stay as separate patches.
->
+> So remove linux/version.h from these files.
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>   drivers/soc/tegra/cbb/tegra-cbb.c    | 1 -
+>   drivers/soc/tegra/cbb/tegra194-cbb.c | 1 -
+>   drivers/soc/tegra/cbb/tegra234-cbb.c | 1 -
+>   3 files changed, 3 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/cbb/tegra-cbb.c b/drivers/soc/tegra/cbb/tegra-cbb.c
+> index a8566b9dd8de..bd96204a68ee 100644
+> --- a/drivers/soc/tegra/cbb/tegra-cbb.c
+> +++ b/drivers/soc/tegra/cbb/tegra-cbb.c
+> @@ -16,7 +16,6 @@
+>   #include <linux/of_address.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/ioport.h>
+> -#include <linux/version.h>
+>   #include <soc/tegra/fuse.h>
+>   #include <soc/tegra/tegra-cbb.h>
+>   
+> diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+> index d4112b683f00..a05fc2caff3b 100644
+> --- a/drivers/soc/tegra/cbb/tegra194-cbb.c
+> +++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+> @@ -23,7 +23,6 @@
+>   #include <linux/of_address.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/ioport.h>
+> -#include <linux/version.h>
+>   #include <soc/tegra/fuse.h>
+>   #include <soc/tegra/tegra-cbb.h>
+>   
+> diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
+> index f33d094e5ea6..e23e8acfd7c7 100644
+> --- a/drivers/soc/tegra/cbb/tegra234-cbb.c
+> +++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
+> @@ -24,7 +24,6 @@
+>   #include <linux/of_address.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/ioport.h>
+> -#include <linux/version.h>
+>   #include <soc/tegra/fuse.h>
+>   #include <soc/tegra/tegra-cbb.h>
+>   
 
-And all dropped. Run checkpatch before sending patches.
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-Best regards,
-Krzysztof
+Thanks
+Jon
 
+-- 
+nvpublic
