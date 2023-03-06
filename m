@@ -2,221 +2,170 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414DDC64EC4
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 19:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0113BC6FD1D
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 20:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbjCFTl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 14:41:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42046 "EHLO
+        id S230176AbjCFUBV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 15:01:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjCFTl4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 14:41:56 -0500
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4707B410AB;
-        Mon,  6 Mar 2023 11:41:54 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fSTHxKv919jVAzHd8uzIxytrEF1TyI0GAbAGtT+97DdYSkteL6Daq6TpkAHiSetB+37eZeuJxEGzGT6CeUsD3Kkpms6iqdSJlWc1gveZ1h8WtRJjVjIYXKrT7ucgmca078xFSc6fAwtvdCoQjaMR9jWRtut+dFs1up6ilgZc5LMLiOECIRtGZOPZ8kYjCwSmbClg2XJ3Ur8fzNABnGKtS3FLcSS3C6VSsgLRunh8i7vd7FqV7Q/qlgoRkmn+AEcZg26n7af64uVt1fLzOasdP+xp85EbKBAAb1sJVxG8Ou/jwdlpNmrkMtw605FyvP0PNbSlIBrrBRuleeIg+wgj3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YaYxfwHrZzy+lOTlSglIYjCGSrSapVtqWK0s7EBESh8=;
- b=FfG/JIGl0KxF0MJfYnZQWzejWVamgDBZcm8rVkjsj/MkNBTesC9/0JG2YnCahGM9ySXgqqmwKgUz0AH9Zwdb7zfLoqphgfKPAR4zqP+ULOMx/LsW26G7A2zDf5ooYMqcMiyXrpdVmVTEBlsYckUc41/ZA+O12nIlo4ajsPIiprF+Xw0vsiWIwHBCjYKaGrfj3xuv7+lU0PG9ZjBpgTrfrgUQNWVfWZ05ncpUImdLhWfL6++18m6Ial3LubnB01Mpcmrugn1EEdQDRgIl+fmOCyGtLQbvfBvsJgSpMVFx7f0RRiz0srqBtknHikXwKr/bjThlK6WGr9vDEs8TAygLxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YaYxfwHrZzy+lOTlSglIYjCGSrSapVtqWK0s7EBESh8=;
- b=f6d1MAN00JHRQnEYaeMbJHf6FGlVN2+hpEGuBcZ7XjJxfs3rXljHAvrnJ/epV2HX2yHe9+TZPLQ1JqraOEBpdOIIKBq4kHpWzdVNgFLhbJykuvcFkcFwxDRSonN3L6/hiXu9uW5UTpwa8unUFI3qPZyIbBVQUtvzDnw1qAtByKOLvXGdQuO5JKXB1asDgejOqOVuFuvvdL6TdgM5XvQftwMZjl3mMW0lbWuQdXFJMNxqBhjwLXEP6pEim81J2ydxCe2T3+/1HY0lHlYg/LP5VxSoplGiq8AAO9qwfw8exwfJR3CUYhCklC3erS5QfiFe0/3eoYccQOAWk+S/Ry5Ibw==
-Received: from DS7PR05CA0062.namprd05.prod.outlook.com (2603:10b6:8:57::8) by
- MN2PR12MB4456.namprd12.prod.outlook.com (2603:10b6:208:266::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.27; Mon, 6 Mar
- 2023 19:41:52 +0000
-Received: from DM6NAM11FT018.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:57:cafe::ce) by DS7PR05CA0062.outlook.office365.com
- (2603:10b6:8:57::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.15 via Frontend
- Transport; Mon, 6 Mar 2023 19:41:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT018.mail.protection.outlook.com (10.13.172.110) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6156.18 via Frontend Transport; Mon, 6 Mar 2023 19:41:51 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 6 Mar 2023
- 11:41:43 -0800
-Received: from [10.41.21.79] (10.126.230.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 6 Mar 2023
- 11:41:39 -0800
-Message-ID: <ed82fe57-fade-7dc7-50e4-acce014a5d2a@nvidia.com>
-Date:   Tue, 7 Mar 2023 01:11:37 +0530
+        with ESMTP id S230144AbjCFUBO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 15:01:14 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3EC67024;
+        Mon,  6 Mar 2023 12:00:56 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id qa18-20020a17090b4fd200b0023750b675f5so14280355pjb.3;
+        Mon, 06 Mar 2023 12:00:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678132856;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
+        b=o6hZefnQYEnFw3COvoTdyyoXo9Zv4P0LTShB301lkw0/gGr+x1ou0XeYCSdcXXLXoz
+         Ie/lwSIsRhh9vBh4c56fFPeCbh1Mg/u0f+SLHuOsNnA01L3iQxuD6tKvCodPDyUeqcUA
+         ipzyAtvRXWR1nR5U0W8m7xh6fPIYtpAYIZVYRkCJb0GTxixFtDSEeec8W6O4TIR9SFvb
+         8TyLwk+heXtYmzhntJcZ54SphmylZPrikYFa1PRdJ8V5j+VefclzJKcG1hcN/EBRiJ2z
+         A5LjdstbOHhVHAVRXA7o2dTcBNuVBc27QoVtU1tjX+Yepbtmilj428R4Os2Xd6WiLWnA
+         Of4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678132856;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uXR1hBuNmG/TwC91AeVvsW1UVH/MwkAfhUSEnuvNaoY=;
+        b=aXlIsS33Jjsuul+qMNL2sbI/Xqukq2wbEWP7Zdwtlj7bv64XyL7zxFEoY23RZ0YQor
+         Bqbh5zVr8LntGonP2exW1FvIEe3AwE9XlYZmNS8BKWTAWJs46K5D88Cz1tVysYW6l+vP
+         FlMoMohxRfMxV4J+TUf+f7Bz1HpG6jA9mHubAYpMaJGTADnDWXZk6nHVD+RgpSfy8wnl
+         /+/YGrN5IjCieKDYZ32gkewHxI34PwOi60E7Fm7h+ZsDbXdaNQooMMjB7VEGiEr6rL0+
+         lQojxCgDm1YNLkaokb9PWqj3WmVVVML7lZp7/PlVkSmU5avaYieldMHSE8tJs0W+SvaY
+         B+Qw==
+X-Gm-Message-State: AO0yUKXAbIFP23mAPtL3C28xLpxvoISrBRzI+Kq+PG803rUuLclFekw1
+        m8OB/pmYca24tx4TYBNZYeUG77vaa6Wk3reLCVE=
+X-Google-Smtp-Source: AK7set/DxZtiZhO+z+A0Is7yokDniYYkETavBEcleYa7IPSvIEQBIV7zty9Y+UWe1CWFM73JZ5CBgh34wQSFC4iK+eg=
+X-Received: by 2002:a17:90a:5993:b0:233:b520:1544 with SMTP id
+ l19-20020a17090a599300b00233b5201544mr6625621pji.0.1678132856231; Mon, 06 Mar
+ 2023 12:00:56 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [Patch v1 04/10] memory: tegra: add support for software mc
- clients in Tegra234
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <treding@nvidia.com>, <dmitry.osipenko@collabora.com>,
-        <viresh.kumar@linaro.org>, <rafael@kernel.org>,
-        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC:     <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
-        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <20221220160240.27494-1-sumitg@nvidia.com>
- <20221220160240.27494-5-sumitg@nvidia.com>
- <ec955be9-affb-e84c-0b27-c27235608a81@linaro.org>
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <ec955be9-affb-e84c-0b27-c27235608a81@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.230.37]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT018:EE_|MN2PR12MB4456:EE_
-X-MS-Office365-Filtering-Correlation-Id: b04f57b0-297a-4b49-231d-08db1e7ad597
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: auLdylmuchcpOqE9nt/F0S2EfTdtWQnc8ScZ///kXuNoCKXtXfAbuAKK6iJ7aW3CsFuOG5AgFCehksqzpfBKaZub9kx+I5x0ffNxzQtiFDTKzIyX0iAv+L7na5YXF4WhhGIF47nUMApHI379tW9o4DUT+OSVg/0GSlUl5ZUa/9fIJK3cCwUhhUMToE4x1ntAxuQhH2lOnfr5d5V/Sdy6bM9tHjYBHc0qXD6sbNDh+1F7PqKnDyCq+WT+j56Mh6V8VBrx7DFG1oOFZwILbf1VTXl9PK30WWHtxwrUcXiMAN4f/9FD12aejF/TsFfYXcdCoOYikOaLHsA91PFoEo/PTbxqvvjNbzEwkVGhLmpooMBe/Gwphlg/1mfH7XpA/SH4VujAzVTLutv+KvAVFBbI2omaZIYXKzPo/DqQ+yBi6Xyr9TC+xG4dwOqHwEMdRVOJV0B+W7q4xoHMf0f68GH9GlpSsE2x4VKOgPXWv26LweUJidsjNTG2fDC66ib3aHUm4My77WLjwk3oTxHPS9cmZcP5Z2HFGjYrtv6K6kLg7tzdXaXhWwvUGdX7IyDlEJl00WbhhWqLAs+9V6YKH0oDjiLC2IbGvSB/Qgh7CLGWf4VYli/laHtCF4fO4unJy3BB6bOxqoYGaWth4E1mfigUlok+jYP+ZSRDD+161GLSvwkUNdrhqQyOujoavpc7Lcnkn3L+2NBxA+ygWZuPnBgSBV3zXhVfg2kEPasajO26wKydde7TlIIH2QeTKmQdQuUlug2tWASb+h0kY0PigYkSGerWWQUNuzteowtWq79DSTQ=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(376002)(396003)(136003)(346002)(451199018)(36840700001)(46966006)(40470700004)(26005)(966005)(82310400005)(53546011)(107886003)(36756003)(36860700001)(426003)(47076005)(40460700003)(356005)(921005)(31696002)(86362001)(7636003)(40480700001)(83380400001)(82740400003)(16526019)(2616005)(186003)(336012)(70206006)(41300700001)(4326008)(8676002)(70586007)(2906002)(31686004)(8936002)(5660300002)(478600001)(316002)(16576012)(54906003)(110136005)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2023 19:41:51.9946
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b04f57b0-297a-4b49-231d-08db1e7ad597
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT018.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4456
+References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com> <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
+In-Reply-To: <20230306172109.595464-10-amit.kumar-mahapatra@amd.com>
+From:   Jonas Gorski <jonas.gorski@gmail.com>
+Date:   Mon, 6 Mar 2023 21:00:44 +0100
+Message-ID: <CAOiHx=nmsAh3ADL3s0eZKpEZJqCB_POi=8YjfxrHYLEbjRfwHg@mail.gmail.com>
+Subject: Re: [PATCH V5 09/15] spi: Add stacked and parallel memories support
+ in SPI core
+To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc:     broonie@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
+        vigneshr@ti.com, jic23@kernel.org, tudor.ambarus@microchip.com,
+        pratyush@kernel.org, Sanju.Mehta@amd.com,
+        chin-ting_kuo@aspeedtech.com, clg@kaod.org, kdasu.kdev@gmail.com,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        eajames@linux.ibm.com, olteanv@gmail.com, han.xu@nxp.com,
+        john.garry@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        narmstrong@baylibre.com, khilman@baylibre.com,
+        matthias.bgg@gmail.com, haibo.chen@nxp.com,
+        linus.walleij@linaro.org, daniel@zonque.org,
+        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
+        krzysztof.kozlowski@linaro.org, andi@etezian.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
+        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
+        kvalo@kernel.org, james.schulman@cirrus.com,
+        david.rhodes@cirrus.com, tanureal@opensource.cirrus.com,
+        rf@opensource.cirrus.com, perex@perex.cz, tiwai@suse.com,
+        npiggin@gmail.com, christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
+        oss@buserror.net, windhl@126.com, yangyingliang@huawei.com,
+        william.zhang@broadcom.com, kursad.oney@broadcom.com,
+        anand.gore@broadcom.com, rafal@milecki.pl, git@amd.com,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        joel@jms.id.au, andrew@aj.id.au, radu_nicolae.pirea@upb.ro,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@microchip.com,
+        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
+        alim.akhtar@samsung.com, ldewangan@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-mtd@lists.infradead.org, lars@metafoo.de,
+        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+        michael@walle.cc, palmer@dabbelt.com,
+        linux-riscv@lists.infradead.org, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
+        amitrkcian2002@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi,
 
+On Mon, 6 Mar 2023 at 18:26, Amit Kumar Mahapatra
+<amit.kumar-mahapatra@amd.com> wrote:
+>
+> For supporting multiple CS the SPI device need to be aware of all the CS
+> values. So, the "chip_select" member in the spi_device structure is now an
+> array that holds all the CS values.
+>
+> spi_device structure now has a "cs_index_mask" member. This acts as an
+> index to the chip_select array. If nth bit of spi->cs_index_mask is set
+> then the driver would assert spi->chip_select[n].
+>
+> In parallel mode all the chip selects are asserted/de-asserted
+> simultaneously and each byte of data is stored in both devices, the even
+> bits in one, the odd bits in the other. The split is automatically handled
+> by the GQSPI controller. The GQSPI controller supports a maximum of two
+> flashes connected in parallel mode. A "multi-cs-cap" flag is added in the
+> spi controntroller data, through ctlr->multi-cs-cap the spi core will make
+> sure that the controller is capable of handling multiple chip selects at
+> once.
+>
+> For supporting multiple CS via GPIO the cs_gpiod member of the spi_device
+> structure is now an array that holds the gpio descriptor for each
+> chipselect.
+>
+> Multi CS support using GPIO is not tested due to unavailability of
+> necessary hardware setup.
+>
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+> ---
+>  drivers/spi/spi.c       | 213 +++++++++++++++++++++++++++-------------
+>  include/linux/spi/spi.h |  34 +++++--
+>  2 files changed, 173 insertions(+), 74 deletions(-)
+>
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index 5866bf5813a4..8ec7f58fa111 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -613,7 +613,8 @@ static int spi_dev_check(struct device *dev, void *data)
+>         struct spi_device *new_spi = data;
+>
+>         if (spi->controller == new_spi->controller &&
+> -           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0))
+> +           spi_get_chipselect(spi, 0) == spi_get_chipselect(new_spi, 0) &&
+> +           spi_get_chipselect(spi, 1) == spi_get_chipselect(new_spi, 1))
+>                 return -EBUSY;
 
-On 22/12/22 17:06, Krzysztof Kozlowski wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 20/12/2022 17:02, Sumit Gupta wrote:
->> Adding support for dummy memory controller clients for use by
->> software.
-> 
-> Use imperative mode (applies to other commits as well)
-> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-> 
-Thank you for suggesting.
-I referred this and changed in v2.
+This will only reject new devices if both chip selects are identical,
+but not if they only share one, e.g. CS 1 + 2 vs 1 + 3, or 1 + 2 vs
+only 2, or if the order is different (1 + 2 vs 2 + 1 - haven't read
+the code too close to know if this is allowed/possible).
 
->> ---
->>   drivers/memory/tegra/mc.c       | 65 +++++++++++++++++++++++----------
->>   drivers/memory/tegra/tegra234.c | 21 +++++++++++
->>   include/soc/tegra/mc.h          |  3 ++
->>   include/soc/tegra/tegra-icc.h   |  7 ++++
->>   4 files changed, 76 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
->> index ff887fb03bce..4ddf9808fe6b 100644
->> --- a/drivers/memory/tegra/mc.c
->> +++ b/drivers/memory/tegra/mc.c
->> @@ -755,6 +755,39 @@ const char *const tegra_mc_error_names[8] = {
->>        [6] = "SMMU translation error",
->>   };
->>
->> +static int tegra_mc_add_icc_node(struct tegra_mc *mc, unsigned int id, const char *name,
->> +                              unsigned int bpmp_id, unsigned int type)
->> +{
->> +     struct tegra_icc_node *tnode;
->> +     struct icc_node *node;
->> +     int err;
->> +
->> +     tnode = kzalloc(sizeof(*tnode), GFP_KERNEL);
->> +     if (!tnode)
->> +             return -ENOMEM;
->> +
->> +     /* create MC client node */
->> +     node = icc_node_create(id);
->> +     if (IS_ERR(node))
->> +             return -EINVAL;
-> 
-> Why do you return other error? It does not look like you moved the code
-> correctly, but with changes. I also do not see how this is related to
-> commit msg...
-> 
-Corrected in v2.
-
-Thanks,
-Sumit
-
->> +
->> +     node->name = name;
->> +     icc_node_add(node, &mc->provider);
->> +
->> +     /* link Memory Client to Memory Controller */
->> +     err = icc_link_create(node, TEGRA_ICC_MC);
->> +     if (err)
->> +             return err;
->> +
->> +     node->data = tnode;
->> +     tnode->node = node;
->> +     tnode->bpmp_id = bpmp_id;
->> +     tnode->type = type;
->> +     tnode->mc = mc;
->> +
->> +     return 0;
->> +}
->> +
->>   /*
->>    * Memory Controller (MC) has few Memory Clients that are issuing memory
->>    * bandwidth allocation requests to the MC interconnect provider. The MC
->> @@ -780,7 +813,6 @@ const char *const tegra_mc_error_names[8] = {
->>    */
->>   static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
->>   {
->> -     struct tegra_icc_node *tnode;
->>        struct icc_node *node;
->>        unsigned int i;
->>        int err;
->> @@ -820,30 +852,23 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
->>                goto remove_nodes;
->>
->>        for (i = 0; i < mc->soc->num_clients; i++) {
->> -             tnode = kzalloc(sizeof(*tnode), GFP_KERNEL);
->> -             if (!tnode)
->> -                     return -ENOMEM;
->> -
->> -             /* create MC client node */
->> -             node = icc_node_create(mc->soc->clients[i].id);
->> -             if (IS_ERR(node)) {
->> -                     err = PTR_ERR(node);
->> +             err = tegra_mc_add_icc_node(mc, mc->soc->clients[i].id,
->> +                                         mc->soc->clients[i].name,
->> +                                         mc->soc->clients[i].bpmp_id,
->> +                                         mc->soc->clients[i].type);
->> +             if (err)
->>                        goto remove_nodes;
->> -             }
->>
->> -             node->name = mc->soc->clients[i].name;
->> -             icc_node_add(node, &mc->provider);
->> +     }
->> +
-> 
-> Best regards,
-> Krzysztof
-> 
+Regards,
+Jonas
