@@ -2,104 +2,98 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA93C61DA4
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 10:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CC7C6FA99
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 13:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230181AbjCFKEF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 05:04:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53134 "EHLO
+        id S231255AbjCFNcA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 08:32:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbjCFKEC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 05:04:02 -0500
+        with ESMTP id S231252AbjCFNb7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 08:31:59 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8527412844;
-        Mon,  6 Mar 2023 02:04:00 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E06E2E80F;
+        Mon,  6 Mar 2023 05:31:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BA6560D36;
-        Mon,  6 Mar 2023 10:04:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77831C433EF;
-        Mon,  6 Mar 2023 10:03:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 749A360F10;
+        Mon,  6 Mar 2023 13:31:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2FF6C433D2;
+        Mon,  6 Mar 2023 13:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678097039;
-        bh=NqMbYyvssKAx59ycEdKMFhaWpef5XSN1pFTGQ0DPAQ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KDfIzHRqSbIPRxQ5kEQXWQNFgsmQ/3ugZts1z8YigEBSh4faCn+rLeqBU6w2tFriP
-         BNIu+8YydqPo4riorBbgxOS7CtqVCqLa6wD9kBbSsh10BujzmsaKnO9x5rtfEEB5ZP
-         CrjBgY61IiuUQIyOL7tTJ8wwjay4MuazLBK/8lIjUw1v5rTby3vl6CMMhl9CV315FM
-         ugCoVWCZAf3kgg1y9ZrCdpSVrR/yFzmlRd4GGXoezELkFnR8jeZcGIeQBDMoxgdlTo
-         hc4aTM3O+wUqG2rTJguyh0O/y219zleqkiBzP4gP+USDs8yUueXwlNh2AzJzEVyu+M
-         yG3K63UQfyD7Q==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1pZ7hv-0007OS-4q; Mon, 06 Mar 2023 11:04:39 +0100
-Date:   Mon, 6 Mar 2023 11:04:39 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Johan Hovold <johan+linaro@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        s=k20201202; t=1678109515;
+        bh=xk2sxBEfsiN8aKVYWYbUYCkQgq5QDPcbaOkOnFjwYec=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=sddlj8enGoNsBB53XnM6yLjlWH6qW0MM4/OXj2+Rd0hDjZKdOA8lStIgrDIroyhqS
+         z3y7rgMjk3K0fqY2Wvs1ndD1L26gzBtFoNFxT6Sl+vOD+o+tVGnW0lHEWqTRn6YOwM
+         ptESxC8P7B5UMiwsRl1dHQEEgUl4gW4Gl1yv2I+8eQnA9Khh6P/Atisof+/iZLsjCw
+         YbZzdtgqrkrjTIULwrFsypWiN3RmoBcRrKua8GqJJYMWtehYD6ls1ftWD9T1mKO70W
+         mmXI8ERzpLqaQ3fedpWkCKXxWlKZm7H2U8NCLy8reO8GCxL3qDrQ4wiuO9D2S42qGk
+         8a8K8eDvN6yvA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 13/23] interconnect: qcom: sm8550: fix registration
- race
-Message-ID: <ZAW6t7LKCBubfnx/@hovoldconsulting.com>
-References: <20230306075651.2449-1-johan+linaro@kernel.org>
- <20230306075651.2449-14-johan+linaro@kernel.org>
- <ZAWsUrlrOfmmNBy3@linaro.org>
- <ZAWzqtWt5yBlYpQU@hovoldconsulting.com>
- <ZAW01RH/gLwlueoT@linaro.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev
+In-Reply-To: <20230221183211.21964-1-clamor95@gmail.com>
+References: <20230221183211.21964-1-clamor95@gmail.com>
+Subject: Re: (subset) [PATCH v1 00/10] Fix sound on ASUS Transformers
+Message-Id: <167810951258.75807.6694477245258374695.b4-ty@kernel.org>
+Date:   Mon, 06 Mar 2023 13:31:52 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZAW01RH/gLwlueoT@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-bd1bf
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 11:39:33AM +0200, Abel Vesa wrote:
-> On 23-03-06 10:34:34, Johan Hovold wrote:
-> > On Mon, Mar 06, 2023 at 11:03:14AM +0200, Abel Vesa wrote:
-> > > On 23-03-06 08:56:41, Johan Hovold wrote:
-> > > > The current interconnect provider registration interface is inherently
-> > > > racy as nodes are not added until the after adding the provider. This
-> > > > can specifically cause racing DT lookups to fail.
-> > > > 
-> > > > Switch to using the new API where the provider is not registered until
-> > > > after it has been fully initialised.
-> > > > 
-> > > > Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
-> > > > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > > > ---
-> > > 
-> > > Any changes since v1 or is it just a resend? 
-> > 
-> > Please see the cover letter:
-> > 
-> > 	https://lore.kernel.org/lkml/20230306075651.2449-1-johan+linaro@kernel.org/
-> > 
-> > Only the first patch of the series was updated in v2.
+On Tue, 21 Feb 2023 20:32:01 +0200, Svyatoslav Ryhel wrote:
+> - add quirk for headset detection used by some T30 devices
+>   (ASUS Transformers, LG Optimus 4X HD and Vu);
+> - add RT5631 and MAX9808x machine drivers
+> - add Fortemedia FM34NE DSP driver used by ASUS Transformers
+>   and mandatory for correct sound work
+> - bind everything into working configuration
 > 
-> Right, my bad. Though I wasn't CC'ed on that as well.
+> [...]
 
-Yeah, sorry about that. I copied the CC list from v1 and forgot to make
-sure that all reviewers were copied on the cover letter.
+Applied to
 
-Johan
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[02/10] sound: soc: jack: allow multiple interrupt per gpio
+        commit: a2d4051b0bd6dffcd736888ae89a550d6f60b060
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
