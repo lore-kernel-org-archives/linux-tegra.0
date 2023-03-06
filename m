@@ -2,38 +2,38 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 683ECC7618E
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 07:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E240EC77B60
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 07:57:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbjCFH5o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 02:57:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
+        id S229850AbjCFH5p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 02:57:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbjCFH5k (ORCPT
+        with ESMTP id S229750AbjCFH5k (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 02:57:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06AFA1A66C;
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA641F5C3;
         Sun,  5 Mar 2023 23:57:38 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8A992B80CA8;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C33FE60C38;
         Mon,  6 Mar 2023 07:57:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F959C433D2;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF39C43333;
         Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1678089456;
-        bh=jIxvGcg8R4JnPiV+2ZOLe9PDqfcIqFNohn8cYUw76ns=;
+        bh=s4E+IpKeqVs9p0UAbccXWGNKbFRHSvps33hCkEkccvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nLgMBLprli7Ul7vTq7CJUfhUoyLCZ57BMb5u7f74sjrik5lQ7NcZHwdtHEoVuO4J8
-         e95ElgAquoOeaTh2Gv591dlk2F/nAcWJ0hBxeGepJ1IkWbjzE5V0LCG2Aw8lqPQ5ns
-         Irx0XLCTPPBbyjLuFnEsaaPvhSMItq744krE5DgPaICVSu38CahIQSdiOR/yYmnEL7
-         /ny9OUBQZw4yL3a1jgJL4JBw7JBtMRANw5Cu4HYNdwezz8oimqdeI4FSOzBYQ5Bodh
-         ftahkMMDqY2G/I5PehhU8z1ZdhYEx9p8XQO5IvQbOE55zmBBU7zRxsl5fXyInwQSNR
-         ucmMWYGQwxNPQ==
+        b=kyryM7uo772eQPz1M5IKYg/3HdXP4zVf3+hXXluSeLcI0oZELQe22iddXsamXquGL
+         AtgawMGenFLwcuf1AafjafQorrJoOWS49QtpCLnrm4FMfdN2f1tFl1w5zoK1JN1h5r
+         MQxbrT204hsnTsdhUvZoH95R+QsEuCjoJJAvAk9JWQFhzXxcPxYp2ah/RE5Nn2U1Tu
+         JpKoUnNM2msakCTxzz/JJlowExNYYmFBd6EFl2rBk8J4boIz99xvEA85psERGMVr0x
+         DMdTcUI0q1fBF4tbQ4+T8sEmF6rg0yf0Xo4c4O9A/aOtEsSQ1xzUBFra6wziBbNGuB
+         urVfSLo+VD5Lg==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1pZ5jc-0000i3-7R; Mon, 06 Mar 2023 08:58:16 +0100
+        id 1pZ5jc-0000iF-J2; Mon, 06 Mar 2023 08:58:16 +0100
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Georgi Djakov <djakov@kernel.org>
 Cc:     "Shawn Guo" <shawnguo@kernel.org>,
@@ -54,9 +54,9 @@ Cc:     "Shawn Guo" <shawnguo@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH v2 06/23] interconnect: qcom: rpm: fix probe child-node error handling
-Date:   Mon,  6 Mar 2023 08:56:34 +0100
-Message-Id: <20230306075651.2449-7-johan+linaro@kernel.org>
+Subject: [PATCH v2 10/23] interconnect: qcom: rpmh: fix registration race
+Date:   Mon,  6 Mar 2023 08:56:38 +0100
+Message-Id: <20230306075651.2449-11-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
 References: <20230306075651.2449-1-johan+linaro@kernel.org>
@@ -66,35 +66,98 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Make sure to clean up and release resources properly also in case probe
-fails when populating child devices.
+The current interconnect provider registration interface is inherently
+racy as nodes are not added until the after adding the provider. This
+can specifically cause racing DT lookups to fail.
 
-Fixes: e39bf2972c6e ("interconnect: icc-rpm: Support child NoC device probe")
-Cc: stable@vger.kernel.org      # 5.17
+Switch to using the new API where the provider is not registered until
+after it has been fully initialised.
+
+Fixes: 976daac4a1c5 ("interconnect: qcom: Consolidate interconnect RPMh support")
+Cc: stable@vger.kernel.org      # 5.7
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/interconnect/qcom/icc-rpm.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/interconnect/qcom/icc-rpmh.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index df3196f72536..91778cfcbc65 100644
---- a/drivers/interconnect/qcom/icc-rpm.c
-+++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -541,8 +541,11 @@ int qnoc_probe(struct platform_device *pdev)
+diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
+index 5168bbf3d92f..fdb5e58e408b 100644
+--- a/drivers/interconnect/qcom/icc-rpmh.c
++++ b/drivers/interconnect/qcom/icc-rpmh.c
+@@ -192,9 +192,10 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+ 	provider->pre_aggregate = qcom_icc_pre_aggregate;
+ 	provider->aggregate = qcom_icc_aggregate;
+ 	provider->xlate_extended = qcom_icc_xlate_extended;
+-	INIT_LIST_HEAD(&provider->nodes);
+ 	provider->data = data;
+ 
++	icc_provider_init(provider);
++
+ 	qp->dev = dev;
+ 	qp->bcms = desc->bcms;
+ 	qp->num_bcms = desc->num_bcms;
+@@ -203,10 +204,6 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+ 	if (IS_ERR(qp->voter))
+ 		return PTR_ERR(qp->voter);
+ 
+-	ret = icc_provider_add(provider);
+-	if (ret)
+-		return ret;
+-
+ 	for (i = 0; i < qp->num_bcms; i++)
+ 		qcom_icc_bcm_init(qp->bcms[i], dev);
+ 
+@@ -218,7 +215,7 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+ 		node = icc_node_create(qn->id);
+ 		if (IS_ERR(node)) {
+ 			ret = PTR_ERR(node);
+-			goto err;
++			goto err_remove_nodes;
+ 		}
+ 
+ 		node->name = qn->name;
+@@ -232,19 +229,27 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	data->num_nodes = num_nodes;
++
++	ret = icc_provider_register(provider);
++	if (ret)
++		goto err_remove_nodes;
++
  	platform_set_drvdata(pdev, qp);
  
  	/* Populate child NoC devices if any */
--	if (of_get_child_count(dev->of_node) > 0)
--		return of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	if (of_get_child_count(dev->of_node) > 0) {
-+		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-+		if (ret)
-+			goto err;
-+	}
+ 	if (of_get_child_count(dev->of_node) > 0) {
+ 		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+ 		if (ret)
+-			goto err;
++			goto err_deregister_provider;
+ 	}
  
  	return 0;
- err:
+-err:
++
++err_deregister_provider:
++	icc_provider_deregister(provider);
++err_remove_nodes:
+ 	icc_nodes_remove(provider);
+-	icc_provider_del(provider);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(qcom_icc_rpmh_probe);
+@@ -253,8 +258,8 @@ int qcom_icc_rpmh_remove(struct platform_device *pdev)
+ {
+ 	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
+ 
++	icc_provider_deregister(&qp->provider);
+ 	icc_nodes_remove(&qp->provider);
+-	icc_provider_del(&qp->provider);
+ 
+ 	return 0;
+ }
 -- 
 2.39.2
 
