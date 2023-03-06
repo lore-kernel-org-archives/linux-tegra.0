@@ -2,148 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE849C64EC4
-	for <linux-tegra@archiver.kernel.org>; Sat,  4 Mar 2023 14:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1B7C61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 07:57:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjCDOrr convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Mar 2023 09:47:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53568 "EHLO
+        id S229570AbjCFH5j (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 02:57:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjCDOrq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Mar 2023 09:47:46 -0500
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9D512F12;
-        Sat,  4 Mar 2023 06:47:44 -0800 (PST)
-Received: by mail-qt1-f179.google.com with SMTP id z6so6108053qtv.0;
-        Sat, 04 Mar 2023 06:47:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677941263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KeKbxzDZy3GcKkrGUofgHv5MAh6MoP5a08Lg7rMsvMk=;
-        b=S3qNnTfaGG8dWVsorNdGIUyak/GpcZUpktOkv6gyxtw3XAcFdhL/CEPTnxawlQEyNf
-         ahJg6xrVKof9Ba8qj4jmw8QWAUQHq5sg8lZVrnFFXNh2e6FSXM8aN92iCBHMkyHyhFOW
-         pF5M9IbKRWk6kueY6GrPeTRsBtYQnAJ+bqHZJg2WQdnDvJo82uZG4w76/sYjAQcpPvj5
-         X3PdR7+eBUj3v3V5VGL6SUaQt75AyLPdgwuQKZZZXmKfQaf0t6b+z4rxR4EzF95nhetG
-         mkUGP6pbLyZPqZlct7Y+mkWH0S8etn2r4am3ttLR2fi3LMB2kL6kUnxO0X/vIDvBZFe5
-         5UKQ==
-X-Gm-Message-State: AO0yUKVzoLn4IAtoBJaDXBH/SlyIWWFCRfWfBdJsVlpAKhiY40HLN8OC
-        Olj/cAkGxTOPQq8Y+JsX6KiYQ9LQxU20VA==
-X-Google-Smtp-Source: AK7set8iJFGfogd8HyTfcNNFYdWDx6zvwpzg4FmQZW+Si0Gg/ZbY1ExyzEf60dMofx6GBE4kRARcwA==
-X-Received: by 2002:ac8:7f14:0:b0:3bf:c407:10c5 with SMTP id f20-20020ac87f14000000b003bfc40710c5mr10006171qtk.26.1677941263461;
-        Sat, 04 Mar 2023 06:47:43 -0800 (PST)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id r15-20020ac867cf000000b003bfc2fc3235sm3817779qtp.67.2023.03.04.06.47.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Mar 2023 06:47:43 -0800 (PST)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-536cb25982eso96915597b3.13;
-        Sat, 04 Mar 2023 06:47:43 -0800 (PST)
-X-Received: by 2002:a81:b723:0:b0:536:38b4:f51 with SMTP id
- v35-20020a81b723000000b0053638b40f51mr3187721ywh.5.1677941242747; Sat, 04 Mar
- 2023 06:47:22 -0800 (PST)
+        with ESMTP id S229535AbjCFH5i (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 02:57:38 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E0E9193E6;
+        Sun,  5 Mar 2023 23:57:37 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED4F960C24;
+        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431BFC4339C;
+        Mon,  6 Mar 2023 07:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678089456;
+        bh=x7c24nw5EsIIq8C+xhEW9SJzZNdBgRpXVyxPgn2uGaQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RVoRdwHGmeMtMPQ5TjivD9CJFhUo4FyjgJ2AVZn2Q7Ow2PgektAAVOa68GROZsOFy
+         KD2PyEtCXnorEv56biJX1Cbb5swuj6QHkmSatqlDTnz7Cd2lQXOuDDVKCbzZrhTd+F
+         vMx+MP3RAFT4MfHY+ZogmNvwakF4yI7kH3TgKAuMpyM1cbWYPZDIIDij/gAxxvA70E
+         Ed5OMQ5MfyVvBxNzB1VG58DODM9OEd7wNQpY2vOJll6d+3piWYQP8P2Ew+cn6YKlnG
+         aZ45BA9wOVOTCyxa0S89b3ZbXsqTzL+7JDSaPJAS+NLvsnII/Tt+a+gM22cjeHF8W5
+         6PLmvYqBb8w4w==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan+linaro@kernel.org>)
+        id 1pZ5jc-0000i5-9y; Mon, 06 Mar 2023 08:58:16 +0100
+From:   Johan Hovold <johan+linaro@kernel.org>
+To:     Georgi Djakov <djakov@kernel.org>
+Cc:     "Shawn Guo" <shawnguo@kernel.org>,
+        "Sascha Hauer" <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        "Fabio Estevam" <festevam@gmail.com>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        "Andy Gross" <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+        =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "Alim Akhtar" <alim.akhtar@samsung.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>
+Subject: [PATCH v2 07/23] interconnect: qcom: rpm: fix probe PM domain error handling
+Date:   Mon,  6 Mar 2023 08:56:35 +0100
+Message-Id: <20230306075651.2449-8-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230306075651.2449-1-johan+linaro@kernel.org>
+References: <20230306075651.2449-1-johan+linaro@kernel.org>
 MIME-Version: 1.0
-References: <20230301185209.274134-1-jjhiblot@traphandler.com>
- <20230301185209.274134-3-jjhiblot@traphandler.com> <CAMuHMdVF337k+zyjpbzoDtWWDnYhM6eM3+As6UuZ7FCgASsMQg@mail.gmail.com>
- <7fa7f07f-d1e1-1e43-992c-4981c5810284@traphandler.com>
-In-Reply-To: <7fa7f07f-d1e1-1e43-992c-4981c5810284@traphandler.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 4 Mar 2023 15:47:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVdZatMYsc=367OuGotzYuo2-XVe5MAZdzh+kBs31=t5A@mail.gmail.com>
-Message-ID: <CAMuHMdVdZatMYsc=367OuGotzYuo2-XVe5MAZdzh+kBs31=t5A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] of: irq: make callers of of_irq_parse_one() release
- the device node
-To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Cc:     saravanak@google.com, clement.leger@bootlin.com,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        zajec5@gmail.com, Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Marc Zyngier <maz@kernel.org>, afaerber@suse.de,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Nishanth Menon <nm@ti.com>, ssantosh@kernel.org,
-        mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-wireless@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jean-Jacques,
+Make sure to disable clocks also in case attaching the power domain
+fails.
 
-On Sat, Mar 4, 2023 at 11:34 AM Jean-Jacques Hiblot
-<jjhiblot@traphandler.com> wrote:
-> On 02/03/2023 08:49, Geert Uytterhoeven wrote:
-> > On Wed, Mar 1, 2023 at 7:53 PM Jean-Jacques Hiblot
-> > <jjhiblot@traphandler.com> wrote:
-> >> of_irq_parse_one() does a get() on the device node returned in out_irq->np.
-> >> Callers of of_irq_parse_one() must do a put() when they are done with it.
-> >
-> > What does "be done with it" really mean here?
-> >
-> >> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-> >
-> >> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-> >> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-> >> @@ -184,6 +184,7 @@ static int __init rcar_gen2_regulator_quirk(void)
-> >>                          kfree(quirk);
-> >>                          continue;
-> >>                  }
-> >> +               of_node_put(argsa->np);
-> >
-> > The quirk object, which is a container of argsa, is still used below,
-> > and stored in a linked list.  I agree argsa->np is not dereferenced,
-> > but the pointer itself is still compared to other pointers.
->
-> I fail to see when the pointers are compared. It looks to me that only
-> the args are compared. Am I missing something ?
+Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
+Cc: stable@vger.kernel.org      # 5.17
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-You're right, in upstream, there is no such check.
-In my local tree, I have converted the comparisons below to use a new
-helper of_phandle_args_eq() (which does compare the np member, too),
-but that change never went upstream, as the other user of that helper
-was rejected.
-
-> In any case, looking more closely at the code, I guess that indeed the
-> of_node_put() shouldn't be added here because this code expects that the
-> nodes never go away. That is probably a good assertion in case of PMICs
-
-OK.
-
-> > IIUIC, calling of_node_put() might cause the reference count to drop to
-> > zero, and the underlying struct node object to be deallocated.
-> > So when a future reference to the same DT node will be taken, a new
-> > struct node object will be allocated, and the pointer comparison below
-> > will fail?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+index 91778cfcbc65..da595059cafd 100644
+--- a/drivers/interconnect/qcom/icc-rpm.c
++++ b/drivers/interconnect/qcom/icc-rpm.c
+@@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
+ 
+ 	if (desc->has_bus_pd) {
+ 		ret = dev_pm_domain_attach(dev, true);
+-		if (ret)
+-			return ret;
++		goto err_disable_clks;
+ 	}
+ 
+ 	provider = &qp->provider;
+@@ -514,8 +513,7 @@ int qnoc_probe(struct platform_device *pdev)
+ 	ret = icc_provider_add(provider);
+ 	if (ret) {
+ 		dev_err(dev, "error adding interconnect provider: %d\n", ret);
+-		clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+-		return ret;
++		goto err_disable_clks;
+ 	}
+ 
+ 	for (i = 0; i < num_nodes; i++) {
+@@ -550,8 +548,9 @@ int qnoc_probe(struct platform_device *pdev)
+ 	return 0;
+ err:
+ 	icc_nodes_remove(provider);
+-	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+ 	icc_provider_del(provider);
++err_disable_clks:
++	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+ 
+ 	return ret;
+ }
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
