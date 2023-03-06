@@ -2,56 +2,44 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D941C678D4
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 09:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 564EDC61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 09:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbjCFJDZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 04:03:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38306 "EHLO
+        id S230023AbjCFJeA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Mar 2023 04:34:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbjCFJDY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 04:03:24 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31A7B742
-        for <linux-tegra@vger.kernel.org>; Mon,  6 Mar 2023 01:03:19 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id o11-20020a05600c4fcb00b003eb33ea29a8so4717797wmq.1
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Mar 2023 01:03:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678093398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AJHpGiNNnS/iHuhCrLJC3kyZETQwy2cp7ry6pPyZxIQ=;
-        b=hzrwwOjdSHOzylUPLi1JyT0tk4upCyVExNtQamh0nS/rBJwh4KYQ/1Uvs7SCa7hm7d
-         YJ6OzeVIGuCpOxuY0QCGh3tgHIkJ67xL5qp37sVCVoKqQ7K6jLxzWurAmpI4z8jsxT1N
-         lKvRHne/mKFVmokyMoXSMBRmDoOIPHw5UqpNTRkpG/dCZ1BLzyptBqAYLVjSnWICedhE
-         rr+PzCy2PTxMdpb1ZpKr0Xgm0wC3ShJ4U5hRqV6RzF3zGufARNtQlHJsu4wDhR/DddmK
-         KKvo08qYT4lRD69xYqiIzG77MlihQHVIxUPdBa+XJkkX9teUea1H5h3SZZz3B6QFaIz/
-         2bNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678093398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AJHpGiNNnS/iHuhCrLJC3kyZETQwy2cp7ry6pPyZxIQ=;
-        b=JaLkwrEB4d9EHFxNKJFHQx/sZwXl0tzEX6UeFTeSzZMwobhY4IwuBy2OG6u+lrVE/T
-         SbOTz/HtNCU07J5BKikGblNogvilV2tYXIrKWO1J6W/fvZdhvajeFnQvtjuUSqE1L3pd
-         kw9LtG5FQu+zsC30uDf0/5dAOocmNnm8y3bpJUFvy10/0Z9uY+n86HgGsJEy0R/+kR0Z
-         tbtAIwguteMcridoGzy8pYrrZEhjAmts35BSTTx1mkkP9VxWlV+vsVQS+J6xNsp7Snw5
-         RrzJ6+F46i4hg60w6D8FLmYyFS65Y9CyywIWTl/a54ey7j1HFLEfqLoCglHuCZ0z5mPf
-         I94w==
-X-Gm-Message-State: AO0yUKVf5HCLsmB8R0FUT1GittJwcNMA5jnG6BR/RnwPiUjeyORL1914
-        O/B0CxczpI38vyKKF6Rw8swuZA==
-X-Google-Smtp-Source: AK7set87B67sTGmugB4xDggZWu9Lud32vEXYunKTICLonbRHmTLO7JqmrVgjWob32QN9cC5Jy5Nulw==
-X-Received: by 2002:a05:600c:1d24:b0:3da:1f6a:7b36 with SMTP id l36-20020a05600c1d2400b003da1f6a7b36mr8498979wms.0.1678093397987;
-        Mon, 06 Mar 2023 01:03:17 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id p20-20020a05600c205400b003e8dcc67bdesm12966260wmg.30.2023.03.06.01.03.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 01:03:17 -0800 (PST)
-Date:   Mon, 6 Mar 2023 11:03:14 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        with ESMTP id S230022AbjCFJd7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 04:33:59 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF46AB44F;
+        Mon,  6 Mar 2023 01:33:55 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8BBF360C24;
+        Mon,  6 Mar 2023 09:33:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7037C433EF;
+        Mon,  6 Mar 2023 09:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678095234;
+        bh=rSbVlDvA0jl2+1DdaAOATpB+OkCH45l4wsx5jB/wzTY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fAi/3R+QQgtVZ8tI+kiUfYNfcLV+HA9q6LUDYpqvhhMtP8mbasNUF0eKSDF8AmiUy
+         DOKGbmAoESXz7sYqeVmrbpa6o/fP3ziYt29zZFt4xXPJp/bD+Sbi1emB64/U48nGKp
+         i1BDPW6iZHlIpnHry6dVwpp9VjCr3ixaezuIs+pmf5fSCgsB/7aci5dKRoO2rKxwVN
+         AxsbTCfPDmNeCACZpQ/xmsm6A7Wx7f8OoV5DIPtqrmXOEhdlSe9E9p7wHlh/J2lv6d
+         yUr9laRp93UNN3PGd/cLp40htMU55q20PUw/pjAs6clh0Xc/pVY90pC+iElgCVGxNs
+         cjC8SyuqRN/tA==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1pZ7Eo-0003jw-Bk; Mon, 06 Mar 2023 10:34:34 +0100
+Date:   Mon, 6 Mar 2023 10:34:34 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     Johan Hovold <johan+linaro@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
@@ -70,104 +58,39 @@ Cc:     Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 13/23] interconnect: qcom: sm8550: fix registration
  race
-Message-ID: <ZAWsUrlrOfmmNBy3@linaro.org>
+Message-ID: <ZAWzqtWt5yBlYpQU@hovoldconsulting.com>
 References: <20230306075651.2449-1-johan+linaro@kernel.org>
  <20230306075651.2449-14-johan+linaro@kernel.org>
+ <ZAWsUrlrOfmmNBy3@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230306075651.2449-14-johan+linaro@kernel.org>
+In-Reply-To: <ZAWsUrlrOfmmNBy3@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 23-03-06 08:56:41, Johan Hovold wrote:
-> The current interconnect provider registration interface is inherently
-> racy as nodes are not added until the after adding the provider. This
-> can specifically cause racing DT lookups to fail.
+On Mon, Mar 06, 2023 at 11:03:14AM +0200, Abel Vesa wrote:
+> On 23-03-06 08:56:41, Johan Hovold wrote:
+> > The current interconnect provider registration interface is inherently
+> > racy as nodes are not added until the after adding the provider. This
+> > can specifically cause racing DT lookups to fail.
+> > 
+> > Switch to using the new API where the provider is not registered until
+> > after it has been fully initialised.
+> > 
+> > Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
+> > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> > ---
 > 
-> Switch to using the new API where the provider is not registered until
-> after it has been fully initialised.
-> 
-> Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
-> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
+> Any changes since v1 or is it just a resend? 
 
-Any changes since v1 or is it just a resend? 
+Please see the cover letter:
 
->  drivers/interconnect/qcom/sm8550.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/interconnect/qcom/sm8550.c b/drivers/interconnect/qcom/sm8550.c
-> index 54fa027ab961..7ab492ca8fe0 100644
-> --- a/drivers/interconnect/qcom/sm8550.c
-> +++ b/drivers/interconnect/qcom/sm8550.c
-> @@ -2197,9 +2197,10 @@ static int qnoc_probe(struct platform_device *pdev)
->  	provider->pre_aggregate = qcom_icc_pre_aggregate;
->  	provider->aggregate = qcom_icc_aggregate;
->  	provider->xlate_extended = qcom_icc_xlate_extended;
-> -	INIT_LIST_HEAD(&provider->nodes);
->  	provider->data = data;
->  
-> +	icc_provider_init(provider);
-> +
->  	qp->dev = &pdev->dev;
->  	qp->bcms = desc->bcms;
->  	qp->num_bcms = desc->num_bcms;
-> @@ -2208,12 +2209,6 @@ static int qnoc_probe(struct platform_device *pdev)
->  	if (IS_ERR(qp->voter))
->  		return PTR_ERR(qp->voter);
->  
-> -	ret = icc_provider_add(provider);
-> -	if (ret) {
-> -		dev_err_probe(&pdev->dev, ret,
-> -			      "error adding interconnect provider\n");
-> -		return ret;
-> -	}
->  
->  	for (i = 0; i < qp->num_bcms; i++)
->  		qcom_icc_bcm_init(qp->bcms[i], &pdev->dev);
-> @@ -2227,7 +2222,7 @@ static int qnoc_probe(struct platform_device *pdev)
->  		node = icc_node_create(qnodes[i]->id);
->  		if (IS_ERR(node)) {
->  			ret = PTR_ERR(node);
-> -			goto err;
-> +			goto err_remove_nodes;
->  		}
->  
->  		node->name = qnodes[i]->name;
-> @@ -2241,12 +2236,17 @@ static int qnoc_probe(struct platform_device *pdev)
->  	}
->  	data->num_nodes = num_nodes;
->  
-> +	ret = icc_provider_register(provider);
-> +	if (ret)
-> +		goto err_remove_nodes;
-> +
->  	platform_set_drvdata(pdev, qp);
->  
->  	return 0;
-> -err:
-> +
-> +err_remove_nodes:
->  	icc_nodes_remove(provider);
-> -	icc_provider_del(provider);
-> +
->  	return ret;
->  }
->  
-> @@ -2254,8 +2254,8 @@ static int qnoc_remove(struct platform_device *pdev)
->  {
->  	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
->  
-> +	icc_provider_deregister(&qp->provider);
->  	icc_nodes_remove(&qp->provider);
-> -	icc_provider_del(&qp->provider);
->  
->  	return 0;
->  }
-> -- 
-> 2.39.2
-> 
+	https://lore.kernel.org/lkml/20230306075651.2449-1-johan+linaro@kernel.org/
+
+Only the first patch of the series was updated in v2.
+
+Johan
