@@ -2,133 +2,129 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E52EBC6FD1C
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Mar 2023 21:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C20C678DB
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 09:21:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbjCFV2I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Mar 2023 16:28:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
+        id S230341AbjCGJVu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Mar 2023 04:21:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbjCFV2G (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Mar 2023 16:28:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 137A22057B;
-        Mon,  6 Mar 2023 13:28:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A8056B81135;
-        Mon,  6 Mar 2023 21:28:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA102C433A1;
-        Mon,  6 Mar 2023 21:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678138079;
-        bh=OPscq8j4gixbBXyx4rYRiqcOtug0pajWX+t3LwK0uPE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PsQMxWTNyqmjmOyLA6f4aBxEbqjXLjGnQvTHUoE4f6zTvuB0TEbKKoow7O0Bl6lqg
-         gYnqSQeBrO1rJ29HWmn+yvMly1eyD9pru67Ei5XhYPhftQR6cu4eDx5Y2uE63s5KIt
-         s3zsZ4FOYFUkiy7gTDlGyR2DhiXrF2ddTXSUbWfDk94k+YWjCuHsJXdkT6LOyMmw3/
-         OBMkdU9AXHfmpJlFP0bcKZdHq+IuioXEaW+oivplUHjLiBGkJeMjuBmdvu2rgkgh5Q
-         WG7SALFgV1PPXh9MrSvGscl5OUXQrlqRl1aL8dYkfSYDeEvI72A6J1sMyBNHxpS7Fw
-         LxAw7Z0FF0jTA==
-Date:   Mon, 6 Mar 2023 21:27:32 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc:     miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        jic23@kernel.org, tudor.ambarus@microchip.com, pratyush@kernel.org,
-        Sanju.Mehta@amd.com, chin-ting_kuo@aspeedtech.com, clg@kaod.org,
-        kdasu.kdev@gmail.com, f.fainelli@gmail.com, rjui@broadcom.com,
-        sbranden@broadcom.com, eajames@linux.ibm.com, olteanv@gmail.com,
-        han.xu@nxp.com, john.garry@huawei.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, narmstrong@baylibre.com,
-        khilman@baylibre.com, matthias.bgg@gmail.com, haibo.chen@nxp.com,
-        linus.walleij@linaro.org, daniel@zonque.org,
-        haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-        agross@kernel.org, bjorn.andersson@linaro.org, heiko@sntech.de,
-        krzysztof.kozlowski@linaro.org, andi@etezian.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
-        masahisa.kojima@linaro.org, jaswinder.singh@linaro.org,
-        rostedt@goodmis.org, mingo@redhat.com, l.stelmach@samsung.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, alex.aring@gmail.com, stefan@datenfreihafen.org,
-        kvalo@kernel.org, james.schulman@cirrus.com,
-        david.rhodes@cirrus.com, tanureal@opensource.cirrus.com,
-        rf@opensource.cirrus.com, perex@perex.cz, tiwai@suse.com,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
-        oss@buserror.net, windhl@126.com, yangyingliang@huawei.com,
-        william.zhang@broadcom.com, kursad.oney@broadcom.com,
-        jonas.gorski@gmail.com, anand.gore@broadcom.com, rafal@milecki.pl,
-        git@amd.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@jms.id.au, andrew@aj.id.au,
-        radu_nicolae.pirea@upb.ro, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, fancer.lancer@gmail.com,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-        venture@google.com, yuenn@google.com, benjaminfair@google.com,
-        yogeshgaur.83@gmail.com, konrad.dybcio@somainline.org,
-        alim.akhtar@samsung.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        michal.simek@amd.com, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-mtd@lists.infradead.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        michael@walle.cc, palmer@dabbelt.com,
-        linux-riscv@lists.infradead.org, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
-        amitrkcian2002@gmail.com, Dhruva Gole <d-gole@ti.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>
-Subject: Re: [PATCH V5 01/15] spi: Replace all spi->chip_select and
- spi->cs_gpiod references with function call
-Message-ID: <00684da3-520f-459d-b6bd-55e728e93ebf@sirena.org.uk>
-References: <20230306172109.595464-1-amit.kumar-mahapatra@amd.com>
- <20230306172109.595464-2-amit.kumar-mahapatra@amd.com>
+        with ESMTP id S229679AbjCGJVp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 04:21:45 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633485372A
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Mar 2023 01:21:19 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id k10so25671863edk.13
+        for <linux-tegra@vger.kernel.org>; Tue, 07 Mar 2023 01:21:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678180878;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ImknzI3+zNXeJrlCA1icMSZ6b0iyjrhhLI3KblQlRyU=;
+        b=O+VlgSxtnovXaHyjEVIV8KV4l+J3jKScOqh1e165d5VfDiFCAHHgiwejOdiNgeLx0m
+         pa2FEhdQ1dzivAuXUTujmVmrR7WgoTvYBpfU5EF8AhbzxOIHNCMqNziQeQXlsG5BnCpB
+         G1IWqJT4rySWpHTpwugW8CX3cwxhlaI4ihhEVfncQXuT5UFoynyXvSvUCQm7v3C0eKQY
+         ekXmoIqiPNZrK2A6FMlDTCfC4GeYbTQedGx50meYT9O0RHoOmWB4AMVwwssOAyDQ7icI
+         io9GYUHX4xQh8cUJmIR+Nm+DA5r3jBueMVmK39FdFF3jtjNVmG8KMGmemJ7SaPNa8Xx7
+         s+KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678180878;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ImknzI3+zNXeJrlCA1icMSZ6b0iyjrhhLI3KblQlRyU=;
+        b=WI3k2ChG+tmAqSCUum1ixQ34r50xNgdyDKr1kBCCgtiIhVUmw0w7JGfe85LxVdc61w
+         q4a5Q/q4Af2yYmYlThkTyns/SQ18CLyJ9KFz9Cfyn8ENEtWAtistttO2U7hxh/PPoB3Q
+         H84HZXy7KEcwNC3SWLrIsaVx+fm6p1zS/p1dTqhmZYzQ6G7IObtImbA/iZ21/1A2TTS9
+         0r+IQOPdzXirJdxP20l0g9GNG2EFeev9M8g7gzLzX7Mh+8CT/4VZTP0CGvdLJFO5lhk3
+         G3NmUeW9RHajfRuTaAGOPEW8kUqcJEUKXKaW+RxVxIP5U4UUzyqmp5Kbv5de1gDLZPxV
+         LZsA==
+X-Gm-Message-State: AO0yUKV3CWfpJTlmv26Syr+kWf+AjQNn9ZLywQOYjBu3kOoLqbUXKi2E
+        P1kbxoYEA0PU4OstD8zJurl4vw==
+X-Google-Smtp-Source: AK7set/8q1Dpn1fKoXGTnw4DYza29NwMw6JpXmdx/lsPqm8Z5LVvZcCJ0RLSFQYk3xrmhvSUrtjLLA==
+X-Received: by 2002:a17:906:ce34:b0:8e0:2887:8263 with SMTP id sd20-20020a170906ce3400b008e028878263mr13454388ejb.39.1678180877879;
+        Tue, 07 Mar 2023 01:21:17 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:5310:35c7:6f9e:2cd3? ([2a02:810d:15c0:828:5310:35c7:6f9e:2cd3])
+        by smtp.gmail.com with ESMTPSA id v7-20020a170906338700b008e51a1fd7bfsm5843951eja.172.2023.03.07.01.21.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Mar 2023 01:21:17 -0800 (PST)
+Message-ID: <87271ce2-8db4-187f-4bb6-31a7ef687557@linaro.org>
+Date:   Tue, 7 Mar 2023 10:21:15 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RfYQ7lwbbyjtjTUN"
-Content-Disposition: inline
-In-Reply-To: <20230306172109.595464-2-amit.kumar-mahapatra@amd.com>
-X-Cookie: teamwork, n.:
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [Patch v2 0/9] Tegra234 Memory interconnect support
+Content-Language: en-US
+To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lpieralisi@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
+        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
+References: <20230220140559.28289-1-sumitg@nvidia.com>
+ <c8cf2435-8b18-7af7-c751-267021142f5a@linaro.org>
+ <22525720-9def-27de-cf41-8fd8165d6e01@linaro.org>
+ <b1a98a10-cc8d-e2f1-f234-c4804763b6ab@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <b1a98a10-cc8d-e2f1-f234-c4804763b6ab@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 06/03/2023 21:43, Sumit Gupta wrote:
+> 
+> 
+> On 06/03/23 20:37, Krzysztof Kozlowski wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 06/03/2023 16:05, Krzysztof Kozlowski wrote:
+>>> On 20/02/2023 15:05, Sumit Gupta wrote:
+>>>> This patch series adds memory interconnect support for Tegra234 SoC.
+>>>> It is used to dynamically scale DRAM Frequency as per the bandwidth
+>>>> requests from different Memory Controller (MC) clients.
+>>>> MC Clients use ICC Framework's icc_set_bw() api to dynamically request
+>>>> for the DRAM bandwidth (BW). As per path, the request will be routed
+>>>> from MC to the EMC driver. MC driver passes the request info like the
+>>>> Client ID, type, and frequency request info to the BPMP-FW which will
+>>>> set the final DRAM freq considering all exisiting requests.
+>>>>
+>>>> MC and EMC are the ICC providers. Nodes in path for a request will be:
+>>>>       Client[1-n] -> MC -> EMC -> EMEM/DRAM
+>>>>
+>>>> The patch series also adds interconnect support in below client drivers:
+>>>> 1) CPUFREQ driver for scaling bandwidth with CPU frequency. For that,
+>>>>     added per cluster OPP table which will be used in the CPUFREQ driver
+>>>>     by requesting the minimum BW respective to the given CPU frequency in
+>>>>     the OPP table of given cluster.
+>>>> 2) PCIE driver to request BW required for different modes.
+>>>
+>>> No dependencies or ordering written, so I am free to take memory
+>>> controller bits, I assume.
+>>
+>> And not.. NAK, since you decided to ignore my comments. Really, we do
+>> not have time for such useless ping pong.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Hi Krzysztof,
+> 
+> I tried to address the comments given during review of v1 in v2.
+> I am sorry if in case I missed any suggestion. Please let me know so I 
+> can incorporate that.
+> 
 
---RfYQ7lwbbyjtjTUN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I never got any feedback and my first glance suggested nothing changed.
+Let me check again.
 
-On Mon, Mar 06, 2023 at 10:50:55PM +0530, Amit Kumar Mahapatra wrote:
+Best regards,
+Krzysztof
 
->  drivers/spi/spi-omap-100k.c       |  2 +-
-
-This is also not against -rc1, this file was removed in bcace9c4c9270292
-("spi: remove omap 100K driver").
-
---RfYQ7lwbbyjtjTUN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQGWsMACgkQJNaLcl1U
-h9C7Fwf+MqZVyi3PlI6YIKPDaaFyWnmjZtweIjxd+4E2eEmTZq9MbcCHS/W56cUk
-TPWusPOjIa33XHC376rZpTYGqNTRjvOo8UwttJFAFQFbtMNui8BfC1bnrROwoyUE
-AxcOxhCAi3r1P0nRIkS126TepySOo1qXD1gf6YUQydf6/iDxzq7VddVjfqtt3dPF
-6rnt0G5xA5O0Z75Kc76h4ePCX7kXMqJhJSaJf7HFcGwD2P5HIeRcRyucD2q4Ddnr
-KzkdziV90/s6X7Q9cfiA620jfm8jVdqqN3yC+JX/L2Iu8kpeefFFgD49yG2aMtxv
-zgXP6uMpvQm5g7F9e/wo/JMWhjfh8g==
-=uJRe
------END PGP SIGNATURE-----
-
---RfYQ7lwbbyjtjTUN--
