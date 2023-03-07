@@ -2,109 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AD3C678DB
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 11:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD17FC6FD1B
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 11:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbjCGLcj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Mar 2023 06:32:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59768 "EHLO
+        id S230453AbjCGL73 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Mar 2023 06:59:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbjCGLch (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 06:32:37 -0500
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A52251CBB;
-        Tue,  7 Mar 2023 03:31:59 -0800 (PST)
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3277tv94022730;
-        Tue, 7 Mar 2023 05:30:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=8Gw+hMjGj1I9H2fg3ljNbnH8D9RaMuxw0VHL6fBZJv4=;
- b=RLWayBHYAC3WRv9HPpNTERg+r3oTqRoc1PhTaiH7YBIi+g27pmBKE71aOiAvS27S3N07
- +QHcy5hOfjEbFGHVcXXvt9qIN3WGOS3Bqlri7NiCAQhOhMOgUcVD/jtynzPS4OAO8V4x
- y0soTVGFyQ8h0rjtQN8pahOoaJaEwQF+b1XRYG7PlC2fH/BI33BVKPohDXEuq+sfwinQ
- st9ocuKEdqcae/7gnnLT1gkEC3NHxNf2+QnaoIAl+yku5tDVskg+wvMD2woy7I197Y8b
- atlA+qMh5usVUKVHiqBqRp3egA8oAV2JdrRPRQRVEwGGY4zU2uz2Qv/12AeFgHJufFHL 1A== 
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3p4497427y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Mar 2023 05:30:19 -0600
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.25; Tue, 7 Mar
- 2023 05:30:16 -0600
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1118.25 via Frontend Transport; Tue, 7 Mar 2023 05:30:16 -0600
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id C72ED11D3;
-        Tue,  7 Mar 2023 11:30:16 +0000 (UTC)
-Date:   Tue, 7 Mar 2023 11:30:16 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-CC:     <perex@perex.cz>, <tiwai@suse.com>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <james.schulman@cirrus.com>,
-        <david.rhodes@cirrus.com>, <tanureal@opensource.cirrus.com>,
-        <rf@opensource.cirrus.com>, <oder_chiou@realtek.com>,
-        <shengjiu.wang@gmail.com>, <Xiubo.Lee@gmail.com>,
-        <festevam@gmail.com>, <nicoleotsuka@gmail.com>,
-        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
-        <kernel@pengutronix.de>, <linux-imx@nxp.com>,
-        <cezary.rojewski@intel.com>,
-        <pierre-louis.bossart@linux.intel.com>,
-        <peter.ujfalusi@linux.intel.com>,
-        <yung-chuan.liao@linux.intel.com>,
-        <ranjani.sridharan@linux.intel.com>,
-        <kai.vehmanen@linux.intel.com>, <matthias.bgg@gmail.com>,
-        <srinivas.kandagatla@linaro.org>, <bgoswami@quicinc.com>,
-        <vkoul@kernel.org>, <daniel.baluta@nxp.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <jarkko.nikula@bitmer.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linuxppc-dev@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <sound-open-firmware@alsa-project.org>,
-        <linux-tegra@vger.kernel.org>, <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: do not include pm_runtime.h if not used
-Message-ID: <20230307113016.GS68926@ediswmail.ad.cirrus.com>
-References: <20230307103022.1007420-1-claudiu.beznea@microchip.com>
+        with ESMTP id S230197AbjCGL72 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 06:59:28 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8604F311FB
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Mar 2023 03:59:27 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZVyL-0006bk-F0; Tue, 07 Mar 2023 12:59:13 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZVyK-002TGM-Cw; Tue, 07 Mar 2023 12:59:12 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pZVyJ-002yk8-11; Tue, 07 Mar 2023 12:59:11 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 24/31] phy: tegra: xusb: Convert to platform remove callback returning void
+Date:   Tue,  7 Mar 2023 12:58:53 +0100
+Message-Id: <20230307115900.2293120-25-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230307115900.2293120-1-u.kleine-koenig@pengutronix.de>
+References: <20230307115900.2293120-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230307103022.1007420-1-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-GUID: 8AhJH_Etb0kWl8-U4QDOKiyr044l28y7
-X-Proofpoint-ORIG-GUID: 8AhJH_Etb0kWl8-U4QDOKiyr044l28y7
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1837; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=E3uo38jywnktvSNvAGRANsI8kEJhkfQ9Ly00U4vBCFY=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkBybhMO4YTx5uCCpzSiO56pIYF4a85pRbL/tYG WkTAGgRW+CJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZAcm4QAKCRDB/BR4rcrs CRSdB/94UtxtudX+pBQ3YkBMzxE5Ip8dBJfer2GWIFb6V8yJcGdVWaKYm43IuF+0Es5Bp6vg0Ig yxI7dfHdogkmACUNUfKWQLZp4it5ry39d8DjtA2nNjO7rDkGQXvymmzNisOayVmB/UpOuage/Am CBiREKl3y1lnrlUcWN+NdSZ2kJTEiIha6HN3fgSOgmG2on75mWlnyG+DXgs/ew551npdRwlUdqA 7GmfSJcy01zov8C2JQZe3aK4+fVT7S++FCUesI+rMGAY/w4GoMf0G9lowbOSD/ztvk5vaNwNeDo GM+Ghpj2OzBHVyP+1q1OfZJJMlLKWfolKyWEeD7plyA56FSB
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 12:30:22PM +0200, Claudiu Beznea wrote:
-> Do not include pm_runtime.h header in files where runtime PM support is
-> not implemented.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  sound/soc/codecs/cs35l45.h                                | 1 -
-> diff --git a/sound/soc/codecs/cs35l45.h b/sound/soc/codecs/cs35l45.h
-> index 53fe9d2b7b15..0555702eac03 100644
-> --- a/sound/soc/codecs/cs35l45.h
-> +++ b/sound/soc/codecs/cs35l45.h
-> @@ -11,7 +11,6 @@
->  #ifndef CS35L45_H
->  #define CS35L45_H
->  
-> -#include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-cs35l45 does already make use of some functions from that header,
-and more support is in the process of being upstreamed. So this
-part should be dropped.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Thanks,
-Charles
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/phy/tegra/xusb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 78045bd6c214..ec335668563d 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -1267,7 +1267,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static int tegra_xusb_padctl_remove(struct platform_device *pdev)
++static void tegra_xusb_padctl_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_xusb_padctl *padctl = platform_get_drvdata(pdev);
+ 	int err;
+@@ -1285,8 +1285,6 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
+ 
+ 	padctl->soc->ops->remove(padctl);
+-
+-	return 0;
+ }
+ 
+ static __maybe_unused int tegra_xusb_padctl_suspend_noirq(struct device *dev)
+@@ -1321,7 +1319,7 @@ static struct platform_driver tegra_xusb_padctl_driver = {
+ 		.pm = &tegra_xusb_padctl_pm_ops,
+ 	},
+ 	.probe = tegra_xusb_padctl_probe,
+-	.remove = tegra_xusb_padctl_remove,
++	.remove_new = tegra_xusb_padctl_remove,
+ };
+ module_platform_driver(tegra_xusb_padctl_driver);
+ 
+-- 
+2.39.1
+
