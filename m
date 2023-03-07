@@ -2,227 +2,216 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6710DC678D4
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 12:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB745C678D5
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 16:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230338AbjCGMAN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Mar 2023 07:00:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42708 "EHLO
+        id S229875AbjCGQng (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Mar 2023 11:43:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229682AbjCGMAM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 07:00:12 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E044233DC
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Mar 2023 04:00:11 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZVyN-0006T7-KM; Tue, 07 Mar 2023 12:59:15 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZVyF-002TEW-9a; Tue, 07 Mar 2023 12:59:07 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZVyE-002yig-5U; Tue, 07 Mar 2023 12:59:06 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Icenowy Zheng <uwu@icenowy.me>,
-        Justin Chen <justinpopo6@gmail.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Pratyush Yadav <p.yadav@ti.com>,
-        Rahul T R <r-ravikumar@ti.com>,
-        Swapnil Jakhade <sjakhade@cadence.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Liu Ying <victor.liu@nxp.com>, Yuan Can <yuancan@huawei.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        JC Kuo <jckuo@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Matt Ranostay <mranostay@ti.com>,
-        Sinthu Raja <sinthu.raja@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tanmay Patil <t-patil@ti.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Lv Ruyi <lv.ruyi@zte.com.cn>
-Cc:     linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        kernel@pengutronix.de,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 00/31] phy: Convert to platform remove callback returning void
-Date:   Tue,  7 Mar 2023 12:58:29 +0100
-Message-Id: <20230307115900.2293120-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.1
+        with ESMTP id S229705AbjCGQnM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 11:43:12 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2618D1F933
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Mar 2023 08:40:40 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:614d:21b0:703:d0f9])
+        by albert.telenet-ops.be with bizsmtp
+        id VUg82900A3mNwr406Ug80J; Tue, 07 Mar 2023 17:40:24 +0100
+Received: from geert (helo=localhost)
+        by ramsan.of.borg with local-esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pZaMC-00BCRZ-9r;
+        Tue, 07 Mar 2023 17:40:08 +0100
+Date:   Tue, 7 Mar 2023 17:40:08 +0100 (CET)
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Guo Ren <guoren@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Kajetan Puchalski <kajetan.puchalski@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>, linux@armlinux.org.uk,
+        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 07/51] cpuidle,psci: Push RCU-idle into driver
+In-Reply-To: <20230112195539.760296658@infradead.org>
+Message-ID: <ff338b9f-4ab0-741b-26ea-7b7351da156@linux-m68k.org>
+References: <20230112194314.845371875@infradead.org> <20230112195539.760296658@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5818; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=MYs5JN8sdLbdhFqX1o8FkbSoO7sfiFpKaRQbsKFPJqQ=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkByZ3qXmeqAA+C0xt3Tbnmc2ihyUokkXi7q3YR NmSTiOqsGOJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZAcmdwAKCRDB/BR4rcrs CQWGB/411PW1y2WnaZUJlgvVPVtj4QZujEz8AqlBRHTptyhx5CaQGlPe5Xdx6F1Q5b+kPwyAdD9 /HAdHufSEHfPbZGDUn4HLokWRJ8EGqimHminkBYxmUvdoH5XYFmaQwZ6a88+sD124laNpghG7TD rX6oqjXAt4PTE/fQrGyqD/tWwDxLRZpczwfFESmWk28IPcjCEOQQP+2oSas8Mef2Oc8JJQWBCvl YDEq69SPXLHguNB1ZudTCSbi4KAzJ9LHrwEWqumQjr2K3Du5Gg91o9+6EaSl2YQGu5XnPFgmqQ3 cWA/IVc9vOXlx2ruwlHvEB1wcclx//PSUSpKGg2356dPcYJG
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+ 	Hoi Peter,
 
-this patch series adapts the platform drivers below drivers/phy to use the
-.remove_new() callback. Compared to the traditional .remove() callback
-.remove_new() returns no value. This is a good thing because the driver core
-doesn't (and cannot) cope for errors during remove. The only effect of a
-non-zero return value in .remove() is that the driver core emits a warning. The
-device is removed anyhow and an early return from .remove() usually yields a
-resource leak.
+(reduced the insane CC list)
 
-By changing the remove callback to return void driver authors cannot
-reasonably assume any more that there is some kind of cleanup later.
+On Thu, 12 Jan 2023, Peter Zijlstra wrote:
+> Doing RCU-idle outside the driver, only to then temporarily enable it
+> again, at least twice, before going idle is daft.
+>
+> Notably once implicitly through the cpu_pm_*() calls and once
+> explicitly doing ct_irq_*_irqon().
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Guo Ren <guoren@kernel.org>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-All drivers in drivers/spmi returned zero unconditionally in their remove
-callback, so they could all be converted trivially to .remove_new().
+Thanks for your patch, which is now commit e038f7b8028a1d1b ("cpuidle,
+psci: Push RCU-idle into driver") in v6.3-rc1.
 
-Note that this series depends on commit 5c5a7680e67b ("platform: Provide
-a remove callback that returns no value") which is included in v6.3-rc1.
+I have bisected a PSCI checker regression on Renesas R-Car Gen3/4 SoCs
+to commit a01353cf1896ea5b ("cpuidle: Fix ct_idle_*() usage") (the 7
+commits before that do not compile):
 
-Best regards
-Uwe
+psci_checker: PSCI checker started using 2 CPUs
+psci_checker: Starting hotplug tests
+psci_checker: Trying to turn off and on again all CPUs
+psci: CPU0 killed (polled 0 ms)
+Detected PIPT I-cache on CPU0
+CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
+psci_checker: Trying to turn off and on again group 0 (CPUs 0-1)
+psci: CPU0 killed (polled 0 ms)
+Detected PIPT I-cache on CPU0
+CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
+psci_checker: Hotplug tests passed OK
+psci_checker: Starting suspend tests (10 cycles per state)
+psci_checker: CPU 0 entering suspend cycles, states 1 through 1
+psci_checker: CPU 1 entering suspend cycles, states 1 through 1
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:141 ct_kernel_exit.constprop.0+0xd8/0xf4
+Modules linked in:
+CPU: 1 PID: 177 Comm: psci_suspend_te Not tainted 6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
+Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : ct_kernel_exit.constprop.0+0xd8/0xf4
+lr : ct_kernel_exit.constprop.0+0xc8/0xf4
+sp : ffffffc00b73bd30
+x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
+x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+x23: ffffff800981e140 x22: 0000000000000001 x21: 0000000000010000
+x20: ffffffc0086be1d8 x19: ffffff807fbac070 x18: 0000000000000000
+x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
+x14: ffffffc00895be78 x13: 0000000000000001 x12: 0000000000000000
+x11: 00000000000001aa x10: 00000000ffffffea x9 : 000000000000000f
+x8 : ffffffc00b73bb68 x7 : ffffffc00b73be18 x6 : ffffffc00815ff34
+x5 : ffffffc00a6a0c30 x4 : ffffffc00801ce00 x3 : 0000000000000000
+x2 : ffffffc008dc3070 x1 : ffffffc008dc3078 x0 : 0000000004208040
+Call trace:
+  ct_kernel_exit.constprop.0+0xd8/0xf4
+  ct_idle_enter+0x18/0x20
+  psci_enter_idle_state+0xa4/0xfc
+  suspend_test_thread+0x238/0x2f0
+  kthread+0xd8/0xe8
+  ret_from_fork+0x10/0x20
+irq event stamp: 0
+hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last disabled at (0): [<0000000000000000>] 0x0
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:186 ct_kernel_enter.constprop.0+0x78/0xa4
+Modules linked in:
+CPU: 1 PID: 177 Comm: psci_suspend_te Tainted: G        W          6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
+Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : ct_kernel_enter.constprop.0+0x78/0xa4
+lr : ct_kernel_enter.constprop.0+0x68/0xa4
+sp : ffffffc00b73bd30
+x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
+x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+x23: ffffff800981e140 x22: 0000000000000001 x21: 00000000ffffffa1
+x20: ffffffc0086be1d8 x19: 00000000000000c0 x18: 0000000000000000
+x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
+x14: ffffffc00895be78 x13: ffffff800e325180 x12: ffffffc076de9000
+x11: 0000000034d4d91d x10: 0000000000000008 x9 : 0000000000001000
+x8 : ffffffc008012800 x7 : 0000000000000000 x6 : ffffff807fbac070
+x5 : ffffffc008dc3070 x4 : 0000000000000000 x3 : 000000000001a9fc
+x2 : 0000000000000003 x1 : ffffffc008dc3070 x0 : 0000000004208040
+Call trace:
+  ct_kernel_enter.constprop.0+0x78/0xa4
+  ct_idle_exit+0x18/0x38
+  psci_enter_idle_state+0xdc/0xfc
+  suspend_test_thread+0x238/0x2f0
+  kthread+0xd8/0xe8
+  ret_from_fork+0x10/0x20
+irq event stamp: 0
+hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
+softirqs last disabled at (0): [<0000000000000000>] 0x0
+---[ end trace 0000000000000000 ]---
+psci_checker: Failed to suspend CPU 1: error -1 (requested state 1, cycle 0)
+psci_checker: CPU 0 suspend test results: success 0, shallow states 10, errors 0
+mmcblk0rpmb: mmc0:0001 BGSD3R 4.00 MiB, chardev (243:0)
+psci_checker: CPU 1 suspend test results: success 0, shallow states 9, errors 1
+psci_checker: 1 error(s) encountered in suspend tests
+psci_checker: PSCI checker completed
 
-Uwe Kleine-König (31):
-  phy: allwinner: phy-sun4i-usb: Convert to platform remove callback
-    returning void
-  phy: broadcom: phy-brcm-usb: Convert to platform remove callback
-    returning void
-  phy: cadence: cdns-dphy: Convert to platform remove callback returning
-    void
-  phy: cadence: phy-cadence-sierra: Convert to platform remove callback
-    returning void
-  phy: cadence: phy-cadence-torrent: Convert to platform remove callback
-    returning void
-  phy: freescale: phy-fsl-imx8qm-lvds-phy: Convert to platform remove
-    callback returning void
-  phy: intel: phy-intel-lgm-combo: Convert to platform remove callback
-    returning void
-  phy: mediatek: phy-mtk-mipi-dsi: Convert to platform remove callback
-    returning void
-  phy: motorola: phy-cpcap-usb: Convert to platform remove callback
-    returning void
-  phy: motorola: phy-mapphone-mdm6600: Convert to platform remove
-    callback returning void
-  phy: phy-lgm-usb: Convert to platform remove callback returning void
-  phy: qualcomm: phy-qcom-apq8064-sata: Convert to platform remove
-    callback returning void
-  phy: qualcomm: phy-qcom-eusb2-repeater: Convert to platform remove
-    callback returning void
-  phy: qualcomm: phy-qcom-ipq806x-sata: Convert to platform remove
-    callback returning void
-  phy: renesas: phy-rcar-gen3-pcie: Convert to platform remove callback
-    returning void
-  phy: renesas: phy-rcar-gen3-usb2: Convert to platform remove callback
-    returning void
-  phy: renesas: phy-rcar-gen3-usb3: Convert to platform remove callback
-    returning void
-  phy: renesas: r8a779f0-ether-serdes: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-inno-csidphy: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-inno-dsidphy: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-inno-hdmi: Convert to platform remove
-    callback returning void
-  phy: rockchip: phy-rockchip-typec: Convert to platform remove callback
-    returning void
-  phy: st: phy-stm32-usbphyc: Convert to platform remove callback
-    returning void
-  phy: tegra: xusb: Convert to platform remove callback returning void
-  phy: ti: phy-am654-serdes: Convert to platform remove callback
-    returning void
-  phy: ti: phy-da8xx-usb: Convert to platform remove callback returning
-    void
-  phy: ti: phy-dm816x-usb: Convert to platform remove callback returning
-    void
-  phy: ti: phy-j721e-wiz: Convert to platform remove callback returning
-    void
-  phy: ti: phy-omap-usb2: Convert to platform remove callback returning
-    void
-  phy: ti: phy-ti-pipe3: Convert to platform remove callback returning
-    void
-  phy: ti: phy-twl4030-usb: Convert to platform remove callback
-    returning void
+> ---
+> drivers/cpuidle/cpuidle-psci.c |    9 +++++----
+> 1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> --- a/drivers/cpuidle/cpuidle-psci.c
+> +++ b/drivers/cpuidle/cpuidle-psci.c
+> @@ -69,12 +69,12 @@ static int __psci_enter_domain_idle_stat
+> 		return -1;
+>
+> 	/* Do runtime PM to manage a hierarchical CPU toplogy. */
+> -	ct_irq_enter_irqson();
+> 	if (s2idle)
+> 		dev_pm_genpd_suspend(pd_dev);
+> 	else
+> 		pm_runtime_put_sync_suspend(pd_dev);
+> -	ct_irq_exit_irqson();
+> +
+> +	ct_idle_enter();
+>
+> 	state = psci_get_domain_state();
+> 	if (!state)
+> @@ -82,12 +82,12 @@ static int __psci_enter_domain_idle_stat
+>
+> 	ret = psci_cpu_suspend_enter(state) ? -1 : idx;
+>
+> -	ct_irq_enter_irqson();
+> +	ct_idle_exit();
+> +
+> 	if (s2idle)
+> 		dev_pm_genpd_resume(pd_dev);
+> 	else
+> 		pm_runtime_get_sync(pd_dev);
+> -	ct_irq_exit_irqson();
+>
+> 	cpu_pm_exit();
+>
+> @@ -240,6 +240,7 @@ static int psci_dt_cpu_init_topology(str
+> 	 * of a shared state for the domain, assumes the domain states are all
+> 	 * deeper states.
+> 	 */
+> +	drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
+> 	drv->states[state_count - 1].enter = psci_enter_domain_idle_state;
+> 	drv->states[state_count - 1].enter_s2idle = psci_enter_s2idle_domain_idle_state;
+> 	psci_cpuidle_use_cpuhp = true;
 
- drivers/phy/allwinner/phy-sun4i-usb.c            | 6 ++----
- drivers/phy/broadcom/phy-brcm-usb.c              | 6 ++----
- drivers/phy/cadence/cdns-dphy.c                  | 6 ++----
- drivers/phy/cadence/phy-cadence-sierra.c         | 6 ++----
- drivers/phy/cadence/phy-cadence-torrent.c        | 6 ++----
- drivers/phy/freescale/phy-fsl-imx8qm-lvds-phy.c  | 6 ++----
- drivers/phy/intel/phy-intel-lgm-combo.c          | 5 ++---
- drivers/phy/mediatek/phy-mtk-mipi-dsi.c          | 5 ++---
- drivers/phy/motorola/phy-cpcap-usb.c             | 6 ++----
- drivers/phy/motorola/phy-mapphone-mdm6600.c      | 6 ++----
- drivers/phy/phy-lgm-usb.c                        | 6 ++----
- drivers/phy/qualcomm/phy-qcom-apq8064-sata.c     | 6 ++----
- drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c   | 8 +++-----
- drivers/phy/qualcomm/phy-qcom-ipq806x-sata.c     | 6 ++----
- drivers/phy/renesas/phy-rcar-gen3-pcie.c         | 6 ++----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c         | 6 ++----
- drivers/phy/renesas/phy-rcar-gen3-usb3.c         | 6 ++----
- drivers/phy/renesas/r8a779f0-ether-serdes.c      | 6 ++----
- drivers/phy/rockchip/phy-rockchip-inno-csidphy.c | 6 ++----
- drivers/phy/rockchip/phy-rockchip-inno-dsidphy.c | 6 ++----
- drivers/phy/rockchip/phy-rockchip-inno-hdmi.c    | 6 ++----
- drivers/phy/rockchip/phy-rockchip-typec.c        | 6 ++----
- drivers/phy/st/phy-stm32-usbphyc.c               | 6 ++----
- drivers/phy/tegra/xusb.c                         | 6 ++----
- drivers/phy/ti/phy-am654-serdes.c                | 6 ++----
- drivers/phy/ti/phy-da8xx-usb.c                   | 6 ++----
- drivers/phy/ti/phy-dm816x-usb.c                  | 6 ++----
- drivers/phy/ti/phy-j721e-wiz.c                   | 6 ++----
- drivers/phy/ti/phy-omap-usb2.c                   | 6 ++----
- drivers/phy/ti/phy-ti-pipe3.c                    | 6 ++----
- drivers/phy/ti/phy-twl4030-usb.c                 | 6 ++----
- 31 files changed, 63 insertions(+), 123 deletions(-)
+Gr{oetje,eeting}s,
 
-base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
--- 
-2.39.1
+ 						Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
