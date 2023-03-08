@@ -2,122 +2,267 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A58C64EC4
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Mar 2023 16:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79544C64EC4
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Mar 2023 17:23:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbjCHQ7D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Mar 2023 11:59:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50966 "EHLO
+        id S230078AbjCHRW7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Mar 2023 12:22:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbjCHQ6k (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Mar 2023 11:58:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C63960A5;
-        Wed,  8 Mar 2023 08:57:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C18E61852;
-        Wed,  8 Mar 2023 16:56:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E1CC433D2;
-        Wed,  8 Mar 2023 16:56:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678294606;
-        bh=mSiziORV5JOTz/dmr0twQJK+pWs676MExklouuLQSu4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TJJX9gQkCIR0opXes4eHqs5uTOE9Y9L7OqpcXEXaCkzPlUyPcnFfIQgJlEiPCW3Lu
-         PpZscyFSSKIlryX5jP9682maJ20mVnI9p8SzClO438O2QWCnSX+BQgty2R0+Hyv5jY
-         /EoOdCdKUtQIB+W9lRqWjC4w/101WiLe9e57NLNbccfUz55fZBMS3avpuGodcfpkyi
-         hak+5qcsgwfnTSjFTUOgmfblvACWaI7ETIoIUG9bcNysnHoJbadxLcVndj82JLs9tu
-         0v1/keyeB2AvlGRn7HHU1CnXTRGLbSSmUv3lRIq2/JcCYc+17KJWsJiEBTmUQrC0v0
-         T93cFl2467BdQ==
-Date:   Wed, 8 Mar 2023 09:56:44 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] gpu: host1x: fix uninitialized variable use
-Message-ID: <20230308165644.GA1181835@dev-arch.thelio-3990X>
-References: <20230127221418.2522612-1-arnd@kernel.org>
- <Y/eULFO4jbivQ679@dev-arch.thelio-3990X>
+        with ESMTP id S229757AbjCHRWa (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Mar 2023 12:22:30 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA15258B5B
+        for <linux-tegra@vger.kernel.org>; Wed,  8 Mar 2023 09:21:44 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so1820730wmb.5
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Mar 2023 09:21:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678296103;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sMBPLwmXyTz7mlDCuN3O0V+WpRxXWFBmBWl2SNVqS1g=;
+        b=s6gQM/VtwKirxxKzNvmm9JzhAhUqG0nHrWvqCtJpLxr7X2iIneE1MwHASiqW06Y7Wv
+         3bOkvHM0D9pJTtAtcyjr6pmMfSpGTjwOE7Pe2qsqkeCTjWFYBBSPO2Ht0kGLGTPnok87
+         K+YaML/H1aj0ZprsmgmmWVWjT9dtQn0GjvCJomUFhJe02uZ/R36Ge3b60N3PR59npD1F
+         W2pf6cq5WfkC/YpvQJslv3r5zWR8tONshT0GrgyTfq2cQaJbI130K/4d8ewgKRH2Renw
+         Drw6uwKQMOsYaQNzZ6i6GPOkSP9PA0Fu67m+dWnZEzciCBoZNLKmBilG8YYmHCIzJlsU
+         4Eig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678296103;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sMBPLwmXyTz7mlDCuN3O0V+WpRxXWFBmBWl2SNVqS1g=;
+        b=feGgdfg5B+2h62SvOOmRuMGFzio2NzwhaDfJS1ahHHLlfmii/UTIG9tT15HYXtf0co
+         kOxPCTlgOahLj4aZnaOeLhKugN5qVMrskI4MBpAk7KyLmFe0G6F2ISt0525cTuR+bV/H
+         Z6dGP8wP59FqhqCL7yQQYVRrmw/3NT0YKZ+cvP05qPuMbbwlSZ/0HfKiLvXfBaLNHQ92
+         9aJHxvMrk+i2C9Eaka9snOyAMZHCAHhIq6CPkbzxnaDdHhc//XaoKMxATblOrIMhhSTf
+         Oz6hblUuJNvD+LE/lzpWn6o3PZ7yYmXWMW3n8ttlBh3g5V5uC6zuomnn+juRKOAOdef8
+         BLaA==
+X-Gm-Message-State: AO0yUKV/KXvqC/GUJ2lVvsFk9H28WLOiPUq+TJXeyw9PSZQr+rNkRqGq
+        3T94CMrWR0WSUcUiEON9BycisA==
+X-Google-Smtp-Source: AK7set9BTwgGUpksfyJLCnL6I7a6OQD9RsvOB32QRsaI6Dhl7wGNwA8Ph2+6mmWAkUaWlECqHz3GfA==
+X-Received: by 2002:a05:600c:450f:b0:3e2:19b0:887d with SMTP id t15-20020a05600c450f00b003e219b0887dmr16873432wmo.25.1678296103096;
+        Wed, 08 Mar 2023 09:21:43 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:4213:ad42:5630:43c4? ([2a05:6e02:1041:c10:4213:ad42:5630:43c4])
+        by smtp.googlemail.com with ESMTPSA id l21-20020a05600c1d1500b003ebf73acf9asm3128401wms.3.2023.03.08.09.21.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Mar 2023 09:21:42 -0800 (PST)
+Message-ID: <d7286d1f-2ef1-248d-58a2-10ce68de0bcf@linaro.org>
+Date:   Wed, 8 Mar 2023 18:21:41 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y/eULFO4jbivQ679@dev-arch.thelio-3990X>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
+ usage
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Johan Hovold <johan@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>
+References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
+ <Y9J4WAFyXyV/nqlG@orome> <20230210131703.GF175687@linaro.org>
+ <Y+ZQC85TM+O8p8gQ@orome>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <Y+ZQC85TM+O8p8gQ@orome>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Ping? This warning is now in 6.3-rc1.
 
-On Thu, Feb 23, 2023 at 09:28:28AM -0700, Nathan Chancellor wrote:
-> Hi Thierry, Daniel, and David,
+Hi Thierry,
+
+did you have time to look to the changes ?
+
+Or at least a way to remove the get_thermal_instance() usage ?
+
+
+
+
+On 10/02/2023 15:09, Thierry Reding wrote:
+> On Fri, Feb 10, 2023 at 02:17:03PM +0100, Daniel Lezcano wrote:
+>> Hi Thierry,
+>>
+>> On Thu, Jan 26, 2023 at 01:55:52PM +0100, Thierry Reding wrote:
+>>> On Tue, Jan 24, 2023 at 08:57:23PM +0100, Daniel Lezcano wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> does anyone know what is the purpose of the get_thermal_instance() usage in
+>>>> this code:
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tree/drivers/thermal/tegra/soctherm.c?h=thermal/linux-next#n623
+>>>>
+>>>> The driver is using a function which is reserved for the thermal core. It
+>>>> should not.
+>>>>
+>>>> Is the following change ok ?
+>>>>
+>>>> diff --git a/drivers/thermal/tegra/soctherm.c
+>>>> b/drivers/thermal/tegra/soctherm.c
+>>>> index 220873298d77..5f552402d987 100644
+>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>> @@ -620,9 +620,8 @@ static int tegra_thermctl_set_trip_temp(struct
+>>>> thermal_zone_device *tz, int trip
+>>>>   				continue;
+>>>>
+>>>>   			cdev = ts->throt_cfgs[i].cdev;
+>>>> -			if (get_thermal_instance(tz, cdev, trip_id))
+>>>> -				stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>> -			else
+>>>> +			stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>> +			if (!stc)
+>>>>   				continue;
+>>>>
+>>>>   			return throttrip_program(dev, sg, stc, temp);
+>>>> @@ -768,9 +767,9 @@ static int tegra_soctherm_set_hwtrips(struct device
+>>>> *dev,
+>>>>   			continue;
+>>>>
+>>>>   		cdev = ts->throt_cfgs[i].cdev;
+>>>> -		if (get_thermal_instance(tz, cdev, trip))
+>>>> -			stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>> -		else
+>>>> +
+>>>> +		stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>> +		if (!stc)
+>>>>   			continue;
+>>>>
+>>>>   		ret = throttrip_program(dev, sg, stc, temperature);
+>>>
+>>> There's a small difference in behavior after applying this patch. Prior
+>>> to this I get (on Tegra210):
+>>>
+>>> 	[   12.354091] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
+>>> 	[   12.379009] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
+>>> 	[   12.388882] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
+>>> 	[   12.401007] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
+>>> 	[   12.471041] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
+>>> 	[   12.482852] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
+>>> 	[   12.482860] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
+>>> 	[   12.485357] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
+>>> 	[   12.501774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
+>>>
+>>> and after these changes, it turns into:
+>>>
+>>> 	[   12.447113] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
+>>> 	[   12.472300] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
+>>> 	[   12.481789] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
+>>> 	[   12.495447] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
+>>> 	[   12.496514] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
+>>> 	[   12.510353] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
+>>> 	[   12.526856] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
+>>> 	[   12.528774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
+>>> 	[   12.569352] tegra_soctherm 700e2000.thermal-sensor: programming throttle for pll to 103000
+>>> 	[   12.577635] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when pll reaches 103000 mC
+>>> 	[   12.590952] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
+>>> 	[   12.600783] tegra_soctherm 700e2000.thermal-sensor: programming throttle for mem to 103000
+>>> 	[   12.609204] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when mem reaches 103000 mC
+>>>
+>>> The "programming throttle ..." messages are something I've added locally
+>>> to trace what gets called. So it looks like for "pll" and "mem" thermal
+>>> zones, we now program trip points whereas we previously didn't.
+>>
+>> The DT descriptioni (tegra210.dtsi) says one thing and the implementation says
+>> something else.
+>>
+>> If we refer to the PLL description, there is one 'hot' trip point and
+>> one 'critical' trip point. No polling delay at all, so we need the
+>> interrupts.
+>>
+>> Logically, we should set the 'hot' trip point first, when the trip
+>> point is crossed, we setup the next trip point, which is the critical.
+>>
+>> With these two trip points, the first one will send a notification to
+>> the userspace and the second one will force a shutdown of the
+>> system. For both, no cooling device is expected.
 > 
-> On Fri, Jan 27, 2023 at 11:14:00PM +0100, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > The error handling for platform_get_irq() failing no longer
-> > works after a recent change, clang now points this out with
-> > a warning:
-> > 
-> > drivers/gpu/host1x/dev.c:520:6: error: variable 'syncpt_irq' is uninitialized when used here [-Werror,-Wuninitialized]
-> >         if (syncpt_irq < 0)
-> >             ^~~~~~~~~~
-> > 
-> > Fix this by removing the variable and checking the correct
-> > error status.
-> > 
-> > Fixes: 625d4ffb438c ("gpu: host1x: Rewrite syncpoint interrupt handling")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/gpu/host1x/dev.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> > index 4872d183d860..aae2efeef503 100644
-> > --- a/drivers/gpu/host1x/dev.c
-> > +++ b/drivers/gpu/host1x/dev.c
-> > @@ -487,7 +487,6 @@ static int host1x_get_resets(struct host1x *host)
-> >  static int host1x_probe(struct platform_device *pdev)
-> >  {
-> >  	struct host1x *host;
-> > -	int syncpt_irq;
-> >  	int err;
-> >  
-> >  	host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
-> > @@ -517,8 +516,8 @@ static int host1x_probe(struct platform_device *pdev)
-> >  	}
-> >  
-> >  	host->syncpt_irq = platform_get_irq(pdev, 0);
-> > -	if (syncpt_irq < 0)
-> > -		return syncpt_irq;
-> > +	if (host->syncpt_irq < 0)
-> > +		return host->syncpt_irq;
-> >  
-> >  	mutex_init(&host->devices_lock);
-> >  	INIT_LIST_HEAD(&host->devices);
-> > -- 
-> > 2.39.0
-> > 
+> I think the intention here is to use the soctherm's built-in throttling
+> mechanism as a last resort measure to try and cool the system down. I
+> suppose that could count as "passive" cooling, so specifying it as the
+> cooling device for the "passive" trip point may be more appropriate.
 > 
-> Apologies if this has been reported already or has a solution in
-> progress but mainline is now broken because this change got separated
-> from the change it is fixing:
+> The throttling that happens here is quite severe, so we don't want it to
+> happen too early. I would expect that our "passive" trip point shouldn't
+> be a lot less than the "hot" temperature. I suspect that's the reason
+> why the "hot" trip point was reused for this.
 > 
-> https://github.com/ClangBuiltLinux/continuous-integration2/actions/runs/4249931209/jobs/7391912774
-> https://storage.tuxsuite.com/public/clangbuiltlinux/continuous-integration2/builds/2M7y9HpiXB13qiC2mkHMyeZOcLW/build.log
+> I'm also beginning to think that we should just not expose the soctherm
+> throttling as a cooling device and instead keep it internal to the
+> soctherm driver entirely.
 > 
-> I see this change sitting in the drm-tegra tree [1], which is getting
-> merged into -next, so it is fixed there, which is why we did not notice
-> any issues until the drm-next tree was merged into mainline. Can this be
-> fast tracked to Linus to unbreak clang builds with -Werror?
+>> Well, actually I don't get the logic of the soctherm driver. It should
+>> just rely on the thermal framework to set the trip point regardless
+>> the cooling devices.
 > 
-> [1]: https://gitlab.freedesktop.org/drm/tegra/-/commit/b9930311641cf2ed905a84aabe27e8f3868aee4a
+> Again, "throttrip" doesn't map well to the concept of trip points
+> because its not a mechanism to notify when a certain temperature is
+> reached. It's an additional mechanism to automatically start throttling
+> once a given temperature threshold is crossed. So it's basically an
+> auto-cooling-device. If we program it only in response to a trip point
+> notification, there aren't any benefits to this throttle mechanism. So
+> again, I think we're probably better off just removing the cooling
+> device implementation for it and always program it with the "hot" or
+> "passive" trip point temperatures.
+> 
+>> The device tree also is strange. For example, the dram sets
+>> cooling-device = <&emc 0 0>; an inoperative action for a 'nominal'
+>> trip point ... If the goal is to stop the mitigation, that is already
+>> done by the governor when the trip point is crossed the way down. The
+>> second trip point is an 'active' cooling device but it refers to a emc
+>> which is, at the first glance, a passive cooling device.
+> 
+> I think this is because for the mem-thermal zone, "passive" is
+> considered to be less "severe" than "active". My understanding is that
+> the severity goes "active", "passive", "hot", "critical". "Active" trip
+> points are those where we want to use active cooling devices (such as a
+> fan, for example) to try and cool the device. The "passive" trip points
+> should only be reached when active cooling devices aren't up to the job
+> and passive mechanisms need to be deployed. Passive in this case meaning
+> the hardware itself has to be throttled.
+> 
+> If you look at the temperatures defined for passive vs. active for the
+> "mem" thermal zone, then clearly they are reversed. <&emc 0 0> should be
+> used for active trip points, and <&emc 1 1> means throttling of the EMC
+> frequency, i.e. for passive trip points.
+> 
+>> The gpu description only describes hot and critical trip points. The
+>> cooling device maps to the 'hot' trip point ! The governor is not used
+>> in this case, so the cooling device is inoperative. Same for the cpu
+>> thermal zone.
+>>
+>> IOW, the driver is not correctly implemented and the device tree is
+>> wrong. Thermal is not working correctly on these board AFAICT.
+> 
+> I'll try to rework this. As I mentioned above I think we can just remove
+> that throttle_heavy cooling device and instead hard-code that in the
+> driver to a given temperature. Given that this is probably all defunct
+> anyway, the best would probably be to extend the soctherm's
+> throttle-cfgs node with a temperature field so we can avoid the reliance
+> on trip points (which would allow us to get rid of the calls to the
+> get_thermal_instance() helper).
+> 
+> On the DT side, I think most of the cooling maps can be cleaned up. We
+> can remove the entries for "critical" and "hot" trip points if the
+> driver unconditionally programs the automated throttling. For EMC we
+> want to reverse the "passive" and "active" trip points and possibly drop
+> the dram-passive cooling map as well, since you mentioned the core would
+> take care of disabling the cooling device automatically.
+> 
+> Thierry
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
