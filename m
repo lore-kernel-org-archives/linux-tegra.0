@@ -2,182 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7980BC74A44
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Mar 2023 17:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9E8C678D5
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Mar 2023 07:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231922AbjCGRx2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Mar 2023 12:53:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45844 "EHLO
+        id S229846AbjCHHfl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Mar 2023 02:35:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232276AbjCGRxI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Mar 2023 12:53:08 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8868992F14
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Mar 2023 09:47:34 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZbOi-0001A8-23; Tue, 07 Mar 2023 18:46:48 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZbOJ-002XP1-FG; Tue, 07 Mar 2023 18:46:23 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZbOI-0034GD-GY; Tue, 07 Mar 2023 18:46:22 +0100
-Date:   Tue, 7 Mar 2023 18:46:22 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Kursad Oney <kursad.oney@broadcom.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-samsung-soc@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-sunxi@lists.linux.dev, Anand Gore <anand.gore@broadcom.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-spi@vger.kernel.org,
-        Yogesh Gaur <yogeshgaur.83@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-xtensa@linux-xtensa.org, Andi Shyti <andi@etezian.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Radu Pirea <radu_nicolae.pirea@upb.ro>,
-        Jay Fang <f.fangjian@huawei.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-aspeed@lists.ozlabs.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        William Zhang <william.zhang@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Li-hao Kuo <lhjeff911@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S229570AbjCHHfe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Mar 2023 02:35:34 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8BB14EB0;
+        Tue,  7 Mar 2023 23:35:24 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id da10so62105445edb.3;
+        Tue, 07 Mar 2023 23:35:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678260923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gte2HFg34yVeA/U5OHeIizbsHhlUPWICXggwBKuVh2I=;
+        b=Dt82pBO67slGMwDm1SS6/1HLw6ZpAzyD6srwgZVrAvXg86Ba82MtmdgLPLzCSDT3b9
+         BN5+kNFV9aXgpZOPMK1GjuNptRtjo4oP3cbH5Ia65t+klmJvNMZKI4qxSlrYRmuOaNsk
+         DsGdBVpK1l+E8cuMCRpVKGbJsuaIj6RzOhQBPzk4XXLXs+Lv9ZkGH0HFQTPswWh8RoSh
+         1jvcdkiZw0oul9twRi176xsDc+cbt97a8HonmyAWHAS2Gfny3Wx7qppNirRF3FaCHOv/
+         U1lUJB3hKqsYfm7LJBVMywfgJdsTyw/ddCn7P8TNNWEokX0dg5PC1Prp8+KRgSi+6XjV
+         uvzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678260923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gte2HFg34yVeA/U5OHeIizbsHhlUPWICXggwBKuVh2I=;
+        b=hT9kdunHwRKV2kPpbaTUTsv/BJG/oYCGKydWBOq6tZ0pRsNrmHFQrI05zTmuDOjZGS
+         hYB6sAVcSz5d5jTbL5fDDb5TqSBm8LTiPq57O1ouNsyC+dFJfmlbIWh4Tu6gBrmlYYa8
+         crkvI/2QL2ISvoA5b0pyRxo6n7UFYonwhEXefgunUcNjT8K2KWqwZYk+6dpfu+5+DNpy
+         fdd3J36F0CnMNGZE1EH5MWJs8kYupy60A24Noyk5qbJCsd3VMHV6+QkEs+84eLWi8z6d
+         Sk49TWpnwBfZKXvhsn2aO7Q9HF/0h/Sywzt07qYBN7VnhxEtxnhu52pj83mqOsMkWgDe
+         ra3A==
+X-Gm-Message-State: AO0yUKUWqnxlnR1y3HGAzAZHgz4sdX8qtRyTYrm471l5i6skRB8bwUR1
+        9kfjxNfpy+kaQ/7BJCLIPzEqeMewUSo=
+X-Google-Smtp-Source: AK7set8BdlJlpmywABZUT++XuOH4ogUuKoQXSG95jB3Xk6sHLRzgk3JFLTIQsB8V/aB5j/dY/7XHjQ==
+X-Received: by 2002:a17:906:ac3:b0:8f2:bcb5:bbf2 with SMTP id z3-20020a1709060ac300b008f2bcb5bbf2mr18581306ejf.44.1678260922879;
+        Tue, 07 Mar 2023 23:35:22 -0800 (PST)
+Received: from xeon.. ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id h15-20020a1709062dcf00b008dffda52d71sm7051880eji.124.2023.03.07.23.35.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Mar 2023 23:35:22 -0800 (PST)
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        linux-riscv@lists.infradead.org,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-        Andy Gross <agross@kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Han Xu <han.xu@nxp.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Patrick Venture <venture@google.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>, openbmc@lists.ozlabs.org,
-        Daniel Mack <daniel@zonque.org>
-Subject: Re: [PATCH 00/87] spi: Convert to platform remove callback returning
- void
-Message-ID: <20230307174622.vluzrlicw2gdn7hq@pengutronix.de>
-References: <20230303172041.2103336-1-u.kleine-koenig@pengutronix.de>
- <ddcda593-f8e9-43a4-bba6-dae31e8d6b39@sirena.org.uk>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev
+Subject: [PATCH v2 0/8] Fix sound on ASUS Transformers
+Date:   Wed,  8 Mar 2023 09:34:54 +0200
+Message-Id: <20230308073502.5421-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="subqk3tp4gcmon6z"
-Content-Disposition: inline
-In-Reply-To: <ddcda593-f8e9-43a4-bba6-dae31e8d6b39@sirena.org.uk>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+- add quirk for headset detection used by some T30 devices
+  (ASUS Transformers, LG Optimus 4X HD and Vu);
+- add RT5631 and MAX9808x machine drivers
+- update bindings
 
---subqk3tp4gcmon6z
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+Changes from v1
+- fm34 dropped for re-work
+- quirk for headset detection and rt5631 bringup splitted
+- minor adjustments in binding updates
+- improvement of rt5631 rate asignment
+---
 
-Hello Mark,
+David Heidelberg (1):
+  dt-bindings: sound: nvidia,tegra-audio: add RT5631 CODEC
 
-On Tue, Mar 07, 2023 at 05:00:47PM +0000, Mark Brown wrote:
-> On Fri, Mar 03, 2023 at 06:19:14PM +0100, Uwe Kleine-K=F6nig wrote:
->=20
-> >   spi: mpc512x-psc: Convert to platform remove callback returning void
-> >   spi: mpc52xx-psc: Convert to platform remove callback returning void
->=20
-> As well as the Raspberry Pi patch dropped due to build failures I also
-> dropped these two as they conflicted with Rob's refactoring of that
-> driver, nothing especially complex but since there's stuff to resend
-> anyway...
+Svyatoslav Ryhel (7):
+  dt-bindings: sound: nvidia,tegra-audio-common: add
+    coupled-mic-hp-detect property
+  ASoC: tegra: Support coupled mic-hp detection
+  ARM: tegra: transformers: update sound nodes
+  ASoC: tegra: Support RT5631 by machine driver
+  ARM: tegra: transformers: bind RT5631 sound nodes
+  dt-bindings: sound: nvidia,tegra-audio: add MAX9808x CODEC
+  ASoC: tegra: Support MAX9808x by machine driver
 
-Fine for me. Given that my queue of patches to convert the remove
-callbacks is quite big, there is no pressure from my side to get these
-all in. 84 from 87 is great already, I'll care about the remaining 3
-patches (and the few drivers that don't return 0 in .remove()) later.
+ .../sound/nvidia,tegra-audio-common.yaml      |   4 +
+ .../sound/nvidia,tegra-audio-max9808x.yaml    |  90 +++++++++++++
+ .../sound/nvidia,tegra-audio-rt5631.yaml      |  85 ++++++++++++
+ arch/arm/boot/dts/tegra20-asus-tf101.dts      |   7 +-
+ arch/arm/boot/dts/tegra30-asus-tf201.dts      |  17 +++
+ arch/arm/boot/dts/tegra30-asus-tf300t.dts     |   5 +-
+ arch/arm/boot/dts/tegra30-asus-tf300tg.dts    |  17 +++
+ arch/arm/boot/dts/tegra30-asus-tf700t.dts     |  17 +++
+ .../dts/tegra30-asus-transformer-common.dtsi  |   9 +-
+ sound/soc/tegra/Kconfig                       |  18 +++
+ sound/soc/tegra/tegra_asoc_machine.c          | 125 +++++++++++++++++-
+ 11 files changed, 380 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5631.yaml
 
-Thanks
-Uwe
+-- 
+2.37.2
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---subqk3tp4gcmon6z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQHeGsACgkQwfwUeK3K
-7AmJQAf+OLFnhHHVOJXrgsKSMBVT9Qycgk1Nx3JjIocPvU73GYAc8BXwKRUCjb2G
-yTOGAdCjHSEwQuDZxv2NhBd/vpxLkpD7iy/doYJxHT2UMPWV54rl6CFYJEHlJPqW
-Z/Ml4CO3hzmB4BXtCN8RnFyPLmswQObzaXX8HL2DGHB1XE8S1ih7F9Kal3TQISuT
-hZmmMMLaoUtmq5BdGPNybIlL7hGGrMoH0ej+lkPelgMI+QnFAQ6ge26Uc1x9lkDb
-M9w96TPGO6fCBhTV7g21HUUO1P1MsEqJqTPxwUxg+iatcXPmt/w55d07QZQbST7b
-W1YrIAGbAt6hkfVtrrUIlqw3J57gTA==
-=WgaT
------END PGP SIGNATURE-----
-
---subqk3tp4gcmon6z--
