@@ -2,267 +2,214 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79544C64EC4
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Mar 2023 17:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 582CFC64EC4
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Mar 2023 17:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbjCHRW7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Mar 2023 12:22:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39144 "EHLO
+        id S229529AbjCHR2W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Mar 2023 12:28:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229757AbjCHRWa (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Mar 2023 12:22:30 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA15258B5B
-        for <linux-tegra@vger.kernel.org>; Wed,  8 Mar 2023 09:21:44 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so1820730wmb.5
-        for <linux-tegra@vger.kernel.org>; Wed, 08 Mar 2023 09:21:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678296103;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sMBPLwmXyTz7mlDCuN3O0V+WpRxXWFBmBWl2SNVqS1g=;
-        b=s6gQM/VtwKirxxKzNvmm9JzhAhUqG0nHrWvqCtJpLxr7X2iIneE1MwHASiqW06Y7Wv
-         3bOkvHM0D9pJTtAtcyjr6pmMfSpGTjwOE7Pe2qsqkeCTjWFYBBSPO2Ht0kGLGTPnok87
-         K+YaML/H1aj0ZprsmgmmWVWjT9dtQn0GjvCJomUFhJe02uZ/R36Ge3b60N3PR59npD1F
-         W2pf6cq5WfkC/YpvQJslv3r5zWR8tONshT0GrgyTfq2cQaJbI130K/4d8ewgKRH2Renw
-         Drw6uwKQMOsYaQNzZ6i6GPOkSP9PA0Fu67m+dWnZEzciCBoZNLKmBilG8YYmHCIzJlsU
-         4Eig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678296103;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sMBPLwmXyTz7mlDCuN3O0V+WpRxXWFBmBWl2SNVqS1g=;
-        b=feGgdfg5B+2h62SvOOmRuMGFzio2NzwhaDfJS1ahHHLlfmii/UTIG9tT15HYXtf0co
-         kOxPCTlgOahLj4aZnaOeLhKugN5qVMrskI4MBpAk7KyLmFe0G6F2ISt0525cTuR+bV/H
-         Z6dGP8wP59FqhqCL7yQQYVRrmw/3NT0YKZ+cvP05qPuMbbwlSZ/0HfKiLvXfBaLNHQ92
-         9aJHxvMrk+i2C9Eaka9snOyAMZHCAHhIq6CPkbzxnaDdHhc//XaoKMxATblOrIMhhSTf
-         Oz6hblUuJNvD+LE/lzpWn6o3PZ7yYmXWMW3n8ttlBh3g5V5uC6zuomnn+juRKOAOdef8
-         BLaA==
-X-Gm-Message-State: AO0yUKV/KXvqC/GUJ2lVvsFk9H28WLOiPUq+TJXeyw9PSZQr+rNkRqGq
-        3T94CMrWR0WSUcUiEON9BycisA==
-X-Google-Smtp-Source: AK7set9BTwgGUpksfyJLCnL6I7a6OQD9RsvOB32QRsaI6Dhl7wGNwA8Ph2+6mmWAkUaWlECqHz3GfA==
-X-Received: by 2002:a05:600c:450f:b0:3e2:19b0:887d with SMTP id t15-20020a05600c450f00b003e219b0887dmr16873432wmo.25.1678296103096;
-        Wed, 08 Mar 2023 09:21:43 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:4213:ad42:5630:43c4? ([2a05:6e02:1041:c10:4213:ad42:5630:43c4])
-        by smtp.googlemail.com with ESMTPSA id l21-20020a05600c1d1500b003ebf73acf9asm3128401wms.3.2023.03.08.09.21.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Mar 2023 09:21:42 -0800 (PST)
-Message-ID: <d7286d1f-2ef1-248d-58a2-10ce68de0bcf@linaro.org>
-Date:   Wed, 8 Mar 2023 18:21:41 +0100
-MIME-Version: 1.0
+        with ESMTP id S229468AbjCHR2U (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Mar 2023 12:28:20 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2051.outbound.protection.outlook.com [40.107.243.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56785B5E9;
+        Wed,  8 Mar 2023 09:28:18 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ILtabLtdWBOCLVNWrMLYcTdhpFxZd794crdn0y6wVdwjzanUCV3W8yKK7UGmD/B7VN7z81tmCYuGR0+hZKhY4alZlgqSzF9HDpIlnAQwYJlO8qk2LMPDNfhZRKcC5HzUYNTQIsBnwWsrxlMv9ZD7hp+63eMzJkALpz2bkJZHOjlTkbXR43KEPwdkKFLKIKwIKm2fCOD+XXpWuAy5Gk8UDPoV2PfK+Sqo3XKJCbcQ+6p9uO8b1cOsu40ElraHdlsfoW/l336My0GfHjbz+udUqOd6VVe/m3A0jtDrjPcX9p+3znypCu4HDR+0mU/o+9ldlW/7RsdH0gSk9NkOhZNchg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b5DPdjFzSja952kNHzfQf1M6wM5x7JEJPqVnNbnyjq0=;
+ b=BQE+vdWsiEX99DGWgx4jwsXjdgIcoi1Pc9ayYSPiTJ0Hv3GCYWp0Rry7AiHrQDEnHsa6OYD/42nAmygyM6oCWCjG8IcBVM/8t/c6uetz7b1WiKGQEVElTsvJZ+Q9fTdOQTF12UDVTANGfDWfRzzUerNoxG3lgCUvYXRnkOsXEgTwPj1gfBfUb75luOTEezDNTY+1vN4VcQ7PmRifjbC3hEfPN3a9oH0eRqqWtra1pxjJ0q2Guhzc7Aj9Id/80GK+qLUyaOBNbCmtsP6NK1+bsaR29sl1cm5vkhizDtglzVnd1t1r77Dozf666ssOs5X2mINzBcXbfqnbpS2HEA1SLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b5DPdjFzSja952kNHzfQf1M6wM5x7JEJPqVnNbnyjq0=;
+ b=ozio1N5K/MRAfsv6Q69w4D9DxSaq6KZw+wEioxRKba3ljFyunpjfQYB6LHXlI0HfpA3/hgTbY4Rpz8Gg60xAHXj5QAKrBIReF9wjUOuDm8uyItV2UtzrKNDeoohX3sU8j8+rEXmFGwi+3i1INQ2Oh9ZsEn8BrFfDceDU6UqRBtAB7bJccpViP/qEfqjGPE5h+gVcrJMb2kUxRKhWFf/ilUYVQh9lrjbmHs+w6A/+lVp3jsgRhLn2qIwS5hYY+EXxcRFlk4Tu0jNJjfyYP3LfGJxRM7JhZWB3/F6jhjvEaAWOQil72Tpm2mmDGB0dopOzke/uK3Qt1O6JSufe1qpQ2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ MN0PR12MB6150.namprd12.prod.outlook.com (2603:10b6:208:3c6::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.29; Wed, 8 Mar
+ 2023 17:28:15 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5464:997b:389:4b07]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5464:997b:389:4b07%9]) with mapi id 15.20.6156.031; Wed, 8 Mar 2023
+ 17:28:15 +0000
+Message-ID: <67f9fe7f-392a-9acd-1a4d-0a43da634367@nvidia.com>
+Date:   Wed, 8 Mar 2023 17:28:06 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
- usage
+Subject: Re: [PATCH] gpu: host1x: fix uninitialized variable use
 Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Johan Hovold <johan@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
- <Y9J4WAFyXyV/nqlG@orome> <20230210131703.GF175687@linaro.org>
- <Y+ZQC85TM+O8p8gQ@orome>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <Y+ZQC85TM+O8p8gQ@orome>
+To:     Nathan Chancellor <nathan@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Robin Murphy <robin.murphy@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20230127221418.2522612-1-arnd@kernel.org>
+ <Y/eULFO4jbivQ679@dev-arch.thelio-3990X>
+ <20230308165644.GA1181835@dev-arch.thelio-3990X>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20230308165644.GA1181835@dev-arch.thelio-3990X>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LNXP123CA0023.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:d2::35) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MN0PR12MB6150:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54540a3a-eb07-49c5-3e95-08db1ffa7fc8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YypRur4I0CBPyEn48ylWeWv+vf8Vyiej/qpgjz7hmUY+pPImCk8dzsaV/V+IxOINO0YjerueHkz9FHy06SrQzFiyLNGM5MJGOtwg0JXDBDhXLbFsXiRk9OkyHUnPPEEp+TMKwGftwsVZ4ZNyuoa8A7VkWe49FqhZ2xbSCp9wf+tK+B8liMUwYKtCHWHa5sBr2L4sQ7vu9va+Kkjk6Ol1lf42PlXCAp3E/4+s1CDEt7MCflZZU8HAN53vVJ1dHhhBxVrzoi0Z6dmZT4+PilyPYKGMFKpDB0tkUYlfgYhIIqM/P0Z/H5o95l/3bh3bRPTcjF9lU+0Qxysww1LAnBBMN6xNiogMgHuWmoa7Btm3+GxRjUz+WqfnXezB4VOuCg3ceXCCxpH0TlUy6nPoy+Yv6QQs9FG+JgUgEZprYV8AULx+OmuDVROpB0/Kl2qJkrGBWChwIIduvIVsceeKXos94S8WBKF+BdoRUqqZGw0SlZ4sMnU+GcHs47O3Q6RPuqQFreytIEcwZSePG/kVMua0ftvuJkfhWqE4VZg3uARR3SgcbKy8BxWnCDbA6/LKttd4qbagZxPp/OkHZQ/119wqx5wNnFCeBw4oBJznF/RsC34K1TygVoNO5u7tvYjnnp4EEwN0ApxE6P9xYFfGY8ZOdNfPLf5jCiwjCHalsIu9iD1e5G6KVC5l2BMEIIT9FBrXIxBIFnWLDebL7A4U6vxNCHEPUiQqcfDUg0l1mrB06bMAnMQIKRfWJ0R+ON69Sup4lIOxzccga6LVHDLUWG+fAgWK0e3I10+i4SqcRkTzSTTYqzX1M00H3mssh0wPs7y+PGkkLuIL+FQQyXfJjGAFCQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(136003)(39860400002)(346002)(376002)(396003)(451199018)(38100700002)(86362001)(31696002)(6666004)(66476007)(2906002)(36756003)(41300700001)(7416002)(8676002)(5660300002)(8936002)(66556008)(66946007)(4326008)(6506007)(53546011)(186003)(6512007)(83380400001)(2616005)(316002)(54906003)(478600001)(6486002)(966005)(110136005)(31686004)(32563001)(43740500002)(45980500001)(357404004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Vm9rNkV0S1dYREVDSGJaZjZadHFDbG41dGlVSVQrMklkdExOMDlWMEZzSU1z?=
+ =?utf-8?B?bm9NUG5OT1A1M0U1ZVJBRlNxL2NXNytLNDlwaUVwTmZYbURkQjBCLzNxclJv?=
+ =?utf-8?B?ZkYyVDc2R2dpMzRhSWhoaURTOStCNlMxazRnTEZFamtycU5LdHY1VHFSZmM4?=
+ =?utf-8?B?SzFYa2ROeUY0UXAvKzVRekNrb281VDkrU2J4ZjVNVVdMNFVYZXRCam9ZSTFh?=
+ =?utf-8?B?WEVqdTBRRFU0WmdpLzkvODBpSEkzRDlGSHNvRzM0MUJWdUcwUG5iMmVVMnJU?=
+ =?utf-8?B?cHArNHU1MmppeGtWUFJKSDNsbnFOYVVZbTNDNWkwdEJQck0yWmplbVhaeTJh?=
+ =?utf-8?B?WmFKRzRDRUdSS29zZUdTSTRjOW94SjVMVE9udU1pUkVUbmowU3k3VTFDUHFq?=
+ =?utf-8?B?SjZuU0pGcm1BMnEvb1duU2o3LzMvUGIzWnlueGg3ajBnZWd2R1dDUno3YW5y?=
+ =?utf-8?B?UDRpUHlpRXBpQVVwY01QMDArTHhaRFVtSlVqQ05iVzFjdU85OTI5YSt4Q09E?=
+ =?utf-8?B?bmxkblBDVUJmVERHNXp0NDZuK1Bqd24yZHhpUGlDdHExU0o4L0dHWEFBSUpV?=
+ =?utf-8?B?RHJzQzY5WGJZVEswYTJFSEdVYWJYczh3ZDFIbHVTRndrT1Q4UktMdGdUQksr?=
+ =?utf-8?B?Sm0ySnNsTis5MklKUEIwN3hxSHFZYk1PTWkvSlNkaE91UDZtanBhZVE2VjNE?=
+ =?utf-8?B?bFh1TldqZS95dEROV0hOUmdQbFB5VlFJWkJNbVBJNE1DamxxL2VVN1pGWmtU?=
+ =?utf-8?B?Vnp4UWc0OG1kcTZWY3VsRUpDMjBlNzhzUE9mSFU4MVJJWG5Jc0N5UHNPZENn?=
+ =?utf-8?B?ZndXMElkeG13cUE2ZUFjQ2E1dnpBeGpNRnRYZmNGekNxcUlsZnBSTHgvT2VN?=
+ =?utf-8?B?NmthRFVqSlRkL0JzUDFXOUo2UmxpbG5sVDI4aThIUEZuUFkzaloyR3h5OHlL?=
+ =?utf-8?B?cUVKeDBYTnA4VjVtMStwNDQ3MUppckVGeXlJKzZIQ3I3RTlJcm9WcGd0enNj?=
+ =?utf-8?B?WEdOV2NTNzdMek9hR2JTSHl5Q3RUZE1pOERsYWl2ekVpb0NYZU5WclRvRU1q?=
+ =?utf-8?B?MmpZVmFUcStIdE84b1pjcG1iZzgzMkVab3lQbWorcEFlL0thQ0MxcW54bnpC?=
+ =?utf-8?B?UUFCMGN0eEVpOG5FWHhFNkZNcEJ6NnFvaGJ2Qm9aMmRoREdQMWdXMXIrRVRT?=
+ =?utf-8?B?cFo5UmNhc2Q4MlkxRUpGcjd4ejhzUGJCSkVVNC9pR0Y1dDduYXFNb25sRUc5?=
+ =?utf-8?B?NTVHMWEvVUhvRHRmVjQrb1JZSkpadU5LQnBRSnlid3J3OU1tSC81K3JFb29y?=
+ =?utf-8?B?SnJPa1RaNmxDTFpGNnJ2U1l0eitkQlQwdkRNWDlkYkhJeW1WeEdXekRVa0wr?=
+ =?utf-8?B?cWc3bzlDdHhIaWtqVTdvQUUyNlI0QmtOV3JOS0FJNWxWL1VGL2xNL01EUHdn?=
+ =?utf-8?B?YjRPYWt3OUlEZHQ1d0p2aUZMME1aNlpDN05SUzNqYmNMNFg4Mm9Qc0lvQzJR?=
+ =?utf-8?B?RURGaVQ0UWFOU3FvZFdXdGdCMUMzQ0E4NHdET2xmYTR2NmVqbUovNGoydjI4?=
+ =?utf-8?B?REU1UFZNM2dRSGZNbGZ5OWs0b3RhWk0yc1NlVmR3eFFBdWZpd2YzVUczRGZW?=
+ =?utf-8?B?MnhJSHV6OGZid0N5bjg3NlhSa2orSkVPOU1DN3hvSTNibnk3MTh1TVJSMmVW?=
+ =?utf-8?B?MnZFRVJJRWdvY0ZEMGlVTzJMOTBEbzBKeUdHUGlnb3FvL2picHIrZCtHMGZr?=
+ =?utf-8?B?czJxQlFxMFl0Ym5tdFBNZ0FLVmg2S0dpcDArTlFQWHFhSmp2ZUFYMElEbzdE?=
+ =?utf-8?B?Y3hmNnd4bzVTcEx4aUZLbm1LTSswOFZEb0RDU04xcEFMOTBCN1RnNm1TdDRK?=
+ =?utf-8?B?RE9abjgrSHhQbnhLTDE3TVlLbjJYNWdSUWpORFVZbmNjb1UxZ25BczJ1ZFFY?=
+ =?utf-8?B?RUtxN2EyV1h4SUs1Sjl0NCs2UmwwbEpkMHk4Z3hPbm5MWWJkOEw1UWt6dEY0?=
+ =?utf-8?B?czFKd0tPMjJiSklIanBucFF1cUphMjBPRTQxN0MxSU9wdFFOZmNOaGlmVFNa?=
+ =?utf-8?B?U291QUZ1NW9yRi9TTDh5WnU5dm9pRkE3T0kvNE0vQXlPdVF2KzlQbENmK3VB?=
+ =?utf-8?B?b2FMbk1sRE9ZNGZON3RQdFRvWGcxMFlCcHdQM3NBVUg4WG8yZUJ4ODVuR0NV?=
+ =?utf-8?B?ZHgyaXFyNUNqUUNwQjZDRTFndWsxVnpBcjAwb0Zwa2l6YzVIS1FYUmpYOENP?=
+ =?utf-8?B?clhxLzBRVUVCNDN2dzhrZHRkTU93PT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54540a3a-eb07-49c5-3e95-08db1ffa7fc8
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2023 17:28:15.2296
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bEUYBhOcoGAgpmHc6wdZN/lzmmwZd8nGdkoenm0PwE3uBH4/A30Br1p0sgBEXaCcfiMBGXt+Q9SrM57+rduoZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6150
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-Hi Thierry,
 
-did you have time to look to the changes ?
+On 08/03/2023 16:56, Nathan Chancellor wrote:
+> Ping? This warning is now in 6.3-rc1.
 
-Or at least a way to remove the get_thermal_instance() usage ?
+Thierry is away at the moment.
+
+David, Daniel, do you want to pick this up directly in the meantime as a 
+fix for 6.3? Mikko has already reviewed and FWIW ...
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks
+Jon
 
 
-
-
-On 10/02/2023 15:09, Thierry Reding wrote:
-> On Fri, Feb 10, 2023 at 02:17:03PM +0100, Daniel Lezcano wrote:
->> Hi Thierry,
+> On Thu, Feb 23, 2023 at 09:28:28AM -0700, Nathan Chancellor wrote:
+>> Hi Thierry, Daniel, and David,
 >>
->> On Thu, Jan 26, 2023 at 01:55:52PM +0100, Thierry Reding wrote:
->>> On Tue, Jan 24, 2023 at 08:57:23PM +0100, Daniel Lezcano wrote:
->>>>
->>>> Hi,
->>>>
->>>> does anyone know what is the purpose of the get_thermal_instance() usage in
->>>> this code:
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tree/drivers/thermal/tegra/soctherm.c?h=thermal/linux-next#n623
->>>>
->>>> The driver is using a function which is reserved for the thermal core. It
->>>> should not.
->>>>
->>>> Is the following change ok ?
->>>>
->>>> diff --git a/drivers/thermal/tegra/soctherm.c
->>>> b/drivers/thermal/tegra/soctherm.c
->>>> index 220873298d77..5f552402d987 100644
->>>> --- a/drivers/thermal/tegra/soctherm.c
->>>> +++ b/drivers/thermal/tegra/soctherm.c
->>>> @@ -620,9 +620,8 @@ static int tegra_thermctl_set_trip_temp(struct
->>>> thermal_zone_device *tz, int trip
->>>>   				continue;
->>>>
->>>>   			cdev = ts->throt_cfgs[i].cdev;
->>>> -			if (get_thermal_instance(tz, cdev, trip_id))
->>>> -				stc = find_throttle_cfg_by_name(ts, cdev->type);
->>>> -			else
->>>> +			stc = find_throttle_cfg_by_name(ts, cdev->type);
->>>> +			if (!stc)
->>>>   				continue;
->>>>
->>>>   			return throttrip_program(dev, sg, stc, temp);
->>>> @@ -768,9 +767,9 @@ static int tegra_soctherm_set_hwtrips(struct device
->>>> *dev,
->>>>   			continue;
->>>>
->>>>   		cdev = ts->throt_cfgs[i].cdev;
->>>> -		if (get_thermal_instance(tz, cdev, trip))
->>>> -			stc = find_throttle_cfg_by_name(ts, cdev->type);
->>>> -		else
->>>> +
->>>> +		stc = find_throttle_cfg_by_name(ts, cdev->type);
->>>> +		if (!stc)
->>>>   			continue;
->>>>
->>>>   		ret = throttrip_program(dev, sg, stc, temperature);
+>> On Fri, Jan 27, 2023 at 11:14:00PM +0100, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
 >>>
->>> There's a small difference in behavior after applying this patch. Prior
->>> to this I get (on Tegra210):
+>>> The error handling for platform_get_irq() failing no longer
+>>> works after a recent change, clang now points this out with
+>>> a warning:
 >>>
->>> 	[   12.354091] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
->>> 	[   12.379009] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
->>> 	[   12.388882] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
->>> 	[   12.401007] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
->>> 	[   12.471041] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
->>> 	[   12.482852] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
->>> 	[   12.482860] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
->>> 	[   12.485357] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
->>> 	[   12.501774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
+>>> drivers/gpu/host1x/dev.c:520:6: error: variable 'syncpt_irq' is uninitialized when used here [-Werror,-Wuninitialized]
+>>>          if (syncpt_irq < 0)
+>>>              ^~~~~~~~~~
 >>>
->>> and after these changes, it turns into:
+>>> Fix this by removing the variable and checking the correct
+>>> error status.
 >>>
->>> 	[   12.447113] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
->>> 	[   12.472300] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
->>> 	[   12.481789] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
->>> 	[   12.495447] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
->>> 	[   12.496514] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
->>> 	[   12.510353] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
->>> 	[   12.526856] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
->>> 	[   12.528774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
->>> 	[   12.569352] tegra_soctherm 700e2000.thermal-sensor: programming throttle for pll to 103000
->>> 	[   12.577635] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when pll reaches 103000 mC
->>> 	[   12.590952] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
->>> 	[   12.600783] tegra_soctherm 700e2000.thermal-sensor: programming throttle for mem to 103000
->>> 	[   12.609204] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when mem reaches 103000 mC
+>>> Fixes: 625d4ffb438c ("gpu: host1x: Rewrite syncpoint interrupt handling")
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>> ---
+>>>   drivers/gpu/host1x/dev.c | 5 ++---
+>>>   1 file changed, 2 insertions(+), 3 deletions(-)
 >>>
->>> The "programming throttle ..." messages are something I've added locally
->>> to trace what gets called. So it looks like for "pll" and "mem" thermal
->>> zones, we now program trip points whereas we previously didn't.
+>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>>> index 4872d183d860..aae2efeef503 100644
+>>> --- a/drivers/gpu/host1x/dev.c
+>>> +++ b/drivers/gpu/host1x/dev.c
+>>> @@ -487,7 +487,6 @@ static int host1x_get_resets(struct host1x *host)
+>>>   static int host1x_probe(struct platform_device *pdev)
+>>>   {
+>>>   	struct host1x *host;
+>>> -	int syncpt_irq;
+>>>   	int err;
+>>>   
+>>>   	host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
+>>> @@ -517,8 +516,8 @@ static int host1x_probe(struct platform_device *pdev)
+>>>   	}
+>>>   
+>>>   	host->syncpt_irq = platform_get_irq(pdev, 0);
+>>> -	if (syncpt_irq < 0)
+>>> -		return syncpt_irq;
+>>> +	if (host->syncpt_irq < 0)
+>>> +		return host->syncpt_irq;
+>>>   
+>>>   	mutex_init(&host->devices_lock);
+>>>   	INIT_LIST_HEAD(&host->devices);
+>>> -- 
+>>> 2.39.0
+>>>
 >>
->> The DT descriptioni (tegra210.dtsi) says one thing and the implementation says
->> something else.
+>> Apologies if this has been reported already or has a solution in
+>> progress but mainline is now broken because this change got separated
+>> from the change it is fixing:
 >>
->> If we refer to the PLL description, there is one 'hot' trip point and
->> one 'critical' trip point. No polling delay at all, so we need the
->> interrupts.
+>> https://github.com/ClangBuiltLinux/continuous-integration2/actions/runs/4249931209/jobs/7391912774
+>> https://storage.tuxsuite.com/public/clangbuiltlinux/continuous-integration2/builds/2M7y9HpiXB13qiC2mkHMyeZOcLW/build.log
 >>
->> Logically, we should set the 'hot' trip point first, when the trip
->> point is crossed, we setup the next trip point, which is the critical.
+>> I see this change sitting in the drm-tegra tree [1], which is getting
+>> merged into -next, so it is fixed there, which is why we did not notice
+>> any issues until the drm-next tree was merged into mainline. Can this be
+>> fast tracked to Linus to unbreak clang builds with -Werror?
 >>
->> With these two trip points, the first one will send a notification to
->> the userspace and the second one will force a shutdown of the
->> system. For both, no cooling device is expected.
-> 
-> I think the intention here is to use the soctherm's built-in throttling
-> mechanism as a last resort measure to try and cool the system down. I
-> suppose that could count as "passive" cooling, so specifying it as the
-> cooling device for the "passive" trip point may be more appropriate.
-> 
-> The throttling that happens here is quite severe, so we don't want it to
-> happen too early. I would expect that our "passive" trip point shouldn't
-> be a lot less than the "hot" temperature. I suspect that's the reason
-> why the "hot" trip point was reused for this.
-> 
-> I'm also beginning to think that we should just not expose the soctherm
-> throttling as a cooling device and instead keep it internal to the
-> soctherm driver entirely.
-> 
->> Well, actually I don't get the logic of the soctherm driver. It should
->> just rely on the thermal framework to set the trip point regardless
->> the cooling devices.
-> 
-> Again, "throttrip" doesn't map well to the concept of trip points
-> because its not a mechanism to notify when a certain temperature is
-> reached. It's an additional mechanism to automatically start throttling
-> once a given temperature threshold is crossed. So it's basically an
-> auto-cooling-device. If we program it only in response to a trip point
-> notification, there aren't any benefits to this throttle mechanism. So
-> again, I think we're probably better off just removing the cooling
-> device implementation for it and always program it with the "hot" or
-> "passive" trip point temperatures.
-> 
->> The device tree also is strange. For example, the dram sets
->> cooling-device = <&emc 0 0>; an inoperative action for a 'nominal'
->> trip point ... If the goal is to stop the mitigation, that is already
->> done by the governor when the trip point is crossed the way down. The
->> second trip point is an 'active' cooling device but it refers to a emc
->> which is, at the first glance, a passive cooling device.
-> 
-> I think this is because for the mem-thermal zone, "passive" is
-> considered to be less "severe" than "active". My understanding is that
-> the severity goes "active", "passive", "hot", "critical". "Active" trip
-> points are those where we want to use active cooling devices (such as a
-> fan, for example) to try and cool the device. The "passive" trip points
-> should only be reached when active cooling devices aren't up to the job
-> and passive mechanisms need to be deployed. Passive in this case meaning
-> the hardware itself has to be throttled.
-> 
-> If you look at the temperatures defined for passive vs. active for the
-> "mem" thermal zone, then clearly they are reversed. <&emc 0 0> should be
-> used for active trip points, and <&emc 1 1> means throttling of the EMC
-> frequency, i.e. for passive trip points.
-> 
->> The gpu description only describes hot and critical trip points. The
->> cooling device maps to the 'hot' trip point ! The governor is not used
->> in this case, so the cooling device is inoperative. Same for the cpu
->> thermal zone.
->>
->> IOW, the driver is not correctly implemented and the device tree is
->> wrong. Thermal is not working correctly on these board AFAICT.
-> 
-> I'll try to rework this. As I mentioned above I think we can just remove
-> that throttle_heavy cooling device and instead hard-code that in the
-> driver to a given temperature. Given that this is probably all defunct
-> anyway, the best would probably be to extend the soctherm's
-> throttle-cfgs node with a temperature field so we can avoid the reliance
-> on trip points (which would allow us to get rid of the calls to the
-> get_thermal_instance() helper).
-> 
-> On the DT side, I think most of the cooling maps can be cleaned up. We
-> can remove the entries for "critical" and "hot" trip points if the
-> driver unconditionally programs the automated throttling. For EMC we
-> want to reverse the "passive" and "active" trip points and possibly drop
-> the dram-passive cooling map as well, since you mentioned the core would
-> take care of disabling the cooling device automatically.
-> 
-> Thierry
+>> [1]: https://gitlab.freedesktop.org/drm/tegra/-/commit/b9930311641cf2ed905a84aabe27e8f3868aee4a
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+nvpublic
