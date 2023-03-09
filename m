@@ -2,34 +2,34 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93972C6FD1F
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73B0C64EC4
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:45:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231948AbjCIOp1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:45:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53064 "EHLO
+        id S232043AbjCIOp5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:45:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232053AbjCIOoy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:44:54 -0500
+        with ESMTP id S232133AbjCIOpE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:45:04 -0500
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4765AF8A48;
-        Thu,  9 Mar 2023 06:44:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BFACE7CA5;
+        Thu,  9 Mar 2023 06:44:21 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 46671FF805;
-        Thu,  9 Mar 2023 14:44:05 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 6A242FF809;
+        Thu,  9 Mar 2023 14:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678373049;
+        t=1678373060;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8x6ANxKmlQRR8yGJcgQ569q5zpdBXVx3vBAjyJdMrk4=;
-        b=SJz82fixkCCvzLZ1RiSQ9HMpHbJ82m2tdSyrffWE2WCG9pRxRbGMYm+njdDsq+cbGjSCap
-        jJxPBUTqBt3Yupaveb0EAk1VOrJma6Heb2aVUoTSZAWFUSUfSn/P9TuJbdGNvM2zGI96EL
-        P6AnwkivZI0FEYaWDXv56kuhcGNW6Q+BYoTj9i+mM2Zdb6K/AlNw+vBQ2CHQx8U90ek7Px
-        BaEE4ad6w/cZLGH2TR/MRLJKeuGEsONr4vuqtlax7yB2neZLiRP3gZrKbvxLcaK5g2kmGa
-        q0eDasU7+8PV4eh2CuTLg65DymWb8llMdsjKlKs9wV8GbVIRDv0ycKoiVSwRpg==
+        bh=eAvKkQlWuYYr6YxU/goHqRoXYfDwpGVohln81j6K6R8=;
+        b=eT/4q1Q7Jo5RTgzWZvhGuXRq7XTUBl+XmFekQqZFh4ZEW2kIMJOq7Nj5oyDKOF0mpT2cIu
+        0bz/pW32PfKXVdtIFcCNep/5TUGcFvSs23NgB3pK1paLY0jVSUO9ax84B9yxAYYZf+2+M7
+        IAU1qXAN8Zcd/ggaupqiiUFrK8gOklVlZ0zNwOG8gP/jk1Ddf9TZaYl/n7OsuTwNLvmuIp
+        oeao6oTcUFlTRLWbGqLQmCCmspSJJ33+zMTQbHzE21LQ9rGy2shoCvJGH7NNw0VOGTrLRr
+        /8P6eRQ5j+T5zxJAyAMefytWdarbqCEcRnspdXfZXxAX3rMeucJ0DM/TdsVLRQ==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -49,9 +49,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [RESEND PATCH v4 14/21] staging: media: tegra-video: move default format to soc-specific data
-Date:   Thu,  9 Mar 2023 15:43:13 +0100
-Message-Id: <20230309144320.2937553-15-luca.ceresoli@bootlin.com>
+Subject: [RESEND PATCH v4 17/21] staging: media: tegra-video: move syncpt init/free to a per-soc op
+Date:   Thu,  9 Mar 2023 15:43:16 +0100
+Message-Id: <20230309144320.2937553-18-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
 References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
@@ -61,15 +61,15 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra_default_format in vi.c is specific to Tegra210 CSI.
+tegra_channel_host1x_syncpt_init() gets the host1x syncpts needed for the
+Tegra210 implementation, and tegra_channel_host1x_syncpts_free() puts
+them.
 
-In preparation for adding Tegra20 VIP support, move the default format to a
-new field in the soc-specific `struct tegra_vi_soc`. Instead of an entire
-format struct, only store a pointer to an item in the existing format
-array.
+Tegra20 needs to get and put a different syncpt. In preparation for adding
+Tegra20 support, move these functions to new ops in the soc-specific
+`struct tegra_vi_ops` .
 
-No functional changes. The format pointed to is the same that used to be in
-vi.c.
+No functional changes.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -82,75 +82,196 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/tegra210.c |  2 ++
- drivers/staging/media/tegra-video/vi.c       | 11 +----------
- drivers/staging/media/tegra-video/vi.h       |  2 ++
- 3 files changed, 5 insertions(+), 10 deletions(-)
+ drivers/staging/media/tegra-video/tegra210.c | 52 ++++++++++++++++++++
+ drivers/staging/media/tegra-video/vi.c       | 52 ++------------------
+ drivers/staging/media/tegra-video/vi.h       |  5 ++
+ 3 files changed, 60 insertions(+), 49 deletions(-)
 
 diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index 71483d0c19bf..28d3d05c12c4 100644
+index 28d3d05c12c4..d47ba79bac75 100644
 --- a/drivers/staging/media/tegra-video/tegra210.c
 +++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -771,8 +771,10 @@ const struct tegra_vi_soc tegra210_vi_soc = {
- 	.hw_revision = 3,
- 	.vi_max_channels = 6,
- #if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
-+	.default_video_format = &tegra210_video_formats[0],
- 	.vi_max_clk_hz = 499200000,
- #else
-+	.default_video_format = &tegra210_video_formats[4],
- 	.vi_max_clk_hz = 998400000,
- #endif
- };
+@@ -179,6 +179,56 @@ static u32 vi_csi_read(struct tegra_vi_channel *chan, u8 portno,
+ /*
+  * Tegra210 VI channel capture operations
+  */
++
++static int tegra210_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
++{
++	struct tegra_vi *vi = chan->vi;
++	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
++	struct host1x_syncpt *fs_sp;
++	struct host1x_syncpt *mw_sp;
++	int ret, i;
++
++	for (i = 0; i < chan->numgangports; i++) {
++		fs_sp = host1x_syncpt_request(&vi->client, flags);
++		if (!fs_sp) {
++			dev_err(vi->dev, "failed to request frame start syncpoint\n");
++			ret = -ENOMEM;
++			goto free_syncpts;
++		}
++
++		mw_sp = host1x_syncpt_request(&vi->client, flags);
++		if (!mw_sp) {
++			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
++			host1x_syncpt_put(fs_sp);
++			ret = -ENOMEM;
++			goto free_syncpts;
++		}
++
++		chan->frame_start_sp[i] = fs_sp;
++		chan->mw_ack_sp[i] = mw_sp;
++		spin_lock_init(&chan->sp_incr_lock[i]);
++	}
++
++	return 0;
++
++free_syncpts:
++	for (i = 0; i < chan->numgangports; i++) {
++		host1x_syncpt_put(chan->mw_ack_sp[i]);
++		host1x_syncpt_put(chan->frame_start_sp[i]);
++	}
++	return ret;
++}
++
++static void tegra210_channel_host1x_syncpt_free(struct tegra_vi_channel *chan)
++{
++	int i;
++
++	for (i = 0; i < chan->numgangports; i++) {
++		host1x_syncpt_put(chan->mw_ack_sp[i]);
++		host1x_syncpt_put(chan->frame_start_sp[i]);
++	}
++}
++
+ static void tegra210_fmt_align(struct v4l2_pix_format *pix, unsigned int bpp)
+ {
+ 	unsigned int min_bpl;
+@@ -758,6 +808,8 @@ static const struct tegra_video_format tegra210_video_formats[] = {
+ 
+ /* Tegra210 VI operations */
+ static const struct tegra_vi_ops tegra210_vi_ops = {
++	.channel_host1x_syncpt_init = tegra210_channel_host1x_syncpt_init,
++	.channel_host1x_syncpt_free = tegra210_channel_host1x_syncpt_free,
+ 	.vi_fmt_align = tegra210_fmt_align,
+ 	.vi_start_streaming = tegra210_vi_start_streaming,
+ 	.vi_stop_streaming = tegra210_vi_stop_streaming,
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index a76cad0e3026..3762fd273514 100644
+index 22f6d6478d3e..760606c65a97 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -44,15 +44,6 @@ struct tegra_vi_graph_entity {
- 	struct v4l2_subdev *subdev;
- };
+@@ -973,21 +973,11 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+ 	return 0;
+ }
  
--static const struct tegra_video_format tegra_default_format = {
--	.img_dt = TEGRA_IMAGE_DT_RAW10,
--	.bit_width = 10,
--	.code = MEDIA_BUS_FMT_SRGGB10_1X10,
--	.bpp = 2,
--	.img_fmt = TEGRA_IMAGE_FORMAT_DEF,
--	.fourcc = V4L2_PIX_FMT_SRGGB10,
--};
+-static void tegra_channel_host1x_syncpts_free(struct tegra_vi_channel *chan)
+-{
+-	int i;
 -
- static inline struct tegra_vi *
- host1x_client_to_vi(struct host1x_client *client)
+-	for (i = 0; i < chan->numgangports; i++) {
+-		host1x_syncpt_put(chan->mw_ack_sp[i]);
+-		host1x_syncpt_put(chan->frame_start_sp[i]);
+-	}
+-}
+-
+ static void tegra_channel_cleanup(struct tegra_vi_channel *chan)
  {
-@@ -1111,7 +1102,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- 	init_waitqueue_head(&chan->done_wait);
+ 	v4l2_ctrl_handler_free(&chan->ctrl_handler);
+ 	media_entity_cleanup(&chan->video.entity);
+-	tegra_channel_host1x_syncpts_free(chan);
++	chan->vi->ops->channel_host1x_syncpt_free(chan);
+ 	mutex_destroy(&chan->video_lock);
+ }
  
- 	/* initialize the video format */
--	chan->fmtinfo = &tegra_default_format;
-+	chan->fmtinfo = chan->vi->soc->default_video_format;
- 	chan->format.pixelformat = chan->fmtinfo->fourcc;
- 	chan->format.colorspace = V4L2_COLORSPACE_SRGB;
- 	chan->format.field = V4L2_FIELD_NONE;
+@@ -1005,42 +995,6 @@ void tegra_channels_cleanup(struct tegra_vi *vi)
+ 	}
+ }
+ 
+-static int tegra_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
+-{
+-	struct tegra_vi *vi = chan->vi;
+-	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
+-	struct host1x_syncpt *fs_sp;
+-	struct host1x_syncpt *mw_sp;
+-	int ret, i;
+-
+-	for (i = 0; i < chan->numgangports; i++) {
+-		fs_sp = host1x_syncpt_request(&vi->client, flags);
+-		if (!fs_sp) {
+-			dev_err(vi->dev, "failed to request frame start syncpoint\n");
+-			ret = -ENOMEM;
+-			goto free_syncpts;
+-		}
+-
+-		mw_sp = host1x_syncpt_request(&vi->client, flags);
+-		if (!mw_sp) {
+-			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
+-			host1x_syncpt_put(fs_sp);
+-			ret = -ENOMEM;
+-			goto free_syncpts;
+-		}
+-
+-		chan->frame_start_sp[i] = fs_sp;
+-		chan->mw_ack_sp[i] = mw_sp;
+-		spin_lock_init(&chan->sp_incr_lock[i]);
+-	}
+-
+-	return 0;
+-
+-free_syncpts:
+-	tegra_channel_host1x_syncpts_free(chan);
+-	return ret;
+-}
+-
+ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ {
+ 	struct tegra_vi *vi = chan->vi;
+@@ -1066,7 +1020,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ 	chan->format.sizeimage = chan->format.bytesperline * TEGRA_DEF_HEIGHT;
+ 	vi->ops->vi_fmt_align(&chan->format, chan->fmtinfo->bpp);
+ 
+-	ret = tegra_channel_host1x_syncpt_init(chan);
++	ret = vi->ops->channel_host1x_syncpt_init(chan);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1129,7 +1083,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ cleanup_media:
+ 	media_entity_cleanup(&chan->video.entity);
+ free_syncpts:
+-	tegra_channel_host1x_syncpts_free(chan);
++	vi->ops->channel_host1x_syncpt_free(chan);
+ 	return ret;
+ }
+ 
 diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 1021c730b595..879547073371 100644
+index 851c4f3fcb91..8fadca33bcc9 100644
 --- a/drivers/staging/media/tegra-video/vi.h
 +++ b/drivers/staging/media/tegra-video/vi.h
-@@ -58,6 +58,7 @@ struct tegra_vi_ops {
-  *
-  * @video_formats: supported video formats
-  * @nformats: total video formats
-+ * @default_video_format: default video format (pointer to a @video_formats item)
-  * @ops: vi operations
-  * @hw_revision: VI hw_revision
-  * @vi_max_channels: supported max streaming channels
-@@ -66,6 +67,7 @@ struct tegra_vi_ops {
- struct tegra_vi_soc {
- 	const struct tegra_video_format *video_formats;
- 	const unsigned int nformats;
-+	const struct tegra_video_format *default_video_format;
- 	const struct tegra_vi_ops *ops;
- 	u32 hw_revision;
- 	unsigned int vi_max_channels;
+@@ -38,10 +38,13 @@ enum tegra_vi_pg_mode {
+ };
+ 
+ struct tegra_vi;
++struct tegra_vi_channel;
+ 
+ /**
+  * struct tegra_vi_ops - Tegra VI operations
+  * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
++ * @channel_host1x_syncpt_init: initialize synchronization points
++ * @channel_host1x_syncpt_free: free all synchronization points
+  * @vi_fmt_align: modify `pix` to fit the hardware alignment
+  *		requirements and fill image geometry
+  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
+@@ -52,6 +55,8 @@ struct tegra_vi;
+  */
+ struct tegra_vi_ops {
+ 	int (*vi_enable)(struct tegra_vi *vi, bool on);
++	int (*channel_host1x_syncpt_init)(struct tegra_vi_channel *chan);
++	void (*channel_host1x_syncpt_free)(struct tegra_vi_channel *chan);
+ 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
+ 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
+ 	void (*vi_stop_streaming)(struct vb2_queue *vq);
 -- 
 2.34.1
 
