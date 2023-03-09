@@ -2,34 +2,34 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EDBC76188
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3302BC6FD1F
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231853AbjCIOny (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:43:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50322 "EHLO
+        id S231867AbjCIOn5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:43:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231529AbjCIOno (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:43:44 -0500
+        with ESMTP id S231799AbjCIOnu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:43:50 -0500
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8061B6700A;
-        Thu,  9 Mar 2023 06:43:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7338B9CBCF;
+        Thu,  9 Mar 2023 06:43:48 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 3B20FFF80B;
-        Thu,  9 Mar 2023 14:43:35 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id A2EADFF80E;
+        Thu,  9 Mar 2023 14:43:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678373018;
+        t=1678373027;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=9N6QfVVrKZcw1ffwFaVTv55AGDMNh1cJeI7q8gczYrk=;
-        b=Uv3eV5mZCvY3KesWZXC5+0mFnK2PEZ92/mQaqV0loDu/+jGzyUMGtjjdJnSne9Y2IG2OLe
-        o1/Huyfjcn2U/GM7Dv1u6XS2xxNjEoBB2s/UZl+y0B3lvOh0oabbYuBdcPo/7JRbFR3zOh
-        YmwQna/9i7ONlzSkxChfNfEECKVzliYQi3lRs1SGc+e3dvGYTglbDIL98IVI9E9IVrpYVv
-        ok4o31CQGqjMh0S9UVLben+xuoca9090/eSF/K/ZRg82KbGzaQt1kZ0rL8QDtO1kKthWGL
-        v7qCtw10/02P5CGDgylkRvl1IENo62u0ugtDLpSutrVDfu4WrQGh8r93S82cdg==
+        bh=451TUx22H90CFmnHFXlFDNWmX76XdwcrQAhLbpfaKUw=;
+        b=mq7+KrTVPw6s95NSvdNILqbdbuExDhvq2IrgGbVPAZe+Cn1ZUhHwsMX9UP/lO0wwOce5M3
+        G/6KyxfULvjL12il1akQ8amMHmb3BNsR2+fVLKJDd3hfjYx+S5N3C3pSZN4RcvoWEUulkQ
+        qKejO8ictNddYclgwQylD42APTe9gx4lZ8iWhIJ+pvGjrJwXZAaBlU+tuz7e2PhDpPTYfL
+        lQnftjmaL0CYD3tCOoFzfQtj5KvvsfsGrRihHK/BWLtIugjH6FWPTHiJGAjLE9nuzVNAkS
+        CVqH5K+s9nLNLHUkWoI0xi6TvwX8PIhr+LWDJm+6D7OJIk/iTPbeClJC+WBhHg==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -49,9 +49,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [RESEND PATCH v4 04/21] staging: media: tegra-video: improve documentation of tegra_video_format fields
-Date:   Thu,  9 Mar 2023 15:43:03 +0100
-Message-Id: <20230309144320.2937553-5-luca.ceresoli@bootlin.com>
+Subject: [RESEND PATCH v4 07/21] staging: media: tegra-video: improve error messages
+Date:   Thu,  9 Mar 2023 15:43:06 +0100
+Message-Id: <20230309144320.2937553-8-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
 References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
@@ -61,7 +61,18 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Some fields are irrelevant for Tegra20/VIP. Add a note to clarify that.
+tegra_vi_channels_alloc() can primarily fail for two reasons:
+
+ 1. "ports" node not found
+ 2. port_num > vi->soc->vi_max_channels
+
+Case 1 prints nothing, case 2 has a dev_err(). The caller [tegra_vi_init()]
+has a generic dev_err() on any failure. This mean that in case 2 we print
+two messages, and in case 1 we only print a generic message.
+
+Remove the generic message and add a specific message when case 1 happens,
+so that we always have one specific message without even increasing the
+number of dev_dbg*() calls.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -74,28 +85,35 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/vi.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 183796c8a46a..dd35c3ac992b 100644
---- a/drivers/staging/media/tegra-video/vi.h
-+++ b/drivers/staging/media/tegra-video/vi.h
-@@ -256,11 +256,11 @@ enum tegra_image_dt {
- /**
-  * struct tegra_video_format - Tegra video format description
-  *
-- * @img_dt: image data type
-- * @bit_width: format width in bits per component
-+ * @img_dt: MIPI CSI-2 data type (for CSI-2 only)
-+ * @bit_width: format width in bits per component (for CSI/Tegra210 only)
-  * @code: media bus format code
-  * @bpp: bytes per pixel (when stored in memory)
-- * @img_fmt: image format
-+ * @img_fmt: image format (for CSI/Tegra210 only)
-  * @fourcc: V4L2 pixel format FCC identifier
-  */
- struct tegra_video_format {
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index ae7adf640e76..0e5067a7986a 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1272,7 +1272,7 @@ static int tegra_vi_channels_alloc(struct tegra_vi *vi)
+ 
+ 	ports = of_get_child_by_name(node, "ports");
+ 	if (!ports)
+-		return -ENODEV;
++		return dev_err_probe(vi->dev, -ENODEV, "%pOF: missing 'ports' node\n", node);
+ 
+ 	for_each_child_of_node(ports, port) {
+ 		if (!of_node_name_eq(port, "port"))
+@@ -1824,11 +1824,8 @@ static int tegra_vi_init(struct host1x_client *client)
+ 		ret = tegra_vi_tpg_channels_alloc(vi);
+ 	else
+ 		ret = tegra_vi_channels_alloc(vi);
+-	if (ret < 0) {
+-		dev_err(vi->dev,
+-			"failed to allocate vi channels: %d\n", ret);
++	if (ret < 0)
+ 		goto free_chans;
+-	}
+ 
+ 	ret = tegra_vi_channels_init(vi);
+ 	if (ret < 0)
 -- 
 2.34.1
 
