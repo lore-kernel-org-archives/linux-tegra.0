@@ -2,34 +2,34 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9082BC64EC4
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273B3C64EC4
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbjCIOqu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:46:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53424 "EHLO
+        id S232002AbjCIOrK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:47:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232035AbjCIOp4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:45:56 -0500
+        with ESMTP id S232000AbjCIOqs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:46:48 -0500
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B30A2E8A97;
-        Thu,  9 Mar 2023 06:44:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 776E8F4018;
+        Thu,  9 Mar 2023 06:44:59 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id DA0B8FF814;
-        Thu,  9 Mar 2023 14:44:13 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 123CAFF80D;
+        Thu,  9 Mar 2023 14:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678373057;
+        t=1678373068;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+JiyEr0aLb/Un5/rTb5g/3dOFycMN8fKhuwYurKD+kM=;
-        b=Y3sA0TwiLqtyVBFKoONsoDkzlfvNjvP8Uh2nFHMH3N/p0h3MW2VqXthUm6SV9JkeawsupT
-        buvD5REVKwR+ZWhhLxq5gMZQOX+AWT/k8adb2SNXmoNYkc+fFl1XGDpJSexLsG4PzGsxPn
-        E+/A6xuzXlFkok/cJOBzfRT/hTuEGxF0FmAiI6VvLtsondX4bKvQfZpJgjZ2FNixKvmxLl
-        kzus6ZKcfIu8CsdLTaLp0RObViDP5glYp4lVEX61Ak1u+s+a4gJZ3WttJ5UBLk80P/Td8G
-        vkYGDe0dhLsq+ftbNNwmrhmaX0bdvLatjsTOiupKweysgfeukFQnPSVTa8tEbA==
+        bh=hDiV5rOlFdW2m46RMT95urn/gnlTWYvRe5STpBeX4qE=;
+        b=lAz7R6ENEmOVb3VuiZBSQo9DJOKmuQjU1rNxvD322vbsGHGH3FYqNA1ShRnnA0kv0yAzrl
+        7nipezhFoF6nzxveySCbLRSREGWJxP3Njbnf7YrlAIdxkXN4w8AyzDbkrtetbR5ABPclfU
+        jIXWVmP472LO2Oza9HtwxzEOtLxigamVtYE3bsyv1fJ5HEOFqLSGiJX55+xW3nc7dDB5Bj
+        e61zMckIIx8CL09GXDFNvEIVoYv0r0owpSnDrdoYE2njfrmPWMm6vQ90N2pJP2CRTrsncm
+        uO8shr3cSCDWb8LJ/PmyuZg4o4gdL4KeiQX1F/Lb66gzbVBDg4pO4jUwauj0tA==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -49,9 +49,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [RESEND PATCH v4 16/21] staging: media: tegra-video: add a per-soc enable/disable op
-Date:   Thu,  9 Mar 2023 15:43:15 +0100
-Message-Id: <20230309144320.2937553-17-luca.ceresoli@bootlin.com>
+Subject: [RESEND PATCH v4 20/21] staging: media: tegra-video: add H/V flip controls
+Date:   Thu,  9 Mar 2023 15:43:19 +0100
+Message-Id: <20230309144320.2937553-21-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
 References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
@@ -61,8 +61,16 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra20 VI needs an additional operation to enable the VI, add an
-operation for that.
+Tegra20 can do horizontal and vertical image flip, but Tegra210 cannot
+(either the hardware, or this driver).
+
+In preparation to adding Tegra20 support, add a flag in struct tegra_vi_soc
+so the generic vi.c code knows whether the flip controls should be added or
+not.
+
+Also provide a generic implementation that simply sets two flags in the
+channel struct. The Tegra20 implementation will enable flipping at stream
+start based on those flags.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -75,66 +83,89 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/vi.c | 7 +++++++
- drivers/staging/media/tegra-video/vi.h | 4 ++++
- 2 files changed, 11 insertions(+)
+ drivers/staging/media/tegra-video/vi.c | 14 +++++++++++++-
+ drivers/staging/media/tegra-video/vi.h |  8 ++++++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index a26eb1ca869f..22f6d6478d3e 100644
+index 4a066b61ab8e..d1c6877163c2 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -1853,6 +1853,9 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 	vi->client.ops = &vi_client_ops;
- 	vi->client.dev = &pdev->dev;
+@@ -29,7 +29,7 @@
+ #include "vi.h"
+ #include "video.h"
  
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, true);
-+
- 	ret = host1x_client_register(&vi->client);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev,
-@@ -1863,6 +1866,8 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 	return 0;
+-#define MAX_CID_CONTROLS		1
++#define MAX_CID_CONTROLS		3
  
- rpm_disable:
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, false);
- 	pm_runtime_disable(&pdev->dev);
- 	return ret;
- }
-@@ -1879,6 +1884,8 @@ static int tegra_vi_remove(struct platform_device *pdev)
- 		return err;
+ /**
+  * struct tegra_vi_graph_entity - Entity in the video graph
+@@ -893,6 +893,12 @@ static int vi_s_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_TEGRA_SYNCPT_TIMEOUT_RETRY:
+ 		chan->syncpt_timeout_retry = ctrl->val;
+ 		break;
++	case V4L2_CID_HFLIP:
++		chan->hflip = ctrl->val;
++		break;
++	case V4L2_CID_VFLIP:
++		chan->vflip = ctrl->val;
++		break;
+ 	default:
+ 		return -EINVAL;
  	}
+@@ -964,6 +970,12 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+ 		v4l2_ctrl_handler_free(&chan->ctrl_handler);
+ 		return ret;
+ 	}
++
++	if (chan->vi->soc->has_h_v_flip) {
++		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
++		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
++	}
++
+ #endif
  
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, false);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
+ 	/* setup the controls */
 diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 879547073371..851c4f3fcb91 100644
+index 0503eb678556..8fa817757059 100644
 --- a/drivers/staging/media/tegra-video/vi.h
 +++ b/drivers/staging/media/tegra-video/vi.h
-@@ -37,8 +37,11 @@ enum tegra_vi_pg_mode {
- 	TEGRA_VI_PG_PATCH,
+@@ -74,6 +74,7 @@ struct tegra_vi_ops {
+  * @hw_revision: VI hw_revision
+  * @vi_max_channels: supported max streaming channels
+  * @vi_max_clk_hz: VI clock max frequency
++ * @has_h_v_flip: the chip can do H adn V flip, and the driver implements it
+  */
+ struct tegra_vi_soc {
+ 	const struct tegra_video_format *video_formats;
+@@ -83,6 +84,7 @@ struct tegra_vi_soc {
+ 	u32 hw_revision;
+ 	unsigned int vi_max_channels;
+ 	unsigned int vi_max_clk_hz;
++	bool has_h_v_flip:1;
  };
  
-+struct tegra_vi;
-+
  /**
-  * struct tegra_vi_ops - Tegra VI operations
-+ * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
-  * @vi_fmt_align: modify `pix` to fit the hardware alignment
-  *		requirements and fill image geometry
-  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
-@@ -48,6 +51,7 @@ enum tegra_vi_pg_mode {
-  *		back any queued buffers.
+@@ -170,6 +172,9 @@ struct tegra_vi {
+  * @syncpt_timeout_retry: syncpt timeout retry count for the capture
+  * @pg_mode: test pattern generator mode (disabled/direct/patch)
+  * @notifier: V4L2 asynchronous subdevs notifier
++ *
++ * @hflip: Horizontal flip is enabled
++ * @vflip: Vertical flip is enabled
   */
- struct tegra_vi_ops {
-+	int (*vi_enable)(struct tegra_vi *vi, bool on);
- 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
- 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
- 	void (*vi_stop_streaming)(struct vb2_queue *vq);
+ struct tegra_vi_channel {
+ 	struct list_head list;
+@@ -218,6 +223,9 @@ struct tegra_vi_channel {
+ 	enum tegra_vi_pg_mode pg_mode;
+ 
+ 	struct v4l2_async_notifier notifier;
++
++	bool hflip:1;
++	bool vflip:1;
+ };
+ 
+ /**
 -- 
 2.34.1
 
