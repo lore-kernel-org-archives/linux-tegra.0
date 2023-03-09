@@ -2,213 +2,120 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187E6C64EC4
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 06:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E62ECC64EC4
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 06:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229592AbjCIGSD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Mar 2023 01:18:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37532 "EHLO
+        id S229874AbjCIGTW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Mar 2023 01:19:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbjCIGSA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 01:18:00 -0500
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62825E194;
-        Wed,  8 Mar 2023 22:17:49 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VcjHJlGnilQ4tUrAlGpN6GSh+pGb68u6owLUzvD2cBb2d3xgFtIFloJXmN2PhzbJUO9VYmwAJTcaCEgYHq6HDFpdH0dwzD0uX+EyJ7/jn6XKZZ4/7Ix7PGBWMs6sdm3wODRACwkM0AIwVsmt7akJx+7W6Jd4PD3r5usM7+BLcndEAsyGT1IgJmvfDTzAIeP2oZOF+KOU0M3V0LQo3wmoBpCmOUOHG+itPNCbJtRI1nEATMFWB+Y6O32jypn7VPk2LrJ6+p8wAS20ox3a6LuXNK1WNoFDk5+i5lYoTCSdJLRIQOnUvQCuIG6K4rb1KivFu2Ez1X1L/7dKFxoGURM24A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N/w0fpVorq0Ul+NeMg1CUoIQdPfqxM6d1zbiK3ggKDE=;
- b=XT8G5qQxj2ax4l1gsJaopIs6oNFp9rQA57QoHli+OkK+Dfs1Zv3SlS+DocoOebAqbXLpBwdwvPm8kZdt1Pa48r9rQpQrt3/rDuFYmNW9KY+CESvG4R1GOfOZCDgM7alPAaI1is7x1/eoS3kr62Gvkf38EyvJkQ09OO30xZ/z2ymfoVhMBMGy1/Cy68vb8bJMbxUqfy/oYU+k+5fIr691w6eFFjpFJGETVvLloQl9zeeVgNSxKTpkUhP1+KGvIN+jl7O4fw6nvmCrNfKEsOv2b9E3D2EsyDK8OaJsBebBdomVl88se6Bg4ITam4W58iyJHRnFhZdofkxvYLqP0UTpnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N/w0fpVorq0Ul+NeMg1CUoIQdPfqxM6d1zbiK3ggKDE=;
- b=rvdgJS14Tcz4/VuWRDUXnKIbxMdZLBW7hZrgFcZQc5pFIhwkbYiOQkNA2HaTfv5CQKIN0kzUTzo3zLUdVbXsjzA6GWXwNxkAyLKky/xYR3+FIOjcyIfl6X/EWnO8Tsx1ja9z0kWzuFu5vrRGMKj56cVghy5oTZwSZSGWeDgF7OLkraZQg9J1Oz72hPPvJYv3w+ZkLe+UaZLBviYBFPxagDahA7jcT+qVy8AXzcasUweeNQbod+QK0+OSVAxxY8wDV4xGvnZApS7Sqxa0VLId7gRdikzZi5D/2VmgjPoBsSN2pNoqAdMf5uEZoDTh5an5ZAl5Lga2f4LGBY9iwy38UQ==
-Received: from MN2PR05CA0038.namprd05.prod.outlook.com (2603:10b6:208:236::7)
- by CH0PR12MB5059.namprd12.prod.outlook.com (2603:10b6:610:e2::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.19; Thu, 9 Mar
- 2023 06:17:47 +0000
-Received: from BL02EPF0000EE3F.namprd05.prod.outlook.com
- (2603:10b6:208:236:cafe::d6) by MN2PR05CA0038.outlook.office365.com
- (2603:10b6:208:236::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.19 via Frontend
- Transport; Thu, 9 Mar 2023 06:17:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF0000EE3F.mail.protection.outlook.com (10.167.241.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6178.12 via Frontend Transport; Thu, 9 Mar 2023 06:17:47 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 8 Mar 2023
- 22:17:31 -0800
-Received: from 0e64808-lcelt.nvidia.com (10.126.230.37) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Wed, 8 Mar 2023 22:17:28 -0800
-From:   Haotien Hsu <haotienh@nvidia.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>
-CC:     JC Kuo <jckuo@nvidia.com>,
+        with ESMTP id S229751AbjCIGTV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 01:19:21 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D9326151A
+        for <linux-tegra@vger.kernel.org>; Wed,  8 Mar 2023 22:19:19 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id u9so2872276edd.2
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Mar 2023 22:19:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678342758;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CaH9HgCkr+9a67bT+ARgwdxkpOnUI9ns6L7TKcqObjA=;
+        b=ITYlrvXAQLkr9QYr1uTCWBKzOrLNsyrcRMdCfQF2bEVm4JURTwpxCHksdjne9ihFco
+         J5xoCX5SiafVXk7aSYW07LIEXekSkTvf2ApeU+LAEsBxjH013L3k+REjlBuG3qY18Hyg
+         lp3rsilFOxYh2QWQr1V1zCydwIbkoKLRbWLhe12ba/ajHG6O37Du8mUT7kVeUZYMv6Uj
+         z6i86Esqsj5exC/16OVSS27SGKn1LtIOin3fU20BtzHFtCcCTIibZaDY5eMF96fyZto/
+         joVxPKzYuabMFvKftG26KNL5e0f3j7ClC4ZXqorP0+beQxg7iHTHhlUZgwXvEM5eFfIl
+         3H+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678342758;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CaH9HgCkr+9a67bT+ARgwdxkpOnUI9ns6L7TKcqObjA=;
+        b=FLXoZoXqftoNVLhoQsNqdO2T1pRAFLJiJEakahxdo9sU0a/003UjWdc+p/ZEWExtsd
+         BK/0Q2+7iOJGT6eIeeYdgZ7/VrsViyExwA5RAEjP/mi2jWWnrT39iylZlc2Sgm/HTroY
+         Gbe8honBJVdjLCs39WYqycRjODmd8KkKtJcfR7P+lmrX/NKUJ4Dn3FmRLfXwt7bO4105
+         iqPkb92Zs8eWurTSEZ/sqjyA71sWQc3ER4a6Q7k94kLtsIuO1VEvyxVwtWMm0SmdGtSy
+         MeGneUIjijMkuCYb9BMjCTp0pfy9ddnMKDwABaRTqH55Pl0FDDw9wwjVtP6jv8Z3eo9F
+         6i8A==
+X-Gm-Message-State: AO0yUKWwbnqRQU+eRGCvw7cTFu7g2XnvelKR6UXV4J2I1xzphj5KfY/6
+        rV9PjWxHk5uiH4S4dnBoC45e3Q==
+X-Google-Smtp-Source: AK7set++RSnbc8tC8rKkU11kVGIsuUGK4PI5hIF5Cgcmt0cLqiB0DIPHKMSe/Sjp2IIJN46+60HzYw==
+X-Received: by 2002:aa7:c544:0:b0:4ab:cb8c:932b with SMTP id s4-20020aa7c544000000b004abcb8c932bmr16778604edr.40.1678342757997;
+        Wed, 08 Mar 2023 22:19:17 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:7ee2:e73e:802e:45c1? ([2a02:810d:15c0:828:7ee2:e73e:802e:45c1])
+        by smtp.gmail.com with ESMTPSA id 13-20020a508e0d000000b004af59c07495sm9118572edw.45.2023.03.08.22.19.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Mar 2023 22:19:17 -0800 (PST)
+Message-ID: <49f21605-46f8-8a53-cde3-3d8270ea576a@linaro.org>
+Date:   Thu, 9 Mar 2023 07:19:16 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 15/27] memory: tegra: remove MODULE_LICENSE in non-modules
+Content-Language: en-US
+To:     Nick Alcock <nick.alcock@oracle.com>
+Cc:     mcgrof@kernel.org, linux-modules@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Wayne Chang <waynec@nvidia.com>,
-        <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Henry Lin <henryl@nvidia.com>,
-        Haotien Hsu <haotienh@nvidia.com>
-Subject: [PATCH] phy: tegra: xusb: Support sleepwalk for Tegra234
-Date:   Thu, 9 Mar 2023 14:17:08 +0800
-Message-ID: <20230309061708.4156383-1-haotienh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.230.37]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0000EE3F:EE_|CH0PR12MB5059:EE_
-X-MS-Office365-Filtering-Correlation-Id: b6eb8e1f-00a3-4c24-ce7f-08db206600c7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zVsDxBMT6aPJI4iguKuU94gTyY4VNPXJoJIh16kX99UXlkxRLqdWSYGx8C/MW1dVqtKcsJoBbBFb9nK/67npAAU87i4E/Q7M1OHglYJpbRTDZTtqiDWm7G3/mUkt49tJyz4M7LoQ4PQRTeNUmfejaH+ioO4lkeqAUC31psr3BQyRwfDDqLzpdHitIl6o6PIQIbV/bd1WIibXSYgEMJAJvBvmie0bxSDYLgzYRZWsYcHWclN347Kws1KTH8oJYUuIGhBYU6703h5lGia39wZolo7x2gLu7/8EDC0cObwiBEw63c3W3xVVzKIa6R7vTOXTJZWHXe0LiJ+oleWJoHLAar3FrS/rAVu/++yko4KsV+jbGdhHFzdgGWxAQN0nxappU1f6yMWImQop9hdSArb7ap+C0M69leSW0xdZHLMbTAosWZT8k1uJPUwpakynz9g3vNHumc4RLGA0ZZNOIsa9f9YSHrnrixdB+4H7IYuwC2xY9Yoy7tdna+6W2jRaGwwyKaP2CekI64tfKaQ1fwLB66YJHYsERTcvX8SDAzhnVgHWkdsAe0hrz06UxcGltV0QBRYXhbcMIe6uNZEwP0A75t/y9oJLvhIy55+QgZyrx3EPVd8DF1gOp5zxR5YGF9oe14mv/X3LIetPRJiBTUSbcmWERneu9RbnRYEPS4UP/RBGtd+e0n1CIY5AkM5w5zCh1j3TrNvxv72Y/5MQBncicrV5IqLWpQeB/M7bu1SrSenBDlEhRTQnR4CYoLHW6AU5
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(346002)(136003)(39860400002)(376002)(396003)(451199018)(40470700004)(46966006)(36840700001)(83380400001)(47076005)(426003)(336012)(2906002)(82310400005)(2616005)(70586007)(70206006)(8676002)(7696005)(5660300002)(36860700001)(186003)(26005)(16526019)(41300700001)(7636003)(82740400003)(36756003)(107886003)(6666004)(40460700003)(1076003)(478600001)(4326008)(54906003)(356005)(8936002)(86362001)(110136005)(316002)(40480700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2023 06:17:47.3029
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6eb8e1f-00a3-4c24-ce7f-08db206600c7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0000EE3F.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5059
+        linux-tegra@vger.kernel.org
+References: <20230224150811.80316-1-nick.alcock@oracle.com>
+ <20230224150811.80316-16-nick.alcock@oracle.com>
+ <c6f39365-e840-d782-8ec0-e34ec3681b98@linaro.org>
+ <acc27e8f-73ce-39ee-3666-461f5c72d39d@linaro.org>
+ <87h6ux7qhp.fsf@esperi.org.uk>
+ <16bee433-0088-d651-9592-96a2bb827b7f@linaro.org>
+ <87zg8n3s9m.fsf@esperi.org.uk>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <87zg8n3s9m.fsf@esperi.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Henry Lin <henryl@nvidia.com>
+On 08/03/2023 21:25, Nick Alcock wrote:
+> On 6 Mar 2023, Krzysztof Kozlowski stated:
+> 
+>> On 06/03/2023 18:13, Nick Alcock wrote:
+>>> On 6 Mar 2023, Krzysztof Kozlowski told this:
+>>>
+>>>> On 06/03/2023 15:30, Krzysztof Kozlowski wrote:
+>>>>> On 24/02/2023 16:07, Nick Alcock wrote:
+>>>>>> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
+>>>>>> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+>>>>>> are used to identify modules. As a consequence, uses of the macro
+>>>>>> in non-modules will cause modprobe to misidentify their containing
+>>>>>> object file as a module when it is not (false positives), and modprobe
+>>>>>> might succeed rather than failing with a suitable error message.
+>>>>>>
+>>>>>> So remove it in the files in this commit, none of which can be built as
+>>>>>> modules.
+>>>>>
+>>>>> Applied as well. Squashed with next one. Same subject messes with b4, so
+>>>>> prefix should be corrected if these were to stay as separate patches.
+>>>>
+>>>> And all dropped. Run checkpatch before sending patches.
+>>>
+>>> So... which of the 27 patches n this series is being dropped? It would
+>>> also be nice to know what the checkpatch problems were, because all I
+>>> can see from checkpatch is one error per patch, an apparent false
+>>
+>> The ones I responded that I applied - so the memory controller ones.
+> 
+> OK, resent those three (now two), checkpatch-clean and fused identical
+> subjects together. (Not adjusted non-memory-controller patch commit
+> logs, to avoid causing disruption with those that are already flowing
+> into the tree.)
+> 
+> Hope this is better :)
 
-Add new registers programming in sleepwalk sequence for Tegra234:
-MASTER_ENABLE_A/B/C/D in XUSB_AO_UTMIP_SLEEPWALK.
+If you send a new patch, mark it appropriately and include changelog.
 
-Signed-off-by: Henry Lin <henryl@nvidia.com>
-Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
----
- drivers/phy/tegra/xusb-tegra186.c | 20 ++++++++++++++++++++
- drivers/phy/tegra/xusb.h          |  1 +
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 1aae8535f452..0f60d5d1c167 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -145,6 +145,8 @@
- #define   MODE_HS				MODE(0)
- #define   MODE_RST				MODE(1)
- 
-+#define XUSB_AO_UTMIP_SLEEPWALK_STATUS(x)	(0xa0 + (x) * 4)
-+
- #define XUSB_AO_UTMIP_SLEEPWALK_CFG(x)		(0xd0 + (x) * 4)
- #define XUSB_AO_UHSIC_SLEEPWALK_CFG(x)		(0xf0 + (x) * 4)
- #define   FAKE_USBOP_VAL			BIT(0)
-@@ -172,24 +174,30 @@
- #define   AP_A					BIT(4)
- #define   AN_A					BIT(5)
- #define   HIGHZ_A				BIT(6)
-+#define   MASTER_ENABLE_A			BIT(7)
- /* phase B */
- #define   USBOP_RPD_B				BIT(8)
- #define   USBON_RPD_B				BIT(9)
- #define   AP_B					BIT(12)
- #define   AN_B					BIT(13)
- #define   HIGHZ_B				BIT(14)
-+#define   MASTER_ENABLE_B			BIT(15)
- /* phase C */
- #define   USBOP_RPD_C				BIT(16)
- #define   USBON_RPD_C				BIT(17)
- #define   AP_C					BIT(20)
- #define   AN_C					BIT(21)
- #define   HIGHZ_C				BIT(22)
-+#define   MASTER_ENABLE_C			BIT(23)
- /* phase D */
- #define   USBOP_RPD_D				BIT(24)
- #define   USBON_RPD_D				BIT(25)
- #define   AP_D					BIT(28)
- #define   AN_D					BIT(29)
- #define   HIGHZ_D				BIT(30)
-+#define   MASTER_ENABLE_D			BIT(31)
-+#define   MASTER_ENABLE_B_C_D					\
-+	 (MASTER_ENABLE_B | MASTER_ENABLE_C | MASTER_ENABLE_D)
- 
- #define XUSB_AO_UHSIC_SLEEPWALK(x)		(0x120 + (x) * 4)
- /* phase A */
-@@ -417,6 +425,8 @@ static int tegra186_utmi_enable_phy_sleepwalk(struct tegra_xusb_lane *lane,
- 		value |= HIGHZ_A;
- 		value |= AP_A;
- 		value |= AN_B | AN_C | AN_D;
-+		if (padctl->soc->supports_lp_cfg_en)
-+			value |= MASTER_ENABLE_B_C_D;
- 		break;
- 
- 	case USB_SPEED_LOW:
-@@ -424,6 +434,8 @@ static int tegra186_utmi_enable_phy_sleepwalk(struct tegra_xusb_lane *lane,
- 		value |= HIGHZ_A;
- 		value |= AN_A;
- 		value |= AP_B | AP_C | AP_D;
-+		if (padctl->soc->supports_lp_cfg_en)
-+			value |= MASTER_ENABLE_B_C_D;
- 		break;
- 
- 	default:
-@@ -488,6 +500,13 @@ static int tegra186_utmi_disable_phy_sleepwalk(struct tegra_xusb_lane *lane)
- 	value |= WAKE_VAL_NONE;
- 	ao_writel(priv, value, XUSB_AO_UTMIP_SLEEPWALK_CFG(index));
- 
-+	if (padctl->soc->supports_lp_cfg_en) {
-+		/* disable the four stages of sleepwalk */
-+		value = ao_readl(priv, XUSB_AO_UTMIP_SLEEPWALK(index));
-+		value &= ~(MASTER_ENABLE_A | MASTER_ENABLE_B_C_D);
-+		ao_writel(priv, value, XUSB_AO_UTMIP_SLEEPWALK(index));
-+	}
-+
- 	/* power down the line state detectors of the port */
- 	value = ao_readl(priv, XUSB_AO_UTMIP_PAD_CFG(index));
- 	value |= USBOP_VAL_PD | USBON_VAL_PD;
-@@ -1673,6 +1692,7 @@ const struct tegra_xusb_padctl_soc tegra234_xusb_padctl_soc = {
- 	.supports_gen2 = true,
- 	.poll_trk_completed = true,
- 	.trk_hw_mode = true,
-+	.supports_lp_cfg_en = true,
- };
- EXPORT_SYMBOL_GPL(tegra234_xusb_padctl_soc);
- #endif
-diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index 71b8dcedb646..6bbd88245b9d 100644
---- a/drivers/phy/tegra/xusb.h
-+++ b/drivers/phy/tegra/xusb.h
-@@ -434,6 +434,7 @@ struct tegra_xusb_padctl_soc {
- 	bool need_fake_usb3_port;
- 	bool poll_trk_completed;
- 	bool trk_hw_mode;
-+	bool supports_lp_cfg_en;
- };
- 
- struct tegra_xusb_padctl {
--- 
-2.25.1
+Best regards,
+Krzysztof
 
