@@ -2,34 +2,34 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBF0C64EC4
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EDBC76188
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Mar 2023 14:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231830AbjCIOnx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:43:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50312 "EHLO
+        id S231853AbjCIOny (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:43:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231693AbjCIOnr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:43:47 -0500
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66A13644D;
-        Thu,  9 Mar 2023 06:43:45 -0800 (PST)
+        with ESMTP id S231529AbjCIOno (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Mar 2023 09:43:44 -0500
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8061B6700A;
+        Thu,  9 Mar 2023 06:43:39 -0800 (PST)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 757A0FF80A;
-        Thu,  9 Mar 2023 14:43:41 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 3B20FFF80B;
+        Thu,  9 Mar 2023 14:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678373024;
+        t=1678373018;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=btI7/3wHZD79pSqQcpjZGNx3/m1OdsrdYrwOU237Q0U=;
-        b=BI2lNyYDsVgKoDXhUghhDgOH+DYZNZBcqLr+nynN/ytbsgkIwF7+L525eowZAy6hkfcGBt
-        ZJ+BujNToMxi3/PeEbdqTp7y8mUja3BV1fCYOhID9LZ4WsBogNYC1ufhZd+rIcBbHye6XB
-        nSzWadFcdinilTm0F/inCZtvEGjUjLejxDQtA/pHnCo9dzDIex45fXdL8Tz6m7UGI7JqgX
-        SlK6EpvSkNWQfAFVRr72ZgjzVrg9BYxkPQgToUyeq9PbS7ey7S/nH3rT+qR7LnMss5gAV0
-        pvimvqbqHtyvJwGOAgX1cAVI21eBskExMg8rwhh+DOxDjZozjYPa4hyjuajBsQ==
+        bh=9N6QfVVrKZcw1ffwFaVTv55AGDMNh1cJeI7q8gczYrk=;
+        b=Uv3eV5mZCvY3KesWZXC5+0mFnK2PEZ92/mQaqV0loDu/+jGzyUMGtjjdJnSne9Y2IG2OLe
+        o1/Huyfjcn2U/GM7Dv1u6XS2xxNjEoBB2s/UZl+y0B3lvOh0oabbYuBdcPo/7JRbFR3zOh
+        YmwQna/9i7ONlzSkxChfNfEECKVzliYQi3lRs1SGc+e3dvGYTglbDIL98IVI9E9IVrpYVv
+        ok4o31CQGqjMh0S9UVLben+xuoca9090/eSF/K/ZRg82KbGzaQt1kZ0rL8QDtO1kKthWGL
+        v7qCtw10/02P5CGDgylkRvl1IENo62u0ugtDLpSutrVDfu4WrQGh8r93S82cdg==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -49,9 +49,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>
-Subject: [RESEND PATCH v4 06/21] staging: media: tegra-video: fix typos in comment
-Date:   Thu,  9 Mar 2023 15:43:05 +0100
-Message-Id: <20230309144320.2937553-7-luca.ceresoli@bootlin.com>
+Subject: [RESEND PATCH v4 04/21] staging: media: tegra-video: improve documentation of tegra_video_format fields
+Date:   Thu,  9 Mar 2023 15:43:03 +0100
+Message-Id: <20230309144320.2937553-5-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
 References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
@@ -61,10 +61,7 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add "skip" in "so we can *skip* the current channel" or it doesn't make
-sense.
-
-Also add articles where appropriate to fix English grammar.
+Some fields are irrelevant for Tegra20/VIP. Add a note to clarify that.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -77,27 +74,28 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/vi.c | 6 +++---
+ drivers/staging/media/tegra-video/vi.h | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 6aecdd28bd82..ae7adf640e76 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -1762,10 +1762,10 @@ static int tegra_vi_graph_init(struct tegra_vi *vi)
- 	 * Walk the links to parse the full graph. Each channel will have
- 	 * one endpoint of the composite node. Start by parsing the
- 	 * composite node and parse the remote entities in turn.
--	 * Each channel will register v4l2 async notifier to make the graph
--	 * independent between the channels so we can the current channel
-+	 * Each channel will register a v4l2 async notifier to make the graph
-+	 * independent between the channels so we can skip the current channel
- 	 * in case of something wrong during graph parsing and continue with
--	 * next channels.
-+	 * the next channels.
- 	 */
- 	list_for_each_entry(chan, &vi->vi_chans, list) {
- 		struct fwnode_handle *ep, *remote;
+diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
+index 183796c8a46a..dd35c3ac992b 100644
+--- a/drivers/staging/media/tegra-video/vi.h
++++ b/drivers/staging/media/tegra-video/vi.h
+@@ -256,11 +256,11 @@ enum tegra_image_dt {
+ /**
+  * struct tegra_video_format - Tegra video format description
+  *
+- * @img_dt: image data type
+- * @bit_width: format width in bits per component
++ * @img_dt: MIPI CSI-2 data type (for CSI-2 only)
++ * @bit_width: format width in bits per component (for CSI/Tegra210 only)
+  * @code: media bus format code
+  * @bpp: bytes per pixel (when stored in memory)
+- * @img_fmt: image format
++ * @img_fmt: image format (for CSI/Tegra210 only)
+  * @fourcc: V4L2 pixel format FCC identifier
+  */
+ struct tegra_video_format {
 -- 
 2.34.1
 
