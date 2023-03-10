@@ -2,68 +2,150 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2456C6FD19
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 08:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55894C6FD1C
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 08:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230366AbjCJIZ4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Mar 2023 03:25:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58158 "EHLO
+        id S231406AbjCJIr5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Mar 2023 03:47:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbjCJIZu (ORCPT
+        with ESMTP id S231132AbjCJIrY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Mar 2023 03:25:50 -0500
-X-Greylist: delayed 1800 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 10 Mar 2023 00:25:49 PST
-Received: from bitmer.com (server-237-49.tentacle.cloud [185.179.237.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B931070E1;
-        Fri, 10 Mar 2023 00:25:48 -0800 (PST)
-Received: from jarkko by bitmer.com with local (Exim 4.92)
-        (envelope-from <jarkko.nikula@bitmer.com>)
-        id 1paWpw-0003gh-Gf; Fri, 10 Mar 2023 09:06:44 +0200
-Date:   Fri, 10 Mar 2023 09:06:44 +0200
-From:   Jarkko Nikula <jarkko.nikula@bitmer.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com,
-        broonie@kernel.org, james.schulman@cirrus.com,
-        david.rhodes@cirrus.com, tanureal@opensource.cirrus.com,
-        rf@opensource.cirrus.com, oder_chiou@realtek.com,
-        shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com,
-        nicoleotsuka@gmail.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, linux-imx@nxp.com,
-        cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com,
-        peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
-        ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
-        matthias.bgg@gmail.com, srinivas.kandagatla@linaro.org,
-        bgoswami@quicinc.com, vkoul@kernel.org, daniel.baluta@nxp.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        sound-open-firmware@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] ASoC: do not include pm_runtime.h if not used
-Message-ID: <20230310070644.GA13582@bitmer.com>
-References: <20230307103022.1007420-1-claudiu.beznea@microchip.com>
+        Fri, 10 Mar 2023 03:47:24 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD1710A293;
+        Fri, 10 Mar 2023 00:45:30 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C752B61133;
+        Fri, 10 Mar 2023 08:45:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4862C433EF;
+        Fri, 10 Mar 2023 08:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678437929;
+        bh=DqpiA8k7wNjjdxkzp733A1Yn67FxOT0U4u3LTJ/xLzc=;
+        h=Date:Subject:To:References:From:In-Reply-To:From;
+        b=Pl/xPLTjTj6iFkuaY6eJcMaKVOIDojBNzS/hfaWNcgngAxhO5Ugm2YvCUHNSrCFIj
+         NAqKnIB4FpFCo6/b8zScUzWfMWJTWxzr6LgSM7WArfsX2C1gGXigdBR1Rs2Uy1jKbq
+         jFhwulKlv1duy1R5bQFdlDJXNd2caHEnqGQf1Z4n8JhLDrb5gvPSB9m1aMeGjcuBZr
+         VwIwSQ3aXF0uWldICH3uVmOZHLscZI7Q/ivrgLR8p+PHSySugFAit1Wpzgbc7BYBhG
+         vvV2H4mDfkZEBbAf66uiXnLKWzkiVlbodp67bsMuiYpRbvZagYvtmGvbCMnelduIjM
+         8EmONrzJxXs0A==
+Message-ID: <f661f27f-f367-2948-1435-5b5fa43a3b46@kernel.org>
+Date:   Fri, 10 Mar 2023 09:45:24 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230307103022.1007420-1-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH V2 4/6] dt-bindings: timestamp: Add Tegra234 support
+Content-Language: en-US
+To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org, robh+dt@kernel.org,
+        timestamp@lists.linux.dev
+References: <20230214115553.10416-1-dipenp@nvidia.com>
+ <20230214115553.10416-5-dipenp@nvidia.com>
+ <3c0ad963-ce69-bd5b-20cd-888e5fbdecaf@kernel.org>
+ <7a8027c9-dc73-3684-c5f2-3071f315b3cd@nvidia.com>
+ <a5e897e5-4cb9-d50f-47a8-ffb8bd8774cb@kernel.org>
+ <18f9a6ca-a61b-4cbb-b729-1fdb6d48651a@nvidia.com>
+ <ab9f7730-d399-0786-67e5-aad57716809e@kernel.org>
+ <c1a78a59-c8ae-81e5-b641-a7cb75062ab3@nvidia.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <c1a78a59-c8ae-81e5-b641-a7cb75062ab3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 07, 2023 at 12:30:22PM +0200, Claudiu Beznea wrote:
-> Do not include pm_runtime.h header in files where runtime PM support is
-> not implemented.
+On 09/03/2023 19:49, Dipen Patel wrote:
+> On 3/8/23 10:16 PM, Krzysztof Kozlowski wrote:
+>> On 08/03/2023 21:09, Dipen Patel wrote:
+>>> On 3/8/23 11:05 AM, Krzysztof Kozlowski wrote:
+>>>> On 08/03/2023 19:45, Dipen Patel wrote:
+>>>>> On 2/16/23 6:17 AM, Krzysztof Kozlowski wrote:
+>>>>>> On 14/02/2023 12:55, Dipen Patel wrote:
+>>>>>>> Added timestamp provider support for the Tegra234 in devicetree
+>>>>>>> bindings.
+>>>>>>
+>>>>>> 1. Your commit does much more. You need to explain it why you drop some
+>>>>>> property.
+>>>>> ACK, will address it next patch
+>>>>>>
+>>>>>> 2. Bindings go before its usage (in the patchset).
+>>>>> Ack...
+>>>>>>
+>>>>>> 3. Please use scripts/get_maintainers.pl to get a list of necessary
+>>>>>> people and lists to CC.  It might happen, that command when run on an
+>>>>>> older kernel, gives you outdated entries.  Therefore please be sure you
+>>>>>> base your patches on recent Linux kernel.
+>>>>> It is based on recent linux at the time patch series was sent...
+>>>>
+>>>> That's good but then why you do not use scripts/get_maintainers.pl? The
+>>>> hint about recent kernel was just a hint... Just do not invent addresses
+>>>> by yourself and use the tool to get them right.
+>>>>
+>>> I will take a note for the next patch series to add any missing people. The current
+>>> list of people/group is what historically helped review this new timestamp/hte subsystem.
+>>>
+>>>> (...)
+>>>>
+>>>>>>> +  properties:
+>>>>>>> +    compatible:
+>>>>>>> +      contains:
+>>>>>>> +        enum:
+>>>>>>> +          - nvidia,tegra194-gte-aon
+>>>>>>
+>>>>>> This is an ABI break. Does your driver handle it?
+>>>>> yes, handling patch is part of this patch series.
+>>>>
+>>>> Can you point me to the code which does it? I see "return -ENODEV;", so
+>>>> I think you do not handle ABI break. I could miss something but since
+>>>> you disagree with me, please at least bring some arguments...
+>>> Refer to patch https://patchwork.kernel.org/project/timestamp/patch/20230214115553.10416-3-dipenp@nvidia.com/
+>>> which has compatible properties added and also code changes to reflect addition/deletion of some
+>>> properties.
+>>
+>> I referred to the code which breaks the ABI.
+>>
+>>>
+>>> I am not sure I have understood about ABI break comment. How else one should handle if
+>>> there is no related gpio controller property found?
+>>
+>> In a way it does not break existing users? There are many ways to handle
+>> it, but I don't know your code to point you.
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
-...
->  sound/soc/ti/omap-mcbsp-st.c                              | 1 -
->  36 files changed, 37 deletions(-)
+> It is new subsystem and has only one driver which uses it so far. 
 
-Looks like header was copied by accident from omap-mcbsp.c when sidetone
-functionality was split into this new file.
+We do not talk about subsystem, but Tegra SoC, which is not new. Unless
+you meant this is new SoC/DTS?
 
-Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+> This was a decision taken
+> after review comments (By Thierry, also in the mailing list) to add this property (nvidia,gpio-controller)
+> and necessary changes have been made to existing user. From now on, it has to follow this change.
+
+What is "it" which has to follow? There are rules for stable ABI and
+commit msg does not explain why they should not be followed.
+
+> 
+>>
+>>> I am assuming you are referring to the
+>>> below code from the patch 2 (link above) when you said "return -ENODEV".
+>>
+>>
+>> Your bindings patch points to ABI break without any
+>> explanation/justification. Then your code #2 patch actually breaks it,
+>> also without any justification.
+> I am going to add explanation/justification in the commit message in the next patch series. But to give
+> you context, discussion happened here https://patchwork.ozlabs.org/project/linux-gpio/patch/20221103174523.29592-3-dipenp@nvidia.com/
+
+Either too many messages (and I missed something) or I could not find
+why ABI break is accepted and justified.
+
+
+Best regards,
+Krzysztof
+
