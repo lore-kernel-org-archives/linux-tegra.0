@@ -2,52 +2,55 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C4EC64EC4
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 15:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B6FC6FA99
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 15:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233985AbjCJPLE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Mar 2023 10:11:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43844 "EHLO
+        id S234072AbjCJPZD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Mar 2023 10:25:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233950AbjCJPKi (ORCPT
+        with ESMTP id S234265AbjCJPYm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Mar 2023 10:10:38 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF9985256;
-        Fri, 10 Mar 2023 07:02:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678460581; x=1709996581;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FdWrrEiVvcGV5We2oP4cFNJrwxSOXnTFkXSWK6R+KRo=;
-  b=Swaa2Gn66VmQ98H0uc0g81vbOUzfQtWVrvlTeLWwuH00tj3alj/fYl+I
-   p0u4l0Mg9oINryaL1l69yp1mLvaaPHV1C0YFXg4Z/YVlIhj56t8AxYdgN
-   WohAkWZuwPWA0/PhBsN0qd64FPP6lS8UbfandFr5ou97aamzmgMP5XNB9
-   Lcilswtd8bfKL9P6OAEDLyfH0A94gj3ihpnsLnDKWZp/Op3cT3BNe+wy8
-   rgzYTq9xjf7eaR7m+68dAm+/iJCmE+aI3rCQcF4xi5Gej64anVyMjom/5
-   7gdnQG0oqKDLY5H9wC8ntAR/PRDeaCLuWDxWltQmaaQtPfXMOqjnZJWqG
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10645"; a="336764006"
-X-IronPort-AV: E=Sophos;i="5.98,250,1673942400"; 
-   d="scan'208";a="336764006"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2023 07:01:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10645"; a="788037593"
-X-IronPort-AV: E=Sophos;i="5.98,250,1673942400"; 
-   d="scan'208";a="788037593"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.99.16.144]) ([10.99.16.144])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2023 07:01:47 -0800
-Message-ID: <a23852d7-c70c-a03c-99fb-b453bdc750a1@linux.intel.com>
-Date:   Fri, 10 Mar 2023 16:01:45 +0100
+        Fri, 10 Mar 2023 10:24:42 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D3E113FC;
+        Fri, 10 Mar 2023 07:14:22 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7074B61964;
+        Fri, 10 Mar 2023 15:14:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5BA0C433B0;
+        Fri, 10 Mar 2023 15:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678461261;
+        bh=sgc8sIikzUKf8oaUnbtaXcTY2+rUOaKm8L45dmJWIxw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XsSdofoMEl9DiYAK/5ZfZwS39YNneCyCkE2OMaRWREuFbfAKyFkSbPfX7MGZcG4M7
+         JAeBtbixw/gZHCVfI2L/DClYn6pJa7qjBMGz08lE6JrnCEkh0hSOMt43r5/aUqmZSz
+         OH855hrU5l1onGHH6KfbzuDFtdHssh/uoofSzr19FlyR2g9v+q5I70AUu22M+BmnRO
+         b8+zztOPCyBsxmSt4a6CqbzxeWH73JK8u/OCwRnI6XUMFF6eeqPuu0PTriEqEY1Asx
+         1WnD7DVAkpnF8vMtJpiy6LsQrLt/e0y4uqrj2F4+wPGAlLSnraGi8gEAXKDxdBpMdK
+         ELb1vvyozXFrw==
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-536bf92b55cso102911827b3.12;
+        Fri, 10 Mar 2023 07:14:21 -0800 (PST)
+X-Gm-Message-State: AO0yUKX1fWfvAwutADE33I/PEt9NFbuErN+w28Nfen0mmpxXyUKIH4YX
+        DWQWFnaL5fmy6y3+K7DrQ5WzG7l4Ce0XPMkbxg==
+X-Google-Smtp-Source: AK7set9VS13tgdT+DzbUPAyK1hhAFX+2x0Vswnb9c7OreYxCI/2ydgI/cIMuWNP/8hWsvzFznbnbU6n4F1bUdn7w/qM=
+X-Received: by 2002:a81:ad5a:0:b0:536:4d58:54b2 with SMTP id
+ l26-20020a81ad5a000000b005364d5854b2mr17238450ywk.4.1678461260807; Fri, 10
+ Mar 2023 07:14:20 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] ASoC: Use of_property_present() for testing DT property
- presence
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+References: <20230310144732.1546328-1-robh@kernel.org> <a23852d7-c70c-a03c-99fb-b453bdc750a1@linux.intel.com>
+In-Reply-To: <a23852d7-c70c-a03c-99fb-b453bdc750a1@linux.intel.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 10 Mar 2023 09:14:08 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+XBzEMWrz=quxq4TkrejMMFRRvo0UinghmBphtmr=XXw@mail.gmail.com>
+Message-ID: <CAL_Jsq+XBzEMWrz=quxq4TkrejMMFRRvo0UinghmBphtmr=XXw@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: Use of_property_present() for testing DT property presence
+To:     =?UTF-8?B?QW1hZGV1c3ogU8WCYXdpxYRza2k=?= 
+        <amadeuszx.slawinski@linux.intel.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>,
@@ -62,83 +65,71 @@ To:     Rob Herring <robh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-tegra@vger.kernel.org
-References: <20230310144732.1546328-1-robh@kernel.org>
-From:   =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20230310144732.1546328-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/10/2023 3:47 PM, Rob Herring wrote:
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties. As
-> part of this, convert of_get_property/of_find_property calls to the
-> recently added of_property_present() helper when we just want to test
-> for presence of a property and nothing more.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->   sound/soc/codecs/lpass-macro-common.c | 2 +-
->   sound/soc/generic/audio-graph-card.c  | 2 +-
->   sound/soc/generic/audio-graph-card2.c | 2 +-
->   sound/soc/mxs/mxs-sgtl5000.c          | 2 +-
->   sound/soc/samsung/i2s.c               | 2 +-
->   sound/soc/sh/fsi.c                    | 2 +-
->   sound/soc/stm/stm32_i2s.c             | 2 +-
->   sound/soc/stm/stm32_sai_sub.c         | 4 ++--
->   sound/soc/tegra/tegra_asoc_machine.c  | 2 +-
->   9 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/lpass-macro-common.c b/sound/soc/codecs/lpass-macro-common.c
-> index 1b9082d237c1..f54baaad54d4 100644
-> --- a/sound/soc/codecs/lpass-macro-common.c
-> +++ b/sound/soc/codecs/lpass-macro-common.c
-> @@ -16,7 +16,7 @@ struct lpass_macro *lpass_macro_pds_init(struct device *dev)
->   	struct lpass_macro *l_pds;
->   	int ret;
->   
-> -	if (!of_find_property(dev->of_node, "power-domains", NULL))
-> +	if (!of_property_present(dev->of_node, "power-domains"))
->   		return NULL;
->   
->   	l_pds = devm_kzalloc(dev, sizeof(*l_pds), GFP_KERNEL);
-> diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-> index 5daa824a4ffc..d788f5f23a8a 100644
-> --- a/sound/soc/generic/audio-graph-card.c
-> +++ b/sound/soc/generic/audio-graph-card.c
-> @@ -78,7 +78,7 @@ static int graph_get_dai_id(struct device_node *ep)
->   		 * only of_graph_parse_endpoint().
->   		 * We need to check "reg" property
->   		 */
-> -		if (of_get_property(ep,   "reg", NULL))
-> +		if (of_property_present(ep,   "reg"))
+On Fri, Mar 10, 2023 at 9:01=E2=80=AFAM Amadeusz S=C5=82awi=C5=84ski
+<amadeuszx.slawinski@linux.intel.com> wrote:
+>
+> On 3/10/2023 3:47 PM, Rob Herring wrote:
+> > It is preferred to use typed property access functions (i.e.
+> > of_property_read_<type> functions) rather than low-level
+> > of_get_property/of_find_property functions for reading properties. As
+> > part of this, convert of_get_property/of_find_property calls to the
+> > recently added of_property_present() helper when we just want to test
+> > for presence of a property and nothing more.
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >   sound/soc/codecs/lpass-macro-common.c | 2 +-
+> >   sound/soc/generic/audio-graph-card.c  | 2 +-
+> >   sound/soc/generic/audio-graph-card2.c | 2 +-
+> >   sound/soc/mxs/mxs-sgtl5000.c          | 2 +-
+> >   sound/soc/samsung/i2s.c               | 2 +-
+> >   sound/soc/sh/fsi.c                    | 2 +-
+> >   sound/soc/stm/stm32_i2s.c             | 2 +-
+> >   sound/soc/stm/stm32_sai_sub.c         | 4 ++--
+> >   sound/soc/tegra/tegra_asoc_machine.c  | 2 +-
+> >   9 files changed, 10 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/sound/soc/codecs/lpass-macro-common.c b/sound/soc/codecs/l=
+pass-macro-common.c
+> > index 1b9082d237c1..f54baaad54d4 100644
+> > --- a/sound/soc/codecs/lpass-macro-common.c
+> > +++ b/sound/soc/codecs/lpass-macro-common.c
+> > @@ -16,7 +16,7 @@ struct lpass_macro *lpass_macro_pds_init(struct devic=
+e *dev)
+> >       struct lpass_macro *l_pds;
+> >       int ret;
+> >
+> > -     if (!of_find_property(dev->of_node, "power-domains", NULL))
+> > +     if (!of_property_present(dev->of_node, "power-domains"))
+> >               return NULL;
+> >
+> >       l_pds =3D devm_kzalloc(dev, sizeof(*l_pds), GFP_KERNEL);
+> > diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/a=
+udio-graph-card.c
+> > index 5daa824a4ffc..d788f5f23a8a 100644
+> > --- a/sound/soc/generic/audio-graph-card.c
+> > +++ b/sound/soc/generic/audio-graph-card.c
+> > @@ -78,7 +78,7 @@ static int graph_get_dai_id(struct device_node *ep)
+> >                * only of_graph_parse_endpoint().
+> >                * We need to check "reg" property
+> >                */
+> > -             if (of_get_property(ep,   "reg", NULL))
+> > +             if (of_property_present(ep,   "reg"))
+>
+> Bit of nit picking, but any reason, why there are multiple spaces,
+> before "reg" here?
 
-Bit of nit picking, but any reason, why there are multiple spaces, 
-before "reg" here?
+Only because there was before and it was a scripted change.
 
->   			return info.id;
->   
->   		node = of_get_parent(ep);
-> diff --git a/sound/soc/generic/audio-graph-card2.c b/sound/soc/generic/audio-graph-card2.c
-> index 06609a526b78..259544f64df9 100644
-> --- a/sound/soc/generic/audio-graph-card2.c
-> +++ b/sound/soc/generic/audio-graph-card2.c
-> @@ -376,7 +376,7 @@ static int graph_get_dai_id(struct device_node *ep)
->   		 * only of_graph_parse_endpoint().
->   		 * We need to check "reg" property
->   		 */
-> -		if (of_get_property(ep,   "reg", NULL))
-> +		if (of_property_present(ep,   "reg"))
-
-And here?
-
-
+Rob
