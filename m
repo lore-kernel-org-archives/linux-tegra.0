@@ -2,62 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E5FC6FD1F
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 14:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C91BC74A5B
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 14:49:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233010AbjCJOsh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Mar 2023 09:48:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43608 "EHLO
+        id S233079AbjCJOtB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Mar 2023 09:49:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233046AbjCJOrf (ORCPT
+        with ESMTP id S233083AbjCJOrl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Mar 2023 09:47:35 -0500
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D02412115C;
-        Fri, 10 Mar 2023 06:47:19 -0800 (PST)
-Received: by mail-oi1-f172.google.com with SMTP id y184so4386047oiy.8;
-        Fri, 10 Mar 2023 06:47:19 -0800 (PST)
+        Fri, 10 Mar 2023 09:47:41 -0500
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCAD511F62C;
+        Fri, 10 Mar 2023 06:47:24 -0800 (PST)
+Received: by mail-oi1-f182.google.com with SMTP id be16so4445147oib.0;
+        Fri, 10 Mar 2023 06:47:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678459635;
+        d=1e100.net; s=20210112; t=1678459639;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vOScINdVt5AO68Lh+/aSSo0LSJcWlj/v+OQKQopbrfE=;
-        b=eolFuhBLjUSLjh4iH9KotyuBJTqQza0Ns9lw0nM5K0kS70QydcjOAOdONGKCf+NkVn
-         amz7/eJhBRQMQpo+P5c8GayjcFdkAs+CnNu3IJ7EM4J1imFDx5fUKhFtt4T/KWYtN7V8
-         W67e9+BfNrh83/dWcyHjjLnGMSyaxVFQIviMBfHyP7Nkr9Kgj59VduVRw1YWTztfv002
-         BfBg3bTzsOPA/fdPUDrwFJ7puEgHWdvaHyHurkWU87PQKPBoVg8n2GGFXWbgDO4drash
-         z43HG9iEzNiIKKORzs+ylVh9jtk59mYB9ub6fJR8WOnQRDFvikoh4p48jVg9GhyyXhl1
-         0qDg==
-X-Gm-Message-State: AO0yUKVcSoe+pQ6iYwHeI29T6JqbtXypSXx0dBOYKmhCZo/yaqOYOW3v
-        XPu9z3avjgBNeuAtf6zf8HzyJw8/WA==
-X-Google-Smtp-Source: AK7set+A03WCNhhILxT+Im0HjPRwqAdlpSrjmwLHRwv5tCq6UJ03m7njDAzYDBsWlFqeSLAiKCrC0Q==
-X-Received: by 2002:a05:6808:8f1:b0:384:349a:15d0 with SMTP id d17-20020a05680808f100b00384349a15d0mr3352325oic.38.1678459634837;
-        Fri, 10 Mar 2023 06:47:14 -0800 (PST)
+        bh=UdWW9ncgSIHEZEYSb0mkw0NVObO6RbETPoJE1mKPNzo=;
+        b=vH3QQbK4G3kihj5VzK4+zFI8DkXsedZFmxTqFQtnHvGFg2SFZ7i4hKL4WvOYA72sK1
+         8NTHTK07eg3k4rY+i5gRxzUSx15UG97J4IJjHuJ+3Uwk4u2x1PvR2XZFoHVtqmpkPaKk
+         gvPQDj1Nd105BOsjoROBO06kJSfkzoxL2MsQ/IwSoc57cXzzNfL2ykCE6cFRTQEp+fpS
+         rKHH4jFZp+PR48SMzisIt01oV4aS/6OoZwrEU8QESlfFQxOLNwNIlE8aUygx898QLUU2
+         e3E24SsJ4zECRvVOfmEolnhbW+tKk6OuyN5qQoIP+aCzwM+BsGw6HCV55yKOqkisd0f0
+         Ud8g==
+X-Gm-Message-State: AO0yUKXeSAeOcuEhMFSGoHvUpHKO0wSC2pBY/wkKfd0eCuzF+/lFq/9b
+        DyL7hffgdA7LZapAcQHw/A==
+X-Google-Smtp-Source: AK7set/8L4r+XvpMu69vm6S6XFR1r1QKusZrKwJxtRfFGT1XqqIlwZ3+BTC+mAIkluQcKq5JUFaEUQ==
+X-Received: by 2002:a05:6808:197:b0:384:311d:5664 with SMTP id w23-20020a056808019700b00384311d5664mr11445048oic.23.1678459638382;
+        Fri, 10 Mar 2023 06:47:18 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id q194-20020a4a33cb000000b00517fc5fdf5bsm801303ooq.17.2023.03.10.06.47.13
+        by smtp.gmail.com with ESMTPSA id s9-20020acac209000000b00383eaf88e75sm943090oif.39.2023.03.10.06.47.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Mar 2023 06:47:14 -0800 (PST)
-Received: (nullmailer pid 1541776 invoked by uid 1000);
-        Fri, 10 Mar 2023 14:47:02 -0000
+        Fri, 10 Mar 2023 06:47:17 -0800 (PST)
+Received: (nullmailer pid 1542071 invoked by uid 1000);
+        Fri, 10 Mar 2023 14:47:04 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
+To:     Sudeep Holla <sudeep.holla@arm.com>,
         Cristian Marussi <cristian.marussi@arm.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] cpufreq: Use of_property_present() for testing DT property presence
-Date:   Fri, 10 Mar 2023 08:47:02 -0600
-Message-Id: <20230310144702.1541730-1-robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] firmware: Use of_property_present() for testing DT property presence
+Date:   Fri, 10 Mar 2023 08:47:04 -0600
+Message-Id: <20230310144704.1542045-1-robh@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,87 +66,50 @@ for presence of a property and nothing more.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 2 +-
- drivers/cpufreq/imx-cpufreq-dt.c     | 2 +-
- drivers/cpufreq/imx6q-cpufreq.c      | 4 ++--
- drivers/cpufreq/scmi-cpufreq.c       | 2 +-
- drivers/cpufreq/tegra20-cpufreq.c    | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/firmware/arm_scmi/optee.c | 2 +-
+ drivers/firmware/tegra/bpmp.c     | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index e85703651098..5ac6b9e5270e 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -179,7 +179,7 @@ static bool __init cpu0_node_has_opp_v2_prop(void)
- 	struct device_node *np = of_cpu_device_node_get(0);
- 	bool ret = false;
+diff --git a/drivers/firmware/arm_scmi/optee.c b/drivers/firmware/arm_scmi/optee.c
+index 929720387102..e123de6e8c67 100644
+--- a/drivers/firmware/arm_scmi/optee.c
++++ b/drivers/firmware/arm_scmi/optee.c
+@@ -403,7 +403,7 @@ static int setup_static_shmem(struct device *dev, struct scmi_chan_info *cinfo,
+ static int setup_shmem(struct device *dev, struct scmi_chan_info *cinfo,
+ 		       struct scmi_optee_channel *channel)
+ {
+-	if (of_find_property(cinfo->dev->of_node, "shmem", NULL))
++	if (of_property_present(cinfo->dev->of_node, "shmem"))
+ 		return setup_static_shmem(dev, cinfo, channel);
+ 	else
+ 		return setup_dynamic_shmem(dev, channel);
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 042c2043929d..8b5e5daa9fae 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -764,19 +764,19 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		goto free_mrq;
  
--	if (of_get_property(np, "operating-points-v2", NULL))
-+	if (of_property_present(np, "operating-points-v2"))
- 		ret = true;
+-	if (of_find_property(pdev->dev.of_node, "#clock-cells", NULL)) {
++	if (of_property_present(pdev->dev.of_node, "#clock-cells")) {
+ 		err = tegra_bpmp_init_clocks(bpmp);
+ 		if (err < 0)
+ 			goto free_mrq;
+ 	}
  
- 	of_node_put(np);
-diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufreq-dt.c
-index 76e553af2071..535867a7dfdd 100644
---- a/drivers/cpufreq/imx-cpufreq-dt.c
-+++ b/drivers/cpufreq/imx-cpufreq-dt.c
-@@ -89,7 +89,7 @@ static int imx_cpufreq_dt_probe(struct platform_device *pdev)
+-	if (of_find_property(pdev->dev.of_node, "#reset-cells", NULL)) {
++	if (of_property_present(pdev->dev.of_node, "#reset-cells")) {
+ 		err = tegra_bpmp_init_resets(bpmp);
+ 		if (err < 0)
+ 			goto free_mrq;
+ 	}
  
- 	cpu_dev = get_cpu_device(0);
- 
--	if (!of_find_property(cpu_dev->of_node, "cpu-supply", NULL))
-+	if (!of_property_present(cpu_dev->of_node, "cpu-supply"))
- 		return -ENODEV;
- 
- 	if (of_machine_is_compatible("fsl,imx7ulp")) {
-diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-index ad4ce8493144..48e1772e98fd 100644
---- a/drivers/cpufreq/imx6q-cpufreq.c
-+++ b/drivers/cpufreq/imx6q-cpufreq.c
-@@ -222,7 +222,7 @@ static int imx6q_opp_check_speed_grading(struct device *dev)
- 	u32 val;
- 	int ret;
- 
--	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
-+	if (of_property_present(dev->of_node, "nvmem-cells")) {
- 		ret = nvmem_cell_read_u32(dev, "speed_grade", &val);
- 		if (ret)
- 			return ret;
-@@ -279,7 +279,7 @@ static int imx6ul_opp_check_speed_grading(struct device *dev)
- 	u32 val;
- 	int ret = 0;
- 
--	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
-+	if (of_property_present(dev->of_node, "nvmem-cells")) {
- 		ret = nvmem_cell_read_u32(dev, "speed_grade", &val);
- 		if (ret)
- 			return ret;
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 513a071845c2..f34e6382a4c5 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -310,7 +310,7 @@ static int scmi_cpufreq_probe(struct scmi_device *sdev)
- 
- #ifdef CONFIG_COMMON_CLK
- 	/* dummy clock provider as needed by OPP if clocks property is used */
--	if (of_find_property(dev->of_node, "#clock-cells", NULL))
-+	if (of_property_present(dev->of_node, "#clock-cells"))
- 		devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, NULL);
- #endif
- 
-diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-index ab7ac7df9e62..dfd2de4f8e07 100644
---- a/drivers/cpufreq/tegra20-cpufreq.c
-+++ b/drivers/cpufreq/tegra20-cpufreq.c
-@@ -25,7 +25,7 @@ static bool cpu0_node_has_opp_v2_prop(void)
- 	struct device_node *np = of_cpu_device_node_get(0);
- 	bool ret = false;
- 
--	if (of_get_property(np, "operating-points-v2", NULL))
-+	if (of_property_present(np, "operating-points-v2"))
- 		ret = true;
- 
- 	of_node_put(np);
+-	if (of_find_property(pdev->dev.of_node, "#power-domain-cells", NULL)) {
++	if (of_property_present(pdev->dev.of_node, "#power-domain-cells")) {
+ 		err = tegra_bpmp_init_powergates(bpmp);
+ 		if (err < 0)
+ 			goto free_mrq;
 -- 
 2.39.2
 
