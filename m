@@ -2,165 +2,139 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C01C742A7
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 18:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3626AC6FA99
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 18:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbjCJSIN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Mar 2023 13:08:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51524 "EHLO
+        id S229800AbjCJS6F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Mar 2023 13:58:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbjCJSIL (ORCPT
+        with ESMTP id S230000AbjCJS6E (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Mar 2023 13:08:11 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E98EF1B318;
-        Fri, 10 Mar 2023 10:08:06 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 14EF061BB2;
-        Fri, 10 Mar 2023 18:08:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92FFC433EF;
-        Fri, 10 Mar 2023 18:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678471685;
-        bh=1Z0qzAWjdgjpl9cppEGMQkzvMHIUxky2AMt6JDpGnN4=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=dRKOZR4q0d/gZV1FcaOoD2TkSsBp9tJ4pMk6uHCG63pE7rD44jrwd3yDEJpLuJEqO
-         lJOhyy1MGFgQsUa9Gvzv8CEJm0mtnWngZKfPR6hZ5ZqkjHjW5Q4xGXI9IU1gXYDwSn
-         Lww/AAS7YhRd2h54aQHyr3an+NDRKO0dO+elLmjUUt2id6pyTHOhP9hJ+sLRcHPig2
-         f9E4lMl3dhLIvkCpzAczBixCwMzpo6P7sh54erF2w+tA8KYfu/WsuGHIhDS/plSnax
-         2n8mqX7AkBjtTXQ+oeqrW9gYPftC5rn7j0uSj20O/nlYk6/OpaJbkcXgL+riX3s9kD
-         5upRoX6NQy3MA==
-Message-ID: <d80001de-3cf7-59e9-5ae7-d8dfe0a1c21e@kernel.org>
-Date:   Fri, 10 Mar 2023 19:08:00 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH V2 4/6] dt-bindings: timestamp: Add Tegra234 support
-To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org,
-        timestamp@lists.linux.dev
-References: <20230214115553.10416-1-dipenp@nvidia.com>
- <20230214115553.10416-5-dipenp@nvidia.com>
- <3c0ad963-ce69-bd5b-20cd-888e5fbdecaf@kernel.org>
- <7a8027c9-dc73-3684-c5f2-3071f315b3cd@nvidia.com>
- <a5e897e5-4cb9-d50f-47a8-ffb8bd8774cb@kernel.org>
- <18f9a6ca-a61b-4cbb-b729-1fdb6d48651a@nvidia.com>
- <ab9f7730-d399-0786-67e5-aad57716809e@kernel.org>
- <c1a78a59-c8ae-81e5-b641-a7cb75062ab3@nvidia.com>
- <f661f27f-f367-2948-1435-5b5fa43a3b46@kernel.org>
- <6733c921-3cca-cd7b-3846-0ab6ce172c14@nvidia.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <6733c921-3cca-cd7b-3846-0ab6ce172c14@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+        Fri, 10 Mar 2023 13:58:04 -0500
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2068.outbound.protection.outlook.com [40.107.93.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C9FFF1E;
+        Fri, 10 Mar 2023 10:57:57 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A9wdDWa3eLWT+QWcKe0E7nwxpbD6QtuL1tjrlkM2MOqzJ7PGl2c6RxuRvoQwAbRR9dQiczqlppZpduLN4bFHg6A4Umv1tFEt46T5ryAhJ9DBDRUhf1R+dzWJDYfSbHeRw4q/9n4CYMFUrcZ89GgGJwlEF1TkjU/cSe7BJ2SzUUto2Rw/PixA+uLqWNJy1vaHUHFOOnFBtWCE5fFVFe08j9GGl1iypWjCSl/yHb9DTiptXvkouiEEcjlsspgf/vffFsxNiLVSGtprXU8O/guYM8LEV17ISqLqitZiDxwfJmmg66nDaibDIFQMKk3j/Tmf9WvCAeWB3mJPZStzFkEGPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9eSKQXXsuO4BsiBWbmbMjU9V6KmH4POtqOJVvP/do6g=;
+ b=EIOeL+R/YDuW4h5FpqFiArxL8W1MSNc63ceKSy6gzvJbKUrjRUIGfbQLXHgypUwXSkz0AqkjUiE8je1uW+MIu4mQ6a/UbcJQJC+Q2dWjRsIFg2c5jm5oJ5KUOWdWFwGiyZXTMfDi29Zu0KUQXoCV5tVsoy3x+YVxkzcDxk0gFQO8Dz1spMMEGmErGvN8/4UT0mi2em/Z9e06Ct/Qim48GnmnTMIuWY0Oy0yyGCEAhEyjWsKjBoDG2hn0ZbXgSlUeL8Pox2nfIUyCnooJAG+a/YuMxrx36AFPnFIfhXhls+1gYPGJBq3cNVG4OGwUl50QM/69jF4UNw3bcA1VeBI2ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9eSKQXXsuO4BsiBWbmbMjU9V6KmH4POtqOJVvP/do6g=;
+ b=IcdDnxVcxJfRwerHkIAyeIIDcxOVPsQWjlwlcNzsb1iLhNPAQp2XWHvWfvxLQp6ceeDpNqVh+kQj93TWZlvWRWYNCi+qIa+dM31I4Tv05IloLYhgGygSDus2abXfmEY9UibUWyag2km1roI2oIc53etXDIdgAS0RsFZ8AZ3ZgPJmkQW+feRXVc6y72ASw1jcle2fBpdFDOpOUi3dMg+asVypXZr3w3qP1xIiVGho/pqk/1HdwKPPVH0xc9jNVjet/ZoBon967jdkM08SPzowIkKnzQIOoKv6CpIRuCggqDLrQDseTfuJIW38Bq5ORZlFh+vPolE135ZckhAhGMNgTw==
+Received: from CYZPR05CA0043.namprd05.prod.outlook.com (2603:10b6:930:a3::25)
+ by BY5PR12MB4195.namprd12.prod.outlook.com (2603:10b6:a03:200::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.19; Fri, 10 Mar
+ 2023 18:57:55 +0000
+Received: from CY4PEPF0000C978.namprd02.prod.outlook.com
+ (2603:10b6:930:a3:cafe::7) by CYZPR05CA0043.outlook.office365.com
+ (2603:10b6:930:a3::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.20 via Frontend
+ Transport; Fri, 10 Mar 2023 18:57:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000C978.mail.protection.outlook.com (10.167.241.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6178.12 via Frontend Transport; Fri, 10 Mar 2023 18:57:55 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 10 Mar 2023
+ 10:57:46 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Fri, 10 Mar 2023 10:57:46 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5 via Frontend
+ Transport; Fri, 10 Mar 2023 10:57:46 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 000/193] 4.14.308-rc1 review
+In-Reply-To: <20230310133710.926811681@linuxfoundation.org>
+References: <20230310133710.926811681@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Message-ID: <34edc6d7-3cbe-4e5c-b2d7-665ea33f2efd@drhqmail202.nvidia.com>
+Date:   Fri, 10 Mar 2023 10:57:46 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000C978:EE_|BY5PR12MB4195:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7b6ab8f-1ed1-42db-33f6-08db21995baa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9Sj6WmUHHaEdTFeCcpr1Tialdoqm/JJE24KJJgwYgLYFyK2UY5agP+bT5oV7lMeiGZvidECtcfpMzmjBDSBhw/Tl+5RU2rrW4d/x9pvseRJBauD23uAWVPq2yRkx/SFuwMKoVp5Bqo3PpVyIfQ4aS4+axbvxiC7RMJUDwPk4Nvz6Wgf0xhKMK55j44AtB1NmjIJDkbJiYJMPy65FEsJL/YiR9Je1TUPfHgIEG+4b5CUva/ob1N3zcx5LoMwBg06dufueZ5At6qiHE+/PdZUyiH11DsAXAFVxwaEvjd/osM/UoIK8nZlbYk9ByvEz//owwfWRtqn3wG114kbWVLObthxrph7whfZHWOYBhgToiXNZfDcG8fPU8nA/ttE5P9A2RbvV5PyToFY5Q3JcZp4EYlBjZMv2hhl0JHdggxjz29wzkZqieVQbcyatZTH9wcSaB/k++JOFM9obQru1oW+ES4pJ//EB8onthhPv3woigOVpD3Ls0RAv4DQ7tmhgSvSH1Hs0CbKNcfCW0/RUzSe4oYjI3M98eCJB+35RgW4T3YWKrcav8qYpsIyMQckHIjFPBfebHxlVa43R/JNqeZweDq6EXjObuzYxhue/wK1K0VqD1k8MEXB8xlLpdChfjONrzgYKZU6Xn1179DgaYWw5/Y+wBUI5iqkAuN60rqrX02yoi9ezCa/TdPOsZ53PdB7elUqRXA39c4uilCj+0ONyoVIYJkd5+42Y0kast5x83ERRwZ4I666BPqbDF2WuOldp+rXt1WZIvWYfw2PnBhI4/A==
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(346002)(39860400002)(136003)(396003)(376002)(451199018)(46966006)(36840700001)(70206006)(31686004)(2906002)(5660300002)(7416002)(26005)(356005)(8936002)(4326008)(31696002)(41300700001)(6916009)(8676002)(70586007)(86362001)(316002)(54906003)(40480700001)(478600001)(966005)(36860700001)(82740400003)(7636003)(82310400005)(336012)(186003)(426003)(47076005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2023 18:57:55.3713
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7b6ab8f-1ed1-42db-33f6-08db21995baa
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000C978.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4195
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/03/2023 18:19, Dipen Patel wrote:
-> On 3/10/23 12:45 AM, Krzysztof Kozlowski wrote:
->> On 09/03/2023 19:49, Dipen Patel wrote:
->>> On 3/8/23 10:16 PM, Krzysztof Kozlowski wrote:
->>>> On 08/03/2023 21:09, Dipen Patel wrote:
->>>>> On 3/8/23 11:05 AM, Krzysztof Kozlowski wrote:
->>>>>> On 08/03/2023 19:45, Dipen Patel wrote:
->>>>>>> On 2/16/23 6:17 AM, Krzysztof Kozlowski wrote:
->>>>>>>> On 14/02/2023 12:55, Dipen Patel wrote:
->>>>>>>>> Added timestamp provider support for the Tegra234 in devicetree
->>>>>>>>> bindings.
->>>>>>>>
->>>>>>>> 1. Your commit does much more. You need to explain it why you drop some
->>>>>>>> property.
->>>>>>> ACK, will address it next patch
->>>>>>>>
->>>>>>>> 2. Bindings go before its usage (in the patchset).
->>>>>>> Ack...
->>>>>>>>
->>>>>>>> 3. Please use scripts/get_maintainers.pl to get a list of necessary
->>>>>>>> people and lists to CC.  It might happen, that command when run on an
->>>>>>>> older kernel, gives you outdated entries.  Therefore please be sure you
->>>>>>>> base your patches on recent Linux kernel.
->>>>>>> It is based on recent linux at the time patch series was sent...
->>>>>>
->>>>>> That's good but then why you do not use scripts/get_maintainers.pl? The
->>>>>> hint about recent kernel was just a hint... Just do not invent addresses
->>>>>> by yourself and use the tool to get them right.
->>>>>>
->>>>> I will take a note for the next patch series to add any missing people. The current
->>>>> list of people/group is what historically helped review this new timestamp/hte subsystem.
->>>>>
->>>>>> (...)
->>>>>>
->>>>>>>>> +  properties:
->>>>>>>>> +    compatible:
->>>>>>>>> +      contains:
->>>>>>>>> +        enum:
->>>>>>>>> +          - nvidia,tegra194-gte-aon
->>>>>>>>
->>>>>>>> This is an ABI break. Does your driver handle it?
->>>>>>> yes, handling patch is part of this patch series.
->>>>>>
->>>>>> Can you point me to the code which does it? I see "return -ENODEV;", so
->>>>>> I think you do not handle ABI break. I could miss something but since
->>>>>> you disagree with me, please at least bring some arguments...
->>>>> Refer to patch https://patchwork.kernel.org/project/timestamp/patch/20230214115553.10416-3-dipenp@nvidia.com/
->>>>> which has compatible properties added and also code changes to reflect addition/deletion of some
->>>>> properties.
->>>>
->>>> I referred to the code which breaks the ABI.
->>>>
->>>>>
->>>>> I am not sure I have understood about ABI break comment. How else one should handle if
->>>>> there is no related gpio controller property found?
->>>>
->>>> In a way it does not break existing users? There are many ways to handle
->>>> it, but I don't know your code to point you.
->>>
->>> It is new subsystem and has only one driver which uses it so far. 
->>
->> We do not talk about subsystem, but Tegra SoC, which is not new. Unless
->> you meant this is new SoC/DTS?
->>
->>> This was a decision taken
->>> after review comments (By Thierry, also in the mailing list) to add this property (nvidia,gpio-controller)
->>> and necessary changes have been made to existing user. From now on, it has to follow this change.
->>
->> What is "it" which has to follow? There are rules for stable ABI and
->> commit msg does not explain why they should not be followed.
+On Fri, 10 Mar 2023 14:36:22 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.308 release.
+> There are 193 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> "It" here means hte-tegra194.c HTE provider which is the only one and not being used by any entity
-> yet.
+> Responses should be made by Sun, 12 Mar 2023 13:36:38 +0000.
+> Anything received after that time might be too late.
 > 
->>
->>>
->>>>
->>>>> I am assuming you are referring to the
->>>>> below code from the patch 2 (link above) when you said "return -ENODEV".
->>>>
->>>>
->>>> Your bindings patch points to ABI break without any
->>>> explanation/justification. Then your code #2 patch actually breaks it,
->>>> also without any justification.
->>> I am going to add explanation/justification in the commit message in the next patch series. But to give
->>> you context, discussion happened here https://patchwork.ozlabs.org/project/linux-gpio/patch/20221103174523.29592-3-dipenp@nvidia.com/
->>
->> Either too many messages (and I missed something) or I could not find
->> why ABI break is accepted and justified.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.308-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
 > 
-> https://patchwork.ozlabs.org/project/linux-gpio/patch/20221103174523.29592-5-dipenp@nvidia.com/#3000908 and
-> affected code/comment at https://patchwork.ozlabs.org/project/linux-gpio/patch/20221103174523.29592-5-dipenp@nvidia.com/#3000908.
+> thanks,
 > 
-> Will it help if I send new patch series with detailed commit message?
+> greg k-h
 
-Yes. If the binding is not used, it's a perfectly valid reason and
-should be mentioned in commit msg.
+All tests passing for Tegra ...
 
-Best regards,
-Krzysztof
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
+Linux version:	4.14.308-rc1-g6eaf98b65d62
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
