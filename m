@@ -2,150 +2,159 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55894C6FD1C
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 08:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E5FC6FD1F
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Mar 2023 14:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231406AbjCJIr5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Mar 2023 03:47:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
+        id S233010AbjCJOsh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Mar 2023 09:48:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231132AbjCJIrY (ORCPT
+        with ESMTP id S233046AbjCJOrf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Mar 2023 03:47:24 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD1710A293;
-        Fri, 10 Mar 2023 00:45:30 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C752B61133;
-        Fri, 10 Mar 2023 08:45:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4862C433EF;
-        Fri, 10 Mar 2023 08:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678437929;
-        bh=DqpiA8k7wNjjdxkzp733A1Yn67FxOT0U4u3LTJ/xLzc=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=Pl/xPLTjTj6iFkuaY6eJcMaKVOIDojBNzS/hfaWNcgngAxhO5Ugm2YvCUHNSrCFIj
-         NAqKnIB4FpFCo6/b8zScUzWfMWJTWxzr6LgSM7WArfsX2C1gGXigdBR1Rs2Uy1jKbq
-         jFhwulKlv1duy1R5bQFdlDJXNd2caHEnqGQf1Z4n8JhLDrb5gvPSB9m1aMeGjcuBZr
-         VwIwSQ3aXF0uWldICH3uVmOZHLscZI7Q/ivrgLR8p+PHSySugFAit1Wpzgbc7BYBhG
-         vvV2H4mDfkZEBbAf66uiXnLKWzkiVlbodp67bsMuiYpRbvZagYvtmGvbCMnelduIjM
-         8EmONrzJxXs0A==
-Message-ID: <f661f27f-f367-2948-1435-5b5fa43a3b46@kernel.org>
-Date:   Fri, 10 Mar 2023 09:45:24 +0100
+        Fri, 10 Mar 2023 09:47:35 -0500
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D02412115C;
+        Fri, 10 Mar 2023 06:47:19 -0800 (PST)
+Received: by mail-oi1-f172.google.com with SMTP id y184so4386047oiy.8;
+        Fri, 10 Mar 2023 06:47:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678459635;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vOScINdVt5AO68Lh+/aSSo0LSJcWlj/v+OQKQopbrfE=;
+        b=eolFuhBLjUSLjh4iH9KotyuBJTqQza0Ns9lw0nM5K0kS70QydcjOAOdONGKCf+NkVn
+         amz7/eJhBRQMQpo+P5c8GayjcFdkAs+CnNu3IJ7EM4J1imFDx5fUKhFtt4T/KWYtN7V8
+         W67e9+BfNrh83/dWcyHjjLnGMSyaxVFQIviMBfHyP7Nkr9Kgj59VduVRw1YWTztfv002
+         BfBg3bTzsOPA/fdPUDrwFJ7puEgHWdvaHyHurkWU87PQKPBoVg8n2GGFXWbgDO4drash
+         z43HG9iEzNiIKKORzs+ylVh9jtk59mYB9ub6fJR8WOnQRDFvikoh4p48jVg9GhyyXhl1
+         0qDg==
+X-Gm-Message-State: AO0yUKVcSoe+pQ6iYwHeI29T6JqbtXypSXx0dBOYKmhCZo/yaqOYOW3v
+        XPu9z3avjgBNeuAtf6zf8HzyJw8/WA==
+X-Google-Smtp-Source: AK7set+A03WCNhhILxT+Im0HjPRwqAdlpSrjmwLHRwv5tCq6UJ03m7njDAzYDBsWlFqeSLAiKCrC0Q==
+X-Received: by 2002:a05:6808:8f1:b0:384:349a:15d0 with SMTP id d17-20020a05680808f100b00384349a15d0mr3352325oic.38.1678459634837;
+        Fri, 10 Mar 2023 06:47:14 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q194-20020a4a33cb000000b00517fc5fdf5bsm801303ooq.17.2023.03.10.06.47.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Mar 2023 06:47:14 -0800 (PST)
+Received: (nullmailer pid 1541776 invoked by uid 1000);
+        Fri, 10 Mar 2023 14:47:02 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH] cpufreq: Use of_property_present() for testing DT property presence
+Date:   Fri, 10 Mar 2023 08:47:02 -0600
+Message-Id: <20230310144702.1541730-1-robh@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH V2 4/6] dt-bindings: timestamp: Add Tegra234 support
-Content-Language: en-US
-To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org,
-        timestamp@lists.linux.dev
-References: <20230214115553.10416-1-dipenp@nvidia.com>
- <20230214115553.10416-5-dipenp@nvidia.com>
- <3c0ad963-ce69-bd5b-20cd-888e5fbdecaf@kernel.org>
- <7a8027c9-dc73-3684-c5f2-3071f315b3cd@nvidia.com>
- <a5e897e5-4cb9-d50f-47a8-ffb8bd8774cb@kernel.org>
- <18f9a6ca-a61b-4cbb-b729-1fdb6d48651a@nvidia.com>
- <ab9f7730-d399-0786-67e5-aad57716809e@kernel.org>
- <c1a78a59-c8ae-81e5-b641-a7cb75062ab3@nvidia.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <c1a78a59-c8ae-81e5-b641-a7cb75062ab3@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 09/03/2023 19:49, Dipen Patel wrote:
-> On 3/8/23 10:16 PM, Krzysztof Kozlowski wrote:
->> On 08/03/2023 21:09, Dipen Patel wrote:
->>> On 3/8/23 11:05 AM, Krzysztof Kozlowski wrote:
->>>> On 08/03/2023 19:45, Dipen Patel wrote:
->>>>> On 2/16/23 6:17 AM, Krzysztof Kozlowski wrote:
->>>>>> On 14/02/2023 12:55, Dipen Patel wrote:
->>>>>>> Added timestamp provider support for the Tegra234 in devicetree
->>>>>>> bindings.
->>>>>>
->>>>>> 1. Your commit does much more. You need to explain it why you drop some
->>>>>> property.
->>>>> ACK, will address it next patch
->>>>>>
->>>>>> 2. Bindings go before its usage (in the patchset).
->>>>> Ack...
->>>>>>
->>>>>> 3. Please use scripts/get_maintainers.pl to get a list of necessary
->>>>>> people and lists to CC.  It might happen, that command when run on an
->>>>>> older kernel, gives you outdated entries.  Therefore please be sure you
->>>>>> base your patches on recent Linux kernel.
->>>>> It is based on recent linux at the time patch series was sent...
->>>>
->>>> That's good but then why you do not use scripts/get_maintainers.pl? The
->>>> hint about recent kernel was just a hint... Just do not invent addresses
->>>> by yourself and use the tool to get them right.
->>>>
->>> I will take a note for the next patch series to add any missing people. The current
->>> list of people/group is what historically helped review this new timestamp/hte subsystem.
->>>
->>>> (...)
->>>>
->>>>>>> +  properties:
->>>>>>> +    compatible:
->>>>>>> +      contains:
->>>>>>> +        enum:
->>>>>>> +          - nvidia,tegra194-gte-aon
->>>>>>
->>>>>> This is an ABI break. Does your driver handle it?
->>>>> yes, handling patch is part of this patch series.
->>>>
->>>> Can you point me to the code which does it? I see "return -ENODEV;", so
->>>> I think you do not handle ABI break. I could miss something but since
->>>> you disagree with me, please at least bring some arguments...
->>> Refer to patch https://patchwork.kernel.org/project/timestamp/patch/20230214115553.10416-3-dipenp@nvidia.com/
->>> which has compatible properties added and also code changes to reflect addition/deletion of some
->>> properties.
->>
->> I referred to the code which breaks the ABI.
->>
->>>
->>> I am not sure I have understood about ABI break comment. How else one should handle if
->>> there is no related gpio controller property found?
->>
->> In a way it does not break existing users? There are many ways to handle
->> it, but I don't know your code to point you.
-> 
-> It is new subsystem and has only one driver which uses it so far. 
+It is preferred to use typed property access functions (i.e.
+of_property_read_<type> functions) rather than low-level
+of_get_property/of_find_property functions for reading properties. As
+part of this, convert of_get_property/of_find_property calls to the
+recently added of_property_present() helper when we just want to test
+for presence of a property and nothing more.
 
-We do not talk about subsystem, but Tegra SoC, which is not new. Unless
-you meant this is new SoC/DTS?
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/cpufreq/cpufreq-dt-platdev.c | 2 +-
+ drivers/cpufreq/imx-cpufreq-dt.c     | 2 +-
+ drivers/cpufreq/imx6q-cpufreq.c      | 4 ++--
+ drivers/cpufreq/scmi-cpufreq.c       | 2 +-
+ drivers/cpufreq/tegra20-cpufreq.c    | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
-> This was a decision taken
-> after review comments (By Thierry, also in the mailing list) to add this property (nvidia,gpio-controller)
-> and necessary changes have been made to existing user. From now on, it has to follow this change.
-
-What is "it" which has to follow? There are rules for stable ABI and
-commit msg does not explain why they should not be followed.
-
-> 
->>
->>> I am assuming you are referring to the
->>> below code from the patch 2 (link above) when you said "return -ENODEV".
->>
->>
->> Your bindings patch points to ABI break without any
->> explanation/justification. Then your code #2 patch actually breaks it,
->> also without any justification.
-> I am going to add explanation/justification in the commit message in the next patch series. But to give
-> you context, discussion happened here https://patchwork.ozlabs.org/project/linux-gpio/patch/20221103174523.29592-3-dipenp@nvidia.com/
-
-Either too many messages (and I missed something) or I could not find
-why ABI break is accepted and justified.
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index e85703651098..5ac6b9e5270e 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -179,7 +179,7 @@ static bool __init cpu0_node_has_opp_v2_prop(void)
+ 	struct device_node *np = of_cpu_device_node_get(0);
+ 	bool ret = false;
+ 
+-	if (of_get_property(np, "operating-points-v2", NULL))
++	if (of_property_present(np, "operating-points-v2"))
+ 		ret = true;
+ 
+ 	of_node_put(np);
+diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufreq-dt.c
+index 76e553af2071..535867a7dfdd 100644
+--- a/drivers/cpufreq/imx-cpufreq-dt.c
++++ b/drivers/cpufreq/imx-cpufreq-dt.c
+@@ -89,7 +89,7 @@ static int imx_cpufreq_dt_probe(struct platform_device *pdev)
+ 
+ 	cpu_dev = get_cpu_device(0);
+ 
+-	if (!of_find_property(cpu_dev->of_node, "cpu-supply", NULL))
++	if (!of_property_present(cpu_dev->of_node, "cpu-supply"))
+ 		return -ENODEV;
+ 
+ 	if (of_machine_is_compatible("fsl,imx7ulp")) {
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index ad4ce8493144..48e1772e98fd 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -222,7 +222,7 @@ static int imx6q_opp_check_speed_grading(struct device *dev)
+ 	u32 val;
+ 	int ret;
+ 
+-	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
++	if (of_property_present(dev->of_node, "nvmem-cells")) {
+ 		ret = nvmem_cell_read_u32(dev, "speed_grade", &val);
+ 		if (ret)
+ 			return ret;
+@@ -279,7 +279,7 @@ static int imx6ul_opp_check_speed_grading(struct device *dev)
+ 	u32 val;
+ 	int ret = 0;
+ 
+-	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
++	if (of_property_present(dev->of_node, "nvmem-cells")) {
+ 		ret = nvmem_cell_read_u32(dev, "speed_grade", &val);
+ 		if (ret)
+ 			return ret;
+diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+index 513a071845c2..f34e6382a4c5 100644
+--- a/drivers/cpufreq/scmi-cpufreq.c
++++ b/drivers/cpufreq/scmi-cpufreq.c
+@@ -310,7 +310,7 @@ static int scmi_cpufreq_probe(struct scmi_device *sdev)
+ 
+ #ifdef CONFIG_COMMON_CLK
+ 	/* dummy clock provider as needed by OPP if clocks property is used */
+-	if (of_find_property(dev->of_node, "#clock-cells", NULL))
++	if (of_property_present(dev->of_node, "#clock-cells"))
+ 		devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, NULL);
+ #endif
+ 
+diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+index ab7ac7df9e62..dfd2de4f8e07 100644
+--- a/drivers/cpufreq/tegra20-cpufreq.c
++++ b/drivers/cpufreq/tegra20-cpufreq.c
+@@ -25,7 +25,7 @@ static bool cpu0_node_has_opp_v2_prop(void)
+ 	struct device_node *np = of_cpu_device_node_get(0);
+ 	bool ret = false;
+ 
+-	if (of_get_property(np, "operating-points-v2", NULL))
++	if (of_property_present(np, "operating-points-v2"))
+ 		ret = true;
+ 
+ 	of_node_put(np);
+-- 
+2.39.2
 
