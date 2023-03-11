@@ -2,106 +2,115 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBFBC61DA4
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Mar 2023 17:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E40CC74A44
+	for <linux-tegra@archiver.kernel.org>; Sat, 11 Mar 2023 18:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbjCKRT3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Mar 2023 12:19:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34870 "EHLO
+        id S229595AbjCKSZa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Mar 2023 13:25:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbjCKRTZ (ORCPT
+        with ESMTP id S229502AbjCKSZ2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Mar 2023 12:19:25 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3370141083;
-        Sat, 11 Mar 2023 09:19:24 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 8C45ACE03F7;
-        Sat, 11 Mar 2023 17:19:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ACB8C433EF;
-        Sat, 11 Mar 2023 17:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678555160;
-        bh=Xjh3wk7o+LHEFty4gqGN/nReXay+Bh8f9wzC52SXd8I=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=f1USAqYP/WZKfWOMPPzlqNRuH6dR85MoHXKJAOkHhJlDyVC2Y46EFZKo2PaYhoQe/
-         5ohqtnDj7HFtBOmCGuON1EvaAcYttVUYk2/w68eOv+dtJGdvJ7zUdFNclV1XRzfC/m
-         efbuFaqK6qQc1CQWgS2bp51kXD5H3CGwvNNrr/L7nqRDccXnbRr2KORsIqzHv+81tR
-         hQ9iYMZoNa0BHq7Ndtr7fNrIvrfXmkQf23fvYJrokU00lnRKjRfgyb1dwGygPyknk7
-         rfHYBhD1WBLyOgOHoqQVwyEl89Ituwd0rijouTsYeRK0qb5qovaQjBgaXzUClAY+Ra
-         PvfewW1M/Jsjw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <20230310144732.1546328-1-robh@kernel.org>
-References: <20230310144732.1546328-1-robh@kernel.org>
-Subject: Re: [PATCH] ASoC: Use of_property_present() for testing DT
- property presence
-Message-Id: <167855515541.950365.6616901508065986731.b4-ty@kernel.org>
-Date:   Sat, 11 Mar 2023 17:19:15 +0000
+        Sat, 11 Mar 2023 13:25:28 -0500
+X-Greylist: delayed 451 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 11 Mar 2023 10:25:27 PST
+Received: from smtp.smtpout.orange.fr (smtp-11.smtpout.orange.fr [80.12.242.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 970A26EB9C
+        for <linux-tegra@vger.kernel.org>; Sat, 11 Mar 2023 10:25:27 -0800 (PST)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id b3mwpUM6K9PB3b3mwp6Jgv; Sat, 11 Mar 2023 19:17:54 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 11 Mar 2023 19:17:54 +0100
+X-ME-IP: 86.243.2.178
+Message-ID: <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
+Date:   Sat, 11 Mar 2023 19:17:50 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-2eb1a
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 07/23] interconnect: qcom: rpm: fix probe PM domain error
+ handling
+To:     johan+linaro@kernel.org
+Cc:     a.swigon@samsung.com, agross@kernel.org, alim.akhtar@samsung.com,
+        andersson@kernel.org, djakov@kernel.org, festevam@gmail.com,
+        jonathanh@nvidia.com, kernel@pengutronix.de,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        s.hauer@pengutronix.de, s.nawrocki@samsung.com,
+        shawnguo@kernel.org, stable@vger.kernel.org,
+        thierry.reding@gmail.com, y.oudjana@protonmail.com
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-8-johan+linaro@kernel.org>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230201101559.15529-8-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 10 Mar 2023 08:47:31 -0600, Rob Herring wrote:
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties. As
-> part of this, convert of_get_property/of_find_property calls to the
-> recently added of_property_present() helper when we just want to test
-> for presence of a property and nothing more.
+Le 01/02/2023 à 11:15, Johan Hovold a écrit :
+> Make sure to disable clocks also in case attaching the power domain
+> fails.
 > 
-> [...]
+> Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
+> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org      # 5.17
+> Cc: Yassine Oudjana <y.oudjana-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
+> Signed-off-by: Johan Hovold <johan+linaro-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> ---
+>   drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
+>   1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> index 91778cfcbc65..da595059cafd 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.c
+> +++ b/drivers/interconnect/qcom/icc-rpm.c
+> @@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
+>   
+>   	if (desc->has_bus_pd) {
+>   		ret = dev_pm_domain_attach(dev, true);
+> -		if (ret)
+> -			return ret;
+> +		goto err_disable_clks;
 
-Applied to
+Hi,
+this change looks strange because we now skip the rest of the function.
 
-   broonie/sound.git for-next
+Is it really intended?
 
-Thanks!
 
-[1/1] ASoC: Use of_property_present() for testing DT property presence
-      commit: 1e108e60a44a924e3666fa2a10b53f6c31522856
+Also, should dev_pm_domain_detach() be called somewhere in the error 
+handling path and remove function ?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+CJ
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+>   	}
+>   
+>   	provider = &qp->provider;
+> @@ -514,8 +513,7 @@ int qnoc_probe(struct platform_device *pdev)
+>   	ret = icc_provider_add(provider);
+>   	if (ret) {
+>   		dev_err(dev, "error adding interconnect provider: %d\n", ret);
+> -		clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+> -		return ret;
+> +		goto err_disable_clks;
+>   	}
+>   
+>   	for (i = 0; i < num_nodes; i++) {
+> @@ -550,8 +548,9 @@ int qnoc_probe(struct platform_device *pdev)
+>   	return 0;
+>   err:
+>   	icc_nodes_remove(provider);
+> -	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+>   	icc_provider_del(provider);
+> +err_disable_clks:
+> +	clk_bulk_disable_unprepare(qp->num_clks, qp->bus_clks);
+>   
+>   	return ret;
+>   }
 
