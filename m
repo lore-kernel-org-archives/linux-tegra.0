@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A38F2C6FD1F
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F3EC74A4B
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:14:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbjCLNO0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Mar 2023 09:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44736 "EHLO
+        id S230224AbjCLNO4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Mar 2023 09:14:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229836AbjCLNOE (ORCPT
+        with ESMTP id S230075AbjCLNOH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Mar 2023 09:14:04 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAF54FF3D
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:13:43 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id cn21so8313708edb.0
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:13:43 -0700 (PDT)
+        Sun, 12 Mar 2023 09:14:07 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E9548E05
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:13:47 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id o12so38494665edb.9
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678626823;
+        d=linaro.org; s=google; t=1678626825;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=htfDeYfzO9faOo04zE1zbbujaGC8tJVc0LLIWYl/0E0=;
-        b=tWY5RRrl1f9P7YtLpyoXwinY0arcCPoS91VIZamWggOmJA3famcby5+OZgSd6D+3Kd
-         eCD1W8dLgS+FdEzVc+bFFH/FHIRuGvvJD4r5wyOs9K3SqnlcXv2Pyztgd4ay1djF+lM+
-         a8t+bz5kIbyuWGHoN4lV0N1gIwWkDD5MJJKQvznugy0sbFLCTV1ZL6gVO+8oOav3hUya
-         khEHKs6qBFkXPUX+JbMR5N7HurufkoAZ9eGkLnCr88gbiFg1n3dRqmAlnsPFAD8f20Uw
-         /KWfOLBYYz6YW1zCZ2igu5mQ5/plPLyE2zQRCvIhjOFZXsYHGYEV4R7EwsQjMFRUaukp
-         k9RQ==
+        bh=Mi2x5KmVHY8aFVS8WFaKRIl7phB/m6sMx8X9ScJ0O1Y=;
+        b=GG1FZzu4R08U7ZrQJTDqnm9yyObLtqMDWCx3B/cxyKmqz+Inu/lGru3GBlSAmoNZ2d
+         WS9SlIFw7l28qxUjUEIBnfHvBpm5c6g1F4pUDGTJklw6dfbWjyAvPQGUtVzR7OyvFiyQ
+         dyuSUmpAGQUkWb8ymF+2KyhC2+95GCs3P8qBCovptLLx92YGuEIvrF2/nQKp3RKdKB2q
+         4WRWxJI+thxZatMOq8kxvNE8yRXL8FB+dRcXQH7oOSuC9AcNWcYgasCTPck/INBz0sk4
+         D5bd8nEqJArLbuAbevCLQSORbLT9ASQ4UO6q9+5gCJHqKdXkvauSNJboZF8dLbTMmvXn
+         eDAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678626823;
+        d=1e100.net; s=20210112; t=1678626825;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=htfDeYfzO9faOo04zE1zbbujaGC8tJVc0LLIWYl/0E0=;
-        b=dNY6deBLGCdVcdVcK0+qbIQAGDp4XnCw0yEDSn8RLSju2jsocDO5QkwrJ3m72QVsoa
-         4lQP+gov4mkvm1/A1q1jJnsCJVs9VFm/PC7RI6tneVu57MhZFTVU7L2G47kBT4tyxlaf
-         m6hH03xEXBoPxoU8PAwNal/gLmw6Q+zc8Fm0BNtf1TQhGREzVwe0w0wUpYRCj56aieEG
-         PoXIJqmb24ibA6L2yZkpDnzmd9V6IdL6IJELbp74qF/rxUL5Xpz0dh2OTPllrrJlwHi5
-         F88/8WfUVT9C5cQ9xKEyhhZQLPIJhAYLAaaEUoIAe+Db0cJew4UhtR6DsShMt9NIc/Og
-         SoUg==
-X-Gm-Message-State: AO0yUKWSEIi94gFVhfqsOVuDFeUDX1HZnyKn2/jyUoJARl1GRmuDdT9p
-        rCDMo+SaqZVKjcqodI4A/XC17g==
-X-Google-Smtp-Source: AK7set8sFYEVlwjj96yBoYEcUC6q6umvvTijNA5/w5cBj5OSXSMnBWa3ubt3+oomwUIh2AE5fhzWng==
-X-Received: by 2002:a17:906:d28c:b0:8e5:88ca:ebac with SMTP id ay12-20020a170906d28c00b008e588caebacmr31563524ejb.40.1678626823445;
-        Sun, 12 Mar 2023 06:13:43 -0700 (PDT)
+        bh=Mi2x5KmVHY8aFVS8WFaKRIl7phB/m6sMx8X9ScJ0O1Y=;
+        b=OdX3Kg4JYUXS48S4uioNCLzbIHfPvtu/HEs3CoctgUS9kfWqPL2m20UOlfXb73B5/U
+         QdiCSZ97OwH6D43foRV0qJE0UG6acKQl3K8ASyqL/Jt9EpbAIR51WVq9kX91zRNQQzpp
+         /5jYVv1wz/S3kw71aGxKMOtjPTvdEiwjn2Qr1o92aHOx5XkGww4cjRAdO/+fI30xUbYp
+         3DQyEnsZGsHsZNiTtGld1LiyWCLk1nlw8d7OoKnEAVcJN6Vsq8F6HDnu5cV5ZW0jf8gj
+         jdOz9NQCnM9PE99Csg05EocaKCqxcXqRN7JCaUEmcZrxrEmm+5D9k/c0yi4tLBfvZgSQ
+         Z51w==
+X-Gm-Message-State: AO0yUKX3vpb9dkM4/Ill3OJlb93lZNuxUuDMrZiKB4Ps2bKDBd5JeS6N
+        x33VPo1tKpEVjomnVerwHfMIIg==
+X-Google-Smtp-Source: AK7set+7qUF+bcLWEkAr4Cox0v1rHikG9c/U926xfMgDAeF0Y5GVKCnNz9afn9B0OfITyqkEgAYQeQ==
+X-Received: by 2002:a05:6402:1005:b0:4f9:f45e:c8b3 with SMTP id c5-20020a056402100500b004f9f45ec8b3mr5025265edu.27.1678626825396;
+        Sun, 12 Mar 2023 06:13:45 -0700 (PDT)
 Received: from krzk-bin.. ([2a02:810d:15c0:828:d9f6:3e61:beeb:295a])
-        by smtp.gmail.com with ESMTPSA id r19-20020a1709067fd300b008eddbd46d7esm2213279ejs.31.2023.03.12.06.13.41
+        by smtp.gmail.com with ESMTPSA id r19-20020a1709067fd300b008eddbd46d7esm2213279ejs.31.2023.03.12.06.13.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Mar 2023 06:13:43 -0700 (PDT)
+        Sun, 12 Mar 2023 06:13:45 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Joe Tessler <jrt@google.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
@@ -95,9 +95,9 @@ To:     Joe Tessler <jrt@google.com>,
         linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-rockchip@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 10/28] media: platform: sti: drop of_match_ptr for ID table
-Date:   Sun, 12 Mar 2023 14:13:00 +0100
-Message-Id: <20230312131318.351173-10-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 11/28] media: platform: ti: am437x: drop of_match_ptr for ID table
+Date:   Sun, 12 Mar 2023 14:13:01 +0100
+Message-Id: <20230312131318.351173-11-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
 References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
@@ -113,26 +113,26 @@ used and the of_match_ptr does not have any sense (this also allows ACPI
 matching via PRP0001, even though it might not be relevant here).  This
 also fixes !CONFIG_OF error:
 
-  drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c:1169:34: error: ‘c8sectpfe_match’ defined but not used [-Werror=unused-const-variable=]
+  drivers/media/platform/ti/am437x/am437x-vpfe.c:2620:34: error: ‘vpfe_of_match’ defined but not used [-Werror=unused-const-variable=]
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c | 2 +-
+ drivers/media/platform/ti/am437x/am437x-vpfe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-index c38b62d4f1ae..67d4db0abd8a 100644
---- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-+++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-@@ -1175,7 +1175,7 @@ MODULE_DEVICE_TABLE(of, c8sectpfe_match);
- static struct platform_driver c8sectpfe_driver = {
+diff --git a/drivers/media/platform/ti/am437x/am437x-vpfe.c b/drivers/media/platform/ti/am437x/am437x-vpfe.c
+index 2dfae9bc0bba..fe89b8e250e7 100644
+--- a/drivers/media/platform/ti/am437x/am437x-vpfe.c
++++ b/drivers/media/platform/ti/am437x/am437x-vpfe.c
+@@ -2629,7 +2629,7 @@ static struct platform_driver vpfe_driver = {
  	.driver = {
- 		.name = "c8sectpfe",
--		.of_match_table = of_match_ptr(c8sectpfe_match),
-+		.of_match_table = c8sectpfe_match,
+ 		.name	= VPFE_MODULE_NAME,
+ 		.pm	= &vpfe_pm_ops,
+-		.of_match_table = of_match_ptr(vpfe_of_match),
++		.of_match_table = vpfe_of_match,
  	},
- 	.probe	= c8sectpfe_probe,
- 	.remove	= c8sectpfe_remove,
+ };
+ 
 -- 
 2.34.1
 
