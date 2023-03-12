@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC0DC6FA99
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D528BC6FD1F
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:15:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbjCLNPq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Mar 2023 09:15:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45362 "EHLO
+        id S230089AbjCLNPv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Mar 2023 09:15:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjCLNOx (ORCPT
+        with ESMTP id S230087AbjCLNO6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Mar 2023 09:14:53 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6224743E
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:09 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id ek18so7376494edb.6
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:09 -0700 (PDT)
+        Sun, 12 Mar 2023 09:14:58 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3347951F8E
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:15 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id er25so10372589edb.5
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678626839;
+        d=linaro.org; s=google; t=1678626854;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O6y38vRZkdBS5R5uwqFpYAPV0SwqgL3Ad/RHz3KFEYg=;
-        b=F6qp4Yb8Iigoi2EWlwMSg+KfJE/41jbOR7JfTYJrgttrWACfS6ajuqUiwOO66uyPgb
-         TSDyuz5lva0OBRpoxvmaQOkSg779UZzBuqAbseB/rjiaktLeYs86i+UZ1RiiDfuwEogl
-         ImOHBGF6zWH4XHlclIsr4PBBWT2fVxOqEv7QgTlPMCwKZCTyvZvengCbdn/HQjYm1St7
-         TR1Fuiv3f3MVlOlqtTOYQ3sVaeIbG4GFsP8RvY29ZWUI9AsuszMAJwOB3kqiSewpQkFQ
-         GTId4N5+TKXJcB3/DyP8UI5FAsEArWEZwyv6MV+vzx+xd9JOXHrYMPxQGsi4uVXbREux
-         JaWA==
+        bh=k/JwivpSWSUp7SGgg579h7vvWa7gXoSaXDjfT9QxQC0=;
+        b=CXU5Sft4Qo94NqQz3mPSkb9P2d9WUUzBRab27MBYfCDp4zAJtkVa4U2gt8ruuAK2fx
+         bYmi5lZFbKvFh7jAiwga20LHYuPZuLJ6WwFDw37JcecknQr1EZ6tbXpKsSHrRFM6dH42
+         G9jmlFKCdF2j0PJTIZv91TvmWvYmxJetJ5eGnZpcumSgmaLtlgm4+ONduSKLc+F6aFmS
+         2wbtsxeM7XjreClsKD102rjyRJhh1sgoZRixqozGJ4sff/5C87OVnI8gkQkfEaJBXzHN
+         PLG7p5dhHufbK/Jk1Kg16Rh8G+p1NrvtMOVierX90bJ5vpXVZA5+RMdYqOUEGm66DbRf
+         t+sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678626839;
+        d=1e100.net; s=20210112; t=1678626854;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O6y38vRZkdBS5R5uwqFpYAPV0SwqgL3Ad/RHz3KFEYg=;
-        b=eWpqCkOxDYt3kIOmp6h0KDG2jk/IoJgZ5H7ewkZKwmM5spkk+DJHoMYVfTQISlL005
-         aOCvEbMdsldfdQCgLmrBhvP7Abjf5MTd3zPEWWfmZmLv21jDz3Z8bA2AZtbBl3RF/Ekw
-         vCmkSwoRU+spcoNgP/iY4IC5WCjOHP7zqSuILxOW4Gn4IMUlPPJv/wzFMPUIed5KMlv6
-         kybkQ1VRc+BFgFmhUZwr+F4UbAtvuSvOEPvWt1xPEPcBlS3dvBcjW4ynzVrRwL4Injyv
-         yDD5TB6pqIjBOwKgABAxKMMTmkoAxtOX8QyoXOwsRmVKm6pjtKC1ScscD44v9oCNR7O3
-         Ibrw==
-X-Gm-Message-State: AO0yUKVT8sesDVNEmDSqPs1MnlJeoFbkuLWH3W/Yqf32n7X9jS+SwYba
-        4Ris/arY1pM705J398kXINm+Eg==
-X-Google-Smtp-Source: AK7set/WMW6RgALtAuft2GXt0JFDI5Y2R0SGD1j3uPRf3y93eii3868Nj2pM7xYCjr1WDifLt9I7Xg==
-X-Received: by 2002:a17:907:8a12:b0:88d:9cf8:2dbb with SMTP id sc18-20020a1709078a1200b0088d9cf82dbbmr37183584ejc.12.1678626839411;
-        Sun, 12 Mar 2023 06:13:59 -0700 (PDT)
+        bh=k/JwivpSWSUp7SGgg579h7vvWa7gXoSaXDjfT9QxQC0=;
+        b=yHXEMzwMMFOlboFzYDAh/mnQHwy41Ge5lNWptT+OVk9bUjL+5VN0HI7/RF7PtSAjYG
+         e7bDLMeo00K8tbpVD7YIwtPN6XUV/JQx+MuCsZVoajMIXhghjMStJooSwMu9naLKcuj2
+         A+r5FxaWnW+fL12Pp5LmaN6JJfqiSOdolI5z3L4VYTt9VevYLPGuLEoF+6FldU+sY/fK
+         q4wpuPMF/2rI7XZUR6HFyL7h6RQXrozdsFKc4BK85Fpx5Ad7Hwx1yQAC7BUKgGiajGql
+         +sdMa75wThx/ViI4jmVnxc8r+mZDNRZQKZXd36x+SeGUoW6frcedUPpEx6oWmVoO100u
+         HfEQ==
+X-Gm-Message-State: AO0yUKW4ztrCFzCpFoR7Tr2N5gVMKqyY9xMmMHr8SED2fQw6Smo3YMdr
+        eHEzRU/JwxBCEeOlR98QDxYgiQ==
+X-Google-Smtp-Source: AK7set9d5tKP82Jz7WZKOjVJ2kxKgLrUjVcq5llmdVffKX9VOgz87qa4igqTtbGBsn15XQe1Xo+erA==
+X-Received: by 2002:a17:906:5ca:b0:8f6:ad32:cd51 with SMTP id t10-20020a17090605ca00b008f6ad32cd51mr35131755ejt.62.1678626854759;
+        Sun, 12 Mar 2023 06:14:14 -0700 (PDT)
 Received: from krzk-bin.. ([2a02:810d:15c0:828:d9f6:3e61:beeb:295a])
-        by smtp.gmail.com with ESMTPSA id r19-20020a1709067fd300b008eddbd46d7esm2213279ejs.31.2023.03.12.06.13.57
+        by smtp.gmail.com with ESMTPSA id r19-20020a1709067fd300b008eddbd46d7esm2213279ejs.31.2023.03.12.06.14.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Mar 2023 06:13:59 -0700 (PDT)
+        Sun, 12 Mar 2023 06:14:14 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Joe Tessler <jrt@google.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
@@ -95,9 +95,9 @@ To:     Joe Tessler <jrt@google.com>,
         linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-rockchip@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 18/28] media: platform: sun8i-a83t-mipi-csi2: drop of_match_ptr for ID table
-Date:   Sun, 12 Mar 2023 14:13:08 +0100
-Message-Id: <20230312131318.351173-18-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 26/28] media: i2c: imx290: drop of_match_ptr for ID table
+Date:   Sun, 12 Mar 2023 14:13:16 +0100
+Message-Id: <20230312131318.351173-26-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
 References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
@@ -113,26 +113,26 @@ used and the of_match_ptr does not have any sense (this also allows ACPI
 matching via PRP0001, even though it might not be relevant here).  This
 also fixes !CONFIG_OF error:
 
-  drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c:818:34: error: ‘sun8i_a83t_mipi_csi2_of_match’ defined but not used [-Werror=unused-const-variable=]
+  drivers/media/i2c/imx290.c:1354:34: error: ‘imx290_of_match’ defined but not used [-Werror=unused-const-variable=]
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c  | 2 +-
+ drivers/media/i2c/imx290.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
-index cd2e92ae2293..1f0cc7b1ba47 100644
---- a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
-+++ b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
-@@ -826,7 +826,7 @@ static struct platform_driver sun8i_a83t_mipi_csi2_platform_driver = {
- 	.remove	= sun8i_a83t_mipi_csi2_remove,
- 	.driver	= {
- 		.name		= SUN8I_A83T_MIPI_CSI2_NAME,
--		.of_match_table	= of_match_ptr(sun8i_a83t_mipi_csi2_of_match),
-+		.of_match_table	= sun8i_a83t_mipi_csi2_of_match,
- 		.pm		= &sun8i_a83t_mipi_csi2_pm_ops,
+diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+index 49d6c8bdec41..3c9470fbfd53 100644
+--- a/drivers/media/i2c/imx290.c
++++ b/drivers/media/i2c/imx290.c
+@@ -1363,7 +1363,7 @@ static struct i2c_driver imx290_i2c_driver = {
+ 	.driver = {
+ 		.name  = "imx290",
+ 		.pm = &imx290_pm_ops,
+-		.of_match_table = of_match_ptr(imx290_of_match),
++		.of_match_table = imx290_of_match,
  	},
  };
+ 
 -- 
 2.34.1
 
