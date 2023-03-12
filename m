@@ -2,30 +2,30 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0207C6FA99
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF6CC6FA99
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230460AbjCLNnz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Mar 2023 09:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46776 "EHLO
+        id S230453AbjCLNoj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Mar 2023 09:44:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230507AbjCLNnt (ORCPT
+        with ESMTP id S230511AbjCLNog (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Mar 2023 09:43:49 -0400
+        Sun, 12 Mar 2023 09:44:36 -0400
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C8815CB6;
-        Sun, 12 Mar 2023 06:43:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31DA04DE2E;
+        Sun, 12 Mar 2023 06:44:16 -0700 (PDT)
 Received: from pendragon.ideasonboard.com (85-76-21-162-nat.elisa-mobile.fi [85.76.21.162])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CF8CD814;
-        Sun, 12 Mar 2023 14:43:20 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 53AC3814;
+        Sun, 12 Mar 2023 14:44:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1678628618;
-        bh=M3+2iadqGPWpajU73rzJOfscL/vSRK4MRXJAHhM3Vwk=;
+        s=mail; t=1678628655;
+        bh=GIlRGmGTtC6jpsSZ0ba5wl6HzV35Y2nOKPuBj0K1wN0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S94E3bY7StoQHAgj4Ene3ZegV2UW70uJapggOmnnq5BOLviJUieoQR8vK8iwSl4mO
-         nB7/HV5FvVhNrNav/Fa7DCJ28ZI4Ge8PLvjWiSCH37yTbot58V3FwpG2xrGmlCYlzV
-         N/5h+69TBJLuAxEGxTdow4/6Ep+WKBDw4muOuYUQ=
-Date:   Sun, 12 Mar 2023 15:41:16 +0200
+        b=ro3AaFbXbcLvGqlxrfAEbdIrpAAaHlAJ/6civ6dkuTzEzWQyXTWr7PnIZBkt6bcTU
+         Bf99juUP4FP/oDXeTtEcvcV23lfGAzoCHcdopubXo/QjIbuxoWEp0o3qg66f9CJjcQ
+         sALk/eWpdUshZqwnSx5GQKiESC+gm4xmH8RwMWfY=
+Date:   Sun, 12 Mar 2023 15:44:01 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Joe Tessler <jrt@google.com>,
@@ -70,16 +70,15 @@ Cc:     Joe Tessler <jrt@google.com>,
         linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 11/28] media: platform: ti: am437x: drop of_match_ptr for
- ID table
-Message-ID: <20230312134116.GL2545@pendragon.ideasonboard.com>
+Subject: Re: [PATCH 23/28] media: i2c: ov2640: drop of_match_ptr for ID table
+Message-ID: <20230312134401.GB8229@pendragon.ideasonboard.com>
 References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
- <20230312131318.351173-11-krzysztof.kozlowski@linaro.org>
+ <20230312131318.351173-23-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230312131318.351173-11-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230312131318.351173-23-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -88,41 +87,35 @@ Hi Krzysztof,
 
 Thank you for the patch.
 
-On Sun, Mar 12, 2023 at 02:13:01PM +0100, Krzysztof Kozlowski wrote:
-> The driver can match only via the DT table so the table should be always
-> used and the of_match_ptr does not have any sense (this also allows ACPI
-> matching via PRP0001, even though it might not be relevant here).  This
-
-"might not be relevant" is a bit of an understatement in this case :-)
-
-> also fixes !CONFIG_OF error:
+On Sun, Mar 12, 2023 at 02:13:13PM +0100, Krzysztof Kozlowski wrote:
+> The driver will match mostly by DT table (even thought there is regular
+> ID table) so there is little benefit in of_match_ptr (this also allows
+> ACPI matching via PRP0001, even though it might not be relevant here).
+> This also fixes !CONFIG_OF error:
 > 
->   drivers/media/platform/ti/am437x/am437x-vpfe.c:2620:34: error: ‘vpfe_of_match’ defined but not used [-Werror=unused-const-variable=]
-
-This driver should probably depend on CONFIG_OF, but that's a separate
-issue.
-
+>   drivers/media/i2c/ov2640.c:1290:34: error: ‘ov2640_of_match’ defined but not used [-Werror=unused-const-variable=]
+> 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
 > ---
->  drivers/media/platform/ti/am437x/am437x-vpfe.c | 2 +-
+>  drivers/media/i2c/ov2640.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/platform/ti/am437x/am437x-vpfe.c b/drivers/media/platform/ti/am437x/am437x-vpfe.c
-> index 2dfae9bc0bba..fe89b8e250e7 100644
-> --- a/drivers/media/platform/ti/am437x/am437x-vpfe.c
-> +++ b/drivers/media/platform/ti/am437x/am437x-vpfe.c
-> @@ -2629,7 +2629,7 @@ static struct platform_driver vpfe_driver = {
+> diff --git a/drivers/media/i2c/ov2640.c b/drivers/media/i2c/ov2640.c
+> index 39d56838a4ef..a92c091356c5 100644
+> --- a/drivers/media/i2c/ov2640.c
+> +++ b/drivers/media/i2c/ov2640.c
+> @@ -1296,7 +1296,7 @@ MODULE_DEVICE_TABLE(of, ov2640_of_match);
+>  static struct i2c_driver ov2640_i2c_driver = {
 >  	.driver = {
->  		.name	= VPFE_MODULE_NAME,
->  		.pm	= &vpfe_pm_ops,
-> -		.of_match_table = of_match_ptr(vpfe_of_match),
-> +		.of_match_table = vpfe_of_match,
+>  		.name = "ov2640",
+> -		.of_match_table = of_match_ptr(ov2640_of_match),
+> +		.of_match_table = ov2640_of_match,
 >  	},
->  };
->  
+>  	.probe_new = ov2640_probe,
+>  	.remove   = ov2640_remove,
 
 -- 
 Regards,
