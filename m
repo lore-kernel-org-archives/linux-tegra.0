@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5F2C6FD1F
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDCFC6FA99
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 13:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjCLNP4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Mar 2023 09:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45220 "EHLO
+        id S230355AbjCLNP6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Mar 2023 09:15:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbjCLNPL (ORCPT
+        with ESMTP id S229964AbjCLNPQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Mar 2023 09:15:11 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A254497EA
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:22 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id x3so38435766edb.10
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:22 -0700 (PDT)
+        Sun, 12 Mar 2023 09:15:16 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834F628E82
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:24 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id ek18so7377406edb.6
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 06:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678626847;
+        d=linaro.org; s=google; t=1678626849;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0wZbL2YE4DT8U/n7QjqQ5NPuVVOedoWmVW8GR5DkOxE=;
-        b=KhyYeWigZGhPF510CvX5h9jE+fAqEKL2Rqs6qyLcdHXMTpfyTrH/yYmW5MTvJeK8nU
-         9Y29KFzVe5cxs4J/rOcqaKWnpIbAymZchxZ/wGXUYskLlKXCUtjl0OgM6d1MpMYDwe2B
-         5JML0Xz4YjWR3BX2c/3QL3NfzaX094la29OY3e5oakPa2FxDE0KgDp7gO70LZ03aGu6/
-         hWXBFSgOOKx8rWZ3Aubf1UN1YZWNDAQIP5CIknOtco2JAOy74u8Thdocrurl29RGgT5l
-         qLqTSjhtjfsb+ut1Estkk2Nyx1WDu0Ny1wu+fQDaiUFcO5y10EPZSGOTf7jHfa86mqiH
-         i6Pg==
+        bh=38C9btURbQsaMIipOhvsQvm6Dy7PKwPGkg3PY63qI38=;
+        b=m5nxwWZS+IjOxjDSLMlcc9Mw3quPwPmLZGwjL0YQEcQdFJH9ABjF8RScjIrJ48oGzx
+         CeSVDrWPupHnu88aXT4OXI198T4AmpikK45pZee6+1kcKldpWFVdMkX4Nmd0xTQHIAzb
+         7UEG5bGZNzRsmjDPRi566bc37BTemvDPj1tWmhMPE6WPiS736MVrhoVtGhBqME9a/TfC
+         XTQwjVIg0rNNsyY4DyCt4dBK+LB3XCp0pHTrn6Vef4pIhpJLOgBhUU4OybxOcH+eYCP0
+         IdU5OYQpRstCWiFkNv63Xd/bZkppmZfSaIJr5HJjB3GT7zlg/7ren+XF+nqi5vq/6hUB
+         Y2Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678626847;
+        d=1e100.net; s=20210112; t=1678626849;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0wZbL2YE4DT8U/n7QjqQ5NPuVVOedoWmVW8GR5DkOxE=;
-        b=Wx7Z8ZZTKCZpsdB5O2fKmg2LfipRQrJvxLUsnZPiCeqtVB1zJhGu5N4Xkg+yVdp3WZ
-         7LexWxRQ2HX5BbcsBZZjTF+GV1XpjG6xeu/oUMX8DGd8hKOjO2fS4998fN2m3XsZIA6N
-         Lok27AtY9HIJ5eFrHTa+CG3QLySqAHNmrETixtR/+ZSWIFjIZeNBsjEs3l5Kd24mqUB2
-         80dpg7APuZmUMh7FTUhn5QlmKRX+D0Y5wV1UaCc/YwIYzWs52QacHPrGhNF6+0BUO6/J
-         z53eLXDEJGuo9w1Hx+ifAeUYXVte8yRJPOOGTgLybg7whee2jykLjm5+h2fVtXIi2N7u
-         s7eg==
-X-Gm-Message-State: AO0yUKX8vqZ+JRtc1mE/2cQaz1jRiQ3Jp3JO1CjD9ofK/PucB9fj9Ksc
-        +7vJmf6oixMZG8Enj0lx56HR0Q==
-X-Google-Smtp-Source: AK7set/LSFpK4yaynBThKlKSPfP1bsBiZFb33g2FppGxi4UYvcynFTqjlnDykMn5irNp8KK0K+3W1Q==
-X-Received: by 2002:a05:6402:1105:b0:4b6:821e:1859 with SMTP id u5-20020a056402110500b004b6821e1859mr8115383edv.7.1678626847028;
-        Sun, 12 Mar 2023 06:14:07 -0700 (PDT)
+        bh=38C9btURbQsaMIipOhvsQvm6Dy7PKwPGkg3PY63qI38=;
+        b=YnbJWxz0qf7SYzqBV1u1FDFMNSxb0nIcbBhqdr8t3Cg0QZF0VSwNpEaBCXjAa+IawG
+         LwMflSs2Mg+m9yq3NZqZffQcBiXWWDbZu/3XY3vp39AZbSQjopd+Ng1DF3VLPxj1aA48
+         oH7MeDOdVaqpfBDTk21hL4PAUxhi0ftepr7C4vUqHSOXf8qkyrcyYdz2Yn2yEfSLXEzL
+         MM/JBjmMpuaWcd9US5Vd0YNKhPqXozqnUBjmfWCdz5p0ZP9+/SEMC9xhtciJRAg0dsFE
+         KFGF7jRWYRun9YnJRCYGl7wpdaA+uHKUWcUTw3twbS93pzKotZiK4X5fePFXRvfNQV7X
+         lRqQ==
+X-Gm-Message-State: AO0yUKWg8TPQ23KyyiDcV/zU9UewOSmJtbRzjpz8pPAQ3/tQhs0XnRGg
+        rrF2CP1pUKm7rTNOjU31mfvVhQ==
+X-Google-Smtp-Source: AK7set8Zl0KNYXv2AhHSd8Fn3iuvU9rRSVGaJA6ydZDA517h1/4H4uOnDfoNavy1zJht7v4B+j49+g==
+X-Received: by 2002:a05:6402:2037:b0:4c0:821a:40da with SMTP id ay23-20020a056402203700b004c0821a40damr31253519edb.34.1678626849069;
+        Sun, 12 Mar 2023 06:14:09 -0700 (PDT)
 Received: from krzk-bin.. ([2a02:810d:15c0:828:d9f6:3e61:beeb:295a])
-        by smtp.gmail.com with ESMTPSA id r19-20020a1709067fd300b008eddbd46d7esm2213279ejs.31.2023.03.12.06.14.05
+        by smtp.gmail.com with ESMTPSA id r19-20020a1709067fd300b008eddbd46d7esm2213279ejs.31.2023.03.12.06.14.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Mar 2023 06:14:06 -0700 (PDT)
+        Sun, 12 Mar 2023 06:14:08 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Joe Tessler <jrt@google.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
@@ -95,9 +95,9 @@ To:     Joe Tessler <jrt@google.com>,
         linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-rockchip@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 22/28] media: i2c: mt9m111: drop of_match_ptr for ID table
-Date:   Sun, 12 Mar 2023 14:13:12 +0100
-Message-Id: <20230312131318.351173-22-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 23/28] media: i2c: ov2640: drop of_match_ptr for ID table
+Date:   Sun, 12 Mar 2023 14:13:13 +0100
+Message-Id: <20230312131318.351173-23-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
 References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
@@ -113,26 +113,26 @@ ID table) so there is little benefit in of_match_ptr (this also allows
 ACPI matching via PRP0001, even though it might not be relevant here).
 This also fixes !CONFIG_OF error:
 
-  drivers/media/i2c/mt9m111.c:1370:34: error: ‘mt9m111_of_match’ defined but not used [-Werror=unused-const-variable=]
+  drivers/media/i2c/ov2640.c:1290:34: error: ‘ov2640_of_match’ defined but not used [-Werror=unused-const-variable=]
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/media/i2c/mt9m111.c | 2 +-
+ drivers/media/i2c/ov2640.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
-index f5fe272d1205..20ed87d872c8 100644
---- a/drivers/media/i2c/mt9m111.c
-+++ b/drivers/media/i2c/mt9m111.c
-@@ -1382,7 +1382,7 @@ MODULE_DEVICE_TABLE(i2c, mt9m111_id);
- static struct i2c_driver mt9m111_i2c_driver = {
+diff --git a/drivers/media/i2c/ov2640.c b/drivers/media/i2c/ov2640.c
+index 39d56838a4ef..a92c091356c5 100644
+--- a/drivers/media/i2c/ov2640.c
++++ b/drivers/media/i2c/ov2640.c
+@@ -1296,7 +1296,7 @@ MODULE_DEVICE_TABLE(of, ov2640_of_match);
+ static struct i2c_driver ov2640_i2c_driver = {
  	.driver = {
- 		.name = "mt9m111",
--		.of_match_table = of_match_ptr(mt9m111_of_match),
-+		.of_match_table = mt9m111_of_match,
+ 		.name = "ov2640",
+-		.of_match_table = of_match_ptr(ov2640_of_match),
++		.of_match_table = ov2640_of_match,
  	},
- 	.probe_new	= mt9m111_probe,
- 	.remove		= mt9m111_remove,
+ 	.probe_new = ov2640_probe,
+ 	.remove   = ov2640_remove,
 -- 
 2.34.1
 
