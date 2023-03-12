@@ -2,79 +2,158 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA7AC7618A
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Mar 2023 21:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A60AC7618B
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 12:14:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbjCKVtF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Mar 2023 16:49:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60356 "EHLO
+        id S229810AbjCLMOc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Mar 2023 08:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229885AbjCKVtD (ORCPT
+        with ESMTP id S229516AbjCLMOa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Mar 2023 16:49:03 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05FE534C08;
-        Sat, 11 Mar 2023 13:49:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BBE48B80A4B;
-        Sat, 11 Mar 2023 21:49:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B14C433D2;
-        Sat, 11 Mar 2023 21:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678571339;
-        bh=n3JRQcAMcYwEy8CS4/5si/5YrxyBg0r1UZbAZ2pyPlo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=uyFYUKfsQB66OxBWPeAE1dkiI8u+Pc/vQpGBuYwntSNOIoK1CFbmWO5tM1LbxEk6j
-         9Al9x7ycDOi9JKUpRy1bLUJp7GwlOA4+p9yCStXyeBo2W1d2P5S/ntmG4ZuxF+9EW+
-         gWC4o7rbfvzh/FP5xkiktWmZ8c5/0woh4Ea5SgZ4JuQ/KYFglLrG187SyNDhPyCPm3
-         /QA8p9TpthagbHhx1FQw/2RXEPxNvSlsNAeX4+1/nHUa7jyYZlwct43roUeoRyzcur
-         wJ5E+ISf/KJjRuUKA5T7gBqOoiIjHtjywjxcveL2KuoPWGvz02q5rZ9vNPCm1Z6rfb
-         vqVancc5B731g==
-Message-ID: <01959c869e01075705cd436afa822f2586d0509c.camel@kernel.org>
-Subject: Re: [Patch V8 2/3] tpm_tis-spi: Add hardware wait polling
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>, robh+dt@kernel.org,
-        broonie@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        krzysztof.kozlowski+dt@linaro.org, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        skomatineni@nvidia.com, ldewangan@nvidia.com
-Date:   Sat, 11 Mar 2023 23:48:57 +0200
-In-Reply-To: <20230302041804.24718-3-kyarlagadda@nvidia.com>
-References: <20230302041804.24718-1-kyarlagadda@nvidia.com>
-         <20230302041804.24718-3-kyarlagadda@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.1-0ubuntu1 
+        Sun, 12 Mar 2023 08:14:30 -0400
+Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C642D36FE1;
+        Sun, 12 Mar 2023 05:14:25 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.west.internal (Postfix) with ESMTP id 2E8A02B066CB;
+        Sun, 12 Mar 2023 08:14:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Sun, 12 Mar 2023 08:14:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1678623258; x=1678630458; bh=uOiTi6/NTNM3M
+        UGJcuvZvSM01KsroDdW5S+kXTtbd8w=; b=eHYyrL4NaW+yMUjCNptl5jYYtoi8E
+        hLBKzStAuQkG4v/z4hhP3kqHJQ2dwsRiMM/zQZmYQuybV3ns2BtF/u+8yL8z2Lpx
+        Fmm8zqjgnyTXuowli2+dSb8yfzjw4fhctK9VDp59jUGkHPWADWbTNq/qwMcS4V2D
+        nJzvwzXB3DZqQONKCTj7Ai1tlKWl3EuFudxD2O4eOA/UZCCneHrJ2UESteRQ80wa
+        DIqa4yLbBJCwUjKYoouq9gT2uFNwoaBp54W+m/0tweudxnh2fvhCVWnaKIgSmJRU
+        6fTwksJ6D/49vNcKmO24kfNVAM+PfU+O0BFXGq6gmpmocg7/R3c1RWetw==
+X-ME-Sender: <xms:GMINZGTf74JeblrjlpCh3YB4_QRRq8vjzK0oAN37uf84Wq2fmxR25A>
+    <xme:GMINZLwR_DLRm0xvpbHAjBj56JOUxatnZe2vfFGNpmMYMmk-Rc5duszkyCP3ccJqd
+    CMMbOhtJaOGzHw>
+X-ME-Received: <xmr:GMINZD3N8oWjeD-ZblmcgytVfWOgbjI-9Urb4YeJ1SDeIiaSlgllXVS72rYf>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvddvvddgfeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcu
+    ufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrth
+    htvghrnhepvddufeevkeehueegfedtvdevfefgudeifeduieefgfelkeehgeelgeejjeeg
+    gefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepih
+    guohhstghhsehiughoshgthhdrohhrgh
+X-ME-Proxy: <xmx:GMINZCCd5Yv4ayURM5DOEpHnfT7iGftOXamBF3b0R3zWoNndjgvtew>
+    <xmx:GMINZPhqsrHiMYhX0eZcE-3b2KPOlLyZft3GgY2KvKmPR4znhEQTFQ>
+    <xmx:GMINZOr3mCJj8kq-QN1JeGycDSOV_iFTbuNK_uDCf3DOYZ8phjakwA>
+    <xmx:GsINZCMz0m5ZZart7AcvGICSsoelDhvqQ3z5GzBg10_jUUYuoBThpmdI-JU>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 12 Mar 2023 08:14:15 -0400 (EDT)
+Date:   Sun, 12 Mar 2023 14:14:12 +0200
+From:   Ido Schimmel <idosch@idosch.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, rui.zhang@intel.com,
+        Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Kaestle <peter@piie.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        danieller@nvidia.com, vadimp@nvidia.com, petrm@nvidia.com
+Subject: Re: [PATCH v8 01/29] thermal/core: Add a generic
+ thermal_zone_get_trip() function
+Message-ID: <ZA3CFNhU4AbtsP4G@shredder>
+References: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
+ <20221003092602.1323944-2-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221003092602.1323944-2-daniel.lezcano@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-T24gVGh1LCAyMDIzLTAzLTAyIGF0IDA5OjQ4ICswNTMwLCBLcmlzaG5hIFlhcmxhZ2FkZGEgd3Jv
-dGU6Cj4gK2ludCB0cG1fdGlzX3NwaV90cmFuc2ZlcihzdHJ1Y3QgdHBtX3Rpc19kYXRhICpkYXRh
-LCB1MzIgYWRkciwgdTE2Cj4gbGVuLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIHU4ICppbiwgY29uc3QgdTggKm91dCkKPiArewo+ICvCoMKgwqDCoMKg
-wqDCoHN0cnVjdCB0cG1fdGlzX3NwaV9waHkgKnBoeSA9IHRvX3RwbV90aXNfc3BpX3BoeShkYXRh
-KTsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qgc3BpX2NvbnRyb2xsZXIgKmN0bHIgPSBwaHktPnNw
-aV9kZXZpY2UtPmNvbnRyb2xsZXI7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoC8qCj4gK8KgwqDCoMKg
-wqDCoMKgICogVFBNIGZsb3cgY29udHJvbCBvdmVyIFNQSSByZXF1aXJlcyBmdWxsIGR1cGxleCBz
-dXBwb3J0Lgo+ICvCoMKgwqDCoMKgwqDCoCAqIFNlbmQgZW50aXJlIG1lc3NhZ2UgdG8gYSBoYWxm
-IGR1cGxleCBjb250cm9sbGVyIHRvIGhhbmRsZQo+ICvCoMKgwqDCoMKgwqDCoCAqIHdhaXQgcG9s
-bGluZyBpbiBjb250cm9sbGVyLgo+ICvCoMKgwqDCoMKgwqDCoCAqIFNldCBUUE0gSFcgZmxvdyBj
-b250cm9sIGZsYWcuLgo+ICvCoMKgwqDCoMKgwqDCoCAqLwo+ICvCoMKgwqDCoMKgwqDCoGlmIChj
-dGxyLT5mbGFncyAmIFNQSV9DT05UUk9MTEVSX0hBTEZfRFVQTEVYKQo+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gdHBtX3Rpc19zcGlfaHdfZmxvd190cmFuc2ZlcihkYXRh
-LCBhZGRyLCBsZW4sCj4gaW4sCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgb3V0KTsKPiArwqDCoMKgwqDCoMKgwqBlbHNlCj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoHJldHVybiB0cG1fdGlzX3NwaV9zd19mbG93X3RyYW5zZmVyKGRhdGEsIGFk
-ZHIsIGxlbiwKPiBpbiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBvdXQpOwo+ICt9Cj4gKwoKQmFzZWQgb24gdGhlIGNvbmRpdGlvbiwgYmV0dGVyIG5hbWVz
-IHdvdWxkIGJlCgoxLiB0cG1fdGlzX3NwaV90cmFuc2Zlcl9oYWxmKCkKMi4gdHBtX3Rpc19zcGlf
-dHJhbnNmZXJfZnVsbCgpCgpCUiwgSmFya2tvCg==
+On Mon, Oct 03, 2022 at 11:25:34AM +0200, Daniel Lezcano wrote:
+> @@ -1252,9 +1319,10 @@ thermal_zone_device_register_with_trips(const char *type, struct thermal_trip *t
+>  		goto release_device;
+>  
+>  	for (count = 0; count < num_trips; count++) {
+> -		if (tz->ops->get_trip_type(tz, count, &trip_type) ||
+> -		    tz->ops->get_trip_temp(tz, count, &trip_temp) ||
+> -		    !trip_temp)
+> +		struct thermal_trip trip;
+> +
+> +		result = thermal_zone_get_trip(tz, count, &trip);
+> +		if (result)
+>  			set_bit(count, &tz->trips_disabled);
+>  	}
 
+Daniel, this change makes it so that trip points with a temperature of
+zero are no longer disabled. This behavior was originally added in
+commit 81ad4276b505 ("Thermal: Ignore invalid trip points"). The mlxsw
+driver relies on this behavior - see mlxsw_thermal_module_trips_reset()
+- and with this change I see that the thermal subsystem tries to
+repeatedly set the state of the associated cooling devices to the
+maximum state. Other drivers might also be affected by this.
+
+Following patch solves the problem for me:
+
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 55679fd86505..b50931f84aaa 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -1309,7 +1309,7 @@ thermal_zone_device_register_with_trips(const char *type, struct thermal_trip *t
+                struct thermal_trip trip;
+ 
+                result = thermal_zone_get_trip(tz, count, &trip);
+-               if (result)
++               if (result || !trip.temperature)
+                        set_bit(count, &tz->trips_disabled);
+        }
+
+Should I submit it or do you have a better idea?
+
+Thanks
