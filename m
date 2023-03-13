@@ -2,117 +2,99 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D47C6FD19
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Mar 2023 20:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3335C61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 04:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbjCLUXL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Mar 2023 16:23:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56326 "EHLO
+        id S229934AbjCME2x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Mar 2023 00:28:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbjCLUXH (ORCPT
+        with ESMTP id S229641AbjCME2w (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Mar 2023 16:23:07 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0DD81A958;
-        Sun, 12 Mar 2023 13:23:05 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id da10so40960811edb.3;
-        Sun, 12 Mar 2023 13:23:05 -0700 (PDT)
+        Mon, 13 Mar 2023 00:28:52 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850A72A6D5
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 21:28:51 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id j3-20020a17090adc8300b0023d09aea4a6so1327894pjv.5
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 21:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112; t=1678652584;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zx5Hx16VtrsWGIQLk9WwOhEjwlykZ68lI6lzjbPZklw=;
-        b=Hf8bDIgSRyHgy9bXQ/Gk4nexYiqXGYoCYtQ04Ivh+iCVbpJ2b5wzrRnb++ax5WG5YU
-         l1ECC7hckmqBIWK0FYKledOUlR/8oGb9iU/bprqDFfYvUnH9HXOkXMuEU7AitS1oLCXw
-         myetldVYFfznoSCvDzeKhgZkcDBm8pW0l/vGCJjUPX1DzrdmVRAKk857IvrVjfQ9XSKG
-         2N5oK1VtlQxJyFx4Mf99gdPkQnYe53VpL6QT66oSCLZqVHMC0inMBQbwy20+y8itU9ok
-         BWs74qxV0g+EZr9O9dScl2udx1DcuJJXJz0jv3NNva7rrPcHkok53W0tVeIcIuzzmOKr
-         qkHw==
+        d=linaro.org; s=google; t=1678681731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TAvGM9A2vDOzZdyZgN/PhkShf6xY7yJiV2Tqe3Nl+SQ=;
+        b=vgSzyJf6wycqYZ/VP28K2uAd0g5ZW4Z17ATSTMj8bm/53X2tJN6kLXOuJUq2qi31px
+         yTLOEvIj36P32blXlmvFWEpkRyIyz6ATGjFYQ99xtcsCFHsc2JewOeL8a0bqcWQhue0K
+         Z5knfx4nBfuz7GdB05icBFRp6tGwuynWdlqAsAt0+7J16rlNB1iwp70JepKXzgvD38M0
+         ifWATre3vYuJ0aduoRvF3Bakmn6wIVtpHx7H288oyWgmd0dvzyus7St6jM9vCxoDphRJ
+         WCDeXAK4kePRLuHWAPz7O8Z+/yQDo4YzoXMueK6qhRQmHigR4daFHTCI5iuSZ6Um6HSk
+         5iQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678652584;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zx5Hx16VtrsWGIQLk9WwOhEjwlykZ68lI6lzjbPZklw=;
-        b=5WazXZ4Qz/NvVm69OT/4CRb+qs3zBybI4XyOjHhtZ2HGBsJnO7YyG4RpfiOcYm6+o5
-         cyLDc2l7ucDgX0tzoymHyCVqXlVq1EHGNjs4+dZdkywVG4EkHZdtqhvKK119p/F3piQc
-         0TGai7S2XDPqLvSBJcIlhc0OrNsWNiFvZs5yoB0AHVM0VsXC+lAtrjHL3wj0SAOanyBv
-         vr+8j1wpmDdfxQxLe3HM/NBWb39hg9UXlvBsjcerqQ89/210CVhg+c5tQy1DE5nT36ea
-         PscKoLpWvDxV0m5/90LV5df19AlkOiGOegetNPjbIfsiaV6BVdCZhspFxIPvXBhUroEr
-         ZMqA==
-X-Gm-Message-State: AO0yUKWDXZNYedqeOj/tFuiK2AoU55wxDKsI6DZlsxd/Ipej6kHQxhQ3
-        YOSQe/BnHYB1rYqlmPnxtCG5QxC7RNPpS20Lx40=
-X-Google-Smtp-Source: AK7set9zgGbqFrzGWxNsXVoKpAldwMmxSrIf9cZOIFv0n5RvCM/bJPrPW3NGvz9pmm0rGWW96q1mG4aHSyR0BOq+UH0=
-X-Received: by 2002:a17:906:e58:b0:922:ff34:d814 with SMTP id
- q24-20020a1709060e5800b00922ff34d814mr2005221eji.6.1678652584109; Sun, 12 Mar
- 2023 13:23:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org> <20230312131318.351173-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230312131318.351173-2-krzysztof.kozlowski@linaro.org>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 12 Mar 2023 21:22:53 +0100
-Message-ID: <CAFBinCDTRjqLfJvs=dtQNS0=5mZSDAdR8tQNt_qLt-BH9+P7MA@mail.gmail.com>
-Subject: Re: [PATCH 02/28] media: cec: meson: drop of_match_ptr for ID table
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Joe Tessler <jrt@google.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        d=1e100.net; s=20210112; t=1678681731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TAvGM9A2vDOzZdyZgN/PhkShf6xY7yJiV2Tqe3Nl+SQ=;
+        b=r1Fr9FeKsN1vYEDZj5W6fJ2uo8+pWJmit1HU2TBKQWZAjSvk1Vvf5Y1WxSwZX4n0cf
+         P7w+iw9pZp1Mrl75fTivO+DSRP2A96XDC89UZNUPXAH13slm4hREVqleT14Kd/WNuFTM
+         nyMaFuHAkD/FcnaSo4m6umDcwtKZZYPGZTiutR5AeIbutx+FuAGKyt9biIWlXdjSQgbK
+         ayzs7x3DM1nBZKXcpH9FrURpJHYHbNCx2Rr5of8bClEowGG5D5N7dvUvMhCQuki4K9Pc
+         UJYHKaWC/MKB89nxbgdakp4CP4hIZMRWa+IG8iTvSvKdFXl3xFJid/j/MEvPs2rkzhaG
+         b+Iw==
+X-Gm-Message-State: AO0yUKW6lI0qV3vi7H3+dDPwRXP0/Ksz9hA9WdMWfxgDog1+gMWNgeTa
+        CGg5RuCFHKcoaVl/slwz8NLE3g==
+X-Google-Smtp-Source: AK7set9p4bFVrpjWBwosOcH7++GcaLBhSfedNIG7sXxnuN2cWJ9UqlzAa/4KGepgTsY0V/w5bofLMg==
+X-Received: by 2002:a17:90b:943:b0:23d:198c:a5ec with SMTP id dw3-20020a17090b094300b0023d198ca5ecmr565374pjb.39.1678681730991;
+        Sun, 12 Mar 2023 21:28:50 -0700 (PDT)
+Received: from localhost ([122.172.83.155])
+        by smtp.gmail.com with ESMTPSA id y2-20020a1709029b8200b0019f0f5704besm3557029plp.236.2023.03.12.21.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Mar 2023 21:28:50 -0700 (PDT)
+Date:   Mon, 13 Mar 2023 09:58:48 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Bin Liu <bin.liu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: Use of_property_present() for testing DT
+ property presence
+Message-ID: <20230313042848.bt4vl3tjjdb6qs34@vireshk-i7>
+References: <20230310144702.1541730-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230310144702.1541730-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Mar 12, 2023 at 2:13=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> The driver can match only via the DT table so the table should be always
-> used and the of_match_ptr does not have any sense (this also allows ACPI
-> matching via PRP0001, even though it might not be relevant here).
->
->   drivers/media/cec/platform/meson/ao-cec.c:711:34: error: =E2=80=98meson=
-_ao_cec_of_match=E2=80=99 defined but not used [-Werror=3Dunused-const-vari=
-able=3D]
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On 10-03-23, 08:47, Rob Herring wrote:
+> It is preferred to use typed property access functions (i.e.
+> of_property_read_<type> functions) rather than low-level
+> of_get_property/of_find_property functions for reading properties. As
+> part of this, convert of_get_property/of_find_property calls to the
+> recently added of_property_present() helper when we just want to test
+> for presence of a property and nothing more.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 2 +-
+>  drivers/cpufreq/imx-cpufreq-dt.c     | 2 +-
+>  drivers/cpufreq/imx6q-cpufreq.c      | 4 ++--
+>  drivers/cpufreq/scmi-cpufreq.c       | 2 +-
+>  drivers/cpufreq/tegra20-cpufreq.c    | 2 +-
+>  5 files changed, 6 insertions(+), 6 deletions(-)
+
+Applied. Thanks.
+
+-- 
+viresh
