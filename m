@@ -2,99 +2,103 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3335C61DA4
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 04:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC13C6FD19
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 07:57:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjCME2x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Mar 2023 00:28:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35402 "EHLO
+        id S230050AbjCMH5S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Mar 2023 03:57:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbjCME2w (ORCPT
+        with ESMTP id S230215AbjCMH4d (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Mar 2023 00:28:52 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850A72A6D5
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 21:28:51 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id j3-20020a17090adc8300b0023d09aea4a6so1327894pjv.5
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Mar 2023 21:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678681731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TAvGM9A2vDOzZdyZgN/PhkShf6xY7yJiV2Tqe3Nl+SQ=;
-        b=vgSzyJf6wycqYZ/VP28K2uAd0g5ZW4Z17ATSTMj8bm/53X2tJN6kLXOuJUq2qi31px
-         yTLOEvIj36P32blXlmvFWEpkRyIyz6ATGjFYQ99xtcsCFHsc2JewOeL8a0bqcWQhue0K
-         Z5knfx4nBfuz7GdB05icBFRp6tGwuynWdlqAsAt0+7J16rlNB1iwp70JepKXzgvD38M0
-         ifWATre3vYuJ0aduoRvF3Bakmn6wIVtpHx7H288oyWgmd0dvzyus7St6jM9vCxoDphRJ
-         WCDeXAK4kePRLuHWAPz7O8Z+/yQDo4YzoXMueK6qhRQmHigR4daFHTCI5iuSZ6Um6HSk
-         5iQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678681731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TAvGM9A2vDOzZdyZgN/PhkShf6xY7yJiV2Tqe3Nl+SQ=;
-        b=r1Fr9FeKsN1vYEDZj5W6fJ2uo8+pWJmit1HU2TBKQWZAjSvk1Vvf5Y1WxSwZX4n0cf
-         P7w+iw9pZp1Mrl75fTivO+DSRP2A96XDC89UZNUPXAH13slm4hREVqleT14Kd/WNuFTM
-         nyMaFuHAkD/FcnaSo4m6umDcwtKZZYPGZTiutR5AeIbutx+FuAGKyt9biIWlXdjSQgbK
-         ayzs7x3DM1nBZKXcpH9FrURpJHYHbNCx2Rr5of8bClEowGG5D5N7dvUvMhCQuki4K9Pc
-         UJYHKaWC/MKB89nxbgdakp4CP4hIZMRWa+IG8iTvSvKdFXl3xFJid/j/MEvPs2rkzhaG
-         b+Iw==
-X-Gm-Message-State: AO0yUKW6lI0qV3vi7H3+dDPwRXP0/Ksz9hA9WdMWfxgDog1+gMWNgeTa
-        CGg5RuCFHKcoaVl/slwz8NLE3g==
-X-Google-Smtp-Source: AK7set9p4bFVrpjWBwosOcH7++GcaLBhSfedNIG7sXxnuN2cWJ9UqlzAa/4KGepgTsY0V/w5bofLMg==
-X-Received: by 2002:a17:90b:943:b0:23d:198c:a5ec with SMTP id dw3-20020a17090b094300b0023d198ca5ecmr565374pjb.39.1678681730991;
-        Sun, 12 Mar 2023 21:28:50 -0700 (PDT)
-Received: from localhost ([122.172.83.155])
-        by smtp.gmail.com with ESMTPSA id y2-20020a1709029b8200b0019f0f5704besm3557029plp.236.2023.03.12.21.28.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Mar 2023 21:28:50 -0700 (PDT)
-Date:   Mon, 13 Mar 2023 09:58:48 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
+        Mon, 13 Mar 2023 03:56:33 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C30E11147
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Mar 2023 00:54:53 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbd0w-0001jC-Ui; Mon, 13 Mar 2023 08:54:38 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbd0w-003nam-6T; Mon, 13 Mar 2023 08:54:38 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbd0v-004TOj-DO; Mon, 13 Mar 2023 08:54:37 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: Use of_property_present() for testing DT
- property presence
-Message-ID: <20230313042848.bt4vl3tjjdb6qs34@vireshk-i7>
-References: <20230310144702.1541730-1-robh@kernel.org>
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 4/5] clocksource: timer-tegra186: Convert to platform remove callback returning void
+Date:   Mon, 13 Mar 2023 08:54:29 +0100
+Message-Id: <20230313075430.2730803-5-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230313075430.2730803-1-u.kleine-koenig@pengutronix.de>
+References: <20230313075430.2730803-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230310144702.1541730-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1785; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fWROh41pLFAOOuaiIIcU6R9zdNm1DYH76BDFy3r52HE=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDtavHL7WtDQHc1rbvZJIqcgl0K9PqzTyycMnC 6Nf5KH11GuJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA7WrwAKCRDB/BR4rcrs CWQLB/41/1OCgtQxaLErB4WJV6Ma17tE20bSAkkJok3pVc7CSdHeSW8eNf9kjC3KRUrj2ligs4l LIVuFA/HaxYHMAL4Yl6HqF7MIn/4xMfvbIN0H1EP/hgfBA+2dfwJcd4DsLQnIPTqGTcRSI7qmbB gjXgAvzizCICokkN1p7zKo97Nki8sgv5AGB0w89dZKRXh3IAWVCYJv4xP3rLlsYjg6fwD37jW1z 86yfBkfSrGKOuJLbsLmiHr40+xsMfDItTmlVvcS2cFckywqhSVydAjn5/tryyJqkSk102PhkH0c /6GUqM5+8JqrVQuQIZ3+iWbv7vuN16/sc7nsxUipYgkOw9bB
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10-03-23, 08:47, Rob Herring wrote:
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties. As
-> part of this, convert of_get_property/of_find_property calls to the
-> recently added of_property_present() helper when we just want to test
-> for presence of a property and nothing more.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 2 +-
->  drivers/cpufreq/imx-cpufreq-dt.c     | 2 +-
->  drivers/cpufreq/imx6q-cpufreq.c      | 4 ++--
->  drivers/cpufreq/scmi-cpufreq.c       | 2 +-
->  drivers/cpufreq/tegra20-cpufreq.c    | 2 +-
->  5 files changed, 6 insertions(+), 6 deletions(-)
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-Applied. Thanks.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/clocksource/timer-tegra186.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
+index ea742889ee06..ccc762d32422 100644
+--- a/drivers/clocksource/timer-tegra186.c
++++ b/drivers/clocksource/timer-tegra186.c
+@@ -447,15 +447,13 @@ static int tegra186_timer_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static int tegra186_timer_remove(struct platform_device *pdev)
++static void tegra186_timer_remove(struct platform_device *pdev)
+ {
+ 	struct tegra186_timer *tegra = platform_get_drvdata(pdev);
+ 
+ 	clocksource_unregister(&tegra->usec);
+ 	clocksource_unregister(&tegra->osc);
+ 	clocksource_unregister(&tegra->tsc);
+-
+-	return 0;
+ }
+ 
+ static int __maybe_unused tegra186_timer_suspend(struct device *dev)
+@@ -505,7 +503,7 @@ static struct platform_driver tegra186_wdt_driver = {
+ 		.of_match_table = tegra186_timer_of_match,
+ 	},
+ 	.probe = tegra186_timer_probe,
+-	.remove = tegra186_timer_remove,
++	.remove_new = tegra186_timer_remove,
+ };
+ module_platform_driver(tegra186_wdt_driver);
+ 
 -- 
-viresh
+2.39.1
+
