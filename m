@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B95C6FD1F
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 14:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2F9C61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 14:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231543AbjCMOzo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Mar 2023 10:55:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35224 "EHLO
+        id S231593AbjCMOz7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Mar 2023 10:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231236AbjCMOzl (ORCPT
+        with ESMTP id S231596AbjCMOzr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Mar 2023 10:55:41 -0400
-X-Greylist: delayed 453 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 13 Mar 2023 07:55:01 PDT
-Received: from gofer.mess.org (gofer.mess.org [IPv6:2a02:8011:d000:212::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 712A964841;
-        Mon, 13 Mar 2023 07:55:01 -0700 (PDT)
+        Mon, 13 Mar 2023 10:55:47 -0400
+X-Greylist: delayed 465 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 13 Mar 2023 07:55:10 PDT
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9C94C6D5;
+        Mon, 13 Mar 2023 07:55:09 -0700 (PDT)
 Received: by gofer.mess.org (Postfix, from userid 1000)
-        id E2BC91000C4; Mon, 13 Mar 2023 14:47:22 +0000 (GMT)
+        id 0CA6A1000B8; Mon, 13 Mar 2023 14:45:44 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-        t=1678718842; bh=A6Y556DDngnyfZDUq/i6s59n3p9QlOwB9TuI5IIX23Q=;
+        t=1678718744; bh=MQpbYRSJt2Nky5m/Hb4UlOgCs8k1dpHDoiIla4to54M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jNI+nhi92YA9jFcloGjP836tOzSltRSbge0kglWgPUauPoC2ishEnQ0Kc1PR1zJZo
-         ewgi/8Ut0X/20A7nTgRdHl3cVFthlrQuS7tWmfUigtx8xLOQg1KQInwxcH44RviUVB
-         uyKKQYO4hPgDNNiYI0jkqe1E9jPfMH1faIY2wq61mYL3CKqve5XFRU1mUQGtI50Y5c
-         6gAYsn20KWM7YaEo1BTe2CtYkzoBrOLYCJdTGisNUZO9LPKtKl4uajSrf9nO38oVFN
-         1TXC+CnzivmXncSSohEL9g4v5HA6z74H/uPZfcd2zYIAwm2AGo66gBH3EC9so5avm3
-         WYXc/5jd2q4Dg==
-Date:   Mon, 13 Mar 2023 14:47:22 +0000
+        b=VfhWWs0CDcE1gvNX2bXlLWyiGqQNluLYD0O0MSFqBVnkM6DU9I2mGeJ+uh0PUnSB1
+         qEMx2alInfFAXtyAxi+XiPNFq/nvUtpwZMC/o7yPi1mpdC3r8GhRep1wRVxKv4nniH
+         neI4CR1YoTW11uB79YwAZsajpesqobvK/q/lo+6qrYsBFdzWx8IVJ9NdUHozUz1xb1
+         dDzcX/jrJ/vpNyVtCP6kcmm5OvP4zWiNl6esTu34QIANrW2+XE9BebzE23GLOJqLov
+         0jWohIUUN+7quOtf6VpPlPOXGqXxSZuw5fqzdLHRoz410t4mWFKIjBTWf3+HmNaZuJ
+         ZxrWX35f85+mA==
+Date:   Mon, 13 Mar 2023 14:45:43 +0000
 From:   Sean Young <sean@mess.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Joe Tessler <jrt@google.com>,
@@ -73,26 +73,27 @@ Cc:     Joe Tessler <jrt@google.com>,
         linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 06/28] media: rc: ir-rx51: drop of_match_ptr for ID table
-Message-ID: <ZA83eipHUk5/vsRp@gofer.mess.org>
+Subject: Re: [PATCH 04/28] media: rc: gpio-ir-recv: drop of_match_ptr for ID
+ table
+Message-ID: <ZA83FwxxePyIXPvL@gofer.mess.org>
 References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
- <20230312131318.351173-6-krzysztof.kozlowski@linaro.org>
+ <20230312131318.351173-4-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230312131318.351173-6-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230312131318.351173-4-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Mar 12, 2023 at 02:12:56PM +0100, Krzysztof Kozlowski wrote:
+On Sun, Mar 12, 2023 at 02:12:54PM +0100, Krzysztof Kozlowski wrote:
 > The driver can match only via the DT table so the table should be always
 > used and the of_match_ptr does not have any sense (this also allows ACPI
 > matching via PRP0001, even though it might not be relevant here).  This
 > also fixes !CONFIG_OF error:
 > 
->   drivers/media/rc/ir-rx51.c:264:34: error: ‘ir_rx51_match’ defined but not used [-Werror=unused-const-variable=]
+>   drivers/media/rc/gpio-ir-recv.c:197:34: error: ‘gpio_ir_recv_of_match’ defined but not used [-Werror=unused-const-variable=]
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
@@ -102,21 +103,21 @@ Thanks
 Sean
 
 > ---
->  drivers/media/rc/ir-rx51.c | 2 +-
+>  drivers/media/rc/gpio-ir-recv.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/rc/ir-rx51.c b/drivers/media/rc/ir-rx51.c
-> index adbbe639a261..13e81bf8005d 100644
-> --- a/drivers/media/rc/ir-rx51.c
-> +++ b/drivers/media/rc/ir-rx51.c
-> @@ -275,7 +275,7 @@ static struct platform_driver ir_rx51_platform_driver = {
->  	.resume		= ir_rx51_resume,
->  	.driver		= {
->  		.name	= KBUILD_MODNAME,
-> -		.of_match_table = of_match_ptr(ir_rx51_match),
-> +		.of_match_table = ir_rx51_match,
->  	},
->  };
->  module_platform_driver(ir_rx51_platform_driver);
+> diff --git a/drivers/media/rc/gpio-ir-recv.c b/drivers/media/rc/gpio-ir-recv.c
+> index 8dbe780dae4e..ae1199cc73fd 100644
+> --- a/drivers/media/rc/gpio-ir-recv.c
+> +++ b/drivers/media/rc/gpio-ir-recv.c
+> @@ -205,7 +205,7 @@ static struct platform_driver gpio_ir_recv_driver = {
+>  	.remove = gpio_ir_recv_remove,
+>  	.driver = {
+>  		.name   = KBUILD_MODNAME,
+> -		.of_match_table = of_match_ptr(gpio_ir_recv_of_match),
+> +		.of_match_table = gpio_ir_recv_of_match,
+>  #ifdef CONFIG_PM
+>  		.pm	= &gpio_ir_recv_pm_ops,
+>  #endif
 > -- 
 > 2.34.1
