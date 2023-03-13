@@ -2,112 +2,82 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F0EC6FD1F
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 08:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B469C6FD19
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 08:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbjCMIRs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Mar 2023 04:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36834 "EHLO
+        id S229668AbjCMInq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Mar 2023 04:43:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjCMIRr (ORCPT
+        with ESMTP id S229534AbjCMInp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Mar 2023 04:17:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB2E2B9F3;
-        Mon, 13 Mar 2023 01:17:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 13 Mar 2023 04:43:45 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE4421296;
+        Mon, 13 Mar 2023 01:43:43 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8602F6114C;
-        Mon, 13 Mar 2023 08:17:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0AA9C433EF;
-        Mon, 13 Mar 2023 08:17:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678695465;
-        bh=jzyrPeuPJwvGuYEX291gbAHZu85wfusV8HgesMnJlyI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nSK0sRt5aC3BDLSctPPKTY+COy70tLVrdKzFQnlo0qamNPCLzvZc8oRmkJDEwYPSl
-         6BgGS0bRyj3gcESUSnsOG5FUTc2rU+xJCo9rnqg3SxO7Zarcz8DVINr3xtUCO9Sqdi
-         SVPgfbGNXm8VYVNfIBEgimi/MdKvuwdFVz7pBI2aRf2JLV7OUvd9Ds3xxNj0y2kj6s
-         B0nE4D79AivGr9tqx4NEQAOaCn249kmw3hG4gDjOpHfCyakL6zjx4As2g6VIRit6EW
-         ioL4/eMZsyuxoeSwv0Bb1BoyPPliaahIAlY+pKqIVb946pbW1SVYix7k770NJXXkGJ
-         otKhSHWLmb+aQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1pbdOG-0004Yv-VH; Mon, 13 Mar 2023 09:18:45 +0100
-Date:   Mon, 13 Mar 2023 09:18:44 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     johan+linaro@kernel.org, a.swigon@samsung.com, agross@kernel.org,
-        alim.akhtar@samsung.com, andersson@kernel.org, djakov@kernel.org,
-        festevam@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski@linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        s.hauer@pengutronix.de, s.nawrocki@samsung.com,
-        shawnguo@kernel.org, stable@vger.kernel.org,
-        thierry.reding@gmail.com, y.oudjana@protonmail.com
-Subject: Re: [PATCH 07/23] interconnect: qcom: rpm: fix probe PM domain error
- handling
-Message-ID: <ZA7cZBF58yMSjG/+@hovoldconsulting.com>
-References: <20230201101559.15529-1-johan+linaro@kernel.org>
- <20230201101559.15529-8-johan+linaro@kernel.org>
- <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 901456602F64;
+        Mon, 13 Mar 2023 08:43:41 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1678697022;
+        bh=4665rYemk6A2Xust8XxLzgdzG2cxoWIBxqr5W23dBBU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gCrSGv+pa3FO7jv7lAjrOcRNNwZOhG8bnVPxVcMAZV3jbVupV2eD23h7+xM5UqZKq
+         yIFrUAQpgZPrQXJPWQ2RFLfEftrGAy4qlZzCnQzI2CffgTmAbylpOxjEby0sKHIkgx
+         X21RB9a4WBM4zQnnwGQ8H6eObyuYDcE+e29GQJhU/l1syW31ydi1sCab54psgqSK49
+         SzKU25O5AzqhcHcmAuU4EH/4+uOO4Fv8/WJJ7cHNE2p3/uyB0JFITvnz9cMkxRw4Oa
+         CQZUPWa6x3vmdim8mSJTPEIiZ9jPW9E6ZMWg9gOyShmzJRunuRFwEJ24aqDDWvQDCr
+         CiN7YlGwWzXLg==
+Message-ID: <ffaf4d60-f8d1-2456-88eb-8c91ed4a6b4a@collabora.com>
+Date:   Mon, 13 Mar 2023 09:43:38 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] PCI: Use of_property_present() for testing DT property
+ presence
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230310144719.1544443-1-robh@kernel.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230310144719.1544443-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Mar 11, 2023 at 07:17:50PM +0100, Christophe JAILLET wrote:
-> Le 01/02/2023 à 11:15, Johan Hovold a écrit :
-> > Make sure to disable clocks also in case attaching the power domain
-> > fails.
-> > 
-> > Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
-> > Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org      # 5.17
-> > Cc: Yassine Oudjana <y.oudjana-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
-> > Signed-off-by: Johan Hovold <johan+linaro-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > ---
-> >   drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
-> >   1 file changed, 4 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-> > index 91778cfcbc65..da595059cafd 100644
-> > --- a/drivers/interconnect/qcom/icc-rpm.c
-> > +++ b/drivers/interconnect/qcom/icc-rpm.c
-> > @@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
-> >   
-> >   	if (desc->has_bus_pd) {
-> >   		ret = dev_pm_domain_attach(dev, true);
-> > -		if (ret)
-> > -			return ret;
-> > +		goto err_disable_clks;
+Il 10/03/23 15:47, Rob Herring ha scritto:
+> It is preferred to use typed property access functions (i.e.
+> of_property_read_<type> functions) rather than low-level
+> of_get_property/of_find_property functions for reading properties. As
+> part of this, convert of_get_property/of_find_property calls to the
+> recently added of_property_present() helper when we just want to test
+> for presence of a property and nothing more.
 > 
-> Hi,
-> this change looks strange because we now skip the rest of the function.
-> 
-> Is it really intended?
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-No, this was definitely not intentional. Thanks for catching this. I'll
-send a follow up fix for Georgi to fold in or apply on top.
 
-> Also, should dev_pm_domain_detach() be called somewhere in the error 
-> handling path and remove function ?
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> # 
+pcie-mediatek
 
-In principle, yes. (I think read the above as being another device
-managed resource.)
-
-It turns out, however, that this code is totally bogus as any power
-domain would already have been attached by the platform bus code and the
-above call would always just succeed. The platform code would also
-handle detach on errors. 
-
-I'll send a patch to remove this.
-
-Johan
