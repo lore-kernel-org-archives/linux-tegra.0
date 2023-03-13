@@ -2,95 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77D4C7618B
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 07:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F0EC6FD1F
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 08:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbjCMH6G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Mar 2023 03:58:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60324 "EHLO
+        id S229712AbjCMIRs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Mar 2023 04:17:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbjCMH5N (ORCPT
+        with ESMTP id S229591AbjCMIRr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Mar 2023 03:57:13 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF7E2A14B
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Mar 2023 00:55:18 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pbd0x-0001j6-AO; Mon, 13 Mar 2023 08:54:39 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pbd0v-003naX-CF; Mon, 13 Mar 2023 08:54:37 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pbd0u-004TOX-OE; Mon, 13 Mar 2023 08:54:36 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH 0/5] clocksource: Convert to platform remove callback returning void
-Date:   Mon, 13 Mar 2023 08:54:25 +0100
-Message-Id: <20230313075430.2730803-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.1
+        Mon, 13 Mar 2023 04:17:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB2E2B9F3;
+        Mon, 13 Mar 2023 01:17:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8602F6114C;
+        Mon, 13 Mar 2023 08:17:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0AA9C433EF;
+        Mon, 13 Mar 2023 08:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678695465;
+        bh=jzyrPeuPJwvGuYEX291gbAHZu85wfusV8HgesMnJlyI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nSK0sRt5aC3BDLSctPPKTY+COy70tLVrdKzFQnlo0qamNPCLzvZc8oRmkJDEwYPSl
+         6BgGS0bRyj3gcESUSnsOG5FUTc2rU+xJCo9rnqg3SxO7Zarcz8DVINr3xtUCO9Sqdi
+         SVPgfbGNXm8VYVNfIBEgimi/MdKvuwdFVz7pBI2aRf2JLV7OUvd9Ds3xxNj0y2kj6s
+         B0nE4D79AivGr9tqx4NEQAOaCn249kmw3hG4gDjOpHfCyakL6zjx4As2g6VIRit6EW
+         ioL4/eMZsyuxoeSwv0Bb1BoyPPliaahIAlY+pKqIVb946pbW1SVYix7k770NJXXkGJ
+         otKhSHWLmb+aQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1pbdOG-0004Yv-VH; Mon, 13 Mar 2023 09:18:45 +0100
+Date:   Mon, 13 Mar 2023 09:18:44 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     johan+linaro@kernel.org, a.swigon@samsung.com, agross@kernel.org,
+        alim.akhtar@samsung.com, andersson@kernel.org, djakov@kernel.org,
+        festevam@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        s.hauer@pengutronix.de, s.nawrocki@samsung.com,
+        shawnguo@kernel.org, stable@vger.kernel.org,
+        thierry.reding@gmail.com, y.oudjana@protonmail.com
+Subject: Re: [PATCH 07/23] interconnect: qcom: rpm: fix probe PM domain error
+ handling
+Message-ID: <ZA7cZBF58yMSjG/+@hovoldconsulting.com>
+References: <20230201101559.15529-1-johan+linaro@kernel.org>
+ <20230201101559.15529-8-johan+linaro@kernel.org>
+ <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1493; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=yo4yph09zji6jUBdgrKcMoe7RCLM6ePyFNEQRE1Mono=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDtajP8HGpAMePs0ZnmVVLrhvd2sv+Tnd0xIxZ h0sy6J4bKqJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA7WowAKCRDB/BR4rcrs CQpTB/0fklJTJiJcfqJgvfdMQaem2ZxZR/Gmruv90hj1UT6nMcstF5G68Btu/eTP7TWwYq4sQUs RhljjMAO/qioqNZL3bO8aZDgzlb8NOg22O3ggXg9+AkMkbm4fWlRWbGHlX/E3vCL/YsMugy2ffl lxg69QN0jZOfEu09mORB9tvbXwbeKHR4H/yvgpowCtiE6JqUF7otxDaQh7A6c4UOyblpQvdCjci WuP6O2hg9hRQjUn/qy4UObfEXeTYzdC1/sGxz9dXHeJU/o2WFu02wv/ggy/vN8ae+zAp6tJ2DNy mTQdLEGJjf23EV9BCefhUQkalSThsZgl3qSWStQbsGdGslP3
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <641d04a3-9236-fe76-a20f-11466a01460e@wanadoo.fr>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+On Sat, Mar 11, 2023 at 07:17:50PM +0100, Christophe JAILLET wrote:
+> Le 01/02/2023 à 11:15, Johan Hovold a écrit :
+> > Make sure to disable clocks also in case attaching the power domain
+> > fails.
+> > 
+> > Fixes: 7de109c0abe9 ("interconnect: icc-rpm: Add support for bus power domain")
+> > Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org      # 5.17
+> > Cc: Yassine Oudjana <y.oudjana-g/b1ySJe57IN+BqQ9rBEUg@public.gmane.org>
+> > Signed-off-by: Johan Hovold <johan+linaro-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > ---
+> >   drivers/interconnect/qcom/icc-rpm.c | 9 ++++-----
+> >   1 file changed, 4 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> > index 91778cfcbc65..da595059cafd 100644
+> > --- a/drivers/interconnect/qcom/icc-rpm.c
+> > +++ b/drivers/interconnect/qcom/icc-rpm.c
+> > @@ -498,8 +498,7 @@ int qnoc_probe(struct platform_device *pdev)
+> >   
+> >   	if (desc->has_bus_pd) {
+> >   		ret = dev_pm_domain_attach(dev, true);
+> > -		if (ret)
+> > -			return ret;
+> > +		goto err_disable_clks;
+> 
+> Hi,
+> this change looks strange because we now skip the rest of the function.
+> 
+> Is it really intended?
 
-this patch series adapts the platform drivers below drivers/clk
-to use the .remove_new() callback. Compared to the traditional .remove()
-callback .remove_new() returns no value. This is a good thing because
-the driver core doesn't (and cannot) cope for errors during remove. The
-only effect of a non-zero return value in .remove() is that the driver
-core emits a warning. The device is removed anyhow and an early return
-from .remove() usually yields a resource leak.
+No, this was definitely not intentional. Thanks for catching this. I'll
+send a follow up fix for Georgi to fold in or apply on top.
 
-Most clocksource drivers are not supposed to be removed. Two drivers are
-adapted here to actually prevent removal. One driver is fixed not to
-return an error code in .remove() and then the two remaining drivers
-with a remove callback are trivially converted to .remove_new().
+> Also, should dev_pm_domain_detach() be called somewhere in the error 
+> handling path and remove function ?
 
-Best regards
-Uwe
+In principle, yes. (I think read the above as being another device
+managed resource.)
 
-Uwe Kleine-König (5):
-  clocksource: sh_mtu2: Mark driver as non-removable
-  clocksource: timer-stm32-lp: Mark driver as non-removable
-  clocksource: timer-ti-dm: Improve error message in .remove
-  clocksource: timer-tegra186: Convert to platform remove callback
-    returning void
-  clocksource: timer-ti-dm: Convert to platform remove callback
-    returning void
+It turns out, however, that this code is totally bogus as any power
+domain would already have been attached by the platform bus code and the
+above call would always just succeed. The platform code would also
+handle detach on errors. 
 
- drivers/clocksource/sh_mtu2.c        | 7 +------
- drivers/clocksource/timer-stm32-lp.c | 7 +------
- drivers/clocksource/timer-tegra186.c | 6 ++----
- drivers/clocksource/timer-ti-dm.c    | 7 ++++---
- 4 files changed, 8 insertions(+), 19 deletions(-)
+I'll send a patch to remove this.
 
-
-base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
--- 
-2.39.1
-
+Johan
