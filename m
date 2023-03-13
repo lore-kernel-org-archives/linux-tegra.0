@@ -2,141 +2,197 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7250CC6FD19
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 09:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BBBC61DA4
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 10:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbjCMJqB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Mar 2023 05:46:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
+        id S230140AbjCMKpt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Mar 2023 06:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbjCMJp7 (ORCPT
+        with ESMTP id S229616AbjCMKps (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Mar 2023 05:45:59 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2089.outbound.protection.outlook.com [40.107.92.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DEC274AA;
-        Mon, 13 Mar 2023 02:45:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xhy7/S3T6em46m77SpCDu2POWNwu+piLYbwEoCT1JXAbJok6oyVLBewGWPQpjMOTSpO9NKHYvYf99Po1qkA6em5Z0NuBiF51xXr7mQi0m+ziOKkJRsF4uDaV+YasXsD5xAdQYIm8szMaIyEZENt3YEyaZHpj7AhWP5JhgLUo8adO2/gMGOxzGxcljhm441uyDDV3q6yFIibdOeD8H24eqTK5zmwj9BNCmiDORctuQytPKVbxDtJPCApuRF5qkIPFFfrybw7Y1kwgkUDVSB0N71wXgPvbPCVfoW7ji6hhe8t7oXo4iJfrCVA/4t1UpSY1JZlErv0S60ATE5g7Nh8/GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3/bAkxfmL4RorA+Aq9hQL+TRaaE4z66sKX1SJ8nP2mM=;
- b=hu764KxZkxSZCEeD7zPSXMHJ0Q+bD5pE5JwDgK+UMoSeNtpL7FAjc5pjdyMAstSaTX7Mw95CQx4KoQ5BS7JLrxu/oJKZwum87WGDuzxZOUkAEAzYZaESUVPQnJt6mQoeT449dw6xZlpR3wUDPYuElXBheVaVtI18rtEs2JT8yldbjmcJOncKFR6k6tP8ejRWztLN7DteqV+WbEHyQmbbXw6A39SWRrATzlskEFlv8yn4NV90aYnfHDEF8t4EKLDzqqYG0AsNbx7t+ubrlIHRjZUWzfI14RnawisZ950IdTvUgNLZj2NLEAh9vXHfK/Y2Cmbv3qu34oNU+fSZR+/FyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3/bAkxfmL4RorA+Aq9hQL+TRaaE4z66sKX1SJ8nP2mM=;
- b=fDGfmtZpIhbKHI57VAxHp6GfD+/VP4lfthUJ+t6zgGFi26d2yT/Dz9ZOEVpkqaYf7ngwGDkzqqmFMi8G6g5vGIwgq0mOEPL7twcphxpTjFyI1PqKjb6UVtPg4fwrW2QJUjk7xv7DH43fAfxAN7E+ijvp45Y5WU9y4ee6jk4cDQMF6p0obnO2dDchYxwkYqns7LUw44+ykgmyNGnBOS9uc4GrLG9gUUqknvMdKpFhmAfItqAqeRLdWWkkSHiR8GXrWmpJWjOym0exRaepzJO4Kqjkj8c4hzn1nV6t4OB9diKhEwgGqSMon3AZ/bxfdPenfF6UGPH1R5XVhxhLXX+W0g==
-Received: from BN9PR03CA0929.namprd03.prod.outlook.com (2603:10b6:408:107::34)
- by DM4PR12MB5914.namprd12.prod.outlook.com (2603:10b6:8:67::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.24; Mon, 13 Mar
- 2023 09:45:39 +0000
-Received: from BN8NAM11FT037.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:107:cafe::99) by BN9PR03CA0929.outlook.office365.com
- (2603:10b6:408:107::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.25 via Frontend
- Transport; Mon, 13 Mar 2023 09:45:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT037.mail.protection.outlook.com (10.13.177.182) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6178.24 via Frontend Transport; Mon, 13 Mar 2023 09:45:38 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 13 Mar 2023
- 02:45:24 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 13 Mar
- 2023 02:45:24 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5 via Frontend
- Transport; Mon, 13 Mar 2023 02:45:24 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.2 000/211] 6.2.4-rc1 review
-In-Reply-To: <20230310133718.689332661@linuxfoundation.org>
-References: <20230310133718.689332661@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Mar 2023 06:45:48 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8972E521D4
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Mar 2023 03:45:46 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id o38-20020a05600c512600b003e8320d1c11so7136683wms.1
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Mar 2023 03:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678704345;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6YaG0SWzLbweQszAk60kBLdxmB/7i6RyPeQI10oAzV4=;
+        b=LGtukpD/p9tW2HynhY3ArpOnq71vUNWspCHDXcqL9E0H12uUGwCrNnJ8M0RxmdNpeq
+         pAeM7HgE3lC/iWS08/SNNgrlDNCkMeXQqRuX8cwlBg4zRVpNXPW3gDjtnKxALuceF78y
+         NdVTDObibZ8R4EtyBNCPIMcq0OgaTbkZvAM49h3p8hUGXW7fJ7YGuhjTjqQdepEuEkoV
+         cD7UbzHMLuWJXYr4Foe1gbFD2MHYxciKwANocceIkSdzewD4rowtkp2iwkioPH9TaNKp
+         rEBkV5vvEN+FggyOIX39CDWbzc/iJhYRAVxAyxEi2kAEgx37tlorGCa+Sd08jrlENeFY
+         mZeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678704345;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6YaG0SWzLbweQszAk60kBLdxmB/7i6RyPeQI10oAzV4=;
+        b=mKymFHUx3FDL4xLRuRR02Ek2Sh356tXGTqYRxHI1BOxjSnc6v9GE/qQ8ntU61/BYMB
+         1OWQy5huigqPaoZ643jzUdar0+pvgl1fYmCUQMCeFPYgByFc2TUVhysWweRweP8HjWAl
+         TG/eDIbx/4z4692LvHpECjieILrLEntqmZAZli8WgPgknfqaZ/nH2h/BcWgXepJSSzJi
+         eMZZQOIPpRmBgljhMWEehzHkUtDSAk01QT0+sGB+fvIkm6lgbEjHXWEsypJUzJdxbmpC
+         4S94t2SP9jk29KQyIbsjMzoqx8q/WRuB4Pny9D6lk9qL4BDt1/VKfTUxKRl0B7Ny04zd
+         fSIg==
+X-Gm-Message-State: AO0yUKWw8k6HR8P9EF5ynjvHQrftlFchFiLnxow2kbW3CH2yFaMy3RyI
+        Xa4JPlxIxM1AaSeP0mnJ6wypQQ==
+X-Google-Smtp-Source: AK7set+0Oc4726DzdphLUKeZrWCln4A5vSwSav6cx8LjV/d2+4mI/5d3Gg6o/COIT9hrcw7T8dFWSQ==
+X-Received: by 2002:a05:600c:3504:b0:3ea:d620:579b with SMTP id h4-20020a05600c350400b003ead620579bmr9852881wmq.0.1678704344899;
+        Mon, 13 Mar 2023 03:45:44 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:8522:ca6e:1db4:96c6? ([2a05:6e02:1041:c10:8522:ca6e:1db4:96c6])
+        by smtp.googlemail.com with ESMTPSA id l4-20020a05600c4f0400b003dc4a47605fsm9523224wmq.8.2023.03.13.03.45.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Mar 2023 03:45:44 -0700 (PDT)
+Message-ID: <f78e6b70-a963-c0ca-a4b2-0d4c6aeef1fb@linaro.org>
+Date:   Mon, 13 Mar 2023 11:45:41 +0100
 MIME-Version: 1.0
-Message-ID: <3bd56fce-d281-439d-a95b-439ff6afe918@rnnvmail204.nvidia.com>
-Date:   Mon, 13 Mar 2023 02:45:24 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT037:EE_|DM4PR12MB5914:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3287312-325e-465b-1cbc-08db23a7b3d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: O2sBevakd1VnL3XD3rrRM/jX+q6MJw7XlTUaQTsHXI55hhOLyP/DTPCegJ5ijp2Bh2zqLik9mNTxY4my8YwRADtCxWoS5SVeyELvrSPuGxua2kW2zdtl0x5WhNp9XsQYY8z75WXjMF8Fldm2He3mtTsJGu4vqbjLG80/jxFFQFoWmDRNTHWjlL2NmVEsEGXpbEoaGc7wPeLXeEaY5suvL2BzJD67vMZpLvNWyMbYY21SDq5Vn/Ke9e/tmHkWWccaK7lN1loQyfgSDsfTu9Z4pOiSF+xAR5507H66JLMFnRVuKI1wgUr1WgfbcXOqGa3KR3zocKJQ9v4n6y4bLKDD/L2nL8WjLAyNmvzNCTWTIXK8LUDlLhHgFjWfcUBWjfmimkqZ/bq2xbgWXdy5LbNCLibWoKbl9e6SiKghrZrANvNBX82qnHBfrybZWblc2Wfxc06f1ijezFJVCWF6KfPI0y2NeDLG5ksixbymAto6IZrCONDIWdON6PwEcQ9AqgmcH3d6Tdqvcpp4DHLsVZ5WeoMXas5vTXp5oHnTFEBbQyyXMYQf2PKiUnePC9bcDA0tHsUqggCHHXjCchOwquP5HHI3C0g+bRtPyjPHAf2X7RIH7DjxIRX6DpFoJY/omk0dstZJ81MqA/7xTnhIZ3+eKiAQ6qDekVHQUx6i98vd/VygokuIls8b3/gM0frMckAWJuEoJ+uACjqfAagukWd2a/lJ3Mu6MwKcXLS/PGwN1C2Y0fPqPn0bZn+vXOZgKzv0ffIH1GX+DxxcBTGRvu4pL+L/+Tk/vw7BFoz/jTEWfkI=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(396003)(39860400002)(376002)(136003)(346002)(451199018)(40470700004)(36840700001)(46966006)(31696002)(86362001)(82310400005)(356005)(36860700001)(82740400003)(7636003)(40480700001)(40460700003)(4326008)(70206006)(8676002)(70586007)(6916009)(8936002)(54906003)(478600001)(41300700001)(316002)(7416002)(5660300002)(2906002)(47076005)(426003)(336012)(966005)(186003)(26005)(31686004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2023 09:45:38.5043
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3287312-325e-465b-1cbc-08db23a7b3d9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT037.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5914
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v8 01/29] thermal/core: Add a generic
+ thermal_zone_get_trip() function
+Content-Language: en-US
+To:     Ido Schimmel <idosch@idosch.org>
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, rui.zhang@intel.com,
+        Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Kaestle <peter@piie.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        danieller@nvidia.com, vadimp@nvidia.com, petrm@nvidia.com
+References: <20221003092602.1323944-1-daniel.lezcano@linaro.org>
+ <20221003092602.1323944-2-daniel.lezcano@linaro.org>
+ <ZA3CFNhU4AbtsP4G@shredder>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <ZA3CFNhU4AbtsP4G@shredder>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 10 Mar 2023 14:36:20 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.2.4 release.
-> There are 211 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+Hi Ido,
+
+On 12/03/2023 13:14, Ido Schimmel wrote:
+> On Mon, Oct 03, 2022 at 11:25:34AM +0200, Daniel Lezcano wrote:
+>> @@ -1252,9 +1319,10 @@ thermal_zone_device_register_with_trips(const char *type, struct thermal_trip *t
+>>   		goto release_device;
+>>   
+>>   	for (count = 0; count < num_trips; count++) {
+>> -		if (tz->ops->get_trip_type(tz, count, &trip_type) ||
+>> -		    tz->ops->get_trip_temp(tz, count, &trip_temp) ||
+>> -		    !trip_temp)
+>> +		struct thermal_trip trip;
+>> +
+>> +		result = thermal_zone_get_trip(tz, count, &trip);
+>> +		if (result)
+>>   			set_bit(count, &tz->trips_disabled);
+>>   	}
 > 
-> Responses should be made by Sun, 12 Mar 2023 13:36:38 +0000.
-> Anything received after that time might be too late.
+> Daniel, this change makes it so that trip points with a temperature of
+> zero are no longer disabled. This behavior was originally added in
+> commit 81ad4276b505 ("Thermal: Ignore invalid trip points"). The mlxsw
+> driver relies on this behavior - see mlxsw_thermal_module_trips_reset()
+> - and with this change I see that the thermal subsystem tries to
+> repeatedly set the state of the associated cooling devices to the
+> maximum state. Other drivers might also be affected by this.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.2.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.2.y
-> and the diffstat can be found below.
+> Following patch solves the problem for me:
 > 
-> thanks,
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index 55679fd86505..b50931f84aaa 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -1309,7 +1309,7 @@ thermal_zone_device_register_with_trips(const char *type, struct thermal_trip *t
+>                  struct thermal_trip trip;
+>   
+>                  result = thermal_zone_get_trip(tz, count, &trip);
+> -               if (result)
+> +               if (result || !trip.temperature)
+>                          set_bit(count, &tz->trips_disabled);
+>          }
 > 
-> greg k-h
+> Should I submit it or do you have a better idea?
 
-All tests passing for Tegra ...
+Thanks for reporting this, I think the fix you are proposing is correct 
+regarding the previous behavior.
 
-Test results for stable-v6.2:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+However, I disagree with the commit 81ad4276b505, because it defines the 
+zero as an invalid trip point. But some platforms have warming devices, 
+when the temperature is too cold, eg 0°C, we enable the warming device 
+in order to stay in the functioning temperature range.
 
-Linux version:	6.2.4-rc1-g54d58d14b95c
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Other devices can do the same with negative temperature values.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+This feature is not yet upstream and the rework of the trip point should 
+allow proper handling of cold trip points.
 
-Jon
+If you can send the change to fix the regression that would be great.
+
+But keep in mind, the driver is assuming an internal thermal framework 
+behavior. The trips_disabled is only to overcome a trip point 
+description bug and you should not rely on it as well as not changing 
+the trip points on the fly after they are registered.
+
+Actually, the mlxsw driver should just build a valid array of trip 
+points without 0°C trip point and pass it to 
+thermal_zone_device_register_with_trips(). That would be a proper change 
+without relying on a side effect of the thermal trip bug 0°C workaround.
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
