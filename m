@@ -2,123 +2,144 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3986DC6FD19
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 17:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B861C7618B
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Mar 2023 20:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229964AbjCMRzz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Mar 2023 13:55:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54668 "EHLO
+        id S229796AbjCMUyA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Mar 2023 16:54:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbjCMRzv (ORCPT
+        with ESMTP id S229977AbjCMUxy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Mar 2023 13:55:51 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B0434C0B
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Mar 2023 10:55:48 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id r15so24874123edq.11
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Mar 2023 10:55:48 -0700 (PDT)
+        Mon, 13 Mar 2023 16:53:54 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39797F01E;
+        Mon, 13 Mar 2023 13:53:40 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5416949b35aso139740987b3.13;
+        Mon, 13 Mar 2023 13:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678730146;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JlcrnhxuRd6rV69CEfffZDmaaf6zxlWaBbyK92fytus=;
-        b=zrT7N+L4i1OOmHooCUtuKQxSOa3Hl/v/al9JW1jb/ccugW//3tZctpe8h8XqOLPVPd
-         28FTmDGBe/txValWJ4yjwNiFKkBvn1KymKVGg/ybUJgLljp//aUkiRZ50xC7kl4Tbbbj
-         aiXj4BhUOmS+nYtWQ9V3TMbGRJDLU9OTqUWEyvNLqXpbcdsbGJnsYaHtBcEbR1NxYFSh
-         3TPQAbpAovUx1vfywwYojF4mNL5fHu7ax1zJ99q/wW1LOwJM2pkmAOPuzXjU+QLl044f
-         3i19gjqQNSucPGQdcdgsl+/fuoVl0xUvb3nM2+ZYkuy0CI5+fnQwDijoTSmIFrC58wP+
-         1Png==
+        d=gmail.com; s=20210112; t=1678740820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YZpqs5siL4Ymiuu8Rnql+zUqmGWcS+ZbAUBpWJ9W4K8=;
+        b=KDTS7fZaclyphgJmqC5N15uD3+Gq9l4SliqQgO+pQM5PW7JyjCgsme6Ge6zXtsqVxx
+         AW1l83xNB2ZVX6w+QoQcccw87e1AscXRvCCeZLy1nzrLKUU1XU34faaYkOiDyN24nAY+
+         v6AuBphGSYHv2//9OqQZjdq/Jw5V0E+1129tns66JhFazayIQv6o62288nii6Zp5HB1N
+         TVhCN3L0l+bFus5xhnnmZ3CJCowu7SEkSE+SVTPEf73wBpgQuZlxkq1PIFew5GxN8BkQ
+         9o66TpI9Ei8fIKOQHLzaO+QfgzHm0YuUjG7Vicxxh0QA7Gdwclqym4Dwdmdr6Txlz323
+         wNoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678730146;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JlcrnhxuRd6rV69CEfffZDmaaf6zxlWaBbyK92fytus=;
-        b=IVxyftzCV9PgBz1az6+hb3qG1NyzkuT7qc6XQrZprHi4bRlRyhu7eoP9Qh3Ybrz6Ut
-         qwFgdgbmuoJqCWZU0/SasCr/hJ2cLZZ+C2WgNqhQX/oOdD72AQ8tv6vJ4fVW4NPQS2rA
-         A7Nf2reSO5WesGT+O7zH/RhcgoT0GL4iHzbSefLMLfk/6zwnoz5ub6XHYo7mRaddDBjP
-         RRJ9s2RYYogLfAEmRpgzGUbEram+jlv51u1IvR7O8k1Hn7cTmnNxH0MmlK4wOR+dF0Qe
-         uwSo/gqo8xEi2Twr91v7ZT5RuR8LqU4nz8fdugbzs7hK0IW8WB6zREd8u5DxtMp8HuJ5
-         RmPg==
-X-Gm-Message-State: AO0yUKUavOotvWtGyVAAYIEz/p2RlLBH09sDQ9zpqiQTC3fDfMQq32nx
-        v4Cce9UmuzCh7bXujdEv2U2U6Q==
-X-Google-Smtp-Source: AK7set+F+T0O61QUAlFi1WKTG8LwavM0EbkptZ54DncABKfzh7oDSD7DKJnsUeNG6kb6uO0yUhNKyQ==
-X-Received: by 2002:a17:906:2843:b0:8b1:15ab:f4cd with SMTP id s3-20020a170906284300b008b115abf4cdmr31342450ejc.53.1678730146574;
-        Mon, 13 Mar 2023 10:55:46 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:69db:4882:d071:27c4? ([2a02:810d:15c0:828:69db:4882:d071:27c4])
-        by smtp.gmail.com with ESMTPSA id h7-20020a170906718700b009289de993e2sm65306ejk.216.2023.03.13.10.55.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Mar 2023 10:55:46 -0700 (PDT)
-Message-ID: <6c5045d9-4f4a-5018-3f3f-7746b08ab2b5@linaro.org>
-Date:   Mon, 13 Mar 2023 18:55:45 +0100
+        d=1e100.net; s=20210112; t=1678740820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YZpqs5siL4Ymiuu8Rnql+zUqmGWcS+ZbAUBpWJ9W4K8=;
+        b=4rN0ia/kPPVPe+e2ORxbmTnTESz7QbvJD1xelbFdxTkHGETjy2LUoYr/m3dkYaN0nG
+         Wu98ipIwuypiNL8GuqJOnqOnsXfnacHFIZIsq1JEd6wZokavRpMWSHAd3pQEpyO1y462
+         jQMRF2Ublqs81b3Uwzbk7zIRTm/VhYILoQEYg/iO39VUQTfpTb2SKYNvF1PtUSAIbBLC
+         WQ9LiCHC3muxtzGPrTwweC3H65D6lzqGT/++O2of6C0i+9m33WTyDAFPC9+sw9lRojAI
+         OonClbCUOdFg5VrIrW/1RV7gXVoFoaLsYrkJaU/hPjwDRlw/xMSrm/5n9UvTKDl/6qz6
+         9ONA==
+X-Gm-Message-State: AO0yUKXvXDGxVQGYE6y8qBKIYOtWRDX69JR95r/z9IKQPr5davVp7u5e
+        3Izb8CQHMAvh19XpRM0Z+D1CBuikflldxpfrRp0=
+X-Google-Smtp-Source: AK7set+bkApoxdat3t4mM5yzrnKSLYecVccpJe9yYCQX9Rk8pbyyHXlR/QgC7cJyNYCPNbj0eloQSjFebG86/6a1CaA=
+X-Received: by 2002:a81:a9c6:0:b0:52e:f77c:315d with SMTP id
+ g189-20020a81a9c6000000b0052ef77c315dmr8791180ywh.3.1678740819961; Mon, 13
+ Mar 2023 13:53:39 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH V3 2/6] dt-bindings: timestamp: Add Tegra234 support
-To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org,
-        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
-        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
-References: <20230310190634.5053-1-dipenp@nvidia.com>
- <20230310190634.5053-3-dipenp@nvidia.com>
- <f6d9c84a-1c75-d9b4-59ed-39d6c5b310a9@linaro.org>
- <b4195142-6cfe-df3c-6edf-0c40b64ad02a@nvidia.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <b4195142-6cfe-df3c-6edf-0c40b64ad02a@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org> <20230312131318.351173-11-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230312131318.351173-11-krzysztof.kozlowski@linaro.org>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 13 Mar 2023 20:53:13 +0000
+Message-ID: <CA+V-a8sPwMax7A=k=8bz9SDbWJt7mNHG0-27UXsC=bEhAP3zQw@mail.gmail.com>
+Subject: Re: [PATCH 11/28] media: platform: ti: am437x: drop of_match_ptr for
+ ID table
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Joe Tessler <jrt@google.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Bin Liu <bin.liu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 13/03/2023 18:05, Dipen Patel wrote:
-> On 3/12/23 8:47 AM, Krzysztof Kozlowski wrote:
->> On 10/03/2023 20:06, Dipen Patel wrote:
->>> Added timestamp provider support for the Tegra234 in devicetree
->>> bindings. In addition, it addresses review comments from the
->>> previous review round as follows:
->>> - Removes nvidia,slices property. This was not necessary as it
->>> is a constant value and can be hardcoded inside the driver code.
->>> - Adds nvidia,gpio-controller property. This simplifies how GTE driver
->>> retrieves GPIO controller instance, see below explanation.
->>>
->>> Without this property code would look like:
->>> if (of_device_is_compatible(dev->of_node, "nvidia,tegra194-gte-aon"))
->>> 	hte_dev->c = gpiochip_find("tegra194-gpio-aon",
->>> 				   tegra_get_gpiochip_from_name);
->>> else if (of_device_is_compatible(dev->of_node, "nvidia,tegra234-gte-aon"))
->>> 	hte_dev->c = gpiochip_find("tegra234-gpio-aon",
->>> 				   tegra_get_gpiochip_from_name);
->>> else
->>> 	return -ENODEV;
->>>
->>> This means for every future addition of the compatible string, if else
->>> condition statements have to be expanded.
->>>
->>> With the property:
->>> gpio_ctrl = of_parse_phandle(dev->of_node, "nvidia,gpio-controller", 0);
->>> ....
->>> hte_dev->c = gpiochip_find(gpio_ctrl, tegra_get_gpiochip_from_of_node);
->>>
->>> We haven't technically started making use of these bindings, so
->>> backwards-compatibility shouldn't be an issue yet.
->>
->> Unfortunately, I don't understand this statement. The
->> nvidia,tegra194-gte-aon with removed property is in a released kernel
->> v6.2. What does it mean "technically"? It's a released kernel thus it is
->> a released ABI.
-> 
-> There is no active user of that driver, so even if it breaks 6.2, it is fine
-> as there is no one to complain about it.
+On Sun, Mar 12, 2023 at 1:13=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> The driver can match only via the DT table so the table should be always
+> used and the of_match_ptr does not have any sense (this also allows ACPI
+> matching via PRP0001, even though it might not be relevant here).  This
+> also fixes !CONFIG_OF error:
+>
+>   drivers/media/platform/ti/am437x/am437x-vpfe.c:2620:34: error: =E2=80=
+=98vpfe_of_match=E2=80=99 defined but not used [-Werror=3Dunused-const-vari=
+able=3D]
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/media/platform/ti/am437x/am437x-vpfe.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
 
-How do you know? It's a released kernel, thus how can you ask millions
-of people if they use it or not?
+Cheers,
+Prabhakar
 
-Best regards,
-Krzysztof
-
+> diff --git a/drivers/media/platform/ti/am437x/am437x-vpfe.c b/drivers/med=
+ia/platform/ti/am437x/am437x-vpfe.c
+> index 2dfae9bc0bba..fe89b8e250e7 100644
+> --- a/drivers/media/platform/ti/am437x/am437x-vpfe.c
+> +++ b/drivers/media/platform/ti/am437x/am437x-vpfe.c
+> @@ -2629,7 +2629,7 @@ static struct platform_driver vpfe_driver =3D {
+>         .driver =3D {
+>                 .name   =3D VPFE_MODULE_NAME,
+>                 .pm     =3D &vpfe_pm_ops,
+> -               .of_match_table =3D of_match_ptr(vpfe_of_match),
+> +               .of_match_table =3D vpfe_of_match,
+>         },
+>  };
+>
+> --
+> 2.34.1
+>
