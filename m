@@ -2,140 +2,88 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE7AC6FD1D
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Mar 2023 12:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440C9C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Mar 2023 13:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232130AbjCNMXk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Mar 2023 08:23:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41788 "EHLO
+        id S230098AbjCNNVr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Mar 2023 09:21:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232030AbjCNMXY (ORCPT
+        with ESMTP id S232399AbjCNNV2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Mar 2023 08:23:24 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2065.outbound.protection.outlook.com [40.107.223.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B039594A50;
-        Tue, 14 Mar 2023 05:19:32 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g3WDBv07MJwEPIPj5e1H/6dIyeGnO/kDetGCEewrmiaI9QuWS1YOTmgDYuhETpc6KwAWJZf7mIulVdaaeW0f9PVc2kE3qAvdS2s9GMSflApLaA2kpxK1LvJn5ph2Z6Osy4+pMrIh8UHTDQSg2jJbEqacXTi8HnruDkIhg6p0wDDr5P1cmb8otRlsCzVGEytingkUEWs6gg/djWC+3n9x6gm3ilsf6VL0HByfcu+f4vcK10b4OwxU/yuoSw6zrpa1HfbJnAA4rF3+Q1kKAAXgNZo6RJso5vDg7YYuvONLa+nRuZG6l/sx7oLEF0FgvEsIFQbt35scziNwIMIyQEQwQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gSwzhKFPYeA9ZYWordZ/2WtBeLQd/uECwPCK4IbTyxg=;
- b=FdjZqdh51uinotLSMhS/kqKA/JOvRF7p2xAhi2aRKQ3cYOxSqOs/Dil2pVE7Nb15qIzBIBSSETX3Wzg3buoTTmB7Bk+HkJefWdGdK3UwavbnQgxfwAuGUSo1eCMC0y6UHumrAmQhhsBZ1zYynbizStdvtRAzOk/qg1+fmgtUSoe040x0YenOTf4wLhJ9Hq+5XMAYyMJvVf8fOo5Xl9uzx2pUOW7+ejT5uZk6RPDtFNsnz6lMuCxk5FKR5CuJ6kJPMp5v8huUv6f6u5TlAEABl2+tYtM7GMaU7f26242M6dMPG1xH49NkmUpHGOoD7fxJUFKXKshSj77B0p40Rbbf6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gSwzhKFPYeA9ZYWordZ/2WtBeLQd/uECwPCK4IbTyxg=;
- b=UJiSclOYUOrSf2NhQYAe1CvEqVyE7JO225OAMUpRqTloGTOpeoiSnlNdTVLI5NZNfCzwtxwzvzCcVmwAgwpRSIcLlS/Odd54DOZ4IzqfF3xmmAA837s2KYJmSc+dKMyAtoliA+HLQ9XmHh/nwKlJ+ML0UoZOobXmeX816IYf6I7NhNssq7K2GMuiry80uMl1CPcesk36ITKSKc8vpxVMEkUQ4Pqnjtn64wwZ8m3G3kxsku82gf8gbVfxTWdMThG6MgI3sTVpz2/1DDAuSadegqu1uHxnl3MpdgaOP00FbKVst+SXzaVOZjflkKEZmw7D1Wl5bL28VDzfjpT6YFDpdg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- DS7PR12MB6336.namprd12.prod.outlook.com (2603:10b6:8:93::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6178.26; Tue, 14 Mar 2023 12:18:19 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::5464:997b:389:4b07]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::5464:997b:389:4b07%9]) with mapi id 15.20.6178.026; Tue, 14 Mar 2023
- 12:18:19 +0000
-Message-ID: <636816e1-522c-d1a1-a7d5-3a1b5608216c@nvidia.com>
-Date:   Tue, 14 Mar 2023 12:17:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH V3 4/6] hte: Add Tegra234 provider
-Content-Language: en-US
-To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        robh+dt@kernel.org, timestamp@lists.linux.dev,
-        krzysztof.kozlowski+dt@linaro.org, brgl@bgdev.pl, corbet@lwn.net,
-        gregkh@linuxfoundation.org
-References: <20230310190634.5053-1-dipenp@nvidia.com>
- <20230310190634.5053-5-dipenp@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20230310190634.5053-5-dipenp@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO3P265CA0005.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:bb::10) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        Tue, 14 Mar 2023 09:21:28 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A40AA8C72;
+        Tue, 14 Mar 2023 06:17:53 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id d36so19969706lfv.8;
+        Tue, 14 Mar 2023 06:17:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678799871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qFrp6mNEmGMQ8XFqlpuxBB/MWI7MG2f0UoJdue3eE3E=;
+        b=Pd38mR+Co6Z+QfV/zdxM3InYiPPvSWTHyvwOAdcSHK15xy7dXM7E5QYeowkEMYt8DN
+         GebXMK9DuljKlfhC3hwaW+dLHGsaE5rISpfQ+cPIJ7FhatGeeFBGnQdS5CwgkvJ2RVgy
+         ubXuW3AYiUfzvdFBjcjXhWd/L5UvoSDPsdAvwIIQmWOzrXZrupQqkYaNmtOByarKOvU6
+         EiRsNdNhPvFPAGw5GJ75lvikGGnb4YtUiZ1d8ljIGfddWmHjrVMktSZRU5xmbFjqG7k2
+         FARK/m9/VHkvz3fQPwfwrmgAeAJ8bRinfHUKc2Fe1KeAjy/6wkTc5nS2eu6khEIFs5m/
+         PLng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678799871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qFrp6mNEmGMQ8XFqlpuxBB/MWI7MG2f0UoJdue3eE3E=;
+        b=4TrOx3T/md3p+gMxz7eB+oMi6aPYvteOBrdR/vGhXBGTvt9cGGH4oepzunhalfgyOk
+         RhjU7Y1q2wYUfUEUBQym5jDMu23acEA/KLtFPh9GyUEJJz7T+K/iUFDkdIpPcQbDdGHI
+         kgXHR9b1bThmj0HSDQrve1LDeePiTN8AhYar+11DEhqPfWzBux64g4o05I6gPfwCO6Qe
+         8MBEoseoFX8VZ7M68vf3pjXMi+eLMZLIAFL5gMLlDSPwDNjhTGYqpgwSavSUXQwq8FYz
+         zisxtpSCyS5aYmcnIowbkYnqE4daWLtOSVh4njQ4Vycy0l7JVzhJ9ELrb3s5QOd0tw4r
+         ZgCQ==
+X-Gm-Message-State: AO0yUKX/fA3WN9vXRmFvjmr5XU+hiq8p0VjrGWGYBV+VPQov/E3UMGJG
+        zzmlajPT0R1Xri0yoEEFRA==
+X-Google-Smtp-Source: AK7set9Q+E1S+jof5ejuZA8hQbHWrMrCUVEZyDFM7ls6gK5sbqzaJzvH+lDQZW22ER01+/ftLQ7Dxg==
+X-Received: by 2002:ac2:596d:0:b0:4d8:4f53:37ad with SMTP id h13-20020ac2596d000000b004d84f5337admr722945lfp.7.1678799870792;
+        Tue, 14 Mar 2023 06:17:50 -0700 (PDT)
+Received: from cphcirce.. (80-62-116-106-mobile.dk.customer.tdc.net. [80.62.116.106])
+        by smtp.gmail.com with ESMTPSA id o15-20020ac2494f000000b004a2c447598fsm399865lfi.159.2023.03.14.06.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Mar 2023 06:17:50 -0700 (PDT)
+From:   Alfredo Cruz <alfredo.carlon@gmail.com>
+To:     mturquette@baylibre.com, pdeschrijver@nvidia.com,
+        pgaikwad@nvidia.com, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc:     Alfredo Cruz <alfredo.carlon@gmail.com>
+Subject: [PATCH] clk/tegra/clk-tegra124-dfll-fcpu: Add check to 'regulator_list_voltage'
+Date:   Tue, 14 Mar 2023 14:17:18 +0100
+Message-Id: <20230314131718.27031-1-alfredo.carlon@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DS7PR12MB6336:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1daa99d7-faeb-4ecc-334c-08db2486321f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Mzm1R+czblmEB5mMVyYp2BOhMP8BxJmOPhuBzPglpNQc292xcSKCaJ6iZoTqfPBbB+PTy8U/9jNP2r7lP9J7wmnXmW6ng1bTnwPz7D/tGEssrPU+1HQk+HXhY0Q2Tmqto2C2/knL8VAsPeDheTaZeZQk1sHzsd9DNQTnbMWgBbibBtPVtEmWHOCNI/XFWqwwV+mhI+4xqUFZHfMCTi58PVq+/aJzT+7gGej+1CMXFQwHZb3q7xe18XD4jqTcD36aeMRZnqKHsE4tfbaH5qIpGoUBKm2JwiHw0jEBMXm2hgwkml6ZUT0o9ZOYu5xJK6QFWrvZ2syBhsGJjTI/Sr+Y0AkSNgr2I9/IATp8ascDzMc2zVxQvYIFdN7CgYeQNHK0sJdBIXPGc6iY3V1ZjmDKCU66apUHyvwjiZuWqRyaJWGNQ1HAgENtzdJ7b8kNcq8WoYUoeaZea4+gLuBsMEjvaj13oZcX0Uwh93W9EvwMXAmLiyuG/L5q1v6wSDhYYUhdbaJmOKy3oHuABCPI9Lvgrf1Q7cZADwETe49eLF9BGhXIJXXORm++fMGJbnz2oFfk8mZb824nWVSKJMvOFX0jUZ+Mamkq2tZGsZSoMEi9eO6pS7SSx0ODUyMuGIqy2LoIIPdgqJN27Zo4gVBaO+MdnHEn3IsshrHUigI9xxCgJrVbhmfgDrKrpFq4mznNCM1quEvMOcV6MU4AyRszx3LOmSdmHf7Y1dIEzyVlQ/wyrom5toOcuBk1w8LiKz4dysXd
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(376002)(346002)(396003)(366004)(136003)(451199018)(31696002)(921005)(86362001)(38100700002)(36756003)(41300700001)(2906002)(7416002)(4744005)(8936002)(5660300002)(6512007)(6506007)(186003)(26005)(2616005)(55236004)(53546011)(316002)(8676002)(66556008)(66476007)(66946007)(6666004)(6486002)(478600001)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RlkwTmFZWnl3eUducHRDblZKaVdLTW9LTXk3NFVoSmsxUkE2ZjFxWC84Mkhl?=
- =?utf-8?B?RVl6ZU1ESG5TdHc4U04yYVAxUDltMU43eHV0R1dHT081Q3YydThLWHRzWmh0?=
- =?utf-8?B?TFY0MWVtNitwVUVFY1liL0JZaUptdkpYUzNKNDA0T001WkRzLzNSM01zODRZ?=
- =?utf-8?B?bHQya0FnSURaby9yZFhvVlh3MEhJYTcyVVdwNW4xTE9hY0syY1JoQ3ZtZk9l?=
- =?utf-8?B?Y05oclF2cXpTTnRGOGtSeVFGcnJ5RXhwTXNueUlHWXNVMDgvSjRwcjhEU0lU?=
- =?utf-8?B?SXhHdEVxR1NpcHpVbUJCeC9RaUYrNkxOdkozK0NaM25oeWJWVlB1SVo3dkRG?=
- =?utf-8?B?ZUtBZmFrWjJmKzRndDlmVGl6Z1Nkc0lDWENGUU90Ym0vUTh1bzZYa3EwZVRR?=
- =?utf-8?B?Q055OHJ2b0V6UjhBaCsyZDBRazQ3SGh1WGNoN1Q0aFM4UUhpR3prbnQ1RDQ0?=
- =?utf-8?B?bnNYak9DaXFIZG5SUms5Yk9vLzV5WTlJRjRxdkV3NjhFUk9scVl3ZThzblho?=
- =?utf-8?B?VkJ6Zll4TjNkbE1LY3dFWkxFSUM2cWRVZjV2TTlqTzlpNmliYzA3NzdaNXpy?=
- =?utf-8?B?UFRDV1dQMXBIQ2I1OHdpMXJjQVM0RVR5RnEwQTlIWjBid2JGR2FVRTFVdXdq?=
- =?utf-8?B?RnU0cDFaZitRb1RBODQ4OUx0amtDMkNSRm5qTjh5WVVkTWo3alZobk5ZTTYx?=
- =?utf-8?B?K3UxbnA2M2RuNm9pdmxSWitxS2pxUDZMelVZSTZXVmdZTU9GdldqOVJSWExL?=
- =?utf-8?B?UlAxQ212djR2OHNhQktJVm8wT3VqQ2p5ekNJK1Y4OHJpdEF3R2QvUHZVYmh4?=
- =?utf-8?B?RitFTGRvVlovNFF6WGFuWEwreTNuaFNTZXJoNjc3K21nVGp0TENrckNaTi9Y?=
- =?utf-8?B?SG0zK2JwRmI3YXlQdS9FUVdud3BzaklCS3l2YWVibjBONzFEQlZVMWxROTBB?=
- =?utf-8?B?bkF3M1BKcE10QU9RTXlvK3lLaHJlVW0xWmNlS1F1aGpoeFRjaUZTdmczMFFM?=
- =?utf-8?B?Ylh5SHpBZG1wNngreTFDQlB3dkJaNitoWm1wazVweC91TitlRDY0SDFTTDlj?=
- =?utf-8?B?RDFyaktkdHRKSURZa0trOXN6cjBoU1JTUFJhaE4xZ21XYlN5N2xRVzJNVEla?=
- =?utf-8?B?SExEeFVxQklFL0FXcmlaZ3MwTHBlUytMekFBcDQvYmZCemg3NnlxQThzdFBB?=
- =?utf-8?B?NDQ4RXdqOThVQ2JtQUJNTnlZODBpUnBMMmJ4aHlWSzNqOXcrMWtvNEVmMVJi?=
- =?utf-8?B?Q2JKR3JKT3N4cnoyZEQ3TXk4RldWZkZCZjNTd2VtSytxZ1J6THFuamlmb0xB?=
- =?utf-8?B?cnNYb0tqMk45Q2xlR1RLdmJTMlRFMW9YNXF4a1Y3b1p4Rm9UL09IaXJwYmVu?=
- =?utf-8?B?RkdnbXQ1Y0lGM1dFVnl4Q1gyaGg3K1h3UlY4eTFMMitjSmVnWTFzS0h3SUJZ?=
- =?utf-8?B?d1Zha0VsSzBpZ3lFNmZBK0lVcE1TbDNCWG9uTzQ4T3p4Yy9hTWhWVmxCeWF6?=
- =?utf-8?B?ZGhsU3k0RVNWRk53NUhnUllnVW00cTlmQXJKUGtXd0ZNSFptQUE2MVQzQ3Vh?=
- =?utf-8?B?Z2c4SGVxNVFwVG5LaW5PUkoyK25BR2tBWFo4N0RkY3ZObnNwZ3dFbFB5Q3h2?=
- =?utf-8?B?bW10eVpVc0xDYWREMG8rQU00YWFvV2hQaGFtWUN0amhVdmwwKy9wYjJ3VmVs?=
- =?utf-8?B?eUVHTzNReFQzVVNZS1ljbWdIK2JVc3JQbTV2eGFOVW1lUk9iUW5XbnBpb3A3?=
- =?utf-8?B?Y0JXRTY1Ui9MYkJHR2JreXBwNWNVWVVxNWxvUC9EWkNzNTh5aFB3WVAyS2tB?=
- =?utf-8?B?NzlBYTJIYmUvbVZVSDF6MGlPWHkxLzR5Q0dhYjUrQW5qNi9qeXBoaE5xMnZX?=
- =?utf-8?B?MXo5enhMMTJOU2x1T1RudFRUMzRtQ0gwWmtMMW1oYjFBQXJXcWw4ZFR0dGNt?=
- =?utf-8?B?YWNKM202b1dRSDJjakt4Q1lUeGRxVzdpelJ2dUJ3SWRkSzlkMHZFMmFkVFdC?=
- =?utf-8?B?RExNellsNlFsM2FjUytlTVZrcUlHemlnb05mM1hGZTBBM2JVZlJYanRzdTdY?=
- =?utf-8?B?SzRsOGlqVjJhRmtLYmpnWUg4aDRKbWF3cktvZjIzMExLWWw1RzNQeExZOE5j?=
- =?utf-8?B?NW9hQ2pMVTZ4NkZOWTFUU01PbkcxVDh3SWdleHpvZ3g2dGY2TThMcldGQm5z?=
- =?utf-8?B?VGc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1daa99d7-faeb-4ecc-334c-08db2486321f
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2023 12:18:19.1773
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R9TMoV7Woq5ZjVf9NPOsBpnw0TH/Kd+BfFLjfqp6nb4WEiAhGIIfYsB38gHdEvzjvFK2edFz1o3Kw+3bfKiyEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6336
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/03/2023 19:06, Dipen Patel wrote:
-> This patch adds HTE provider support for the Tegra234 and reflects the
-> changes made in the device tree as follow.
-> - Add slices field in the SoC specific structure
-> - Remove gpio chip find by name function instead make use of the phandle
-> parsed from the DT node
+Signed-off-by: Alfredo Cruz <alfredo.carlon@gmail.com>
+---
+Hi,
+I'm not entirely sure if 'regulator_list_voltage(reg, 0)' will never return less than 0.
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-This patch appears to be 3 things. So this should be 3 patches.
-
-Thanks!
-Jon
-
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 5e339ad0a97c..745bb828e53e 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -543,6 +543,8 @@ static int get_alignment_from_regulator(struct device *dev,
+ 		return PTR_ERR(reg);
+ 
+ 	align->offset_uv = regulator_list_voltage(reg, 0);
++	if (align->offset_uv < 0)
++		align->offset_uv = 0;
+ 	align->step_uv = regulator_get_linear_step(reg);
+ 
+ 	regulator_put(reg);
 -- 
-nvpublic
+2.39.2
+
