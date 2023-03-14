@@ -2,88 +2,160 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 440C9C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Mar 2023 13:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128B1C6FD1C
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Mar 2023 16:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbjCNNVr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Mar 2023 09:21:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37724 "EHLO
+        id S231479AbjCNQDc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Mar 2023 12:03:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232399AbjCNNV2 (ORCPT
+        with ESMTP id S229810AbjCNQDR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Mar 2023 09:21:28 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A40AA8C72;
-        Tue, 14 Mar 2023 06:17:53 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id d36so19969706lfv.8;
-        Tue, 14 Mar 2023 06:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678799871;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qFrp6mNEmGMQ8XFqlpuxBB/MWI7MG2f0UoJdue3eE3E=;
-        b=Pd38mR+Co6Z+QfV/zdxM3InYiPPvSWTHyvwOAdcSHK15xy7dXM7E5QYeowkEMYt8DN
-         GebXMK9DuljKlfhC3hwaW+dLHGsaE5rISpfQ+cPIJ7FhatGeeFBGnQdS5CwgkvJ2RVgy
-         ubXuW3AYiUfzvdFBjcjXhWd/L5UvoSDPsdAvwIIQmWOzrXZrupQqkYaNmtOByarKOvU6
-         EiRsNdNhPvFPAGw5GJ75lvikGGnb4YtUiZ1d8ljIGfddWmHjrVMktSZRU5xmbFjqG7k2
-         FARK/m9/VHkvz3fQPwfwrmgAeAJ8bRinfHUKc2Fe1KeAjy/6wkTc5nS2eu6khEIFs5m/
-         PLng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678799871;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qFrp6mNEmGMQ8XFqlpuxBB/MWI7MG2f0UoJdue3eE3E=;
-        b=4TrOx3T/md3p+gMxz7eB+oMi6aPYvteOBrdR/vGhXBGTvt9cGGH4oepzunhalfgyOk
-         RhjU7Y1q2wYUfUEUBQym5jDMu23acEA/KLtFPh9GyUEJJz7T+K/iUFDkdIpPcQbDdGHI
-         kgXHR9b1bThmj0HSDQrve1LDeePiTN8AhYar+11DEhqPfWzBux64g4o05I6gPfwCO6Qe
-         8MBEoseoFX8VZ7M68vf3pjXMi+eLMZLIAFL5gMLlDSPwDNjhTGYqpgwSavSUXQwq8FYz
-         zisxtpSCyS5aYmcnIowbkYnqE4daWLtOSVh4njQ4Vycy0l7JVzhJ9ELrb3s5QOd0tw4r
-         ZgCQ==
-X-Gm-Message-State: AO0yUKX/fA3WN9vXRmFvjmr5XU+hiq8p0VjrGWGYBV+VPQov/E3UMGJG
-        zzmlajPT0R1Xri0yoEEFRA==
-X-Google-Smtp-Source: AK7set9Q+E1S+jof5ejuZA8hQbHWrMrCUVEZyDFM7ls6gK5sbqzaJzvH+lDQZW22ER01+/ftLQ7Dxg==
-X-Received: by 2002:ac2:596d:0:b0:4d8:4f53:37ad with SMTP id h13-20020ac2596d000000b004d84f5337admr722945lfp.7.1678799870792;
-        Tue, 14 Mar 2023 06:17:50 -0700 (PDT)
-Received: from cphcirce.. (80-62-116-106-mobile.dk.customer.tdc.net. [80.62.116.106])
-        by smtp.gmail.com with ESMTPSA id o15-20020ac2494f000000b004a2c447598fsm399865lfi.159.2023.03.14.06.17.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 06:17:50 -0700 (PDT)
-From:   Alfredo Cruz <alfredo.carlon@gmail.com>
-To:     mturquette@baylibre.com, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     Alfredo Cruz <alfredo.carlon@gmail.com>
-Subject: [PATCH] clk/tegra/clk-tegra124-dfll-fcpu: Add check to 'regulator_list_voltage'
-Date:   Tue, 14 Mar 2023 14:17:18 +0100
-Message-Id: <20230314131718.27031-1-alfredo.carlon@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 14 Mar 2023 12:03:17 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240BD25BAF;
+        Tue, 14 Mar 2023 09:03:08 -0700 (PDT)
+Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 02D474000A;
+        Tue, 14 Mar 2023 16:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1678809787;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PfjFZ5rXzr3BIOF/GtTdCC+o1HvEGjF/qwaSlO3r/Sk=;
+        b=Sf8NBWQgwLcalyizQeDgcbWTJBfhbNu7MgV+yCyqYvr7LR05IJHLkXzBdrWUIumTxANHn+
+        hB2lPIAKzi7PvefYp99DwN8aiv6h6xV84w1Z29T02/TP3Z/1CoDzcU/bFRHCZs0SWhsz2N
+        BhCaPOG/prYzw8L5sgOQMkCl+63t9qSqxMcHFEs+O8k1jdyCuZ+C0saia/3u12WSv1LMHF
+        ZFr1XpWb4UCCE8eYDePcW5uZtlAtB+j3qPKWw2aBAQiJIRucxMto3eeBgeDn10TFk9xtTh
+        H931WYtAY7hVHHwBcZoKAzGdAAp678EK8Juf6ZsL5nqnuoAnLe1pE+od7WFhKQ==
+Date:   Tue, 14 Mar 2023 17:02:56 +0100
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Joe Tessler <jrt@google.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Bin Liu <bin.liu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 16/28] media: platform: sun6i-csi: drop of_match_ptr for
+ ID table
+Message-ID: <ZBCasA/J2Ci6OEZw@aptenodytes>
+References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
+ <20230312131318.351173-16-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Il/EvjUmeeGoz4+Y"
+Content-Disposition: inline
+In-Reply-To: <20230312131318.351173-16-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Signed-off-by: Alfredo Cruz <alfredo.carlon@gmail.com>
----
-Hi,
-I'm not entirely sure if 'regulator_list_voltage(reg, 0)' will never return less than 0.
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 5e339ad0a97c..745bb828e53e 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -543,6 +543,8 @@ static int get_alignment_from_regulator(struct device *dev,
- 		return PTR_ERR(reg);
- 
- 	align->offset_uv = regulator_list_voltage(reg, 0);
-+	if (align->offset_uv < 0)
-+		align->offset_uv = 0;
- 	align->step_uv = regulator_get_linear_step(reg);
- 
- 	regulator_put(reg);
--- 
-2.39.2
+--Il/EvjUmeeGoz4+Y
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Krzysztof,
+
+On Sun 12 Mar 23, 14:13, Krzysztof Kozlowski wrote:
+> The driver can match only via the DT table so the table should be always
+> used and the of_match_ptr does not have any sense (this also allows ACPI
+> matching via PRP0001, even though it might not be relevant here).  This
+> also fixes !CONFIG_OF error:
+>=20
+>   drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c:401:34: error: =E2=
+=80=98sun6i_csi_of_match=E2=80=99 defined but not used [-Werror=3Dunused-co=
+nst-variable=3D]
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Looks good to me:
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Thanks !
+
+Paul
+
+> ---
+>  drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers=
+/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> index e3e6650181c8..187a2419da96 100644
+> --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> @@ -429,7 +429,7 @@ static struct platform_driver sun6i_csi_platform_driv=
+er =3D {
+>  	.remove	=3D sun6i_csi_remove,
+>  	.driver	=3D {
+>  		.name		=3D SUN6I_CSI_NAME,
+> -		.of_match_table	=3D of_match_ptr(sun6i_csi_of_match),
+> +		.of_match_table	=3D sun6i_csi_of_match,
+>  		.pm		=3D &sun6i_csi_pm_ops,
+>  	},
+>  };
+> --=20
+> 2.34.1
+>=20
+
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--Il/EvjUmeeGoz4+Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmQQmrAACgkQ3cLmz3+f
+v9G0UQgAgqkiTU6DCCn3MAsOxs7XlE6PTVir0WIBXYAO1uUS6eNKjIyBKLCVmKwL
+iTgalBnhTb3SW6j5kYlUmMY0FdvMgQfM1W7uAX52Vk/O0NF2DHSHVLje/jSCbwR+
+DqCCHKeVGRqWZxpPtb4GcbMEtY7xwooPm0SwEGeVcXo9sT9LUght/zJ3Pa6Eet2O
+sSo4BVIZvlqDPwSEuiB4SLH0QJDUI8rzrtYBa2bEzstHwimw0reAtAFpT/g/QnI/
+t+URgXSvKsMgPMaiOtQmsOG5c9mUKipHQVUdeIMxe4KGcIxCWz1DWXgE1FUqHaB9
+1MO6S1SgXwRmWZDToL97PcRr9fqX5A==
+=aAGN
+-----END PGP SIGNATURE-----
+
+--Il/EvjUmeeGoz4+Y--
