@@ -2,236 +2,170 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC371C7618A
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Mar 2023 09:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B98C76196
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Mar 2023 11:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbjCPJcQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Mar 2023 05:32:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53450 "EHLO
+        id S230106AbjCPLhZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Mar 2023 07:37:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230180AbjCPJcO (ORCPT
+        with ESMTP id S230209AbjCPLhV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Mar 2023 05:32:14 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49F4B370A;
-        Thu, 16 Mar 2023 02:32:12 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 02F89219ED;
-        Thu, 16 Mar 2023 09:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1678959131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LgQ6KC2ybaQuhcxvNbj5yWV84Hdg07Eok3qBPbbxY94=;
-        b=hSKEhyQb/6Qjn+ILebTCLmhg2e9A8CfNry1H0RTT8RjbcX0ewBMRxjmDEGJwKXajwe5mAZ
-        lf5+kWSjWH3ALiTHhvLMzHP1U3K6ssM3drv98CuVfHI8RbC/TZ34ZdD7AfpSs1PrwdoY5A
-        pI0L7xCe/IZAfteZaaDtgdTGWm9XBqE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1678959131;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LgQ6KC2ybaQuhcxvNbj5yWV84Hdg07Eok3qBPbbxY94=;
-        b=0yC+ZFrSFabuSowZtdH2oq1j4t0E9INETd9hrlrihhJEg9KK7ZdJaPl82UJ4mDZM/+qCvP
-        EibyFzdcMAa1+2Dg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DE806133E0;
-        Thu, 16 Mar 2023 09:32:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 9o+MNRjiEmRkRAAAMHmgww
-        (envelope-from <tiwai@suse.de>); Thu, 16 Mar 2023 09:32:08 +0000
-Date:   Thu, 16 Mar 2023 10:32:08 +0100
-Message-ID: <87ttylhwiv.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        V sujith kumar Reddy <Vsujithkumar.Reddy@amd.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mohan Kumar <mkumard@nvidia.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        syed saba kareem <syed.sabakareem@amd.com>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        Meng Tang <tangmeng@uniontech.com>,
-        Martin =?ISO-8859-2?Q?Povi=B9er?= <povik+lin@cutebit.org>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Peter Rosin <peda@axentia.se>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        James Schulman <james.schulman@cirrus.com>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Lucas Tanure <tanureal@opensource.cirrus.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
-        Zhang Qilong <zhangqilong3@huawei.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liang He <windhl@126.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Akihiko Odaki <akihiko.odaki@gmail.com>,
-        Amadeusz =?ISO-8859-2?Q?S=B3awi=F1ski?= 
-        <amadeuszx.slawinski@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Moises Cardona <moisesmcardona@gmail.com>,
-        Zhen Ni <nizhen@uniontech.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Andrey Turkin <andrey.turkin@gmail.com>,
-        Muralidhar Reddy <muralidhar.reddy@intel.com>,
-        Zhu Ning <zhuning0077@gmail.com>,
-        Gongjun Song <gongjun.song@intel.com>,
-        Shuming Fan <shumingf@realtek.com>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>,
-        Hezi Shahmoon <hezi@marvell.com>,
-        Neta Zur Hershkovits <neta@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Trevor Wu <trevor.wu@mediatek.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linh Phung <linh.phung.jy@renesas.com>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Mikhail Rudenko <mike.rudenko@gmail.com>,
-        Li Chen <lchen@ambarella.com>,
-        Ban Tao <fengzheng923@gmail.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Li kunyu <kunyu@nfschina.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Max Filippov <jcmvbkbc@gmail.com>, alsa-devel@alsa-project.org,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, asahi@lists.linux.dev,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        patches@opensource.cirrus.com, Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org
-Subject: Re: [PATCH 000/173] ALSA/ASoC: Convert to platform remove callback returning void
-In-Reply-To: <20230315150745.67084-1-u.kleine-koenig@pengutronix.de>
-References: <20230315150745.67084-1-u.kleine-koenig@pengutronix.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
+        Thu, 16 Mar 2023 07:37:21 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2044.outbound.protection.outlook.com [40.107.237.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A2E763F2
+        for <linux-tegra@vger.kernel.org>; Thu, 16 Mar 2023 04:37:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FQ7UTMyCKIUqzznKgHKHhx2mGQ77aQ1tED5tgRSzG6U67i+tZ6gepqeUdT3x9wVaHwaaz9EQxNgDurNHUqTOQJR2Jv00RI0ag5BTiGPfyvX5J4IMhAUIy+A+OKvzQ9VHYrRjos7h8NTzNbWhiQQ+K7DXbxunvhIez04i6ghjnhHSnRWLzmAcL+wCJIfOYCLvoz2cTsDoOIUmP1zZyllMFlDUd72EtygvgwW9psrxAmq8gywW9zFp8G1/Thw91A0tj5kte5p7yIKop08+udAs5upHoAe8BAjUobvZ5fcseYoLg1QFWsYKrHXm6vuxihnNw25JYUF9aN5ZKMXRPkhLgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CIkBVu0+Lmk3XDDym8QRy93ynHKA4tUEi2Q5Dmbe2Us=;
+ b=BZVM3Yrh5orpY/++eXqkpNaA/r/2/fCIjYU5vA5bbZLvAu2llMLVKSuBpVZw26j4qVuM9I8+fLlQhEpD/VpCGqACM5dlZkDmMdeyjz8MF4eN4HiGmkSWZrteBoYEBityEe+XwezscccvDsmIEwE2s3EhxiB3guU7pEJFPLgk4e7MZnVA3AgpZO2w3J+EG03h1riIp5zjfESg4LLJ5Z4myLNOLeM4hgfxpxtsH+wNYYnQCpr95DMRKFHPJbczpR7C2C9CPkGZrQgopmXtH+p4Mz/VIXOPKWspKzpu+E9GjiBXaiRlzLROCYKyxTfKxiwHV319ffbUA/s0OkQ/0xuZWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CIkBVu0+Lmk3XDDym8QRy93ynHKA4tUEi2Q5Dmbe2Us=;
+ b=kCPRZNPVM3zrC/10uZi70VL6eXAayH0WRRfO+AvcBnxIiI6t1NEym/y2r7ChSU4mCXdTwd3s1nUaAFP18HZLF6jNvRPf0sFslSUnGg1nPZQDtHdKpW+njYOx3E2Fb0AAKr4jWBKpzT/KaLBXYoL6iVtlKE74xNPCvh0w2qwATh5CohbeX6qPhaB76eXlJEMpPA1OvABgjyL95n8ONI21aOJqQe7t8FYMT9Up+DxIDPrMg3RhCKO1sV+onUAiXj+ekHhb608Ajce8UIg9CG4F7O2Xd5CITmueZi4HF6mzCVgk9IxEj9PbQlsi9c2c2QUWveTq5vF34KWadNtGr0XbUA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CH0PR12MB8462.namprd12.prod.outlook.com (2603:10b6:610:190::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.23; Thu, 16 Mar
+ 2023 11:37:04 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5464:997b:389:4b07]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5464:997b:389:4b07%9]) with mapi id 15.20.6178.031; Thu, 16 Mar 2023
+ 11:37:04 +0000
+Message-ID: <ddac1870-dbd4-e49a-abb5-148457549bf0@nvidia.com>
+Date:   Thu, 16 Mar 2023 11:36:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [GIT PULL] arm64: tegra: Device tree fixes for v6.3-rc1
+Content-Language: en-US
+To:     arm@kernel.org, soc@kernel.org
+Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>
+References: <20230302094213.3874449-1-thierry.reding@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20230302094213.3874449-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0538.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:319::8) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CH0PR12MB8462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c8b0886-bda4-4228-f2d7-08db2612c41f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NzKXGaIBeA/JLdS8KdF6Ac4USbhL5EjdmgnPW5g3T6H7ChLNU+5AA7ZffW7pMkqs02heanFRYMQkCObybp2itcxOZcWw1uo/hNnJ0jUTgNe2SvACbI3Cm9bH8MOsW3f5ORDabFJes0V62aGbNdCTivm5g162nyqKvSgU9BoytkQnIXxN6pTn0wyeTPGQN+d6VXiVO1YI+pSDLOit7poWpuOqRAYKKt/DjkKSLZ7943v3Rrx0qDJU6nkwZwL3aaMxHOcEtnZD5MhKs+y+7sTzaya0ABkj6rdu//OxLmYfCmz267F1mt6glQArY2iBg2vnOAPYi5yG9e2cMxxEE4dFfyP2iB6bol1dDf0vjEBgQljwfZMGOVnlOMADn9hQP9l/BwuZnHmk8TcFS7XlCnkwXKoaw3UMBvHs3ILKenE2m8ENoU+73Rbpm9r349C1D90WTn3/NgFJZoledHwNpn1nq6+tHRVJhJ/dWHPO2mbiA8ApmcO2ClaeiY1ED7D3K0qCx40r4g+s8+fOFiIz5hx3ZrBL7Znvm4l2ATqz195+vMteKLW1wC11gPW3WV7OuS828gSXeW6WWPi7YxBdCxQ8Qmx02KDsL8MMBjYVmpMUYA+v1aLPkLb8vKb4Y/BZQPTEn86sA57ztYwWZcxxWa6UsbkjDqdo5ycEktEUp/VERozZ0GicI3X5DqZ076Pker6wn5Suhee296Mk4viXIIjkn8eDKLpO2RbzuBcbfgBDBtLno08k1ByEI5UdxKzJmgTgc3ledB/Nzb035lbZxZ/3MQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(366004)(346002)(376002)(136003)(396003)(451199018)(31686004)(2906002)(36756003)(86362001)(31696002)(38100700002)(186003)(53546011)(6512007)(2616005)(55236004)(26005)(5660300002)(6506007)(6666004)(6486002)(478600001)(41300700001)(83380400001)(66946007)(66476007)(316002)(4326008)(8936002)(8676002)(66556008)(966005)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VzRwbENneDFNd1FNT2pQdmxVWExqaWxxUUtudWhzUm1Kd3hCU3JaQjV0Z0Zo?=
+ =?utf-8?B?SmN3dTA1Rlh1emdVTDcyZGVRaW5zbld6WmNpYkU5UURQTUUvSHM5TXpKbXEv?=
+ =?utf-8?B?WUNsbHFKTUllUU5oNzljVitkK3grNGNzeEkzUVo1T1hiNmtONVRndGZ3eFpi?=
+ =?utf-8?B?ODFYZmppNGlWa0QwNkJmOVZrZlFFd290aFN4TlJuQi9QVUZscEpYelU3V2tO?=
+ =?utf-8?B?a015RlhYNFdHZjZBKzVVSksrTVlrK2R4S2FCa3pncGQ3RVJhTER5OXVHWDhG?=
+ =?utf-8?B?K2F1cURJbWxMSDY3NnRYNWhaYkRyQnhxN0U4NStZWkR1OUR5SnJQUU43SlRp?=
+ =?utf-8?B?OExTNjAxRURaRDJmK2FCMWpwQVdKU3lKTEtBN2FwdmE0OVZublA3ZkJ5MFp4?=
+ =?utf-8?B?Zy9BZnA5VzJycm02eVFzSURTSWVRVTBCV1RoN0MxY055K1RsK3B0a2QvbGk1?=
+ =?utf-8?B?VlA2aTgrUm5uL1R4RmNRb2tkVEJNdGZzaC9WWTd4VFVTemlvdWl1NWx1ZExu?=
+ =?utf-8?B?bUZ0KzdSbCtxRFBXMHBLQnhiL3Nnb0JsaWRJM1R5amQweEtlN1lRTDd2Q01l?=
+ =?utf-8?B?TjByWVROR2dkSlV5SlgrNzk5UmpsdlB1ZENwVjkxbStDWnZXQWZnQjliUUNF?=
+ =?utf-8?B?WVFaQlVGTllzYTJLTGNvMEZ2R0g5QnJ2dFRKR1drSjgrVU84ZFoxbzhpT1BW?=
+ =?utf-8?B?ZklMSUtuZW9QTGs0LzAvRERiamdsa2hjemFua09sanZmc2tRMHBUNWkyOW1s?=
+ =?utf-8?B?bUJHMmZFbGhwODN1aDIrRnVOQjZUT1VwSDA5ODBwaUdHZHdRL0xkV3hmTkZC?=
+ =?utf-8?B?bmlFSDVsVTdtaGEvNVJ5M25wZGp5aHhEQVdaa3NMZUQ4QWM3aENsNnh5bkdR?=
+ =?utf-8?B?M3p4dHVQSkJQcE5MM1dRekFaNE50YndNZVQvRFpia3hVQnFpc2VQVVVmbFpl?=
+ =?utf-8?B?b05JMVZqRU1zeEhHTm56NkxPTGlxYjZPR25lMVh2U2dmOVpScE1HYmQ4WVU4?=
+ =?utf-8?B?VlJQK3VjcTRTLzRDbFByVDZDMVNDbXZtQThxS1o3UGVTbHRPQmVMbUZOakJF?=
+ =?utf-8?B?NXhrR1U4VHdvYnlZTlp1THBqQ2huNGdoMnFEcHE3OGgzVGN3OGIvdGN4Vjdr?=
+ =?utf-8?B?MVMybGhBR2hNV1dnVks5a1QxYXZSdTBhak85L0RYUURUTGYvclAxbDdCcDJH?=
+ =?utf-8?B?REVSRVNxWFJjQ2txTTJhT2RreVNTclIyeElQVXlRWXRadjBZWGpKbkhYbm84?=
+ =?utf-8?B?Z0FhU1JiOStZaFhyT2RuR28vNFRMSjlHRXJnU2V3bXdDSXRZMnZYajNXeWxa?=
+ =?utf-8?B?M0kvR3VieXRDQ1hta0hqME4vRi9WUHVDVkdEc0I4WmxUTUNIOXBEVHJ6K2w3?=
+ =?utf-8?B?TVVSSXA3MENoZHZvSTFPTmxQMXhDK3pvQnRneFA5R0tjVmtxN2lmY2VscXZQ?=
+ =?utf-8?B?VkdBL0pSQmxoV1ZFelFhRUxwaW44eUQxaVlxa0doOTNNaGxrNHgrdjZ1QTNq?=
+ =?utf-8?B?QlkrRjA0SHBZVkRIRzdMQzI2Um5IK0Qrb1pmWU1MSW4rTi83d3ZTNzEvNVZ4?=
+ =?utf-8?B?UlhueldWTVlyOTB1V2JSdjNaQVJBMGdsSXowUVcvMFBRUExKTEI5Z0hFT1NB?=
+ =?utf-8?B?SVIvV0FQRmFRRW5YTW9tVDZTSVJ6Yk1leVR4L1pKUDRLQVMxOVMza3J3YXBN?=
+ =?utf-8?B?SjU4NUV6M3hDNTUzTmJNcWJNNXliV3JDVWpBRDFYYS9HdUVLWUY4ZllmNkRJ?=
+ =?utf-8?B?Yk5yczlhdy9Cc2MxRXV3UTNKZE4yeFZyL0VjMWl1WDlYVVVRc2crZFZFZ3ZW?=
+ =?utf-8?B?RzFUeTRNdzdPY3RPV0dXOGFlU1dRbjNOdkNKZDMyM2liSnlnOXE3S0pxM3Mv?=
+ =?utf-8?B?UUZzd1pNS2dGVk5VUUc0bitvZ0tWbkthcEZqVHg3QlRKbkovNFhRbnN2dFBJ?=
+ =?utf-8?B?aWlqVHFCTUF6Wkh3K1JaUnNIRGtIQ3gyREc3Nk82VzhvUHJnTEYxU05KUnFG?=
+ =?utf-8?B?eThDNTRzNkMxaTBGdzFKekxjS0pKOWNwZ0dIOXVLdjd0RUJTZ1lFNWlFQk9G?=
+ =?utf-8?B?MkFlamVkVDl2Mk1pNno1ai85cDhPZGFtTWhQSExTSE8yZXVLbElkdFY1K25s?=
+ =?utf-8?B?R25vaWM2NlN1bGxBS3FmMEllNmRqNUEvWVMzd3dzUFUxK3d0UldwM2diUU9h?=
+ =?utf-8?B?ekE9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c8b0886-bda4-4228-f2d7-08db2612c41f
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2023 11:37:04.7251
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3w43OtVZOs0UsC2pENZYkterxfoquaO8B3AV6UaEekORBUFeYDYBv9p0z6GEu0DtYtrnNk/cxqI6LZ7FOwgzgg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8462
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 15 Mar 2023 16:04:52 +0100,
-Uwe Kleine-König wrote:
-> 
-> Hello,
-> 
-> this series adapts the platform drivers below sound/ to use the .remove_new()
-> callback. Compared to the traditional .remove() callback .remove_new() returns
-> no value. This is a good thing because the driver core doesn't (and cannot)
-> cope for errors during remove. The only effect of a non-zero return value in
-> .remove() is that the driver core emits a warning. The device is removed anyhow
-> and an early return from .remove() usually yields a resource leak.
-> 
-> By changing the remove callback to return void driver authors cannot
-> reasonably assume any more that there is some kind of cleanup later.
-> 
-> The first two patches simplify a driver each to return zero unconditionally,
-> and then all drivers are trivially converted to .remove_new().
-> 
-> There are nearly no interdependencies in this patch set---only 1 <- 11 and
-> 2 <- 16. So even if some individual problems are found (I don't expect that),
-> the other patches can (and from my POV should) still be applied.
-> 
-> Best regards
-> Uwe
-> 
-> Uwe Kleine-König (173):
-(snip)
+Hi all,
 
-For the whole series,
+On 02/03/2023 09:42, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 682e1c498ae793ad90587171c93c1f7ec87aa208:
+> 
+>    arm64: tegra: Drop I2C iommus and dma-coherent properties (2023-01-27 17:08:58 +0100)
+> 
+> are available in the Git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.3-arm64-dt-fixes
+> 
+> for you to fetch changes up to 4bb54c2ce48ffb3a06133ac0fb4086f7b48d9109:
+> 
+>    arm64: tegra: Bump CBB ranges property on Tegra194 and Tegra234 (2023-03-02 10:35:11 +0100)
+> 
+> This single fix is also available in patchwork if you prefer to pick
+> this up as a standalone patch:
+> 
+> 	http://patchwork.ozlabs.org/project/linux-tegra/patch/20230214140549.3340395-1-thierry.reding@gmail.com/
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> arm64: tegra: Device tree fixes for v6.3-rc1
+> 
+> This contains a fix for the CBB bus' ranges property on Tegra194 and
+> Tegra234 that restores proper translation of PCI addresses.
+> 
+> ----------------------------------------------------------------
+> Thierry Reding (1):
+>        arm64: tegra: Bump CBB ranges property on Tegra194 and Tegra234
+> 
+>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
+>   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Takashi Iwai <tiwai@suse.de>
 
 
-thanks,
+I have not seen this land in the mainline yet. If you already have this 
+queued up for v6.3 then ignore this, but if not, please can we get this 
+pulled in?
 
-Takashi
+Thanks!
+Jon
+-- 
+nvpublic
