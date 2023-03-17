@@ -2,73 +2,79 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8062C74A5B
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Mar 2023 23:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED058C7619A
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Mar 2023 23:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229878AbjCQXgq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Mar 2023 19:36:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48880 "EHLO
+        id S230378AbjCQXgr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Mar 2023 19:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229826AbjCQXgW (ORCPT
+        with ESMTP id S230272AbjCQXgl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Mar 2023 19:36:22 -0400
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459E5168AC;
-        Fri, 17 Mar 2023 16:36:18 -0700 (PDT)
-Received: by mail-io1-f47.google.com with SMTP id o12so3002737iow.6;
-        Fri, 17 Mar 2023 16:36:18 -0700 (PDT)
+        Fri, 17 Mar 2023 19:36:41 -0400
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D22E570B4;
+        Fri, 17 Mar 2023 16:36:33 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id d14so125550ion.9;
+        Fri, 17 Mar 2023 16:36:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679096177;
+        d=1e100.net; s=20210112; t=1679096192;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YAZcuKYJLCFnnEBKwS88rbdIifxh3NqeJFPoZLaOyjw=;
-        b=oRaRraxlXe7772+ZMeC6SLcPFxTwGrFiUwD+DM69mjhWjW1OTGLA2VduY1bQOhOhTo
-         KP+Wcinrpp3Hvdd2ZcHM4/0xt4X0A2ZB+PlqLNPXG12sVyPErwNQlMBr0TBJUpSti++I
-         sldhbf9BByRdEBxp3D0H7BV63vjpw5fIwLo1/NBVLeM8jAVWs78IRrEt/Dm79/0MWIPz
-         KiGaMrs5oHqySg2yyq9qe0oyxsAG75nIwKSewXWHyvY18n0pxiAsoRAr+bOV0QFDQ/Qp
-         uhne+jQ3HYmYYghg2fErpLjgVrhAYXf6TEAjehCiZPwZl8znH+6t3C4V0P/KeTgcZjSl
-         sxMw==
-X-Gm-Message-State: AO0yUKXrQ4C8D+8JVZqoQV0d+1rBQ9+dGPmyqyLSwSUbNGw9MtjfQ9PM
-        vqnEEDVnbDAm9fU25Bx/WA==
-X-Google-Smtp-Source: AK7set9gCASFPcC1fuJCihIuym7rvnt9NnFL5ocgZ9H5SbJyCefO3q+izumFnA1p86VcXbLopc6Cug==
-X-Received: by 2002:a5d:9041:0:b0:74c:d67a:6f97 with SMTP id v1-20020a5d9041000000b0074cd67a6f97mr238081ioq.17.1679096177277;
-        Fri, 17 Mar 2023 16:36:17 -0700 (PDT)
+        bh=QN3VBPIGb3rOSd+0jNY6Clws16ZGwPI612DSnOTxph8=;
+        b=MdIPLb5CzypUstiUhFRDDutIPXmx/AtgOB7hKP0DixNAVJa+BfqLEneDH5rLFQSq/h
+         79y3V+ma2PilzhEGErMEzAafqwNC6a74CKpqBgvNQrzt+yYS3LsTBydgjViYAyesLU/l
+         lxkgBTq9U/dz4NUiUEuF2SlxS1B66QZPiUnxuVKuHpDaLhauXDY1YWo5SPcBeECXJP3p
+         wFsmThKruCorwnq2wnm6VIahEKDTJTPlCtpwv+Mn7Wo96c1Kd2Z4Nl5LNG3uTIliUv0a
+         8p6PpkdFttPaJqHfyKtXIL48k1ay0nU0sgfMHYfPzvEiWdSJOF8lwTsOggm1F71cAL6x
+         AWhw==
+X-Gm-Message-State: AO0yUKV8dfa5KgokTrkRPBZ7uvf/QqxviEpV7QYapB4/aSv6cFti3orQ
+        J9M9jpej3TFrjT6Aw5JUyA==
+X-Google-Smtp-Source: AK7set8wdY61KiB6Q4yMM2jI4EjrFkioINzI1ifBEABr06zavTE55dY/Squs0NvmzTRjzWzfPSUmPw==
+X-Received: by 2002:a5e:d909:0:b0:746:1c75:233a with SMTP id n9-20020a5ed909000000b007461c75233amr203302iop.20.1679096192171;
+        Fri, 17 Mar 2023 16:36:32 -0700 (PDT)
 Received: from robh_at_kernel.org ([64.188.179.249])
-        by smtp.gmail.com with ESMTPSA id c7-20020a6bec07000000b007549f6e6d3csm591593ioh.28.2023.03.17.16.36.15
+        by smtp.gmail.com with ESMTPSA id a22-20020a6b6616000000b007530bbfa577sm883819ioc.18.2023.03.17.16.36.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Mar 2023 16:36:16 -0700 (PDT)
-Received: (nullmailer pid 3967959 invoked by uid 1000);
-        Fri, 17 Mar 2023 23:36:13 -0000
+        Fri, 17 Mar 2023 16:36:31 -0700 (PDT)
+Received: (nullmailer pid 3968465 invoked by uid 1000);
+        Fri, 17 Mar 2023 23:36:28 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+To:     Robin van der Gracht <robin@protonic.nl>,
+        Miguel Ojeda <ojeda@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        James Schulman <james.schulman@cirrus.com>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Lucas Tanure <tanureal@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Tomi Valkeinen <tomba@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH] ASoC: dt-bindings: Drop unneeded quotes
-Date:   Fri, 17 Mar 2023 18:36:10 -0500
-Message-Id: <20230317233612.3967849-1-robh@kernel.org>
+        <angelogioacchino.delregno@collabora.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dt-bindings: display: Drop unneeded quotes
+Date:   Fri, 17 Mar 2023 18:36:24 -0500
+Message-Id: <20230317233626.3968358-1-robh@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -81,642 +87,420 @@ checking for this can be enabled in yamllint.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/sound/adi,adau1372.yaml          |  2 +-
- .../bindings/sound/adi,max98396.yaml          |  8 +++---
- .../bindings/sound/audio-graph-port.yaml      | 22 ++++++++--------
- .../bindings/sound/audio-graph.yaml           |  8 +++---
- .../bindings/sound/cirrus,cs35l45.yaml        |  2 +-
- .../bindings/sound/cirrus,cs42l42.yaml        | 12 ++++-----
- .../bindings/sound/mt8186-afe-pcm.yaml        |  6 ++---
- .../sound/mt8186-mt6366-da7219-max98357.yaml  |  2 +-
- .../sound/mt8186-mt6366-rt1019-rt5682s.yaml   |  2 +-
- .../bindings/sound/mt8192-afe-pcm.yaml        |  6 ++---
- .../sound/mt8192-mt6359-rt1015-rt5682.yaml    |  4 +--
- .../bindings/sound/mt8195-afe-pcm.yaml        |  2 +-
- .../bindings/sound/mt8195-mt6359.yaml         |  8 +++---
- .../sound/nvidia,tegra-audio-alc5632.yaml     |  8 +++---
- .../sound/nvidia,tegra-audio-max98090.yaml    |  8 +++---
- .../sound/nvidia,tegra-audio-rt5640.yaml      |  6 ++---
- .../sound/nvidia,tegra-audio-rt5677.yaml      | 26 +++++++++----------
- .../sound/nvidia,tegra-audio-sgtl5000.yaml    |  6 ++---
- .../sound/nvidia,tegra-audio-wm8753.yaml      |  6 ++---
- .../sound/nvidia,tegra-audio-wm8903.yaml      |  8 +++---
- .../sound/nvidia,tegra-audio-wm9712.yaml      |  8 +++---
- .../bindings/sound/qcom,q6asm-dais.yaml       |  2 +-
- .../bindings/sound/renesas,rsnd.yaml          |  2 +-
- .../devicetree/bindings/sound/sgtl5000.yaml   |  6 ++---
- .../bindings/sound/simple-card.yaml           |  2 +-
- .../sound/socionext,uniphier-aio.yaml         |  2 +-
- 26 files changed, 87 insertions(+), 87 deletions(-)
+ .../bindings/auxdisplay/holtek,ht16k33.yaml    |  2 +-
+ .../bindings/display/bridge/nxp,ptn3460.yaml   |  2 +-
+ .../display/bridge/toshiba,tc358767.yaml       |  2 +-
+ .../bindings/display/dp-aux-bus.yaml           |  2 +-
+ .../display/mediatek/mediatek,hdmi.yaml        |  2 +-
+ .../display/msm/dsi-controller-main.yaml       |  8 ++++----
+ .../bindings/display/msm/dsi-phy-10nm.yaml     |  2 +-
+ .../bindings/display/panel/ronbo,rb070d30.yaml |  2 +-
+ .../bindings/display/renesas,du.yaml           |  4 ++--
+ .../display/tegra/nvidia,tegra114-mipi.yaml    |  2 +-
+ .../display/tegra/nvidia,tegra124-sor.yaml     | 12 ++++++------
+ .../display/tegra/nvidia,tegra186-dc.yaml      |  4 ++--
+ .../tegra/nvidia,tegra186-dsi-padctl.yaml      |  2 +-
+ .../display/tegra/nvidia,tegra20-dsi.yaml      | 12 ++++++------
+ .../display/tegra/nvidia,tegra20-hdmi.yaml     |  6 +++---
+ .../bindings/display/ti/ti,am65x-dss.yaml      |  2 +-
+ .../display/xylon,logicvc-display.yaml         | 18 +++++++++---------
+ 17 files changed, 42 insertions(+), 42 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/adi,adau1372.yaml b/Documentation/devicetree/bindings/sound/adi,adau1372.yaml
-index 044bcd370d49..ea62e51aba90 100644
---- a/Documentation/devicetree/bindings/sound/adi,adau1372.yaml
-+++ b/Documentation/devicetree/bindings/sound/adi,adau1372.yaml
-@@ -32,7 +32,7 @@ properties:
+diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+index fc4873deb76f..4f6ffb8182a9 100644
+--- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
++++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Robin van der Gracht <robin@protonic.nl>
+ 
+ allOf:
+-  - $ref: "/schemas/input/matrix-keymap.yaml#"
++  - $ref: /schemas/input/matrix-keymap.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml b/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
+index 107dd138e6c6..cdeb67bc05f0 100644
+--- a/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
+@@ -18,7 +18,7 @@ properties:
      maxItems: 1
+ 
+   edid-emulation:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description:
+       The EDID emulation entry to use
+       Value  Resolution  Description
+diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
+index 140927884418..e1494b5007cb 100644
+--- a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
+@@ -23,7 +23,7 @@ properties:
+         i2c address of the bridge, 0x68 or 0x0f, depending on bootstrap pins
  
    clock-names:
--    const: "mclk"
-+    const: mclk
- 
-   powerdown-gpios:
-     description: GPIO used for hardware power-down.
-diff --git a/Documentation/devicetree/bindings/sound/adi,max98396.yaml b/Documentation/devicetree/bindings/sound/adi,max98396.yaml
-index fd5aa61b467f..bdc10d4204ec 100644
---- a/Documentation/devicetree/bindings/sound/adi,max98396.yaml
-+++ b/Documentation/devicetree/bindings/sound/adi,max98396.yaml
-@@ -41,21 +41,21 @@ properties:
- 
-   adi,vmon-slot-no:
-     description: slot number of the voltage sense monitor
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 15
-     default: 0
- 
-   adi,imon-slot-no:
-     description: slot number of the current sense monitor
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 15
-     default: 1
- 
-   adi,spkfb-slot-no:
-     description: slot number of speaker DSP monitor
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 15
-     default: 2
-@@ -64,7 +64,7 @@ properties:
-     description:
-       Selects the PCM data input channel that is routed to the speaker
-       audio processing bypass path.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 15
-     default: 0
-diff --git a/Documentation/devicetree/bindings/sound/audio-graph-port.yaml b/Documentation/devicetree/bindings/sound/audio-graph-port.yaml
-index 6b4e02a0695a..fa9f9a853365 100644
---- a/Documentation/devicetree/bindings/sound/audio-graph-port.yaml
-+++ b/Documentation/devicetree/bindings/sound/audio-graph-port.yaml
-@@ -16,19 +16,19 @@ definitions:
-     $ref: /schemas/graph.yaml#/$defs/port-base
-     properties:
-       convert-rate:
--        $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-sample-rate"
-+        $ref: /schemas/sound/dai-params.yaml#/$defs/dai-sample-rate
-       convert-channels:
--        $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-channels"
-+        $ref: /schemas/sound/dai-params.yaml#/$defs/dai-channels
-       convert-sample-format:
--        $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-sample-format"
-+        $ref: /schemas/sound/dai-params.yaml#/$defs/dai-sample-format
-       mclk-fs:
--        $ref: "simple-card.yaml#/definitions/mclk-fs"
-+        $ref: simple-card.yaml#/definitions/mclk-fs
- 
-   endpoint-base:
-     $ref: /schemas/graph.yaml#/$defs/endpoint-base
-     properties:
-       mclk-fs:
--        $ref: "simple-card.yaml#/definitions/mclk-fs"
-+        $ref: simple-card.yaml#/definitions/mclk-fs
-       frame-inversion:
-         description: dai-link uses frame clock inversion
-         $ref: /schemas/types.yaml#/definitions/flag
-@@ -49,11 +49,11 @@ definitions:
-         description: Indicates system clock
-         $ref: /schemas/types.yaml#/definitions/phandle
-       system-clock-frequency:
--        $ref: "simple-card.yaml#/definitions/system-clock-frequency"
-+        $ref: simple-card.yaml#/definitions/system-clock-frequency
-       system-clock-direction-out:
--        $ref: "simple-card.yaml#/definitions/system-clock-direction-out"
-+        $ref: simple-card.yaml#/definitions/system-clock-direction-out
-       system-clock-fixed:
--        $ref: "simple-card.yaml#/definitions/system-clock-fixed"
-+        $ref: simple-card.yaml#/definitions/system-clock-fixed
- 
-       dai-format:
-         description: audio format.
-@@ -69,11 +69,11 @@ definitions:
-             - msb
-             - lsb
-       convert-rate:
--        $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-sample-rate"
-+        $ref: /schemas/sound/dai-params.yaml#/$defs/dai-sample-rate
-       convert-channels:
--        $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-channels"
-+        $ref: /schemas/sound/dai-params.yaml#/$defs/dai-channels
-       convert-sample-format:
--        $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-sample-format"
-+        $ref: /schemas/sound/dai-params.yaml#/$defs/dai-sample-format
- 
-       dai-tdm-slot-num:
-         description: Number of slots in use.
-diff --git a/Documentation/devicetree/bindings/sound/audio-graph.yaml b/Documentation/devicetree/bindings/sound/audio-graph.yaml
-index d59baedee180..c87eb91de159 100644
---- a/Documentation/devicetree/bindings/sound/audio-graph.yaml
-+++ b/Documentation/devicetree/bindings/sound/audio-graph.yaml
-@@ -15,7 +15,7 @@ properties:
-   label:
-     maxItems: 1
-   prefix:
--    description: "device name prefix"
-+    description: device name prefix
-     $ref: /schemas/types.yaml#/definitions/string
-   routing:
-     description: |
-@@ -27,11 +27,11 @@ properties:
-     description: User specified audio sound widgets.
-     $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-   convert-rate:
--    $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-sample-rate"
-+    $ref: /schemas/sound/dai-params.yaml#/$defs/dai-sample-rate
-   convert-channels:
--    $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-channels"
-+    $ref: /schemas/sound/dai-params.yaml#/$defs/dai-channels
-   convert-sample-format:
--    $ref: "/schemas/sound/dai-params.yaml#/$defs/dai-sample-format"
-+    $ref: /schemas/sound/dai-params.yaml#/$defs/dai-sample-format
- 
-   pa-gpios:
-     maxItems: 1
-diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs35l45.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs35l45.yaml
-index 88a0ca474c3d..b79990cf4f9f 100644
---- a/Documentation/devicetree/bindings/sound/cirrus,cs35l45.yaml
-+++ b/Documentation/devicetree/bindings/sound/cirrus,cs35l45.yaml
-@@ -45,7 +45,7 @@ properties:
-       Audio serial port SDOUT Hi-Z control. Sets the Hi-Z
-       configuration for SDOUT pin of amplifier. Logical OR of
-       CS35L45_ASP_TX_HIZ_xxx values.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 3
-     default: 2
-diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs42l42.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs42l42.yaml
-index 7356084a2ca2..af599d8735e2 100644
---- a/Documentation/devicetree/bindings/sound/cirrus,cs42l42.yaml
-+++ b/Documentation/devicetree/bindings/sound/cirrus,cs42l42.yaml
-@@ -68,7 +68,7 @@ properties:
-       This is "normal tip sense (TS)" in the datasheet.
- 
-       The CS42L42_TS_INV_* defines are available for this.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 1
- 
-@@ -87,7 +87,7 @@ properties:
-       7 - 1.5s
- 
-       The CS42L42_TS_DBNCE_* defines are available for this.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 7
- 
-@@ -106,7 +106,7 @@ properties:
-       7 - 1.5s
- 
-       The CS42L42_TS_DBNCE_* defines are available for this.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 7
- 
-@@ -120,7 +120,7 @@ properties:
- 
-       0ms - 200ms,
-       Default = 100ms
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 200
- 
-@@ -133,7 +133,7 @@ properties:
- 
-       0ms - 20ms,
-       Default = 10ms
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 20
- 
-@@ -169,7 +169,7 @@ properties:
-       3 - Slowest
- 
-       The CS42L42_HSBIAS_RAMP_* defines are available for this.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 0
-     maximum: 3
- 
-diff --git a/Documentation/devicetree/bindings/sound/mt8186-afe-pcm.yaml b/Documentation/devicetree/bindings/sound/mt8186-afe-pcm.yaml
-index 88f82d096443..7fe85b08f9df 100644
---- a/Documentation/devicetree/bindings/sound/mt8186-afe-pcm.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8186-afe-pcm.yaml
-@@ -26,15 +26,15 @@ properties:
-     const: audiosys
- 
-   mediatek,apmixedsys:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek apmixedsys controller
- 
-   mediatek,infracfg:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek infracfg controller
- 
-   mediatek,topckgen:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek topckgen controller
+-    const: "ref"
++    const: ref
  
    clocks:
-diff --git a/Documentation/devicetree/bindings/sound/mt8186-mt6366-da7219-max98357.yaml b/Documentation/devicetree/bindings/sound/mt8186-mt6366-da7219-max98357.yaml
-index d427f7f623db..9853c11a1330 100644
---- a/Documentation/devicetree/bindings/sound/mt8186-mt6366-da7219-max98357.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8186-mt6366-da7219-max98357.yaml
-@@ -18,7 +18,7 @@ properties:
-       - mediatek,mt8186-mt6366-da7219-max98357-sound
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/dp-aux-bus.yaml b/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
+index 5e4afe9f98fb..0ece7b01790b 100644
+--- a/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
++++ b/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
+@@ -26,7 +26,7 @@ description:
  
-   mediatek,platform:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8186 ASoC platform.
+ properties:
+   $nodename:
+-    const: "aux-bus"
++    const: aux-bus
  
-   headset-codec:
-diff --git a/Documentation/devicetree/bindings/sound/mt8186-mt6366-rt1019-rt5682s.yaml b/Documentation/devicetree/bindings/sound/mt8186-mt6366-rt1019-rt5682s.yaml
-index aa23b0024c46..d80083df03eb 100644
---- a/Documentation/devicetree/bindings/sound/mt8186-mt6366-rt1019-rt5682s.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8186-mt6366-rt1019-rt5682s.yaml
-@@ -19,7 +19,7 @@ properties:
-       - mediatek,mt8186-mt6366-rt5682s-max98360-sound
- 
-   mediatek,platform:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8186 ASoC platform.
- 
-   dmic-gpios:
-diff --git a/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml b/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
-index 7a25bc9b8060..064ef172bef4 100644
---- a/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
-@@ -24,15 +24,15 @@ properties:
-     const: audiosys
- 
-   mediatek,apmixedsys:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek apmixedsys controller
- 
-   mediatek,infracfg:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek infracfg controller
- 
-   mediatek,topckgen:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek topckgen controller
- 
-   power-domains:
-diff --git a/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml b/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml
-index c6e614c1c30b..7e50f5d65c8f 100644
---- a/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml
-@@ -21,11 +21,11 @@ properties:
-       - mediatek,mt8192_mt6359_rt1015p_rt5682s
- 
-   mediatek,platform:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8192 ASoC platform.
- 
-   mediatek,hdmi-codec:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of HDMI codec.
- 
-   headset-codec:
-diff --git a/Documentation/devicetree/bindings/sound/mt8195-afe-pcm.yaml b/Documentation/devicetree/bindings/sound/mt8195-afe-pcm.yaml
-index 4452a4070eff..d5adf07d46e0 100644
---- a/Documentation/devicetree/bindings/sound/mt8195-afe-pcm.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8195-afe-pcm.yaml
-@@ -32,7 +32,7 @@ properties:
-       See ../reserved-memory/reserved-memory.txt for details.
- 
-   mediatek,topckgen:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of the mediatek topckgen controller
- 
-   power-domains:
-diff --git a/Documentation/devicetree/bindings/sound/mt8195-mt6359.yaml b/Documentation/devicetree/bindings/sound/mt8195-mt6359.yaml
-index ad3447ff8b2c..c1ddbf672ca3 100644
---- a/Documentation/devicetree/bindings/sound/mt8195-mt6359.yaml
-+++ b/Documentation/devicetree/bindings/sound/mt8195-mt6359.yaml
-@@ -24,19 +24,19 @@ properties:
-     description: User specified audio sound card name
- 
-   mediatek,platform:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8195 ASoC platform.
- 
-   mediatek,dptx-codec:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8195 Display Port Tx codec node.
- 
-   mediatek,hdmi-codec:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8195 HDMI codec node.
- 
-   mediatek,adsp:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
-     description: The phandle of MT8195 ADSP platform.
- 
-   mediatek,dai-link:
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.yaml
-index 7ef774910e5c..96f2f927a6f5 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.yaml
-@@ -31,10 +31,10 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headset Stereophone"
--        - "Int Spk"
--        - "Headset Mic"
--        - "Digital Mic"
-+        - Headset Stereophone
-+        - Int Spk
-+        - Headset Mic
-+        - Digital Mic
- 
-         # CODEC Pins
-         - SPKOUT
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.yaml
-index ccc2ee77ca30..4d912458b18b 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.yaml
-@@ -38,10 +38,10 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headphones"
--        - "Speakers"
--        - "Mic Jack"
--        - "Int Mic"
-+        - Headphones
-+        - Speakers
-+        - Mic Jack
-+        - Int Mic
- 
-         # CODEC Pins
-         - MIC1
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.yaml
-index b1deaf271afa..2638592435b2 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.yaml
-@@ -31,9 +31,9 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headphones"
--        - "Speakers"
--        - "Mic Jack"
-+        - Headphones
-+        - Speakers
-+        - Mic Jack
- 
-         # CODEC Pins
-         - DMIC1
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.yaml
-index a49997d6028b..09e1d0b18d27 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.yaml
-@@ -31,11 +31,11 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headphone"
--        - "Speaker"
--        - "Headset Mic"
--        - "Internal Mic 1"
--        - "Internal Mic 2"
-+        - Headphone
-+        - Speaker
-+        - Headset Mic
-+        - Internal Mic 1
-+        - Internal Mic 2
- 
-         # CODEC Pins
-         - IN1P
-@@ -47,14 +47,14 @@ properties:
-         - DMIC2
-         - DMIC3
-         - DMIC4
--        - "DMIC L1"
--        - "DMIC L2"
--        - "DMIC L3"
--        - "DMIC L4"
--        - "DMIC R1"
--        - "DMIC R2"
--        - "DMIC R3"
--        - "DMIC R4"
-+        - DMIC L1
-+        - DMIC L2
-+        - DMIC L3
-+        - DMIC L4
-+        - DMIC R1
-+        - DMIC R2
-+        - DMIC R3
-+        - DMIC R4
-         - LOUT1
-         - LOUT2
-         - LOUT3
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.yaml
-index 943e7c01741c..e5bc6a6ade24 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.yaml
-@@ -31,9 +31,9 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headphone Jack"
--        - "Line In Jack"
--        - "Mic Jack"
-+        - Headphone Jack
-+        - Line In Jack
-+        - Mic Jack
- 
-         # CODEC Pins
-         - HP_OUT
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.yaml
-index a5b431d7d0c2..3323d6a438f5 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.yaml
-@@ -31,8 +31,8 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headphone Jack"
--        - "Mic Jack"
-+        - Headphone Jack
-+        - Mic Jack
- 
-         # CODEC Pins
-         - LOUT1
-@@ -53,7 +53,7 @@ properties:
-         - MIC1
-         - MIC2N
-         - MIC2
--        - "Mic Bias"
-+        - Mic Bias
- 
- required:
-   - nvidia,i2s-controller
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.yaml
-index 1b836acab980..1be25ce4514b 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.yaml
-@@ -35,10 +35,10 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headphone Jack"
--        - "Int Spk"
--        - "Mic Jack"
--        - "Int Mic"
-+        - Headphone Jack
-+        - Int Spk
-+        - Mic Jack
-+        - Int Mic
- 
-         # CODEC Pins
-         - IN1L
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.yaml
-index a1448283344b..397306b8800d 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.yaml
-@@ -31,9 +31,9 @@ properties:
-     items:
-       enum:
-         # Board Connectors
--        - "Headphone"
--        - "LineIn"
--        - "Mic"
-+        - Headphone
-+        - LineIn
-+        - Mic
- 
-         # CODEC Pins
-         - MONOOUT
-@@ -48,7 +48,7 @@ properties:
-         - PCBEEP
-         - MIC1
-         - MIC2
--        - "Mic Bias"
-+        - Mic Bias
- 
- required:
-   - nvidia,ac97-controller
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6asm-dais.yaml b/Documentation/devicetree/bindings/sound/qcom,q6asm-dais.yaml
-index 0110b38f6de9..ce811942a9f1 100644
---- a/Documentation/devicetree/bindings/sound/qcom,q6asm-dais.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6asm-dais.yaml
-@@ -56,7 +56,7 @@ patternProperties:
-           Compress offload dai.
- 
-     dependencies:
--      is-compress-dai: ["direction"]
-+      is-compress-dai: [ direction ]
- 
-     required:
-       - reg
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-index 12ccf29338d9..5cfe71994bf7 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-@@ -155,7 +155,7 @@ properties:
-           dmas:
-             maxItems: 1
-           dma-names:
--            const: "tx"
-+            const: tx
-         required:
-           - dmas
-           - dma-names
-diff --git a/Documentation/devicetree/bindings/sound/sgtl5000.yaml b/Documentation/devicetree/bindings/sound/sgtl5000.yaml
-index 02059d66b084..1353c051488f 100644
---- a/Documentation/devicetree/bindings/sound/sgtl5000.yaml
-+++ b/Documentation/devicetree/bindings/sound/sgtl5000.yaml
+   panel:
+     $ref: panel/panel-common.yaml#
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+index 8afdd67d6780..b90b6d18a828 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
 @@ -50,7 +50,7 @@ properties:
-     description: The bias voltage to be used in mVolts. The voltage can take
-       values from 1.25V to 3V by 250mV steps. If this node is not mentioned
-       or the value is unknown, then the value is set to 1.25V.
+       - const: hdmi
+ 
+   mediatek,syscon-hdmi:
+-    $ref: '/schemas/types.yaml#/definitions/phandle-array'
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+       - items:
+           - description: phandle to system configuration registers
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+index e75a3efe4dac..2188d7c9b0bb 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+@@ -74,7 +74,7 @@ properties:
+ 
+   syscon-sfpb:
+     description: A phandle to mmss_sfpb syscon node (only for DSIv2).
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   qcom,dual-dsi-mode:
+     type: boolean
+@@ -105,14 +105,14 @@ properties:
+     type: object
+ 
+   ports:
+-    $ref: "/schemas/graph.yaml#/properties/ports"
++    $ref: /schemas/graph.yaml#/properties/ports
+     description: |
+       Contains DSI controller input and output ports as children, each
+       containing one endpoint subnode.
+ 
+     properties:
+       port@0:
+-        $ref: "/schemas/graph.yaml#/$defs/port-base"
++        $ref: /schemas/graph.yaml#/$defs/port-base
+         unevaluatedProperties: false
+         description: |
+           Input endpoints of the controller.
+@@ -128,7 +128,7 @@ properties:
+                   enum: [ 0, 1, 2, 3 ]
+ 
+       port@1:
+-        $ref: "/schemas/graph.yaml#/$defs/port-base"
++        $ref: /schemas/graph.yaml#/$defs/port-base
+         unevaluatedProperties: false
+         description: |
+           Output endpoints of the controller.
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
+index 3ec466c3ab38..e6b00d7387ce 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
+@@ -58,7 +58,7 @@ properties:
+       maximum: 31
+ 
+   qcom,phy-drive-ldo-level:
 -    $ref: "/schemas/types.yaml#/definitions/uint32"
 +    $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [ 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000 ]
+     description:
+       The PHY LDO has an amplitude tuning feature to adjust the LDO output
+       for the HSTX drive. Use supported levels (mV) to offset the drive level
+diff --git a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
+index d67617f6f74a..95ce22c6787a 100644
+--- a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
+@@ -37,7 +37,7 @@ properties:
  
-   lrclk-strength:
-@@ -63,7 +63,7 @@ properties:
-         1 =		1.66 mA		2.87 mA		4.02  mA
-         2 =		3.33 mA		5.74 mA		8.03  mA
-         3 =		4.99 mA		8.61 mA		12.05 mA
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [ 0, 1, 2, 3 ]
+   backlight:
+     description: Backlight used by the panel
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
  
-   sclk-strength:
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
+index d4830f52c512..c5b9e6812bce 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.yaml
++++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
 @@ -76,7 +76,7 @@ properties:
-         1 =		1.66 mA		2.87 mA		4.02  mA
-         2 =		3.33 mA		5.74 mA		8.03  mA
-         3 =		4.99 mA		8.61 mA		12.05 mA
+     unevaluatedProperties: false
+ 
+   renesas,cmms:
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+       maxItems: 1
+     description:
+@@ -84,7 +84,7 @@ properties:
+       available DU channel.
+ 
+   renesas,vsps:
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+       items:
+         - description: phandle to VSP instance that serves the DU channel
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
+index d5ca8cf86e8e..f448624dd779 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
+@@ -38,7 +38,7 @@ properties:
+     description: The number of cells in a MIPI calibration specifier.
+       Should be 1. The single cell specifies a bitmask of the pads that
+       need to be calibrated for a given device.
 -    $ref: "/schemas/types.yaml#/definitions/uint32"
 +    $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [ 0, 1, 2, 3 ]
+     const: 1
  
-   port:
-diff --git a/Documentation/devicetree/bindings/sound/simple-card.yaml b/Documentation/devicetree/bindings/sound/simple-card.yaml
-index 806e2fff165f..b05e05c81cc4 100644
---- a/Documentation/devicetree/bindings/sound/simple-card.yaml
-+++ b/Documentation/devicetree/bindings/sound/simple-card.yaml
-@@ -78,7 +78,7 @@ definitions:
-     $ref: /schemas/types.yaml#/definitions/uint32
+ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
+index 907fb0baccae..70f0e45c71d6 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
+@@ -69,12 +69,12 @@ properties:
+   # Tegra186 and later
+   nvidia,interface:
+     description: index of the SOR interface
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
  
-   prefix:
--    description: "device name prefix"
-+    description: device name prefix
-     $ref: /schemas/types.yaml#/definitions/string
+   nvidia,ddc-i2c-bus:
+     description: phandle of an I2C controller used for DDC EDID
+       probing
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
  
-   label:
-diff --git a/Documentation/devicetree/bindings/sound/socionext,uniphier-aio.yaml b/Documentation/devicetree/bindings/sound/socionext,uniphier-aio.yaml
-index 9cf0efaed88e..8600520d7c47 100644
---- a/Documentation/devicetree/bindings/sound/socionext,uniphier-aio.yaml
-+++ b/Documentation/devicetree/bindings/sound/socionext,uniphier-aio.yaml
-@@ -42,7 +42,7 @@ properties:
-       Specifies a phandle to soc-glue, which is used for changing mode of S/PDIF
-       signal pin to output from Hi-Z. This property is optional if you use I2S
-       signal pins only.
+   nvidia,hpd-gpio:
+     description: specifies a GPIO used for hotplug detection
+@@ -82,23 +82,23 @@ properties:
+ 
+   nvidia,edid:
+     description: supplies a binary EDID blob
+-    $ref: "/schemas/types.yaml#/definitions/uint8-array"
++    $ref: /schemas/types.yaml#/definitions/uint8-array
+ 
+   nvidia,panel:
+     description: phandle of a display panel, required for eDP
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,xbar-cfg:
+     description: 5 cells containing the crossbar configuration.
+       Each lane of the SOR, identified by the cell's index, is
+       mapped via the crossbar to the pad specified by the cell's
+       value.
+-    $ref: "/schemas/types.yaml#/definitions/uint32-array"
++    $ref: /schemas/types.yaml#/definitions/uint32-array
+ 
+   # optional when driving an eDP output
+   nvidia,dpaux:
+     description: phandle to a DispayPort AUX interface
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+ allOf:
+   - if:
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
+index 265a60d79d89..ce4589466a18 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
+@@ -60,13 +60,13 @@ properties:
+   nvidia,outputs:
+     description: A list of phandles of outputs that this display
+       controller can drive.
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+ 
+   nvidia,head:
+     description: The number of the display controller head. This
+       is used to setup the various types of output to receive
+       video data from the given head.
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
+index e5a6145c8c53..da75b71e8ece 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
+@@ -29,7 +29,7 @@ properties:
+       - const: dsi
+ 
+ allOf:
+-  - $ref: "/schemas/reset/reset.yaml"
++  - $ref: /schemas/reset/reset.yaml
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
+index 511cbe74e729..59e1dc0813e7 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
+@@ -59,12 +59,12 @@ properties:
+     description: Should contain a phandle and a specifier specifying
+       which pads are used by this DSI output and need to be
+       calibrated. See nvidia,tegra114-mipi.yaml for details.
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+ 
+   nvidia,ddc-i2c-bus:
+     description: phandle of an I2C controller used for DDC EDID
+       probing
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,hpd-gpio:
+     description: specifies a GPIO used for hotplug detection
+@@ -72,19 +72,19 @@ properties:
+ 
+   nvidia,edid:
+     description: supplies a binary EDID blob
+-    $ref: "/schemas/types.yaml#/definitions/uint8-array"
++    $ref: /schemas/types.yaml#/definitions/uint8-array
+ 
+   nvidia,panel:
+     description: phandle of a display panel
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,ganged-mode:
+     description: contains a phandle to a second DSI controller to
+       gang up with in order to support up to 8 data lanes
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+ allOf:
+-  - $ref: "../dsi-controller.yaml#"
++  - $ref: ../dsi-controller.yaml#
+   - if:
+       properties:
+         compatible:
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
+index f65e59cfffa7..f77197e4869f 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
+@@ -68,7 +68,7 @@ properties:
+   nvidia,ddc-i2c-bus:
+     description: phandle of an I2C controller used for DDC EDID
+       probing
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,hpd-gpio:
+     description: specifies a GPIO used for hotplug detection
+@@ -76,11 +76,11 @@ properties:
+ 
+   nvidia,edid:
+     description: supplies a binary EDID blob
+-    $ref: "/schemas/types.yaml#/definitions/uint8-array"
++    $ref: /schemas/types.yaml#/definitions/uint8-array
+ 
+   nvidia,panel:
+     description: phandle of a display panel
 -    $ref: "/schemas/types.yaml#/definitions/phandle"
 +    $ref: /schemas/types.yaml#/definitions/phandle
  
    "#sound-dai-cells":
-     const: 1
+     const: 0
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+index 5c7d2cbc4aac..4247280d6c3c 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+@@ -88,7 +88,7 @@ properties:
+           The DSS DPI output port node from video port 2
+ 
+   ti,am65x-oldi-io-ctrl:
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       phandle to syscon device node mapping OLDI IO_CTRL registers.
+       The mapped range should point to OLDI_DAT0_IO_CTRL, map it and
+diff --git a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+index fc02c5d50ce4..87404d72ea37 100644
+--- a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
++++ b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+@@ -89,25 +89,25 @@ properties:
+     description: Display output colorspace (C_DISPLAY_COLOR_SPACE).
+ 
+   xylon,display-depth:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description: Display output depth (C_PIXEL_DATA_WIDTH).
+ 
+   xylon,row-stride:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description: Fixed number of pixels in a framebuffer row (C_ROW_STRIDE).
+ 
+   xylon,dithering:
+-    $ref: "/schemas/types.yaml#/definitions/flag"
++    $ref: /schemas/types.yaml#/definitions/flag
+     description: Dithering module is enabled (C_XCOLOR)
+ 
+   xylon,background-layer:
+-    $ref: "/schemas/types.yaml#/definitions/flag"
++    $ref: /schemas/types.yaml#/definitions/flag
+     description: |
+       The last layer is used to display a black background (C_USE_BACKGROUND).
+       The layer must still be registered.
+ 
+   xylon,layers-configurable:
+-    $ref: "/schemas/types.yaml#/definitions/flag"
++    $ref: /schemas/types.yaml#/definitions/flag
+     description: |
+       Configuration of layers' size, position and offset is enabled
+       (C_USE_SIZE_POSITION).
+@@ -131,7 +131,7 @@ properties:
+             maxItems: 1
+ 
+           xylon,layer-depth:
+-            $ref: "/schemas/types.yaml#/definitions/uint32"
++            $ref: /schemas/types.yaml#/definitions/uint32
+             description: Layer depth (C_LAYER_X_DATA_WIDTH).
+ 
+           xylon,layer-colorspace:
+@@ -151,19 +151,19 @@ properties:
+             description: Alpha mode for the layer (C_LAYER_X_ALPHA_MODE).
+ 
+           xylon,layer-base-offset:
+-            $ref: "/schemas/types.yaml#/definitions/uint32"
++            $ref: /schemas/types.yaml#/definitions/uint32
+             description: |
+               Offset in number of lines (C_LAYER_X_OFFSET) starting from the
+               video RAM base (C_VMEM_BASEADDR), only for version 3.
+ 
+           xylon,layer-buffer-offset:
+-            $ref: "/schemas/types.yaml#/definitions/uint32"
++            $ref: /schemas/types.yaml#/definitions/uint32
+             description: |
+               Offset in number of lines (C_BUFFER_*_OFFSET) starting from the
+               layer base offset for the second buffer used in double-buffering.
+ 
+           xylon,layer-primary:
+-            $ref: "/schemas/types.yaml#/definitions/flag"
++            $ref: /schemas/types.yaml#/definitions/flag
+             description: |
+               Layer should be registered as a primary plane (exactly one is
+               required).
 -- 
 2.39.2
 
