@@ -2,54 +2,81 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0F1C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Mar 2023 09:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803FDC74A5B
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Mar 2023 11:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbjCQJLU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Mar 2023 05:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39982 "EHLO
+        id S229842AbjCQLWI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Mar 2023 07:22:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230509AbjCQJLG (ORCPT
+        with ESMTP id S229603AbjCQLWG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Mar 2023 05:11:06 -0400
-X-Greylist: delayed 1158 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 17 Mar 2023 02:10:33 PDT
-Received: from mail.edsonnith.pl (mail.edsonnith.pl [195.231.83.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1799BF958
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Mar 2023 02:10:33 -0700 (PDT)
-Received: by mail.edsonnith.pl (Postfix, from userid 1002)
-        id 45D6E82AE2; Fri, 17 Mar 2023 09:50:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=edsonnith.pl; s=mail;
-        t=1679043074; bh=R834O9ZKPsOqL7TcrHze/mUM6BZ0xyR+u5GqXjK8tTo=;
-        h=Date:From:To:Subject:From;
-        b=VRyN7jgKI9Jx6vn0ogQlbTAnD8RNdA+A4PXVfKiHFT4MVL0ROsnLDyFC+HcMJbgMX
-         ONS/Sd8n9dNFS4BjChZ1Wt0HB37Tqlr3Zk7C2lkTerbQOqx89IXi3mIw+mpP6JgALB
-         uO6nXsMYl1ZTtOKK9AE+cl+CYsr46W+kDXzPi7T5G3PRTpTjcIQHI3SmtUI0BO7Ety
-         wfSBJKM+RVMtAz0g4DVJjNYVHKuL277VM6RK3cnj10DTb17gsdvB25y1Dd2p4EMrlY
-         z7aOATZ9fx6O9gTHwWB2uLoo+uBEqA0fC01Qty5MgGeXauUq+0Ju6qgSutkMKa0mtp
-         TEnL6h+9V46cA==
-Received: by mail.edsonnith.pl for <linux-tegra@vger.kernel.org>; Fri, 17 Mar 2023 08:50:33 GMT
-Message-ID: <20230317084500-0.1.7.8bg.0.11t89qy0en@edsonnith.pl>
-Date:   Fri, 17 Mar 2023 08:50:33 GMT
-From:   "Maciej Przybylski" <maciej.przybylski@edsonnith.pl>
-To:     <linux-tegra@vger.kernel.org>
-Subject: =?UTF-8?Q?Pytanie_o_wycen=C4=99_?=
-X-Mailer: mail.edsonnith.pl
+        Fri, 17 Mar 2023 07:22:06 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4BD35AF;
+        Fri, 17 Mar 2023 04:21:37 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id d13so4775274pjh.0;
+        Fri, 17 Mar 2023 04:21:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679052094;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WxKX5ZJpiF04icvSHpZ1JZbirujoxDwuq90/M5FjSys=;
+        b=YSJDOLaroYd5w6iQfw3pdh471hY8XPd5FvwTmVPnGRUkl28QMXCHqo/o7llbDurN6W
+         jDPnDPltYLthgdu1rM3rv8u0PR9XOIz5HezA9EUENzU8JmPgPI8ozfmT79k0Zx3TlG6X
+         /7QNPd73hFIQ6mKIUijKptnhjDagvipVHSkTgX0XKUiKTLuY0MGHz1BkKnPGYgm6lmFZ
+         KtnO/pHVbVAJzPtRxOJ3sqzY08tSW8c2E29p19VL/TfoAhT1XLVPzein5X+te5WgdVNp
+         Be4wfNIVTgP3xU69HvUNrNOm2v1m4xylYKTeL95Ryggxkn23nUUhIdWvpdF4L1/xqW8Z
+         9JgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679052094;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WxKX5ZJpiF04icvSHpZ1JZbirujoxDwuq90/M5FjSys=;
+        b=H7MvIti2pcQWyfI3fvVeP2koA22HCCJSqAcV6FK2EtFWtlYvQf8CoVj19Crv7pizU9
+         FBBzSwuI6c9dCiBOGAVivwQ3YYURRJwnIVl9nckggM5rhsIzyiMOkXaT5NdMeB7txGjI
+         uJeSmeauabEKOFGsFREpW2ld9/SoUei897YMaAmvWbaGntwFt5bifQ8QzBPzgSS1ptZv
+         3BNbKRLOVsg50ORiHPFt2sRB2ixnTqIzM64hcD6icDg3QPf1ENZr65lg+DMSxg2Qlc1h
+         5sIk/1NNZL3juto7+gNtw6nxuyx0MsJiiqUqTptmmWyJurxXIwCsKNC/EIecBOF+FxXj
+         XNNw==
+X-Gm-Message-State: AO0yUKVWnoO4XYLn9xgrBZYxfaK7oyqddb0K6f9HZNxdeq74+iM+zqRX
+        Lvz1pABcvNDU7sakk5gc8OQ=
+X-Google-Smtp-Source: AK7set8ja1cWo1D6wJamqoAnRPQ12MFPwJrSryte3yXlsyCvRIdPaGtpd49G2n0EsAW3H9Yz1f497g==
+X-Received: by 2002:a17:902:ea0f:b0:19e:8267:9590 with SMTP id s15-20020a170902ea0f00b0019e82679590mr7836526plg.41.1679052093980;
+        Fri, 17 Mar 2023 04:21:33 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:d084:8252:e846:af61])
+        by smtp.gmail.com with ESMTPSA id a8-20020a170902900800b0019a88c1cf63sm1328760plp.180.2023.03.17.04.21.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 04:21:33 -0700 (PDT)
+Date:   Fri, 17 Mar 2023 04:21:30 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] Input: Use of_property_read_bool() for boolean properties
+Message-ID: <ZBRNOgXAS8wC9xSH@google.com>
+References: <20230310144708.1542751-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230310144708.1542751-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Fri, Mar 10, 2023 at 08:47:08AM -0600, Rob Herring wrote:
+> It is preferred to use typed property access functions (i.e.
+> of_property_read_<type> functions) rather than low-level
+> of_get_property/of_find_property functions for reading properties.
+> Convert reading boolean properties to to of_property_read_bool().
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Czy poszukuj=C4=85 Pa=C5=84stwo aktualnie nowych klient=C3=B3w z segmentu=
- B2B?
+Applied, thank you.
 
-Wspieramy firmy w nawi=C4=85zywaniu relacji biznesowych.
-
-Czy mo=C5=BCemy porozmawia=C4=87?
-
-
-Pozdrawiam
-Maciej Przybylski
+-- 
+Dmitry
