@@ -2,95 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA99C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Mar 2023 08:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0F1C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Mar 2023 09:11:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbjCQIXy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Mar 2023 04:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57686 "EHLO
+        id S229908AbjCQJLU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Mar 2023 05:11:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230337AbjCQIXZ (ORCPT
+        with ESMTP id S230509AbjCQJLG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Mar 2023 04:23:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60211457DE;
-        Fri, 17 Mar 2023 01:23:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 73794B824EC;
-        Fri, 17 Mar 2023 08:22:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BF67C433AC;
-        Fri, 17 Mar 2023 08:22:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679041360;
-        bh=TTXOACgLSQFnl4K1HvxAX3eNv0Oie4ZJ9D8WDA/I0Ds=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AbD0bEafKOg+j81tmm9Cs2kmYjZ+XVHsanpQgZrPzJWe0ONoNQ9NtO0x7Pco0BuU/
-         Rv8xi9Hngx/nWLVZeIkZsogasnZY4948QlPJYzZ3VcSPlG1DV4gllutdIQpQCCsggO
-         IbqBDpWtF6sxu4FGUfqFdCZnSALNX3FASec4leYPY7go9rZr14YBLbJKyMxGDE0SiT
-         7s024WSOz+rx37noj6aplaBm0mEHkE0r3DF/d8hWbSklFkg/9VbW38Lk7F+sqJnSfU
-         r1PICp7gwWbp94aJAmx0tIGIgEuBL7MV8ig6qrXOo+vFV7oOFF+VP/sREO5oLpve+x
-         azsMVmQbaNr7A==
-From:   Lee Jones <lee@kernel.org>
-To:     lee@kernel.org, dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 09/37] drm/tegra/dc: Remove set but unused variable 'state'
-Date:   Fri, 17 Mar 2023 08:16:50 +0000
-Message-Id: <20230317081718.2650744-10-lee@kernel.org>
-X-Mailer: git-send-email 2.40.0.rc1.284.g88254d51c5-goog
-In-Reply-To: <20230317081718.2650744-1-lee@kernel.org>
-References: <20230317081718.2650744-1-lee@kernel.org>
+        Fri, 17 Mar 2023 05:11:06 -0400
+X-Greylist: delayed 1158 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 17 Mar 2023 02:10:33 PDT
+Received: from mail.edsonnith.pl (mail.edsonnith.pl [195.231.83.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1799BF958
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Mar 2023 02:10:33 -0700 (PDT)
+Received: by mail.edsonnith.pl (Postfix, from userid 1002)
+        id 45D6E82AE2; Fri, 17 Mar 2023 09:50:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=edsonnith.pl; s=mail;
+        t=1679043074; bh=R834O9ZKPsOqL7TcrHze/mUM6BZ0xyR+u5GqXjK8tTo=;
+        h=Date:From:To:Subject:From;
+        b=VRyN7jgKI9Jx6vn0ogQlbTAnD8RNdA+A4PXVfKiHFT4MVL0ROsnLDyFC+HcMJbgMX
+         ONS/Sd8n9dNFS4BjChZ1Wt0HB37Tqlr3Zk7C2lkTerbQOqx89IXi3mIw+mpP6JgALB
+         uO6nXsMYl1ZTtOKK9AE+cl+CYsr46W+kDXzPi7T5G3PRTpTjcIQHI3SmtUI0BO7Ety
+         wfSBJKM+RVMtAz0g4DVJjNYVHKuL277VM6RK3cnj10DTb17gsdvB25y1Dd2p4EMrlY
+         z7aOATZ9fx6O9gTHwWB2uLoo+uBEqA0fC01Qty5MgGeXauUq+0Ju6qgSutkMKa0mtp
+         TEnL6h+9V46cA==
+Received: by mail.edsonnith.pl for <linux-tegra@vger.kernel.org>; Fri, 17 Mar 2023 08:50:33 GMT
+Message-ID: <20230317084500-0.1.7.8bg.0.11t89qy0en@edsonnith.pl>
+Date:   Fri, 17 Mar 2023 08:50:33 GMT
+From:   "Maciej Przybylski" <maciej.przybylski@edsonnith.pl>
+To:     <linux-tegra@vger.kernel.org>
+Subject: =?UTF-8?Q?Pytanie_o_wycen=C4=99_?=
+X-Mailer: mail.edsonnith.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+Dzie=C5=84 dobry,
 
- drivers/gpu/drm/tegra/dc.c: In function ‘tegra_crtc_calculate_memory_bandwidth’:
- drivers/gpu/drm/tegra/dc.c:2384:38: warning: variable ‘old_state’ set but not used [-Wunused-but-set-variable]
+Czy poszukuj=C4=85 Pa=C5=84stwo aktualnie nowych klient=C3=B3w z segmentu=
+ B2B?
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Lee Jones <lee@kernel.org>
----
- drivers/gpu/drm/tegra/dc.c | 2 --
- 1 file changed, 2 deletions(-)
+Wspieramy firmy w nawi=C4=85zywaniu relacji biznesowych.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index a67453cee8832..cafa1720026cc 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2381,7 +2381,6 @@ static int tegra_crtc_calculate_memory_bandwidth(struct drm_crtc *crtc,
- 	const struct tegra_plane_state *tegra_state;
- 	const struct drm_plane_state *plane_state;
- 	struct tegra_dc *dc = to_tegra_dc(crtc);
--	const struct drm_crtc_state *old_state;
- 	struct drm_crtc_state *new_state;
- 	struct tegra_plane *tegra;
- 	struct drm_plane *plane;
-@@ -2396,7 +2395,6 @@ static int tegra_crtc_calculate_memory_bandwidth(struct drm_crtc *crtc,
- 		return 0;
- 
- 	new_state = drm_atomic_get_new_crtc_state(state, crtc);
--	old_state = drm_atomic_get_old_crtc_state(state, crtc);
- 
- 	/*
- 	 * For overlapping planes pixel's data is fetched for each plane at
--- 
-2.40.0.rc1.284.g88254d51c5-goog
+Czy mo=C5=BCemy porozmawia=C4=87?
 
+
+Pozdrawiam
+Maciej Przybylski
