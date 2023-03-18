@@ -2,147 +2,171 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C5EC61DA4
-	for <linux-tegra@archiver.kernel.org>; Sat, 18 Mar 2023 18:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B739EC7618E
+	for <linux-tegra@archiver.kernel.org>; Sat, 18 Mar 2023 19:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbjCRSz6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 18 Mar 2023 14:55:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37380 "EHLO
+        id S229541AbjCRTPn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 18 Mar 2023 15:15:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbjCRSz5 (ORCPT
+        with ESMTP id S229488AbjCRTPn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 18 Mar 2023 14:55:57 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 432591F4B6;
-        Sat, 18 Mar 2023 11:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679165756; x=1710701756;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UQeD0VGWp/2m7vB76CpmPBDiMvvWfCbuAHZTBTn2+IE=;
-  b=m8Xyn2am8K8bmfj81PuSkqLC3lqDqreErCC24F8wKmztQ/OjLQHcQR0O
-   4nuogF7aERSd1QudKMg1JvsujLCx3svU+Hy/bDw/xg+DinhS8e9x7LLsF
-   G49EwV5Sk4j7Ba43T09Jt0AuN5YC5c5oC4T58TkB33+bSpOJ5HTBQcbjf
-   suHbtjKHY+w3rhUy5h4vGqWxGdVzvffI3ImyLuOgojKD+MW3UwzI50W+V
-   6T0NdmUbEdxLN9sqslTHrIbWlraQeFafESNb3+4UDhmitU69nkMkuB4yj
-   TwCcSpwVH/Vww0NOcYHeQbk+ceKF2fmkFKK76V2kVlnleZXmyhFM1s9qn
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10653"; a="326820077"
-X-IronPort-AV: E=Sophos;i="5.98,272,1673942400"; 
-   d="scan'208";a="326820077"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2023 11:55:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10653"; a="630627711"
-X-IronPort-AV: E=Sophos;i="5.98,272,1673942400"; 
-   d="scan'208";a="630627711"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 18 Mar 2023 11:55:53 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pdbiZ-000ADq-2P;
-        Sat, 18 Mar 2023 18:55:51 +0000
-Date:   Sun, 19 Mar 2023 02:55:33 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sumitra Sharma <sumitraartsy@gmail.com>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        outreachy@lists.linux.dev
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH] Staging: nvec: Change container_of macro to an inline
- function.
-Message-ID: <202303190233.v2KJFmIG-lkp@intel.com>
-References: <20230318170514.GA49181@sumitra.com>
+        Sat, 18 Mar 2023 15:15:43 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72995298D3;
+        Sat, 18 Mar 2023 12:15:41 -0700 (PDT)
+Received: from [192.168.2.157] (109-252-120-116.nat.spd-mgts.ru [109.252.120.116])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2743B6602EAB;
+        Sat, 18 Mar 2023 19:15:38 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1679166938;
+        bh=oMWY8M1N3xc2OMZ3Qxr9ENMzgfszuvvxzezKMnicu0Y=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Q6H5YMSx3iNxeU5PJBBDI+Q+fchPTAUH6zzv9r7zzuVp4J5+9YRWxFm2VfE8T68wI
+         c6am+uWobUQQuBfLdTZsRS844uUei3wtmY7ds1Dw/HeG/XVflX612dR3qNMJkYVc/o
+         gWLeyD1S4H/yBxuYdHjBOx/p2nSgPI1HlNHbMEF7var5hFyoTU8a2a0yrkzKGoFj3P
+         wcvnSCdJZpsiEhDJL16CONrisoCITL1dsa6EkJ4ri9EsxT6ipcDS4oF3DA44y80AW2
+         wnb1qUzDSLWXPrgAaZoXVUPrxZqf5VLH7x9Kfu3SzZtzTCoClByJ7YBR7IS19NJa2q
+         hTZq9au/4v/SA==
+Message-ID: <0c2913b7-b393-e7d8-604e-fbf127e7d26a@collabora.com>
+Date:   Sat, 18 Mar 2023 22:15:35 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230318170514.GA49181@sumitra.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] mfd: tps6586x: register restart handler
+Content-Language: en-US
+To:     Benjamin Bara <bbara93@gmail.com>, lee@kernel.org
+Cc:     digetx@gmail.com, jonathanh@nvidia.com, treding@nvidia.com,
+        richard.leitner@linux.dev, benjamin.bara@skidata.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230316164703.1157813-1-bbara93@gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20230316164703.1157813-1-bbara93@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Sumitra,
+On 3/16/23 19:47, Benjamin Bara wrote:
+> From: Benjamin Bara <benjamin.bara@skidata.com>
+> 
+> The TPS658629-Q1 (unfortunately the only TPS6586x with public data sheet)
+> provides a SOFT RST bit in the SUPPLYENE reg to request a (cold) reboot.
+> 
+> Use it to implement and register a restart handler/notifier.
+> The DS does not clarify if only writing the SOFT RST bit has side effects.
+> Therefore, regmap_update_bits() is used.
+> 
+> Set an appropriate system_state and disable the IRQs to activate
+> i2c_in_atomic_xfer_mode(). This avoids the following WARNING:
+> [   12.667612] WARNING: CPU: 1 PID: 1 at kernel/rcu/tree_plugin.h:318 rcu_note_context_switch+0x33c/0x6b0
+> [   12.676926] Voluntary context switch within RCU read-side critical section!
+> ...
+> [   12.742376]  schedule_timeout from wait_for_completion_timeout+0x90/0x114
+> [   12.749179]  wait_for_completion_timeout from tegra_i2c_wait_completion+0x40/0x70
+> 
+> Tested on a TPS658640.
+> 
+> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> ---
+>  drivers/mfd/tps6586x.c | 38 ++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 36 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+> index 2d947f3f606a..e40c664b5f64 100644
+> --- a/drivers/mfd/tps6586x.c
+> +++ b/drivers/mfd/tps6586x.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+>  #include <linux/irqdomain.h>
+> +#include <linux/irqflags.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> @@ -22,6 +23,7 @@
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/of.h>
+>  
+> @@ -29,6 +31,7 @@
+>  #include <linux/mfd/tps6586x.h>
+>  
+>  #define TPS6586X_SUPPLYENE	0x14
+> +#define SOFT_RST_BIT		BIT(0)
+>  #define EXITSLREQ_BIT		BIT(1)
+>  #define SLEEP_MODE_BIT		BIT(3)
+>  
+> @@ -466,6 +469,23 @@ static void tps6586x_power_off(void)
+>  	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
+>  }
+>  
+> +static int tps6586x_restart_notify(struct notifier_block *this, unsigned long mode, void *data)
+> +{
+> +	/* bring pmic into HARD REBOOT state, disable IRQs for atomic i2c RCU */
+> +	system_state = SYSTEM_RESTART;
+> +	local_irq_disable();
+> +	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SOFT_RST_BIT);
+> +	local_irq_enable();
+> +
+> +	mdelay(500);
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block tps6586x_restart_handler = {
+> +	.notifier_call = tps6586x_restart_notify,
+> +	.priority = 200,
+> +};
+> +
+>  static void tps6586x_print_version(struct i2c_client *client, int version)
+>  {
+>  	const char *name;
+> @@ -559,9 +579,16 @@ static int tps6586x_i2c_probe(struct i2c_client *client)
+>  		goto err_add_devs;
+>  	}
+>  
+> -	if (pdata->pm_off && !pm_power_off) {
+> +	if (pdata->pm_off) {
+>  		tps6586x_dev = &client->dev;
+> -		pm_power_off = tps6586x_power_off;
+> +		if (!pm_power_off)
+> +			pm_power_off = tps6586x_power_off;
+> +
+> +		ret = register_restart_handler(&tps6586x_restart_handler);
+> +		if (ret) {
+> +			dev_err(&client->dev, "register restart handler failed: %d\n", ret);
+> +			goto err_add_devs;
+> +		}
+>  	}
+>  
+>  	return 0;
+> @@ -582,6 +609,13 @@ static void tps6586x_i2c_remove(struct i2c_client *client)
+>  	mfd_remove_devices(tps6586x->dev);
+>  	if (client->irq)
+>  		free_irq(client->irq, tps6586x);
+> +
+> +	if (tps6586x_dev == &client->dev) {
+> +		tps6586x_dev = NULL;
+> +		unregister_restart_handler(&tps6586x_restart_handler);
+> +		if (pm_power_off == tps6586x_power_off)
+> +			pm_power_off = NULL;
+> +	}
 
-Thank you for the patch! Yet something to improve:
+There are newer devm_register_power_off/restart_handler() helpers in
+kernel [1]. Will be great if you'll use them in v2.
 
-[auto build test ERROR on staging/staging-testing]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Sumitra-Sharma/Staging-nvec-Change-container_of-macro-to-an-inline-function/20230319-010628
-patch link:    https://lore.kernel.org/r/20230318170514.GA49181%40sumitra.com
-patch subject: [PATCH] Staging: nvec: Change container_of macro to an inline function.
-config: arm64-randconfig-r014-20230319 (https://download.01.org/0day-ci/archive/20230319/202303190233.v2KJFmIG-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/e58807d27f0ba705144bce72751f5cb0a75b9682
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Sumitra-Sharma/Staging-nvec-Change-container_of-macro-to-an-inline-function/20230319-010628
-        git checkout e58807d27f0ba705144bce72751f5cb0a75b9682
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/staging/nvec/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303190233.v2KJFmIG-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/staging/nvec/nvec_paz00.c:19:9: error: incomplete definition of type 'struct nvec_led'
-           return container_of(led_cdev, struct nvec_led, cdev);
-                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/container_of.h:20:47: note: expanded from macro 'container_of'
-           static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:338:74: note: expanded from macro '__same_type'
-   #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-                                                                            ^
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-   #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-                                    ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-   #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-                                                          ^~~~
-   drivers/staging/nvec/nvec_paz00.c:17:22: note: forward declaration of 'struct nvec_led'
-   static inline struct nvec_led *to_nvec_led(struct led_classdev *led_cdev)
-                        ^
->> drivers/staging/nvec/nvec_paz00.c:19:9: error: offsetof of incomplete type 'struct nvec_led'
-           return container_of(led_cdev, struct nvec_led, cdev);
-                  ^                      ~~~~~~
-   include/linux/container_of.h:23:21: note: expanded from macro 'container_of'
-           ((type *)(__mptr - offsetof(type, member))); })
-                              ^        ~~~~
-   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
-   #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-                                   ^                  ~~~~
-   drivers/staging/nvec/nvec_paz00.c:17:22: note: forward declaration of 'struct nvec_led'
-   static inline struct nvec_led *to_nvec_led(struct led_classdev *led_cdev)
-                        ^
->> drivers/staging/nvec/nvec_paz00.c:19:9: error: returning 'void' from a function with incompatible result type 'struct nvec_led *'
-           return container_of(led_cdev, struct nvec_led, cdev);
-                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/container_of.h:18:41: note: expanded from macro 'container_of'
-   #define container_of(ptr, type, member) ({                              \
-                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   3 errors generated.
-
-
-vim +19 drivers/staging/nvec/nvec_paz00.c
-
-    16	
-    17	static inline struct nvec_led *to_nvec_led(struct led_classdev *led_cdev)
-    18	{
-  > 19		return container_of(led_cdev, struct nvec_led, cdev);
-    20	}
-    21	
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/include/linux/reboot.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Best regards,
+Dmitry
+
