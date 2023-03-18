@@ -2,138 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACFBC7618B
-	for <linux-tegra@archiver.kernel.org>; Sat, 18 Mar 2023 17:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C5EC61DA4
+	for <linux-tegra@archiver.kernel.org>; Sat, 18 Mar 2023 18:55:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjCRRzp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 18 Mar 2023 13:55:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33756 "EHLO
+        id S229817AbjCRSz6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 18 Mar 2023 14:55:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbjCRRzo (ORCPT
+        with ESMTP id S229713AbjCRSz5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 18 Mar 2023 13:55:44 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D141F5F1;
-        Sat, 18 Mar 2023 10:55:41 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id h8so8416289plf.10;
-        Sat, 18 Mar 2023 10:55:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679162141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=81qaQdBcBEP2jHfYRJB7eE244mJTlBVviRI7USBuECw=;
-        b=AK7708FUtr5f/inCfiB0yMc0/h3V8fqEYmQnW0dtGVhFsTxuLGkAXuxMFjDK3z3PSh
-         SFbLz2DmNOczUkpncbTl8uftF4cQ7yThClmt3P/70TNVlcG2XF+SW+/gv49pnuDbecE8
-         sGgk6zihg2H2Oh4BdHDi436izZltHaRKiOrN1ta9V2h5aYoa1pcmCfG6XPE28VhuIg0P
-         7AeG2IkR24bqU+uG3Qk4tBO2nIUlO3VYmdovXyKpbZae5w2ur7BA3pjNG+mb9yv6PhBT
-         3dxAULCVXyXEM6lTAQI+e2YvTIX1RtF5gQH4K22JQE2dNClQkdXE9Oy9kLok/olDMb9d
-         6ORg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679162141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=81qaQdBcBEP2jHfYRJB7eE244mJTlBVviRI7USBuECw=;
-        b=O5eLim1OC3zsv/uoXCJx8iPOA/j2GuAaTJd7MPaJW08fFN/guptEcFEo9YZrjNKUWG
-         i2sl3+JOkvj23eLk7WyjLUFp1OKC/R9cf+cHNZPFPwxDRyd/jDSxCpPphspT2Z1txkGz
-         Ke6gj7WM3haaiiiForCbaYPul1ORMGxp9W2MuthMvq7QPxV4LqmcULuFtKdGQfxFA34V
-         G60ho+TBlcyWJ+EqHjc5yguyz57684Q8c8L2uKpMkXIIiKTsJ5+yQUaW/2vfasdXdwYO
-         By78k8rEYkjTbPsD5s8QEgKZ/3Qah4LAr8j8VM4DndGZSApGnVs9O1nrah5dD4o5ltrT
-         aCxA==
-X-Gm-Message-State: AO0yUKVAYDvK3w2Lc9tZ/piKI6qAgRDKOWgNVWlsEViscQ+6/IJV4rMy
-        drriNSBYn1pvoc0r3QdVTrs=
-X-Google-Smtp-Source: AK7set/hbzhTcYbmFLhKb0SHtB97paH+z56ao+FfTyjpzr2In6PrTz9qj8HLnFeT69UAeY0frWIJkw==
-X-Received: by 2002:a17:90a:1903:b0:23b:2963:ec94 with SMTP id 3-20020a17090a190300b0023b2963ec94mr12832199pjg.29.1679162141142;
-        Sat, 18 Mar 2023 10:55:41 -0700 (PDT)
-Received: from sumitra.com ([117.199.163.158])
-        by smtp.gmail.com with ESMTPSA id b17-20020a631b51000000b004e28be19d1csm3439677pgm.32.2023.03.18.10.55.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Mar 2023 10:55:40 -0700 (PDT)
-Date:   Sat, 18 Mar 2023 10:55:32 -0700
-From:   Sumitra Sharma <sumitraartsy@gmail.com>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     Marc Dietrich <marvin24@gmx.de>,
+        Sat, 18 Mar 2023 14:55:57 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 432591F4B6;
+        Sat, 18 Mar 2023 11:55:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679165756; x=1710701756;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UQeD0VGWp/2m7vB76CpmPBDiMvvWfCbuAHZTBTn2+IE=;
+  b=m8Xyn2am8K8bmfj81PuSkqLC3lqDqreErCC24F8wKmztQ/OjLQHcQR0O
+   4nuogF7aERSd1QudKMg1JvsujLCx3svU+Hy/bDw/xg+DinhS8e9x7LLsF
+   G49EwV5Sk4j7Ba43T09Jt0AuN5YC5c5oC4T58TkB33+bSpOJ5HTBQcbjf
+   suHbtjKHY+w3rhUy5h4vGqWxGdVzvffI3ImyLuOgojKD+MW3UwzI50W+V
+   6T0NdmUbEdxLN9sqslTHrIbWlraQeFafESNb3+4UDhmitU69nkMkuB4yj
+   TwCcSpwVH/Vww0NOcYHeQbk+ceKF2fmkFKK76V2kVlnleZXmyhFM1s9qn
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10653"; a="326820077"
+X-IronPort-AV: E=Sophos;i="5.98,272,1673942400"; 
+   d="scan'208";a="326820077"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2023 11:55:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10653"; a="630627711"
+X-IronPort-AV: E=Sophos;i="5.98,272,1673942400"; 
+   d="scan'208";a="630627711"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 18 Mar 2023 11:55:53 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pdbiZ-000ADq-2P;
+        Sat, 18 Mar 2023 18:55:51 +0000
+Date:   Sun, 19 Mar 2023 02:55:33 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sumitra Sharma <sumitraartsy@gmail.com>,
+        Marc Dietrich <marvin24@gmx.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
         linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
         outreachy@lists.linux.dev
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
 Subject: Re: [PATCH] Staging: nvec: Change container_of macro to an inline
  function.
-Message-ID: <20230318175532.GA49651@sumitra.com>
+Message-ID: <202303190233.v2KJFmIG-lkp@intel.com>
 References: <20230318170514.GA49181@sumitra.com>
- <alpine.DEB.2.22.394.2303181811260.2914@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.22.394.2303181811260.2914@hadrien>
+In-Reply-To: <20230318170514.GA49181@sumitra.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Mar 18, 2023 at 06:14:50PM +0100, Julia Lawall wrote:
-> 
-> 
-> On Sat, 18 Mar 2023, Sumitra Sharma wrote:
-> 
-> > The macro has the drawback that one cannot determine
-> > what type it applies to by looking at the definition.
-> > Hence this macro definition is not type-safe.
-> >
-> > The inline function gives the same benefits as the
-> > macro and only accepts the specific type of arguments.
-> > Use static because the definition only requires it to be
-> > visible in the current file.
-> 
-> Sumitra,
-> 
-> The subject line and log message could be a little less generic.  For the
-> subject line, one has the impression that you are changing the definition
-> of container_of itself.
-> 
-> The log message is also a bit wordy.  Something like the following would
-> be more concise and still present the issue:
->
+Hi Sumitra,
 
-Okay. I will focus more on writing better patch subject and description.
+Thank you for the patch! Yet something to improve:
 
-Thanks.
+[auto build test ERROR on staging/staging-testing]
 
-Regards,
+url:    https://github.com/intel-lab-lkp/linux/commits/Sumitra-Sharma/Staging-nvec-Change-container_of-macro-to-an-inline-function/20230319-010628
+patch link:    https://lore.kernel.org/r/20230318170514.GA49181%40sumitra.com
+patch subject: [PATCH] Staging: nvec: Change container_of macro to an inline function.
+config: arm64-randconfig-r014-20230319 (https://download.01.org/0day-ci/archive/20230319/202303190233.v2KJFmIG-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm64 cross compiling tool for clang build
+        # apt-get install binutils-aarch64-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/e58807d27f0ba705144bce72751f5cb0a75b9682
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Sumitra-Sharma/Staging-nvec-Change-container_of-macro-to-an-inline-function/20230319-010628
+        git checkout e58807d27f0ba705144bce72751f5cb0a75b9682
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/staging/nvec/
 
-Sumitra
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303190233.v2KJFmIG-lkp@intel.com/
 
-> Convert to_nvec_led from a macro to an inline function, to make the
-> relevant types apparent in the definition and to benefit from the type
-> checking performed by the compiler at call sites.
-> 
-> julia
-> 
-> 
-> >
-> > Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
-> > ---
-> >  drivers/staging/nvec/nvec_paz00.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/staging/nvec/nvec_paz00.c b/drivers/staging/nvec/nvec_paz00.c
-> > index 8b4da95081c8..9573ba762cdd 100644
-> > --- a/drivers/staging/nvec/nvec_paz00.c
-> > +++ b/drivers/staging/nvec/nvec_paz00.c
-> > @@ -14,8 +14,10 @@
-> >  #include <linux/platform_device.h>
-> >  #include "nvec.h"
-> >
-> > -#define to_nvec_led(led_cdev) \
-> > -	container_of(led_cdev, struct nvec_led, cdev)
-> > +static inline struct nvec_led *to_nvec_led(struct led_classdev *led_cdev)
-> > +{
-> > +	return container_of(led_cdev, struct nvec_led, cdev);
-> > +}
-> >
-> >  #define NVEC_LED_REQ {'\x0d', '\x10', '\x45', '\x10', '\x00'}
-> >
-> > --
-> > 2.25.1
-> >
-> >
-> >
+All errors (new ones prefixed by >>):
+
+>> drivers/staging/nvec/nvec_paz00.c:19:9: error: incomplete definition of type 'struct nvec_led'
+           return container_of(led_cdev, struct nvec_led, cdev);
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:20:47: note: expanded from macro 'container_of'
+           static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:338:74: note: expanded from macro '__same_type'
+   #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+                                                                            ^
+   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
+   #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+                                    ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
+   #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+                                                          ^~~~
+   drivers/staging/nvec/nvec_paz00.c:17:22: note: forward declaration of 'struct nvec_led'
+   static inline struct nvec_led *to_nvec_led(struct led_classdev *led_cdev)
+                        ^
+>> drivers/staging/nvec/nvec_paz00.c:19:9: error: offsetof of incomplete type 'struct nvec_led'
+           return container_of(led_cdev, struct nvec_led, cdev);
+                  ^                      ~~~~~~
+   include/linux/container_of.h:23:21: note: expanded from macro 'container_of'
+           ((type *)(__mptr - offsetof(type, member))); })
+                              ^        ~~~~
+   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
+   #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+                                   ^                  ~~~~
+   drivers/staging/nvec/nvec_paz00.c:17:22: note: forward declaration of 'struct nvec_led'
+   static inline struct nvec_led *to_nvec_led(struct led_classdev *led_cdev)
+                        ^
+>> drivers/staging/nvec/nvec_paz00.c:19:9: error: returning 'void' from a function with incompatible result type 'struct nvec_led *'
+           return container_of(led_cdev, struct nvec_led, cdev);
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:18:41: note: expanded from macro 'container_of'
+   #define container_of(ptr, type, member) ({                              \
+                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   3 errors generated.
+
+
+vim +19 drivers/staging/nvec/nvec_paz00.c
+
+    16	
+    17	static inline struct nvec_led *to_nvec_led(struct led_classdev *led_cdev)
+    18	{
+  > 19		return container_of(led_cdev, struct nvec_led, cdev);
+    20	}
+    21	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
