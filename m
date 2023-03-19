@@ -2,114 +2,99 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA46C76195
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Mar 2023 13:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17484C6FD1F
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Mar 2023 15:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbjCSNmk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 19 Mar 2023 09:42:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
+        id S230289AbjCSPTi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 19 Mar 2023 11:19:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbjCSNmj (ORCPT
+        with ESMTP id S230325AbjCSPTh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 19 Mar 2023 09:42:39 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B9BC1EBED;
-        Sun, 19 Mar 2023 06:42:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 05F63B80B93;
-        Sun, 19 Mar 2023 13:42:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23062C433D2;
-        Sun, 19 Mar 2023 13:42:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679233355;
-        bh=XW28SiAdE1y4C0WY0yU92It1pSLjH0atea5xcEjiF5A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I9yWFTqLR2JGlBPFzFmDDRQcgN2yR1p/TpStQI6vefWn9mdWXLed/GGB/hV1JyZOL
-         pqTq+DP1B7p1bztMIinDLte9cZKtiXuq1ZLV8SKkxHhROrnZIDZqMtmiX4SEIRS3si
-         wuuaBUVfeWzOl1gvYVfRM082aYX0NT+sjRJLZfgLFX5MzB6FL/sMlA17IanM7mW6gu
-         huZQKNrCTuTtOJ5o3vMsBUEILe7rqBuRTwqmTsLtTfmA7kb3/OMFkyckEhr8p6KHxr
-         l34BhosglXUMcUSQb9MuvosUqtp/upweK8dt8parKWpuRhjFvteU63BPTdvBC8fncn
-         ZtndsjZod/AzA==
-Date:   Sun, 19 Mar 2023 15:42:32 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [Patch V8 2/3] tpm_tis-spi: Add hardware wait polling
-Message-ID: <20230319134232.wzjvk4ddwqrbexil@kernel.org>
-References: <20230302041804.24718-1-kyarlagadda@nvidia.com>
- <20230302041804.24718-3-kyarlagadda@nvidia.com>
- <01959c869e01075705cd436afa822f2586d0509c.camel@kernel.org>
- <DM4PR12MB576911FA514FAFEBE6B3A39FC3BF9@DM4PR12MB5769.namprd12.prod.outlook.com>
+        Sun, 19 Mar 2023 11:19:37 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F384B199CF
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Mar 2023 08:19:34 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id eg48so37665130edb.13
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Mar 2023 08:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679239173;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DiXOBbFB11Ip0nTIkggAfEvbZiGBEphpMg7tUKwDv8Q=;
+        b=bAZDUQYki7wbeRanSmh1+yCFPmXSZwkqqGPdsRHdCVXC03JyOxd/Y/vKKL6tDt0jh9
+         peEJUFK2/gYsoZAmerpiPJwZKpvbNp/99WxXsC/f1NobG99PlsgQVFMQn1Qf3eoXh9+q
+         8bcuBj8FrRC3Fc4+nbMmcdPm3MrhPFmJnQ9MscLdwELrfACrj7LwL9K4mtLXZyHggZ14
+         VLeHDsdF7oBtL2M5sz9sOTMsxHS7vBr8KEaqpBKqu7zu7dACUr+RhwnYgTklcFLvC2dx
+         IVmL7pzPNLKUAbhjBrdREvYc5vm3GwNW9/oGnebln3gS2usBcuSWDAbvX+ehTgJexXXF
+         yVlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679239173;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DiXOBbFB11Ip0nTIkggAfEvbZiGBEphpMg7tUKwDv8Q=;
+        b=5J9l6EbR117rjGi7CcFF2SqnAzupwc+UhWti75qIOUWqSgwSDuZoW1Z2hHYwXqP1OT
+         xgRzd3tpPKYugaP2k5sAzhQ9wcu1zBV5leVQMu+NP4ItaIuAMOinJ55fr+ZrTjW/aYwE
+         ZE6bpDyoTvRIR+RRyAHl7huhXy7axJ9gCOYzAH8VkZCOM0zC7pAX14oVindoq0SzMqRH
+         0u/OnaGvIM4ZGMHRzsQc6mDKZp8q6wAGVEtoXATAP3Ba8gE9PvEVwgBrAz2BOXAizpZK
+         WdCAONuF5Jq7fOq2R9NqI3JTpP6iCUtz+BHyY5bVSHxX7iX1nqliaEbEACCpSdDG582c
+         fo5g==
+X-Gm-Message-State: AO0yUKWraB7GlWGM5tbHdSYDOOOOLZxIpPvW3cMd73u8GKbyi+crmml/
+        lVhJMN7hxpT2A0g8+kDEZjKOag==
+X-Google-Smtp-Source: AK7set+6EyPI1D5fB1UGRkWHuzffRXBguOqPVwrOUmlBfKF0ISupIco1O4Z+5HC+N3PLJzPHc1Z8qw==
+X-Received: by 2002:a17:906:95ce:b0:8b2:8876:2a11 with SMTP id n14-20020a17090695ce00b008b288762a11mr5510823ejy.28.1679239173483;
+        Sun, 19 Mar 2023 08:19:33 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:5b5f:f22b:a0b:559d? ([2a02:810d:15c0:828:5b5f:f22b:a0b:559d])
+        by smtp.gmail.com with ESMTPSA id rv17-20020a17090710d100b00932fa67b48fsm2137433ejb.183.2023.03.19.08.19.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 Mar 2023 08:19:33 -0700 (PDT)
+Message-ID: <8782c1a1-6600-31b8-bd62-8ea5cb0ff081@linaro.org>
+Date:   Sun, 19 Mar 2023 16:19:31 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM4PR12MB576911FA514FAFEBE6B3A39FC3BF9@DM4PR12MB5769.namprd12.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [Patch v2 2/9] memory: tegra: add interconnect support for DRAM
+ scaling in Tegra234
+Content-Language: en-US
+To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lpieralisi@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
+        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
+References: <20230220140559.28289-1-sumitg@nvidia.com>
+ <20230220140559.28289-3-sumitg@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230220140559.28289-3-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Mar 15, 2023 at 03:47:33PM +0000, Krishna Yarlagadda wrote:
+On 20/02/2023 15:05, Sumit Gupta wrote:
+> Add Interconnect framework support to dynamically set the DRAM
+> bandwidth from different clients. Both the MC and EMC drivers are
+> added as ICC providers. The path for any request is:
+>  MC-Client[1-n] -> MC -> EMC -> EMEM/DRAM
 > 
-> > -----Original Message-----
-> > From: Jarkko Sakkinen <jarkko@kernel.org>
-> > Sent: 12 March 2023 03:19
-> > To: Krishna Yarlagadda <kyarlagadda@nvidia.com>; robh+dt@kernel.org;
-> > broonie@kernel.org; peterhuewe@gmx.de; jgg@ziepe.ca;
-> > krzysztof.kozlowski+dt@linaro.org; linux-spi@vger.kernel.org; linux-
-> > tegra@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
-> > kernel@vger.kernel.org
-> > Cc: thierry.reding@gmail.com; Jonathan Hunter <jonathanh@nvidia.com>;
-> > Sowjanya Komatineni <skomatineni@nvidia.com>; Laxman Dewangan
-> > <ldewangan@nvidia.com>
-> > Subject: Re: [Patch V8 2/3] tpm_tis-spi: Add hardware wait polling
-> > 
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Thu, 2023-03-02 at 09:48 +0530, Krishna Yarlagadda wrote:
-> > > +int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16
-> > > len,
-> > > +                        u8 *in, const u8 *out)
-> > > +{
-> > > +       struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> > > +       struct spi_controller *ctlr = phy->spi_device->controller;
-> > > +
-> > > +       /*
-> > > +        * TPM flow control over SPI requires full duplex support.
-> > > +        * Send entire message to a half duplex controller to handle
-> > > +        * wait polling in controller.
-> > > +        * Set TPM HW flow control flag..
-> > > +        */
-> > > +       if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX)
-> > > +               return tpm_tis_spi_hw_flow_transfer(data, addr, len,
-> > > in,
-> > > +                                                   out);
-> > > +       else
-> > > +               return tpm_tis_spi_sw_flow_transfer(data, addr, len,
-> > > in,
-> > > +                                                   out);
-> > > +}
-> > > +
-> > 
-> > Based on the condition, better names would be
-> Though condition is based on half duplex, functions are implementing
-> HW or SW flow of the transfer.
+> MC client's request for bandwidth will go to the MC driver which
+> passes the client request info like BPMP Client ID, Client type
+> and the Bandwidth to the BPMP-FW. The final DRAM freq to achieve
+> the requested bandwidth is set by the BPMP-FW based on the passed
+> parameters.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
 
-Both are hardwaw flows in the sense that you are controlling a piece of hardware.
 
-BR, Jarkko
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
