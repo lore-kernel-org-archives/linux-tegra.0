@@ -2,174 +2,99 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1970FC7618E
-	for <linux-tegra@archiver.kernel.org>; Sat, 18 Mar 2023 20:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C472C7619A
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Mar 2023 09:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229799AbjCRUuA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 18 Mar 2023 16:50:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
+        id S229689AbjCSJYo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 19 Mar 2023 05:24:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbjCRUt7 (ORCPT
+        with ESMTP id S229652AbjCSJYl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 18 Mar 2023 16:49:59 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74624196A4;
-        Sat, 18 Mar 2023 13:49:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679172597; x=1710708597;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=o8z2PeaN3WAvssy4e3LxOy8ukDZJheMvUjBaqQOXlSI=;
-  b=ESUDUdWDdTqcWDU4s14/sRDinZDNEQqXxTku8lsiuQ5wYddjajAU9qew
-   3ofGKTvJtmlFICNWI615mAKqDApw55qUO0qNTw8GIqUxgj+6Hq8yBcHS9
-   w5akqAWkVXf5Sa+wnJiBrj32pCMbupTOV5fT0kSRwt9b1bPnzdXCgbDmS
-   qyydoF5LQqVBLE+Yji6JItks1+Z94PenM8aTCamu92Hevxya6q5lCfbp3
-   A67IvhnHZdPI5S803f27O/Y9UysEZu0OYCk35PxvSsyQa+z2ORwcpsNda
-   4UwgTf93KmqCGYTLhY4VPpv4rMNMCY4LZwnK1B3GV5hN7NOxNzACB2n4e
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10653"; a="322307184"
-X-IronPort-AV: E=Sophos;i="5.98,272,1673942400"; 
-   d="scan'208";a="322307184"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2023 13:49:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10653"; a="657923988"
-X-IronPort-AV: E=Sophos;i="5.98,272,1673942400"; 
-   d="scan'208";a="657923988"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 18 Mar 2023 13:49:54 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pddUv-000AGa-25;
-        Sat, 18 Mar 2023 20:49:53 +0000
-Date:   Sun, 19 Mar 2023 04:48:56 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sumitra Sharma <sumitraartsy@gmail.com>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        outreachy@lists.linux.dev
-Cc:     oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH] Staging: nvec: Change container_of macro to an inline
- function.
-Message-ID: <202303190432.kRoDGmiE-lkp@intel.com>
-References: <20230318170514.GA49181@sumitra.com>
+        Sun, 19 Mar 2023 05:24:41 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAED518A81
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Mar 2023 02:24:39 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pdpHI-0003Rn-95; Sun, 19 Mar 2023 10:24:36 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pdpHH-005C8I-Dm; Sun, 19 Mar 2023 10:24:35 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pdpHG-0066PY-Fm; Sun, 19 Mar 2023 10:24:34 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 10/11] usb: phy: tegra: Convert to platform remove callback returning void
+Date:   Sun, 19 Mar 2023 10:24:27 +0100
+Message-Id: <20230319092428.283054-11-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230319092428.283054-1-u.kleine-koenig@pengutronix.de>
+References: <20230319092428.283054-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230318170514.GA49181@sumitra.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1599; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=MN1EJiNdXGYOaDxNv5BhfcV4O33BjTjkUCoG2WCtJi0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkFtTGQQR2LHrdNUbLIP4UWo/CFWV+UwX7hOuYl K8wdYsjweyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZBbUxgAKCRCPgPtYfRL+ TnVoCACGt6AK/01o99qYtQ5TyfW34SQL/dt737UX5Pq0lI/YnDJN/iKI/5RuyY5TK18YrIJysGv cHOjO3mgBRPbyVlNfwh7m4aKlSBwioWWoiD0FbZwDf5Y7BSkyon+lsIFgwKtHVtPJKEZIvQBLBn Gi1r5QcXMPEODZLLO25p3Ziq1Dte8jycMCo9ap7gfV+Tc3u9LO4cqNNt+/jE0f5HuQAGMEPkilc 9lD68r4TtYTo2Bcxkmr5HLFUrplFQBl4oJSeBr/pNf/mmjmimoDZGsi/A3NJy0kQ4w5J+fK7UVf EFZpOq+bfn9/Vgxzu8FNiMhXL8h0ltzAPfIaDJnGhMJPl6iQ
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Sumitra,
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-Thank you for the patch! Yet something to improve:
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-[auto build test ERROR on staging/staging-testing]
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/usb/phy/phy-tegra-usb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sumitra-Sharma/Staging-nvec-Change-container_of-macro-to-an-inline-function/20230319-010628
-patch link:    https://lore.kernel.org/r/20230318170514.GA49181%40sumitra.com
-patch subject: [PATCH] Staging: nvec: Change container_of macro to an inline function.
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20230319/202303190432.kRoDGmiE-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/e58807d27f0ba705144bce72751f5cb0a75b9682
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Sumitra-Sharma/Staging-nvec-Change-container_of-macro-to-an-inline-function/20230319-010628
-        git checkout e58807d27f0ba705144bce72751f5cb0a75b9682
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/staging/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303190432.kRoDGmiE-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/module.h:12,
-                    from drivers/staging/nvec/nvec_paz00.c:10:
-   drivers/staging/nvec/nvec_paz00.c: In function 'to_nvec_led':
->> include/linux/container_of.h:20:54: error: invalid use of undefined type 'struct nvec_led'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |                                                      ^~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |                       ^~~~~~~~~~~
-   drivers/staging/nvec/nvec_paz00.c:19:16: note: in expansion of macro 'container_of'
-      19 |         return container_of(led_cdev, struct nvec_led, cdev);
-         |                ^~~~~~~~~~~~
-   include/linux/compiler_types.h:338:27: error: expression in static assertion is not an integer
-     338 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |         ^~~~~~~~~~~~~
-   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |                       ^~~~~~~~~~~
-   drivers/staging/nvec/nvec_paz00.c:19:16: note: in expansion of macro 'container_of'
-      19 |         return container_of(led_cdev, struct nvec_led, cdev);
-         |                ^~~~~~~~~~~~
-   In file included from include/uapi/linux/posix_types.h:5,
-                    from include/uapi/linux/types.h:14,
-                    from include/linux/types.h:6,
-                    from include/linux/kasan-checks.h:5,
-                    from include/asm-generic/rwonce.h:26,
-                    from ./arch/arm/include/generated/asm/rwonce.h:1,
-                    from include/linux/compiler.h:247,
-                    from include/linux/build_bug.h:5:
->> include/linux/stddef.h:16:33: error: invalid use of undefined type 'struct nvec_led'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/linux/container_of.h:23:28: note: in expansion of macro 'offsetof'
-      23 |         ((type *)(__mptr - offsetof(type, member))); })
-         |                            ^~~~~~~~
-   drivers/staging/nvec/nvec_paz00.c:19:16: note: in expansion of macro 'container_of'
-      19 |         return container_of(led_cdev, struct nvec_led, cdev);
-         |                ^~~~~~~~~~~~
-   drivers/staging/nvec/nvec_paz00.c:20:1: error: control reaches end of non-void function [-Werror=return-type]
-      20 | }
-         | ^
-   cc1: some warnings being treated as errors
-
-
-vim +20 include/linux/container_of.h
-
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08   9  
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  10  /**
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  11   * container_of - cast a member of a structure out to the containing structure
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  12   * @ptr:	the pointer to the member.
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  13   * @type:	the type of the container struct this is embedded in.
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  14   * @member:	the name of the member within the struct.
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  15   *
-7376e561fd2e01 Sakari Ailus     2022-10-24  16   * WARNING: any const qualifier of @ptr is lost.
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  17   */
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  18  #define container_of(ptr, type, member) ({				\
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  19  	void *__mptr = (void *)(ptr);					\
-e1edc277e6f6df Rasmus Villemoes 2021-11-08 @20  	static_assert(__same_type(*(ptr), ((type *)0)->member) ||	\
-e1edc277e6f6df Rasmus Villemoes 2021-11-08  21  		      __same_type(*(ptr), void),			\
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  22  		      "pointer type mismatch in container_of()");	\
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  23  	((type *)(__mptr - offsetof(type, member))); })
-d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  24  
-
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index f0240107edb1..014a96fdbd36 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -1486,18 +1486,16 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	return usb_add_phy_dev(&tegra_phy->u_phy);
+ }
+ 
+-static int tegra_usb_phy_remove(struct platform_device *pdev)
++static void tegra_usb_phy_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_usb_phy *tegra_phy = platform_get_drvdata(pdev);
+ 
+ 	usb_remove_phy(&tegra_phy->u_phy);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver tegra_usb_phy_driver = {
+ 	.probe		= tegra_usb_phy_probe,
+-	.remove		= tegra_usb_phy_remove,
++	.remove_new	= tegra_usb_phy_remove,
+ 	.driver		= {
+ 		.name	= "tegra-phy",
+ 		.of_match_table = tegra_usb_phy_id_table,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.39.2
+
