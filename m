@@ -2,244 +2,174 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6841AC77B70
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 14:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E53EC6FD1D
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 15:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230041AbjCTO6x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 10:58:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41880 "EHLO
+        id S233190AbjCTPhX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 11:37:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231893AbjCTO6K (ORCPT
+        with ESMTP id S232966AbjCTPgy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 10:58:10 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D3561125A7;
-        Mon, 20 Mar 2023 07:56:30 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FD62AD7;
-        Mon, 20 Mar 2023 07:57:13 -0700 (PDT)
-Received: from FVFF77S0Q05N.cambridge.arm.com (FVFF77S0Q05N.cambridge.arm.com [10.1.35.35])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAA413F71E;
-        Mon, 20 Mar 2023 07:56:26 -0700 (PDT)
-Date:   Mon, 20 Mar 2023 14:56:20 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Guo Ren <guoren@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Kajetan Puchalski <kajetan.puchalski@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, linux@armlinux.org.uk,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 07/51] cpuidle,psci: Push RCU-idle into driver
-Message-ID: <ZBh0FPlF1oeqHftc@FVFF77S0Q05N.cambridge.arm.com>
-References: <20230112194314.845371875@infradead.org>
- <20230112195539.760296658@infradead.org>
- <ff338b9f-4ab0-741b-26ea-7b7351da156@linux-m68k.org>
+        Mon, 20 Mar 2023 11:36:54 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416B5303D9;
+        Mon, 20 Mar 2023 08:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679326127; x=1710862127;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/fRnRCW+Rd918Lokio/1z6rWnclRA6bccd8kJtT6fQI=;
+  b=kT5v93WWC6jlObR0mNTAu/I/sOOqoCN9sEeMCnEZepdqM3osc9mYQP3l
+   i9UveTSA/L47l5PuXczis33IxShChyDISaX7haAoaaDdXzSCJsyklj/If
+   wdzXs5Hjfxr28cCPt137CImt5J0G5mx3v3355mxvWgVx6/BqXIzRMqVfz
+   QpFzglAAMf1Rbma4wm3nQ38idLZTRHbxoq35m+o8KIJoDzO+mf2ZxIqnV
+   NkHeqxWR2fGnHw+RdLWLugJEHfOGPk+lUo5sR713j7KTYXVaf04OPUIA1
+   td+A3aeZqQMtRywwbYOl4m9eBYL1zLHzyUgL14lDYxojGpGvnTk/W8dIo
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="338718182"
+X-IronPort-AV: E=Sophos;i="5.98,274,1673942400"; 
+   d="scan'208";a="338718182"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2023 08:27:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="750148546"
+X-IronPort-AV: E=Sophos;i="5.98,274,1673942400"; 
+   d="scan'208";a="750148546"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 20 Mar 2023 08:27:47 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1peHQI-000B74-28;
+        Mon, 20 Mar 2023 15:27:46 +0000
+Date:   Mon, 20 Mar 2023 23:27:14 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sumitra Sharma <sumitraartsy@gmail.com>,
+        Marc Dietrich <marvin24@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        outreachy@lists.linux.dev
+Cc:     oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2] Staging: nvec: Convert to_nvec_led from a macro to an
+ inline function
+Message-ID: <202303202327.ojGuSQqT-lkp@intel.com>
+References: <20230318175250.GA49618@sumitra.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff338b9f-4ab0-741b-26ea-7b7351da156@linux-m68k.org>
+In-Reply-To: <20230318175250.GA49618@sumitra.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Geert,
+Hi Sumitra,
 
-On Tue, Mar 07, 2023 at 05:40:08PM +0100, Geert Uytterhoeven wrote:
-> 	Hoi Peter,
-> 
-> (reduced the insane CC list)
+Thank you for the patch! Yet something to improve:
 
-Helpfully you dropped me from Cc, so I missed this until just now...
+[auto build test ERROR on staging/staging-testing]
 
-> On Thu, 12 Jan 2023, Peter Zijlstra wrote:
-> > Doing RCU-idle outside the driver, only to then temporarily enable it
-> > again, at least twice, before going idle is daft.
-> > 
-> > Notably once implicitly through the cpu_pm_*() calls and once
-> > explicitly doing ct_irq_*_irqon().
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> > Reviewed-by: Guo Ren <guoren@kernel.org>
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
-> > Tested-by: Tony Lindgren <tony@atomide.com>
-> > Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> 
-> Thanks for your patch, which is now commit e038f7b8028a1d1b ("cpuidle,
-> psci: Push RCU-idle into driver") in v6.3-rc1.
-> 
-> I have bisected a PSCI checker regression on Renesas R-Car Gen3/4 SoCs
-> to commit a01353cf1896ea5b ("cpuidle: Fix ct_idle_*() usage") (the 7
-> commits before that do not compile):
->
-> psci_checker: PSCI checker started using 2 CPUs
-> psci_checker: Starting hotplug tests
-> psci_checker: Trying to turn off and on again all CPUs
-> psci: CPU0 killed (polled 0 ms)
-> Detected PIPT I-cache on CPU0
-> CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
-> psci_checker: Trying to turn off and on again group 0 (CPUs 0-1)
-> psci: CPU0 killed (polled 0 ms)
-> Detected PIPT I-cache on CPU0
-> CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
-> psci_checker: Hotplug tests passed OK
-> psci_checker: Starting suspend tests (10 cycles per state)
-> psci_checker: CPU 0 entering suspend cycles, states 1 through 1
-> psci_checker: CPU 1 entering suspend cycles, states 1 through 1
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:141 ct_kernel_exit.constprop.0+0xd8/0xf4
+url:    https://github.com/intel-lab-lkp/linux/commits/Sumitra-Sharma/Staging-nvec-Convert-to_nvec_led-from-a-macro-to-an-inline-function/20230319-015434
+patch link:    https://lore.kernel.org/r/20230318175250.GA49618%40sumitra.com
+patch subject: [PATCH v2] Staging: nvec: Convert to_nvec_led from a macro to an inline function
+config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20230320/202303202327.ojGuSQqT-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/5bb6b930cab3ac631310d3bbf40c9decf91dfd38
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Sumitra-Sharma/Staging-nvec-Convert-to_nvec_led-from-a-macro-to-an-inline-function/20230319-015434
+        git checkout 5bb6b930cab3ac631310d3bbf40c9decf91dfd38
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/staging/
 
-So that's:
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303202327.ojGuSQqT-lkp@intel.com/
 
-  WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
+All errors (new ones prefixed by >>):
 
-... and the PSCI checker doens't run in the context of the idle thread, so the
-warning is correct, and we're violating the expectation of the context tracking
-code.
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/module.h:12,
+                    from drivers/staging/nvec/nvec_paz00.c:10:
+   drivers/staging/nvec/nvec_paz00.c: In function 'to_nvec_led':
+>> include/linux/container_of.h:20:54: error: invalid use of undefined type 'struct nvec_led'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                                      ^~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   drivers/staging/nvec/nvec_paz00.c:19:16: note: in expansion of macro 'container_of'
+      19 |         return container_of(led_cdev, struct nvec_led, cdev);
+         |                ^~~~~~~~~~~~
+   include/linux/compiler_types.h:338:27: error: expression in static assertion is not an integer
+     338 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   drivers/staging/nvec/nvec_paz00.c:19:16: note: in expansion of macro 'container_of'
+      19 |         return container_of(led_cdev, struct nvec_led, cdev);
+         |                ^~~~~~~~~~~~
+   In file included from include/uapi/linux/posix_types.h:5,
+                    from include/uapi/linux/types.h:14,
+                    from include/linux/types.h:6,
+                    from include/linux/kasan-checks.h:5,
+                    from include/asm-generic/rwonce.h:26,
+                    from ./arch/arm/include/generated/asm/rwonce.h:1,
+                    from include/linux/compiler.h:247,
+                    from include/linux/build_bug.h:5:
+>> include/linux/stddef.h:16:33: error: invalid use of undefined type 'struct nvec_led'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:23:28: note: in expansion of macro 'offsetof'
+      23 |         ((type *)(__mptr - offsetof(type, member))); })
+         |                            ^~~~~~~~
+   drivers/staging/nvec/nvec_paz00.c:19:16: note: in expansion of macro 'container_of'
+      19 |         return container_of(led_cdev, struct nvec_led, cdev);
+         |                ^~~~~~~~~~~~
+   drivers/staging/nvec/nvec_paz00.c:20:1: error: control reaches end of non-void function [-Werror=return-type]
+      20 | }
+         | ^
+   cc1: some warnings being treated as errors
 
-The PSCI checker is very much a special case, and I'm not sure how we can fix
-this without removing the warning in the cases we want it. It'd be nicer if we
-could "queue" the idle into the relevant idle thread. :/
 
-I'm very tempted to say we should just rip the checker code out, rather than
-contorting the rest of the code to make that work.
+vim +20 include/linux/container_of.h
 
-Thanks,
-Mark.
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08   9  
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  10  /**
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  11   * container_of - cast a member of a structure out to the containing structure
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  12   * @ptr:	the pointer to the member.
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  13   * @type:	the type of the container struct this is embedded in.
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  14   * @member:	the name of the member within the struct.
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  15   *
+7376e561fd2e01 Sakari Ailus     2022-10-24  16   * WARNING: any const qualifier of @ptr is lost.
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  17   */
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  18  #define container_of(ptr, type, member) ({				\
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  19  	void *__mptr = (void *)(ptr);					\
+e1edc277e6f6df Rasmus Villemoes 2021-11-08 @20  	static_assert(__same_type(*(ptr), ((type *)0)->member) ||	\
+e1edc277e6f6df Rasmus Villemoes 2021-11-08  21  		      __same_type(*(ptr), void),			\
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  22  		      "pointer type mismatch in container_of()");	\
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  23  	((type *)(__mptr - offsetof(type, member))); })
+d2a8ebbf8192b8 Andy Shevchenko  2021-11-08  24  
 
-> Modules linked in:
-> CPU: 1 PID: 177 Comm: psci_suspend_te Not tainted 6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
-> Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-> pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : ct_kernel_exit.constprop.0+0xd8/0xf4
-> lr : ct_kernel_exit.constprop.0+0xc8/0xf4
-> sp : ffffffc00b73bd30
-> x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-> x23: ffffff800981e140 x22: 0000000000000001 x21: 0000000000010000
-> x20: ffffffc0086be1d8 x19: ffffff807fbac070 x18: 0000000000000000
-> x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
-> x14: ffffffc00895be78 x13: 0000000000000001 x12: 0000000000000000
-> x11: 00000000000001aa x10: 00000000ffffffea x9 : 000000000000000f
-> x8 : ffffffc00b73bb68 x7 : ffffffc00b73be18 x6 : ffffffc00815ff34
-> x5 : ffffffc00a6a0c30 x4 : ffffffc00801ce00 x3 : 0000000000000000
-> x2 : ffffffc008dc3070 x1 : ffffffc008dc3078 x0 : 0000000004208040
-> Call trace:
->  ct_kernel_exit.constprop.0+0xd8/0xf4
->  ct_idle_enter+0x18/0x20
->  psci_enter_idle_state+0xa4/0xfc
->  suspend_test_thread+0x238/0x2f0
->  kthread+0xd8/0xe8
->  ret_from_fork+0x10/0x20
-> irq event stamp: 0
-> hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last disabled at (0): [<0000000000000000>] 0x0
-> ---[ end trace 0000000000000000 ]---
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:186 ct_kernel_enter.constprop.0+0x78/0xa4
-> Modules linked in:
-> CPU: 1 PID: 177 Comm: psci_suspend_te Tainted: G        W          6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
-> Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-> pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : ct_kernel_enter.constprop.0+0x78/0xa4
-> lr : ct_kernel_enter.constprop.0+0x68/0xa4
-> sp : ffffffc00b73bd30
-> x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-> x23: ffffff800981e140 x22: 0000000000000001 x21: 00000000ffffffa1
-> x20: ffffffc0086be1d8 x19: 00000000000000c0 x18: 0000000000000000
-> x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
-> x14: ffffffc00895be78 x13: ffffff800e325180 x12: ffffffc076de9000
-> x11: 0000000034d4d91d x10: 0000000000000008 x9 : 0000000000001000
-> x8 : ffffffc008012800 x7 : 0000000000000000 x6 : ffffff807fbac070
-> x5 : ffffffc008dc3070 x4 : 0000000000000000 x3 : 000000000001a9fc
-> x2 : 0000000000000003 x1 : ffffffc008dc3070 x0 : 0000000004208040
-> Call trace:
->  ct_kernel_enter.constprop.0+0x78/0xa4
->  ct_idle_exit+0x18/0x38
->  psci_enter_idle_state+0xdc/0xfc
->  suspend_test_thread+0x238/0x2f0
->  kthread+0xd8/0xe8
->  ret_from_fork+0x10/0x20
-> irq event stamp: 0
-> hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-> softirqs last disabled at (0): [<0000000000000000>] 0x0
-> ---[ end trace 0000000000000000 ]---
-> psci_checker: Failed to suspend CPU 1: error -1 (requested state 1, cycle 0)
-> psci_checker: CPU 0 suspend test results: success 0, shallow states 10, errors 0
-> mmcblk0rpmb: mmc0:0001 BGSD3R 4.00 MiB, chardev (243:0)
-> psci_checker: CPU 1 suspend test results: success 0, shallow states 9, errors 1
-> psci_checker: 1 error(s) encountered in suspend tests
-> psci_checker: PSCI checker completed
-> 
-> > ---
-> > drivers/cpuidle/cpuidle-psci.c |    9 +++++----
-> > 1 file changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > --- a/drivers/cpuidle/cpuidle-psci.c
-> > +++ b/drivers/cpuidle/cpuidle-psci.c
-> > @@ -69,12 +69,12 @@ static int __psci_enter_domain_idle_stat
-> > 		return -1;
-> > 
-> > 	/* Do runtime PM to manage a hierarchical CPU toplogy. */
-> > -	ct_irq_enter_irqson();
-> > 	if (s2idle)
-> > 		dev_pm_genpd_suspend(pd_dev);
-> > 	else
-> > 		pm_runtime_put_sync_suspend(pd_dev);
-> > -	ct_irq_exit_irqson();
-> > +
-> > +	ct_idle_enter();
-> > 
-> > 	state = psci_get_domain_state();
-> > 	if (!state)
-> > @@ -82,12 +82,12 @@ static int __psci_enter_domain_idle_stat
-> > 
-> > 	ret = psci_cpu_suspend_enter(state) ? -1 : idx;
-> > 
-> > -	ct_irq_enter_irqson();
-> > +	ct_idle_exit();
-> > +
-> > 	if (s2idle)
-> > 		dev_pm_genpd_resume(pd_dev);
-> > 	else
-> > 		pm_runtime_get_sync(pd_dev);
-> > -	ct_irq_exit_irqson();
-> > 
-> > 	cpu_pm_exit();
-> > 
-> > @@ -240,6 +240,7 @@ static int psci_dt_cpu_init_topology(str
-> > 	 * of a shared state for the domain, assumes the domain states are all
-> > 	 * deeper states.
-> > 	 */
-> > +	drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
-> > 	drv->states[state_count - 1].enter = psci_enter_domain_idle_state;
-> > 	drv->states[state_count - 1].enter_s2idle = psci_enter_s2idle_domain_idle_state;
-> > 	psci_cpuidle_use_cpuhp = true;
-> 
-> Gr{oetje,eeting}s,
-> 
-> 						Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
-> 							    -- Linus Torvalds
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
