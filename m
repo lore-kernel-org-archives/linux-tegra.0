@@ -2,56 +2,56 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3370DC6FD1D
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 08:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB46C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 08:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230217AbjCTIod (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 04:44:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39790 "EHLO
+        id S230167AbjCTI6Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 04:58:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbjCTIoc (ORCPT
+        with ESMTP id S230489AbjCTI6Y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 04:44:32 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFBC12CFB;
-        Mon, 20 Mar 2023 01:44:29 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id lr16-20020a17090b4b9000b0023f187954acso11588157pjb.2;
-        Mon, 20 Mar 2023 01:44:29 -0700 (PDT)
+        Mon, 20 Mar 2023 04:58:24 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7072510AAE;
+        Mon, 20 Mar 2023 01:58:22 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id m2so9544456wrh.6;
+        Mon, 20 Mar 2023 01:58:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679301869;
+        d=gmail.com; s=20210112; t=1679302701;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gs8rcm/d7d5rUf8zE5Zuo/A8IdhoZtRoqNxyEktI7DU=;
-        b=D1Zmcz+v1MK/aSof4oDyzd7q1lx9K9HTk27r+LV6Lh1C3y/VPTkYrWUQMA/OMPpcKU
-         we08QnxWPTFCyvkjbDwhE3gvfDeg2Jn0RzBP4V+/2fH0eNEg36YInV9OONtM4o6Dh3x5
-         qXABGpInu9pkf6OBcanjeGCD6sMY50g9QkfUk2RT3Igek5ixe3O75VESxkXnrq00JXyr
-         9Cs6qlykNDGCbrYqav6bfOyJ82b9huN0+x0ahdhTu3wnkJNC2whpCfZf6e0MOZHAtgBi
-         VO8GxL4tZ1h9YYEM6GnojpOykTBVhIcWmpVO+SHsjNgsnvFU+NBzkK4GWrBATqH6zCwk
-         gUzg==
+        bh=DzJeoTbKWKmIBwgQA0Y6y/DCv+ZaiOaeERybU2fweUE=;
+        b=QDRO/di0+W4wO0US7hLYQPt0JtqrXuz+l1/4iXt4x4pSqH1+Up7aPBXLgzauOOdr4t
+         R4aV7r0anl4+aiGVdthztkDvMh13STej0atvbniaW+ZYi1AuLxQT5WD3x3pVlG7yVf4e
+         dL9R2uq6DQsa2EfgQZg4XciDUjCT9prIVtNyNDpH16tFUnnVVIxox7ieHMFD1iRNu159
+         wcjrALUHtCKlnPBrU5mZrtSyc1sfF5Jb+rXHsJDZYnytWbso+d/DnRzzr7cZ5I/dLNCk
+         00u8YFwtqnSwRObn4iDBzgVlb/VBTi5k99cT2a4XC7oGphqujkc1lFpZ37nqP/ubyIgi
+         MxBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679301869;
+        d=1e100.net; s=20210112; t=1679302701;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gs8rcm/d7d5rUf8zE5Zuo/A8IdhoZtRoqNxyEktI7DU=;
-        b=1lLd+yteqHnpR+xHSPKljGsQccn6Y25i26vsPHj53KteOqRqLc7fDgHfDHnwqt87dL
-         VzXJwCcIuQlBoPb2FIJtOC4IBFPtrobD2/n/q1R3L8S/MNneNs8cSQcKh4q8dswOpZeo
-         7ZT+0KA2grMHmPXh5NgV/ZbO3UL7bfrHpJ2yBQwda6rRIRTJZ5J0liB/fB5DGttNc9CM
-         fmXl7iTarIVWWWeJmjPSt7nu414QmAYpbK35PphlMevGsuzApyAfZBlaRs9PJgu6/r+j
-         d2HFGnXt8mz6Bx8PmCcfFxzKh20HzG+CaswZyNkR6Y+xf+FmE1aeD1J6PtzXEvLidP6Q
-         s5Lw==
-X-Gm-Message-State: AO0yUKU5JdludfT5ywBO3CxoNd77JBSKXpyvut057V+JI+rjUZantEDi
-        K1EzkRUKjU7s1FfvcILauRU=
-X-Google-Smtp-Source: AK7set/c7pstRRWuhurf3gUuxnXwtKb1375FG/fOeRr1dGCOpfdeRb7/xUqrWb2ye0HQRVT8Xbwv3w==
-X-Received: by 2002:a17:902:e742:b0:19f:7977:c9d6 with SMTP id p2-20020a170902e74200b0019f7977c9d6mr18905610plf.28.1679301869033;
-        Mon, 20 Mar 2023 01:44:29 -0700 (PDT)
-Received: from sumitra.com ([210.212.97.176])
-        by smtp.gmail.com with ESMTPSA id d4-20020a170902b70400b001a1c2eb3950sm2847455pls.22.2023.03.20.01.44.24
+        bh=DzJeoTbKWKmIBwgQA0Y6y/DCv+ZaiOaeERybU2fweUE=;
+        b=RXWMgjp1ShFfhOsMQjj4q0UmNj8/egXDhZIhwK1i8todMwA5gkKnX4Xzq2V1Gckfos
+         q5uG7djXHmETNTDR3PxC9BqtSBP8QlO/6GbT7ioRxJpw1/B/y0nPd/V6Agbm3sA9nBpU
+         Gzt4lGY23TRys6a+p8YCHuqjkcwcyr6+l+ZcBXhuAQSAvJEVIwPczPDf41p1eJBRBkXq
+         CdvpzsIExmVPB31QsPVj8hRPzhlopLPd/6Z/WulQFKnaLyPO6jdGMyDtnpOK+B5S3n8m
+         nVoOaLIsqUQ6EaLQTQLUvPmUtFm2BINmzOn+djhcsW581spSCasM6iu6aaF4XoSjRAFG
+         wgzQ==
+X-Gm-Message-State: AO0yUKX7wvfodVfo9pkCUgkRvhFTUqUvOSKOBpwujUhXZEbnmZHpNIKX
+        1Rl/aUtZ5UBie6XsXCpnI08=
+X-Google-Smtp-Source: AK7set+KLxobAAO+fehPbXx6zZ9HiCLEkSn44tcxAykkKqp8FeNPy5vK22tOMa9HFICZsPo+2mWv2A==
+X-Received: by 2002:a5d:6512:0:b0:2ce:9c6b:4fc5 with SMTP id x18-20020a5d6512000000b002ce9c6b4fc5mr8838497wru.16.1679302700800;
+        Mon, 20 Mar 2023 01:58:20 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id m23-20020a056000181700b002c5694aef92sm8312838wrh.21.2023.03.20.01.58.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 01:44:27 -0700 (PDT)
-Date:   Mon, 20 Mar 2023 01:44:22 -0700
-From:   Sumitra Sharma <sumitraartsy@gmail.com>
-To:     Dan Carpenter <error27@gmail.com>
+        Mon, 20 Mar 2023 01:58:20 -0700 (PDT)
+Date:   Mon, 20 Mar 2023 11:58:16 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     Sumitra Sharma <sumitraartsy@gmail.com>
 Cc:     Marc Dietrich <marvin24@gmx.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
@@ -59,39 +59,60 @@ Cc:     Marc Dietrich <marvin24@gmx.de>,
         outreachy@lists.linux.dev
 Subject: Re: [PATCH v2] Staging: nvec: Convert to_nvec_led from a macro to an
  inline function
-Message-ID: <20230320084422.GA126429@sumitra.com>
+Message-ID: <256ee298-e34e-4ff4-94ba-e4a0102ef2ac@kili.mountain>
 References: <20230318175250.GA49618@sumitra.com>
  <417e944c-4653-43ef-b492-c82c536e4d87@kili.mountain>
+ <20230320084422.GA126429@sumitra.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <417e944c-4653-43ef-b492-c82c536e4d87@kili.mountain>
+In-Reply-To: <20230320084422.GA126429@sumitra.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 08:39:49AM +0300, Dan Carpenter wrote:
-> On Sat, Mar 18, 2023 at 10:52:50AM -0700, Sumitra Sharma wrote:
-> > Convert to_nvec_led from a macro to a static inline function, to make the
-> > relevant types apparent in the definition and to benefit from the type
-> > checking performed by the compiler at call sites.
+On Mon, Mar 20, 2023 at 01:44:22AM -0700, Sumitra Sharma wrote:
+> On Mon, Mar 20, 2023 at 08:39:49AM +0300, Dan Carpenter wrote:
+> > On Sat, Mar 18, 2023 at 10:52:50AM -0700, Sumitra Sharma wrote:
+> > > Convert to_nvec_led from a macro to a static inline function, to make the
+> > > relevant types apparent in the definition and to benefit from the type
+> > > checking performed by the compiler at call sites.
+> > > 
+> > > Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
+> > > ---
 > > 
-> > Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
-> > ---
+> > You need to compile test your changes.
+> >
 > 
-> You need to compile test your changes.
->
-
-Hi dan,
-
-I am facing problems in creating modules and in compiling them.
-
-Any help in this would be appreciated. Here is the link to the thread https://lore.kernel.org/outreachy/alpine.DEB.2.22.394.2303191336090.2867@hadrien/T/#t
-
-Regards,
-
-Sumitra
-
-> regards,
-> dan carpenter
+> Hi dan,
 > 
+> I am facing problems in creating modules and in compiling them.
+> 
+> Any help in this would be appreciated. Here is the link to the thread
+> https://lore.kernel.org/outreachy/alpine.DEB.2.22.394.2303191336090.2867@hadrien/T/#t
+
+If you're editing a .h file then you need to compile all the stuff which
+includes it.  It's slightly complicated.  But if you're just editing a
+.c file like here then what I do is I have use my Smatch script to try
+compile it.
+
+In Debian run:
+apt-get install gcc make sqlite3 libsqlite3-dev libdbd-sqlite3-perl libssl-dev libtry-tiny-perl
+Or in Fedora run:
+yum install gcc make sqlite3 sqlite-devel sqlite perl-DBD-SQLite openssl-devel perl-Try-Tiny
+
+git clone https://github.com/error27/smatch.git
+cd smatch
+make
+
+cd /path/to/kernel_src/
+~/smatch/smatch_scripts/kchecker drivers/staging/nvec/nvec_paz00.c
+
+Also I run Sparse on the file.
+~/smatch/smatch_scripts/kchecker --sparse drivers/staging/nvec/nvec_paz00.c
+
+When I'm patching a file, then I like to look at any other issues I
+might want to fix and deal with that as well.
+
+regards,
+dan carpenter
