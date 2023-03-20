@@ -2,185 +2,182 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7E0C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 20:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED07FC6FD1C
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 21:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229483AbjCTU7t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 16:59:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45832 "EHLO
+        id S229646AbjCTVKw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 17:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbjCTU7s (ORCPT
+        with ESMTP id S229803AbjCTVKu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 16:59:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0870334026;
-        Mon, 20 Mar 2023 13:59:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 460426182E;
-        Mon, 20 Mar 2023 20:59:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D52C433EF;
-        Mon, 20 Mar 2023 20:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679345979;
-        bh=RSEgHvtt3CggVhM3Oq6w2XSZQEHDdD+8wzZxlP4dmH0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WmMyNozfbwl692K876/r+x8HJJghuCPAqMJAzA917D2JHSjKUuBiIv4VYUEGZpQ/C
-         8W2Ss49KTE8Wl3SO/fu2kydd2TMAAb2rcCZOPxN390DR0dRi2Tjhi8xrc19iocHBW/
-         WbltPF631voPaw21dowIfWe17TA6JOKYusqtf7fOucDpam0s5RTE5OTsunGioJpD8a
-         F3dIZvBTTLFJIqgyDORiLFQMQwMF3rH0x8jAodHjlFqr0ty7kdDGbIxupY0OJSYJWM
-         zlj/64QY1yMrIuN+J/WXF0bQNiAzM06v/TcGatfuWPIhgUbvR97zzKCBU5EN0WDqiz
-         CmPSOmKNSRAJg==
-Received: by pali.im (Postfix)
-        id 350C260F; Mon, 20 Mar 2023 21:59:36 +0100 (CET)
-Date:   Mon, 20 Mar 2023 21:59:36 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2] PCI: Assign PCI domain by ida_alloc()
-Message-ID: <20230320205936.wd6pj3trljsduj5c@pali>
-References: <20220702204737.7719-1-pali@kernel.org>
- <20220714184130.5436-1-pali@kernel.org>
- <b529cb69-0602-9eed-fc02-2f068707a006@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Mon, 20 Mar 2023 17:10:50 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92D672472D;
+        Mon, 20 Mar 2023 14:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679346649; x=1710882649;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=AuyMGEn/LKntExlz0/427+egqC/JX2IpiKTx9tqg5+A=;
+  b=HloptGlxhXQD3GEQpbJb6wTPDQJupXjwdx3YCybCA3oRAPJKOu8fhChn
+   LgK5EkqiJZDyqVro/6h90+O7gqhgFbD82f4EjH1asJhhCvY3KLK6mlPy7
+   04ZGBFTUNFn1gofy+ciCNuDgMTeaydpOeg8E6mYhff8lNMNpFN96srXmB
+   IVQ6KJ5YI9K0Uo02fCKlfgHRWnBPsk/53fSSsBt7u1wC5nyDIxWKMmIi6
+   W2gvO7SD76KBGaH/c7oatO5YWUUIMmjzkRNIuf/QQHzrB+CK/phTvz0SD
+   zMLKwZEAAgCOthRddmburfiRkvoxshkfT9IacPNMWjHcoBPt2CRgne9ZK
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="322622737"
+X-IronPort-AV: E=Sophos;i="5.98,276,1673942400"; 
+   d="scan'208";a="322622737"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2023 14:10:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="713700539"
+X-IronPort-AV: E=Sophos;i="5.98,276,1673942400"; 
+   d="scan'208";a="713700539"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orsmga001.jf.intel.com with ESMTP; 20 Mar 2023 14:10:39 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Mon, 20 Mar 2023 14:10:38 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21 via Frontend Transport; Mon, 20 Mar 2023 14:10:38 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.21; Mon, 20 Mar 2023 14:10:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bG3DD7kOYlV33ZHMNrX2zI/jiDv8tPSoswpmZm/Q1E7a19J47mlo88Shz0bkjPY77wpGajZJuHy9NsaQZl+kGiQ0NgFLrrv1aaQyMUHDk2arE0AS9wSSAaD5FJfDoe+KGCh8IE2Esg+hK0Ruou3BfZ87x/MnHDkahrJrfCCWZLGnGwEBuhK7FEvGPXDB/+vLfDkFsQLF+Ejn3SIxKnIMLgv0KRe83SKIALCf9cP/wdbIG/Yat8kg+6th87/mv8h/eaGFqmI/G7CphPcP4dKXXkkM0IvqUgVH14Q0E87+BACJmtci/Psmki0576yFtNrzqn9Gw7nsjBDl7K6PfMiI6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1Gx2OtRiBM6yV0RuQx6owqSVBgTO+e32MPWCK/Qo1H4=;
+ b=GiOhAKoeOWLbQ7i6yrGKYVAE2eIXBNb+AWzzXMIt/7moEiIG4Oh/27g6k0yuZhsQlXF0b6HfmSUE/TFJQTzrfhk/QzwruhnVbkWCJcPoW8v1BUWmHZmzsBx3r78ma9uj6qbVI+zlz2Pxv+c9x+fSDBdLG6cghtQi/vP9by+WnE94I38SQr2OqYAp1S5qpgjTJXcTiXyB8X9AQM1DDmKQW1mPMlMj7deYwt7T455C0okrhQ6pWyilEoVbzVAlLEktJuvFTFqzs+0k2byQkII+gQeDd42VamGcau1iOiy4tEbe2UmtqBgs48mYQDXOunh2tjzVbkwvbK8GN3QsYZ6N2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SJ0PR11MB5008.namprd11.prod.outlook.com (2603:10b6:a03:2d5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Mon, 20 Mar
+ 2023 21:10:37 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::84dd:d3f2:6d99:d7ff]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::84dd:d3f2:6d99:d7ff%7]) with mapi id 15.20.6178.037; Mon, 20 Mar 2023
+ 21:10:36 +0000
+Date:   Mon, 20 Mar 2023 14:10:33 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Sumitra Sharma <sumitraartsy@gmail.com>,
+        Julia Lawall <julia.lawall@inria.fr>
+CC:     Marc Dietrich <marvin24@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <ac100@lists.launchpad.net>, <linux-tegra@vger.kernel.org>,
+        <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <outreachy@lists.linux.dev>
+Subject: Re: [PATCH] Staging: nvec: Change container_of macro to an inline
+ function.
+Message-ID: <6418cbc98b225_2c274e29437@iweiny-mobl.notmuch>
+References: <20230318170514.GA49181@sumitra.com>
+ <alpine.DEB.2.22.394.2303181811260.2914@hadrien>
+ <20230318175532.GA49651@sumitra.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <b529cb69-0602-9eed-fc02-2f068707a006@nvidia.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20230318175532.GA49651@sumitra.com>
+X-ClientProxiedBy: BY3PR10CA0016.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::21) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SJ0PR11MB5008:EE_
+X-MS-Office365-Filtering-Correlation-Id: 922ee535-0183-4c33-8ecc-08db29878cf4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Vg3/PvN0pqqNhrGNWExwiFjcv9rRV0n3lD51lq/X0/i8vnTRP4nwqWb81n1a7QAy9xFuIIvnFzBK0PEFBWtlibQxUYw1N3oyRV9dCHwnNdGSN5BseX3CXkcmbvgz0sHBwnTpD5kkRNHR4kLannJxyKOcCdKgqF5bN1x3m428s+bEZz+0Z7LIx8Xkoq35fg7RnPTjdWvkCvqoy+DcbeaRu1z7djgkNre7BnEJaR/4r1SdkYYmrGBoW/f4zB2PkVAhxuE4hCScYEaZYGjaZgvTKmMlABlyhqp88fCIyq/JNKfFe53iA295jdLDkXaZom0FjfKiRi6zuI/75pdyFQtm+G1DVeG135QN4SyfsS2+AGx0/A+qGSAcb9/3ajpo7gfw4LoGzCUsR2VBDREA0EoxGUQ8oLR6bnYKdM0ExxRdcQezGE8LqG+ARBsA17WfBvHhR8PPdyNsFE31TngscyPEQCFH1su5IeT6+AsgKuZsdtsZRJMlsQaYxvoQPZYRMSl9gMndeDmLqnGB4+QwVjPbypYvhI9DN1uBXFqKBUDDSJd6IKTr5KCGTlcM2moytKI80EKn2mPNYoSEjBiF/yruDhAsYv3tdLpwWYgVXT6t8U7cU3ZOsgFXicjMSpab/BTqyVp1lYTUxhudq8kbT8ZEZg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(396003)(346002)(136003)(366004)(39860400002)(376002)(451199018)(41300700001)(186003)(6486002)(4326008)(6666004)(478600001)(83380400001)(8676002)(316002)(110136005)(66476007)(66556008)(66946007)(6506007)(26005)(6512007)(9686003)(54906003)(44832011)(8936002)(5660300002)(38100700002)(82960400001)(2906002)(86362001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6ck2RHVD/PgyBcaJOw9tnWUCJk7LHLFP1E0kAzgeNeWYk16CeIgiyi+JxhlC?=
+ =?us-ascii?Q?4CFkWlNZbbHFw+ccdBkMkWRDsVSVjW7B2mWIaXw7KyvFr0T5T22kpVJ+6ucz?=
+ =?us-ascii?Q?ZFw82oIOfyg8NxDZoZCj55YEkQU7tl+vRrWr5dsGF2rK1xfprhRSjDcF9Z+M?=
+ =?us-ascii?Q?s0sp/Kj/1aIfDfBIum+21FIFRLN+ENCTEFs/JXvGqpz9VWk+V788TussrXm9?=
+ =?us-ascii?Q?K73QDNYlOw745qiupny6ukyOK/rN2yzyNeP4jZv48UFIZuYKL3sxnn1RnOy+?=
+ =?us-ascii?Q?194/y4sTOZBeQX51WvYsBimgqy5wORq1i2n1tqozSckOXVexVmBRqf21msQj?=
+ =?us-ascii?Q?We1OGq076Lp1IlDYlYZXvr9t13Kr1/1zDlXOaY/aWb5jgjxqyIDB2mx8C1Oe?=
+ =?us-ascii?Q?7dj2GKyAGyrshXP99qrAsILwLA1Qkx9r13j0jtD6+uQXzCtZBdYcRWVVonYV?=
+ =?us-ascii?Q?xu0w9HmLHlS0d2Y9i5zAMoTctAA+fAPPvSV5PpSOj8ZMId/ON+QKxLSkTIxF?=
+ =?us-ascii?Q?Ke+TLoxWDmyeUZIRqDi7VyjW6RwwjnTrRsNTvoJoHSghF+e/l1qsPMSuowvo?=
+ =?us-ascii?Q?DhBl6hW1J22bRIUXuPExsmNwfNejX06c6h5UcAqTmOyuY2+TLBmnEJZEJu/Y?=
+ =?us-ascii?Q?yJ6L2u5ll/bqMTqsB+ZT8JTx0lrTyiiPcxl8Z3jvG+5kgKyplt+NmO8vpFMa?=
+ =?us-ascii?Q?pQ9OjAGivPNF7LYAIfM53H++ZMXscpFn4N7X06LUqwpiFgfcaX33GnNlAqRO?=
+ =?us-ascii?Q?+MsBnEOIj1VD9D2j8UKW2HijEw4XPQvIS8jSzVU3qjxVCjMMQ8gbfEMtvi5r?=
+ =?us-ascii?Q?Hncixlczr0KOlxDiS9poA3sIBVMrZlZGrpQoYiwpVQiFSTMqABxSG5EtCToF?=
+ =?us-ascii?Q?D1GUIxru8zbawxEeYobjGzMFBrTxmheTor4l39gXV/mc9YqPz7bcASp6nNaT?=
+ =?us-ascii?Q?DtTisiMQwNVB1BaXpC6ZVSlbq+8teekxp4hZNwdtyWUXOUMwP/CDBqjMRvxS?=
+ =?us-ascii?Q?49Iy11r7VUNi5XnMLi42l0C1drY8xzvpcm7HP1ByX6n+XsfGIGlKgw0ug/od?=
+ =?us-ascii?Q?/jlG6/bEOEpPrxBwn+QG0gm7tYT1hsM5HHjWR5B0xkMUix7vMhAg8wHYLu98?=
+ =?us-ascii?Q?a3CtYErRtEDdDCVPQfwqBn58lkdSG0IRzAsl8xQ7kiXhd2UxqdEt6axBg8ES?=
+ =?us-ascii?Q?0V5Es61144KorwIZECUuW5ubF00frkjgFQNO9c4NKUg2lu4m6/IwThQcjlaK?=
+ =?us-ascii?Q?bppCvMP0m3jDXppOYQjJkdUVIW/LjcfKPdv/JP2jp9r3lUVC5sfDv9JSlqXP?=
+ =?us-ascii?Q?AyujL75XhtL1rZC/lX1U/HSjXE1PYcW4gpp2mYzCnNqHlWkmAkTp467dqBaf?=
+ =?us-ascii?Q?hUlyxn9DxjQQleXLZVN/KtkveKvFuG3rCNUDFko+Ye78Aerf/nm1Reuzffb2?=
+ =?us-ascii?Q?FYBtgu6x/zJeIAv/vL2w385XT8NkeK3jcCIXl3hK0+03Ny0RCKmhtp1Pg5ra?=
+ =?us-ascii?Q?Ii0iiUGefQn/0shC9qWPSO4hW4U62Z9yB3kXbsXyLfM+tM1hy7DUsY5b0ShR?=
+ =?us-ascii?Q?I8x4XrfsOOha9vNxlArQFrgrjEDf88kq0SzX7iI8?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 922ee535-0183-4c33-8ecc-08db29878cf4
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2023 21:10:36.7887
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dheW8l1OKb4EiKuIQ7GM+BQFBsk2MDqIpCECqijLc0wYim1jiXsM6HWMXvkUjG1tbQePzyKefevhJbuIUq8eWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5008
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello!
+Sumitra Sharma wrote:
+> On Sat, Mar 18, 2023 at 06:14:50PM +0100, Julia Lawall wrote:
+> > 
+> > 
+> > On Sat, 18 Mar 2023, Sumitra Sharma wrote:
+> > 
+> > > The macro has the drawback that one cannot determine
+> > > what type it applies to by looking at the definition.
+> > > Hence this macro definition is not type-safe.
+> > >
+> > > The inline function gives the same benefits as the
+> > > macro and only accepts the specific type of arguments.
+> > > Use static because the definition only requires it to be
+> > > visible in the current file.
+> > 
+> > Sumitra,
+> > 
+> > The subject line and log message could be a little less generic.  For the
+> > subject line, one has the impression that you are changing the definition
+> > of container_of itself.
+> > 
+> > The log message is also a bit wordy.  Something like the following would
+> > be more concise and still present the issue:
+> >
+> 
+> Okay. I will focus more on writing better patch subject and description.
 
-On Monday 20 March 2023 20:26:05 Jon Hunter wrote:
-> Hi Pali,
-> 
-> After this change was made we are seeing the following bug
-> report on a Tegra234 Jetson Orin board ...
-> 
-> [   17.172346] tegra194-pcie 141a0000.pcie: host bridge /pcie@141a0000 ranges:
-> [   17.172470] tegra194-pcie 141a0000.pcie:      MEM 0x2800000000..0x2b27ffffff -> 0x2800000000
-> [   17.172519] tegra194-pcie 141a0000.pcie:      MEM 0x2b28000000..0x2b2fffffff -> 0x0040000000
-> [   17.172548] tegra194-pcie 141a0000.pcie:       IO 0x003a100000..0x003a1fffff -> 0x003a100000
-> [   17.173449] tegra194-pcie 141a0000.pcie: iATU: unroll T, 8 ob, 2 ib, align 64K, limit 32G
-> [   18.279048] tegra194-pcie 141a0000.pcie: Phy link never came up
-> [   19.279285] tegra194-pcie 141a0000.pcie: Phy link never came up
-> [   19.279599] tegra194-pcie 141a0000.pcie: PCI host bridge to bus 0005:00
-> [   19.279613] pci_bus 0005:00: root bus resource [bus 00-ff]
-> [   19.279622] pci_bus 0005:00: root bus resource [mem 0x2800000000-0x2b27ffffff pref]
-> [   19.279631] pci_bus 0005:00: root bus resource [mem 0x2b28000000-0x2b2fffffff] (bus address [0x40000000-0x47ffffff])
-> [   19.279639] pci_bus 0005:00: root bus resource [io  0x200000-0x2fffff] (bus address [0x3a100000-0x3a1fffff])
-> [   19.279687] pci 0005:00:00.0: [10de:229a] type 01 class 0x060400
-> [   19.279886] pci 0005:00:00.0: PME# supported from D0 D3hot
-> [   19.283256] pci 0005:00:00.0: PCI bridge to [bus 01-ff]
-> [   19.283590] pcieport 0005:00:00.0: Adding to iommu group 26
-> [   19.283991] pcieport 0005:00:00.0: PME: Signaling with IRQ 174
-> [   19.284429] pcieport 0005:00:00.0: AER: enabled with IRQ 174
-> [   19.285003] pci_bus 0005:01: busn_res: [bus 01-ff] is released
-> [   19.285591] pci 0005:00:00.0: Removing from iommu group 26
-> [   19.285751] pci_bus 0005:00: busn_res: [bus 00-ff] is released
-> [   19.285870] ==================================================================
-> [   19.293351] BUG: KFENCE: use-after-free read in pci_bus_release_domain_nr+0x10/0x70
-> 
-> [   19.302817] Use-after-free read at 0x000000007f3b80eb (in kfence-#115):
-> [   19.309677]  pci_bus_release_domain_nr+0x10/0x70
-> [   19.309691]  dw_pcie_host_deinit+0x28/0x78
-> [   19.309702]  tegra_pcie_deinit_controller+0x1c/0x38 [pcie_tegra194]
-> [   19.309734]  tegra_pcie_dw_probe+0x648/0xb28 [pcie_tegra194]
-> [   19.309752]  platform_probe+0x90/0xd8
-> [   19.309764]  really_probe+0xb8/0x298
-> [   19.309777]  __driver_probe_device+0x78/0xd8
-> [   19.309788]  driver_probe_device+0x38/0x120
-> [   19.309799]  __device_attach_driver+0x94/0xe0
-> [   19.309812]  bus_for_each_drv+0x70/0xc8
-> [   19.309822]  __device_attach+0xfc/0x188
-> [   19.309833]  device_initial_probe+0x10/0x18
-> [   19.309844]  bus_probe_device+0x94/0xa0
-> [   19.309854]  deferred_probe_work_func+0x80/0xb8
-> [   19.309864]  process_one_work+0x1e0/0x348
-> [   19.309882]  worker_thread+0x48/0x410
-> [   19.309891]  kthread+0xf4/0x110
-> [   19.309904]  ret_from_fork+0x10/0x20
-> 
-> [   19.311457] kfence-#115: 0x00000000063a155a-0x00000000ba698da8, size=1072, cache=kmalloc-2k
-> 
-> [   19.311469] allocated by task 96 on cpu 10 at 19.279323s:
-> [   19.311562]  __kmem_cache_alloc_node+0x260/0x278
-> [   19.311571]  kmalloc_trace+0x24/0x30
-> [   19.311580]  pci_alloc_bus+0x24/0xa0
-> [   19.311590]  pci_register_host_bridge+0x48/0x4b8
-> [   19.311601]  pci_scan_root_bus_bridge+0xc0/0xe8
-> [   19.311613]  pci_host_probe+0x18/0xc0
-> [   19.311623]  dw_pcie_host_init+0x2c0/0x568
-> [   19.311630]  tegra_pcie_dw_probe+0x610/0xb28 [pcie_tegra194]
-> [   19.311647]  platform_probe+0x90/0xd8
-> [   19.311653]  really_probe+0xb8/0x298
-> [   19.311663]  __driver_probe_device+0x78/0xd8
-> [   19.311672]  driver_probe_device+0x38/0x120
-> [   19.311682]  __device_attach_driver+0x94/0xe0
-> [   19.311694]  bus_for_each_drv+0x70/0xc8
-> [   19.311702]  __device_attach+0xfc/0x188
-> [   19.311713]  device_initial_probe+0x10/0x18
-> [   19.311724]  bus_probe_device+0x94/0xa0
-> [   19.311733]  deferred_probe_work_func+0x80/0xb8
-> [   19.311743]  process_one_work+0x1e0/0x348
-> [   19.311753]  worker_thread+0x48/0x410
-> [   19.311763]  kthread+0xf4/0x110
-> [   19.311771]  ret_from_fork+0x10/0x20
-> 
-> [   19.311782] freed by task 96 on cpu 10 at 19.285833s:
-> [   19.311799]  release_pcibus_dev+0x30/0x40
-> [   19.311808]  device_release+0x30/0x90
-> [   19.311814]  kobject_put+0xa8/0x120
-> [   19.311832]  device_unregister+0x20/0x30
-> [   19.311839]  pci_remove_bus+0x78/0x88
-> [   19.311850]  pci_remove_root_bus+0x5c/0x98
-> [   19.311860]  dw_pcie_host_deinit+0x28/0x78
-> [   19.311866]  tegra_pcie_deinit_controller+0x1c/0x38 [pcie_tegra194]
-> [   19.311883]  tegra_pcie_dw_probe+0x648/0xb28 [pcie_tegra194]
-> [   19.311900]  platform_probe+0x90/0xd8
-> [   19.311906]  really_probe+0xb8/0x298
-> [   19.311916]  __driver_probe_device+0x78/0xd8
-> [   19.311926]  driver_probe_device+0x38/0x120
-> [   19.311936]  __device_attach_driver+0x94/0xe0
-> [   19.311947]  bus_for_each_drv+0x70/0xc8
-> [   19.311956]  __device_attach+0xfc/0x188
-> [   19.311966]  device_initial_probe+0x10/0x18
-> [   19.311976]  bus_probe_device+0x94/0xa0
-> [   19.311985]  deferred_probe_work_func+0x80/0xb8
-> [   19.311995]  process_one_work+0x1e0/0x348
-> [   19.312005]  worker_thread+0x48/0x410
-> [   19.312014]  kthread+0xf4/0x110
-> [   19.312022]  ret_from_fork+0x10/0x20
+Sumitra,
 
-Based on the above trace it looks like a double free of "pp->bridge"
-structure.
+I can't tell for sure via email if you are getting discouraged.  But if you are
+don't feel bad.  Writing good commit messages is hard.
 
-Also, which kernel version are you using? Because from above third
-trace it looks like that dw_pcie_host_deinit() calls first
-pci_remove_root_bus() function and then (from first strace) it also
-calls pci_bus_release_domain_nr() function.
+That said, I see a couple of build errors from 0day on this patch.  Do use the
+tools to correct things like that before submitting.
 
-Source code of the dw_pcie_host_deinit() is there:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-designware-host.c
-But I do not see where dw_pcie_host_deinit() calls
-pci_bus_release_domain_nr() function as visible in the first trace.
-
-> [   19.313579] CPU: 10 PID: 96 Comm: kworker/u24:2 Not tainted 6.2.0 #4
-> [   19.320171] Hardware name:  /, BIOS 1.0-d7fb19b 08/10/2022
-> [   19.325852] Workqueue: events_unbound deferred_probe_work_func
-> [   19.331919] ==================================================================
-> 
-> After reverting this change I no longer see this issue.
-> Let me know if you have any thoughts.
-> 
-> Thanks
-> Jon
-> -- 
-> nvpublic
+Ira
