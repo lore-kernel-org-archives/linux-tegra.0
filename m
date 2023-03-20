@@ -2,92 +2,84 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD339C7618D
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 23:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B864DC761AF
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 23:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229771AbjCTXla (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 19:41:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36556 "EHLO
+        id S230013AbjCTXmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 19:42:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjCTXl3 (ORCPT
+        with ESMTP id S229483AbjCTXmx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 19:41:29 -0400
-Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1998716318;
-        Mon, 20 Mar 2023 16:40:35 -0700 (PDT)
-Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-17ac5ee3f9cso14634456fac.12;
-        Mon, 20 Mar 2023 16:40:35 -0700 (PDT)
+        Mon, 20 Mar 2023 19:42:53 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F84E144A0;
+        Mon, 20 Mar 2023 16:41:54 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-17aaa51a911so14703777fac.5;
+        Mon, 20 Mar 2023 16:41:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679355513;
+        d=1e100.net; s=20210112; t=1679355603;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WTjElMD2e38UsgsTs97igwD/ZfRZyIeExtZdYYvY0Bg=;
-        b=tuEANuSON0TK8CtCuSGwIK/ZPaX7WclgJLMuL6LaVCeB0RZnW6mtIh+hW1Fom37jys
-         LLenkZ9s+RPZOw07wwlmF8EopUbxFihYCLoA4mrB3v/byoWQ4/5rmMheBC7PEtMsEFbe
-         FS1YTBviqu0LWnHiWR+N/6MWWKYj867KlTwal8f/xc7k6FEngj0CIThEYxZFb4jpCdTu
-         vwP3d1P3qgd2HcFWReh7+0isWcfQ89uMJa3jrZxGVoPXajoSaeb7k5Msys3HUY3IEkXm
-         PTR6IgygUbsAQPGM7bDng5mcfylsyW3Xtu2mpeERLYoMVyTycyibBU8fqmkUVjxwE2k8
-         2ZXQ==
-X-Gm-Message-State: AO0yUKWzzTHYoI/eu6qxAHdBt3JX+Pmk5EUsHUyJt1Ja+oy24HxHf0wU
-        1SvGJ/jWrxgX9WxyWS9od4hWyZIflA==
-X-Google-Smtp-Source: AK7set+hHdPoFGWzZ5ptnA09Ix+Hy815lPMvG22c3graSik823dt7vi0hqhv7XA1SsJzcgYAnv6ZpQ==
-X-Received: by 2002:a05:6870:8325:b0:177:a8a8:657 with SMTP id p37-20020a056870832500b00177a8a80657mr116991oae.10.1679355513269;
-        Mon, 20 Mar 2023 16:38:33 -0700 (PDT)
+        bh=K5DG9ZkQtn4FRPIJJzwqnJ/wNYIHJuC+kgmFbmzvz/8=;
+        b=wPXxFU2nQ86V3W6yqqV8tVHwWAaHMYME9OKq3rwnuJtczCcvEDS7/I9Ns/i3y1BOQc
+         hBKVdJ9geaSaiLOQt5BidGPbo7t9bGMfv7HcyL0ztFRrQgsOqe9L5uHBCRPUZdi/CU1V
+         z4qUK32bmr+eUTeFFPL9ykzAj+5o7oTGv6ewjA9z+vk79cyBn17n8pd94lIDu2RRHUSf
+         y7T/y7yMhKA+WvL39y40ZxHGZUc2PPAzjd8MKIa07mN4JNR6rr2QI0Xn8+M9cKbklwa6
+         7PJr9rR0iyYRZt9u3HKL/Yy401+orhoOvHvbiDKtFIE0/R+lScUzPMOidHRvAvkXr1fM
+         Y3Zw==
+X-Gm-Message-State: AO0yUKVl7VKfjR1rQ7jDt2fOer4iQGeNO8BcAmLY2vQUZ3/C9gXWNIvL
+        9nudaZXZw/X3hNuRwqzcgQ==
+X-Google-Smtp-Source: AK7set+OVVt52OpYolejvcBJwqTnwHsThacTTp8sg0b1O3iBw1LXfEhy6ajkDmdDLpfmiemJlnxhTg==
+X-Received: by 2002:a05:6871:88e:b0:172:6cf9:383a with SMTP id r14-20020a056871088e00b001726cf9383amr84969oaq.22.1679355602658;
+        Mon, 20 Mar 2023 16:40:02 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id vl9-20020a0568710e8900b0017ad7a5f57dsm3785814oab.11.2023.03.20.16.38.31
+        by smtp.gmail.com with ESMTPSA id d8-20020a0568301b6800b0069bcd7ccf1dsm4511837ote.35.2023.03.20.16.40.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 16:38:32 -0700 (PDT)
-Received: (nullmailer pid 2919676 invoked by uid 1000);
-        Mon, 20 Mar 2023 23:38:31 -0000
+        Mon, 20 Mar 2023 16:40:02 -0700 (PDT)
+Received: (nullmailer pid 2921351 invoked by uid 1000);
+        Mon, 20 Mar 2023 23:40:00 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Robin van der Gracht <robin@protonic.nl>,
-        Miguel Ojeda <ojeda@kernel.org>,
+To:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         Neil Armstrong <neil.armstrong@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomba@kernel.org>,
+        Yu Chen <chenyu56@huawei.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: display: Drop unneeded quotes
-Date:   Mon, 20 Mar 2023 18:38:21 -0500
-Message-Id: <20230320233823.2919475-1-robh@kernel.org>
+        <angelogioacchino.delregno@collabora.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Vincent Shih <vincent.sunplus@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Cc:     linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-can@vger.kernel.org
+Subject: [PATCH] dt-bindings: phy: Drop unneeded quotes
+Date:   Mon, 20 Mar 2023 18:39:52 -0500
+Message-Id: <20230320233955.2921179-1-robh@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -98,610 +90,582 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 Cleanup bindings dropping unneeded quotes. Once all these are fixed,
 checking for this can be enabled in yamllint.
 
-Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
-v2:
- - Also drop quotes on URLs
----
- .../bindings/auxdisplay/holtek,ht16k33.yaml   |  2 +-
- .../display/amlogic,meson-dw-hdmi.yaml        |  4 ++--
- .../bindings/display/amlogic,meson-vpu.yaml   |  4 ++--
- .../display/bridge/analogix,anx7625.yaml      |  4 ++--
- .../display/bridge/cdns,mhdp8546.yaml         |  4 ++--
- .../bindings/display/bridge/nxp,ptn3460.yaml  |  2 +-
- .../display/bridge/toshiba,tc358767.yaml      |  2 +-
- .../bindings/display/dp-aux-bus.yaml          |  2 +-
- .../bindings/display/imx/nxp,imx8mq-dcss.yaml |  4 ++--
- .../display/mediatek/mediatek,hdmi.yaml       |  2 +-
- .../display/msm/dsi-controller-main.yaml      |  8 +++----
- .../bindings/display/msm/dsi-phy-10nm.yaml    |  2 +-
- .../devicetree/bindings/display/msm/gmu.yaml  |  4 ++--
- .../devicetree/bindings/display/msm/gpu.yaml  |  4 ++--
- .../devicetree/bindings/display/msm/mdp4.yaml |  4 ++--
- .../display/panel/ronbo,rb070d30.yaml         |  2 +-
- .../bindings/display/renesas,du.yaml          |  4 ++--
- .../display/tegra/nvidia,tegra114-mipi.yaml   |  2 +-
- .../display/tegra/nvidia,tegra124-sor.yaml    | 12 +++++-----
- .../display/tegra/nvidia,tegra186-dc.yaml     |  4 ++--
- .../tegra/nvidia,tegra186-dsi-padctl.yaml     |  2 +-
- .../display/tegra/nvidia,tegra20-dsi.yaml     | 12 +++++-----
- .../display/tegra/nvidia,tegra20-hdmi.yaml    |  6 ++---
- .../bindings/display/ti/ti,am65x-dss.yaml     |  6 ++---
- .../bindings/display/ti/ti,j721e-dss.yaml     |  4 ++--
- .../bindings/display/ti/ti,k2g-dss.yaml       |  4 ++--
- .../display/xylon,logicvc-display.yaml        | 22 +++++++++----------
- 27 files changed, 66 insertions(+), 66 deletions(-)
+ .../bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml          | 4 ++--
+ .../bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml         | 2 +-
+ .../devicetree/bindings/phy/amlogic,axg-mipi-dphy.yaml      | 4 ++--
+ .../bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml         | 4 ++--
+ .../devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml      | 4 ++--
+ .../devicetree/bindings/phy/amlogic,g12a-usb3-pcie-phy.yaml | 4 ++--
+ .../bindings/phy/amlogic,meson-axg-mipi-pcie-analog.yaml    | 4 ++--
+ .../devicetree/bindings/phy/amlogic,meson-axg-pcie.yaml     | 4 ++--
+ .../devicetree/bindings/phy/amlogic,meson8-hdmi-tx-phy.yaml | 4 ++--
+ .../devicetree/bindings/phy/amlogic,meson8b-usb2-phy.yaml   | 4 ++--
+ .../devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml      | 4 ++--
+ Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml    | 4 ++--
+ Documentation/devicetree/bindings/phy/cdns,salvo-phy.yaml   | 4 ++--
+ .../devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml      | 4 ++--
+ .../devicetree/bindings/phy/hisilicon,hi3670-usb3.yaml      | 6 +++---
+ .../bindings/phy/marvell,armada-3700-utmi-phy.yaml          | 4 ++--
+ .../bindings/phy/marvell,armada-cp110-utmi-phy.yaml         | 4 ++--
+ .../devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml      | 4 ++--
+ .../devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml    | 4 ++--
+ .../devicetree/bindings/phy/phy-cadence-sierra.yaml         | 4 ++--
+ .../devicetree/bindings/phy/phy-cadence-torrent.yaml        | 4 ++--
+ Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml | 4 ++--
+ Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml     | 4 ++--
+ Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml   | 4 ++--
+ Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml | 4 ++--
+ .../devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml     | 4 ++--
+ Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml      | 4 ++--
+ .../devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml       | 4 ++--
+ .../devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml    | 4 ++--
+ Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml  | 2 +-
+ .../devicetree/bindings/phy/sunplus,sp7021-usb2-phy.yaml    | 4 ++--
+ .../devicetree/bindings/phy/ti,phy-am654-serdes.yaml        | 4 ++--
+ Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml  | 4 ++--
+ Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml | 4 ++--
+ Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml  | 4 ++--
+ 35 files changed, 69 insertions(+), 69 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-index fc4873deb76f..4f6ffb8182a9 100644
---- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-+++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-@@ -10,7 +10,7 @@ maintainers:
-   - Robin van der Gracht <robin@protonic.nl>
- 
- allOf:
--  - $ref: "/schemas/input/matrix-keymap.yaml#"
-+  - $ref: /schemas/input/matrix-keymap.yaml#
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
-index 74cefdf1b843..0c85894648d8 100644
---- a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
+diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml
+index c03b83103e87..cf4eed230565 100644
+--- a/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml
 @@ -2,8 +2,8 @@
- # Copyright 2019 BayLibre, SAS
+ # Copyright 2019 Ondrej Jirman <megous@megous.com>
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/amlogic,meson-dw-hdmi.yaml#"
+-$id: "http://devicetree.org/schemas/phy/allwinner,sun50i-h6-usb3-phy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/amlogic,meson-dw-hdmi.yaml#
++$id: http://devicetree.org/schemas/phy/allwinner,sun50i-h6-usb3-phy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Amlogic specific extensions to the Synopsys Designware HDMI Controller
+ title: Allwinner H6 USB3 PHY
  
-diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
-index 6655a93b1874..0c72120acc4f 100644
---- a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
-+++ b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
+diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml
+index fe9702e7bdd8..6a4fd4929959 100644
+--- a/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml
++++ b/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml
+@@ -45,7 +45,7 @@ properties:
+     maxItems: 1
+ 
+   allwinner,direction:
+-    $ref: '/schemas/types.yaml#/definitions/string'
++    $ref: /schemas/types.yaml#/definitions/string
+     description: |
+       Direction of the D-PHY:
+       - "rx" for receiving (e.g. when used with MIPI CSI-2);
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,axg-mipi-dphy.yaml b/Documentation/devicetree/bindings/phy/amlogic,axg-mipi-dphy.yaml
+index 5eddaed3d853..64795f170f32 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,axg-mipi-dphy.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,axg-mipi-dphy.yaml
 @@ -2,8 +2,8 @@
- # Copyright 2019 BayLibre, SAS
+ # Copyright 2020 BayLibre, SAS
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/amlogic,meson-vpu.yaml#"
+-$id: "http://devicetree.org/schemas/phy/amlogic,axg-mipi-dphy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/amlogic,meson-vpu.yaml#
++$id: http://devicetree.org/schemas/phy/amlogic,axg-mipi-dphy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Amlogic Meson Display Controller
+ title: Amlogic AXG MIPI D-PHY
  
-diff --git a/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml b/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml
-index 4590186c4a0b..b42553ac505c 100644
---- a/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml
-@@ -2,8 +2,8 @@
- # Copyright 2019 Analogix Semiconductor, Inc.
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Analogix ANX7625 SlimPort (4K Mobile HD Transmitter)
- 
-diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-index b2e8bc6da9d0..c2b369456e4e 100644
---- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml
+index 7aa0c05d6ce4..c8c83acfb871 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,g12a-mipi-dphy-analog.yaml
 @@ -1,8 +1,8 @@
  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/bridge/cdns,mhdp8546.yaml#"
+-$id: "http://devicetree.org/schemas/phy/amlogic,g12a-mipi-dphy-analog.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/bridge/cdns,mhdp8546.yaml#
++$id: http://devicetree.org/schemas/phy/amlogic,g12a-mipi-dphy-analog.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Cadence MHDP8546 bridge
+ title: Amlogic G12A MIPI analog PHY
  
-diff --git a/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml b/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
-index 107dd138e6c6..cdeb67bc05f0 100644
---- a/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
-@@ -18,7 +18,7 @@ properties:
-     maxItems: 1
- 
-   edid-emulation:
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     description:
-       The EDID emulation entry to use
-       Value  Resolution  Description
-diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
-index 140927884418..e1494b5007cb 100644
---- a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
-@@ -23,7 +23,7 @@ properties:
-         i2c address of the bridge, 0x68 or 0x0f, depending on bootstrap pins
- 
-   clock-names:
--    const: "ref"
-+    const: ref
- 
-   clocks:
-     maxItems: 1
-diff --git a/Documentation/devicetree/bindings/display/dp-aux-bus.yaml b/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
-index 5e4afe9f98fb..0ece7b01790b 100644
---- a/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
-+++ b/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
-@@ -26,7 +26,7 @@ description:
- 
- properties:
-   $nodename:
--    const: "aux-bus"
-+    const: aux-bus
- 
-   panel:
-     $ref: panel/panel-common.yaml#
-diff --git a/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml b/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
-index 989ab312c1f4..4ae6328cde64 100644
---- a/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
-+++ b/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml
+index bb01c6b34dab..0031fb6a4e76 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml
 @@ -2,8 +2,8 @@
- # Copyright 2019 NXP
+ # Copyright 2019 BayLibre, SAS
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/imx/nxp,imx8mq-dcss.yaml#"
+-$id: "http://devicetree.org/schemas/phy/amlogic,g12a-usb2-phy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/imx/nxp,imx8mq-dcss.yaml#
++$id: http://devicetree.org/schemas/phy/amlogic,g12a-usb2-phy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: iMX8MQ Display Controller Subsystem (DCSS)
+ title: Amlogic G12A USB2 PHY
  
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
-index 8afdd67d6780..b90b6d18a828 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
-@@ -50,7 +50,7 @@ properties:
-       - const: hdmi
- 
-   mediatek,syscon-hdmi:
--    $ref: '/schemas/types.yaml#/definitions/phandle-array'
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-     items:
-       - items:
-           - description: phandle to system configuration registers
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-index e75a3efe4dac..2188d7c9b0bb 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-@@ -74,7 +74,7 @@ properties:
- 
-   syscon-sfpb:
-     description: A phandle to mmss_sfpb syscon node (only for DSIv2).
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
-   qcom,dual-dsi-mode:
-     type: boolean
-@@ -105,14 +105,14 @@ properties:
-     type: object
- 
-   ports:
--    $ref: "/schemas/graph.yaml#/properties/ports"
-+    $ref: /schemas/graph.yaml#/properties/ports
-     description: |
-       Contains DSI controller input and output ports as children, each
-       containing one endpoint subnode.
- 
-     properties:
-       port@0:
--        $ref: "/schemas/graph.yaml#/$defs/port-base"
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-         unevaluatedProperties: false
-         description: |
-           Input endpoints of the controller.
-@@ -128,7 +128,7 @@ properties:
-                   enum: [ 0, 1, 2, 3 ]
- 
-       port@1:
--        $ref: "/schemas/graph.yaml#/$defs/port-base"
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-         unevaluatedProperties: false
-         description: |
-           Output endpoints of the controller.
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-index 3ec466c3ab38..e6b00d7387ce 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
-@@ -58,7 +58,7 @@ properties:
-       maximum: 31
- 
-   qcom,phy-drive-ldo-level:
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     description:
-       The PHY LDO has an amplitude tuning feature to adjust the LDO output
-       for the HSTX drive. Use supported levels (mV) to offset the drive level
-diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-index ab14e81cb050..029d72822d8b 100644
---- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-@@ -3,8 +3,8 @@
- %YAML 1.2
- ---
- 
--$id: "http://devicetree.org/schemas/display/msm/gmu.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/msm/gmu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: GMU attached to certain Adreno GPUs
- 
-diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-index d4191cca71fb..5dabe7b6794b 100644
---- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,g12a-usb3-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/amlogic,g12a-usb3-pcie-phy.yaml
+index 3314711292d6..1a5a12adb72b 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,g12a-usb3-pcie-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,g12a-usb3-pcie-phy.yaml
 @@ -2,8 +2,8 @@
+ # Copyright 2019 BayLibre, SAS
  %YAML 1.2
  ---
- 
--$id: "http://devicetree.org/schemas/display/msm/gpu.yaml#"
+-$id: "http://devicetree.org/schemas/phy/amlogic,g12a-usb3-pcie-phy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/msm/gpu.yaml#
++$id: http://devicetree.org/schemas/phy/amlogic,g12a-usb3-pcie-phy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Adreno or Snapdragon GPUs
+ title: Amlogic G12A USB3 + PCIE Combo PHY
  
-diff --git a/Documentation/devicetree/bindings/display/msm/mdp4.yaml b/Documentation/devicetree/bindings/display/msm/mdp4.yaml
-index 58c13f5277b6..35204a287579 100644
---- a/Documentation/devicetree/bindings/display/msm/mdp4.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/mdp4.yaml
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,meson-axg-mipi-pcie-analog.yaml b/Documentation/devicetree/bindings/phy/amlogic,meson-axg-mipi-pcie-analog.yaml
+index a90fa1baadab..009a39808318 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,meson-axg-mipi-pcie-analog.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,meson-axg-mipi-pcie-analog.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/amlogic,meson-axg-mipi-pcie-analog.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/amlogic,meson-axg-mipi-pcie-analog.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Amlogic AXG shared MIPI/PCIE analog PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,meson-axg-pcie.yaml b/Documentation/devicetree/bindings/phy/amlogic,meson-axg-pcie.yaml
+index 45f3d72b1cca..40fbf8ac3271 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,meson-axg-pcie.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,meson-axg-pcie.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/amlogic,meson-axg-pcie.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/amlogic,meson-axg-pcie.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Amlogic AXG PCIE PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,meson8-hdmi-tx-phy.yaml b/Documentation/devicetree/bindings/phy/amlogic,meson8-hdmi-tx-phy.yaml
+index 1f085cdd1c85..6f9fd1c953f0 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,meson8-hdmi-tx-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,meson8-hdmi-tx-phy.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/amlogic,meson8-hdmi-tx-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/amlogic,meson8-hdmi-tx-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Amlogic Meson8, Meson8b and Meson8m2 HDMI TX PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/amlogic,meson8b-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/amlogic,meson8b-usb2-phy.yaml
+index 03c4809dbe8d..df68bfe5f407 100644
+--- a/Documentation/devicetree/bindings/phy/amlogic,meson8b-usb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/amlogic,meson8b-usb2-phy.yaml
 @@ -1,8 +1,8 @@
  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/msm/mdp4.yaml#"
+-$id: "http://devicetree.org/schemas/phy/amlogic,meson8b-usb2-phy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/msm/mdp4.yaml#
++$id: http://devicetree.org/schemas/phy/amlogic,meson8b-usb2-phy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Qualcomm Adreno/Snapdragon MDP4 display controller
+ title: Amlogic Meson8, Meson8b, Meson8m2 and GXBB USB2 PHY
  
-diff --git a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
-index d67617f6f74a..95ce22c6787a 100644
---- a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
-@@ -37,7 +37,7 @@ properties:
+diff --git a/Documentation/devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml b/Documentation/devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml
+index 0f0bcde9eb88..bd527f566c3b 100644
+--- a/Documentation/devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/brcm,bcm63xx-usbh-phy.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/brcm,bcm63xx-usbh-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/brcm,bcm63xx-usbh-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-   backlight:
-     description: Backlight used by the panel
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
+ title: BCM63xx USBH PHY
  
- required:
-   - compatible
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
-index d4830f52c512..c5b9e6812bce 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.yaml
-+++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-@@ -76,7 +76,7 @@ properties:
-     unevaluatedProperties: false
+diff --git a/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml b/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml
+index 435b971dfd9b..8467c8e6368c 100644
+--- a/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/brcm,sata-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/brcm,sata-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-   renesas,cmms:
--    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-     items:
-       maxItems: 1
-     description:
-@@ -84,7 +84,7 @@ properties:
-       available DU channel.
+ title: Broadcom SATA3 PHY
  
-   renesas,vsps:
--    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-     items:
-       items:
-         - description: phandle to VSP instance that serves the DU channel
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
-index d5ca8cf86e8e..f448624dd779 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
-@@ -38,7 +38,7 @@ properties:
-     description: The number of cells in a MIPI calibration specifier.
-       Should be 1. The single cell specifies a bitmask of the pads that
-       need to be calibrated for a given device.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     const: 1
+diff --git a/Documentation/devicetree/bindings/phy/cdns,salvo-phy.yaml b/Documentation/devicetree/bindings/phy/cdns,salvo-phy.yaml
+index 3a07285b5470..c9e65a2facd5 100644
+--- a/Documentation/devicetree/bindings/phy/cdns,salvo-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/cdns,salvo-phy.yaml
+@@ -2,8 +2,8 @@
+ # Copyright (c) 2020 NXP
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/cdns,salvo-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/cdns,salvo-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
-index 907fb0baccae..70f0e45c71d6 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
-@@ -69,12 +69,12 @@ properties:
-   # Tegra186 and later
-   nvidia,interface:
-     description: index of the SOR interface
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
+ title: Cadence SALVO PHY
  
-   nvidia,ddc-i2c-bus:
-     description: phandle of an I2C controller used for DDC EDID
-       probing
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
-   nvidia,hpd-gpio:
-     description: specifies a GPIO used for hotplug detection
-@@ -82,23 +82,23 @@ properties:
- 
-   nvidia,edid:
-     description: supplies a binary EDID blob
--    $ref: "/schemas/types.yaml#/definitions/uint8-array"
-+    $ref: /schemas/types.yaml#/definitions/uint8-array
- 
-   nvidia,panel:
-     description: phandle of a display panel, required for eDP
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
-   nvidia,xbar-cfg:
-     description: 5 cells containing the crossbar configuration.
-       Each lane of the SOR, identified by the cell's index, is
-       mapped via the crossbar to the pad specified by the cell's
-       value.
--    $ref: "/schemas/types.yaml#/definitions/uint32-array"
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
- 
-   # optional when driving an eDP output
-   nvidia,dpaux:
-     description: phandle to a DispayPort AUX interface
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
- allOf:
-   - if:
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
-index 265a60d79d89..ce4589466a18 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
-@@ -60,13 +60,13 @@ properties:
-   nvidia,outputs:
-     description: A list of phandles of outputs that this display
-       controller can drive.
--    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
- 
-   nvidia,head:
-     description: The number of the display controller head. This
-       is used to setup the various types of output to receive
-       video data from the given head.
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
- 
- additionalProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
-index e5a6145c8c53..da75b71e8ece 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
-@@ -29,7 +29,7 @@ properties:
-       - const: dsi
- 
- allOf:
--  - $ref: "/schemas/reset/reset.yaml"
-+  - $ref: /schemas/reset/reset.yaml
- 
- additionalProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
-index 511cbe74e729..59e1dc0813e7 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
-@@ -59,12 +59,12 @@ properties:
-     description: Should contain a phandle and a specifier specifying
-       which pads are used by this DSI output and need to be
-       calibrated. See nvidia,tegra114-mipi.yaml for details.
--    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
- 
-   nvidia,ddc-i2c-bus:
-     description: phandle of an I2C controller used for DDC EDID
-       probing
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
-   nvidia,hpd-gpio:
-     description: specifies a GPIO used for hotplug detection
-@@ -72,19 +72,19 @@ properties:
- 
-   nvidia,edid:
-     description: supplies a binary EDID blob
--    $ref: "/schemas/types.yaml#/definitions/uint8-array"
-+    $ref: /schemas/types.yaml#/definitions/uint8-array
- 
-   nvidia,panel:
-     description: phandle of a display panel
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
-   nvidia,ganged-mode:
-     description: contains a phandle to a second DSI controller to
-       gang up with in order to support up to 8 data lanes
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
- allOf:
--  - $ref: "../dsi-controller.yaml#"
-+  - $ref: ../dsi-controller.yaml#
-   - if:
-       properties:
-         compatible:
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
-index f65e59cfffa7..f77197e4869f 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
-@@ -68,7 +68,7 @@ properties:
-   nvidia,ddc-i2c-bus:
-     description: phandle of an I2C controller used for DDC EDID
-       probing
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
-   nvidia,hpd-gpio:
-     description: specifies a GPIO used for hotplug detection
-@@ -76,11 +76,11 @@ properties:
- 
-   nvidia,edid:
-     description: supplies a binary EDID blob
--    $ref: "/schemas/types.yaml#/definitions/uint8-array"
-+    $ref: /schemas/types.yaml#/definitions/uint8-array
- 
-   nvidia,panel:
-     description: phandle of a display panel
--    $ref: "/schemas/types.yaml#/definitions/phandle"
-+    $ref: /schemas/types.yaml#/definitions/phandle
- 
-   "#sound-dai-cells":
+diff --git a/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml b/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
+index b11d9873854a..405c6b0b88c0 100644
+--- a/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
++++ b/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
+@@ -19,11 +19,11 @@ properties:
      const: 0
-diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-index 5c7d2cbc4aac..b6b402f16161 100644
---- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-+++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-@@ -2,8 +2,8 @@
- # Copyright 2019 Texas Instruments Incorporated
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/display/ti/ti,am65x-dss.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/ti/ti,am65x-dss.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Texas Instruments AM65x Display Subsystem
- 
-@@ -88,7 +88,7 @@ properties:
-           The DSS DPI output port node from video port 2
- 
-   ti,am65x-oldi-io-ctrl:
--    $ref: "/schemas/types.yaml#/definitions/phandle"
+   hisilicon,pericrg-syscon:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
 +    $ref: /schemas/types.yaml#/definitions/phandle
-     description:
-       phandle to syscon device node mapping OLDI IO_CTRL registers.
-       The mapped range should point to OLDI_DAT0_IO_CTRL, map it and
-diff --git a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-index 2986f9acc9f0..fad7cba58d39 100644
---- a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-+++ b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+     description: phandle of syscon used to control iso refclk.
+ 
+   hisilicon,pctrl-syscon:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: phandle of syscon used to control usb tcxo.
+ 
+   hisilicon,eye-diagram-param:
+diff --git a/Documentation/devicetree/bindings/phy/hisilicon,hi3670-usb3.yaml b/Documentation/devicetree/bindings/phy/hisilicon,hi3670-usb3.yaml
+index 3c69aca6c7eb..a1a8a84dfc54 100644
+--- a/Documentation/devicetree/bindings/phy/hisilicon,hi3670-usb3.yaml
++++ b/Documentation/devicetree/bindings/phy/hisilicon,hi3670-usb3.yaml
+@@ -20,15 +20,15 @@ properties:
+     const: 0
+ 
+   hisilicon,pericrg-syscon:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: phandle of syscon used to control iso refclk.
+ 
+   hisilicon,pctrl-syscon:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: phandle of syscon used to control usb tcxo.
+ 
+   hisilicon,sctrl-syscon:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: phandle of syscon used to control phy deep sleep.
+ 
+   hisilicon,eye-diagram-param:
+diff --git a/Documentation/devicetree/bindings/phy/marvell,armada-3700-utmi-phy.yaml b/Documentation/devicetree/bindings/phy/marvell,armada-3700-utmi-phy.yaml
+index 632d61c07f40..3aa1a46796dd 100644
+--- a/Documentation/devicetree/bindings/phy/marvell,armada-3700-utmi-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/marvell,armada-3700-utmi-phy.yaml
 @@ -2,8 +2,8 @@
- # Copyright 2019 Texas Instruments Incorporated
+ 
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/ti/ti,j721e-dss.yaml#"
+-$id: "http://devicetree.org/schemas/phy/marvell,armada-3700-utmi-phy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/ti/ti,j721e-dss.yaml#
++$id: http://devicetree.org/schemas/phy/marvell,armada-3700-utmi-phy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Texas Instruments J721E Display Subsystem
+ title: Marvell Armada UTMI/UTMI+ PHY
  
-diff --git a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-index 7ce7bbad5780..96b1439f88e3 100644
---- a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-+++ b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+diff --git a/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml b/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml
+index 43416c216190..9ce7b4c6d208 100644
+--- a/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml
 @@ -2,8 +2,8 @@
- # Copyright 2019 Texas Instruments Incorporated
+ 
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/ti/ti,k2g-dss.yaml#"
+-$id: "http://devicetree.org/schemas/phy/marvell,armada-cp110-utmi-phy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/ti/ti,k2g-dss.yaml#
++$id: http://devicetree.org/schemas/phy/marvell,armada-cp110-utmi-phy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Texas Instruments K2G Display Subsystem
+ title: Marvell Armada CP110/CP115 UTMI PHY
  
-diff --git a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
-index fc02c5d50ce4..76b804b7c880 100644
---- a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
-+++ b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+diff --git a/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml b/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
+index ff255aa4cc10..bd3bd2f8b1cd 100644
+--- a/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
 @@ -2,8 +2,8 @@
- # Copyright 2019 Bootlin
+ # Copyright 2019 Lubomir Rintel <lkundrak@v3.sk>
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/display/xylon,logicvc-display.yaml#"
+-$id: "http://devicetree.org/schemas/phy/marvell,mmp3-hsic-phy.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/display/xylon,logicvc-display.yaml#
++$id: http://devicetree.org/schemas/phy/marvell,mmp3-hsic-phy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Xylon LogiCVC display controller
+ title: Marvell MMP3 HSIC PHY
  
-@@ -89,25 +89,25 @@ properties:
-     description: Display output colorspace (C_DISPLAY_COLOR_SPACE).
+diff --git a/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml b/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
+index c2f4cb0b254a..b35c4d256e40 100644
+--- a/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/mediatek,mt7621-pci-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/mediatek,mt7621-pci-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-   xylon,display-depth:
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     description: Display output depth (C_PIXEL_DATA_WIDTH).
+ title: Mediatek Mt7621 PCIe PHY
  
-   xylon,row-stride:
--    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     description: Fixed number of pixels in a framebuffer row (C_ROW_STRIDE).
+diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
+index 6a09472740ed..c3d1fa102798 100644
+--- a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
++++ b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/phy-cadence-sierra.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/phy-cadence-sierra.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-   xylon,dithering:
--    $ref: "/schemas/types.yaml#/definitions/flag"
-+    $ref: /schemas/types.yaml#/definitions/flag
-     description: Dithering module is enabled (C_XCOLOR)
+ title: Cadence Sierra PHY
  
-   xylon,background-layer:
--    $ref: "/schemas/types.yaml#/definitions/flag"
-+    $ref: /schemas/types.yaml#/definitions/flag
-     description: |
-       The last layer is used to display a black background (C_USE_BACKGROUND).
-       The layer must still be registered.
+diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+index 2ad1faadda2a..dc92be05fe5f 100644
+--- a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
++++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/phy-cadence-torrent.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/phy-cadence-torrent.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-   xylon,layers-configurable:
--    $ref: "/schemas/types.yaml#/definitions/flag"
-+    $ref: /schemas/types.yaml#/definitions/flag
-     description: |
-       Configuration of layers' size, position and offset is enabled
-       (C_USE_SIZE_POSITION).
-@@ -131,7 +131,7 @@ properties:
-             maxItems: 1
+ title: Cadence Torrent SD0801 PHY
  
-           xylon,layer-depth:
--            $ref: "/schemas/types.yaml#/definitions/uint32"
-+            $ref: /schemas/types.yaml#/definitions/uint32
-             description: Layer depth (C_LAYER_X_DATA_WIDTH).
+diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
+index 445b2467f4f6..4790c6238a40 100644
+--- a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
++++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/phy-tegra194-p2u.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/phy-tegra194-p2u.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-           xylon,layer-colorspace:
-@@ -151,19 +151,19 @@ properties:
-             description: Alpha mode for the layer (C_LAYER_X_ALPHA_MODE).
+ title: NVIDIA Tegra194 & Tegra234 P2U
  
-           xylon,layer-base-offset:
--            $ref: "/schemas/types.yaml#/definitions/uint32"
-+            $ref: /schemas/types.yaml#/definitions/uint32
-             description: |
-               Offset in number of lines (C_LAYER_X_OFFSET) starting from the
-               video RAM base (C_VMEM_BASEADDR), only for version 3.
+diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+index 1e104ae76ee6..c4f8e6ffa5c3 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+@@ -2,8 +2,8 @@
  
-           xylon,layer-buffer-offset:
--            $ref: "/schemas/types.yaml#/definitions/uint32"
-+            $ref: /schemas/types.yaml#/definitions/uint32
-             description: |
-               Offset in number of lines (C_BUFFER_*_OFFSET) starting from the
-               layer base offset for the second buffer used in double-buffering.
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-           xylon,layer-primary:
--            $ref: "/schemas/types.yaml#/definitions/flag"
-+            $ref: /schemas/types.yaml#/definitions/flag
-             description: |
-               Layer should be registered as a primary plane (exactly one is
-               required).
+ title: Qualcomm eDP PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+index 7f403e77f320..543c1a2811a5 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+@@ -2,8 +2,8 @@
+ 
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm QUSB2 phy controller
+ 
+diff --git a/Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml b/Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
+index ca6a0836b53c..6c99e02b2b4f 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,usb-hs-28nm.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/qcom,usb-hs-28nm.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/qcom,usb-hs-28nm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm Synopsys DesignWare Core 28nm High-Speed PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml b/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml
+index 85d405e028b9..a26524b7e7b7 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm Synopsys Femto High-Speed USB PHY V2
+ 
+diff --git a/Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml b/Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml
+index bd1388d62ce0..6e4254ff1cd7 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,usb-ss.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/qcom,usb-ss.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/qcom,usb-ss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm Synopsys 1.0.0 SuperSpeed USB PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml b/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
+index 3e7191b168fb..09c614952fea 100644
+--- a/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/qcom-usb-ipq4019-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/qcom-usb-ipq4019-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcom IPQ40xx Dakota HS/SS USB PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+index 28e299a9609d..41df8bb08ff7 100644
+--- a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+@@ -21,12 +21,12 @@ properties:
+     maxItems: 1
+ 
+   samsung,pmu-syscon:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: phandle for PMU system controller interface, used to
+                  control PMU registers bits for PCIe PHY
+ 
+   samsung,fsys-sysreg:
+-    $ref: '/schemas/types.yaml#/definitions/phandle'
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description: phandle for FSYS sysreg interface, used to control
+                  sysreg registers bits for PCIe PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+index c5dbb91ac402..782f975b43ae 100644
+--- a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+@@ -35,7 +35,7 @@ properties:
+     maxItems: 4
+ 
+   samsung,pmu-syscon:
+-    $ref: '/schemas/types.yaml#/definitions/phandle-array'
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     maxItems: 1
+     items:
+       minItems: 1
+diff --git a/Documentation/devicetree/bindings/phy/sunplus,sp7021-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/sunplus,sp7021-usb2-phy.yaml
+index 069d422775bb..57914f214e06 100644
+--- a/Documentation/devicetree/bindings/phy/sunplus,sp7021-usb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/sunplus,sp7021-usb2-phy.yaml
+@@ -2,8 +2,8 @@
+ # Copyright (C) Sunplus Co., Ltd. 2021
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/sunplus,sp7021-usb2-phy.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/sunplus,sp7021-usb2-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Sunplus SP7021 USB 2.0 PHY Controller
+ 
+diff --git a/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.yaml b/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.yaml
+index 738c92bb7518..2a886b91bf2d 100644
+--- a/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.yaml
++++ b/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.yaml
+@@ -35,9 +35,9 @@ properties:
+       clock.
+ 
+   assigned-clocks:
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+   assigned-clock-parents:
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+ 
+   '#phy-cells':
+     const: 2
+diff --git a/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml b/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
+index 6d46f57fa1b4..3699a06bdf6e 100644
+--- a/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
++++ b/Documentation/devicetree/bindings/phy/ti,phy-gmii-sel.yaml
+@@ -2,8 +2,8 @@
+ # Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/ti,phy-gmii-sel.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/ti,phy-gmii-sel.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: CPSW Port's Interface Mode Selection PHY
+ 
+diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+index c54b36c104ab..a55fc0f24533 100644
+--- a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
++++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+@@ -2,8 +2,8 @@
+ # Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/ti,phy-j721e-wiz.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/ti,phy-j721e-wiz.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: TI J721E WIZ (SERDES Wrapper)
+ 
+diff --git a/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml b/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
+index 237295b2b5a8..79dad3e89aa6 100644
+--- a/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
++++ b/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/phy/ti,tcan104x-can.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/phy/ti,tcan104x-can.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: TCAN104x CAN TRANSCEIVER PHY
+ 
 -- 
 2.39.2
 
