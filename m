@@ -2,141 +2,706 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32571C6FD1C
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 22:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD339C7618D
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 23:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbjCTWEH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:04:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51956 "EHLO
+        id S229771AbjCTXla (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 19:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjCTWEG (ORCPT
+        with ESMTP id S229598AbjCTXl3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 18:04:06 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E7C46A1;
-        Mon, 20 Mar 2023 15:04:04 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id w11so7404729wmo.2;
-        Mon, 20 Mar 2023 15:04:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679349842;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6B/G/Avv34zlBUdW5xblvGC436YdVz0pbsXhfWqrqU8=;
-        b=R7rSSr2FRoVkJHqqUVUC7gqjXpOI3vhWu03zsM8/4mhFwQvJCoTuNzcoqujnqHX1b7
-         oYuX3TmfE1ZY/6ZcRGbPa63/jfsgrYs6AJz0fJKy36rY/bbrTxUU8of/ijlfvRrIPsyW
-         +AgUZHEXSNpDevHU8tYcYauyPu3r/ef2Bjau/D2BeS3HD9QvHqt90BZxn1kT6tOOH4R1
-         GwUTOtg6K6zWyWDiuBZ1qYIl6TILByC/fx/i9+VuJD5IMPCx/hyv5ko7MmGeYWkDI28T
-         Zpd/TuGyotf6S65hhBHoHFRAHf4QS7DUaDDqZ8EIoKdfqaIIgF1b8n1rmynHHusNhJGb
-         a5UA==
+        Mon, 20 Mar 2023 19:41:29 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1998716318;
+        Mon, 20 Mar 2023 16:40:35 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-17ac5ee3f9cso14634456fac.12;
+        Mon, 20 Mar 2023 16:40:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679349842;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6B/G/Avv34zlBUdW5xblvGC436YdVz0pbsXhfWqrqU8=;
-        b=lsGsnYUvRGkJqVtp9xka6CiHdEX2Bk6z6P4SvhjJNbgO/TBuBG8gKCROrs0QDtJZeX
-         00V4wB/ZC3RdIazV9gkYlm30DDtcDVL1+X+S7DBNeryax1FojdGAv1NOmHq2yCgwQWO6
-         rdUUBJZSKxiX4pkDYk/pSx6cP5Q7PuBfW2gwwMvk4K1kUU72b9T6ctVyb1FG1yP7cOPe
-         O3okgzg5rxuy/+YKkS/06oGvBTzJaDdOSTBTBPHE7YRhUvYvkWOqNgK98FZYDDa2lYLZ
-         fnXPUKzp7kzgvFwmDSndogm3puQiPjry5fGomqwDl2k6JzOPVe2rAdowQ5zDn1r3l+TS
-         CTTA==
-X-Gm-Message-State: AO0yUKVFKeflOQUHryz8CBkua3g5/opxsvWaa4510Xltib3dNnvPsQI5
-        j9kpKS/4+uGPuubwfBw8OXo=
-X-Google-Smtp-Source: AK7set9F28VitLawp5ROjm4DDQ9bWgz5jpu+qXB8gL8+1WwYNxxJPpgQjH6na2EKKQhcywed5Dwnnw==
-X-Received: by 2002:a1c:4c1a:0:b0:3ed:95a5:3257 with SMTP id z26-20020a1c4c1a000000b003ed95a53257mr800158wmf.2.1679349842541;
-        Mon, 20 Mar 2023 15:04:02 -0700 (PDT)
-Received: from PCBABN.skidata.net ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id bg5-20020a05600c3c8500b003e7f1086660sm17868386wmb.15.2023.03.20.15.04.01
+        d=1e100.net; s=20210112; t=1679355513;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WTjElMD2e38UsgsTs97igwD/ZfRZyIeExtZdYYvY0Bg=;
+        b=tuEANuSON0TK8CtCuSGwIK/ZPaX7WclgJLMuL6LaVCeB0RZnW6mtIh+hW1Fom37jys
+         LLenkZ9s+RPZOw07wwlmF8EopUbxFihYCLoA4mrB3v/byoWQ4/5rmMheBC7PEtMsEFbe
+         FS1YTBviqu0LWnHiWR+N/6MWWKYj867KlTwal8f/xc7k6FEngj0CIThEYxZFb4jpCdTu
+         vwP3d1P3qgd2HcFWReh7+0isWcfQ89uMJa3jrZxGVoPXajoSaeb7k5Msys3HUY3IEkXm
+         PTR6IgygUbsAQPGM7bDng5mcfylsyW3Xtu2mpeERLYoMVyTycyibBU8fqmkUVjxwE2k8
+         2ZXQ==
+X-Gm-Message-State: AO0yUKWzzTHYoI/eu6qxAHdBt3JX+Pmk5EUsHUyJt1Ja+oy24HxHf0wU
+        1SvGJ/jWrxgX9WxyWS9od4hWyZIflA==
+X-Google-Smtp-Source: AK7set+hHdPoFGWzZ5ptnA09Ix+Hy815lPMvG22c3graSik823dt7vi0hqhv7XA1SsJzcgYAnv6ZpQ==
+X-Received: by 2002:a05:6870:8325:b0:177:a8a8:657 with SMTP id p37-20020a056870832500b00177a8a80657mr116991oae.10.1679355513269;
+        Mon, 20 Mar 2023 16:38:33 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id vl9-20020a0568710e8900b0017ad7a5f57dsm3785814oab.11.2023.03.20.16.38.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 15:04:02 -0700 (PDT)
-From:   Benjamin Bara <bbara93@gmail.com>
-To:     lee@kernel.org
-Cc:     dmitry.osipenko@collabora.com, jonathanh@nvidia.com,
-        treding@nvidia.com, richard.leitner@linux.dev,
-        benjamin.bara@skidata.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mfd: tps6586x: register restart handler
-Date:   Mon, 20 Mar 2023 23:03:45 +0100
-Message-Id: <20230320220345.1463687-3-bbara93@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230320220345.1463687-1-bbara93@gmail.com>
-References: <20230320220345.1463687-1-bbara93@gmail.com>
+        Mon, 20 Mar 2023 16:38:32 -0700 (PDT)
+Received: (nullmailer pid 2919676 invoked by uid 1000);
+        Mon, 20 Mar 2023 23:38:31 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Robin van der Gracht <robin@protonic.nl>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: display: Drop unneeded quotes
+Date:   Mon, 20 Mar 2023 18:38:21 -0500
+Message-Id: <20230320233823.2919475-1-robh@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Benjamin Bara <benjamin.bara@skidata.com>
+Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+checking for this can be enabled in yamllint.
 
-The TPS658629-Q1 (unfortunately the only TPS6586x with public data sheet)
-provides a SOFT RST bit in the SUPPLYENE reg to request a (cold) reboot.
-
-Use it to implement and register a restart handler.
-
-Tested on a TPS658640.
-
-Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/mfd/tps6586x.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+v2:
+ - Also drop quotes on URLs
+---
+ .../bindings/auxdisplay/holtek,ht16k33.yaml   |  2 +-
+ .../display/amlogic,meson-dw-hdmi.yaml        |  4 ++--
+ .../bindings/display/amlogic,meson-vpu.yaml   |  4 ++--
+ .../display/bridge/analogix,anx7625.yaml      |  4 ++--
+ .../display/bridge/cdns,mhdp8546.yaml         |  4 ++--
+ .../bindings/display/bridge/nxp,ptn3460.yaml  |  2 +-
+ .../display/bridge/toshiba,tc358767.yaml      |  2 +-
+ .../bindings/display/dp-aux-bus.yaml          |  2 +-
+ .../bindings/display/imx/nxp,imx8mq-dcss.yaml |  4 ++--
+ .../display/mediatek/mediatek,hdmi.yaml       |  2 +-
+ .../display/msm/dsi-controller-main.yaml      |  8 +++----
+ .../bindings/display/msm/dsi-phy-10nm.yaml    |  2 +-
+ .../devicetree/bindings/display/msm/gmu.yaml  |  4 ++--
+ .../devicetree/bindings/display/msm/gpu.yaml  |  4 ++--
+ .../devicetree/bindings/display/msm/mdp4.yaml |  4 ++--
+ .../display/panel/ronbo,rb070d30.yaml         |  2 +-
+ .../bindings/display/renesas,du.yaml          |  4 ++--
+ .../display/tegra/nvidia,tegra114-mipi.yaml   |  2 +-
+ .../display/tegra/nvidia,tegra124-sor.yaml    | 12 +++++-----
+ .../display/tegra/nvidia,tegra186-dc.yaml     |  4 ++--
+ .../tegra/nvidia,tegra186-dsi-padctl.yaml     |  2 +-
+ .../display/tegra/nvidia,tegra20-dsi.yaml     | 12 +++++-----
+ .../display/tegra/nvidia,tegra20-hdmi.yaml    |  6 ++---
+ .../bindings/display/ti/ti,am65x-dss.yaml     |  6 ++---
+ .../bindings/display/ti/ti,j721e-dss.yaml     |  4 ++--
+ .../bindings/display/ti/ti,k2g-dss.yaml       |  4 ++--
+ .../display/xylon,logicvc-display.yaml        | 22 +++++++++----------
+ 27 files changed, 66 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index 4869155437cb..b46917231847 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -15,6 +15,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/irqdomain.h>
-+#include <linux/irqflags.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-@@ -30,6 +31,7 @@
- #include <linux/mfd/tps6586x.h>
+diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+index fc4873deb76f..4f6ffb8182a9 100644
+--- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
++++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Robin van der Gracht <robin@protonic.nl>
  
- #define TPS6586X_SUPPLYENE	0x14
-+#define SOFT_RST_BIT		BIT(0)
- #define EXITSLREQ_BIT		BIT(1)
- #define SLEEP_MODE_BIT		BIT(3)
+ allOf:
+-  - $ref: "/schemas/input/matrix-keymap.yaml#"
++  - $ref: /schemas/input/matrix-keymap.yaml#
  
-@@ -470,6 +472,20 @@ static int tps6586x_power_off_handler(struct sys_off_data *data)
- 	return tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
- }
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
+index 74cefdf1b843..0c85894648d8 100644
+--- a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 BayLibre, SAS
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/amlogic,meson-dw-hdmi.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/amlogic,meson-dw-hdmi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
-+static int tps6586x_restart_handler(struct sys_off_data *data)
-+{
-+	unsigned long flags;
-+	struct device *tps6586x_dev = (struct device *)data->cb_data;
-+
-+	/* bring pmic into HARD REBOOT state, enforce atomic i2c xfer */
-+	local_irq_save(flags);
-+	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SOFT_RST_BIT);
-+	local_irq_restore(flags);
-+
-+	mdelay(500);
-+	return 0;
-+}
-+
- static void tps6586x_print_version(struct i2c_client *client, int version)
- {
- 	const char *name;
-@@ -570,6 +586,13 @@ static int tps6586x_i2c_probe(struct i2c_client *client)
- 			dev_err(&client->dev, "register power off handler failed: %d\n", ret);
- 			goto err_add_devs;
- 		}
-+
-+		ret = devm_register_restart_handler(&client->dev, &tps6586x_restart_handler,
-+						    &client->dev);
-+		if (ret) {
-+			dev_err(&client->dev, "register restart handler failed: %d\n", ret);
-+			goto err_add_devs;
-+		}
- 	}
+ title: Amlogic specific extensions to the Synopsys Designware HDMI Controller
  
- 	return 0;
+diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
+index 6655a93b1874..0c72120acc4f 100644
+--- a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
++++ b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 BayLibre, SAS
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/amlogic,meson-vpu.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/amlogic,meson-vpu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Amlogic Meson Display Controller
+ 
+diff --git a/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml b/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml
+index 4590186c4a0b..b42553ac505c 100644
+--- a/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 Analogix Semiconductor, Inc.
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/bridge/analogix,anx7625.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Analogix ANX7625 SlimPort (4K Mobile HD Transmitter)
+ 
+diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+index b2e8bc6da9d0..c2b369456e4e 100644
+--- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/bridge/cdns,mhdp8546.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/bridge/cdns,mhdp8546.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Cadence MHDP8546 bridge
+ 
+diff --git a/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml b/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
+index 107dd138e6c6..cdeb67bc05f0 100644
+--- a/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/nxp,ptn3460.yaml
+@@ -18,7 +18,7 @@ properties:
+     maxItems: 1
+ 
+   edid-emulation:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description:
+       The EDID emulation entry to use
+       Value  Resolution  Description
+diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
+index 140927884418..e1494b5007cb 100644
+--- a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358767.yaml
+@@ -23,7 +23,7 @@ properties:
+         i2c address of the bridge, 0x68 or 0x0f, depending on bootstrap pins
+ 
+   clock-names:
+-    const: "ref"
++    const: ref
+ 
+   clocks:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/dp-aux-bus.yaml b/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
+index 5e4afe9f98fb..0ece7b01790b 100644
+--- a/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
++++ b/Documentation/devicetree/bindings/display/dp-aux-bus.yaml
+@@ -26,7 +26,7 @@ description:
+ 
+ properties:
+   $nodename:
+-    const: "aux-bus"
++    const: aux-bus
+ 
+   panel:
+     $ref: panel/panel-common.yaml#
+diff --git a/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml b/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+index 989ab312c1f4..4ae6328cde64 100644
+--- a/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
++++ b/Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 NXP
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/imx/nxp,imx8mq-dcss.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/imx/nxp,imx8mq-dcss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: iMX8MQ Display Controller Subsystem (DCSS)
+ 
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+index 8afdd67d6780..b90b6d18a828 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.yaml
+@@ -50,7 +50,7 @@ properties:
+       - const: hdmi
+ 
+   mediatek,syscon-hdmi:
+-    $ref: '/schemas/types.yaml#/definitions/phandle-array'
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+       - items:
+           - description: phandle to system configuration registers
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+index e75a3efe4dac..2188d7c9b0bb 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+@@ -74,7 +74,7 @@ properties:
+ 
+   syscon-sfpb:
+     description: A phandle to mmss_sfpb syscon node (only for DSIv2).
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   qcom,dual-dsi-mode:
+     type: boolean
+@@ -105,14 +105,14 @@ properties:
+     type: object
+ 
+   ports:
+-    $ref: "/schemas/graph.yaml#/properties/ports"
++    $ref: /schemas/graph.yaml#/properties/ports
+     description: |
+       Contains DSI controller input and output ports as children, each
+       containing one endpoint subnode.
+ 
+     properties:
+       port@0:
+-        $ref: "/schemas/graph.yaml#/$defs/port-base"
++        $ref: /schemas/graph.yaml#/$defs/port-base
+         unevaluatedProperties: false
+         description: |
+           Input endpoints of the controller.
+@@ -128,7 +128,7 @@ properties:
+                   enum: [ 0, 1, 2, 3 ]
+ 
+       port@1:
+-        $ref: "/schemas/graph.yaml#/$defs/port-base"
++        $ref: /schemas/graph.yaml#/$defs/port-base
+         unevaluatedProperties: false
+         description: |
+           Output endpoints of the controller.
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
+index 3ec466c3ab38..e6b00d7387ce 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
+@@ -58,7 +58,7 @@ properties:
+       maximum: 31
+ 
+   qcom,phy-drive-ldo-level:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description:
+       The PHY LDO has an amplitude tuning feature to adjust the LDO output
+       for the HSTX drive. Use supported levels (mV) to offset the drive level
+diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+index ab14e81cb050..029d72822d8b 100644
+--- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
++++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+@@ -3,8 +3,8 @@
+ %YAML 1.2
+ ---
+ 
+-$id: "http://devicetree.org/schemas/display/msm/gmu.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/msm/gmu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: GMU attached to certain Adreno GPUs
+ 
+diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+index d4191cca71fb..5dabe7b6794b 100644
+--- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
++++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+@@ -2,8 +2,8 @@
+ %YAML 1.2
+ ---
+ 
+-$id: "http://devicetree.org/schemas/display/msm/gpu.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/msm/gpu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Adreno or Snapdragon GPUs
+ 
+diff --git a/Documentation/devicetree/bindings/display/msm/mdp4.yaml b/Documentation/devicetree/bindings/display/msm/mdp4.yaml
+index 58c13f5277b6..35204a287579 100644
+--- a/Documentation/devicetree/bindings/display/msm/mdp4.yaml
++++ b/Documentation/devicetree/bindings/display/msm/mdp4.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/msm/mdp4.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/msm/mdp4.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm Adreno/Snapdragon MDP4 display controller
+ 
+diff --git a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
+index d67617f6f74a..95ce22c6787a 100644
+--- a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
++++ b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
+@@ -37,7 +37,7 @@ properties:
+ 
+   backlight:
+     description: Backlight used by the panel
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
+index d4830f52c512..c5b9e6812bce 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.yaml
++++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
+@@ -76,7 +76,7 @@ properties:
+     unevaluatedProperties: false
+ 
+   renesas,cmms:
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+       maxItems: 1
+     description:
+@@ -84,7 +84,7 @@ properties:
+       available DU channel.
+ 
+   renesas,vsps:
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+       items:
+         - description: phandle to VSP instance that serves the DU channel
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
+index d5ca8cf86e8e..f448624dd779 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
+@@ -38,7 +38,7 @@ properties:
+     description: The number of cells in a MIPI calibration specifier.
+       Should be 1. The single cell specifies a bitmask of the pads that
+       need to be calibrated for a given device.
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     const: 1
+ 
+ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
+index 907fb0baccae..70f0e45c71d6 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
+@@ -69,12 +69,12 @@ properties:
+   # Tegra186 and later
+   nvidia,interface:
+     description: index of the SOR interface
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+ 
+   nvidia,ddc-i2c-bus:
+     description: phandle of an I2C controller used for DDC EDID
+       probing
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,hpd-gpio:
+     description: specifies a GPIO used for hotplug detection
+@@ -82,23 +82,23 @@ properties:
+ 
+   nvidia,edid:
+     description: supplies a binary EDID blob
+-    $ref: "/schemas/types.yaml#/definitions/uint8-array"
++    $ref: /schemas/types.yaml#/definitions/uint8-array
+ 
+   nvidia,panel:
+     description: phandle of a display panel, required for eDP
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,xbar-cfg:
+     description: 5 cells containing the crossbar configuration.
+       Each lane of the SOR, identified by the cell's index, is
+       mapped via the crossbar to the pad specified by the cell's
+       value.
+-    $ref: "/schemas/types.yaml#/definitions/uint32-array"
++    $ref: /schemas/types.yaml#/definitions/uint32-array
+ 
+   # optional when driving an eDP output
+   nvidia,dpaux:
+     description: phandle to a DispayPort AUX interface
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+ allOf:
+   - if:
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
+index 265a60d79d89..ce4589466a18 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
+@@ -60,13 +60,13 @@ properties:
+   nvidia,outputs:
+     description: A list of phandles of outputs that this display
+       controller can drive.
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+ 
+   nvidia,head:
+     description: The number of the display controller head. This
+       is used to setup the various types of output to receive
+       video data from the given head.
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
+index e5a6145c8c53..da75b71e8ece 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
+@@ -29,7 +29,7 @@ properties:
+       - const: dsi
+ 
+ allOf:
+-  - $ref: "/schemas/reset/reset.yaml"
++  - $ref: /schemas/reset/reset.yaml
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
+index 511cbe74e729..59e1dc0813e7 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
+@@ -59,12 +59,12 @@ properties:
+     description: Should contain a phandle and a specifier specifying
+       which pads are used by this DSI output and need to be
+       calibrated. See nvidia,tegra114-mipi.yaml for details.
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
++    $ref: /schemas/types.yaml#/definitions/phandle-array
+ 
+   nvidia,ddc-i2c-bus:
+     description: phandle of an I2C controller used for DDC EDID
+       probing
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,hpd-gpio:
+     description: specifies a GPIO used for hotplug detection
+@@ -72,19 +72,19 @@ properties:
+ 
+   nvidia,edid:
+     description: supplies a binary EDID blob
+-    $ref: "/schemas/types.yaml#/definitions/uint8-array"
++    $ref: /schemas/types.yaml#/definitions/uint8-array
+ 
+   nvidia,panel:
+     description: phandle of a display panel
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,ganged-mode:
+     description: contains a phandle to a second DSI controller to
+       gang up with in order to support up to 8 data lanes
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+ allOf:
+-  - $ref: "../dsi-controller.yaml#"
++  - $ref: ../dsi-controller.yaml#
+   - if:
+       properties:
+         compatible:
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
+index f65e59cfffa7..f77197e4869f 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
+@@ -68,7 +68,7 @@ properties:
+   nvidia,ddc-i2c-bus:
+     description: phandle of an I2C controller used for DDC EDID
+       probing
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   nvidia,hpd-gpio:
+     description: specifies a GPIO used for hotplug detection
+@@ -76,11 +76,11 @@ properties:
+ 
+   nvidia,edid:
+     description: supplies a binary EDID blob
+-    $ref: "/schemas/types.yaml#/definitions/uint8-array"
++    $ref: /schemas/types.yaml#/definitions/uint8-array
+ 
+   nvidia,panel:
+     description: phandle of a display panel
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+ 
+   "#sound-dai-cells":
+     const: 0
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+index 5c7d2cbc4aac..b6b402f16161 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 Texas Instruments Incorporated
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/ti/ti,am65x-dss.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/ti/ti,am65x-dss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Texas Instruments AM65x Display Subsystem
+ 
+@@ -88,7 +88,7 @@ properties:
+           The DSS DPI output port node from video port 2
+ 
+   ti,am65x-oldi-io-ctrl:
+-    $ref: "/schemas/types.yaml#/definitions/phandle"
++    $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       phandle to syscon device node mapping OLDI IO_CTRL registers.
+       The mapped range should point to OLDI_DAT0_IO_CTRL, map it and
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+index 2986f9acc9f0..fad7cba58d39 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 Texas Instruments Incorporated
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/ti/ti,j721e-dss.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/ti/ti,j721e-dss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Texas Instruments J721E Display Subsystem
+ 
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+index 7ce7bbad5780..96b1439f88e3 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 Texas Instruments Incorporated
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/ti/ti,k2g-dss.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/ti/ti,k2g-dss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Texas Instruments K2G Display Subsystem
+ 
+diff --git a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+index fc02c5d50ce4..76b804b7c880 100644
+--- a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
++++ b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2019 Bootlin
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/display/xylon,logicvc-display.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/display/xylon,logicvc-display.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Xylon LogiCVC display controller
+ 
+@@ -89,25 +89,25 @@ properties:
+     description: Display output colorspace (C_DISPLAY_COLOR_SPACE).
+ 
+   xylon,display-depth:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description: Display output depth (C_PIXEL_DATA_WIDTH).
+ 
+   xylon,row-stride:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description: Fixed number of pixels in a framebuffer row (C_ROW_STRIDE).
+ 
+   xylon,dithering:
+-    $ref: "/schemas/types.yaml#/definitions/flag"
++    $ref: /schemas/types.yaml#/definitions/flag
+     description: Dithering module is enabled (C_XCOLOR)
+ 
+   xylon,background-layer:
+-    $ref: "/schemas/types.yaml#/definitions/flag"
++    $ref: /schemas/types.yaml#/definitions/flag
+     description: |
+       The last layer is used to display a black background (C_USE_BACKGROUND).
+       The layer must still be registered.
+ 
+   xylon,layers-configurable:
+-    $ref: "/schemas/types.yaml#/definitions/flag"
++    $ref: /schemas/types.yaml#/definitions/flag
+     description: |
+       Configuration of layers' size, position and offset is enabled
+       (C_USE_SIZE_POSITION).
+@@ -131,7 +131,7 @@ properties:
+             maxItems: 1
+ 
+           xylon,layer-depth:
+-            $ref: "/schemas/types.yaml#/definitions/uint32"
++            $ref: /schemas/types.yaml#/definitions/uint32
+             description: Layer depth (C_LAYER_X_DATA_WIDTH).
+ 
+           xylon,layer-colorspace:
+@@ -151,19 +151,19 @@ properties:
+             description: Alpha mode for the layer (C_LAYER_X_ALPHA_MODE).
+ 
+           xylon,layer-base-offset:
+-            $ref: "/schemas/types.yaml#/definitions/uint32"
++            $ref: /schemas/types.yaml#/definitions/uint32
+             description: |
+               Offset in number of lines (C_LAYER_X_OFFSET) starting from the
+               video RAM base (C_VMEM_BASEADDR), only for version 3.
+ 
+           xylon,layer-buffer-offset:
+-            $ref: "/schemas/types.yaml#/definitions/uint32"
++            $ref: /schemas/types.yaml#/definitions/uint32
+             description: |
+               Offset in number of lines (C_BUFFER_*_OFFSET) starting from the
+               layer base offset for the second buffer used in double-buffering.
+ 
+           xylon,layer-primary:
+-            $ref: "/schemas/types.yaml#/definitions/flag"
++            $ref: /schemas/types.yaml#/definitions/flag
+             description: |
+               Layer should be registered as a primary plane (exactly one is
+               required).
 -- 
-2.34.1
+2.39.2
 
