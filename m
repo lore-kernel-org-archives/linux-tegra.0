@@ -2,116 +2,96 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51DA4C7618A
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 08:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3370DC6FD1D
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 08:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229776AbjCTIKE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 04:10:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53608 "EHLO
+        id S230217AbjCTIod (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 04:44:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbjCTIKD (ORCPT
+        with ESMTP id S229892AbjCTIoc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 04:10:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26525BB8E;
-        Mon, 20 Mar 2023 01:10:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B514361265;
-        Mon, 20 Mar 2023 08:10:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA8C9C4339C;
-        Mon, 20 Mar 2023 08:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1679299800;
-        bh=UpyOnbmz84P/0j1392CDgxerKpDK7NnKKNJvKX27NIM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N9d8qt3EgAKEeQxrvjJZHsgkoKw58zCiciKWvivUs4y7houYJJT1O15v2y7LRcSaM
-         o+1nRgmuRJ+lfPuAzlEurX90LGIUME88kIvZVKoclR2lGGOVfL+w2NZWAfC3r1/1o0
-         yqKs3dxQTAAkl5kpRbsL5b2pQcs8bPgc0ote8GGE=
-Date:   Mon, 20 Mar 2023 09:09:52 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Haotien Hsu <haotienh@nvidia.com>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, JC Kuo <jckuo@nvidia.com>,
-        Wayne Chang <waynec@nvidia.com>
-Subject: Re: [PATCH] usb: xhci: tegra: fix sleep in atomic call
-Message-ID: <ZBgU0GtLAVdaBQQ1@kroah.com>
-References: <20230320074028.186282-1-haotienh@nvidia.com>
+        Mon, 20 Mar 2023 04:44:32 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFBC12CFB;
+        Mon, 20 Mar 2023 01:44:29 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id lr16-20020a17090b4b9000b0023f187954acso11588157pjb.2;
+        Mon, 20 Mar 2023 01:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679301869;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gs8rcm/d7d5rUf8zE5Zuo/A8IdhoZtRoqNxyEktI7DU=;
+        b=D1Zmcz+v1MK/aSof4oDyzd7q1lx9K9HTk27r+LV6Lh1C3y/VPTkYrWUQMA/OMPpcKU
+         we08QnxWPTFCyvkjbDwhE3gvfDeg2Jn0RzBP4V+/2fH0eNEg36YInV9OONtM4o6Dh3x5
+         qXABGpInu9pkf6OBcanjeGCD6sMY50g9QkfUk2RT3Igek5ixe3O75VESxkXnrq00JXyr
+         9Cs6qlykNDGCbrYqav6bfOyJ82b9huN0+x0ahdhTu3wnkJNC2whpCfZf6e0MOZHAtgBi
+         VO8GxL4tZ1h9YYEM6GnojpOykTBVhIcWmpVO+SHsjNgsnvFU+NBzkK4GWrBATqH6zCwk
+         gUzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679301869;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gs8rcm/d7d5rUf8zE5Zuo/A8IdhoZtRoqNxyEktI7DU=;
+        b=1lLd+yteqHnpR+xHSPKljGsQccn6Y25i26vsPHj53KteOqRqLc7fDgHfDHnwqt87dL
+         VzXJwCcIuQlBoPb2FIJtOC4IBFPtrobD2/n/q1R3L8S/MNneNs8cSQcKh4q8dswOpZeo
+         7ZT+0KA2grMHmPXh5NgV/ZbO3UL7bfrHpJ2yBQwda6rRIRTJZ5J0liB/fB5DGttNc9CM
+         fmXl7iTarIVWWWeJmjPSt7nu414QmAYpbK35PphlMevGsuzApyAfZBlaRs9PJgu6/r+j
+         d2HFGnXt8mz6Bx8PmCcfFxzKh20HzG+CaswZyNkR6Y+xf+FmE1aeD1J6PtzXEvLidP6Q
+         s5Lw==
+X-Gm-Message-State: AO0yUKU5JdludfT5ywBO3CxoNd77JBSKXpyvut057V+JI+rjUZantEDi
+        K1EzkRUKjU7s1FfvcILauRU=
+X-Google-Smtp-Source: AK7set/c7pstRRWuhurf3gUuxnXwtKb1375FG/fOeRr1dGCOpfdeRb7/xUqrWb2ye0HQRVT8Xbwv3w==
+X-Received: by 2002:a17:902:e742:b0:19f:7977:c9d6 with SMTP id p2-20020a170902e74200b0019f7977c9d6mr18905610plf.28.1679301869033;
+        Mon, 20 Mar 2023 01:44:29 -0700 (PDT)
+Received: from sumitra.com ([210.212.97.176])
+        by smtp.gmail.com with ESMTPSA id d4-20020a170902b70400b001a1c2eb3950sm2847455pls.22.2023.03.20.01.44.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Mar 2023 01:44:27 -0700 (PDT)
+Date:   Mon, 20 Mar 2023 01:44:22 -0700
+From:   Sumitra Sharma <sumitraartsy@gmail.com>
+To:     Dan Carpenter <error27@gmail.com>
+Cc:     Marc Dietrich <marvin24@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        outreachy@lists.linux.dev
+Subject: Re: [PATCH v2] Staging: nvec: Convert to_nvec_led from a macro to an
+ inline function
+Message-ID: <20230320084422.GA126429@sumitra.com>
+References: <20230318175250.GA49618@sumitra.com>
+ <417e944c-4653-43ef-b492-c82c536e4d87@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230320074028.186282-1-haotienh@nvidia.com>
+In-Reply-To: <417e944c-4653-43ef-b492-c82c536e4d87@kili.mountain>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 03:40:28PM +0800, Haotien Hsu wrote:
-> From: Wayne Chang <waynec@nvidia.com>
+On Mon, Mar 20, 2023 at 08:39:49AM +0300, Dan Carpenter wrote:
+> On Sat, Mar 18, 2023 at 10:52:50AM -0700, Sumitra Sharma wrote:
+> > Convert to_nvec_led from a macro to a static inline function, to make the
+> > relevant types apparent in the definition and to benefit from the type
+> > checking performed by the compiler at call sites.
+> > 
+> > Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
+> > ---
 > 
-> When we set the OTG port to Host mode, we observed the following splat:
-> [  167.057718] BUG: sleeping function called from invalid context at
-> include/linux/sched/mm.h:229
-> [  167.057872] Workqueue: events tegra_xusb_usb_phy_work
-> [  167.057954] Call trace:
-> [  167.057962]  dump_backtrace+0x0/0x210
-> [  167.057996]  show_stack+0x30/0x50
-> [  167.058020]  dump_stack_lvl+0x64/0x84
-> [  167.058065]  dump_stack+0x14/0x34
-> [  167.058100]  __might_resched+0x144/0x180
-> [  167.058140]  __might_sleep+0x64/0xd0
-> [  167.058171]  slab_pre_alloc_hook.constprop.0+0xa8/0x110
-> [  167.058202]  __kmalloc_track_caller+0x74/0x2b0
-> [  167.058233]  kvasprintf+0xa4/0x190
-> [  167.058261]  kasprintf+0x58/0x90
-> [  167.058285]  tegra_xusb_find_port_node.isra.0+0x58/0xd0
-> [  167.058334]  tegra_xusb_find_port+0x38/0xa0
-> [  167.058380]  tegra_xusb_padctl_get_usb3_companion+0x38/0xd0
-> [  167.058430]  tegra_xhci_id_notify+0x8c/0x1e0
-> [  167.058473]  notifier_call_chain+0x88/0x100
-> [  167.058506]  atomic_notifier_call_chain+0x44/0x70
-> [  167.058537]  tegra_xusb_usb_phy_work+0x60/0xd0
-> [  167.058581]  process_one_work+0x1dc/0x4c0
-> [  167.058618]  worker_thread+0x54/0x410
-> [  167.058650]  kthread+0x188/0x1b0
-> [  167.058672]  ret_from_fork+0x10/0x20
+> You need to compile test your changes.
+>
+
+Hi dan,
+
+I am facing problems in creating modules and in compiling them.
+
+Any help in this would be appreciated. Here is the link to the thread https://lore.kernel.org/outreachy/alpine.DEB.2.22.394.2303191336090.2867@hadrien/T/#t
+
+Regards,
+
+Sumitra
+
+> regards,
+> dan carpenter
 > 
-> The function tegra_xusb_padctl_get_usb3_companion eventually calls
-> tegra_xusb_find_port and this in turn calls kasprintf which might sleep
-> and so cannot be called from an atomic context.
-> 
-> Fix this by moving the call to tegra_xusb_padctl_get_usb3_companion to
-> the tegra_xhci_id_work function where it is really needed.
-> 
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
-
-What commit id does this fix?  And does it need to be backported to
-older kernels?
-
-> ---
->  drivers/usb/host/xhci-tegra.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 1ff22f675930..af0185bacc70 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -2,7 +2,7 @@
->  /*
->   * NVIDIA Tegra xHCI host controller driver
->   *
-> - * Copyright (c) 2014-2020, NVIDIA CORPORATION. All rights reserved.
-> + * Copyright (c) 2014-2023, NVIDIA CORPORATION. All rights reserved.
-
-Please submit copyright updates separately, showing that there really
-was copyright updates during those years as that is independent of this
-fix and does not need to be backported anywhere.
-
-thanks,
-
-greg k-h
