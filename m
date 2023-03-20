@@ -2,116 +2,103 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5523CC7618A
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 10:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73FCC761A6
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 10:11:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbjCTKDI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59958 "EHLO
+        id S229862AbjCTKLU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 06:11:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjCTKDH (ORCPT
+        with ESMTP id S229735AbjCTKLS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 06:03:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67FDEF87;
-        Mon, 20 Mar 2023 03:02:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9E63EB80DB6;
-        Mon, 20 Mar 2023 10:02:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDB5C4339E;
-        Mon, 20 Mar 2023 10:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1679306551;
-        bh=m+dT1Fldxa66anQiAD5chZaxSHfu7R3YXUoFLoVhDDc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zf63xN9WAa4njasw9U//z79z4OPMwYhDas2HJ2C+xnMNEwv9SDncJMlRDc4OOdsvK
-         PD9B4qA9rlDO3XdgiBeiQBOTE2ZukuLPNAnKZLaaFokbuomAiMTMMYhPEdLuntktuI
-         ZtU2/TYp1KErZN4931crJCph8+GEUor5mFxQWxnA=
-Date:   Mon, 20 Mar 2023 11:02:28 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Haotien Hsu <haotienh@nvidia.com>
-Cc:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Wayne Chang <waynec@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        Jui Chang Kuo <jckuo@nvidia.com>
-Subject: Re: [PATCH] usb: xhci: tegra: fix sleep in atomic call
-Message-ID: <ZBgvNEaRWK56gC3i@kroah.com>
-References: <20230320074028.186282-1-haotienh@nvidia.com>
- <ZBgU0GtLAVdaBQQ1@kroah.com>
- <1ba86b0d74344459188a85c46bdcfbcb8cb3e8f2.camel@nvidia.com>
+        Mon, 20 Mar 2023 06:11:18 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806C61BD9;
+        Mon, 20 Mar 2023 03:11:15 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id bz27so609177qtb.1;
+        Mon, 20 Mar 2023 03:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679307074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yVu+5LM+n5S+m3afYfpgcD0EeRGmLNpp+tXakDwzmT8=;
+        b=beWuDmyL+NNsrvkK7dFnUmnYw04XKdrb13EeNF9Px9lt6H5FFNrH6JdvPf4+NOVRbW
+         UmEdZ9NJTRhTvjGJuV7GLe5wwPXQw516KPGlgxFMg4AXNDkjB2z1HJp0v/+9ebI8ynBX
+         3qtKBzEtxu+8mh1pAR6BgraUkxLRQqtUCn0O63niGzZnYvNrFB8RUEzftYvWxoqqkPtC
+         C34/aZNEmUvXUiBrAEkti0IENYv63XGjTczE1c8SH6OGJTYPhk08alV3aJsJ1uW88fzA
+         wZeiSGiM1C34wXrunmox3djy4K8/HHe0utwlH785SRutcG1OeSvBigKYkBkMgUxc08wZ
+         BYgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679307074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yVu+5LM+n5S+m3afYfpgcD0EeRGmLNpp+tXakDwzmT8=;
+        b=Nc6U3exIHFIHQSqrOmLLcXSkGCs/ltdJ9nYhKz4LN34xHU6nRJsgPdqry+SJEDiNlG
+         r8q3y1MMqM969hKriPxLCg1dJdfuEFSisz3/u3TCT8VIOaIv9FL4JOyBTa7ijkScLhiN
+         nhalfLcJjmUpe4oWxsueRbnnr/QFyRRw/19leMpkAsdtlGMR4fOnPmRaarOIy/2yPpJK
+         74lVcLHICIeANdtXT0be/1pzKzFAVvdA7Kh9zZI0C3F6e/Q/G83TpqQxgZ7Vbjrf1ZHq
+         33cmBqejdCjpYWuRJ4n7XcY2AVPbNO4qydWrqG+pCuql+U1cK6SKgdvuzeYqZ9TYRTBf
+         VoUg==
+X-Gm-Message-State: AO0yUKWn2vH2ii4fSLGj1hNNrVjeMKdklv3DHyvAn0cOO3Ty3vFrBYh/
+        E/GzoxKWUT99VBLZB4YLDgHSz1M4Of0aYYG4k0U=
+X-Google-Smtp-Source: AK7set/N/c1j9jpxMoJtOx8hIYRYm3z6xjz0i0SNt/oDvYWlcoKOLY50Y1BWLlTU5klU113E28kOdzETszUS/8JqKvY=
+X-Received: by 2002:a05:622a:1aa8:b0:3df:58e7:4aa5 with SMTP id
+ s40-20020a05622a1aa800b003df58e74aa5mr1704739qtc.0.1679307074525; Mon, 20 Mar
+ 2023 03:11:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ba86b0d74344459188a85c46bdcfbcb8cb3e8f2.camel@nvidia.com>
+References: <20230319115925.1317654-1-sensor1010@163.com>
+In-Reply-To: <20230319115925.1317654-1-sensor1010@163.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 20 Mar 2023 12:10:38 +0200
+Message-ID: <CAHp75Vf9kwhbZaGjZeN5Jq0Wr_yJtDdj9N48-3o79AMORqmS3w@mail.gmail.com>
+Subject: Re: [PATCH v2] drivers/gpio : Remove redundant platform_set_drvdata().
+To:     Lizhe <sensor1010@163.com>
+Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, geert+renesas@glider.be,
+        info@metux.net, rjui@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
+        sbranden@broadcom.com, shc_work@mail.ru, j-keerthy@ti.com,
+        hoan@os.amperecomputing.com, fancer.lancer@gmail.com,
+        orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
+        zhang.lyra@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        kaloz@openwrt.org, khalasa@piap.pl, keguang.zhang@gmail.com,
+        daniel@thingy.jp, romain.perier@gmail.com, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, thierry.reding@gmail.com,
+        u.kleine-koenig@pengutronix.de, grygorii.strashko@ti.com,
+        ssantosh@kernel.org, khilman@kernel.org, mani@kernel.org,
+        ludovic.desroches@microchip.com, andy@kernel.org,
+        palmer@dabbelt.com, paul.walmsley@sifive.com, jonathanh@nvidia.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com,
+        michal.simek@xilinx.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 09:54:28AM +0000, Haotien Hsu wrote:
-> On Mon, 2023-03-20 at 09:09 +0100, Greg Kroah-Hartman wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Mon, Mar 20, 2023 at 03:40:28PM +0800, Haotien Hsu wrote:
-> > > From: Wayne Chang <waynec@nvidia.com>
-> > > 
-> > > When we set the OTG port to Host mode, we observed the following
-> > > splat:
-> > > [  167.057718] BUG: sleeping function called from invalid context
-> > > at
-> > > include/linux/sched/mm.h:229
-> > > [  167.057872] Workqueue: events tegra_xusb_usb_phy_work
-> > > [  167.057954] Call trace:
-> > > [  167.057962]  dump_backtrace+0x0/0x210
-> > > [  167.057996]  show_stack+0x30/0x50
-> > > [  167.058020]  dump_stack_lvl+0x64/0x84
-> > > [  167.058065]  dump_stack+0x14/0x34
-> > > [  167.058100]  __might_resched+0x144/0x180
-> > > [  167.058140]  __might_sleep+0x64/0xd0
-> > > [  167.058171]  slab_pre_alloc_hook.constprop.0+0xa8/0x110
-> > > [  167.058202]  __kmalloc_track_caller+0x74/0x2b0
-> > > [  167.058233]  kvasprintf+0xa4/0x190
-> > > [  167.058261]  kasprintf+0x58/0x90
-> > > [  167.058285]  tegra_xusb_find_port_node.isra.0+0x58/0xd0
-> > > [  167.058334]  tegra_xusb_find_port+0x38/0xa0
-> > > [  167.058380]  tegra_xusb_padctl_get_usb3_companion+0x38/0xd0
-> > > [  167.058430]  tegra_xhci_id_notify+0x8c/0x1e0
-> > > [  167.058473]  notifier_call_chain+0x88/0x100
-> > > [  167.058506]  atomic_notifier_call_chain+0x44/0x70
-> > > [  167.058537]  tegra_xusb_usb_phy_work+0x60/0xd0
-> > > [  167.058581]  process_one_work+0x1dc/0x4c0
-> > > [  167.058618]  worker_thread+0x54/0x410
-> > > [  167.058650]  kthread+0x188/0x1b0
-> > > [  167.058672]  ret_from_fork+0x10/0x20
-> > > 
-> > > The function tegra_xusb_padctl_get_usb3_companion eventually calls
-> > > tegra_xusb_find_port and this in turn calls kasprintf which might
-> > > sleep
-> > > and so cannot be called from an atomic context.
-> > > 
-> > > Fix this by moving the call to tegra_xusb_padctl_get_usb3_companion
-> > > to
-> > > the tegra_xhci_id_work function where it is really needed.
-> > > 
-> > > Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> > > Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
-> > 
-> > What commit id does this fix?  And does it need to be backported to
-> > older kernels?
-> > 
-> 
-> Sorry for missing "Fixes:" and "Cc: stable" lines.
+On Sun, Mar 19, 2023 at 2:01=E2=80=AFPM Lizhe <sensor1010@163.com> wrote:
+>
+> platform_set_drvdata() is redundant in these functions.
+> the purpose of calling this function is to place data
+> in *driver_data. but the data is not retrieved in these
+> functions
 
-What should be listed for the Fixes line?  Please add it when you
-resubmit it.
+You need to:
+1) split the series on per driver basis (not all of the drivers are
+going thru the same subsystem);
+2) improve English grammar and style in your commit message;
+3) carefully explain in the cover letter your methods of finding the
+places you think need to be improved.
 
-thanks,
+Before that it's a waste of time to look at your contributions.
 
-greg k-h
+--=20
+With Best Regards,
+Andy Shevchenko
