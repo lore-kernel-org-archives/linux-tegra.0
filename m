@@ -2,160 +2,73 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52C8C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Mar 2023 23:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948BBC6FD1C
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Mar 2023 02:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbjCTXrL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Mar 2023 19:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45260 "EHLO
+        id S229561AbjCUCHw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Mar 2023 22:07:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbjCTXrK (ORCPT
+        with ESMTP id S229572AbjCUCHw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Mar 2023 19:47:10 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D42A03C06
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Mar 2023 16:46:31 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id h25so5365800lfv.6
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Mar 2023 16:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679355920;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6yNR8X23A98sblDxbw5Poz4eMrkTW4BedLygWYr/QqY=;
-        b=zhreF+PljbDmKvP/Iu8G+igR5OmJ+q+rU5tYXa5BiCuhvU2aEL0hqMDkE1X3CBtvYq
-         rlQPLKAkZkvoOyAUg86pz6otZJz5A+fLwDHzGsPp0EN1g2hTEr0CxiZsbIBPIXLFqYkx
-         p5t4JPKg2aLkVadeG6d5hFz+pAxd8i2q1/LXw0qlUc9oEwZwdETPzo4JL5CNSZy4exeh
-         BfO6Dwx8A1EhpO1q5OrU+lJK1EMc4iCXNaJbfQKqMxzE89PBrzPpgzrsP01BQoSrmwhX
-         ANIU33RxUUEZa1DLvHUgf0Z4WQzagFOZzgzzicvpUYefiWMpiTzbnCwwQGs8mXHzYfyJ
-         JGwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679355920;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6yNR8X23A98sblDxbw5Poz4eMrkTW4BedLygWYr/QqY=;
-        b=Es+97u1dJ7Yh7kCdkX7f953KyewfHOUa3QyG5M2HnjvRulyXAaeD61r+fuQq14jICI
-         pfmBtsxHS5EqldE8K1gWIwtAJotoSaY8sJsdQIbPqsO2t9lyM0Q+6NafnilTUC5WGdp0
-         nGIojP6J0Xx+43qlmnYy3Ilp/hT3iwX5A4cr27MbmIRoR0zbqXSalKBXQX8EAAuj3kD4
-         oAAkWfTvCHYh9xLnBJOexgwz3Ji1gyPst73ODv7rvjdONRpVxkQkOImNuPyILmeDb9eF
-         VIyqzh1IT0EfMzeBH/FkQ7smD2ru00BaaaV6PcMthtkoEQi2HTc82NA+jLV+FrUMiRFw
-         JsOw==
-X-Gm-Message-State: AO0yUKUfo4gZjESYRpleWQXBKruPD4v5aCcG5aUO2rwSYbumAELQ9RaG
-        +2VJYSe4rV6xxIvEt2dDy1+2Zw==
-X-Google-Smtp-Source: AK7set8MGVhASxzEwrHlVBfW2UlJo/rZ2P+TFZs8vUWIrx9O7hrMJAGVckUytY/qAEStsErgqHNslw==
-X-Received: by 2002:ac2:4310:0:b0:4dd:af76:d3c with SMTP id l16-20020ac24310000000b004ddaf760d3cmr170842lfh.48.1679355920301;
-        Mon, 20 Mar 2023 16:45:20 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id s9-20020a2e98c9000000b00293534d9757sm1982264ljj.81.2023.03.20.16.45.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Mar 2023 16:45:19 -0700 (PDT)
-Message-ID: <2e352a73-181e-7539-7932-f753b29ee967@linaro.org>
-Date:   Tue, 21 Mar 2023 01:45:18 +0200
+        Mon, 20 Mar 2023 22:07:52 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08AF33471;
+        Mon, 20 Mar 2023 19:07:49 -0700 (PDT)
+Received: from [192.168.2.81] (109-252-120-116.nat.spd-mgts.ru [109.252.120.116])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 22ED46602179;
+        Tue, 21 Mar 2023 02:07:47 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1679364467;
+        bh=ZOJqWsivZeSOUQy/aPgiOfZ9KXY9x67+cSZ+slXM7cA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=M4jWVDbzL3MD/wvZWEEj8yc0jXdg+i0Jp/2DDmwVkrU+gkKHj31FaS3zr+rdacQLu
+         3Dfhrdjsv6QHAM1/F3ISn8j1kMgo7rz2cxKeUouQcd7cwuw171CnjDKtXaTsm1MEm2
+         tU3Qdrf01bOJS3bf8snEdQLZ5YZFvA0T20XyPACOkGZSF+tIzK+QtPJ3gT3WCEPk7J
+         /GLl/giCaqydSZ1dy1V/ZqSe60jr/JQjTdaRprLaj+3hjXBlv70lNOubAz7gmsvEqc
+         1CnDuqJCWmLKL1KptWpVVwKTmErsHvB9ssXQA+twEAi8DvMX7/aQgxQHZjcne6l10Q
+         tq+6Wv3p7p3jw==
+Message-ID: <a9d9ad38-3743-1cff-2b47-75d1ecdc6f81@collabora.com>
+Date:   Tue, 21 Mar 2023 05:07:44 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH v2] dt-bindings: display: Drop unneeded quotes
-Content-Language: en-GB
-To:     Rob Herring <robh@kernel.org>,
-        Robin van der Gracht <robin@protonic.nl>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20230320233823.2919475-1-robh@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230320233823.2919475-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 2/2] mfd: tps6586x: register restart handler
+To:     Benjamin Bara <bbara93@gmail.com>, lee@kernel.org,
+        Wolfram Sang <wsa@kernel.org>
+Cc:     jonathanh@nvidia.com, treding@nvidia.com,
+        richard.leitner@linux.dev, benjamin.bara@skidata.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230320220345.1463687-1-bbara93@gmail.com>
+ <20230320220345.1463687-3-bbara93@gmail.com>
+Content-Language: en-US
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20230320220345.1463687-3-bbara93@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21/03/2023 01:38, Rob Herring wrote:
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
-> 
-> Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> v2:
->   - Also drop quotes on URLs
-> ---
->   .../bindings/auxdisplay/holtek,ht16k33.yaml   |  2 +-
->   .../display/amlogic,meson-dw-hdmi.yaml        |  4 ++--
->   .../bindings/display/amlogic,meson-vpu.yaml   |  4 ++--
->   .../display/bridge/analogix,anx7625.yaml      |  4 ++--
->   .../display/bridge/cdns,mhdp8546.yaml         |  4 ++--
->   .../bindings/display/bridge/nxp,ptn3460.yaml  |  2 +-
->   .../display/bridge/toshiba,tc358767.yaml      |  2 +-
->   .../bindings/display/dp-aux-bus.yaml          |  2 +-
->   .../bindings/display/imx/nxp,imx8mq-dcss.yaml |  4 ++--
->   .../display/mediatek/mediatek,hdmi.yaml       |  2 +-
->   .../display/msm/dsi-controller-main.yaml      |  8 +++----
->   .../bindings/display/msm/dsi-phy-10nm.yaml    |  2 +-
->   .../devicetree/bindings/display/msm/gmu.yaml  |  4 ++--
->   .../devicetree/bindings/display/msm/gpu.yaml  |  4 ++--
->   .../devicetree/bindings/display/msm/mdp4.yaml |  4 ++--
+On 3/21/23 01:03, Benjamin Bara wrote:
+> +static int tps6586x_restart_handler(struct sys_off_data *data)
+> +{
+> +	unsigned long flags;
+> +	struct device *tps6586x_dev = (struct device *)data->cb_data;
+> +
+> +	/* bring pmic into HARD REBOOT state, enforce atomic i2c xfer */
+> +	local_irq_save(flags);
+> +	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SOFT_RST_BIT);
+> +	local_irq_restore(flags);
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> #display/msm
-
->   .../display/panel/ronbo,rb070d30.yaml         |  2 +-
->   .../bindings/display/renesas,du.yaml          |  4 ++--
->   .../display/tegra/nvidia,tegra114-mipi.yaml   |  2 +-
->   .../display/tegra/nvidia,tegra124-sor.yaml    | 12 +++++-----
->   .../display/tegra/nvidia,tegra186-dc.yaml     |  4 ++--
->   .../tegra/nvidia,tegra186-dsi-padctl.yaml     |  2 +-
->   .../display/tegra/nvidia,tegra20-dsi.yaml     | 12 +++++-----
->   .../display/tegra/nvidia,tegra20-hdmi.yaml    |  6 ++---
->   .../bindings/display/ti/ti,am65x-dss.yaml     |  6 ++---
->   .../bindings/display/ti/ti,j721e-dss.yaml     |  4 ++--
->   .../bindings/display/ti/ti,k2g-dss.yaml       |  4 ++--
->   .../display/xylon,logicvc-display.yaml        | 22 +++++++++----------
->   27 files changed, 66 insertions(+), 66 deletions(-)
-
+Please change i2c_in_atomic_xfer_mode() to use preemptible() instead of
+irqs_disabled() and drop the local_irq_save/restore.
 
 -- 
-With best wishes
+Best regards,
 Dmitry
 
