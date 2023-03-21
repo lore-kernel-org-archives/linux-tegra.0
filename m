@@ -2,108 +2,161 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76EDC77B60
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Mar 2023 05:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F8EC6FD1D
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Mar 2023 06:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229784AbjCUFuH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Mar 2023 01:50:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42666 "EHLO
+        id S229640AbjCUGTk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Mar 2023 02:19:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjCUFuF (ORCPT
+        with ESMTP id S230122AbjCUGTj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Mar 2023 01:50:05 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7718A5C;
-        Mon, 20 Mar 2023 22:50:02 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id f19-20020a9d5f13000000b00693ce5a2f3eso7948362oti.8;
-        Mon, 20 Mar 2023 22:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679377801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PQRYTyJUcXjGIlb32K69CN7N/CfuacDHmOLvuVVkIeU=;
-        b=F5so8U9eSPDfKwLwdhjWe1tE8PfeVDHKjkiyKaVpWQqKRuyuavEeTzXd4hk6L3z6zp
-         VHPO8QjxcIT4MYzTcNnHQK4kCkDGjZgPowyHLuCLV9GljdqpK9u99uNfqkBMK5RA93gv
-         FGjbjWg9KVC+SGloN3ekhh+2k6L7EF7wthr0pjQIqJLNck01caZneaWdLgqxokr/RLrO
-         1sgViMnoTTZxc9T5zi936whRCWGOMENT2d8QDQSNUknsMhStPJdQFhKuw7YCDQdWuHuY
-         XA7Htk2YAl4jH1GHMq/ggeJA09GTqzjWLySHNgMO09vanozHHeos4pEKMn6CfOVlZGDt
-         TxtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679377801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PQRYTyJUcXjGIlb32K69CN7N/CfuacDHmOLvuVVkIeU=;
-        b=F+s8zjzIrEGYsx6hUIpY4AypQRSgaI1J7euQkQ42p6TNiWR74+Ud4W3WVMAditLJQr
-         CaowjZJsj4VOVBiY73DILXuj3n8dIFKKlDOzRQycXhzqak3mJzisw0X7W0rwfuLLvRVa
-         z9eC4RuXcuND7FSIotBqml8LvChmRxDlfbzak3IIEgZykkxXvnR98fmKAE/gY0B6iJWI
-         3K6BFRwIxhGk/uEJd1rgoZrcWFqAWmntoK5dVXJ3X9PqM0Xo6MUHeEVOY7DngFtGfSQB
-         ukGxegKWRtQPXMBRWWZRJ6bN8VxyHS5OmJ16tKzw9wIOZilgG8lIG8cJCCN7Gokc3AHu
-         v7Sg==
-X-Gm-Message-State: AO0yUKWmHcErfDaWY4rFJTxA2dExzj9FWKjUTnOPCZDHm/k8X/cLEk4a
-        PK3HM0Z9jYhzC7DHIEy1kM5zp9CPH1PMihlxGU0=
-X-Google-Smtp-Source: AK7set9hGdm8jb3Zms52xIkHW02ezlDplA4s1W/5C+8w1fxRVUiCGMOX1ghjWbWe1rulG24xEDF5Rs78eQG2Vsd6oW8=
-X-Received: by 2002:a05:6830:13d3:b0:69e:24a7:e042 with SMTP id
- e19-20020a05683013d300b0069e24a7e042mr409968otq.3.1679377801763; Mon, 20 Mar
- 2023 22:50:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230320233955.2921179-1-robh@kernel.org>
-In-Reply-To: <20230320233955.2921179-1-robh@kernel.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Tue, 21 Mar 2023 06:49:49 +0100
-Message-ID: <CAMhs-H829e-QSwMXAVN6b4pYTB+_d-PLJxbEqdhd9oOrYnY-aQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: phy: Drop unneeded quotes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+        Tue, 21 Mar 2023 02:19:39 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C873629E0B;
+        Mon, 20 Mar 2023 23:19:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ED10AB812A1;
+        Tue, 21 Mar 2023 06:19:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40726C433EF;
+        Tue, 21 Mar 2023 06:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1679379572;
+        bh=o6gdPjxvDO2lUysJD4btv0gnfbX3M+bVFjVrGrkuHPU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n1595sKLeoRMkXVLlNvYTFYhoktp7jhdB08keut33OLupIBX6dVmh75rtGh/97GDl
+         lmwvoWYQRzTL2ONelkDEfYT/kmOx2j5Q6G67hoxLLKFBzDT/cxgv84J73WbXa6TPMO
+         t1Ak4r+F/E3UFVA0QIgwiVj2LhlmXyI/B87BCiOQ=
+Date:   Tue, 21 Mar 2023 07:19:29 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Haotien Hsu <haotienh@nvidia.com>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vincent Shih <vincent.sunplus@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-can@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, JC Kuo <jckuo@nvidia.com>,
+        Wayne Chang <waynec@nvidia.com>
+Subject: Re: [PATCH v2] usb: xhci: tegra: fix sleep in atomic call
+Message-ID: <ZBlMcZA71BKs1oYo@kroah.com>
+References: <20230321023636.771729-1-haotienh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230321023636.771729-1-haotienh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 12:40=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
-e:
->
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On Tue, Mar 21, 2023 at 10:36:36AM +0800, Haotien Hsu wrote:
+> From: Wayne Chang <waynec@nvidia.com>
+> 
+> When we set the OTG port to Host mode, we observed the following splat:
+> [  167.057718] BUG: sleeping function called from invalid context at
+> include/linux/sched/mm.h:229
+> [  167.057872] Workqueue: events tegra_xusb_usb_phy_work
+> [  167.057954] Call trace:
+> [  167.057962]  dump_backtrace+0x0/0x210
+> [  167.057996]  show_stack+0x30/0x50
+> [  167.058020]  dump_stack_lvl+0x64/0x84
+> [  167.058065]  dump_stack+0x14/0x34
+> [  167.058100]  __might_resched+0x144/0x180
+> [  167.058140]  __might_sleep+0x64/0xd0
+> [  167.058171]  slab_pre_alloc_hook.constprop.0+0xa8/0x110
+> [  167.058202]  __kmalloc_track_caller+0x74/0x2b0
+> [  167.058233]  kvasprintf+0xa4/0x190
+> [  167.058261]  kasprintf+0x58/0x90
+> [  167.058285]  tegra_xusb_find_port_node.isra.0+0x58/0xd0
+> [  167.058334]  tegra_xusb_find_port+0x38/0xa0
+> [  167.058380]  tegra_xusb_padctl_get_usb3_companion+0x38/0xd0
+> [  167.058430]  tegra_xhci_id_notify+0x8c/0x1e0
+> [  167.058473]  notifier_call_chain+0x88/0x100
+> [  167.058506]  atomic_notifier_call_chain+0x44/0x70
+> [  167.058537]  tegra_xusb_usb_phy_work+0x60/0xd0
+> [  167.058581]  process_one_work+0x1dc/0x4c0
+> [  167.058618]  worker_thread+0x54/0x410
+> [  167.058650]  kthread+0x188/0x1b0
+> [  167.058672]  ret_from_fork+0x10/0x20
+> 
+> The function tegra_xusb_padctl_get_usb3_companion eventually calls
+> tegra_xusb_find_port and this in turn calls kasprintf which might sleep
+> and so cannot be called from an atomic context.
+> 
+> Fix this by moving the call to tegra_xusb_padctl_get_usb3_companion to
+> the tegra_xhci_id_work function where it is really needed.
+> 
+> Fixes: f836e7843036 ("usb: xhci-tegra: Add OTG support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> index 1ff22f675930..8dbce2cdb7e4 100644
+> --- a/drivers/usb/host/xhci-tegra.c
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * NVIDIA Tegra xHCI host controller driver
+>   *
+> - * Copyright (c) 2014-2020, NVIDIA CORPORATION. All rights reserved.
+> + * Copyright (c) 2014-2020,2023, NVIDIA CORPORATION. All rights reserved.
+>   * Copyright (C) 2014 Google, Inc.
+>   */
+>  
+> @@ -1360,6 +1360,10 @@ static void tegra_xhci_id_work(struct work_struct *work)
+>  
+>  	mutex_unlock(&tegra->lock);
+>  
+> +	tegra->otg_usb3_port = tegra_xusb_padctl_get_usb3_companion(
+> +							tegra->padctl,
+> +							tegra->otg_usb2_port);
+> +
+>  	if (tegra->host_mode) {
+>  		/* switch to host mode */
+>  		if (tegra->otg_usb3_port >= 0) {
+> @@ -1474,9 +1478,6 @@ static int tegra_xhci_id_notify(struct notifier_block *nb,
+>  	}
+>  
+>  	tegra->otg_usb2_port = tegra_xusb_get_usb2_port(tegra, usbphy);
+> -	tegra->otg_usb3_port = tegra_xusb_padctl_get_usb3_companion(
+> -							tegra->padctl,
+> -							tegra->otg_usb2_port);
+>  
+>  	tegra->host_mode = (usbphy->last_event == USB_EVENT_ID) ? true : false;
+>  
+> -- 
+> 2.25.1
+> 
 
->  .../devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml    | 4 ++--
+Hi,
 
-Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
