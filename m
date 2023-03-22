@@ -2,31 +2,31 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2416C6FD1C
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Mar 2023 17:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 773A5C761AF
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Mar 2023 17:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbjCVRC6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Mar 2023 13:02:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56180 "EHLO
+        id S230338AbjCVRDB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Mar 2023 13:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbjCVRCx (ORCPT
+        with ESMTP id S230327AbjCVRCy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Mar 2023 13:02:53 -0400
+        Wed, 22 Mar 2023 13:02:54 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CF461A82
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Mar 2023 10:02:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8186D65040
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Mar 2023 10:02:34 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pf1r1-0000PU-Rp; Wed, 22 Mar 2023 18:02:27 +0100
+        id 1pf1r3-0000Tc-UV; Wed, 22 Mar 2023 18:02:29 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pf1r1-005xjx-4z; Wed, 22 Mar 2023 18:02:27 +0100
+        id 1pf1r3-005xkV-4L; Wed, 22 Mar 2023 18:02:29 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pf1r0-0075pT-Do; Wed, 22 Mar 2023 18:02:26 +0100
+        id 1pf1r2-0075px-4q; Wed, 22 Mar 2023 18:02:28 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Thierry Reding <thierry.reding@gmail.com>,
@@ -35,15 +35,15 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         kernel@pengutronix.de
-Subject: [PATCH 03/12] drm/tegra: dc: Convert to platform remove callback returning void
-Date:   Wed, 22 Mar 2023 18:02:14 +0100
-Message-Id: <20230322170223.410376-4-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 11/12] drm/tegra: sor: Convert to platform remove callback returning void
+Date:   Wed, 22 Mar 2023 18:02:22 +0100
+Message-Id: <20230322170223.410376-12-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230322170223.410376-1-u.kleine-koenig@pengutronix.de>
 References: <20230322170223.410376-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1624; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=8CVItIwYzK3rZXS6aH5yKeL14hWmec5ZIR7iH6JSpuE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkGzSRgRx7UW6hEDVhHgcaH8qbMVTrkfZhaYsv+ NzFaTOuQG2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZBs0kQAKCRCPgPtYfRL+ ThmsCACzElK1kL3IKjcabYXCE+AFMFWhTfA3Jh3Lf3REWp/8nIKq23DZ5S3g9dF6I2wy2ByuQSs ss3qNUyp90/hU/5M7B6A78x3i4olxQKlMZWAQwE9YXI6TDQPGFysL4EmPi/UjbX7v3C8AXtqFib CU0NND3yAHNMZO5wKFzd4MMSTf+BMnKuQsx+u1/0W8JUt1V/El5KaifdLhL9OxZdSOiDuqjoGcd HxaKLYB84ypwUSGqOaSciTo85kh6m+a7ipAFGLfOcgoyPo+btvqA5/BxE7EwQexV4phhnjIwUzl ik0sOCg3MeLWAdfdpfnyCoUg0DMyhaVIXJ9aZoSIL8qOC7em
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1628; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fGqGHLUiDg9uEoAElkwDcbRQaGigQX3abZ7Lukw8B6c=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkGzSa336iK10c0Y56cTt/UhQtR7J6b1Eq2IPxg WztzTcRia+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZBs0mgAKCRCPgPtYfRL+ TutoB/wMMgA4KsCGT2bWf4QyxYPBgydWgc6d8HnPFnq2tYz5bseRAds+7DvdWPgQIWQaxixUphF 5+nImP517gpdqZQuCaYZZ7AW4FHAHyfTmZ3IWfS1SR5Yp6SIyErcTIFR+Z2Dja0TBv+Xem3FQhW de94K9oeT1cibUauyo69rbg0zxvWtmi7a33p/58iWZMJBKmDFoodXwOC4kS0ZuO7h3eh58yFGmY I5cyVWmmCthGgEQXLZHySoPmI0Xn1/0LHWSAOCUHHAfVuMA7XwirEg5fKblriGLH6XeuscG9ey4 kZudG7DZM5zemR4CqF/VmAox6JfhkZEhbvfq3oryXOqa36ls
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -67,37 +67,37 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/gpu/drm/tegra/dc.c | 6 ++----
+ drivers/gpu/drm/tegra/sor.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 6bf1b2bc43b1..53630b673029 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -3263,7 +3263,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index d067b2d01b2e..e617d55f6f3c 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -3978,7 +3978,7 @@ static int tegra_sor_probe(struct platform_device *pdev)
  	return err;
  }
  
--static int tegra_dc_remove(struct platform_device *pdev)
-+static void tegra_dc_remove(struct platform_device *pdev)
+-static int tegra_sor_remove(struct platform_device *pdev)
++static void tegra_sor_remove(struct platform_device *pdev)
  {
- 	struct tegra_dc *dc = platform_get_drvdata(pdev);
+ 	struct tegra_sor *sor = platform_get_drvdata(pdev);
  
-@@ -3272,8 +3272,6 @@ static int tegra_dc_remove(struct platform_device *pdev)
- 	tegra_dc_rgb_remove(dc);
+@@ -3992,8 +3992,6 @@ static int tegra_sor_remove(struct platform_device *pdev)
+ 	}
  
- 	pm_runtime_disable(&pdev->dev);
+ 	tegra_output_remove(&sor->output);
 -
 -	return 0;
  }
  
- struct platform_driver tegra_dc_driver = {
-@@ -3282,5 +3280,5 @@ struct platform_driver tegra_dc_driver = {
- 		.of_match_table = tegra_dc_of_match,
+ static int __maybe_unused tegra_sor_suspend(struct device *dev)
+@@ -4053,5 +4051,5 @@ struct platform_driver tegra_sor_driver = {
+ 		.pm = &tegra_sor_pm_ops,
  	},
- 	.probe = tegra_dc_probe,
--	.remove = tegra_dc_remove,
-+	.remove_new = tegra_dc_remove,
+ 	.probe = tegra_sor_probe,
+-	.remove = tegra_sor_remove,
++	.remove_new = tegra_sor_remove,
  };
 -- 
 2.39.2
