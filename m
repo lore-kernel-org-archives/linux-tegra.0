@@ -2,115 +2,63 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C14EC761A6
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Mar 2023 20:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87D2C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Mar 2023 01:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbjCUUkb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Mar 2023 16:40:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59138 "EHLO
+        id S229550AbjCVBnl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Mar 2023 21:43:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbjCUUk3 (ORCPT
+        with ESMTP id S229512AbjCVBnk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Mar 2023 16:40:29 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88F613B0F1;
-        Tue, 21 Mar 2023 13:40:24 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id l16so9231068ybe.6;
-        Tue, 21 Mar 2023 13:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679431223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rnJYCIHb3YOLk6h7F2Xo1WPCj6zYYjtkpvkZ8wpoQJs=;
-        b=jLlwwP11Eqd3QcuN1GuSMsYw65pUik7rYOLx5A1BPNTMKYJnucTWfSjnqUytJNHQXy
-         GlAFJL6HyR3XP707iPGwPLT9NY80fMZ/hCISBwSyJBwHfz7eX+lK3CL2OIHoNHXO5Kyz
-         no+vIz2/4ucVrHHNXkTOmblHIkWNlzdaISIxpB3ZjQRTD5u2I/FgqtMhRgiy9YzTWTcX
-         waavRaNlKiFGoog+iFNJImDr8t2BuR/0PLfTa74EW/SK1wMrTJ1l2qBB/fA5N5Y/t28Q
-         /rPFIaJLKvcae0dQ9PRxX/RisjwpluW3tmFgSdLMjx7xzAexmNpGqZa2XA5/3IwG7ffU
-         1+CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679431223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rnJYCIHb3YOLk6h7F2Xo1WPCj6zYYjtkpvkZ8wpoQJs=;
-        b=UDw/pTjDpVPB3R2MB4IPyDpBqxjevfkOFn/twFloF0zj3tK4+pMOQU5bA9nIIeV59O
-         foklRmlFan8ILt8HSg74rX8YcJ2ohP2aCfbcFGBDqymqWQWowvjERA3Nf9vLXFMGf2Fi
-         k9kgyC6AxVvYhpPGCx0sgUETfFZz+EMDn4f0BG1cLHlBQjXmfqWOr6NYIUIFBpGjZdF3
-         am75TALB6OX3K48NmIYjQsID9nuPZITxVqd08Brw1VqCV6lW+JlBirYqVVUvxejnwD9n
-         PKeTv8jinTyZzc7Z2udEKhxP4u4BFGC7KvSCgtueh/VS1HanONDreTwZkIlyAQDNwVJQ
-         fLOw==
-X-Gm-Message-State: AAQBX9dwVEOWOmKSA7Oq+2OO3KdryIdcU8p7qUb9nbYYoPvMEpOJMdPX
-        cgi/H6xDkC+ui3nAGKxmZAa5fZ8ItQx1b5RRufE=
-X-Google-Smtp-Source: AKy350Yr0lFcvlrRV/aUYAmitKBlF/YIDHoHGNgfQJQ9fN+jGmA0gMeojAbcNNdTi/SlMNF7cHZPfM6jxoOO65XX8gM=
-X-Received: by 2002:a05:6902:6:b0:b5c:f48:3083 with SMTP id
- l6-20020a056902000600b00b5c0f483083mr2322649ybh.11.1679431223686; Tue, 21 Mar
- 2023 13:40:23 -0700 (PDT)
+        Tue, 21 Mar 2023 21:43:40 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 739F552911;
+        Tue, 21 Mar 2023 18:43:39 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VeOZfe3_1679449412;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0VeOZfe3_1679449412)
+          by smtp.aliyun-inc.com;
+          Wed, 22 Mar 2023 09:43:36 +0800
+From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To:     lgirdwood@gmail.com
+Cc:     broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] ASoC: tegra: remove unneeded semicolon
+Date:   Wed, 22 Mar 2023 09:43:30 +0800
+Message-Id: <20230322014330.97079-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-References: <20230320233823.2919475-1-robh@kernel.org>
-In-Reply-To: <20230320233823.2919475-1-robh@kernel.org>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 21 Mar 2023 21:40:12 +0100
-Message-ID: <CANiq72m+cNuGiU_J9xU9QKmQK-ncD=1Y5imskrFNFSezzmjq8A@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: display: Drop unneeded quotes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Robin van der Gracht <robin@protonic.nl>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 12:38=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
-e:
->
->  .../bindings/auxdisplay/holtek,ht16k33.yaml   |  2 +-
+./sound/soc/tegra/tegra_asoc_machine.c:206:3-4: Unneeded semicolon.
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4583
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ sound/soc/tegra/tegra_asoc_machine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Miguel
+diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
+index c2aaa496468c..f5092b410926 100644
+--- a/sound/soc/tegra/tegra_asoc_machine.c
++++ b/sound/soc/tegra/tegra_asoc_machine.c
+@@ -203,7 +203,7 @@ int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
+ 					  "nvidia,coupled-mic-hp-det")) {
+ 			tegra_machine_mic_jack_gpio.desc = machine->gpiod_hp_det;
+ 			tegra_machine_mic_jack_gpio.jack_status_check = coupled_mic_hp_check;
+-		};
++		}
+ 
+ 		err = snd_soc_jack_add_gpios(&tegra_machine_mic_jack, 1,
+ 					     &tegra_machine_mic_jack_gpio);
+-- 
+2.20.1.7.g153144c
+
