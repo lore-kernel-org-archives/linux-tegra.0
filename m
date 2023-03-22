@@ -2,31 +2,31 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE4FC76195
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Mar 2023 17:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A265C76196
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Mar 2023 17:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbjCVRC4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Mar 2023 13:02:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56310 "EHLO
+        id S230402AbjCVRC5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Mar 2023 13:02:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229784AbjCVRCw (ORCPT
+        with ESMTP id S229794AbjCVRCw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Wed, 22 Mar 2023 13:02:52 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC676287C
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Mar 2023 10:02:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5033C637F7
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Mar 2023 10:02:33 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pf1r1-0000PS-Rp; Wed, 22 Mar 2023 18:02:27 +0100
+        id 1pf1r2-0000PY-24; Wed, 22 Mar 2023 18:02:28 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pf1r1-005xjt-2M; Wed, 22 Mar 2023 18:02:27 +0100
+        id 1pf1r1-005xk1-Bq; Wed, 22 Mar 2023 18:02:27 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pf1r0-0075pQ-6p; Wed, 22 Mar 2023 18:02:26 +0100
+        id 1pf1r0-0075pX-Lk; Wed, 22 Mar 2023 18:02:26 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Thierry Reding <thierry.reding@gmail.com>,
@@ -35,15 +35,15 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         kernel@pengutronix.de
-Subject: [PATCH 02/12] drm/tegra: rgb: Make tegra_dc_rgb_remove() return void
-Date:   Wed, 22 Mar 2023 18:02:13 +0100
-Message-Id: <20230322170223.410376-3-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 04/12] drm/tegra: dpaux: Convert to platform remove callback returning void
+Date:   Wed, 22 Mar 2023 18:02:15 +0100
+Message-Id: <20230322170223.410376-5-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230322170223.410376-1-u.kleine-koenig@pengutronix.de>
 References: <20230322170223.410376-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2271; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=R2c12RCoAJNB1Ym1Z8XA0LNnWuyRmRWf7LRJ15IB9g8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkGzSQ18dFEVstJRUWcrKwK/J/YtT8BBUd69Trh TBUl1RWQMWJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZBs0kAAKCRCPgPtYfRL+ ToPLB/9u0yBthwpWsinaC30eGwPtXx21a6i9MH8gDfIel05tReXHehmN72rmghXYtwsMwZGgUvY 7PCOJq3Ft1piC1WBJXr6GQEqogWK8Wsb1QVBjrpyxdtY0i3H+u1kI8qkfVSz2dfzEfgPwH5yi3z W/D3Nef9hELh18sVkUnX9ZsWml+dAoUgMMJ7TvI7gEIi2GOXTWPZllWbRXV8EWzHKNTLsDhHKsR UY9qk5U/KIuzh/2z9tRpLPtR8+hrJb5U7WgR3+arxLQ5XXCqd3boo+SdaoszmdnHSyLMsDQXR0P ESCwCytCkU6VC8RZFFEaUaIkO7CVGO4hjxYf0mAsSTXUt3O0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1761; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=6Tyw8Au9KpeTmv6RYa0mwqi6I44JPDfcpUHMvWx+Rmc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkGzSSyr/X+oOnKYm6NOiZf0PRm/AbXaEFQOJvq 8uDcTGwH1WJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZBs0kgAKCRCPgPtYfRL+ Tg1bB/9YomilV0m5Cnr/29R//t7XFy9u2Tk7YvXzL+06/R6FWj7ItkGjCBtEriW2kJieI0Tfqvo 1o2Fhgb3n0NfKMVWZCH/663etX0vGupSoqGENX58RfQkHnSfxn5wi7Z2GfyuTRKx32k2QZBjHmd ebtpEVC4Fs1Zlywd2Tm5maQhZ/sy5qVqMTJLzVTjYsVxaV7+SSxN0uFW2dqr4LrDCthv1oavvJQ Myfunh0T6423aeK/DR4L/1JhNiGn4aDAXuoce5P/XC75LUHLztR4TxggyCDc5xLSuuk4u2sJ49t Bee9eKocbQXp6srCXbfcmhcZml3Ru4GhFuBPm72BCsxW4Rrx
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -54,78 +54,53 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This function returned zero unconditionally. Make it return no value and
-simplify all callers accordingly.
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
+
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/gpu/drm/tegra/dc.c  | 7 +------
- drivers/gpu/drm/tegra/dc.h  | 2 +-
- drivers/gpu/drm/tegra/rgb.c | 6 ++----
- 3 files changed, 4 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index bd108159fc2c..6bf1b2bc43b1 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -3266,15 +3266,10 @@ static int tegra_dc_probe(struct platform_device *pdev)
- static int tegra_dc_remove(struct platform_device *pdev)
- {
- 	struct tegra_dc *dc = platform_get_drvdata(pdev);
--	int err;
- 
- 	host1x_client_unregister(&dc->client);
- 
--	err = tegra_dc_rgb_remove(dc);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to remove RGB output: %d\n", err);
--		return err;
--	}
-+	tegra_dc_rgb_remove(dc);
- 
- 	pm_runtime_disable(&pdev->dev);
- 
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index f902794d42cc..0559fa6b1bf7 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -169,7 +169,7 @@ void tegra_crtc_atomic_post_commit(struct drm_crtc *crtc,
- 
- /* from rgb.c */
- int tegra_dc_rgb_probe(struct tegra_dc *dc);
--int tegra_dc_rgb_remove(struct tegra_dc *dc);
-+void tegra_dc_rgb_remove(struct tegra_dc *dc);
- int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc);
- int tegra_dc_rgb_exit(struct tegra_dc *dc);
- 
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index ff8fce36d2aa..da2d9baca214 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -250,12 +250,12 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 3c84e73d5051..4d2677dcd831 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -579,7 +579,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
  	return 0;
  }
  
--int tegra_dc_rgb_remove(struct tegra_dc *dc)
-+void tegra_dc_rgb_remove(struct tegra_dc *dc)
+-static int tegra_dpaux_remove(struct platform_device *pdev)
++static void tegra_dpaux_remove(struct platform_device *pdev)
  {
- 	struct tegra_rgb *rgb;
+ 	struct tegra_dpaux *dpaux = platform_get_drvdata(pdev);
  
- 	if (!dc->rgb)
--		return 0;
-+		return;
- 
- 	rgb = to_rgb(dc->rgb);
- 	clk_put(rgb->pll_d2_out0);
-@@ -263,8 +263,6 @@ int tegra_dc_rgb_remove(struct tegra_dc *dc)
- 
- 	tegra_output_remove(dc->rgb);
- 	dc->rgb = NULL;
+@@ -594,8 +594,6 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
+ 	mutex_lock(&dpaux_lock);
+ 	list_del(&dpaux->list);
+ 	mutex_unlock(&dpaux_lock);
 -
 -	return 0;
  }
  
- int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+ static int tegra_dpaux_suspend(struct device *dev)
+@@ -695,7 +693,7 @@ struct platform_driver tegra_dpaux_driver = {
+ 		.pm = pm_ptr(&tegra_dpaux_pm_ops),
+ 	},
+ 	.probe = tegra_dpaux_probe,
+-	.remove = tegra_dpaux_remove,
++	.remove_new = tegra_dpaux_remove,
+ };
+ 
+ struct drm_dp_aux *drm_dp_aux_find_by_of_node(struct device_node *np)
 -- 
 2.39.2
 
