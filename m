@@ -2,135 +2,182 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62099C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Mar 2023 13:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E34C6FD1C
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Mar 2023 13:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231215AbjCWNNs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Mar 2023 09:13:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42616 "EHLO
+        id S229600AbjCWNwZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Mar 2023 09:52:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231501AbjCWNNq (ORCPT
+        with ESMTP id S231681AbjCWNwY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Mar 2023 09:13:46 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2078.outbound.protection.outlook.com [40.107.92.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19C266EBF
-        for <linux-tegra@vger.kernel.org>; Thu, 23 Mar 2023 06:13:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OG5RbPn8jzhwcgZmDlzGGCgs2y+VYyq6xEVc7zUplBFL+kMzaSjNpEEKp0FrHzUbncTUSe3J+HS3jNO4qD4fpwvvtDZVSKdw9B9t9ZJX+IaRSnQFiQ5APXZR1I2QOVaLBO4gOHYSXq+n/5Tfbw6j6bXP4f+SdZyhL6zEnTAMRRhFmfXk6OyoZ9OlriFUwRc1ffTvGrqMpyYHsAWNAeIlaZ8Nr6cfbQWiiCDVOKXps8tWmncGmM7D0yxsXDifRXv4nRULw+tvqJfrRC3DT3j/t2d3X3GuXxhPI8rvwlSXxER+my6+zcMps62ENM3iubqwixwxA7RCUEAIKySHShjD9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MrLH0XoRWNG2aaOdEHQo22fifq/w8Jufvt6HGNwY9ls=;
- b=UasRgAbxukNDrp6UEY9qM42h23nVwiapxjtgdrpV6Cd2nFjPzV//+stiZzCTwwKZ1L/44wU+TQKyYVDAXMixWdB79JYP2AWBT1lWyrA0sqrSIIvxQTMWVi9pi4cA9gq6UcPlQJ62Y4f/jloU/ptmOy+m+20CBZuUbj0CKYTHJiRXj+ANc/On62EeP8zQvjNIPGoMk3q3sYqsMs8FbDbIdHRYqnzysMlDDVcuMwT+enqxjTVISBLwKRnjUtJoU7BlvzZ+IPK6k780IYkPOWMnfiKU40UNX+Qpmvk3Ybzn9EcJNo3skD924w9VyWm1akp2JInJpPrWw4cvTUEoGlKScg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MrLH0XoRWNG2aaOdEHQo22fifq/w8Jufvt6HGNwY9ls=;
- b=TzQEC1w/PajCKo+KoNiQ+21sjhjwLY92ULalkXiQ5D85A986HzssagKng5m+SdmFLgwbr6fWgty6zCazry6+oviQfCV9aYp6DoPZ6r+suNWWq5Rvb3t354hTYaHKBiOfiDxFuM0LHrYYmSYqnAFoSNX7PtQhGxLmTSsiKMAUDl5zwIHaY5lUu5CUdhCl/kUmnHs1E0QVtInS3UJmtPqEMJdEkWiiU1OAeAHJy3WiqM58ROoSin5L5OniYxwgBXPCSfhKljx+nP17LIVhV/mCkpprkle7YZlGvPPWTy2b9lzXyIg8jB40ivCU5hEHGn8mxgkq3NXMuxosJRgTUgA7fQ==
-Received: from DM6PR03CA0100.namprd03.prod.outlook.com (2603:10b6:5:333::33)
- by CH0PR12MB5060.namprd12.prod.outlook.com (2603:10b6:610:e3::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Thu, 23 Mar
- 2023 13:13:40 +0000
-Received: from DM6NAM11FT079.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:333:cafe::55) by DM6PR03CA0100.outlook.office365.com
- (2603:10b6:5:333::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38 via Frontend
- Transport; Thu, 23 Mar 2023 13:13:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- DM6NAM11FT079.mail.protection.outlook.com (10.13.173.4) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6222.21 via Frontend Transport; Thu, 23 Mar 2023 13:13:39 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 23 Mar 2023
- 06:13:30 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Thu, 23 Mar 2023 06:13:29 -0700
-Received: from ubu1604-desktop.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.5 via Frontend
- Transport; Thu, 23 Mar 2023 06:13:27 -0700
-From:   Sushil Singh <sushilkumars@nvidia.com>
-To:     <treding@nvidia.com>, <jonathanh@nvidia.com>,
-        <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <vbhadram@nvidia.com>,
-        <sushilkumars@nvidia.com>
-Subject: [PATCH V2] soc/tegra: pmc: Add wake source interrupt for MGBE
-Date:   Thu, 23 Mar 2023 18:43:24 +0530
-Message-ID: <1679577204-8304-1-git-send-email-sushilkumars@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Thu, 23 Mar 2023 09:52:24 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AF557ECD;
+        Thu, 23 Mar 2023 06:52:23 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id y4so86971839edo.2;
+        Thu, 23 Mar 2023 06:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679579542;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hCM/asaxbLHdp2e/d8AVFh0bmUGqAzxZv/hf4ha4l9Y=;
+        b=pstVBkDnZrmssUIUYPZjpk78j5pcOe/MM4ApJ+Yu3jCuurIPGxpCrbOLxR0S4ssq+7
+         YO69iekwuVXT/hy/xGmfVE3jgGvj4NFBTk71kmjq9JC/lsPAmab78B7EjYBBG2VS5LeJ
+         qJcliefH9FqPYxhQLyVb804kpIyGUud27JhznW1tmUMvuJHKaQqOEhYeQJEzISmpynKL
+         qoT/X12DnPqa+pSP5aDBwxSssOqDBzjQkutyXJRaLz5C0NZUznnJp805jh5prRKQ4wNj
+         tYrP17M+XlJoXkBsJgTVUJxtl0KTm5wHaoQDJuGvs7CI0c70nMaAuAu8/86Zyu3aCeK1
+         hWEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679579542;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hCM/asaxbLHdp2e/d8AVFh0bmUGqAzxZv/hf4ha4l9Y=;
+        b=OpOny3kPVxxroWsbTTXIKpf0l5baUs0QM7R6WyZhL6MCMdbhHrEQdZjHXa6FUqS/6i
+         R0WwT2SYMTDKBrk9VZO6XLE9lrPmqn1lQjNPQTuOuMWz810vPGLLhgGoSkI+sM0ow6IT
+         iRCryCEPtMedd3o2N7TC98BmEnuvugXKTrMSSlpONMonhIRHvFDhFm0jDI7xrTPe5kFB
+         /TbxPno0Fmnr88JbW4cyNSB8KW8Xzri4l9lLZ+whYUWWy0SuRRaLcil9NICicmteq7sG
+         uhkv1TSmAoLMw4+31dZ/ljn0YFvPs4TS6S366tM93ejvEudqCTDC0tlStZpc9XffmqQF
+         KjjQ==
+X-Gm-Message-State: AO0yUKV2Z+f1CCVwFMgCsdcRhVChETEBVNW7sqVzRurJJIs+b9rBEFO9
+        GOtlvYK8qQOJGAvU28GNSmzJj6kLQqI=
+X-Google-Smtp-Source: AK7set8/7bvQOIV2HCFliHXd5hevFPhZ2APdmoa3kx1pSVhz43v62G9Mz96w5R39l2XvFhyIFuT9Ug==
+X-Received: by 2002:a17:906:c01:b0:930:27c2:6d8d with SMTP id s1-20020a1709060c0100b0093027c26d8dmr10885715ejf.61.1679579541914;
+        Thu, 23 Mar 2023 06:52:21 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id v15-20020a170906858f00b0093229e527cdsm8248292ejx.42.2023.03.23.06.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Mar 2023 06:52:21 -0700 (PDT)
+Date:   Thu, 23 Mar 2023 14:52:20 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        "digetx@gmail.com" <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+        "wsa@kernel.org" <wsa@kernel.org>
+Subject: Re: [PATCH v3] i2c: tegra: Share same DMA channel for RX and TX
+Message-ID: <ZBxZlNOhLyUZi1B+@orome>
+References: <20230322102413.52886-1-akhilrajeev@nvidia.com>
+ <db870e74-9d97-740a-9829-5fafc0bb0559@nvidia.com>
+ <SJ1PR12MB6339FC0B9BB57D1D2300D46CC0869@SJ1PR12MB6339.namprd12.prod.outlook.com>
+ <b9235dfc-10dc-1ed0-1510-fd98902491e3@nvidia.com>
+ <SJ1PR12MB63395F16F399E67733EED69BC0879@SJ1PR12MB6339.namprd12.prod.outlook.com>
+ <ZBwg2Rnc6d5EQ3pu@orome>
+ <SJ1PR12MB63391B10B3F73DE89A214486C0879@SJ1PR12MB6339.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT079:EE_|CH0PR12MB5060:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3810190-06c7-420c-aacc-08db2ba06b70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3o5MUsbSmWwmIqdzbTlYHm9x/9jx1TFc6qAre2fc5vG6yEu2QaYw97G48pgpe5h95gSKXGm6AQIugz5lB3vCDNWjLK8LRuvHRo2rx4mKzCt8+WzMTr09+y5YShzpC5jTMm3XPQ262Lvr6d2QHUU4EFdW+pz+6mVtcob4mGsdxcLabH2ig5MkLcnH3N6V3AEBlvkiw8trtR8lPZu6tjP8eBD4pmpM0CybK1RinCOBn2joJCpJZ2X/vxKbGGGimFAxis/yilgoHMT/tf8+58hU0bzqwNAYBzFVCQNqhsX8ZJx9sgcXa49iAyDYO958uauqQORArmLIYjKEAxHQNs+fb4nzyOr0hdJBm1nZdrI305yEJHVRLzUi8MJmbzRHQfJ0Q5X4WpuS61OrVTOTkr784O8PGwEW81be0fUzb/FWKa2lOd9yGifJCTYM+XxnNHUKcwtAIioCUAQs2eOrFY6nxNQ0JHK9jwYuVEcXDt4R4f+st+FIVCI+FBUMMUL4zyisaOV1iByd7u2NR8a2/dIHta3QeXl5bC99mm63PVoMCwsPHK8i+qZtsa5YdKxg2NveGKvkv4ub64FrMKHnI3z2EWs0TqCxvob4wGFTeqNIwFwk8JBykwiYAc2hpFYQNYQXzcoZsl+BougasB+3Bu2WYLalkMaOMNgqVR+IUiVXu865aD1EpK84iriieF1L6mnr8Ts2Eb/SP19xujNkXXyh4jeJdXgKrvBRFkafN222Qs2gFZrM9Lhq/DGZ7R58AyU1
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(376002)(346002)(396003)(136003)(451199018)(36840700001)(40470700004)(46966006)(86362001)(36756003)(36860700001)(82740400003)(356005)(7636003)(2906002)(40460700003)(41300700001)(4326008)(8676002)(5660300002)(8936002)(40480700001)(82310400005)(2616005)(336012)(186003)(83380400001)(47076005)(426003)(54906003)(478600001)(70586007)(70206006)(110136005)(316002)(107886003)(26005)(6666004)(7696005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2023 13:13:39.9114
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3810190-06c7-420c-aacc-08db2ba06b70
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT079.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5060
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CcE1zS+p41bOMhG1"
+Content-Disposition: inline
+In-Reply-To: <SJ1PR12MB63391B10B3F73DE89A214486C0879@SJ1PR12MB6339.namprd12.prod.outlook.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the GPIO wake interrupt for MGBE ethernet controller on Tegra234 SoC.
 
-Signed-off-by: Sushil Singh <sushilkumars@nvidia.com>
----
+--CcE1zS+p41bOMhG1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-Address Jonathan's comments
-Rewrite the commit description
-Use "mgbe" instead of "mgbe_wake"
+On Thu, Mar 23, 2023 at 12:16:23PM +0000, Akhil R wrote:
+> , Mar 23, 2023 at 09:26:00AM +0000, Akhil R wrote:
+> > > > On 22/03/2023 12:00, Akhil R wrote:
+> > > > >> On 22/03/2023 10:24, Akhil R wrote:
+> > > > >>> Allocate only one DMA channel for I2C and share it for both TX =
+and
+> > RX
+> > > > >>> instead of using two different DMA hardware channels with the
+> > same
+> > > > >>> slave ID. Since I2C supports only half duplex, there is no impa=
+ct on
+> > > > >>> perf with this.
+> > > > >>>
+> > > > >>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > > > >>
+> > > > >> Just to confirm. This impacts all Tegra devices from Tegra20 to =
+the
+> > > > >> latest. Does this work for all Tegra and the different DMA contr=
+ollers
+> > > > >> that they have?
+> > > > >>
+> > > > > Yes, It should. I could see in the APB DMA driver that the same c=
+hannel
+> > > > > could be used for TX and RX and the direction is configured only =
+during
+> > > > > dma_prep_*() calls.
+> > > > > I did not test it on a Tegra with APB DMA, but since it works very
+> > similar
+> > > > > to GPC DMA there should not be any impact.
+> > > >
+> > > >
+> > > > OK. BTW, this does not apply cleanly on top of -next. It appears th=
+at
+> > > > this is based on top "i2c: tegra: Fix PEC support for SMBUS block r=
+ead"
+> > > > and that one needs to be applied first. This can be avoided if you =
+send
+> > > > as a series.
+> > > >
+> > > Oh. Okay. I used 'git am --3way' when I tried, and the conflict went
+> > unnoticed.
+> > > Shall I send a new version on top of -next?
+> > > The two patches were added in different contexts and that=E2=80=99s w=
+hy I did not
+> > > combine them as a series.
+> >=20
+> > It's usually best to combine them in a series even if they are in
+> > slightly different contexts. This is especially true if they cause
+> > conflicts between one another. If you send them as a series, you can
+> > resolve the conflicts yourself (you may not even have conflicts locally
+> > if you create the patches in the same branch), but if you send them
+> > separately the maintainer will end up having to resolve the conflicts
+> > (or apply in the right order).
+> >=20
+> > It's best if you resolve the conflicts because you know better than the
+> > maintainer (usually) or specify any dependencies to make it easier for
+> > the maintainer to do the right thing.
+> >=20
+> > But again, in the vast majority of cases, it's best to combine all the
+> > work on one driver in a single series before sending out.
+> >=20
+> Okay. Got it. I shall send a new patchset with both the patches.=20
+> Can I put the patchset as v1 or does it have to be something different?
+> Because this patch is in v3 and "i2c: tegra: Fix PEC support for SMBUS=20
+> block read" is v2 now.
 
- drivers/soc/tegra/pmc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Best to keep versioning. I'd go with making the combined series v4,
+which is probably the least confusing. You can technically also make a
+combined series where each patch is at a different version, but that
+would probably confuse people even more.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index cf4cfbf..0f3c472 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -3,7 +3,7 @@
-  * drivers/soc/tegra/pmc.c
-  *
-  * Copyright (c) 2010 Google, Inc
-- * Copyright (c) 2018-2022, NVIDIA CORPORATION. All rights reserved.
-+ * Copyright (c) 2018-2023, NVIDIA CORPORATION. All rights reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross@google.com>
-@@ -4227,6 +4227,7 @@ static const char * const tegra234_reset_sources[] = {
- static const struct tegra_wake_event tegra234_wake_events[] = {
- 	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
- 	TEGRA_WAKE_IRQ("rtc", 73, 10),
-+	TEGRA_WAKE_GPIO("mgbe", 56, 0, TEGRA234_MAIN_GPIO(Y, 3)),
- };
- 
- static const struct tegra_pmc_soc tegra234_pmc_soc = {
--- 
-2.7.4
+Thierry
 
+--CcE1zS+p41bOMhG1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQcWZEACgkQ3SOs138+
+s6EzDA//SdB03eh7tWga1ZsnAih5+Omq8AJYQIDmz+s5HtoaIRGPusBKVkK5yaJ3
+uJktcFq9kXRDaCQs3lryqnAdGqD4gEHJuJVh9jGJCkDzsO9NvuIiVfWDVy2GQRMW
+8Xpi5UpGu5HBelXx1rOFUP4kLPTp/4Br5zdatxqgCKn1eIucjVLQ/dVrthpmA6vf
+8oXwm73XD4f25YHfOnUdtQb+8aHNs7O4iB8xcAEg1F5K8B4/CIykorGEVrazXmUM
+mvNEevVeg/Dww+yr3oGgM+YRWnYkJUt8mmHOsBQcl42nR9JRRvdH0yS8RZ3QLcNZ
+cJbSe65tMbgvde0+nHznaUVdYn05sxoorYSwZR7RCWKFSWN0ffc9yNxh5HKiezpS
+QHO/eMl//NiAz6qoV0PCucW+d2ClY4sPIW8pxE3w8FmvXP9KR6yiavSa0eHYg9iT
+FW4KvW/Dbkjq1K4AoYaUp+hnnrUtNGmx4f4lvxWNyFVucOcXfZK5WHd9FvJf5f+B
+sSFQdvK8NFDOugtfXOPUN4NZQfHZz0f2OXASiQXlWWYGgIwyU0i6y5r1j4Hw6Kei
+3OhC2F5+J5qPUVpCl5CFFhx0TjRNpnT6aztrdJZkUPGO7fa1CMBjcZLyRevokwKJ
+RNFa2DOCXdJbSOKtU7ZPl4FNvnLZVyhwtpBUZlzIZddC+IAvpCE=
+=TrYq
+-----END PGP SIGNATURE-----
+
+--CcE1zS+p41bOMhG1--
