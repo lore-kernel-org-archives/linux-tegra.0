@@ -2,129 +2,204 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E62B3C6FD20
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 10:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BC2C77B60
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 11:09:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbjCXKui (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Mar 2023 06:50:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43322 "EHLO
+        id S229945AbjCXLJp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Mar 2023 07:09:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230092AbjCXKu1 (ORCPT
+        with ESMTP id S229908AbjCXLJn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Mar 2023 06:50:27 -0400
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCDC149BD
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Mar 2023 03:50:26 -0700 (PDT)
-Received: by mail-ot1-x329.google.com with SMTP id d22-20020a9d5e16000000b0069b5252ced7so662645oti.13
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Mar 2023 03:50:26 -0700 (PDT)
+        Fri, 24 Mar 2023 07:09:43 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC7312CFA;
+        Fri, 24 Mar 2023 04:09:42 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id r29so1356682wra.13;
+        Fri, 24 Mar 2023 04:09:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1679655025;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LA3Zcbbrd2EPDNxAP1qxAnsroRRZb68Sab3Jkh0P0Sc=;
-        b=Ml2sbeXt/dJV+DVGdd+scTwplDkwCY6tNDAarNSO3EkTPvCC5TMw0SXUB/1GzsyHlb
-         Q/hm5Fs1tVJHZiaUSjpj4ilnnjhayYRhd1Jb5N8YsoVyBUjufC8K2OsitmUyB/8AVL9F
-         fH381F+xJ4iNHp8+pGopMBOJLEhExFdBuAkHQ=
+        d=gmail.com; s=20210112; t=1679656180;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKGzHAjESOwY5CJ6aIkXRblEUT9vcmLWXQ+M0lRFaT8=;
+        b=hzyILuXnSZ7lMaDYB5rhB/bnNUkufwU6fB5inzHRnGwGUpJquemA3X84Lzp++Y2YJ+
+         xX92fJNLk8xQHwS1+YxTda7OSm5DtCOvp4pDLhNSgUC+z/fJXup9nphjXvyJHgvtZySv
+         Ing1oEJUNGaC5fkPShiXmhVhP4ZVm14D3SAO1J3Mw26nhpiPZuGPtANkaXRqnth94OzX
+         eWmkntp/5aW21aNCDZJKirG9vn5GmZabE2CYZSk/g1dEY9qxrgIgg/yw5kqOFSzwoNBS
+         JwX3UeufEHb7ANEt7KtJeAKptHBPlTmLr2bfmp8WEFpNkr4PD3Q/FNi6OhewGezr1Z61
+         Chlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679655025;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1679656180;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LA3Zcbbrd2EPDNxAP1qxAnsroRRZb68Sab3Jkh0P0Sc=;
-        b=c3IYZYALaO2sNzc4qyIdm963iW31zhPM3oQTEVpGuNHTh6UqnW0mVe+NKl6ae1rXog
-         HmlbLDncA8NnuzAkg6mUaK8aEqRF8fDHfFD3N1RTaOJTXnTEFlI/KN3AFgHdhoWOpCLW
-         dLYhCjQFAI2s0XVYJnRxEe8qqN4dqM8X3tjNNCXaZ2swKB8b07Bvau9ZPcFQP3V00JN4
-         h3T30xJYVDhOsVcKD81DtmbiOHMI0YMsnCpTCmmdwyEVsNYqpfeBHh2+ImiIEwL/2Ty4
-         8YKcmT7ZfUZAuK/Mm1qm54ioAabvQV3NmUMsDd8XvPmqx4Vz/aVbTyIyy99V89KGyBK+
-         YETA==
-X-Gm-Message-State: AO0yUKVd4OP6DNJLllVS0cfi5ujc2MhvBQzF1pdjCaYS+Jaly0pXdFUk
-        6/eVsw89fl5mjvpHVpiF+kDkPc1ygDqsPLW/8RjjPA==
-X-Google-Smtp-Source: AK7set9XwOprmvMSZxE219+neH4dJVe0b6v5IUqmo46jRmevl4lz/+ilhJWCP96nyC4V+5+FhrFrE2HhdAGzya1YoHU=
-X-Received: by 2002:a9d:4f15:0:b0:699:7d71:d2dc with SMTP id
- d21-20020a9d4f15000000b006997d71d2dcmr916625otl.6.1679655025541; Fri, 24 Mar
- 2023 03:50:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230127221418.2522612-1-arnd@kernel.org> <Y/eULFO4jbivQ679@dev-arch.thelio-3990X>
- <20230308165644.GA1181835@dev-arch.thelio-3990X> <67f9fe7f-392a-9acd-1a4d-0a43da634367@nvidia.com>
- <ZB1xWRo0rkhku2BS@phenom.ffwll.local> <CAKMK7uF4tYyw6Eio6YkWZpBej1J8_5+VLU_hvVbL-Lnk06=v1g@mail.gmail.com>
- <ZB19rRHIeLxyzDrX@orome>
-In-Reply-To: <ZB19rRHIeLxyzDrX@orome>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 24 Mar 2023 11:50:14 +0100
-Message-ID: <CAKMK7uGP+n6CkMLq4N006Mctj6ta7NV3iSBt7qZiisptTBVv8w@mail.gmail.com>
-Subject: Re: [PATCH] gpu: host1x: fix uninitialized variable use
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Nathan Chancellor <nathan@kernel.org>,
+        bh=KKGzHAjESOwY5CJ6aIkXRblEUT9vcmLWXQ+M0lRFaT8=;
+        b=ly5d+/fL5EKpn7Bp+71iKSRbyO7HkCOSlqRVToPpkQcwQxjoExn2qXhRa6aL2P8VYR
+         L3cn82n8D9kWtW16wyaaCX2aA6PPBslJ8KqtQ1eqA4ewCd18tmzREnRvXWEQ+9yxxZn1
+         EbYNXUve1JZbDLB3j8Zs/5G+EGgC51UdGWxpiruj70bvj8LntE6DUFbkLIc3+Luxy1qz
+         ezJKwU4NO0MEoxdtsntbn7gEFewHA9RCTbYvSewCzIIyK+mf/QOha5nQ524L5qLN85vo
+         tUrOAiKIiPTT1xR6FGISAj7kHKy9Y89e6s7Y+S3bmjgQoUJSyYfSxhZagl4orQqlJk9B
+         ar6Q==
+X-Gm-Message-State: AAQBX9f6sUP/obKVPazfcA2R9b+mg0FPaxX/sf6ZLCxXwDWmtsT29Jvx
+        jjOxYpQFGLrRNZTHL2w6/D8=
+X-Google-Smtp-Source: AKy350ZmBQJTJNYHdzNhp0Qvsm2ha5bci7Pffhjn47i2N4HkGJnSU/0GajVbD8LVTLhlg10uq2ysNw==
+X-Received: by 2002:a5d:6290:0:b0:2da:53e3:57cf with SMTP id k16-20020a5d6290000000b002da53e357cfmr1959487wru.71.1679656180460;
+        Fri, 24 Mar 2023 04:09:40 -0700 (PDT)
+Received: from localhost (188.28.8.105.threembb.co.uk. [188.28.8.105])
+        by smtp.gmail.com with ESMTPSA id a8-20020a056000100800b002d8566128e5sm9760336wrx.25.2023.03.24.04.09.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Mar 2023 04:09:39 -0700 (PDT)
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+ <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
+ <20221104145946.orsyrhiqvypisl5j@houat>
+ <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
+ <20221107085417.xrsh6xy3ouwdkp4z@houat>
+ <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
+ <20221109110045.j24vwkaq3s4yzoy3@houat>
+ <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
         David Airlie <airlied@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+Date:   Thu, 23 Mar 2023 15:35:30 +0000
+In-reply-to: <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
+Message-ID: <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 24 Mar 2023 at 11:38, Thierry Reding <thierry.reding@gmail.com> wrote:
+
+Stephen Boyd <sboyd@kernel.org> writes:
+
+> Quoting Maxime Ripard (2022-11-09 03:00:45)
+>> On Mon, Nov 07, 2022 at 08:57:22PM +0000, Aidan MacDonald wrote:
+>> >
+>> > Maxime Ripard <maxime@cerno.tech> writes:
+>> >
+>> > > Hi,
+>> > >
+>> > > On Fri, Nov 04, 2022 at 05:35:29PM +0000, Aidan MacDonald wrote:
+>> >
+>> > Assigning the parent clock in the DT works once, at boot, but going off
+>> > what you wrote in the commit message, if the clock driver has a
+>> > .determine_rate() implementation that *can* reparent clocks then it
+>> > probably *will* reparent them, and the DT assignment will be lost.
+>>
+>> Yes, indeed, but assigned-clock-parents never provided any sort of
+>> guarantee on whether or not the clock was allowed to reparent or not.
+>> It's just a one-off thing, right before probe, and a clk_set_parent()
+>> call at probe will override that just fine.
+>>
+>> Just like assigned-clock-rates isn't permanent.
+>>
+>> > What I'm suggesting is a runtime constraint that the clock subsystem
+>> > would enforce, and actively prevent drivers from changing the parent.
+>> > Either explicitly with clk_set_parent() or due to .determine_rate().
+>> >
+>> > That way you could write a .determine_rate() implementation that *can*
+>> > select a better parent, but if the DT applies a constraint to fix the
+>> > clock to a particular parent, the clock subsystem will force that parent
+>> > to be used so you can be sure the clock is never reparented by accident.
+>>
+>> Yeah, that sounds like a good idea, and CLK_SET_RATE_NO_REPARENT isn't
+>> too far off from this, it's just ignored by clk_set_parent() for now. I
+>> guess we could rename CLK_SET_RATE_NO_REPARENT to CLK_NO_REPARENT, make
+>> clk_set_parent handle it, and set that flag whenever
+>> assigned-clock-parents is set on a clock.
+>>
+>> It's out of scope for this series though, and I certainly don't want to
+>> deal with all the regressions it might create :)
+>>
 >
-> On Fri, Mar 24, 2023 at 10:59:23AM +0100, Daniel Vetter wrote:
-> > On Fri, 24 Mar 2023 at 10:46, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > >
-> > > On Wed, Mar 08, 2023 at 05:28:06PM +0000, Jon Hunter wrote:
-> > > >
-> > > >
-> > > > On 08/03/2023 16:56, Nathan Chancellor wrote:
-> > > > > Ping? This warning is now in 6.3-rc1.
-> > > >
-> > > > Thierry is away at the moment.
-> > > >
-> > > > David, Daniel, do you want to pick this up directly in the meantime as a fix
-> > > > for 6.3? Mikko has already reviewed and FWIW ...
-> > >
-> > > Generally first fallback should be drm-misc maintainers (or anyone else
-> > > with commit rights), but since this fell through cracks for weeks it seems
-> > > I'll pick it up to drm-fixes now directly.
-> >
-> > Ok I think I found out why this fell through cracks, MAINTAINERS isn't
-> > updated that host1x&tegra is maintained in drm-misc.
-> >
-> > John, since Thierry is out, can you pls create the MAINTAINERS patch to
-> > - point at drm-misc git repo everywhere needed
-> > - add any missing host1x paths to the drm-misc entry so that
-> > get_maintainers.pl adds the right people for this patch (currently it
-> > doesn't)
-> >
-> > Also should we have at least a 2nd person for tegra stuff (or well
-> > maybe nvidia stuff in general) for drm-misc? Currently it's just
-> > Thierry, and I don't think that's enough. Whomever gets volunteered
-> > please follow
-> >
-> > https://drm.pages.freedesktop.org/maintainer-tools/commit-access.html#drm-misc
->
-> We never actually moved host1x and Tegra DRM to drm-misc completely.
-> There's still a separate tree that feeds into linux-next. This made
-> sense a while ago because there was a lot going on, but development
-> speed has decreased recently, so we may want to fix that. The big
-> benefit is that drm-misc is better oiled than drm-tegra, so getting
-> things merged would be easier for everyone.
+> This sounds like a new dt binding that says the assigned parent should
+> never change. It sounds sort of like gpio hogs. A clock-hogs binding?
 
-Hm I thought you had a split where you feed -fixes through misc and
-features through tegra.git? Just listing both trees would cover that.
+Ideally we want the clock driver to be able to reparent clocks freely
+to get the best rate. But we also need some control over that to stop
+consumers from being reparented in undesired ways. Eg. you might want
+to make sure the GPU gets its own PLL so it can be reclocked easily,
+and putting another device on the GPU's PLL could prevent that.
 
-> I'm all in favor of adding a second Tegra person to take pick up the
-> slack when necessary.
+The only way to achieve this today is (1) never do any reparenting in
+the clock driver; and (2) use assigned-clock-parents in the DT to set
+up the entire clock tree manually.
 
-Imo features still through tegra.git with just you is fine, there's
-not going to be anyone else (like ci farms) blocked if that's held up
-for a bit. It's more the bugfixes where a 2nd nvidia person would be
-great.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Maxime said that (2) is basically wrong -- if assigned-clock-parents
+provides no guarantee on what the OS does "after boot" then the OS is
+pretty much free to ignore it.
+
+My suggestion: add a per-clock bitmap to keep track of which parents
+are allowed. Any operation that would select a parent clock not on the
+whitelist should fail. Automatic reparenting should only select from
+clocks on the whitelist. And we need new DT bindings for controlling
+the whitelist, for example:
+
+    clock-parents-0 = <&clk1>, <&pll_c>;
+    clock-parents-1 = <&clk2>, <&pll_a>, <&pll_b>;
+
+This means that clk1 can only have pll_c as a parent, while clk2 can
+have pll_a or pll_b as parents. By default every clock will be able
+to use any parent, so a list is only needed if the machine needs a
+more restrictive policy.
+
+assigned-clock-parents should disable automatic reparenting, but allow
+explicit clk_set_parent(). This will allow clock drivers to start doing
+reparenting without breaking old DTs.
