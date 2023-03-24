@@ -2,249 +2,236 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850C6C7619A
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 18:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1620FC77B61
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 22:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231460AbjCXSvu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Mar 2023 14:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39264 "EHLO
+        id S232366AbjCXWEF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Mar 2023 18:04:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231263AbjCXSvt (ORCPT
+        with ESMTP id S231896AbjCXWEA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Mar 2023 14:51:49 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C59270B;
-        Fri, 24 Mar 2023 11:51:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TC1n6LM1aCAMDc9WDQX1m4oiVEwuXVe5d/wq6lnaXV2hFdku/5UcGG9kHnFrRUhf5ABHqp2K3NCK353GIRpgl/Cx4SwNQ7H27/9JsQv7d290nMBmXXoTcwa9+eB6MPZbtB/x6BB1Ez+IuA4o6F5aJmYyMDLSBFg8TDgU9nSwu4kcihMzR9iG6XUAou94Qq0KRZ8OZU2Xzm1f8yIH3UN2VaNraBwhTir5NHJv5O2ZD/d8x+kBbD2T1s/yX0ItjrnkWVNo2O8HSBqo1Iz9o+SFGja802vaI6+2foDExNLYkuGnKOVIfhg21/wl4E3ciMrmZ200ARAKAiA6I8UHxymZnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XTRp0nIAhtx0YzW2i3jspM6rsZXVMyMRmOkQ8fO867g=;
- b=mtxnajkEn9wGgxpcPcvpG1jgUDAWy/cDER8PF1iC1JtAle2RmIlgOSAZnkyvkqKkdq/0MGUZV4tx+ZJIsHiHVzD+RWD5xt+d6yNWiXSbmOWKfXeamyiBUa8t2xyT/61c8wGKNGaYVZXZnCFh4YA86Kv3vnCPwUHMFYEGMhkAVNq+SMyfvr2gyziWtvtWWCiWxvnWCEfo1yabKIK2AoavGe+2I94ETFg6CkJW0aBd67HWMnMk2maakAfzlZlPUhZ+uBAJVco3Bz+y0iYI4xxhwHZ/FUwkY1KUfHXkjpqnqxzwWtkgiA9k1etxeUcGfc52VFUFyGWkWK7f19x0kzi8pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XTRp0nIAhtx0YzW2i3jspM6rsZXVMyMRmOkQ8fO867g=;
- b=FpYdwirearVN7oF9gAQsyt9Jr2NE+DvFSn5LKCnlvvjuX43NWRyG4/KpnrQ4+mdjWIz4X8awRu6Duhy3tQy6dnwe0I63XB3emSz9ifdeVVwfxh2q33bSGwthhzcER+i7f1uqYsvap7+zFKfXIZUrh/2zC/SV/OYa9ECUGjW7T3WwCgV59Exb66DwOU/61VqDcyR2RCeEyZOq+RnMV9mqr3sNMsmy6Ic6wPbhdwAPMsb6X/d84vBEeEzAgshvQq0oD8jhMaazPIMr83MzWxLCiPQhV+lZTKoCkqoeCq1s44hmVQvMj4PBRDsVRFWk5eOQj88bb1deCGWN+ECX+jJW4A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA1PR12MB6604.namprd12.prod.outlook.com (2603:10b6:208:3a0::7)
- by MN6PR12MB8516.namprd12.prod.outlook.com (2603:10b6:208:46f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Fri, 24 Mar
- 2023 18:51:44 +0000
-Received: from IA1PR12MB6604.namprd12.prod.outlook.com
- ([fe80::735c:fa9:2043:279a]) by IA1PR12MB6604.namprd12.prod.outlook.com
- ([fe80::735c:fa9:2043:279a%5]) with mapi id 15.20.6178.038; Fri, 24 Mar 2023
- 18:51:44 +0000
-Message-ID: <7f2dc5cf-78b5-81c6-0012-26b1adce1c86@nvidia.com>
-Date:   Fri, 24 Mar 2023 11:51:40 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.0
-Subject: Re: [PATCH V4 04/10] dt-bindings: timestamp: Add
- nvidia,gpio-controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
-        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
-References: <20230323012929.10815-1-dipenp@nvidia.com>
- <20230323012929.10815-5-dipenp@nvidia.com>
- <20230324171329.GA2062332-robh@kernel.org>
-Content-Language: en-US
-X-Nvconfidentiality: public
-From:   Dipen Patel <dipenp@nvidia.com>
-In-Reply-To: <20230324171329.GA2062332-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0070.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::15) To IA1PR12MB6604.namprd12.prod.outlook.com
- (2603:10b6:208:3a0::7)
+        Fri, 24 Mar 2023 18:04:00 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE7F15899;
+        Fri, 24 Mar 2023 15:03:56 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id l27so3152595wrb.2;
+        Fri, 24 Mar 2023 15:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679695435;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:from:to:cc:subject:date:message-id:reply-to;
+        bh=eQ3RSbBi4GxRzlwFNletxU5cxz92xG3Lj6FTyrjdc0o=;
+        b=T3F8aNz2ox9uoURQlE0mq2sXW4z262BpvG7ZxRtAtIbFhPc/TQEpQM0a0SgR+TrqHO
+         CLYGJXT6hxHwzdY9UN32CZG2dOkIF2LFvXUPmwkIF/2GkwmMW7kb6axItHjQcEjAF96P
+         YoZ2Q3loL8sCvN2e52vHQqe+AQbmZyqmh9t2+HCpPytsWAA2sxbaBc61b92bJ1dDr0QQ
+         Tdx2iHxB/Aa/m/jyDHMcs00O0mdizZduxSlMQxMVQw/7cAeVdYgYGEV+MFN8ajK6+qK2
+         SFuRxlx0kY19AQ86OkmU5aCJ9GqDDqrZ45+h67Pz4nAn4V4ElL3E8abtemphkRCVy/gF
+         HzMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679695435;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eQ3RSbBi4GxRzlwFNletxU5cxz92xG3Lj6FTyrjdc0o=;
+        b=nmxnWhLnjHt3vcEBGatjhUU02G51BLUYULi2BQs8T4icOYnbGK69tW1ZyhLdYQcMdB
+         lQ0/cjB5ysCngJr+CEm08KzBxQPdvw9X2h6gTwaZr765p/kVhGS3ZHa9p2MkUwe4i6DO
+         +mq78Ig92aPgTQIc1F70Sq/YjIDabu83Pt9ZFe8r6o9fb3z0cRTseWTLlOrOFg+vtI2b
+         pm+PiiHs2A9PrdXj9dpJ6nghIOvs3c/SBtAPr8/4HfP3MAPqgCx3MF2VYczslInfrCzo
+         1GdO642oQVdIw8XR/hKtcau1UhnMIXiv9pEJQI5nRdopNyqqUpazgyVMpzeyhK/CGJCu
+         +E6Q==
+X-Gm-Message-State: AAQBX9ccfpBnfgybTJcuB6w0QlS5vELRyLYPQwuxym7dv63XmkNTTpek
+        gNP11EBchsClD+5U2Z4sRJo=
+X-Google-Smtp-Source: AKy350bTnEgVdoWb1kTWyTj04kbZ8RkYf2o8/EHnYZiiSg63myut6K0B/vHtQugbPkbZgvwsB8kF9A==
+X-Received: by 2002:adf:e905:0:b0:2ce:a096:3ff2 with SMTP id f5-20020adfe905000000b002cea0963ff2mr3187613wrm.63.1679695434807;
+        Fri, 24 Mar 2023 15:03:54 -0700 (PDT)
+Received: from localhost (94.197.5.156.threembb.co.uk. [94.197.5.156])
+        by smtp.gmail.com with ESMTPSA id e9-20020adffc49000000b002be5bdbe40csm19237361wrs.27.2023.03.24.15.03.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Mar 2023 15:03:54 -0700 (PDT)
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+ <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
+ <20221104145946.orsyrhiqvypisl5j@houat>
+ <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
+ <20221107085417.xrsh6xy3ouwdkp4z@houat>
+ <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
+ <20221109110045.j24vwkaq3s4yzoy3@houat>
+ <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
+ <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
+ <20230324111959.frjf4neopbs67ugd@houat>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+Date:   Fri, 24 Mar 2023 20:58:48 +0000
+In-reply-to: <20230324111959.frjf4neopbs67ugd@houat>
+Message-ID: <rTJKpeLOBeu3eOLW5z3P5fEpcOJJLrGs@localhost>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|MN6PR12MB8516:EE_
-X-MS-Office365-Filtering-Correlation-Id: eec32a54-2a08-4d52-661a-08db2c98d02f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SIyjqGq0z1q+sHdvUNO3lH5LvYnzgRepiuWsZhS3xEMo6xs0rZViZNSZakj5SUbiA0ttze/Dw8Z9XANs1MLgEaZIkwHIVX79NnMO9ywqnb357Tm99GRQ0xzBTSNcpGNnI+P7zMXHBrkE0ySun+ftFCNDrtMHjcgn0o3e6HYcrWTdPf7kWCQLGQEm/eISQPSCgjyk/6+JVZoAcRUQm8k8T8REAI+euGgOLFcTdO/i4naCgpF1m/EK+OHsyvCVTcapurU/lA3SSY2n46J086f2FsoM4cOSTKxW86y4wK5usEwudSHqRPBk+WnJF1wROBdCXV7bfkBXpIPmojrVOoOAVEZEQbBeHv/nvtnkP9WswbnUuzBWYf9fQnlj7Q6us24PCUmOXtuDDRFnEi+LKekAnAtr4ZjWALZn1v2OIrxBo5+DcHtNqBsk2tyEBd4Qa1FnNlUWIDkY9OHaK28egHSQUasdkjMyz7PYFaLVi5QIVMHKVDon8ROlNvLEgwpqqZGg49u6aZII3YMMM1Hb7pam/iOzwzUDA39gyCPZ7rnxpVLrsCv+5G8C7dnj3hXpXYF+xrHEoFkGBQjzlue+rw46Y1ndhuwdRvUNSTcdO3Tce78bRjUXVpnLzegXRmdOCsB4hrFH2UNE8NvuvKYOirFrCVbNqm+AVyH5lt0tYz80uz9N7H/ZFRMhPbh2MSGYEHeALm9ByMP3c+MfxM8VfYl1RJN08ndFOJBitMSjp/rveE8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(376002)(39860400002)(396003)(366004)(451199021)(2906002)(2616005)(38100700002)(4326008)(6916009)(66476007)(66946007)(66556008)(7416002)(6666004)(41300700001)(316002)(5660300002)(26005)(6512007)(186003)(6486002)(53546011)(6506007)(478600001)(83380400001)(8936002)(31686004)(8676002)(31696002)(86362001)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q1Y2dU1LKy9TTHpFcFZ3elp0cG9HcFh5K24wamc5M3FmTGhCcWRFWUxjaWJL?=
- =?utf-8?B?TkVNWURIWER4elJ1OUxnZlNvNXd5aVdSTVEydHUwVEdKdW1LK0hkV3NYQ29M?=
- =?utf-8?B?QUlXMzdMcGVoaEdyL3VualhWUjl3Q2lUcW8rekFZVGo2WVdYSG9xWXFOSWto?=
- =?utf-8?B?TzNENVFzWlIxOGJBMVpnNXJQRWZCYXNISkNVQUlQNEZTdFlsSzRaNk1wS0ll?=
- =?utf-8?B?N240L2JlUXN3bURBTDhqYStUN2tMeHdpK0taN1hHdVV5MzdlNE1Va2ZMbnN0?=
- =?utf-8?B?YUlMc201RlExNVo0c1RMWjhyZGNZeU9wSkRPTlpibDlGeHBLajNCSS9MRUpL?=
- =?utf-8?B?elVwSlFTRVBvKzdDWTliVzFqcTNYZk1iVmdjQjZPWm5xSWV6dzM4TWJCSVNE?=
- =?utf-8?B?cFVKS2Z6S1JndUtrTU1CbTdmMjhYUUZ6WC9nQzIrMWVoQk1KTFI5dHc2d2ll?=
- =?utf-8?B?SnZ5blpENmh3bi9iRCtwOFkxNW55R25RcUg2NHEvWHYzZEFWQ1loTXJBckp3?=
- =?utf-8?B?a09HNytHLzRDdWdXSGRtVFZJb2tuSjNUR3Z0dEhDdE9qVnNDNXRZZlZSZm5j?=
- =?utf-8?B?TXI5MW52Qlk3NkJhVDNudWFpRUdOTVM4WGpDa2k1dTZqa0pvQURaQXdlRmFF?=
- =?utf-8?B?dFpmejlXQ0JpditaZUs3ZFJiUWJxSVdhS3dSbFMwc1NxNDVRdkR3Nmc2RGZl?=
- =?utf-8?B?Ym1TT213MDNmQWczQTdhcGVGd0hqdTlqYzdMU3NnZXFzbEwwRENzN2pVelBx?=
- =?utf-8?B?LzgwenB2SjRtdzR2ekdBejNrZVFuUVN5TnFqdzhhOFhIcE8rWFc1K0UrTGh5?=
- =?utf-8?B?aGh3ek1BZDJVSEFzVUszQkZEVVFnQWVlMXBWNmxJUnF2dFdocFlQOXlsNm5C?=
- =?utf-8?B?NVFiWkRHMnNnbmxOZ09YaVpxM21UY3AwaDFyeHVxQ1N2c05pSTdvZ1ZjRGRW?=
- =?utf-8?B?ekV5QVNPOHVtT3JsNTRVL0Mvak5od1NhT0JVSWRVWUR1RjJuSWp6eEppT3pn?=
- =?utf-8?B?Q0ltOCtveTh5MEVhWWVIS2gweFdQVjlzZ1NrRmQ3OWNYOHZZMWhRWUVsR2hC?=
- =?utf-8?B?OERGMzNVaGc0WWxOTEROczlKcS81ZWI2cFdiVnBRZUxsQmRIUlplL3JqRUE4?=
- =?utf-8?B?WHNram1EQmhOQWpaN2xEdlRDeVNUS3d6a1djS1lJQjErQ3hSaEMvZHdkb1lq?=
- =?utf-8?B?OHVyNHo4VTVZdEs4OXhZVmUzOXRWamQwcmIrcWFzb0F4RVRaYlVGTVhvY2Jk?=
- =?utf-8?B?aTdvbnpWVXc2RnRJNUtsN2ozUVNsMEtEWFJrZFhnOFBPU3ZlUnhWeG9Qd3da?=
- =?utf-8?B?Ui9tYzBVQy9nQmVSTDR6OU04RFZ6ZitUeFcrR3dtcXcyQmpqSUtEM092TDZD?=
- =?utf-8?B?ZHhjeXhQbEtSZGlFZnhreVowaEhGU3dIN1JiYXp4UjNMc3I2c3Rla25keEJl?=
- =?utf-8?B?eGYzOTFSMHlDcWJNeE5OUzFwZXJXS29VOWhZUGVnVlVtT3c3dTgxcVZWMlhp?=
- =?utf-8?B?UmZKWks2b3lIWlZBTStkcEgxZWJXSGlUR3pMZVNteExuMGt3NVNiTjkvWDd4?=
- =?utf-8?B?cFpnOEdwTzYzbFQ1anNGL1Y4UzVGQnY4Q2VLT3FmVUI5dUhKdUVqemxrNjFM?=
- =?utf-8?B?d0diV0hTZFZ1RWJsV0swL0RpbUY4VWYra1RzajZTbS9aS3JnbUs0N2d4N0FX?=
- =?utf-8?B?TGRBbGNVY2YvbUtZU09JUmNNY1dYdllKNzk0WTVBelZ2OVRseWFWUzJEbXpu?=
- =?utf-8?B?c2Q1U3FPK2hUcEk4Y2p4WUNQRjhSNmpPemVramF1RnZQbElFZFlYWE1JQkhw?=
- =?utf-8?B?bWxJeU9MUGpLQ3Bza3pNSEwyTFVtM1o3d04zcGNST1dMQUcyNGU0WGVjRENW?=
- =?utf-8?B?L0l6OU41ZlZqaVIwQUpLS0w1YzF5c0JualpIeUtJemJxNU0waytOblZJSXBQ?=
- =?utf-8?B?Q2pnbExPODU3RmpyMnNtOXNMWmtrS1dpUEh0UVB6NkNxN3o3YkhNUGhjbllD?=
- =?utf-8?B?ekR1Z2Z1Y3Z1dUZDVlZJbWFwUlgya3dSZXk4aGRGblMwQlVueXdjL3NHczNu?=
- =?utf-8?B?MWZkWVJoVDZwT2pHMmJUSERxYzdzZGc5K0VrNVNVMGgvVHFhaFd2RzRaeitk?=
- =?utf-8?Q?5hR1sLkZjghP9nvVIBczBEGZW?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eec32a54-2a08-4d52-661a-08db2c98d02f
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6604.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 18:51:44.6898
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ep8PXmLhvIATDBoDWAFgJnhtohsxxZ+hgAcw94wLWve87zYbPQF6925gmQmzPrckwWsrDTkR9Sk0jXZjMIua5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8516
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/24/23 10:13 AM, Rob Herring wrote:
-> On Wed, Mar 22, 2023 at 06:29:23PM -0700, Dipen Patel wrote:
->> Introducing nvidia,gpio-controller property from Tegra234 SoCs onwards.
->> This is done to help below case.
->>
->> Without this property code would look like:
->> if (of_device_is_compatible(dev->of_node, "nvidia,tegra194-gte-aon"))
->> 	hte_dev->c = gpiochip_find("tegra194-gpio-aon",
->> 				   tegra_get_gpiochip_from_name);
->> else if (of_device_is_compatible(dev->of_node, "nvidia,tegra234-gte-aon"))
->> 	hte_dev->c = gpiochip_find("tegra234-gpio-aon",
->> 				   tegra_get_gpiochip_from_name);
->> else
->> 	return -ENODEV;
-> 
-> Or you just put the name in match data.
 
-Not sure I have understood this comment, but "name" the first argument is
-already there to supply to callback to match data. Also, this if else is
-needed to know which "name" to provide.
-> 
->>
->> This means for every future addition of the compatible string, if else
->> condition statements have to be expanded.
->>
->> With the property:
->> gpio_ctrl = of_parse_phandle(dev->of_node, "nvidia,gpio-controller", 0);
->> ....
->> hte_dev->c = gpiochip_find(gpio_ctrl, tegra_get_gpiochip_from_of_node);
->>
->> This simplifies the code significantly. The introdunction of this
-> 
-> typo
+Maxime Ripard <maxime@cerno.tech> writes:
 
-ACK...
-> 
->> property/binding does not break existing Tegra194 provider driver.
-> 
-> Making a new property required is an ABI break.
-The driver code for the Tegra194 binds by old binding and does not need
-this new property, the relevant code is part of this patch series.
-> 
->> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
->> ---
->>  .../timestamp/nvidia,tegra194-hte.yaml        | 31 +++++++++++++++++--
->>  1 file changed, 29 insertions(+), 2 deletions(-)
+> On Thu, Mar 23, 2023 at 03:35:30PM +0000, Aidan MacDonald wrote:
 >>
->> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
->> index eafc33e9ae2e..841273a3d8ae 100644
->> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
->> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
->> @@ -51,6 +51,12 @@ properties:
->>        LIC instance has 11 slices and Tegra234 LIC has 17 slices.
->>      enum: [3, 11, 17]
->>  
->> +  nvidia,gpio-controller:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      The phandle to AON gpio controller instance. This is required to handle
->> +      namespace conversion between GPIO and GTE.
-> 
-> Explain what the GPIO controller is needed for rather than how this 
-> changes the driver.
-Doesn't "This is required..." statement addresses why GPIO controller is needed
-for part? Or do you want detail explanation which is already part of the commit?
-> 
->> +
->>    '#timestamp-cells':
->>      description:
->>        This represents number of line id arguments as specified by the
->> @@ -65,22 +71,43 @@ required:
->>    - interrupts
->>    - "#timestamp-cells"
->>  
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - nvidia,tegra234-gte-aon
->> +    then:
->> +      required:
->> +        - nvidia,gpio-controller
-> 
->> +
->>  additionalProperties: false
->>  
->>  examples:
->>    - |
->>      tegra_hte_aon: timestamp@c1e0000 {
->>                compatible = "nvidia,tegra194-gte-aon";
->> -              reg = <0xc1e0000 0x10000>;
->> +              reg = <0x0 0xc1e0000 0x0 0x10000>;
->> +              interrupts = <0 13 0x4>;
->> +              nvidia,int-threshold = <1>;
->> +              #timestamp-cells = <1>;
->> +    };
->> +
->> +  - |
->> +    tegra234_hte_aon: timestamp@c1e0000 {
->> +              compatible = "nvidia,tegra234-gte-aon";
->> +              reg = <0x0 0xc1e0000 0x0 0x10000>;
->>                interrupts = <0 13 0x4>;
->>                nvidia,int-threshold = <1>;
->> +              nvidia,gpio-controller = <&gpio_aon>;
->>                #timestamp-cells = <1>;
->>      };
->>  
->>    - |
->>      tegra_hte_lic: timestamp@3aa0000 {
->>                compatible = "nvidia,tegra194-gte-lic";
->> -              reg = <0x3aa0000 0x10000>;
->> +              reg = <0x0 0x3aa0000 0x0 0x10000>;
->>                interrupts = <0 11 0x4>;
->>                nvidia,int-threshold = <1>;
->>                #timestamp-cells = <1>;
->> -- 
->> 2.17.1
+>> Stephen Boyd <sboyd@kernel.org> writes:
 >>
+>> > Quoting Maxime Ripard (2022-11-09 03:00:45)
+>> >> On Mon, Nov 07, 2022 at 08:57:22PM +0000, Aidan MacDonald wrote:
+>> >> >
+>> >> > Maxime Ripard <maxime@cerno.tech> writes:
+>> >> >
+>> >> > > Hi,
+>> >> > >
+>> >> > > On Fri, Nov 04, 2022 at 05:35:29PM +0000, Aidan MacDonald wrote:
+>> >> >
+>> >> > Assigning the parent clock in the DT works once, at boot, but going off
+>> >> > what you wrote in the commit message, if the clock driver has a
+>> >> > .determine_rate() implementation that *can* reparent clocks then it
+>> >> > probably *will* reparent them, and the DT assignment will be lost.
+>> >>
+>> >> Yes, indeed, but assigned-clock-parents never provided any sort of
+>> >> guarantee on whether or not the clock was allowed to reparent or not.
+>> >> It's just a one-off thing, right before probe, and a clk_set_parent()
+>> >> call at probe will override that just fine.
+>> >>
+>> >> Just like assigned-clock-rates isn't permanent.
+>> >>
+>> >> > What I'm suggesting is a runtime constraint that the clock subsystem
+>> >> > would enforce, and actively prevent drivers from changing the parent.
+>> >> > Either explicitly with clk_set_parent() or due to .determine_rate().
+>> >> >
+>> >> > That way you could write a .determine_rate() implementation that *can*
+>> >> > select a better parent, but if the DT applies a constraint to fix the
+>> >> > clock to a particular parent, the clock subsystem will force that parent
+>> >> > to be used so you can be sure the clock is never reparented by accident.
+>> >>
+>> >> Yeah, that sounds like a good idea, and CLK_SET_RATE_NO_REPARENT isn't
+>> >> too far off from this, it's just ignored by clk_set_parent() for now. I
+>> >> guess we could rename CLK_SET_RATE_NO_REPARENT to CLK_NO_REPARENT, make
+>> >> clk_set_parent handle it, and set that flag whenever
+>> >> assigned-clock-parents is set on a clock.
+>> >>
+>> >> It's out of scope for this series though, and I certainly don't want to
+>> >> deal with all the regressions it might create :)
+>> >>
+>> >
+>> > This sounds like a new dt binding that says the assigned parent should
+>> > never change. It sounds sort of like gpio hogs. A clock-hogs binding?
+>>
+>> Ideally we want the clock driver to be able to reparent clocks freely
+>> to get the best rate. But we also need some control over that to stop
+>> consumers from being reparented in undesired ways. Eg. you might want
+>> to make sure the GPU gets its own PLL so it can be reclocked easily,
+>> and putting another device on the GPU's PLL could prevent that.
+>>
+>> The only way to achieve this today is (1) never do any reparenting in
+>> the clock driver; and (2) use assigned-clock-parents in the DT to set
+>> up the entire clock tree manually.
+>>
+>> Maxime said that (2) is basically wrong -- if assigned-clock-parents
+>> provides no guarantee on what the OS does "after boot" then the OS is
+>> pretty much free to ignore it.
+>
+> I didn't really say it's wrong, just that it never provided the
+> guarantee you expect it to provide. I can't really say whether it's an
+> issue or not on your platform.
+>
+> It's mostly unrelated to this series though, none of these patches
+> affect that behavior in one way or the other.
 
+I know. Sorry for derailing your patch :(
+
+>> My suggestion: add a per-clock bitmap to keep track of which parents
+>> are allowed. Any operation that would select a parent clock not on the
+>> whitelist should fail. Automatic reparenting should only select from
+>> clocks on the whitelist. And we need new DT bindings for controlling
+>> the whitelist, for example:
+>>
+>>     clock-parents-0 = <&clk1>, <&pll_c>;
+>>     clock-parents-1 = <&clk2>, <&pll_a>, <&pll_b>;
+>>
+>> This means that clk1 can only have pll_c as a parent, while clk2 can
+>> have pll_a or pll_b as parents. By default every clock will be able
+>> to use any parent, so a list is only needed if the machine needs a
+>> more restrictive policy.
+>>
+>> assigned-clock-parents should disable automatic reparenting, but allow
+>> explicit clk_set_parent(). This will allow clock drivers to start doing
+>> reparenting without breaking old DTs.
+>
+> I'm generally not a fan of putting all these policies in the device
+> tree. Do you have an example where it wouldn't be possible to do exactly
+> this from the driver itself?
+>
+> Maxime
+
+I'm confused. What's implicit in the example is clk1 and clk2 might
+have *other* possible choices of parent clock and the device tree is
+limiting what the OS is allowed to choose.
+
+Why would you put such arbitrary limitations into the driver? They
+would be different from machine to machine, unless the clock tree is
+so simple there is only *one* meaningful way to configure it. Most
+SoCs are complicated enough that there will be tradeoffs depending
+on what peripherals you are using (typically a single machine will
+not use *every* peripheral device provided by the SoC).
