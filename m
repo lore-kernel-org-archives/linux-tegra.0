@@ -2,236 +2,150 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1620FC77B61
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 22:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72ABEC76195
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 22:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232366AbjCXWEF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Mar 2023 18:04:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
+        id S232326AbjCXWLY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Mar 2023 18:11:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231896AbjCXWEA (ORCPT
+        with ESMTP id S232233AbjCXWLU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Mar 2023 18:04:00 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE7F15899;
-        Fri, 24 Mar 2023 15:03:56 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id l27so3152595wrb.2;
-        Fri, 24 Mar 2023 15:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679695435;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :references:from:to:cc:subject:date:message-id:reply-to;
-        bh=eQ3RSbBi4GxRzlwFNletxU5cxz92xG3Lj6FTyrjdc0o=;
-        b=T3F8aNz2ox9uoURQlE0mq2sXW4z262BpvG7ZxRtAtIbFhPc/TQEpQM0a0SgR+TrqHO
-         CLYGJXT6hxHwzdY9UN32CZG2dOkIF2LFvXUPmwkIF/2GkwmMW7kb6axItHjQcEjAF96P
-         YoZ2Q3loL8sCvN2e52vHQqe+AQbmZyqmh9t2+HCpPytsWAA2sxbaBc61b92bJ1dDr0QQ
-         Tdx2iHxB/Aa/m/jyDHMcs00O0mdizZduxSlMQxMVQw/7cAeVdYgYGEV+MFN8ajK6+qK2
-         SFuRxlx0kY19AQ86OkmU5aCJ9GqDDqrZ45+h67Pz4nAn4V4ElL3E8abtemphkRCVy/gF
-         HzMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679695435;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :references:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eQ3RSbBi4GxRzlwFNletxU5cxz92xG3Lj6FTyrjdc0o=;
-        b=nmxnWhLnjHt3vcEBGatjhUU02G51BLUYULi2BQs8T4icOYnbGK69tW1ZyhLdYQcMdB
-         lQ0/cjB5ysCngJr+CEm08KzBxQPdvw9X2h6gTwaZr765p/kVhGS3ZHa9p2MkUwe4i6DO
-         +mq78Ig92aPgTQIc1F70Sq/YjIDabu83Pt9ZFe8r6o9fb3z0cRTseWTLlOrOFg+vtI2b
-         pm+PiiHs2A9PrdXj9dpJ6nghIOvs3c/SBtAPr8/4HfP3MAPqgCx3MF2VYczslInfrCzo
-         1GdO642oQVdIw8XR/hKtcau1UhnMIXiv9pEJQI5nRdopNyqqUpazgyVMpzeyhK/CGJCu
-         +E6Q==
-X-Gm-Message-State: AAQBX9ccfpBnfgybTJcuB6w0QlS5vELRyLYPQwuxym7dv63XmkNTTpek
-        gNP11EBchsClD+5U2Z4sRJo=
-X-Google-Smtp-Source: AKy350bTnEgVdoWb1kTWyTj04kbZ8RkYf2o8/EHnYZiiSg63myut6K0B/vHtQugbPkbZgvwsB8kF9A==
-X-Received: by 2002:adf:e905:0:b0:2ce:a096:3ff2 with SMTP id f5-20020adfe905000000b002cea0963ff2mr3187613wrm.63.1679695434807;
-        Fri, 24 Mar 2023 15:03:54 -0700 (PDT)
-Received: from localhost (94.197.5.156.threembb.co.uk. [94.197.5.156])
-        by smtp.gmail.com with ESMTPSA id e9-20020adffc49000000b002be5bdbe40csm19237361wrs.27.2023.03.24.15.03.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Mar 2023 15:03:54 -0700 (PDT)
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
- <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
- <20221104145946.orsyrhiqvypisl5j@houat>
- <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
- <20221107085417.xrsh6xy3ouwdkp4z@houat>
- <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
- <20221109110045.j24vwkaq3s4yzoy3@houat>
- <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
- <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
- <20230324111959.frjf4neopbs67ugd@houat>
-From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
-Date:   Fri, 24 Mar 2023 20:58:48 +0000
-In-reply-to: <20230324111959.frjf4neopbs67ugd@houat>
-Message-ID: <rTJKpeLOBeu3eOLW5z3P5fEpcOJJLrGs@localhost>
+        Fri, 24 Mar 2023 18:11:20 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B90D9125AE;
+        Fri, 24 Mar 2023 15:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679695857; x=1711231857;
+  h=date:from:to:subject:message-id:references:in-reply-to:
+   mime-version;
+  bh=5RrxLTTjMon1jC1so4TQ+usCeafUHYmIyut5H1BgXhw=;
+  b=eGgMNQT2X2UhLkZbOBH/xaTnl7e2eTYnV2bhoO5hsG4GzmuQwuNETKja
+   1J6JGm9R22z1lcf+d4tmv6lPf2oXsVPS5RTzp8p8qJtDIcOxADEigYGHN
+   AzmDxQOyyYcPTfGFJI82yI/rwihOY0HF25PtPDt3URC9+Amq/7Qgn2BKM
+   OCMEPIw2DUB9VyWEVl284SjxjaglszNFlWhx2UQbPxhyVolFVNc9Ov0TB
+   N8cj9jrVK12a4SvXBP8Ewf29AXGBeqpw/fFhF8lz3jnmskLsmb41orW87
+   cZmGMD2Zfq6BzIkU2qSQJZ7rq0Gij74D2WNajvcK8nR1O50VU8Y1KukDf
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10659"; a="338617581"
+X-IronPort-AV: E=Sophos;i="5.98,289,1673942400"; 
+   d="scan'208";a="338617581"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2023 15:10:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10659"; a="747314528"
+X-IronPort-AV: E=Sophos;i="5.98,289,1673942400"; 
+   d="scan'208";a="747314528"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Mar 2023 15:10:57 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Fri, 24 Mar 2023 15:10:57 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21 via Frontend Transport; Fri, 24 Mar 2023 15:10:57 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.21; Fri, 24 Mar 2023 15:10:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ADayHUtKTyupvHfnPoFsf1P5JdYu84aKSIVWdHAZJkNCBRuqxlynSlzYwmBTKmPwvdu/Dx0EYGat2HFP+9vCsGoLGvGH222IaBACpn/9puYSxQ+B/KSuKWgGObdaPK0lQpx1OJzoW4WG/8PXHqBK1rxbI8bn+dyBOlIdhc95VJQ7eTGm3VdjzLTaxIIppBzo4K11b6P4DJTxZuE8I6c63dABwPkEtIxr8F3kPPKkUV8P5Rrp+5MV6KizOsoCmEle0NaqjBPoFAYA2MdCsU7IP2V9Fx2B1CF95BTOx5qYupqRdnYKsDW0z3xnd1bCRLpMemJ+jR9GCYwQgP8Q4x3+7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KlaKj5WFdGZ2Xq4JNKKdxuHgQmLyVaVrPrJ8O1me+HY=;
+ b=XGDQGVL+go0qJ0aeYM//Kv/AeQ+ahmZyRAdT6ZhH0IpIxhei9+/TflMHOWQSSXAm1oPCYN3QjJbsZ3E4x6mDPW0YhbCYJ3J8BJuI8DU3Wykhwums1dWEg6WL8Zdwbd5uUk7Ec6bNHkWKZc2Lz6ykSOu+uyozZ+L9TSNkvpiKlTfGVRVQyCnbphztcyQ/639ewY+zUvrZptECwFp1xok9HPSOdwilLf1QWND3CX/ku8yirLdT/JElXwznZBG6kmiaiew4qTeS4gXEddYYXAeHBIs/D7ErSACPPrMWF88wzoEMYZjUY3GNzd7gyFRlNl3WUBOEZLnkoMZXzSKqEPDR7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by BL3PR11MB6363.namprd11.prod.outlook.com (2603:10b6:208:3b6::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Fri, 24 Mar
+ 2023 22:10:54 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::84dd:d3f2:6d99:d7ff]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::84dd:d3f2:6d99:d7ff%7]) with mapi id 15.20.6178.037; Fri, 24 Mar 2023
+ 22:10:52 +0000
+Date:   Fri, 24 Mar 2023 15:10:49 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Sumitra Sharma <sumitraartsy@gmail.com>,
+        Marc Dietrich <marvin24@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <ac100@lists.launchpad.net>, <linux-tegra@vger.kernel.org>,
+        <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <outreachy@lists.linux.dev>
+Subject: Re: [PATCH v4] Staging: nvec: Remove macro definition to_nvec_led
+Message-ID: <641e1fe98339a_325e1f2941d@iweiny-mobl.notmuch>
+References: <20230322054051.GA150453@sumitra.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230322054051.GA150453@sumitra.com>
+X-ClientProxiedBy: SJ0PR05CA0198.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::23) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|BL3PR11MB6363:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5f77040-3280-4295-1e00-08db2cb4a1df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: aEam2JazXElM8AmLKAre0oKErwYrwIqzIE6/o0ayKM8JLUCbmDZB6p9EhMYgR6B0vqvRH3/GOGnpI9+kQNcvQaRMGpES8ZjdhfnO8QYhV9slX10sscrtcnfsulq2y8uwhGOUyHjI9NcawCH7Ps9t2fZMeTyEnuu0kQcHV++VAJ9cA4s1yrtsN6xjrhCzNB0FpQrTvQa27ILY8V3bcaCACSceLwkpj7wNyUtRjBSkV3DgtA3b/w23hWkxjxmrSRZPffaj21cMYyqZ6LxO85oflN4qQXu/u/xSkgDCUagqwXGQoUoY4gmQhS9l3TgkwjDUNNyL+FzTnzZeq1tpHCvrFrJ9taLqbqc9t9aWfHi8UQ9wZt1Fh06Mnm8st0NUX/3bQeAje27SkwatmFHp6u+j/XHJR9SSoxl2S4E39xVRQTyQO378ofy2TSXVohPvLuDG8N8TejnKjLJl9nIX8H0zGsvb0M+aQMKCnAFt2fTOeJDnhNCJrlNaxYHORPlvIU3decxfMMPxXpB+PGhwKlAVkfWZUGIxd9jlwRnQx35pMEo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(136003)(346002)(376002)(366004)(396003)(451199021)(44832011)(110136005)(8936002)(478600001)(6666004)(186003)(5660300002)(82960400001)(2906002)(316002)(6486002)(38100700002)(26005)(6506007)(66946007)(41300700001)(66556008)(558084003)(6512007)(66476007)(9686003)(86362001)(8676002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?M7DyJ9Lfd9EpJxuClDAPtvXiM/wx56C8jKx5Tn9exB26M9NMedLKCyYHtI8p?=
+ =?us-ascii?Q?70gVEHjhWuppf6KG9LjYcu0yMGHquMIDeYtMfqT93NB16mmfZuRGKBfucqoG?=
+ =?us-ascii?Q?D2TpRt/PG7oY5KXD0NSOBk5whv5DBlhNEgDakrMTnWUc/bNj8qcZ3P/HnKBR?=
+ =?us-ascii?Q?BlHOX62u/Kg3ko5HLyZl2uUjjIZMr3+QqVOHpDnmaD2KnW6BDCbA3Ama9CX0?=
+ =?us-ascii?Q?FXcNlZbMZ/TpmZnm+dK3jmsNin4BwwszlwEzxS1qzUwOc07YAXEnakNNue0+?=
+ =?us-ascii?Q?P8UGsqcVAixlTvlEz6p+KulmyM+cK8SJwiDejIGEWnRwpCqNR6FCIFX1uNA7?=
+ =?us-ascii?Q?PL4kCP3rltAoeOAXNYWA00jPoQW7hJrhVXbjep6mVv6JRrSzfqpWTgpfPNfR?=
+ =?us-ascii?Q?2XKyPv3VUlnLN+V0XDif0FffZyFmO4H7gnYfwoU0HJ8Yv3Ur8aKEoAkV85Ip?=
+ =?us-ascii?Q?t5pLqanuuZZL138+6GipD3CR55u4vWJYYVzyGH4A1bW7qQwS5eGEndtb6T4I?=
+ =?us-ascii?Q?0YzZ+nl9og3etylYosFBHDicK7c3nkmCQrNKLNzIHgrZn4LPAjrxiaeJTV1k?=
+ =?us-ascii?Q?8zFs6XbwdJoy2MdZP9zSvJhrfeClFp5pUuzaIq3RoLyCCoSP9MI+UzAXPmOD?=
+ =?us-ascii?Q?0++eoioNv9ICbKoz60egkYU+ZQAVxRXevqmY4R/wX77cdMJsRh+o6ohsVeK6?=
+ =?us-ascii?Q?F+Ox3wjFSlwKKuJtBIEnDLYo1ZcmWGj02w3hsIhIHbLce9rwycBiFFBDRfOa?=
+ =?us-ascii?Q?SMZ6dWcGoYbYEulTU675Ol7lI+PPK0FQs5tQd/1Q6eeH7aBC/2umS/V41hKC?=
+ =?us-ascii?Q?On/CUGXCNkZYXoaRYfpah2mTOZrEwQtzoncMZ3Mh9PCllXaFDYvrI87MbBik?=
+ =?us-ascii?Q?zAov6dGgxp9xYoJQrfs3fysNa3FfTRpRU4juS5yMNTKSOqw8cbfm7vHZIQNJ?=
+ =?us-ascii?Q?anvyMlIdFBYoV0mAvAgbbVXs5cq3tC7JXp0Kxl9pJlrxTiae08leiDsXGFui?=
+ =?us-ascii?Q?q+aqwA2ycm6ROrfWnSfu0SviYKFwyH/0EfLDfhU0ak/jtiVpZRzWCOkEfbhB?=
+ =?us-ascii?Q?4whYl6y3rj8ij0F7QIsS20W+fzw0OP+vuTHCV/yp6yJ9XfhdXrO6c+eiXAPu?=
+ =?us-ascii?Q?K2cLpGuI8tgasg0qGcNbonuma8pDNxLDNfjODfiy5Lludz8cFpqBfJDl/JaZ?=
+ =?us-ascii?Q?vWvqQ4HlpfKw3yjdarjfmb6EDP9ILeMDdQg2jij/riwIHgwW69iWAzjOqbC+?=
+ =?us-ascii?Q?S2xaLaSAPbKHEYtiOE95yDsAem3mhZtWa2PriReAGojsLR2oeCTXAwYIB4BD?=
+ =?us-ascii?Q?OiABIghm39LSV2VqrAQvLu+0tTmC4oP3HkkehQn9TL3aYqwfu7Q2BtHsQMJ2?=
+ =?us-ascii?Q?AsEyYd9+LJET6f/3wPsNr8SyTq8IIhVSzkl4XICS3J2dTgUvW3UlLegtMG10?=
+ =?us-ascii?Q?67Nw/KEcTIeWh8PfnUd2Xg27xXc4669omnSfGhgmf1NDD/+6BhTTOpxcuRB5?=
+ =?us-ascii?Q?GAofDfwphaj3knVBem+zJEXpj5zE2MHYsw/LrHcvgu6BnVRMDf3BVRpT2XQf?=
+ =?us-ascii?Q?x2JxB8zCXp/bFuzKZ5tmL0dx9QkWLvAH8BS06Gwn?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5f77040-3280-4295-1e00-08db2cb4a1df
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 22:10:52.7371
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mZVHlcHfQ5P3pK/aSw4PeJ29PDNYQxouLT+oxaiFEbrVuqos6SQHk+zYTv2B+jdaBUVNCR1ybte6NTD08D1Wzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6363
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Sumitra Sharma wrote:
+> Remove definition 'to_nvec_led' because it is only used once.
+> Rewrite the code directly in the calling function
+> 'nvec_led_brightness_set'.
+> 
+> Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
 
-Maxime Ripard <maxime@cerno.tech> writes:
-
-> On Thu, Mar 23, 2023 at 03:35:30PM +0000, Aidan MacDonald wrote:
->>
->> Stephen Boyd <sboyd@kernel.org> writes:
->>
->> > Quoting Maxime Ripard (2022-11-09 03:00:45)
->> >> On Mon, Nov 07, 2022 at 08:57:22PM +0000, Aidan MacDonald wrote:
->> >> >
->> >> > Maxime Ripard <maxime@cerno.tech> writes:
->> >> >
->> >> > > Hi,
->> >> > >
->> >> > > On Fri, Nov 04, 2022 at 05:35:29PM +0000, Aidan MacDonald wrote:
->> >> >
->> >> > Assigning the parent clock in the DT works once, at boot, but going off
->> >> > what you wrote in the commit message, if the clock driver has a
->> >> > .determine_rate() implementation that *can* reparent clocks then it
->> >> > probably *will* reparent them, and the DT assignment will be lost.
->> >>
->> >> Yes, indeed, but assigned-clock-parents never provided any sort of
->> >> guarantee on whether or not the clock was allowed to reparent or not.
->> >> It's just a one-off thing, right before probe, and a clk_set_parent()
->> >> call at probe will override that just fine.
->> >>
->> >> Just like assigned-clock-rates isn't permanent.
->> >>
->> >> > What I'm suggesting is a runtime constraint that the clock subsystem
->> >> > would enforce, and actively prevent drivers from changing the parent.
->> >> > Either explicitly with clk_set_parent() or due to .determine_rate().
->> >> >
->> >> > That way you could write a .determine_rate() implementation that *can*
->> >> > select a better parent, but if the DT applies a constraint to fix the
->> >> > clock to a particular parent, the clock subsystem will force that parent
->> >> > to be used so you can be sure the clock is never reparented by accident.
->> >>
->> >> Yeah, that sounds like a good idea, and CLK_SET_RATE_NO_REPARENT isn't
->> >> too far off from this, it's just ignored by clk_set_parent() for now. I
->> >> guess we could rename CLK_SET_RATE_NO_REPARENT to CLK_NO_REPARENT, make
->> >> clk_set_parent handle it, and set that flag whenever
->> >> assigned-clock-parents is set on a clock.
->> >>
->> >> It's out of scope for this series though, and I certainly don't want to
->> >> deal with all the regressions it might create :)
->> >>
->> >
->> > This sounds like a new dt binding that says the assigned parent should
->> > never change. It sounds sort of like gpio hogs. A clock-hogs binding?
->>
->> Ideally we want the clock driver to be able to reparent clocks freely
->> to get the best rate. But we also need some control over that to stop
->> consumers from being reparented in undesired ways. Eg. you might want
->> to make sure the GPU gets its own PLL so it can be reclocked easily,
->> and putting another device on the GPU's PLL could prevent that.
->>
->> The only way to achieve this today is (1) never do any reparenting in
->> the clock driver; and (2) use assigned-clock-parents in the DT to set
->> up the entire clock tree manually.
->>
->> Maxime said that (2) is basically wrong -- if assigned-clock-parents
->> provides no guarantee on what the OS does "after boot" then the OS is
->> pretty much free to ignore it.
->
-> I didn't really say it's wrong, just that it never provided the
-> guarantee you expect it to provide. I can't really say whether it's an
-> issue or not on your platform.
->
-> It's mostly unrelated to this series though, none of these patches
-> affect that behavior in one way or the other.
-
-I know. Sorry for derailing your patch :(
-
->> My suggestion: add a per-clock bitmap to keep track of which parents
->> are allowed. Any operation that would select a parent clock not on the
->> whitelist should fail. Automatic reparenting should only select from
->> clocks on the whitelist. And we need new DT bindings for controlling
->> the whitelist, for example:
->>
->>     clock-parents-0 = <&clk1>, <&pll_c>;
->>     clock-parents-1 = <&clk2>, <&pll_a>, <&pll_b>;
->>
->> This means that clk1 can only have pll_c as a parent, while clk2 can
->> have pll_a or pll_b as parents. By default every clock will be able
->> to use any parent, so a list is only needed if the machine needs a
->> more restrictive policy.
->>
->> assigned-clock-parents should disable automatic reparenting, but allow
->> explicit clk_set_parent(). This will allow clock drivers to start doing
->> reparenting without breaking old DTs.
->
-> I'm generally not a fan of putting all these policies in the device
-> tree. Do you have an example where it wouldn't be possible to do exactly
-> this from the driver itself?
->
-> Maxime
-
-I'm confused. What's implicit in the example is clk1 and clk2 might
-have *other* possible choices of parent clock and the device tree is
-limiting what the OS is allowed to choose.
-
-Why would you put such arbitrary limitations into the driver? They
-would be different from machine to machine, unless the clock tree is
-so simple there is only *one* meaningful way to configure it. Most
-SoCs are complicated enough that there will be tradeoffs depending
-on what peripherals you are using (typically a single machine will
-not use *every* peripheral device provided by the SoC).
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
