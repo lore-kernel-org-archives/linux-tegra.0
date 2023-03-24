@@ -2,59 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EADEC6FD1C
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 09:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E19DBC77B60
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 10:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231281AbjCXJ7h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Mar 2023 05:59:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53382 "EHLO
+        id S231375AbjCXKin (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Mar 2023 06:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbjCXJ7g (ORCPT
+        with ESMTP id S230482AbjCXKim (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Mar 2023 05:59:36 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3247613524
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Mar 2023 02:59:35 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-17ec8963db8so1212897fac.8
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Mar 2023 02:59:35 -0700 (PDT)
+        Fri, 24 Mar 2023 06:38:42 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C255E3AB;
+        Fri, 24 Mar 2023 03:38:41 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id h8so6044788ede.8;
+        Fri, 24 Mar 2023 03:38:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1679651974;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3S1jZpPFamxYpM15q1AsKfyrzurt5PTq4wNBIuUsWUI=;
-        b=QYW+l3DBUnQ5ubmYmXBr0H1dxlZ4HSLqh7wMlwF3ocB1NGNlLlfABYYXqOkIlu/qWx
-         chXDwyqc0t3c6D9QdQ4Jem9Okt6b6TJ2rlECoLD11Lovfw1LHQJajCmUaHHrTx5sZM0s
-         b076vp1OwlQK4nnvJWTh/gCUBqGaYjFE6MKG8=
+        d=gmail.com; s=20210112; t=1679654320;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ECT1/Ru7wV82ugDePS3u/IWmW8AXpzFH/azNcPIPIVk=;
+        b=RzqE2AQnZGhHDLwMMdp+78VXQ2QgjyazQbEtVsMB/DIoReiiYrQY3DOmbRPwLmjXbV
+         xX/Ar0CnzH3u/UsvfhAykXjF7Tq9BdN02wmcNErfPEIhtHe2M6jnS0R7eTahexUCwJAm
+         bnKrketFKxMGlsHyuT/qM3OUKv+D40LHlJr/VoF+jecJ54YcrE5tyCF13AzKfDRSiTSG
+         wKnwP/IxIH+cqvesf+mrMlai9NHeTQgOw/Mq+/3HcbPRbbYqLixKTvWI8385JuDCCQwj
+         CqcMc72Qa4zRqMTNwuii+ZCbZtqKJTWwiFeWdXrHyF/LBOrEIf5354vGUkj7bzrBvtWK
+         AaOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679651974;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3S1jZpPFamxYpM15q1AsKfyrzurt5PTq4wNBIuUsWUI=;
-        b=wKxjsXy5ynd6+nxEYevcZBHvhPBVIIVr4QpnnTe3Ln7HbIbxE9+DLxdEHCpVaEpctj
-         qCEkcmkgU/USL/z/+IZiOZZqIwX8Wwpcnh16jFLK5F2M2Vh9IOqe/CKOjxFEiHpUTRP3
-         wr1oDszi9k8bJKu0VBawhh5AXVANlxj9j08XHerOhzqzl1Q36N/GTnQCOERRkKmxJxxX
-         2eYRGpSnTTrHuwmGYIzX9QS1JLHTs9V53bD2gfhV35YBpykXNNrn8GM6skgysUtnP2x8
-         vndUqRD0PPnKHdJrrybDOAtAXZlCJD3xjLXE5qgQIXhsZsyyPnuCA15AGcFYmsyZ6Jo0
-         qHmA==
-X-Gm-Message-State: AAQBX9cVF7UZwfKJSGwL2gCZlC4QKQS2fCG2jaVDUncaGivz58aR1K5Y
-        NdAwvz/rYKbbC1o7kV519ilieuPbgSIroYlVWrBwdw==
-X-Google-Smtp-Source: AK7set8nnSsWs0sg/cfPv8YNM0ZQhXr8KxqRW4ooPSiAH3ue+FwWvT+JfLiS9Ro4hwDEE7/aUEiXBwoGKN/IAsNiCbA=
-X-Received: by 2002:a05:6870:1050:b0:177:bf3e:5d4f with SMTP id
- 16-20020a056870105000b00177bf3e5d4fmr837720oaj.8.1679651974508; Fri, 24 Mar
- 2023 02:59:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230127221418.2522612-1-arnd@kernel.org> <Y/eULFO4jbivQ679@dev-arch.thelio-3990X>
- <20230308165644.GA1181835@dev-arch.thelio-3990X> <67f9fe7f-392a-9acd-1a4d-0a43da634367@nvidia.com>
- <ZB1xWRo0rkhku2BS@phenom.ffwll.local>
-In-Reply-To: <ZB1xWRo0rkhku2BS@phenom.ffwll.local>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 24 Mar 2023 10:59:23 +0100
-Message-ID: <CAKMK7uF4tYyw6Eio6YkWZpBej1J8_5+VLU_hvVbL-Lnk06=v1g@mail.gmail.com>
-Subject: Re: [PATCH] gpu: host1x: fix uninitialized variable use
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Nathan Chancellor <nathan@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        d=1e100.net; s=20210112; t=1679654320;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ECT1/Ru7wV82ugDePS3u/IWmW8AXpzFH/azNcPIPIVk=;
+        b=KWBUf3HFKYWG4DD1PwprHVCaHUHPx5Q0NdaBwu9dhqTi2beXzHvL0mCJ9YdEVnEIgf
+         B7+5lcyg8Oiu+46pU0my6jIuMRF4wwe4XODH+mTcrgdPWLeLUKgB8/xHqZKhfKOOCM0/
+         nzioWQOy1m+KzFnwn740KCYyEd+T2/dpKXlq4E3p6FGh+HuQoUvKohBVy34r9YGsSj2H
+         bMPw/mNBYkFUerycMXXP0r6Ox2nRWV6R45iuDs1XJ4s8vJdAWhOJtGmDMUAhk/CSm6uv
+         JYHSmyZdvxddscLIU5qidEDwfa6e5F2XkJ56yqWjvZloS9X6GUUPGOe6XkbtXtyfsGzH
+         rFZA==
+X-Gm-Message-State: AAQBX9eMNZGW1zAblPeqthq6wrB5M6yN5iCxW9ygJmHCdOmIso12B2AQ
+        LgV5MgW5R92SFY9AckbD7mA=
+X-Google-Smtp-Source: AKy350YhoHLiRBo1ctGglttUmGpas7AzWt+igKKTxGZtmvo09PoGpabh9E5mLh3z1b3hamSWfM7xYA==
+X-Received: by 2002:a17:906:b24e:b0:930:21a:c80 with SMTP id ce14-20020a170906b24e00b00930021a0c80mr2089595ejb.47.1679654319862;
+        Fri, 24 Mar 2023 03:38:39 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id g26-20020a1709064e5a00b00930525d89e2sm9972454ejw.89.2023.03.24.03.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Mar 2023 03:38:39 -0700 (PDT)
+Date:   Fri, 24 Mar 2023 11:38:37 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Nathan Chancellor <nathan@kernel.org>,
         David Airlie <airlied@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Nick Desaulniers <ndesaulniers@google.com>,
@@ -64,127 +64,97 @@ Cc:     Nathan Chancellor <nathan@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] gpu: host1x: fix uninitialized variable use
+Message-ID: <ZB19rRHIeLxyzDrX@orome>
+References: <20230127221418.2522612-1-arnd@kernel.org>
+ <Y/eULFO4jbivQ679@dev-arch.thelio-3990X>
+ <20230308165644.GA1181835@dev-arch.thelio-3990X>
+ <67f9fe7f-392a-9acd-1a4d-0a43da634367@nvidia.com>
+ <ZB1xWRo0rkhku2BS@phenom.ffwll.local>
+ <CAKMK7uF4tYyw6Eio6YkWZpBej1J8_5+VLU_hvVbL-Lnk06=v1g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kg2CDr5zPYYVxPyh"
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uF4tYyw6Eio6YkWZpBej1J8_5+VLU_hvVbL-Lnk06=v1g@mail.gmail.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 24 Mar 2023 at 10:46, Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Wed, Mar 08, 2023 at 05:28:06PM +0000, Jon Hunter wrote:
+
+--kg2CDr5zPYYVxPyh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Mar 24, 2023 at 10:59:23AM +0100, Daniel Vetter wrote:
+> On Fri, 24 Mar 2023 at 10:46, Daniel Vetter <daniel@ffwll.ch> wrote:
 > >
+> > On Wed, Mar 08, 2023 at 05:28:06PM +0000, Jon Hunter wrote:
+> > >
+> > >
+> > > On 08/03/2023 16:56, Nathan Chancellor wrote:
+> > > > Ping? This warning is now in 6.3-rc1.
+> > >
+> > > Thierry is away at the moment.
+> > >
+> > > David, Daniel, do you want to pick this up directly in the meantime a=
+s a fix
+> > > for 6.3? Mikko has already reviewed and FWIW ...
 > >
-> > On 08/03/2023 16:56, Nathan Chancellor wrote:
-> > > Ping? This warning is now in 6.3-rc1.
-> >
-> > Thierry is away at the moment.
-> >
-> > David, Daniel, do you want to pick this up directly in the meantime as a fix
-> > for 6.3? Mikko has already reviewed and FWIW ...
->
-> Generally first fallback should be drm-misc maintainers (or anyone else
-> with commit rights), but since this fell through cracks for weeks it seems
-> I'll pick it up to drm-fixes now directly.
+> > Generally first fallback should be drm-misc maintainers (or anyone else
+> > with commit rights), but since this fell through cracks for weeks it se=
+ems
+> > I'll pick it up to drm-fixes now directly.
+>=20
+> Ok I think I found out why this fell through cracks, MAINTAINERS isn't
+> updated that host1x&tegra is maintained in drm-misc.
+>=20
+> John, since Thierry is out, can you pls create the MAINTAINERS patch to
+> - point at drm-misc git repo everywhere needed
+> - add any missing host1x paths to the drm-misc entry so that
+> get_maintainers.pl adds the right people for this patch (currently it
+> doesn't)
+>=20
+> Also should we have at least a 2nd person for tegra stuff (or well
+> maybe nvidia stuff in general) for drm-misc? Currently it's just
+> Thierry, and I don't think that's enough. Whomever gets volunteered
+> please follow
+>=20
+> https://drm.pages.freedesktop.org/maintainer-tools/commit-access.html#drm=
+-misc
 
-Ok I think I found out why this fell through cracks, MAINTAINERS isn't
-updated that host1x&tegra is maintained in drm-misc.
+We never actually moved host1x and Tegra DRM to drm-misc completely.
+There's still a separate tree that feeds into linux-next. This made
+sense a while ago because there was a lot going on, but development
+speed has decreased recently, so we may want to fix that. The big
+benefit is that drm-misc is better oiled than drm-tegra, so getting
+things merged would be easier for everyone.
 
-John, since Thierry is out, can you pls create the MAINTAINERS patch to
-- point at drm-misc git repo everywhere needed
-- add any missing host1x paths to the drm-misc entry so that
-get_maintainers.pl adds the right people for this patch (currently it
-doesn't)
+I'm all in favor of adding a second Tegra person to take pick up the
+slack when necessary.
 
-Also should we have at least a 2nd person for tegra stuff (or well
-maybe nvidia stuff in general) for drm-misc? Currently it's just
-Thierry, and I don't think that's enough. Whomever gets volunteered
-please follow
+Thierry
 
-https://drm.pages.freedesktop.org/maintainer-tools/commit-access.html#drm-misc
+--kg2CDr5zPYYVxPyh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks, Daniel
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQdfasACgkQ3SOs138+
+s6GJTg//d12Nx4SOSj062aViq5Ogt408l+g2R+09DBr0O/NW9IoUKKRq7fCrhw9P
+JLcHXdUYAgr9WylfV2Y/KVkd2zIVOUzmwqtM5S3knJ2WYZfLV9X4R9H2dOqN4YrL
+uVxLeQtZB6NRAZMZeg0YnPuS25Lx7gYbK7GqViItayAlhqx0lbpYM3LrjSeC5cwP
+W2scYiTrwByz5w6VFizFUztlZON8DrAEJ9+PcLWDjVzJwTl6cfvRRimkj9A380XK
+R6YVZpNGLy7Jlb8i/UayquMrl9YzJh6oewgDLnM/ckx/Pq0KWs5RH/wKRTS+9tX6
+y9FFrf3WIc0oz/mK7A7T9hW6Vno7Ys1N+RYxCENLdruWODQfjAeB23C+k7O8dckX
+yVJmhRSqBRBfnnsMursu9le1/m2ahXjTuch6rNlBWdXgiWlgsOtXqCCwo039C/al
+DrLJ6FtY2qftqjOFZUFvdArFPIER9Qrki1UFyBEOVnKdw7RFvs8iht1nXi7Blqny
+R20SUVz+U8ptBV0JvxPa/IjuRw8G+pE0pUHv73FmArI+oVO+uSilaLqVZLYSKZqo
+02sod/iBFkbic92VT8zItvb3N4fvYE+jVyHAPG+YuaqXfRdYFZTcm1mcETw5omll
+i5PFlRnImLAvtl6Uz3MEgYCs/4jvWUnxKlA+8KV/JtcM7XfrgwA=
+=zSBl
+-----END PGP SIGNATURE-----
 
->
-> >
-> > Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> >
-> > Thanks
-> > Jon
-> >
-> >
-> > > On Thu, Feb 23, 2023 at 09:28:28AM -0700, Nathan Chancellor wrote:
-> > > > Hi Thierry, Daniel, and David,
-> > > >
-> > > > On Fri, Jan 27, 2023 at 11:14:00PM +0100, Arnd Bergmann wrote:
-> > > > > From: Arnd Bergmann <arnd@arndb.de>
-> > > > >
-> > > > > The error handling for platform_get_irq() failing no longer
-> > > > > works after a recent change, clang now points this out with
-> > > > > a warning:
-> > > > >
-> > > > > drivers/gpu/host1x/dev.c:520:6: error: variable 'syncpt_irq' is uninitialized when used here [-Werror,-Wuninitialized]
-> > > > >          if (syncpt_irq < 0)
-> > > > >              ^~~~~~~~~~
-> > > > >
-> > > > > Fix this by removing the variable and checking the correct
-> > > > > error status.
-> > > > >
-> > > > > Fixes: 625d4ffb438c ("gpu: host1x: Rewrite syncpoint interrupt handling")
-> > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > ---
-> > > > >   drivers/gpu/host1x/dev.c | 5 ++---
-> > > > >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> > > > > index 4872d183d860..aae2efeef503 100644
-> > > > > --- a/drivers/gpu/host1x/dev.c
-> > > > > +++ b/drivers/gpu/host1x/dev.c
-> > > > > @@ -487,7 +487,6 @@ static int host1x_get_resets(struct host1x *host)
-> > > > >   static int host1x_probe(struct platform_device *pdev)
-> > > > >   {
-> > > > >         struct host1x *host;
-> > > > > -       int syncpt_irq;
-> > > > >         int err;
-> > > > >         host = devm_kzalloc(&pdev->dev, sizeof(*host), GFP_KERNEL);
-> > > > > @@ -517,8 +516,8 @@ static int host1x_probe(struct platform_device *pdev)
-> > > > >         }
-> > > > >         host->syncpt_irq = platform_get_irq(pdev, 0);
-> > > > > -       if (syncpt_irq < 0)
-> > > > > -               return syncpt_irq;
-> > > > > +       if (host->syncpt_irq < 0)
-> > > > > +               return host->syncpt_irq;
-> > > > >         mutex_init(&host->devices_lock);
-> > > > >         INIT_LIST_HEAD(&host->devices);
-> > > > > --
-> > > > > 2.39.0
-> > > > >
-> > > >
-> > > > Apologies if this has been reported already or has a solution in
-> > > > progress but mainline is now broken because this change got separated
-> > > > from the change it is fixing:
-> > > >
-> > > > https://github.com/ClangBuiltLinux/continuous-integration2/actions/runs/4249931209/jobs/7391912774
-> > > > https://storage.tuxsuite.com/public/clangbuiltlinux/continuous-integration2/builds/2M7y9HpiXB13qiC2mkHMyeZOcLW/build.log
-> > > >
-> > > > I see this change sitting in the drm-tegra tree [1], which is getting
-> > > > merged into -next, so it is fixed there, which is why we did not notice
-> > > > any issues until the drm-next tree was merged into mainline. Can this be
-> > > > fast tracked to Linus to unbreak clang builds with -Werror?
-> > > >
-> > > > [1]: https://gitlab.freedesktop.org/drm/tegra/-/commit/b9930311641cf2ed905a84aabe27e8f3868aee4a
-> >
-> > --
-> > nvpublic
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+--kg2CDr5zPYYVxPyh--
