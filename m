@@ -2,259 +2,123 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 883FAC77B61
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 11:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6F1C6FD20
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Mar 2023 12:00:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231405AbjCXLUM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Mar 2023 07:20:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40372 "EHLO
+        id S230125AbjCXMAB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Mar 2023 08:00:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230380AbjCXLUK (ORCPT
+        with ESMTP id S229681AbjCXMAA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Mar 2023 07:20:10 -0400
-Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9218225972;
-        Fri, 24 Mar 2023 04:20:08 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 02E8758211D;
-        Fri, 24 Mar 2023 07:20:06 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 24 Mar 2023 07:20:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1679656805; x=1679664005; bh=jn
-        hC/DvfTlyZcOnZuUe9LuHIarcRp2uTbbPObwOvLtk=; b=RINbDJrDavr91qApxS
-        4BIapnsTSMpJsQcMuiekOJ4buZfgO1V5bxZUX92x96X+70RG5pM597H6X6A8ze2Q
-        J3K3HTIk9bh/ZbHNJcL4cY9CXoNlp9BFd+TTAQzaGhbL4Q/xS5FNx1TElQW6xvG7
-        0pWgXxxHWJn2xo8oKO6WZBtJ8/apSTxWaFgzT4XANpTX/yFywGqPfreFSFA+SxYy
-        DVWfFOmgiUFFAwcBCuUS5l1GOHRlbwP6IKA226oMHwgNZfpxX+vE/kqqplzGKxN6
-        3CA6w8YfKEc956VkNbvyMcVk4fjXMyE6jZ/K83ddG+CzpHvsr07jRCCCdY737Omz
-        uzeA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1679656805; x=1679664005; bh=jnhC/DvfTlyZc
-        OnZuUe9LuHIarcRp2uTbbPObwOvLtk=; b=G4KWdAq5u3yOdbhwSK/77/yGH7IQB
-        2xysJ+4DHASMDHD4DpUNSh0qiUQ7PoZ0HeB31FPCqa3ypIcHnjDyiqx4+OASl4vt
-        YII+0RiTBeUGCTuHiRp/2zrlkY7JsRYyob4hyT9jfvFspEvX+TWDxi6HeqVtkkkI
-        EIEz+43mJMF3TccMFqhY9/s2d2q0Bnzb5506eHVsiiRibRjc0JM/OyGd5+joNcoL
-        b2y+9ja4sW5wabUkTzlsQiAxcTUWRGjZRPmuIIWmJFWEdsTq0+X56oaR8GkrkVqB
-        dX4i5J533jmuMxkiG1iqzEHijtLWz0ghQXTKvlKaafFgHLlEw3jiDRZ4g==
-X-ME-Sender: <xms:YocdZJLt50SkjajEyhHxYSSrkPY2nLRG7oaF9-PbUsC11O7ePH7evw>
-    <xme:YocdZFJvv5yKSgbbCu2PjUCjA3iwB3zBFKv-CakFAJTI01X8NjMVPj3knfOKgALZS
-    iMcO2SYsLNKDxAxjx0>
-X-ME-Received: <xmr:YocdZBtqfm5ufo2nxuPX_n4UUydUMdQkmyrCYSBkP5S6uLxOjnGe7GgKlZv5k0gAuEdnyA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdegiedgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
-    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:YocdZKbb7h5XVzEGX4iPtxOkH5TmcsjFZOlhmJTWiCjxSzGBF3gLdQ>
-    <xmx:YocdZAZuVnKbOWnxm7JK_ixmWayh3DAJUGZTPl_6A4AyOaeCS8MgPA>
-    <xmx:YocdZODYFHhXEhG6sanelWXub-LDcHvfMUzvrDzXEPo_cfiaikGjCA>
-    <xmx:ZYcdZJnXIuUKCYqWP9MzEN0pWHGV9cxtt8SL0wrI9YqOxIudpLjjYg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Mar 2023 07:20:01 -0400 (EDT)
-Date:   Fri, 24 Mar 2023 12:19:59 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
-Message-ID: <20230324111959.frjf4neopbs67ugd@houat>
-References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
- <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
- <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
- <20221104145946.orsyrhiqvypisl5j@houat>
- <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
- <20221107085417.xrsh6xy3ouwdkp4z@houat>
- <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
- <20221109110045.j24vwkaq3s4yzoy3@houat>
- <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
- <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
+        Fri, 24 Mar 2023 08:00:00 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2060.outbound.protection.outlook.com [40.107.101.60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CFD123C68;
+        Fri, 24 Mar 2023 04:59:59 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c9N+g+48pJM9zHjirlhB9C10OdvKahIjqtpXgNYBYSvlcL1ZQ+uM6Nd6N7mraNmFRMRdWeOo3mOMjGfsKXPSI+C00BKhYDwtgeYLneFiKcIFPmGq0fQEtCRn3zyUSc/oduwuwSpSID56nkZIUY5zmSEG6tMeBTkO3JCWZkUUBqgiIUpfW9kLm2mASye9YOBk+HdrcvZo0gPsxn5mcQbpO1uio3GeufWVX3XC4c4rXQhQ9Jea3vj8FQsm5QJ3jXBhPItnYysyrZghRpauMG2uDDNKXC+UHRB/h775TtZXSggFoAK0zT4DtXxYbykV/AczVUiKfupsm7PpDS+LuT4vbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GOEphR0ddAF+H/cBDADZDU2k3G2PO8xXS0A3/4VNCJ8=;
+ b=njB6j6Y8MEVHeChCwt6LQ1JL40t2YUJjnTl18cSIq8NfSCJrviQ3U5OxnI+RzdZDVImUceLd77IOhOXb8s3v1fe8QzuQW4om4wY8tKr/i3J8tImdvAfLBduCcgIKfsbPSRdGhX0Qaop8MZX6wfqgvkC7roUHimQBdHzF7xr/DdC2xr7Rd2cm+ayWd/3o3MRt0z1hsd6ll6aFaxeB9U/klbtVBcsVsfJd0Swd+sIfB0j16ehLoXX5+M0WQ6ysmWve/9fUWs/JayO2ndgkjkxkdaD4cDsIEV/srNmJROYf5VRpqwXM8foKjFWQVrvFJnCwrP0A/3uZxKSOs/92o7UGPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GOEphR0ddAF+H/cBDADZDU2k3G2PO8xXS0A3/4VNCJ8=;
+ b=jL6gvFcgzSxUJTjieSlyU5mU+IBNYgApOT/nVK/VtgkcJ/a5uKrmozp4swzL6YBrjEoeceBhiuQb8e/zkac5jluaQDS4I5Pjv/zm8OAKUDBhFKKnO1btU32cgeNQWCQ52B8Cyrhu2N0ggc5/8mslY5b4v0omd7otvTMhF5A1F2FZLbEIhhUrbCrRjjo1tg78ef/Hkbw/JNPsyZ59b0KOy0TcS7CEW1JayQCL2alQ0uUuKKHI1QFEOmQwSc2LXRJTqCRopP81vdM27gatGrzPD+H5yMGrJOdOIT7+2wpenB7osKhQvgvdvqYw/fLXB6sAk6Af6GPH1Nd7IVHCTJnKoQ==
+Received: from MW4PR03CA0254.namprd03.prod.outlook.com (2603:10b6:303:b4::19)
+ by BL0PR12MB4898.namprd12.prod.outlook.com (2603:10b6:208:1c7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.40; Fri, 24 Mar
+ 2023 11:59:57 +0000
+Received: from CO1NAM11FT082.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b4:cafe::8d) by MW4PR03CA0254.outlook.office365.com
+ (2603:10b6:303:b4::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38 via Frontend
+ Transport; Fri, 24 Mar 2023 11:59:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1NAM11FT082.mail.protection.outlook.com (10.13.175.224) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6222.22 via Frontend Transport; Fri, 24 Mar 2023 11:59:56 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 24 Mar 2023
+ 04:59:56 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Fri, 24 Mar 2023 04:59:55 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Fri, 24 Mar 2023 04:59:52 -0700
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <christian.koenig@amd.com>, <digetx@gmail.com>,
+        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <sumit.semwal@linaro.org>,
+        <thierry.reding@gmail.com>, <wsa@kernel.org>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH v4 0/2] Tegra I2C DMA and SMBus blockread updates
+Date:   Fri, 24 Mar 2023 17:29:22 +0530
+Message-ID: <20230324115924.64218-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ygvujwxxgbycerm7"
-Content-Disposition: inline
-In-Reply-To: <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT082:EE_|BL0PR12MB4898:EE_
+X-MS-Office365-Filtering-Correlation-Id: 487060c5-d3dc-4ec5-ffa2-08db2c5f4983
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tQj+WnOL+LxvW9RhfykF360b+XekWAj7MkcPLK4VZ5FctgvX4bBdmT6P6ns2FgpUxEZZlvpXJhQLlKpCPyjG3xsXDPTVQh9/d2y1JEwZSaphabhFSdln6lJmIgm5gJWrHghJvPuGLOafe/h15jEhENvk3o9WPDn4Q5idK6doYDRpYt+4P+3rkjUeKMJcqD/01AFJxv/NRRu5XEVSnaSLVhOPyi2s6bsHcyNwxOLi9uOQL41CTNsxa/dP80Oz9k+2PA2rf4JxMugYS+5eDUClqqhk25AdJLCl/Mwjg61c8UqZ+EfSLDnzwlUwRqoBxDhoB6XwMCR8LCMd8Zrb6p1MHdj2TFP4aOvUzKiPNvihuLow6chU0rQdWbm2bUa1kGuEr0xrLFOCOeZfixTdt+BvxqMh7ui0vv68JvDOe9hxjX/dKyZiThBd6CCG5TL7qNYq7/fVMbTJymjcmO76SN4izSCxUn7+ladYbK98m56kOOFHBYIvjRHT/E4nMvk3rLSTpQ05SjqyYta+Lj43oBXwDNtU8gG5wkQQMhmO+CTzgGXj1lIa5G4y/ZKqz/OQpm4L/vv5NwFc5ZcipBRW5F2dnvQ9EtAqyk5w/ANtbRW4PvMNN+UkE+HcSmEOl666XGXyMBhS5VupzBfyINjY52QrsT52dw9jMkKAwhvDqR/6zX5cUYRxV6g09qpOAooI8rqJH2RBeUlU4OK0UOnIc5rcIhRpY6euDFbX6vkWNurWN3LWgMy/Hf23I4So12w1hQG1U1Z8qLAQT7qxaGIHWUa5K/gIp0QycMgTgx4zB2nV7pU/n+OP8D8/G0qXDXgBXC7KXcPnbel+arxtscmDkTdvWw==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(39860400002)(346002)(396003)(136003)(451199018)(36840700001)(46966006)(26005)(186003)(1076003)(6666004)(107886003)(36860700001)(40480700001)(36756003)(83380400001)(356005)(921005)(86362001)(82310400005)(82740400003)(7636003)(2616005)(426003)(336012)(47076005)(5660300002)(316002)(8936002)(7696005)(4744005)(8676002)(70206006)(4326008)(41300700001)(110136005)(478600001)(70586007)(2906002)(966005)(15650500001)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 11:59:56.9022
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 487060c5-d3dc-4ec5-ffa2-08db2c5f4983
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT082.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4898
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+The patchset contains two independent updates to tegra-i2c driver.
+* Update I2C DMA channel usage to use single DMA channel instead of
+two different hardware channels.
+* Fix PEC byte issue during SMBus block read caused by mismanaged
+msg->len property in i2c_msg struct.
 
---ygvujwxxgbycerm7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+v3->v4:
+ Combine the two patches to one series to avoid merge conflicts.
 
-Hi,
+Adding the latest independent version links below.
+https://lkml.kernel.org/lkml/ZBxZlNOhLyUZi1B+@orome/T/#mb41b90701e70d9663d54455c7e014a528c589284
+https://lkml.kernel.org/lkml/20230322131037.53805-1-akhilrajeev@nvidia.com/T/#u
 
-On Thu, Mar 23, 2023 at 03:35:30PM +0000, Aidan MacDonald wrote:
->=20
-> Stephen Boyd <sboyd@kernel.org> writes:
->=20
-> > Quoting Maxime Ripard (2022-11-09 03:00:45)
-> >> On Mon, Nov 07, 2022 at 08:57:22PM +0000, Aidan MacDonald wrote:
-> >> >
-> >> > Maxime Ripard <maxime@cerno.tech> writes:
-> >> >
-> >> > > Hi,
-> >> > >
-> >> > > On Fri, Nov 04, 2022 at 05:35:29PM +0000, Aidan MacDonald wrote:
-> >> >
-> >> > Assigning the parent clock in the DT works once, at boot, but going =
-off
-> >> > what you wrote in the commit message, if the clock driver has a
-> >> > .determine_rate() implementation that *can* reparent clocks then it
-> >> > probably *will* reparent them, and the DT assignment will be lost.
-> >>
-> >> Yes, indeed, but assigned-clock-parents never provided any sort of
-> >> guarantee on whether or not the clock was allowed to reparent or not.
-> >> It's just a one-off thing, right before probe, and a clk_set_parent()
-> >> call at probe will override that just fine.
-> >>
-> >> Just like assigned-clock-rates isn't permanent.
-> >>
-> >> > What I'm suggesting is a runtime constraint that the clock subsystem
-> >> > would enforce, and actively prevent drivers from changing the parent.
-> >> > Either explicitly with clk_set_parent() or due to .determine_rate().
-> >> >
-> >> > That way you could write a .determine_rate() implementation that *ca=
-n*
-> >> > select a better parent, but if the DT applies a constraint to fix the
-> >> > clock to a particular parent, the clock subsystem will force that pa=
-rent
-> >> > to be used so you can be sure the clock is never reparented by accid=
-ent.
-> >>
-> >> Yeah, that sounds like a good idea, and CLK_SET_RATE_NO_REPARENT isn't
-> >> too far off from this, it's just ignored by clk_set_parent() for now. I
-> >> guess we could rename CLK_SET_RATE_NO_REPARENT to CLK_NO_REPARENT, make
-> >> clk_set_parent handle it, and set that flag whenever
-> >> assigned-clock-parents is set on a clock.
-> >>
-> >> It's out of scope for this series though, and I certainly don't want to
-> >> deal with all the regressions it might create :)
-> >>
-> >
-> > This sounds like a new dt binding that says the assigned parent should
-> > never change. It sounds sort of like gpio hogs. A clock-hogs binding?
->=20
-> Ideally we want the clock driver to be able to reparent clocks freely
-> to get the best rate. But we also need some control over that to stop
-> consumers from being reparented in undesired ways. Eg. you might want
-> to make sure the GPU gets its own PLL so it can be reclocked easily,
-> and putting another device on the GPU's PLL could prevent that.
->=20
-> The only way to achieve this today is (1) never do any reparenting in
-> the clock driver; and (2) use assigned-clock-parents in the DT to set
-> up the entire clock tree manually.
->=20
-> Maxime said that (2) is basically wrong -- if assigned-clock-parents
-> provides no guarantee on what the OS does "after boot" then the OS is
-> pretty much free to ignore it.
+Akhil R (2):
+  i2c: tegra: Fix PEC support for SMBUS block read
+  i2c: tegra: Share same DMA channel for RX and TX
 
-I didn't really say it's wrong, just that it never provided the
-guarantee you expect it to provide. I can't really say whether it's an
-issue or not on your platform.
+ drivers/i2c/busses/i2c-tegra.c | 107 ++++++++++++++-------------------
+ 1 file changed, 46 insertions(+), 61 deletions(-)
 
-It's mostly unrelated to this series though, none of these patches
-affect that behavior in one way or the other.
+-- 
+2.17.1
 
-> My suggestion: add a per-clock bitmap to keep track of which parents
-> are allowed. Any operation that would select a parent clock not on the
-> whitelist should fail. Automatic reparenting should only select from
-> clocks on the whitelist. And we need new DT bindings for controlling
-> the whitelist, for example:
->=20
->     clock-parents-0 =3D <&clk1>, <&pll_c>;
->     clock-parents-1 =3D <&clk2>, <&pll_a>, <&pll_b>;
->=20
-> This means that clk1 can only have pll_c as a parent, while clk2 can
-> have pll_a or pll_b as parents. By default every clock will be able
-> to use any parent, so a list is only needed if the machine needs a
-> more restrictive policy.
->=20
-> assigned-clock-parents should disable automatic reparenting, but allow
-> explicit clk_set_parent(). This will allow clock drivers to start doing
-> reparenting without breaking old DTs.
-
-I'm generally not a fan of putting all these policies in the device
-tree. Do you have an example where it wouldn't be possible to do exactly
-this from the driver itself?
-
-Maxime
-
---ygvujwxxgbycerm7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZB2HXwAKCRDj7w1vZxhR
-xSbnAQCJvmVlpJgunPtELVTvf4BU6vbdciJ5jecqJV2UslBqNAEA3GtvUaTD5e0p
-e0nSvm2EbCQGLtQFj+xVrIWIaKTMYAc=
-=GgBk
------END PGP SIGNATURE-----
-
---ygvujwxxgbycerm7--
