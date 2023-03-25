@@ -2,163 +2,88 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6BAC6FD1C
-	for <linux-tegra@archiver.kernel.org>; Sat, 25 Mar 2023 08:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74771C6FD1C
+	for <linux-tegra@archiver.kernel.org>; Sat, 25 Mar 2023 11:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231880AbjCYIUe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 25 Mar 2023 04:20:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40740 "EHLO
+        id S231862AbjCYLEh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 25 Mar 2023 07:04:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231776AbjCYIUd (ORCPT
+        with ESMTP id S229505AbjCYLEg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 25 Mar 2023 04:20:33 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1442F10416;
-        Sat, 25 Mar 2023 01:20:31 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id v1so3869432wrv.1;
-        Sat, 25 Mar 2023 01:20:30 -0700 (PDT)
+        Sat, 25 Mar 2023 07:04:36 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB3DAF27
+        for <linux-tegra@vger.kernel.org>; Sat, 25 Mar 2023 04:04:35 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id cn12so17359948edb.4
+        for <linux-tegra@vger.kernel.org>; Sat, 25 Mar 2023 04:04:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679732429;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3af7AQ9wLc3osxXyvBrW7r37wpKHewq77ohhLjiNp5I=;
-        b=GZ1zj3fLUmYGbFKegO6Z/96BsbgaT0xaE5+gckU7HaFQbDxJMIFSkRHSnrB9mx2wBK
-         4g1bCh6Tzyj1t7Ret28ok7awRe8vNxNBNpgBdzRtey0nyujnXvAi47uFUf0xo4UiYyjv
-         2T56JemorZ2bwiOpMwP24BfCKwWpbjug6NZC64K4QbP+cjhO/BJ8TYituLAtrrgBJovq
-         cpJLSXZXb0KpLo4seOeAi7vCPqV4PFy+6oIeOWoTYkZ5lZmiXCKYFPu2B7RppBT/qfxH
-         HKq2FxkrkUo9MQHTtJwEc9sSK1AIytvPi7V7kR9Ei52lYCCJWCtx6T+GYV2SfC80+MEf
-         93IQ==
+        d=linaro.org; s=google; t=1679742273;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YGuQcUMPAohDQdYCn6esi5t8mBDfcwG+UMgt1Vpx+WM=;
+        b=pMAvRb8aCJ2b0iCd+bQbJvnxrHmZdtK2pRSRcgh8uUGqvblJeke1gYjt2UVdKTPv2T
+         tE/Jx7SUB3KniKeL3tXU9iLtWMVaVOQn2bD0tkfIwL+eY/NlNpJBI/hXmIDAh8bMyaYI
+         HxIWizm/znH9TrCyib1AJNP0PMJXPbJ1I8+dxmfRO9M6mkYHa9lSvSjWmGoAta0y3o61
+         RUXOIC0PIN/nYSvCp4SDQyCd2//4jjpLR3o1hFqT22PbPt8syu6kWex4RbPC1Voip8PD
+         jMvgpF3URNTFFCWYZiTX/Qv30J+QbEIufaG3hIQmjufi0hl6LEfjfX2yX6SW+1o5ZMfX
+         LrZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679732429;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3af7AQ9wLc3osxXyvBrW7r37wpKHewq77ohhLjiNp5I=;
-        b=PysBXID0z7mZvQsxOjhUN5jfZE8YytYU1lUBYMAj3pAhpPTXfSeJoRBSDbKUYJqglG
-         vTVSQB7MwG+LutLDh614WcDWW0QGjBj4ZaK1ZAEsuj+dtJtXs+Nk0Bjb7iaXpXEqAUC2
-         /WbeNStNj7QepVQewpfmJQXtA2lLAzn46AkkrI23d6ez8ffiY9mFzggWVdHk7Cgi9cKc
-         mEIhfgQ6xfX5Oq2y1l875TEukSBi5XtntpFQEbL4EiNkAvR1BxijMALDmK1a2CTV2/n+
-         8WsK5EDsDCHQEJj+/ZK0hvMQkCtsNhq66VSTHIfzc6NZO3OR9CKDueTQ8czZx+H1/xgX
-         2PVA==
-X-Gm-Message-State: AAQBX9dy7AIG8zDf3a6fesSBC9MpIIM9/DTyEk2If635q9pye0hLmzBM
-        oLQTPCAA2eoZ0/++kE3Fe/U=
-X-Google-Smtp-Source: AKy350bLGJPGmjTfdtazrsPWVO0wWlxVunsld/1YbgyXqFusaQ02JFkJPR+WAO2w05EfTfvNjI051w==
-X-Received: by 2002:adf:e44f:0:b0:2cf:eb86:bd90 with SMTP id t15-20020adfe44f000000b002cfeb86bd90mr4484604wrm.63.1679732429524;
-        Sat, 25 Mar 2023 01:20:29 -0700 (PDT)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id n12-20020a5d484c000000b002c59f18674asm20175918wrs.22.2023.03.25.01.20.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Mar 2023 01:20:29 -0700 (PDT)
-From:   Svyatoslav Ryhel <clamor95@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v3 2/2] ARM: tegra: transformers: bind RT5631 sound nodes
-Date:   Sat, 25 Mar 2023 10:20:11 +0200
-Message-Id: <20230325082011.6985-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230325082011.6985-1-clamor95@gmail.com>
-References: <20230325082011.6985-1-clamor95@gmail.com>
+        d=1e100.net; s=20210112; t=1679742273;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YGuQcUMPAohDQdYCn6esi5t8mBDfcwG+UMgt1Vpx+WM=;
+        b=OVASCzJPLoFNDdeG3piO+MLN7yJWhmHxEaQitx53VWcum1s2iOJ5a/ZAXpx9YHjbs0
+         djmdDQFpnyeMKpjnpMvNpbd6xdvyWIL0Xw4pOlr2ejP2LCAB1Fr2OrUPdqg+Zuh193CA
+         OJMYrVjT9qJgOM6cXtSo4ZxhponLOoLMd+EcwdrAZxyLktUH3ij8rmQLCqMz0Xt7wWSE
+         3m/iT8KFr/RaQatMGpi3565uYcvN/tdxtvOVEp7Lf7B9iYGxUxbFF3ePBtM5eu5v/n1x
+         DBrWFV9TsiJsibIwkl77UOF8C80X9PQTGmc8QF8b8xlbfRU5stvv3Ooap0mBFd9BSOuh
+         Vf/g==
+X-Gm-Message-State: AAQBX9d5SEgCRBani6QMY3hfmYECMnlvBPFUwHg9LPrXzJAiIqaNUAps
+        Hoab2bW7Plp+qx0ls7BjomFQ4w==
+X-Google-Smtp-Source: AKy350Y/NlId/yerM/9zRTivgf+nQ019MPql1v8mGNitanGiTO1YCTgARhntB8wDoJL8eH7ILlPbiQ==
+X-Received: by 2002:a17:906:951:b0:933:3cc7:4420 with SMTP id j17-20020a170906095100b009333cc74420mr5852539ejd.45.1679742273597;
+        Sat, 25 Mar 2023 04:04:33 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:d230:b2c7:d55:c9c8? ([2a02:810d:15c0:828:d230:b2c7:d55:c9c8])
+        by smtp.gmail.com with ESMTPSA id b1-20020a1709065e4100b008ca52f7fbcbsm11602168eju.1.2023.03.25.04.04.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Mar 2023 04:04:33 -0700 (PDT)
+Message-ID: <55ab6fdb-7b93-38bb-bbf9-9d9e2051afba@linaro.org>
+Date:   Sat, 25 Mar 2023 12:04:32 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V4 02/10] dt-bindings: timestamp: Add Tegra234 support
+Content-Language: en-US
+To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org, robh+dt@kernel.org,
+        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
+        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
+References: <20230323012929.10815-1-dipenp@nvidia.com>
+ <20230323012929.10815-3-dipenp@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230323012929.10815-3-dipenp@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-TF201, TF300TG and TF700T support RT5631 codec.
+On 23/03/2023 02:29, Dipen Patel wrote:
+> Added timestamp provider support for the Tegra234 in devicetree
+> bindings.
+> 
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+> v2:
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/tegra30-asus-tf201.dts   | 17 +++++++++++++++++
- arch/arm/boot/dts/tegra30-asus-tf300tg.dts | 17 +++++++++++++++++
- arch/arm/boot/dts/tegra30-asus-tf700t.dts  | 17 +++++++++++++++++
- 3 files changed, 51 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/arch/arm/boot/dts/tegra30-asus-tf201.dts b/arch/arm/boot/dts/tegra30-asus-tf201.dts
-index 3c2b9e93e028..0406c5a69c12 100644
---- a/arch/arm/boot/dts/tegra30-asus-tf201.dts
-+++ b/arch/arm/boot/dts/tegra30-asus-tf201.dts
-@@ -624,4 +624,21 @@ opp-table-emc {
- 		/delete-node/ opp-800000000-1300;
- 		/delete-node/ opp-900000000-1350;
- 	};
-+
-+	sound {
-+		compatible = "asus,tegra-audio-rt5631-tf201",
-+			     "nvidia,tegra-audio-rt5631";
-+		nvidia,model = "Asus Transformer Prime TF201 RT5631";
-+
-+		nvidia,audio-routing =
-+			"Headphone Jack", "HPOL",
-+			"Headphone Jack", "HPOR",
-+			"Int Spk", "SPOL",
-+			"Int Spk", "SPOR",
-+			"MIC1", "MIC Bias1",
-+			"MIC Bias1", "Mic Jack",
-+			"DMIC", "Int Mic";
-+
-+		nvidia,audio-codec = <&rt5631>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra30-asus-tf300tg.dts b/arch/arm/boot/dts/tegra30-asus-tf300tg.dts
-index 573deeafb7ba..4861db8e1e59 100644
---- a/arch/arm/boot/dts/tegra30-asus-tf300tg.dts
-+++ b/arch/arm/boot/dts/tegra30-asus-tf300tg.dts
-@@ -1084,4 +1084,21 @@ opp-table-actmon {
- 		/delete-node/ opp-800000000;
- 		/delete-node/ opp-900000000;
- 	};
-+
-+	sound {
-+		compatible = "asus,tegra-audio-rt5631-tf300tg",
-+			     "nvidia,tegra-audio-rt5631";
-+		nvidia,model = "Asus Transformer Pad TF300TG RT5631";
-+
-+		nvidia,audio-routing =
-+			"Headphone Jack", "HPOL",
-+			"Headphone Jack", "HPOR",
-+			"Int Spk", "SPOL",
-+			"Int Spk", "SPOR",
-+			"MIC1", "MIC Bias1",
-+			"MIC Bias1", "Mic Jack",
-+			"DMIC", "Int Mic";
-+
-+		nvidia,audio-codec = <&rt5631>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra30-asus-tf700t.dts b/arch/arm/boot/dts/tegra30-asus-tf700t.dts
-index e7fe8c7a7435..efde7dad718a 100644
---- a/arch/arm/boot/dts/tegra30-asus-tf700t.dts
-+++ b/arch/arm/boot/dts/tegra30-asus-tf700t.dts
-@@ -820,4 +820,21 @@ vdd_1v2_mipi: regulator-mipi {
- 		enable-active-high;
- 		vin-supply = <&vdd_3v3_sys>;
- 	};
-+
-+	sound {
-+		compatible = "asus,tegra-audio-rt5631-tf700t",
-+			     "nvidia,tegra-audio-rt5631";
-+		nvidia,model = "Asus Transformer Infinity TF700T RT5631";
-+
-+		nvidia,audio-routing =
-+			"Headphone Jack", "HPOL",
-+			"Headphone Jack", "HPOR",
-+			"Int Spk", "SPOL",
-+			"Int Spk", "SPOR",
-+			"MIC1", "MIC Bias1",
-+			"MIC Bias1", "Mic Jack",
-+			"DMIC", "Int Mic";
-+
-+		nvidia,audio-codec = <&rt5631>;
-+	};
- };
--- 
-2.37.2
+Best regards,
+Krzysztof
 
