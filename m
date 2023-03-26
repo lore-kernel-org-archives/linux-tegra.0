@@ -2,190 +2,176 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0920C6FD1F
-	for <linux-tegra@archiver.kernel.org>; Sat, 25 Mar 2023 18:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8536C6FD1C
+	for <linux-tegra@archiver.kernel.org>; Sun, 26 Mar 2023 12:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231561AbjCYSfJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 25 Mar 2023 14:35:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58502 "EHLO
+        id S231905AbjCZMUG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 26 Mar 2023 08:20:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231893AbjCYSfG (ORCPT
+        with ESMTP id S230312AbjCZMUF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 25 Mar 2023 14:35:06 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11hn2204.outbound.protection.outlook.com [52.100.173.204])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96640EC69;
-        Sat, 25 Mar 2023 11:34:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gU5JbaNZw0Z+drBr2foxXt5ZF/+Ipyy7dHCF5d85zsRHwVVPO1X1lX/GwLaXE3/dhzI0RRSHxNrtoj4gWrlfGV3NAKHwMWQUq55+ySAYLhK3GsJ/begRIPFZ9EqpNIX1Gg0rMg6WKZNROkr9DUr5SODUKpZ6EKM4JdFXid7a7d9k8hv8DP0XcPT3DToxlqpzqMY/OKLdae372BiivYIrzOlgUy1qHtchm8dw5NzV+vGwD9E5xyRcoXaFvQtEcI8d/bDJarOX/3eT37VVR5DizRO+fpwNpCm/cf+6OemFc5htwL6XADl8TuSglq/1fOdphhDDIufopuHZP0yJIVkONQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XHUi5v9Gc3/D8leeYb11n8pDVawxq0/2mLSkzw+ypPE=;
- b=i0Lbp1JyybLDPF763QuKXDhS8ZQkj4YartgkLMKwlV14EsZakQcdIhwwfohJaI2UGChNRACrEw3WgDZliVBmejpRw7bL0ZZw6CCbNA4WLDMdRydDbv3eBor5D+cP2/B/8AEpSp0NBBozy9s0YqpRPByJk83p9/7qQLNQGfhaapIPdYbZpPk6V3+0gcscK8z9xVr0ESWiSS2duJLBQSXXtTkxANkhZeGTAQ8sO9/DR+bJ7QNK4DAiAkaotUxyGL81MKJmTgkucTBCZhdSZOo/AHKE573hVH2LqVHvb51bzNi0oSbsFcAE1+z44RCvZHKx8wZ3gT5O5IN8n/YAXwD1kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XHUi5v9Gc3/D8leeYb11n8pDVawxq0/2mLSkzw+ypPE=;
- b=MX2PG2IVQYtYnyliaRG+manL34apFTeyTZPhpkKe3P0U44x3vUn+O6RhGX/3XylJaWsviHmw7hiJmlQeVCC7nz8sssSdI746Yk9v2t/ARkyjxGBpKTq69kKJeFyJDZFIGcCb9XBeC8+t99+kH9T+mIo2BA8SPKCTgZshzWq0sMnNdfhh7A4Jgg+RkmixPy1wTdqXvsLpG0/7atWqTPgyVWLmjGsa13Y44bA4sY7LtoHb3w10OBTEfIcS9rgqfImjE/SqRWL++ahSfq72ppfcVQocrx834Xo1aUci9Dt1qXsOEvLGNL5xZ92op0WXY27Etc/3ZiRTTNw7HIAbF2osVQ==
-Received: from BN0PR04CA0193.namprd04.prod.outlook.com (2603:10b6:408:e9::18)
- by DM4PR12MB5940.namprd12.prod.outlook.com (2603:10b6:8:6b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.41; Sat, 25 Mar
- 2023 18:34:53 +0000
-Received: from BN8NAM11FT064.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e9:cafe::51) by BN0PR04CA0193.outlook.office365.com
- (2603:10b6:408:e9::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.41 via Frontend
- Transport; Sat, 25 Mar 2023 18:34:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN8NAM11FT064.mail.protection.outlook.com (10.13.176.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6222.22 via Frontend Transport; Sat, 25 Mar 2023 18:34:52 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Sat, 25 Mar 2023
- 11:34:52 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Sat, 25 Mar
- 2023 11:34:51 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.5 via Frontend
- Transport; Sat, 25 Mar 2023 11:34:47 -0700
-From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
-To:     <robh+dt@kernel.org>, <broonie@kernel.org>, <peterhuewe@gmx.de>,
-        <jgg@ziepe.ca>, <jarkko@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Subject: [Patch V9 3/3] spi: tegra210-quad: Enable TPM wait polling
-Date:   Sun, 26 Mar 2023 00:04:09 +0530
-Message-ID: <20230325183409.7695-4-kyarlagadda@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230325183409.7695-1-kyarlagadda@nvidia.com>
-References: <20230325183409.7695-1-kyarlagadda@nvidia.com>
-X-NVConfidentiality: public
+        Sun, 26 Mar 2023 08:20:05 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83819729F
+        for <linux-tegra@vger.kernel.org>; Sun, 26 Mar 2023 05:19:48 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id y4so25170616edo.2
+        for <linux-tegra@vger.kernel.org>; Sun, 26 Mar 2023 05:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679833187;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5IfSw2r9l6b89lopg9LLMNXb7FdQOCZOmyoAvbxtqm4=;
+        b=ICgUV56vJG7JvicQ1to2mtKiPShhd0VBIO0jiWPe2V3YS/q3rol+M1E1zzGXk/XPNP
+         +W1qo4xda1Lzl4nPbMJVO5Hhw/HP9QrgJEhZGek4acCxCZmg5+wmt0tqSHTgSXUBidk+
+         cJFFpDy7WYYw1gtHrufleBzx5Id6xgsu9xDtMzOiPWjV50ZrD1Z8F76MGBjzSlya3X6F
+         XeJUKCrBAkiz9z3C8j1tmZVY63B/u3Lim3OlHt4qNTcxBEghauXDqNj+DJhE2IHofTxQ
+         N/yNC/PmdtDcbAOpQJO+XMjjPPj8GCAFAAwGW+CK2+k7X2wTMs0qJvglfC++etLedY9T
+         fz4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679833187;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5IfSw2r9l6b89lopg9LLMNXb7FdQOCZOmyoAvbxtqm4=;
+        b=pyLEEcj0yyXcViVr5tsaRtR8zYZCUGN3yDvT4oCr1LZl74/tzC6PKbBRdJCx8g0pTa
+         tOgmyrqsZCyHC78w9UW1e0ix5VKd2ebMd3fT697R3fGDTyVwr+N+OQ/E3jUZBXai/6Kr
+         Nr2ncEA6UtGQ0gBE7d//PHt7JrcnnZnqEZiU0rdxv6hZ/8GXOuizvdFu6MUo9ypgB4+1
+         5F3UdL6hJ69YR4rcyqc26GeitWIZRqu+sIsyDyASaubc+PO+onT3YTU4IdUjMTwy2Dfv
+         k/8ZAcXOabjfuVZ8QxE7UYgRkWwjbvQyh3eARJnirjk4X6sgVFi+rZNvXq7LqksphQvq
+         9Ang==
+X-Gm-Message-State: AAQBX9cgm7+sTAbs1lCSsQ2j29Q7QOyIu4svEXqXnvS55f0JI/hf2OSz
+        zB9YBt9I0H7iLucfIMJ4DBgGL8A5vaMeJ6nqGkU=
+X-Google-Smtp-Source: AKy350a1XLCkbinF5XRxjdf3OkRhCOO6OmHKr8keL9ZpWl+WeR/eP/VXicf+cpUc0OZlO78BUWT3zA==
+X-Received: by 2002:a17:907:1c21:b0:8dd:5710:a017 with SMTP id nc33-20020a1709071c2100b008dd5710a017mr11870314ejc.4.1679833187018;
+        Sun, 26 Mar 2023 05:19:47 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:6cac:926d:a4f2:aa09? ([2a02:810d:15c0:828:6cac:926d:a4f2:aa09])
+        by smtp.gmail.com with ESMTPSA id k7-20020a1709062a4700b008b176df2899sm12856711eje.160.2023.03.26.05.19.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Mar 2023 05:19:46 -0700 (PDT)
+Message-ID: <e06977ab-8112-1e45-4392-df36e358e772@linaro.org>
+Date:   Sun, 26 Mar 2023 14:19:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT064:EE_|DM4PR12MB5940:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6f97a4d-3c4d-4d0a-7ab3-08db2d5f9ff4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: FO4dGUjyWZKMeLK4TM48bmWJm34kPMcN6gU/Mzo3XJUPIxzB589u1Azx+IQLa/VEc3ZOD7LAM5iwqrAr7rCOHHtevNdukAMMi3GQDr8TDl28PFAUH0kjPZ3RTvx1sZ4luD3gysBK6a5EtkgM8WAKMb6YzsWN0/kcGcSy0ZcbI5Uz+TKbedReHWrW/hO/VH2wqufdq5Cr3dskWV0eDl+n4rxrcbGN/gPBRM0XexPMdd8JL5rn4u3IczaFWv28CGE44z8qPMLpjbLUN26QJZDZQ65AG9KI8xSz8iPJWIzf1bMOVoCzyD2pXXU8NRwawprR1eCJJPMDmZ2pmhSRYbpP3wUGaXu7kniLO7PjkoBBO25NziKJSttOY1OLLyHzio1v0mG0/eMHaNehI6mjYp/SLR2fR186aq9XBotxEhpSLDWd38tSNNZBJb9Uy+iAM6uAqJHMt5LLKPJ/0cDpk1c1PrD2jrq1f3P31T4hxTpsiD1bfyT8bNJcmyHe+Au8wT/fPfFMUWgkYKmfe6JDsDv5E8f+saakG7r2dcbp286w4Jh4l3LmdjxUR3Mu9JxApvR50y16ckvfOeKH4uLXdasSxzifiF+GKEHUMIUnbURH2oHTsKJhVYtHg6h8nTgGGLT0pKBhU4pCsOktVX6rpqjdf2SGiHkR3fXT/Ns7LIv2KrGUDRZAYgL78hzdTfGfKFX2KGdrD5qM+e6nvaZuP+mPGoev6vq0VK7q++G2EZwiLfaRQdIKkrcWeKYfgIjdkG2JtYYKjAKS2GyzKIOK4yitrlrDRoJZ9hnKaJQgRG0+8jrWC660QHcO6TsW7f2C0esZBxN1Mv+1Hu2GuQ8j/eGAHwMu4A1cgMc27ZXXbAs2rrRzGJSu/DAB6fhlaxnlQAJp
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(346002)(39860400002)(376002)(396003)(451199021)(5400799015)(36840700001)(40470700004)(46966006)(921005)(356005)(40460700003)(40480700001)(426003)(47076005)(83380400001)(2616005)(2906002)(36756003)(336012)(34070700002)(36860700001)(316002)(110136005)(54906003)(107886003)(6666004)(70586007)(70206006)(7696005)(478600001)(8936002)(7416002)(5660300002)(26005)(8676002)(4326008)(186003)(41300700001)(82310400005)(7636003)(82740400003)(1076003)(86362001)(83996005)(2101003)(12100799027);DIR:OUT;SFP:1501;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2023 18:34:52.9768
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6f97a4d-3c4d-4d0a-7ab3-08db2d5f9ff4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT064.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5940
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT binding doc
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Prathamesh Shete <pshete@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Suresh Mangipudi <smangipudi@nvidia.com>
+References: <20230207115617.12088-1-pshete@nvidia.com>
+ <a1395eb2-da3a-e080-fa6b-50f20d879655@linaro.org> <Y+OGdMFQkL9Dtaq/@orome>
+ <9e7e1762-1c2e-28cd-c7a7-b0577addf51e@linaro.org>
+ <DM5PR12MB24066CE3175B74150235FE55B7B49@DM5PR12MB2406.namprd12.prod.outlook.com>
+ <3b9d4177-ebd9-e341-294d-41860fa8c5ac@linaro.org> <ZBxeLIXJDbM2ebyt@orome>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZBxeLIXJDbM2ebyt@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Trusted Platform Module requires flow control. As defined in TPM
-interface specification, client would drive MISO line at same cycle as
-last address bit on MOSI.
-Tegra234 and Tegra241 QSPI controllers have TPM wait state detection
-feature which is enabled for TPM client devices reported in SPI device
-mode bits.
+On 23/03/2023 15:11, Thierry Reding wrote:
+> On Wed, Mar 08, 2023 at 01:24:04PM +0100, Krzysztof Kozlowski wrote:
+>> On 08/03/2023 12:45, Prathamesh Shete wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>> Sent: Wednesday, February 8, 2023 5:28 PM
+>>>> To: Thierry Reding <thierry.reding@gmail.com>
+>>>> Cc: Prathamesh Shete <pshete@nvidia.com>; Jonathan Hunter
+>>>> <jonathanh@nvidia.com>; linus.walleij@linaro.org; robh+dt@kernel.org;
+>>>> krzysztof.kozlowski+dt@linaro.org; devicetree@vger.kernel.org; linux-
+>>>> tegra@vger.kernel.org; linux-gpio@vger.kernel.org; Suresh Mangipudi
+>>>> <smangipudi@nvidia.com>
+>>>> Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT binding doc
+>>>>
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> On 08/02/2023 12:24, Thierry Reding wrote:
+>>>>> On Tue, Feb 07, 2023 at 04:33:08PM +0100, Krzysztof Kozlowski wrote:
+>>>>
+>>>>
+>>>>>>> +          type: object
+>>>>>>> +          additionalProperties:
+>>>>>>> +            properties:
+>>>>>>> +              nvidia,pins:
+>>>>>>> +                description: An array of strings. Each string contains the name
+>>>>>>> +                  of a pin or group. Valid values for these names are listed
+>>>>>>> +                  below.
+>>>>>>
+>>>>>> Define properties in top level, which points to the complexity of
+>>>>>> your if-else, thus probably this should be split into two bindings.
+>>>>>> Dunno, your other bindings repeat this pattern :(
+>>>>>
+>>>>> The property itself is already defined in the common schema found in
+>>>>> nvidia,tegra-pinmux-common.yaml and we're overriding this here for
+>>>>> each instance since each has its own set of pins.
+>>>>>
+>>>>> This was a compromise to avoid too many bindings. Originally I
+>>>>> attempted to roll all Tegra pinctrl bindings into a single dt-schema,
+>>>>> but that turned out truly horrible =) Splitting this into per-SoC
+>>>>> bindings is already causing a lot of duplication in these files,
+>>>>
+>>>> What would be duplicated? Almost eveerything should be coming from
+>>>> shared binding, so you will have only compatible,
+>>>> patternProperties(pinmux) and nvidia,pins. And an example. Maybe I miss
+>>>> something but I would say this would create many but very easy to read
+>>>> bindings, referencing common pieces.
+>>>>
+>>>>> though splitting
+>>>>> off the common bits into nvidi,tegra-pinmux-common.yaml helps a bit
+>>>>> with that already. Splitting this into per-instance bindings would
+>>>>> effectively duplicate everything but the pin array here, so we kind of
+>>>>> settled on this compromise for Tegra194.
+>>>>
+>>>> OK, but are you sure it is now readable? You have if:then: with
+>>>> patternProperties: with additionalProperties: with properties: with
+>>>> nvidia,pins.
+>>> This is inline with the existing bindings and I think this is the compromise that was reached during review when the bindings were submitted,
+>>
+>> So the code might be totally unreadable, but it is inline with existing
+>> code, thus it should stay unreadable. Great.
+> 
+> I'd say this is very subjective. I personally don't find the current
+> version hard to read, but that's maybe because I wrote it... =)
+> 
+>>> offer to rework if a better alternative can be found, but that only makes sense if all the other bindings get changed as well, so I think it'd be good if we can merge in the same format as the existing bindings for now and change all of them later on.
+>>
+>> Cleanup should happen before adding new bindings.
+> 
+> I don't recall the exact problems that I ran into last time, but I do
+> remember that pulling out the common bindings to the very top-level was
+> the main issue.
+> 
+> If I understand correctly what you're saying, the main problem that
+> makes this hard to read is the if and else constructs for AON/MAIN
+> variants on Tegra194/Tegra234. These should be quite easy to pull out
+> into separate bindings. I'll do that first and then see if there's
+> anything that could be done to further improve things.
 
-Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
----
- drivers/spi/spi-tegra210-quad.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+One problem is allowing characters here which are not allowed. Second
+problem is reluctance to change it with argument "existing bindings also
+have this problem". It's explanation like "there is already bug like
+this, so I am allowed to add similar one".
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index 325b4427491c..de6aafe4448c 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -142,6 +142,7 @@
- 
- #define QSPI_GLOBAL_CONFIG			0X1a4
- #define QSPI_CMB_SEQ_EN				BIT(0)
-+#define QSPI_TPM_WAIT_POLL_EN			BIT(1)
- 
- #define QSPI_CMB_SEQ_ADDR			0x1a8
- #define QSPI_ADDRESS_VALUE_SET(X)		(((x) & 0xFFFF) << 0)
-@@ -164,6 +165,7 @@
- struct tegra_qspi_soc_data {
- 	bool has_dma;
- 	bool cmb_xfer_capable;
-+	bool supports_tpm;
- 	unsigned int cs_count;
- };
- 
-@@ -1065,6 +1067,12 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
- 
- 	/* Enable Combined sequence mode */
- 	val = tegra_qspi_readl(tqspi, QSPI_GLOBAL_CONFIG);
-+	if (spi->mode & SPI_TPM_HW_FLOW) {
-+		if (tqspi->soc_data->supports_tpm)
-+			val |= QSPI_TPM_WAIT_POLL_EN;
-+		else
-+			return -EIO;
-+	}
- 	val |= QSPI_CMB_SEQ_EN;
- 	tegra_qspi_writel(tqspi, val, QSPI_GLOBAL_CONFIG);
- 	/* Process individual transfer list */
-@@ -1196,6 +1204,8 @@ static int tegra_qspi_non_combined_seq_xfer(struct tegra_qspi *tqspi,
- 	/* Disable Combined sequence mode */
- 	val = tegra_qspi_readl(tqspi, QSPI_GLOBAL_CONFIG);
- 	val &= ~QSPI_CMB_SEQ_EN;
-+	if (tqspi->soc_data->supports_tpm)
-+		val &= ~QSPI_TPM_WAIT_POLL_EN;
- 	tegra_qspi_writel(tqspi, val, QSPI_GLOBAL_CONFIG);
- 	list_for_each_entry(transfer, &msg->transfers, transfer_list) {
- 		struct spi_transfer *xfer = transfer;
-@@ -1454,24 +1464,28 @@ static irqreturn_t tegra_qspi_isr_thread(int irq, void *context_data)
- static struct tegra_qspi_soc_data tegra210_qspi_soc_data = {
- 	.has_dma = true,
- 	.cmb_xfer_capable = false,
-+	.supports_tpm = false,
- 	.cs_count = 1,
- };
- 
- static struct tegra_qspi_soc_data tegra186_qspi_soc_data = {
- 	.has_dma = true,
- 	.cmb_xfer_capable = true,
-+	.supports_tpm = false,
- 	.cs_count = 1,
- };
- 
- static struct tegra_qspi_soc_data tegra234_qspi_soc_data = {
- 	.has_dma = false,
- 	.cmb_xfer_capable = true,
-+	.supports_tpm = true,
- 	.cs_count = 1,
- };
- 
- static struct tegra_qspi_soc_data tegra241_qspi_soc_data = {
- 	.has_dma = false,
- 	.cmb_xfer_capable = true,
-+	.supports_tpm = true,
- 	.cs_count = 4,
- };
- 
--- 
-2.17.1
+Now third is that defining properties in allOf is not the style we want
+to have, because it does not work with additionalProperties and is
+difficult to read. Again using argument "existing code also does like
+this" is a very poor argument.
+
+Best regards,
+Krzysztof
 
