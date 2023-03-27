@@ -2,82 +2,103 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CF3C77B71
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 15:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB26C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 15:03:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjC0PBn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Mar 2023 11:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40640 "EHLO
+        id S232323AbjC0PDw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Mar 2023 11:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232782AbjC0PBi (ORCPT
+        with ESMTP id S231740AbjC0PDt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Mar 2023 11:01:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E84D4483;
-        Mon, 27 Mar 2023 08:01:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CAE6061303;
-        Mon, 27 Mar 2023 15:01:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2FC4C4339E;
-        Mon, 27 Mar 2023 15:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679929296;
-        bh=dsoVd3bOkZ1/OXyt+ZP8t5ze5tdgtMoUGRvUuV6EukM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SHPAMbr7ynIEkq5oNWhug9hIbn4LJ0wlRJ6JgemhXBguNbBUPRRDeUdVcqazMWkWC
-         dk9d8QHtU103JjtWCjNwzZLwSakTbYVoyyZMPznbW2kNkDFCK+lV/7pj97e//rbFdB
-         KAcjBslm3nZ5BD8UOtzQgE313X4qN68GC8CjlYGQyBtCbPdHgVt918IpKotLwM74ca
-         Zn52WHW55dJ8f6+KX/RVedxJw0EkqlPTOL1x9rcwK7iDgIZU3Ce79U8tYgcWxannLX
-         MEStSzPPRTj0snsGEx0UFdc0kYSX/e0hXkgCvgkTLp0pcdTYZYHGlYYERA/m/ZwxGN
-         9en6lprtJ6hkQ==
-From:   Will Deacon <will@kernel.org>
-To:     mcgrof@kernel.org, Nick Alcock <nick.alcock@oracle.com>
-Cc:     catalin.marinas@arm.com, kernel-team@android.com,
-        Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-modules@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-serial@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 00/24] MODULE_LICENSE removals, second tranche
-Date:   Mon, 27 Mar 2023 16:01:15 +0100
-Message-Id: <167992609868.3834946.4831319626649638477.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230217141059.392471-1-nick.alcock@oracle.com>
-References: <20230217141059.392471-1-nick.alcock@oracle.com>
+        Mon, 27 Mar 2023 11:03:49 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE2C30EB;
+        Mon, 27 Mar 2023 08:03:01 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id i13so11847686lfe.9;
+        Mon, 27 Mar 2023 08:03:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679929354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e6VQOUIWhV+wzBeCHjyQhOVLLGvk7Jpv4IJCO1YwaE8=;
+        b=SV0/rmbVDc+FyLq9iNVrGTQH8FfyPie8Cw6BehWUy+V9LhJ2fGd4leTIhqMLL/Rlek
+         13Eae2PNehBIMTU2rzkDpWBvDsxculMHX5uTXeEnqdeRnWdgQjZPWm8jAgqUlZeqjuuP
+         ozbAuBg6IJCwF0sJltDt+GYh1WuAaxaWBYgWJ3EhDosghHTlQh+PdJ1vK6v8PGKR21kq
+         IXQjc6dgNTXNZA7p6ON3h8E+04nTWvwgolYknZTaNq02md3fDDTOVKbuZi2DccJz1ojI
+         ySgc16+4AdeaYI5oQvneFcJJlTB0IUH0T4Y6WCp6CWs9gJxSd+QVzgC1xma7eYzgsYmM
+         JmWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679929354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e6VQOUIWhV+wzBeCHjyQhOVLLGvk7Jpv4IJCO1YwaE8=;
+        b=HWhBYUHxTdd06Dr5oJJ10KxXLiUVbdaNoj9+uv4FmGtfdpfuTgn5x5jqhb8JCPvxEY
+         EqeWZ92VuBMcFxXrF6MsFwxJJ3QK3aus3N4G5LASeEGt9P/at/nqJmzj+yAEKpc3JgbU
+         DV5+LD+9PvoQt0sUQJBZ1vVW36ZN5xiRXn1vfsu8S8zqeJ4ywsXpR8rxdtm6G4a0lo+2
+         6sYL4V8Ag/FYVFV3CNxJSk2c36Hi1+Aqjh9cJvYbb3Bfb/gZkz0xfThmNvT6TW8t1SpR
+         SIEa5RVmN9zsyfl0OXvNquZ1keUtEZ8VNhDAhrCUi2muwZYkvdpiAoR8/kgkUokFAV12
+         wvZA==
+X-Gm-Message-State: AAQBX9dAN1zBmuYbyfBezCEVU/LoLDLE7M03z7ccbW3M/jzTCdJbpwko
+        zEaEG+WJsXZPs668e53LttM=
+X-Google-Smtp-Source: AKy350YWeYIpIf267Srs3CZ2MraXr6TEeCcgO7WyQgwRur/vNjrPCbZELyimnI7YAg50x7HloUjKZQ==
+X-Received: by 2002:ac2:4467:0:b0:4e8:a0a3:e242 with SMTP id y7-20020ac24467000000b004e8a0a3e242mr3374758lfl.7.1679929354102;
+        Mon, 27 Mar 2023 08:02:34 -0700 (PDT)
+Received: from xeon.. ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id f4-20020a19ae04000000b0049ad2619becsm4706923lfc.131.2023.03.27.08.02.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 08:02:33 -0700 (PDT)
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v4 0/2] Fix sound on ASUS Transformers
+Date:   Mon, 27 Mar 2023 18:02:17 +0300
+Message-Id: <20230327150219.13636-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 17 Feb 2023 14:10:35 +0000, Nick Alcock wrote:
-> This series, based on current modules-next, is part of a treewide cleanup
-> suggested by Luis Chamberlain, to remove the LICENSE_MODULE usage from
-> files/objects that are not tristate.  Due to recent changes to kbuild, these
-> uses are now problematic.  See the commit logs for more details.
-> 
-> (The commit log prefixes and Cc lists are automatically determined using
-> the script mentioned below.  I've eyeballed them, and they seem reasonable:
-> my apologies if they are not.)
-> 
-> [...]
+- update dts bindings
 
-Applied drivers/perf patch to will (for-next/perf), thanks!
+---
+Changes from v3
+- fixed typo in wm8903 audio-routing
 
-[08/24] kbuild, drivers/perf: remove MODULE_LICENSE in non-modules
-        https://git.kernel.org/will/c/a64021d3726a
+Changes from v2
+- dropped already picked patches
+- adjustments in binding updates (tf101 and tf300t require wm8903
+  codec patch to properly work with internal mic)
 
-Cheers,
+Changes from v1
+- fm34 dropped for re-work
+- quirk for headset detection and rt5631 bringup splitted
+- minor adjustments in binding updates
+- improvement of rt5631 rate asignment
+---
+
+Svyatoslav Ryhel (2):
+  ARM: tegra: transformers: update WM8903 sound nodes
+  ARM: tegra: transformers: bind RT5631 sound nodes
+
+ arch/arm/boot/dts/tegra20-asus-tf101.dts        | 13 +++++++------
+ arch/arm/boot/dts/tegra30-asus-tf201.dts        | 17 +++++++++++++++++
+ arch/arm/boot/dts/tegra30-asus-tf300t.dts       |  6 ++----
+ arch/arm/boot/dts/tegra30-asus-tf300tg.dts      | 17 +++++++++++++++++
+ arch/arm/boot/dts/tegra30-asus-tf700t.dts       | 17 +++++++++++++++++
+ .../dts/tegra30-asus-transformer-common.dtsi    |  9 +++++----
+ 6 files changed, 65 insertions(+), 14 deletions(-)
+
 -- 
-Will
+2.37.2
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
