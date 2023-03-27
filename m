@@ -2,97 +2,74 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575CBC761A6
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 14:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB329C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 15:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232717AbjC0OzA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Mar 2023 10:55:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60028 "EHLO
+        id S230107AbjC0PBi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Mar 2023 11:01:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229762AbjC0Oyv (ORCPT
+        with ESMTP id S232693AbjC0PBg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Mar 2023 10:54:51 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D713A80;
-        Mon, 27 Mar 2023 07:54:49 -0700 (PDT)
+        Mon, 27 Mar 2023 11:01:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FBE54680;
+        Mon, 27 Mar 2023 08:01:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 2B6C4CE122B;
-        Mon, 27 Mar 2023 14:54:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF56C433EF;
-        Mon, 27 Mar 2023 14:54:45 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 39289B8160C;
+        Mon, 27 Mar 2023 15:01:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E12C433D2;
+        Mon, 27 Mar 2023 15:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679928886;
-        bh=E4YD9UhzA51aarLNwwe1oXuA4ITF8ovQGB7U2nahqBY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q91KKPRDajS3v4wkummmMfdrSuvEs/r3Dk6cctCJ9s5VmjSo6dySQVes4feFaAr2m
-         XSlNoqyAvQguvXDk7WkSOgwJdKzjI2p0Hr7FEB28N9mwSZ/UpZYMpdfZ/hqfhOp8Bv
-         Lk4RnTT7RVFFlA2oy1QSdXIJqubFo0fTZzXBV5W8ZWQjkrMmSYpRE9jHM2oJIG+nA0
-         wr8bX4kH4zsrLhOhG6h+G+QUPPzJn/WQxyx6mVm8HpdFC9zCy7fDYTiN8zntWxbt9C
-         Pv9QjAy6MylPbpKONfcNLP0eQu9uBXn1ik4RJ30cFNMfcfPcxOuBmqJqAA+j5Fh2a4
-         b6dJlYeD3LS5g==
-Date:   Mon, 27 Mar 2023 16:54:43 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com,
-        dmitry.osipenko@collabora.com, jonathanh@nvidia.com,
-        richard.leitner@linux.dev, treding@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] i2c: core: run atomic i2c xfer when !preemptible
-Message-ID: <ZCGuMzmS0Lz5WX2/@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Benjamin Bara <bbara93@gmail.com>, Lee Jones <lee@kernel.org>,
-        rafael.j.wysocki@intel.com, dmitry.osipenko@collabora.com,
-        jonathanh@nvidia.com, richard.leitner@linux.dev, treding@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>, stable@vger.kernel.org
-References: <20230327-tegra-pmic-reboot-v3-0-3c0ee3567e14@skidata.com>
- <20230327-tegra-pmic-reboot-v3-2-3c0ee3567e14@skidata.com>
+        s=k20201202; t=1679929284;
+        bh=iviKd5K9/wgG7KfF6zDJQYJw3clnrBqztYiMjgjIA7g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qPPuGnTARvIcUJ4+oHOZ2HkvqbiXw90CIAu+aiTW3+QORqvj7/OCQQ+gEcQsR+Sgm
+         IDpre+1T+HGi72IAAptX+Y0FJUFIuIIhm35p7gdoatgGbFvV00lTk+/mhTBTHWcGWh
+         Ifp5twzEpP4YOip6075XqfzH5JGCNYTjjhhnuejr4cqt0Y2xv3QA5gKTy8BtTfElqZ
+         xCqVHTmFOCZ+1nIOkWcJOFcUAvdgi+8wMZ/CgMMMO7NQA8xRqHJOXjmiER5Ax1x0td
+         HXJhL/eRbFypdX/YVz+NeuKazvID6/TGnac5ES3e8xCcQpZ/ddGRUrhYCnFFFu+KA8
+         K34QSCdDn766w==
+From:   Will Deacon <will@kernel.org>
+To:     rdunlap@infradead.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, suzuki.poulose@arm.com,
+        Besar Wicaksono <bwicaksono@nvidia.com>
+Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, vsethi@nvidia.com
+Subject: Re: [PATCH v2] perf: arm_cspmu: Fix variable dereference warning
+Date:   Mon, 27 Mar 2023 16:01:11 +0100
+Message-Id: <167992637873.3835657.18435170691665437274.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20230302205701.35323-1-bwicaksono@nvidia.com>
+References: <20230302205701.35323-1-bwicaksono@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mTzm4KGcMhUw6XkC"
-Content-Disposition: inline
-In-Reply-To: <20230327-tegra-pmic-reboot-v3-2-3c0ee3567e14@skidata.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, 2 Mar 2023 14:57:01 -0600, Besar Wicaksono wrote:
+> Fix warning message from smatch tool:
+>   | smatch warnings:
+>   | drivers/perf/arm_cspmu/arm_cspmu.c:1075 arm_cspmu_find_cpu_container()
+>   |    warn: variable dereferenced before check 'cpu_dev' (see line 1073)
+> 
+> 
 
---mTzm4KGcMhUw6XkC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to will (for-next/perf), thanks!
 
+[1/1] perf: arm_cspmu: Fix variable dereference warning
+      https://git.kernel.org/will/c/16e15834659e
 
-> -	return system_state > SYSTEM_RUNNING && irqs_disabled();
-> +	return system_state > SYSTEM_RUNNING && !preemptible();
+Cheers,
+-- 
+Will
 
-For the !CONFIG_PREEMPT_COUNT case, preemptible() is defined 0. So,
-don't we lose the irqs_disabled() check in that case?
-
-
---mTzm4KGcMhUw6XkC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmQhrikACgkQFA3kzBSg
-KbYTSxAAhu1oioVlg3a+6Wpxav9PdJ3/W10uegdGB7fNN1w/1+JXPfbNjO08eHAk
-MBj5qYRYA9syYhNvq0ufRSGLLaGc7YoJnxLphU9Rwx+07ZsZbMdEmzkhHPau2GKM
-fRIWY06kmTJ+ZW4G6XxCeEQklD1xjmKgs5dsmTG9n1Qvfifo7mbf3bgj13zh4+ww
-Wqd031uW8YWwnJ51G/hkJz3VitxTwUKVmTTZY8Ta2rN6MxoXZoavGbylk2urO2ob
-GTDnz6yBxynpNsG/vJuaU0m/ieqKSFlfRGJBGaClWbdzvdd9O4SWE/SHswbZpGJI
-5/Wx18KdPdZaiiSK9Nw61pRj66AqXjRDBsJGT7Wc70Sr1P5VhFXxwhPXjY0/7q8h
-6KfwQhN8UwndhpERxsLz0Mx2y0P9puRz5IPGavk5fReL1NvBEtgTMnKLW2I6g9ZB
-bXpH7kzE1ZTrarqwDkquYR7erZr40e1ZJ5OdIuj3eSNJHcvfI4Ya1oS5SIFi3KMz
-U4y3mQhQJ6XL/l7K7PDDhuMWSDdj2aovJVwFKoZEaU41A+x85BK5h/4MHDTdkqdb
-8km1QMmMDAXTNfcMqiz4kmMLW6zkWY/lvXYe1iQAoHyXDjsu6ItJL0sEeg845uDr
-A0U6sECmTV47Gn8cX5FzcMWDsVAjFGAcOnJ/JrjGOld0b3WzIA0=
-=CNU/
------END PGP SIGNATURE-----
-
---mTzm4KGcMhUw6XkC--
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
