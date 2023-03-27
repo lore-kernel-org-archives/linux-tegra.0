@@ -2,50 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB329C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 15:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CF3C77B71
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 15:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230107AbjC0PBi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Mar 2023 11:01:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40606 "EHLO
+        id S229821AbjC0PBn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Mar 2023 11:01:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232693AbjC0PBg (ORCPT
+        with ESMTP id S232782AbjC0PBi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Mar 2023 11:01:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FBE54680;
-        Mon, 27 Mar 2023 08:01:27 -0700 (PDT)
+        Mon, 27 Mar 2023 11:01:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E84D4483;
+        Mon, 27 Mar 2023 08:01:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 39289B8160C;
-        Mon, 27 Mar 2023 15:01:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E12C433D2;
-        Mon, 27 Mar 2023 15:01:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CAE6061303;
+        Mon, 27 Mar 2023 15:01:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2FC4C4339E;
+        Mon, 27 Mar 2023 15:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679929284;
-        bh=iviKd5K9/wgG7KfF6zDJQYJw3clnrBqztYiMjgjIA7g=;
+        s=k20201202; t=1679929296;
+        bh=dsoVd3bOkZ1/OXyt+ZP8t5ze5tdgtMoUGRvUuV6EukM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qPPuGnTARvIcUJ4+oHOZ2HkvqbiXw90CIAu+aiTW3+QORqvj7/OCQQ+gEcQsR+Sgm
-         IDpre+1T+HGi72IAAptX+Y0FJUFIuIIhm35p7gdoatgGbFvV00lTk+/mhTBTHWcGWh
-         Ifp5twzEpP4YOip6075XqfzH5JGCNYTjjhhnuejr4cqt0Y2xv3QA5gKTy8BtTfElqZ
-         xCqVHTmFOCZ+1nIOkWcJOFcUAvdgi+8wMZ/CgMMMO7NQA8xRqHJOXjmiER5Ax1x0td
-         HXJhL/eRbFypdX/YVz+NeuKazvID6/TGnac5ES3e8xCcQpZ/ddGRUrhYCnFFFu+KA8
-         K34QSCdDn766w==
+        b=SHPAMbr7ynIEkq5oNWhug9hIbn4LJ0wlRJ6JgemhXBguNbBUPRRDeUdVcqazMWkWC
+         dk9d8QHtU103JjtWCjNwzZLwSakTbYVoyyZMPznbW2kNkDFCK+lV/7pj97e//rbFdB
+         KAcjBslm3nZ5BD8UOtzQgE313X4qN68GC8CjlYGQyBtCbPdHgVt918IpKotLwM74ca
+         Zn52WHW55dJ8f6+KX/RVedxJw0EkqlPTOL1x9rcwK7iDgIZU3Ce79U8tYgcWxannLX
+         MEStSzPPRTj0snsGEx0UFdc0kYSX/e0hXkgCvgkTLp0pcdTYZYHGlYYERA/m/ZwxGN
+         9en6lprtJ6hkQ==
 From:   Will Deacon <will@kernel.org>
-To:     rdunlap@infradead.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, suzuki.poulose@arm.com,
-        Besar Wicaksono <bwicaksono@nvidia.com>
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        treding@nvidia.com, vsethi@nvidia.com
-Subject: Re: [PATCH v2] perf: arm_cspmu: Fix variable dereference warning
-Date:   Mon, 27 Mar 2023 16:01:11 +0100
-Message-Id: <167992637873.3835657.18435170691665437274.b4-ty@kernel.org>
+To:     mcgrof@kernel.org, Nick Alcock <nick.alcock@oracle.com>
+Cc:     catalin.marinas@arm.com, kernel-team@android.com,
+        Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-modules@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-serial@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 00/24] MODULE_LICENSE removals, second tranche
+Date:   Mon, 27 Mar 2023 16:01:15 +0100
+Message-Id: <167992609868.3834946.4831319626649638477.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230302205701.35323-1-bwicaksono@nvidia.com>
-References: <20230302205701.35323-1-bwicaksono@nvidia.com>
+In-Reply-To: <20230217141059.392471-1-nick.alcock@oracle.com>
+References: <20230217141059.392471-1-nick.alcock@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -53,18 +57,22 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 2 Mar 2023 14:57:01 -0600, Besar Wicaksono wrote:
-> Fix warning message from smatch tool:
->   | smatch warnings:
->   | drivers/perf/arm_cspmu/arm_cspmu.c:1075 arm_cspmu_find_cpu_container()
->   |    warn: variable dereferenced before check 'cpu_dev' (see line 1073)
+On Fri, 17 Feb 2023 14:10:35 +0000, Nick Alcock wrote:
+> This series, based on current modules-next, is part of a treewide cleanup
+> suggested by Luis Chamberlain, to remove the LICENSE_MODULE usage from
+> files/objects that are not tristate.  Due to recent changes to kbuild, these
+> uses are now problematic.  See the commit logs for more details.
 > 
+> (The commit log prefixes and Cc lists are automatically determined using
+> the script mentioned below.  I've eyeballed them, and they seem reasonable:
+> my apologies if they are not.)
 > 
+> [...]
 
-Applied to will (for-next/perf), thanks!
+Applied drivers/perf patch to will (for-next/perf), thanks!
 
-[1/1] perf: arm_cspmu: Fix variable dereference warning
-      https://git.kernel.org/will/c/16e15834659e
+[08/24] kbuild, drivers/perf: remove MODULE_LICENSE in non-modules
+        https://git.kernel.org/will/c/a64021d3726a
 
 Cheers,
 -- 
