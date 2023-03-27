@@ -2,353 +2,180 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B798C761AF
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 07:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6E7C7619A
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 09:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232405AbjC0HRj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Mar 2023 03:17:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47842 "EHLO
+        id S233170AbjC0J4U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Mar 2023 05:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232434AbjC0HRh (ORCPT
+        with ESMTP id S232307AbjC0J4T (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Mar 2023 03:17:37 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6669E422F;
-        Mon, 27 Mar 2023 00:17:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 8DCA1CE10B2;
-        Mon, 27 Mar 2023 07:17:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53948C433D2;
-        Mon, 27 Mar 2023 07:17:28 +0000 (UTC)
-Message-ID: <1c4e5eaf-8a38-41cf-1e4f-6006d575d5ea@xs4all.nl>
-Date:   Mon, 27 Mar 2023 09:17:26 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 01/12] gpu: host1x: Make host1x_client_unregister() return
- void
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Mon, 27 Mar 2023 05:56:19 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11hn2200.outbound.protection.outlook.com [52.100.171.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E205A49DD;
+        Mon, 27 Mar 2023 02:56:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dyVO74EyXsChydjFvWspkbsDzIAAV3PMZh6eLxdLfb6DOG2nkKINI4M217JmwyQpj+Oq8Nq2wjqUtizqHm4xPrgpY8HYMLMKpQKj80ULB1sKlBN5vYnE2/3N/wMHVfI4DunGL59ky7XEU5wJXcpKnkmsuUzyCn850H9YArAWpxCVtP86ugIFuA5rqmi8bGFbcPgbaEPZJBA5sCxi01E4PfrCWSWIq/GucalkwUg1z9UCc3EV6nzOpfaDIMS4n1nC+S7ovS8Bha2amsAd4ndgXQDA124e2wQ/t2tYoBg+4RurrUolhEcC0Udi8OiYcpzp54S0sl7O/uCz8dCV6Un2Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7plBS8a5XxvCxm1FqZtDJDHWgxJ4J4W/dpZkThQSBjo=;
+ b=PnPG/00ppXNSfZjkmge2rBXGSXdB8cQ8O1q78TI7tsBrmfl2DcQEErybbxMLtFicF8lWnmIPZ+yliblgW/Gqqs95nbLyqeMAPNPY7R0TY9xLmzq+nyCCAlDkUE37oJEi8EHVX1SRl4rSmwWxTaj1hQB8CNNNxLSVC0O+aMvXqbOMciTLdbNBiX5H3HaS5ir4pH2gummgDuW+j7OI5XhbLHIzuogkPqGTBXGcLQdTCp/36vxi+lx/okujgHXFx+GOs7f6teTyAVa4UVBl93jt3LA8JBFDyUxac1KfxtcN8nEASv5zCFFVbCG06Q/QWwNCK+LjPdy6iEnxrXU0yOMlXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7plBS8a5XxvCxm1FqZtDJDHWgxJ4J4W/dpZkThQSBjo=;
+ b=Lzr2wRD8cQoShNkDziRvR97l+82hJMzrk37WLOqGbAr9K+5q/efi129RAH3m3PrvJATEKucXTBrl1mGKzSf0xBCgsiXuGwEz1BdzVb5OMzYRu8h0jriWbod4yC4KJxNsny5m6aW7jMRYnDSEED3ZWl12rb9xVot8umCQ5X6rGHoQDuFFW05Tz6MXubcQRDJ4HoXBhyIW7gD1rLhWdaIqQxzsnNL+p2D+ce07JA8IxWU7SoBrI+w64aLQm9lAnTZvgs7ZoZEEJGfSwueYW/e2vny1UtYRQ1SGU7fquX6z3WiEx/b+Pi4jc1Q7AQBiMGokcS3yNj4xWj7NNYRs4/4giA==
+Received: from MW4PR04CA0229.namprd04.prod.outlook.com (2603:10b6:303:87::24)
+ by SA0PR12MB4589.namprd12.prod.outlook.com (2603:10b6:806:92::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.30; Mon, 27 Mar
+ 2023 09:56:16 +0000
+Received: from CO1NAM11FT084.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:87:cafe::e1) by MW4PR04CA0229.outlook.office365.com
+ (2603:10b6:303:87::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.41 via Frontend
+ Transport; Mon, 27 Mar 2023 09:56:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1NAM11FT084.mail.protection.outlook.com (10.13.174.194) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6222.22 via Frontend Transport; Mon, 27 Mar 2023 09:56:16 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 27 Mar 2023
+ 02:56:01 -0700
+Received: from 0e64808-lcelt.nvidia.com (10.126.231.37) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Mon, 27 Mar 2023 02:55:58 -0700
+From:   Haotien Hsu <haotienh@nvidia.com>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        kernel@pengutronix.de, linux-media@vger.kernel.org,
-        linux-staging@lists.linux.dev
-References: <20230322170223.410376-1-u.kleine-koenig@pengutronix.de>
- <20230322170223.410376-2-u.kleine-koenig@pengutronix.de>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <20230322170223.410376-2-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     JC Kuo <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>,
+        Haotien Hsu <haotienh@nvidia.com>
+Subject: [PATCH v5] usb: xhci: tegra: fix sleep in atomic call
+Date:   Mon, 27 Mar 2023 17:55:48 +0800
+Message-ID: <20230327095548.1599470-1-haotienh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT084:EE_|SA0PR12MB4589:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79f2771e-5235-44eb-013f-08db2ea9819c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HupJ8ORFP7ZyXF5S/YM8GVlUgYwTB5CRjV60Noh7faTXG8UOnlHUOD0ILV0VjPTeLFfrtubj7ElEPaSvcXq3raRoFXC6DZ6xNoq4lVB2TwdclfNZQzg4YcUl6rVeM6UCFXajN417ICZ/ISMqoMtcvyC6C1a/reiUGVXpY6sCrVQXlNNbw+emzrWTRN+JciQEBjNg4JmS1e44StKQIx5LYxptk/aIFbjNTn6y+PMImzlpjEXKWG9li2PqZHojgpHnMmx5iYbbqUjJ5tc7GAUFFOR3k7EPJY5zv0iCwBGxP+WlJJ3r00AqJlHmbofxa8uNJfw9qyWjexUrwx8hpp+H1p+U8FcY+foM5t/YIQ2Td7aDp0KXxOsl6RLLLCBwpNV/LRw+OsrD9Er0IVzVGO79GR6t3ozQbuReEqAUD/CtbW/4ySSTJXX6/KeLo0D+GXXpOcJF3JiXFIZpXr0jF0Ufh8rS0Ut4XzYDq5fuBHsp+DpsIoqSae1ffRBEKAfe3+ff86AzJp0zazX4Vbw1P07oIjJA9cGtA0/XLAF0TUr8FBoKcnpKnRQuDo9rDpXE9GiRsT8E7qlNO0jo0i2DjxBMKs9xPHIwdk+dg2jf4dv1Jysyv8JoFGxegQ8DN8hxETZ32VgPInQfxs4OFNw7DbxIMLwjt3f6u9dWhzlmhidcIdi6AXog5KnicGPjt2IHe+uGa2nfGbnKwY6/VKkoOlepmG4G95voobeW409zEXLynMCxM3/eZGCEK8wswYONKEoK7z0WUcjLvve7QTBWgwP1ayqVY6X1hddTab8gChBqmfnCx4vk6Pbyvatfcs4MBptX
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(346002)(396003)(376002)(5400799015)(451199021)(46966006)(40470700004)(36840700001)(1076003)(26005)(16526019)(40480700001)(41300700001)(6666004)(186003)(107886003)(7696005)(83380400001)(426003)(336012)(2616005)(47076005)(478600001)(54906003)(110136005)(34020700004)(316002)(36860700001)(40460700003)(4326008)(2906002)(8676002)(70206006)(70586007)(7636003)(82740400003)(356005)(36756003)(82310400005)(86362001)(5660300002)(8936002)(12100799027);DIR:OUT;SFP:1501;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2023 09:56:16.0017
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79f2771e-5235-44eb-013f-08db2ea9819c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT084.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4589
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 22/03/2023 18:02, Uwe Kleine-König wrote:
-> This function returned zero unconditionally. Make it return no value and
-> simplify all callers accordingly.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> ---
->  drivers/gpu/drm/tegra/dc.c              | 7 +------
->  drivers/gpu/drm/tegra/dsi.c             | 8 +-------
->  drivers/gpu/drm/tegra/gr2d.c            | 8 +-------
->  drivers/gpu/drm/tegra/gr3d.c            | 8 +-------
->  drivers/gpu/drm/tegra/hdmi.c            | 8 +-------
->  drivers/gpu/drm/tegra/hub.c             | 9 ++-------
->  drivers/gpu/drm/tegra/nvdec.c           | 8 +-------
->  drivers/gpu/drm/tegra/sor.c             | 8 +-------
->  drivers/gpu/drm/tegra/vic.c             | 8 +-------
->  drivers/gpu/host1x/bus.c                | 6 ++----
->  drivers/staging/media/tegra-video/csi.c | 8 +-------
->  drivers/staging/media/tegra-video/vi.c  | 8 +-------
->  include/linux/host1x.h                  | 2 +-
->  13 files changed, 15 insertions(+), 81 deletions(-)
+From: Wayne Chang <waynec@nvidia.com>
 
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+When we set the dual-role port to Host mode, we observed the following
+splat:
+[  167.057718] BUG: sleeping function called from invalid context at
+include/linux/sched/mm.h:229
+[  167.057872] Workqueue: events tegra_xusb_usb_phy_work
+[  167.057954] Call trace:
+[  167.057962]  dump_backtrace+0x0/0x210
+[  167.057996]  show_stack+0x30/0x50
+[  167.058020]  dump_stack_lvl+0x64/0x84
+[  167.058065]  dump_stack+0x14/0x34
+[  167.058100]  __might_resched+0x144/0x180
+[  167.058140]  __might_sleep+0x64/0xd0
+[  167.058171]  slab_pre_alloc_hook.constprop.0+0xa8/0x110
+[  167.058202]  __kmalloc_track_caller+0x74/0x2b0
+[  167.058233]  kvasprintf+0xa4/0x190
+[  167.058261]  kasprintf+0x58/0x90
+[  167.058285]  tegra_xusb_find_port_node.isra.0+0x58/0xd0
+[  167.058334]  tegra_xusb_find_port+0x38/0xa0
+[  167.058380]  tegra_xusb_padctl_get_usb3_companion+0x38/0xd0
+[  167.058430]  tegra_xhci_id_notify+0x8c/0x1e0
+[  167.058473]  notifier_call_chain+0x88/0x100
+[  167.058506]  atomic_notifier_call_chain+0x44/0x70
+[  167.058537]  tegra_xusb_usb_phy_work+0x60/0xd0
+[  167.058581]  process_one_work+0x1dc/0x4c0
+[  167.058618]  worker_thread+0x54/0x410
+[  167.058650]  kthread+0x188/0x1b0
+[  167.058672]  ret_from_fork+0x10/0x20
 
-Regards,
+The function tegra_xusb_padctl_get_usb3_companion eventually calls
+tegra_xusb_find_port and this in turn calls kasprintf which might sleep
+and so cannot be called from an atomic context.
 
-	Hans
+Fix this by moving the call to tegra_xusb_padctl_get_usb3_companion to
+the tegra_xhci_id_work function where it is really needed.
 
-> 
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index a67453cee883..bd108159fc2c 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -3268,12 +3268,7 @@ static int tegra_dc_remove(struct platform_device *pdev)
->  	struct tegra_dc *dc = platform_get_drvdata(pdev);
->  	int err;
->  
-> -	err = host1x_client_unregister(&dc->client);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&dc->client);
->  
->  	err = tegra_dc_rgb_remove(dc);
->  	if (err < 0) {
-> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> index de1333dc0d86..c8a02a1024bc 100644
-> --- a/drivers/gpu/drm/tegra/dsi.c
-> +++ b/drivers/gpu/drm/tegra/dsi.c
-> @@ -1662,16 +1662,10 @@ static int tegra_dsi_probe(struct platform_device *pdev)
->  static int tegra_dsi_remove(struct platform_device *pdev)
->  {
->  	struct tegra_dsi *dsi = platform_get_drvdata(pdev);
-> -	int err;
->  
->  	pm_runtime_disable(&pdev->dev);
->  
-> -	err = host1x_client_unregister(&dsi->client);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&dsi->client);
->  
->  	tegra_output_remove(&dsi->output);
->  
-> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-> index e3bb4c99ed39..49b8d4953e7f 100644
-> --- a/drivers/gpu/drm/tegra/gr2d.c
-> +++ b/drivers/gpu/drm/tegra/gr2d.c
-> @@ -298,14 +298,8 @@ static int gr2d_probe(struct platform_device *pdev)
->  static int gr2d_remove(struct platform_device *pdev)
->  {
->  	struct gr2d *gr2d = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&gr2d->client.base);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&gr2d->client.base);
->  
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-> index a1fd3113ea96..cd3679d8eef9 100644
-> --- a/drivers/gpu/drm/tegra/gr3d.c
-> +++ b/drivers/gpu/drm/tegra/gr3d.c
-> @@ -553,14 +553,8 @@ static int gr3d_probe(struct platform_device *pdev)
->  static int gr3d_remove(struct platform_device *pdev)
->  {
->  	struct gr3d *gr3d = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&gr3d->client.base);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&gr3d->client.base);
->  
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-> index 40ec3e6cf204..6798eea317df 100644
-> --- a/drivers/gpu/drm/tegra/hdmi.c
-> +++ b/drivers/gpu/drm/tegra/hdmi.c
-> @@ -1877,14 +1877,8 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
->  static int tegra_hdmi_remove(struct platform_device *pdev)
->  {
->  	struct tegra_hdmi *hdmi = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&hdmi->client);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&hdmi->client);
->  
->  	tegra_output_remove(&hdmi->output);
->  
-> diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-> index b872527a123c..2c91dc444085 100644
-> --- a/drivers/gpu/drm/tegra/hub.c
-> +++ b/drivers/gpu/drm/tegra/hub.c
-> @@ -1178,13 +1178,8 @@ static int tegra_display_hub_remove(struct platform_device *pdev)
->  {
->  	struct tegra_display_hub *hub = platform_get_drvdata(pdev);
->  	unsigned int i;
-> -	int err;
->  
-> -	err = host1x_client_unregister(&hub->client);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -	}
-> +	host1x_client_unregister(&hub->client);
->  
->  	for (i = 0; i < hub->soc->num_wgrps; i++) {
->  		struct tegra_windowgroup *wgrp = &hub->wgrps[i];
-> @@ -1194,7 +1189,7 @@ static int tegra_display_hub_remove(struct platform_device *pdev)
->  
->  	pm_runtime_disable(&pdev->dev);
->  
-> -	return err;
-> +	return 0;
->  }
->  
->  static const struct tegra_display_hub_soc tegra186_display_hub = {
-> diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
-> index 86c5818ac27b..077f3af0d0b6 100644
-> --- a/drivers/gpu/drm/tegra/nvdec.c
-> +++ b/drivers/gpu/drm/tegra/nvdec.c
-> @@ -550,14 +550,8 @@ static int nvdec_probe(struct platform_device *pdev)
->  static int nvdec_remove(struct platform_device *pdev)
->  {
->  	struct nvdec *nvdec = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&nvdec->client.base);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&nvdec->client.base);
->  
->  	falcon_exit(&nvdec->falcon);
->  
-> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-> index 8af632740673..d067b2d01b2e 100644
-> --- a/drivers/gpu/drm/tegra/sor.c
-> +++ b/drivers/gpu/drm/tegra/sor.c
-> @@ -3981,14 +3981,8 @@ static int tegra_sor_probe(struct platform_device *pdev)
->  static int tegra_sor_remove(struct platform_device *pdev)
->  {
->  	struct tegra_sor *sor = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&sor->client);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&sor->client);
->  
->  	pm_runtime_disable(&pdev->dev);
->  
-> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-> index 531a71c72061..fd614756ecf8 100644
-> --- a/drivers/gpu/drm/tegra/vic.c
-> +++ b/drivers/gpu/drm/tegra/vic.c
-> @@ -540,14 +540,8 @@ static int vic_probe(struct platform_device *pdev)
->  static int vic_remove(struct platform_device *pdev)
->  {
->  	struct vic *vic = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&vic->client.base);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-> -			err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&vic->client.base);
->  
->  	falcon_exit(&vic->falcon);
->  
-> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> index bc7271a00a94..4d16a3396c4a 100644
-> --- a/drivers/gpu/host1x/bus.c
-> +++ b/drivers/gpu/host1x/bus.c
-> @@ -803,7 +803,7 @@ EXPORT_SYMBOL(__host1x_client_register);
->   * Removes a host1x client from its host1x controller instance. If a logical
->   * device has already been initialized, it will be torn down.
->   */
-> -int host1x_client_unregister(struct host1x_client *client)
-> +void host1x_client_unregister(struct host1x_client *client)
->  {
->  	struct host1x_client *c;
->  	struct host1x *host1x;
-> @@ -815,7 +815,7 @@ int host1x_client_unregister(struct host1x_client *client)
->  		err = host1x_del_client(host1x, client);
->  		if (!err) {
->  			mutex_unlock(&devices_lock);
-> -			return 0;
-> +			return;
->  		}
->  	}
->  
-> @@ -832,8 +832,6 @@ int host1x_client_unregister(struct host1x_client *client)
->  	mutex_unlock(&clients_lock);
->  
->  	host1x_bo_cache_destroy(&client->cache);
-> -
-> -	return 0;
->  }
->  EXPORT_SYMBOL(host1x_client_unregister);
->  
-> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-> index 426e653bd55d..36ca639622c9 100644
-> --- a/drivers/staging/media/tegra-video/csi.c
-> +++ b/drivers/staging/media/tegra-video/csi.c
-> @@ -778,14 +778,8 @@ static int tegra_csi_probe(struct platform_device *pdev)
->  static int tegra_csi_remove(struct platform_device *pdev)
->  {
->  	struct tegra_csi *csi = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&csi->client);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev,
-> -			"failed to unregister host1x client: %d\n", err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&csi->client);
->  
->  	pm_runtime_disable(&pdev->dev);
->  
-> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-> index 11dd142c98c5..26f7aedce718 100644
-> --- a/drivers/staging/media/tegra-video/vi.c
-> +++ b/drivers/staging/media/tegra-video/vi.c
-> @@ -2041,14 +2041,8 @@ static int tegra_vi_probe(struct platform_device *pdev)
->  static int tegra_vi_remove(struct platform_device *pdev)
->  {
->  	struct tegra_vi *vi = platform_get_drvdata(pdev);
-> -	int err;
->  
-> -	err = host1x_client_unregister(&vi->client);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev,
-> -			"failed to unregister host1x client: %d\n", err);
-> -		return err;
-> -	}
-> +	host1x_client_unregister(&vi->client);
->  
->  	pm_runtime_disable(&pdev->dev);
->  
-> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> index 9a9de4b97a25..9c8119ed13a4 100644
-> --- a/include/linux/host1x.h
-> +++ b/include/linux/host1x.h
-> @@ -443,7 +443,7 @@ int __host1x_client_register(struct host1x_client *client);
->  		__host1x_client_register(client);	\
->  	})
->  
-> -int host1x_client_unregister(struct host1x_client *client);
-> +void host1x_client_unregister(struct host1x_client *client);
->  
->  int host1x_client_suspend(struct host1x_client *client);
->  int host1x_client_resume(struct host1x_client *client);
+Fixes: f836e7843036 ("usb: xhci-tegra: Add OTG support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
+---
+V4 -> V5: Update commit message and code layout with 100 columns
+V3 -> V4: Remove copyright change from this patch
+V2 -> V3: Add version information
+V1 -> V2: Add "Fixes" and "Cc:" lines and update copyright years
+---
+ drivers/usb/host/xhci-tegra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 1ff22f675930..a88c39e525c2 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1360,6 +1360,9 @@ static void tegra_xhci_id_work(struct work_struct *work)
+ 
+ 	mutex_unlock(&tegra->lock);
+ 
++	tegra->otg_usb3_port = tegra_xusb_padctl_get_usb3_companion(tegra->padctl,
++								    tegra->otg_usb2_port);
++
+ 	if (tegra->host_mode) {
+ 		/* switch to host mode */
+ 		if (tegra->otg_usb3_port >= 0) {
+@@ -1474,9 +1477,6 @@ static int tegra_xhci_id_notify(struct notifier_block *nb,
+ 	}
+ 
+ 	tegra->otg_usb2_port = tegra_xusb_get_usb2_port(tegra, usbphy);
+-	tegra->otg_usb3_port = tegra_xusb_padctl_get_usb3_companion(
+-							tegra->padctl,
+-							tegra->otg_usb2_port);
+ 
+ 	tegra->host_mode = (usbphy->last_event == USB_EVENT_ID) ? true : false;
+ 
+-- 
+2.25.1
 
