@@ -2,60 +2,58 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8DEC6FD1D
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 17:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6903C76195
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Mar 2023 17:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232591AbjC0RBu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Mar 2023 13:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51852 "EHLO
+        id S232710AbjC0RCO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Mar 2023 13:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232602AbjC0RBk (ORCPT
+        with ESMTP id S232741AbjC0RB6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Mar 2023 13:01:40 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298B13C31;
-        Mon, 27 Mar 2023 10:01:36 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id r14so1183789oiw.12;
-        Mon, 27 Mar 2023 10:01:36 -0700 (PDT)
+        Mon, 27 Mar 2023 13:01:58 -0400
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F943AB1;
+        Mon, 27 Mar 2023 10:01:53 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id d22-20020a9d5e16000000b0069b5252ced7so4879203oti.13;
+        Mon, 27 Mar 2023 10:01:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679936495;
+        d=1e100.net; s=20210112; t=1679936512;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A1cer0myC+DWXq6An3rnd+VU8s9Hlurez1Dtqg1RAXY=;
-        b=ROpqpACInh74Ci1JpVcsye1pNNkh2QC+5vt5MySEHLTB65qEc0+9VAo1Hdmp92yWRP
-         YqCoeKNy5+xl+WWB/sgoqeMvEsaSVJXPS8NFw61uk75VCWpdMk+czKjPbMGw5AmVtRAe
-         QRuG30rc/GoZKrawXgMn363rhx+86VoOaCmy7OdSIlTYLWKhSMo/z48a34Fre5g0iYlC
-         t4aIZVvRaJWjS/rYeBrs5mdQ3/BasskUEMzIZcSDsHKxE/oZopljBn8OPAnR0O93Y0i1
-         dwB0VJjt0qkO5sIQsbq3M5QOOXJ5GmcbbVEmCQQr1bIZFRHqOhWNfR6WVBbPJQFiIu+I
-         Xfgw==
-X-Gm-Message-State: AO0yUKXx0guzd08hsBFqKI01Vln+EpBMhLFVEYDcmUWXe5LMQAgVB2h8
-        A+qRuofsUUWJ1P92KYTGAg==
-X-Google-Smtp-Source: AK7set9SgajdaFm03+ruzVbdS8nr9AGDu1wFpBNE1MkKTQ3SXd6u3tEkVayylaoJu/IVuphkeImN8w==
-X-Received: by 2002:aca:2217:0:b0:387:6a3b:5a86 with SMTP id b23-20020aca2217000000b003876a3b5a86mr5256962oic.28.1679936493734;
-        Mon, 27 Mar 2023 10:01:33 -0700 (PDT)
+        bh=8thxkCxhQ4w8ZrYXYbphu5VfpY+v0rzWJw1ucTh4OsQ=;
+        b=zoDosFcpOM60/el5avPquThfFfwZ8AanqRZo/rCqWri0JCx+JaDEnMPAOTCIjJnkoE
+         IpRF4cbVi5YW31WsutfKomGHzbletvxhMFhsH5NdzSm72AhVhAlbSejAyTPfuPwYEkVf
+         z2PoFj7OAts/cQ4ZXHtNjUAfrYr4V186ZVsWD0xx4bcNGzKxuimbhGyIyUyatLBcJ0l/
+         gAAR8/0wmFUAWJHr83iJSoNH3yt2yKSgDo1nN0LEaR46mAGaiWmndAXhKyRwSrrLXUJZ
+         BJEw1FyxRE4ihEiTOdRtUrRCNAZe2r7xx88H6YGCZdbiLju1WQLUZck/vpVT9a9+CnQ/
+         2ACA==
+X-Gm-Message-State: AO0yUKWhkZ/ReL0joqFw+JDjQh9tbeNhFvWDPqyCDwvzCwvsprvDqW6o
+        Ny1js0vct1VNrTY4h6Pj6R3OeAAmng==
+X-Google-Smtp-Source: AK7set/6iTCH/LyMo818dTIV9VQpMfn/2XvqF8VH4quka+5tgnEXKlN4nsdlcLJqh8EaxCScKx17zg==
+X-Received: by 2002:a05:6830:1044:b0:684:e788:eca9 with SMTP id b4-20020a056830104400b00684e788eca9mr6237557otp.17.1679936512455;
+        Mon, 27 Mar 2023 10:01:52 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n67-20020acabd46000000b0038919e6eb5esm1610639oif.3.2023.03.27.10.01.32
+        by smtp.gmail.com with ESMTPSA id p14-20020a056830130e00b006a14579a8besm892360otq.43.2023.03.27.10.01.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 10:01:33 -0700 (PDT)
-Received: (nullmailer pid 4104036 invoked by uid 1000);
-        Mon, 27 Mar 2023 17:01:32 -0000
+        Mon, 27 Mar 2023 10:01:51 -0700 (PDT)
+Received: (nullmailer pid 4105557 invoked by uid 1000);
+        Mon, 27 Mar 2023 17:01:50 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-Subject: [PATCH] dt-bindings: reserved-memory: Drop unneeded quotes
-Date:   Mon, 27 Mar 2023 12:01:22 -0500
-Message-Id: <20230327170122.4103518-1-robh@kernel.org>
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] dt-bindings: timer: Drop unneeded quotes
+Date:   Mon, 27 Mar 2023 12:01:45 -0500
+Message-Id: <20230327170146.4104556-1-robh@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,141 +66,100 @@ checking for this can be enabled in yamllint.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/reserved-memory/google,open-dice.yaml          | 2 +-
- .../bindings/reserved-memory/nvidia,tegra210-emc-table.yaml | 2 +-
- .../devicetree/bindings/reserved-memory/phram.yaml          | 4 ++--
- .../devicetree/bindings/reserved-memory/qcom,cmd-db.yaml    | 6 +++---
- .../devicetree/bindings/reserved-memory/qcom,rmtfs-mem.yaml | 6 +++---
- .../devicetree/bindings/reserved-memory/ramoops.yaml        | 6 +++---
- .../bindings/reserved-memory/shared-dma-pool.yaml           | 2 +-
- 7 files changed, 14 insertions(+), 14 deletions(-)
+ .../devicetree/bindings/timer/arm,arch_timer_mmio.yaml        | 2 +-
+ Documentation/devicetree/bindings/timer/cdns,ttc.yaml         | 2 +-
+ .../devicetree/bindings/timer/intel,ixp4xx-timer.yaml         | 4 ++--
+ .../devicetree/bindings/timer/nvidia,tegra-timer.yaml         | 4 ++--
+ .../devicetree/bindings/timer/nvidia,tegra186-timer.yaml      | 4 ++--
+ Documentation/devicetree/bindings/timer/st,nomadik-mtu.yaml   | 4 ++--
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reserved-memory/google,open-dice.yaml b/Documentation/devicetree/bindings/reserved-memory/google,open-dice.yaml
-index a924fcfca085..c591ec37d7e8 100644
---- a/Documentation/devicetree/bindings/reserved-memory/google,open-dice.yaml
-+++ b/Documentation/devicetree/bindings/reserved-memory/google,open-dice.yaml
-@@ -16,7 +16,7 @@ maintainers:
-   - David Brazdil <dbrazdil@google.com>
+diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
+index f6efa48c4256..7a4a6ab85970 100644
+--- a/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
++++ b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
+@@ -66,7 +66,7 @@ patternProperties:
+     description: A timer node has up to 8 frame sub-nodes, each with the following properties.
+     properties:
+       frame-number:
+-        $ref: "/schemas/types.yaml#/definitions/uint32"
++        $ref: /schemas/types.yaml#/definitions/uint32
+         minimum: 0
+         maximum: 7
  
- allOf:
--  - $ref: "reserved-memory.yaml"
-+  - $ref: reserved-memory.yaml
+diff --git a/Documentation/devicetree/bindings/timer/cdns,ttc.yaml b/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
+index 7d821fd480f6..bc5e6f226295 100644
+--- a/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
++++ b/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
+@@ -28,7 +28,7 @@ properties:
+     maxItems: 1
  
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra210-emc-table.yaml b/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra210-emc-table.yaml
-index b1b0421a4255..e2ace3df942a 100644
---- a/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra210-emc-table.yaml
-+++ b/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra210-emc-table.yaml
-@@ -14,7 +14,7 @@ description: On Tegra210, firmware passes a binary representation of the
-   EMC frequency table via a reserved memory region.
+   timer-width:
+-    $ref: "/schemas/types.yaml#/definitions/uint32"
++    $ref: /schemas/types.yaml#/definitions/uint32
+     description: |
+       Bit width of the timer, necessary if not 16.
  
- allOf:
--  - $ref: "reserved-memory.yaml"
-+  - $ref: reserved-memory.yaml
+diff --git a/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml b/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
+index f32575d4b5aa..526b8db4d575 100644
+--- a/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
++++ b/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2018 Linaro Ltd.
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/timer/intel,ixp4xx-timer.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/timer/intel,ixp4xx-timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/reserved-memory/phram.yaml b/Documentation/devicetree/bindings/reserved-memory/phram.yaml
-index 6c4db28015f1..65c7cacf9be4 100644
---- a/Documentation/devicetree/bindings/reserved-memory/phram.yaml
-+++ b/Documentation/devicetree/bindings/reserved-memory/phram.yaml
-@@ -17,8 +17,8 @@ maintainers:
-   - Vincent Whitchurch <vincent.whitchurch@axis.com>
+ title: Intel IXP4xx XScale Networking Processors Timers
  
- allOf:
--  - $ref: "reserved-memory.yaml"
--  - $ref: "/schemas/mtd/mtd.yaml"
-+  - $ref: reserved-memory.yaml
-+  - $ref: /schemas/mtd/mtd.yaml
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
+index b78209cd0f28..9ea2ea3a7599 100644
+--- a/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/timer/nvidia,tegra-timer.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/timer/nvidia,tegra-timer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.yaml b/Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.yaml
-index df1b5e0ed3f4..610f8ef37e8d 100644
---- a/Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.yaml
-+++ b/Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.yaml
+ title: NVIDIA Tegra timer
+ 
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+index db8b5595540f..76516e18e042 100644
+--- a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
 @@ -1,8 +1,8 @@
  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/reserved-memory/qcom,cmd-db.yaml#"
+-$id: "http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/reserved-memory/qcom,cmd-db.yaml#
++$id: http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Qualcomm Command DB
+ title: NVIDIA Tegra186 timer
  
-@@ -20,7 +20,7 @@ maintainers:
-   - Bjorn Andersson <bjorn.andersson@linaro.org>
- 
- allOf:
--  - $ref: "reserved-memory.yaml"
-+  - $ref: reserved-memory.yaml
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/reserved-memory/qcom,rmtfs-mem.yaml b/Documentation/devicetree/bindings/reserved-memory/qcom,rmtfs-mem.yaml
-index 08eb10c25821..bab982f00485 100644
---- a/Documentation/devicetree/bindings/reserved-memory/qcom,rmtfs-mem.yaml
-+++ b/Documentation/devicetree/bindings/reserved-memory/qcom,rmtfs-mem.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+diff --git a/Documentation/devicetree/bindings/timer/st,nomadik-mtu.yaml b/Documentation/devicetree/bindings/timer/st,nomadik-mtu.yaml
+index 901848d298ec..fa65878b3571 100644
+--- a/Documentation/devicetree/bindings/timer/st,nomadik-mtu.yaml
++++ b/Documentation/devicetree/bindings/timer/st,nomadik-mtu.yaml
+@@ -2,8 +2,8 @@
+ # Copyright 2022 Linaro Ltd.
  %YAML 1.2
  ---
--$id: "http://devicetree.org/schemas/reserved-memory/qcom,rmtfs-mem.yaml#"
+-$id: "http://devicetree.org/schemas/timer/st,nomadik-mtu.yaml#"
 -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/reserved-memory/qcom,rmtfs-mem.yaml#
++$id: http://devicetree.org/schemas/timer/st,nomadik-mtu.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
  
- title: Qualcomm Remote File System Memory
+ title: ST Microelectronics Nomadik Multi-Timer Unit MTU Timer
  
-@@ -15,7 +15,7 @@ maintainers:
-   - Bjorn Andersson <bjorn.andersson@linaro.org>
- 
- allOf:
--  - $ref: "reserved-memory.yaml"
-+  - $ref: reserved-memory.yaml
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/reserved-memory/ramoops.yaml b/Documentation/devicetree/bindings/reserved-memory/ramoops.yaml
-index 0391871cf44d..45cc39ecc9f8 100644
---- a/Documentation/devicetree/bindings/reserved-memory/ramoops.yaml
-+++ b/Documentation/devicetree/bindings/reserved-memory/ramoops.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/reserved-memory/ramoops.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/reserved-memory/ramoops.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Ramoops oops/panic logger
- 
-@@ -27,7 +27,7 @@ maintainers:
-   - Kees Cook <keescook@chromium.org>
- 
- allOf:
--  - $ref: "reserved-memory.yaml"
-+  - $ref: reserved-memory.yaml
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml b/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
-index 47696073b665..457de0920cd1 100644
---- a/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
-+++ b/Documentation/devicetree/bindings/reserved-memory/shared-dma-pool.yaml
-@@ -10,7 +10,7 @@ maintainers:
-   - devicetree-spec@vger.kernel.org
- 
- allOf:
--  - $ref: "reserved-memory.yaml"
-+  - $ref: reserved-memory.yaml
- 
- properties:
-   compatible:
 -- 
 2.39.2
 
