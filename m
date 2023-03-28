@@ -2,440 +2,231 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF01EC6FD18
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 12:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D50EFC761AF
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 12:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232583AbjC1Mga (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Mar 2023 08:36:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44694 "EHLO
+        id S231124AbjC1MkP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Mar 2023 08:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232345AbjC1Mg3 (ORCPT
+        with ESMTP id S232654AbjC1MkM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Mar 2023 08:36:29 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on20629.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eaa::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0760DA5E0;
-        Tue, 28 Mar 2023 05:36:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=N70gmgFgs+4yLDYprIIaAuGWuQkvR7dr7e+N4hFEVstAY5DvmIvVuRp+phTzMNkWf90Z4Okoxl0pSaH/thVkPejqz8skiGuHGnCYe9o4Ag6rXSbDR6b3q3A8678S48WccCkE16+Us222rxrKGqRFeCKj/EHnizQqUU4Pq7oZhOTAfQOI43gSHjScf4ieSNJTN76SlLZAq7+hV7l7svsn8YQlVnV5qFmmMQs7vtjvCg7IlQVoWQsvyYe/XViigDrjzxl93jIVb+18GkP7Zu167S/+fMbbK2pIlO8taIhhIQrj0GvMeHVK/DaAwiImlaozzz1jLIygYSDVrK6PdXEdqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g88IRCFz5dM5RtmHZGUDQNCP9oPjwuqMIcc1TspUo6w=;
- b=eRH78wUL4bO0hXzmhh6nsOtOhghFVCEuAYXIv6iUZkKgM8NkAH1WRfhD+/B4Zdb+D5nDJR1x0SWPTUBcMWQzBfAt3NPXGefA235qT+6KpbCMtirAgwHPDXsjIjG+yYP0eq9jFDC4CQJorjZNw2aP9gF5PB9KtSzukFGoA5Jh5PitohvPromlroCLxbLdw7HhqFeIc6VWsF23adRjpOoakVwKp1fRRU6RfRB7V8mw79ATycpiVWRdSAmv6aqQruhkv3WHm4dDltH8jBCrqYubFabcWGhEcrsmSljnpv2lp2Xba7gT3rrNAvhKRtON2hesEzw3HH4fcukbGy7GjyGvFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g88IRCFz5dM5RtmHZGUDQNCP9oPjwuqMIcc1TspUo6w=;
- b=F1CKwIeLWYUfEeUVKMMaHxp2q3xoyfKrldTnhSZgJxwQRKoZVzS4/ZZZU1dATHGIhMFM9b41U8OBOAjGKxNHN5fgWsoiICIzZ2eAdOB0czBcjlGkRFNTN6iQhqp/nIE2cwMyoK3y8uVPj/WhA33cQFY2GwzPPmegcX1eZ6zKq0+YA3yPP6urw3dhrx/7QBWQWuof1sKN6ux5EZ28EzfwADE4HZqMM0b0lnvmHnTZcuh1CMAhCLz8Y0COLv0CAQueDPQNOixWZpetcOZeWEcfyrh1lhA6X9Lu0TfcUaCvhjiTXnAaVSg0yzocGaTvy8jj8dbJ5oHbYBSaCYNU768weA==
-Received: from MW4PR02CA0018.namprd02.prod.outlook.com (2603:10b6:303:16d::17)
- by SJ1PR12MB6171.namprd12.prod.outlook.com (2603:10b6:a03:45a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Tue, 28 Mar
- 2023 12:34:56 +0000
-Received: from CO1NAM11FT097.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:16d:cafe::72) by MW4PR02CA0018.outlook.office365.com
- (2603:10b6:303:16d::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.43 via Frontend
- Transport; Tue, 28 Mar 2023 12:34:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT097.mail.protection.outlook.com (10.13.175.185) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6222.22 via Frontend Transport; Tue, 28 Mar 2023 12:34:56 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 28 Mar 2023
- 05:34:45 -0700
-Received: from [10.41.21.79] (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 28 Mar
- 2023 05:34:39 -0700
-Message-ID: <34631b30-7589-9b9d-4dd0-2e2606f62887@nvidia.com>
-Date:   Tue, 28 Mar 2023 18:04:37 +0530
+        Tue, 28 Mar 2023 08:40:12 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93DE79EFA;
+        Tue, 28 Mar 2023 05:39:50 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id t10so48990223edd.12;
+        Tue, 28 Mar 2023 05:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680007189;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nkahNZrJeIv1+bxwFASjNCDYeTxk+0/JVaqPrT+yHUg=;
+        b=SYUCiCwlqlyBtVCcx0V848MOAZ0Y/fSiZYfkrpBaMJpBy9gkKoyKU8qvNk6hJZEPn5
+         /f89JMCzUa/FjVxBXXL9kUp+lTvg3abrPEIiZvp7eBkBhUj5U6wxVD09KqbyDxw9l14e
+         mvtgMaJL/0b+xMZvSsw/7I/V5sxCbEtAA2ce8WegQUR6g/tjMnUkaeHmPgEfHRqVUMXw
+         s7uC6U8EWJzB2McgafDiK0vgo/6WyKG5LRlZ/y7dZC2+rWmv6dtgtvQJJpsJOfMVN371
+         HQ6HnnZc70IGJ7HUsWKxLy9P1Iw0hB0WG78K/IsHsSNvQn4kryWidPBxyiI/ZmGC2wYW
+         51Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680007189;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nkahNZrJeIv1+bxwFASjNCDYeTxk+0/JVaqPrT+yHUg=;
+        b=FGhEAPO6eZMVHSs1IrZEB4R6WDdgZKbUfdVutKscQ2icEppHO9YKcYXxQ/r3Z3ERkn
+         HRW7pib33e1Idgt4eeROfcjmpOSKdmW5A/OSBbQV1N4Pm2xqkDN1IAUPT60MN4Buo4uk
+         TrjOQnMG157lIM3qKqn8WnzoiQJ39aD5lTTognfXlfRxlgPE1uTMj3PogCKQq7i2D0nt
+         mgWV7vPYgGB9buZkuwHP62bk+w68FpSOi57A1y/51h4HsDHeoLzM4gAIIOkna4qPpEX9
+         QS3qGGS49Nr10FeiM+GbeYCAxTmGIc5huZvX0dPgnGbnSw31+NHIl4+t3MPeskiJMzmP
+         MvCQ==
+X-Gm-Message-State: AAQBX9cmGubdP6ZKzx0e8XhUyu/eh78Nj2J65tpYAG7VSXr2mAoXwcvN
+        Ptot9WrFzqY18hIzfYOSLiM=
+X-Google-Smtp-Source: AKy350ZSTnZi0wlK7RVHH79oyTR0QFck1OHqW88Wf+z3AAU1VKWwtN5dvy+O21IsUi2k7O8m4Jm+yA==
+X-Received: by 2002:a17:906:7109:b0:931:6921:bdb7 with SMTP id x9-20020a170906710900b009316921bdb7mr15179096ejj.60.1680007188624;
+        Tue, 28 Mar 2023 05:39:48 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id c16-20020a170906925000b009327f9a397csm14678274ejx.145.2023.03.28.05.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Mar 2023 05:39:48 -0700 (PDT)
+Date:   Tue, 28 Mar 2023 14:39:46 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Prathamesh Shete <pshete@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Suresh Mangipudi <smangipudi@nvidia.com>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT binding doc
+Message-ID: <ZCLgEhrQiYHGGZ6S@orome>
+References: <20230207115617.12088-1-pshete@nvidia.com>
+ <a1395eb2-da3a-e080-fa6b-50f20d879655@linaro.org>
+ <Y+OGdMFQkL9Dtaq/@orome>
+ <9e7e1762-1c2e-28cd-c7a7-b0577addf51e@linaro.org>
+ <DM5PR12MB24066CE3175B74150235FE55B7B49@DM5PR12MB2406.namprd12.prod.outlook.com>
+ <3b9d4177-ebd9-e341-294d-41860fa8c5ac@linaro.org>
+ <ZBxeLIXJDbM2ebyt@orome>
+ <e06977ab-8112-1e45-4392-df36e358e772@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [Patch v4 03/10] memory: tegra: add interconnect support for DRAM
- scaling in Tegra234
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <treding@nvidia.com>, <dmitry.osipenko@collabora.com>,
-        <viresh.kumar@linaro.org>, <rafael@kernel.org>,
-        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <lpieralisi@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
-        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
-        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
-        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <20230327161426.32639-1-sumitg@nvidia.com>
- <20230327161426.32639-4-sumitg@nvidia.com>
- <8b04a266-20eb-f1c1-278f-764b1b06b78b@linaro.org>
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <8b04a266-20eb-f1c1-278f-764b1b06b78b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT097:EE_|SJ1PR12MB6171:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25e68f07-af5b-475b-f637-08db2f88d675
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UxrjGKoImP6apgizhhXjnLqTrFk0jmXamaOnxrF88xPEcXK0vLFmeKpzLCKqQhoqhJJhnXyFVESaMlBYzi3gj/japLcOGQtutvLnH/k+cwgTpwLmBJdLDdKo+IhaI0CqDaVUMe8AARR4CV5/8xwk4EY0Vk2RV35JYuaaII8U+foe3i3CwYD54KUY2NJ26WlieLxtt+/6E3ZTF3fHLrTiCU2yZn5u2uBz1tVnYYICZAx1k8p44Amq3rntNRbEcpXdRzLphmhfFRvpMUAFvfz34MVBRdYQaJz+aDHsPLVDztbaWWFwbWAR4FbZJlhe73EIkyDIKOuu0o5+vdw0l1LZ9taTltLNx/LHT22eE9r/Yddi8Ow0e8CtMv6kRhm02aj+xpEfmjd3n8X6S3W4/eeUm9mO3TXKe1/gEE0l/4RZceB83XZYiD2Gt/zu4qYY6cjim+8ewpiJE+n4V/yuR8P0nb4wY6whLemUB0kzLwomWgEgk4MNX1ESjCy9hKjQ/B89lp4XxS7CGhTS78R/fkpQlIX8+4E1jl/Ht2sXESl8wJ83VFnIlMnJSQddl6RobSjFHhwMEdSQiCoHuJz8OIHI9mP9AbAnZhp3byvnpyaWVu6GsE3YPsTTh7271p5gxW8iUJQ6/SPNREiw291h+lJFnS64ecbGLj7V4gYzLRj4q66ULr0BK09I8HQZwCrbOxWIWZKT2XVcdKEK7ZKSTsZy5pAUzZ+U71dB8RfQBT8LBEWlzNBAO2wsOnzdxy73VmDvmAZm17pz3oVceHVyXjpO3rrlilhjbNRxEwagrABkpKiC/xvd0V1GJGEcaNPwq/7N
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(39860400002)(376002)(396003)(346002)(451199021)(36840700001)(46966006)(40470700004)(54906003)(5660300002)(478600001)(8936002)(7416002)(186003)(16576012)(82310400005)(316002)(2906002)(82740400003)(26005)(31696002)(40480700001)(107886003)(70206006)(36756003)(110136005)(426003)(16526019)(40460700003)(4326008)(83380400001)(41300700001)(31686004)(47076005)(336012)(36860700001)(70586007)(34020700004)(53546011)(8676002)(86362001)(356005)(2616005)(7636003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2023 12:34:56.1451
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25e68f07-af5b-475b-f637-08db2f88d675
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT097.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6171
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XSu3Gsb1PNODp4mo"
+Content-Disposition: inline
+In-Reply-To: <e06977ab-8112-1e45-4392-df36e358e772@linaro.org>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
+--XSu3Gsb1PNODp4mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 28/03/23 13:01, Krzysztof Kozlowski wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 27/03/2023 18:14, Sumit Gupta wrote:
->> Add Interconnect framework support to dynamically set the DRAM
->> bandwidth from different clients. Both the MC and EMC drivers are
->> added as ICC providers. The path for any request is:
->>   MC-Client[1-n] -> MC -> EMC -> EMEM/DRAM
->>
->> MC client's request for bandwidth will go to the MC driver which
->> passes the client request info like BPMP Client ID, Client type
->> and the Bandwidth to the BPMP-FW. The final DRAM freq to achieve
->> the requested bandwidth is set by the BPMP-FW based on the passed
->> parameters.
->>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->> ---
->>   drivers/memory/tegra/mc.c           |   5 +
->>   drivers/memory/tegra/tegra186-emc.c | 125 ++++++++++++++++++++++++
->>   drivers/memory/tegra/tegra186.c     |   3 +
->>   drivers/memory/tegra/tegra234.c     | 143 +++++++++++++++++++++++++++-
->>   include/linux/tegra-icc.h           |  65 +++++++++++++
->>   include/soc/tegra/mc.h              |   7 ++
->>   6 files changed, 347 insertions(+), 1 deletion(-)
->>   create mode 100644 include/linux/tegra-icc.h
->>
->> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
->> index 9082b6c3763d..983455b1f98d 100644
->> --- a/drivers/memory/tegra/mc.c
->> +++ b/drivers/memory/tegra/mc.c
->> @@ -15,6 +15,7 @@
->>   #include <linux/platform_device.h>
->>   #include <linux/slab.h>
->>   #include <linux/sort.h>
->> +#include <linux/tegra-icc.h>
->>
->>   #include <soc/tegra/fuse.h>
->>
->> @@ -792,6 +793,8 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
->>        mc->provider.data = &mc->provider;
->>        mc->provider.set = mc->soc->icc_ops->set;
->>        mc->provider.aggregate = mc->soc->icc_ops->aggregate;
->> +     mc->provider.get_bw = mc->soc->icc_ops->get_bw;
->> +     mc->provider.xlate = mc->soc->icc_ops->xlate;
->>        mc->provider.xlate_extended = mc->soc->icc_ops->xlate_extended;
->>
->>        icc_provider_init(&mc->provider);
->> @@ -824,6 +827,8 @@ static int tegra_mc_interconnect_setup(struct tegra_mc *mc)
->>                err = icc_link_create(node, TEGRA_ICC_MC);
->>                if (err)
->>                        goto remove_nodes;
->> +
->> +             node->data = (struct tegra_mc_client *)&(mc->soc->clients[i]);
->>        }
->>
->>        err = icc_provider_register(&mc->provider);
->> diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
->> index e935ad4e95b6..1eefcf2ac0c7 100644
->> --- a/drivers/memory/tegra/tegra186-emc.c
->> +++ b/drivers/memory/tegra/tegra186-emc.c
->> @@ -7,9 +7,11 @@
->>   #include <linux/debugfs.h>
->>   #include <linux/module.h>
->>   #include <linux/mod_devicetable.h>
->> +#include <linux/of_platform.h>
->>   #include <linux/platform_device.h>
->>
->>   #include <soc/tegra/bpmp.h>
->> +#include "mc.h"
->>
->>   struct tegra186_emc_dvfs {
->>        unsigned long latency;
->> @@ -29,8 +31,15 @@ struct tegra186_emc {
->>                unsigned long min_rate;
->>                unsigned long max_rate;
->>        } debugfs;
->> +
->> +     struct icc_provider provider;
->>   };
->>
->> +static inline struct tegra186_emc *to_tegra186_emc(struct icc_provider *provider)
->> +{
->> +     return container_of(provider, struct tegra186_emc, provider);
->> +}
->> +
->>   /*
->>    * debugfs interface
->>    *
->> @@ -146,11 +155,104 @@ DEFINE_DEBUGFS_ATTRIBUTE(tegra186_emc_debug_max_rate_fops,
->>                          tegra186_emc_debug_max_rate_get,
->>                          tegra186_emc_debug_max_rate_set, "%llu\n");
->>
->> +/*
->> + * tegra_emc_icc_set_bw() - Set BW api for EMC provider
->> + * @src: ICC node for External Memory Controller (EMC)
->> + * @dst: ICC node for External Memory (DRAM)
->> + *
->> + * Do nothing here as info to BPMP-FW is now passed in the BW set function
->> + * of the MC driver. BPMP-FW sets the final Freq based on the passed values.
->> + */
->> +static int tegra_emc_icc_set_bw(struct icc_node *src, struct icc_node *dst)
->> +{
->> +     return 0;
->> +}
->> +
->> +static struct icc_node *
->> +tegra_emc_of_icc_xlate(struct of_phandle_args *spec, void *data)
->> +{
->> +     struct icc_provider *provider = data;
->> +     struct icc_node *node;
->> +
->> +     /* External Memory is the only possible ICC route */
->> +     list_for_each_entry(node, &provider->nodes, node_list) {
->> +             if (node->id != TEGRA_ICC_EMEM)
->> +                     continue;
->> +
->> +             return node;
->> +     }
->> +
->> +     return ERR_PTR(-EPROBE_DEFER);
->> +}
->> +
->> +static int tegra_emc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *peak)
->> +{
->> +     *avg = 0;
->> +     *peak = 0;
->> +
->> +     return 0;
->> +}
->> +
->> +static int tegra_emc_interconnect_init(struct tegra186_emc *emc)
->> +{
->> +     struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
->> +     const struct tegra_mc_soc *soc = mc->soc;
->> +     struct icc_node *node;
->> +     int err;
->> +
->> +     emc->provider.dev = emc->dev;
->> +     emc->provider.set = tegra_emc_icc_set_bw;
->> +     emc->provider.data = &emc->provider;
->> +     emc->provider.aggregate = soc->icc_ops->aggregate;
->> +     emc->provider.xlate = tegra_emc_of_icc_xlate;
->> +     emc->provider.get_bw = tegra_emc_icc_get_init_bw;
->> +
->> +     icc_provider_init(&emc->provider);
->> +
->> +     /* create External Memory Controller node */
->> +     node = icc_node_create(TEGRA_ICC_EMC);
->> +     if (IS_ERR(node)) {
->> +             err = PTR_ERR(node);
->> +             goto err_msg;
->> +     }
->> +
->> +     node->name = "External Memory Controller";
->> +     icc_node_add(node, &emc->provider);
->> +
->> +     /* link External Memory Controller to External Memory (DRAM) */
->> +     err = icc_link_create(node, TEGRA_ICC_EMEM);
->> +     if (err)
->> +             goto remove_nodes;
->> +
->> +     /* create External Memory node */
->> +     node = icc_node_create(TEGRA_ICC_EMEM);
->> +     if (IS_ERR(node)) {
->> +             err = PTR_ERR(node);
->> +             goto remove_nodes;
->> +     }
->> +
->> +     node->name = "External Memory (DRAM)";
->> +     icc_node_add(node, &emc->provider);
->> +
->> +     err = icc_provider_register(&emc->provider);
->> +     if (err)
->> +             goto remove_nodes;
->> +
->> +     return 0;
-> 
-> Blank line
-> 
->> +remove_nodes:
->> +     icc_nodes_remove(&emc->provider);
->> +err_msg:
->> +     dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
->> +
->> +     return err;
->> +}
->> +
->>   static int tegra186_emc_probe(struct platform_device *pdev)
->>   {
->>        struct mrq_emc_dvfs_latency_response response;
->>        struct tegra_bpmp_message msg;
->>        struct tegra186_emc *emc;
->> +     struct tegra_mc *mc;
->>        unsigned int i;
->>        int err;
->>
->> @@ -158,6 +260,9 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->>        if (!emc)
->>                return -ENOMEM;
->>
->> +     platform_set_drvdata(pdev, emc);
->> +     emc->dev = &pdev->dev;
-> 
-> This patch looks like stiched from two or more patches... emc->dev does
-> not look like new member of emc, thus why do you set in exisitng
-> function in this patch? Why it wasn't needed before?
-> 
-> Same about line before.
-> 
-Replied in other mail. will fix this.
+On Sun, Mar 26, 2023 at 02:19:45PM +0200, Krzysztof Kozlowski wrote:
+> On 23/03/2023 15:11, Thierry Reding wrote:
+> > On Wed, Mar 08, 2023 at 01:24:04PM +0100, Krzysztof Kozlowski wrote:
+> >> On 08/03/2023 12:45, Prathamesh Shete wrote:
+> >>>
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>>> Sent: Wednesday, February 8, 2023 5:28 PM
+> >>>> To: Thierry Reding <thierry.reding@gmail.com>
+> >>>> Cc: Prathamesh Shete <pshete@nvidia.com>; Jonathan Hunter
+> >>>> <jonathanh@nvidia.com>; linus.walleij@linaro.org; robh+dt@kernel.org;
+> >>>> krzysztof.kozlowski+dt@linaro.org; devicetree@vger.kernel.org; linux-
+> >>>> tegra@vger.kernel.org; linux-gpio@vger.kernel.org; Suresh Mangipudi
+> >>>> <smangipudi@nvidia.com>
+> >>>> Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT bind=
+ing doc
+> >>>>
+> >>>> External email: Use caution opening links or attachments
+> >>>>
+> >>>>
+> >>>> On 08/02/2023 12:24, Thierry Reding wrote:
+> >>>>> On Tue, Feb 07, 2023 at 04:33:08PM +0100, Krzysztof Kozlowski wrote:
+> >>>>
+> >>>>
+> >>>>>>> +          type: object
+> >>>>>>> +          additionalProperties:
+> >>>>>>> +            properties:
+> >>>>>>> +              nvidia,pins:
+> >>>>>>> +                description: An array of strings. Each string co=
+ntains the name
+> >>>>>>> +                  of a pin or group. Valid values for these name=
+s are listed
+> >>>>>>> +                  below.
+> >>>>>>
+> >>>>>> Define properties in top level, which points to the complexity of
+> >>>>>> your if-else, thus probably this should be split into two bindings.
+> >>>>>> Dunno, your other bindings repeat this pattern :(
+> >>>>>
+> >>>>> The property itself is already defined in the common schema found in
+> >>>>> nvidia,tegra-pinmux-common.yaml and we're overriding this here for
+> >>>>> each instance since each has its own set of pins.
+> >>>>>
+> >>>>> This was a compromise to avoid too many bindings. Originally I
+> >>>>> attempted to roll all Tegra pinctrl bindings into a single dt-schem=
+a,
+> >>>>> but that turned out truly horrible =3D) Splitting this into per-SoC
+> >>>>> bindings is already causing a lot of duplication in these files,
+> >>>>
+> >>>> What would be duplicated? Almost eveerything should be coming from
+> >>>> shared binding, so you will have only compatible,
+> >>>> patternProperties(pinmux) and nvidia,pins. And an example. Maybe I m=
+iss
+> >>>> something but I would say this would create many but very easy to re=
+ad
+> >>>> bindings, referencing common pieces.
+> >>>>
+> >>>>> though splitting
+> >>>>> off the common bits into nvidi,tegra-pinmux-common.yaml helps a bit
+> >>>>> with that already. Splitting this into per-instance bindings would
+> >>>>> effectively duplicate everything but the pin array here, so we kind=
+ of
+> >>>>> settled on this compromise for Tegra194.
+> >>>>
+> >>>> OK, but are you sure it is now readable? You have if:then: with
+> >>>> patternProperties: with additionalProperties: with properties: with
+> >>>> nvidia,pins.
+> >>> This is inline with the existing bindings and I think this is the com=
+promise that was reached during review when the bindings were submitted,
+> >>
+> >> So the code might be totally unreadable, but it is inline with existing
+> >> code, thus it should stay unreadable. Great.
+> >=20
+> > I'd say this is very subjective. I personally don't find the current
+> > version hard to read, but that's maybe because I wrote it... =3D)
+> >=20
+> >>> offer to rework if a better alternative can be found, but that only m=
+akes sense if all the other bindings get changed as well, so I think it'd b=
+e good if we can merge in the same format as the existing bindings for now =
+and change all of them later on.
+> >>
+> >> Cleanup should happen before adding new bindings.
+> >=20
+> > I don't recall the exact problems that I ran into last time, but I do
+> > remember that pulling out the common bindings to the very top-level was
+> > the main issue.
+> >=20
+> > If I understand correctly what you're saying, the main problem that
+> > makes this hard to read is the if and else constructs for AON/MAIN
+> > variants on Tegra194/Tegra234. These should be quite easy to pull out
+> > into separate bindings. I'll do that first and then see if there's
+> > anything that could be done to further improve things.
+>=20
+> One problem is allowing characters here which are not allowed. Second
+> problem is reluctance to change it with argument "existing bindings also
+> have this problem". It's explanation like "there is already bug like
+> this, so I am allowed to add similar one".
 
->> +
->>        emc->bpmp = tegra_bpmp_get(&pdev->dev);
->>        if (IS_ERR(emc->bpmp))
->>                return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp), "failed to get BPMP\n");
->> @@ -236,6 +341,25 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->>        debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
->>                            emc, &tegra186_emc_debug_max_rate_fops);
->>
->> +     mc = dev_get_drvdata(emc->dev->parent);
->> +     if (mc && mc->soc->icc_ops) {
->> +             /*
->> +              * Initialize the ICC even if BPMP-FW doesn't support 'MRQ_BWMGR_INT'.
->> +              * Use the flag 'mc->bwmgr_mrq_supported' within MC driver and return
->> +              * EINVAL instead of passing the request to BPMP-FW later when the BW
->> +              * request is made by client with 'icc_set_bw()' call.
->> +              */
->> +             err = tegra_emc_interconnect_init(emc);
->> +             if (err)
->> +                     goto put_bpmp;
->> +
->> +             if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT))
->> +                     mc->bwmgr_mrq_supported = true;
->> +             else
->> +
-> 
-> Drop blank line.
-> 
->> +                     dev_info(&pdev->dev, "MRQ_BWMGR_INT not present\n");
-> 
-> And what user is supposed to do with this? Either make it descriptive or
-> drop.
-> 
-Replied in other mail. will fix this.
+This is not a bug that we're trying to replicate. We're basing this
+binding on a existing bindings that were already reviewed upstream a
+long time ago. It uses a shared binding that's in use by these other
+bindings, so making any changes to this new binding means either the
+other ones need to be changed as well or we can't reuse the existing
+shared binding.
 
+> Now third is that defining properties in allOf is not the style we want
+> to have, because it does not work with additionalProperties and is
+> difficult to read. Again using argument "existing code also does like
+> this" is a very poor argument.
 
->> +     }
->> +
->>        return 0;
->>
->>   put_bpmp:
->> @@ -272,6 +396,7 @@ static struct platform_driver tegra186_emc_driver = {
->>                .name = "tegra186-emc",
->>                .of_match_table = tegra186_emc_of_match,
->>                .suppress_bind_attrs = true,
->> +             .sync_state = icc_sync_state,
->>        },
->>        .probe = tegra186_emc_probe,
->>        .remove = tegra186_emc_remove,
->> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
->> index 7bb73f06fad3..386e029e41bb 100644
->> --- a/drivers/memory/tegra/tegra186.c
->> +++ b/drivers/memory/tegra/tegra186.c
->> @@ -10,6 +10,7 @@
->>   #include <linux/of_device.h>
->>   #include <linux/platform_device.h>
->>
->> +#include <soc/tegra/bpmp.h>
->>   #include <soc/tegra/mc.h>
->>
->>   #if defined(CONFIG_ARCH_TEGRA_186_SOC)
->> @@ -65,6 +66,8 @@ static int tegra186_mc_probe(struct tegra_mc *mc)
->>   static void tegra186_mc_remove(struct tegra_mc *mc)
->>   {
->>        of_platform_depopulate(mc->dev);
->> +
->> +     tegra_bpmp_put(mc->bpmp);
->>   }
->>
->>   #if IS_ENABLED(CONFIG_IOMMU_API)
->> diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
->> index 02dcc5748bba..4f34247c9bda 100644
->> --- a/drivers/memory/tegra/tegra234.c
->> +++ b/drivers/memory/tegra/tegra234.c
->> @@ -1,18 +1,24 @@
->>   // SPDX-License-Identifier: GPL-2.0-only
->>   /*
->> - * Copyright (C) 2021-2022, NVIDIA CORPORATION.  All rights reserved.
->> + * Copyright (C) 20212-2023, NVIDIA CORPORATION.  All rights reserved.
-> 
-> Typo, 2021.
-> 
-Will fix.
+As far as I can tell, it does work as expected in this case because
+we're not actually adding any *new* properties in the allOf/if branches.
+If we were, then yes, we would need to use unevaluatedProperties and
+that can get complicated. But again, in this case we're merely
+overriding existing properties with more specific values, which means
+that both the standard binding applies and then things are narrowed down
+by the values defined for each compatible.
 
->>    */
->>
->>   #include <soc/tegra/mc.h>
->>
->>   #include <dt-bindings/memory/tegra234-mc.h>
->> +#include <linux/interconnect.h>
->> +#include <linux/of_device.h>
-> 
-> One more suprising change...
-> 
-Will remove the header file "of_device.h".
+Thierry
 
->> +#include <linux/tegra-icc.h>
->>
->> +#include <soc/tegra/bpmp.h>
->>   #include "mc.h"
->>
->>   static const struct tegra_mc_client tegra234_mc_clients[] = {
->>        {
->>                .id = TEGRA234_MEMORY_CLIENT_MGBEARD,
->>                .name = "mgbeard",
->> +             .bpmp_id = TEGRA_ICC_BPMP_EQOS,
->> +             .type = TEGRA_ICC_NISO,
->>                .sid = TEGRA234_SID_MGBE,
->>                .regs = {
->>                        .sid = {
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+--XSu3Gsb1PNODp4mo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQi4BAACgkQ3SOs138+
+s6GRYBAAsUYHCigNtdc8rSsLD1NsjbYlndUAsaupRMDOT3KiJDGC5luJCphp687y
+5YYtrWu9glbcfubIGNr7eBHcelnOQqqHt9u5fgLV1C20tvYNbAdu6MJqB0p4QuVF
+WM1x09wv6BpK39TYEY+psHhFyUCnm4t+PCF+uOiRPjpZMgyp2kZ3gSwa9PArCUzm
+1k+kCfPo7G8zjClLDNV3knOkqW36kS4VNd6UDkCrs+OK2T7zCCpwBTNDVjZaVuUK
+ar14F2j2o38N9uqldtGkbdZk5GtAxleZXiggDa1KLHTVegibJmnBx7NDmEXkkI/P
+WNmwhtd5hSu1y9+sP52gNz/rdd7DcG2Nr4jF2D+z6SlVFVT+2QzsI1uRlh7+yvW3
+091yMAeH5rwHgpPNWvrWZ1QZbA4uTUKPPJMkqFww62rQDdORenWTdhZiYXJyD9qd
+Pn9PZZSJVKxdbDew1k2EeFUk6B5cacRjQEjmSgE9dNsxeC0kZK7tT5I1w/CWQJSL
+2zUrsy+SfUgQN/MKDiF8BB146+Vn3vDqNloUcMnDOYrrlnOnWVNa57pFkJmCchdv
+kOJGq5DVN+TecCQXAKes5qO77pzPFepii6d2P3SZGyrsd6I97skCiPxg2HUJgr3l
+C4tmCM9vOx3gf4oEdkNv9uUFzn4+xaQ/TAvePQKlrxr6u26J0DU=
+=NdYS
+-----END PGP SIGNATURE-----
+
+--XSu3Gsb1PNODp4mo--
