@@ -2,231 +2,140 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D50EFC761AF
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 12:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B00C6FD18
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 12:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbjC1MkP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Mar 2023 08:40:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52400 "EHLO
+        id S232706AbjC1Mmp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Mar 2023 08:42:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232654AbjC1MkM (ORCPT
+        with ESMTP id S232494AbjC1Mmj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Mar 2023 08:40:12 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93DE79EFA;
-        Tue, 28 Mar 2023 05:39:50 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id t10so48990223edd.12;
-        Tue, 28 Mar 2023 05:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680007189;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nkahNZrJeIv1+bxwFASjNCDYeTxk+0/JVaqPrT+yHUg=;
-        b=SYUCiCwlqlyBtVCcx0V848MOAZ0Y/fSiZYfkrpBaMJpBy9gkKoyKU8qvNk6hJZEPn5
-         /f89JMCzUa/FjVxBXXL9kUp+lTvg3abrPEIiZvp7eBkBhUj5U6wxVD09KqbyDxw9l14e
-         mvtgMaJL/0b+xMZvSsw/7I/V5sxCbEtAA2ce8WegQUR6g/tjMnUkaeHmPgEfHRqVUMXw
-         s7uC6U8EWJzB2McgafDiK0vgo/6WyKG5LRlZ/y7dZC2+rWmv6dtgtvQJJpsJOfMVN371
-         HQ6HnnZc70IGJ7HUsWKxLy9P1Iw0hB0WG78K/IsHsSNvQn4kryWidPBxyiI/ZmGC2wYW
-         51Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680007189;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nkahNZrJeIv1+bxwFASjNCDYeTxk+0/JVaqPrT+yHUg=;
-        b=FGhEAPO6eZMVHSs1IrZEB4R6WDdgZKbUfdVutKscQ2icEppHO9YKcYXxQ/r3Z3ERkn
-         HRW7pib33e1Idgt4eeROfcjmpOSKdmW5A/OSBbQV1N4Pm2xqkDN1IAUPT60MN4Buo4uk
-         TrjOQnMG157lIM3qKqn8WnzoiQJ39aD5lTTognfXlfRxlgPE1uTMj3PogCKQq7i2D0nt
-         mgWV7vPYgGB9buZkuwHP62bk+w68FpSOi57A1y/51h4HsDHeoLzM4gAIIOkna4qPpEX9
-         QS3qGGS49Nr10FeiM+GbeYCAxTmGIc5huZvX0dPgnGbnSw31+NHIl4+t3MPeskiJMzmP
-         MvCQ==
-X-Gm-Message-State: AAQBX9cmGubdP6ZKzx0e8XhUyu/eh78Nj2J65tpYAG7VSXr2mAoXwcvN
-        Ptot9WrFzqY18hIzfYOSLiM=
-X-Google-Smtp-Source: AKy350ZSTnZi0wlK7RVHH79oyTR0QFck1OHqW88Wf+z3AAU1VKWwtN5dvy+O21IsUi2k7O8m4Jm+yA==
-X-Received: by 2002:a17:906:7109:b0:931:6921:bdb7 with SMTP id x9-20020a170906710900b009316921bdb7mr15179096ejj.60.1680007188624;
-        Tue, 28 Mar 2023 05:39:48 -0700 (PDT)
-Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id c16-20020a170906925000b009327f9a397csm14678274ejx.145.2023.03.28.05.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 05:39:48 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 14:39:46 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Prathamesh Shete <pshete@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Suresh Mangipudi <smangipudi@nvidia.com>
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT binding doc
-Message-ID: <ZCLgEhrQiYHGGZ6S@orome>
-References: <20230207115617.12088-1-pshete@nvidia.com>
- <a1395eb2-da3a-e080-fa6b-50f20d879655@linaro.org>
- <Y+OGdMFQkL9Dtaq/@orome>
- <9e7e1762-1c2e-28cd-c7a7-b0577addf51e@linaro.org>
- <DM5PR12MB24066CE3175B74150235FE55B7B49@DM5PR12MB2406.namprd12.prod.outlook.com>
- <3b9d4177-ebd9-e341-294d-41860fa8c5ac@linaro.org>
- <ZBxeLIXJDbM2ebyt@orome>
- <e06977ab-8112-1e45-4392-df36e358e772@linaro.org>
+        Tue, 28 Mar 2023 08:42:39 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E025283F6;
+        Tue, 28 Mar 2023 05:42:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N7VvDVJa4KwRG/ZJDI4wWcfJgygOr/A8dG7Q/BM8SU0CSRmaMUMqSPjRZ56fXFeG+AWldmN3/SJnNnWS2NgL23Q4LpeFkUArE41+dzLr2xdj0ap0kGEk/XNUP6zOSAsmfDxWkjmfrNafc5b+BNuXQrDnIF6X5SID9AXOUlWHcIqbeFuhFhJiplm+NDtpKqxJnUkexrS9O9B1IeZb+VVOpaHfVT2so2xgjhTddQTLl1oDyxT7fKqpydV5okPknbpIQMTbTLUFrodATqN/LwDQfn2omuJ/aC3nUkv9ebizmdX+6mM3Sux9qqqxboXaRPVMcRiLZT9FscmhBeZjO/QK1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RCNWDk1jVtPNZxpVXdlzF4nocbA7v7f8PjQq1mHeOHA=;
+ b=IdJkpbGwiUb9LxUaj6VtVbiPs1WN5G7TiJP3P9c7qP/4YZzNXwN0I6pHvIdbfEjUgRzfjWUfpqvzJM2PpyORjMNNqPNh0Igv/DzXmeTASqLAVZqzqzojPnLZQqpiR0Y5YFuP8bhV0GyrbZyJzSZVAbQgWAB2U5j2YXdRHEPTmqkbKZJw84H481hemYJyyBv2ZWxUZB6CqGf+tOQeAmQydhQjb1VVYaz23ioZMGPf3v4sxJ7Wbo54QCRpmiuTn4EiItBQoXu43WHabagw/Ylgdwc6PsA/phsUWbCfds3WYgM0XsprgLtahSuGGeM7rpNtVJAlReYfv0jkFDAWl61TVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RCNWDk1jVtPNZxpVXdlzF4nocbA7v7f8PjQq1mHeOHA=;
+ b=mwkYexB6B/4TiHW7QFhWTQ51Xkaahay0UuZduCLUDsA+bhvLmCiOCQpPvX0GqJqam/U4mzplz6baCryG9A+D0qr7F4sB+uArxjNvtkU5uMYLJK3hJp2cjnwd9KDZQMBvrCg8DaCTXFOb8RZpoCZGt9rvX6X+p8HmfT9OGLBtZiBpuQWS3eYJGYUOEtlLL6fttxcifQeI0T2sbF7TCHaIlUzhM48AgrZGF9czcEYQy7MeykivxPyVrA71l9dgn3lZ60dzKmnFXOxHPo4mqNEm2OBvW4sVR9PgfbpHxOYhbvUMDx4e5dUJ9ElV8Iswf5rIb8938raezEnpB0vuOVt7BA==
+Received: from BN9PR03CA0045.namprd03.prod.outlook.com (2603:10b6:408:fb::20)
+ by IA1PR12MB6019.namprd12.prod.outlook.com (2603:10b6:208:3d5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.33; Tue, 28 Mar
+ 2023 12:42:14 +0000
+Received: from BN8NAM11FT059.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:fb:cafe::8e) by BN9PR03CA0045.outlook.office365.com
+ (2603:10b6:408:fb::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.43 via Frontend
+ Transport; Tue, 28 Mar 2023 12:42:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN8NAM11FT059.mail.protection.outlook.com (10.13.177.120) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6222.22 via Frontend Transport; Tue, 28 Mar 2023 12:42:14 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 28 Mar 2023
+ 05:42:04 -0700
+Received: from [10.41.21.79] (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 28 Mar
+ 2023 05:41:58 -0700
+Message-ID: <db682990-573f-e827-7342-ca8cda0b4067@nvidia.com>
+Date:   Tue, 28 Mar 2023 18:11:56 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XSu3Gsb1PNODp4mo"
-Content-Disposition: inline
-In-Reply-To: <e06977ab-8112-1e45-4392-df36e358e772@linaro.org>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [Patch v4 02/10] arm64: tegra: add bpmp ref in tegra234-mc node
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <treding@nvidia.com>, <dmitry.osipenko@collabora.com>,
+        <viresh.kumar@linaro.org>, <rafael@kernel.org>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+        <lpieralisi@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
+        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
+        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
+        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <20230327161426.32639-1-sumitg@nvidia.com>
+ <20230327161426.32639-3-sumitg@nvidia.com>
+ <af455119-7178-bed8-4099-ee50c7b6134b@linaro.org>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <af455119-7178-bed8-4099-ee50c7b6134b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT059:EE_|IA1PR12MB6019:EE_
+X-MS-Office365-Filtering-Correlation-Id: 78d0f487-76db-435a-e95a-08db2f89db99
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 1tAHrFmrmFxxzDEMAy9twXiDJtMp638uARarkaes7lglUE1xassMz+qOCUFtQ6J+kbAza8/XCmO/Fy7dSLLVXEDKnRWbYRJcNoauZYDY+QsPYF6kZy0ygbRTSg5wrOR79gACHygCYa7VKvXnxHdYLimmdBtWHpkg2grFiFPOQ1HG+2qpC8/FBQTFoKWitz6n6SQf1swK4/a35SKH7Y6HH0tdp92mB3GqiYU9HAqVqUmo0qIjRumtmfcDwkgvPebEhKVduzpDIn/xnT03Ir6Y51uc8/04AaHwgs0TNiVXSu0I12oypaF5G5eTT00lL+FB/WOKCONLcBIR/cy7TYB/jY+twxJHEu33SThE8Q1aVq+Dk7QCRJ8D9E8dyQhuEMYiWWsYYrrkiTsAGhLoWO2XkVXbVlQdY3ZdtjHc+IDJDZBTWml189S5uNw16dafLfDfB+zXQFmyM2La7E5aB3Y6jeU6eVdUsEFQHdP3fy74FlFvtk1Qq3YcuGBhJjMdKuNyDM4xrKyuVd4+uDrX/cC7u71U6XjNQddsGlhYfPbCSbkj8kXBMtw9zUtSn2x4yn5d8u7AXY1gC+vWQsZJV3ffKyKe3VnPsrI6NBM9yoYmoPlII6+PMvUVi20TB6na3oYl2WOZmZJ6/FSh1+NTWFyEQDjL6WRxaPOIJvLllPFyftpT4WxVL9g0tKu3g46IDfO2iwbPi5tscSSFygsDZnrtqtxNPhMELajw67aIcaUWtKyTp7Ne1MIvtLSWJizSaTT5VV3+c/c0JWPCG3bbJoVkwvkQPfyZS95dmJB+By7k2nrVup2A9qpISRD1qL4AfEvc
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(346002)(136003)(376002)(451199021)(46966006)(40470700004)(36840700001)(4326008)(40480700001)(41300700001)(36860700001)(40460700003)(70586007)(70206006)(16576012)(316002)(34020700004)(110136005)(478600001)(8676002)(54906003)(2906002)(53546011)(16526019)(186003)(7416002)(5660300002)(4744005)(2616005)(82310400005)(336012)(426003)(31696002)(31686004)(86362001)(47076005)(36756003)(82740400003)(107886003)(26005)(8936002)(7636003)(356005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2023 12:42:14.2348
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78d0f487-76db-435a-e95a-08db2f89db99
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT059.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6019
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---XSu3Gsb1PNODp4mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 26, 2023 at 02:19:45PM +0200, Krzysztof Kozlowski wrote:
-> On 23/03/2023 15:11, Thierry Reding wrote:
-> > On Wed, Mar 08, 2023 at 01:24:04PM +0100, Krzysztof Kozlowski wrote:
-> >> On 08/03/2023 12:45, Prathamesh Shete wrote:
-> >>>
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >>>> Sent: Wednesday, February 8, 2023 5:28 PM
-> >>>> To: Thierry Reding <thierry.reding@gmail.com>
-> >>>> Cc: Prathamesh Shete <pshete@nvidia.com>; Jonathan Hunter
-> >>>> <jonathanh@nvidia.com>; linus.walleij@linaro.org; robh+dt@kernel.org;
-> >>>> krzysztof.kozlowski+dt@linaro.org; devicetree@vger.kernel.org; linux-
-> >>>> tegra@vger.kernel.org; linux-gpio@vger.kernel.org; Suresh Mangipudi
-> >>>> <smangipudi@nvidia.com>
-> >>>> Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT bind=
-ing doc
-> >>>>
-> >>>> External email: Use caution opening links or attachments
-> >>>>
-> >>>>
-> >>>> On 08/02/2023 12:24, Thierry Reding wrote:
-> >>>>> On Tue, Feb 07, 2023 at 04:33:08PM +0100, Krzysztof Kozlowski wrote:
-> >>>>
-> >>>>
-> >>>>>>> +          type: object
-> >>>>>>> +          additionalProperties:
-> >>>>>>> +            properties:
-> >>>>>>> +              nvidia,pins:
-> >>>>>>> +                description: An array of strings. Each string co=
-ntains the name
-> >>>>>>> +                  of a pin or group. Valid values for these name=
-s are listed
-> >>>>>>> +                  below.
-> >>>>>>
-> >>>>>> Define properties in top level, which points to the complexity of
-> >>>>>> your if-else, thus probably this should be split into two bindings.
-> >>>>>> Dunno, your other bindings repeat this pattern :(
-> >>>>>
-> >>>>> The property itself is already defined in the common schema found in
-> >>>>> nvidia,tegra-pinmux-common.yaml and we're overriding this here for
-> >>>>> each instance since each has its own set of pins.
-> >>>>>
-> >>>>> This was a compromise to avoid too many bindings. Originally I
-> >>>>> attempted to roll all Tegra pinctrl bindings into a single dt-schem=
-a,
-> >>>>> but that turned out truly horrible =3D) Splitting this into per-SoC
-> >>>>> bindings is already causing a lot of duplication in these files,
-> >>>>
-> >>>> What would be duplicated? Almost eveerything should be coming from
-> >>>> shared binding, so you will have only compatible,
-> >>>> patternProperties(pinmux) and nvidia,pins. And an example. Maybe I m=
-iss
-> >>>> something but I would say this would create many but very easy to re=
-ad
-> >>>> bindings, referencing common pieces.
-> >>>>
-> >>>>> though splitting
-> >>>>> off the common bits into nvidi,tegra-pinmux-common.yaml helps a bit
-> >>>>> with that already. Splitting this into per-instance bindings would
-> >>>>> effectively duplicate everything but the pin array here, so we kind=
- of
-> >>>>> settled on this compromise for Tegra194.
-> >>>>
-> >>>> OK, but are you sure it is now readable? You have if:then: with
-> >>>> patternProperties: with additionalProperties: with properties: with
-> >>>> nvidia,pins.
-> >>> This is inline with the existing bindings and I think this is the com=
-promise that was reached during review when the bindings were submitted,
-> >>
-> >> So the code might be totally unreadable, but it is inline with existing
-> >> code, thus it should stay unreadable. Great.
-> >=20
-> > I'd say this is very subjective. I personally don't find the current
-> > version hard to read, but that's maybe because I wrote it... =3D)
-> >=20
-> >>> offer to rework if a better alternative can be found, but that only m=
-akes sense if all the other bindings get changed as well, so I think it'd b=
-e good if we can merge in the same format as the existing bindings for now =
-and change all of them later on.
-> >>
-> >> Cleanup should happen before adding new bindings.
-> >=20
-> > I don't recall the exact problems that I ran into last time, but I do
-> > remember that pulling out the common bindings to the very top-level was
-> > the main issue.
-> >=20
-> > If I understand correctly what you're saying, the main problem that
-> > makes this hard to read is the if and else constructs for AON/MAIN
-> > variants on Tegra194/Tegra234. These should be quite easy to pull out
-> > into separate bindings. I'll do that first and then see if there's
-> > anything that could be done to further improve things.
->=20
-> One problem is allowing characters here which are not allowed. Second
-> problem is reluctance to change it with argument "existing bindings also
-> have this problem". It's explanation like "there is already bug like
-> this, so I am allowed to add similar one".
+On 28/03/23 12:51, Krzysztof Kozlowski wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 27/03/2023 18:14, Sumit Gupta wrote:
+>> Add the "nvidia,bpmp" property within the "memory-controller" node
+>> to reference BPMP node. This is needed by the MC driver to pass
+>> the client info to the BPMP-FW when memory interconnect support is
+>> available.
+>>
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> 
+> DTS goes to the end of patchset. If you put it here to fix
+> bisectability, then your patchset is already broken.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-This is not a bug that we're trying to replicate. We're basing this
-binding on a existing bindings that were already reviewed upstream a
-long time ago. It uses a shared binding that's in use by these other
-bindings, so making any changes to this new binding means either the
-other ones need to be changed as well or we can't reuse the existing
-shared binding.
+Ok, will move the 'Patch 2 & 7' to the end of patch set (i.e. Patch 9 & 10)
+   [Patch v4 02/10] arm64: tegra: add bpmp ref in tegra234-mc node
+   [Patch v4 07/10] arm64: tegra: Add cpu OPP tables and interconnects 
+property
 
-> Now third is that defining properties in allOf is not the style we want
-> to have, because it does not work with additionalProperties and is
-> difficult to read. Again using argument "existing code also does like
-> this" is a very poor argument.
+Thank you,
+Sumit Gupta
 
-As far as I can tell, it does work as expected in this case because
-we're not actually adding any *new* properties in the allOf/if branches.
-If we were, then yes, we would need to use unevaluatedProperties and
-that can get complicated. But again, in this case we're merely
-overriding existing properties with more specific values, which means
-that both the standard binding applies and then things are narrowed down
-by the values defined for each compatible.
-
-Thierry
-
---XSu3Gsb1PNODp4mo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQi4BAACgkQ3SOs138+
-s6GRYBAAsUYHCigNtdc8rSsLD1NsjbYlndUAsaupRMDOT3KiJDGC5luJCphp687y
-5YYtrWu9glbcfubIGNr7eBHcelnOQqqHt9u5fgLV1C20tvYNbAdu6MJqB0p4QuVF
-WM1x09wv6BpK39TYEY+psHhFyUCnm4t+PCF+uOiRPjpZMgyp2kZ3gSwa9PArCUzm
-1k+kCfPo7G8zjClLDNV3knOkqW36kS4VNd6UDkCrs+OK2T7zCCpwBTNDVjZaVuUK
-ar14F2j2o38N9uqldtGkbdZk5GtAxleZXiggDa1KLHTVegibJmnBx7NDmEXkkI/P
-WNmwhtd5hSu1y9+sP52gNz/rdd7DcG2Nr4jF2D+z6SlVFVT+2QzsI1uRlh7+yvW3
-091yMAeH5rwHgpPNWvrWZ1QZbA4uTUKPPJMkqFww62rQDdORenWTdhZiYXJyD9qd
-Pn9PZZSJVKxdbDew1k2EeFUk6B5cacRjQEjmSgE9dNsxeC0kZK7tT5I1w/CWQJSL
-2zUrsy+SfUgQN/MKDiF8BB146+Vn3vDqNloUcMnDOYrrlnOnWVNa57pFkJmCchdv
-kOJGq5DVN+TecCQXAKes5qO77pzPFepii6d2P3SZGyrsd6I97skCiPxg2HUJgr3l
-C4tmCM9vOx3gf4oEdkNv9uUFzn4+xaQ/TAvePQKlrxr6u26J0DU=
-=NdYS
------END PGP SIGNATURE-----
-
---XSu3Gsb1PNODp4mo--
