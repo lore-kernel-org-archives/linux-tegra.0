@@ -2,171 +2,119 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA00C76195
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 11:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4751FC76196
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 11:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231840AbjC1LF2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Mar 2023 07:05:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37422 "EHLO
+        id S232132AbjC1LK7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Mar 2023 07:10:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230363AbjC1LF1 (ORCPT
+        with ESMTP id S231124AbjC1LK6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Mar 2023 07:05:27 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9FEC1BE4;
-        Tue, 28 Mar 2023 04:05:26 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id t10so47849485edd.12;
-        Tue, 28 Mar 2023 04:05:26 -0700 (PDT)
+        Tue, 28 Mar 2023 07:10:58 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE02F8A62;
+        Tue, 28 Mar 2023 04:10:32 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id i5so48236197eda.0;
+        Tue, 28 Mar 2023 04:10:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680001525;
+        d=gmail.com; s=20210112; t=1680001780;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hgAzbw56ejUDiI3qD00xbyBSvhLL/o3WUj/Sgq/sOmU=;
-        b=pJ9yxRFOnNYegckCt7yIRBc/csN+qzHfDBPX3owq93O32P4SSJL51DEZFLhWbRGgTT
-         agVv0pUgtrvo8Ikvvbw5qHUOq3H5t57L0NqRQ4dj0EqaMj6CRRYI1PA1y9KRmy9KLycl
-         1WThE+YfrDRZ2TZOKngL2dT5CJodOQ3UAsj37mzM4t1Jj2asXCVUZMShFrScV3+jadxP
-         xQAI4w5+nnm5edZXfdM+9o3sxxU73GnTqPuTFqzDJbfWFnXzY6kCmbCZ7BZ2qVrK2EQr
-         NwYQU5e+/zJc3RF+Ko90vbzHskYUh2nSM/04zHdAuW66fXacdybn4skssciUOcLH7o84
-         1HXw==
+        bh=uibwFF2TVvqiHQK5fdq7Y5W42YgDAbkfIpArXeup5wU=;
+        b=GvosVofuIrNwAdPotbsCdwsUbkzugW8o8T4mpk/gBOlMSMfQ1N+O5zBy4vpji2VKd6
+         YGQerXOIhGkQO3kcHKf7Kb238ycUOOq/dQWuAQza7nIsvXqw6raSNWVgTOFkABjg7Mbr
+         PhJCo5ymWBHVIv2GgFjwQjIjbgyV5jmxHU6zP7PN2GgiOwKqjbh7mmmU1wIdgxGa1jcg
+         nKqwUbwzSBqMD+uZMsfO7NAZ4H1a8dYChG8Z7SLR4N2ii9kY1qpq/diqg0KPvaWQrH2p
+         qWsyQi1RxRZCHwK+sQ5+CZttAjj5cn6Gwd0+eDKVXMFOKb4qur3DphoXuxCV8pCttdcB
+         Ry5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680001525;
+        d=1e100.net; s=20210112; t=1680001780;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hgAzbw56ejUDiI3qD00xbyBSvhLL/o3WUj/Sgq/sOmU=;
-        b=W+wABF0pYnPW3WUVy/3hPM0fh/cwYIUV+wzVxsue5FIrxLuysfMHv4xSLfAWttstTd
-         H3VzbtCdSJramO42jOrCBuA5dEDx99zIzEpKAxXmwY9Gfymx0wh9VOzoPJr5jrCGBo7p
-         7WwHse/z57L+3aDUJAQeZAO2nBqbtMaBfB2vSwC5StXFhg5XBwKUGp7ufP9xU5AVHgd+
-         TU1HNwGapyexhN2q/Xw9x/Xt1MQpOgZ1mAMlTntkqJan9wf/D9ZfZAJmsTJatLMQb0wa
-         tR5qRIU0ytr+BxrhxecfSLagq48c0XjkmywvAsk5H7wRPlyHa1UzGU8dLKfFxxOOBMqW
-         ICww==
-X-Gm-Message-State: AAQBX9f9apdgnr9JKoeax0JVi6brQBosIxN/yADlFRRuD5Q28yzxaUDL
-        aJ1nVu9ykvUbLXtxPcQ/n94=
-X-Google-Smtp-Source: AKy350Z7rt4UoBfZevUBtoA1huLQE0D0hotgjOT3yD3iK4uWGd8PbuMvVbtvJQGJp4u5GzZ70hIxPw==
-X-Received: by 2002:a17:907:7e87:b0:93f:f70:b2e6 with SMTP id qb7-20020a1709077e8700b0093f0f70b2e6mr16994611ejc.0.1680001525237;
-        Tue, 28 Mar 2023 04:05:25 -0700 (PDT)
+        bh=uibwFF2TVvqiHQK5fdq7Y5W42YgDAbkfIpArXeup5wU=;
+        b=MYwN774+r1Dr7xuJVGNvS9a+LFq9qCw4Ix/5A7hBcceonN/kGUby4AyGbmE75JrqUB
+         rJLVYLYQ7Cp21qs02LVF0YXF7CQZx0En1sJ5wXveSrI1M/kVigS4gINYJtEHkBmnuCQe
+         0WxXkeLn3/cauePAJR1b52HObIZ0MnLYWYSeTRG9uTU+4WouGwR7REWWL9hBGOW0S9jH
+         NZ/aGFKIi/oHba+x0iylK14Ah+yufBy8w7UUgZClop3IbTEa01xfMMHDUVeHLLkrPxKR
+         hjo/fSKWt0m+BYrf+JSvO+KZugSMkXAeX8YKtLnaswz6enA1ZVp4WUFeNnB6vYCV5Hir
+         +pAg==
+X-Gm-Message-State: AAQBX9fsHNM06+k7K0+Sy2BQ+/bjJ4DAInyhBe3upn1TFhQC3s/IPD/d
+        tedBvqHDKvVFAzWIkkiuEUE=
+X-Google-Smtp-Source: AKy350YoKtupGYJy02TQY9KyZjq77AewZQXmmmqeAPBbMAQ5AZCvoRndWAXn6zZu9khw6NtD7NiuIA==
+X-Received: by 2002:a17:906:3701:b0:886:221b:44e5 with SMTP id d1-20020a170906370100b00886221b44e5mr14200567ejc.62.1680001779643;
+        Tue, 28 Mar 2023 04:09:39 -0700 (PDT)
 Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id c16-20020a170906925000b009327f9a397csm14596170ejx.145.2023.03.28.04.05.24
+        by smtp.gmail.com with ESMTPSA id hy14-20020a1709068a6e00b009351546fb54sm11566185ejc.28.2023.03.28.04.09.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 04:05:24 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 13:05:23 +0200
+        Tue, 28 Mar 2023 04:09:39 -0700 (PDT)
+Date:   Tue, 28 Mar 2023 13:09:37 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        lpieralisi@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
-        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
-        ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v4 03/10] memory: tegra: add interconnect support for
- DRAM scaling in Tegra234
-Message-ID: <ZCLJ895gHPXQE+Lz@orome>
-References: <20230327161426.32639-1-sumitg@nvidia.com>
- <20230327161426.32639-4-sumitg@nvidia.com>
- <8b04a266-20eb-f1c1-278f-764b1b06b78b@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: timer: Drop unneeded quotes
+Message-ID: <ZCLK8TN8dp8LJsQI@orome>
+References: <20230327170146.4104556-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z50dz8DtOK299JG9"
+        protocol="application/pgp-signature"; boundary="25Alk08cwWa0SAB7"
 Content-Disposition: inline
-In-Reply-To: <8b04a266-20eb-f1c1-278f-764b1b06b78b@linaro.org>
+In-Reply-To: <20230327170146.4104556-1-robh@kernel.org>
 User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---z50dz8DtOK299JG9
+--25Alk08cwWa0SAB7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 28, 2023 at 09:31:58AM +0200, Krzysztof Kozlowski wrote:
-> On 27/03/2023 18:14, Sumit Gupta wrote:
-[...]
-> > diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra=
-/tegra186-emc.c
-[...]
-> > @@ -158,6 +260,9 @@ static int tegra186_emc_probe(struct platform_devic=
-e *pdev)
-> >  	if (!emc)
-> >  		return -ENOMEM;
-> > =20
-> > +	platform_set_drvdata(pdev, emc);
-> > +	emc->dev =3D &pdev->dev;
+On Mon, Mar 27, 2023 at 12:01:45PM -0500, Rob Herring wrote:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
 >=20
-> This patch looks like stiched from two or more patches... emc->dev does
-> not look like new member of emc, thus why do you set in exisitng
-> function in this patch? Why it wasn't needed before?
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/timer/arm,arch_timer_mmio.yaml        | 2 +-
+>  Documentation/devicetree/bindings/timer/cdns,ttc.yaml         | 2 +-
+>  .../devicetree/bindings/timer/intel,ixp4xx-timer.yaml         | 4 ++--
+>  .../devicetree/bindings/timer/nvidia,tegra-timer.yaml         | 4 ++--
+>  .../devicetree/bindings/timer/nvidia,tegra186-timer.yaml      | 4 ++--
+>  Documentation/devicetree/bindings/timer/st,nomadik-mtu.yaml   | 4 ++--
+>  6 files changed, 10 insertions(+), 10 deletions(-)
 
-This looks like it may be leftover from some development. These two
-lines exist in this driver a few lines further down. Either one pair
-should be removed. I don't see why this would need to be moved, so
-probably the above additions can just be dropped.
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
-> >  	emc->bpmp =3D tegra_bpmp_get(&pdev->dev);
-> >  	if (IS_ERR(emc->bpmp))
-> >  		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp), "failed to get =
-BPMP\n");
-> > @@ -236,6 +341,25 @@ static int tegra186_emc_probe(struct platform_devi=
-ce *pdev)
-> >  	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
-> >  			    emc, &tegra186_emc_debug_max_rate_fops);
-> > =20
-> > +	mc =3D dev_get_drvdata(emc->dev->parent);
-> > +	if (mc && mc->soc->icc_ops) {
-> > +		/*
-> > +		 * Initialize the ICC even if BPMP-FW doesn't support 'MRQ_BWMGR_INT=
-'.
-> > +		 * Use the flag 'mc->bwmgr_mrq_supported' within MC driver and return
-> > +		 * EINVAL instead of passing the request to BPMP-FW later when the BW
-> > +		 * request is made by client with 'icc_set_bw()' call.
-> > +		 */
-> > +		err =3D tegra_emc_interconnect_init(emc);
-> > +		if (err)
-> > +			goto put_bpmp;
-> > +
-> > +		if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT))
-> > +			mc->bwmgr_mrq_supported =3D true;
-> > +		else
-> > +
->=20
-> Drop blank line.
->=20
-> > +			dev_info(&pdev->dev, "MRQ_BWMGR_INT not present\n");
->=20
-> And what user is supposed to do with this? Either make it descriptive or
-> drop.
-
-Agreed. I think we can just drop this. If the intention was to provide a
-quick way for people to detect whether BWMGR is available or not, using
-something from sysfs/debugfs would be preferable.
-
-Thierry
-
---z50dz8DtOK299JG9
+--25Alk08cwWa0SAB7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQiyfAACgkQ3SOs138+
-s6FbVA//bUVPUi8Z6YbSbsr4lHpodrVcNKo8kLvOAIm4MrRyRHiEXz+fzcorFDD1
-DuvPL76LXtzwRgA6fcQPOgRjeLkTQspfkIb69WzeGYFwqVY6ddPTfMTwucmYwIqZ
-4lMCMpiDuv8onPnmMH/l3PEiHFlzETb1IIfIDs6+u1NZ0jVyi0ovEM4y9jGhOb5x
-3+K+HFl9zAMLaXRWH+ckLaVJ075FUTZw3rp13v4kCjSy7Zbm3NhnJqf7zftJDfk5
-Hxzawn21Yw/Kb5ANSWOuPhwP+has+BPAp1P8JZIgBSURxJaxY1C6Utv6yx7zWWpS
-LydIrQBS62gSS0l5Kh095FZbPUwHOKbCh7E0yqvDSz323v+HjhGm1KUeJ42tYKkg
-b2D0vwMqSjKVKm2vZ1QqVqvYSU/2UFeo5Iu4niGeOiaRRQ0D93zTmDzK4VN5ISBo
-rTQIt3u+ypphgF9rcHixfORuyIE0pmR1UJy+U5D+ko0x6599i5d+gXinXAg67DMG
-DUTGb0JP+9FqF5wcpMacTkR+s2eux5IvT+hRaKr0PAzityvDlcnq9lWa6SLkCJsp
-eDpPoDcTRGYtaEcy37zU5wtXuV9lLGOUWVrkZiHILwN8S+G8EO6lmM0ISmHemHAJ
-acMXRTtGeOMCybdN+qD+41oLPMMlqzgqhNKQWDkPHceO5Lu3jEY=
-=xbRH
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQiyvEACgkQ3SOs138+
+s6HWXxAAl7iEzTN8cHtB4Rscf4jSFuHl8zMQdSYdB1cBcWeCmCbFhKCNvzIsWotb
+HU79w3Uko7gZfFNr44eYYTf4YsZI8aIXlAGzE9zPVATGTAUcnw6GfNY5siUVW+SD
+xENVkMf6K7vBTrp/Sl1IIPVDL+yfLvNIQCqADS/Xbv/E8AIl5vG6aKxCR3omKTQr
+enV+opxIbbADUhAQGKPerTF71+xdKFruRjYycmolPXX0QKfXRPv3oamD79zlmoxw
+mtVCr5E47EpVlRg7dc92HPzZwnqIyY+haNf/HmxaV9sQ4fOGBN7ZWVafav0bOuF0
+bsatDC6WLgMhjbg0AvxoCTpSzQT+ziB14moHGfJWKqNzzqOkGRJtjaZZyVGr3DXr
+lpsdgX3E+aiJExbESc8pT4EMs4cyBhn7W8yaBVILgMQ7B9twGe6UR+hChqqMKx3q
+s2TBOUWq+WnaZcZwBuyZKdgTKos5crlffbJaAh28uI2WTJ/GzPpvZZ/2rNyweXHb
+ypSQNHmHW8aU2YTFbKineicLjoMwyE0jXhvD6/Nog95qr8YQdxf7z3XYuF9Abqfm
+j0LUnLOcw5hYvhPN/93ZwR+KT9KhgpQTr94K5yoY1nNnAr++bqgWGILeEBsCEN5w
+kNTtR4j+ykgmKmTval7FiiWN6NevZKlWlDJadZVUNSKfm0hZ2sA=
+=Fy2B
 -----END PGP SIGNATURE-----
 
---z50dz8DtOK299JG9--
+--25Alk08cwWa0SAB7--
