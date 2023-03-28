@@ -2,127 +2,120 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CA3C76195
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 11:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDFEC76195
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 11:28:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232573AbjC1LWq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Mar 2023 07:22:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34542 "EHLO
+        id S232867AbjC1L2Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Mar 2023 07:28:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232630AbjC1LWl (ORCPT
+        with ESMTP id S232903AbjC1L2H (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Mar 2023 07:22:41 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034887EEA
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Mar 2023 04:22:30 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id eg48so48057092edb.13
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Mar 2023 04:22:29 -0700 (PDT)
+        Tue, 28 Mar 2023 07:28:07 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8FE9901B;
+        Tue, 28 Mar 2023 04:27:45 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id t10so48081804edd.12;
+        Tue, 28 Mar 2023 04:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680002548;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dzwHQ2Duk/kqF5BJ0fG5L6Cu8NMF103H5aRIBgcczb4=;
-        b=htrzrsE7hmfkJgnGa64UdAmCTFbDjwVjX1/ZK7rzlfJ4rum1twPXjx2IcPP12VND9T
-         0DKpttfDZeCJAjZF9hf9sirzt1D7GiaNIvC2Ms0GGq/MedlyTFbot/1vxF4CxC0kFUot
-         lJYlci1bOkm1cjOAaW76KTfxGYDZpTUwaWI6CqiqlLyD64vI1f8N1ETCWOZvAh6jSSal
-         1PbzRamEOc4x30/OWIqrzOivLgt4Uzhb1hguorghfB6U/5sNzMn2YAbgBBqg+Tdtf4hr
-         dXV/1WfiU6mwe/scWd/TkMX5uL4+EeTzYs24kk9cDqFNzkUiCS1rn8BmpwTCA4wE1eLy
-         wDUQ==
+        d=gmail.com; s=20210112; t=1680002864;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aH679ERMSWNWvXyyXLYJ8g9hSSHQrkcB5OP8voimmFc=;
+        b=gXIQbLvbeMucqMf+c3bLPfUYw9LCwhdze69JIPGKgQYp55MekKZrZhC05qqHwTIxjs
+         Q+vH8szRNFgSiSMMRaPm8ftuQrQrKvg79urc0qS1cubJ8PlEOU6VeTesKuNDa9hLZYJG
+         WIVTUh3hR3JuqiIRlVyfXOMVT7Xjvzce1iVAGFIH9MadtQeLW63l9804BtYxEC9tiCWh
+         vSYikVo9nPkNEsb34uh0sRuxTRkeYnjElvSjjVs6UzKCmRPyt9lTcM8EnuhUjOqboGSo
+         nkkm/S2zYEOUd2bzpPp4JgaB1D3CYutiTLnuor/NKxz9T0uc5qbB4fsxLY0Pine+Kpyo
+         KWfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680002548;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dzwHQ2Duk/kqF5BJ0fG5L6Cu8NMF103H5aRIBgcczb4=;
-        b=A3LZUrHxFsNPtq/ME3IxGvPy3QGmwjK/MEy2mNAgU7CeIUU2GLoQlCJ/ZIB2JifZgs
-         ArQO6zv1ApLCvbxuEc5NaimoEUJiZkdmtN8c3+y5Rbb47ja63eIrZUo/HV3Ek527NnTj
-         pMo/Z2k7mZV1c2DBhjaB8a8po8R6J/R5hdlgsX4PP2/m12e3ueVV30BnXGteHf+2akNi
-         2PJzd4qMuOY2gr3aXxy/uvRDLD0tV3IfrKnGHffdhasFSzwEiAHK2lbEU/9gk3w3GoX5
-         rL0dRUec028o1TJVxR98bi+4iSHDQQuYLYFyJqeCBygcFVXd6YARnjJhZdtStp/VBKPQ
-         Nqqg==
-X-Gm-Message-State: AAQBX9e6j69XxgfQfTOgqxj7tp2E2lTQtrbtWNoycV/j7fPwtfJWaAQZ
-        z7Vo4kcLIU+UPtGAIH3qfv9xuw==
-X-Google-Smtp-Source: AKy350aGvcc3WcYuz9u6zfbZBRO4GkfWN+fYq58at9mlFg8RR/uitQlgp2yla6cyxnFnFhXLJw2AWw==
-X-Received: by 2002:a17:907:86ac:b0:92b:eefb:b966 with SMTP id qa44-20020a17090786ac00b0092beefbb966mr21203353ejc.0.1680002548506;
-        Tue, 28 Mar 2023 04:22:28 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:9e92:dca6:241d:71b6? ([2a02:810d:15c0:828:9e92:dca6:241d:71b6])
-        by smtp.gmail.com with ESMTPSA id l22-20020a170906079600b009333288d0ffsm13778637ejc.194.2023.03.28.04.22.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Mar 2023 04:22:28 -0700 (PDT)
-Message-ID: <79d8044f-ce68-463e-66f7-8755e253bc99@linaro.org>
-Date:   Tue, 28 Mar 2023 13:22:26 +0200
+        d=1e100.net; s=20210112; t=1680002864;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aH679ERMSWNWvXyyXLYJ8g9hSSHQrkcB5OP8voimmFc=;
+        b=Axgk9CkhlsdB3aJm3hAlU60KNQT1zC3ixE5VUENERb4gfw2WSaOE5TzlGGxL+eLv9+
+         er5nfo/ZKw9tzjwBJUnvntiX1AT6zqBrJCKS30xZ/ztYHURyi5LDmyyG4y0MZQG4GtBD
+         4Wij/xNmqH+LM+fXh2yUFj0G0MnSauhopwhpe6fjbTYt4XaMiymt8rKlESI3Dbv5S+RM
+         fgc+4e0BM4ry6fiGy7DezIRWJEgThaFus11CoWA1fTzSzTwcsnUhCmvD2fYWs5H36BXz
+         DGtUqFwwFo0+oWOvRN9pbB4pnEnlUwaVPaMxJnr/xVEYb8p2zdeC/0e2USx1BrVrV0cB
+         97Ig==
+X-Gm-Message-State: AAQBX9cCELke2VpdbOO8s2mWE/sxlYIdmJxWLSljeh1gC3qfSZXNnoiA
+        yHrgciYg5FirJyrs5Z6xC9Q=
+X-Google-Smtp-Source: AKy350ZHcR+qthehrvWOddTp/MfouX/tJnnAMq8wa6jAB/Fcla2by8oFGNX4wJOfl/VcEqw1xEkK8Q==
+X-Received: by 2002:a17:907:d386:b0:87b:dac0:b23b with SMTP id vh6-20020a170907d38600b0087bdac0b23bmr16831917ejc.55.1680002863802;
+        Tue, 28 Mar 2023 04:27:43 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id c19-20020a170906155300b0093ebc654f78sm5091121ejd.25.2023.03.28.04.27.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Mar 2023 04:27:43 -0700 (PDT)
+Date:   Tue, 28 Mar 2023 13:27:41 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] ARM: tegra: Add labels to tegra30.dtsi
+Message-ID: <ZCLPLUFFzzQ0NUoV@orome>
+References: <20230304084319.18424-1-clamor95@gmail.com>
+ <20230304084319.18424-2-clamor95@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [Patch v4 01/10] dt-bindings: memory: tegra: add bpmp ref in
- tegra234-mc node
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        lpieralisi@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
-        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
-        ishah@nvidia.com, bbasu@nvidia.com
-References: <20230327161426.32639-1-sumitg@nvidia.com>
- <20230327161426.32639-2-sumitg@nvidia.com>
- <787f656a-223d-5eed-e311-9cc7a6c46452@linaro.org> <ZCLF6ZRH528pu/r3@orome>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZCLF6ZRH528pu/r3@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="MJ5Vjm57uiN1d04K"
+Content-Disposition: inline
+In-Reply-To: <20230304084319.18424-2-clamor95@gmail.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28/03/2023 12:48, Thierry Reding wrote:
-> On Tue, Mar 28, 2023 at 09:23:04AM +0200, Krzysztof Kozlowski wrote:
->> On 27/03/2023 18:14, Sumit Gupta wrote:
->>> For Tegra234, add the "nvidia,bpmp" property within the Memory
->>> Controller (MC) node to reference BPMP node. This is needed in
->>> the MC driver to pass the client info to the BPMP-FW when memory
->>> interconnect support is available.
->>>
->>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>> ---
->>>  .../bindings/memory-controllers/nvidia,tegra186-mc.yaml    | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>> index 935d63d181d9..398d27bb2373 100644
->>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>> @@ -58,6 +58,10 @@ properties:
->>>    "#interconnect-cells":
->>>      const: 1
->>>  
->>> +  nvidia,bpmp:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description: phandle of the node representing the BPMP
->>
->> Why do you need this multiple times? Both in parent and all external-mc
->> children?
-> 
-> We've had nvidia,bpmp in the external memory controller node since
-> basically the beginning because we've always needed it there. For newer
-> chips we now also need it for the memory controller.
-> 
-> Ideally I think we would only have this in the MC and have the EMC
-> driver reference it via the EMC's parent (i.e. MC), but that would break
-> backwards-compatibility. Reaching into the EMC's DT node from the MC was
-> another option that we discussed internally, but it didn't look right
-> given how this is also needed by the MC.
-> 
-> One thing we could potentially do is deprecate the nvidia,bpmp phandle
-> in the EMC and only keep it as a fallback in the drivers in case the
-> parent MC doesn't find it's own in the DT.
 
-Yes, deprecation would answer to my question.
+--MJ5Vjm57uiN1d04K
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Sat, Mar 04, 2023 at 10:43:15AM +0200, Svyatoslav Ryhel wrote:
+> From: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+>=20
+> Add phandle names for memory/I2C/SPI/USB/SDMMC controller nodes to allow
+> for cleaner device descriptions.
+>=20
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  arch/arm/boot/dts/tegra30.dtsi | 36 +++++++++++++++++-----------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
 
+This patch by itself only adds labels and isn't useful by itself. If you
+really must have these labels, add them in the same patch that makes use
+of them to demonstrate why you think this is an improvement.
+
+Thierry
+
+--MJ5Vjm57uiN1d04K
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQizy0ACgkQ3SOs138+
+s6Epcw/+I6jhse64EVfUoKxu5Z7OM2+MicpOkAYQ9COsMPlwmzk5ZTOK+ghZhEa3
+m8CWNMWej6EiyCl61idoIwkDyD4Y7+WlTWcfLbc5NWYdQk1qaVcOUek2fcCLYxDX
+bNCN2GLdK19z7qoaq9I9GLontKnfbWTNh8l9XxvHUgA+1cZ3n03tcnlSzsapZnEK
+fJYfrJn3miYNGO1U7pM1ESpkluCOYbe7KuvW9u1D7IodLANHBIJqotDdSGSh3SKh
+3yr10UMM0IuBy1PHXGevs/Di7rkHwBjabzzb+jzaC8dMiYwgSh0q2iM+TIIH4+Rw
+hfaiYW10E7+ogZ00GtNSLFl6d1CLKZ3mX1UBm5CYj9n2ZX+4LPWlSj+oM6aZAPI7
+fEbfaxQ4+FDu7ENLJiXcl36XJtROLkwae7liui1wbVbYA4navfP/Utoa5L9eDoPz
+Zk0bLFzNu5fvFptA52gy5Y+r35gdh/dNegIeV4E5xiGk5pVPZaX5Y6tq8J0/hWU1
+69UmsElMiv0Af8xad11SCzq/xX7RugVaShiuOsfSiiTPWBVKjmnO6MWFyfrunpwZ
+qyaukK8odh8NNLDNNe0INbr7Vl3DoUJ9BVDiXsVzlQ2TQE9McvvouLj5zV4oO0at
+JEbqrtgqZpWmKRevCuPM6iyg3rwaQKCdfTi97J9pwuVdzUDQqKY=
+=F73r
+-----END PGP SIGNATURE-----
+
+--MJ5Vjm57uiN1d04K--
