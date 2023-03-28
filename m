@@ -2,128 +2,127 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27272C76195
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 11:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CA3C76195
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 11:22:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231932AbjC1LVz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Mar 2023 07:21:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32856 "EHLO
+        id S232573AbjC1LWq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Mar 2023 07:22:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231978AbjC1LVy (ORCPT
+        with ESMTP id S232630AbjC1LWl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Mar 2023 07:21:54 -0400
+        Tue, 28 Mar 2023 07:22:41 -0400
 Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB827A8A;
-        Tue, 28 Mar 2023 04:21:51 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id eh3so48068669edb.11;
-        Tue, 28 Mar 2023 04:21:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034887EEA
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Mar 2023 04:22:30 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id eg48so48057092edb.13
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Mar 2023 04:22:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680002510;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/uV8dWinN4UoTmw9006A8Yi8Nmf//s38L4m1uuCw/6o=;
-        b=Z8IWeCmXyimOyR61VNL6lafjFaK/PgrLtpeBX+Ym3xj3VI17fe7f7cJDSch1CZph2f
-         fzg7PVGr5Iy2ytybSxI7+vrm/1PLfFfPByUuV0lOasqgwTscpRq0xjpqVgL2WTcyZ/QC
-         AB/vtbBDObUQOF5fFzVtBeZEmS+JoYVq34EGdgE5zdFfhm+MmPq0J/KN0mi+eOJBDAKA
-         hmfPx5NG3tPrDnzZDPrqlaC85mlncNponnV/NZ1X/MMXfjxBg3U1PcwurJ3rkCp+lG/3
-         1K8iBq04OB2kozVcFyASya30U+ISjv/0FRoRI+BCyoQx9HCSFpDFikGLosMMJlDoQKPA
-         pBAg==
+        d=linaro.org; s=google; t=1680002548;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dzwHQ2Duk/kqF5BJ0fG5L6Cu8NMF103H5aRIBgcczb4=;
+        b=htrzrsE7hmfkJgnGa64UdAmCTFbDjwVjX1/ZK7rzlfJ4rum1twPXjx2IcPP12VND9T
+         0DKpttfDZeCJAjZF9hf9sirzt1D7GiaNIvC2Ms0GGq/MedlyTFbot/1vxF4CxC0kFUot
+         lJYlci1bOkm1cjOAaW76KTfxGYDZpTUwaWI6CqiqlLyD64vI1f8N1ETCWOZvAh6jSSal
+         1PbzRamEOc4x30/OWIqrzOivLgt4Uzhb1hguorghfB6U/5sNzMn2YAbgBBqg+Tdtf4hr
+         dXV/1WfiU6mwe/scWd/TkMX5uL4+EeTzYs24kk9cDqFNzkUiCS1rn8BmpwTCA4wE1eLy
+         wDUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680002510;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/uV8dWinN4UoTmw9006A8Yi8Nmf//s38L4m1uuCw/6o=;
-        b=6wujYzTPYfoKEQDncohuTUO+b2HCUCPQ3tKU4y2gW5LaZsYXYW/YPc01tAoLfSeghu
-         yMsRjwJryTPhY8bSRo5rCMnLd9M+VdOZqwl/ALrI2McuIGqlXamcmxpit22gGu6z23Gq
-         VYS1sX7L0oV6zEsJYq6C8hrCX1hY0QGExbKt5MINbH3x9IASsfJL09nMsYR40wuZ5pLZ
-         3Vql1JsQSHbpFrsaWQUj/kn9Gog2UmFU9OUUqqBorEnedypu7qPEFbL0TVWwDMQiATUl
-         v75ZHPyDcVLr7jO3u9zB195igHvGV4vLdAceq/LIS7Bk7hyAA/ku8vXhQbm+BthisxYw
-         PS+A==
-X-Gm-Message-State: AAQBX9e3HMWuG1O4/I0KJvBSsN8wXix0uHii/Bpzlpr0wKeM2Wjqk3dQ
-        VthSgnM9IosOeB43MNwpfFvXvz1u/Uw=
-X-Google-Smtp-Source: AKy350YNJqW2Fdv328B0CnIhA6U3LZ8U501/lms78tE7OXPrOZ21aK+VITMTCPn3H0WQ8FFMnVcd9w==
-X-Received: by 2002:a17:906:4b08:b0:8b1:7de3:cfaa with SMTP id y8-20020a1709064b0800b008b17de3cfaamr16262164eju.3.1680002509658;
-        Tue, 28 Mar 2023 04:21:49 -0700 (PDT)
-Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id k19-20020a508ad3000000b00501c0eaf10csm12868133edk.40.2023.03.28.04.21.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 04:21:49 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 13:21:47 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] Fix sound on ASUS Transformers
-Message-ID: <ZCLNy7jB1H6eClwf@orome>
-References: <20230327150219.13636-1-clamor95@gmail.com>
+        d=1e100.net; s=20210112; t=1680002548;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dzwHQ2Duk/kqF5BJ0fG5L6Cu8NMF103H5aRIBgcczb4=;
+        b=A3LZUrHxFsNPtq/ME3IxGvPy3QGmwjK/MEy2mNAgU7CeIUU2GLoQlCJ/ZIB2JifZgs
+         ArQO6zv1ApLCvbxuEc5NaimoEUJiZkdmtN8c3+y5Rbb47ja63eIrZUo/HV3Ek527NnTj
+         pMo/Z2k7mZV1c2DBhjaB8a8po8R6J/R5hdlgsX4PP2/m12e3ueVV30BnXGteHf+2akNi
+         2PJzd4qMuOY2gr3aXxy/uvRDLD0tV3IfrKnGHffdhasFSzwEiAHK2lbEU/9gk3w3GoX5
+         rL0dRUec028o1TJVxR98bi+4iSHDQQuYLYFyJqeCBygcFVXd6YARnjJhZdtStp/VBKPQ
+         Nqqg==
+X-Gm-Message-State: AAQBX9e6j69XxgfQfTOgqxj7tp2E2lTQtrbtWNoycV/j7fPwtfJWaAQZ
+        z7Vo4kcLIU+UPtGAIH3qfv9xuw==
+X-Google-Smtp-Source: AKy350aGvcc3WcYuz9u6zfbZBRO4GkfWN+fYq58at9mlFg8RR/uitQlgp2yla6cyxnFnFhXLJw2AWw==
+X-Received: by 2002:a17:907:86ac:b0:92b:eefb:b966 with SMTP id qa44-20020a17090786ac00b0092beefbb966mr21203353ejc.0.1680002548506;
+        Tue, 28 Mar 2023 04:22:28 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:9e92:dca6:241d:71b6? ([2a02:810d:15c0:828:9e92:dca6:241d:71b6])
+        by smtp.gmail.com with ESMTPSA id l22-20020a170906079600b009333288d0ffsm13778637ejc.194.2023.03.28.04.22.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Mar 2023 04:22:28 -0700 (PDT)
+Message-ID: <79d8044f-ce68-463e-66f7-8755e253bc99@linaro.org>
+Date:   Tue, 28 Mar 2023 13:22:26 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zp4bjfirGDraf1PA"
-Content-Disposition: inline
-In-Reply-To: <20230327150219.13636-1-clamor95@gmail.com>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [Patch v4 01/10] dt-bindings: memory: tegra: add bpmp ref in
+ tegra234-mc node
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lpieralisi@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
+        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
+        ishah@nvidia.com, bbasu@nvidia.com
+References: <20230327161426.32639-1-sumitg@nvidia.com>
+ <20230327161426.32639-2-sumitg@nvidia.com>
+ <787f656a-223d-5eed-e311-9cc7a6c46452@linaro.org> <ZCLF6ZRH528pu/r3@orome>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZCLF6ZRH528pu/r3@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 28/03/2023 12:48, Thierry Reding wrote:
+> On Tue, Mar 28, 2023 at 09:23:04AM +0200, Krzysztof Kozlowski wrote:
+>> On 27/03/2023 18:14, Sumit Gupta wrote:
+>>> For Tegra234, add the "nvidia,bpmp" property within the Memory
+>>> Controller (MC) node to reference BPMP node. This is needed in
+>>> the MC driver to pass the client info to the BPMP-FW when memory
+>>> interconnect support is available.
+>>>
+>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>> ---
+>>>  .../bindings/memory-controllers/nvidia,tegra186-mc.yaml    | 7 +++++++
+>>>  1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>> index 935d63d181d9..398d27bb2373 100644
+>>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>> @@ -58,6 +58,10 @@ properties:
+>>>    "#interconnect-cells":
+>>>      const: 1
+>>>  
+>>> +  nvidia,bpmp:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description: phandle of the node representing the BPMP
+>>
+>> Why do you need this multiple times? Both in parent and all external-mc
+>> children?
+> 
+> We've had nvidia,bpmp in the external memory controller node since
+> basically the beginning because we've always needed it there. For newer
+> chips we now also need it for the memory controller.
+> 
+> Ideally I think we would only have this in the MC and have the EMC
+> driver reference it via the EMC's parent (i.e. MC), but that would break
+> backwards-compatibility. Reaching into the EMC's DT node from the MC was
+> another option that we discussed internally, but it didn't look right
+> given how this is also needed by the MC.
+> 
+> One thing we could potentially do is deprecate the nvidia,bpmp phandle
+> in the EMC and only keep it as a fallback in the drivers in case the
+> parent MC doesn't find it's own in the DT.
 
---zp4bjfirGDraf1PA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, deprecation would answer to my question.
 
-On Mon, Mar 27, 2023 at 06:02:17PM +0300, Svyatoslav Ryhel wrote:
-> - update dts bindings
->=20
-> ---
-> Changes from v3
-> - fixed typo in wm8903 audio-routing
->=20
-> Changes from v2
-> - dropped already picked patches
-> - adjustments in binding updates (tf101 and tf300t require wm8903
->   codec patch to properly work with internal mic)
->=20
-> Changes from v1
-> - fm34 dropped for re-work
-> - quirk for headset detection and rt5631 bringup splitted
-> - minor adjustments in binding updates
-> - improvement of rt5631 rate asignment
-> ---
->=20
-> Svyatoslav Ryhel (2):
->   ARM: tegra: transformers: update WM8903 sound nodes
->   ARM: tegra: transformers: bind RT5631 sound nodes
+Best regards,
+Krzysztof
 
-Applied, with a slightly modified commit message on the first patch.
-
-Thanks,
-Thierry
-
---zp4bjfirGDraf1PA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQizcsACgkQ3SOs138+
-s6Gz4Q/+NOMS5FzvQg5WA+9YZlqgugF7iYmC9iLdDMeRQDBJOH26CNTS6JpYqtxa
-oilauC4jeuVhGVRFQtoESm7cplU0nUdy4tDbdiT46/iLaDXRk+0YXAbo7EOgJoLv
-mm4SmUDNIW5QrAKrgQkQNXCVStSI3c/eaoGoI4/LW4y69LeYUwRz3jmNiPUnFHE7
-MLrYEYqTcWU3eoQeyEF6FZTIkZLob7z08roTRVUEmVa0JPwmZYRZ8ASCGF5X3UOw
-QbJcKTwFoEf9PFBj7mZCWj6cm63crA4+yLAKyvnqImKBbX9XXXw+DoxuzMq7LSCV
-c4ANiAIwngwRbwoGsvY/KCkL78jG3TRtqCtMD4yGowlrL1Q3aIt29fWJ9J+RpRxe
-8LVi5zNDf5eZ1EYSwNhWybJLjzslmC9ihS8aDZg54zXttCcDoXugGlvUd/PRi2oe
-lppGr1c/fC01Tkzyniq2PlnTW2EnfJXdYwfOusJ9z/IbV+UwkKyeiElc0DA4Yq9E
-M+qfj9r/lsjQRiE0yfNx6t+uexZV5Voqw+A8H5P22giNbs0FVHP+cINwJPOe2WrB
-pNgxv+1xgq0oJSrSJ8bXKyc1dMmaUZa1tzJYEjuY37eNccdgaZWvg/FuTnmfb2O+
-VmdOOTsJWZ2cZ11Nz5u/h+RTEdfLuckssJ83pndXlugvSNIIe4I=
-=II9E
------END PGP SIGNATURE-----
-
---zp4bjfirGDraf1PA--
