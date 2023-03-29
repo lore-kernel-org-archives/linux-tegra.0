@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E647C761A6
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 09:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77308C74A5B
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 09:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbjC2JFC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 05:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38708 "EHLO
+        id S230213AbjC2JFD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 05:05:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230386AbjC2JEm (ORCPT
+        with ESMTP id S230414AbjC2JEn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 05:04:42 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3C9109;
-        Wed, 29 Mar 2023 02:04:35 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id ew6so60308746edb.7;
-        Wed, 29 Mar 2023 02:04:35 -0700 (PDT)
+        Wed, 29 Mar 2023 05:04:43 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4196310C0;
+        Wed, 29 Mar 2023 02:04:37 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id x3so60293517edb.10;
+        Wed, 29 Mar 2023 02:04:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680080674;
+        d=gmail.com; s=20210112; t=1680080676;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/Jvw7lCXM6klT4g7y4ectmTBzvvioBJrdjfCKfiCV2M=;
-        b=mkn927X9y7hQT/e3mbUQodOELFdTFuo6a8aSvq040mCj8hzc1WlsbnfOIyHANqMRhh
-         FVNcSvAmJH/c9C6MjynAPGPzQ3ZB+m/5fiWO8+91Ixq6S3aBhzO+UMdARBOVjhXiGtoy
-         gWvnMv/NWam4OY/NndFelVNcA6Puh8sqRKcES3LVYeAp0iAPMV34QDZnx5JqpCFeqfeG
-         hW7L3DY+sgqSl/0tBWD01iOo4lat77RFA+xTpDm2pdSw/EIXOy182KgeHy2CCkiU5RPY
-         cHEzpWdVuhH9+IPblD+4LyISsCcjim3zYRD/s6/IBFnqEAFTA+ZPeOD5eS0/4A/A3vi6
-         Sqvg==
+        bh=AmA1pqJOyOb2cR7V74kR64IR6Xx2k2cxNLkEbR3rMXM=;
+        b=FVJ/5YauamJ6U6iOQs9roy5sKS0qDMHGt0OvI8eBFgY9RIpRlkxf3KsjRPMsSW41cz
+         5RKAycWDx0/9Jh9vJTJxJyGN9O67fUrtoPCY6eb8I5HyMINfSrZvbzxcKHykOm/m8MVa
+         3H4jKRrDMUf60B4uyMaIi7K8f0MFdpHTkdZw+TrwruOk1HJhHoPs65SNj+n/9refWZ7k
+         QFHXxyG8m5Huh3+6oDYyV677SV7g5r1dS2LFUGplSj/IzBTaIPy85CNd8xozDwpbbb75
+         BfyxuIX26oHz+4gS5Y3pBgt9U6jdTpoXXPCuYpC1PzGCh3LHCxVC6d88Jk5ZgQRRf8ab
+         IJMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680080674;
+        d=1e100.net; s=20210112; t=1680080676;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/Jvw7lCXM6klT4g7y4ectmTBzvvioBJrdjfCKfiCV2M=;
-        b=4IVpk57/XIxSuWBvbpML2HjdmNG79YnEy6er5b35Ia7fVhX0zxEGUkykGfmn5LoPA7
-         Pkl/pxSVhnZFOoghtnfpPTM0jwp+O+dhU3CrCD0dQvVDZAcLQHhhtMWLMId/X7aFrSru
-         +6D+VF5jHjwBuIR1U2I3rVEvnZYWhqJPHR+tMWqG8AlczuR4AdcNGGz5m9nq6KnWH/rQ
-         XA2w4k4ZcjCDY4aEb3yrs4fqGAQrRnBFalFMjOaQNYfVPba+0GcAuWUyVsp2o5/8NJnG
-         mc1PrQ6P/xKjV+/1cpoo7ZahflAzdgLhQnPY+k/uQyZWPlsNR5/BWF/jc1BKGDFOGgCq
-         45Xg==
-X-Gm-Message-State: AAQBX9e4EbdXldNJUZbsGB8M4UhrGT0qjr/gL5S3bizrT+WMT1AOudTt
-        jKh7c2X0k9H1E233acDrk4s=
-X-Google-Smtp-Source: AKy350aQCPq8bPYW984D+5+Jh+MLtGKQ/ZaHWaLmBqRqmERGETGj1WRzsR0wpE81UJJNsfRVfdRx6g==
-X-Received: by 2002:a17:906:2b8e:b0:946:c022:8979 with SMTP id m14-20020a1709062b8e00b00946c0228979mr6248001ejg.21.1680080674212;
-        Wed, 29 Mar 2023 02:04:34 -0700 (PDT)
+        bh=AmA1pqJOyOb2cR7V74kR64IR6Xx2k2cxNLkEbR3rMXM=;
+        b=le8YoShSI3XzlrtG/b41+EByu3xKM1fym07D0uwa9IpEEjNyggJQc3Q0c/LkNs1Z7W
+         PAxmUwxXdZKCRAooB6vYzMUEiOE/W6xxBHM73VzLolc5wFYdmA7zgP3Imq7rNCMZdNZJ
+         uW/dIgu6juGjI0e8z6HbZRl+EvYpynxozcLRReHjAr6Jv4Wcxt5wwG7K0Jd5/806IPsk
+         Iap+w57GBg7AUkc99+/iQ8puTOWgnwfFGsTFPHRKFiA6exQWOGifeWy8kdL9xQb03PDx
+         6CJIQnIC0nngAFvHpPYBBIAKe9VayVl3tKKhpK2dkhbXmQmJouPX0/Ncf9F5k6dIkeaB
+         BzKA==
+X-Gm-Message-State: AAQBX9eaSH0bRhNQEh1lc1AZdIth4+xIS/btWa4ufyfG7ag6DXWtJgW6
+        T1KDrXKwFv8VaU4O4AmX2GA=
+X-Google-Smtp-Source: AKy350ZIBRKInUSM9Rx3wY46if9XU9amzDEMk9tHwDFrjeL46KDedicWzC2oVl5OWHZAH3h6aNL8Pg==
+X-Received: by 2002:a17:906:b2d2:b0:93e:fa12:aa1a with SMTP id cf18-20020a170906b2d200b0093efa12aa1amr17924410ejb.1.1680080675859;
+        Wed, 29 Mar 2023 02:04:35 -0700 (PDT)
 Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id n3-20020a170906088300b009327ed171f2sm15437127eje.129.2023.03.29.02.04.33
+        by smtp.gmail.com with ESMTPSA id n3-20020a170906088300b009327ed171f2sm15437127eje.129.2023.03.29.02.04.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 02:04:33 -0700 (PDT)
+        Wed, 29 Mar 2023 02:04:35 -0700 (PDT)
 From:   Svyatoslav Ryhel <clamor95@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -60,9 +60,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Dmitry Osipenko <digetx@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/4] ARM: tegra: transformer: use labels for mmc in aliases
-Date:   Wed, 29 Mar 2023 12:04:00 +0300
-Message-Id: <20230329090403.5274-2-clamor95@gmail.com>
+Subject: [PATCH v3 3/4] ARM: tegra: asus-tf101: fix accelerometer mount matrix
+Date:   Wed, 29 Mar 2023 12:04:02 +0300
+Message-Id: <20230329090403.5274-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230329090403.5274-1-clamor95@gmail.com>
 References: <20230329090403.5274-1-clamor95@gmail.com>
@@ -72,99 +72,33 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use phandle references for mmc instead of path in aliases.
+Accelerometer mount matrix used in tf101 downstream is inverted.
+This new matrix was generated on actual device using calibration
+script, like on other transformers.
 
+Tested-by: Robert Eckelmann <longnoserob@gmail.com>
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/tegra114-asus-tf701t.dts           | 12 ++++++------
- .../boot/dts/tegra30-asus-transformer-common.dtsi    | 12 ++++++------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/tegra20-asus-tf101.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/tegra114-asus-tf701t.dts
-index 84a3eb38e71d..3a420ac969ff 100644
---- a/arch/arm/boot/dts/tegra114-asus-tf701t.dts
-+++ b/arch/arm/boot/dts/tegra114-asus-tf701t.dts
-@@ -13,9 +13,9 @@ / {
- 	chassis-type = "convertible";
+diff --git a/arch/arm/boot/dts/tegra20-asus-tf101.dts b/arch/arm/boot/dts/tegra20-asus-tf101.dts
+index 7b2969656ec9..dcb231f6e42d 100644
+--- a/arch/arm/boot/dts/tegra20-asus-tf101.dts
++++ b/arch/arm/boot/dts/tegra20-asus-tf101.dts
+@@ -577,9 +577,9 @@ accelerometer@f {
+ 					vdd-supply = <&vdd_1v8_sys>;
+ 					vddio-supply = <&vdd_1v8_sys>;
  
- 	aliases {
--		mmc0 = "/mmc@78000600"; /* eMMC */
--		mmc1 = "/mmc@78000400"; /* uSD slot */
--		mmc2 = "/mmc@78000000"; /* WiFi */
-+		mmc0 = &sdmmc4; /* eMMC */
-+		mmc1 = &sdmmc3; /* uSD slot */
-+		mmc2 = &sdmmc1; /* WiFi */
- 
- 		rtc0 = &palmas;
- 		rtc1 = "/rtc@7000e000";
-@@ -605,12 +605,12 @@ i2s@70080300 {
+-					mount-matrix =	 "1",  "0",  "0",
+-							 "0",  "1",  "0",
+-							 "0",  "0",  "1";
++					mount-matrix =	"-1",  "0",  "0",
++							 "0", "-1",  "0",
++							 "0",  "0", "-1";
+ 				};
+ 			};
  		};
- 	};
- 
--	mmc@78000000 {
-+	sdmmc1: mmc@78000000 {
- 		/* WiFi */
- 	};
- 
- 	/* MicroSD card */
--	mmc@78000400 {
-+	sdmmc3: mmc@78000400 {
- 		status = "okay";
- 
- 		bus-width = <4>;
-@@ -626,7 +626,7 @@ mmc@78000400 {
- 		pinctrl-0 = <&sdmmc3_default>;
- 	};
- 
--	mmc@78000600 {
-+	sdmmc4: mmc@78000600 {
- 		/* eMMC */
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-index 1861b2de2dc3..f32806f07989 100644
---- a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-@@ -12,9 +12,9 @@ / {
- 	chassis-type = "convertible";
- 
- 	aliases {
--		mmc0 = "/mmc@78000600"; /* eMMC */
--		mmc1 = "/mmc@78000000"; /* uSD slot */
--		mmc2 = "/mmc@78000400"; /* WiFi */
-+		mmc0 = &sdmmc4; /* eMMC */
-+		mmc1 = &sdmmc1; /* uSD slot */
-+		mmc2 = &sdmmc3; /* WiFi */
- 
- 		rtc0 = &pmic;
- 		rtc1 = "/rtc@7000e000";
-@@ -1388,7 +1388,7 @@ i2s@70080600 {		/* i2s3 */
- 		};
- 	};
- 
--	mmc@78000000 {
-+	sdmmc1: mmc@78000000 {
- 		status = "okay";
- 
- 		/* FIXME: Full 208Mhz clock rate doesn't work reliably */
-@@ -1401,7 +1401,7 @@ mmc@78000000 {
- 		vqmmc-supply = <&vddio_usd>;	/* ldo3 */
- 	};
- 
--	mmc@78000400 {
-+	sdmmc3: mmc@78000400 {
- 		status = "okay";
- 
- 		#address-cells = <1>;
-@@ -1431,7 +1431,7 @@ wifi@1 {
- 		};
- 	};
- 
--	mmc@78000600 {
-+	sdmmc4: mmc@78000600 {
- 		status = "okay";
- 		bus-width = <8>;
- 		vmmc-supply = <&vcore_emmc>;
 -- 
 2.37.2
 
