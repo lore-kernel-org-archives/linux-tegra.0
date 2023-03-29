@@ -2,156 +2,106 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203D5C761AF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 19:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C014C74A5B
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 19:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbjC2TRJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 15:17:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
+        id S230254AbjC2Tvv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 15:51:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbjC2TRI (ORCPT
+        with ESMTP id S230334AbjC2Tvr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 15:17:08 -0400
+        Wed, 29 Mar 2023 15:51:47 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540BD40C8;
-        Wed, 29 Mar 2023 12:17:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 609947DA0;
+        Wed, 29 Mar 2023 12:51:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1070DB8241C;
-        Wed, 29 Mar 2023 19:17:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA6FC433D2;
-        Wed, 29 Mar 2023 19:17:04 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F1A97B82435;
+        Wed, 29 Mar 2023 19:50:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A242C433D2;
+        Wed, 29 Mar 2023 19:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680117424;
-        bh=5C8dmAZ+o3akW5jgtH0MgmlKVAVR0yjs7CVlJLVZGA0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=XD02prjcCNlDc1psSDEItfpAr5d/im6gMLuWbUoBdEVe65wXKDHChBPPLutfA2zty
-         a7FJ/72yAQqxOg+23JIwd8mW74dFmO1WVL/LOKKskmKny8yUXtPhMpZ8TJGJAElhQ/
-         NywFqWAVCZl7wG4yJa6jcuuExa/Au36abld/j7SA9VtUBQnmReYwRIAC3NXdADCWjJ
-         jTfb/3qHUguAjNFSHU3F3/xB4Wjw/1gStbokg5qUCes3/t5IJDbpNwNrPj1+VT0j2A
-         365sEyaHjsJk06o8qfICHZqAjKv6cdYM7SzjbasorVJUyGhmg+jBssqWO5p++o5QcG
-         Ly8feYkui7bKw==
-Date:   Wed, 29 Mar 2023 14:17:03 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        lpieralisi@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
-        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
-        ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v4 10/10] PCI: tegra194: add interconnect support in
- Tegra234
-Message-ID: <20230329191703.GA3076491@bhelgaas>
+        s=k20201202; t=1680119445;
+        bh=DdQ/InU+JW6FxMcEa544An9vo1GjuN7pFdS9qPTwzR0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FBi6j/qw9eZ7S+XE7GyglFFe6nIcEepVGw/DOcSKnd/j6Eb3QlyQfhm366ogCr3qH
+         lYYkW+fqmZskhWF23oz88zeyfcXxvMECpRZI7H1w6HCyVu/uy+ZfeQletZYWD44Fol
+         shTvFUmhzCoHQfD0bjlXxZVwWhVJJBWPHRBCSFH/5lIVlpt5NzaEzsqdVOZrF2E614
+         1Qn11Ot6C1/KDBrSVTqLu07QFFa7KjVVM4kMUvgZIt++hX+lqrFSZYFiyhVfUgNNfD
+         efRwFGaND95MyeCelC4PyYTjsbka4+J+SGj4ayMKgROGEKMi3EFs4rq/Onk7QDvpKh
+         vpET/yHmUU+wQ==
+Date:   Wed, 29 Mar 2023 21:50:42 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com,
+        dmitry.osipenko@collabora.com, jonathanh@nvidia.com,
+        richard.leitner@linux.dev, treding@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] i2c: core: run atomic i2c xfer when !preemptible
+Message-ID: <ZCSWkhyQjnzByDoR@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Benjamin Bara <bbara93@gmail.com>, Lee Jones <lee@kernel.org>,
+        rafael.j.wysocki@intel.com, dmitry.osipenko@collabora.com,
+        jonathanh@nvidia.com, richard.leitner@linux.dev, treding@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>, stable@vger.kernel.org
+References: <20230327-tegra-pmic-reboot-v3-0-3c0ee3567e14@skidata.com>
+ <20230327-tegra-pmic-reboot-v3-2-3c0ee3567e14@skidata.com>
+ <ZCGuMzmS0Lz5WX2/@ninjato>
+ <CAJpcXm6bt100442y8ajz7kR0nF3Gm9PVVwo3EKVBDC4Pmd-7Ag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VVeP+HbfnOeUVDlq"
 Content-Disposition: inline
-In-Reply-To: <1d029226-9749-9211-2baa-7f9188641ce0@nvidia.com>
+In-Reply-To: <CAJpcXm6bt100442y8ajz7kR0nF3Gm9PVVwo3EKVBDC4Pmd-7Ag@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Mar 29, 2023 at 11:28:40PM +0530, Sumit Gupta wrote:
-> On 29/03/23 22:29, Bjorn Helgaas wrote:
-> > On Wed, Mar 29, 2023 at 02:44:34PM +0530, Sumit Gupta wrote:
-> > > On 28/03/23 23:23, Bjorn Helgaas wrote:
-> > > > > +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
-> > > > > +{
-> > > > > +     struct dw_pcie *pci = &pcie->pci;
-> > > > > +     u32 val, speed, width;
-> > > > > +
-> > > > > +     val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
-> > > > > +
-> > > > > +     speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
-> > > > > +     width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
-> > > > > +
-> > > > > +     val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
-> > > > > +
-> > > > > +     if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
-> > > > > +             dev_err(pcie->dev, "can't set bw[%u]\n", val);
-> > > > > +
-> > > > > +     clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> > > > 
-> > > > Array bounds violation; PCI_EXP_LNKSTA_CLS is 0x000f, so possible
-> > > > speed (CLS) values are 0..0xf and "speed - 1" values are -1..0xe.
-> > > > 
-> > > > pcie_gen_freq[] is of size 4 (valid indices 0..3).
-> > > > 
-> > > > I see that you're just *moving* this code, but might as well fix it.
-> > > > 
-> > > Thank you for the review.
-> > > Will include the below change in the same patch. Please let me know if any
-> > > issue.
-> > > 
-> > >   -       clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> > >   +       if (speed && (speed <= ARRAY_SIZE(pcie_gen_freq)))
-> > >   +               clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> > >   +       else
-> > >   +               clk_set_rate(pcie->core_clk, pcie_gen_freq[0]);
-> > 
-> > I didn't notice that speed is a u32, so -1 is not a possible value.
-> > Also, it's used earlier for PCIE_SPEED2MBS_ENC(), so you could do
-> > something like this:
-> > 
-> >    speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val) - 1;
-> >    if (speed >= ARRAY_SIZE(pcie_gen_freq))
-> >      speed = 0;
-> > 
-> >    val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
-> >          BITS_PER_BYTE);
-> >    ...
-> >    clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
-> 
-> I tried this change but PCIE_SPEED2MBS_ENC gives zero when speed value is
-> one. The speed value ranges from "1 to 4" and for value "1",
-> pcie_link_speed[speed] gives '0xff'.
 
-Oh, my fault, sorry!  I thought both places indexed the same array,
-but the first is pcie_link_speed[] (where all the possible values
-(0..0xf) are valid indices) and the second is pcie_gen_freq[] (where
-only 0..3 are valid).
+--VVeP+HbfnOeUVDlq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The below change works fine. Please share if its OK to add it in patch.
-> 
->   speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
->   if (!speed || speed >= ARRAY_SIZE(pcie_gen_freq))
->           speed = 1;
-> 
->   val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
-> BITS_PER_BYTE);
+On Mon, Mar 27, 2023 at 06:23:24PM +0200, Benjamin Bara wrote:
+> On Mon, 27 Mar 2023 at 16:54, Wolfram Sang <wsa@kernel.org> wrote:
+> > For the !CONFIG_PREEMPT_COUNT case, preemptible() is defined 0. So,
+> > don't we lose the irqs_disabled() check in that case?
+>=20
+> Thanks for the feedback!
+> PREEMPT_COUNT is selected by PREEMPTION, so I guess in the case of
+> !PREEMPT_COUNT,
+> we should be atomic (anyways)?
 
-So I don't think you need to clamp "speed" for indexing
-pcie_link_speed[] at all.
+Could you make sure please? Asking Peter Zijlstra might be a good idea.
+He helped me with the current implementation.
 
->   if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
->           dev_err(pcie->dev, "can't set bw[%u]\n", val);
-> 
->   clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
 
-What if you added a 0th entry to pcie_gen_freq[] so you can index it
-directly with the PCI_EXP_LNKSTA_CLS value the same way as
-pcie_link_speed[]?  Then you wouldn't need the "- 1" and only have to
-worry about going off the end:
+--VVeP+HbfnOeUVDlq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  static const unsigned int pcie_gen_freq[] = {
-    GEN1_CORE_CLK_FREQ,	  /* PCI_EXP_LNKSTA_CLS == 0; undefined */
-    GEN1_CORE_CLK_FREQ,
-    GEN2_CORE_CLK_FREQ,
-    GEN3_CORE_CLK_FREQ,
-    GEN4_CORE_CLK_FREQ,
-  };
+-----BEGIN PGP SIGNATURE-----
 
-  speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmQklpIACgkQFA3kzBSg
+KbYNNA/+Lc8HqdBhMVtjtKZDd3Km+SqobG8vzuo0octKy5b3E6mK3/y6ZdGssoBs
+EBZ30DQ1H3dBfNsLFz4Ydy2Dir2SLgcxBKT3IPp6bTzjheXumCjCMTa65N8jmBX2
+zX2eu9mVBv5XZAZ1pVzeZVK9EVUU2u/stFuknIg8Cmk+jEgaNCxkKsCnPbnL2l/a
+lKzps+mfNQWI+Tda5XdBPmLP0gtcHvqQpAJ2SRvDwtf03w+YLY4dJ2jN6IhuwSGO
+fisy58cwOPwgen46mk3BLPoEftAw9Ss7smkGmQOb8QY6ZWBo1d2KaxOnaY325kI7
+oGqqtJP1lWinThlqmEhNfUnqJpDrSySgisyT1NKJ6b60Wr0u9BbM8rkfclpnnzyY
+QGZW7lfL4EFzKKbMq1GQiMCDn3tN9nR35W9KtqXPM7i3urOHKWQ3/3dFjcv69Tuk
+QU79XKhnrzEhb43YAhzpfYb8QMB4YdahH78/PhDrwTsfZodqN5yNJeAvx70XiCYp
+3J9jrzmwKquFhz/too/2CLjsiJHie9tcwQZthiV/9+NsulXGg4E0Kv9XKKINB4+e
+condSDcIwRbw0c0T5V5GSHILnNptQywbPoU8npgThFQGsJX4dluRv9+SD4K4hwsf
+qOPVXjiwt+UIZPyz3qW0dHp+dD4TgwmyuH3rl7HAZyk4Csiu/Vw=
+=JbH5
+-----END PGP SIGNATURE-----
 
-  val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
-        BITS_PER_BYTE);
-
-  if (speed >= ARRAY_SIZE(pcie_gen_freq))
-    speed = 0;
-  clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
-
-Bjorn
+--VVeP+HbfnOeUVDlq--
