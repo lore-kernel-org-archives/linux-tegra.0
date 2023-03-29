@@ -2,116 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBFAC761AF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 18:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203D5C761AF
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 19:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229638AbjC2SRs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 14:17:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50340 "EHLO
+        id S230200AbjC2TRJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 15:17:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjC2SRr (ORCPT
+        with ESMTP id S229687AbjC2TRI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 14:17:47 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CC0BC46AF;
-        Wed, 29 Mar 2023 11:17:46 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDD751576;
-        Wed, 29 Mar 2023 11:18:30 -0700 (PDT)
-Received: from bogus (unknown [10.57.52.160])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 158D23F6C4;
-        Wed, 29 Mar 2023 11:17:36 -0700 (PDT)
-Date:   Wed, 29 Mar 2023 19:17:02 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Anup Patel <anup@brainfault.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Subject: Re: [PATCH 16/19] cpuidle: Adjust includes to remove of_device.h
-Message-ID: <20230329181702.x5u562himerwolfg@bogus>
-References: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
- <20230329-dt-cpu-header-cleanups-v1-16-581e2605fe47@kernel.org>
+        Wed, 29 Mar 2023 15:17:08 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540BD40C8;
+        Wed, 29 Mar 2023 12:17:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1070DB8241C;
+        Wed, 29 Mar 2023 19:17:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA6FC433D2;
+        Wed, 29 Mar 2023 19:17:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680117424;
+        bh=5C8dmAZ+o3akW5jgtH0MgmlKVAVR0yjs7CVlJLVZGA0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=XD02prjcCNlDc1psSDEItfpAr5d/im6gMLuWbUoBdEVe65wXKDHChBPPLutfA2zty
+         a7FJ/72yAQqxOg+23JIwd8mW74dFmO1WVL/LOKKskmKny8yUXtPhMpZ8TJGJAElhQ/
+         NywFqWAVCZl7wG4yJa6jcuuExa/Au36abld/j7SA9VtUBQnmReYwRIAC3NXdADCWjJ
+         jTfb/3qHUguAjNFSHU3F3/xB4Wjw/1gStbokg5qUCes3/t5IJDbpNwNrPj1+VT0j2A
+         365sEyaHjsJk06o8qfICHZqAjKv6cdYM7SzjbasorVJUyGhmg+jBssqWO5p++o5QcG
+         Ly8feYkui7bKw==
+Date:   Wed, 29 Mar 2023 14:17:03 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lpieralisi@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
+        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
+        ishah@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch v4 10/10] PCI: tegra194: add interconnect support in
+ Tegra234
+Message-ID: <20230329191703.GA3076491@bhelgaas>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-16-581e2605fe47@kernel.org>
+In-Reply-To: <1d029226-9749-9211-2baa-7f9188641ce0@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Mar 29, 2023 at 10:52:13AM -0500, Rob Herring wrote:
-> Now that of_cpu_device_node_get() is defined in of.h, of_device.h is just
-> implicitly including other includes, and is no longer needed. Adjust the
-> include files with what was implicitly included by of_device.h (cpu.h,
-> cpuhotplug.h, of.h, and of_platform.h) and drop including of_device.h.
+On Wed, Mar 29, 2023 at 11:28:40PM +0530, Sumit Gupta wrote:
+> On 29/03/23 22:29, Bjorn Helgaas wrote:
+> > On Wed, Mar 29, 2023 at 02:44:34PM +0530, Sumit Gupta wrote:
+> > > On 28/03/23 23:23, Bjorn Helgaas wrote:
+> > > > > +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
+> > > > > +{
+> > > > > +     struct dw_pcie *pci = &pcie->pci;
+> > > > > +     u32 val, speed, width;
+> > > > > +
+> > > > > +     val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
+> > > > > +
+> > > > > +     speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+> > > > > +     width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
+> > > > > +
+> > > > > +     val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
+> > > > > +
+> > > > > +     if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
+> > > > > +             dev_err(pcie->dev, "can't set bw[%u]\n", val);
+> > > > > +
+> > > > > +     clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+> > > > 
+> > > > Array bounds violation; PCI_EXP_LNKSTA_CLS is 0x000f, so possible
+> > > > speed (CLS) values are 0..0xf and "speed - 1" values are -1..0xe.
+> > > > 
+> > > > pcie_gen_freq[] is of size 4 (valid indices 0..3).
+> > > > 
+> > > > I see that you're just *moving* this code, but might as well fix it.
+> > > > 
+> > > Thank you for the review.
+> > > Will include the below change in the same patch. Please let me know if any
+> > > issue.
+> > > 
+> > >   -       clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+> > >   +       if (speed && (speed <= ARRAY_SIZE(pcie_gen_freq)))
+> > >   +               clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+> > >   +       else
+> > >   +               clk_set_rate(pcie->core_clk, pcie_gen_freq[0]);
+> > 
+> > I didn't notice that speed is a u32, so -1 is not a possible value.
+> > Also, it's used earlier for PCIE_SPEED2MBS_ENC(), so you could do
+> > something like this:
+> > 
+> >    speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val) - 1;
+> >    if (speed >= ARRAY_SIZE(pcie_gen_freq))
+> >      speed = 0;
+> > 
+> >    val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
+> >          BITS_PER_BYTE);
+> >    ...
+> >    clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Please ack and I will take the series via the DT tree.
-> ---
->  drivers/cpuidle/cpuidle-psci.c      | 1 -
->  drivers/cpuidle/cpuidle-qcom-spm.c  | 3 +--
->  drivers/cpuidle/cpuidle-riscv-sbi.c | 2 +-
->  drivers/cpuidle/dt_idle_states.c    | 1 -
->  4 files changed, 2 insertions(+), 5 deletions(-)
+> I tried this change but PCIE_SPEED2MBS_ENC gives zero when speed value is
+> one. The speed value ranges from "1 to 4" and for value "1",
+> pcie_link_speed[speed] gives '0xff'.
+
+Oh, my fault, sorry!  I thought both places indexed the same array,
+but the first is pcie_link_speed[] (where all the possible values
+(0..0xf) are valid indices) and the second is pcie_gen_freq[] (where
+only 0..3 are valid).
+
+> The below change works fine. Please share if its OK to add it in patch.
 > 
-> diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
-> index 6de027f9f6f5..bf68920d038a 100644
-> --- a/drivers/cpuidle/cpuidle-psci.c
-> +++ b/drivers/cpuidle/cpuidle-psci.c
-> @@ -16,7 +16,6 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/psci.h>
->  #include <linux/pm_domain.h>
+>   speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+>   if (!speed || speed >= ARRAY_SIZE(pcie_gen_freq))
+>           speed = 1;
+> 
+>   val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
+> BITS_PER_BYTE);
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+So I don't think you need to clamp "speed" for indexing
+pcie_link_speed[] at all.
 
--- 
-Regards,
-Sudeep
+>   if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
+>           dev_err(pcie->dev, "can't set bw[%u]\n", val);
+> 
+>   clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+
+What if you added a 0th entry to pcie_gen_freq[] so you can index it
+directly with the PCI_EXP_LNKSTA_CLS value the same way as
+pcie_link_speed[]?  Then you wouldn't need the "- 1" and only have to
+worry about going off the end:
+
+  static const unsigned int pcie_gen_freq[] = {
+    GEN1_CORE_CLK_FREQ,	  /* PCI_EXP_LNKSTA_CLS == 0; undefined */
+    GEN1_CORE_CLK_FREQ,
+    GEN2_CORE_CLK_FREQ,
+    GEN3_CORE_CLK_FREQ,
+    GEN4_CORE_CLK_FREQ,
+  };
+
+  speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+
+  val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
+        BITS_PER_BYTE);
+
+  if (speed >= ARRAY_SIZE(pcie_gen_freq))
+    speed = 0;
+  clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
+
+Bjorn
