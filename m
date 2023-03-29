@@ -2,59 +2,62 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAD9C761AF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F586C77B6D
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:58:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231455AbjC2PyG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 11:54:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43248 "EHLO
+        id S231239AbjC2P6p convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 11:58:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231229AbjC2PxY (ORCPT
+        with ESMTP id S230494AbjC2P62 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 11:53:24 -0400
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A7894;
-        Wed, 29 Mar 2023 08:53:23 -0700 (PDT)
-Received: by mail-ot1-f47.google.com with SMTP id 61-20020a9d02c3000000b0069fe8de3139so8451454otl.1;
-        Wed, 29 Mar 2023 08:53:23 -0700 (PDT)
+        Wed, 29 Mar 2023 11:58:28 -0400
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D99D15BBE;
+        Wed, 29 Mar 2023 08:57:50 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id er13so24283845edb.9;
+        Wed, 29 Mar 2023 08:57:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680105203;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GcRNyMomlVIyDJBO4v13lmumWoZCHsVn17zoo+wPdkk=;
-        b=JcuCBpIzgihULYhOc1Ur+hGhyYGwvtuCpYrTecfzIkA3LXkM57CD2d3Ay9oCjyabSF
-         Ea0nY+fBWM2la6FW0CRXvEw7lCbLF1l1VTK24MouFE/Bf58EjfGF1OF66neagMS6HBVZ
-         qZfnaJnrHwJHhXgdPGXX+cW+lyEjAHKrcu58eS5ka2jSZgv8qEEGsTecV1CqkidcVPXh
-         IwAhH01NazwjsSwbMiBf1zx8E2lLU1ANDdYW+FzAB/U9DIWeXThMROUF16KDdcXnF38J
-         FmAw255IXi0iLkdg0vnYsN7uuCgmXCFAaV8eHdDZNZZN7HwCtPXiXKvmNqS3KNLVEQeP
-         qmCA==
-X-Gm-Message-State: AO0yUKV/1jDjD2fVHRPN5N8SfPPuSbGddbxG9Dko0OYg54YWSqNkQu4t
-        0tvocvEAk5Bl0jWYU8gd4Q==
-X-Google-Smtp-Source: AK7set+G4RUI7e7LVlBDXGQ8p8x17CahM2R0t8c+RybdcRc83FcjeXtVKZHsxX3oO+Yqeus+IJNu+w==
-X-Received: by 2002:a05:6830:124e:b0:68e:da51:2cb2 with SMTP id s14-20020a056830124e00b0068eda512cb2mr10233310otp.37.1680105202916;
-        Wed, 29 Mar 2023 08:53:22 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id y26-20020a056830209a00b006a06e7972ebsm6242943otq.38.2023.03.29.08.53.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 08:53:22 -0700 (PDT)
-Received: (nullmailer pid 3198087 invoked by uid 1000);
-        Wed, 29 Mar 2023 15:52:45 -0000
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 29 Mar 2023 10:52:10 -0500
-Subject: [PATCH 13/19] soc: mediatek: mtk-svs: Add explicit include for
- cpu.h
+        d=1e100.net; s=20210112; t=1680105431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mv45vqNNvk7gfjj9ywv5t87xL9EGo+L1vyvtzDS68LU=;
+        b=zneWHeMjHgnz/FlxY9gOdWel+Biu6vY1wIVNBypUud5cFuWy94VgNkIcDMlQshlMC1
+         kSohzem/DqzemmVfmIGPJZcGllbtu79NUk1TL57qBwIkdrYYywC0n5aj0toQG3B2XDWb
+         HDULPB40D7bHs9ihfkasaCJa2joUY7YG4NTeMOGVaPlrVEdzpfro6wBPwDjX15ErEA6k
+         epf4TKCjT2oe/LbqftMpyKMBBf0Ws07rCnQ5POrJZfQKR02lB00N2Vx5UbJPXl6aynjq
+         Y6HfckyT1N2r+FRHYus8JcOxbaXxGVnZRyhI3XYMKTNOodty+Em/LLhTUI4KiGxrWj80
+         laSA==
+X-Gm-Message-State: AAQBX9c1NNl26lM1cCqY0dkxXjKpPvohyKm3pYfdIHThNisOc8vYyZRo
+        p7MuNNMcfbhSaQfrXyqIGIf/QB7ATNIq6/1b
+X-Google-Smtp-Source: AKy350bDNHP9CTNtTgHuTD8bHAM78SJBcIfhWL/xWstN3I5lT2k2VUVe+z1yT6ySAusC85ZuE0Q6RQ==
+X-Received: by 2002:a17:906:3288:b0:8b1:fc58:a4ad with SMTP id 8-20020a170906328800b008b1fc58a4admr21801432ejw.11.1680105431102;
+        Wed, 29 Mar 2023 08:57:11 -0700 (PDT)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
+        by smtp.gmail.com with ESMTPSA id wf4-20020a170907d68400b0093f3d12d64bsm5930422ejc.179.2023.03.29.08.57.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Mar 2023 08:57:11 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id q7-20020a05600c46c700b003ef6e809574so6728778wmo.4;
+        Wed, 29 Mar 2023 08:57:10 -0700 (PDT)
+X-Received: by 2002:a5d:591c:0:b0:2ca:4533:5d6a with SMTP id
+ v28-20020a5d591c000000b002ca45335d6amr4154237wrd.7.1680105410028; Wed, 29 Mar
+ 2023 08:56:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230329-dt-cpu-header-cleanups-v1-13-581e2605fe47@kernel.org>
-References: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
-In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
+References: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org> <20230329-dt-cpu-header-cleanups-v1-6-581e2605fe47@kernel.org>
+In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-6-581e2605fe47@kernel.org>
+Reply-To: wens@csie.org
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 29 Mar 2023 23:56:38 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64tNZa_LCUpHBbBUdpftB_Dms=oHcb7ZAD42qL-ov73hw@mail.gmail.com>
+Message-ID: <CAGb2v64tNZa_LCUpHBbBUdpftB_Dms=oHcb7ZAD42qL-ov73hw@mail.gmail.com>
+Subject: Re: [PATCH 06/19] ARM: sunxi: Drop of_device.h include
+To:     Rob Herring <robh@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
         Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
         Paul Walmsley <paul.walmsley@sifive.com>,
@@ -88,45 +91,50 @@ To:     "David S. Miller" <davem@davemloft.net>,
         Jiaxun Yang <jiaxun.yang@flygoat.com>,
         Marc Zyngier <maz@kernel.org>,
         Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-riscv@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org
-X-Mailer: b4 0.13-dev
+        Stephen Boyd <sboyd@kernel.org>, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Removing the include of cpu.h from of_device.h (included by
-of_platform.h) causes an error:
+On Wed, Mar 29, 2023 at 11:53 PM Rob Herring <robh@kernel.org> wrote:
+>
+> Now that of_cpu_device_node_get() is defined in of.h, of_device.h is just
+> implicitly including other includes, and is no longer needed. Just drop
+> including of_device.h as of.h is already included.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> Please ack and I will take the series via the DT tree.
 
-drivers/soc/mediatek/mtk-svs.c:2134:41: error: implicit declaration of function 'get_cpu_device'; did you mean 'get_swap_device'? [-Werror=implicit-function-declaration]
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-of_platform.h is still needed for of_find_device_by_node().
+I doubt this file would ever see any more changes.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
-Please ack and I will take the series via the DT tree.
----
- drivers/soc/mediatek/mtk-svs.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/mediatek/mtk-svs.c b/drivers/soc/mediatek/mtk-svs.c
-index f26eb2f637d5..1b7579a5bec6 100644
---- a/drivers/soc/mediatek/mtk-svs.c
-+++ b/drivers/soc/mediatek/mtk-svs.c
-@@ -7,6 +7,7 @@
- #include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/completion.h>
-+#include <linux/cpu.h>
- #include <linux/cpuidle.h>
- #include <linux/debugfs.h>
- #include <linux/device.h>
-
--- 
-2.39.2
-
+> ---
+>  arch/arm/mach-sunxi/mc_smp.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+> index 26cbce135338..cb63921232a6 100644
+> --- a/arch/arm/mach-sunxi/mc_smp.c
+> +++ b/arch/arm/mach-sunxi/mc_smp.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/irqchip/arm-gic.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/of_device.h>
+>  #include <linux/smp.h>
+>
+>  #include <asm/cacheflush.h>
+>
+> --
+> 2.39.2
+>
