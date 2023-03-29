@@ -2,318 +2,98 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C63C6FD18
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 11:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F0DC74A5B
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:07:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbjC2L5b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 07:57:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32868 "EHLO
+        id S230360AbjC2PHX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 11:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbjC2L5a (ORCPT
+        with ESMTP id S229854AbjC2PHW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 07:57:30 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE73B44B4;
-        Wed, 29 Mar 2023 04:57:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8201AB822E3;
-        Wed, 29 Mar 2023 11:56:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD3C7C433EF;
-        Wed, 29 Mar 2023 11:56:26 +0000 (UTC)
-Message-ID: <1ce12330-47d9-92e6-46a5-455641e4154f@xs4all.nl>
-Date:   Wed, 29 Mar 2023 13:56:25 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [RESEND PATCH v4 03/21] staging: media: tegra-video: fix
- .vidioc_enum_fmt_vid_cap to return all formats
-Content-Language: en-US
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 29 Mar 2023 11:07:22 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D9735B7;
+        Wed, 29 Mar 2023 08:07:17 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id b20so64678335edd.1;
+        Wed, 29 Mar 2023 08:07:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680102436;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=urzvodPCAGhfqi2EGiuZIZ1TFiaE63Fj1P+4W8yWfH0=;
+        b=BVgP6rm8w4s7YwaUxETfy06Z70rwJtlhSAN63afhCWK0MGSl0Un7qF7vDEcv9cC8Lu
+         AzvBYlTOS6sdhEcWl5l9+23NmOO9EivxMfEiGeuDKP4uBXjtznFNSCW65Xf/Ln03i1iI
+         2dLnp41PgnW7s5ETRv1wW2eVnEXrmGTRSntT4IDLDLjLMfOkrJ+9AAyILgQ5uI56q6Xr
+         2MTp27y8TGSi38CBwoaawUYpLs63B0CQHw9ZFDWeN2q3w0uIGk2k0hJB99kczklkRXvw
+         4xS2i5EDp6fNp40/AyDyevJN07G+ldYdMV8a6BOz1NqcsifHliNTMCs4YUEEX5UJR/Uj
+         9BRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680102436;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=urzvodPCAGhfqi2EGiuZIZ1TFiaE63Fj1P+4W8yWfH0=;
+        b=vckFnZ+yER9Hra0QmlcoAsBwmyJ4p/eVUyfZawwmAHHYsGOt9ysaUr5NtmhUjcVWAM
+         wLlTiEiCsDespJMqDT9r5yQhP0/CVzesvvKDlQoz4Fslc6xm/UHQzCuFLCQl2TFX0sL2
+         /t7xj0qDBR435hm4Iz1IYiUlioU6aaALpZYO2z3ppbUsVGGoAvcb6KpXkssexKNCEiTk
+         dHYVxTkqbQom7Qma9OFDZmiNK0WFJLcKoMDWKu+waoHluzt4NdsGjpNa8zjFDXH7yQKz
+         whK76X/b5SY9b5IKBLQsr5iT7wg+ZGVHaCQbVKj3SyiOt6Ivwc0Yf87PrdeVoSDVD8NB
+         W7xA==
+X-Gm-Message-State: AAQBX9cFUOtI1ENIq0HCJYd0ffRffgAGYGpBv2AO4NfFTY7SUEgQUS9y
+        gQ3S9dTL0e6gQaGMplehN7M=
+X-Google-Smtp-Source: AKy350bzcLeDJRyj3EN5E96/6HGU6AakMYtGGCS7Cx4i2tyCnQRYAMqCe11gcOrfM4+8X/Xzf+04tQ==
+X-Received: by 2002:a17:907:77d3:b0:92b:f019:d5eb with SMTP id kz19-20020a17090777d300b0092bf019d5ebmr18846498ejc.44.1680102435738;
+        Wed, 29 Mar 2023 08:07:15 -0700 (PDT)
+Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id p23-20020a1709066a9700b008d53ea69227sm16540890ejr.224.2023.03.29.08.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Mar 2023 08:07:15 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>
-References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
- <20230309144320.2937553-4-luca.ceresoli@bootlin.com>
- <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
-In-Reply-To: <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 1/4] dt-bindings: tegra: Document Jetson Orin NX
+Date:   Wed, 29 Mar 2023 17:07:07 +0200
+Message-Id: <20230329150710.773441-2-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230329150710.773441-1-thierry.reding@gmail.com>
+References: <20230329150710.773441-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Luca,
+From: Thierry Reding <treding@nvidia.com>
 
-On 29/03/2023 13:16, Hans Verkuil wrote:
-> Hi Luca,
-> 
-> I finally found the time to test this series. It looks OK, except for this patch.
-> The list of supported formats really has to be the intersection of what the tegra
-> supports and what the sensor supports.
-> 
-> Otherwise you would advertise pixelformats that cannot be used, and the application
-> would have no way of knowing that.
-> 
-> This patch needs to be dropped.
-> 
-> I'll run this series through my other checks, and I will let you know today if
-> anything else needs to be changed.
+The Jetson Orin NX is the latest iteration in the NX family of Jetson
+products. Document the compatible strings used for these devices.
 
-All other checks passed, so this is the only issue blocking this series from being
-merged.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ Documentation/devicetree/bindings/arm/tegra.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Regards,
-
-	Hans
-
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> On 09/03/2023 15:43, Luca Ceresoli wrote:
->> The .vidioc_enum_fmt_vid_cap (called tegra_channel_enum_format() here)
->> should return all the supported formats. Instead the current implementation
->> computes the intersection between the formats it supports and those
->> supported by the first subdev in the stream (typically the image sensor).
->>
->> Remove all the unnecessary logic that supports such algorithm. In order to
->> do this, also change the Tegra210 CSI TPG formats from the current
->> open-coded implementation in vi_tpg_fmts_bitmap_init() to a const array in
->> tegra210.c, just like the one that describes the regular formats.
->>
->> Fixes: 3d8a97eabef0 ("media: tegra-video: Add Tegra210 Video input driver")
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>
->> ---
->>
->> Changed in v4:
->>  - Added review tags
->>
->> No changes in v3
->> No changes in v2
->> ---
->>  drivers/staging/media/tegra-video/tegra210.c |   7 +-
->>  drivers/staging/media/tegra-video/vi.c       | 103 +------------------
->>  drivers/staging/media/tegra-video/vi.h       |   4 -
->>  3 files changed, 9 insertions(+), 105 deletions(-)
->>
->> diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
->> index d58370a84737..eb19dd5107ce 100644
->> --- a/drivers/staging/media/tegra-video/tegra210.c
->> +++ b/drivers/staging/media/tegra-video/tegra210.c
->> @@ -683,8 +683,12 @@ enum tegra210_image_format {
->>  	V4L2_PIX_FMT_##FOURCC,						\
->>  }
->>  
->> -/* Tegra210 supported video formats */
->>  static const struct tegra_video_format tegra210_video_formats[] = {
->> +#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
->> +	/* VI only support 2 formats in TPG mode */
->> +	TEGRA210_VIDEO_FMT(RAW10,  10, SRGGB10_1X10,      2, T_R16_I,    SRGGB10),
->> +	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X32_PADHI, 4, T_A8B8G8R8, RGBX32),
->> +#else
->>  	/* RAW 8 */
->>  	TEGRA210_VIDEO_FMT(RAW8, 8, SRGGB8_1X8, 1, T_L8, SRGGB8),
->>  	TEGRA210_VIDEO_FMT(RAW8, 8, SGRBG8_1X8, 1, T_L8, SGRBG8),
->> @@ -714,6 +718,7 @@ static const struct tegra_video_format tegra210_video_formats[] = {
->>  	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, YUYV),
->>  	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, VYUY),
->>  	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, UYVY),
->> +#endif
->>  };
->>  
->>  /* Tegra210 VI operations */
->> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
->> index 11dd142c98c5..9dba6e97ebdd 100644
->> --- a/drivers/staging/media/tegra-video/vi.c
->> +++ b/drivers/staging/media/tegra-video/vi.c
->> @@ -3,7 +3,6 @@
->>   * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
->>   */
->>  
->> -#include <linux/bitmap.h>
->>  #include <linux/clk.h>
->>  #include <linux/delay.h>
->>  #include <linux/host1x.h>
->> @@ -73,15 +72,6 @@ static int tegra_get_format_idx_by_code(struct tegra_vi *vi,
->>  	return -1;
->>  }
->>  
->> -static u32 tegra_get_format_fourcc_by_idx(struct tegra_vi *vi,
->> -					  unsigned int index)
->> -{
->> -	if (index >= vi->soc->nformats)
->> -		return -EINVAL;
->> -
->> -	return vi->soc->video_formats[index].fourcc;
->> -}
->> -
->>  static const struct tegra_video_format *
->>  tegra_get_format_by_fourcc(struct tegra_vi *vi, u32 fourcc)
->>  {
->> @@ -430,19 +420,12 @@ static int tegra_channel_enum_format(struct file *file, void *fh,
->>  				     struct v4l2_fmtdesc *f)
->>  {
->>  	struct tegra_vi_channel *chan = video_drvdata(file);
->> -	unsigned int index = 0, i;
->> -	unsigned long *fmts_bitmap = chan->tpg_fmts_bitmap;
->> -
->> -	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
->> -		fmts_bitmap = chan->fmts_bitmap;
->> +	const struct tegra_vi_soc *soc = chan->vi->soc;
->>  
->> -	if (f->index >= bitmap_weight(fmts_bitmap, MAX_FORMAT_NUM))
->> +	if (f->index >= soc->nformats)
->>  		return -EINVAL;
->>  
->> -	for (i = 0; i < f->index + 1; i++, index++)
->> -		index = find_next_bit(fmts_bitmap, MAX_FORMAT_NUM, index);
->> -
->> -	f->pixelformat = tegra_get_format_fourcc_by_idx(chan->vi, index - 1);
->> +	f->pixelformat = soc->video_formats[f->index].fourcc;
->>  
->>  	return 0;
->>  }
->> @@ -1059,78 +1042,6 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
->>  	return 0;
->>  }
->>  
->> -/* VI only support 2 formats in TPG mode */
->> -static void vi_tpg_fmts_bitmap_init(struct tegra_vi_channel *chan)
->> -{
->> -	int index;
->> -
->> -	bitmap_zero(chan->tpg_fmts_bitmap, MAX_FORMAT_NUM);
->> -
->> -	index = tegra_get_format_idx_by_code(chan->vi,
->> -					     MEDIA_BUS_FMT_SRGGB10_1X10, 0);
->> -	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
->> -
->> -	index = tegra_get_format_idx_by_code(chan->vi,
->> -					     MEDIA_BUS_FMT_RGB888_1X32_PADHI,
->> -					     0);
->> -	bitmap_set(chan->tpg_fmts_bitmap, index, 1);
->> -}
->> -
->> -static int vi_fmts_bitmap_init(struct tegra_vi_channel *chan)
->> -{
->> -	int index, ret, match_code = 0;
->> -	struct v4l2_subdev *subdev;
->> -	struct v4l2_subdev_mbus_code_enum code = {
->> -		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
->> -	};
->> -
->> -	bitmap_zero(chan->fmts_bitmap, MAX_FORMAT_NUM);
->> -
->> -	/*
->> -	 * Set the bitmap bits based on all the matched formats between the
->> -	 * available media bus formats of sub-device and the pre-defined Tegra
->> -	 * supported video formats.
->> -	 */
->> -	subdev = tegra_channel_get_remote_source_subdev(chan);
->> -	while (1) {
->> -		ret = v4l2_subdev_call(subdev, pad, enum_mbus_code,
->> -				       NULL, &code);
->> -		if (ret < 0)
->> -			break;
->> -
->> -		index = tegra_get_format_idx_by_code(chan->vi, code.code, 0);
->> -		while (index >= 0) {
->> -			bitmap_set(chan->fmts_bitmap, index, 1);
->> -			if (!match_code)
->> -				match_code = code.code;
->> -			/* look for other formats with same mbus code */
->> -			index = tegra_get_format_idx_by_code(chan->vi,
->> -							     code.code,
->> -							     index + 1);
->> -		}
->> -
->> -		code.index++;
->> -	}
->> -
->> -	/*
->> -	 * Set the bitmap bit corresponding to default tegra video format if
->> -	 * there are no matched formats.
->> -	 */
->> -	if (!match_code) {
->> -		match_code = tegra_default_format.code;
->> -		index = tegra_get_format_idx_by_code(chan->vi, match_code, 0);
->> -		if (WARN_ON(index < 0))
->> -			return -EINVAL;
->> -
->> -		bitmap_set(chan->fmts_bitmap, index, 1);
->> -	}
->> -
->> -	/* initialize channel format to the sub-device active format */
->> -	tegra_channel_set_subdev_active_fmt(chan);
->> -
->> -	return 0;
->> -}
->> -
->>  static void tegra_channel_host1x_syncpts_free(struct tegra_vi_channel *chan)
->>  {
->>  	int i;
->> @@ -1501,7 +1412,6 @@ int tegra_v4l2_nodes_setup_tpg(struct tegra_video_device *vid)
->>  			goto cleanup;
->>  
->>  		v4l2_set_subdev_hostdata(&csi_chan->subdev, vi_chan);
->> -		vi_tpg_fmts_bitmap_init(vi_chan);
->>  		csi_chan = list_next_entry(csi_chan, list);
->>  	}
->>  
->> @@ -1721,13 +1631,6 @@ static int tegra_vi_graph_notify_complete(struct v4l2_async_notifier *notifier)
->>  		goto unregister_video;
->>  	}
->>  
->> -	ret = vi_fmts_bitmap_init(chan);
->> -	if (ret < 0) {
->> -		dev_err(vi->dev,
->> -			"failed to initialize formats bitmap: %d\n", ret);
->> -		goto unregister_video;
->> -	}
->> -
->>  	subdev = tegra_channel_get_remote_csi_subdev(chan);
->>  	if (!subdev) {
->>  		ret = -ENODEV;
->> diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
->> index a68e2c02c7b0..183796c8a46a 100644
->> --- a/drivers/staging/media/tegra-video/vi.h
->> +++ b/drivers/staging/media/tegra-video/vi.h
->> @@ -163,8 +163,6 @@ struct tegra_vi_graph_entity {
->>   *
->>   * @ctrl_handler: V4L2 control handler of this video channel
->>   * @syncpt_timeout_retry: syncpt timeout retry count for the capture
->> - * @fmts_bitmap: a bitmap for supported formats matching v4l2 subdev formats
->> - * @tpg_fmts_bitmap: a bitmap for supported TPG formats
->>   * @pg_mode: test pattern generator mode (disabled/direct/patch)
->>   * @notifier: V4L2 asynchronous subdevs notifier
->>   */
->> @@ -205,8 +203,6 @@ struct tegra_vi_channel {
->>  
->>  	struct v4l2_ctrl_handler ctrl_handler;
->>  	unsigned int syncpt_timeout_retry;
->> -	DECLARE_BITMAP(fmts_bitmap, MAX_FORMAT_NUM);
->> -	DECLARE_BITMAP(tpg_fmts_bitmap, MAX_FORMAT_NUM);
->>  	enum tegra_vi_pg_mode pg_mode;
->>  
->>  	struct v4l2_async_notifier notifier;
-> 
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+index 1f62253f9410..c1a62eb1b925 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -167,5 +167,9 @@ properties:
+           - const: nvidia,p3737-0000+p3701-0000
+           - const: nvidia,p3701-0000
+           - const: nvidia,tegra234
++      - description: Jetson Orin NX
++        items:
++          - const: nvidia,p3767-0000
++          - const: nvidia,tegra234
+ 
+ additionalProperties: true
+-- 
+2.40.0
 
