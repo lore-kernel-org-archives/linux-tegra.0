@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABCAC7EE37
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7BDC7EE33
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231248AbjC2Px2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 11:53:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42830 "EHLO
+        id S231237AbjC2Px0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 11:53:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231165AbjC2PxL (ORCPT
+        with ESMTP id S230110AbjC2PxO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 11:53:11 -0400
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7048059C3;
-        Wed, 29 Mar 2023 08:53:01 -0700 (PDT)
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-17aeb49429eso16663520fac.6;
-        Wed, 29 Mar 2023 08:53:01 -0700 (PDT)
+        Wed, 29 Mar 2023 11:53:14 -0400
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78ABA10F0;
+        Wed, 29 Mar 2023 08:53:08 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id p2-20020a056820044200b0053e5914a50fso1233252oou.2;
+        Wed, 29 Mar 2023 08:53:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680105180;
+        d=1e100.net; s=20210112; t=1680105188;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tGkcT5R0a8JeH9pr+tvR6Dp+SnQFVzxwMvRKP+oraeM=;
-        b=EORiKky2kD8bzQ9Zct1R+M+iXdqGVkMXmNFaEHHAekbprofIuLr1Oj+Xul/H98XlmG
-         5YEyPPIDLbJgAOlhdgkC32U/m4SXzV0SKXiDaBXvzl7aqmtGAECoif9nTlb6cmWwLaQ3
-         wwFXchs7MWlKxkddrz4Y0UUA0N5kSkypp2kfpaP2uwyCDH8sfZPy5k2KAfcSxp1MefBr
-         sOutmoCd/uoDi8LjADVZ6WG7K9WZzJLOGW++m2Hcck3gMa4X5MbdioLs4ZslPT45n1gj
-         hTNf7SKHCKmOulNVrqZMSZU+tzlZglFMkmukBuCRRt4wmAkFYEM2JHSEvps7JGmGhL2n
-         9hhw==
-X-Gm-Message-State: AAQBX9fuTyqAuL+RWwp5YcOyX2EJPnrhHc8dL23cdNBGryI+fnkxktip
-        RuVEfhBuAnIDzS8uxhrzCQ==
-X-Google-Smtp-Source: AKy350Zzh18IDSS9PRm/nm4uzfWROBk4i8K8e/GnmjZJixonIc4wyA8Ejs1S5hYlKdIJ6vpTCTaGZw==
-X-Received: by 2002:a05:6870:1fcd:b0:172:5de5:785 with SMTP id gp13-20020a0568701fcd00b001725de50785mr13981327oac.6.1680105180656;
-        Wed, 29 Mar 2023 08:53:00 -0700 (PDT)
+        bh=/qOq2NGpUAbxXp1g8F5WR4fkX2S7bH0m0xxnMP60FJ8=;
+        b=XkouJt2RhMRBqqeek+OXcgxC+1hWWNASgQzUkUrKoEW7RtA/WdqoU9GOtiIPVKFXzo
+         sBR6a4W4Zg6cbvEQ+qWh7bZegVwFBM6n9Owe45S6Q6P6hWPvp3obfuLoT67jYsQBFKeV
+         878ZISfyJATV4JVdqnktH5ike1z0F6kW2n/V8xVVZojnqFQg7fybDDiFr5EvI+c2iPLI
+         ET/ngT7/4A+GtqxM0OJI2IRCf829K+Ce4ULfrXfIcagQgEyJYtgE/yn1/RHhzxBlPb1q
+         JFnUbKrm/5/2aEZG1nJEuTi/QovIOEErBbtPcvx7nDQGRA3mSdh5UvqbUn0lszjGWp7i
+         Qrmw==
+X-Gm-Message-State: AO0yUKXFNw29Se3D8m+XmEmCBSVbCPVMp5j7I7F5Xr3/H7FMbu9q1Oxf
+        IyQfINoGWPSRPoPP/+l7rA==
+X-Google-Smtp-Source: AK7set+oji6+6UZVdlF32jW97Cd5wKPzdK3BfB/MTFUCEZ/Z55TdZpfcLorcJt7g+5txg06Aa2xkVA==
+X-Received: by 2002:a4a:3797:0:b0:538:1e63:1725 with SMTP id r145-20020a4a3797000000b005381e631725mr10070334oor.4.1680105187664;
+        Wed, 29 Mar 2023 08:53:07 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id b4-20020a056871030400b001762ce27f9asm11853490oag.23.2023.03.29.08.52.58
+        by smtp.gmail.com with ESMTPSA id s9-20020a4a9689000000b005255e556399sm13966954ooi.43.2023.03.29.08.53.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 08:53:00 -0700 (PDT)
-Received: (nullmailer pid 3198091 invoked by uid 1000);
+        Wed, 29 Mar 2023 08:53:07 -0700 (PDT)
+Received: (nullmailer pid 3198063 invoked by uid 1000);
         Wed, 29 Mar 2023 15:52:45 -0000
 From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 29 Mar 2023 10:52:12 -0500
-Subject: [PATCH 15/19] cpufreq: sun50i: Add explicit include for cpu.h
+Date:   Wed, 29 Mar 2023 10:51:58 -0500
+Subject: [PATCH 01/19] of: Make devtree_lock declaration private
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230329-dt-cpu-header-cleanups-v1-15-581e2605fe47@kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230329-dt-cpu-header-cleanups-v1-1-581e2605fe47@kernel.org>
 References: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
 In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -99,36 +99,69 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Removing the include of cpu.h from of_device.h causes an error:
-
-drivers/cpufreq/sun50i-cpufreq-nvmem.c:42:19: error: implicit declaration of function ‘get_cpu_device’; did you mean ‘get_device’? [-Werror=implicit-function-declaration]
-
-As of_device.h is not otherwise needed, it can be replaced with of.h
-(also implicitly included).
+Sparc is the only place devtree_lock is used outside of drivers/of/.
+Move the devtree_lock declaration into of_private.h and Sparc's prom.h
+so pulling in spinlock.h to of.h can be avoided for everything besides
+Sparc.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
-Please ack and I will take the series via the DT tree.
----
- drivers/cpufreq/sun50i-cpufreq-nvmem.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/sparc/include/asm/prom.h | 3 +++
+ drivers/of/of_private.h       | 1 +
+ include/linux/of.h            | 2 --
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-index 1583a370da39..4321d7bbe769 100644
---- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-+++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-@@ -10,9 +10,10 @@
+diff --git a/arch/sparc/include/asm/prom.h b/arch/sparc/include/asm/prom.h
+index 587edb8b5a65..8184575b1336 100644
+--- a/arch/sparc/include/asm/prom.h
++++ b/arch/sparc/include/asm/prom.h
+@@ -19,11 +19,14 @@
+ #include <linux/mutex.h>
+ #include <linux/atomic.h>
+ #include <linux/irqdomain.h>
++#include <linux/spinlock.h>
  
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ #define of_compat_cmp(s1, s2, l)	strncmp((s1), (s2), (l))
+ #define of_prop_cmp(s1, s2)		strcasecmp((s1), (s2))
+ #define of_node_cmp(s1, s2)		strcmp((s1), (s2))
  
-+#include <linux/cpu.h>
- #include <linux/module.h>
- #include <linux/nvmem-consumer.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_opp.h>
- #include <linux/slab.h>
++extern raw_spinlock_t devtree_lock;
++
+ struct of_irq_controller {
+ 	unsigned int	(*irq_build)(struct device_node *, unsigned int, void *);
+ 	void		*data;
+diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+index fb6792d381a6..b57f1014e419 100644
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -38,6 +38,7 @@ struct alias_prop {
+ #define OF_ROOT_NODE_SIZE_CELLS_DEFAULT 1
+ 
+ extern struct mutex of_mutex;
++extern raw_spinlock_t devtree_lock;
+ extern struct list_head aliases_lookup;
+ extern struct kset *of_kset;
+ 
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 0af611307db2..36cf94596eba 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -16,7 +16,6 @@
+ #include <linux/errno.h>
+ #include <linux/kobject.h>
+ #include <linux/mod_devicetable.h>
+-#include <linux/spinlock.h>
+ #include <linux/topology.h>
+ #include <linux/notifier.h>
+ #include <linux/property.h>
+@@ -145,7 +144,6 @@ extern struct device_node *of_root;
+ extern struct device_node *of_chosen;
+ extern struct device_node *of_aliases;
+ extern struct device_node *of_stdout;
+-extern raw_spinlock_t devtree_lock;
+ 
+ /*
+  * struct device_node flag descriptions
 
 -- 
 2.39.2
