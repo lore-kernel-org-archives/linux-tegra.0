@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDA1C8300C
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D66AC87FF1
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:53:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231252AbjC2Px3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 11:53:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42664 "EHLO
+        id S231262AbjC2Pxa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 11:53:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231129AbjC2PxC (ORCPT
+        with ESMTP id S231159AbjC2PxK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 11:53:02 -0400
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D0255AE;
-        Wed, 29 Mar 2023 08:52:54 -0700 (PDT)
-Received: by mail-oi1-f178.google.com with SMTP id y184so11916088oiy.8;
-        Wed, 29 Mar 2023 08:52:54 -0700 (PDT)
+        Wed, 29 Mar 2023 11:53:10 -0400
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DF774C13;
+        Wed, 29 Mar 2023 08:52:59 -0700 (PDT)
+Received: by mail-oo1-f46.google.com with SMTP id o26-20020a4ad49a000000b0053964a84b0fso2496041oos.7;
+        Wed, 29 Mar 2023 08:52:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680105174;
+        d=1e100.net; s=20210112; t=1680105178;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/yItqnZ9vRLGQesakQq7xospJXeaAueRctcAXfNX28w=;
-        b=sG6L4O4BKsf5MBqMPPwIzzmOikNUw5iiXjs+ETC+qR+b1b9dxEizJPlCyNzR+rgDy9
-         bLEp33m6d5wUeOzr54850ZWOZ2ImsyCnqyuQ/GQHT+v2xQ/A0FSQuYwgD9BLGeVL6Wjw
-         MTJkCG3lOJcUkS43Ub7thiWeMzhk+JxdfFJ/E5seSN/w4t1fD6TnjWU5z8Gv3iJxqkwT
-         rFmG8JfYHBlZUWGM8UbgaWr6yfaAYRUh8nissA5aTMkY0qQAY8VCrrHEbYJkVhJzexMi
-         6IddBXDAu2oEpHhiBSqxjK1gGJyCB8X4Ko4lxMUXUgyqU9YwRmIpYSMxvsTfiKAynwql
-         muIw==
-X-Gm-Message-State: AO0yUKVt1nWi8ShRHZUqNbGd0XPTjRAObI3RAb3HJq169qAhD56OyYwP
-        qeSt8N0b4gPSWRXdzWKhTTIJ52TPyA==
-X-Google-Smtp-Source: AK7set8VenL+CVecLJkZQ+2YD6HECaZWNdDHKrwGAWt0Tn+DIRoRNNZ1eYx2LdRkWm+8wMeNY2nxyA==
-X-Received: by 2002:aca:1c07:0:b0:386:9dba:4571 with SMTP id c7-20020aca1c07000000b003869dba4571mr8390718oic.25.1680105174043;
-        Wed, 29 Mar 2023 08:52:54 -0700 (PDT)
+        bh=xaKQY99G3HY+F9cltbrOFgoelmJMxNBfQJcO0sLBgas=;
+        b=PKDFlgAjacJH7C1CRe1m0Q/BWtr57PTdq7iEGG8xwqMX68KjF8kKS/WJo4ITAT0hOU
+         aGwliu2FVDDg+3QXHcI8zsZEt2GfM9lB1/QfOa0avByoJ3rv0CEDJqBMHfFfjBQQ2/Sh
+         hBFtQjjAvbdmAfr3EULWxF910GnmrDUC8yZhBAonDGKKZRKxV5ypSfpG33RehXWDYgu4
+         VXGQttPWOAMFNIWxNfUqQnjPGF+axRf51orBaCy1BJV2UuoITU0e+Ul6/hLRrUw8ty0Z
+         Q7y9uisGKVN+n/tzhhNEQ/hQ+sB1TAja2NEpU+FhhEDBKZ2/kTkSdSPWJXBKNzbkWFTW
+         QMDQ==
+X-Gm-Message-State: AO0yUKWOBvSw1LJ23fQo/U8R814Yem1pVgc1zy/bri661zHx+46plfXX
+        ti50etPI3Y+YteUOsnQipQ==
+X-Google-Smtp-Source: AK7set/NHlve/5dROzrE0RjwFIfWzeZwZim5jtRZxJnjvVhB2968rp1PLl6KK6w8FucuWDAPMr2x9Q==
+X-Received: by 2002:a4a:890d:0:b0:51a:6ea9:5053 with SMTP id f13-20020a4a890d000000b0051a6ea95053mr8240938ooi.9.1680105178376;
+        Wed, 29 Mar 2023 08:52:58 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id q132-20020acac08a000000b0037fa035f4f3sm13719284oif.53.2023.03.29.08.52.52
+        by smtp.gmail.com with ESMTPSA id c192-20020a4a4fc9000000b0053b88b03e24sm8091146oob.18.2023.03.29.08.52.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 08:52:53 -0700 (PDT)
-Received: (nullmailer pid 3198099 invoked by uid 1000);
+        Wed, 29 Mar 2023 08:52:58 -0700 (PDT)
+Received: (nullmailer pid 3198071 invoked by uid 1000);
         Wed, 29 Mar 2023 15:52:45 -0000
 From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 29 Mar 2023 10:52:16 -0500
-Subject: [PATCH 19/19] of: Drop cpu.h include from of_device.h
+Date:   Wed, 29 Mar 2023 10:52:02 -0500
+Subject: [PATCH 05/19] of: Drop unnecessary includes in headers
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230329-dt-cpu-header-cleanups-v1-19-581e2605fe47@kernel.org>
+Message-Id: <20230329-dt-cpu-header-cleanups-v1-5-581e2605fe47@kernel.org>
 References: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
 In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -99,26 +99,79 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Now that all users which had an implicit dependency on cpu.h have been
-fixed. the cpu.h include can be dropped from of_device.h
+Drop unnecessary includes in DT headers. Some simply aren't needed and
+some can be replaced with forward declarations.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- include/linux/of_device.h | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/of.h          | 5 ++---
+ include/linux/of_device.h   | 3 ++-
+ include/linux/of_platform.h | 5 +++--
+ 3 files changed, 7 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 1f1e847a1c13..96979c67c5fa 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -16,13 +16,10 @@
+ #include <linux/errno.h>
+ #include <linux/kobject.h>
+ #include <linux/mod_devicetable.h>
+-#include <linux/topology.h>
+-#include <linux/notifier.h>
+ #include <linux/property.h>
+ #include <linux/list.h>
+ 
+ #include <asm/byteorder.h>
+-#include <asm/errno.h>
+ 
+ typedef u32 phandle;
+ typedef u32 ihandle;
+@@ -1517,6 +1514,8 @@ enum of_reconfig_change {
+ 	OF_RECONFIG_CHANGE_REMOVE,
+ };
+ 
++struct notifier_block;
++
+ #ifdef CONFIG_OF_DYNAMIC
+ extern int of_reconfig_notifier_register(struct notifier_block *);
+ extern int of_reconfig_notifier_unregister(struct notifier_block *);
 diff --git a/include/linux/of_device.h b/include/linux/of_device.h
-index 5cdafe19dc80..7ac9a8ae9c80 100644
+index 910951a22eb4..5cdafe19dc80 100644
 --- a/include/linux/of_device.h
 +++ b/include/linux/of_device.h
-@@ -2,7 +2,6 @@
- #ifndef _LINUX_OF_DEVICE_H
- #define _LINUX_OF_DEVICE_H
- 
--#include <linux/cpu.h>
- #include <linux/platform_device.h>
+@@ -7,9 +7,10 @@
  #include <linux/of_platform.h> /* temporary until merge */
  
+ #include <linux/of.h>
+-#include <linux/mod_devicetable.h>
+ 
+ struct device;
++struct of_device_id;
++struct kobj_uevent_env;
+ 
+ #ifdef CONFIG_OF
+ extern const struct of_device_id *of_match_device(
+diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
+index 8ac5cb933dc3..d8045bcfc35e 100644
+--- a/include/linux/of_platform.h
++++ b/include/linux/of_platform.h
+@@ -6,12 +6,13 @@
+  *			 <benh@kernel.crashing.org>
+  */
+ 
+-#include <linux/device.h>
+ #include <linux/mod_devicetable.h>
+-#include <linux/pm.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ 
++struct device;
++struct of_device_id;
++
+ /**
+  * struct of_dev_auxdata - lookup table entry for device names & platform_data
+  * @compatible: compatible value of node to match against node
 
 -- 
 2.39.2
