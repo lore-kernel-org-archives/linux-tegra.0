@@ -2,207 +2,227 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0CDC761A6
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 22:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DBDC761A6
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 23:23:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbjC2WlT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 18:41:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60402 "EHLO
+        id S231137AbjC2XXr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 19:23:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230443AbjC2WlQ (ORCPT
+        with ESMTP id S230091AbjC2XXp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 18:41:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C438FB;
-        Wed, 29 Mar 2023 15:41:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D2CE661E56;
-        Wed, 29 Mar 2023 22:41:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5263C433EF;
-        Wed, 29 Mar 2023 22:41:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680129670;
-        bh=CeEJnBYJl3ZDd3RPEBDgKL0tVDlu4feGB9+FfWt1zmk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b5nfjI1fjRJhEVcJODS9wUAGVGev2TGBrZoJqeK+Rqszy0ayNWle4fH5rk6207rzn
-         IAG19TT/vJ8l+2gmpJP+fOWBKGO+3iWvSXKq5jQ1FniyF2U2e1+Y42tDtVvxsQSaIl
-         LiH7d8MNN5GzAOvJ14UTAJYSlz95znepPIt6f7QlnY9dSYy8TXqlzCclQ/hdFeCTVr
-         uFHP5W+TpFevYIy2/ymgoGcX7CK/Aw1NAP6A1PC7PSe1BJwlWDwY+dgHrm3lY8dtfu
-         qCiQmL1XOj6us6/CUkeJOCFzdTFyAlk5bymPZyjOBxJKAVlQPlcGHaWGuW1r2IZuzp
-         AfhJxYy4B1lmg==
-Date:   Thu, 30 Mar 2023 01:41:07 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
-        jgg@ziepe.ca, krzysztof.kozlowski+dt@linaro.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        skomatineni@nvidia.com, ldewangan@nvidia.com
-Subject: Re: [Patch V9 2/3] tpm_tis-spi: Add hardware wait polling
-Message-ID: <20230329224107.5y3anydp4fnmnehe@kernel.org>
-References: <20230325183409.7695-1-kyarlagadda@nvidia.com>
- <20230325183409.7695-3-kyarlagadda@nvidia.com>
+        Wed, 29 Mar 2023 19:23:45 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18B335B6;
+        Wed, 29 Mar 2023 16:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680132204; x=1711668204;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=4EafHpwZJ07cRRVjKdnM9mw9iawxEjekbPGw4y0jcXY=;
+  b=PgK/hDjeRC1Tm/pL06qaYXDzGLL15gey1SXJrZeNNTrQtKHxISgdQU5e
+   K9umHpKzOe5pu48EWWzvl/nWJzmWnHJ9P9n1J0Tp5irkX7bF50BgpWeWH
+   SITxVp5riENQQnl/BcOknGqJLn5h6J+aHiE5QlgE+ZIXNUBsgKJb03Y3P
+   1w3tT7Wi2J86nO+NCft0cAVcVd7oJD8edSH0sf+ZCrTXSs3ybyBqLEUto
+   4s4Fr+A8Jay+8UIGpUPNi9j09lYLTD4ebmpIoKV5VdJJeDS+l8MVW/9Tk
+   zDQVJhOYIJNg4Gmbw14GMpskUD9XkPUk6SYYQE70DjEdjTIil4PgnZO0x
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="341041052"
+X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
+   d="scan'208";a="341041052"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2023 16:23:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="930514062"
+X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
+   d="scan'208";a="930514062"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmsmga006.fm.intel.com with ESMTP; 29 Mar 2023 16:23:24 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Wed, 29 Mar 2023 16:23:23 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Wed, 29 Mar 2023 16:23:23 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21 via Frontend Transport; Wed, 29 Mar 2023 16:23:23 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.101)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.21; Wed, 29 Mar 2023 16:23:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nLlg/v2DdmsaUBnGAgHo8/peOBB8I2cZinIObskyAXcCnhUeSGhNjyPEQZ89vCWEnVQGSDNA8ZEMyntRbQqEscFqxLyLUdyBb+mZ/npSYNhhGu/0adCiRWrj8a7jGrA5MLnaJguI488HFPH9DAl+/F88jCLBxPlniBj11oCHPiR47yxSRAVB5x8FGE+ggV5ozqZDMs3B3956cApLAHL4c4LuFJDiVE1+y2C+yP3EalWYhzH77XOwx08ad6R3JUzy+NFEtoWaPfHDGKPL/7E11EBBQwfGSDJLUE1C2/pUM/AO99oqeDz+YTouaIdh46Ooy+LUPYo0r+R+FP7YupSBqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4EafHpwZJ07cRRVjKdnM9mw9iawxEjekbPGw4y0jcXY=;
+ b=IuGaI7RjHK/aiQ2MzoSYvSj1WBiLI2zepB0akljO3njt8Cp7s2lhRnUGohBI5nR0b6K08IOgM1bvU3ob4G+12/kMtsFqhSU79jDluQ/R5Sl9Rp/agov0gu6mC62Y22sABJ6qlb9nNV6Y4fA6RPgQAXrjtsETC4quo9JKZrjAYaZ4UuLmF7O2Mintybf2QpAVORPDNfhoGU1Em3QwlTF1Oj94fw2SaexeKbTfOUIxZal9mWenXtNE3FpT/voO8pMahLpordkVEiztcpWLwapAQHjwq/6qmLWMsSYZE2vnKDJxGG6GD++nEBOroAYpws8L92lGH4UJBodgetc+3/FLWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by IA1PR11MB8247.namprd11.prod.outlook.com (2603:10b6:208:449::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.32; Wed, 29 Mar
+ 2023 23:23:21 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::ea5c:3d05:5d92:bc04]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::ea5c:3d05:5d92:bc04%8]) with mapi id 15.20.6222.035; Wed, 29 Mar 2023
+ 23:23:20 +0000
+From:   "Keller, Jacob E" <jacob.e.keller@intel.com>
+To:     Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Marc Zyngier" <maz@kernel.org>
+CC:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 0/5] Remove acpi.h implicit include of of.h
+Thread-Topic: [PATCH 0/5] Remove acpi.h implicit include of of.h
+Thread-Index: AQHZYoSCF122w+cVw0Skw6T+0Rx/SK8SZUsg
+Date:   Wed, 29 Mar 2023 23:23:20 +0000
+Message-ID: <CO1PR11MB508970B2F338C9176CE32DD3D6899@CO1PR11MB5089.namprd11.prod.outlook.com>
+References: <20230329-acpi-header-cleanup-v1-0-8dc5cd3c610e@kernel.org>
+In-Reply-To: <20230329-acpi-header-cleanup-v1-0-8dc5cd3c610e@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR11MB5089:EE_|IA1PR11MB8247:EE_
+x-ms-office365-filtering-correlation-id: 32aa7b70-246b-40b3-7cc4-08db30ac95c6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: rakcu5VYvPmrNTT1IWayzZAOAHE3SMcJlwsHISLtPzqpTlaQhsl8mW6L5JopYe50UZS+l0ljbeZsL7d2wA5ArX+e0UCDGmIsEIVV4yhWWf2JNfkswBbr5JN5wX8a5lA4sx4IcYCHamKSL68vDZiUsalaaxsuSpf5zJ1d4I/b/hAlaa/TeVr4AUY32THnEOGw8wBbNQkWEVuKbtL7wNkoADdTtDJuizjBX7VGnXnAvH9sSV8lOoYoKrH51O48g5QjL9KGQeQc8lq4eSyxHjc5w8FhwNz+esr59KEi/yy1ryvc0I8mvoiSdqlptHDHwni853bn+Dw2MGNukQijyXogCz7kT9H0WO2K/f0cGCTdaEPKjMKQnZx+MeBKQXM/XjmjTxjfyhou74GYP2BaK/lPp6jv9SatuMOxE8rl1PMEqMetvtgwENJ7nl6PrqYn7loEVJTunZf8xrBdvOV22TK4Z7UP5dIFGUwW2Kr5YIVGfdT9GvZXot1sbKsk72qpE15DsWoui4tSVC/uOyR2YZP9ACPDQErmfUuUB3If4wzhi5Hp1XwKf301BADaBL0b/ekW/RSwAvTcM2abE1MQd3YwYHYKNVV8sgpNZPpcTRkSfEaYaBdT0Tx0Dnu3poD0y5M8PWJYJNPveWnCbpmLP65mtw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(396003)(376002)(366004)(346002)(39860400002)(451199021)(86362001)(2906002)(38070700005)(33656002)(55016003)(76116006)(53546011)(83380400001)(478600001)(71200400001)(66946007)(54906003)(38100700002)(7696005)(9686003)(5660300002)(8676002)(66446008)(66556008)(66476007)(64756008)(316002)(4326008)(122000001)(6506007)(26005)(110136005)(186003)(8936002)(52536014)(82960400001)(921005)(7416002)(41300700001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eldMRU03dFRDd3VpN25VSlE0dTY3Z2hJMjhZT3BIWVpyZmdNVDZySFp0RWYr?=
+ =?utf-8?B?b2Yvamxvb3VtdmV6bnc0TVBxcWFvUU5XS09tQ3ZpQmp5SVZWbDVwNnUxYlQ0?=
+ =?utf-8?B?OEJIWnpHTWUzVmhlajF0UWhWRXplbzBSVk0rSzJqd0twWmY1TEE4KzVlODlS?=
+ =?utf-8?B?T1ZhK3BpenJwOUdrbFdZYmJaZUR3SENWSm4yUmtvMCt3WVVjRGlnemxpZ1FN?=
+ =?utf-8?B?aGduaFdWMlR6WUZaQTZrNGltRE9GamtGUmNOdTJWc0tFWWtGQ2t2Um5lSG9m?=
+ =?utf-8?B?UmpOY1NHNVRFNXdubzVtcm51dC9VMVdDR2hpVXViMjVhWWFkem1XOHVJaGhr?=
+ =?utf-8?B?NkVxZnBaSlVOSk1PanJtdVl0eVB3ME1NQ2sxbS9DZVdnWXBlaTRSczhxNFJs?=
+ =?utf-8?B?bWpZZDNub0tGSTNUUzdmT2Y0MXUwVklBSHlQTnZWWlQ3M3ZGRDlWU01DZnJ6?=
+ =?utf-8?B?eklrejZ3Z0huV3BUZ29yUC80UHhyVDJvTENWV1E0U1ZYcXpIY1pRd2kwYzNr?=
+ =?utf-8?B?c1R0czN4TktTbWhUd0JQeEw5bndIVnZucndUejBISk0zbGtMY09qTkF1Q3gr?=
+ =?utf-8?B?WWMxRk9lMEUzalBhV0lRMlRDT3ZUOGNDOFpKck9CWU9BSy8rcGVBcHpHZGY4?=
+ =?utf-8?B?Mmx6U2czaXh2ckFSUEVFOEFZNlR1djloUERaYWk0TTY3T0M2aG5jU0EwaVBx?=
+ =?utf-8?B?UXEwN1pneVUvS0g1a0FrSk9YMzZnSFMxT05EYXNhSTFWRVp5cUlyWkdrRlVF?=
+ =?utf-8?B?RnZndVJzVUpSLytsKzUySTJRRStTVFdLbHUrSHZ6MTJEYTk2TzVIZjZMSGdD?=
+ =?utf-8?B?a3ZJa2dvaGVnb1hmUzFJYm9wWDRoQlYrdTJBLzJIRU1WVHdvNGhVQ0dQTGhz?=
+ =?utf-8?B?VUlCSnlVTldRMlVYeFpQZkJUSllEc0VGNmd6S1NTbFlLT0dYRnpaNW5hZHov?=
+ =?utf-8?B?TmJWSHUwb1I5L3JEK1hsRXBucWp5NDBTVThwTitGSlRtOW9DYUppUzlCNGhh?=
+ =?utf-8?B?dzByWis2dkVtamlEVDBtV3p1MlcwcGZ6b0Y1bXNEQjY5VHdzYUFYT1lNZ1NL?=
+ =?utf-8?B?SUhLTjd0dW11SmxqYUxQK01mQTczT0g1dVZjby83bVBBcGJrV2x4b0x4NHI5?=
+ =?utf-8?B?M3BSVWlFSUxndUp1amwzbHgvT0Q3a2EzYklTUm1FU0FTaEN6eVRXQS9MRGJZ?=
+ =?utf-8?B?em0rVko5bFY1OElJVmd2a0hpZWRadDB3RVk0aEVQVWNOaFhSWVRUNUZtZ0tP?=
+ =?utf-8?B?Tk5ySmxHU3gwVlZ3SXNYUndPODFHME0zNWJsNFBTSGQ0YlNEakdqT1cxMEs3?=
+ =?utf-8?B?K1F2MTRKVnBma3l2bWZOeWZ4cUNpK3RZUnI4QlRiYlVnR3NsekJUMGJqd3pX?=
+ =?utf-8?B?V1orSHFGUnMvcENyNTBzckFRM2NIQXpzWVBDM3lJaGJXWS93b01BZEF5SjMz?=
+ =?utf-8?B?bWt4dDZjenAxMEdMZ3ArbW13YU5LUUExS0ErY0ZFOHBCRFZXdzR2ZGtHNUVv?=
+ =?utf-8?B?aE45UkpMcWFtY2cwTGYyajB4WURJandQdE5BRndsVTVYbGRlc0FqQnI5dXVu?=
+ =?utf-8?B?b3BXazFRT0FTcnZ0WHJiTVByLzVhZ3pRQWxUVW9VenRxeEhsQVVuRWljNnJN?=
+ =?utf-8?B?Y3ljL1ArZTRqTXVUNE5URWFuV3V3SkVrOFZxV1lWWmFGWHlEU0YvWHg3cjQ5?=
+ =?utf-8?B?eVRqYVVuS2psTjkyNjJIWkpIRmRMeUQyS0RDNnl2VkY1SHdPbWhsalByZEFy?=
+ =?utf-8?B?L2JkbzBrUmZKK1hzT05BaUxUejJKeXhwNnFOR2JCay9yTlk1VDB5dFVaaUc0?=
+ =?utf-8?B?bXA4dnVoaGtJSElCWUNyblh3VndDZGJldGVQbGU1ZUM3L3M1TDIvYTZkZ2ho?=
+ =?utf-8?B?enBXL2d0djNxYlJZSVFrUUhPdDMxcDQ5bGt3VjVQOGMzeVJuWHFJeXNMOU96?=
+ =?utf-8?B?UnR3a0pYdnViMHRHRmtBQlJXeEZqVWY2bHVGYVI4UXkzNWp4M0EyQlMrUlNG?=
+ =?utf-8?B?cGhNWlYrdXFHZGorbXcxTjdTdUZQcndsYmZubkhmT3hWT0pMd0R2c1QwNzdY?=
+ =?utf-8?B?RERhaExVRUwweGVkRzFYN3ovMFlVdThQM2Vqem9xbFVGOVEvZEJzVVpEYlZx?=
+ =?utf-8?Q?Xyo216EKqqFeb7uZzgR+91xt8?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230325183409.7695-3-kyarlagadda@nvidia.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32aa7b70-246b-40b3-7cc4-08db30ac95c6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2023 23:23:20.8343
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xvQ0H2nRC/6pcyh4kT+QV8UpZSeRhMpI3mrSfxV+maxoZ8rmZpv0Ur3/UtVnGuqBZ2BWgRNI4f1PKq/OlPcXqM6xVnWN0IF8m9lLe8FEZVc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8247
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Mar 26, 2023 at 12:04:08AM +0530, Krishna Yarlagadda wrote:
-> TPM devices may insert wait state on last clock cycle of ADDR phase.
-> For SPI controllers that support full-duplex transfers, this can be
-> detected using software by reading the MISO line. For SPI controllers
-> that only support half-duplex transfers, such as the Tegra QSPI, it is
-> not possible to detect the wait signal from software. The QSPI
-> controller in Tegra234 and Tegra241 implement hardware detection of the
-> wait signal which can be enabled in the controller for TPM devices.
-> 
-> The current TPM TIS driver only supports software detection of the wait
-> signal. To support SPI controllers that use hardware to detect the wait
-> signal, add the function tpm_tis_spi_hw_flow_transfer() and move the
-> existing code for software based detection into a function called
-> tpm_tis_spi_sw_flow_transfer(). SPI controllers that only support
-> half-duplex transfers will always call tpm_tis_spi_hw_flow_transfer()
-> because they cannot support software based detection. The bit
-> SPI_TPM_HW_FLOW is set to indicate to the SPI controller that hardware
-> detection is required and it is the responsibility of the SPI controller
-> driver to determine if this is supported or not.
-> 
-> For hardware flow control, CMD-ADDR-DATA messages are combined into a
-> single message where as for software flow control exiting method of
-> CMD-ADDR in a message and DATA in another is followed.
-> 
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> ---
->  drivers/char/tpm/tpm_tis_spi_main.c | 91 ++++++++++++++++++++++++++++-
->  1 file changed, 89 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-> index a0963a3e92bd..db9afd0b83da 100644
-> --- a/drivers/char/tpm/tpm_tis_spi_main.c
-> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
-> @@ -71,8 +71,74 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
->  	return 0;
->  }
->  
-> -int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> -			 u8 *in, const u8 *out)
-> +/*
-> + * Half duplex controller with support for TPM wait state detection like
-> + * Tegra QSPI need CMD, ADDR & DATA sent in single message to manage HW flow
-> + * control. Each phase sent in different transfer for controller to idenity
-> + * phase.
-> + */
-> +static int tpm_tis_spi_transfer_half(struct tpm_tis_data *data,	u32 addr,
-> +				     u16 len, u8 *in, const u8 *out)
-> +{
-> +	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> +	struct spi_transfer spi_xfer[3];
-> +	struct spi_message m;
-> +	u8 transfer_len;
-> +	int ret;
-> +
-> +	while (len) {
-> +		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
-> +
-> +		spi_message_init(&m);
-> +		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
-> +		phy->iobuf[1] = 0xd4;
-> +		phy->iobuf[2] = addr >> 8;
-> +		phy->iobuf[3] = addr;
-> +
-> +		memset(&spi_xfer, 0, sizeof(spi_xfer));
-> +
-> +		spi_xfer[0].tx_buf = phy->iobuf;
-> +		spi_xfer[0].len = 1;
-> +		spi_message_add_tail(&spi_xfer[0], &m);
-> +
-> +		spi_xfer[1].tx_buf = phy->iobuf + 1;
-> +		spi_xfer[1].len = 3;
-> +		spi_message_add_tail(&spi_xfer[1], &m);
-> +
-> +		if (out) {
-> +			spi_xfer[2].tx_buf = &phy->iobuf[4];
-> +			spi_xfer[2].rx_buf = NULL;
-> +			memcpy(&phy->iobuf[4], out, transfer_len);
-> +			out += transfer_len;
-> +		}
-> +
-> +		if (in) {
-> +			spi_xfer[2].tx_buf = NULL;
-> +			spi_xfer[2].rx_buf = &phy->iobuf[4];
-> +		}
-> +
-> +		spi_xfer[2].len = transfer_len;
-> +		spi_message_add_tail(&spi_xfer[2], &m);
-> +
-> +		reinit_completion(&phy->ready);
-> +
-> +		ret = spi_sync_locked(phy->spi_device, &m);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		if (in) {
-> +			memcpy(in, &phy->iobuf[4], transfer_len);
-> +			in += transfer_len;
-> +		}
-> +
-> +		len -= transfer_len;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int tpm_tis_spi_transfer_full(struct tpm_tis_data *data, u32 addr,
-> +				     u16 len, u8 *in, const u8 *out)
->  {
->  	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
->  	int ret = 0;
-> @@ -140,6 +206,24 @@ int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
->  	return ret;
->  }
->  
-> +int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> +			 u8 *in, const u8 *out)
-> +{
-> +	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> +	struct spi_controller *ctlr = phy->spi_device->controller;
-> +
-> +	/*
-> +	 * TPM flow control over SPI requires full duplex support.
-> +	 * Send entire message to a half duplex controller to handle
-> +	 * wait polling in controller.
-> +	 * Set TPM HW flow control flag..
-> +	 */
-> +	if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX)
-> +		return tpm_tis_spi_transfer_half(data, addr, len, in, out);
-> +	else
-> +		return tpm_tis_spi_transfer_full(data, addr, len, in, out);
-> +}
-> +
->  static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
->  				  u16 len, u8 *result, enum tpm_tis_io_mode io_mode)
->  {
-> @@ -181,6 +265,9 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
->  
->  	phy->flow_control = tpm_tis_spi_flow_control;
->  
-> +	if (dev->controller->flags & SPI_CONTROLLER_HALF_DUPLEX)
-> +		dev->mode |= SPI_TPM_HW_FLOW;
-> +
->  	/* If the SPI device has an IRQ then use that */
->  	if (dev->irq > 0)
->  		irq = dev->irq;
-> -- 
-> 2.17.1
-> 
-
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgPHJv
+YmhAa2VybmVsLm9yZz4NCj4gU2VudDogV2VkbmVzZGF5LCBNYXJjaCAyOSwgMjAyMyAyOjIxIFBN
+DQo+IFRvOiBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+OyBMZW4gQnJvd24g
+PGxlbmJAa2VybmVsLm9yZz47DQo+IE1hcmNlbG8gU2NobWl0dCA8bWFyY2Vsby5zY2htaXR0MUBn
+bWFpbC5jb20+OyBMYXJzLVBldGVyIENsYXVzZW4NCj4gPGxhcnNAbWV0YWZvby5kZT47IE1pY2hh
+ZWwgSGVubmVyaWNoIDxNaWNoYWVsLkhlbm5lcmljaEBhbmFsb2cuY29tPjsNCj4gSm9uYXRoYW4g
+Q2FtZXJvbiA8amljMjNAa2VybmVsLm9yZz47IEdyZWcgS3JvYWgtSGFydG1hbg0KPiA8Z3JlZ2to
+QGxpbnV4Zm91bmRhdGlvbi5vcmc+OyBKb2hhbm5lcyBCZXJnIDxqb2hhbm5lc0BzaXBzb2x1dGlv
+bnMubmV0PjsNCj4gRGF2aWQgUy4gTWlsbGVyIDxkYXZlbUBkYXZlbWxvZnQubmV0PjsgRXJpYyBE
+dW1hemV0DQo+IDxlZHVtYXpldEBnb29nbGUuY29tPjsgSmFrdWIgS2ljaW5za2kgPGt1YmFAa2Vy
+bmVsLm9yZz47IFBhb2xvIEFiZW5pDQo+IDxwYWJlbmlAcmVkaGF0LmNvbT47IEppcmkgU2xhYnkg
+PGppcmlzbGFieUBrZXJuZWwub3JnPjsgVGhpZXJyeSBSZWRpbmcNCj4gPHRoaWVycnkucmVkaW5n
+QGdtYWlsLmNvbT47IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+OyBNYXJj
+DQo+IFp5bmdpZXIgPG1hekBrZXJuZWwub3JnPg0KPiBDYzogbGludXgtaWlvQHZnZXIua2VybmVs
+Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IHN0YWdpbmdAbGlz
+dHMubGludXguZGV2OyBsaW51eC13aXJlbGVzc0B2Z2VyLmtlcm5lbC5vcmc7DQo+IG5ldGRldkB2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNlcmlhbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiB0
+ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0
+cmVlQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0ggMC81XSBSZW1vdmUgYWNwaS5o
+IGltcGxpY2l0IGluY2x1ZGUgb2Ygb2YuaA0KPiANCj4gSW4gdGhlIHByb2Nlc3Mgb2YgY2xlYW5p
+bmcgdXAgRFQgaW5jbHVkZXMsIEkgZm91bmQgdGhhdCBzb21lIGRyaXZlcnMNCj4gdXNpbmcgRFQg
+ZnVuY3Rpb25zIGNvdWxkIGJ1aWxkIHdpdGhvdXQgYW55IGV4cGxpY2l0IERUIGluY2x1ZGUuIEkg
+dHJhY2VkDQo+IHRoZSBpbmNsdWRlIHRvIGJlIGNvbWluZyBmcm9tIGFjcGkuaCB2aWEgaXJxZG9t
+YWluLmguDQo+IA0KPiBJIHdhcyBwbGVhc2FudGx5IHN1cnByaXNlZCB0aGF0IHRoZXJlIHdlcmUg
+bm90IDEwMHMgb3IgZXZlbiAxMHMgb2YNCj4gd2FybmluZ3Mgd2hlbiBicmVha2luZyB0aGUgaW5j
+bHVkZSBjaGFpbi4gU28gaGVyZSdzIHRoZSByZXN1bHRpbmcNCj4gc2VyaWVzLg0KPiANCj4gSSdk
+IHN1Z2dlc3QgUmFmYWVsIHRha2UgdGhlIHdob2xlIHNlcmllcy4gQWx0ZXJuYXRpdmVseSx0aGUg
+Zml4ZXMgY2FuIGJlDQo+IGFwcGxpZWQgaW4gNi40IGFuZCB0aGVuIHRoZSBsYXN0IHBhdGNoIGVp
+dGhlciBhZnRlciByYzEgb3IgdGhlDQo+IGZvbGxvd2luZyBjeWNsZS4NCj4gDQoNCk5pY2UgdGhh
+dCB0aGVyZSBhcmVuJ3QgdG9vIG1hbnkgZXJyb3JzLiBVc2Ugb2YgdGhlIGZvcndhcmQgZGVjbGFy
+YXRpb25zIG1ha2VzIHNlbnNlIHJhdGhlciB0aGFuIGluY2x1ZGluZyBhIGJ1bmNoIG9mIHVucmVs
+YXRlZCBkZWZpbml0aW9ucy4gTmljZS4NCg0KUmV2aWV3ZWQtYnk6IEphY29iIEtlbGxlciA8amFj
+b2IuZS5rZWxsZXJAaW50ZWwuY29tPg0KDQpUaGFua3MsDQpKYWtlDQoNCj4gU2lnbmVkLW9mZi1i
+eTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gLS0tDQo+IFJvYiBIZXJyaW5nICg1
+KToNCj4gICAgICAgaWlvOiBhZGM6IGFkNzI5MjogQWRkIGV4cGxpY2l0IGluY2x1ZGUgZm9yIG9m
+LmgNCj4gICAgICAgc3RhZ2luZzogaWlvOiByZXNvbHZlcjogYWQyczEyMTA6IEFkZCBleHBsaWNp
+dCBpbmNsdWRlIGZvciBvZi5oDQo+ICAgICAgIG5ldDogcmZraWxsLWdwaW86IEFkZCBleHBsaWNp
+dCBpbmNsdWRlIGZvciBvZi5oDQo+ICAgICAgIHNlcmlhbDogODI1MF90ZWdyYTogQWRkIGV4cGxp
+Y2l0IGluY2x1ZGUgZm9yIG9mLmgNCj4gICAgICAgQUNQSTogUmVwbGFjZSBpcnFkb21haW4uaCBp
+bmNsdWRlIHdpdGggc3RydWN0IGRlY2xhcmF0aW9ucw0KPiANCj4gIGRyaXZlcnMvaWlvL2FkYy9h
+ZDcyOTIuYyAgICAgICAgICAgICAgICB8IDEgKw0KPiAgZHJpdmVycy9zdGFnaW5nL2lpby9yZXNv
+bHZlci9hZDJzMTIxMC5jIHwgMSArDQo+ICBkcml2ZXJzL3R0eS9zZXJpYWwvODI1MC84MjUwX3Rl
+Z3JhLmMgICAgfCAxICsNCj4gIGluY2x1ZGUvbGludXgvYWNwaS5oICAgICAgICAgICAgICAgICAg
+ICB8IDQgKysrLQ0KPiAgbmV0L3Jma2lsbC9yZmtpbGwtZ3Bpby5jICAgICAgICAgICAgICAgIHwg
+MSArDQo+ICA1IGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0K
+PiAtLS0NCj4gYmFzZS1jb21taXQ6IGZlMTVjMjZlZTI2ZWZhMTE3NDFhN2I2MzJlOWYyM2IwMWFj
+YTRjYzYNCj4gY2hhbmdlLWlkOiAyMDIzMDMyOS1hY3BpLWhlYWRlci1jbGVhbnVwLTY2NTMzMTgy
+ODQzNg0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiAtLQ0KPiBSb2IgSGVycmluZyA8cm9iaEBrZXJu
+ZWwub3JnPg0KDQo=
