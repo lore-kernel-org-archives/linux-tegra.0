@@ -2,139 +2,74 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E77C6FD18
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Mar 2023 17:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C097AC6FD18
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 02:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229810AbjC1RyD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Mar 2023 13:54:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39404 "EHLO
+        id S229540AbjC2CfD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Mar 2023 22:35:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229690AbjC1RyB (ORCPT
+        with ESMTP id S229456AbjC2CfC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Mar 2023 13:54:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA86BE05C;
-        Tue, 28 Mar 2023 10:53:54 -0700 (PDT)
+        Tue, 28 Mar 2023 22:35:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A7F2703;
+        Tue, 28 Mar 2023 19:35:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5F158B81E34;
-        Tue, 28 Mar 2023 17:53:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AEDC433EF;
-        Tue, 28 Mar 2023 17:53:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3CAD061A3F;
+        Wed, 29 Mar 2023 02:35:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818F7C433D2;
+        Wed, 29 Mar 2023 02:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680026032;
-        bh=2YiRa5zMmLavggXXj54qS1KpalIDFc2G9Mo2Yjx/i+s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=d1Jz9mFoMyg/YgxPBKDO/yvKkTgt8/GT8XBPbHu5QOP0cMWOODHX2SQJDx0RdhGIY
-         PfEuHxmKwpNeM9/KWDoVOMIoXWvmhOAqZSGMPi+6INV0NfxFXJwPdZBt8bSrcZSBHo
-         wh22JAu/Wb4hPdSUzNHGBlTpHi6wScwSpz3Is8zW40fZryc+CaFp/6gC+LKaKqmyuk
-         fR7v0xIKH0mLrldmBA+vdsx4I/XCskuJrnKE/Ab++MVgVttm4ZUb3PtRAfYRvj0x0Y
-         vMnxxs4qigE3avnh6Rfqkon9vbMm9aY7cvnNWLI6ziYfohWeQRgj88fWQd7txEnLl+
-         sK+wMk++drGmg==
-Date:   Tue, 28 Mar 2023 12:53:50 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        lpieralisi@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
-        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
-        ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v4 10/10] PCI: tegra194: add interconnect support in
- Tegra234
-Message-ID: <20230328175350.GA2953686@bhelgaas>
+        s=k20201202; t=1680057300;
+        bh=GqNruyQ94NkZ9NZt0BUZLkCLHVLlwAwMXOdfDeCJI04=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ovg0HlNr3Bs88xxOHq4hcpTCtbM+6JRYm0WsI4AU+1u5NlvgImtKg6x2VOrNqhzmy
+         TXo7abF/Uk6iVlsJedflsT7NZ1qXTPi9LYQirrguYQKQFJ3EEqf3ntsIOe0+zk5DES
+         cpt/Nnb5NDzbaAuklKOJtjlLXpNzjYQlhUk+9DPff5rSRmNljbwFkKUgHVfwDPbGwW
+         fKHdMZTPeIaw8iWgBjhJO9jC+OBXaaaSEIYp4m0C1Oo5OAeMfJFDmywcnwTL+RHc5F
+         DNUQofY35JnnjosPfUZcGgfaHjDNSvTY/OrfctUMLtCFIke/F8qDhHgB87vERs5fK6
+         zMZZ3BDDpf5DA==
+Message-ID: <ce45ed77bb246d98adda4f478c020222.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230327161426.32639-11-sumitg@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230312161512.2715500-3-u.kleine-koenig@pengutronix.de>
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de> <20230312161512.2715500-3-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 02/30] clk: tegra: Don't warn three times about failure to unregister
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Date:   Tue, 28 Mar 2023 19:34:58 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Capitalize subject line please, to match pcie-tegra194.c history.
-
-On Mon, Mar 27, 2023 at 09:44:26PM +0530, Sumit Gupta wrote:
-> Add support to request DRAM bandwidth with Memory Interconnect
-> in Tegra234 SoC. The DRAM BW required for different modes depends
-> on speed (Gen-1/2/3/4) and width/lanes (x1/x2/x4/x8).
-> 
-> Suggested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+Quoting Uwe Kleine-K=C3=B6nig (2023-03-12 09:14:44)
+> tegra124_dfll_fcpu_remove() calls tegra_dfll_unregister() and the former
+> emits an error message if the latter fails. In that case
+> tegra_dfll_unregister() already printed an error message. Additionally
+> tegra124_dfll_fcpu_remove() returns an error code which results in yet
+> another warning emitted by platform_remove().
+>=20
+> So drop the error message from tegra124_dfll_fcpu_remove() and let it
+> return 0. (Retuning 0 has no side effect but suppressing the error
+> message in platform_remove().)
+>=20
+> Also add two comments about exiting early being wrong. This is something
+> that needs fixing separately.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 > ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 40 +++++++++++++++++-----
->  1 file changed, 32 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 09825b4a075e..d2513c9d3feb 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -15,6 +15,7 @@
->  #include <linux/gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
-> +#include <linux/interconnect.h>
 
-Almost alphabetized, swap interrupt.h and interconnect.h.
-
->  #include <linux/iopoll.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> @@ -287,6 +288,7 @@ struct tegra_pcie_dw {
->  	unsigned int pex_rst_irq;
->  	int ep_state;
->  	long link_status;
-> +	struct icc_path *icc_path;
->  };
->  
->  static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
-> @@ -309,6 +311,24 @@ struct tegra_pcie_soc {
->  	enum dw_pcie_device_mode mode;
->  };
->  
-> +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
-> +{
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	u32 val, speed, width;
-> +
-> +	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
-> +
-> +	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
-> +	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
-> +
-> +	val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
-> +
-> +	if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
-> +		dev_err(pcie->dev, "can't set bw[%u]\n", val);
-> +
-> +	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-
-Array bounds violation; PCI_EXP_LNKSTA_CLS is 0x000f, so possible
-speed (CLS) values are 0..0xf and "speed - 1" values are -1..0xe.
-
-pcie_gen_freq[] is of size 4 (valid indices 0..3).
-
-I see that you're just *moving* this code, but might as well fix it.
-
-> +}
-> +
->  static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -452,14 +472,12 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
->  	struct tegra_pcie_dw *pcie = arg;
->  	struct dw_pcie_ep *ep = &pcie->pci.ep;
->  	struct dw_pcie *pci = &pcie->pci;
-> -	u32 val, speed;
-> +	u32 val;
->  
->  	if (test_and_clear_bit(0, &pcie->link_status))
->  		dw_pcie_ep_linkup(ep);
->  
-> -	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
-> -		PCI_EXP_LNKSTA_CLS;
-> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> +	tegra_pcie_icc_set(pcie);
+Applied to clk-next
