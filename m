@@ -2,408 +2,189 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76ED9C761AF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 17:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21491C74A5B
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 17:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230130AbjC2ROL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 13:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39384 "EHLO
+        id S229738AbjC2R7J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 13:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbjC2ROK (ORCPT
+        with ESMTP id S229451AbjC2R7I (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 13:14:10 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540611FCC
-        for <linux-tegra@vger.kernel.org>; Wed, 29 Mar 2023 10:14:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680110049; x=1711646049;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=a/oAkn7vAHFINNWHMRvp+WT+kIAvJm5Ahc0IuF9GAn0=;
-  b=jPWIxSqz60g6vzsDXDmYB/6LYFFWqJG7IzLlxoIIUpgq/fuDt9/+sELU
-   D5iG1Nq/MLKyQ/LoKqrPYxGtURFytUkDD4d80k4jl6NMaHHLu6XLWuJoa
-   Tqe7+3Y5MH8vGFnZFDzAumoSiPNaPrhqPtnUOsygXiS0PvahFFRE7NJOh
-   ylI2TtgRy8hgcSTi6fE8KH/siBzJHtiSX2QCMsKPZ4NvJ5lBMBohvZATP
-   5soTw4M++NkTk6aqTlIAKeBijI05GAUi4zapidcYAJqT/3rEj+bW7Ebmh
-   YFymDqPx+vzQFZkqLzV+0zb+rGSVMHXDgBNjeh9RRB1IEPXEhjqPqJ2km
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="329422553"
-X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
-   d="scan'208";a="329422553"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2023 10:14:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10664"; a="773648962"
-X-IronPort-AV: E=Sophos;i="5.98,301,1673942400"; 
-   d="scan'208";a="773648962"
-Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.70])
-  by FMSMGA003.fm.intel.com with SMTP; 29 Mar 2023 10:14:03 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 29 Mar 2023 20:14:02 +0300
-From:   Ville Syrjala <ville.syrjala@linux.intel.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Emma Anholt <emma@anholt.net>,
-        Maxime Ripard <mripard@kernel.org>,
-        intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] drm/scdc-helper: Pimp SCDC debugs
-Date:   Wed, 29 Mar 2023 20:14:02 +0300
-Message-Id: <20230329171402.2772-1-ville.syrjala@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+        Wed, 29 Mar 2023 13:59:08 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2064.outbound.protection.outlook.com [40.107.94.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2C52132;
+        Wed, 29 Mar 2023 10:59:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j8Sa5UAjM5UHRXzXy8UWrBoXwQlVtaA+8jMeuHfUHb7n9z2EOjmt+9Kc0cIooO+z8AuOTLmxQX+Lmbo4UGe8pnOschd4J8JOnlHHBci03O3DymxzSWDjCM4uA0+MBUucItWfrcrJ4k9cb5zC68NzwOWuaTy9TOWq566pt5P8nAaPKzMY/hO5ShD5h0uA011dcwBAq/VKhE5n2AsTgXr6DJErx4raO05o3V0OC75jM4Q2YVTbabr6QV96ne8+mI7AhCht6v2+sKV9W9SsyLyXR58Io5Dc2hxbrSHM0pbhPTMjGEqc9Xt0EuyVvNA2/8MbksAP0TO7+ykUmgHUlUnXMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZOPneTcbaqfS9zLowMOyXCiplcRCbA5JdYHvdLSXTiw=;
+ b=hPzA9uRoaPa03i0Vl8Dj7slquXGvM4ypkC2ls/AopuwJzwj6Obu9AzA16j7m00C/G+FG7IJ8DYv+zRMp9pwxM2Bgtqds96EysstW0p6qyJek8tQMRM5/QghrCE4aCtCgpv6dIj6ZJYLuNoFcXRlipBQCSnD1UI7eYmY/I8ky3DqZo3FMcdLmuY1vnmzRz87TAXo6dAYz8F24/DMXq6yFtWX2KDeW3d+O5am5GmSKoA3QrFpkBX5zlVVWtkV9K2WGQGgtMlJaF5dTwNtMQBdu6h1pJ7JyMrP8K0b2at2rTgquLrRgsv608x6z3ZKTh9/Kf1fTGS4DTxlGnqO0puJVwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZOPneTcbaqfS9zLowMOyXCiplcRCbA5JdYHvdLSXTiw=;
+ b=hrK5t53NpSfluhr3iXO9DdvYwls3aw9vuuLMF5J5BHN6h2PJ2jY5/Pik0x3VP6dCkd3B/6nL6UETR+kV+xQLmYMqlg+6VuWUcgy6WQwkcCvyqmpJRFYHaNLn2gaAt1eFAz7CcHIoX1xXorBqYjpaVU8MJ+bYyiNEe9CIQ3nWm9JcRXz5eSOC9MNZ58NzLNY78gxQqIy+PaumdszPKwCzuhFgYkPcEwFjsbDy+jNYxnQ++uq3NEtXzDu38dpe2Flcdsla38zWcjfG8quD8AzgtTc7CS3fkpW+ObynrqeCl/B7nSJUA0sk5qFW3KL24BZ43pI8YkFTzZpF7jf3w3Mgzg==
+Received: from CY5PR04CA0010.namprd04.prod.outlook.com (2603:10b6:930:1e::19)
+ by SJ2PR12MB7848.namprd12.prod.outlook.com (2603:10b6:a03:4ca::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.28; Wed, 29 Mar
+ 2023 17:59:01 +0000
+Received: from CY4PEPF0000C981.namprd02.prod.outlook.com
+ (2603:10b6:930:1e:cafe::a0) by CY5PR04CA0010.outlook.office365.com
+ (2603:10b6:930:1e::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.20 via Frontend
+ Transport; Wed, 29 Mar 2023 17:59:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000C981.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6178.26 via Frontend Transport; Wed, 29 Mar 2023 17:59:01 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 29 Mar 2023
+ 10:58:49 -0700
+Received: from [10.41.21.79] (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 29 Mar
+ 2023 10:58:43 -0700
+Message-ID: <1d029226-9749-9211-2baa-7f9188641ce0@nvidia.com>
+Date:   Wed, 29 Mar 2023 23:28:40 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [Patch v4 10/10] PCI: tegra194: add interconnect support in
+ Tegra234
+Content-Language: en-US
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <treding@nvidia.com>, <krzysztof.kozlowski@linaro.org>,
+        <dmitry.osipenko@collabora.com>, <viresh.kumar@linaro.org>,
+        <rafael@kernel.org>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+        <lpieralisi@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <mmaddireddy@nvidia.com>, <kw@linux.com>, <bhelgaas@google.com>,
+        <vidyas@nvidia.com>, <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>,
+        <ishah@nvidia.com>, <bbasu@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>
+References: <20230329165957.GA3066317@bhelgaas>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <20230329165957.GA3066317@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000C981:EE_|SJ2PR12MB7848:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d2c4ae9-e08d-4ffc-51e6-08db307f4720
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: D6kR2wcA3gTet6BsihXBjG0+2Z6/uZ6d9W7moBalrVAHpv/rdjDL8plrL59XH5j8uWZWVNRK6N4lQqVzzNQOlVvkUkMrxnkE+JHZEEemEi/QLn1RMZMf585o9sxKPyBi4nqGeHyo43xMUw5f7G0TFCfvjJI9C3moKrt8k6mwI2epwgcbfmPRV8q9aGMaVzU/uYbiDQuLvDpj5FR1Mgjmg0yvsQOY5VrgQpWaNzRukskknrLpBxF27UeZ+Aga4jBDPH8bQIl9IqToBfsJ/n0y7bodsJz3a5KqRQ9bZuIAL6A6+GTTxNJ6NkANUmV7BKH2nZj5rNIWzpxidbz/FN1rpf2TmQTKhU3Lkl+OZZqPDPdU1pFlnAgdKCTfLriqQ3T+Z0LrFKwjg6OE+em9LcGeQZ2iPPe1XZFMXzZ33ZTSZI47dbQgTaLNertnAg0N4DtHSEeLfo0t8QWiGLLzs+ZqQzXVXOyek9BHuoAi+6sLyUTMzo6y5MshRotLq+6eqqPtww9aoU1jZwdvve9l+BjOsE+em+PijTGwG/I6DZ0YCBiQ5I8B2K1AXLZElUGg/gVRyvChF9WdWZA1CMuTuq9yt9sM9CfDvYCBiPeD42OWUfntI7HkjpU1oyB/6iI6+ohu6V3llkmMG/4BldTvZ6MSO+o1YpNEzspxHk6Ls8wK0iPSHBJuq6pRgRYi8wRETn01sgArMWP9xKGcMsgIZAFdODEcJMjIy+v/GWBLagFqR21RUJ5fBm0koMpzWKR6JLcYF1CALpDzaUtJfJlyLAZo8kFpXU6IK/Ibyu5nEJUEJqk=
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(136003)(346002)(39860400002)(451199021)(46966006)(36840700001)(40470700004)(47076005)(2906002)(2616005)(83380400001)(426003)(336012)(6916009)(8676002)(4326008)(70206006)(70586007)(478600001)(54906003)(53546011)(316002)(16576012)(26005)(16526019)(7416002)(107886003)(82310400005)(186003)(36756003)(86362001)(36860700001)(41300700001)(31696002)(82740400003)(7636003)(5660300002)(356005)(40480700001)(40460700003)(31686004)(8936002)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Mar 2023 17:59:01.3931
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d2c4ae9-e08d-4ffc-51e6-08db307f4720
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000C981.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7848
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Include the device and connector information in the SCDC
-debugs. Makes it easier to figure out who did what.
 
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Robert Foss <rfoss@kernel.org>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Jonas Karlman <jonas@kwiboo.se>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Emma Anholt <emma@anholt.net>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c |  8 ++---
- drivers/gpu/drm/display/drm_scdc_helper.c | 36 ++++++++++++++++++-----
- drivers/gpu/drm/i915/display/intel_ddi.c  |  4 +--
- drivers/gpu/drm/i915/display/intel_hdmi.c |  4 +--
- drivers/gpu/drm/tegra/sor.c               | 10 +++----
- drivers/gpu/drm/vc4/vc4_hdmi.c            | 21 +++++++------
- include/drm/display/drm_scdc_helper.h     | 12 ++++++--
- 7 files changed, 62 insertions(+), 33 deletions(-)
+On 29/03/23 22:29, Bjorn Helgaas wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On Wed, Mar 29, 2023 at 02:44:34PM +0530, Sumit Gupta wrote:
+>> On 28/03/23 23:23, Bjorn Helgaas wrote:
+>>>> +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
+>>>> +{
+>>>> +     struct dw_pcie *pci = &pcie->pci;
+>>>> +     u32 val, speed, width;
+>>>> +
+>>>> +     val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
+>>>> +
+>>>> +     speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+>>>> +     width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
+>>>> +
+>>>> +     val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
+>>>> +
+>>>> +     if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
+>>>> +             dev_err(pcie->dev, "can't set bw[%u]\n", val);
+>>>> +
+>>>> +     clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+>>>
+>>> Array bounds violation; PCI_EXP_LNKSTA_CLS is 0x000f, so possible
+>>> speed (CLS) values are 0..0xf and "speed - 1" values are -1..0xe.
+>>>
+>>> pcie_gen_freq[] is of size 4 (valid indices 0..3).
+>>>
+>>> I see that you're just *moving* this code, but might as well fix it.
+>>>
+>> Thank you for the review.
+>> Will include the below change in the same patch. Please let me know if any
+>> issue.
+>>
+>>   -       clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+>>   +       if (speed && (speed <= ARRAY_SIZE(pcie_gen_freq)))
+>>   +               clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+>>   +       else
+>>   +               clk_set_rate(pcie->core_clk, pcie_gen_freq[0]);
+> 
+> I didn't notice that speed is a u32, so -1 is not a possible value.
+> Also, it's used earlier for PCIE_SPEED2MBS_ENC(), so you could do
+> something like this:
+> 
+>    speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val) - 1;
+>    if (speed >= ARRAY_SIZE(pcie_gen_freq))
+>      speed = 0;
+> 
+>    val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
+>          BITS_PER_BYTE);
+>    ...
+>    clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index aa51c61a78c7..7f57ca168ab6 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1426,9 +1426,9 @@ void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi,
- 	/* Control for TMDS Bit Period/TMDS Clock-Period Ratio */
- 	if (dw_hdmi_support_scdc(hdmi, display)) {
- 		if (mtmdsclock > HDMI14_MAX_TMDSCLK)
--			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 1);
-+			drm_scdc_set_high_tmds_clock_ratio(&hdmi->connector, hdmi->ddc, 1);
- 		else
--			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 0);
-+			drm_scdc_set_high_tmds_clock_ratio(&hdmi->connector, hdmi->ddc, 0);
- 	}
- }
- EXPORT_SYMBOL_GPL(dw_hdmi_set_high_tmds_clock_ratio);
-@@ -2116,7 +2116,7 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 				min_t(u8, bytes, SCDC_MIN_SOURCE_VERSION));
- 
- 			/* Enabled Scrambling in the Sink */
--			drm_scdc_set_scrambling(hdmi->ddc, 1);
-+			drm_scdc_set_scrambling(&hdmi->connector, hdmi->ddc, 1);
- 
- 			/*
- 			 * To activate the scrambler feature, you must ensure
-@@ -2132,7 +2132,7 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 			hdmi_writeb(hdmi, 0, HDMI_FC_SCRAMBLER_CTRL);
- 			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
- 				    HDMI_MC_SWRSTZ);
--			drm_scdc_set_scrambling(hdmi->ddc, 0);
-+			drm_scdc_set_scrambling(&hdmi->connector, hdmi->ddc, 0);
- 		}
- 	}
- 
-diff --git a/drivers/gpu/drm/display/drm_scdc_helper.c b/drivers/gpu/drm/display/drm_scdc_helper.c
-index c3ad4ab2b456..2b124152384c 100644
---- a/drivers/gpu/drm/display/drm_scdc_helper.c
-+++ b/drivers/gpu/drm/display/drm_scdc_helper.c
-@@ -26,6 +26,8 @@
- #include <linux/delay.h>
- 
- #include <drm/display/drm_scdc_helper.h>
-+#include <drm/drm_connector.h>
-+#include <drm/drm_device.h>
- #include <drm/drm_print.h>
- 
- /**
-@@ -140,6 +142,7 @@ EXPORT_SYMBOL(drm_scdc_write);
- 
- /**
-  * drm_scdc_get_scrambling_status - what is status of scrambling?
-+ * @connector: connector
-  * @adapter: I2C adapter for DDC channel
-  *
-  * Reads the scrambler status over SCDC, and checks the
-@@ -148,14 +151,17 @@ EXPORT_SYMBOL(drm_scdc_write);
-  * Returns:
-  * True if the scrambling is enabled, false otherwise.
-  */
--bool drm_scdc_get_scrambling_status(struct i2c_adapter *adapter)
-+bool drm_scdc_get_scrambling_status(struct drm_connector *connector,
-+				    struct i2c_adapter *adapter)
- {
- 	u8 status;
- 	int ret;
- 
- 	ret = drm_scdc_readb(adapter, SCDC_SCRAMBLER_STATUS, &status);
- 	if (ret < 0) {
--		DRM_DEBUG_KMS("Failed to read scrambling status: %d\n", ret);
-+		drm_dbg_kms(connector->dev,
-+			    "[CONNECTOR:%d:%s] Failed to read scrambling status: %d\n",
-+			    connector->base.id, connector->name, ret);
- 		return false;
- 	}
- 
-@@ -165,6 +171,7 @@ EXPORT_SYMBOL(drm_scdc_get_scrambling_status);
- 
- /**
-  * drm_scdc_set_scrambling - enable scrambling
-+ * @connector: connector
-  * @adapter: I2C adapter for DDC channel
-  * @enable: bool to indicate if scrambling is to be enabled/disabled
-  *
-@@ -175,14 +182,18 @@ EXPORT_SYMBOL(drm_scdc_get_scrambling_status);
-  * Returns:
-  * True if scrambling is set/reset successfully, false otherwise.
-  */
--bool drm_scdc_set_scrambling(struct i2c_adapter *adapter, bool enable)
-+bool drm_scdc_set_scrambling(struct drm_connector *connector,
-+			     struct i2c_adapter *adapter,
-+			     bool enable)
- {
- 	u8 config;
- 	int ret;
- 
- 	ret = drm_scdc_readb(adapter, SCDC_TMDS_CONFIG, &config);
- 	if (ret < 0) {
--		DRM_DEBUG_KMS("Failed to read TMDS config: %d\n", ret);
-+		drm_dbg_kms(connector->dev,
-+			    "[CONNECTOR:%d:%s] Failed to read TMDS config: %d\n",
-+			    connector->base.id, connector->name, ret);
- 		return false;
- 	}
- 
-@@ -193,7 +204,9 @@ bool drm_scdc_set_scrambling(struct i2c_adapter *adapter, bool enable)
- 
- 	ret = drm_scdc_writeb(adapter, SCDC_TMDS_CONFIG, config);
- 	if (ret < 0) {
--		DRM_DEBUG_KMS("Failed to enable scrambling: %d\n", ret);
-+		drm_dbg_kms(connector->dev,
-+			    "[CONNECTOR:%d:%s] Failed to enable scrambling: %d\n",
-+			    connector->base.id, connector->name, ret);
- 		return false;
- 	}
- 
-@@ -203,6 +216,7 @@ EXPORT_SYMBOL(drm_scdc_set_scrambling);
- 
- /**
-  * drm_scdc_set_high_tmds_clock_ratio - set TMDS clock ratio
-+ * @connector: connector
-  * @adapter: I2C adapter for DDC channel
-  * @set: ret or reset the high clock ratio
-  *
-@@ -230,14 +244,18 @@ EXPORT_SYMBOL(drm_scdc_set_scrambling);
-  * Returns:
-  * True if write is successful, false otherwise.
-  */
--bool drm_scdc_set_high_tmds_clock_ratio(struct i2c_adapter *adapter, bool set)
-+bool drm_scdc_set_high_tmds_clock_ratio(struct drm_connector *connector,
-+					struct i2c_adapter *adapter,
-+					bool set)
- {
- 	u8 config;
- 	int ret;
- 
- 	ret = drm_scdc_readb(adapter, SCDC_TMDS_CONFIG, &config);
- 	if (ret < 0) {
--		DRM_DEBUG_KMS("Failed to read TMDS config: %d\n", ret);
-+		drm_dbg_kms(connector->dev,
-+			    "[CONNECTOR:%d:%s] Failed to read TMDS config: %d\n",
-+			    connector->base.id, connector->name, ret);
- 		return false;
- 	}
- 
-@@ -248,7 +266,9 @@ bool drm_scdc_set_high_tmds_clock_ratio(struct i2c_adapter *adapter, bool set)
- 
- 	ret = drm_scdc_writeb(adapter, SCDC_TMDS_CONFIG, config);
- 	if (ret < 0) {
--		DRM_DEBUG_KMS("Failed to set TMDS clock ratio: %d\n", ret);
-+		drm_dbg_kms(connector->dev,
-+			    "[CONNECTOR:%d:%s] Failed to set TMDS clock ratio: %d\n",
-+			    connector->base.id, connector->name, ret);
- 		return false;
- 	}
- 
-diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
-index 73240cf78c8b..d8a9790f9d36 100644
---- a/drivers/gpu/drm/i915/display/intel_ddi.c
-+++ b/drivers/gpu/drm/i915/display/intel_ddi.c
-@@ -3988,8 +3988,8 @@ static int intel_hdmi_reset_link(struct intel_encoder *encoder,
- 
- 	ret = drm_scdc_readb(adapter, SCDC_TMDS_CONFIG, &config);
- 	if (ret < 0) {
--		drm_err(&dev_priv->drm, "Failed to read TMDS config: %d\n",
--			ret);
-+		drm_err(&dev_priv->drm, "[CONNECTOR:%d:%s] Failed to read TMDS config: %d\n",
-+			connector->base.base.id, connector->base.name, ret);
- 		return 0;
- 	}
- 
-diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
-index c7e9e1fbed37..1835df94616a 100644
---- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-@@ -2661,9 +2661,9 @@ bool intel_hdmi_handle_sink_scrambling(struct intel_encoder *encoder,
- 		    str_yes_no(scrambling), high_tmds_clock_ratio ? 40 : 10);
- 
- 	/* Set TMDS bit clock ratio to 1/40 or 1/10, and enable/disable scrambling */
--	return drm_scdc_set_high_tmds_clock_ratio(adapter,
-+	return drm_scdc_set_high_tmds_clock_ratio(connector, adapter,
- 						  high_tmds_clock_ratio) &&
--		drm_scdc_set_scrambling(adapter, scrambling);
-+		drm_scdc_set_scrambling(connector, adapter, scrambling);
- }
- 
- static u8 chv_port_to_ddc_pin(struct drm_i915_private *dev_priv, enum port port)
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 8af632740673..6cfdb2dec561 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -2142,8 +2142,8 @@ static void tegra_sor_hdmi_scdc_disable(struct tegra_sor *sor)
- {
- 	struct i2c_adapter *ddc = sor->output.ddc;
- 
--	drm_scdc_set_high_tmds_clock_ratio(ddc, false);
--	drm_scdc_set_scrambling(ddc, false);
-+	drm_scdc_set_high_tmds_clock_ratio(&sor->output.connector, ddc, false);
-+	drm_scdc_set_scrambling(&sor->output.connector, ddc, false);
- 
- 	tegra_sor_hdmi_disable_scrambling(sor);
- }
-@@ -2170,8 +2170,8 @@ static void tegra_sor_hdmi_scdc_enable(struct tegra_sor *sor)
- {
- 	struct i2c_adapter *ddc = sor->output.ddc;
- 
--	drm_scdc_set_high_tmds_clock_ratio(ddc, true);
--	drm_scdc_set_scrambling(ddc, true);
-+	drm_scdc_set_high_tmds_clock_ratio(&sor->output.connector, ddc, true);
-+	drm_scdc_set_scrambling(&sor->output.connector, ddc, true);
- 
- 	tegra_sor_hdmi_enable_scrambling(sor);
- }
-@@ -2181,7 +2181,7 @@ static void tegra_sor_hdmi_scdc_work(struct work_struct *work)
- 	struct tegra_sor *sor = container_of(work, struct tegra_sor, scdc.work);
- 	struct i2c_adapter *ddc = sor->output.ddc;
- 
--	if (!drm_scdc_get_scrambling_status(ddc)) {
-+	if (!drm_scdc_get_scrambling_status(&sor->output.connector, ddc)) {
- 		DRM_DEBUG_KMS("SCDC not scrambled\n");
- 		tegra_sor_hdmi_scdc_enable(sor);
- 	}
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 464c3cc8e6fb..ca27fe092679 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -885,7 +885,8 @@ static void vc4_hdmi_set_infoframes(struct drm_encoder *encoder)
- static void vc4_hdmi_enable_scrambling(struct drm_encoder *encoder)
- {
- 	struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
--	struct drm_device *drm = vc4_hdmi->connector.dev;
-+	struct drm_connector *connector = &vc4_hdmi->connector;
-+	struct drm_device *drm = connector->dev;
- 	const struct drm_display_mode *mode = &vc4_hdmi->saved_adjusted_mode;
- 	unsigned long flags;
- 	int idx;
-@@ -903,8 +904,8 @@ static void vc4_hdmi_enable_scrambling(struct drm_encoder *encoder)
- 	if (!drm_dev_enter(drm, &idx))
- 		return;
- 
--	drm_scdc_set_high_tmds_clock_ratio(vc4_hdmi->ddc, true);
--	drm_scdc_set_scrambling(vc4_hdmi->ddc, true);
-+	drm_scdc_set_high_tmds_clock_ratio(connector, vc4_hdmi->ddc, true);
-+	drm_scdc_set_scrambling(connector, vc4_hdmi->ddc, true);
- 
- 	spin_lock_irqsave(&vc4_hdmi->hw_lock, flags);
- 	HDMI_WRITE(HDMI_SCRAMBLER_CTL, HDMI_READ(HDMI_SCRAMBLER_CTL) |
-@@ -922,7 +923,8 @@ static void vc4_hdmi_enable_scrambling(struct drm_encoder *encoder)
- static void vc4_hdmi_disable_scrambling(struct drm_encoder *encoder)
- {
- 	struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
--	struct drm_device *drm = vc4_hdmi->connector.dev;
-+	struct drm_connector *connector = &vc4_hdmi->connector;
-+	struct drm_device *drm = connector->dev;
- 	unsigned long flags;
- 	int idx;
- 
-@@ -944,8 +946,8 @@ static void vc4_hdmi_disable_scrambling(struct drm_encoder *encoder)
- 		   ~VC5_HDMI_SCRAMBLER_CTL_ENABLE);
- 	spin_unlock_irqrestore(&vc4_hdmi->hw_lock, flags);
- 
--	drm_scdc_set_scrambling(vc4_hdmi->ddc, false);
--	drm_scdc_set_high_tmds_clock_ratio(vc4_hdmi->ddc, false);
-+	drm_scdc_set_scrambling(connector, vc4_hdmi->ddc, false);
-+	drm_scdc_set_high_tmds_clock_ratio(connector, vc4_hdmi->ddc, false);
- 
- 	drm_dev_exit(idx);
- }
-@@ -955,12 +957,13 @@ static void vc4_hdmi_scrambling_wq(struct work_struct *work)
- 	struct vc4_hdmi *vc4_hdmi = container_of(to_delayed_work(work),
- 						 struct vc4_hdmi,
- 						 scrambling_work);
-+	struct drm_connector *connector = &vc4_hdmi->connector;
- 
--	if (drm_scdc_get_scrambling_status(vc4_hdmi->ddc))
-+	if (drm_scdc_get_scrambling_status(connector, vc4_hdmi->ddc))
- 		return;
- 
--	drm_scdc_set_high_tmds_clock_ratio(vc4_hdmi->ddc, true);
--	drm_scdc_set_scrambling(vc4_hdmi->ddc, true);
-+	drm_scdc_set_high_tmds_clock_ratio(connector, vc4_hdmi->ddc, true);
-+	drm_scdc_set_scrambling(connector, vc4_hdmi->ddc, true);
- 
- 	queue_delayed_work(system_wq, &vc4_hdmi->scrambling_work,
- 			   msecs_to_jiffies(SCRAMBLING_POLLING_DELAY_MS));
-diff --git a/include/drm/display/drm_scdc_helper.h b/include/drm/display/drm_scdc_helper.h
-index ded01fd948b4..9ad523b45454 100644
---- a/include/drm/display/drm_scdc_helper.h
-+++ b/include/drm/display/drm_scdc_helper.h
-@@ -28,6 +28,7 @@
- 
- #include <drm/display/drm_scdc.h>
- 
-+struct drm_connector;
- struct i2c_adapter;
- 
- ssize_t drm_scdc_read(struct i2c_adapter *adapter, u8 offset, void *buffer,
-@@ -71,9 +72,14 @@ static inline int drm_scdc_writeb(struct i2c_adapter *adapter, u8 offset,
- 	return drm_scdc_write(adapter, offset, &value, sizeof(value));
- }
- 
--bool drm_scdc_get_scrambling_status(struct i2c_adapter *adapter);
-+bool drm_scdc_get_scrambling_status(struct drm_connector *connector,
-+				    struct i2c_adapter *adapter);
- 
--bool drm_scdc_set_scrambling(struct i2c_adapter *adapter, bool enable);
--bool drm_scdc_set_high_tmds_clock_ratio(struct i2c_adapter *adapter, bool set);
-+bool drm_scdc_set_scrambling(struct drm_connector *connector,
-+			     struct i2c_adapter *adapter,
-+			     bool enable);
-+bool drm_scdc_set_high_tmds_clock_ratio(struct drm_connector *connector,
-+					struct i2c_adapter *adapter,
-+					bool set);
- 
- #endif
--- 
-2.39.2
+I tried this change but PCIE_SPEED2MBS_ENC gives zero when speed value 
+is one. The speed value ranges from "1 to 4" and for value "1", 
+pcie_link_speed[speed] gives '0xff'.
 
+  const unsigned char pcie_link_speed[] = {
+          PCI_SPEED_UNKNOWN,              /* 0 */
+
+The below change works fine. Please share if its OK to add it in patch.
+
+   speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+   if (!speed || speed >= ARRAY_SIZE(pcie_gen_freq))
+           speed = 1;
+
+   val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / 
+BITS_PER_BYTE);
+
+   if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
+           dev_err(pcie->dev, "can't set bw[%u]\n", val);
+
+   clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+
+
+Thank you,
+Sumit Gupta
