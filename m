@@ -2,52 +2,51 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D02C7EE30
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABCAC7EE37
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Mar 2023 15:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231243AbjC2Px1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 11:53:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42596 "EHLO
+        id S231248AbjC2Px2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 11:53:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230511AbjC2Pw7 (ORCPT
+        with ESMTP id S231165AbjC2PxL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 11:52:59 -0400
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC7885258;
-        Wed, 29 Mar 2023 08:52:52 -0700 (PDT)
-Received: by mail-oo1-f51.google.com with SMTP id l7-20020a4abe07000000b0053e1205c84bso2136682oop.9;
-        Wed, 29 Mar 2023 08:52:52 -0700 (PDT)
+        Wed, 29 Mar 2023 11:53:11 -0400
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7048059C3;
+        Wed, 29 Mar 2023 08:53:01 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-17aeb49429eso16663520fac.6;
+        Wed, 29 Mar 2023 08:53:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680105172;
+        d=1e100.net; s=20210112; t=1680105180;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hUvdSWvlelGy1WbXkwFcUNCtjmz5cL2Z3yoJim8fyN4=;
-        b=aODX/6ADRviQrEpvD9jvFMaqnQIU0s6qdxBGaa+80aOFrEi2GGSBI3hn8jldFN5/Fe
-         aQH8vhvbeRlSsLHGsZWQmtkppZuI3yletOQPg3utpNptIZR0++A8ZSQMm9ucWJrxyE7g
-         z1v/bazbW4FW7ea5DAHNfxqnESnBXKJF36TRk0mvrqkl77IhEnnjx8DgbR/u61kWoCuu
-         sRURc8o2nP9+WWLmx4C1uE6i942K94R1XVILAGBz0vImq4+SaSgsoRhCQX9SvGzxKLC6
-         G/XUdGloaGJjsFjF14HPc+p5oTVejWAKfKlcBMVwqKXRmIWHfrD6UpWiIpYAhkfRPcLB
-         2xCg==
-X-Gm-Message-State: AO0yUKW6H+7kkywF6lx3NheJqIKiSUgKPi9QaQkse32gaRNbj1y/4jiX
-        dgRisqBYYKsbLzrh4DcKbrxw3fvkpQ==
-X-Google-Smtp-Source: AK7set8fZmNpueyLlqRjeVxsIcrGmIm7sG0omBAJB7zOEj3TTntZfmKbMnjZiGlZRcAnzZ6+ha8iMg==
-X-Received: by 2002:a4a:4191:0:b0:538:4d29:30cb with SMTP id x139-20020a4a4191000000b005384d2930cbmr9034039ooa.8.1680105171818;
-        Wed, 29 Mar 2023 08:52:51 -0700 (PDT)
+        bh=tGkcT5R0a8JeH9pr+tvR6Dp+SnQFVzxwMvRKP+oraeM=;
+        b=EORiKky2kD8bzQ9Zct1R+M+iXdqGVkMXmNFaEHHAekbprofIuLr1Oj+Xul/H98XlmG
+         5YEyPPIDLbJgAOlhdgkC32U/m4SXzV0SKXiDaBXvzl7aqmtGAECoif9nTlb6cmWwLaQ3
+         wwFXchs7MWlKxkddrz4Y0UUA0N5kSkypp2kfpaP2uwyCDH8sfZPy5k2KAfcSxp1MefBr
+         sOutmoCd/uoDi8LjADVZ6WG7K9WZzJLOGW++m2Hcck3gMa4X5MbdioLs4ZslPT45n1gj
+         hTNf7SKHCKmOulNVrqZMSZU+tzlZglFMkmukBuCRRt4wmAkFYEM2JHSEvps7JGmGhL2n
+         9hhw==
+X-Gm-Message-State: AAQBX9fuTyqAuL+RWwp5YcOyX2EJPnrhHc8dL23cdNBGryI+fnkxktip
+        RuVEfhBuAnIDzS8uxhrzCQ==
+X-Google-Smtp-Source: AKy350Zzh18IDSS9PRm/nm4uzfWROBk4i8K8e/GnmjZJixonIc4wyA8Ejs1S5hYlKdIJ6vpTCTaGZw==
+X-Received: by 2002:a05:6870:1fcd:b0:172:5de5:785 with SMTP id gp13-20020a0568701fcd00b001725de50785mr13981327oac.6.1680105180656;
+        Wed, 29 Mar 2023 08:53:00 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 129-20020a4a1887000000b005252d376caesm13850273ooo.22.2023.03.29.08.52.49
+        by smtp.gmail.com with ESMTPSA id b4-20020a056871030400b001762ce27f9asm11853490oag.23.2023.03.29.08.52.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 08:52:51 -0700 (PDT)
-Received: (nullmailer pid 3198095 invoked by uid 1000);
+        Wed, 29 Mar 2023 08:53:00 -0700 (PDT)
+Received: (nullmailer pid 3198091 invoked by uid 1000);
         Wed, 29 Mar 2023 15:52:45 -0000
 From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 29 Mar 2023 10:52:14 -0500
-Subject: [PATCH 17/19] irqchip: loongson-eiointc: Add explicit include for
- cpuhotplug.h
+Date:   Wed, 29 Mar 2023 10:52:12 -0500
+Subject: [PATCH 15/19] cpufreq: sun50i: Add explicit include for cpu.h
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230329-dt-cpu-header-cleanups-v1-17-581e2605fe47@kernel.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230329-dt-cpu-header-cleanups-v1-15-581e2605fe47@kernel.org>
 References: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
 In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -102,39 +101,34 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 Removing the include of cpu.h from of_device.h causes an error:
 
-drivers/irqchip/irq-loongson-eiointc.c:420:9: error: implicit declaration of function 'cpuhp_setup_state_nocalls' [-Werror=implicit-function-declaration]
+drivers/cpufreq/sun50i-cpufreq-nvmem.c:42:19: error: implicit declaration of function ‘get_cpu_device’; did you mean ‘get_device’? [-Werror=implicit-function-declaration]
 
-This driver doesn't even use DT, so all the DT includes can be dropped.
+As of_device.h is not otherwise needed, it can be replaced with of.h
+(also implicitly included).
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
 Please ack and I will take the series via the DT tree.
 ---
- drivers/irqchip/irq-loongson-eiointc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/cpufreq/sun50i-cpufreq-nvmem.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
-index d15fd38c1756..fd9d87f1470e 100644
---- a/drivers/irqchip/irq-loongson-eiointc.c
-+++ b/drivers/irqchip/irq-loongson-eiointc.c
-@@ -7,16 +7,13 @@
+diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+index 1583a370da39..4321d7bbe769 100644
+--- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
++++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+@@ -10,9 +10,10 @@
  
- #define pr_fmt(fmt) "eiointc: " fmt
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-+#include <linux/cpuhotplug.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/kernel.h>
--#include <linux/platform_device.h>
--#include <linux/of_address.h>
--#include <linux/of_irq.h>
--#include <linux/of_platform.h>
- #include <linux/syscore_ops.h>
- 
- #define EIOINTC_REG_NODEMAP	0x14a0
++#include <linux/cpu.h>
+ #include <linux/module.h>
+ #include <linux/nvmem-consumer.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_opp.h>
+ #include <linux/slab.h>
 
 -- 
 2.39.2
