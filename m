@@ -2,451 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEC4C77B61
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 08:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B340C77B62
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 08:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbjC3IgX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Mar 2023 04:36:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54904 "EHLO
+        id S229894AbjC3IiL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Mar 2023 04:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230293AbjC3IgO (ORCPT
+        with ESMTP id S229577AbjC3IiJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Mar 2023 04:36:14 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1276A6D
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Mar 2023 01:36:11 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 43A4221A98;
-        Thu, 30 Mar 2023 08:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1680165370; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tyAsvLxxSPqqEMN8Gwy8wMJEbceObIlovA8CqeT0y+Q=;
-        b=giwPQGS3vm4BpGpDGSflHaF1pqxz7lBuM8F3XcijfWLVEN37pLoiOruz2Qha9t70087EqZ
-        1io08d+q8XGaJa1AGXQREV4Tpib6+bVXYkxJZLkygPxHVZgiTwOmdmeQrmIOJy2u/7eyO9
-        G029+V7pgGaKN8m/9lW7ILwqB5zqNro=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1680165370;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tyAsvLxxSPqqEMN8Gwy8wMJEbceObIlovA8CqeT0y+Q=;
-        b=AicTgmMexa0A+z8APTIrq971nngVtsL1cOB4/ncUCTtjAq+hjH3JcNSrYX0eu+xC+44ppT
-        6Lx3mqwLhNo7u2Ag==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 182A0138FF;
-        Thu, 30 Mar 2023 08:36:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id MC/EBPpJJWQHHAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 30 Mar 2023 08:36:10 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, javierm@redhat.com,
-        airlied@gmail.com, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 7/7] drm/tegra: Implement fbdev emulation as in-kernel client
-Date:   Thu, 30 Mar 2023 10:36:07 +0200
-Message-Id: <20230330083607.12834-8-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230330083607.12834-1-tzimmermann@suse.de>
-References: <20230330083607.12834-1-tzimmermann@suse.de>
+        Thu, 30 Mar 2023 04:38:09 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF5A44EFE;
+        Thu, 30 Mar 2023 01:38:08 -0700 (PDT)
+Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PnGtQ0zQ0z6J9tP;
+        Thu, 30 Mar 2023 16:34:22 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Thu, 30 Mar
+ 2023 09:38:06 +0100
+Date:   Thu, 30 Mar 2023 09:38:05 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+CC:     Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        "Michael Hennerich" <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>,
+        Marc Zyngier <maz@kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/5] iio: adc: ad7292: Add explicit include for of.h
+Message-ID: <20230330093805.00003bb4@Huawei.com>
+In-Reply-To: <ZCThn87xFr3wGtzP@marsc.168.1.7>
+References: <20230329-acpi-header-cleanup-v1-0-8dc5cd3c610e@kernel.org>
+        <20230329-acpi-header-cleanup-v1-1-8dc5cd3c610e@kernel.org>
+        <ZCThn87xFr3wGtzP@marsc.168.1.7>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.76]
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Move code from ad-hoc fbdev callbacks into DRM client functions
-and remove the old callbacks. The functions instruct the client
-to poll for changed output or restore the display. The DRM core
-calls both, the old callbacks and the new client helpers, from
-the same places. The new functions perform the same operation as
-before, so there's no change in functionality.
+On Wed, 29 Mar 2023 22:10:55 -0300
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-Replace all code that initializes or releases fbdev emulation
-throughout the driver. Instead initialize the fbdev client by a
-single call to tegra_fbdev_setup() after tegra has registered
-its DRM device. As in most drivers, tegra's fbdev emulation now
-acts like a regular DRM client.
+> On 03/29, Rob Herring wrote:
+> > With linux/acpi.h no longer implicitly including of.h, add an explicit
+> > include of of.h to fix the following error:
+> > 
+> > drivers/iio/adc/ad7292.c:307:9: error: implicit declaration of function 'for_each_available_child_of_node'; did you mean 'fwnode_for_each_available_child_node'? [-Werror=implicit-function-declaration]
+> > 
+> > Signed-off-by: Rob Herring <robh@kernel.org>  
+> 
+> Acked-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-The fbdev client setup consists of the initial preparation and the
-hot-plugging of the display. The latter creates the fbdev device
-and sets up the fbdev framebuffer. The setup performs display
-hot-plugging once. If no display can be detected, DRM probe helpers
-re-run the detection on each hotplug event.
-
-A call to drm_dev_unregister() releases the client automatically.
-No further action is required within tegra. If the fbdev
-framebuffer has been fully set up, struct fb_ops.fb_destroy
-implements the release. For partially initialized emulation, the
-fbdev client reverts the initial setup.
-
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/tegra/drm.c   |  23 +----
- drivers/gpu/drm/tegra/drm.h   |  18 +---
- drivers/gpu/drm/tegra/fbdev.c | 177 +++++++++++++++-------------------
- 3 files changed, 86 insertions(+), 132 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 6ca9f396e55b..85ba96cddd51 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -56,9 +56,6 @@ static int tegra_atomic_check(struct drm_device *drm,
- 
- static const struct drm_mode_config_funcs tegra_drm_mode_config_funcs = {
- 	.fb_create = tegra_fb_create,
--#ifdef CONFIG_DRM_FBDEV_EMULATION
--	.output_poll_changed = drm_fb_helper_output_poll_changed,
--#endif
- 	.atomic_check = tegra_atomic_check,
- 	.atomic_commit = drm_atomic_helper_commit,
- };
-@@ -885,7 +882,6 @@ static const struct drm_driver tegra_drm_driver = {
- 			   DRIVER_ATOMIC | DRIVER_RENDER | DRIVER_SYNCOBJ,
- 	.open = tegra_drm_open,
- 	.postclose = tegra_drm_postclose,
--	.lastclose = drm_fb_helper_lastclose,
- 
- #if defined(CONFIG_DEBUG_FS)
- 	.debugfs_init = tegra_debugfs_init,
-@@ -1185,15 +1181,11 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 	drm->mode_config.funcs = &tegra_drm_mode_config_funcs;
- 	drm->mode_config.helper_private = &tegra_drm_mode_config_helpers;
- 
--	err = tegra_drm_fb_prepare(drm);
--	if (err < 0)
--		goto config;
--
- 	drm_kms_helper_poll_init(drm);
- 
- 	err = host1x_device_init(dev);
- 	if (err < 0)
--		goto fbdev;
-+		goto poll;
- 
- 	/*
- 	 * Now that all display controller have been initialized, the maximum
-@@ -1256,18 +1248,14 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 	if (err < 0)
- 		goto hub;
- 
--	err = tegra_drm_fb_init(drm);
-+	err = drm_dev_register(drm, 0);
- 	if (err < 0)
- 		goto hub;
- 
--	err = drm_dev_register(drm, 0);
--	if (err < 0)
--		goto fb;
-+	tegra_fbdev_setup(drm);
- 
- 	return 0;
- 
--fb:
--	tegra_drm_fb_exit(drm);
- hub:
- 	if (tegra->hub)
- 		tegra_display_hub_cleanup(tegra->hub);
-@@ -1280,10 +1268,8 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 	}
- 
- 	host1x_device_exit(dev);
--fbdev:
-+poll:
- 	drm_kms_helper_poll_fini(drm);
--	tegra_drm_fb_free(drm);
--config:
- 	drm_mode_config_cleanup(drm);
- domain:
- 	if (tegra->domain)
-@@ -1304,7 +1290,6 @@ static int host1x_drm_remove(struct host1x_device *dev)
- 	drm_dev_unregister(drm);
- 
- 	drm_kms_helper_poll_fini(drm);
--	tegra_drm_fb_exit(drm);
- 	drm_atomic_helper_shutdown(drm);
- 	drm_mode_config_cleanup(drm);
- 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 576f03b8434e..f9d18e8cf6ab 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -15,7 +15,6 @@
- #include <drm/drm_bridge.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_encoder.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fixed.h>
- #include <drm/drm_probe_helper.h>
- #include <uapi/drm/tegra_drm.h>
-@@ -194,22 +193,9 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
- 					const struct drm_mode_fb_cmd2 *cmd);
- 
- #ifdef CONFIG_DRM_FBDEV_EMULATION
--int tegra_drm_fb_prepare(struct drm_device *drm);
--void tegra_drm_fb_free(struct drm_device *drm);
--int tegra_drm_fb_init(struct drm_device *drm);
--void tegra_drm_fb_exit(struct drm_device *drm);
-+void tegra_fbdev_setup(struct drm_device *drm);
- #else
--static inline int tegra_drm_fb_prepare(struct drm_device *drm)
--{
--	return 0;
--}
--static inline void tegra_drm_fb_free(struct drm_device *drm)
--{ }
--static inline int tegra_drm_fb_init(struct drm_device *drm)
--{
--	return 0;
--}
--static inline void tegra_drm_fb_exit(struct drm_device *drm)
-+static inline void tegra_fbdev_setup(struct drm_device *drm)
- { }
- #endif
- 
-diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
-index 31a95a955efb..dc6dda641d1c 100644
---- a/drivers/gpu/drm/tegra/fbdev.c
-+++ b/drivers/gpu/drm/tegra/fbdev.c
-@@ -9,6 +9,9 @@
- 
- #include <linux/console.h>
- 
-+#include <drm/drm_drv.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-@@ -32,6 +35,26 @@ static int tegra_fb_mmap(struct fb_info *info, struct vm_area_struct *vma)
- 	return __tegra_gem_mmap(&bo->gem, vma);
- }
- 
-+static void tegra_fbdev_fb_destroy(struct fb_info *info)
-+{
-+	struct drm_fb_helper *helper = info->par;
-+	struct drm_framebuffer *fb = helper->fb;
-+	struct tegra_bo *bo = tegra_fb_get_plane(fb, 0);
-+
-+	drm_fb_helper_fini(helper);
-+
-+	/* Undo the special mapping we made in fbdev probe. */
-+	if (bo->pages) {
-+		vunmap(bo->vaddr);
-+		bo->vaddr = NULL;
-+	}
-+	drm_framebuffer_remove(fb);
-+
-+	drm_client_release(&helper->client);
-+	drm_fb_helper_unprepare(helper);
-+	kfree(helper);
-+}
-+
- static const struct fb_ops tegra_fb_ops = {
- 	.owner = THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
-@@ -41,6 +64,7 @@ static const struct fb_ops tegra_fb_ops = {
- 	.fb_copyarea = drm_fb_helper_sys_copyarea,
- 	.fb_imageblit = drm_fb_helper_sys_imageblit,
- 	.fb_mmap = tegra_fb_mmap,
-+	.fb_destroy = tegra_fbdev_fb_destroy,
- };
- 
- static int tegra_fbdev_probe(struct drm_fb_helper *helper,
-@@ -130,16 +154,52 @@ static const struct drm_fb_helper_funcs tegra_fb_helper_funcs = {
-  */
- 
- static void tegra_fbdev_client_unregister(struct drm_client_dev *client)
--{ }
-+{
-+	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
-+
-+	if (fb_helper->info) {
-+		drm_fb_helper_unregister_info(fb_helper);
-+	} else {
-+		drm_client_release(&fb_helper->client);
-+		drm_fb_helper_unprepare(fb_helper);
-+		kfree(fb_helper);
-+	}
-+}
- 
--static int tregra_fbdev_client_restore(struct drm_client_dev *client)
-+static int tegra_fbdev_client_restore(struct drm_client_dev *client)
- {
-+	drm_fb_helper_lastclose(client->dev);
-+
- 	return 0;
- }
- 
- static int tegra_fbdev_client_hotplug(struct drm_client_dev *client)
- {
-+	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
-+	struct drm_device *dev = client->dev;
-+	int ret;
-+
-+	if (dev->fb_helper)
-+		return drm_fb_helper_hotplug_event(dev->fb_helper);
-+
-+	ret = drm_fb_helper_init(dev, fb_helper);
-+	if (ret)
-+		goto err_drm_err;
-+
-+	if (!drm_drv_uses_atomic_modeset(dev))
-+		drm_helper_disable_unused_functions(dev);
-+
-+	ret = drm_fb_helper_initial_config(fb_helper);
-+	if (ret)
-+		goto err_drm_fb_helper_fini;
-+
- 	return 0;
-+
-+err_drm_fb_helper_fini:
-+	drm_fb_helper_fini(fb_helper);
-+err_drm_err:
-+	drm_err(dev, "Failed to setup fbdev emulation (ret=%d)\n", ret);
-+	return ret;
- }
- 
- static const struct drm_client_funcs tegra_fbdev_client_funcs = {
-@@ -149,109 +209,32 @@ static const struct drm_client_funcs tegra_fbdev_client_funcs = {
- 	.hotplug	= tegra_fbdev_client_hotplug,
- };
- 
--static struct drm_fb_helper *tegra_fbdev_create(struct drm_device *drm)
-+void tegra_fbdev_setup(struct drm_device *dev)
- {
- 	struct drm_fb_helper *helper;
-+	int ret;
-+
-+	drm_WARN(dev, !dev->registered, "Device has not been registered.\n");
-+	drm_WARN(dev, dev->fb_helper, "fb_helper is already set!\n");
- 
- 	helper = kzalloc(sizeof(*helper), GFP_KERNEL);
- 	if (!helper)
--		return ERR_PTR(-ENOMEM);
--
--	drm_fb_helper_prepare(drm, helper, 32, &tegra_fb_helper_funcs);
--
--	return helper;
--}
--
--static void tegra_fbdev_free(struct drm_fb_helper *helper)
--{
--	drm_fb_helper_unprepare(helper);
--	kfree(helper);
--}
--
--static int tegra_fbdev_init(struct drm_fb_helper *helper,
--			    unsigned int num_crtc,
--			    unsigned int max_connectors)
--{
--	struct drm_device *drm = helper->dev;
--	int err;
--
--	err = drm_client_init(dev, &helper->client, "fbdev", &tegra_fbdev_client_funcs);
--	if (err)
--		return err;
--
--	err = drm_fb_helper_init(drm, helper);
--	if (err < 0) {
--		dev_err(drm->dev, "failed to initialize DRM FB helper: %d\n",
--			err);
--		goto err_drm_client_release;
--	}
-+		return;
-+	drm_fb_helper_prepare(dev, helper, 32, &tegra_fb_helper_funcs);
- 
--	err = drm_fb_helper_initial_config(helper);
--	if (err < 0) {
--		dev_err(drm->dev, "failed to set initial configuration: %d\n",
--			err);
--		goto fini;
--	}
-+	ret = drm_client_init(dev, &helper->client, "fbdev", &tegra_fbdev_client_funcs);
-+	if (ret)
-+		goto err_drm_client_init;
- 
--	return 0;
-+	ret = tegra_fbdev_client_hotplug(&helper->client);
-+	if (ret)
-+		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
- 
--fini:
--	drm_fb_helper_fini(helper);
--err_drm_client_release:
--	drm_client_release(&helper->client);
--	return err;
--}
-+	drm_client_register(&helper->client);
- 
--static void tegra_fbdev_exit(struct drm_fb_helper *helper)
--{
--	struct drm_framebuffer *fb = helper->fb;
--
--	drm_fb_helper_unregister_info(helper);
--
--	if (fb) {
--		struct tegra_bo *bo = tegra_fb_get_plane(fb, 0);
--
--		/* Undo the special mapping we made in fbdev probe. */
--		if (bo && bo->pages) {
--			vunmap(bo->vaddr);
--			bo->vaddr = NULL;
--		}
--
--		drm_framebuffer_remove(fb);
--	}
--
--	drm_fb_helper_fini(helper);
--	drm_client_release(&helper->client);
--	tegra_fbdev_free(helper);
--}
-+	return;
- 
--int tegra_drm_fb_prepare(struct drm_device *drm)
--{
--	drm->fb_helper = tegra_fbdev_create(drm);
--	if (IS_ERR(drm->fb_helper))
--		return PTR_ERR(drm->fb_helper);
--
--	return 0;
--}
--
--void tegra_drm_fb_free(struct drm_device *drm)
--{
--	tegra_fbdev_free(drm->fb_helper);
--}
--
--int tegra_drm_fb_init(struct drm_device *drm)
--{
--	int err;
--
--	err = tegra_fbdev_init(drm->fb_helper, drm->mode_config.num_crtc,
--			       drm->mode_config.num_connector);
--	if (err < 0)
--		return err;
--
--	return 0;
--}
--
--void tegra_drm_fb_exit(struct drm_device *drm)
--{
--	tegra_fbdev_exit(drm->fb_helper);
-+err_drm_client_init:
-+	drm_fb_helper_unprepare(helper);
-+	kfree(helper);
- }
--- 
-2.40.0
+> 
+> Thanks,
+> Marcelo
+> 
+> > ---
+> >  drivers/iio/adc/ad7292.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/iio/adc/ad7292.c b/drivers/iio/adc/ad7292.c
+> > index a2f9fda25ff3..cccacec5db6d 100644
+> > --- a/drivers/iio/adc/ad7292.c
+> > +++ b/drivers/iio/adc/ad7292.c
+> > @@ -8,6 +8,7 @@
+> >  #include <linux/bitfield.h>
+> >  #include <linux/device.h>
+> >  #include <linux/module.h>
+> > +#include <linux/of.h>
+> >  #include <linux/regulator/consumer.h>
+> >  #include <linux/spi/spi.h>
+> >  
+> > 
+> > -- 
+> > 2.39.2
+> >   
 
