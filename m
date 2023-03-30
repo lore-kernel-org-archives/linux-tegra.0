@@ -2,209 +2,126 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA82C761A6
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 13:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C6EC761A6
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 16:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231894AbjC3N65 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Mar 2023 09:58:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47642 "EHLO
+        id S232096AbjC3Qar (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Mar 2023 12:30:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231650AbjC3N65 (ORCPT
+        with ESMTP id S231817AbjC3Qa2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Mar 2023 09:58:57 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 522ED4213
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Mar 2023 06:58:55 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id q16so24620136lfe.10
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Mar 2023 06:58:55 -0700 (PDT)
+        Thu, 30 Mar 2023 12:30:28 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A4BEFA8;
+        Thu, 30 Mar 2023 09:29:42 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id e18so19698634wra.9;
+        Thu, 30 Mar 2023 09:29:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680184733;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=27unI8wWC3xyBQDKcEdRsVirNoZHmyXbsED4WP7a6fY=;
-        b=R460FUeBKM5rkTRImdau+2e0dozel2XbOR0qZruDlE8L/xUhXFsZRHki7d86pQ+xMu
-         zHhjAC7o1JRGVZUyU9ldQmE9oGGkO1Ytd2TOOzQTlwbGbBOUIak/xAYXM3paPpU3nRx4
-         YtEuLE2+rMCEMDx+VzoMf+i/lS9ZtklEqlTIRiim22SH6OfDlCCiGUuPOuZQZdNI/9x3
-         OU28D00XuvAr60s7wxZgTSGfu4ttOAcODklrWQo3RH06E+D4ENQMS7cZ3r+PKX1CTw12
-         XCnA5pAxWfluiwAY/yJgtztiQYsbmZerdzNb75DvbANq12MTLyvzMt+kWhs9YZHlnxGo
-         fVaQ==
+        d=gmail.com; s=20210112; t=1680193776;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yN1+Jn1orcHwBA+J1Kqg+1Ee+kAAwlGiXyYhRzrUkxI=;
+        b=IxJYcWSTnbePkTHm5muh962DShLEtwyD6DwDMDrPDsyzRpAjDZnu+drrIvuUYGzRkM
+         UcTFEbKkxEJ4WuGCgw3SbgyIfdlaDzk4buAayfnQHT2sRJOP4R4iwKfb+aorswot9p4j
+         bfl8a5D/RTyop/iqTk8wocHODC4LHvWQ/pMbmalkEv0pu78fAy2K3+qvD9ihDJWtT+Q2
+         8uJbSU+fCW9qLlqtbDUNMeBMySs3J9ADwObm+3T5SjVHyJmDbX4bLeyZhHRMpWpf8ws+
+         lTghBOqCc/UGFuooO0qCzI3eVED4dTWtwfq7deM8BbQ9k/WJi4BdkSeOVIKJuLiBkEQ+
+         RdRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680184733;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=27unI8wWC3xyBQDKcEdRsVirNoZHmyXbsED4WP7a6fY=;
-        b=PylY5KYA0mYMOIOeA17yFAbD2guBdoSMQD2gRkBqc++q8fXqVONUn6E8hzBpOlTQ6/
-         ltovculKcgAGN5X+fUpsDEdr8cBClEZv9LDAoSheuqZN59FWaodTwB/y6vpaQn+nkevB
-         n7waXfpovxweX4vQuK02ZB91bVIcL/8bvME9iSAEHVGT1mFqTMo7hJChjJVki6hjE7W2
-         SoyL2ZPniSVRpGPv6PEpe549OHydMTVHLdzyo2ospz9/uHxR9ftgmUimelvXT9qZcWsZ
-         26JYDTIe8hLj9JmUbQdV7Ke4h3JJjlp1dl2O9DQ0/bOlyKe4UKLlQCkeDpNtqJ5EZbc5
-         JgdQ==
-X-Gm-Message-State: AAQBX9c3MTXdPvZYd3M7SHzolRSpjZIhAzPUkNHGdrXg7kRoqP5ErIXv
-        RXlaKHESBnhO/a2DWAETcbCizA==
-X-Google-Smtp-Source: AKy350by6kwTXHDqM6Rl2aSlGzj+St4CNnAP2EEj5N8lRCc7Lq7O0jplsZ81SDolQvMQfsI9IvFl6g==
-X-Received: by 2002:a19:700e:0:b0:4de:3774:2d97 with SMTP id h14-20020a19700e000000b004de37742d97mr5524564lfc.13.1680184733578;
-        Thu, 30 Mar 2023 06:58:53 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id n22-20020a195516000000b004eafac09d8esm3278848lfe.240.2023.03.30.06.58.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Mar 2023 06:58:53 -0700 (PDT)
-Message-ID: <0b39b19e-e5ee-2751-cd57-68278354da5f@linaro.org>
-Date:   Thu, 30 Mar 2023 15:58:51 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT binding doc
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Prathamesh Shete <pshete@nvidia.com>,
+        d=1e100.net; s=20210112; t=1680193776;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yN1+Jn1orcHwBA+J1Kqg+1Ee+kAAwlGiXyYhRzrUkxI=;
+        b=kJy8fxjaRnDdMVdxDecxMgoZBdXM2MIlMhV2sf6DT1oRL1WgSoSXSlRKoWyXe57gEW
+         cms0HXw0h+B9xjzdu7x1IYGUYBK1VW3R3/Zo8ScJPYbweafsi9rSsy8+xxtid7zWDJ6L
+         mj+tg98axfDwSSFXICDhA5atRS1mJJOQEsI44ahO3iJyWc6XqQ4IIo9ps+G40PZnyw2W
+         As0RTIIl+CqfyHKBHneS9e2Oqrnsq4js1w7hMmeP2L0YgMBDnFPHOhnunIkXEbGrS7Ls
+         1vxfT9gn0n++nPmEV+nC1V1Dro82LLVjG5Lfj8z+/+ADD8TG8QW9JgCUMJKck1oyUyJ5
+         XMWQ==
+X-Gm-Message-State: AAQBX9cUKN0RX5SaBj2EHFmQnTbrDQ8Z6kotmY2aEheUSU31aorKxuQU
+        FKOfIr5/PA0719mty/d6Heg=
+X-Google-Smtp-Source: AKy350ZdBKGl6sCjqiNiB3Fnxp2T1UpMp5P6xbf3RUuIn0/fgl3PPQ9gQduzQgKdriCNRbld2GH97Q==
+X-Received: by 2002:a05:6000:114b:b0:2e4:cbef:9f2a with SMTP id d11-20020a056000114b00b002e4cbef9f2amr2516042wrx.2.1680193775696;
+        Thu, 30 Mar 2023 09:29:35 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id o10-20020a5d684a000000b002d89e113691sm24238578wrw.52.2023.03.30.09.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Mar 2023 09:29:35 -0700 (PDT)
+Date:   Thu, 30 Mar 2023 18:29:33 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Suresh Mangipudi <smangipudi@nvidia.com>
-References: <20230207115617.12088-1-pshete@nvidia.com>
- <a1395eb2-da3a-e080-fa6b-50f20d879655@linaro.org> <Y+OGdMFQkL9Dtaq/@orome>
- <9e7e1762-1c2e-28cd-c7a7-b0577addf51e@linaro.org>
- <DM5PR12MB24066CE3175B74150235FE55B7B49@DM5PR12MB2406.namprd12.prod.outlook.com>
- <3b9d4177-ebd9-e341-294d-41860fa8c5ac@linaro.org> <ZBxeLIXJDbM2ebyt@orome>
- <e06977ab-8112-1e45-4392-df36e358e772@linaro.org> <ZCLgEhrQiYHGGZ6S@orome>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZCLgEhrQiYHGGZ6S@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] thermal: tegra-bpmp: Handle offline zones
+Message-ID: <ZCW47Ux5wa9XYd6j@orome>
+References: <20230330094904.2589428-1-cyndis@kapsi.fi>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q074XcMAmYlwWTlF"
+Content-Disposition: inline
+In-Reply-To: <20230330094904.2589428-1-cyndis@kapsi.fi>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28/03/2023 14:39, Thierry Reding wrote:
-> On Sun, Mar 26, 2023 at 02:19:45PM +0200, Krzysztof Kozlowski wrote:
->> On 23/03/2023 15:11, Thierry Reding wrote:
->>> On Wed, Mar 08, 2023 at 01:24:04PM +0100, Krzysztof Kozlowski wrote:
->>>> On 08/03/2023 12:45, Prathamesh Shete wrote:
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>> Sent: Wednesday, February 8, 2023 5:28 PM
->>>>>> To: Thierry Reding <thierry.reding@gmail.com>
->>>>>> Cc: Prathamesh Shete <pshete@nvidia.com>; Jonathan Hunter
->>>>>> <jonathanh@nvidia.com>; linus.walleij@linaro.org; robh+dt@kernel.org;
->>>>>> krzysztof.kozlowski+dt@linaro.org; devicetree@vger.kernel.org; linux-
->>>>>> tegra@vger.kernel.org; linux-gpio@vger.kernel.org; Suresh Mangipudi
->>>>>> <smangipudi@nvidia.com>
->>>>>> Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: tegra234: Add DT binding doc
->>>>>>
->>>>>> External email: Use caution opening links or attachments
->>>>>>
->>>>>>
->>>>>> On 08/02/2023 12:24, Thierry Reding wrote:
->>>>>>> On Tue, Feb 07, 2023 at 04:33:08PM +0100, Krzysztof Kozlowski wrote:
->>>>>>
->>>>>>
->>>>>>>>> +          type: object
->>>>>>>>> +          additionalProperties:
->>>>>>>>> +            properties:
->>>>>>>>> +              nvidia,pins:
->>>>>>>>> +                description: An array of strings. Each string contains the name
->>>>>>>>> +                  of a pin or group. Valid values for these names are listed
->>>>>>>>> +                  below.
->>>>>>>>
->>>>>>>> Define properties in top level, which points to the complexity of
->>>>>>>> your if-else, thus probably this should be split into two bindings.
->>>>>>>> Dunno, your other bindings repeat this pattern :(
->>>>>>>
->>>>>>> The property itself is already defined in the common schema found in
->>>>>>> nvidia,tegra-pinmux-common.yaml and we're overriding this here for
->>>>>>> each instance since each has its own set of pins.
->>>>>>>
->>>>>>> This was a compromise to avoid too many bindings. Originally I
->>>>>>> attempted to roll all Tegra pinctrl bindings into a single dt-schema,
->>>>>>> but that turned out truly horrible =) Splitting this into per-SoC
->>>>>>> bindings is already causing a lot of duplication in these files,
->>>>>>
->>>>>> What would be duplicated? Almost eveerything should be coming from
->>>>>> shared binding, so you will have only compatible,
->>>>>> patternProperties(pinmux) and nvidia,pins. And an example. Maybe I miss
->>>>>> something but I would say this would create many but very easy to read
->>>>>> bindings, referencing common pieces.
->>>>>>
->>>>>>> though splitting
->>>>>>> off the common bits into nvidi,tegra-pinmux-common.yaml helps a bit
->>>>>>> with that already. Splitting this into per-instance bindings would
->>>>>>> effectively duplicate everything but the pin array here, so we kind of
->>>>>>> settled on this compromise for Tegra194.
->>>>>>
->>>>>> OK, but are you sure it is now readable? You have if:then: with
->>>>>> patternProperties: with additionalProperties: with properties: with
->>>>>> nvidia,pins.
->>>>> This is inline with the existing bindings and I think this is the compromise that was reached during review when the bindings were submitted,
->>>>
->>>> So the code might be totally unreadable, but it is inline with existing
->>>> code, thus it should stay unreadable. Great.
->>>
->>> I'd say this is very subjective. I personally don't find the current
->>> version hard to read, but that's maybe because I wrote it... =)
->>>
->>>>> offer to rework if a better alternative can be found, but that only makes sense if all the other bindings get changed as well, so I think it'd be good if we can merge in the same format as the existing bindings for now and change all of them later on.
->>>>
->>>> Cleanup should happen before adding new bindings.
->>>
->>> I don't recall the exact problems that I ran into last time, but I do
->>> remember that pulling out the common bindings to the very top-level was
->>> the main issue.
->>>
->>> If I understand correctly what you're saying, the main problem that
->>> makes this hard to read is the if and else constructs for AON/MAIN
->>> variants on Tegra194/Tegra234. These should be quite easy to pull out
->>> into separate bindings. I'll do that first and then see if there's
->>> anything that could be done to further improve things.
->>
->> One problem is allowing characters here which are not allowed. Second
->> problem is reluctance to change it with argument "existing bindings also
->> have this problem". It's explanation like "there is already bug like
->> this, so I am allowed to add similar one".
-> 
-> This is not a bug that we're trying to replicate. We're basing this
-> binding on a existing bindings that were already reviewed upstream a
-> long time ago. It uses a shared binding that's in use by these other
-> bindings, so making any changes to this new binding means either the
-> other ones need to be changed as well or we can't reuse the existing
-> shared binding.
 
-Are you sure? I did not see here conflict. The specific device binding
-can narrow the pattern defined in common binding.
+--q074XcMAmYlwWTlF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What's more, where do you see this pattern at all in shared binding?
+On Thu, Mar 30, 2023 at 12:49:04PM +0300, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+>=20
+> Thermal zones located in power domains may not be accessible when
+> the domain is powergated. In this situation, reading the temperature
+> will return -BPMP_EFAULT. When evaluating trips, BPMP will internally
+> use -256C as the temperature for offline zones.
+>=20
+> For smooth operation, for offline zones, return -EAGAIN when reading
+> the temperature and allow registration of zones even if they are
+> offline during probe.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> v2:
+> * Adjusted commit message.
+> * Patch 2/2 dropped for now since it is more controversial,
+>   and this patch is more critical.
+>=20
+>  drivers/thermal/tegra/tegra-bpmp-thermal.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 
-I am sorry, but this does not fit my arguments at all. This pattern is
-clearly wrong and argument to keep duplicating it because other (not
-common!) binding also has it is by design invalid.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> 
->> Now third is that defining properties in allOf is not the style we want
->> to have, because it does not work with additionalProperties and is
->> difficult to read. Again using argument "existing code also does like
->> this" is a very poor argument.
-> 
-> As far as I can tell, it does work as expected in this case because
-> we're not actually adding any *new* properties in the allOf/if branches.
+--q074XcMAmYlwWTlF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The if:else: defines type and additionalProperties, so I am sorry but
-this is not a readable solution.
+-----BEGIN PGP SIGNATURE-----
 
-> If we were, then yes, we would need to use unevaluatedProperties and
-> that can get complicated. But again, in this case we're merely
-> overriding existing properties with more specific values, which means
-> that both the standard binding applies and then things are narrowed down
-> by the values defined for each compatible.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQluOsACgkQ3SOs138+
+s6H4OA/6AxZ9lvyK8vFq4QrKH+cmYkVUB6/VsqXgF42eaxIzYPBLqnaXqqXkR1Ji
+qPZe5uTay/R2v6gxgg9V97aK43DNTL4dQV7DHxk1sa+Oepe8JBEnzUEjSdUmC391
+ou98SDwyRHj8P6VoNM1BPVAfSP2F1j1jZn2f/hrr0qZ7aj2NyZltoW0G3bdyDA2e
+sLG+9GRmddEmWGzPqezNUnKLmkOgx4huodK0uk7Pi2gR4YLLcgRmj+/61p5AOeAl
+Dn0ihEzmVEzxczbY/PDzEe/Gmw55Zgs0BDGxU2I6pTvKkhDBzECJwG8Dk6RGaVqM
+Oq81jGTSTwK8ZqdgxCjSNN71tv8sc2RI5WcJ5ImFh7+WFVooyW5DWBD3SJAF24DI
+IQaSzen6n5eYx/EJ3P7ZWO6JtSdUPUj+VTRyxGgxijYv/NHQQ7cf6T4xY/HDgABU
+c5W49SLYWv2NrN8NiYkAuUqVHDK9Y/MftdQyL//sa5wnzX6BHrGBWW4nQ9Ndxlhh
+mgTSaPWEYMAFT8lQWJhwRox9xj/z+fBUF2lO/aqx2tyXYvL/iLtygGtXEWzKmQmj
+ewHCpJgmh5mdMLfQwAyWKeftO0Y2ylgnqW5xUdR6qiqfEtzhMkbXJXcfoRR3T3gk
+MQKTVBlYMw2XDrklOZRrV6VoPZb7hvnayvUmqNtQJUQkezcO8js=
+=d+wm
+-----END PGP SIGNATURE-----
 
-
-Best regards,
-Krzysztof
-
+--q074XcMAmYlwWTlF--
