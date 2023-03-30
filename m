@@ -2,155 +2,214 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC25AC761A6
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 13:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6FDC761AF
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 13:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231887AbjC3NMS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Mar 2023 09:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41670 "EHLO
+        id S232013AbjC3Ne2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Mar 2023 09:34:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231835AbjC3NMR (ORCPT
+        with ESMTP id S231542AbjC3Ne1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Mar 2023 09:12:17 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAC7AD30;
-        Thu, 30 Mar 2023 06:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Wf6MWb07ZNdojZiHGLU/UEUqS29HIvuV7xIdWH9ogCM=; b=TyTxXCYdiREo+cP3lUaBxvkN/8
-        tpK0TZMeXm/mhBjX0BvMy4tGzxhUeDjbqb7p2Iem87a7jkD59ToSTmpzLWUejh76EByNHNQxqYQJ2
-        Zsb0X+mEA5F40k5C8A48x+Yf6cuAkdpSo9smM3tzOF651z9ab/DvQM5ujQtHYHnXbe/M09vKKBjcP
-        fT8nr3Ed/YxP/GVZomhy8GGyScU5GEgnxkOpSOlCZyVUnT5iNaUpiKMBui7v6fos/wY1JBtqVzao3
-        DqBsWt50eO6OlYFMUG5/XFC3K5Q+Hk85+DJFHb/90y17XvD/WeBT3Q3YywCEuKPuPDZqhpT/k/Ff+
-        7is0QGcA==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1phs4F-000xOs-GC; Thu, 30 Mar 2023 16:11:51 +0300
-Message-ID: <a43eab2c-c634-0b36-57eb-fe657bb17004@kapsi.fi>
-Date:   Thu, 30 Mar 2023 16:11:50 +0300
+        Thu, 30 Mar 2023 09:34:27 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2082.outbound.protection.outlook.com [40.107.101.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E549029;
+        Thu, 30 Mar 2023 06:34:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XguiMLPE1RSZAEmSU7WvrYp3HV25NO9O2WjLj/Xc8r+HrPCYy520RkCkuvluejYYl6sWZ1g0WWC8uBcIgXhWeR3i/yHsi4Dc5IfiYvOkw46AU9Cz4wHIPnW+nKJmuFuJQt+geIWt2SqxL1YWglBx5b+D6Kxi3nSS/tzZzqm2tZC7ZvjDYjVRdlpbAi5ZIFsqD4J6s3vGj9dnx796uGzl2+T3HgTT1Po1cC/+8ErK4XJkBDtmpSSc1wnYncb3vFML27b2q5ZNloqRsZy/4TQnvFJjK0RJjS5JA4iJkQ3qIX468ofYYZDQQYk0fyVXtlaAL+G2ZrqohathqbkDI+WTXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+/FPLSvJUMGH/Sainst3GJd9T28t69atGD6aYkesA8Y=;
+ b=mENfeRTCoeQBjhSCvSLaZKslttG50g04o69YseHKCaZSvxDQ4ZZ1PCmH4gZJ6FNF1+25XVtDBxIe7AQHjaZNE70Rd7mrJ2ZipQVS6d9KFOwRkrUCFJywDu00VJXcW7T+u0jcIunxZfS4z0OflI8/W4gwsWFFi/QLjvlkRD/P9HpUqTYdUhGF7DrAbdhYwvxhcCz8EcrggqACI3xY+jHKme93zlBy97gnCsCQCoDxIkWl3iPAYv9iriAoGjGTZLB+01zS4OkH7sElPfqC+9yk4Mm9d8AmwC7BA8OyTNq6hl41X4aNfwVCCcDRCtZ6QCPzTQEhK5J7RdpppFU2xwIF9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+/FPLSvJUMGH/Sainst3GJd9T28t69atGD6aYkesA8Y=;
+ b=KcXsRojDweao3IWBi5pN/Tt//1qWHvBJmkj8IMSeeuDDsHtMGFqRGvAKZFqArGOVX5oIeIyw90UIQwiABbxOlgRasV9jn/z+Nb5TRYtMyqKkLQzkY6eAtYjpr0kmM6RYnx7CKdDXuCT+Guug3HY9TYF0l7vfmbMtVhMH+7PSl9KAoh8thBsg2CQaBiqPJxdwXjkWf2JEpQ7CgF8F3Jhq9Ix454vkTM/v+DlDzyxBZpZO0TOM3Fy8eRdbqXFqswki7CHj5kbfA5tROBh3GyDqT6vSW2ayJor6CL1uCL2EeJjlquKkF9eczSgJybo/lqMbAwU6d5g1XM8oh0o2tnIO5Q==
+Received: from DM5PR07CA0111.namprd07.prod.outlook.com (2603:10b6:4:ae::40) by
+ BN9PR12MB5194.namprd12.prod.outlook.com (2603:10b6:408:11b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.32; Thu, 30 Mar
+ 2023 13:34:05 +0000
+Received: from DM6NAM11FT084.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:4:ae:cafe::b3) by DM5PR07CA0111.outlook.office365.com
+ (2603:10b6:4:ae::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.22 via Frontend
+ Transport; Thu, 30 Mar 2023 13:34:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DM6NAM11FT084.mail.protection.outlook.com (10.13.172.132) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6222.22 via Frontend Transport; Thu, 30 Mar 2023 13:34:05 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 30 Mar 2023
+ 06:34:02 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Thu, 30 Mar 2023 06:34:02 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Thu, 30 Mar 2023 06:33:56 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <treding@nvidia.com>, <krzysztof.kozlowski@linaro.org>,
+        <dmitry.osipenko@collabora.com>, <viresh.kumar@linaro.org>,
+        <rafael@kernel.org>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+        <lpieralisi@kernel.org>, <helgaas@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
+        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
+        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
+        <bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [Patch v5 0/8] Tegra234 Memory interconnect support
+Date:   Thu, 30 Mar 2023 19:03:46 +0530
+Message-ID: <20230330133354.714-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2] thermal: tegra-bpmp: Handle offline zones
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230330094904.2589428-1-cyndis@kapsi.fi>
- <a09d8edf-9db1-0037-15a4-7ce329b82bf2@linaro.org>
- <204e0435-c544-8727-e892-9fc69b8d691d@kapsi.fi>
- <ff48b15c-f8ce-b971-c840-81458715d82b@linaro.org>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <ff48b15c-f8ce-b971-c840-81458715d82b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT084:EE_|BN9PR12MB5194:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6442c27-2a38-4865-f817-08db31236e9b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tdJkvq22N5js+HKXtl68ZdcTrcaZzer02h2xTPTBoPWdO1OvGSOm+C6W/ODoClSzbLE2EL71v84o5xEzSYdqUZoOp7wnlWWrwFNhfVqlGdFf5zNifqPkEVjKsus98DDaZEg7ubBf/wd36wiMpQ1AGCfw6YtrjVhAV42w+/BWTeyN0zj7lhc3niQog2nCZ/38tZ85nE0XwaEhDC+IHqNlo2L6PZrQrEuzpan5N+qWW6dCg5WYJ1i37orzi4KVNi8FiQBCOKr3XwHmv3zCSujXf/2J1wUwUVaFqv43AXO4alCfawFLSVMk0EIj4BnNg1p1bZkfVwQ97f8o84zHkmJywF73KcJXuPp5t+nt/xQq1M8Op/XHdI3phgnda+m4hqoqiOPhy6ySZlFB1vrbeDzshEGsvApj26iA9w7bPfv6uNKW7FWyFABtH+8CgBnUH3c97YWC+2Z+Im/DywVJKQFbCwKwWpa2fl2fOJ/9IdfvE2UXU2l8u/4oOFoViQWqTPArnw/PdmXP3A7wZXtXVM/QISN9m0LrRBFHpnFYperDjdm4p1TccENOOxJCBhf/hGpsihefymEvCN90yeeLyg2/8IY/6rgsklprj227rCx/s6OWKc9PvJGHMjJCtHa5GAE+oSeW+wILdTFIXQHEPtGaRUWY1NRjlWy0X1XJShTR3sHevj7kNhMZnagu4wH6yFvUjPVgfGdgEE50mJTawS6zZjZbchWOi+FOHny1ph7XG6WkkWMB6QZVBUMW8H54/kG624AvBeq+dW/VhlBivja3R5JjOIpgYKJuorcdQmewt01XeDkleXJfHyYDW+zkQicKVKUTip2m5f9ee6ynH9cQ/asAy4R1q00RjhoWZd98p8k=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(396003)(136003)(346002)(39860400002)(451199021)(40470700004)(46966006)(36840700001)(6666004)(478600001)(107886003)(186003)(70586007)(26005)(34020700004)(70206006)(316002)(8676002)(336012)(4326008)(41300700001)(5660300002)(356005)(7416002)(82740400003)(8936002)(54906003)(1076003)(36860700001)(7636003)(7696005)(40460700003)(2616005)(83380400001)(426003)(47076005)(110136005)(966005)(2906002)(82310400005)(86362001)(36756003)(40480700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2023 13:34:05.0982
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6442c27-2a38-4865-f817-08db31236e9b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT084.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5194
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/30/23 15:36, Daniel Lezcano wrote:
-> On 30/03/2023 12:06, Mikko Perttunen wrote:
->> On 3/30/23 13:03, Daniel Lezcano wrote:
->>> On 30/03/2023 11:49, Mikko Perttunen wrote:
->>>> From: Mikko Perttunen <mperttunen@nvidia.com>
->>>>
->>>> Thermal zones located in power domains may not be accessible when
->>>> the domain is powergated. In this situation, reading the temperature
->>>> will return -BPMP_EFAULT. When evaluating trips, BPMP will internally
->>>> use -256C as the temperature for offline zones.
->>>
->>>> For smooth operation, for offline zones, return -EAGAIN when reading
->>>> the temperature and allow registration of zones even if they are
->>>> offline during probe.
->>>
->>> I think it makes more sense to check if the power domain associated 
->>> with the device is powered up and if not return -EPROBE_DEFER.
->>
->> The power domains in question are related to computer vision engines 
->> that only get powered on when in use, possibly never if the user 
->> doesn't run a computer vision workload on the system. We still want 
->> other thermal zones to be available.
-> 
-> Ok, I see the point.
-> 
-> I'm worried about the semantic of the errors returned, the translation 
-> from BPMP_EFAULT to EAGAIN and the assumption it is a disabled (may be 
-> forever) thermal zone.
-> 
-> What does the documentation say for the error msg.rx.ret == -BPMP_EFAULT?
-> 
+Hi All,
 
-The documentation says
+Thank you for the review. Have incorporated the changes suggested in v4.
+Requesting for ACK on the remaining patches if all fine.
 
-Value          | Description
--------------- | -----------------------------------------
-0              | Temperature query succeeded.
--#BPMP_EINVAL  | Invalid request parameters.
--#BPMP_ENOENT  | No driver registered for thermal zone.
--#BPMP_EFAULT  | Problem reading temperature measurement.
+The patches are divided into below groups:
 
-In practice, what BPMP_EFAULT means here is that the hardware has no 
-indicated temperature for the zone, which really only happens if the 
-power domain is powered off.
+- Patch [7]  : Memory Interconnect support in PCI (MC client)
+  -- Need ACK.
 
-Mikko
+- Patch [3-6, 8]: Memory Interconnect support in CPUFREQ (MC client)
+  -- 'Patch 3, 4 & 5': have ACK from Krzysztof.
+  -- 'Patch 6 & 8': Need ACK.
 
-> 
->>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>> ---
->>>> v2:
->>>> * Adjusted commit message.
->>>> * Patch 2/2 dropped for now since it is more controversial,
->>>>    and this patch is more critical.
->>>>
->>>>   drivers/thermal/tegra/tegra-bpmp-thermal.c | 9 ++++++++-
->>>>   1 file changed, 8 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/thermal/tegra/tegra-bpmp-thermal.c 
->>>> b/drivers/thermal/tegra/tegra-bpmp-thermal.c
->>>> index f5fd4018f72f..4ffc3bb3bf35 100644
->>>> --- a/drivers/thermal/tegra/tegra-bpmp-thermal.c
->>>> +++ b/drivers/thermal/tegra/tegra-bpmp-thermal.c
->>>> @@ -52,6 +52,8 @@ static int __tegra_bpmp_thermal_get_temp(struct 
->>>> tegra_bpmp_thermal_zone *zone,
->>>>       err = tegra_bpmp_transfer(zone->tegra->bpmp, &msg);
->>>>       if (err)
->>>>           return err;
->>>> +    if (msg.rx.ret == -BPMP_EFAULT)
->>>> +        return -EAGAIN;
->>>>       if (msg.rx.ret)
->>>>           return -EINVAL;
->>>> @@ -259,7 +261,12 @@ static int tegra_bpmp_thermal_probe(struct 
->>>> platform_device *pdev)
->>>>           zone->tegra = tegra;
->>>>           err = __tegra_bpmp_thermal_get_temp(zone, &temp);
->>>> -        if (err < 0) {
->>>> +
->>>> +        /*
->>>> +         * Sensors in powergated domains may temporarily fail to be 
->>>> read
->>>> +         * (-EAGAIN), but will become accessible when the domain is 
->>>> powered on.
->>>> +         */
->>>> +        if (err < 0 && err != -EAGAIN) {
->>>>               devm_kfree(&pdev->dev, zone);
->>>>               continue;
->>>>           }
->>>
->>
-> 
+- Patch [1-2]: Memory Interconnect base support
+  -- 'Patch 2': has ACK from Krzysztof.
+  -- 'Patch 1': Need ACK.
+
+Both the MC client patches are dependent on the 'Patch [1-2]'.
+
+Thank you,
+Sumit Gupta
+============
+
+This patch series adds memory interconnect support for Tegra234 SoC.
+It is used to dynamically scale DRAM Frequency as per the bandwidth
+requests from different Memory Controller (MC) clients.
+MC Clients use ICC Framework's icc_set_bw() api to dynamically request
+for the DRAM bandwidth (BW). As per path, the request will be routed
+from MC to the EMC driver. MC driver passes the request info like the
+Client ID, type, and frequency request info to the BPMP-FW which will
+set the final DRAM freq considering all exisiting requests.
+
+MC and EMC are the ICC providers. Nodes in path for a request will be:
+     Client[1-n] -> MC -> EMC -> EMEM/DRAM
+
+The patch series also adds interconnect support in below clients:
+1) CPUFREQ driver for scaling bandwidth with CPU frequency. For that,
+   add per cluster OPP table which will be used in the CPUFREQ driver
+   by requesting the minimum BW respective to the given CPU frequency
+   in the OPP table of it's cluster.
+2) PCIE driver to request BW required for different modes.
+
+---
+v4[4] -> v5:
+- dropped 'patch 1 & 2' from v4 which added "nvidia,bpmp" in MC node.
+- save BPMP ref from EMC node into 'mc->bpmp' and use it in MC driver.
+- added check for array bounds violation in pci suggested by Bjorn.
+- moved DT patch having OPP table to the last 'Patch 8'.
+- did multiple small changes and cleanup suggested by Krzysztof in v4.
+
+v3[3] -> v4:
+- dropped 'patch 1' from v3 which returns 'struct tegra_bpmp *'.
+- added 'patch 1 & 2' to get bpmp ref using 'nvidia,bpmp' property.
+- dropped 'patch 10 & 11' from v3 and added those changes in 'patch 3'.
+- added static to prototype of 'tegra_cpufreq_init_cpufreq_table()' to
+  fix the warning reported by 'kernel test robot'.
+
+v2[2] -> v3:
+- in 'patch 7', set 'icc_dram_bw_scaling' to false if set_opp call failed
+  to avoid flooding of uart with 'Failed to set bw' messages.
+- added 'patch 10' to handle if the bpmp-fw is old and not support bwmgr mrq.
+- added 'patch 11' to fix interconnect registration in tegra186-emc.
+  ref patch link in linux next:
+  [https://lore.kernel.org/all/20230306075651.2449-21-johan+linaro@kernel.org/]
+
+v1[1] -> v2:
+- moved BW setting to tegra234_mc_icc_set() from EMC driver.
+- moved sw clients to the 'tegra_mc_clients' table.
+- point 'node->data' to the entry within 'tegra_mc_clients'.
+- removed 'struct tegra_icc_node' and get client info using 'node->data'.
+- changed error handling in and around tegra_emc_interconnect_init().
+- moved 'tegra-icc.h' from 'include/soc/tegra' to 'include/linux'.
+- added interconnect support to PCIE driver in 'Patch 9'.
+- merged 'Patch 9 & 10' from [1] to get num_channels and use.
+- merged 'Patch 2 & 3' from [1] to add ISO and NISO clients.
+- added 'Acked-by' of Krzysztof from 'Patch 05/10' of [1].
+- Removed 'Patch 7' from [1] as that is merged now.
+
+Sumit Gupta (8):
+  memory: tegra: add interconnect support for DRAM scaling in Tegra234
+  memory: tegra: add mc clients for Tegra234
+  memory: tegra: add software mc clients in Tegra234
+  dt-bindings: tegra: add icc ids for dummy MC clients
+  memory: tegra: make cpu cluster bw request a multiple of mc channels
+  cpufreq: tegra194: add OPP support and set bandwidth
+  PCI: tegra194: add interconnect support in Tegra234
+  arm64: tegra: Add cpu OPP tables and interconnects property
+
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi   | 276 ++++++++++
+ drivers/cpufreq/tegra194-cpufreq.c         | 156 +++++-
+ drivers/memory/tegra/mc.c                  |  24 +
+ drivers/memory/tegra/mc.h                  |   1 +
+ drivers/memory/tegra/tegra186-emc.c        | 130 +++++
+ drivers/memory/tegra/tegra234.c            | 595 ++++++++++++++++++++-
+ drivers/pci/controller/dwc/pcie-tegra194.c |  44 +-
+ include/dt-bindings/memory/tegra234-mc.h   |   5 +
+ include/linux/tegra-icc.h                  |  65 +++
+ include/soc/tegra/mc.h                     |   8 +
+ 10 files changed, 1282 insertions(+), 22 deletions(-)
+ create mode 100644 include/linux/tegra-icc.h
+
+[1] https://lore.kernel.org/lkml/20221220160240.27494-1-sumitg@nvidia.com/
+[2] https://lore.kernel.org/lkml/20230220140559.28289-1-sumitg@nvidia.com/
+[3] https://lore.kernel.org/lkml/20230320182441.11904-1-sumitg@nvidia.com/
+[4] https://lore.kernel.org/lkml/20230327161426.32639-1-sumitg@nvidia.com/
+
+-- 
+2.17.1
 
