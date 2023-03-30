@@ -2,94 +2,127 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405A3C77B6F
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 08:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8DFC761AF
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 08:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbjC3Iii (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Mar 2023 04:38:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56486 "EHLO
+        id S230303AbjC3IpO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Mar 2023 04:45:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbjC3Ii0 (ORCPT
+        with ESMTP id S230081AbjC3IpE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Mar 2023 04:38:26 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3674472AB;
-        Thu, 30 Mar 2023 01:38:23 -0700 (PDT)
-Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4PnGx448Glz6J7dB;
-        Thu, 30 Mar 2023 16:36:40 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Thu, 30 Mar
- 2023 09:38:20 +0100
-Date:   Thu, 30 Mar 2023 09:38:20 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
+        Thu, 30 Mar 2023 04:45:04 -0400
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0447ABC
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Mar 2023 01:44:47 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 352FC32005C1;
+        Thu, 30 Mar 2023 04:44:07 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 30 Mar 2023 04:44:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1680165846; x=1680252246; bh=4XNUjLlOKaJSjFfFdN+7SXwSxUZo6ku1tlT
+        TLuNKmwU=; b=R9Ha0BW4icsJYig73ZgjSlV5zMrkqhE/O6liqwzxZ3ld8vmjXy3
+        +mi3xd0LKpBJeETsFmmDjMNV3Q9vwSIRCMe2CW6Gt6Mn+RD9ttVW30veGm6UY3wP
+        uUB1sNK/0e7NSLsldshPOLZWYx5Aj5Gk2Ys/xrlbO4u+PHAFMDAE+9P15/PnPClS
+        XV3+TFs5xPOXCo2dQ+ErJ8/ju+WSKj/j3o19bYFXuInkfg5iUB+bt4ExpnSPnNRw
+        yNj4pN784Lf6imHExCZozCKPSg4Q1E4AtNjZG66wYD8c/afReRCIup5YYXjYDQVA
+        l51YhHhOWzqj6fYMqt7KCTQYWRwns9X4scg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1680165846; x=1680252246; bh=4XNUjLlOKaJSjFfFdN+7SXwSxUZo6ku1tlT
+        TLuNKmwU=; b=pGJ2Wkc1vhyVIqYsYkTyVHN1IIdjELHFbg+QtnK+FDl7HX6+Xs7
+        +lYf3m3rGJxgAdNFmnbk7sKv3zSko+JBjagXZ6OJG+5ntfIGiNys0yv7YuPbPQ2i
+        TIC0D4opV70TBxxPX+1QAA866/8emjfVuJ87zJuVUXj2D41nh5Pd15lw6GpJXkiR
+        1zEbaS/Z5XqiyYHp4+9md9Uyccr/QFYpotXELJCT/kIQggGlmbeLXbf52G58E0Z8
+        1x7YTtcwcYvomvGIRN/deaUmjfmIhh/n/cgN/k1BG+PpZz2+bCTs3sR39OmJD+Eb
+        ZAPOkvAz4GYvTQBh2euZpO1mvyiyGpbebkA==
+X-ME-Sender: <xms:1kslZJefsWI7nvhlyNdmS0sijFi12KrXLZoiHzeIbWGL41PtW0l9og>
+    <xme:1kslZHO5LPQ8Vjr5hoZ_HWr0c04ze2E8ZVQrwgerAyIhbbtbtNydQ0xaD5wkcsGP1
+    BsvM5vnftAKJ8brgd8>
+X-ME-Received: <xmr:1kslZCigDM3wC4zPwO9cO9SknzeeweURz3jK4_j2lolny4JKUhZStq4vj30>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehkedgtdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnheptefgleeggfegkeekgffgleduieduffejffegveevkeejudektdduueet
+    feetfefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:1kslZC-NB0DHVQXzJ1YStrVWNVRdkUhnyi8t2un8TXJrJ8W6TJkGgw>
+    <xmx:1kslZFsbpzFx61dJ7df0pCJXUGKxflvkDrwzNYyweDR8kYWAspxnJQ>
+    <xmx:1kslZBEEhelljLB8gsFEd5eTxHhUwO9hCMFwSc-oeJNsE0Pkwmdi2w>
+    <xmx:1kslZGk6R_-hSFAdU5gzXIt-XaAJFHGy5zdWEt4YJ0GPPMHSEto1-w>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 Mar 2023 04:44:05 -0400 (EDT)
+Date:   Thu, 30 Mar 2023 10:44:04 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Marc Zyngier" <maz@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-staging@lists.linux.dev>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/5] staging: iio: resolver: ad2s1210: Add explicit
- include for of.h
-Message-ID: <20230330093820.0000639d@Huawei.com>
-In-Reply-To: <20230329-acpi-header-cleanup-v1-2-8dc5cd3c610e@kernel.org>
-References: <20230329-acpi-header-cleanup-v1-0-8dc5cd3c610e@kernel.org>
-        <20230329-acpi-header-cleanup-v1-2-8dc5cd3c610e@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+        Emma Anholt <emma@anholt.net>, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] drm/scdc-helper: Pimp SCDC debugs
+Message-ID: <20230330084404.5uku6p42rorcuhv2@penduick>
+References: <20230329171402.2772-1-ville.syrjala@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.76]
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230329171402.2772-1-ville.syrjala@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 29 Mar 2023 16:20:43 -0500
-Rob Herring <robh@kernel.org> wrote:
+Hi,
 
-> With linux/acpi.h no longer implicitly including of.h, add an explicit
-> include of of.h to fix the following error:
-> 
-> drivers/staging/iio/resolver/ad2s1210.c:706:21: error: implicit declaration of function 'of_match_ptr' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+On Wed, Mar 29, 2023 at 08:14:02PM +0300, Ville Syrjala wrote:
+> diff --git a/drivers/gpu/drm/display/drm_scdc_helper.c b/drivers/gpu/drm/=
+display/drm_scdc_helper.c
+> index c3ad4ab2b456..2b124152384c 100644
+> --- a/drivers/gpu/drm/display/drm_scdc_helper.c
+> +++ b/drivers/gpu/drm/display/drm_scdc_helper.c
+> @@ -26,6 +26,8 @@
+>  #include <linux/delay.h>
+> =20
+>  #include <drm/display/drm_scdc_helper.h>
+> +#include <drm/drm_connector.h>
+> +#include <drm/drm_device.h>
+>  #include <drm/drm_print.h>
+> =20
+>  /**
+> @@ -140,6 +142,7 @@ EXPORT_SYMBOL(drm_scdc_write);
+> =20
+>  /**
+>   * drm_scdc_get_scrambling_status - what is status of scrambling?
+> + * @connector: connector
+>   * @adapter: I2C adapter for DDC channel
+>   *
+>   * Reads the scrambler status over SCDC, and checks the
+> @@ -148,14 +151,17 @@ EXPORT_SYMBOL(drm_scdc_write);
+>   * Returns:
+>   * True if the scrambling is enabled, false otherwise.
+>   */
+> -bool drm_scdc_get_scrambling_status(struct i2c_adapter *adapter)
+> +bool drm_scdc_get_scrambling_status(struct drm_connector *connector,
+> +				    struct i2c_adapter *adapter)
 
-> ---
->  drivers/staging/iio/resolver/ad2s1210.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-> index e4cf42438487..eb364639fa58 100644
-> --- a/drivers/staging/iio/resolver/ad2s1210.c
-> +++ b/drivers/staging/iio/resolver/ad2s1210.c
-> @@ -7,6 +7,7 @@
->  #include <linux/types.h>
->  #include <linux/mutex.h>
->  #include <linux/device.h>
-> +#include <linux/of.h>
->  #include <linux/spi/spi.h>
->  #include <linux/slab.h>
->  #include <linux/sysfs.h>
-> 
+Is there any driver where adapter isn't equal to connector->ddc?
 
+If not, there's no reason to pass both
+
+Maxime
