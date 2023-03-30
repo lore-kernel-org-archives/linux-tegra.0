@@ -2,93 +2,98 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2A6C77B6E
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 17:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F16C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 21:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232223AbjC3RTN convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Mar 2023 13:19:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49146 "EHLO
+        id S229612AbjC3VPA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Mar 2023 17:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232237AbjC3RTI (ORCPT
+        with ESMTP id S230061AbjC3VOu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Mar 2023 13:19:08 -0400
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3983CE1A2;
-        Thu, 30 Mar 2023 10:19:05 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id eg48so79228577edb.13;
-        Thu, 30 Mar 2023 10:19:05 -0700 (PDT)
+        Thu, 30 Mar 2023 17:14:50 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55614EF9C
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Mar 2023 14:14:43 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id d17so20407293wrb.11
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Mar 2023 14:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680210882;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=svitRmAwfjSzCiTV3iUGu1W95ui5xUmfJsnHH3NKzfI=;
+        b=Rss+c7+JE5WyxT+VVG/iOwxZVc8YNHKmivBSMRMVaBeJ9bdsZX88XJniTyN8h23gsX
+         ypDL2EQadCUGFEJqsAPaRGz2BiGTQxSx/dn0UI3QB0tJJbNZJLzumZPkKbipUOWVlQIc
+         B5P/iN4aTa397B02f5L8k4L2E7Ta8NeckYfzZ1dmqZls10f5FO6swRQcVPBQ+1Vw33nP
+         S6/nUbYIuYag2O/V1N0g9hf5b6B+U47nDXZfAu4GMBf3r5DGoBwgG0D4N8jmnV8dVdGQ
+         M6A2BO94NIUMb78mrE7oI0zc1V3mirIgu5L1oFIEq5VtDwPp+7U2LJOeWth8n95TWXQx
+         zuRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680196743;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/sK01N/HcAzey7kutWyAm0fiwuXpPIV0t8lDayMPKNs=;
-        b=4r8n6zZoDCBwTrqlp6Wpc0Opn4JmZTEDhm+FmJNJeKI6a+Pv+Q3RRlFjsr1uHrpUiY
-         0HSzyc61/TnpDx/H/pVUreWsdyBdtGV+x4Csmimk+qL4CaKEQMubSejsU5t7TkBMumlV
-         tqiiK1nGmdaZLimos68yQmt1f3rcJRT4uVCgkc47+ucCL1iL7lmNy8YFh9nBs7zOXLG6
-         sZIPb3oDVkR5WJ++wT5no7X6p2SqTJUDaasZwkK9CcE/cbpVuFmpool7B2KL62Td03OE
-         GGEkFXgbAdf8+ln3IVOVQxQlslyu5WkIMOajXpclKe5atWNr3Gqhro3KV1qkmKwGqKii
-         +B/g==
-X-Gm-Message-State: AAQBX9c/Q3e3+Ef2ddBZtuqGNsgJGTlZ/KKCVMs9gQtpXl2WcW/c8ddy
-        DbjroA3ziOmH0T8o6RJuuzwZjXfwszhnQIk8fr4=
-X-Google-Smtp-Source: AKy350YytQ1yNiR6W3Bf1WUTGN6F1FlrOPm5tq5wq5gaK9i6al6bWOGltYKF/XedV9kSLG6QNcyQIMF5Rh1uNWAeOVs=
-X-Received: by 2002:a17:907:a0cd:b0:947:4b15:51e5 with SMTP id
- hw13-20020a170907a0cd00b009474b1551e5mr1794105ejc.2.1680196743353; Thu, 30
- Mar 2023 10:19:03 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680210882;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=svitRmAwfjSzCiTV3iUGu1W95ui5xUmfJsnHH3NKzfI=;
+        b=ou5/AU0gbfBCyFxRA1BDPYDmfoCL/Ne3f8YD/ZiHvuLo86VaTbXWTANTydszP1t6jF
+         k7UHMIOKsKXCZs6Z1L+xCwEC6ndKzkTNmbdaQgDEMUnZqWTMDPxaCr7n06aLTD+j0UhG
+         zv/7Y2Csxnz4ByMrCuIH8mnSnoR01V6sll20HjfAPmhTYlhYdW4/vcg3cKAvybfsN52s
+         XgqlNaVXLokUe1C+JJNpvKQy6oxWTeIEQuk9sQ+4ANIV45fvJOBOMYOepEIQSjNjMtaT
+         NHxHKjSeCh71zIMj96GsnJ811KpiVqWrbQCImnAOkb5kjQd0vDu3/nteXvBWhaLdm7mY
+         Dl7w==
+X-Gm-Message-State: AAQBX9dXZEIUy0njLt1vq7JEhGXDqETiyuAT8zD6dOIydsbTlE5hwKp5
+        qxH9sK5RB1eAsUSyeSDiguq70Q==
+X-Google-Smtp-Source: AKy350YaiKIoamW1LIp23ecuuhJKv2CmTkC9MN9Posn6KiVuywUpfE2+nyKS9604rK8MW3YV5PxixA==
+X-Received: by 2002:a05:6000:8a:b0:2d1:e517:4992 with SMTP id m10-20020a056000008a00b002d1e5174992mr17772196wrx.69.1680210881643;
+        Thu, 30 Mar 2023 14:14:41 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:17ff:909e:1b73:8366? ([2a05:6e02:1041:c10:17ff:909e:1b73:8366])
+        by smtp.googlemail.com with ESMTPSA id t17-20020adff611000000b002c5a790e959sm376235wrp.19.2023.03.30.14.14.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Mar 2023 14:14:41 -0700 (PDT)
+Message-ID: <f0d51904-d363-cb76-cd6f-f1ebefd0aa5a@linaro.org>
+Date:   Thu, 30 Mar 2023 23:14:40 +0200
 MIME-Version: 1.0
-References: <20230329-acpi-header-cleanup-v1-0-8dc5cd3c610e@kernel.org> <ZCUon17pXpgBr0eQ@kroah.com>
-In-Reply-To: <ZCUon17pXpgBr0eQ@kroah.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 30 Mar 2023 19:18:52 +0200
-Message-ID: <CAJZ5v0jKA9GQULe360ZnwiKc4HRHcLJR=LxDwwm7DGP59JU_rw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Remove acpi.h implicit include of of.h
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     Len Brown <lenb@kernel.org>,
-        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v2] thermal: tegra-bpmp: Handle offline zones
+Content-Language: en-US
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Marc Zyngier <maz@kernel.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230330094904.2589428-1-cyndis@kapsi.fi>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230330094904.2589428-1-cyndis@kapsi.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Mar 30, 2023 at 8:13 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Mar 29, 2023 at 04:20:41PM -0500, Rob Herring wrote:
-> > In the process of cleaning up DT includes, I found that some drivers
-> > using DT functions could build without any explicit DT include. I traced
-> > the include to be coming from acpi.h via irqdomain.h.
-> >
-> > I was pleasantly surprised that there were not 100s or even 10s of
-> > warnings when breaking the include chain. So here's the resulting
-> > series.
-> >
-> > I'd suggest Rafael take the whole series. Alternatively,the fixes can be
-> > applied in 6.4 and then the last patch either after rc1 or the
-> > following cycle.
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
->
-> Nice cleanup, all are:
->
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On 30/03/2023 11:49, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Thermal zones located in power domains may not be accessible when
+> the domain is powergated. In this situation, reading the temperature
+> will return -BPMP_EFAULT. When evaluating trips, BPMP will internally
+> use -256C as the temperature for offline zones.
+> 
+> For smooth operation, for offline zones, return -EAGAIN when reading
+> the temperature and allow registration of zones even if they are
+> offline during probe.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-All applied as 6.4 material with the tags collected so far, thanks!
+Applied, thanks
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
