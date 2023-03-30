@@ -2,221 +2,96 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D31C6C77B62
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 08:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A82C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 08:36:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbjC3IAw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Mar 2023 04:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
+        id S229660AbjC3IgQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Mar 2023 04:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbjC3IAt (ORCPT
+        with ESMTP id S230191AbjC3IgL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Mar 2023 04:00:49 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E4B6199;
-        Thu, 30 Mar 2023 01:00:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eZmlr/iyfazVZnT3DIEI6b9aIwGGntg9dPkrVn99FYskHlTB0UZSlsGucDKG5zIs/uvSa9afGXD5Mfu+sqGmJ1XGWyFGDTx+N2ig8Rt+r74/z0fLkKA9b8g7vBR4QicuxOZat/whpqXgV1/Wxz/1pnKxt2p3Eumam3RfcDv2nzo196VF2TBMMkfipLH/u/UBuzkQKwEDBR2yHj2jaI8Y648isv5CS9tjPQfB29+InwOF8RZXtIqaUuauicuAuPomqSt+Gchhm+8xqBlLal0VPznng9A+RBbSJmAvBSux0eh2NnCdmy8wGbQ4fRSysjNTNbC4SpINcwy9IiRfTQoBSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QDHLdFJ2rnEBPrCpcr3nXSZR/4JHONT4dd5pvk7UmSI=;
- b=XmCpsdxBO0LoyVjvE0j3slW5Q7zAglEqg3FYGEZlCqRGP4kPny1euV/8SoI4Kkr6v4S2g6Wsmst5dBubia0d0ooF1UUTSUXp5nrEEL2ThNg9PadcapSOCGUpqPnQGtchHo/OripKO67WRIoKITCtbSBOJV/SMonFjUtZoXkk1xnaFoRLK4S7o0P8p5DMNG3VKM3Nhm1ZKd4Vi49Ti6XZyR7juLQAW0VYjvMddXg0qR5QRzw+STtuPK4+aD0jjbPnMJnmzCfKOM95WcS7UGE/t7YdVv+R10IRfMhRwiAtFMn4Alt3IgYmowZlTimGpH4no0HviNIfOZ8Uo2WB+P1Qqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QDHLdFJ2rnEBPrCpcr3nXSZR/4JHONT4dd5pvk7UmSI=;
- b=kwy99lLRY2yBZwzru8UidHyIQIb/4vElUs+qZH1IujBP9G46olnh2JpFCNo37GzXn/y9s/fFp9+kJukASlv2zOcNImr6zD8dJ3pQILJpRhEQDHZN2IDocWbXNip/iZ163Q09Kq03CTx7jSF899IujxKcjBFAlAQ2IO7C4xrCtvpUHaljzwIZHmqPE98NHqKXRnW5f0Q5AHO+YEZQWVfi8C/cD+JRAlAEeABKMOtUO82sRaSnHfEH1a7yyU/GXkoToa6PHa6ui7t2K3mUc7OO/KRpxRfuHML/8vy3AHbmgVPLe1rbF8HZh1IWo6ECtXCKXYT/doK0bxv5XvvcyuzXvg==
-Received: from MW4PR04CA0098.namprd04.prod.outlook.com (2603:10b6:303:83::13)
- by DS0PR12MB6487.namprd12.prod.outlook.com (2603:10b6:8:c4::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.26; Thu, 30 Mar
- 2023 08:00:46 +0000
-Received: from CO1NAM11FT046.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:83:cafe::4d) by MW4PR04CA0098.outlook.office365.com
- (2603:10b6:303:83::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.20 via Frontend
- Transport; Thu, 30 Mar 2023 08:00:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT046.mail.protection.outlook.com (10.13.174.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6254.22 via Frontend Transport; Thu, 30 Mar 2023 08:00:45 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 30 Mar 2023
- 01:00:24 -0700
-Received: from [10.41.21.79] (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 30 Mar
- 2023 01:00:18 -0700
-Message-ID: <72b9168b-d4d6-4312-32ea-69358df2f2d0@nvidia.com>
-Date:   Thu, 30 Mar 2023 13:30:16 +0530
+        Thu, 30 Mar 2023 04:36:11 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF51B6EB4
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Mar 2023 01:36:09 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id AC85F219FE;
+        Thu, 30 Mar 2023 08:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680165368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=prc8SEhYyhNSt3X1QSGKo4Ub8nWmTh1lDEZAJiIba/0=;
+        b=QgNsjpM8BLb9BdHCw4LFvX6aBdBwPBh5sHRDQmxHUnZVCdgoEgu7CINgR8mVvBwitYIRfy
+        VfA8ewwEliLWAbSRtMZA+N8kmKiOuQcTgeiefy20FR81fwZUWDFAgOmZVXOMZCMvRzaRgF
+        HJpxkqDeuc7fKyhNGEVbx/Uh5tOMY14=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680165368;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=prc8SEhYyhNSt3X1QSGKo4Ub8nWmTh1lDEZAJiIba/0=;
+        b=cZunbX0Ux6PY4cO9SCwLIP1JGVolY1+QZpLhPdjEgMJbJbUeMajZv6YpxDIeLHfgqm87YC
+        z+rmjqgbo6nG8tBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7D44A138FF;
+        Thu, 30 Mar 2023 08:36:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id d4NYHfhJJWQHHAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 30 Mar 2023 08:36:08 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, javierm@redhat.com,
+        airlied@gmail.com, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 0/7] drm/tegra: Convert fbdev to DRM client
+Date:   Thu, 30 Mar 2023 10:36:00 +0200
+Message-Id: <20230330083607.12834-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [Patch v4 10/10] PCI: tegra194: add interconnect support in
- Tegra234
-Content-Language: en-US
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <treding@nvidia.com>, <krzysztof.kozlowski@linaro.org>,
-        <dmitry.osipenko@collabora.com>, <viresh.kumar@linaro.org>,
-        <rafael@kernel.org>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <lpieralisi@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <mmaddireddy@nvidia.com>, <kw@linux.com>, <bhelgaas@google.com>,
-        <vidyas@nvidia.com>, <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>,
-        <ishah@nvidia.com>, <bbasu@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>
-References: <20230329191703.GA3076491@bhelgaas>
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <20230329191703.GA3076491@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT046:EE_|DS0PR12MB6487:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa544357-74cc-4cc7-7a91-08db30f4de39
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qHQi7QEiEKez7cDlBSG7nCwLHGTyu2P9NHJ17KLL+YSjy2vR4X6L/rYWiGZFrjL8U7JGA8WTwJW92ambbpZR023FDYxPrjA02KERYYD0zMmMK/Kuz+2/J7sFgATdKnvXjAnq1GpXUJ+d04dEirIB9TZVUG629fsNWIheHtA5A99UcAhGniBTvT6UtmZELBD38buJU7IjWLXazUbpxnxrwWniMEVKqMOYDfoQRYQMiVw4KAFZ200lZArf4Yf1Ub5+1UwpeqvUEqwrYSl1KnhRuRjhv5coAhXUoPdIV45RM0VctegWgHsbcCS3miI/pNYAt7mg4zRw98U9Y10BBWD2h/EScfVTFFbwPo1Cj06IACV94FEAVtnArb5P8FqBbZPoav10ATlT+aN8qmnp6skULFeJJIghJzNDYYEywErNkg68L+rv9unBMyzC9XD7nHa0TPst9xJSh7kHe7/7sI8yw+z1gMi8/JFy1673V0CV1BFqrjS9lJDcIrQD/VbbyPo1BoYDhKfEZFYEcTQJkffSxpxJcEmCz3vcAZv0TBVEaUmsG6eMbYzytpVpQirIQHIpSSN/my9h4oEzKdrL/Ubx43az+jXu7+IcJDrUo5mDWFbWsY0Oht2idCyzRvNkG9FplvivQ3ZlFvK2V6RYLIMJkjowChINsdkZIQ2nF9zXNLbhHF16EOLUeXjQeiiHqkHjdGLmSAbOI4rmyVlkcBqFNNR34vHYRORgdOkxdCxx/wZvgGEIeNzjWcUmpmYcXf92Y+PhAVzBddKanDjk6Mr6kpxQxqa9vlNiZz2EcHpWf1Iklt3tXnp84VyVsRMVxt6S
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(376002)(136003)(396003)(346002)(451199021)(36840700001)(46966006)(40470700004)(36860700001)(336012)(47076005)(478600001)(26005)(8676002)(40460700003)(16526019)(356005)(31696002)(107886003)(2906002)(31686004)(54906003)(70586007)(40480700001)(186003)(4326008)(82310400005)(316002)(7416002)(86362001)(36756003)(41300700001)(16576012)(83380400001)(53546011)(82740400003)(426003)(7636003)(5660300002)(2616005)(70206006)(34020700004)(8936002)(6916009)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2023 08:00:45.9957
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa544357-74cc-4cc7-7a91-08db30f4de39
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT046.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6487
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Convert tegra's fbdev code to struct drm_client. Replaces the current
+ad-hoc integration. The conversion includes a number of cleanups. As
+with most other drivers' fbdev emulation, fbdev in tegra is now just
+another DRM client that runs after the DRM device has been registered.
 
+Once all drivers' fbdev emulation has been converted to struct drm_client,
+we can attempt to add additional in-kernel clients. A DRM-based dmesg
+log or a bootsplash are commonly mentioned. DRM can then switch easily
+among the existing clients if/when required.
 
-On 30/03/23 00:47, Bjorn Helgaas wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Wed, Mar 29, 2023 at 11:28:40PM +0530, Sumit Gupta wrote:
->> On 29/03/23 22:29, Bjorn Helgaas wrote:
->>> On Wed, Mar 29, 2023 at 02:44:34PM +0530, Sumit Gupta wrote:
->>>> On 28/03/23 23:23, Bjorn Helgaas wrote:
->>>>>> +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
->>>>>> +{
->>>>>> +     struct dw_pcie *pci = &pcie->pci;
->>>>>> +     u32 val, speed, width;
->>>>>> +
->>>>>> +     val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
->>>>>> +
->>>>>> +     speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
->>>>>> +     width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
->>>>>> +
->>>>>> +     val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
->>>>>> +
->>>>>> +     if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
->>>>>> +             dev_err(pcie->dev, "can't set bw[%u]\n", val);
->>>>>> +
->>>>>> +     clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
->>>>>
->>>>> Array bounds violation; PCI_EXP_LNKSTA_CLS is 0x000f, so possible
->>>>> speed (CLS) values are 0..0xf and "speed - 1" values are -1..0xe.
->>>>>
->>>>> pcie_gen_freq[] is of size 4 (valid indices 0..3).
->>>>>
->>>>> I see that you're just *moving* this code, but might as well fix it.
->>>>>
->>>> Thank you for the review.
->>>> Will include the below change in the same patch. Please let me know if any
->>>> issue.
->>>>
->>>>    -       clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
->>>>    +       if (speed && (speed <= ARRAY_SIZE(pcie_gen_freq)))
->>>>    +               clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
->>>>    +       else
->>>>    +               clk_set_rate(pcie->core_clk, pcie_gen_freq[0]);
->>>
->>> I didn't notice that speed is a u32, so -1 is not a possible value.
->>> Also, it's used earlier for PCIE_SPEED2MBS_ENC(), so you could do
->>> something like this:
->>>
->>>     speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val) - 1;
->>>     if (speed >= ARRAY_SIZE(pcie_gen_freq))
->>>       speed = 0;
->>>
->>>     val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
->>>           BITS_PER_BYTE);
->>>     ...
->>>     clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
->>
->> I tried this change but PCIE_SPEED2MBS_ENC gives zero when speed value is
->> one. The speed value ranges from "1 to 4" and for value "1",
->> pcie_link_speed[speed] gives '0xff'.
-> 
-> Oh, my fault, sorry!  I thought both places indexed the same array,
-> but the first is pcie_link_speed[] (where all the possible values
-> (0..0xf) are valid indices) and the second is pcie_gen_freq[] (where
-> only 0..3 are valid).
-> 
->> The below change works fine. Please share if its OK to add it in patch.
->>
->>    speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
->>    if (!speed || speed >= ARRAY_SIZE(pcie_gen_freq))
->>            speed = 1;
->>
->>    val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
->> BITS_PER_BYTE);
-> 
-> So I don't think you need to clamp "speed" for indexing
-> pcie_link_speed[] at all.
-> 
->>    if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
->>            dev_err(pcie->dev, "can't set bw[%u]\n", val);
->>
->>    clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> 
-> What if you added a 0th entry to pcie_gen_freq[] so you can index it
-> directly with the PCI_EXP_LNKSTA_CLS value the same way as
-> pcie_link_speed[]?  Then you wouldn't need the "- 1" and only have to
-> worry about going off the end:
-> 
->    static const unsigned int pcie_gen_freq[] = {
->      GEN1_CORE_CLK_FREQ,   /* PCI_EXP_LNKSTA_CLS == 0; undefined */
->      GEN1_CORE_CLK_FREQ,
->      GEN2_CORE_CLK_FREQ,
->      GEN3_CORE_CLK_FREQ,
->      GEN4_CORE_CLK_FREQ,
->    };
-> 
->    speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
-> 
->    val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) /
->          BITS_PER_BYTE);
-> 
->    if (speed >= ARRAY_SIZE(pcie_gen_freq))
->      speed = 0;
->    clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
-> 
-> Bjorn
+I did the conversion from similar experience with other drivers. But I
+don't have the hardware to test this. Any testing is welcome.
 
-Yes, this is working fine. Will add it in the patch.
+Thomas Zimmermann (7):
+  drm/tegra: Include <linux/of.h>
+  drm/tegra: Include <linux/i2c.h>
+  drm/tegra: Removed fb from struct tegra_fbdev
+  drm/tegra: Remove struct tegra_fbdev
+  drm/tegra: Hide fbdev support behind config option
+  drm/tegra: Initialize fbdev DRM client
+  drm/tegra: Implement fbdev emulation as in-kernel client
 
-Thank you,
-Sumit Gupta
+ drivers/gpu/drm/tegra/Makefile |   2 +
+ drivers/gpu/drm/tegra/drm.c    |  23 +---
+ drivers/gpu/drm/tegra/drm.h    |  27 ++--
+ drivers/gpu/drm/tegra/fb.c     | 242 +--------------------------------
+ drivers/gpu/drm/tegra/fbdev.c  | 240 ++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/output.c |   3 +
+ drivers/gpu/drm/tegra/rgb.c    |   1 +
+ 7 files changed, 265 insertions(+), 273 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/fbdev.c
+
+-- 
+2.40.0
+
