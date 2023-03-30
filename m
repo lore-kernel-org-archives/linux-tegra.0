@@ -2,55 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F66C74A5B
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 03:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCC2C74A5B
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Mar 2023 03:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbjC3Dyx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Mar 2023 23:54:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35692 "EHLO
+        id S229730AbjC3DzE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Mar 2023 23:55:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbjC3Dys (ORCPT
+        with ESMTP id S229652AbjC3Dy4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Mar 2023 23:54:48 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE5C5B86
-        for <linux-tegra@vger.kernel.org>; Wed, 29 Mar 2023 20:54:46 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id le6so16882534plb.12
-        for <linux-tegra@vger.kernel.org>; Wed, 29 Mar 2023 20:54:46 -0700 (PDT)
+        Wed, 29 Mar 2023 23:54:56 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B434259EF
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Mar 2023 20:54:54 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id c4so55794pjs.4
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Mar 2023 20:54:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680148485;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mwmSNDnybMqBEh0Z+gPmCfYtw9bkrJ0PR1su4QL+8ng=;
-        b=GfolM2geRXzvdw+ehZXpU8LIxL1xjz8Gj7iUHWYn0dQe/xK6gKP+jAnnfACd9dNas/
-         V++Sm0TyABcLhhIGfP5TWHGwoCe9wculMPYuWNh8MX5dslq4eZGiHhMbH8QnfrjFjyDi
-         1R02/q4m606IhgQClA65oAaxUmLy9Tlpoo3VU7hbegQucmzXRckhRFIw+Bte6EBu90qm
-         Eybgi+WtfZP6vwZHlApEpFbN2Q1QBxtwJODT8JmI2ozap/CAX0ZDAlAhOh4ro/TsRICH
-         q6vFusF7IDZ1ivkOyQ2u6hFyH7XuM27wai0R73hAJNlIGTC/gbz4+yD+DIAgG5FzF0WR
-         8Nww==
+        d=linaro.org; s=google; t=1680148494;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ORTcc1S4DbhSj9bYXgbzlVEJUmJSEuJEOt6fEFrhs3I=;
+        b=KDkr9GukbLDb5E0cjryjb5Wh0SCZaycf/IUr90YlJNe0yf+CJFbuqVLgseHvC1XTAs
+         Mj696hVP3J+/JyxeccnDx4sbyBLoQR8t6nLYlyTiLLcc21ZTbl5DObP3Sn5N4aoPtg5K
+         vT05+Dy7pELaLbJ3Jtjg4yd67A4IfUXlaie5LW1NfYlipHOIwyXNtqF0se+FNlmkrAW9
+         0bSdtfv+XKaMh8hj340BwSg3B4py1O/ULmxkhI+S+4sADQi7xMUd3Eyip4T50rRfAII+
+         GbYAWTbGyTjtff51zxbKYOhiJVlu3d4/NXIx3s+ZSTQbkwQZhq1bYkwIvzgmP/zufxWD
+         V87Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680148485;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mwmSNDnybMqBEh0Z+gPmCfYtw9bkrJ0PR1su4QL+8ng=;
-        b=HghkfYvoOPN6gEOnSaFePF8vue7bCv0NoyDROq5Ay9tWOK+qcyjmt9tL0GApvR9YWl
-         n7msGGWx3wIiL5f/mDDFrWv5nBcPiVipPAZbvpG6kmI2BE+eidVp1QJ+/Ojtxjhd1/7V
-         WzIh4i0cVgR280c4rKmpPETn2ve3QsAGAW3q34L1N+0O2WCxVR88x0kBEtcrhKKSzUOr
-         vUoT4vydsjgCNifPZmzXLfmp3b70nEPsCq31VBpeOCDBghPaddWy71xna+fH6WWR6U8r
-         zizJMDxz8Kh67+M/bLC1Hwdo3I/YLZuLrFl12KC5NMvWh1NXgo1L5WcN3LOqIb904tVP
-         h2Cg==
-X-Gm-Message-State: AAQBX9ccvwuEvzwkllbsyEWzV9r+sH87HYGpfTOCXU8KA0/XTY8cmA2e
-        KO7RNeTLJKpUdTnJnUYRICcX7A==
-X-Google-Smtp-Source: AKy350ZtoosHc1UXvyJfiqR7/4WaAgxoUcypk7oVcM2Qe5NgerUZWsBCiwEUDE9iUeMBrzKflkrmgQ==
-X-Received: by 2002:a05:6a20:b71f:b0:e0:316a:d62c with SMTP id fg31-20020a056a20b71f00b000e0316ad62cmr11170953pzb.60.1680148485691;
-        Wed, 29 Mar 2023 20:54:45 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680148494;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ORTcc1S4DbhSj9bYXgbzlVEJUmJSEuJEOt6fEFrhs3I=;
+        b=JdO2mLzexJ2C/T6Ziklycu6Qg84vfqFXxZDRgzCg0oLefp5D9jSEnZSIVD07bq+PKT
+         SxrdPAjd4rBcsfgWP6m6u/umOs3asQqwMpUfKsXtiendjNnQE5HXlJf3cOMKzFQbaOZi
+         aMQJQ2065593C5/LK4wS0YPj4YqcMNrst1T3KyWFxHSmexmA5+LrWGYGC3NP1g/KY9AJ
+         yX4Z0YumcRATp6hIAPaENLUeg46OcVwnjyU/PZTWhcTuj5ddsogD6Jh5DEfaNs5sazS7
+         nJaE1juRbVLWk/GNCf7OLjErd8IUE5yItWelsu7UIuYoYmQMvOGSaLr8x3MHxBiu0CAC
+         meNQ==
+X-Gm-Message-State: AAQBX9eoS0COXZyTUpLt5fHeHp0p4BsLApQw3XkM5DdEeXpj5Szp5NcE
+        6noK8V9pKtKOf7Xz8JONqZwRsQ==
+X-Google-Smtp-Source: AKy350Z3+wrY9ZgUHedACp4BaESa2FvIEkabhjg74d5bnPV2JCYBYbJoHjnYpjGWoPDBynyeKDWcRw==
+X-Received: by 2002:a17:902:d503:b0:19d:1720:3873 with SMTP id b3-20020a170902d50300b0019d17203873mr24981326plg.57.1680148494287;
+        Wed, 29 Mar 2023 20:54:54 -0700 (PDT)
 Received: from localhost ([122.172.85.168])
-        by smtp.gmail.com with ESMTPSA id q17-20020a62ae11000000b0062607d604b2sm23791281pff.53.2023.03.29.20.54.44
+        by smtp.gmail.com with ESMTPSA id q9-20020a17090ad38900b002340d317f3esm2154710pju.52.2023.03.29.20.54.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 20:54:45 -0700 (PDT)
-Date:   Thu, 30 Mar 2023 09:24:43 +0530
+        Wed, 29 Mar 2023 20:54:53 -0700 (PDT)
+Date:   Thu, 30 Mar 2023 09:24:51 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Rob Herring <robh@kernel.org>
 Cc:     "David S. Miller" <davem@davemloft.net>,
@@ -97,50 +96,44 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
         linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-mips@vger.kernel.org
-Subject: Re: [PATCH 15/19] cpufreq: sun50i: Add explicit include for cpu.h
-Message-ID: <20230330035443.kowj26o4z22yg5f7@vireshk-i7>
+Subject: Re: [PATCH 18/19] OPP: Adjust includes to remove of_device.h
+Message-ID: <20230330035451.huc3ae2acvgoh4xs@vireshk-i7>
 References: <20230329-dt-cpu-header-cleanups-v1-0-581e2605fe47@kernel.org>
- <20230329-dt-cpu-header-cleanups-v1-15-581e2605fe47@kernel.org>
+ <20230329-dt-cpu-header-cleanups-v1-18-581e2605fe47@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-15-581e2605fe47@kernel.org>
+In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-18-581e2605fe47@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 29-03-23, 10:52, Rob Herring wrote:
-> Removing the include of cpu.h from of_device.h causes an error:
-> 
-> drivers/cpufreq/sun50i-cpufreq-nvmem.c:42:19: error: implicit declaration of function ‘get_cpu_device’; did you mean ‘get_device’? [-Werror=implicit-function-declaration]
-> 
-> As of_device.h is not otherwise needed, it can be replaced with of.h
-> (also implicitly included).
+> Now that of_cpu_device_node_get() is defined in of.h, of_device.h is just
+> implicitly including other includes, and is no longer needed. Adjust the
+> include files with what was implicitly included by of_device.h (cpu.h and
+> of.h) and drop including of_device.h.
 > 
 > Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
 > Please ack and I will take the series via the DT tree.
 > ---
->  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/opp/of.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> index 1583a370da39..4321d7bbe769 100644
-> --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> @@ -10,9 +10,10 @@
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
-> +#include <linux/cpu.h>
->  #include <linux/module.h>
->  #include <linux/nvmem-consumer.h>
+> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> index e55c6095adf0..63b126c6215e 100644
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -13,7 +13,7 @@
+>  #include <linux/cpu.h>
+>  #include <linux/errno.h>
+>  #include <linux/device.h>
 > -#include <linux/of_device.h>
 > +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_opp.h>
+>  #include <linux/pm_domain.h>
 >  #include <linux/slab.h>
+>  #include <linux/export.h>
 
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
