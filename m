@@ -2,81 +2,64 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C616C76196
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Mar 2023 07:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB462C76196
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Mar 2023 12:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjCaHNB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 31 Mar 2023 03:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37052 "EHLO
+        id S232435AbjCaMWZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 31 Mar 2023 08:22:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbjCaHNA (ORCPT
+        with ESMTP id S232408AbjCaMWB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 31 Mar 2023 03:13:00 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E4E6728A;
-        Fri, 31 Mar 2023 00:12:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2wX7kk84wGIs9+erUIwfdfDQ+Jpj8eePWOZPFDFpn54=; b=q6kCfk6/fpolQcMBg4CRgFixF2
-        rtpoo3Xyhb1dcl40Y9oF2ooSPeVX3H6VOYU1fnlipDUVW4eQaeMPQ1pKEweCZea4JGyP+/0jnruBP
-        PUeehIOM+ccFrDGotYB0DghGB69sXNt8UFUmx4MND8xdWQNZYsBOel+2eFgihfD8NOLf6gOiVKM/s
-        Qg7JLvYubi1LkhHjjO0w/ZQN32kTZCyebfD+MEgxFva4Pgd2bwwFAstPkI6SrhBJBo1ywf0GobkX6
-        MLjVWBX88Q/47E5KqBVsqxUvnoCImRGKl1vvTcs6Zpw3nR2f5oAm8HeRt63unfq/6unYe4vTIGRe8
-        yQtmcZWQ==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1pi8wC-004OBK-NS; Fri, 31 Mar 2023 10:12:40 +0300
-Message-ID: <e1c0721e-7a73-aee6-9fe2-9cab8f353a49@kapsi.fi>
-Date:   Fri, 31 Mar 2023 10:12:39 +0300
+        Fri, 31 Mar 2023 08:22:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279A220C12;
+        Fri, 31 Mar 2023 05:21:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 72C5B6252C;
+        Fri, 31 Mar 2023 12:21:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 006BAC433EF;
+        Fri, 31 Mar 2023 12:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680265288;
+        bh=qjxhFHgRDKgQd0YZIE0gdI9Qd2axFPOwPWgUbDSQUaA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mjfOzE6l1QTG4/mErNaWoZBjJ1alTHmmqTbWlj+5N5HCCooR637lHTBfQHwEeFt4D
+         vFGQhHaBZrNjWvp9vTdQxKhhu16ybMT0JOUWFoGHJk1kKZmP22DF5JExOyCQeQ2ZWh
+         ldx8cQqIlk+32qX7cItCeZ5ghpVN7/iAcL2qDhOsdcM+ZYc38/l0Q3wSmB8HV5tz9C
+         OYd8gnolfbdxFl3IV6GfRZt4/B+Sp8MiHkc9Hdul58p9biodYvaZyu9vkUWISrCGU5
+         5ORZvdqa6C79BB4N8yxxXwXXhSlgZSmWqEGCNyNGvEDrGldPKlR4WUiD38iNWhwqEg
+         7zMd2cwPOsfFA==
+Date:   Fri, 31 Mar 2023 17:51:24 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Tom Rix <trix@redhat.com>
+Cc:     ldewangan@nvidia.com, jonathanh@nvidia.com,
+        thierry.reding@gmail.com, nathan@kernel.org,
+        ndesaulniers@google.com, dmaengine@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH] dmaengine: tegra-apb: remove unused tdma_read function
+Message-ID: <ZCbQRE9MS1Jg43uP@matsya>
+References: <20230322121001.2569909-1-trix@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2] thermal: tegra-bpmp: Handle offline zones
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230330094904.2589428-1-cyndis@kapsi.fi>
- <f0d51904-d363-cb76-cd6f-f1ebefd0aa5a@linaro.org>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <f0d51904-d363-cb76-cd6f-f1ebefd0aa5a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230322121001.2569909-1-trix@redhat.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/31/23 00:14, Daniel Lezcano wrote:
-> On 30/03/2023 11:49, Mikko Perttunen wrote:
->> From: Mikko Perttunen <mperttunen@nvidia.com>
->>
->> Thermal zones located in power domains may not be accessible when
->> the domain is powergated. In this situation, reading the temperature
->> will return -BPMP_EFAULT. When evaluating trips, BPMP will internally
->> use -256C as the temperature for offline zones.
->>
->> For smooth operation, for offline zones, return -EAGAIN when reading
->> the temperature and allow registration of zones even if they are
->> offline during probe.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> 
-> Applied, thanks
-> 
+On 22-03-23, 08:10, Tom Rix wrote:
+> clang with W=1 reports
+> drivers/dma/tegra20-apb-dma.c:236:19: error: unused function
+>   'tdma_read' [-Werror,-Wunused-function]
+> static inline u32 tdma_read(struct tegra_dma *tdma, u32 reg)
+>                   ^
+> This function is not used so remove it.
 
-Thank you!
-Mikko
+Applied, thanks
+
+-- 
+~Vinod
