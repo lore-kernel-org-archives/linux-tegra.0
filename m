@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C700C77B6C
-	for <linux-tegra@archiver.kernel.org>; Fri, 31 Mar 2023 16:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B33C761A6
+	for <linux-tegra@archiver.kernel.org>; Fri, 31 Mar 2023 16:33:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbjCaQd1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S231429AbjCaQd1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Fri, 31 Mar 2023 12:33:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48192 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbjCaQdK (ORCPT
+        with ESMTP id S229646AbjCaQdL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 31 Mar 2023 12:33:10 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D112659C;
-        Fri, 31 Mar 2023 09:29:26 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id w9so91842628edc.3;
-        Fri, 31 Mar 2023 09:29:26 -0700 (PDT)
+        Fri, 31 Mar 2023 12:33:11 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD34427800;
+        Fri, 31 Mar 2023 09:29:27 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id ew6so91765368edb.7;
+        Fri, 31 Mar 2023 09:29:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680280164;
+        d=gmail.com; s=20210112; t=1680280165;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AKG4C+1Wx4Y61hBzbbvjWu9OyPNzcije/ihAphovozk=;
-        b=iznjKuTE2IeQ70WzXlZancPwpcOmeP+eKhI4gKhIIK+knF+Kl6DdanJRh3T98lpE+X
-         Vyiqs1/nXyYawYQxrPcGo6MaZBLeKqqc3uXSJKXna3nm6cc+PONVRQ9O10qVA7WaPDRu
-         Ewfr/1q8/a8gQ5PeQNeO+pf9KrP48Mce9wNJ8eBSp0SKeqgjLhtu/CEeDJf4ZJ7y8svX
-         QNFrKn+OmfLQbPxsMQducYP2Ii7KYZliwKm8qQvXaj+4khkt+0tFb4gkakc4nvU/Cx5o
-         5dDhBIdPmVe+gGz6jQQXPBUM3alepbAUfe0wjfNP7cS2VQay/GRhtKd3k1AvXWsyp+/6
-         dZpw==
+        bh=Jc+j8urDB/RnvdpJvSHn8Xs0bbTHrMm8P5jHRi5MUYw=;
+        b=pJeABH9ThD5HRuTqbwHNI7X95wVKH0SdGIuseCzEhtEIA4FII0e688YqzGWyIG5Pw+
+         AUg1i145H+ObPopcBb/xmVOI7qtAr3UVMos7k9+n9e0/cwbb/OvLcHXo0W424vok1jSW
+         VPvYDHo9UZv3sJfe42hwAfsIMiUKDH2ml6WP2q56ZoeBVYyclYjJ3QGWRQN+hICO9T19
+         tjWsJ9xA+fLpX/HVA6yP6ID3zGly8sWAf4WSZdBSpQqFViyaHQ9NEjAyEX8z7cj44SA3
+         bB9w7x+/9J2d8doG8NNUcK3KI+lJvBVd3aOR7LfGZ4QkSQCVI2W9JcRP3ojnZDc7aN4H
+         HO5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680280164;
+        d=1e100.net; s=20210112; t=1680280165;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AKG4C+1Wx4Y61hBzbbvjWu9OyPNzcije/ihAphovozk=;
-        b=TFHhz/7g5WWc9ilY15hcjFPRiAyHjxJPFul7nNv15mTUjaCq6oJUHFDRdwdcDA4uws
-         Q/J3Efsv9Bpz7ySPf2JBtHNMQAmsO4ER4jDljqpRRMnICqleC0AM3i6WzGJrQCfQfRvE
-         krujk+ymGm8vxPx+AQ7Yz5aSuXdmRRLIG6ZBdekTy+tzCKbVWlL++yruh48xXV0ZhZ6f
-         dc7zq7/6jjq3GPifC4vPZKkJXJ0pVx12HKRYjoUul2B3DjD9TW8+cDuuSRrBkgdLoS01
-         yWJmXKpqxEf2GzEtRvyLVrGWckeyjsLofOq4TB70HTqgy6pArVbQAbjkg7tDh3oWkh/+
-         ISkg==
-X-Gm-Message-State: AAQBX9cK5M7ThZBRf5PlvKPKZ8BTcbXo2wZpLHXUFmTWZlcku4xciGQh
-        c2bDXE7ulxKf7Cv3ajByyTI=
-X-Google-Smtp-Source: AKy350Z3OdSu04lehKu6OZGHzi0HqKQFJtho+lZaTJolUt0S1sNAUOZqFRUAXLie1iKKhnF0yYsTbA==
-X-Received: by 2002:a17:906:9404:b0:8b1:7eba:de5 with SMTP id q4-20020a170906940400b008b17eba0de5mr9628183ejx.10.1680280164251;
-        Fri, 31 Mar 2023 09:29:24 -0700 (PDT)
+        bh=Jc+j8urDB/RnvdpJvSHn8Xs0bbTHrMm8P5jHRi5MUYw=;
+        b=5KIUk99GWgPbW5sQAx2WCqpAAu6u2EKxDjsFEhZ3YVy61t5hy3wAAi/JQbyd8P57+M
+         /+a0hObE+Ti8Tn8otnx5FZy4d984iykJKkK3Y8zH9EbEDbp08/itGsiuNngSlc+FsF63
+         GEwN6sSy/ESII22jeoOlmApoysYSs29VxL2hcq52//3PAHwbGvWPZKjcUQJ6PoTmZvSy
+         3+EzOCE8ILP1r20fJ01HeejrJaRl3qDc2I6nRQRnz/wWbxqnA5Vo2GCX0hQ6o4m42h0l
+         bfLcgCijVXqGi62NUOckUwFljghvxSItXHu6tiRdN9d1fOOXYpi8+3EHqvHqLkcyDOYh
+         Exmw==
+X-Gm-Message-State: AAQBX9ev4L+MK/Yj7UZ5qPlC2eOq+enqah51JlUoH1fqwhHdUPogKixt
+        2Y28Y6lm5pb09xOh5WAJXwc=
+X-Google-Smtp-Source: AKy350bYUnjVhHMWhYKzfBG8UFCaPwgQVsip/GV8eVvgs547tUlLjsuWFuwFKaMk4r13Ar0qLLC9RA==
+X-Received: by 2002:a17:906:2759:b0:930:8fd7:789f with SMTP id a25-20020a170906275900b009308fd7789fmr25316146ejd.38.1680280165224;
+        Fri, 31 Mar 2023 09:29:25 -0700 (PDT)
 Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id qo26-20020a170907213a00b00930aa50372csm1126494ejb.43.2023.03.31.09.29.23
+        by smtp.gmail.com with ESMTPSA id y18-20020a170906525200b0093f322187f0sm1125011ejm.189.2023.03.31.09.29.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 09:29:24 -0700 (PDT)
+        Fri, 31 Mar 2023 09:29:25 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 3/4] arm64: tegra: Support Jetson Orin NX
-Date:   Fri, 31 Mar 2023 18:29:13 +0200
-Message-Id: <20230331162914.16922-3-thierry.reding@gmail.com>
+Subject: [PATCH v3 4/4] arm64: tegra: Support Jetson Orin NX reference platform
+Date:   Fri, 31 Mar 2023 18:29:14 +0200
+Message-Id: <20230331162914.16922-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230331162914.16922-1-thierry.reding@gmail.com>
 References: <20230331162914.16922-1-thierry.reding@gmail.com>
@@ -68,71 +68,211 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This adds a device tree for the Jetson Orin NX module, which is Jetson
-AGX Orin's little sibling with 6 or 8 ARM Cortex-A78AE cores, an Ampere
-GPU (1024 GPU and 32 tensor cores) and a number of accelerators for
-machine learning, image processing and more.
-
-The Jetson Orin NX comes with either 8 or 16 GiB of 128-bit LPDDR5 and
-supports NVME for mass storage.
+Add support for the combination of the NVIDIA Jetson Orin NX (P3767, SKU
+0) module and the P3768 carrier board.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
 Changes in v3:
-- split out P3767 DTS include to allow sharing with Jetson Orin Nano
+- move more nodes into the P3768 DTS include for better reusability
 
 Changes in v2:
-- add SPI flash and SD card to make UEFI happy
+- fix system EEPROM I2C address
+- enable HDA because why not
 
- .../boot/dts/nvidia/tegra234-p3767-0000.dtsi  |  14 ++
- .../arm64/boot/dts/nvidia/tegra234-p3767.dtsi | 172 ++++++++++++++++++
- 2 files changed, 186 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3767-0000.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
+ arch/arm64/boot/dts/nvidia/Makefile           |   2 +
+ .../nvidia/tegra234-p3768-0000+p3767-0000.dts | 134 ++++++++++
+ .../boot/dts/nvidia/tegra234-p3768-0000.dtsi  | 245 ++++++++++++++++++
+ 3 files changed, 381 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3767-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3767-0000.dtsi
+diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
+index bc34c9d8846a..1406d5d40b8f 100644
+--- a/arch/arm64/boot/dts/nvidia/Makefile
++++ b/arch/arm64/boot/dts/nvidia/Makefile
+@@ -9,6 +9,7 @@ DTC_FLAGS_tegra194-p2972-0000 := -@
+ DTC_FLAGS_tegra194-p3509-0000+p3668-0000 := -@
+ DTC_FLAGS_tegra194-p3509-0000+p3668-0001 := -@
+ DTC_FLAGS_tegra234-p3737-0000+p3701-0000 := -@
++DTC_FLAGS_tegra234-p3768-0000+p3767-0000 := -@
+ 
+ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
+@@ -24,3 +25,4 @@ dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p3509-0000+p3668-0000.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p3509-0000+p3668-0001.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-sim-vdk.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3737-0000+p3701-0000.dtb
++dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3768-0000+p3767-0000.dtb
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
 new file mode 100644
-index 000000000000..baf4f69e410d
+index 000000000000..7dfbc38eb3c4
 --- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3767-0000.dtsi
-@@ -0,0 +1,14 @@
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
+@@ -0,0 +1,134 @@
 +// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
 +
-+#include "tegra234-p3767.dtsi"
++#include <dt-bindings/input/linux-event-codes.h>
++#include <dt-bindings/input/gpio-keys.h>
++
++#include "tegra234-p3767-0000.dtsi"
++#include "tegra234-p3768-0000.dtsi"
 +
 +/ {
-+	compatible = "nvidia,p3767-0000", "nvidia,tegra234";
-+	model = "NVIDIA Jetson Orin NX";
++	compatible = "nvidia,p3768-0000+p3767-0000", "nvidia,p3767-0000", "nvidia,tegra234";
++	model = "NVIDIA Jetson Orin NX Engineering Reference Developer Kit";
++
++	aliases {
++		serial0 = &tcu;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
 +	bus@0 {
++		serial@31d0000 {
++			current-speed = <115200>;
++			status = "okay";
++		};
++
++		pwm@32a0000 {
++			assigned-clocks = <&bpmp TEGRA234_CLK_PWM3>;
++			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
++			status = "okay";
++		};
++
 +		hda@3510000 {
 +			nvidia,model = "NVIDIA Jetson Orin NX HDA";
++			status = "okay";
++		};
++
++		padctl@3520000 {
++			status = "okay";
++		};
++
++		/* C1 - M.2 Key-E */
++		pcie@14100000 {
++			status = "okay";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++
++			phys = <&p2u_hsio_3>;
++			phy-names = "p2u-0";
++		};
++
++		/* C4 - M.2 Key-M */
++		pcie@14160000 {
++			status = "okay";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++
++			phys = <&p2u_hsio_4>, <&p2u_hsio_5>, <&p2u_hsio_6>,
++			       <&p2u_hsio_7>;
++			phy-names = "p2u-0", "p2u-1", "p2u-2", "p2u-3";
++		};
++
++		/* C8 - Ethernet */
++		pcie@140a0000 {
++			status = "okay";
++
++			num-lanes = <2>;
++
++			phys = <&p2u_gbe_2>, <&p2u_gbe_3>;
++			phy-names = "p2u-0", "p2u-1";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++			vpcie3v3-supply = <&vdd_3v3_pcie>;
++		};
++
++		/* C7 - M.2 Key-M */
++		pcie@141e0000 {
++			status = "okay";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++
++			phys = <&p2u_gbe_0>, <&p2u_gbe_1>;
++			phy-names = "p2u-0", "p2u-1";
 +		};
 +	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		key-force-recovery {
++			label = "Force Recovery";
++			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 0) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_KEY>;
++			linux,code = <BTN_1>;
++		};
++
++		key-power {
++			label = "Power";
++			gpios = <&gpio_aon TEGRA234_AON_GPIO(EE, 4) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_KEY>;
++			linux,code = <KEY_POWER>;
++			wakeup-event-action = <EV_ACT_ASSERTED>;
++			wakeup-source;
++		};
++
++		key-suspend {
++			label = "Suspend";
++			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 2) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_KEY>;
++			linux,code = <KEY_SLEEP>;
++		};
++	};
++
++	fan: pwm-fan {
++		compatible = "pwm-fan";
++		pwms = <&pwm3 0 45334>;
++		cooling-levels = <0 95 178 255>;
++		#cooling-cells = <2>;
++	};
++
++	vdd_3v3_pcie: regulator-vdd-3v3-pcie {
++		compatible = "regulator-fixed";
++		regulator-name = "VDD_3V3_PCIE";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio_aon TEGRA234_AON_GPIO(AA, 5) GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	serial {
++		status = "okay";
++	};
 +};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi
 new file mode 100644
-index 000000000000..bd60478fa75e
+index 000000000000..aee21428e1a5
 --- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
-@@ -0,0 +1,172 @@
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi
+@@ -0,0 +1,245 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+#include "tegra234.dtsi"
-+
 +/ {
-+	compatible = "nvidia,p3767", "nvidia,tegra234";
++	compatible = "nvidia,p3768-0000";
++
++	aliases {
++		serial0 = &tcu;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
 +	bus@0 {
 +		i2c@3160000 {
 +			status = "okay";
 +
-+			eeprom@50 {
++			eeprom@57 {
 +				compatible = "atmel,24c02";
-+				reg = <0x50>;
++				reg = <0x57>;
 +
-+				label = "module";
-+				vcc-supply = <&vdd_1v8_hs>;
++				label = "system";
++				vcc-supply = <&vdd_1v8_sys>;
 +				address-width = <8>;
 +				pagesize = <8>;
 +				size = <256>;
@@ -140,152 +280,219 @@ index 000000000000..bd60478fa75e
 +			};
 +		};
 +
-+		spi@3270000 {
++		serial@31d0000 {
++			current-speed = <115200>;
 +			status = "okay";
-+
-+			flash@0 {
-+				compatible = "jedec,spi-nor";
-+				reg = <0>;
-+				spi-max-frequency = <136000000>;
-+				spi-tx-bus-width = <4>;
-+				spi-rx-bus-width = <4>;
-+			};
 +		};
 +
-+		/*
-+		 * This only exists on Jetson Orin Nano Developer Kit (SKU 5)
-+		 * but UEFI needs this and will remove it on devices where it
-+		 * doesn't exist.
-+		 */
-+		mmc@3400000 {
-+			status = "okay";
-+			bus-width = <4>;
-+			cd-gpios = <&gpio TEGRA234_MAIN_GPIO(G, 7) GPIO_ACTIVE_HIGH>;
-+			disable-wp;
-+		};
-+
-+		hda@3510000 {
++		pwm@32a0000 {
++			assigned-clocks = <&bpmp TEGRA234_CLK_PWM3>;
++			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
 +			status = "okay";
 +		};
 +
 +		padctl@3520000 {
-+			vclamp-usb-supply = <&vdd_1v8_ao>;
-+			avdd-usb-supply = <&vdd_3v3_ao>;
-+		};
-+
-+		rtc@c2a0000 {
 +			status = "okay";
++
++			pads {
++				usb2 {
++					lanes {
++						usb2-0 {
++							nvidia,function = "xusb";
++							status = "okay";
++						};
++
++						usb2-1 {
++							nvidia,function = "xusb";
++							status = "okay";
++						};
++
++						usb2-2 {
++							nvidia,function = "xusb";
++							status = "okay";
++						};
++					};
++				};
++
++				usb3 {
++					lanes {
++						usb3-0 {
++							nvidia,function = "xusb";
++							status = "okay";
++						};
++
++						usb3-1 {
++							nvidia,function = "xusb";
++							status = "okay";
++						};
++					};
++				};
++			};
++
++			ports {
++				/* recovery port */
++				usb2-0 {
++					mode = "otg";
++					vbus-supply = <&vdd_5v0_sys>;
++					status = "okay";
++					usb-role-switch;
++				};
++
++				/* hub */
++				usb2-1 {
++					mode = "host";
++					vbus-supply = <&vdd_1v1_hub>;
++					status = "okay";
++				};
++
++				/* M.2 Key-E */
++				usb2-2 {
++					mode = "host";
++					vbus-supply = <&vdd_5v0_sys>;
++					status = "okay";
++				};
++
++				/* hub */
++				usb3-0 {
++					nvidia,usb2-companion = <1>;
++					status = "okay";
++				};
++
++				/* J5 */
++				usb3-1 {
++					nvidia,usb2-companion = <0>;
++					status = "okay";
++				};
++			};
 +		};
 +
-+		pmc@c360000 {
-+			nvidia,invert-interrupt;
++		usb@3550000 {
++			status = "okay";
++
++			phys = <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
++			       <&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-1}>;
++			phy-names = "usb2-0", "usb3-1";
++		};
++
++		usb@3610000 {
++			status = "okay";
++
++			phys = <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
++			       <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
++			       <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-2}>,
++			       <&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-0}>,
++			       <&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-1}>;
++			phy-names = "usb2-0", "usb2-1", "usb2-2", "usb3-0",
++				    "usb3-1";
++		};
++
++		/* C1 - M.2 Key-E */
++		pcie@14100000 {
++			status = "okay";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++
++			phys = <&p2u_hsio_3>;
++			phy-names = "p2u-0";
++		};
++
++		/* C4 - M.2 Key-M */
++		pcie@14160000 {
++			status = "okay";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++
++			phys = <&p2u_hsio_4>, <&p2u_hsio_5>, <&p2u_hsio_6>,
++			       <&p2u_hsio_7>;
++			phy-names = "p2u-0", "p2u-1", "p2u-2", "p2u-3";
++		};
++
++		/* C8 - Ethernet */
++		pcie@140a0000 {
++			status = "okay";
++
++			num-lanes = <2>;
++
++			phys = <&p2u_gbe_2>, <&p2u_gbe_3>;
++			phy-names = "p2u-0", "p2u-1";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++			vpcie3v3-supply = <&vdd_3v3_pcie>;
++		};
++
++		/* C7 - M.2 Key-M */
++		pcie@141e0000 {
++			status = "okay";
++
++			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
++
++			phys = <&p2u_gbe_0>, <&p2u_gbe_1>;
++			phy-names = "p2u-0", "p2u-1";
 +		};
 +	};
 +
-+	vdd_5v0_sys: regulator-vdd-5v0-sys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_5V0_SYS";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		key-force-recovery {
++			label = "Force Recovery";
++			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 0) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_KEY>;
++			linux,code = <BTN_1>;
++		};
++
++		key-power {
++			label = "Power";
++			gpios = <&gpio_aon TEGRA234_AON_GPIO(EE, 4) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_KEY>;
++			linux,code = <KEY_POWER>;
++			wakeup-event-action = <EV_ACT_ASSERTED>;
++			wakeup-source;
++		};
++
++		key-suspend {
++			label = "Suspend";
++			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 2) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_KEY>;
++			linux,code = <KEY_SLEEP>;
++		};
 +	};
 +
-+	vdd_1v8_hs: regulator-vdd-1v8-hs {
++	fan: pwm-fan {
++		compatible = "pwm-fan";
++		pwms = <&pwm3 0 45334>;
++		cooling-levels = <0 95 178 255>;
++		#cooling-cells = <2>;
++	};
++
++	vdd_1v8_sys: regulator-vdd-1v8-sys {
 +		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_HS";
++		regulator-name = "VDD_1V8_SYS";
 +		regulator-min-microvolt = <1800000>;
 +		regulator-max-microvolt = <1800000>;
 +		regulator-always-on;
 +	};
 +
-+	vdd_1v8_ao: regulator-vdd-1v8-ao {
++	vdd_1v1_hub: regulator-vdd-1v1-hub {
 +		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_AO";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
++		regulator-name = "VDD_AV10_HUB";
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1100000>;
 +		vin-supply = <&vdd_5v0_sys>;
++		regulator-always-on;
 +	};
 +
-+	vdd_3v3_ao: regulator-vdd-3v3-ao {
++	vdd_3v3_pcie: regulator-vdd-3v3-pcie {
 +		compatible = "regulator-fixed";
-+		regulator-name = "VDD_3V3_AO";
-+		regulator-min-microvolt = <33000000>;
-+		regulator-max-microvolt = <33000000>;
-+		regulator-always-on;
-+		vin-supply = <&vdd_5v0_sys>;
++		regulator-name = "VDD_3V3_PCIE";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio_aon TEGRA234_AON_GPIO(AA, 5) GPIO_ACTIVE_HIGH>;
++		enable-active-high;
 +	};
 +
-+	thermal-zones {
-+		/*
-+		 * This monitoring is far from optimal, but it's good enough
-+		 * at this stage.
-+		 */
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <1000>;
-+			status = "okay";
-+
-+			trips {
-+				critical {
-+					temperature = <104500>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				hot {
-+					temperature = <99000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				board_trip_passive: passive {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				board_trip_active2: active-2 {
-+					temperature = <80000>;
-+					hysteresis = <4000>;
-+					type = "active";
-+				};
-+
-+				board_trip_active1: active-1 {
-+					temperature = <65000>;
-+					hysteresis = <4000>;
-+					type = "active";
-+				};
-+
-+				board_trip_active0: active-0 {
-+					temperature = <50000>;
-+					hysteresis = <4000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				passive {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&board_trip_passive>;
-+				};
-+
-+				active2 {
-+					cooling-device = <&fan 2 3>;
-+					trip = <&board_trip_active2>;
-+				};
-+
-+				active1 {
-+					cooling-device = <&fan 1 2>;
-+					trip = <&board_trip_active1>;
-+				};
-+
-+				active0 {
-+					cooling-device = <&fan 0 1>;
-+					trip = <&board_trip_active0>;
-+				};
-+			};
-+		};
++	serial {
++		status = "okay";
 +	};
 +};
 -- 
