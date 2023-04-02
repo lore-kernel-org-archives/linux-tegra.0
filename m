@@ -2,92 +2,110 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B239C76196
-	for <linux-tegra@archiver.kernel.org>; Sun,  2 Apr 2023 10:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88326C7619A
+	for <linux-tegra@archiver.kernel.org>; Sun,  2 Apr 2023 14:31:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230206AbjDBKsx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 2 Apr 2023 06:48:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57732 "EHLO
+        id S231143AbjDBObV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 2 Apr 2023 10:31:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjDBKsv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 2 Apr 2023 06:48:51 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E379ED1
-        for <linux-tegra@vger.kernel.org>; Sun,  2 Apr 2023 03:48:50 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b20so106576920edd.1
-        for <linux-tegra@vger.kernel.org>; Sun, 02 Apr 2023 03:48:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680432529;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tW+7TOlagUvWmJtVFJHl22fhkuH+2aKc+XL5snu6Uzo=;
-        b=cv5sIp0UBeHlXf+jmaqhCJRUnWxJH21trKQ7vJaE+LHhkLsG8oiRP9mbB9/j2TVBNa
-         k2xsxwOkQTpD2wSEgQhv4waiWsy07BpxQkASltnzFtyqW2fIjwSVB+94g03OsIu2dFIs
-         tElyhw1V4wr5hrMueEoUv1zMdm4LHrQWDI1mq8nOIu6LgB32SzMfHHjfKw0BhNHFnDRl
-         cUkoXq6HVVRvzabDnvISuji/i4jHWqoFrNCFMfpabgQob3XwCzTy1elpYyAIytw22QLW
-         ZLq1N3BENpwa+QnoT4BL48pYlC8g9L+Cq7wAm65rL38Tbf8t0TyfFXTdbIWmhM7Uc5Wx
-         fD2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680432529;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tW+7TOlagUvWmJtVFJHl22fhkuH+2aKc+XL5snu6Uzo=;
-        b=Ky3wzm6E0SFE+Hw2I0ESjHn/r6CQbAE/oSi8aBTslYzs2eR1A0hYXxC78MquMhvdA9
-         nSSXyL8zuu7L8enNZp9DZG3kvLEuXRqadvF9GRrNEGjtAdpeORA67nfNB7ZrHPvYBl3I
-         RJznx5F6djKbzsvfpuyjzlL/Z5lD2rsM4kdmxxkfm10i6Eiy0koypzkliZoV3HC5zsa6
-         VRfhlgTFfUvIv9HsGAOgarY6vosVNrtqYTAcHROkQo2371R2YxmWYPU027kPjKj2fQVj
-         5p9qkXDbOYr5GtIpSCBfAfydub5AuNv+BIBi9EDtUEzv/A0ikk5JQyCEFEWfrBX4w2xV
-         DFqw==
-X-Gm-Message-State: AAQBX9ecF1IfNdLetFY1v9TwJt7x0ru5uQ0ZDkO+fIWjk6/vX5FSLAPC
-        MBmsvX6+qU9PmJE25GlQswcA9w==
-X-Google-Smtp-Source: AKy350a9ti0wFRsYX7CDnCDMwimoQ+209hNtbHaA5HkE4+mkGOVRUdNflpysWcJQzRwTozpCdyvT4g==
-X-Received: by 2002:aa7:dad3:0:b0:4fb:999:e04c with SMTP id x19-20020aa7dad3000000b004fb0999e04cmr31098522eds.38.1680432528999;
-        Sun, 02 Apr 2023 03:48:48 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:7f7f:6a30:7a20:94d5? ([2a02:810d:15c0:828:7f7f:6a30:7a20:94d5])
-        by smtp.gmail.com with ESMTPSA id ee55-20020a056402293700b004aef147add6sm3081539edb.47.2023.04.02.03.48.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Apr 2023 03:48:48 -0700 (PDT)
-Message-ID: <05409782-c33b-983f-6e13-6b8fb87244e1@linaro.org>
-Date:   Sun, 2 Apr 2023 12:48:47 +0200
+        with ESMTP id S230478AbjDBObL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 2 Apr 2023 10:31:11 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0636D11E82
+        for <linux-tegra@vger.kernel.org>; Sun,  2 Apr 2023 07:31:08 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1piyjH-0002u0-6X; Sun, 02 Apr 2023 16:30:47 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1piyjF-008TR2-GS; Sun, 02 Apr 2023 16:30:45 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1piyjE-009zBw-S8; Sun, 02 Apr 2023 16:30:44 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH net-next 11/11] net: stmmac: dwmac-tegra: Convert to platform remove callback returning void
+Date:   Sun,  2 Apr 2023 16:30:25 +0200
+Message-Id: <20230402143025.2524443-12-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230402143025.2524443-1-u.kleine-koenig@pengutronix.de>
+References: <20230402143025.2524443-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] memory: tegra: read values from correct device
-Content-Language: en-US
-To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org
-References: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1839; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=uHRt5tyID3sy+YzsWmQL2tOBQyY0bRA4sv5Z8ygAGyI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkKZF6OE52KDsYV5Xv4yliz34sJ3jBSH6VKfon7 qZzKvPQ5e2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZCmRegAKCRCPgPtYfRL+ TqCkB/9hKeMJ3O43PWdOHFqnTLSpwqfROPoS7HtPBbrTtAwRh/OwtyTpBNmMH52FjwQGw4tKLt6 d9eAz6u+JGxYCqfzn3KZ2t1mSIg6HmEgSoyYADzwN3/ar0BvYOHrU25/0qzf6WuW6s/MdYbzfNV VrFBKNO2Eq65hLFEA0hvrVpmq5h8Aj3aayg9LuaGAJX1C4b5z2193DEl7BVs96WjZzprOcym8yD FYOcIpvJzL4dVQOcdquOMH422VFn/jr0FyHWuEV0QQMLflKPNrOEVVL13pmV9NoEUmhvdeqqojq bYQTjC2zTKV+ibEsMoIIAkMm8kwO1peDBNPtqJ/8PChmbyhC
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 23/03/2023 00:40, Diogo Ivo wrote:
-> When reading MR18 for Dev1 the code was incorrectly reading the
-> value corresponding to Dev0, so fix this by adjusting the index
-> according to the Tegra X1 TRM.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> ---
->  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-Any reviews on this?
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Anyway I expect resend to have full cc-list.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Standard msg:
-
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC.  It might happen, that command when run on an older
-kernel, gives you outdated entries.  Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+index bdf990cf2f31..f8367c5b490b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+@@ -353,15 +353,13 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static int tegra_mgbe_remove(struct platform_device *pdev)
++static void tegra_mgbe_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_mgbe *mgbe = get_stmmac_bsp_priv(&pdev->dev);
+ 
+ 	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
+ 
+ 	stmmac_pltfr_remove(pdev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id tegra_mgbe_match[] = {
+@@ -374,7 +372,7 @@ static SIMPLE_DEV_PM_OPS(tegra_mgbe_pm_ops, tegra_mgbe_suspend, tegra_mgbe_resum
+ 
+ static struct platform_driver tegra_mgbe_driver = {
+ 	.probe = tegra_mgbe_probe,
+-	.remove = tegra_mgbe_remove,
++	.remove_new = tegra_mgbe_remove,
+ 	.driver = {
+ 		.name = "tegra-mgbe",
+ 		.pm		= &tegra_mgbe_pm_ops,
+-- 
+2.39.2
 
