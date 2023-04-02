@@ -2,148 +2,91 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 059C0C7619A
-	for <linux-tegra@archiver.kernel.org>; Sun,  2 Apr 2023 10:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B239C76196
+	for <linux-tegra@archiver.kernel.org>; Sun,  2 Apr 2023 10:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbjDBKrI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 2 Apr 2023 06:47:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56550 "EHLO
+        id S230206AbjDBKsx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 2 Apr 2023 06:48:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbjDBKrH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 2 Apr 2023 06:47:07 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDB411EBA
-        for <linux-tegra@vger.kernel.org>; Sun,  2 Apr 2023 03:47:04 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id h8so106570163ede.8
-        for <linux-tegra@vger.kernel.org>; Sun, 02 Apr 2023 03:47:04 -0700 (PDT)
+        with ESMTP id S230141AbjDBKsv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 2 Apr 2023 06:48:51 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E379ED1
+        for <linux-tegra@vger.kernel.org>; Sun,  2 Apr 2023 03:48:50 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id b20so106576920edd.1
+        for <linux-tegra@vger.kernel.org>; Sun, 02 Apr 2023 03:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680432423;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=linaro.org; s=google; t=1680432529;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=boY93jyd6+T4l8iYNZlZE0N095pRX4NnlYNcBxMegqE=;
-        b=KJF9SsfWvwvyR4Yw5C5V1+mHelTyrF51rvwVQmy4cS34/YnHeIMNzaqun0xl6GDRdi
-         yCD7Nxe7hxn7VJgirW/NXE9dHznT7Q4+fQq2Lrp+ZET8RipTCo/T+L8x7zqJN+m/lDh9
-         cZDJjGN5Q7c8bb5MzjB78EtPkDrxHezKhnJPw4d4ZNrsLyWGqZj4D2nf8OSWYTWOTHrY
-         uL7y6P8t3S//PuVzPNZERT9zxrfHouWnW80Yf+LkQM4jLAitXRfilQSjvegdz8c9tle/
-         vKbV8EzMR0n9zSGiX6dptsHQVHJG2nPPYST7+x/N3QFgjovOM+wp/Z5FmHInkWg0snZ+
-         YGFA==
+        bh=tW+7TOlagUvWmJtVFJHl22fhkuH+2aKc+XL5snu6Uzo=;
+        b=cv5sIp0UBeHlXf+jmaqhCJRUnWxJH21trKQ7vJaE+LHhkLsG8oiRP9mbB9/j2TVBNa
+         k2xsxwOkQTpD2wSEgQhv4waiWsy07BpxQkASltnzFtyqW2fIjwSVB+94g03OsIu2dFIs
+         tElyhw1V4wr5hrMueEoUv1zMdm4LHrQWDI1mq8nOIu6LgB32SzMfHHjfKw0BhNHFnDRl
+         cUkoXq6HVVRvzabDnvISuji/i4jHWqoFrNCFMfpabgQob3XwCzTy1elpYyAIytw22QLW
+         ZLq1N3BENpwa+QnoT4BL48pYlC8g9L+Cq7wAm65rL38Tbf8t0TyfFXTdbIWmhM7Uc5Wx
+         fD2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680432423;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=1e100.net; s=20210112; t=1680432529;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=boY93jyd6+T4l8iYNZlZE0N095pRX4NnlYNcBxMegqE=;
-        b=T/qdSnuaqe9B2ZjZuWomI3omsn1dQZgHO4ZMdhJqY3Hg9DY4/ohSSiz+i7E5A278H6
-         WhXgWQCcUmnqWmhNndJh/wmZLaNb4Q922buA1TAfn+KB/oX/H1v7jcUSWfO5IC3qPl3S
-         oz5O9dKBCdApE2FjYJF/Rq13I4fXV72hAhvhZUkupPZmZzNKuMcrjF1O8PN3MgaVpk9E
-         sgyGxoK/4BVWOeENAA+5qEMSIOLnNoi+Zg/YYfa8CeR3H/1eMBSOlMkD66j0AaJS4X35
-         vNII8KlrlNMe9t/prgH3fp/NXQI220y5cs/mdlM4XW3Neil1MyBeZVUDknaAAp6R2sj1
-         ojlg==
-X-Gm-Message-State: AAQBX9duIQ/R2lUtAalGO21oCQiWAeZVEOBMUACRm+xYzldkOgnyAGjK
-        29kZ77plWAYbe/tPNM0mohvrqA==
-X-Google-Smtp-Source: AKy350ZEHhfp/UzJ0URFQoZ1spvf7xAJ6vhppv6/DhrVo837ythU/SyCg9S1R8dhbRGHXfjkskDSVQ==
-X-Received: by 2002:aa7:d885:0:b0:4fd:2155:74ef with SMTP id u5-20020aa7d885000000b004fd215574efmr32584061edq.19.1680432423031;
-        Sun, 02 Apr 2023 03:47:03 -0700 (PDT)
+        bh=tW+7TOlagUvWmJtVFJHl22fhkuH+2aKc+XL5snu6Uzo=;
+        b=Ky3wzm6E0SFE+Hw2I0ESjHn/r6CQbAE/oSi8aBTslYzs2eR1A0hYXxC78MquMhvdA9
+         nSSXyL8zuu7L8enNZp9DZG3kvLEuXRqadvF9GRrNEGjtAdpeORA67nfNB7ZrHPvYBl3I
+         RJznx5F6djKbzsvfpuyjzlL/Z5lD2rsM4kdmxxkfm10i6Eiy0koypzkliZoV3HC5zsa6
+         VRfhlgTFfUvIv9HsGAOgarY6vosVNrtqYTAcHROkQo2371R2YxmWYPU027kPjKj2fQVj
+         5p9qkXDbOYr5GtIpSCBfAfydub5AuNv+BIBi9EDtUEzv/A0ikk5JQyCEFEWfrBX4w2xV
+         DFqw==
+X-Gm-Message-State: AAQBX9ecF1IfNdLetFY1v9TwJt7x0ru5uQ0ZDkO+fIWjk6/vX5FSLAPC
+        MBmsvX6+qU9PmJE25GlQswcA9w==
+X-Google-Smtp-Source: AKy350a9ti0wFRsYX7CDnCDMwimoQ+209hNtbHaA5HkE4+mkGOVRUdNflpysWcJQzRwTozpCdyvT4g==
+X-Received: by 2002:aa7:dad3:0:b0:4fb:999:e04c with SMTP id x19-20020aa7dad3000000b004fb0999e04cmr31098522eds.38.1680432528999;
+        Sun, 02 Apr 2023 03:48:48 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:7f7f:6a30:7a20:94d5? ([2a02:810d:15c0:828:7f7f:6a30:7a20:94d5])
-        by smtp.gmail.com with ESMTPSA id u26-20020a50a41a000000b004fb95f51f54sm3142513edb.12.2023.04.02.03.47.01
+        by smtp.gmail.com with ESMTPSA id ee55-20020a056402293700b004aef147add6sm3081539edb.47.2023.04.02.03.48.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Apr 2023 03:47:02 -0700 (PDT)
-Message-ID: <8a22aea9-5027-e8a4-db80-ce79f3830e10@linaro.org>
-Date:   Sun, 2 Apr 2023 12:47:01 +0200
+        Sun, 02 Apr 2023 03:48:48 -0700 (PDT)
+Message-ID: <05409782-c33b-983f-6e13-6b8fb87244e1@linaro.org>
+Date:   Sun, 2 Apr 2023 12:48:47 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [Patch v4 01/10] dt-bindings: memory: tegra: add bpmp ref in
- tegra234-mc node
+Subject: Re: [PATCH] memory: tegra: read values from correct device
 Content-Language: en-US
-To:     Sumit Gupta <sumitg@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     treding@nvidia.com, dmitry.osipenko@collabora.com,
-        viresh.kumar@linaro.org, rafael@kernel.org, jonathanh@nvidia.com,
-        robh+dt@kernel.org, lpieralisi@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
-        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
-        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
-References: <20230327161426.32639-1-sumitg@nvidia.com>
- <20230327161426.32639-2-sumitg@nvidia.com>
- <787f656a-223d-5eed-e311-9cc7a6c46452@linaro.org> <ZCLF6ZRH528pu/r3@orome>
- <79d8044f-ce68-463e-66f7-8755e253bc99@linaro.org> <ZCLiCWRYbO98qwCn@orome>
- <0b393600-3f08-c2e8-9b02-664c6a984de1@nvidia.com>
+To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+References: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <0b393600-3f08-c2e8-9b02-664c6a984de1@nvidia.com>
+In-Reply-To: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 29/03/2023 19:12, Sumit Gupta wrote:
+On 23/03/2023 00:40, Diogo Ivo wrote:
+> When reading MR18 for Dev1 the code was incorrectly reading the
+> value corresponding to Dev0, so fix this by adjusting the index
+> according to the Tegra X1 TRM.
 > 
-> 
-> On 28/03/23 18:18, Thierry Reding wrote:
->> On Tue, Mar 28, 2023 at 01:22:26PM +0200, Krzysztof Kozlowski wrote:
->>> On 28/03/2023 12:48, Thierry Reding wrote:
->>>> On Tue, Mar 28, 2023 at 09:23:04AM +0200, Krzysztof Kozlowski wrote:
->>>>> On 27/03/2023 18:14, Sumit Gupta wrote:
->>>>>> For Tegra234, add the "nvidia,bpmp" property within the Memory
->>>>>> Controller (MC) node to reference BPMP node. This is needed in
->>>>>> the MC driver to pass the client info to the BPMP-FW when memory
->>>>>> interconnect support is available.
->>>>>>
->>>>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>>>>> ---
->>>>>>   .../bindings/memory-controllers/nvidia,tegra186-mc.yaml    | 7 +++++++
->>>>>>   1 file changed, 7 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>>>>> index 935d63d181d9..398d27bb2373 100644
->>>>>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>>>>> @@ -58,6 +58,10 @@ properties:
->>>>>>     "#interconnect-cells":
->>>>>>       const: 1
->>>>>>   
->>>>>> +  nvidia,bpmp:
->>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>>>> +    description: phandle of the node representing the BPMP
->>>>>
->>>>> Why do you need this multiple times? Both in parent and all external-mc
->>>>> children?
->>>>
->>>> We've had nvidia,bpmp in the external memory controller node since
->>>> basically the beginning because we've always needed it there. For newer
->>>> chips we now also need it for the memory controller.
->>>>
->>>> Ideally I think we would only have this in the MC and have the EMC
->>>> driver reference it via the EMC's parent (i.e. MC), but that would break
->>>> backwards-compatibility. Reaching into the EMC's DT node from the MC was
->>>> another option that we discussed internally, but it didn't look right
->>>> given how this is also needed by the MC.
->>>>
->>>> One thing we could potentially do is deprecate the nvidia,bpmp phandle
->>>> in the EMC and only keep it as a fallback in the drivers in case the
->>>> parent MC doesn't find it's own in the DT.
->>>
->>> Yes, deprecation would answer to my question.
->>
->> Okay, great. Sumit, you can resolve this by adding a "deprecated: true"
->> to the EMC's nvidia,bpmp property schema. In the driver we can then try
->> to look at the MC's ->bpmp and if it exists reuse that. If it doesn't
->> exist, we can keep the existing lookup as a fallback for device trees
->> that haven't been updated yet.
-> 
-> We can't use MC's->bpmp in the EMC driver's probe as it will be NULL. 
-> This is because MC driver uses "arch_initcall" and gets probed earlier 
-> than BPMP. We can do this in another way as below change. This way we 
-> can use the existing "nvidia,bpmp" property from EMC node and don't need 
-> to move it to the MC node. Please share if this change sounds OK.
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> ---
+>  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Then rather it sounds like time to fix these
-orderings/arch_initcall/missing defer.
+Any reviews on this?
 
+Anyway I expect resend to have full cc-list.
+
+Standard msg:
+
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC.  It might happen, that command when run on an older
+kernel, gives you outdated entries.  Therefore please be sure you base
+your patches on recent Linux kernel.
 
 Best regards,
 Krzysztof
