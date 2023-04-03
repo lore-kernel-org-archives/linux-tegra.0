@@ -2,125 +2,85 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9824C761A6
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 14:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87003C76188
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 14:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232579AbjDCOCL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 10:02:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38304 "EHLO
+        id S233274AbjDCOYO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 10:24:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230269AbjDCOCK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 10:02:10 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B547A8B;
-        Mon,  3 Apr 2023 07:02:09 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id k17so34837434ybm.11;
-        Mon, 03 Apr 2023 07:02:09 -0700 (PDT)
+        with ESMTP id S233235AbjDCOYK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 10:24:10 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAA63128E;
+        Mon,  3 Apr 2023 07:24:00 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id ew6so117988883edb.7;
+        Mon, 03 Apr 2023 07:24:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680530528;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lcw7CsrgJYECAzGsrUJFDPn/CnlU4ZU6smKnWO17Ae0=;
-        b=mQkUbNiW0esw3jO4JiIlQGq18gSiAY8UYiaxcqykrSwc0GcoaqBnZZu81I2uh9b0A1
-         W6RjLKVl30VbyvmM/i2idv4uDHjf5FsqWULm9+rm3Udncrc7RYR9sp4j0tZI9B5C0IeM
-         KJ6dIETWJXYUssvxdq7zIlxWYs6U8PNgxsMnWgN1GeHA35xgTsIgpY/M/wt5uVyYIUTO
-         1veRDy7QiJ266iCrtchYEjv/qrTEZGxr+Taia7wTuyk8xUV4ZxqlRoIhCQbw5PKoCN8Z
-         Q0p/8+oh/fauIXLqwmbEL27+SsDuOGh54qu2EJI8cbIlYbOVNcXPsmzRsEnUX/ScLG1P
-         3rbg==
+        d=gmail.com; s=20210112; t=1680531838;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FBCxiuC+gyqJNlyUk0XbBNwlob5y05A7OfTHHRJLFvE=;
+        b=gvPKnl3r2PLxZoT8h90GZRxYawFoVClhlheHV6sOJSNID61I9DzWcjId4R4mW5Yytm
+         0fhVg0XptEaZK8eivDo0yO9yj8wGW7IlRZMY6lWOygot/RojiAgnxnB+Iu/9eYPy9EmK
+         BWOLi+FXt3hjPN/kygwdrDHks1rm11YqhGhOns4V3X8bdiB85CKCbGa1rnAnFR0m9K8S
+         l6kcchkD60WU2F/529NtWfq58+rHxp+VulRI674fvHTYdTknifYTxDsfCe32ki91DyN7
+         Kn122SNOq8aKwuoqFyx84yTSUBKXPT3bRgrnlxbV5By188CJ8ovUxE4yz2TPLX8+n2b0
+         Klkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680530528;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lcw7CsrgJYECAzGsrUJFDPn/CnlU4ZU6smKnWO17Ae0=;
-        b=F7qSnwmRAAsDkUoUfmkjWYprdCFxze+WdgmpwWX0E72EpF0JF4jUrMN10RTTRnoN4m
-         FHrkHL3lYZOBha5eyLmXrK/qlNhMilc15FEbDLeSSEYiDbUbDpBsgzghz4ACdLuIaFgs
-         eqXTKPopNKFwYnNdgIxjPY74BFs39FaYcLY1CtopmQpv7A5pAPTgLllOEvd+PzFIoZ7/
-         gfYlA/d2xxQiVtIS1hASYaiG1Sl9KUIqsQPPeKXTfodUeAXbgXUM+QGXsF0Vgmcaes4o
-         p+dHe4BjqzKn7eSvaNZTuY7d90t7Qa7cs3QLV1Fr5ob/F24f5L0ydDIBWcgGBANzHGjQ
-         CUaQ==
-X-Gm-Message-State: AAQBX9cMTYEYWKQ3WSNOuFYyv51Asn6wPl9dU/5e1yNZy9ubUFU+Ty1o
-        cMmhu0A3cLY6oj7O0zBu30ta/296umgUIK7VOAI=
-X-Google-Smtp-Source: AKy350YKHmOqiL7IpC/Sx2Cu1gKrbtmOye3W2UwR6MNJrI4YJ78lzeG0UeVfyco2byZJzLJuVgOf3PGgek6XPCmFY1c=
-X-Received: by 2002:a05:6902:1247:b0:b78:4b00:7772 with SMTP id
- t7-20020a056902124700b00b784b007772mr22643916ybu.5.1680530528529; Mon, 03 Apr
- 2023 07:02:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230402164826.752842-1-dmitry.osipenko@collabora.com> <20230402164826.752842-8-dmitry.osipenko@collabora.com>
-In-Reply-To: <20230402164826.752842-8-dmitry.osipenko@collabora.com>
-From:   Emil Velikov <emil.l.velikov@gmail.com>
-Date:   Mon, 3 Apr 2023 15:01:57 +0100
-Message-ID: <CACvgo529Rji9oVdSX81NJhXf9bF6jq1OTLhDff9CjHvfKLS4tA@mail.gmail.com>
-Subject: Re: [PATCH v1 7/7] drm/shmem-helper: Switch to reservation lock
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
+        d=1e100.net; s=20210112; t=1680531838;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FBCxiuC+gyqJNlyUk0XbBNwlob5y05A7OfTHHRJLFvE=;
+        b=bO4hxmZwcaxJAclWzZDI0PGnSi7ZNWI+PWqLa9v7Z97MOCfWm9maU5+uS1QYboC3kD
+         6laM/tSKlNYsrbensxkDucRlg/jJrewLxxBBXk9i9bR/uRzlpJZ2o5BS8SC4N6qbQc81
+         WaEtgvJRy5Zkp0DorNE0DQZ8FkWn1jkhxjL6+lD4fvlKjV7wQ41i2t3usONARD6usZvL
+         nItXzMTTjU/u1YSpDf/jU+YYsmdLKL6dSeX8XO86JRNLQ/iUD22yfEGQ4mIAK6gxujH4
+         AVy2S+RGSsIcE9ohGNMFcyJVF/f6JmRZSmCTp63bmckKuOIu+STaKRbjs4gKxNSNl4xs
+         pQJw==
+X-Gm-Message-State: AAQBX9ccWbdHKw9b2mrqTK8ndmqWLH3sr6x7v0z4psxgMssMSUyMO9ff
+        EwHWCKl12VHNqhR+/vxaolWDNMfjonc=
+X-Google-Smtp-Source: AKy350YTiuFcgV3gzn7Cd9wNojQEnrlUfaD6YeGaL2dsUns7COy/mkFyhQosOu4rMb6YPJ2bp5NZ9g==
+X-Received: by 2002:aa7:cb03:0:b0:502:7eeb:edb2 with SMTP id s3-20020aa7cb03000000b005027eebedb2mr9188801edt.26.1680531838608;
+        Mon, 03 Apr 2023 07:23:58 -0700 (PDT)
+Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id g29-20020a50d0dd000000b004c0239e41d8sm4713185edf.81.2023.04.03.07.23.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 07:23:58 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, kernel@collabora.com,
-        linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Jon Hunter <jonathanh@nvidia.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] arm64: tegra: Add DSU PMUs for Tegra234
+Date:   Mon,  3 Apr 2023 16:23:55 +0200
+Message-Id: <168053182387.1336231.14712971615107054390.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230306150157.122897-1-jonathanh@nvidia.com>
+References: <20230306150157.122897-1-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+From: Thierry Reding <treding@nvidia.com>
 
-On Sun, 2 Apr 2023 at 17:49, Dmitry Osipenko
-<dmitry.osipenko@collabora.com> wrote:
+On Mon, 6 Mar 2023 15:01:57 +0000, Jon Hunter wrote:
+> Populate the DynamIQ Shared Unit (DSU) Performance Monitor Unit (PMU)
+> devices for Tegra234 which has one DSU PMU per CPU cluster.
+> 
+> 
 
-> -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
-> +static int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
->  {
-> -       mutex_lock(&shmem->pages_lock);
-> -       drm_gem_shmem_put_pages_locked(shmem);
-> -       mutex_unlock(&shmem->pages_lock);
-> +       struct drm_gem_object *obj = &shmem->base;
-> +       int ret;
-> +
-> +       dma_resv_assert_held(shmem->base.resv);
-> +
-> +       drm_WARN_ON(obj->dev, obj->import_attach);
-> +
+Applied, thanks!
 
-We don't need this WARN_ON to happen with a reservation lock, do we?
-If so, let's leave that in the caller.
+[1/1] arm64: tegra: Add DSU PMUs for Tegra234
+      commit: 1e7861b8ea94096fcecbaaa34bfdf9925de67747
 
-> +       ret = drm_gem_shmem_get_pages(shmem);
-> +
-> +       return ret;
-> +}
-> +
-> +static void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem)
-> +{
-> +       struct drm_gem_object *obj = &shmem->base;
-> +
-> +       dma_resv_assert_held(shmem->base.resv);
-> +
-> +       drm_WARN_ON(obj->dev, obj->import_attach);
-> +
-
-Ditto.
-
-With that the series is:
-Reviewed-by; Emil Velikov <emil.l.velikov@gmail.com>
-
-HTH
--Emil
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
