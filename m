@@ -2,426 +2,209 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08598C76196
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 16:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDB4C76188
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 18:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231185AbjDCQjr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 12:39:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49848 "EHLO
+        id S233357AbjDCStS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 14:49:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjDCQjq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 12:39:46 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2083.outbound.protection.outlook.com [40.107.223.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704CB1721;
-        Mon,  3 Apr 2023 09:39:44 -0700 (PDT)
+        with ESMTP id S232822AbjDCStR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 14:49:17 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2087.outbound.protection.outlook.com [40.107.93.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D941BF3;
+        Mon,  3 Apr 2023 11:49:15 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fb2rFrsuyIcJNSxDKym3WlKaqTMLQVS5DtcFJ7MhTooLHZIy3RpXf6AbsUQQIv1V7JxrtcKhaYjg1NsUMdmVaq8eub5bciFeBu7WGWV+a+ToO1Fi9AEddBysgT7fNqIj1vpCHUN7F089ghgTbC4iw56w/JQCdeRjK/H0jlmWGeVro4Hy7ludcWGNtPFerebPohO724k9WfP3nRihbzN434UGgoOLe3FXCiyGmekOYpod6WUGBfD7X/38RfBAp0DyLuZa3Lm0Sg4hreMKUCADcW2UBBeEd3FLOjSmZR/y/qy3HzHRbdx6bL3ElcNKXIptHDpSowSmfWtAH+oXphapDg==
+ b=UB+APoCSj9NtnZ/DgSPSJVRcZSotTHc4ZLt3wcMcmYKnyT43TAeJTFwD1KpR8tXbP6Ov3EybZs2g/DDMTUgk2Oe/jTEWIl2Uep07dPkwtA83XFxZN8NLkle+GMFda8Y/maOyrM1pygBzWHneSPrbDrfBLNNAQW5JL0aSpLsm3QoJ3Y1zZ/LYuYZDNQMGPO4QZoixAov+bnmtOy7iI+9Q0o122wAgPU7qtjCORgzNSbsmPKV4QZTZJN5nWiPEZMsAE8GHuVYoew9XVzSfVMPU923KGp6QVcgdosoxUA+qOBmBh1BU/0wfJdUbk0lQ0fuiRvYyWH8DaHYePey0NKC7oA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0lvMx3TQoltuImMR1BwsVYv8SfTbCeyMGXz5YJiK0lA=;
- b=JmEo5eavWCB+spGK4q95sJyHc4ahrmgXq11/+6NUsrFYKv5DYZMFlkairslauW9Ao3D5Lt5RvHExwh+cOzwH51Lzr67Ksz9qZAMzgUQY4TZiXl+bv/AB1Fxfmbfd8ruEEq2CKwYQ5U4xxatDcArVsT5FHKD6B+IeBk/alH1oky1h6otLYJG5kTY39NW2/aeSmw3ibL2LDKTuxbNLG5P2Lu8WYarW3sidHfzaG4Hz3cARbcJnKVaCpjCSTEFjnK6Q35vUglQ5RdtMibHpQ9HU0AXk3Mq1nNFHjJXpotaXJtCbpCh24377MrCraTL+aw8rLSGFqMzWSoFkjmOS+siZjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=3oA+3Xc0SRG1xTmFuM1mM6ikHs1lQywvdw89vBox+WQ=;
+ b=CVxcH+Gv1GyJPD5Qea9Vqr8uwZ9UiI0ttEHPPYbDCeAT4XzkJ+VTRetI0DkRa88ktlrnEKmDBAxAD3WjdYfKuW1eK2l9pobuYreLWGyLNYcXfsbAedS/jXiLv11OlilP+IteDXy4CPPHYah9AADcmV4nClK1aLnL0ow+nOB0iykoijIys1F5KFUCYgmgdaZzh5k4Z0IeSaT0Fyr7em/eB8mxCmk23yB8L7j6RzjgOkWu2GK9y9K0xiyznXzTwWtWkFI5f5Tswm3uGy0uK5l3q8u8M/o+iC4s05k/a/3l3Jn6lpeVkKKpQnl4sofSulMKT9PlfjEVgWeoN5OR+D9Hkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0lvMx3TQoltuImMR1BwsVYv8SfTbCeyMGXz5YJiK0lA=;
- b=SdOBCtBNaSZLskM3hjFR98e3GLOu9csGae40Iz2Ut4UNiz7G8ytvqxWxsaq1K3SH0ejy6kOw3fX7w2Iwvu9YwrgbA6VZGWtBSB52ut/a2p48r47ujckN5bjQVEDKVo52Z4DN54HbD+1UG/KcsdljvbW4P1MHSbG9lzjZi+CwQlCPSXpUA/3f2exfv9GXQ5zY+/bVtflKJNdaJX79JsIE+bdb/+Sg4tPcAmXUK4gFUsRNm9b6ZwEswMEuiwY3yXGjKcxlxcCf03Qr1F44znmiYpEeT2p2sbKAKJCYyDR0MOwQrcyGT5zG2ewe3Rv9rrLjS5ASrtCmmpAgtlVeKLFC5w==
-Received: from DM6PR02CA0103.namprd02.prod.outlook.com (2603:10b6:5:1f4::44)
- by IA0PR12MB8087.namprd12.prod.outlook.com (2603:10b6:208:401::5) with
+ bh=3oA+3Xc0SRG1xTmFuM1mM6ikHs1lQywvdw89vBox+WQ=;
+ b=NE1Rp5RH0sidAybmSrhXKxqgRke05XVzwodiSSguqIouoP7UsNv4v29v96E0EB6t/Nys9bgyFsi560En7g1Xwftbhu7cqGICgK4EJG+1o8BmDAE7qzdQniEhRkU2Y94DFtt2EGv+WR2UsZ+lttY+pep6XnuySjseSUZFsQcUMZayaAX5/J36R2Hmo1qgMWXe0y/gFkmpHGbHdY7iRaMkTRhVZnTPCNpT1fCBrm40IUbiosL40QKesDvpJStbc34z5LmSdeOe/nHOvr9LfgUpnK2wvDGv54yifJ5V4q3wRfz0hmv4vIcarWynbF3eJ1iSodwEDYY5qLQ1UO1KGrGgpA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com (2603:10b6:208:3a0::7)
+ by DS7PR12MB5839.namprd12.prod.outlook.com (2603:10b6:8:7a::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.33; Mon, 3 Apr
- 2023 16:39:42 +0000
-Received: from DM6NAM11FT035.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1f4:cafe::ac) by DM6PR02CA0103.outlook.office365.com
- (2603:10b6:5:1f4::44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.20 via Frontend
- Transport; Mon, 3 Apr 2023 16:39:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DM6NAM11FT035.mail.protection.outlook.com (10.13.172.100) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6277.18 via Frontend Transport; Mon, 3 Apr 2023 16:39:41 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 3 Apr 2023
- 09:39:33 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 3 Apr 2023
- 09:39:33 -0700
-Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Mon, 3 Apr 2023 09:39:31 -0700
-From:   Besar Wicaksono <bwicaksono@nvidia.com>
-To:     <suzuki.poulose@arm.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <mark.rutland@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
-        <rwiley@nvidia.com>, <efunsten@nvidia.com>,
-        "Besar Wicaksono" <bwicaksono@nvidia.com>
-Subject: [PATCH] perf: arm_cspmu: Separate Arm and vendor module
-Date:   Mon, 3 Apr 2023 11:39:05 -0500
-Message-ID: <20230403163905.20354-1-bwicaksono@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.34; Mon, 3 Apr
+ 2023 18:49:13 +0000
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::265:64aa:fb3e:288]) by IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::265:64aa:fb3e:288%4]) with mapi id 15.20.6254.033; Mon, 3 Apr 2023
+ 18:49:13 +0000
+Message-ID: <d21063d2-da5b-bb60-93da-0e7f827c8599@nvidia.com>
+Date:   Mon, 3 Apr 2023 11:49:08 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.9.1
+Subject: Re: [PATCH V4 03/10] dt-bindings: timestamp: Deprecate nvidia,slices
+ property
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        robh+dt@kernel.org, timestamp@lists.linux.dev,
+        krzysztof.kozlowski+dt@linaro.org, brgl@bgdev.pl, corbet@lwn.net,
+        gregkh@linuxfoundation.org
+References: <20230323012929.10815-1-dipenp@nvidia.com>
+ <20230323012929.10815-4-dipenp@nvidia.com>
+ <eb9a922b-82d6-c955-0fac-d6bedb494c68@linaro.org>
+Content-Language: en-US
+X-Nvconfidentiality: public
+From:   Dipen Patel <dipenp@nvidia.com>
+In-Reply-To: <eb9a922b-82d6-c955-0fac-d6bedb494c68@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR17CA0068.namprd17.prod.outlook.com
+ (2603:10b6:a03:167::45) To IA1PR12MB6604.namprd12.prod.outlook.com
+ (2603:10b6:208:3a0::7)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT035:EE_|IA0PR12MB8087:EE_
-X-MS-Office365-Filtering-Correlation-Id: d84f6704-1b47-40e8-7c58-08db34620638
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|DS7PR12MB5839:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08867a55-a4ef-4907-e016-08db34741e28
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: b+zPl1JoOj9Tt+E2d5S1z8ZQwTBV462uOhrNvPzSb6G3JZklV2DD0/H1SK1Gg1SCs+SuOSDLyDd7Acyj/VEfHL5Fs85lk9GiEP14oRoFk8hw5CbcXIlfzcZnjM34M6r/1AWDn8HqHsmHD9bcKmvo4D/AGcdfhDwwcsYPj8UuK0h45ImpT92/gKfQiNEmvDTDJ3aP1oWMZj1zO+vH+Ph/MvkqxXF1JIvSXUqQacVlq4D5JXwmldKMiyn4H63JklvuIW8C54rq0OYMwMszyaTKFGckbQzOEU/LITJxsQs5OUPWNjr1DzcEOzvp+xLscpiwYiPaBtGLyOLeefsMxnrRNIuPnCcKMmbzZ0474kDRuZq5GpguCMpf5Jm+wwR1CBuQ8WAB0rr8bSmBVmk49l+oS9fYvQOY1r3K0+VwsbbF7MDABQI2YhY9FzemiocgGIvykO07iSvYlUbHlK+wQW3sYZQ+a6sPyb7/+QL3OHtdtg6YVHxr6mjdmZUC+baXN5OL1aECCV+sprDuA7+MQuYTnpdHUiq+N9uKo7jMRPo4KT0JxNZk4xsEKT8I90CWbCMcyfXg0LeSD+vbg2ys+cSGY0XQUL/sEp26sQqW7VLLutj7JR5o6kQX1ZGfvzgVPuGcpljrPUXh2WWrX98r/YRtwNR2XqtPT3WIOiFH2YwKtjfy+XhMCHhasKVrNSUz2wEBU8o95CuhXUyCyNkcPASCVeJt/+ZTE4sw6XmZO6SsQNLyqrxFDS24zgphwEo1E36s9zr8hKUHXeTNLRuEobIKZG0CetJnzC9ImlghxabNWbk=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(39860400002)(136003)(396003)(451199021)(36840700001)(40470700004)(46966006)(2616005)(86362001)(82310400005)(2906002)(36756003)(40480700001)(47076005)(34020700004)(7696005)(336012)(83380400001)(186003)(426003)(1076003)(26005)(107886003)(6666004)(4326008)(8676002)(478600001)(70206006)(36860700001)(70586007)(40460700003)(82740400003)(41300700001)(7636003)(356005)(5660300002)(316002)(54906003)(110136005)(8936002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 8ed6lsKiHPepBCReAlRqaLiUOC+S++cjSNHGvhpxcZ03JdNujo0iBoXZYXN603fRUrQpbT1kvy4uMhDDRDpMyMGeqgfswbEHbBjQF6KLqfDe7mFOLvtDA17qoNp2J74X/DD9/mCYpMAJyF/icz9grvu8L6iSG4mvx7fkGrVMslmkHfCWhA0Zb8UC7aEdZNGr6J5gd1DLC1HH1nyMCyp6EKuQKulna1WKum1shdDO8GRB74qu04rLLjM2K1u58j4PMICN636mbKaCQQUVZ+yrQw6Rkb/fGfnuhobhZ+uLze8iavrDNrMZ+tIvip75bGvsMDpBcsQnfYb17U7uZoJzUzTIFKw7XMaLMDFqIYAgtW/GxHlvf4vXWlTTVKM72vstLAPoRlNDFoTc7dXb8+IwZyII7UmposrsXkZPTmC46EUnVKwm966e0pgTlMyVu7Gka3+kaspWivbL4CegWmLl//qy/6MOQNGlpZIjgx5EyvR5x/xI18dOKKU+/1t3C5YbVlKRieebrJV+19tE8F4gTJ8JztFPqek8zJNV5lStH/tx6kFbk04GEH0y5N5F4BUBCY7Zm6WaeZa+dBVK5xPzxymcb2GHflQ8oHBxDkTozX4x6Ad/T5ieomvHjYX886k/1czlDCgK1GFWxYFk3klnNFJUVqzcAbW+Dsu7NftdARo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(366004)(136003)(346002)(396003)(376002)(451199021)(31686004)(2906002)(38100700002)(7416002)(5660300002)(921005)(66476007)(66556008)(66946007)(8936002)(41300700001)(8676002)(36756003)(316002)(2616005)(31696002)(83380400001)(53546011)(86362001)(478600001)(186003)(6512007)(6506007)(26005)(6666004)(6486002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R2oxb3BTd3JWWSt1NXJERE0xVjJWR2RHVmg0cUc5ZmQrN0RwbmZJRjNyMDhI?=
+ =?utf-8?B?dHBpVUFmRW5FSzVxdmZKWmdMNXU5ZVVhWFhvemp6SDg2RGJmRkVuRjhkdStK?=
+ =?utf-8?B?V3Z6dExmZUFKZnJPVVVZK1NwdEdReURHQi9vNjUxTXFaeFZGK1ZQSk9PT1dM?=
+ =?utf-8?B?NUpuM1p5Yjhrb1YxeFBRbnM4SVhJSS9jVVR4eWp0VHpDSVFkaXVsS3ZZSGoy?=
+ =?utf-8?B?NFJMY2NOREJxdDdqOFcyWFROVFZrdk9uRjVhM0FOSk82TjQya2lEYTNNbnpE?=
+ =?utf-8?B?ZFk5ZytuQnNxamt2UUxGMDZGY0F0U2RTeGI2SVQrK0hMQTF2UlM2S3dZaTRq?=
+ =?utf-8?B?ejRaWWhabTFJeTdwckVJU2xxcWNhSVVWNTNzSTZaUEtIMkllUVRRQkRQVWVp?=
+ =?utf-8?B?dERPTmtsS1F0VTJXbmxqOXFwYS9kdnVjS0dOaVoyZXNsQkpzTUUzM1RPeith?=
+ =?utf-8?B?Z3lWTEJITmF0b2VrTHdKNVVqaFlaMklWeDdhcUFiUkFNWVI1R1d1eGIzWmFL?=
+ =?utf-8?B?ZVpkY3BnRzhhZjBrWmJPTkJuUExjcGR4NUhEUnVIZ0oxQTgzVndVUFpaaTZB?=
+ =?utf-8?B?SmtjcjRIZjFuTXU2MWZBOXdVVmdpNktCeXZOS1pRTzBhcjQzTHlhTUp6OXJM?=
+ =?utf-8?B?SmxlWXZsR1R3MTN3QmRVUEx1K3lpdDVJbTF2UmRWSnIyKzJoSml5M1JEWkxl?=
+ =?utf-8?B?MGRzKzAyNTQ5WDlPeVk3MDlrejhqVXBjU3ZBY3oxbWlxZURDZGdGdzE2Vm9o?=
+ =?utf-8?B?YVQxUEVRR2VLWVJXditIY1JqendWSkZXTTN3R2hXYVFUenp3aDdhT3V4ZElH?=
+ =?utf-8?B?MnBSYXp1S0IzdWU0OC9OS24xbytCcklUeHFDZmVSZ3ZreWpXTEVDdG1RTEdV?=
+ =?utf-8?B?TUE0cnFhWGFmQ3VRZ1o0N0FRd3JmMmV4N0tlOEltWHQxSVFua0lUTkJ0YnFh?=
+ =?utf-8?B?VmhlWUNJVk5wamZlQ1MyTGFuRDN6UXN4QnY3dVlkWHJmRUxyTVVwYmZxdFpH?=
+ =?utf-8?B?TVF5Qk1zY2ZjRFlLZDBiUS90am1yc0ZiRFNLUWtWSTdxY0xqWkhZQUIwS0hX?=
+ =?utf-8?B?RVpKY2NWOC90RC9IVGtZMUlzTGxPd1lUSG1OdFdFSEE3TW45QXN0clBrUUZV?=
+ =?utf-8?B?bHlsNEFuRkZKVG8vM1loTEdGQ1pnb1V4S1lsZlh4VUtvK3V2ZjdwL1hMY3B6?=
+ =?utf-8?B?Z0FwSm9sR0F1a2NHSklCZ1h3MndzTTZ0NXQvaUZQMWttZjlBekY0TjJyUTlp?=
+ =?utf-8?B?Q09QSlphblJDK1hMY2VHZjBYOSs3N2NxOGVhSzhuZlZvVTBiMFV0V3BzR05U?=
+ =?utf-8?B?YTAySmFYNHRza1l4dW5Lb2pBeDNWUFlqT3FSbkU0eGw1MWM5UndxQm5Ic05P?=
+ =?utf-8?B?aHg1Y0RORWpPYS9LMW1LMHVTbjJrYXA3MXVLWVdnYkhXM2lqSDRGeHFZbi9P?=
+ =?utf-8?B?aVAxd21HZGE0SWdHQkxuNHptR3RqSmJsaDlyeFMrb1dRTitVa25ZdFFRSzE3?=
+ =?utf-8?B?MUYycWNnVENIUTRCeDlBQ2E4MUhSRjFjeFlPT29vK0V1eTlpQmJKUG0wejFs?=
+ =?utf-8?B?YzRlVWVuczkzMHRUVm9OSEVrZmtMRDQ5TitDYzJtY1ArQU9KWlFLeEdRYU14?=
+ =?utf-8?B?aTI4bndLeGRPaHViakZuSzNZY1Q4cDhsbXJEckRFNGtIbU9VaHYrTEJKcmRw?=
+ =?utf-8?B?dFVLRHJ4M1E3NnRDaGtoTklEWUN6SW1jYXZBSTVtdGZGYnczTzZSY0NESFcv?=
+ =?utf-8?B?VTh3c1R3YTdWNFBxdndhUktFbU5SQWpoOTNWSVQvUzVROXNhdTdNM21JUUIr?=
+ =?utf-8?B?NDl1K1B0Q3I4Y0dZWFgvTGV3c0g4OVhXOEdveGNIR05HdHpReG5SNjdhdzlK?=
+ =?utf-8?B?emxWcGpXVkIyK3RoL1JMcFNHSXJablZuOHZCTE0xTHJTQ29FejBzb1VyUjgr?=
+ =?utf-8?B?ZDVDaWcyZ0l6T3pOdHNoSjRFS09ia1NQUE92bmNsVU16WGFXc3lYSWVxOTNy?=
+ =?utf-8?B?dGpzeU5lL1pOTmVPRmt0V3hDVE9ES2FpQjZ0VmdJcVArdVAwZ2pROE55UzFI?=
+ =?utf-8?B?MVRJWHZkd1B1d3NBb2NuSzR5UXRCWG5BUlBXSFFQekQ4Q2VkN2tZRlNlSDdT?=
+ =?utf-8?Q?D4pl0I0IyhLfLwU0lxKGce9Xg?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2023 16:39:41.7143
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08867a55-a4ef-4907-e016-08db34741e28
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6604.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2023 18:49:13.4263
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d84f6704-1b47-40e8-7c58-08db34620638
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT035.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8087
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T5z7grNbWjso4hxshrvtTdWX6narjt+1IYv9NTWK9ftGH6xS2ht1h/j+FS7XHYEarhYlG6by+D6TjZ1SPjclKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5839
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Arm Coresight PMU driver consists of main standard code and vendor
-backend code. Both are currently built as a single module.
-This patch adds vendor registration API to separate the two to
-keep things modular. Vendor module shall register to the main
-module on loading and trigger device reprobe.
+On 3/25/23 4:05 AM, Krzysztof Kozlowski wrote:
+> On 23/03/2023 02:29, Dipen Patel wrote:
+>> The property is not necessary as it is a constant value and can be
+>> hardcoded in the driver code.
+>>
+>> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+>> ---
+>>  .../timestamp/nvidia,tegra194-hte.yaml        | 43 ++-----------------
+>>  1 file changed, 4 insertions(+), 39 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+>> index 158dbe58c49f..eafc33e9ae2e 100644
+>> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+>> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
+>> @@ -42,10 +42,13 @@ properties:
+>>  
+>>    nvidia,slices:
+>>      $ref: /schemas/types.yaml#/definitions/uint32
+>> +    deprecated: true
+>>      description:
+>>        HTE lines are arranged in 32 bit slice where each bit represents different
+>>        line/signal that it can enable/configure for the timestamp. It is u32
+>> -      property and the value depends on the HTE instance in the chip.
+>> +      property and the value depends on the HTE instance in the chip. The AON
+>> +      GTE instances for both Tegra194 and Tegra234 has 3 slices. The Tegra194
+>> +      LIC instance has 11 slices and Tegra234 LIC has 17 slices.
+>>      enum: [3, 11, 17]
+>>  
+>>    '#timestamp-cells':
+>> @@ -56,46 +59,10 @@ properties:
+>>        mentioned in the nvidia GPIO device tree binding document.
+>>      const: 1
+>>  
+>> -allOf:
+>> -  - if:
+>> -      properties:
+>> -        compatible:
+>> -          contains:
+>> -            enum:
+>> -              - nvidia,tegra194-gte-aon
+>> -              - nvidia,tegra234-gte-aon
+>> -    then:
+>> -      properties:
+>> -        nvidia,slices:
+>> -          const: 3
+>> -
+>> -  - if:
+>> -      properties:
+>> -        compatible:
+>> -          contains:
+>> -            enum:
+>> -              - nvidia,tegra194-gte-lic
+>> -    then:
+>> -      properties:
+>> -        nvidia,slices:
+>> -          const: 11
+>> -
+>> -  - if:
+>> -      properties:
+>> -        compatible:
+>> -          contains:
+>> -            enum:
+>> -              - nvidia,tegra234-gte-lic
+>> -    then:
+>> -      properties:
+>> -        nvidia,slices:
+>> -          const: 17
+> 
+> You just added this entire block in previous patch. Adding it there and
+> immediately removing does not make much sense.
+Yes, probably I should just keep that block in this patch as it is since
+there is a deprecate field already introduced by this patch which should be enough. 
 
-Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
----
- drivers/perf/arm_cspmu/Makefile       |   3 +-
- drivers/perf/arm_cspmu/arm_cspmu.c    | 113 +++++++++++++++++++++-----
- drivers/perf/arm_cspmu/arm_cspmu.h    |  10 ++-
- drivers/perf/arm_cspmu/nvidia_cspmu.c |  24 +++++-
- drivers/perf/arm_cspmu/nvidia_cspmu.h |  17 ----
- 5 files changed, 124 insertions(+), 43 deletions(-)
- delete mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
-
-diff --git a/drivers/perf/arm_cspmu/Makefile b/drivers/perf/arm_cspmu/Makefile
-index fedb17df982d..2514ad34aaf0 100644
---- a/drivers/perf/arm_cspmu/Makefile
-+++ b/drivers/perf/arm_cspmu/Makefile
-@@ -2,5 +2,4 @@
- #
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu_module.o
--arm_cspmu_module-y := arm_cspmu.o nvidia_cspmu.o
-+obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu.o nvidia_cspmu.o
-diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-index e31302ab7e37..6dbcd46d9fdf 100644
---- a/drivers/perf/arm_cspmu/arm_cspmu.c
-+++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-@@ -16,7 +16,7 @@
-  * The user should refer to the vendor technical documentation to get details
-  * about the supported events.
-  *
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-  *
-  */
- 
-@@ -25,13 +25,13 @@
- #include <linux/ctype.h>
- #include <linux/interrupt.h>
- #include <linux/io-64-nonatomic-lo-hi.h>
-+#include <linux/list.h>
- #include <linux/module.h>
- #include <linux/perf_event.h>
- #include <linux/platform_device.h>
- #include <acpi/processor.h>
- 
- #include "arm_cspmu.h"
--#include "nvidia_cspmu.h"
- 
- #define PMUNAME "arm_cspmu"
- #define DRVNAME "arm-cs-arch-pmu"
-@@ -117,11 +117,14 @@
-  */
- #define HILOHI_MAX_POLL	1000
- 
--/* JEDEC-assigned JEP106 identification code */
--#define ARM_CSPMU_IMPL_ID_NVIDIA		0x36B
--
- static unsigned long arm_cspmu_cpuhp_state;
- 
-+/* List of Coresight PMU instances in the system. */
-+static LIST_HEAD(cspmus);
-+
-+/* List of registered vendor backends. */
-+static LIST_HEAD(cspmu_impls);
-+
- /*
-  * In CoreSight PMU architecture, all of the MMIO registers are 32-bit except
-  * counter register. The counter register can be implemented as 32-bit or 64-bit
-@@ -380,26 +383,94 @@ static struct attribute_group arm_cspmu_cpumask_attr_group = {
- };
- 
- struct impl_match {
--	u32 pmiidr;
--	u32 mask;
-+	struct list_head next;
-+	u32 pmiidr_impl;
- 	int (*impl_init_ops)(struct arm_cspmu *cspmu);
- };
- 
--static const struct impl_match impl_match[] = {
--	{
--	  .pmiidr = ARM_CSPMU_IMPL_ID_NVIDIA,
--	  .mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
--	  .impl_init_ops = nv_cspmu_init_ops
--	},
--	{}
--};
-+static struct impl_match *arm_cspmu_get_impl_match(u32 pmiidr_impl)
-+{
-+	struct impl_match *impl_match;
-+
-+	list_for_each_entry(impl_match, &cspmu_impls, next) {
-+		if (impl_match->pmiidr_impl == pmiidr_impl)
-+			return impl_match;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int arm_cspmu_device_reprobe(u32 pmiidr_impl)
-+{
-+	int ret;
-+	struct arm_cspmu *cspmu, *temp;
-+
-+	/* Reprobe all arm_cspmu devices associated with implementer id. */
-+	list_for_each_entry_safe(cspmu, temp, &cspmus, next) {
-+		const u32 impl_id = FIELD_GET(ARM_CSPMU_PMIIDR_IMPLEMENTER,
-+					cspmu->impl.pmiidr);
-+
-+		if (pmiidr_impl == impl_id) {
-+			ret = device_reprobe(cspmu->dev);
-+			if (ret) {
-+				dev_err(cspmu->dev, "Failed reprobe %s\n",
-+					cspmu->name);
-+				return ret;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+int arm_cspmu_impl_register(u32 pmiidr_impl,
-+	int (*impl_init_ops)(struct arm_cspmu *cspmu))
-+{
-+	struct impl_match *impl;
-+
-+	if (arm_cspmu_get_impl_match(pmiidr_impl)) {
-+		pr_err("ARM CSPMU implementer: 0x%x is already registered\n",
-+			pmiidr_impl);
-+		return -EEXIST;
-+	}
-+
-+	impl = kzalloc(sizeof(struct impl_match), GFP_KERNEL);
-+
-+	list_add(&impl->next, &cspmu_impls);
-+
-+	impl->pmiidr_impl = pmiidr_impl;
-+	impl->impl_init_ops = impl_init_ops;
-+
-+	return arm_cspmu_device_reprobe(pmiidr_impl);
-+}
-+EXPORT_SYMBOL_GPL(arm_cspmu_impl_register);
-+
-+void arm_cspmu_impl_unregister(u32 pmiidr_impl)
-+{
-+	struct impl_match *impl;
-+
-+	impl = arm_cspmu_get_impl_match(pmiidr_impl);
-+	if (!impl) {
-+		pr_err("Unable to find ARM CSPMU implementer: 0x%x\n",
-+			pmiidr_impl);
-+		return;
-+	}
-+
-+	list_del(&impl->next);
-+	kfree(impl);
-+
-+	if (arm_cspmu_device_reprobe(pmiidr_impl))
-+		pr_err("ARM CSPMU failed reprobe implementer: 0x%x\n",
-+			pmiidr_impl);
-+}
-+EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
- 
- static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
- {
- 	int ret;
- 	struct acpi_apmt_node *apmt_node = cspmu->apmt_node;
- 	struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
--	const struct impl_match *match = impl_match;
-+	const struct impl_match *match;
- 
- 	/*
- 	 * Get PMU implementer and product id from APMT node.
-@@ -411,10 +482,11 @@ static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
- 				       readl(cspmu->base0 + PMIIDR);
- 
- 	/* Find implementer specific attribute ops. */
--	for (; match->pmiidr; match++) {
--		const u32 mask = match->mask;
-+	list_for_each_entry(match, &cspmu_impls, next) {
-+		const u32 impl_id = FIELD_GET(ARM_CSPMU_PMIIDR_IMPLEMENTER,
-+						cspmu->impl.pmiidr);
- 
--		if ((match->pmiidr & mask) == (cspmu->impl.pmiidr & mask)) {
-+		if (match->pmiidr_impl == impl_id) {
- 			ret = match->impl_init_ops(cspmu);
- 			if (ret)
- 				return ret;
-@@ -924,6 +996,8 @@ static struct arm_cspmu *arm_cspmu_alloc(struct platform_device *pdev)
- 	if (!cspmu)
- 		return NULL;
- 
-+	list_add(&cspmu->next, &cspmus);
-+
- 	cspmu->dev = dev;
- 	cspmu->apmt_node = apmt_node;
- 
-@@ -1214,6 +1288,7 @@ static int arm_cspmu_device_remove(struct platform_device *pdev)
- 
- 	perf_pmu_unregister(&cspmu->pmu);
- 	cpuhp_state_remove_instance(arm_cspmu_cpuhp_state, &cspmu->cpuhp_node);
-+	list_del(&cspmu->next);
- 
- 	return 0;
- }
-diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
-index 51323b175a4a..64c3b565f1b1 100644
---- a/drivers/perf/arm_cspmu/arm_cspmu.h
-+++ b/drivers/perf/arm_cspmu/arm_cspmu.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0
-  *
-  * ARM CoreSight Architecture PMU driver.
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-  *
-  */
- 
-@@ -116,6 +116,7 @@ struct arm_cspmu_impl {
- 
- /* Coresight PMU descriptor. */
- struct arm_cspmu {
-+	struct list_head next;
- 	struct pmu pmu;
- 	struct device *dev;
- 	struct acpi_apmt_node *apmt_node;
-@@ -148,4 +149,11 @@ ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
- 				    struct device_attribute *attr,
- 				    char *buf);
- 
-+/* Register vendor backend. */
-+int arm_cspmu_impl_register(u32 pmiidr_impl,
-+	int (*impl_init_ops)(struct arm_cspmu *cspmu));
-+
-+/* Unregister vendor backend. */
-+void arm_cspmu_impl_unregister(u32 pmiidr_impl);
-+
- #endif /* __ARM_CSPMU_H__ */
-diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-index 72ef80caa3c8..d7083fed135d 100644
---- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-+++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-  *
-  */
- 
-@@ -8,7 +8,10 @@
- 
- #include <linux/topology.h>
- 
--#include "nvidia_cspmu.h"
-+#include "arm_cspmu.h"
-+
-+/* JEDEC-assigned JEP106 identification code */
-+#define ARM_CSPMU_IMPL_ID_NVIDIA     0x36B
- 
- #define NV_PCIE_PORT_COUNT           10ULL
- #define NV_PCIE_FILTER_ID_MASK       GENMASK_ULL(NV_PCIE_PORT_COUNT - 1, 0)
-@@ -351,7 +354,7 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
- 	return name;
- }
- 
--int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
-+static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
- {
- 	u32 prodid;
- 	struct nv_cspmu_ctx *ctx;
-@@ -395,6 +398,19 @@ int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(nv_cspmu_init_ops);
-+
-+static int __init nvidia_cspmu_init(void)
-+{
-+	return arm_cspmu_impl_register(ARM_CSPMU_IMPL_ID_NVIDIA,
-+		nv_cspmu_init_ops);
-+}
-+
-+static void __exit nvidia_cspmu_exit(void)
-+{
-+	arm_cspmu_impl_unregister(ARM_CSPMU_IMPL_ID_NVIDIA);
-+}
-+
-+module_init(nvidia_cspmu_init);
-+module_exit(nvidia_cspmu_exit);
- 
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.h b/drivers/perf/arm_cspmu/nvidia_cspmu.h
-deleted file mode 100644
-index 71e18f0dc50b..000000000000
---- a/drivers/perf/arm_cspmu/nvidia_cspmu.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0
-- *
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-- *
-- */
--
--/* Support for NVIDIA specific attributes. */
--
--#ifndef __NVIDIA_CSPMU_H__
--#define __NVIDIA_CSPMU_H__
--
--#include "arm_cspmu.h"
--
--/* Allocate NVIDIA descriptor. */
--int nv_cspmu_init_ops(struct arm_cspmu *cspmu);
--
--#endif /* __NVIDIA_CSPMU_H__ */
-
-base-commit: 73f2c2a7e1d2b31fdd5faa6dfa151c437a6c0a5a
-prerequisite-patch-id: fb691dc01d87597bcbaa4d352073304287c20f73
--- 
-2.17.1
+>> -
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
