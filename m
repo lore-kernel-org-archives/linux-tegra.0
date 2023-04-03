@@ -2,135 +2,141 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC7FC76196
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 10:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9B5C76196
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 10:42:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231564AbjDCK1Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 06:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46934 "EHLO
+        id S231998AbjDCKmq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 06:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231921AbjDCK1X (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 06:27:23 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B972137
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Apr 2023 03:26:48 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id n19so16796987wms.0
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Apr 2023 03:26:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680517601;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uJqJCfXYsKrauWQ1VzvumsEN640d4PkwxnqFIZ8sjg4=;
-        b=vYyXyZIon/EizW+NXgKhpk0havOfXPqISSQhL9lsTu9/m92Lodhn4bKB4Ot5wuUM3F
-         WKj/muGRtrUUWlBVpOEuMwqWZL9T4xu648PG+TsTmD/KWTl/A6biSUS0W41DmrabNy3/
-         sRu1NwKfcwgSsl414b/wXytQJzQEnlbvoXKC8w/D7K4LtQXYMuBuDG5xpoNySCDI7G3i
-         qPDxRnUI7Pzn7j6zngUl3fhwQ9RPp8FfTtjnITZ2VZtkZgiQ9mx9plRkhgaSVcRWcOXA
-         Fs6STndGzx7tkpKp7VK7cbDG8DshTEwIIo3TtDIT2QXbiGqfl0q/5+FehMLFtqvdQLyI
-         8GHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680517601;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uJqJCfXYsKrauWQ1VzvumsEN640d4PkwxnqFIZ8sjg4=;
-        b=5sowHvA3WYy8d2YAAoDY+VPqhtyb7anllHy5MvuB5eYT93RuvOcdwy0s94Sq9mELJp
-         EbQA0UuBkeZomDHHJtXslzjwaLB8N7nep67wpvond+KRxTA5K4u37SRM5mz2IgEqZTqd
-         VXWcEm5bDLtd9WEQPO3SL8hKxoA5g4vlpRoC4cuLKjE6rBV95sSrBVKKD9eggALRaA5a
-         k4p5IEfOnwanE68IwyZojwxW8svTguhXrdieYRmnYoCmgaEVQ5Bzrbu8Mhf9ndEH1PBr
-         Y9ab5N555XBsT/jbF6o7YASQSG5AwzsYo0k7PhZXtHsBtOjAE1XQ1iLWocGXFtD1THpC
-         D/uQ==
-X-Gm-Message-State: AAQBX9cH+VwHvEzMOxMyc+edugjo8XQ9z1jJqEUsbv/qJrQ0hUuBMJRM
-        QIkbeHhli1B+dxqTkdAFDhLmSQ==
-X-Google-Smtp-Source: AKy350YKX9loEpC/aa7UcSmpn4QvLYOnjAUIpqPaJ3ERSh3FCOLOMkxwpPSHzNxBOFfj3nU8n2WH4Q==
-X-Received: by 2002:a7b:c3ce:0:b0:3f0:3a9a:516e with SMTP id t14-20020a7bc3ce000000b003f03a9a516emr10482522wmj.15.1680517601510;
-        Mon, 03 Apr 2023 03:26:41 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:8052:c9eb:6b69:e69a? ([2a05:6e02:1041:c10:8052:c9eb:6b69:e69a])
-        by smtp.googlemail.com with ESMTPSA id u17-20020a7bcb11000000b003ef5db16176sm11758625wmj.32.2023.04.03.03.26.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Apr 2023 03:26:41 -0700 (PDT)
-Message-ID: <2c37a786-0ae5-273e-f82b-4f9c82663053@linaro.org>
-Date:   Mon, 3 Apr 2023 12:26:40 +0200
+        with ESMTP id S232011AbjDCKm2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 06:42:28 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C99D21B36A
+        for <linux-tegra@vger.kernel.org>; Mon,  3 Apr 2023 03:42:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 9910A21B66;
+        Mon,  3 Apr 2023 10:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680518526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fEc7S2hK90KviV06JbTXa9QIARshJripW9VtwndNc3U=;
+        b=Y/sUZJ64xMRZgX0AcevlbmrzfK8u7yOxta8o16W1o7Oa/fGGy5KvbiY8qT+9pABpvYaELE
+        m0ydiXWCeNmbycm2Z0tj2/2/FPgJ+WU7Tc9bTH0SCx72mOM5pN8JIbeBM1owznehZtLzhN
+        8lEL3yLvL6zfB9YFJ0cQEnRP5/xXeOI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680518526;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fEc7S2hK90KviV06JbTXa9QIARshJripW9VtwndNc3U=;
+        b=DwHPWJ+RkaKOmBRra8uV5hQZ0amjk4ZhRym1rbYv2p2oEznjsC9SoiOStbzXOrG1SECGT+
+        USb9/vEfZbRKn5DQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 69EAA1331A;
+        Mon,  3 Apr 2023 10:42:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id r9viGH6tKmTvDgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 03 Apr 2023 10:42:06 +0000
+Message-ID: <ffb0005d-d871-1317-8b16-d6fe3771a35e@suse.de>
+Date:   Mon, 3 Apr 2023 12:42:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH] thermal: tegra-bpmp: Check if BPMP supports trip points
+Subject: Re: [1/7] drm/tegra: Include <linux/of.h>
 Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20221129153914.2699041-1-cyndis@kapsi.fi>
- <Y9KTrO+WqJJwuEDf@orome> <a08355e1-c393-2b2e-4a44-360e08607bb9@linaro.org>
- <Y9KfcSwYt7utbcg5@orome> <e716eda4-edfc-5946-4e6f-42aab5f73b0f@linaro.org>
- <d7435a96-3480-280e-d996-73fea690c373@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <d7435a96-3480-280e-d996-73fea690c373@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Sui Jingfeng <15330273260@189.cn>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, javierm@redhat.com, airlied@gmail.com,
+        daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20230330083607.12834-2-tzimmermann@suse.de>
+ <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------Cs1b5Oxi17jpsFR0JX2Go0sw"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/04/2023 12:22, Jon Hunter wrote:
-> Hi Daniel,
-> 
-> On 26/01/2023 16:07, Daniel Lezcano wrote:
->> On 26/01/2023 16:42, Thierry Reding wrote:
->>> On Thu, Jan 26, 2023 at 04:08:03PM +0100, Daniel Lezcano wrote:
->>>>
->>>> Hi Thierry,
->>>>
->>>> On 26/01/2023 15:52, Thierry Reding wrote:
->>>>> On Tue, Nov 29, 2022 at 05:39:14PM +0200, Mikko Perttunen wrote:
->>>>>> From: Mikko Perttunen <mperttunen@nvidia.com>
->>>>>>
->>>>>> Check if BPMP supports thermal trip points, and if not,
->>>>>> do not expose the .set_trips callback to the thermal core
->>>>>> framework. This can happen in virtualized environments
->>>>>> where asynchronous communication with VM BPMP drivers is not
->>>>>> available.
->>>>>>
->>>>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>>>> ---
->>>>>>    drivers/thermal/tegra/tegra-bpmp-thermal.c | 52 
->>>>>> +++++++++++++++++++++-
->>>>>>    1 file changed, 51 insertions(+), 1 deletion(-)
->>>>>
->>>>> Applied, thanks.
->>>>
->>>> I prefer you provide an Acked-by and I take the thermal related 
->>>> patches.
->>>> Especially in this period where we are reworking the framework with the
->>>> thermal trip points ;)
->>>
->>> Sorry, my bad. I misread this as belonging to drivers/firmware/tegra
->>> which goes in via ARM SoC.
->>
->> No worries ;)
->>
->>> I'll drop this from the Tegra tree. Feel free
->>> to pick this up:
->>
->> Ok, thanks
->>
->>> Acked-by: Thierry Reding <treding@nvidia.com>
-> 
-> 
-> I don't see this one in -next. Are you able to pick this one up now?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------Cs1b5Oxi17jpsFR0JX2Go0sw
+Content-Type: multipart/mixed; boundary="------------DbZpzGf8mG6QyD2xs4dpV5PN";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Sui Jingfeng <15330273260@189.cn>, thierry.reding@gmail.com,
+ jonathanh@nvidia.com, javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Message-ID: <ffb0005d-d871-1317-8b16-d6fe3771a35e@suse.de>
+Subject: Re: [1/7] drm/tegra: Include <linux/of.h>
+References: <20230330083607.12834-2-tzimmermann@suse.de>
+ <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
+In-Reply-To: <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
 
-Before going in -next, it will go through bleeding-edge then -next, 
-logically tomorrow.
+--------------DbZpzGf8mG6QyD2xs4dpV5PN
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
+DQoNCkFtIDMwLjAzLjIzIHVtIDE0OjUxIHNjaHJpZWIgU3VpIEppbmdmZW5nOg0KPiANCj4g
+UmV2aWV3ZWQtYnk6IFN1aSBKaW5nZmVuZyA8c3VpamluZ2ZlbmdAbG9vbmdzb24uY24gDQo+
+IDxtYWlsdG86c3VpamluZ2ZlbmdAbG9vbmdzb24uY24+Pg0KDQpUaGFua3MgYSBsb3QuDQoN
+Cj4gDQo+IA0KPiBPbiAyMDIzLzMvMzAgMTY6MzYsIFRob21hcyBaaW1tZXJtYW5uIHdyb3Rl
+Og0KPj4gSW5jbHVkZSA8bGludXgvb2YuaD4gdG8gZ2V0IHRoZSBjb250YWluZWQgZGVjbGFy
+YXRpb25zLiBObyBmdW5jdGlvbmFsDQo+PiBjaGFuZ2VzLg0KPj4NCj4+IFNpZ25lZC1vZmYt
+Ynk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPg0KPj4gLS0tDQo+
+PiDCoCBkcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0LmMgfCAyICsrDQo+PiDCoCBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmPCoMKgwqAgfCAxICsNCj4+IMKgIDIgZmlsZXMgY2hh
+bmdlZCwgMyBpbnNlcnRpb25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS90ZWdyYS9vdXRwdXQuYyANCj4+IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1
+dC5jDQo+PiBpbmRleCBhODkyNWRjZDdlZGQuLmQzMWM4N2Y0OGRhMCAxMDA2NDQNCj4+IC0t
+LSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRwdXQuYw0KPj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL291dHB1dC5jDQo+PiBAQCAtNCw2ICs0LDggQEANCj4+IMKgwqAgKiBD
+b3B5cmlnaHQgKEMpIDIwMTIgTlZJRElBIENPUlBPUkFUSU9OLsKgIEFsbCByaWdodHMgcmVz
+ZXJ2ZWQuDQo+PiDCoMKgICovDQo+PiArI2luY2x1ZGUgPGxpbnV4L29mLmg+DQo+PiArDQo+
+PiDCoCAjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+DQo+PiDCoCAjaW5jbHVk
+ZSA8ZHJtL2RybV9vZi5oPg0KPj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fcGFuZWwuaD4NCj4+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vdGVncmEvcmdiLmMNCj4+IGluZGV4IGZmOGZjZTM2ZDJhYS4uM2YwNjAyODJjZDhk
+IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3JnYi5jDQo+PiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMNCj4+IEBAIC01LDYgKzUsNyBAQA0KPj4g
+wqDCoCAqLw0KPj4gwqAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPj4gKyNpbmNsdWRlIDxs
+aW51eC9vZi5oPg0KPj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPg0K
+Pj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fYnJpZGdlX2Nvbm5lY3Rvci5oPg0KDQotLSANClRo
+b21hcyBaaW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3
+YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJu
+YmVyZywgR2VybWFueQ0KKEhSQiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0c2bD
+vGhyZXI6IEl2byBUb3Rldg0K
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+--------------DbZpzGf8mG6QyD2xs4dpV5PN--
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--------------Cs1b5Oxi17jpsFR0JX2Go0sw
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmQqrX4FAwAAAAAACgkQlh/E3EQov+An
+Fg/+KNNxM3qSQ5Hbg/Ykeoq+ESe6IX7oTy3DtvOMmLG3VbElFVxIPsgU/2VrOoITUEDrE6i6kE5w
+Dz+JHr43kpz/4oC4GpdFC2pbNY2UF5Pyh5viq2Zs8d+m6H6+onLAxW/Jnxu1iLknS5C5uzFF0Euc
+Oi9rtPJF6uc9QDfhhwOIoOC2hCQQzzmYKqC2uKCWt/N/QrYwyLAB0AUznsACTN2QNg80blv/1jMt
+6yEESDGVdzQRnXBpt8kcKaG6e7bIc3eZ0r/bxzzNPz6Wld1VUBUXTuw9q8OfMgyfa/ZGJuQKIcNX
+oYYXPJuFbYHz4IhwPJ2qfWgm3xSoh2MD/lwJc/a5D1NahghWxcaKFTqfD548FhZG/d1sGQWeRcd1
+ljhVn+vpOdXX3hZm+a08nZ0yzs3XtvmH5fzTbxdAbNt/2v0+TRiyQVRTjq4Mj2z6OPm67io3HM3s
+Urw4UQ4oJ2JRP4v/PTlQBas/IJ25VjoexY6rp8052Yr1e6P3zTxm0MSEPzL2bmboX17x9kE9mhRg
+4GpARwq1ycJXjFl6ffD7OGZaZHmmKwnsVbP0VenxiZZ/vORW4DnvR+D7SgCGs6XdI773kf/XwFl3
+EyJYXayt0tFNEE8x0/Xj2d32BNi2fi5ZZxO2UBZiwrjcm68LxwQdoJ/cnTuqbeu6sA1PG+AdMz2h
+n8E=
+=0nFu
+-----END PGP SIGNATURE-----
+
+--------------Cs1b5Oxi17jpsFR0JX2Go0sw--
