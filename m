@@ -2,110 +2,80 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEC6C7619A
-	for <linux-tegra@archiver.kernel.org>; Sun,  2 Apr 2023 22:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E969C76196
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 06:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230292AbjDBWa2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 2 Apr 2023 18:30:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41136 "EHLO
+        id S231372AbjDCGuY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 02:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjDBWa2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 2 Apr 2023 18:30:28 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571336EBB;
-        Sun,  2 Apr 2023 15:30:27 -0700 (PDT)
-Received: from [192.168.2.163] (109-252-124-32.nat.spd-mgts.ru [109.252.124.32])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3ACE06602E34;
-        Sun,  2 Apr 2023 23:30:18 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680474626;
-        bh=8PXBF8vV02LOUYcIW54cjJhIhkm+x7i45sfvjpWdHT8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=VavHMw5TBD5Vk/Vta/7MpXGm0jSCH9ZANdchgd6Xq+rEE2g2hiDE0FyDaXMYg2QpU
-         D7w0+Oa+EAfbneCaruAPnZv7G3ZjzkY3ZEpeE5ZlHSmITCjKsgPkyF5vds0tbNkSGh
-         ABNDkLxJcRFEtycPCfUNa88FVxMcDX6bg7UQO3yK2Iu7ZYsqhvQRPPyNm0LZ1QM78n
-         dpdajKV051YcBxfjTBmX5mENPgiprJCwOkF9FHYaxChG0QKMfmWJnrTZDTmXOjAuUn
-         nTdZH7gSiZ3xUlpn1/rVaENBrOYO6bsTV5EkkiR696ksIUZ92trKXF+7v4dtMk9rfO
-         d/vKgIyiMNF/w==
-Message-ID: <6abaa803-1639-b949-3af5-05a341f9b459@collabora.com>
-Date:   Mon, 3 Apr 2023 01:30:09 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
+        with ESMTP id S229945AbjDCGuX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 02:50:23 -0400
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0DE2727;
+        Sun,  2 Apr 2023 23:50:20 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id n14so27338425qta.10;
+        Sun, 02 Apr 2023 23:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680504619;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UY7uVDKavnayiHsQEjZEIVpvQWztlTClif0OZXNLtJQ=;
+        b=YHXAtup2LEtNpxWLo4CQ2SLwadUFQuQOszkc3qRBVI4DoIbAGcRZEs40NdPhwvp7CY
+         EDRpvksBm6tMNFaHqG1EKq/UkFgtAZE70gw9W3Jh64LRGGQkbewJon7Vp/gCl7i1hmmq
+         L3gc2OM/SiAXxFFDTeIB3DNbgb8RI0uvxR+4xHGhogZe36zUKlzWfNAAUw8fSWisT2UL
+         H5bBd379pL9RNS/NOqng6DbLVVBPOmGe5iQI7XOSr4aER+7nMn8Y1VDAvI7WeFYAx7v8
+         YZ9gHrW20FJg3MjcZoeQ9AzPUDu7TDLPEfI9SdxE7tGZYzefLN69VhJq78oWlloQo/UO
+         Yy8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680504619;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UY7uVDKavnayiHsQEjZEIVpvQWztlTClif0OZXNLtJQ=;
+        b=WhuNyT4/imuAIrRVlB7Y3tNf3S7BqDef8Zrjsk3IihdqB/eLhx2HSfXlOrdfO9spIK
+         cpep/82R0jkFAAMgX3sC9X6Iqcwx4veO+TH/HW0Jz8L1SOs7hEjHKYJX/Nqu0npQTNif
+         kV2k7adphNPW5UDDcAbGGVgAQ0ntiDbIBEXPwTRYYmAvFX++gKELOmLrZsQBa5tiTeUl
+         1i0d7dUsg5LHDfJCimKSuu1csHOblCdpmvQ7Dwuxu7AOwYbriZfWpOkmRnVQZEofUAxv
+         m80JMKkcY4p223jaWLZVpnxE2eWd37enxRcSrKLlZLGBkkPTVBnO8lrPtZKEqhDUYsPl
+         KMbw==
+X-Gm-Message-State: AO0yUKVv7Jefl0xG4PW0EMmvDtJk3pVBguKKOvmKi1vS3THtpRLNIfB5
+        7NNoGiE0Yz5wcbKKfDr+tOM=
+X-Google-Smtp-Source: AK7set9M9SUD7QQ3peFVgNl8rJ4f7gXXjOnpkvefFqRWiS+AQHrpCwPjMXzZfPhpBOskHm66i45zcw==
+X-Received: by 2002:a05:622a:1983:b0:3e0:3d65:19d2 with SMTP id u3-20020a05622a198300b003e03d6519d2mr57959747qtc.20.1680504619179;
+        Sun, 02 Apr 2023 23:50:19 -0700 (PDT)
+Received: from PCBABN.skidata.net ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id d70-20020a376849000000b007467a4d8691sm2569782qkc.47.2023.04.02.23.50.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Apr 2023 23:50:18 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+To:     dmitry.osipenko@collabora.com
+Cc:     bbara93@gmail.com, benjamin.bara@skidata.com, jonathanh@nvidia.com,
+        lee@kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        rafael.j.wysocki@intel.com, richard.leitner@linux.dev,
+        treding@nvidia.com, wsa@kernel.org
 Subject: Re: [PATCH v3 4/4] mfd: tps6586x: register restart handler
-Content-Language: en-US
-To:     Benjamin Bara <bbara93@gmail.com>, Wolfram Sang <wsa@kernel.org>,
-        Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com
-Cc:     jonathanh@nvidia.com, richard.leitner@linux.dev,
-        treding@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-References: <20230327-tegra-pmic-reboot-v3-0-3c0ee3567e14@skidata.com>
- <20230327-tegra-pmic-reboot-v3-4-3c0ee3567e14@skidata.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20230327-tegra-pmic-reboot-v3-4-3c0ee3567e14@skidata.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date:   Mon,  3 Apr 2023 08:50:13 +0200
+Message-Id: <20230403065013.520339-1-bbara93@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <6abaa803-1639-b949-3af5-05a341f9b459@collabora.com>
+References: <6abaa803-1639-b949-3af5-05a341f9b459@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/27/23 16:57, Benjamin Bara wrote:
-> From: Benjamin Bara <benjamin.bara@skidata.com>
-> 
-> There are a couple of boards which use a tps6586x as
-> "ti,system-power-controller", e.g. the tegra20-tamonten.dtsi.
-> For these, the only registered restart handler is the warm reboot via
-> tegra's PMC. As the bootloader of the tegra20 requires the VDE, it must
-> be ensured that VDE is enabled (which is the case after a cold reboot).
-> For the "normal reboot", this is basically the case since
-> 8f0c714ad9be1ef774c98e8819a7a571451cb019.
-> However, this workaround is not executed in case of an emergency restart.
-> In case of an emergency restart, the system now simply hangs in the
-> bootloader, as VDE is not enabled (as not in use).
-> 
-> The TPS658629-Q1 (unfortunately the only TPS6586x with public data sheet)
-> provides a SOFT RST bit in the SUPPLYENE reg to request a (cold) reboot.
-> This avoids the hang-up.
-> 
-> Tested on a TPS658640.
-> 
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> ---
->  drivers/mfd/tps6586x.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-> index 93f1bf440191..c8adf6a08277 100644
-> --- a/drivers/mfd/tps6586x.c
-> +++ b/drivers/mfd/tps6586x.c
-> @@ -30,6 +30,7 @@
->  #include <linux/mfd/tps6586x.h>
->  
->  #define TPS6586X_SUPPLYENE	0x14
-> +#define SOFT_RST_BIT		BIT(0)
->  #define EXITSLREQ_BIT		BIT(1)
->  #define SLEEP_MODE_BIT		BIT(3)
->  
-> @@ -470,6 +471,17 @@ static int tps6586x_power_off_handler(struct sys_off_data *data)
->  	return tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
->  }
->  
-> +static int tps6586x_restart_handler(struct sys_off_data *data)
-> +{
-> +	struct device *tps6586x_dev = data->cb_data;
-> +
-> +	/* bring pmic into HARD REBOOT state */
-> +	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SOFT_RST_BIT);
-> +
-> +	mdelay(500);
-Is this delay needed? There is no delay in a case of power off.
+Thanks for the feedback!
 
--- 
-Best regards,
-Dmitry
+The DS states: "When the reboot request state is set an internal timer TWAIT
+(10ms typ) is started. The reboot request ends when t > TWAIT."
 
+Therefore, my intention was to wait a little bit before starting the next
+handler in the chain. I can do some tests without the mdelay, but otherwise
+will reduce it to 15ms in the next patch. What do you think about it?
+
+BR,
+Benjamin
