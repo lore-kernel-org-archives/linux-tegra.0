@@ -2,132 +2,148 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DF8C76196
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 16:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC51C76188
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 16:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232172AbjDCQGy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 12:06:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34440 "EHLO
+        id S232808AbjDCQao (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 12:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232831AbjDCQGu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 12:06:50 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F62423A;
-        Mon,  3 Apr 2023 09:06:17 -0700 (PDT)
-Received: from [192.168.2.163] (109-252-124-32.nat.spd-mgts.ru [109.252.124.32])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 62445660313D;
-        Mon,  3 Apr 2023 17:06:15 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680537976;
-        bh=51DH+WEXRTwye3bL60EML5+n6ov/nUbID+1syBtvpVc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=C9GkqTYAX09V3aIvsoWtqW3YPmEWj7zFP3HggswnZ4se7DeHa3lkiNFh+heVl0M8r
-         SMS5ViZbdpkfsdTECVba356upLtrBCtf/hNI9XsK/zgOjLro2s7iXKpiHBPbtwebTl
-         KmGe4nw/TN92clBXluiu6KIIxxbc6dDRGFReFqMARCrijGVwoRa4ZJilHlovsJDHDo
-         j+sCM4MDZKBJqgndI3A4ms85H9GC6k1totnOzsXmlIM9oNQ+l6D08COyCBlP7K9d9N
-         lzCUdaIjaMrO122v9zron59ycQAJAJwca0VO36KRO8MSvgkXEdy+iizwUIUlWzs4uH
-         PbHYXc3qx29gw==
-Message-ID: <f70c6d62-a7fd-c153-932f-16886e46329b@collabora.com>
-Date:   Mon, 3 Apr 2023 19:06:12 +0300
+        with ESMTP id S232759AbjDCQan (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 12:30:43 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944E52717
+        for <linux-tegra@vger.kernel.org>; Mon,  3 Apr 2023 09:30:08 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id eg48so119570645edb.13
+        for <linux-tegra@vger.kernel.org>; Mon, 03 Apr 2023 09:30:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680539404;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MeWz95RBmI6XpSLkAR+cuB3iAEeGC3iRvwSDE5+WIbY=;
+        b=vHhtKJL5afd3fDZb5Xvy5G6y/LTvqitLGSe7Ap0XWRSd3UnHwlhXG/jlL1pEDbro5N
+         dDLdwGPIJVRIvCgJf+ooSRVUmcxTfsxV8spRGbOdGMiu0Yjabnu9Hv/mjHGNPXQ8lvjN
+         cHe5ugODQYhlOZWDVDxVyYBUABgPfEhUNhPdKeF3/9v5wJk7oZDOr605S7tVuPNd8wTF
+         bx6a/0ODqm177Gf9vkkLZzZXwHE9nR4G62csYL1zJ90eb79s5EDQerAqVGy4fDYuhuFx
+         gXu3jujaXU5RPMtaZlFQ+OKGBp5RSLJJ0rYp6O8X402TZk6l3E92wW+w0z23pJ8wZvpJ
+         eSIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680539404;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MeWz95RBmI6XpSLkAR+cuB3iAEeGC3iRvwSDE5+WIbY=;
+        b=S1ReKAG9aHNFu2GkZ1RuoFIbpiEzGOXfmBTg4A6h/nfZASPa6dOFnzic4Txd4xvORJ
+         2rdlsTwSkL3j+k1Rm6nyMrFYy9u1er1nKsEipID/+2vwnkNVxlODPC0ZH9IgLaXZHTi6
+         zNqVKovE/moGWpADd3CDVMByyjCh1fYHqHyt9J/jc2rrMavEAJ5Sfm26ldTNlLTQD7Oe
+         ynCpQ0oU8Vqo0FlNY+D1oR2GK2CQ/Ksp6DpUgPiEfX4fgHfr1/VqnlJr0cVqLzXzc7nB
+         fgLV7dFhxesehK0MMvGddMcCABw60rJFjlPfi0QpGE2Zajrrlhw2ZjreTK7QR8B9AOmy
+         dj9Q==
+X-Gm-Message-State: AAQBX9eWPF/urXYgF8ZQNR7DIC+hMYZpUc2WG0p9Q2tFvl2ZBD8QirWe
+        p3s4kZhahqENYtiQuX44cg+xQQ==
+X-Google-Smtp-Source: AKy350YS4e1dI8mZhrbLOs96X7qTnH/JqlEPq688zdETFGPGyW8pAjyNj4FhzEJY/Pp8fKqk3yTMRQ==
+X-Received: by 2002:a17:906:3da:b0:931:95a1:a05a with SMTP id c26-20020a17090603da00b0093195a1a05amr37358230eja.62.1680539403777;
+        Mon, 03 Apr 2023 09:30:03 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.91])
+        by smtp.gmail.com with ESMTPSA id ld4-20020a1709079c0400b009486efb9192sm2073196ejc.11.2023.04.03.09.29.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Apr 2023 09:30:03 -0700 (PDT)
+Message-ID: <f881883e-23e1-66e0-78d2-da86533b038f@linaro.org>
+Date:   Mon, 3 Apr 2023 17:29:59 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v2] soc/tegra: pmc: Support software wake-up for SPE
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 00/49] mtd: nand: Convert to platform remove callback
+ returning void
 Content-Language: en-US
-To:     Petlozu Pravareshwar <petlozup@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, ulf.hansson@linaro.org, kkartik@nvidia.com,
-        cai.huoqing@linux.dev, spatra@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Viswanath L <viswanathl@nvidia.com>
-References: <20230330170621.258068-1-petlozup@nvidia.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20230330170621.258068-1-petlozup@nvidia.com>
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Valentin Korenblit <vkorenblit@sequans.com>,
+        Wang Weiyang <wangweiyang2@huawei.com>,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
+        =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        Jack Wang <jinpu.wang@ionos.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-mediatek@lists.infradead.org, linux-oxnas@groups.io,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+References: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
+From:   Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/30/23 20:06, Petlozu Pravareshwar wrote:
-> The Sensor Processing Engine(SPE) can trigger a software wake-up of
-> the device. To support this wake-up for the SPE, set SR_CAPTURE_EN
-> bit in WAKE_AOWAKE_CNTRL register associated with the wake-up for
-> the SPE. This SR capturing logic is expected to be enabled for wakes
-> with short pulse signalling requirements.
+
+
+On 4/1/23 17:18, Uwe Kleine-König wrote:
+> Hello,
 > 
-> Signed-off-by: Viswanath L <viswanathl@nvidia.com>
-> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
-> ---
-> v1->v2:
-> * Rebase the change on latest code.
-> ---
->  drivers/soc/tegra/pmc.c | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
+> this series adapts the platform drivers below drivers/mtd/nand to use the
+> .remove_new() callback. Compared to the traditional .remove() callback
+> .remove_new() returns no value. This is a good thing because the driver core
+> doesn't (and cannot) cope for errors during remove. The only effect of a
+> non-zero return value in .remove() is that the driver core emits a warning. The
+> device is removed anyhow and an early return from .remove() usually yields a
+> resource leak.
 > 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index cf4cfbf9f7c5..2a2342eff622 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -3,7 +3,7 @@
->   * drivers/soc/tegra/pmc.c
->   *
->   * Copyright (c) 2010 Google, Inc
-> - * Copyright (c) 2018-2022, NVIDIA CORPORATION. All rights reserved.
-> + * Copyright (c) 2018-2023, NVIDIA CORPORATION. All rights reserved.
->   *
->   * Author:
->   *	Colin Cross <ccross@google.com>
-> @@ -177,6 +177,7 @@
->  /* Tegra186 and later */
->  #define WAKE_AOWAKE_CNTRL(x) (0x000 + ((x) << 2))
->  #define WAKE_AOWAKE_CNTRL_LEVEL (1 << 3)
-> +#define WAKE_AOWAKE_CNTRL_SR_CAPTURE_EN (1 << 1)
->  #define WAKE_AOWAKE_MASK_W(x) (0x180 + ((x) << 2))
->  #define WAKE_AOWAKE_MASK_R(x) (0x300 + ((x) << 2))
->  #define WAKE_AOWAKE_STATUS_W(x) (0x30c + ((x) << 2))
-> @@ -191,6 +192,8 @@
->  #define WAKE_AOWAKE_CTRL 0x4f4
->  #define  WAKE_AOWAKE_CTRL_INTR_POLARITY BIT(0)
->  
-> +#define SW_WAKE_ID		83 /* wake83 */
-> +
->  /* for secure PMC */
->  #define TEGRA_SMC_PMC		0xc2fffe00
->  #define  TEGRA_SMC_PMC_READ	0xaa
-> @@ -355,6 +358,7 @@ struct tegra_pmc_soc {
->  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
->  				   struct device_node *np,
->  				   bool invert);
-> +	void (*set_wake_filters)(struct tegra_pmc *pmc);
->  	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
->  	int (*irq_set_type)(struct irq_data *data, unsigned int type);
->  	int (*powergate_set)(struct tegra_pmc *pmc, unsigned int id,
-> @@ -2416,6 +2420,17 @@ static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
->  	return 0;
->  }
->  
-> +static void tegra186_pmc_set_wake_filters(struct tegra_pmc *pmc)
-> +{
-> +	u32 value;
-> +
-> +	/* SW Wake (wake83) needs SR_CAPTURE filter to be enabled */
-> +	value = readl(pmc->wake + WAKE_AOWAKE_CNTRL(SW_WAKE_ID));
-> +	value |= WAKE_AOWAKE_CNTRL_SR_CAPTURE_EN;
-> +	writel(value, pmc->wake + WAKE_AOWAKE_CNTRL(SW_WAKE_ID));
-> +	dev_dbg(pmc->dev, "WAKE_AOWAKE_CNTRL_83 = 0x%x\n", value);
-> +}
+> By changing the remove callback to return void driver authors cannot
+> reasonably assume any more that there is some kind of cleanup later.
+> 
+> As all drivers already return 0 in their .remove callback, they can be
+> converted trivially.
+> 
 
-To me this needs to be moved to the SPE driver, which should get the PMC
-regmap handle and enable wake only when needed, similarly how it's done
-by USB Tegra drivers that also need to configure PMC. Otherwise this
-looks like a hack/workaround.
+I'd make a single patch per subsystem for trivial changes, but I don't
+mind having them split per driver either:
 
--- 
-Best regards,
-Dmitry
-
+Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
