@@ -2,83 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7962C77B60
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 12:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AB7C76196
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 12:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232116AbjDCMfA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 08:35:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58528 "EHLO
+        id S230175AbjDCMgg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 08:36:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232139AbjDCMe6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 08:34:58 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FFBE44A6
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Apr 2023 05:34:57 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id b20so116722260edd.1
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Apr 2023 05:34:57 -0700 (PDT)
+        with ESMTP id S231634AbjDCMgf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 08:36:35 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FF583;
+        Mon,  3 Apr 2023 05:36:34 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id r11so116734069edd.5;
+        Mon, 03 Apr 2023 05:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680525296;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1680525393;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BRz0z+JkOW+ffsm9FTlOV9QzqEs4yOWOrNFHA5kxiYA=;
-        b=SGMEdgLuzCGG50lGUoc64MUIDsJ1p4EHfysj5F26/SLYsYNbhvMY7oqoq4k0GHc1hc
-         FJA+TKUdYVNHy1Zuzt0mxzYmzBmqbPIuSQN7REVduPLEJopYeSrmf4rg1lM6pavZ/ffZ
-         ckoOAOWSeS84gbAqKdOtVV5/K35gXN6UmyrMA/7oMVJVOEby6MMEeD9cIkmmY7nE6gLY
-         983m9Xq5Sa1qtK3XbW+RBmcbovdSxsTWB6Z//35zitsYiaQv8i67LEIcViwA80Jlm+iZ
-         4SAtVDYFPyOL0LNGRkxEz236sJ2WgnLxHLji4R8k+ptCcqG+yygaCrLFqRq1MSl3NmhD
-         nQ2Q==
+        bh=mI8z72ys9h7213jm8p1zrgDacfSUNl6g9XbEXB4wrlI=;
+        b=MQjLEdhjuKT+lGjIRKmxaKu4KuHKHlBGeP2wARXS+CrWlTYiICeROVrOrOCOx1G/ef
+         Lt4t89Fj3AS7bdi7Y578v4/h0nspKd44HpbMCfJCdbFzr9jgnGotrVjOl5fJcUuia2qz
+         9QqSRtVxtg32GWWjuUVlPBiJCT9M4q8ml6wgkPzffn6sF+Qiu73APmLsP5c7uIS03kib
+         qdoeCr8kZwWRsv0kclOj5GcnzA8HboHxI6AIGefOFaKFWSMjK+pbrsvDg2/EhTX9sS6C
+         HqCN0BAyCp5rlaIF6+fmjNr5LonAk0d6owaUOfnHUpDEC8ev+wHzkV5ZkPpHFjwsga1X
+         4Ngg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680525296;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1680525393;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BRz0z+JkOW+ffsm9FTlOV9QzqEs4yOWOrNFHA5kxiYA=;
-        b=gnPLe8qJ95GlBKiGB5EiBxjBDF55z5Eq87gHC0lVmPGmks4ZU0Ns9adWZ22sI6uWgi
-         d6cn3i1oSrX7dkUamXHUg8/wFucpbYkDntuCznj4qWp75mRwe3tf7MFeZFHpIX9zVL6l
-         ouKwLJlM0ioMdaYee65dO4HTFoaGMq5cyxC7RGwIj9Mw6TMAAElyFuqYxX49xEazLWwP
-         nGNMiBkYQTXGF95HWgyv8AFL3e5CAE1MjdtDBwI7a5c+aohtGunfejEuZuAmuAG8rl3w
-         hXOGBuY1C+taLuv3QwKhJyab+mfFGn2mMXa4V+5K3JwM+zghlHPgY9AoTdk9FWW7qde/
-         Gc9Q==
-X-Gm-Message-State: AAQBX9cEdvsG30eAqPt23XIl+ebdaBzrBHohBHT/H7CR2wbHjYODkX1X
-        BlQQYJAgiq9ecd+/FJJ3hvB2TtiTsbs=
-X-Google-Smtp-Source: AKy350avKcUKuj7EQWXg9YCfZ0wTN1n6S1fyrLOcaJcViepPNUUg5CXWjlUCv1J9kFiysR9vLTa2sw==
-X-Received: by 2002:a17:906:7214:b0:905:a46b:a725 with SMTP id m20-20020a170906721400b00905a46ba725mr16359724ejk.16.1680525295831;
-        Mon, 03 Apr 2023 05:34:55 -0700 (PDT)
-Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id u25-20020a170906109900b008e22978b98bsm4506797eju.61.2023.04.03.05.34.55
+        bh=mI8z72ys9h7213jm8p1zrgDacfSUNl6g9XbEXB4wrlI=;
+        b=3Rj41Ds5YSXFbkLW7nQ0ThZteOA1ysqdlKgKXtODkKB+ISlxQDbQR+5sLNF/g5rpWF
+         bP1oJnh2gpRoXSl1cJq1yq4njKQbb2BjABa+H4aUfE5GXTaVW1Wbz80DLcA+7Nmvp5jc
+         LL544S0e4a7RMiKP6XQY767ELkMw+AZkf5E6M7HwqLQuwkiRUNAz7bC3uW9mlAI+bi+Y
+         NPcKDTG0Sg3BetXS9rb/moZ2GZwpIdukJZ5rgA8jb+i+qhsNJtyrzELSpwVQ5p3s+BLO
+         Md37ICrZKr5FaPmcOJ37ApdKJ4XiG+ZQ3uH3tHt6P3UQTXzXzmXMwEyBJgb4/+RjT9+Q
+         Tuiw==
+X-Gm-Message-State: AAQBX9cExaG4W80+ZCLMzcHxSL7B61O9ce295F0uqmgF3n7a08IIvvx7
+        2WQFCH4KdGqSIQo+7qCss5jCh9IjWNw=
+X-Google-Smtp-Source: AKy350aNaCdCQMP8OiC6dLC+L3XK5X8QMbP0o414svnCma1txj1E/+7yKLhsCmY5hXu60n5rTyzYbw==
+X-Received: by 2002:a17:906:cf89:b0:87b:d3f3:dcf3 with SMTP id um9-20020a170906cf8900b0087bd3f3dcf3mr35421385ejb.35.1680525392919;
+        Mon, 03 Apr 2023 05:36:32 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id bt23-20020a170906b15700b009477a173744sm4496269ejb.38.2023.04.03.05.36.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 05:34:55 -0700 (PDT)
+        Mon, 03 Apr 2023 05:36:32 -0700 (PDT)
+Date:   Mon, 3 Apr 2023 14:36:30 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: pmc: Add the PMIC wake event for Tegra234
-Date:   Mon,  3 Apr 2023 14:34:51 +0200
-Message-Id: <168052526462.1061641.12340186102533226512.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230306150900.123616-1-jonathanh@nvidia.com>
-References: <20230306150900.123616-1-jonathanh@nvidia.com>
+To:     Petlozu Pravareshwar <petlozup@nvidia.com>
+Cc:     jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        dmitry.osipenko@collabora.com, ulf.hansson@linaro.org,
+        kkartik@nvidia.com, cai.huoqing@linux.dev, spatra@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Viswanath L <viswanathl@nvidia.com>
+Subject: Re: [PATCH v2] soc/tegra: pmc: Support software wake-up for SPE
+Message-ID: <ZCrITl9ZSPsawOpm@orome>
+References: <20230330170621.258068-1-petlozup@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="H4q6Deodu/0Ekunc"
+Content-Disposition: inline
+In-Reply-To: <20230330170621.258068-1-petlozup@nvidia.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-On Mon, 6 Mar 2023 15:09:00 +0000, Jon Hunter wrote:
-> Add the PMIC wake event for Tegra234 that is used to bring the device
-> out of system suspend for events such as an RTC alarm.
-> 
-> 
+--H4q6Deodu/0Ekunc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Thu, Mar 30, 2023 at 05:06:21PM +0000, Petlozu Pravareshwar wrote:
+> The Sensor Processing Engine(SPE) can trigger a software wake-up of
+> the device. To support this wake-up for the SPE, set SR_CAPTURE_EN
+> bit in WAKE_AOWAKE_CNTRL register associated with the wake-up for
+> the SPE. This SR capturing logic is expected to be enabled for wakes
+> with short pulse signalling requirements.
+>=20
+> Signed-off-by: Viswanath L <viswanathl@nvidia.com>
+> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> ---
+> v1->v2:
+> * Rebase the change on latest code.
+> ---
+>  drivers/soc/tegra/pmc.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
 
-[1/1] soc/tegra: pmc: Add the PMIC wake event for Tegra234
-      commit: 161e0f78b396823e8596ae5e709d93acd914dad3
+Applied, thanks.
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Thierry
+
+--H4q6Deodu/0Ekunc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQqyE4ACgkQ3SOs138+
+s6E7hg//YszA7cR4dHtbCofh/mlp2CATRSom55hnsqEZUN/LSwswlD24/hIbkrEH
+kqoIkwpYoT5Nb+qIMxVa8jQOnTz/0Wfw3kTm2ofGXesuBddcY08fgCM1FPUhNXfM
+jAkzpK8C01r5+dA3TQdJNOyO3Cy/AujB308zlM/RsIqOZaArkaQaW0/X/IxFWV5l
+lkTewoj0ixETW5s0FRKMn4dYupyLYAc6Emjc5xu6rJ2dLxgujrwaZCVVdlBOqvzC
+lvMf+cgNwlJaFlGD/lR93gBE76EJs7vqMLummebvCZ5dfzhyeRtqIoPHswF52al7
+we7aT+0VdPcEIwRjCroqeUIiklScACnABYtBjvcknIbLhhvM5WkyQOCtN8DbfqkD
+2GG4n33K0xoCo/ugXOXzlONx08UMswM4tZr9DpnQxoDI1m6GS/okfA9ZZX9kwmFs
+THe8BmXapxRrA4zfNHDRtJtbokse0ImQzM3mOWFXsk0PRwF10Daxcym4ubynuABD
+QvBJHtbDtxZmnyi+z8OlmyEkpO9I9e3JyDM5gmqF0+UFOxJk43oZuyeKJozKXPLv
+5rpjtgH00FEtYEIbTXpjGJg7L7hxWCIMReZfrDckB5GCQiQuA1hW02P740S0K+aS
+/HnWBYSD125NqdJRz2CMWe2jEJqAEfw+2O4DBbEFNACi3bPPkr4=
+=89E5
+-----END PGP SIGNATURE-----
+
+--H4q6Deodu/0Ekunc--
