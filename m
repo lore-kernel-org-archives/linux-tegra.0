@@ -2,139 +2,175 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C83C77B60
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 10:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D56C76196
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 10:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232312AbjDCKTy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 06:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37390 "EHLO
+        id S232118AbjDCKXE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 06:23:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231961AbjDCKTT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 06:19:19 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10B2112BF3;
-        Mon,  3 Apr 2023 03:19:07 -0700 (PDT)
-Received: from [192.168.2.163] (109-252-124-32.nat.spd-mgts.ru [109.252.124.32])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7E3D56601F5E;
-        Mon,  3 Apr 2023 11:19:04 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680517146;
-        bh=oUsrnUvVWFNCO2I8SuCXiTW/AVZU2rkXoBafHs5oU3Y=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=lULd60iyGYARm3PqzyHmdn7asLZYd2d8dPWIEjvXyMF07YzyTnsdvZi2dYUGyyKAu
-         hmW8XBPJQ6/iNKJHewWO+8Ak6W2rS3OU/OVGVuet7EP1bZyS1GNzWJz8c1D/Ip+QLK
-         LN/UrIG7gufbNIC48TTRIRA99cicPtqUQT7ij8l6h/yE2i1Jt468aGCYN6B6ZSPq6V
-         NB0nVByIN7hCp3ntdWTkFDGH9uP7rozub9VgUCThwJg6vLpuPNZpnl+83FFlS5pOuL
-         5iEzz4yl/t408u97uSNIW7ZmNXhyVTF0D6zS6/I4Rov2Y+ceq8S1Pn9+WjLchRvvIg
-         nb8/Tklw6SA6A==
-Message-ID: <80cdf100-ef3c-23ae-5adf-bcf97fa85e72@collabora.com>
-Date:   Mon, 3 Apr 2023 13:19:01 +0300
-MIME-Version: 1.0
+        with ESMTP id S231448AbjDCKXD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 06:23:03 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D55B01981;
+        Mon,  3 Apr 2023 03:23:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JciQhlUbqGmPYwk0iCt2hEaluxvYHbSrp0HbKuVzco+YC7wVjslHfx/W6djGnan0BevCUEHUFGawakC+Rd7dwNbhggS2/dDhzhJUkKuaqIG7AY61poTc2hWwn+jivdz/yJHB9FTk/ooQ0M3mYEXHWqK8h8dO4155/WSpkzk4I0uFj51kCXMeb8HHUPN5Rk430yCSIfSy+NPe4wDvtn8W8IcgiPiLTtcz6eklaPyABfeiwNsW/SomhCeySK0UmF9fIK+NZOdd8NOvsYgHmGb5e0v8LetClvHYakO6PUdK8yk8MzYnDGtm5Okygf02KKYQJW5mnQ3y2mWu0ugkePDRyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M1m5tPGc+ZXh1fYpWlABbyr2vbKVIkNc407RfMRTwKI=;
+ b=oR1+7lm0B7QZeKXkpuPBjDaQClF/eCO+OyUBmq0HiUARchLT1Ya+90zXafK3m8iWwHLzFa4EGIcQqcBGQcF27TlD5RAK6pBXQ4lFcrSKdFKfovp5PQYJTUO9Ve+BiVvgKwAIZl9HAa6+j+PVWnoa40uHYym1K1EM9Yk8i3DzuvsauVeIAiAfnJu5q/guNURappz+PR0iYalvIpYUEGQOvn3zSZ0CR6VV3eUc8uYmAPhvsqQunJwNFZLhxLo0VhLF3+6r0S9NwojcI+aFf4kz+pIxKLnowIgKunzKjWugMyiDkT/dbjeXLfIYdpnoo2un+HPeZLSfNl390swJlFJF8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M1m5tPGc+ZXh1fYpWlABbyr2vbKVIkNc407RfMRTwKI=;
+ b=rCatHO1YRzRIFwXDA2OV3qvufRYqhL8mHZXYJcWwP75Z/nGGZYHUx91wBha7eAyyG7VTmIfsgZEzxkiBuTFXs0mOzBGvp2o8zdBXiEeKF17xgR5fS517uUKkDSshUCxhc+OBOk/L/9KwcZIkQR8LD6OjVu1RL+TPa+eh//TUq8D4cXaDt1yZleqrRfOuZhpvECff93Ncd+FJ3z2IzbOGmIg9ymtIBIaV8LKqNWXuDF7qg/9juC/q9eAog3mb36zHNv5Bj5xaTdbm8pxWMKNfDzFwZaAl4vzuPCmTwjnmIRbys0AYmcchRiJJMW+9AZ7CLMey8eQvCbpI8tfH5ubrrg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY8PR12MB7585.namprd12.prod.outlook.com (2603:10b6:930:98::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6254.33; Mon, 3 Apr 2023 10:22:59 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5dbf:5052:da60:647c]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::5dbf:5052:da60:647c%4]) with mapi id 15.20.6254.030; Mon, 3 Apr 2023
+ 10:22:59 +0000
+Message-ID: <d7435a96-3480-280e-d996-73fea690c373@nvidia.com>
+Date:   Mon, 3 Apr 2023 11:22:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH v1 0/7] Move dma-buf mmap() reservation locking down to
- exporters
+Subject: Re: [PATCH] thermal: tegra-bpmp: Check if BPMP supports trip points
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20221129153914.2699041-1-cyndis@kapsi.fi>
+ <Y9KTrO+WqJJwuEDf@orome> <a08355e1-c393-2b2e-4a44-360e08607bb9@linaro.org>
+ <Y9KfcSwYt7utbcg5@orome> <e716eda4-edfc-5946-4e6f-42aab5f73b0f@linaro.org>
 Content-Language: en-US
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        kernel@collabora.com
-References: <20230402164826.752842-1-dmitry.osipenko@collabora.com>
-In-Reply-To: <20230402164826.752842-1-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <e716eda4-edfc-5946-4e6f-42aab5f73b0f@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0221.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::10) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CY8PR12MB7585:EE_
+X-MS-Office365-Filtering-Correlation-Id: baa0caaf-a5df-474d-d3a5-08db342d65ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0BeTpmoamrFUwOLv956k2VUxhefPG7TQTQWwCPTexvBo+uVKR9co9eWKtsjwL3IFtc3DUUCemTTS+6wTYSVFWr4lCY0/ih6DGR3e1+0f2Hgu52RIDI596qH1Nh54T941LF640xkMYLm+62/ZQQXaGRaMDuETGFviSS4IFlcu7xMGLhXNFG449U96tMpB1FuJqXBigl1UiMY/F+ajxupycEYZaVi5zboGS0wgGXhAZNFlSA2nHd4AfhrhUElA/laDGQdaD48yEtSun02eE84UWE1HMig86lrMlF1D89B/EleB7BD8dLymss3EhQzDZy2TH0nxxJrRHnqrblqBfH4+J2utQ1NsIbmK+Aa5RS4+N3eG3hbrvgK2r0h9wq83aPte4EJ1fjho6jgH9EqESyjXLVxYLo+ewyL/aBE5y8uRot/zgl87f2r4obiZC7X0H31XgAN8u4LhPw+2bA5pE0CtTP02AGx9IKc2GcYQt1JHF5Hid9w30fh6XnqV8yiW1HxnJ+gJtRNMPx05bGQpupU4GICFVA25ZAFnH/rQlH4l6urA7j8fdeeCH9hx56kAHcCHUXT5LkR24G+C4SyUKJXit6pZnfkOdNkKbS8uvUH1WZ7GfXY+wEgDYur4d07cmxkZFHAZr5mlDApRSOIiySeR9Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(376002)(39860400002)(366004)(396003)(451199021)(31686004)(2906002)(86362001)(5660300002)(8936002)(41300700001)(66556008)(66476007)(66946007)(8676002)(110136005)(4326008)(36756003)(6666004)(316002)(54906003)(478600001)(6486002)(26005)(6506007)(6512007)(53546011)(55236004)(186003)(83380400001)(2616005)(31696002)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SEpNc3FEZUVPenFSS3Zkcncvb1h3eHRmUzRzbzdVQ1hRbkF4ZjR6MmNpZDlX?=
+ =?utf-8?B?enVmQnlsd2hTZC9xNk5mdXBmRXRSS3ZTMUsrRFVhYzBFUC9GLzBrc2ZvYUtM?=
+ =?utf-8?B?QmRhOGhmQ3BERG5rRXJZL2ZkRk56UVdyWGhBd2dkRXN2dEE0RXpQNGRQTVVx?=
+ =?utf-8?B?NVdhR1A1VzFmTDl0ZlI0VVF3VXVKWE5JNkM2QVR3UHExSUJHSGZCN2dkVnBu?=
+ =?utf-8?B?aWFRS1lMMnAyZ0FvclJKTDQ0Qm1wSzgzRjA2Ky9pdllkM2hHakMzWGQ3aE1S?=
+ =?utf-8?B?UktZamswYVNNRFRVWUhNZnYxQzk0dGpPNWg3aXEvWWUrU08yM0pzdWRRdk1n?=
+ =?utf-8?B?NTFUK1FIaVZybC8xWUpjVjhxNGtkWnlxd2JXS2piRTR4ejNnVC9KaUJaR3B6?=
+ =?utf-8?B?RmRpRWo1S3ZWYitEM2h5UTh1OEtzOURiNGg2VXRTUFdlK0Rsc3V4WmVRZDdv?=
+ =?utf-8?B?Q0Y0MkE3anVmak9yMEVBT0lYTmRvZmtFWXQwbzFvcmhIZ0k0OFVwTTlWWHlS?=
+ =?utf-8?B?VnVPNURyUGlPK2UxTUJYcWhPM2QxQjF1amtLOUV4Ri9qOHRFelNOUGpCU0NV?=
+ =?utf-8?B?aDR4VzNzaDkrcWpIcnloTjFuY0xpcDhRWEZpblhjeVl0UW9GQ3JvM3JvWDVC?=
+ =?utf-8?B?QXdsSGN2aU0yYzdUSFpBdk1HQ3NvNldRbW9FdTlBOGViNHlqcTlrTmViS1dQ?=
+ =?utf-8?B?NFpiMUlUZlRvYzdZUnROL3I0WGRQbVQrUnZaTVBySHJnbGF0ZEY5QVQwK2Jv?=
+ =?utf-8?B?MFBML0IxSks5TWNxazlHWldPdDV5Rk81dWJobTJLekR1aFltWEVWUWdoYmJx?=
+ =?utf-8?B?am9RVFp3RGZzSkZDT0VUMkY3UVBwQUR0ZW5RY3dzemRCa2ZETEVkcUZNZlVt?=
+ =?utf-8?B?K1RuYlpHZDBXd2NHMTNreHExSHUvUUpzbmI0TnpNMUp2dDRmTUFSQTZDQmVG?=
+ =?utf-8?B?ZWxpZVIxYnJFdlFOdDh5ZEpNSVNRb3liZU1pVmh6MkkxY1lZaENrL0ZMMnI3?=
+ =?utf-8?B?OWRySWdFQnljdFR4aWlxVW42R2RvMlpaSTlTTEhJV3ExbXQzaUJ4Q3lkOGht?=
+ =?utf-8?B?NDVzRnhMQXc3c1E3YlBZQ3A0TGhLQUdNdm4rMzh2djY4K0d4QmxrR0F1SG5v?=
+ =?utf-8?B?SmRvNkhmRGErZHFsQVNHWkVvMDlzZjVVNCtqWHZ2TTM2V1NscVpZWlo0Smw5?=
+ =?utf-8?B?RkVucmtwK29ld3FZQXJzVjBSVDhLdWlCN1dyOGY1bzdES2JhWnNEdlQyZW9D?=
+ =?utf-8?B?ZUFYVXBSQ1phclhnTzhYOHFma3U0WE1NQTdyN2xyUzdtT1Z0RUZ5T05Oc09s?=
+ =?utf-8?B?c0lBUGhEZkwvbnUwUk1UWUFYcWs2bG5yNVJCMWNCem9ZSmR6L1FkWVpXYXNu?=
+ =?utf-8?B?SUpuOTBhcTNjbkxORGJneFgwL1ZrUGNycjROaFRHWU5GeEJlTUxFN0VzbklD?=
+ =?utf-8?B?aHFNTnlPQ0FYOHAyN1J3OFQ2S3FOWjJPQkhrdGxkbHR5Z1pXRkc0SytlVUMv?=
+ =?utf-8?B?TlVJajgvY3VYTWIwWkJLL29EUmF0NExlak9NUk1Kc2FsblFjMm9NdldYaGhj?=
+ =?utf-8?B?MWdxOFJFclJKYzQ0ZmUrc1laVis1NXdZcyswMnR2RmxpS0UvUjE0aWhmTVJJ?=
+ =?utf-8?B?aGpFWnp4QWpJMXk2MUUzUkpybXJmMTk1Y0Fxd2x3SFdlRUI3RXZMTW9kZENO?=
+ =?utf-8?B?NDVuWjRZemtwTWkwLytEQ2ZGYjdUbTQycEFYRUlHSGl3Z29RbGlLUHRKTStQ?=
+ =?utf-8?B?djlaL2dUR0FQbDd3ZU5lS2twN04xTkdwN2J6dWMvM1JMZzdjditycWphbHlZ?=
+ =?utf-8?B?WTMzRDc0YVhha2hpUC84aXlzcWFCQXA5K3hTTFBiYW1jbWdFclNVbUY3dks2?=
+ =?utf-8?B?K3F5THVsbDZPZTlyeGprQ1Q2c25Ed1BGeDJwWm9TVmRjQTJGRzdJZTZwZkpp?=
+ =?utf-8?B?cWJkbnpWZm96aU55VUFkWFJtdC9sN2Yrc1BSWlhMcXNPTmNXTVg1UXEwUkND?=
+ =?utf-8?B?c0xyUGQ1N2xWbUNYNFNYdFBqcUw3UG9CZDFZWnpLTjBVWXBpZ3BCUFJuVWF1?=
+ =?utf-8?B?NUpCejd4akM0alplRUFVZEYwYzRMTm5HNkZpZVhCN2YyeXVZSzVRUlBjNm1P?=
+ =?utf-8?Q?hJ692mEY9fhnzfgaeUWxCLRi3?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: baa0caaf-a5df-474d-d3a5-08db342d65ab
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2023 10:22:59.0095
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sRHvkYsariyI8SVGbRGLqOSwJoI/OHwhqe54v0LPSOj/9gVfCVuRmM5UR7Hy3NPVltOYo5K550YlndvdcMVQcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7585
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/2/23 19:48, Dmitry Osipenko wrote:
-> This patchset makes dma-buf exporters responisble for taking care of
-> the reservation lock. I also included patch that moves drm-shmem to use
-> reservation lock, to let CI test the whole set. I'm going to take all
-> the patches via the drm-misc tree, please give an ack.
-> 
-> Previous policy stated that dma-buf core takes the lock around mmap()
-> callback. Which meant that both importers and exporters shouldn't touch
-> the reservation lock in the mmap() code path. This worked well until
-> Intel-CI found a deadlock problem in a case of self-imported dma-buf [1].
-> 
-> The problem happens when userpace mmaps a self-imported dma-buf, i.e.
-> mmaps the dma-buf FD. DRM core treats self-imported dma-bufs as own GEMs
-> [2]. There is no way to differentiate a prime GEM from a normal GEM for
-> drm-shmem in drm_gem_shmem_mmap(), which resulted in a deadlock problem
-> for drm-shmem mmap() code path once it's switched to use reservation lock.
-> 
-> It was difficult to fix the drm-shmem problem without adjusting dma-buf
-> locking policy. In parctice not much changed from importers perspective
-> because previosly dma-buf was taking the lock in between of importers
-> and exporters. Now this lock is shifted down to exporters.
-> 
-> [1] https://intel-gfx-ci.01.org/tree/drm-tip/Patchwork_114671v2/shard-snb5/igt@prime_vgem@sync@rcs0.html
-> [2] https://elixir.bootlin.com/linux/v6.3-rc4/source/drivers/gpu/drm/drm_prime.c#L924
-> 
-> Dmitry Osipenko (7):
->   Revert "media: videobuf2: Assert held reservation lock for dma-buf
->     mmapping"
->   Revert "dma-buf/heaps: Assert held reservation lock for dma-buf
->     mmapping"
->   Revert "udmabuf: Assert held reservation lock for dma-buf mmapping"
->   Revert "fastrpc: Assert held reservation lock for dma-buf mmapping"
->   Revert "drm: Assert held reservation lock for dma-buf mmapping"
->   dma-buf: Change locking policy for mmap()
->   drm/shmem-helper: Switch to reservation lock
-> 
->  drivers/dma-buf/dma-buf.c                     |  17 +-
->  drivers/dma-buf/heaps/cma_heap.c              |   3 -
->  drivers/dma-buf/heaps/system_heap.c           |   3 -
->  drivers/dma-buf/udmabuf.c                     |   2 -
->  drivers/gpu/drm/drm_gem_shmem_helper.c        | 217 ++++++++----------
->  drivers/gpu/drm/drm_prime.c                   |   2 -
->  drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c    |   2 -
->  drivers/gpu/drm/lima/lima_gem.c               |   8 +-
->  drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c     |   2 -
->  drivers/gpu/drm/panfrost/panfrost_drv.c       |   7 +-
->  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |   6 +-
->  drivers/gpu/drm/panfrost/panfrost_mmu.c       |  19 +-
->  drivers/gpu/drm/tegra/gem.c                   |   2 -
->  .../common/videobuf2/videobuf2-dma-contig.c   |   3 -
->  .../media/common/videobuf2/videobuf2-dma-sg.c |   3 -
->  .../common/videobuf2/videobuf2-vmalloc.c      |   3 -
->  drivers/misc/fastrpc.c                        |   3 -
->  include/drm/drm_gem_shmem_helper.h            |  14 +-
->  18 files changed, 123 insertions(+), 193 deletions(-)
-> 
+Hi Daniel,
 
-Intel's IGT passed[1] (see Tests section) with the new locking policy,
-which failed previously for the "drm/shmem-helper: Switch to reservation
-lock" patch.
+On 26/01/2023 16:07, Daniel Lezcano wrote:
+> On 26/01/2023 16:42, Thierry Reding wrote:
+>> On Thu, Jan 26, 2023 at 04:08:03PM +0100, Daniel Lezcano wrote:
+>>>
+>>> Hi Thierry,
+>>>
+>>> On 26/01/2023 15:52, Thierry Reding wrote:
+>>>> On Tue, Nov 29, 2022 at 05:39:14PM +0200, Mikko Perttunen wrote:
+>>>>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>>>>>
+>>>>> Check if BPMP supports thermal trip points, and if not,
+>>>>> do not expose the .set_trips callback to the thermal core
+>>>>> framework. This can happen in virtualized environments
+>>>>> where asynchronous communication with VM BPMP drivers is not
+>>>>> available.
+>>>>>
+>>>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>>>>> ---
+>>>>>    drivers/thermal/tegra/tegra-bpmp-thermal.c | 52 
+>>>>> +++++++++++++++++++++-
+>>>>>    1 file changed, 51 insertions(+), 1 deletion(-)
+>>>>
+>>>> Applied, thanks.
+>>>
+>>> I prefer you provide an Acked-by and I take the thermal related patches.
+>>> Especially in this period where we are reworking the framework with the
+>>> thermal trip points ;)
+>>
+>> Sorry, my bad. I misread this as belonging to drivers/firmware/tegra
+>> which goes in via ARM SoC.
+> 
+> No worries ;)
+> 
+>> I'll drop this from the Tegra tree. Feel free
+>> to pick this up:
+> 
+> Ok, thanks
+> 
+>> Acked-by: Thierry Reding <treding@nvidia.com>
 
-[1] https://patchwork.freedesktop.org/series/116000/
+
+I don't see this one in -next. Are you able to pick this one up now?
+
+Thanks!
+Jon
 
 -- 
-Best regards,
-Dmitry
-
+nvpublic
