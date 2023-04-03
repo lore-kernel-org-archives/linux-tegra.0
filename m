@@ -2,141 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9B5C76196
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 10:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAAAC76196
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 12:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231998AbjDCKmq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 06:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59560 "EHLO
+        id S231821AbjDCMe7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 08:34:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232011AbjDCKm2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 06:42:28 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C99D21B36A
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Apr 2023 03:42:08 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9910A21B66;
-        Mon,  3 Apr 2023 10:42:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1680518526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fEc7S2hK90KviV06JbTXa9QIARshJripW9VtwndNc3U=;
-        b=Y/sUZJ64xMRZgX0AcevlbmrzfK8u7yOxta8o16W1o7Oa/fGGy5KvbiY8qT+9pABpvYaELE
-        m0ydiXWCeNmbycm2Z0tj2/2/FPgJ+WU7Tc9bTH0SCx72mOM5pN8JIbeBM1owznehZtLzhN
-        8lEL3yLvL6zfB9YFJ0cQEnRP5/xXeOI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1680518526;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fEc7S2hK90KviV06JbTXa9QIARshJripW9VtwndNc3U=;
-        b=DwHPWJ+RkaKOmBRra8uV5hQZ0amjk4ZhRym1rbYv2p2oEznjsC9SoiOStbzXOrG1SECGT+
-        USb9/vEfZbRKn5DQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 69EAA1331A;
-        Mon,  3 Apr 2023 10:42:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id r9viGH6tKmTvDgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 03 Apr 2023 10:42:06 +0000
-Message-ID: <ffb0005d-d871-1317-8b16-d6fe3771a35e@suse.de>
-Date:   Mon, 3 Apr 2023 12:42:05 +0200
+        with ESMTP id S232138AbjDCMe5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 08:34:57 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91641A7;
+        Mon,  3 Apr 2023 05:34:56 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id cn12so116741406edb.4;
+        Mon, 03 Apr 2023 05:34:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680525295;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DtVxUa5GbvQbInbpWYGe+NpGQEqqfRWgDia/3ptEFZ8=;
+        b=Qy8xeLJ6dpwfZhNZ1gU/VF/ba1JTXpwUzL1OWA2ckScUKRoLUpm2BPvChv3nBU6X8W
+         YXlBNjs+PC0i57Xzi54EifATk/md192XF72vPr5V+dQqFkLuZLtQFN+6vStMKglY/Jcq
+         5U1AeM1IWZFF9Gc87MqANj7/85iwYLWP+GJUnKMlnAZnzEvq8ReodTKdzVHQfLb3LrZM
+         t1SBd6n3iRaWfPlkz8TNSiLgXguQzKi0DGp5LnY1dXoZGHdPBlY4WCn0c9Cz2kqLohvb
+         u56wj6zpVuTusmt8NyoJGen/WjYf+6Vn+c3YT0wRFKkWM0YYsmtKtW2geNiFZPXau2LH
+         /Akw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680525295;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DtVxUa5GbvQbInbpWYGe+NpGQEqqfRWgDia/3ptEFZ8=;
+        b=XJVN9JMqve9/vwh8/yCfJ1DVUOSeQGMeE5PcUurh0/+IoGUJGYjEHbNMiJmKkXMnhD
+         omj+lghmQ9mssd30VdIJWsmGd8HlBDXR+3f9e/yrx3UTMtoQG2MsN5klDEnp9j5HCbAR
+         WzASGVExJRls8SUxjfQyGqjU8DK99b4V2hs2/rA525AZaCaFygIQzc36NLupQ9J8AQ+X
+         q0Q03p6jw7CbucupJgFy6Pd4OOmNe4OMSjkdBBi8p7kOyune+vuQAKi5NV6bzP7JJ5kp
+         McHWtK26qEXlsLHCibtN5pQ10G7sdXB81NoNVaeXnmgjCQcRn/7t1q4z8uYoo3p1WRAW
+         y8cQ==
+X-Gm-Message-State: AAQBX9doS6Gx5507ii8F1CHYXx1pA4za5gSYfeLjOQVHimYz7DeiceQZ
+        3XF7+wR6xkJbKLvC9mQSMXgyIT3FZ30=
+X-Google-Smtp-Source: AKy350byu/0moN89r2ygiunpwT2gKrbSfNKb4c47wGp4CAzddKiOCZ+04YAnb2pvDfNPzGKSEc761g==
+X-Received: by 2002:a17:906:9f1a:b0:947:405a:955f with SMTP id fy26-20020a1709069f1a00b00947405a955fmr13323561ejc.31.1680525294714;
+        Mon, 03 Apr 2023 05:34:54 -0700 (PDT)
+Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id kd24-20020a17090798d800b00933d64cd447sm4480927ejc.121.2023.04.03.05.34.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 05:34:54 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] firmware: tegra: bpmp: Fix error paths in debugfs
+Date:   Mon,  3 Apr 2023 14:34:50 +0200
+Message-Id: <168052526462.1061641.10119003958456223259.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230301134756.999169-1-cyndis@kapsi.fi>
+References: <20230301134756.999169-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [1/7] drm/tegra: Include <linux/of.h>
-Content-Language: en-US
-To:     Sui Jingfeng <15330273260@189.cn>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, javierm@redhat.com, airlied@gmail.com,
-        daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20230330083607.12834-2-tzimmermann@suse.de>
- <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------Cs1b5Oxi17jpsFR0JX2Go0sw"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------Cs1b5Oxi17jpsFR0JX2Go0sw
-Content-Type: multipart/mixed; boundary="------------DbZpzGf8mG6QyD2xs4dpV5PN";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Sui Jingfeng <15330273260@189.cn>, thierry.reding@gmail.com,
- jonathanh@nvidia.com, javierm@redhat.com, airlied@gmail.com, daniel@ffwll.ch
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
-Message-ID: <ffb0005d-d871-1317-8b16-d6fe3771a35e@suse.de>
-Subject: Re: [1/7] drm/tegra: Include <linux/of.h>
-References: <20230330083607.12834-2-tzimmermann@suse.de>
- <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
-In-Reply-To: <14d8245f-d3ab-64a1-7cc0-52ec77dcd13f@189.cn>
+From: Thierry Reding <treding@nvidia.com>
 
---------------DbZpzGf8mG6QyD2xs4dpV5PN
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+On Wed, 1 Mar 2023 15:47:55 +0200, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Some error paths in mrq_debug_read and bpmp_debug_show would overwrite
+> the return error code with a subsequent call to mrq_debug_close.
+> 
+> Change the code to only change the error code if there was no prior
+> error.
+> 
+> [...]
 
-DQoNCkFtIDMwLjAzLjIzIHVtIDE0OjUxIHNjaHJpZWIgU3VpIEppbmdmZW5nOg0KPiANCj4g
-UmV2aWV3ZWQtYnk6IFN1aSBKaW5nZmVuZyA8c3VpamluZ2ZlbmdAbG9vbmdzb24uY24gDQo+
-IDxtYWlsdG86c3VpamluZ2ZlbmdAbG9vbmdzb24uY24+Pg0KDQpUaGFua3MgYSBsb3QuDQoN
-Cj4gDQo+IA0KPiBPbiAyMDIzLzMvMzAgMTY6MzYsIFRob21hcyBaaW1tZXJtYW5uIHdyb3Rl
-Og0KPj4gSW5jbHVkZSA8bGludXgvb2YuaD4gdG8gZ2V0IHRoZSBjb250YWluZWQgZGVjbGFy
-YXRpb25zLiBObyBmdW5jdGlvbmFsDQo+PiBjaGFuZ2VzLg0KPj4NCj4+IFNpZ25lZC1vZmYt
-Ynk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPg0KPj4gLS0tDQo+
-PiDCoCBkcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0LmMgfCAyICsrDQo+PiDCoCBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmPCoMKgwqAgfCAxICsNCj4+IMKgIDIgZmlsZXMgY2hh
-bmdlZCwgMyBpbnNlcnRpb25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9vdXRwdXQuYyANCj4+IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1
-dC5jDQo+PiBpbmRleCBhODkyNWRjZDdlZGQuLmQzMWM4N2Y0OGRhMCAxMDA2NDQNCj4+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRwdXQuYw0KPj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL291dHB1dC5jDQo+PiBAQCAtNCw2ICs0LDggQEANCj4+IMKgwqAgKiBD
-b3B5cmlnaHQgKEMpIDIwMTIgTlZJRElBIENPUlBPUkFUSU9OLsKgIEFsbCByaWdodHMgcmVz
-ZXJ2ZWQuDQo+PiDCoMKgICovDQo+PiArI2luY2x1ZGUgPGxpbnV4L29mLmg+DQo+PiArDQo+
-PiDCoCAjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+DQo+PiDCoCAjaW5jbHVk
-ZSA8ZHJtL2RybV9vZi5oPg0KPj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fcGFuZWwuaD4NCj4+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vdGVncmEvcmdiLmMNCj4+IGluZGV4IGZmOGZjZTM2ZDJhYS4uM2YwNjAyODJjZDhk
-IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3JnYi5jDQo+PiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMNCj4+IEBAIC01LDYgKzUsNyBAQA0KPj4g
-wqDCoCAqLw0KPj4gwqAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPj4gKyNpbmNsdWRlIDxs
-aW51eC9vZi5oPg0KPj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPg0K
-Pj4gwqAgI2luY2x1ZGUgPGRybS9kcm1fYnJpZGdlX2Nvbm5lY3Rvci5oPg0KDQotLSANClRo
-b21hcyBaaW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3
-YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJu
-YmVyZywgR2VybWFueQ0KKEhSQiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0c2bD
-vGhyZXI6IEl2byBUb3Rldg0K
+Applied, thanks!
 
---------------DbZpzGf8mG6QyD2xs4dpV5PN--
+[1/2] firmware: tegra: bpmp: Fix error paths in debugfs
+      (no commit info)
+[2/2] soc/tegra: bpmp: Actually free memory on error path
+      commit: 61228c9b240468dba55ef8a4ac93e777c810c68b
 
---------------Cs1b5Oxi17jpsFR0JX2Go0sw
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmQqrX4FAwAAAAAACgkQlh/E3EQov+An
-Fg/+KNNxM3qSQ5Hbg/Ykeoq+ESe6IX7oTy3DtvOMmLG3VbElFVxIPsgU/2VrOoITUEDrE6i6kE5w
-Dz+JHr43kpz/4oC4GpdFC2pbNY2UF5Pyh5viq2Zs8d+m6H6+onLAxW/Jnxu1iLknS5C5uzFF0Euc
-Oi9rtPJF6uc9QDfhhwOIoOC2hCQQzzmYKqC2uKCWt/N/QrYwyLAB0AUznsACTN2QNg80blv/1jMt
-6yEESDGVdzQRnXBpt8kcKaG6e7bIc3eZ0r/bxzzNPz6Wld1VUBUXTuw9q8OfMgyfa/ZGJuQKIcNX
-oYYXPJuFbYHz4IhwPJ2qfWgm3xSoh2MD/lwJc/a5D1NahghWxcaKFTqfD548FhZG/d1sGQWeRcd1
-ljhVn+vpOdXX3hZm+a08nZ0yzs3XtvmH5fzTbxdAbNt/2v0+TRiyQVRTjq4Mj2z6OPm67io3HM3s
-Urw4UQ4oJ2JRP4v/PTlQBas/IJ25VjoexY6rp8052Yr1e6P3zTxm0MSEPzL2bmboX17x9kE9mhRg
-4GpARwq1ycJXjFl6ffD7OGZaZHmmKwnsVbP0VenxiZZ/vORW4DnvR+D7SgCGs6XdI773kf/XwFl3
-EyJYXayt0tFNEE8x0/Xj2d32BNi2fi5ZZxO2UBZiwrjcm68LxwQdoJ/cnTuqbeu6sA1PG+AdMz2h
-n8E=
-=0nFu
------END PGP SIGNATURE-----
-
---------------Cs1b5Oxi17jpsFR0JX2Go0sw--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
