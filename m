@@ -2,199 +2,70 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FDFC76188
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 15:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEBCC76188
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Apr 2023 15:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230120AbjDCPl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Apr 2023 11:41:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46090 "EHLO
+        id S231878AbjDCPoX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Apr 2023 11:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232531AbjDCPl4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 11:41:56 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2812703
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Apr 2023 08:41:51 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pjMIC-0004b4-3b; Mon, 03 Apr 2023 17:40:24 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pjMI6-008iaO-0i; Mon, 03 Apr 2023 17:40:18 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pjMI5-00AHwO-5x; Mon, 03 Apr 2023 17:40:17 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Deepak R Varma <drv@mailo.com>,
-        Yuan Can <yuancan@huawei.com>,
-        Simon Horman <horms@verge.net.au>,
-        Sven Van Asbroeck <TheSven73@gmail.com>,
-        Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Eugen Hristev <eugen.hristev@collabora.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Maxime Ripard <mripard@kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-        Christian Gromm <christian.gromm@microchip.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Umang Jain <umang.jain@ideasonboard.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Adrien Thierry <athierry@redhat.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Jakob Koschel <jakobkoschel@gmail.com>
-Cc:     linux-staging@lists.linux.dev, kernel@pengutronix.de,
-        greybus-dev@lists.linaro.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org
-Subject: [PATCH 00/24] staging: Convert to platform remove callback returning void
-Date:   Mon,  3 Apr 2023 17:39:50 +0200
-Message-Id: <20230403154014.2564054-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S231783AbjDCPoX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Apr 2023 11:44:23 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEBDE8;
+        Mon,  3 Apr 2023 08:44:22 -0700 (PDT)
+Received: from [192.168.2.163] (109-252-124-32.nat.spd-mgts.ru [109.252.124.32])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A99E6660312D;
+        Mon,  3 Apr 2023 16:44:19 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1680536660;
+        bh=h906dX4/iwoBMkK5p++Mkpnuq0YPw75gIWeGHov8PcE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=f7h6y51iyU9x9BJVmQM570DlR1t+AbYsIjlhM/UUKIHEkjwhG6wOnhYpyWYzfDfbx
+         LswAR3pQN1VypwRg1NAyjrKw1dsJfFhbxUqNQGsdbKHImnrsFoF8GBj9a4ze1xjzf+
+         ikn/6tGwqYgt4wo0ezuYyD5qJcAcJ/vH8+nBkR/CblyBav3CqdshxpKe9aMZE9VkmI
+         X1rnTyVohHNlEKXfBPKvYgF4i7WqDddJCvTD1mpOcSwDopAt2C66uyMnmPrW3nje0c
+         20tLWPEaOhzwHskP5QBbGgGhgxiIABeljiPrwu0xg4nG9Kg/aH+xqJLbC09Ys9uomg
+         mR/H5SFIh8a4g==
+Message-ID: <ab4d8e1e-d378-85d2-34aa-404ff178c49f@collabora.com>
+Date:   Mon, 3 Apr 2023 18:44:16 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v3 4/4] mfd: tps6586x: register restart handler
+Content-Language: en-US
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     benjamin.bara@skidata.com, jonathanh@nvidia.com, lee@kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, rafael.j.wysocki@intel.com,
+        richard.leitner@linux.dev, treding@nvidia.com, wsa@kernel.org
+References: <6abaa803-1639-b949-3af5-05a341f9b459@collabora.com>
+ <20230403065013.520339-1-bbara93@gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20230403065013.520339-1-bbara93@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5012; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=QcqVobs2IGjtDB50UkJ1/XzbU0MSF7u4i5A5EQTdJQg=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkKvM0O0Tc0pjx/M/6GF+i1BCxRCmy/MPnr7RU1 yFBMKjXOfaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZCrzNAAKCRCPgPtYfRL+ Tpy2CACy6x0vU06fdXyxll9SO1keGvUJwPKWx+3c3iql31e1Lm+qBWx4HjLGWAH1BCBwe3626DH lDN1BYh6O1PbPw6fq7eefH5DBIAVGnQSOsyyOFUmo5y3kXQn60JKzxX7xSKuHzUxXXkaj6BYFEl dl3VmQyiYF0+g1PGODFTQSeX9kxjPWoD5g9e11a2P8dLs8Iu1lwVEIyHyEyjcsrYsB3Wj23JY5E t8/rn6+663fTt7WDV/oQ0q40Q54RNHtq2Ou/9xwLL/Jm63tGZ6gAnvbnQcFoAji4hrf+apNVsp/ aW4zaDe6809yWD3o9ofDidHCWNev/88M0ILROQDh07UCEMyG
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+On 4/3/23 09:50, Benjamin Bara wrote:
+> Thanks for the feedback!
+> 
+> The DS states: "When the reboot request state is set an internal timer TWAIT
+> (10ms typ) is started. The reboot request ends when t > TWAIT."
+> 
+> Therefore, my intention was to wait a little bit before starting the next
+> handler in the chain. I can do some tests without the mdelay, but otherwise
+> will reduce it to 15ms in the next patch. What do you think about it?
 
-this series adapts the platform drivers below drivers/staging to use the
-.remove_new() callback. Compared to the traditional .remove() callback
-.remove_new() returns no value. This is a good thing because the driver
-core doesn't (and cannot) cope for errors during remove. The only effect
-of a non-zero return value in .remove() is that the driver core emits a
-warning. The device is removed anyhow and an early return from .remove()
-usually yields a resource leak.
+Sounds good. Please add a clarifying comment for the delay to the code.
 
-By changing the remove callback to return void driver authors cannot
-reasonably assume any more that there is some kind of cleanup later.
-
-All drivers in staging already return zero in their remove callback, so
-they can be trivially converted.
-
-The changes to the individual drivers are all orthogonal. If I need to
-resend some patches because of some review feedback, I'd like to only
-send the patches that actually needed changes, so please pick up the
-remaining patches that don't need changing to reduce the amount of mail.
-
-Best regards
-Uwe
-
-Uwe Kleine-König (24):
-  staging: axis-fifo: Convert to platform remove callback returning void
-  staging: emxx_udc: Convert to platform remove callback returning void
-  staging: fieldbus: arcx-anybus: Convert to platform remove callback
-    returning void
-  staging: greybus: arche-apb-ctrl: Convert to platform remove callback
-    returning void
-  staging: greybus: arche: Convert to platform remove callback returning
-    void
-  staging: media: atmel-sama5d2-isc: Convert to platform remove callback
-    returning void
-  staging: media: atmel-sama7g5-isc: Convert to platform remove callback
-    returning void
-  staging: media: imx-media-csi: Convert to platform remove callback
-    returning void
-  staging: media: imx-media-dev: Convert to platform remove callback
-    returning void
-  staging: media: imx6-mipi-csi2: Convert to platform remove callback
-    returning void
-  staging: media: imx8mq-mipi-csi2: Convert to platform remove callback
-    returning void
-  staging: media: meson: vdec: Convert to platform remove callback
-    returning void
-  staging: media: omap4iss: Convert to platform remove callback
-    returning void
-  staging: media: rkvdec: Convert to platform remove callback returning
-    void
-  staging: media: sunxi: cedrus: Convert to platform remove callback
-    returning void
-  staging: media: sun6i-isp: Convert to platform remove callback
-    returning void
-  staging: most: dim2: Convert to platform remove callback returning
-    void
-  staging: nvec: Convert to platform remove callback returning void
-  staging: nvec: nvec_kbd: Convert to platform remove callback returning
-    void
-  staging: nvec_power: Convert to platform remove callback returning
-    void
-  staging: nvec_ps2: Convert to platform remove callback returning void
-  staging: octeon: ethernet: Convert to platform remove callback
-    returning void
-  staging: vc04_services: bcm2835-camera: Convert to platform remove
-    callback returning void
-  staging: vc04_services: vchiq_arm: Convert to platform remove callback
-    returning void
-
- drivers/staging/axis-fifo/axis-fifo.c                       | 6 ++----
- drivers/staging/emxx_udc/emxx_udc.c                         | 6 ++----
- drivers/staging/fieldbus/anybuss/arcx-anybus.c              | 5 ++---
- drivers/staging/greybus/arche-apb-ctrl.c                    | 6 ++----
- drivers/staging/greybus/arche-platform.c                    | 6 ++----
- drivers/staging/media/deprecated/atmel/atmel-sama5d2-isc.c  | 6 ++----
- drivers/staging/media/deprecated/atmel/atmel-sama7g5-isc.c  | 6 ++----
- drivers/staging/media/imx/imx-media-csi.c                   | 6 ++----
- drivers/staging/media/imx/imx-media-dev.c                   | 6 ++----
- drivers/staging/media/imx/imx6-mipi-csi2.c                  | 6 ++----
- drivers/staging/media/imx/imx8mq-mipi-csi2.c                | 6 ++----
- drivers/staging/media/meson/vdec/vdec.c                     | 6 ++----
- drivers/staging/media/omap4iss/iss.c                        | 6 ++----
- drivers/staging/media/rkvdec/rkvdec.c                       | 5 ++---
- drivers/staging/media/sunxi/cedrus/cedrus.c                 | 6 ++----
- drivers/staging/media/sunxi/sun6i-isp/sun6i_isp.c           | 6 ++----
- drivers/staging/most/dim2/dim2.c                            | 6 ++----
- drivers/staging/nvec/nvec.c                                 | 6 ++----
- drivers/staging/nvec/nvec_kbd.c                             | 6 ++----
- drivers/staging/nvec/nvec_power.c                           | 6 ++----
- drivers/staging/nvec/nvec_ps2.c                             | 6 ++----
- drivers/staging/octeon/ethernet.c                           | 5 ++---
- .../staging/vc04_services/bcm2835-camera/bcm2835-camera.c   | 6 ++----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c   | 6 ++----
- 24 files changed, 48 insertions(+), 93 deletions(-)
-
-
-base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
 -- 
-2.39.2
+Best regards,
+Dmitry
 
