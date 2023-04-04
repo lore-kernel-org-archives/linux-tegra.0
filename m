@@ -2,232 +2,155 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB31C77B6C
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 10:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78431C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 10:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234403AbjDDKXV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 06:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
+        id S234009AbjDDK2y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 06:28:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234568AbjDDKWc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 06:22:32 -0400
-Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF8930F2;
-        Tue,  4 Apr 2023 03:22:29 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 00159582163;
-        Tue,  4 Apr 2023 06:22:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 04 Apr 2023 06:22:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1680603748; x=1680610948; bh=Y91dNVRC560xUvx2fMAi/mWKBqMyfZBI+Kp
-        XEHHEN9g=; b=OZEponvylEnXflhuY8Pa/uMr6kPZI8uy7C27QHYzERputK8PFyj
-        nPusGsKhQqWQTAWGMuU/jFKFHxMENuvsN96gsc2qRsN72iDMgJlt8jQNXu9j09AC
-        ZncdFytpz0SfEhc/HfGOhG/qj/yCVtwbQS2JDEQ/qpyMzZ8+UVzxcHyFedHFqlu7
-        STkxuqlGbKKvggHnOS/hbKfjTUvAAPHmQWso9IaEKOn+R9RKdxIhIOXi+MY+fWJs
-        U8sYvsrFReQTwEzMVMRgXOPLVupSoYKg9FFtu4o3L6aoj/I00Mh79FKJdOYd5mE2
-        4FvMw7EL4VWRD2CPqyYD0BIi/gdMAuHiCPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1680603748; x=1680610948; bh=Y91dNVRC560xUvx2fMAi/mWKBqMyfZBI+Kp
-        XEHHEN9g=; b=qNYSFBdULXpzc2blFVma8VlW8cwRBsN1qtqo3bd9XX7gyScq5Rw
-        ywm5VSv1BJfDg5Cgk5PGuneL9leymiZl1GuoVVNJBEzRhHGyZi06SLZBtymH4zsR
-        As9bSpXomue4N6PLLGJxKpi2d5E0vumbRd2cocmGiKhjvqYkvuwCA/3arXzBoGTx
-        URY+lRltXiCE+PoJI1Hiq7uB+yTodeei2rMwY91mLLQln/9Q+qt+KgK6OdHlxifs
-        MNuZW/55ZCtkl6tX5+Os6zM1iuk5fx61em+mDjCAyc1dsP9cFzEs7rl2vPnfeeIr
-        9K9GRT45MkrB18L3AQAwttlu3PjkXFXkcdA==
-X-ME-Sender: <xms:ZPorZKTRBWkmcfnlzz1RL0m7fNkZwkm0yGMxLRBBpiGF_33jzfM-UA>
-    <xme:ZPorZPy2-bSQ-aNL7KwRxfjaUtfh87x_2rzV7qCb8Tt5_X7H4cQ76UZrwFm58RstQ
-    ewyhS68AUyEmwDKjps>
-X-ME-Received: <xmr:ZPorZH2paZiRSBTAumRkSoyMO3J4e6Z67wXRfanbP1ksP3cXr8ip_1xC80G1sBaGAQeNX4wy6InwqWKuSaN_S--VlDto3X4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeiledgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepvedvleeijeegvdekffehkeehieelhfeggfffheetkeeuledvtdeuffeh
-    teeltdffnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:ZPorZGDkYr2idebGaoMxJDtv57Xzfvopes69ah9ClSc5n3bpeFsiag>
-    <xmx:ZPorZDhBDYE_mkQ2xxhFkfcHyh11XwYhOWdaAxoFr-vfn2iPY4iqaQ>
-    <xmx:ZPorZCqxwwuEpa2mjh4WDlwztpS1H5uiSXkZDmY4EUZaT8XhZpAYCQ>
-    <xmx:ZPorZBsPulsBNyB8imiTYQ-FKgCG1DOW2Vy4NhI2LqUG495349RB8g>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Apr 2023 06:22:27 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 04 Apr 2023 12:11:00 +0200
-Subject: [PATCH v3 10/65] clk: k210: pll: Add a determine_rate hook
+        with ESMTP id S233184AbjDDK2y (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 06:28:54 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2181A1731;
+        Tue,  4 Apr 2023 03:28:53 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id y4so128612963edo.2;
+        Tue, 04 Apr 2023 03:28:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680604131;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lFnhjOVDQ3ItCxmop4qZbHatGDWaTPywjSlabLzg9LE=;
+        b=cMcc5XGY1xYe2xnDmZxzicNPkAs+dVgKdBYDr5K9dUg0d0aXC3jj5+8Z8xpZ8SF+N7
+         bkFYUuUy6ug0qNFeVg84AQ7fYIphC/bZlNkFGbAHvRlyCwhKNP3x9mLUpxQd+tJad9VV
+         PqbIZbmpmlYWRj0SydPCJgOLXceOw36xGF23j2TVWYnGBegVL/c55WwWYaHkemZ6M2PD
+         R/RgsALUZsOLobzxV20mYQSM2wIENBm1WImLKXLoS3rwSBrmnNk2Zh49P+zRc4aTX8Xh
+         xmqgYmD1kF1x5x/zu4fXYqnDpKTUDS7t4w8sXpn4Y+ZjRsVzYd3WjQCV4Qt8Nvtz7eUP
+         zQOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680604131;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lFnhjOVDQ3ItCxmop4qZbHatGDWaTPywjSlabLzg9LE=;
+        b=USKqJ7foDlZ1agF51xzg6YEMzjFdibthpIhTw07Eqla/oK1MgYr4eAIpdw9HNqLK3G
+         eoTHJd/SMkNl7YDtrPs7D0VrrUTpVCqB+BdgwbC1QWPeYzf+aTGUm43seztziFARKK5C
+         igHZ23E5KqJ/wzmCA0aV3w8tP4Xx+V4ZhSpWYFt/KR6PV3QCCXQ8gY233MuNzUHYM9Ym
+         LwNikRzPNNVEjSKEijTkbn8A4gzjzH1AwWCoNenkgXLVFDiKYEGWyybIFaQEHVGrtsuL
+         O+r0XYjIR54Ra/ie36l4V0D7Oxvl1vR0OFDG8rbEcEi6wrwaXPmK1G3Ws6jyyPUDzlK8
+         7l9w==
+X-Gm-Message-State: AAQBX9e3jOE4aHzhca/CeGWJZ/e6mFmzyRuxpZ0l8P9y1OfZZ7FhcpUd
+        Zflt1R28cb0mFK3s05hVR59HK2rKpD8=
+X-Google-Smtp-Source: AKy350YTuwR0WdZcRmjxnBolJRplJ7pURoZBpPDv4DaQCLQi6MZav3gLAUxpI2FqWwmGPOf6tN1xIQ==
+X-Received: by 2002:a17:906:841a:b0:947:c09f:3a5d with SMTP id n26-20020a170906841a00b00947c09f3a5dmr1582176ejx.75.1680604131452;
+        Tue, 04 Apr 2023 03:28:51 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id x5-20020a170906b08500b0093dfd62f9dasm5745572ejy.35.2023.04.04.03.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Apr 2023 03:28:51 -0700 (PDT)
+Date:   Tue, 4 Apr 2023 12:28:49 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
+        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
+Subject: Re: [PATCH V4 04/10] dt-bindings: timestamp: Add
+ nvidia,gpio-controller
+Message-ID: <ZCv74dMMucY24L9m@orome>
+References: <20230323012929.10815-1-dipenp@nvidia.com>
+ <20230323012929.10815-5-dipenp@nvidia.com>
+ <20230324171329.GA2062332-robh@kernel.org>
+ <7f2dc5cf-78b5-81c6-0012-26b1adce1c86@nvidia.com>
+ <19b71fef-614a-d678-2e73-95db8f226e61@linaro.org>
+ <df00404e-96a8-bf33-cbc7-25dbb09c89c7@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20221018-clk-range-checks-fixes-v3-10-9a1358472d52@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>
-X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3674; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=XeSprVIIyV/zrzbwClEFi3glvsdpjWNha9xD/jrwm8I=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCna37fW3go1M1YpvFiplc2y3N3T39BP8sDt/8drHnrdeOAd
- sjqpo5SFQYyLQVZMkSVG2HxJ3KlZrzvZ+ObBzGFlAhnCwMUpABOZWcfwv3hir+py1csVXsffsRyWLG
- yXT2T+lcsey7gyReX9qdn/ZRgZ3vZwcO1f/yonqulLnU7ar6tXe5ItLRpfifwQMRD70PObBwA=
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="j4v+jpU4YnL3mitN"
+Content-Disposition: inline
+In-Reply-To: <df00404e-96a8-bf33-cbc7-25dbb09c89c7@nvidia.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The K210 PLL clock implements a mux with a set_parent hook, but
-doesn't provide a determine_rate implementation.
 
-This is a bit odd, since set_parent() is there to, as its name implies,
-change the parent of a clock. However, the most likely candidate to
-trigger that parent change is a call to clk_set_rate(), with
-determine_rate() figuring out which parent is the best suited for a
-given rate.
+--j4v+jpU4YnL3mitN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The other trigger would be a call to clk_set_parent(), but it's far less
-used, and it doesn't look like there's any obvious user for that clock.
+On Mon, Apr 03, 2023 at 09:24:17PM -0700, Dipen Patel wrote:
+> On 3/25/23 4:09 AM, Krzysztof Kozlowski wrote:
+> > On 24/03/2023 19:51, Dipen Patel wrote:
+> >> On 3/24/23 10:13 AM, Rob Herring wrote:
+> >>> On Wed, Mar 22, 2023 at 06:29:23PM -0700, Dipen Patel wrote:
+> >>>> Introducing nvidia,gpio-controller property from Tegra234 SoCs onwar=
+ds.
+> >>>> This is done to help below case.
+> >>>>
+> >>>> Without this property code would look like:
+> >>>> if (of_device_is_compatible(dev->of_node, "nvidia,tegra194-gte-aon"))
+> >>>> 	hte_dev->c =3D gpiochip_find("tegra194-gpio-aon",
+> >>>> 				   tegra_get_gpiochip_from_name);
+> >>>> else if (of_device_is_compatible(dev->of_node, "nvidia,tegra234-gte-=
+aon"))
+> >>>> 	hte_dev->c =3D gpiochip_find("tegra234-gpio-aon",
+> >>>> 				   tegra_get_gpiochip_from_name);
+> >>>> else
+> >>>> 	return -ENODEV;
+> >>>
+> >>> Or you just put the name in match data.
+> >>
+> >> Not sure I have understood this comment, but "name" the first argument=
+ is
+> >> already there to supply to callback to match data. Also, this if else =
+is
+> >> needed to know which "name" to provide.
+> >=20
+> > The point is that of_device_is_compatible() do not really scale and make
+> > code more difficult to read. Your variant-customization should in
+> > general entirely come from match/driver data.
+>=20
+> Perhaps I should not have mentioned driver related details here about how
+> this property will help, that detail will go in driver patch. In the next
+> patch series I will remove this commit and just focus on what this proper=
+ty
+> is.
 
-So, the set_parent hook is effectively unused, possibly because of an
-oversight. However, it could also be an explicit decision by the
-original author to avoid any reparenting but through an explicit call to
-clk_set_parent().
+I think the point that Rob and Krzysztof are trying to make that rather
+than adding a new property for this, we can add a const char *gpio field
+to struct tegra_hte_data and then set that to the compatible string of
+the GPIO controller that we need this for.
 
-The latter case would be equivalent to setting the flag
-CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-to __clk_mux_determine_rate(). Indeed, if no determine_rate
-implementation is provided, clk_round_rate() (through
-clk_core_round_rate_nolock()) will call itself on the parent if
-CLK_SET_RATE_PARENT is set, and will not change the clock rate
-otherwise. __clk_mux_determine_rate() has the exact same behavior when
-CLK_SET_RATE_NO_REPARENT is set.
+To be honest, I slightly prefer the explicit phandle reference, but it
+also complicates things a bit and looking up by compatible string isn't
+all that bad.
 
-And if it was an oversight, then we are at least explicit about our
-behavior now and it can be further refined down the line.
+Thierry
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk-k210.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+--j4v+jpU4YnL3mitN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/clk/clk-k210.c b/drivers/clk/clk-k210.c
-index 4eed667eddaf..a96ab8611e1f 100644
---- a/drivers/clk/clk-k210.c
-+++ b/drivers/clk/clk-k210.c
-@@ -537,6 +537,7 @@ static const struct clk_ops k210_pll2_ops = {
- 	.disable	= k210_pll_disable,
- 	.is_enabled	= k210_pll_is_enabled,
- 	.recalc_rate	= k210_pll_get_rate,
-+	.determine_rate = __clk_mux_determine_rate,
- 	.set_parent	= k210_pll2_set_parent,
- 	.get_parent	= k210_pll2_get_parent,
- };
-@@ -544,7 +545,8 @@ static const struct clk_ops k210_pll2_ops = {
- static int __init k210_register_pll(struct device_node *np,
- 				    struct k210_sysclk *ksc,
- 				    enum k210_pll_id pllid, const char *name,
--				    int num_parents, const struct clk_ops *ops)
-+				    int num_parents, const struct clk_ops *ops,
-+				    unsigned long flags)
- {
- 	struct k210_pll *pll = &ksc->plls[pllid];
- 	struct clk_init_data init = {};
-@@ -558,6 +560,7 @@ static int __init k210_register_pll(struct device_node *np,
- 	init.parent_data = parent_data;
- 	init.num_parents = num_parents;
- 	init.ops = ops;
-+	init.flags = flags;
- 
- 	pll->hw.init = &init;
- 	pll->ksc = ksc;
-@@ -574,19 +577,20 @@ static int __init k210_register_plls(struct device_node *np,
- 		k210_init_pll(ksc->regs, i, &ksc->plls[i]);
- 
- 	/* PLL0 and PLL1 only have IN0 as parent */
--	ret = k210_register_pll(np, ksc, K210_PLL0, "pll0", 1, &k210_pll_ops);
-+	ret = k210_register_pll(np, ksc, K210_PLL0, "pll0", 1, &k210_pll_ops, 0);
- 	if (ret) {
- 		pr_err("%pOFP: register PLL0 failed\n", np);
- 		return ret;
- 	}
--	ret = k210_register_pll(np, ksc, K210_PLL1, "pll1", 1, &k210_pll_ops);
-+	ret = k210_register_pll(np, ksc, K210_PLL1, "pll1", 1, &k210_pll_ops, 0);
- 	if (ret) {
- 		pr_err("%pOFP: register PLL1 failed\n", np);
- 		return ret;
- 	}
- 
- 	/* PLL2 has IN0, PLL0 and PLL1 as parents */
--	ret = k210_register_pll(np, ksc, K210_PLL2, "pll2", 3, &k210_pll2_ops);
-+	ret = k210_register_pll(np, ksc, K210_PLL2, "pll2", 3, &k210_pll2_ops,
-+				CLK_SET_RATE_NO_REPARENT);
- 	if (ret) {
- 		pr_err("%pOFP: register PLL2 failed\n", np);
- 		return ret;
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.39.2
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQr+94ACgkQ3SOs138+
+s6FuTg//RaYWUCY1EIVK5FtyolJck7DDm1TQXL5ILgE2I9QFBGSGMptLVzAvGKDa
+OlqURt08FlaVKMGrdfW6KB4d9eIUt2GI7mFBftFfFa7jB0YDRvrF1HLtUJ80xQmZ
+vcLHKiWXfOPBxK8Z1m47MUoWOnhlbbPX2asdk+kF6Zy4c1XvADfKEIckN3LDTv7z
+guxioGkdf4/yfbQrIbqxrQ0sxiOU9wQJg9ZqxMObBLtMnMPvylNN9/oP7XsuAMfD
+0+hhaM9MSQKa+/XucaqqmiHqCfoP1GoRBl6DvJezrZx4TIoI7FlGJ1QIxuecOI2G
+JDelTvifSpzlfC5giaR6GS3cQXvyvKuAG5kQfodHhyV1JdV1wVP4YguEdXFPDRoG
+mWrRImkogPPvWvy20wCaqZRor8riz8r8jYTXZBUbL8CnpGeB/7EMG7KU4X7IICTa
+yhlqAMN734OzI4EMzp/s+tZCa/QaPaE1nlPHSOBvyp+Pv2xjjzDdbDyN3vzSX1A/
+WZTWOooXjbPkvhXcxC2+toMdSGJuvqsEn5emfcnpAw3mNUYuJRF500phzK8sQoVv
+G6NetMfFRKcTTzDQznnK3gomRb6EVrKw1cRy3ZOP52s+cSILZXZKLX0aV6l8hppx
+rnEDotFl9tti4UbRn+sX2eA7IqB+ftwAQyu1f2dNCPSw0V3m3cY=
+=Zelo
+-----END PGP SIGNATURE-----
 
+--j4v+jpU4YnL3mitN--
