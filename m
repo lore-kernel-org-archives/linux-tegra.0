@@ -2,66 +2,66 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97303C77B6E
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 12:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B174C761A6
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 12:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234227AbjDDMU1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 08:20:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50916 "EHLO
+        id S234427AbjDDM0T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 08:26:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234837AbjDDMT1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 08:19:27 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3274A40E0;
-        Tue,  4 Apr 2023 05:15:23 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id i5so129916225eda.0;
-        Tue, 04 Apr 2023 05:15:23 -0700 (PDT)
+        with ESMTP id S234873AbjDDM0I (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 08:26:08 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5BA40D1;
+        Tue,  4 Apr 2023 05:25:56 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id h8so129867961ede.8;
+        Tue, 04 Apr 2023 05:25:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680610521;
+        d=gmail.com; s=20210112; t=1680611154;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TNeLO/yfrx5qZBUcRPTS1m46W0sJKNmgtcjlVQfqLK0=;
-        b=MX1GkM/k7Wvv4kVwPD5iJTZypvDu1JvY7Br3/Lx9HxZylVr1cdixaKy7MpHGbtJl68
-         oueFBklE/kvlMwon1iZdQBFezLnc0xc4gZ8cPRAH2FY+HertVLVg4N8mj4RDL09bDWwo
-         JNAeA74R31LQ1hcpJRbFW6cI/rHB6EswvmmJhJKO+59GHnDVuZhzMy1j5lWDv4wpAlhy
-         bjqnGqkVFwRV+pEPjBVhE1x+0AO5SiSo/p68IHQRs6fkqElP6NBBrhdIF19tOkiqzyT8
-         WXUsInRs3BZ42NgZOz05MV3EfMBEXGdF8C4ewdjsJixVJztB5ePxwUCjgXzU+9L87gtS
-         D4rA==
+        bh=lvEiamQupS534VfqUXbSuDpINFZftut0QS92LpEg7X4=;
+        b=ITg0zr2umq6uJE5uWt38EKHKISLid7v1/LtdB0gMGwoJ7m76yE9AukVpmJ3D4ucMK0
+         4VD5e/vOPPzmfkG6ioZCZQedRavVzn8oskNNDk9df6YjFG+SwOxecL3O0UuRX18nkZNo
+         6DztwhTa8v0zPMYpinELW76yH9Ts58g0M5SRUCpfsjGZuLlnA6C+wXd1yqeN2gaTNXD6
+         4bQKj3FygSn3gx6iGOtSY5yHfg9TtTA2eTBQkJTBLvJXUY3bwF+Q/rQIn/xGfInX+3dR
+         aHbKnNxhhUv6UAfLSKnLu9t/mYRqlZwfxWeHYPwXicNp56Ua77Cux1GUemRhHdNRC4ug
+         bSPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680610521;
+        d=1e100.net; s=20210112; t=1680611154;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TNeLO/yfrx5qZBUcRPTS1m46W0sJKNmgtcjlVQfqLK0=;
-        b=HFpmlr75rh15rNHhORvKSwDGm4MRd3v//L1lDxxaElMUTlgSwuRm09LBmD6KZvphRR
-         TsGaVF/epWAwGYKkdvAtDNXYqQFlD7sX9+3YXK951/cGAPiEEroddldHvVHFl6PjBK9f
-         ZZE/O5BScS6lOsHtZNLHIfAwyTC2VJF5mgZ+AQtyQUx09Hz4HK9ULz8BX5ooKMjHTYV2
-         Nn/ImOvwYU/AxOcUiIqjgag2rqrkNN1KZEPVpTOoHCOWHQotelbV/5hFwwJ6oTOXNmkj
-         gXkmKu1vY/B+xvpEgf2hJhD0us9mJZU/uw5qMeizVCbV/l1pLZ05uAgHZjZdKEl2eYCl
-         NxYw==
-X-Gm-Message-State: AAQBX9cnGDeo+W0YtwwhaKtaSLB8YmHW/Tjcs8tuy9LuJpXLQZr2bzfB
-        jlucVQYZXiAHiknQldFUwek=
-X-Google-Smtp-Source: AKy350bQ71nVxPcoRSh43ab4cRnZtZe6Ur+WJgNdzEfCmeG2QbKWF6iZ7ySINe5NarE8PgKOKCIgVQ==
-X-Received: by 2002:a05:6402:1204:b0:4ac:b528:5727 with SMTP id c4-20020a056402120400b004acb5285727mr2477500edw.1.1680610521704;
-        Tue, 04 Apr 2023 05:15:21 -0700 (PDT)
+        bh=lvEiamQupS534VfqUXbSuDpINFZftut0QS92LpEg7X4=;
+        b=WL32vLQ4f9FM5+qwTekctCJfPYHhaMgiVaNeezm49od53OvMc7V9KESjlD+NtOCTqY
+         8Hw8JkwXmIf2soZNT+mW4EvjRHjtEGU1SIzI9twR7TzX+vKC5srEq4PP2lqBDrvwkEbE
+         kzKqWnMNJUJtTd2PrUWNN7di9HWs2GKpRQtagEZVftx9HSdB8kqIqQADev97NZlGu5sk
+         H75oWIkg9EX9l4V/7nqSY4h2KG82PgRZISrLWZdFkv4szwkXdwyRUz1T5tiLoXNpF3xo
+         2yEKcXiXj1R3SD+PmTs5uhnB5ExDnqGikhv7z503IsgMrEtzn7elJyeFe14q5Crt9eli
+         geHw==
+X-Gm-Message-State: AAQBX9fUsyZdg0tryXHUoG+Cvz46QVP0f42C2zKLueo829KxGWfDXu1Y
+        oDYfeu8Q6gW+PnoDQdnNYZY=
+X-Google-Smtp-Source: AKy350ZtNIoX7YZQDjBWRvM/+GxlQgoOVYwVgBRI52Y/EHxaIjTiEupUcppEDvzfUr8QQ+yo7CRhGg==
+X-Received: by 2002:a17:907:16a6:b0:947:f4e2:aa2c with SMTP id hc38-20020a17090716a600b00947f4e2aa2cmr13829357ejc.29.1680611154246;
+        Tue, 04 Apr 2023 05:25:54 -0700 (PDT)
 Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i24-20020a508718000000b005024aff3bb5sm5809772edb.80.2023.04.04.05.15.21
+        by smtp.gmail.com with ESMTPSA id bu7-20020a170906a14700b0093348be32cfsm5988062ejb.90.2023.04.04.05.25.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 05:15:21 -0700 (PDT)
+        Tue, 04 Apr 2023 05:25:53 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc:     dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com,
-        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        thierry.reding@gmail.com, robh+dt@kernel.org, arnd@arndb.de,
-        sam@ravnborg.org, daniel@ffwll.ch
-Subject: Re: (subset) [PATCH v2 RESEND 2/4] drm/tegra: dsi: Clear enable register if powered by bootloader
-Date:   Tue,  4 Apr 2023 14:15:20 +0200
-Message-Id: <168061050774.2055282.2696750809957075732.b4-ty@nvidia.com>
+To:     Daniel Vetter <daniel@ffwll.ch>, Mikko Perttunen <cyndis@kapsi.fi>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] gpu: host1x: Don't rely on dma_fence_wait_timeout return value
+Date:   Tue,  4 Apr 2023 14:25:50 +0200
+Message-Id: <168061111512.2057226.3790183208967549717.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20221128162851.110611-2-diogo.ivo@tecnico.ulisboa.pt>
-References: <20221128162851.110611-1-diogo.ivo@tecnico.ulisboa.pt> <20221128162851.110611-2-diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20230301135107.999976-1-cyndis@kapsi.fi>
+References: <20230301135107.999976-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,18 +71,20 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-On Mon, 28 Nov 2022 16:28:49 +0000, Diogo Ivo wrote:
-> In cases where the DSI module is left on by the bootloader
-> some panels may fail to initialize if the enable register is not cleared
-> before the panel's initialization sequence is sent, so clear it if that
-> is the case.
+On Wed, 1 Mar 2023 15:51:06 +0200, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
 > 
+> dma_fence_wait_timeout (along with a host of other jiffies-based
+> timeouting functions) returns zero both in case of timeout and when
+> the wait completes during the last jiffy before timeout. As such,
+> we can't rely on it to distinguish between success and timeout.
 > 
+> [...]
 
 Applied, thanks!
 
-[2/4] drm/tegra: dsi: Clear enable register if powered by bootloader
-      commit: 588ed52d31ab37c5ac86816911f6428d2de265a6
+[1/1] gpu: host1x: Don't rely on dma_fence_wait_timeout return value
+      commit: c1aaee94380874fd40f7bb8417c597aba3f72c75
 
 Best regards,
 -- 
