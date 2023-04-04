@@ -2,219 +2,98 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37D2C77B62
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 14:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9437C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 14:07:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235795AbjDDOGT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 10:06:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51478 "EHLO
+        id S234617AbjDDOH1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 10:07:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235522AbjDDOGJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 10:06:09 -0400
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21B6F5248;
-        Tue,  4 Apr 2023 07:05:49 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A5E6D582194;
-        Tue,  4 Apr 2023 09:57:26 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 04 Apr 2023 09:57:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1680616646; x=1680623846; bh=GPOQHzST5q8msjbIBFQ+7r7N059sBRr2Nl2
-        PCYzOKLI=; b=Fwip6LRQwnrOx4+gCO/5Jmsn1zqw4dvqOtHhV+wCq0HF80n14lf
-        0IafefAFZFsKvJca4Ot/KCXg/c9DC6oPy/pkdkLPqqJgHe+0oibMECoFY03vDdXq
-        0oUhnjFSNGtL2fPM0C+8rLaKv5WrQr9RohWUrykcchOLGqFOTRam7Hjaz8G93wZz
-        GCpF55e2xRA2WNRqcSD3o5DnVwgD1fanamFNSJ+6NdtbE+RGcApOouIhokbvwRaY
-        RPvhCEch2/4O40o3yUmDL5JrAen4YnlYyGDnFBrME0yD3XlHfqj4RW3aBYEZOpJf
-        wcYgYmKQyhV+MDSY8woU9zPAvumckeCd55g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1680616646; x=1680623846; bh=GPOQHzST5q8msjbIBFQ+7r7N059sBRr2Nl2
-        PCYzOKLI=; b=uCLBr8BVPh/7mbcP2S6g4Qdi+ZE3/fcKMVx68z7Cfj0HD+Hk4DV
-        csIDTTt9k1aZGwiq8XgmhF+/b8LfdNMzNMv+x8Z6OE3/m5NViLiaCF6vFkyAgZ2f
-        fk/Z/1V/RMqIBcUzX8YAsqPX2DLfvRYkIcVPiClFgzRMqHdpvRXeRs4X3qnqQZa+
-        IpspzCUW7a6pPMVfrlSXv+WPlJaY7zCc/XlpeMmeElDlo0XicDM4FxIOsRrXgtcG
-        JxFaYOfHrPnx9PJpDawZLtbnw80pZQJgbe9C4X5NpAy5sK8WaWljNVX/3GrRZUPO
-        u/5MYfTXrTygQSUOoa2mE/DzWuPsD0RNDkw==
-X-ME-Sender: <xms:xiwsZB7lRc6r97GubxaQ_CQKGp4tCYY70IKNRbIO17kgybw9SuYFSg>
-    <xme:xiwsZO6dOSMpBETQyE3fmrJB-t8ZQcaljoBmyA74zl6qPwaGROiX5lFj75J1091-Z
-    On1jOI6cGYgJGzRyDk>
-X-ME-Received: <xmr:xiwsZIdqNLYn_oUdwe4tH6MtJXn7NNV2dpPgsO-bpZin5zlnKIDQ9JwZ9gxQ5TqpotmYEaG1YX13XQJ6-iF3H9diZgOKuAQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeiledgjedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepvedvleeijeegvdekffehkeehieelhfeggfffheetkeeuledvtdeuffeh
-    teeltdffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:xiwsZKIRXjeeEDRU4kxLoxxJ-V_xi9yk92gcWFTsxqHYFuet2qMagw>
-    <xmx:xiwsZFLSgBCKxQvZq0qbc6cteT7qEeqI1H68Hrrpi6rSdzixMyXXYg>
-    <xmx:xiwsZDzVTUTLb-Z_CLCPt2cMRtDdNaGgVC-w0SoV8sPwAZBUboii4A>
-    <xmx:xiwsZMUKd2xhjPS76fWFGsD9kr7E-HA-aQC1AfetRUBNV-y3BX4MvQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Apr 2023 09:57:24 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 04 Apr 2023 12:11:47 +0200
-Subject: [PATCH v3 57/65] clk: ingenic: tcu: Switch to determine_rate
+        with ESMTP id S234443AbjDDOH0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 10:07:26 -0400
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEA75258;
+        Tue,  4 Apr 2023 07:06:54 -0700 (PDT)
+Received: by mail-qt1-x832.google.com with SMTP id cn12so28255628qtb.8;
+        Tue, 04 Apr 2023 07:06:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680617212;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mqA0aoKLpeVA32vIaHb9r/e2K6aw/oZkyeQELAebYPc=;
+        b=g3xNksrvYH2oPXKSdaktqR4E3st4g35PSLatf6tbVsOsXsDr1Sj1jLwbq1uBmULmIE
+         2bYTxUlI4/FlwuQOYE0GnEbxfUgPo0QQrM+tJctxP1xmdn9uW0jo5wEYy/xCngbBjmBp
+         B9jK6IABFElULF/1P5AZMjQ3RQqhR4a44SVLlnWCkQ62zdFGSCGbVgpB3BwEObhudPD6
+         0LEpddJETCcqlK4wCGZfMkCah4Srx4ZTc4FYPqpuZ892nFiO2UFl7FQYRXr8OzNlNlIJ
+         yAmvVNcKNJ23zojs+Lz5iHwJpJeeNnxjRRJqhIt6+eduGyx5D/r1Pkd3ok5Y7PebCij7
+         Y2TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680617212;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mqA0aoKLpeVA32vIaHb9r/e2K6aw/oZkyeQELAebYPc=;
+        b=Ycwgll4X05++FudvdIktPbWKLoavgCSmZqP7p6859tfItrIKHVqm9ViXaJrJNiAq55
+         DY/w0I2mLTCJXOZkh9LW+Y+VBdqWLrn+QeENtd04crIdJaw5TrvmP1EC47LngSDZWTT9
+         3GtDgdeD2nXN9IBoKFLohx4Jws37zCPG51kuby3TugOncs9h1QlZi853DigYAkOFyk1M
+         kPnUZuulADbjz/OfeBcz+F8HDpuqIm47CHbrfc3PHJJX+CY1ZZVMiJ3GWBVbtVgjEFj3
+         as5c2EYFgp65/3cskLIMYyFP+4od7bsBZ0foXu5yOQUvDYkNtgzFNjM/CP3e3tre/awN
+         zsTA==
+X-Gm-Message-State: AAQBX9fSck+YGIJFHErmVqAo2rS73LmREqAxpmAZv64PneSZYLGED1sD
+        ixifssQ88Lwe+FjEsq6Qe3w=
+X-Google-Smtp-Source: AKy350aH2P68cMEab0T2UXtKUu4U0+HrVNWU2CbCXEjLk+vTfFkCPJ/GrvWomK4of+TgUI297Qjb6A==
+X-Received: by 2002:a05:622a:1313:b0:3d2:7f3b:c691 with SMTP id v19-20020a05622a131300b003d27f3bc691mr3470798qtk.47.1680617211741;
+        Tue, 04 Apr 2023 07:06:51 -0700 (PDT)
+Received: from PCBABN.skidata.net ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id l22-20020ac848d6000000b003bfb0ea8094sm3230398qtr.83.2023.04.04.07.06.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Apr 2023 07:06:51 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+To:     peterz@infradead.org
+Cc:     bbara93@gmail.com, benjamin.bara@skidata.com,
+        dmitry.osipenko@collabora.com, jonathanh@nvidia.com,
+        lee@kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        rafael.j.wysocki@intel.com, richard.leitner@linux.dev,
+        stable@vger.kernel.org, treding@nvidia.com, wsa@kernel.org
+Subject: Re: [PATCH v3 2/4] i2c: core: run atomic i2c xfer when !preemptible
+Date:   Tue,  4 Apr 2023 16:06:42 +0200
+Message-Id: <20230404140642.550919-1-bbara93@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230404082255.GU4253@hirez.programming.kicks-ass.net>
+References: <20230404082255.GU4253@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20221018-clk-range-checks-fixes-v3-57-9a1358472d52@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>
-X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2812; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=aOwPU2Wm+Ndnnv0Bta9NJXANyxyt+Vki1X5WuRxHu+Q=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCna37df/7BTRcBz02mlnLSDh+K3/VhauLGzbI/U76fLP7hE
- ffLZ2FHKwiDGxSArpsgSI2y+JO7UrNedbHzzYOawMoEMYeDiFICJnOlj+F++IUTz/pvJccuZTPXmmL
- tqGuqp8rgttjd572FRKNTk58XwP9Zhi03aU9HSBYfMnlyryeJeeK1LnaW7bNvFyBrH+67XuQA=
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Ingenic TCU clocks implements a mux with a set_parent hook, but
-doesn't provide a determine_rate implementation.
+On Tue, 4 Apr 2023 at 10:23, Peter Zijlstra <peterz@infradead.org> wrote:
+> You can mostly forget about CONFIG_PREEMPT=n (or more specifically
+> CONFIG_PREMPT_COUNT=n) things that work for PREEMPT typically also work
+> for !PREEMPT.
 
-This is a bit odd, since set_parent() is there to, as its name implies,
-change the parent of a clock. However, the most likely candidate to
-trigger that parent change is a call to clk_set_rate(), with
-determine_rate() figuring out which parent is the best suited for a
-given rate.
+Thanks for the clarification!
 
-The other trigger would be a call to clk_set_parent(), but it's far less
-used, and it doesn't look like there's any obvious user for that clock.
+> The question here seems to be if i2c_in_atomic_xfer_mode() should have
+> an in_atomic() / !preemptible() check, right? IIUC Wolfram doesn't like
+> it being used outside of extra special cicumstances?
 
-So, the set_parent hook is effectively unused, possibly because of an
-oversight. However, it could also be an explicit decision by the
-original author to avoid any reparenting but through an explicit call to
-clk_set_parent().
+Sorry for expressing things more complicated than needed.
+Yes, exactly. Wolfram expressed considerations of adding preemptible() as
+check, as the now existing irq_disabled() check is lost with !PREEMPT. I tried
+to clarify that the check seems to be there for "performance reasons" and that
+the check essentially was !preemptible() before v5.2, so nothing should break.
 
-The driver does implement round_rate() though, which means that we can
-change the rate of the clock, but we will never get to change the
-parent.
-
-However, It's hard to tell whether it's been done on purpose or not.
-
-Since we'll start mandating a determine_rate() implementation, let's
-convert the round_rate() implementation to a determine_rate(), which
-will also make the current behavior explicit. And if it was an
-oversight, the clock behaviour can be adjusted later on.
-
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/ingenic/tcu.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-index d5544cbc5c48..7d04ef40b7cf 100644
---- a/drivers/clk/ingenic/tcu.c
-+++ b/drivers/clk/ingenic/tcu.c
-@@ -178,18 +178,21 @@ static u8 ingenic_tcu_get_prescale(unsigned long rate, unsigned long req_rate)
- 	return 5; /* /1024 divider */
- }
- 
--static long ingenic_tcu_round_rate(struct clk_hw *hw, unsigned long req_rate,
--		unsigned long *parent_rate)
-+static int ingenic_tcu_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
- {
--	unsigned long rate = *parent_rate;
-+	unsigned long rate = req->best_parent_rate;
- 	u8 prescale;
- 
--	if (req_rate > rate)
--		return rate;
-+	if (req->rate > rate) {
-+		req->rate = rate;
-+		return 0;
-+	}
- 
--	prescale = ingenic_tcu_get_prescale(rate, req_rate);
-+	prescale = ingenic_tcu_get_prescale(rate, req->rate);
- 
--	return rate >> (prescale * 2);
-+	req->rate = rate >> (prescale * 2);
-+	return 0;
- }
- 
- static int ingenic_tcu_set_rate(struct clk_hw *hw, unsigned long req_rate,
-@@ -219,7 +222,7 @@ static const struct clk_ops ingenic_tcu_clk_ops = {
- 	.set_parent	= ingenic_tcu_set_parent,
- 
- 	.recalc_rate	= ingenic_tcu_recalc_rate,
--	.round_rate	= ingenic_tcu_round_rate,
-+	.determine_rate	= ingenic_tcu_determine_rate,
- 	.set_rate	= ingenic_tcu_set_rate,
- 
- 	.enable		= ingenic_tcu_enable,
-
--- 
-2.39.2
-
+However, what came to my mind during my "research", is that it might make sense
+to handle all i2c transfers atomically when in a post RUNNING state (namely
+HALT, POWER_OFF, RESTART, SUSPEND). The outcome would basically be the same as
+with this patch series applied, but I guess the reasoning behind it would be
+simplified: If in a restart handler, the i2c transfer is atomic, independent of
+current IRQ or preemption state. Currently, the state depends on from where the
+handler is triggered. As you have stated, most of the i2c transfers in the
+mentioned states will just update single bits for power-off/sleep/suspend, so
+IMHO nothing where not using a DMA would matter from a performance point of
+view. But there might be other reasons for not doing so - I guess in this case
+the provided patch is fine (at least from my side).
