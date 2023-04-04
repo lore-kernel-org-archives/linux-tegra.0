@@ -2,73 +2,74 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C44BC761AF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACACC77B76
 	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 10:22:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234625AbjDDKWj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 06:22:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54978 "EHLO
+        id S234453AbjDDKWl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 06:22:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234351AbjDDKW1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 06:22:27 -0400
+        with ESMTP id S234549AbjDDKW0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 06:22:26 -0400
 Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10D7213B;
-        Tue,  4 Apr 2023 03:22:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA7130DC;
+        Tue,  4 Apr 2023 03:22:17 -0700 (PDT)
 Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5621F58214A;
-        Tue,  4 Apr 2023 06:22:20 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 01B82582134;
+        Tue,  4 Apr 2023 06:22:14 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 04 Apr 2023 06:22:20 -0400
+  by compute1.internal (MEProxy); Tue, 04 Apr 2023 06:22:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:content-type:content-type:date
         :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1680603740; x=1680610940; bh=7i/Ab+kXgxVSz3G6M0zpfnoNQPldDWBWa8x
-        D+C440h4=; b=BLFyrB97Jv1YShK1/5/T70wP48oMhwtjL6xAMeqnDAaQSiteUv9
-        qWO0++teV+/3FWUx3+KiGDy6yZnzYtHTZwvFmlZeI1FWUvTMZTJMJ1VBEzMXipl8
-        3bVeemB6fNrhZEpfPmRkwr00PnPMNpcPM0upEcl5kbW/F44lUZQpcswsAZS4d0rl
-        3SXb6EZ6+qM2zqNWboYmeovIpwdGjVtGVR0mSc8ns/o8WydSJcDvWGD0rVjMMWbm
-        hmbJr5FADyoBs/ec3WZoQ7Hegf5oCMGLwFSI8zqZF0xJNQIFOj7N3vK9MoOHF06K
-        Nuar0hUiDU0I38WlUFhPFCFCLBiB/UliZJA==
+        1680603733; x=1680610933; bh=WYf7JKf7bEdF8hHwKDdBz9r1xxeBm+Dh8ua
+        SPYCTEi4=; b=H0hJm4LCoiaDFah1h+s2JN+EunVIvLAXy7aJ5/gJILt/0yLaYDM
+        0mhqqudjgH+8+vfiriJ2W+NuNbWn+692hXg8Ffs6Kh9Gkfib6vY0v791cBYg3/6F
+        zbPHVAada2G67RZ0WRyYuSJm9IMK+6qyE0kkquXoD3apc/32aNVLOJMf0CR3RSeb
+        CSu3tiZ1GjiHCPPTbxG+5vlGZz/X1qtMC2n696o14yFPVtDwiUBVApizG0Ndg+ST
+        qQ6B+1U7nc9qJa6w8oXasXw+aOgxHx+nEtP1MBT3l1zEG/N7AU8upXO9U0Ow/NW/
+        VF9YMGoW7mEBwi7342vqIH+RBL8yZTv/Snw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:content-type:date:date:feedback-id:feedback-id
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1680603740; x=1680610940; bh=7i/Ab+kXgxVSz3G6M0zpfnoNQPldDWBWa8x
-        D+C440h4=; b=XhEHYYk1BAJaNN/M/XsU9toylC7HwzJdVG37H+mkuuX7Ol//y/C
-        O8LjHdEtyNVFVfOvVzlrdVgNGQge2wD8G2PGYC9MQy/AQw3GL682+KHb5TPvJWmo
-        4EjDk2q7EngUSw2xh6Kkh0YxMoKHtxOjsbhi5CPLtlhYJQP6TOT6+9sX/DwBvZ2g
-        duY1aF4bHby9O7X0KnA8Kkeh1/7EZ8Hj5Iyy4wR/+nNenoVmVB4IH17eKV2qRDuP
-        ErGBU3Myn78+I9c0OUD0e1GgjWnx4q6rB6mBznJm9uSA2ukOyvD37Mry5iyir4xb
-        J80IMMgmJa9wqbBnXlqj27wN40KX97x0Nrw==
-X-ME-Sender: <xms:XPorZKJ9u2Ksy9rRZnE8a3JPnbQd98mT_JmtmzogHSlqv7hu2tR20g>
-    <xme:XPorZCImAhKx9oOR9fEdNbZs97k5GCwHlEvdS5aQvSBDT8s7nshJx0rG6X6i82tC-
-    2-V03o40UNhTjgwfC8>
-X-ME-Received: <xmr:XPorZKsg5TOEtI7QCD8__GeVOUACWPgRPZMeAS3MhlPCXFXKcn1qX1dQ8q1diBI1e4tQGCHzuoNXLJvbhwIvrsAxWkEMT-4>
+        1680603733; x=1680610933; bh=WYf7JKf7bEdF8hHwKDdBz9r1xxeBm+Dh8ua
+        SPYCTEi4=; b=R2okELTrtUsALUW4p9D7il0Y1qlBCZ4HT4lnU4N5n1jsqU+rEoO
+        6ECGlzsHco9TUyBLaRVvu1RlOA5VMxJ2MozFdgxGZPYclS0D7iW7++RDrCJ2HitC
+        sUYDKVRFJc4hE9W3SFQDsJPYNZMFnm5ItZeJxG+FOBLoulXKl/0T4GGe3lt4Iyuy
+        eljoPwHv4/0cUnjvfcmFMk+skPnv1TYfdBX2GYQhoqk8HtIhxrAjDCqIIJESmgNP
+        GCsYzn/Py6HrzFsfpn4Z/Qac8kFsBRWCLMQEtrHcGCnc4NA7Ir3xwO/jvDGStyvL
+        Plcha2lMZydOBeGY79cuZp8FKmEZ5n7Ha7w==
+X-ME-Sender: <xms:VforZKJPU1TqtY53Ll3aQkk46Eme0QN2wGb1mjq6oF6zINffmVXm9Q>
+    <xme:VforZCKQUu4BCCUc4neyDW3OcKUKkeq9XLJZv8qt8Fo4eVTP2bzTKE1wKzrosZ1ED
+    33IvtstXkxyRBkCXJA>
+X-ME-Received: <xmr:VforZKtCXvlA0ky3saqqUcmtOp7KIrMVkGa_DFR-BvgWrePpgmc2p0AWEad_lHYEU0JQsUZ4CEy5kXibjqSEirz7yTVTLD8>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeiledgvdejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforgig
     ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
     grthhtvghrnhepvedvleeijeegvdekffehkeehieelhfeggfffheetkeeuledvtdeuffeh
-    teeltdffnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomh
+    teeltdffnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomh
     epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:XPorZPb2b6AodSj6NC8ZrCY_3xuHhm_wBGT2EpedWt3mOTfLB3HwwA>
-    <xmx:XPorZBbvmCJouG-ABpB0vGhIXNA6g1PFiJ7TRW0AcD9BkJKrt7nw2g>
-    <xmx:XPorZLAsGh9Zwe3W2fG6yMTf2RtrR2NCqL78BZUTcUOwQT3ncWcQNQ>
-    <xmx:XPorZCmHiKHJrh-bM6VJf3vlChJzF648YBGa0MBU6pqwUyzm-LrENQ>
+X-ME-Proxy: <xmx:VforZPZwj-HMU23pTOD7DHwjluKWWl_0_swXHw59c3YTDPv2b_Lmnw>
+    <xmx:VforZBbhm5zl49hnGjQOUxKUGx4OMGeLIfo4t7gRVRTeynr-qf1nEw>
+    <xmx:VforZLA2x8-42zXsqXMAxXONu04Dfde__d85itiTkW_kgtdOjwJcbw>
+    <xmx:VforZCnJVbzV2Mo6nKId7Os0otn3V1CCiw7z8GocMp07koP4sFPcjg>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Apr 2023 06:22:18 -0400 (EDT)
+ 4 Apr 2023 06:22:12 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 04 Apr 2023 12:10:57 +0200
-Subject: [PATCH v3 07/65] clk: at91: sckc: Add a determine_rate hook
+Date:   Tue, 04 Apr 2023 12:10:55 +0200
+Subject: [PATCH v3 05/65] clk: actions: composite: Add a determine_rate
+ hook for pass clk
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20221018-clk-range-checks-fixes-v3-7-9a1358472d52@cerno.tech>
+Message-Id: <20221018-clk-range-checks-fixes-v3-5-9a1358472d52@cerno.tech>
 References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
 In-Reply-To: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -128,18 +129,18 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
         Maxime Ripard <maxime@cerno.tech>
 X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2294; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=Lg/brXNdE1g9siAzXUI7jZQhQ+BR+hmAKU9lQUCbDLU=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCna37csuiyvqSFuzlpet8JtVtfVhVxPzhxOk7zqMqHkHqNi
- +oXWjlIWBjEuBlkxRZYYYfMlcadmve5k45sHM4eVCWQIAxenAEwkYRMjw55fIddF3mx5YN1fNH3tlY
- SwSCMPpcXFEvY71YsuXvu04RIjQ+fMOdlzPomLZlaeTw7YvvLC9gXfFooXvfxQvfSd4kqFREYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2552; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=5+q2ZWHTfCPw6PYw2bUudsGQiMT0hW8lELkDwWqjDVM=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCna37e8XCa/rEL9UtD96On1hxd7N7/0sffdtDVG/lqn9bfQ
+ x4arOkpZGMS4GGTFFFlihM2XxJ2a9bqTjW8ezBxWJpAhDFycAjCR/G2MDEvkn1l9ZDA5sX+F+Vo5vS
+ 3LDDz7+bh/rzF1evdxruUmSQuGfwpNt3XNn096nhyh93m121vOhyu1jynW70iZdjqjSKREgwcA
 X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The SAM9x5 slow clock implements a mux with a set_parent hook, but
+The Actions "Pass" clock implements a mux with a set_parent hook, but
 doesn't provide a determine_rate implementation.
 
 This is a bit odd, since set_parent() is there to, as its name implies,
@@ -170,30 +171,35 @@ behavior now and it can be further refined down the line.
 
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/at91/sckc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/actions/owl-composite.c | 1 +
+ drivers/clk/actions/owl-composite.h | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index fdc9b669f8a7..9c42961a8a2f 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -310,6 +310,7 @@ static u8 clk_sam9x5_slow_get_parent(struct clk_hw *hw)
- }
+diff --git a/drivers/clk/actions/owl-composite.c b/drivers/clk/actions/owl-composite.c
+index 101706e0c66f..4c844a5613e4 100644
+--- a/drivers/clk/actions/owl-composite.c
++++ b/drivers/clk/actions/owl-composite.c
+@@ -189,6 +189,7 @@ const struct clk_ops owl_comp_fix_fact_ops = {
  
- static const struct clk_ops sam9x5_slow_ops = {
-+	.determine_rate = __clk_mux_determine_rate,
- 	.set_parent = clk_sam9x5_slow_set_parent,
- 	.get_parent = clk_sam9x5_slow_get_parent,
- };
-@@ -337,7 +338,7 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
- 	init.ops = &sam9x5_slow_ops;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
--	init.flags = 0;
-+	init.flags = CLK_SET_RATE_NO_REPARENT;
+ const struct clk_ops owl_comp_pass_ops = {
+ 	/* mux_ops */
++	.determine_rate	= __clk_mux_determine_rate,
+ 	.get_parent	= owl_comp_get_parent,
+ 	.set_parent	= owl_comp_set_parent,
  
- 	slowck->hw.init = &init;
- 	slowck->sckcr = sckcr;
+diff --git a/drivers/clk/actions/owl-composite.h b/drivers/clk/actions/owl-composite.h
+index bca38bf8f218..0a0eecc78344 100644
+--- a/drivers/clk/actions/owl-composite.h
++++ b/drivers/clk/actions/owl-composite.h
+@@ -104,7 +104,7 @@ struct owl_composite {
+ 			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
+ 						     _parent,		\
+ 						     &owl_comp_pass_ops,\
+-						     _flags),		\
++						     _flags | CLK_SET_RATE_NO_REPARENT), \
+ 		},							\
+ 	}
+ 
 
 -- 
 2.39.2
