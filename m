@@ -2,103 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20CF0C761A6
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 14:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9030BC761A6
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 15:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235466AbjDDONp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 10:13:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37518 "EHLO
+        id S235618AbjDDPVA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 11:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235737AbjDDONl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 10:13:41 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03ACB558F;
-        Tue,  4 Apr 2023 07:13:08 -0700 (PDT)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 3D7E6100005;
-        Tue,  4 Apr 2023 14:12:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1680617587;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zl7MLykOKA8UlNhyqu3tWD/vjZRODEGN3E9wOmRfmr8=;
-        b=HERL1THee0w4ARcbmdqBbW9M2FrPt7M+4Zaeh/18I2OVyQ3MM0Usdk7NaPHFHD9vHrkI+I
-        e6Rw2Qo8DqxzMLNRPH7tdMTM4sXVOKb3byVmNQw1hU9hyte98VxCkOevjiFKXUjndP7l0o
-        fQXdMmYky22zAt7WMMTqJNETXimQFN7kaXSK2gu+vzkgvcXwnoMVA+S4byJsnO9o0TyEdL
-        NTpBE/7o4qGE7Tm1KSr5epsIsp2X3gs1bhxOKwvfmoWs1fJ9uXdwMxKdp72zRd/W2yJ+BC
-        2f5+NrOZt/WcDePLlFvQ+Cr+DbQfAOEuR513WeF4ixVoJRbe1FkVNLOkeaT62Q==
-Date:   Tue, 4 Apr 2023 16:12:51 +0200
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RESEND PATCH v4 03/21] staging: media: tegra-video: fix
- .vidioc_enum_fmt_vid_cap to return all formats
-Message-ID: <20230404161251.272cc78b@booty>
-In-Reply-To: <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
-References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
-        <20230309144320.2937553-4-luca.ceresoli@bootlin.com>
-        <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S235000AbjDDPVA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 11:21:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD28E468F;
+        Tue,  4 Apr 2023 08:20:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A6EE635CE;
+        Tue,  4 Apr 2023 15:20:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89BA6C433EF;
+        Tue,  4 Apr 2023 15:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680621658;
+        bh=zz/zwaxro2lTFYeVOZkWlnueS/5qGSV7aFGRshKv8Jo=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=LiiiMMbxvfh/dSd9Hf47+Bh9ti8InYkdpMEPKm8uj3V7mzD7ZnJ9UUB/7OZSIYGz5
+         ze+uSB3Jc3PY+az8ROpQyOvNh3LJ+dNNDFQDmrppsqWpVav3PYRnSolKSk9Gab6aQp
+         vmo7Yx8mDpTJ0rfwPz5n4na/0pXESRgka0ubCgtZrr/kQCiYUfHVUFfj/Q1n2e2Q4U
+         /3VoOvlV7Dpp7Tad1r2o42Whh8gJrrL+42QEOPUV/cwq7BcHBfd1Zb9fqjMLuGX3AA
+         kZcX2rW+NiLGklBgTnm3uPYkD89yt8d3BCUW9wpZOAqiHshY/glY5bpVIHAEl1LCv7
+         8361xETIzkRvw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Yang Li <yang.lee@linux.alibaba.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        skomatineni@nvidia.com, ldewangan@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20230328061031.70140-1-yang.lee@linux.alibaba.com>
+References: <20230328061031.70140-1-yang.lee@linux.alibaba.com>
+Subject: Re: [PATCH -next 1/2] spi: tegra114: Use
+ devm_platform_get_and_ioremap_resource()
+Message-Id: <168062165623.53383.15473905152295240848.b4-ty@kernel.org>
+Date:   Tue, 04 Apr 2023 16:20:56 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-00303
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Hans,
-
-On Wed, 29 Mar 2023 13:16:22 +0200
-Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
-
-> Hi Luca,
+On Tue, 28 Mar 2023 14:10:30 +0800, Yang Li wrote:
+> According to commit 890cc39a8799 ("drivers: provide
+> devm_platform_get_and_ioremap_resource()"), convert
+> platform_get_resource(), devm_ioremap_resource() to a single
+> call to devm_platform_get_and_ioremap_resource(), as this is exactly
+> what this function does.
 > 
-> I finally found the time to test this series. It looks OK, except for this patch.
-
-Thank you very much for taking the time!
-
-> The list of supported formats really has to be the intersection of what the tegra
-> supports and what the sensor supports.
 > 
-> Otherwise you would advertise pixelformats that cannot be used, and the application
-> would have no way of knowing that.
+> [...]
 
-As far as I understand, I think we should rather make this driver fully
-behave as an MC-centric device. It is already using MC quite
-successfully after all.
+Applied to
 
-Do you think this is correct?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-If you do, then I think the plan would be:
+Thanks!
 
- - Add the V4L2_CAP_IO_MC flag
- - As the mbus_code in get_format appropriately
- - Leave the changes in this patch unmodified otherwise
+[1/2] spi: tegra114: Use devm_platform_get_and_ioremap_resource()
+      commit: 05c79f71e357a566de887efa55672c8a36569f60
+[2/2] spi: tegra210-quad: Use devm_platform_get_and_ioremap_resource()
+      commit: 69d286c5293a35cbf2de3efe3cf4a47bdd264b92
 
-Best regards,
-Luca
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
