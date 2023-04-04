@@ -2,126 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D63C761A6
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 11:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2867CC6FD1D
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 11:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234713AbjDDLQQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 07:16:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51598 "EHLO
+        id S234198AbjDDLUT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 07:20:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234523AbjDDLQP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 07:16:15 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4651C1BE2;
-        Tue,  4 Apr 2023 04:16:14 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id ew6so128975585edb.7;
-        Tue, 04 Apr 2023 04:16:14 -0700 (PDT)
+        with ESMTP id S234165AbjDDLUS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 07:20:18 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D46DC;
+        Tue,  4 Apr 2023 04:20:17 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id y20so41988628lfj.2;
+        Tue, 04 Apr 2023 04:20:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680606973;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1680607216;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a93jlFBEn37wnN+TcvU+K1AUTd72n1q82Rp2YlCTV3Q=;
-        b=UyIkfrOmB7rJCwWoTVRwQQD9qhL2RcE3FbLY5o+pvNKiqfTCRdmL+TaH24hsQTY+ic
-         /KodZsrgfNJPO93oHf67gUhdgVUgngVo1d/CxmFL4gU8qGrmHmcXfNtxCmkoESC7oU4H
-         xVRn2djQO0j39P1cxFDg/84Ef4keE0k/wYGBgDm39dTMyYDywBQ7CZwLW3tYQpzmf9en
-         yzJBz53R7NLVRYZN0nUvYPtv8HufFKZ1q+CcU/XYS/94AVd8BdW87AWvSyQJYmEisaat
-         mKHEYQ0ytW8SuPd6GQOlgZ+GnQX/viQ6V/e83g9YIbapJakUswthgweaQ2og+JRWrT0X
-         GaKw==
+        bh=9xdko7jl4FcfBu5T09U5ILBtmM3jji4Qd+iEhYv/HhQ=;
+        b=bpkWJKrEhdvApIWGBXI4vug3m2LCOEI8t5R5oBiOXMPmcgHrFESKo16ntIPiEpI9KO
+         kfjJcnxKamO9VBtbEdW/7DaGLn0viBkssUXR4+Le83C1usgx0ZAYXi68OgI0TWAUH4/o
+         VRlAtTNUhsOsPMf/6GYBt4mw3XMe1HQwwMMk9usMaTzU4cwldfNmyti04SDSOiHDkQar
+         gwEmZ3BTnNA7zZ+tGcNaYtJGCg3IUK0gHJgzeNPlRtRcQN+hUrJnkxhKTL4POmgONrhU
+         D9+6SnKSMoyA0iXEVvWShhCri6SIy2zFB0i7rdUH+58utoYkcnCvIMSlDaXUEW7J2WPz
+         d/Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680606973;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1680607216;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a93jlFBEn37wnN+TcvU+K1AUTd72n1q82Rp2YlCTV3Q=;
-        b=pyZXAHZLn06pcdeaeyNWU0H6Y0dbct0/J9N4fsrgaDV8k+kzIHQB5TRO8bBTf52g77
-         7r+WC2GE+KIkQwMtdgrR1z9pZsvPWNlsey9vjgzeITkQsbe78u8KAVStxB8pLwzf3mhV
-         icWioX3HPbnjPscmW+AucfbKGKDO8xZimJwRkOL1YTJJbQmJMWVfdTiWUxDLC/qINNOD
-         b5OUhGFEhxu1tUige8hzHkjcTeDx9x7uGpNGkwaxJYY1jelnIUBDDzruiOk27SjGtbrW
-         InzFlXmoE6vdjeqZW4PtrSB+gtirGPLIVfrYevEzQlpyjNGlj+xszs7duQESrRdFn5RN
-         oAAA==
-X-Gm-Message-State: AAQBX9eje7YBCKXnFrlceDgbZWeZpZjrsbJnI1ooem1IwjN/sobpdmZk
-        sgm+jsiNfIgvwNuWB3UT9l8=
-X-Google-Smtp-Source: AKy350YX2rjJgE8ohoVGUGgdqkT4aMdrcxdH+2xwiWoRgZ0Iqukk70bnmVt/ZEgV6aKvJBaBqME0gg==
-X-Received: by 2002:a17:907:170a:b0:8dd:5710:a017 with SMTP id le10-20020a170907170a00b008dd5710a017mr1740550ejc.4.1680606972817;
-        Tue, 04 Apr 2023 04:16:12 -0700 (PDT)
-Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id f24-20020a170906825800b008bc8ad41646sm5815788ejx.157.2023.04.04.04.16.12
+        bh=9xdko7jl4FcfBu5T09U5ILBtmM3jji4Qd+iEhYv/HhQ=;
+        b=krCpyv3/HeP/hf6KAmeF4T7rp0kew3ryjgbHm1kqcOeiwyBElyLhp3i6/tDSmZKnXu
+         uVUOLCO4UvMbvCHmi/ETeiRjwMbN9PnKfup86hEgIUnBrayWRRRTQJYnwGXUAOR8Z4Oy
+         cqtYGUfaJ2A08fJHNPGVE7dHJ4Db4EGUQ90zGKPH9SljpoayB7rbPDV3TKgn/80to6Kp
+         sFHZcwblSnfuL9JBLqdYjVGrM2sNMROJKfe9/i0kAr5FKSt/sZrpiMgDU58sE4Z2yWVx
+         5VLNzDCXt9TMGpDwB4T4eE7r22gXXCjw5YtpInuSJd7NvYEGmnvq75diOBRAKjWTT4Tu
+         bfLA==
+X-Gm-Message-State: AAQBX9dVfHp6zvr7g6DCA24cZTr4l4FKzmhCThZDec3sqilggOTno7dx
+        SlsS8OfcJtHTcDjxJGsTP80=
+X-Google-Smtp-Source: AKy350ZAq9lNhL6JmwR0hDpQE3z8MsJosSQEJD6FaK8D/i1Prr/X8D5wHrcwhrphx/G6Yi0/jSF9VA==
+X-Received: by 2002:a19:e05c:0:b0:4d8:86c1:4786 with SMTP id g28-20020a19e05c000000b004d886c14786mr6299632lfj.27.1680607215383;
+        Tue, 04 Apr 2023 04:20:15 -0700 (PDT)
+Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 10-20020ac2484a000000b004a2c447598fsm2286320lfy.159.2023.04.04.04.20.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 04:16:12 -0700 (PDT)
-Date:   Tue, 4 Apr 2023 13:16:10 +0200
+        Tue, 04 Apr 2023 04:20:15 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH net-next 11/11] net: stmmac: dwmac-tegra: Convert to
- platform remove callback returning void
-Message-ID: <ZCwG-iyu43vKoFGu@orome>
-References: <20230402143025.2524443-1-u.kleine-koenig@pengutronix.de>
- <20230402143025.2524443-12-u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: tegra: Document Jetson Orin NX
+Date:   Tue,  4 Apr 2023 13:20:14 +0200
+Message-Id: <168060719503.2048989.12985869866369030936.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230331162914.16922-1-thierry.reding@gmail.com>
+References: <20230331162914.16922-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OpE5E+f+NrCfJbvo"
-Content-Disposition: inline
-In-Reply-To: <20230402143025.2524443-12-u.kleine-koenig@pengutronix.de>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---OpE5E+f+NrCfJbvo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 31 Mar 2023 18:29:11 +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The Jetson Orin NX is the latest iteration in the NX family of Jetson
+> products. Document the compatible strings used for these devices.
+> 
+> 
 
-On Sun, Apr 02, 2023 at 04:30:25PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
->=20
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+Applied, thanks!
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+[1/4] dt-bindings: tegra: Document Jetson Orin NX
+      commit: 062dfd995e8cbaf47f6cbf8bcdf5525439ebaa5e
+[2/4] dt-bindings: tegra: Document Jetson Orin NX reference platform
+      commit: d89baa52929f00e9052f61b4eef838ccc8ebf180
+[3/4] arm64: tegra: Support Jetson Orin NX
+      commit: 13b0aca303e97500e6aa6fa7965c620394c67775
+[4/4] arm64: tegra: Support Jetson Orin NX reference platform
+      commit: e63472eda5ea84424e4bff2b809389b0ba266613
 
---OpE5E+f+NrCfJbvo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQsBvoACgkQ3SOs138+
-s6EduRAAv3uNT9SNrysZJ44HOk63A5CQb1xTEVAacJguS9BsNgRfH79RGsaT9jWp
-axQPQQcoyqH9pSmJLUdXyknDjQ0V2fLjCm7FlMTpPn+WGarF6FEBy2F/0Q7B30d/
-LIb1zYnuwNfW6rCWzZo/cTK/Neck8+zC7TQRbAg5PMrNGZadZf/wEpg+tBY4lL+X
-Dcrs4n+fD89x1VSEynqBIg3AyMFGsh1iWNQ9Icn7Hi9PUe2PiyUJmqmEPEwp6xEu
-qD3AwrN0jX+exBIn4BxojVms2alChLZvTDVzxWM2l217ANgALCWf/MQlBcGhuPpl
-j3wqdKpbRUcrg/B0BeFSQ1Fy2rrOnUbnexngxHsqG4voE6BZrXTicUjPH4pzOp7d
-KvEtXVVMmo5n3mXMI8PBUsJl3k3YQnMEo+Bu1JHf9q8EYrOmDLXkkopP/BmTXrN3
-WswMR7BcGyC1rkMJ6pmnAp0qvEd8E5BK5NM6I6npvs0qaqw6rzYLNylMQkAwLpgK
-lVNsi8Gl/XSFtJwADUurLKiZCy/nkNXWh7O080/EZlKPkhEnvWemUndATh29ClmP
-DI7BbFaLtnb73mTtfuBozbIiFsZMnu4KfCls72hS1zYrFJ9FahXTSE6ny1InV86T
-UMNUYLR2MpLbYdqCJ07gm/3no/ErA/L4IRmzAWPMOLPu2gg869U=
-=/3Yh
------END PGP SIGNATURE-----
-
---OpE5E+f+NrCfJbvo--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
