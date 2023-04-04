@@ -2,88 +2,90 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BDFC6FD1D
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 16:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1575BC6FD1D
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 16:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235908AbjDDQMf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 12:12:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48408 "EHLO
+        id S235684AbjDDQ6y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 12:58:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235707AbjDDQMe (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 12:12:34 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22AD51708;
-        Tue,  4 Apr 2023 09:12:33 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id w9so132787078edc.3;
-        Tue, 04 Apr 2023 09:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680624751;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CEde4dazqs8JsdpTq9e976ZMwIeqbEXbVwUyENJtDV0=;
-        b=Z/iFB9SXOwMEOpCmleolmC6l2LhvyD3XMh7WKOQsjMrvrxUfm8ennXwNohnigYv577
-         B0hcxCfK9O73k2WCkdVlygKAlqYEEo72A8k1oNl+MsgsyTJGhgafCec/5kegRzRVLQXT
-         OCOfvy9H+0BPY68owun4pHVK1Y2z87oAUDjbO42Onc2uTvHyqB3Pk9lYHWCIitiB3L+W
-         6O1IIhVrJUlTQOnrp6Z+7/NZyyt//bCrMkRfulIemxRMeROJ6K/RYHwuMY84B7/V8FIH
-         Esd2Q2uWSlAzo36yuNwBvSFHrCTIQzFqztfrFUU82/mwACajVe92PJiD1PZ2RvDi8R/9
-         F1Tg==
+        with ESMTP id S232964AbjDDQ6x (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 12:58:53 -0400
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6262B3ABC;
+        Tue,  4 Apr 2023 09:58:48 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-17997ccf711so35354917fac.0;
+        Tue, 04 Apr 2023 09:58:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680624751;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CEde4dazqs8JsdpTq9e976ZMwIeqbEXbVwUyENJtDV0=;
-        b=iUBMRAh5T6utDDl3ynVEUZS5TlACSz+LAp/hUUQOY1NdPj3zDYd7Tl4pitG0RVdmbb
-         odyytsm6k/AIscy3PZw+IqHlI4wgqZ6G+x/QHH7ez8isjXr2bZLoe3a4Lv9Z8weCoDXN
-         T8dBjNK0i1UcxfJJr+fm46cTCFV4ENzTLkJAVbKYaYbrA7OnbEoiOoh2N3TBzLZh5foS
-         fzlrY0evkpyacz44ssRNQ+ODR4WxEYZmkcDvDK2tT2eUdnnI7GzKKG9KaFNvRlXmVNti
-         3juFPztn2M48Ej/kVdhEjT9C2G8aLPudKYUeWmmGevG3Up+l14Tdr6nBVkz7rigs2AOZ
-         VVqQ==
-X-Gm-Message-State: AAQBX9dfd8BN4MN2pI84OYq7OJhZQWlZEuBPlQI6zogVbAVh0jYOgFbu
-        aC2nMpFBhiM/foUcUbXy5Dc=
-X-Google-Smtp-Source: AKy350Y7Q1EvlaIMvcDZzEKWbHr8fByK3cVf/k9Wwlk6Un7sG8GyowpBQ8MoX8kuqDf1J9EYnHhtUg==
-X-Received: by 2002:a17:906:c217:b0:92d:9767:8e0a with SMTP id d23-20020a170906c21700b0092d97678e0amr102818ejz.13.1680624751436;
-        Tue, 04 Apr 2023 09:12:31 -0700 (PDT)
-Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id jo25-20020a170906f6d900b0093408d33875sm6126508ejb.49.2023.04.04.09.12.30
+        d=1e100.net; s=20210112; t=1680627527;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DiNu1ACRu56K9bloHouaXrNZa/JCLgtThvUYRqbnw58=;
+        b=lBHrmI4hrpjrBIiwUvV4fdcb0NK+SWBAm8vKjpdq1GzZ8tu73w0QQt501Ewa9gSRDM
+         T4KCeGLojE4znvigwgn7TOjTODpJ/vAFeYkOe2muYymoCaKJAJzaMmUszCc20mKyqLMv
+         vJ26nzOTsEfZoWJPVuqevMQOsbCzqHVBnDItRGJNwEGIn9lm/KwvZG1zFXi7SF4/xq2f
+         NMh4GOgEv3pGFCa6wffFoajlua1NK0/AUUN07B1tsREpiG+eCMLCy2i/InliCxeVfTyS
+         t1XVui8jggLUksoCs1/XgE++IpzhaG7lrWjcWEJGfD4nHILkbCdR3XIObSIIF053hxK3
+         QrbA==
+X-Gm-Message-State: AAQBX9fmaJXq2/u/EG4YXZ7PEaZu6H+bRtObFD2pvK/C75OBUSTBRczD
+        u3wZrg+JzfEcvagJo0anJQ==
+X-Google-Smtp-Source: AKy350ZCXusNb0GY54vqNjcB+19rcJ0QVPtVsjXBfRiKkGVSG03QFymysoMWHm6BrxE9RNOeVe2vOA==
+X-Received: by 2002:a05:6870:638a:b0:17d:1f3:3016 with SMTP id t10-20020a056870638a00b0017d01f33016mr52065oap.5.1680627527584;
+        Tue, 04 Apr 2023 09:58:47 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id vc12-20020a0568708f4c00b00172426ebe58sm4883176oab.27.2023.04.04.09.58.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 09:12:31 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     oder_chiou@realtek.com, thierry.reding@gmail.com,
-        Sameer Pujar <spujar@nvidia.com>,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        broonie@kernel.org, jonathanh@nvidia.com
-Cc:     kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
-        lgirdwood@gmail.com, tiwai@suse.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, perex@perex.cz,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: tegra: Audio codec support on Jetson AGX Orin
-Date:   Tue,  4 Apr 2023 18:12:30 +0200
-Message-Id: <168062474005.2644933.17495662209402914912.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <1676263474-13346-1-git-send-email-spujar@nvidia.com>
-References: <1676263474-13346-1-git-send-email-spujar@nvidia.com>
+        Tue, 04 Apr 2023 09:58:47 -0700 (PDT)
+Received: (nullmailer pid 56057 invoked by uid 1000);
+        Tue, 04 Apr 2023 16:58:46 -0000
+Date:   Tue, 4 Apr 2023 11:58:46 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] firmware: Use of_property_present() for testing DT
+ property presence
+Message-ID: <20230404165846.GA49361-robh@kernel.org>
+References: <20230310144704.1542045-1-robh@kernel.org>
+ <20230323120030.7mk62xk7tco32zw2@bogus>
+ <ZCwmWoZhMOlHnnzf@orome>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZCwmWoZhMOlHnnzf@orome>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
-
-On Mon, 13 Feb 2023 10:14:34 +0530, Sameer Pujar wrote:
-> Jetson AGX Orin has onboard RT5640 audio codec. This patch adds the
-> codec device node and the bindings to I2S1 interface.
+On Tue, Apr 04, 2023 at 03:30:02PM +0200, Thierry Reding wrote:
+> On Thu, Mar 23, 2023 at 12:00:30PM +0000, Sudeep Holla wrote:
+> > On Fri, Mar 10, 2023 at 08:47:04AM -0600, Rob Herring wrote:
+> > > It is preferred to use typed property access functions (i.e.
+> > > of_property_read_<type> functions) rather than low-level
+> > > of_get_property/of_find_property functions for reading properties. As
+> > > part of this, convert of_get_property/of_find_property calls to the
+> > > recently added of_property_present() helper when we just want to test
+> > > for presence of a property and nothing more.
+> > > 
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > ---
+> > >  drivers/firmware/arm_scmi/optee.c | 2 +-
+> > 
+> > Acked-by: Sudeep Holla <sudeep.holla@arm.com>(for the SCMI part)
+> > 
+> > I am assuming you will route this as it has other changes as well in the
+> > patch.
 > 
+> I can also pick this up along with the Tegra changes if Rob doesn't
+> want to take it. But also feel free to take this through whatever tree
+> works best, for the Tegra parts:
 > 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Applied, thanks!
+You can take it. Thanks.
 
-[1/1] arm64: tegra: Audio codec support on Jetson AGX Orin
-      commit: b903a6c5aaa862f8b88f4be4431ccca3b6fbc187
-
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Rob
