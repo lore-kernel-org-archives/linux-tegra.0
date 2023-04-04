@@ -2,140 +2,191 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E185C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 11:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F26C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 11:15:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234954AbjDDLGc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 07:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34132 "EHLO
+        id S234648AbjDDLPe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 07:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234713AbjDDLGK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 07:06:10 -0400
+        with ESMTP id S234639AbjDDLPd (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 07:15:33 -0400
 Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCD175269;
-        Tue,  4 Apr 2023 04:04:13 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id ew6so128842487edb.7;
-        Tue, 04 Apr 2023 04:04:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F661BF;
+        Tue,  4 Apr 2023 04:15:32 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id y4so129112260edo.2;
+        Tue, 04 Apr 2023 04:15:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680606238;
+        d=gmail.com; s=20210112; t=1680606931;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fna98BOXaPalQtbny6015p5IIFjUBKyffzvMmpdaxto=;
-        b=fs59/D5ouTu64eyM86CdFM3P+CGzngI5xTh6/WPM9C0AsjaF2rSxH9G/1DLE/B9Xrk
-         /gnOMtKYYdLqAAli9t0sXQRW8SzWgheyRpn0Son+BPrIUFdjthyZusXKJ/LiBG9U25Tg
-         AcwNd+4ar1K90HsL9fMuSiCZ+SlLnKrAtcydT9xaN0yrfNolpR9v5rkWlmE4BCynT2+x
-         Rq3P5JkjsOjgiN0xgXZ6jDPkR5N9rJbvFk0c9zGCtb74GiyBur8gFGznoVDsLtKelXPu
-         xOy70vEdVvQL9chEcO1mF8wAoPsDMl9l/IizYcQTPlaW4tMu+XHWLMZ/FcG4+vk8TLp1
-         uGFQ==
+        bh=ZNX9K8ck0uUOzT2dTHFGkWC9/9Gij8pMO/80UWewFWk=;
+        b=poqjbSv1ZVSUR04cF3S6ZY8DN1RMI06+QRQSSmIw4M4Cd0+1AJxLicIb0AMuZURxiR
+         XnwQx549KTEHyr0OT1yJfBqJgDj5WxvKR96Pq5SgAFRkPzZ3B5osov6GaeW5attluhBd
+         L5DsuHrD/P+uxJgqKJRziHzDuXp6fVMNXiNgaED0NJOu71PCEYqLgUHF1D5jzfCcMaXF
+         j3M4d+tl1yrvCb2mM7C519tXa55d9SqwWcKPJA0o5XByS2YHltirR5x9TCV1PKrY92av
+         WSjEPUd1s1V05CcDyFt8LPZNeBcnzOsK6LhUUH1wN2imbbE/cY0JOiTJhv8xsKMrHUx+
+         FSwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680606238;
+        d=1e100.net; s=20210112; t=1680606931;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fna98BOXaPalQtbny6015p5IIFjUBKyffzvMmpdaxto=;
-        b=BE3KgWxifTHo6WiBxsT4lDcM4EFSyRTVYwLaeapoMYkwRYvXwQ4uU8yNouiOg1dAW0
-         z3T58pHfNITGr6sfalWBPl0dgnPaA1e7tjgSepAgFYDTzrIOmCWtWPahq5LpyTmNtiXz
-         s/Yw0cmpuvIn6uvfhxvIus1TrjCdUQJzWTgZ8ADt32zD5BtNTA+HqcC630jW3cm/BiXU
-         U9b30Z/4lgCPC8xVBP3RDpufy8TVKeLUxq5d1vI2s5JrU7N86xzL9Qays7QZPf/KuTAd
-         B8zNYMdzyVihu5YlqNk0tzT3jEOq6VDFLPaPBisDMo2EQHykVRZG0Emx+a0WHruwUM/Y
-         4wJQ==
-X-Gm-Message-State: AAQBX9cz1VnR8WWSXtNJ28s2pce3NgR52oA66YFwpFGcCj67Mf+cgTvb
-        dYzYxyQXISNZI2zUMV7R7KCycu5DAbI=
-X-Google-Smtp-Source: AKy350ao5TOqOSsKpv54TlBSUzVQIMTj7FyQSMApYVFUiEeRb5OUW3rOmEFeTU/uxFEmQq7VeSOCnQ==
-X-Received: by 2002:a05:6402:1a2c:b0:4fd:2b04:6e8b with SMTP id be12-20020a0564021a2c00b004fd2b046e8bmr2222804edb.29.1680606238642;
-        Tue, 04 Apr 2023 04:03:58 -0700 (PDT)
+        bh=ZNX9K8ck0uUOzT2dTHFGkWC9/9Gij8pMO/80UWewFWk=;
+        b=1EJbQFHe5MaZs4He7vqfvaAL+L1oEyJKnYN0cB+oOVvJ+N3FdhIrUJsWqBo8qlNCQ+
+         g3FGWJVM18FNb6hmD8rcBG9JQTT2dP+QcjWW5ylxmx89cZXs5YrKKK/EEgxc230vM7gj
+         1lYVj9/Gxmuhxwzrz/QwnH3kmY5zX39IOBvZ9XnqBVo3ihYTL4M3OBu+CF5WSXh4W1qA
+         w9b4lPjvsLuhPvBf5gKWOo8FBZYmPdKxuT5uFpEPhtrXkfVThQfEXESaMM9PFMHQeEJC
+         di6aVJeP3TreRFsyC/DaO0jZO/Fq5Tcn/sfWPHL3Lv4GtnOGU/tMb9m/vEx/RyW2gl6J
+         VSlg==
+X-Gm-Message-State: AAQBX9ebpHH7kZMeNgPzSzabRPc10uCC90YQbxiYpoIOyoHyFMu1voyq
+        oBYnAz6qkFB8BO6JNRZV86aOplWn7+8=
+X-Google-Smtp-Source: AKy350Z6C9Gw8Vh96AW+yrfxA4Sgu7/Hq0BsTNLvh87HFfmUa8xTE/s5AyENeayPg5tTBF+PBwbciA==
+X-Received: by 2002:a17:906:f244:b0:947:fb8a:f2d2 with SMTP id gy4-20020a170906f24400b00947fb8af2d2mr1597820ejb.62.1680606931134;
+        Tue, 04 Apr 2023 04:15:31 -0700 (PDT)
 Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ee55-20020a056402293700b004aef147add6sm5668875edb.47.2023.04.04.04.03.58
+        by smtp.gmail.com with ESMTPSA id s5-20020a170906454500b008e54ac90de1sm5844791ejq.74.2023.04.04.04.15.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 04:03:58 -0700 (PDT)
-Date:   Tue, 4 Apr 2023 13:03:56 +0200
+        Tue, 04 Apr 2023 04:15:30 -0700 (PDT)
+Date:   Tue, 4 Apr 2023 13:15:29 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/4] dt-bindings: tegra: Document Jetson Orin Nano
-Message-ID: <ZCwEHNeZEhvzclX6@orome>
-References: <20230331163159.17145-1-thierry.reding@gmail.com>
- <20230331163159.17145-2-thierry.reding@gmail.com>
- <944bc557-7090-4b5a-e1bc-31b99fad06e5@linaro.org>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Petlozu Pravareshwar <petlozup@nvidia.com>, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, ulf.hansson@linaro.org, kkartik@nvidia.com,
+        cai.huoqing@linux.dev, spatra@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Viswanath L <viswanathl@nvidia.com>
+Subject: Re: [PATCH v2] soc/tegra: pmc: Support software wake-up for SPE
+Message-ID: <ZCwG0SM9szT6toGG@orome>
+References: <20230330170621.258068-1-petlozup@nvidia.com>
+ <f70c6d62-a7fd-c153-932f-16886e46329b@collabora.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tIuhWl8EGbu/wjct"
+        protocol="application/pgp-signature"; boundary="HWENIabzcbjHRvPD"
 Content-Disposition: inline
-In-Reply-To: <944bc557-7090-4b5a-e1bc-31b99fad06e5@linaro.org>
+In-Reply-To: <f70c6d62-a7fd-c153-932f-16886e46329b@collabora.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---tIuhWl8EGbu/wjct
+--HWENIabzcbjHRvPD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 31, 2023 at 10:20:16PM +0200, Krzysztof Kozlowski wrote:
-> On 31/03/2023 18:31, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
+On Mon, Apr 03, 2023 at 07:06:12PM +0300, Dmitry Osipenko wrote:
+> On 3/30/23 20:06, Petlozu Pravareshwar wrote:
+> > The Sensor Processing Engine(SPE) can trigger a software wake-up of
+> > the device. To support this wake-up for the SPE, set SR_CAPTURE_EN
+> > bit in WAKE_AOWAKE_CNTRL register associated with the wake-up for
+> > the SPE. This SR capturing logic is expected to be enabled for wakes
+> > with short pulse signalling requirements.
 > >=20
-> > The Jetson Orin Nano is the little sibling of the Jetson Orin NX.
-> > Document the corresponding compatible strings for these devices.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > Signed-off-by: Viswanath L <viswanathl@nvidia.com>
+> > Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
 > > ---
-> >  Documentation/devicetree/bindings/arm/tegra.yaml | 7 +++++++
-> >  1 file changed, 7 insertions(+)
+> > v1->v2:
+> > * Rebase the change on latest code.
+> > ---
+> >  drivers/soc/tegra/pmc.c | 24 +++++++++++++++++++++++-
+> >  1 file changed, 23 insertions(+), 1 deletion(-)
 > >=20
-> > diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documen=
-tation/devicetree/bindings/arm/tegra.yaml
-> > index 61e638c9cad7..60c151da5e06 100644
-> > --- a/Documentation/devicetree/bindings/arm/tegra.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-> > @@ -220,6 +220,13 @@ properties:
-> >                - nvidia,p3767-0001
-> >                - nvidia,p3767-0002
-> >            - const: nvidia,tegra234
-> > +      - description: Jetson Orin Nano
-> > +        items:
-> > +          - enum:
-> > +              - nvidia,p3767-0003
-> > +              - nvidia,p3767-0004
-> > +              - nvidia,p3767-0005
+> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> > index cf4cfbf9f7c5..2a2342eff622 100644
+> > --- a/drivers/soc/tegra/pmc.c
+> > +++ b/drivers/soc/tegra/pmc.c
+> > @@ -3,7 +3,7 @@
+> >   * drivers/soc/tegra/pmc.c
+> >   *
+> >   * Copyright (c) 2010 Google, Inc
+> > - * Copyright (c) 2018-2022, NVIDIA CORPORATION. All rights reserved.
+> > + * Copyright (c) 2018-2023, NVIDIA CORPORATION. All rights reserved.
+> >   *
+> >   * Author:
+> >   *	Colin Cross <ccross@google.com>
+> > @@ -177,6 +177,7 @@
+> >  /* Tegra186 and later */
+> >  #define WAKE_AOWAKE_CNTRL(x) (0x000 + ((x) << 2))
+> >  #define WAKE_AOWAKE_CNTRL_LEVEL (1 << 3)
+> > +#define WAKE_AOWAKE_CNTRL_SR_CAPTURE_EN (1 << 1)
+> >  #define WAKE_AOWAKE_MASK_W(x) (0x180 + ((x) << 2))
+> >  #define WAKE_AOWAKE_MASK_R(x) (0x300 + ((x) << 2))
+> >  #define WAKE_AOWAKE_STATUS_W(x) (0x30c + ((x) << 2))
+> > @@ -191,6 +192,8 @@
+> >  #define WAKE_AOWAKE_CTRL 0x4f4
+> >  #define  WAKE_AOWAKE_CTRL_INTR_POLARITY BIT(0)
+> > =20
+> > +#define SW_WAKE_ID		83 /* wake83 */
+> > +
+> >  /* for secure PMC */
+> >  #define TEGRA_SMC_PMC		0xc2fffe00
+> >  #define  TEGRA_SMC_PMC_READ	0xaa
+> > @@ -355,6 +358,7 @@ struct tegra_pmc_soc {
+> >  	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+> >  				   struct device_node *np,
+> >  				   bool invert);
+> > +	void (*set_wake_filters)(struct tegra_pmc *pmc);
+> >  	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
+> >  	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+> >  	int (*powergate_set)(struct tegra_pmc *pmc, unsigned int id,
+> > @@ -2416,6 +2420,17 @@ static int tegra210_pmc_irq_set_type(struct irq_=
+data *data, unsigned int type)
+> >  	return 0;
+> >  }
+> > =20
+> > +static void tegra186_pmc_set_wake_filters(struct tegra_pmc *pmc)
+> > +{
+> > +	u32 value;
+> > +
+> > +	/* SW Wake (wake83) needs SR_CAPTURE filter to be enabled */
+> > +	value =3D readl(pmc->wake + WAKE_AOWAKE_CNTRL(SW_WAKE_ID));
+> > +	value |=3D WAKE_AOWAKE_CNTRL_SR_CAPTURE_EN;
+> > +	writel(value, pmc->wake + WAKE_AOWAKE_CNTRL(SW_WAKE_ID));
+> > +	dev_dbg(pmc->dev, "WAKE_AOWAKE_CNTRL_83 =3D 0x%x\n", value);
+> > +}
 >=20
-> Similar questions as for patch #1. Where are the DTSes? Where are the
-> differences? If we keep documenting every SKU which is the same from
-> user/OS perspective, this list would grow crazy.
+> To me this needs to be moved to the SPE driver, which should get the PMC
+> regmap handle and enable wake only when needed, similarly how it's done
+> by USB Tegra drivers that also need to configure PMC. Otherwise this
+> looks like a hack/workaround.
 
-As for the concern of this list growing crazy: as far as I know it's
-complete after this. I'm not aware of any other SKUs being planned for
-the future. Obviously that could always change, but again, I think there
-is some advantage in being as complete as possible when documenting
-these, otherwise someone will eventually come across a SKU that's not
-documented and be easily confused.
+Wake is still only enabled when needed via the irq_set_wake() callback.
+And this is slightly different in that it pretty has no side-effects. It
+isn't a configuration option that needs to be switched every now and
+then but rather just a bit in a register that happens to have the wrong
+default value (or an inconvenient default value).
+
+For USB there are actual side-effects and some of the settings only make
+sense if a given USB port is actually used, etc. So doing the regmap
+dance is actually worth it.
+
+For SPE it just doesn't seem worth it to have all of these inter-
+dependencies just for the sake of statically setting one bit once during
+boot.
 
 Thierry
 
---tIuhWl8EGbu/wjct
+--HWENIabzcbjHRvPD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQsBBwACgkQ3SOs138+
-s6EbZg/9FD4w/ntB8fSVDEIKKyhtSt8sgxLcjuz1KK2ZrwKvevU7LgqmuAAJ29yT
-QyTehky+UMhGdCcWied+DhtwTNtt3kfosYStr0HFKZOFv0Cm1wBpgMz7PytjkA5U
-QmoOvhILWsm152Z8PqNK999nJktGDmJRCTFh99yvyLrCXG5XG/HKyfsJDg++GP6w
-btMJUHKCVsyd399gyMElvlUcjRK+DvN7lQpkjTQm3ebldt6KMB2WdTYLsTc8J2SR
-qfwxfGo7dA+F74vxOs6iqq6hw0wRSpzLSh0fAxRPs//8PwR512jwhr5GFsoxi4wJ
-RLQSIW8OkvFv0o2uCI7UNUXv3/HbcxMs74XCRaU5hFkad1x6kr436QW+qnhT9pLq
-ShVuoxsoPfo0orl91eK6/8LusWv/OrIoovq2UAJ/MwSnpcwQLcWi278G4ailoP6N
-3QlBkKP5mc/TrIU0LTR0he3jSOzJD2M4YviecE8DqLT74XBHDRWo8eEiUNAyyI0w
-5eGOvLKIT+JGMzxlVwkue1LXBvuGiI+Lo2apqXZdaTK+NyNCfMZuIiHnzYEsU7Fn
-EDz7Y6Lw5mW8MbKcrz6oS9bkNitwRG4aE5YgodVGp3d4NMk5r+Fpm4dLkEhJ8jdV
-U8OJJz79YxJl3sIau099EENakAcZUvpy8tKUqep/5r6vb7dDDn4=
-=Lukh
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQsBs4ACgkQ3SOs138+
+s6En+RAAvRL37e270TWQhnw+WuuJchdJ3i+kJ9KFpCRbWXBoHv/4JB+WQHHiOpI9
+LYi231NgMEDgQvmgyRgB5sPJIGA4+9aLVqhitOHU3wm3tZBQ1lrMaymPALSOGcQs
+pHpXPFd8FO+vYdWYjVdh7K2mGT0V4eDkgNdPzdFFfMdxFSqs3taoMxUCnsKOGEZg
+JScNPs6bws+5+5qmvgkm0Uei7OuKW8UTsJOdHyma66CHF4oql2WEDB84/a2reKUB
+fIqwEI+jfHH80ilXuf755Q3zssgcePK4b3A86LqlXfgIqB0Gw+25W3a5S1pfMosk
+8mYoVIpwsXRK0jOazims3KZIMA3ILwJBgm4uC5Vj3bzcmsqlvEEoVzSXTkhdGE7I
+0cvXkXXlpx59w370QvvPPxS0yiiU/V3xBA4WUl+p3mI7MuQx/26cZ2PSIPT+VuK4
+WnyblJ9ssV7OQCSzebeR/oxmDhfsB2lqLFNCfMt4f7GUd9idkHqitr11W6rYclCp
+AJ2ZDqXLHDSlmrL3MIBd9CIpwCPVav8N3Ez7FNFj1/aly7wuqL9EW9lgIqj+7ZI+
+hCE4Txl8XaJ0GdTUWC4Dh00QqaRCBHtgeVvgGGbg/fC0tyuwYqGlvTb4Zg8MHQrD
+VxXGDdyqOtysE6dT9wRIAhDOEgzWYLYGO4GhjIhBpbDQ3TYJWQ8=
+=YpjT
 -----END PGP SIGNATURE-----
 
---tIuhWl8EGbu/wjct--
+--HWENIabzcbjHRvPD--
