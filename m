@@ -2,69 +2,69 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AF8C761A6
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 13:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1DEC761A6
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Apr 2023 13:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234796AbjDDNeE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 09:34:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43986 "EHLO
+        id S235174AbjDDNeI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 09:34:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235133AbjDDNeD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 09:34:03 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4928144A1;
-        Tue,  4 Apr 2023 06:33:29 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id ek18so130712733edb.6;
-        Tue, 04 Apr 2023 06:33:29 -0700 (PDT)
+        with ESMTP id S235156AbjDDNeG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 09:34:06 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D5D40CD;
+        Tue,  4 Apr 2023 06:33:31 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id ek18so130713088edb.6;
+        Tue, 04 Apr 2023 06:33:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680615198;
+        d=gmail.com; s=20210112; t=1680615200;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nj6AAE4bBemvgWH7OPzB21B8uE7Vkqv4W3Kl15c9r2E=;
-        b=n0i1awinG9E8S337ouwMBqHM20IpfPjlf84YjQ9SroLgB3kG0CmdNvRF+mekeo+v/L
-         c9m2SLe6XcHrhAAILk5K2iQceebI4JlxSz+HE0+Ya4//Xnuge1eENvJpacS39krVEAkO
-         rfkZJcJPLzasTTz0R+Vs1QS+RHm3jqwCehXBj5ULBu5rbvgRshnPe9Z6rNvztB+cdpsS
-         T83P2hBtyOaSrMY/hrhtVEFXyNNqyJmDDRirzHt78y68DUGo3CO5bGRqYJYwjLvD+GOn
-         IqqNEmjePC/SL7lOwql+8NOINKdvn0/tiqvLAHILapZ4pSC2LU6RnrMiPeGsZWHeXV9+
-         EQBA==
+        bh=uvRrYX/VkYr2liqoThj7T0rsfgCC4S4xc3IvCNfR1Gw=;
+        b=C0DT0hcyBMONZrAhs+SSbsdayCm5+Dl8sWjUyveyCgiGBXHX40yw2ouhhJDyA+2NFQ
+         ubkrOyEKC6TFyGvs0mScw/RFO1yVHM+2IgaM3hFuTyEi5OblJ3iRbc9hthnTtVI2/uMi
+         udW3fN6DOWGURfGTIeafAEVhcDwFoUVgZJGJ+7jsaZdRbeWRSBYvOvV8ZvWLmJPG4xtC
+         cqoh3HyYwevl2GLJyV11e22TeBAIyEAY/60DU8tapE/cTNwVXYcYGVcFdTSkQmj9qFTO
+         LKP3wRxxiekOGLKXH5FdfqGbTyxirH/jJiFcfZrlppETMpXCacFHtJJbfWmFsPSaG+3d
+         Jriw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680615198;
+        d=1e100.net; s=20210112; t=1680615200;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nj6AAE4bBemvgWH7OPzB21B8uE7Vkqv4W3Kl15c9r2E=;
-        b=LT4kOZwslDyvSHiLrTyZAR6EVGRYKvCMtJwMRVKsvFPD7PsrOFpO7Qw0Q7nNmkdT9n
-         5m+OUkLGluAojPPa1YBTayebu0wTSpPyETb/NM4zSoxKHQSgmiHgzMQb2y6w74iMbc7m
-         nfSyIjYPDkX7nY/dcO/AKOA6QtE7P9aOK0Z6tdusa+MBN0esOHv9GuvF47sTKTpGIPkI
-         +Rzq6pDkQhqMklA7k72cUNKclIWfM1I69heIXBHqFTEposvELsobg6JoQS6ZLQ0dnBGR
-         JReMMRncNYz0CjzU8Enot0tQTnZrXdLqQqyNtf6DG5WkfwwuHr463Ga5MEMTKwmtQ0f7
-         r9hA==
-X-Gm-Message-State: AAQBX9e9cJZpiTgsD7zAz129zYfR0Zc+k9xF8GJqK5JF+8CBNsCgp9IZ
-        8YWTYTjmwjdHl/SzSe01GMY=
-X-Google-Smtp-Source: AKy350bwkSXLO6QYvpzoePwPAAlm7RHyQM5h7B7l4VrnUybYq2A63vhPiqUsbragWApeQiUzrfX6SA==
-X-Received: by 2002:a17:906:3bce:b0:8b1:2d0e:281 with SMTP id v14-20020a1709063bce00b008b12d0e0281mr2423674ejf.18.1680615198361;
-        Tue, 04 Apr 2023 06:33:18 -0700 (PDT)
+        bh=uvRrYX/VkYr2liqoThj7T0rsfgCC4S4xc3IvCNfR1Gw=;
+        b=JtuU9uyiBGCq34PPerRpLenPvkcR7hrnub+7s5oiQ0coCrIu2cJ+0/MZRJ1SK4o6QF
+         t+1RR2FhiIe6cW4nzMf01EDCib8FPXVbDMl9PtG9txW2FzU6cuzE+9YPCWxrRxR4OU1k
+         U6OoR2Qy7bmiL5cbZ9OWqV+vovOrGGt0E9AjDagHXMGe1TZkXSnR5okn7SBdMTGSHtQp
+         PmQ/zXxCb223MkWSyjagPz/b/o6W5VIoq7J5sBL4DL1w7g2HEhFCujs9SXe533C2V1rA
+         AQK0Zy3sM73s0qpisw5OHBL/NBJICglQ7Lihn//QpWgd0pWiDLtkAX+WtE0t/uEcglIk
+         1jPg==
+X-Gm-Message-State: AAQBX9dH6oUsDmFaBADTS558fDS+Dy1h38/ERRUvFrAK7X13s2HAYJnU
+        z5dIWpzqLFQuXUtiOyf4QC4=
+X-Google-Smtp-Source: AKy350ajSVQWBzNirJ1Il5vAytxkgh6tu1ZpBDKEDVP5rxKwSHN/faQ4eWdFnWjfXpXhAOx51ewctA==
+X-Received: by 2002:a17:906:2306:b0:92b:e3f0:275f with SMTP id l6-20020a170906230600b0092be3f0275fmr2364543eja.40.1680615199985;
+        Tue, 04 Apr 2023 06:33:19 -0700 (PDT)
 Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id rv13-20020a1709068d0d00b0094928b18886sm592497ejc.52.2023.04.04.06.33.18
+        by smtp.gmail.com with ESMTPSA id b17-20020a170906491100b008e57b5e0ce9sm5921995ejq.108.2023.04.04.06.33.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 06:33:18 -0700 (PDT)
+        Tue, 04 Apr 2023 06:33:19 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Maxim Schwalm <maxim.schwalm@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Svyatoslav Ryhel <clamor95@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 2/4] ARM: tegra30: Use cpu* labels
-Date:   Tue,  4 Apr 2023 15:33:13 +0200
-Message-Id: <168061516876.2141244.13032819432444292317.b4-ty@nvidia.com>
+Subject: Re: (subset) [PATCH v3 4/4] ARM: tegra30: peripherals: add 266.5MHz nodes
+Date:   Tue,  4 Apr 2023 15:33:15 +0200
+Message-Id: <168061516875.2141244.12474864091063517769.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230329090403.5274-3-clamor95@gmail.com>
-References: <20230329090403.5274-1-clamor95@gmail.com> <20230329090403.5274-3-clamor95@gmail.com>
+In-Reply-To: <20230329090403.5274-5-clamor95@gmail.com>
+References: <20230329090403.5274-1-clamor95@gmail.com> <20230329090403.5274-5-clamor95@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -74,16 +74,15 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-On Wed, 29 Mar 2023 12:04:01 +0300, Svyatoslav Ryhel wrote:
-> From: Maxim Schwalm <maxim.schwalm@gmail.com>
-> 
-> Replace cpu paths with labels since those already exist in tree.
+On Wed, 29 Mar 2023 12:04:03 +0300, Svyatoslav Ryhel wrote:
+> LG Optimus Vu (p895) and Optimus 4X HD (p880) have 266.5MHz RAM
+> clock and require this entry to work with it correctly.
 > 
 > 
 
 Applied, thanks!
 
-[2/4] ARM: tegra30: Use cpu* labels
+[4/4] ARM: tegra30: peripherals: add 266.5MHz nodes
       (no commit info)
 
 Best regards,
