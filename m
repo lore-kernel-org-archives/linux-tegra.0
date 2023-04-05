@@ -2,223 +2,91 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ADCC77B6E
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 13:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1FAC77B60
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 13:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238059AbjDENET (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 09:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47774 "EHLO
+        id S237940AbjDENKA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 09:10:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238176AbjDENEQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 09:04:16 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F2A5FCF;
-        Wed,  5 Apr 2023 06:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1680699848;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YkbuvCGQOWFY1W5hX/uG2RveqynQ+85wv2M8PGFZ7vc=;
-        b=3mEi9sd14RtSilWugED3F/f1NHSVZz/2xsgSbVUMYtohN4iyRWPQuN/0cj7BtjXjYQTI9X
-        a6aEynlck8IN4/RYN4tKNy+VG1wAYjPHKb2w1UKNamaQkeW8Ds6o9+R3WX/pE03V9N6Ndu
-        0nvl10itS1x2Cw7b1X3xuVSiT51gMLU=
-Message-ID: <3c1c42baf7d764bf6429b470f534fd9ec46ddedd.camel@crapouillou.net>
-Subject: Re: [PATCH v3 56/65] clk: ingenic: cgu: Switch to determine_rate
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-Date:   Wed, 05 Apr 2023 15:04:05 +0200
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-56-9a1358472d52@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
-         <20221018-clk-range-checks-fixes-v3-56-9a1358472d52@cerno.tech>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S238257AbjDENJ5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 09:09:57 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9318626B5;
+        Wed,  5 Apr 2023 06:09:55 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id er13so99939484edb.9;
+        Wed, 05 Apr 2023 06:09:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680700194;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iXULW1Tg1AvdOyR+817NcoyG6wJR38hO2pnEfsLrzL4=;
+        b=q5oa/vCMhLevDXLGtIpoACoVOPOvmzLMX9o3qnP3wKbXQyOzatgUXfu6V6QBdE1Dsf
+         tMEkU2b4o4yLO24wRWesww5hno7GPFbEzWv6GVGryZArFf8E1r5kae7bSzduSCbAtIs8
+         hcrvr5AfakYeh7BUqpimcK+GUIl68tYdBsPcdXWb6FWLlwnwoCBXa79/2lr8de5Y1p0R
+         /Kbpuqk+eAn7/XobajFP5P5ce4DdDtIxgqndoqbQUXgXtrp+5fHNocsiKgrYXQQp07pm
+         L67ZFx10y/0kbp1eFtGyw012hyVOYhXHIF9ykmGKNLYL+yCLljKzjiKs69bNaD9yHvlG
+         TMjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680700194;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iXULW1Tg1AvdOyR+817NcoyG6wJR38hO2pnEfsLrzL4=;
+        b=X7wLvXuJF6Y3lQJzsH4tDxe905B9h+Z8iUcvtYwXfrrFjIfn262cPeXePIfCoXNGYO
+         1gUwBDHYjKKFuBlmU3LfPBxtwQEbu2HeR8DAg9sPgJHg9WamSR75Gm8ao9Krs2vGV7G4
+         bLlcDUkWys3bFQx5JOHiYM1MdWT0TwYlda1nt6lT/6OXV7uVJuFoUw1wxnL1LzUI5vXT
+         JByPF01S3L0zjkJrYig6DTNaN/ckGJPMJjMvNTZAJsyiklyVlKgmXbp8H/UhJ4OClwAi
+         /FM+VT/XsLcG4OI66bz/gdo66vPp3w92jCVmpiavO/BCk8EX5lkWaxoqLRI7UtC2ZxpH
+         H3MQ==
+X-Gm-Message-State: AAQBX9djBKn7pb/FfgUCtO8dh44fXuNQikWwD/E3SSRWuZAY74/5Dn40
+        kzHWoxGHYKecqSnNZ5Qxec4=
+X-Google-Smtp-Source: AKy350Y2m+a9IWIGy84W5fLSXxpY0qaEzQ49JdELMllLsc1czCEAlJXIYXIq7s7xpfJypNaP/7iGoA==
+X-Received: by 2002:a17:906:4714:b0:931:d644:b9d3 with SMTP id y20-20020a170906471400b00931d644b9d3mr2789003ejq.59.1680700194084;
+        Wed, 05 Apr 2023 06:09:54 -0700 (PDT)
+Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 8-20020a170906018800b009306ebc79d3sm7302203ejb.59.2023.04.05.06.09.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 06:09:53 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] arm64: tegra: dts: add vccmq on p3310 TX2 SoM
+Date:   Wed,  5 Apr 2023 15:09:47 +0200
+Message-Id: <168070017409.4044223.8463461096099563249.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230127093910.426233-1-ben.dooks@codethink.co.uk>
+References: <20230127093910.426233-1-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Maxime,
+From: Thierry Reding <treding@nvidia.com>
 
-Le mardi 04 avril 2023 =C3=A0 12:11 +0200, Maxime Ripard a =C3=A9crit=C2=A0=
-:
-> The Ingenic CGU clocks implements a mux with a set_parent hook, but
-> doesn't provide a determine_rate implementation.
->=20
-> This is a bit odd, since set_parent() is there to, as its name
-> implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
->=20
-> The other trigger would be a call to clk_set_parent(), but it's far
-> less
-> used, and it doesn't look like there's any obvious user for that
-> clock.
->=20
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call
-> to
-> clk_set_parent().
+On Fri, 27 Jan 2023 09:39:10 +0000, Ben Dooks wrote:
+> The TX2 SoM's SDIO WiFI card is connected via mmc@3440000 however it does
+> not look like the upstream kernel is even bothering to power this (and
+> the regulator framework shuts down this power rail post kernel init).
+> 
+> The issue seems to be a missing link for vccq from the MAX77620 PMIC's LDO5
+> which is labeled vddio_sdmmc3 (and not used anywhere else) to the mmc@3440000
+> node to ensure there is at leasr bus power.
+> 
+> [...]
 
-As I said in the v2 (IIRC), clk_set_parent() is used when re-parenting
-from the device tree.
+Applied, thanks!
 
->=20
-> The driver does implement round_rate() though, which means that we
-> can
-> change the rate of the clock, but we will never get to change the
-> parent.
->=20
-> However, It's hard to tell whether it's been done on purpose or not.
->=20
-> Since we'll start mandating a determine_rate() implementation, let's
-> convert the round_rate() implementation to a determine_rate(), which
-> will also make the current behavior explicit. And if it was an
-> oversight, the clock behaviour can be adjusted later on.
+[1/1] arm64: tegra: dts: add vccmq on p3310 TX2 SoM
+      (no commit info)
 
-So just to be sure, this patch won't make clk_set_rate() automatically
-switch parents, right?
-
-Allowing automatic re-parenting sounds like a huge can of worms...
-
-Cheers,
--Paul
-
->=20
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
-> =C2=A0drivers/clk/ingenic/cgu.c | 15 ++++++++-------
-> =C2=A01 file changed, 8 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-> index 1f7ba30f5a1b..0c9c8344ad11 100644
-> --- a/drivers/clk/ingenic/cgu.c
-> +++ b/drivers/clk/ingenic/cgu.c
-> @@ -491,22 +491,23 @@ ingenic_clk_calc_div(struct clk_hw *hw,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return div;
-> =C2=A0}
-> =C2=A0
-> -static long
-> -ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *paren=
-t_rate)
-> +static int ingenic_clk_determine_rate(struct clk_hw *hw,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struc=
-t clk_rate_request *req)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct ingenic_clk *ingen=
-ic_clk =3D to_ingenic_clk(hw);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const struct ingenic_cgu_=
-clk_info *clk_info =3D
-> to_clk_info(ingenic_clk);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int div =3D 1;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (clk_info->type & CGU_=
-CLK_DIV)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0div =3D ingenic_clk_calc_div(hw, clk_info,
-> *parent_rate, req_rate);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0div =3D ingenic_clk_calc_div(hw, clk_info, req-
-> >best_parent_rate,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 req->rate);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else if (clk_info->type &=
- CGU_CLK_FIXDIV)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0div =3D clk_info->fixdiv.div;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else if (clk_hw_can_set_r=
-ate_parent(hw))
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0*parent_rate =3D req_rate;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0req->best_parent_rate =3D req->rate;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return DIV_ROUND_UP(*parent_ra=
-te, div);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0req->rate =3D DIV_ROUND_UP(req=
-->best_parent_rate, div);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static inline int ingenic_clk_check_stable(struct ingenic_cgu *cgu,
-> @@ -626,7 +627,7 @@ static const struct clk_ops ingenic_clk_ops =3D {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.set_parent =3D ingenic_c=
-lk_set_parent,
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.recalc_rate =3D ingenic_=
-clk_recalc_rate,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.round_rate =3D ingenic_clk_ro=
-und_rate,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.determine_rate =3D ingenic_cl=
-k_determine_rate,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.set_rate =3D ingenic_clk=
-_set_rate,
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.enable =3D ingenic_clk_e=
-nable,
->=20
-
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
