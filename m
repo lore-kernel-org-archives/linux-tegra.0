@@ -2,103 +2,149 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B08C77B60
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 15:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025E1C76188
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 15:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238049AbjDEPFD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 11:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51654 "EHLO
+        id S237845AbjDEPJ6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 11:09:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233443AbjDEPFC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 11:05:02 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24130CE
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Apr 2023 08:05:01 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id e18so36523640wra.9
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Apr 2023 08:05:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680707099;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JJ/TIkMhk2bPX1HK0lvdvOcV5MO27OCyBCUDQZH39zI=;
-        b=lFm0/BjykT3G1eDy8yG3/f/+9hGtVDN4Ior/kfWUUde8UGG5JzHhgamuK6EFwY2lc+
-         wLuYU/tJnhfhNKZT0niU/VoR/UWzGDgkiHGBS2G9qwlqSPvyNzy2+a7hN3pGshfblGSN
-         XTlX8rewe3AvIk7sUIGnGYUDNED0dzQVHuJ46eALpdbdFZtOaiRxE7LOPSok+zs+SwUT
-         A/+i7Lq9wYLZwujAWUDsE8zAFgiXNFVmRFS15VROcrUQ6QXk9e7SWu62aUfFaIuwF99c
-         v9LZC2fu5b53cYqqFh/NMV3pT1jSq+pN/c3GeuDYCK7aIcnC2uZ7j/VyIuqC31fvRLY9
-         zaIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680707099;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JJ/TIkMhk2bPX1HK0lvdvOcV5MO27OCyBCUDQZH39zI=;
-        b=N8OONKCQrysHPDLSWIARokM/gnTv5qvfHr7rWCT+yJLO4nzCgOwK60q0Slss5nX//3
-         HfdyiiF+omt8xkYZ7SHIISuZfUjumt+tZxWYnyF++GYSVO1ij9zxdQCx0Bb+CFJO5ae3
-         SlNIx9411DnTo/Nxb/DEintc1oGB8et5T6pD8V/ngU+C5BMgVuIfPw5KmBTGBQxdozSN
-         6aeH8wSEAMOyfq67dfdrcPMsIKyxl1wUu1GNgqzQqOXJ0wpZMMZc/QlwPGXczcshZQfL
-         bfxY8zqdppnAbs5L3ZlHPlzI1jnDNFsJBpkrYo4co+bn6agejakFDB3pp+zpVJNbamaL
-         uzyw==
-X-Gm-Message-State: AAQBX9cQlids0vAKzHquJZSLUiuAUcTkhZ0845n4EZbtYfupRkQbwXct
-        KW5eJW+jMdfo3jK4N4nVipg=
-X-Google-Smtp-Source: AKy350Zo6+JFFWEOk1JLcS1QaNH29U9mO7wq3L+rrdvlL2uVVg3IQgJKzxWpEkaxN9bsHkxZp+1N8g==
-X-Received: by 2002:adf:f8ca:0:b0:2cf:ed87:37c9 with SMTP id f10-20020adff8ca000000b002cfed8737c9mr2045804wrq.11.1680707099119;
-        Wed, 05 Apr 2023 08:04:59 -0700 (PDT)
-Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g7-20020a5d5407000000b002e6423cb207sm14146577wrv.112.2023.04.05.08.04.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 08:04:58 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     daniel@ffwll.ch, Thomas Zimmermann <tzimmermann@suse.de>,
-        jonathanh@nvidia.com, javierm@redhat.com, airlied@gmail.com,
-        thierry.reding@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 0/7] drm/tegra: Convert fbdev to DRM client
-Date:   Wed,  5 Apr 2023 17:04:58 +0200
-Message-Id: <168070704247.1047612.15878020832415463467.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230330083607.12834-1-tzimmermann@suse.de>
-References: <20230330083607.12834-1-tzimmermann@suse.de>
+        with ESMTP id S238790AbjDEPI1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 11:08:27 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB5117688
+        for <linux-tegra@vger.kernel.org>; Wed,  5 Apr 2023 08:06:34 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A9BC31F6E6;
+        Wed,  5 Apr 2023 15:06:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680707190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z2kIQPRlex0nBeqtH/l+Ef5eKiBPCXp3r54hsGVfuN0=;
+        b=gKLAf8XdYZO8IPa/kzr0tvvo3maPgYwrdkMc792aoIqB6Q6hGJ9yhJSfF3gELw4BpRRTq+
+        nlLONJhiQil6HjDrVSPzjNLPbGXCIJ5xNy13X88yyaCz3TfCi6tU8vC+n8TpD0Lc3V+SNj
+        Xd31wSSLy9wnX2YOVr1nDyEpbXw3AQk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680707190;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z2kIQPRlex0nBeqtH/l+Ef5eKiBPCXp3r54hsGVfuN0=;
+        b=/KifHnPXi8LQr9zPDHbyxmwtIb3waXhsX+diHL9zExSJNxjQ3+jv19uObV0i6isqvGvyh3
+        1VfKY7n2V5ubwQDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7D31F13A10;
+        Wed,  5 Apr 2023 15:06:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id /uhoHXaOLWRGIQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 05 Apr 2023 15:06:30 +0000
+Message-ID: <791521e1-1d2b-c0ff-7fe3-57d81af2bf2c@suse.de>
+Date:   Wed, 5 Apr 2023 17:06:29 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 0/7] drm/tegra: Convert fbdev to DRM client
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     javierm@redhat.com, dri-devel@lists.freedesktop.org,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+References: <20230330083607.12834-1-tzimmermann@suse.de>
+ <ZC2L69yI6l_2zPuG@orome>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <ZC2L69yI6l_2zPuG@orome>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------9503PDom9JUMyWMoESvL0rN7"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------9503PDom9JUMyWMoESvL0rN7
+Content-Type: multipart/mixed; boundary="------------onvAPL1A2w86BaLPub86GyYd";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: javierm@redhat.com, dri-devel@lists.freedesktop.org,
+ jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+Message-ID: <791521e1-1d2b-c0ff-7fe3-57d81af2bf2c@suse.de>
+Subject: Re: [PATCH 0/7] drm/tegra: Convert fbdev to DRM client
+References: <20230330083607.12834-1-tzimmermann@suse.de>
+ <ZC2L69yI6l_2zPuG@orome>
+In-Reply-To: <ZC2L69yI6l_2zPuG@orome>
 
-On Thu, 30 Mar 2023 10:36:00 +0200, Thomas Zimmermann wrote:
-> Convert tegra's fbdev code to struct drm_client. Replaces the current
-> ad-hoc integration. The conversion includes a number of cleanups. As
-> with most other drivers' fbdev emulation, fbdev in tegra is now just
-> another DRM client that runs after the DRM device has been registered.
-> 
-> Once all drivers' fbdev emulation has been converted to struct drm_client,
-> we can attempt to add additional in-kernel clients. A DRM-based dmesg
-> log or a bootsplash are commonly mentioned. DRM can then switch easily
-> among the existing clients if/when required.
-> 
-> [...]
+--------------onvAPL1A2w86BaLPub86GyYd
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Applied, thanks!
+DQoNCkFtIDA1LjA0LjIzIHVtIDE2OjU1IHNjaHJpZWIgVGhpZXJyeSBSZWRpbmc6DQo+IE9u
+IFRodSwgTWFyIDMwLCAyMDIzIGF0IDEwOjM2OjAwQU0gKzAyMDAsIFRob21hcyBaaW1tZXJt
+YW5uIHdyb3RlOg0KPj4gQ29udmVydCB0ZWdyYSdzIGZiZGV2IGNvZGUgdG8gc3RydWN0IGRy
+bV9jbGllbnQuIFJlcGxhY2VzIHRoZSBjdXJyZW50DQo+PiBhZC1ob2MgaW50ZWdyYXRpb24u
+IFRoZSBjb252ZXJzaW9uIGluY2x1ZGVzIGEgbnVtYmVyIG9mIGNsZWFudXBzLiBBcw0KPj4g
+d2l0aCBtb3N0IG90aGVyIGRyaXZlcnMnIGZiZGV2IGVtdWxhdGlvbiwgZmJkZXYgaW4gdGVn
+cmEgaXMgbm93IGp1c3QNCj4+IGFub3RoZXIgRFJNIGNsaWVudCB0aGF0IHJ1bnMgYWZ0ZXIg
+dGhlIERSTSBkZXZpY2UgaGFzIGJlZW4gcmVnaXN0ZXJlZC4NCj4+DQo+PiBPbmNlIGFsbCBk
+cml2ZXJzJyBmYmRldiBlbXVsYXRpb24gaGFzIGJlZW4gY29udmVydGVkIHRvIHN0cnVjdCBk
+cm1fY2xpZW50LA0KPj4gd2UgY2FuIGF0dGVtcHQgdG8gYWRkIGFkZGl0aW9uYWwgaW4ta2Vy
+bmVsIGNsaWVudHMuIEEgRFJNLWJhc2VkIGRtZXNnDQo+PiBsb2cgb3IgYSBib290c3BsYXNo
+IGFyZSBjb21tb25seSBtZW50aW9uZWQuIERSTSBjYW4gdGhlbiBzd2l0Y2ggZWFzaWx5DQo+
+PiBhbW9uZyB0aGUgZXhpc3RpbmcgY2xpZW50cyBpZi93aGVuIHJlcXVpcmVkLg0KPj4NCj4+
+IEkgZGlkIHRoZSBjb252ZXJzaW9uIGZyb20gc2ltaWxhciBleHBlcmllbmNlIHdpdGggb3Ro
+ZXIgZHJpdmVycy4gQnV0IEkNCj4+IGRvbid0IGhhdmUgdGhlIGhhcmR3YXJlIHRvIHRlc3Qg
+dGhpcy4gQW55IHRlc3RpbmcgaXMgd2VsY29tZS4NCj4+DQo+PiBUaG9tYXMgWmltbWVybWFu
+biAoNyk6DQo+PiAgICBkcm0vdGVncmE6IEluY2x1ZGUgPGxpbnV4L29mLmg+DQo+PiAgICBk
+cm0vdGVncmE6IEluY2x1ZGUgPGxpbnV4L2kyYy5oPg0KPj4gICAgZHJtL3RlZ3JhOiBSZW1v
+dmVkIGZiIGZyb20gc3RydWN0IHRlZ3JhX2ZiZGV2DQo+PiAgICBkcm0vdGVncmE6IFJlbW92
+ZSBzdHJ1Y3QgdGVncmFfZmJkZXYNCj4+ICAgIGRybS90ZWdyYTogSGlkZSBmYmRldiBzdXBw
+b3J0IGJlaGluZCBjb25maWcgb3B0aW9uDQo+PiAgICBkcm0vdGVncmE6IEluaXRpYWxpemUg
+ZmJkZXYgRFJNIGNsaWVudA0KPj4gICAgZHJtL3RlZ3JhOiBJbXBsZW1lbnQgZmJkZXYgZW11
+bGF0aW9uIGFzIGluLWtlcm5lbCBjbGllbnQNCj4+DQo+PiAgIGRyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9NYWtlZmlsZSB8ICAgMiArDQo+PiAgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0u
+YyAgICB8ICAyMyArLS0tDQo+PiAgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgICB8
+ICAyNyArKy0tDQo+PiAgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jICAgICB8IDI0MiAr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+ICAgZHJpdmVycy9ncHUvZHJt
+L3RlZ3JhL2ZiZGV2LmMgIHwgMjQwICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+DQo+PiAgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9vdXRwdXQuYyB8ICAgMyArDQo+PiAgIGRy
+aXZlcnMvZ3B1L2RybS90ZWdyYS9yZ2IuYyAgICB8ICAgMSArDQo+PiAgIDcgZmlsZXMgY2hh
+bmdlZCwgMjY1IGluc2VydGlvbnMoKyksIDI3MyBkZWxldGlvbnMoLSkNCj4+ICAgY3JlYXRl
+IG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYmRldi5jDQo+IA0KPiBTZWVt
+cyB0byBiZSB3b3JraW5nIGp1c3QgZmluZS4gQXBwbGllZCwgdGhhbmtzLg0KDQpUaGFua3Mg
+YSBsb3QhDQoNCj4gDQo+IFRoaWVycnkNCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3Jh
+cGhpY3MgRHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFu
+eSBHbWJIDQpNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkNCihIUkIg
+MzY4MDksIEFHIE7DvHJuYmVyZykNCkdlc2Now6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCg==
 
-[1/7] drm/tegra: Include <linux/of.h>
-      commit: 162b2ae95e0887ea75883bc419d55dd714b8fbf5
-[2/7] drm/tegra: Include <linux/i2c.h>
-      commit: 0e4ec6d97a2c6e96a5ec8d0edc00aa658238ed3f
-[3/7] drm/tegra: Removed fb from struct tegra_fbdev
-      commit: 5705d5b6a21e75c095df29deec8a13aa6b59f83c
-[4/7] drm/tegra: Remove struct tegra_fbdev
-      commit: fc5646b848222601d8be78b66b6498130437abe1
-[5/7] drm/tegra: Hide fbdev support behind config option
-      commit: 63ab4848d1d2eda1658ae82a3cb6eb7e03d28cec
-[6/7] drm/tegra: Initialize fbdev DRM client
-      commit: d9d1e306e70db905f29d05952c1499fd3c6ef6ef
-[7/7] drm/tegra: Implement fbdev emulation as in-kernel client
-      commit: 8e5113c627334ed32748d95ababd548171d2333d
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+--------------onvAPL1A2w86BaLPub86GyYd--
+
+--------------9503PDom9JUMyWMoESvL0rN7
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmQtjnYFAwAAAAAACgkQlh/E3EQov+Bk
+mQ//addCkJXFsWKQGDPr5GiC1uGkp4Nzj0ss2WCYaKxtU5O51gM6LL4Yln01e+vZuFIEKtTZP1yG
+seQJpIlntp1cobCBJPRgEMYVw7707yfbNWlhg3KfYRJKuha3W3ve04tt7rrHfsB0s9gfZ8qGijWi
+m9XC5hgfqB99mtAJgS+ZDsCr7ePxjrnIWZ10OqX2KxO+9X5dW9XHHzDmMMBvK3OByvE0pLB4n5l7
+0lKRfoDjA4Di3rYlt8gVok9MXH1mFvP7u4Yk+4cz+p6pkOgfF6/LPmf9ehY72sg3s3Y8N02j+HfJ
+8TuxAtA4Vz/ho6FRfLXkKkDuC9QYX0GgvZYT7r1Lqgu74hHggJP3SumRonPvFmMkSBLX0AJ+LwuL
+PoDKpLBsiFSxEFiJSa0kGqi7jBbMLAQTLeyYQ5pe1rbtNpsi3Eqngj+s4oBDHFiwhkd5sGuRbqcM
+WryRvkf+lMxHHVrXZW+7w49LBCdamE4NUXXFS7Rn5pthRgn+Njs7XdbWv3pcXsxoym1EOG1CoXFL
+oAuuA/LDhopKt0ZA2UtlGnTqUqEbAe6+0h11oeBQy0dP/2f6/lTIVjgFA8cssRDdpb5SYzWU8/2W
+Wak9PmOdSPYNXaq5SBRl69iw0TSras3sGeHiWL/tgg/w0QDE1Tnzj7Zf6ldoqpp7CelYdvKQSZCm
+FC4=
+=KmDg
+-----END PGP SIGNATURE-----
+
+--------------9503PDom9JUMyWMoESvL0rN7--
