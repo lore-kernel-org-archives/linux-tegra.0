@@ -2,86 +2,201 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA04BC7619A
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 15:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53576C77B70
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 15:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238740AbjDEPN3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 11:13:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36608 "EHLO
+        id S238689AbjDEPSb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 11:18:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238439AbjDEPNA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 11:13:00 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8991990;
-        Wed,  5 Apr 2023 08:11:03 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-4fa3c1a7a41so487858a12.2;
-        Wed, 05 Apr 2023 08:11:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680707460;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yMNiMInW3HUbCjLEIC5JIbfFmqCERgeRsCuCIkHaiuE=;
-        b=IlLcCACfKSefPyakpGvt5kBsAEPfd5ctQPCH7yMmaxmv17urKgPkQDoZIwuGkjDx0f
-         vxaNuMqS/jNi5BeMzJxDCzNgHWUPlaxRqorAVDDNHezDR/3rIP3AAd7P9IcK+oOWksvF
-         8nM/YVG/aPN7bCtiiF2FwGu5H1V84uRy8QJvR+t5I1IA042Jdqt3dCJ26Um/wXNwMtxY
-         ry8+ELAAY5nI8HM3hlz4a9QB9ihFW+UGjvnqTEkF+6XQtJCaVrZpBy0RxpNZKyh4Pq1I
-         b3IpUDBxw2K75giPKyE4ezYROCRSEEkxvcdwXxhTliJLsi+7pQF8AyfiW5jUncxVB+F8
-         6NBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680707460;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yMNiMInW3HUbCjLEIC5JIbfFmqCERgeRsCuCIkHaiuE=;
-        b=mL6weA5iU8xpdK2WJ69OGR5Pzp+t7Yyyyo+p08HqSfS+sR7PssmeX6U21P/BooBrNM
-         cHnwZtSX0IH2uGQq/FWhO+WtboaQKlNwyvhlyQMDhJGbg5VvEDbLRI0VF8WiFcfnEy3c
-         wbKx5o/4bGIaAqmnsn7HRqKJQBCB+c1jJ1T/YjpQtredw8R+rDe7OMKMaAGPtnyEk1E8
-         VepvuvvA6D7t1GUURF3ohTOyRuszpQO5srMV8DIHFmV8T5zzdsqHSPKf8FG3gVBeLpwV
-         mBKghF5cfFZXjpHLBRAGnr//Oc1m1qjLyaFlC7BjZi/a1QIidn9pvAFUMtR6YAF308gF
-         wH9Q==
-X-Gm-Message-State: AAQBX9cAefUul+kCPO+OCCqt5oXXHRGxy/6TrB9IOAqucPnlePXotYVV
-        GNBIIT9H+8BioeFHOy9rEWg=
-X-Google-Smtp-Source: AKy350YmEPnLXaazQRn8ZjJTBCn46vz/EiJi2YWD04lWCeHj/p9aJ4cJ/thhsGhabKGu5sJOW3PnKw==
-X-Received: by 2002:a05:6402:6c5:b0:502:9d16:fd00 with SMTP id n5-20020a05640206c500b005029d16fd00mr2029242edy.9.1680707460286;
-        Wed, 05 Apr 2023 08:11:00 -0700 (PDT)
-Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id gx20-20020a1709068a5400b00931faf03db0sm7453250ejc.27.2023.04.05.08.10.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 08:10:59 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     skamble@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Kartik <kkartik@nvidia.com>,
-        thierry.reding@gmail.com, windhl@126.com, pshete@nvidia.com,
-        arnd@arndb.de, jonathanh@nvidia.com
-Subject: Re: [PATCH] soc/tegra: fuse: Remove nvmem root only access
-Date:   Wed,  5 Apr 2023 17:10:59 +0200
-Message-Id: <168070745086.1048656.13825441875980867510.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <1673944255-8041-1-git-send-email-kkartik@nvidia.com>
-References: <1673944255-8041-1-git-send-email-kkartik@nvidia.com>
+        with ESMTP id S238683AbjDEPSN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 11:18:13 -0400
+Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD555B95;
+        Wed,  5 Apr 2023 08:17:35 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id CFB322B06725;
+        Wed,  5 Apr 2023 11:17:25 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 05 Apr 2023 11:17:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1680707845; x=1680715045; bh=4g
+        3Y3WtpEmHJBlHmaZSfRkusN6Gsi4T8SDJHzgHkAHw=; b=L4vZO5QE1gCVJJlu2o
+        r6vojScB4+ZzvhrGxAnCgZw8q3iEvd5m35SZkx+KC1V9nR1oJrFdkv+ey7bHZjCL
+        h7ZEBk9Gmy/3C1A/1qdft9MpePUYhTf2LMdsCjgEXC/wq8oDjffPfKya8bL0vOhv
+        zM4glmn3aahZ0fd/tWPeXFJVlzfG49xJGig3f3S4nIf2yKej0KUqRbtf9U4HO7U4
+        Fca3KFRY0boUta2nyK/ZvwIoPXjc0uR7jRie7ubda+6o8LFTmR3EQPKCjDxKPY69
+        q+rnuCjeiU34JIwElnik7ZIFhfh2uCaJ5k3L+G6Ma8lMgJQI3qmYO86jMfQxx5Ci
+        VdNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1680707845; x=1680715045; bh=4g3Y3WtpEmHJB
+        lHmaZSfRkusN6Gsi4T8SDJHzgHkAHw=; b=VEkZsmfrmM6qqrbSYR67T7b6tnqGF
+        AvhJD3Y4WLLq1tU2AX/t6uAgHsNHwJpXvwtS4GnhhmEJ7XPVKNwRq+9WMhmmzML+
+        RG6DEdWr2hNUhcl8o0yOuq3CX2GqoiuaH9MsBOokOxVfwovgwExj8beYgt4/HxuA
+        a96LoWlzOcRy23htu+pg7NjQwIET42Hppt8MLtacCrxmqqy1yW4bPHimBOxOQWfJ
+        wAwezgR/QID/T8H8Ty1cHIhdRLrfE64Z96wSdoJclrB780/8YTOOdsPEANPT/KF4
+        SSABADpffcDQPX+mkREx6UEIjxMxopVCUSw91MvdZ2vn4nW1L5oPr6aSQ==
+X-ME-Sender: <xms:BJEtZAuMkk6wnab4QseDQgMYaxs-ZoalWk6ba9JDW-N_MwUR-r-0_g>
+    <xme:BJEtZNeeUQqDS514Kh75x4vjSF_5nb0vlfH8K6OmRPlsGhffGSlMHsAhdX_0tWg6m
+    1rxuj_wVXQehW37VVk>
+X-ME-Received: <xmr:BJEtZLwjCpHui3RPPt2Zh-h4Q5a1KUTc9johjdZpp-INV-i7TjtqsffumjLDSjqJRIBhpUDe69m60CBw6P-vuyAbTZVw17w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdejuddgkeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeeuveduheeutdekvefgudevjeeufedvvdevhfejgfelgfdtkeevueegteek
+    gfelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:BJEtZDOLnxucnvKx3FD6J-fSLSIdKT1u6WKBdKX_FeKFrkbQnefb_g>
+    <xmx:BJEtZA_bReMUs9Hnw0kWbI8p_MC65dZMSzDb9-uV0n2-sq5SiGHLpg>
+    <xmx:BJEtZLVbSPxoi4qvWklXjQcQFOKJSC341u3oT8-2Qg5yq0Cm5T0yJQ>
+    <xmx:BZEtZFFxxiKux8gHULwGp3q2GhoxRfghXYlW4d0UO9AUrD_vtD7rQM5gvGo>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Apr 2023 11:17:22 -0400 (EDT)
+Date:   Wed, 5 Apr 2023 17:17:21 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH v3 43/65] ASoC: tlv320aic32x4: Add a determine_rate hook
+Message-ID: <erm4iq3mygnrr4h2gd5cag3sfuovv47ibdqsbmxcfabngvnwy4@z63ksvj55zuu>
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+ <20221018-clk-range-checks-fixes-v3-43-9a1358472d52@cerno.tech>
+ <01f32440-8dd2-4030-9006-a3123be55845@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l2rp74o6ajwb6i7x"
+Content-Disposition: inline
+In-Reply-To: <01f32440-8dd2-4030-9006-a3123be55845@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-On Tue, 17 Jan 2023 14:00:55 +0530, Kartik wrote:
-> To read fuse values, various "non-root" userspace applications require
-> access to nvmem binary interface.
-> 
-> Remove root only access for nvmem userspace binary interface.
-> 
-> 
+--l2rp74o6ajwb6i7x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+Hi Mark,
 
-[1/1] soc/tegra: fuse: Remove nvmem root only access
-      commit: 821d96e3a006d09ca9aa3d982c50f3d86fa55500
+On Tue, Apr 04, 2023 at 04:26:18PM +0100, Mark Brown wrote:
+> On Tue, Apr 04, 2023 at 12:11:33PM +0200, Maxime Ripard wrote:
+> > The tlv320aic32x4 clkin clock implements a mux with a set_parent hook,
+> > but doesn't provide a determine_rate implementation.
+>=20
+> > This is a bit odd, since set_parent() is there to, as its name implies,
+> > change the parent of a clock. However, the most likely candidate to
+> > trigger that parent change is a call to clk_set_rate(), with
+> > determine_rate() figuring out which parent is the best suited for a
+> > given rate.
+>=20
+> > The other trigger would be a call to clk_set_parent(), but it's far less
+> > used, and it doesn't look like there's any obvious user for that clock.
+>=20
+> It could be configured from device tree as well couldn't it?
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Yep, indeed.
+
+> > So, the set_parent hook is effectively unused, possibly because of an
+> > oversight. However, it could also be an explicit decision by the
+> > original author to avoid any reparenting but through an explicit call to
+> > clk_set_parent().
+>=20
+> Historically clk_set_rate() wouldn't reparent IIRC.
+>=20
+> > The latter case would be equivalent to setting the flag
+> > CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> > to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> > implementation is provided, clk_round_rate() (through
+> > clk_core_round_rate_nolock()) will call itself on the parent if
+> > CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> > otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> > CLK_SET_RATE_NO_REPARENT is set.
+>=20
+> > And if it was an oversight, then we are at least explicit about our
+> > behavior now and it can be further refined down the line.
+>=20
+> To be honest it's surprising that we'd have to manually specify this, I
+> would expect to be able to reparent.  I suspect it'd be better to go the
+> other way here and allow reparenting.
+
+Yeah, I think I'd prefer to allow reparenting too, but as can be seen
+=66rom the other reviewers in that thread, it seems like we have a very
+split community here, so that doesn't sound very realistic without some
+major pushback :)
+
+Maxime
+
+--l2rp74o6ajwb6i7x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZC2RAQAKCRDj7w1vZxhR
+xRegAPwLq9rAf2gXBh+S5NNzglDB7jF/equjD6dhO2iJfkonFgD+OuUuIkBhvEAH
+dy14syHvUOJJRm7L8hscnDwFHJrXQA0=
+=mQrD
+-----END PGP SIGNATURE-----
+
+--l2rp74o6ajwb6i7x--
