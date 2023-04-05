@@ -2,133 +2,186 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69365C76188
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 12:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A26C77B60
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 12:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238077AbjDEMzO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 08:55:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60672 "EHLO
+        id S237602AbjDEM5i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 08:57:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237957AbjDEMzI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 08:55:08 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F88659F2;
-        Wed,  5 Apr 2023 05:55:05 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id w9so140847337edc.3;
-        Wed, 05 Apr 2023 05:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680699303;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H4tYbZenNBkxV/FQRg+S7v7n3Mdw3SCk0TngrP6puJI=;
-        b=eCW2LWCImKLG5aOQZZGbDSM1LV6ho4g+la4QiFIZcs/lhY2Nl4o8Ir+NCvJKWHn6iV
-         43HL2brd+yUUviB1ugm1UlHsvqGeDSkEYfZnGS8+jtcH+x20iSLxr0bF1CVoEPBJYUhh
-         tAnEhj9J9E+qMd/lWJqVjo+pyB6/kADIHmoI8TVfJAhwqKQQjssspAdscYclQHOzxE52
-         84jrYYsaZsTmCgBDXzOGDWvsO+lQE+vh8SzwHruLsbSuLD/eGsCTdf3FyxINekwZwIyR
-         2mvP8dj70Q7NqwsK4VlVkax/Ajk8TPqMx4PfxEKukrRldiMBcoSdlxMljXGuEYwYUtwR
-         JlCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680699303;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H4tYbZenNBkxV/FQRg+S7v7n3Mdw3SCk0TngrP6puJI=;
-        b=sLvD+hbXF7LoMQODcPjyVgckqDb+jSUKzv8T4ALpKS7kNDfZ32V4/l0IgtYCW61CGC
-         QaxN1nj1coggIPz3anZsJzFNXb7wAD7kaEZpwjAIiGXFzBcg15sgg3lARqHbPKXeWinG
-         ossnLnBEBNrfuY0GebSRA+b+CfY2cXThMFJEh5F6aVsLlPiq7COGTi8/sY0hq+5Ypi/w
-         DKghhUGmk1/fdccxuk7IHlMR0ASQHM4C2xdiP4QiWnKrMUd9kQMMYf3uCL7rthilb6sV
-         p2VO7YTHyh5xuOzh2On9rWVrJbBs0Q11I2gH3sW49PVkpUkUE+tvZJF7GLmYyHdAJTbn
-         u1QA==
-X-Gm-Message-State: AAQBX9fLOJhQ0NAihTghZSmAv6ipkiB0MqRC6iGZLPZ7osrYzIYd8xPS
-        q0WnHMBIrULwM1JsUWwPcvY=
-X-Google-Smtp-Source: AKy350YS4PSOZvCF5BvFFMUjCIDyAM5G+I54ziVSBDSouJcPLsBCfOtfctRr24S/oA//wxQ89MZv1w==
-X-Received: by 2002:a17:906:c005:b0:947:55ce:1217 with SMTP id e5-20020a170906c00500b0094755ce1217mr2711864ejz.73.1680699303642;
-        Wed, 05 Apr 2023 05:55:03 -0700 (PDT)
-Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a10-20020a1709065f8a00b00947c0df0fc4sm6871792eju.19.2023.04.05.05.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 05:55:03 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 14:55:01 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        with ESMTP id S232576AbjDEM5g (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 08:57:36 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8904B30FE;
+        Wed,  5 Apr 2023 05:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1680699450;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mq/p4txhSsRLR5xVgrA62YXfgD49tU+mOTycAeKgsHg=;
+        b=Mb98f9ufodGaozAOY4xYrOH4ki7sxYY/vAA0bNDznfkO1jY7oQ7vUoy9gBV18sQyg7Fqkp
+        4iw1OtIZgkWKHd7enKxNHs2560FyoXBFO6izP6fR7+5aCxwEgm0s0Qni1/6h8kIbFM1q0N
+        AxvQ9vdC4gf6sPGfRYLz7iOkrkLShI8=
+Message-ID: <1e0e8e9fe44c27e844e7e918a985704e58da2c27.camel@crapouillou.net>
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: tegra194: Handle errors in BPMP response
-Message-ID: <ZC1vpXRoHb3H2alF@orome>
-References: <20230208142735.3218707-1-cyndis@kapsi.fi>
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Date:   Wed, 05 Apr 2023 14:57:26 +0200
+In-Reply-To: <20230327192430.b2cp3yyrkzy4g4vw@penduick>
+References: <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
+         <20221104145946.orsyrhiqvypisl5j@houat>
+         <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
+         <20221107085417.xrsh6xy3ouwdkp4z@houat>
+         <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
+         <20221109110045.j24vwkaq3s4yzoy3@houat>
+         <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
+         <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
+         <20230324111959.frjf4neopbs67ugd@houat>
+         <rTJKpeLOBeu3eOLW5z3P5fEpcOJJLrGs@localhost>
+         <20230327192430.b2cp3yyrkzy4g4vw@penduick>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uk3AIlB7GyEsN23u"
-Content-Disposition: inline
-In-Reply-To: <20230208142735.3218707-1-cyndis@kapsi.fi>
-User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Maxime,
 
---uk3AIlB7GyEsN23u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 08, 2023 at 04:27:35PM +0200, Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+Le lundi 27 mars 2023 =C3=A0 21:24 +0200, Maxime Ripard a =C3=A9crit=C2=A0:
+> On Fri, Mar 24, 2023 at 08:58:48PM +0000, Aidan MacDonald wrote:
+> > > > My suggestion: add a per-clock bitmap to keep track of which
+> > > > parents
+> > > > are allowed. Any operation that would select a parent clock not
+> > > > on the
+> > > > whitelist should fail. Automatic reparenting should only select
+> > > > from
+> > > > clocks on the whitelist. And we need new DT bindings for
+> > > > controlling
+> > > > the whitelist, for example:
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0 clock-parents-0 =3D <&clk1>, <&pll_c>;
+> > > > =C2=A0=C2=A0=C2=A0 clock-parents-1 =3D <&clk2>, <&pll_a>, <&pll_b>;
+> > > >=20
+> > > > This means that clk1 can only have pll_c as a parent, while
+> > > > clk2 can
+> > > > have pll_a or pll_b as parents. By default every clock will be
+> > > > able
+> > > > to use any parent, so a list is only needed if the machine
+> > > > needs a
+> > > > more restrictive policy.
+> > > >=20
+> > > > assigned-clock-parents should disable automatic reparenting,
+> > > > but allow
+> > > > explicit clk_set_parent(). This will allow clock drivers to
+> > > > start doing
+> > > > reparenting without breaking old DTs.
+> > >=20
+> > > I'm generally not a fan of putting all these policies in the
+> > > device
+> > > tree. Do you have an example where it wouldn't be possible to do
+> > > exactly
+> > > this from the driver itself?
+> >=20
+> > I'm confused. What's implicit in the example is clk1 and clk2 might
+> > have *other* possible choices of parent clock and the device tree
+> > is
+> > limiting what the OS is allowed to choose.
+> >=20
+> > Why would you put such arbitrary limitations into the driver?
 >=20
-> The return value from tegra_bpmp_transfer indicates the success or
-> failure of the IPC transaction with BPMP. If the transaction
-> succeeded, we also need to check the actual command's result code.
-> Add code to do this.
+> Why would we put such arbitrary limitations in the firmware? As this
+> entire thread can attest, people are already using the device tree to
+> work around the limitations of the Linux driver, or reduce the
+> features of Linux because they can rely on the device tree. Either
+> way, it's linked to the state of the Linux driver, and any other OS
+> or
+> Linux version could very well implement something more dynamic.
+
+Probably because if we have to choose between setting policy in the
+kernel or in the firmware, it is arguably better to set it in the
+firmware.
+
+Especially when talking about clocks, as the firmware is already the
+one programming the boot clocks.
+
+Cheers,
+-Paul
+
+> > They would be different from machine to machine, unless the clock
+> > tree is so simple there is only *one* meaningful way to configure
+> > it.
 >=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
+> If we look at the device trees we have in-tree, most of the users of
+> assigned-clocks are the same from one board to another.
+>=20
+> > Most SoCs are complicated enough that there will be tradeoffs
+> > depending on what peripherals you are using (typically a single
+> > machine will not use *every* peripheral device provided by the
+> > SoC).
+>=20
+> We already have APIs to lock parents or rates on a given clock from
+> the consumer. It's far superior (feature-wise) than what the device
+> tree will ever offer because it's code, and it depends on the usage
+> already since an unused driver won't probe.
+>=20
+> Maxime
 
-Lorenzo asked whether the error check could be incorporated into
-tegra_bpmp_transfer() in reply to an earlier version of this. It would
-be possible, but I think it has the downside of loosing some context.
-The end result would still be the same, but it would make it impossible
-for the caller to distinguish between a failure of tegra_bpmp_transfer()
-and a failure of the message transaction.
-
-For example the cpufreq driver checks for msg.rx.ret =3D=3D -BPMP_EINVAL and
-if that's returned will mark the given cluster as not available. This is
-special behavior that only makes sense within the context of cpufreq. It
-wouldn't be possible to make these decisions if tegra_bpmp_transfer()
-did some automated conversion and effectively rolled the message error
-into the function return error.
-
-So I think this will need to stay as-is to make sure we can handle these
-errors correctly.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---uk3AIlB7GyEsN23u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQtb6MACgkQ3SOs138+
-s6EQag//SeOpJ8NPsSwZEk/4IYWE/s7a21ssZ/jZ+ZPty3DnS2IqhT7rD0om8eBe
-X3s7zT5xt35Qwi2i4+aaTVkimdt+zdYM5oDapFX/dOiC5irW1PCpaScroTvbObYP
-N3dQ8wztuJagGolWvt1SyiuwXMt5wuIAYo/RcnlDg9iozvgo72KoEnEmfrMfEPcb
-pLwmFOAP5I6abuzeHDBtirw6AZvWcgcmnngFQN0ZEa6q7QmXw4qiuYBN6yZsIw/U
-H5ecgOqEOtZKO4nN/xsIRbnvXIXsTA4Y05jMlGR+1xEWKhUaJQ+z2RpbeUG8+U/h
-sAR2TxJVVUeyj7UNOayxFNf/oO98GZfQi/FycYPUJqr0h9IH3vAk4vh9QchiFHCb
-tOi1K6geT+doP1lkOFcQ3eizqu6T5ocFY0f2NFbakPXaFMkb3pJNYK7Wm6/F9O03
-slL82TZALrVbEwRuwdLclSqB0+rwp5mCiytwE19TVzQp7dIxQLjkTB9bX/vTbgkv
-r/7Mt/p5n8NmTWYIMYmHlzgeBF0EHDVeGB6znLbQ4ZSPBDN/mZWFLJ8XpE5Nlli1
-1h8t/M/W/IA0ZSW8gW2dcXXd678DAC+p2C3bcCA56zYh6Jqh/WPDM2StL5aBLZo5
-pG8lg2/rtzbnIqx5O33oqoUpcwArJtGiaYqox8r5lH10p9i+ZH4=
-=Hkx5
------END PGP SIGNATURE-----
-
---uk3AIlB7GyEsN23u--
