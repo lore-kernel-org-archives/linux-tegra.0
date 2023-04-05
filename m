@@ -2,130 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A62C7619A
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 12:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9260EC7619A
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 12:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237330AbjDEMOD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 08:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52968 "EHLO
+        id S237729AbjDEMOw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 08:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237007AbjDEMOC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 08:14:02 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A083C22;
-        Wed,  5 Apr 2023 05:14:01 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id j18-20020a05600c1c1200b003ee5157346cso23600300wms.1;
-        Wed, 05 Apr 2023 05:14:01 -0700 (PDT)
+        with ESMTP id S237007AbjDEMOv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 08:14:51 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33F0C3C22
+        for <linux-tegra@vger.kernel.org>; Wed,  5 Apr 2023 05:14:49 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id w9so140554043edc.3
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Apr 2023 05:14:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680696840;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdZN+OaYBGqujKD5R9k9qcJDjZo3DT83mr53rt5m3DA=;
-        b=IXHlf5a/wfSJlitOn1KM3JLDauYy0wQSWASL2GLbxwUuQiavL2Q9iee5HL5CZTcYt6
-         NClCJflpdI6egXtbSMZ6I5QzqEGndAaUEooH7TqqqDWUlZGsLx8PrAKGlp2jOQCqQHS3
-         NMiZNfnREhxeQwfVBEs2kadqkLTb/uG1cO7mP1c55sDi0bFDPlq61iUyq78NDpUXkoci
-         rw45ZUP9bI3AIC37ctPKxiBEANSCIuVgUUBxqcHwvN/fsBaxu368zbjpbs4WTYxQEjoz
-         2h8ZyuSYbln99xlQTE12YdAoOBGp+CfidihVJyOb4W6ax6179hAtmOTffOIi9wE4CGlv
-         +mAQ==
+        d=gmail.com; s=20210112; t=1680696887;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IpXRDC+Ftm8/s3u6sHKGTO7Ya5b3E/7w5SAWjP7y4Xg=;
+        b=Ho7CL2c01JqDpDn1mnrDD8HDKCgkh8lPZtfdBik+ucWyFLrgVQTawDXrhpOzKQJjCZ
+         8+WBrJ9EFzhyj+NGkOrrB4ca+A4/psZSEbqw3cuJoZOzOmffMG47xcfxn9XH4+h+r/nA
+         RIS3Z6y0M0gP7vr1wkVWNJf6XNOkDCIUohAt9+gbc9qclvrPi54Wi46E47mpWK8+PHDx
+         u4/IymiDsZcxNyYQctK0f9JpQRoKO31Gdh4daws4x+fL8uhSfT+xYLTcIA4MsSc7BtS9
+         wFrZXvSuOoYlBKFQMmpCnvSuqeK/knm0giLlBLeWtLDMolZX2wYMNTOLn5v0b+TWpphV
+         MLVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680696840;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bdZN+OaYBGqujKD5R9k9qcJDjZo3DT83mr53rt5m3DA=;
-        b=yP2yOUhBmmcZ8MHwho58IqtDZ0c7ye0K5UUYZLlppMl/ox7p/iq6k+AwV4aCmKEhQg
-         g0gw77XMXqeWPSJRwOotAiBLMDZkW64MgjXy4XVS7BitOwmjQZqIV0iBljNFltZ7RCYM
-         xwOk397D5RR1/cxALPoqp/6emaR1dKmAL5tIEbGIvMI4QptJQhozvEAqGqTlN/Mpsnty
-         RSUP7c8myqOpH5Hyvpb29FUHhT0/ktigJt4+E2O/Uoh0fpIpODIwmhsFcA4R/o+gnOuv
-         acpBCwREZ8UVfuZtWXvKEMovnCpKaYVhxLBzr8V8Si6lRDyeGSSXzKzwvRklMWdoW5Q/
-         VmbA==
-X-Gm-Message-State: AAQBX9cd8PmJVxykvCIgeJY8T7Pgzwf84ZkNj57KJAAnYyn3EecZjrlk
-        o3f+MdMmAUU0UU2Ad99DojM=
-X-Google-Smtp-Source: AKy350bY2g9mxsmYFguHsT6G8kdF2sj8uXpLbF8EPfagq8E7dEGJjz6Z0YgazY89BbcpGtBx5TXEZA==
-X-Received: by 2002:a05:600c:b4f:b0:3ed:d64f:ec30 with SMTP id k15-20020a05600c0b4f00b003edd64fec30mr4366586wmr.33.1680696839878;
-        Wed, 05 Apr 2023 05:13:59 -0700 (PDT)
-Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id y9-20020a1c4b09000000b003edf2dc7ca3sm2011444wma.34.2023.04.05.05.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 05:13:59 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 14:13:57 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] thermal/drivers/tegra: remove redundant msg in
- tegra_tsensor_register_channel()
-Message-ID: <ZC1mBUMF3MWmNqY5@orome>
-References: <20230318144412.75046-1-frank.li@vivo.com>
- <20230318144412.75046-6-frank.li@vivo.com>
+        d=1e100.net; s=20210112; t=1680696887;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IpXRDC+Ftm8/s3u6sHKGTO7Ya5b3E/7w5SAWjP7y4Xg=;
+        b=FRbM7hZ1MMHoDsGAEGi31wk1TaVQmzYCe0bu/a3uUpiCZ1qe1FEz6mVuEXbo9ZNGWj
+         8YhgtfNNwr1xdB/K0T07G42QdoU0bMHqAnBLwzHtkTsU9PpgBCq4ko7JxdKWXR/MFXlS
+         3Ru67AK35kXx0SKpSsAGD3CcqmncEkJTvPA+uc6mJUysNUAJqV0IU5GH7WwuHqtxXWzq
+         3oMZACR9fHCnm8uYdJU94c3ktu5LLu/R2Qk5JosBVlkBgfKbeNNTORKlFZuxHhGhoRus
+         IzeE+vP+XBmIs60QFr4wu8rWYDn0en6vqIKNWoA8XLnF8izvTGIAyeDo49vNBuYN1IR6
+         A4fw==
+X-Gm-Message-State: AAQBX9dQRiDBQUerO+1rnREjVQRje4YrUihI61sRiI4uMpBbesDJuHu2
+        s5WAXmbOgztEEH4/2tOk/Sa4dxyclDQ=
+X-Google-Smtp-Source: AKy350bGKXVF8AWToGmMNuy71ff4Yr3Em3vUTYC+hY/EoLY9s6TjyCvpLyuEAV4NVHMrLg6NyPXhNQ==
+X-Received: by 2002:a17:906:110d:b0:889:1eb1:7517 with SMTP id h13-20020a170906110d00b008891eb17517mr2579662eja.30.1680696887512;
+        Wed, 05 Apr 2023 05:14:47 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1256:79a0:3838:470:c3f8:814e? ([2a02:908:1256:79a0:3838:470:c3f8:814e])
+        by smtp.gmail.com with ESMTPSA id t12-20020a170906608c00b0093d0867a65csm7399102ejj.175.2023.04.05.05.14.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Apr 2023 05:14:46 -0700 (PDT)
+Message-ID: <e4ab3d50-f286-3858-5ab4-867e9a5cca2f@gmail.com>
+Date:   Wed, 5 Apr 2023 14:14:45 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gjylHNenLSUt247p"
-Content-Disposition: inline
-In-Reply-To: <20230318144412.75046-6-frank.li@vivo.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] drm/tegra: fix another missing include
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     treding@nvidia.com, linux-tegra@vger.kernel.org
+References: <20230405114443.113834-1-christian.koenig@amd.com>
+ <ZC1kFMgpXlqVErTi@orome>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <ZC1kFMgpXlqVErTi@orome>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Am 05.04.23 um 14:05 schrieb Thierry Reding:
+> On Wed, Apr 05, 2023 at 01:44:43PM +0200, Christian König wrote:
+>> Since tegra now compile tests on other platforms the kernel test robot
+>> started to complain that this here is not pulled in under all
+>> conditions.
+>>
+>> Signed-off-by: Christian König <christian.koenig@amd.com>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Link: https://lore.kernel.org/oe-kbuild-all/202304050946.yGGTKkcr-lkp@intel.com/
+>> ---
+>>   drivers/gpu/drm/tegra/fb.c | 1 +
+>>   1 file changed, 1 insertion(+)
+> I had meant to bring this up in response to the other patch that you had
+> sent but then forgot. One of the sanity scripts I run complains that you
+> have different email addresses in the author and Signed-off-by: fields.
+> I already fixed that up for the original patch (I used the Signed-off-by
+> email for the author as well). Let me know if that's not how you want to
+> handle this.
+>
+> May also be worth fixing up your setup so it doesn't generate these
+> conflicting entries.
 
---gjylHNenLSUt247p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, that's a well known issue.
 
-On Sat, Mar 18, 2023 at 10:44:09PM +0800, Yangtao Li wrote:
-> The upper-layer devm_thermal_add_hwmon_sysfs() function can directly
-> print error information.
->=20
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  drivers/thermal/tegra/tegra30-tsensor.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/te=
-gra/tegra30-tsensor.c
-> index cb584a5735ed..c243e9d76d3c 100644
-> --- a/drivers/thermal/tegra/tegra30-tsensor.c
-> +++ b/drivers/thermal/tegra/tegra30-tsensor.c
-> @@ -523,8 +523,7 @@ static int tegra_tsensor_register_channel(struct tegr=
-a_tsensor *ts,
->  		return 0;
->  	}
-> =20
-> -	if (devm_thermal_add_hwmon_sysfs(ts->dev, tsc->tzd))
-> -		dev_warn(ts->dev, "failed to add hwmon sysfs attributes\n");
-> +	devm_thermal_add_hwmon_sysfs(ts->dev, tsc->tzd);
+The AMD mail servers are notoriously unreliable and mangle patches 
+during sendout.
 
-I don't see any error messages output by devm_thermal_add_hwmon_sysfs()
-nor any of the functions that it calls. Did I miss something?
+Because of this I've switched to using gmail for sending patches, but 
+keep the author and Signed-of-by line with my AMD mail.
 
-Thierry
+Christian.
 
---gjylHNenLSUt247p
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> Thierry
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQtZgUACgkQ3SOs138+
-s6GpURAAk+YDurZ447gp7uDTxfOaYD/WaSUnwC9TvOJ2fpt9y+YhH2otMIF8WAPM
-lqfAnEYnCHORqpww0ARzYmoVtQ9m4QlaFSRzV7Wefu0q0EZvd2ao2Diw3h9Z2zaH
-kqbwDxQVceIidxpdbodxpe3OuiZyPDc4D9mE7xCdg7ze+7mE+Ysht2eTks6LTJIr
-GEB0Cso93K6QBcVYYHO3NAdMXQI9c79z5l4uovKBNLFM2Mqapy/JIVzo6zVEIBPM
-fq7g2kaF54WlNBYRF73mM6x7dxJD4KQUK2Y0Va1OSE2zhvxiWnGg4EizY+VPKwys
-9JKYv1/fDUj0oNzmBPO2kwBscNTfLKJJF6XBLDXPHaguO9CDWDEomFsXIenuAicB
-hkQuOTwo9K6FTggivUZvZQiRn3HMFJf34Yv2E4LSZ/u6AjfrfT66/FEKlDKZFvON
-WM0RK3OXHJm3Fo6pv1nE3mZz1+YMC9wVO0ZI9fFv7XW00WUVh5PFBdYDd+dWc8Y7
-AAfZ3Q0RG/sIKfTCHXnOoHpRZfR52aHqV1taiK2wvV1+nD79S4SwAgTWbUJ+acbN
-ClSTpbO4GlIvliyJnlt60ObPTNB6vOuI5M6nLNsNx6mUEo2K1JA/BkBU38G62isz
-FldRzpXNAXQZ/YR5NUA2ybN1h3KmJvcgydL3Yc7Ml/HkXr2IXjw=
-=uiiy
------END PGP SIGNATURE-----
-
---gjylHNenLSUt247p--
