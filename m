@@ -2,66 +2,66 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1FAC77B60
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 13:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C445DC77B6E
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 13:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237940AbjDENKA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 09:10:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54552 "EHLO
+        id S238214AbjDENKB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 09:10:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238257AbjDENJ5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 09:09:57 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9318626B5;
-        Wed,  5 Apr 2023 06:09:55 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id er13so99939484edb.9;
-        Wed, 05 Apr 2023 06:09:55 -0700 (PDT)
+        with ESMTP id S238266AbjDENJ7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 09:09:59 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1290D26B5;
+        Wed,  5 Apr 2023 06:09:58 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-92fcb45a2cdso48069466b.0;
+        Wed, 05 Apr 2023 06:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680700194;
+        d=gmail.com; s=20210112; t=1680700196;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iXULW1Tg1AvdOyR+817NcoyG6wJR38hO2pnEfsLrzL4=;
-        b=q5oa/vCMhLevDXLGtIpoACoVOPOvmzLMX9o3qnP3wKbXQyOzatgUXfu6V6QBdE1Dsf
-         tMEkU2b4o4yLO24wRWesww5hno7GPFbEzWv6GVGryZArFf8E1r5kae7bSzduSCbAtIs8
-         hcrvr5AfakYeh7BUqpimcK+GUIl68tYdBsPcdXWb6FWLlwnwoCBXa79/2lr8de5Y1p0R
-         /Kbpuqk+eAn7/XobajFP5P5ce4DdDtIxgqndoqbQUXgXtrp+5fHNocsiKgrYXQQp07pm
-         L67ZFx10y/0kbp1eFtGyw012hyVOYhXHIF9ykmGKNLYL+yCLljKzjiKs69bNaD9yHvlG
-         TMjA==
+        bh=9ABwXzX9ED7ffK8apt+kOqvZLK0zFOVMM8GUx+TO2Y4=;
+        b=J947sK/H2QM6m2NIyuhMaGvEqeddONKCuWPFky5HdkFJytSPe7WZxywy6nxq3ueE1X
+         fdbSVcHrIxbda+lelGerJs0xR4JHh/FF4I6T9Lcsiu2BgBiNTi8OItEtgOEK1LmbDVCv
+         pqhtEg5kKRyPrqXkmfPXbYX4uKnhbdO5QroUoNElNunCpfA7OL2WFLItiJbYTwSnWcDL
+         mJBSBx0nWZWrGflk2s5/Hi+tmHQsNnlJWtosryiz7lA7K9FcdRW/z7ZDCdYCdOVhKdci
+         80OjPn7kVZS3NVJTfko5Vd8kKGJ1HR6dHJbEpNLwgNh/BRhLlu3J539g9IVzjuQpb5qJ
+         yB3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680700194;
+        d=1e100.net; s=20210112; t=1680700196;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iXULW1Tg1AvdOyR+817NcoyG6wJR38hO2pnEfsLrzL4=;
-        b=X7wLvXuJF6Y3lQJzsH4tDxe905B9h+Z8iUcvtYwXfrrFjIfn262cPeXePIfCoXNGYO
-         1gUwBDHYjKKFuBlmU3LfPBxtwQEbu2HeR8DAg9sPgJHg9WamSR75Gm8ao9Krs2vGV7G4
-         bLlcDUkWys3bFQx5JOHiYM1MdWT0TwYlda1nt6lT/6OXV7uVJuFoUw1wxnL1LzUI5vXT
-         JByPF01S3L0zjkJrYig6DTNaN/ckGJPMJjMvNTZAJsyiklyVlKgmXbp8H/UhJ4OClwAi
-         /FM+VT/XsLcG4OI66bz/gdo66vPp3w92jCVmpiavO/BCk8EX5lkWaxoqLRI7UtC2ZxpH
-         H3MQ==
-X-Gm-Message-State: AAQBX9djBKn7pb/FfgUCtO8dh44fXuNQikWwD/E3SSRWuZAY74/5Dn40
-        kzHWoxGHYKecqSnNZ5Qxec4=
-X-Google-Smtp-Source: AKy350Y2m+a9IWIGy84W5fLSXxpY0qaEzQ49JdELMllLsc1czCEAlJXIYXIq7s7xpfJypNaP/7iGoA==
-X-Received: by 2002:a17:906:4714:b0:931:d644:b9d3 with SMTP id y20-20020a170906471400b00931d644b9d3mr2789003ejq.59.1680700194084;
-        Wed, 05 Apr 2023 06:09:54 -0700 (PDT)
+        bh=9ABwXzX9ED7ffK8apt+kOqvZLK0zFOVMM8GUx+TO2Y4=;
+        b=Gn65IviFXcDO9HTcjFHtc1FSa8uRNhP8k5Xbym50V7DftKpbsy0pv8r21/UZZ0wwEL
+         qOZB1Efkbm9qSwgCkgpg100IzORxX4IzvrEImXfwdqNZxoeB/QEGMCFpIJYYzYoQlhmT
+         XkbeECp1KMzvGSQoiXhND0vI7tOmGNMzKCvvkfKxTZH7qGA29/r778A29KcQZUw109wP
+         BozJebu5lP5faeQ6XREKFGKBI3X5r5ppnt0CaoYLpAeQnidso4kJPZLBxHPbw3n7wZaE
+         1xgYj+0zE2r7CY9WTXyCNwU6DZZxy9VLZ8RAG2RXEIxqTEbomhVdtKDC39B3KrZyyibN
+         +4tA==
+X-Gm-Message-State: AAQBX9f5adCGfSTfyG8mP4t/83HkHFsRH6s/vGVMvjZYVRUMDc6JTtWb
+        hRgckNvewpUs6BCvRa8lSHc=
+X-Google-Smtp-Source: AKy350ZFN+1S2Jl91B+pmFj3c+sgStbb2dBs2rJdrMduqKM475PkGVBM03ai3RZUq9ciRWyHdf73Wg==
+X-Received: by 2002:a05:6402:148:b0:502:32ae:14fb with SMTP id s8-20020a056402014800b0050232ae14fbmr1754229edu.5.1680700196289;
+        Wed, 05 Apr 2023 06:09:56 -0700 (PDT)
 Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 8-20020a170906018800b009306ebc79d3sm7302203ejb.59.2023.04.05.06.09.53
+        by smtp.gmail.com with ESMTPSA id d7-20020a50cd47000000b005027ecc148esm6807750edj.65.2023.04.05.06.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 06:09:53 -0700 (PDT)
+        Wed, 05 Apr 2023 06:09:55 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] arm64: tegra: dts: add vccmq on p3310 TX2 SoM
-Date:   Wed,  5 Apr 2023 15:09:47 +0200
-Message-Id: <168070017409.4044223.8463461096099563249.b4-ty@nvidia.com>
+To:     Nick Alcock <nick.alcock@oracle.com>, mcgrof@kernel.org
+Cc:     Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: (subset) [PATCH 09/24] kbuild, ARM: tegra: remove MODULE_LICENSE in non-modules
+Date:   Wed,  5 Apr 2023 15:09:49 +0200
+Message-Id: <168070017411.4044223.15212068652607056465.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230127093910.426233-1-ben.dooks@codethink.co.uk>
-References: <20230127093910.426233-1-ben.dooks@codethink.co.uk>
+In-Reply-To: <20230217141059.392471-10-nick.alcock@oracle.com>
+References: <20230217141059.392471-1-nick.alcock@oracle.com> <20230217141059.392471-10-nick.alcock@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,21 +71,20 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-On Fri, 27 Jan 2023 09:39:10 +0000, Ben Dooks wrote:
-> The TX2 SoM's SDIO WiFI card is connected via mmc@3440000 however it does
-> not look like the upstream kernel is even bothering to power this (and
-> the regulator framework shuts down this power rail post kernel init).
-> 
-> The issue seems to be a missing link for vccq from the MAX77620 PMIC's LDO5
-> which is labeled vddio_sdmmc3 (and not used anywhere else) to the mmc@3440000
-> node to ensure there is at leasr bus power.
+On Fri, 17 Feb 2023 14:10:44 +0000, Nick Alcock wrote:
+> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
+> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+> are used to identify modules. As a consequence, uses of the macro
+> in non-modules will cause modprobe to misidentify their containing
+> object file as a module when it is not (false positives), and modprobe
+> might succeed rather than failing with a suitable error message.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] arm64: tegra: dts: add vccmq on p3310 TX2 SoM
-      (no commit info)
+[09/24] kbuild, ARM: tegra: remove MODULE_LICENSE in non-modules
+        (no commit info)
 
 Best regards,
 -- 
