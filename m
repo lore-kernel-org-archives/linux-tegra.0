@@ -2,127 +2,140 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDD8C7619A
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 14:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C574C7619A
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 14:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238557AbjDEOap (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 10:30:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37676 "EHLO
+        id S238406AbjDEOee (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 10:34:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238586AbjDEOai (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 10:30:38 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83F515FCA;
-        Wed,  5 Apr 2023 07:30:13 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (softbank219059148246.bbtec.net [219.59.148.246])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 80F391718;
-        Wed,  5 Apr 2023 16:30:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1680705010;
-        bh=Qs3POKuzAMl2FAwrRUyvpLBK6qJSzNKEzukle8jld14=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MURgjpwOIUrJIP2D7Rtkc9A8Kxbv1mzNmPQvR40pLpJ2dTdxJTFhUDRn1ILC3QF/X
-         DTL/lO/prlXUnU/52QubBohKPtzvTssDjp0yYnhPQHFsnYpBlxGwPzSsynDUY/aaiM
-         RtPdJEXy7tJq0vMbsOjDR/FYTYpotdw9i5EwU06c=
-Date:   Wed, 5 Apr 2023 17:30:18 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>
-Subject: Re: [RESEND PATCH v4 03/21] staging: media: tegra-video: fix
- .vidioc_enum_fmt_vid_cap to return all formats
-Message-ID: <20230405143018.GC9915@pendragon.ideasonboard.com>
-References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
- <20230309144320.2937553-4-luca.ceresoli@bootlin.com>
- <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
- <20230404161251.272cc78b@booty>
- <20230405023048.GD9915@pendragon.ideasonboard.com>
- <20230405103134.2ae10766@booty>
- <dddd76a7-f882-f1dd-0781-fcc1f9b4e060@xs4all.nl>
+        with ESMTP id S238315AbjDEOee (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 10:34:34 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on20601.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eae::601])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13886C1;
+        Wed,  5 Apr 2023 07:34:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fW0Ggo+RwJkQbH+gW+BeHaH4+rwcVtHKA1+KSVJK3yxS32Qn/uo1VPAPCujSUu+Wi+nbNwZqEfCULl7UyRp0eDLGE+/0tWzoYU9RAAda5k4jXjLQtUzCpLLCXX1pZdBD35NOE9BRlRAAV0fsMIGirwAhzcnIq2IBZCn5mD9Brh9Cs7Vmf6Y85OKSYioyXW7diBmUwI+M3nKBfEcjTo5l3adcbr3Av5XyXXE/ndWo4CXMCJZ2A3FGhW/DlIXGmwT37fW5tICeU9PE5vZxoPlEEG7ZIt5wNWw8Fw33XS1+zbgfTEf5OXSbjOvqaaFKKPLc1lGaGtY8gA9sgK2d666nKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kt3PY0ud7Ku92JLK+3YPx0QObceEiWNazVg6asdO2lc=;
+ b=HFrVeyeirC/lqdllW/FbBO9mFBjfTW22h5SNbozN8qf+Joun80Sc0P+9ALUBxqwlXTiNpQiMb3GJ0UT86CK9YmQzWU4v/1j0DIl1ZL6Xzg5p3WH2WfjeiVxD24z9IKgkNxbo7FrNhpmNiNlXAVqF60Qr/DO6pwKAuJB83YFinNm15BKSp2xBJJVIPFGi8LBhQeP9gii9MpZknhFlsMqATaCeuQRckmdHfsN+W9vc8cCyQHPfkHYP89v/iHR/rlj3kz69pXMzGMv8/v5aQ43knx/qadSKmcWcfGHodim2eUnr9dKy3H1J7/gcigrSLRfihLBbx5VyxAIGU4MW9DsrkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kt3PY0ud7Ku92JLK+3YPx0QObceEiWNazVg6asdO2lc=;
+ b=T4NKlybN0bdvdWRWI0IsTDdVV8uqdtKbtuK+Xx3+d3iHMpiOq5u7uHwrat8+6njl2LUTFsRmGterYAohkdcfvlLjQlMKjKfQuKkHtnR9ViLFHuJJS4c8YnzgYvk9MuwGJijSrQ04tgxfxN7XLRyfnIJjYIcfOY82d551hUTaUVfP2QHZrZDecBfSksSUb0HAIerEp2jgjx09tcrQBkg0xGuvtnyXV/rj1/UDKhFvPfLiZ5fZ4qznbdYXggIwNeeH+z5ixuNaa3ZUqKQwLleRlHDiux2GXJFhonLBnAu6+B73NEcukWRn7hYkccfJQXyAiNypc6C7/SvqE4sd+fXL+w==
+Received: from BN0PR04CA0123.namprd04.prod.outlook.com (2603:10b6:408:ed::8)
+ by PH7PR12MB7161.namprd12.prod.outlook.com (2603:10b6:510:200::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.35; Wed, 5 Apr
+ 2023 14:34:29 +0000
+Received: from BN8NAM11FT089.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ed:cafe::fa) by BN0PR04CA0123.outlook.office365.com
+ (2603:10b6:408:ed::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.30 via Frontend
+ Transport; Wed, 5 Apr 2023 14:34:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN8NAM11FT089.mail.protection.outlook.com (10.13.176.105) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6277.30 via Frontend Transport; Wed, 5 Apr 2023 14:34:28 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 5 Apr 2023
+ 07:34:22 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Wed, 5 Apr 2023 07:34:21 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Wed, 5 Apr 2023 07:34:21 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/99] 5.15.106-rc1 review
+In-Reply-To: <20230403140356.079638751@linuxfoundation.org>
+References: <20230403140356.079638751@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dddd76a7-f882-f1dd-0781-fcc1f9b4e060@xs4all.nl>
+Message-ID: <ee0bde44-7c8b-4590-94e4-e255945577d1@drhqmail201.nvidia.com>
+Date:   Wed, 5 Apr 2023 07:34:21 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT089:EE_|PH7PR12MB7161:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5b9999b2-a839-49d5-af67-08db35e2dcfc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PVTqazNMcT919swYKXYGryepYGDuruDdtgHyE41/Svzw3UTu9g2tZN+IB6lDlN6SXnnmd+okR1TL+7rFNEEuDGtzINP/MkS2eR07QOdYx4ntNozm7itGFp2fe4lh57FTFeVmwE/9/ZMUpaatywjeZnQrEE/RuxXjgtUoLu1y3qPndoBeDO4vTlPXfBNctf+sNJ2v5Zlytqhd7b4JYvnliICdr/2NIK15MxmpEPa7h5fhHcRLCDVma5hTEZCll/fI1w8FeF+y5QZBMtD7FNJXmO66XzhbQtpXSIt7xa09m1wGDteW+QsM2I0GIxPtOCgjdnCZDBLSAkUMNHozxEkzYgy5AFH+F7uG6/LrIU5LlV+puwXncTaUL6rchoNA64fhUlXwnSlbwOqNwZCYQUUUo1bEJvX5fefF0SqKa8J7dPz1Jij1GrVdGVKoU4xp7T6JcwDRSDaAV+gBM1CxGxg99PZqlGdwoHUVzej97FXFLMhKF1DIUrqXA0HFzlctk6eQiColDx4vHAVp1i5JeUOGLbflMrK9tkHipsB3y5O1LxZeEmTjnlNhPL9UZ7wDrc6HltDL0kV7PrQ7p6RpTdlHAx8bwgn3L39ZpabZLaSE9KZNhY29l0ZsBFUxN1Y5iHpDawwGXIvF7LgJeAGuLY90ebEMLmmmLHG0abdnPCAh3OU1RVVKOOr9Jjt265FBaSWHTwPErAdT35RCKOkKhBfXXFMAJ8u5dXYeC9DcPqe/e9oGJusfnKFXOwyIjWXjP2TMo6ksyVe41U5rNrdi0JcrwH4iZZFuWFUgbVcZ89qDYf4=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(396003)(136003)(376002)(451199021)(40470700004)(36840700001)(46966006)(31686004)(47076005)(426003)(336012)(40460700003)(86362001)(186003)(26005)(7636003)(31696002)(6916009)(2906002)(70206006)(70586007)(8676002)(82740400003)(41300700001)(40480700001)(356005)(4326008)(36860700001)(54906003)(316002)(478600001)(82310400005)(7416002)(8936002)(966005)(5660300002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2023 14:34:28.7610
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b9999b2-a839-49d5-af67-08db35e2dcfc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT089.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7161
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Hans,
-
-On Wed, Apr 05, 2023 at 10:50:37AM +0200, Hans Verkuil wrote:
-> On 05/04/2023 10:31, Luca Ceresoli wrote:
-> > On Wed, 5 Apr 2023 05:30:48 +0300 Laurent Pinchart wrote:
-> >> On Tue, Apr 04, 2023 at 04:12:51PM +0200, Luca Ceresoli wrote:
-> >>> On Wed, 29 Mar 2023 13:16:22 +0200 Hans Verkuil wrote:
-> >>>   
-> >>>> Hi Luca,
-> >>>>
-> >>>> I finally found the time to test this series. It looks OK, except for this patch.  
-> >>>
-> >>> Thank you very much for taking the time!
-> >>>   
-> >>>> The list of supported formats really has to be the intersection of what the tegra
-> >>>> supports and what the sensor supports.
-> >>>>
-> >>>> Otherwise you would advertise pixelformats that cannot be used, and the application
-> >>>> would have no way of knowing that.  
-> >>>
-> >>> As far as I understand, I think we should rather make this driver fully
-> >>> behave as an MC-centric device. It is already using MC quite
-> >>> successfully after all.
-> >>>
-> >>> Do you think this is correct?  
-> >>
-> >> Given the use cases for this driver, I agree.
+On Mon, 03 Apr 2023 16:08:23 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.106 release.
+> There are 99 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I disagree.
+> Responses should be made by Wed, 05 Apr 2023 14:03:18 +0000.
+> Anything received after that time might be too late.
 > 
-> This driver doesn't use the media controller for anything at the moment. The
-> /dev/mediaX device just shows the internal topology (i.e. connected sensors),
-> but otherwise it does nothing.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.106-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
 > 
-> While it would be great if we could unlock the ISP on the Tegra, the reality
-> is that it is entirely closed source and can't be used in a linux driver, and
-> that's not going to change, sadly.
-
-Never say never :-)
-
-> That leaves us with just a basic CSI capture driver. Rather than trying to
-> change this driver to a full MC device with no benefits, just drop this change
-> and get your code in.
-
-Can't the hardware support capturing different virtual channels or data
-types from the same CSI-2 source ? That would require MC support, the
-stream API requires subdev device nodes.
-
-> Note that this driver will stay in staging since it still fails when I try to
-> capture from two sensors at the same time: syncpoint errors start appearing
-> in that case. I think there are locking issues. I think I have someone to take
-> a look at that, but first I want your series to get merged.
+> thanks,
 > 
-> In the very unlikely event that the ISP can be implemented in a linux driver,
-> it will probably become a new driver.
-> 
-> Regards,
-> 
-> > Ok, thanks for the feedback. I will send a v5 with this change.
+> greg k-h
 
--- 
-Regards,
+All tests passing for Tegra ...
 
-Laurent Pinchart
+Test results for stable-v5.15:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    114 tests:	114 pass, 0 fail
+
+Linux version:	5.15.106-rc1-gaacd62149991
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
