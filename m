@@ -2,31 +2,37 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A081C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 02:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1130C7619A
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 08:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236386AbjDECav (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 22:30:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
+        id S237515AbjDEIbn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 04:31:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235178AbjDECau (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 22:30:50 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97317BB;
-        Tue,  4 Apr 2023 19:30:45 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (fp76f193f3.tkyc206.ap.nuro.jp [118.241.147.243])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 622C2905;
-        Wed,  5 Apr 2023 04:30:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1680661841;
-        bh=92JxqutkaA7MOBZzEsI8JVLAVvvA2FVlO8U5Q3EjmSo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mWO+SH7/XV27sw9R9Rw+KgqItm8rURI5GQYFV1sl6pR8XqDB6GW41gIU2YwetbYJf
-         AtRC/91JVGQs52YzgrvoES/zkyNKZ3kM/rEVQD8Wdrh/kfYVzeVJvyDFcz5Eo0QXhG
-         Cc25z/I3g+l6D2expqUK61OIFTqhI2ZjYHVrjfc4=
-Date:   Wed, 5 Apr 2023 05:30:48 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+        with ESMTP id S230163AbjDEIbm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 04:31:42 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3D731FF6;
+        Wed,  5 Apr 2023 01:31:39 -0700 (PDT)
+Received: from booty (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 5E4551BF20E;
+        Wed,  5 Apr 2023 08:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1680683498;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dfpX8n3KjmDuOMM79pUj2UNu0NextAFw1gDVBnHMLw4=;
+        b=bCcuC7sWRQhfy48p+yKdWbEIRlhTIKVTe01b/RtLxDpwYXkNTNSsthBgWlrM5AyYCFAD9V
+        bPZAeDNTSMUdLU6TH3O9/wHuQedepqeKZFAePw42KIr3UlWGLsObQHIx8FRA/Yzo/Hpwas
+        1oMfM22Ru1auoLd8ys6PHjyeEs1k+RTPAgcCt6EDnt1ohR6x/rMuXDzlORw7UkENAYfwpS
+        Bgqu7CtMjURcHeXgjEMd0FKRfuuPeaa635UVKIvKX9q7NrF+b0gicCAXGtd9tGp3oRRUos
+        YgHaBQkht/RyoSHfYHY0w8lMSHHsAAkY1nM7AiJntPvjMh+FRmG6op0Q0JlDlQ==
+Date:   Wed, 5 Apr 2023 10:31:34 +0200
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -46,51 +52,58 @@ Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Richard Leitner <richard.leitner@skidata.com>
 Subject: Re: [RESEND PATCH v4 03/21] staging: media: tegra-video: fix
  .vidioc_enum_fmt_vid_cap to return all formats
-Message-ID: <20230405023048.GD9915@pendragon.ideasonboard.com>
+Message-ID: <20230405103134.2ae10766@booty>
+In-Reply-To: <20230405023048.GD9915@pendragon.ideasonboard.com>
 References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
- <20230309144320.2937553-4-luca.ceresoli@bootlin.com>
- <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
- <20230404161251.272cc78b@booty>
+        <20230309144320.2937553-4-luca.ceresoli@bootlin.com>
+        <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
+        <20230404161251.272cc78b@booty>
+        <20230405023048.GD9915@pendragon.ideasonboard.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230404161251.272cc78b@booty>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Luca,
+Hi Laurent,
 
-On Tue, Apr 04, 2023 at 04:12:51PM +0200, Luca Ceresoli wrote:
-> On Wed, 29 Mar 2023 13:16:22 +0200 Hans Verkuil wrote:
+On Wed, 5 Apr 2023 05:30:48 +0300
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+
+> Hi Luca,
 > 
-> > Hi Luca,
+> On Tue, Apr 04, 2023 at 04:12:51PM +0200, Luca Ceresoli wrote:
+> > On Wed, 29 Mar 2023 13:16:22 +0200 Hans Verkuil wrote:
+> >   
+> > > Hi Luca,
+> > > 
+> > > I finally found the time to test this series. It looks OK, except for this patch.  
 > > 
-> > I finally found the time to test this series. It looks OK, except for this patch.
-> 
-> Thank you very much for taking the time!
-> 
-> > The list of supported formats really has to be the intersection of what the tegra
-> > supports and what the sensor supports.
+> > Thank you very much for taking the time!
+> >   
+> > > The list of supported formats really has to be the intersection of what the tegra
+> > > supports and what the sensor supports.
+> > > 
+> > > Otherwise you would advertise pixelformats that cannot be used, and the application
+> > > would have no way of knowing that.  
 > > 
-> > Otherwise you would advertise pixelformats that cannot be used, and the application
-> > would have no way of knowing that.
+> > As far as I understand, I think we should rather make this driver fully
+> > behave as an MC-centric device. It is already using MC quite
+> > successfully after all.
+> > 
+> > Do you think this is correct?  
 > 
-> As far as I understand, I think we should rather make this driver fully
-> behave as an MC-centric device. It is already using MC quite
-> successfully after all.
-> 
-> Do you think this is correct?
+> Given the use cases for this driver, I agree.
 
-Given the use cases for this driver, I agree.
+Ok, thanks for the feedback. I will send a v5 with this change.
 
-> If you do, then I think the plan would be:
-> 
->  - Add the V4L2_CAP_IO_MC flag
->  - As the mbus_code in get_format appropriately
->  - Leave the changes in this patch unmodified otherwise
+Best regards,
+Luca
 
 -- 
-Regards,
-
-Laurent Pinchart
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
