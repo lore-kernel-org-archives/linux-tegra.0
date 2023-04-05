@@ -2,151 +2,95 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FA3C761AF
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 02:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A081C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 02:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236695AbjDECYv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Apr 2023 22:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44318 "EHLO
+        id S236386AbjDECav (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Apr 2023 22:30:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230455AbjDECYu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 22:24:50 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6089E1FDC;
-        Tue,  4 Apr 2023 19:24:40 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id c18so33085061ple.11;
-        Tue, 04 Apr 2023 19:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680661480;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9QNbM9lP47YBzDxJmWKWYEJzZC9ZIOjbZpNDsjzB1/E=;
-        b=Xihw6CgZ9/9usz7a8VJsWY8rfqP+LOYjs7G3CCcJY+RprHUpGDw82g//kV+M/lN2eN
-         MCKYQ+HhvY5W1cSsIACkXEtTwItPP3atD7PSnn6CY3edFU7fRlyEpyLbrZYs5XvWXdKy
-         t9elDA+lhxpC06IPynnlGlvRp14mdfczCSvYnTbh9qn3oESdwAnGclujGnTFKq1PvYHe
-         UNDDXArlN2SssUcwAIha7XxGo6wmqlEvq3mMQaulR81DCsd7RPPSH6PKtAexQR7gj6dj
-         3c+zp0QURkwJcGXiXIAuMESlFidSs+6E6PbTvTKTDji9VpvU3LDj2Ttziz8wU064/qwl
-         Zonw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680661480;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9QNbM9lP47YBzDxJmWKWYEJzZC9ZIOjbZpNDsjzB1/E=;
-        b=4lHcdDcU+kVkqi3c8yjTzXgbF5KWrrxDG0ZvG+z7Yqq2/nUytX09hE3RcbBmOk1mon
-         mGliFZIbRvM1ifPWww13EcQslHE/dsMtxDlExyOKiQ/N7XtBCDKGB83K9RTJfOZWHmbX
-         BSCJKvTFJ6sdNpsTs0qAOE7s//aAoO7ocQ9qB4GA7gXmnngrIJpEorDv5TRkXyNCXxMS
-         tcJzD0vl5vChBEmNGiuMxHXGgxWau2fIQZOY6JAuE13nFzF4jTwX625OhEF3DYH7wAG9
-         j/sUPbzHv4zCAYbS+v0aX20AfzjK57XirEXRyA3Hu32vsGuLzofrcDOtlsOJ4i8+KIUV
-         dk7g==
-X-Gm-Message-State: AAQBX9dXt7pAKbxR00URXFVSrumboZk0+ORyaV5FpjFsNz52ZfXm3oUB
-        k+/PilDtGY8k9qU/cACcYDg=
-X-Google-Smtp-Source: AKy350YC3ggg9qLvnDzmFothcUSjAQpi7xNqcwvsbbun0pCTYz8A4L5T/wFudH3EGQ7zlYXf1Kpd3g==
-X-Received: by 2002:a05:6a20:659c:b0:da:c40:8dc with SMTP id p28-20020a056a20659c00b000da0c4008dcmr4172153pzh.6.1680661479619;
-        Tue, 04 Apr 2023 19:24:39 -0700 (PDT)
-Received: from [192.168.43.80] (subs02-180-214-232-18.three.co.id. [180.214.232.18])
-        by smtp.gmail.com with ESMTPSA id x9-20020aa793a9000000b005898fcb7c1bsm9679454pff.177.2023.04.04.19.24.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Apr 2023 19:24:39 -0700 (PDT)
-Message-ID: <364610b8-2c40-6a71-513e-4e154b077055@gmail.com>
-Date:   Wed, 5 Apr 2023 09:24:30 +0700
+        with ESMTP id S235178AbjDECau (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Apr 2023 22:30:50 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97317BB;
+        Tue,  4 Apr 2023 19:30:45 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (fp76f193f3.tkyc206.ap.nuro.jp [118.241.147.243])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 622C2905;
+        Wed,  5 Apr 2023 04:30:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1680661841;
+        bh=92JxqutkaA7MOBZzEsI8JVLAVvvA2FVlO8U5Q3EjmSo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mWO+SH7/XV27sw9R9Rw+KgqItm8rURI5GQYFV1sl6pR8XqDB6GW41gIU2YwetbYJf
+         AtRC/91JVGQs52YzgrvoES/zkyNKZ3kM/rEVQD8Wdrh/kfYVzeVJvyDFcz5Eo0QXhG
+         Cc25z/I3g+l6D2expqUK61OIFTqhI2ZjYHVrjfc4=
+Date:   Wed, 5 Apr 2023 05:30:48 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>
+Subject: Re: [RESEND PATCH v4 03/21] staging: media: tegra-video: fix
+ .vidioc_enum_fmt_vid_cap to return all formats
+Message-ID: <20230405023048.GD9915@pendragon.ideasonboard.com>
+References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
+ <20230309144320.2937553-4-luca.ceresoli@bootlin.com>
+ <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
+ <20230404161251.272cc78b@booty>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH V4 06/10] hte: Re-phrase tegra API document
-Content-Language: en-US
-To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org,
-        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
-        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
-References: <20230323012929.10815-1-dipenp@nvidia.com>
- <20230323012929.10815-7-dipenp@nvidia.com>
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <20230323012929.10815-7-dipenp@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230404161251.272cc78b@booty>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/23/23 08:29, Dipen Patel wrote:
-> Make Tegra194 API document generic to make it applicable for
-> current and future tegra hte providers.
+Hi Luca,
+
+On Tue, Apr 04, 2023 at 04:12:51PM +0200, Luca Ceresoli wrote:
+> On Wed, 29 Mar 2023 13:16:22 +0200 Hans Verkuil wrote:
 > 
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> ---
->  Documentation/driver-api/hte/tegra194-hte.rst | 33 +++++++++----------
->  1 file changed, 16 insertions(+), 17 deletions(-)
+> > Hi Luca,
+> > 
+> > I finally found the time to test this series. It looks OK, except for this patch.
 > 
+> Thank you very much for taking the time!
+> 
+> > The list of supported formats really has to be the intersection of what the tegra
+> > supports and what the sensor supports.
+> > 
+> > Otherwise you would advertise pixelformats that cannot be used, and the application
+> > would have no way of knowing that.
+> 
+> As far as I understand, I think we should rather make this driver fully
+> behave as an MC-centric device. It is already using MC quite
+> successfully after all.
+> 
+> Do you think this is correct?
 
-While generalizing the doc, the doc file name should also be renamed
-(i.e. to tegra-hte.rst).
+Given the use cases for this driver, I agree.
 
-> diff --git a/Documentation/driver-api/hte/tegra194-hte.rst b/Documentation/driver-api/hte/tegra194-hte.rst
-> index f2d617265546..85e654772782 100644
-> --- a/Documentation/driver-api/hte/tegra194-hte.rst
-> +++ b/Documentation/driver-api/hte/tegra194-hte.rst
-> @@ -5,25 +5,25 @@ HTE Kernel provider driver
->  
->  Description
->  -----------
-> -The Nvidia tegra194 HTE provider driver implements two GTE
-> -(Generic Timestamping Engine) instances: 1) GPIO GTE and 2) LIC
-> -(Legacy Interrupt Controller) IRQ GTE. Both GTE instances get the
-> -timestamp from the system counter TSC which has 31.25MHz clock rate, and the
-> -driver converts clock tick rate to nanoseconds before storing it as timestamp
-> -value.
-> +The Nvidia tegra HTE provider also known as GTE (Generic Timestamping Engine)
-> +driver implements two GTE instances: 1) GPIO GTE and 2) LIC
-> +(Legacy Interrupt Controller) IRQ GTE. Both GTE instances get the timestamp
-> +from the system counter TSC which has 31.25MHz clock rate, and the driver
-> +converts clock tick rate to nanoseconds before storing it as timestamp value.
->  
->  GPIO GTE
->  --------
->  
->  This GTE instance timestamps GPIO in real time. For that to happen GPIO
-> -needs to be configured as input. The always on (AON) GPIO controller instance
-> -supports timestamping GPIOs in real time and it has 39 GPIO lines. The GPIO GTE
-> -and AON GPIO controller are tightly coupled as it requires very specific bits
-> -to be set in GPIO config register before GPIO GTE can be used, for that GPIOLIB
-> -adds two optional APIs as below. The GPIO GTE code supports both kernel
-> -and userspace consumers. The kernel space consumers can directly talk to HTE
-> -subsystem while userspace consumers timestamp requests go through GPIOLIB CDEV
-> -framework to HTE subsystem.
-> +needs to be configured as input. Only the always on (AON) GPIO controller
-> +instance supports timestamping GPIOs in real time as it is tightly coupled with
-> +the GPIO GTE. To support this, GPIOLIB adds two optional APIs as mentioned
-> +below. The GPIO GTE code supports both kernel and userspace consumers. The
-> +kernel space consumers can directly talk to HTE subsystem while userspace
-> +consumers timestamp requests go through GPIOLIB CDEV framework to HTE
-> +subsystem. The hte devicetree binding described at
-> +``Documentation/devicetree/bindings/timestamp`` provides an example of how a
-> +consumer can request an GPIO line.
->  
->  See gpiod_enable_hw_timestamp_ns() and gpiod_disable_hw_timestamp_ns().
->  
-> @@ -34,9 +34,8 @@ returns the timestamp in nanoseconds.
->  LIC (Legacy Interrupt Controller) IRQ GTE
->  -----------------------------------------
->  
-> -This GTE instance timestamps LIC IRQ lines in real time. There are 352 IRQ
-> -lines which this instance can add timestamps to in real time. The hte
-> -devicetree binding described at ``Documentation/devicetree/bindings/timestamp``
-> +This GTE instance timestamps LIC IRQ lines in real time. The hte devicetree
-> +binding described at ``Documentation/devicetree/bindings/timestamp``
->  provides an example of how a consumer can request an IRQ line. Since it is a
->  one-to-one mapping with IRQ GTE provider, consumers can simply specify the IRQ
->  number that they are interested in. There is no userspace consumer support for
-
-The wording LGTM, thanks!
-
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> If you do, then I think the plan would be:
+> 
+>  - Add the V4L2_CAP_IO_MC flag
+>  - As the mbus_code in get_format appropriately
+>  - Leave the changes in this patch unmodified otherwise
 
 -- 
-An old man doll... just what I always wanted! - Clara
+Regards,
 
+Laurent Pinchart
