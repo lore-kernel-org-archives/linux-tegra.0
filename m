@@ -2,65 +2,66 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0F6C761A6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5BDC76188
 	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 13:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238222AbjDENKC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 09:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54564 "EHLO
+        id S238223AbjDENKD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 09:10:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238261AbjDENJ5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 09:09:57 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2700271C;
-        Wed,  5 Apr 2023 06:09:56 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id fi11so17438451edb.10;
-        Wed, 05 Apr 2023 06:09:56 -0700 (PDT)
+        with ESMTP id S238159AbjDENKA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 09:10:00 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227D71FEC;
+        Wed,  5 Apr 2023 06:09:59 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id ek18so140992747edb.6;
+        Wed, 05 Apr 2023 06:09:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680700195;
+        d=gmail.com; s=20210112; t=1680700197;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Lrrn9Os7k/oSQLAsT1c79tz/mKrZxstzRd8x/1yg5OY=;
-        b=jq671NIvFC1RCtZAsM8SH4MdrPC/7JD0eGHg73Ked+Uqr2YYRYUTCfiFbzp6Vy0jUO
-         bcUyq8S95NmcCSGNMjba7bfl4G8ud/MVmch4PrJklkL6EJwBV2GAGqqSGmMS00zcHCSO
-         uMel4YZsnM+WGlUFXPOrx576FOPsPMItMJamtg+qY7cm6YLxXVy1dnQxWOzumNs/3+Nb
-         BPdAtYBijvc2ed34pB3WJSS7A0VhS943F3bYimc6oQqkjn8yuzhe90uYlVxfqT1neuDW
-         0x5zlV0JUOQWSru2rPW9NDnwsEOSEQZMlObWkKvcHm/nFCdtXZW7BDzbBZRy+EQo/PG5
-         V2cA==
+        bh=Vc6lpfSkhCFjZHegYgPH2xzL1XMSoHFdPSi+Hb5EdvY=;
+        b=qpg7ZYCUnkTeF3b6x6kbrQyX2BavDizjxk/2XDA79QURowrQ2TbSVfnW9rhylzBJVT
+         1Bh7GPohy51Twy9gO++ipoy3Npo7zP1qFrfSpDxjTnCVtD0G5EX3k9J7mtmLF6TiOyZ/
+         jp9R9bZUq8O6it5kb8HhTDsI7smP/fK4rrUanIziLOjI+po+bbPTwt+LMQC5lv7AOsx4
+         KBmXD+yTXr/wx0/LyNF95sugOW7ylL2LzW/eXYXM6HRABFbuzCGAP+vMVli8IPh6XCXi
+         fk5aupAgTSlvSPViPo6Qb9TaBnB3Sqhia0EzRbKYCp3ctOmKWf2/s5tFu6WhrXooniJm
+         U11g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680700195;
+        d=1e100.net; s=20210112; t=1680700197;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Lrrn9Os7k/oSQLAsT1c79tz/mKrZxstzRd8x/1yg5OY=;
-        b=UAJWy1KnDA/3y+nlAoG0RStlwjtxnii46gclKkSPnOZbMgSj6QlJ3dPbP8aSP/hh5K
-         cjHhzZpS9Hgf3PWuQPtDbFaojI2ceCgEH6BqeJt5O+cnbPZXf7sWUbfwFjwPP9xG/3ay
-         74b+3IBs5B9I4/huRc4b72oMVTtALMFNEFYBab3LY4hEff9HCEaaYWdjbHWnjHdocyoq
-         2pISBFLKLVxWwjA5Kxb9e9nUaSW7EAYGq+OHw0ypzDxSJZDvzAwNNgDi2rCflet3N+R8
-         P/ACGy+zUwEIYNugTQTiOacmjwoCquHbmZG9NqmFrBrTpk4YZx4GwcAwrzHwdp94gvrm
-         AV7Q==
-X-Gm-Message-State: AAQBX9cHeM35i0/QeAVF7RZb96o3lSjVzGcXXGrQN2Vj5keGmVRY8ZPV
-        krM69RkPx5CZKuPgb47bcVU=
-X-Google-Smtp-Source: AKy350a5Nz3W7YKjiebz8MBrsJk59qHlbv1+CekqwjMDfRDUGg3XAjtJfBeqDSAfgIvKy1kTkhxcTA==
-X-Received: by 2002:a17:907:1b1c:b0:949:87e1:5b31 with SMTP id mp28-20020a1709071b1c00b0094987e15b31mr1050535ejc.19.1680700195086;
-        Wed, 05 Apr 2023 06:09:55 -0700 (PDT)
+        bh=Vc6lpfSkhCFjZHegYgPH2xzL1XMSoHFdPSi+Hb5EdvY=;
+        b=1Dxk7Ea000htkesDgE8R4v47psAGTCi+v+sXc9HyozFKMQrqF57u+67I2xZ4oya/kq
+         1wUCOMOr0/FK+MgOw78O6bjejwqlKpjzUef6/wViicxYF1sGPnVTApT5LubkB9POhnC1
+         BM59SlKzDSJjJqY7loEfHW5hg9UgHtDPzdTgfxpcMVpTbAnZEn07Z1nXZDdzQAkA1B5q
+         m4KafNb/jsxT74yj2gcx8yN8vW2ofaRK79dkOTMP+GV1ng2Kiiv1nQCaR1lRL/iaydEp
+         6Bg58cdq7PjCZlXRWJ9m9jQyq9SGFyCEOrhWR6DhCC1ARTH71OBBK7hFznAvLFpD+zID
+         2ktQ==
+X-Gm-Message-State: AAQBX9fCpMNlgDrjJuhcsxhLFgtANkPoOSmmYBskOWvGOS4YEMsvC1Iq
+        z1JjSLjZbr6JnzEO3IhzoIc=
+X-Google-Smtp-Source: AKy350alzGXioav9KKWdOSGxp9WUWI3K1jkYkHhw8Tueh9auQSnW3kxrsPw/x7HQfCybtSFuZaTkmQ==
+X-Received: by 2002:a17:906:2b0d:b0:93f:fbe:c389 with SMTP id a13-20020a1709062b0d00b0093f0fbec389mr2911447ejg.13.1680700197494;
+        Wed, 05 Apr 2023 06:09:57 -0700 (PDT)
 Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id qq8-20020a17090720c800b008def483cf79sm7327438ejb.168.2023.04.05.06.09.54
+        by smtp.gmail.com with ESMTPSA id h23-20020a170906261700b008e0bb004976sm7311267ejc.134.2023.04.05.06.09.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 06:09:54 -0700 (PDT)
+        Wed, 05 Apr 2023 06:09:57 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     will@kernel.org, catalin.marinas@arm.com,
-        Besar Wicaksono <bwicaksono@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        vsethi@nvidia.com, jonathanh@nvidia.com,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: defconfig: enable ARM CoreSight PMU driver
-Date:   Wed,  5 Apr 2023 15:09:48 +0200
-Message-Id: <168070017414.4044223.13292657935768427902.b4-ty@nvidia.com>
+To:     Nick Alcock <nick.alcock@oracle.com>, mcgrof@kernel.org
+Cc:     Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: (subset) [PATCH 20/20] soc/tegra: cbb: remove MODULE_LICENSE in non-modules
+Date:   Wed,  5 Apr 2023 15:09:50 +0200
+Message-Id: <168070017411.4044223.332660591498857046.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230321200535.10584-1-bwicaksono@nvidia.com>
-References: <20230321200535.10584-1-bwicaksono@nvidia.com>
+In-Reply-To: <20230228130215.289081-21-nick.alcock@oracle.com>
+References: <20230228130215.289081-1-nick.alcock@oracle.com> <20230228130215.289081-21-nick.alcock@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -70,15 +71,20 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-On Tue, 21 Mar 2023 15:05:35 -0500, Besar Wicaksono wrote:
-> Enable driver for Coresight PMU arch device.
+On Tue, 28 Feb 2023 13:02:15 +0000, Nick Alcock wrote:
+> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
+> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+> are used to identify modules. As a consequence, uses of the macro
+> in non-modules will cause modprobe to misidentify their containing
+> object file as a module when it is not (false positives), and modprobe
+> might succeed rather than failing with a suitable error message.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] arm64: defconfig: enable ARM CoreSight PMU driver
-      (no commit info)
+[20/20] soc/tegra: cbb: remove MODULE_LICENSE in non-modules
+        (no commit info)
 
 Best regards,
 -- 
