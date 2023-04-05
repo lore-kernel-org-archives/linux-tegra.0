@@ -2,129 +2,252 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5547AC761AF
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 18:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52825C761AF
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 18:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233171AbjDESTY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 14:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48580 "EHLO
+        id S233171AbjDESf2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 14:35:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbjDESTX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 14:19:23 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F9EC6A5B;
-        Wed,  5 Apr 2023 11:19:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mVWL4wSnX/bJ8Tk7EpLw/fxSPC3YHvMGqp0II5nToZEaZvFFp7iGI1nWRRkOByIQWWuoiJYKCLxe/na2mYW3hNP/0GtsozcbheLa4QyIc6OCnpesTWeK9qBLhbZl/zB3uYeU7kzQrjUhVKUMIUh4do3GyPzUEffxzxKA5htGRLr+wrs2KyufZbYQFDjPWf+s4+KbAOulE75cjBitfC1uvFlmMv4V6PuwPnpGgGGaVeTWgE7pVT/MAv0A26Qiy/kjDRfbYwcJi/3KPvbIqY/sjFyo+JsnR13LLdsvIC/mePsUjihFxT4m61nJDGHPImrIT0MSpulFgv8xFjV4dNshnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NUHIqL9GG/MqckcICY8cpcEz4mrhQ1ioutInGCeqUlI=;
- b=JNBXK7/XG1JVSrbuZwy0l6jByR8aANpN4/+0ALozbogZ56sV8t87NXwOva4WQfLEE/LutsbG9mkzd0HbfML0XLFNzhzRGvEoniAbnTh7215PJlTVwXhCxHV9ybEJ/5L4bwgxS56owdoH49OUijjtuG82ngc0JUnPSiklKXVMGT2kEiOYMdcRvtIZqG6t+n+Exy78tbazY85LGuB7sFWqVkHDklR9rwvhdk5pijfH2JdfYcwdzYVJ5qY500DiSuscQXv5Z61yBhKXX6+9qnJOYkevDegb2ycVBCJd9T26sRivZVDJ4efzx9hanrfbEI5oLmKbcx3HMjcjL+E9ZF85cQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NUHIqL9GG/MqckcICY8cpcEz4mrhQ1ioutInGCeqUlI=;
- b=Mt3p53sKVL63Y7GN/db/+4uCpMQVYfD9PeN3AkzfLWsWtMqZCdkdHrKtlaftzqvMbQ0CBXOal2wgXOtLJj2GhclQf+saEhDTWri7qvOCv9WOevObsWB1cV/+v0EOL9Ngk1RLwSch7mbPOFiwBldBs5F4lIoO1MmYP2aN8MbmcUfBUCh/kmgnwTRFAO+NX7lQenKGtBRhrVpjPe6azt00fQ1MmHEWx950mU4HEkN4S7TZlzQBKfW84eUlu0OHsWdSbpBoR1+xfjddvPYE8W7ltoSCI+HzN1IvjSjsbF8yTrC0JTUEeei/lHMOK42xbAJR3AvZFkL9lEMvEj1vsvf9pQ==
-Received: from BN9PR03CA0638.namprd03.prod.outlook.com (2603:10b6:408:13b::13)
- by CY5PR12MB6624.namprd12.prod.outlook.com (2603:10b6:930:40::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.30; Wed, 5 Apr
- 2023 18:19:16 +0000
-Received: from BL02EPF000145B9.namprd05.prod.outlook.com
- (2603:10b6:408:13b:cafe::71) by BN9PR03CA0638.outlook.office365.com
- (2603:10b6:408:13b::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.22 via Frontend
- Transport; Wed, 5 Apr 2023 18:19:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BL02EPF000145B9.mail.protection.outlook.com (10.167.241.209) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6222.35 via Frontend Transport; Wed, 5 Apr 2023 18:19:15 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 5 Apr 2023
- 11:19:06 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Wed, 5 Apr 2023 11:19:05 -0700
-Received: from moonraker.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Wed, 5 Apr 2023 11:19:04 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-CC:     <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/2] usb: gadget: tegra-xudc: Fix crash in vbus_draw
-Date:   Wed, 5 Apr 2023 19:18:53 +0100
-Message-ID: <20230405181854.42355-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229533AbjDESf1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 14:35:27 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4961C10E6;
+        Wed,  5 Apr 2023 11:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680719726; x=1712255726;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=legMIf5YD0q+ajTCLkrNmjm9FBPRqVMOXe3drlEE8NY=;
+  b=cMf+CcIBFsZBLhJUVs2Gt8Awo5Et3ld5mtiHUsD3Xzg4Q7ukEXRjpuyn
+   4LZE+fP0OMsOPdSzEz3RBOl0optafYDgJ33ZlWiBZdoi3sZrMH7ffLCK3
+   ocAAi1UXuY6AXcZk7cdU+6DGR2+qDLjYVU21/NfsvFJDI57VS3cLxkhzu
+   TAuyBqdVpJIriIjbrC+hLHufRuTeQZWAJhIUHG9AFmeukSCNBqQM+M/aZ
+   pe+y7f5Uhh4jov/cq8Ml63NJhnslw9DdZV3I8Wtt/6KAo/Wp5jsqrzlMo
+   oA1fFNkuLwMWiO7foaeB38JmC4LUbQQw3wiywSdPWzOFWgdctPdwKjL9o
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10671"; a="370365086"
+X-IronPort-AV: E=Sophos;i="5.98,321,1673942400"; 
+   d="scan'208";a="370365086"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2023 11:35:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10671"; a="686844405"
+X-IronPort-AV: E=Sophos;i="5.98,321,1673942400"; 
+   d="scan'208";a="686844405"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 05 Apr 2023 11:35:21 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pk7ya-000Qi2-2Z;
+        Wed, 05 Apr 2023 18:35:20 +0000
+Date:   Thu, 06 Apr 2023 02:35:03 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-wireless@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        io-uring@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 8417c8f5007bf4567ccffda850a3157c7d905f67
+Message-ID: <642dbf57.X1BJAzM0kfiN4uzj%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF000145B9:EE_|CY5PR12MB6624:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5b4c462-5b88-4dd3-3acd-08db360243fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: sBQJxGXCQ9ACw28xtH16W0UYpsOwDdAITVq/zg0eRkn77bX1uExuFlkRqai9wvkL+7NozdGHhBvxU3d8U9/mGCHRq+RZqEU3B42xY1H2FrES3UeOKWDe+VkLwzoNyhFefQrVuQYjHoVXuyWo088qSxU/vv/T2k+zYT6IdLMr7S5ZQZu70yIiQ67T72jzBh+XrfGZi1Jq8Z2dqKlbhcuh2xXKf1NOrEaTzOwb7SzEpuMqrrUIxQh2y0rsqZ0oJCzd/PZjNpaSudOY0LmC/AcH35t1rIEZczC5qxeNKlLX68IR0diqYKCnGegr+e7IKeg3CbnaqXsvVgJpYuswRtbt0BeEnOoKUKCsi5bRt2J2m47Fe/HeuE8NVVFWdOo+osl5zN0Nfx/FPNpc1OM5GJ90U5uzW35uO+K71WvmCr5qMFEc08HEDTGbxzaaBWcBSKCR9mxN61j03MGk5hTW05nA1WwLfOGJ0Od+ZigNykmXxUKfvMqQl2NeruSE5IrJdtKgytW4bWXWukhSSRwazk6qKos4aMceRI2MVdA0QRgT8m6B8ehrQGtk5jPUgKrintcGYuTPgYNUqAbTKqpWxcgAAzXlWTS9KvNYFHS3WIcDGq8Qyfrd8zA5sUV3tZy/ji6Jd/GFh1VkJV8bLDTuQxOGWK45IG3l7V1UzJxo5SHsftFvVBhO9xVc9yZ1skmCOXt/GZ67KZNQzmwyde5G1H9C/Thu4angtyhZR/RKQz0UHddT98uEZNOiXUNfes13T+vb
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(376002)(346002)(39860400002)(451199021)(40470700004)(46966006)(36840700001)(5660300002)(41300700001)(8936002)(2906002)(8676002)(4326008)(316002)(110136005)(478600001)(7696005)(1076003)(26005)(2616005)(6666004)(107886003)(70586007)(70206006)(426003)(336012)(186003)(83380400001)(47076005)(356005)(7636003)(54906003)(82740400003)(6636002)(40460700003)(82310400005)(36756003)(36860700001)(40480700001)(86362001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2023 18:19:15.9529
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5b4c462-5b88-4dd3-3acd-08db360243fd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000145B9.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6624
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit ac82b56bda5f ("usb: gadget: tegra-xudc: Add vbus_draw support")
-populated the vbus_draw callback for the Tegra XUDC driver. The function
-tegra_xudc_gadget_vbus_draw(), that was added by this commit, assumes
-that the pointer 'curr_usbphy' has been initialised, which is not always
-the case because this is only initialised when the USB role is updated.
-Fix this crash, by checking that the 'curr_usbphy' is valid before
-dereferencing.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 8417c8f5007bf4567ccffda850a3157c7d905f67  Add linux-next specific files for 20230405
 
-Fixes: ac82b56bda5f ("usb: gadget: tegra-xudc: Add vbus_draw support")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/usb/gadget/udc/tegra-xudc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Error/Warning reports:
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index 2b71b33725f1..5bccd64847ff 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -2167,7 +2167,7 @@ static int tegra_xudc_gadget_vbus_draw(struct usb_gadget *gadget,
- 
- 	dev_dbg(xudc->dev, "%s: %u mA\n", __func__, m_a);
- 
--	if (xudc->curr_usbphy->chg_type == SDP_TYPE)
-+	if (xudc->curr_usbphy && xudc->curr_usbphy->chg_type == SDP_TYPE)
- 		ret = usb_phy_set_power(xudc->curr_usbphy, m_a);
- 
- 	return ret;
+https://lore.kernel.org/oe-kbuild-all/202303161521.jbGbaFjJ-lkp@intel.com
+
+Error/Warning: (recently discovered and may have been fixed)
+
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:351:13: warning: variable 'bw_needed' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:352:25: warning: variable 'link' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/tegra/fb.c:276:60: error: 'VM_MAP' undeclared (first use in this function); did you mean 'VM_MTE'?
+drivers/net/wireless/legacy/ray_cs.c:628:17: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+ld.lld: error: undefined symbol: find_kallsyms_symbol_value
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+drivers/acpi/property.c:985 acpi_data_prop_read_single() error: potentially dereferencing uninitialized 'obj'.
+include/linux/gpio/consumer.h: linux/err.h is included more than once.
+include/linux/gpio/driver.h: asm/bug.h is included more than once.
+io_uring/io_uring.c:432 io_prep_async_work() error: we previously assumed 'req->file' could be null (see line 425)
+io_uring/kbuf.c:221 __io_remove_buffers() warn: variable dereferenced before check 'bl->buf_ring' (see line 219)
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- alpha-randconfig-r036-20230403
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- ia64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- loongarch-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- loongarch-defconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- mips-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-gpu-drm-tegra-fb.c:error:VM_MAP-undeclared-(first-use-in-this-function)
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- parisc-randconfig-r015-20230403
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- riscv-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+clang_recent_errors
+`-- arm-randconfig-r046-20230403
+    `-- ld.lld:error:undefined-symbol:find_kallsyms_symbol_value
+
+elapsed time: 727m
+
+configs tested: 100
+configs skipped: 6
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r002-20230403   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r036-20230403   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r021-20230403   gcc  
+arc                  randconfig-r025-20230403   gcc  
+arc                  randconfig-r043-20230403   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r046-20230403   clang
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r032-20230403   clang
+csky         buildonly-randconfig-r003-20230403   gcc  
+csky                                defconfig   gcc  
+csky                 randconfig-r033-20230403   gcc  
+hexagon      buildonly-randconfig-r001-20230403   clang
+hexagon              randconfig-r012-20230403   clang
+hexagon              randconfig-r041-20230403   clang
+hexagon              randconfig-r045-20230403   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230403   clang
+i386                 randconfig-a002-20230403   clang
+i386                 randconfig-a003-20230403   clang
+i386                 randconfig-a004-20230403   clang
+i386                 randconfig-a005-20230403   clang
+i386                 randconfig-a006-20230403   clang
+i386                 randconfig-a011-20230403   gcc  
+i386                 randconfig-a012-20230403   gcc  
+i386                 randconfig-a013-20230403   gcc  
+i386                 randconfig-a014-20230403   gcc  
+i386                 randconfig-a015-20230403   gcc  
+i386                 randconfig-a016-20230403   gcc  
+i386                 randconfig-r035-20230403   clang
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r026-20230403   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r022-20230403   gcc  
+m68k                             allmodconfig   gcc  
+m68k         buildonly-randconfig-r005-20230403   gcc  
+m68k         buildonly-randconfig-r006-20230403   gcc  
+m68k                                defconfig   gcc  
+microblaze           randconfig-r024-20230403   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                               defconfig   gcc  
+openrisc             randconfig-r003-20230403   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r011-20230403   gcc  
+parisc               randconfig-r013-20230403   gcc  
+parisc               randconfig-r015-20230403   gcc  
+parisc               randconfig-r034-20230403   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc      buildonly-randconfig-r004-20230403   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230403   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r004-20230403   clang
+s390                 randconfig-r006-20230403   clang
+s390                 randconfig-r016-20230403   gcc  
+s390                 randconfig-r031-20230403   clang
+s390                 randconfig-r044-20230403   gcc  
+sh                               allmodconfig   gcc  
+sh                   randconfig-r002-20230403   gcc  
+sparc                               defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230403   clang
+x86_64               randconfig-a002-20230403   clang
+x86_64               randconfig-a003-20230403   clang
+x86_64               randconfig-a004-20230403   clang
+x86_64               randconfig-a005-20230403   clang
+x86_64               randconfig-a006-20230403   clang
+x86_64               randconfig-a011-20230403   gcc  
+x86_64               randconfig-a012-20230403   gcc  
+x86_64               randconfig-a013-20230403   gcc  
+x86_64               randconfig-a014-20230403   gcc  
+x86_64               randconfig-a015-20230403   gcc  
+x86_64               randconfig-a016-20230403   gcc  
+x86_64                               rhel-8.3   gcc  
+xtensa               randconfig-r001-20230403   gcc  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
