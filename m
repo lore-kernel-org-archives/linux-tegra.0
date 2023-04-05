@@ -2,119 +2,130 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F38C7619A
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 12:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A62C7619A
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 12:14:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbjDEMFq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 08:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50340 "EHLO
+        id S237330AbjDEMOD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 08:14:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230520AbjDEMFp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 08:05:45 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA0440E0
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Apr 2023 05:05:44 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id p34so20740039wms.3
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Apr 2023 05:05:44 -0700 (PDT)
+        with ESMTP id S237007AbjDEMOC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 08:14:02 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A083C22;
+        Wed,  5 Apr 2023 05:14:01 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id j18-20020a05600c1c1200b003ee5157346cso23600300wms.1;
+        Wed, 05 Apr 2023 05:14:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680696342;
+        d=gmail.com; s=20210112; t=1680696840;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U7o16sV0+j5SKfvLRCYs9MgIMFY2vBEusoWoaW5wCYk=;
-        b=m3hk2npbzksJ4HoJXV7pSeO3qV+eA53TVobT2V4rqEKp2hgMSs0VpwMZBz6ywOZGm8
-         gGaqCui39/OpX2BAy8OgrvhgsFnJCKGFgjnrVvZtkjyQpx4W9WpiHuVREBM+k4lv2RVw
-         vLWIrbORH7x8KUjLWZWuJ5SsRaviK2t8D1DB3aytqFyyQOIkCKItCDUkAYZDN4ONdEzX
-         o3tkTz9SGTWmwZcj8TlBhMRSAx6NWL18ZgNT949tu/5ua2A9ET2uMABwWOAvH+xi1dTQ
-         ZzhNjyXAbfhBDzIbDWNZIjG+7TziTYAH1LEj0lJYVxkbar3os6ZXdhFnv4XVLNgFtTdx
-         QyGw==
+        bh=bdZN+OaYBGqujKD5R9k9qcJDjZo3DT83mr53rt5m3DA=;
+        b=IXHlf5a/wfSJlitOn1KM3JLDauYy0wQSWASL2GLbxwUuQiavL2Q9iee5HL5CZTcYt6
+         NClCJflpdI6egXtbSMZ6I5QzqEGndAaUEooH7TqqqDWUlZGsLx8PrAKGlp2jOQCqQHS3
+         NMiZNfnREhxeQwfVBEs2kadqkLTb/uG1cO7mP1c55sDi0bFDPlq61iUyq78NDpUXkoci
+         rw45ZUP9bI3AIC37ctPKxiBEANSCIuVgUUBxqcHwvN/fsBaxu368zbjpbs4WTYxQEjoz
+         2h8ZyuSYbln99xlQTE12YdAoOBGp+CfidihVJyOb4W6ax6179hAtmOTffOIi9wE4CGlv
+         +mAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680696342;
+        d=1e100.net; s=20210112; t=1680696840;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U7o16sV0+j5SKfvLRCYs9MgIMFY2vBEusoWoaW5wCYk=;
-        b=azAKTb7FYgJWPfdpImSiXFWhZY/9YLPMX1YVcU+3rROtKU1NNM/BoktbWsFYH5+zqI
-         t4QKA4Buetah/4iPvAGbYR87ezEHV1Grg1uQiI/HJ2vlKUYzYMorPyohdrfUcCoDEPkv
-         ZjqzdBXYPPsM9Z2TfTRr0mwm3pR7FVUiSEk/Rf8vr91Rd17yS7B1+BjY8ux8shW1gSZf
-         KG2Ejlvom1j9013i7Avrt81I24eS6JIe8VGVS652H8QCnlPnzRLN1T7NAD+v3QImBxbu
-         wAE2pz1iktcUg3SvtciOp3n/Nx0uyZUQeAFrS//+/WrqIwKTDZwBM4g0axoUu4wYvcwn
-         paHA==
-X-Gm-Message-State: AAQBX9dxfa3+wiUnyb22N67EUBWGo1rOyAeJqIhGipcmaSE+nsoNFdXZ
-        lHjd6Cgdqi/IsLkgP3z5/as=
-X-Google-Smtp-Source: AKy350YTdy7hUQ1TPqWHpvoq3Ro5lACy0nAxkomCc0u0QUnfb+mCqH+CmwWOWIfJ/09NhZStV/8fHA==
-X-Received: by 2002:a05:600c:aca:b0:3ee:97c:58f4 with SMTP id c10-20020a05600c0aca00b003ee097c58f4mr1634685wmr.12.1680696342296;
-        Wed, 05 Apr 2023 05:05:42 -0700 (PDT)
+        bh=bdZN+OaYBGqujKD5R9k9qcJDjZo3DT83mr53rt5m3DA=;
+        b=yP2yOUhBmmcZ8MHwho58IqtDZ0c7ye0K5UUYZLlppMl/ox7p/iq6k+AwV4aCmKEhQg
+         g0gw77XMXqeWPSJRwOotAiBLMDZkW64MgjXy4XVS7BitOwmjQZqIV0iBljNFltZ7RCYM
+         xwOk397D5RR1/cxALPoqp/6emaR1dKmAL5tIEbGIvMI4QptJQhozvEAqGqTlN/Mpsnty
+         RSUP7c8myqOpH5Hyvpb29FUHhT0/ktigJt4+E2O/Uoh0fpIpODIwmhsFcA4R/o+gnOuv
+         acpBCwREZ8UVfuZtWXvKEMovnCpKaYVhxLBzr8V8Si6lRDyeGSSXzKzwvRklMWdoW5Q/
+         VmbA==
+X-Gm-Message-State: AAQBX9cd8PmJVxykvCIgeJY8T7Pgzwf84ZkNj57KJAAnYyn3EecZjrlk
+        o3f+MdMmAUU0UU2Ad99DojM=
+X-Google-Smtp-Source: AKy350bY2g9mxsmYFguHsT6G8kdF2sj8uXpLbF8EPfagq8E7dEGJjz6Z0YgazY89BbcpGtBx5TXEZA==
+X-Received: by 2002:a05:600c:b4f:b0:3ed:d64f:ec30 with SMTP id k15-20020a05600c0b4f00b003edd64fec30mr4366586wmr.33.1680696839878;
+        Wed, 05 Apr 2023 05:13:59 -0700 (PDT)
 Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id h9-20020a1ccc09000000b003ed1ff06faasm2011985wmb.19.2023.04.05.05.05.41
+        by smtp.gmail.com with ESMTPSA id y9-20020a1c4b09000000b003edf2dc7ca3sm2011444wma.34.2023.04.05.05.13.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 05:05:41 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 14:05:40 +0200
+        Wed, 05 Apr 2023 05:13:59 -0700 (PDT)
+Date:   Wed, 5 Apr 2023 14:13:57 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>
-Cc:     treding@nvidia.com, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: fix another missing include
-Message-ID: <ZC1kFMgpXlqVErTi@orome>
-References: <20230405114443.113834-1-christian.koenig@amd.com>
+To:     Yangtao Li <frank.li@vivo.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/9] thermal/drivers/tegra: remove redundant msg in
+ tegra_tsensor_register_channel()
+Message-ID: <ZC1mBUMF3MWmNqY5@orome>
+References: <20230318144412.75046-1-frank.li@vivo.com>
+ <20230318144412.75046-6-frank.li@vivo.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xCbwhukvcwOElukt"
+        protocol="application/pgp-signature"; boundary="gjylHNenLSUt247p"
 Content-Disposition: inline
-In-Reply-To: <20230405114443.113834-1-christian.koenig@amd.com>
+In-Reply-To: <20230318144412.75046-6-frank.li@vivo.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---xCbwhukvcwOElukt
-Content-Type: text/plain; charset=utf-8
+--gjylHNenLSUt247p
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 05, 2023 at 01:44:43PM +0200, Christian K=C3=B6nig wrote:
-> Since tegra now compile tests on other platforms the kernel test robot
-> started to complain that this here is not pulled in under all
-> conditions.
+On Sat, Mar 18, 2023 at 10:44:09PM +0800, Yangtao Li wrote:
+> The upper-layer devm_thermal_add_hwmon_sysfs() function can directly
+> print error information.
 >=20
-> Signed-off-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Link: https://lore.kernel.org/oe-kbuild-all/202304050946.yGGTKkcr-lkp@int=
-el.com/
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > ---
->  drivers/gpu/drm/tegra/fb.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/thermal/tegra/tegra30-tsensor.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/te=
+gra/tegra30-tsensor.c
+> index cb584a5735ed..c243e9d76d3c 100644
+> --- a/drivers/thermal/tegra/tegra30-tsensor.c
+> +++ b/drivers/thermal/tegra/tegra30-tsensor.c
+> @@ -523,8 +523,7 @@ static int tegra_tsensor_register_channel(struct tegr=
+a_tsensor *ts,
+>  		return 0;
+>  	}
+> =20
+> -	if (devm_thermal_add_hwmon_sysfs(ts->dev, tsc->tzd))
+> -		dev_warn(ts->dev, "failed to add hwmon sysfs attributes\n");
+> +	devm_thermal_add_hwmon_sysfs(ts->dev, tsc->tzd);
 
-I had meant to bring this up in response to the other patch that you had
-sent but then forgot. One of the sanity scripts I run complains that you
-have different email addresses in the author and Signed-off-by: fields.
-I already fixed that up for the original patch (I used the Signed-off-by
-email for the author as well). Let me know if that's not how you want to
-handle this.
-
-May also be worth fixing up your setup so it doesn't generate these
-conflicting entries.
+I don't see any error messages output by devm_thermal_add_hwmon_sysfs()
+nor any of the functions that it calls. Did I miss something?
 
 Thierry
 
---xCbwhukvcwOElukt
+--gjylHNenLSUt247p
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQtZBEACgkQ3SOs138+
-s6HVVQ//TJOlfkMYC0+ZrAhlUZ44/P1UhOuSeks1hix7qN42HCMBfswHnMOFR4EG
-gcAKxqEPhvZ0JBlMGFbj1DO4Q216VkuU21YLak5hUgKkTXH6TgFKtNlpnBgE8XlJ
-wRj4oRddrZuBEApdYvVTdsUkloxxZfjn0dHKRfysl6TitE9rl/JHLQzC2QxLhpSD
-DUxd2VLxOVtGX5lviBV9W0Ni7JpRqST8pVhEONwLhQPi011DN8AYUMIKay3Mzh77
-4ox4cYRJLCeBLGy9UpxaycZ77UcbsbIUkXIQyFQnRSj4A1fa30R/A2EHi/YnEX+b
-Ba7a+HEW3hnGWRNvYpsXFU//RFgBAMwPIyvL4nas3QgI/oESOdd9CLD4j9AEZP2A
-FqPBPfFxFRpggZFYU35pfWAcprBXj7zHGxrAIRhgDKjj7LruWfSjepCuyHJkhCyK
-YZaXojU41iaOD2Ije8jF0U7Nau3dVdnEUN68ikbImiqNID/ArjHww9VaE/3gWJ27
-Q+GsfS4acp8DPwDlf87e1kKbS7tLT4Z9AqC9YV6ttvhJc/auOp4WGvSY71dFJlOV
-j9C0nAQQ1AQ87XYOrMOaEDoB0vdRmDyZoGQOMN3jeZgdMb51sKdMTowtrZMxVCws
-2T3ehr7inUZL73DFG8G5ExnEWnmsQDCEo4520IP2QTYjvDk0NpU=
-=6JfS
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQtZgUACgkQ3SOs138+
+s6GpURAAk+YDurZ447gp7uDTxfOaYD/WaSUnwC9TvOJ2fpt9y+YhH2otMIF8WAPM
+lqfAnEYnCHORqpww0ARzYmoVtQ9m4QlaFSRzV7Wefu0q0EZvd2ao2Diw3h9Z2zaH
+kqbwDxQVceIidxpdbodxpe3OuiZyPDc4D9mE7xCdg7ze+7mE+Ysht2eTks6LTJIr
+GEB0Cso93K6QBcVYYHO3NAdMXQI9c79z5l4uovKBNLFM2Mqapy/JIVzo6zVEIBPM
+fq7g2kaF54WlNBYRF73mM6x7dxJD4KQUK2Y0Va1OSE2zhvxiWnGg4EizY+VPKwys
+9JKYv1/fDUj0oNzmBPO2kwBscNTfLKJJF6XBLDXPHaguO9CDWDEomFsXIenuAicB
+hkQuOTwo9K6FTggivUZvZQiRn3HMFJf34Yv2E4LSZ/u6AjfrfT66/FEKlDKZFvON
+WM0RK3OXHJm3Fo6pv1nE3mZz1+YMC9wVO0ZI9fFv7XW00WUVh5PFBdYDd+dWc8Y7
+AAfZ3Q0RG/sIKfTCHXnOoHpRZfR52aHqV1taiK2wvV1+nD79S4SwAgTWbUJ+acbN
+ClSTpbO4GlIvliyJnlt60ObPTNB6vOuI5M6nLNsNx6mUEo2K1JA/BkBU38G62isz
+FldRzpXNAXQZ/YR5NUA2ybN1h3KmJvcgydL3Yc7Ml/HkXr2IXjw=
+=uiiy
 -----END PGP SIGNATURE-----
 
---xCbwhukvcwOElukt--
+--gjylHNenLSUt247p--
