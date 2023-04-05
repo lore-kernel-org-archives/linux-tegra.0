@@ -2,142 +2,86 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D47E7C76188
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 15:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA04BC7619A
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 15:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238762AbjDEPND (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 11:13:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35372 "EHLO
+        id S238740AbjDEPN3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 11:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238730AbjDEPMl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 11:12:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECC97EC0;
-        Wed,  5 Apr 2023 08:10:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CA53F625CE;
-        Wed,  5 Apr 2023 15:10:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 604D1C433D2;
-        Wed,  5 Apr 2023 15:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680707405;
-        bh=rJ3M+zYS15q5Quad0wzrZG7xL5+9ADdP5E4EpauPQDA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uwvoLG9Mg6dizDLr402j7UdbsqsQxuYjteYBhYwhrJlAsrbTC9nd6DQo1IzXxCIaN
-         9U72nBXMiZahaLCTdTcDIyoRUQ+ocS5hUtOmf5c/huPkH9rNDWmoozW7pynZHzH+D0
-         BGkdmKh+F8uLhLLPmXVxsc28WnJBRX2V3SfGP8T4wKvdqas3AfRJERK4rgMzIwhb2E
-         qUgFyspMctrP+YLPss7RMpYkfaXUxCSqnJxvkR2qxW/mhhhcEOUM7AD8vA30RzOHfq
-         MNkaCuaeprkDAK/eetegajbSH5jkLfbeRNdoBlc7xa5It9mB4L6J4Y1vI1mBg8lIkR
-         DpSUyJSUzAZBg==
-Date:   Wed, 5 Apr 2023 16:09:49 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v3 63/65] ASoC: tlv320aic32x4: pll: Switch to
- determine_rate
-Message-ID: <6b83dd87-3819-4db4-bd07-92487a1df09d@sirena.org.uk>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-63-9a1358472d52@cerno.tech>
+        with ESMTP id S238439AbjDEPNA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 11:13:00 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8991990;
+        Wed,  5 Apr 2023 08:11:03 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-4fa3c1a7a41so487858a12.2;
+        Wed, 05 Apr 2023 08:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1680707460;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yMNiMInW3HUbCjLEIC5JIbfFmqCERgeRsCuCIkHaiuE=;
+        b=IlLcCACfKSefPyakpGvt5kBsAEPfd5ctQPCH7yMmaxmv17urKgPkQDoZIwuGkjDx0f
+         vxaNuMqS/jNi5BeMzJxDCzNgHWUPlaxRqorAVDDNHezDR/3rIP3AAd7P9IcK+oOWksvF
+         8nM/YVG/aPN7bCtiiF2FwGu5H1V84uRy8QJvR+t5I1IA042Jdqt3dCJ26Um/wXNwMtxY
+         ry8+ELAAY5nI8HM3hlz4a9QB9ihFW+UGjvnqTEkF+6XQtJCaVrZpBy0RxpNZKyh4Pq1I
+         b3IpUDBxw2K75giPKyE4ezYROCRSEEkxvcdwXxhTliJLsi+7pQF8AyfiW5jUncxVB+F8
+         6NBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680707460;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yMNiMInW3HUbCjLEIC5JIbfFmqCERgeRsCuCIkHaiuE=;
+        b=mL6weA5iU8xpdK2WJ69OGR5Pzp+t7Yyyyo+p08HqSfS+sR7PssmeX6U21P/BooBrNM
+         cHnwZtSX0IH2uGQq/FWhO+WtboaQKlNwyvhlyQMDhJGbg5VvEDbLRI0VF8WiFcfnEy3c
+         wbKx5o/4bGIaAqmnsn7HRqKJQBCB+c1jJ1T/YjpQtredw8R+rDe7OMKMaAGPtnyEk1E8
+         VepvuvvA6D7t1GUURF3ohTOyRuszpQO5srMV8DIHFmV8T5zzdsqHSPKf8FG3gVBeLpwV
+         mBKghF5cfFZXjpHLBRAGnr//Oc1m1qjLyaFlC7BjZi/a1QIidn9pvAFUMtR6YAF308gF
+         wH9Q==
+X-Gm-Message-State: AAQBX9cAefUul+kCPO+OCCqt5oXXHRGxy/6TrB9IOAqucPnlePXotYVV
+        GNBIIT9H+8BioeFHOy9rEWg=
+X-Google-Smtp-Source: AKy350YmEPnLXaazQRn8ZjJTBCn46vz/EiJi2YWD04lWCeHj/p9aJ4cJ/thhsGhabKGu5sJOW3PnKw==
+X-Received: by 2002:a05:6402:6c5:b0:502:9d16:fd00 with SMTP id n5-20020a05640206c500b005029d16fd00mr2029242edy.9.1680707460286;
+        Wed, 05 Apr 2023 08:11:00 -0700 (PDT)
+Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id gx20-20020a1709068a5400b00931faf03db0sm7453250ejc.27.2023.04.05.08.10.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 08:10:59 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     skamble@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Kartik <kkartik@nvidia.com>,
+        thierry.reding@gmail.com, windhl@126.com, pshete@nvidia.com,
+        arnd@arndb.de, jonathanh@nvidia.com
+Subject: Re: [PATCH] soc/tegra: fuse: Remove nvmem root only access
+Date:   Wed,  5 Apr 2023 17:10:59 +0200
+Message-Id: <168070745086.1048656.13825441875980867510.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <1673944255-8041-1-git-send-email-kkartik@nvidia.com>
+References: <1673944255-8041-1-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bXPsTMNAHQ2iLa6U"
-Content-Disposition: inline
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-63-9a1358472d52@cerno.tech>
-X-Cookie: 1 bulls, 3 cows.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---bXPsTMNAHQ2iLa6U
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, 17 Jan 2023 14:00:55 +0530, Kartik wrote:
+> To read fuse values, various "non-root" userspace applications require
+> access to nvmem binary interface.
+> 
+> Remove root only access for nvmem userspace binary interface.
+> 
+> 
 
-On Tue, Apr 04, 2023 at 12:11:53PM +0200, Maxime Ripard wrote:
+Applied, thanks!
 
-> The driver does implement round_rate() though, which means that we can
-> change the rate of the clock, but we will never get to change the
-> parent.
+[1/1] soc/tegra: fuse: Remove nvmem root only access
+      commit: 821d96e3a006d09ca9aa3d982c50f3d86fa55500
 
-> However, It's hard to tell whether it's been done on purpose or not.
-
-> Since we'll start mandating a determine_rate() implementation, let's
-> convert the round_rate() implementation to a determine_rate(), which
-> will also make the current behavior explicit. And if it was an
-> oversight, the clock behaviour can be adjusted later on.
-
-Similar comments to the other patch, I'm pretty sure this is just
-surprising design on the part of the clock API and we should just allow
-reparenting.
-
---bXPsTMNAHQ2iLa6U
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQtjzwACgkQJNaLcl1U
-h9AOwgf9ErN1u2S7sQlFKj2SeLpE5lRKnNP6D1ooc6560nzhA27lBtrYHbRW8SJl
-T+kbhVrNtrlNbq+4ODnnfurtCWZnzgv4x6SDSb4ifzjckcCo4hjqHk9kcGQk/0Cw
-pe5S6KjNiGE3LWSWa85iqnAHH8XPVms/VcjAtDbLdiXBqV0fBmvKHpKkqpQ2IKiJ
-CPVabkZYMXj4Qh+tGAScos2ZPgNI6nG1euebgm1iPDvutLxcxU8RVHA++BVKNa62
-/ijunLrZY+U2Msq+RZQGuSWr7TfdD1DUhxhdnTG4Hjm4Q3r0KaWeixGyICYY6TyC
-r4CUzpWuZDn+9YNx2ETW7ACv6ayuMg==
-=P5db
------END PGP SIGNATURE-----
-
---bXPsTMNAHQ2iLa6U--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
