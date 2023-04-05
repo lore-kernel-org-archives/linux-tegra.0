@@ -2,165 +2,134 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AB9C77B62
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 09:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEF2C76188
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 09:29:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237170AbjDEJZ4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 05:25:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50466 "EHLO
+        id S237710AbjDEJ3z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 05:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237070AbjDEJZ4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 05:25:56 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BAC59CD;
-        Wed,  5 Apr 2023 02:25:22 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9476e2fa157so27280066b.3;
-        Wed, 05 Apr 2023 02:25:22 -0700 (PDT)
+        with ESMTP id S237538AbjDEJ3f (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 05:29:35 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 158135B9C;
+        Wed,  5 Apr 2023 02:29:00 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id r11so139504622edd.5;
+        Wed, 05 Apr 2023 02:29:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680686719;
+        d=gmail.com; s=20210112; t=1680686936;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZsO7CMD7bPDm2CVtgvMagzS63lAN+cW4r8Q3lLthBC0=;
-        b=Sc2oJnaTOotkej0gDnxIYnabEz74FMbjG5HrtrXbs3m9BfeLLFJqZAYGHsrUQcXN01
-         tZrBnNqTnPUSnNFIf2yKUC+WrX4r/HvnkekUrBkjc2tlnnYWiPAGgI/lLB5F6Ydv9zgL
-         IgugDbj0OmDFRVgJ2xCacq/gAxKwAkkQHBTx320d4rQCgpwlrACFH+faDh700e//1iHw
-         bEkPIxlNlbHC5b7PiecSoE5K6nM9ikl9Y7JbF3H1B3upck/SmDH4wFBnoJBUquU6OCo7
-         +1GcBqPDP+rLttcypWS7SlUqeA/R15G0ly0uiQi2ttpBrlrPmvgBddD3zkm2lq9FEXfZ
-         btaA==
+        bh=VBpy8sWwJTgWGLvReKzXSppeMMMH/k1pHf1dgNFGfSc=;
+        b=ioBNji+RxxxGGQ36bVeyUwYahfusubuoh5Nwpq0S6lk+P1tK3t617l85xXHF1RH0E0
+         OGxhS5anmVXjcVjpR+cbMmDWNfn4bIBMxP+oldipb595Nm4MKsIiMhXp2ZiYKDkndoSp
+         Ip0puBLq2gl8EIc5OPqJfRLUr1eeu6Dp2CS1jPMDYXAbJ5VSj+oa/5eC1+QsHEh7XbIG
+         xLx6LP3veiE7hqgzSPqs2IgixTI7cdW2YUmY3BZSoDwC4d//d1vznOdaiwKh1KwmZOWm
+         wjt7g9JbyuUknwjyUUyhh5+p47Pnizp9TtWBp2UEfkhNqXSxT2868Yxo175m3wJ1KHoE
+         h98w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680686719;
+        d=1e100.net; s=20210112; t=1680686936;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZsO7CMD7bPDm2CVtgvMagzS63lAN+cW4r8Q3lLthBC0=;
-        b=1XSiMOva/SBfeO2f+Vgj6Qqtv03ghDceF0/k3vl0f9X5awNkRvxP6Y5Lbjp2NNkGpl
-         iq4FSaQ/ne1Y/7LHSCGidButxl3q70ulSR3yrimgUHsnWzE3V0pDHF8KNHl5SOMA1LoV
-         knKSrUapOEU3ztQWFNUkN90PSaZ0/PMhr++4XQerYi0mk0bz7yYr8psejmgxzpplsPhO
-         d8jNCBEq4FhONMYNt0qkRkXW/x1ZzVbWtqSwMp09cJ8R6ekppjAIn5KcayyZnU/bCCJf
-         2aNTG13QT3tAXPiHdRu9rbUxcBE7vgjD8qnt2D1zNjBuIo161GVFsGzxlEFNRSamCKA6
-         nGlg==
-X-Gm-Message-State: AAQBX9doZUiyuYajTBj5KOwl5W2n1Kq/5uorPuyYKDb/dbiCUIjwrLM/
-        74zYJQS+SP2XkEic30PLrA4=
-X-Google-Smtp-Source: AKy350a93DlwDPvJe/VkbbWDoc1J7coQHTAONyuHxrQTG/UgRqlMTyvzxgpzNb/Y0TVoNA/Zlz1AZA==
-X-Received: by 2002:aa7:c959:0:b0:502:70ee:61e9 with SMTP id h25-20020aa7c959000000b0050270ee61e9mr1269100edt.21.1680686719407;
-        Wed, 05 Apr 2023 02:25:19 -0700 (PDT)
+        bh=VBpy8sWwJTgWGLvReKzXSppeMMMH/k1pHf1dgNFGfSc=;
+        b=SHWyKgsDncwSdPlNUQjq2UlOrZr62JAm4gvLf4Uglf5KxeGmUU16EbrbO9M+SuB9/y
+         98IcWyYBKUVVuIBAGhmF0DFVkoFxlaQ2N6HMZAADk6RykWkc1G+HZTtylXX0+dXnGNk0
+         n6dOg7876kOO+duSceYMDPEMzGpDDODNzVuIyHcvN4awczj3PwJyCBNdgjqscTwMITn5
+         Pa6YfMMyBPcfVtYI1bt3BYKzXkNgbMzCFlP69rC2oRkFhPgEWxCz1uVj5EQUBQOkSegF
+         q1ODoUbEIEno3ZPebwi12BUZ6IMOz3Zt4rAb8pwZKQcjSDe5GaHJ4EciG5N6Jq66NCss
+         NbxA==
+X-Gm-Message-State: AAQBX9cIIhIprIQrNw/t47z72bV2aMbVh4cLOS0P4ZBgEsdtz3HCJZ+O
+        dwNZC1Z5T3ALJ6C6OHiuiH0=
+X-Google-Smtp-Source: AKy350YUNRcjDWMLp0qTEat7nfaXpF/+sohcF9dQ+5CXzGSGZoXIEtlOhulbBix6Li3JgyJN/QV8Ig==
+X-Received: by 2002:a17:906:6894:b0:944:18ef:c970 with SMTP id n20-20020a170906689400b0094418efc970mr2515964ejr.32.1680686936010;
+        Wed, 05 Apr 2023 02:28:56 -0700 (PDT)
 Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a26-20020a50c31a000000b005027686918bsm6842614edb.11.2023.04.05.02.25.18
+        by smtp.gmail.com with ESMTPSA id qp25-20020a170907207900b009342fe44911sm7031978ejb.123.2023.04.05.02.28.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 02:25:19 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 11:25:17 +0200
+        Wed, 05 Apr 2023 02:28:55 -0700 (PDT)
+Date:   Wed, 5 Apr 2023 11:28:53 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Deepak Rawat <drawat.floss@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Emma Anholt <emma@anholt.net>, Helge Deller <deller@gmx.de>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
         David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-hyperv@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 3/8] drm/aperture: Remove primary argument
-Message-ID: <ZC0-fXAW-lzaAU2E@orome>
-References: <20230404201842.567344-1-daniel.vetter@ffwll.ch>
- <20230404201842.567344-3-daniel.vetter@ffwll.ch>
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [RESEND PATCH v4 03/21] staging: media: tegra-video: fix
+ .vidioc_enum_fmt_vid_cap to return all formats
+Message-ID: <ZC0_VX5VDOkSVhn6@orome>
+References: <20230309144320.2937553-1-luca.ceresoli@bootlin.com>
+ <20230309144320.2937553-4-luca.ceresoli@bootlin.com>
+ <85268d69-3d3b-2c0f-ba26-073f09052362@xs4all.nl>
+ <20230404161251.272cc78b@booty>
+ <20230405023048.GD9915@pendragon.ideasonboard.com>
+ <20230405103134.2ae10766@booty>
+ <dddd76a7-f882-f1dd-0781-fcc1f9b4e060@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pe4OG5itKNCOCk9H"
+        protocol="application/pgp-signature"; boundary="05p1aaOYNTitphbN"
 Content-Disposition: inline
-In-Reply-To: <20230404201842.567344-3-daniel.vetter@ffwll.ch>
+In-Reply-To: <dddd76a7-f882-f1dd-0781-fcc1f9b4e060@xs4all.nl>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---pe4OG5itKNCOCk9H
+--05p1aaOYNTitphbN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 04, 2023 at 10:18:37PM +0200, Daniel Vetter wrote:
-> Only really pci devices have a business setting this - it's for
-> figuring out whether the legacy vga stuff should be nuked too. And
-> with the preceeding two patches those are all using the pci version of
-> this.
->=20
-> Which means for all other callers primary =3D=3D false and we can remove
-> it now.
->=20
-> v2:
-> - Reorder to avoid compile fail (Thomas)
-> - Include gma500, which retained it's called to the non-pci version.
->=20
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Javier Martinez Canillas <javierm@redhat.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Deepak Rawat <drawat.floss@gmail.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Emma Anholt <emma@anholt.net>
-> Cc: Helge Deller <deller@gmx.de>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: linux-hyperv@vger.kernel.org
-> Cc: linux-amlogic@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-fbdev@vger.kernel.org
-> ---
->  drivers/gpu/drm/arm/hdlcd_drv.c             |  2 +-
->  drivers/gpu/drm/armada/armada_drv.c         |  2 +-
->  drivers/gpu/drm/drm_aperture.c              | 11 +++--------
->  drivers/gpu/drm/gma500/psb_drv.c            |  2 +-
->  drivers/gpu/drm/hyperv/hyperv_drm_drv.c     |  1 -
->  drivers/gpu/drm/meson/meson_drv.c           |  2 +-
->  drivers/gpu/drm/msm/msm_fbdev.c             |  2 +-
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  2 +-
->  drivers/gpu/drm/stm/drv.c                   |  2 +-
->  drivers/gpu/drm/sun4i/sun4i_drv.c           |  2 +-
->  drivers/gpu/drm/tegra/drm.c                 |  2 +-
->  drivers/gpu/drm/vc4/vc4_drv.c               |  2 +-
->  include/drm/drm_aperture.h                  |  7 +++----
->  13 files changed, 16 insertions(+), 23 deletions(-)
+On Wed, Apr 05, 2023 at 10:50:37AM +0200, Hans Verkuil wrote:
+[...]
+> Note that this driver will stay in staging since it still fails when I try to
+> capture from two sensors at the same time: syncpoint errors start appearing
+> in that case. I think there are locking issues. I think I have someone to take
+> a look at that, but first I want your series to get merged.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Mikko (added) is familiar with syncpoints, so he may be able to help
+with. Can you provide steps to reproduce these issues? That may make
+it easier for us to help figure this out.
 
---pe4OG5itKNCOCk9H
+Unfortunately I don't have any device with an actual sensor on it, so
+I can only test with the test pattern generator, but syncpoint errors
+sound like they would happen with either setup.
+
+Thierry
+
+--05p1aaOYNTitphbN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQtPn0ACgkQ3SOs138+
-s6Fo0w//fwbm/KtdC2iJvrSjyZDTSl19JmfKyGGpOHU/Qz2otALAXQuZlJnnVHiw
-8gF1p2fUKFt3i5vAuHQDQrrVlWqpUzV090odcP0kz/ajjOeg0XKoicGbXQDuzjeS
-QpNuw3XYw3ndS4x/IFYDXYeeFcnhwV8dT6gJhSmoUYfhnLBsfC/mJFe0i6mgnVZr
-hIxm7xPo5pWTkzxg8UodgBuTq6TKINQTYRUOx8ET598/yHOlC0Wn6I5ONG+JR9Q1
-N7Ot0dDfGW7jpsoTlxJK5NFCb2kaFbQRXTzZ3qHhKaRCvt97GoteoTh2cNvOGwD0
-wzTI0J3ePLgmP8FuiFNuqJCibjP40BN2oIwuAZq5XR6obLbtlZyAERqGjcJ/MFFr
-n/DS6y/5g8g1Zp2yGX1Og0+QlD/ujivtGCvkJVKETOVl2s4VUVQ1LvwuVOiyOG68
-3q6ExUGcP+UawXW+hqMf4qZDWB3v0FZAow7yKLAGM4S6Erf2C00EqKI+x6Q+XxqZ
-LDUUAuiHwoL9QNHPpazX+epf9lNqmNHomuruPvLnSlaknU98q/hVm7paOuRy50W8
-izyXfudIZH2Cf/Qj94moh6biq3PJEcgSrQIQQvCwiHJgTN8t/UirgC3xUH49/jrH
-ibylIbpBdaQPeZDCLa+J1W6Nk58Jlgj4nPqF1LH20LbKay1/0TM=
-=gv9d
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQtP1UACgkQ3SOs138+
+s6FNpw//dPYUajgCSBJRv0WcnavPtJ3hVlgqhl2wBA4rqtD1NNMJEWkZsI/IUwFu
+Lq/UJQuk/brWu8OplLlMaLWm5lngUBMM+t7qHepjdX5GFGKRB684Q106smQw071R
+FZ/UqPxLxi9jjWtfAukVZfTjaMxrHt2iSKzz/mc1Lfs2TItZVG0pEEzC3XQdUxks
+xn/2wtvoxYBWtDUY132MRYCvS5t26sP8iiZX4Xlm7QYFkQtpwkUi2BmLDS+pPJ08
+QulGePJQHZT95TMrSFCcBmuIxJSPYVUlkzG35IxtkVc93NV6TuVHqW3dRg34+jtN
+Cj9d5mFQ2fPNrNiHGCT7OTTKI8kVy3nZS+yXydHYIQ1NkAOfFzKSHxwd+XA419SY
+emZIhrXy/5VxsNpygDOkkiiP+0VfXKhlGVar0mJhOSKbmbiQwP1T0eQDpeFi7TCF
+WW8KFHJqGQgsfSL8pxxqbrwxY2zv5kLllHkyEfU/xSNgvjL3u1qfLnvy8HviuxGX
+fmwk/pOaR0+wenBd89SY8tNyz9Nc3DwrfQ70mPclhfG0WrsenmSgzmlk2hWNha7V
+I2T44bFe95lkDhDFU60gnlKL8jpPeICyIVJ3RXPpXN099f8JzjNI3GqfgUwIfaKA
+Whu5bJHeUZ+EPc0lrH0kkbjY8w2oTyC9W6tF87eqa8M7kujVdgE=
+=GclZ
 -----END PGP SIGNATURE-----
 
---pe4OG5itKNCOCk9H--
+--05p1aaOYNTitphbN--
