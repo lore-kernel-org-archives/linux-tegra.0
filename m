@@ -2,503 +2,201 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C65C76188
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 09:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D77C7619A
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 10:47:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231455AbjDEJgQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 05:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40574 "EHLO
+        id S237835AbjDEKrJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 06:47:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231624AbjDEJgO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 05:36:14 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 037E15241;
-        Wed,  5 Apr 2023 02:35:44 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDC771684;
-        Wed,  5 Apr 2023 02:35:33 -0700 (PDT)
-Received: from [10.57.53.173] (unknown [10.57.53.173])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 676A43F73F;
-        Wed,  5 Apr 2023 02:34:47 -0700 (PDT)
-Message-ID: <9991256d-37e8-5fc8-5ed9-82a6a1b40dff@arm.com>
-Date:   Wed, 5 Apr 2023 10:34:45 +0100
+        with ESMTP id S237740AbjDEKrI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 06:47:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2011249F9;
+        Wed,  5 Apr 2023 03:47:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AD08D63C57;
+        Wed,  5 Apr 2023 10:47:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55A2C433EF;
+        Wed,  5 Apr 2023 10:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680691623;
+        bh=q4mbSRyaECqXZBaI2chRUC8g7fKSua/OlQr5LOzU8Lc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NYk7GArMLcHuZT6LglhcwfKswPjiUhvpykd6UfUcigFlmjTxk81cdWTM8meuG87OK
+         auDr+rMup6Gh3bPqxaK+PCnitUXnEcraBkw66jONfxwMxKRcJ0aR9cXwA0je2NqU2a
+         SuaAOx/GkY80DSvwBckR1cf/XsDftwTEfg7AN0H7peYfBa1gba7rbOJrs6tgMXDXKm
+         XQ8oLmDqeHfK/qTHu9W+FGatJMx9o8YWlmPrCEP5+hb9JJQI1gRSJ+nqGxZxfBVt+4
+         TebyxdRgWJ3of8pZKvTeVOoEeLzzAf8umVcViGN092/imnB2nDAMnXOUUYGrgP7fXR
+         olLMJGuWAKHZg==
+Date:   Wed, 5 Apr 2023 12:46:54 +0200
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        helgaas@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
+        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
+        ishah@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch v5 7/8] PCI: tegra194: add interconnect support in
+ Tegra234
+Message-ID: <ZC1Rnrb0MObR5S42@lpieralisi>
+References: <20230330133354.714-1-sumitg@nvidia.com>
+ <20230330133354.714-8-sumitg@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.0
-Subject: Re: [PATCH] perf: arm_cspmu: Separate Arm and vendor module
-To:     Besar Wicaksono <bwicaksono@nvidia.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>,
-        Richard Wiley <rwiley@nvidia.com>,
-        Eric Funsten <efunsten@nvidia.com>
-References: <20230403163905.20354-1-bwicaksono@nvidia.com>
- <3f8147b6-3362-c35b-3605-45e63cb2ddc6@arm.com>
- <SJ0PR12MB56763839F03B0D9FC90B1742A0939@SJ0PR12MB5676.namprd12.prod.outlook.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <SJ0PR12MB56763839F03B0D9FC90B1742A0939@SJ0PR12MB5676.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230330133354.714-8-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04/04/2023 23:14, Besar Wicaksono wrote:
-> Hi Suzuki,
-> 
->> -----Original Message-----
->> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Sent: Tuesday, April 4, 2023 5:09 AM
->> To: Besar Wicaksono <bwicaksono@nvidia.com>; catalin.marinas@arm.com;
->> will@kernel.org; mark.rutland@arm.com
->> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
->> linux-tegra@vger.kernel.org; Thierry Reding <treding@nvidia.com>;
->> Jonathan Hunter <jonathanh@nvidia.com>; Vikram Sethi
->> <vsethi@nvidia.com>; Richard Wiley <rwiley@nvidia.com>; Eric Funsten
->> <efunsten@nvidia.com>
->> Subject: Re: [PATCH] perf: arm_cspmu: Separate Arm and vendor module
->>
->> External email: Use caution opening links or attachments
->>
->>
->> Hi Besar
->>
->>
->> On 03/04/2023 17:39, Besar Wicaksono wrote:
->>> Arm Coresight PMU driver consists of main standard code and vendor
->>> backend code. Both are currently built as a single module.
->>> This patch adds vendor registration API to separate the two to
->>> keep things modular. Vendor module shall register to the main
->>> module on loading and trigger device reprobe.
->>
->> Thanks for working on this.
->>
->>>
->>> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
->>> ---
->>>    drivers/perf/arm_cspmu/Makefile       |   3 +-
->>>    drivers/perf/arm_cspmu/arm_cspmu.c    | 113
->> +++++++++++++++++++++-----
->>>    drivers/perf/arm_cspmu/arm_cspmu.h    |  10 ++-
->>>    drivers/perf/arm_cspmu/nvidia_cspmu.c |  24 +++++-
->>>    drivers/perf/arm_cspmu/nvidia_cspmu.h |  17 ----
->>>    5 files changed, 124 insertions(+), 43 deletions(-)
->>>    delete mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
->>>
->>> diff --git a/drivers/perf/arm_cspmu/Makefile
->> b/drivers/perf/arm_cspmu/Makefile
->>> index fedb17df982d..2514ad34aaf0 100644
->>> --- a/drivers/perf/arm_cspmu/Makefile
->>> +++ b/drivers/perf/arm_cspmu/Makefile
->>> @@ -2,5 +2,4 @@
->>>    #
->>>    # SPDX-License-Identifier: GPL-2.0
->>>
->>> -obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) +=
->> arm_cspmu_module.o
->>> -arm_cspmu_module-y := arm_cspmu.o nvidia_cspmu.o
->>> +obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) +=
->> arm_cspmu.o nvidia_cspmu.o
->>
->> Now that we have a mechanism to add the NVIDIA CSPMU driver, please
->> could we make it a separate Kconfig ?
-> 
-> Sure, I will add one for Nvidia backend.
-> 
->>
->>> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c
->> b/drivers/perf/arm_cspmu/arm_cspmu.c
->>> index e31302ab7e37..6dbcd46d9fdf 100644
->>> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
->>> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
->>> @@ -16,7 +16,7 @@
->>>     * The user should refer to the vendor technical documentation to get
->> details
->>>     * about the supported events.
->>>     *
->>> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights
->> reserved.
->>> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights
->> reserved.
->>>     *
->>>     */
->>>
->>> @@ -25,13 +25,13 @@
->>>    #include <linux/ctype.h>
->>>    #include <linux/interrupt.h>
->>>    #include <linux/io-64-nonatomic-lo-hi.h>
->>> +#include <linux/list.h>
->>>    #include <linux/module.h>
->>>    #include <linux/perf_event.h>
->>>    #include <linux/platform_device.h>
->>>    #include <acpi/processor.h>
->>>
->>>    #include "arm_cspmu.h"
->>> -#include "nvidia_cspmu.h"
->>>
->>>    #define PMUNAME "arm_cspmu"
->>>    #define DRVNAME "arm-cs-arch-pmu"
->>> @@ -117,11 +117,14 @@
->>>     */
->>>    #define HILOHI_MAX_POLL     1000
->>>
->>> -/* JEDEC-assigned JEP106 identification code */
->>> -#define ARM_CSPMU_IMPL_ID_NVIDIA             0x36B
->>> -
->>>    static unsigned long arm_cspmu_cpuhp_state;
->>>
->>> +/* List of Coresight PMU instances in the system. */
->>> +static LIST_HEAD(cspmus);
->>> +
->>> +/* List of registered vendor backends. */
->>> +static LIST_HEAD(cspmu_impls);
->>> +
->>>    /*
->>>     * In CoreSight PMU architecture, all of the MMIO registers are 32-bit
->> except
->>>     * counter register. The counter register can be implemented as 32-bit or
->> 64-bit
->>> @@ -380,26 +383,94 @@ static struct attribute_group
->> arm_cspmu_cpumask_attr_group = {
->>>    };
->>>
->>>    struct impl_match {
->>> -     u32 pmiidr;
->>> -     u32 mask;
->>> +     struct list_head next;
->>> +     u32 pmiidr_impl;
->>
->> Do we need something more flexible here ? i.e.,
->>
->> u32 pmiidr_val;
->> u32 pmiidr_mask;
->>
->> So that, a single backend could support multiple/reduced
->> set of devices.
->>
-> 
-> I was thinking that vendor backend does further filtering.
-> But yes, it doesn't hurt to have the mask back.
-> 
->>
->>>        int (*impl_init_ops)(struct arm_cspmu *cspmu); >   };
->>>
->>> -static const struct impl_match impl_match[] = {
->>> -     {
->>> -       .pmiidr = ARM_CSPMU_IMPL_ID_NVIDIA,
->>> -       .mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
->>> -       .impl_init_ops = nv_cspmu_init_ops
->>> -     },
->>> -     {}
->>> -};
->>> +static struct impl_match *arm_cspmu_get_impl_match(u32 pmiidr_impl)
->>> +{
->>> +     struct impl_match *impl_match;
->>> +
->>> +     list_for_each_entry(impl_match, &cspmu_impls, next) {
->>> +             if (impl_match->pmiidr_impl == pmiidr_impl)
->>
->> And this could be:
->>          ((pmiidr_impl & impl_match->pmiidr_mask) == match->pmiidr_val)
->>> +                     return impl_match;
->>> +     }
->>> +
->>> +     return NULL;
->>> +}
->>> +
->>> +static int arm_cspmu_device_reprobe(u32 pmiidr_impl)
->>> +{
->>> +     int ret;
->>> +     struct arm_cspmu *cspmu, *temp;
->>> +
->>> +     /* Reprobe all arm_cspmu devices associated with implementer id. */
->>> +     list_for_each_entry_safe(cspmu, temp, &cspmus, next) {
->>> +             const u32 impl_id =
->> FIELD_GET(ARM_CSPMU_PMIIDR_IMPLEMENTER,
->>> +                                     cspmu->impl.pmiidr);
->>> +
->>> +             if (pmiidr_impl == impl_id) {
->>> +                     ret = device_reprobe(cspmu->dev);
->>> +                     if (ret) {
->>> +                             dev_err(cspmu->dev, "Failed reprobe %s\n",
->>> +                                     cspmu->name);
->>> +                             return ret;
->>> +                     }
->>
->>                          break here  ?
-> 
-> No, we need to continue the iteration to make sure we reprobe all devices
-> with matching backend.
-> 
->>
->>> +             }
->>> +     }
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +int arm_cspmu_impl_register(u32 pmiidr_impl,
->>> +     int (*impl_init_ops)(struct arm_cspmu *cspmu))
->>> +{
->>> +     struct impl_match *impl;
->>> +
->>> +     if (arm_cspmu_get_impl_match(pmiidr_impl)) {
->>> +             pr_err("ARM CSPMU implementer: 0x%x is already registered\n",
->>> +                     pmiidr_impl);
->>> +             return -EEXIST;
->>> +     }
->>> +
->>> +     impl = kzalloc(sizeof(struct impl_match), GFP_KERNEL);
->>> +
->>> +     list_add(&impl->next, &cspmu_impls);
->>
->> Don't we need a lock protect this one ?
-> 
-> Thanks for pointing this out, I will add the lock.
-> 
->>
->>> +
->>> +     impl->pmiidr_impl = pmiidr_impl;
->>> +     impl->impl_init_ops = impl_init_ops;
->>
->> Would be good to do these steps before we actually add it to the
->> list. Anyways, the lock is still needed to prevent races.
->>
->>> +
->>> +     return arm_cspmu_device_reprobe(pmiidr_impl);
->>> +}
->>> +EXPORT_SYMBOL_GPL(arm_cspmu_impl_register);
->>> +
->>> +void arm_cspmu_impl_unregister(u32 pmiidr_impl)
->>> +{
->>> +     struct impl_match *impl;
->>> +
->>> +     impl = arm_cspmu_get_impl_match(pmiidr_impl);
->>> +     if (!impl) {
->>> +             pr_err("Unable to find ARM CSPMU implementer: 0x%x\n",
->>> +                     pmiidr_impl);
->>> +             return;
->>> +     }
->>> +
->>> +     list_del(&impl->next);
->>> +     kfree(impl);
->>> +
->>> +     if (arm_cspmu_device_reprobe(pmiidr_impl))
->>> +             pr_err("ARM CSPMU failed reprobe implementer: 0x%x\n",
->>> +                     pmiidr_impl);
->>
->> Is this for falling back to the generic driver ?
-> 
-> Yes, correct. I will add a comment to clarify.
-> 
->>
->>> +}
->>> +EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
->>>
->>>    static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
->>>    {
->>>        int ret;
->>>        struct acpi_apmt_node *apmt_node = cspmu->apmt_node;
->>>        struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
->>> -     const struct impl_match *match = impl_match;
->>> +     const struct impl_match *match;
->>>
->>>        /*
->>>         * Get PMU implementer and product id from APMT node.
->>> @@ -411,10 +482,11 @@ static int arm_cspmu_init_impl_ops(struct
->> arm_cspmu *cspmu)
->>>                                       readl(cspmu->base0 + PMIIDR);
->>>
->>>        /* Find implementer specific attribute ops. */
->>> -     for (; match->pmiidr; match++) {
->>> -             const u32 mask = match->mask;
->>> +     list_for_each_entry(match, &cspmu_impls, next) {
->>> +             const u32 impl_id =
->> FIELD_GET(ARM_CSPMU_PMIIDR_IMPLEMENTER,
->>> +                                             cspmu->impl.pmiidr);
->>>
->>> -             if ((match->pmiidr & mask) == (cspmu->impl.pmiidr & mask)) {
->>> +             if (match->pmiidr_impl == impl_id) {
->>
->> match = arm_cspmu_get_impl_match(); ?
-> 
-> I missed this, thanks for pointing this out.
-> 
->>
->>>                        ret = match->impl_init_ops(cspmu);
->>>                        if (ret)
->>>                                return ret;
->>> @@ -924,6 +996,8 @@ static struct arm_cspmu *arm_cspmu_alloc(struct
->> platform_device *pdev)
->>>        if (!cspmu)
->>>                return NULL;
->>>
->>> +     list_add(&cspmu->next, &cspmus);
->>> +
->>>        cspmu->dev = dev;
->>>        cspmu->apmt_node = apmt_node;
->>>
->>> @@ -1214,6 +1288,7 @@ static int arm_cspmu_device_remove(struct
->> platform_device *pdev)
->>>
->>>        perf_pmu_unregister(&cspmu->pmu);
->>>        cpuhp_state_remove_instance(arm_cspmu_cpuhp_state, &cspmu-
->>> cpuhp_node);
->>> +     list_del(&cspmu->next);
->>>
->>>        return 0;
->>>    }
->>> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h
->> b/drivers/perf/arm_cspmu/arm_cspmu.h
->>> index 51323b175a4a..64c3b565f1b1 100644
->>> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
->>> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
->>> @@ -1,7 +1,7 @@
->>>    /* SPDX-License-Identifier: GPL-2.0
->>>     *
->>>     * ARM CoreSight Architecture PMU driver.
->>> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights
->> reserved.
->>> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights
->> reserved.
->>>     *
->>>     */
->>>
->>> @@ -116,6 +116,7 @@ struct arm_cspmu_impl {
->>>
->>>    /* Coresight PMU descriptor. */
->>>    struct arm_cspmu {
->>> +     struct list_head next;
->>>        struct pmu pmu;
->>>        struct device *dev;
->>>        struct acpi_apmt_node *apmt_node;
->>> @@ -148,4 +149,11 @@ ssize_t arm_cspmu_sysfs_format_show(struct
->> device *dev,
->>>                                    struct device_attribute *attr,
->>>                                    char *buf);
->>>
->>> +/* Register vendor backend. */
->>> +int arm_cspmu_impl_register(u32 pmiidr_impl,
->>> +     int (*impl_init_ops)(struct arm_cspmu *cspmu));
->>
->> May be pack it in the structure ?
-> 
-> Sure, will do.
+You should still capitalize the subject.
 
+"PCI: tegra194: Add interconnect.."
 
-Another point we must do is to add the corresponding backend driver
-as the "pmu->module" to prevent it from being unloaded when an event
-is running.
-
-Suzuki
-
-
+On Thu, Mar 30, 2023 at 07:03:53PM +0530, Sumit Gupta wrote:
+> Add support to request DRAM bandwidth with Memory Interconnect
+> in Tegra234 SoC. The DRAM BW required for different modes depends
+> on speed (Gen-1/2/3/4) and width/lanes (x1/x2/x4/x8).
 > 
-> Thanks,
-> Besar
-> 
->>
->>
->> Suzuki
->>
->>> +
->>> +/* Unregister vendor backend. */
->>> +void arm_cspmu_impl_unregister(u32 pmiidr_impl);
->>> +
->>>    #endif /* __ARM_CSPMU_H__ */
->>> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c
->> b/drivers/perf/arm_cspmu/nvidia_cspmu.c
->>> index 72ef80caa3c8..d7083fed135d 100644
->>> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
->>> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
->>> @@ -1,6 +1,6 @@
->>>    // SPDX-License-Identifier: GPL-2.0
->>>    /*
->>> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights
->> reserved.
->>> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights
->> reserved.
->>>     *
->>>     */
->>>
->>> @@ -8,7 +8,10 @@
->>>
->>>    #include <linux/topology.h>
->>>
->>> -#include "nvidia_cspmu.h"
->>> +#include "arm_cspmu.h"
->>> +
->>> +/* JEDEC-assigned JEP106 identification code */
->>> +#define ARM_CSPMU_IMPL_ID_NVIDIA     0x36B
->>>
->>>    #define NV_PCIE_PORT_COUNT           10ULL
->>>    #define NV_PCIE_FILTER_ID_MASK
->> GENMASK_ULL(NV_PCIE_PORT_COUNT - 1, 0)
->>> @@ -351,7 +354,7 @@ static char *nv_cspmu_format_name(const struct
->> arm_cspmu *cspmu,
->>>        return name;
->>>    }
->>>
->>> -int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->>> +static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->>>    {
->>>        u32 prodid;
->>>        struct nv_cspmu_ctx *ctx;
->>> @@ -395,6 +398,19 @@ int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->>>
->>>        return 0;
->>>    }
->>> -EXPORT_SYMBOL_GPL(nv_cspmu_init_ops);
->>> +
->>> +static int __init nvidia_cspmu_init(void)
->>> +{
->>> +     return arm_cspmu_impl_register(ARM_CSPMU_IMPL_ID_NVIDIA,
->>> +             nv_cspmu_init_ops);
->>> +}
->>> +
->>> +static void __exit nvidia_cspmu_exit(void)
->>> +{
->>> +     arm_cspmu_impl_unregister(ARM_CSPMU_IMPL_ID_NVIDIA);
->>> +}
->>> +
->>> +module_init(nvidia_cspmu_init);
->>> +module_exit(nvidia_cspmu_exit);
->>>
->>>    MODULE_LICENSE("GPL v2");
->>> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.h
->> b/drivers/perf/arm_cspmu/nvidia_cspmu.h
->>> deleted file mode 100644
->>> index 71e18f0dc50b..000000000000
->>> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.h
->>> +++ /dev/null
->>> @@ -1,17 +0,0 @@
->>> -/* SPDX-License-Identifier: GPL-2.0
->>> - *
->>> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights
->> reserved.
->>> - *
->>> - */
->>> -
->>> -/* Support for NVIDIA specific attributes. */
->>> -
->>> -#ifndef __NVIDIA_CSPMU_H__
->>> -#define __NVIDIA_CSPMU_H__
->>> -
->>> -#include "arm_cspmu.h"
->>> -
->>> -/* Allocate NVIDIA descriptor. */
->>> -int nv_cspmu_init_ops(struct arm_cspmu *cspmu);
->>> -
->>> -#endif /* __NVIDIA_CSPMU_H__ */
->>>
->>> base-commit: 73f2c2a7e1d2b31fdd5faa6dfa151c437a6c0a5a
->>> prerequisite-patch-id: fb691dc01d87597bcbaa4d352073304287c20f73
-> 
+> Suggested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 
+You should add a Link to the relevant lore archive, I am
+pretty sure Bjorn chimed in too.
+
+This patch does too many things at once; more importantly it
+does *not* explain why we request memory bandwidth and why it
+is required and *safe* given that the current code works so far.
+
+So:
+
+patch 1: fix the array overflow issues with the current code
+patch 2: add memory bandwidth interconnect support
+
+Thanks,
+Lorenzo
+
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 44 ++++++++++++++++++----
+>  1 file changed, 36 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 09825b4a075e..89d829a946ee 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/gpio.h>
+>  #include <linux/gpio/consumer.h>
+> +#include <linux/interconnect.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+> @@ -223,6 +224,7 @@
+>  #define EP_STATE_ENABLED	1
+>  
+>  static const unsigned int pcie_gen_freq[] = {
+> +	GEN1_CORE_CLK_FREQ,   /* PCI_EXP_LNKSTA_CLS == 0; undefined */
+>  	GEN1_CORE_CLK_FREQ,
+>  	GEN2_CORE_CLK_FREQ,
+>  	GEN3_CORE_CLK_FREQ,
+> @@ -287,6 +289,7 @@ struct tegra_pcie_dw {
+>  	unsigned int pex_rst_irq;
+>  	int ep_state;
+>  	long link_status;
+> +	struct icc_path *icc_path;
+>  };
+>  
+>  static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
+> @@ -309,6 +312,27 @@ struct tegra_pcie_soc {
+>  	enum dw_pcie_device_mode mode;
+>  };
+>  
+> +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
+> +{
+> +	struct dw_pcie *pci = &pcie->pci;
+> +	u32 val, speed, width;
+> +
+> +	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
+> +
+> +	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+> +	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
+> +
+> +	val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
+> +
+> +	if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
+> +		dev_err(pcie->dev, "can't set bw[%u]\n", val);
+> +
+> +	if (speed >= ARRAY_SIZE(pcie_gen_freq))
+> +		speed = 0;
+> +
+> +	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
+> +}
+> +
+>  static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> @@ -452,14 +476,12 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
+>  	struct tegra_pcie_dw *pcie = arg;
+>  	struct dw_pcie_ep *ep = &pcie->pci.ep;
+>  	struct dw_pcie *pci = &pcie->pci;
+> -	u32 val, speed;
+> +	u32 val;
+>  
+>  	if (test_and_clear_bit(0, &pcie->link_status))
+>  		dw_pcie_ep_linkup(ep);
+>  
+> -	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
+> -		PCI_EXP_LNKSTA_CLS;
+> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+> +	tegra_pcie_icc_set(pcie);
+>  
+>  	if (pcie->of_data->has_ltr_req_fix)
+>  		return IRQ_HANDLED;
+> @@ -945,9 +967,9 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+>  
+>  static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+>  {
+> -	u32 val, offset, speed, tmp;
+>  	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+>  	struct dw_pcie_rp *pp = &pci->pp;
+> +	u32 val, offset, tmp;
+>  	bool retry = true;
+>  
+>  	if (pcie->of_data->mode == DW_PCIE_EP_TYPE) {
+> @@ -1018,9 +1040,7 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+>  		goto retry_link;
+>  	}
+>  
+> -	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
+> -		PCI_EXP_LNKSTA_CLS;
+> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
+> +	tegra_pcie_icc_set(pcie);
+>  
+>  	tegra_pcie_enable_interrupts(pp);
+>  
+> @@ -2224,6 +2244,14 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, pcie);
+>  
+> +	pcie->icc_path = devm_of_icc_get(&pdev->dev, "write");
+> +	ret = PTR_ERR_OR_ZERO(pcie->icc_path);
+> +	if (ret) {
+> +		tegra_bpmp_put(pcie->bpmp);
+> +		dev_err_probe(&pdev->dev, ret, "failed to get write interconnect\n");
+> +		return ret;
+> +	}
+> +
+>  	switch (pcie->of_data->mode) {
+>  	case DW_PCIE_RC_TYPE:
+>  		ret = devm_request_irq(dev, pp->irq, tegra_pcie_rp_irq_handler,
+> -- 
+> 2.17.1
+> 
