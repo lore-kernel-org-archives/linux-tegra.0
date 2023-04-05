@@ -2,131 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D2FC76188
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 17:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB02C77B6E
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Apr 2023 18:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233800AbjDER6P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Apr 2023 13:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49344 "EHLO
+        id S229926AbjDESMI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Apr 2023 14:12:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233317AbjDER6O (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 13:58:14 -0400
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49FAE3C3E;
-        Wed,  5 Apr 2023 10:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9w+mHpl3Feo9gU6TGM0RoWAtGMwIO5vz3Gl4AH/wd0s=; b=ZvxTGezmCbRayrfaajPz6xpEHS
-        9xqTZcht8r4gHITGoiwsva82Nok6b15BGWuZKWSrLl+I3zBJjcFwf+UVlJquHBRv6wFvYI9XwrFAK
-        AgzAnA6iLxp8/KslBLav3VPrwP7yzajCOoDMluwwA0p5IDJNk2ky2i4WBjsguubUmD9qlk9wIZdLh
-        Rs9LU80gk8BAFm6YxVWrvCkmN0PF+4w7b3AUJGiu8cG62CLZzIb1Vo9yu+vnZpxcqYUXpp9KjjPdh
-        et6d+RYaSjzfpPU1FvXvLAARE6lEgkgpZ0BcGTPgYxK70fO1YQVl313vPOEpltdyn9itg7zaF7T+j
-        NqJK3XzQ==;
-Received: from ip98-183-112-29.ok.ok.cox.net ([98.183.112.29]:57812 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.96)
-        (envelope-from <david@lechnology.com>)
-        id 1pk4gc-0004aP-2T;
-        Wed, 05 Apr 2023 11:04:35 -0400
-Message-ID: <2c8c6e3e-835e-f545-2a57-8e037d32fe9b@lechnology.com>
-Date:   Wed, 5 Apr 2023 10:04:28 -0500
+        with ESMTP id S229520AbjDESMH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Apr 2023 14:12:07 -0400
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728A71A8;
+        Wed,  5 Apr 2023 11:12:06 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id eh3so143194259edb.11;
+        Wed, 05 Apr 2023 11:12:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680718325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y/h1wnReky+bpZGjcFPhU9qtus+mzxkSsVtUudoN3sc=;
+        b=vQX4/PwL95AZ9I2LZTH0RXnvpskQLWjMiVIwVIlOgJDMFZaLBx3GotY7TD7NMwE/ZY
+         Ntzi3VKCSf3O5VOXPgiBdkcGTAu088fjmifg58YQ4QZaSh1vJfKA8t5ggQRWxxTPazIi
+         1VF08eMwU6WUtv7ROFZCyt8Gu6XLzVE88hue+w33pfID8UlqvqlN1LgfWKfjpw4IrQdB
+         3GtAOOKf6u1r5tv8LfpCH/irngvcgCQpaltb/Vrw09D3RJH+v6rDHF4n18zZRz3xDzfu
+         qgbqWmThrgHBgIg56BsSM3oGsM2S7q33RekU5iZxBDfANOGKQ3T0nbnDUGEZOLAX/kaT
+         xuZg==
+X-Gm-Message-State: AAQBX9dCS+FCM2foabbPmfJZ1VypqnfyEdsC63/BWQrfYKH+tUc8dxwF
+        Nv6yPSBtrNmY+maFNJBhGIXDtKVb7tOgBrsjpfQ=
+X-Google-Smtp-Source: AKy350a4/1UgQtuZi96LdxsX2CgTr+CU3hxhJSZ5/OXGn3TAfH7X6v13QHnOxtyoiPa1CwRyJPG+X/O/1zQCiXxYReY=
+X-Received: by 2002:a17:906:6d55:b0:947:c623:2c84 with SMTP id
+ a21-20020a1709066d5500b00947c6232c84mr2032299ejt.2.1680718324772; Wed, 05 Apr
+ 2023 11:12:04 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v3 21/65] clk: davinci: da8xx-cfgchip: Add a
- determine_rate hook
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+References: <20230329-acpi-header-cleanup-v1-0-8dc5cd3c610e@kernel.org>
+ <20230329-acpi-header-cleanup-v1-5-8dc5cd3c610e@kernel.org>
+ <CAJZ5v0h8pEq4Tx-Q=VPT-XR73NRk=_XQg6vgr-wA-CFesuuSLg@mail.gmail.com> <CAL_JsqKVg_1T2SkMRryDFyYho1Kz+ppNkqozPdyyX_t4EFBJpg@mail.gmail.com>
+In-Reply-To: <CAL_JsqKVg_1T2SkMRryDFyYho1Kz+ppNkqozPdyyX_t4EFBJpg@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 5 Apr 2023 20:11:53 +0200
+Message-ID: <CAJZ5v0gjJsEe4hUgTcCUXghKkWd+0ChPfDndPavioj2XMC_gMQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] ACPI: Replace irqdomain.h include with struct declarations
+To:     Rob Herring <robh@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-21-9a1358472d52@cerno.tech>
-From:   David Lechner <david@lechnology.com>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-21-9a1358472d52@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Marc Zyngier <maz@kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/4/23 5:11 AM, Maxime Ripard wrote:
-> The Davinci DA8xxx cfgchip mux clock implements a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
-> 
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
-> 
+On Wed, Apr 5, 2023 at 6:48 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Apr 5, 2023 at 9:59 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > Hi Rob,
+> >
+> > On Wed, Mar 29, 2023 at 11:21 PM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > linux/acpi.h includes irqdomain.h which includes of.h. Break the include
+> > > chain by replacing the irqdomain include with forward declarations for
+> > > struct irq_domain and irq_domain_ops which is sufficient for acpi.h.
+> > >
+> > > Cc: Marc Zyngier <maz@kernel.org>
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > ---
+> > >  include/linux/acpi.h | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> > > index efff750f326d..169c17c0b0dc 100644
+> > > --- a/include/linux/acpi.h
+> > > +++ b/include/linux/acpi.h
+> > > @@ -10,12 +10,14 @@
+> > >
+> > >  #include <linux/errno.h>
+> > >  #include <linux/ioport.h>      /* for struct resource */
+> > > -#include <linux/irqdomain.h>
+> > >  #include <linux/resource_ext.h>
+> > >  #include <linux/device.h>
+> > >  #include <linux/property.h>
+> > >  #include <linux/uuid.h>
+> > >
+> > > +struct irq_domain;
+> > > +struct irq_domain_ops;
+> > > +
+> > >  #ifndef _LINUX
+> > >  #define _LINUX
+> > >  #endif
+> > >
+> > > --
+> >
+> > This causes build issues in linux-next, so I've dropped the series.  I
+> > will be happy to pick it up again when the build issues are addressed,
+> > though.
+>
+> Is it just the one in pata_macio.c or are there others you are aware of?
 
-As mentioned in my previous review, parent is selected by device
-tree and should never be changed after init.
+I'm aware of a few:
 
-
+https://lore.kernel.org/lkml/20230403201801.02839c9a@canb.auug.org.au/
+https://lore.kernel.org/lkml/20230403112514.47ff91bb@canb.auug.org.au/
+https://lore.kernel.org/lkml/20230403111605.7658ec62@canb.auug.org.au/
+https://lore.kernel.org/lkml/20230403110650.6b13cb71@canb.auug.org.au/
