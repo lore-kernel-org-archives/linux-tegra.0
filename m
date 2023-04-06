@@ -2,87 +2,182 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A9FC76196
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 12:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A66FC76196
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 12:14:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236979AbjDFMFV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Apr 2023 08:05:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42582 "EHLO
+        id S229656AbjDFMOJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Apr 2023 08:14:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238681AbjDFMFC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Apr 2023 08:05:02 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D2E901C;
-        Thu,  6 Apr 2023 05:03:31 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id n21so783541ejz.4;
-        Thu, 06 Apr 2023 05:03:31 -0700 (PDT)
+        with ESMTP id S230079AbjDFMOI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Apr 2023 08:14:08 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA273C0B
+        for <linux-tegra@vger.kernel.org>; Thu,  6 Apr 2023 05:14:06 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id n21so857410ejz.4
+        for <linux-tegra@vger.kernel.org>; Thu, 06 Apr 2023 05:14:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680782609;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Go1w/1aC0WMyrU2tHEVEfl1C38hl149Gmuqes9rB4CU=;
-        b=PkCc3NvlQhuP1+R3SS09h9Z8RCY8z69FZW6IcytblCWpVTiDmhz5jwclTiasCwT9Oy
-         Hjkz00NzbleMgor2QtzlfPHNCDMhONlMs0aOZIDhu9s+kY5w8k2rSwW6NqNznGZwGxXB
-         Uok5lWzVAlkfLSSbgqG2SUbsCVWvJkUs2JAtdrty5sa7n70JJtRFeXF2g1iL6zCEMMf9
-         To8Bh5tuYLOk0sd5a19fiSigun21Dddl1DqdBc/DF43LcU9rCHgf42qwKcxYk4MciX0q
-         60668KYX8/wAdiqETfOP1OIfyeoQsUtcxT3ykCWPoJgrz3u7lASbKFI7B2jC5OM1/YFd
-         L2vA==
+        d=gmail.com; s=20210112; t=1680783245;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t0cKGNr7aS2PBD4dskbuQlYyxnKlXAeKQMmfFjR+x8U=;
+        b=XFPe72ZR0w8dUcNuFlrPWAXiEsSjall0aUnMemRVcU1D1KX66YG05mnVuyAxQLcX9X
+         ON9i5fQVCMh8ifamEuBXu1AtbmzXAIE6/2WuVz1kOU7S61lMuF36b2IsyQtdEE1uvEGW
+         JfeZgipSsnWiJpI1wyKtv0UjJXM6y3/SuSR04aeAeM6PYgWXippAFfZkAUZ0sxt6gz5g
+         nZqVbHRLLyaPUwlrTnjyRvIomywvLnhnZSa4dsC0ZJOa/CBlj8isODoyvzF8OWP3cMR9
+         5R8v/BekEFzj/IDH8VCdWDp1mrZuuooDmNhdpIG7zQhJ86+mgI2xGpdlykfpnSiTM6TJ
+         zP8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680782609;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Go1w/1aC0WMyrU2tHEVEfl1C38hl149Gmuqes9rB4CU=;
-        b=qIV+JONL3qys7FBklGe+0MFP95MlVqVYaw8Wl2IsJREygB7hARtM3lJJPiO3cPnVph
-         VmQ8Gzt16uQTBDlp9KNWtDhjgBBsfYlGRH3DckQjWXyPYMO2qpWOz6AYzJm1dJV7i/+S
-         vL6+k5FMqeBSaAAr9WIhZofFJXOyGSvQB17WdiRGhiESPdNPzDvoS/7igrSU4Yse0nFz
-         pjsYgfXVTL7RNar7HqJKs6Z65vmDpLN6RQFIuR9LbvpMhGeI+zBiBW6rMMiMnByAgAXE
-         BnOYR3FW7F7nfsHdso7XqHU2poGDfTgFZIq55aRGifFnt2IFT6cCO/FaHGw4cfC1zhVE
-         GiUg==
-X-Gm-Message-State: AAQBX9eJyUbnJE+RP7UoQllD1EAu8zcfw+IqKKcOHi6JPUX4+ETqeV3u
-        uxCrleq1XuEIQweicj7YboU=
-X-Google-Smtp-Source: AKy350YtecHxljjAvQASvWuOoFJYdUQt++BoqDoynDN0CWd+SUGMxylECCAzwF6q1YbVCNQU+UQCKQ==
-X-Received: by 2002:a17:906:7150:b0:922:446b:105a with SMTP id z16-20020a170906715000b00922446b105amr5169539ejj.19.1680782609139;
-        Thu, 06 Apr 2023 05:03:29 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680783245;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t0cKGNr7aS2PBD4dskbuQlYyxnKlXAeKQMmfFjR+x8U=;
+        b=lljg3nq+ABRKEuH6ZgiETLR1b6GEZMsT6EiAl1RAwNVRsTfB+qD4C0ApzTL9Lfl+yi
+         FwnPWvPCHrC/u/6LjYPFetPwOhOzkrNkS2sQoFNQxiqM9qNoU98XwmAho9PFF9gnuEnr
+         FaJNC/p9N4QalSpTmeGl6gWVLqS8YJanFAxz4Z8Di4bbYv6I0RO2gmw/dI2stH3lHvr5
+         Pzl/PxQAsQ6RB+8dErrGXc4LCsaxR+jH9kT4ehD7Cncc/4rCThEBQlnLvjwMS6cAMcuQ
+         K1bEdRVWyq89gDGtchLBiJqwpEXZAv9UMZO+zW2O+t2/ATQCfsuUBYtiS7KqZZa7q7n4
+         jVNw==
+X-Gm-Message-State: AAQBX9dXrWkhbTMaYOhyrf5FRmyKyl83ARliefI8dBjnQ1an5YGbhmL0
+        ZItMx+kQShe3hKINs98kQ18=
+X-Google-Smtp-Source: AKy350bn7S7LsNXLrOK6NW2S8RlhndG3xDpjK9WwxpESScyCWY60jcm3xVTweEw+/iP0DUq18RXOKg==
+X-Received: by 2002:a17:906:3f86:b0:929:e5a8:63f7 with SMTP id b6-20020a1709063f8600b00929e5a863f7mr4863887ejj.28.1680783245167;
+        Thu, 06 Apr 2023 05:14:05 -0700 (PDT)
 Received: from localhost (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id h3-20020a1709067cc300b00947f4e2b2b5sm721007ejp.127.2023.04.06.05.03.28
+        by smtp.gmail.com with ESMTPSA id lf11-20020a170907174b00b0092b546b57casm726124ejc.195.2023.04.06.05.14.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Apr 2023 05:03:28 -0700 (PDT)
+        Thu, 06 Apr 2023 05:14:04 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     airlied@gmail.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, daniel@ffwll.ch,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        mperttunen@nvidia.com, Nur Hussein <hussein@unixcat.org>,
-        thierry.reding@gmail.com
-Subject: Re: [PATCH] drm/tegra : Avoid potential integer overflow of 32 bit int
-Date:   Thu,  6 Apr 2023 14:03:28 +0200
-Message-Id: <168078260130.966805.9780166486659802079.b4-ty@nvidia.com>
+To:     Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL] drm/tegra: Changes for v6.4-rc1
+Date:   Thu,  6 Apr 2023 14:14:04 +0200
+Message-Id: <20230406121404.967704-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230405202559.2232430-1-hussein@unixcat.org>
-References: <20230405202559.2232430-1-hussein@unixcat.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Hi Dave, Daniel,
 
-On Thu, 6 Apr 2023 04:25:59 +0800, Nur Hussein wrote:
-> In tegra_sor_compute_config(), the 32-bit value mode->clock
-> is multiplied by 1000, and assigned to the u64 variable pclk.
-> We can avoid a potential 32-bit integer overflow by casting
-> mode->clock to u64 before we do the arithmetic and assignment.
-> 
-> 
+The following changes since commit e8d018dd0257f744ca50a729e3d042cf2ec9da65:
 
-Applied, thanks!
+  Linux 6.3-rc3 (2023-03-19 13:27:55 -0700)
 
-[1/1] drm/tegra : Avoid potential integer overflow of 32 bit int
-      (no commit info)
+are available in the Git repository at:
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+  https://gitlab.freedesktop.org/drm/tegra.git tags/drm/tegra/for-6.4-rc1
+
+for you to fetch changes up to 2429b3c529da29d4277d519bd66d034842dcd70c:
+
+  drm/tegra: Avoid potential 32-bit integer overflow (2023-04-06 14:02:33 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+drm/tegra: Changes for v6.4-rc1
+
+The majority of this is minor cleanups and fixes. Other than those, this
+contains Uwe's conversion to the new driver remove callback and Thomas'
+fbdev DRM client conversion. The driver can now also be built on other
+architectures to easy compile coverage.
+
+Finally, this adds Mikko as a second maintainer for the driver. As a
+next step we also want Tegra DRM to move into drm-misc to streamline the
+maintenance process.
+
+----------------------------------------------------------------
+Cai Huoqing (3):
+      drm/tegra: sor: Make use of the helper function dev_err_probe()
+      drm/tegra: dsi: Make use of the helper function dev_err_probe()
+      drm/tegra: plane: Improve use of dev_err_probe()
+
+Christian König (2):
+      drm/tegra: Allow compile test on !ARM v2
+      drm/tegra: Fix another missing include
+
+Deepak R Varma (1):
+      drm/tegra: sor: Remove redundant error logging
+
+Diogo Ivo (1):
+      drm/tegra: dsi: Clear enable register if powered by bootloader
+
+Lee Jones (1):
+      drm/tegra: dc: Remove set but unused variable 'state'
+
+Mikko Perttunen (1):
+      gpu: host1x: Don't rely on dma_fence_wait_timeout return value
+
+Nur Hussein (1):
+      drm/tegra: Avoid potential 32-bit integer overflow
+
+Thierry Reding (1):
+      MAINTAINERS: Add Mikko as backup maintainer for Tegra DRM
+
+Thomas Zimmermann (7):
+      drm/tegra: Include <linux/of.h>
+      drm/tegra: Include <linux/i2c.h>
+      drm/tegra: Removed fb from struct tegra_fbdev
+      drm/tegra: Remove struct tegra_fbdev
+      drm/tegra: Hide fbdev support behind config option
+      drm/tegra: Initialize fbdev DRM client
+      drm/tegra: Implement fbdev emulation as in-kernel client
+
+Uwe Kleine-König (12):
+      gpu: host1x: Make host1x_client_unregister() return void
+      drm/tegra: rgb: Make tegra_dc_rgb_remove() return void
+      drm/tegra: dc: Convert to platform remove callback returning void
+      drm/tegra: dpaux: Convert to platform remove callback returning void
+      drm/tegra: dsi: Convert to platform remove callback returning void
+      drm/tegra: gr2d: Convert to platform remove callback returning void
+      drm/tegra: gr3d: Convert to platform remove callback returning void
+      drm/tegra: hdmi: Convert to platform remove callback returning void
+      drm/tegra: hub: Convert to platform remove callback returning void
+      drm/tegra: nvdec: Convert to platform remove callback returning void
+      drm/tegra: sor: Convert to platform remove callback returning void
+      drm/tegra: vic: Convert to platform remove callback returning void
+
+Yang Yingliang (2):
+      gpu: host1x: Fix potential double free if IOMMU is disabled
+      gpu: host1x: Fix memory leak of device names
+
+Ye Xingchen (1):
+      gpu: host1x: mipi: Use devm_platform_get_and_ioremap_resource()
+
+ MAINTAINERS                             |   1 +
+ drivers/gpu/drm/tegra/Kconfig           |   2 +-
+ drivers/gpu/drm/tegra/Makefile          |   2 +
+ drivers/gpu/drm/tegra/dc.c              |  22 +--
+ drivers/gpu/drm/tegra/dc.h              |   2 +-
+ drivers/gpu/drm/tegra/dpaux.c           |   6 +-
+ drivers/gpu/drm/tegra/drm.c             |  23 +--
+ drivers/gpu/drm/tegra/drm.h             |  27 ++--
+ drivers/gpu/drm/tegra/dsi.c             |  51 ++++---
+ drivers/gpu/drm/tegra/fb.c              | 242 +-------------------------------
+ drivers/gpu/drm/tegra/fbdev.c           | 241 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/gem.c             |   1 +
+ drivers/gpu/drm/tegra/gr2d.c            |  14 +-
+ drivers/gpu/drm/tegra/gr3d.c            |  14 +-
+ drivers/gpu/drm/tegra/hdmi.c            |  14 +-
+ drivers/gpu/drm/tegra/hub.c             |  13 +-
+ drivers/gpu/drm/tegra/nvdec.c           |  14 +-
+ drivers/gpu/drm/tegra/output.c          |   3 +
+ drivers/gpu/drm/tegra/plane.c           |  16 +--
+ drivers/gpu/drm/tegra/rgb.c             |   7 +-
+ drivers/gpu/drm/tegra/sor.c             |  44 ++----
+ drivers/gpu/drm/tegra/vic.c             |  14 +-
+ drivers/gpu/host1x/Kconfig              |   2 +-
+ drivers/gpu/host1x/bus.c                |   6 +-
+ drivers/gpu/host1x/context.c            |  24 ++--
+ drivers/gpu/host1x/mipi.c               |   4 +-
+ drivers/gpu/host1x/syncpt.c             |   8 +-
+ drivers/staging/media/tegra-video/csi.c |   8 +-
+ drivers/staging/media/tegra-video/vi.c  |   8 +-
+ include/linux/host1x.h                  |   2 +-
+ 30 files changed, 370 insertions(+), 465 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/fbdev.c
