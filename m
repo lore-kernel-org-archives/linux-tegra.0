@@ -2,197 +2,363 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241D8C7618D
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 13:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52752C77B70
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 13:22:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238028AbjDFNTA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Apr 2023 09:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45910 "EHLO
+        id S238262AbjDFNWZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Apr 2023 09:22:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237453AbjDFNS6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Apr 2023 09:18:58 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C8886A6
-        for <linux-tegra@vger.kernel.org>; Thu,  6 Apr 2023 06:18:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dYajvoSz9BCuEjUuA1bEd6STrE3vvvgmYvn865RokJs=; b=bTBruZ/qcn/IkL+g5mQk/A5YGA
-        Yzya0k/UueXeFpdrXki11tH24TrWU4OjwmPJN8zIPR0qXibsEiEg6L5vtbb+FY5eRfL6ABGbaT2Xm
-        Iu0xPpGhQvSjI5rfr6Pu3UXttVcqgIQixJyET1VRA1g23yxci3ISl0mnSycUKG+T8XDdlxZUOvwzW
-        YY+brnOn7jToXq6eLBj0vm4UrNb+xXNmZvV9sXN84qxAYAEI1cp3z6hQ7sOOnpYcbaT34IqBJqBkz
-        OSKAhZZ2HAq2GP1e8c3PW1T1B7rCurGJgRf3lkwyuBQiHE88nR8oKM6+YO7mbU/aO+8rMdwOTD3Cd
-        jGV8RDRA==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1pkPVm-00Fcs2-FE; Thu, 06 Apr 2023 16:18:46 +0300
-Message-ID: <561c74a9-8fdf-568f-f5f2-d0c80d651ce0@kapsi.fi>
-Date:   Thu, 6 Apr 2023 16:18:46 +0300
+        with ESMTP id S238461AbjDFNWO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Apr 2023 09:22:14 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B37BA27A;
+        Thu,  6 Apr 2023 06:21:55 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C4C791FD90;
+        Thu,  6 Apr 2023 13:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1680787271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xIGJnt5QSwKB43F9uP1VqMB3iD5JjjLHplTDaG7Av8s=;
+        b=AhLxeW6ZF3ybtEfQukgquDPR8/Mfe6ESeFT0v5iVEJov/NJZ8+LeGcd4EI7R5FyBX1J94w
+        OIMNf4HuFsGxTW23NJbV15ILq6opRyUMfO5sTZaxgUsfyVOTdKt7OMFD/HZYdXDY6sNmgC
+        dZIqGlc6jmxFR5WIvrMzVkJms1pF9fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1680787271;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xIGJnt5QSwKB43F9uP1VqMB3iD5JjjLHplTDaG7Av8s=;
+        b=3bWX3eeqgk766FDUH7AJRfbnwg/UrqazBIZLohOvie2z1mU/HeQckNZWyjCzxFdxFcE0a7
+        lhI+RiQOWMr6U5Dw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 52CD9133E5;
+        Thu,  6 Apr 2023 13:21:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id GKprE0fHLmSqBwAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 06 Apr 2023 13:21:11 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     javierm@redhat.com, daniel.vetter@ffwll.ch,
+        patrik.r.jakobsson@gmail.com
+Cc:     dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Deepak Rawat <drawat.floss@gmail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Emma Anholt <emma@anholt.net>, Helge Deller <deller@gmx.de>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-hyperv@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v5 3/9] drm/aperture: Remove primary argument
+Date:   Thu,  6 Apr 2023 15:21:03 +0200
+Message-Id: <20230406132109.32050-4-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230406132109.32050-1-tzimmermann@suse.de>
+References: <20230406132109.32050-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [GIT PULL] drm/tegra: Changes for v6.4-rc1
-Content-Language: en-US
-To:     Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dave Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-References: <20230406121404.967704-1-thierry.reding@gmail.com>
- <ZC7EnnQZ0LBpC/cV@phenom.ffwll.local>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <ZC7EnnQZ0LBpC/cV@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/6/23 16:09, Daniel Vetter wrote:
-> On Thu, Apr 06, 2023 at 02:14:04PM +0200, Thierry Reding wrote:
->> Hi Dave, Daniel,
->>
->> The following changes since commit e8d018dd0257f744ca50a729e3d042cf2ec9da65:
->>
->>    Linux 6.3-rc3 (2023-03-19 13:27:55 -0700)
->>
->> are available in the Git repository at:
->>
->>    https://gitlab.freedesktop.org/drm/tegra.git tags/drm/tegra/for-6.4-rc1
->>
->> for you to fetch changes up to 2429b3c529da29d4277d519bd66d034842dcd70c:
->>
->>    drm/tegra: Avoid potential 32-bit integer overflow (2023-04-06 14:02:33 +0200)
->>
->> Thanks,
->> Thierry
->>
->> ----------------------------------------------------------------
->> drm/tegra: Changes for v6.4-rc1
->>
->> The majority of this is minor cleanups and fixes. Other than those, this
->> contains Uwe's conversion to the new driver remove callback and Thomas'
->> fbdev DRM client conversion. The driver can now also be built on other
->> architectures to easy compile coverage.
-> 
-> Neat cleanup on top might be too look at the generic fbdev stuff, just as
-> an idea.
-> 
->> Finally, this adds Mikko as a second maintainer for the driver. As a
->> next step we also want Tegra DRM to move into drm-misc to streamline the
->> maintenance process.
-> 
-> Amusingly the one patch that dim flagged as lacking a 2nd set of eyes (no
-> a-b/rb or committer!=author) is the MAINTAINERS patch, would have been
-> good to record Mikko's ack for getting volunteered :-)
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Haha, admittedly I was a bit surprised to see myself being added to 
-MAINTAINERS so quickly after talking about it with Thierry; but yes, I 
-submit myself to the duty :)
+Only really pci devices have a business setting this - it's for
+figuring out whether the legacy vga stuff should be nuked too. And
+with the preceding two patches those are all using the pci version of
+this.
 
-Cheers,
-Mikko
+Which means for all other callers primary == false and we can remove
+it now.
 
-> 
-> Anyway all good, pulled, thanks!
-> 
->>
->> ----------------------------------------------------------------
->> Cai Huoqing (3):
->>        drm/tegra: sor: Make use of the helper function dev_err_probe()
->>        drm/tegra: dsi: Make use of the helper function dev_err_probe()
->>        drm/tegra: plane: Improve use of dev_err_probe()
->>
->> Christian König (2):
->>        drm/tegra: Allow compile test on !ARM v2
->>        drm/tegra: Fix another missing include
->>
->> Deepak R Varma (1):
->>        drm/tegra: sor: Remove redundant error logging
->>
->> Diogo Ivo (1):
->>        drm/tegra: dsi: Clear enable register if powered by bootloader
->>
->> Lee Jones (1):
->>        drm/tegra: dc: Remove set but unused variable 'state'
->>
->> Mikko Perttunen (1):
->>        gpu: host1x: Don't rely on dma_fence_wait_timeout return value
->>
->> Nur Hussein (1):
->>        drm/tegra: Avoid potential 32-bit integer overflow
->>
->> Thierry Reding (1):
->>        MAINTAINERS: Add Mikko as backup maintainer for Tegra DRM
->>
->> Thomas Zimmermann (7):
->>        drm/tegra: Include <linux/of.h>
->>        drm/tegra: Include <linux/i2c.h>
->>        drm/tegra: Removed fb from struct tegra_fbdev
->>        drm/tegra: Remove struct tegra_fbdev
->>        drm/tegra: Hide fbdev support behind config option
->>        drm/tegra: Initialize fbdev DRM client
->>        drm/tegra: Implement fbdev emulation as in-kernel client
->>
->> Uwe Kleine-König (12):
->>        gpu: host1x: Make host1x_client_unregister() return void
->>        drm/tegra: rgb: Make tegra_dc_rgb_remove() return void
->>        drm/tegra: dc: Convert to platform remove callback returning void
->>        drm/tegra: dpaux: Convert to platform remove callback returning void
->>        drm/tegra: dsi: Convert to platform remove callback returning void
->>        drm/tegra: gr2d: Convert to platform remove callback returning void
->>        drm/tegra: gr3d: Convert to platform remove callback returning void
->>        drm/tegra: hdmi: Convert to platform remove callback returning void
->>        drm/tegra: hub: Convert to platform remove callback returning void
->>        drm/tegra: nvdec: Convert to platform remove callback returning void
->>        drm/tegra: sor: Convert to platform remove callback returning void
->>        drm/tegra: vic: Convert to platform remove callback returning void
->>
->> Yang Yingliang (2):
->>        gpu: host1x: Fix potential double free if IOMMU is disabled
->>        gpu: host1x: Fix memory leak of device names
->>
->> Ye Xingchen (1):
->>        gpu: host1x: mipi: Use devm_platform_get_and_ioremap_resource()
->>
->>   MAINTAINERS                             |   1 +
->>   drivers/gpu/drm/tegra/Kconfig           |   2 +-
->>   drivers/gpu/drm/tegra/Makefile          |   2 +
->>   drivers/gpu/drm/tegra/dc.c              |  22 +--
->>   drivers/gpu/drm/tegra/dc.h              |   2 +-
->>   drivers/gpu/drm/tegra/dpaux.c           |   6 +-
->>   drivers/gpu/drm/tegra/drm.c             |  23 +--
->>   drivers/gpu/drm/tegra/drm.h             |  27 ++--
->>   drivers/gpu/drm/tegra/dsi.c             |  51 ++++---
->>   drivers/gpu/drm/tegra/fb.c              | 242 +-------------------------------
->>   drivers/gpu/drm/tegra/fbdev.c           | 241 +++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/tegra/gem.c             |   1 +
->>   drivers/gpu/drm/tegra/gr2d.c            |  14 +-
->>   drivers/gpu/drm/tegra/gr3d.c            |  14 +-
->>   drivers/gpu/drm/tegra/hdmi.c            |  14 +-
->>   drivers/gpu/drm/tegra/hub.c             |  13 +-
->>   drivers/gpu/drm/tegra/nvdec.c           |  14 +-
->>   drivers/gpu/drm/tegra/output.c          |   3 +
->>   drivers/gpu/drm/tegra/plane.c           |  16 +--
->>   drivers/gpu/drm/tegra/rgb.c             |   7 +-
->>   drivers/gpu/drm/tegra/sor.c             |  44 ++----
->>   drivers/gpu/drm/tegra/vic.c             |  14 +-
->>   drivers/gpu/host1x/Kconfig              |   2 +-
->>   drivers/gpu/host1x/bus.c                |   6 +-
->>   drivers/gpu/host1x/context.c            |  24 ++--
->>   drivers/gpu/host1x/mipi.c               |   4 +-
->>   drivers/gpu/host1x/syncpt.c             |   8 +-
->>   drivers/staging/media/tegra-video/csi.c |   8 +-
->>   drivers/staging/media/tegra-video/vi.c  |   8 +-
->>   include/linux/host1x.h                  |   2 +-
->>   30 files changed, 370 insertions(+), 465 deletions(-)
->>   create mode 100644 drivers/gpu/drm/tegra/fbdev.c
-> 
+v2:
+- Reorder to avoid compile fail (Thomas)
+- Include gma500, which retained it's called to the non-pci version.
+
+v4:
+- fix Daniel's S-o-b address
+
+v5:
+- add back an S-o-b tag with Daniel's Intel address
+
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Deepak Rawat <drawat.floss@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Emma Anholt <emma@anholt.net>
+Cc: Helge Deller <deller@gmx.de>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-hyperv@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-fbdev@vger.kernel.org
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+---
+ drivers/gpu/drm/arm/hdlcd_drv.c             |  2 +-
+ drivers/gpu/drm/armada/armada_drv.c         |  2 +-
+ drivers/gpu/drm/drm_aperture.c              | 11 +++--------
+ drivers/gpu/drm/gma500/psb_drv.c            |  2 +-
+ drivers/gpu/drm/hyperv/hyperv_drm_drv.c     |  1 -
+ drivers/gpu/drm/meson/meson_drv.c           |  2 +-
+ drivers/gpu/drm/msm/msm_fbdev.c             |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  2 +-
+ drivers/gpu/drm/stm/drv.c                   |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c           |  2 +-
+ drivers/gpu/drm/tegra/drm.c                 |  2 +-
+ drivers/gpu/drm/vc4/vc4_drv.c               |  2 +-
+ include/drm/drm_aperture.h                  |  7 +++----
+ 13 files changed, 16 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/gpu/drm/arm/hdlcd_drv.c b/drivers/gpu/drm/arm/hdlcd_drv.c
+index 9020bf820bc8..12f5a2c7f03d 100644
+--- a/drivers/gpu/drm/arm/hdlcd_drv.c
++++ b/drivers/gpu/drm/arm/hdlcd_drv.c
+@@ -285,7 +285,7 @@ static int hdlcd_drm_bind(struct device *dev)
+ 	 */
+ 	if (hdlcd_read(hdlcd, HDLCD_REG_COMMAND)) {
+ 		hdlcd_write(hdlcd, HDLCD_REG_COMMAND, 0);
+-		drm_aperture_remove_framebuffers(false, &hdlcd_driver);
++		drm_aperture_remove_framebuffers(&hdlcd_driver);
+ 	}
+ 
+ 	drm_mode_config_reset(drm);
+diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/armada/armada_drv.c
+index 0643887800b4..c99ec7078301 100644
+--- a/drivers/gpu/drm/armada/armada_drv.c
++++ b/drivers/gpu/drm/armada/armada_drv.c
+@@ -95,7 +95,7 @@ static int armada_drm_bind(struct device *dev)
+ 	}
+ 
+ 	/* Remove early framebuffers */
+-	ret = drm_aperture_remove_framebuffers(false, &armada_drm_driver);
++	ret = drm_aperture_remove_framebuffers(&armada_drm_driver);
+ 	if (ret) {
+ 		dev_err(dev, "[" DRM_NAME ":%s] can't kick out simple-fb: %d\n",
+ 			__func__, ret);
+diff --git a/drivers/gpu/drm/drm_aperture.c b/drivers/gpu/drm/drm_aperture.c
+index 3b8fdeeafd53..697cffbfd603 100644
+--- a/drivers/gpu/drm/drm_aperture.c
++++ b/drivers/gpu/drm/drm_aperture.c
+@@ -32,17 +32,13 @@
+  *
+  *	static int remove_conflicting_framebuffers(struct pci_dev *pdev)
+  *	{
+- *		bool primary = false;
+  *		resource_size_t base, size;
+  *		int ret;
+  *
+  *		base = pci_resource_start(pdev, 0);
+  *		size = pci_resource_len(pdev, 0);
+- *	#ifdef CONFIG_X86
+- *		primary = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
+- *	#endif
+  *
+- *		return drm_aperture_remove_conflicting_framebuffers(base, size, primary,
++ *		return drm_aperture_remove_conflicting_framebuffers(base, size,
+  *		                                                    &example_driver);
+  *	}
+  *
+@@ -161,7 +157,6 @@ EXPORT_SYMBOL(devm_aperture_acquire_from_firmware);
+  * drm_aperture_remove_conflicting_framebuffers - remove existing framebuffers in the given range
+  * @base: the aperture's base address in physical memory
+  * @size: aperture size in bytes
+- * @primary: also kick vga16fb if present
+  * @req_driver: requesting DRM driver
+  *
+  * This function removes graphics device drivers which use the memory range described by
+@@ -171,9 +166,9 @@ EXPORT_SYMBOL(devm_aperture_acquire_from_firmware);
+  * 0 on success, or a negative errno code otherwise
+  */
+ int drm_aperture_remove_conflicting_framebuffers(resource_size_t base, resource_size_t size,
+-						 bool primary, const struct drm_driver *req_driver)
++						 const struct drm_driver *req_driver)
+ {
+-	return aperture_remove_conflicting_devices(base, size, primary, req_driver->name);
++	return aperture_remove_conflicting_devices(base, size, false, req_driver->name);
+ }
+ EXPORT_SYMBOL(drm_aperture_remove_conflicting_framebuffers);
+ 
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index f1e0eed8fea4..4bb06a89e48d 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -428,7 +428,7 @@ static int psb_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	 * TODO: Refactor psb_driver_load() to map vdc_reg earlier. Then we
+ 	 *       might be able to read the framebuffer range from the device.
+ 	 */
+-	ret = drm_aperture_remove_framebuffers(false, &driver);
++	ret = drm_aperture_remove_framebuffers(&driver);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/gpu/drm/hyperv/hyperv_drm_drv.c b/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
+index f830d62a5ce6..a7d2c92d6c6a 100644
+--- a/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
++++ b/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
+@@ -74,7 +74,6 @@ static int hyperv_setup_vram(struct hyperv_drm_device *hv,
+ 
+ 	drm_aperture_remove_conflicting_framebuffers(screen_info.lfb_base,
+ 						     screen_info.lfb_size,
+-						     false,
+ 						     &hyperv_driver);
+ 
+ 	hv->fb_size = (unsigned long)hv->mmio_megabytes * 1024 * 1024;
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index bb72fda9106d..ca6d1e59e5d9 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -285,7 +285,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	 * Remove early framebuffers (ie. simplefb). The framebuffer can be
+ 	 * located anywhere in RAM
+ 	 */
+-	ret = drm_aperture_remove_framebuffers(false, &meson_driver);
++	ret = drm_aperture_remove_framebuffers(&meson_driver);
+ 	if (ret)
+ 		goto free_drm;
+ 
+diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+index d26aa52217ce..16652a5a7018 100644
+--- a/drivers/gpu/drm/msm/msm_fbdev.c
++++ b/drivers/gpu/drm/msm/msm_fbdev.c
+@@ -155,7 +155,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
+ 	}
+ 
+ 	/* the fw fb could be anywhere in memory */
+-	ret = drm_aperture_remove_framebuffers(false, dev->driver);
++	ret = drm_aperture_remove_framebuffers(dev->driver);
+ 	if (ret)
+ 		goto fini;
+ 
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index 6e0788d14c10..d97f2edc646b 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -140,7 +140,7 @@ static int rockchip_drm_bind(struct device *dev)
+ 	int ret;
+ 
+ 	/* Remove existing drivers that may own the framebuffer memory. */
+-	ret = drm_aperture_remove_framebuffers(false, &rockchip_drm_driver);
++	ret = drm_aperture_remove_framebuffers(&rockchip_drm_driver);
+ 	if (ret) {
+ 		DRM_DEV_ERROR(dev,
+ 			      "Failed to remove existing framebuffers - %d.\n",
+diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+index 422220df7d8c..cb4404b3ce62 100644
+--- a/drivers/gpu/drm/stm/drv.c
++++ b/drivers/gpu/drm/stm/drv.c
+@@ -185,7 +185,7 @@ static int stm_drm_platform_probe(struct platform_device *pdev)
+ 
+ 	DRM_DEBUG("%s\n", __func__);
+ 
+-	ret = drm_aperture_remove_framebuffers(false, &drv_driver);
++	ret = drm_aperture_remove_framebuffers(&drv_driver);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index e49f78a6a8cf..daa7faf72a4b 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -98,7 +98,7 @@ static int sun4i_drv_bind(struct device *dev)
+ 		goto unbind_all;
+ 
+ 	/* Remove early framebuffers (ie. simplefb) */
+-	ret = drm_aperture_remove_framebuffers(false, &sun4i_drv_driver);
++	ret = drm_aperture_remove_framebuffers(&sun4i_drv_driver);
+ 	if (ret)
+ 		goto unbind_all;
+ 
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 6ca9f396e55b..d11d259f9399 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1252,7 +1252,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 
+ 	drm_mode_config_reset(drm);
+ 
+-	err = drm_aperture_remove_framebuffers(false, &tegra_drm_driver);
++	err = drm_aperture_remove_framebuffers(&tegra_drm_driver);
+ 	if (err < 0)
+ 		goto hub;
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+index c8bf954042e0..823395c23cc3 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.c
++++ b/drivers/gpu/drm/vc4/vc4_drv.c
+@@ -350,7 +350,7 @@ static int vc4_drm_bind(struct device *dev)
+ 			return -EPROBE_DEFER;
+ 	}
+ 
+-	ret = drm_aperture_remove_framebuffers(false, driver);
++	ret = drm_aperture_remove_framebuffers(driver);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/include/drm/drm_aperture.h b/include/drm/drm_aperture.h
+index 7096703c3949..cbe33b49fd5d 100644
+--- a/include/drm/drm_aperture.h
++++ b/include/drm/drm_aperture.h
+@@ -13,14 +13,13 @@ int devm_aperture_acquire_from_firmware(struct drm_device *dev, resource_size_t
+ 					resource_size_t size);
+ 
+ int drm_aperture_remove_conflicting_framebuffers(resource_size_t base, resource_size_t size,
+-						 bool primary, const struct drm_driver *req_driver);
++						 const struct drm_driver *req_driver);
+ 
+ int drm_aperture_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
+ 						     const struct drm_driver *req_driver);
+ 
+ /**
+  * drm_aperture_remove_framebuffers - remove all existing framebuffers
+- * @primary: also kick vga16fb if present
+  * @req_driver: requesting DRM driver
+  *
+  * This function removes all graphics device drivers. Use this function on systems
+@@ -30,9 +29,9 @@ int drm_aperture_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
+  * 0 on success, or a negative errno code otherwise
+  */
+ static inline int
+-drm_aperture_remove_framebuffers(bool primary, const struct drm_driver *req_driver)
++drm_aperture_remove_framebuffers(const struct drm_driver *req_driver)
+ {
+-	return drm_aperture_remove_conflicting_framebuffers(0, (resource_size_t)-1, primary,
++	return drm_aperture_remove_conflicting_framebuffers(0, (resource_size_t)-1,
+ 							    req_driver);
+ }
+ 
+-- 
+2.40.0
 
