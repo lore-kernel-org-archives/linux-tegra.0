@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FEAC77B70
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 16:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DA6C761A6
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 16:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239933AbjDFQHZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Apr 2023 12:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45814 "EHLO
+        id S239970AbjDFQHn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Apr 2023 12:07:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239913AbjDFQHV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Apr 2023 12:07:21 -0400
+        with ESMTP id S239924AbjDFQHh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Apr 2023 12:07:37 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E0FA5FB;
-        Thu,  6 Apr 2023 09:07:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EAFE9773;
+        Thu,  6 Apr 2023 09:07:17 -0700 (PDT)
 Received: from workpc.. (109-252-119-170.nat.spd-mgts.ru [109.252.119.170])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B5DED66031E0;
-        Thu,  6 Apr 2023 17:07:05 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1412B66031DE;
+        Thu,  6 Apr 2023 17:07:10 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680797227;
-        bh=+y9WRIJ4shQTe2dz4WBdbVwQw7y2f8JJMM7aQYwXu1I=;
+        s=mail; t=1680797232;
+        bh=i+8ZTN0RqkBszh4mtnmP6dUFSRdIZ0W3HJzBJKtrT90=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CBhAGKo6G+0QBfaJo75kb4LKjTBYR2m6NK1xy5J0DRNvIebZ9QaxkjBr9agK4Rfuy
-         ya/DQ9dnvLpP+edoT6nG21XhAwBhG60O1YO7t1DqYlUrGKbRLXi+u3BbSKpek0Q1el
-         ws6XQty7fBHw0izzYZMPNNq6cqpE6zk8TekNCpy6hig7/HWwD4iPzPpEcZuTbboNp2
-         1tz7YmR5XokeqFuKb4iQE3yXW/2rybS3mjbmFlsPsmK8fyxFps2Nrde+Yo5ySOeK0q
-         DJP1wS9uzUngRbwvYc5t+wO3ku3aqPK2XWdhMfQeLveiQjy6rtG3zyIV/KdDBE6Gn0
-         0bpHdsfZmKfFQ==
+        b=JD3kaKCZfu72elUMIMaTzy55WisgCoHuHIk7bt98jXNjZwBf8mC8cTGW5aI7A6sh9
+         RcbHeVqfSLlyqPzVVN+Snzq5qkxI58jfDBD6igXWXrEs8ZFTmRod7mEpVb+JD0rY4e
+         STMB6FbcN9hD+dvEfu4YuYGfi8jYrX3p9zG8lHg5moNOV/CQQRBRLCYjIbIODA641Z
+         g3My4K+RpFyxYb3BD2c6AvX7Y+czPh42DeO/WtFuGoiPexhrlLsBc5g+EvwPFgzioc
+         6VNj+QYGZsYpIZ87NYwgfKh3PMgPLZ44XRa0Xxl2RRS2GeRbp8coHz/JmSBCGETjAc
+         2jiTJaQSCNqQA==
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To:     Sumit Semwal <sumit.semwal@linaro.org>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -56,9 +56,9 @@ Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v2 4/7] fastrpc: Don't assert held reservation lock for dma-buf mmapping
-Date:   Thu,  6 Apr 2023 19:06:34 +0300
-Message-Id: <20230406160637.541702-5-dmitry.osipenko@collabora.com>
+Subject: [PATCH v2 6/7] dma-buf: Change locking policy for mmap()
+Date:   Thu,  6 Apr 2023 19:06:36 +0300
+Message-Id: <20230406160637.541702-7-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230406160637.541702-1-dmitry.osipenko@collabora.com>
 References: <20230406160637.541702-1-dmitry.osipenko@collabora.com>
@@ -68,43 +68,82 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Don't assert held dma-buf reservation lock on memory mapping of exported
-buffer.
-
-We're going to change dma-buf mmap() locking policy such that exporters
-will have to handle the lock. The previous locking policy caused deadlock
-problem for DRM drivers in a case of self-imported dma-bufs once these
-drivers are moved to use reservation lock universally. The problem is
-solved by moving the lock down to exporters. This patch prepares fastrpc
-for the locking policy update.
+Change locking policy of mmap() callback, making exporters responsible
+for handling dma-buf reservation locking. Previous locking policy stated
+that dma-buf is locked for both importers and exporters by the dma-buf
+core, which caused a deadlock problem for DRM drivers in a case of
+self-imported dma-bufs which required to take the lock from the DRM
+exporter side.
 
 Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/misc/fastrpc.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/dma-buf/dma-buf.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index a701132638cf..7e9c9ad37fd9 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -6,7 +6,6 @@
- #include <linux/device.h>
- #include <linux/dma-buf.h>
- #include <linux/dma-mapping.h>
--#include <linux/dma-resv.h>
- #include <linux/idr.h>
- #include <linux/list.h>
- #include <linux/miscdevice.h>
-@@ -733,8 +732,6 @@ static int fastrpc_mmap(struct dma_buf *dmabuf,
- 	struct fastrpc_buf *buf = dmabuf->priv;
- 	size_t size = vma->vm_end - vma->vm_start;
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index aa4ea8530cb3..21916bba77d5 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -131,7 +131,6 @@ static struct file_system_type dma_buf_fs_type = {
+ static int dma_buf_mmap_internal(struct file *file, struct vm_area_struct *vma)
+ {
+ 	struct dma_buf *dmabuf;
+-	int ret;
  
--	dma_resv_assert_held(dmabuf->resv);
+ 	if (!is_dma_buf_file(file))
+ 		return -EINVAL;
+@@ -147,11 +146,7 @@ static int dma_buf_mmap_internal(struct file *file, struct vm_area_struct *vma)
+ 	    dmabuf->size >> PAGE_SHIFT)
+ 		return -EINVAL;
+ 
+-	dma_resv_lock(dmabuf->resv, NULL);
+-	ret = dmabuf->ops->mmap(dmabuf, vma);
+-	dma_resv_unlock(dmabuf->resv);
 -
- 	return dma_mmap_coherent(buf->dev, vma, buf->virt,
- 				 FASTRPC_PHYS(buf->phys), size);
+-	return ret;
++	return dmabuf->ops->mmap(dmabuf, vma);
  }
+ 
+ static loff_t dma_buf_llseek(struct file *file, loff_t offset, int whence)
+@@ -850,6 +845,7 @@ static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
+  *     - &dma_buf_ops.release()
+  *     - &dma_buf_ops.begin_cpu_access()
+  *     - &dma_buf_ops.end_cpu_access()
++ *     - &dma_buf_ops.mmap()
+  *
+  * 2. These &dma_buf_ops callbacks are invoked with locked dma-buf
+  *    reservation and exporter can't take the lock:
+@@ -858,7 +854,6 @@ static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
+  *     - &dma_buf_ops.unpin()
+  *     - &dma_buf_ops.map_dma_buf()
+  *     - &dma_buf_ops.unmap_dma_buf()
+- *     - &dma_buf_ops.mmap()
+  *     - &dma_buf_ops.vmap()
+  *     - &dma_buf_ops.vunmap()
+  *
+@@ -1463,8 +1458,6 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_end_cpu_access, DMA_BUF);
+ int dma_buf_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma,
+ 		 unsigned long pgoff)
+ {
+-	int ret;
+-
+ 	if (WARN_ON(!dmabuf || !vma))
+ 		return -EINVAL;
+ 
+@@ -1485,11 +1478,7 @@ int dma_buf_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma,
+ 	vma_set_file(vma, dmabuf->file);
+ 	vma->vm_pgoff = pgoff;
+ 
+-	dma_resv_lock(dmabuf->resv, NULL);
+-	ret = dmabuf->ops->mmap(dmabuf, vma);
+-	dma_resv_unlock(dmabuf->resv);
+-
+-	return ret;
++	return dmabuf->ops->mmap(dmabuf, vma);
+ }
+ EXPORT_SYMBOL_NS_GPL(dma_buf_mmap, DMA_BUF);
+ 
 -- 
 2.39.2
 
