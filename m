@@ -2,25 +2,25 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E73A9C77B70
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 17:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C20C7618D
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Apr 2023 17:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240098AbjDFRU0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Apr 2023 13:20:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57672 "EHLO
+        id S240111AbjDFRU2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Apr 2023 13:20:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjDFRTv (ORCPT
+        with ESMTP id S238397AbjDFRTv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Apr 2023 13:19:51 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on20600.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eae::600])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0C8B74F;
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A838B74C;
         Thu,  6 Apr 2023 10:19:26 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aKCeGQbhUwt3N4Ar6blZkX4Dg9Ogx452/DxAdt8jRwmAef+4I7WG4bwforYVuyp6Xb/JxWaQ5U7oBFgaJzn7NOe3BwwMHx1oMlfYnj9pYgecDH/ArERLBWtU52X4ty/X9a9cD1rCDnV5vCfcBY3wZBocOUQ7wZtZFLKYjlEEud+kIupJkJM6QdYzqFMwZvulkWqpJxHFdmvsKQ0X63Yy3RtCEzA4Av4YkPBgljlNsHkbYvZU43nVwNJO89XaID5maNvzT8j4SvRcPGxQVMnxO0qRTug8Jsm6t52DAz6fbNEdMPAvorLSqbUz/ur6ojZIHbHTc7A6A6cDjb93Nc5MlA==
+ b=LxZLdjcR6OrdSkDlySlSIqGSSC61drOSYTUhW3cqF1LDnwFU78ER/o8PQi/cU2BvTgNGOKVdRS5m7qD497cAEfflyWrTQV7AmhZX+Nk1IdRqP2dqC86jLFkqiTVWie8ck84zygt7Rbd8JeDbf8QXryyCxAnEv7p+g7DgZrLVglxMzzWnbWymFaejAbiMzMUp5JWQ0dDGEjkQAtnCpJ1E1BpSx+q8xxrBR4JHPeWQyJX6jr52MhUfkYLvjUxBMJje79SoydiTj5x0CmID2cVlJYo+5+/qPFu2r4MkK2n03lbQ1eXlhVPMnE346x6dHSYz6NCqQ1ntxINeDcodfSc8pA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jq6UmJPHke1jcU1XfRhPlhhFfZbQYlbpC9SF83EL9xc=;
- b=VSz0boJK1Vy5T0sU4/e/nF0/zhWxRilF13fPt75f9ODOSKY5cuTx1qdo2lvcKgpjSTWNAyrc5tLGHt6GHvT8J2jC87Aeffp8dYuPSmMiiZpAHMPT8CGSM/iBLATJVRp7HOj63oIAnHNiqqOzhvfa54fZ4UtQ59SlUTjyJYdT5ILgzhlPcKBA1ecipSyTO4ueh65uUPmiP3mDCSrZ7U5HS5mfOgCNE73zmy91D9M1EGk5SprDmY7yNBWe6hf1l0Uouuwx5Sabm22F9MU0q5v21mpRwe2X0vs5V7Sd4X0JFf4V0FTyAYhPy1CehLpZYmfpm+n/v2KlYnFaTZZihzehQw==
+ bh=rpr7mmBjfnZDPZpotB3Ko5DC5NCtrzswAHRmVD+pezE=;
+ b=H7LX46BGNEqMSM7TzoZGQa9P3w2d9gZNAYYwS0cTiRGYVywhOBEgLfP7zjVypmX37D4VnDjf0kHBw/TC9h0TV/G3cMpuEbCe1OkF3JSyNPcol8a4IzRAX+uJueYr79HPDl3rQbOVcqoYP53Xg42i7/ohk7fD52EfesfW2fJcXMMKRU7dj8TsvOrVoxEh3Cx4hX/Olc1HI9NuysZKnMqGOfBeEe1R41OFXq0hUbun2eaAk/maD/pV5mpsmHxxVina7rTbYs+4yjaaCvvg1PysmX7Ftr9KDR9GaOBiUsk/SZ0ZErL648RgM3kgCzXDRfs/TliAQniVhnR3CaSyDkCtDQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -28,18 +28,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jq6UmJPHke1jcU1XfRhPlhhFfZbQYlbpC9SF83EL9xc=;
- b=R+bSpCLVwkneSOZtFpOSDqEzktZWLZ9NylEwFjcxSiNQJk6VURsl7u7QqIK23N0oChVptqp9eILCp9ArHHslhaZs/rWCgKO7G41kBzRzKhBkU8CW0ZZXOmr0o5ZPaayEWySUokgZI0SBsTP5TSm2G6PaRUF1ozADUC4uN80lYLPPHr+cIdOAwgWdVAx105M/k73dgYhmGxrVJS4Aw1Wq6t0MuDZcogw/AJEALEKLTsOsFvrw8yu8BrVRo9LUHCoxshxAdsj6/EJ8FebRD8+9938h1Y+NHh+uOSauM3CZPnE8iJIyJmHHss4fTRT/qoESyUqBt75wC3rK8aKph/PF8g==
-Received: from BN0PR04CA0066.namprd04.prod.outlook.com (2603:10b6:408:ea::11)
- by SA1PR12MB7200.namprd12.prod.outlook.com (2603:10b6:806:2bb::7) with
+ bh=rpr7mmBjfnZDPZpotB3Ko5DC5NCtrzswAHRmVD+pezE=;
+ b=kLj6MsE3k9Egr3XQlOpzkq0xZBwEm/hfozHmndb4Yc7wb/Ddxib5SoFtSmBDJvu7BkxRq3Wa0FjC720QXxpr1b4SLTicM3LPnga0AtEfAPQeG0c3hdyoYrUf02GT0tDiDpERFA815LVi5H/VVkEbR8S57cPoI72vStKr/9tvMlGhrNdG0UJY5+JMmn/R2+hFRStk8axnZAI+Kp00c9hHI11q3XlbiIlpUJNzniaI4arR3fC36vQ+2h5U0TPb8Wxim4qLg6rLt6S8G7h/ljXtz7SArzcCf/hs2hSH4IIogM1tU6lGcE54Os9XPDEgxeNFdWTPKOGFAmQreFfa/j2V/Q==
+Received: from BL1PR13CA0359.namprd13.prod.outlook.com (2603:10b6:208:2c6::34)
+ by PH7PR12MB6667.namprd12.prod.outlook.com (2603:10b6:510:1a9::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.33; Thu, 6 Apr
- 2023 17:19:06 +0000
-Received: from BL02EPF000145BB.namprd05.prod.outlook.com
- (2603:10b6:408:ea:cafe::c7) by BN0PR04CA0066.outlook.office365.com
- (2603:10b6:408:ea::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.37 via Frontend
- Transport; Thu, 6 Apr 2023 17:19:06 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.30; Thu, 6 Apr
+ 2023 17:19:07 +0000
+Received: from BL02EPF000145B8.namprd05.prod.outlook.com
+ (2603:10b6:208:2c6:cafe::4d) by BL1PR13CA0359.outlook.office365.com
+ (2603:10b6:208:2c6::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.14 via Frontend
+ Transport; Thu, 6 Apr 2023 17:19:07 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -47,20 +47,20 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF000145BB.mail.protection.outlook.com (10.167.241.211) with Microsoft
+ BL02EPF000145B8.mail.protection.outlook.com (10.167.241.208) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6222.35 via Frontend Transport; Thu, 6 Apr 2023 17:19:05 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ 15.20.6222.35 via Frontend Transport; Thu, 6 Apr 2023 17:19:07 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 6 Apr 2023
- 10:18:40 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 10:18:41 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 6 Apr 2023
- 10:18:39 -0700
+ 10:18:40 -0700
 Received: from dipenp.nvidia.com (10.127.8.10) by mail.nvidia.com
  (10.129.68.10) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Thu, 6 Apr 2023 10:18:39 -0700
+ Transport; Thu, 6 Apr 2023 10:18:40 -0700
 From:   Dipen Patel <dipenp@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
@@ -70,9 +70,9 @@ To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <krzysztof.kozlowski+dt@linaro.org>, <brgl@bgdev.pl>,
         <corbet@lwn.net>, <gregkh@linuxfoundation.org>
 CC:     Dipen Patel <dipenp@nvidia.com>
-Subject: [V5 02/10] dt-bindings: timestamp: Add Tegra234 support
-Date:   Thu, 6 Apr 2023 10:18:29 -0700
-Message-ID: <20230406171837.11206-3-dipenp@nvidia.com>
+Subject: [V5 04/10] dt-bindings: timestamp: Add nvidia,gpio-controller
+Date:   Thu, 6 Apr 2023 10:18:31 -0700
+Message-ID: <20230406171837.11206-5-dipenp@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230406171837.11206-1-dipenp@nvidia.com>
 References: <20230406171837.11206-1-dipenp@nvidia.com>
@@ -81,127 +81,107 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF000145BB:EE_|SA1PR12MB7200:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2d5c99f-f7fc-482c-b663-08db36c306a6
+X-MS-TrafficTypeDiagnostic: BL02EPF000145B8:EE_|PH7PR12MB6667:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0189bab-b62d-46cd-5d78-08db36c30787
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SvdTzGWtNW1BpwU+MIqhzU28qx1RYlQFhdespwdfgL/ft7ABSSuH0G9V56wDGaXyAv49i0OHSfc+XB3lQWeKmxK8IOI6pM3CfEmV0NdZYXAP8zEkIZxtTmAUsDjUv3eRPFJKwTR5VDIi65rZqiFASnYEU6/L2wROLDo6f83HPdrGHnxsn2JafP3cgnNMbqImYl9TW3XMuPArw9TuSCNOsrJCev2Vr77zU0u0gN7Lf49Iurog/NhIvadRHSFc5szW8RGT/uiIqybSeYCDtwH5N+gsurrIrHtEqBvYRgSQXKnjsyeBlm3sPvfRKexGLzZjxhPqwlaM3RBQT9DfXKi3glrJ/8VD6ED1WizeYOWilTpBpXc4fxY9V+rKJP1VCW3aPwm2kqyuIoeJ0AJQWrt7YwdZDw6pQO1qSGIxpzp5MqrX0RsUkQSFTHbFWgh6wfllPiBTdeCh5XyKSkl5TUiKbHykbC2r5AvU1KQ+aN7YaqvmvcqOT9XaRGe9ag8YOP0QkX4AgvKLYWGkHZukzmA7t3l1ifG/iBMU1Hr6qT3OC+upLrnicbfUhl8Yl+2I90isKHVGdjYPyTC3hzrSMoL2RiKpscw1pYdrOCLeJ+Ut4iQuCD73EiTNgLyCzrp2/GFatnFJU/k7xJ/8L+R5jmAqRVX4oFhVD+T8eRPkWZ5OgnxWiYueT7aOrhC16Nl8D2w/YTzVJxMYGOlQ8N3rtGSXpLR40JNRsGICpCx8Dlxt+f4K2AmMiCFvmBd23QGnxdJo4dERY2zijw/1uCnhlqfX6ADjj8syILJyHM38862DEqzwkJ0yfbU6UcNjDuHD23zdQ7JOWf34+4IbdFcRaYrDN3kStbnSGLXfQUU/s7iWVOaiKO/2ojThraRlszrPB/qOrgvJR5ESVQqu5a2dJdaCRw==
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(136003)(396003)(39860400002)(451199021)(46966006)(36840700001)(40470700004)(47076005)(110136005)(478600001)(186003)(1076003)(2616005)(107886003)(40480700001)(7696005)(36756003)(966005)(2906002)(86362001)(40460700003)(83380400001)(6666004)(26005)(426003)(356005)(70206006)(70586007)(41300700001)(5660300002)(8936002)(7416002)(921005)(7636003)(8676002)(82740400003)(36860700001)(316002)(336012)(4326008)(82310400005)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 0zUwQCusRD9naTU1onApIMIO8TjEbReIreBwBcAfHZ0uz+IPwNZAE3FK9cb8g4KNs3v5Jayqsw5EABOXYBmELOegkiLRkthEzrwVsb3TylXTcc8EFCnqYyULRSx/Cp7u2kLU0mQuKIh7YcsLCYXiXaUzB+zriUqhDRur0BsyfnnRFKfHguma7edF8CjIUe96Z3J28Onok3nxd1umLj83DTtmU7JhPHGMDoTIFffCVvZ6kNdoOBBhi9wdAPqXquKl1/2T9GAjuixkZAy5kYW65BbGEODU3cAp86l0Q83TbapAof9B+l5qriQs39rWSe8syzupJ6tK0XR9KnGzspt15sxAIINZorFoKeNAqOF2FGV12dzabPZXrqQsn4SJ2hr/rM2hChQznd/t349Q7Y0OLm2iwUOiyXI7Z7qN6H2tow0fgxDF5CMsg3pPpudDiEm1UtGP49lilIloobAoVH7oTy79BXVKKV4784gQ+OBXpOZztcvQQjcSbr2aACK6KvZnEJl+byjuCcEeZ40vl6LVj0Q7oM8jZ1JSyp0FwgeyO2ztdXj2UDpJXHU/e7rZDFwjt68OM8a9xTkYUnMfIbnY3C75jnV4kmtInbqN7Xp5IhXE4G56BrygK48XsSx1MXkzpbEu1ILCxPwkzBSzK7N3DHum64ZOF0AMgzuPUME6sajYWYJ3WCbkoyDMsqmkb5/IYtUZlduxAab3jQFEGDtjLEXBd1+NZXZzDJqBGjunI/b7kgAllO18P9OnTdpkCj71giC2EQZrDw5KvuENIHKD6KXhSlxeweYjmoluuXpk/KsDKpk9VaxqRoEg9rLx6uln
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(136003)(376002)(39860400002)(451199021)(40470700004)(46966006)(36840700001)(82740400003)(82310400005)(7636003)(356005)(921005)(40460700003)(40480700001)(7696005)(86362001)(36756003)(6666004)(186003)(1076003)(4326008)(26005)(107886003)(70206006)(2906002)(70586007)(5660300002)(478600001)(316002)(41300700001)(8936002)(7416002)(110136005)(36860700001)(336012)(47076005)(83380400001)(8676002)(426003)(2616005)(83996005)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2023 17:19:05.9137
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2023 17:19:07.3860
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2d5c99f-f7fc-482c-b663-08db36c306a6
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0189bab-b62d-46cd-5d78-08db36c30787
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000145BB.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000145B8.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7200
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6667
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Added timestamp provider support for the Tegra234 in devicetree
-bindings.
+The tegra always-on (AON) GPIO HTE/GTE provider depends on the AON
+GPIO controller where it needs to do namespace conversion between GPIO
+line number (belonging to AON GPIO controller instance) and the GTE
+slice bits. The patch introduces nvidia,gpio-controller property to
+represent that dependency.
 
 Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-v2:
-- Removed nvidia,slices property
-- Added nvidia,gpio-controller based on review comments from Thierry,
-  this will help simplify the  hte provider driver.
-
-v3:
-- Explained changes in detail in commit message
-- Added allOf section per review comment
-
-v4:
-- Logically divide the v3 patch as follows
-- Created Tegra234 support patch
-- Created depracate nvidia,slices property patch
-- Created addition of the nvidia,gpio-controller property patch
-
- .../timestamp/nvidia,tegra194-hte.yaml        | 44 +++++++++++++++++--
- 1 file changed, 40 insertions(+), 4 deletions(-)
+ .../timestamp/nvidia,tegra194-hte.yaml        | 36 ++++++++++++++++---
+ 1 file changed, 31 insertions(+), 5 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-index c31e207d1652..158dbe58c49f 100644
+index 855dad3f2023..66eaa3fab8cc 100644
 --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
 +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/timestamp/nvidia,tegra194-hte.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+@@ -51,6 +51,12 @@ properties:
+       LIC instance has 11 slices and Tegra234 LIC has 17 slices.
+     enum: [3, 11, 17]
  
--title: Tegra194 on chip generic hardware timestamping engine (HTE)
-+title: Tegra on chip generic hardware timestamping engine (HTE) provider
- 
- maintainers:
-   - Dipen Patel <dipenp@nvidia.com>
-@@ -23,6 +23,8 @@ properties:
-     enum:
-       - nvidia,tegra194-gte-aon
-       - nvidia,tegra194-gte-lic
-+      - nvidia,tegra234-gte-aon
-+      - nvidia,tegra234-gte-lic
- 
-   reg:
-     maxItems: 1
-@@ -43,9 +45,8 @@ properties:
-     description:
-       HTE lines are arranged in 32 bit slice where each bit represents different
-       line/signal that it can enable/configure for the timestamp. It is u32
--      property and depends on the HTE instance in the chip. The value 3 is for
--      GPIO GTE and 11 for IRQ GTE.
--    enum: [3, 11]
-+      property and the value depends on the HTE instance in the chip.
-+    enum: [3, 11, 17]
- 
++  nvidia,gpio-controller:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle to AON gpio controller instance. This is required to handle
++      namespace conversion between GPIO and GTE.
++
    '#timestamp-cells':
      description:
-@@ -55,6 +56,41 @@ properties:
+       This represents number of line id arguments as specified by the
+@@ -59,6 +65,12 @@ properties:
        mentioned in the nvidia GPIO device tree binding document.
      const: 1
  
-+allOf:
++required:
++  - compatible
++  - reg
++  - interrupts
++  - "#timestamp-cells"
++
+ allOf:
+   - if:
+       properties:
+@@ -94,11 +106,15 @@ allOf:
+         nvidia,slices:
+           const: 17
+ 
+-required:
+-  - compatible
+-  - reg
+-  - interrupts
+-  - "#timestamp-cells"
 +  - if:
 +      properties:
 +        compatible:
 +          contains:
 +            enum:
-+              - nvidia,tegra194-gte-aon
 +              - nvidia,tegra234-gte-aon
 +    then:
-+      properties:
-+        nvidia,slices:
-+          const: 3
++      required:
++        - nvidia,gpio-controller
+ 
+ additionalProperties: false
+ 
+@@ -112,6 +128,16 @@ examples:
+               #timestamp-cells = <1>;
+     };
+ 
++  - |
++    tegra234_hte_aon: timestamp@c1e0000 {
++              compatible = "nvidia,tegra234-gte-aon";
++              reg = <0xc1e0000 0x10000>;
++              interrupts = <0 13 0x4>;
++              nvidia,int-threshold = <1>;
++              nvidia,gpio-controller = <&gpio_aon>;
++              #timestamp-cells = <1>;
++    };
 +
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra194-gte-lic
-+    then:
-+      properties:
-+        nvidia,slices:
-+          const: 11
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra234-gte-lic
-+    then:
-+      properties:
-+        nvidia,slices:
-+          const: 17
-+
- required:
-   - compatible
-   - reg
+   - |
+     tegra_hte_lic: timestamp@3aa0000 {
+               compatible = "nvidia,tegra194-gte-lic";
 -- 
 2.17.1
 
