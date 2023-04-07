@@ -2,153 +2,126 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E45C77B6E
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 08:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C67C6FD1D
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 08:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239799AbjDGIL2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Apr 2023 04:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51356 "EHLO
+        id S233084AbjDGIxE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Apr 2023 04:53:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239610AbjDGILM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 04:11:12 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DEBA5DC;
-        Fri,  7 Apr 2023 01:11:01 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id D70776000C;
-        Fri,  7 Apr 2023 08:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1680855059;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k62lE0Z84brwUbN0RTewMQPHSeeiOVUlnJEgkCzQsvo=;
-        b=R9CLiy5G5LdE9BO36N204fuspyAxiiF7TmcabLrbwrQPeoEl5Pn0pcw2pa9LFURAj+yhqS
-        Ku6ulo+yoPDqo0ywa6hZxIhfMa2hfrKY6oIoCe+v26HM6BlIqcgn8p8u0WJDFU+gYVyAOT
-        iWOVTokLobBTMlDhc5L2oqSRq3pJIdqQ+s5IqSFwu1iEWL1rH1J0xX63ZpwsrUgxYtF5VC
-        JMA7zniKULdwaW97f/g6p4Ec2AzETlg0EBYuF+OIU67+xs5aqnBUa8bo0FWsfGskdfArda
-        sO7wxwa4nSLUU/oHmfv/0zUTbea+upPaTGkKYKQ1Sq0BSBr1Ah5yUIuIzPRbHA==
-Date:   Fri, 7 Apr 2023 10:10:43 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Valentin Korenblit <vkorenblit@sequans.com>,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
-        Han Xu <han.xu@nxp.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        Jack Wang <jinpu.wang@ionos.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org, linux-oxnas@groups.io,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 00/49] mtd: nand: Convert to platform remove callback
- returning void
-Message-ID: <20230407101043.299f5e22@xps-13>
-In-Reply-To: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
-References: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S239663AbjDGIxC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 04:53:02 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE562688
+        for <linux-tegra@vger.kernel.org>; Fri,  7 Apr 2023 01:53:01 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id 18so7015712ejo.13
+        for <linux-tegra@vger.kernel.org>; Fri, 07 Apr 2023 01:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680857579;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wlHWtlABj8qjvp5ESnXWBoVofX8daVWy+IDWAsL03bY=;
+        b=ia0bi7tbGYmCoZN1df9IYpjDKCeq8SPvEQyKE/xUtm+yOWJS+V1pb0SOji5K3cBcaj
+         8cuakjt68IModKox6lDFqyHJst/92x7iV2ZjVXsqATmlmQmqW7Voy+jkwmSHrimk1IfI
+         xUdwWN8nnSFXiU3ALSpo31fYtdlDx32tqzX+KrtKtgMpBysQD6vDlkTxz9NHG5mtWHu/
+         xuI5fjDy3xwdn46qSzFcrK5BkkRob5ciKQBxIEHV1LUaSFqQ93hQRMjo0eZPCyVAheUk
+         CidUQpFX7v2QN52KuI67K+HJjkXhpeb/kOgitgfCX4pwj0dX/QCWhE0r+zXZnZNHbMJ5
+         m5HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680857579;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlHWtlABj8qjvp5ESnXWBoVofX8daVWy+IDWAsL03bY=;
+        b=ZI0iLsz8XdWjTb6hA5VNi6tLKXdNeFrC4hIbT6iwxCRMXgypuK79htHqwFXU4SXxxv
+         Sgnmn3bkeHFzYBkMi7ZSnTeg8hfokhbBqWlslrpis/tO4SuDeeaHlzfq94kbhQTpkBQt
+         oV5ua/OJVukCuLgLKK0FpqhjlwVAKFa19BEenW8EQI+YFEGoi4UNysOWGZj6X+OONQfG
+         fIgVh+dpR/uqMfqTN4LbqkqhxWX3KzZYLdVr3ik3Hp9LZxi+pgGhnNi/8lGMr/wc/8PI
+         caOZYzbNtgKqBiuzkXZunnOuXC2wNlCorU8enLJlukEEFc+6ejVg7UlDwrlLUSiVD2fJ
+         LwwA==
+X-Gm-Message-State: AAQBX9eurmS6DwKi/L3AlRcGo/tGOHVYlIvoteGFT84WEHF1Ff0iddDK
+        xQtFKWU6EYAC2jWOTufvhoyFders2ei8KwZvD14=
+X-Google-Smtp-Source: AKy350bAQnGAWfdFGFapIr547rM6c0h1WffL1ip7X2v6HtQLEMwThzXIQlEhVE4EIZq84rRuMGzhww==
+X-Received: by 2002:a17:906:4a92:b0:8b1:2bde:5c70 with SMTP id x18-20020a1709064a9200b008b12bde5c70mr1595023eju.2.1680857579641;
+        Fri, 07 Apr 2023 01:52:59 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:14a3:366:3172:3c37? ([2a02:810d:15c0:828:14a3:366:3172:3c37])
+        by smtp.gmail.com with ESMTPSA id wg11-20020a17090705cb00b0093a0e5977e2sm1811378ejb.225.2023.04.07.01.52.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Apr 2023 01:52:59 -0700 (PDT)
+Message-ID: <4129f3d5-1df8-a767-6783-1d7123b2e9d4@linaro.org>
+Date:   Fri, 7 Apr 2023 10:52:58 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 1/4] dt-bindings: Document additional Jetson Orin NX SKUs
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20230331163159.17145-1-thierry.reding@gmail.com>
+ <3a8724bc-fb44-0080-fd24-c04e3841385e@linaro.org> <ZCwAnBbeYVVUMti8@orome>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZCwAnBbeYVVUMti8@orome>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Uwe,
+On 04/04/2023 12:49, Thierry Reding wrote:
+> On Fri, Mar 31, 2023 at 10:19:00PM +0200, Krzysztof Kozlowski wrote:
+>> On 31/03/2023 18:31, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> Beyond the original 16 GiB SKU (0), additional SKUs exist, such as the 8
+>>> GiB SKU (1) and an internal-only SKU (2) that comes with an equipeed SD
+>>
+>> typo: equipped
+>>
+>>> card slot.
+>>
+>> Is there a point in documenting all of them if there is no DTS? Also,
+>> size of storage (eMMC?) pretty often is runtime-detectable, so you do no
+>> need a new DTS and new compatible.
+> 
+> This is for the sake of completeness since these compatible strings
+> correspond to the part numbers that will show up on stickers on these
+> modules. In practice, yes, most of the differences will be runtime-
+> detected and the DT updated to reflect the SKU differences by UEFI.
 
-u.kleine-koenig@pengutronix.de wrote on Sat,  1 Apr 2023 18:18:49 +0200:
+Just because there is some sticker, it does not mean we need a
+compatible. We actually omit dozen of versions per device - all PMICs,
+I2C IIO and others have some packaging bins and revision numbers.
 
-> Hello,
->=20
-> this series adapts the platform drivers below drivers/mtd/nand to use the
-> .remove_new() callback. Compared to the traditional .remove() callback
-> .remove_new() returns no value. This is a good thing because the driver c=
-ore
-> doesn't (and cannot) cope for errors during remove. The only effect of a
-> non-zero return value in .remove() is that the driver core emits a warnin=
-g. The
-> device is removed anyhow and an early return from .remove() usually yield=
-s a
-> resource leak.
->=20
-> By changing the remove callback to return void driver authors cannot
-> reasonably assume any more that there is some kind of cleanup later.
->=20
-> As all drivers already return 0 in their .remove callback, they can be
-> converted trivially.
+Although here if I understand correctly, UEFI firmware will add these
+compatibles?
 
-I've looked at the different patches, they look good to me but as they
-are all trivial and exactly identical, would you mind sending this
-again all squashed in a single patch? A subsystem-wide conversion seems
-appropriate. In all cases I plan to take this for the next merge
-window.
+> 
+> As far as I know, UEFI doesn't actually do anything with the compatible
+> strings themselves, but that's potentially something that could happen
+> at some point. The SKU numbers also show up in EEPROMs, so I think
+> having one place where these are documented might be helpful to people.
 
-I've collected the tags received so far if you want:
+Just like bins, revision numbers etc, the DT would be overwhelmed if we
+decided to document all this just because it exists somewhere.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com> # atmel
-Reviewed-by: Paul Cercueil <paul@crapouillou.net> # ingenic
-Reviewed-by: Philippe Mathieu-Daud=C3=A9 <philmd@linaro.org> # ingenic
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com> # intel
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com> # mes=
-on
-Acked-by: Roger Quadros <rogerq@kernel.org> # omap
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
-Reviewed-by: Heiko Stuebner <heiko@sntech.de> # rockchip
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com> # sunxi
-Acked-by: Thierry Reding <treding@nvidia.com> # tegra
+> 
+> The 16 GiB in this case is actually DRAM, but it's also detected at
+> runtime. 
 
-BTW, thanks to all of you who reviewed and answered to this thread!
-This is highly appreciated.=20
+Which in many cases is filled by bootloader (/memory node) and we do not
+create any new compatibles.
 
-Thanks,
-Miqu=C3=A8l
+> We don't actually plan on upstreaming DTS files for all of
+> these, since we don't expect all SKUs to be widely used (the internal
+> one, for example) so we should be able to cover pretty much all variants
+> with just two DTS files.
+
+That's one  more argument of not having these compatibles at all.
+
+Best regards,
+Krzysztof
+
