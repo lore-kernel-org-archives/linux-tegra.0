@@ -2,59 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C67C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 08:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A016C77B61
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 09:00:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233084AbjDGIxE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Apr 2023 04:53:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
+        id S240136AbjDGJAC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Apr 2023 05:00:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239663AbjDGIxC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 04:53:02 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE562688
-        for <linux-tegra@vger.kernel.org>; Fri,  7 Apr 2023 01:53:01 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id 18so7015712ejo.13
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Apr 2023 01:53:01 -0700 (PDT)
+        with ESMTP id S238089AbjDGJAC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 05:00:02 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FE8B86B9
+        for <linux-tegra@vger.kernel.org>; Fri,  7 Apr 2023 02:00:00 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id j22so7058451ejv.1
+        for <linux-tegra@vger.kernel.org>; Fri, 07 Apr 2023 02:00:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680857579;
+        d=linaro.org; s=google; t=1680857999;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wlHWtlABj8qjvp5ESnXWBoVofX8daVWy+IDWAsL03bY=;
-        b=ia0bi7tbGYmCoZN1df9IYpjDKCeq8SPvEQyKE/xUtm+yOWJS+V1pb0SOji5K3cBcaj
-         8cuakjt68IModKox6lDFqyHJst/92x7iV2ZjVXsqATmlmQmqW7Voy+jkwmSHrimk1IfI
-         xUdwWN8nnSFXiU3ALSpo31fYtdlDx32tqzX+KrtKtgMpBysQD6vDlkTxz9NHG5mtWHu/
-         xuI5fjDy3xwdn46qSzFcrK5BkkRob5ciKQBxIEHV1LUaSFqQ93hQRMjo0eZPCyVAheUk
-         CidUQpFX7v2QN52KuI67K+HJjkXhpeb/kOgitgfCX4pwj0dX/QCWhE0r+zXZnZNHbMJ5
-         m5HQ==
+        bh=TFRYoLLiAiUJ8Uj5NmQxGnUsAVpAgC+ZF9701cISMN8=;
+        b=MRjUZWqzY7Z9xhZ6yVkcaMxyh6hQ4PG8Q+iyBCfDk5QWhzRXqiCd5j3M0ioZ6dq78/
+         8o71sGConYzSsMbYIujWzRawUKNqV+QX99Xn6g8g/2P3JMuDKThqslO7HUYJSAql+Pgv
+         qkOHncgJ0WyOT5BJp+ZCF2Vc1C4IUcuXRZAs+b4SinPvJWnhbNlxOb93F4sczyUSNaMR
+         qJhvdIaio6uTYSdYmgkNMVrDB7KfVJC85g8XHGxefLERIdRMvQv94RPoJQKD+0L1L2xp
+         ggcHcVXLcILavWZ0a/uAtEOHU5hABi7hbWMiQAJlTSVCuTpHnEl0X8Jf/iwpaAEJL2pk
+         RX3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680857579;
+        d=1e100.net; s=20210112; t=1680857999;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wlHWtlABj8qjvp5ESnXWBoVofX8daVWy+IDWAsL03bY=;
-        b=ZI0iLsz8XdWjTb6hA5VNi6tLKXdNeFrC4hIbT6iwxCRMXgypuK79htHqwFXU4SXxxv
-         Sgnmn3bkeHFzYBkMi7ZSnTeg8hfokhbBqWlslrpis/tO4SuDeeaHlzfq94kbhQTpkBQt
-         oV5ua/OJVukCuLgLKK0FpqhjlwVAKFa19BEenW8EQI+YFEGoi4UNysOWGZj6X+OONQfG
-         fIgVh+dpR/uqMfqTN4LbqkqhxWX3KzZYLdVr3ik3Hp9LZxi+pgGhnNi/8lGMr/wc/8PI
-         caOZYzbNtgKqBiuzkXZunnOuXC2wNlCorU8enLJlukEEFc+6ejVg7UlDwrlLUSiVD2fJ
-         LwwA==
-X-Gm-Message-State: AAQBX9eurmS6DwKi/L3AlRcGo/tGOHVYlIvoteGFT84WEHF1Ff0iddDK
-        xQtFKWU6EYAC2jWOTufvhoyFders2ei8KwZvD14=
-X-Google-Smtp-Source: AKy350bAQnGAWfdFGFapIr547rM6c0h1WffL1ip7X2v6HtQLEMwThzXIQlEhVE4EIZq84rRuMGzhww==
-X-Received: by 2002:a17:906:4a92:b0:8b1:2bde:5c70 with SMTP id x18-20020a1709064a9200b008b12bde5c70mr1595023eju.2.1680857579641;
-        Fri, 07 Apr 2023 01:52:59 -0700 (PDT)
+        bh=TFRYoLLiAiUJ8Uj5NmQxGnUsAVpAgC+ZF9701cISMN8=;
+        b=M/Pfs/WwwKOx0gIWJ7YxJ6/bUhh/hxYH0iM5uH2aGAPCf2SyrK2T2axLPklYtaEjra
+         HztJ1/OGvLoNibVhJh5TAeauCDzaFRKELXNDVOQlY+fQFk5so59uTeYbVrC+YPDTzm+q
+         EI4zfN0RqrXVg9vyJwc5mB7dThkz9Z8g8t1FPano0/5XAtk9gV6x+NiS1WhIvVAbi8ly
+         erV1orKcsQsvOYahA+qTOVWjxLRzFGoTGpeenvBS9jO6eopjmW6vfrg5zZYu3dn7DqFt
+         J1JkNte2QjPaFtTOHFXQlEwIW8tuhTnA/H0QqG7BFF1U7ze467cY4T8qbx6slEaeVJB6
+         h17A==
+X-Gm-Message-State: AAQBX9fL/4BOpnxcgQ7C9tNjGQWVMy0TG8xqaEK6K9h9ClpyGuPqYVdx
+        pQaHBz4/IYJnKHr7nuxSrLL4Lg==
+X-Google-Smtp-Source: AKy350bsUKBzpzsI8dUYbRFz23k3elErLBMEuJpD1nI8ltpMbBcrf4/8Zg4wvAAtHG+yrz5R9y9Utg==
+X-Received: by 2002:a17:906:af78:b0:92f:e7e2:b7b3 with SMTP id os24-20020a170906af7800b0092fe7e2b7b3mr1833630ejb.5.1680857998892;
+        Fri, 07 Apr 2023 01:59:58 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:14a3:366:3172:3c37? ([2a02:810d:15c0:828:14a3:366:3172:3c37])
-        by smtp.gmail.com with ESMTPSA id wg11-20020a17090705cb00b0093a0e5977e2sm1811378ejb.225.2023.04.07.01.52.58
+        by smtp.gmail.com with ESMTPSA id cw10-20020a170906478a00b009486efb9192sm1865736ejc.11.2023.04.07.01.59.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Apr 2023 01:52:59 -0700 (PDT)
-Message-ID: <4129f3d5-1df8-a767-6783-1d7123b2e9d4@linaro.org>
-Date:   Fri, 7 Apr 2023 10:52:58 +0200
+        Fri, 07 Apr 2023 01:59:58 -0700 (PDT)
+Message-ID: <7df09672-6b7e-2f16-958c-e06909870332@linaro.org>
+Date:   Fri, 7 Apr 2023 10:59:57 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 1/4] dt-bindings: Document additional Jetson Orin NX SKUs
+Subject: Re: [PATCH 2/4] dt-bindings: tegra: Document Jetson Orin Nano
 Content-Language: en-US
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -62,65 +62,94 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20230331163159.17145-1-thierry.reding@gmail.com>
- <3a8724bc-fb44-0080-fd24-c04e3841385e@linaro.org> <ZCwAnBbeYVVUMti8@orome>
+ <20230331163159.17145-2-thierry.reding@gmail.com>
+ <944bc557-7090-4b5a-e1bc-31b99fad06e5@linaro.org> <ZCwDBO6317rGsAD4@orome>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZCwAnBbeYVVUMti8@orome>
+In-Reply-To: <ZCwDBO6317rGsAD4@orome>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04/04/2023 12:49, Thierry Reding wrote:
-> On Fri, Mar 31, 2023 at 10:19:00PM +0200, Krzysztof Kozlowski wrote:
+On 04/04/2023 12:59, Thierry Reding wrote:
+> On Fri, Mar 31, 2023 at 10:20:16PM +0200, Krzysztof Kozlowski wrote:
 >> On 31/03/2023 18:31, Thierry Reding wrote:
 >>> From: Thierry Reding <treding@nvidia.com>
 >>>
->>> Beyond the original 16 GiB SKU (0), additional SKUs exist, such as the 8
->>> GiB SKU (1) and an internal-only SKU (2) that comes with an equipeed SD
+>>> The Jetson Orin Nano is the little sibling of the Jetson Orin NX.
+>>> Document the corresponding compatible strings for these devices.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/arm/tegra.yaml | 7 +++++++
+>>>  1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+>>> index 61e638c9cad7..60c151da5e06 100644
+>>> --- a/Documentation/devicetree/bindings/arm/tegra.yaml
+>>> +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+>>> @@ -220,6 +220,13 @@ properties:
+>>>                - nvidia,p3767-0001
+>>>                - nvidia,p3767-0002
+>>>            - const: nvidia,tegra234
+>>> +      - description: Jetson Orin Nano
+>>> +        items:
+>>> +          - enum:
+>>> +              - nvidia,p3767-0003
+>>> +              - nvidia,p3767-0004
+>>> +              - nvidia,p3767-0005
 >>
->> typo: equipped
->>
->>> card slot.
->>
->> Is there a point in documenting all of them if there is no DTS? Also,
->> size of storage (eMMC?) pretty often is runtime-detectable, so you do no
->> need a new DTS and new compatible.
+>> Similar questions as for patch #1. Where are the DTSes? Where are the
+>> differences? If we keep documenting every SKU which is the same from
+>> user/OS perspective, this list would grow crazy.
 > 
-> This is for the sake of completeness since these compatible strings
-> correspond to the part numbers that will show up on stickers on these
-> modules. In practice, yes, most of the differences will be runtime-
-> detected and the DT updated to reflect the SKU differences by UEFI.
+> Most of the differences will be user-noticeable, even if they can be
+> runtime detected. Besides the mentioned differences in DRAM size, things
+> like the number of CPUs, 
 
-Just because there is some sticker, it does not mean we need a
-compatible. We actually omit dozen of versions per device - all PMICs,
-I2C IIO and others have some packaging bins and revision numbers.
+You need different DTS for different number of CPUs. It's not the case
+we talk here.
 
-Although here if I understand correctly, UEFI firmware will add these
-compatibles?
+> GPU compute units or video encoders/decoders
 
-> 
-> As far as I know, UEFI doesn't actually do anything with the compatible
-> strings themselves, but that's potentially something that could happen
-> at some point. The SKU numbers also show up in EEPROMs, so I think
-> having one place where these are documented might be helpful to people.
+I would argue that for these as well you will have different DTS.
 
-Just like bins, revision numbers etc, the DT would be overwhelmed if we
-decided to document all this just because it exists somewhere.
+> can vary depending on the SKU. While the OS should certainly be able to
+> abstract all of that away as best as possible, on user may still end up
+> with SKU 3 and another with SKU 5 and it's important for people to know
+> what they have.
+
+Depends. They know what do they have. If the DTS is the same, then it is
+apparently not important to know what do they have because it is all
+"the same" (in a compatible meaning).
 
 > 
-> The 16 GiB in this case is actually DRAM, but it's also detected at
-> runtime. 
+> So I think we have to find a way to both keep things simple from a DTS
+> point of view (as I said, we should be able to make do with one DTS file
+> for the Jetson Orin NX and one for the Jetson Orin Nano with UEFI taking
+> care of fixing up the DTS per SKU), and not lying to users. If users get
+> a SKU 3, then that's what we should report instead of 3 (or whatever
+> ends up being the SKU that we use in the DTS).
+> 
+> So I want to be as complete as possible in documenting these so that
+> when people go look for the part numbers, they can at least find some
+> reference to them.
 
-Which in many cases is filled by bootloader (/memory node) and we do not
-create any new compatibles.
+To Chromium guys I need to spend effort to ask to document at least
+something, as they claim any board compatible bindings are useless for
+them. It's one border case.
 
-> We don't actually plan on upstreaming DTS files for all of
-> these, since we don't expect all SKUs to be widely used (the internal
-> one, for example) so we should be able to cover pretty much all variants
-> with just two DTS files.
+Here, I need to bring it to the middle from another side and border case
+- documenting many unneeded compatibles which do not exist in DTS.
 
-That's one  more argument of not having these compatibles at all.
+It would be much easier if you folks get together and exchange
+arguments, not through me. :)
+
+Let me be clear then for this case:
+We do not document compatibles for stuff somewhere out-of-tree, just
+because it is there or you want it to be there. We document the stuff in
+the kernel or other SW projects.
 
 Best regards,
 Krzysztof
