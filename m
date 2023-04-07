@@ -2,109 +2,201 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5E8C6FD1D
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 09:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E415C77B6C
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 13:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240395AbjDGJWt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Apr 2023 05:22:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39972 "EHLO
+        id S230198AbjDGNjN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Apr 2023 09:39:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239255AbjDGJWs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 05:22:48 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFA657EFE
-        for <linux-tegra@vger.kernel.org>; Fri,  7 Apr 2023 02:22:47 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id v14-20020a05600c470e00b003f06520825fso4098809wmo.0
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Apr 2023 02:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680859366; x=1683451366;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mAHN/CXGKB3MoWWLWw4IwQR8WT0NcGmGtE32ua85Fio=;
-        b=fnAVnR//fLTEhksF6zhXwre/Lz8EGHSTWVPDu47TErpK2EkQldJ7D8tV6M6A4jE94r
-         Auf9T86+AbWaYOY9AoOocUu7N6fpZL2I9VqkdH//u9w0Agg+QoodIPNeiXHysrObZYgQ
-         DSR3HtXLLLS907XBhkKbbHeHTuc7FOrp1fuedLnoyAv1fCWdRpJBEhJfXVjQTBmhflF2
-         rg60dk6KBY7uurF9/AmFMpRD0B0DpdsZsb60Idh9M83bfna82ouQZAnmZM+0WFUPuOWQ
-         GJylSPyq9iqmFLrwnMSadPyRbUcpYzYBfjv+oJe1aEdMQhfF9oa3Hcc78lVoJg+Bqjgo
-         Qx9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680859366; x=1683451366;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mAHN/CXGKB3MoWWLWw4IwQR8WT0NcGmGtE32ua85Fio=;
-        b=eQ9PHdV32UtJ2a9petTWBv6cX/oCffu4LKDliZCAWfjJ1rdzU1jk0oGPEKEVmoqjiH
-         KigmkaO8UnvrO2jHbONRwkyCykmkCuzm+JjUl5shmoyvOFfjtwC6wnAR7av9Ociism+f
-         OOWWX9zobGNQspFlAKXK2fg3zzOyj8sppwP0Fn8RV63YCeorBax52F2Pk12HslMDNPnZ
-         eLtNQhB1+v5we1gFYKIYFGGvVEBgs2WvzbT1vSXyyNUthqVz+9PyN4da+E8gt89JE5lb
-         Nd2FtAT4xBRjNvceHL1sbORYuLINVh9hvRI8QzDAw94uiHbr9NBpAONtTOf4v4rYGj9D
-         Wsxg==
-X-Gm-Message-State: AAQBX9fdbGEFZZloa9oLCwueMT/XuoQ88eshfAS5wOlZmHxU4/CgNZQQ
-        ScWXL0eTMQhELIk/hTaMhGkPQCiKCZU0GQ==
-X-Google-Smtp-Source: AKy350aZVRXZqA0LSuGCu5ghnoUFmSjHwuifpbjTE2BfrdbgLgWlLt+Fzu0kAPnCVeVfa/lTm2PkfA==
-X-Received: by 2002:a1c:7212:0:b0:3ef:71d5:41d8 with SMTP id n18-20020a1c7212000000b003ef71d541d8mr810583wmc.32.1680859366089;
-        Fri, 07 Apr 2023 02:22:46 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d4-20020a05600c3ac400b003ee8a1bc220sm7766510wms.1.2023.04.07.02.22.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Apr 2023 02:22:45 -0700 (PDT)
-Date:   Fri, 7 Apr 2023 12:19:09 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     mperttunen@nvidia.com
-Cc:     linux-tegra@vger.kernel.org
-Subject: [bug report] drm/tegra: Add NVDEC driver
-Message-ID: <29294990-de08-4806-b71d-66b769126c5e@kili.mountain>
+        with ESMTP id S230361AbjDGNjM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 09:39:12 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C2E893;
+        Fri,  7 Apr 2023 06:39:09 -0700 (PDT)
+Received: from booty.fritz.box (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id C45F31BF20A;
+        Fri,  7 Apr 2023 13:39:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1680874747;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=VVN0XOngDYz3uGp4wCGBZNM2OHBQACSdvb++Rh+7vvs=;
+        b=SI+lxDSNzORAqgYxur6f7/ldWLJSIqGCO7TYflpS2hfjrz59oR4h0iczIYxpetpxUf+UhJ
+        ESeHWh7albPLHlQ/J4cWqCntV9KwjfOF7psQW/fM+4ly4SFdB0/FJ4q1eRb+V+h1GOdhe2
+        ywHf3Uf46Bc/plUn+c8gkzkAtKWAt+XYyOsOj3FiV6JvbSvDC1RpnEVktRkcXTnr7jRuwf
+        uOY+o5MEFLOMTiK3qKAxqbPEuzcyJavXwtzahTOHaA9XGr2944bS+GGLkyi0rJxA3aUNTV
+        8KU4XvQMUCATp9HPQf5PBl6TbvSf/xIaUsJoIC854ZpmFjQMeb58YyOzd+wxSQ==
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     linux-tegra@vger.kernel.org
+Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-staging@lists.linux.dev,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Richard Leitner <richard.leitner@skidata.com>
+Subject: [PATCH v5 00/20] Add Tegra20 parallel video input capture
+Date:   Fri,  7 Apr 2023 15:38:32 +0200
+Message-Id: <20230407133852.2850145-1-luca.ceresoli@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Mikko Perttunen,
+New in v5: dropped the patch that was removing lots of the logic behind
+enum_format, after discussion with Hans. The rest is unmodified except for
+rebasing and fixing a couple typos in comments.
 
-The patch 46f226c93d35: "drm/tegra: Add NVDEC driver" from Sep 16,
-2021, leads to the following Smatch static checker warning:
+Full details follow.
 
-	drivers/gpu/drm/tegra/nvdec.c:282 nvdec_load_falcon_firmware()
-	error: uninitialized symbol 'iova'.
+Tegra20 and other Tegra SoCs have a video input (VI) peripheral that can
+receive from either MIPI CSI-2 or parallel video (called respectively "CSI"
+and "VIP" in the documentation). The kernel currently has a staging driver
+for Tegra210 CSI capture. This patch set adds support for Tegra20 VIP
+capture.
 
-drivers/gpu/drm/tegra/nvdec.c
-    253 static int nvdec_load_falcon_firmware(struct nvdec *nvdec)
-    254 {
-    255         struct host1x_client *client = &nvdec->client.base;
-    256         struct tegra_drm *tegra = nvdec->client.drm;
-    257         dma_addr_t iova;
-    258         size_t size;
-    259         void *virt;
-    260         int err;
-    261 
-    262         if (nvdec->falcon.firmware.virt)
-    263                 return 0;
-    264 
-    265         err = falcon_read_firmware(&nvdec->falcon, nvdec->config->firmware);
-    266         if (err < 0)
-    267                 return err;
-    268 
-    269         size = nvdec->falcon.firmware.size;
-    270 
-    271         if (!client->group) {
-    272                 virt = dma_alloc_coherent(nvdec->dev, size, &iova, GFP_KERNEL);
-    273 
-    274                 err = dma_mapping_error(nvdec->dev, iova);
-    275                 if (err < 0)
-    276                         return err;
-    277         } else {
-    278                 virt = tegra_drm_alloc(tegra, size, &iova);
-                                                             ^^^^
-Needs an if (IS_ERR(virt)) {
+Unfortunately I had no real documentation available to base this work on.
+I only had a working downstream 3.1 kernel, so I started with the driver
+found there and heavily reworked it to fit into the mainline tegra-video
+driver structure. The existing code appears written with the intent of
+being modular and allow adding new input mechanisms and new SoCs while
+keeping a unique VI core module. However its modularity and extensibility
+was not enough to add Tegra20 VIP support, so I added some hooks to turn
+hard-coded behaviour into per-SoC or per-bus customizable code. There are
+also a fix, some generic cleanups and DT bindings.
 
-No idea why this warning is only just showing up now after two years...
+Quick tour of the patches:
 
-    279         }
-    280 
-    281         nvdec->falcon.firmware.virt = virt;
---> 282         nvdec->falcon.firmware.iova = iova;
-    283 
+ * Device tree bindings
 
-regards,
-dan carpenter
+   01. dt-bindings: display: tegra: add Tegra20 VIP
+   02. dt-bindings: display: tegra: vi: add 'vip' property and example
+
+ * Minor improvements to logging, comments, cleanups
+
+   03. staging: media: tegra-video: improve documentation of tegra_video_format fields
+   04. staging: media: tegra-video: document tegra_channel_get_remote_source_subdev
+   05. staging: media: tegra-video: fix typos in comment
+   06. staging: media: tegra-video: improve error messages
+   07. staging: media: tegra-video: slightly simplify cleanup on errors
+   08. staging: media: tegra-video: move private struct declaration to C file
+   09. staging: media: tegra-video: move tegra210_csi_soc to C file
+   10. staging: media: tegra-video: remove unneeded include
+
+ * Preparation to make the VI module generic enough to host Tegra20 and VIP
+
+   11. staging: media: tegra-video: Kconfig: allow TPG only on Tegra210
+   12. staging: media: tegra-video: move tegra_channel_fmt_align to a per-soc op
+   13. staging: media: tegra-video: move default format to soc-specific data
+   14. staging: media: tegra-video: move MIPI calibration calls from VI to CSI
+   15. staging: media: tegra-video: add a per-soc enable/disable op
+   16. staging: media: tegra-video: move syncpt init/free to a per-soc op
+   17. staging: media: tegra-video: add syncpts for Tegra20 to struct tegra_vi
+   18. staging: media: tegra-video: add hooks for planar YUV and H/V flip
+   19. staging: media: tegra-video: add H/V flip controls
+
+ * Implementation of VIP and Tegra20
+
+   20. staging: media: tegra-video: add support for Tegra20 parallel input
+
+Enjoy!
+
+Changed in v5:
+- removed patch 3 as requested by Hans Verkuil; now the driver is kept
+  video-node-centric and the enum_format logic is unchanged
+- rebased on top of that
+- trivial fixes (typos)
+
+Changed in RESEND,v4:
+- add Rob's review tag on patch 2
+
+Changed in v4:
+- fixed the leftovers after the removal of 'channel@0' in DT
+- added review tags by Dimtry
+
+Changed in v3:
+- removed the 'channel@0' node from the device tree representation of vip
+- squashed the last two patches (VIP + T20) into one
+- small cleanups
+- rebase on v6.2-rc1
+
+Changed in v2:
+- improved dt-bindings patches based on reviews
+- removed patches 3 and 4 adding DT labels without a mainline user
+- two small fixes to the last patch
+
+[v4,resend] https://lore.kernel.org/linux-tegra/20230309144320.2937553-1-luca.ceresoli@bootlin.com/
+[v4] https://lore.kernel.org/linux-tegra/20230130141603.323221-1-luca.ceresoli@bootlin.com/
+[v3] https://lore.kernel.org/linux-media/20221229133205.981397-1-luca.ceresoli@bootlin.com/
+[v2] https://lore.kernel.org/linux-tegra/20221222100328.6e341874@booty/T/#t
+[v1] https://lore.kernel.org/linux-tegra/20221124155634.5bc2a423@booty/T/#t
+
+Luca
+
+Luca Ceresoli (20):
+  dt-bindings: display: tegra: add Tegra20 VIP
+  dt-bindings: display: tegra: vi: add 'vip' property and example
+  staging: media: tegra-video: improve documentation of
+    tegra_video_format fields
+  staging: media: tegra-video: document
+    tegra_channel_get_remote_source_subdev
+  staging: media: tegra-video: fix typos in comment
+  staging: media: tegra-video: improve error messages
+  staging: media: tegra-video: slightly simplify cleanup on errors
+  staging: media: tegra-video: move private struct declaration to C file
+  staging: media: tegra-video: move tegra210_csi_soc to C file
+  staging: media: tegra-video: remove unneeded include
+  staging: media: tegra-video: Kconfig: allow TPG only on Tegra210
+  staging: media: tegra-video: move tegra_channel_fmt_align to a per-soc
+    op
+  staging: media: tegra-video: move default format to soc-specific data
+  staging: media: tegra-video: move MIPI calibration calls from VI to
+    CSI
+  staging: media: tegra-video: add a per-soc enable/disable op
+  staging: media: tegra-video: move syncpt init/free to a per-soc op
+  staging: media: tegra-video: add syncpts for Tegra20 to struct
+    tegra_vi
+  staging: media: tegra-video: add hooks for planar YUV and H/V flip
+  staging: media: tegra-video: add H/V flip controls
+  staging: media: tegra-video: add support for Tegra20 parallel input
+
+ .../display/tegra/nvidia,tegra20-vi.yaml      |  59 ++
+ .../display/tegra/nvidia,tegra20-vip.yaml     |  41 ++
+ MAINTAINERS                                   |   3 +
+ drivers/staging/media/tegra-video/Kconfig     |   1 +
+ drivers/staging/media/tegra-video/Makefile    |   2 +
+ drivers/staging/media/tegra-video/csi.c       |  48 ++
+ drivers/staging/media/tegra-video/csi.h       |   4 -
+ drivers/staging/media/tegra-video/tegra20.c   | 661 ++++++++++++++++++
+ drivers/staging/media/tegra-video/tegra210.c  |  90 +++
+ drivers/staging/media/tegra-video/vi.c        | 222 ++----
+ drivers/staging/media/tegra-video/vi.h        |  71 +-
+ drivers/staging/media/tegra-video/video.c     |   5 +
+ drivers/staging/media/tegra-video/video.h     |   2 +-
+ drivers/staging/media/tegra-video/vip.c       | 290 ++++++++
+ drivers/staging/media/tegra-video/vip.h       |  68 ++
+ 15 files changed, 1380 insertions(+), 187 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
+ create mode 100644 drivers/staging/media/tegra-video/tegra20.c
+ create mode 100644 drivers/staging/media/tegra-video/vip.c
+ create mode 100644 drivers/staging/media/tegra-video/vip.h
+
+-- 
+2.34.1
+
