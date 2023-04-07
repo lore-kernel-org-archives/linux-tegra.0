@@ -2,34 +2,34 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB3FC6FD1D
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 13:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC3AC6FD1D
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Apr 2023 13:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240960AbjDGNls (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Apr 2023 09:41:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47164 "EHLO
+        id S240739AbjDGNmD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Apr 2023 09:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240822AbjDGNlC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 09:41:02 -0400
+        with ESMTP id S240898AbjDGNlR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Apr 2023 09:41:17 -0400
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3988EB440;
-        Fri,  7 Apr 2023 06:40:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2A23BDF0;
+        Fri,  7 Apr 2023 06:40:16 -0700 (PDT)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 52C121BF209;
-        Fri,  7 Apr 2023 13:39:57 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id BCB451BF20A;
+        Fri,  7 Apr 2023 13:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1680874800;
+        t=1680874814;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3iC8kRXcLuBDuHKQdXlAD3W7mWqK6ZwJx/sRZ81bY2A=;
-        b=iyovwNrHQnq9EQUBnAVD4AMngQ/S2sXnrf6TLMcZUvdUEE97CAwLt6n0cqp5hv80WSw2nS
-        78cKButm0dtGq+fANd+CEDfP8MZJ1yGZ9afG2Djp3F8dYdbUM2/mKzrbk44zzt0UWkgY7z
-        W39OJ1MR1gSveQOM+MJ4xrAfvdCJwMQijrtrcUvTDgJdjLKv9ftMvbEBZPrP0/YLQ2GEpn
-        FM6FqoWFSceIu+FwmAK+ACZ1ICCTRvqFWm2nGYcArsDZ01mTfGSrfQvsWWoMmz7LdDK7mJ
-        X0SGncGKgjbZhH5CuVZ9PtsFNiqxfozn0H6Ztq+UcpFpoerv2L9wqBxSzfyPGg==
+        bh=ancsjPRzD7RkHIrMd+4Fj+5TdggxMO2abcceDc4ZHko=;
+        b=ZOe+ejUnRImwjrhYuF/F6gvvAvnhLJgFzvzu4RXS7DFZn71GKfft22VGHFmhkzRRadJcAe
+        wsDp6GF04msG4XbtGMvOKJ0sLd3ViGbZwiyEhWZI9Il1yWwu2VtiHi1O0m4TXzOy9wN5hZ
+        Zm856YCo5TJuhDTgXVgnb8Xxz+TdgnzTbJcZY7o283nDcfikNTa+8cgTlspZLDPVI4jMmS
+        7O3zW9oROE7JeepPjsePPKhMT848cR7CtxXszid3dA1EFLOgAhvjsAOxLuY4R5RoogL4Hc
+        YqTb9qCR/A7tdHD0V1D8FyWo3FLQY+mpWbwtXMZ6NiCezZE4iT8ztUEYrmNJHQ==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     linux-tegra@vger.kernel.org
 Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
@@ -51,9 +51,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>,
         Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v5 09/20] staging: media: tegra-video: move tegra210_csi_soc to C file
-Date:   Fri,  7 Apr 2023 15:38:41 +0200
-Message-Id: <20230407133852.2850145-10-luca.ceresoli@bootlin.com>
+Subject: [PATCH v5 11/20] staging: media: tegra-video: Kconfig: allow TPG only on Tegra210
+Date:   Fri,  7 Apr 2023 15:38:43 +0200
+Message-Id: <20230407133852.2850145-12-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230407133852.2850145-1-luca.ceresoli@bootlin.com>
 References: <20230407133852.2850145-1-luca.ceresoli@bootlin.com>
@@ -63,7 +63,10 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This declaration is used only in csi.c, no need to export it elsewhere.
+We are about to add support for the Tegra20 parallel video capture, which
+has no TPG. In preparation for that, limit the VIDEO_TEGRA_TPG option to
+Tegra210 which is the only implementation currently provided by this
+driver.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -75,42 +78,23 @@ No changes in v5
 Changed in v4:
  - Added review tags
 
-This patch was added in v3.
+No changes in v3
+No changes in v2
 ---
- drivers/staging/media/tegra-video/csi.c | 4 ++++
- drivers/staging/media/tegra-video/csi.h | 4 ----
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/media/tegra-video/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-index 426e653bd55d..9a03d5ccdf3c 100644
---- a/drivers/staging/media/tegra-video/csi.c
-+++ b/drivers/staging/media/tegra-video/csi.c
-@@ -792,6 +792,10 @@ static int tegra_csi_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#if defined(CONFIG_ARCH_TEGRA_210_SOC)
-+extern const struct tegra_csi_soc tegra210_csi_soc;
-+#endif
-+
- static const struct of_device_id tegra_csi_of_id_table[] = {
- #if defined(CONFIG_ARCH_TEGRA_210_SOC)
- 	{ .compatible = "nvidia,tegra210-csi", .data = &tegra210_csi_soc },
-diff --git a/drivers/staging/media/tegra-video/csi.h b/drivers/staging/media/tegra-video/csi.h
-index 6960ea2e3d36..3e6e5ee1bb1e 100644
---- a/drivers/staging/media/tegra-video/csi.h
-+++ b/drivers/staging/media/tegra-video/csi.h
-@@ -151,10 +151,6 @@ struct tegra_csi {
- 	struct list_head csi_chans;
- };
- 
--#if defined(CONFIG_ARCH_TEGRA_210_SOC)
--extern const struct tegra_csi_soc tegra210_csi_soc;
--#endif
--
- void tegra_csi_error_recover(struct v4l2_subdev *subdev);
- void tegra_csi_calc_settle_time(struct tegra_csi_channel *csi_chan,
- 				u8 csi_port_num,
+diff --git a/drivers/staging/media/tegra-video/Kconfig b/drivers/staging/media/tegra-video/Kconfig
+index df1b2cff2417..c53441822fdf 100644
+--- a/drivers/staging/media/tegra-video/Kconfig
++++ b/drivers/staging/media/tegra-video/Kconfig
+@@ -15,5 +15,6 @@ config VIDEO_TEGRA
+ config VIDEO_TEGRA_TPG
+ 	bool "NVIDIA Tegra VI driver TPG mode"
+ 	depends on VIDEO_TEGRA
++	depends on ARCH_TEGRA_210_SOC
+ 	help
+ 	  Say yes here to enable Tegra internal TPG mode
 -- 
 2.34.1
 
