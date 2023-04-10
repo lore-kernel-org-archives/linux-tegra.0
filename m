@@ -2,61 +2,82 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8A2C76196
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Apr 2023 16:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6A6C77B61
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Apr 2023 23:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230083AbjDJQ7k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Apr 2023 12:59:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58498 "EHLO
+        id S229964AbjDJX1z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Apr 2023 19:27:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbjDJQ7j (ORCPT
+        with ESMTP id S230032AbjDJX1u (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Apr 2023 12:59:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAB31FCF;
-        Mon, 10 Apr 2023 09:59:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BDDE460FF4;
-        Mon, 10 Apr 2023 16:59:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1187C433A0;
-        Mon, 10 Apr 2023 16:59:35 +0000 (UTC)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] memory: tegra: read values from correct device
-Date:   Mon, 10 Apr 2023 18:59:27 +0200
-Message-Id: <168114590173.12295.16629807729065292748.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
+        Mon, 10 Apr 2023 19:27:50 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CF82710;
+        Mon, 10 Apr 2023 16:27:42 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id bf5so4325198oib.8;
+        Mon, 10 Apr 2023 16:27:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681169262; x=1683761262;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mfji5NwyNXtXMo7uqw/b5LhlGHgLtluaYpZTYl5kDcg=;
+        b=1X5EktgpuTUZA3z9/cGIm5uaeMOsBwZoHcVr31VXaXlUaUQjXll9rOiCIXvs0BA9Kp
+         x3zknCRos+8rnR3IHjidGBMZ1H6JtHys9W4w+A3Lm3yR5pZlh0zW2JU+gyUKPBqR2E7G
+         Ma7XoGrW8Z0c+rX8w26BGvrqdyRTyd58U23KtFlfb2f2XeVJVmYIW20NzPaHN5un5xio
+         tCyabZ9cKl5yRsCkoOol07sx3pQ6NZDRKaCyXxI1F9el9uwWxTjPPOvM4nX19GPZ4DGc
+         mMXv1Ta8cfqPriW7SCCfN+W3FvRsiDv8ZwtnvdpEhjkMXDRipqkFnb393tC8i9ZtT3wY
+         0i3Q==
+X-Gm-Message-State: AAQBX9dtflDRV+ilNZUGSCpg7BfXJAcfkuPSrvwGZsa5m7FH2pduHJ4N
+        bw2qlSHKESjoeJEIkym1Pg==
+X-Google-Smtp-Source: AKy350YAbAr6APS9TvDqRY2lI0vAquRw5hKXo1B2+OpPci8Vc6rmORsRHoIs5Ce4Xt+6ABzM9Ze33g==
+X-Received: by 2002:a05:6808:4391:b0:384:dfc7:7d84 with SMTP id dz17-20020a056808439100b00384dfc77d84mr4983708oib.58.1681169262021;
+        Mon, 10 Apr 2023 16:27:42 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id s83-20020acac256000000b00383eaea5e88sm4769712oif.38.2023.04.10.16.27.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Apr 2023 16:27:41 -0700 (PDT)
+Received: (nullmailer pid 1562406 invoked by uid 1000);
+        Mon, 10 Apr 2023 23:27:40 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bus: tegra-gmi: Replace of_platform.h with explicit includes
+Date:   Mon, 10 Apr 2023 18:27:35 -0500
+Message-Id: <20230410232735.1562296-1-robh@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Tegra-gmi doesn't use anything from of_platform.h, but depends on
+of.h, of_device.h, and platform_device.h which are all implicitly
+included, but that is going to be removed soon.
 
-On Wed, 22 Mar 2023 23:40:50 +0000, Diogo Ivo wrote:
-> When reading MR18 for Dev1 the code was incorrectly reading the
-> value corresponding to Dev0, so fix this by adjusting the index
-> according to the Tegra X1 TRM.
-> 
-> 
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/bus/tegra-gmi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied, thanks! It's late, so it might miss current cycle.
-
-[1/1] memory: tegra: read values from correct device
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/be4c5c6e84429e87cfdf1c8be350a49a714a93e2
-
-Best regards,
+diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
+index 662266719682..e3506ef37051 100644
+--- a/drivers/bus/tegra-gmi.c
++++ b/drivers/bus/tegra-gmi.c
+@@ -9,7 +9,9 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ 
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.39.2
+
