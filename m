@@ -2,126 +2,61 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 636B1C76196
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Apr 2023 09:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8A2C76196
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Apr 2023 16:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229526AbjDJJX5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Apr 2023 05:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
+        id S230083AbjDJQ7k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Apr 2023 12:59:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbjDJJX4 (ORCPT
+        with ESMTP id S229669AbjDJQ7j (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Apr 2023 05:23:56 -0400
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [IPv6:2001:690:2100:1::15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E28212C
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Apr 2023 02:23:54 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id B19CA6005C5B;
-        Mon, 10 Apr 2023 10:23:49 +0100 (WEST)
-X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
-        tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
-        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
-        with LMTP id 4JYP2xTsExQx; Mon, 10 Apr 2023 10:23:46 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 844066018C45;
-        Mon, 10 Apr 2023 10:20:11 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
-        s=mail; t=1681118411;
-        bh=gBSFRVFqYr+AMaysfV+bAVT0xDfF+JZwiMuoAwAOm7M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=Ax8yvAv99D4CMV7iKvUVubdcKSvW/eFMl0gMI05mv/lWr5BtM0N5+wPu2Da80m1l+
-         ZqWfO5S6E4TmXYPO4ooYGmQyI+RgNfb/EPIz3ek9ZwRCdnKJpev99g+h/4qX1jvoBb
-         O6zzcGb2N6+IJNmbm8p4y+uEfagN9i3QcQo3YHso=
-Received: from wslaptop (unknown [IPv6:2001:8a0:fbe7:6700:65be:d034:d2ec:60ff])
-        (Authenticated sender: ist187313)
-        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 8A78E360077;
-        Mon, 10 Apr 2023 10:20:10 +0100 (WEST)
-Date:   Mon, 10 Apr 2023 10:17:56 +0100
-From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jonathanh@nvidia.com, arnd@arndb.de, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: smaug: Add EMC frequency change tables
-Message-ID: <pn6jovxrx7bkxfxq6qarlo357mvsf3ggxznzidz7pfdteefvvd@rqwbx4onwnky>
-References: <20230319194255.124589-1-diogo.ivo@tecnico.ulisboa.pt>
- <ZC11H7mXfHX_mGXh@orome>
+        Mon, 10 Apr 2023 12:59:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAB31FCF;
+        Mon, 10 Apr 2023 09:59:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BDDE460FF4;
+        Mon, 10 Apr 2023 16:59:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1187C433A0;
+        Mon, 10 Apr 2023 16:59:35 +0000 (UTC)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] memory: tegra: read values from correct device
+Date:   Mon, 10 Apr 2023 18:59:27 +0200
+Message-Id: <168114590173.12295.16629807729065292748.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
+References: <20230322234050.47332-1-diogo.ivo@tecnico.ulisboa.pt>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZC11H7mXfHX_mGXh@orome>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Apr 05, 2023 at 03:18:23PM +0200, Thierry Reding wrote:
-> On Sun, Mar 19, 2023 at 07:42:55PM +0000, Diogo Ivo wrote:
-> > Add the reserved-memory regions of the nominal and derated tables setup by
-> > the bootloader so that the EMC frequency change code can access them.
-> > 
-> > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 21 +++++++++++++++++++
-> >  1 file changed, 21 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> > index 709f3f417a19..a74826ae97b4 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> > @@ -30,6 +30,22 @@ memory {
-> >  		reg = <0x0 0x80000000 0x0 0xc0000000>;
-> >  	};
-> >  
-> > +	reserved-memory {
-> > +		#address-cells = <2>;
-> > +		#size-cells = <2>;
-> > +		ranges;
-> > +
-> > +		nominal: emc-table@f67cc000 {
-> > +			compatible = "nvidia,tegra210-emc-table";
-> > +			reg = <0x0 0xf67cc000 0x0 0xbea0>;
-> > +		};
-> > +
-> > +		derated: emc-table@f67d7ea0 {
-> > +			compatible = "nvidia,tegra210-emc-table";
-> > +			reg = <0x0 0xf67d7ea0 0x0 0xbea0>;
-> > +		};
-> > +	};
-> > +
+
+On Wed, 22 Mar 2023 23:40:50 +0000, Diogo Ivo wrote:
+> When reading MR18 for Dev1 the code was incorrectly reading the
+> value corresponding to Dev0, so fix this by adjusting the index
+> according to the Tegra X1 TRM.
 > 
-> These tables are typically generated by the firmware/bootloader at
-> runtime. Often they'll use heap allocations for these, so the addresses
-> are not guaranteed to be static.
 > 
-> Can you share a few details about what set of components you've used to
-> set this up? If we add these we want to be as specific as possible that
-> people use exactly the same set of firmware files.
-> 
-> Thierry
 
-In the case of the Pixel C, coreboot takes care of copying these tables
-into a static cbmem region. The actual function taking care of this is
-tegra210_run_mtc(), found in [1], and from here it is possible to
-construct the cbmem memory layout. I have confirmed that the device is
-actually running this version of coreboot from the cbmem_console logs,
-where the commits are explicitly stated. These logs also indicate where
-the tables are located,
+Applied, thanks! It's late, so it might miss current cycle.
 
-Wrote coreboot table at: 00000000f66ca000, 0x2c0 bytes, checksum 3601
-coreboot table: 728 bytes.
-CBMEM ROOT  0. f67ff000 00001000
-CONSOLE     1. f67ef000 00010000
-TIME STAMP  2. f67ee000 00001000
-VBOOT       3. f67ed000 00001000
-VPD         4. f67e4000 00009000
-MTC         5. f67cc000 00018000
-RAMOOPS     6. f66cc000 00100000
-COREBOOT    7. f66ca000 00002000
+[1/1] memory: tegra: read values from correct device
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/be4c5c6e84429e87cfdf1c8be350a49a714a93e2
 
-and
-
-MTC: Copied 0x17d40 bytes from 0000000081008b70 to 00000000f67cc000
-
-Diogo
-
-[1]: https://chromium.googlesource.com/chromiumos/third_party/coreboot/+/refs/heads/firmware-smaug-7900.B/src/soc/nvidia/tegra210/mtc.c
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
