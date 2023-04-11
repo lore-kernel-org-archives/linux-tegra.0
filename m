@@ -2,495 +2,199 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972C5C76196
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 11:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B6DC7619A
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 11:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbjDKLDi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Apr 2023 07:03:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57968 "EHLO
+        id S229804AbjDKLNq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Apr 2023 07:13:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229920AbjDKLDe (ORCPT
+        with ESMTP id S229666AbjDKLNl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Apr 2023 07:03:34 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2048.outbound.protection.outlook.com [40.107.101.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8196240EA;
-        Tue, 11 Apr 2023 04:03:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VYhIVzIdA9JSMj+PnGDg8/5JVUPnFEqxe5wxg5v+7T+B2iziAd6bgrz6jJoaYZQAMrgiTD+NJNeSo3gzs/S6mBN4HjPP5je8BGSQIpBHA+eK1OhciCOBRsUnwQadnAf+P4LR6qU7wG5ZP08wIKPsvw1MEVDUb9Ved6QCs7uZP4fz0yE9uxlA3WhlfOjtDSM9c4s4q0CXOvnd7MDVtBPcr+eWp6nTA+LJGUP2JJjUtmiauBV6aZWHqtfcmlJo9HLh7RpZ4GAB0BUlzk5Xm2EoxF5Bx91ooTZZWHxLswneJpi7AHgtEQ5j/nWE+UTcb+3WaZYUCejO4UryJ1pUQhnxBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3nsMtliVfQ4xVQKkWlDg78TRz0LuP+gntsRIi9bqP48=;
- b=hndB6Q14ATdscIEfzOcP44y9XHCLq1ywan0/92p/YjCHnZlBm1+DuPe8oOsCscVRFcE1F2uicCAvYYXoaZYbj1znwaxWi2tbVDjKrSzAduGy0OodLc7SByaRwLACeIIjAb0uHIpQZWXGwdQUByvFE+tftykCiO6DksmmJlL526z1i3Cb82O1Y/QKeqTdcgXTmjiIZK1wQibSZeEtDRDjr9mXhFU2rbiIK3yHuVdSZopEWAcElM8XuFExwfCBYkaQHmeTgvkVjEMbEvp0Bze6jP9NP1P+SSj20wrSZ7/wCh97XU8cJr34QT86DhbvjFvxuCFWNktLy0cCELljT7vABw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3nsMtliVfQ4xVQKkWlDg78TRz0LuP+gntsRIi9bqP48=;
- b=nfXsregxvgKLcPcDLRxuby20bdnzV0X3u9QFEYtBlKsrL8DHeENv/VsT+q0B906jXfwvplY0YweYQ0Bk/ME2hHAWlCHeTEwkRP8omE8haMUAimpFlABYG34BEfRMQzRAFCiyC+ELvCsRpytBBmi03OB96qKyy+yoBI1QNZ4ISViwUpUyJimppl/suOrxEN2SGgxDm2xMFs+U7pINRGGveN6Vpp2U8Is/KyDZHVQoe8HCrKWjkXWzk+oKoab0WzDSQZEELZeehHDMOL4VkbH/ZWNzNDatT6WHI4XzXAY6XOyVy0Ac1Lb33birQx1J40vNYJuJPrEQxLtinO2OSgKQkA==
-Received: from BN9PR03CA0343.namprd03.prod.outlook.com (2603:10b6:408:f6::18)
- by CY5PR12MB6130.namprd12.prod.outlook.com (2603:10b6:930:26::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.31; Tue, 11 Apr
- 2023 11:02:29 +0000
-Received: from BN8NAM11FT111.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:f6:cafe::d5) by BN9PR03CA0343.outlook.office365.com
- (2603:10b6:408:f6::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.34 via Frontend
- Transport; Tue, 11 Apr 2023 11:02:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN8NAM11FT111.mail.protection.outlook.com (10.13.177.54) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6298.24 via Frontend Transport; Tue, 11 Apr 2023 11:02:28 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 11 Apr 2023
- 04:02:15 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 11 Apr
- 2023 04:02:14 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Tue, 11 Apr 2023 04:02:09 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <treding@nvidia.com>, <krzysztof.kozlowski@linaro.org>,
-        <dmitry.osipenko@collabora.com>, <viresh.kumar@linaro.org>,
-        <rafael@kernel.org>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <lpieralisi@kernel.org>, <helgaas@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
-        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
-        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
-        <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [Patch v6 9/9] arm64: tegra: Add cpu OPP tables and interconnects property
-Date:   Tue, 11 Apr 2023 16:30:02 +0530
-Message-ID: <20230411110002.19824-10-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230411110002.19824-1-sumitg@nvidia.com>
-References: <20230411110002.19824-1-sumitg@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 11 Apr 2023 07:13:41 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92E964697
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Apr 2023 04:13:17 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pmBv0-0004gl-Lm; Tue, 11 Apr 2023 13:12:10 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pmBuf-00AURe-AU; Tue, 11 Apr 2023 13:11:49 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pmBue-00CH5H-AL; Tue, 11 Apr 2023 13:11:48 +0200
+Date:   Tue, 11 Apr 2023 13:11:48 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Valentin Korenblit <vkorenblit@sequans.com>,
+        Lucas Stach <dev@lynxeye.de>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Han Xu <han.xu@nxp.com>, Chuanhong Guo <gch981213@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org,
+        Tudor Ambarus <tudor.ambarus@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-sunxi@lists.linux.dev, ye xingchen <ye.xingchen@zte.com.cn>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Wang Weiyang <wangweiyang2@huawei.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        linux-mediatek@lists.infradead.org, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        kernel@pengutronix.de, Richard Weinberger <richard@nod.at>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-oxnas@groups.io, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: Re: [PATCH] mtd: nand: Convert to platform remove callback returning
+ void
+Message-ID: <20230411111148.yefmzohsvk3facq3@pengutronix.de>
+References: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
+ <20230407101043.299f5e22@xps-13>
+ <20230408185332.d2g2ao4tdp6ltm4i@pengutronix.de>
+ <20230411102025.6b2fdc9e@xps-13>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT111:EE_|CY5PR12MB6130:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d934ed8-26e3-4e28-6b09-08db3a7c3d82
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: FPpY/cbFd2S+OkS4z5W4gvYQQOFVSflNdidc5lOnt2wJfSyaAtM7JEApLNXR64p65lNpiYrsnVO2Ny7/Ey8I7bHWQ5njWnGYWLp4ThPw9flZvDLPUAFbFLHLY2f7z9nMK5Spamtj2QBDjOtqsXJmlOWu5ttnEva3CXv/FRQVAG9/JS82g/GzzZVkjvxnp0A3j0txa/GHDs2AzB+7rGd650a7iLd7Z6ok8D3CAg6jG9rory1Pgy7knrnguSsKj0obsty7vKoJ3fKD/HxuoPw2oKcRWebxZHwwPBlw6+y4Xw3p9k5cZRikrb8ixaZZnePxRwC8hj/n0j1bJbDSBLCPOYoa6+AJSOalvYvgcSRKmUBU0qaKljwu2QH7KnodzaGtLjjCDSiy3Ax/ityuiTPExAnnbGzgpHyqhhL/uF75jpPPLUtS5tNIAgcE7A+IK02wnN0lOJ2hS1Ixbl/sd3Y0EXBQXoUAbFVOEzC4Z3AkSE5vAEaQ74a61ehRmaxay9Uk7yBnxcyJb9hYFYjvoXT8emfWiTJgwS//GGOw3IDEmJZyN4Wwys2XM7sqHJ27fkRjW+g5ocsY/LxnAf/zGWiMfaV9m9+3BdNp6VR88vx7jQYHMF4Ipdp+2x1KfXugLf6Ikj90mgarsTKeNbGB1jhRTpZpS+Wtz6SXQQPhmEiFgS6JkXHdNKbiRvTiuEpKVWtSLGE7+c5+jNA2P1m42LsellksuBbYI7jBrEv9M1TSjMMD0ETqlCGgSIsHHXZ81ibJ
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(39860400002)(396003)(136003)(451199021)(40470700004)(46966006)(36840700001)(186003)(8936002)(36860700001)(2616005)(83380400001)(426003)(47076005)(70586007)(6666004)(7696005)(54906003)(478600001)(26005)(107886003)(1076003)(110136005)(7416002)(82740400003)(356005)(5660300002)(36756003)(40460700003)(7636003)(2906002)(82310400005)(4326008)(86362001)(70206006)(41300700001)(40480700001)(316002)(8676002)(336012);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2023 11:02:28.3339
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d934ed8-26e3-4e28-6b09-08db3a7c3d82
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT111.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6130
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="he6vq5knkogtd7j7"
+Content-Disposition: inline
+In-Reply-To: <20230411102025.6b2fdc9e@xps-13>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add OPP table and interconnects property to scale DDR frequency with
-CPU frequency for better performance. Each operating point entry of
-the OPP table has CPU freq to per MC channel bandwidth mapping.
-One table is added for each cluster even though the table data is
-same because the bandwidth request is per cluster. This is done
-because OPP framework creates a single icc path and hence single
-bandwidth request if the table is marked as 'opp-shared' and shared
-among all clusters. For us, the OPP table data is same but the MC
-Client ID argument to interconnects property is different for each
-cluster. So, having per cluster table makes different icc path for
-each cluster and helps to make per cluster BW requests.
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 276 +++++++++++++++++++++++
- 1 file changed, 276 insertions(+)
+--he6vq5knkogtd7j7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 5d354f8923b4..8d0b89b5733e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -3011,6 +3011,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl0_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER0 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3027,6 +3030,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl0_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER0 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3043,6 +3049,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl0_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER0 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3059,6 +3068,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl0_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER0 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3075,6 +3087,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl1_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3091,6 +3106,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl1_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3107,6 +3125,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl1_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3123,6 +3144,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl1_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER1 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3139,6 +3163,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl2_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER2 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3155,6 +3182,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl2_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER2 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3171,6 +3201,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl2_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER2 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3187,6 +3220,9 @@
- 
- 			enable-method = "psci";
- 
-+			operating-points-v2 = <&cl2_opp_tbl>;
-+			interconnects = <&mc TEGRA_ICC_MC_CPU_CLUSTER2 &emc>;
-+
- 			i-cache-size = <65536>;
- 			i-cache-line-size = <64>;
- 			i-cache-sets = <256>;
-@@ -3461,4 +3497,244 @@
- 		interrupt-parent = <&gic>;
- 		always-on;
- 	};
-+
-+	cl0_opp_tbl: opp-table-cluster0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		cl0_ch1_opp1: opp-115200000 {
-+			  opp-hz = /bits/ 64 <115200000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp2: opp-268800000 {
-+			opp-hz = /bits/ 64 <268800000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp3: opp-422400000 {
-+			opp-hz = /bits/ 64 <422400000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp4: opp-576000000 {
-+			opp-hz = /bits/ 64 <576000000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp5: opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp6: opp-883200000 {
-+			opp-hz = /bits/ 64 <883200000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp7: opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp8: opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl0_ch1_opp9: opp-1344000000 {
-+			opp-hz = /bits/ 64 <1344000000>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		cl0_ch1_opp10: opp-1497600000 {
-+			opp-hz = /bits/ 64 <1497600000>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		cl0_ch1_opp11: opp-1651200000 {
-+			opp-hz = /bits/ 64 <1651200000>;
-+			opp-peak-kBps = <2660000>;
-+		};
-+
-+		cl0_ch1_opp12: opp-1804800000 {
-+			opp-hz = /bits/ 64 <1804800000>;
-+			opp-peak-kBps = <2660000>;
-+		};
-+
-+		cl0_ch1_opp13: opp-1958400000 {
-+			opp-hz = /bits/ 64 <1958400000>;
-+			opp-peak-kBps = <3200000>;
-+		};
-+
-+		cl0_ch1_opp14: opp-2112000000 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-peak-kBps = <6400000>;
-+		};
-+
-+		cl0_ch1_opp15: opp-2201600000 {
-+			opp-hz = /bits/ 64 <2201600000>;
-+			opp-peak-kBps = <6400000>;
-+		};
-+	};
-+
-+	cl1_opp_tbl: opp-table-cluster1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		cl1_ch1_opp1: opp-115200000 {
-+			  opp-hz = /bits/ 64 <115200000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp2: opp-268800000 {
-+			opp-hz = /bits/ 64 <268800000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp3: opp-422400000 {
-+			opp-hz = /bits/ 64 <422400000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp4: opp-576000000 {
-+			opp-hz = /bits/ 64 <576000000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp5: opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp6: opp-883200000 {
-+			opp-hz = /bits/ 64 <883200000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp7: opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp8: opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl1_ch1_opp9: opp-1344000000 {
-+			opp-hz = /bits/ 64 <1344000000>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		cl1_ch1_opp10: opp-1497600000 {
-+			opp-hz = /bits/ 64 <1497600000>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		cl1_ch1_opp11: opp-1651200000 {
-+			opp-hz = /bits/ 64 <1651200000>;
-+			opp-peak-kBps = <2660000>;
-+		};
-+
-+		cl1_ch1_opp12: opp-1804800000 {
-+			opp-hz = /bits/ 64 <1804800000>;
-+			opp-peak-kBps = <2660000>;
-+		};
-+
-+		cl1_ch1_opp13: opp-1958400000 {
-+			opp-hz = /bits/ 64 <1958400000>;
-+			opp-peak-kBps = <3200000>;
-+		};
-+
-+		cl1_ch1_opp14: opp-2112000000 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-peak-kBps = <6400000>;
-+		};
-+
-+		cl1_ch1_opp15: opp-2201600000 {
-+			opp-hz = /bits/ 64 <2201600000>;
-+			opp-peak-kBps = <6400000>;
-+		};
-+	};
-+
-+	cl2_opp_tbl: opp-table-cluster2 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		cl2_ch1_opp1: opp-115200000 {
-+			  opp-hz = /bits/ 64 <115200000>;
-+			  opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp2: opp-268800000 {
-+			opp-hz = /bits/ 64 <268800000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp3: opp-422400000 {
-+			opp-hz = /bits/ 64 <422400000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp4: opp-576000000 {
-+			opp-hz = /bits/ 64 <576000000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp5: opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp6: opp-883200000 {
-+			opp-hz = /bits/ 64 <883200000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp7: opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp8: opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			opp-peak-kBps = <816000>;
-+		};
-+
-+		cl2_ch1_opp9: opp-1344000000 {
-+			opp-hz = /bits/ 64 <1344000000>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		cl2_ch1_opp10: opp-1497600000 {
-+			opp-hz = /bits/ 64 <1497600000>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		cl2_ch1_opp11: opp-1651200000 {
-+			opp-hz = /bits/ 64 <1651200000>;
-+			opp-peak-kBps = <2660000>;
-+		};
-+
-+		cl2_ch1_opp12: opp-1804800000 {
-+			opp-hz = /bits/ 64 <1804800000>;
-+			opp-peak-kBps = <2660000>;
-+		};
-+
-+		cl2_ch1_opp13: opp-1958400000 {
-+			opp-hz = /bits/ 64 <1958400000>;
-+			opp-peak-kBps = <3200000>;
-+		};
-+
-+		cl2_ch1_opp14: opp-2112000000 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-peak-kBps = <6400000>;
-+		};
-+
-+		cl2_ch1_opp15: opp-2201600000 {
-+			opp-hz = /bits/ 64 <2201600000>;
-+			opp-peak-kBps = <6400000>;
-+		};
-+	};
- };
--- 
-2.17.1
+Hello Miquel,
 
+On Tue, Apr 11, 2023 at 10:20:25AM +0200, Miquel Raynal wrote:
+> > On Fri, Apr 07, 2023 at 10:10:43AM +0200, Miquel Raynal wrote:
+> > > I've looked at the different patches, they look good to me but as they
+> > > are all trivial and exactly identical, would you mind sending this
+> > > again all squashed in a single patch? A subsystem-wide conversion see=
+ms
+> > > appropriate. In all cases I plan to take this for the next merge
+> > > window. =20
+> >=20
+> > I slightly prefer them separately, because I like small patches and
+> > because the Acks and Reviews only apply to the individual drivers.
+> > But I don't mind seriously, so here comes the series squashed into one.
+>=20
+> For any non trivial change, I would definitely do that as well.
+
+A patch is only trivial as long as it doesn't do anything wrong.
+I don't assume any problem, but it wouldn't be the first. The first was
+bcm2835_spi_remove() being used in bcm2835_spi_shutdown().
+
+> The thing is, by collecting the tags with b4, you lost all the Acks and
+> Reviews targets, while we could prevent this, see below.
+>=20
+> > While going through the changed, probably the s3c24xx driver (which
+> > isn't exactly identical to the other changes) could benefit from an
+> > additional change throwing out the early exit (which---I guess---cannot
+> > be hit).
+>=20
+> Yes, I believe the 'info =3D=3D NULL' condition is useless, feel free to
+> drop it in a second patch if you wish.
+
+Yeah.
+
+> > BTW, I constructed the lists of acks/reviews myself and found the same
+> > set. However b4 wailed about each patch claiming:
+> >=20
+> > 	    =E2=9C=97 BADSIG: DKIM/infradead.org
+>=20
+> No idea what this means, any pointer?
+
+lists.infradead.org signs all outgoing mail and something between these
+outgoing mails and b4 consuming them breaks the signature. I didn't
+debug, but depending on where the problem is, either
+postmaster@lists.infradead.org or the admins of lore.kernel.org or the
+maintainer of b4 might want to know and fix.
+
+> > And it didn't like you producing the tags, saying:
+> >=20
+> > 	NOTE: some trailers ignored due to from/email mismatches:
+> > 	    ! Trailer: Acked-by: Roger Quadros <rogerq@kernel.org>
+> > 	     Msg From: Miquel Raynal <miquel.raynal@bootlin.com>
+> > 	    [...]
+>=20
+> Well, yes, I don't expect b4 to read plain english when I say "I
+> collected them for you" ^^ But at least my list had a '# <area>' suffix
+> for each of the Acked and Reviewed changes, which is now missing. I
+> don't know  how useful they actually are, but it seems to me that the
+> information was lost between v1 and v2?
+
+That's right. I will resend in a separate thread with the annotations
+fixed. Sorry for the noise.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--he6vq5knkogtd7j7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ1QHMACgkQj4D7WH0S
+/k59PQgApmYCdD89s3AZJOYu84R1sSO13lJD2sW2YG/826FnsTQ8v5JAAMkZRhMV
+k+MCufvC25ennRcrXR5Uv8O1rreswBF1+9WhnWNEGGzaOsRqvVjkbsrMHgpJUsh3
+FMlNyvjm6KpNJhqF46lITimOhkWph7CAmCq1OMnfs5D1/biK19XqlwyNlOrka0XW
+8dwB13fYwc9PnEdLkyfmzqtcQbGBezwBjXzPkAls4+2qwIJkinKwMZACrpKd1VUr
+VOROg0xogL+KfIkaVvPu4UQTs2jpIf13YnyBfynr+pg81qKqHh6lHeS9zaMbTEhM
+JRbE//97QsOix1ZjsQHXvFD4zk8yjQ==
+=LsjF
+-----END PGP SIGNATURE-----
+
+--he6vq5knkogtd7j7--
