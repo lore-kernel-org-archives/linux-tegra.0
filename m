@@ -2,136 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7CAC77B6F
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 13:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1EDC77B73
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 16:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbjDKNnU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Apr 2023 09:43:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57576 "EHLO
+        id S229744AbjDKQbE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Apr 2023 12:31:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjDKNnT (ORCPT
+        with ESMTP id S229611AbjDKQbD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Apr 2023 09:43:19 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737CCBB;
-        Tue, 11 Apr 2023 06:43:17 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 9447D60012;
-        Tue, 11 Apr 2023 13:43:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1681220595;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YG/a/d5U809a62Azy9i6h0lXlFjsDlTWJ9pqm8OP5bU=;
-        b=hHX8UiCAZtL5szZpK25h+QcFJybRGblg1lJQbRfyMx4JhQP74URDH1PKlY0KtXD3u0AO2m
-        +ojA1YL+HugJT1SJVxxR1NYpviqZqbbpow2rLTyNqPi0WoFB5rz7YxXiVuAr4g5gmsiyxL
-        8xeH9vyYgmP34C7BrjUOpRtzFxvVV8P2UmIaJD4/UQDa583WTuDsx7Ds98idmyBl2HFpp3
-        zvTwQvoQEzuSkPafSJjtVuXbFV4hd7FtG06jKqZ6fcBnTEJrP4zP/9kNobxXCtGcqWgOlE
-        Ef+hIJk5W9JQ94A7C/XGwiY1NyrQCIQ80fZuj6vDKRBjxmLd8EqRkNBiqztvTA==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Valentin Korenblit <vkorenblit@sequans.com>,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
-        =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
-        Han Xu <han.xu@nxp.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        Jack Wang <jinpu.wang@ionos.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-mtd@lists.infradead.org,
-        kernel@pengutronix.de, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        =?utf-8?q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v3] mtd: nand: Convert to platform remove callback returning void
-Date:   Tue, 11 Apr 2023 15:43:04 +0200
-Message-Id: <20230411134305.445759-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230411113816.3472237-1-u.kleine-koenig@pengutronix.de>
-References: 
+        Tue, 11 Apr 2023 12:31:03 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE13A40C8;
+        Tue, 11 Apr 2023 09:31:02 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id qb20so21447677ejc.6;
+        Tue, 11 Apr 2023 09:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1681230661;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lUtdmO5RhKKGgsshDATRStPZUG/pJBx9W7yE7kfQ97o=;
+        b=iXUCz/YRwpooX0LJ2CjxCwvuEbzWNZ4HtNnVpxAgPs5447q73rfarFtpTI16t+Ac2p
+         UFMl7ZjnLq1SGC0AyYt218TSgbgdzq6KsyOL7cWaLKxh7jA19hdbbj8CUx1psTTFNBjm
+         APk7TbIA4ZpwvI3T91GSe9oHzuFKfdz+MiBm3suTqNF5fVoZ2X4IywASgQYKJql6H3pC
+         EmseqHXl+rtQPo8F2K8rPwjiEUZzt2RctOyBypvF6jHtB+zDIPXBW6Itsq6OQjQguEt9
+         0b3v/rnbFW132IRtFD78C29vbsjpA76n89ZX+5vgyk4guHEJOUzrO7b2kDhLLI/pYTlS
+         nUGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681230661;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lUtdmO5RhKKGgsshDATRStPZUG/pJBx9W7yE7kfQ97o=;
+        b=AmX75crRJEARPd47aYQkWsoJTTHQOSp6stPLEYsmzBA4SF60q1p+u8A9s3EqTeKjtP
+         Rm9ePTH3JV3EHk4IsQDvlty478EWj+sBC3dzfVaXJSiP7xeC48D7Edwd90M6e5CE4BIy
+         fx86tzZrrlg35/n+cuWUHFGOkgS+vKox/71QtgQZM9CtKfuoYdPN/0UDrsW0KlLl/X4p
+         4EQqcSFNXcEvDH5hz+cbP6wrRlBfQiluc2ASqs861t1nW0KTczQ5TiEPrfwflb0/a0K/
+         J3JHs+YukJt6eRRdH9eBkb6rwbNe2KWJOTalFmmP+xs0cRI/ZYb6xBCcgT6zcNIge31U
+         bZVg==
+X-Gm-Message-State: AAQBX9e+1V/UgOkox1d2q9GCBUPkm6L9feDTcXNLC701KE30N687vFj9
+        eN9RK+obB+E1VKCdO04GlmQ=
+X-Google-Smtp-Source: AKy350Y0D5VWkb/RTlDyKlVs1DqA2ctLjh5WfRAflgMMPA2Ussjc653GY5AnIU/MD3Zg2p/OupxyKQ==
+X-Received: by 2002:a17:906:31d9:b0:931:ad32:79ed with SMTP id f25-20020a17090631d900b00931ad3279edmr11576235ejf.12.1681230660970;
+        Tue, 11 Apr 2023 09:31:00 -0700 (PDT)
+Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id qk6-20020a1709077f8600b00948fd62a53asm6305718ejc.71.2023.04.11.09.31.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Apr 2023 09:31:00 -0700 (PDT)
+Date:   Tue, 11 Apr 2023 18:30:58 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Johan Hovold <johan@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>
+Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
+ usage
+Message-ID: <ZDWLQgttLR2dWbwd@orome>
+References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
+ <Y9J4WAFyXyV/nqlG@orome>
+ <20230210131703.GF175687@linaro.org>
+ <Y+ZQC85TM+O8p8gQ@orome>
+ <365c469b-22f6-fb26-1872-5e9a5079af5d@linaro.org>
+ <Y+Ze4tAM6Jpszq/3@orome>
+ <c93d583d-e2b8-e8dd-cc94-cd77ecb2cab1@linaro.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'ec185b18c22323cb0cde0319fa90b3e467b1ed2d'
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ufNrFSjcZLO8PioW"
+Content-Disposition: inline
+In-Reply-To: <c93d583d-e2b8-e8dd-cc94-cd77ecb2cab1@linaro.org>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 2023-04-11 at 11:38:16 UTC, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
-> 
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
-> 
-> Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com> # atmel
-> Reviewed-by: Paul Cercueil <paul@crapouillou.net> # ingenic
-> Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org> # ingenic
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com> # intel
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com> # meson
-> Acked-by: Roger Quadros <rogerq@kernel.org> # omap_elm
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de> # rockchip
-> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com> # sunxi
-> Acked-by: Thierry Reding <treding@nvidia.com> # tegra
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+--ufNrFSjcZLO8PioW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Miquel
+On Tue, Apr 11, 2023 at 12:48:25PM +0200, Daniel Lezcano wrote:
+>=20
+> Hi Thierry,
+>=20
+> did you have time to look at this ?
+>=20
+> This driver is the only one using get_thermal_instance() and I would like=
+ to
+> remove this function along with the thermal_core.h inclusion in this driv=
+er
+
+Yeah, I've had work in progress patches for this for a few weeks but
+haven't had the time to test these much. I'd like to take a bit longer
+to test them before sending them out.
+
+Thierry
+
+--ufNrFSjcZLO8PioW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQ1i0IACgkQ3SOs138+
+s6F09Q/8Dqyk/Wx7nPG1vPtdEdx+ms6SMJ58mkrUxY0nPHtZP9C9lvOsytfI9XpC
+YVldrNNumV5zqtPAf2nJkdVLGcKCEZ6vASkDvhIRQ8l0dgNQBhLV8AqlafcC9KSd
+AbvXrK44I42sFtkyONdtgoNjrAAtPINrihcMn3VLFkplqv9dj7GRgVYAHbTS7KYB
+eyHz+QEHCINu2GiqUE9NcYjaPWxCp/KavY5zd/cQGotnibfJKC2z789SfcPvrN/m
+1M0KsexT0kFmp+D4D+G/AsMKmadSoUWi9adQrCFaLw7GXU0hn3ih/m6Pa5RRutu1
+35RwtnT9PfbWT3+F0KfNjYZFhwFiF/iFn/FUAEMQ2j3pCq8SmKXPA/bnuZMvfDVg
+nHCOmI0aUZ+VaAm1SYAlQCh4KOmJQxTu1ibPEOii/G0ccC5Nx6IxMMVeuzPNt85X
+YPXZbOvIB+Q1d6LdbsrP7uWEKmn68yN9Hz//r7FvSO1NS2rfbkC1Fm1OojREnKxT
+7K7YvtV7WbR1XeskwAsfmaTSnGxqoSdofEpCWcYgQgTkxxlSBww0pxvcqZ8+eQ6a
+MNyuDCzCCrcgHP0lrI/JlpMdS0ZUXc1lLm3m/P2aB+PjsFA/JsjBRwF3fSh+JjYD
+TVBRH7QE+8gd5hmUYClgBRjMRvvuk8g6NnGiTNrvlIKVmgB+xG8=
+=dsvd
+-----END PGP SIGNATURE-----
+
+--ufNrFSjcZLO8PioW--
