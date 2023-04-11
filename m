@@ -2,187 +2,296 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5527C77B77
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 10:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 677E1C76196
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 10:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbjDKK2R convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Apr 2023 06:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55460 "EHLO
+        id S229678AbjDKKsb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Apr 2023 06:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbjDKK2Q (ORCPT
+        with ESMTP id S229659AbjDKKsa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Apr 2023 06:28:16 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C313E49;
-        Tue, 11 Apr 2023 03:28:14 -0700 (PDT)
-Received: by mail-ot1-f46.google.com with SMTP id i15-20020a9d610f000000b006a11f365d13so2901392otj.0;
-        Tue, 11 Apr 2023 03:28:14 -0700 (PDT)
+        Tue, 11 Apr 2023 06:48:30 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A839430FF
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Apr 2023 03:48:28 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id o18so7081394wro.12
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Apr 2023 03:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681210107; x=1683802107;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SVDWJnAAwrepPupyFSVjoWUaB4nQWZPWtKMm3U8io/I=;
+        b=j3zDcU+iAPsrfADKIV+Gr7vETui9jC7A8eVxsZZFfekHSCqKr5qKn2cka4OmyI1MR8
+         bOjUAZp7lkvRFZYFUfUjp+T9sgjgpWNQCmynj/g05FUJjlT+YMGuni8BlbRvqW4loNJk
+         5BePMbkBj5b6sQSh7FNtvOPAvbKDwQ5KB2BAikOvZtfjltOEman03qRZRB94AmuSh4pP
+         OedN746i/TErka7/ygpzf0jURljow2rPwuMW4k0q/YFlWSf3vC++mDuckRaoySLkwe7K
+         ncoKhMwvPEo28Fmm0m71PeA0DgrKS0cgaeZ6n+s77D/iebA8x1CvTHYZJPVCSTipDZfe
+         qUng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681208893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9k4ZTujQ4vL3rn+nuolFAvnH5smJoZ+VnOtxKctHstQ=;
-        b=y+0bH845JCNTfFSKJ0B1MNOHn231uHjFfzkjSJyaq98rD8+jejuBRzoyTS8HhnoNsO
-         8jQ0bd7bTqaZURCPChYQYxcPRSs7oyztbrQDGH3EQAa+rc3jkxU/hdBWk908Q1jRcEBD
-         MRxiWJpu5gvekAKHSXCg2vGClTRugX04MBZZy4Kje2/PBxfpSq/pGiuATVcYKzGxG4p1
-         3urjx9jdH9H2ImVyeelhhnhTvDRI3YejMMpWCWeMZ4s+LCNLUVhFVzA17grZmnFhAGlG
-         jbl9XUx5k4pxksCLilIFkF5uzXvqEjaBwX59XSJJnun9IBrkMSZr6cWBRu5bR8R1NM7Q
-         FRmA==
-X-Gm-Message-State: AAQBX9fL7mSESR+2nvw+f/aGHSDFxg7E8T6wyWC0Q+6AyiOEoINmtg4c
-        9qmfuOeOiXyBbgolJirbePzAEaVVepxtJt9a
-X-Google-Smtp-Source: AKy350an1xN/hishtaGm9b8dpgu3i42ccxwem6GQPxV40Cnc+i419snNpiA8gUUu82rkDrPlDBj9fg==
-X-Received: by 2002:a9d:7ac4:0:b0:69f:b541:3f6e with SMTP id m4-20020a9d7ac4000000b0069fb5413f6emr6422271otn.19.1681208893360;
-        Tue, 11 Apr 2023 03:28:13 -0700 (PDT)
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
-        by smtp.gmail.com with ESMTPSA id d16-20020a9d5e10000000b006a305c68617sm5237126oti.53.2023.04.11.03.28.12
+        d=1e100.net; s=20210112; t=1681210107; x=1683802107;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVDWJnAAwrepPupyFSVjoWUaB4nQWZPWtKMm3U8io/I=;
+        b=c1DskIs1LIexOgY1Kw9UneOoDnyIDfLsZ+eE3uEKMkWXDxGyz4z6C64L5OzUswg+yu
+         bLPKU6Y3Rw4ZO5EJGa1cLKxiZiVm/QmiQbSX1FChcq7TJw0nbLMUptSkUAiet9hpOkrl
+         c3WxwoVQOvLLlTpLUKnW3NdRMZZzAIsB3855kFlHk6QnC8vCE1bePfTOMP26Sh3Bm4FY
+         Ezt+cLqco4KO7NV1+I9znqJyN03U5wgVOFyy6fhItP5HJaiClWodTzQpnBBk/qMoG921
+         nY+DB4RM7krXMWmNlurps1RtO3QcCgEsLdRyJammDjkScTwJct02uIGhha3UlVT/0/R7
+         gasA==
+X-Gm-Message-State: AAQBX9dKEJIjmyN8J49RfFdEm/r4xrdWKGCdSo7uyPVA4QZNVxBcjklC
+        rWtYLbzuYF8qTWEW8yLlqYYHyA==
+X-Google-Smtp-Source: AKy350YDrTuMpbPE+jkPqv88NXCrKsMGooMWeJZ4PZE9iPbtrilSMNP5EAs7CfJQWp29ynGqvBXXcw==
+X-Received: by 2002:a5d:6a88:0:b0:2c5:4ca3:d56c with SMTP id s8-20020a5d6a88000000b002c54ca3d56cmr9487181wru.0.1681210106957;
+        Tue, 11 Apr 2023 03:48:26 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:2611:592:3b9e:d2ae? ([2a05:6e02:1041:c10:2611:592:3b9e:d2ae])
+        by smtp.googlemail.com with ESMTPSA id m14-20020a5d6a0e000000b002f01cb41b0bsm6564780wru.60.2023.04.11.03.48.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Apr 2023 03:28:12 -0700 (PDT)
-Received: by mail-ot1-f51.google.com with SMTP id cp25-20020a056830661900b00693ce5a2f3eso3621124otb.8;
-        Tue, 11 Apr 2023 03:28:12 -0700 (PDT)
-X-Received: by 2002:a25:d74c:0:b0:b46:c5aa:86ef with SMTP id
- o73-20020a25d74c000000b00b46c5aa86efmr5126210ybg.12.1681208871324; Tue, 11
- Apr 2023 03:27:51 -0700 (PDT)
+        Tue, 11 Apr 2023 03:48:26 -0700 (PDT)
+Message-ID: <c93d583d-e2b8-e8dd-cc94-cd77ecb2cab1@linaro.org>
+Date:   Tue, 11 Apr 2023 12:48:25 +0200
 MIME-Version: 1.0
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech> <20221018-clk-range-checks-fixes-v3-28-9a1358472d52@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-28-9a1358472d52@cerno.tech>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 11 Apr 2023 12:27:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
-Message-ID: <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 28/65] clk: renesas: r9a06g032: Add a determine_rate hook
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Ralph Siemsen <ralph.siemsen@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
+ usage
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Johan Hovold <johan@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>
+References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
+ <Y9J4WAFyXyV/nqlG@orome> <20230210131703.GF175687@linaro.org>
+ <Y+ZQC85TM+O8p8gQ@orome> <365c469b-22f6-fb26-1872-5e9a5079af5d@linaro.org>
+ <Y+Ze4tAM6Jpszq/3@orome>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <Y+Ze4tAM6Jpszq/3@orome>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-CC Gareth, Hervé, Miquel, Ralph
 
-On Tue, Apr 4, 2023 at 2:44 PM Maxime Ripard <maxime@cerno.tech> wrote:
-> The Renesas r9a06g032 bitselect clock implements a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
->
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
->
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
->
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
->
-> The latter case would be equivalent to setting the flag
-> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-> to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> implementation is provided, clk_round_rate() (through
-> clk_core_round_rate_nolock()) will call itself on the parent if
-> CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> otherwise. __clk_mux_determine_rate() has the exact same behavior when
-> CLK_SET_RATE_NO_REPARENT is set.
->
-> And if it was an oversight, then we are at least explicit about our
-> behavior now and it can be further refined down the line.
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Hi Thierry,
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-But I do not have the hardware.
+did you have time to look at this ?
 
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -1121,6 +1121,7 @@ static int r9a06g032_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  }
->
->  static const struct clk_ops clk_bitselect_ops = {
-> +       .determine_rate = __clk_mux_determine_rate,
->         .get_parent = r9a06g032_clk_mux_get_parent,
->         .set_parent = r9a06g032_clk_mux_set_parent,
->  };
-> @@ -1145,7 +1146,7 @@ r9a06g032_register_bitsel(struct r9a06g032_priv *clocks,
->
->         init.name = desc->name;
->         init.ops = &clk_bitselect_ops;
-> -       init.flags = CLK_SET_RATE_PARENT;
-> +       init.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT;
->         init.parent_names = names;
->         init.num_parents = 2;
->
+This driver is the only one using get_thermal_instance() and I would 
+like to remove this function along with the thermal_core.h inclusion in 
+this driver
 
-Gr{oetje,eeting}s,
+Thanks
+   -- Daniel
 
-                        Geert
+
+On 10/02/2023 16:12, Thierry Reding wrote:
+> On Fri, Feb 10, 2023 at 03:36:59PM +0100, Daniel Lezcano wrote:
+>> On 10/02/2023 15:09, Thierry Reding wrote:
+>>> On Fri, Feb 10, 2023 at 02:17:03PM +0100, Daniel Lezcano wrote:
+>>>> Hi Thierry,
+>>>>
+>>>> On Thu, Jan 26, 2023 at 01:55:52PM +0100, Thierry Reding wrote:
+>>>>> On Tue, Jan 24, 2023 at 08:57:23PM +0100, Daniel Lezcano wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> does anyone know what is the purpose of the get_thermal_instance() usage in
+>>>>>> this code:
+>>>>>>
+>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tree/drivers/thermal/tegra/soctherm.c?h=thermal/linux-next#n623
+>>>>>>
+>>>>>> The driver is using a function which is reserved for the thermal core. It
+>>>>>> should not.
+>>>>>>
+>>>>>> Is the following change ok ?
+>>>>>>
+>>>>>> diff --git a/drivers/thermal/tegra/soctherm.c
+>>>>>> b/drivers/thermal/tegra/soctherm.c
+>>>>>> index 220873298d77..5f552402d987 100644
+>>>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>>>> @@ -620,9 +620,8 @@ static int tegra_thermctl_set_trip_temp(struct
+>>>>>> thermal_zone_device *tz, int trip
+>>>>>>    				continue;
+>>>>>>
+>>>>>>    			cdev = ts->throt_cfgs[i].cdev;
+>>>>>> -			if (get_thermal_instance(tz, cdev, trip_id))
+>>>>>> -				stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>>>> -			else
+>>>>>> +			stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>>>> +			if (!stc)
+>>>>>>    				continue;
+>>>>>>
+>>>>>>    			return throttrip_program(dev, sg, stc, temp);
+>>>>>> @@ -768,9 +767,9 @@ static int tegra_soctherm_set_hwtrips(struct device
+>>>>>> *dev,
+>>>>>>    			continue;
+>>>>>>
+>>>>>>    		cdev = ts->throt_cfgs[i].cdev;
+>>>>>> -		if (get_thermal_instance(tz, cdev, trip))
+>>>>>> -			stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>>>> -		else
+>>>>>> +
+>>>>>> +		stc = find_throttle_cfg_by_name(ts, cdev->type);
+>>>>>> +		if (!stc)
+>>>>>>    			continue;
+>>>>>>
+>>>>>>    		ret = throttrip_program(dev, sg, stc, temperature);
+>>>>>
+>>>>> There's a small difference in behavior after applying this patch. Prior
+>>>>> to this I get (on Tegra210):
+>>>>>
+>>>>> 	[   12.354091] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
+>>>>> 	[   12.379009] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
+>>>>> 	[   12.388882] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
+>>>>> 	[   12.401007] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
+>>>>> 	[   12.471041] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
+>>>>> 	[   12.482852] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
+>>>>> 	[   12.482860] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
+>>>>> 	[   12.485357] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
+>>>>> 	[   12.501774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
+>>>>>
+>>>>> and after these changes, it turns into:
+>>>>>
+>>>>> 	[   12.447113] tegra_soctherm 700e2000.thermal-sensor: missing thermtrips, will use critical trips as shut down temp
+>>>>> 	[   12.472300] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when cpu reaches 102500 mC
+>>>>> 	[   12.481789] tegra_soctherm 700e2000.thermal-sensor: programming throttle for cpu to 102500
+>>>>> 	[   12.495447] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when cpu reaches 102500 mC
+>>>>> 	[   12.496514] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when gpu reaches 103000 mC
+>>>>> 	[   12.510353] tegra_soctherm 700e2000.thermal-sensor: programming throttle for gpu to 103000
+>>>>> 	[   12.526856] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when gpu reaches 103000 mC
+>>>>> 	[   12.528774] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when pll reaches 103000 mC
+>>>>> 	[   12.569352] tegra_soctherm 700e2000.thermal-sensor: programming throttle for pll to 103000
+>>>>> 	[   12.577635] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when pll reaches 103000 mC
+>>>>> 	[   12.590952] tegra_soctherm 700e2000.thermal-sensor: thermtrip: will shut down when mem reaches 103000 mC
+>>>>> 	[   12.600783] tegra_soctherm 700e2000.thermal-sensor: programming throttle for mem to 103000
+>>>>> 	[   12.609204] tegra_soctherm 700e2000.thermal-sensor: throttrip: will throttle when mem reaches 103000 mC
+>>>>>
+>>>>> The "programming throttle ..." messages are something I've added locally
+>>>>> to trace what gets called. So it looks like for "pll" and "mem" thermal
+>>>>> zones, we now program trip points whereas we previously didn't.
+>>>>
+>>>> The DT descriptioni (tegra210.dtsi) says one thing and the implementation says
+>>>> something else.
+>>>>
+>>>> If we refer to the PLL description, there is one 'hot' trip point and
+>>>> one 'critical' trip point. No polling delay at all, so we need the
+>>>> interrupts.
+>>>>
+>>>> Logically, we should set the 'hot' trip point first, when the trip
+>>>> point is crossed, we setup the next trip point, which is the critical.
+>>>>
+>>>> With these two trip points, the first one will send a notification to
+>>>> the userspace and the second one will force a shutdown of the
+>>>> system. For both, no cooling device is expected.
+>>>
+>>> I think the intention here is to use the soctherm's built-in throttling
+>>> mechanism as a last resort measure to try and cool the system down. I
+>>> suppose that could count as "passive" cooling, so specifying it as the
+>>> cooling device for the "passive" trip point may be more appropriate.
+>>>
+>>> The throttling that happens here is quite severe, so we don't want it to
+>>> happen too early. I would expect that our "passive" trip point shouldn't
+>>> be a lot less than the "hot" temperature. I suspect that's the reason
+>>> why the "hot" trip point was reused for this.
+>>>
+>>> I'm also beginning to think that we should just not expose the soctherm
+>>> throttling as a cooling device and instead keep it internal to the
+>>> soctherm driver entirely.
+>>
+>> Yes, and perhaps separate it from the sensor driver.
+>>
+>> There is a similar hardware limiter for the qcom platform [1]. The
+>> description in the device tree is separated from the sensor and the binding
+>> has temperatures to begin the mitigation [2].
+> 
+> The hardware throttling is controlled using registers that are part of
+> the SOCTHERM block, so we can't separate it from the sensor driver. I
+> don't think that's much of a problem, though. The code for this already
+> exists in the current soctherm driver, so it's just a matter of removing
+> the cooling device registration code.
+> 
+>>
+>> There is no trip point associated as those are related to the in-kernel
+>> mitigation.
+>>
+>> If this mitigation is a heavy mitigation, above what the kernel is able to
+>> do with a passive cooling device. It would make sense to just have
+>> configured outside of the thermal zone.
+>>
+>> So the configuration would be something like:
+>>
+>> myperformance_limite {
+>> 	@ = <0x...>
+>> 	temperature_limit = 95000;
+>> };
+>>
+>> thermal_zone {
+>>
+>> 	cpu : {
+>> 		trips {
+>> 			alert {
+>> 			temperature = 90000;
+>> 			hysteresis = 2000;
+>> 			type = passive;
+>> 			};
+>>
+>> 			hot {
+>> 			temperature = 97000;
+>> 			type = hot;
+>> 			};
+>>
+>> 			critical {
+>> 			temperature = 100000;
+>> 			hysteresis = 2000;
+>> 			type = critical;
+>> 			};
+>>
+>> 			cooling-maps = <&cpu NO_LIMIT NO_LIMIT>;
+>> 		};
+>> 	}
+>> };
+>>
+>> The behavior will be a passive mitigation, if it fails the hardware limiter
+>> will take over, if that fails then hot sends a notification to the userspace
+>> (giving the opportunity to hotplug a cpu or kill a task or suspend), if that
+>> fails then shutdown.
+> 
+> Yeah, that's exactly what I had in mind.
+> 
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tree/drivers/thermal/qcom/lmh.c?h=thermal/bleeding-edge
+>>
+>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845.dtsi?h=thermal/bleeding-edge#n3922
+>>
+>> [ ... ]
+>>
+>>> On the DT side, I think most of the cooling maps can be cleaned up. We
+>>> can remove the entries for "critical" and "hot" trip points if the
+>>> driver unconditionally programs the automated throttling.
+>>
+>> You may want to keep the critical trip points at least. Even if the hardware
+>> limiter is certainly very effective, having the critical point is another
+>> fail safe allowing to gracefully shutdown the system before a wild hardware
+>> reset.
+> 
+> Yeah. What I meant was to remove only the cooling map entries for
+> critical and hot since they would be unused. We absolutely want to
+> keep the trip points themselves around to make sure the system will
+> forcefully shutdown as a last resort.
+> 
+> Thierry
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
