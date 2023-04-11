@@ -2,184 +2,187 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E9DC77B74
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 08:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5527C77B77
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 10:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbjDKIWt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Apr 2023 04:22:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57370 "EHLO
+        id S229814AbjDKK2R convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Apr 2023 06:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbjDKIWZ (ORCPT
+        with ESMTP id S229787AbjDKK2Q (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Apr 2023 04:22:25 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C004ECB;
-        Tue, 11 Apr 2023 01:21:04 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 86501C000B;
-        Tue, 11 Apr 2023 08:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1681201245;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5dxn4NJiE3B4l0ky6etbuCAHmNrCsdSn8aiPhVJqzK0=;
-        b=ZsU8dYwTOc46TPHSbq5p16/9AQmMS/uUngPw/Ep3ffxRbxNAvDSBCBvcAy2pJthLsUo170
-        Rj2p9Mc9u19gW1370eOx7JvIAabcDATJDumAn+o4DLCQe7iYje0L16LYJobe4Ma8iY4S2M
-        hVT2XlKE7FDCpaVqWTtgFMG9mm77zh0cU7Io21vdLB2MKPq3F4zr/E7ECZswWoUCh/54s9
-        LxOZOxezaGsD/cMwwjzDu8L5qQzOGwesAiCNFf9eRpldZFKNpdmxXMmy52npYKIeX+l3mz
-        4g3Xo/1Q9fGa3R74wYDYHo17n1DEYEktLz9cH0XxSNGHCrcLqbBdY32P+qBBmQ==
-Date:   Tue, 11 Apr 2023 10:20:25 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Lucas Stach <dev@lynxeye.de>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Stefan Agner <stefan@agner.ch>, linux-mips@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-tegra@vger.kernel.org, Liang Yang <liang.yang@amlogic.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-amlogic@lists.infradead.org,
-        Chuanhong Guo <gch981213@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Heiko Stuebner <heiko@sntech.de>,
-        Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-mediatek@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        kernel@pengutronix.de, Arnd Bergmann <arnd@arndb.de>,
+        Tue, 11 Apr 2023 06:28:16 -0400
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C313E49;
+        Tue, 11 Apr 2023 03:28:14 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id i15-20020a9d610f000000b006a11f365d13so2901392otj.0;
+        Tue, 11 Apr 2023 03:28:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681208893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9k4ZTujQ4vL3rn+nuolFAvnH5smJoZ+VnOtxKctHstQ=;
+        b=y+0bH845JCNTfFSKJ0B1MNOHn231uHjFfzkjSJyaq98rD8+jejuBRzoyTS8HhnoNsO
+         8jQ0bd7bTqaZURCPChYQYxcPRSs7oyztbrQDGH3EQAa+rc3jkxU/hdBWk908Q1jRcEBD
+         MRxiWJpu5gvekAKHSXCg2vGClTRugX04MBZZy4Kje2/PBxfpSq/pGiuATVcYKzGxG4p1
+         3urjx9jdH9H2ImVyeelhhnhTvDRI3YejMMpWCWeMZ4s+LCNLUVhFVzA17grZmnFhAGlG
+         jbl9XUx5k4pxksCLilIFkF5uzXvqEjaBwX59XSJJnun9IBrkMSZr6cWBRu5bR8R1NM7Q
+         FRmA==
+X-Gm-Message-State: AAQBX9fL7mSESR+2nvw+f/aGHSDFxg7E8T6wyWC0Q+6AyiOEoINmtg4c
+        9qmfuOeOiXyBbgolJirbePzAEaVVepxtJt9a
+X-Google-Smtp-Source: AKy350an1xN/hishtaGm9b8dpgu3i42ccxwem6GQPxV40Cnc+i419snNpiA8gUUu82rkDrPlDBj9fg==
+X-Received: by 2002:a9d:7ac4:0:b0:69f:b541:3f6e with SMTP id m4-20020a9d7ac4000000b0069fb5413f6emr6422271otn.19.1681208893360;
+        Tue, 11 Apr 2023 03:28:13 -0700 (PDT)
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
+        by smtp.gmail.com with ESMTPSA id d16-20020a9d5e10000000b006a305c68617sm5237126oti.53.2023.04.11.03.28.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Apr 2023 03:28:12 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id cp25-20020a056830661900b00693ce5a2f3eso3621124otb.8;
+        Tue, 11 Apr 2023 03:28:12 -0700 (PDT)
+X-Received: by 2002:a25:d74c:0:b0:b46:c5aa:86ef with SMTP id
+ o73-20020a25d74c000000b00b46c5aa86efmr5126210ybg.12.1681208871324; Tue, 11
+ Apr 2023 03:27:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech> <20221018-clk-range-checks-fixes-v3-28-9a1358472d52@cerno.tech>
+In-Reply-To: <20221018-clk-range-checks-fixes-v3-28-9a1358472d52@cerno.tech>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Apr 2023 12:27:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
+Message-ID: <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
+Subject: Re: [PATCH v3 28/65] clk: renesas: r9a06g032: Add a determine_rate hook
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
         Manivannan Sadhasivam <mani@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Wang Weiyang <wangweiyang2@huawei.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Han Xu <han.xu@nxp.com>, Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Valentin Korenblit <vkorenblit@sequans.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, linux-oxnas@groups.io,
-        Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: Re: [PATCH] mtd: nand: Convert to platform remove callback
- returning void
-Message-ID: <20230411102025.6b2fdc9e@xps-13>
-In-Reply-To: <20230408185332.d2g2ao4tdp6ltm4i@pengutronix.de>
-References: <20230401161938.2503204-1-u.kleine-koenig@pengutronix.de>
-        <20230407101043.299f5e22@xps-13>
-        <20230408185332.d2g2ao4tdp6ltm4i@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Ralph Siemsen <ralph.siemsen@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Uwe,
+CC Gareth, Hervé, Miquel, Ralph
 
-u.kleine-koenig@pengutronix.de wrote on Sat, 8 Apr 2023 20:53:32 +0200:
+On Tue, Apr 4, 2023 at 2:44 PM Maxime Ripard <maxime@cerno.tech> wrote:
+> The Renesas r9a06g032 bitselect clock implements a mux with a set_parent
+> hook, but doesn't provide a determine_rate implementation.
+>
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+>
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+>
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+>
+> The latter case would be equivalent to setting the flag
+> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> implementation is provided, clk_round_rate() (through
+> clk_core_round_rate_nolock()) will call itself on the parent if
+> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> CLK_SET_RATE_NO_REPARENT is set.
+>
+> And if it was an oversight, then we are at least explicit about our
+> behavior now and it can be further refined down the line.
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
->=20
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
->=20
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-> Reviewed-by: Philippe Mathieu-Daud=C3=A9 <philmd@linaro.org>
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Acked-by: Roger Quadros <rogerq@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
->=20
-> Hey Miquel,
->=20
-> On Fri, Apr 07, 2023 at 10:10:43AM +0200, Miquel Raynal wrote:
-> > I've looked at the different patches, they look good to me but as they
-> > are all trivial and exactly identical, would you mind sending this
-> > again all squashed in a single patch? A subsystem-wide conversion seems
-> > appropriate. In all cases I plan to take this for the next merge
-> > window. =20
->=20
-> I slightly prefer them separately, because I like small patches and
-> because the Acks and Reviews only apply to the individual drivers.
-> But I don't mind seriously, so here comes the series squashed into one.
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+But I do not have the hardware.
 
-For any non trivial change, I would definitely do that as well.
+> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> @@ -1121,6 +1121,7 @@ static int r9a06g032_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>  }
+>
+>  static const struct clk_ops clk_bitselect_ops = {
+> +       .determine_rate = __clk_mux_determine_rate,
+>         .get_parent = r9a06g032_clk_mux_get_parent,
+>         .set_parent = r9a06g032_clk_mux_set_parent,
+>  };
+> @@ -1145,7 +1146,7 @@ r9a06g032_register_bitsel(struct r9a06g032_priv *clocks,
+>
+>         init.name = desc->name;
+>         init.ops = &clk_bitselect_ops;
+> -       init.flags = CLK_SET_RATE_PARENT;
+> +       init.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT;
+>         init.parent_names = names;
+>         init.num_parents = 2;
+>
 
-The thing is, by collecting the tags with b4, you lost all the Acks and
-Reviews targets, while we could prevent this, see below.
+Gr{oetje,eeting}s,
 
-> While going through the changed, probably the s3c24xx driver (which
-> isn't exactly identical to the other changes) could benefit from an
-> additional change throwing out the early exit (which---I guess---cannot
-> be hit).
+                        Geert
 
-Yes, I believe the 'info =3D=3D NULL' condition is useless, feel free to
-drop it in a second patch if you wish.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> BTW, I constructed the lists of acks/reviews myself and found the same
-> set. However b4 wailed about each patch claiming:
->=20
-> 	    =E2=9C=97 BADSIG: DKIM/infradead.org
-
-No idea what this means, any pointer?
-
-> And it didn't like you producing the tags, saying:
->=20
-> 	NOTE: some trailers ignored due to from/email mismatches:
-> 	    ! Trailer: Acked-by: Roger Quadros <rogerq@kernel.org>
-> 	     Msg From: Miquel Raynal <miquel.raynal@bootlin.com>
-> 	    [...]
-
-Well, yes, I don't expect b4 to read plain english when I say "I
-collected them for you" ^^ But at least my list had a '# <area>' suffix
-for each of the Acked and Reviewed changes, which is now missing. I
-don't know  how useful they actually are, but it seems to me that the
-information was lost between v1 and v2?
-
-Thanks,
-Miqu=C3=A8l
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
