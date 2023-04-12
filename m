@@ -2,228 +2,168 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED72AC77B72
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Apr 2023 17:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F99C77B6E
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Apr 2023 18:27:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbjDLRKq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Apr 2023 13:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48282 "EHLO
+        id S229830AbjDLS1b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Apr 2023 14:27:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjDLRKp (ORCPT
+        with ESMTP id S229503AbjDLS13 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Apr 2023 13:10:45 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on20601.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eae::601])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0973118;
-        Wed, 12 Apr 2023 10:10:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VZ+Phni+HA/VcuEOvw7SVigOjxtFQfd9YDsgG3MxLqCZiqpsPXwKhMVU01f+XwFDJmQZ+wugiiZa0XK+XevHuUqGVwJlQIqN7q8ODeLP9mYXA/L+yFDJkvY3bifntl2TzifTyCZ6XYpcRCNt5DkV1e7GUgwp27AbsHrSuesPix+qS7gmt/tywfV5DLljqotLPp9mFkyJW46ync9eKS9zIovPHHl3O8ObQuAjgt3LqspxDC/4THFjb9vKnRzi/nWLGQNHq/BIUJV1nG2XX8Y8w8mb1SO4WW2yFKmJ5MSFnvlIPJmv0PeSxlhQoextvnRKoK94C74GLjbF//1258qtvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6q5NYrVN4YRUWNMiIoWaR5gQkSuuPEDXslDnU52cNQk=;
- b=NlijC2cpW1/jHB9rS9XPSAuz9UXHCCkvASHNXW6YBXtw0LuEpTwY2eXggQLq7Jiedd/AYV6Kz1ogucgJruGv7EYa6L4dIn8k8pE0gcPWq0HUL9FmVkLPDp7lD+RXsVHTFfxlFQugO8KNekknHeCKv4L4Puyjq88KJD7HcPRzgQaSuPYSYSXSsshKgp5Ft068pCgOzf5B1t2KaXiWd73eJBdSZAZ+ckuDvs45BlOsFJmpUHDR0w53qFoDqOD2hyAz+Bz9FHU9fq0HHaonO7QbwIJ7hb7+WZJAb37jXIwxrJML3u5zFtBFE+LwFJoYPm9pe4Kuk7eh7kwaEjZphUludA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6q5NYrVN4YRUWNMiIoWaR5gQkSuuPEDXslDnU52cNQk=;
- b=TggoZwNRLn7pvmDNU5+/o03+85j6vlomCUxOG7gG0f25d3y4DSGyDKAJQ8IJzBjKqO+CZsDFZW0/IfgSFbeD+agaKiT5XEceYNCHU33FESvb1vrfnquVH+eIQf1IqlP6JBQYNh/gpAug/M9AI9G5QpIRZRZDdtg9BRPnSf5xSmKl1NpIc5UE04195/+JV0VYO166qAYRPF2fAC+Uw5XJXkgRZlrHGk8xbDlBzqeyVt6M13Cbgyj774EcZ99bdR5pdmQanuYckQ3CL+7d2bIEnQPzxuRCDzkHW1WAvf1cgsGOCIdiPhuSxdfmIBTsesEJR2fHId+GCuzKzPTgYEVmXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA1PR12MB6604.namprd12.prod.outlook.com (2603:10b6:208:3a0::7)
- by DM4PR12MB5891.namprd12.prod.outlook.com (2603:10b6:8:67::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.38; Wed, 12 Apr
- 2023 17:10:40 +0000
-Received: from IA1PR12MB6604.namprd12.prod.outlook.com
- ([fe80::265:64aa:fb3e:288]) by IA1PR12MB6604.namprd12.prod.outlook.com
- ([fe80::265:64aa:fb3e:288%5]) with mapi id 15.20.6277.034; Wed, 12 Apr 2023
- 17:10:40 +0000
-Message-ID: <2c02147c-827a-030c-5aab-15b53e25e4c7@nvidia.com>
-Date:   Wed, 12 Apr 2023 10:10:34 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.1
-Subject: Re: [V5 04/10] dt-bindings: timestamp: Add nvidia,gpio-controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
-        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
-References: <20230406171837.11206-1-dipenp@nvidia.com>
- <20230406171837.11206-5-dipenp@nvidia.com>
- <20230412142903.GA2313008-robh@kernel.org>
-Content-Language: en-US
-X-Nvconfidentiality: public
-From:   Dipen Patel <dipenp@nvidia.com>
-In-Reply-To: <20230412142903.GA2313008-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0203.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::28) To IA1PR12MB6604.namprd12.prod.outlook.com
- (2603:10b6:208:3a0::7)
+        Wed, 12 Apr 2023 14:27:29 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355D240D7;
+        Wed, 12 Apr 2023 11:27:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681324048; x=1712860048;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=cqKO9TziOmEEhE0gbMgiPkWcojaHbnVzNzEhpsuxk3A=;
+  b=K91t95DziJTYAB42d3jGi3THhWvPbuepNtDpiEcofje+BhqqdMlvIacb
+   WbpJXV1TYDw0x8dqURClCwx4BzeVyPTx5HR3s6fwrdH3FncMOIlKDiZez
+   eveMkCBQXmUp04eO+ZyFVg0X6P8ZZKg2ta9ZLCmn5ayFIDbYjh6AELGrs
+   Deykxph1UFQfF85F9BMGpkcWuTinEq40RH7I4dsohdiNcsAyHPiPVLYh5
+   isiR0lVkM93+KTILXzFUPvSB5fo0TWGAWV7zp5O4tqfpHmxlx4MeBBzmG
+   N8hx0/p/35MpDn8Ara+YnbNxSrTUTU37CFR/8VU2wcBMv3bcaPiEZvFxF
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="328099187"
+X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
+   d="scan'208";a="328099187"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 11:27:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="753646682"
+X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
+   d="scan'208";a="753646682"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Apr 2023 11:27:21 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pmfBg-000Xyx-2P;
+        Wed, 12 Apr 2023 18:27:20 +0000
+Date:   Thu, 13 Apr 2023 02:27:20 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+        David Airlie <airlied@gmail.com>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-fbdev@vger.kernel.org, lvc-project@linuxtesting.org,
+        dri-devel@lists.freedesktop.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Helge Deller <deller@gmx.de>, amd-gfx@lists.freedesktop.org,
+        Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] video/hdmi: minor fixes for *_infoframe_init functions
+Message-ID: <202304130224.59cNkdgV-lkp@intel.com>
+References: <20230412152910.9486-1-n.zhandarovich@fintech.ru>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|DM4PR12MB5891:EE_
-X-MS-Office365-Filtering-Correlation-Id: db83e991-af1d-4006-2c4c-08db3b78d77a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +zCghiKSEJ6yDu047FxMCxvQx89piyh/45G7Ht+gxAK4GHZTlP/Mtd5sgWCt30S6nkg9ZVRYCXf5yoJX3GwM8IdoF/kuobbBZJHLZFbjts+3/rQ/As7UMBNUVmC+k8jc2AlRfU7F0Uz3pUUmHr/RjxQ5NAm0lFFESZZryo+lk7+F7Rhj4d1lYxNBMfYmjnW4ywSVuwut/Ner+U8Sm8PHcIsiTSxp4xigU0ECwhjVjwTqp9P5E8hY3ghg+/uN1VPIBZeanWY5+z6p0KYanZXMxqKrqx12AmIX42p/pAoIJH+agPkf6S6+QjeibqYlFhuVZqEdj31d9A5haR/15f11wXiWAm/cWY2EjJXv1IAQ2GICtXW8KcKYKqRZEkSKszrFw2J6OfnSukqej+IL9QW+TdxVKAyRGWxsxL+q5so1TYFy2sqNSvwf9tH33KJc9BLQmwQV2RLLChknmqaJ7hqraFle9R8NUnB5tO2iERagd3UNmEw8SKoi3Jytw5nrzptPd7voC5nYzXeuCvI1DNs09jBZlVz1oIqL/frIJrGdy+pLcLVzaxld5NZvKzhVJqFJqD5OCZ3pJDxmOLAroLQnqdl25vJ6KQdlHkdSjGjWO9bpS7jav6UlU8YlORRpaUi8w96ZnFiHIoqIcC1GAl3AeA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(346002)(396003)(376002)(366004)(451199021)(31686004)(478600001)(6512007)(83380400001)(36756003)(31696002)(2616005)(86362001)(38100700002)(316002)(2906002)(53546011)(6506007)(26005)(186003)(5660300002)(6486002)(66476007)(6666004)(6916009)(66556008)(8936002)(41300700001)(8676002)(7416002)(66946007)(4326008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZWJ5a1ZKaDZoQ1RqbWlrdnZLT1pNbFBaelZha1BtcDA2bmFSUHhlVmVqdlBa?=
- =?utf-8?B?cTJMVTBtWFBobHVLTGpUTHdnUm12Wm9UVlhLVkJVNXBjUnFQaTd0bXR1VHM2?=
- =?utf-8?B?Zm40K0ZHQkk2RDY4TVprV3VhZnczOGRHSGsxUWd1eHBFMk5yRmhYZWJwT1BQ?=
- =?utf-8?B?VVRsWTI4MVpUU3doVCtSMlB1MEd5YStHZVo2WnBUdEJ0QUUxWmFsS0tPWWVr?=
- =?utf-8?B?NU02b2dnMXhQWHBiUHFUTEtYRG9LOVVZZVIwUzlmbmM2Y3FDLzI4V2tnRHFv?=
- =?utf-8?B?dllXSjArQkpxYkNFcTdiUDBOemZ5TVVUV09NM29XOHozUldUekVGL0JINS8w?=
- =?utf-8?B?UkJRUm9BN1NISTZ4Y0xJWlhCS1V2Z0tURjd1bFlSRU9nT0VhQmNvNjB6ZnJj?=
- =?utf-8?B?NVFQMEh5aE05OVFSYW9iR0VOeXVJNzd2ZGt6K1ZURXZZdDVWSTVGMVlFOWYx?=
- =?utf-8?B?MGF1TEFtTXdOaEZ0b09QeVdNMTdlWlNHdmhmTmtNbWpLNG4rYWtkUzFvQm9S?=
- =?utf-8?B?L2hmb1ZqbEdwUUVFYjZwY0QvTFhjWlJybzlwNHp4Z2JuMnlWODFEenIzVHlp?=
- =?utf-8?B?VXpSRy96cnNUMnZLNVM3REdlMTVFWVczSnBNd0pUN3NHaDlncytreHJBUU55?=
- =?utf-8?B?bmNMVGR3dDF2WVc3RmhqL1BEK3ZLdHRjSlEvK2hSVDMxbkhqMytUaHpJR0N5?=
- =?utf-8?B?MCtVZmhKdWZLeXBiMTlTdmdBRFc2SlB5SVNjajJaNE1zWlBvUlRGL3FWcTlW?=
- =?utf-8?B?eUJaVWdodVVoOUlNUHhXYkFOY3dqM0dHQXY3MjAwUHZncnBpOThCeGtuUGR1?=
- =?utf-8?B?ZklNQmJ5NUx0UVEyQmV0UjA2NEc2ZGVBQzNtSW11eW56WjNnRlY2ZW5zbnVD?=
- =?utf-8?B?TnVtRVp3ZGVjMm1LWlRjbTBkNG9WNlNTNXhXRVNEbXljN0N0ZzNGdXpFT01V?=
- =?utf-8?B?TDlURkJsMGdMRmZ2N01aaEZYWTFqUktYNXFLVE1xdExkYTZ6QllaUU1xNzZJ?=
- =?utf-8?B?TkxKa05OZmhZN3VmWDBnd1Y1ZUZILzVwZWJFd2haczhTM2NEakk2eVVRN05E?=
- =?utf-8?B?VEFhTlQxNnVhWURUTlFYLzBTZ2xMaXBDWGZTRHdPendsRk9jWGttdkorYVlU?=
- =?utf-8?B?WEdTQU91MWZGUFFVbnc3SHVJL0VkS1ZUYWpUSVpUeStVaEpHNkNzS2RxNXRr?=
- =?utf-8?B?dDNGT0JMb0thR2JuY0kzck0vMk9LSzNYYTFOUkx1NG1CRm1zbk5GdDdZS0h0?=
- =?utf-8?B?d21TcEdaN0ViM1JaOGJXanEvMTdsRURVcjVxVFNCL1l5QWZ1R1Y5YlRFWDdy?=
- =?utf-8?B?ZmY2cHBwWS9NQUtWQWdaMFZtbFpuK2hpK2N5SGJLL1hiejcycitRdGtIRmtF?=
- =?utf-8?B?dFhiZUZOWS9UdUFpZW1JaDlhZUZqNmV4WXh4QVROYitZeXJudEJxdFBZUW5Y?=
- =?utf-8?B?U3lqMnlFT3RJVTlWUzFRSGxQNlYySHdtQkF1TkMvNmUwcFR2aEpNQVUyVmVv?=
- =?utf-8?B?SFNZMUQwbGJIV1JkWEI0NFgwVG44SkhSL2trNXNoalM2RFJhKzVCQXhaK3Bi?=
- =?utf-8?B?MmpPTGpOay82K3d0emRaR1A2eXFQUEV2cnBEWXY2WCtyMW11RVB5UWdpdUpK?=
- =?utf-8?B?QjhmU216TnI1NThmL1c5Q2wyakI3NzJzcWtzd3NZY21YakEyYzlUbW1UaEFx?=
- =?utf-8?B?WWhwaGJES042Y0hnZlA4c0VIM2NpNXNKcEtpaUNxc25PU0haTVpPaWd6Z3lG?=
- =?utf-8?B?V2RYVGlXK3c5TWdiM3IrOEJsLzJ3TjlKYS9JMXpQcFk2UjR4TlQ4bjlqTHNq?=
- =?utf-8?B?VnZhMXJuTnpmSkVIOWQvY1NxcEdSZWNQcWR3a2FxU05WUmFGMmNjTW5kOGYw?=
- =?utf-8?B?QjA2V05EaGJ4V1lQQnRHRG03UVZLa2FoTFFjd29zQ2hHZGdQckxIVEVEaGkz?=
- =?utf-8?B?U3U2djBjQ1pPSUplTHpzSzFocHhROU5GelN3SlFFVjE5L0tuaGUzUHNuZU1h?=
- =?utf-8?B?UXovZmZPSEdJY0lCOGNIa3FmeG9Pa3RRMUlUT29UTXlHQmtjRDBGNTd5SWFM?=
- =?utf-8?B?NGx2UTlmT2ZISWRJU2tGcEQ2bEszQThkOHZxZzZoTmJtQSt5Kzhqck5NbUtT?=
- =?utf-8?Q?i4rr/Cygy0yMC69T/VgwezzBf?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: db83e991-af1d-4006-2c4c-08db3b78d77a
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6604.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2023 17:10:40.4003
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T6CVweztjhWl/lmVr8/X4KX2gd6TClK1UFDDj8moNsrlV7pUK/cqBDKgB39697+o663/q43t80zK/iFrRyNjLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5891
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230412152910.9486-1-n.zhandarovich@fintech.ru>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/12/23 7:29 AM, Rob Herring wrote:
-> On Thu, Apr 06, 2023 at 10:18:31AM -0700, Dipen Patel wrote:
->> The tegra always-on (AON) GPIO HTE/GTE provider depends on the AON
->> GPIO controller where it needs to do namespace conversion between GPIO
->> line number (belonging to AON GPIO controller instance) and the GTE
->> slice bits. The patch introduces nvidia,gpio-controller property to
->> represent that dependency.
->>
->> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->>  .../timestamp/nvidia,tegra194-hte.yaml        | 36 ++++++++++++++++---
->>  1 file changed, 31 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
->> index 855dad3f2023..66eaa3fab8cc 100644
->> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
->> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
->> @@ -51,6 +51,12 @@ properties:
->>        LIC instance has 11 slices and Tegra234 LIC has 17 slices.
->>      enum: [3, 11, 17]
->>  
->> +  nvidia,gpio-controller:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      The phandle to AON gpio controller instance. This is required to handle
->> +      namespace conversion between GPIO and GTE.
->> +
->>    '#timestamp-cells':
->>      description:
->>        This represents number of line id arguments as specified by the
->> @@ -59,6 +65,12 @@ properties:
->>        mentioned in the nvidia GPIO device tree binding document.
->>      const: 1
->>  
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - "#timestamp-cells"
->> +
->>  allOf:
->>    - if:
->>        properties:
->> @@ -94,11 +106,15 @@ allOf:
->>          nvidia,slices:
->>            const: 17
->>  
->> -required:
->> -  - compatible
->> -  - reg
->> -  - interrupts
->> -  - "#timestamp-cells"
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - nvidia,tegra234-gte-aon
->> +    then:
->> +      required:
->> +        - nvidia,gpio-controller
-> 
-> Adding a new required property is an ABI break. But you just added this 
-> in patch 2. If this is required as part of nvidia,tegra234-gte-aon 
-> support, then it should all be 1 patch.
-Ok, will move this to one patch. For the ABI break, I have added appropriate
-code in the concerned driver to continue to be backward compatible.
+Hi Nikita,
 
-> 
->>  
->>  additionalProperties: false
->>  
->> @@ -112,6 +128,16 @@ examples:
->>                #timestamp-cells = <1>;
->>      };
->>  
->> +  - |
->> +    tegra234_hte_aon: timestamp@c1e0000 {
->> +              compatible = "nvidia,tegra234-gte-aon";
->> +              reg = <0xc1e0000 0x10000>;
->> +              interrupts = <0 13 0x4>;
->> +              nvidia,int-threshold = <1>;
->> +              nvidia,gpio-controller = <&gpio_aon>;
->> +              #timestamp-cells = <1>;
->> +    };
->> +
-> 
-> Really need a whole other example for 1 property?
-The property affects Tegra234 Soc and beyond, This example is provided
-to showcase that and it also implies that old SoC Tegra194 is not affected
-by this new property. Havind said, that I have not issue removing this example. 
+kernel test robot noticed the following build warnings:
 
-> 
->>    - |
->>      tegra_hte_lic: timestamp@3aa0000 {
->>                compatible = "nvidia,tegra194-gte-lic";
->> -- 
->> 2.17.1
->>
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on tegra/for-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes linus/master v6.3-rc6 next-20230412]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Nikita-Zhandarovich/video-hdmi-minor-fixes-for-_infoframe_init-functions/20230412-232947
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20230412152910.9486-1-n.zhandarovich%40fintech.ru
+patch subject: [PATCH] video/hdmi: minor fixes for *_infoframe_init functions
+config: i386-randconfig-a005-20230410 (https://download.01.org/0day-ci/archive/20230413/202304130224.59cNkdgV-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/36210f5b0ac3046f4c1c1d0c6e392eab40811699
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Nikita-Zhandarovich/video-hdmi-minor-fixes-for-_infoframe_init-functions/20230412-232947
+        git checkout 36210f5b0ac3046f4c1c1d0c6e392eab40811699
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/gpu/drm/i915/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304130224.59cNkdgV-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpu/drm/i915/display/intel_hdmi.c:769:37: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+           if (drm_WARN_ON(encoder->base.dev, ret))
+                                              ^~~
+   include/drm/drm_print.h:630:19: note: expanded from macro 'drm_WARN_ON'
+           drm_WARN((drm), (x), "%s",                                      \
+                            ^
+   include/drm/drm_print.h:620:7: note: expanded from macro 'drm_WARN'
+           WARN(condition, "%s %s: " format,                               \
+                ^~~~~~~~~
+   include/asm-generic/bug.h:131:25: note: expanded from macro 'WARN'
+           int __ret_warn_on = !!(condition);                              \
+                                  ^~~~~~~~~
+   drivers/gpu/drm/i915/display/intel_hdmi.c:756:9: note: initialize the variable 'ret' to silence this warning
+           int ret;
+                  ^
+                   = 0
+   1 warning generated.
+
+
+vim +/ret +769 drivers/gpu/drm/i915/display/intel_hdmi.c
+
+b055c8f3ef9f7b drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-07-08  748  
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  749  static bool
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  750  intel_hdmi_compute_spd_infoframe(struct intel_encoder *encoder,
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  751  				 struct intel_crtc_state *crtc_state,
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  752  				 struct drm_connector_state *conn_state)
+c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  753  {
+7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  754  	struct drm_i915_private *i915 = to_i915(encoder->base.dev);
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  755  	struct hdmi_spd_infoframe *frame = &crtc_state->infoframes.spd.spd;
+5adaea799c1c2c drivers/gpu/drm/i915/intel_hdmi.c         Damien Lespiau      2013-08-06  756  	int ret;
+5adaea799c1c2c drivers/gpu/drm/i915/intel_hdmi.c         Damien Lespiau      2013-08-06  757  
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  758  	if (!crtc_state->has_infoframe)
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  759  		return true;
+c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  760  
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  761  	crtc_state->infoframes.enable |=
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  762  		intel_hdmi_infoframe_enable(HDMI_INFOFRAME_TYPE_SPD);
+c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  763  
+7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  764  	if (IS_DGFX(i915))
+36210f5b0ac304 drivers/gpu/drm/i915/display/intel_hdmi.c Nikita Zhandarovich 2023-04-12  765  		hdmi_spd_infoframe_init(frame, "Intel", "Discrete gfx");
+7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  766  	else
+36210f5b0ac304 drivers/gpu/drm/i915/display/intel_hdmi.c Nikita Zhandarovich 2023-04-12  767  		hdmi_spd_infoframe_init(frame, "Intel", "Integrated gfx");
+7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  768  
+3a47ae201e0749 drivers/gpu/drm/i915/display/intel_hdmi.c Pankaj Bharadiya    2020-01-15 @769  	if (drm_WARN_ON(encoder->base.dev, ret))
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  770  		return false;
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  771  
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  772  	frame->sdi = HDMI_SPD_SDI_PC;
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  773  
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  774  	ret = hdmi_spd_infoframe_check(frame);
+3a47ae201e0749 drivers/gpu/drm/i915/display/intel_hdmi.c Pankaj Bharadiya    2020-01-15  775  	if (drm_WARN_ON(encoder->base.dev, ret))
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  776  		return false;
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  777  
+fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  778  	return true;
+c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  779  }
+c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  780  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
