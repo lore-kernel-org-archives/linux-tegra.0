@@ -2,125 +2,57 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1EDC77B73
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Apr 2023 16:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68197C7619A
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Apr 2023 07:41:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjDKQbE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Apr 2023 12:31:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36854 "EHLO
+        id S229578AbjDLHl6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Apr 2023 03:41:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjDKQbD (ORCPT
+        with ESMTP id S229950AbjDLHl4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Apr 2023 12:31:03 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE13A40C8;
-        Tue, 11 Apr 2023 09:31:02 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id qb20so21447677ejc.6;
-        Tue, 11 Apr 2023 09:31:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1681230661;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lUtdmO5RhKKGgsshDATRStPZUG/pJBx9W7yE7kfQ97o=;
-        b=iXUCz/YRwpooX0LJ2CjxCwvuEbzWNZ4HtNnVpxAgPs5447q73rfarFtpTI16t+Ac2p
-         UFMl7ZjnLq1SGC0AyYt218TSgbgdzq6KsyOL7cWaLKxh7jA19hdbbj8CUx1psTTFNBjm
-         APk7TbIA4ZpwvI3T91GSe9oHzuFKfdz+MiBm3suTqNF5fVoZ2X4IywASgQYKJql6H3pC
-         EmseqHXl+rtQPo8F2K8rPwjiEUZzt2RctOyBypvF6jHtB+zDIPXBW6Itsq6OQjQguEt9
-         0b3v/rnbFW132IRtFD78C29vbsjpA76n89ZX+5vgyk4guHEJOUzrO7b2kDhLLI/pYTlS
-         nUGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681230661;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lUtdmO5RhKKGgsshDATRStPZUG/pJBx9W7yE7kfQ97o=;
-        b=AmX75crRJEARPd47aYQkWsoJTTHQOSp6stPLEYsmzBA4SF60q1p+u8A9s3EqTeKjtP
-         Rm9ePTH3JV3EHk4IsQDvlty478EWj+sBC3dzfVaXJSiP7xeC48D7Edwd90M6e5CE4BIy
-         fx86tzZrrlg35/n+cuWUHFGOkgS+vKox/71QtgQZM9CtKfuoYdPN/0UDrsW0KlLl/X4p
-         4EQqcSFNXcEvDH5hz+cbP6wrRlBfQiluc2ASqs861t1nW0KTczQ5TiEPrfwflb0/a0K/
-         J3JHs+YukJt6eRRdH9eBkb6rwbNe2KWJOTalFmmP+xs0cRI/ZYb6xBCcgT6zcNIge31U
-         bZVg==
-X-Gm-Message-State: AAQBX9e+1V/UgOkox1d2q9GCBUPkm6L9feDTcXNLC701KE30N687vFj9
-        eN9RK+obB+E1VKCdO04GlmQ=
-X-Google-Smtp-Source: AKy350Y0D5VWkb/RTlDyKlVs1DqA2ctLjh5WfRAflgMMPA2Ussjc653GY5AnIU/MD3Zg2p/OupxyKQ==
-X-Received: by 2002:a17:906:31d9:b0:931:ad32:79ed with SMTP id f25-20020a17090631d900b00931ad3279edmr11576235ejf.12.1681230660970;
-        Tue, 11 Apr 2023 09:31:00 -0700 (PDT)
-Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id qk6-20020a1709077f8600b00948fd62a53asm6305718ejc.71.2023.04.11.09.31.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 09:31:00 -0700 (PDT)
-Date:   Tue, 11 Apr 2023 18:30:58 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Wei Ni <wni@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Johan Hovold <johan@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-Subject: Re: thermal/drivers/tegra: Getting rid of the get_thermal_instance()
- usage
-Message-ID: <ZDWLQgttLR2dWbwd@orome>
-References: <fa2bd92a-f2ae-a671-b537-87c0f3c03dbd@linaro.org>
- <Y9J4WAFyXyV/nqlG@orome>
- <20230210131703.GF175687@linaro.org>
- <Y+ZQC85TM+O8p8gQ@orome>
- <365c469b-22f6-fb26-1872-5e9a5079af5d@linaro.org>
- <Y+Ze4tAM6Jpszq/3@orome>
- <c93d583d-e2b8-e8dd-cc94-cd77ecb2cab1@linaro.org>
+        Wed, 12 Apr 2023 03:41:56 -0400
+Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 289E71FD2
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Apr 2023 00:41:51 -0700 (PDT)
+Received: by mail.lokoho.com (Postfix, from userid 1001)
+        id A64DC82C76; Wed, 12 Apr 2023 08:41:15 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1681285308; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=hhW61gRPtTpVTOEKj3GNPBullEoWb/ZG51xsxKXsFYyR9qPRuvc+LMG+oEzR9epbn
+         U6kkXnBC0X+Sd63HYYS9+m2njhesVCXw6EQr3EG7QRLseD04b4xMlgMTk7ljgU4sww
+         DKqxfcJS4BXV7Z6QtzySkkEcMQXm+T570Pep4gGo8DKwCGpSrYROs00zeXbQr55tc3
+         IKs7OeI3Pd8o3R3La9kg6HPHduJyIpGpYegppvJo7aP42iCZrSXTetfwzcx0PeUvMZ
+         KGQVWkZrAEhWXiIt+kOVaXHeA2Kyn9fiIlcqATgJLENNfvyI7pvpuTiyqEPgPpXFa9
+         1hHwCr5FHiSLw==
+Received: by mail.lokoho.com for <linux-tegra@vger.kernel.org>; Wed, 12 Apr 2023 07:40:53 GMT
+Message-ID: <20230412074501-0.1.59.1u7cf.0.bmkmcianhx@lokoho.com>
+Date:   Wed, 12 Apr 2023 07:40:53 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <linux-tegra@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ufNrFSjcZLO8PioW"
-Content-Disposition: inline
-In-Reply-To: <c93d583d-e2b8-e8dd-cc94-cd77ecb2cab1@linaro.org>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Dzie=C5=84 dobry,
 
---ufNrFSjcZLO8PioW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-On Tue, Apr 11, 2023 at 12:48:25PM +0200, Daniel Lezcano wrote:
->=20
-> Hi Thierry,
->=20
-> did you have time to look at this ?
->=20
-> This driver is the only one using get_thermal_instance() and I would like=
- to
-> remove this function along with the thermal_core.h inclusion in this driv=
-er
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
-Yeah, I've had work in progress patches for this for a few weeks but
-haven't had the time to test these much. I'd like to take a bit longer
-to test them before sending them out.
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
-Thierry
 
---ufNrFSjcZLO8PioW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQ1i0IACgkQ3SOs138+
-s6F09Q/8Dqyk/Wx7nPG1vPtdEdx+ms6SMJ58mkrUxY0nPHtZP9C9lvOsytfI9XpC
-YVldrNNumV5zqtPAf2nJkdVLGcKCEZ6vASkDvhIRQ8l0dgNQBhLV8AqlafcC9KSd
-AbvXrK44I42sFtkyONdtgoNjrAAtPINrihcMn3VLFkplqv9dj7GRgVYAHbTS7KYB
-eyHz+QEHCINu2GiqUE9NcYjaPWxCp/KavY5zd/cQGotnibfJKC2z789SfcPvrN/m
-1M0KsexT0kFmp+D4D+G/AsMKmadSoUWi9adQrCFaLw7GXU0hn3ih/m6Pa5RRutu1
-35RwtnT9PfbWT3+F0KfNjYZFhwFiF/iFn/FUAEMQ2j3pCq8SmKXPA/bnuZMvfDVg
-nHCOmI0aUZ+VaAm1SYAlQCh4KOmJQxTu1ibPEOii/G0ccC5Nx6IxMMVeuzPNt85X
-YPXZbOvIB+Q1d6LdbsrP7uWEKmn68yN9Hz//r7FvSO1NS2rfbkC1Fm1OojREnKxT
-7K7YvtV7WbR1XeskwAsfmaTSnGxqoSdofEpCWcYgQgTkxxlSBww0pxvcqZ8+eQ6a
-MNyuDCzCCrcgHP0lrI/JlpMdS0ZUXc1lLm3m/P2aB+PjsFA/JsjBRwF3fSh+JjYD
-TVBRH7QE+8gd5hmUYClgBRjMRvvuk8g6NnGiTNrvlIKVmgB+xG8=
-=dsvd
------END PGP SIGNATURE-----
-
---ufNrFSjcZLO8PioW--
+Pozdrawiam
+Adam Charachuta
