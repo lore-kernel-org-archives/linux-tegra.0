@@ -2,154 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E70C7619A
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Apr 2023 14:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883C7C7619A
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Apr 2023 14:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbjDLO3P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Apr 2023 10:29:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
+        id S231697AbjDLOkX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Apr 2023 10:40:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230148AbjDLO3O (ORCPT
+        with ESMTP id S231724AbjDLOkN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Apr 2023 10:29:14 -0400
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AF9A7EC9;
-        Wed, 12 Apr 2023 07:29:05 -0700 (PDT)
-Received: by mail-oo1-f54.google.com with SMTP id s19-20020a4adb93000000b00540fa505f2dso5152339oou.7;
-        Wed, 12 Apr 2023 07:29:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681309745; x=1683901745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k176WWn9jx2u9/R85lUvqY1542CwXWfLfbsNq5SxUZA=;
-        b=WAEoo10EWeC1aTXu+75mqlZHrXkBVH3Cdzpy7HQP8NjHc+4BmggcstgyFrJFXssniZ
-         EFtMRmXE1Sxh4kVle0RkfWJdsNBNxJCSYzhr0CvzgotYS8d5FRoVBLIt9Br7pozWli+Y
-         07Zr821IdPWJlN9q4hB3jAfOBEW0n1dIbPUcdWJQAi9OIC8VazYraon+vyMO+Xk+NZ0m
-         gJVus5wcjadtrMaEJtSElHxge7IGk5CDQ6ls34wCeJ98j6KGf8o0294zhMuuW0KZQoGz
-         UHeHUMfia4ncVQIMfED+SaW+PS+O+bipddDD+kGByKkS/afgthPWNJC3/XN8mtMX0DaH
-         fyoQ==
-X-Gm-Message-State: AAQBX9eyT1TzmjPMKzl4MGTfcthrZFeO5BDVKsE4tHOZFsfEoPyg+dJD
-        KJJmadsQwk2q6aFfaPwEyA==
-X-Google-Smtp-Source: AKy350aF8ET7xIUWcuvk3rOrrw4hKxuH7IjNvt/FtHfQ6zrFgjNr7B6n7Hn/lJZWMWfntV16LOmy/w==
-X-Received: by 2002:a4a:8902:0:b0:541:f866:7548 with SMTP id f2-20020a4a8902000000b00541f8667548mr1040877ooi.1.1681309744774;
-        Wed, 12 Apr 2023 07:29:04 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id j41-20020a4a88ac000000b0053b88b03e24sm7061927ooa.18.2023.04.12.07.29.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Apr 2023 07:29:04 -0700 (PDT)
-Received: (nullmailer pid 2318194 invoked by uid 1000);
-        Wed, 12 Apr 2023 14:29:03 -0000
-Date:   Wed, 12 Apr 2023 09:29:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
-        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
-Subject: Re: [V5 04/10] dt-bindings: timestamp: Add nvidia,gpio-controller
-Message-ID: <20230412142903.GA2313008-robh@kernel.org>
-References: <20230406171837.11206-1-dipenp@nvidia.com>
- <20230406171837.11206-5-dipenp@nvidia.com>
+        Wed, 12 Apr 2023 10:40:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CBAC4EDD;
+        Wed, 12 Apr 2023 07:39:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A069562A00;
+        Wed, 12 Apr 2023 14:39:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2520DC4339E;
+        Wed, 12 Apr 2023 14:39:45 +0000 (UTC)
+Message-ID: <ec2f4f25-938d-f87c-90f2-2e7f69b27c8f@xs4all.nl>
+Date:   Wed, 12 Apr 2023 16:39:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230406171837.11206-5-dipenp@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 1/7] media: videobuf2: Don't assert held reservation
+ lock for dma-buf mmapping
+Content-Language: en-US
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        kernel@collabora.com
+References: <20230406160637.541702-1-dmitry.osipenko@collabora.com>
+ <20230406160637.541702-2-dmitry.osipenko@collabora.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <20230406160637.541702-2-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 10:18:31AM -0700, Dipen Patel wrote:
-> The tegra always-on (AON) GPIO HTE/GTE provider depends on the AON
-> GPIO controller where it needs to do namespace conversion between GPIO
-> line number (belonging to AON GPIO controller instance) and the GTE
-> slice bits. The patch introduces nvidia,gpio-controller property to
-> represent that dependency.
+On 06/04/2023 18:06, Dmitry Osipenko wrote:
+> Don't assert held dma-buf reservation lock on memory mapping of exported
+> buffer.
 > 
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> We're going to change dma-buf mmap() locking policy such that exporters
+> will have to handle the lock. The previous locking policy caused deadlock
+> problem for DRM drivers in a case of self-imported dma-bufs once these
+> drivers are moved to use reservation lock universally. The problem is
+> solved by moving the lock down to exporters. This patch prepares videobuf2
+> for the locking policy update.
+> 
+> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+
+Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+
+Regards,
+
+	Hans
+
 > ---
->  .../timestamp/nvidia,tegra194-hte.yaml        | 36 ++++++++++++++++---
->  1 file changed, 31 insertions(+), 5 deletions(-)
+>  drivers/media/common/videobuf2/videobuf2-dma-contig.c | 3 ---
+>  drivers/media/common/videobuf2/videobuf2-dma-sg.c     | 3 ---
+>  drivers/media/common/videobuf2/videobuf2-vmalloc.c    | 3 ---
+>  3 files changed, 9 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> index 855dad3f2023..66eaa3fab8cc 100644
-> --- a/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> +++ b/Documentation/devicetree/bindings/timestamp/nvidia,tegra194-hte.yaml
-> @@ -51,6 +51,12 @@ properties:
->        LIC instance has 11 slices and Tegra234 LIC has 17 slices.
->      enum: [3, 11, 17]
+> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> index 205d3cac425c..2fa455d4a048 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> @@ -11,7 +11,6 @@
+>   */
 >  
-> +  nvidia,gpio-controller:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      The phandle to AON gpio controller instance. This is required to handle
-> +      namespace conversion between GPIO and GTE.
-> +
->    '#timestamp-cells':
->      description:
->        This represents number of line id arguments as specified by the
-> @@ -59,6 +65,12 @@ properties:
->        mentioned in the nvidia GPIO device tree binding document.
->      const: 1
+>  #include <linux/dma-buf.h>
+> -#include <linux/dma-resv.h>
+>  #include <linux/module.h>
+>  #include <linux/refcount.h>
+>  #include <linux/scatterlist.h>
+> @@ -456,8 +455,6 @@ static int vb2_dc_dmabuf_ops_vmap(struct dma_buf *dbuf, struct iosys_map *map)
+>  static int vb2_dc_dmabuf_ops_mmap(struct dma_buf *dbuf,
+>  	struct vm_area_struct *vma)
+>  {
+> -	dma_resv_assert_held(dbuf->resv);
+> -
+>  	return vb2_dc_mmap(dbuf->priv, vma);
+>  }
 >  
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#timestamp-cells"
-> +
->  allOf:
->    - if:
->        properties:
-> @@ -94,11 +106,15 @@ allOf:
->          nvidia,slices:
->            const: 17
+> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> index 183037fb1273..28f3fdfe23a2 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+> @@ -10,7 +10,6 @@
+>   * the Free Software Foundation.
+>   */
 >  
-> -required:
-> -  - compatible
-> -  - reg
-> -  - interrupts
-> -  - "#timestamp-cells"
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra234-gte-aon
-> +    then:
-> +      required:
-> +        - nvidia,gpio-controller
+> -#include <linux/dma-resv.h>
+>  #include <linux/module.h>
+>  #include <linux/mm.h>
+>  #include <linux/refcount.h>
+> @@ -498,8 +497,6 @@ static int vb2_dma_sg_dmabuf_ops_vmap(struct dma_buf *dbuf,
+>  static int vb2_dma_sg_dmabuf_ops_mmap(struct dma_buf *dbuf,
+>  	struct vm_area_struct *vma)
+>  {
+> -	dma_resv_assert_held(dbuf->resv);
+> -
+>  	return vb2_dma_sg_mmap(dbuf->priv, vma);
+>  }
+>  
+> diff --git a/drivers/media/common/videobuf2/videobuf2-vmalloc.c b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+> index a6c6d2fcaaa4..7c635e292106 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+> @@ -10,7 +10,6 @@
+>   * the Free Software Foundation.
+>   */
+>  
+> -#include <linux/dma-resv.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/mm.h>
+> @@ -319,8 +318,6 @@ static int vb2_vmalloc_dmabuf_ops_vmap(struct dma_buf *dbuf,
+>  static int vb2_vmalloc_dmabuf_ops_mmap(struct dma_buf *dbuf,
+>  	struct vm_area_struct *vma)
+>  {
+> -	dma_resv_assert_held(dbuf->resv);
+> -
+>  	return vb2_vmalloc_mmap(dbuf->priv, vma);
+>  }
+>  
 
-Adding a new required property is an ABI break. But you just added this 
-in patch 2. If this is required as part of nvidia,tegra234-gte-aon 
-support, then it should all be 1 patch.
-
->  
->  additionalProperties: false
->  
-> @@ -112,6 +128,16 @@ examples:
->                #timestamp-cells = <1>;
->      };
->  
-> +  - |
-> +    tegra234_hte_aon: timestamp@c1e0000 {
-> +              compatible = "nvidia,tegra234-gte-aon";
-> +              reg = <0xc1e0000 0x10000>;
-> +              interrupts = <0 13 0x4>;
-> +              nvidia,int-threshold = <1>;
-> +              nvidia,gpio-controller = <&gpio_aon>;
-> +              #timestamp-cells = <1>;
-> +    };
-> +
-
-Really need a whole other example for 1 property?
-
->    - |
->      tegra_hte_lic: timestamp@3aa0000 {
->                compatible = "nvidia,tegra194-gte-lic";
-> -- 
-> 2.17.1
-> 
