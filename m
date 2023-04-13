@@ -2,48 +2,48 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F99C77B6E
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Apr 2023 18:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF51C77B71
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 04:17:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbjDLS1b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Apr 2023 14:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42592 "EHLO
+        id S230136AbjDMER5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Apr 2023 00:17:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjDLS13 (ORCPT
+        with ESMTP id S230147AbjDMERX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Apr 2023 14:27:29 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355D240D7;
-        Wed, 12 Apr 2023 11:27:28 -0700 (PDT)
+        Thu, 13 Apr 2023 00:17:23 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DC386AA;
+        Wed, 12 Apr 2023 21:15:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681324048; x=1712860048;
+  t=1681359341; x=1712895341;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=cqKO9TziOmEEhE0gbMgiPkWcojaHbnVzNzEhpsuxk3A=;
-  b=K91t95DziJTYAB42d3jGi3THhWvPbuepNtDpiEcofje+BhqqdMlvIacb
-   WbpJXV1TYDw0x8dqURClCwx4BzeVyPTx5HR3s6fwrdH3FncMOIlKDiZez
-   eveMkCBQXmUp04eO+ZyFVg0X6P8ZZKg2ta9ZLCmn5ayFIDbYjh6AELGrs
-   Deykxph1UFQfF85F9BMGpkcWuTinEq40RH7I4dsohdiNcsAyHPiPVLYh5
-   isiR0lVkM93+KTILXzFUPvSB5fo0TWGAWV7zp5O4tqfpHmxlx4MeBBzmG
-   N8hx0/p/35MpDn8Ara+YnbNxSrTUTU37CFR/8VU2wcBMv3bcaPiEZvFxF
+  bh=Hud/tEH/bO4ykSDB5vwIzW+i0/5nC8j5l6CjYVfUw8w=;
+  b=VGx1BflOdGoAqLNxc5jgyPNY1mkFT7S+FaTloPX+lkhFLpFEXvGouXtD
+   6rNF8b8CIe7oHl8HHQJbHs8O57SxWO/xnU4j863aa2Bgiflar8BcKLlLP
+   6pAamFfNMIQfJMXyegBraYV9IA71zQVVkLc9l+zSSMkLgeiv+tn5clt8q
+   ClHoRVO6eJn1ckN/0YMUTpeGEySFzp/haRpjtIw+adnU8cOphBk/qJH8w
+   KSftDcCPX3m4Rei0hu49wRCj4XkTt+SW5tdjYnUY2zNJ5sEgGK77kj4sO
+   nUUPaiiIeXY7dg/AnqH6L8cvxwauVeF6I6cbB6rGSYekNNhYcK46qmAFS
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="328099187"
+X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="406919607"
 X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
-   d="scan'208";a="328099187"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 11:27:27 -0700
+   d="scan'208";a="406919607"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 21:15:40 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="753646682"
+X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="682736293"
 X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
-   d="scan'208";a="753646682"
+   d="scan'208";a="682736293"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Apr 2023 11:27:21 -0700
+  by orsmga007.jf.intel.com with ESMTP; 12 Apr 2023 21:15:34 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pmfBg-000Xyx-2P;
-        Wed, 12 Apr 2023 18:27:20 +0000
-Date:   Thu, 13 Apr 2023 02:27:20 +0800
+        id 1pmoMv-000YKr-2w;
+        Thu, 13 Apr 2023 04:15:33 +0000
+Date:   Thu, 13 Apr 2023 12:15:09 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
         David Airlie <airlied@gmail.com>
@@ -64,7 +64,7 @@ Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
         Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] video/hdmi: minor fixes for *_infoframe_init functions
-Message-ID: <202304130224.59cNkdgV-lkp@intel.com>
+Message-ID: <202304131234.hT3mzkju-lkp@intel.com>
 References: <20230412152910.9486-1-n.zhandarovich@fintech.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
@@ -77,10 +77,10 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 Hi Nikita,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on drm-misc/drm-misc-next]
-[also build test WARNING on tegra/for-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes linus/master v6.3-rc6 next-20230412]
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on tegra/for-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes linus/master v6.3-rc6 next-20230412]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
@@ -89,7 +89,7 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Nikita-Zhandarovich/video
 base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
 patch link:    https://lore.kernel.org/r/20230412152910.9486-1-n.zhandarovich%40fintech.ru
 patch subject: [PATCH] video/hdmi: minor fixes for *_infoframe_init functions
-config: i386-randconfig-a005-20230410 (https://download.01.org/0day-ci/archive/20230413/202304130224.59cNkdgV-lkp@intel.com/config)
+config: x86_64-randconfig-a005-20230410 (https://download.01.org/0day-ci/archive/20230413/202304131234.hT3mzkju-lkp@intel.com/config)
 compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
@@ -100,16 +100,16 @@ reproduce (this is a W=1 build):
         git checkout 36210f5b0ac3046f4c1c1d0c6e392eab40811699
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/gpu/drm/i915/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/gpu/drm/i915/
 
 If you fix the issue, kindly add following tag where applicable
 | Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304130224.59cNkdgV-lkp@intel.com/
+| Link: https://lore.kernel.org/oe-kbuild-all/202304131234.hT3mzkju-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> drivers/gpu/drm/i915/display/intel_hdmi.c:769:37: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+>> drivers/gpu/drm/i915/display/intel_hdmi.c:769:37: error: variable 'ret' is uninitialized when used here [-Werror,-Wuninitialized]
            if (drm_WARN_ON(encoder->base.dev, ret))
                                               ^~~
    include/drm/drm_print.h:630:19: note: expanded from macro 'drm_WARN_ON'
@@ -125,7 +125,7 @@ All warnings (new ones prefixed by >>):
            int ret;
                   ^
                    = 0
-   1 warning generated.
+   1 error generated.
 
 
 vim +/ret +769 drivers/gpu/drm/i915/display/intel_hdmi.c
