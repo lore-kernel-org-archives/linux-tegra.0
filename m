@@ -2,136 +2,485 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B5DC77B61
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 14:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E861EC77B6E
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 14:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231789AbjDMOH3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Apr 2023 10:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41548 "EHLO
+        id S230099AbjDMOXD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Apr 2023 10:23:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231781AbjDMOHV (ORCPT
+        with ESMTP id S229910AbjDMOXC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Apr 2023 10:07:21 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2080.outbound.protection.outlook.com [40.107.102.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D762394;
-        Thu, 13 Apr 2023 07:07:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aYL21vKRqjKv6ra6qHAmGU1dfHZuvXgnS77no3ncOVv3V/PTIyGlQVXMWTKJPcGkgngsPOebV8CStZFjndEvEfPqPA6rt/8Mxdj17GaUaoO5cHGc4EtKWpHC6pnRYvoetHzXuQYHcjF96QqzPTcUIVjDKbgb8OxOa6Le5EdP31yXfUyFMYtAebjld4bDOmzEyTu16YdBubGSFwmhC+dYXDJWC63fQ/Kc9erL51bcEjaNuRQf5LMF2AC7iubHB+gnjTiYFDiB1ukZhEU8Rb/sBOF+sgyCL5bNpUWLxZSPOFiqLl4acd089AymZqZSAjHsVBu3z9eEekKsB163x9eI+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/C0u8SVP3nb/NJ6zPmIn+/IBbotcOEL3QqmSClS70V8=;
- b=M7E4DVFmp6EDuVW7RGf28FLvGjSWsB0Z+kQ7kV/i7R7YQ6C5lwVXQ12iy2ik9CBd6QvHxn96Glk+h4lPIThLSnXweXA2HjA+WwPydKXiQ5o1Nje1GmqcUwkh9lfHCXecOlSzYvdZ/MCgWOhttrQJbtfYuBY4k2fXtFzD0oe35sBdQg+sBK/8cN2rSwmTkaap0/NPr2MIn86W0H9qP2ESoP6CPycN3awNwt8KHtmvJKtu2fRuQOFK0PN17CXYyyAoCGGsDJkr+HhrJEIASI3yoz5kpujQqz7J7Wv0WqUHkL0uDvdI11nTvbUzeO7kn0wkP/aTNfU9h/t6gtnIQjWodg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/C0u8SVP3nb/NJ6zPmIn+/IBbotcOEL3QqmSClS70V8=;
- b=EhMfXMq01ZIeZ4fUYiQfHFCLaaWb/fry/Xpxx9Pfs51wcKmuOnSAsUh8y7f/D2QpbANZEXHrCt3UxnCgbzPmAdH4mVUbwjKzLIEg7ERdfFxWjTLcCrV0MXskb4L7/coQQMvydFY1yZyxn5xDxxKd6TvU/RorwRCUxAAZr3F1wMaKZd6NzAZZToqQessZLCOSngY9duE3Q37UXKxK6gr7OKRC05aoYZkheUqaoAXlpRPaNMX7rHstKy1XLaStvptlCK2F2ExGscldxLXUG8CC3ZR8pRHrKcA8NJfU4Qv5q6tA68C6IuidXSTVV56tiuSxxrQ6dZi1yL7/Azlhk321RA==
-Received: from SJ1PR12MB6339.namprd12.prod.outlook.com (2603:10b6:a03:454::10)
- by DM4PR12MB7669.namprd12.prod.outlook.com (2603:10b6:8:106::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Thu, 13 Apr
- 2023 14:07:17 +0000
-Received: from SJ1PR12MB6339.namprd12.prod.outlook.com
- ([fe80::1183:1168:f0fb:40d7]) by SJ1PR12MB6339.namprd12.prod.outlook.com
- ([fe80::1183:1168:f0fb:40d7%6]) with mapi id 15.20.6277.035; Thu, 13 Apr 2023
- 14:07:17 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        "digetx@gmail.com" <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "wsa@kernel.org" <wsa@kernel.org>
-Subject: RE: [PATCH v5 1/2] i2c: tegra: Fix PEC support for SMBUS block read
-Thread-Topic: [PATCH v5 1/2] i2c: tegra: Fix PEC support for SMBUS block read
-Thread-Index: AQHZbgk/4cutGcLXH0Kic5v7h3WGUK8pREGAgAACABA=
-Date:   Thu, 13 Apr 2023 14:07:17 +0000
-Message-ID: <SJ1PR12MB6339EDD711E6B2E9D1E44C1FC0989@SJ1PR12MB6339.namprd12.prod.outlook.com>
-References: <20230413130849.2894-1-akhilrajeev@nvidia.com>
- <20230413130849.2894-2-akhilrajeev@nvidia.com>
- <5492c5cc-c93a-fde3-cd77-a598b2b67af5@collabora.com>
-In-Reply-To: <5492c5cc-c93a-fde3-cd77-a598b2b67af5@collabora.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR12MB6339:EE_|DM4PR12MB7669:EE_
-x-ms-office365-filtering-correlation-id: 695d5134-e859-44d0-1878-08db3c2863a0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: orjsy++f9h6zn4aO2rPfNkB115Bb8lr56a4E8dHCfWJ6g9ELVnQBSCDdFPn8xQojgMO1gjnbX+dRV+eCyOY3xnZM5ty5k1vvyLG96Z1REmZSLhaMohemNQiglf7eo1/iTjIq6ePqouXGkqVcQutaK7E9uMhB2cIACY8zn12rxDNHZr+DFzMINnayIp1s7VYUMWRvNIAqKcdFSelmNgtcqWa3Hbb4dHTX+n2D0i4w4NDodZeHf25HKinpGKJdOVH2K+5N4+CwGQe10+kOaDdmllXibdebsEhL5oheNmA2hLaP7oC1mxzKepEy8dAPinD+xprLZgn1tnISZ+WLUFIepNXdfP3snZjAd94K2E+eWdOiOKHJdnUECKmkWyc3MTt/HOuOtYj0OXpungqiBRc+VX69dDWu0W7+fMbijekf1pgoARUJCoqSe8IeSuOZW42QnVc/aUCxJFhh51jPPjBr87H7PsgcQBNDDE459Z9wp2aV0L6bW7A3j3s7PgetHCmehyW/yKqW8obUfolnZ8N+ckXHmpBdj/XtrtrSbDEwz27gATePtwM8lxTLgfeF7AGoQS0MNjURKPTfpSFJ7ArlbUH46zjnRqeuxPLPhHDDMySJp2o7zxZxK7LV1d3bd7fBtm8x2HipnJT6AFCSS5UzfA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6339.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(39860400002)(396003)(136003)(366004)(451199021)(558084003)(76116006)(66946007)(66476007)(66446008)(64756008)(66556008)(86362001)(478600001)(316002)(71200400001)(7696005)(55016003)(110136005)(5660300002)(52536014)(8936002)(8676002)(122000001)(83380400001)(2906002)(921005)(38100700002)(9686003)(38070700005)(26005)(6506007)(41300700001)(186003)(53546011)(33656002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dEFPejVqbDRpRG1YUUpyYlFKS3lrWUVuOWY2Y0ZmSnR6Zm5BWWIrb0dXYmF3?=
- =?utf-8?B?VUdwR09GR3dBTDlVUEw3WkdZbXhMUWJUc0Vib0ltVXJ0dUYxc20vTDRlOE40?=
- =?utf-8?B?WmRVVWIvMVFuWFdKYkRvUFJlVGhXZWxNdkZnK3hJa2MzMzJmTVp3U0tES09m?=
- =?utf-8?B?dFYxd1BkZEpxMUFxZUtVR1c3SE9sZHh0aWtEQjdXUURsbnZPbzFDV0JTN21a?=
- =?utf-8?B?cWJkVndBV1Yxd0J6TEwxVlA2aU5hR0NVeWJlMnZTQ0VtU01VdUlrdG02RW43?=
- =?utf-8?B?ZDZDREYyVFpsaGhwN0JrRWNldnFjQ0R5a1JJQlllU2QzSGVGZGcwUmJmZTZ1?=
- =?utf-8?B?cS9TaXFOS1RXbFZlYjlhZEt0L0wyQ1JXY0xNeUp4M2xlV2MvNVpWWmoxWkpa?=
- =?utf-8?B?K1IzVW9ML2NTaWFNVzlRQzQ5T1V4R2dadUZhVnpVbnRxN0pqT0pJa1JKTlI0?=
- =?utf-8?B?UHlNM085cWtDR2JCTHIwaFlnTndIODFnTVltQ0FzRDJHY3ZNYUcxL3JrUzV2?=
- =?utf-8?B?ZzJ1ZFVtYnc5WGl1OE1PMURQN3NEcENYUnFneFQ5YzZUWWFlTDdEM0dDdEtF?=
- =?utf-8?B?WXZrb1MxbGxQQmh3TTg4eVkxZVNmNGVaUEVzQWdoQ0VWOUFtejZtdlhIaHpo?=
- =?utf-8?B?Q2FMaGp3VzM2SkxEVDNCUUlHRThVaU9vOWpicHpRODc3c2hQYm9HdU1LR1l6?=
- =?utf-8?B?d2RrbDhxL1daWDBVU3lEWlNGcHZ0aDRqanVBUENwT2xCS1FnOTZYdW9EWHhV?=
- =?utf-8?B?UlN5UDJydW1ZNTJ0L0dOU3NndnJReURSZzd0aUk0cHhNclVBWHBSRUhDUHRB?=
- =?utf-8?B?REJNWWtWb3E3UmJhbGZoR1Z6NDdvMGJBRE9mWlAyMHdPZUhFbjRIY3VJR0ww?=
- =?utf-8?B?UVpQWTVzMHFudnVHcHY1NkRrbWU5WjN6QnkzTmU5a3RpdFdJU3FVSHJDaHNl?=
- =?utf-8?B?eHoyd252MmRsQmxTdTJqVldvZlduK3luWEdFd2g2a3FvLzFIWm1JMm5SRlps?=
- =?utf-8?B?dUhSUWViVUgxczRxL1ZuVWV1VmFra1h0U3lCSWcwRzlDVWpjbXdOcG5zeW4v?=
- =?utf-8?B?Mlo3bC8ycHhMVWhEOC9vK2tuc0hCUERLT2ZQcFFFWS9zNjhNTXZ0QWI0SGw5?=
- =?utf-8?B?U1ZWRk53SkUyM000U2h6cnRDOEdzZmFvek5nTjNwdVdhejlyT0xxQzdQVU1D?=
- =?utf-8?B?TjBwb0Y5K1M5S0xTb0Q0bVA2a0wwMm1hM2Q3cWhrZzNScElLWktCbW5UdEE4?=
- =?utf-8?B?cGVqdXptK0hIK1VvdjVQQ0dLbjJPUkY3eWQyMFp1cnAybW9teFU2L0szZlhp?=
- =?utf-8?B?TWlnQXJsYUdLRktoL2djeWU2WWxQdzlTTVdGSWdUM09ReVIvZzM2T0JDNVVs?=
- =?utf-8?B?UWgwRFErWDdWd1VGaWJ0N3cxTXRielR2ZEtXSHhNUEZaTjgrSnl0OUcwdWdV?=
- =?utf-8?B?M0t3TTAvcUlpRElQMDg4WVVkajhYK2hIRkFTVldxbUJ2NnZYaC9ySVlpdzZG?=
- =?utf-8?B?dm5sRTI5cWNiTVN2VTNMaXE0cGdkWUlWVFRYSDVFVVhmU2QrczBVWnByeUVu?=
- =?utf-8?B?aC8yWU9KdjFVVlBldVBraUh6d1Zld2FDdHFFc0VYU3owdW1sSDlDcmRKQWhr?=
- =?utf-8?B?dUhIdzZVNXdyVGpJeDZPNVdRcGpFa1NxL2pzd3dmbUIxcWY2aHRvUU10c2s0?=
- =?utf-8?B?MTdRYjhscXltbUpjU2QzQ3B6dXJKMW1oT2dINFBnUmprZStMNHhORTdRUXJJ?=
- =?utf-8?B?R3VDTVRKdlhFVEdjSVFvMWlSY1doWTRMNEtpS1FjKzZSN3BuYUdqNXBVOXdE?=
- =?utf-8?B?bjBVc2ZXODUwOTZjbnpHc21pejFDOVlJTDkvMEt0MlNiUXhyMTNLY2dPS0xa?=
- =?utf-8?B?YTNxeTZycXJjRkdCcEpPdzhmajc4SGdSampLSERiazhoU2Z0YllRTVl3M0w0?=
- =?utf-8?B?NDY1NW5MdWlnamFkSTNZWCtBYm5BbjA2cEVhVmZrVVRKci9mT0FRNEhrKytq?=
- =?utf-8?B?WG95VDFYQU5NRDBWODlQaURsVFZOQWhHYVErUmNQYjc0ZUhnZnZPL0JIdmFK?=
- =?utf-8?B?aHVIbWhNM1gwcmJ1ZXBCTmV4TDBxd041ZGNHcmU3bCtFbS9hajUwc1o3NzY1?=
- =?utf-8?Q?1d5EwFP00G5VNt6axveLN7s8v?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 13 Apr 2023 10:23:02 -0400
+Received: from exchange.fintech.ru (e10edge.fintech.ru [195.54.195.159])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0800F3;
+        Thu, 13 Apr 2023 07:22:58 -0700 (PDT)
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 13 Apr
+ 2023 17:22:55 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 13 Apr
+ 2023 17:22:55 +0300
+From:   Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To:     David Airlie <airlied@gmail.com>
+CC:     Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Helge Deller <deller@gmx.de>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <amd-gfx@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH v2] video/hdmi: minor fixes for *_infoframe_init functions
+Date:   Thu, 13 Apr 2023 07:22:38 -0700
+Message-ID: <20230413142238.19011-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6339.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 695d5134-e859-44d0-1878-08db3c2863a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2023 14:07:17.0453
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LnRRvLuI7FYeqj/0b9pVe5eExpO/M2MF0wMjWiKvHE5AqqxPH8ak4i2BwpM+11izNgNTuEiAdDy2h41n4jpHGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7669
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.0.253.138]
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PiBPbiA0LzEzLzIzIDE2OjA4LCBBa2hpbCBSIHdyb3RlOg0KPiA+IEBAIC0yNzksNiArMjgwLDcg
-QEAgc3RydWN0IHRlZ3JhX2kyY19kZXYgew0KPiA+ICAgICAgIHNpemVfdCBtc2dfYnVmX3JlbWFp
-bmluZzsNCj4gPiAgICAgICBpbnQgbXNnX2VycjsNCj4gPiAgICAgICB1OCAqbXNnX2J1ZjsNCj4g
-PiArICAgICBfX3UxNiBtc2dfbGVuOw0KPiANCj4gSXQncyBzdGlsbCBfX3UxNg0KT2guIEkgdG90
-YWxseSBtaXNzZWQgdGhhdCBjb21tZW50LiBXaWxsIHVwZGF0ZS4NCg0KVGhhbmtzLA0KQWtoaWwN
-Cg==
+Multiple hdmi_*_infoframe_init() functions that initialize different
+types of hdmi infoframes only return default 0 value (contrary to their
+descriptions). Yet these functions are still checked against possible
+errors in case of failure.
+
+This patch removes redundant checks for errors in calls to following
+functions:
+- hdmi_spd_infoframe_init
+- hdmi_audio_infoframe_init
+- hdmi_vendor_infoframe_init
+- hdmi_drm_infoframe_init
+
+Also, change their return types to void and fix descriptions.
+
+Fixes: 2c676f378edb ("[media] hdmi: added unpack and logging functions for InfoFrames")
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+v2: Fix build warning by removing unnecessary call to drm_WARN_ON()
+    with uninitialized value.
+    Reported-by: kernel test robot <lkp@intel.com>
+    Link: https://lore.kernel.org/oe-kbuild-all/202304131234.hT3mzkju-lkp@intel.com/
+
+ drivers/gpu/drm/display/drm_hdmi_helper.c |  5 +---
+ drivers/gpu/drm/drm_edid.c                |  5 +---
+ drivers/gpu/drm/i915/display/intel_hdmi.c |  4 +--
+ drivers/gpu/drm/mediatek/mtk_hdmi.c       | 14 ++--------
+ drivers/gpu/drm/radeon/r600_hdmi.c      
+ drivers/gpu/drm/display/drm_hdmi_helper.c |  5 +---
+ drivers/gpu/drm/drm_edid.c                |  5 +---
+ drivers/gpu/drm/i915/display/intel_hdmi.c |  7 ++---
+ drivers/gpu/drm/mediatek/mtk_hdmi.c       | 14 ++--------
+ drivers/gpu/drm/radeon/r600_hdmi.c        |  6 +----
+ drivers/gpu/drm/sti/sti_hdmi.c            |  6 +----
+ drivers/gpu/drm/tegra/hdmi.c              |  7 +----
+ drivers/gpu/drm/tegra/sor.c               |  6 +----
+ drivers/gpu/drm/vc4/vc4_hdmi.c            |  7 +----
+ drivers/video/hdmi.c                      | 44 ++++++-------------------------
+ include/linux/hdmi.h                      |  8 +++---
+ 11 files changed, 23 insertions(+), 92 deletions(-)
+
+diff --git a/drivers/gpu/drm/display/drm_hdmi_helper.c b/drivers/gpu/drm/display/drm_hdmi_helper.c
+index faf5e9efa7d3..ce7038a3a183 100644
+--- a/drivers/gpu/drm/display/drm_hdmi_helper.c
++++ b/drivers/gpu/drm/display/drm_hdmi_helper.c
+@@ -27,7 +27,6 @@ int drm_hdmi_infoframe_set_hdr_metadata(struct hdmi_drm_infoframe *frame,
+ {
+ 	struct drm_connector *connector;
+ 	struct hdr_output_metadata *hdr_metadata;
+-	int err;
+ 
+ 	if (!frame || !conn_state)
+ 		return -EINVAL;
+@@ -47,9 +46,7 @@ int drm_hdmi_infoframe_set_hdr_metadata(struct hdmi_drm_infoframe *frame,
+ 	    connector->hdr_sink_metadata.hdmi_type1.eotf))
+ 		DRM_DEBUG_KMS("Unknown EOTF %d\n", hdr_metadata->hdmi_metadata_type1.eotf);
+ 
+-	err = hdmi_drm_infoframe_init(frame);
+-	if (err < 0)
+-		return err;
++	hdmi_drm_infoframe_init(frame);
+ 
+ 	frame->eotf = hdr_metadata->hdmi_metadata_type1.eotf;
+ 	frame->metadata_type = hdr_metadata->hdmi_metadata_type1.metadata_type;
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 261a62e15934..c268148502d6 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -7159,7 +7159,6 @@ drm_hdmi_vendor_infoframe_from_display_mode(struct hdmi_vendor_infoframe *frame,
+ 	 */
+ 	bool has_hdmi_infoframe = connector ?
+ 		connector->display_info.has_hdmi_infoframe : false;
+-	int err;
+ 
+ 	if (!frame || !mode)
+ 		return -EINVAL;
+@@ -7167,9 +7166,7 @@ drm_hdmi_vendor_infoframe_from_display_mode(struct hdmi_vendor_infoframe *frame,
+ 	if (!has_hdmi_infoframe)
+ 		return -EINVAL;
+ 
+-	err = hdmi_vendor_infoframe_init(frame);
+-	if (err < 0)
+-		return err;
++	hdmi_vendor_infoframe_init(frame);
+ 
+ 	/*
+ 	 * Even if it's not absolutely necessary to send the infoframe
+diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+index c0ce6d3dc505..59e2f53015c0 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+@@ -778,12 +778,9 @@ intel_hdmi_compute_spd_infoframe(struct intel_encoder *encoder,
+ 		intel_hdmi_infoframe_enable(HDMI_INFOFRAME_TYPE_SPD);
+ 
+ 	if (IS_DGFX(i915))
+-		ret = hdmi_spd_infoframe_init(frame, "Intel", "Discrete gfx");
++		hdmi_spd_infoframe_init(frame, "Intel", "Discrete gfx");
+ 	else
+-		ret = hdmi_spd_infoframe_init(frame, "Intel", "Integrated gfx");
+-
+-	if (drm_WARN_ON(encoder->base.dev, ret))
+-		return false;
++		hdmi_spd_infoframe_init(frame, "Intel", "Integrated gfx");
+ 
+ 	frame->sdi = HDMI_SPD_SDI_PC;
+ 
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index 0a8e0a13f516..75899e4a011f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -995,12 +995,7 @@ static int mtk_hdmi_setup_spd_infoframe(struct mtk_hdmi *hdmi,
+ 	u8 buffer[HDMI_INFOFRAME_HEADER_SIZE + HDMI_SPD_INFOFRAME_SIZE];
+ 	ssize_t err;
+ 
+-	err = hdmi_spd_infoframe_init(&frame, vendor, product);
+-	if (err < 0) {
+-		dev_err(hdmi->dev, "Failed to initialize SPD infoframe: %zd\n",
+-			err);
+-		return err;
+-	}
++	hdmi_spd_infoframe_init(&frame, vendor, product);
+ 
+ 	err = hdmi_spd_infoframe_pack(&frame, buffer, sizeof(buffer));
+ 	if (err < 0) {
+@@ -1018,12 +1013,7 @@ static int mtk_hdmi_setup_audio_infoframe(struct mtk_hdmi *hdmi)
+ 	u8 buffer[HDMI_INFOFRAME_HEADER_SIZE + HDMI_AUDIO_INFOFRAME_SIZE];
+ 	ssize_t err;
+ 
+-	err = hdmi_audio_infoframe_init(&frame);
+-	if (err < 0) {
+-		dev_err(hdmi->dev, "Failed to setup audio infoframe: %zd\n",
+-			err);
+-		return err;
+-	}
++	hdmi_audio_infoframe_init(&frame);
+ 
+ 	frame.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
+ 	frame.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
+diff --git a/drivers/gpu/drm/radeon/r600_hdmi.c b/drivers/gpu/drm/radeon/r600_hdmi.c
+index f3551ebaa2f0..b690254562e8 100644
+--- a/drivers/gpu/drm/radeon/r600_hdmi.c
++++ b/drivers/gpu/drm/radeon/r600_hdmi.c
+@@ -432,11 +432,7 @@ void r600_hdmi_update_audio_settings(struct drm_encoder *encoder)
+ 	DRM_DEBUG("0x%02X IEC60958 status bits and 0x%02X category code\n",
+ 		  (int)audio.status_bits, (int)audio.category_code);
+ 
+-	err = hdmi_audio_infoframe_init(&frame);
+-	if (err < 0) {
+-		DRM_ERROR("failed to setup audio infoframe\n");
+-		return;
+-	}
++	hdmi_audio_infoframe_init(&frame);
+ 
+ 	frame.channels = audio.channels;
+ 
+diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+index 8539fe1fedc4..1f92db1fb960 100644
+--- a/drivers/gpu/drm/sti/sti_hdmi.c
++++ b/drivers/gpu/drm/sti/sti_hdmi.c
+@@ -1321,11 +1321,7 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+ 	}
+ 
+ 	/* Initialize audio infoframe */
+-	err = hdmi_audio_infoframe_init(&hdmi->audio.cea);
+-	if (err) {
+-		DRM_ERROR("Failed to init audio infoframe\n");
+-		goto err_sysfs;
+-	}
++	hdmi_audio_infoframe_init(&hdmi->audio.cea);
+ 
+ 	cec_fill_conn_info_from_drm(&conn_info, drm_connector);
+ 	hdmi->notifier = cec_notifier_conn_register(&hdmi->dev, NULL,
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 40ec3e6cf204..fe8fcd1b056b 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -747,12 +747,7 @@ static void tegra_hdmi_setup_audio_infoframe(struct tegra_hdmi *hdmi)
+ 	u8 buffer[14];
+ 	ssize_t err;
+ 
+-	err = hdmi_audio_infoframe_init(&frame);
+-	if (err < 0) {
+-		dev_err(hdmi->dev, "failed to setup audio infoframe: %zd\n",
+-			err);
+-		return;
+-	}
++	hdmi_audio_infoframe_init(&frame);
+ 
+ 	frame.channels = hdmi->format.channels;
+ 
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 8af632740673..d8cd93d5af10 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -2021,11 +2021,7 @@ static int tegra_sor_hdmi_enable_audio_infoframe(struct tegra_sor *sor)
+ 	u32 value;
+ 	int err;
+ 
+-	err = hdmi_audio_infoframe_init(&frame);
+-	if (err < 0) {
+-		dev_err(sor->dev, "failed to setup audio infoframe: %d\n", err);
+-		return err;
+-	}
++	hdmi_audio_infoframe_init(&frame);
+ 
+ 	frame.channels = sor->format.channels;
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index ea22c9bf223a..d7de86b41901 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -816,13 +816,8 @@ static void vc4_hdmi_set_avi_infoframe(struct drm_encoder *encoder)
+ static void vc4_hdmi_set_spd_infoframe(struct drm_encoder *encoder)
+ {
+ 	union hdmi_infoframe frame;
+-	int ret;
+ 
+-	ret = hdmi_spd_infoframe_init(&frame.spd, "Broadcom", "Videocore");
+-	if (ret < 0) {
+-		DRM_ERROR("couldn't fill SPD infoframe\n");
+-		return;
+-	}
++	hdmi_spd_infoframe_init(&frame.spd, "Broadcom", "Videocore");
+ 
+ 	frame.spd.sdi = HDMI_SPD_SDI_PC;
+ 
+diff --git a/drivers/video/hdmi.c b/drivers/video/hdmi.c
+index 03c7f27dde49..a4a1359415a0 100644
+--- a/drivers/video/hdmi.c
++++ b/drivers/video/hdmi.c
+@@ -216,10 +216,8 @@ EXPORT_SYMBOL(hdmi_avi_infoframe_pack);
+  * @frame: HDMI SPD infoframe
+  * @vendor: vendor string
+  * @product: product string
+- *
+- * Returns 0 on success or a negative error code on failure.
+  */
+-int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
++void hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
+ 			    const char *vendor, const char *product)
+ {
+ 	size_t len;
+@@ -234,8 +232,6 @@ int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
+ 	memcpy(frame->vendor, vendor, min(len, sizeof(frame->vendor)));
+ 	len = strlen(product);
+ 	memcpy(frame->product, product, min(len, sizeof(frame->product)));
+-
+-	return 0;
+ }
+ EXPORT_SYMBOL(hdmi_spd_infoframe_init);
+ 
+@@ -348,18 +344,14 @@ EXPORT_SYMBOL(hdmi_spd_infoframe_pack);
+ /**
+  * hdmi_audio_infoframe_init() - initialize an HDMI audio infoframe
+  * @frame: HDMI audio infoframe
+- *
+- * Returns 0 on success or a negative error code on failure.
+  */
+-int hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame)
++void hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame)
+ {
+ 	memset(frame, 0, sizeof(*frame));
+ 
+ 	frame->type = HDMI_INFOFRAME_TYPE_AUDIO;
+ 	frame->version = 1;
+ 	frame->length = HDMI_AUDIO_INFOFRAME_SIZE;
+-
+-	return 0;
+ }
+ EXPORT_SYMBOL(hdmi_audio_infoframe_init);
+ 
+@@ -526,10 +518,8 @@ EXPORT_SYMBOL(hdmi_audio_infoframe_pack_for_dp);
+ /**
+  * hdmi_vendor_infoframe_init() - initialize an HDMI vendor infoframe
+  * @frame: HDMI vendor infoframe
+- *
+- * Returns 0 on success or a negative error code on failure.
+  */
+-int hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame)
++void hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame)
+ {
+ 	memset(frame, 0, sizeof(*frame));
+ 
+@@ -544,8 +534,6 @@ int hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame)
+ 	 */
+ 	frame->s3d_struct = HDMI_3D_STRUCTURE_INVALID;
+ 	frame->length = HDMI_VENDOR_INFOFRAME_SIZE;
+-
+-	return 0;
+ }
+ EXPORT_SYMBOL(hdmi_vendor_infoframe_init);
+ 
+@@ -698,18 +686,14 @@ hdmi_vendor_any_infoframe_check_only(const union hdmi_vendor_any_infoframe *fram
+  * hdmi_drm_infoframe_init() - initialize an HDMI Dynaminc Range and
+  * mastering infoframe
+  * @frame: HDMI DRM infoframe
+- *
+- * Returns 0 on success or a negative error code on failure.
+  */
+-int hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame)
++void hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame)
+ {
+ 	memset(frame, 0, sizeof(*frame));
+ 
+ 	frame->type = HDMI_INFOFRAME_TYPE_DRM;
+ 	frame->version = 1;
+ 	frame->length = HDMI_DRM_INFOFRAME_SIZE;
+-
+-	return 0;
+ }
+ EXPORT_SYMBOL(hdmi_drm_infoframe_init);
+ 
+@@ -1661,7 +1645,6 @@ static int hdmi_spd_infoframe_unpack(struct hdmi_spd_infoframe *frame,
+ 				     const void *buffer, size_t size)
+ {
+ 	const u8 *ptr = buffer;
+-	int ret;
+ 
+ 	if (size < HDMI_INFOFRAME_SIZE(SPD))
+ 		return -EINVAL;
+@@ -1677,9 +1660,7 @@ static int hdmi_spd_infoframe_unpack(struct hdmi_spd_infoframe *frame,
+ 
+ 	ptr += HDMI_INFOFRAME_HEADER_SIZE;
+ 
+-	ret = hdmi_spd_infoframe_init(frame, ptr, ptr + 8);
+-	if (ret)
+-		return ret;
++	hdmi_spd_infoframe_init(frame, ptr, ptr + 8);
+ 
+ 	frame->sdi = ptr[24];
+ 
+@@ -1703,7 +1684,6 @@ static int hdmi_audio_infoframe_unpack(struct hdmi_audio_infoframe *frame,
+ 				       const void *buffer, size_t size)
+ {
+ 	const u8 *ptr = buffer;
+-	int ret;
+ 
+ 	if (size < HDMI_INFOFRAME_SIZE(AUDIO))
+ 		return -EINVAL;
+@@ -1717,9 +1697,7 @@ static int hdmi_audio_infoframe_unpack(struct hdmi_audio_infoframe *frame,
+ 	if (hdmi_infoframe_checksum(buffer, HDMI_INFOFRAME_SIZE(AUDIO)) != 0)
+ 		return -EINVAL;
+ 
+-	ret = hdmi_audio_infoframe_init(frame);
+-	if (ret)
+-		return ret;
++	hdmi_audio_infoframe_init(frame);
+ 
+ 	ptr += HDMI_INFOFRAME_HEADER_SIZE;
+ 
+@@ -1755,7 +1733,6 @@ hdmi_vendor_any_infoframe_unpack(union hdmi_vendor_any_infoframe *frame,
+ {
+ 	const u8 *ptr = buffer;
+ 	size_t length;
+-	int ret;
+ 	u8 hdmi_video_format;
+ 	struct hdmi_vendor_infoframe *hvf = &frame->hdmi;
+ 
+@@ -1789,9 +1766,7 @@ hdmi_vendor_any_infoframe_unpack(union hdmi_vendor_any_infoframe *frame,
+ 	if (hdmi_video_format > 0x2)
+ 		return -EINVAL;
+ 
+-	ret = hdmi_vendor_infoframe_init(hvf);
+-	if (ret)
+-		return ret;
++	hdmi_vendor_infoframe_init(hvf);
+ 
+ 	hvf->length = length;
+ 
+@@ -1837,15 +1812,12 @@ int hdmi_drm_infoframe_unpack_only(struct hdmi_drm_infoframe *frame,
+ 	const u8 *temp;
+ 	u8 x_lsb, x_msb;
+ 	u8 y_lsb, y_msb;
+-	int ret;
+ 	int i;
+ 
+ 	if (size < HDMI_DRM_INFOFRAME_SIZE)
+ 		return -EINVAL;
+ 
+-	ret = hdmi_drm_infoframe_init(frame);
+-	if (ret)
+-		return ret;
++	hdmi_drm_infoframe_init(frame);
+ 
+ 	frame->eotf = ptr[0] & 0x7;
+ 	frame->metadata_type = ptr[1] & 0x7;
+diff --git a/include/linux/hdmi.h b/include/linux/hdmi.h
+index 2f4dcc8d060e..e60a28d181f2 100644
+--- a/include/linux/hdmi.h
++++ b/include/linux/hdmi.h
+@@ -214,7 +214,7 @@ ssize_t hdmi_avi_infoframe_pack(struct hdmi_avi_infoframe *frame, void *buffer,
+ ssize_t hdmi_avi_infoframe_pack_only(const struct hdmi_avi_infoframe *frame,
+ 				     void *buffer, size_t size);
+ int hdmi_avi_infoframe_check(struct hdmi_avi_infoframe *frame);
+-int hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame);
++void hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame);
+ ssize_t hdmi_drm_infoframe_pack(struct hdmi_drm_infoframe *frame, void *buffer,
+ 				size_t size);
+ ssize_t hdmi_drm_infoframe_pack_only(const struct hdmi_drm_infoframe *frame,
+@@ -249,7 +249,7 @@ struct hdmi_spd_infoframe {
+ 	enum hdmi_spd_sdi sdi;
+ };
+ 
+-int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
++void hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
+ 			    const char *vendor, const char *product);
+ ssize_t hdmi_spd_infoframe_pack(struct hdmi_spd_infoframe *frame, void *buffer,
+ 				size_t size);
+@@ -331,7 +331,7 @@ struct hdmi_audio_infoframe {
+ 
+ };
+ 
+-int hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame);
++void hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame);
+ ssize_t hdmi_audio_infoframe_pack(struct hdmi_audio_infoframe *frame,
+ 				  void *buffer, size_t size);
+ ssize_t hdmi_audio_infoframe_pack_only(const struct hdmi_audio_infoframe *frame,
+@@ -393,7 +393,7 @@ struct hdr_sink_metadata {
+ 	};
+ };
+ 
+-int hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame);
++void hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame);
+ ssize_t hdmi_vendor_infoframe_pack(struct hdmi_vendor_infoframe *frame,
+ 				   void *buffer, size_t size);
+ ssize_t hdmi_vendor_infoframe_pack_only(const struct hdmi_vendor_infoframe *frame,
