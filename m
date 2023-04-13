@@ -2,485 +2,198 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E861EC77B6E
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 14:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 161BFC77B6E
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 14:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbjDMOXD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Apr 2023 10:23:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53890 "EHLO
+        id S230291AbjDMOwU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Apr 2023 10:52:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbjDMOXC (ORCPT
+        with ESMTP id S229564AbjDMOwT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Apr 2023 10:23:02 -0400
-Received: from exchange.fintech.ru (e10edge.fintech.ru [195.54.195.159])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0800F3;
-        Thu, 13 Apr 2023 07:22:58 -0700 (PDT)
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 13 Apr
- 2023 17:22:55 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 13 Apr
- 2023 17:22:55 +0300
-From:   Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To:     David Airlie <airlied@gmail.com>
-CC:     Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Helge Deller <deller@gmx.de>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <intel-gfx@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <amd-gfx@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH v2] video/hdmi: minor fixes for *_infoframe_init functions
-Date:   Thu, 13 Apr 2023 07:22:38 -0700
-Message-ID: <20230413142238.19011-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.25.1
+        Thu, 13 Apr 2023 10:52:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D0D99;
+        Thu, 13 Apr 2023 07:52:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B847263F45;
+        Thu, 13 Apr 2023 14:52:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6790DC4339B;
+        Thu, 13 Apr 2023 14:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681397537;
+        bh=QG9Ja6Qfdja3+F6aw1CtqZqw6k9MQzX8MhhvMSkoqxA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AZURpi2bwBdV5kPciUgesKGZsSWm09HGKZW2sB6s/37Hig0Fg4lC6lNwxgFSWisgE
+         GP20+mS3rkZioj3dVnG+tpGUZLEMA1XZiBQ6el5iF3REiqkQYmmPdJUzkFr7k4hHcD
+         MhbAnLnxBJyeKIqpLEKg9ebIKMlR2PJ6McrEqfoTB7yTfzhzglf/Dy82wUF7C1qW9l
+         7IyCU5EdCKX476SshiOCjLyarFivvPnjBZXOseNMtjjQItfglcM7llqnIIP9q+dPdM
+         WzpTxLuNMf8SJJqK94R7iK3EiMoNzAFuu547JnrLBoIcEkq0ngKGmOBX88IUbWHbTr
+         WvlJ7QW67jVaA==
+Date:   Thu, 13 Apr 2023 16:52:08 +0200
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        helgaas@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
+        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
+        ishah@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch v6 8/9] PCI: tegra194: Add interconnect support in
+ Tegra234
+Message-ID: <ZDgXGCJQAHpLTw9S@lpieralisi>
+References: <20230411110002.19824-1-sumitg@nvidia.com>
+ <20230411110002.19824-9-sumitg@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.0.253.138]
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230411110002.19824-9-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Multiple hdmi_*_infoframe_init() functions that initialize different
-types of hdmi infoframes only return default 0 value (contrary to their
-descriptions). Yet these functions are still checked against possible
-errors in case of failure.
+On Tue, Apr 11, 2023 at 04:30:01PM +0530, Sumit Gupta wrote:
+> Add support to request DRAM bandwidth with Memory Interconnect
+> in Tegra234 SoC. The DRAM BW required for different modes depends
+> on speed (Gen-1/2/3/4) and width/lanes (x1/x2/x4/x8).
+> Currently, no latency is observed in data transfer with PCI as the
+> DRAM Freq is always set to max. But that results in high power
+> consumption. Now for Tegra234, we are enabling the dynamic scaling
+> of the DRAM Freq based on requests from Clients instead of running
+> at the max Freq always. This change does that for PCI MC client.
 
-This patch removes redundant checks for errors in calls to following
-functions:
-- hdmi_spd_infoframe_init
-- hdmi_audio_infoframe_init
-- hdmi_vendor_infoframe_init
-- hdmi_drm_infoframe_init
+I am sorry but this is still unclear to me. The sentence above makes
+me think that you are *adding* latency to the data transfer trading
+it with lower power consumption; probably that's a wrong parsing of
+what you are saying - so please explain what you want to say
+with "no latency is observed" and whether this patch changes that
+(which is not allowed because that would count as a regression).
 
-Also, change their return types to void and fix descriptions.
+Thanks,
+Lorenzo
 
-Fixes: 2c676f378edb ("[media] hdmi: added unpack and logging functions for InfoFrames")
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
-v2: Fix build warning by removing unnecessary call to drm_WARN_ON()
-    with uninitialized value.
-    Reported-by: kernel test robot <lkp@intel.com>
-    Link: https://lore.kernel.org/oe-kbuild-all/202304131234.hT3mzkju-lkp@intel.com/
-
- drivers/gpu/drm/display/drm_hdmi_helper.c |  5 +---
- drivers/gpu/drm/drm_edid.c                |  5 +---
- drivers/gpu/drm/i915/display/intel_hdmi.c |  4 +--
- drivers/gpu/drm/mediatek/mtk_hdmi.c       | 14 ++--------
- drivers/gpu/drm/radeon/r600_hdmi.c      
- drivers/gpu/drm/display/drm_hdmi_helper.c |  5 +---
- drivers/gpu/drm/drm_edid.c                |  5 +---
- drivers/gpu/drm/i915/display/intel_hdmi.c |  7 ++---
- drivers/gpu/drm/mediatek/mtk_hdmi.c       | 14 ++--------
- drivers/gpu/drm/radeon/r600_hdmi.c        |  6 +----
- drivers/gpu/drm/sti/sti_hdmi.c            |  6 +----
- drivers/gpu/drm/tegra/hdmi.c              |  7 +----
- drivers/gpu/drm/tegra/sor.c               |  6 +----
- drivers/gpu/drm/vc4/vc4_hdmi.c            |  7 +----
- drivers/video/hdmi.c                      | 44 ++++++-------------------------
- include/linux/hdmi.h                      |  8 +++---
- 11 files changed, 23 insertions(+), 92 deletions(-)
-
-diff --git a/drivers/gpu/drm/display/drm_hdmi_helper.c b/drivers/gpu/drm/display/drm_hdmi_helper.c
-index faf5e9efa7d3..ce7038a3a183 100644
---- a/drivers/gpu/drm/display/drm_hdmi_helper.c
-+++ b/drivers/gpu/drm/display/drm_hdmi_helper.c
-@@ -27,7 +27,6 @@ int drm_hdmi_infoframe_set_hdr_metadata(struct hdmi_drm_infoframe *frame,
- {
- 	struct drm_connector *connector;
- 	struct hdr_output_metadata *hdr_metadata;
--	int err;
- 
- 	if (!frame || !conn_state)
- 		return -EINVAL;
-@@ -47,9 +46,7 @@ int drm_hdmi_infoframe_set_hdr_metadata(struct hdmi_drm_infoframe *frame,
- 	    connector->hdr_sink_metadata.hdmi_type1.eotf))
- 		DRM_DEBUG_KMS("Unknown EOTF %d\n", hdr_metadata->hdmi_metadata_type1.eotf);
- 
--	err = hdmi_drm_infoframe_init(frame);
--	if (err < 0)
--		return err;
-+	hdmi_drm_infoframe_init(frame);
- 
- 	frame->eotf = hdr_metadata->hdmi_metadata_type1.eotf;
- 	frame->metadata_type = hdr_metadata->hdmi_metadata_type1.metadata_type;
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 261a62e15934..c268148502d6 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -7159,7 +7159,6 @@ drm_hdmi_vendor_infoframe_from_display_mode(struct hdmi_vendor_infoframe *frame,
- 	 */
- 	bool has_hdmi_infoframe = connector ?
- 		connector->display_info.has_hdmi_infoframe : false;
--	int err;
- 
- 	if (!frame || !mode)
- 		return -EINVAL;
-@@ -7167,9 +7166,7 @@ drm_hdmi_vendor_infoframe_from_display_mode(struct hdmi_vendor_infoframe *frame,
- 	if (!has_hdmi_infoframe)
- 		return -EINVAL;
- 
--	err = hdmi_vendor_infoframe_init(frame);
--	if (err < 0)
--		return err;
-+	hdmi_vendor_infoframe_init(frame);
- 
- 	/*
- 	 * Even if it's not absolutely necessary to send the infoframe
-diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
-index c0ce6d3dc505..59e2f53015c0 100644
---- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-@@ -778,12 +778,9 @@ intel_hdmi_compute_spd_infoframe(struct intel_encoder *encoder,
- 		intel_hdmi_infoframe_enable(HDMI_INFOFRAME_TYPE_SPD);
- 
- 	if (IS_DGFX(i915))
--		ret = hdmi_spd_infoframe_init(frame, "Intel", "Discrete gfx");
-+		hdmi_spd_infoframe_init(frame, "Intel", "Discrete gfx");
- 	else
--		ret = hdmi_spd_infoframe_init(frame, "Intel", "Integrated gfx");
--
--	if (drm_WARN_ON(encoder->base.dev, ret))
--		return false;
-+		hdmi_spd_infoframe_init(frame, "Intel", "Integrated gfx");
- 
- 	frame->sdi = HDMI_SPD_SDI_PC;
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index 0a8e0a13f516..75899e4a011f 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -995,12 +995,7 @@ static int mtk_hdmi_setup_spd_infoframe(struct mtk_hdmi *hdmi,
- 	u8 buffer[HDMI_INFOFRAME_HEADER_SIZE + HDMI_SPD_INFOFRAME_SIZE];
- 	ssize_t err;
- 
--	err = hdmi_spd_infoframe_init(&frame, vendor, product);
--	if (err < 0) {
--		dev_err(hdmi->dev, "Failed to initialize SPD infoframe: %zd\n",
--			err);
--		return err;
--	}
-+	hdmi_spd_infoframe_init(&frame, vendor, product);
- 
- 	err = hdmi_spd_infoframe_pack(&frame, buffer, sizeof(buffer));
- 	if (err < 0) {
-@@ -1018,12 +1013,7 @@ static int mtk_hdmi_setup_audio_infoframe(struct mtk_hdmi *hdmi)
- 	u8 buffer[HDMI_INFOFRAME_HEADER_SIZE + HDMI_AUDIO_INFOFRAME_SIZE];
- 	ssize_t err;
- 
--	err = hdmi_audio_infoframe_init(&frame);
--	if (err < 0) {
--		dev_err(hdmi->dev, "Failed to setup audio infoframe: %zd\n",
--			err);
--		return err;
--	}
-+	hdmi_audio_infoframe_init(&frame);
- 
- 	frame.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
- 	frame.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
-diff --git a/drivers/gpu/drm/radeon/r600_hdmi.c b/drivers/gpu/drm/radeon/r600_hdmi.c
-index f3551ebaa2f0..b690254562e8 100644
---- a/drivers/gpu/drm/radeon/r600_hdmi.c
-+++ b/drivers/gpu/drm/radeon/r600_hdmi.c
-@@ -432,11 +432,7 @@ void r600_hdmi_update_audio_settings(struct drm_encoder *encoder)
- 	DRM_DEBUG("0x%02X IEC60958 status bits and 0x%02X category code\n",
- 		  (int)audio.status_bits, (int)audio.category_code);
- 
--	err = hdmi_audio_infoframe_init(&frame);
--	if (err < 0) {
--		DRM_ERROR("failed to setup audio infoframe\n");
--		return;
--	}
-+	hdmi_audio_infoframe_init(&frame);
- 
- 	frame.channels = audio.channels;
- 
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 8539fe1fedc4..1f92db1fb960 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -1321,11 +1321,7 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
- 	}
- 
- 	/* Initialize audio infoframe */
--	err = hdmi_audio_infoframe_init(&hdmi->audio.cea);
--	if (err) {
--		DRM_ERROR("Failed to init audio infoframe\n");
--		goto err_sysfs;
--	}
-+	hdmi_audio_infoframe_init(&hdmi->audio.cea);
- 
- 	cec_fill_conn_info_from_drm(&conn_info, drm_connector);
- 	hdmi->notifier = cec_notifier_conn_register(&hdmi->dev, NULL,
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index 40ec3e6cf204..fe8fcd1b056b 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -747,12 +747,7 @@ static void tegra_hdmi_setup_audio_infoframe(struct tegra_hdmi *hdmi)
- 	u8 buffer[14];
- 	ssize_t err;
- 
--	err = hdmi_audio_infoframe_init(&frame);
--	if (err < 0) {
--		dev_err(hdmi->dev, "failed to setup audio infoframe: %zd\n",
--			err);
--		return;
--	}
-+	hdmi_audio_infoframe_init(&frame);
- 
- 	frame.channels = hdmi->format.channels;
- 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 8af632740673..d8cd93d5af10 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -2021,11 +2021,7 @@ static int tegra_sor_hdmi_enable_audio_infoframe(struct tegra_sor *sor)
- 	u32 value;
- 	int err;
- 
--	err = hdmi_audio_infoframe_init(&frame);
--	if (err < 0) {
--		dev_err(sor->dev, "failed to setup audio infoframe: %d\n", err);
--		return err;
--	}
-+	hdmi_audio_infoframe_init(&frame);
- 
- 	frame.channels = sor->format.channels;
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index ea22c9bf223a..d7de86b41901 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -816,13 +816,8 @@ static void vc4_hdmi_set_avi_infoframe(struct drm_encoder *encoder)
- static void vc4_hdmi_set_spd_infoframe(struct drm_encoder *encoder)
- {
- 	union hdmi_infoframe frame;
--	int ret;
- 
--	ret = hdmi_spd_infoframe_init(&frame.spd, "Broadcom", "Videocore");
--	if (ret < 0) {
--		DRM_ERROR("couldn't fill SPD infoframe\n");
--		return;
--	}
-+	hdmi_spd_infoframe_init(&frame.spd, "Broadcom", "Videocore");
- 
- 	frame.spd.sdi = HDMI_SPD_SDI_PC;
- 
-diff --git a/drivers/video/hdmi.c b/drivers/video/hdmi.c
-index 03c7f27dde49..a4a1359415a0 100644
---- a/drivers/video/hdmi.c
-+++ b/drivers/video/hdmi.c
-@@ -216,10 +216,8 @@ EXPORT_SYMBOL(hdmi_avi_infoframe_pack);
-  * @frame: HDMI SPD infoframe
-  * @vendor: vendor string
-  * @product: product string
-- *
-- * Returns 0 on success or a negative error code on failure.
-  */
--int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
-+void hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
- 			    const char *vendor, const char *product)
- {
- 	size_t len;
-@@ -234,8 +232,6 @@ int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
- 	memcpy(frame->vendor, vendor, min(len, sizeof(frame->vendor)));
- 	len = strlen(product);
- 	memcpy(frame->product, product, min(len, sizeof(frame->product)));
--
--	return 0;
- }
- EXPORT_SYMBOL(hdmi_spd_infoframe_init);
- 
-@@ -348,18 +344,14 @@ EXPORT_SYMBOL(hdmi_spd_infoframe_pack);
- /**
-  * hdmi_audio_infoframe_init() - initialize an HDMI audio infoframe
-  * @frame: HDMI audio infoframe
-- *
-- * Returns 0 on success or a negative error code on failure.
-  */
--int hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame)
-+void hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame)
- {
- 	memset(frame, 0, sizeof(*frame));
- 
- 	frame->type = HDMI_INFOFRAME_TYPE_AUDIO;
- 	frame->version = 1;
- 	frame->length = HDMI_AUDIO_INFOFRAME_SIZE;
--
--	return 0;
- }
- EXPORT_SYMBOL(hdmi_audio_infoframe_init);
- 
-@@ -526,10 +518,8 @@ EXPORT_SYMBOL(hdmi_audio_infoframe_pack_for_dp);
- /**
-  * hdmi_vendor_infoframe_init() - initialize an HDMI vendor infoframe
-  * @frame: HDMI vendor infoframe
-- *
-- * Returns 0 on success or a negative error code on failure.
-  */
--int hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame)
-+void hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame)
- {
- 	memset(frame, 0, sizeof(*frame));
- 
-@@ -544,8 +534,6 @@ int hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame)
- 	 */
- 	frame->s3d_struct = HDMI_3D_STRUCTURE_INVALID;
- 	frame->length = HDMI_VENDOR_INFOFRAME_SIZE;
--
--	return 0;
- }
- EXPORT_SYMBOL(hdmi_vendor_infoframe_init);
- 
-@@ -698,18 +686,14 @@ hdmi_vendor_any_infoframe_check_only(const union hdmi_vendor_any_infoframe *fram
-  * hdmi_drm_infoframe_init() - initialize an HDMI Dynaminc Range and
-  * mastering infoframe
-  * @frame: HDMI DRM infoframe
-- *
-- * Returns 0 on success or a negative error code on failure.
-  */
--int hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame)
-+void hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame)
- {
- 	memset(frame, 0, sizeof(*frame));
- 
- 	frame->type = HDMI_INFOFRAME_TYPE_DRM;
- 	frame->version = 1;
- 	frame->length = HDMI_DRM_INFOFRAME_SIZE;
--
--	return 0;
- }
- EXPORT_SYMBOL(hdmi_drm_infoframe_init);
- 
-@@ -1661,7 +1645,6 @@ static int hdmi_spd_infoframe_unpack(struct hdmi_spd_infoframe *frame,
- 				     const void *buffer, size_t size)
- {
- 	const u8 *ptr = buffer;
--	int ret;
- 
- 	if (size < HDMI_INFOFRAME_SIZE(SPD))
- 		return -EINVAL;
-@@ -1677,9 +1660,7 @@ static int hdmi_spd_infoframe_unpack(struct hdmi_spd_infoframe *frame,
- 
- 	ptr += HDMI_INFOFRAME_HEADER_SIZE;
- 
--	ret = hdmi_spd_infoframe_init(frame, ptr, ptr + 8);
--	if (ret)
--		return ret;
-+	hdmi_spd_infoframe_init(frame, ptr, ptr + 8);
- 
- 	frame->sdi = ptr[24];
- 
-@@ -1703,7 +1684,6 @@ static int hdmi_audio_infoframe_unpack(struct hdmi_audio_infoframe *frame,
- 				       const void *buffer, size_t size)
- {
- 	const u8 *ptr = buffer;
--	int ret;
- 
- 	if (size < HDMI_INFOFRAME_SIZE(AUDIO))
- 		return -EINVAL;
-@@ -1717,9 +1697,7 @@ static int hdmi_audio_infoframe_unpack(struct hdmi_audio_infoframe *frame,
- 	if (hdmi_infoframe_checksum(buffer, HDMI_INFOFRAME_SIZE(AUDIO)) != 0)
- 		return -EINVAL;
- 
--	ret = hdmi_audio_infoframe_init(frame);
--	if (ret)
--		return ret;
-+	hdmi_audio_infoframe_init(frame);
- 
- 	ptr += HDMI_INFOFRAME_HEADER_SIZE;
- 
-@@ -1755,7 +1733,6 @@ hdmi_vendor_any_infoframe_unpack(union hdmi_vendor_any_infoframe *frame,
- {
- 	const u8 *ptr = buffer;
- 	size_t length;
--	int ret;
- 	u8 hdmi_video_format;
- 	struct hdmi_vendor_infoframe *hvf = &frame->hdmi;
- 
-@@ -1789,9 +1766,7 @@ hdmi_vendor_any_infoframe_unpack(union hdmi_vendor_any_infoframe *frame,
- 	if (hdmi_video_format > 0x2)
- 		return -EINVAL;
- 
--	ret = hdmi_vendor_infoframe_init(hvf);
--	if (ret)
--		return ret;
-+	hdmi_vendor_infoframe_init(hvf);
- 
- 	hvf->length = length;
- 
-@@ -1837,15 +1812,12 @@ int hdmi_drm_infoframe_unpack_only(struct hdmi_drm_infoframe *frame,
- 	const u8 *temp;
- 	u8 x_lsb, x_msb;
- 	u8 y_lsb, y_msb;
--	int ret;
- 	int i;
- 
- 	if (size < HDMI_DRM_INFOFRAME_SIZE)
- 		return -EINVAL;
- 
--	ret = hdmi_drm_infoframe_init(frame);
--	if (ret)
--		return ret;
-+	hdmi_drm_infoframe_init(frame);
- 
- 	frame->eotf = ptr[0] & 0x7;
- 	frame->metadata_type = ptr[1] & 0x7;
-diff --git a/include/linux/hdmi.h b/include/linux/hdmi.h
-index 2f4dcc8d060e..e60a28d181f2 100644
---- a/include/linux/hdmi.h
-+++ b/include/linux/hdmi.h
-@@ -214,7 +214,7 @@ ssize_t hdmi_avi_infoframe_pack(struct hdmi_avi_infoframe *frame, void *buffer,
- ssize_t hdmi_avi_infoframe_pack_only(const struct hdmi_avi_infoframe *frame,
- 				     void *buffer, size_t size);
- int hdmi_avi_infoframe_check(struct hdmi_avi_infoframe *frame);
--int hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame);
-+void hdmi_drm_infoframe_init(struct hdmi_drm_infoframe *frame);
- ssize_t hdmi_drm_infoframe_pack(struct hdmi_drm_infoframe *frame, void *buffer,
- 				size_t size);
- ssize_t hdmi_drm_infoframe_pack_only(const struct hdmi_drm_infoframe *frame,
-@@ -249,7 +249,7 @@ struct hdmi_spd_infoframe {
- 	enum hdmi_spd_sdi sdi;
- };
- 
--int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
-+void hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
- 			    const char *vendor, const char *product);
- ssize_t hdmi_spd_infoframe_pack(struct hdmi_spd_infoframe *frame, void *buffer,
- 				size_t size);
-@@ -331,7 +331,7 @@ struct hdmi_audio_infoframe {
- 
- };
- 
--int hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame);
-+void hdmi_audio_infoframe_init(struct hdmi_audio_infoframe *frame);
- ssize_t hdmi_audio_infoframe_pack(struct hdmi_audio_infoframe *frame,
- 				  void *buffer, size_t size);
- ssize_t hdmi_audio_infoframe_pack_only(const struct hdmi_audio_infoframe *frame,
-@@ -393,7 +393,7 @@ struct hdr_sink_metadata {
- 	};
- };
- 
--int hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame);
-+void hdmi_vendor_infoframe_init(struct hdmi_vendor_infoframe *frame);
- ssize_t hdmi_vendor_infoframe_pack(struct hdmi_vendor_infoframe *frame,
- 				   void *buffer, size_t size);
- ssize_t hdmi_vendor_infoframe_pack_only(const struct hdmi_vendor_infoframe *frame,
+> 
+> Suggested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 51 +++++++++++++++-------
+>  1 file changed, 35 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index e6eec85480ca..4fdadc7b045f 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/gpio.h>
+>  #include <linux/gpio/consumer.h>
+> +#include <linux/interconnect.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+> @@ -288,6 +289,7 @@ struct tegra_pcie_dw {
+>  	unsigned int pex_rst_irq;
+>  	int ep_state;
+>  	long link_status;
+> +	struct icc_path *icc_path;
+>  };
+>  
+>  static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
+> @@ -310,6 +312,27 @@ struct tegra_pcie_soc {
+>  	enum dw_pcie_device_mode mode;
+>  };
+>  
+> +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
+> +{
+> +	struct dw_pcie *pci = &pcie->pci;
+> +	u32 val, speed, width;
+> +
+> +	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
+> +
+> +	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
+> +	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
+> +
+> +	val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
+> +
+> +	if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
+> +		dev_err(pcie->dev, "can't set bw[%u]\n", val);
+> +
+> +	if (speed >= ARRAY_SIZE(pcie_gen_freq))
+> +		speed = 0;
+> +
+> +	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
+> +}
+> +
+>  static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> @@ -453,18 +476,12 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
+>  	struct tegra_pcie_dw *pcie = arg;
+>  	struct dw_pcie_ep *ep = &pcie->pci.ep;
+>  	struct dw_pcie *pci = &pcie->pci;
+> -	u32 val, speed;
+> +	u32 val;
+>  
+>  	if (test_and_clear_bit(0, &pcie->link_status))
+>  		dw_pcie_ep_linkup(ep);
+>  
+> -	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
+> -		PCI_EXP_LNKSTA_CLS;
+> -
+> -	if (speed >= ARRAY_SIZE(pcie_gen_freq))
+> -		speed = 0;
+> -
+> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
+> +	tegra_pcie_icc_set(pcie);
+>  
+>  	if (pcie->of_data->has_ltr_req_fix)
+>  		return IRQ_HANDLED;
+> @@ -950,9 +967,9 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+>  
+>  static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+>  {
+> -	u32 val, offset, speed, tmp;
+>  	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+>  	struct dw_pcie_rp *pp = &pci->pp;
+> +	u32 val, offset, tmp;
+>  	bool retry = true;
+>  
+>  	if (pcie->of_data->mode == DW_PCIE_EP_TYPE) {
+> @@ -1023,13 +1040,7 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+>  		goto retry_link;
+>  	}
+>  
+> -	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
+> -		PCI_EXP_LNKSTA_CLS;
+> -
+> -	if (speed >= ARRAY_SIZE(pcie_gen_freq))
+> -		speed = 0;
+> -
+> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
+> +	tegra_pcie_icc_set(pcie);
+>  
+>  	tegra_pcie_enable_interrupts(pp);
+>  
+> @@ -2233,6 +2244,14 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, pcie);
+>  
+> +	pcie->icc_path = devm_of_icc_get(&pdev->dev, "write");
+> +	ret = PTR_ERR_OR_ZERO(pcie->icc_path);
+> +	if (ret) {
+> +		tegra_bpmp_put(pcie->bpmp);
+> +		dev_err_probe(&pdev->dev, ret, "failed to get write interconnect\n");
+> +		return ret;
+> +	}
+> +
+>  	switch (pcie->of_data->mode) {
+>  	case DW_PCIE_RC_TYPE:
+>  		ret = devm_request_irq(dev, pp->irq, tegra_pcie_rp_irq_handler,
+> -- 
+> 2.17.1
+> 
