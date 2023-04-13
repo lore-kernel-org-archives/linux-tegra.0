@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4FCC77B73
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 07:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B208C77B6C
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 07:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbjDMHrN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Apr 2023 03:47:13 -0400
+        id S230149AbjDMHrO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Apr 2023 03:47:14 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbjDMHrL (ORCPT
+        with ESMTP id S230153AbjDMHrM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Apr 2023 03:47:11 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D72159019;
-        Thu, 13 Apr 2023 00:47:05 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id z9so8154509ejx.11;
-        Thu, 13 Apr 2023 00:47:05 -0700 (PDT)
+        Thu, 13 Apr 2023 03:47:12 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1548A78;
+        Thu, 13 Apr 2023 00:47:07 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id dm2so35280585ejc.8;
+        Thu, 13 Apr 2023 00:47:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681372024; x=1683964024;
+        d=gmail.com; s=20221208; t=1681372026; x=1683964026;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ow1G+6M3ovTb8LY2mz6EmTo6+VyZI/HlronVRfHttzk=;
-        b=GnvONpBdSzXOAXoZJpTRHIbJdQrjSB5inw+RRtcfkCmHeJFmJDBg2sgEYAARICKqro
-         ZW4dbsZKCAqW1HI7aFBJYhnhCdfz1T//GdFyIputq6XULQtjR7NdJO+wdCm6jV0PGdjE
-         CgqdCLChrFO6jKCUDncpBn0Cpmc1p79rjlcr92/cfY24YWqavVQ/Z24eepOGtI7hxMm8
-         CPkyAbB/Xg47O5Ecs94EQ2vxSLNE3C10O8azgQ9ECFBg+j0cYiyD1fDr3X31ySPqWHt1
-         ZaIm03+6miNeeTNAmowltZ34CV/Q78D+7XmkcnN7FIMNGVMS+ejwbDpKYCjKHFnitI+B
-         W+Yg==
+        bh=gi1d/YjeLexKJcbgToDInYZzxIr8FRJ39DahrVUGeSc=;
+        b=nfH4WdCQMMdVZx/gPfjblfSFfD1zVmy7zCqRHWLdVSfNVGMhQ0mWxG6f4JZ5p3LPND
+         yAFNxbxc4kwiJp6sj4PYKJYGmsnCpWvMS6mwlb/8jouZR0MdvN54+++WXNWCDqjL3g+I
+         VO3Uk3j/v88BmzhVa4xfmTLo4zSsNoe206q0xhax4oi4bvAhiQKtc2qDUxT4YAat4UKT
+         45AFUsIew9mB4EUrM38/WZNAeru7t2gLCN0t+O+gA8o3BebuoKT4byUWwwhL2CDAgkfm
+         WrgDFX8qT25Njj51RFxr5td9P+3dYmqtqsOL7/XBVnP0ksTGhXywRYJUDR/niq+LFYD2
+         zAjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681372024; x=1683964024;
+        d=1e100.net; s=20221208; t=1681372026; x=1683964026;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ow1G+6M3ovTb8LY2mz6EmTo6+VyZI/HlronVRfHttzk=;
-        b=kBn9Ou+KGsXQPr6pcu0zcAdQUW55ByNwRC0YlSn9ohE0uJoGqV1WWBhcgoIgIh2Zxw
-         oH5yvRFnytcXLltchYwhQrJfKzheq9nkM+FLq7TVjnppToxx/Fn8FkCgpIRgBA9bC959
-         7tItfo2A1OkQZ7AJ6KZqpMA3xjCpOSDjD/O0rTTekBVJcsLA8CVYpXg1HfnbQLkWGhRU
-         ogTog7ADkK44uW4RbZeLUjhfFjI/5XiTKsihRpgOULeoJS3bf3cxwgXfhdHmr+wWMULj
-         TolrTdgOdr2eimKi4Njli5uUowDN2lFlEdsrzZZjJqj//e2SGtUOrV3ebV76z35Lcc+K
-         /26w==
-X-Gm-Message-State: AAQBX9dDr9DlNhJnMbDqbzgfwB9mws62SxEoN78HnJCeA8GgMq5GAXtX
-        HXZHyUrP3XcDbeEzVqhZiWTTlV7OZKP0gQ==
-X-Google-Smtp-Source: AKy350YtiC1xMPHzs5BOzuwlhrD6gtaQLKTdEhArz/ivGdRBLWpD/KnbyEhxP3x541KorlKZsF9XJg==
-X-Received: by 2002:a17:907:72c2:b0:94e:6edc:71bc with SMTP id du2-20020a17090772c200b0094e6edc71bcmr4612049ejc.25.1681372024165;
-        Thu, 13 Apr 2023 00:47:04 -0700 (PDT)
+        bh=gi1d/YjeLexKJcbgToDInYZzxIr8FRJ39DahrVUGeSc=;
+        b=PRk5zXEjxlboNGAZBQ67eisOGxjktoHHRBPFTLxH8DFwK36riSAl135sZ3kLtLfoOg
+         MlahxnAjf7DtcCxL/dRVmRIAJtvTwCwKS4Cxfd8TUxiTDfg/Y0mH5XdvX8S/OKLu3eJN
+         sGwh98uTzukoRCzrllYvVA56lXMszm8Fx77rFTZqgPNkYA6yCFZ0kUO0tUKOxsv1UMsz
+         EvJ3n3isyr0+ZB9V8xSkxKPsveP5B60Y6atyl2F87YGvFDrEa9QD2XbES2x8QbD3mG/+
+         8vExk5vIgV9l+JxmoHGK5BK851gEgXPpcKTgvPxS41ikgA6xXiie+kxE9RWh3BSzXYsw
+         +iog==
+X-Gm-Message-State: AAQBX9dNoyzK80Jtk9D1onT8y/FbPIVyruCP6Yt+wN94IlL/SfBjy5jC
+        AzN72AulaWar8QklErV12VX0RQyDdjVnWQ==
+X-Google-Smtp-Source: AKy350a045OqV+ZEjYV8npQxGwumhviRukmrC30BjZ/b+Y+5EmO8Fzz6nxHlrRjwZLuiuCpa3a2jMQ==
+X-Received: by 2002:a17:906:9486:b0:94e:509b:c5a6 with SMTP id t6-20020a170906948600b0094e509bc5a6mr1740152ejx.75.1681372026086;
+        Thu, 13 Apr 2023 00:47:06 -0700 (PDT)
 Received: from [127.0.1.1] ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id q16-20020a1709060f9000b0094e954fd015sm565620ejj.175.2023.04.13.00.47.03
+        by smtp.gmail.com with ESMTPSA id q16-20020a1709060f9000b0094e954fd015sm565620ejj.175.2023.04.13.00.47.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 00:47:03 -0700 (PDT)
+        Thu, 13 Apr 2023 00:47:05 -0700 (PDT)
 From:   Benjamin Bara <bbara93@gmail.com>
-Date:   Thu, 13 Apr 2023 09:46:40 +0200
-Subject: [PATCH v4 2/4] i2c: core: run atomic i2c xfer when !preemptible
+Date:   Thu, 13 Apr 2023 09:46:42 +0200
+Subject: [PATCH v4 4/4] mfd: tps6586x: register restart handler
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230327-tegra-pmic-reboot-v4-2-b24af219fb47@skidata.com>
+Message-Id: <20230327-tegra-pmic-reboot-v4-4-b24af219fb47@skidata.com>
 References: <20230327-tegra-pmic-reboot-v4-0-b24af219fb47@skidata.com>
 In-Reply-To: <20230327-tegra-pmic-reboot-v4-0-b24af219fb47@skidata.com>
 To:     Wolfram Sang <wsa@kernel.org>, Lee Jones <lee@kernel.org>,
@@ -65,8 +65,7 @@ Cc:     dmitry.osipenko@collabora.com, peterz@infradead.org,
         jonathanh@nvidia.com, richard.leitner@linux.dev,
         treding@nvidia.com, linux-kernel@vger.kernel.org,
         linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>,
-        stable@vger.kernel.org
+        Benjamin Bara <benjamin.bara@skidata.com>
 X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -74,47 +73,74 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Benjamin Bara <benjamin.bara@skidata.com>
 
-Since bae1d3a05a8b, i2c transfers are non-atomic if preemption is
-disabled. However, non-atomic i2c transfers require preemption (e.g. in
-wait_for_completion() while waiting for the DMA).
+There are a couple of boards which use a tps6586x as
+"ti,system-power-controller", e.g. the tegra20-tamonten.dtsi.
+For these, the only registered restart handler is the warm reboot via
+tegra's PMC. As the bootloader of the tegra20 requires the VDE, it must
+be ensured that VDE is enabled (which is the case after a cold reboot).
+For the "normal reboot", this is basically the case since 8f0c714ad9be.
+However, this workaround is not executed in case of an emergency restart.
+In case of an emergency restart, the system now simply hangs in the
+bootloader, as VDE is not enabled (because it is not used).
 
-panic() calls preempt_disable_notrace() before calling
-emergency_restart(). Therefore, if an i2c device is used for the
-restart, the xfer should be atomic. This avoids warnings like:
+The TPS658629-Q1 (unfortunately the only TPS6586x with public data sheet)
+provides a SOFT RST bit in the SUPPLYENE reg to request a (cold) reboot,
+which takes at least 10ms (as the data sheet states).
+This avoids the hang-up.
 
-[   12.667612] WARNING: CPU: 1 PID: 1 at kernel/rcu/tree_plugin.h:318 rcu_note_context_switch+0x33c/0x6b0
-[   12.676926] Voluntary context switch within RCU read-side critical section!
-...
-[   12.742376]  schedule_timeout from wait_for_completion_timeout+0x90/0x114
-[   12.749179]  wait_for_completion_timeout from tegra_i2c_wait_completion+0x40/0x70
-...
-[   12.994527]  atomic_notifier_call_chain from machine_restart+0x34/0x58
-[   13.001050]  machine_restart from panic+0x2a8/0x32c
+Tested on a TPS658640.
 
-Use !preemptible() instead, which is basically the same check as
-pre-v5.2.
-
-Fixes: bae1d3a05a8b ("i2c: core: remove use of in_atomic()")
-Cc: stable@vger.kernel.org # v5.2+
-Suggested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
 ---
- drivers/i2c/i2c-core.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/tps6586x.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
-index 1247e6e6e975..05b8b8dfa9bd 100644
---- a/drivers/i2c/i2c-core.h
-+++ b/drivers/i2c/i2c-core.h
-@@ -29,7 +29,7 @@ int i2c_dev_irq_from_resources(const struct resource *resources,
-  */
- static inline bool i2c_in_atomic_xfer_mode(void)
- {
--	return system_state > SYSTEM_RUNNING && irqs_disabled();
-+	return system_state > SYSTEM_RUNNING && !preemptible();
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index 93f1bf440191..91754f30e26b 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -30,6 +30,7 @@
+ #include <linux/mfd/tps6586x.h>
+ 
+ #define TPS6586X_SUPPLYENE	0x14
++#define SOFT_RST_BIT		BIT(0)
+ #define EXITSLREQ_BIT		BIT(1)
+ #define SLEEP_MODE_BIT		BIT(3)
+ 
+@@ -470,6 +471,19 @@ static int tps6586x_power_off_handler(struct sys_off_data *data)
+ 	return tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
  }
  
- static inline int __i2c_lock_bus_helper(struct i2c_adapter *adap)
++static int tps6586x_restart_handler(struct sys_off_data *data)
++{
++	struct device *tps6586x_dev = data->cb_data;
++	int ret;
++
++	/* bring pmic into HARD REBOOT state. this takes at least 10ms. */
++	ret = tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SOFT_RST_BIT);
++	mdelay(15);
++
++	dev_err(tps6586x_dev, "restart failed: timeout\n");
++	return ret;
++}
++
+ static void tps6586x_print_version(struct i2c_client *client, int version)
+ {
+ 	const char *name;
+@@ -570,6 +584,13 @@ static int tps6586x_i2c_probe(struct i2c_client *client)
+ 			dev_err(&client->dev, "register power off handler failed: %d\n", ret);
+ 			goto err_add_devs;
+ 		}
++
++		ret = devm_register_restart_handler(&client->dev, &tps6586x_restart_handler,
++						    &client->dev);
++		if (ret) {
++			dev_err(&client->dev, "register restart handler failed: %d\n", ret);
++			goto err_add_devs;
++		}
+ 	}
+ 
+ 	return 0;
 
 -- 
 2.34.1
