@@ -2,198 +2,131 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161BFC77B6E
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 14:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0386DC77B61
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 19:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbjDMOwU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Apr 2023 10:52:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
+        id S229877AbjDMTvc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Apr 2023 15:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjDMOwT (ORCPT
+        with ESMTP id S229492AbjDMTvb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Apr 2023 10:52:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D0D99;
-        Thu, 13 Apr 2023 07:52:18 -0700 (PDT)
+        Thu, 13 Apr 2023 15:51:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BAEF271E;
+        Thu, 13 Apr 2023 12:51:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B847263F45;
-        Thu, 13 Apr 2023 14:52:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6790DC4339B;
-        Thu, 13 Apr 2023 14:52:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AE0A3615B7;
+        Thu, 13 Apr 2023 19:51:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 251F8C433EF;
+        Thu, 13 Apr 2023 19:51:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681397537;
-        bh=QG9Ja6Qfdja3+F6aw1CtqZqw6k9MQzX8MhhvMSkoqxA=;
+        s=k20201202; t=1681415488;
+        bh=VD3AH8/BOXPv2IMvKmDKEehX7IswoAmODYA+TR627Jo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AZURpi2bwBdV5kPciUgesKGZsSWm09HGKZW2sB6s/37Hig0Fg4lC6lNwxgFSWisgE
-         GP20+mS3rkZioj3dVnG+tpGUZLEMA1XZiBQ6el5iF3REiqkQYmmPdJUzkFr7k4hHcD
-         MhbAnLnxBJyeKIqpLEKg9ebIKMlR2PJ6McrEqfoTB7yTfzhzglf/Dy82wUF7C1qW9l
-         7IyCU5EdCKX476SshiOCjLyarFivvPnjBZXOseNMtjjQItfglcM7llqnIIP9q+dPdM
-         WzpTxLuNMf8SJJqK94R7iK3EiMoNzAFuu547JnrLBoIcEkq0ngKGmOBX88IUbWHbTr
-         WvlJ7QW67jVaA==
-Date:   Thu, 13 Apr 2023 16:52:08 +0200
-From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        helgaas@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
-        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
-        ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v6 8/9] PCI: tegra194: Add interconnect support in
- Tegra234
-Message-ID: <ZDgXGCJQAHpLTw9S@lpieralisi>
-References: <20230411110002.19824-1-sumitg@nvidia.com>
- <20230411110002.19824-9-sumitg@nvidia.com>
+        b=VCtYT890v2FRNOna+n2kFlQUZGsy0rBa70/M8Fi0623Yy6A8HCCzDldPFgV/ej/xA
+         F1YzJ+Iq1TUbxiDFT+wAZQYKhXSeSDYdq3tkrl+fimUZ0kTr5BryN3l884PPyUGjwt
+         X8cOefnM3db3riLehwMJJ6vV4E/KLhNRL6ikaUoN4tIK/Vdqp/PBwp+6oDrHRc4e/C
+         B/1+1g8M3Z7pWFX4iIjYdKgmVfCM+bMU5z5/iQ5Nu5SPF4CkzTzP1JEpTG1CpKb/Ws
+         GGc3M/KZegRLpXQBISjk4gvp1tRkumWNf7zu5pxa2YVlro/J3OSz5us5R5z+FfF6fz
+         CS5IjwjBxtgUQ==
+Date:   Thu, 13 Apr 2023 21:51:25 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com,
+        dmitry.osipenko@collabora.com, peterz@infradead.org,
+        jonathanh@nvidia.com, richard.leitner@linux.dev,
+        treding@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] i2c: core: run atomic i2c xfer when !preemptible
+Message-ID: <ZDhdPbcHFaR+2dhR@sai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Benjamin Bara <bbara93@gmail.com>, Lee Jones <lee@kernel.org>,
+        rafael.j.wysocki@intel.com, dmitry.osipenko@collabora.com,
+        peterz@infradead.org, jonathanh@nvidia.com,
+        richard.leitner@linux.dev, treding@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>, stable@vger.kernel.org
+References: <20230327-tegra-pmic-reboot-v4-0-b24af219fb47@skidata.com>
+ <20230327-tegra-pmic-reboot-v4-2-b24af219fb47@skidata.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+d+oo9lOK+g04O7i"
 Content-Disposition: inline
-In-Reply-To: <20230411110002.19824-9-sumitg@nvidia.com>
+In-Reply-To: <20230327-tegra-pmic-reboot-v4-2-b24af219fb47@skidata.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 04:30:01PM +0530, Sumit Gupta wrote:
-> Add support to request DRAM bandwidth with Memory Interconnect
-> in Tegra234 SoC. The DRAM BW required for different modes depends
-> on speed (Gen-1/2/3/4) and width/lanes (x1/x2/x4/x8).
-> Currently, no latency is observed in data transfer with PCI as the
-> DRAM Freq is always set to max. But that results in high power
-> consumption. Now for Tegra234, we are enabling the dynamic scaling
-> of the DRAM Freq based on requests from Clients instead of running
-> at the max Freq always. This change does that for PCI MC client.
 
-I am sorry but this is still unclear to me. The sentence above makes
-me think that you are *adding* latency to the data transfer trading
-it with lower power consumption; probably that's a wrong parsing of
-what you are saying - so please explain what you want to say
-with "no latency is observed" and whether this patch changes that
-(which is not allowed because that would count as a regression).
+--+d+oo9lOK+g04O7i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Lorenzo
+On Thu, Apr 13, 2023 at 09:46:40AM +0200, Benjamin Bara wrote:
+> From: Benjamin Bara <benjamin.bara@skidata.com>
+>=20
+> Since bae1d3a05a8b, i2c transfers are non-atomic if preemption is
+> disabled. However, non-atomic i2c transfers require preemption (e.g. in
+> wait_for_completion() while waiting for the DMA).
+>=20
+> panic() calls preempt_disable_notrace() before calling
+> emergency_restart(). Therefore, if an i2c device is used for the
+> restart, the xfer should be atomic. This avoids warnings like:
+>=20
+> [   12.667612] WARNING: CPU: 1 PID: 1 at kernel/rcu/tree_plugin.h:318 rcu=
+_note_context_switch+0x33c/0x6b0
+> [   12.676926] Voluntary context switch within RCU read-side critical sec=
+tion!
+> ...
+> [   12.742376]  schedule_timeout from wait_for_completion_timeout+0x90/0x=
+114
+> [   12.749179]  wait_for_completion_timeout from tegra_i2c_wait_completio=
+n+0x40/0x70
+> ...
+> [   12.994527]  atomic_notifier_call_chain from machine_restart+0x34/0x58
+> [   13.001050]  machine_restart from panic+0x2a8/0x32c
+>=20
+> Use !preemptible() instead, which is basically the same check as
+> pre-v5.2.
+>=20
+> Fixes: bae1d3a05a8b ("i2c: core: remove use of in_atomic()")
+> Cc: stable@vger.kernel.org # v5.2+
+> Suggested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
 
-> 
-> Suggested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 51 +++++++++++++++-------
->  1 file changed, 35 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index e6eec85480ca..4fdadc7b045f 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -14,6 +14,7 @@
->  #include <linux/delay.h>
->  #include <linux/gpio.h>
->  #include <linux/gpio/consumer.h>
-> +#include <linux/interconnect.h>
->  #include <linux/interrupt.h>
->  #include <linux/iopoll.h>
->  #include <linux/kernel.h>
-> @@ -288,6 +289,7 @@ struct tegra_pcie_dw {
->  	unsigned int pex_rst_irq;
->  	int ep_state;
->  	long link_status;
-> +	struct icc_path *icc_path;
->  };
->  
->  static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
-> @@ -310,6 +312,27 @@ struct tegra_pcie_soc {
->  	enum dw_pcie_device_mode mode;
->  };
->  
-> +static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
-> +{
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	u32 val, speed, width;
-> +
-> +	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
-> +
-> +	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, val);
-> +	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
-> +
-> +	val = width * (PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]) / BITS_PER_BYTE);
-> +
-> +	if (icc_set_bw(pcie->icc_path, MBps_to_icc(val), 0))
-> +		dev_err(pcie->dev, "can't set bw[%u]\n", val);
-> +
-> +	if (speed >= ARRAY_SIZE(pcie_gen_freq))
-> +		speed = 0;
-> +
-> +	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
-> +}
-> +
->  static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -453,18 +476,12 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
->  	struct tegra_pcie_dw *pcie = arg;
->  	struct dw_pcie_ep *ep = &pcie->pci.ep;
->  	struct dw_pcie *pci = &pcie->pci;
-> -	u32 val, speed;
-> +	u32 val;
->  
->  	if (test_and_clear_bit(0, &pcie->link_status))
->  		dw_pcie_ep_linkup(ep);
->  
-> -	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
-> -		PCI_EXP_LNKSTA_CLS;
-> -
-> -	if (speed >= ARRAY_SIZE(pcie_gen_freq))
-> -		speed = 0;
-> -
-> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
-> +	tegra_pcie_icc_set(pcie);
->  
->  	if (pcie->of_data->has_ltr_req_fix)
->  		return IRQ_HANDLED;
-> @@ -950,9 +967,9 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
->  
->  static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
->  {
-> -	u32 val, offset, speed, tmp;
->  	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
->  	struct dw_pcie_rp *pp = &pci->pp;
-> +	u32 val, offset, tmp;
->  	bool retry = true;
->  
->  	if (pcie->of_data->mode == DW_PCIE_EP_TYPE) {
-> @@ -1023,13 +1040,7 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
->  		goto retry_link;
->  	}
->  
-> -	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
-> -		PCI_EXP_LNKSTA_CLS;
-> -
-> -	if (speed >= ARRAY_SIZE(pcie_gen_freq))
-> -		speed = 0;
-> -
-> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
-> +	tegra_pcie_icc_set(pcie);
->  
->  	tegra_pcie_enable_interrupts(pp);
->  
-> @@ -2233,6 +2244,14 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, pcie);
->  
-> +	pcie->icc_path = devm_of_icc_get(&pdev->dev, "write");
-> +	ret = PTR_ERR_OR_ZERO(pcie->icc_path);
-> +	if (ret) {
-> +		tegra_bpmp_put(pcie->bpmp);
-> +		dev_err_probe(&pdev->dev, ret, "failed to get write interconnect\n");
-> +		return ret;
-> +	}
-> +
->  	switch (pcie->of_data->mode) {
->  	case DW_PCIE_RC_TYPE:
->  		ret = devm_request_irq(dev, pp->irq, tegra_pcie_rp_irq_handler,
-> -- 
-> 2.17.1
-> 
+So, with Peter's input and me checking again:
+
+Acked-by: Wolfram Sang <wsa@kernel.org>
+
+I assume this shall go in via the mfd-tree. Let me know if I should pick
+it instead.
+
+
+--+d+oo9lOK+g04O7i
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmQ4XT0ACgkQFA3kzBSg
+KbbAJA//f+xXOS04L16X+BQ/HPdV9h08kJltv/KDQ7sfvNd+ALOJslAZbEdgNVKH
+zj96ZFX4u75ZdDH6YiImSGUfXqWoseKZiK4ZvkPaKabsG8uv/uHZIJdYG6qXpD7Q
+b0sg6z6TgvpVSAp0l4n0FgeNQE2KVCZ5WAcjFQx46vcXufyvyycZPUU0Ht37ufZL
+x0kCd04YeX+wnRUp9nH9JNI4frjnR/uqwfTM4MCdnyrX1WXk70J6AMQ/C5UuKfGe
+EYsWRs6cTUyo7vMqLEImkb4XXTZMJqCl+dmC1oP2w8w+Lvm9P7RcwuI0Q1yuKKp/
+1fypvphtyrsqnIzaox57pMgE6Fzh8qVSaC0ZMZWX1fje9PWwFhnBX79RBx6V3OIA
+4NKWEtyB2KeCtEPeimh2d2ZUKg4VHjKuT4gHafLx417s7qjRe2jYLg8VM81rgukC
+Qe36LnTryBcGq7TBBGCVZehnwtnHxiYmGJ5cZtKP+Tp4uFUxD8MN9UQDNoeLnI+L
+mXxpmDptYoxPbJBBSCgvgMcnuW2LAAL9Jjtpt/xestPqgSdQhWQ03KwyrNkFztl/
+h59ULzWc90RQoNG8lK++XEI3jyB5VpAfPE/axAjhUTtS3bxZ1iuGh6Vywn3b3iD/
+M/JlFy5nloZAuabCFKByKf7emEp/Wc36fA0r42RkKQsL7IVSXbc=
+=KAjA
+-----END PGP SIGNATURE-----
+
+--+d+oo9lOK+g04O7i--
