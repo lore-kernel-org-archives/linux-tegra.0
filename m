@@ -2,168 +2,135 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF51C77B71
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 04:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8B5C77B6C
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Apr 2023 07:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbjDMER5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Apr 2023 00:17:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45152 "EHLO
+        id S230134AbjDMHrL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Apr 2023 03:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbjDMERX (ORCPT
+        with ESMTP id S230135AbjDMHrK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Apr 2023 00:17:23 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DC386AA;
-        Wed, 12 Apr 2023 21:15:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681359341; x=1712895341;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Hud/tEH/bO4ykSDB5vwIzW+i0/5nC8j5l6CjYVfUw8w=;
-  b=VGx1BflOdGoAqLNxc5jgyPNY1mkFT7S+FaTloPX+lkhFLpFEXvGouXtD
-   6rNF8b8CIe7oHl8HHQJbHs8O57SxWO/xnU4j863aa2Bgiflar8BcKLlLP
-   6pAamFfNMIQfJMXyegBraYV9IA71zQVVkLc9l+zSSMkLgeiv+tn5clt8q
-   ClHoRVO6eJn1ckN/0YMUTpeGEySFzp/haRpjtIw+adnU8cOphBk/qJH8w
-   KSftDcCPX3m4Rei0hu49wRCj4XkTt+SW5tdjYnUY2zNJ5sEgGK77kj4sO
-   nUUPaiiIeXY7dg/AnqH6L8cvxwauVeF6I6cbB6rGSYekNNhYcK46qmAFS
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="406919607"
-X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
-   d="scan'208";a="406919607"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2023 21:15:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10678"; a="682736293"
-X-IronPort-AV: E=Sophos;i="5.98,339,1673942400"; 
-   d="scan'208";a="682736293"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 12 Apr 2023 21:15:34 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pmoMv-000YKr-2w;
-        Thu, 13 Apr 2023 04:15:33 +0000
-Date:   Thu, 13 Apr 2023 12:15:09 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-        David Airlie <airlied@gmail.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-fbdev@vger.kernel.org, lvc-project@linuxtesting.org,
-        dri-devel@lists.freedesktop.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Helge Deller <deller@gmx.de>, amd-gfx@lists.freedesktop.org,
-        Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] video/hdmi: minor fixes for *_infoframe_init functions
-Message-ID: <202304131234.hT3mzkju-lkp@intel.com>
-References: <20230412152910.9486-1-n.zhandarovich@fintech.ru>
+        Thu, 13 Apr 2023 03:47:10 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B40900B;
+        Thu, 13 Apr 2023 00:47:04 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id si1so5005583ejb.10;
+        Thu, 13 Apr 2023 00:47:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681372022; x=1683964022;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KOuwbnc4+41VpzVHB9p5nbmYtRThGGu7Mwdt155gh28=;
+        b=qqTgVQmAL6UU97AE//TW9OjBsm6bBbg9WvGKt4vdlPzHDDn7S1FY1dgtuLcPJ5T59Z
+         mEDCt3yjGEqd0k4CG8ocNxlDKlJb2mkPMuUw+8sWmse1wWXNIlYEUNE/Hd1Xq6gPNMwf
+         iPaut3yVjByLOaaW+WzIbF7EEH3mnZVCtyPA5VV843tRtw6vZAwhIbwTY24jmD6C71Zx
+         4zDqaiqUbvXV1OthH3sDnBhijxvpesuSTO+rz5Yrvp7o+AaFo7OCHTrZesM58IWmz5ow
+         jkV8holglAhsu2yiIAp3MThSZIexkXu5678CcFCZdET765qe3Z8NgmcX+NygmQOOM56l
+         Vk5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681372022; x=1683964022;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KOuwbnc4+41VpzVHB9p5nbmYtRThGGu7Mwdt155gh28=;
+        b=lAFbbFmE+hF2t7KfecDAJ/o9e0lRBB1U7t78BJyp2oRS1bZesGlAOEKHutbrWJaVga
+         y8paXzLdq0WHFiSwqp/rrXT2IrAQka4Ly26SQCPh6LTnA3Td4ZjjZoZOj3Mx4+H7fUmf
+         WuMUUSx4Rxfz1E07SMVdLMg4ko4vOo8Gr8ukD2ZTagMqoRJ65V+chj+PfffCJZ4Owroe
+         chSlppowIa9u1eRTWWVh/apfch8b+l0zDFpy6dnnOh8MPg2ruI7Og9q30P9hkmsjPiT5
+         /XD+YpihR/zm7qWeHYBD6Lz26N9sqDuEV8yUocQOdAswYz33V420DfdsGUkOnhFz0Cb4
+         kDyg==
+X-Gm-Message-State: AAQBX9dTcOLfEv+XUEVUts1FVAAOUDUq1dBs03io0+MUKwwToW8Y1QM2
+        eA9zAO6E/ekfBUka9Uk6HlObGEEgGYzqvQ==
+X-Google-Smtp-Source: AKy350bp3iXlyEQbFjKGT5NZIccPNn9+rLYfP5Ln+3SubO5TqiLEFUZU6DhuulQ31aQNr5Shh+DN/g==
+X-Received: by 2002:a17:906:2009:b0:94a:4cba:3302 with SMTP id 9-20020a170906200900b0094a4cba3302mr1593072ejo.64.1681372022279;
+        Thu, 13 Apr 2023 00:47:02 -0700 (PDT)
+Received: from [127.0.1.1] ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id q16-20020a1709060f9000b0094e954fd015sm565620ejj.175.2023.04.13.00.47.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Apr 2023 00:47:01 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+Subject: [PATCH v4 0/4] mfd: tps6586x: register restart handler
+Date:   Thu, 13 Apr 2023 09:46:38 +0200
+Message-Id: <20230327-tegra-pmic-reboot-v4-0-b24af219fb47@skidata.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230412152910.9486-1-n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF6zN2QC/32OwW7CMBBEfwX53EW210koJ/4DcVibTWKBY7S2I
+ iqUf2+SU089Po3mzXxUYYlc1PnwUcJzLDFPK7ivgwojTQNDvK+srLao0XZQeRCCV4oBhH3OFZz
+ pmr4/GUfOq7XnqTB4oSmMWzNRqSxb8BLu43sfu95W7iUnqKMw/Z3Q1mp0zdG4FttTBwa8J6Fvv
+ AyJ4vMYctpkYyw1y89+fMZN+d/HGUEDBs2MTduxcZfyiHeqtOtuy7L8AhEdiJIKAQAA
+To:     Wolfram Sang <wsa@kernel.org>, Lee Jones <lee@kernel.org>,
+        rafael.j.wysocki@intel.com
+Cc:     dmitry.osipenko@collabora.com, peterz@infradead.org,
+        jonathanh@nvidia.com, richard.leitner@linux.dev,
+        treding@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        stable@vger.kernel.org
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Nikita,
+Hi!
 
-kernel test robot noticed the following build errors:
+The Tegra20 requires an enabled VDE power domain during startup. As the
+VDE is currently not used, it is disabled during runtime.
+Since 8f0c714ad9be, there is a workaround for the "normal restart path"
+which enables the VDE before doing PMC's warm reboot. This workaround is
+not executed in the "emergency restart path", leading to a hang-up
+during start.
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on tegra/for-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes linus/master v6.3-rc6 next-20230412]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This series implements and registers a new pmic-based restart handler
+for boards with tps6586x. This cold reboot ensures that the VDE power
+domain is enabled during startup on tegra20-based boards.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nikita-Zhandarovich/video-hdmi-minor-fixes-for-_infoframe_init-functions/20230412-232947
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20230412152910.9486-1-n.zhandarovich%40fintech.ru
-patch subject: [PATCH] video/hdmi: minor fixes for *_infoframe_init functions
-config: x86_64-randconfig-a005-20230410 (https://download.01.org/0day-ci/archive/20230413/202304131234.hT3mzkju-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/36210f5b0ac3046f4c1c1d0c6e392eab40811699
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Nikita-Zhandarovich/video-hdmi-minor-fixes-for-_infoframe_init-functions/20230412-232947
-        git checkout 36210f5b0ac3046f4c1c1d0c6e392eab40811699
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/gpu/drm/i915/
+Since bae1d3a05a8b, i2c transfers are non-atomic while preemption is
+disabled (which is e.g. done during panic()). This could lead to
+warnings ("Voluntary context switch within RCU") in i2c-based restart
+handlers during emergency restart. The state of preemption should be
+detected by i2c_in_atomic_xfer_mode() to use atomic i2c xfer when
+required. Beside the new system_state check, the check is the same as
+the one pre v5.2.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304131234.hT3mzkju-lkp@intel.com/
+v3: https://lore.kernel.org/r/20230327-tegra-pmic-reboot-v3-0-3c0ee3567e14@skidata.com
+v2: https://lore.kernel.org/all/20230320220345.1463687-1-bbara93@gmail.com/
+system_state: https://lore.kernel.org/all/20230320213230.1459532-1-bbara93@gmail.com/
+v1: https://lore.kernel.org/all/20230316164703.1157813-1-bbara93@gmail.com/
 
-All errors (new ones prefixed by >>):
+v4:
+- 1,2: add "Fixes" and adapt commit messages
+- 4: reduce delay after requesting the restart (as suggested by Dmitry)
 
->> drivers/gpu/drm/i915/display/intel_hdmi.c:769:37: error: variable 'ret' is uninitialized when used here [-Werror,-Wuninitialized]
-           if (drm_WARN_ON(encoder->base.dev, ret))
-                                              ^~~
-   include/drm/drm_print.h:630:19: note: expanded from macro 'drm_WARN_ON'
-           drm_WARN((drm), (x), "%s",                                      \
-                            ^
-   include/drm/drm_print.h:620:7: note: expanded from macro 'drm_WARN'
-           WARN(condition, "%s %s: " format,                               \
-                ^~~~~~~~~
-   include/asm-generic/bug.h:131:25: note: expanded from macro 'WARN'
-           int __ret_warn_on = !!(condition);                              \
-                                  ^~~~~~~~~
-   drivers/gpu/drm/i915/display/intel_hdmi.c:756:9: note: initialize the variable 'ret' to silence this warning
-           int ret;
-                  ^
-                   = 0
-   1 error generated.
+v3:
+- bring system_state back in this series
+- do atomic i2c xfer if not preemptible (as suggested by Dmitry)
+- fix style issues mentioned by Dmitry
+- add cc stable as suggested by Dmitry
+- add explanation why this is needed for Jon
 
+v2:
+- use devm-based restart handler
+- convert the existing power_off handler to a devm-based handler
+- handle system_state in extra series
 
-vim +/ret +769 drivers/gpu/drm/i915/display/intel_hdmi.c
+---
+Benjamin Bara (4):
+      kernel/reboot: emergency_restart: set correct system_state
+      i2c: core: run atomic i2c xfer when !preemptible
+      mfd: tps6586x: use devm-based power off handler
+      mfd: tps6586x: register restart handler
 
-b055c8f3ef9f7b drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-07-08  748  
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  749  static bool
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  750  intel_hdmi_compute_spd_infoframe(struct intel_encoder *encoder,
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  751  				 struct intel_crtc_state *crtc_state,
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  752  				 struct drm_connector_state *conn_state)
-c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  753  {
-7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  754  	struct drm_i915_private *i915 = to_i915(encoder->base.dev);
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  755  	struct hdmi_spd_infoframe *frame = &crtc_state->infoframes.spd.spd;
-5adaea799c1c2c drivers/gpu/drm/i915/intel_hdmi.c         Damien Lespiau      2013-08-06  756  	int ret;
-5adaea799c1c2c drivers/gpu/drm/i915/intel_hdmi.c         Damien Lespiau      2013-08-06  757  
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  758  	if (!crtc_state->has_infoframe)
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  759  		return true;
-c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  760  
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  761  	crtc_state->infoframes.enable |=
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  762  		intel_hdmi_infoframe_enable(HDMI_INFOFRAME_TYPE_SPD);
-c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  763  
-7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  764  	if (IS_DGFX(i915))
-36210f5b0ac304 drivers/gpu/drm/i915/display/intel_hdmi.c Nikita Zhandarovich 2023-04-12  765  		hdmi_spd_infoframe_init(frame, "Intel", "Discrete gfx");
-7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  766  	else
-36210f5b0ac304 drivers/gpu/drm/i915/display/intel_hdmi.c Nikita Zhandarovich 2023-04-12  767  		hdmi_spd_infoframe_init(frame, "Intel", "Integrated gfx");
-7d1675dcb5a16c drivers/gpu/drm/i915/display/intel_hdmi.c Taylor, Clinton A   2022-11-29  768  
-3a47ae201e0749 drivers/gpu/drm/i915/display/intel_hdmi.c Pankaj Bharadiya    2020-01-15 @769  	if (drm_WARN_ON(encoder->base.dev, ret))
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  770  		return false;
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  771  
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  772  	frame->sdi = HDMI_SPD_SDI_PC;
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  773  
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  774  	ret = hdmi_spd_infoframe_check(frame);
-3a47ae201e0749 drivers/gpu/drm/i915/display/intel_hdmi.c Pankaj Bharadiya    2020-01-15  775  	if (drm_WARN_ON(encoder->base.dev, ret))
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  776  		return false;
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  777  
-fbf08556ed4344 drivers/gpu/drm/i915/intel_hdmi.c         Ville Syrjälä       2019-02-25  778  	return true;
-c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  779  }
-c0864cb39c6869 drivers/gpu/drm/i915/intel_hdmi.c         Jesse Barnes        2011-08-03  780  
+ drivers/i2c/i2c-core.h |  2 +-
+ drivers/mfd/tps6586x.c | 45 +++++++++++++++++++++++++++++++++++++--------
+ kernel/reboot.c        |  1 +
+ 3 files changed, 39 insertions(+), 9 deletions(-)
+---
+base-commit: 197b6b60ae7bc51dd0814953c562833143b292aa
+change-id: 20230327-tegra-pmic-reboot-4175ff814a4b
 
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Benjamin Bara <benjamin.bara@skidata.com>
+
