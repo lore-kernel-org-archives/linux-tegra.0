@@ -2,95 +2,102 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2F6C77B70
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Apr 2023 06:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A15CCC77B73
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Apr 2023 07:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbjDNGQM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Apr 2023 02:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48364 "EHLO
+        id S229876AbjDNHgm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Apr 2023 03:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbjDNGQL (ORCPT
+        with ESMTP id S229902AbjDNHgk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Apr 2023 02:16:11 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78A395271;
-        Thu, 13 Apr 2023 23:16:07 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id z9so16001153ejx.11;
-        Thu, 13 Apr 2023 23:16:07 -0700 (PDT)
+        Fri, 14 Apr 2023 03:36:40 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369D76584
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 00:36:20 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id fy21so485237ejb.9
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 00:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681452966; x=1684044966;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SbTsshoRiULEkzwBbQ+pYzOmV8qW1WFmOzv8hcmERH4=;
-        b=R3bW5oFzORH25LIWr6Rg5plNyiNJTBt4KgKmYoJ2EKV6Z+dvmvaGm8n9S60SRjxiYe
-         b0piYWEFo8jkbjnCYJeyVAdQT21K26c65Db46czCaRbusEzE21ycT8kybD0/+A6ICrQc
-         QXzGi2XvyBRZMYbV0yMV+MSz8e+bUcRT6HgInsxtuCnkkiqzu5aLzoNsCYRs0SFQANgW
-         B68p7HMqK3NyvxFlclBgEgJpDgXjCuRbKVs57Mw036ArKdMKDA5DnpjJvO/HvN/nKhoi
-         rJpiBvezc2+XVSeQBcGKAi1Ycowo9f8W27quGoR6wgSWG95ufD4PPs00f4P0Dv5BYmye
-         dO7A==
+        d=linaro.org; s=google; t=1681457776; x=1684049776;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6BIZm7OVoNPgP6hAJjegDQgkQsNI+ED4GT7hk/PWCTI=;
+        b=KLRG03aT3upNVPSBhBy9mK+wVYK0Rg+7gOcMpROGPKro/27CtNuIHLDXg0n/BZo+cx
+         n1krkAKd10ib4EXHQ/9eKJKZWDylSuNY/OwMo0kvsaFT1o4WSAUJ56FUILTJBBm5Tm9m
+         eW7gEFThJZ9ZsOp3TsxQRBvT9TOT/hbGgW+R9H3uNxgkeJypfJSv4QzqCFJS1hCk9n/a
+         aYfb0fz4CfhE7SHunCg/qCYgYUXB6D1j5qykim9mzN4uaIMT4wKi8hg3fp7HM5JHcmEF
+         lCZy5tsEHnECWiUWdov0ES0MDacOf0aY+/Rm/rdJn0W68Gtwdj5U2jwRVaKiFWMxEcST
+         vcqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681452966; x=1684044966;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SbTsshoRiULEkzwBbQ+pYzOmV8qW1WFmOzv8hcmERH4=;
-        b=ZWTz9B0CCtLca4zs4Ny5UtvcsHJxyxXjSSDn+UNDEhCApYucacE/0OpYkhWd39GOZw
-         gdkOGvUqDz76F+NVWxQFwKIsf2vD4nALhzHwqwmJooFWt3ZTpsiOt2VPkIkZkq8SAp9D
-         OaSfy9mbcwYgwAd1C+45Uu7rBlPO29bll1ce9J9GbG0gFzQ1Bk/Ho0RMAvULq8+1TIvB
-         zZq5/wKVHjK3nZYaJl9lmu5m9oWZrwvxXvYjRwOnHteCJcXmrGyY1D0mD6VlKOvS5KhL
-         iZDeFiJmUvSLRkkRJ160KDIi9H2w0zyifcDgY2ffDgNICHd4bHEHCGI6i6xXLv6LFUJO
-         czQA==
-X-Gm-Message-State: AAQBX9fULy0NAnLCzKCpp4AGn3fb1CHm2mT5norJi8sGerEgECPFIG+b
-        WWz1xiY5HN0RzOd9N/5OHLO2Vqg5awKEEumpyzY=
-X-Google-Smtp-Source: AKy350YMUhpwGWLwdV8/zzTVOiBxJk0QUuemBr0E9mcNMXCso4UmTVAQLZ360/+Pv4eJ0mbEkifzTL8++3Wb+45xeDI=
-X-Received: by 2002:a17:906:9b90:b0:947:9f2a:8ca0 with SMTP id
- dd16-20020a1709069b9000b009479f2a8ca0mr2583942ejc.10.1681452965680; Thu, 13
- Apr 2023 23:16:05 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1681457776; x=1684049776;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6BIZm7OVoNPgP6hAJjegDQgkQsNI+ED4GT7hk/PWCTI=;
+        b=GgPz1UIjv3U3rWU5/UCE7Dzi8tJPYlTw3zRSPaEeMyjOhbJIsWe2o1mDqR3aizZqLo
+         96Dv90qTZSeNIdwF+563uqyAHOh/sSEomlXlfKRvdNOohApHjzWh9tR75K3A8umEoVZY
+         Nt3nkUybmgtU7vbax6qzJuST05Jhi2WWn5gg3COtqu6rVm8LNIjdcz5E+SFvfU3ZgqQw
+         QDfvZb9GYs9iAG1bDHkuDWtI3Mx0dd+XNkAfzyLWyjta264yshgixHNyhf1gOw5RwspJ
+         xlbHAz7NlBRzB+KJAw22g4MfYRFmP+OcwWpZMET4mGpcX0aXRFRyk1XWcquYNKdNzUO/
+         1Pvg==
+X-Gm-Message-State: AAQBX9cQR+Ao/biklgNeCd1KRWgXmiTvoeed1xjeFL0JYZ6DGrNWztx7
+        JYHjeiCoDWysNexTl0CI5ys8lQ==
+X-Google-Smtp-Source: AKy350ataZ2VxRZLVqcOMSGN9yHYPp2N5iuran36ny+AQ/gi+UjSIj45G6llauYBbyVOYStGbZPi3w==
+X-Received: by 2002:a17:906:2788:b0:94a:90e5:b2b6 with SMTP id j8-20020a170906278800b0094a90e5b2b6mr4995448ejc.58.1681457776525;
+        Fri, 14 Apr 2023 00:36:16 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:8a60:6b0f:105a:eefb? ([2a02:810d:15c0:828:8a60:6b0f:105a:eefb])
+        by smtp.gmail.com with ESMTPSA id j25-20020a170906095900b0094a70a89bffsm2018786ejd.205.2023.04.14.00.36.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Apr 2023 00:36:16 -0700 (PDT)
+Message-ID: <373eacb8-be3f-6b95-3e08-f0ff36f79891@linaro.org>
+Date:   Fri, 14 Apr 2023 09:36:15 +0200
 MIME-Version: 1.0
-References: <20230327-tegra-pmic-reboot-v4-0-b24af219fb47@skidata.com>
- <20230327-tegra-pmic-reboot-v4-3-b24af219fb47@skidata.com> <2df6f002-dcf8-1073-d0b5-a9843103096a@collabora.com>
-In-Reply-To: <2df6f002-dcf8-1073-d0b5-a9843103096a@collabora.com>
-From:   Benjamin Bara <bbara93@gmail.com>
-Date:   Fri, 14 Apr 2023 08:15:54 +0200
-Message-ID: <CAJpcXm4RRV15UUzsrw_9s4-ifE0W0uKSsZ2sAJxojsoctaT8Ow@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] mfd: tps6586x: use devm-based power off handler
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Wolfram Sang <wsa@kernel.org>, Lee Jones <lee@kernel.org>,
-        rafael.j.wysocki@intel.com, peterz@infradead.org,
-        jonathanh@nvidia.com, Richard Leitner <richard.leitner@linux.dev>,
-        treding@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [V6 0/9] Add Tegra234 HTE support
+Content-Language: en-US
+To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org, robh+dt@kernel.org,
+        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
+        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
+References: <20230414004455.19275-1-dipenp@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230414004455.19275-1-dipenp@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 13 Apr 2023, 22:37 Dmitry Osipenko,
-<dmitry.osipenko@collabora.com> wrote:
-> Handlers must return NOTIFY_DONE or notifier_from_errno(). Sorry for
-> missing this previously.
+On 14/04/2023 02:44, Dipen Patel wrote:
+> This patch series mainly adds support for the Tegra234 HTE provider. In
+> addition, it addresses dt binding comments which prompted code
+> changes in the existing HTE provider driver without breaking the
+> Tegra194 provider. The comments raised concern how existing code
+> retrieves gpio controller node
+> (the node is used to help namespace conversion between HTE and GPIOLIB).
+> To help simplify that process, new DT property is suggested which adds
+> gpio controller node in the HTE provider binding as phandle property. To
+> conlude this patch series:
+> - adds Tegra234 HTE provider
+> - modifies existing provider code to address new dt binding for Tegra234
+> without breaking it for the Tegra194 chip.
+> 
+> The V1 patch series:
+> - Adds tegra Tegra234 HTE(timestamp) provider supports.
+> - Updates MAINTAINERS file for git tree, mail list fields.
+> - Updates devicetree and API documentations.
+> - Enables HTE subsystem, Tegra194 and Tegra234 HTE providers
+> by default in arm64 defconfig and dts files.
 
-Thanks!
+All your emails miss PATCH prefix. Use `git format-patch` to generate
+proper versioned patch. Stripping important part messes up with our
+filters. We have quite a lot of emails, so proper filtering is important.
 
-AFAIU, notifier_from_errno() sets NOTIFY_STOP_MASK, which stops
-atomic_notifier_call_chain() immediately. So I think NOTIFY_DONE is the
-only valid return value for sys_off handlers, to not skip others. So I
-think letting sys_off_notify() [1] always return NOTIFY_DONE might be a
-good idea.
+Best regards,
+Krzysztof
 
-If so, we could return a "notify return errno" (or also a "normal
-errno") from the handler, which is checked, but then replaced to
-NOTIFY_DONE, in [1]. This would enable us to have a common place to
-check for failed handlers.
-
-Handlers then should only return NOTIFY_DONE when they are skipped (e.g.
-when the requested reboot mode is not supported by the handler).
-Otherwise, I think ETIME, ENOSYS or ENOTSUPP might fit when the
-communication was successful, a possible delay awaited, but the return
-was still reached. What do you think?
-
-Thanks and best regards,
-Benjamin
-
-[1] https://elixir.bootlin.com/linux/v6.3-rc6/source/kernel/reboot.c#L327
