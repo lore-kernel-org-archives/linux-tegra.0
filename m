@@ -2,313 +2,163 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5F4C77B71
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Apr 2023 15:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F61FC77B73
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Apr 2023 17:14:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230325AbjDNPvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Apr 2023 11:51:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39252 "EHLO
+        id S230293AbjDNRO2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Apr 2023 13:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229953AbjDNPvx (ORCPT
+        with ESMTP id S230099AbjDNRO1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Apr 2023 11:51:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE80A30FA;
-        Fri, 14 Apr 2023 08:51:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6C7EF648BE;
-        Fri, 14 Apr 2023 15:51:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 371F6C433D2;
-        Fri, 14 Apr 2023 15:51:36 +0000 (UTC)
-Message-ID: <04e89fcc-87db-8677-daf9-48aa3cb61b8c@xs4all.nl>
-Date:   Fri, 14 Apr 2023 17:51:34 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v5 14/20] staging: media: tegra-video: move MIPI
- calibration calls from VI to CSI
+        Fri, 14 Apr 2023 13:14:27 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1384326BE;
+        Fri, 14 Apr 2023 10:14:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZD66bSjnuzI/t6ryI1pOwbR9Z0bCs+4GTXyq5ru1lowHqxvAN4wlRFkckDu7ixIrcRCikciK5XeHSnslOUuxTJdgKzxbwMOtuL0ukoOHiactc3uxdrZLyFZYgsCYZDxsAJa3vwpur4SVtgw/l9Ue07SCo0yZoDZfZFe30x+gOZXDp2ewsn7RodZT9GPtlCtCi7DaDgOg4sK1BLz8bCMeFbOh0utbYcNtGBQKobEUbwpWzwiSW3KTQnksQTGqibSh0vFf/7DCcI7Ts/GfKMnNR5aaN7uDCbGnKXRwRQScYY8sbxvsN0Bw27Z9+vvRfMxFjmvSdbJ4fN4+/9G/8/vlfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XNWMPgWNdf85QIgERBrgkU3xuTUUuBnvjDdkq7DdMAs=;
+ b=oEO2BMKO66qZWUW+8dNpeNmINu1XzsPsZ/lbPS37+QO2ansez4br0CJcdCRzeM6hqO6+iTwZ2AmYNaaPH5961eK7+HtaO6/26j9ai9vRT60mxsIS4JbryYnUyT6mRNRce06dMxDqfrPHZtKjw33Two2ilyG7XcbyTejIPQ/wMsJFoDYNCYAXg85UvsT3yC2nngVKdpFPiGLGsAWT3Lous2XmnfMyJ5dW1FIe9dNcxRKs/4ka3VROJxw0bq6k3AYk2NSzyrSBMQQCzJifOS9ua1kqUScDjAcPoWAImIUlgmuL6kF300VtHRMPH8C0DWza5zfhgQpBT27nnOTY6vkgUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XNWMPgWNdf85QIgERBrgkU3xuTUUuBnvjDdkq7DdMAs=;
+ b=Jw1hmyBKgo9fQgiU3YCPzrtEaFtdtG5Z6mYKmgP8NG26kj4PAbL4kGsuj9GBXjBv7dcvfDuMiAr2fSEbrrB0GF1tNTE9MJh6womY02B7Vdk/WC/s4jed2TRNW1N4Q419r/iJgXujh2LztMwAyXC70noaLfVuy+nJPYgAIdQqGUgFizHftBiG83Hwes9X46J6zefib+n6NR7vo9ajyLexzG1QK03aR2igzvMpW1oUUV4VADTXbINugLRNPix401JkbJbxFGSLLdLedgRYOHeDO4Lty3FlYMXHeKKxmaf3pp7kr74VKp+r9aePRAkTTM3rGoPQ/acPr5zfSC28XwIZRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com (2603:10b6:208:3a0::7)
+ by CY8PR12MB7169.namprd12.prod.outlook.com (2603:10b6:930:5e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.35; Fri, 14 Apr
+ 2023 17:14:24 +0000
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::265:64aa:fb3e:288]) by IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::265:64aa:fb3e:288%5]) with mapi id 15.20.6277.047; Fri, 14 Apr 2023
+ 17:14:23 +0000
+Message-ID: <a280fe0f-b8b1-4cb5-b4b6-aa9e9367241e@nvidia.com>
+Date:   Fri, 14 Apr 2023 10:14:18 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Subject: Re: [V6 0/9] Add Tegra234 HTE support
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        robh+dt@kernel.org, timestamp@lists.linux.dev,
+        krzysztof.kozlowski+dt@linaro.org, brgl@bgdev.pl, corbet@lwn.net,
+        gregkh@linuxfoundation.org
+References: <20230414004455.19275-1-dipenp@nvidia.com>
+ <373eacb8-be3f-6b95-3e08-f0ff36f79891@linaro.org>
 Content-Language: en-US
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        linux-tegra@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-staging@lists.linux.dev,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-References: <20230407133852.2850145-1-luca.ceresoli@bootlin.com>
- <20230407133852.2850145-15-luca.ceresoli@bootlin.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20230407133852.2850145-15-luca.ceresoli@bootlin.com>
+X-Nvconfidentiality: public
+From:   Dipen Patel <dipenp@nvidia.com>
+In-Reply-To: <373eacb8-be3f-6b95-3e08-f0ff36f79891@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR06CA0061.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::38) To IA1PR12MB6604.namprd12.prod.outlook.com
+ (2603:10b6:208:3a0::7)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|CY8PR12MB7169:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4f86e32-2c31-4b1b-2f9c-08db3d0bb14c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: c8bf8O28w4CEF7Z4EEZpwa3pRUHAUdz97IbHZTYKUeH8tbpuiIdhW+ewlfDq/rrySJVLk889mx0z8IhyXYAMCnMBJli/kqkdKR3Qj8oSMtTS/O9pNSfccAjMBtwIPLueGGQCbx1/fsq+1bUv0xaTvz2ES9lWP6zgv3NfbO1sGlXZ8rn7ufK4Oy4nYyLjm036RmYkcpsUhr1NJDp8ma9LCZ/Te5usSqvvmXwprbw/nxe2Xe4Qu0dwWtJrEHYovfot40I16WDY7SqZYVT5s97N4ATwBBzsGez1A/96P3EBvqDNX5vstVfVlKm9oKds2NBQcdBPb6FbO0lXaZZ/jEvtHFXAkwBy9FFn9QhdRxR6rvUE+TlVV2W+KG/CoBxItIfUIrf6FPiaKUTexDF832WLfv+GGNyxMNBLFdX6/cpFckfTfMdkUC6OhwkGbGs7dnrm/F3NCKWcXhym3z7pPmGzC4tETfL5OT6V58M9m05S0q7eX+m3FP9mB2DBVvC4jiFd1gLSz4IVUtJYbx+ntrDyoViIWmgQu65e9ZmgvMKz0WMaVQh65W03A+QTgYnkOEYydqodAVBYS4XoNvNZ2EclMJPrmI0s8zr4N4yV8vGLOqlp8Nn3v3wuAOA5HyHinc0qaopE4EUBsCfUT/jmA9FYIGLRFPujOGzUt8RC09FTLKc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(39860400002)(136003)(366004)(376002)(451199021)(31696002)(86362001)(36756003)(186003)(6512007)(26005)(6506007)(6666004)(2906002)(2616005)(478600001)(316002)(7416002)(66946007)(8676002)(6486002)(41300700001)(5660300002)(66556008)(8936002)(83380400001)(31686004)(66476007)(53546011)(38100700002)(921005)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RmZjWDVybWtWY1cySCt0WTd5eit6alNHV0lIa2ZGdXA2WUd4NlRBYkFhMW5w?=
+ =?utf-8?B?aW02b0ZDVWUrRzI4R0M2UGZXQnNsS2EzN1VsRVBweGphRU5ITWh1QTlBNFAw?=
+ =?utf-8?B?cTg2eW0wWjFlQ2NlZlludWhYcThkZWg4WEl3dFdsa0xVYmVsQ3hWVWlqWlIy?=
+ =?utf-8?B?cGttTWZWUk5UTDhsN2xRK1hMdXhmeWg3ZHFXM0ZGbUx2bmg2M1dEeEUvM29I?=
+ =?utf-8?B?d0E5UUZUSHQxU25yd3VFekI3dWFCd2tGcFhqVlpyR21xYVppdnBKc2VWeTdQ?=
+ =?utf-8?B?T3NZaDYwaE43S29aUDRIOTF0Mm9ldFp3QVJQT2tFWFVvcjQ0ZXc0UnhMRFJz?=
+ =?utf-8?B?M3A4LzFCOTVWYkk3eTV2enBwSXB3eityU3ZFQW00QjdmRWlOZGFEY1ovVlZi?=
+ =?utf-8?B?M3BkQXhmZmVxS2dsVGtsZXo4Tk5pK212VVhMUGNmVHdaRlRMMWlkVjZmMG1s?=
+ =?utf-8?B?bjZHMEdLQVF6TnZ2R056am8yQldHTEI3ZkVSVzVWaWlxMXMxOWVmM0JVb1RL?=
+ =?utf-8?B?RU9TMHZza2ZrdW56TWZvTitoV0ZmM2ljQ3p2dzY5M2FqbjRwZ0FTNVkvcDdE?=
+ =?utf-8?B?d3ltOVhkY0RUN0hkZzlrU2EzN0RrZ0hNNVVJWXRURzZWQjlBUjBKVjBrSTF0?=
+ =?utf-8?B?YXEya3hmcDB6SWk5cjd5akFieTAwa2lQdzVxUXUyT3pXUFM5akQrbW1uQUdj?=
+ =?utf-8?B?VHhOMUhiZThCeDBYeFp6M01nVks5cEcrSWNDalZKV2dsblBRV3NvQnhpRzU2?=
+ =?utf-8?B?N0h4R0NkcUZtdjUwNldJdzBtdjEvMVROTzlzSDJ5bEFrZkxRVWJVdlBXU2Y5?=
+ =?utf-8?B?RVhoTHMwWjJ5ZXZtbTFUeWJHZ1Q5cVU4Z3ROdEQ4MGZPTEFzSmljMzFldkww?=
+ =?utf-8?B?ZXliRnB2eDY1MDF1UmlSSnJDb2dxUG12MitDRTN4M085WE5NWmtnSUVKczY3?=
+ =?utf-8?B?NDF0dnR1THNGYkoyWmRWaGp1MnNPZXJYcVZ2YllkdE5ESEkrZzdmY2tja3ZJ?=
+ =?utf-8?B?V2FxSkd5TDV2ZlZrTjNJbDhmcWNRMnRTaVdDRytLL1NuRm8vb2lkRllsTXNX?=
+ =?utf-8?B?ZkVyWFd1UVdjT1J5WEN2SThjNDFlT1VnQ2I4b3B3a016UXVabHI4bVpJWW5o?=
+ =?utf-8?B?MjRvaWlWWVQ3QkY1RTUwanRrcWVCZVlSMlgzNFphMjErMXlQSXgzTkJhOGM4?=
+ =?utf-8?B?bjFCMnZBNTQ4TXNieDhyaDFhNHhYbTBlYnl0bW5YaXA3Ky8wb01va3ZxeDZS?=
+ =?utf-8?B?b3BJL3Q3b1lPbXRUK2ZwWkoxVlBTampDMzUvZEJtdWFLSVFKOCs0WFZ4dFRv?=
+ =?utf-8?B?MHdpa2kzOVYvTnFLd1FBeFZzUDliVkNrQmVkZmhScUZ2RWNqZWwrRnYzaEta?=
+ =?utf-8?B?SnZ0eGFZRWhVeUtybVRmcGxzMnJHdGFaVnVDV2FndDRrZnZqSGhZbUNXVlRv?=
+ =?utf-8?B?Y0tTVzZHSkdBRjlobTNMZ1NjZVp1V1B2UWdDRzFzQWVqQnFWR3JTQXZoTjBx?=
+ =?utf-8?B?aEJlcnVoRExJNmhpNFQwRU80U2VIT2E5ZnIrSkN5VVF4VFUwdm85RS85MUR0?=
+ =?utf-8?B?eWFSYm5yZXNLNmZaTDRuRDRWUnF0RVRhZ2Jxd1hBSzlUd0lienpqYmU3d21T?=
+ =?utf-8?B?K0ZsVExod2tTdlh6dzVTVFF4YVBrZ052MEJvZm1SbTgvNDRCYmMzWmRRZ0F2?=
+ =?utf-8?B?Yi9pSFNReVVjb3NEZTZ2Z0tGbStvOGZQSGpqRkRad2NCMG5iQnhrUmhHRkNS?=
+ =?utf-8?B?dVNFOTN5Y25VSERnVlhHSldhNUYyTkV0Mm9SSVhpcXZPYlNjaTRqWEhXN1ps?=
+ =?utf-8?B?WUllc3l6Q0szcURXM0xCd3B6NnhlT3NMZTZuN2d3Sm9nL2lmZXB5RDlUQVpr?=
+ =?utf-8?B?Vmh0cTlubTMvK25lOEhncXZ3SlNWZkVRVjROYzREQkpRQTBlZEZTY2I5b2VR?=
+ =?utf-8?B?SnYyUlJNTjNQNlVHbjlqQ0pzTDlpMWRaL09qUTQ0ajIrM3V4V2tkV3ZkZkxE?=
+ =?utf-8?B?SGJiUXkrQjVkQUhHSThqNkZFdmRON3VGd3B6eXZYcmNmMHBxbXMrNGRnVnhO?=
+ =?utf-8?B?RWh1dnlYbTdKRHpNSWNXMS90R3pmdUZza0RIQ243WklEcmwwWkxzYWI2OTgz?=
+ =?utf-8?Q?W/z4iWvswwLpwiqfb51iqfqHK?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4f86e32-2c31-4b1b-2f9c-08db3d0bb14c
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6604.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2023 17:14:23.5329
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lT8/cLKhg4Rk6iTukACvmcRBPBt3Z5qfMJO1s4koQs5nuconoDsxtUz3KjdIAvAa36jU0IXDCuWIhh1hZS7ADA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7169
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Luca,
-
-I just encountered an error in this patch, so I have rejected the PR I made.
-
-See below for the details:
-
-On 07/04/2023 15:38, Luca Ceresoli wrote:
-> The CSI module does not handle all the MIPI lane calibration procedure,
-> leaving a small part of it to the VI module. In doing this,
-> tegra_channel_enable_stream() (vi.c) manipulates the private data of the
-> upstream subdev casting it to struct 'tegra_csi_channel', which will be
-> wrong after introducing a VIP (parallel video input) channel.
+On 4/14/23 12:36 AM, Krzysztof Kozlowski wrote:
+> On 14/04/2023 02:44, Dipen Patel wrote:
+>> This patch series mainly adds support for the Tegra234 HTE provider. In
+>> addition, it addresses dt binding comments which prompted code
+>> changes in the existing HTE provider driver without breaking the
+>> Tegra194 provider. The comments raised concern how existing code
+>> retrieves gpio controller node
+>> (the node is used to help namespace conversion between HTE and GPIOLIB).
+>> To help simplify that process, new DT property is suggested which adds
+>> gpio controller node in the HTE provider binding as phandle property. To
+>> conlude this patch series:
+>> - adds Tegra234 HTE provider
+>> - modifies existing provider code to address new dt binding for Tegra234
+>> without breaking it for the Tegra194 chip.
+>>
+>> The V1 patch series:
+>> - Adds tegra Tegra234 HTE(timestamp) provider supports.
+>> - Updates MAINTAINERS file for git tree, mail list fields.
+>> - Updates devicetree and API documentations.
+>> - Enables HTE subsystem, Tegra194 and Tegra234 HTE providers
+>> by default in arm64 defconfig and dts files.
 > 
-> This prevents adding support for the VIP module.  It also breaks the
-> logical isolation between modules.
+> All your emails miss PATCH prefix. Use `git format-patch` to generate
+> proper versioned patch. Stripping important part messes up with our
+> filters. We have quite a lot of emails, so proper filtering is important.
+
+My bad...excitement of sending the patch series got hold of me :) Now I have realized
+it is been happening since the beginning. Since all the previous patches have been
+sent without PATCH prefix, is it ok for this version as it is or do you want me to resend
+with proper prefix?
+
 > 
-> Since the lane calibration requirement does not exist in the parallel input
-> module, moving the calibration function to a per-module op is not
-> optimal. Instead move the calibration procedure in the CSI module, together
-> with the rest of the calibration procedures. After this change,
-> tegra_channel_enable_stream() just calls v4l2_subdev_call() to ask for a
-> stream start/stop to the CSI module, which in turn knows all the
-> CSI-specific details to implement it.
+> Best regards,
+> Krzysztof
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> ---
-> 
-> No changes in v5
-> 
-> Changed in v4:
->  - Added review tags
-> 
-> No changes in v3
-> No changes in v2
-> ---
->  drivers/staging/media/tegra-video/csi.c | 44 ++++++++++++++++++++
->  drivers/staging/media/tegra-video/vi.c  | 54 ++-----------------------
->  2 files changed, 48 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-> index 9a03d5ccdf3c..b93fc879ef3a 100644
-> --- a/drivers/staging/media/tegra-video/csi.c
-> +++ b/drivers/staging/media/tegra-video/csi.c
-> @@ -328,12 +328,42 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
->  	}
->  
->  	csi_chan->pg_mode = chan->pg_mode;
-> +
-> +	/*
-> +	 * Tegra CSI receiver can detect the first LP to HS transition.
-> +	 * So, start the CSI stream-on prior to sensor stream-on and
-> +	 * vice-versa for stream-off.
-> +	 */
->  	ret = csi->ops->csi_start_streaming(csi_chan);
->  	if (ret < 0)
->  		goto finish_calibration;
->  
-> +	if (csi_chan->mipi) {
-> +		struct v4l2_subdev *src_subdev;
-> +		/*
-> +		 * TRM has incorrectly documented to wait for done status from
-> +		 * calibration logic after CSI interface power on.
-> +		 * As per the design, calibration results are latched and applied
-> +		 * to the pads only when the link is in LP11 state which will happen
-> +		 * during the sensor stream-on.
-> +		 * CSI subdev stream-on triggers start of MIPI pads calibration.
-> +		 * Wait for calibration to finish here after sensor subdev stream-on.
-> +		 */
-> +		src_subdev = tegra_channel_get_remote_source_subdev(chan);
-> +		ret = v4l2_subdev_call(src_subdev, video, s_stream, true);
-> +		err = tegra_mipi_finish_calibration(csi_chan->mipi);
-> +
-> +		if (ret < 0 && ret != -ENOIOCTLCMD)
-> +			goto disable_csi_stream;
-
-If there was an error from s_stream, then tegra_mipi_finish_calibration is called
-and it goes to disable_csi_stream...
-
-> +
-> +		if (err < 0)
-> +			dev_warn(csi->dev, "MIPI calibration failed: %d\n", err);
-> +	}
-> +
->  	return 0;
->  
-> +disable_csi_stream:
-> +	csi->ops->csi_stop_streaming(csi_chan);
->  finish_calibration:
->  	if (csi_chan->mipi)
->  		tegra_mipi_finish_calibration(csi_chan->mipi);
-
-...but here tegra_mipi_finish_calibration() is called again, leading to an unlock
-imbalance.
-
-This is the callstack:
-
-[  109.894502] IMX274 5-001a: s_stream failed
-
-[  109.900203] =====================================
-[  109.904898] WARNING: bad unlock balance detected!
-[  109.909594] 6.3.0-rc2-tegra #16 Not tainted
-[  109.913774] -------------------------------------
-[  109.918470] v4l2-ctl/2000 is trying to release lock (&mipi->lock) at:
-[  109.924911] [<ffff80000866b828>] tegra_mipi_finish_calibration+0x84/0xb0
-[  109.931621] but there are no more locks to release!
-[  109.936489]
-               other info that might help us debug this:
-[  109.943004] 1 lock held by v4l2-ctl/2000:
-[  109.947009]  #0: ffff000083bcf6a8 (&chan->video_lock){....}-{3:3}, at: __video_do_ioctl+0xdc/0x3c8
-[  109.955987]
-               stack backtrace:
-[  109.960336] CPU: 2 PID: 2000 Comm: v4l2-ctl Not tainted 6.3.0-rc2-tegra #16
-[  109.967290] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
-[  109.973200] Call trace:
-[  109.975642]  dump_backtrace+0xa0/0xfc
-[  109.979308]  show_stack+0x18/0x24
-[  109.982622]  dump_stack_lvl+0x48/0x60
-[  109.986285]  dump_stack+0x18/0x24
-[  109.989598]  print_unlock_imbalance_bug+0x130/0x148
-[  109.994472]  lock_release+0x1bc/0x248
-[  109.998131]  __mutex_unlock_slowpath+0x48/0x2cc
-[  110.002657]  mutex_unlock+0x20/0x2c
-[  110.006141]  tegra_mipi_finish_calibration+0x84/0xb0
-[  110.011102]  tegra_csi_s_stream+0x260/0x318
-[  110.015286]  call_s_stream+0x80/0xcc
-[  110.018857]  tegra_channel_set_stream+0x58/0xe4
-[  110.023386]  tegra210_vi_start_streaming+0xb0/0x1c8
-[  110.028262]  tegra_channel_start_streaming+0x54/0x134
-[  110.033311]  vb2_start_streaming+0xbc/0x1b8
-[  110.037491]  vb2_core_streamon+0x158/0x260
-[  110.041582]  vb2_ioctl_streamon+0x4c/0x90
-[  110.045589]  v4l_streamon+0x24/0x30
-[  110.049076]  __video_do_ioctl+0x160/0x3c8
-[  110.053082]  video_usercopy+0x1f0/0x658
-[  110.056916]  video_ioctl2+0x18/0x28
-[  110.060404]  v4l2_ioctl+0x40/0x60
-[  110.063715]  __arm64_sys_ioctl+0xac/0xf0
-[  110.067638]  invoke_syscall+0x48/0x114
-[  110.071385]  el0_svc_common.constprop.0+0x44/0xec
-[  110.076086]  do_el0_svc+0x38/0x98
-[  110.079398]  el0_svc+0x2c/0x84
-[  110.082454]  el0t_64_sync_handler+0xf4/0x120
-[  110.086722]  el0t_64_sync+0x190/0x194
-
-Regards,
-
-	Hans
-
-> @@ -352,10 +382,24 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
->  
->  static int tegra_csi_disable_stream(struct v4l2_subdev *subdev)
->  {
-> +	struct tegra_vi_channel *chan = v4l2_get_subdev_hostdata(subdev);
->  	struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
->  	struct tegra_csi *csi = csi_chan->csi;
->  	int err;
->  
-> +	/*
-> +	 * Stream-off subdevices in reverse order to stream-on.
-> +	 * Remote source subdev in TPG mode is same as CSI subdev.
-> +	 */
-> +	if (csi_chan->mipi) {
-> +		struct v4l2_subdev *src_subdev;
-> +
-> +		src_subdev = tegra_channel_get_remote_source_subdev(chan);
-> +		err = v4l2_subdev_call(src_subdev, video, s_stream, false);
-> +		if (err < 0 && err != -ENOIOCTLCMD)
-> +			dev_err_probe(csi->dev, err, "source subdev stream off failed\n");
-> +	}
-> +
->  	csi->ops->csi_stop_streaming(csi_chan);
->  
->  	if (csi_chan->mipi) {
-> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-> index b88532d8d2c9..c76c2a404889 100644
-> --- a/drivers/staging/media/tegra-video/vi.c
-> +++ b/drivers/staging/media/tegra-video/vi.c
-> @@ -197,49 +197,15 @@ tegra_channel_get_remote_source_subdev(struct tegra_vi_channel *chan)
->  
->  static int tegra_channel_enable_stream(struct tegra_vi_channel *chan)
->  {
-> -	struct v4l2_subdev *csi_subdev, *src_subdev;
-> -	struct tegra_csi_channel *csi_chan;
-> -	int ret, err;
-> +	struct v4l2_subdev *subdev;
-> +	int ret;
->  
-> -	/*
-> -	 * Tegra CSI receiver can detect the first LP to HS transition.
-> -	 * So, start the CSI stream-on prior to sensor stream-on and
-> -	 * vice-versa for stream-off.
-> -	 */
-> -	csi_subdev = tegra_channel_get_remote_csi_subdev(chan);
-> -	ret = v4l2_subdev_call(csi_subdev, video, s_stream, true);
-> +	subdev = tegra_channel_get_remote_csi_subdev(chan);
-> +	ret = v4l2_subdev_call(subdev, video, s_stream, true);
->  	if (ret < 0 && ret != -ENOIOCTLCMD)
->  		return ret;
->  
-> -	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
-> -		return 0;
-> -
-> -	csi_chan = v4l2_get_subdevdata(csi_subdev);
-> -	/*
-> -	 * TRM has incorrectly documented to wait for done status from
-> -	 * calibration logic after CSI interface power on.
-> -	 * As per the design, calibration results are latched and applied
-> -	 * to the pads only when the link is in LP11 state which will happen
-> -	 * during the sensor stream-on.
-> -	 * CSI subdev stream-on triggers start of MIPI pads calibration.
-> -	 * Wait for calibration to finish here after sensor subdev stream-on.
-> -	 */
-> -	src_subdev = tegra_channel_get_remote_source_subdev(chan);
-> -	ret = v4l2_subdev_call(src_subdev, video, s_stream, true);
-> -	err = tegra_mipi_finish_calibration(csi_chan->mipi);
-> -
-> -	if (ret < 0 && ret != -ENOIOCTLCMD)
-> -		goto err_disable_csi_stream;
-> -
-> -	if (err < 0)
-> -		dev_warn(csi_chan->csi->dev,
-> -			 "MIPI calibration failed: %d\n", err);
-> -
->  	return 0;
-> -
-> -err_disable_csi_stream:
-> -	v4l2_subdev_call(csi_subdev, video, s_stream, false);
-> -	return ret;
->  }
->  
->  static int tegra_channel_disable_stream(struct tegra_vi_channel *chan)
-> @@ -247,18 +213,6 @@ static int tegra_channel_disable_stream(struct tegra_vi_channel *chan)
->  	struct v4l2_subdev *subdev;
->  	int ret;
->  
-> -	/*
-> -	 * Stream-off subdevices in reverse order to stream-on.
-> -	 * Remote source subdev in TPG mode is same as CSI subdev.
-> -	 */
-> -	subdev = tegra_channel_get_remote_source_subdev(chan);
-> -	ret = v4l2_subdev_call(subdev, video, s_stream, false);
-> -	if (ret < 0 && ret != -ENOIOCTLCMD)
-> -		return ret;
-> -
-> -	if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
-> -		return 0;
-> -
->  	subdev = tegra_channel_get_remote_csi_subdev(chan);
->  	ret = v4l2_subdev_call(subdev, video, s_stream, false);
->  	if (ret < 0 && ret != -ENOIOCTLCMD)
 
