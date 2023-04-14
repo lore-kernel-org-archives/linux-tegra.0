@@ -2,114 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF003C77B73
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Apr 2023 20:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86254C77B72
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Apr 2023 21:48:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbjDNUrq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Apr 2023 16:47:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48052 "EHLO
+        id S229908AbjDNVsC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Apr 2023 17:48:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbjDNUrp (ORCPT
+        with ESMTP id S229907AbjDNVsC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Apr 2023 16:47:45 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FFE3A96
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 13:47:44 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-94eff00bcdaso38491266b.1
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 13:47:44 -0700 (PDT)
+        Fri, 14 Apr 2023 17:48:02 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38DEC2D51
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 14:48:00 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-50672fbf83eso7853148a12.0
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 14:48:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681505262; x=1684097262;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=linaro.org; s=google; t=1681508878; x=1684100878;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=s5f3N0RAtgUVBIB/xIm7w7WNTQBqMz0AMr1YWNHsHjg=;
-        b=X7duMdF7yBT9zLGwesGIN4G3wnxp3Cjfh3udvsg4agx3zVaZ/60sVw/xE7aSLDTGhJ
-         zIjF3dd5jmSjhNdUX/OuNDeR2QQNKuNa7hYPHXF+TO4ZuLaKUXtGxHGa03DKlHrMgFeu
-         xfjSbV19IpjVaxXaFVOgcoi9ORTuRfC4KpnrmEDPFuoispB5my4N9JAPmdvul7vQ7HXf
-         Yum4/lMy5nouQOYVVzN07viXOybs3vZoC4POy8XN2UmICUQ3Y6zvtFLW30B1TIzjFLZl
-         RiDCukTz9T+ZsbMuVrfFxih+a2WKElYsyb0CNfJebpbF0EgGQQ1aL3Bh25KUHqarouEr
-         k3xg==
+        bh=3EVZPS7cfZtkMpVcoeHTNj5NWFzlcFiikQhX7e7eo7s=;
+        b=oIKjcQ5bA3LZIj+MtHEU4gp7gZWetvnXUBlEDfdBhf7gL5Wvs1HRCG4FPxaBqH8pso
+         3zrd/j511kb7/GQPqGXt3D0rqQs66pkRdbbuW/7dg9EMolAo0k2q2HuU3oqzxbdWV1vH
+         zQtK1kl2NepczBZdGgiesQcpnBqc03G4wnYMZy54qu3cI59KWI98u+w+tCFH360uBQ+L
+         71+vf6AESb5obKm+RLh1gPoDojrdB564W6QtGpu42eRNOmzAoHSSwjFKJ3PwAuBA5+UC
+         kdm6pGp14QECBMnHonGDtPmgSX+/YDkKsqDlSZ6sLueUzF9e0e7kzgSbOLBDnzxjUVdH
+         R6YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681505262; x=1684097262;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=1e100.net; s=20221208; t=1681508878; x=1684100878;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s5f3N0RAtgUVBIB/xIm7w7WNTQBqMz0AMr1YWNHsHjg=;
-        b=TNiL6JDweb1DpMADCvcggKnHyHdteVotJFkr8ophoQgwfeHDaJOmd745P/62/HNVAQ
-         oJeGyVNXK/p005BV7hggj+4XTaWzkIS8UmypKSBXI4N++MKt/LJuZ5Qh5BcmPwZuF2tx
-         OFwIZoO/mtkZwWgR71s2cflNWEv7VH3TDCZTQqFTyx1ng2z6gsIkPI02qdeuJzHCkpX2
-         mGeaxHifZxOrBw0uLM5/9oCsBakPmc7CmsS8TAcJCmuemHROYkoc0T+QeUnMNQpnuKD5
-         bdTTjYhR1v+hlSfhDZCnUTM7RkyBuOaberdy1mPhmAMDibbX4/PoqbtiadLg9BX4tkIW
-         +jAA==
-X-Gm-Message-State: AAQBX9dROJHP2nH2DuhuqwHxV2CIoI2T1CEr9DZwgzSk+TiwOswIMgkF
-        uLlEfI/0EjnNYLcwvO2EpgXpJg==
-X-Google-Smtp-Source: AKy350YgvMVGXc4UafDc/Bu9EhgyHaWr2UVtxorQb1uoFdRovgAwRThK3H4UFtY7yfcABeD8dWrWig==
-X-Received: by 2002:a05:6402:b2e:b0:4fb:f2db:a654 with SMTP id bo14-20020a0564020b2e00b004fbf2dba654mr7044407edb.12.1681505262487;
-        Fri, 14 Apr 2023 13:47:42 -0700 (PDT)
+        bh=3EVZPS7cfZtkMpVcoeHTNj5NWFzlcFiikQhX7e7eo7s=;
+        b=WN9vEZ2Jx2DnqoWsff8MKZaDGWZRB+p9JSS+pFIVoUWYtMtLQ123fQNm2DlhaatA+m
+         ZQxOXiUlMLMxUmOJ+fYA3Olqn+cFK6bgPGI1esCysM2udGas4Wdt9lbLjE8B9tgVIBbu
+         btj7VeCH+flNfGJc0yQ0cSaIPUJS8rr6auHbyyYKLL9oy2jmnBEvfnz68q+Kbev6peET
+         WegKi1akQAvZ0EJMbxcJWZv7FmDECiZ+K2mClMAMKs8BD+ZhQrD3OTAaLlDMccXiYAs3
+         EbVdPKT/xxHXBuSbJrlN+9+3dGEHNLdHJ8pG/NSSPg9PwPNzvWatDCEBhxXugoNy4CKD
+         uzGw==
+X-Gm-Message-State: AAQBX9cMgo17eX/JnkDezGucCPpZQCozGQxTzvrhyl6YgUFHAwo88wCh
+        LtJHquToD6sm9Ju15XYV25rp9g==
+X-Google-Smtp-Source: AKy350Zd7mIwQhRcrPhJL46mGi+B2WmInMBjqPo7ce+h/92m7V5Dbt/VUSCHLDLUeD0k87Zjl8iA/w==
+X-Received: by 2002:a05:6402:114e:b0:504:9e79:e86f with SMTP id g14-20020a056402114e00b005049e79e86fmr7272505edw.18.1681508878492;
+        Fri, 14 Apr 2023 14:47:58 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:ffae:8aab:ae5a:4688? ([2a02:810d:15c0:828:ffae:8aab:ae5a:4688])
-        by smtp.gmail.com with ESMTPSA id bf13-20020a0564021a4d00b005024459f431sm2491923edb.70.2023.04.14.13.47.41
+        by smtp.gmail.com with ESMTPSA id c18-20020aa7c752000000b00501d73cfc86sm2562459eds.9.2023.04.14.14.47.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Apr 2023 13:47:41 -0700 (PDT)
-Message-ID: <193eb300-3075-c07c-6946-9c56aca7a340@linaro.org>
-Date:   Fri, 14 Apr 2023 22:47:40 +0200
+        Fri, 14 Apr 2023 14:47:58 -0700 (PDT)
+Message-ID: <187d51b3-6fec-7a25-e472-3d9020c12db5@linaro.org>
+Date:   Fri, 14 Apr 2023 23:47:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
-Subject: Re: [V6 0/9] Add Tegra234 HTE support
+Subject: Re: [PATCH 01/10] dt-bindings: thermal: tegra: Document throttle
+ temperature
 Content-Language: en-US
-To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org,
-        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
-        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
-References: <20230414004455.19275-1-dipenp@nvidia.com>
- <373eacb8-be3f-6b95-3e08-f0ff36f79891@linaro.org>
- <a280fe0f-b8b1-4cb5-b4b6-aa9e9367241e@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20230414125721.1043589-1-thierry.reding@gmail.com>
+ <20230414125721.1043589-2-thierry.reding@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a280fe0f-b8b1-4cb5-b4b6-aa9e9367241e@nvidia.com>
+In-Reply-To: <20230414125721.1043589-2-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/04/2023 19:14, Dipen Patel wrote:
-> On 4/14/23 12:36 AM, Krzysztof Kozlowski wrote:
->> On 14/04/2023 02:44, Dipen Patel wrote:
->>> This patch series mainly adds support for the Tegra234 HTE provider. In
->>> addition, it addresses dt binding comments which prompted code
->>> changes in the existing HTE provider driver without breaking the
->>> Tegra194 provider. The comments raised concern how existing code
->>> retrieves gpio controller node
->>> (the node is used to help namespace conversion between HTE and GPIOLIB).
->>> To help simplify that process, new DT property is suggested which adds
->>> gpio controller node in the HTE provider binding as phandle property. To
->>> conlude this patch series:
->>> - adds Tegra234 HTE provider
->>> - modifies existing provider code to address new dt binding for Tegra234
->>> without breaking it for the Tegra194 chip.
->>>
->>> The V1 patch series:
->>> - Adds tegra Tegra234 HTE(timestamp) provider supports.
->>> - Updates MAINTAINERS file for git tree, mail list fields.
->>> - Updates devicetree and API documentations.
->>> - Enables HTE subsystem, Tegra194 and Tegra234 HTE providers
->>> by default in arm64 defconfig and dts files.
->>
->> All your emails miss PATCH prefix. Use `git format-patch` to generate
->> proper versioned patch. Stripping important part messes up with our
->> filters. We have quite a lot of emails, so proper filtering is important.
+On 14/04/2023 14:57, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> My bad...excitement of sending the patch series got hold of me :) Now I have realized
-> it is been happening since the beginning. Since all the previous patches have been
-> sent without PATCH prefix, is it ok for this version as it is or do you want me to resend
-> with proper prefix?
+> Each throttling configuration needs to specify the temperature threshold
+> at which it should start throttling. Previously this was tied to a given
+> trip point as a cooling device and used the temperature specified for
+> that trip point. This doesn't work well because the throttling mechanism
+> is not a cooling device in the traditional sense.
 > 
+> Instead, allow device trees to specify the throttle temperature in the
+> throttle configuration directly so that the throttle doesn't need to be
+> exposed as a cooling device.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/thermal/nvidia,tegra124-soctherm.yaml         | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+> index 4677ad6645a5..37dac851f486 100644
+> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
 
-It's okay for me, no need to resend. I just wanted to bring this to your
-attention, so future patchsets can be improved.
+File does not exist in next and no dependency is mentioned, so tricky to
+review and figure out context. Without context the comment is:
+
+
+> @@ -120,6 +120,13 @@ properties:
+>                # high (85%, TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
+>                - 3
+>  
+> +          temperature:
+> +            $ref: /schemas/types.yaml#/definitions/int32
+
+Use -millicelsius suffix instead:
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+
+> +            minimum: -273000
+> +            maximum: 200000
+> +            description: The temperature threshold (in millicelsius) that,
+> +              when crossed, will trigger the configured automatic throttling.
+
+Don't you want some hysteresis? Or is it already using trips binding?
+But in that case you should skip the $ref and maximum - they come from
+thermal-zones, don't they?
 
 Best regards,
 Krzysztof
