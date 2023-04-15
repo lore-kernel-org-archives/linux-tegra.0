@@ -2,126 +2,348 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86254C77B72
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Apr 2023 21:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6D0C77B78
+	for <linux-tegra@archiver.kernel.org>; Sat, 15 Apr 2023 06:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbjDNVsC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Apr 2023 17:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43246 "EHLO
+        id S229625AbjDOGbZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 15 Apr 2023 02:31:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbjDNVsC (ORCPT
+        with ESMTP id S229542AbjDOGbY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Apr 2023 17:48:02 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38DEC2D51
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 14:48:00 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-50672fbf83eso7853148a12.0
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Apr 2023 14:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681508878; x=1684100878;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3EVZPS7cfZtkMpVcoeHTNj5NWFzlcFiikQhX7e7eo7s=;
-        b=oIKjcQ5bA3LZIj+MtHEU4gp7gZWetvnXUBlEDfdBhf7gL5Wvs1HRCG4FPxaBqH8pso
-         3zrd/j511kb7/GQPqGXt3D0rqQs66pkRdbbuW/7dg9EMolAo0k2q2HuU3oqzxbdWV1vH
-         zQtK1kl2NepczBZdGgiesQcpnBqc03G4wnYMZy54qu3cI59KWI98u+w+tCFH360uBQ+L
-         71+vf6AESb5obKm+RLh1gPoDojrdB564W6QtGpu42eRNOmzAoHSSwjFKJ3PwAuBA5+UC
-         kdm6pGp14QECBMnHonGDtPmgSX+/YDkKsqDlSZ6sLueUzF9e0e7kzgSbOLBDnzxjUVdH
-         R6YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681508878; x=1684100878;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3EVZPS7cfZtkMpVcoeHTNj5NWFzlcFiikQhX7e7eo7s=;
-        b=WN9vEZ2Jx2DnqoWsff8MKZaDGWZRB+p9JSS+pFIVoUWYtMtLQ123fQNm2DlhaatA+m
-         ZQxOXiUlMLMxUmOJ+fYA3Olqn+cFK6bgPGI1esCysM2udGas4Wdt9lbLjE8B9tgVIBbu
-         btj7VeCH+flNfGJc0yQ0cSaIPUJS8rr6auHbyyYKLL9oy2jmnBEvfnz68q+Kbev6peET
-         WegKi1akQAvZ0EJMbxcJWZv7FmDECiZ+K2mClMAMKs8BD+ZhQrD3OTAaLlDMccXiYAs3
-         EbVdPKT/xxHXBuSbJrlN+9+3dGEHNLdHJ8pG/NSSPg9PwPNzvWatDCEBhxXugoNy4CKD
-         uzGw==
-X-Gm-Message-State: AAQBX9cMgo17eX/JnkDezGucCPpZQCozGQxTzvrhyl6YgUFHAwo88wCh
-        LtJHquToD6sm9Ju15XYV25rp9g==
-X-Google-Smtp-Source: AKy350Zd7mIwQhRcrPhJL46mGi+B2WmInMBjqPo7ce+h/92m7V5Dbt/VUSCHLDLUeD0k87Zjl8iA/w==
-X-Received: by 2002:a05:6402:114e:b0:504:9e79:e86f with SMTP id g14-20020a056402114e00b005049e79e86fmr7272505edw.18.1681508878492;
-        Fri, 14 Apr 2023 14:47:58 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:ffae:8aab:ae5a:4688? ([2a02:810d:15c0:828:ffae:8aab:ae5a:4688])
-        by smtp.gmail.com with ESMTPSA id c18-20020aa7c752000000b00501d73cfc86sm2562459eds.9.2023.04.14.14.47.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Apr 2023 14:47:58 -0700 (PDT)
-Message-ID: <187d51b3-6fec-7a25-e472-3d9020c12db5@linaro.org>
-Date:   Fri, 14 Apr 2023 23:47:56 +0200
+        Sat, 15 Apr 2023 02:31:24 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65EE422F;
+        Fri, 14 Apr 2023 23:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681540282; x=1713076282;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vNjobJbkMOaL4V9aYbIr6Qr1gsthsCZ8xnDOUbhuCzI=;
+  b=dEsmiUk3aIzdGbq8sNsh120jqTf3HJGQnn6HxSb0rhPF0ITo++eKadkY
+   I0t63sdPFgLxxKsl4u144KVTJ0pnSjZ318m0wBfZUcnPUGX8hzhtnid99
+   usK0XxiSRbKE8WReTRB090JussiPk/dVQnSDHseETLHMhZegXAt+k/L4J
+   v/IJCvRCTf1BemIrd3MkVgx++pagEBqiq+1iGL+uMbjwLLagYlfGH5wTs
+   rzDa+ODt3q0BuSSP2mGwsH3DMTn9YipymRokHYDR8EWbRLEVHeEN940ux
+   pfcuDcYgImB37vFgAkcCKYPf7v+pU+1PCWKB7LNbMnNz1u1VL/JtCZ9Ob
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="346464337"
+X-IronPort-AV: E=Sophos;i="5.99,199,1677571200"; 
+   d="scan'208";a="346464337"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2023 23:31:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10680"; a="722720540"
+X-IronPort-AV: E=Sophos;i="5.99,199,1677571200"; 
+   d="scan'208";a="722720540"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 14 Apr 2023 23:31:17 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pnZRM-000ab7-2f;
+        Sat, 15 Apr 2023 06:31:16 +0000
+Date:   Sat, 15 Apr 2023 14:30:28 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD SUCCESS WITH WARNING
+ d3f2cd24819158bb70701c3549e586f9df9cee67
+Message-ID: <643a4484.lQNwSPXmxToKotfK%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 01/10] dt-bindings: thermal: tegra: Document throttle
- temperature
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20230414125721.1043589-1-thierry.reding@gmail.com>
- <20230414125721.1043589-2-thierry.reding@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230414125721.1043589-2-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/04/2023 14:57, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Each throttling configuration needs to specify the temperature threshold
-> at which it should start throttling. Previously this was tied to a given
-> trip point as a cooling device and used the temperature specified for
-> that trip point. This doesn't work well because the throttling mechanism
-> is not a cooling device in the traditional sense.
-> 
-> Instead, allow device trees to specify the throttle temperature in the
-> throttle configuration directly so that the throttle doesn't need to be
-> exposed as a cooling device.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../bindings/thermal/nvidia,tegra124-soctherm.yaml         | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-> index 4677ad6645a5..37dac851f486 100644
-> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: d3f2cd24819158bb70701c3549e586f9df9cee67  Add linux-next specific files for 20230414
 
-File does not exist in next and no dependency is mentioned, so tricky to
-review and figure out context. Without context the comment is:
+Warning reports:
 
+https://lore.kernel.org/oe-kbuild-all/202303161521.jbGbaFjJ-lkp@intel.com
 
-> @@ -120,6 +120,13 @@ properties:
->                # high (85%, TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
->                - 3
->  
-> +          temperature:
-> +            $ref: /schemas/types.yaml#/definitions/int32
+Warning: (recently discovered and may have been fixed)
 
-Use -millicelsius suffix instead:
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:351:13: warning: variable 'bw_needed' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:352:25: warning: variable 'link' set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/legacy/ray_cs.c:628:17: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c:298:6: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
 
-> +            minimum: -273000
-> +            maximum: 200000
-> +            description: The temperature threshold (in millicelsius) that,
-> +              when crossed, will trigger the configured automatic throttling.
+Unverified Warning (likely false positive, please contact us if interested):
 
-Don't you want some hysteresis? Or is it already using trips binding?
-But in that case you should skip the $ref and maximum - they come from
-thermal-zones, don't they?
+drivers/acpi/property.c:985 acpi_data_prop_read_single() error: potentially dereferencing uninitialized 'obj'.
+drivers/gpu/host1x/context.c:82 host1x_memory_context_list_init() warn: missing error code 'err'
+drivers/gpu/host1x/dev.c:417 host1x_iommu_attach() warn: passing zero to 'ERR_PTR'
+fs/xfs/scrub/refcount.c: xfs_mount.h is included more than once.
+fs/xfs/scrub/refcount.c: xfs_trans_resv.h is included more than once.
 
-Best regards,
-Krzysztof
+Warning ids grouped by kconfigs:
 
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- alpha-randconfig-r013-20230409
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arc-randconfig-c023-20230412
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arc-randconfig-r022-20230409
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-randconfig-m041-20230413
+|   |-- drivers-gpu-host1x-context.c-host1x_memory_context_list_init()-warn:missing-error-code-err
+|   `-- drivers-gpu-host1x-dev.c-host1x_iommu_attach()-warn:passing-zero-to-ERR_PTR
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- i386-randconfig-m021
+|   `-- drivers-acpi-property.c-acpi_data_prop_read_single()-error:potentially-dereferencing-uninitialized-obj-.
+|-- ia64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- loongarch-defconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- microblaze-randconfig-r012-20230415
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- mips-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- parisc-randconfig-r003-20230410
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- powerpc-randconfig-r034-20230413
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- riscv-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- riscv-randconfig-r042-20230410
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- s390-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- sparc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- sparc64-randconfig-r014-20230415
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- x86_64-allnoconfig
+|   |-- fs-xfs-scrub-refcount.c:xfs_mount.h-is-included-more-than-once.
+|   `-- fs-xfs-scrub-refcount.c:xfs_trans_resv.h-is-included-more-than-once.
+|-- x86_64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+`-- x86_64-randconfig-m001
+    `-- drivers-acpi-property.c-acpi_data_prop_read_single()-error:potentially-dereferencing-uninitialized-obj-.
+clang_recent_errors
+|-- arm-randconfig-r046-20230409
+|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
+|-- arm64-randconfig-r032-20230410
+|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
+`-- powerpc-randconfig-r035-20230410
+    `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
+
+elapsed time: 734m
+
+configs tested: 156
+configs skipped: 13
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r006-20230415   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r013-20230409   gcc  
+alpha                randconfig-r034-20230409   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r022-20230409   gcc  
+arc                  randconfig-r032-20230413   gcc  
+arc                  randconfig-r043-20230409   gcc  
+arc                  randconfig-r043-20230410   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm          buildonly-randconfig-r004-20230415   gcc  
+arm          buildonly-randconfig-r005-20230415   gcc  
+arm                                 defconfig   gcc  
+arm                       imx_v4_v5_defconfig   clang
+arm                        keystone_defconfig   gcc  
+arm                   milbeaut_m10v_defconfig   clang
+arm                  randconfig-r002-20230409   gcc  
+arm                  randconfig-r006-20230410   gcc  
+arm                  randconfig-r014-20230409   clang
+arm                  randconfig-r024-20230409   clang
+arm                  randconfig-r033-20230410   gcc  
+arm                  randconfig-r046-20230409   clang
+arm                  randconfig-r046-20230410   clang
+arm                           spitz_defconfig   clang
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r014-20230410   gcc  
+arm64                randconfig-r032-20230410   clang
+arm64                randconfig-r035-20230413   gcc  
+arm64                randconfig-r036-20230413   gcc  
+csky                                defconfig   gcc  
+hexagon              randconfig-r015-20230409   clang
+hexagon              randconfig-r015-20230413   clang
+hexagon              randconfig-r024-20230410   clang
+hexagon              randconfig-r031-20230409   clang
+hexagon              randconfig-r041-20230409   clang
+hexagon              randconfig-r041-20230410   clang
+hexagon              randconfig-r045-20230409   clang
+hexagon              randconfig-r045-20230410   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230410   clang
+i386                 randconfig-a002-20230410   clang
+i386                 randconfig-a003-20230410   clang
+i386                 randconfig-a004-20230410   clang
+i386                 randconfig-a005-20230410   clang
+i386                 randconfig-a006-20230410   clang
+i386                 randconfig-a011-20230410   gcc  
+i386                 randconfig-a012-20230410   gcc  
+i386                 randconfig-a013-20230410   gcc  
+i386                 randconfig-a014-20230410   gcc  
+i386                 randconfig-a015-20230410   gcc  
+i386                 randconfig-a016-20230410   gcc  
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r006-20230409   gcc  
+loongarch            randconfig-r021-20230409   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r005-20230409   gcc  
+m68k                 randconfig-r012-20230409   gcc  
+m68k                 randconfig-r015-20230410   gcc  
+microblaze   buildonly-randconfig-r001-20230415   gcc  
+microblaze           randconfig-r003-20230409   gcc  
+microblaze           randconfig-r011-20230415   gcc  
+microblaze           randconfig-r012-20230415   gcc  
+microblaze           randconfig-r016-20230413   gcc  
+microblaze           randconfig-r021-20230410   gcc  
+microblaze           randconfig-r033-20230413   gcc  
+microblaze           randconfig-r035-20230409   gcc  
+microblaze           randconfig-r036-20230410   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                            gpr_defconfig   gcc  
+mips                 randconfig-r031-20230410   gcc  
+nios2        buildonly-randconfig-r003-20230415   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r011-20230409   gcc  
+nios2                randconfig-r016-20230409   gcc  
+nios2                randconfig-r026-20230409   gcc  
+openrisc             randconfig-r012-20230410   gcc  
+openrisc             randconfig-r022-20230410   gcc  
+openrisc             randconfig-r026-20230410   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r003-20230410   gcc  
+parisc               randconfig-r005-20230410   gcc  
+parisc               randconfig-r011-20230413   gcc  
+parisc               randconfig-r023-20230409   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                     ep8248e_defconfig   gcc  
+powerpc                 mpc8540_ads_defconfig   gcc  
+powerpc              randconfig-r034-20230413   gcc  
+powerpc              randconfig-r035-20230410   clang
+powerpc                    socrates_defconfig   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r001-20230409   clang
+riscv                randconfig-r036-20230409   clang
+riscv                randconfig-r042-20230409   gcc  
+riscv                randconfig-r042-20230410   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r004-20230410   clang
+s390                 randconfig-r044-20230409   gcc  
+s390                 randconfig-r044-20230410   gcc  
+sh                               allmodconfig   gcc  
+sh                   randconfig-r001-20230410   gcc  
+sh                   randconfig-r002-20230410   gcc  
+sh                   randconfig-r013-20230410   gcc  
+sh                           se7722_defconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r004-20230409   gcc  
+sparc                randconfig-r011-20230410   gcc  
+sparc                randconfig-r013-20230415   gcc  
+sparc                randconfig-r032-20230409   gcc  
+sparc                randconfig-r033-20230409   gcc  
+sparc                       sparc64_defconfig   gcc  
+sparc64                          alldefconfig   gcc  
+sparc64              randconfig-r014-20230413   gcc  
+sparc64              randconfig-r014-20230415   gcc  
+sparc64              randconfig-r016-20230410   gcc  
+sparc64              randconfig-r016-20230415   gcc  
+sparc64              randconfig-r025-20230410   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64                        randconfig-a001   clang
+x86_64                        randconfig-a002   gcc  
+x86_64                        randconfig-a003   clang
+x86_64                        randconfig-a004   gcc  
+x86_64                        randconfig-a005   clang
+x86_64                        randconfig-a006   gcc  
+x86_64               randconfig-a011-20230410   gcc  
+x86_64               randconfig-a012-20230410   gcc  
+x86_64               randconfig-a013-20230410   gcc  
+x86_64               randconfig-a014-20230410   gcc  
+x86_64               randconfig-a015-20230410   gcc  
+x86_64               randconfig-a016-20230410   gcc  
+x86_64                        randconfig-k001   clang
+x86_64                               rhel-8.3   gcc  
+xtensa               randconfig-r034-20230410   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
