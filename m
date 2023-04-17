@@ -2,234 +2,182 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6401AC77B70
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Apr 2023 09:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA106C77B70
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Apr 2023 09:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230430AbjDQJCa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Apr 2023 05:02:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34300 "EHLO
+        id S229604AbjDQJG0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Apr 2023 05:06:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230192AbjDQJCQ (ORCPT
+        with ESMTP id S229540AbjDQJGZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Apr 2023 05:02:16 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D5C644B2
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Apr 2023 02:02:11 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKd9-0004W9-9f; Mon, 17 Apr 2023 10:54:35 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKce-00Bpk9-B4; Mon, 17 Apr 2023 10:54:04 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1poKcd-00DrOr-K2; Mon, 17 Apr 2023 10:54:03 +0200
-Date:   Mon, 17 Apr 2023 10:54:03 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Eddie James <eajames@linux.ibm.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Robert Foss <rfoss@kernel.org>, Sean Young <sean@mess.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Antti Palosaari <crope@iki.fi>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-        Eugen Hristev <eugen.hristev@collabora.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Benoit Parrot <bparrot@ti.com>,
-        Moudy Ho <moudy.ho@mediatek.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Rory Liu <hellojacky0226@hotmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Zhou Peng <eagle.zhou@nxp.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Dafna Hirschfeld <dafna@fastmail.com>,
-        Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Bin Liu <bin.liu@mediatek.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Qiheng Lin <linqiheng@huawei.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Daniel Almeida <daniel.almeida@collabora.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Ajye Huang <ajye_huang@compal.corp-partner.google.com>,
-        Scott Chao <scott_chao@wistron.corp-partner.google.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        Andy Gross <agross@kernel.org>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH 000/117] media: Convert to platform remove callback
- returning void
-Message-ID: <20230417085403.sbk3k4qlpljbfqld@pengutronix.de>
-References: <20230326143224.572654-1-u.kleine-koenig@pengutronix.de>
- <20230417060203.le3izz56wt73si6k@pengutronix.de>
- <20230417061928.GD28551@pendragon.ideasonboard.com>
- <20230417073049.2b5b35hpjrjcrlge@pengutronix.de>
- <OS0PR01MB59221153A63F64BBAD3ED20D869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        Mon, 17 Apr 2023 05:06:25 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF959170D;
+        Mon, 17 Apr 2023 02:06:23 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a5so5685798ejb.6;
+        Mon, 17 Apr 2023 02:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681722382; x=1684314382;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tRw++8DCsbGRpKEYAvR6c5N87LkuLbIZdhy/p3qR+is=;
+        b=OdcAo9gViulnTDbqdPTYCzAVE/krbdLJaDTSOSsz2UEKmR/QWJFG9DlfieG2lvMnxP
+         Q247aeezUz8ssIfDJ7F/F+uQZWocDRMAgDT3b4RQvmzJ9N4/3EOMESdOB4Pfg2K9syE3
+         7go/d449NALS5uwoONLWDRjEUqRDM1gN2yoMB/YS5w6l8BCudd6X91dl0hzApKX/rWTu
+         VDXLXsZWf8AuwFEJpoIAAOW5qMpgjTzPJvfEKFWoT/PF1ePvgMLgeCRz+2eIZCC9RSGC
+         m5vOm49lK/TkCDLcXM58yXAod1BXl5PP+pD4gagqflPU1RBgZp/osWgRu7ypGYx8czks
+         apVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681722382; x=1684314382;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tRw++8DCsbGRpKEYAvR6c5N87LkuLbIZdhy/p3qR+is=;
+        b=Av6nh+Uuu5PjAE46iOBnXbBXqG+dk+7HyjQF2Q9ToheE6Ai17ZscQgto5X8SVCGg2f
+         zTdZPu3Sg7TypyHKKFIIG2nDy044npru6HpSreW7lcIlg5MO0fvaJ+of+GuzPiczdJ8j
+         zfWKPyVjlzV4ZKPLLFyk8whfrQ90CO7C3VIzXpTRA9BfpLlSi5qFQUNS3RKVMRpFozlm
+         jfLHjIaK8zkyCSR60EZE5D43dmd7N+hd6vhHEQwiBpwxeqXTKNLtCeVwbSWxmZAAcbOB
+         1s24ebGz+1hVCCijp4WDKa2O57EPmP8QOt6niD9s64C2FTmoJsjb4OGbNQCM3H5Afynu
+         tn8g==
+X-Gm-Message-State: AAQBX9f1rAwdQ2Dyvg8gv3u+m3FWCWdIPZ0BOKcFYSTjuN08757RTnrj
+        JL76Ewgc66HBrz+NboMOQolAN+WeWjY=
+X-Google-Smtp-Source: AKy350ZK+YGWEv6Grr3hY2pQZOUcytskKThJXsUjLmFw8fe9hhjYsGOEj0Z/OgMhzz4761KptxN76Q==
+X-Received: by 2002:a17:907:1623:b0:94f:49a2:619a with SMTP id hb35-20020a170907162300b0094f49a2619amr4068267ejc.11.1681722381812;
+        Mon, 17 Apr 2023 02:06:21 -0700 (PDT)
+Received: from orome (p200300e41f053a00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f05:3a00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id qb37-20020a1709077ea500b0094ee0c9a6d0sm4820220ejc.184.2023.04.17.02.06.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Apr 2023 02:06:21 -0700 (PDT)
+Date:   Mon, 17 Apr 2023 11:06:19 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 09/10] arm64: tegra: Rework SOCTHERM on Tegra132 and
+ Tegra210
+Message-ID: <ZD0MC6AqgNtYUJ4a@orome>
+References: <20230414125721.1043589-1-thierry.reding@gmail.com>
+ <20230414125721.1043589-10-thierry.reding@gmail.com>
+ <ed5f12fd-f1f8-9823-a32d-5782068dc790@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fbine4cndaaohubi"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xwrNWjN09bPXOM+0"
 Content-Disposition: inline
-In-Reply-To: <OS0PR01MB59221153A63F64BBAD3ED20D869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <ed5f12fd-f1f8-9823-a32d-5782068dc790@linaro.org>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---fbine4cndaaohubi
-Content-Type: text/plain; charset=iso-8859-1
+--xwrNWjN09bPXOM+0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 17, 2023 at 07:57:57AM +0000, Biju Das wrote:
-> Hi Uwe,
-> > > I think the series got applied to the master branch of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git.
-> > > It should thus appear in v6.4.
+On Mon, Apr 17, 2023 at 10:15:11AM +0200, Daniel Lezcano wrote:
+> On 14/04/2023 14:57, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > I guess that linux-stable.git is a copy&paste failure (and it's not the=
-re).
-> > I don't see the series in the master branch of
-> > git://linuxtv.org/media_tree.git either.
+> > The "heavy throttle" cooling device that SOCTHERM uses isn't a cooling
+> > device in the traditional sense. It's an automatic mechanism that cannot
+> > be actively controlled. Do not expose it as a cooling device and instead
+> > of tying it to a specific trip point, hard-code the temperature at which
+> > the automatic throttling will begin.
 > >=20
-> > .. a bit later ...
+> > While at it, clean up the trip point names to reflect the names used by
+> > the thermal device tree bindings.
 > >=20
-> > ah, it's in git://linuxtv.org/mchehab/media-next.git
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >   arch/arm64/boot/dts/nvidia/tegra132.dtsi | 63 +++++-------------
+> >   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 83 +++++++-----------------
+> >   2 files changed, 39 insertions(+), 107 deletions(-)
 > >=20
-> > I guess I was just to quick and probably the series will be included in
-> > today's next.
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot=
+/dts/nvidia/tegra132.dtsi
+> > index 8b78be8f4f9d..11ebf7517df1 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+> > @@ -876,11 +876,10 @@ soctherm: thermal-sensor@700e2000 {
+> >   		#thermal-sensor-cells =3D <1>;
+> >   		throttle-cfgs {
+> > -			throttle_heavy: heavy {
+> > +			heavy {
+> >   				nvidia,priority =3D <100>;
+> >   				nvidia,cpu-throt-level =3D <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
+> > -
+> > -				#cooling-cells =3D <2>;
+> > +				temperature =3D <102000>;
+> >   			};
+> >   		};
+> >   	};
+> > @@ -1136,114 +1135,84 @@ cpu-thermal {
+> >   			polling-delay-passive =3D <1000>;
+> >   			polling-delay =3D <0>;
+> > -			thermal-sensors =3D
+> > -				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
+> > +			thermal-sensors =3D <&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
+> >   			trips {
+> > -				cpu_shutdown_trip {
+> > +				critical {
+> >   					temperature =3D <105000>;
+> >   					hysteresis =3D <1000>;
+> >   					type =3D "critical";
+> >   				};
+> > -				cpu_throttle_trip: throttle-trip {
+> > +				hot {
+> >   					temperature =3D <102000>;
+> >   					hysteresis =3D <1000>;
+> >   					type =3D "hot";
+> >   				};
+> >   			};
+> > -
+> > -			cooling-maps {
+> > -				map0 {
+> > -					trip =3D <&cpu_throttle_trip>;
+> > -					cooling-device =3D <&throttle_heavy 1 1>;
+> > -				};
+> > -			};
 >=20
-> I believe patchwork <patchwork@linuxtv.org> will send notification to
-> author and along with people who applied tags for that patch.
+> If the hardware mitigation is 'heavy', don't you want to have DVFS acting
+> before hardware throttling ?
 
-Indeed, I got such a notification on Apr 11. But even if I had that on
-my radar when asking and considered such notifications reliable in
-general, I would have asked, as the patches didn't apprear in next up to
-now.
+The throttling here is in fact some form of DVFS, but yes, generally we
+would likely want to have additional forms of DVFS before we reach this
+state. We could add CPU cooling devices and there's also a mechanism to
+throttle the DRAM frequency on certain boards.
 
-Thanks
-Uwe
+But those are mostly orthogonal to this series. The goal here is to get
+rid of the throttling mechanism as a cooling device.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Thierry
 
---fbine4cndaaohubi
+--xwrNWjN09bPXOM+0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ9CSoACgkQj4D7WH0S
-/k6ShQgAkiGsAbqnu5CIYl6vVltmySdbzFphOT5lae+k2iaPjP4KBQyey9E309bA
-T8cWAHGmSzTAr3+xiHj0Vl3KS3KltR2ike2TLIupFKTW6gJIpAyseCA8SLtj625z
-DYRY5/9pDFLtNe4MD6tpVn7ZPAzEb/DdC/F12elKbSP+3RLwwRhyo/EtmAbFc6f9
-e/G2EuuAPaBs+wywWC9piaSjYWk57nSelhyJqSoWAJbpZM2hOiGsIeaiI2OI6l9X
-sye5ayrw1sdGUVa70KExUaG9L0d1hFmhkfZz3m7I2ZosIc5Q3k5RCBDj41MxyvTC
-7hFi24KnDnjHVL2gEWrM+oBRJZju9Q==
-=h+pR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmQ9DAsACgkQ3SOs138+
+s6FELg/+L3hpRpV39q61zhQbh/YoF7yUOFJNYif7YnBVic6Rl2wVaoV0v8bQhVcx
+h7qTUhSg4nTgwRHzOaPpfAbiTwch7a3hGHJJ9GV6Dpv/2DkGDDiFUur1l84EhX7A
+nNg3PzmbZiig4HRR5qpelCirAWq4iApIuq5AwDjrUScV3bAeVvQSLYQLddnx+/pZ
+kpg9K0XGggfOvgdtaYo2cIDWPTNJYwbSIPUAf2w7valVHb4JOGQlUznp9j+OnZTh
+sX8M9BZBNZ2ri3gB60KcQfWpsleiv49DWo7v7N/ZOtPSOAxLtFZXCvRLJv/0Q2xf
+IN3zCDwlSVw710XqoKAKhmEtYK7Dpj0rQN50UxXASygVr43jBbFH7gJ3E/4rGt6B
+iyZhL+2h4fwhPaPDQh7VZBHIh3iboO9wvGDl6Hjq3M1DxZ07T4HIGl9IrpM+oWDu
+x1fzlFkuDbuH6G8YSKOFn7Bki7BJwOREbTzCMtHdbVwti4mmwe24oPi9Ay8N7nca
+Dh4h0/8J5hfHZYQa8A+xwaMSlziXprZGDOys4tw21v8scj1xxwv/EXkBMncYE0ti
+0LLONmdhycrKY9DtBI6iSDsvRIGbzlTTHGIp3O3nnb74DHtZGx/95GN6GBIGXGp6
+tXFO5FO77thcrhbj3Bkm1Ax/bgFgdaSriA9p62DavTOhP/7lzDA=
+=xoD4
 -----END PGP SIGNATURE-----
 
---fbine4cndaaohubi--
+--xwrNWjN09bPXOM+0--
