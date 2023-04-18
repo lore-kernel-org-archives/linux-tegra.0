@@ -2,182 +2,106 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5474FC77B75
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13DAC77B76
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 09:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231352AbjDRIK3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 04:10:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53206 "EHLO
+        id S230032AbjDRJNW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Apr 2023 05:13:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231502AbjDRIKX (ORCPT
+        with ESMTP id S229610AbjDRJNU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 04:10:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A273855BB;
-        Tue, 18 Apr 2023 01:10:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 391AB625ED;
-        Tue, 18 Apr 2023 08:09:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6F15C433EF;
-        Tue, 18 Apr 2023 08:09:34 +0000 (UTC)
-Message-ID: <5c649a34-90cb-d02b-2737-7c9a858c3faa@xs4all.nl>
-Date:   Tue, 18 Apr 2023 10:09:33 +0200
+        Tue, 18 Apr 2023 05:13:20 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 832A44ED5
+        for <linux-tegra@vger.kernel.org>; Tue, 18 Apr 2023 02:13:18 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-63b5fca48bcso1554672b3a.0
+        for <linux-tegra@vger.kernel.org>; Tue, 18 Apr 2023 02:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681809198; x=1684401198;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xbleKyCRtEj4mzfFg8I15iJYzLocd2tmdYnO3kTlaTM=;
+        b=mAR79v7Tn0gnysG30TB5j3Pp0X26z8pZv0JEzF+Tqkz49IEzlC+s0Yyv7WXhbv4yYq
+         F+TDUy6I52Y5dNVvbGC7sgkiB70fCfGKJlCoZViRHiaAbukG2YT+GJkxE/GlePzswAmj
+         DNwAMDwz5K8+vf+eK6BFlJCdxRf3BnXXBPMLVkGlDfyZLZ8bW09Og+LrCRbjDjweZatT
+         rrOygmPKKhxnJxCNahihy09XwykQM7h3R76R9LF6A5lVDUcVPX8gCWWpWo69b+hpjABp
+         7kgpJntY9UpqB8kDuD8Gz/rE5x9ChJESOIYcBuBskXljHfr7c/GgsMLtudPLTw8IB1e4
+         ApOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681809198; x=1684401198;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xbleKyCRtEj4mzfFg8I15iJYzLocd2tmdYnO3kTlaTM=;
+        b=bsp/UtpWw+T62ZDJCIzDkBHnm/idfK7Ta1e8cG3S9GNwxAHtaBVyr4Mhl0boVPZbH0
+         uVEEcIzM1weByjpwfzdH/AIX6RP0C4PuZZ1WJGlECzM3gHcDVJFi2vcjiSZ0HFZFnFKO
+         CjVQYjfYbJ2eyuAOptgiv5kt7QDb4TjDl8XOdFyo8aALtvNn5DQdsr3s5ix8wDUaHm81
+         I9WmKmxM3LxGyRTKEFoFirrqbLsNUbqkuP20lwP8Yv7AWUoe/LyIRdH7XJSINQgFZZtB
+         fmh4raXaj4j2+sGjg4/e5H2jOKRKJuHxKJ7oLzAUvUhQrrJLYVCQDy2j5zGGqNaRchEn
+         4Dzg==
+X-Gm-Message-State: AAQBX9dwO0NVqJqQTdZoSC/+Bd2QcGvxgEM9gn7D3T7stx7I35WWwhM0
+        hfM8F3bpByTxFP3A8nwZiwRpoQ==
+X-Google-Smtp-Source: AKy350btit3r+ik6rSegfaTgfcFeOECknK0pFDr3Uu7rl6nEAw1H+XBYxFE0VoXAoRGBuSsBsAHVLA==
+X-Received: by 2002:a17:902:8e82:b0:1a6:9762:6eee with SMTP id bg2-20020a1709028e8200b001a697626eeemr1390525plb.40.1681809197881;
+        Tue, 18 Apr 2023 02:13:17 -0700 (PDT)
+Received: from localhost ([122.172.85.8])
+        by smtp.gmail.com with ESMTPSA id w11-20020a170902d70b00b001a66bf1406bsm9129056ply.144.2023.04.18.02.13.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 02:13:17 -0700 (PDT)
+Date:   Tue, 18 Apr 2023 14:43:15 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
+        dmitry.osipenko@collabora.com, rafael@kernel.org,
+        jonathanh@nvidia.com, robh+dt@kernel.org, lpieralisi@kernel.org,
+        helgaas@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
+        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
+        ishah@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch v6 6/9] cpufreq: tegra194: add OPP support and set
+ bandwidth
+Message-ID: <20230418091315.bxh4hp6g3vekdi2r@vireshk-i7>
+References: <20230411110002.19824-1-sumitg@nvidia.com>
+ <20230411110002.19824-7-sumitg@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v5 14/20] staging: media: tegra-video: move MIPI
- calibration calls from VI to CSI
-Content-Language: en-US
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-staging@lists.linux.dev,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-References: <20230407133852.2850145-1-luca.ceresoli@bootlin.com>
- <20230407133852.2850145-15-luca.ceresoli@bootlin.com>
- <04e89fcc-87db-8677-daf9-48aa3cb61b8c@xs4all.nl>
- <20230418100756.329305ca@booty>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20230418100756.329305ca@booty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230411110002.19824-7-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18/04/2023 10:07, Luca Ceresoli wrote:
-> Hi Hans,
+On 11-04-23, 16:29, Sumit Gupta wrote:
+> Add support to use OPP table from DT in Tegra194 cpufreq driver.
+> Tegra SoC's receive the frequency lookup table (LUT) from BPMP-FW.
+> Cross check the OPP's present in DT against the LUT from BPMP-FW
+> and enable only those DT OPP's which are present in LUT also.
 > 
-> On Fri, 14 Apr 2023 17:51:34 +0200
-> Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+> The OPP table in DT has CPU Frequency to bandwidth mapping where
+> the bandwidth value is per MC channel. DRAM bandwidth depends on the
+> number of MC channels which can vary as per the boot configuration.
+> This per channel bandwidth from OPP table will be later converted by
+> MC driver to final bandwidth value by multiplying with number of
+> channels before sending the request to BPMP-FW.
 > 
->> Hi Luca,
->>
->> I just encountered an error in this patch, so I have rejected the PR I made.
->>
->> See below for the details:
->>
->> On 07/04/2023 15:38, Luca Ceresoli wrote:
->>> The CSI module does not handle all the MIPI lane calibration procedure,
->>> leaving a small part of it to the VI module. In doing this,
->>> tegra_channel_enable_stream() (vi.c) manipulates the private data of the
->>> upstream subdev casting it to struct 'tegra_csi_channel', which will be
->>> wrong after introducing a VIP (parallel video input) channel.
->>>
->>> This prevents adding support for the VIP module.  It also breaks the
->>> logical isolation between modules.
->>>
->>> Since the lane calibration requirement does not exist in the parallel input
->>> module, moving the calibration function to a per-module op is not
->>> optimal. Instead move the calibration procedure in the CSI module, together
->>> with the rest of the calibration procedures. After this change,
->>> tegra_channel_enable_stream() just calls v4l2_subdev_call() to ask for a
->>> stream start/stop to the CSI module, which in turn knows all the
->>> CSI-specific details to implement it.
->>>
->>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>>
->>> ---
->>>
->>> No changes in v5
->>>
->>> Changed in v4:
->>>  - Added review tags
->>>
->>> No changes in v3
->>> No changes in v2
->>> ---
->>>  drivers/staging/media/tegra-video/csi.c | 44 ++++++++++++++++++++
->>>  drivers/staging/media/tegra-video/vi.c  | 54 ++-----------------------
->>>  2 files changed, 48 insertions(+), 50 deletions(-)
->>>
->>> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
->>> index 9a03d5ccdf3c..b93fc879ef3a 100644
->>> --- a/drivers/staging/media/tegra-video/csi.c
->>> +++ b/drivers/staging/media/tegra-video/csi.c
->>> @@ -328,12 +328,42 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
->>>  	}
->>>  
->>>  	csi_chan->pg_mode = chan->pg_mode;
->>> +
->>> +	/*
->>> +	 * Tegra CSI receiver can detect the first LP to HS transition.
->>> +	 * So, start the CSI stream-on prior to sensor stream-on and
->>> +	 * vice-versa for stream-off.
->>> +	 */
->>>  	ret = csi->ops->csi_start_streaming(csi_chan);
->>>  	if (ret < 0)
->>>  		goto finish_calibration;
->>>  
->>> +	if (csi_chan->mipi) {
->>> +		struct v4l2_subdev *src_subdev;
->>> +		/*
->>> +		 * TRM has incorrectly documented to wait for done status from
->>> +		 * calibration logic after CSI interface power on.
->>> +		 * As per the design, calibration results are latched and applied
->>> +		 * to the pads only when the link is in LP11 state which will happen
->>> +		 * during the sensor stream-on.
->>> +		 * CSI subdev stream-on triggers start of MIPI pads calibration.
->>> +		 * Wait for calibration to finish here after sensor subdev stream-on.
->>> +		 */
->>> +		src_subdev = tegra_channel_get_remote_source_subdev(chan);
->>> +		ret = v4l2_subdev_call(src_subdev, video, s_stream, true);
->>> +		err = tegra_mipi_finish_calibration(csi_chan->mipi);
->>> +
->>> +		if (ret < 0 && ret != -ENOIOCTLCMD)
->>> +			goto disable_csi_stream;  
->>
->> If there was an error from s_stream, then tegra_mipi_finish_calibration is called
->> and it goes to disable_csi_stream...
->>
->>> +
->>> +		if (err < 0)
->>> +			dev_warn(csi->dev, "MIPI calibration failed: %d\n", err);
->>> +	}
->>> +
->>>  	return 0;
->>>  
->>> +disable_csi_stream:
->>> +	csi->ops->csi_stop_streaming(csi_chan);
->>>  finish_calibration:
->>>  	if (csi_chan->mipi)
->>>  		tegra_mipi_finish_calibration(csi_chan->mipi);  
->>
->> ...but here tegra_mipi_finish_calibration() is called again, leading to an unlock
->> imbalance.
+> If OPP table is not present in DT, then use the LUT from BPMP-FW
+> directy as the CPU frequency table and not do the DRAM frequency
+> scaling which is same as the current behavior.
 > 
-> Many thanks for your testing! Unfortunately I have no Tegra210 hardware
-> so this never happened here, but with your report the problem got
-> obvious and, luckily, the fix appeared to be just a oneliner.
+> Now, as the CPU Frequency table is being controlling through OPP
+> table in DT. Keeping fewer entries in the table will create less
+> frequency steps and can help to scale fast to high frequencies
+> when required.
 > 
-> v6 just sent! I'm wondering whether there is still hope to get this
-> 6.4...
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra194-cpufreq.c | 156 ++++++++++++++++++++++++++---
+>  1 file changed, 143 insertions(+), 13 deletions(-)
 
-Sorry, it's too late for 6.4 now. Only fixes can go in for 6.4.
+Can this be applied independently of the rest of the series ?
 
-Regards,
-
-	Hans
-
-> 
-> Best regards,
-> Luca
-> 
-
+-- 
+viresh
