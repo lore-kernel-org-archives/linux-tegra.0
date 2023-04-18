@@ -2,152 +2,165 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33775C77B7E
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 16:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D367C77B78
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 16:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbjDRQNm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 12:13:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55592 "EHLO
+        id S232496AbjDRQ1i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Apr 2023 12:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjDRQNl (ORCPT
+        with ESMTP id S232477AbjDRQ1h (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 12:13:41 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD8819037
-        for <linux-tegra@vger.kernel.org>; Tue, 18 Apr 2023 09:13:38 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id kt6so36432365ejb.0
-        for <linux-tegra@vger.kernel.org>; Tue, 18 Apr 2023 09:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681834417; x=1684426417;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yAv9XfH/Gcbn1WieuwEvWfpJNF3KgicHWHVmjLoU5QE=;
-        b=MOZwPa2rZB8kg7oVKePNVH/IS83tGzcDvxbHwZxW5aRMpXwgvke/oJZec/7r9KPsY3
-         /E8Ce3dkKnCCrUxgibxQN16BRAxOMC4RmGaeBGabXCiF6zMrlK47/JZpIeI8/5JmPZEz
-         NZ4yPoOe1Ry1UEt9Z2sG5hi5WriW2nMsXn+bTnPUjiF+harlrfN+Bk5hrpjjz9JiQzPF
-         xuVCtk/vM5L0Fra6G3Uc4z4BB8VZNTYHoJVlJ+8BBbADzpoS09u48P0ahanKIlzrgM/S
-         JQlgY4PfvsdS+AjVCjQ4jZvDcqZQ513NQrJip4eUyPIJkhoQJVnoFbej9rJYei4K9HYu
-         AP5w==
+        Tue, 18 Apr 2023 12:27:37 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A999ABBAB;
+        Tue, 18 Apr 2023 09:27:22 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-38dfa504415so583910b6e.0;
+        Tue, 18 Apr 2023 09:27:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681834417; x=1684426417;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yAv9XfH/Gcbn1WieuwEvWfpJNF3KgicHWHVmjLoU5QE=;
-        b=Uls6xlh+XYVLy/pIeqcH8PKrNFQrq8Me7VLaX1LDLU0z6Kpv2OuW8hwfSgtS++18B7
-         uEQu8pisY3GtIfibwoi8LEdXqHlaPl/5TwCNNQFrrkARYjZ2rqsiqvC4loWAipInLrbk
-         8sU5SYztNuNjg+TxXZJgXNeo4WRh9VzyxlzU6TfmXnBXR8/EmwhXqVs1APfrL9m6ycRY
-         Jnr7toDPQFS8fjibRvB+9wqElJqSou/2qEFsjfHuPgakjK0Ymxdh7qJWO5wzHvWvkSAs
-         7/5MEmSBZ27CEqlitHmc8gmwqthNExKx28Sg3F22XHSCdy15nrlOBZFWgA8n8Jg8uQNx
-         7nwA==
-X-Gm-Message-State: AAQBX9dSmhE29CL+eIgNW4ipQFVL4yza0Lvq5fspnYyc2nrPoKme7PQu
-        S1uhp6g+mQNE10fymK0Pnh97YlQRKJi6JD8FRW5Tsw==
-X-Google-Smtp-Source: AKy350byU7g05KQNnXaqyBGpF+lgnwfZRRpo4F2yMSsK2H8utAP+tW7wFMY1VbL1Ti9JpKY1Kq+r0Q==
-X-Received: by 2002:a17:907:9197:b0:94f:553:6fd6 with SMTP id bp23-20020a170907919700b0094f05536fd6mr10080280ejb.24.1681834417139;
-        Tue, 18 Apr 2023 09:13:37 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:a276:7d35:5226:1c77? ([2a02:810d:15c0:828:a276:7d35:5226:1c77])
-        by smtp.gmail.com with ESMTPSA id xd10-20020a170907078a00b0095328ce9c8bsm729247ejb.67.2023.04.18.09.13.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Apr 2023 09:13:36 -0700 (PDT)
-Message-ID: <df267337-f258-4fbc-0fdb-ddfe31761ffa@linaro.org>
-Date:   Tue, 18 Apr 2023 18:13:35 +0200
+        d=1e100.net; s=20221208; t=1681835242; x=1684427242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KA3Wj6o+Guvdyn6RVWvc15n99JJqv1Kt6CugaXzG/F8=;
+        b=mGsWZW/8X0/PhZqjkhij0g3zsoUHvTBhb0SpsjQhi8nOFJRbfmcdUnKM9GScncj7jk
+         7mepd1GwBgrfS/UGbmzMVztZFONLgU5LMsPgZZ3R1dGwaGoWqJDD6PFN6p0T4FnArzyE
+         XWi21AAO36UYeGKHWO/8j3PJEYZmB0MSMc81tCduD6ompeTpNbnjN2JHvP3w0YM7qu4z
+         2g0c9ZrHB27VyRe3oKb/Q24di1LMbbM3aft3dEYbILzMroPur2HrO4rqv+b/Tvq/cdLb
+         X6QXbiZz0EzjKW19Itfaok7DjEfRggGkodLeBEzYFSkplBm4P19g2TWiEl7FRO4ezp0S
+         /L+g==
+X-Gm-Message-State: AAQBX9dgSZKuvtOplE8SAbQ4kNm2zIYvIKJVI81SgL/n6ghkUseqzy9j
+        RxJ8drhRX5hd2R3YqH48omI3hBt42g==
+X-Google-Smtp-Source: AKy350bBHLRqNa07Du4N0WmT6K0vuSFaG9g8fJGUXZXaLSnM3rdYMjG2JcU3ECFR82i0sqHbDMgiyw==
+X-Received: by 2002:a05:6808:2203:b0:38e:390b:777b with SMTP id bd3-20020a056808220300b0038e390b777bmr1228732oib.59.1681835241818;
+        Tue, 18 Apr 2023 09:27:21 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id i11-20020aca3b0b000000b0038c235e24fesm2204031oia.48.2023.04.18.09.27.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 09:27:20 -0700 (PDT)
+Received: (nullmailer pid 1810183 invoked by uid 1000);
+        Tue, 18 Apr 2023 16:27:19 -0000
+Date:   Tue, 18 Apr 2023 11:27:19 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] PCI: Use of_property_present() for testing DT property
+ presence
+Message-ID: <20230418162719.GF1764573-robh@kernel.org>
+References: <20230310144719.1544443-1-robh@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 01/10] dt-bindings: thermal: tegra: Document throttle
- temperature
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20230414125721.1043589-1-thierry.reding@gmail.com>
- <20230414125721.1043589-2-thierry.reding@gmail.com>
- <187d51b3-6fec-7a25-e472-3d9020c12db5@linaro.org> <ZD0KdAXyi0Ex1JOU@orome>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZD0KdAXyi0Ex1JOU@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230310144719.1544443-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17/04/2023 10:59, Thierry Reding wrote:
-> On Fri, Apr 14, 2023 at 11:47:56PM +0200, Krzysztof Kozlowski wrote:
->> On 14/04/2023 14:57, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Each throttling configuration needs to specify the temperature threshold
->>> at which it should start throttling. Previously this was tied to a given
->>> trip point as a cooling device and used the temperature specified for
->>> that trip point. This doesn't work well because the throttling mechanism
->>> is not a cooling device in the traditional sense.
->>>
->>> Instead, allow device trees to specify the throttle temperature in the
->>> throttle configuration directly so that the throttle doesn't need to be
->>> exposed as a cooling device.
->>>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>>  .../bindings/thermal/nvidia,tegra124-soctherm.yaml         | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
->>> index 4677ad6645a5..37dac851f486 100644
->>> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
->>> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
->>
->> File does not exist in next and no dependency is mentioned, so tricky to
->> review and figure out context. Without context the comment is:
+On Fri, Mar 10, 2023 at 08:47:19AM -0600, Rob Herring wrote:
+> It is preferred to use typed property access functions (i.e.
+> of_property_read_<type> functions) rather than low-level
+> of_get_property/of_find_property functions for reading properties. As
+> part of this, convert of_get_property/of_find_property calls to the
+> recently added of_property_present() helper when we just want to test
+> for presence of a property and nothing more.
 > 
-> Apologies, I have a conversion series for these thermal bindings. I'll
-> send those out first.
-> 
->>> @@ -120,6 +120,13 @@ properties:
->>>                # high (85%, TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
->>>                - 3
->>>  
->>> +          temperature:
->>> +            $ref: /schemas/types.yaml#/definitions/int32
->>
->> Use -millicelsius suffix instead:
->> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-> 
-> Okay.
-> 
->>> +            minimum: -273000
->>> +            maximum: 200000
->>> +            description: The temperature threshold (in millicelsius) that,
->>> +              when crossed, will trigger the configured automatic throttling.
->>
->> Don't you want some hysteresis? Or is it already using trips binding?
->> But in that case you should skip the $ref and maximum - they come from
->> thermal-zones, don't they?
-> 
-> We don't use a hysteresis at the moment, but checking the register
-> documentation, there's indeed "up" and "down" thresholds, so we can add
-> another property for that.
-> 
-> This doesn't use the trips binding and in fact, one of the reasons for
-> this change is because we want to make this separate from trip points.
-> Trip points are usually associated with cooling devices and this
-> throttling mechanism doesn't really fit that concept because it is an
-> automatic mechanism that is triggered when a given temperature threshold
-> is crossed, rather than a manually activated mechanism, which is what a
-> cooling device would be.
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/pci/controller/pci-tegra.c     | 4 ++--
+>  drivers/pci/controller/pcie-mediatek.c | 2 +-
+>  drivers/pci/hotplug/rpaphp_core.c      | 4 ++--
+>  drivers/pci/of.c                       | 2 +-
+>  4 files changed, 6 insertions(+), 6 deletions(-)
 
-OK, I just wasn't sure if the binding already includes trips, which
-would mean you should use existing 'temperature' property.
+Ping!
 
-In such case, I think it's better to switch to property with common unit
-- millicelsius, either low/high ranges or with hysteresis.
-
-Best regards,
-Krzysztof
-
+> 
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 74c109f14ff0..79630885b9c8 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -1375,7 +1375,7 @@ static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
+>  	struct tegra_pcie_port *port;
+>  	int err;
+>  
+> -	if (!soc->has_gen2 || of_find_property(np, "phys", NULL) != NULL)
+> +	if (!soc->has_gen2 || of_property_present(np, "phys"))
+>  		return tegra_pcie_phys_get_legacy(pcie);
+>  
+>  	list_for_each_entry(port, &pcie->ports, list) {
+> @@ -1944,7 +1944,7 @@ static bool of_regulator_bulk_available(struct device_node *np,
+>  	for (i = 0; i < num_supplies; i++) {
+>  		snprintf(property, 32, "%s-supply", supplies[i].supply);
+>  
+> -		if (of_find_property(np, property, NULL) == NULL)
+> +		if (!of_property_present(np, property))
+>  			return false;
+>  	}
+>  
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index ae5ad05ddc1d..31de7a29192c 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -643,7 +643,7 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
+>  		return err;
+>  	}
+>  
+> -	if (of_find_property(dev->of_node, "interrupt-names", NULL))
+> +	if (of_property_present(dev->of_node, "interrupt-names"))
+>  		port->irq = platform_get_irq_byname(pdev, "pcie_irq");
+>  	else
+>  		port->irq = platform_get_irq(pdev, port->slot);
+> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+> index 491986197c47..2316de0fd198 100644
+> --- a/drivers/pci/hotplug/rpaphp_core.c
+> +++ b/drivers/pci/hotplug/rpaphp_core.c
+> @@ -278,7 +278,7 @@ int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (of_find_property(dn->parent, "ibm,drc-info", NULL))
+> +	if (of_property_present(dn->parent, "ibm,drc-info"))
+>  		return rpaphp_check_drc_props_v2(dn, drc_name, drc_type,
+>  						be32_to_cpu(*my_index));
+>  	else
+> @@ -440,7 +440,7 @@ int rpaphp_add_slot(struct device_node *dn)
+>  	if (!of_node_name_eq(dn, "pci"))
+>  		return 0;
+>  
+> -	if (of_find_property(dn, "ibm,drc-info", NULL))
+> +	if (of_property_present(dn, "ibm,drc-info"))
+>  		return rpaphp_drc_info_add_slot(dn);
+>  	else
+>  		return rpaphp_drc_add_slot(dn);
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index 196834ed44fe..e085f2eca372 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -447,7 +447,7 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
+>  		return -ENODEV;
+>  
+>  	/* Local interrupt-map in the device node? Use it! */
+> -	if (of_get_property(dn, "interrupt-map", NULL)) {
+> +	if (of_property_present(dn, "interrupt-map")) {
+>  		pin = pci_swizzle_interrupt_pin(pdev, pin);
+>  		ppnode = dn;
+>  	}
+> -- 
+> 2.39.2
+> 
