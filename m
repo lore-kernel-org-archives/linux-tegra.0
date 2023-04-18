@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B32C77B71
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16E7C77B75
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231582AbjDRIEA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 04:04:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41344 "EHLO
+        id S231567AbjDRIEI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Apr 2023 04:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231551AbjDRIDc (ORCPT
+        with ESMTP id S231135AbjDRIDm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 04:03:32 -0400
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [217.70.178.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54FA47EEB;
-        Tue, 18 Apr 2023 01:02:47 -0700 (PDT)
+        Tue, 18 Apr 2023 04:03:42 -0400
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67E293DE;
+        Tue, 18 Apr 2023 01:02:48 -0700 (PDT)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 120AB24001A;
-        Tue, 18 Apr 2023 08:01:48 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id E5270240017;
+        Tue, 18 Apr 2023 08:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1681804912;
+        t=1681804930;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WiE3J/ZOXI1J5wUqjC9+bkIXh5jNrN6O4z7mUkMhHyw=;
-        b=i5d1jmjfVRl7A7wPSmJJsjHqYz6LwegI32FzADO4J45upyQzkYZj6YmWP0o2TOuZYDg2cm
-        SjxNvdadRt1WocfK0qxLxvjFTTotO6boulfSPfQR689oX5uHrPeOfvSbt9SUh2g442i7rf
-        ISsL0+hjuDb1tl15AeZMvmscZzTfTrlD+p3BGe7krJNfDZtumzaor7kdzPwYP8DG7WNZop
-        oJldGlV87YpdxAbNjJAP7kR3P4wUvYQCPNix6qvdPF67EiIvqPHqvKBA6Jp82f4D6S+pgO
-        j+pWCC2wfvlrSnoRIVcsr3MqLDCMO6mnB6wTvn9zK4FQxi1Yrm37NkqwnRQu7w==
+        bh=PsM0loFRr7Qqghs8TxnS6mVQjrcznghYt4siqeLqiTA=;
+        b=TUwe/PdtzCx0VYAlos4wo9jTu8GD4uuLKuwxLrUhSYm7uLHmv/t1jD7+BnwEBMUrbRaI4U
+        CGY427TlyZ3vEhGSeXlx+0EipsBeTz9i+EKETqQz+N7yu5W9AzzA+w/NAkvsvuDxrCvNmg
+        yB53EC/4jjS+YSIzgKLOOju5ErmoRjeHX+PU9bWoNnZy4BE3xaICAcXKW8XaymY+tjfTqH
+        dINyRVBjJK9UFRYle3ayhapaQCC9b1rYhu8KKD3SJeNbJsIvsTrEmayLWJrejJNCvOD64i
+        JHo3ro4qcOb1nkXzpl151Oy1Os45FZJF5lVty60n6h+9SjloCnlEgsRf/nLonA==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     linux-tegra@vger.kernel.org
 Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
@@ -52,9 +52,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>,
         Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 13/20] staging: media: tegra-video: move default format to soc-specific data
-Date:   Tue, 18 Apr 2023 10:00:47 +0200
-Message-Id: <20230418080054.452955-14-luca.ceresoli@bootlin.com>
+Subject: [PATCH v6 18/20] staging: media: tegra-video: add hooks for planar YUV and H/V flip
+Date:   Tue, 18 Apr 2023 10:00:52 +0200
+Message-Id: <20230418080054.452955-19-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
 References: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
@@ -64,15 +64,20 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra_default_format in vi.c is specific to Tegra210 CSI.
+Tegra20 supports planar YUV422 capture, which can be implemented by writing
+U and V base address registers in addition to the "main" base buffer
+address register.
 
-In preparation for adding Tegra20 VIP support, move the default format to a
-new field in the soc-specific `struct tegra_vi_soc`. Instead of an entire
-format struct, only store a pointer to an item in the existing format
-array.
+It also supports H and V flip, which among others requires to write the
+start address (i.e. the 1st offset to write, at the end of the buffer or
+line) in more registers for Y and, for planar formats, U and V.
 
-No functional changes. The format pointed to is the same that used to be in
-vi.c.
+Add minimal hooks in VI to allow per-SoC optional support to those
+features:
+
+ - variables in struct tegra_vi for the U and V buffer base offsets
+ - variables in struct tegra_vi for the Y, U and V buffer start offsets
+ - an optional per-soc VI operation to compute those values on queue setup
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -80,10 +85,7 @@ Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 ---
 
 No changes in v6
-
-Changed in v5:
- - Minor update after removal of "staging: media: tegra-video: fix
-   .vidioc_enum_fmt_vid_cap to return all formats" patch
+No changes in v5
 
 Changed in v4:
  - Added review tags
@@ -91,84 +93,78 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/tegra210.c |  2 ++
- drivers/staging/media/tegra-video/vi.c       | 13 ++-----------
- drivers/staging/media/tegra-video/vi.h       |  2 ++
- 3 files changed, 6 insertions(+), 11 deletions(-)
+ drivers/staging/media/tegra-video/vi.c |  4 ++++
+ drivers/staging/media/tegra-video/vi.h | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index d19ff6b49ae8..b4fcd4e93b8c 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -766,8 +766,10 @@ const struct tegra_vi_soc tegra210_vi_soc = {
- 	.hw_revision = 3,
- 	.vi_max_channels = 6,
- #if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
-+	.default_video_format = &tegra210_video_formats[0],
- 	.vi_max_clk_hz = 499200000,
- #else
-+	.default_video_format = &tegra210_video_formats[4],
- 	.vi_max_clk_hz = 998400000,
- #endif
- };
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 35d7cda1373f..b88532d8d2c9 100644
+index b74cdd1d1c82..5ab24977ec46 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -45,15 +45,6 @@ struct tegra_vi_graph_entity {
- 	struct v4l2_subdev *subdev;
- };
+@@ -102,6 +102,7 @@ tegra_get_format_by_fourcc(struct tegra_vi *vi, u32 fourcc)
+ /*
+  * videobuf2 queue operations
+  */
++
+ static int tegra_channel_queue_setup(struct vb2_queue *vq,
+ 				     unsigned int *nbuffers,
+ 				     unsigned int *nplanes,
+@@ -117,6 +118,9 @@ static int tegra_channel_queue_setup(struct vb2_queue *vq,
+ 	sizes[0] = chan->format.sizeimage;
+ 	alloc_devs[0] = chan->vi->dev;
  
--static const struct tegra_video_format tegra_default_format = {
--	.img_dt = TEGRA_IMAGE_DT_RAW10,
--	.bit_width = 10,
--	.code = MEDIA_BUS_FMT_SRGGB10_1X10,
--	.bpp = 2,
--	.img_fmt = TEGRA_IMAGE_FORMAT_DEF,
--	.fourcc = V4L2_PIX_FMT_SRGGB10,
--};
--
- static inline struct tegra_vi *
- host1x_client_to_vi(struct host1x_client *client)
- {
-@@ -1103,7 +1094,7 @@ static int vi_fmts_bitmap_init(struct tegra_vi_channel *chan)
- 	 * there are no matched formats.
- 	 */
- 	if (!match_code) {
--		match_code = tegra_default_format.code;
-+		match_code = chan->vi->soc->default_video_format->code;
- 		index = tegra_get_format_idx_by_code(chan->vi, match_code, 0);
- 		if (WARN_ON(index < 0))
- 			return -EINVAL;
-@@ -1200,7 +1191,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- 	init_waitqueue_head(&chan->done_wait);
++	if (chan->vi->ops->channel_queue_setup)
++		chan->vi->ops->channel_queue_setup(chan);
++
+ 	return 0;
+ }
  
- 	/* initialize the video format */
--	chan->fmtinfo = &tegra_default_format;
-+	chan->fmtinfo = chan->vi->soc->default_video_format;
- 	chan->format.pixelformat = chan->fmtinfo->fourcc;
- 	chan->format.colorspace = V4L2_COLORSPACE_SRGB;
- 	chan->format.field = V4L2_FIELD_NONE;
 diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 213955c7545d..b424c967c6f2 100644
+index 02f940f2e2eb..cadf80b742a8 100644
 --- a/drivers/staging/media/tegra-video/vi.h
 +++ b/drivers/staging/media/tegra-video/vi.h
-@@ -58,6 +58,7 @@ struct tegra_vi_ops {
+@@ -47,6 +47,7 @@ struct tegra_vi_channel;
+  * @channel_host1x_syncpt_free: free all synchronization points
+  * @vi_fmt_align: modify `pix` to fit the hardware alignment
+  *		requirements and fill image geometry
++ * @channel_queue_setup: additional operations at the end of vb2_ops::queue_setup
+  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
+  *		VI for capture and runs capture start and capture finish
+  *		kthreads for capturing frames to buffer and returns them back.
+@@ -58,6 +59,7 @@ struct tegra_vi_ops {
+ 	int (*channel_host1x_syncpt_init)(struct tegra_vi_channel *chan);
+ 	void (*channel_host1x_syncpt_free)(struct tegra_vi_channel *chan);
+ 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
++	void (*channel_queue_setup)(struct tegra_vi_channel *chan);
+ 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
+ 	void (*vi_stop_streaming)(struct vb2_queue *vq);
+ };
+@@ -148,6 +150,12 @@ struct tegra_vi {
+  * @queue: vb2 buffers queue
+  * @sequence: V4L2 buffers sequence number
   *
-  * @video_formats: supported video formats
-  * @nformats: total video formats
-+ * @default_video_format: default video format (pointer to a @video_formats item)
-  * @ops: vi operations
-  * @hw_revision: VI hw_revision
-  * @vi_max_channels: supported max streaming channels
-@@ -66,6 +67,7 @@ struct tegra_vi_ops {
- struct tegra_vi_soc {
- 	const struct tegra_video_format *video_formats;
- 	const unsigned int nformats;
-+	const struct tegra_video_format *default_video_format;
- 	const struct tegra_vi_ops *ops;
- 	u32 hw_revision;
- 	unsigned int vi_max_channels;
++ * @addr_offset_u: U plane base address, relative to buffer base address (only for planar)
++ * @addr_offset_v: V plane base address, relative to buffer base address (only for planar)
++ * @start_offset:   1st Y byte to write, relative to buffer base address (for H/V flip)
++ * @start_offset_u: 1st U byte to write, relative to buffer base address (for H/V flip)
++ * @start_offset_v: 1st V byte to write, relative to buffer base address (for H/V flip)
++ *
+  * @capture: list of queued buffers for capture
+  * @start_lock: protects the capture queued list
+  * @done: list of capture done queued buffers
+@@ -189,6 +197,12 @@ struct tegra_vi_channel {
+ 	struct vb2_queue queue;
+ 	u32 sequence;
+ 
++	unsigned int addr_offset_u;
++	unsigned int addr_offset_v;
++	unsigned int start_offset;
++	unsigned int start_offset_u;
++	unsigned int start_offset_v;
++
+ 	struct list_head capture;
+ 	/* protects the capture queued list */
+ 	spinlock_t start_lock;
 -- 
 2.34.1
 
