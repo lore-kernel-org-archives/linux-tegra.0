@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DA2C77B75
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A22C77B75
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:03:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbjDRIDI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 04:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42496 "EHLO
+        id S231546AbjDRIDb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Apr 2023 04:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231528AbjDRICh (ORCPT
+        with ESMTP id S231497AbjDRICu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 04:02:37 -0400
+        Tue, 18 Apr 2023 04:02:50 -0400
 Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D006173D;
-        Tue, 18 Apr 2023 01:02:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC727DB6;
+        Tue, 18 Apr 2023 01:02:25 -0700 (PDT)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 0AF12240012;
-        Tue, 18 Apr 2023 08:01:59 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id C321824001E;
+        Tue, 18 Apr 2023 08:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1681804923;
+        t=1681804934;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vdK6nt2jp8murA6Tyi2XudKL24Qk5UvZgDlNDAZbm+o=;
-        b=RctV38/fZrPDiDU+1EtCQ/5ISnxOi0YoDmtx0A1CZJs9N6GFU5LYxMXQPk2MhnHTxr6I3+
-        Z2LpBlwcD4iys3WAqS0GdHepOif0G8SA4y4iip+a9maHEKjb/agVyOLG+OIjBaJhX6CM9E
-        LAZMCBIWu8+FQE1+iLMxfOHYT/Qd83o9vxZYg8AXqssAPzugQZB4b12Ojt+Y8Kz9X3eBua
-        mMto97YutzgNchVSBA9+NGQaz92dza6cyShQFH9uTbOkGWVSSCVf9Xi6e0Aa17bLcEBAXR
-        V3l9WLHKODu324mG1/QiaVj+/49+moYb04sp9iOhcI99yVU+iZGt8PeW4asrSg==
+        bh=zI1HE7xYpFUXXPJOpa1EDaS4Y2c6dkA50VEWah254Wo=;
+        b=irXErdd8xPwyarlKe1jRze6lT993QTpw4Tx2xanfkQ65ACxGv9ta18N42bZHomyBfMPf4K
+        c/eRLUiMBKNtEAZ1rYECxImo+AF0peAN8nMYGzQLvhCyGoi5nf/f0DkUXUngG1at2wTRv3
+        LKwZfl27owGIUj2BvakXFUvODQ0R0b1jhBTcOifJ0gGnZ4m7W+ryqheuPc9VqIPX6whbhh
+        MOTDb2/9PwJQa3BE+BXuLLxd2p291CztSoSFqPc7OPNc2Ny5EYYOxU7hdfCPm7IxvsNOu0
+        GJi4dOIzrxN1lBrGA8py5nQn6YWWDau/5zwQDumASGd/Cmw5Gv6DF2xGPkMmiA==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     linux-tegra@vger.kernel.org
 Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
@@ -52,9 +52,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>,
         Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 16/20] staging: media: tegra-video: move syncpt init/free to a per-soc op
-Date:   Tue, 18 Apr 2023 10:00:50 +0200
-Message-Id: <20230418080054.452955-17-luca.ceresoli@bootlin.com>
+Subject: [PATCH v6 19/20] staging: media: tegra-video: add H/V flip controls
+Date:   Tue, 18 Apr 2023 10:00:53 +0200
+Message-Id: <20230418080054.452955-20-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
 References: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
@@ -64,15 +64,16 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-tegra_channel_host1x_syncpt_init() gets the host1x syncpts needed for the
-Tegra210 implementation, and tegra_channel_host1x_syncpts_free() puts
-them.
+Tegra20 can do horizontal and vertical image flip, but Tegra210 cannot
+(either the hardware, or this driver).
 
-Tegra20 needs to get and put a different syncpt. In preparation for adding
-Tegra20 support, move these functions to new ops in the soc-specific
-`struct tegra_vi_ops` .
+In preparation to adding Tegra20 support, add a flag in struct tegra_vi_soc
+so the generic vi.c code knows whether the flip controls should be added or
+not.
 
-No functional changes.
+Also provide a generic implementation that simply sets two flags in the
+channel struct. The Tegra20 implementation will enable flipping at stream
+start based on those flags.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -80,7 +81,9 @@ Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 ---
 
 No changes in v6
-No changes in v5
+
+Changed in v5:
+ - Fixed typo in comment
 
 Changed in v4:
  - Added review tags
@@ -88,196 +91,89 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/tegra210.c | 52 ++++++++++++++++++++
- drivers/staging/media/tegra-video/vi.c       | 52 ++------------------
- drivers/staging/media/tegra-video/vi.h       |  5 ++
- 3 files changed, 60 insertions(+), 49 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 14 +++++++++++++-
+ drivers/staging/media/tegra-video/vi.h |  8 ++++++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index b4fcd4e93b8c..da99f19a39e7 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -179,6 +179,56 @@ static u32 vi_csi_read(struct tegra_vi_channel *chan, u8 portno,
- /*
-  * Tegra210 VI channel capture operations
-  */
-+
-+static int tegra210_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
-+{
-+	struct tegra_vi *vi = chan->vi;
-+	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
-+	struct host1x_syncpt *fs_sp;
-+	struct host1x_syncpt *mw_sp;
-+	int ret, i;
-+
-+	for (i = 0; i < chan->numgangports; i++) {
-+		fs_sp = host1x_syncpt_request(&vi->client, flags);
-+		if (!fs_sp) {
-+			dev_err(vi->dev, "failed to request frame start syncpoint\n");
-+			ret = -ENOMEM;
-+			goto free_syncpts;
-+		}
-+
-+		mw_sp = host1x_syncpt_request(&vi->client, flags);
-+		if (!mw_sp) {
-+			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
-+			host1x_syncpt_put(fs_sp);
-+			ret = -ENOMEM;
-+			goto free_syncpts;
-+		}
-+
-+		chan->frame_start_sp[i] = fs_sp;
-+		chan->mw_ack_sp[i] = mw_sp;
-+		spin_lock_init(&chan->sp_incr_lock[i]);
-+	}
-+
-+	return 0;
-+
-+free_syncpts:
-+	for (i = 0; i < chan->numgangports; i++) {
-+		host1x_syncpt_put(chan->mw_ack_sp[i]);
-+		host1x_syncpt_put(chan->frame_start_sp[i]);
-+	}
-+	return ret;
-+}
-+
-+static void tegra210_channel_host1x_syncpt_free(struct tegra_vi_channel *chan)
-+{
-+	int i;
-+
-+	for (i = 0; i < chan->numgangports; i++) {
-+		host1x_syncpt_put(chan->mw_ack_sp[i]);
-+		host1x_syncpt_put(chan->frame_start_sp[i]);
-+	}
-+}
-+
- static void tegra210_fmt_align(struct v4l2_pix_format *pix, unsigned int bpp)
- {
- 	unsigned int min_bpl;
-@@ -753,6 +803,8 @@ static const struct tegra_video_format tegra210_video_formats[] = {
- 
- /* Tegra210 VI operations */
- static const struct tegra_vi_ops tegra210_vi_ops = {
-+	.channel_host1x_syncpt_init = tegra210_channel_host1x_syncpt_init,
-+	.channel_host1x_syncpt_free = tegra210_channel_host1x_syncpt_free,
- 	.vi_fmt_align = tegra210_fmt_align,
- 	.vi_start_streaming = tegra210_vi_start_streaming,
- 	.vi_stop_streaming = tegra210_vi_stop_streaming,
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 8df233049c81..b74cdd1d1c82 100644
+index 5ab24977ec46..39e9df895ede 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -1062,21 +1062,11 @@ static int vi_fmts_bitmap_init(struct tegra_vi_channel *chan)
- 	return 0;
- }
+@@ -30,7 +30,7 @@
+ #include "vi.h"
+ #include "video.h"
  
--static void tegra_channel_host1x_syncpts_free(struct tegra_vi_channel *chan)
--{
--	int i;
--
--	for (i = 0; i < chan->numgangports; i++) {
--		host1x_syncpt_put(chan->mw_ack_sp[i]);
--		host1x_syncpt_put(chan->frame_start_sp[i]);
--	}
--}
--
- static void tegra_channel_cleanup(struct tegra_vi_channel *chan)
- {
- 	v4l2_ctrl_handler_free(&chan->ctrl_handler);
- 	media_entity_cleanup(&chan->video.entity);
--	tegra_channel_host1x_syncpts_free(chan);
-+	chan->vi->ops->channel_host1x_syncpt_free(chan);
- 	mutex_destroy(&chan->video_lock);
- }
- 
-@@ -1094,42 +1084,6 @@ void tegra_channels_cleanup(struct tegra_vi *vi)
- 	}
- }
- 
--static int tegra_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
--{
--	struct tegra_vi *vi = chan->vi;
--	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
--	struct host1x_syncpt *fs_sp;
--	struct host1x_syncpt *mw_sp;
--	int ret, i;
--
--	for (i = 0; i < chan->numgangports; i++) {
--		fs_sp = host1x_syncpt_request(&vi->client, flags);
--		if (!fs_sp) {
--			dev_err(vi->dev, "failed to request frame start syncpoint\n");
--			ret = -ENOMEM;
--			goto free_syncpts;
--		}
--
--		mw_sp = host1x_syncpt_request(&vi->client, flags);
--		if (!mw_sp) {
--			dev_err(vi->dev, "failed to request memory ack syncpoint\n");
--			host1x_syncpt_put(fs_sp);
--			ret = -ENOMEM;
--			goto free_syncpts;
--		}
--
--		chan->frame_start_sp[i] = fs_sp;
--		chan->mw_ack_sp[i] = mw_sp;
--		spin_lock_init(&chan->sp_incr_lock[i]);
--	}
--
--	return 0;
--
--free_syncpts:
--	tegra_channel_host1x_syncpts_free(chan);
--	return ret;
--}
--
- static int tegra_channel_init(struct tegra_vi_channel *chan)
- {
- 	struct tegra_vi *vi = chan->vi;
-@@ -1155,7 +1109,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- 	chan->format.sizeimage = chan->format.bytesperline * TEGRA_DEF_HEIGHT;
- 	vi->ops->vi_fmt_align(&chan->format, chan->fmtinfo->bpp);
- 
--	ret = tegra_channel_host1x_syncpt_init(chan);
-+	ret = vi->ops->channel_host1x_syncpt_init(chan);
- 	if (ret)
- 		return ret;
- 
-@@ -1218,7 +1172,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- cleanup_media:
- 	media_entity_cleanup(&chan->video.entity);
- free_syncpts:
--	tegra_channel_host1x_syncpts_free(chan);
-+	vi->ops->channel_host1x_syncpt_free(chan);
- 	return ret;
- }
- 
-diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 886b10e7d723..dfb5870b1411 100644
---- a/drivers/staging/media/tegra-video/vi.h
-+++ b/drivers/staging/media/tegra-video/vi.h
-@@ -38,10 +38,13 @@ enum tegra_vi_pg_mode {
- };
- 
- struct tegra_vi;
-+struct tegra_vi_channel;
+-#define MAX_CID_CONTROLS		1
++#define MAX_CID_CONTROLS		3
  
  /**
-  * struct tegra_vi_ops - Tegra VI operations
-  * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
-+ * @channel_host1x_syncpt_init: initialize synchronization points
-+ * @channel_host1x_syncpt_free: free all synchronization points
-  * @vi_fmt_align: modify `pix` to fit the hardware alignment
-  *		requirements and fill image geometry
-  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
-@@ -52,6 +55,8 @@ struct tegra_vi;
+  * struct tegra_vi_graph_entity - Entity in the video graph
+@@ -910,6 +910,12 @@ static int vi_s_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_TEGRA_SYNCPT_TIMEOUT_RETRY:
+ 		chan->syncpt_timeout_retry = ctrl->val;
+ 		break;
++	case V4L2_CID_HFLIP:
++		chan->hflip = ctrl->val;
++		break;
++	case V4L2_CID_VFLIP:
++		chan->vflip = ctrl->val;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -981,6 +987,12 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+ 		v4l2_ctrl_handler_free(&chan->ctrl_handler);
+ 		return ret;
+ 	}
++
++	if (chan->vi->soc->has_h_v_flip) {
++		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
++		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
++	}
++
+ #endif
+ 
+ 	/* setup the controls */
+diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
+index cadf80b742a8..778c0ec475ab 100644
+--- a/drivers/staging/media/tegra-video/vi.h
++++ b/drivers/staging/media/tegra-video/vi.h
+@@ -74,6 +74,7 @@ struct tegra_vi_ops {
+  * @hw_revision: VI hw_revision
+  * @vi_max_channels: supported max streaming channels
+  * @vi_max_clk_hz: VI clock max frequency
++ * @has_h_v_flip: the chip can do H and V flip, and the driver implements it
   */
- struct tegra_vi_ops {
- 	int (*vi_enable)(struct tegra_vi *vi, bool on);
-+	int (*channel_host1x_syncpt_init)(struct tegra_vi_channel *chan);
-+	void (*channel_host1x_syncpt_free)(struct tegra_vi_channel *chan);
- 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
- 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
- 	void (*vi_stop_streaming)(struct vb2_queue *vq);
+ struct tegra_vi_soc {
+ 	const struct tegra_video_format *video_formats;
+@@ -83,6 +84,7 @@ struct tegra_vi_soc {
+ 	u32 hw_revision;
+ 	unsigned int vi_max_channels;
+ 	unsigned int vi_max_clk_hz;
++	bool has_h_v_flip:1;
+ };
+ 
+ /**
+@@ -172,6 +174,9 @@ struct tegra_vi {
+  * @tpg_fmts_bitmap: a bitmap for supported TPG formats
+  * @pg_mode: test pattern generator mode (disabled/direct/patch)
+  * @notifier: V4L2 asynchronous subdevs notifier
++ *
++ * @hflip: Horizontal flip is enabled
++ * @vflip: Vertical flip is enabled
+  */
+ struct tegra_vi_channel {
+ 	struct list_head list;
+@@ -222,6 +227,9 @@ struct tegra_vi_channel {
+ 	enum tegra_vi_pg_mode pg_mode;
+ 
+ 	struct v4l2_async_notifier notifier;
++
++	bool hflip:1;
++	bool vflip:1;
+ };
+ 
+ /**
 -- 
 2.34.1
 
