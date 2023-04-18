@@ -2,165 +2,83 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D367C77B78
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 16:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0813FC77B75
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 18:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232496AbjDRQ1i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 12:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41410 "EHLO
+        id S232331AbjDRSCK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Apr 2023 14:02:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232477AbjDRQ1h (ORCPT
+        with ESMTP id S232438AbjDRSCG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 12:27:37 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A999ABBAB;
-        Tue, 18 Apr 2023 09:27:22 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-38dfa504415so583910b6e.0;
-        Tue, 18 Apr 2023 09:27:22 -0700 (PDT)
+        Tue, 18 Apr 2023 14:02:06 -0400
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1A79A5D1;
+        Tue, 18 Apr 2023 11:02:04 -0700 (PDT)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-1879fc89e67so490315fac.0;
+        Tue, 18 Apr 2023 11:02:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681835242; x=1684427242;
+        d=1e100.net; s=20221208; t=1681840924; x=1684432924;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KA3Wj6o+Guvdyn6RVWvc15n99JJqv1Kt6CugaXzG/F8=;
-        b=mGsWZW/8X0/PhZqjkhij0g3zsoUHvTBhb0SpsjQhi8nOFJRbfmcdUnKM9GScncj7jk
-         7mepd1GwBgrfS/UGbmzMVztZFONLgU5LMsPgZZ3R1dGwaGoWqJDD6PFN6p0T4FnArzyE
-         XWi21AAO36UYeGKHWO/8j3PJEYZmB0MSMc81tCduD6ompeTpNbnjN2JHvP3w0YM7qu4z
-         2g0c9ZrHB27VyRe3oKb/Q24di1LMbbM3aft3dEYbILzMroPur2HrO4rqv+b/Tvq/cdLb
-         X6QXbiZz0EzjKW19Itfaok7DjEfRggGkodLeBEzYFSkplBm4P19g2TWiEl7FRO4ezp0S
-         /L+g==
-X-Gm-Message-State: AAQBX9dgSZKuvtOplE8SAbQ4kNm2zIYvIKJVI81SgL/n6ghkUseqzy9j
-        RxJ8drhRX5hd2R3YqH48omI3hBt42g==
-X-Google-Smtp-Source: AKy350bBHLRqNa07Du4N0WmT6K0vuSFaG9g8fJGUXZXaLSnM3rdYMjG2JcU3ECFR82i0sqHbDMgiyw==
-X-Received: by 2002:a05:6808:2203:b0:38e:390b:777b with SMTP id bd3-20020a056808220300b0038e390b777bmr1228732oib.59.1681835241818;
-        Tue, 18 Apr 2023 09:27:21 -0700 (PDT)
+        bh=52DDXGdLNEShITAc5JOG2UZwH2YBxeM0UslFfpBYM9Y=;
+        b=BcDMrrEngYmvIOa1/XDcokFEOqM0q9fwrTI1d6f+b4/uEyEYzcV1FcrZYZgJEOt+ox
+         1Uga/89RMsgOAdXYCm9KvTlZ5+k1crNQogBNgd2HBg1BHNA54PPvOl9XrzdzaX+4Z9kU
+         n4glYyD6qP6gKIKi5Oj45G27zx/c1ZdYv5j2kAhdd5ISf4tekRaxh1rsmuHzSfXMyTyO
+         HKOjg+kwjjXEiHMRQOpZTWqr4RAWtAup7gztDgJQUjckZ7d2/aLWcYUML/tHhOyKvyUz
+         9SR5gVPdF70lB+glGIntXC3IWh+TldWOAT6i62bKH1J0RGqBOt/TjO4F6ZTgGGcogY9C
+         +qjA==
+X-Gm-Message-State: AAQBX9fIlrQtw4Vv03EkGDbZaZQMBEabTUps8ojpu9N6cEQ2plqK5Brm
+        drqY5FKKw9Ie2WXfkIvSkQ==
+X-Google-Smtp-Source: AKy350Z7akrNTmLW6o5dIL1AQ5/62r2EZXsK8BJOQQOdwSx+gZacCAHiNFH5kkVpdLx9pqKn0vSHGw==
+X-Received: by 2002:a05:6870:9a23:b0:183:eb95:7166 with SMTP id fo35-20020a0568709a2300b00183eb957166mr1813376oab.15.1681840923874;
+        Tue, 18 Apr 2023 11:02:03 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id i11-20020aca3b0b000000b0038c235e24fesm2204031oia.48.2023.04.18.09.27.20
+        by smtp.gmail.com with ESMTPSA id u5-20020a056870b0c500b00172ac40356csm5795710oag.50.2023.04.18.11.02.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 09:27:20 -0700 (PDT)
-Received: (nullmailer pid 1810183 invoked by uid 1000);
-        Tue, 18 Apr 2023 16:27:19 -0000
-Date:   Tue, 18 Apr 2023 11:27:19 -0500
+        Tue, 18 Apr 2023 11:02:03 -0700 (PDT)
+Received: (nullmailer pid 2057312 invoked by uid 1000);
+        Tue, 18 Apr 2023 18:02:02 -0000
+Date:   Tue, 18 Apr 2023 13:02:02 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Halasa <khalasa@piap.pl>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] PCI: Use of_property_present() for testing DT property
- presence
-Message-ID: <20230418162719.GF1764573-robh@kernel.org>
-References: <20230310144719.1544443-1-robh@kernel.org>
+        Imre Kaloz <kaloz@openwrt.org>, linux-kernel@vger.kernel.org,
+        Linus Walleij <linusw@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: timer: Drop unneeded quotes
+Message-ID: <168184087334.2054869.5890313933665475872.robh@kernel.org>
+References: <20230327170146.4104556-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230310144719.1544443-1-robh@kernel.org>
+In-Reply-To: <20230327170146.4104556-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 08:47:19AM -0600, Rob Herring wrote:
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties. As
-> part of this, convert of_get_property/of_find_property calls to the
-> recently added of_property_present() helper when we just want to test
-> for presence of a property and nothing more.
+
+On Mon, 27 Mar 2023 12:01:45 -0500, Rob Herring wrote:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
 > 
 > Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/pci/controller/pci-tegra.c     | 4 ++--
->  drivers/pci/controller/pcie-mediatek.c | 2 +-
->  drivers/pci/hotplug/rpaphp_core.c      | 4 ++--
->  drivers/pci/of.c                       | 2 +-
->  4 files changed, 6 insertions(+), 6 deletions(-)
-
-Ping!
-
+>  .../devicetree/bindings/timer/arm,arch_timer_mmio.yaml        | 2 +-
+>  Documentation/devicetree/bindings/timer/cdns,ttc.yaml         | 2 +-
+>  .../devicetree/bindings/timer/intel,ixp4xx-timer.yaml         | 4 ++--
+>  .../devicetree/bindings/timer/nvidia,tegra-timer.yaml         | 4 ++--
+>  .../devicetree/bindings/timer/nvidia,tegra186-timer.yaml      | 4 ++--
+>  Documentation/devicetree/bindings/timer/st,nomadik-mtu.yaml   | 4 ++--
+>  6 files changed, 10 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index 74c109f14ff0..79630885b9c8 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -1375,7 +1375,7 @@ static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
->  	struct tegra_pcie_port *port;
->  	int err;
->  
-> -	if (!soc->has_gen2 || of_find_property(np, "phys", NULL) != NULL)
-> +	if (!soc->has_gen2 || of_property_present(np, "phys"))
->  		return tegra_pcie_phys_get_legacy(pcie);
->  
->  	list_for_each_entry(port, &pcie->ports, list) {
-> @@ -1944,7 +1944,7 @@ static bool of_regulator_bulk_available(struct device_node *np,
->  	for (i = 0; i < num_supplies; i++) {
->  		snprintf(property, 32, "%s-supply", supplies[i].supply);
->  
-> -		if (of_find_property(np, property, NULL) == NULL)
-> +		if (!of_property_present(np, property))
->  			return false;
->  	}
->  
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index ae5ad05ddc1d..31de7a29192c 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -643,7 +643,7 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
->  		return err;
->  	}
->  
-> -	if (of_find_property(dev->of_node, "interrupt-names", NULL))
-> +	if (of_property_present(dev->of_node, "interrupt-names"))
->  		port->irq = platform_get_irq_byname(pdev, "pcie_irq");
->  	else
->  		port->irq = platform_get_irq(pdev, port->slot);
-> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-> index 491986197c47..2316de0fd198 100644
-> --- a/drivers/pci/hotplug/rpaphp_core.c
-> +++ b/drivers/pci/hotplug/rpaphp_core.c
-> @@ -278,7 +278,7 @@ int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
->  		return -EINVAL;
->  	}
->  
-> -	if (of_find_property(dn->parent, "ibm,drc-info", NULL))
-> +	if (of_property_present(dn->parent, "ibm,drc-info"))
->  		return rpaphp_check_drc_props_v2(dn, drc_name, drc_type,
->  						be32_to_cpu(*my_index));
->  	else
-> @@ -440,7 +440,7 @@ int rpaphp_add_slot(struct device_node *dn)
->  	if (!of_node_name_eq(dn, "pci"))
->  		return 0;
->  
-> -	if (of_find_property(dn, "ibm,drc-info", NULL))
-> +	if (of_property_present(dn, "ibm,drc-info"))
->  		return rpaphp_drc_info_add_slot(dn);
->  	else
->  		return rpaphp_drc_add_slot(dn);
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index 196834ed44fe..e085f2eca372 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -447,7 +447,7 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
->  		return -ENODEV;
->  
->  	/* Local interrupt-map in the device node? Use it! */
-> -	if (of_get_property(dn, "interrupt-map", NULL)) {
-> +	if (of_property_present(dn, "interrupt-map")) {
->  		pin = pci_swizzle_interrupt_pin(pdev, pin);
->  		ppnode = dn;
->  	}
-> -- 
-> 2.39.2
-> 
+
+Applied, thanks!
+
