@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E7CC77B7F
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6383C77B7D
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbjDRIDA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 04:03:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42410 "EHLO
+        id S231515AbjDRIDB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Apr 2023 04:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231378AbjDRICe (ORCPT
+        with ESMTP id S231518AbjDRICf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 04:02:34 -0400
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6A14492;
-        Tue, 18 Apr 2023 01:02:02 -0700 (PDT)
+        Tue, 18 Apr 2023 04:02:35 -0400
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [217.70.178.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A046EB1;
+        Tue, 18 Apr 2023 01:02:03 -0700 (PDT)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 78450240003;
-        Tue, 18 Apr 2023 08:01:56 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 7E430240019;
+        Tue, 18 Apr 2023 08:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1681804919;
+        t=1681804897;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OjDn7feuOfCx2JjEUm878aYF49HGL6X0Phz44CtOnuQ=;
-        b=I7tZjmhH627GBuHF1wzSyhCZUFSROiN803K5xByz5h/wt2k+vh76TmZaCefebp80x3tKbt
-        0kpo4QrCalP+dLGNLqxKfbSCCAJm+6bwNHkBQLwEzKBagUNnUGZPxEd8jWtNRK3e+59QaY
-        Tiq9bgDcC3neCV9d6syb1oGzdfrMqs4FkUl0j+lc6Pke91BnkjTVb7xe10tZYr6dDnbLZf
-        zIBUz+rbcZ2D0oSA8IE8pOVTb9vauOgQKOMhQ53snUFlXg2m+oy2KvfcCUeQRmhCHsEPA7
-        mCfxL1NF8yRAm6lppOViupcDCHjs+CPjo1eGp96jBBk0KBYkZyXgfdD4uy9HrA==
+        bh=89LKE84J28tS17t2LdvykdrtMycfjqjpFsn9fqF7WMA=;
+        b=cR/vLn9OfPIFbn5rnGwm6tVQg2V4B2GZV4leUnT4A7/YjQ8kZ5r2GXEunwfwQw0ucjVRWU
+        tHzsV4rFsIrBb9oeVXAHXmHA5PXF/rF/8g/cqweqMg7JUBUDeyVH9UZjUijJcmDORJ/PhN
+        LvHGr8Krxrn5c468h94c50UnxEsvR2+MXp3wKUrWdWWhfXJI07bLFonZCs5AcSua6yn4Zs
+        EEentkxlW/9oHPx1pdRCkYGyGPvTsIkHiYihTEru81CQQ9T7hzEhzamF+7PY/aXYDsl0IT
+        bIe8VaVsihthCGJ/WhAEFYesUyHFBxspIPth+V+hikEcxG2d80QY4ptMXLYNyA==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     linux-tegra@vger.kernel.org
 Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
@@ -52,9 +52,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>,
         Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 15/20] staging: media: tegra-video: add a per-soc enable/disable op
-Date:   Tue, 18 Apr 2023 10:00:49 +0200
-Message-Id: <20230418080054.452955-16-luca.ceresoli@bootlin.com>
+Subject: [PATCH v6 09/20] staging: media: tegra-video: move tegra210_csi_soc to C file
+Date:   Tue, 18 Apr 2023 10:00:43 +0200
+Message-Id: <20230418080054.452955-10-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
 References: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
@@ -64,8 +64,7 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra20 VI needs an additional operation to enable the VI, add an
-operation for that.
+This declaration is used only in csi.c, no need to export it elsewhere.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -78,69 +77,42 @@ No changes in v5
 Changed in v4:
  - Added review tags
 
-No changes in v3
-No changes in v2
+This patch was added in v3.
 ---
- drivers/staging/media/tegra-video/vi.c | 7 +++++++
- drivers/staging/media/tegra-video/vi.h | 4 ++++
- 2 files changed, 11 insertions(+)
+ drivers/staging/media/tegra-video/csi.c | 4 ++++
+ drivers/staging/media/tegra-video/csi.h | 4 ----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index c76c2a404889..8df233049c81 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -1950,6 +1950,9 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 	vi->client.ops = &vi_client_ops;
- 	vi->client.dev = &pdev->dev;
- 
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, true);
-+
- 	ret = host1x_client_register(&vi->client);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev,
-@@ -1960,6 +1963,8 @@ static int tegra_vi_probe(struct platform_device *pdev)
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index 426e653bd55d..9a03d5ccdf3c 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -792,6 +792,10 @@ static int tegra_csi_remove(struct platform_device *pdev)
  	return 0;
- 
- rpm_disable:
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, false);
- 	pm_runtime_disable(&pdev->dev);
- 	return ret;
  }
-@@ -1976,6 +1981,8 @@ static int tegra_vi_remove(struct platform_device *pdev)
- 		return err;
- 	}
  
-+	if (vi->ops->vi_enable)
-+		vi->ops->vi_enable(vi, false);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
-diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index b424c967c6f2..886b10e7d723 100644
---- a/drivers/staging/media/tegra-video/vi.h
-+++ b/drivers/staging/media/tegra-video/vi.h
-@@ -37,8 +37,11 @@ enum tegra_vi_pg_mode {
- 	TEGRA_VI_PG_PATCH,
++#if defined(CONFIG_ARCH_TEGRA_210_SOC)
++extern const struct tegra_csi_soc tegra210_csi_soc;
++#endif
++
+ static const struct of_device_id tegra_csi_of_id_table[] = {
+ #if defined(CONFIG_ARCH_TEGRA_210_SOC)
+ 	{ .compatible = "nvidia,tegra210-csi", .data = &tegra210_csi_soc },
+diff --git a/drivers/staging/media/tegra-video/csi.h b/drivers/staging/media/tegra-video/csi.h
+index 6960ea2e3d36..3e6e5ee1bb1e 100644
+--- a/drivers/staging/media/tegra-video/csi.h
++++ b/drivers/staging/media/tegra-video/csi.h
+@@ -151,10 +151,6 @@ struct tegra_csi {
+ 	struct list_head csi_chans;
  };
  
-+struct tegra_vi;
-+
- /**
-  * struct tegra_vi_ops - Tegra VI operations
-+ * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
-  * @vi_fmt_align: modify `pix` to fit the hardware alignment
-  *		requirements and fill image geometry
-  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
-@@ -48,6 +51,7 @@ enum tegra_vi_pg_mode {
-  *		back any queued buffers.
-  */
- struct tegra_vi_ops {
-+	int (*vi_enable)(struct tegra_vi *vi, bool on);
- 	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
- 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
- 	void (*vi_stop_streaming)(struct vb2_queue *vq);
+-#if defined(CONFIG_ARCH_TEGRA_210_SOC)
+-extern const struct tegra_csi_soc tegra210_csi_soc;
+-#endif
+-
+ void tegra_csi_error_recover(struct v4l2_subdev *subdev);
+ void tegra_csi_calc_settle_time(struct tegra_csi_channel *csi_chan,
+ 				u8 csi_port_num,
 -- 
 2.34.1
 
