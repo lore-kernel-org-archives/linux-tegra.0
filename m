@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC54C77B75
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5813C77B78
 	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 08:02:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231460AbjDRICe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 04:02:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41254 "EHLO
+        id S231464AbjDRICf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Apr 2023 04:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231463AbjDRICN (ORCPT
+        with ESMTP id S231458AbjDRICM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 04:02:13 -0400
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D54BF868B;
+        Tue, 18 Apr 2023 04:02:12 -0400
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [217.70.178.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABB18684;
         Tue, 18 Apr 2023 01:01:35 -0700 (PDT)
 Received: from booty.fritz.box (unknown [77.244.183.192])
         (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 89064240011;
-        Tue, 18 Apr 2023 08:01:30 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPA id 84CE824000B;
+        Tue, 18 Apr 2023 08:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1681804894;
+        t=1681804890;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ce1Cq6IBrZ258McFK0fXzLWtRecvX/0hdobwe0m2ndY=;
-        b=GRYjYaFHbz5AcIYbRWM4ZvWspoFCeAwfoWazMbWqkK6ZdUBpyufPTWiYHR7EqEyMCCQBII
-        ZXeAD4bwi7Ck8ehh22K1AmaOoEe7W1EEd4i48bxjyvEFT+9ZUvPyggMkoER4QfZ60Khlpk
-        RWlHON3DCati5VF83pVAjidF2GDFx5w+48+B1NvoFEEWRjZfCMgVbmySyXnRzPvum5pxIN
-        EAQldYjM7aaYPt3hc1gqRU8QszMtVnel7ouk5uM7X8Re1uEf/zMkk87Uo3ADoGF08rNdvd
-        H6et9e6zyYRqZVFBkGsfjEFN51Nfyi6lgo1K86QhqjZqNcsbjq58TrYe/9unrA==
+        bh=p+VzAfaSqgxKGJT/6W+d7FGRqtXq2O0GiseDQOgCfqU=;
+        b=CGSJMVEfNn8zDkV84d82TAiUJl2y5+Pwo1O9aV9Ce6AJUmPS1EFtWXRwjBkjvUpbugSmJF
+        gWNi3LaMjt3p0GQ1boGQjjxiRUhwx0e1IVVbR7U82AwdGKH9DRehcs9Qf0Q5uvaPNNYp53
+        LBwqkFoviljVP5xY31IOwLko5O0Y2bEwke3syBsV21u6A75adHeimqpA7r0Y3at6Kj2tRU
+        rxMP8LdJ3mFOz6Ll0PnuOdpJaaZ3sMNKH/bFqvduwga4so63TVUXUK9xPChmKRrjYecbBt
+        w5mwIpP+OXS7y1YT0hCEpk6JM31QPYZPS/HVg/RcmtRji64IiXrR/r3EfatQHg==
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
 To:     linux-tegra@vger.kernel.org
 Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
@@ -52,9 +52,9 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Richard Leitner <richard.leitner@skidata.com>,
         Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v6 08/20] staging: media: tegra-video: move private struct declaration to C file
-Date:   Tue, 18 Apr 2023 10:00:42 +0200
-Message-Id: <20230418080054.452955-9-luca.ceresoli@bootlin.com>
+Subject: [PATCH v6 07/20] staging: media: tegra-video: slightly simplify cleanup on errors
+Date:   Tue, 18 Apr 2023 10:00:41 +0200
+Message-Id: <20230418080054.452955-8-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
 References: <20230418080054.452955-1-luca.ceresoli@bootlin.com>
@@ -64,8 +64,8 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-struct tegra_vi_graph_entity is an internal implementation detail of the VI
-module. Move its declaration from vi.h to vi.c.
+of_node_put(node) does nothing if node == NULL, so it can be moved to the
+cleanup section at the bottom.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
@@ -81,58 +81,46 @@ Changed in v4:
 No changes in v3
 No changes in v2
 ---
- drivers/staging/media/tegra-video/vi.c | 13 +++++++++++++
- drivers/staging/media/tegra-video/vi.h | 13 -------------
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index ce4ff4cbf587..db98d06351b4 100644
+index 1c0424bf1ab0..ce4ff4cbf587 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -32,6 +32,19 @@
+@@ -1352,7 +1352,7 @@ static int tegra_vi_channels_alloc(struct tegra_vi *vi)
+ 	struct device_node *node = vi->dev->of_node;
+ 	struct device_node *ep = NULL;
+ 	struct device_node *ports;
+-	struct device_node *port;
++	struct device_node *port = NULL;
+ 	unsigned int port_num;
+ 	struct device_node *parent;
+ 	struct v4l2_fwnode_endpoint v4l2_ep = { .bus_type = 0 };
+@@ -1375,7 +1375,6 @@ static int tegra_vi_channels_alloc(struct tegra_vi *vi)
+ 			dev_err(vi->dev, "invalid port num %d for %pOF\n",
+ 				port_num, port);
+ 			ret = -EINVAL;
+-			of_node_put(port);
+ 			goto cleanup;
+ 		}
  
- #define MAX_CID_CONTROLS		1
+@@ -1398,13 +1397,12 @@ static int tegra_vi_channels_alloc(struct tegra_vi *vi)
  
-+/**
-+ * struct tegra_vi_graph_entity - Entity in the video graph
-+ *
-+ * @asd: subdev asynchronous registration information
-+ * @entity: media entity from the corresponding V4L2 subdev
-+ * @subdev: V4L2 subdev
-+ */
-+struct tegra_vi_graph_entity {
-+	struct v4l2_async_subdev asd;
-+	struct media_entity *entity;
-+	struct v4l2_subdev *subdev;
-+};
-+
- static const struct tegra_video_format tegra_default_format = {
- 	.img_dt = TEGRA_IMAGE_DT_RAW10,
- 	.bit_width = 10,
-diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 5396bf53ab75..9959cbe02ca0 100644
---- a/drivers/staging/media/tegra-video/vi.h
-+++ b/drivers/staging/media/tegra-video/vi.h
-@@ -98,19 +98,6 @@ struct tegra_vi {
- 	struct list_head vi_chans;
- };
+ 		lanes = v4l2_ep.bus.mipi_csi2.num_data_lanes;
+ 		ret = tegra_vi_channel_alloc(vi, port_num, port, lanes);
+-		if (ret < 0) {
+-			of_node_put(port);
++		if (ret < 0)
+ 			goto cleanup;
+-		}
+ 	}
  
--/**
-- * struct tegra_vi_graph_entity - Entity in the video graph
-- *
-- * @asd: subdev asynchronous registration information
-- * @entity: media entity from the corresponding V4L2 subdev
-- * @subdev: V4L2 subdev
-- */
--struct tegra_vi_graph_entity {
--	struct v4l2_async_subdev asd;
--	struct media_entity *entity;
--	struct v4l2_subdev *subdev;
--};
--
- /**
-  * struct tegra_vi_channel - Tegra video channel
-  *
+ cleanup:
++	of_node_put(port);
+ 	of_node_put(ports);
+ 	return ret;
+ }
 -- 
 2.34.1
 
