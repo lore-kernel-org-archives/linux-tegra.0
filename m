@@ -2,141 +2,296 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23581C77B73
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Apr 2023 20:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB750C6FD18
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Apr 2023 21:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbjDSU2z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Apr 2023 16:28:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45460 "EHLO
+        id S232640AbjDSVcU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Apr 2023 17:32:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231475AbjDSU2x (ORCPT
+        with ESMTP id S232637AbjDSVcM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Apr 2023 16:28:53 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2081.outbound.protection.outlook.com [40.107.237.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691A22685;
-        Wed, 19 Apr 2023 13:28:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AQDquMuJZ8nPN06FVxbRdm380giPwXHXMjUB479yH5qjfUHPM7zFISNTgabIv1LhovcfFq83NFWQ9dvkhBUjkrEgQ5V64GIdmmWRWl/QPpCxWyqqg1omXME78kRQy48hj842CjXswqoqoKO/u1JiNPQP2n68edD/dJUgJKygluAUixAcqv/1/U9SXyL7caEZjptzvSlGEko52yXpU0telQSF4BMEx5KSL2XnzEPL6/DlvrLGPrkRU8srjunSCwnX3/nkYmKdA75raygx4B5EHy0QNDxElH2CrJbqQ6Gpc9x+WhBemxGSSMLmOrTF4gV9b1uqVqa+9ByLQZirsHFAWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/GgM0xtrChp/eSAPoUXAd84+SLRPmq+TsEVO4tF7UTc=;
- b=eUY88/vCOSxVfIzc60z7ExgGEjgbVe+pRKaHq+OaiYYu2NgM0LYHP7llS9hjtixO11PeazTaoDAFQjmteU7T3AGafHjOjiHfRSg/QDwZ39cqc9LZtM1uiHtN/Y5+DQ4mgkChquqO2Q/PMQXMrvMVXTy3Rt8ihy2L9wayhVcJ+WU2C5qKoE2RChLaicRMmKckhsNr6xWSLj8Bdyk9LXCAdimwym0U0Xth4sq75zrNuSPsSB2vlvu2c4cGLHBbt8nVsJCQgX/9CJxkjKQzS4RrgCCIfF3JtRkA1cg+l8vbBDvwjm1y3ZMNFef0aGHpbAKDvmX0BTIwIcwX/bLHzhWj4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/GgM0xtrChp/eSAPoUXAd84+SLRPmq+TsEVO4tF7UTc=;
- b=BOn5N2dJCnVQ4nHgrb4KQpPGuY7qNsu0Qk+EiOdK1wUuklJ99chY7TcCSYa2krZkjn7ksKyAmY5bgrLP0CZyiw1IcWdBVfr7WnBfpmxnPaIlipEu4WM08P+ggRhUkyZeHRN+JE+ULKJ/mHh2qXhKl0fvnMdTUFlbOMpKKCdSciIZ9kBdzZaamkyl+cFRDvT4CINaLn+FwAPSxSDcIJPTYeyxqmsZbyrvR2YBLZyosnCNdBASqEFtyi9PIG0DBEuQPZn1AipLR6vOa1DV0Z8zLX9rsE4BHJ/kQehGFxe5OvYRPe1iu3bsbNzkSY8X33LVZQ8gpaireyqteYTMD3kbAg==
-Received: from BN0PR10CA0004.namprd10.prod.outlook.com (2603:10b6:408:143::18)
- by SA1PR12MB5657.namprd12.prod.outlook.com (2603:10b6:806:234::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Wed, 19 Apr
- 2023 20:28:35 +0000
-Received: from BL02EPF000145BB.namprd05.prod.outlook.com
- (2603:10b6:408:143:cafe::9e) by BN0PR10CA0004.outlook.office365.com
- (2603:10b6:408:143::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.22 via Frontend
- Transport; Wed, 19 Apr 2023 20:28:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BL02EPF000145BB.mail.protection.outlook.com (10.167.241.211) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6319.14 via Frontend Transport; Wed, 19 Apr 2023 20:28:35 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 19 Apr 2023
- 13:28:25 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Wed, 19 Apr 2023 13:28:24 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
- Transport; Wed, 19 Apr 2023 13:28:24 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/129] 6.1.25-rc3 review
-In-Reply-To: <20230419132048.193275637@linuxfoundation.org>
-References: <20230419132048.193275637@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Apr 2023 17:32:12 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 31FEB5FC0;
+        Wed, 19 Apr 2023 14:32:02 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FD5C1424;
+        Wed, 19 Apr 2023 14:32:45 -0700 (PDT)
+Received: from [10.57.83.86] (unknown [10.57.83.86])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25DA43F587;
+        Wed, 19 Apr 2023 14:32:00 -0700 (PDT)
+Message-ID: <926a8f15-504e-c7a6-2686-c901f877a4dd@arm.com>
+Date:   Wed, 19 Apr 2023 22:31:58 +0100
 MIME-Version: 1.0
-Message-ID: <a1b757b7-8489-4872-a13b-b39e2175ba9b@drhqmail202.nvidia.com>
-Date:   Wed, 19 Apr 2023 13:28:24 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF000145BB:EE_|SA1PR12MB5657:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc4f9127-bbfb-48c9-3141-08db4114a6dd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RcqRXjLqZguRt5xqdHkokT//P/5PCRM+RUXiIZk+eUicAMyPi4Wd2dw2G/8dbnK/Rc741xFWQNr/Oi9emxYJmZHDGVoPqN1srbIlQiAL0OrJXidH2YqgSBfsUMwdBQdWbfa/aKO6rbAvoR1RogFXO56ki3itFRs5UkpFxqqyAxNgX/lTNDyybk1ajSEY1XEDsOFg//k74gW79YtOPjfsV0zDWK+AB/A37pK8w3CzxckqiYY8mDixocCGQgEr/DxDQZkj1sY7+XirFMyN7FFWcKUx2WGqCkTr+s814JJ8akb4DeyJF05yL59MYbNQ+ITwfStcU9FqMBRK7D8VO+YTk1NaB6FZtBBqkahPZsd+XeuR4B43xUmENWHNmwYf1OUb4EcrqFSkXQcGpMghQpmyD3oHeDjLd1lBslaIViCMvLu32/UfTkswOTxxmgmKHa8/CbJykk0AP/9Yd5R3SBLcGmxoTbge/bgkMEhkl5RD/xMNu7ZFAc7BggHmokYWLFBccxR57fP+GHb+c20TL3DdVbRyqnMDGz/IiQZkMj3cHAuxh5xLF4mFutBzdQ97RDkpmx1FRqNt88xFppnzvssUWdJILYSxjKLkEyoKzPiXLaLX/b60e9jR8Tmt3Rx3yQuW/7grOgvr3MIYqc48HnwvonGtRSJ1mHHW+dESUMm2SEDuI5wxw8/U/QZ1ouS4r0Cfw6LmBM71O2X5Jxa+vZ3ys4IeymWsMAtgMPHQANIc4Y73bH2KSOy5nvT0TvPbkS5EcZvFIe7xD1TVv+PtK3WT88sE+Ef11WcwxhJpN6QRgEk=
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(136003)(39860400002)(376002)(451199021)(40470700004)(36840700001)(46966006)(5660300002)(966005)(40460700003)(82740400003)(2906002)(4326008)(70206006)(70586007)(6916009)(7416002)(86362001)(8936002)(41300700001)(316002)(7636003)(356005)(82310400005)(8676002)(31696002)(478600001)(40480700001)(54906003)(26005)(31686004)(336012)(426003)(36860700001)(47076005)(186003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2023 20:28:35.5847
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc4f9127-bbfb-48c9-3141-08db4114a6dd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000145BB.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5657
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Subject: Re: [PATCH v2] perf: arm_cspmu: Separate Arm and vendor module
+To:     Besar Wicaksono <bwicaksono@nvidia.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vikram Sethi <vsethi@nvidia.com>,
+        Richard Wiley <rwiley@nvidia.com>,
+        Eric Funsten <efunsten@nvidia.com>
+References: <20230418062030.45620-1-bwicaksono@nvidia.com>
+ <122f0599-0ed4-6753-ef7a-5fed5c50fa1b@arm.com>
+ <SJ0PR12MB5676B580F6EC210C53C4A9C3A09D9@SJ0PR12MB5676.namprd12.prod.outlook.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <SJ0PR12MB5676B580F6EC210C53C4A9C3A09D9@SJ0PR12MB5676.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 19 Apr 2023 15:21:54 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.25 release.
-> There are 129 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 18/04/2023 20:33, Besar Wicaksono wrote:
+> Hi Suzuki,
 > 
-> Responses should be made by Fri, 21 Apr 2023 13:20:20 +0000.
-> Anything received after that time might be too late.
+>> -----Original Message-----
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Sent: Tuesday, April 18, 2023 6:07 AM
+>> To: Besar Wicaksono <bwicaksono@nvidia.com>; catalin.marinas@arm.com;
+>> will@kernel.org; mark.rutland@arm.com
+>> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+>> tegra@vger.kernel.org; Thierry Reding <treding@nvidia.com>; Jonathan
+>> Hunter <jonathanh@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>; Richard
+>> Wiley <rwiley@nvidia.com>; Eric Funsten <efunsten@nvidia.com>
+>> Subject: Re: [PATCH v2] perf: arm_cspmu: Separate Arm and vendor module
+>>
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 18/04/2023 07:20, Besar Wicaksono wrote:
+>>> Arm Coresight PMU driver consists of main standard code and vendor
+>>> backend code. Both are currently built as a single module.
+>>> This patch adds vendor registration API to separate the two to
+>>> keep things modular. Vendor module shall register to the main
+>>> module on loading and trigger device reprobe.
+>>>
+>>> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+>>> ---
+>>>
+>>> Changes from v1:
+>>>    * Added separate Kconfig entry for nvidia backend
+>>>    * Added lock to protect accesses to the lists
+>>>    * Added support for matching subset devices from a vendor
+>>>    * Added state tracking to avoid reprobe when a device is in use
+>>> v1: ttps://lore.kernel.org/linux-arm-kernel/20230403163905.20354-1-
+>> bwicaksono@nvidia.com/T/#u
+>>>
+>>> ---
+>>>    drivers/perf/arm_cspmu/Kconfig        |   9 +-
+>>>    drivers/perf/arm_cspmu/Makefile       |   6 +-
+>>>    drivers/perf/arm_cspmu/arm_cspmu.c    | 280
+>> +++++++++++++++++++++++---
+>>>    drivers/perf/arm_cspmu/arm_cspmu.h    |  32 ++-
+>>>    drivers/perf/arm_cspmu/nvidia_cspmu.c |  39 +++-
+>>>    drivers/perf/arm_cspmu/nvidia_cspmu.h |  17 --
+>>>    6 files changed, 325 insertions(+), 58 deletions(-)
+>>>    delete mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
+>>>
+>>> diff --git a/drivers/perf/arm_cspmu/Kconfig
+>> b/drivers/perf/arm_cspmu/Kconfig
+>>> index 0b316fe69a45..8ce7b45a0075 100644
+>>> --- a/drivers/perf/arm_cspmu/Kconfig
+>>> +++ b/drivers/perf/arm_cspmu/Kconfig
+>>> @@ -1,6 +1,6 @@
+>>>    # SPDX-License-Identifier: GPL-2.0
+>>>    #
+>>> -# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights
+>> reserved.
+>>> +# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights
+>> reserved.
+>>>
+>>>    config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+>>>        tristate "ARM Coresight Architecture PMU"
+>>> @@ -11,3 +11,10 @@ config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+>>>          based on ARM CoreSight PMU architecture. Note that this PMU
+>>>          architecture does not have relationship with the ARM CoreSight
+>>>          Self-Hosted Tracing.
+>>> +
+>>> +config NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+>>> +     tristate "NVIDIA Coresight Architecture PMU"
+>>> +     depends on ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+>>> +     help
+>>> +       Provides NVIDIA specific attributes for performance monitoring unit
+>>> +       (PMU) devices based on ARM CoreSight PMU architecture.
+>>> diff --git a/drivers/perf/arm_cspmu/Makefile
+>> b/drivers/perf/arm_cspmu/Makefile
+>>> index fedb17df982d..f8ae22411d59 100644
+>>> --- a/drivers/perf/arm_cspmu/Makefile
+>>> +++ b/drivers/perf/arm_cspmu/Makefile
+>>> @@ -1,6 +1,6 @@
+>>> -# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights
+>> reserved.
+>>> +# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights
+>> reserved.
+>>>    #
+>>>    # SPDX-License-Identifier: GPL-2.0
+>>>
+>>> -obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) +=
+>> arm_cspmu_module.o
+>>> -arm_cspmu_module-y := arm_cspmu.o nvidia_cspmu.o
+>>> +obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) +=
+>> arm_cspmu.o
+>>> +obj-$(CONFIG_NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU) +=
+>> nvidia_cspmu.o
+>>> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c
+>> b/drivers/perf/arm_cspmu/arm_cspmu.c
+>>> index e31302ab7e37..c55ea2b74454 100644
+>>> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+>>> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+>>> @@ -16,7 +16,7 @@
+>>>     * The user should refer to the vendor technical documentation to get
+>> details
+>>>     * about the supported events.
+>>>     *
+>>> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights
+>> reserved.
+>>> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights
+>> reserved.
+>>>     *
+>>>     */
+>>>
+>>> @@ -25,13 +25,14 @@
+>>>    #include <linux/ctype.h>
+>>>    #include <linux/interrupt.h>
+>>>    #include <linux/io-64-nonatomic-lo-hi.h>
+>>> +#include <linux/list.h>
+>>>    #include <linux/module.h>
+>>> +#include <linux/mutex.h>
+>>>    #include <linux/perf_event.h>
+>>>    #include <linux/platform_device.h>
+>>>    #include <acpi/processor.h>
+>>>
+>>>    #include "arm_cspmu.h"
+>>> -#include "nvidia_cspmu.h"
+>>>
+>>>    #define PMUNAME "arm_cspmu"
+>>>    #define DRVNAME "arm-cs-arch-pmu"
+>>> @@ -117,11 +118,52 @@
+>>>     */
+>>>    #define HILOHI_MAX_POLL     1000
+>>>
+>>> -/* JEDEC-assigned JEP106 identification code */
+>>> -#define ARM_CSPMU_IMPL_ID_NVIDIA             0x36B
+>>> -
+>>>    static unsigned long arm_cspmu_cpuhp_state;
+>>>
+>>> +/* List of Coresight PMU instances in the system. */
+>>> +static LIST_HEAD(arm_cspmus);
+>>> +
+>>> +/* List of registered vendor backends. */
+>>> +static LIST_HEAD(arm_cspmu_impls);
+>>> +
+>>> +static DEFINE_MUTEX(arm_cspmu_lock);
+>>> +
+>>> +/*
+>>> + * State of the generic driver.
+>>> + * 0 => registering backend.
+>>> + * 1 => ready to use.
+>>> + * 2 or more => in use.
+>>> + */
+>>> +#define ARM_CSPMU_STATE_REG  0
+>>> +#define ARM_CSPMU_STATE_READY        1
+>>> +static atomic_t arm_cspmu_state;
+>>> +
+>>> +static void arm_cspmu_state_ready(void)
+>>> +{
+>>> +     atomic_set(&arm_cspmu_state, ARM_CSPMU_STATE_READY);
+>>> +}
+>>> +
+>>> +static bool try_arm_cspmu_state_reg(void)
+>>> +{
+>>> +     const int old = ARM_CSPMU_STATE_READY;
+>>> +     const int new = ARM_CSPMU_STATE_REG;
+>>> +
+>>> +     return atomic_cmpxchg(&arm_cspmu_state, old, new) == old;
+>>> +}
+>>> +
+>>> +static bool try_arm_cspmu_state_get(void)
+>>> +{
+>>> +     return atomic_inc_not_zero(&arm_cspmu_state);
+>>> +}
+>>> +
+>>> +static void arm_cspmu_state_put(void)
+>>> +{
+>>> +     int ret;
+>>> +
+>>> +     ret = atomic_dec_if_positive(&arm_cspmu_state);
+>>> +     WARN_ON(ret < 0);
+>>> +}
+>>> +
+>>
+>> As long as the vendor module is set for the PMU instance, it won't be
+>> unloaded as long as there are any perf events and thus the specific
+>> driver cannot be unloaded. So, you don't need explicit refcount
+>> maintenance for each pmu callbacks.
+>>
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.25-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> The arm_cspmu_state mainly protects during new backend registration when
+> the device is attached to standard implementation. All devices are attached to
+> standard implementation initially when arm_cspmu module is loaded, since there
+> is no backend yet. On backend registration, the standard impl is replaced by
+> backend impl. However, the module unloading mechanism doesn't provide
+> protection because standard impl is owned by arm_cspmu module, which
+> is not unloaded during registration.
 > 
-> thanks,
+> The refcount may not be required if the devices are not attached to standard
+> Implementation by default, and the unreg doesn't fallback to it. But that makes
+> the devices usable only when there is a vendor backend available.
+
+Ok, thanks for the explanation. But I still think we :
+
+  - Don't need a single global refcount for all the PMUs. Instead this
+    could be per PMU instance (arm_cspmu), only when it is backed by
+    "generic" backend, others get module refcount. If the refcount of
+    "generic" PMU is positive, during the registration of a matching
+    backend driver, we could simply mark that as pending reprobe.
+
+  - And only do the refcount for the following call backs:
+
+   pmu:: event_init -> hold the refcount
+   pmu:: destroy -> drop the refcount and trigger a reprobe if one was
+         pending (see above)
+
+This would allow loading (unrelated) modules even when other PMUs are
+active.
+
+>>> +static bool impl_param_match(const struct arm_cspmu_impl_param *A,
+>>> +                          const struct arm_cspmu_impl_param *B)
+>>> +{
+>>> +     /*
+>>> +      * Match criteria:
+>>> +      * - Implementer id should match.
+>>> +      * - A's device id is within B's range, or vice versa. This allows
+>>> +      *   vendor to register backend for a range of devices.
+>>> +      */
+>>> +     if ((A->impl_id == B->impl_id) &&
+>>> +         (((A->pvr & A->pvr_mask) == (B->pvr & A->pvr_mask)) ||
+>>> +          ((A->pvr & B->pvr_mask) == (B->pvr & B->pvr_mask))))
+>>> +             return true;
+>>> +
+>>
+>> nit: Please do not use CAPITAL letters for variable names. Could this
+>> simply accept a pmiidr and a impl_match and match the fields with that
+>> of the mask/value pair. See more below.
+>>
 > 
-> greg k-h
+> The bitfield comparison in impl_param_match can be reused for different purposes:
+> 1. Test between two mask/value pairs to check if device id ranges from
+>       both pairs are intersecting. We use it during validation in (un)registration.
+> 2. Along with to_impl_param, we can compare a pmiidr value with a
+>       mask/value pair to check if a device is compatible with a backend. We use
+>       it during reprobe and initializing impl_ops.
 
-All tests passing for Tegra ...
+Ok.
 
-Test results for stable-v6.1:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
-
-Linux version:	6.1.25-rc3-g45df5d9a8cbd
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Suzuki
