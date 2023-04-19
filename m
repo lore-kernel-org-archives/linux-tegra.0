@@ -2,208 +2,141 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F05CC6FD18
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Apr 2023 14:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6923C6FD18
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Apr 2023 20:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232690AbjDSOdG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Apr 2023 10:33:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
+        id S231442AbjDSU2i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Apr 2023 16:28:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232784AbjDSOdF (ORCPT
+        with ESMTP id S231942AbjDSU2d (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Apr 2023 10:33:05 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0169EE1
-        for <linux-tegra@vger.kernel.org>; Wed, 19 Apr 2023 07:32:42 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id he13so22226109wmb.2
-        for <linux-tegra@vger.kernel.org>; Wed, 19 Apr 2023 07:32:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681914760; x=1684506760;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yrJF8JCWqT51gG6Yojv1sYCui51lkUDIMOxbxH6Yq0A=;
-        b=DfBzMIFXr+XVMZJtu2NlUEBFwS7Y8pVxbXFuYYJG0quP6d0tm5zxBit9Trj3P22f/D
-         G97I/6JxkSr2tgMzV7engXd0YkCNEbPWh4muQbniGwDdkr2eKBzRby+e4TC4g3QBEJPr
-         9tnIm/8LwI2geZEQ1aRWy8FbOoEam3HrQdEfQkKeOck196AcVAdIXpTemQWJd+DGFaDc
-         OTn2JqwrtZQYeGUBPnG2aHuZFVARQ0pMF3cw0q7e1dPssXptwH4GUqahLomUSlA+9mQb
-         gfrMzfSvYRSphwvwgi0GumbT5pPmYPWnq6rdNd5WIZj4XU3qpLK3dblOguwV+QFXPi6d
-         yJEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681914760; x=1684506760;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yrJF8JCWqT51gG6Yojv1sYCui51lkUDIMOxbxH6Yq0A=;
-        b=YluM82h/Tb1Q78Tm+ANWcaodTaRqLhnmMIHM3Ne9ybtzo6zobbIbWQQvSuf32C/+Cc
-         /eHlk7fcnAjPP1h9iT8enUJeOH1157uSIeqhLQ3xmUMPmzYwiJmFqnhLa51h6c29gs85
-         2eZ2/vmdYz1Wja4cLKuVR5N+hUmK7qwlveEpAn+3Ts+Sj0QVHuSBuUQ0Ft9OF0h1eVwv
-         VaopLPFOhNQSmGG1N8qCwYsPZOQtQEu5v4HA81DLro97BRcLBfToHcI0e66q7vqkTzSK
-         YPiLicOXFVeEgtN7uVsNVvciiqUJaP+dqdlQ8J0GokUaYipeY+nXTkCe9C7rX0JSOKjz
-         3n4g==
-X-Gm-Message-State: AAQBX9fGRkyqxQvKAoHVGAEXG5Ia6F/SzaOt2Ms5zqd6LnQPcDqTJn42
-        +nVso8FrbrM0k/TkdEjW6ErPiw==
-X-Google-Smtp-Source: AKy350ZSF6ge7PhB6Xt7b5Y9QFQj982pW40ql6SqZL+CL3ssovF88jDryQeH1XdRaFzT1cT6WoDfhw==
-X-Received: by 2002:a1c:ed19:0:b0:3f0:a0bb:58ef with SMTP id l25-20020a1ced19000000b003f0a0bb58efmr17074663wmh.25.1681914760379;
-        Wed, 19 Apr 2023 07:32:40 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o2-20020a05600c4fc200b003f1738e64c0sm2432595wmq.20.2023.04.19.07.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 07:32:39 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 17:32:23 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     dipenp@nvidia.com
-Cc:     linux-tegra@vger.kernel.org
-Subject: [bug report] hte: Add Tegra HTE test driver
-Message-ID: <53e53a09-6051-494b-80a3-a78d2874ae65@kili.mountain>
+        Wed, 19 Apr 2023 16:28:33 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2045.outbound.protection.outlook.com [40.107.243.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB5839031;
+        Wed, 19 Apr 2023 13:28:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PfykV0+rRjV3WJUjSojwpAfDK7wRX/4oVsvIbAXw4XIgXT7FEw3vrivtFAeCCgG5gY0E2Y3HAM1goyKx2KIba1gpX5SVk3crdEDb6Ne1fa6tKTaO4gk5jPhX8ZbT+Sd/ImuppnUafL6n+4nbn6zFhRS9GVRpIADxzM5diP6DkSwyQIoqT1Nx+1cgCKuX435NVMSO2rRPs813BS0pMjNeVrgKxJKAwFbpd8BzRxJIWkzbGLWGCsLfW+CeaiXa8x150+h4GQYW8qr1uLkht+nVPt8aTuw9f2atwt0wtvY9N6la+A29ND8oWQaK1QUOO/wMLHHFaq0WBV5HmXzVcKbWYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WtqOXyMZlNMC2oEpno+zyXh68TyFQQVI0s7+jrrwx3s=;
+ b=eT92Krkir78tKpLl+B58cieD+CVYWT1hnmLKtmQrAIyAKhxEeDoD5OZVFOCV3L3QuQf6ShxVDAGExcKVouCDaMGA0fwmaLxkiugUERVrUUj1E9Q4fe53nDSkKT8F8ntdzo+F7AsIS8TJMHnlaK7U0U2jmdyFjZVmz6OMAUmFA8O0LjpbbgYjFIlcLIn/qbHxWYkkFzrnVJ7puHFOTKxEfDZ3GhYJzvTM7c1YsfRPRi7zhfzli6vDQ3WLCdntJiiTtA0q+c/OCCDTWIW0niecox1Wdl0vIaelJH4RABrShgzthVSa/r5fCCnytsGlLroHTEdQnyfT86XlibFh0DdAhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WtqOXyMZlNMC2oEpno+zyXh68TyFQQVI0s7+jrrwx3s=;
+ b=OG0K9h7Uhh0iL+p8Z2D1oo6Sn9xeIHyOgZWf9iyh8sBw7PetDVfvxa8MLo7HtXhvmocRJh3im5HwvXTEYBA32H6yKATHBqBJ16v9O4v9T2weI3XofI0ci+IZu1VUCNNw65C4lEzZOO/aiFFg4mxePAlTnvkOR2qD56UbAk0GqXaBZCg0v26pDtmddcdJ1K8nU/b2Na73fU9LU4CLecaHLwY6rir5CT05hJiMqVwspX29zz78upa8Fq6jvzPjWr+JrPfLoJTbUvL2Q6kzuAVNm/PIhrwekHXoGQSEcPJNo2p9jJMGhgB0uyqOrpLUimNc8SQd3reJ1FryWnWR+U8T8Q==
+Received: from MN2PR19CA0054.namprd19.prod.outlook.com (2603:10b6:208:19b::31)
+ by PH0PR12MB8173.namprd12.prod.outlook.com (2603:10b6:510:296::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.45; Wed, 19 Apr
+ 2023 20:28:16 +0000
+Received: from BL02EPF000145B8.namprd05.prod.outlook.com
+ (2603:10b6:208:19b:cafe::27) by MN2PR19CA0054.outlook.office365.com
+ (2603:10b6:208:19b::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.22 via Frontend
+ Transport; Wed, 19 Apr 2023 20:28:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL02EPF000145B8.mail.protection.outlook.com (10.167.241.208) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6319.16 via Frontend Transport; Wed, 19 Apr 2023 20:28:16 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 19 Apr 2023
+ 13:28:07 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Wed, 19 Apr 2023 13:28:07 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Wed, 19 Apr 2023 13:28:07 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 6.2 000/135] 6.2.12-rc3 review
+In-Reply-To: <20230419132054.228391649@linuxfoundation.org>
+References: <20230419132054.228391649@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Message-ID: <1b3d8953-f0a2-474f-b864-75002a356512@drhqmail201.nvidia.com>
+Date:   Wed, 19 Apr 2023 13:28:07 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF000145B8:EE_|PH0PR12MB8173:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c9d6420-9e49-4657-20b7-08db41149b31
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Cb4lNuooNzJSmExeHHNAGF4G/84eTm+P5Nehkf1JHuLVnAkDna4VfbB6+25zNSxuFQDJGiRAm5zSO/TToBlFVNYYbvQ5OmEiN/51Oz52PnnGzI5gy3p59EYBkLO+O/qjghL0RQXbKdtgdTM/7LNPdvHxBRo3ngjFakZaBLaPOKZXH7QvLLGndShr8XlFIeJirnwfbXpUkks4RHA61qlayO3ukuceazsjNOtJY73ptqtafeA6qpQgfa0lcH9xpEtRTaYWDgTrHr+BuKf/rYOYdgJsffUW9MQUgp+0pFEpKib3orOXF0XOGzgOQOGMFdneLJZulp/0z4Si9IycjOsXFvQWd8UVERM0T0nvfuT9gKCUD2ATkdKN3O2LWbxCw2Gg7jVb3T13U6woH+mKDXFO/y7kK3B3GlnvoRsNTf+YPYThJ3PivhZNCl6pTf7YWm73RUa6D2dpMd4u18cZ8U07oAvSLaqA+nXD4Rk1RoBUSLvP9TbDw644egGzzyQ2UFvrPySs3BLRP0+KA0UPA9UTiSJsaHrrlT9zDirQ+2V4vvYtVei/Pu1dEIohTdLjlL3SE8MarQLylxnyn2CmtdPLNDivb3dFPyeHzTPCl6tXHGRh3xGgWVd7uO8PqEGYGCbkLShj63ZiSUpZmTtQmyBhYDyLeGeREnGqsqUrN16B2GAf6e2SSW1hhzUDb1nIFPdxi0zEvbNc85t7nusaiQ7h4V5oBjZLQdk98qmfD8xoopHs/qhpXEsz58jYKV+Q3UJpnwlgBtUBVyIewlPXpE6Ti7X33y7bgnZ7L19VmGIZJ+4=
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(376002)(136003)(346002)(451199021)(40470700004)(36840700001)(46966006)(26005)(186003)(40460700003)(82310400005)(41300700001)(54906003)(426003)(40480700001)(86362001)(336012)(47076005)(4326008)(6916009)(31696002)(316002)(70586007)(70206006)(36860700001)(8936002)(7416002)(8676002)(2906002)(966005)(7636003)(31686004)(356005)(82740400003)(5660300002)(478600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2023 20:28:16.0177
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c9d6420-9e49-4657-20b7-08db41149b31
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000145B8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8173
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Dipen Patel,
+On Wed, 19 Apr 2023 15:22:02 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.2.12 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 21 Apr 2023 13:20:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.2.12-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.2.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The patch 9a75a7cd03c9: "hte: Add Tegra HTE test driver" from Apr 22,
-2022, leads to the following Smatch static checker warning:
+All tests passing for Tegra ...
 
-	drivers/hte/hte-tegra194-test.c:157 tegra_hte_test_probe()
-	warn: missing error code 'ret'
+Test results for stable-v6.2:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    130 tests:	130 pass, 0 fail
 
-drivers/hte/hte-tegra194-test.c
-    102 static int tegra_hte_test_probe(struct platform_device *pdev)
-    103 {
-    104         int ret = 0;
-    105         int i, cnt;
-    106 
-    107         dev_set_drvdata(&pdev->dev, &hte);
-    108         hte.pdev = &pdev->dev;
-    109 
-    110         hte.gpio_out = gpiod_get(&pdev->dev, "out", 0);
-    111         if (IS_ERR(hte.gpio_out)) {
-    112                 dev_err(&pdev->dev, "failed to get gpio out\n");
-    113                 ret = -EINVAL;
+Linux version:	6.2.12-rc3-g7507bdf58f79
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-It might be better to preserve the error code:
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-	ret = PTR_ERR(hte.gpio_out);
-
-I don't know if gpiod_get() can return -EPROBE_DEFER, but that's
-an especially important error code to preserve.
-
-    114                 goto out;
-    115         }
-    116 
-    117         hte.gpio_in = gpiod_get(&pdev->dev, "in", 0);
-    118         if (IS_ERR(hte.gpio_in)) {
-    119                 dev_err(&pdev->dev, "failed to get gpio in\n");
-    120                 ret = -EINVAL;
-    121                 goto free_gpio_out;
-    122         }
-    123 
-    124         ret = gpiod_direction_output(hte.gpio_out, 0);
-    125         if (ret) {
-    126                 dev_err(&pdev->dev, "failed to set output\n");
-    127                 ret = -EINVAL;
-
-Preserve the error code here as well?
-
-    128                 goto free_gpio_in;
-    129         }
-    130 
-    131         ret = gpiod_direction_input(hte.gpio_in);
-    132         if (ret) {
-    133                 dev_err(&pdev->dev, "failed to set input\n");
-    134                 ret = -EINVAL;
-    135                 goto free_gpio_in;
-    136         }
-    137 
-    138         ret = gpiod_to_irq(hte.gpio_in);
-    139         if (ret < 0) {
-    140                 dev_err(&pdev->dev, "failed to map GPIO to IRQ: %d\n", ret);
-    141                 ret = -ENXIO;
-    142                 goto free_gpio_in;
-    143         }
-    144 
-    145         hte.gpio_in_irq = ret;
-    146         ret = request_irq(ret, tegra_hte_test_gpio_isr,
-    147                           IRQF_TRIGGER_RISING,
-    148                           "tegra_hte_gpio_test_isr", &hte);
-    149         if (ret) {
-    150                 dev_err(&pdev->dev, "failed to acquire IRQ\n");
-    151                 ret = -ENXIO;
-    152                 goto free_irq;
-    153         }
-    154 
-    155         cnt = of_hte_req_count(hte.pdev);
-    156         if (cnt < 0)
---> 157                 goto free_irq;
-
-Needs a "ret = cnt;" on this error path otherwise it returns success.
-
-    158 
-    159         dev_info(&pdev->dev, "Total requested lines:%d\n", cnt);
-    160 
-    161         hte.desc = devm_kzalloc(hte.pdev, sizeof(*hte.desc) * cnt, GFP_KERNEL);
-    162         if (!hte.desc) {
-    163                 ret = -ENOMEM;
-    164                 goto free_irq;
-    165         }
-    166 
-    167         for (i = 0; i < cnt; i++) {
-    168                 if (i == 0)
-    169                         /*
-    170                          * GPIO hte init, line_id and name will be parsed from
-    171                          * the device tree node. The edge_flag is implicitly
-    172                          * set by request_irq call. Only line_data is needed to be
-    173                          * set.
-    174                          */
-    175                         hte_init_line_attr(&hte.desc[i], 0, 0, NULL,
-    176                                            hte.gpio_in);
-    177                 else
-    178                         /*
-    179                          * same comment as above except that IRQ does not need
-    180                          * line data.
-    181                          */
-    182                         hte_init_line_attr(&hte.desc[i], 0, 0, NULL, NULL);
-    183 
-    184                 ret = hte_ts_get(hte.pdev, &hte.desc[i], i);
-    185                 if (ret)
-    186                         goto ts_put;
-
-This is a very interesting thing because we're calling ts_put when
-ts_get() failed...
-
-    187 
-    188                 ret = devm_hte_request_ts_ns(hte.pdev, &hte.desc[i],
-    189                                              process_hw_ts, NULL,
-    190                                              &hte.desc[i]);
-    191                 if (ret) /* no need to ts_put, request API takes care */
-    192                         goto free_irq;
-
-The comment says that we don't call ts_put but then if the ts_get
-fails on the next iteration through the loop, then we will.
-
-    193         }
-    194 
-    195         timer_setup(&hte.timer, gpio_timer_cb, 0);
-    196         mod_timer(&hte.timer, jiffies + msecs_to_jiffies(5000));
-    197 
-    198         return 0;
-    199 
-    200 ts_put:
-    201         cnt = i;
-    202         for (i = 0; i < cnt; i++)
-    203                 hte_ts_put(&hte.desc[i]);
-    204 free_irq:
-    205         free_irq(hte.gpio_in_irq, &hte);
-    206 free_gpio_in:
-    207         gpiod_put(hte.gpio_in);
-    208 free_gpio_out:
-    209         gpiod_put(hte.gpio_out);
-    210 out:
-    211 
-    212         return ret;
-    213 }
-
-regards,
-dan carpenter
+Jon
