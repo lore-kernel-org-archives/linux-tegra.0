@@ -2,163 +2,141 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82803C77B76
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Apr 2023 21:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE55C77B73
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Apr 2023 10:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232753AbjDRVDJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Apr 2023 17:03:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
+        id S232544AbjDSKv4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Apr 2023 06:51:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230408AbjDRVDI (ORCPT
+        with ESMTP id S231722AbjDSKvz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Apr 2023 17:03:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ABFB7ED6;
-        Tue, 18 Apr 2023 14:03:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DC73662C35;
-        Tue, 18 Apr 2023 21:03:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 155EEC433EF;
-        Tue, 18 Apr 2023 21:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681851786;
-        bh=wUDQT7v4d9CA1v22EaRJl1H3C9V5twleJc7yXsj1qDA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=d5Uz3AqaD26Yv+nr9cFaoJzGbvLA3JqeJLNEPT8wSh1eb6X6EvRFOZ1SKuGjyCYpx
-         eH2HpI20aWdUaPs3W5D/b6IG/WZzl6KwS/RFlYyRmrj2rU8u8rhD2yi+B+D2Asy1aG
-         QZzpLc0Q40QmOcm3NtyQ0h0gD2NQ5jFUlsl5BFNaodBkqBr1SPZwgBdjChL8Vl6K7q
-         VzDjHXH+ceP1GDR16/ib2INaiLJASQIi75eyNC3TBuwxzV7EIo15vKo9ljsrRpjMPA
-         0kVyQPK6wtnK0kOGYyaRSwpiVK5b41MoX34NS0IlllNjSRS+UpeVDKG7EhBSgiUjHy
-         8RPrv8vYiZQzA==
-Date:   Tue, 18 Apr 2023 16:03:04 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] PCI: Use of_property_present() for testing DT property
- presence
-Message-ID: <20230418210304.GA158193@bhelgaas>
+        Wed, 19 Apr 2023 06:51:55 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10hn2244.outbound.protection.outlook.com [52.100.156.244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6586A4E;
+        Wed, 19 Apr 2023 03:51:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YmQdnsTvuClE0o0M++helI2Vs+1zzn/gCj2AU37B0J283eYTZ8PCZyUukJyy1mEwGSM82K0TBJ+gd/pTjCfDHuj28BHdvDgx9TkHEKCfIYLkNnbazfoB2fcAa2JoJFuWYvrltx9JLBBHlr2U3FLcdnm3igOFlEXAJOSNiRzC29x1CgTnk088KwbEo1ksohCsT7Et/vS0qVQCgi3YoULfBEWYuqks9LmTBhyQMTZDjFSjoDTX58Vy2Iq14WFI4vGdeInKrx700SRcX8YUt3YLgVsN2MSCpAcOodiHf+nJnatH5jNQOxRYrgtQe9C41jg4TOm8EdlS5GAz5wuFqNb4vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lZUYKm5uQnW2gecD5pUe8LdygzZce4wFpdxBce04eaQ=;
+ b=JsYhCQbshkf60etnnZ4rAFmnRaikKZOQYsUoAQX59yXUesSaxVDOyoWUpccwehpNZejSVRs5AHUKOhKNoSdtiNR403L4ERMSSi2iPY8y/PjsW0evRr7D4FmBLtXQjF+z6ty4/xG8sKHh0/Ef89jiRokrYBPhxdjP+VlG1ZVhkn2DY8Ju6xVkXZw95NuVGjGbnYuTW6ZBk3ekNp+3qlDCbx+TvmTnrGh5pGN64pZvjxuwx0RdJ37EHpgmqMTjFkMQbtbHfSqeBglTan5IJ0NEC79tHqLwJFNIaJbqpB3Me63nXNS4mc4sB6M25re/Vrd7whIMyFIzbdyKA8opphOTgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lZUYKm5uQnW2gecD5pUe8LdygzZce4wFpdxBce04eaQ=;
+ b=DrtLg0EJvkL04adhQq298OVQnXOG1KxM6OQAAGpvB8Yi9wMPKWKk45h3wUglXy++4Y9ZvgkkkzePkkLnbAHbE1jcoBPwonNOLv545YPKJB7W/+DeVS7e03XJB1vQ4xtar30kITx16odj+WxTAylLZhQG7UNlZXsw2SQw0KdhahAxQsANtm14qPMpR1hwK06ydqpawfrorOcYaHBI0829f8BiootoagFNdtvFZp1MGmSkdJN7VHcC8k+g2ObGVo0lN/fGvMmEyYmT2iPEa192/4ccdSewj6UNOW5GrJ8d6TKipbQTkx1aKM7ThuQ35RlCKq91wZ9XJadsUeNeVkAV4w==
+Received: from DM6PR12CA0019.namprd12.prod.outlook.com (2603:10b6:5:1c0::32)
+ by DS0PR12MB8219.namprd12.prod.outlook.com (2603:10b6:8:de::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.45; Wed, 19 Apr
+ 2023 10:51:50 +0000
+Received: from DM6NAM11FT091.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:1c0:cafe::11) by DM6PR12CA0019.outlook.office365.com
+ (2603:10b6:5:1c0::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.22 via Frontend
+ Transport; Wed, 19 Apr 2023 10:51:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DM6NAM11FT091.mail.protection.outlook.com (10.13.173.108) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6319.22 via Frontend Transport; Wed, 19 Apr 2023 10:51:50 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 19 Apr 2023
+ 03:51:45 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Wed, 19 Apr 2023 03:51:45 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Wed, 19 Apr 2023 03:51:45 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/92] 5.4.241-rc1 review
+In-Reply-To: <20230418120304.658273364@linuxfoundation.org>
+References: <20230418120304.658273364@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230310144719.1544443-1-robh@kernel.org>
+Message-ID: <83f2b54a-27df-4077-ab16-d66a8e68b622@drhqmail201.nvidia.com>
+Date:   Wed, 19 Apr 2023 03:51:45 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT091:EE_|DS0PR12MB8219:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c588a56-f4c3-4a46-7497-08db40c4149a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PMIWHSfom9qNQqUaO8MugztFMKdfU7O3gGiYw1KUBvpQK5xFt5dufga4gGGFzB6XoPxsTaevJwRtA66hgs936uTj3bMKIzj22Tu+9ocXuK9mq8rHrlIKbQmZdJjCqbE8EPCxUcTFEbCeO3zT4N/S0EO4amLJzKa3QkuO7nCUJrGw4WGzHE76P1/t539u9nlf+1RmWg8Mscf+xqCjiOVMi+ltq9CCQzSAu16C1cfmGNxHCS6hQ8dpl8iXGaBdjCMpUVt9J/xJpY2ajMIm/EsmaW25vl3yzCyyvQ19dDFjIXxdYpeYxv6tGynwyzL1XooSDRurj+uBQo+5dJB3DwagxLIn5M+zZivwlQk6lYC8uh9JHYoK8aTa859hb9I1C8uuWqg8CXNoLpOgviwlFeQoZAJAVB5vxCL7ni/U+TBRVBsiiQFIC2z29dxoBTc2rGKMSqzv2Z3oCrlgCWbT18iWYSwkeTxiFgo8zXU3Qbb9roFBAT4JE5k9HWAi+IDp8YXn1QPHbFUGJdP94Y+oFQ+zZjjNQCDyDmPtCJGGoaba6uXwlenf/7mO0Mewmh977CaRiYbXE307gyWjboEDTb0JjrqmKZkahbJc6Mx9SV2iXw9lFtIgl3uPYmP3mvsCY9N8cIVJyk28gwDZbTi21St7Q4ereemeo1tMm/Rs17mZx4dBq1OmxGz1l2+UmXB4XfpUWcD2o9d9zvGqyOPTwFnjFajJ+8hTWxSfNSL4c1knlYEKn61u8OwGsd/4wL2EpAvpBZhgc5Uky7WEGi5ZZ97HF5jEaa5le6e//KRyups84ax215KAU16BKp2n0Z1NFCg9JRkMQrgSQHyDPsYFGp60NbSH+1Whpu1zDluSX10RLik=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(346002)(39860400002)(376002)(5400799015)(451199021)(36840700001)(46966006)(40470700004)(34070700002)(31686004)(5660300002)(86362001)(426003)(6916009)(40480700001)(40460700003)(31696002)(82740400003)(7636003)(356005)(47076005)(36860700001)(316002)(336012)(26005)(186003)(82310400005)(966005)(54906003)(478600001)(41300700001)(8676002)(70586007)(70206006)(4326008)(8936002)(2906002)(7416002)(12100799027);DIR:OUT;SFP:1501;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2023 10:51:50.5085
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c588a56-f4c3-4a46-7497-08db40c4149a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT091.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8219
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 08:47:19AM -0600, Rob Herring wrote:
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties. As
-> part of this, convert of_get_property/of_find_property calls to the
-> recently added of_property_present() helper when we just want to test
-> for presence of a property and nothing more.
+On Tue, 18 Apr 2023 14:20:35 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.241 release.
+> There are 92 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Responses should be made by Thu, 20 Apr 2023 12:02:44 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.241-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Applied with AngeloGioacchino's reviewed-by to pci/enumeration for
-v6.4, thanks!
+All tests passing for Tegra ...
 
-> ---
->  drivers/pci/controller/pci-tegra.c     | 4 ++--
->  drivers/pci/controller/pcie-mediatek.c | 2 +-
->  drivers/pci/hotplug/rpaphp_core.c      | 4 ++--
->  drivers/pci/of.c                       | 2 +-
->  4 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index 74c109f14ff0..79630885b9c8 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -1375,7 +1375,7 @@ static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
->  	struct tegra_pcie_port *port;
->  	int err;
->  
-> -	if (!soc->has_gen2 || of_find_property(np, "phys", NULL) != NULL)
-> +	if (!soc->has_gen2 || of_property_present(np, "phys"))
->  		return tegra_pcie_phys_get_legacy(pcie);
->  
->  	list_for_each_entry(port, &pcie->ports, list) {
-> @@ -1944,7 +1944,7 @@ static bool of_regulator_bulk_available(struct device_node *np,
->  	for (i = 0; i < num_supplies; i++) {
->  		snprintf(property, 32, "%s-supply", supplies[i].supply);
->  
-> -		if (of_find_property(np, property, NULL) == NULL)
-> +		if (!of_property_present(np, property))
->  			return false;
->  	}
->  
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index ae5ad05ddc1d..31de7a29192c 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -643,7 +643,7 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
->  		return err;
->  	}
->  
-> -	if (of_find_property(dev->of_node, "interrupt-names", NULL))
-> +	if (of_property_present(dev->of_node, "interrupt-names"))
->  		port->irq = platform_get_irq_byname(pdev, "pcie_irq");
->  	else
->  		port->irq = platform_get_irq(pdev, port->slot);
-> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-> index 491986197c47..2316de0fd198 100644
-> --- a/drivers/pci/hotplug/rpaphp_core.c
-> +++ b/drivers/pci/hotplug/rpaphp_core.c
-> @@ -278,7 +278,7 @@ int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
->  		return -EINVAL;
->  	}
->  
-> -	if (of_find_property(dn->parent, "ibm,drc-info", NULL))
-> +	if (of_property_present(dn->parent, "ibm,drc-info"))
->  		return rpaphp_check_drc_props_v2(dn, drc_name, drc_type,
->  						be32_to_cpu(*my_index));
->  	else
-> @@ -440,7 +440,7 @@ int rpaphp_add_slot(struct device_node *dn)
->  	if (!of_node_name_eq(dn, "pci"))
->  		return 0;
->  
-> -	if (of_find_property(dn, "ibm,drc-info", NULL))
-> +	if (of_property_present(dn, "ibm,drc-info"))
->  		return rpaphp_drc_info_add_slot(dn);
->  	else
->  		return rpaphp_drc_add_slot(dn);
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index 196834ed44fe..e085f2eca372 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -447,7 +447,7 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
->  		return -ENODEV;
->  
->  	/* Local interrupt-map in the device node? Use it! */
-> -	if (of_get_property(dn, "interrupt-map", NULL)) {
-> +	if (of_property_present(dn, "interrupt-map")) {
->  		pin = pci_swizzle_interrupt_pin(pdev, pin);
->  		ppnode = dn;
->  	}
-> -- 
-> 2.39.2
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
+
+Linux version:	5.4.241-rc1-g230f1bde44b6
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
