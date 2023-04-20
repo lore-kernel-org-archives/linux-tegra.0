@@ -2,301 +2,244 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C10EC77B73
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Apr 2023 00:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 169E1C77B73
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Apr 2023 02:33:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbjDTAWX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Apr 2023 20:22:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60440 "EHLO
+        id S230298AbjDTCd2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Apr 2023 22:33:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230043AbjDTAWW (ORCPT
+        with ESMTP id S229547AbjDTCd1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Apr 2023 20:22:22 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858F8173D;
-        Wed, 19 Apr 2023 17:22:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z3mDNbg1vJ/fbsIuSIfDt84uVaNQf9+fpi0de+PCG6SstDosoAzVZ60sH1QnT4lQqGcid6jFeI/wI5VlVxLlSdlPrxDh+VCGWA84lYZ4C1o0JHagbNSoAcYektwUBhJs7IiRJbIfwmMoSeJ6vvr69z1g1z6BICnO2XFh5yLfXKQGBzUwnhwC54VQEudo4pF7mBg1sBoNnYvBCx+WrlMeVKRzuvHa/akBnRapoJljYkbk1x+sdWFUKaQPzz4gAWJukgYwxjr3ET1JVjQ+Mukoi91Qyd1U2Zl59k6xJwsGK7oFz23NxbcA/28WUPY7DE8ayV+vNW3qiGeGWAK8oASKAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3ybUq09cGOwbaEq9Offfs56Fi929JfEMPBkaZlScaIo=;
- b=P090yWXcA68/wPEai8T/Bi2alxnuWSv4xiJkTtIRnZTMDmx+qVagv2IVM7HOCbruwPECdiim7jSOPjarzb4CHW01NR8lKWE7nKueiqfe4EXitC6qOkvN5znVEVtlyJJJlYuCblN8LMSgEwUamNTpeJqQ5ixnHQ9TXi4deIWTfDorFTonyx8PeP2O/wQ0mkYm3CunFEAOBWfNMxjku/SRlA+x8PXgYtEV8br4ovClp2qpf+rB1CD4oo05OzDJpfG56rNui9fgJkgsvEbGXcjPKq5a0/OsDym/bqXJrH8xgAkD9V3ZLM72pqfhPu5qmGUKtPOQQOdJA3xjZQi2ZN0sVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3ybUq09cGOwbaEq9Offfs56Fi929JfEMPBkaZlScaIo=;
- b=fkIuOpgBpvWVk2Qy3AjKsqs1WFHBF4OsM/kNM3L2kxkQeEBThBoJ/f+YPNt83VZLI8EJZOTxq5YeaX4Rz739X+u8cNFTvAxpoEzc4KTQr7fTRaktsrlatmQ/APqlY+g9egTBHehEUExAER/gPQrH+zGmldqJPWaE7wYtAQwEgQj52uQJM9Lm2JFKdvx9WYdC993Jt4CbeINdFkTEojp9c+iOOJQftI/v1tQ0m7jY0MRLx/smE/gEtjPkVeldONIgFV07Q2TU3tZEMvcYLh2oe+EbQqrL9svsptkSZM7yhGoonuEnh5G9WlPSJAYLHw9XB+ttcC/lzrYlobtRbmfxpA==
-Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
- by DM8PR12MB5478.namprd12.prod.outlook.com (2603:10b6:8:29::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.22; Thu, 20 Apr
- 2023 00:22:15 +0000
-Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
- ([fe80::5f30:d992:1391:bac]) by SJ0PR12MB5676.namprd12.prod.outlook.com
- ([fe80::5f30:d992:1391:bac%6]) with mapi id 15.20.6298.045; Thu, 20 Apr 2023
- 00:22:15 +0000
-From:   Besar Wicaksono <bwicaksono@nvidia.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>,
-        Richard Wiley <rwiley@nvidia.com>,
-        Eric Funsten <efunsten@nvidia.com>
-Subject: RE: [PATCH v2] perf: arm_cspmu: Separate Arm and vendor module
-Thread-Topic: [PATCH v2] perf: arm_cspmu: Separate Arm and vendor module
-Thread-Index: AQHZcb/AWUgRdv2LEU+52+bKKlUbua8w6E2AgABl3/CAAdsRAIAAKXzw
-Date:   Thu, 20 Apr 2023 00:22:14 +0000
-Message-ID: <SJ0PR12MB5676D9A11E18CE124722DE57A0639@SJ0PR12MB5676.namprd12.prod.outlook.com>
-References: <20230418062030.45620-1-bwicaksono@nvidia.com>
- <122f0599-0ed4-6753-ef7a-5fed5c50fa1b@arm.com>
- <SJ0PR12MB5676B580F6EC210C53C4A9C3A09D9@SJ0PR12MB5676.namprd12.prod.outlook.com>
- <926a8f15-504e-c7a6-2686-c901f877a4dd@arm.com>
-In-Reply-To: <926a8f15-504e-c7a6-2686-c901f877a4dd@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|DM8PR12MB5478:EE_
-x-ms-office365-filtering-correlation-id: 796c73e9-3ee6-4d65-1f65-08db41354af5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: VrFDs6Pp+ifvOxvSigCdHXorLIrFZqUnNrdvMLHKJY08Z/2QikbxPKQmHkOfUBTk7FMst5pk6li5oxpMQycWNV5OucwWdE8VNdkmJYhsrpzwntjRPWMRoOuN15k8QxQHwslGFDsy7PVwgGF2kpLkbzfRIOo01ig84XIdVRlGe4IMhCg6FjlpbYwPNxeSbM738HkBMj+D8R2viIgU8LZ40Bb+qjBUkKmT7tReurBj4L5B1MBm4i2PINqEqD4UxjrfSHTeJ8AkxTtOgW17XOxFM3rpvoJoVwChpwwrUo16NV7hadH5DRifuN/wTZifC5sYnqGIAX5OKVtPKDIDGhoY7EmeWrFGDkpAvhsbEwVa7aMxlIUlYKkr5mTOYUbVekDLjogEw2ECrrdEdt/8CqRXL4yFNYAmVxJnuDSZyo/H1eML6Gn8AJJwWyzCxh63AmO69f2mjDCvX2/7b6HyBX/8mRPEcTFYSKDu4x1mZvrpe4rhdPAz3fqI8gY7/UmglF/c5q0m+/by2mT77PYFcotyBksVat4meGrHYF9/tcHhgOaonWSrpyZnvHmHV9Ss1v6dqW7JQ5mgvDur5Ig/KHETC3ssdDq3zuKD85PuYXviOOXdu94q4XWrs8n32USDNUwt
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(376002)(136003)(39860400002)(366004)(451199021)(186003)(86362001)(122000001)(41300700001)(66556008)(55016003)(6506007)(33656002)(53546011)(9686003)(107886003)(316002)(66446008)(66476007)(64756008)(4326008)(26005)(7696005)(71200400001)(83380400001)(478600001)(110136005)(38070700005)(8676002)(8936002)(5660300002)(66946007)(76116006)(2906002)(52536014)(54906003)(38100700002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QUc3TnRid0FHVEU3Ykc2Z3BQVzhOeHFFSG9jZXZ0YlpndjNoL3ZGS09WV3lF?=
- =?utf-8?B?ZVJrZWxGU0tDZERTRUllWWlHY3RaRE43SUMxR2dhKzVQaVo4YU83dk9Remtr?=
- =?utf-8?B?Smo1RDZKUXBPTnRkZ1JoQ1NGYzNJNVZhNWJ1N3ZZeXRGaDk4UlBxYmtHdWNO?=
- =?utf-8?B?N2pxb0pxRXV4Z0ErdFJvWG55RlNobmJuQkw3cXNYbmVWTW5iODZ6bWNqdnVm?=
- =?utf-8?B?SXRqSHNtYVJTWVBGNmIvMVQ2QmlyamhoSVJvSXI1MUxaV2NVcXpxNldXaEcy?=
- =?utf-8?B?NlNxUk9iL2xxV3Zvekc3K1VyUXg2VGdQNmd4bmRXMFY0akRpbXMzY0RBRGZD?=
- =?utf-8?B?a1VWWmdpRGo2bXNpTysweWZIbEMvdEM1WU1oUUtpTVZYQzJtZlk4c0Z1cmRS?=
- =?utf-8?B?UFUxZGs1UFRtYXFDMWpEWmQrelNESFpIS1p1SnlhQnpqOXl0RTZ1NGJvZlgw?=
- =?utf-8?B?MlFZa2VHRHU5d3h2SEVLZlY1bUJwaENGbzVPT28wU0JYVW9pVENtaWR1cklo?=
- =?utf-8?B?N1Nxbm5XZHVyT0NWREFYNGQxWGF0bEZZTDRJQ3cyYmdnNTNKMHBaTlN5TmRH?=
- =?utf-8?B?ZkFLNHJEbkJablNML2dYMzg4ano2ZmZMSEZvNzdoNkVGbHFmK3dtSXJGMHVU?=
- =?utf-8?B?Mko3NFljS3NiK09QWHF0R2NQdXU5eE4xdlVKRjcwNnJRdnZPSUlkNFBpejZp?=
- =?utf-8?B?NW05aGRoVVBoeWtseG1zYTE5bnRKZmNLdG9CdlB1QiswbGIzVHBjTnpiM255?=
- =?utf-8?B?M21WS3NUSXJJTml4clA2M3JyQ3hMUU1Sb2R1WHltQVI3RUhrT3o5SDR3cTY3?=
- =?utf-8?B?VDFiVmRRWSsrTGx1Q0dQR1RJbUZESVowbW1nUmpKOUc3bHRpSkRCQzhhV3FV?=
- =?utf-8?B?SzlHaWIwYTE0bFlTMHpPYXdOM01yYmpGRkVPYWUyT3VkREY0TkR0cWkrWHhX?=
- =?utf-8?B?b0NtMFQxTDg5aGlsMldrc3RqYkgyTTQzVGJ6N1FpRlRsTHFsY2ZOZVFlRXFH?=
- =?utf-8?B?NXpHRFBKUElDNFN0K1FoOVE5K0VsNS80eWt2cGU2dUh1bGJ4eUFuSGk2aXVH?=
- =?utf-8?B?dlIzajBDczlIQXhHZXlpL2p5NmJRZnA5cmZlRW4xYi9KY0IrYjBlL3ZOaWRH?=
- =?utf-8?B?WWpHaEgzUEgvUDIza2pid3ZGb0dzK2pHWVVDc1lUN3QwWWhzdjFEVW5IbDJS?=
- =?utf-8?B?UjU2Z2Fpbk1iMTlmV25COFBDcGN4Y0FsVHVKdU90aVV1ZTFNTHlvc2c1TEpC?=
- =?utf-8?B?WG0xcDcrMXd5WEQ5ei9vb08xVUZtVC8va1pESmM3dW1NRlgzN1RyUmxIckQ2?=
- =?utf-8?B?NHA2dkhNdzdScElISHhxS2xuVkpvUkcraFdXT3ZtTUdEdEl1Mmhkdmc2UzZH?=
- =?utf-8?B?MnVQUVJpNU1BN3ZUYkx0RUJDMU9KNXFLQzVzc0RuYlRIQS9YOGljUGhNdWZK?=
- =?utf-8?B?UlZUKzJGKzZzWDUvakk4U0tGNG9ieEZ2dVduM2pCODdET1o2RTdRRU9LRDF4?=
- =?utf-8?B?UEdmOG1NWjdVNFExdytFam8vYXIraDJsYVBRRElkaFNNOHF1UjVMMVUrY3F3?=
- =?utf-8?B?bHpSRVN0Qm54M2tsYmppM080NEoxWVVkckwyZnBsMWd1b3V0NG1SR0E2bjJC?=
- =?utf-8?B?emlqOCtaUHVYMnRVYWtVcmxrY05LclMvRWJtYWdHZUlFdnhhb2toanlIci9x?=
- =?utf-8?B?T09xU1BtNVNZeGFFc0NmcnhnQ2JkUUFNUHNhQW5Qc2hxVHdvUXJXaWtOUlpU?=
- =?utf-8?B?TEw4RDdMdi96eDlHaktaQWI5Z0JUdTB1V3Rla2dlRlAxSTJqbWVGTFRHSE83?=
- =?utf-8?B?cnlMWmxrS2ttbzZhR3RIVjhucEl0Q3hsRWlIeURGQ3RhdE9GWHpZY091QSsz?=
- =?utf-8?B?bFlJcEE2RTR4ZURqdW1iTlhaQVZhek1HSDNrSks0ZFU1VER6bnF3M2tIZTJx?=
- =?utf-8?B?UkZwd0IybVVTY2RJVS9QM3oyVk1KT09EVzJWVGJaTmpFQW8rVURmZXJwUUVk?=
- =?utf-8?B?SlRuclFZSUViV2N1OHU4T21vWkJxRE9US2lhTDhaWklsWUVqbG42Mm1YZ21S?=
- =?utf-8?B?dEM0N0NCMGdNNE50TUp3eVNOalozK25JOUZzNlh1SHB0WkN3RWhjYVQ3SDdq?=
- =?utf-8?Q?A7ZMplonUvoDKP/IJIIO75y9E?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 19 Apr 2023 22:33:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A51549C4
+        for <linux-tegra@vger.kernel.org>; Wed, 19 Apr 2023 19:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681957965;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/9IH18D+jEVDVrg48E7D/+Hh3Zv47nKyKN2/CYQ3+8w=;
+        b=ikwwBniAbSr7wUYr3NCkLw2z/BUmm2BptMVemQT+UhrRjkVLCxK+ayC+lw+aHV8lW3Cyuf
+        YJXckAB6DtpgRlU4LgAZEnLNE/qTonZo71pvkXpomitvlq145JsEfevsJ0BpjBRiwStXj5
+        Jg7PJZYq9eIYcBsZFGunn9IpXH+cY28=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-17-qB74Cd_cPjeT5wmF-Hy0ig-1; Wed, 19 Apr 2023 22:32:44 -0400
+X-MC-Unique: qB74Cd_cPjeT5wmF-Hy0ig-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1a649f0290fso5768245ad.3
+        for <linux-tegra@vger.kernel.org>; Wed, 19 Apr 2023 19:32:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681957963; x=1684549963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/9IH18D+jEVDVrg48E7D/+Hh3Zv47nKyKN2/CYQ3+8w=;
+        b=Xiz0Q68HUWEjMQM4f+aIunvX8W+JXefxx6JcdNxmSFX+YGPoisFWlMY1lTk1/NUQGr
+         v6NzBdcqzVAJtzin933KEfmIjcMbAEAVddtOXOh3GoTjiVIkFShD4AHyHQYhEpy5DnL6
+         KAbtb91yaUPnitQRXfLCOQON7GF/cgi4aSYT5fO9J1TJeKutloI8cspyrIyihg0f0Ly3
+         zxr/iZptISsHNWxzKewsw5qGqBjgWzXn0o9XHmFbhwOA6E3NpD1XmlTCjVilXAHfyBoC
+         mdzGvwQqzV2mCVnNweT/HqQZrJ4W4mB8hbz9sTM5fWm2EIArq/E/pgih+ipzDq6l+M/R
+         QRvw==
+X-Gm-Message-State: AAQBX9ccpzncWR72qZpNFOS+om1pDPjhn9ly6Ic8Icc1DWtpQayim2C3
+        +puznccoifo4pXVfCcRH/TvPAfxgZerkZ73IaZ0i5RdyouMU0pPFcoKrSMOevlsSBEs27oEjkAr
+        wvu9pKgVhTNW4t7Jm/YoVo0Y=
+X-Received: by 2002:a17:902:c40f:b0:1a6:34ea:6bcf with SMTP id k15-20020a170902c40f00b001a634ea6bcfmr8945998plk.45.1681957962974;
+        Wed, 19 Apr 2023 19:32:42 -0700 (PDT)
+X-Google-Smtp-Source: AKy350a1VqyocJwfvjl49Pr9/YOTM3pq0JRu0La34QR/GP+CXIeyAco/PY+sgLhpPkkP0NDdWwroew==
+X-Received: by 2002:a17:902:c40f:b0:1a6:34ea:6bcf with SMTP id k15-20020a170902c40f00b001a634ea6bcfmr8945964plk.45.1681957962576;
+        Wed, 19 Apr 2023 19:32:42 -0700 (PDT)
+Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
+        by smtp.gmail.com with ESMTPSA id 5-20020a170902ee4500b001a064282b11sm124862plo.151.2023.04.19.19.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Apr 2023 19:32:42 -0700 (PDT)
+Date:   Wed, 19 Apr 2023 19:32:40 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
+        jgg@ziepe.ca, jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        skomatineni@nvidia.com, ldewangan@nvidia.com
+Subject: Re: [Patch V9 2/3] tpm_tis-spi: Add hardware wait polling
+Message-ID: <a6jhf7wghnos6yjvgt3rbudhwsx4r4r7kurm35euofz3mjwmdu@74z44ohjgmre>
+References: <20230325183409.7695-1-kyarlagadda@nvidia.com>
+ <20230325183409.7695-3-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 796c73e9-3ee6-4d65-1f65-08db41354af5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2023 00:22:14.9102
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: R83/g1hHWrOjkcbPT5KTwZt9nU9sx/LPRKMG/rIfFIARPtA7AAm2HdN3gj8Nj+0aDx/9asPbuYERb4Bd6pVEuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5478
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230325183409.7695-3-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-SGkgU3V6dWtpLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1enVr
-aSBLIFBvdWxvc2UgPHN1enVraS5wb3Vsb3NlQGFybS5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwg
-QXByaWwgMTksIDIwMjMgNDozMiBQTQ0KPiBUbzogQmVzYXIgV2ljYWtzb25vIDxid2ljYWtzb25v
-QG52aWRpYS5jb20+OyBjYXRhbGluLm1hcmluYXNAYXJtLmNvbTsNCj4gd2lsbEBrZXJuZWwub3Jn
-OyBtYXJrLnJ1dGxhbmRAYXJtLmNvbQ0KPiBDYzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gdGVncmFA
-dmdlci5rZXJuZWwub3JnOyBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPjsgSm9u
-YXRoYW4NCj4gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT47IFZpa3JhbSBTZXRoaSA8dnNl
-dGhpQG52aWRpYS5jb20+OyBSaWNoYXJkDQo+IFdpbGV5IDxyd2lsZXlAbnZpZGlhLmNvbT47IEVy
-aWMgRnVuc3RlbiA8ZWZ1bnN0ZW5AbnZpZGlhLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2
-Ml0gcGVyZjogYXJtX2NzcG11OiBTZXBhcmF0ZSBBcm0gYW5kIHZlbmRvciBtb2R1bGUNCj4gDQo+
-IEV4dGVybmFsIGVtYWlsOiBVc2UgY2F1dGlvbiBvcGVuaW5nIGxpbmtzIG9yIGF0dGFjaG1lbnRz
-DQo+IA0KPiANCj4gT24gMTgvMDQvMjAyMyAyMDozMywgQmVzYXIgV2ljYWtzb25vIHdyb3RlOg0K
-PiA+IEhpIFN1enVraSwNCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+
-PiBGcm9tOiBTdXp1a2kgSyBQb3Vsb3NlIDxzdXp1a2kucG91bG9zZUBhcm0uY29tPg0KPiA+PiBT
-ZW50OiBUdWVzZGF5LCBBcHJpbCAxOCwgMjAyMyA2OjA3IEFNDQo+ID4+IFRvOiBCZXNhciBXaWNh
-a3Nvbm8gPGJ3aWNha3Nvbm9AbnZpZGlhLmNvbT47DQo+IGNhdGFsaW4ubWFyaW5hc0Bhcm0uY29t
-Ow0KPiA+PiB3aWxsQGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tDQo+ID4+IENjOiBs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc7DQo+IGxpbnV4LQ0KPiA+PiB0ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7IFRoaWVycnkg
-UmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+OyBKb25hdGhhbg0KPiA+PiBIdW50ZXIgPGpvbmF0
-aGFuaEBudmlkaWEuY29tPjsgVmlrcmFtIFNldGhpIDx2c2V0aGlAbnZpZGlhLmNvbT47DQo+IFJp
-Y2hhcmQNCj4gPj4gV2lsZXkgPHJ3aWxleUBudmlkaWEuY29tPjsgRXJpYyBGdW5zdGVuIDxlZnVu
-c3RlbkBudmlkaWEuY29tPg0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyXSBwZXJmOiBhcm1f
-Y3NwbXU6IFNlcGFyYXRlIEFybSBhbmQgdmVuZG9yDQo+IG1vZHVsZQ0KPiA+Pg0KPiA+PiBFeHRl
-cm5hbCBlbWFpbDogVXNlIGNhdXRpb24gb3BlbmluZyBsaW5rcyBvciBhdHRhY2htZW50cw0KPiA+
-Pg0KPiA+Pg0KPiA+PiBPbiAxOC8wNC8yMDIzIDA3OjIwLCBCZXNhciBXaWNha3Nvbm8gd3JvdGU6
-DQo+ID4+PiBBcm0gQ29yZXNpZ2h0IFBNVSBkcml2ZXIgY29uc2lzdHMgb2YgbWFpbiBzdGFuZGFy
-ZCBjb2RlIGFuZCB2ZW5kb3INCj4gPj4+IGJhY2tlbmQgY29kZS4gQm90aCBhcmUgY3VycmVudGx5
-IGJ1aWx0IGFzIGEgc2luZ2xlIG1vZHVsZS4NCj4gPj4+IFRoaXMgcGF0Y2ggYWRkcyB2ZW5kb3Ig
-cmVnaXN0cmF0aW9uIEFQSSB0byBzZXBhcmF0ZSB0aGUgdHdvIHRvDQo+ID4+PiBrZWVwIHRoaW5n
-cyBtb2R1bGFyLiBWZW5kb3IgbW9kdWxlIHNoYWxsIHJlZ2lzdGVyIHRvIHRoZSBtYWluDQo+ID4+
-PiBtb2R1bGUgb24gbG9hZGluZyBhbmQgdHJpZ2dlciBkZXZpY2UgcmVwcm9iZS4NCj4gPj4+DQo+
-ID4+PiBTaWduZWQtb2ZmLWJ5OiBCZXNhciBXaWNha3Nvbm8gPGJ3aWNha3Nvbm9AbnZpZGlhLmNv
-bT4NCj4gPj4+IC0tLQ0KPiA+Pj4NCj4gPj4+IENoYW5nZXMgZnJvbSB2MToNCj4gPj4+ICAgICog
-QWRkZWQgc2VwYXJhdGUgS2NvbmZpZyBlbnRyeSBmb3IgbnZpZGlhIGJhY2tlbmQNCj4gPj4+ICAg
-ICogQWRkZWQgbG9jayB0byBwcm90ZWN0IGFjY2Vzc2VzIHRvIHRoZSBsaXN0cw0KPiA+Pj4gICAg
-KiBBZGRlZCBzdXBwb3J0IGZvciBtYXRjaGluZyBzdWJzZXQgZGV2aWNlcyBmcm9tIGEgdmVuZG9y
-DQo+ID4+PiAgICAqIEFkZGVkIHN0YXRlIHRyYWNraW5nIHRvIGF2b2lkIHJlcHJvYmUgd2hlbiBh
-IGRldmljZSBpcyBpbiB1c2UNCj4gPj4+IHYxOiB0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4
-LWFybS1rZXJuZWwvMjAyMzA0MDMxNjM5MDUuMjAzNTQtMS0NCj4gPj4gYndpY2Frc29ub0Budmlk
-aWEuY29tL1QvI3UNCj4gPj4+DQo+ID4+PiAtLS0NCj4gPj4+ICAgIGRyaXZlcnMvcGVyZi9hcm1f
-Y3NwbXUvS2NvbmZpZyAgICAgICAgfCAgIDkgKy0NCj4gPj4+ICAgIGRyaXZlcnMvcGVyZi9hcm1f
-Y3NwbXUvTWFrZWZpbGUgICAgICAgfCAgIDYgKy0NCj4gPj4+ICAgIGRyaXZlcnMvcGVyZi9hcm1f
-Y3NwbXUvYXJtX2NzcG11LmMgICAgfCAyODANCj4gPj4gKysrKysrKysrKysrKysrKysrKysrKyst
-LS0NCj4gPj4+ICAgIGRyaXZlcnMvcGVyZi9hcm1fY3NwbXUvYXJtX2NzcG11LmggICAgfCAgMzIg
-KystDQo+ID4+PiAgICBkcml2ZXJzL3BlcmYvYXJtX2NzcG11L252aWRpYV9jc3BtdS5jIHwgIDM5
-ICsrKy0NCj4gPj4+ICAgIGRyaXZlcnMvcGVyZi9hcm1fY3NwbXUvbnZpZGlhX2NzcG11LmggfCAg
-MTcgLS0NCj4gPj4+ICAgIDYgZmlsZXMgY2hhbmdlZCwgMzI1IGluc2VydGlvbnMoKyksIDU4IGRl
-bGV0aW9ucygtKQ0KPiA+Pj4gICAgZGVsZXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcGVyZi9hcm1f
-Y3NwbXUvbnZpZGlhX2NzcG11LmgNCj4gPj4+DQo+ID4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9w
-ZXJmL2FybV9jc3BtdS9LY29uZmlnDQo+ID4+IGIvZHJpdmVycy9wZXJmL2FybV9jc3BtdS9LY29u
-ZmlnDQo+ID4+PiBpbmRleCAwYjMxNmZlNjlhNDUuLjhjZTdiNDVhMDA3NSAxMDA2NDQNCj4gPj4+
-IC0tLSBhL2RyaXZlcnMvcGVyZi9hcm1fY3NwbXUvS2NvbmZpZw0KPiA+Pj4gKysrIGIvZHJpdmVy
-cy9wZXJmL2FybV9jc3BtdS9LY29uZmlnDQo+ID4+PiBAQCAtMSw2ICsxLDYgQEANCj4gPj4+ICAg
-ICMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gPj4+ICAgICMNCj4gPj4+IC0j
-IENvcHlyaWdodCAoYykgMjAyMiwgTlZJRElBIENPUlBPUkFUSU9OICYgQUZGSUxJQVRFUy4gQWxs
-IHJpZ2h0cw0KPiA+PiByZXNlcnZlZC4NCj4gPj4+ICsjIENvcHlyaWdodCAoYykgMjAyMi0yMDIz
-LCBOVklESUEgQ09SUE9SQVRJT04gJiBBRkZJTElBVEVTLiBBbGwNCj4gcmlnaHRzDQo+ID4+IHJl
-c2VydmVkLg0KPiA+Pj4NCj4gPj4+ICAgIGNvbmZpZyBBUk1fQ09SRVNJR0hUX1BNVV9BUkNIX1NZ
-U1RFTV9QTVUNCj4gPj4+ICAgICAgICB0cmlzdGF0ZSAiQVJNIENvcmVzaWdodCBBcmNoaXRlY3R1
-cmUgUE1VIg0KPiA+Pj4gQEAgLTExLDMgKzExLDEwIEBAIGNvbmZpZw0KPiBBUk1fQ09SRVNJR0hU
-X1BNVV9BUkNIX1NZU1RFTV9QTVUNCj4gPj4+ICAgICAgICAgIGJhc2VkIG9uIEFSTSBDb3JlU2ln
-aHQgUE1VIGFyY2hpdGVjdHVyZS4gTm90ZSB0aGF0IHRoaXMgUE1VDQo+ID4+PiAgICAgICAgICBh
-cmNoaXRlY3R1cmUgZG9lcyBub3QgaGF2ZSByZWxhdGlvbnNoaXAgd2l0aCB0aGUgQVJNIENvcmVT
-aWdodA0KPiA+Pj4gICAgICAgICAgU2VsZi1Ib3N0ZWQgVHJhY2luZy4NCj4gPj4+ICsNCj4gPj4+
-ICtjb25maWcgTlZJRElBX0NPUkVTSUdIVF9QTVVfQVJDSF9TWVNURU1fUE1VDQo+ID4+PiArICAg
-ICB0cmlzdGF0ZSAiTlZJRElBIENvcmVzaWdodCBBcmNoaXRlY3R1cmUgUE1VIg0KPiA+Pj4gKyAg
-ICAgZGVwZW5kcyBvbiBBUk1fQ09SRVNJR0hUX1BNVV9BUkNIX1NZU1RFTV9QTVUNCj4gPj4+ICsg
-ICAgIGhlbHANCj4gPj4+ICsgICAgICAgUHJvdmlkZXMgTlZJRElBIHNwZWNpZmljIGF0dHJpYnV0
-ZXMgZm9yIHBlcmZvcm1hbmNlIG1vbml0b3JpbmcgdW5pdA0KPiA+Pj4gKyAgICAgICAoUE1VKSBk
-ZXZpY2VzIGJhc2VkIG9uIEFSTSBDb3JlU2lnaHQgUE1VIGFyY2hpdGVjdHVyZS4NCj4gPj4+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL3BlcmYvYXJtX2NzcG11L01ha2VmaWxlDQo+ID4+IGIvZHJpdmVy
-cy9wZXJmL2FybV9jc3BtdS9NYWtlZmlsZQ0KPiA+Pj4gaW5kZXggZmVkYjE3ZGY5ODJkLi5mOGFl
-MjI0MTFkNTkgMTAwNjQ0DQo+ID4+PiAtLS0gYS9kcml2ZXJzL3BlcmYvYXJtX2NzcG11L01ha2Vm
-aWxlDQo+ID4+PiArKysgYi9kcml2ZXJzL3BlcmYvYXJtX2NzcG11L01ha2VmaWxlDQo+ID4+PiBA
-QCAtMSw2ICsxLDYgQEANCj4gPj4+IC0jIENvcHlyaWdodCAoYykgMjAyMiwgTlZJRElBIENPUlBP
-UkFUSU9OICYgQUZGSUxJQVRFUy4gQWxsIHJpZ2h0cw0KPiA+PiByZXNlcnZlZC4NCj4gPj4+ICsj
-IENvcHlyaWdodCAoYykgMjAyMi0yMDIzLCBOVklESUEgQ09SUE9SQVRJT04gJiBBRkZJTElBVEVT
-LiBBbGwNCj4gcmlnaHRzDQo+ID4+IHJlc2VydmVkLg0KPiA+Pj4gICAgIw0KPiA+Pj4gICAgIyBT
-UERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiA+Pj4NCj4gPj4+IC1vYmotJChDT05G
-SUdfQVJNX0NPUkVTSUdIVF9QTVVfQVJDSF9TWVNURU1fUE1VKSArPQ0KPiA+PiBhcm1fY3NwbXVf
-bW9kdWxlLm8NCj4gPj4+IC1hcm1fY3NwbXVfbW9kdWxlLXkgOj0gYXJtX2NzcG11Lm8gbnZpZGlh
-X2NzcG11Lm8NCj4gPj4+ICtvYmotJChDT05GSUdfQVJNX0NPUkVTSUdIVF9QTVVfQVJDSF9TWVNU
-RU1fUE1VKSArPQ0KPiA+PiBhcm1fY3NwbXUubw0KPiA+Pj4gK29iai0kKENPTkZJR19OVklESUFf
-Q09SRVNJR0hUX1BNVV9BUkNIX1NZU1RFTV9QTVUpICs9DQo+ID4+IG52aWRpYV9jc3BtdS5vDQo+
-ID4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wZXJmL2FybV9jc3BtdS9hcm1fY3NwbXUuYw0KPiA+
-PiBiL2RyaXZlcnMvcGVyZi9hcm1fY3NwbXUvYXJtX2NzcG11LmMNCj4gPj4+IGluZGV4IGUzMTMw
-MmFiN2UzNy4uYzU1ZWEyYjc0NDU0IDEwMDY0NA0KPiA+Pj4gLS0tIGEvZHJpdmVycy9wZXJmL2Fy
-bV9jc3BtdS9hcm1fY3NwbXUuYw0KPiA+Pj4gKysrIGIvZHJpdmVycy9wZXJmL2FybV9jc3BtdS9h
-cm1fY3NwbXUuYw0KPiA+Pj4gQEAgLTE2LDcgKzE2LDcgQEANCj4gPj4+ICAgICAqIFRoZSB1c2Vy
-IHNob3VsZCByZWZlciB0byB0aGUgdmVuZG9yIHRlY2huaWNhbCBkb2N1bWVudGF0aW9uIHRvIGdl
-dA0KPiA+PiBkZXRhaWxzDQo+ID4+PiAgICAgKiBhYm91dCB0aGUgc3VwcG9ydGVkIGV2ZW50cy4N
-Cj4gPj4+ICAgICAqDQo+ID4+PiAtICogQ29weXJpZ2h0IChjKSAyMDIyLCBOVklESUEgQ09SUE9S
-QVRJT04gJiBBRkZJTElBVEVTLiBBbGwgcmlnaHRzDQo+ID4+IHJlc2VydmVkLg0KPiA+Pj4gKyAq
-IENvcHlyaWdodCAoYykgMjAyMi0yMDIzLCBOVklESUEgQ09SUE9SQVRJT04gJiBBRkZJTElBVEVT
-LiBBbGwNCj4gcmlnaHRzDQo+ID4+IHJlc2VydmVkLg0KPiA+Pj4gICAgICoNCj4gPj4+ICAgICAq
-Lw0KPiA+Pj4NCj4gPj4+IEBAIC0yNSwxMyArMjUsMTQgQEANCj4gPj4+ICAgICNpbmNsdWRlIDxs
-aW51eC9jdHlwZS5oPg0KPiA+Pj4gICAgI2luY2x1ZGUgPGxpbnV4L2ludGVycnVwdC5oPg0KPiA+
-Pj4gICAgI2luY2x1ZGUgPGxpbnV4L2lvLTY0LW5vbmF0b21pYy1sby1oaS5oPg0KPiA+Pj4gKyNp
-bmNsdWRlIDxsaW51eC9saXN0Lmg+DQo+ID4+PiAgICAjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+
-DQo+ID4+PiArI2luY2x1ZGUgPGxpbnV4L211dGV4Lmg+DQo+ID4+PiAgICAjaW5jbHVkZSA8bGlu
-dXgvcGVyZl9ldmVudC5oPg0KPiA+Pj4gICAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2Rldmlj
-ZS5oPg0KPiA+Pj4gICAgI2luY2x1ZGUgPGFjcGkvcHJvY2Vzc29yLmg+DQo+ID4+Pg0KPiA+Pj4g
-ICAgI2luY2x1ZGUgImFybV9jc3BtdS5oIg0KPiA+Pj4gLSNpbmNsdWRlICJudmlkaWFfY3NwbXUu
-aCINCj4gPj4+DQo+ID4+PiAgICAjZGVmaW5lIFBNVU5BTUUgImFybV9jc3BtdSINCj4gPj4+ICAg
-ICNkZWZpbmUgRFJWTkFNRSAiYXJtLWNzLWFyY2gtcG11Ig0KPiA+Pj4gQEAgLTExNywxMSArMTE4
-LDUyIEBADQo+ID4+PiAgICAgKi8NCj4gPj4+ICAgICNkZWZpbmUgSElMT0hJX01BWF9QT0xMICAg
-ICAxMDAwDQo+ID4+Pg0KPiA+Pj4gLS8qIEpFREVDLWFzc2lnbmVkIEpFUDEwNiBpZGVudGlmaWNh
-dGlvbiBjb2RlICovDQo+ID4+PiAtI2RlZmluZSBBUk1fQ1NQTVVfSU1QTF9JRF9OVklESUEgICAg
-ICAgICAgICAgMHgzNkINCj4gPj4+IC0NCj4gPj4+ICAgIHN0YXRpYyB1bnNpZ25lZCBsb25nIGFy
-bV9jc3BtdV9jcHVocF9zdGF0ZTsNCj4gPj4+DQo+ID4+PiArLyogTGlzdCBvZiBDb3Jlc2lnaHQg
-UE1VIGluc3RhbmNlcyBpbiB0aGUgc3lzdGVtLiAqLw0KPiA+Pj4gK3N0YXRpYyBMSVNUX0hFQUQo
-YXJtX2NzcG11cyk7DQo+ID4+PiArDQo+ID4+PiArLyogTGlzdCBvZiByZWdpc3RlcmVkIHZlbmRv
-ciBiYWNrZW5kcy4gKi8NCj4gPj4+ICtzdGF0aWMgTElTVF9IRUFEKGFybV9jc3BtdV9pbXBscyk7
-DQo+ID4+PiArDQo+ID4+PiArc3RhdGljIERFRklORV9NVVRFWChhcm1fY3NwbXVfbG9jayk7DQo+
-ID4+PiArDQo+ID4+PiArLyoNCj4gPj4+ICsgKiBTdGF0ZSBvZiB0aGUgZ2VuZXJpYyBkcml2ZXIu
-DQo+ID4+PiArICogMCA9PiByZWdpc3RlcmluZyBiYWNrZW5kLg0KPiA+Pj4gKyAqIDEgPT4gcmVh
-ZHkgdG8gdXNlLg0KPiA+Pj4gKyAqIDIgb3IgbW9yZSA9PiBpbiB1c2UuDQo+ID4+PiArICovDQo+
-ID4+PiArI2RlZmluZSBBUk1fQ1NQTVVfU1RBVEVfUkVHICAwDQo+ID4+PiArI2RlZmluZSBBUk1f
-Q1NQTVVfU1RBVEVfUkVBRFkgICAgICAgIDENCj4gPj4+ICtzdGF0aWMgYXRvbWljX3QgYXJtX2Nz
-cG11X3N0YXRlOw0KPiA+Pj4gKw0KPiA+Pj4gK3N0YXRpYyB2b2lkIGFybV9jc3BtdV9zdGF0ZV9y
-ZWFkeSh2b2lkKQ0KPiA+Pj4gK3sNCj4gPj4+ICsgICAgIGF0b21pY19zZXQoJmFybV9jc3BtdV9z
-dGF0ZSwgQVJNX0NTUE1VX1NUQVRFX1JFQURZKTsNCj4gPj4+ICt9DQo+ID4+PiArDQo+ID4+PiAr
-c3RhdGljIGJvb2wgdHJ5X2FybV9jc3BtdV9zdGF0ZV9yZWcodm9pZCkNCj4gPj4+ICt7DQo+ID4+
-PiArICAgICBjb25zdCBpbnQgb2xkID0gQVJNX0NTUE1VX1NUQVRFX1JFQURZOw0KPiA+Pj4gKyAg
-ICAgY29uc3QgaW50IG5ldyA9IEFSTV9DU1BNVV9TVEFURV9SRUc7DQo+ID4+PiArDQo+ID4+PiAr
-ICAgICByZXR1cm4gYXRvbWljX2NtcHhjaGcoJmFybV9jc3BtdV9zdGF0ZSwgb2xkLCBuZXcpID09
-IG9sZDsNCj4gPj4+ICt9DQo+ID4+PiArDQo+ID4+PiArc3RhdGljIGJvb2wgdHJ5X2FybV9jc3Bt
-dV9zdGF0ZV9nZXQodm9pZCkNCj4gPj4+ICt7DQo+ID4+PiArICAgICByZXR1cm4gYXRvbWljX2lu
-Y19ub3RfemVybygmYXJtX2NzcG11X3N0YXRlKTsNCj4gPj4+ICt9DQo+ID4+PiArDQo+ID4+PiAr
-c3RhdGljIHZvaWQgYXJtX2NzcG11X3N0YXRlX3B1dCh2b2lkKQ0KPiA+Pj4gK3sNCj4gPj4+ICsg
-ICAgIGludCByZXQ7DQo+ID4+PiArDQo+ID4+PiArICAgICByZXQgPSBhdG9taWNfZGVjX2lmX3Bv
-c2l0aXZlKCZhcm1fY3NwbXVfc3RhdGUpOw0KPiA+Pj4gKyAgICAgV0FSTl9PTihyZXQgPCAwKTsN
-Cj4gPj4+ICt9DQo+ID4+PiArDQo+ID4+DQo+ID4+IEFzIGxvbmcgYXMgdGhlIHZlbmRvciBtb2R1
-bGUgaXMgc2V0IGZvciB0aGUgUE1VIGluc3RhbmNlLCBpdCB3b24ndCBiZQ0KPiA+PiB1bmxvYWRl
-ZCBhcyBsb25nIGFzIHRoZXJlIGFyZSBhbnkgcGVyZiBldmVudHMgYW5kIHRodXMgdGhlIHNwZWNp
-ZmljDQo+ID4+IGRyaXZlciBjYW5ub3QgYmUgdW5sb2FkZWQuIFNvLCB5b3UgZG9uJ3QgbmVlZCBl
-eHBsaWNpdCByZWZjb3VudA0KPiA+PiBtYWludGVuYW5jZSBmb3IgZWFjaCBwbXUgY2FsbGJhY2tz
-Lg0KPiA+Pg0KPiA+DQo+ID4gVGhlIGFybV9jc3BtdV9zdGF0ZSBtYWlubHkgcHJvdGVjdHMgZHVy
-aW5nIG5ldyBiYWNrZW5kIHJlZ2lzdHJhdGlvbg0KPiB3aGVuDQo+ID4gdGhlIGRldmljZSBpcyBh
-dHRhY2hlZCB0byBzdGFuZGFyZCBpbXBsZW1lbnRhdGlvbi4gQWxsIGRldmljZXMgYXJlIGF0dGFj
-aGVkDQo+IHRvDQo+ID4gc3RhbmRhcmQgaW1wbGVtZW50YXRpb24gaW5pdGlhbGx5IHdoZW4gYXJt
-X2NzcG11IG1vZHVsZSBpcyBsb2FkZWQsIHNpbmNlDQo+IHRoZXJlDQo+ID4gaXMgbm8gYmFja2Vu
-ZCB5ZXQuIE9uIGJhY2tlbmQgcmVnaXN0cmF0aW9uLCB0aGUgc3RhbmRhcmQgaW1wbCBpcyByZXBs
-YWNlZCBieQ0KPiA+IGJhY2tlbmQgaW1wbC4gSG93ZXZlciwgdGhlIG1vZHVsZSB1bmxvYWRpbmcg
-bWVjaGFuaXNtIGRvZXNuJ3QgcHJvdmlkZQ0KPiA+IHByb3RlY3Rpb24gYmVjYXVzZSBzdGFuZGFy
-ZCBpbXBsIGlzIG93bmVkIGJ5IGFybV9jc3BtdSBtb2R1bGUsIHdoaWNoDQo+ID4gaXMgbm90IHVu
-bG9hZGVkIGR1cmluZyByZWdpc3RyYXRpb24uDQo+ID4NCj4gPiBUaGUgcmVmY291bnQgbWF5IG5v
-dCBiZSByZXF1aXJlZCBpZiB0aGUgZGV2aWNlcyBhcmUgbm90IGF0dGFjaGVkIHRvIHN0YW5kYXJk
-DQo+ID4gSW1wbGVtZW50YXRpb24gYnkgZGVmYXVsdCwgYW5kIHRoZSB1bnJlZyBkb2Vzbid0IGZh
-bGxiYWNrIHRvIGl0LiBCdXQgdGhhdA0KPiBtYWtlcw0KPiA+IHRoZSBkZXZpY2VzIHVzYWJsZSBv
-bmx5IHdoZW4gdGhlcmUgaXMgYSB2ZW5kb3IgYmFja2VuZCBhdmFpbGFibGUuDQo+IA0KPiBPaywg
-dGhhbmtzIGZvciB0aGUgZXhwbGFuYXRpb24uIEJ1dCBJIHN0aWxsIHRoaW5rIHdlIDoNCj4gDQo+
-ICAgLSBEb24ndCBuZWVkIGEgc2luZ2xlIGdsb2JhbCByZWZjb3VudCBmb3IgYWxsIHRoZSBQTVVz
-LiBJbnN0ZWFkIHRoaXMNCj4gICAgIGNvdWxkIGJlIHBlciBQTVUgaW5zdGFuY2UgKGFybV9jc3Bt
-dSksIG9ubHkgd2hlbiBpdCBpcyBiYWNrZWQgYnkNCg0KT2ssIHdlIGNhbiBhZGQgcmVmY291bnQg
-cGVyIFBNVS4NCg0KPiAgICAgImdlbmVyaWMiIGJhY2tlbmQsIG90aGVycyBnZXQgbW9kdWxlIHJl
-ZmNvdW50LiBJZiB0aGUgcmVmY291bnQgb2YNCj4gICAgICJnZW5lcmljIiBQTVUgaXMgcG9zaXRp
-dmUsIGR1cmluZyB0aGUgcmVnaXN0cmF0aW9uIG9mIGEgbWF0Y2hpbmcNCj4gICAgIGJhY2tlbmQg
-ZHJpdmVyLCB3ZSBjb3VsZCBzaW1wbHkgbWFyayB0aGF0IGFzIHBlbmRpbmcgcmVwcm9iZS4NCj4g
-DQo+ICAgLSBBbmQgb25seSBkbyB0aGUgcmVmY291bnQgZm9yIHRoZSBmb2xsb3dpbmcgY2FsbCBi
-YWNrczoNCj4gDQo+ICAgIHBtdTo6IGV2ZW50X2luaXQgLT4gaG9sZCB0aGUgcmVmY291bnQNCj4g
-ICAgcG11OjogZGVzdHJveSAtPiBkcm9wIHRoZSByZWZjb3VudCBhbmQgdHJpZ2dlciBhIHJlcHJv
-YmUgaWYgb25lIHdhcw0KPiAgICAgICAgICBwZW5kaW5nIChzZWUgYWJvdmUpDQoNCklzIGl0IHNh
-ZmUgdG8gcmVwcm9iZSBvbiBkZXN0cm95ID8gVGhlIHJlcHJvYmUgd2lsbCBmcmVlIGFuZCByZWFs
-bG9jYXRlDQp0aGUgbWVtb3J5IG1hbmFnZWQgYnkgdGhlIGRldmljZS4NCg0KVGhhbmtzLA0KQmVz
-YXINCg==
+On Sun, Mar 26, 2023 at 12:04:08AM +0530, Krishna Yarlagadda wrote:
+> TPM devices may insert wait state on last clock cycle of ADDR phase.
+> For SPI controllers that support full-duplex transfers, this can be
+> detected using software by reading the MISO line. For SPI controllers
+> that only support half-duplex transfers, such as the Tegra QSPI, it is
+> not possible to detect the wait signal from software. The QSPI
+> controller in Tegra234 and Tegra241 implement hardware detection of the
+> wait signal which can be enabled in the controller for TPM devices.
+> 
+> The current TPM TIS driver only supports software detection of the wait
+> signal. To support SPI controllers that use hardware to detect the wait
+> signal, add the function tpm_tis_spi_hw_flow_transfer() and move the
+> existing code for software based detection into a function called
+> tpm_tis_spi_sw_flow_transfer(). SPI controllers that only support
+> half-duplex transfers will always call tpm_tis_spi_hw_flow_transfer()
+> because they cannot support software based detection. The bit
+> SPI_TPM_HW_FLOW is set to indicate to the SPI controller that hardware
+> detection is required and it is the responsibility of the SPI controller
+> driver to determine if this is supported or not.
+> 
+> For hardware flow control, CMD-ADDR-DATA messages are combined into a
+> single message where as for software flow control exiting method of
+> CMD-ADDR in a message and DATA in another is followed.
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  drivers/char/tpm/tpm_tis_spi_main.c | 91 ++++++++++++++++++++++++++++-
+>  1 file changed, 89 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
+> index a0963a3e92bd..db9afd0b83da 100644
+> --- a/drivers/char/tpm/tpm_tis_spi_main.c
+> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
+> @@ -71,8 +71,74 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
+>  	return 0;
+>  }
+>  
+> -int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+> -			 u8 *in, const u8 *out)
+> +/*
+> + * Half duplex controller with support for TPM wait state detection like
+> + * Tegra QSPI need CMD, ADDR & DATA sent in single message to manage HW flow
+> + * control. Each phase sent in different transfer for controller to idenity
+> + * phase.
+> + */
+> +static int tpm_tis_spi_transfer_half(struct tpm_tis_data *data,	u32 addr,
+> +				     u16 len, u8 *in, const u8 *out)
+> +{
+> +	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
+> +	struct spi_transfer spi_xfer[3];
+> +	struct spi_message m;
+> +	u8 transfer_len;
+> +	int ret;
+> +
+> +	while (len) {
+> +		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
+> +
+> +		spi_message_init(&m);
+> +		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
+> +		phy->iobuf[1] = 0xd4;
+> +		phy->iobuf[2] = addr >> 8;
+> +		phy->iobuf[3] = addr;
+
+I haven't looked at much TPM code in the past couple of years, but
+perhaps some defines instead of magic numbers here? 0x80 is the rw bit,
+and 0xd4 the transaction offset?
+
+> +
+> +		memset(&spi_xfer, 0, sizeof(spi_xfer));
+> +
+> +		spi_xfer[0].tx_buf = phy->iobuf;
+> +		spi_xfer[0].len = 1;
+> +		spi_message_add_tail(&spi_xfer[0], &m);
+> +
+> +		spi_xfer[1].tx_buf = phy->iobuf + 1;
+> +		spi_xfer[1].len = 3;
+> +		spi_message_add_tail(&spi_xfer[1], &m);
+> +
+> +		if (out) {
+> +			spi_xfer[2].tx_buf = &phy->iobuf[4];
+> +			spi_xfer[2].rx_buf = NULL;
+> +			memcpy(&phy->iobuf[4], out, transfer_len);
+> +			out += transfer_len;
+> +		}
+> +
+> +		if (in) {
+> +			spi_xfer[2].tx_buf = NULL;
+> +			spi_xfer[2].rx_buf = &phy->iobuf[4];
+> +		}
+> +
+> +		spi_xfer[2].len = transfer_len;
+> +		spi_message_add_tail(&spi_xfer[2], &m);
+> +
+> +		reinit_completion(&phy->ready);
+> +
+> +		ret = spi_sync_locked(phy->spi_device, &m);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		if (in) {
+> +			memcpy(in, &phy->iobuf[4], transfer_len);
+> +			in += transfer_len;
+> +		}
+> +
+> +		len -= transfer_len;
+> +	}
+> +
+> +	return ret;
+> +}
+
+Does tpm_tis_spi_transfer_half not need to lock the bus?  The doc comments for spi_sync_locked
+state:
+
+ This call should be used by drivers that require exclusive access to the
+ SPI bus. It has to be preceded by a spi_bus_lock call. The SPI bus must
+ be released by a spi_bus_unlock call when the exclusive access is over.
+
+If that isn't the case should it be using spi_sync instead of spi_sync_locked?
+
+Regards,
+Jerry
+
+> +
+> +static int tpm_tis_spi_transfer_full(struct tpm_tis_data *data, u32 addr,
+> +				     u16 len, u8 *in, const u8 *out)
+>  {
+>  	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
+>  	int ret = 0;
+> @@ -140,6 +206,24 @@ int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+>  	return ret;
+>  }
+>  
+> +int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+> +			 u8 *in, const u8 *out)
+> +{
+> +	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
+> +	struct spi_controller *ctlr = phy->spi_device->controller;
+> +
+> +	/*
+> +	 * TPM flow control over SPI requires full duplex support.
+> +	 * Send entire message to a half duplex controller to handle
+> +	 * wait polling in controller.
+> +	 * Set TPM HW flow control flag..
+> +	 */
+> +	if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX)
+> +		return tpm_tis_spi_transfer_half(data, addr, len, in, out);
+> +	else
+> +		return tpm_tis_spi_transfer_full(data, addr, len, in, out);
+> +}
+> +
+>  static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
+>  				  u16 len, u8 *result, enum tpm_tis_io_mode io_mode)
+>  {
+> @@ -181,6 +265,9 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
+>  
+>  	phy->flow_control = tpm_tis_spi_flow_control;
+>  
+> +	if (dev->controller->flags & SPI_CONTROLLER_HALF_DUPLEX)
+> +		dev->mode |= SPI_TPM_HW_FLOW;
+> +
+>  	/* If the SPI device has an IRQ then use that */
+>  	if (dev->irq > 0)
+>  		irq = dev->irq;
+> -- 
+> 2.17.1
+> 
+
