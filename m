@@ -2,260 +2,133 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCA1C77B73
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Apr 2023 03:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 258FAC77B72
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Apr 2023 06:43:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233784AbjDTDNI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Apr 2023 23:13:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57340 "EHLO
+        id S233469AbjDTGnc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Apr 2023 02:43:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233174AbjDTDMr (ORCPT
+        with ESMTP id S229749AbjDTGnb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Apr 2023 23:12:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3772F2135
-        for <linux-tegra@vger.kernel.org>; Wed, 19 Apr 2023 20:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681960321;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WJkzeJvwCETUjWcwNy+63mU9+yCXou1XIKFoGxVIfQ0=;
-        b=XytSxA9cKmqrdqfhVBKQq7fda2KnjfkNV3I73WyJytoJ3BI2rw//6w2D/OsuAFu2laekCc
-        q0vc1OK+lVXHe2Iwka1JzRoomtKRx/CL5RmBNqfBTZfT4R/GpfYgH59LmyEPJq+05KwLTE
-        buYEIrPix7x0f4SwGdsKEFXQjsiAgyM=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-kWWliyiOOOWJwxk6vVkY5g-1; Wed, 19 Apr 2023 23:11:57 -0400
-X-MC-Unique: kWWliyiOOOWJwxk6vVkY5g-1
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1a6820f90c6so3849455ad.0
-        for <linux-tegra@vger.kernel.org>; Wed, 19 Apr 2023 20:11:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681960316; x=1684552316;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WJkzeJvwCETUjWcwNy+63mU9+yCXou1XIKFoGxVIfQ0=;
-        b=hl6VfRGGSHzn83xTbBXEQWfxiWb1TenH0bEU3u+FaoX9UVnqTahiHNPno5PCDHwH2Z
-         a7iE2ISLl3AfoFC7zLC2JVAOrSbQdJw/axBOKR3a8j00qRCUVzfEAlMu15ERyxIzHUv5
-         j6WYMJs/DFuMHLc4FGsxTnrDj6T3dL55goyOVPjKQvA9+Pfi7iablBRXJHGgegdWWXfV
-         2bSbLGlg5vheq9LPB/8OfdY4gYqdkMRxw2bpkOWHpOVAPhp5Pq9XpL2pEzL3fmB7xW36
-         dhvAmBm37aaHup0T4dW0+Z4MtyshSkrEa0iXsbhC1sk9hvhNo5+orFLigd4mAb4S+DRI
-         heQw==
-X-Gm-Message-State: AAQBX9fQGYOp/76ccsOD+y5LnRkSTNWa3AcnEa20WW7xzJZQxSG/25BL
-        KP1P/961IfcEKj4FZc5iT0ZZ5YDKR56lTb262ppODbAw/E5s6C2JJbVP8010irS/GA28zAJJrre
-        Er/e2BFz4Bq/AfEpAhUnNe7M=
-X-Received: by 2002:a17:902:e0cc:b0:19e:dc0e:1269 with SMTP id e12-20020a170902e0cc00b0019edc0e1269mr76465pla.7.1681960316375;
-        Wed, 19 Apr 2023 20:11:56 -0700 (PDT)
-X-Google-Smtp-Source: AKy350ax8FFXo3OHHtKHTICA0kOA/Q49kpcfJ7vYva+HjvLXcSzVkRLCzrjx53STrgpygHaJ1jeLfg==
-X-Received: by 2002:a17:902:e0cc:b0:19e:dc0e:1269 with SMTP id e12-20020a170902e0cc00b0019edc0e1269mr76444pla.7.1681960316010;
-        Wed, 19 Apr 2023 20:11:56 -0700 (PDT)
-Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id a13-20020a1709027d8d00b001a647709860sm153930plm.157.2023.04.19.20.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 20:11:55 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 20:11:54 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
-        jgg@ziepe.ca, jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        skomatineni@nvidia.com, ldewangan@nvidia.com
-Subject: Re: [Patch V9 2/3] tpm_tis-spi: Add hardware wait polling
-Message-ID: <enfduqgdgrdpfw73suydlbmu3mopk545vwrpoat2chkop375np@o3fxh5k7wc76>
-References: <20230325183409.7695-1-kyarlagadda@nvidia.com>
- <20230325183409.7695-3-kyarlagadda@nvidia.com>
- <a6jhf7wghnos6yjvgt3rbudhwsx4r4r7kurm35euofz3mjwmdu@74z44ohjgmre>
+        Thu, 20 Apr 2023 02:43:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13FBD1FE4;
+        Wed, 19 Apr 2023 23:43:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 930FB61C00;
+        Thu, 20 Apr 2023 06:43:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6067C433D2;
+        Thu, 20 Apr 2023 06:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1681973009;
+        bh=QvyofU4jJrOv/LND4GOXatYNGg2XL7j40PJ0jc/vGn8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lufp0kxudV+138bhm7a5/DdYa8SSR7Ube6k+0Dx6RybT+7pf6tVrllf+lSL8i8vMs
+         BsMJeQofBgtRlU28zThArhLHfZpJasu9D48Z0Lo777GUHq3ApUbHD42NNwK+1QG94S
+         9VG8qm3ZxgKVMGVh/o5nR3cRdVQy9BU4i0JVSHRE=
+Date:   Thu, 20 Apr 2023 08:43:26 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Nagarjuna Kristam <nkristam@nvidia.com>, linux-usb@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] usb: gadget: tegra-xudc: Fix crash in vbus_draw
+Message-ID: <2023042003-rentable-kitchen-ebbd@gregkh>
+References: <20230405181854.42355-1-jonathanh@nvidia.com>
+ <ZC59VDIEYzbR1YKF@orome>
+ <de55706b-f632-b921-a6f8-dc107601977a@nvidia.com>
+ <ZC60SvlnC7GXnjoW@orome>
+ <e49aa102-5737-fd13-29d6-4515d733fb7c@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a6jhf7wghnos6yjvgt3rbudhwsx4r4r7kurm35euofz3mjwmdu@74z44ohjgmre>
+In-Reply-To: <e49aa102-5737-fd13-29d6-4515d733fb7c@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 07:32:40PM -0700, Jerry Snitselaar wrote:
-> On Sun, Mar 26, 2023 at 12:04:08AM +0530, Krishna Yarlagadda wrote:
-> > TPM devices may insert wait state on last clock cycle of ADDR phase.
-> > For SPI controllers that support full-duplex transfers, this can be
-> > detected using software by reading the MISO line. For SPI controllers
-> > that only support half-duplex transfers, such as the Tegra QSPI, it is
-> > not possible to detect the wait signal from software. The QSPI
-> > controller in Tegra234 and Tegra241 implement hardware detection of the
-> > wait signal which can be enabled in the controller for TPM devices.
+On Wed, Apr 19, 2023 at 10:53:42PM +0100, Jon Hunter wrote:
+> Hi Greg,
+> 
+> On 06/04/2023 13:00, Thierry Reding wrote:
+> > On Thu, Apr 06, 2023 at 10:35:15AM +0100, Jon Hunter wrote:
+> > > 
+> > > On 06/04/2023 09:05, Thierry Reding wrote:
+> > > > On Wed, Apr 05, 2023 at 07:18:53PM +0100, Jon Hunter wrote:
+> > > > > Commit ac82b56bda5f ("usb: gadget: tegra-xudc: Add vbus_draw support")
+> > > > > populated the vbus_draw callback for the Tegra XUDC driver. The function
+> > > > > tegra_xudc_gadget_vbus_draw(), that was added by this commit, assumes
+> > > > > that the pointer 'curr_usbphy' has been initialised, which is not always
+> > > > > the case because this is only initialised when the USB role is updated.
+> > > > > Fix this crash, by checking that the 'curr_usbphy' is valid before
+> > > > > dereferencing.
+> > > > > 
+> > > > > Fixes: ac82b56bda5f ("usb: gadget: tegra-xudc: Add vbus_draw support")
+> > > > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > > > > ---
+> > > > >    drivers/usb/gadget/udc/tegra-xudc.c | 2 +-
+> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+> > > > > index 2b71b33725f1..5bccd64847ff 100644
+> > > > > --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> > > > > +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> > > > > @@ -2167,7 +2167,7 @@ static int tegra_xudc_gadget_vbus_draw(struct usb_gadget *gadget,
+> > > > >    	dev_dbg(xudc->dev, "%s: %u mA\n", __func__, m_a);
+> > > > > -	if (xudc->curr_usbphy->chg_type == SDP_TYPE)
+> > > > > +	if (xudc->curr_usbphy && xudc->curr_usbphy->chg_type == SDP_TYPE)
+> > > > >    		ret = usb_phy_set_power(xudc->curr_usbphy, m_a);
+> > > > >    	return ret;
+> > > > 
+> > > > Looking at tegra_xudc_probe(), that calls tegra_xudc_update_data_role()
+> > > > for all PHYs, so shouldn't that be enough to get curr_usbphy set? Or is
+> > > > there perhaps a race between ->vbus_draw() and the data role update? Is
+> > > > ->vbus_draw() perhaps called as part of usb_add_gadget_udc()? Should we
+> > > > reorder those to make sure the role is properly updated before the
+> > > > gadget is registered?
+> > > 
+> > > Yes it does call it, but it still does not set the curr_usbphy. If you look
+> > > at the function it may not set it.
+> > > 
+> > > In the backtrace I saw, which was happening on reboot, it was in the
+> > > unregister of the gadget ...
+> > > 
+> > > [ 1102.047896] Call trace:
+> > > [ 1102.050402]  0xffffde9fd18c0878
+> > > [ 1102.053602]  usb_gadget_vbus_draw+0x28/0x50
+> > > [ 1102.057879]  composite_disconnect+0x1c/0x40 [libcomposite]
+> > > [ 1102.063509]  usb_get_function_instance+0x1808/0x27b0 [libcomposite]
+> > > [ 1102.069935]  usb_gadget_disconnect+0x64/0xa0
+> > > [ 1102.074304]  usb_gadget_remove_driver+0x2c/0xc0
+> > > [ 1102.078942]  usb_gadget_unregister_driver+0x70/0xf0
+> > > [ 1102.083927]  usb_get_function_instance+0x2774/0x27b0 [libcomposite]
+> > > [ 1102.090339]  unregister_gadget_item+0x280/0x470 [libcomposite]
+> > > [ 1102.096314]  configfs_write_iter+0xc4/0x120
+> > > [ 1102.100609]  new_sync_write+0xe8/0x190
+> > > [ 1102.104461]  vfs_write+0x234/0x380
+> > > [ 1102.107938]  ksys_write+0x6c/0x100
+> > > [ 1102.111417]  __arm64_sys_write+0x1c/0x30
+> > > [ 1102.115427]  invoke_syscall.constprop.0+0x4c/0xe0
+> > > [ 1102.120245]  do_el0_svc+0x50/0x150
+> > > [ 1102.123723]  el0_svc+0x28/0xc0
+> > > [ 1102.126854]  el0t_64_sync_handler+0xb0/0xc0
+> > > [ 1102.131138]  el0t_64_sync+0x1a0/0x1a4
+> > > [ 1102.134889] Code: 910003fd a90153f3 f94ce413 f100027f (b9409a60)
+> > > [ 1102.141139] ---[ end trace cdf6612bd43fcbf2 ]---
 > > 
-> > The current TPM TIS driver only supports software detection of the wait
-> > signal. To support SPI controllers that use hardware to detect the wait
-> > signal, add the function tpm_tis_spi_hw_flow_transfer() and move the
-> > existing code for software based detection into a function called
-> > tpm_tis_spi_sw_flow_transfer(). SPI controllers that only support
-> > half-duplex transfers will always call tpm_tis_spi_hw_flow_transfer()
-> > because they cannot support software based detection. The bit
-> > SPI_TPM_HW_FLOW is set to indicate to the SPI controller that hardware
-> > detection is required and it is the responsibility of the SPI controller
-> > driver to determine if this is supported or not.
+> > Alright. There are a lot of cases where we can run into this and it all
+> > looks a little complicated, so I think it would be good to unwind this
+> > at some point. But I can't think of an easy way to do that, so for a fix
+> > this looks good:
 > > 
-> > For hardware flow control, CMD-ADDR-DATA messages are combined into a
-> > single message where as for software flow control exiting method of
-> > CMD-ADDR in a message and DATA in another is followed.
-> > 
-> > Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> > ---
-> >  drivers/char/tpm/tpm_tis_spi_main.c | 91 ++++++++++++++++++++++++++++-
-> >  1 file changed, 89 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-> > index a0963a3e92bd..db9afd0b83da 100644
-> > --- a/drivers/char/tpm/tpm_tis_spi_main.c
-> > +++ b/drivers/char/tpm/tpm_tis_spi_main.c
-> > @@ -71,8 +71,74 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
-> >  	return 0;
-> >  }
-> >  
-> > -int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> > -			 u8 *in, const u8 *out)
-> > +/*
-> > + * Half duplex controller with support for TPM wait state detection like
-> > + * Tegra QSPI need CMD, ADDR & DATA sent in single message to manage HW flow
-> > + * control. Each phase sent in different transfer for controller to idenity
-> > + * phase.
-> > + */
-> > +static int tpm_tis_spi_transfer_half(struct tpm_tis_data *data,	u32 addr,
-> > +				     u16 len, u8 *in, const u8 *out)
-> > +{
-> > +	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> > +	struct spi_transfer spi_xfer[3];
-> > +	struct spi_message m;
-> > +	u8 transfer_len;
-> > +	int ret;
-> > +
-> > +	while (len) {
-> > +		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
-> > +
-> > +		spi_message_init(&m);
-> > +		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
-> > +		phy->iobuf[1] = 0xd4;
-> > +		phy->iobuf[2] = addr >> 8;
-> > +		phy->iobuf[3] = addr;
+> > Reviewed-by: Thierry Reding <treding@nvidia.com>
 > 
-> I haven't looked at much TPM code in the past couple of years, but
-> perhaps some defines instead of magic numbers here? 0x80 is the rw bit,
-> and 0xd4 the transaction offset?
-> 
-> > +
-> > +		memset(&spi_xfer, 0, sizeof(spi_xfer));
-> > +
-> > +		spi_xfer[0].tx_buf = phy->iobuf;
-> > +		spi_xfer[0].len = 1;
-> > +		spi_message_add_tail(&spi_xfer[0], &m);
-> > +
-> > +		spi_xfer[1].tx_buf = phy->iobuf + 1;
-> > +		spi_xfer[1].len = 3;
-> > +		spi_message_add_tail(&spi_xfer[1], &m);
-> > +
-> > +		if (out) {
-> > +			spi_xfer[2].tx_buf = &phy->iobuf[4];
-> > +			spi_xfer[2].rx_buf = NULL;
-> > +			memcpy(&phy->iobuf[4], out, transfer_len);
-> > +			out += transfer_len;
-> > +		}
-> > +
-> > +		if (in) {
-> > +			spi_xfer[2].tx_buf = NULL;
-> > +			spi_xfer[2].rx_buf = &phy->iobuf[4];
-> > +		}
-> > +
-> > +		spi_xfer[2].len = transfer_len;
-> > +		spi_message_add_tail(&spi_xfer[2], &m);
-> > +
-> > +		reinit_completion(&phy->ready);
-> > +
-> > +		ret = spi_sync_locked(phy->spi_device, &m);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +
-> > +		if (in) {
-> > +			memcpy(in, &phy->iobuf[4], transfer_len);
-> > +			in += transfer_len;
-> > +		}
-> > +
-> > +		len -= transfer_len;
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> 
-> Does tpm_tis_spi_transfer_half not need to lock the bus?  The doc comments for spi_sync_locked
-> state:
-> 
->  This call should be used by drivers that require exclusive access to the
->  SPI bus. It has to be preceded by a spi_bus_lock call. The SPI bus must
->  be released by a spi_bus_unlock call when the exclusive access is over.
-> 
-> If that isn't the case should it be using spi_sync instead of spi_sync_locked?
-> 
-> Regards,
-> Jerry
+> OK for pick this up v6.4?
 
-b4 mbox -c to the rescue. I found the earlier discussion with Mark about
-the lock, so I guess the question is just should this call spi_sync
-instead of spi_sync_locked then?
+It's in my queue, which is big, I'm at a conference this week but will
+try to get to it today on the train ride...
 
-The magic numbers is a minor nit, and can probably be cleaned up
-separately since the full duplex code was already doing the same
-thing. The only other nit is just the older tcg spec being referenced
-in patch 1.
-
-Regards,
-Jerry
-
-> 
-> > +
-> > +static int tpm_tis_spi_transfer_full(struct tpm_tis_data *data, u32 addr,
-> > +				     u16 len, u8 *in, const u8 *out)
-> >  {
-> >  	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> >  	int ret = 0;
-> > @@ -140,6 +206,24 @@ int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> >  	return ret;
-> >  }
-> >  
-> > +int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> > +			 u8 *in, const u8 *out)
-> > +{
-> > +	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
-> > +	struct spi_controller *ctlr = phy->spi_device->controller;
-> > +
-> > +	/*
-> > +	 * TPM flow control over SPI requires full duplex support.
-> > +	 * Send entire message to a half duplex controller to handle
-> > +	 * wait polling in controller.
-> > +	 * Set TPM HW flow control flag..
-> > +	 */
-> > +	if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX)
-> > +		return tpm_tis_spi_transfer_half(data, addr, len, in, out);
-> > +	else
-> > +		return tpm_tis_spi_transfer_full(data, addr, len, in, out);
-> > +}
-> > +
-> >  static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
-> >  				  u16 len, u8 *result, enum tpm_tis_io_mode io_mode)
-> >  {
-> > @@ -181,6 +265,9 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
-> >  
-> >  	phy->flow_control = tpm_tis_spi_flow_control;
-> >  
-> > +	if (dev->controller->flags & SPI_CONTROLLER_HALF_DUPLEX)
-> > +		dev->mode |= SPI_TPM_HW_FLOW;
-> > +
-> >  	/* If the SPI device has an IRQ then use that */
-> >  	if (dev->irq > 0)
-> >  		irq = dev->irq;
-> > -- 
-> > 2.17.1
-> > 
-> 
-
+greg k-h
