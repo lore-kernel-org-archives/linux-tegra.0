@@ -2,90 +2,111 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 300B1C77B73
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Apr 2023 15:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBE4C77B76
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Apr 2023 16:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231672AbjDTPdj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Apr 2023 11:33:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36096 "EHLO
+        id S234159AbjDTQGl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Apr 2023 12:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbjDTPdi (ORCPT
+        with ESMTP id S234321AbjDTQGk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Apr 2023 11:33:38 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A761988
-        for <linux-tegra@vger.kernel.org>; Thu, 20 Apr 2023 08:33:32 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-3023a56048bso357940f8f.3
-        for <linux-tegra@vger.kernel.org>; Thu, 20 Apr 2023 08:33:32 -0700 (PDT)
+        Thu, 20 Apr 2023 12:06:40 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B3666A48;
+        Thu, 20 Apr 2023 09:05:58 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id z6so7561096ejc.5;
+        Thu, 20 Apr 2023 09:05:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682004810; x=1684596810;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g0abtiB/aHhrDR7QdF1aM8Dd//j8mWq0AuKn6qMdj88=;
-        b=I2LAugDuCJuSk61OFoS8FY5Slcy6UsR3s+NuRR4uD0UiGla75DEy2KEfkCkcJt3A1D
-         BaeUfgEejRpp96QuFZM/QP0IPOIMJ6niDTunlPuygoLnbjuKaMjyxxpoPizQbUKxKzLK
-         8UKuBGw/ltlw9ahYHwrsWEOAbNCyNqLDDZz2xCDtqRHhWKTO7HReGwUTejd0m1R9c95W
-         QOqJo9YJXUTXJ6WoAfk1/utV63wP07yhvL2MT18krFbq9pLY+dkN4XguHoxFxFLAtYb7
-         irbUI9dKP/B1nAMfG6hmAHg7k36qggAEJ433qw57xcxZbjvcsbhHl4xHco3b48yw14sg
-         HPJQ==
+        d=gmail.com; s=20221208; t=1682006757; x=1684598757;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EIrWFxNQFlhme+9qVbuyjFRPmgNp9vvWt4N75xCa6m4=;
+        b=a9rxcvGAOssBpy4B7PyIEPBItlmSNahxnycgB4kVPzpIz6OZ9CMc7H97kEQ8rirzr1
+         g4e//k/2hJlZY2UcTf/ZV7W78D0oif+QDSD8y/Rjn3IS8zvtuB+EizeU3l7A1BdTG049
+         /TJWVOz7m+8Q0LcUIHXBV6oCE8u8hCi8ncoqi1GYe/MbKP6mPGOlXoG+YVsOwtANwTGX
+         hE03Mn2G4krPSPrc1K/FPi1bTYIyLwIqQRteyPxens4/5ubijN1xjmZtZ6xEWcBqVc0o
+         933H5jxC2QivNsdcAo30+PfZbexvs7vECbotqh6MI5YhKteAcECf5k46gh7EosS7RUg7
+         bZUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682004810; x=1684596810;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g0abtiB/aHhrDR7QdF1aM8Dd//j8mWq0AuKn6qMdj88=;
-        b=LJxigPxaUmVsdF8TqVV3+36hi0ktHGqZG+Wt5Z+0VQkLNQ0achhb9WHlAx+BCSS9Sr
-         WG33xhO0fNUIqrYLTjPxQ596hfMS0Mnt1D/XWl6WguPKuaTOW75wewXmf4XHt/oHKlGw
-         qU2BqSq4Fq6DKL21KAmEtz0Fw22PR9i/4NHylqcD7fBKisJx4RKkgIHz+BDWPFjQbpkM
-         ForYlc8EMxNrmYbFoX2aihxtNf583HRylpNRs/NEZgCOv5WgF+xaq0OYyHskN+rZVwPh
-         mvQNcn7c9vK0wMIJq1tmrxJz6BYAfBVT6041dC1PQRshaqwtXgSvzBzuypg0XAh+BCPC
-         rimQ==
-X-Gm-Message-State: AAQBX9fINMITSsWoITC+Y7WVJgoOQrQCbfGJmKDPZCw5Tq5dG9axm40G
-        0+gIxaJMwMyFKa8+3W7H0vZJ5mYm9PwPe0oTSA5qGw==
-X-Google-Smtp-Source: AKy350aKQn9FMaL24BNAT0iN/pj3mhU1a8hSmnwt2jqDaJP7j0Ujm0T2iGPKP4+qjfzdRVzMS4Rx4w==
-X-Received: by 2002:a05:6000:1289:b0:2ce:ae05:4436 with SMTP id f9-20020a056000128900b002ceae054436mr1556159wrx.41.1682004810184;
-        Thu, 20 Apr 2023 08:33:30 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s1-20020adff801000000b00300aee6c9cesm2259979wrp.20.2023.04.20.08.33.27
+        d=1e100.net; s=20221208; t=1682006757; x=1684598757;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EIrWFxNQFlhme+9qVbuyjFRPmgNp9vvWt4N75xCa6m4=;
+        b=Q1r7eBXFNHjTW2+pUwrJeWi0bJ3D9gLvh5fg/Jev8A5MQrfokmifJJhILMlhXsx0YH
+         lOe4jgrKZRXwhxPahpRLNhDuynbOt3scPKnKTyON5OtiVa5q9EnuOx6+rjiVtn+BRsZb
+         8hWkDQWvC/yD9uEPOFbHTtQUTVUxlzuyhWfsur6VCv2pCOgzwnEibtTZmTiTvkoLgE36
+         Qz1cotI9fza55L6H5mfoqRY51Q7gBhg4AFs0MbReppJSC1P8aoMVW1+7RSRTWuNDuQSQ
+         n23lr4Pf0IIdfc/xCYTIqR/kSrbuvAzTY5jVkLXVnTPl03tCvFF8YSWsflUZCnaUjeS+
+         s3ng==
+X-Gm-Message-State: AAQBX9el0LyXMRI/tSd+cbc227SckVB90EGVRB/0lGaUUDipgLVsYySo
+        UbdIS5KLnwKElMSF/me1XLE=
+X-Google-Smtp-Source: AKy350YlLeT7OF1W7F6jluIK5b7JRjgtxjCjjoHaFXqLQ9oKKT4V6FsG5KV+u9+otG5Z3zZDBE9Jrg==
+X-Received: by 2002:a17:906:1c06:b0:94b:d57e:9d4b with SMTP id k6-20020a1709061c0600b0094bd57e9d4bmr2070785ejg.2.1682006756729;
+        Thu, 20 Apr 2023 09:05:56 -0700 (PDT)
+Received: from orome (p200300e41f053a00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f05:3a00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id l22-20020a170906795600b0094f25ae0821sm887732ejo.31.2023.04.20.09.05.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 08:33:28 -0700 (PDT)
-Date:   Thu, 20 Apr 2023 18:33:25 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     nkristam@nvidia.com
-Cc:     linux-tegra@vger.kernel.org
-Subject: [bug report] usb: gadget: Add UDC driver for tegra XUSB device mode
- controller
-Message-ID: <082799e5-253b-4116-a427-5fc7a4522aaa@kili.mountain>
+        Thu, 20 Apr 2023 09:05:56 -0700 (PDT)
+Date:   Thu, 20 Apr 2023 18:05:54 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org, robh+dt@kernel.org,
+        timestamp@lists.linux.dev, krzysztof.kozlowski+dt@linaro.org,
+        brgl@bgdev.pl, corbet@lwn.net, gregkh@linuxfoundation.org
+Subject: Re: [V6 4/9] arm64: tegra: Add Tegra234 GTE nodes
+Message-ID: <ZEFi4vKVtstiAno3@orome>
+References: <20230414004455.19275-1-dipenp@nvidia.com>
+ <20230414004455.19275-5-dipenp@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NPoYIIrP4+2LC65A"
 Content-Disposition: inline
+In-Reply-To: <20230414004455.19275-5-dipenp@nvidia.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Nagarjuna Kristam,
 
-This is a semi-automatic email about new static checker warnings.
+--NPoYIIrP4+2LC65A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The patch 49db427232fe: "usb: gadget: Add UDC driver for tegra XUSB
-device mode controller" from Oct 18, 2019, leads to the following
-Smatch complaint:
+On Thu, Apr 13, 2023 at 05:44:50PM -0700, Dipen Patel wrote:
+> Add GTE LIC and AON GPIO nodes for the tegra234 SoC.
+>=20
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 
-    drivers/usb/gadget/udc/tegra-xudc.c:2683 tegra_xudc_handle_transfer_completion()
-    warn: variable dereferenced before check 'ep->desc' (see line 2681)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-drivers/usb/gadget/udc/tegra-xudc.c
-  2680	
-  2681			tegra_xudc_req_done(ep, req, 0);
-                                            ^^
-ep->desc gets dereferenced inside the function.
+--NPoYIIrP4+2LC65A
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  2682	
-  2683			if (ep->desc && usb_endpoint_xfer_control(ep->desc))
-                            ^^^^^^^^
-So this check is too late.  Hopefully, the NULL check can be deleted?
+-----BEGIN PGP SIGNATURE-----
 
-  2684				tegra_xudc_ep0_req_done(xudc);
-  2685	
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRBYuIACgkQ3SOs138+
+s6EhoQ/+NM3QPHuY/4aEUx5uEy94QwELsFH6cn5FTtmq3kevgv+fjstZ1Ojxy3Nf
+tx34APCxIWm85Bs6qI+xs7o0ikd+WrttTV6CxQhpOiptO88eDr3vT2aN6bSqTBR7
+LR5HvaOnn06pRkYHbMGM6OTRLCAEU5J7Cz3C+n1oG6mE6405ImpAAImYZMyPH7Be
+ITbUFGF+ZH6cucAlxvoi5GnBn8zoN9hYgLphhQs7qOqSqV+bVxVBvFJq2ZXBhQPp
+CKHvoKdN6aWcynnLiPDZsZ1uvVfjV/iOUMwgb/lyl5SW/nrXQqipBPN6l5ONvG2F
+xUt/auV2Ipsn3x8vlEKts2qrzVwl9ojiy6Is/hUp95L/srpJUeix0zPGU38thBSp
+aVbsNXy6T2yQCpjFE9kVO3uuIvJGsOqSp6tt4CYrrEryt93ktU9dEjREbkaLRDRa
+5oSnzNVDKmzith3Zi7uPUL7eKvtQflnMbCOhn2HvAyVcjijyWxaQvqYuDC9tZhs/
+31R8aSgpVF8in6IkQnztLgEdXehAi4yuq9TWOeKRgVJUYAXBfmg+kfXchmRVlxVl
+d5UNYfEqmPjjxRbJPL7491G8JXtV6V53RrSuEuZizMdUgT3Qp2ut4J+DaTXMHiSc
+NBfvENpdOfv8MBtwt7Rs/kyZZJC5D9RT5jKMomseLewcNM+X6ho=
+=vZgG
+-----END PGP SIGNATURE-----
 
-regards,
-dan carpenter
+--NPoYIIrP4+2LC65A--
