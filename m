@@ -2,74 +2,70 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD68C77B75
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Apr 2023 07:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83EFC77B75
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Apr 2023 08:50:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229565AbjDUHme (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Apr 2023 03:42:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51502 "EHLO
+        id S229938AbjDUIun (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Apr 2023 04:50:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbjDUHmc (ORCPT
+        with ESMTP id S231478AbjDUIuK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Apr 2023 03:42:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4051BD5;
-        Fri, 21 Apr 2023 00:42:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D13264E25;
-        Fri, 21 Apr 2023 07:42:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A3BC433EF;
-        Fri, 21 Apr 2023 07:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682062947;
-        bh=pxCnzZf5c+gpy3rhAq/AgjK3nwcW2mvgkjhIw+gITy4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K8L3WScVaobBNhLDiBJwSskEacX89meHyPGIzjcW91OOgC0BF4X5aFw/lqFXahn1U
-         EPQzc/PCZmE90R8+Tk4+xJM5WgyMpevIheFLjZxLyIZcQb6xzLkwp6DPmvLZTBVtTi
-         cDTLpvQI3iqwIJnR7Ynhnm51QYlu+V/vUFD/9WXuutcKh7VnxwdC8TlJAK9En4itB/
-         7P6mzyxBGPuQwIMHlIM7A2wLo2sBCGU6cYDJbgX2UL2+hd4qeW6nWLMoY5kCQTDJ6b
-         8CTwmnqASlTijft5ae2+4fzlUcadljTzsrH4QI+UhrF9LleT7WapvHK5UmapYID/q7
-         KfB13xYfcvOTw==
-Date:   Fri, 21 Apr 2023 08:42:22 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
-        jonathanh@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        peterz@infradead.org, rafael.j.wysocki@intel.com,
-        richard.leitner@linux.dev, treding@nvidia.com, wsa@kernel.org
-Subject: Re: [PATCH v5 6/6] mfd: tps6586x: register restart handler
-Message-ID: <20230421074222.GP996918@google.com>
-References: <20230421072507.GK996918@google.com>
- <20230421073250.1203077-1-bbara93@gmail.com>
+        Fri, 21 Apr 2023 04:50:10 -0400
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2101693FA;
+        Fri, 21 Apr 2023 01:49:57 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VgcHKjy_1682066993;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0VgcHKjy_1682066993)
+          by smtp.aliyun-inc.com;
+          Fri, 21 Apr 2023 16:49:54 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     thierry.reding@gmail.com
+Cc:     mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
+        jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yang Li <yang.lee@linux.alibaba.com>
+Subject: [PATCH -next] drm/tegra: dpaux: Use devm_platform_ioremap_resource()
+Date:   Fri, 21 Apr 2023 16:49:52 +0800
+Message-Id: <20230421084952.45275-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230421073250.1203077-1-bbara93@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 21 Apr 2023, Benjamin Bara wrote:
+Convert platform_get_resource(),devm_ioremap_resource() to a single
+call to devm_platform_ioremap_resource(), as this is exactly what this
+function does.
 
-> On Fri, 21 Apr 2023 at 09:25, Lee Jones <lee@kernel.org> wrote:
-> > The confusing part for me, the reader, was that both say "will take at
-> > least 10ms" or words to that effect, but they sleep for a different
-> > amount of time.
-> 
-> Yep, got it. For the next version, I will rewrite to:
-> "Put the PMIC into * state. Data sheet states that this takes at least 20ms.
-> As this is board-specific, add some buffer to prevent the timeout error."
-> and change to -ETIMEDOUT instead of -ETIME.
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/gpu/drm/tegra/dpaux.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-No need to be more verbose.
-
-Stick to the one liner, just be more clear about the timings.
-
-The reader can see that you've added a little buffer without explanation.
-
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 4d2677dcd831..4699def04190 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -447,7 +447,6 @@ static const struct pinmux_ops tegra_dpaux_pinmux_ops = {
+ static int tegra_dpaux_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_dpaux *dpaux;
+-	struct resource *regs;
+ 	u32 value;
+ 	int err;
+ 
+@@ -461,8 +460,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&dpaux->list);
+ 	dpaux->dev = &pdev->dev;
+ 
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	dpaux->regs = devm_ioremap_resource(&pdev->dev, regs);
++	dpaux->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dpaux->regs))
+ 		return PTR_ERR(dpaux->regs);
+ 
 -- 
-Lee Jones [李琼斯]
+2.20.1.7.g153144c
+
