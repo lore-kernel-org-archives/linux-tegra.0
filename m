@@ -2,119 +2,204 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA85C77B76
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Apr 2023 13:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00615C77B76
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Apr 2023 21:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbjDUNNE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Apr 2023 09:13:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41594 "EHLO
+        id S232340AbjDUVsY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Apr 2023 17:48:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232354AbjDUNND (ORCPT
+        with ESMTP id S229698AbjDUVsW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Apr 2023 09:13:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16A909ECF;
-        Fri, 21 Apr 2023 06:13:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8AB463E7D;
-        Fri, 21 Apr 2023 13:13:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF73C433D2;
-        Fri, 21 Apr 2023 13:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682082781;
-        bh=LTVF3UalAmWiwiNCKiCSSsd5kOFARhJPHx3eV2qtZfE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EnFjT+cLXDWGzZ2ck7tAXbOS238fadx5OvphD1h6WpDW1zxp9KWxta5nCszqE9qla
-         fYPHZjk9NQowBxU3/tAjfuR3PXl2la+L7blgf4Uik7rocsNEiItVlmtKF3f9Bz7YCV
-         ZavqiwSgBqkoUYe9VZtdMrZ7GWCN2KrIACfuWa+t35WCl0wPeUMqmulVuXWKIB1LEP
-         Vedfm7zHiUttnBzzwPoI2slNA45yN2Ge2eyBtuaYld0fIUWLG8P5ypIqq3DFyALVLM
-         2bbufYNlOCmRPfLLio26ExAslQCDv7uABZm3Ux+jlLvoqFQXxydbpMRe3FqKvWVpid
-         zqsO7350CAuEQ==
-Date:   Fri, 21 Apr 2023 15:12:53 +0200
-From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     treding@nvidia.com, krzysztof.kozlowski@linaro.org,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        helgaas@kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        mmaddireddy@nvidia.com, kw@linux.com, bhelgaas@google.com,
-        vidyas@nvidia.com, sanjayc@nvidia.com, ksitaraman@nvidia.com,
-        ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v6 7/9] PCI: tegra194: Fix possible array out of bounds
- access
-Message-ID: <ZEKL1XzYzOwcEkHK@lpieralisi>
-References: <20230411110002.19824-1-sumitg@nvidia.com>
- <20230411110002.19824-8-sumitg@nvidia.com>
+        Fri, 21 Apr 2023 17:48:22 -0400
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B8F92;
+        Fri, 21 Apr 2023 14:48:20 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6a438f0d9c9so2037793a34.1;
+        Fri, 21 Apr 2023 14:48:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682113700; x=1684705700;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DRyhlU6c3feVqq/s8FXw+A2ovCuk/nDpRc2zb7Wb02o=;
+        b=gxNxtdjzoe/XKbmMXUtCXzrZ45OCZaKdKG0hymenhTIqIsokflVij1J/a5z1H3mrzB
+         ukna95A4RJAqJoh0clTO5u6jLou3BAKYOnEswyl2Uf6es7yAQi/WO1BlJa7U5AiRaSSv
+         FXkvIQDDXZPPpmAvx/EiOPRAWYt2sdH5TeeT7Ezy51mKWykSrWoC+8hZ6D47lfo//OH6
+         wF9uodnFsGAfVBexDHlarVcZan1cr56QcaSAvdRQuqzqGkVCk+crK4k15PtJqNoFtrUo
+         qeivE2+ZTBvYQ/J7b9g8cJ+3VhhJT7yg8ZuaR5msNtjVlMhfwqL5/wFciJpZA30Jjlef
+         LVgA==
+X-Gm-Message-State: AAQBX9fuzAnpuFXZnXdwPlDP9nW9TgYHeaq4mqAujRvNqsmuj+3u92UM
+        Sltc6f4P73HT0BFPrdEQkBk1bKF1fw==
+X-Google-Smtp-Source: AKy350aZUQfz+TT7Tkt8vP5BUlF8jQwcYin20eCbq0naZufUG8oi6julfm/UDVlx8BlcTVY1c1/c/Q==
+X-Received: by 2002:a05:6830:1698:b0:6a6:2f86:978d with SMTP id k24-20020a056830169800b006a62f86978dmr2681665otr.12.1682113700088;
+        Fri, 21 Apr 2023 14:48:20 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id dk10-20020a0568303b0a00b006a60606de62sm2128180otb.52.2023.04.21.14.48.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Apr 2023 14:48:19 -0700 (PDT)
+Received: (nullmailer pid 1812127 invoked by uid 1000);
+        Fri, 21 Apr 2023 21:48:18 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami <bgoswami@quicinc.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, patches@opensource.cirrus.com
+Subject: [PATCH] ASoC: dt-bindings: More dropping unneeded quotes
+Date:   Fri, 21 Apr 2023 16:48:10 -0500
+Message-Id: <20230421214810.1811962-1-robh@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230411110002.19824-8-sumitg@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 04:30:00PM +0530, Sumit Gupta wrote:
-> Add check to fix the possible array out of bounds violation by
-> making speed equal to GEN1_CORE_CLK_FREQ when its value is more
-> than the size of "pcie_gen_freq" array. This array has size of
-> four but possible speed (CLS) values are from "0 to 0xF". So,
-> "speed - 1" values are "-1 to 0xE". This change was suggested by
-> "Bjorn Helgaas" in the below link.
+Another batch of dropping unneeded quotes on $id and $schema which were
+missed in the last round. Once all these are fixed, checking for this can
+be enabled in yamllint.
 
-There is a Suggested-by tag and a Link: tag remove the last
-sentence, that's duplicate information.
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/sound/nvidia,tegra-audio-common.yaml  | 4 ++--
+ Documentation/devicetree/bindings/sound/qcom,q6apm-dai.yaml   | 4 ++--
+ .../devicetree/bindings/sound/qcom,q6dsp-lpass-clocks.yaml    | 4 ++--
+ .../devicetree/bindings/sound/qcom,q6dsp-lpass-ports.yaml     | 4 ++--
+ Documentation/devicetree/bindings/sound/tas2562.yaml          | 4 ++--
+ Documentation/devicetree/bindings/sound/tas2770.yaml          | 4 ++--
+ Documentation/devicetree/bindings/sound/tas27xx.yaml          | 4 ++--
+ Documentation/devicetree/bindings/sound/wlf,wm8903.yaml       | 4 ++--
+ 8 files changed, 16 insertions(+), 16 deletions(-)
 
-> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> Link: https://lore.kernel.org/lkml/72b9168b-d4d6-4312-32ea-69358df2f2d0@nvidia.com/
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml
+index 7c1e9895ce85..2588589ad62d 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/nvidia,tegra-audio-common.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-common.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Common properties for NVIDIA Tegra audio complexes
+ 
+diff --git a/Documentation/devicetree/bindings/sound/qcom,q6apm-dai.yaml b/Documentation/devicetree/bindings/sound/qcom,q6apm-dai.yaml
+index cdbb4096fa44..9e5b30d9c6e6 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,q6apm-dai.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,q6apm-dai.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/qcom,q6apm-dai.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/qcom,q6apm-dai.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm Audio Process Manager Digital Audio Interfaces
+ 
+diff --git a/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-clocks.yaml b/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-clocks.yaml
+index 1168410f6fbd..3552c44137ed 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-clocks.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-clocks.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/qcom,q6dsp-lpass-clocks.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/qcom,q6dsp-lpass-clocks.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm DSP LPASS Clock Controller
+ 
+diff --git a/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-ports.yaml b/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-ports.yaml
+index 044e77718a1b..08c618e7e428 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-ports.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,q6dsp-lpass-ports.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/qcom,q6dsp-lpass-ports.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/qcom,q6dsp-lpass-ports.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm DSP LPASS(Low Power Audio SubSystem) Audio Ports
+ 
+diff --git a/Documentation/devicetree/bindings/sound/tas2562.yaml b/Documentation/devicetree/bindings/sound/tas2562.yaml
+index a5bb561bfcfb..41489a3ac79f 100644
+--- a/Documentation/devicetree/bindings/sound/tas2562.yaml
++++ b/Documentation/devicetree/bindings/sound/tas2562.yaml
+@@ -2,8 +2,8 @@
+ # Copyright (C) 2019 Texas Instruments Incorporated
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/tas2562.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/tas2562.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Texas Instruments TAS2562 Smart PA
+ 
+diff --git a/Documentation/devicetree/bindings/sound/tas2770.yaml b/Documentation/devicetree/bindings/sound/tas2770.yaml
+index 26088adb9dc2..930bd111b072 100644
+--- a/Documentation/devicetree/bindings/sound/tas2770.yaml
++++ b/Documentation/devicetree/bindings/sound/tas2770.yaml
+@@ -2,8 +2,8 @@
+ # Copyright (C) 2019-20 Texas Instruments Incorporated
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/tas2770.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/tas2770.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Texas Instruments TAS2770 Smart PA
+ 
+diff --git a/Documentation/devicetree/bindings/sound/tas27xx.yaml b/Documentation/devicetree/bindings/sound/tas27xx.yaml
+index 8cba01316855..bda26b246634 100644
+--- a/Documentation/devicetree/bindings/sound/tas27xx.yaml
++++ b/Documentation/devicetree/bindings/sound/tas27xx.yaml
+@@ -2,8 +2,8 @@
+ # Copyright (C) 2020-2022 Texas Instruments Incorporated
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/tas27xx.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/tas27xx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Texas Instruments TAS2764/TAS2780 Smart PA
+ 
+diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8903.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8903.yaml
+index 7105ed5fd6c7..4cfa66f62681 100644
+--- a/Documentation/devicetree/bindings/sound/wlf,wm8903.yaml
++++ b/Documentation/devicetree/bindings/sound/wlf,wm8903.yaml
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: "http://devicetree.org/schemas/sound/wlf,wm8903.yaml#"
+-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/sound/wlf,wm8903.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: WM8903 audio codec
+ 
+-- 
+2.39.2
 
-Acked-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 09825b4a075e..e6eec85480ca 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -223,6 +223,7 @@
->  #define EP_STATE_ENABLED	1
->  
->  static const unsigned int pcie_gen_freq[] = {
-> +	GEN1_CORE_CLK_FREQ,	/* PCI_EXP_LNKSTA_CLS == 0; undefined */
->  	GEN1_CORE_CLK_FREQ,
->  	GEN2_CORE_CLK_FREQ,
->  	GEN3_CORE_CLK_FREQ,
-> @@ -459,7 +460,11 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
->  
->  	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
->  		PCI_EXP_LNKSTA_CLS;
-> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> +
-> +	if (speed >= ARRAY_SIZE(pcie_gen_freq))
-> +		speed = 0;
-> +
-> +	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
->  
->  	if (pcie->of_data->has_ltr_req_fix)
->  		return IRQ_HANDLED;
-> @@ -1020,7 +1025,11 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
->  
->  	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
->  		PCI_EXP_LNKSTA_CLS;
-> -	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> +
-> +	if (speed >= ARRAY_SIZE(pcie_gen_freq))
-> +		speed = 0;
-> +
-> +	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
->  
->  	tegra_pcie_enable_interrupts(pp);
->  
-> -- 
-> 2.17.1
-> 
