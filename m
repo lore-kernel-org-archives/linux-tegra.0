@@ -2,216 +2,202 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2161AC6FD18
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Apr 2023 15:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2EAC7618E
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Apr 2023 08:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229606AbjDWPIY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Apr 2023 11:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34748 "EHLO
+        id S229696AbjDXIcW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Apr 2023 04:32:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbjDWPIX (ORCPT
+        with ESMTP id S229507AbjDXIcV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Apr 2023 11:08:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45272E73;
-        Sun, 23 Apr 2023 08:08:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D49A161A18;
-        Sun, 23 Apr 2023 15:08:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62058C433EF;
-        Sun, 23 Apr 2023 15:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682262501;
-        bh=Bx08/1DfqELmigMEJHsOejEGnnoVg2rW5edq8aepiMY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=INdR8/X3lJVtD4B20CDbxGQjqqiWV8AcaGSfeoVppiLGDmv7vdgy0fC1aPiI4wXKb
-         E33YNCFOu2n2nA47tfllh27dBlZqxVqOvLbRzcCCYihSTEKarZYOCL6IYgjuZjBu9N
-         iv969l3igGxijcs62IlpWZMXIYnUwoll3SI4g5P5W91XpVNR3RnuWtslVYVD1QXAmY
-         9eqtF06gESC7jxsmOPaTrmSCLBgs4R7wAnu0LyaF7ZK6SxD1u3pVeJwxjrit1adB7w
-         pTVFdLG3jwsYqVhv4mPG6WdJR2vAAlzMnuUf6ZmW6IKeTQrsNlBDT71AJp6U/fjyJr
-         oSpnn2JgC7nKw==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Sun, 23 Apr 2023 18:08:16 +0300
-Message-Id: <CS48A9Y752N4.QEM73WVMZYLQ@suppilovahvero>
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Krishna Yarlagadda" <kyarlagadda@nvidia.com>,
-        <jsnitsel@redhat.com>, <robh+dt@kernel.org>, <broonie@kernel.org>,
-        <peterhuewe@gmx.de>, <jgg@ziepe.ca>,
-        <krzysztof.kozlowski+dt@linaro.org>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Cc:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <skomatineni@nvidia.com>, <ldewangan@nvidia.com>
-Subject: Re: [Patch V10 2/3] tpm_tis-spi: Add hardware wait polling
-X-Mailer: aerc 0.14.0
-References: <20230421091309.2672-1-kyarlagadda@nvidia.com>
- <20230421091309.2672-3-kyarlagadda@nvidia.com>
-In-Reply-To: <20230421091309.2672-3-kyarlagadda@nvidia.com>
+        Mon, 24 Apr 2023 04:32:21 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 60FF21AD;
+        Mon, 24 Apr 2023 01:32:19 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84820D75;
+        Mon, 24 Apr 2023 01:33:02 -0700 (PDT)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.78.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BF913F5A1;
+        Mon, 24 Apr 2023 01:32:18 -0700 (PDT)
+Date:   Mon, 24 Apr 2023 09:32:16 +0100
+From:   Ionela Voinescu <ionela.voinescu@arm.com>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     viresh.kumar@linaro.org, rafael@kernel.org, mark.rutland@arm.com,
+        sudeep.holla@arm.com, lpieralisi@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, vsethi@nvidia.com, sdonthineni@nvidia.com,
+        sanjayc@nvidia.com, ksitaraman@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch 6/6] cpufreq: CPPC: use wq to read amu counters on target
+ cpu
+Message-ID: <ZEY+kENTxCvHlhvK@arm.com>
+References: <20230418113459.12860-1-sumitg@nvidia.com>
+ <20230418113459.12860-7-sumitg@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230418113459.12860-7-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri Apr 21, 2023 at 12:13 PM EEST, Krishna Yarlagadda wrote:
-> TPM devices may insert wait state on last clock cycle of ADDR phase.
-> For SPI controllers that support full-duplex transfers, this can be
-> detected using software by reading the MISO line. For SPI controllers
-> that only support half-duplex transfers, such as the Tegra QSPI, it is
-> not possible to detect the wait signal from software. The QSPI
-> controller in Tegra234 and Tegra241 implement hardware detection of the
-> wait signal which can be enabled in the controller for TPM devices.
->
-> The current TPM TIS driver only supports software detection of the wait
-> signal. To support SPI controllers that use hardware to detect the wait
-> signal, add the function tpm_tis_spi_hw_flow_transfer() and move the
-> existing code for software based detection into a function called
-> tpm_tis_spi_sw_flow_transfer(). SPI controllers that only support
-> half-duplex transfers will always call tpm_tis_spi_hw_flow_transfer()
-> because they cannot support software based detection. The bit
-> SPI_TPM_HW_FLOW is set to indicate to the SPI controller that hardware
-> detection is required and it is the responsibility of the SPI controller
-> driver to determine if this is supported or not.
->
-> For hardware flow control, CMD-ADDR-DATA messages are combined into a
-> single message where as for software flow control exiting method of
-> CMD-ADDR in a message and DATA in another is followed.
->
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Hi Sumit,
+
+Thank you for the patches!
+
+On Tuesday 18 Apr 2023 at 17:04:59 (+0530), Sumit Gupta wrote:
+> ARM cores which implement the Activity Monitor Unit (AMU)
+> use Functional Fixed Hardware (FFH) to map AMU counters to
+> Delivered_Counter and Reference_Counter registers. Each
+> sysreg is read separately with a smp_call_function_single
+> call. So, total four IPI's are used, one per register.
+> Due to this, the AMU's core counter and constant counter
+> sampling can happen at a non-consistent time interval if
+> an IPI is handled late. This results in unstable frequency
+> value from "cpuinfo_cur_req" node sometimes. To fix, queue
+> work on target CPU to read all counters synchronously in
+> sequence. This helps to remove the inter-IPI latency and
+> make sure that both the counters are sampled at a close
+> time interval.
+> Without this change we observed that the re-generated value
+> of CPU Frequency from AMU counters sometimes deviates by
+> ~25% as the counters are read at non-determenistic time.
+> Currently, kept the change specific to Tegra241. It can be
+> applied to other SoC's having AMU if same issue is observed.
+> 
+
+To be honest I never liked the need for IPIs but it was the most
+generic solution I could find for an FFH implementation that does not
+assume a dependency between different reads, which is usecase specific.
+
+Also, for any kind of caching of the counters I'd have to introduce some
+logic that would assume we'd always have two consecutive reads - one for
+the cycle counter and one for the constant counter, and there should be no
+update between them. And then there's the problem of potentially returning
+the same values if there's no update between two sets of reads.
+
+The only feasible idea based on caching would be to piggy back on the
+frequency invariance engine (FIE) which computes a performance scale
+factor on the tick which can be translated to frequency. But the
+frequency obtained would be an average frequency for the past 4ms, which
+can in turn be at up to 4ms old (or more, if the CPU was idle).
+
+Would something like this work for you?
+
+This could also help with a similar issue described at [1] - not an IPI
+related issue, but an issue with similar symptoms.
+
+[1] https://lore.kernel.org/lkml/20230328193846.8757-1-yang@os.amperecomputing.com/
+
+Thanks,
+Ionela.
+
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  drivers/char/tpm/tpm_tis_spi_main.c | 91 ++++++++++++++++++++++++++++-
->  1 file changed, 89 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_t=
-is_spi_main.c
-> index a0963a3e92bd..8967f179f808 100644
-> --- a/drivers/char/tpm/tpm_tis_spi_main.c
-> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
-> @@ -71,8 +71,74 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi=
-_phy *phy,
->  	return 0;
+>  drivers/cpufreq/cppc_cpufreq.c | 53 +++++++++++++++++++++++++++-------
+>  1 file changed, 43 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 5e6a132a525e..52b93ac6225e 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -46,6 +46,8 @@ static bool boost_supported;
+>  /* default 2usec delay between sampling */
+>  static unsigned int sampling_delay_us = 2;
+>  
+> +static bool get_rate_use_wq;
+> +
+>  static void cppc_check_hisi_workaround(void);
+>  static void cppc_nvidia_workaround(void);
+>  
+> @@ -99,6 +101,12 @@ struct cppc_freq_invariance {
+>  static DEFINE_PER_CPU(struct cppc_freq_invariance, cppc_freq_inv);
+>  static struct kthread_worker *kworker_fie;
+>  
+> +struct feedback_ctrs {
+> +	u32 cpu;
+> +	struct cppc_perf_fb_ctrs fb_ctrs_t0;
+> +	struct cppc_perf_fb_ctrs fb_ctrs_t1;
+> +};
+> +
+>  static unsigned int hisi_cppc_cpufreq_get_rate(unsigned int cpu);
+>  static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
+>  				 struct cppc_perf_fb_ctrs *fb_ctrs_t0,
+> @@ -851,28 +859,44 @@ static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
+>  	return (reference_perf * delta_delivered) / delta_reference;
 >  }
-> =20
-> -int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> -			 u8 *in, const u8 *out)
-> +/*
-> + * Half duplex controller with support for TPM wait state detection like
-> + * Tegra QSPI need CMD, ADDR & DATA sent in single message to manage HW =
-flow
-> + * control. Each phase sent in different transfer for controller to iden=
-ity
-> + * phase.
-> + */
-> +static int tpm_tis_spi_transfer_half(struct tpm_tis_data *data,	u32 addr=
-,
-> +				     u16 len, u8 *in, const u8 *out)
+>  
+> +static int cppc_get_perf_ctrs_sync(void *fb_ctrs)
 > +{
-> +	struct tpm_tis_spi_phy *phy =3D to_tpm_tis_spi_phy(data);
-> +	struct spi_transfer spi_xfer[3];
-> +	struct spi_message m;
-> +	u8 transfer_len;
+> +	struct feedback_ctrs *ctrs = fb_ctrs;
 > +	int ret;
 > +
-> +	while (len) {
-> +		transfer_len =3D min_t(u16, len, MAX_SPI_FRAMESIZE);
+> +	ret = cppc_get_perf_ctrs(ctrs->cpu, &(ctrs->fb_ctrs_t0));
+> +	if (ret)
+> +		return ret;
 > +
-> +		spi_message_init(&m);
-> +		phy->iobuf[0] =3D (in ? 0x80 : 0) | (transfer_len - 1);
-> +		phy->iobuf[1] =3D 0xd4;
-> +		phy->iobuf[2] =3D addr >> 8;
-> +		phy->iobuf[3] =3D addr;
+> +	udelay(sampling_delay_us);
 > +
-> +		memset(&spi_xfer, 0, sizeof(spi_xfer));
-> +
-> +		spi_xfer[0].tx_buf =3D phy->iobuf;
-> +		spi_xfer[0].len =3D 1;
-> +		spi_message_add_tail(&spi_xfer[0], &m);
-> +
-> +		spi_xfer[1].tx_buf =3D phy->iobuf + 1;
-> +		spi_xfer[1].len =3D 3;
-> +		spi_message_add_tail(&spi_xfer[1], &m);
-> +
-> +		if (out) {
-> +			spi_xfer[2].tx_buf =3D &phy->iobuf[4];
-> +			spi_xfer[2].rx_buf =3D NULL;
-> +			memcpy(&phy->iobuf[4], out, transfer_len);
-> +			out +=3D transfer_len;
-> +		}
-> +
-> +		if (in) {
-> +			spi_xfer[2].tx_buf =3D NULL;
-> +			spi_xfer[2].rx_buf =3D &phy->iobuf[4];
-> +		}
-> +
-> +		spi_xfer[2].len =3D transfer_len;
-> +		spi_message_add_tail(&spi_xfer[2], &m);
-> +
-> +		reinit_completion(&phy->ready);
-> +
-> +		ret =3D spi_sync(phy->spi_device, &m);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		if (in) {
-> +			memcpy(in, &phy->iobuf[4], transfer_len);
-> +			in +=3D transfer_len;
-> +		}
-> +
-> +		len -=3D transfer_len;
-> +	}
+> +	ret = cppc_get_perf_ctrs(ctrs->cpu, &(ctrs->fb_ctrs_t1));
+> +	if (ret)
+> +		return ret;
 > +
 > +	return ret;
 > +}
 > +
-> +static int tpm_tis_spi_transfer_full(struct tpm_tis_data *data, u32 addr=
-,
-> +				     u16 len, u8 *in, const u8 *out)
+>  static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
 >  {
->  	struct tpm_tis_spi_phy *phy =3D to_tpm_tis_spi_phy(data);
->  	int ret =3D 0;
-> @@ -140,6 +206,24 @@ int tpm_tis_spi_transfer(struct tpm_tis_data *data, =
-u32 addr, u16 len,
->  	return ret;
->  }
-> =20
-> +int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> +			 u8 *in, const u8 *out)
-> +{
-> +	struct tpm_tis_spi_phy *phy =3D to_tpm_tis_spi_phy(data);
-> +	struct spi_controller *ctlr =3D phy->spi_device->controller;
-> +
-> +	/*
-> +	 * TPM flow control over SPI requires full duplex support.
-> +	 * Send entire message to a half duplex controller to handle
-> +	 * wait polling in controller.
-> +	 * Set TPM HW flow control flag..
-> +	 */
-> +	if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX)
-> +		return tpm_tis_spi_transfer_half(data, addr, len, in, out);
+> -	struct cppc_perf_fb_ctrs fb_ctrs_t0 = {0}, fb_ctrs_t1 = {0};
+>  	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+>  	struct cppc_cpudata *cpu_data = policy->driver_data;
+> +	struct feedback_ctrs fb_ctrs = {0};
+>  	u64 delivered_perf;
+>  	int ret;
+>  
+>  	cpufreq_cpu_put(policy);
+> +	fb_ctrs.cpu = cpu;
+>  
+> -	ret = cppc_get_perf_ctrs(cpu, &fb_ctrs_t0);
+> -	if (ret)
+> -		return ret;
+> -
+> -	udelay(sampling_delay_us);
+> -
+> -	ret = cppc_get_perf_ctrs(cpu, &fb_ctrs_t1);
+> +	if (get_rate_use_wq)
+> +		ret = smp_call_on_cpu(cpu, cppc_get_perf_ctrs_sync, &fb_ctrs, false);
 > +	else
-> +		return tpm_tis_spi_transfer_full(data, addr, len, in, out);
-> +}
-> +
->  static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
->  				  u16 len, u8 *result, enum tpm_tis_io_mode io_mode)
+> +		ret = cppc_get_perf_ctrs_sync(&fb_ctrs);
+>  	if (ret)
+>  		return ret;
+>  
+> -	delivered_perf = cppc_perf_from_fbctrs(cpu_data, &fb_ctrs_t0,
+> -					       &fb_ctrs_t1);
+> +	delivered_perf = cppc_perf_from_fbctrs(cpu_data, &(fb_ctrs.fb_ctrs_t0),
+> +					       &(fb_ctrs.fb_ctrs_t1));
+>  
+>  	return cppc_cpufreq_perf_to_khz(cpu_data, delivered_perf);
+>  }
+> @@ -953,7 +977,16 @@ static unsigned int hisi_cppc_cpufreq_get_rate(unsigned int cpu)
+>  
+>  static void cppc_nvidia_workaround(void)
 >  {
-> @@ -181,6 +265,9 @@ static int tpm_tis_spi_probe(struct spi_device *dev)
-> =20
->  	phy->flow_control =3D tpm_tis_spi_flow_control;
-> =20
-> +	if (dev->controller->flags & SPI_CONTROLLER_HALF_DUPLEX)
-> +		dev->mode |=3D SPI_TPM_HW_FLOW;
+> +	int cpu;
 > +
->  	/* If the SPI device has an IRQ then use that */
->  	if (dev->irq > 0)
->  		irq =3D dev->irq;
-> --=20
+>  	sampling_delay_us = 25;
+> +
+> +#ifdef CONFIG_ARM64_AMU_EXTN
+> +	cpu = get_cpu_with_amu_feat();
+> +
+> +	if (cpu < nr_cpu_ids)
+> +		get_rate_use_wq = true;
+> +#endif
+>  }
+>  
+>  static void cppc_check_hisi_workaround(void)
+> -- 
 > 2.17.1
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Should I pick these patches?
-
-BR, Jarkko
+> 
