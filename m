@@ -2,168 +2,196 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7714CC7EE20
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Apr 2023 18:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7C5C77B7E
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Apr 2023 22:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231796AbjDXScp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Apr 2023 14:32:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
+        id S233248AbjDXWLF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Apr 2023 18:11:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbjDXSci (ORCPT
+        with ESMTP id S232473AbjDXWLD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Apr 2023 14:32:38 -0400
+        Mon, 24 Apr 2023 18:11:03 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C00244A4;
-        Mon, 24 Apr 2023 11:32:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA976974B;
+        Mon, 24 Apr 2023 15:10:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E0C8E61DAE;
-        Mon, 24 Apr 2023 18:32:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DC2C433EF;
-        Mon, 24 Apr 2023 18:32:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F6BB629A5;
+        Mon, 24 Apr 2023 22:10:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2BDC4339B;
+        Mon, 24 Apr 2023 22:10:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682361155;
-        bh=Qwb6xQXtIp9IK5K1XYNjKtQG2ZIwhMNhHPe94Eain8I=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=AL1mQRPIK32zEIp1g3UTreatnys6JEiIOElV8WxQ0HCWYrYOh9FUa/pV+J28wkIb0
-         kuYZuUJpavJkOZaHtCtWDI71bQfr8PqKub4qFn3x5yzC4y8fbdLxu7HbJwBzC+XQwm
-         VrE7IOJkHHjP11gDLRWFy86EVLqVWwQrt/B4cpTsksi6B3BO3cBvv6mbtnfmE01ZgB
-         TzxQElbzcDm36YDmuacquU8+DAzm2Bx6Sa8BvlgfPXGSzs47J+MRnxBY/ACBhDqqPE
-         NaKy9ZqKj3mZAujGR2xqbrAlZIyDJXBbelkgz2XIH4N+SG2lVTYr08TXhvRv/t7uAi
-         Q8Hr8qGO9TEdw==
-Message-ID: <679921ee-98d4-d6ef-5934-e009fd4b31fc@kernel.org>
-Date:   Mon, 24 Apr 2023 13:32:28 -0500
+        s=k20201202; t=1682374235;
+        bh=FnGcqvrEdLbzUlljWiXhCsHy+qSn4AIL5KgH7iNawGA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vD/FFfAqifz1nnj6u1cKoYA6GH2xWLs1V+ea4SuOBpAHQh0NGFjWQSVbhpBcJcyWf
+         5aOCD+ypac0Bq6YZR1YiJlplzcuSYM9Rj/cS7VNwTmIarJqdDGwq0siT8Z1Rx3pyFd
+         uIF6CG+ld0p/DXJ2MDysgwFGm33oDzMbh8FK4uTfw2dpxgA6gSYi2UnPj9+YrUqTUc
+         RO+7Hri8oZZphp3UiJzPteyEuQ/oIqhua7BNO+3B52D/6VB2MsknlXdeKRKeWTnwr9
+         uVKS0ASFJVltj9jRqGi5XDys6F6NjS3eMd3J8yY7nKHNNoZ64TPWpTB1RlyDqpRbtD
+         Lm7Fysb+fVYSQ==
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-b980e16b27bso3718565276.2;
+        Mon, 24 Apr 2023 15:10:35 -0700 (PDT)
+X-Gm-Message-State: AAQBX9e8RY653WnzJwPFBtySWK8SDqDKskKBHG4OclBLZPLx0oNeIpjt
+        tthT9PFunoYSbPqfR7D/8H8g516mKNGGuZB6Mw==
+X-Google-Smtp-Source: AKy350Z8fwjeT6uilQZV5elUBNHPlU26+hD27eSWPRlQhPwmqTcN2nXurF+nyFvBNi+9INgYk5eGXnlLE8/dW8JHY5k=
+X-Received: by 2002:a0d:e2c9:0:b0:54f:752e:9b63 with SMTP id
+ l192-20020a0de2c9000000b0054f752e9b63mr9341801ywe.15.1682374234531; Mon, 24
+ Apr 2023 15:10:34 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 29/65] clk: socfpga: gate: Add a determine_rate hook
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+References: <20220328000915.15041-1-ansuelsmth@gmail.com> <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+ <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
+In-Reply-To: <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 24 Apr 2023 17:10:23 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
+Message-ID: <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
-Content-Language: en-US
-From:   Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
+        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
+        linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-realtek-soc@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Maxime,
+On Tue, Mar 29, 2022 at 8:27=E2=80=AFAM Ansuel Smith <ansuelsmth@gmail.com>=
+ wrote:
+>
+> On Tue, Mar 29, 2022 at 03:20:18PM +0200, Krzysztof Kozlowski wrote:
+> > On 28/03/2022 02:09, Ansuel Smith wrote:
+> > > Hi,
+> > > as the title say, the intention of this ""series"" is to finally cate=
+gorize
+> > > the ARM dts directory in subdirectory for each oem.
+> > >
+> > > The main reason for this is that it became unpractical to handle 2600
+> > > dts files and try to even understand/edit/check the situation for a
+> > > specific target.
+> > >
+> > > In arm64 we already have this kind of separation and I honestly think
+> > > that this was never proposed for ARM due to the fact that there are
+> > > 2600+ files to sort and the fact that it will be a mess to merge this
+> > > entirely but IMHO with a little bit of effort we can finally solve th=
+is
+> > > problem and have a well organized directory just like arm64.
+> > >
+> > > Some prerequisite on how this work was done:
+> > > - This comes entirely from a python script created by me for the task=
+.
+> > >   linked here [1]
+> > > - I had to manually categorize all the different arch in the makefile
+> > >   based on the oem. I searched every arch on the internet trying to
+> > >   understand the correct oem. I hope they are correct but I would lov=
+e
+> > >   some comments about them.
+> > > - This current ""series"" is all squashed in one big commit to better
+> > >   receive comments for this. The final version ideally would have all
+> > >   changes in separate commits. The script can already do this, it's j=
+ust
+> > >   commented.
+> > >
+> > > Here is a list of some discoveries while doing all the sorting.
+> > > These are totally additional reason why we need this.
+> > >
+> > > While creating the script I discovered some funny things:
+> > > - We have orphan dts! There are dts that are never compiled and are
+> > >   there just for reference. We would never have noticed this without =
+this
+> > >   change and probably nobody noticed it. They are currently all liste=
+d
+> > >   in the python script.
+> > > - We have dtsi shared across different oem. My current solution for t=
+hem
+> > >   is: NOT SORT THEM and leave them in the generic directory and creat=
+e a
+> > >   link in each oem dts that points to these dtsi. This is to try in
+> > >   every way possible to skip any additional changes to the dts.
+> > >   Current dtsi that suffers from this are only 3. (listed in the scri=
+pt)
+> > > - arm64 dts and dtsi reference ARM dts. Obviously this change would c=
+ause
+> > >   broken include for these special dtsi. The script creates a depende=
+ncy
+> > >   table of the entire arm64 directory and fix every broken dependency
+> > >   (hoping they all use a sane include logic... regex is used to parse
+> > >   all the different dependency)
+> > >
+> > > So in short the script does the following steps:
+> > > 1. Enumerate all the action to do... (dts to move, scan dependency fo=
+r
+> > >    the dts...)
+> > > 2. Generate the arm64 dependency
+> > > 3. Creates the Makefile
+> > > 4. Generate the Makefiles for the current oem
+> > > 5. Move all the related dts and dtsi for the current oem
+> > > 6. Check broken dependency and fix them by editing the dts and writin=
+g
+> > >    the correct include (or fix any symbolic link)
+> > >
+> > > This is an output that describes all the things done by the script [2=
+]
+> > >
+> > > I really hope I didn't commit any logic mistake in the script but mos=
+t
+> > > of the work should be done.
+> > >
+> >
+> > +Cc Arnd and Olof,
+> >
+> > Ansuel,
+> > Thanks for you patch. Please cc the SoC maintainers in such submissions=
+.
+> > It seems that you got some quite nice discussion, but still the core
+> > folks are not Cced, so no one would be able to take your patch...
+> >
+>
+> I had some problem with gmail and sending mail too much users. I put Rob
+> and You and all the various list to try to workaround the "gmail spam
+> protection"
+>
+> > I am pretty sure we were discussing such split idea in the past and it
+> > did not get traction, but I cannot recall the exact discussion.
+> >
+>
+> I think the main issue here is how to handle bot and how problematic is
+> to merge this. As written in the cover letter the final version of this
+> should be a big series of 50+ patch with every commit specific to each
+> oem. In theory we should be able to merge the different oem separately
+> and try to at least start the categorization.
+> Another idea I got to at least have a "migration path" is to convert
+> every dts in the dts/ directory to a symbolic link that target the dts
+> in the correct oem. But I assume that would fix only part of the problem
+> and git am will still be problematic.
 
-On 4/4/23 05:11, Maxime Ripard wrote:
-> The SoCFGPA gate clock implements a mux with a set_parent hook, but
-> doesn't provide a determine_rate implementation.
-> 
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
-> 
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
-> 
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
-> 
-> The latter case would be equivalent to setting the flag
-> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-> to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> implementation is provided, clk_round_rate() (through
-> clk_core_round_rate_nolock()) will call itself on the parent if
-> CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> otherwise. __clk_mux_determine_rate() has the exact same behavior when
-> CLK_SET_RATE_NO_REPARENT is set.
-> 
-> And if it was an oversight, then we are at least explicit about our
-> behavior now and it can be further refined down the line.
-> 
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->   drivers/clk/socfpga/clk-gate.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-> index 32ccda960f28..cbba8462a09e 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -110,6 +110,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
->   
->   static struct clk_ops gateclk_ops = {
->   	.recalc_rate = socfpga_clk_recalc_rate,
-> +	.determine_rate = __clk_mux_determine_rate,
->   	.get_parent = socfpga_clk_get_parent,
->   	.set_parent = socfpga_clk_set_parent,
->   };
-> @@ -166,7 +167,7 @@ void __init socfpga_gate_init(struct device_node *node)
->   
->   	init.name = clk_name;
->   	init.ops = ops;
-> -	init.flags = 0;
-> +	init.flags = CLK_SET_RATE_NO_REPARENT;
->   
->   	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
->   	if (init.num_parents < 2) {
-> 
+I have a script[1] that does the conversion written the last time this
+came up. Just have to agree on directory names. I think the easiest
+would be for Arnd/Olof to run it at the end of a merge window before
+rc1.
 
-This patch broke SoCFPGA boot serial port. The characters are mangled.
+I'm very much in favor of this happening especially before *any*
+overlays are added to add to the mess (it's probably already
+happened).
 
-Dinh
+Rob
+
+[1] https://lore.kernel.org/all/20181204183649.GA5716@bogus/
