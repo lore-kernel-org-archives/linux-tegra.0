@@ -2,125 +2,168 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76ED9C7618E
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Apr 2023 15:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7714CC7EE20
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Apr 2023 18:32:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231640AbjDXPbu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Apr 2023 11:31:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38796 "EHLO
+        id S231796AbjDXScp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Apr 2023 14:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230346AbjDXPbu (ORCPT
+        with ESMTP id S229929AbjDXSci (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Apr 2023 11:31:50 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BD47A9B;
-        Mon, 24 Apr 2023 08:31:38 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-504eb1155d3so34333373a12.1;
-        Mon, 24 Apr 2023 08:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682350297; x=1684942297;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1y6VlpLoyeFDIUhuCEpLwrAfvADTwZBo+tgcsp58GCM=;
-        b=YJwxUq/J9GCdLIL2jCK2dcru87AfR9ie2HyWphb4MArimcUfNEEzuurkCCtAns2I9x
-         +cKbCX3bPNjM+o7eyaDZd4G0YZYZgqI9BgVVjjObwV9rkB/rGtCIk7Gw8GoKqGdMX46D
-         kON81OiQ5KUYPhZZlYXFjPjd2z3CVQ0TD3kQjMG71oosSHBSJV4NbNy0PSoJj23rAdQY
-         QGmeCH2L1hh9+Q/iNevD1hlPc1YthJWB7mbDizRYmlKkCRRbnQlHEE3roOaYdUstheuY
-         XHa/hXyP6okeltFgieCKi1BhzeLcSpzu4kluT7oUFkO9HWXDKdRSkqbAkQy6mpAlq1pS
-         TxQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682350297; x=1684942297;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1y6VlpLoyeFDIUhuCEpLwrAfvADTwZBo+tgcsp58GCM=;
-        b=lr17HvzpZOYZ4FZnbU/Q+O8TOLJazNDNy5fYXz/rb/+6/SH1OS3ZKvtyF5cMA9D+el
-         duRY3g5CVLuzaHO36mIbo1EipOqiNq8xrSV3CTM0bYGzYKMq2oAg2tlvsHJvgJQATlSd
-         2USFAAMIcckTZjhSzUWuaEaOlWqSLibxxaL6cK4o7TGiJzFTowXt/zNuYoJiBDrD4uMk
-         0UEeQsIfTAspcs6Un4jaKj2EghE4wFwzKmv2glzEus+tEs9DD6W64zjCrX2MLoSs0nUQ
-         mU0sJs8E4hTmVl1Q+7r/pMlYgR84Bv8JPOJeGE4XwGMHsmNzdje0ffKBTgdZ2tiQIv/i
-         un+w==
-X-Gm-Message-State: AAQBX9eN6wxZiOfd8KyBhfUtFR9/Y+kP6MnNtvyUjsUFUOOgClf6Citx
-        IRd3Lso3/tKGugm9saBs/G0=
-X-Google-Smtp-Source: AKy350ZJ7YUu8TOixGb73t39jePcGdOuSu946lu2XRcNjnJzhh//CbEJQJbRFD756DxcHWAlOD+SFA==
-X-Received: by 2002:aa7:cd11:0:b0:4ad:738b:6706 with SMTP id b17-20020aa7cd11000000b004ad738b6706mr13752469edw.2.1682350297188;
-        Mon, 24 Apr 2023 08:31:37 -0700 (PDT)
-Received: from orome (p200300e41f053a00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f05:3a00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v10-20020a1709062f0a00b0094f62181917sm5597129eji.138.2023.04.24.08.31.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 08:31:36 -0700 (PDT)
-Date:   Mon, 24 Apr 2023 17:31:34 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        jsnitsel@redhat.com, robh+dt@kernel.org, peterhuewe@gmx.de,
-        jgg@ziepe.ca, krzysztof.kozlowski+dt@linaro.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com
-Subject: Re: [Patch V10 2/3] tpm_tis-spi: Add hardware wait polling
-Message-ID: <ZEag1lAonYcmNFXk@orome>
-References: <20230421091309.2672-1-kyarlagadda@nvidia.com>
- <20230421091309.2672-3-kyarlagadda@nvidia.com>
- <CS48A9Y752N4.QEM73WVMZYLQ@suppilovahvero>
- <3df39f0b-70dc-4b42-bae1-72c07607cbc7@sirena.org.uk>
- <ZEaWQD_QTs2usVl8@orome>
- <5fae29cd-d5f4-4616-be1c-1cd4d5b9a538@sirena.org.uk>
+        Mon, 24 Apr 2023 14:32:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C00244A4;
+        Mon, 24 Apr 2023 11:32:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E0C8E61DAE;
+        Mon, 24 Apr 2023 18:32:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DC2C433EF;
+        Mon, 24 Apr 2023 18:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682361155;
+        bh=Qwb6xQXtIp9IK5K1XYNjKtQG2ZIwhMNhHPe94Eain8I=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=AL1mQRPIK32zEIp1g3UTreatnys6JEiIOElV8WxQ0HCWYrYOh9FUa/pV+J28wkIb0
+         kuYZuUJpavJkOZaHtCtWDI71bQfr8PqKub4qFn3x5yzC4y8fbdLxu7HbJwBzC+XQwm
+         VrE7IOJkHHjP11gDLRWFy86EVLqVWwQrt/B4cpTsksi6B3BO3cBvv6mbtnfmE01ZgB
+         TzxQElbzcDm36YDmuacquU8+DAzm2Bx6Sa8BvlgfPXGSzs47J+MRnxBY/ACBhDqqPE
+         NaKy9ZqKj3mZAujGR2xqbrAlZIyDJXBbelkgz2XIH4N+SG2lVTYr08TXhvRv/t7uAi
+         Q8Hr8qGO9TEdw==
+Message-ID: <679921ee-98d4-d6ef-5934-e009fd4b31fc@kernel.org>
+Date:   Mon, 24 Apr 2023 13:32:28 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HoxvrgZmmApzwDPp"
-Content-Disposition: inline
-In-Reply-To: <5fae29cd-d5f4-4616-be1c-1cd4d5b9a538@sirena.org.uk>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v3 29/65] clk: socfpga: gate: Add a determine_rate hook
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+ <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
+Content-Language: en-US
+From:   Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Maxime,
 
---HoxvrgZmmApzwDPp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 4/4/23 05:11, Maxime Ripard wrote:
+> The SoCFGPA gate clock implements a mux with a set_parent hook, but
+> doesn't provide a determine_rate implementation.
+> 
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+> 
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+> 
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+> 
+> The latter case would be equivalent to setting the flag
+> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> implementation is provided, clk_round_rate() (through
+> clk_core_round_rate_nolock()) will call itself on the parent if
+> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> CLK_SET_RATE_NO_REPARENT is set.
+> 
+> And if it was an oversight, then we are at least explicit about our
+> behavior now and it can be further refined down the line.
+> 
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>   drivers/clk/socfpga/clk-gate.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+> index 32ccda960f28..cbba8462a09e 100644
+> --- a/drivers/clk/socfpga/clk-gate.c
+> +++ b/drivers/clk/socfpga/clk-gate.c
+> @@ -110,6 +110,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
+>   
+>   static struct clk_ops gateclk_ops = {
+>   	.recalc_rate = socfpga_clk_recalc_rate,
+> +	.determine_rate = __clk_mux_determine_rate,
+>   	.get_parent = socfpga_clk_get_parent,
+>   	.set_parent = socfpga_clk_set_parent,
+>   };
+> @@ -166,7 +167,7 @@ void __init socfpga_gate_init(struct device_node *node)
+>   
+>   	init.name = clk_name;
+>   	init.ops = ops;
+> -	init.flags = 0;
+> +	init.flags = CLK_SET_RATE_NO_REPARENT;
+>   
+>   	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+>   	if (init.num_parents < 2) {
+> 
 
-On Mon, Apr 24, 2023 at 04:18:45PM +0100, Mark Brown wrote:
-> On Mon, Apr 24, 2023 at 04:46:24PM +0200, Thierry Reding wrote:
->=20
-> > Would it make sense for you to pick up patch 2/3 as well? As far as I
-> > can tell there's a build dependency on patch 1/3 because of the newly
-> > added SPI_TPM_HW_FLOW symbol.
->=20
-> I'll include it in my pull request for spi this time round so it should
-> end up in -rc1, my thinking was that I was happy with the SPI bits and
-> if it was in -rc1 then the TPM bits could be handled without cross tree
-> issues when the review was sorted (which it is now but wasn't at the
-> time).  If the SPI side doesn't make -rc1 for some reason I can pick up
-> the TPM bit as well, and/or do a signed tag.
+This patch broke SoCFPGA boot serial port. The characters are mangled.
 
-Sounds good.
-
-Thanks,
-Thierry
-
---HoxvrgZmmApzwDPp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRGoNYACgkQ3SOs138+
-s6Hhng//fM8OK3GgVRYeyJIuvFsW9EXaRU/OWm+n4eMdT3wGXOGeJAk4AYdptYJo
-z2dDOlNAlUsKjP6ZVHfLOAH8cdZH/gGSaWRot0hv85KWlDr5pJUKZ65rsBiIPkbd
-EocantA23aFpg837JDnKj1btRUKPWAXTgbAigRuQRbIDB0ZreYCDikk/YZR5vqze
-h4YyeccRq+Uj1OpGzNmQ8YGWHbgRIJs653OlbYmsHiLeyinLNz7bmg3wohSiwR/0
-l1h8O/aL4ZQNbTiQ02mYApcL9N+5PEyIBXj2HC/G+VPFqcRlSzOtBAvRixdnCsVe
-M+/XexW7FkpalITyto2lH9DVauGaKpNI6bfwY5wBcfPT7Li0RsWmDIQe4bKyWpBJ
-U6mQaBI8+rMDCrv6dajKphd7Ml9uO+eefpIYBRcWHeqg6263HaiKXUMf75rtlWAo
-MJ4zCQ/NmFaVTyNf+U+8MhLHAWbh1Cb8jNPEheY7gY9CKvJrC6c5EerH2fJ8q1bU
-mwlDYHqYSXXAXN2MJDC1E21HHe2dA9Guq4i9wE7bSDRw0byP0L7vz3/0nzP6hXn/
-JcIMhda+b8GcYFhzEpgaJWSqC5UJdV19qjluntRLw/9kf5DW5ZO+ErdYsoAnWKs6
-ZCezjFvPdDgGQ6Rhb2GFVUE01xtalPb6qYmHv34+oLMRTyWORCU=
-=0QL7
------END PGP SIGNATURE-----
-
---HoxvrgZmmApzwDPp--
+Dinh
