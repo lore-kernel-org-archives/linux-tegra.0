@@ -2,114 +2,99 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3B0C7EE26
-	for <linux-tegra@archiver.kernel.org>; Sat, 29 Apr 2023 18:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CD7C77B60
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 Apr 2023 05:50:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbjD2SY7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 29 Apr 2023 14:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50972 "EHLO
+        id S231710AbjD3FuL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Apr 2023 01:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230309AbjD2SYz (ORCPT
+        with ESMTP id S229814AbjD3FuL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 29 Apr 2023 14:24:55 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F7A210A
-        for <linux-tegra@vger.kernel.org>; Sat, 29 Apr 2023 11:24:52 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1a6762fd23cso9040545ad.3
-        for <linux-tegra@vger.kernel.org>; Sat, 29 Apr 2023 11:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20221208.gappssmtp.com; s=20221208; t=1682792692; x=1685384692;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KGl5HMSK57VmBSwKSnwgm3VXr902jH6XBJlNczgIzTY=;
-        b=l+H0JwRFKwAD4TzkKtg69sq/SE0iMjDe/NX6Txlv16Ba4kBdBRnOLJE9cuEp/EtowJ
-         pvTfeswVQQvBqhKyncNpPdAR29BMkNe6LB9ZMzoVyBV5Q9aGwXPM1Fc+6Qr50SDIiKsJ
-         q9xyHClsPNOcAaBRr9fQ8UfCjonz6jsBwXrYvJjTpLiOgKgKgvN8uwk1fTPbl8XK+035
-         m3QY80DvBeDJf799u5hnhHuLgfMpPNb4a9jtTjDBw2OzLziw75OHG2J322CH+dAw1HCw
-         HsmmVI7grjIDtuj7uBS5rk+EMADzgTEglzedbNWVOsorwBluoILEBWp5M0RLFiHKNfCf
-         2+Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682792692; x=1685384692;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KGl5HMSK57VmBSwKSnwgm3VXr902jH6XBJlNczgIzTY=;
-        b=WmF9ZqR0w0yhwDmnmuY8xLqC7uriuOR48EGgVNPy0v+hulkCeAEg6P3e7VRCOkMkIT
-         9YCk01FZndqXkDtvWKabk9O92Qz05I8VpHpXZ0u70t/R1MvaZ4J86CVaNI9vSL4S9YQ8
-         CpUDk9e05zW+ykksltdLNE4CGNZ33eRwAWKOosA3MN9SMmYEZnU2uhhStyiG9f2z2f2o
-         DpiqMCtgcmz44R9dPH43H5Rh1DpTxZQ9Cr8qGgd3poI8zgRBThopRmKuWwLXng4J/ldB
-         E2Pf6MkeTd2m9GTzbmFKoLwcGTX3X9Xouz4iTsnvOtWw/KcV5Kyx7lEswpq/lglvYY5d
-         Qytg==
-X-Gm-Message-State: AC+VfDxz/mJwU3MwxOg842jR415zSmz0MLM4oXLnxY3LpMnGzYzPlm6Z
-        1Bw437jk691RREj8ajnPV95T5A==
-X-Google-Smtp-Source: ACHHUZ6ZiLzN9eR+ckFMqg7tN3D4bPpq4geojnHO1Jqz7HXa46oxZHVvxREPvQQtQygRvSqX/lxFkg==
-X-Received: by 2002:a17:903:124b:b0:1a2:8c7e:f315 with SMTP id u11-20020a170903124b00b001a28c7ef315mr10630845plh.21.1682792692014;
-        Sat, 29 Apr 2023 11:24:52 -0700 (PDT)
-Received: from localhost ([50.221.140.188])
-        by smtp.gmail.com with ESMTPSA id z2-20020a170902708200b001a19196af48sm15137375plk.64.2023.04.29.11.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Apr 2023 11:24:51 -0700 (PDT)
-Date:   Sat, 29 Apr 2023 11:24:51 -0700 (PDT)
-X-Google-Original-Date: Sat, 29 Apr 2023 11:24:33 PDT (-0700)
-Subject:     Re: [PATCH 09/19] riscv: cacheinfo: Adjust includes to remove of_device.h
-In-Reply-To: <20230329-dt-cpu-header-cleanups-v1-9-581e2605fe47@kernel.org>
-CC:     davem@davemloft.net, robh+dt@kernel.org, frowand.list@gmail.com,
-        linux@armlinux.org.uk, wens@csie.org, jernej.skrabec@gmail.com,
-        samuel@sholland.org, Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, Greg KH <gregkh@linuxfoundation.org>,
-        rafael@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        amit.kachhap@gmail.com, viresh.kumar@linaro.org,
-        lukasz.luba@arm.com, amitk@kernel.org, rui.zhang@intel.com,
-        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        tiny.windzz@gmail.com, lpieralisi@kernel.org, sudeep.holla@arm.com,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        anup@brainfault.org, chenhuacai@kernel.org,
-        jiaxun.yang@flygoat.com, Marc Zyngier <maz@kernel.org>,
-        vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-riscv@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     robh@kernel.org
-Message-ID: <mhng-8827afbb-9f5f-4a6d-b528-4b79b1a32f8a@palmer-ri-x1c9a>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Sun, 30 Apr 2023 01:50:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C36E79;
+        Sat, 29 Apr 2023 22:50:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A8DD560EDE;
+        Sun, 30 Apr 2023 05:50:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39475C433EF;
+        Sun, 30 Apr 2023 05:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682833807;
+        bh=QMYAxp9NWGDCs3LLQfSUVVXP07rpeyOHDzsWDz+sdtg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gI/WWOTRamIomRJolzCV54MCB1/H05B/9GhlhQ0yBpIBQ0KNG+GvoWl1K3T4pR2WG
+         NT/BPlTgT29vhlLB0lp/hVkknzNU5QC5r3LiZ3lrFhUXPnK9C9hjWBarbTMvegskwH
+         0KSq1Xw6zftez7pDrYkCEck4hKa9ZOyAtsyPi+gAoK/e/CN7/d7zTHgA+zPmXN92PF
+         MIZxwn1AqT9AUqTOHP5h+04Umid/k1MaMnL4/PXAMVUGRHWluIgvidm5xhrJejb+My
+         p/ZoEfvmrBZ0NqgJR761NHzfVRB3nuAXwkq//9Ipmr0CbFOraqqQmHal6WzGQNpSKr
+         +1OBk4uqF/HXw==
+Date:   Sun, 30 Apr 2023 07:50:00 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     christian.koenig@amd.com, digetx@gmail.com, jonathanh@nvidia.com,
+        ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        sumit.semwal@linaro.org, thierry.reding@gmail.com
+Subject: Re: [PATCH v6 RESEND 1/2] i2c: tegra: Fix PEC support for SMBUS
+ block read
+Message-ID: <ZE4BiLABVUxagMUU@sai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Akhil R <akhilrajeev@nvidia.com>, christian.koenig@amd.com,
+        digetx@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, sumit.semwal@linaro.org,
+        thierry.reding@gmail.com
+References: <20230427123915.38199-1-akhilrajeev@nvidia.com>
+ <20230427123915.38199-2-akhilrajeev@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1F8N9qcHs/oSa7Lb"
+Content-Disposition: inline
+In-Reply-To: <20230427123915.38199-2-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 29 Mar 2023 08:52:06 PDT (-0700), robh@kernel.org wrote:
-> Now that of_cpu_device_node_get() is defined in of.h, of_device.h is just
-> implicitly including other includes, and is no longer needed. Adjust the
-> include files with what was implicitly included by of_device.h (cpu.h and
-> of.h) and drop including of_device.h.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Please ack and I will take the series via the DT tree.
-> ---
->  arch/riscv/kernel/cacheinfo.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
-> index 3a13113f1b29..e3829d2de5d9 100644
-> --- a/arch/riscv/kernel/cacheinfo.c
-> +++ b/arch/riscv/kernel/cacheinfo.c
-> @@ -5,7 +5,6 @@
->
->  #include <linux/cpu.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <asm/cacheinfo.h>
->
->  static struct riscv_cacheinfo_ops *rv_cache_ops;
 
-Reviewed-by: Palmer Dabbelt <palmer@rivosinc.com>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+--1F8N9qcHs/oSa7Lb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 27, 2023 at 06:09:14PM +0530, Akhil R wrote:
+> Update the msg->len value correctly for SMBUS block read. The discrepancy
+> went unnoticed as msg->len is used in SMBUS transfers only when a PEC
+> byte is added.
+>=20
+> Fixes: d7583c8a5748 ("i2c: tegra: Add SMBus block read function")
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Applied to for-current, thanks!
+
+
+--1F8N9qcHs/oSa7Lb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmROAYQACgkQFA3kzBSg
+Kbbcxg//XcGhRdi6iM/p2IuXbEi9pCpjkL2lA+WIkrNP03iDk6CJDiFE5hJTQl1V
+iowBR1+gXts9cqNTiyC2ptCw6S7Vz/gqJSQBdj9WwUZlFeetgY+cGenn4LMbDvJo
+hGZ5ZHANl8LRO5pBUAoPZX+d04HTDArdlwzVRof6soqifRz61G5KFbNEy2ay2ijS
+OG/Vg9y9rQvJoADfKOpt3UYsT18XEzMqFgQMhh4Fn8TKH0UvXTVw0Dh3JXlz5DVy
+kiUMOMevXBkaeuPVQd9LD5U3S/UhtIo1EiT7pAxXlj6VODDIqk4oZ19fV8c0chg3
+DNpv0r0fFwBGAw96s61icH0TIZPhOaRyoHF55bsvocxdCsGl7mGKJrDM8OCyQDhW
+XtK0GHUCKooBQRHvyI1dgKO4l93WqnyGDaAKtmqk4aJFosKN3l55pIHJXl8BvlOc
+Xn+1HNl+ErFLQIwiHldZ2zdlL09BiIYgiCkjcH85spzYi5ZV2BxHXcjs5C4QF0TY
+4M68aCLgk0KmJcVLWbEqhqhiGjZs4Qu6iv3whIX0GhFOoPhXcg8HwEgNsLXHu6p6
+xpmyv7YIkvBSVYnwsiHaiuYv+sIPw3ZLhsbTUA+umWInFKf/aSJHThe3UrCYsZxH
+3GlSYRuzZCwoFw/sunIpmJz83L3VKqB538SvB5fNBY0zLYQlW8g=
+=zVkC
+-----END PGP SIGNATURE-----
+
+--1F8N9qcHs/oSa7Lb--
