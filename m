@@ -2,99 +2,87 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CD7C77B60
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 Apr 2023 05:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C21C77B73
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 May 2023 02:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231710AbjD3FuL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Apr 2023 01:50:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55350 "EHLO
+        id S232381AbjEAC72 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Apr 2023 22:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbjD3FuL (ORCPT
+        with ESMTP id S232380AbjEAC7G (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Apr 2023 01:50:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C36E79;
-        Sat, 29 Apr 2023 22:50:08 -0700 (PDT)
+        Sun, 30 Apr 2023 22:59:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601FA1735;
+        Sun, 30 Apr 2023 19:58:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8DD560EDE;
-        Sun, 30 Apr 2023 05:50:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39475C433EF;
-        Sun, 30 Apr 2023 05:50:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 417B760C79;
+        Mon,  1 May 2023 02:58:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D31C4339E;
+        Mon,  1 May 2023 02:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682833807;
-        bh=QMYAxp9NWGDCs3LLQfSUVVXP07rpeyOHDzsWDz+sdtg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gI/WWOTRamIomRJolzCV54MCB1/H05B/9GhlhQ0yBpIBQ0KNG+GvoWl1K3T4pR2WG
-         NT/BPlTgT29vhlLB0lp/hVkknzNU5QC5r3LiZ3lrFhUXPnK9C9hjWBarbTMvegskwH
-         0KSq1Xw6zftez7pDrYkCEck4hKa9ZOyAtsyPi+gAoK/e/CN7/d7zTHgA+zPmXN92PF
-         MIZxwn1AqT9AUqTOHP5h+04Umid/k1MaMnL4/PXAMVUGRHWluIgvidm5xhrJejb+My
-         p/ZoEfvmrBZ0NqgJR761NHzfVRB3nuAXwkq//9Ipmr0CbFOraqqQmHal6WzGQNpSKr
-         +1OBk4uqF/HXw==
-Date:   Sun, 30 Apr 2023 07:50:00 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     christian.koenig@amd.com, digetx@gmail.com, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        sumit.semwal@linaro.org, thierry.reding@gmail.com
-Subject: Re: [PATCH v6 RESEND 1/2] i2c: tegra: Fix PEC support for SMBUS
- block read
-Message-ID: <ZE4BiLABVUxagMUU@sai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Akhil R <akhilrajeev@nvidia.com>, christian.koenig@amd.com,
-        digetx@gmail.com, jonathanh@nvidia.com, ldewangan@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, sumit.semwal@linaro.org,
-        thierry.reding@gmail.com
-References: <20230427123915.38199-1-akhilrajeev@nvidia.com>
- <20230427123915.38199-2-akhilrajeev@nvidia.com>
+        s=k20201202; t=1682909908;
+        bh=cv8JJGXNWBr26hY0SkfA4Eso+vQuOnX6tOzJprj6XyI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WjVdKBpq9a+t7M83lQiE9hoWsAfIK6i7syA0K5IcFiWCcyi+36kUIy7opZeUSWf7W
+         ufP9ZfFS9jim14XfVcoCXxiO1eh059rvXlyG/WEM/fnfO7qB6LhCclyiqZyMpgA+xO
+         odf9vPp09d1Zx5+xKG2Zz5iZ2JZHqvyx8zvOCq4ITIbweeohTCj+/IwslBa/eCvmNh
+         Zq1aT6uABvT22ZQye8TSa1TKvvkmdn6/64jt4VM42souVsEtZ0WNNlVZeX6FjJWEB1
+         wBQJ74GzhXb2wzDmwIkXNugxWkgD9v4r1+D1pT6TINnE1ChAfSw+vsgdJhQ7Ny6Urb
+         uZcG5AoOy34mQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nur Hussein <hussein@unixcat.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
+        mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
+        jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.3 27/44] drm/tegra: Avoid potential 32-bit integer overflow
+Date:   Sun, 30 Apr 2023 22:56:15 -0400
+Message-Id: <20230501025632.3253067-27-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230501025632.3253067-1-sashal@kernel.org>
+References: <20230501025632.3253067-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1F8N9qcHs/oSa7Lb"
-Content-Disposition: inline
-In-Reply-To: <20230427123915.38199-2-akhilrajeev@nvidia.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Nur Hussein <hussein@unixcat.org>
 
---1F8N9qcHs/oSa7Lb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 2429b3c529da29d4277d519bd66d034842dcd70c ]
 
-On Thu, Apr 27, 2023 at 06:09:14PM +0530, Akhil R wrote:
-> Update the msg->len value correctly for SMBUS block read. The discrepancy
-> went unnoticed as msg->len is used in SMBUS transfers only when a PEC
-> byte is added.
->=20
-> Fixes: d7583c8a5748 ("i2c: tegra: Add SMBus block read function")
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
+In tegra_sor_compute_config(), the 32-bit value mode->clock is
+multiplied by 1000, and assigned to the u64 variable pclk. We can avoid
+a potential 32-bit integer overflow by casting mode->clock to u64 before
+we do the arithmetic and assignment.
 
-Applied to for-current, thanks!
+Signed-off-by: Nur Hussein <hussein@unixcat.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/tegra/sor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 8af632740673a..77723d5f1d3fd 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1153,7 +1153,7 @@ static int tegra_sor_compute_config(struct tegra_sor *sor,
+ 				    struct drm_dp_link *link)
+ {
+ 	const u64 f = 100000, link_rate = link->rate * 1000;
+-	const u64 pclk = mode->clock * 1000;
++	const u64 pclk = (u64)mode->clock * 1000;
+ 	u64 input, output, watermark, num;
+ 	struct tegra_sor_params params;
+ 	u32 num_syms_per_line;
+-- 
+2.39.2
 
---1F8N9qcHs/oSa7Lb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmROAYQACgkQFA3kzBSg
-Kbbcxg//XcGhRdi6iM/p2IuXbEi9pCpjkL2lA+WIkrNP03iDk6CJDiFE5hJTQl1V
-iowBR1+gXts9cqNTiyC2ptCw6S7Vz/gqJSQBdj9WwUZlFeetgY+cGenn4LMbDvJo
-hGZ5ZHANl8LRO5pBUAoPZX+d04HTDArdlwzVRof6soqifRz61G5KFbNEy2ay2ijS
-OG/Vg9y9rQvJoADfKOpt3UYsT18XEzMqFgQMhh4Fn8TKH0UvXTVw0Dh3JXlz5DVy
-kiUMOMevXBkaeuPVQd9LD5U3S/UhtIo1EiT7pAxXlj6VODDIqk4oZ19fV8c0chg3
-DNpv0r0fFwBGAw96s61icH0TIZPhOaRyoHF55bsvocxdCsGl7mGKJrDM8OCyQDhW
-XtK0GHUCKooBQRHvyI1dgKO4l93WqnyGDaAKtmqk4aJFosKN3l55pIHJXl8BvlOc
-Xn+1HNl+ErFLQIwiHldZ2zdlL09BiIYgiCkjcH85spzYi5ZV2BxHXcjs5C4QF0TY
-4M68aCLgk0KmJcVLWbEqhqhiGjZs4Qu6iv3whIX0GhFOoPhXcg8HwEgNsLXHu6p6
-xpmyv7YIkvBSVYnwsiHaiuYv+sIPw3ZLhsbTUA+umWInFKf/aSJHThe3UrCYsZxH
-3GlSYRuzZCwoFw/sunIpmJz83L3VKqB538SvB5fNBY0zLYQlW8g=
-=zVkC
------END PGP SIGNATURE-----
-
---1F8N9qcHs/oSa7Lb--
