@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC609C77B73
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 May 2023 03:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285A6C77B7F
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 May 2023 03:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232919AbjEADMS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Apr 2023 23:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36980 "EHLO
+        id S232986AbjEADQq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Apr 2023 23:16:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233054AbjEADKQ (ORCPT
+        with ESMTP id S233624AbjEADP7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Apr 2023 23:10:16 -0400
+        Sun, 30 Apr 2023 23:15:59 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCDD26A5;
-        Sun, 30 Apr 2023 20:04:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9454659C7;
+        Sun, 30 Apr 2023 20:06:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9DD4C61029;
-        Mon,  1 May 2023 03:03:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB978C433D2;
-        Mon,  1 May 2023 03:03:40 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E030F61780;
+        Mon,  1 May 2023 03:05:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 320EFC4339C;
+        Mon,  1 May 2023 03:05:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682910222;
-        bh=cv8JJGXNWBr26hY0SkfA4Eso+vQuOnX6tOzJprj6XyI=;
+        s=k20201202; t=1682910357;
+        bh=z4Kl8L7wxX4xJ2N4SX2g9Q0DC4BQTCOs5TJtelKsGDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SlYlSkWGcAZedzaH4az8/BIXMITaWtgg5rU2tp3Iu9hgoLsjtr54yPdtSO9930lu6
-         HPb8QBjHWTXdnOZtav+JQ3C4q/Tt19QXRxO6JyDMJVAzeCeI4GF62dGFJo4uxn10Vi
-         rTCt3iji4F6juaot+5AQ2GpL59TtH8dCRVEhum60BjAh5t79ovaXjEa4vWvTMLVX6t
-         gxcOh74qAuxFMrFIOcSZQOCogUnJyBU4cPDQCPkIRSWw7G067kILgPAd8DntkPg1MT
-         aNPAUO+NFcgzpLlifuaSZErxCiW8iFXgKjZIRquJvfH6llVcoMYX7Pl2xC1zRDIZNz
-         nI3S/h3YWbwUw==
+        b=gtq4TguKX9v2MkpF1aukzQfE5l0S7rB8mhwCZD0rZkHsOp/t7Q79w5WnygHl/vYpr
+         6Zs7dEDSfcCajaS3H4okiggjXpCgWtSjhsWBumrWFLR56OsSXMlkXZKTfdw+aWB7wx
+         P7P4Sg0g/FhZJKpc2iQUQCVxy0ZfEgeqo+cxtcOf00uhbd8vIupw8kr2NIaU0Pz/9n
+         9glV5GLqFmgqd8hnPRFhW5u24sWlrnVy3tieGwwkD8HUrhuVXdo6qAJTos+BSv1Yk8
+         RmaMpbHTA1kteu5uJEnpgXVDTpkYzOsIBZdQ/oZJZowfxVEstxCUMiAWQTNy4BTonx
+         CVaaBI0nVBIyA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nur Hussein <hussein@unixcat.org>,
@@ -40,12 +40,12 @@ Cc:     Nur Hussein <hussein@unixcat.org>,
         mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
         jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 21/33] drm/tegra: Avoid potential 32-bit integer overflow
-Date:   Sun, 30 Apr 2023 23:02:15 -0400
-Message-Id: <20230501030227.3254266-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 08/12] drm/tegra: Avoid potential 32-bit integer overflow
+Date:   Sun, 30 Apr 2023 23:05:34 -0400
+Message-Id: <20230501030540.3254928-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230501030227.3254266-1-sashal@kernel.org>
-References: <20230501030227.3254266-1-sashal@kernel.org>
+In-Reply-To: <20230501030540.3254928-1-sashal@kernel.org>
+References: <20230501030540.3254928-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -71,7 +71,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 8af632740673a..77723d5f1d3fd 100644
+index 32c83f2e386ca..9d60d1c4cfcea 100644
 --- a/drivers/gpu/drm/tegra/sor.c
 +++ b/drivers/gpu/drm/tegra/sor.c
 @@ -1153,7 +1153,7 @@ static int tegra_sor_compute_config(struct tegra_sor *sor,
