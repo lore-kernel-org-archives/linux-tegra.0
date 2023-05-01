@@ -2,87 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B266CC77B7F
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 May 2023 03:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AA3C77B61
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 May 2023 15:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233429AbjEADSG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Apr 2023 23:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43764 "EHLO
+        id S232823AbjEAPmw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 1 May 2023 11:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233161AbjEADRE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Apr 2023 23:17:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE886A79;
-        Sun, 30 Apr 2023 20:07:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S232818AbjEAPmu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 May 2023 11:42:50 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16073BC;
+        Mon,  1 May 2023 08:42:48 -0700 (PDT)
+Received: from [192.168.2.246] (109-252-144-198.dynamic.spd-mgts.ru [109.252.144.198])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 096F461800;
-        Mon,  1 May 2023 03:07:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48677C4339E;
-        Mon,  1 May 2023 03:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682910419;
-        bh=JayhGJ+wvicz/0HtZ+mIEHy5D+aoDtGqENBOibQMLH8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GqvI3QWQswA2guzQIoqYSbRbnQFOyD2Ap4cJRWkc8K8+VRDtDKZBYBKc2LRkn04F0
-         BY2J05IYkQBNDMunBcv4mBfsA+pDyJrcgGTmDsuAkpKZn1E2z3zwL5uWEOD2xNStSy
-         X+1bdzmzbUhBFqmGjsUJllzl9wKv0gv4GdMwmeo/37KmpraXFERTjR9KoZpH2a+FJC
-         7PEP4/4zFlXiiZdjXJ4EwcgMuRMRxjJoG10S0Ima0V6M6Xdzr3Ehx+TTH3ys+dY3B4
-         jRAQsoXwGRReRBiJqOC7xe3isxjnAJxFr3YLGYIE2Bs8pM/IBslyP7lQjea2prT+B7
-         chyZs6uinQtzg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nur Hussein <hussein@unixcat.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, thierry.reding@gmail.com,
-        mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
-        jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 4/6] drm/tegra: Avoid potential 32-bit integer overflow
-Date:   Sun, 30 Apr 2023 23:06:50 -0400
-Message-Id: <20230501030653.3255321-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230501030653.3255321-1-sashal@kernel.org>
-References: <20230501030653.3255321-1-sashal@kernel.org>
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id EB81C66029DE;
+        Mon,  1 May 2023 16:42:43 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1682955765;
+        bh=tnb48ajCvVa+EQpEey/B5t9Rz5vp0zrnI8Dk3GtJzds=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=WgvDqGNqkRpELu/Mnul8g+QVtXq/hzn4k+FFEpusaFYSFGnm1Jzhw7htlINg83ht0
+         rimocQaotDdO/fUi53zoTX3QHV7v9281Ek5Igtx+auJwFkjZpXDctQ0M/Kn5vHfS4+
+         OW4QnmZX768H0BwI2PhD+LIZzOHhUDWBMs+Ix1NrYapO0+w/aY+gydF6hv1Foy7+Gb
+         ViVwJ+6U+FpEkMOKSwdCn/llqkyoZM7FDHdwIeDlq2uH1XtoQerfiViPJdSJ5w6mWI
+         1vjSPku078f0wkOVjQ9EvdrbQ3FtYALJUEpnGClgOfUj1aOcHAQUZKOvTnrFiO979u
+         8o4Qf3UIpdQqQ==
+Message-ID: <14d7ed85-7ab6-04d9-1958-d5ceae2a79f8@collabora.com>
+Date:   Mon, 1 May 2023 18:42:40 +0300
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 6/7] dma-buf: Change locking policy for mmap()
+Content-Language: en-US
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        kernel@collabora.com, Sumit Semwal <sumit.semwal@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>
+References: <20230406160637.541702-1-dmitry.osipenko@collabora.com>
+ <20230406160637.541702-7-dmitry.osipenko@collabora.com>
+In-Reply-To: <20230406160637.541702-7-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Nur Hussein <hussein@unixcat.org>
+On 4/6/23 19:06, Dmitry Osipenko wrote:
+> Change locking policy of mmap() callback, making exporters responsible
+> for handling dma-buf reservation locking. Previous locking policy stated
+> that dma-buf is locked for both importers and exporters by the dma-buf
+> core, which caused a deadlock problem for DRM drivers in a case of
+> self-imported dma-bufs which required to take the lock from the DRM
+> exporter side.
+> 
+> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> ---
+>  drivers/dma-buf/dma-buf.c | 17 +++--------------
+>  1 file changed, 3 insertions(+), 14 deletions(-)
 
-[ Upstream commit 2429b3c529da29d4277d519bd66d034842dcd70c ]
+Christian, may I add yours ack to this patch?
 
-In tegra_sor_compute_config(), the 32-bit value mode->clock is
-multiplied by 1000, and assigned to the u64 variable pclk. We can avoid
-a potential 32-bit integer overflow by casting mode->clock to u64 before
-we do the arithmetic and assignment.
-
-Signed-off-by: Nur Hussein <hussein@unixcat.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/tegra/sor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 352ae52be3418..76451c8bfb46b 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -709,7 +709,7 @@ static int tegra_sor_compute_config(struct tegra_sor *sor,
- 				    struct drm_dp_link *link)
- {
- 	const u64 f = 100000, link_rate = link->rate * 1000;
--	const u64 pclk = mode->clock * 1000;
-+	const u64 pclk = (u64)mode->clock * 1000;
- 	u64 input, output, watermark, num;
- 	struct tegra_sor_params params;
- 	u32 num_syms_per_line;
 -- 
-2.39.2
+Best regards,
+Dmitry
 
