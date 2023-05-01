@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C21C77B73
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 May 2023 02:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D302FC7EE24
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 May 2023 03:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232381AbjEAC72 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Apr 2023 22:59:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50678 "EHLO
+        id S232611AbjEADGm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Apr 2023 23:06:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232380AbjEAC7G (ORCPT
+        with ESMTP id S232649AbjEADEm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Apr 2023 22:59:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601FA1735;
-        Sun, 30 Apr 2023 19:58:29 -0700 (PDT)
+        Sun, 30 Apr 2023 23:04:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C05124495;
+        Sun, 30 Apr 2023 20:01:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 417B760C79;
-        Mon,  1 May 2023 02:58:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D31C4339E;
-        Mon,  1 May 2023 02:58:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 318DB61710;
+        Mon,  1 May 2023 03:01:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E8FC433D2;
+        Mon,  1 May 2023 03:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682909908;
+        s=k20201202; t=1682910079;
         bh=cv8JJGXNWBr26hY0SkfA4Eso+vQuOnX6tOzJprj6XyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WjVdKBpq9a+t7M83lQiE9hoWsAfIK6i7syA0K5IcFiWCcyi+36kUIy7opZeUSWf7W
-         ufP9ZfFS9jim14XfVcoCXxiO1eh059rvXlyG/WEM/fnfO7qB6LhCclyiqZyMpgA+xO
-         odf9vPp09d1Zx5+xKG2Zz5iZ2JZHqvyx8zvOCq4ITIbweeohTCj+/IwslBa/eCvmNh
-         Zq1aT6uABvT22ZQye8TSa1TKvvkmdn6/64jt4VM42souVsEtZ0WNNlVZeX6FjJWEB1
-         wBQJ74GzhXb2wzDmwIkXNugxWkgD9v4r1+D1pT6TINnE1ChAfSw+vsgdJhQ7Ny6Urb
-         uZcG5AoOy34mQ==
+        b=Ug1c7SKE4is/WPO7z4not0gLK107US9sRbdNr9/rTuPmuzgC9aXzHmXPk+IFoQZlB
+         yGNoDBQnasi7+UKYkvTs1IbqQtAGz/v25rxA16d1duM5eNkAlvyN0ErVVmFforA3LQ
+         mN34NQ3YMKdnuVoTmQSGvn145JjbzyxENeVGb4874NPZd2ukpPbUHud5LWDdbsuxu+
+         n32ZB3Lwama8+vyC3YLxwRL5SzWk6wIboRg1/efLuqhRFMm2M8fByMDBpr00+CdGpS
+         3v0E1fNH6WlznD78EyRjuREUQUuvLHVPr5Y0EeZhMaQ3vyWLZF9X7j2k8ZaW7Ksd2P
+         5yoko3VYcTAqQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nur Hussein <hussein@unixcat.org>,
@@ -40,12 +40,12 @@ Cc:     Nur Hussein <hussein@unixcat.org>,
         mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
         jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.3 27/44] drm/tegra: Avoid potential 32-bit integer overflow
-Date:   Sun, 30 Apr 2023 22:56:15 -0400
-Message-Id: <20230501025632.3253067-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.2 24/37] drm/tegra: Avoid potential 32-bit integer overflow
+Date:   Sun, 30 Apr 2023 22:59:32 -0400
+Message-Id: <20230501025945.3253774-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230501025632.3253067-1-sashal@kernel.org>
-References: <20230501025632.3253067-1-sashal@kernel.org>
+In-Reply-To: <20230501025945.3253774-1-sashal@kernel.org>
+References: <20230501025945.3253774-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
