@@ -2,131 +2,139 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13B1C7EE24
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 08:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9F7C77B73
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 10:32:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233404AbjEBIPe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 May 2023 04:15:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59518 "EHLO
+        id S234009AbjEBKcw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 May 2023 06:32:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjEBIPd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 04:15:33 -0400
-Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74801DD;
-        Tue,  2 May 2023 01:15:30 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 0A58D5803C3;
-        Tue,  2 May 2023 04:15:27 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Tue, 02 May 2023 04:15:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1683015327; x=1683022527; bh=ghjR7QqLTKl0Wa6Qp/pmJnR12EKA7bqxYQW
-        ouqZ3mAY=; b=G/ReWH/CR4stPP8pBvKE2oH2tiIxeT1Y9djsugPvcan1vwLCNKB
-        +CmHc2S3racpCMakxZ1qQRdhDmpzbTSxPsJLCIAsBgFwKTe+QJwmoUIe5cxfT6Wy
-        tgZI7GBK40sokCJo7woyfvbYgCDiIcu9MJqEUid0mCHXVNlzPDjNZzJJBtLrLhF9
-        X/mbJHalC7bJ1Xs6/CKvhniyT1ORP+ioH4B0Q9MMwa1hEm8wfe270mide7U5ucC4
-        jYc1KiyRZtz0ezseY2LvXW4OKb5R6V9gMew5kODf8MnejtSKgLd/xIANaAqpsh7o
-        O3SUD5day0+7MZzwDONO0PUZT+hvXwYxYyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683015327; x=1683022527; bh=ghjR7QqLTKl0Wa6Qp/pmJnR12EKA7bqxYQW
-        ouqZ3mAY=; b=Y/xWbzku7vrNHNzte8uy72nMxc+pbAIi4IeA/XfvwUvtiZV9Est
-        bPyNKEthPJpnwnx5/Y68ss9jDEmHmeNI9uaomvywj4LEhNdN2/6OUB0Ap6qjjHvb
-        OQIPRGrLOJBmcaLg/XgkHAzTOPE5Xwu/E3de9zryJ4QMstqpCG+bbbWHvXXdfXgL
-        L+W8t5CYwFrU7f8XrnzjjIYPTrCSQ2/hUzXAWg8+DhkBUcIkmt6eVQO+8Sms9yZ1
-        Z+nDtml+a4kCprv84LWaOxgu+YrgM2G6hBbX6r3CD52Qvxv2Jvyac8zhWROAt9xl
-        Ftb8duEVIIhaiX5H6fsUSxaLGjuOvtdmUyw==
-X-ME-Sender: <xms:nsZQZGG99LYs7t6dhgAngkbsv9osgUeFMS5nCv0_eqkMW790xp5pVg>
-    <xme:nsZQZHXku8NWvKl4XxdR48yR-0RVaLsU5fwZmJq18kazWD7vv8gAEIoPKVDAKkTuy
-    5prPVni2U8mfnd5sN8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfedviecutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfgjeev
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:nsZQZAK8fS_X5YYcPQ8tmCY5TK5FJ7gjlJsS0RCSCVoEK-Zwdrq3Yw>
-    <xmx:nsZQZAFFLoJhNSVEvLGVyQfmt0zeZphfcdHG8-tw9pYY47GFwhKrNA>
-    <xmx:nsZQZMUL4rbP96pvZI76ZCUHun2qRq8vNtMGMdc-nT5M5xb0isYJ2g>
-    <xmx:n8ZQZPq1o7msWppgt2EUHhnFGcmwGcb09Ud671-g5_97NEtVzT49Eg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 1C690B60086; Tue,  2 May 2023 04:15:26 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-374-g72c94f7a42-fm-20230417.001-g72c94f7a
-Mime-Version: 1.0
-Message-Id: <720a2829-b6b5-411c-ac69-9a53e881f48d@app.fastmail.com>
-In-Reply-To: <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
- <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
- <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
- <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
- <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
-Date:   Tue, 02 May 2023 10:15:03 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Rob Herring" <robh+dt@kernel.org>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        "Olof Johansson" <olof@lixom.net>
-Cc:     "Christian Marangi" <ansuelsmth@gmail.com>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-sunxi@lists.linux.dev,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        "linux-oxnas@groups.io" <linux-oxnas@groups.io>,
-        linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S234023AbjEBKcD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 06:32:03 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBE75273;
+        Tue,  2 May 2023 03:30:15 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-956ff2399b1so747256666b.3;
+        Tue, 02 May 2023 03:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683023414; x=1685615414;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yoz9JAbN5f+BVMAIJU5OP6UpMSWt3PXfSC9zASQ8+H0=;
+        b=qPJ2Hw6amNfB8lmXOrdvIl9FoT5xySIqwZYWNum7nfccE3LyonUmxVC4xvOcGkIACz
+         307kXPO/NEqxiW/gL534TetAjXFMoxa712gCWzKQ9ryZyTyQGMomA1FstyAd9rudnxDJ
+         7fxgC6AH+COjiSwLoolMULeoK+VOXPx+4clNKCXfmDkRZ6m4hSGBl+TNH9oRewB4vJ7s
+         GGDFrB5+hrF9djGr072zaTtShx1WWAkMkalYHIxnaA/YwcHurRqoQVgEEGcgHzSDCIV5
+         TcF93MCyDjYjmn8HxsAncCUR7fkPNCJmvVqGqCCZtOSZA9/R8phHp/VwRwXcb4ea7wMM
+         ejrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683023414; x=1685615414;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yoz9JAbN5f+BVMAIJU5OP6UpMSWt3PXfSC9zASQ8+H0=;
+        b=gcGVJyfRTWBVUL0f08RkYXuHH1NBWUH2YB1Fis8XfVFwAEUOJ6nW8mBf0E4Tqt5G9G
+         mQFCADBwfhiHM9W2KtheliLn1y3HFPOQw8PymzWvCfoCzjyT9XVIViN4nB54JOr4MvA8
+         wXS83Ruckb1wHrZ/RFl4JUDfQ3VFkcFYmxq6ecu7SDq7xLrOG6uc6htPylPAWIs/oyD1
+         eOAfAy6ubMwuXULdHicAsC1Q+hug630Og1h7tnwcJARt+E2FG4bdy3PKt16xnoJcOIS2
+         Cmg3rFVPAtlvLlYDYReNGJU8PCIHVfBB2Vjcq3+q+gdU4duyv5kS6p8U8NiNDU7py5T3
+         U0Jg==
+X-Gm-Message-State: AC+VfDzGE23YqpQJwx3aKVBw+jdUi1sU9M7Mgbcm/k0qSvIwZ/XPYKWr
+        MMR+2tSB+gGzqUMa+PzqksU=
+X-Google-Smtp-Source: ACHHUZ6YZ5pgw9VrLJ2fqMsSEx0tEiCLwIYXUGSFpKeEuP8/APOwu3MjFq79vENWW/sdJ/Brfn0IHw==
+X-Received: by 2002:a17:907:94cc:b0:948:b9ea:3302 with SMTP id dn12-20020a17090794cc00b00948b9ea3302mr15065573ejc.1.1683023413633;
+        Tue, 02 May 2023 03:30:13 -0700 (PDT)
+Received: from orome (p200300e41f053a00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f05:3a00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id u13-20020a170906c40d00b0094aa087578csm16154555ejz.171.2023.05.02.03.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 May 2023 03:30:13 -0700 (PDT)
+Date:   Tue, 2 May 2023 12:30:11 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: tegra194: Fix an error handling path in
+ tegra194_cpufreq_probe()
+Message-ID: <ZFDmMydAy4CiJjfQ@orome>
+References: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gK1WG8+Pg3vMnVql"
+Content-Disposition: inline
+In-Reply-To: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 25, 2023, at 17:57, Rob Herring wrote:
-> On Tue, Apr 25, 2023 at 2:28=E2=80=AFAM Geert Uytterhoeven <geert@linu=
-x-m68k.org> wrote:
->
->> Does your script also cater for .dts files not matching any pattern,
->> but including a .dtsi file that does match a pattern?
->
-> I assume I built everything after moving, but maybe not...
->
-> That's all just "details". First, we need agreement on a) moving
-> things to subdirs and b) doing it 1-by-1 or all at once. So far we've
-> been stuck on a) for being 'too much churn'.
 
-Sorry for missing most of the discussion last week. The script sounds
-fine to me, the only reason I didn't want to do this in the past is that
-we had the plan to move platforms out of the kernel tree to an external
-repository and I wanted to do this platform at a time and also only move
-each one once. I don't think that is going to happen anytime soon now,
-so let's just do your script.
+--gK1WG8+Pg3vMnVql
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you send me the script and/or a pull request of the resulting
-tree based on my soc/dt branch? Everything is merged upstream,
-and I think git-merge would handle the remaining merges with any
-other changes in mainline.
+On Tue, Apr 25, 2023 at 03:11:19PM +0200, Christophe JAILLET wrote:
+> If the probe needs to be deferred, some resources still need to be
+> released. So branch to the error handling path instead of returning
+> directly.
+>=20
+> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidt=
+h")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only
+> ---
+>  drivers/cpufreq/tegra194-cpufreq.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra19=
+4-cpufreq.c
+> index c8d03346068a..36dad5ea5947 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -686,8 +686,10 @@ static int tegra194_cpufreq_probe(struct platform_de=
+vice *pdev)
+> =20
+>  	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable IC=
+C scaling */
+>  	cpu_dev =3D get_cpu_device(0);
+> -	if (!cpu_dev)
+> -		return -EPROBE_DEFER;
+> +	if (!cpu_dev) {
+> +		err =3D -EPROBE_DEFER;
+> +		goto err_free_res;
+> +	}
 
-        Arnd
+I think ultimately it'd be better to try get_cpu_device(0) earlier so
+that we don't do all that work upfront before we fail. However, it looks
+like there's some other improvements that could be done in that area, so
+this looks like a good fix in the meantime:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--gK1WG8+Pg3vMnVql
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRQ5jMACgkQ3SOs138+
+s6G2Wg//TRLHO0MURhGFW5IfnB5xXcvKaHVeurXxBdRWI4KuA8CQv5+2plHnEci6
+BlU7+GHpOB+3Ch+bfnUVuhFN4WleYecoD69FS9GxwLaYukg7R7ynqVhYX/tccT1w
+lzkZFUzYqrJMxY4ZAKMD14PmnY7tm/DFQO8Ht7Iu1DWKCRVZTd1udfXpqw4z8spc
+ndm1uxVz3d2ojvkhevIWOpHYpsCXgbzYMasi1lHpbui/RGUyr6JE1L2CY23+Ne4s
+KcF/QrhXWRXs6+s40Xi7rQrAgtj/evq0wOlly/YGLBtP4mKpQB1T/o8MlF0NfW3x
+iQoKEAfBIbmOYodXCYjrZvj8ftq7pOtQbzXWW67wzjOxyDuXc/j2XVodHdoDtJ+0
+VSabbpTT+RQsXDM61RxBqeH56mXl6TpJaBLL/reh6BVRESmTPfaqXOkw12BXLYhZ
+IHDOfbuXvHAT1fhJjOWj2yxiqOhwcsIJVIyQlrBfUIjjf1AKOkaUGgiO4jffHjSG
+uYyglby74dbDWqLXnotxaMpSNRSCY94kxEw99p2MtsAb/HTOzCpw2SX/PGBePjwI
+XJCyZ54FOIBBvi+0LBZhjbDitkbILO0zvPZ6etx99jFC2ZRndIqLks22WO/B0h34
+mHYcuakHBmhjbnPK+Yt8YbNQtgUo2O401FTHT/Cm78Y5vYybem4=
+=WBsp
+-----END PGP SIGNATURE-----
+
+--gK1WG8+Pg3vMnVql--
