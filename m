@@ -2,149 +2,119 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF81C7EE25
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 18:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A45C7EE26
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 19:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234160AbjEBSRQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 May 2023 14:17:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54498 "EHLO
+        id S229614AbjEBTBU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 May 2023 15:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234109AbjEBSRO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 14:17:14 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF5B01FD7;
-        Tue,  2 May 2023 11:17:01 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 342IEdEv012302;
-        Tue, 2 May 2023 18:16:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=+n8liBN5L0dwaVKtdnjrH6nlYtbK4M0ezTsHBz+OcQw=;
- b=sn4AceGT3vDGiHGn22xFeXMbzYcsOPv9cXhDyTYrfiwFszyCB3H+AB8wQVpH485ZZ/Uj
- dJ2cvznYQ7mAdQCdz9fuR0ODuAdr2LWcbSv6EGUgiKX3FNMtg8vllKBBTPBeG+1dUkHz
- cP4HGKL5XB2JOyfZtaIn/+S1h4fgRJ7YdJy2hzV5PjFNYgNcYRgwKVf27tgVI+fdhRH9
- Ifqv4TWQEPfQq1DWsnQZ3ozYodu/xjf0Tymgasn4aIdQ3H+2nLMOkFtoO4bmDudVi+/0
- CFivFI+0Hf5eAfLPNvqgKj4nvGd4W+SxayXz7Bht2trqFeqehwoI+6Xj10/GLnaeSm+N qA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb7mb01r7-17
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 May 2023 18:16:13 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 342I2dPJ019051;
-        Tue, 2 May 2023 18:03:11 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb6qv1frk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 May 2023 18:03:11 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34246qx7021338;
-        Tue, 2 May 2023 18:02:41 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3q8tv6sr6y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 May 2023 18:02:41 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 342I2cI939715088
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 2 May 2023 18:02:38 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12A6920043;
-        Tue,  2 May 2023 18:02:38 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2341420040;
-        Tue,  2 May 2023 18:02:36 +0000 (GMT)
-Received: from [9.171.18.35] (unknown [9.171.18.35])
-        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Tue,  2 May 2023 18:02:36 +0000 (GMT)
-Message-ID: <aec2895379f426ac7c01c6d5952666975b8e1710.camel@linux.ibm.com>
-Subject: Re: [PATCH 20/20] iommu: Convert remaining simple drivers to
- domain_alloc_paging()
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Steven Price <steven.price@arm.com>
-Date:   Tue, 02 May 2023 20:02:35 +0200
-In-Reply-To: <ZFErVOr8RDoeZ2tq@nvidia.com>
-References: <20-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
-         <b9b6a50724b4f1ac2b98e518a8b9a820a912850f.camel@linux.ibm.com>
-         <ZFErVOr8RDoeZ2tq@nvidia.com>
+        with ESMTP id S229511AbjEBTBS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 15:01:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13562DC;
+        Tue,  2 May 2023 12:01:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A2FA662803;
+        Tue,  2 May 2023 19:01:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FE4C433A4;
+        Tue,  2 May 2023 19:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683054076;
+        bh=prkycoKFrtYOB9sqzJph1/Wh7+dUYl73V0ySsrK86tE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rf/Ymu/EiSQOPePfJMJv1847ZBWRjnjneowURtOqNMODuCRTfcl2GQ0h/jO2AdmCs
+         leEyX7R6GR2dka6/IsiyySID/QcvyxsSv7fNtmEEy0Cm9A6hC1sqxMJ+9jfUBya5xj
+         ODLup2MnZzYCOUMdIZzoCrk5OSl4AOnL/7/DJbtkd5lptoW7/0YbgOkcgOH14mk6Au
+         qACeCdnoaBW8B9rF8o7n7shq7gT7w0jQTaVjP3mXHg69IyA+TLldeHm4Y1C5mj86Z3
+         uRYRPp4016gJq/2Xf9LklNYOIaWs99spKYSrk9MtOv6rk+8yKfvzOFwqXzWomFJ/+X
+         cezzz3yUhjKtA==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-4f00d3f98deso30189736e87.0;
+        Tue, 02 May 2023 12:01:15 -0700 (PDT)
+X-Gm-Message-State: AC+VfDy6HROMOBtt8vjysX7PaO7pZt0gXrzRwYR+dhVfCyhlP6x07oQQ
+        5zNawx7YmJwz7OCZi6b5qscMEp/eoQDqajAPwA==
+X-Google-Smtp-Source: ACHHUZ4aQAyOb+PGJ7PQfIp0PiLUMh7I0dBEHOyVsVppKRO7n40/yktfmotxwSexv0gCD3XVcEmYB9ah5iQIzUMa54Q=
+X-Received: by 2002:a05:6512:3b07:b0:4eb:412e:b06a with SMTP id
+ f7-20020a0565123b0700b004eb412eb06amr237890lfv.22.1683054074001; Tue, 02 May
+ 2023 12:01:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220328000915.15041-1-ansuelsmth@gmail.com> <CAFr9PXkgrRe-=E=GhNnZ4w1x_FMb97-_RmX6ND1vEd74_TbZSw@mail.gmail.com>
+ <4ff4f171-c5f8-87af-aad1-5e7686292288@microchip.com> <45bc13a8-1442-2dd3-b9ea-1ed2f5962bac@arm.com>
+In-Reply-To: <45bc13a8-1442-2dd3-b9ea-1ed2f5962bac@arm.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 2 May 2023 14:01:01 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL7t47x-5U6STynwW-+4wJUhs_R9wuaQ0YOgX59aJ=vew@mail.gmail.com>
+Message-ID: <CAL_JsqL7t47x-5U6STynwW-+4wJUhs_R9wuaQ0YOgX59aJ=vew@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
+        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Santiago Esteban <Santiago.Esteban@microchip.com>,
+        Cristian Birsan <Cristian.Birsan@microchip.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-omap@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@axis.com, linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
+        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
+        linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-realtek-soc@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: slkEV7990viVZeo3EoiAzvk_x4KeFq9l
-X-Proofpoint-ORIG-GUID: cZ5QXiUnqxQL3lGAYvCQF1nCj-zW_0d9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-02_10,2023-04-27_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- adultscore=0 spamscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
- phishscore=0 mlxlogscore=527 impostorscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305020156
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 2023-05-02 at 12:25 -0300, Jason Gunthorpe wrote:
-> On Tue, May 02, 2023 at 04:52:32PM +0200, Niklas Schnelle wrote:
-> > @@ -1947,7 +1948,7 @@ static struct iommu_domain *__iommu_domain_alloc(=
-struct bus_type *bus,
-> >         if ((type =3D=3D IOMMU_DOMAIN_UNMANAGED || type =3D=3D IOMMU_DO=
-MAIN_DMA) &&
-> >             bus->iommu_ops->domain_alloc_paging)
-> >                 domain =3D bus->iommu_ops->domain_alloc_paging(dev);
-> > -       else
-> > +       else if (bus->iommu_ops->domain_alloc)
-> >                 domain =3D bus->iommu_ops->domain_alloc(type);
-> >         if (!domain)
-> >                 return NULL;
->=20
-> Agh, yes, it should fail, this is right, I'll fold it in, thanks
->=20
-> > This then uses the fallback of an empty IOMMU_DOMAIN_UNMANAGED and I
-> > get a working device in the guest. Also tried hot unplug where the
-> > device is taken over by the host again.
->=20
-> Great, thanks, I'll add your tested-by for the s390 drivers.
+On Tue, Apr 25, 2023 at 11:21=E2=80=AFAM Robin Murphy <robin.murphy@arm.com=
+> wrote:
+>
+> On 29/03/2022 9:50 am, Nicolas Ferre wrote:
+> > Ansuel, All,
+> >
+> > On 28/03/2022 at 10:55, Daniel Palmer wrote:
+> >> Hi Ansuel
+> >>
+> >> On Mon, 28 Mar 2022 at 09:09, Ansuel Smith <ansuelsmth@gmail.com> wrot=
+e:
+> >>>
+> >>> Hi,
+> >>> as the title say, the intention of this ""series"" is to finally
+> >>> categorize
+> >>> the ARM dts directory in subdirectory for each oem.
+> >>
+> >> While I agree with this change and think it's for the good (browsing
+> >> the ARM dts directory at the moment is frustrating..) I think
+> >> buildroot and others need to be told about this as it'll potentially
+> >> break their kernel build scripting for ARM and probably messes up the
+> >> configs they have for existing boards.
+> >
+> > This aspect mustn't be underestimated and I anticipate lots of issues
+> > during a long time on this particular topic of "build systems".
+> >
+> > Another aspect is CI and public or private testing farms we all have
+> > running.
+>
+> Yet another is if this affects what `make dtbs_install` does (I don't
+> know for sure, but I'd be inclined to suspect it might). Some distros
+> use that to deliver the DTBs as part of their kernel package, so if
+> paths suddenly change it could break end users' bootloader setups too.
 
-Yes and with the above change feel free to add my for this patch and
-see my other reply for the s390 specific change.
+Indeed, this came up last time. Turns out I had already implemented
+support to maintain the flat install. I just re-wrote it since
+Makefile.dtbinst changed completely since then.
 
-Acked-by: Niklas Schnelle <schnelle@linux.ibm.com> # s390
-
-(I've recently been added as additional S390 IOMMU (PCI) maintainer)
+Rob
