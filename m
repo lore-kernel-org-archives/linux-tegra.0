@@ -2,555 +2,169 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA09C7EE26
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 15:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3414DC7EE23
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 15:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234356AbjEBPDN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 May 2023 11:03:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58194 "EHLO
+        id S234282AbjEBP04 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 May 2023 11:26:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234261AbjEBPDN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 11:03:13 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2074.outbound.protection.outlook.com [40.107.102.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5171F1FDE;
-        Tue,  2 May 2023 08:03:11 -0700 (PDT)
+        with ESMTP id S234629AbjEBPZO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 11:25:14 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94C1268F;
+        Tue,  2 May 2023 08:25:11 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=USJGAhtf4Eajgk9ImZuojJBzbsUtuOOp+xNNORkUL3iACM2BSTqtquHWVVAfHvMUuMYOppZaqXuwgO+aPBI85M4gOssMPf8KcabnJyNn6E9hiLqvamktiQzHDvmO/5GcUgyXkLPKiFXSvr9zNoM/jPOtxGeEb/4WHXIu8M8hGeaXk+Pxbb/gN95IZ3NgNIGXwIb7qTqDcXOYos3uVqFC2StchWggw7y8y0Egjve3oFU5S5kM4D7ZR6CFWoVBP6Coxz66ekZebxN+7C7yXwz5u/Ywy1yWIjmeZKwPBElVqVlzGYtwEZFR/lUw69CbyJcHb9QdleyB42Qv4ZgoqfMuxA==
+ b=Tcyb/Q+FWAAsQB6Lo2Q30cu8Ny8f77VFbKheKSZbvOOVCbCk7wWHD4gzkuc7xw6qCym3IAs7l9gFe1R8wYaTt6Mga7EBM1MsN9KxZB47DwnFERckmnLFQZ4hspXLdvORKNJ7s/Cvml6W2FChxL4+z6DQVOLDEmNQ29yXQc6/X2jCZS4OLDSMTT5dpLjha3sTOK0vojcPoYmkc6JPwCGUx28WmRsDFnYq9v5qigbpWv8RB5hzqvglLF18G3eBtTc+oaE7gnwYlw/XBLxZrIQd3E5/hJnIFkh7uxaOW9RWuXNHUTgw7vFZEax4Mar3k9eud2K7/Gw/nbuPcop+9zSccA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=inz1dqNAuiGFWO3O2JO/5MSPjA3vQ+Q6mPwyTrx2ROw=;
- b=JI7AwQGYAgQ/kV0XPPkXZcE+nfqZXClQcq2/rX73tYeKe1ZRVK/ln3PgrhhPt17AW+bVSSPvGBOMGqBw7kjtCHfWXKm0JLZ8m/LEDl78Oyzaj0vBi0AE3zZwR6pbXdv6HZEjM/YkkM4WDrW1Nt9+L3Mu8BRpw1FoZFcw9h3iqvepV3ywvni7JRNYWPc02jBL11+UEoN2araLf73JLc23Z/XRMTgmGt9jO1Zz0ll45D9vX92cu6NdcMK7mpr8NY7uiC68bgj8PAIOcjzOdPDJ0bNfw6iEsyV7ZKst9vl9YAaFk8xNZCWOo+Bi/EzTJg17qkD3Z7OXJmkSAp4Os7D0iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=KDBbbX3BI8ybwiWEwQ772cU55r9WiK2OVUn/WgHlJNo=;
+ b=SKuNXQMX53cn6jr+kNlquWfAkFxtNTQwyR3cIlGzpw0DHP//16ecBicoTUPCJs5gB9hQfE5QJ0dpfTktizDYQL/HiWKE3xlANWYkgAWF5bg6Jy/OzUYfVgv+bUfwrzJWZ5jCDurQLBB0Uimx2bY7mjZ4dm5dRcx2wLBFFlEcYJEK0TcYyEAtq08CatH+SCtFVxgHH+I2v+xPXmOl4FIxB5BZecMWIC1HQremKtMHjXFOKfhLumo3XS0RZdeOZolXQCj9u6ZLuJFlPYaxzS+EHzwbErDrFeiqH0t+XA5ikaB/qPWamTDD//anDPuivlSGwt4VhCEk7DGnznKXtUyW7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=inz1dqNAuiGFWO3O2JO/5MSPjA3vQ+Q6mPwyTrx2ROw=;
- b=Cm3Nhyrm/Kdr9gVpbrZl5o+Vqqx/o+aJXGTGf2+BheG9wOn6m813JAm3KgMGpUFsZgQNyE6j24B6ndyhUORntywc8X8WkAlnRG9+Zc7CxMc1g2gXM7xsIO9CC7TAtm3ONMALWh/et+A/tMWU9s9wekWF8KqMi+jYwAkSm0EEIwfwWoUeLx5wM/d7r8RMQm96p4zLQ53joQ8JZKq8UjwcCBerTMyFU5ZkRg/fWSIT8mM5U1WSg4UvN6HFuf4egeugbhTIxglykw12J7y1Zws3RJyBiIzSdUKH6gzJnfjio1nekshNxF7QA0QPUGwGA+3f5IwhXTtnDj8MbcWJEh0MUg==
-Received: from DM6PR11CA0023.namprd11.prod.outlook.com (2603:10b6:5:190::36)
- by CY5PR12MB6454.namprd12.prod.outlook.com (2603:10b6:930:36::22) with
+ bh=KDBbbX3BI8ybwiWEwQ772cU55r9WiK2OVUn/WgHlJNo=;
+ b=C8zrQrUR/odibz6N9Lh31brF1x/EJWeLaGv80ILIzR1bXLGTeVzS3zoYaxGTQh7qFgHZamyCBmMvZNW/pP4NgwH1x9y9r03WsT76Z65tOwwiOYhQ5zBwH8sc92CXjMX/cIhuVWHShyrpnrp6JDH1D9s7GSqCZHW/X8bpEW4RZJpDlCw3F+oc+SZMXYRzZOIPbfylOeW3DnZz+pKvMNa8Pt1f8XQY/uk2m9MLk4WgUhZ3pIMYTWGxYB/Uo7JczXoxS7puxy59dURrjJAYx8b+JlL1P7KDxn0ju3Wqr/Ihl+3QVoU9C9JCeAyl8rZnd/hcUvpIfGIzMbLvXMEMrpxoLg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by PH7PR12MB8426.namprd12.prod.outlook.com (2603:10b6:510:241::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.20; Tue, 2 May
- 2023 15:03:08 +0000
-Received: from DM6NAM11FT099.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:190:cafe::da) by DM6PR11CA0023.outlook.office365.com
- (2603:10b6:5:190::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.31 via Frontend
- Transport; Tue, 2 May 2023 15:03:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DM6NAM11FT099.mail.protection.outlook.com (10.13.172.241) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6363.20 via Frontend Transport; Tue, 2 May 2023 15:03:08 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 2 May 2023
- 08:02:54 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 2 May 2023
- 08:02:53 -0700
-Received: from build-shgarg-20230103T221109854.nvidia.com (10.127.8.13) by
- mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via
- Frontend Transport; Tue, 2 May 2023 08:02:53 -0700
-From:   Shubhi Garg <shgarg@nvidia.com>
-To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-CC:     <shgarg@nvidia.com>
-Subject: [PATCH v1 2/2] arm64: tegra: Add support for IGX Orin
-Date:   Tue, 2 May 2023 15:02:49 +0000
-Message-ID: <20230502150249.773425-2-shgarg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230502150249.773425-1-shgarg@nvidia.com>
-References: <20230502150249.773425-1-shgarg@nvidia.com>
-X-NVConfidentiality: public
+ 2023 15:25:09 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6340.030; Tue, 2 May 2023
+ 15:25:09 +0000
+Date:   Tue, 2 May 2023 12:25:08 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Niklas Schnelle <schnelle@linux.ibm.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Steven Price <steven.price@arm.com>
+Subject: Re: [PATCH 20/20] iommu: Convert remaining simple drivers to
+ domain_alloc_paging()
+Message-ID: <ZFErVOr8RDoeZ2tq@nvidia.com>
+References: <20-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
+ <b9b6a50724b4f1ac2b98e518a8b9a820a912850f.camel@linux.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9b6a50724b4f1ac2b98e518a8b9a820a912850f.camel@linux.ibm.com>
+X-ClientProxiedBy: BL6PEPF00013E0B.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1001:0:10) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT099:EE_|CY5PR12MB6454:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25082d63-4140-496d-5e8b-08db4b1e571f
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|PH7PR12MB8426:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e2d5a08-163f-46b2-06ea-08db4b216a78
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8ByHmTaX+L0Rjn081SFNaozXhF7fUxgfa76WrRtxaCsdQKD6yxkm3T9EgfS7BsgkFM/kWG+aUXT0xQK5EfU57C7g6x4U8ro4D98326fRw30vuVhTuWFQ5Vigjd869ibgZu8EaEGaGE34Z0O765Mm3AyuMX7RJKK5GS9gQ/vGVgEA/rNyTJC4ntwEihLjyQnOLuCvDGqWf+o064NSxPP+NdryWGlJ47fH7mvYTIqUjA778e0b81x5NEaZ9rwv4iLLaR258myuUc9gREPmGzdH/6xjdum/zxRDUwJUad594JNX6vhKKOz9Gau7dA/eHM7ceF2C0WP/3oHgcojwSzgg3ywf0BYVi+yNpZlcd/HuzhhO2YrSVVCgs3RmagFt1g3aTvHUgu473BFpcudiFCw7/sXi1+hmRSdLEtvP2em0caAD6hqzPoF1X4XxPxbpmnJpBHFUEWfjMFwobWe+dq2s1BD7TxNZgCeVwDcaistS95HbKGZPdoSSar9bGlAGDxa39cJoMYvvEQOAgiauZLQc9DyayWjQHnAs6/naKs4PCI7RoHuNdmsNyccYpL3iQGoz3sidSXZLFJy3C+ZfYmlwUslb4VwNFugzDl7PRGsK4CvAGu3bY36wq8C4Ryl6DYA231rWHNueryARDKpNS6BlSehOLLZ+IVwVIcUrflXvLJjIJpDNDPmu+4hm3wiw95lb/kPi6Fb2wqwiDX9BAJHVRA==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(376002)(136003)(39860400002)(451199021)(36840700001)(40470700004)(46966006)(70206006)(70586007)(2906002)(336012)(86362001)(2616005)(426003)(82310400005)(5660300002)(8936002)(8676002)(40460700003)(36756003)(41300700001)(316002)(4326008)(110136005)(478600001)(6666004)(40480700001)(7696005)(26005)(186003)(82740400003)(356005)(7636003)(1076003)(83380400001)(47076005)(36860700001)(107886003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: XMCJHI/QGKOYNL/H8/aY4TUIqL2UI52cWv7h7S4/xkTX5NEmXoSmmNAMq4niAooQfEnchjUWHo1us6dnSBh3KeV23CSRt3+wi76NMhfaPX8bJZNoRPf+tq+JDaCQw/YfMWZermN08H59hAGkU00ZIxlKGt+h6UBB4k9sS1p5ZdlNstedpoAa2rLt9UQ2AifIn1QmJfGA/RFR+lLzsZ/DW7IjEh+AGk/b0oOJa/D5ZCs6TiaPpWhlXArCeNQMhrSikQ4xwHBhVICybYdBCEYf0TK0GxsGQzspX35Mb8l8NfsbIocF2icvlnZzHn6UXJ5uFK43Ozx80sI+acjswykqz2vahcv60TlYC/z5wMA1+0Q/8HGCOl4xMUzBb0L4qdUBLBPLS0BMoV28BCzkXUUvm8I1qe39+61bEfCnvPsR5UEVG8WF+jf+ESd73N3o5KRy8QTe1bLZq5I8O16vd91H/LIROcJFkVkt3tuTQmQNC/HMNf8Z9b3P/ROk7qh9XaEhX41TpOqqVKMg99j3ARNv/D0GiuNyTrQMgUHe+HGSSthIr9h1eaPDT4jtB2Qz9yUK
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(366004)(376002)(136003)(396003)(346002)(451199021)(7416002)(7406005)(5660300002)(6916009)(86362001)(2616005)(83380400001)(186003)(26005)(6512007)(6506007)(38100700002)(8676002)(8936002)(478600001)(54906003)(6486002)(316002)(36756003)(41300700001)(4326008)(66476007)(66556008)(66946007)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7GT5/Aq4qmHLdHjns4lu5JRl2LSxJnFl5+5ChBONMPpRrOeIWrDZ7XPIO0Wz?=
+ =?us-ascii?Q?P8+1PicryyyrkneuO9fSK9SaReBJxAtDYNCaonoM2X8PwKMjFAzzK6oEiqd7?=
+ =?us-ascii?Q?zRGS6gwNLQ96D8B3ydW1/IxO2s/oh6KfIZpyXFOFk+c+ui02xs3fOQrsOyPD?=
+ =?us-ascii?Q?+TP/SKRk2TraIYvwcJgSiIZ54ZnhbyZuQPsQxpmP07VmrNpxQuwXD+qzr5kN?=
+ =?us-ascii?Q?ORPqVBr1wgCokNQ/5+ob1zhLtUJp/vm/o65Qa8uB5iz7F8t27fcVz/O9TL+a?=
+ =?us-ascii?Q?yEE6FkSalDs/QTUPjwkoknz7g1Zcf5wk6EMo33+cJSDiirSwL04zTYW+mlpv?=
+ =?us-ascii?Q?kh0P/nz5gD8mXO278tw+o4IzhXWyLVnkd8qtlHYZ7+hW/nUMzJp15RNo9nWy?=
+ =?us-ascii?Q?JFLL2Uw0Ce40SG3tGf1mhz4raFjr2WXl474N3U4k3r2emwAiGeM/QiUreGh1?=
+ =?us-ascii?Q?v7mv1Xb58dLK3mP17WptVu5O3Ic28jv5PbtxoCB1BvJjWrnTUXUR3eAfpm58?=
+ =?us-ascii?Q?LkeXNX3wxsWClJfjS7Qjy1dWkagrE+JWbNBQEbRy7vYftnXp4yXY/6jh0ju5?=
+ =?us-ascii?Q?8P1GkzpndUgL99hGH45socxJQpQ/vzlXL0MOpghNSwuj3uX0aQB1gCq//e2U?=
+ =?us-ascii?Q?/SzXbZJffrd/OfZTpWZ5DLSIX069gdMIDM9G0rN68/ARMdkjcp1o16BmXsNJ?=
+ =?us-ascii?Q?ywzVOxIHqAezsEAT+vkE3U/Y2V8DI0QmDvZ3AMy7p2MD5R8Q6eC06smW3rhr?=
+ =?us-ascii?Q?3i7PzyWUTSXmdrdqN9ml4daiAgsl/9A4tWSavKLthvPOeb/w1cI488aSSSSq?=
+ =?us-ascii?Q?O3aRwdAv9fJaF24sJ4OFYaVx6z1LJAcvdrn65COuofP8oloRO02wpmWWR27y?=
+ =?us-ascii?Q?/+jmbzPOZFNHy6H7oGfdqfMc5N+BSb/WgGg4BKvKtN9ZwaMMjEtyYpZUKBy/?=
+ =?us-ascii?Q?qcgXPeY72XwNdwKxHnSzDBPGJuRt8vDwD0FQj9Rb5C/tVYYD0b9r55gYw9Nn?=
+ =?us-ascii?Q?D59wjAPIhFqlnDVdT7KAlPTShEU9lVNAZBDdRpZCEZQusT8DQ5KvvxgqmSqT?=
+ =?us-ascii?Q?Gi166sZup9CKapH0Qh2eK9RETdqTzEA81IZg73lF6hRcEt437WKBMzgq4/iR?=
+ =?us-ascii?Q?w5znMSxZjaeN71mRJJIeRQRe2CFDjKLrJRGUpZzTpFZyAmzDCV2D2khXcKQ5?=
+ =?us-ascii?Q?bIq+CxvA51UhOosAMJh9emOxRZU5At7QzXnlItdKc7YhGYZZVw+3m58XmdCR?=
+ =?us-ascii?Q?Tez2TsnDszMPAFMkjl3bHpLPPu73MRKqaiMXuj2XbQXzcI59Sg4cfC37vjBO?=
+ =?us-ascii?Q?X6yqlS7JP27VED1y2ch/3vc2CgDF0tk2Uw1qHCbqEu2/bnrTd8aiEP0PJhK2?=
+ =?us-ascii?Q?9GE7O6p84nuVA2yeCMhkQ6Jn2/NtmYDwa9EqXQBoAIq/f1rPtYUQmzYqPT+8?=
+ =?us-ascii?Q?q+WbltEEdzB/oii6RnEzqn8hP0LHm3tfH63TJJil0xOhVpAfU6GvXUxWgAZv?=
+ =?us-ascii?Q?K2Kqm9ak+RSOSaVjH9fHEPZtJZKh2xWl7KIYmH0BmzgrbxiZY+1a2jbXlgvy?=
+ =?us-ascii?Q?hsAucatvftFJW5g39+awGgOfnotynDoTvfniWLVh?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2023 15:03:08.4426
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e2d5a08-163f-46b2-06ea-08db4b216a78
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2023 15:25:09.7554
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25082d63-4140-496d-5e8b-08db4b1e571f
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT099.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6454
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DvRnqMM2z5zxO/SiGUto0UfDBO2kiKcTjT63DbjIJYAXo2EHHT1zzSMCsvHJiAPF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8426
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add support for the NVIDIA IGX Orin development kit having P3701
-module with P3740 carrier board.
+On Tue, May 02, 2023 at 04:52:32PM +0200, Niklas Schnelle wrote:
+> @@ -1947,7 +1948,7 @@ static struct iommu_domain *__iommu_domain_alloc(struct bus_type *bus,
+>         if ((type == IOMMU_DOMAIN_UNMANAGED || type == IOMMU_DOMAIN_DMA) &&
+>             bus->iommu_ops->domain_alloc_paging)
+>                 domain = bus->iommu_ops->domain_alloc_paging(dev);
+> -       else
+> +       else if (bus->iommu_ops->domain_alloc)
+>                 domain = bus->iommu_ops->domain_alloc(type);
+>         if (!domain)
+>                 return NULL;
 
-Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/Makefile           |   2 +
- .../boot/dts/nvidia/tegra234-p3701-0008.dtsi  | 111 +++++++++++++
- .../nvidia/tegra234-p3740-0002+p3701-0008.dts | 155 ++++++++++++++++++
- .../boot/dts/nvidia/tegra234-p3740-0002.dtsi  | 137 ++++++++++++++++
- 4 files changed, 405 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3740-0002.dtsi
+Agh, yes, it should fail, this is right, I'll fold it in, thanks
 
-diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
-index 1406d5d40b8f..2ea0058979d3 100644
---- a/arch/arm64/boot/dts/nvidia/Makefile
-+++ b/arch/arm64/boot/dts/nvidia/Makefile
-@@ -9,6 +9,7 @@ DTC_FLAGS_tegra194-p2972-0000 := -@
- DTC_FLAGS_tegra194-p3509-0000+p3668-0000 := -@
- DTC_FLAGS_tegra194-p3509-0000+p3668-0001 := -@
- DTC_FLAGS_tegra234-p3737-0000+p3701-0000 := -@
-+DTC_FLAGS_tegra234-p3740-0002+p3701-0008 := -@
- DTC_FLAGS_tegra234-p3768-0000+p3767-0000 := -@
- 
- dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
-@@ -25,4 +26,5 @@ dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p3509-0000+p3668-0000.dtb
- dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p3509-0000+p3668-0001.dtb
- dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-sim-vdk.dtb
- dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3737-0000+p3701-0000.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3740-0002+p3701-0008.dtb
- dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-p3768-0000+p3767-0000.dtb
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi
-new file mode 100644
-index 000000000000..e468352b8b7f
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "tegra234.dtsi"
-+
-+/ {
-+	compatible = "nvidia,p3701-0008", "nvidia,tegra234";
-+
-+	bus@0 {
-+		i2c@3160000 {
-+			status = "okay";
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c02";
-+				reg = <0x50>;
-+				label = "module";
-+				vcc-supply = <&vdd_1v8_hs>;
-+				address-width = <8>;
-+				pagesize = <8>;
-+				size = <256>;
-+				read-only;
-+			};
-+		};
-+
-+		spi@3270000 {
-+			status = "okay";
-+
-+			flash@0 {
-+				compatible = "jedec,spi-nor";
-+				reg = <0>;
-+				spi-max-frequency = <102000000>;
-+				spi-tx-bus-width = <4>;
-+				spi-rx-bus-width = <4>;
-+			};
-+		};
-+
-+		mmc@3460000 {
-+			status = "okay";
-+			bus-width = <8>;
-+			non-removable;
-+		};
-+
-+		i2c@c240000 {
-+			status = "okay";
-+		};
-+
-+		rtc@c2a0000 {
-+			status = "okay";
-+		};
-+
-+		pmc@c360000 {
-+			nvidia,invert-interrupt;
-+		};
-+	};
-+
-+	bpmp {
-+		i2c {
-+			status = "okay";
-+
-+			thermal-sensor@4c {
-+				status = "okay";
-+				reg = <0x4c>;
-+				vcc-supply = <&vdd_1v8_ao>;
-+			};
-+		};
-+
-+		thermal {
-+			status = "okay";
-+		};
-+	};
-+
-+	vdd_1v8_ao: regulator-vdd-1v8-ao {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_AO";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_1v8_hs: regulator-vdd-1v8-hs {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_HS";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_1v8_ls: regulator-vdd-1v8-ls {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_LS";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_3v3_ao: regulator-vdd-3v3-ao {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-AO-3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_5v0_sys: regulator-vdd-5v0-sys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VIN_SYS_5V0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-new file mode 100644
-index 000000000000..3ac8070918bb
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+
-+#include <dt-bindings/input/linux-event-codes.h>
-+#include <dt-bindings/input/gpio-keys.h>
-+#include "tegra234-p3701-0008.dtsi"
-+#include "tegra234-p3740-0002.dtsi"
-+
-+/ {
-+	model = "NVIDIA IGX Orin Development Kit";
-+	compatible = "nvidia,p3740-0002+p3701-0008", "nvidia,p3701-0008", "nvidia,tegra234";
-+
-+	bus@0 {
-+		host1x@13e00000 {
-+			nvdec@15480000 {
-+				status = "okay";
-+			};
-+		};
-+
-+		pcie@140e0000 {
-+			status = "okay";
-+			vddio-pex-ctl-supply = <&vdd_1v8_ls>;
-+			phys = <&p2u_gbe_4>, <&p2u_gbe_5>;
-+			phy-names = "p2u-0", "p2u-1";
-+		};
-+
-+		pcie@14100000 {
-+			status = "okay";
-+			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
-+			phys = <&p2u_hsio_3>;
-+			phy-names = "p2u-0";
-+		};
-+
-+		pcie@14160000 {
-+			status = "okay";
-+			vddio-pex-ctl-supply = <&vdd_1v8_ao>;
-+			phys = <&p2u_hsio_7>, <&p2u_hsio_6>, <&p2u_hsio_5>,
-+			       <&p2u_hsio_4>;
-+			phy-names = "p2u-0", "p2u-1", "p2u-2", "p2u-3";
-+		};
-+
-+		pcie@141a0000 {
-+			status = "okay";
-+			vddio-pex-ctl-supply = <&vdd_1v8_ls>;
-+			phys = <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
-+				<&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
-+				<&p2u_nvhs_6>, <&p2u_nvhs_7>;
-+			phy-names = "p2u-0", "p2u-1", "p2u-2", "p2u-3", "p2u-4",
-+				    "p2u-5", "p2u-6", "p2u-7";
-+		};
-+
-+		pcie@141e0000 {
-+			status = "okay";
-+			vddio-pex-ctl-supply = <&vdd_1v8_ls>;
-+			phys = <&p2u_gbe_0>, <&p2u_gbe_1>;
-+			phy-names = "p2u-0", "p2u-1";
-+		};
-+
-+		aconnect@2900000 {
-+			status = "okay";
-+		};
-+
-+		serial@3100000 {
-+			compatible = "nvidia,tegra194-hsuart";
-+			status = "okay";
-+		};
-+
-+		i2c@3160000 {
-+			status = "okay";
-+		};
-+
-+		i2c@3180000 {
-+			status = "okay";
-+		};
-+
-+		i2c@3190000 {
-+			status = "okay";
-+		};
-+
-+		i2c@31b0000 {
-+			status = "okay";
-+		};
-+
-+		i2c@31c0000 {
-+			status = "okay";
-+
-+		};
-+
-+		i2c@31e0000 {
-+			status = "okay";
-+		};
-+
-+		spi@3270000 {
-+			status = "okay";
-+		};
-+
-+		hda@3510000 {
-+			nvidia,model = "NVIDIA IGX HDA";
-+			status = "okay";
-+		};
-+
-+		fuse@3810000 {
-+			status = "okay";
-+		};
-+
-+		i2c@c240000 {
-+			status = "okay";
-+		};
-+
-+		i2c@c250000 {
-+			status = "okay";
-+		};
-+	};
-+
-+	aliases {
-+		serial0 = &tcu;
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttyTCU0,115200n8";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		status = "okay";
-+
-+		key-force-recovery {
-+			label = "Force Recovery";
-+			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 0) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <BTN_1>;
-+		};
-+
-+		key-power {
-+			label = "Power";
-+			gpios = <&gpio_aon TEGRA234_AON_GPIO(EE, 4) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-event-action = <EV_ACT_ASSERTED>;
-+			wakeup-source;
-+		};
-+
-+		key-suspend {
-+			label = "Suspend";
-+			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 2) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_SLEEP>;
-+		};
-+	};
-+
-+	serial {
-+		status = "okay";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002.dtsi
-new file mode 100644
-index 000000000000..c95063b19321
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002.dtsi
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/ {
-+	compatible = "nvidia,p3740-0002";
-+
-+	bus@0 {
-+		i2c@31c0000 {
-+			/* carrier board ID EEPROM */
-+			eeprom@55 {
-+				compatible = "atmel,24c02";
-+				reg = <0x55>;
-+
-+				label = "system";
-+				vcc-supply = <&vdd_1v8_ls>;
-+				address-width = <8>;
-+				pagesize = <8>;
-+				size = <256>;
-+				read-only;
-+			};
-+		};
-+
-+		padctl@3520000 {
-+			vclamp-usb-supply = <&vdd_1v8_ao>;
-+			avdd-usb-supply = <&vdd_3v3_ao>;
-+			status = "okay";
-+
-+			pads {
-+				usb2 {
-+					lanes {
-+						usb2-0 {
-+							nvidia,function = "xusb";
-+							status = "okay";
-+						};
-+
-+						usb2-1 {
-+							nvidia,function = "xusb";
-+							status = "okay";
-+						};
-+
-+						usb2-2 {
-+							nvidia,function = "xusb";
-+							status = "okay";
-+						};
-+
-+						usb2-3 {
-+							nvidia,function = "xusb";
-+							status = "okay";
-+						};
-+					};
-+				};
-+
-+				usb3 {
-+					lanes {
-+						usb3-0 {
-+							nvidia,function = "xusb";
-+							status = "okay";
-+						};
-+
-+						usb3-1 {
-+							nvidia,function = "xusb";
-+							status = "okay";
-+						};
-+
-+						usb3-2 {
-+							nvidia,function = "xusb";
-+							status = "okay";
-+						};
-+					};
-+				};
-+			};
-+
-+			ports {
-+				usb2-0 {
-+					mode = "otg";
-+					usb-role-switch;
-+					status = "okay";
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+
-+				usb2-1 {
-+					mode = "host";
-+					status = "okay";
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+
-+				usb2-2 {
-+					mode = "host";
-+					status = "okay";
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+
-+				usb2-3 {
-+					mode = "host";
-+					status = "okay";
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+
-+				usb3-0 {
-+					nvidia,usb2-companion = <2>;
-+					status = "okay";
-+				};
-+
-+				usb3-1 {
-+					nvidia,usb2-companion = <0>;
-+					status = "okay";
-+				};
-+
-+				usb3-2 {
-+					nvidia,usb2-companion = <1>;
-+					status = "okay";
-+				};
-+			};
-+		};
-+
-+		usb@3550000 {
-+			status = "okay";
-+
-+			phys = <&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-1}>;
-+			phy-names = "usb2-0", "usb3-0";
-+		};
-+
-+		usb@3610000 {
-+			status = "okay";
-+
-+			phys =	<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
-+				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
-+				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-2}>,
-+				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-3}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-0}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-1}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-2}>;
-+			phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3",
-+				"usb3-0", "usb3-1", "usb3-2";
-+		};
-+	};
-+};
--- 
-2.17.1
+> This then uses the fallback of an empty IOMMU_DOMAIN_UNMANAGED and I
+> get a working device in the guest. Also tried hot unplug where the
+> device is taken over by the host again.
 
+Great, thanks, I'll add your tested-by for the s390 drivers.
+
+> I think with my DMA API
+> conversion patches we can support blocking domains properly but for a
+> temporary solution the above may be acceptable.
+
+Yes, this is a good idea, I encourage all drivers to implement at
+least one of BLOCKING or IDENTITY as global static singletons that
+can't fail - this will allow us to have cleaner error recovery flows.
+
+Jason
