@@ -2,122 +2,204 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4FFC77B73
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 12:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB92C77B73
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 May 2023 14:54:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233865AbjEBMib (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 May 2023 08:38:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
+        id S234488AbjEBOyC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 May 2023 10:54:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233786AbjEBMia (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 08:38:30 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3CAB8526E;
-        Tue,  2 May 2023 05:38:29 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CDC6C14;
-        Tue,  2 May 2023 05:39:13 -0700 (PDT)
-Received: from [10.57.23.107] (unknown [10.57.23.107])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E32703F64C;
-        Tue,  2 May 2023 05:38:26 -0700 (PDT)
-Message-ID: <07d187de-2e0c-6ea7-d386-56eb5fb50f7d@arm.com>
-Date:   Tue, 2 May 2023 13:38:22 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v2] perf: arm_cspmu: Separate Arm and vendor module
-Content-Language: en-GB
-To:     Besar Wicaksono <bwicaksono@nvidia.com>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
+        with ESMTP id S234487AbjEBOyA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 May 2023 10:54:00 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5375B210B;
+        Tue,  2 May 2023 07:53:58 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 342ErN65031685;
+        Tue, 2 May 2023 14:53:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=A9PzCa1lY9nUR20Q3fDAZA1RsBEr5LdyYZXsjJQssc8=;
+ b=itWJdKMD0Vb1kIguS2uvvFOOLyK9gL3u+2PzJEPocTOIRjyJRVVEm0u5BgKPrNWHt78+
+ 9JZR5LqNUnWgKyagrJRVwRXl45H59PXlaUDtqaj2PFPMUZp3hMgAJvwvJTTuAsM4Gytp
+ /bYtg7X+0tpvaSlRv4DO35XyuHtzCCy109LAtVqLIJkKtEuZTUSISou1oFEFbWv8V/ay
+ Qiu1BETXlt//c8thokXeJy3C8PX+m/VFcDBVgQ7213tir+ncGT95DRwKuq7owvQ/K9oZ
+ 1M6av8FikOWDloi7BlO2KaLxC5a+yU6baB8o1Bh50Gzz33k+hXMOa6DZnkhGcKbDghgq sQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb4h3rbve-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:53:25 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 342Egimo031178;
+        Tue, 2 May 2023 14:52:56 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb4h3rbpg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:52:56 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 341LC9Fa005173;
+        Tue, 2 May 2023 14:52:38 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3q8tv6snm7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:52:38 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 342EqZPw54460742
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 May 2023 14:52:35 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F3F742004E;
+        Tue,  2 May 2023 14:52:34 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D981B2004D;
+        Tue,  2 May 2023 14:52:32 +0000 (GMT)
+Received: from [9.171.18.35] (unknown [9.171.18.35])
+        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  2 May 2023 14:52:32 +0000 (GMT)
+Message-ID: <b9b6a50724b4f1ac2b98e518a8b9a820a912850f.camel@linux.ibm.com>
+Subject: Re: [PATCH 20/20] iommu: Convert remaining simple drivers to
+ domain_alloc_paging()
+From:   Niklas Schnelle <schnelle@linux.ibm.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>,
-        Richard Wiley <rwiley@nvidia.com>,
-        Eric Funsten <efunsten@nvidia.com>
-References: <20230418062030.45620-1-bwicaksono@nvidia.com>
- <61e4c2ba-7549-2766-8c94-9de4fc27ecbd@arm.com>
- <SJ0PR12MB567670F52673F9806BC6EABFA06B9@SJ0PR12MB5676.namprd12.prod.outlook.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <SJ0PR12MB567670F52673F9806BC6EABFA06B9@SJ0PR12MB5676.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Joerg Roedel <joro@8bytes.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Steven Price <steven.price@arm.com>
+Date:   Tue, 02 May 2023 16:52:32 +0200
+In-Reply-To: <20-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
+References: <20-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: T6YFZPN53T-8NBr50MiQVf0_hbdxvlIx
+X-Proofpoint-ORIG-GUID: edimN0IzfVknfN6LBbnWL53jz6o5saRq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-02_09,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2305020124
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023-04-28 23:23, Besar Wicaksono wrote:
-> Hi Robin and Suzuki,
-> 
->> -----Original Message-----
->> From: Robin Murphy <robin.murphy@arm.com>
->> Sent: Thursday, April 27, 2023 7:21 AM
->> To: Besar Wicaksono <bwicaksono@nvidia.com>; suzuki.poulose@arm.com;
->> catalin.marinas@arm.com; will@kernel.org; mark.rutland@arm.com
->> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
->> tegra@vger.kernel.org; Thierry Reding <treding@nvidia.com>; Jonathan
->> Hunter <jonathanh@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>; Richard
->> Wiley <rwiley@nvidia.com>; Eric Funsten <efunsten@nvidia.com>
->> Subject: Re: [PATCH v2] perf: arm_cspmu: Separate Arm and vendor module
->>
->> External email: Use caution opening links or attachments
->>
->>
->> On 2023-04-18 07:20, Besar Wicaksono wrote:
->>> Arm Coresight PMU driver consists of main standard code and vendor
->>> backend code. Both are currently built as a single module.
->>> This patch adds vendor registration API to separate the two to
->>> keep things modular. Vendor module shall register to the main
->>> module on loading and trigger device reprobe.
->>
->> I think it might be considerably cleaner and safer if the main driver
->> retained at least some knowledge of the PMIIDR matches and used those to
->> explicity request the relevant module. Otherwise, not only is there an
->> awful lot of fiddly complexity here, but there's also quite a burden on
->> the user to know which modules they have to load to get full
->> functionality on any given system.
-> 
-> Do you mean like keep the existing match table as a whitelist, and associate
-> each entry with the backend module name to load it from the main driver ?
+On Mon, 2023-05-01 at 15:03 -0300, Jason Gunthorpe wrote:
+> These drivers don't support IOMMU_DOMAIN_DMA, so this commit effectively
+> allows them to support that mode.
+>=20
+> The prior work to require default_domains makes this safe because every
+> one of these drivers is either compilation incompatible with dma-iommu.c,
+> or already establishing a default_domain. In both cases alloc_domain()
+> will never be called with IOMMU_DOMAIN_DMA for these drivers so it is saf=
+e
+> to drop the test.
+>=20
+> Removing these tests clarifies that the domain allocation path is only
+> about the functionality of a paging domain and has nothing to do with
+> policy of how the paging domain is used for UNMANAGED/DMA/DMA_FQ.
+>=20
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> ---
+>  drivers/iommu/fsl_pamu_domain.c | 7 ++-----
+>  drivers/iommu/msm_iommu.c       | 7 ++-----
+>  drivers/iommu/mtk_iommu_v1.c    | 7 ++-----
+>  drivers/iommu/omap-iommu.c      | 7 ++-----
+>  drivers/iommu/s390-iommu.c      | 7 ++-----
+>  drivers/iommu/tegra-gart.c      | 7 ++-----
+>  6 files changed, 12 insertions(+), 30 deletions(-)
+>=20
+>=20
+---8<---
+> -static struct iommu_domain *s390_domain_alloc(unsigned domain_type)
+> +static struct iommu_domain *s390_domain_alloc_paging(struct device *dev)
+>  {
+>  	struct s390_domain *s390_domain;
+> =20
+> -	if (domain_type !=3D IOMMU_DOMAIN_UNMANAGED)
+> -		return NULL;
+> -
+>  	s390_domain =3D kzalloc(sizeof(*s390_domain), GFP_KERNEL);
+>  	if (!s390_domain)
+>  		return NULL;
+> @@ -447,7 +444,7 @@ void zpci_destroy_iommu(struct zpci_dev *zdev)
+>  static const struct iommu_ops s390_iommu_ops =3D {
+>  	.default_domain =3D &s390_iommu_platform_domain,
+>  	.capable =3D s390_iommu_capable,
+> -	.domain_alloc =3D s390_domain_alloc,
+> +	.domain_alloc_paging =3D s390_domain_alloc_paging,
 
-It would essentially be a table that matches a PMIIDR filter to a module 
-name. Having looked for existing examples of this kind of usage model, 
-in terms of the overall shape it might look closest to a very 
-stripped-down version of the crypto manager.
+Leaving .domain_alloc unset here leads to an OOPs with your GitHub
+branch (iommu_mandatory_default) when I try to use vfio-pci for KVM
+pass-through via the following call chain:
 
->> FYI I've just started working on adding devicetree support, and I do
->> need the generic architectural functionality to keep working in the
->> absence of any imp-def backend.
-> 
-> W.r.t the reprobe discussion with Suzuki, this would mean the expected
-> behavior is to attach the device to standard imp as fallback/default.
-> Suzuki, my preference is not supporting delayed reprobe on event->destroy
-> due to the potential access to stale data. We should just fail the backend
-> registration if one of the device is in use.
+...
+vfio_group_fops_unl_ioctl()
+   vfio_group_ioctl_set_container()
+      vfio_container_attach_group()
+         iommu_group_claim_dma_owner()
+            __iommu_take_dma_ownership()
+               __iommu_group_alloc_blocking_domain()
+               __iommu_domain_alloc(=E2=80=A6, IOMMU_DOMAIN_BLOCKED)
 
-We shouldn't need to worry about that at all. If requesting an expected 
-implementation module fails and those PMUs end up falling back to 
-baseline functionality, there's no need to actively deny the backend if 
-the module is manually loaded later, it merely won't be used. As far as 
-reprobing goes, it seems reasonable for the user to remove/reload the 
-main module after fixing the backend module availability if it matters 
-to them. Or maybe we could just EPROBE_DEFER instead of falling back to 
-baseline if we know the module is enabled and *should* be available; I 
-don't have a particular preference either way. The main thing is just to 
-have the backend modules work in a simple, intuitive, and mostly 
-automatic manner, without all the complexity of effectively 
-reimplementing a whole custom driver model in between perf and the real 
-driver model.
+The problem is that in __iommu_domain_alloc() a call to bus->iommu_ops-
+>domain_alloc() is attempted for IOMMU_DOMAIN_BLCOKED even if the
+function pointer is unset.
 
-I think the only really notable thing about this approach is that it 
-would probably need to make sure the PMU probe runs asynchronously from 
-the main module_init.
+So I tried with the obvious fix:
 
-Thanks,
-Robin.
+@@ -1947,7 +1948,7 @@ static struct iommu_domain *__iommu_domain_alloc(stru=
+ct bus_type *bus,
+        if ((type =3D=3D IOMMU_DOMAIN_UNMANAGED || type =3D=3D IOMMU_DOMAIN=
+_DMA) &&
+            bus->iommu_ops->domain_alloc_paging)
+                domain =3D bus->iommu_ops->domain_alloc_paging(dev);
+-       else
++       else if (bus->iommu_ops->domain_alloc)
+                domain =3D bus->iommu_ops->domain_alloc(type);
+        if (!domain)
+                return NULL;
+
+This then uses the fallback of an empty IOMMU_DOMAIN_UNMANAGED and I
+get a working device in the guest. Also tried hot unplug where the
+device is taken over by the host again. I think with my DMA API
+conversion patches we can support blocking domains properly but for a
+temporary solution the above may be acceptable.
+
+>  	.probe_device =3D s390_iommu_probe_device,
+>  	.release_device =3D s390_iommu_release_device,
+>  	.device_group =3D generic_device_group,
+
