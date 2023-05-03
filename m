@@ -2,86 +2,107 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D63C77B7F
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 May 2023 06:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6D4C7EE29
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 May 2023 08:56:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229460AbjECGa3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 3 May 2023 02:30:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40564 "EHLO
+        id S229736AbjECI4o convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 3 May 2023 04:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbjECGa2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 3 May 2023 02:30:28 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 943221FF6
-        for <linux-tegra@vger.kernel.org>; Tue,  2 May 2023 23:30:26 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-953343581a4so725162166b.3
-        for <linux-tegra@vger.kernel.org>; Tue, 02 May 2023 23:30:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683095425; x=1685687425;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fedxg7gZ1h8LLsR1yvOHRY06EVDSSXBvBk82z0z9LUU=;
-        b=Yr2SmWTexUZOLgI7DWYaampCqVkEHDwutJOTkiYSVJ1ksTMoLD7mT4bJ0r8j1GCwud
-         j+MDQJyqxZMI7Tu6OhG1eFfdDoXhm7/O3/VUsN2Cf4qISUhgxdQ9EAsHS2Ak1NVUDEZy
-         OV+AKdVL+PJuvripbGZtMxnx9NXLnS9vTdRFjINN6hL64AYjBp/lixSyk+wsvRVtcvDB
-         g1ACoOYYrNX81s4Ab9hrQhSn4d13c3vOABXa9sbOT/opPyErmH4e//rDOExrjCEdWKtE
-         0lPAsFJjzUjk4WxXhOBJ8Bh2O8Vo82BDvHInzy2JVv4WvQe0WUQ22k08Pl3v0TPT+033
-         Szww==
+        with ESMTP id S229496AbjECI4m (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 3 May 2023 04:56:42 -0400
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F92C10D9;
+        Wed,  3 May 2023 01:56:41 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-b9a6ab9ede3so6855179276.2;
+        Wed, 03 May 2023 01:56:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683095425; x=1685687425;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fedxg7gZ1h8LLsR1yvOHRY06EVDSSXBvBk82z0z9LUU=;
-        b=KqjGp70uVTKyPn/JMoPMb/Wsl/Tq3Z7v+ivbrTxkQqY06WWntVt38seJpsXbZ3XVRE
-         C57hkszU1oxWvIxlEbDn6cmS0hvBvLflHUJMsbwmUeX6Kk1mKnALX079qEZQoa1J7bsn
-         +T3qliABK1n0JYDvlBbR+aRDqMCbDaIq9KBeEF55x+AVosxxhCQM5aiqeCBaiD3upWF/
-         /BFPfOCyQenfP9Hjq2aO8osdbLaLBIdxiUzJtNRwxIWMjOi3ricc9tT5vFPbY/nK3cBK
-         htoX/Ppnr59CF/TijCzf3GZkvoAOEOcK7Q6meOk5ue8Hd+Ra+lxApM0fNqLnkqcbhqfQ
-         BT1w==
-X-Gm-Message-State: AC+VfDwBCon/sJ2uu7HzoXM1BS8U7HuLpJKEAby762569luOQKTypOBq
-        sN8pefr5Hibqow8KCE32dP++8w==
-X-Google-Smtp-Source: ACHHUZ7NetKDA1jAuean3fgV0HB80b49vOf5ovLUODUwEEdXO55G93GNCN0vGK8RRcGbwWIbf4tb0g==
-X-Received: by 2002:a17:906:9b88:b0:94f:8605:3f31 with SMTP id dd8-20020a1709069b8800b0094f86053f31mr2253634ejc.42.1683095425117;
-        Tue, 02 May 2023 23:30:25 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:a40b:9d8:1fa0:ecc5? ([2a02:810d:15c0:828:a40b:9d8:1fa0:ecc5])
-        by smtp.gmail.com with ESMTPSA id sk19-20020a170906631300b009572a8f86fbsm15414283ejc.165.2023.05.02.23.30.23
+        d=1e100.net; s=20221208; t=1683104200; x=1685696200;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nLIjSxvkFoShCDz7/AeeChAXiJ9TCtnKs3s5wZ5JN+8=;
+        b=FRpPJUrL5Hb3oc5BuMFQBhZ4kfNvTcKqJqUBY8MtwS3Rxd1E/6kRj/uMVORK4XtsJ8
+         NhiwCMkJGlulmZqTPkIQyNhEEZ8EgaL7peQWqoPL3svLDhFi2Jqf2h5Ot6oasv9w+0AB
+         43Hv5gwYZe1Qp1QTybQAbVsGPZGWdnBUo0e6KC8Psinp4ZtqJgRNnOgsG6LzyADMvOxy
+         fAvNvDamkFZAkAYlw7Wvt0/SnTk/idRl/OAV9CcxctVAaCWZYGFHr5z3Kp053v189/XA
+         47rgAz865l5z2iKIKXN6mo0MF95H6hO3+F0PH38RPzxt/VI1fo4sps6cZGAJ8VpDduRL
+         kBVg==
+X-Gm-Message-State: AC+VfDz+F4ErOC3guT9EWPgPM52AB/CRV7nShJgRHVsL5DEjIgN89qKT
+        CrL0BCLU8ge1LiLBdE/gez5cG15lQPK6ew==
+X-Google-Smtp-Source: ACHHUZ6toUWOAd7Hr3Z+9B+MCMog8Eb57DYlvSZrBCsL/ydWUww26o17p03f5N8yRj9DSX3eTb0+BQ==
+X-Received: by 2002:a25:e68d:0:b0:b9e:7f1b:ea9d with SMTP id d135-20020a25e68d000000b00b9e7f1bea9dmr4464171ybh.33.1683104200482;
+        Wed, 03 May 2023 01:56:40 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id z12-20020a5b020c000000b00b7767ca7485sm7179350ybl.34.2023.05.03.01.56.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 May 2023 23:30:23 -0700 (PDT)
-Message-ID: <347fca73-4537-6322-6263-d67a5ffe094d@linaro.org>
-Date:   Wed, 3 May 2023 08:30:22 +0200
+        Wed, 03 May 2023 01:56:39 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-b9a6ab9ede3so6855147276.2;
+        Wed, 03 May 2023 01:56:39 -0700 (PDT)
+X-Received: by 2002:a25:fc1b:0:b0:b9a:6f77:9018 with SMTP id
+ v27-20020a25fc1b000000b00b9a6f779018mr19158460ybd.41.1683104199175; Wed, 03
+ May 2023 01:56:39 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH 1/2] dt-bindings: tegra: Document compatible for IGX
-Content-Language: en-US
-To:     Shubhi Garg <shgarg@nvidia.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20230502105437.769350-1-shgarg@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230502105437.769350-1-shgarg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220328000915.15041-1-ansuelsmth@gmail.com> <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+ <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain> <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
+ <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
+ <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
+ <720a2829-b6b5-411c-ac69-9a53e881f48d@app.fastmail.com> <CAL_JsqKCtmkwzKa01gyG65fH8ye6R3KhR41PJbJhOJ4X9j=znA@mail.gmail.com>
+In-Reply-To: <CAL_JsqKCtmkwzKa01gyG65fH8ye6R3KhR41PJbJhOJ4X9j=znA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 3 May 2023 10:56:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXjKwfBizmH8cZYEmVC2ZYLLqQG4kyrHm6Ct0j4EK4eQg@mail.gmail.com>
+Message-ID: <CAMuHMdXjKwfBizmH8cZYEmVC2ZYLLqQG4kyrHm6Ct0j4EK4eQg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-sunxi@lists.linux.dev,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
+        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+        "linux-oxnas@groups.io" <linux-oxnas@groups.io>,
+        linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-realtek-soc@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 02/05/2023 12:54, Shubhi Garg wrote:
-> Document the compatible strings used for Nvidia IGX Orin Development
-> kit which uses P3701 SKU8 and P3740 carrier board.
-> 
-> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/arm/tegra.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+Hi Rob,
 
-I just saw it and reviewed it, so both are v1?
+On Tue, May 2, 2023 at 9:40 PM Rob Herring <robh+dt@kernel.org> wrote:
+>     'r7' : 'renesas',
+>     'r8' : 'renesas',
+>     'r9' : 'renesas',
+>     'emev2' : 'renesas',
+>     'sh73a' : 'renesas',
+>     'gr-' : 'renesas',
+>     'iwg' : 'renesas',
 
-use proper versioning and add missing changelogs to the patches.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
