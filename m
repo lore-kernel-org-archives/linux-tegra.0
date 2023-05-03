@@ -2,207 +2,149 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADF5C7EE26
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 May 2023 09:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CEAC7EE26
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 May 2023 09:18:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbjECJRm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 3 May 2023 05:17:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56506 "EHLO
+        id S229606AbjECJS4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 3 May 2023 05:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjECJRm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 3 May 2023 05:17:42 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 67893E4F;
-        Wed,  3 May 2023 02:17:40 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 006112F4;
-        Wed,  3 May 2023 02:18:24 -0700 (PDT)
-Received: from [10.57.82.232] (unknown [10.57.82.232])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 539BE3F67D;
-        Wed,  3 May 2023 02:17:34 -0700 (PDT)
-Message-ID: <1db712d2-9e33-4183-2766-34e32f170507@arm.com>
-Date:   Wed, 3 May 2023 10:17:29 +0100
+        with ESMTP id S229511AbjECJS4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 3 May 2023 05:18:56 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5BA1BFA;
+        Wed,  3 May 2023 02:18:54 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f1763ee8f8so31916385e9.1;
+        Wed, 03 May 2023 02:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683105533; x=1685697533;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6SerbCvte8Ln3UHF66Me7IiNAwWVhU8rwwnMJP/YMH4=;
+        b=XKtYmTgBzIgJYdrVI+fTEAl29NG4jkWS5XPWQBBoHaSpZ0qsk4GOMhlvWrpfsHZ0Km
+         FyIF/CczMe+bxmK1heMH37Nj7z/tDapyRkEDggDcDrjoA0j1Ly562ctoHh8QGd9EMALz
+         yzdnoSyBSgBkLGrwwu+Ixw92ipTOx+Lt8rvpwDVaMFDRRE2Aktwrql+Oal8YRkqgaU1Y
+         vL74bmeaBO0jx4oLBNc7xcxTRIM/KnI3UM4zyJF2dq0xW44kICVQjUcBVa8vcpZE3VE2
+         hHR9GyD6kFz0EUyHYdLcgrV/1hSVDqmqHx+6cZEZqpYeiKUYUAiDlGAamPQJzuRm2CHI
+         V+vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683105533; x=1685697533;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6SerbCvte8Ln3UHF66Me7IiNAwWVhU8rwwnMJP/YMH4=;
+        b=UiJO3/Cw6uFYnG0ovLof9X5pYlSPd+oXaEnLfjHFqi1/OUN4boBwKPuLSnl7JQht0i
+         Gz58KHhtkwBCKR2zlMV0aX6DVlUm43digtjfbRnQMiKyKHrwkg5iOlupaO/iI4A10Tnm
+         VEkgYo9ZULb3aYc5DeAwd+XR5mrgtSieaWyDDnRcw1S2lMoyaA2+r94/3P4+aNAALnzT
+         82XRUafQ9BqsOJTgyQc+7rZW8TgGWfYKXYCQNu1yhyL4UjJdvdyM38t/D2PqRlnK/svd
+         yLAVjGb/8m9hAOLqKD9Yki6HA5Ixo0B/VeMtgPYxriimlUdYLULqfSRMlrINBScN+eTh
+         Txwg==
+X-Gm-Message-State: AC+VfDxwmBYjmX4jBlxqpp32YfQy36aWjaaVkk8xs1cr9lA/klQeZA3V
+        SyRFAu9N1RVrcmtNJuqwssc=
+X-Google-Smtp-Source: ACHHUZ4/vbn7VAA8vSmpZ5hpqCHpFr8PVv8ONeC0ua0rZTsYIqWj9jPfyxpTnWEwUDYJ3+0s73ihTg==
+X-Received: by 2002:a05:600c:d7:b0:3f1:93c2:4df6 with SMTP id u23-20020a05600c00d700b003f193c24df6mr13714885wmm.12.1683105532602;
+        Wed, 03 May 2023 02:18:52 -0700 (PDT)
+Received: from orome (p200300e41f053a00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f05:3a00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id f21-20020a1c6a15000000b003ee6aa4e6a9sm1311299wmc.5.2023.05.03.02.18.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 May 2023 02:18:52 -0700 (PDT)
+Date:   Wed, 3 May 2023 11:18:50 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Shubhi Garg <shgarg@nvidia.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: tegra: Document compatible for IGX
+Message-ID: <ZFIm-nDpMZog9aOr@orome>
+References: <20230502150249.773425-1-shgarg@nvidia.com>
+ <664379bf-96c4-b66c-6b0b-7b848ae6000c@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH 02/20] iommu/terga-gart: Replace set_platform_dma_ops()
- with IOMMU_DOMAIN_PLATFORM
-To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Steven Price <steven.price@arm.com>
-References: <2-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
-Content-Language: en-GB
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <2-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6Vko1tQucAgVwjQX"
+Content-Disposition: inline
+In-Reply-To: <664379bf-96c4-b66c-6b0b-7b848ae6000c@linaro.org>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023-05-01 19:02, Jason Gunthorpe wrote:
-> tegra-gart seems to be kind of wonky since from the start its 'detach_dev'
-> op doesn't actually touch hardware. It is supposed to empty the GART of
-> all translations loaded into it.
 
-No, detach should never tear down translations - what if other devices 
-are still using the domain?
+--6Vko1tQucAgVwjQX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Call this weirdness PLATFORM which keeps the basic original
-> ops->detach_dev() semantic alive without needing much special core code
-> support. I'm guessing it really ends up in a BLOCKING configuration, but
-> without any forced cleanup it is unsafe.
+On Wed, May 03, 2023 at 08:22:21AM +0200, Krzysztof Kozlowski wrote:
+> On 02/05/2023 17:02, Shubhi Garg wrote:
+> > Document the compatible strings used for Nvidia IGX Orin Development
+> > kit which uses P3701 SKU8 and P3740 carrier board.
+> >=20
+> > Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/tegra.yaml | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documen=
+tation/devicetree/bindings/arm/tegra.yaml
+> > index 0df41f5b7e2a..34523b8b5d1f 100644
+> > --- a/Documentation/devicetree/bindings/arm/tegra.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+> > @@ -176,5 +176,10 @@ properties:
+> >            - const: nvidia,p3768-0000+p3767-0000
+> >            - const: nvidia,p3767-0000
+> >            - const: nvidia,tegra234
+> > +      - description: NVIDIA IGX Orin Development Kit
+> > +        items:
+> > +          - const: nvidia,p3740-0002+p3701-0008
+> > +          - const: nvidia,p3701-0008
+> > +          - const: nvidia,tegra234
+> > =20
+>=20
+> Don't stuff things to the end, but put in some logical order. For
+> example 'I' could be before 'N'.
 
-The GART translation aperture is in physical address space, so the truth 
-is that all devices have access to it at the same time as having access 
-to the rest of physical address space. Attach/detach here really are 
-only bookkeeping for which domain currently owns the aperture.
+Sorting these alphabetically doesn't work well because it's not very
+deterministic. So far we've always grouped these by SoC family and
+within each group they are sorted chronologically. Chronologically
+here being determined by the upstream activity. We could perhaps make
+that a bit more formal by sorting by part number. Those are usually
+assigned at design time (i.e. p3740 was designed prior to p3768), so
+in that case the IGX would be sorted after the AGX Orin.
 
-FWIW I wrote up this patch a while ago, not sure if it needs rebasing 
-again...
+The NVIDIA in the description is something we haven't been very strict
+about. It'd probably be a good idea to add that wherever relevant since
+other vendors make products with these modules.
 
-Thanks,
-Robin.
+We could also add comments to the list to visually separate the SoC
+family groups. That's something for another patch, though.
 
------>8-----
-Subject: [PATCH] iommu/tegra-gart: Add default identity domain support
+Would you agree with chronological (by part number) sorting? In practice
+this would tend towards new things getting added to the end, but I think
+it's the least confusing for people looking at these lists. For instance
+if I buy a very recent device, I would expect it to show up somewhere
+close to the end of a list rather than potentially very high up.
 
-The nature of a GART means that supporting identity domains is as easy
-as doing nothing, so bring the Tegra driver into the modern world of
-default domains with a trivial implementation. Identity domains are
-allowed to exist alongside any explicit domain for the translation
-aperture, since they both simply represent regions of the physical
-address space with no isolation from each other. As such we'll continue
-to do the "wrong" thing with groups to allow that to work, since the
-notion of isolation that groups represent is counterproductive to the
-GART's established usage model.
+Thierry
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
-  drivers/iommu/tegra-gart.c | 39 +++++++++++++++++++-------------------
-  1 file changed, 19 insertions(+), 20 deletions(-)
+--6Vko1tQucAgVwjQX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index c4136eec1f97..07aa7ea6a306 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -111,7 +111,13 @@ static int gart_iommu_attach_dev(struct 
-iommu_domain *domain,
+-----BEGIN PGP SIGNATURE-----
 
-  	spin_lock(&gart->dom_lock);
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRSJvgACgkQ3SOs138+
+s6EDAg//SpMJpUx87PnrtyCorL3jf+UuYZXTUC8ih/qVZAw7j9vCp1KnGyy7CoZ+
+doA//mQl2VyK39pyor082omb2z6UPoe8QXF0Un9hn4+qPZPjXEGeSdUQHaIwTFNG
+qlcujWeLlDjORzv7kT/Tk44JxebTbLp7kzrTVhlA9vuCB/fl/JIIJhazQ4Um/7t6
+ZWHOxxgj91+dJD5zpzQtrOetRKhFkbXT4Po73C7dZmE6DzKo5lOhUh/TbNXeMxzu
+5Y/l+/oZ06eyLAPwnxreC3hScO1EeXRdGUdr+zomIM4FMnurCONM/uZp7XMpObzO
+yz+vs6bY91DgCTYDUTnS3soDUyljOHAZh7/Fa22FKqXiYy6YkuFWfcM9d6KXWuo1
+YalwYfosRyO2oo+pk7TzjafRHBIokwV9wyOwDRC3PCvizfsqbi3LXiMFwfJf26i+
+TbyIVZeZvYZqOZSyaVnaRBKceO8lyagI7bOW8i59WVCLBYvDGzttgIpdpsqlgDEF
+Nb3Al14ahr+h12O9B5N9fDgaXkJoR3CFg5//TgKV5ORrM3isHrsCM8XZaXeJ5hb7
+wOexoadRqOkdQzlNpxPoX84Zqy3lLfGwlDI/L2pFjwWbKDqyYM3sH2NBQHNmgjG4
+Sih+kzy1N5DGwEoiC3jrT19Crr85iRgcpbPvHrz0x8FbRoFJgJI=
+=S4US
+-----END PGP SIGNATURE-----
 
--	if (gart->active_domain && gart->active_domain != domain) {
-+	if (domain->type == IOMMU_DOMAIN_IDENTITY) {
-+		if (dev_iommu_priv_get(dev)) {
-+			dev_iommu_priv_set(dev, NULL);
-+			if (--gart->active_devices == 0)
-+				gart->active_domain = NULL;
-+		}
-+	} else if (gart->active_domain && gart->active_domain != domain) {
-  		ret = -EINVAL;
-  	} else if (dev_iommu_priv_get(dev) != domain) {
-  		dev_iommu_priv_set(dev, domain);
-@@ -124,28 +130,15 @@ static int gart_iommu_attach_dev(struct 
-iommu_domain *domain,
-  	return ret;
-  }
-
--static void gart_iommu_set_platform_dma(struct device *dev)
--{
--	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
--	struct gart_device *gart = gart_handle;
--
--	spin_lock(&gart->dom_lock);
--
--	if (dev_iommu_priv_get(dev) == domain) {
--		dev_iommu_priv_set(dev, NULL);
--
--		if (--gart->active_devices == 0)
--			gart->active_domain = NULL;
--	}
--
--	spin_unlock(&gart->dom_lock);
--}
--
-  static struct iommu_domain *gart_iommu_domain_alloc(struct device *dev,
-  						    unsigned type)
-  {
-+	static struct iommu_domain identity;
-  	struct iommu_domain *domain;
-
-+	if (type == IOMMU_DOMAIN_IDENTITY)
-+		return &identity;
-+
-  	if (type != IOMMU_DOMAIN_UNMANAGED)
-  		return NULL;
-
-@@ -162,7 +155,8 @@ static struct iommu_domain 
-*gart_iommu_domain_alloc(struct device *dev,
-  static void gart_iommu_domain_free(struct iommu_domain *domain)
-  {
-  	WARN_ON(gart_handle->active_domain == domain);
--	kfree(domain);
-+	if (domain->type != IOMMU_DOMAIN_IDENTITY)
-+		kfree(domain);
-  }
-
-  static inline int __gart_iommu_map(struct gart_device *gart, unsigned 
-long iova,
-@@ -247,6 +241,11 @@ static struct iommu_device 
-*gart_iommu_probe_device(struct device *dev)
-  	return &gart_handle->iommu;
-  }
-
-+static int gart_iommu_def_domain_type(struct device *dev)
-+{
-+	return IOMMU_DOMAIN_IDENTITY;
-+}
-+
-  static int gart_iommu_of_xlate(struct device *dev,
-  			       struct of_phandle_args *args)
-  {
-@@ -271,9 +270,9 @@ static const struct iommu_ops gart_iommu_ops = {
-  	.domain_alloc	= gart_iommu_domain_alloc,
-  	.probe_device	= gart_iommu_probe_device,
-  	.device_group	= generic_device_group,
--	.set_platform_dma_ops = gart_iommu_set_platform_dma,
-  	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
-  	.of_xlate	= gart_iommu_of_xlate,
-+	.def_domain_type = gart_iommu_def_domain_type,
-  	.default_domain_ops = &(const struct iommu_domain_ops) {
-  		.attach_dev	= gart_iommu_attach_dev,
-  		.map		= gart_iommu_map,
--- 
-2.39.2.101.g768bb238c484.dirty
-
+--6Vko1tQucAgVwjQX--
