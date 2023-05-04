@@ -2,241 +2,182 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638E6C7EE23
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 May 2023 14:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8EDC7EE25
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 May 2023 17:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbjEDOTw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 May 2023 10:19:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56830 "EHLO
+        id S229693AbjEDRBh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 May 2023 13:01:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbjEDOTv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 May 2023 10:19:51 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBF926A4;
-        Thu,  4 May 2023 07:19:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CZ4dtbjp9SZMpgM7AItz3O3Hn9E+h+8gWKE52u3ZgnR+p4Y6spOZCxw+MAUFZe8YGPtSHT3y8hXLV9EoK5afRuw1AI/IT+Eb9Wceo0JG5iE1ks4WZCt0LbLpgyMn1WjhCvzOLekW+E2X38UWhO1DZf7wKWgqfSWcRX81whdK1TXMbehYd7X/rq28oMpoQS8HemykX3QT1cB8Kfvt3jrFjAxNGMywVjhxq40UEQ8rdmwWyO4LwAN4Pbq3EwGLD3slnTrzNEghegcluXiq92m+wootFsXjrzI81+Gq88fJqClbVwtdExpoe2QWULI1yR2zLeidJtuzgEQdJ5IToDpBSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yifWR4BcyPcWmjMxpdmwSSrlpxtmcQWiABeUkzQ/KhI=;
- b=BQM2kXG5r8ssR/85MihlChotOacxbgDQJ7RC1/12yXyDmHYKoOuSmAhzO28PA7qoGOpcw4D9v3R2s9JFIpbB/agshaIYk2mvyqf/1gj5qDXmhZ0TNP8UMXAPccW4sZyS32MAPIyvULgTKL6npAdp3OhDwbbqd6DgcDWXe5g8dAWWlUGz2suR/eZCLu7TmLSqylTpb1tLJyyCSlEcLmANHzjUWrNHKbq84anEp3+PDHvjiYiiqpUKEV1NlVjtC6AT/TwcD5nD7zNwahIt0A9gUycfBZokeD2TeoCA7NK611MzxpZ2PWaICUf45aDHU2rnPi3jnjfbe9gNNqRDlOuIfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yifWR4BcyPcWmjMxpdmwSSrlpxtmcQWiABeUkzQ/KhI=;
- b=ZIOPQT+B+4R84mdQVTy5bJslD645UNba1GtD/Gdq4xSZj/9sj5m4NgWwuaCoDI6z9qHfFeCR0rjkIRzHvOWp/B69n5KV30aSp2du5R8X1kqkS/tuvQ0kajHXIsgq1T2he9I7PGN03ssPSZTXppbpv5B01FU/95KpIN5Y2j5ARJpVeFp5kN8eBkQIppR9WOrLhwguG0C7sq08CM3R2g6BAE2Lz9hmEXWp5zRYrdRmtHcdiCSxtadX631J2A4qPFxewWajFAMxdR3aNZm6qru/AuD5SXV90XpFbAx2p9sxTcYevQh62wI2m7lgRgh2S7qpBjx+/zYa7ZzmiqOrS+uQgw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by DM8PR12MB5398.namprd12.prod.outlook.com (2603:10b6:8:3f::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6363.26; Thu, 4 May 2023 14:19:46 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6363.022; Thu, 4 May 2023
- 14:19:46 +0000
-Date:   Thu, 4 May 2023 11:19:45 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S229470AbjEDRBf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 May 2023 13:01:35 -0400
+Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57BD030C0;
+        Thu,  4 May 2023 10:01:33 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 8758A5803C8;
+        Thu,  4 May 2023 13:01:31 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 04 May 2023 13:01:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1683219691; x=1683226891; bh=92
+        1YgmgJDyX8fTpEjsf680K9b88j6xKzseERDrln0VI=; b=UYj68jiu63Xrv9446C
+        U+7U9vT/DXuEOuF3C0zduG+D5WwodyQMk5zwxbNyx6IQ/IHLcFFKytQ58Niabyii
+        HVter6AnK4ozGstpWcb5IyV/Epexltg5yOm/kFrPSmr4yj5YIzaeiVlfA1JjwN+q
+        eZIFziOXq/OXFg/9YSOYo2OZTG7PRgSnfuJ/SjE7Y4ew/Bj25quWLuh/t0BdQ1nN
+        gr29J1wULKDJhJMUQ5sC6VZCQ0LmvT5mvjrh1ge/K441JeWExDM+jU8TvC9BbaI7
+        FZBNgnpNSIK7wXulqF9ONHUxtHhw/a67TW9cQwyucpsYz4ig7GrlTNbCH5W9yCeh
+        W5gA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1683219691; x=1683226891; bh=921YgmgJDyX8f
+        TpEjsf680K9b88j6xKzseERDrln0VI=; b=WZAQbTl4KhdIBGFggnepbC24ozON+
+        Y9P7RamUUn7KUOWfYKgsofJKMU48g+a442uJvpwU3eSyLQOp4GW03QHV/nxVQUZy
+        kwx1JFK0G0n3OX0QxctPhaenfPjSDIRHfhQCLLL2k/1SNkO0+tdr2ePUDWuuQElv
+        hAIWgE5sxPtyjiqrYoW9Xzd1CGRPuuuJqVj0jqU1tNQgYccAk9hmIGX4ChAah8ut
+        YyPTN1JU564F6RHSmzHnxPcTGjFo5Vzs3IXod7C95xqFT6q0ULFQe2gA2K8RFkeH
+        AkTeomH/mAn/3XjfXDtpF5l4Y14mA6UOEaSmMPu86fbGpwwMJ8npfGAjQ==
+X-ME-Sender: <xms:6eRTZBd0Ca4UchpFkmcVRifBZTiLzDjaNYIL7ROKZYaoG-tDG7sJzw>
+    <xme:6eRTZPMzfdcnM01gMAo4h9ncJjXV2G6Nnz_K08C0TtkeGA9U0GpVI924kPDOXLzG1
+    o3H35qXB0mAKR_nHJo>
+X-ME-Received: <xmr:6eRTZKjIX9LfZkO66qX4gILAEZHe-iK55SIBd3aO1CEJWIS47IOXh50_YQkpM_GGYDtiztC_5PPESExggI7WAxdKyZmWwh8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeftddguddtjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeet
+    kefgleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:6eRTZK_L0pD3f9C6mQznCyuZW59l3sB-Df_ouW1uu_huJ9lMp9fZrQ>
+    <xmx:6eRTZNu3V9DGdTelUE-VIZ4R-xjzfJTdBioowM4FVQ2sC0il4NTMOQ>
+    <xmx:6eRTZJGmUm2SjMFMmFm9mJ4FpEruFnIuKFeUcXhEvcHdHm2GnQML-Q>
+    <xmx:6-RTZB2mU23ipge8XMotfaWkDt4t3YRIYZvJ9OpnSv1sp4-zCY_M7A>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 May 2023 13:01:27 -0400 (EDT)
+Date:   Thu, 4 May 2023 19:01:25 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH 06/20] iommu/exynos: Implement an IDENTITY domain
-Message-ID: <ZFO/AcHaWNZbL8p3@nvidia.com>
-References: <6-v1-21cc72fcfb22+a7a-iommu_all_defdom_jgg@nvidia.com>
- <aaddd64b-6935-f84a-5fda-28011c717051@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aaddd64b-6935-f84a-5fda-28011c717051@arm.com>
-X-ClientProxiedBy: BL1PR13CA0061.namprd13.prod.outlook.com
- (2603:10b6:208:2b8::6) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH v3 43/65] ASoC: tlv320aic32x4: Add a determine_rate hook
+Message-ID: <leuxcmkwyb6k77oh47jcpcyp3dujy5f7gjijvkaxjz6gy5im3f@c4kvrnq6auug>
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+ <20221018-clk-range-checks-fixes-v3-43-9a1358472d52@cerno.tech>
+ <01f32440-8dd2-4030-9006-a3123be55845@sirena.org.uk>
+ <erm4iq3mygnrr4h2gd5cag3sfuovv47ibdqsbmxcfabngvnwy4@z63ksvj55zuu>
+ <fcc11e4d-eba6-4eff-b3e5-9488a4da84c3@sirena.org.uk>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DM8PR12MB5398:EE_
-X-MS-Office365-Filtering-Correlation-Id: 507053a2-0fa9-4dcf-b020-08db4caa9cd5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RDR4q83fQAUDrpAQzKoPZYMqht/wRefAQue/Y0qBTyQbbx4wupBgszkMR8nS2Yt9kA0lhSTRK5DOBgiTqIEfjUvYwE78etFrHkbCTk+o/57rVGrB1Vo4p88hWsI0zmkMLcDWs6aXCqw38SpfzNECEIwLLr/9CwZEVB73UIohVTOPTbSbAbbDsIXXy6Wfs4YhKRRtFC5AXHt8qY2w3OWsfx/HBxwxeJwzMAeCJtb7of603Sdu9BamwxZKLCX0cJNjriWqlkPcr2IG3Y7iCSu1vC1Y6YQ2ldkiTXk73Fczi4auOcSnyczrYs4E0Nb+kXXMpZq+kkHo9IX4OVH+Uh9wjQWnlkAU2Th8YKxlsbzICL4qrXfT/mSzoXqPxVR2MO6hlgQhYuIlMtuBQDHmlojsjM+8dzQsvd/6DkDBxE3KUMgElY4VEg7dG/awd3S8mxb2foBMf3rKF81VAoUIjJLzHzFm+MUCGAgOXHP8vNcjZUHLhae3pxDWpyEsUpsWLdq/psUWw9XSuS1c3dTxo8Naox5/UtwQZGk1J+h4ADKVxyC5aDKmjbUhMPSLlL7A7AB4
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(39860400002)(396003)(346002)(366004)(376002)(451199021)(7406005)(7416002)(478600001)(38100700002)(8676002)(5660300002)(8936002)(2616005)(110136005)(26005)(86362001)(66476007)(66946007)(66556008)(4326008)(6486002)(6512007)(83380400001)(6506007)(316002)(2906002)(186003)(41300700001)(36756003)(54906003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1JzmpYKAD0/OyqxZwnRQisLShhWv94HhwCq7lRMC9rV/tm7vTN1IPBvkaKaA?=
- =?us-ascii?Q?QEfX850v3ckFUzpgORUzXJ5DKfXOZekZD0Lu18pSvaAlqXuYfjTLQQ6mBYbY?=
- =?us-ascii?Q?nfq4PgjEr2YvWsvlGrjibUxeZbHC/FFel5yreeCc85Sz3pbwJGx+3O5kt+J+?=
- =?us-ascii?Q?Xn46U48kFoCZFHvGgr5+X29ssjW+Y0pxHyWn3/EmQFnJmC83KoyNsPnlHISI?=
- =?us-ascii?Q?Tcs3A3BIdPR1W8jCZ9ccc0dF2pFvztDfCuL5OFNGTeEkrYmVx7JjxJS7epCb?=
- =?us-ascii?Q?B3w+yNcHhCSzoC7KAOV5Wfpza52WyyA1jpinUFqtM4uqOumibaQIIxTIJUls?=
- =?us-ascii?Q?fS3B4T5Pgxmqh2WpR3Bbi6M1jLZBY8OrnjvEVwz/3tqImIri7bhRkKX5e2E4?=
- =?us-ascii?Q?4mElF0q1/AaYYFY7ZgHa6xXWccG/Ie7GnmmhUu83BsnkYdSs75455xw4E7QA?=
- =?us-ascii?Q?tRSytNG0st1jd7WXGZc044khlX8+RgolR+5uzXl/vZ20k4avGlWpxOHeTFaB?=
- =?us-ascii?Q?wc4g2yoY4G/ypn00Py/MdFNkoa9Awc0gsyTHZQ89fbA2GZ2icmDMPteFoo53?=
- =?us-ascii?Q?wdi2Cg6ehR8phnCJirCQo2XcpqDyw4BdxAFuocwtyuH4bsbX1gITTnaCXG/8?=
- =?us-ascii?Q?ruFsZREVSmB9a73/926ku20C0wZwyr+s5aKR4nAM2dIoRWp1CEXYphGpXfJi?=
- =?us-ascii?Q?VP7XdeY6mj3qaWRxfGhkBt7NGRweutn3JpOHRnIXQ/IfWi1JSsI2Hn57/eLD?=
- =?us-ascii?Q?7Xes/QPcy/UNwc+Yaa1lQabPbWOJIOiZbO2WMq4W56rIxqcakmfQNpwkUNOY?=
- =?us-ascii?Q?iPXHQ1JLJ2SfuUPNfWRDs6DMP/OmNZecIbqu6h3mtOywIg3I7W22whpuIQP8?=
- =?us-ascii?Q?CFD7C4BMYQJa9W6f3g/qfAZrYBtny10b10TR+4AbyvC3m3gCUXNkyBIAk1K6?=
- =?us-ascii?Q?sqEg1pr+csG6he8nkLUd7k3ShaL7rAr9ljXeuR1Z1T/Pw3R8+wBZsDFCmB7J?=
- =?us-ascii?Q?QWiQ1Yw9iPdeULb7AgBX2wyvsvIFwdHiP9flod9u/ljJjYl2SNH9DxI1gex7?=
- =?us-ascii?Q?LiJVgklxZIr5orM2rJCXQ0syWZMwkrtxKhz1GWK5l24757/JEuKdXpHk8xMZ?=
- =?us-ascii?Q?Nx3E2MkbjNd34raCOjF53CNCo//bGCzAELa4q/MVPdoyAq9AeTL7LeeYlW8o?=
- =?us-ascii?Q?XsPlFjNcKoX1Ls//etGsvuQanLuOiF4M5hUtuogL6bCyF9n4SXYAbygiVp1h?=
- =?us-ascii?Q?aUYf0cJVkz9D4uTgtyAZvzUBRlpV+VdB/haTGMTTYAPDbopT4h6G5JLuJKbb?=
- =?us-ascii?Q?k2r+EEabvQncdktF5DzQXpWSd+adK+gcqtaxYNbpJJIUL7qN17pk/S95mTJX?=
- =?us-ascii?Q?h7ocB31NVx9XQzDLPsVSV0pEiJTR+JrjJ4wO7HdN6ILs3UhhlE/pQF48ycgk?=
- =?us-ascii?Q?ZKwuyARzIiTwAEcp1wiFE6tQQl1S876bbv4Id70fV3wep7V2bbeRQAvYR174?=
- =?us-ascii?Q?zX6MAwf9extHoZHZBE4mNciWKKJhSu4ckyXccX6Gh5vUnSEskGnjbz3GSV+s?=
- =?us-ascii?Q?2HbIkeCUXrLdpiMwD6NMK/9kiyOpPELECkDW5UFD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 507053a2-0fa9-4dcf-b020-08db4caa9cd5
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2023 14:19:46.5203
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kbSciKV/S1pS7T3CqqXv4U5DoutqAtRz5NmzkxJMqoN8q06aWH95hiNlXjYpE0NE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5398
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="co3427ienkolccfs"
+Content-Disposition: inline
+In-Reply-To: <fcc11e4d-eba6-4eff-b3e5-9488a4da84c3@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, May 03, 2023 at 04:31:39PM +0100, Robin Murphy wrote:
-> > -				    struct device *dev)
-> > +static int exynos_iommu_identity_attach(struct iommu_domain *identity_domain,
-> > +					struct device *dev)
-> >   {
-> > -	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
-> >   	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
-> > -	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
-> > +	struct exynos_iommu_domain *domain;
-> > +	phys_addr_t pagetable;
-> >   	struct sysmmu_drvdata *data, *next;
-> >   	unsigned long flags;
-> > -	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
-> > -		return;
-> > +	if (!owner)
-> > +		return -ENODEV;
-> 
-> That can't be true - devices can't be attached without having already
-> dereferenced their group, which means they've been through probe_device
-> successfully.
 
-Yes, the current code is wrong to check has_sysmmu(), I removed it
+--co3427ienkolccfs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +	if (owner->domain == identity_domain)
-> > +		return 0;
-> > +
-> > +	domain = to_exynos_domain(owner->domain);
-> > +	pagetable = virt_to_phys(domain->pgtable);
-> 
-> Identity domains by definition shouldn't have a pagetable? I don't think
-> virt_to_phys(NULL) can be assumed to be valid or safe in general.
+Hi Mark,
 
-Read again, the first if excludes that owner->domain is identity so
-it must be paging. Thus pgtable mst be valid.
+On Wed, Apr 05, 2023 at 04:34:31PM +0100, Mark Brown wrote:
+> On Wed, Apr 05, 2023 at 05:17:21PM +0200, Maxime Ripard wrote:
+> > On Tue, Apr 04, 2023 at 04:26:18PM +0100, Mark Brown wrote:
+>=20
+> > > To be honest it's surprising that we'd have to manually specify this,=
+ I
+> > > would expect to be able to reparent.  I suspect it'd be better to go =
+the
+> > > other way here and allow reparenting.
+>=20
+> > Yeah, I think I'd prefer to allow reparenting too, but as can be seen
+> > from the other reviewers in that thread, it seems like we have a very
+> > split community here, so that doesn't sound very realistic without some
+> > major pushback :)
+>=20
+> For these ASoC drivers I think we should just do the reparenting,
+> they're very much at the leaf of the tree so the considerations that
+> make it a problem sometimes are unlikely to apply.
 
-More broadly the struct exynos_iommu_domain is now always a paging
-domain.
+I'd still prefer to remain conservative on this series and try not to
+change the behaviour in it. It's pretty massive already, I'd like to
+avoid tracking regressions left and right :)
 
-> >   	mutex_lock(&owner->rpm_lock);
-> > @@ -1009,15 +1015,25 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
-> >   		list_del_init(&data->domain_node);
-> >   		spin_unlock(&data->lock);
-> >   	}
-> 
-> This iterates the whole domain->clients list, which may include other
-> devices from other groups belonging to other IOMMU instances. I think that's
-> technically an issue already given that we support cross-instance domain
-> attach here, which the DRM drivers rely on. I can't quite work out off-hand
-> if this is liable to make it any worse or not :/
+Would sending a subsequent series that would do this acceptable for you?
 
-Yeah, that looks wrong today - it should be a strict pairing with
-exynos_iommu_attach_device() so it needs to check if each
-client's sysmmu_drvdata is in the exynos_iommu_owner->controller list.
-Marek?
+Maxime
 
-At least this transformation shouldn't make it worse as we will still
-call this code in all the same places as we always did. The identity
-domain is also not threaded on this list.
+--co3427ienkolccfs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > -	owner->domain = NULL;
-> > +	owner->domain = identity_domain;
-> >   	spin_unlock_irqrestore(&domain->lock, flags);
-> >   	mutex_unlock(&owner->rpm_lock);
-> >   	dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n", __func__,
-> 
-> This no longer makes much sense.
+-----BEGIN PGP SIGNATURE-----
 
-	dev_dbg(dev, "%s: Restored IOMMU to IDENTITY from pgtable %pa\n",
-		__func__, &pagetable);
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZFPk5QAKCRDj7w1vZxhR
+xYK/AQDT76loaORROKC2ghqyIIHmBg+xw8VB5nThUFKuIO4RhgD9ERaCF31CTPdE
+PdgL4dyZrWlQGqGmbyHbk465s505Jww=
+=OlOa
+-----END PGP SIGNATURE-----
 
-Better?
-
-> > @@ -1457,6 +1458,7 @@ static int exynos_iommu_of_xlate(struct device *dev,
-> >   		INIT_LIST_HEAD(&owner->controllers);
-> >   		mutex_init(&owner->rpm_lock);
-> > +		owner->domain = &exynos_identity_domain;
-> 
-> I think strictly this would be more of a probe_device thing than an of_xlate
-> thing, but it's not super-important.
-
-The full code block is this:
-
-		owner = kzalloc(sizeof(*owner), GFP_KERNEL);
-		if (!owner) {
-			put_device(&sysmmu->dev);
-			return -ENOMEM;
-		}
-
-		INIT_LIST_HEAD(&owner->controllers);
-		mutex_init(&owner->rpm_lock);
-		owner->domain = &exynos_identity_domain;
-		dev_iommu_priv_set(dev, owner);
-
-So we set the domain at the same time we allocate and initialize the
-owner struct.
-
-Why this is allocated in of_xlate is beyond me, but it is the right
-place to put this initialization, we never want NULL to be stored
-here.
-
-Thanks,
-Jason
+--co3427ienkolccfs--
