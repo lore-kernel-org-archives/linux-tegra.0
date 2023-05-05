@@ -2,450 +2,693 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44694C7EE2C
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 11:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2042C77B7F
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 17:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231811AbjEELfy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 May 2023 07:35:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
+        id S231359AbjEERY5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 May 2023 13:24:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231698AbjEELfx (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 May 2023 07:35:53 -0400
-Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E39F61BF;
-        Fri,  5 May 2023 04:35:51 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailnew.west.internal (Postfix) with ESMTP id CF5502B066B8;
-        Fri,  5 May 2023 07:25:53 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 05 May 2023 07:25:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1683285953; x=1683293153; bh=WU20FpUx77EC9SQ4SvyGsBOJEHNPQAGkitA
-        hRG2bZ+8=; b=cgeM5GXMn3UxomTuwWA6AkOxgVn1PUeJmY+HSkE1TZA752i4fMf
-        QlYTaJ3UBsrM+xmXXoB8aMPoNfu33v/+uNcOH6qdiut5C/giuLiiL+5xpPL9JQ3q
-        KBZI2kK8gg4c7gD5R7CpKcY87dEyeTl7s1nF18OyeKxj9B28kPMuyI7bzaLQuG7F
-        jUCWx54c1O0WZ7iMU4OguTOmfgUWmsnRtWbzh20WYFo3Z2hV6z0lK9Rpe9SA8+gk
-        xun/BjXaV1djzqXT5STJvMBm9KjZTBCAJ3fnpgoAoMk4b34q1MzQLNEwCiR0sj6I
-        Yfq0t+Rzah7rVMv1mCoZhd7NmbmoteVaanw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683285953; x=1683293153; bh=WU20FpUx77EC9SQ4SvyGsBOJEHNPQAGkitA
-        hRG2bZ+8=; b=jr8lN2ghqcDZ5kqJHWWrVG+JVKxrGxFjiL2Fo6F+tO6khTu9uNC
-        3Vzfo/OsYMLD3RLfc+/5PSx3qtINZwp/2/Qs+vt62FUAIp8X+tN87wRyDj5pE/9y
-        PJokTD1FNIRNQR0hzIJGElMJPY0E/L8AV0eT2rJj7nhin7Vj/nnbY7UhIGMzeYDx
-        iZDx76QA1IsHnrUbb92BFyco9yHVZY5Uwf7/Tkjsuw9gRBiv+1/xFABEQxh5Q0cS
-        HziRpz9berfkuczUH/qZ7+c14O98hfnbgHBn//enLqYX0/76S0yKkBeLnX8FTGaH
-        oEkXYF8N3c35dQD5wyXVdIoY4aiurQAwgcA==
-X-ME-Sender: <xms:wOdUZPn2YVsOeYXvI146nyDBWr3nSH3lCpz6TRPAgUE6KZdJu7P3Fg>
-    <xme:wOdUZC36G9DFmwnj6d-CzDtfAPXXtK4y5a-_3scL858H7lwpPNUG_M4edZEEYa5N-
-    tg9xeQ-DK8K9mvYpZU>
-X-ME-Received: <xmr:wOdUZFpLil1rYYbdxZv73ZNsYdbpwpqWCmYK9efiaExczIoN6U3ELq1yOJKPCGV4y-bO_I83vIlHjCvk21D8HlpE9UvyMI4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddggedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepudduudfhveejteefgedvffdvvedvjedugedukeejhedtlefhffevtefh
-    jeeltdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:wOdUZHldcNsAc0CZDFE_9vVcrWupYRHe9dwKRyFTwC0LjLqStRUHWA>
-    <xmx:wOdUZN1GorjN-GCmdgKxvoBp8OzxFMyLWI1u7jCbHAXQD_RK26nEeA>
-    <xmx:wOdUZGtWZeNEW5CaVVPyp59BAgGJLKL2I-3qwPdfa01u7LQiEAVLhw>
-    <xmx:wedUZO9YMlrZ92sVeEfotUdtjLPxcIR6arJIzZeSlMtLRwBRhGDuJ-hp_iA>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 07:25:51 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Fri, 05 May 2023 13:25:06 +0200
-Subject: [PATCH v4 04/68] clk: Introduce
- clk_hw_determine_rate_no_reparent()
+        with ESMTP id S230055AbjEERY4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 May 2023 13:24:56 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4328EE6C;
+        Fri,  5 May 2023 10:24:53 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36BF91FB;
+        Fri,  5 May 2023 10:25:37 -0700 (PDT)
+Received: from [10.57.81.246] (unknown [10.57.81.246])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 545163F5A1;
+        Fri,  5 May 2023 10:24:49 -0700 (PDT)
+Message-ID: <09b2a614-b7e5-d4e4-bcd4-bd1c22470821@arm.com>
+Date:   Fri, 5 May 2023 18:24:27 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20221018-clk-range-checks-fixes-v4-4-971d5077e7d2@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        David Lechner <david@lechnology.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Markus Schneider-Pargmann <msp@baylibre.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Peng Fan <peng.fan@nxp.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sekhar Nori <nsekhar@ti.com>, Shawn Guo <shawnguo@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, dri-devel@lists.freedesktop.org,
-        linux-actions@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
-        linux-rtc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        patches@opensource.cirrus.com,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10829; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=YBkKiWSHU6AfKueAcHZCOzbYZiY/0bHTLTOJ1X0UewY=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhzxedUy9mc+d6kvbti+3SFwfvMnndXJS6hu1k/TrpDJGw
- on1pHaUsDGJcDLJiiiwxwuZL4k7Net3JxjcPZg4rE8gQBi5OAZjIMUdGhrc1IfwXRIW2N4U5T025te
- 74MuZT1+3CXxzLnmrrU8G66gwjw9XfZ8pdlhx7KvVmQf4Moc++3jnXPGXyivk3x50qOet1hBMA
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v3] perf: arm_cspmu: Separate Arm and vendor module
+Content-Language: en-GB
+To:     Besar Wicaksono <bwicaksono@nvidia.com>, suzuki.poulose@arm.com,
+        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
+        efunsten@nvidia.com
+References: <20230505005956.22837-1-bwicaksono@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20230505005956.22837-1-bwicaksono@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+On 2023-05-05 01:59, Besar Wicaksono wrote:
+> Arm Coresight PMU driver consists of main standard code and vendor
+> backend code. Both are currently built as a single module.
+> This patch adds vendor registration API to separate the two to
+> keep things modular. Main driver maintains a list of backend module
+> and will request it when probing the device.
+> 
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> ---
+> 
+> Changes from v2:
+>   * Move sysfs_event/format_show definition to arm_cspmu.h and move impl
+>     registration API definition to a separate module so main driver and vendor
+>     module are independent.
+>   * The registration API now just sets the impl_init_ops callback, no reprobe.
+>   * Add PMIIDR table that maps to the vendor module name. During device probe,
+>     main driver requests the vendor module if PMIIDR is matching.
+>   * Keeping the name of the main driver module as arm_cspmu_module.
+> Thanks to Robin and Suzuki for the feedback.
+> v2:  https://lore.kernel.org/linux-arm-kernel/20230418062030.45620-1-bwicaksono@nvidia.com/T/#u
+> 
+> Changes from v1:
+>   * Added separate Kconfig entry for nvidia backend
+>   * Added lock to protect accesses to the lists
+>   * Added support for matching subset devices from a vendor
+>   * Added state tracking to avoid reprobe when a device is in use
+> Thanks to Suzuki for the feedback.
+> v1: https://lore.kernel.org/linux-arm-kernel/20230403163905.20354-1-bwicaksono@nvidia.com/T/#u
+> 
+> ---
+>   drivers/perf/arm_cspmu/Kconfig          |   9 +-
+>   drivers/perf/arm_cspmu/Makefile         |   7 +-
+>   drivers/perf/arm_cspmu/arm_cspmu.c      |  86 ++++++------------
+>   drivers/perf/arm_cspmu/arm_cspmu.h      |  55 ++++++++++--
+>   drivers/perf/arm_cspmu/arm_cspmu_impl.c | 114 ++++++++++++++++++++++++
+>   drivers/perf/arm_cspmu/nvidia_cspmu.c   |  35 +++++++-
+>   drivers/perf/arm_cspmu/nvidia_cspmu.h   |  17 ----
+>   7 files changed, 235 insertions(+), 88 deletions(-)
+>   create mode 100644 drivers/perf/arm_cspmu/arm_cspmu_impl.c
+>   delete mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
+> 
+> diff --git a/drivers/perf/arm_cspmu/Kconfig b/drivers/perf/arm_cspmu/Kconfig
+> index 0b316fe69a45..8ce7b45a0075 100644
+> --- a/drivers/perf/arm_cspmu/Kconfig
+> +++ b/drivers/perf/arm_cspmu/Kconfig
+> @@ -1,6 +1,6 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   #
+> -# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> +# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+>   
+>   config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+>   	tristate "ARM Coresight Architecture PMU"
+> @@ -11,3 +11,10 @@ config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+>   	  based on ARM CoreSight PMU architecture. Note that this PMU
+>   	  architecture does not have relationship with the ARM CoreSight
+>   	  Self-Hosted Tracing.
+> +
+> +config NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+> +	tristate "NVIDIA Coresight Architecture PMU"
+> +	depends on ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
+> +	help
+> +	  Provides NVIDIA specific attributes for performance monitoring unit
+> +	  (PMU) devices based on ARM CoreSight PMU architecture.
+> diff --git a/drivers/perf/arm_cspmu/Makefile b/drivers/perf/arm_cspmu/Makefile
+> index fedb17df982d..602ecb99dc57 100644
+> --- a/drivers/perf/arm_cspmu/Makefile
+> +++ b/drivers/perf/arm_cspmu/Makefile
+> @@ -1,6 +1,9 @@
+> -# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> +# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+>   #
+>   # SPDX-License-Identifier: GPL-2.0
+>   
+> +obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu_impl.o
 
-Some clock drivers do not want to allow any reparenting on a given
-clock, but usually do so by not providing any determine_rate
-implementation.
+Not sure what's up with this... I have no complaint with keeping the 
+impl infrastucture together in its own source file, but it still wants 
+to end up as part of arm_cspmu_module. Doing otherwise just adds 
+unnecessary overhead at many levels and invites more problems.
 
-Whenever we call clk_round_rate() or clk_set_rate(), this leads to
-clk_core_can_round() returning false and thus the rest of the function
-either forwarding the rate request to its current parent if
-CLK_SET_RATE_PARENT is set, or just returning the current clock rate.
+>   obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu_module.o
+> -arm_cspmu_module-y := arm_cspmu.o nvidia_cspmu.o
+> +arm_cspmu_module-y := arm_cspmu.o
+> +
+> +obj-$(CONFIG_NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += nvidia_cspmu.o
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index a3f1c410b417..04c318744f55 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -16,7 +16,7 @@
+>    * The user should refer to the vendor technical documentation to get details
+>    * about the supported events.
+>    *
+> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+>    *
+>    */
+>   
+> @@ -31,7 +31,6 @@
+>   #include <acpi/processor.h>
+>   
+>   #include "arm_cspmu.h"
+> -#include "nvidia_cspmu.h"
+>   
+>   #define PMUNAME "arm_cspmu"
+>   #define DRVNAME "arm-cs-arch-pmu"
+> @@ -117,9 +116,6 @@
+>    */
+>   #define HILOHI_MAX_POLL	1000
+>   
+> -/* JEDEC-assigned JEP106 identification code */
+> -#define ARM_CSPMU_IMPL_ID_NVIDIA		0x36B
+> -
+>   static unsigned long arm_cspmu_cpuhp_state;
+>   
+>   /*
+> @@ -186,16 +182,6 @@ static inline bool use_64b_counter_reg(const struct arm_cspmu *cspmu)
+>   	return (counter_size(cspmu) > 32);
+>   }
+>   
+> -ssize_t arm_cspmu_sysfs_event_show(struct device *dev,
+> -				struct device_attribute *attr, char *buf)
+> -{
+> -	struct dev_ext_attribute *eattr =
+> -		container_of(attr, struct dev_ext_attribute, attr);
+> -	return sysfs_emit(buf, "event=0x%llx\n",
+> -			  (unsigned long long)eattr->var);
+> -}
+> -EXPORT_SYMBOL_GPL(arm_cspmu_sysfs_event_show);
+> -
+>   /* Default event list. */
+>   static struct attribute *arm_cspmu_event_attrs[] = {
+>   	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
+> @@ -231,16 +217,6 @@ arm_cspmu_event_attr_is_visible(struct kobject *kobj,
+>   	return attr->mode;
+>   }
+>   
+> -ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
+> -				struct device_attribute *attr,
+> -				char *buf)
+> -{
+> -	struct dev_ext_attribute *eattr =
+> -		container_of(attr, struct dev_ext_attribute, attr);
+> -	return sysfs_emit(buf, "%s\n", (char *)eattr->var);
+> -}
+> -EXPORT_SYMBOL_GPL(arm_cspmu_sysfs_format_show);
+> -
 
-This behaviour happens implicitly, and as we move forward to making a
-determine_rate implementation required for muxes, we need some way to
-explicitly opt-in for that behaviour.
+Is there a reason for moving these (other than bodging around issues 
+caused by the Makefile mishap above)?
 
-Fortunately, this is exactly what the clk_core_determine_rate_no_reparent()
-function is doing, so we can simply make it available to drivers.
+(also, I'm now wondering why they're exported in the first place, since 
+a backend module is hardly going to need to override the default 
+implementations with the default implementations...)
 
-Cc: Abel Vesa <abelvesa@kernel.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: "Andreas Färber" <afaerber@suse.de>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@gmail.com>
-Cc: David Lechner <david@lechnology.com>
-Cc: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Miles Chen <miles.chen@mediatek.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Orson Zhai <orsonzhai@gmail.com>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Samuel Holland <samuel@sholland.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-actions@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-phy@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-rtc@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-sunxi@lists.linux.dev
-Cc: linux-tegra@vger.kernel.org
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: patches@opensource.cirrus.com
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk.c            |  18 +++++
- drivers/clk/clk_test.c       | 152 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |   2 +
- 3 files changed, 172 insertions(+)
+>   static struct attribute *arm_cspmu_format_attrs[] = {
+>   	ARM_CSPMU_FORMAT_EVENT_ATTR,
+>   	ARM_CSPMU_FORMAT_FILTER_ATTR,
+> @@ -379,27 +355,12 @@ static struct attribute_group arm_cspmu_cpumask_attr_group = {
+>   	.attrs = arm_cspmu_cpumask_attrs,
+>   };
+>   
+> -struct impl_match {
+> -	u32 pmiidr;
+> -	u32 mask;
+> -	int (*impl_init_ops)(struct arm_cspmu *cspmu);
+> -};
+> -
+> -static const struct impl_match impl_match[] = {
+> -	{
+> -	  .pmiidr = ARM_CSPMU_IMPL_ID_NVIDIA,
+> -	  .mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
+> -	  .impl_init_ops = nv_cspmu_init_ops
+> -	},
+> -	{}
+> -};
+> -
+>   static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
+>   {
+> -	int ret;
+> +	int ret = 0;
+>   	struct acpi_apmt_node *apmt_node = cspmu->apmt_node;
+>   	struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
+> -	const struct impl_match *match = impl_match;
+> +	const struct arm_cspmu_impl_module *match;
+>   
+>   	/*
+>   	 * Get PMU implementer and product id from APMT node.
+> @@ -411,18 +372,21 @@ static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
+>   				       readl(cspmu->base0 + PMIIDR);
+>   
+>   	/* Find implementer specific attribute ops. */
+> -	for (; match->pmiidr; match++) {
+> -		const u32 mask = match->mask;
+> -
+> -		if ((match->pmiidr & mask) == (cspmu->impl.pmiidr & mask)) {
+> -			ret = match->impl_init_ops(cspmu);
+> -			if (ret)
+> -				return ret;
+> -
+> -			break;
+> +	match = arm_cspmu_impl_match_module(cspmu->impl.pmiidr);
+> +	if (match) {
+> +		request_module(match->name);
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f57f821a5e5a..5365595433c8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -783,6 +783,24 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
- }
- EXPORT_SYMBOL_GPL(__clk_mux_determine_rate_closest);
- 
-+/*
-+ * clk_hw_determine_rate_no_reparent - clk_ops::determine_rate implementation for a clk that doesn't reparent
-+ * @hw: mux type clk to determine rate on
-+ * @req: rate request, also used to return preferred frequency
-+ *
-+ * Helper for finding best parent rate to provide a given frequency.
-+ * This can be used directly as a determine_rate callback (e.g. for a
-+ * mux), or from a more complex clock that may combine a mux with other
-+ * operations.
-+ *
-+ * Returns: 0 on success, -EERROR value on error
-+ */
-+int clk_hw_determine_rate_no_reparent(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
-+{
-+	return clk_core_determine_rate_no_reparent(hw, req);
-+}
-+
- /***        clk api        ***/
- 
- static void clk_core_rate_unprotect(struct clk_core *core)
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 2cb51153750d..b3ed3b0e4c31 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -141,6 +141,12 @@ static const struct clk_ops clk_multiple_parents_mux_ops = {
- 	.determine_rate = __clk_mux_determine_rate_closest,
- };
- 
-+static const struct clk_ops clk_multiple_parents_no_reparent_mux_ops = {
-+	.determine_rate = clk_hw_determine_rate_no_reparent,
-+	.get_parent = clk_multiple_parents_mux_get_parent,
-+	.set_parent = clk_multiple_parents_mux_set_parent,
-+};
-+
- static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
- {
- 	struct clk_dummy_context *ctx;
-@@ -2395,10 +2401,156 @@ static struct kunit_suite clk_mux_notifier_test_suite = {
- 	.test_cases = clk_mux_notifier_test_cases,
- };
- 
-+static int
-+clk_mux_no_reparent_test_init(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx;
-+	const char *parents[2] = { "parent-0", "parent-1"};
-+	int ret;
-+
-+	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	test->priv = ctx;
-+
-+	ctx->parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT("parent-0",
-+							    &clk_dummy_rate_ops,
-+							    0);
-+	ctx->parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
-+	ret = clk_hw_register(NULL, &ctx->parents_ctx[0].hw);
-+	if (ret)
-+		return ret;
-+
-+	ctx->parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT("parent-1",
-+							    &clk_dummy_rate_ops,
-+							    0);
-+	ctx->parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
-+	ret = clk_hw_register(NULL, &ctx->parents_ctx[1].hw);
-+	if (ret)
-+		return ret;
-+
-+	ctx->current_parent = 0;
-+	ctx->hw.init = CLK_HW_INIT_PARENTS("test-mux", parents,
-+					   &clk_multiple_parents_no_reparent_mux_ops,
-+					   0);
-+	ret = clk_hw_register(NULL, &ctx->hw);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void
-+clk_mux_no_reparent_test_exit(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+
-+	clk_hw_unregister(&ctx->hw);
-+	clk_hw_unregister(&ctx->parents_ctx[0].hw);
-+	clk_hw_unregister(&ctx->parents_ctx[1].hw);
-+}
-+
-+/*
-+ * Test that if the we have a mux that cannot change parent and we call
-+ * clk_round_rate() on it with a rate that should cause it to change
-+ * parent, it won't.
-+ */
-+static void clk_mux_no_reparent_round_rate(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
-+	struct clk *other_parent, *parent;
-+	unsigned long other_parent_rate;
-+	unsigned long parent_rate;
-+	long rounded_rate;
-+
-+	parent = clk_get_parent(clk);
-+	KUNIT_ASSERT_PTR_NE(test, parent, NULL);
-+
-+	parent_rate = clk_get_rate(parent);
-+	KUNIT_ASSERT_GT(test, parent_rate, 0);
-+
-+	other_parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, other_parent);
-+	KUNIT_ASSERT_FALSE(test, clk_is_match(parent, other_parent));
-+
-+	other_parent_rate = clk_get_rate(other_parent);
-+	KUNIT_ASSERT_GT(test, other_parent_rate, 0);
-+	clk_put(other_parent);
-+
-+	rounded_rate = clk_round_rate(clk, other_parent_rate);
-+	KUNIT_ASSERT_GT(test, rounded_rate, 0);
-+	KUNIT_EXPECT_EQ(test, rounded_rate, parent_rate);
-+
-+	clk_put(clk);
-+}
-+
-+/*
-+ * Test that if the we have a mux that cannot change parent and we call
-+ * clk_set_rate() on it with a rate that should cause it to change
-+ * parent, it won't.
-+ */
-+static void clk_mux_no_reparent_set_rate(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
-+	struct clk *other_parent, *parent;
-+	unsigned long other_parent_rate;
-+	unsigned long parent_rate;
-+	unsigned long rate;
-+	int ret;
-+
-+	parent = clk_get_parent(clk);
-+	KUNIT_ASSERT_PTR_NE(test, parent, NULL);
-+
-+	parent_rate = clk_get_rate(parent);
-+	KUNIT_ASSERT_GT(test, parent_rate, 0);
-+
-+	other_parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, other_parent);
-+	KUNIT_ASSERT_FALSE(test, clk_is_match(parent, other_parent));
-+
-+	other_parent_rate = clk_get_rate(other_parent);
-+	KUNIT_ASSERT_GT(test, other_parent_rate, 0);
-+	clk_put(other_parent);
-+
-+	ret = clk_set_rate(clk, other_parent_rate);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, parent_rate);
-+
-+	clk_put(clk);
-+}
-+
-+static struct kunit_case clk_mux_no_reparent_test_cases[] = {
-+	KUNIT_CASE(clk_mux_no_reparent_round_rate),
-+	KUNIT_CASE(clk_mux_no_reparent_set_rate),
-+	{}
-+};
-+
-+/*
-+ * Test suite for a clock mux that isn't allowed to change parent, using
-+ * the clk_hw_determine_rate_no_reparent() helper.
-+ *
-+ * These tests exercise that helper, and the proper selection of
-+ * rates and parents.
-+ */
-+static struct kunit_suite clk_mux_no_reparent_test_suite = {
-+	.name = "clk-mux-no-reparent",
-+	.init = clk_mux_no_reparent_test_init,
-+	.exit = clk_mux_no_reparent_test_exit,
-+	.test_cases = clk_mux_no_reparent_test_cases,
-+};
-+
- kunit_test_suites(
- 	&clk_leaf_mux_set_rate_parent_test_suite,
- 	&clk_test_suite,
- 	&clk_multiple_parents_mux_test_suite,
-+	&clk_mux_no_reparent_test_suite,
- 	&clk_mux_notifier_test_suite,
- 	&clk_orphan_transparent_multiple_parent_mux_test_suite,
- 	&clk_orphan_transparent_single_parent_test_suite,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 28ff6f1a6ada..f8f220fb5dab 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1333,6 +1333,8 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
- int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 				 struct clk_rate_request *req,
- 				 unsigned long flags);
-+int clk_hw_determine_rate_no_reparent(struct clk_hw *hw,
-+				      struct clk_rate_request *req);
- void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
- void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
- 			   unsigned long *max_rate);
+Are we confident this can't deadlock when it's already in the middle of 
+loading the main module?
 
--- 
-2.40.0
+I'm mostly just paranoid thanks to my plentiful experience of 
+inadvertently making driver probe routines crash, leaving some lock held 
+in the module loader which typically ends up in having to hard-reset the 
+machine :(
 
+> +
+> +		if (match->param.module && match->param.impl_init_ops) {
+
+The module handles can be NULL if everything is built-in, so 
+impl_init_ops is our only useful indicator here.
+
+> +			if (try_module_get(match->param.module)) {
+> +				cspmu->impl.module = match->param.module;
+> +				ret = match->param.impl_init_ops(cspmu);
+> +			}
+
+As mentioned previously, I think it might be appropriate to warn that 
+we're falling back to the generic implementation when we've failed to 
+find the ops for a match we *do* know about.
+
+>   		}
+>   	}
+>   
+> +	if (ret)
+> +		return ret;
+> +
+>   	/* Use default callbacks if implementer doesn't provide one. */
+>   	CHECK_DEFAULT_IMPL_OPS(impl_ops, get_event_attrs);
+>   	CHECK_DEFAULT_IMPL_OPS(impl_ops, get_format_attrs);
+> @@ -484,11 +448,6 @@ arm_cspmu_alloc_attr_group(struct arm_cspmu *cspmu)
+>   	struct attribute_group **attr_groups = NULL;
+>   	struct device *dev = cspmu->dev;
+>   	const struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
+> -	int ret;
+> -
+> -	ret = arm_cspmu_init_impl_ops(cspmu);
+> -	if (ret)
+> -		return NULL;
+>   
+>   	cspmu->identifier = impl_ops->get_identifier(cspmu);
+>   	cspmu->name = impl_ops->get_name(cspmu);
+> @@ -1203,11 +1162,21 @@ static int arm_cspmu_device_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		return ret;
+>   
+> +	ret = arm_cspmu_init_impl_ops(cspmu);
+> +	if (ret)
+> +		goto module_put;
+> +
+>   	ret = arm_cspmu_register_pmu(cspmu);
+>   	if (ret)
+> -		return ret;
+> +		goto module_put;
+>   
+>   	return 0;
+> +
+> +module_put:
+> +	if (cspmu->impl.module)
+
+No need to check, module_put(NULL) is valid.
+
+> +		module_put(cspmu->impl.module);
+> +
+> +	return ret;
+>   }
+>   
+>   static int arm_cspmu_device_remove(struct platform_device *pdev)
+> @@ -1217,6 +1186,9 @@ static int arm_cspmu_device_remove(struct platform_device *pdev)
+>   	perf_pmu_unregister(&cspmu->pmu);
+>   	cpuhp_state_remove_instance(arm_cspmu_cpuhp_state, &cspmu->cpuhp_node);
+>   
+> +	if (cspmu->impl.module)
+
+Ditto.
+
+> +		module_put(cspmu->impl.module);
+> +
+>   	return 0;
+>   }
+>   
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
+> index 51323b175a4a..0b60165f770a 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
+> @@ -1,7 +1,7 @@
+>   /* SPDX-License-Identifier: GPL-2.0
+>    *
+>    * ARM CoreSight Architecture PMU driver.
+> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+>    *
+>    */
+>   
+> @@ -68,8 +68,13 @@
+>   
+>   /* PMIIDR register field */
+>   #define ARM_CSPMU_PMIIDR_IMPLEMENTER	GENMASK(11, 0)
+> +#define ARM_CSPMU_PMIIDR_REVISION	GENMASK(15, 12)
+> +#define ARM_CSPMU_PMIIDR_VARIANT	GENMASK(19, 16)
+>   #define ARM_CSPMU_PMIIDR_PRODUCTID	GENMASK(31, 20)
+>   
+> +/* JEDEC-assigned JEP106 identification code */
+> +#define ARM_CSPMU_IMPL_ID_NVIDIA	0x36B
+> +
+>   struct arm_cspmu;
+>   
+>   /* This tracks the events assigned to each counter in the PMU. */
+> @@ -107,10 +112,28 @@ struct arm_cspmu_impl_ops {
+>   					 struct attribute *attr, int unused);
+>   };
+>   
+> +/* Vendor/implementer registration parameter. */
+> +struct arm_cspmu_impl_param {
+> +	/* Backend module. */
+> +	struct module *module;
+> +	/* PMIIDR value/mask. */
+> +	u32 pmiidr_val;
+> +	u32 pmiidr_mask;
+> +	/* Callback to vendor backend to init arm_cspmu_impl::ops. */
+> +	int (*impl_init_ops)(struct arm_cspmu *cspmu);
+> +};
+> +
+> +/* Vendor/implementer module. */
+> +struct arm_cspmu_impl_module {
+> +	const char *name;
+> +	struct arm_cspmu_impl_param param;
+> +};
+
+Nit: FWIW I'd just have a single flat structure and call it something 
+like arm_cspmu_impl_match.
+
+> +
+>   /* Vendor/implementer descriptor. */
+>   struct arm_cspmu_impl {
+>   	u32 pmiidr;
+>   	struct arm_cspmu_impl_ops ops;
+> +	struct module *module;
+>   	void *ctx;
+>   };
+>   
+> @@ -139,13 +162,31 @@ struct arm_cspmu {
+>   };
+>   
+>   /* Default function to show event attribute in sysfs. */
+> -ssize_t arm_cspmu_sysfs_event_show(struct device *dev,
+> -				   struct device_attribute *attr,
+> -				   char *buf);
+> +static inline ssize_t arm_cspmu_sysfs_event_show(struct device *dev,
+> +				struct device_attribute *attr, char *buf)
+> +{
+> +	struct dev_ext_attribute *eattr =
+> +		container_of(attr, struct dev_ext_attribute, attr);
+> +	return sysfs_emit(buf, "event=0x%llx\n",
+> +			  (unsigned long long)eattr->var);
+> +}
+>   
+>   /* Default function to show format attribute in sysfs. */
+> -ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
+> -				    struct device_attribute *attr,
+> -				    char *buf);
+> +static inline ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
+> +				struct device_attribute *attr, char *buf)
+> +{
+> +	struct dev_ext_attribute *eattr =
+> +		container_of(attr, struct dev_ext_attribute, attr);
+> +	return sysfs_emit(buf, "%s\n", (char *)eattr->var);
+> +}
+> +
+> +/* Register vendor backend. */
+> +int arm_cspmu_impl_register(const struct arm_cspmu_impl_param *impl_param);
+> +
+> +/* Unregister vendor backend. */
+> +void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_param *impl_param);
+> +
+> +/* Get matching vendor module compatible with /p pmiidr. */
+> +const struct arm_cspmu_impl_module *arm_cspmu_impl_match_module(u32 pmiidr);
+>   
+>   #endif /* __ARM_CSPMU_H__ */
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu_impl.c b/drivers/perf/arm_cspmu/arm_cspmu_impl.c
+> new file mode 100644
+> index 000000000000..35e0f4c2410a
+> --- /dev/null
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu_impl.c
+> @@ -0,0 +1,114 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Implementation specific backend registration.
+> + *
+> + * Copyright (c) 2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> + *
+> + */
+> +
+> +#include <linux/mutex.h>
+> +
+> +#include "arm_cspmu.h"
+> +
+> +static DEFINE_MUTEX(arm_cspmu_lock);
+> +
+> +static struct arm_cspmu_impl_module module_list[] = {
+> +	{
+> +		.name = "nvidia_cspmu",
+> +		.param = {
+> +			.pmiidr_val = ARM_CSPMU_IMPL_ID_NVIDIA,
+> +			.pmiidr_mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
+> +		},
+> +	},
+> +	{}
+> +};
+> +
+> +static struct arm_cspmu_impl_module *arm_cspmu_impl_find_module(
+> +	const struct arm_cspmu_impl_param *impl_param)
+> +{
+> +	struct arm_cspmu_impl_module *module;
+> +
+> +	for (module = module_list; module->name; module++) {
+> +		if (!strcmp(module->name, impl_param->module->name) &&
+> +		    module->param.pmiidr_val == impl_param->pmiidr_val &&
+> +		    module->param.pmiidr_mask == impl_param->pmiidr_mask)
+> +			return module;
+> +	}
+> +
+> +	return NULL;
+> +}
+
+I don't think we want different logic for this - probe has to be able to 
+get an unambiguous match from a PMIIDR value alone, therefore it must be 
+sufficient for backend registration to do the same, e.g. 
+arm_cspmu_impl_match_module(ARM_CSPMU_IMPL_ID_NVIDIA). Haveing different 
+match conditions makes it all to easy to let subtle bugs in.
+
+> +
+> +const struct arm_cspmu_impl_module *arm_cspmu_impl_match_module(u32 pmiidr)
+> +{
+> +	struct arm_cspmu_impl_module *module;
+
+Nit: just initialise to NULL...
+
+> +	mutex_lock(&arm_cspmu_lock);
+> +
+> +	for (module = module_list; module->name; module++) {
+> +		u32 mask = module->param.pmiidr_mask;
+> +
+> +		if ((module->param.pmiidr_val & mask) == (pmiidr & mask)) {
+
+...and break here.
+
+> +			mutex_unlock(&arm_cspmu_lock);
+> +			return module;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&arm_cspmu_lock);
+
+However, this locking doesn't work anyway - module_list and the 
+pmiidr_{mask,val} values are static, so there is no need to protect the 
+match lookup itself. The potential race which does exist is between 
+arm_cspmu_impl_register() writing to module/impl_init_ops and 
+arm_cspmu_init_impl_ops() reading them, which is not covered.
+
+> +
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(arm_cspmu_impl_match_module);
+> +
+> +int arm_cspmu_impl_register(const struct arm_cspmu_impl_param *impl_param)
+
+Ah, I see, this explains the structure split. I reckon it would be fine 
+to either just pass the PMIIDR value, module handle and impl_init_ops as 
+explicit arguments here, or a whole dummy match template with only those 
+fields filled in.
+
+> +{
+> +	struct arm_cspmu_impl_module *module;
+> +	int ret = 0;
+> +
+> +	if (!impl_param->module || !impl_param->impl_init_ops) {
+
+Again, this module check prevents it from working with the whole driver 
++ backend built-in.
+
+> +		pr_err("arm_cspmu reg failed, invalid module or init_ops\n");
+
+If anything, probably just WARN_ON() impl_init_ops being NULL here, 
+since that would mean the backend module is fundamentally broken. 
+However it would effectvely already be covered if we had a more general 
+user warning based on not finding the ops for a known match at probe, as 
+suggested earlier. The corner case of loading a broken module and *not* 
+trying to use it doesn't seem worth bothering about.
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	mutex_lock(&arm_cspmu_lock);
+> +
+> +	module = arm_cspmu_impl_find_module(impl_param);
+> +	if (module) {
+> +		module->param.module = impl_param->module;
+> +		module->param.impl_init_ops = impl_param->impl_init_ops;
+> +	} else {
+
+I do however think it might be worth also checking if a match is found 
+but the ops are already set. That would mean our match table is broken 
+and contains a non-unique PMIIDR match, which isn't going to be easily 
+caught anywhere else, and the implications might be subtle and only show 
+up for other users later.
+
+> +		pr_err("arm_cspmu reg failed, unable to find pmiidr: 0x%x, mask: 0x%x, module: %s\n",
+> +			impl_param->pmiidr_val,
+> +			impl_param->pmiidr_mask,
+> +			impl_param->module->name);
+> +
+> +		ret = -EINVAL;
+> +	}
+> +
+> +
+> +	mutex_unlock(&arm_cspmu_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(arm_cspmu_impl_register);
+> +
+> +void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_param *impl_param)
+> +{
+> +	struct arm_cspmu_impl_module *module;
+> +
+> +	mutex_lock(&arm_cspmu_lock);
+> +
+> +	module = arm_cspmu_impl_find_module(impl_param);
+> +	if (module) {
+
+I think it's reasonable to have a usage model where unregister should 
+only be called if register succeeded, and thus we can assume this lookup 
+never fails. That certainly fits if the expectation is that 
+register/unregister are tied to module_init/module_exit.
+
+Thanks,
+Robin.
+
+> +		module->param.module = NULL;
+> +		module->param.impl_init_ops = NULL;
+> +	} else
+> +		pr_err("arm_cspmu unreg failed, unable to find pmiidr: 0x%x, mask: 0x%x, module: %s\n",
+> +			impl_param->pmiidr_val,
+> +			impl_param->pmiidr_mask,
+> +			impl_param->module->name);
+> +
+> +	mutex_unlock(&arm_cspmu_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
+> +
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> index 72ef80caa3c8..7ac8f17de116 100644
+> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> @@ -1,14 +1,15 @@
+>   // SPDX-License-Identifier: GPL-2.0
+>   /*
+> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+>    *
+>    */
+>   
+>   /* Support for NVIDIA specific attributes. */
+>   
+> +#include <linux/module.h>
+>   #include <linux/topology.h>
+>   
+> -#include "nvidia_cspmu.h"
+> +#include "arm_cspmu.h"
+>   
+>   #define NV_PCIE_PORT_COUNT           10ULL
+>   #define NV_PCIE_FILTER_ID_MASK       GENMASK_ULL(NV_PCIE_PORT_COUNT - 1, 0)
+> @@ -351,7 +352,7 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
+>   	return name;
+>   }
+>   
+> -int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
+> +static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
+>   {
+>   	u32 prodid;
+>   	struct nv_cspmu_ctx *ctx;
+> @@ -395,6 +396,32 @@ int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
+>   
+>   	return 0;
+>   }
+> -EXPORT_SYMBOL_GPL(nv_cspmu_init_ops);
+> +
+> +/* Match all NVIDIA Coresight PMU devices */
+> +static const struct arm_cspmu_impl_param nv_cspmu_param = {
+> +	.module		= THIS_MODULE,
+> +	.pmiidr_val	= ARM_CSPMU_IMPL_ID_NVIDIA,
+> +	.pmiidr_mask	= ARM_CSPMU_PMIIDR_IMPLEMENTER,
+> +	.impl_init_ops	= nv_cspmu_init_ops
+> +};
+> +
+> +static int __init nvidia_cspmu_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = arm_cspmu_impl_register(&nv_cspmu_param);
+> +	if (ret)
+> +		pr_err("nvidia_cspmu backend registration error: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static void __exit nvidia_cspmu_exit(void)
+> +{
+> +	arm_cspmu_impl_unregister(&nv_cspmu_param);
+> +}
+> +
+> +module_init(nvidia_cspmu_init);
+> +module_exit(nvidia_cspmu_exit);
+>   
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.h b/drivers/perf/arm_cspmu/nvidia_cspmu.h
+> deleted file mode 100644
+> index 71e18f0dc50b..000000000000
+> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.h
+> +++ /dev/null
+> @@ -1,17 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0
+> - *
+> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> - *
+> - */
+> -
+> -/* Support for NVIDIA specific attributes. */
+> -
+> -#ifndef __NVIDIA_CSPMU_H__
+> -#define __NVIDIA_CSPMU_H__
+> -
+> -#include "arm_cspmu.h"
+> -
+> -/* Allocate NVIDIA descriptor. */
+> -int nv_cspmu_init_ops(struct arm_cspmu *cspmu);
+> -
+> -#endif /* __NVIDIA_CSPMU_H__ */
+> 
+> base-commit: 145e5cddfe8b4bf607510b2dcf630d95f4db420f
