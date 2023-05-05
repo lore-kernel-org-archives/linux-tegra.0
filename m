@@ -2,657 +2,430 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5B7C7EE21
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 01:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD7AC77B73
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 02:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229553AbjEEBAf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 May 2023 21:00:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45734 "EHLO
+        id S229818AbjEECs5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 May 2023 22:48:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjEEBAf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 May 2023 21:00:35 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2046.outbound.protection.outlook.com [40.107.220.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17CDF7EC1;
-        Thu,  4 May 2023 18:00:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DUDx50CBRyJ8A2VSc/nZvMVtFnBPDuYMGF4JtqWiTz6HPC5C4pampb+OPj0nEf1CeIiE9OVLe2E50LqGzZB1VX06ZhpLm6NRenhFFDcuq+1HC415ijlxyhwgOjjsefRzjVxUM8tssGS2Q3RgkfFSX9VuRyyxgA4uC9PubwYyFh/p6q/gAeGHJIBgMOpONDW0V9KoHpB+8Tji6F6U6uina9rzbqBe1UEGBNLZcxTtva1ftQvGGyA6mceh3CZaV/FnuDsQXTN6YMerOXEOfP+7rm2sB6Gakg87EnuzRF9x3dsRh+U5ydA/qmVVDgfDwwylSNfrvvBBqzv3Qjrbd/atXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DwQoGir6v2Xn7Y/HrgBQugS9EA3laIOAHzr8+NNzFds=;
- b=oCcuNMhYrBtTLDDwo9QhEIxSP3YqevyU+wt3w4n4M0zf2U2vO6AMdvqlbxkCDWqrDqIZ9ISnWnK5FKlmCaqmliOiKTY1LYk965i0dnRRJ0dJiV7BAlDRl0fMnHCGIcc1QF3bMQlFP6pS6HAbCl9TqmQNgbXzNLqO3/JwtbTxiatpV7CtchqryrPQHV8CqG4UONJafpl1qx9OjdbLnE30+rufkNyX53DiZ8uj+TYieWIxUQAPgYZqVH53xIgx+MDWfoPzI2RnafHFNVy/v/o03YUty5rvhXOUepw3cD7wZJ0R35XjPTsGj9ZA/6jjy/qpYZh6N5uUXEDOOTsKG2HUBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DwQoGir6v2Xn7Y/HrgBQugS9EA3laIOAHzr8+NNzFds=;
- b=CRfouOFaMKzyv8HtwxCtpb+1ViFjXxMkF4RMT8GE2QHjyIqBASXxhj1dYCdh5LPeQBC6abf8a0sD8dpAvqC50lwe+58946v/+KTeud9lkAC8nLnwRw1paOMwfDEvz5XN5WoQ1z+L8Ju5LGQnbmdrvz0M02+tyUDRZfmcW1ojgsd8sZqxpG3EXzlAzjllid6FZXDka1FiS39mfefnscSGNUoJv8Hr3aZxezKpfKSnJaTCP9Nr72h4+BaISES6YWo7yl52rSU8z6E36pwBsPdxglt6e09G6ulDxZ9UIkht/b+9DynEGBCxM4wlGcjmJEpHJCMbJx5cfUL41VA2w92VzA==
-Received: from BN0PR04CA0075.namprd04.prod.outlook.com (2603:10b6:408:ea::20)
- by DM4PR12MB5867.namprd12.prod.outlook.com (2603:10b6:8:66::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.26; Fri, 5 May
- 2023 01:00:29 +0000
-Received: from BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:ea:cafe::df) by BN0PR04CA0075.outlook.office365.com
- (2603:10b6:408:ea::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.27 via Frontend
- Transport; Fri, 5 May 2023 01:00:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT023.mail.protection.outlook.com (10.13.177.103) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6363.27 via Frontend Transport; Fri, 5 May 2023 01:00:28 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 4 May 2023
- 18:00:12 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 4 May 2023
- 18:00:11 -0700
-Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Thu, 4 May 2023 18:00:11 -0700
-From:   Besar Wicaksono <bwicaksono@nvidia.com>
-To:     <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
-        <rwiley@nvidia.com>, <efunsten@nvidia.com>,
-        "Besar Wicaksono" <bwicaksono@nvidia.com>
-Subject: [PATCH v3] perf: arm_cspmu: Separate Arm and vendor module
-Date:   Thu, 4 May 2023 19:59:56 -0500
-Message-ID: <20230505005956.22837-1-bwicaksono@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT023:EE_|DM4PR12MB5867:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1f09375-be10-4cc2-1506-08db4d041e4b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ri9/k/34b19yL7K492cW7KvYO5+52zzLtzCf488DD4/x5tL9AruhwbBk41p5bb3YuN/HBKJF7/oudd86pWojCAXFpI8//dSWpw8pbMXcGs86fIOH/GkPznGoDr9wrrGp+/c0WIznonTe9OqxWXBx688qluBzb/0nMGHG+cx37PdlTlAJripy1Lbx4A1Pk+BOMcB/kVKNZqvJkd6ks4JgObCdD91JQeG/82RMjrmZVB2loiimgv8gOHwY4okre4OlNvD59vAqgnkulk9H6cK7THGxV2J+52mEOoOs0MTkFDF4WqgHlIz1TTpk750iywVM+b9RdXT8FImKj7ybAVPMLpaM6Vh7qlnq6mammgxqxHxDpk8899221BaFxA8HXDTjgCP7RVdiUNBjxUseXtCRIKJZlxCzhSrIZpWOtXozfM30ltE9w4KaLKZYv9DhQGxDKWxANNM6hVcDHPBik/UzTWP1OZ5I9da8WYvi8bKZxGQAM2txM3+RqWzdjX7/tlulw0k9gREwSOzuc2Xs0At+P3UyrKI7d2gO1B0J9EMRRORdzXcIP7AV193D85Lf1Jxy3LbbAGQfvqV0wus8mOIYG/qy9Plm+vnEwj9akzC8P5jaw4AryOlZ2jSMkUv4AuHVHZTT8xCmZdImJRIn42yaeJctofflRKp2fo9h2UAvCbib+wtzOIesivuV36wKCmwezT/ErldmMWzxQvxh5MCPLk2JnC8uZ9Cm41BnYFnN+Wf8zFnaZbK3mxSzDCMMg69BDlW2G8Mw8/oNSHbDZYRCVqXtp1+wNnjhEv+xuXcAhO8=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(396003)(39860400002)(376002)(451199021)(36840700001)(46966006)(40470700004)(5660300002)(8676002)(40480700001)(8936002)(966005)(86362001)(36756003)(316002)(4326008)(7696005)(82310400005)(41300700001)(70586007)(70206006)(82740400003)(356005)(7636003)(40460700003)(478600001)(6666004)(47076005)(36860700001)(30864003)(2906002)(110136005)(54906003)(2616005)(26005)(1076003)(107886003)(83380400001)(186003)(336012)(426003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2023 01:00:28.4776
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1f09375-be10-4cc2-1506-08db4d041e4b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5867
+        with ESMTP id S229514AbjEECsz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 May 2023 22:48:55 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF46812092;
+        Thu,  4 May 2023 19:48:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683254933; x=1714790933;
+  h=date:from:to:cc:subject:message-id;
+  bh=qn89V4Emd/8E6BltukrzYp0YvboKoRFlLq7PUU5Jhd8=;
+  b=X2LPBIYkMUa4/V5lbftFcFrtVaLYaG9/6MNilHRX1Lm8Nvlddtz4+pto
+   Ti9OHzw4ef7AIfLtjCrqxED1KihJTMEDUXdul2/Pm7qX4tWEuaak0JpV3
+   ZiYd5e0pVsmiqPO7hbbdGJNGLNeLubUKkcfVDji3NFeUcYCTwKob1NK1M
+   j0eWsHNphJ4OKGHWUb1vFT921QWE5NqRhDa1tFkdhAmJgNmV+1PY5MHmR
+   kjcIpCklUbi7kd7zaUecEe58/RJ25eTEtzjgw4wUVFXmjNO91EEcYgNLe
+   1kI+ORnV2/0tWF/ZTUj1i7kRxR5H3ft2uvgeMXVIWfGn3BF5LRlgNVNSJ
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10700"; a="346586510"
+X-IronPort-AV: E=Sophos;i="5.99,250,1677571200"; 
+   d="scan'208";a="346586510"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2023 19:48:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10700"; a="841483938"
+X-IronPort-AV: E=Sophos;i="5.99,250,1677571200"; 
+   d="scan'208";a="841483938"
+Received: from lkp-server01.sh.intel.com (HELO fe5d646e317d) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 04 May 2023 19:48:50 -0700
+Received: from kbuild by fe5d646e317d with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pulV3-00002D-0Z;
+        Fri, 05 May 2023 02:48:49 +0000
+Date:   Fri, 05 May 2023 10:47:58 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-bluetooth@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 145e5cddfe8b4bf607510b2dcf630d95f4db420f
+Message-ID: <20230505024758.umVTa%lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Arm Coresight PMU driver consists of main standard code and vendor
-backend code. Both are currently built as a single module.
-This patch adds vendor registration API to separate the two to
-keep things modular. Main driver maintains a list of backend module
-and will request it when probing the device.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 145e5cddfe8b4bf607510b2dcf630d95f4db420f  Add linux-next specific files for 20230504
 
-Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
----
+Error/Warning reports:
 
-Changes from v2:
- * Move sysfs_event/format_show definition to arm_cspmu.h and move impl
-   registration API definition to a separate module so main driver and vendor
-   module are independent.
- * The registration API now just sets the impl_init_ops callback, no reprobe.
- * Add PMIIDR table that maps to the vendor module name. During device probe,
-   main driver requests the vendor module if PMIIDR is matching.
- * Keeping the name of the main driver module as arm_cspmu_module.
-Thanks to Robin and Suzuki for the feedback.
-v2:  https://lore.kernel.org/linux-arm-kernel/20230418062030.45620-1-bwicaksono@nvidia.com/T/#u
+https://lore.kernel.org/oe-kbuild-all/202304102354.Q4VOXGTE-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202304220119.94Pw6YsD-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202304230014.YbScpx20-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202304250419.YtCLtUhG-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202305042329.Gyk53keD-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202305050237.1cQ4fBKs-lkp@intel.com
 
-Changes from v1:
- * Added separate Kconfig entry for nvidia backend
- * Added lock to protect accesses to the lists
- * Added support for matching subset devices from a vendor
- * Added state tracking to avoid reprobe when a device is in use
-Thanks to Suzuki for the feedback.
-v1: https://lore.kernel.org/linux-arm-kernel/20230403163905.20354-1-bwicaksono@nvidia.com/T/#u
+Error/Warning: (recently discovered and may have been fixed)
 
----
- drivers/perf/arm_cspmu/Kconfig          |   9 +-
- drivers/perf/arm_cspmu/Makefile         |   7 +-
- drivers/perf/arm_cspmu/arm_cspmu.c      |  86 ++++++------------
- drivers/perf/arm_cspmu/arm_cspmu.h      |  55 ++++++++++--
- drivers/perf/arm_cspmu/arm_cspmu_impl.c | 114 ++++++++++++++++++++++++
- drivers/perf/arm_cspmu/nvidia_cspmu.c   |  35 +++++++-
- drivers/perf/arm_cspmu/nvidia_cspmu.h   |  17 ----
- 7 files changed, 235 insertions(+), 88 deletions(-)
- create mode 100644 drivers/perf/arm_cspmu/arm_cspmu_impl.c
- delete mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
+arch/um/drivers/harddog_user.c:6:10: fatal error: stdio.h: No such file or directory
+drivers/accel/habanalabs/gaudi/gaudi.c:117:19: warning: unused variable 'gaudi_irq_name' [-Wunused-const-variable]
+drivers/base/regmap/regcache-maple.c:113:23: warning: 'lower_index' is used uninitialized [-Wuninitialized]
+drivers/base/regmap/regcache-maple.c:113:36: warning: 'lower_last' is used uninitialized [-Wuninitialized]
+drivers/bluetooth/btnxpuart.c:1332:34: warning: unused variable 'nxpuart_of_match_table' [-Wunused-const-variable]
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6339:6: warning: no previous prototype for 'amdgpu_dm_connector_funcs_force' [-Wmissing-prototypes]
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6395:21: warning: variable 'count' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c:494:13: warning: variable 'j' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c:48:38: warning: unused variable 'golden_settings_gc_9_4_3' [-Wunused-const-variable]
+drivers/gpu/drm/i915/gt/uc/guc_capture_fwif.h:62: warning: wrong kernel-doc identifier on line:
+drivers/gpu/drm/i915/i915_pmu.h:41: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+drivers/gpu/drm/i915/i915_request.h:176: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+drivers/gpu/drm/i915/i915_vma.h:145: warning: expecting prototype for i915_vma_offset(). Prototype was for i915_vma_size() instead
+drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c:298:6: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+mm/gup.c:2813:14: error: implicit declaration of function 'folio_fast_pin_allowed'; did you mean 'folio_test_pinned'? [-Werror=implicit-function-declaration]
+mm/gup.c:2813:7: error: call to undeclared function 'folio_fast_pin_allowed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+phy-mtk-hdmi-mt8195.c:(.text+0x186): undefined reference to `__floatundidf'
+riscv64-linux-ld: phy-mtk-hdmi-mt8195.c:(.text+0x198): undefined reference to `__ltdf2'
+riscv64-linux-ld: phy-mtk-hdmi-mt8195.c:(.text+0x1b8): undefined reference to `__gedf2'
 
-diff --git a/drivers/perf/arm_cspmu/Kconfig b/drivers/perf/arm_cspmu/Kconfig
-index 0b316fe69a45..8ce7b45a0075 100644
---- a/drivers/perf/arm_cspmu/Kconfig
-+++ b/drivers/perf/arm_cspmu/Kconfig
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- #
--# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- 
- config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
- 	tristate "ARM Coresight Architecture PMU"
-@@ -11,3 +11,10 @@ config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
- 	  based on ARM CoreSight PMU architecture. Note that this PMU
- 	  architecture does not have relationship with the ARM CoreSight
- 	  Self-Hosted Tracing.
-+
-+config NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU
-+	tristate "NVIDIA Coresight Architecture PMU"
-+	depends on ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
-+	help
-+	  Provides NVIDIA specific attributes for performance monitoring unit
-+	  (PMU) devices based on ARM CoreSight PMU architecture.
-diff --git a/drivers/perf/arm_cspmu/Makefile b/drivers/perf/arm_cspmu/Makefile
-index fedb17df982d..602ecb99dc57 100644
---- a/drivers/perf/arm_cspmu/Makefile
-+++ b/drivers/perf/arm_cspmu/Makefile
-@@ -1,6 +1,9 @@
--# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- #
- # SPDX-License-Identifier: GPL-2.0
- 
-+obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu_impl.o
- obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu_module.o
--arm_cspmu_module-y := arm_cspmu.o nvidia_cspmu.o
-+arm_cspmu_module-y := arm_cspmu.o
-+
-+obj-$(CONFIG_NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += nvidia_cspmu.o
-diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-index a3f1c410b417..04c318744f55 100644
---- a/drivers/perf/arm_cspmu/arm_cspmu.c
-+++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-@@ -16,7 +16,7 @@
-  * The user should refer to the vendor technical documentation to get details
-  * about the supported events.
-  *
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-  *
-  */
- 
-@@ -31,7 +31,6 @@
- #include <acpi/processor.h>
- 
- #include "arm_cspmu.h"
--#include "nvidia_cspmu.h"
- 
- #define PMUNAME "arm_cspmu"
- #define DRVNAME "arm-cs-arch-pmu"
-@@ -117,9 +116,6 @@
-  */
- #define HILOHI_MAX_POLL	1000
- 
--/* JEDEC-assigned JEP106 identification code */
--#define ARM_CSPMU_IMPL_ID_NVIDIA		0x36B
--
- static unsigned long arm_cspmu_cpuhp_state;
- 
- /*
-@@ -186,16 +182,6 @@ static inline bool use_64b_counter_reg(const struct arm_cspmu *cspmu)
- 	return (counter_size(cspmu) > 32);
- }
- 
--ssize_t arm_cspmu_sysfs_event_show(struct device *dev,
--				struct device_attribute *attr, char *buf)
--{
--	struct dev_ext_attribute *eattr =
--		container_of(attr, struct dev_ext_attribute, attr);
--	return sysfs_emit(buf, "event=0x%llx\n",
--			  (unsigned long long)eattr->var);
--}
--EXPORT_SYMBOL_GPL(arm_cspmu_sysfs_event_show);
--
- /* Default event list. */
- static struct attribute *arm_cspmu_event_attrs[] = {
- 	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-@@ -231,16 +217,6 @@ arm_cspmu_event_attr_is_visible(struct kobject *kobj,
- 	return attr->mode;
- }
- 
--ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
--				struct device_attribute *attr,
--				char *buf)
--{
--	struct dev_ext_attribute *eattr =
--		container_of(attr, struct dev_ext_attribute, attr);
--	return sysfs_emit(buf, "%s\n", (char *)eattr->var);
--}
--EXPORT_SYMBOL_GPL(arm_cspmu_sysfs_format_show);
--
- static struct attribute *arm_cspmu_format_attrs[] = {
- 	ARM_CSPMU_FORMAT_EVENT_ATTR,
- 	ARM_CSPMU_FORMAT_FILTER_ATTR,
-@@ -379,27 +355,12 @@ static struct attribute_group arm_cspmu_cpumask_attr_group = {
- 	.attrs = arm_cspmu_cpumask_attrs,
- };
- 
--struct impl_match {
--	u32 pmiidr;
--	u32 mask;
--	int (*impl_init_ops)(struct arm_cspmu *cspmu);
--};
--
--static const struct impl_match impl_match[] = {
--	{
--	  .pmiidr = ARM_CSPMU_IMPL_ID_NVIDIA,
--	  .mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
--	  .impl_init_ops = nv_cspmu_init_ops
--	},
--	{}
--};
--
- static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
- {
--	int ret;
-+	int ret = 0;
- 	struct acpi_apmt_node *apmt_node = cspmu->apmt_node;
- 	struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
--	const struct impl_match *match = impl_match;
-+	const struct arm_cspmu_impl_module *match;
- 
- 	/*
- 	 * Get PMU implementer and product id from APMT node.
-@@ -411,18 +372,21 @@ static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
- 				       readl(cspmu->base0 + PMIIDR);
- 
- 	/* Find implementer specific attribute ops. */
--	for (; match->pmiidr; match++) {
--		const u32 mask = match->mask;
--
--		if ((match->pmiidr & mask) == (cspmu->impl.pmiidr & mask)) {
--			ret = match->impl_init_ops(cspmu);
--			if (ret)
--				return ret;
--
--			break;
-+	match = arm_cspmu_impl_match_module(cspmu->impl.pmiidr);
-+	if (match) {
-+		request_module(match->name);
-+
-+		if (match->param.module && match->param.impl_init_ops) {
-+			if (try_module_get(match->param.module)) {
-+				cspmu->impl.module = match->param.module;
-+				ret = match->param.impl_init_ops(cspmu);
-+			}
- 		}
- 	}
- 
-+	if (ret)
-+		return ret;
-+
- 	/* Use default callbacks if implementer doesn't provide one. */
- 	CHECK_DEFAULT_IMPL_OPS(impl_ops, get_event_attrs);
- 	CHECK_DEFAULT_IMPL_OPS(impl_ops, get_format_attrs);
-@@ -484,11 +448,6 @@ arm_cspmu_alloc_attr_group(struct arm_cspmu *cspmu)
- 	struct attribute_group **attr_groups = NULL;
- 	struct device *dev = cspmu->dev;
- 	const struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
--	int ret;
--
--	ret = arm_cspmu_init_impl_ops(cspmu);
--	if (ret)
--		return NULL;
- 
- 	cspmu->identifier = impl_ops->get_identifier(cspmu);
- 	cspmu->name = impl_ops->get_name(cspmu);
-@@ -1203,11 +1162,21 @@ static int arm_cspmu_device_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = arm_cspmu_init_impl_ops(cspmu);
-+	if (ret)
-+		goto module_put;
-+
- 	ret = arm_cspmu_register_pmu(cspmu);
- 	if (ret)
--		return ret;
-+		goto module_put;
- 
- 	return 0;
-+
-+module_put:
-+	if (cspmu->impl.module)
-+		module_put(cspmu->impl.module);
-+
-+	return ret;
- }
- 
- static int arm_cspmu_device_remove(struct platform_device *pdev)
-@@ -1217,6 +1186,9 @@ static int arm_cspmu_device_remove(struct platform_device *pdev)
- 	perf_pmu_unregister(&cspmu->pmu);
- 	cpuhp_state_remove_instance(arm_cspmu_cpuhp_state, &cspmu->cpuhp_node);
- 
-+	if (cspmu->impl.module)
-+		module_put(cspmu->impl.module);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
-index 51323b175a4a..0b60165f770a 100644
---- a/drivers/perf/arm_cspmu/arm_cspmu.h
-+++ b/drivers/perf/arm_cspmu/arm_cspmu.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0
-  *
-  * ARM CoreSight Architecture PMU driver.
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-  *
-  */
- 
-@@ -68,8 +68,13 @@
- 
- /* PMIIDR register field */
- #define ARM_CSPMU_PMIIDR_IMPLEMENTER	GENMASK(11, 0)
-+#define ARM_CSPMU_PMIIDR_REVISION	GENMASK(15, 12)
-+#define ARM_CSPMU_PMIIDR_VARIANT	GENMASK(19, 16)
- #define ARM_CSPMU_PMIIDR_PRODUCTID	GENMASK(31, 20)
- 
-+/* JEDEC-assigned JEP106 identification code */
-+#define ARM_CSPMU_IMPL_ID_NVIDIA	0x36B
-+
- struct arm_cspmu;
- 
- /* This tracks the events assigned to each counter in the PMU. */
-@@ -107,10 +112,28 @@ struct arm_cspmu_impl_ops {
- 					 struct attribute *attr, int unused);
- };
- 
-+/* Vendor/implementer registration parameter. */
-+struct arm_cspmu_impl_param {
-+	/* Backend module. */
-+	struct module *module;
-+	/* PMIIDR value/mask. */
-+	u32 pmiidr_val;
-+	u32 pmiidr_mask;
-+	/* Callback to vendor backend to init arm_cspmu_impl::ops. */
-+	int (*impl_init_ops)(struct arm_cspmu *cspmu);
-+};
-+
-+/* Vendor/implementer module. */
-+struct arm_cspmu_impl_module {
-+	const char *name;
-+	struct arm_cspmu_impl_param param;
-+};
-+
- /* Vendor/implementer descriptor. */
- struct arm_cspmu_impl {
- 	u32 pmiidr;
- 	struct arm_cspmu_impl_ops ops;
-+	struct module *module;
- 	void *ctx;
- };
- 
-@@ -139,13 +162,31 @@ struct arm_cspmu {
- };
- 
- /* Default function to show event attribute in sysfs. */
--ssize_t arm_cspmu_sysfs_event_show(struct device *dev,
--				   struct device_attribute *attr,
--				   char *buf);
-+static inline ssize_t arm_cspmu_sysfs_event_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct dev_ext_attribute *eattr =
-+		container_of(attr, struct dev_ext_attribute, attr);
-+	return sysfs_emit(buf, "event=0x%llx\n",
-+			  (unsigned long long)eattr->var);
-+}
- 
- /* Default function to show format attribute in sysfs. */
--ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
--				    struct device_attribute *attr,
--				    char *buf);
-+static inline ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct dev_ext_attribute *eattr =
-+		container_of(attr, struct dev_ext_attribute, attr);
-+	return sysfs_emit(buf, "%s\n", (char *)eattr->var);
-+}
-+
-+/* Register vendor backend. */
-+int arm_cspmu_impl_register(const struct arm_cspmu_impl_param *impl_param);
-+
-+/* Unregister vendor backend. */
-+void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_param *impl_param);
-+
-+/* Get matching vendor module compatible with /p pmiidr. */
-+const struct arm_cspmu_impl_module *arm_cspmu_impl_match_module(u32 pmiidr);
- 
- #endif /* __ARM_CSPMU_H__ */
-diff --git a/drivers/perf/arm_cspmu/arm_cspmu_impl.c b/drivers/perf/arm_cspmu/arm_cspmu_impl.c
-new file mode 100644
-index 000000000000..35e0f4c2410a
---- /dev/null
-+++ b/drivers/perf/arm_cspmu/arm_cspmu_impl.c
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Implementation specific backend registration.
-+ *
-+ * Copyright (c) 2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ *
-+ */
-+
-+#include <linux/mutex.h>
-+
-+#include "arm_cspmu.h"
-+
-+static DEFINE_MUTEX(arm_cspmu_lock);
-+
-+static struct arm_cspmu_impl_module module_list[] = {
-+	{
-+		.name = "nvidia_cspmu",
-+		.param = {
-+			.pmiidr_val = ARM_CSPMU_IMPL_ID_NVIDIA,
-+			.pmiidr_mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
-+		},
-+	},
-+	{}
-+};
-+
-+static struct arm_cspmu_impl_module *arm_cspmu_impl_find_module(
-+	const struct arm_cspmu_impl_param *impl_param)
-+{
-+	struct arm_cspmu_impl_module *module;
-+
-+	for (module = module_list; module->name; module++) {
-+		if (!strcmp(module->name, impl_param->module->name) &&
-+		    module->param.pmiidr_val == impl_param->pmiidr_val &&
-+		    module->param.pmiidr_mask == impl_param->pmiidr_mask)
-+			return module;
-+	}
-+
-+	return NULL;
-+}
-+
-+const struct arm_cspmu_impl_module *arm_cspmu_impl_match_module(u32 pmiidr)
-+{
-+	struct arm_cspmu_impl_module *module;
-+
-+	mutex_lock(&arm_cspmu_lock);
-+
-+	for (module = module_list; module->name; module++) {
-+		u32 mask = module->param.pmiidr_mask;
-+
-+		if ((module->param.pmiidr_val & mask) == (pmiidr & mask)) {
-+			mutex_unlock(&arm_cspmu_lock);
-+			return module;
-+		}
-+	}
-+
-+	mutex_unlock(&arm_cspmu_lock);
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(arm_cspmu_impl_match_module);
-+
-+int arm_cspmu_impl_register(const struct arm_cspmu_impl_param *impl_param)
-+{
-+	struct arm_cspmu_impl_module *module;
-+	int ret = 0;
-+
-+	if (!impl_param->module || !impl_param->impl_init_ops) {
-+		pr_err("arm_cspmu reg failed, invalid module or init_ops\n");
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&arm_cspmu_lock);
-+
-+	module = arm_cspmu_impl_find_module(impl_param);
-+	if (module) {
-+		module->param.module = impl_param->module;
-+		module->param.impl_init_ops = impl_param->impl_init_ops;
-+	} else {
-+		pr_err("arm_cspmu reg failed, unable to find pmiidr: 0x%x, mask: 0x%x, module: %s\n",
-+			impl_param->pmiidr_val,
-+			impl_param->pmiidr_mask,
-+			impl_param->module->name);
-+
-+		ret = -EINVAL;
-+	}
-+
-+
-+	mutex_unlock(&arm_cspmu_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(arm_cspmu_impl_register);
-+
-+void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_param *impl_param)
-+{
-+	struct arm_cspmu_impl_module *module;
-+
-+	mutex_lock(&arm_cspmu_lock);
-+
-+	module = arm_cspmu_impl_find_module(impl_param);
-+	if (module) {
-+		module->param.module = NULL;
-+		module->param.impl_init_ops = NULL;
-+	} else
-+		pr_err("arm_cspmu unreg failed, unable to find pmiidr: 0x%x, mask: 0x%x, module: %s\n",
-+			impl_param->pmiidr_val,
-+			impl_param->pmiidr_mask,
-+			impl_param->module->name);
-+
-+	mutex_unlock(&arm_cspmu_lock);
-+}
-+EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-index 72ef80caa3c8..7ac8f17de116 100644
---- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-+++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-@@ -1,14 +1,15 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+ * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-  *
-  */
- 
- /* Support for NVIDIA specific attributes. */
- 
-+#include <linux/module.h>
- #include <linux/topology.h>
- 
--#include "nvidia_cspmu.h"
-+#include "arm_cspmu.h"
- 
- #define NV_PCIE_PORT_COUNT           10ULL
- #define NV_PCIE_FILTER_ID_MASK       GENMASK_ULL(NV_PCIE_PORT_COUNT - 1, 0)
-@@ -351,7 +352,7 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
- 	return name;
- }
- 
--int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
-+static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
- {
- 	u32 prodid;
- 	struct nv_cspmu_ctx *ctx;
-@@ -395,6 +396,32 @@ int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(nv_cspmu_init_ops);
-+
-+/* Match all NVIDIA Coresight PMU devices */
-+static const struct arm_cspmu_impl_param nv_cspmu_param = {
-+	.module		= THIS_MODULE,
-+	.pmiidr_val	= ARM_CSPMU_IMPL_ID_NVIDIA,
-+	.pmiidr_mask	= ARM_CSPMU_PMIIDR_IMPLEMENTER,
-+	.impl_init_ops	= nv_cspmu_init_ops
-+};
-+
-+static int __init nvidia_cspmu_init(void)
-+{
-+	int ret;
-+
-+	ret = arm_cspmu_impl_register(&nv_cspmu_param);
-+	if (ret)
-+		pr_err("nvidia_cspmu backend registration error: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void __exit nvidia_cspmu_exit(void)
-+{
-+	arm_cspmu_impl_unregister(&nv_cspmu_param);
-+}
-+
-+module_init(nvidia_cspmu_init);
-+module_exit(nvidia_cspmu_exit);
- 
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.h b/drivers/perf/arm_cspmu/nvidia_cspmu.h
-deleted file mode 100644
-index 71e18f0dc50b..000000000000
---- a/drivers/perf/arm_cspmu/nvidia_cspmu.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0
-- *
-- * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-- *
-- */
--
--/* Support for NVIDIA specific attributes. */
--
--#ifndef __NVIDIA_CSPMU_H__
--#define __NVIDIA_CSPMU_H__
--
--#include "arm_cspmu.h"
--
--/* Allocate NVIDIA descriptor. */
--int nv_cspmu_init_ops(struct arm_cspmu *cspmu);
--
--#endif /* __NVIDIA_CSPMU_H__ */
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
-base-commit: 145e5cddfe8b4bf607510b2dcf630d95f4db420f
+drivers/cpufreq/pcc-cpufreq.c: linux/platform_device.h is included more than once.
+drivers/gpu/host1x/context.c:82 host1x_memory_context_list_init() warn: missing error code 'err'
+drivers/gpu/host1x/dev.c:417 host1x_iommu_attach() warn: passing zero to 'ERR_PTR'
+fs/ext4/super.c:4722 ext4_check_feature_compatibility() warn: bitwise AND condition is false here
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- alpha-randconfig-r003-20230501
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-base-regmap-regcache-maple.c:warning:lower_index-is-used-uninitialized
+|   |-- drivers-base-regmap-regcache-maple.c:warning:lower_last-is-used-uninitialized
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- arc-buildonly-randconfig-r001-20230430
+|   |-- drivers-base-regmap-regcache-maple.c:warning:lower_index-is-used-uninitialized
+|   `-- drivers-base-regmap-regcache-maple.c:warning:lower_last-is-used-uninitialized
+|-- arc-buildonly-randconfig-r002-20230502
+|   |-- drivers-base-regmap-regcache-maple.c:warning:lower_index-is-used-uninitialized
+|   `-- drivers-base-regmap-regcache-maple.c:warning:lower_last-is-used-uninitialized
+|-- arc-hsdk_defconfig
+|   |-- drivers-base-regmap-regcache-maple.c:warning:lower_index-is-used-uninitialized
+|   `-- drivers-base-regmap-regcache-maple.c:warning:lower_last-is-used-uninitialized
+|-- arc-randconfig-c043-20230430
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- arc-randconfig-r035-20230501
+|   |-- drivers-base-regmap-regcache-maple.c:warning:lower_index-is-used-uninitialized
+|   `-- drivers-base-regmap-regcache-maple.c:warning:lower_last-is-used-uninitialized
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- csky-randconfig-r001-20230430
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- ia64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- ia64-buildonly-randconfig-r001-20230502
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- ia64-randconfig-r032-20230501
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- loongarch-buildonly-randconfig-r005-20230501
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- loongarch-defconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- loongarch-randconfig-r005-20230430
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- microblaze-randconfig-r031-20230501
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- mips-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- mips-buildonly-randconfig-r003-20230502
+|   `-- mm-gup.c:error:implicit-declaration-of-function-folio_fast_pin_allowed
+|-- mips-maltaup_xpa_defconfig
+|   `-- mm-gup.c:error:implicit-declaration-of-function-folio_fast_pin_allowed
+|-- mips-randconfig-s033-20230428
+|   `-- mm-gup.c:error:implicit-declaration-of-function-folio_fast_pin_allowed
+|-- openrisc-buildonly-randconfig-r004-20230430
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- openrisc-randconfig-m041-20230501
+|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|   |-- drivers-gpu-host1x-context.c-host1x_memory_context_list_init()-warn:missing-error-code-err
+|   |-- drivers-gpu-host1x-dev.c-host1x_iommu_attach()-warn:passing-zero-to-ERR_PTR
+|   `-- fs-ext4-super.c-ext4_check_feature_compatibility()-warn:bitwise-AND-condition-is-false-here
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- riscv-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- riscv-randconfig-r042-20230504
+|   |-- phy-mtk-hdmi-mt8195.c:(.text):undefined-reference-to-__floatundidf
+|   |-- riscv64-linux-ld:phy-mtk-hdmi-mt8195.c:(.text):undefined-reference-to-__gedf2
+|   `-- riscv64-linux-ld:phy-mtk-hdmi-mt8195.c:(.text):undefined-reference-to-__ltdf2
+|-- s390-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- sparc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- sparc64-randconfig-c003-20230430
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- um-allmodconfig
+|   `-- arch-um-drivers-harddog_user.c:fatal-error:stdio.h:No-such-file-or-directory
+|-- x86_64-allnoconfig
+|   `-- drivers-cpufreq-pcc-cpufreq.c:linux-platform_device.h-is-included-more-than-once.
+|-- x86_64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+|-- xtensa-buildonly-randconfig-r005-20230430
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:no-previous-prototype-for-amdgpu_dm_connector_funcs_force
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-amdgpu_dm-amdgpu_dm.c:warning:variable-count-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+`-- xtensa-buildonly-randconfig-r006-20230430
+    `-- drivers-gpu-drm-amd-amdgpu-amdgpu_gfx.c:warning:variable-j-set-but-not-used
+clang_recent_errors
+|-- hexagon-randconfig-r035-20230430
+|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
+|-- hexagon-randconfig-r045-20230504
+|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-i915-gt-uc-guc_capture_fwif.h:warning:wrong-kernel-doc-identifier-on-line:
+|   |-- drivers-gpu-drm-i915-i915_pmu.h:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
+|   |-- drivers-gpu-drm-i915-i915_request.h:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
+|   `-- drivers-gpu-drm-i915-i915_vma.h:warning:expecting-prototype-for-i915_vma_offset().-Prototype-was-for-i915_vma_size()-instead
+|-- mips-bcm63xx_defconfig
+|   `-- mm-gup.c:error:call-to-undeclared-function-folio_fast_pin_allowed-ISO-C99-and-later-do-not-support-implicit-function-declarations
+|-- s390-randconfig-r044-20230503
+|   `-- drivers-gpu-drm-amd-amdgpu-gfx_v9_4_3.c:warning:unused-variable-golden_settings_gc_9_4_3
+|-- x86_64-randconfig-a016-20230501
+|   `-- drivers-accel-habanalabs-gaudi-gaudi.c:warning:unused-variable-gaudi_irq_name
+`-- x86_64-randconfig-r025-20230501
+    `-- drivers-bluetooth-btnxpuart.c:warning:unused-variable-nxpuart_of_match_table
+
+elapsed time: 733m
+
+configs tested: 158
+configs skipped: 17
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r002-20230430   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r003-20230501   gcc  
+alpha                randconfig-r014-20230503   gcc  
+alpha                randconfig-r033-20230430   gcc  
+arc                              allyesconfig   gcc  
+arc          buildonly-randconfig-r001-20230430   gcc  
+arc          buildonly-randconfig-r002-20230502   gcc  
+arc                                 defconfig   gcc  
+arc                     haps_hs_smp_defconfig   gcc  
+arc                            hsdk_defconfig   gcc  
+arc                  randconfig-r006-20230501   gcc  
+arc                  randconfig-r022-20230501   gcc  
+arc                  randconfig-r033-20230501   gcc  
+arc                  randconfig-r034-20230501   gcc  
+arc                  randconfig-r035-20230501   gcc  
+arc                  randconfig-r043-20230503   gcc  
+arc                  randconfig-r043-20230504   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                         lpc32xx_defconfig   clang
+arm                          moxart_defconfig   clang
+arm                        neponset_defconfig   clang
+arm                  randconfig-r003-20230430   clang
+arm                  randconfig-r046-20230503   gcc  
+arm                  randconfig-r046-20230504   clang
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r003-20230502   clang
+arm64                randconfig-r006-20230430   gcc  
+csky                                defconfig   gcc  
+csky                 randconfig-r001-20230430   gcc  
+hexagon                             defconfig   clang
+hexagon              randconfig-r035-20230430   clang
+hexagon              randconfig-r041-20230503   clang
+hexagon              randconfig-r041-20230504   clang
+hexagon              randconfig-r045-20230503   clang
+hexagon              randconfig-r045-20230504   clang
+i386                             allyesconfig   clang
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-r003-20230501   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230501   gcc  
+i386                 randconfig-a002-20230501   gcc  
+i386                 randconfig-a003-20230501   gcc  
+i386                 randconfig-a004-20230501   gcc  
+i386                 randconfig-a005-20230501   gcc  
+i386                 randconfig-a006-20230501   gcc  
+i386                 randconfig-a011-20230501   clang
+i386                 randconfig-a012-20230501   clang
+i386                 randconfig-a013-20230501   clang
+i386                 randconfig-a014-20230501   clang
+i386                 randconfig-a015-20230501   clang
+i386                 randconfig-a016-20230501   clang
+ia64                             allmodconfig   gcc  
+ia64         buildonly-randconfig-r001-20230502   gcc  
+ia64         buildonly-randconfig-r004-20230502   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r032-20230501   gcc  
+loongarch                        alldefconfig   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch    buildonly-randconfig-r005-20230501   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r001-20230502   gcc  
+loongarch            randconfig-r005-20230430   gcc  
+loongarch            randconfig-r024-20230501   gcc  
+m68k                             allmodconfig   gcc  
+m68k                          amiga_defconfig   gcc  
+m68k         buildonly-randconfig-r001-20230501   gcc  
+m68k         buildonly-randconfig-r006-20230501   gcc  
+m68k                                defconfig   gcc  
+m68k                       m5275evb_defconfig   gcc  
+m68k                        mvme16x_defconfig   gcc  
+m68k                 randconfig-r034-20230430   gcc  
+microblaze           randconfig-r001-20230501   gcc  
+microblaze           randconfig-r002-20230430   gcc  
+microblaze           randconfig-r031-20230501   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                            ar7_defconfig   gcc  
+mips                        bcm63xx_defconfig   clang
+mips         buildonly-randconfig-r003-20230502   gcc  
+mips                           ip27_defconfig   clang
+mips                          rm200_defconfig   clang
+nios2        buildonly-randconfig-r004-20230501   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r002-20230502   gcc  
+nios2                randconfig-r024-20230430   gcc  
+openrisc     buildonly-randconfig-r004-20230430   gcc  
+openrisc             randconfig-r004-20230501   gcc  
+openrisc             randconfig-r012-20230503   gcc  
+parisc       buildonly-randconfig-r006-20230502   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                    amigaone_defconfig   gcc  
+powerpc                      cm5200_defconfig   gcc  
+powerpc                       ebony_defconfig   clang
+powerpc                     kilauea_defconfig   clang
+powerpc                 mpc8315_rdb_defconfig   clang
+powerpc              randconfig-r031-20230430   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r036-20230430   gcc  
+riscv                randconfig-r042-20230503   clang
+riscv                randconfig-r042-20230504   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r016-20230503   clang
+s390                 randconfig-r021-20230430   clang
+s390                 randconfig-r044-20230503   clang
+s390                 randconfig-r044-20230504   gcc  
+s390                       zfcpdump_defconfig   gcc  
+sh                               allmodconfig   gcc  
+sh                   randconfig-r004-20230502   gcc  
+sh                   randconfig-r022-20230430   gcc  
+sh                           se7705_defconfig   gcc  
+sh                           se7712_defconfig   gcc  
+sh                           sh2007_defconfig   gcc  
+sh                   sh7724_generic_defconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r002-20230501   gcc  
+sparc                randconfig-r015-20230503   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230501   gcc  
+x86_64               randconfig-a002-20230501   gcc  
+x86_64               randconfig-a003-20230501   gcc  
+x86_64               randconfig-a004-20230501   gcc  
+x86_64               randconfig-a005-20230501   gcc  
+x86_64               randconfig-a006-20230501   gcc  
+x86_64               randconfig-a011-20230501   clang
+x86_64               randconfig-a012-20230501   clang
+x86_64               randconfig-a013-20230501   clang
+x86_64               randconfig-a014-20230501   clang
+x86_64               randconfig-a015-20230501   clang
+x86_64               randconfig-a016-20230501   clang
+x86_64                        randconfig-k001   clang
+x86_64               randconfig-r025-20230501   clang
+x86_64               randconfig-r026-20230501   clang
+x86_64               randconfig-r036-20230501   gcc  
+x86_64                               rhel-8.3   gcc  
+xtensa       buildonly-randconfig-r005-20230430   gcc  
+xtensa       buildonly-randconfig-r006-20230430   gcc  
+xtensa                generic_kc705_defconfig   gcc  
+xtensa               randconfig-r005-20230502   gcc  
+xtensa               randconfig-r032-20230430   gcc  
+
 -- 
-2.17.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
