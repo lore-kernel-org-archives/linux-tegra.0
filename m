@@ -2,73 +2,73 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC84C7EE2D
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 11:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B83A7C7EE30
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 11:28:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbjEEL2J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 May 2023 07:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38646 "EHLO
+        id S230398AbjEEL2K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 May 2023 07:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbjEEL2H (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 May 2023 07:28:07 -0400
+        with ESMTP id S231749AbjEEL2I (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 May 2023 07:28:08 -0400
 Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BEE1A613;
-        Fri,  5 May 2023 04:27:56 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 821C53200A81;
-        Fri,  5 May 2023 07:27:29 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2132A1A124;
+        Fri,  5 May 2023 04:28:00 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 950D23200A6F;
+        Fri,  5 May 2023 07:27:32 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 05 May 2023 07:27:30 -0400
+  by compute4.internal (MEProxy); Fri, 05 May 2023 07:27:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:content-type:content-type:date
         :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1683286049; x=1683372449; bh=q70o0WF6BfPt6BaN/01tO1E9nwsVg1Ia0t2
-        wtAQxJRk=; b=QT9uAoF3NSLY79JsSvKeGtkFAVzfjklGSpiEmJ17YoqKQ92RFwo
-        qj3MgzNnOiiHWhjT435+gNfDpHtRKyld4IGMh90VyUhvV9Shqt24S2VP84jMvoe3
-        dkoAz9uKxw668UcOga2xkwWUguSRuz4dHoBFU6mcwhlhnq9x7AoCp+WT9ZJ1GN8y
-        GKul6yQiC3PBvndeXn0nEQ9muXxbNP1u1Z6C4aBA9qgMoF5WTPr8O6/1uoMNSgYn
-        6z4bg9NKdVbMRA3+bQD0vF8ovOMM1l+AM9mZm+ZZrKy7poGAMbvK2ALjS1Lqow/P
-        HzSG5Amw9dLZQFQ62UbGhlSUuXPaUbvNKWQ==
+        1683286052; x=1683372452; bh=ymxSPdQl8cWZob12r9yUYXDcHuEQxU/QEkU
+        E5OehpRE=; b=Z/ktcRUFHaoAc/pYCRxoSwcdfoS3Z+ChRigRO93INUGNI9OQOWz
+        9UqYsQT07+9EkyngeCX6fc4OmwEk0RUMV8FraCcx6lS2eoyCyWGUxt4YOJDhDbIf
+        DY+yQwmwf6Lrx44z1RU0baa+atIKBq9dYYLF77q7DvQZRGHwaxPF9++tmWMUBiQU
+        YFykxF4C2HyFTQ32YAo7Qh5+o+/Fk/pkgnWL4dsVgcO5NPC76VzLkl5Q1zFk/hkB
+        Elxp/pA5D0pvA5hxN2kUFBdAYIvbI0WQpZdH0o3ZFJGnYtxUC7emBBKexYnUlmsw
+        cAmrLToaG847Dt5oHfjCbGV8nbEUxa6Sy4Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:content-type:date:date:feedback-id:feedback-id
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683286049; x=1683372449; bh=q70o0WF6BfPt6BaN/01tO1E9nwsVg1Ia0t2
-        wtAQxJRk=; b=aTEhWl1IUmI768837kQ2Z3LiiTvSYKnGRqu6WjOEVAFNreE6xMq
-        eVahA1whLQGwcHH8NziQ86cKYU4NruhNImjsweYsgiLHUb4bO6uWhHOGV4U423n5
-        SCXM1JETM/DvzFWiQ8AYkb7aTLjYUq8IEPX5DzKLGV3nzLUOY+BNPzfRudBAiEMb
-        SYczr8jt3JqME9N0Pb90UdXv90/14iF3A7FxK4JOEefpbTdV9hpuxM8CYPITH/MM
-        DHQI773fCncMHnJotowaLiAvgeR6ljHF/Z2+iFuac6GO9jqpvK448ToDxBFW8L/z
-        9md1NyDFIfpKUPk6ZizxJR5tTiszct+QoPA==
-X-ME-Sender: <xms:IehUZChFKfhQG3U6CCEj84wzEzItY6dF8dMV7m9IBAdIw7mxhaHgnQ>
-    <xme:IehUZDB-inbvSAwqTCPpFfDgg55JslBzJO4ZQVcQkrA8zI712QpF7ekE1L3T673VP
-    wahZl2q--llmmU0IMU>
-X-ME-Received: <xmr:IehUZKEy99FZBr9zox3NDmB-nsJPqIWa9_CVEIz6-Ku-mHEQkF6W3qwe7CFQoT1DAnKHkaKU-f4YhCH7YiVwQuZ24vxqDAc>
+        1683286052; x=1683372452; bh=ymxSPdQl8cWZob12r9yUYXDcHuEQxU/QEkU
+        E5OehpRE=; b=Y8DX6HYLBnFP2S9bldq1t8M/ZfJI7seZuVcGlh8xIUl3l9Hdyth
+        GeeOzkP0KWmoDiTTLIQ8j2LKOq2AoDa6Q4Pg+zZPpwMwLgIBgl6MRGXoclfwwAms
+        jhQscs2hlkJJokFq3GesExFwXP985EKqXQ1AtZs6PHKOHocyTBBf+AkYlS3KRD1I
+        tJ7OajrjYPWLSik0ESvigt3ehBL1g/rObVXOlkJUB+ZUsLP/Uo2HV31O3JbWR0B3
+        IHHWfedzd8rtgl3iyYFLegd8eQohfHdizwEmB7d+xJ5rOGMiPUsIV3XQtfOcmL4J
+        k3rlOPmfRhTnpWuCW87vQSr08y39wtiF/BQ==
+X-ME-Sender: <xms:JOhUZEFqY6ubmkunG3WOlxmvdj3KOXJBm5oQKoQpOh8RRjl0yv8jNg>
+    <xme:JOhUZNW_rOSrR5tDIDQQPJRLUV0Bz39c1H5R9DA7gkWIpEKGQP-hv2kS_dNDa8Yyu
+    mYT_qLvUaW7kNK2cCM>
+X-ME-Received: <xmr:JOhUZOJjoxflC5VmyGFIxtpMFKLYmUlo8JD2EihFmHbNaIi4rmG9Wac60E8DYQOj4f71YNfk8yGw5xiILfPvSX9j2um0WwQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddggedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforgig
     ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
     grthhtvghrnhepvedvleeijeegvdekffehkeehieelhfeggfffheetkeeuledvtdeuffeh
-    teeltdffnecuvehluhhsthgvrhfuihiivgepleenucfrrghrrghmpehmrghilhhfrhhomh
+    teeltdffnecuvehluhhsthgvrhfuihiivgepheenucfrrghrrghmpehmrghilhhfrhhomh
     epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:IehUZLSgDA39EtY2nuaC9-Rn5J7S1e6z6qRYsfJErgvFova4XUM5GA>
-    <xmx:IehUZPzo9WAUWNulzFz6rhW8qGG7tYnHFtFxVp3oyH4HegCxEaw25Q>
-    <xmx:IehUZJ43PQnZ2uLdFaUhvdvQYFHZuMPthT9AK-H_VJTYmtjayvg0iw>
-    <xmx:IehUZGz0T04ML7gVaJ7QcDKX6FSRd87_qzTUeoCivxCG7e9qoRUMwA>
+X-ME-Proxy: <xmx:JOhUZGH_iTGpL8oSH7ww3VrQWEWSHS3vl7aY8Qqlifjx4d5ZogdCHg>
+    <xmx:JOhUZKWm4tqwDjVp2HgiuNyy0xtAxWSCYKuuUDmx5aSpVQct_IisZA>
+    <xmx:JOhUZJPOOwvEe5N2_2N5ViFhGb501mpzE8WYt3GCjmFxBALVRPT6yw>
+    <xmx:JOhUZFHpSSh1NWDJKu4PBphILKSRiPuavO3m-kz3dHC7aOhJ7NLACw>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 07:27:28 -0400 (EDT)
+ 5 May 2023 07:27:31 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Fri, 05 May 2023 13:25:37 +0200
-Subject: [PATCH v4 35/68] clk: tegra: super: Add a determine_rate hook
+Date:   Fri, 05 May 2023 13:25:38 +0200
+Subject: [PATCH v4 36/68] clk: tegra: periph: Add a determine_rate hook
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20221018-clk-range-checks-fixes-v4-35-971d5077e7d2@cerno.tech>
+Message-Id: <20221018-clk-range-checks-fixes-v4-36-971d5077e7d2@cerno.tech>
 References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
 In-Reply-To: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -80,18 +80,18 @@ Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>,
         Thierry Reding <thierry.reding@gmail.com>,
         linux-tegra@vger.kernel.org
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2140; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=zOMkcOOtE4uat3PA5tfy+7gzs+yxnY0tvmb+4dzoRFE=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhz5cknlzXuItfLj3I7Q2vdtOlpc5e6RkKLP0tttGcqivn
- Je3sKGVhEONikBVTZIkRNl8Sd2rW6042vnkwc1iZQIYwcHEKwEROhjIyvN048e7mgiOecuWXH+/UeC
- k+4fuuCz7+y/Y1qGjUnNwwPYmRYXvm2fc+8ok20wT7es4IMfaecd/qKtEiFcizrWe/+7tSVgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2126; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=cxoJgtX4So4bmPh0M56fxVCzJPBLLEFUvLjHWdQ3NZA=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhz5cwXPHj0ZztlVOxf3ZpzgP/Wu6oNwceFRreVlrAZLZu
+ qj5PRykLgxgXg6yYIkuMsPmSuFOzXney8c2DmcPKBDaEi1MAJnLWjJHh10Wp388+Pt7sInYwseXCm6
+ sPL9U0rp101PqXU2z2y4xreowMF6/eeq69qfnJzEPp/xIK1nixv3Q3PrUk6VvC3Ve7+PR5WAA=
 X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra super mux clock implements a mux with a set_parent hook, but
+The Tegra periph nodiv clock implements a mux with a set_parent hook, but
 doesn't provide a determine_rate implementation.
 
 This is a bit odd, since set_parent() is there to, as its name implies,
@@ -123,21 +123,21 @@ Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-tegra@vger.kernel.org
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/tegra/clk-super.c | 1 +
+ drivers/clk/tegra/clk-periph.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index a98a420398fa..3f3a7a203c5f 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -136,6 +136,7 @@ static void clk_super_mux_restore_context(struct clk_hw *hw)
- }
+diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
+index 79ca3aa072b7..ea443366e972 100644
+--- a/drivers/clk/tegra/clk-periph.c
++++ b/drivers/clk/tegra/clk-periph.c
+@@ -140,6 +140,7 @@ const struct clk_ops tegra_clk_periph_ops = {
+ };
  
- static const struct clk_ops tegra_clk_super_mux_ops = {
+ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
 +	.determine_rate = clk_hw_determine_rate_no_reparent,
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
- 	.restore_context = clk_super_mux_restore_context,
+ 	.get_parent = clk_periph_get_parent,
+ 	.set_parent = clk_periph_set_parent,
+ 	.is_enabled = clk_periph_is_enabled,
 
 -- 
 2.40.0
