@@ -2,114 +2,320 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E83C7EE23
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 11:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EA1C7EE2C
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 11:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231540AbjEELM6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 May 2023 07:12:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56212 "EHLO
+        id S231698AbjEEL1I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 May 2023 07:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbjEELM5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 May 2023 07:12:57 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61B121A106;
-        Fri,  5 May 2023 04:12:56 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f1763ee8f8so11221425e9.1;
-        Fri, 05 May 2023 04:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683285175; x=1685877175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ijXnLFs/E46BZ9vNzrvv52u6Szz+pPucPk3iNgQDX0=;
-        b=ktYmbTRAlaZPDQsuTHy/0W24MvI1iC67ZUpDtDkZ9YSlqzbJBWP+0kFoH8q3O4qUut
-         VM98hi2uHsFbz/a0TfWfO7KvfyYzl17T7JQzv6CKZmpSJ0F1+rUE3+8BcLPCasHpRYBh
-         w3+xRL+jvzEaqldrTuZFIITUxQJF8VKhNY10/FJ3qtw7usjlZkbrZUAEo1vviX7GohaY
-         5KKPw12O6XNmC6HTyUrMnlnnG+8ZbqEy6bBgQvW67d6vp4NcGNVms7IDdScdHK7wbMIz
-         1yO76Y4+hDmJbQFYJkb/AMHKBQEFiuadthz9Nyn15POXLgi9VcW19GgSdXDTnt49g9KG
-         6fcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683285175; x=1685877175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ijXnLFs/E46BZ9vNzrvv52u6Szz+pPucPk3iNgQDX0=;
-        b=CJgXVotR4N9zO4J6gTg+gzp3eT/xh9yYxuNOKWPrPjb7XQspcjBh72QjgnjxzA+vFc
-         NMmfZ64YTFPrDPzBoDR0ZB7aW5SJTPGcjtVy5DYNIuTwNdiH8MuFFURWt9HRROp8MxGz
-         5k5WrwKIZd00pytBK85HQYrKb8pAASvas+KWKghtlIl7JxjvOpPiClSRRHjImvUKPTbn
-         cDh+1hN3JyOUwc0uVon0WmvP5lf5R9frL/hPYkdj2XA5PIn8WNAii8P6nYsawgZGzzwT
-         KyOMrUJ7DvZ4nD2B3GwyxmwQreiWSyDRNkzSmxdXlgpaZ6Esg27uhGkl4UzO9F5NTEG2
-         f76A==
-X-Gm-Message-State: AC+VfDznxBFe2po3j/W2hUAAhDmvb82jgsAMc1HTsv2YXFpPBEiTkzMX
-        bSBvAmLI9w8qiqmNIUytOWo=
-X-Google-Smtp-Source: ACHHUZ7VBqUiJxZux5Zvw1CbWJkUScVvhwDiZ8l56Xhc08qtgy5n+5w+8QOylGPS6kQyJv2SQvxZfw==
-X-Received: by 2002:adf:f188:0:b0:306:37ac:ef8e with SMTP id h8-20020adff188000000b0030637acef8emr1077455wro.56.1683285174620;
-        Fri, 05 May 2023 04:12:54 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id g11-20020adff40b000000b002c8476dde7asm2054187wro.114.2023.05.05.04.12.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 04:12:53 -0700 (PDT)
-Date:   Fri, 5 May 2023 12:12:52 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-bluetooth@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [linux-next:master] BUILD REGRESSION
- 145e5cddfe8b4bf607510b2dcf630d95f4db420f
-Message-ID: <1c8aade0-5859-40f3-b6af-5211d1f6a941@lucifer.local>
-References: <20230505024758.umVTa%lkp@intel.com>
+        with ESMTP id S231686AbjEEL1F (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 May 2023 07:27:05 -0400
+Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F041AEEF;
+        Fri,  5 May 2023 04:26:39 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id EAC902B067B4;
+        Fri,  5 May 2023 07:25:45 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 05 May 2023 07:25:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1683285945; x=1683293145; bh=UQKDjmKPSzC7x5C95cs9YOZc6yAVPvrTJ4b
+        1utEyhQs=; b=UDQJjfgae9Jy0KKyFS0jdkkFbIHInOjJANJqIPxcx2irxjptzoa
+        sOkGAs/Z2RiPml73V/Dyqz18ojQmjuG0m5k2qzRasE2wOduD0CM8Clamakjgpmr6
+        cCDoP9q1ou3E91lXfG3zQq94jjWZw7UtQ4ecrXCJNgsgnb0RX7vXIXcU3WAaEa7D
+        PrLAjPWKmGuGUZB+qjmy3wiVkZUpVewbtTrg5ySbFZP8gV1D1a8ytRBQ6oMOsLEw
+        5e92vJbN6fb877F8q/bLcn8jg76/PM41W/zJ3tFHn9N3jA4plS5kcc3kJ+o8zzms
+        2jftE0cuihiOeKakfTVrSqvLxUNW+XVhkgQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1683285945; x=1683293145; bh=UQKDjmKPSzC7x5C95cs9YOZc6yAVPvrTJ4b
+        1utEyhQs=; b=eETp/afWAPWzhC0ojTjFS4E2W8DChqKPKekP/EPuz5wcqmFBedN
+        ZE+2I5zoeVPXyzKsIEvFVqbdeKASr4jE/E0HiMkzTedmCrKH7DHijuv1Pr0iz6lm
+        mkw6mO2IYBh/nuQLdyKHPD9sAPZo6XHnTGzbJmn9B/JRjfopvt9kUHSt7K7spG5U
+        mWrJ8HMVdVXDUOfwWRWWOBbcosSLQzfxtxBGfoiLaSQVUQQwmLExj8nwhCziNLGx
+        3WVMizySGqhM98PNWHHPcW+udXkQtb9aSDcQw/m31nJjuplyRlOmetOHAEsIxyUq
+        98B8xE3APjy+uJkG8FtMHjn7l8Mdn0KBGkg==
+X-ME-Sender: <xms:uOdUZNj3ZpRewkMtfxJ6-ctpOTk2iZx5Ay1l69YUkk0t1y1bBktOIw>
+    <xme:uOdUZCCzmcX3Ogu0_MvnPgEHEe5QuKkoSeQ39kZDFWs5CBbm3W3hi8pMTy23Haspl
+    MBMYjdHw32Wvd2ycdQ>
+X-ME-Received: <xmr:uOdUZNFcQBLQLsDsGRahkPNFqahy8ULrpN3NGsH_y-MOTDZwMw-Gom31V1u7tVnIPIHyGwtAF-f649-KhACFYqJrLXRbNVI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddgfeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepudduudfhveejteefgedvffdvvedvjedugedukeejhedtlefhffevtefh
+    jeeltdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:uOdUZCS3WqyF5n_W3EiJVuNpMnHgAXUa1OpdnFRLa8UYUgd11F-oNg>
+    <xmx:uOdUZKwWniyq1PrG5KiKO_9_icEmzUCRDxijmAeCZ0CdvgtAjfwv1A>
+    <xmx:uOdUZI7LJJc_HfCtyAo4xAEhts_dpqgNb42EzjXV5B62USvVCiTKVQ>
+    <xmx:uedUZK5NUkPOnYhg1Pw5l4WoybZn50aZGTzwuONG_b-ZzRWQ6TMX7TYzgTw>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 5 May 2023 07:25:43 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+Date:   Fri, 05 May 2023 13:25:05 +0200
+Subject: [PATCH v4 03/68] clk: Move no reparent case into a separate
+ function
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230505024758.umVTa%lkp@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20221018-clk-range-checks-fixes-v4-3-971d5077e7d2@cerno.tech>
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+In-Reply-To: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@gmail.com>,
+        David Lechner <david@lechnology.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Markus Schneider-Pargmann <msp@baylibre.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Peng Fan <peng.fan@nxp.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sekhar Nori <nsekhar@ti.com>, Shawn Guo <shawnguo@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, dri-devel@lists.freedesktop.org,
+        linux-actions@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        patches@opensource.cirrus.com,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5599; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=Pxa6LrZe1o/eBr4UI7umXibSzTm/MpQguARoHEO5XCk=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhzxc5Rstf2bExQeEn73VnY64JKuoy700DJTb9UzzofGj6
+ AUHmjlIWBjEuBlkxRZYYYfMlcadmve5k45sHM4eVCWQIAxenAEzk3AyGf/Zn+S0ni19r774wuWmK42
+ TRba9ZDL7d93cNy5IJu/ex8zjD/2SHmTwr1himMz9fPun629N1J8OVT1ytvTFn9681xQe/X+YAAA==
+X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, May 05, 2023 at 10:47:58AM +0800, kernel test robot wrote:
-> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> branch HEAD: 145e5cddfe8b4bf607510b2dcf630d95f4db420f  Add linux-next specific files for 20230504
->
-> Error/Warning reports:
->
-> https://lore.kernel.org/oe-kbuild-all/202304102354.Q4VOXGTE-lkp@intel.com
-> https://lore.kernel.org/oe-kbuild-all/202304220119.94Pw6YsD-lkp@intel.com
-> https://lore.kernel.org/oe-kbuild-all/202304230014.YbScpx20-lkp@intel.com
-> https://lore.kernel.org/oe-kbuild-all/202304250419.YtCLtUhG-lkp@intel.com
-> https://lore.kernel.org/oe-kbuild-all/202305042329.Gyk53keD-lkp@intel.com
-> https://lore.kernel.org/oe-kbuild-all/202305050237.1cQ4fBKs-lkp@intel.com
->
-> Error/Warning: (recently discovered and may have been fixed)
->
-> arch/um/drivers/harddog_user.c:6:10: fatal error: stdio.h: No such file or directory
-> drivers/accel/habanalabs/gaudi/gaudi.c:117:19: warning: unused variable 'gaudi_irq_name' [-Wunused-const-variable]
-> drivers/base/regmap/regcache-maple.c:113:23: warning: 'lower_index' is used uninitialized [-Wuninitialized]
-> drivers/base/regmap/regcache-maple.c:113:36: warning: 'lower_last' is used uninitialized [-Wuninitialized]
-> drivers/bluetooth/btnxpuart.c:1332:34: warning: unused variable 'nxpuart_of_match_table' [-Wunused-const-variable]
-> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6339:6: warning: no previous prototype for 'amdgpu_dm_connector_funcs_force' [-Wmissing-prototypes]
-> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6395:21: warning: variable 'count' set but not used [-Wunused-but-set-variable]
-> drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c:494:13: warning: variable 'j' set but not used [-Wunused-but-set-variable]
-> drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c:48:38: warning: unused variable 'golden_settings_gc_9_4_3' [-Wunused-const-variable]
-> drivers/gpu/drm/i915/gt/uc/guc_capture_fwif.h:62: warning: wrong kernel-doc identifier on line:
-> drivers/gpu/drm/i915/i915_pmu.h:41: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-> drivers/gpu/drm/i915/i915_request.h:176: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-> drivers/gpu/drm/i915/i915_vma.h:145: warning: expecting prototype for i915_vma_offset(). Prototype was for i915_vma_size() instead
-> drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c:298:6: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-> mm/gup.c:2813:14: error: implicit declaration of function 'folio_fast_pin_allowed'; did you mean 'folio_test_pinned'? [-Werror=implicit-function-declaration]
-> mm/gup.c:2813:7: error: call to undeclared function 'folio_fast_pin_allowed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+From: Stephen Boyd <sboyd@kernel.org>
 
-The folio_fast_pin_allowed() declaration should be fixed in v9 of the series that introduced it [1].
+We'll need to turn the code in clk_mux_determine_rate_flags() to deal
+with CLK_SET_RATE_NO_REPARENT into a helper clock drivers will be able
+to use if they don't want to allow reparenting.
 
-[1]:https://lore.kernel.org/all/cover.1683235180.git.lstoakes@gmail.com/
+Cc: Abel Vesa <abelvesa@kernel.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: "Andreas Färber" <afaerber@suse.de>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: David Airlie <airlied@gmail.com>
+Cc: David Lechner <david@lechnology.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Miles Chen <miles.chen@mediatek.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Orson Zhai <orsonzhai@gmail.com>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Samuel Holland <samuel@sholland.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-actions@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-phy@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-rtc@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-sunxi@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: patches@opensource.cirrus.com
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+---
+ drivers/clk/clk.c | 75 +++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 43 insertions(+), 32 deletions(-)
 
-> phy-mtk-hdmi-mt8195.c:(.text+0x186): undefined reference to `__floatundidf'
-> riscv64-linux-ld: phy-mtk-hdmi-mt8195.c:(.text+0x198): undefined reference to `__ltdf2'
-> riscv64-linux-ld: phy-mtk-hdmi-mt8195.c:(.text+0x1b8): undefined reference to `__gedf2'
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e495dd7a1eae..f57f821a5e5a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -594,6 +594,46 @@ clk_core_forward_rate_req(struct clk_core *core,
+ 		req->max_rate = old_req->max_rate;
+ }
+ 
++static int
++clk_core_determine_rate_no_reparent(struct clk_hw *hw,
++				    struct clk_rate_request *req)
++{
++	struct clk_core *core = hw->core;
++	struct clk_core *parent = core->parent;
++	unsigned long best;
++	int ret;
++
++	if (core->flags & CLK_SET_RATE_PARENT) {
++		struct clk_rate_request parent_req;
++
++		if (!parent) {
++			req->rate = 0;
++			return 0;
++		}
++
++		clk_core_forward_rate_req(core, req, parent, &parent_req,
++					  req->rate);
++
++		trace_clk_rate_request_start(&parent_req);
++
++		ret = clk_core_round_rate_nolock(parent, &parent_req);
++		if (ret)
++			return ret;
++
++		trace_clk_rate_request_done(&parent_req);
++
++		best = parent_req.rate;
++	} else if (parent) {
++		best = clk_core_get_rate_nolock(parent);
++	} else {
++		best = clk_core_get_rate_nolock(core);
++	}
++
++	req->rate = best;
++
++	return 0;
++}
++
+ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+ 				 struct clk_rate_request *req,
+ 				 unsigned long flags)
+@@ -603,35 +643,8 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+ 	unsigned long best = 0;
+ 
+ 	/* if NO_REPARENT flag set, pass through to current parent */
+-	if (core->flags & CLK_SET_RATE_NO_REPARENT) {
+-		parent = core->parent;
+-		if (core->flags & CLK_SET_RATE_PARENT) {
+-			struct clk_rate_request parent_req;
+-
+-			if (!parent) {
+-				req->rate = 0;
+-				return 0;
+-			}
+-
+-			clk_core_forward_rate_req(core, req, parent, &parent_req, req->rate);
+-
+-			trace_clk_rate_request_start(&parent_req);
+-
+-			ret = clk_core_round_rate_nolock(parent, &parent_req);
+-			if (ret)
+-				return ret;
+-
+-			trace_clk_rate_request_done(&parent_req);
+-
+-			best = parent_req.rate;
+-		} else if (parent) {
+-			best = clk_core_get_rate_nolock(parent);
+-		} else {
+-			best = clk_core_get_rate_nolock(core);
+-		}
+-
+-		goto out;
+-	}
++	if (core->flags & CLK_SET_RATE_NO_REPARENT)
++		return clk_core_determine_rate_no_reparent(hw, req);
+ 
+ 	/* find the parent that can provide the fastest rate <= rate */
+ 	num_parents = core->num_parents;
+@@ -670,9 +683,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+ 	if (!best_parent)
+ 		return -EINVAL;
+ 
+-out:
+-	if (best_parent)
+-		req->best_parent_hw = best_parent->hw;
++	req->best_parent_hw = best_parent->hw;
+ 	req->best_parent_rate = best;
+ 	req->rate = best;
+ 
 
-[snip]
+-- 
+2.40.0
+
