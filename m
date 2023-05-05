@@ -2,77 +2,76 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CB3C7EE23
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 11:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44694C7EE2C
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 May 2023 11:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231769AbjEELfx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 May 2023 07:35:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41576 "EHLO
+        id S231811AbjEELfy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 May 2023 07:35:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjEELfx (ORCPT
+        with ESMTP id S231698AbjEELfx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 May 2023 07:35:53 -0400
 Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB5BA251;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E39F61BF;
         Fri,  5 May 2023 04:35:51 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id EFE7D2B06795;
-        Fri,  5 May 2023 07:25:30 -0400 (EDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.west.internal (Postfix) with ESMTP id CF5502B066B8;
+        Fri,  5 May 2023 07:25:53 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 05 May 2023 07:25:36 -0400
+  by compute6.internal (MEProxy); Fri, 05 May 2023 07:25:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:message-id:mime-version:reply-to
-        :sender:subject:subject:to:to; s=fm2; t=1683285930; x=
-        1683293130; bh=l5ioAqLUIgJULjqwKYtOjHFnbY6yI6/LI8d0PR6VtyM=; b=K
-        daFzuUu6XO2LaYjDTphcLLz/GlUPhIOw1rRn6yVXs3eyQLNaa181x0dHDbt9UdLo
-        zyAvbbqqbqt6xguEWLq+Y7XvKxH8h67iwigmG6lIm0397Bk5HScfh1TsqFN0EDMr
-        3LonuK2S0VmFCWYQyaihe+VAnSIiWWLNXU0vMykWBYLbu6ZIqboackHNE0IXfxIR
-        as2IC7+5LWKRCXWB34eIBIQ7u+PTN6mMZnFqmo5giXRuFqZO+hVljeKHPIM7iSCJ
-        w0/C/PvtZnSL78SBaiAHhHXczCOrVc7JURiYnvm0UtZtyN08Y927yIuZ51nxGJWJ
-        3ecp+WM1vrDHFY4zIvbOA==
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1683285953; x=1683293153; bh=WU20FpUx77EC9SQ4SvyGsBOJEHNPQAGkitA
+        hRG2bZ+8=; b=cgeM5GXMn3UxomTuwWA6AkOxgVn1PUeJmY+HSkE1TZA752i4fMf
+        QlYTaJ3UBsrM+xmXXoB8aMPoNfu33v/+uNcOH6qdiut5C/giuLiiL+5xpPL9JQ3q
+        KBZI2kK8gg4c7gD5R7CpKcY87dEyeTl7s1nF18OyeKxj9B28kPMuyI7bzaLQuG7F
+        jUCWx54c1O0WZ7iMU4OguTOmfgUWmsnRtWbzh20WYFo3Z2hV6z0lK9Rpe9SA8+gk
+        xun/BjXaV1djzqXT5STJvMBm9KjZTBCAJ3fnpgoAoMk4b34q1MzQLNEwCiR0sj6I
+        Yfq0t+Rzah7rVMv1mCoZhd7NmbmoteVaanw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:message-id:mime-version:reply-to:sender
-        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; t=1683285930; x=1683293130; bh=l
-        5ioAqLUIgJULjqwKYtOjHFnbY6yI6/LI8d0PR6VtyM=; b=DaRi2HpzSjUslNUfV
-        +Wxt7duSO5/hYNA2h5A0t8XGQfdp9yTBEQp0yK08w8TSdvKz5sBGFEU2WxcXDYpT
-        3cV8qLYkYFXwVAqSQn5mP0rQxnIN5rLXKyv6FoQpSeQftvNw+Pt0H8KyQbRBA+3V
-        IQGGPQvZv/4gTkVAs5uVT8xAQFzSd1BxMmvHV0Sr/oJgrN2OTr53ytLWNCaT4ReU
-        NGN4AezZPVD8DfXd3DwUFL/96oVoikCr64FddmnTRsceoj0N4vJIAsBSHvFmhCSS
-        Bn/XfJIdxzHcBE7TecPZAQ9KKMBG4dR94DVecCEuaTQVrf4Dg/u7t7NWBo5iw5q5
-        1FxcQ==
-X-ME-Sender: <xms:qOdUZNJT030Zgt0JbyFQ_RKM-cy46jwZsLTVl33BJCq45Pe101WL5g>
-    <xme:qOdUZJJ41xlcocWzLm0jnNS7jBIN8KkghbR3IkcuCflIGMbz56nitKYeNXrfi5TeN
-    gViNhbdGkbU6GCTVhU>
-X-ME-Received: <xmr:qOdUZFvaCVHP_XNid9KfZrJC6EXQ0C-AAcDY8d4bpB7xTzWbi3MxAk88SYyXrBGv0YYlu-vTD2zoc2M2Bibqqrtpo-lEpZk>
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1683285953; x=1683293153; bh=WU20FpUx77EC9SQ4SvyGsBOJEHNPQAGkitA
+        hRG2bZ+8=; b=jr8lN2ghqcDZ5kqJHWWrVG+JVKxrGxFjiL2Fo6F+tO6khTu9uNC
+        3Vzfo/OsYMLD3RLfc+/5PSx3qtINZwp/2/Qs+vt62FUAIp8X+tN87wRyDj5pE/9y
+        PJokTD1FNIRNQR0hzIJGElMJPY0E/L8AV0eT2rJj7nhin7Vj/nnbY7UhIGMzeYDx
+        iZDx76QA1IsHnrUbb92BFyco9yHVZY5Uwf7/Tkjsuw9gRBiv+1/xFABEQxh5Q0cS
+        HziRpz9berfkuczUH/qZ7+c14O98hfnbgHBn//enLqYX0/76S0yKkBeLnX8FTGaH
+        oEkXYF8N3c35dQD5wyXVdIoY4aiurQAwgcA==
+X-ME-Sender: <xms:wOdUZPn2YVsOeYXvI146nyDBWr3nSH3lCpz6TRPAgUE6KZdJu7P3Fg>
+    <xme:wOdUZC36G9DFmwnj6d-CzDtfAPXXtK4y5a-_3scL858H7lwpPNUG_M4edZEEYa5N-
+    tg9xeQ-DK8K9mvYpZU>
+X-ME-Received: <xmr:wOdUZFpLil1rYYbdxZv73ZNsYdbpwpqWCmYK9efiaExczIoN6U3ELq1yOJKPCGV4y-bO_I83vIlHjCvk21D8HlpE9UvyMI4>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddggedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepgfeutdejvdeiheffveetieejtdfhleekleffheejtdfhkeehfeekgedvgeei
-    tddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:qOdUZOYmJ9ZsaodLa9eaX9Q8q4HKIKwuTBwJAtYSDKF8GpNgXk42fg>
-    <xmx:qOdUZEb46ec3DVsk5A-VwtFLn5NwE5E1PepLOVibVXBwwU6BkntCMA>
-    <xmx:qOdUZCA2HAk2HAzU0PLbBu4ihiyeyzAMLisKixjpCdEI11Zrvkz5Jg>
-    <xmx:qudUZOXd4C3fyX9ywwFJ0Y0vPI9HQrT33VOj41wJMoXxHKeJ6EWEk-kmzE8>
+    cujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepudduudfhveejteefgedvffdvvedvjedugedukeejhedtlefhffevtefh
+    jeeltdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:wOdUZHldcNsAc0CZDFE_9vVcrWupYRHe9dwKRyFTwC0LjLqStRUHWA>
+    <xmx:wOdUZN1GorjN-GCmdgKxvoBp8OzxFMyLWI1u7jCbHAXQD_RK26nEeA>
+    <xmx:wOdUZGtWZeNEW5CaVVPyp59BAgGJLKL2I-3qwPdfa01u7LQiEAVLhw>
+    <xmx:wedUZO9YMlrZ92sVeEfotUdtjLPxcIR6arJIzZeSlMtLRwBRhGDuJ-hp_iA>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 07:25:27 -0400 (EDT)
+ 5 May 2023 07:25:51 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v4 00/68] clk: Make determine_rate mandatory for muxes
-Date:   Fri, 05 May 2023 13:25:02 +0200
-Message-Id: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+Date:   Fri, 05 May 2023 13:25:06 +0200
+Subject: [PATCH v4 04/68] clk: Introduce
+ clk_hw_determine_rate_no_reparent()
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAI7nVGQC/43NzQ6CMAwH8FchOzuztQymJ9/DeIBRZIFAsuGiI
- by7lZvxIKfm349fFxEpeIrinC0iUPLRTyOH/JAJ11XjnaRvOAtQAFppK93Qy7ANXEeuj7L1T4o
- SFJ5aNICQK8HHdRVJ1rzoOj4fH8PAzc7HeQqv7VnSXK5/3aSlki1Sa5XRVufq4iiM03Emhm9sJ
- tjnwMcpSiwachot/Ti4z0F2TpVGY/MSGgNfzrqubzQ7VSJSAQAA
+Content-Transfer-Encoding: 8bit
+Message-Id: <20221018-clk-range-checks-fixes-v4-4-971d5077e7d2@cerno.tech>
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+In-Reply-To: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>,
@@ -131,233 +130,322 @@ Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         NXP Linux Team <linux-imx@nxp.com>,
         patches@opensource.cirrus.com,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Liam Beguin <liambeguin@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Pawel Moll <pawel.moll@arm.com>, alsa-devel@alsa-project.org
+        Pengutronix Kernel Team <kernel@pengutronix.de>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8811; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=DTutEgCIMF28vydDZ/bIJ7FNCahxgFT27xgwey0IUAI=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhzxe9Xxi/3cvxVqX7ota1NvX8JiY10syKs/hVXlh2s5Wr
- xyh3lLIwiHExyIopssQImy+JOzXrdScb3zyYOaxMIEMYuDgFYCIG0Qz/3R5ZNfhd/XJhS3zivh2awt
- u3XDHevLprI+OV15f2zRd/0czIcHfvjUN8sh+uf+NwWChWIG+Rz7NssnmgDruxem/tXuG77AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10829; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=YBkKiWSHU6AfKueAcHZCOzbYZiY/0bHTLTOJ1X0UewY=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhzxedUy9mc+d6kvbti+3SFwfvMnndXJS6hu1k/TrpDJGw
+ on1pHaUsDGJcDLJiiiwxwuZL4k7Net3JxjcPZg4rE8gQBi5OAZjIMUdGhrc1IfwXRIW2N4U5T025te
+ 74MuZT1+3CXxzLnmrrU8G66gwjw9XfZ8pdlhx7KvVmQf4Moc++3jnXPGXyivk3x50qOet1hBMA
 X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+From: Stephen Boyd <sboyd@kernel.org>
 
-This is a follow-up to a previous series that was printing a warning
-when a mux has a set_parent implementation but is missing
-determine_rate().
+Some clock drivers do not want to allow any reparenting on a given
+clock, but usually do so by not providing any determine_rate
+implementation.
 
-The rationale is that set_parent() is very likely to be useful when
-changing the rate, but it's determine_rate() that takes the parenting
-decision. If we're missing it, then the current parent is always going
-to be used, and thus set_parent() will not be used. The only exception
-being a direct call to clk_set_parent(), but those are fairly rare
-compared to clk_set_rate().
+Whenever we call clk_round_rate() or clk_set_rate(), this leads to
+clk_core_can_round() returning false and thus the rest of the function
+either forwarding the rate request to its current parent if
+CLK_SET_RATE_PARENT is set, or just returning the current clock rate.
 
-Stephen then asked to promote the warning to an error, and to fix up all
-the muxes that are in that situation first. So here it is :)
+This behaviour happens implicitly, and as we move forward to making a
+determine_rate implementation required for muxes, we need some way to
+explicitly opt-in for that behaviour.
 
-It was build-tested on x86, arm and arm64.
+Fortunately, this is exactly what the clk_core_determine_rate_no_reparent()
+function is doing, so we can simply make it available to drivers.
 
-Affected drivers have been tracked down by the following coccinelle
-script:
-
-virtual report 
-
-@ clk_ops @
-identifier ops;
-position p;
-@@
-
- struct clk_ops ops@p = {
-   ...
- };
-
-@ has_set_parent @
-identifier clk_ops.ops;
-identifier set_parent_f;
-@@
-
-  struct clk_ops ops = {
-	.set_parent = set_parent_f,
-  };
-
-@ has_determine_rate @
-identifier clk_ops.ops;
-identifier determine_rate_f;
-@@
-
-  struct clk_ops ops = {
-	.determine_rate = determine_rate_f,
-  };
-
-@ script:python depends on report && has_set_parent && !has_determine_rate @
-ops << clk_ops.ops;
-set_parent_f << has_set_parent.set_parent_f;
-p << clk_ops.p;
-@@
-
-coccilib.report.print_report(p[0], "ERROR: %s has set_parent (%s)" % (ops, set_parent_f))
-
-Berlin is the only user still matching after this series has been
-applied, but it's because it uses a composite clock which throws the
-script off. The driver has been converted and shouldn't be a problem. 
-
-Let me know what you think,
-Maxime
-
+Cc: Abel Vesa <abelvesa@kernel.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: "Andreas Färber" <afaerber@suse.de>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: David Airlie <airlied@gmail.com>
+Cc: David Lechner <david@lechnology.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Miles Chen <miles.chen@mediatek.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Orson Zhai <orsonzhai@gmail.com>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Samuel Holland <samuel@sholland.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-actions@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-phy@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-rtc@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-sunxi@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: patches@opensource.cirrus.com
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
-Changes in v4:
-- Switch from __clk_mux_determine_rate to a new helper
-- Introduced unit tests for that new helper
-- Fix kunit regression
-- Reworded most of the commit logs
-- Link to v3: https://lore.kernel.org/r/20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech
+ drivers/clk/clk.c            |  18 +++++
+ drivers/clk/clk_test.c       | 152 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |   2 +
+ 3 files changed, 172 insertions(+)
 
-Changes in v3:
-- Rebased on top of next-20230404
-- Link to v2: https://lore.kernel.org/r/20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f57f821a5e5a..5365595433c8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -783,6 +783,24 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
+ }
+ EXPORT_SYMBOL_GPL(__clk_mux_determine_rate_closest);
+ 
++/*
++ * clk_hw_determine_rate_no_reparent - clk_ops::determine_rate implementation for a clk that doesn't reparent
++ * @hw: mux type clk to determine rate on
++ * @req: rate request, also used to return preferred frequency
++ *
++ * Helper for finding best parent rate to provide a given frequency.
++ * This can be used directly as a determine_rate callback (e.g. for a
++ * mux), or from a more complex clock that may combine a mux with other
++ * operations.
++ *
++ * Returns: 0 on success, -EERROR value on error
++ */
++int clk_hw_determine_rate_no_reparent(struct clk_hw *hw,
++				      struct clk_rate_request *req)
++{
++	return clk_core_determine_rate_no_reparent(hw, req);
++}
++
+ /***        clk api        ***/
+ 
+ static void clk_core_rate_unprotect(struct clk_core *core)
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 2cb51153750d..b3ed3b0e4c31 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -141,6 +141,12 @@ static const struct clk_ops clk_multiple_parents_mux_ops = {
+ 	.determine_rate = __clk_mux_determine_rate_closest,
+ };
+ 
++static const struct clk_ops clk_multiple_parents_no_reparent_mux_ops = {
++	.determine_rate = clk_hw_determine_rate_no_reparent,
++	.get_parent = clk_multiple_parents_mux_get_parent,
++	.set_parent = clk_multiple_parents_mux_set_parent,
++};
++
+ static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
+ {
+ 	struct clk_dummy_context *ctx;
+@@ -2395,10 +2401,156 @@ static struct kunit_suite clk_mux_notifier_test_suite = {
+ 	.test_cases = clk_mux_notifier_test_cases,
+ };
+ 
++static int
++clk_mux_no_reparent_test_init(struct kunit *test)
++{
++	struct clk_multiple_parent_ctx *ctx;
++	const char *parents[2] = { "parent-0", "parent-1"};
++	int ret;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	test->priv = ctx;
++
++	ctx->parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT("parent-0",
++							    &clk_dummy_rate_ops,
++							    0);
++	ctx->parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
++	ret = clk_hw_register(NULL, &ctx->parents_ctx[0].hw);
++	if (ret)
++		return ret;
++
++	ctx->parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT("parent-1",
++							    &clk_dummy_rate_ops,
++							    0);
++	ctx->parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
++	ret = clk_hw_register(NULL, &ctx->parents_ctx[1].hw);
++	if (ret)
++		return ret;
++
++	ctx->current_parent = 0;
++	ctx->hw.init = CLK_HW_INIT_PARENTS("test-mux", parents,
++					   &clk_multiple_parents_no_reparent_mux_ops,
++					   0);
++	ret = clk_hw_register(NULL, &ctx->hw);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void
++clk_mux_no_reparent_test_exit(struct kunit *test)
++{
++	struct clk_multiple_parent_ctx *ctx = test->priv;
++
++	clk_hw_unregister(&ctx->hw);
++	clk_hw_unregister(&ctx->parents_ctx[0].hw);
++	clk_hw_unregister(&ctx->parents_ctx[1].hw);
++}
++
++/*
++ * Test that if the we have a mux that cannot change parent and we call
++ * clk_round_rate() on it with a rate that should cause it to change
++ * parent, it won't.
++ */
++static void clk_mux_no_reparent_round_rate(struct kunit *test)
++{
++	struct clk_multiple_parent_ctx *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *other_parent, *parent;
++	unsigned long other_parent_rate;
++	unsigned long parent_rate;
++	long rounded_rate;
++
++	parent = clk_get_parent(clk);
++	KUNIT_ASSERT_PTR_NE(test, parent, NULL);
++
++	parent_rate = clk_get_rate(parent);
++	KUNIT_ASSERT_GT(test, parent_rate, 0);
++
++	other_parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, other_parent);
++	KUNIT_ASSERT_FALSE(test, clk_is_match(parent, other_parent));
++
++	other_parent_rate = clk_get_rate(other_parent);
++	KUNIT_ASSERT_GT(test, other_parent_rate, 0);
++	clk_put(other_parent);
++
++	rounded_rate = clk_round_rate(clk, other_parent_rate);
++	KUNIT_ASSERT_GT(test, rounded_rate, 0);
++	KUNIT_EXPECT_EQ(test, rounded_rate, parent_rate);
++
++	clk_put(clk);
++}
++
++/*
++ * Test that if the we have a mux that cannot change parent and we call
++ * clk_set_rate() on it with a rate that should cause it to change
++ * parent, it won't.
++ */
++static void clk_mux_no_reparent_set_rate(struct kunit *test)
++{
++	struct clk_multiple_parent_ctx *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *other_parent, *parent;
++	unsigned long other_parent_rate;
++	unsigned long parent_rate;
++	unsigned long rate;
++	int ret;
++
++	parent = clk_get_parent(clk);
++	KUNIT_ASSERT_PTR_NE(test, parent, NULL);
++
++	parent_rate = clk_get_rate(parent);
++	KUNIT_ASSERT_GT(test, parent_rate, 0);
++
++	other_parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, other_parent);
++	KUNIT_ASSERT_FALSE(test, clk_is_match(parent, other_parent));
++
++	other_parent_rate = clk_get_rate(other_parent);
++	KUNIT_ASSERT_GT(test, other_parent_rate, 0);
++	clk_put(other_parent);
++
++	ret = clk_set_rate(clk, other_parent_rate);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, parent_rate);
++
++	clk_put(clk);
++}
++
++static struct kunit_case clk_mux_no_reparent_test_cases[] = {
++	KUNIT_CASE(clk_mux_no_reparent_round_rate),
++	KUNIT_CASE(clk_mux_no_reparent_set_rate),
++	{}
++};
++
++/*
++ * Test suite for a clock mux that isn't allowed to change parent, using
++ * the clk_hw_determine_rate_no_reparent() helper.
++ *
++ * These tests exercise that helper, and the proper selection of
++ * rates and parents.
++ */
++static struct kunit_suite clk_mux_no_reparent_test_suite = {
++	.name = "clk-mux-no-reparent",
++	.init = clk_mux_no_reparent_test_init,
++	.exit = clk_mux_no_reparent_test_exit,
++	.test_cases = clk_mux_no_reparent_test_cases,
++};
++
+ kunit_test_suites(
+ 	&clk_leaf_mux_set_rate_parent_test_suite,
+ 	&clk_test_suite,
+ 	&clk_multiple_parents_mux_test_suite,
++	&clk_mux_no_reparent_test_suite,
+ 	&clk_mux_notifier_test_suite,
+ 	&clk_orphan_transparent_multiple_parent_mux_test_suite,
+ 	&clk_orphan_transparent_single_parent_test_suite,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 28ff6f1a6ada..f8f220fb5dab 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1333,6 +1333,8 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
+ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+ 				 struct clk_rate_request *req,
+ 				 unsigned long flags);
++int clk_hw_determine_rate_no_reparent(struct clk_hw *hw,
++				      struct clk_rate_request *req);
+ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
+ void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
+ 			   unsigned long *max_rate);
 
-Changes in v2:
-- Drop all the patches already applied
-- Promote the clk registration warning to an error
-- Make all muxes use determine_rate
-- Link to v1: https://lore.kernel.org/r/20221018-clk-range-checks-fixes-v1-0-f3ef80518140@cerno.tech
-
----
-Maxime Ripard (66):
-      clk: Export clk_hw_forward_rate_request()
-      clk: test: Fix type sign of rounded rate variables
-      clk: lan966x: Remove unused round_rate hook
-      clk: nodrv: Add a determine_rate hook
-      clk: test: Add a determine_rate hook
-      clk: actions: composite: Add a determine_rate hook for pass clk
-      clk: at91: main: Add a determine_rate hook
-      clk: at91: sckc: Add a determine_rate hook
-      clk: berlin: div: Add a determine_rate hook
-      clk: cdce706: Add a determine_rate hook
-      clk: k210: pll: Add a determine_rate hook
-      clk: k210: aclk: Add a determine_rate hook
-      clk: k210: mux: Add a determine_rate hook
-      clk: lmk04832: clkout: Add a determine_rate hook
-      clk: lochnagar: Add a determine_rate hook
-      clk: qoriq: Add a determine_rate hook
-      clk: si5341: Add a determine_rate hook
-      clk: stm32f4: mux: Add a determine_rate hook
-      clk: vc5: mux: Add a determine_rate hook
-      clk: vc5: clkout: Add a determine_rate hook
-      clk: wm831x: clkout: Add a determine_rate hook
-      clk: davinci: da8xx-cfgchip: Add a determine_rate hook
-      clk: davinci: da8xx-cfgchip: Add a determine_rate hook
-      clk: imx: busy: Add a determine_rate hook
-      clk: imx: fixup-mux: Add a determine_rate hook
-      clk: imx: scu: Add a determine_rate hook
-      clk: mediatek: cpumux: Add a determine_rate hook
-      clk: pxa: Add a determine_rate hook
-      clk: renesas: r9a06g032: Add a determine_rate hook
-      clk: socfpga: gate: Add a determine_rate hook
-      clk: stm32: core: Add a determine_rate hook
-      clk: tegra: bpmp: Add a determine_rate hook
-      clk: tegra: super: Add a determine_rate hook
-      clk: tegra: periph: Add a determine_rate hook
-      clk: ux500: prcmu: Add a determine_rate hook
-      clk: ux500: sysctrl: Add a determine_rate hook
-      clk: versatile: sp810: Add a determine_rate hook
-      drm/tegra: sor: Add a determine_rate hook
-      phy: cadence: sierra: Add a determine_rate hook
-      phy: cadence: torrent: Add a determine_rate hook
-      phy: ti: am654-serdes: Add a determine_rate hook
-      phy: ti: j721e-wiz: Add a determine_rate hook
-      rtc: sun6i: Add a determine_rate hook
-      ASoC: tlv320aic32x4: Add a determine_rate hook
-      clk: actions: composite: div: Switch to determine_rate
-      clk: actions: composite: fact: Switch to determine_rate
-      clk: at91: smd: Switch to determine_rate
-      clk: axi-clkgen: Switch to determine_rate
-      clk: cdce706: divider: Switch to determine_rate
-      clk: cdce706: clkout: Switch to determine_rate
-      clk: si5341: Switch to determine_rate
-      clk: si5351: pll: Switch to determine_rate
-      clk: si5351: msynth: Switch to determine_rate
-      clk: si5351: clkout: Switch to determine_rate
-      clk: da8xx: clk48: Switch to determine_rate
-      clk: imx: scu: Switch to determine_rate
-      clk: ingenic: cgu: Switch to determine_rate
-      clk: ingenic: tcu: Switch to determine_rate
-      clk: sprd: composite: Switch to determine_rate
-      clk: st: flexgen: Switch to determine_rate
-      clk: stm32: composite: Switch to determine_rate
-      clk: tegra: periph: Switch to determine_rate
-      clk: tegra: super: Switch to determine_rate
-      ASoC: tlv320aic32x4: pll: Switch to determine_rate
-      ASoC: tlv320aic32x4: div: Switch to determine_rate
-      clk: Forbid to register a mux without determine_rate
-
-Stephen Boyd (2):
-      clk: Move no reparent case into a separate function
-      clk: Introduce clk_hw_determine_rate_no_reparent()
-
- drivers/clk/actions/owl-composite.c       |  35 ++++--
- drivers/clk/at91/clk-main.c               |   1 +
- drivers/clk/at91/clk-smd.c                |  29 +++--
- drivers/clk/at91/sckc.c                   |   1 +
- drivers/clk/berlin/berlin2-div.c          |   1 +
- drivers/clk/clk-axi-clkgen.c              |  14 ++-
- drivers/clk/clk-cdce706.c                 |  30 ++---
- drivers/clk/clk-k210.c                    |   3 +
- drivers/clk/clk-lan966x.c                 |  17 ---
- drivers/clk/clk-lmk04832.c                |   1 +
- drivers/clk/clk-lochnagar.c               |   1 +
- drivers/clk/clk-qoriq.c                   |   1 +
- drivers/clk/clk-si5341.c                  |  19 ++--
- drivers/clk/clk-si5351.c                  |  67 ++++++-----
- drivers/clk/clk-stm32f4.c                 |   1 +
- drivers/clk/clk-versaclock5.c             |   2 +
- drivers/clk/clk-wm831x.c                  |   1 +
- drivers/clk/clk.c                         | 108 ++++++++++++------
- drivers/clk/clk_test.c                    | 180 +++++++++++++++++++++++++++++-
- drivers/clk/davinci/da8xx-cfgchip.c       |  12 +-
- drivers/clk/imx/clk-busy.c                |   1 +
- drivers/clk/imx/clk-fixup-mux.c           |   1 +
- drivers/clk/imx/clk-scu.c                 |  20 +++-
- drivers/clk/ingenic/cgu.c                 |  15 +--
- drivers/clk/ingenic/tcu.c                 |  19 ++--
- drivers/clk/mediatek/clk-cpumux.c         |   1 +
- drivers/clk/pxa/clk-pxa.c                 |   1 +
- drivers/clk/renesas/r9a06g032-clocks.c    |   1 +
- drivers/clk/socfpga/clk-gate.c            |   1 +
- drivers/clk/sprd/composite.c              |  16 ++-
- drivers/clk/st/clk-flexgen.c              |  15 +--
- drivers/clk/stm32/clk-stm32-core.c        |  33 ++++--
- drivers/clk/tegra/clk-bpmp.c              |   1 +
- drivers/clk/tegra/clk-periph.c            |  17 ++-
- drivers/clk/tegra/clk-super.c             |  16 ++-
- drivers/clk/ux500/clk-prcmu.c             |   1 +
- drivers/clk/ux500/clk-sysctrl.c           |   1 +
- drivers/clk/versatile/clk-sp810.c         |   1 +
- drivers/gpu/drm/tegra/sor.c               |   1 +
- drivers/phy/cadence/phy-cadence-sierra.c  |   1 +
- drivers/phy/cadence/phy-cadence-torrent.c |   1 +
- drivers/phy/ti/phy-am654-serdes.c         |   1 +
- drivers/phy/ti/phy-j721e-wiz.c            |   1 +
- drivers/rtc/rtc-sun6i.c                   |   1 +
- include/linux/clk-provider.h              |   2 +
- sound/soc/codecs/tlv320aic32x4-clk.c      |  33 +++---
- 46 files changed, 527 insertions(+), 199 deletions(-)
----
-base-commit: 145e5cddfe8b4bf607510b2dcf630d95f4db420f
-change-id: 20221018-clk-range-checks-fixes-2039f3523240
-
-Best regards,
 -- 
-Maxime Ripard <maxime@cerno.tech>
+2.40.0
 
