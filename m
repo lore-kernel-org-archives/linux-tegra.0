@@ -2,113 +2,246 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF492C77B73
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 May 2023 00:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB79C77B75
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 May 2023 09:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjEGAic (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 6 May 2023 20:38:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57580 "EHLO
+        id S230421AbjEGJLO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 May 2023 05:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231994AbjEGAht (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 6 May 2023 20:37:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876002ABDA;
-        Sat,  6 May 2023 17:36:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0EC8C6147C;
-        Sun,  7 May 2023 00:34:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD21C433EF;
-        Sun,  7 May 2023 00:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683419679;
-        bh=40z2ZpojbXuP6tB3+OAoSZu6KHvjy/jbjRj5UZ9K8Nw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZNTKFka9EdHMVSU7XZnt6Iue1iFrugPRhIeoDqYX9MM3Lz/Wdnxh5PnGBRVa79f0J
-         ijFiohs2UAT5wCpUlITOX174WlNWv9S3Yc5DfNt11Aiev4w7Du657eR/PiAi0sRxnm
-         4AwLCZqFqvOgWW+lsCMwnZdckRqushA4d7CW0Nr/MRxQ7PyEb+Xg7JE2mboRZdvBGK
-         vgGqS35IEq/e/yBDeC2REO3RhyY1vVJXZiiOKFFX/JRe0SsCnEwRwCLFm5km1ENGiY
-         t8yme+5yU2aFtJLNKw6pIuwC9QE589KnmT6/d16yCR92QTCEYbPQRN8DdFg4nsmfE+
-         qTtrQcYTcoHPg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Svyatoslav Ryhel <clamor95@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jiapeng.chong@linux.alibaba.com,
-        ion@agorria.com, robh@kernel.org, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 05/19] ASoC: tegra: Support coupled mic-hp detection
-Date:   Sat,  6 May 2023 20:34:03 -0400
-Message-Id: <20230507003417.4077259-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230507003417.4077259-1-sashal@kernel.org>
-References: <20230507003417.4077259-1-sashal@kernel.org>
+        with ESMTP id S230399AbjEGJLN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 May 2023 05:11:13 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D1555A9
+        for <linux-tegra@vger.kernel.org>; Sun,  7 May 2023 02:11:11 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9659c5b14d8so549180066b.3
+        for <linux-tegra@vger.kernel.org>; Sun, 07 May 2023 02:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683450670; x=1686042670;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WJVeF+6z9/ggAVBD2uz3HdoqI651ez6nvvs/Z94Hn3E=;
+        b=ge34Tv1nacy0JlU4TMCDkcjgWKAcwLxMPJ2dqttvd5QDmlGBDNjo3SDaU8jS089GVp
+         97aXexc5Ub/WBVBLBKqwau9eKg4cPpITPJiu9XBXVv4sWtFkODGN+fZRYn0+Lwj78Wr9
+         fOCcWeplDjReFtG1ZWY+8Gg2ComYyfme+ZItmqx1XGp1d+YGrInfxG3ssasguj6Cmj4I
+         UTuYDaGVfumJ4RzEE9sZ+/IqtW0M5spGQAofcgx5AzDbXSrirbcMKLuMiR+Wcl3xBsCV
+         HiX+k/H4PkUKmHdfKesGyx5UbqayeiVibn5DjwZLthhz+4P6ExoNcTFTN5AuH7Pamixs
+         JCxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683450670; x=1686042670;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WJVeF+6z9/ggAVBD2uz3HdoqI651ez6nvvs/Z94Hn3E=;
+        b=iyq92kmQAssMS7MprI/KrDbwfm8AWpciaEbI0m6aC5YYOIGNZddo+yA1B36rRMMohx
+         yLqb//zATf8lepHvxr+LKMs81v9FNsEIN9FvPALi42ek7Tgcz15lzX3VP39CYhsbi6Mu
+         PJNEHkdXSx4KuJ4VkxtuhKwlIHFLCRZ1phZADCwUUEAZYvJOD1LbBL4iMR1o/fJTZ47S
+         tBlyyMVbPV7iJK6itVv8C/TNPjovqVRz0t5OxK48u03tZ2sdrdMT7dLMFu2BwOC9zEBf
+         siwqYkHc9aBHIf4mY3/cNFYowolxlV60BcHf2rYcmggaYsaz8AmwhN5E3bjLFFh3A+mV
+         3VfA==
+X-Gm-Message-State: AC+VfDxEoRlnPLIsrbC07QwJU/XFBsr+oY3pQqVtA4FAd9gcFid6LEz/
+        zqdr2kmZfJ+nvtyS2Co1PqGHjL0sagWAaIbnHAql2A==
+X-Google-Smtp-Source: ACHHUZ56Cj45M5bkDI2Qkj+cfrrqHrRXimMDzax69r9LP0DJegFaXQGg0XWQuxCR+n66BEZ9LerK4Q==
+X-Received: by 2002:a17:907:6d01:b0:957:29e5:1695 with SMTP id sa1-20020a1709076d0100b0095729e51695mr5594140ejc.65.1683450669593;
+        Sun, 07 May 2023 02:11:09 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:183b:950f:b4d5:135a? ([2a02:810d:15c0:828:183b:950f:b4d5:135a])
+        by smtp.gmail.com with ESMTPSA id ze16-20020a170906ef9000b00965ec1faf27sm3024164ejb.74.2023.05.07.02.11.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 May 2023 02:11:08 -0700 (PDT)
+Message-ID: <10b32e55-4d28-5405-035e-c73a514c95e4@linaro.org>
+Date:   Sun, 7 May 2023 11:11:07 +0200
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [Patch v7 1/8] memory: tegra: add interconnect support for DRAM
+ scaling in Tegra234
+Content-Language: en-US
+To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lpieralisi@kernel.org, helgaas@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
+        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
+References: <20230424131337.20151-1-sumitg@nvidia.com>
+ <20230424131337.20151-2-sumitg@nvidia.com>
+ <7c6c6584-204a-ada1-d669-2e8bef50e5e5@linaro.org>
+ <3071273b-b03b-5fc8-ffa1-9b18311a3a5d@nvidia.com>
+ <5ab9687e-756d-f94b-b085-931d4ea534c1@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <5ab9687e-756d-f94b-b085-931d4ea534c1@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Svyatoslav Ryhel <clamor95@gmail.com>
+On 24/04/2023 17:21, Sumit Gupta wrote:
+> 
+> 
+> On 24/04/23 20:30, Sumit Gupta wrote:
+>>
+>>
+>> On 24/04/23 19:18, Krzysztof Kozlowski wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> On 24/04/2023 15:13, Sumit Gupta wrote:
+>>>> Add Interconnect framework support to dynamically set the DRAM
+>>>> bandwidth from different clients. Both the MC and EMC drivers are
+>>>> added as ICC providers. The path for any request is:
+>>>>   MC-Client[1-n] -> MC -> EMC -> EMEM/DRAM
+>>>>
+>>> Thank you for your patch. There is something to discuss/improve.
+>>>
+>>>
+>>>> +static int tegra_emc_interconnect_init(struct tegra186_emc *emc)
+>>>> +{
+>>>> +     struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
+>>>> +     const struct tegra_mc_soc *soc = mc->soc;
+>>>> +     struct icc_node *node;
+>>>> +     int err;
+>>>> +
+>>>> +     emc->provider.dev = emc->dev;
+>>>> +     emc->provider.set = tegra_emc_icc_set_bw;
+>>>> +     emc->provider.data = &emc->provider;
+>>>> +     emc->provider.aggregate = soc->icc_ops->aggregate;
+>>>> +     emc->provider.xlate = tegra_emc_of_icc_xlate;
+>>>> +     emc->provider.get_bw = tegra_emc_icc_get_init_bw;
+>>>> +
+>>>> +     icc_provider_init(&emc->provider);
+>>>> +
+>>>> +     /* create External Memory Controller node */
+>>>> +     node = icc_node_create(TEGRA_ICC_EMC);
+>>>> +     if (IS_ERR(node)) {
+>>>> +             err = PTR_ERR(node);
+>>>> +             goto err_msg;
+>>>> +     }
+>>>> +
+>>>> +     node->name = "External Memory Controller";
+>>>> +     icc_node_add(node, &emc->provider);
+>>>> +
+>>>> +     /* link External Memory Controller to External Memory (DRAM) */
+>>>> +     err = icc_link_create(node, TEGRA_ICC_EMEM);
+>>>> +     if (err)
+>>>> +             goto remove_nodes;
+>>>> +
+>>>> +     /* create External Memory node */
+>>>> +     node = icc_node_create(TEGRA_ICC_EMEM);
+>>>> +     if (IS_ERR(node)) {
+>>>> +             err = PTR_ERR(node);
+>>>> +             goto remove_nodes;
+>>>> +     }
+>>>> +
+>>>> +     node->name = "External Memory (DRAM)";
+>>>> +     icc_node_add(node, &emc->provider);
+>>>> +
+>>>> +     err = icc_provider_register(&emc->provider);
+>>>> +     if (err)
+>>>> +             goto remove_nodes;
+>>>> +
+>>>> +     return 0;
+>>>> +
+>>>> +remove_nodes:
+>>>> +     icc_nodes_remove(&emc->provider);
+>>>> +err_msg:
+>>>> +     dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
+>>>> +
+>>>> +     return err;
+>>>> +}
+>>>> +
+>>>>   static int tegra186_emc_probe(struct platform_device *pdev)
+>>>>   {
+>>>> +     struct tegra_mc *mc = dev_get_drvdata(pdev->dev.parent);
+>>>>        struct mrq_emc_dvfs_latency_response response;
+>>>>        struct tegra_bpmp_message msg;
+>>>>        struct tegra186_emc *emc;
+>>>> @@ -236,6 +339,29 @@ static int tegra186_emc_probe(struct 
+>>>> platform_device *pdev)
+>>>>        debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, 
+>>>> emc->debugfs.root,
+>>>>                            emc, &tegra186_emc_debug_max_rate_fops);
+>>>>
+>>>> +     if (mc && mc->soc->icc_ops) {
+>>>> +             /*
+>>>> +              * Initialize the ICC even if BPMP-FW doesn't support 
+>>>> 'MRQ_BWMGR_INT'.
+>>>> +              * Use the flag 'mc->bwmgr_mrq_supported' within MC 
+>>>> driver and return
+>>>> +              * EINVAL instead of passing the request to BPMP-FW 
+>>>> later when the BW
+>>>> +              * request is made by client with 'icc_set_bw()' call.
+>>>> +              */
+>>>> +             err = tegra_emc_interconnect_init(emc);
+>>>> +             if (err)
+>>>> +                     goto put_bpmp;
+>>>> +
+>>>> +             if (tegra_bpmp_mrq_is_supported(emc->bpmp, 
+>>>> MRQ_BWMGR_INT)) {
+>>>> +                     mc->bwmgr_mrq_supported = true;
+>>>> +
+>>>> +                     /*
+>>>> +                      * MC driver probe can't get BPMP reference as 
+>>>> it gets probed
+>>>> +                      * earlier than BPMP. So, save the BPMP ref got 
+>>>> from the EMC
+>>>> +                      * DT node in the mc->bpmp and use it in MC's 
+>>>> icc_set hook.
+>>>> +                      */
+>>>> +                     mc->bpmp = emc->bpmp;
+>>>
+>>> This (and ()) are called without any locking. You register first the
+>>> interconnect, so set() callback can be used, right? Then set() could be
+>>> called anytime between tegra_emc_interconnect_init() and assignment
+>>> above. How do you synchronize these?
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
+>> Currently, the tegra234_mc_icc_set() has NULL check. So, it will give 
+>> this error.
+>>   if (!mc->bpmp) {
 
-[ Upstream commit eb0b8481c2e03a5ae01f6bea60b42109bd12b6fe ]
+How does it solve concurrent accesses and re-ordering of instructions by
+compiler or CPU?
 
-This quirk is used for cases when there is GPIO which detects
-any type of 3.5 Jack insertion and actual type of jack is defined
-by other GPIO. 3.5 Jack GPIO generates interrupt and MIC GPIO
-indicates type of Jack only if 3.5 Jack GPIO is active.
+>>           dev_err(mc->dev, "BPMP reference NULL\n");
+>>           return -ENOENT;
+>>   }
+>>
+>> To fix, we can do the below change and swap the order. Please let me 
+>> know if this sounds fine ?
+>>   if (mc && mc->soc->icc_ops) {
+>>           if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT)) {
+>>                   mc->bwmgr_mrq_supported = true;
+>>                   mc->bpmp = emc->bpmp;
+>>           }
+>>
+>>           err = tegra_emc_interconnect_init(emc);
+>>           if (err)
+>>                   goto put_bpmp;
+>>
+>>   }
+> Sorry, replied too soon. Missed setting "mc->bpmp" to NULL. Sharing new 
+> proposed change. Please let me know if this looks OK.
+> 
+>   if (mc && mc->soc->icc_ops) {
+>      if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT)) {
+>              mc->bwmgr_mrq_supported = true;
+>              mc->bpmp = emc->bpmp;
+>      }
+> 
+>      err = tegra_emc_interconnect_init(emc);
+>      if (err) {
+>              mc->bpmp = NULL;
+>              goto put_bpmp;
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Link: https://lore.kernel.org/r/20230308073502.5421-3-clamor95@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/tegra/tegra_asoc_machine.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Sorry, I didn't check the code. I assume you should do it...
 
-diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-index 78faa8bcae274..7b6d5d90c3a2d 100644
---- a/sound/soc/tegra/tegra_asoc_machine.c
-+++ b/sound/soc/tegra/tegra_asoc_machine.c
-@@ -51,6 +51,17 @@ static struct snd_soc_jack_gpio tegra_machine_headset_jack_gpio = {
- };
- 
- /* Mic Jack */
-+static int coupled_mic_hp_check(void *data)
-+{
-+	struct tegra_machine *machine = (struct tegra_machine *)data;
-+
-+	/* Detect mic insertion only if 3.5 jack is in */
-+	if (gpiod_get_value_cansleep(machine->gpiod_hp_det) &&
-+	    gpiod_get_value_cansleep(machine->gpiod_mic_det))
-+		return SND_JACK_MICROPHONE;
-+
-+	return 0;
-+}
- 
- static struct snd_soc_jack tegra_machine_mic_jack;
- 
-@@ -183,8 +194,15 @@ int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
- 			return err;
- 		}
- 
-+		tegra_machine_mic_jack_gpio.data = machine;
- 		tegra_machine_mic_jack_gpio.desc = machine->gpiod_mic_det;
- 
-+		if (of_property_read_bool(card->dev->of_node,
-+					  "nvidia,coupled-mic-hp-det")) {
-+			tegra_machine_mic_jack_gpio.desc = machine->gpiod_hp_det;
-+			tegra_machine_mic_jack_gpio.jack_status_check = coupled_mic_hp_check;
-+		};
-+
- 		err = snd_soc_jack_add_gpios(&tegra_machine_mic_jack, 1,
- 					     &tegra_machine_mic_jack_gpio);
- 		if (err)
--- 
-2.39.2
+Best regards,
+Krzysztof
 
