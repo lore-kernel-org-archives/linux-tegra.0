@@ -2,50 +2,50 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C46CC77B75
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 May 2023 00:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF492C77B73
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 May 2023 00:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232063AbjEGAhh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 6 May 2023 20:37:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58244 "EHLO
+        id S229454AbjEGAic (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 6 May 2023 20:38:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231641AbjEGAhQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 6 May 2023 20:37:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B72D2382F;
-        Sat,  6 May 2023 17:35:40 -0700 (PDT)
+        with ESMTP id S231994AbjEGAht (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 6 May 2023 20:37:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876002ABDA;
+        Sat,  6 May 2023 17:36:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 38CAF61527;
-        Sun,  7 May 2023 00:35:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1635FC433EF;
-        Sun,  7 May 2023 00:35:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0EC8C6147C;
+        Sun,  7 May 2023 00:34:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD21C433EF;
+        Sun,  7 May 2023 00:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683419730;
-        bh=w0/VlWq2cmv0raL1yTyE3NLrzjCf+QVPRk0dF2iGjqQ=;
+        s=k20201202; t=1683419679;
+        bh=40z2ZpojbXuP6tB3+OAoSZu6KHvjy/jbjRj5UZ9K8Nw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AjWluKTt6hEqpBZhmmMfl3ryl+v28q0jqISJ0hEBjbMn0OhK1pd03jQJij76C5ddB
-         gSkRPGDlEYm3soJqAx0DTDFmAazjrHJ94RyUebmqojNJerxYHxnDEAuHv/sW9LCBIn
-         XGQ6B4EYGQ+SygoATkdN0YZ3COnZujkCV4SJ9zRGd88Xfef8/YluC9N8P6NUV7er+Y
-         DB7ZKjbO/+JNyH1BllLAyfI2e7VthIwNtwdytx3GmbMDHSD+Mb7aTj6m2NxFzQukEf
-         OXaCMcy8XDvtVbEmqnP1hiPG7Uy9Pig27zCTVT800/AsFWN76J2Q0lPab0qFKfi/hB
-         8GtrkN7xqjVwA==
+        b=ZNTKFka9EdHMVSU7XZnt6Iue1iFrugPRhIeoDqYX9MM3Lz/Wdnxh5PnGBRVa79f0J
+         ijFiohs2UAT5wCpUlITOX174WlNWv9S3Yc5DfNt11Aiev4w7Du657eR/PiAi0sRxnm
+         4AwLCZqFqvOgWW+lsCMwnZdckRqushA4d7CW0Nr/MRxQ7PyEb+Xg7JE2mboRZdvBGK
+         vgGqS35IEq/e/yBDeC2REO3RhyY1vVJXZiiOKFFX/JRe0SsCnEwRwCLFm5km1ENGiY
+         t8yme+5yU2aFtJLNKw6pIuwC9QE589KnmT6/d16yCR92QTCEYbPQRN8DdFg4nsmfE+
+         qTtrQcYTcoHPg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Svyatoslav Ryhel <clamor95@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>, lgirdwood@gmail.com,
         perex@perex.cz, tiwai@suse.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, ion@agorria.com,
-        jiapeng.chong@linux.alibaba.com, robh@kernel.org,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 03/10] ASoC: tegra: Support coupled mic-hp detection
-Date:   Sat,  6 May 2023 20:35:09 -0400
-Message-Id: <20230507003517.4078384-3-sashal@kernel.org>
+        jonathanh@nvidia.com, jiapeng.chong@linux.alibaba.com,
+        ion@agorria.com, robh@kernel.org, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 05/19] ASoC: tegra: Support coupled mic-hp detection
+Date:   Sat,  6 May 2023 20:34:03 -0400
+Message-Id: <20230507003417.4077259-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230507003517.4078384-1-sashal@kernel.org>
-References: <20230507003517.4078384-1-sashal@kernel.org>
+In-Reply-To: <20230507003417.4077259-1-sashal@kernel.org>
+References: <20230507003417.4077259-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -72,7 +72,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 18 insertions(+)
 
 diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-index 2e549b69061ca..21ae1dd5191ca 100644
+index 78faa8bcae274..7b6d5d90c3a2d 100644
 --- a/sound/soc/tegra/tegra_asoc_machine.c
 +++ b/sound/soc/tegra/tegra_asoc_machine.c
 @@ -51,6 +51,17 @@ static struct snd_soc_jack_gpio tegra_machine_headset_jack_gpio = {
