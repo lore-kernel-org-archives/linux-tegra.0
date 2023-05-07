@@ -2,246 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB79C77B75
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 May 2023 09:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30704C7EE2A
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 May 2023 16:26:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230421AbjEGJLO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 May 2023 05:11:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40898 "EHLO
+        id S230399AbjEGQ0u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 May 2023 12:26:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbjEGJLN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 May 2023 05:11:13 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D1555A9
-        for <linux-tegra@vger.kernel.org>; Sun,  7 May 2023 02:11:11 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9659c5b14d8so549180066b.3
-        for <linux-tegra@vger.kernel.org>; Sun, 07 May 2023 02:11:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683450670; x=1686042670;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WJVeF+6z9/ggAVBD2uz3HdoqI651ez6nvvs/Z94Hn3E=;
-        b=ge34Tv1nacy0JlU4TMCDkcjgWKAcwLxMPJ2dqttvd5QDmlGBDNjo3SDaU8jS089GVp
-         97aXexc5Ub/WBVBLBKqwau9eKg4cPpITPJiu9XBXVv4sWtFkODGN+fZRYn0+Lwj78Wr9
-         fOCcWeplDjReFtG1ZWY+8Gg2ComYyfme+ZItmqx1XGp1d+YGrInfxG3ssasguj6Cmj4I
-         UTuYDaGVfumJ4RzEE9sZ+/IqtW0M5spGQAofcgx5AzDbXSrirbcMKLuMiR+Wcl3xBsCV
-         HiX+k/H4PkUKmHdfKesGyx5UbqayeiVibn5DjwZLthhz+4P6ExoNcTFTN5AuH7Pamixs
-         JCxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683450670; x=1686042670;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WJVeF+6z9/ggAVBD2uz3HdoqI651ez6nvvs/Z94Hn3E=;
-        b=iyq92kmQAssMS7MprI/KrDbwfm8AWpciaEbI0m6aC5YYOIGNZddo+yA1B36rRMMohx
-         yLqb//zATf8lepHvxr+LKMs81v9FNsEIN9FvPALi42ek7Tgcz15lzX3VP39CYhsbi6Mu
-         PJNEHkdXSx4KuJ4VkxtuhKwlIHFLCRZ1phZADCwUUEAZYvJOD1LbBL4iMR1o/fJTZ47S
-         tBlyyMVbPV7iJK6itVv8C/TNPjovqVRz0t5OxK48u03tZ2sdrdMT7dLMFu2BwOC9zEBf
-         siwqYkHc9aBHIf4mY3/cNFYowolxlV60BcHf2rYcmggaYsaz8AmwhN5E3bjLFFh3A+mV
-         3VfA==
-X-Gm-Message-State: AC+VfDxEoRlnPLIsrbC07QwJU/XFBsr+oY3pQqVtA4FAd9gcFid6LEz/
-        zqdr2kmZfJ+nvtyS2Co1PqGHjL0sagWAaIbnHAql2A==
-X-Google-Smtp-Source: ACHHUZ56Cj45M5bkDI2Qkj+cfrrqHrRXimMDzax69r9LP0DJegFaXQGg0XWQuxCR+n66BEZ9LerK4Q==
-X-Received: by 2002:a17:907:6d01:b0:957:29e5:1695 with SMTP id sa1-20020a1709076d0100b0095729e51695mr5594140ejc.65.1683450669593;
-        Sun, 07 May 2023 02:11:09 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:183b:950f:b4d5:135a? ([2a02:810d:15c0:828:183b:950f:b4d5:135a])
-        by smtp.gmail.com with ESMTPSA id ze16-20020a170906ef9000b00965ec1faf27sm3024164ejb.74.2023.05.07.02.11.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 May 2023 02:11:08 -0700 (PDT)
-Message-ID: <10b32e55-4d28-5405-035e-c73a514c95e4@linaro.org>
-Date:   Sun, 7 May 2023 11:11:07 +0200
+        with ESMTP id S231615AbjEGQ0s (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 May 2023 12:26:48 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA57218855
+        for <linux-tegra@vger.kernel.org>; Sun,  7 May 2023 09:26:44 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pvhDc-0002Jh-FM; Sun, 07 May 2023 18:26:40 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pvhDb-001nEg-NA; Sun, 07 May 2023 18:26:39 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pvhDb-002AiV-2v; Sun, 07 May 2023 18:26:39 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 44/53] drm/tegra: Convert to platform remove callback returning void
+Date:   Sun,  7 May 2023 18:26:07 +0200
+Message-Id: <20230507162616.1368908-45-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
+References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [Patch v7 1/8] memory: tegra: add interconnect support for DRAM
- scaling in Tegra234
-Content-Language: en-US
-To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        lpieralisi@kernel.org, helgaas@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
-        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
-        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
-References: <20230424131337.20151-1-sumitg@nvidia.com>
- <20230424131337.20151-2-sumitg@nvidia.com>
- <7c6c6584-204a-ada1-d669-2e8bef50e5e5@linaro.org>
- <3071273b-b03b-5fc8-ffa1-9b18311a3a5d@nvidia.com>
- <5ab9687e-756d-f94b-b085-931d4ea534c1@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <5ab9687e-756d-f94b-b085-931d4ea534c1@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1761; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=6Tyw8Au9KpeTmv6RYa0mwqi6I44JPDfcpUHMvWx+Rmc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkV9EXNwL7pp3dWiytKFnM4XC2oa/JVP0OTwaHl urBYj6kcB+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZFfRFwAKCRCPgPtYfRL+ Tu6VB/0cqMnaIjWL2FW5NonzbDFKrECGuIwQ3qn45j3OKE0whwo0lp1k46AMAfmx7z6OboLwqI8 mzMh9APc426bSrFJJjIEIi5/WEn4AZTGwR4olk2MzNYgujWL0m+xElanH1f5z6A/wW/i16x90E/ il/5AGzjeKGC7G4BXG7GvmJdDDGtdNqmcJ3l7vYf5Z0rzvZZcxQwIab9GdVsuq3RgcaOUARKRvH bvtDbWVWGhzfG6raSRcv5YE61xiDLkrReAtlX4ViDN+5DFSg/N4lLx4BVNh3iI+HPr2jDPWy70o wu3kTtwHiN5f/rB54kd3dnLru9QaI+kZ817JAemu8bWKu0vj
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 24/04/2023 17:21, Sumit Gupta wrote:
-> 
-> 
-> On 24/04/23 20:30, Sumit Gupta wrote:
->>
->>
->> On 24/04/23 19:18, Krzysztof Kozlowski wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> On 24/04/2023 15:13, Sumit Gupta wrote:
->>>> Add Interconnect framework support to dynamically set the DRAM
->>>> bandwidth from different clients. Both the MC and EMC drivers are
->>>> added as ICC providers. The path for any request is:
->>>>   MC-Client[1-n] -> MC -> EMC -> EMEM/DRAM
->>>>
->>> Thank you for your patch. There is something to discuss/improve.
->>>
->>>
->>>> +static int tegra_emc_interconnect_init(struct tegra186_emc *emc)
->>>> +{
->>>> +     struct tegra_mc *mc = dev_get_drvdata(emc->dev->parent);
->>>> +     const struct tegra_mc_soc *soc = mc->soc;
->>>> +     struct icc_node *node;
->>>> +     int err;
->>>> +
->>>> +     emc->provider.dev = emc->dev;
->>>> +     emc->provider.set = tegra_emc_icc_set_bw;
->>>> +     emc->provider.data = &emc->provider;
->>>> +     emc->provider.aggregate = soc->icc_ops->aggregate;
->>>> +     emc->provider.xlate = tegra_emc_of_icc_xlate;
->>>> +     emc->provider.get_bw = tegra_emc_icc_get_init_bw;
->>>> +
->>>> +     icc_provider_init(&emc->provider);
->>>> +
->>>> +     /* create External Memory Controller node */
->>>> +     node = icc_node_create(TEGRA_ICC_EMC);
->>>> +     if (IS_ERR(node)) {
->>>> +             err = PTR_ERR(node);
->>>> +             goto err_msg;
->>>> +     }
->>>> +
->>>> +     node->name = "External Memory Controller";
->>>> +     icc_node_add(node, &emc->provider);
->>>> +
->>>> +     /* link External Memory Controller to External Memory (DRAM) */
->>>> +     err = icc_link_create(node, TEGRA_ICC_EMEM);
->>>> +     if (err)
->>>> +             goto remove_nodes;
->>>> +
->>>> +     /* create External Memory node */
->>>> +     node = icc_node_create(TEGRA_ICC_EMEM);
->>>> +     if (IS_ERR(node)) {
->>>> +             err = PTR_ERR(node);
->>>> +             goto remove_nodes;
->>>> +     }
->>>> +
->>>> +     node->name = "External Memory (DRAM)";
->>>> +     icc_node_add(node, &emc->provider);
->>>> +
->>>> +     err = icc_provider_register(&emc->provider);
->>>> +     if (err)
->>>> +             goto remove_nodes;
->>>> +
->>>> +     return 0;
->>>> +
->>>> +remove_nodes:
->>>> +     icc_nodes_remove(&emc->provider);
->>>> +err_msg:
->>>> +     dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
->>>> +
->>>> +     return err;
->>>> +}
->>>> +
->>>>   static int tegra186_emc_probe(struct platform_device *pdev)
->>>>   {
->>>> +     struct tegra_mc *mc = dev_get_drvdata(pdev->dev.parent);
->>>>        struct mrq_emc_dvfs_latency_response response;
->>>>        struct tegra_bpmp_message msg;
->>>>        struct tegra186_emc *emc;
->>>> @@ -236,6 +339,29 @@ static int tegra186_emc_probe(struct 
->>>> platform_device *pdev)
->>>>        debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, 
->>>> emc->debugfs.root,
->>>>                            emc, &tegra186_emc_debug_max_rate_fops);
->>>>
->>>> +     if (mc && mc->soc->icc_ops) {
->>>> +             /*
->>>> +              * Initialize the ICC even if BPMP-FW doesn't support 
->>>> 'MRQ_BWMGR_INT'.
->>>> +              * Use the flag 'mc->bwmgr_mrq_supported' within MC 
->>>> driver and return
->>>> +              * EINVAL instead of passing the request to BPMP-FW 
->>>> later when the BW
->>>> +              * request is made by client with 'icc_set_bw()' call.
->>>> +              */
->>>> +             err = tegra_emc_interconnect_init(emc);
->>>> +             if (err)
->>>> +                     goto put_bpmp;
->>>> +
->>>> +             if (tegra_bpmp_mrq_is_supported(emc->bpmp, 
->>>> MRQ_BWMGR_INT)) {
->>>> +                     mc->bwmgr_mrq_supported = true;
->>>> +
->>>> +                     /*
->>>> +                      * MC driver probe can't get BPMP reference as 
->>>> it gets probed
->>>> +                      * earlier than BPMP. So, save the BPMP ref got 
->>>> from the EMC
->>>> +                      * DT node in the mc->bpmp and use it in MC's 
->>>> icc_set hook.
->>>> +                      */
->>>> +                     mc->bpmp = emc->bpmp;
->>>
->>> This (and ()) are called without any locking. You register first the
->>> interconnect, so set() callback can be used, right? Then set() could be
->>> called anytime between tegra_emc_interconnect_init() and assignment
->>> above. How do you synchronize these?
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>
->> Currently, the tegra234_mc_icc_set() has NULL check. So, it will give 
->> this error.
->>   if (!mc->bpmp) {
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-How does it solve concurrent accesses and re-ordering of instructions by
-compiler or CPU?
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
->>           dev_err(mc->dev, "BPMP reference NULL\n");
->>           return -ENOENT;
->>   }
->>
->> To fix, we can do the below change and swap the order. Please let me 
->> know if this sounds fine ?
->>   if (mc && mc->soc->icc_ops) {
->>           if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT)) {
->>                   mc->bwmgr_mrq_supported = true;
->>                   mc->bpmp = emc->bpmp;
->>           }
->>
->>           err = tegra_emc_interconnect_init(emc);
->>           if (err)
->>                   goto put_bpmp;
->>
->>   }
-> Sorry, replied too soon. Missed setting "mc->bpmp" to NULL. Sharing new 
-> proposed change. Please let me know if this looks OK.
-> 
->   if (mc && mc->soc->icc_ops) {
->      if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT)) {
->              mc->bwmgr_mrq_supported = true;
->              mc->bpmp = emc->bpmp;
->      }
-> 
->      err = tegra_emc_interconnect_init(emc);
->      if (err) {
->              mc->bpmp = NULL;
->              goto put_bpmp;
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/gpu/drm/tegra/dpaux.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Sorry, I didn't check the code. I assume you should do it...
-
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 3c84e73d5051..4d2677dcd831 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -579,7 +579,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tegra_dpaux_remove(struct platform_device *pdev)
++static void tegra_dpaux_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dpaux *dpaux = platform_get_drvdata(pdev);
+ 
+@@ -594,8 +594,6 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
+ 	mutex_lock(&dpaux_lock);
+ 	list_del(&dpaux->list);
+ 	mutex_unlock(&dpaux_lock);
+-
+-	return 0;
+ }
+ 
+ static int tegra_dpaux_suspend(struct device *dev)
+@@ -695,7 +693,7 @@ struct platform_driver tegra_dpaux_driver = {
+ 		.pm = pm_ptr(&tegra_dpaux_pm_ops),
+ 	},
+ 	.probe = tegra_dpaux_probe,
+-	.remove = tegra_dpaux_remove,
++	.remove_new = tegra_dpaux_remove,
+ };
+ 
+ struct drm_dp_aux *drm_dp_aux_find_by_of_node(struct device_node *np)
+-- 
+2.39.2
 
