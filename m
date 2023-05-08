@@ -2,136 +2,113 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14170C77B75
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 14:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7631FC77B7F
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 14:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234526AbjEHOU1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 May 2023 10:20:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57106 "EHLO
+        id S232528AbjEHO1A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 May 2023 10:27:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232571AbjEHOU0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 10:20:26 -0400
-X-Greylist: delayed 1522 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 08 May 2023 07:20:24 PDT
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30200E40;
-        Mon,  8 May 2023 07:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=McnVi0pRU1tHz403LrXGQdHX++EZ969HmPkiZtI1nZQ=; b=iCFl8+pi3CqMBWYuONMPMg+nM0
-        /0WFwKK25rsqOXlJ9hewIV8/L97WhwUxZQP1SfzQ9enn0EOVHR0jMhrTm5VHB1+qiW0DEH0SD8W9o
-        xLwLAEVloGkR2mjNYfLJeyeWVZh0iSlO1JhQM6Y/8t3a99MzAlGmoczVwK852u4u1dx9AyfS/7z3Z
-        7f02wUnQEKhrpKz3kE84mX6ddLUfFBtT7Cq1uH8ZSidTBc3of4UJd3utkAaDIwCn0uoVw81sL42uH
-        /rts8XKsfiLgwzaYg+Vf56fYRSORevj25apxLWkofJPCp1+/ywCfom6jQiSSIPM4U6fxVzbnA0N53
-        R/znwrcw==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1pw1KI-00BxYA-U3; Mon, 08 May 2023 16:54:54 +0300
-Message-ID: <5dabe391-2ec8-4483-ead8-582cd10a0ff1@kapsi.fi>
-Date:   Mon, 8 May 2023 16:54:53 +0300
+        with ESMTP id S229764AbjEHO1A (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 10:27:00 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46FD17ABB
+        for <linux-tegra@vger.kernel.org>; Mon,  8 May 2023 07:26:59 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pw1p7-0008Nx-Ks; Mon, 08 May 2023 16:26:45 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pw1p5-0021HK-CM; Mon, 08 May 2023 16:26:43 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pw1p4-002Ski-KV; Mon, 08 May 2023 16:26:42 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de, Simon Horman <simon.horman@corigine.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH net-next v2 11/11] net: stmmac: dwmac-tegra: Convert to platform remove callback returning void
+Date:   Mon,  8 May 2023 16:26:37 +0200
+Message-Id: <20230508142637.1449363-12-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230508142637.1449363-1-u.kleine-koenig@pengutronix.de>
+References: <20230508142637.1449363-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 4/5] dt-bindings: Add bindings to support DRAM MRQ GSCs
-Content-Language: en-US
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Stefan Kristiansson <stefank@nvidia.com>
-References: <20230508122048.99953-1-pdeschrijver@nvidia.com>
- <20230508122048.99953-5-pdeschrijver@nvidia.com>
- <20230508133325.xllmriwydkczk6lh@krzk-bin>
- <MW3PR12MB43461CD5FEAE22462283AE7CB1719@MW3PR12MB4346.namprd12.prod.outlook.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <MW3PR12MB43461CD5FEAE22462283AE7CB1719@MW3PR12MB4346.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1941; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=QTDJa+yMsqSxmxjnUw6htk1Y9hvDpA8YLqxpg6zNbB4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkWQaZrheDy7RraexOmpuDLaIlfkFWSlzHBZC9a q5EuIDrSheJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZFkGmQAKCRCPgPtYfRL+ TkSWCACLenrrxyw0lMT//GsV6+nJravQC8xIl/opXPY/vHQhzwG6SYAo1EQ01quWaG2kfVSslF4 TitbSlO/wAkhjjjItmJ5eicdUXf1u0p/9tPV5gTffXeZKPNhFLWv+D4E1AE5zsDm3xb+FpS+rOz M78fvAl3vppozkjCQTm8DTMNHkOvyn42uEqMF1JAjM2IUyEK5kIkQdnDSN5qcmUSigroUN9so1J Rsohf7kFTcwYBh7fvbR98iy8q/FNesDsDG0YsZwuqSuCVtAP4zqc3RUDWnD8ymUEI4C9CayaBNF mPkW4voElHfDHUyXWpiYMXqqZqFoMR28Ix7emrLMdfahepS7
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/8/23 16:52, Peter De Schrijver wrote:
-> No idea what the second error is about. Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml does not have a oneOf conditional?
-> 
-> Peter.
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-The oneOf conditional would be from the core schema. Also, no top posting.
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Cheers,
-Mikko
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> 
-> ________________________________________
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: 08 May 2023 16:33
-> To: Peter De Schrijver
-> Cc: thierry.reding@gmail.com; krzysztof.kozlowski+dt@linaro.org; conor+dt@kernel.org; linux-kernel@vger.kernel.org; robh+dt@kernel.org; Jonathan Hunter; linux-tegra@vger.kernel.org; devicetree@vger.kernel.org; Stefan Kristiansson
-> Subject: Re: [PATCH 4/5] dt-bindings: Add bindings to support DRAM MRQ GSCs
-> 
-> On Mon, 08 May 2023 15:20:52 +0300, Peter De Schrijver wrote:
->> Add bindings for DRAM MRQ GSC support.
->>
->> Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
->> Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
->> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> ---
->>   .../firmware/nvidia,tegra186-bpmp.yaml        | 69 ++++++++++++++++++-
->>   .../nvidia,tegra264-bpmp-shmem.yaml           | 40 +++++++++++
->>   2 files changed, 106 insertions(+), 3 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml:10:2: [warning] wrong indentation: expected 2 but found 1 (indentation)
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml: 'oneOf' conditional failed, one must be fixed:
->          'unevaluatedProperties' is a required property
->          'additionalProperties' is a required property
->          hint: Either unevaluatedProperties or additionalProperties must be present
->          from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.example.dts:110.31-116.11: ERROR (duplicate_label): /example-1/hsp@3c00000: Duplicate label 'hsp_top0' on /example-1/hsp@3c00000 and /example-0/hsp@3c00000
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[1]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.example.dtb] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [Makefile:1512: dt_binding_check] Error 2
-> 
-> doc reference errors (make refcheckdocs):
-> Documentation/usb/gadget_uvc.rst: Documentation/userspace-api/media/v4l/pixfmt-packed.yuv.rst
-> MAINTAINERS: Documentation/devicetree/bindings/pwm/pwm-apple.yaml
-> 
-> See https://patchwork.ozlabs.org/patch/1778345
-> 
-> This check can fail if there are any dependencies. The base for a patch
-> series is generally the most recent rc1.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit.
-> 
-> --
-> nvpublic
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+index bdf990cf2f31..f8367c5b490b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+@@ -353,15 +353,13 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static int tegra_mgbe_remove(struct platform_device *pdev)
++static void tegra_mgbe_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_mgbe *mgbe = get_stmmac_bsp_priv(&pdev->dev);
+ 
+ 	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
+ 
+ 	stmmac_pltfr_remove(pdev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id tegra_mgbe_match[] = {
+@@ -374,7 +372,7 @@ static SIMPLE_DEV_PM_OPS(tegra_mgbe_pm_ops, tegra_mgbe_suspend, tegra_mgbe_resum
+ 
+ static struct platform_driver tegra_mgbe_driver = {
+ 	.probe = tegra_mgbe_probe,
+-	.remove = tegra_mgbe_remove,
++	.remove_new = tegra_mgbe_remove,
+ 	.driver = {
+ 		.name = "tegra-mgbe",
+ 		.pm		= &tegra_mgbe_pm_ops,
+-- 
+2.39.2
 
