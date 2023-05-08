@@ -2,219 +2,123 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71748C7EE2C
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 07:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F010BC77B7F
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 08:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbjEHHup (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 May 2023 03:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57260 "EHLO
+        id S232167AbjEHI5K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 May 2023 04:57:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233483AbjEHHuo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 03:50:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B309919920
-        for <linux-tegra@vger.kernel.org>; Mon,  8 May 2023 00:50:42 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pvvdN-000352-R3; Mon, 08 May 2023 09:50:13 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pvvdK-001wDu-Ru; Mon, 08 May 2023 09:50:10 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pvvdJ-002Kte-5G; Mon, 08 May 2023 09:50:09 +0200
-Date:   Mon, 8 May 2023 09:50:09 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Joel Stanley <joel@jms.id.au>, Sam Ravnborg <sam@ravnborg.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Rahul T R <r-ravikumar@ti.com>,
-        Jayshri Pawar <jpawar@cadence.com>,
-        Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Alison Wang <alison.wang@nxp.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Danilo Krummrich <dakr@redhat.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Marek Vasut <marex@denx.de>, Ben Skeggs <bskeggs@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        Yuan Can <yuancan@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
-        Liang He <windhl@126.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Deepak R Varma <drv@mailo.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
+        with ESMTP id S229779AbjEHI5K (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 04:57:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20602171A;
+        Mon,  8 May 2023 01:57:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ABB5461BF3;
+        Mon,  8 May 2023 08:57:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E934C433D2;
+        Mon,  8 May 2023 08:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683536228;
+        bh=Meh1xApQc6QmTSta1gO0+RVCqEAE22ANCjwMLkHa9uw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q6RKEAml9+DeDNWX19AHwf4Mft837x6caaqvjSRx1PxYR8qxLnyGAMNNZlffItVMt
+         P+9EAX4Y1a42nN6458dqcKgtgcamfp05H5XKjNup5NzTLElDHsTyyFhIISuuKyO5sD
+         8iFJ22+PK02zWmFTxowxLoQ20TUGcqWx2YJIORjk2im8sVw5KhDSPUAM1UFiiSh52O
+         A82jitYfZoByAKxjDk6cwd1fvgFFPRDbb04/5oruplz3txQCF9oY/vvUuf5eaPnTM2
+         71W9Kh2ud4j3kvzVgi+Eg5i1D2HCKVqVBVF6SZfbONYCkPJOIemBcSXXa9xpdMMn8a
+         dIwRn7XOXXmKQ==
+Date:   Mon, 8 May 2023 14:27:03 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Haotien Hsu <haotienh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, John Stultz <jstultz@google.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
-        Steven Price <steven.price@arm.com>,
-        linux-rockchip@lists.infradead.org,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        linux-sunxi@lists.linux.dev, Jonas Karlman <jonas@kwiboo.se>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org, etnaviv@lists.freedesktop.org,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, Sean Paul <sean@poorly.run>,
-        linux-arm-kernel@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel@pengutronix.de, Yongqin Liu <yongqin.liu@linaro.org>,
-        freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 00/53] drm: Convert to platform remove callback returning
- void
-Message-ID: <20230508075009.4l4ghdrwopfhmcao@pengutronix.de>
-References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
- <935faac5-280b-b2e0-3fdb-d0424990e43a@suse.de>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Wayne Chang <waynec@nvidia.com>,
+        EJ Hsu <ejh@nvidia.com>
+Subject: Re: [PATCH] phy: tegra: xusb: Fix use-after-free issue
+Message-ID: <ZFi5XzPjez3lrY49@matsya>
+References: <20230504055446.2039372-1-haotienh@nvidia.com>
+ <ZFN3lvjjn9Xu-vRl@orome>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3pf3cmic5n6cdkye"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <935faac5-280b-b2e0-3fdb-d0424990e43a@suse.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <ZFN3lvjjn9Xu-vRl@orome>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 04-05-23, 11:15, Thierry Reding wrote:
+> On Thu, May 04, 2023 at 01:54:46PM +0800, Haotien Hsu wrote:
+> > From: EJ Hsu <ejh@nvidia.com>
+> > 
+> > For the dual-role port, it will assign the phy dev to usb-phy dev and
+> > use the port dev driver as the dev driver of usb-phy.
+> > 
+> > When we try to destroy the port dev, it will destroy its dev driver
+> > as well. But we did not remove the reference from usb-phy dev. This
+> > might cause the use-after-free issue in KASAN.
+> > 
+> > Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
+> > Cc: stable@vger.kernel.org
+> > 
+> > Signed-off-by: EJ Hsu <ejh@nvidia.com>
+> > Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
+> > ---
+> >  drivers/phy/tegra/xusb.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> > index 78045bd6c214..515298a9a433 100644
+> > --- a/drivers/phy/tegra/xusb.c
+> > +++ b/drivers/phy/tegra/xusb.c
+> > @@ -563,13 +563,6 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+> >  
+> >  static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
+> >  {
+> > -	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
+> > -		of_platform_depopulate(&port->dev);
+> > -		usb_role_switch_unregister(port->usb_role_sw);
+> > -		cancel_work_sync(&port->usb_phy_work);
+> > -		usb_remove_phy(&port->usb_phy);
+> > -	}
+> > -
+> >  	if (port->ops->remove)
+> >  		port->ops->remove(port);
+> >  
+> > @@ -832,6 +825,14 @@ void tegra_xusb_usb2_port_remove(struct tegra_xusb_port *port)
+> >  {
+> >  	struct tegra_xusb_usb2_port *usb2 = to_usb2_port(port);
+> >  
+> > +	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
+> > +		of_platform_depopulate(&port->dev);
+> > +		usb_role_switch_unregister(port->usb_role_sw);
+> > +		cancel_work_sync(&port->usb_phy_work);
+> > +		usb_remove_phy(&port->usb_phy);
+> > +		port->usb_phy.dev->driver = NULL;
+> > +	}
+> > +
+> 
+> It's a bit difficult to tell what exactly changed because of the
+> additional move. The move looks correct because this is only valid for
+> USB2 ports, but I think it'd be easier to review if the move was done
+> prior to the addition of the ->driver clearing. Or perhaps a mention in
+> the commit message would be nice.
+> 
+> It's obviously up to Vinod and Kishon if they want to see this
+> clarified. Either way is fine with me, so:
 
---3pf3cmic5n6cdkye
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I agree changes need to be clarified, expecting updated v2 :-)
 
-[A few addressed bounced and my script to find the recipents for a patch
-series broke and invented some addresses. I fixed all the problem I'm
-aware of in this mail.]
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-On Mon, May 08, 2023 at 09:06:27AM +0200, Thomas Zimmermann wrote:
-> for the whole series:
->=20
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->=20
-> Please see my comment on the patches to tiny/.
->=20
-> Let me know if you want me to merge this patchset into drm-misc-next.
 
-Thanks, I'd wait a bit for more acks/reviews to come in and then plan to
-resend later, also addressing the feedback you sent.
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---3pf3cmic5n6cdkye
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmRYqbAACgkQj4D7WH0S
-/k4JeggAnBHUxma4vQ+/T0T9qJC+5c7iGOJ+hg1VKQdu3RFYOsfEdBVHywMuX8Fb
-bkfMbL4jsyN80KX3Sc7XeT0GkuA6n1bkIfJsTz16Dl8pPUTDBLPKYKNT82+brNvg
-XIif/963gu+RJ+x6ME2cdKET84LGmQwhonW2LUxGiRX5JD3FroDO8qaiLtFzkxEg
-zhCTMEQJUy1J6coFLDsxnhLFu4R/6ngT6tZOJfRAB4OiIEFmKVVH0/Y2Ko/ggJ/d
-50TcQO/0MoAzPrToLpaLaT3VtMocbAxQf7XRwpqF4MDvhu7dVfsJIhcWtBYjocz+
-WfD1B59vo0hWYb/QXlkA6OY3tzlBQQ==
-=Fhn+
------END PGP SIGNATURE-----
-
---3pf3cmic5n6cdkye--
+-- 
+~Vinod
