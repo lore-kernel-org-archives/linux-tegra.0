@@ -2,104 +2,124 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61717C77B7F
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 11:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E07C9C77B75
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 12:21:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235834AbjEHL2I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 May 2023 07:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45350 "EHLO
+        id S233625AbjEHMVR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 May 2023 08:21:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235765AbjEHL1o (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 07:27:44 -0400
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0903C38F18;
-        Mon,  8 May 2023 04:27:31 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-38e12d973bfso2257344b6e.0;
-        Mon, 08 May 2023 04:27:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683545250; x=1686137250;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RLxQz9u+YcsKkSQbgJAL99s7i6wSU+2HHEAtjvqTVhA=;
-        b=XX2CuI0Vd9FeD8pXjpRj34F1wX1jzya4fbB0jiLIRLzIO5VyOeqOKxKMkQdCO+cndQ
-         GSDQAI9VoXBOxe+I7kstFF/yWJ4fkpCqFReUAJ/JjjaA4pO0xfJsB2L8ENvsjx99Tk6i
-         OZA8+2yK35uD+FS3HKw8kkj+c/UJUVmtz2y8tQD96UVCNOTh4IRRCLlv09FrLIW46vj+
-         5oqRfuUx/oP0UkS0fKJwifPoSIqUXXmwyFg5Bw4Qsl+bQ5Yv6ocKbAfsss1fOkGmiJr8
-         gFN1t2xczckgqtcFS7stbZ5YrCqQr+8Ny1q6kCC19tvRLPtuC+vkqU1KoqTOTfISgQab
-         /ytw==
-X-Gm-Message-State: AC+VfDwGj439dZzbfP3/KDalfdg5hodimQR03xfi3brT0VzO+LgpF8p0
-        d/6/oVl+i+oYDoLQ9mFDdHo7CM7w73yI
-X-Google-Smtp-Source: ACHHUZ7Ju49ObLf4ykRvD1k8VLj0HUMhfkD4xURbYUOAbhVb6eK2iJHUr7gBK1NfSK4+Z+P4zuyqzA==
-X-Received: by 2002:a05:6808:5c8:b0:383:ca99:c70e with SMTP id d8-20020a05680805c800b00383ca99c70emr4326254oij.59.1683545249993;
-        Mon, 08 May 2023 04:27:29 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n23-20020a4ae1d7000000b0054574f35b8esm3918332oot.41.2023.05.08.04.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 04:27:29 -0700 (PDT)
-Received: (nullmailer pid 789281 invoked by uid 1000);
-        Mon, 08 May 2023 11:27:28 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S233016AbjEHMVQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 08:21:16 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9F324017;
+        Mon,  8 May 2023 05:21:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K9HbNINB2IGGDOTTZdC9uLU6mhOQts77G9eHTXOhR13NVwr9yIW4H6lD8p8OmQHAm+arfi3rYH7WpLs9AtKXVGPsr45P/w/8TV2VGg8x12wgHSJvdWPhYeZ7DTnF+gdJ46PCyyMJkobCH0W4Kvrd/GqyeyFRXpEru1pZLaf2G72JpD0pn+MFkvBqjVuQ1RfKwep7qle1MQqUqB7eDTUXQUI6ugQIUw3K+2OFzprK8BkVCQchfL1eHKEX0ZhGugm/6ge7Zih+RKF+u264F4FekMSvll4fpu2BqrAdOC1m/sNxsypY/L8lIvQIvdQf3WPdca7Yb+qhKxu8Ldasc9kf2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yiGajE/tyfNw2Gj6cNmKQrOCU2LeRVZNZiFrmxuz8z0=;
+ b=K8PAXiJxG1Adoidtwg7SRXFqoxqIO11xiDF3pfb9Pjm9I0k/ky2cJK7PluhMSSHKk0A+mY454VD8cA9mRVNh+mFjOC3cop82fct/ALGeQatKwSeqTDjtblZbxy/D5s4OxmOfAOKVw9chb7JCfI3pWVXWYTP6lwH55WcGZiu98O9V9MlHYxNGkcuZXjjr05zXMb9ECQueCHm4FNOLV/Qd9i3I8yI1HBF8hYPu27BwINyx01TJyYZtZTBFalUPrrc0tIRejpdimRpNwW3gfAjoA1udZrNxrV0PjXx9kjKjMhcG6NDew4sKVxT6nXRMcwUUW2Y8RdiCB5PYFl7BgS2sdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yiGajE/tyfNw2Gj6cNmKQrOCU2LeRVZNZiFrmxuz8z0=;
+ b=oDga4qUSsKVO+y0kYIgWTwH3sMhTNSvzvmCjR4E6FpLdULwPcKoMKlfMmGWqDzjTh1j6pwdRur9OdXYdcAwxaZqQw8KJgwYoj6UgfXThlLBtIADxnCn2GTUJ8Idkelu8DlmWL9HIh5mmxyvVwcmZWbMrY/h5n+n266v/pju2v89y80oUs5WHJqIIIKgoWi10iNtcaA8v7XHBv8oXtY4Jmr5g31qs3nCrTH5/9k9UD8wjKCPxchwzzFB0dXj23kXzG0Z+N1OVTtCxJ/RrNzVzCCgkNAVWb+ZOOGweIN4/8pYD6Ho8vuJbSRQkYzuezEYnsrdrooNCn8EuvXvZXU6Ygw==
+Received: from BLAPR03CA0040.namprd03.prod.outlook.com (2603:10b6:208:32d::15)
+ by DM8PR12MB5415.namprd12.prod.outlook.com (2603:10b6:8:25::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6363.32; Mon, 8 May 2023 12:21:12 +0000
+Received: from BL02EPF000145B8.namprd05.prod.outlook.com
+ (2603:10b6:208:32d:cafe::74) by BLAPR03CA0040.outlook.office365.com
+ (2603:10b6:208:32d::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.32 via Frontend
+ Transport; Mon, 8 May 2023 12:21:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL02EPF000145B8.mail.protection.outlook.com (10.167.241.208) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6387.18 via Frontend Transport; Mon, 8 May 2023 12:21:11 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 8 May 2023
+ 05:20:57 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 8 May 2023
+ 05:20:57 -0700
+Received: from mallet.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Mon, 8 May 2023 05:20:55 -0700
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>, <stefank@nvidia.com>
+CC:     <jassisinghbrar@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: [PATCH 0/5] firmware: tegra: Add MRQ support for Tegra264
+Date:   Mon, 8 May 2023 15:20:43 +0300
+Message-ID: <20230508122048.99953-1-pdeschrijver@nvidia.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Shubhi Garg <shgarg@nvidia.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-In-Reply-To: <20230508102733.1751527-1-shgarg@nvidia.com>
-References: <20230508102733.1751527-1-shgarg@nvidia.com>
-Message-Id: <168354524653.789162.6725251128865957840.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: tegra: Document compatible for IGX
-Date:   Mon, 08 May 2023 06:27:28 -0500
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF000145B8:EE_|DM8PR12MB5415:EE_
+X-MS-Office365-Filtering-Correlation-Id: 38edcc5b-926f-44dd-16a7-08db4fbeb5e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 1Ws6VOzsoFMK6oXuT4Vu4NpbzBlkCU9w8Uk+OHUCOfhyUeCBA2wzmm0R6pLEaxJpiYmljb/fMG7rRD4hk+c09PwzEppc4V1wo1hHoI9mJGeCzCX64VCZFdv+faRVHpoSyLXlmhKL0ZelRW3rIkxgwCogjuYtlLjayvAXhp7zEU1XAxr4DSPrOD3xfIiTKaX0nyUf2m3AJZ1WDcSX/y+tPk6AHwNC9YIE/yEFwygXH9CJ2ybSRYSmsTUGU29QMk/C5yWt6lQu04sB4FfC3GreTV/RuaEs1KZgZ9fXtQG0ZLMrq7xuX+ouSky/GPub3hdfZExIb0E3sJ/7uTeHsFTQ5LqW6snE4s0AjvECsB+PbEzqdEg6QW1Avp0bMUjYvfsXun0+4aZ0r7Ke7jUe3bRSsiPAVaoufjd9UKuRuRNOoP2jyuDNnqU2xamazSTUUg+hRZ8X56ODDIWlXZgxHfy5eRYv80yTk4hD6n4dQRELBj6FPoPl2m4ItT1xSz5zxnM+Dlga04AoeSBFPmglLBvfx8uDL0zrEettL7hfRvLp22UtRpEDaN0N/23xNKcGh0LSkQspzeNjlIvD0bBtAXR54CU6ABwI+8vcYXkqyJuJ9m3AZ1HJpTh3jYJiZChZmnJ12zJnY06j1HGZ09LydLKO/N1nwteS99qfXzmnaWMiXcnCoSxh1xoU6p9YS0F7TJ00SE9uCK/B4uKQYYMe/IoO7g==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(136003)(376002)(39860400002)(451199021)(36840700001)(40470700004)(46966006)(1076003)(40480700001)(26005)(7696005)(83380400001)(336012)(426003)(2616005)(36860700001)(47076005)(36756003)(82310400005)(86362001)(7636003)(356005)(82740400003)(186003)(40460700003)(110136005)(478600001)(6636002)(54906003)(2906002)(316002)(41300700001)(8936002)(8676002)(70586007)(5660300002)(4326008)(70206006)(6666004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2023 12:21:11.5448
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38edcc5b-926f-44dd-16a7-08db4fbeb5e8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000145B8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5415
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+In Tegra264 the carveouts (GSCs) used to communicate between BPMP and
+CPU-NS may reside in DRAM. The location will be signalled using reserved
+memory node in DT. Additionally some minor updates to the HSP driver are
+done to support the new chip.
 
-On Mon, 08 May 2023 10:27:32 +0000, Shubhi Garg wrote:
-> Document the compatible strings used for Nvidia IGX Orin Development
-> kit which uses P3701 SKU8 and P3740 carrier board.
-> 
-> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
-> ---
-> 
-> v2: sorted IGX Orin position as per part number. Since
-> P3740 is designed prior to P3768, it is placed before Orin NX.
-> 
->  Documentation/devicetree/bindings/arm/tegra.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+Peter De Schrijver (3):
+  dt-bindings: mailbox: tegra: Document Tegra264 HSP
+  dt-bindings: Add bindings to support DRAM MRQ GSCs
+  firmware: tegra: bpmp: Add support for DRAM MRQ GSCs
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Stefan Kristiansson (2):
+  mailbox: tegra: add support for Tegra264
+  soc: tegra: fuse: add support for Tegra264
 
-yamllint warnings/errors:
+ .../firmware/nvidia,tegra186-bpmp.yaml        |  69 +++++-
+ .../bindings/mailbox/nvidia,tegra186-hsp.yaml |   1 +
+ .../nvidia,tegra264-bpmp-shmem.yaml           |  40 ++++
+ drivers/firmware/tegra/bpmp-tegra186.c        | 208 +++++++++++++-----
+ drivers/firmware/tegra/bpmp.c                 |   4 +-
+ drivers/mailbox/tegra-hsp.c                   |  16 +-
+ drivers/soc/tegra/fuse/tegra-apbmisc.c        |   3 +-
+ include/soc/tegra/fuse.h                      |   3 +-
+ 8 files changed, 275 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.example.dtb: camera-sensor@3c: port:endpoint:data-lanes: [[1]] is too short
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip-isp1.example.dtb: camera@3c: port:endpoint:data-lanes: [[1]] is too short
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.example.dtb: pcie-ep@33800000: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-
-doc reference errors (make refcheckdocs):
-Documentation/usb/gadget_uvc.rst: Documentation/userspace-api/media/v4l/pixfmt-packed.yuv.rst
-MAINTAINERS: Documentation/devicetree/bindings/pwm/pwm-apple.yaml
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230508102733.1751527-1-shgarg@nvidia.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.40.0
 
