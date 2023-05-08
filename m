@@ -2,113 +2,116 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C57C77B7F
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 13:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07560C77B7F
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 13:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233617AbjEHNBY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 May 2023 09:01:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55762 "EHLO
+        id S232692AbjEHNdd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 May 2023 09:33:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232069AbjEHNBX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 09:01:23 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E03B35D9A;
-        Mon,  8 May 2023 06:01:22 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-953343581a4so684662866b.3;
-        Mon, 08 May 2023 06:01:22 -0700 (PDT)
+        with ESMTP id S233699AbjEHNdc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 09:33:32 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D41518916
+        for <linux-tegra@vger.kernel.org>; Mon,  8 May 2023 06:33:30 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-50bc5197d33so8635214a12.1
+        for <linux-tegra@vger.kernel.org>; Mon, 08 May 2023 06:33:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683550881; x=1686142881;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q2LoaJtLMloogdr4NC6JEd1vFe6odGnmP5Fk9z+paqg=;
-        b=PGmP/t7LQouSPkbJznjaC7lqWZB0IeYXiEw7NaxILpmfsoxfiry+eylMEtTY6MbFIM
-         CJtk/cpasnxrot1/Jq+qCbePSdrCUzuiS8oEyMdYepBtW5bGUhIWoOdG8/As4AYOFiG+
-         J8JfRx4COY7V0+m7aszywcO0v4nhMstfnyEhRz4hwwjVBnk+rJUiBLdcWm7aOejlwrXh
-         YrIX4n9XsiyQDaA0fJwriWLg9jeV5nqk9Of6+uJ2+a73hEXZ9EaJa19/KHWXqt9uxhln
-         c88e1wUmJPd+h46O/WtEGrHcHIe1CVn54bbHhKETb5zRng3sRC0230CnHI8HlW/cXxc1
-         OG0A==
+        d=linaro.org; s=google; t=1683552809; x=1686144809;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rGZFobhDL5KrtJvIVQA1pg81QY7WNmO1VNXBMl/SSNw=;
+        b=yUZoZ3P6QZHl8p862Wqs7BCZ42+QTF1AZs9T+PfQDwg1GCyeIAEK20EXEMVhUiG/RD
+         WuIe5l0DxrkxkZaffWceyl9N+0ygtr2dbhWnnxGuWLuoZbnRaiwTQZ80bwtx2vSQKtI1
+         ow/8DPJDUZJunSCXM9kTGcy22aTEe0rdQjt6H6cxmISLaHJ7MAHWZ/QbAjHxUIiPwJWW
+         t5q+SNR5UoKnX/4yrQ5XkK7BRjlc32g7eHZXUkK/hvYXQ7dit6CkCPn2AyOsv07c3hJT
+         bAvjSEj9cw/jctjqBomczMsg8bNSItV17OOSGfwXfjlffnBy76gedc09A38ndgAj4osi
+         IRpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683550881; x=1686142881;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q2LoaJtLMloogdr4NC6JEd1vFe6odGnmP5Fk9z+paqg=;
-        b=b9zdrg3bnyYn3zdTTiOaM5Nd95xSN0tEpHkFing0nsLGdOe7KNNHBRAllEFjCcPNZO
-         J28wZ8OBKE2Ge+3elnF9IHJC0FLO335n1fxFDkOs2If9p2X4y7MxNbMs9kFCn8EjZEO3
-         Dy8vgsyi2T1n6v1RJPbawtiM/mwUEBNvmxPHKU8BhcCBIJv+zvbkJvM0+9vuWo6pyCTB
-         89UYmnyfKnkzOzUvFAJ1+KV6CHJzI4hNh1tCHaHAf7EZD9DWyGIlfL+Pu6I1varbqaZd
-         vKxAnvJ5atZCQpL3+kxXJ1ZJKJ4SFE+fscT05BwtRyobC584MZ776ina/fHvg+3wMcVv
-         WFug==
-X-Gm-Message-State: AC+VfDwdT8XFjZnGMqiGVdP9a/IlyjBibYnE/sBo3FI7qSNp979xg21x
-        qusVKD3ptQJ5DU3sBS35EoxpxHdH0E8=
-X-Google-Smtp-Source: ACHHUZ4sKYaqSYVrC+06V4KP0qfp6QDadf9rT+aLDf+SWuqt+YszVzjOJtL8SsqCQuB5ylk6qGYDAg==
-X-Received: by 2002:a17:907:94c2:b0:966:3114:c790 with SMTP id dn2-20020a17090794c200b009663114c790mr6021565ejc.37.1683550879441;
-        Mon, 08 May 2023 06:01:19 -0700 (PDT)
-Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i15-20020a50fc0f000000b0050bd19ec39bsm6078598edr.83.2023.05.08.06.01.18
+        d=1e100.net; s=20221208; t=1683552809; x=1686144809;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rGZFobhDL5KrtJvIVQA1pg81QY7WNmO1VNXBMl/SSNw=;
+        b=cBRcud8aQ3GkggCSdtP0lH3y2M0okgnWGoCAw3qbzcHRZrq5qIPiDLGItknyBJBodZ
+         jsp6R82j2CkOblCaK3XF8F2lMfXjA9RUqSSSj8zqeZpqVGXPwOXt/QODSJy4iXhzDXsc
+         OpX408oakmVmNrtdkMfU5aEOe2CiI7uyJ+czuoi5cr4dxIPOAOt5q6hdvr/DKTjSFuXd
+         ttFuhwUSPm3f1dA3SLvto4flJg3XOTjKHVXWRwbtp4eTvLBtnYljexE0BRltznSnRSCv
+         X2/qKt34Ki94+kRDem3rrHVIgQV7LzOzzwEn9bgzO6Ei03GjLJyEiB7u5vN/aWZTAZUA
+         5nmg==
+X-Gm-Message-State: AC+VfDyBu0A/ebwQeo8UkxMz/fCtv/bsUuZt8sdfS6McWhaGx3954WJQ
+        rD2/zKm6N1rjsWmbcsxBuZKVGg==
+X-Google-Smtp-Source: ACHHUZ4fRkLXrslmIhIM8+Kqs1j4thCUZSlxgNvfcuzmmB7Z7emPT0GTwOPmXUpMDWZ4mddzp+epQg==
+X-Received: by 2002:aa7:c849:0:b0:50b:c88b:b227 with SMTP id g9-20020aa7c849000000b0050bc88bb227mr7173469edt.35.1683552808913;
+        Mon, 08 May 2023 06:33:28 -0700 (PDT)
+Received: from krzk-bin ([2a02:810d:15c0:828:50e0:ebdf:b755:b300])
+        by smtp.gmail.com with ESMTPSA id s2-20020aa7cb02000000b0050d82f96860sm3562784edt.59.2023.05.08.06.33.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 06:01:19 -0700 (PDT)
-Date:   Mon, 8 May 2023 15:01:17 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
+        Mon, 08 May 2023 06:33:28 -0700 (PDT)
+Date:   Mon, 8 May 2023 15:33:25 +0200
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     jonathanh@nvidia.com, Stefan Kristiansson <stefank@nvidia.com>,
-        arnd@arndb.de, kkartik@nvidia.com, sumitg@nvidia.com,
-        windhl@126.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] soc: tegra: fuse: add support for Tegra264
-Message-ID: <ZFjynangQpNfYbZ9@orome>
+Cc:     thierry.reding@gmail.com, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        stefank@nvidia.com
+Subject: Re: [PATCH 4/5] dt-bindings: Add bindings to support DRAM MRQ GSCs
+Message-ID: <20230508133325.xllmriwydkczk6lh@krzk-bin>
 References: <20230508122048.99953-1-pdeschrijver@nvidia.com>
- <20230508122048.99953-4-pdeschrijver@nvidia.com>
+ <20230508122048.99953-5-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J9cWw5sqWcv09zQj"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230508122048.99953-4-pdeschrijver@nvidia.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+In-Reply-To: <20230508122048.99953-5-pdeschrijver@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---J9cWw5sqWcv09zQj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 08, 2023 at 03:20:50PM +0300, Peter De Schrijver wrote:
-> From: Stefan Kristiansson <stefank@nvidia.com>
->=20
-> Add support for Tegra264 to the fuse handling code.
->=20
+On Mon, 08 May 2023 15:20:52 +0300, Peter De Schrijver wrote:
+> Add bindings for DRAM MRQ GSC support.
+> 
+> Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
 > Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/soc/tegra/fuse/tegra-apbmisc.c | 3 ++-
->  include/soc/tegra/fuse.h               | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
+>  .../firmware/nvidia,tegra186-bpmp.yaml        | 69 ++++++++++++++++++-
+>  .../nvidia,tegra264-bpmp-shmem.yaml           | 40 +++++++++++
+>  2 files changed, 106 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml
+> 
 
-Same comment regarding the Signed-off-by line as for patch 2/5.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Thierry
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml:10:2: [warning] wrong indentation: expected 2 but found 1 (indentation)
 
---J9cWw5sqWcv09zQj
-Content-Type: application/pgp-signature; name="signature.asc"
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml: 'oneOf' conditional failed, one must be fixed:
+	'unevaluatedProperties' is a required property
+	'additionalProperties' is a required property
+	hint: Either unevaluatedProperties or additionalProperties must be present
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.example.dts:110.31-116.11: ERROR (duplicate_label): /example-1/hsp@3c00000: Duplicate label 'hsp_top0' on /example-1/hsp@3c00000 and /example-0/hsp@3c00000
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[1]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.example.dtb] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1512: dt_binding_check] Error 2
 
------BEGIN PGP SIGNATURE-----
+doc reference errors (make refcheckdocs):
+Documentation/usb/gadget_uvc.rst: Documentation/userspace-api/media/v4l/pixfmt-packed.yuv.rst
+MAINTAINERS: Documentation/devicetree/bindings/pwm/pwm-apple.yaml
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRY8p0ACgkQ3SOs138+
-s6FTbA//XFQm+ljRi5uoKMqDe4mEZ53rAy667NhNgHCEUfUmcfEWKlo0wHNh9vNS
-CFV7bImRVc8J+nKOhL2dlKircLAtVgDVS7lW5+iuWj0j3Z124Rg/xH6ShZoMLLat
-wT8TdW01jCmcr1gtEAlns2r8ra0MRfWcZYl7JureRByltJtgcm9aSqPAom0ddXI4
-FlqwKvPZbdsAPvjsvk+cwEmy0KtLyUeI8Rae+I2nM+ub9PITAJOt5icHBkwjtL5S
-DuJnoG7mH4stKYvRSA+FYBosMx5J+So1A7joMyZAZkcUPVXRYWW2PidarSfK6MT7
-eVW2c5pNaTBLPU9qvn8gjYISmcoMSa/OKlfzL8AHtgR4pt4/xxvn2CeLQH4nMVrl
-u1LviInXYvC+w6IODcrfmvZokf0QQ9ySh4IU+q7ULJ2nl6PitheLRiY4DTKFISVw
-oUsGWDZuMamiI1XGBCKKFdzHN/5lxwNlLA+rlI9bfroHWc1SgWOIyzShV6tr5vza
-oE/FXTt2ton1dkeBlAuO/5aBA07C5eUCR51phZXUaj6Gtu1j6Y5YLWnGFvYV25du
-/HntdcMprgxhZjUAbiR0/jFrPAKIX3F3ScD+AaYrS2KXJs2BNdDujyPo831WCqCo
-RHavwkLWq5u/xqLvFPFgSSSWd3E46TU/kJJYEDT3XPzwlBul5yY=
-=TW6/
------END PGP SIGNATURE-----
+See https://patchwork.ozlabs.org/patch/1778345
 
---J9cWw5sqWcv09zQj--
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
