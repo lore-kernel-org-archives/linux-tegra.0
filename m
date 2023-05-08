@@ -2,151 +2,86 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B780FC7EE22
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 14:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10570C77B7F
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 16:22:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229764AbjEHO1b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 May 2023 10:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34790 "EHLO
+        id S234062AbjEHQWB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 May 2023 12:22:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232541AbjEHO1b (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 10:27:31 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA99198E
-        for <linux-tegra@vger.kernel.org>; Mon,  8 May 2023 07:27:29 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pw1pB-0008Nm-Te; Mon, 08 May 2023 16:26:49 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pw1p2-0021Gd-S8; Mon, 08 May 2023 16:26:40 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pw1p2-002Sk4-6B; Mon, 08 May 2023 16:26:40 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Samin Guo <samin.guo@starfivetech.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        linux-amlogic@lists.infradead.org, linux-oxnas@groups.io,
-        linux-sunxi@lists.linux.dev, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH net-next v2 00/11] net: stmmac: Convert to platform remove callback returning void
-Date:   Mon,  8 May 2023 16:26:26 +0200
-Message-Id: <20230508142637.1449363-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S234055AbjEHQWA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 12:22:00 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6253730CF
+        for <linux-tegra@vger.kernel.org>; Mon,  8 May 2023 09:21:58 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-965e4be7541so681068766b.1
+        for <linux-tegra@vger.kernel.org>; Mon, 08 May 2023 09:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683562917; x=1686154917;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Daf3/YZVuIRlar1MVrr7jyzSesx6ayqFzzPJwULdeHM=;
+        b=D5POiHEz5U7FjRpb3liXqB68Ft9wtkp5+kNbSZM509XH0qGUvCoZaSLTGbPyv0m8J2
+         1U3B3wk7Icg+2wzX9lWduEW7ywVUmUcGfhu80GNjL3KPMPq3fd1n2X7jr6DalMgNMSxK
+         c0qxe9Hiir/SJ22nCMm6hvCRFOD5rzkKialo2vZGPg9wcgcmwXK1y8pnN1bAt8Zni+M/
+         Yt/vo7OfTfXxIM4KDClW+Vj+FeJWT1y3foVa1N79nDpklPxNGHcVLY+sIg3UgqiFk+/K
+         5I6zzyzUu6qHD8ahl6X9J0LgZnZCb4jwzlvTcvmItQOd12B9wg9j8S1mwKg5JR8cQOqR
+         Y7bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683562917; x=1686154917;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Daf3/YZVuIRlar1MVrr7jyzSesx6ayqFzzPJwULdeHM=;
+        b=BNJgfOCzHcYuL96L+SHqyddYg/BK+R+E2tfNFLjwvqQf/SIPa9VES8vvM3pwSp2VJa
+         8FwoHZ1wO7pDNKqaPYnq/pTjHMD51avq8eX2qZHjTB29uO3h1BwjDzgSPMH8WSz0lqxM
+         flU582hH3uc0RBS94LGUKs+rSw5tnIm4VKt5/v53TG0iBtYoPPO8beTrCw+VUCgw7W1h
+         3bWo2XlZMJqPTZ8awbOl5AdP8CuGFKU8nyrQE5TPKimSIF1eT8bCJ8nv/mjD7faNAQW7
+         OKVR3fPuFv47mbOpbAf266iVzJZjT9OBvLlnHTk14fq83aefCtCGk92/RmPik/GSfWEg
+         H2Ug==
+X-Gm-Message-State: AC+VfDyIelc+7Ybo9JCXzrxsxgR62oFlNwOepeaU8w54e/zB/LTOKw5d
+        4QI+EUZg2FhhoP4nr0r+vm/rRA==
+X-Google-Smtp-Source: ACHHUZ7yu3q6sU0Jtw7QF/12xkZZ6/bDUisSp1CiuLKg+AsRUEkSSJXPf60SjFKfBFrDDxEvjp/nuw==
+X-Received: by 2002:a17:907:2d0c:b0:966:5c04:2c5a with SMTP id gs12-20020a1709072d0c00b009665c042c5amr3952247ejc.69.1683562916889;
+        Mon, 08 May 2023 09:21:56 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:50e0:ebdf:b755:b300? ([2a02:810d:15c0:828:50e0:ebdf:b755:b300])
+        by smtp.gmail.com with ESMTPSA id r16-20020a170906c29000b0094f3e169ca5sm147101ejz.158.2023.05.08.09.21.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 May 2023 09:21:56 -0700 (PDT)
+Message-ID: <0ca8517e-ad78-581a-598a-98784223232f@linaro.org>
+Date:   Mon, 8 May 2023 18:21:55 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 1/2] dt-bindings: tegra: Document compatible for IGX
+Content-Language: en-US
+To:     Shubhi Garg <shgarg@nvidia.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20230508102733.1751527-1-shgarg@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230508102733.1751527-1-shgarg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2991; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=e18Kj38bK3tEm/hSzc46Mes9xzQDcw64Vnd25cb8omc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkWQaMhtXiVZEIsYdTMyD+fsTSBXFA2k+fVfb7W Z4wnuQlykSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZFkGjAAKCRCPgPtYfRL+ TqeRCACo0+Gsv6LM1FIlu9KxZ+EkcpVDZXwiB+Le4QCe34u4Z/sJjN/PGWVm1DJGX3TZAiXg1R6 lE6OXvG4Kp8Ek78HiENVfQtqBMLAsxWlabhUC1S8i9iHY50JOkyM3AxazQOY8jKgllX+YCjNIsd 1ElRgtMImqflj1afHSmN5c0aXV8XRTvC05pHb0G7JHDup/b6z1YLYx4wChYq+u/GJJg/BzO24lo Am9+8bevKXSdcTpE48zAsNXTXHweMxlnojnuXv49mB6LJDhh+SrwSDLeFW4y4Q7RFgljVJ4JHt5 lYzHPUfU7TFnx4J9dEc6QUhnC8E6LC7crHmAiKw2JMXhPWtQ
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+On 08/05/2023 12:27, Shubhi Garg wrote:
+> Document the compatible strings used for Nvidia IGX Orin Development
+> kit which uses P3701 SKU8 and P3740 carrier board.
+> 
+> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
+> ---
+> 
+> v2: sorted IGX Orin position as per part number. Since
+> P3740 is designed prior to P3768, it is placed before Orin NX.
+> 
 
-(implicit) v1 of this series is available at
-https://lore.kernel.org/netdev/20230402143025.2524443-1-u.kleine-koenig@pengutronix.de
-.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Changes since then:
-
- - Added various Reviewed-by: and Acked-by: tags received for v1
- - Removed a variable in an earlier patch to make all intermediate steps
-   compilable, spotted by Simon Horman
- - Rebased to v6.4-rc1 (which needed a slight adaption to cope for
-   4bd3bb7b4526 ("net: stmmac: Add glue layer for StarFive JH7110 SoC"))
-
-Best regards
-Uwe
-
-Uwe Kleine-König (11):
-  net: stmmac: Make stmmac_pltfr_remove() return void
-  net: stmmac: dwmac-visconti: Make visconti_eth_clock_remove() return
-    void
-  net: stmmac: dwmac-qcom-ethqos: Drop an if with an always false
-    condition
-  net: stmmac: dwmac-visconti: Convert to platform remove callback
-    returning void
-  net: stmmac: dwmac-dwc-qos-eth: Convert to platform remove callback
-    returning void
-  net: stmmac: dwmac-qcom-ethqos: Convert to platform remove callback
-    returning void
-  net: stmmac: dwmac-rk: Convert to platform remove callback returning
-    void
-  net: stmmac: dwmac-sti: Convert to platform remove callback returning
-    void
-  net: stmmac: dwmac-stm32: Convert to platform remove callback
-    returning void
-  net: stmmac: dwmac-sun8i: Convert to platform remove callback
-    returning void
-  net: stmmac: dwmac-tegra: Convert to platform remove callback
-    returning void
-
- .../ethernet/stmicro/stmmac/dwmac-anarion.c   |  2 +-
- .../stmicro/stmmac/dwmac-dwc-qos-eth.c        |  6 ++----
- .../ethernet/stmicro/stmmac/dwmac-generic.c   |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-imx.c   |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-ingenic.c   |  2 +-
- .../stmicro/stmmac/dwmac-intel-plat.c         |  9 +++------
- .../ethernet/stmicro/stmmac/dwmac-ipq806x.c   |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-lpc18xx.c   |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-mediatek.c  |  9 +++------
- .../net/ethernet/stmicro/stmmac/dwmac-meson.c |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-meson8b.c   |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-oxnas.c |  2 +-
- .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 15 ++++-----------
- .../net/ethernet/stmicro/stmmac/dwmac-rk.c    |  6 ++----
- .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-starfive.c  |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-sti.c   |  6 ++----
- .../net/ethernet/stmicro/stmmac/dwmac-stm32.c |  6 ++----
- .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c |  6 ++----
- .../net/ethernet/stmicro/stmmac/dwmac-sunxi.c |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-tegra.c |  6 ++----
- .../ethernet/stmicro/stmmac/dwmac-visconti.c  | 19 +++++--------------
- .../ethernet/stmicro/stmmac/stmmac_platform.c |  4 +---
- .../ethernet/stmicro/stmmac/stmmac_platform.h |  2 +-
- 24 files changed, 41 insertions(+), 77 deletions(-)
-
-base-commit: ac9a78681b921877518763ba0e89202254349d1b
--- 
-2.39.2
+Best regards,
+Krzysztof
 
