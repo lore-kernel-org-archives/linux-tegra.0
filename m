@@ -2,140 +2,123 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A781C7EE23
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 May 2023 19:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D761C7EE25
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 May 2023 21:19:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235163AbjEITEC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 May 2023 15:04:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39206 "EHLO
+        id S235694AbjEIVTt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 May 2023 17:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234995AbjEITDq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 May 2023 15:03:46 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640E13A89;
-        Tue,  9 May 2023 12:03:41 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9661a1ff1e9so585041566b.1;
-        Tue, 09 May 2023 12:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683659019; x=1686251019;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=41onpHzQLEVrljVFMSZhqOmakDjAgDTWqK5CRbhigA0=;
-        b=dW3Hcc1ywetN6Ic23ffj31/3v55J7Qvz5V/p3r3jo9eAN/rWaoB+0MDU8nYYGR71p/
-         1Yycr1V2zHueNQCrplRox1+o6yIBrlLezAC9qGD9Umn9Aw05z3QkHfa5GnvScSBxjAv9
-         TjwtwX78JFSAkgEvaIuHL7FwTfFOC1RkNmu/WBtF7h/mkQo4UgdoWb/AYmM+7rl9X3M+
-         skqpXUEavyOKgJ1b7/SsMeVQH8E0l4P3UF0I0LQXMhR3EVV6mEYbhhzKnotkgq3IW3XY
-         WEBjlcepf8KUQo6CdTTljBZnANAgb0vxqKb3tJIwIKifRqufqVo155ubm76zSoUDsNJ0
-         q00Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683659019; x=1686251019;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=41onpHzQLEVrljVFMSZhqOmakDjAgDTWqK5CRbhigA0=;
-        b=Memoc0Zgrg3/3zGWmxT8udalh6e372t4/Wqv2Mij+WU8fH7a7s62lWZq6a+MS3IaCp
-         S0PhdoOm898XdzHSBu7Hc0zw8QGkKnjTSfTNTOvtoq/me6cZ+0gQrlGMnXa7MXQG+M/x
-         3+KJ6vc4KciFnU+2TddJtnsf3RtJ3czb2cZkUKd+BP66ZwdQeMjhPseHIW2fFCxMFR3h
-         nM/ldH0m0otFUnnum80dxAxfeSRmOx9mdZFfXWXlISD7m37dzIXcTJyy5DZqnthCXPwy
-         IQ7ngY9CzvmDM+d/Mx3WPwpJQ4E6sYwt/B9wji4r2tZlOWK9LQmmeuU2KSzGE17wBDVv
-         whjQ==
-X-Gm-Message-State: AC+VfDzqv2IxW2eCusYMf/0ATBTfieH366KCA8ZR4ZXUbpMF5HhwbEMJ
-        GCba+weeLIjdg4Cv4oBACtKjAMgKzVlg7Gp1
-X-Google-Smtp-Source: ACHHUZ5FBMnnDtwDDNO2/H6qZ9X1kDVfqKsjE0ZHjszI7WNAp5BgKlqdRDobHjdJxpqnG0KRdB/+Hg==
-X-Received: by 2002:a17:907:9454:b0:94e:54ec:1a10 with SMTP id dl20-20020a170907945400b0094e54ec1a10mr12516223ejc.29.1683659019239;
-        Tue, 09 May 2023 12:03:39 -0700 (PDT)
-Received: from [127.0.1.1] ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id e2-20020a170906c00200b009697aa5acfcsm1640232ejz.122.2023.05.09.12.03.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 12:03:39 -0700 (PDT)
-From:   Benjamin Bara <bbara93@gmail.com>
-Date:   Tue, 09 May 2023 21:03:02 +0200
-Subject: [PATCH v6 4/5] mfd: tps6586x: use devm-based power off handler
+        with ESMTP id S235683AbjEIVTq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 May 2023 17:19:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F5F5279;
+        Tue,  9 May 2023 14:19:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D23BB6366B;
+        Tue,  9 May 2023 21:19:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB339C433AC;
+        Tue,  9 May 2023 21:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683667183;
+        bh=vPKYro4QLlskCwG8Mem35oe25rxm3WPf7BbJoyHZhbg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qkjirZXOF2jPM4fSG84spB1EAy6y6XpHALJ2Oe+3df8H6nrT8LYUjJRHHme8Egmdr
+         uBNOgp+/Xj+5oW2PMQOEB3AyxEJA2NPo/r+aAsMb+ioYtRjKoDVpYY6Id5WtArt+Rn
+         lcPAddDXxan44kyeqlQ3gMBMjzm0YbKLHFRHGlf+zYCcgfxOUK3FcvWatkAAvmoBg5
+         OvoWbPO53BIQrFlqq1XDFZ4ZRVzte0RJ2bsqEY0ivm0UqiZZt6r+Ek59AaMvASeuNA
+         ur2EDbUGXyOBb1p+cF/TJOisKULPzLSFfDcSQleh0l/AoTV1VShwSkjl+ins+xcF0t
+         EoBdyvs3Z3CtA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, pdeschrijver@nvidia.com,
+        pgaikwad@nvidia.com, mturquette@baylibre.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.3 10/18] clk: tegra20: fix gcc-7 constant overflow warning
+Date:   Tue,  9 May 2023 17:19:18 -0400
+Message-Id: <20230509211928.21010-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230509211928.21010-1-sashal@kernel.org>
+References: <20230509211928.21010-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230327-tegra-pmic-reboot-v6-4-af44a4cd82e9@skidata.com>
-References: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
-In-Reply-To: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
-To:     Wolfram Sang <wsa@kernel.org>, Lee Jones <lee@kernel.org>,
-        rafael.j.wysocki@intel.com
-Cc:     dmitry.osipenko@collabora.com, peterz@infradead.org,
-        jonathanh@nvidia.com, richard.leitner@linux.dev,
-        treding@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-X-Mailer: b4 0.12.2
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Benjamin Bara <benjamin.bara@skidata.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Convert the power off handler to a devm-based power off handler.
+[ Upstream commit b4a2adbf3586efa12fe78b9dec047423e01f3010 ]
 
-Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+Older gcc versions get confused by comparing a u32 value to a negative
+constant in a switch()/case block:
+
+drivers/clk/tegra/clk-tegra20.c: In function 'tegra20_clk_measure_input_freq':
+drivers/clk/tegra/clk-tegra20.c:581:2: error: case label does not reduce to an integer constant
+  case OSC_CTRL_OSC_FREQ_12MHZ:
+  ^~~~
+drivers/clk/tegra/clk-tegra20.c:593:2: error: case label does not reduce to an integer constant
+  case OSC_CTRL_OSC_FREQ_26MHZ:
+
+Make the constants unsigned instead.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20230227085914.2560984-1-arnd@kernel.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/tps6586x.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index 2d947f3f606a..b12c9e18970a 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -22,6 +22,7 @@
- #include <linux/err.h>
- #include <linux/i2c.h>
- #include <linux/platform_device.h>
-+#include <linux/reboot.h>
- #include <linux/regmap.h>
- #include <linux/of.h>
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 422d782475532..dcacc5064d339 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -21,24 +21,24 @@
+ #define MISC_CLK_ENB 0x48
  
-@@ -457,13 +458,21 @@ static const struct regmap_config tps6586x_regmap_config = {
- 	.cache_type = REGCACHE_RBTREE,
- };
- 
--static struct device *tps6586x_dev;
--static void tps6586x_power_off(void)
-+static int tps6586x_power_off_handler(struct sys_off_data *data)
- {
--	if (tps6586x_clr_bits(tps6586x_dev, TPS6586X_SUPPLYENE, EXITSLREQ_BIT))
--		return;
-+	int ret;
+ #define OSC_CTRL 0x50
+-#define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+-#define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+-#define OSC_CTRL_OSC_FREQ_19_2MHZ (1<<30)
+-#define OSC_CTRL_OSC_FREQ_12MHZ (2<<30)
+-#define OSC_CTRL_OSC_FREQ_26MHZ (3<<30)
+-#define OSC_CTRL_MASK (0x3f2 | OSC_CTRL_OSC_FREQ_MASK)
+-
+-#define OSC_CTRL_PLL_REF_DIV_MASK (3<<28)
+-#define OSC_CTRL_PLL_REF_DIV_1		(0<<28)
+-#define OSC_CTRL_PLL_REF_DIV_2		(1<<28)
+-#define OSC_CTRL_PLL_REF_DIV_4		(2<<28)
++#define OSC_CTRL_OSC_FREQ_MASK (3u<<30)
++#define OSC_CTRL_OSC_FREQ_13MHZ (0u<<30)
++#define OSC_CTRL_OSC_FREQ_19_2MHZ (1u<<30)
++#define OSC_CTRL_OSC_FREQ_12MHZ (2u<<30)
++#define OSC_CTRL_OSC_FREQ_26MHZ (3u<<30)
++#define OSC_CTRL_MASK (0x3f2u | OSC_CTRL_OSC_FREQ_MASK)
 +
-+	/* Put the PMIC into sleep state. This takes at least 20ms. */
-+	ret = tps6586x_clr_bits(data->dev, TPS6586X_SUPPLYENE, EXITSLREQ_BIT);
-+	if (ret)
-+		return notifier_from_errno(ret);
-+
-+	ret = tps6586x_set_bits(data->dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
-+	if (ret)
-+		return notifier_from_errno(ret);
++#define OSC_CTRL_PLL_REF_DIV_MASK	(3u<<28)
++#define OSC_CTRL_PLL_REF_DIV_1		(0u<<28)
++#define OSC_CTRL_PLL_REF_DIV_2		(1u<<28)
++#define OSC_CTRL_PLL_REF_DIV_4		(2u<<28)
  
--	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
-+	mdelay(50);
-+	return notifier_from_errno(-ETIME);
- }
+ #define OSC_FREQ_DET 0x58
+-#define OSC_FREQ_DET_TRIG (1<<31)
++#define OSC_FREQ_DET_TRIG (1u<<31)
  
- static void tps6586x_print_version(struct i2c_client *client, int version)
-@@ -559,9 +568,13 @@ static int tps6586x_i2c_probe(struct i2c_client *client)
- 		goto err_add_devs;
- 	}
+ #define OSC_FREQ_DET_STATUS 0x5c
+-#define OSC_FREQ_DET_BUSY (1<<31)
+-#define OSC_FREQ_DET_CNT_MASK 0xFFFF
++#define OSC_FREQ_DET_BUSYu (1<<31)
++#define OSC_FREQ_DET_CNT_MASK 0xFFFFu
  
--	if (pdata->pm_off && !pm_power_off) {
--		tps6586x_dev = &client->dev;
--		pm_power_off = tps6586x_power_off;
-+	if (pdata->pm_off) {
-+		ret = devm_register_power_off_handler(&client->dev, &tps6586x_power_off_handler,
-+						      NULL);
-+		if (ret) {
-+			dev_err(&client->dev, "register power off handler failed: %d\n", ret);
-+			goto err_add_devs;
-+		}
- 	}
+ #define TEGRA20_CLK_PERIPH_BANKS	3
  
- 	return 0;
-
 -- 
-2.34.1
+2.39.2
 
