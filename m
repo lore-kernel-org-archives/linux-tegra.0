@@ -2,393 +2,224 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E304CC7EE25
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 May 2023 20:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5719C77B75
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 May 2023 10:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232904AbjEHUz2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 May 2023 16:55:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48014 "EHLO
+        id S233995AbjEIKjR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 May 2023 06:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjEHUz1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 May 2023 16:55:27 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D58E72A6
-        for <linux-tegra@vger.kernel.org>; Mon,  8 May 2023 13:54:56 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pw7r5-000303-P6; Mon, 08 May 2023 22:53:11 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pw7r3-0024oy-Nl; Mon, 08 May 2023 22:53:09 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pw7r2-002YUk-Pw; Mon, 08 May 2023 22:53:08 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thor Thayer <thor.thayer@linux.intel.com>,
-        Elie Morisse <syniurge@gmail.com>,
-        Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jochen Friedrich <jochen@scram.de>,
-        Benson Leung <bleung@chromium.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Jean-Marie Verdun <verdun@hpe.com>,
-        Nick Hawkins <nick.hawkins@hpe.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Chris Pringle <chris.pringle@phabrix.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Khalil Blaiech <kblaiech@nvidia.com>,
-        Asmaa Mnebhi <asmaa@nvidia.com>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Michael Shych <michaelsh@nvidia.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Qii Wang <qii.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stefan Roese <sr@denx.de>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>, Robert Richter <rric@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Vignesh R <vigneshr@ti.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>, Rob Herring <robh@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Robert Foss <rfoss@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Wei Chen <harperchen1110@gmail.com>,
-        George Cherian <gcherian@marvell.com>,
-        Peter Rosin <peda@axentia.se>,
-        Peter Korsgaard <peter.korsgaard@barco.com>
-Cc:     linux-i2c@vger.kernel.org, kernel@pengutronix.de,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, openbmc@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Guenter Roeck <groeck@chromium.org>,
-        chrome-platform@lists.linux.dev,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jan Dabros <jsd@semihalf.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-mips@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        linux-omap@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH 00/89] i2c: Convert to platform remove callback returning void
-Date:   Mon,  8 May 2023 22:51:37 +0200
-Message-Id: <20230508205306.1474415-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S234756AbjEIKjQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 May 2023 06:39:16 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52DC310F5;
+        Tue,  9 May 2023 03:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683628754; x=1715164754;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X/VcwT3gh20/W0MqnD+XABS3TW1iESZBIie/mj3ztgA=;
+  b=lr++nF2wawlMJDrO0PpY6A8wTT5+zUfseKNu0uIKGkv9pVgCfzZCooaL
+   E81bYHsuV1PpqHZdGyDF5+qdoMO/BV0K39zebsqWboLmJloQ4hH/CKdpJ
+   up2DXXVxo6zRNW+HQIrPlNZNHcNxmeX/eHI+voZdDHKIOHBzPPIZ7T9BW
+   /OQ3ExqNzGoMrF3R1J5BNqtLI2PjeHkc58T1oMO4uPIkU9+bo4f1rPt3/
+   CP7nk8ER58JZn7pr5JKqs4JjXvGq2y8zqX892NvQfaAs6hydMdkwGdNLw
+   2Z6GgEgWAe7kSVBM297lIzalk0rWBWxz9LF1+pfIAIzoUMVQJ+e481rvX
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10704"; a="348724196"
+X-IronPort-AV: E=Sophos;i="5.99,261,1677571200"; 
+   d="scan'208";a="348724196"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 03:39:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10704"; a="810624736"
+X-IronPort-AV: E=Sophos;i="5.99,261,1677571200"; 
+   d="scan'208";a="810624736"
+Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 09 May 2023 03:39:03 -0700
+Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pwKkI-00025b-1O;
+        Tue, 09 May 2023 10:39:02 +0000
+Date:   Tue, 9 May 2023 18:38:29 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mperttunen@nvidia.com
+Cc:     oe-kbuild-all@lists.linux.dev, sudeep.holla@arm.com,
+        talho@nvidia.com, robh@kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stefank@nvidia.com
+Subject: Re: [PATCH 5/5] firmware: tegra: bpmp: Add support for DRAM MRQ GSCs
+Message-ID: <202305091826.DCKDo0L8-lkp@intel.com>
+References: <20230508122048.99953-6-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12259; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=CUiyRkHedGuUngm1XVS44bTPkh5X8UNxtDmuuxmkXfI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkWWA/sUJy//6LnoJE8pZ1jpYWJb4ReEOteWEqx nBbdvdRxiaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZFlgPwAKCRCPgPtYfRL+ TrMyB/47jd7Ku/xKY+yn8Pz8lCxZfeQrwdKR0Ava+mmos9tRoEvf3C/fjgZ6JdPMn2xAOuFj5L0 ChlkHdf+cjgqrDShJg+TdHgusB/fqdoi2SilcdhEg4do3/OuaNy0bmP1lx97NUPi74d38/N8hO4 Wjf9h6QZucyKU5j9n9VuRVgPMcA35GhgWZ+Ga+hU+dlTINCOxdJu/al05N7Ex74ppPtfxjCBTQO f0LzVF+aO+5Q9Uyx/0Q1RBhNY2vAtr4I1t+5bybE+u1pqJ9AZNAgk+NuN67I1nNSjBRl0BtYaE3 u5cZFNC9MgmA4TtzZbTz14vLP4QKcyyxwruCQNqDFAK21Isv
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230508122048.99953-6-pdeschrijver@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+Hi Peter,
 
-this series convers the drivers below drivers/i2c to the .remove_new()
-callback of struct platform_driver(). The motivation is to make the
-remove callback less prone for errors and wrong assumptions. See commit
-5c5a7680e67b ("platform: Provide a remove callback that returns no
-value") for a more detailed rationale.
+kernel test robot noticed the following build warnings:
 
-All but one driver already returned zero unconditionally in their
-.remove() callback, so converting them to .remove_new() is trivial.
-i2c-davinci has two patches in this series, first the error path is
-improved to not return an error code, then it's converted as the others
-drivers are.
+[auto build test WARNING on tegra/for-next]
+[also build test WARNING on robh/for-next linus/master v6.4-rc1 next-20230509]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The two davinci patches are also the only interdependency in this
-series. I was unsure if I should split the series in two, the busses and
-the mux changes; if convenient these can be applied independent of each
-other.
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-De-Schrijver/dt-bindings-mailbox-tegra-Document-Tegra264-HSP/20230508-203107
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20230508122048.99953-6-pdeschrijver%40nvidia.com
+patch subject: [PATCH 5/5] firmware: tegra: bpmp: Add support for DRAM MRQ GSCs
+config: arm64-randconfig-s032-20230507 (https://download.01.org/0day-ci/archive/20230509/202305091826.DCKDo0L8-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 12.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-39-gce1a6720-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/37f37c8af4622908dd3a8ca43d23c4e2310bdc20
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Peter-De-Schrijver/dt-bindings-mailbox-tegra-Document-Tegra264-HSP/20230508-203107
+        git checkout 37f37c8af4622908dd3a8ca43d23c4e2310bdc20
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=arm64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/firmware/tegra/
 
-Best regards
-Uwe
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202305091826.DCKDo0L8-lkp@intel.com/
 
-Uwe Kleine-König (89):
-  i2c: altera: Convert to platform remove callback returning void
-  i2c: amd-mp2-plat: Convert to platform remove callback returning void
-  i2c: aspeed: Convert to platform remove callback returning void
-  i2c: at91-core: Convert to platform remove callback returning void
-  i2c: au1550: Convert to platform remove callback returning void
-  i2c: axxia: Convert to platform remove callback returning void
-  i2c: bcm-iproc: Convert to platform remove callback returning void
-  i2c: bcm-kona: Convert to platform remove callback returning void
-  i2c: bcm2835: Convert to platform remove callback returning void
-  i2c: brcmstb: Convert to platform remove callback returning void
-  i2c: cadence: Convert to platform remove callback returning void
-  i2c: cbus-gpio: Convert to platform remove callback returning void
-  i2c: cht-wc: Convert to platform remove callback returning void
-  i2c: cpm: Convert to platform remove callback returning void
-  i2c: cros-ec-tunnel: Convert to platform remove callback returning
-    void
-  i2c: davinci: Improve error reporting for problems during .remove()
-  i2c: davinci: Convert to platform remove callback returning void
-  i2c: designware-platdrv: Convert to platform remove callback returning
-    void
-  i2c: digicolor: Convert to platform remove callback returning void
-  i2c: dln2: Convert to platform remove callback returning void
-  i2c: emev2: Convert to platform remove callback returning void
-  i2c: exynos5: Convert to platform remove callback returning void
-  i2c: gpio: Convert to platform remove callback returning void
-  i2c: gxp: Convert to platform remove callback returning void
-  i2c: highlander: Convert to platform remove callback returning void
-  i2c: hix5hd2: Convert to platform remove callback returning void
-  i2c: ibm_iic: Convert to platform remove callback returning void
-  i2c: img-scb: Convert to platform remove callback returning void
-  i2c: imx-lpi2c: Convert to platform remove callback returning void
-  i2c: imx: Convert to platform remove callback returning void
-  i2c: iop3xx: Convert to platform remove callback returning void
-  i2c: isch: Convert to platform remove callback returning void
-  i2c: jz4780: Convert to platform remove callback returning void
-  i2c: kempld: Convert to platform remove callback returning void
-  i2c: lpc2k: Convert to platform remove callback returning void
-  i2c: meson: Convert to platform remove callback returning void
-  i2c: microchip-corei2c: Convert to platform remove callback returning
-    void
-  i2c: mlxbf: Convert to platform remove callback returning void
-  i2c: mlxcpld: Convert to platform remove callback returning void
-  i2c: mpc: Convert to platform remove callback returning void
-  i2c: mt65xx: Convert to platform remove callback returning void
-  i2c: mt7621: Convert to platform remove callback returning void
-  i2c: mv64xxx: Convert to platform remove callback returning void
-  i2c: mxs: Convert to platform remove callback returning void
-  i2c: npcm7xx: Convert to platform remove callback returning void
-  i2c: ocores: Convert to platform remove callback returning void
-  i2c: octeon-platdrv: Convert to platform remove callback returning
-    void
-  i2c: omap: Convert to platform remove callback returning void
-  i2c: opal: Convert to platform remove callback returning void
-  i2c: pasemi-platform: Convert to platform remove callback returning
-    void
-  i2c: pca-platform: Convert to platform remove callback returning void
-  i2c: pnx: Convert to platform remove callback returning void
-  i2c: powermac: Convert to platform remove callback returning void
-  i2c: pxa: Convert to platform remove callback returning void
-  i2c: qcom-cci: Convert to platform remove callback returning void
-  i2c: qcom-geni: Convert to platform remove callback returning void
-  i2c: qup: Convert to platform remove callback returning void
-  i2c: rcar: Convert to platform remove callback returning void
-  i2c: riic: Convert to platform remove callback returning void
-  i2c: rk3x: Convert to platform remove callback returning void
-  i2c: rzv2m: Convert to platform remove callback returning void
-  i2c: s3c2410: Convert to platform remove callback returning void
-  i2c: scmi: Convert to platform remove callback returning void
-  i2c: scx200_acb: Convert to platform remove callback returning void
-  i2c: sh7760: Convert to platform remove callback returning void
-  i2c: sh_mobile: Convert to platform remove callback returning void
-  i2c: simtec: Convert to platform remove callback returning void
-  i2c: st: Convert to platform remove callback returning void
-  i2c: stm32f4: Convert to platform remove callback returning void
-  i2c: stm32f7: Convert to platform remove callback returning void
-  i2c: sun6i-p2wi: Convert to platform remove callback returning void
-  i2c: synquacer: Convert to platform remove callback returning void
-  i2c: tegra-bpmp: Convert to platform remove callback returning void
-  i2c: tegra: Convert to platform remove callback returning void
-  i2c: uniphier-f: Convert to platform remove callback returning void
-  i2c: uniphier: Convert to platform remove callback returning void
-  i2c: versatile: Convert to platform remove callback returning void
-  i2c: viperboard: Convert to platform remove callback returning void
-  i2c: wmt: Convert to platform remove callback returning void
-  i2c: xgene-slimpro: Convert to platform remove callback returning void
-  i2c: xiic: Convert to platform remove callback returning void
-  i2c: xlp9xx: Convert to platform remove callback returning void
-  i2c: mux: arb-gpio-challenge: Convert to platform remove callback
-    returning void
-  i2c: mux: demux-pinctrl: Convert to platform remove callback returning
-    void
-  i2c: mux: gpio: Convert to platform remove callback returning void
-  i2c: mux: gpmux: Convert to platform remove callback returning void
-  i2c: mux: mlxcpld: Convert to platform remove callback returning void
-  i2c: mux: pinctrl: Convert to platform remove callback returning void
-  i2c: mux: reg: Convert to platform remove callback returning void
+sparse warnings: (new ones prefixed by >>)
+>> drivers/firmware/tegra/bpmp-tegra186.c:190:34: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *addr @@     got void [noderef] __iomem *virt @@
+   drivers/firmware/tegra/bpmp-tegra186.c:190:34: sparse:     expected void *addr
+   drivers/firmware/tegra/bpmp-tegra186.c:190:34: sparse:     got void [noderef] __iomem *virt
+>> drivers/firmware/tegra/bpmp-tegra186.c:248:23: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __iomem *virt @@     got void * @@
+   drivers/firmware/tegra/bpmp-tegra186.c:248:23: sparse:     expected void [noderef] __iomem *virt
+   drivers/firmware/tegra/bpmp-tegra186.c:248:23: sparse:     got void *
+   drivers/firmware/tegra/bpmp-tegra186.c:261:23: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __iomem *virt @@     got void * @@
+   drivers/firmware/tegra/bpmp-tegra186.c:261:23: sparse:     expected void [noderef] __iomem *virt
+   drivers/firmware/tegra/bpmp-tegra186.c:261:23: sparse:     got void *
+   drivers/firmware/tegra/bpmp-tegra186.c:303:23: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __iomem *virt @@     got void * @@
+   drivers/firmware/tegra/bpmp-tegra186.c:303:23: sparse:     expected void [noderef] __iomem *virt
+   drivers/firmware/tegra/bpmp-tegra186.c:303:23: sparse:     got void *
 
- drivers/i2c/busses/i2c-altera.c             |  6 ++----
- drivers/i2c/busses/i2c-amd-mp2-plat.c       |  5 ++---
- drivers/i2c/busses/i2c-aspeed.c             |  6 ++----
- drivers/i2c/busses/i2c-at91-core.c          |  6 ++----
- drivers/i2c/busses/i2c-au1550.c             |  5 ++---
- drivers/i2c/busses/i2c-axxia.c              |  6 ++----
- drivers/i2c/busses/i2c-bcm-iproc.c          |  6 ++----
- drivers/i2c/busses/i2c-bcm-kona.c           |  6 ++----
- drivers/i2c/busses/i2c-bcm2835.c            |  6 ++----
- drivers/i2c/busses/i2c-brcmstb.c            |  5 ++---
- drivers/i2c/busses/i2c-cadence.c            |  6 ++----
- drivers/i2c/busses/i2c-cbus-gpio.c          |  6 ++----
- drivers/i2c/busses/i2c-cht-wc.c             |  6 ++----
- drivers/i2c/busses/i2c-cpm.c                |  6 ++----
- drivers/i2c/busses/i2c-cros-ec-tunnel.c     |  6 ++----
- drivers/i2c/busses/i2c-davinci.c            | 14 ++++++--------
- drivers/i2c/busses/i2c-designware-platdrv.c |  6 ++----
- drivers/i2c/busses/i2c-digicolor.c          |  6 ++----
- drivers/i2c/busses/i2c-dln2.c               |  6 ++----
- drivers/i2c/busses/i2c-emev2.c              |  6 ++----
- drivers/i2c/busses/i2c-exynos5.c            |  6 ++----
- drivers/i2c/busses/i2c-gpio.c               |  6 ++----
- drivers/i2c/busses/i2c-gxp.c                |  6 ++----
- drivers/i2c/busses/i2c-highlander.c         |  6 ++----
- drivers/i2c/busses/i2c-hix5hd2.c            |  6 ++----
- drivers/i2c/busses/i2c-ibm_iic.c            |  6 ++----
- drivers/i2c/busses/i2c-img-scb.c            |  6 ++----
- drivers/i2c/busses/i2c-imx-lpi2c.c          |  6 ++----
- drivers/i2c/busses/i2c-imx.c                |  6 ++----
- drivers/i2c/busses/i2c-iop3xx.c             |  6 ++----
- drivers/i2c/busses/i2c-isch.c               |  6 ++----
- drivers/i2c/busses/i2c-jz4780.c             |  5 ++---
- drivers/i2c/busses/i2c-kempld.c             |  6 ++----
- drivers/i2c/busses/i2c-lpc2k.c              |  6 ++----
- drivers/i2c/busses/i2c-meson.c              |  6 ++----
- drivers/i2c/busses/i2c-microchip-corei2c.c  |  6 ++----
- drivers/i2c/busses/i2c-mlxbf.c              |  6 ++----
- drivers/i2c/busses/i2c-mlxcpld.c            |  6 ++----
- drivers/i2c/busses/i2c-mpc.c                |  6 ++----
- drivers/i2c/busses/i2c-mt65xx.c             |  6 ++----
- drivers/i2c/busses/i2c-mt7621.c             |  6 ++----
- drivers/i2c/busses/i2c-mv64xxx.c            |  6 ++----
- drivers/i2c/busses/i2c-mxs.c                |  6 ++----
- drivers/i2c/busses/i2c-npcm7xx.c            |  5 ++---
- drivers/i2c/busses/i2c-ocores.c             |  6 ++----
- drivers/i2c/busses/i2c-octeon-platdrv.c     |  5 ++---
- drivers/i2c/busses/i2c-omap.c               |  6 ++----
- drivers/i2c/busses/i2c-opal.c               |  6 ++----
- drivers/i2c/busses/i2c-pasemi-platform.c    |  5 ++---
- drivers/i2c/busses/i2c-pca-platform.c       |  6 ++----
- drivers/i2c/busses/i2c-pnx.c                |  6 ++----
- drivers/i2c/busses/i2c-powermac.c           |  6 ++----
- drivers/i2c/busses/i2c-pxa.c                |  6 ++----
- drivers/i2c/busses/i2c-qcom-cci.c           |  6 ++----
- drivers/i2c/busses/i2c-qcom-geni.c          |  5 ++---
- drivers/i2c/busses/i2c-qup.c                |  5 ++---
- drivers/i2c/busses/i2c-rcar.c               |  6 ++----
- drivers/i2c/busses/i2c-riic.c               |  6 ++----
- drivers/i2c/busses/i2c-rk3x.c               |  6 ++----
- drivers/i2c/busses/i2c-rzv2m.c              |  6 ++----
- drivers/i2c/busses/i2c-s3c2410.c            |  6 ++----
- drivers/i2c/busses/i2c-scmi.c               |  6 ++----
- drivers/i2c/busses/i2c-sh7760.c             |  6 ++----
- drivers/i2c/busses/i2c-sh_mobile.c          |  5 ++---
- drivers/i2c/busses/i2c-simtec.c             |  6 ++----
- drivers/i2c/busses/i2c-st.c                 |  6 ++----
- drivers/i2c/busses/i2c-stm32f4.c            |  6 ++----
- drivers/i2c/busses/i2c-stm32f7.c            |  6 ++----
- drivers/i2c/busses/i2c-sun6i-p2wi.c         |  6 ++----
- drivers/i2c/busses/i2c-synquacer.c          |  6 ++----
- drivers/i2c/busses/i2c-tegra-bpmp.c         |  6 ++----
- drivers/i2c/busses/i2c-tegra.c              |  6 ++----
- drivers/i2c/busses/i2c-uniphier-f.c         |  6 ++----
- drivers/i2c/busses/i2c-uniphier.c           |  6 ++----
- drivers/i2c/busses/i2c-versatile.c          |  5 ++---
- drivers/i2c/busses/i2c-viperboard.c         |  6 ++----
- drivers/i2c/busses/i2c-wmt.c                |  6 ++----
- drivers/i2c/busses/i2c-xgene-slimpro.c      |  6 ++----
- drivers/i2c/busses/i2c-xiic.c               |  6 ++----
- drivers/i2c/busses/i2c-xlp9xx.c             |  6 ++----
- drivers/i2c/busses/scx200_acb.c             |  6 ++----
- drivers/i2c/muxes/i2c-arb-gpio-challenge.c  |  5 ++---
- drivers/i2c/muxes/i2c-demux-pinctrl.c       |  6 ++----
- drivers/i2c/muxes/i2c-mux-gpio.c            |  6 ++----
- drivers/i2c/muxes/i2c-mux-gpmux.c           |  6 ++----
- drivers/i2c/muxes/i2c-mux-mlxcpld.c         |  5 ++---
- drivers/i2c/muxes/i2c-mux-pinctrl.c         |  6 ++----
- drivers/i2c/muxes/i2c-mux-reg.c             |  6 ++----
- 88 files changed, 180 insertions(+), 343 deletions(-)
+vim +190 drivers/firmware/tegra/bpmp-tegra186.c
 
-base-commit: ac9a78681b921877518763ba0e89202254349d1b
+   170	
+   171	static void tegra186_bpmp_channel_deinit(struct tegra_bpmp *bpmp)
+   172	{
+   173		int i;
+   174		struct tegra186_bpmp *priv = bpmp->priv;
+   175	
+   176		for (i = 0; i < bpmp->threaded.count; i++) {
+   177			if (!bpmp->threaded_channels[i].bpmp)
+   178				continue;
+   179	
+   180			tegra186_bpmp_channel_cleanup(&bpmp->threaded_channels[i]);
+   181		}
+   182	
+   183		tegra186_bpmp_channel_cleanup(bpmp->rx_channel);
+   184		tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
+   185	
+   186		if (priv->type == TEGRA_SRAM) {
+   187			gen_pool_free(priv->sram.tx, (unsigned long)priv->tx.virt, 4096);
+   188			gen_pool_free(priv->sram.rx, (unsigned long)priv->rx.virt, 4096);
+   189		} else if (priv->type == TEGRA_RMEM) {
+ > 190			memunmap(priv->tx.virt);
+   191		}
+   192	}
+   193	
+   194	static int tegra186_bpmp_channel_setup(struct tegra_bpmp *bpmp)
+   195	{
+   196		unsigned int i;
+   197		int err;
+   198	
+   199		err = tegra186_bpmp_channel_init(bpmp->tx_channel, bpmp,
+   200						 bpmp->soc->channels.cpu_tx.offset);
+   201		if (err < 0)
+   202			return err;
+   203	
+   204		err = tegra186_bpmp_channel_init(bpmp->rx_channel, bpmp,
+   205						 bpmp->soc->channels.cpu_rx.offset);
+   206		if (err < 0) {
+   207			tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
+   208			return err;
+   209		}
+   210	
+   211		for (i = 0; i < bpmp->threaded.count; i++) {
+   212			unsigned int index = bpmp->soc->channels.thread.offset + i;
+   213	
+   214			err = tegra186_bpmp_channel_init(&bpmp->threaded_channels[i],
+   215							 bpmp, index);
+   216			if (err < 0)
+   217				break;
+   218		}
+   219	
+   220		if (err < 0)
+   221			tegra186_bpmp_channel_deinit(bpmp);
+   222	
+   223		return err;
+   224	}
+   225	
+   226	static void tegra186_bpmp_reset_channels(struct tegra_bpmp *bpmp)
+   227	{
+   228		unsigned int i;
+   229	
+   230		tegra186_bpmp_channel_reset(bpmp->tx_channel);
+   231		tegra186_bpmp_channel_reset(bpmp->rx_channel);
+   232	
+   233		for (i = 0; i < bpmp->threaded.count; i++)
+   234			tegra186_bpmp_channel_reset(&bpmp->threaded_channels[i]);
+   235	}
+   236	
+   237	static int tegra186_bpmp_sram_init(struct tegra_bpmp *bpmp)
+   238	{
+   239		int err;
+   240		struct tegra186_bpmp *priv = bpmp->priv;
+   241	
+   242		priv->sram.tx = of_gen_pool_get(bpmp->dev->of_node, "shmem", 0);
+   243		if (!priv->sram.tx) {
+   244			dev_err(bpmp->dev, "TX shmem pool not found\n");
+   245			return -EPROBE_DEFER;
+   246		}
+   247	
+ > 248		priv->tx.virt = gen_pool_dma_alloc(priv->sram.tx, 4096, &priv->tx.phys);
+   249		if (!priv->tx.virt) {
+   250			dev_err(bpmp->dev, "failed to allocate from TX pool\n");
+   251			return -ENOMEM;
+   252		}
+   253	
+   254		priv->sram.rx = of_gen_pool_get(bpmp->dev->of_node, "shmem", 1);
+   255		if (!priv->sram.rx) {
+   256			dev_err(bpmp->dev, "RX shmem pool not found\n");
+   257			err = -EPROBE_DEFER;
+   258			goto free_tx;
+   259		}
+   260	
+   261		priv->rx.virt = gen_pool_dma_alloc(priv->sram.rx, 4096, &priv->rx.phys);
+   262		if (!priv->rx.virt) {
+   263			dev_err(bpmp->dev, "failed to allocate from RX pool\n");
+   264			err = -ENOMEM;
+   265			goto free_tx;
+   266		}
+   267	
+   268		priv->type = TEGRA_SRAM;
+   269	
+   270		return 0;
+   271	
+   272	free_tx:
+   273		gen_pool_free(priv->sram.tx, (unsigned long)priv->tx.virt, 4096);
+   274	
+   275		return err;
+   276	}
+   277	
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
