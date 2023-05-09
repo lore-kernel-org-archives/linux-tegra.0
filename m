@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D761C7EE25
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 May 2023 21:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8195C77B75
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 May 2023 21:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235694AbjEIVTt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 May 2023 17:19:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
+        id S236051AbjEIVVx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 May 2023 17:21:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235683AbjEIVTq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 May 2023 17:19:46 -0400
+        with ESMTP id S229734AbjEIVVS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 May 2023 17:21:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F5F5279;
-        Tue,  9 May 2023 14:19:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A89857DB3;
+        Tue,  9 May 2023 14:20:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D23BB6366B;
-        Tue,  9 May 2023 21:19:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB339C433AC;
-        Tue,  9 May 2023 21:19:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D6E763748;
+        Tue,  9 May 2023 21:20:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402B9C4339E;
+        Tue,  9 May 2023 21:20:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683667183;
+        s=k20201202; t=1683667207;
         bh=vPKYro4QLlskCwG8Mem35oe25rxm3WPf7BbJoyHZhbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qkjirZXOF2jPM4fSG84spB1EAy6y6XpHALJ2Oe+3df8H6nrT8LYUjJRHHme8Egmdr
-         uBNOgp+/Xj+5oW2PMQOEB3AyxEJA2NPo/r+aAsMb+ioYtRjKoDVpYY6Id5WtArt+Rn
-         lcPAddDXxan44kyeqlQ3gMBMjzm0YbKLHFRHGlf+zYCcgfxOUK3FcvWatkAAvmoBg5
-         OvoWbPO53BIQrFlqq1XDFZ4ZRVzte0RJ2bsqEY0ivm0UqiZZt6r+Ek59AaMvASeuNA
-         ur2EDbUGXyOBb1p+cF/TJOisKULPzLSFfDcSQleh0l/AoTV1VShwSkjl+ins+xcF0t
-         EoBdyvs3Z3CtA==
+        b=YX/EqwBbJlW0ljOUklUJV96u9fnbLmQfHQ0CtC4uG6W926Sz8TZdMdsLOFoLUYXiE
+         leXcdSOy6ai4mI0SLh0CjF0BGIIuqrQW3k4DyVwzbGelRBPsPx4QXzQROgE6BUksrQ
+         a3pyPmglZOz6qMB9T/A1oaVK4stcup2ExTEqHQOTvx5xsMyGa2+8xFnEPpkG+mBht8
+         S8cYyuPaGashQCw8isXv9KHp+Zd50a55hNfBCWIWSA1j2mEz1djxWh6h86BjPGjQBm
+         CRB/LyI2m1VfHFHlngmajTkZg4xUK2NBK+dojyr0ZhjVBx9PXhxyNPitoq9PQbzMxn
+         Kd0s53J51a4+Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
@@ -38,12 +38,12 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
         pgaikwad@nvidia.com, mturquette@baylibre.com,
         thierry.reding@gmail.com, jonathanh@nvidia.com,
         linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.3 10/18] clk: tegra20: fix gcc-7 constant overflow warning
-Date:   Tue,  9 May 2023 17:19:18 -0400
-Message-Id: <20230509211928.21010-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.2 10/18] clk: tegra20: fix gcc-7 constant overflow warning
+Date:   Tue,  9 May 2023 17:19:48 -0400
+Message-Id: <20230509211958.21596-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230509211928.21010-1-sashal@kernel.org>
-References: <20230509211928.21010-1-sashal@kernel.org>
+In-Reply-To: <20230509211958.21596-1-sashal@kernel.org>
+References: <20230509211958.21596-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
