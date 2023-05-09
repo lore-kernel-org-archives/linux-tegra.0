@@ -2,175 +2,326 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A84C77B7C
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 May 2023 14:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDE6C7EE2F
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 May 2023 17:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235775AbjEIOsE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 May 2023 10:48:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
+        id S233624AbjEIRi1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 May 2023 13:38:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235438AbjEIOsD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 May 2023 10:48:03 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on20617.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eab::617])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35264E6A;
-        Tue,  9 May 2023 07:48:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jpSbmnyYXAJ3f1Kd8jqrx0UG0j2RWMOULG6Aeza8aRWxfa/6nH/itkJKoZ71q6QyoU8OQ29AgrWifbFjYMK/2zv3F8ntzvdzkvbouyYC0HtI0VPLu+QxI4SLG8kAY2KCcey1C4/FXyh210xzHeaUqTYfGahcHBChe8t64S4S3DGjnvjtlQ8djhPISgL7Q9HPKH4BoNZWn9iFxQLBq35FZYswJRARxMs1sQ2h+i3T84yap6cNiVkXpDdLaaK2S+x2VoOj/jyKUsWeKyBPL6sGYfbiyChvJ/5MyoDGbkPZor+7oilQsCx8V5QTwS5R47wwxnP17qCL6Mkg576qTNDyKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mBMvaTwB/d/bpYmBActCJBpt6VsoE9OlH3gndvwhubk=;
- b=M9uWp38neQnpAZvqGZTEy0HUon8+FJQ5J8f9Jr1/ys2iORxDLzLkZM5HaL7X6y/dCwjwK3lVJBZ5V7L51NP/OjMWPLgk2rS7A/LgNOxGO5fhe8G0N9csvBFL8F/ndlLRAtLrFQ4rPldR9q09p51h32CA2bdRNON5gQbab1XHxJoOu3t+wobOwEBbLvatdAp/+1fX3mX1tpEaITN/HhMN6KZxRDV3nI5sRUJp41bHCpRjU3tldUxtq5PED3oXlyVyijg/+7tsAsZjeiG1YZ6KOTaPCfKGf5aJbeNa2CR32N4jGwUu2yWQdaExGLlYzgzjIfMi4Yx6eNbEQJ3+gk7oSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mBMvaTwB/d/bpYmBActCJBpt6VsoE9OlH3gndvwhubk=;
- b=NMGFiJuA9SN2dLri2AQ4YLPenL9p5yEG7cJc02REIVzh9O3AxfIxydY4PCw4P5K1Phi4dOapFIeL+Hk7w6G0PjmP5z5RW7J2FuieRqLYonw0xWmrpGjHSpkVEPqBqRO5oM6JDGoJNzU6X2uqc1gkRbBhs5nPFZz4F3adFTcKNYdk+w27FzWx3Q1HMwasYwK/naIssoiv8OYsNlMsYBn9XgUHGPLvwo4ijw2ygr7pX/eGMoqIhlL1g+id/+BS8sfmX+0qh+bNh5fQ5x58VrxRCLQoKCFInO/jejez7TY19Wn84LrbZok4B5Cyav25dLq+UTdZQniwEKjIP1oVgGvPVw==
-Received: from BN9P223CA0017.NAMP223.PROD.OUTLOOK.COM (2603:10b6:408:10b::22)
- by CH2PR12MB4070.namprd12.prod.outlook.com (2603:10b6:610:ae::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.33; Tue, 9 May
- 2023 14:47:58 +0000
-Received: from BN8NAM11FT029.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10b:cafe::d7) by BN9P223CA0017.outlook.office365.com
- (2603:10b6:408:10b::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.18 via Frontend
- Transport; Tue, 9 May 2023 14:47:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN8NAM11FT029.mail.protection.outlook.com (10.13.177.68) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6387.18 via Frontend Transport; Tue, 9 May 2023 14:47:58 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 9 May 2023
- 07:47:49 -0700
-Received: from [10.41.21.79] (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 9 May 2023
- 07:47:43 -0700
-Message-ID: <10e2d3b4-d66f-947f-4643-97b1f04e4b31@nvidia.com>
-Date:   Tue, 9 May 2023 20:17:41 +0530
+        with ESMTP id S229491AbjEIRi0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 May 2023 13:38:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87AA22737;
+        Tue,  9 May 2023 10:38:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F1EDC62F5E;
+        Tue,  9 May 2023 17:38:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505E9C433D2;
+        Tue,  9 May 2023 17:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683653903;
+        bh=MGShGh6VlR3Hv1wloISBcqQ3c580bpsFZyJYjZpPIOc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=SZZkL4vQkF3AJdtwH9gbqGDk+xHHq8tV5XNIdopJaR4FlgR4t0ooio/8DGBpkkDI1
+         9XvZh/u8VrwtVLR6+bWUtuZfy3ka3/YOGDr13I6xXvr+C2HbOIlR3sg+oRq+s6WkaX
+         Rkqh5xGd0kOzk1YjGukRVB1zds+TGaaDX2jB0kRdTsqYsrkO3Ft7JAKYCh7PMGBLpW
+         alJPaiC0i7aYN/8emkDIP9Xwx4f44X6MEjZhGFJkaNCeUuWlR3XsB9wLz22IZkVMf/
+         NN+1vwZ7hdXXNsKoUMdjVg4qk+znXu6AnK8f8h7pRveIc4z909KgFaPptU75ZM77M2
+         VmsQjc6DYnN7Q==
+Message-ID: <1b766164-b5e8-61ac-bf73-6d2c49c72409@kernel.org>
+Date:   Tue, 9 May 2023 12:37:39 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [Patch v7 1/8] memory: tegra: add interconnect support for DRAM
- scaling in Tegra234
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <treding@nvidia.com>, <dmitry.osipenko@collabora.com>,
-        <viresh.kumar@linaro.org>, <rafael@kernel.org>,
-        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <lpieralisi@kernel.org>, <helgaas@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
-        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
-        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
-        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <20230424131337.20151-1-sumitg@nvidia.com>
- <20230424131337.20151-2-sumitg@nvidia.com>
- <7c6c6584-204a-ada1-d669-2e8bef50e5e5@linaro.org>
- <3071273b-b03b-5fc8-ffa1-9b18311a3a5d@nvidia.com>
- <5ab9687e-756d-f94b-b085-931d4ea534c1@nvidia.com>
- <10b32e55-4d28-5405-035e-c73a514c95e4@linaro.org>
- <14438cf9-ec78-afb5-107a-4ed954ac0eb7@nvidia.com>
- <0815c0b5-304b-568f-5a64-d19d7d2aeb93@linaro.org>
+Subject: Re: [PATCH v3 29/65] clk: socfpga: gate: Add a determine_rate hook
 Content-Language: en-US
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <0815c0b5-304b-568f-5a64-d19d7d2aeb93@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+ <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
+ <679921ee-98d4-d6ef-5934-e009fd4b31fc@kernel.org>
+ <sjlp5ubnpvulgwhhymmfkmmobkgxacyqwagqozodkee3di2qik@3igj6k3zgbk6>
+ <57dd81d0-510e-0fab-670d-1109eb8dd974@kernel.org>
+ <tgtfisqxubin4cjj6q26fboirbcnjzcazt5y3m322lw5lskz6l@d3tgz4hdfnk2>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <tgtfisqxubin4cjj6q26fboirbcnjzcazt5y3m322lw5lskz6l@d3tgz4hdfnk2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT029:EE_|CH2PR12MB4070:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5d73416-18af-4439-8d07-08db509c6169
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Hm1NFOYmdVbEo6lTkAsiNJOGE0sXD2tFlXTp1MY+1JQMSBW4daycBzI78SQhhSdhiFlQY5vRwybVUtd+cuAU7i5cZTZEvmcqZ6hvoByEkFYgAaWrA/Pu9CZwkYv3+70V0YmVxLThSa9HPAQJAND1bPxMsHpNiW0+MQB+q97gOB3S9gVRrW2beJXuH3JlhG5iYl+kIh+ZwPkoV0VGv7bV7M3IEh0Vq804vbR79ob/71irqIjwOniuucNxeb1V3qW/WKmFgLWWlTWHYQYndm4gNFl7CU24CLmNRBuKObDGii5ozPVR++elTCWZj67lyVzO6Hu1h4ECrUkzXfkaI5pTI+BdOwn/Oo/goZkEY7cMe+eZTuXyozLaInFX5d/hUiQMOx9sfVvCIozC2ARYggrYSP3HCRvtqpkKFdKdmLuNQcO1N1LOJu9klDYKFPRpM/djualjMHomIAUW6I+b9RSSmTzzzSVZjvRX192edvOeWgoXLgJRpYDFVFP5/lmEOnm7erRqiny6Pi+F/+in82IcTVx+LmpkZ30S7uCYhJeyJ79w3ubdQ8Hmfr4uSPXmaCmLhdewwMQ3Szw7/MIXh5ztjYGL1EiMEDVPbMmQGBUahJ94GSyC6fqcYW0cPDq3xgSXlCByF8UQqdwzuaEb/RMuY1t20IGVr/Q7BzRMVZabSGacWxVrbXg8RJ4/tGHaHGqTBopMuzeTrXsFq8lSi1EjzvBEBn/B8ZVkSFleXHwk0V8=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(396003)(346002)(136003)(451199021)(46966006)(36840700001)(40470700004)(70586007)(70206006)(356005)(7636003)(4326008)(40480700001)(40460700003)(41300700001)(426003)(336012)(316002)(31696002)(107886003)(82740400003)(16526019)(2906002)(86362001)(186003)(2616005)(36756003)(82310400005)(5660300002)(53546011)(8936002)(8676002)(7416002)(26005)(36860700001)(54906003)(16576012)(110136005)(31686004)(47076005)(478600001)(83380400001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2023 14:47:58.0609
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5d73416-18af-4439-8d07-08db509c6169
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT029.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4070
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Maxime,
 
-
-On 09/05/23 19:06, Krzysztof Kozlowski wrote:
-> External email: Use caution opening links or attachments
+On 5/4/23 12:04, Maxime Ripard wrote:
+> Hi Dinh,
 > 
-> 
-> On 09/05/2023 15:17, Sumit Gupta wrote:
->>>>>>> +                     /*
->>>>>>> +                      * MC driver probe can't get BPMP reference as
->>>>>>> it gets probed
->>>>>>> +                      * earlier than BPMP. So, save the BPMP ref got
->>>>>>> from the EMC
->>>>>>> +                      * DT node in the mc->bpmp and use it in MC's
->>>>>>> icc_set hook.
->>>>>>> +                      */
->>>>>>> +                     mc->bpmp = emc->bpmp;
->>>>>>
->>>>>> This (and ()) are called without any locking. You register first the
->>>>>> interconnect, so set() callback can be used, right? Then set() could be
->>>>>> called anytime between tegra_emc_interconnect_init() and assignment
->>>>>> above. How do you synchronize these?
->>>>>>
->>>>>> Best regards,
->>>>>> Krzysztof
->>>>>>
->>>>>
->>>>> Currently, the tegra234_mc_icc_set() has NULL check. So, it will give
->>>>> this error.
->>>>>     if (!mc->bpmp) {
+> On Thu, Apr 27, 2023 at 02:09:48PM -0500, Dinh Nguyen wrote:
+>> Hi Maxime,
+>>
+>> On 4/25/23 09:48, Maxime Ripard wrote:
+>>> Hi Dinh,
 >>>
->>> How does it solve concurrent accesses and re-ordering of instructions by
->>> compiler or CPU?
+>>> On Mon, Apr 24, 2023 at 01:32:28PM -0500, Dinh Nguyen wrote:
+>>>> On 4/4/23 05:11, Maxime Ripard wrote:
+>>>>> The SoCFGPA gate clock implements a mux with a set_parent hook, but
+>>>>> doesn't provide a determine_rate implementation.
+>>>>>
+>>>>> This is a bit odd, since set_parent() is there to, as its name implies,
+>>>>> change the parent of a clock. However, the most likely candidate to
+>>>>> trigger that parent change is a call to clk_set_rate(), with
+>>>>> determine_rate() figuring out which parent is the best suited for a
+>>>>> given rate.
+>>>>>
+>>>>> The other trigger would be a call to clk_set_parent(), but it's far less
+>>>>> used, and it doesn't look like there's any obvious user for that clock.
+>>>>>
+>>>>> So, the set_parent hook is effectively unused, possibly because of an
+>>>>> oversight. However, it could also be an explicit decision by the
+>>>>> original author to avoid any reparenting but through an explicit call to
+>>>>> clk_set_parent().
+>>>>>
+>>>>> The latter case would be equivalent to setting the flag
+>>>>> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+>>>>> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+>>>>> implementation is provided, clk_round_rate() (through
+>>>>> clk_core_round_rate_nolock()) will call itself on the parent if
+>>>>> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+>>>>> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+>>>>> CLK_SET_RATE_NO_REPARENT is set.
+>>>>>
+>>>>> And if it was an oversight, then we are at least explicit about our
+>>>>> behavior now and it can be further refined down the line.
+>>>>>
+>>>>> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+>>>>> ---
+>>>>>     drivers/clk/socfpga/clk-gate.c | 3 ++-
+>>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+>>>>> index 32ccda960f28..cbba8462a09e 100644
+>>>>> --- a/drivers/clk/socfpga/clk-gate.c
+>>>>> +++ b/drivers/clk/socfpga/clk-gate.c
+>>>>> @@ -110,6 +110,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
+>>>>>     static struct clk_ops gateclk_ops = {
+>>>>>     	.recalc_rate = socfpga_clk_recalc_rate,
+>>>>> +	.determine_rate = __clk_mux_determine_rate,
+>>>>>     	.get_parent = socfpga_clk_get_parent,
+>>>>>     	.set_parent = socfpga_clk_set_parent,
+>>>>>     };
+>>>>> @@ -166,7 +167,7 @@ void __init socfpga_gate_init(struct device_node *node)
+>>>>>     	init.name = clk_name;
+>>>>>     	init.ops = ops;
+>>>>> -	init.flags = 0;
+>>>>> +	init.flags = CLK_SET_RATE_NO_REPARENT;
+>>>>>     	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+>>>>>     	if (init.num_parents < 2) {
+>>>>>
+>>>>
+>>>> This patch broke SoCFPGA boot serial port. The characters are mangled.
+>>>
+>>> Do you have any other access to that board? If so, could you dump
+>>> clk_summary in debugfs with and without that patch?
 >>>
 >>
->> Now, the "mc->bpmp" is set before tegra_emc_interconnect_init().
->> So, until the EMC interconnect initializes, set() won't be
->> called as the devm_of_icc_get() call will fail.
+>> That dump from the clk_summary are identical for both cases.
 > 
-> What if compiler puts "mc->bpmp" assignment after
-> tegra_emc_interconnect_init()?
+> Thanks for testing
 > 
-> What if CPU executes above assignment also after
-> tegra_emc_interconnect_init()?
+> I'm a bit confused, there should be no difference in behaviour, and if
+> there was any difference I would expect the clock tree to be somewhat
+> different.
 > 
-> Considering amount of code inside tegra_emc_interconnect_init() second
-> case is rather unlikely, but first possible, right?
+> Could you still paste the clk_summary (and dmesg) output? Which UART
+> driver is being used?
 > 
-> Best regards,
-> Krzysztof
+> Also, is there a way for me to test it somehow?
 > 
 
-Yes, for protection from compiler re-ordering I can add
-barrier() after the assignment.
+Apologies, but there is a diff with/without this patch:
 
-   mc->bpmp = emc->bpmp;
-   barrier();
+With patch:
+<           l4_sp_clk                   3        3        0   100000000 
+         0     0  50000         ?
+---
+Without patch:
+ >           l4_sp_clk                   4        4        0   100000000 
+          0     0  50000         ?
 
-Thank you,
-Sumit Gupta
+The enable/prepare count is 4 instead of 3 in the case of a working 
+UART. The debug uart is using the lp_sp_clk.
+
+
+The Cyclone5 devkits are pretty cheap if you want to get one.
+
+Here is the full out of clk_summary:
+
+# cat /sys/kernel/debug/clk/clk_summary
+                                  enable  prepare protect 
+                 duty  hardware
+    clock                          count    count    count rate 
+accuracy phase  cycle    enable
+-------------------------------------------------------------------------------------------------------
+  osc1                                 5        5        0 25000000 
+     0     0  50000         Y
+     sdram_pll                         0        0        0 800000000 
+      0     0  50000         Y
+        h2f_usr2_clk                   0        0        0 133333333 
+      0     0  50000         Y
+           h2f_user2_clk               0        0        0 133333333 
+      0     0  50000         ?
+        ddr_dq_clk                     0        0        0 400000000 
+      0     0  50000         Y
+           ddr_dq_clk_gate             0        0        0 400000000 
+      0     0  50000         ?
+        ddr_2x_dqs_clk                 0        0        0 800000000 
+      0     0  50000         Y
+           ddr_2x_dqs_clk_gate         0        0        0 800000000 
+      0     0  50000         ?
+        ddr_dqs_clk                    0        0        0 400000000 
+      0     0  50000         Y
+           ddr_dqs_clk_gate            0        0        0 400000000 
+      0     0  50000         ?
+     periph_pll                        3        3        0 1000000000 
+       0     0  50000         Y
+        h2f_usr1_clk                   0        0        0 1953125 
+    0     0  50000         Y
+           h2f_user1_clk               0        0        0 1953125 
+    0     0  50000         ?
+        per_base_clk                   4        4        0 200000000 
+      0     0  50000         Y
+           gpio_db_clk                 0        0        0 32000 
+  0     0  50000         ?
+           can1_clk                    0        0        0 40000000 
+     0     0  50000         ?
+           can0_clk                    0        0        0 100000000 
+      0     0  50000         ?
+           spi_m_clk                   1        1        0 200000000 
+      0     0  50000         ?
+           usb_mp_clk                  1        1        0 200000000 
+      0     0  50000         ?
+           l4_sp_clk                   4        4        0 100000000 
+      0     0  50000         ?
+           l4_mp_clk                   1        1        0 100000000 
+      0     0  50000         ?
+        per_nand_mmc_clk               1        1        0 200000000 
+      0     0  50000         Y
+           nand_x_clk                  0        0        0 200000000 
+      0     0  50000         ?
+              nand_clk                 0        0        0 50000000 
+     0     0  50000         ?
+              nand_ecc_clk             0        0        0 200000000 
+      0     0  50000         ?
+           sdmmc_clk                   1        1        0 200000000 
+      0     0  50000         ?
+              sdmmc_clk_divided        1        1        0 50000000 
+     0     0  50000         ?
+        per_qsi_clk                    0        0        0 1953125 
+    0     0  50000         Y
+        emac1_clk                      1        1        0 250000000 
+      0     0  50000         Y
+           emac_1_clk                  1        1        0 250000000 
+      0     0  50000         ?
+        emac0_clk                      0        0        0 1953125 
+    0     0  50000         Y
+           emac_0_clk                  0        0        0 1953125 
+    0     0  50000         ?
+     dbg_base_clk                      0        0        0 6250000 
+    0     0  50000         Y
+        dbg_timer_clk                  0        0        0 6250000 
+    0     0  50000         ?
+        dbg_trace_clk                  0        0        0 6250000 
+    0     0  50000         ?
+        dbg_at_clk                     0        0        0 6250000 
+    0     0  50000         ?
+           dbg_clk                     0        0        0 3125000 
+    0     0  50000         ?
+     main_pll                          2        3        0 1850000000 
+       0     0  50000         Y
+        cfg_h2f_usr0_clk               0        0        0 123333333 
+      0     0  50000         Y
+           h2f_user0_clk               0        0        0 123333333 
+      0     0  50000         ?
+           cfg_clk                     0        0        0 123333333 
+      0     0  50000         ?
+        main_nand_sdmmc_clk            0        0        0 3613281 
+    0     0  50000         Y
+        main_qspi_clk                  1        1        0 370000000 
+      0     0  50000         Y
+           qspi_clk                    1        1        0 370000000 
+      0     0  50000         ?
+        mainclk                        0        1        0 370000000 
+      0     0  50000         Y
+           l3_mp_clk                   0        0        0 185000000 
+      0     0  50000         ?
+              l3_sp_clk                0        0        0 92500000 
+     0     0  50000         Y
+           l3_main_clk                 0        0        0 370000000 
+      0     0  50000         Y
+           l4_main_clk                 0        1        0 370000000 
+      0     0  50000         ?
+        mpuclk                         1        1        0 925000000 
+      0     0  50000         Y
+           mpu_l2_ram_clk              0        0        0 462500000 
+      0     0  50000         Y
+           mpu_periph_clk              1        1        0 231250000 
+      0     0  50000         Y
+
+
+Dinh
