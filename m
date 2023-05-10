@@ -2,116 +2,121 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C31C7EE22
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 14:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671F6C77B7C
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 14:40:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237312AbjEJOgC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 May 2023 10:36:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40056 "EHLO
+        id S237517AbjEJOkm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 May 2023 10:40:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237111AbjEJOgA (ORCPT
+        with ESMTP id S237567AbjEJOkg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 May 2023 10:36:00 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F7307AB2;
-        Wed, 10 May 2023 07:35:56 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-50b9ef67f35so13069328a12.2;
-        Wed, 10 May 2023 07:35:56 -0700 (PDT)
+        Wed, 10 May 2023 10:40:36 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DDE16EB5;
+        Wed, 10 May 2023 07:40:29 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so69506404a12.1;
+        Wed, 10 May 2023 07:40:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683729354; x=1686321354;
+        d=gmail.com; s=20221208; t=1683729628; x=1686321628;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jy9mHnnlUd36FnWW3GV3jUyIBkRWzWw6MZcV58/+PnA=;
-        b=V98ALotLDfv4DY06o0tBF5rwW0BVK5uoRkl0g/h59wULhpTa/Qq/at9tcAA3plSgJ4
-         nU4XRoGRdc9567D7SGt28uVzci0JGTDr+bjSUD0b/dF1U0aRHJe9YvvQYnu259SRnnwO
-         f5dSCCSWP1xI9MXkPGbJ/7VVHyXvU6uSL+opYu71Si8BEh+C9QpRDUF71f542PgOp+1e
-         7ar6nxKLYyqP/26sekZy0zybHhn/ChUirIVF+LMCYLmJ7z/nD0ftxEv2KxA/mLrm5Gna
-         7JDBVD4g5CePytXKunBUtypELcDHXDtOJ6cpT8IVY4il6ogdTV+6kYJC0jfEwvetD4qD
-         95nQ==
+        bh=BrjfVLE0kuezCEefQF3UAj3/eiXoxjrn3YOUxgzVyC0=;
+        b=KS4LjZzMHiePCh/GlG0eJsCGCU2fZKQLTkHMc3cX0qXb8XVeMLVXo4JF3N/x6oB0l/
+         zib01fii1to6KK0vMrp0mx6cvXCqMajgVn76xQiJ48A8bpgzXsPmOAjlGAsmVqAwxWUE
+         eX3PEdujnMiNGSQZSClyTCS/GKqI245W4cuZ/v+TJiBsvG/rKVcpl4JNQB5vyT9nu+go
+         2qTg3NAw1qCPbXVDo827AlZBfyJCuj25xxjoiJNVssh26HldvJ7FYBCR4LPHzrNd/SUk
+         0h8217Ke2+tSbOpEjMP+PlwRODl8bU2Gok94Rj1Pj8jkuNbyxJ1PK8mi8FEzqrFFzOEH
+         GfgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683729354; x=1686321354;
+        d=1e100.net; s=20221208; t=1683729628; x=1686321628;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jy9mHnnlUd36FnWW3GV3jUyIBkRWzWw6MZcV58/+PnA=;
-        b=F6czP2iMHdE661EgHgnI16CnKu07CRchNv/ytxgroGB9sYOzFDcOGmtCqrvg64UxK1
-         YI2FxpRwRMT8qs79W6qAF7ikID5uja9LwovSgX4ABZpvqSZFM9xPyWb4kJYpXFyZ5ZRX
-         KtX4BbLWT9WOMPJfC//EdLTXc6F2AE6yHmoZdZyuhvkrb4ndRwjIlVmv7tCCHvqHSVX7
-         sdC/Br53GzQ2m3GP2zl8JdNvvF1exPyjrJueXwwT/YEvM5Nst7cO+boJlqVfssMHtj+C
-         Z3VrxmnoG+inUa3wBBjgJ1FYY8923umvaIs3sb9zUw2+FzcVisb9dnbKRGkzDZl/2RsX
-         /OYA==
-X-Gm-Message-State: AC+VfDxH8xC68e9FPx2iE0JX4QNiX8SAG/yrQwRpRl/p9VYFVj++sfzs
-        LR2LawFoAl/BVfDUcRepuzI=
-X-Google-Smtp-Source: ACHHUZ57UqvsEczex3L7aooCRx4VflWIp2vb1vqzLGm/7pzcIF75/+CxecWEqn6O6lhCWxKFbfhG3w==
-X-Received: by 2002:aa7:c147:0:b0:50d:1e11:eb9 with SMTP id r7-20020aa7c147000000b0050d1e110eb9mr14636320edp.1.1683729354458;
-        Wed, 10 May 2023 07:35:54 -0700 (PDT)
+        bh=BrjfVLE0kuezCEefQF3UAj3/eiXoxjrn3YOUxgzVyC0=;
+        b=PEAKAHmGYICDU/71m8uh8hI/75SvZboypMTOCEm62fXIyIxm0OW1EbxRZ4YouZdCbC
+         ucpkZFyHGkDL+JbgJqukYkLGDMZUQ3Fx4C8Mwj4QznKdQEQZIUY5t8BlvqEItpk5Bz0F
+         Ug7nbL9MU4jNueOsJSxEV+K07xsaTEBRx7hHZp2HZwmv7caael0K19h7plyCF70Yp6sT
+         ukWEYltB1A/FwlhvgHNiZ+GqiBKPQQnqHKEl9rMpmjfvn8zBhaXupjOxwhDWIOSvjdvm
+         hi0CfkJUfULYD+/9BIMo6gBJiYuDCpCUyNVtJZ+dx40D3s4AJAWMUlSJyd35Lv69EitX
+         91/Q==
+X-Gm-Message-State: AC+VfDyOBri9U1i5jkDd94FErQePSC1XI2gHoFioCEy2DkWcGnsvDWYY
+        MuffQpTqrqKTqdTj2gYAAos=
+X-Google-Smtp-Source: ACHHUZ7kHhC6J//zo/saeuRoGlERPc36A71RXJAfB0Vkkt/9CfVbt/HZ6inh7l+XzHKo3smNkcE6iw==
+X-Received: by 2002:aa7:c953:0:b0:50b:c456:a72a with SMTP id h19-20020aa7c953000000b0050bc456a72amr14550883edt.19.1683729628283;
+        Wed, 10 May 2023 07:40:28 -0700 (PDT)
 Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id q22-20020aa7da96000000b0050470aa444fsm1902932eds.51.2023.05.10.07.35.53
+        by smtp.gmail.com with ESMTPSA id a17-20020aa7d751000000b0050d988bf956sm1993955eds.45.2023.05.10.07.40.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 May 2023 07:35:53 -0700 (PDT)
-Date:   Wed, 10 May 2023 16:35:52 +0200
+        Wed, 10 May 2023 07:40:27 -0700 (PDT)
+Date:   Wed, 10 May 2023 16:40:26 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     jonathanh@nvidia.com, Stefan Kristiansson <stefank@nvidia.com>,
-        arnd@arndb.de, kkartik@nvidia.com, sumitg@nvidia.com,
-        windhl@126.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] soc: tegra: fuse: add support for Tegra264
-Message-ID: <ZFuryEViA0T2FQxZ@orome>
+Cc:     jonathanh@nvidia.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stefank@nvidia.com
+Subject: Re: [PATCH v2 5/6] dt-bindings: memory-region property for
+ tegra186-bpmp
+Message-ID: <ZFus2s7rdIS4hf0S@orome>
 References: <20230510113129.4167493-1-pdeschrijver@nvidia.com>
- <20230510113129.4167493-4-pdeschrijver@nvidia.com>
+ <20230510113129.4167493-6-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4k25NvkuctWTnVXi"
+        protocol="application/pgp-signature"; boundary="Cys7xdI4J5nU1kTN"
 Content-Disposition: inline
-In-Reply-To: <20230510113129.4167493-4-pdeschrijver@nvidia.com>
+In-Reply-To: <20230510113129.4167493-6-pdeschrijver@nvidia.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---4k25NvkuctWTnVXi
+--Cys7xdI4J5nU1kTN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 10, 2023 at 02:31:30PM +0300, Peter De Schrijver wrote:
-> From: Stefan Kristiansson <stefank@nvidia.com>
+On Wed, May 10, 2023 at 02:31:34PM +0300, Peter De Schrijver wrote:
+> Add memory-region property to the tegra186-bpmp binding to support
+> DRAM MRQ GSCs.
 >=20
-> Add support for Tegra264 to the fuse handling code.
->=20
+> Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
 > Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
 > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
->  drivers/soc/tegra/fuse/tegra-apbmisc.c | 3 ++-
->  include/soc/tegra/fuse.h               | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
+>  .../firmware/nvidia,tegra186-bpmp.yaml        | 37 +++++++++++++++++--
+>  1 file changed, 34 insertions(+), 3 deletions(-)
 
-The preferred subject prefix is "soc/tegra:", but I can fix that up when
-applying. Also, capitalize after the last ":".
+We usually use a longer subject prefix, even though that makes the whole
+subject usually become longer than the recommended 50 (or so)
+characters.
+
+Maybe you also want to add a verb to the subject to make it more
+descriptive. As it is the subject doesn't indicate what's happening with
+the memory-region property. It could equally well get removed.
 
 Thierry
 
---4k25NvkuctWTnVXi
+--Cys7xdI4J5nU1kTN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRbq8gACgkQ3SOs138+
-s6GqLA/+J6moqTyFHPsSkQOWqqsHqHtZS8FlYiEK96pP1toNWGPC2unVAKoYL8pg
-wUsyLX0FdjiA983FXOxEzerMwmPa8FVpwrSqTNm99aVGcezrAEr7/CK53+dcEigz
-cYneLCPIEVX6P8NYW8GGmdNob0Kayc1B6T1LhLF1kEfdgKGVwrIJU0psSMma6VVu
-Z+3HjSxeui+KssRodmK/5vP1DTvlpKvpII+yUvcRKo3fKa7d7QY5tmKI1M7IPMz9
-5rziHgcxDGus67oddXv/oYiJc/Co4TuHAG44uNRQxRP2zRYvuHklvdtmIyraI7UN
-GPBfWws4+zVoscF4Rqjlpoif42oE5lVowdD4R3D/iTPxNhVWFcG5jpFKCaH/6/qp
-u8dzwQ0KNQVSGTQZ8DI6wudJ9+ATLQftdofn0l/F48SZD/eL4Hl3+7dp+7cncuH/
-tgiD4nKPzLlOt2nkWlsdr9gzAwBiTPChLMb1NUnK9eVKvoHGfwK/PkqyWDlX5bI/
-J7E42dJ7sedLhjTIsawJ7Xu1mB7eylKdAaLfwpT5guNtSb/vcmi3ekwI3+Mky0Mm
-+F2FWlLkeVPH1r++5yE9vJrcxfe+aDXOMFOceBk/tnXSAiaPwTx/AND7S2V6wOn7
-vwVxgWISQms43OsuD2W0g0RXjEFvgwfRHQKroB3iKCfeR+9d4WQ=
-=qnWx
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRbrNoACgkQ3SOs138+
+s6Forg/+J9Eemk8vswIOaDn+qZ4RRD/PyuaHP2irl7MoioAXpR7tA3qM7x/ltwUz
+odt+2aGX9dR2PfOE/oT6EIHP0Ho8AMyM2R+o9Ii76mqk6GaO0xiluG3PmyZHkkUS
+sziQN5KGVdp74+GiQ8btD6zTn9fO9x9WQ9CXrqU8e/TzlhnPFG3qqEqU5ixH5IH1
+txXMLUuecKr/NAKU0uhEU96hgrw+D7dLPTO877RFhwx4JZ2xcZjTp1qGanfBt+Ep
+K5oXX0NlmcvnG3tYMLTpuwJ4lpIns+PhiANBMRyqH7Fn4fytqb9fmHZPRSPSnT7r
+80+GTZRmd+vXuWI+JkKU714EOkPuJ71XF/hqg/qZHeNeUF/YC0w9GI6KTZQ2d36y
+03yMm3Anvc0VBj2jWJQymgVjZdW5Yc5j1JY9AlJjX2hjNA4fvWwl1fA0YdzGnHxT
+T07cl29tsBBPQlo/1ZtfKaFpcLV8IGfTdokbGirMCse1vaXgF36s1tNFqwp+7Ond
+TFk/AiM91zxDRiN4dUMvpuOmtMN6J6Npj0VZmKLk6RnZn3rbJPJFwarSUJVGYC0r
+A1s2XFEJo8VX5Rb+Pkk7LlTHEG17joDoVm0yCyZQ7Hm/Lvi4JoWJ8tXFqRnlYVIM
+XDWqlm1JQBOZDodV1zxkzK1+19YmGjmB42HmPhS1mchieVU2c50=
+=QylG
 -----END PGP SIGNATURE-----
 
---4k25NvkuctWTnVXi--
+--Cys7xdI4J5nU1kTN--
