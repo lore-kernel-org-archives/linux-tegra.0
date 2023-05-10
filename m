@@ -2,111 +2,105 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB7EC77B7D
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 14:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F23D0C77B7C
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 15:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237549AbjEJOnX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 May 2023 10:43:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47812 "EHLO
+        id S237616AbjEJPA2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 May 2023 11:00:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237258AbjEJOnX (ORCPT
+        with ESMTP id S237293AbjEJPA1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 May 2023 10:43:23 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA58E51;
-        Wed, 10 May 2023 07:43:21 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so69531953a12.1;
-        Wed, 10 May 2023 07:43:21 -0700 (PDT)
+        Wed, 10 May 2023 11:00:27 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985C32D72
+        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 08:00:26 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-965ab8ed1fcso1330400766b.2
+        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 08:00:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683729800; x=1686321800;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6hV3wpq0G9wCRSZdx/DdZ2PROV9kmk2slGRLRteDA5w=;
-        b=G9bVTcj1pWNQLAWnaqugWkF4YORPIxKseaQjcYAaMSeX2/MqYY7rcfz22FOVpCQ1+n
-         Kk0fqjYbnX66zfk1t0TyNz0PMw/YjOTOinHBOz+HegLnL40wLQ+khhbCvtjBWgt0LkKa
-         q76bLgHdvVUap/aHGPPtxeFqILlsQ/doTeBdAu9QCWoMeSRfh6WL07HVwyAlmS1B/skA
-         EkYHTFm+Ygcd0RMXSyIKfY3Xf+1jnz67tl8dzouNDzh8u9P2RFCTE40ZhH236guScxxc
-         fm21XmneVv3P8tdp/dbjp5MM9Fe1SVUgW7Ca51NQzKEFvHIFlt3TX8qbLlDqd2hz+PFy
-         tywg==
+        d=linaro.org; s=google; t=1683730825; x=1686322825;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RtiNrkh2QhwgA/Yef0BWpTiUCIpFoM3AGnkyS7Jdmfs=;
+        b=QDiXouLpaYBg7WPG2ARJAs/YOLbrmwWBubIU82c2PGicvzALpXvwZTAd+OrB8LcOdO
+         qSUDcfHPtS8DJim5uGqsNvKaQAgeEnzmAB5OZ0LbwJYcLNg7kNc2b2qxCbp7yxrot8qB
+         Vmcxm6OFOt96GGiMvWbStmW0ucP1mP1VVnzVNxIRKNh+LKtJkYK+Ujd2Sd6+w9pQHvn5
+         ko2vvSUaxFPI/gbKf7n8RyjpF0PZSleYH3TFb3LXSFv/UZ+tTGid1bce29/AdWA3dB4C
+         b/mCfFelPVzXOpH3Xqvcmcg+sO9fzIHgkatUK7VitQOZL5CHsc0jWi9+OBlTXYtOf2UO
+         6RXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683729800; x=1686321800;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6hV3wpq0G9wCRSZdx/DdZ2PROV9kmk2slGRLRteDA5w=;
-        b=KGd3vWm4g2+AbIQlyNc2TZMzLQxoHqCk4tDnaKRkBnx0Ejz3AU4d/ky5Fc1L26du44
-         ClGbFq/h1xvQ0+Q5ffbDpS/2yXRfzHqGKZt3RlHDeVk3EHzVV5oGzm9mCahoAgAAXfQt
-         J+un7mTZ+BTM29RNcL9M9MteN50jRm7pG89cLKNEwZ7hS9sV748i0ZrhU81rer04jWD3
-         5rsXDGs7uo1aO++TZzj2t9f5ECTfS/MEy9SI3Uq3DV/rRyGPz/IsnhJPZ/MUaV6wdX7L
-         GamaZX44B0UrS9oQJxkpH3PEoN1azemaz6EYhjw7cPwfba3VDm+vH04OzQvQ0E8zMav6
-         GbZQ==
-X-Gm-Message-State: AC+VfDwhD+QIaTulERxrM0XCi9dFEryOfBhC3u18pOmENgHnRGqbB86o
-        iX6Gf0A5UH14YPDOGatu/3U=
-X-Google-Smtp-Source: ACHHUZ6m7CK42mQO2T8kd4XGundaYWXII/u55zQo3uh+SzdrNIrTpeuWBv7+02zKXP687ms302r9xQ==
-X-Received: by 2002:a17:907:25c3:b0:966:399e:a5a5 with SMTP id ae3-20020a17090725c300b00966399ea5a5mr9695095ejc.35.1683729800169;
-        Wed, 10 May 2023 07:43:20 -0700 (PDT)
-Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p3-20020a170906140300b0095850aef138sm2712576ejc.6.2023.05.10.07.43.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 May 2023 07:43:19 -0700 (PDT)
-Date:   Wed, 10 May 2023 16:43:18 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     stefank@nvidia.com, jonathanh@nvidia.com, jassisinghbrar@gmail.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] firmware: tegra: Add MRQ support for Tegra264.
-Message-ID: <ZFuthhVUN9x5Ul5H@orome>
-References: <20230510142248.183629-1-pdeschrijver@nvidia.com>
+        d=1e100.net; s=20221208; t=1683730825; x=1686322825;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RtiNrkh2QhwgA/Yef0BWpTiUCIpFoM3AGnkyS7Jdmfs=;
+        b=D1g+J4hGnmLmcUBh76XXnksk1LgNLEx206tLW/AD+eXvZlJ6Z/2v44ct4X+AHqhE6Z
+         JhkAkh3zM9G3nrxdtsBR7hawuiVPkmTnYOxbzF02/HOYd3dYhSHCN9HE57qwGutjdZRd
+         hWYiqw/zzdhi7Ybp1OxdhasHhf6zBBZQRFHOVXcdPmoW/v1Z00Fqp2P5Cia8p+JUPV18
+         OeTSQ7l4RJLx1dkISrU0eXutfZRdBpg+UwjaLHbzniGV8VBr6Eeqp23cUO5p02I8jb8J
+         xe70uXcPPPjp5Aj9JbVVVQYccjDlqucJaXFLzOkjXMPjTSCm5wa5tvlwvhCcAr9MdX0e
+         DgxQ==
+X-Gm-Message-State: AC+VfDwKyxiPl5we8b+pvwtKhqlWfORn1/cOs7QDFmc+rgJIscDGUF9R
+        c0X3rHO53U8kAZTwY5JaDHtRIw==
+X-Google-Smtp-Source: ACHHUZ7ygoq+P9N7QWkGqQ8akQig23j8CJn8Zam4ACGvB85HbAABfkFwW544ed+C+IjAfprbW9SH1A==
+X-Received: by 2002:a17:907:1b24:b0:94e:5c28:1c19 with SMTP id mp36-20020a1709071b2400b0094e5c281c19mr17526255ejc.5.1683730825073;
+        Wed, 10 May 2023 08:00:25 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:c175:a0f9:6928:8c9d? ([2a02:810d:15c0:828:c175:a0f9:6928:8c9d])
+        by smtp.gmail.com with ESMTPSA id hg8-20020a1709072cc800b00932fa67b48fsm2754259ejc.183.2023.05.10.08.00.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 May 2023 08:00:24 -0700 (PDT)
+Message-ID: <51fc4d85-51bd-90c0-632f-291ef6b02c42@linaro.org>
+Date:   Wed, 10 May 2023 17:00:23 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IEJ6DYV1KbmUKb89"
-Content-Disposition: inline
-In-Reply-To: <20230510142248.183629-1-pdeschrijver@nvidia.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 1/6] dt-bindings: mailbox: tegra: Document Tegra264 HSP
+Content-Language: en-US
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20230510142248.183629-1-pdeschrijver@nvidia.com>
+ <20230510142248.183629-2-pdeschrijver@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230510142248.183629-2-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 10/05/2023 16:22, Peter De Schrijver wrote:
+> Add the compatible string for the HSP block found on the Tegra264 SoC.
+> The HSP block in Tegra264 is not register compatible with the one in
+> Tegra194 or Tegra234 hence there is no fallback compatibility string.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
 
---IEJ6DYV1KbmUKb89
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, May 10, 2023 at 05:22:42PM +0300, Peter De Schrijver wrote:
-> In Tegra264 the carveouts (GSCs) used to communicate between BPMP and
-> CPU-NS may reside in DRAM. The location will be signalled using reserved
-> memory node in DT. Additionally some minor updates to the HSP driver are
-> done to support the new chip.
+Srsly, all tags ignored...
 
-I was still reviewing v2 when you sent this out. Obviously none of those
-comments have now been addressed, so we'll need v4. Generally, try to
-give people a bit more time to review patches before sending new
-versions even if you've got early feedback from the various bots. You
-can of course already integrate fixes for issues pointed out, but there
-is no need to rush one version after the other at this point in the
-review cycle.
+This is a friendly reminder during the review process.
 
-Thierry
+It looks like you received a tag and forgot to add it.
 
---IEJ6DYV1KbmUKb89
-Content-Type: application/pgp-signature; name="signature.asc"
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions. However, there's no need to repost patches *only* to add the
+tags. The upstream maintainer will do that for acks received on the
+version they apply.
 
------BEGIN PGP SIGNATURE-----
+https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRbrYYACgkQ3SOs138+
-s6EFCw/6A5N4Xb9K0Gos9YvwfXHEOAd8hMmqMuped7QrmRL8CQVriQCPmLz4kNql
-cKJKQ3jgszXISSHLtXY84GA6Nf+WUTxzP+H8cqoTsVeMyEuXjz8RD5MSn/SdwRGO
-s3LMjoAfTfSlsVRKLU+7uLxGslX08kiibnSrXJP+xrM6g9v0rfDT4KSsXENahjge
-EhI8L1r0k7HOcvpVPCHG0cWeQDQcvEgMTuonHQy6YnZR0XRuozZiOE3CG6vjtCY4
-beT/pvjTVG384JziwtHqVTDI/YijDdml6KpvivouTjPcshoUYc7lDapt/hMWFkb1
-wjsMVJ7YTyRtHM+51Au+OQZzWhDCv709FI4ix+L2Fb0bRVZNAQ/pwPoQyL/yNain
-0wHU32ag9gnIFZxCh+ClEe+PGq428FlpgI+BBZkhCWGs8fn7dmpgU0HdOtwSnUAC
-N/M5STkfcrx7nc04658sEt7IY+fBbdCP6URQ2/oeXhewYPIOax3704ns2p1jnDD3
-XVZK7qQuQtFNr00qOSjPDnGzQVBFo8XmfrmxenYWEtsQbZM7WD6yYg3Dth/2dyol
-UoHWvmgFJsvzBbOoPMHDozHyb8DV7n1rQ5suYWAqk9evmhDZ1CdCfnAV+KNJuREx
-Yu8k4hJOcrPnAmEVcYjdjjk0+Lsxz+whWmMH7fUWmp6w9/u5zzU=
-=5MKS
------END PGP SIGNATURE-----
+If a tag was not added on purpose, please state why and what changed.
 
---IEJ6DYV1KbmUKb89--
+Best regards,
+Krzysztof
+
