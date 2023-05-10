@@ -2,74 +2,71 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23D0C77B7C
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 15:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 465D4C77B7C
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 15:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237616AbjEJPA2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 May 2023 11:00:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58312 "EHLO
+        id S237192AbjEJPBe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 May 2023 11:01:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237293AbjEJPA1 (ORCPT
+        with ESMTP id S236907AbjEJPBd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 May 2023 11:00:27 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985C32D72
-        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 08:00:26 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-965ab8ed1fcso1330400766b.2
-        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 08:00:26 -0700 (PDT)
+        Wed, 10 May 2023 11:01:33 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 453BAAD32
+        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 08:01:17 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-96a2b6de3cbso133387766b.1
+        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 08:01:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683730825; x=1686322825;
+        d=linaro.org; s=google; t=1683730870; x=1686322870;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RtiNrkh2QhwgA/Yef0BWpTiUCIpFoM3AGnkyS7Jdmfs=;
-        b=QDiXouLpaYBg7WPG2ARJAs/YOLbrmwWBubIU82c2PGicvzALpXvwZTAd+OrB8LcOdO
-         qSUDcfHPtS8DJim5uGqsNvKaQAgeEnzmAB5OZ0LbwJYcLNg7kNc2b2qxCbp7yxrot8qB
-         Vmcxm6OFOt96GGiMvWbStmW0ucP1mP1VVnzVNxIRKNh+LKtJkYK+Ujd2Sd6+w9pQHvn5
-         ko2vvSUaxFPI/gbKf7n8RyjpF0PZSleYH3TFb3LXSFv/UZ+tTGid1bce29/AdWA3dB4C
-         b/mCfFelPVzXOpH3Xqvcmcg+sO9fzIHgkatUK7VitQOZL5CHsc0jWi9+OBlTXYtOf2UO
-         6RXw==
+        bh=vVd0FRReFbXFOhYx5lQ2Gap/VFHzmaCiqe9z4rWLb1I=;
+        b=Z76Uye+WL6zR8S1PJRJcI4sbHKFdwnQZhvZ6YNufRTR0RQ8xl7yYxQCRgwPgb+7nFB
+         Gf3oqye9xFWWaIPAyRinl5vOH16ryJFJd4no8h6feni33/TzWjEfZFNW3gh5alf06aSH
+         Ox7PGNenQwIL/JrZp7W44N5QRsBx4wpNEfJfEpOVCHD1AuwHfDrFYeJodiFkcTv4SmGD
+         dRdMZB856zY/Y/SjsMGQ/9J/amYcXG7nVnDAyqINe9EY/a3+5UIwBEjOM+M/Z7AOTVhX
+         aIG/l2DH4W2+1sP4Rn+2tw0QMMiuoPNvDZnjnA0VBnroORsDSBzaqemaXfPtweGmrVrH
+         F5cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683730825; x=1686322825;
+        d=1e100.net; s=20221208; t=1683730870; x=1686322870;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RtiNrkh2QhwgA/Yef0BWpTiUCIpFoM3AGnkyS7Jdmfs=;
-        b=D1g+J4hGnmLmcUBh76XXnksk1LgNLEx206tLW/AD+eXvZlJ6Z/2v44ct4X+AHqhE6Z
-         JhkAkh3zM9G3nrxdtsBR7hawuiVPkmTnYOxbzF02/HOYd3dYhSHCN9HE57qwGutjdZRd
-         hWYiqw/zzdhi7Ybp1OxdhasHhf6zBBZQRFHOVXcdPmoW/v1Z00Fqp2P5Cia8p+JUPV18
-         OeTSQ7l4RJLx1dkISrU0eXutfZRdBpg+UwjaLHbzniGV8VBr6Eeqp23cUO5p02I8jb8J
-         xe70uXcPPPjp5Aj9JbVVVQYccjDlqucJaXFLzOkjXMPjTSCm5wa5tvlwvhCcAr9MdX0e
-         DgxQ==
-X-Gm-Message-State: AC+VfDwKyxiPl5we8b+pvwtKhqlWfORn1/cOs7QDFmc+rgJIscDGUF9R
-        c0X3rHO53U8kAZTwY5JaDHtRIw==
-X-Google-Smtp-Source: ACHHUZ7ygoq+P9N7QWkGqQ8akQig23j8CJn8Zam4ACGvB85HbAABfkFwW544ed+C+IjAfprbW9SH1A==
-X-Received: by 2002:a17:907:1b24:b0:94e:5c28:1c19 with SMTP id mp36-20020a1709071b2400b0094e5c281c19mr17526255ejc.5.1683730825073;
-        Wed, 10 May 2023 08:00:25 -0700 (PDT)
+        bh=vVd0FRReFbXFOhYx5lQ2Gap/VFHzmaCiqe9z4rWLb1I=;
+        b=VzX3/WfYMFqbQ04X6xbkyBEiK72zFQYr9s5eXUb4g6D0kiUowFIgB8hO3WFZsUjBSW
+         vOGeND+wS/B+yhxAK0gvMdP05Hnvi4Wr2fcNp+v6q6z2Dv308qFxy8eCPWFfxxBJ68/T
+         QsbbF0m8JSG+lhgIprz0dhDcPIL9xwnqJCFm4TYVa59hL8D+0tH3S5mv3I9Ut+AS6KXf
+         bsJqHN953aeqO6TZaJOj2c3InRajgA4qyshu9yKU5EEZEr2qYzQHA/me6Weai0Y1OS5i
+         nbq6sN7wF0wuiPsvuNpNhO4nWIyWr+hv3szDuCqvO9ZNBwQuQAHzra6T3f6pNs8q33ij
+         CiAg==
+X-Gm-Message-State: AC+VfDzSX4gd5sG/R2ikr09SioaFnNSdnzWsGrA4xGdi2iAIUwUQO8mo
+        lqMs8GcueQvwAbHM/gTASQTXSg==
+X-Google-Smtp-Source: ACHHUZ7GiXX4UuZSC2NCohugLiUujJCC7bZc0/nv1q/rRJXQUlxcUI15rUlcsE8El9c2BC1nLuC3+g==
+X-Received: by 2002:a17:906:974b:b0:965:ff38:2fb3 with SMTP id o11-20020a170906974b00b00965ff382fb3mr15745406ejy.74.1683730869782;
+        Wed, 10 May 2023 08:01:09 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:c175:a0f9:6928:8c9d? ([2a02:810d:15c0:828:c175:a0f9:6928:8c9d])
-        by smtp.gmail.com with ESMTPSA id hg8-20020a1709072cc800b00932fa67b48fsm2754259ejc.183.2023.05.10.08.00.23
+        by smtp.gmail.com with ESMTPSA id gf25-20020a170906e21900b0094edfbd475csm2716496ejb.127.2023.05.10.08.01.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 May 2023 08:00:24 -0700 (PDT)
-Message-ID: <51fc4d85-51bd-90c0-632f-291ef6b02c42@linaro.org>
-Date:   Wed, 10 May 2023 17:00:23 +0200
+        Wed, 10 May 2023 08:01:08 -0700 (PDT)
+Message-ID: <390d42f2-56ed-1613-7665-ea5cbaf743ee@linaro.org>
+Date:   Wed, 10 May 2023 17:01:06 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH v3 1/6] dt-bindings: mailbox: tegra: Document Tegra264 HSP
+Subject: Re: [PATCH v3 4/6] dt-bindings: Add bindings to support DRAM MRQ GSCs
 Content-Language: en-US
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefank@nvidia.com
 References: <20230510142248.183629-1-pdeschrijver@nvidia.com>
- <20230510142248.183629-2-pdeschrijver@nvidia.com>
+ <20230510142248.183629-5-pdeschrijver@nvidia.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230510142248.183629-2-pdeschrijver@nvidia.com>
+In-Reply-To: <20230510142248.183629-5-pdeschrijver@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -77,29 +74,24 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 10/05/2023 16:22, Peter De Schrijver wrote:
-> Add the compatible string for the HSP block found on the Tegra264 SoC.
-> The HSP block in Tegra264 is not register compatible with the one in
-> Tegra194 or Tegra234 hence there is no fallback compatibility string.
+> Add bindings for DRAM MRQ GSC support.
 > 
+> Co-developed-by: Stefan Kristiansson <stefank@nvidia
+
+Subject: drop second/last, redundant "bindings". The "dt-bindings"
+prefix is already stating that these are bindings.
+
+
+Use subject prefixes matching the subsystem (which you can get for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching).
+
+.com>
+> Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
 > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
 
-
-Srsly, all tags ignored...
-
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions. However, there's no need to repost patches *only* to add the
-tags. The upstream maintainer will do that for acks received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
-
-If a tag was not added on purpose, please state why and what changed.
+Missing changelog. I am not going to review the same patch.
 
 Best regards,
 Krzysztof
