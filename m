@@ -2,122 +2,110 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19214C77B7D
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 11:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B04C7EE22
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 May 2023 12:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236991AbjEJLoU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 May 2023 07:44:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37320 "EHLO
+        id S237062AbjEJMrv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 May 2023 08:47:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236623AbjEJLoT (ORCPT
+        with ESMTP id S237053AbjEJMru (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 May 2023 07:44:19 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 117FF139;
-        Wed, 10 May 2023 04:44:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H1amMV8FVvEJ8XmLoKjFAVDpAZ90aFnh0+1I22l6cdhggKB1P/WcbtEA2ziL0hwKIs0VcSFgNSSyG4Z1NtT+Ub0lns1Vkf0cc4p0ksxA4M6WIOSDY1xAF8GGVd57qaww9TPH60jcM7SUtINzC3dvXNLPUhQySRR3Wo9UsVPQwWF9hLoYVKYI/zFfw0mZb54eMDYh4WPlTkiNPcnfc0nGNCdqYQCAX59zZ18KuiOiW6srwmARCCyVnPs55OFMR9hVc/NMvyQUdmjhzD3Glim0uB2uvIyF7Igxo+ZK+Zhj6vc5PBzifAC/ylbsbZyZpoJpmdLQQzzc3gnPfD+O3YMfvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9x8TMLu5CAF6YrYbx9lnza1YKxgGnpMMNrRl1POcQOM=;
- b=XkGJHnKo0AqEJHBHsxSAjYUDHC5BeQ9y5rjTr/JqNvNo4zf/bKyToODnbvkighx0jcJGNtkcsinRuU3sq0Y7l1NNaa/tSaDxSRASIFxagybJJ0cYKD+QThD5LVP2APVvj0kHiIkBhzZNfPr0DK1+17iu7YO/oeR2ojhr5L4ZMDC3vjKaQbr7qgwMV5bnHTKmmqLzTQqCC6CPtFRjyQAUWixQm+fHmdzfBbcIXNkWhlxEY8JSfuDmAL3bLCHPemDoP02O0MLuWdYTRrB4uqmQ/56QMv1OZQWzBskKZFFp22AE1Xjca+iE8I5T6loVXTo3g5J8jbNI14rY2S+y5Pwi+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9x8TMLu5CAF6YrYbx9lnza1YKxgGnpMMNrRl1POcQOM=;
- b=PCvpBxlOkcN0b4pP82GQv4r5rhayQGRkUctAxCpx9bfGc3JSvWzuboCyqBI+f12WmjP4tvorn1trCqNSUJMZxNXgMf2Fg3AGdRib2mOzYM75UzsovXLVcOhCrGFReeLcnPCsxE0w1CXKjbjkXBwJ/8Sztd6z0ysM52RRVsm90mn9d/+b/g/dvEGCKfSJeyaxorKAsB6GHhsh+SVSd+13uP8gloM/bz0G62syXTINut3XfUNm/2TP+qF0vB1tev5OuXmdaXDMTdhmdeJw4Ch7cS6sebJV/1XhoIiSrjJbw74q04A9lmES8jGHXly0NXMCbGhO30bWfPoJORDX7ndpOQ==
-Received: from DM6PR02CA0050.namprd02.prod.outlook.com (2603:10b6:5:177::27)
- by CH0PR12MB5044.namprd12.prod.outlook.com (2603:10b6:610:e3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.20; Wed, 10 May
- 2023 11:44:15 +0000
-Received: from DS1PEPF0000E63E.namprd02.prod.outlook.com
- (2603:10b6:5:177:cafe::dd) by DM6PR02CA0050.outlook.office365.com
- (2603:10b6:5:177::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.34 via Frontend
- Transport; Wed, 10 May 2023 11:44:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS1PEPF0000E63E.mail.protection.outlook.com (10.167.17.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6387.20 via Frontend Transport; Wed, 10 May 2023 11:44:14 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 10 May 2023
- 04:44:04 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 10 May
- 2023 04:44:04 -0700
-Received: from localhost (10.127.8.9) by mail.nvidia.com (10.129.68.7) with
- Microsoft SMTP Server id 15.2.986.37 via Frontend Transport; Wed, 10 May 2023
- 04:44:03 -0700
-Date:   Wed, 10 May 2023 14:44:02 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     <stefank@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>
-CC:     <jassisinghbrar@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] firmware: tegra: Add MRQ support for Tegra264.
-Message-ID: <ZFuDgmLXmTs91FqI@44189d9-lcedt>
+        Wed, 10 May 2023 08:47:50 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B915FD3
+        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 05:47:45 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-50bc394919cso10772248a12.2
+        for <linux-tegra@vger.kernel.org>; Wed, 10 May 2023 05:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683722863; x=1686314863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LoN7UzTWOHRfV6DLizardjz7wWvM7VrRl9MfwBd/glw=;
+        b=VW/vtsUD7aHDTF6FaXs3+2O6249VYRLtH3KLTs9QFnecSiHXDOEQvtqYCVCKIY/eFh
+         9FT7d5g39c9IMLG1h9/MP4b43gdlgytJDJJ8xHo5M6XPXN3ALuGb7oduULFnnwQ2C9jZ
+         HN5KnqpbEI4AWa8GaRp6t9zb9Q1pnJRiBXW4lSaKLltND8fcTXk9eF5AHEpLLfOvNWrA
+         SK41quM3EQCkU4i8FRx3FXU6a6WwyskRI+fdjfbcyLkJbPG0+YmIjcPB+/7SLRxktP6R
+         IwBWiG9h86zGKaUKt1hehWVyMyYL99FyDS/9ZABBf256m8Id6UrEJFyD7h/B3eYI0BNt
+         iCjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683722863; x=1686314863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LoN7UzTWOHRfV6DLizardjz7wWvM7VrRl9MfwBd/glw=;
+        b=BS7/rzWm2yqZSHdrJpgtAfjkuca6Sv+GJUmk9TKGCizkPgyAaPCMNDOzFPZcnqebSN
+         mWavC87aysxcYe6t1WHyZWeVb/3x75mqFfyicYTH/opWZCYxvpvuQWnx9c+8pPhEsNLl
+         qYSzGOrG45toh/09P9E6OVLd7fI5wrJnjQa5oBdaLHfVy4znJPmCwTOW4HT6acb6S0Fv
+         PMVFp6EbbD/u27d35cRIrVJYUSGWHXVNneaxOMPK8cicPNZJHHauJ3bmoAK/5HdPqVC+
+         fHiyAFEHxtuyX3fB3ejx5lTAlc+nNXGDaIirh/vAj8w0aiRFKmxBarGKQ772Wy/KiSHC
+         kRPw==
+X-Gm-Message-State: AC+VfDzV81SbuEC0VKig4lqn8f6w6mfm93rPJ8hWhRJCCVCb3lvDSo8o
+        3Kar5DVPF2j84EdgfgiegHtrxQ==
+X-Google-Smtp-Source: ACHHUZ4iOi30Xbasrz4chc7xaV2DeQmJMK4J7neQi6pkPjtC3qtmAjiIcox0YPP/WPvxuMbhLmzdxg==
+X-Received: by 2002:a17:907:2dab:b0:96a:2b4:eb65 with SMTP id gt43-20020a1709072dab00b0096a02b4eb65mr4609370ejc.9.1683722863427;
+        Wed, 10 May 2023 05:47:43 -0700 (PDT)
+Received: from krzk-bin ([2a02:810d:15c0:828:c175:a0f9:6928:8c9d])
+        by smtp.gmail.com with ESMTPSA id ia21-20020a170907a07500b00966392de4easm2672231ejc.14.2023.05.10.05.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 May 2023 05:47:42 -0700 (PDT)
+Date:   Wed, 10 May 2023 14:47:40 +0200
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     robh+dt@kernel.org, thierry.reding@gmail.com,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
+        stefank@nvidia.com, conor+dt@kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] dt-bindings: Add bindings to support DRAM MRQ GSCs
+Message-ID: <20230510124740.lu7ndc5fvnq6fml6@krzk-bin>
 References: <20230510113129.4167493-1-pdeschrijver@nvidia.com>
+ <20230510113129.4167493-5-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230510113129.4167493-1-pdeschrijver@nvidia.com>
-X-NVConfidentiality: public
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0000E63E:EE_|CH0PR12MB5044:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff1f52f2-8a8f-4173-bb6d-08db514be169
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3sD77dQTqr+04QMdS5/gkjXjzYP20Og9zO0EUYxd56qBVbNOZ648//wmhiU2soSGT9E50H+hD+tbdT8Zr/sJ3BkeS6WXPQxpHAdfEKON/IP1B+RKO5tNfvtpJdt28/DY2RbvMW8YgCxqUuiT6kIysv5LGfvB5RqPxx7ekWx3rVc5fDK6sFigd/wv0dMmv6B9S9oPM4r1bHBiH9BilTDCH2EILo7x5vYdNw5hIcIfR0u0+kCkPvoHT20rWmhwOzZN+nz+rvbQKA/vDj1GhPt2TID6paaCWppnENoqpBZe1tkv/5BWUtGPwEaRtUMTZlBJHm3LSmJkuapCdao+MZvmpmFqwXZwGAqTuV+9DlqW+X58SVgahT1XcoDP8neY3AjZALE4mntyHbf/jV0qMdNistZdveFcfmpBr+pqV6A2wVqcm/O/StYV2+F6RxBU7DTFF7Zt2esN7OvHVQZcKBbn0JA55JAPXG22+TolC/RZilOZwG//d3Hk71xpPrOTzL6Epfi6yfrOwXzovTom8aFB6uwZ7gxCvkCK54UA/Din6YPHRgTJPruU09Cw3wWhIXFTllr2fLYcbRAp0YYWvqwD46hLJj+P5VPLWqbGL8aZqbZFa++Xu1Po6H141gSIMf3P65Rj5turpl0uJkEUWe80M9qHa7PrvN3bgBOzV2aki3C9WFR4EQdV7Eio5a2zCztR4Tsn1uSQwlUN0+DWtv7dPGjx65mNsxMJofhCytxc93mRz+Bg6xWbkN3hu1PrCXkw
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(7916004)(39860400002)(346002)(136003)(396003)(376002)(451199021)(36840700001)(40470700004)(46966006)(40460700003)(426003)(336012)(47076005)(83380400001)(186003)(2906002)(4744005)(86362001)(33716001)(82310400005)(82740400003)(356005)(7636003)(36860700001)(40480700001)(8936002)(8676002)(316002)(41300700001)(5660300002)(478600001)(54906003)(110136005)(70586007)(70206006)(4326008)(6636002)(26005)(9686003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2023 11:44:14.7694
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff1f52f2-8a8f-4173-bb6d-08db514be169
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS1PEPF0000E63E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5044
+In-Reply-To: <20230510113129.4167493-5-pdeschrijver@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, May 10, 2023 at 02:31:24PM +0300, Peter De Schrijver wrote:
-> In Tegra264 the carveouts (GSCs) used to communicate between BPMP and
-> CPU-NS may reside in DRAM. The location will be signalled using reserved
-> memory node in DT. Additionally some minor updates to the HSP driver are
-> done to support the new chip.
+On Wed, 10 May 2023 14:31:32 +0300, Peter De Schrijver wrote:
+> Add bindings for DRAM MRQ GSC support.
 > 
-> Peter De Schrijver (4):
->   dt-bindings: mailbox: tegra: Document Tegra264 HSP
->   dt-bindings: Add bindings to support DRAM MRQ GSCs
->   dt-bindings: memory-region property for tegra186-bpmp
->   firmware: tegra: bpmp: Add support for DRAM MRQ GSCs
+> Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
+> Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  .../nvidia,tegra264-bpmp-shmem.yaml           | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml
 > 
-> Stefan Kristiansson (2):
->   mailbox: tegra: add support for Tegra264
->   soc: tegra: fuse: add support for Tegra264
 
-Changes in v2:
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-- Added signoff messages
-- Updated bindings to support DRAM MRQ GSCs
-- Split out memory-region property for tegra186-bpmp
-- Addressed sparse errors in bpmp-tegra186.c
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dts:21.16-50: Warning (reg_format): /example-0/reserved-memory/shmem@f1be0000:reg: property has invalid length (16 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dts:19.47-23.14: Warning (avoid_default_addr_size): /example-0/reserved-memory/shmem@f1be0000: Relying on default #address-cells value
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dts:19.47-23.14: Warning (avoid_default_addr_size): /example-0/reserved-memory/shmem@f1be0000: Relying on default #size-cells value
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
+
+See https://patchwork.ozlabs.org/patch/1779405
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
