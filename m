@@ -2,173 +2,89 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFDCC77B7C
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 May 2023 19:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE1EC77B7F
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 May 2023 19:25:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238973AbjEKTVP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 May 2023 15:21:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46872 "EHLO
+        id S238599AbjEKTZM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 May 2023 15:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231633AbjEKTVO (ORCPT
+        with ESMTP id S238397AbjEKTZL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 May 2023 15:21:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2EC10C9;
-        Thu, 11 May 2023 12:21:13 -0700 (PDT)
+        Thu, 11 May 2023 15:25:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291F67DBF;
+        Thu, 11 May 2023 12:25:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0797B650EA;
-        Thu, 11 May 2023 19:21:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E670C433D2;
-        Thu, 11 May 2023 19:21:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BE531639CC;
+        Thu, 11 May 2023 19:25:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DBFFC433EF;
+        Thu, 11 May 2023 19:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683832872;
-        bh=MJODu8cjkXd6OoV0TmVTxhOZBvGy+7TMYzFGXyH5VYI=;
+        s=k20201202; t=1683833109;
+        bh=y/0OoYatmFHPp5Ma0BwB2mBixbDjxt7J7Ig6y1F9nw0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DlVvLRfwPacQywkHeT/JHDv3yu9Tj//cfXhlpXTon41JA+Nfwjreym7+i2DeCO/wY
-         0iSug93frk80OT1fgPtM77WbI/jEO42Abgbrn378TcHcHqgvUcUooYk7CPYBerqccC
-         JlQRx0icWvUyeuej3XLJK5UJsy53fnx+ZUXmc7Wn8oW2Qd2pijw4DnBTPjJLVz8STq
-         qlNnmFnQiGq6LSm2kqi52xSY3DnXMrWwGE/sNDMwvCzoynASVYpm3rb87m6XutvG1P
-         1cHjhUONgjSXpVn3kwP8lLvcWlDqrda8bVcieH8TWZVDHyqxejWMTPvM/ktJnNynVy
-         oX9/ZwaSE7IBw==
-Date:   Thu, 11 May 2023 20:21:07 +0100
+        b=t6nvDAk+2u7LCFD0Q+y+rdsx6+U6A1UHZ4oYnzmHy6+3I/MH8bXrIpUifRxcej4r0
+         AUiMrhzx9zEeT9DA0+crjKtbQKIhEal5SDtLZ26tz4N8GJoNeUNiuE1+va/LpUXX5n
+         b8NsStma0ut3f1+LXOqlUStvuexn3LJp94y0rA3Z1+pfs86cxGTgQWy4LNljCFUjLb
+         Fnk2PJNYfDeyzTCrJVYUCOA8oGEpOOdUt1QqI2te9QMuxU3HgyEt352PaEGXtAiryT
+         waZyhODVPMex6yWnR08hoDQup8S9/pMNxJ4fRxpbc2kQHFeyJuo39z6na+CzR/wIZW
+         TrhGS9DoWRJEA==
+Date:   Thu, 11 May 2023 20:25:04 +0100
 From:   Conor Dooley <conor@kernel.org>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, stefank@nvidia.com
-Subject: Re: [PATCH v4 4/6] dt-bindings: Add support for DRAM MRQ GSCs
-Message-ID: <20230511-carnivore-legend-17206803d713@spud>
+Subject: Re: [PATCH v4 5/6] dt-bindings: Add support for tegra186-bpmp DRAM
+ MRQ GSCs
+Message-ID: <20230511-overcrowd-puzzling-5c588d276158@spud>
 References: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
- <20230511132048.1122075-5-pdeschrijver@nvidia.com>
+ <20230511132048.1122075-6-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ucUeK4weGJVTHNSS"
+        protocol="application/pgp-signature"; boundary="dExVlHaTJTfKF/f9"
 Content-Disposition: inline
-In-Reply-To: <20230511132048.1122075-5-pdeschrijver@nvidia.com>
+In-Reply-To: <20230511132048.1122075-6-pdeschrijver@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---ucUeK4weGJVTHNSS
-Content-Type: text/plain; charset=utf-8
+--dExVlHaTJTfKF/f9
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 11, 2023 at 04:20:49PM +0300, Peter De Schrijver wrote:
-> Add bindings for DRAM MRQ GSC support.
->=20
-> Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
-> Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+On Thu, May 11, 2023 at 04:20:50PM +0300, Peter De Schrijver wrote:
 
-Perhaps Krzysztof will disagree, but looks fine to me, with some minor
-remarks below.
-Just to note, I didn't get the cover letter & therefore didn't get the
-changelog :/
-I know you had a back and forth with him about that, *my* =E2=82=AC0.02 is =
-that
-either you put the changelog in the cover & send it to everyone, or you
-put it in each patch.
+> +    bpmp {
+> +        compatible = "nvidia,tegra186-bpmp";
+> +        interconnects = <&mc TEGRA186_MEMORY_CLIENT_BPMPR &emc>,
+> +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPW &emc>,
+> +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAR &emc>,
+> +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAW &emc>;
+> +        interconnect-names = "read", "write", "dma-mem", "dma-write";
+> +        mboxes = <&hsp_top1 TEGRA_HSP_MBOX_TYPE_DB
+> +                            TEGRA_HSP_DB_MASTER_BPMP>;
 
-> ---
->  .../nvidia,tegra264-bpmp-shmem.yaml           | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reserved-memory/nvi=
-dia,tegra264-bpmp-shmem.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/nvidia,teg=
-ra264-bpmp-shmem.yaml b/Documentation/devicetree/bindings/reserved-memory/n=
-vidia,tegra264-bpmp-shmem.yaml
-> new file mode 100644
-> index 000000000000..4087459c01db
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-b=
-pmp-shmem.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reserved-memory/nvidia,tegra264-bpmp-=
-shmem.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tegra CPU-NS - BPMP IPC reserved memory
-> +
-> +maintainers:
-> +  - Peter De Schrijver <pdeschrijver@nvidia.com>
-> +
-> +description: |
+FWIW, this fits on one line - although you've just copy-pasted what was
+already there in the other example.
 
-You don't appear to have any formatting to preserve, so the | is not
-needed.
-
-> +  Define a memory region used for communication between CPU-NS and BPMP.
-> +  Typically this node is created by the bootloader as the physical addre=
-ss
-> +  has to be known to both CPU-NS and BPMP for correct IPC operation.
-> +  The memory region is defined using a child node under /reserved-memory.
-> +  The sub-node is named shmem@<address>.
-> +
-> +allOf:
-> +  - $ref: reserved-memory.yaml
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra264-bpmp-shmem
-> +
-> +  reg:
-> +    description: The physical address and size of the shared SDRAM region
-> +
-> +unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - no-map
-> +
-> +examples:
-> +  - |
-> +    reserved-memory {
-> +       #address-cells =3D <2>;
-> +       #size-cells =3D <2>;
-
-You also do not need these size/address-cells, because...
-
-> +       dram_cpu_bpmp_mail: shmem@f1be0000  {
-(nit: double space                          ^^)
-
-> +           compatible =3D "nvidia,tegra264-bpmp-shmem";
-> +           reg =3D <0x0 0xf1be0000 0x0 0x2000>;
-
-=2E..the 64-bit registers here are both 0x0.
-
-With those fixed:
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Cheers,
-Conor.
 
-> +           no-map;
-> +       };
-> +    };
-> +...
-> --=20
-> 2.34.1
->=20
-
---ucUeK4weGJVTHNSS
+--dExVlHaTJTfKF/f9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZF1AIwAKCRB4tDGHoIJi
-0hbVAPoC6OwAmplzwpoHvCInrWR1V+vNUoeq0VCpxoxhwlYCiAEAyZ7YPJfcr4GB
-kA8X40rOpyVck/Forfn6KiNw7KrzJgo=
-=+I2s
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZF1BEAAKCRB4tDGHoIJi
+0l/OAQDrOsbSFzBKvgPvjho0xJQUKaPLSTofvc6P8KB3HCIDUgEApWO5u+zl5nPW
+xP1fytR5QKiCMZEpohFyfoxmpCWxRQE=
+=wqSg
 -----END PGP SIGNATURE-----
 
---ucUeK4weGJVTHNSS--
+--dExVlHaTJTfKF/f9--
