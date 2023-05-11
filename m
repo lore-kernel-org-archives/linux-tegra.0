@@ -2,106 +2,101 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56848C77B7F
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 May 2023 09:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 910FFC7EE2A
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 May 2023 09:03:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237161AbjEKJDa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 May 2023 05:03:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
+        id S237077AbjEKJDc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 May 2023 05:03:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236884AbjEKJD2 (ORCPT
+        with ESMTP id S237106AbjEKJD3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 May 2023 05:03:28 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D304E2735
-        for <linux-tegra@vger.kernel.org>; Thu, 11 May 2023 02:03:24 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1aaf21bb42bso59639945ad.2
-        for <linux-tegra@vger.kernel.org>; Thu, 11 May 2023 02:03:24 -0700 (PDT)
+        Thu, 11 May 2023 05:03:29 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C3F41FEB
+        for <linux-tegra@vger.kernel.org>; Thu, 11 May 2023 02:03:27 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-96a5903758fso126482766b.1
+        for <linux-tegra@vger.kernel.org>; Thu, 11 May 2023 02:03:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683795804; x=1686387804;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KF4j5CyhhoHly7+6zDRQTpQulB4Hs5tNYwEh9vRMQE4=;
-        b=YmMs7kjfKYYyWyHfwvZwAmtTSWbCMXhCWgomqWLAPDAsZRi64dbY2KaLyqNhBvZPmm
-         rrdYp9XxXXgh/1u99nnw05S7wQ0QMJPxenxtGZLtOxN9oGPv+LIDh5Ys5DQnuPydZWKL
-         NKPqrBsExnT+2Xay3TcqFK5ysa/ntjZBh+mXFb0umsel20kq3YxMZpYGD/5UV8p/xFEF
-         ZFqtjjpqCsY3RCGdmssXPlqrehroYi21G+e8SB+0oOFJGcpfJx6DlPJI48BB1YhPSMGd
-         RsW7hE660zXX0HTlak5fLQgKJi4UdE7bv+KjaUl4HFEjn5/twn1wkldlarVKmsdu9MmT
-         YZ1g==
+        d=linaro.org; s=google; t=1683795806; x=1686387806;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/gURyFCLGL6qPfte/M38lDLhFR1He2KCfzZXXVoCQbA=;
+        b=iquqBAsAp6khHMo3FwoOGE6v0VsiHMPYSjGjvTKxzosEfZXQ3il8oDqFbO4XkIeKHv
+         FkT2xFPNu5zcoN/xAab+H7GMj/reMx4tM3hgiqvob+pYCfsBi/YWCiT2HOsGcmXjylB8
+         jlyfx4eWElKt7wlyOrfyy6wT7BGgUHGjw/Yh2FKxJsH1cLJL90npjpoTGXKFALSQvmiK
+         viU5l7F8nmUxXwdBCepdJapeGj+RXbAQT9g5poWne8216Bdve7JknHuyGVL7aUPJ3zxh
+         D1JSoze0mGwo3USInbixsY1y9Z7JdB/nsbZfTKlxYZ8RSOJBgs1bl6H4wxAKHlgcuAW+
+         TzeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683795804; x=1686387804;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KF4j5CyhhoHly7+6zDRQTpQulB4Hs5tNYwEh9vRMQE4=;
-        b=liWwNE9gzjhfvuPxZCL0W3BJO9FajaKc3k9bNGuZorQqTDC7yHNpafOW23hZn+0Fvk
-         Zgg+DquFJCfoEAb2vkQTDmLzlAmndIG5jxvm8op68ehVVtAC/6sVqAvGNBgz9H5UebQE
-         +6k+4F5A+1/Ls9EewALFQVwdevJp/9If1mI3suLqS7mIgwjXqKCugcLLDX91DeQWtGrh
-         sg+z7BwWEs97j+Kk1yvem6bl9eRuBHpnF1q6HYs6uvzyYF5mXApY8IjbUXv0+JB2a1+l
-         T0qYUalD6ed0roUgorg5mu0/qa638YPHfFCGJap9NFUNUQsmemWhgXGRCjij94AU78ms
-         Vldg==
-X-Gm-Message-State: AC+VfDyAeH7xnn+ogqSCMHf6H5PAJvx7b+Z2zzGqpz3/aU7F96UpBR++
-        J/eD22h+ga+Huy2JLOsOzcU84AXJrJbPd3oZHv4=
-X-Google-Smtp-Source: ACHHUZ63/YRTo/PA+R0p5ahIhniwqM2nvsGADq/sNcmBmY7IgJvtr8ka1R9fQKWxbAW6e3OL95ZS2w==
-X-Received: by 2002:a17:902:e545:b0:1ac:a661:a4c9 with SMTP id n5-20020a170902e54500b001aca661a4c9mr10103193plf.33.1683795804247;
-        Thu, 11 May 2023 02:03:24 -0700 (PDT)
-Received: from localhost ([122.172.82.60])
-        by smtp.gmail.com with ESMTPSA id q23-20020a170902789700b001a64a2b790fsm5318967pll.164.2023.05.11.02.03.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 May 2023 02:03:23 -0700 (PDT)
-Date:   Thu, 11 May 2023 14:33:21 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: tegra194: Fix an error handling path in
- tegra194_cpufreq_probe()
-Message-ID: <20230511090321.sqlni5cf3rpmh7sg@vireshk-i7>
-References: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+        d=1e100.net; s=20221208; t=1683795806; x=1686387806;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/gURyFCLGL6qPfte/M38lDLhFR1He2KCfzZXXVoCQbA=;
+        b=R4FFCj/oBKW/T68pc6lpvZt+TQel5BJjmvThkYAoCNqynwCdlslCAEAuj6o3m9a1ED
+         hvbJiqiop5TsnxqVF5DrKk7e0TUjxcJycobTBklNn+uEwvcYPSXIth8Qq8g91xX1lZV6
+         /BFgxdEvf/vSfo7sr7mKjmFbO2cLBYlr3NLMc+zO1orLO0TFzh3v0uBnnQSOr+OwVaR2
+         pwL3y+gFIJB1WVTrkJ/yCGrsBk5XgGEJAejhw3Kc0lidc4ZGrT7dbOm+t90BMDhXW83n
+         ZYDzKRgGnSHDAOJjC02707t69fdkb7zs9MKB9U679x06/kCqdpxlqXJjcQJ4e69ry459
+         FxHw==
+X-Gm-Message-State: AC+VfDw0O42UnSVoK02s2pKdfWTlNdMtzKGu+H9ZO5dyMUs4ZNz6e3Hk
+        OMjbacJ8pad4MyehtchTkVXuEw==
+X-Google-Smtp-Source: ACHHUZ5M9+Dx5f6PabYjCF+Jaeu08L2NV+JAQZZXXwsGJViNaDBFle8VnOu909l4RFYzaIos/HWAYA==
+X-Received: by 2002:a17:907:d01:b0:965:ffda:b9d2 with SMTP id gn1-20020a1709070d0100b00965ffdab9d2mr21532032ejc.11.1683795805683;
+        Thu, 11 May 2023 02:03:25 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:7e61:f14a:c3a4:809e? ([2a02:810d:15c0:828:7e61:f14a:c3a4:809e])
+        by smtp.gmail.com with ESMTPSA id qh20-20020a170906ecb400b009655eb8be26sm3737933ejb.73.2023.05.11.02.03.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 May 2023 02:03:25 -0700 (PDT)
+Message-ID: <5d01e717-39f1-798b-dda8-022b8430dc7d@linaro.org>
+Date:   Thu, 11 May 2023 11:03:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30b17e2219abc3a9a137d28bb51e53732bba5103.1682428267.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 5/6] dt-bindings: memory-region property for
+ tegra186-bpmp
+Content-Language: en-US
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stefank@nvidia.com
+References: <20230510142248.183629-1-pdeschrijver@nvidia.com>
+ <20230510142248.183629-6-pdeschrijver@nvidia.com>
+ <cdba4bb0-551b-a3b2-9329-139d6cda71be@linaro.org>
+ <ZFyhqXhzOUKYUafA@44189d9-lcedt>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZFyhqXhzOUKYUafA@44189d9-lcedt>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25-04-23, 15:11, Christophe JAILLET wrote:
-> If the probe needs to be deferred, some resources still need to be
-> released. So branch to the error handling path instead of returning
-> directly.
+On 11/05/2023 10:04, Peter De Schrijver wrote:
+> On Wed, May 10, 2023 at 05:01:55PM +0200, Krzysztof Kozlowski wrote:
+>> On 10/05/2023 16:22, Peter De Schrijver wrote:
+>>> Add memory-region property to the tegra186-bpmp binding to support
+>>> DRAM MRQ GSCs.
+>>>
+>>> Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
+>>> Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> ---
+>>
+>> Also no changelog. Since I do not see improvements after Thierry
+>> comments I assume you send the same.
+>>
 > 
-> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
->  drivers/cpufreq/tegra194-cpufreq.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-> index c8d03346068a..36dad5ea5947 100644
-> --- a/drivers/cpufreq/tegra194-cpufreq.c
-> +++ b/drivers/cpufreq/tegra194-cpufreq.c
-> @@ -686,8 +686,10 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
->  
->  	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
->  	cpu_dev = get_cpu_device(0);
-> -	if (!cpu_dev)
-> -		return -EPROBE_DEFER;
-> +	if (!cpu_dev) {
-> +		err = -EPROBE_DEFER;
-> +		goto err_free_res;
-> +	}
->  
->  	if (dev_pm_opp_of_get_opp_desc_node(cpu_dev)) {
->  		err = dev_pm_opp_of_find_icc_paths(cpu_dev, NULL);
+> The changelog is in the cover letter. I will send it to you next
+> iteration.
 
-Applied. Thanks.
+I got only few patches, rest is missing including changelog. Thus it is
+the same as it did not exist.
 
--- 
-viresh
+
+Best regards,
+Krzysztof
+
