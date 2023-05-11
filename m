@@ -2,26 +2,26 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF22C7EE22
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 May 2023 13:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F2BC7EE23
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 May 2023 13:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238334AbjEKNYc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 May 2023 09:24:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41128 "EHLO
+        id S238216AbjEKNYe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 May 2023 09:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238185AbjEKNYA (ORCPT
+        with ESMTP id S238319AbjEKNYC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 May 2023 09:24:00 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6B8106D2;
-        Thu, 11 May 2023 06:22:16 -0700 (PDT)
+        Thu, 11 May 2023 09:24:02 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3062B106EC;
+        Thu, 11 May 2023 06:22:18 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LdLqIMouhhdqGRkagjmeoyU+qJSpeUDvrWP0DNj3M3v18G0kZ7PnpIjm8wk4YVKGzs816BnGlHfdwK2+hUOXYykemNlz+1rfSpnqfWKoxwTkKlCvwWWLOea0il89dxRLMtHX6zMtoFECSEU7S5efm3lebQACmiUopaTDfQ2NDyHw4FqwBbShsBms28u/aFI7Z9fCcYUcu8TAEhqcHBhvY5VKLueEido9i2rsWK0kP+ixPl43iktVaaicZe9oshhF6hdb0fQrgXCtJzl3gWdGY1MTuEzTCa8q++7YsupglgwutHw6knn3pZSEJIvaayGn2a9DWrZt7Q9Dy0eTele20g==
+ b=I5DhZnY3XUchsB+cUYL6JKj79QL/XSQeFz+xqRGcfKVX95VldwLzaNMRv0VFOhpa2OU/3Rdcx81BbGoC5LAzF5s2lWEOmk4wUrp1luvvuJ9pj95XlcLpZeb3uX9yBo9W1DVyfyp7dbn/AU40vNKN11Rqz53G3GY4ANP2LpqwKHTLpCe8pNaatITkXbhlJFHyz67W9kHBoOS9Qyek/l+w2m0/P/dd3Gxngzu5jCGsm9epRLdw/aQ/H/haeQlRQ/B0fNaqrcN6dVJ/k8uwIRgqCWUZK81kLNwyXchIa7hxwiPgcbWh47Z9O/AyMkSQqp0Xgs3IaR1KDpkNp1OSuW1+mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/rxdj6f8c95lYWwdmu4mId02ODxGpHnyGoMss7/dYDI=;
- b=h6hpg4+/2qw21VejIQy2ktA+np6dFYR6dIuRw3rXDYSqUIuJRHv6n9iezBwnYoIyLbWbJTBX0xEpGGLehI7IBRCOP66DnNkhdDbvhYClbKXmgKNrsAt2+AJfIzmZ5DlDwGsag3irIzZUXxwwHpFuGfP8T2+z/xzZJze+1TwV5EFj+CDQr8yNt8MxOHfFIX2XPI6WvJoCm1HeTQ8+pK01p5WrX3j/Wcb+32ipzTVcPw3iNqW5DjOxqBo8PPibNB/346SSRL6jcLTsdxvU02pQW2SZp3aH8D+KLUer3U42reReU+VSPIY7ycchRY2lSV8v677kE86qru4Zq/n58APBEg==
+ bh=dLbpQVxDrVejfcTM/lgsnUfRWa0pYoPEX6QosRNCiXo=;
+ b=MTsh8RDonbdjN1dvHG6TYlm/2HUrFt8tcxuMTMjEdJ4bL2c+/cq8RmoeP71TXYGZDp1YLa/+9UKUU1hcZNi2zRLi1PLC0LEo5ua8pwvr6WCxccbn0LCTgNOhMTx87o0bReRMrmNXu7GC/K+zca/PJJHnXqexFc+qP1Ub3xDHCMLQl39umOsXxM6hQLCujMF6qATs6MTiLEhxl0v8sVDw0vdmIpewsnp4CVnhjMFlUntacwKjMYqpslIIUpkM4YdQ5OondGnDK/Ga1cXIaB3Hu9oRGvYrXMI1dXstUjlfl6c5XWMEIyxwQzECv2TEvn8X2R3B2Zis72Tgxv3z23HnfQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -29,18 +29,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/rxdj6f8c95lYWwdmu4mId02ODxGpHnyGoMss7/dYDI=;
- b=C5xQCHKYpmwZgyZPhS2wwtnoFI+ucLNivGEYhm33liTVzfmAPcFsENVTCG284tl7DBrNzxTZalpwABLV2ZLEq3KNKsrSnYv89YzqKfFbaNf4zjPAcj3v67CIAuVGiq61XWCXDbhEx8ST5dC9Ul869qwrEnnsXw9QEA+O75Mf+EQfC+QwH5rR2edTAD5SdrT61ldfqb4xwm3tQ2b8mAFsnlCcfJ5pyFDVqZJaH7QEx0vcpX7YlGWJ2QS5pavheLLBSZ8Gu9t8+BMcepLJB/Ckz7AdU2yXyrO5cnprzeaJNstt2MX7VLQPe445lJszPZAsLFbNDpyjP2FN1K70cibPQg==
-Received: from DS7PR03CA0008.namprd03.prod.outlook.com (2603:10b6:5:3b8::13)
- by PH7PR12MB7913.namprd12.prod.outlook.com (2603:10b6:510:27b::16) with
+ bh=dLbpQVxDrVejfcTM/lgsnUfRWa0pYoPEX6QosRNCiXo=;
+ b=iMc4TttV4sDDTovTX2ZXbaX14dufSMZEKuXww/d9B+73Po2PrY6hkcZkbzULdeFv2W3oM637n42EO65UIsmEsJfNAIjY4ldagYCTztQmUCuvVEBqzpE6wfEwta5/FFXx50RyjbYBuKztZNUGOgfHBYc52jI7VL+MYS7ySLofKw8ThRTE8zdcAsf5LO33tTkE0y+JZWCmdXGZhRvgVF9DptjVybD2kM7UKM7NUDC6UEzD6kwtXa5YT1fwAAlCd8FsZt0zeXCvWW1visSYDLPISNjIpTNyH7bhGhW7v31IZCGcVbkct51PKwS/IYx6vkxBQdV4BaXhHYImHATQP68ahQ==
+Received: from DM6PR07CA0113.namprd07.prod.outlook.com (2603:10b6:5:330::16)
+ by BL3PR12MB6548.namprd12.prod.outlook.com (2603:10b6:208:38f::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.22; Thu, 11 May
- 2023 13:21:47 +0000
-Received: from DM6NAM11FT102.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3b8:cafe::98) by DS7PR03CA0008.outlook.office365.com
- (2603:10b6:5:3b8::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.22 via Frontend
- Transport; Thu, 11 May 2023 13:21:46 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.33; Thu, 11 May
+ 2023 13:22:06 +0000
+Received: from DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:330:cafe::6e) by DM6PR07CA0113.outlook.office365.com
+ (2603:10b6:5:330::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.21 via Frontend
+ Transport; Thu, 11 May 2023 13:22:06 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,30 +48,30 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT102.mail.protection.outlook.com (10.13.173.172) with Microsoft SMTP
+ DM6NAM11FT008.mail.protection.outlook.com (10.13.172.85) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6387.22 via Frontend Transport; Thu, 11 May 2023 13:21:46 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ 15.20.6387.20 via Frontend Transport; Thu, 11 May 2023 13:22:05 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 11 May 2023
- 06:21:34 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ 06:21:47 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 11 May
- 2023 06:21:34 -0700
+ 2023 06:21:46 -0700
 Received: from 44189d9-lcedt.nvidia.com (10.127.8.9) by mail.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Thu, 11 May 2023 06:21:32 -0700
+ Transport; Thu, 11 May 2023 06:21:44 -0700
 From:   Peter De Schrijver <pdeschrijver@nvidia.com>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     Stefan Kristiansson <stefank@nvidia.com>, <arnd@arndb.de>,
-        <kkartik@nvidia.com>, <sumitg@nvidia.com>, <windhl@126.com>,
+CC:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 3/6] soc/tegra: fuse: Add support for Tegra264
-Date:   Thu, 11 May 2023 16:20:48 +0300
-Message-ID: <20230511132048.1122075-4-pdeschrijver@nvidia.com>
+        <stefank@nvidia.com>
+Subject: [PATCH v4 5/6] dt-bindings: Add support for tegra186-bpmp DRAM MRQ GSCs
+Date:   Thu, 11 May 2023 16:20:50 +0300
+Message-ID: <20230511132048.1122075-6-pdeschrijver@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
 References: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
@@ -81,78 +81,106 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT102:EE_|PH7PR12MB7913:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd00da0b-ad43-4309-8e8b-08db5222abaf
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT008:EE_|BL3PR12MB6548:EE_
+X-MS-Office365-Filtering-Correlation-Id: 424d933b-8e5e-420a-1087-08db5222b750
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: akJni1JxLimMNEysEZfQXg/Y2M/Z97Zwx4VGIaVfrwsojPXTEE1r9hQ9YuN9vSzjH7IFC4RqHd2g3T/7zmFcEgh9w7+3btPBTBfCdlUy/3qFFkLb3pWwS06ayVCQeI+dN9T/eu0K+8PZjYVEpK75D9396/7M87hHSa3EmxO06O/z+Nx5KMDE4AIEUFIoDuD6TfThL+0uV7Nwk0469BN9KNvvp7vhAeIYirowSJWP5vvlFymAbT/GbREy3Lj1YyyIsppGc69BTN0FgumkAIuj0Jgsjz4pRzrcXdtTmWRrogDbG1XnIgGNbqN19upWw/4i07eYRBTxiPwq4s29Yb6KM7HSQXfaXniV8UFH5GBR4fshFLSho010/mHJFxKfu/jkFDzSs0TRv3iB/oYbbl+0VVOmr+93EKlKBuJwfotifQZ3tf4CjDgyhbe8ma4JEsHTDxjuDVW0+Yz4zh1Rom/8u44m5NITgr4JUGVGoQf8wiB4+DisZ4/LhGM0gEUS/MNMc0U0g19pl4xaJdTk9utN65WJfeA+lWClFIMP9Z19GOlPskJsxj5hFKXDKNsOhTBNv/RUYHM0O0SZ7pvAJpL6oWDRJnBDQdNM8KkS7LoiaqnfzQah7HsxTGM3Swz9/QQXZOD9MhPvLzUnbgAm26EWePFDehT1dc8q25sUiK9wehxh+YwyQhlYh/e7DLbz2M6euBM4SkrLoOCjaxqGjrI9qEBEUr5RSBQ8ECOr4YVkC3XS+1lB6COJNOzRalYU5/b7
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(376002)(136003)(346002)(451199021)(46966006)(40470700004)(36840700001)(186003)(1076003)(26005)(41300700001)(6666004)(7696005)(83380400001)(47076005)(2616005)(36860700001)(426003)(336012)(478600001)(40460700003)(110136005)(54906003)(4326008)(6636002)(82740400003)(40480700001)(70586007)(70206006)(316002)(82310400005)(7636003)(356005)(5660300002)(8676002)(8936002)(86362001)(2906002)(36756003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: TS7wAYtTOJjLqaYbPh749jzpHd3lY1JjQ9OauS5JZiX31wnjLxcKaSWPxrVoPAe1Q0tdLhnY+YCqmCYvPshh1xe4dgAuSlgIdXhk3rZTsrouIXukcHJn3gbC7ULkP5+OOwQ1hdiv5KnDSVb2nnI7ov1MVi+PCaqoBANIlKrlwGawNESKiys6r1zBzTBBKOvbS0w7kabgaJVH/wp8ZfcyeYaFzL+JnQ/oj6u9a/JqqWYbIerPHiKd0k64haivhzixCUIHIX0P8+JAR4aE2Gyn7msmP5atV9co3U+HEZkTgmlvXyrlkkvWM8rfv9oZGEgS1Paaojn56PxFUbOSRyYEAScD6aZKwRgDP2RAluFP13iA01nahWSRJq/tUbCtl6X39WcZkU08lwgRiNYngF7oVWgTyZlQvJZen/WAMACtuGc7xag4BFhx2D7mQDZCEWeJO+HssRhS5MyyBlUeOrSdHEqP1TvGz19g4CHDJ56cEzJh39CD0a399H9J3jylhmOJKbI/pWYXxndkc8tRyxQO7BHlPFrA6mcQ925L1gqb/BW/A21Rc8bWzFW1wWG5Bq3Z5nDo5thDT4MqeFRdEp9hnCiTcrLBa1sASRzmN5eMePTob+w35vPa+z10mj0GIa7T+uiBt54ZsEoVXKdJup+p38K1cNs/P1hb3F4E9H88rTS8hZR/U5eRo9np43E5TUKLLFmgJ9SQNrxyfNIUEPLcsg==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(346002)(39860400002)(376002)(396003)(451199021)(40470700004)(36840700001)(46966006)(5660300002)(40480700001)(54906003)(40460700003)(70206006)(6636002)(4326008)(2616005)(8676002)(107886003)(26005)(1076003)(8936002)(186003)(6666004)(41300700001)(82310400005)(2906002)(36756003)(7696005)(316002)(478600001)(70586007)(86362001)(7636003)(356005)(82740400003)(83380400001)(426003)(336012)(36860700001)(110136005)(47076005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2023 13:21:46.4425
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2023 13:22:05.9494
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd00da0b-ad43-4309-8e8b-08db5222abaf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 424d933b-8e5e-420a-1087-08db5222b750
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT102.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7913
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6548
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Stefan Kristiansson <stefank@nvidia.com>
+Add memory-region property to the tegra186-bpmp binding to support
+DRAM MRQ GSCs.
 
-Add support for Tegra264 to the fuse handling code.
-
+Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
 Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 3 ++-
- include/soc/tegra/fuse.h               | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ .../firmware/nvidia,tegra186-bpmp.yaml        | 37 +++++++++++++++++--
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 4591c5bcb690..eb0a1d924526 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2014-2023, NVIDIA CORPORATION.  All rights reserved.
-  */
+diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+index 833c07f1685c..f3e02c9d090d 100644
+--- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
++++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+@@ -57,8 +57,11 @@ description: |
+   "#address-cells" or "#size-cells" property.
  
- #include <linux/export.h>
-@@ -62,6 +62,7 @@ bool tegra_is_silicon(void)
- 	switch (tegra_get_chip_id()) {
- 	case TEGRA194:
- 	case TEGRA234:
-+	case TEGRA264:
- 		if (tegra_get_platform() == 0)
- 			return true;
+   The shared memory area for the IPC TX and RX between CPU and BPMP are
+-  predefined and work on top of sysram, which is an SRAM inside the
+-  chip. See ".../sram/sram.yaml" for the bindings.
++  predefined and work on top of either sysram, which is an SRAM inside the
++  chip, or in normal SDRAM.
++  See ".../sram/sram.yaml" for the bindings for the SRAM case.
++  See "../reserved-memory/nvidia,tegra264-bpmp-shmem.yaml" for bindings for
++  the SDRAM case.
  
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index a63de5da8124..3a513be50243 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2012-2023, NVIDIA CORPORATION.  All rights reserved.
-  */
+ properties:
+   compatible:
+@@ -81,6 +84,11 @@ properties:
+     minItems: 2
+     maxItems: 2
  
- #ifndef __SOC_TEGRA_FUSE_H__
-@@ -17,6 +17,7 @@
- #define TEGRA186	0x18
- #define TEGRA194	0x19
- #define TEGRA234	0x23
-+#define TEGRA264	0x26
++  memory-region:
++    description: phandle to reserved memory region used for IPC between
++      CPU-NS and BPMP.
++    maxItems: 1
++
+   "#clock-cells":
+     const: 1
  
- #define TEGRA_FUSE_SKU_CALIB_0	0xf0
- #define TEGRA30_FUSE_SATA_CALIB	0x124
+@@ -115,10 +123,15 @@ properties:
+ 
+ additionalProperties: false
+ 
++oneOf:
++  - required:
++      - memory-region
++  - required:
++      - shmem
++
+ required:
+   - compatible
+   - mboxes
+-  - shmem
+   - "#clock-cells"
+   - "#power-domain-cells"
+   - "#reset-cells"
+@@ -184,3 +197,21 @@ examples:
+             #thermal-sensor-cells = <1>;
+         };
+     };
++
++  - |
++    #include <dt-bindings/mailbox/tegra186-hsp.h>
++
++    bpmp {
++        compatible = "nvidia,tegra186-bpmp";
++        interconnects = <&mc TEGRA186_MEMORY_CLIENT_BPMPR &emc>,
++                        <&mc TEGRA186_MEMORY_CLIENT_BPMPW &emc>,
++                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAR &emc>,
++                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAW &emc>;
++        interconnect-names = "read", "write", "dma-mem", "dma-write";
++        mboxes = <&hsp_top1 TEGRA_HSP_MBOX_TYPE_DB
++                            TEGRA_HSP_DB_MASTER_BPMP>;
++        memory-region = <&dram_cpu_bpmp_mail>;
++        #clock-cells = <1>;
++        #power-domain-cells = <1>;
++        #reset-cells = <1>;
++    };
 -- 
 2.34.1
 
