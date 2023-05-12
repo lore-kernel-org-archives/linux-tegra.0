@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA18DC7EE2F
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 08:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53350C7EE33
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 08:42:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240224AbjELImA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 May 2023 04:42:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54340 "EHLO
+        id S240227AbjELImB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 May 2023 04:42:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240025AbjELIl5 (ORCPT
+        with ESMTP id S240109AbjELIl6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 May 2023 04:41:57 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7342249F4;
-        Fri, 12 May 2023 01:41:56 -0700 (PDT)
+        Fri, 12 May 2023 04:41:58 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B4A95B98;
+        Fri, 12 May 2023 01:41:57 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2836C20437;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C5AEC2277F;
         Fri, 12 May 2023 08:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
         t=1683880915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PJqEG/CeqhUYorQ9LHu5G5OfhEtg1W9GXaMXtW0UJIE=;
-        b=H3suTdauheUg1rxZJzibqHwNSavfFJaxC6qeuZORkZoAC7n192hkknlrHTyMwAMv8hOTlG
-        IsB3dDVmABydUDWJWPbBx8Ucb5dysP6t3SZFhJKJ+igFK1gOg7zEcILXbEiQwjh0+7M2T+
-        GUVr/HEx6T4wTG/kka3ild9F9EdLsMA=
+        bh=CPj8PSVa733w7x7xFCz+v5D3fSwmoptM8FaSvfFesA4=;
+        b=E4qQaRYrBMXM9qzhTmOCzGzXKqXrw+Kac1y/5XRkbdPnpNKr5won871BZ7dbfQT6B0DvXl
+        JsMNcGDEGaKhqPcw7rFBmkeGrKA/rrPHyqN4tFOoPe9wHreCqrti0i3UQXxcNNtGj88hCu
+        qa1q198G8HZkCWQkXwYQMUzrTnXqiP0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
         s=susede2_ed25519; t=1683880915;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PJqEG/CeqhUYorQ9LHu5G5OfhEtg1W9GXaMXtW0UJIE=;
-        b=s3GiwHlmChHPrfB10tKjWu/CN0UtpQBH7O0vfJ2jCOBdk65nxtQgTNSjWFlQnUee9jvzQc
-        AxtRi6m3Rv4Le0AA==
+        bh=CPj8PSVa733w7x7xFCz+v5D3fSwmoptM8FaSvfFesA4=;
+        b=1rOz6zhbuJKgqdK+TAWnurZZCKL9goFz9qADinfTLap1nyF1XNvAyoUH+vsplTgH5i0WQj
+        ZGKX+BhSYFJsGRCw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CBF1913466;
-        Fri, 12 May 2023 08:41:54 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 79BA413466;
+        Fri, 12 May 2023 08:41:55 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id QBEAMdL7XWQZKQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:54 +0000
+        id qE7nHNP7XWQZKQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:55 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
@@ -59,28 +59,27 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 02/11] drm/exynos: Use regular fbdev I/O helpers
-Date:   Fri, 12 May 2023 10:41:43 +0200
-Message-Id: <20230512084152.31233-3-tzimmermann@suse.de>
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>
+Subject: [PATCH 04/11] drm/radeon: Use regular fbdev I/O helpers
+Date:   Fri, 12 May 2023 10:41:45 +0200
+Message-Id: <20230512084152.31233-5-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230512084152.31233-1-tzimmermann@suse.de>
 References: <20230512084152.31233-1-tzimmermann@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-helpers. Exynos does not use damage handling, so DRM's fbdev helpers
+helpers. Radeon does not use damage handling, so DRM's fbdev helpers
 are mere wrappers around the fbdev code.
 
-Add CONFIG_DRM_EXYNOS_FBDEV_EMULATION to select the necessary
+Add CONFIG_DRM_RADEON_FBDEV_EMULATION to select the necessary
 Kconfig options automatically. Make fbdev emulation depend on
 the new config option.
 
@@ -88,98 +87,92 @@ By using fbdev helpers directly within each DRM fbdev emulation,
 we can eventually remove DRM's wrapper functions entirely.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
 ---
- drivers/gpu/drm/exynos/Kconfig            |  8 ++++++++
- drivers/gpu/drm/exynos/Makefile           |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 10 +++++-----
- drivers/gpu/drm/exynos/exynos_drm_fbdev.h |  2 +-
- 4 files changed, 15 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/radeon/Kconfig        | 8 ++++++++
+ drivers/gpu/drm/radeon/Makefile       | 2 +-
+ drivers/gpu/drm/radeon/radeon_fbdev.c | 9 ++++-----
+ drivers/gpu/drm/radeon/radeon_mode.h  | 2 +-
+ 4 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 0cb92d651ff1..c7ac07220e26 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -5,6 +5,7 @@ config DRM_EXYNOS
- 	depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	depends on MMU
- 	select DRM_DISPLAY_HELPER if DRM_EXYNOS_DP
-+	select DRM_EXYNOS_FBDEV_EMULATION if DRM_FBDEV_EMULATION
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
- 	select SND_SOC_HDMI_CODEC if SND_SOC
-@@ -12,6 +13,13 @@ config DRM_EXYNOS
- 	  Choose this option if you have a Samsung SoC Exynos chipset.
- 	  If M is selected the module will be called exynosdrm.
- 
-+config DRM_EXYNOS_FBDEV_EMULATION
+diff --git a/drivers/gpu/drm/radeon/Kconfig b/drivers/gpu/drm/radeon/Kconfig
+index e19d77d58810..66b741d96cc4 100644
+--- a/drivers/gpu/drm/radeon/Kconfig
++++ b/drivers/gpu/drm/radeon/Kconfig
+@@ -8,6 +8,7 @@ config DRM_RADEON
+ 	select DRM_DISPLAY_DP_HELPER
+ 	select DRM_DISPLAY_HELPER
+         select DRM_KMS_HELPER
++	select DRM_RADEON_FBDEV_EMULATION if DRM_FBDEV_EMULATION
+ 	select DRM_SUBALLOC_HELPER
+         select DRM_TTM
+ 	select DRM_TTM_HELPER
+@@ -39,3 +40,10 @@ config DRM_RADEON_USERPTR
+ 	help
+ 	  This option selects CONFIG_MMU_NOTIFIER if it isn't already
+ 	  selected to enabled full userptr support.
++
++config DRM_RADEON_FBDEV_EMULATION
 +	bool
-+	depends on DRM_EXYNOS
++	depends on DRM_RADEON
 +	select FB_CFB_COPYAREA
 +	select FB_CFB_FILLRECT
 +	select FB_CFB_IMAGEBLIT
-+
- if DRM_EXYNOS
+diff --git a/drivers/gpu/drm/radeon/Makefile b/drivers/gpu/drm/radeon/Makefile
+index a8734b7d0485..46c1446196a9 100644
+--- a/drivers/gpu/drm/radeon/Makefile
++++ b/drivers/gpu/drm/radeon/Makefile
+@@ -76,7 +76,7 @@ radeon-y += \
+ 	vce_v1_0.o \
+ 	vce_v2_0.o
  
- comment "CRTCs"
-diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-index 2fd2f3ee4fcf..a9278be4daf3 100644
---- a/drivers/gpu/drm/exynos/Makefile
-+++ b/drivers/gpu/drm/exynos/Makefile
-@@ -6,7 +6,7 @@
- exynosdrm-y := exynos_drm_drv.o exynos_drm_crtc.o exynos_drm_fb.o \
- 		exynos_drm_gem.o exynos_drm_plane.o exynos_drm_dma.o
+-radeon-$(CONFIG_DRM_FBDEV_EMULATION) += radeon_fbdev.o
++radeon-$(CONFIG_DRM_RADEON_FBDEV_EMULATION) += radeon_fbdev.o
+ radeon-$(CONFIG_VGA_SWITCHEROO) += radeon_atpx_handler.o
+ radeon-$(CONFIG_ACPI) += radeon_acpi.o
  
--exynosdrm-$(CONFIG_DRM_FBDEV_EMULATION) += exynos_drm_fbdev.o
-+exynosdrm-$(CONFIG_DRM_EXYNOS_FBDEV_EMULATION)	+= exynos_drm_fbdev.o
- exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o
- exynosdrm-$(CONFIG_DRM_EXYNOS5433_DECON)	+= exynos5433_drm_decon.o
- exynosdrm-$(CONFIG_DRM_EXYNOS7_DECON)	+= exynos7_drm_decon.o
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index ea4b3d248aac..b3333dd1d087 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -8,6 +8,8 @@
-  *	Seung-Woo Kim <sw0312.kim@samsung.com>
+diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/radeon/radeon_fbdev.c
+index fe76e29910ef..dcabe527f9c0 100644
+--- a/drivers/gpu/drm/radeon/radeon_fbdev.c
++++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
+@@ -24,6 +24,7 @@
+  *     David Airlie
   */
  
 +#include <linux/fb.h>
-+
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_helper.h>
-@@ -49,11 +51,9 @@ static const struct fb_ops exynos_drm_fb_ops = {
- 	.owner		= THIS_MODULE,
+ #include <linux/pci.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/vga_switcheroo.h>
+@@ -193,11 +194,9 @@ static const struct fb_ops radeon_fbdev_fb_ops = {
  	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_mmap        = exynos_drm_fb_mmap,
--	.fb_read	= drm_fb_helper_cfb_read,
--	.fb_write	= drm_fb_helper_cfb_write,
--	.fb_fillrect	= drm_fb_helper_cfb_fillrect,
--	.fb_copyarea	= drm_fb_helper_cfb_copyarea,
--	.fb_imageblit	= drm_fb_helper_cfb_imageblit,
-+	.fb_fillrect	= cfb_fillrect,
-+	.fb_copyarea	= cfb_copyarea,
-+	.fb_imageblit	= cfb_imageblit,
- 	.fb_destroy	= exynos_drm_fb_destroy,
+ 	.fb_open = radeon_fbdev_fb_open,
+ 	.fb_release = radeon_fbdev_fb_release,
+-	.fb_read = drm_fb_helper_cfb_read,
+-	.fb_write = drm_fb_helper_cfb_write,
+-	.fb_fillrect = drm_fb_helper_cfb_fillrect,
+-	.fb_copyarea = drm_fb_helper_cfb_copyarea,
+-	.fb_imageblit = drm_fb_helper_cfb_imageblit,
++	.fb_fillrect = cfb_fillrect,
++	.fb_copyarea = cfb_copyarea,
++	.fb_imageblit = cfb_imageblit,
+ 	.fb_destroy = radeon_fbdev_fb_destroy,
  };
  
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-index 1e1dea627cd9..9a8425881ff1 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
-@@ -11,7 +11,7 @@
- #ifndef _EXYNOS_DRM_FBDEV_H_
- #define _EXYNOS_DRM_FBDEV_H_
+diff --git a/drivers/gpu/drm/radeon/radeon_mode.h b/drivers/gpu/drm/radeon/radeon_mode.h
+index 1decdcec0264..c5a8e25a4c97 100644
+--- a/drivers/gpu/drm/radeon/radeon_mode.h
++++ b/drivers/gpu/drm/radeon/radeon_mode.h
+@@ -939,7 +939,7 @@ void dce4_program_fmt(struct drm_encoder *encoder);
+ void dce8_program_fmt(struct drm_encoder *encoder);
  
--#ifdef CONFIG_DRM_FBDEV_EMULATION
-+#if defined(CONFIG_DRM_EXYNOS_FBDEV_EMULATION)
- void exynos_drm_fbdev_setup(struct drm_device *dev);
- #else
- static inline void exynos_drm_fbdev_setup(struct drm_device *dev)
+ /* fbdev layer */
+-#if defined(CONFIG_DRM_FBDEV_EMULATION)
++#if defined(CONFIG_DRM_RADEON_FBDEV_EMULATION)
+ void radeon_fbdev_setup(struct radeon_device *rdev);
+ void radeon_fbdev_set_suspend(struct radeon_device *rdev, int state);
+ bool radeon_fbdev_robj_is_fb(struct radeon_device *rdev, struct radeon_bo *robj);
 -- 
 2.40.1
 
