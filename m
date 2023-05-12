@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F68BC7EE32
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 08:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D24C7EE43
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 08:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240232AbjELImC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 May 2023 04:42:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54350 "EHLO
+        id S240099AbjELImD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 May 2023 04:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240050AbjELIl6 (ORCPT
+        with ESMTP id S240209AbjELIl7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 May 2023 04:41:58 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99AB4EC2;
-        Fri, 12 May 2023 01:41:56 -0700 (PDT)
+        Fri, 12 May 2023 04:41:59 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8CF63A96;
+        Fri, 12 May 2023 01:41:57 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7546620438;
-        Fri, 12 May 2023 08:41:55 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 6BF5622780;
+        Fri, 12 May 2023 08:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1683880915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1683880916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zcdLjrEdU29TNQCZsQL4m88DQQqjwBs7iIoaOgkHlRg=;
-        b=jcQz68kTUMQAs73Qjm2vHwoZRkeFPNiC0LXfZDAnEJuyZzdbxMxjB+Oh/E5bb8cQcJ52S3
-        7kEc645LcFjQlzlFCucSKPZAv+EXZrImcdZd9KQTTphIOINGqxFsGQHAYaHEasK3iYwfq8
-        fAFHb2My0wxzCLntmAtzScc7lPZmsds=
+        bh=Jt5zQXoCLvVCLuvrKWwbv5943v5Jhj6noM4LIx6oKuo=;
+        b=Mq5PxUwXZbCLFDFgnCI1DKYvJ/tcqz3h2zYKwuZLx0LcaaW7G5NPKlIj504Jx6EWQsSrxU
+        oWQ9kf66N++gTLVR0yFAtmhkCWMVcR/5zep83eutPV9pxKK1xTRtYF1lRkini5bgYX8j9K
+        1p8fSFxkldB/3uGINU0866JAO8K4+t0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1683880915;
+        s=susede2_ed25519; t=1683880916;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zcdLjrEdU29TNQCZsQL4m88DQQqjwBs7iIoaOgkHlRg=;
-        b=0QoD+dpt6/O6s0hofIvSvab9ZC5ckSRTYOP9mBjgCzyngWh4uE9pUIJEBJpj/kv3Bjl5hc
-        KzaKZshKUgGHdzAg==
+        bh=Jt5zQXoCLvVCLuvrKWwbv5943v5Jhj6noM4LIx6oKuo=;
+        b=ZSsK/IWLoUNHTWcIAoYs70W6PjH0LJQ50zEZ9f8n4LIs5TTuhnEBM6w7SJ02Bf9Eopy7gB
+        3wXUCWHAV624J1CA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2CA2813A0A;
-        Fri, 12 May 2023 08:41:55 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1E0F813466;
+        Fri, 12 May 2023 08:41:56 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id CFDuCdP7XWQZKQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:55 +0000
+        id OB6KBtT7XWQZKQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:56 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
@@ -59,10 +59,13 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Subject: [PATCH 03/11] drm/gma500: Use regular fbdev I/O helpers
-Date:   Fri, 12 May 2023 10:41:44 +0200
-Message-Id: <20230512084152.31233-4-tzimmermann@suse.de>
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>
+Subject: [PATCH 06/11] drm/msm: Use regular fbdev I/O helpers
+Date:   Fri, 12 May 2023 10:41:47 +0200
+Message-Id: <20230512084152.31233-7-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230512084152.31233-1-tzimmermann@suse.de>
 References: <20230512084152.31233-1-tzimmermann@suse.de>
@@ -73,10 +76,10 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-helpers. Gma500 does not use damage handling, so DRM's fbdev helpers
+helpers. Msm does not use damage handling, so DRM's fbdev helpers
 are mere wrappers around the fbdev code.
 
-Add CONFIG_DRM_GMA500_FBDEV_EMULATION to select the necessary
+Add CONFIG_DRM_MSM_FBDEV_EMULATION to select the necessary
 Kconfig options automatically. Make fbdev emulation depend on
 the new config option.
 
@@ -84,89 +87,97 @@ By using fbdev helpers directly within each DRM fbdev emulation,
 we can eventually remove DRM's wrapper functions entirely.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sean Paul <sean@poorly.run>
 ---
- drivers/gpu/drm/gma500/Kconfig   | 8 ++++++++
- drivers/gpu/drm/gma500/Makefile  | 2 +-
- drivers/gpu/drm/gma500/fbdev.c   | 9 ++++-----
- drivers/gpu/drm/gma500/psb_drv.h | 2 +-
- 4 files changed, 14 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/msm/Kconfig     |  9 +++++++++
+ drivers/gpu/drm/msm/Makefile    |  2 +-
+ drivers/gpu/drm/msm/msm_drv.h   |  2 +-
+ drivers/gpu/drm/msm/msm_fbdev.c | 12 +++++++-----
+ 4 files changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/Kconfig b/drivers/gpu/drm/gma500/Kconfig
-index 2efc0eb41c64..b9655e01b0af 100644
---- a/drivers/gpu/drm/gma500/Kconfig
-+++ b/drivers/gpu/drm/gma500/Kconfig
-@@ -3,6 +3,7 @@ config DRM_GMA500
- 	tristate "Intel GMA500/600/3600/3650 KMS Framebuffer"
- 	depends on DRM && PCI && X86 && MMU
+diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+index 85f5ab1d552c..91a20cd77b83 100644
+--- a/drivers/gpu/drm/msm/Kconfig
++++ b/drivers/gpu/drm/msm/Kconfig
+@@ -17,6 +17,7 @@ config DRM_MSM
+ 	select DRM_DISPLAY_DP_HELPER
+ 	select DRM_DISPLAY_HELPER
  	select DRM_KMS_HELPER
-+	select DRM_GMA500_FBDEV_EMULATION if DRM_FBDEV_EMULATION
- 	select I2C
- 	select I2C_ALGOBIT
- 	# GMA500 depends on ACPI_VIDEO when ACPI is enabled, just like i915
-@@ -15,3 +16,10 @@ config DRM_GMA500
- 	  Say yes for an experimental 2D KMS framebuffer driver for the
- 	  Intel GMA500 (Poulsbo), Intel GMA600 (Moorestown/Oak Trail) and
- 	  Intel GMA3600/3650 (Cedar Trail).
++	select DRM_MSM_FBDEV_EMULATION if DRM_FBDEV_EMULATION
+ 	select DRM_PANEL
+ 	select DRM_BRIDGE
+ 	select DRM_PANEL_BRIDGE
+@@ -165,3 +166,11 @@ config DRM_MSM_HDMI_HDCP
+ 	default y
+ 	help
+ 	  Choose this option to enable HDCP state machine
 +
-+config DRM_GMA500_FBDEV_EMULATION
++config DRM_MSM_FBDEV_EMULATION
 +	bool
-+	depends on DRM_GMA500
-+	select FB_CFB_COPYAREA
-+	select FB_CFB_FILLRECT
-+	select FB_CFB_IMAGEBLIT
-diff --git a/drivers/gpu/drm/gma500/Makefile b/drivers/gpu/drm/gma500/Makefile
-index 4f302cd5e1a6..ea86d6627c51 100644
---- a/drivers/gpu/drm/gma500/Makefile
-+++ b/drivers/gpu/drm/gma500/Makefile
-@@ -38,6 +38,6 @@ gma500_gfx-y += \
- 	  psb_irq.o
++	depends on DRM_MSM
++	select FB_SYS_COPYAREA
++	select FB_SYS_FILLRECT
++	select FB_SYS_FOPS
++	select FB_SYS_IMAGEBLIT
+diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
+index 7274c41228ed..552491ab4f4f 100644
+--- a/drivers/gpu/drm/msm/Makefile
++++ b/drivers/gpu/drm/msm/Makefile
+@@ -129,7 +129,7 @@ msm-$(CONFIG_DRM_MSM_DP)+= dp/dp_aux.o \
+ 	dp/dp_power.o \
+ 	dp/dp_audio.o
  
- gma500_gfx-$(CONFIG_ACPI) +=  opregion.o
--gma500_gfx-$(CONFIG_DRM_FBDEV_EMULATION) +=  fbdev.o
-+gma500_gfx-$(CONFIG_DRM_GMA500_FBDEV_EMULATION) +=  fbdev.o
+-msm-$(CONFIG_DRM_FBDEV_EMULATION) += msm_fbdev.o
++msm-$(CONFIG_DRM_MSM_FBDEV_EMULATION) += msm_fbdev.o
  
- obj-$(CONFIG_DRM_GMA500) += gma500_gfx.o
-diff --git a/drivers/gpu/drm/gma500/fbdev.c b/drivers/gpu/drm/gma500/fbdev.c
-index 62287407e717..60005c3d01d0 100644
---- a/drivers/gpu/drm/gma500/fbdev.c
-+++ b/drivers/gpu/drm/gma500/fbdev.c
-@@ -5,6 +5,7 @@
-  *
-  **************************************************************************/
+ msm-$(CONFIG_DRM_MSM_HDMI_HDCP) += hdmi/hdmi_hdcp.o
+ 
+diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+index e13a8cbd61c9..eb09589fc9f7 100644
+--- a/drivers/gpu/drm/msm/msm_drv.h
++++ b/drivers/gpu/drm/msm/msm_drv.h
+@@ -304,7 +304,7 @@ struct drm_framebuffer *msm_framebuffer_create(struct drm_device *dev,
+ struct drm_framebuffer * msm_alloc_stolen_fb(struct drm_device *dev,
+ 		int w, int h, int p, uint32_t format);
+ 
+-#ifdef CONFIG_DRM_FBDEV_EMULATION
++#if defined(CONFIG_DRM_MSM_FBDEV_EMULATION)
+ void msm_fbdev_setup(struct drm_device *dev);
+ #else
+ static inline void msm_fbdev_setup(struct drm_device *dev)
+diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+index 2ebc86381e1c..fc0353a4160e 100644
+--- a/drivers/gpu/drm/msm/msm_fbdev.c
++++ b/drivers/gpu/drm/msm/msm_fbdev.c
+@@ -4,6 +4,8 @@
+  * Author: Rob Clark <robdclark@gmail.com>
+  */
  
 +#include <linux/fb.h>
- #include <linux/pfn_t.h>
- 
++
+ #include <drm/drm_drv.h>
  #include <drm/drm_crtc_helper.h>
-@@ -136,11 +137,9 @@ static const struct fb_ops psb_fbdev_fb_ops = {
- 	.owner = THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_setcolreg = psb_fbdev_fb_setcolreg,
--	.fb_read = drm_fb_helper_cfb_read,
--	.fb_write = drm_fb_helper_cfb_write,
--	.fb_fillrect = drm_fb_helper_cfb_fillrect,
--	.fb_copyarea = drm_fb_helper_cfb_copyarea,
--	.fb_imageblit = drm_fb_helper_cfb_imageblit,
-+	.fb_fillrect = cfb_fillrect,
-+	.fb_copyarea = cfb_copyarea,
-+	.fb_imageblit = cfb_imageblit,
- 	.fb_mmap = psb_fbdev_fb_mmap,
- 	.fb_destroy = psb_fbdev_fb_destroy,
+ #include <drm/drm_fb_helper.h>
+@@ -57,11 +59,11 @@ static const struct fb_ops msm_fb_ops = {
+ 	/* Note: to properly handle manual update displays, we wrap the
+ 	 * basic fbdev ops which write to the framebuffer
+ 	 */
+-	.fb_read = drm_fb_helper_sys_read,
+-	.fb_write = drm_fb_helper_sys_write,
+-	.fb_fillrect = drm_fb_helper_sys_fillrect,
+-	.fb_copyarea = drm_fb_helper_sys_copyarea,
+-	.fb_imageblit = drm_fb_helper_sys_imageblit,
++	.fb_read = fb_sys_read,
++	.fb_write = fb_sys_write,
++	.fb_fillrect = sys_fillrect,
++	.fb_copyarea = sys_copyarea,
++	.fb_imageblit = sys_imageblit,
+ 	.fb_mmap = msm_fbdev_mmap,
+ 	.fb_destroy = msm_fbdev_fb_destroy,
  };
-diff --git a/drivers/gpu/drm/gma500/psb_drv.h b/drivers/gpu/drm/gma500/psb_drv.h
-index f7f709df99b4..aa2922a0ebf6 100644
---- a/drivers/gpu/drm/gma500/psb_drv.h
-+++ b/drivers/gpu/drm/gma500/psb_drv.h
-@@ -612,7 +612,7 @@ struct drm_framebuffer *psb_framebuffer_create(struct drm_device *dev,
- 					       struct drm_gem_object *obj);
- 
- /* fbdev */
--#if defined(CONFIG_DRM_FBDEV_EMULATION)
-+#if defined(CONFIG_DRM_GMA500_FBDEV_EMULATION)
- void psb_fbdev_setup(struct drm_psb_private *dev_priv);
- #else
- static inline void psb_fbdev_setup(struct drm_psb_private *dev_priv)
 -- 
 2.40.1
 
