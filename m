@@ -2,113 +2,115 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EA5C77B7C
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 14:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7509BC77B75
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 16:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241162AbjELOzL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 May 2023 10:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41882 "EHLO
+        id S229921AbjELQU7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 May 2023 12:20:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241553AbjELOzC (ORCPT
+        with ESMTP id S229624AbjELQU4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 May 2023 10:55:02 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB041160F
-        for <linux-tegra@vger.kernel.org>; Fri, 12 May 2023 07:54:43 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f41d087b24so51571075e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 12 May 2023 07:54:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683903282; x=1686495282;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KPibGk/VsIl1NlQ+E8IH62HD3HFwxeLmQ0A1sDyLGrY=;
-        b=oTbQ0MBI8O99aP/PPw6jI4vWNvScQWUEVVtYJraANg7ALPnGNrbsQhOg/7BE6YG2DG
-         knUbYfPO47MoKkrGI+Pa+q+z8MbVXxH6SJhAF7i1so2qVCuA2LCyOI+1QTPEbjKzPJuM
-         mToXO0p38qTrWNcoAfZ9ZVAi7uBdR//OddKFxWOmf7PU5FIHQ4LKl7IFbSOn3aj+swha
-         15IlcBrpedoTFLlctspWBEXrgz4JbBCHwEEKpFL9cTU1hMDkZDaKCTiGpP1X3SZQAd8E
-         /Kt2rScCLy+3DJXp5l3IElEDnbd+foCmxd0FndbZzGfoBwmqnI/t9AAN+V46+3OGUYs5
-         ekow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683903282; x=1686495282;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KPibGk/VsIl1NlQ+E8IH62HD3HFwxeLmQ0A1sDyLGrY=;
-        b=M6urK/0pUNwrf3grVZ0emzIFhwsOMgVyFu4TeFdbNxjJar2UyCIX30azSoil5Ca720
-         esjxcDqMHZsq7HN+XDsJKZwPchRzfjAHt3Jgzm51GkPOVxXqCdu9ZtA+ur3Js/H3HFIO
-         ZeVzsLH60T/jfC64yzd7WGABW/uz9zBjktfHQDT1Hyu6ZhwCgYDE+Dt2qGR/dprFELkV
-         9v/RRRM3nIKugV6Ke3rIPDY5oJkcUyWzkLaQ3Va2waiNqVoV3M4/OZxgZDgw1ULrHxwQ
-         m1FYvir7igPZPHqBbSbJ8D8Vhup1KZTtZ0DF6/gqBnwkStnGpmLITSpZdElv/f8s4MX1
-         nknw==
-X-Gm-Message-State: AC+VfDy9RHBBmG4IOom5S9d0EOmniEpKhg0vNJy6N7QqxK5QbCOozVxG
-        lhC8ZKGNhQvCN3kBtSgvyY28yQ==
-X-Google-Smtp-Source: ACHHUZ6CncOxg8qPy8qYrW4dm6HRCcDc6I/jklbEDF8sFnXgTK8ZuBSeeupPp/h25wntlT3Rp+dn2w==
-X-Received: by 2002:a7b:cb53:0:b0:3f2:53a5:d308 with SMTP id v19-20020a7bcb53000000b003f253a5d308mr16833397wmj.6.1683903281792;
-        Fri, 12 May 2023 07:54:41 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id v2-20020a1cf702000000b003f32f013c3csm28953540wmh.6.2023.05.12.07.54.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 May 2023 07:54:41 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     Sumit Semwal <sumit.semwal@linaro.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
+        Fri, 12 May 2023 12:20:56 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E8BD7EF5;
+        Fri, 12 May 2023 09:20:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683908455; x=1715444455;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6JMhlSI8AcK3kUbPJJDnaUnKRbv4q1hmlIrs1v8cDOE=;
+  b=e0nPajSQXRHCSv62M3dHBiZU7rOpku7gAhRuOJf+2cp8wDJTyrnaiH6F
+   9uFO/0cZXgiA+vC4Q9OrZNComkcVd260APIsoRFnWwviVmuiwgdTYtP5n
+   HpSjnJB1tVqYGR3C91a1staKfZfsWQ2aGQwMjNmFei2grjOYDyj+ScObq
+   JLanEUdQSkp+PcsrId5ZVI5wb0JIZVPDhw+9vSO2Uv9qvs0eXpscqT1mN
+   HiOIkfKYCPkFiwIj45HEnnQ2/LH8pGBxUlUlGfnpDdzFkgtf9TQxeNRQX
+   D1oyke54WkX29oHanTUI7ur7i3E68Ef6ZiBQnrs7hikskn7Kvg3Td+Qqw
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10708"; a="353077815"
+X-IronPort-AV: E=Sophos;i="5.99,269,1677571200"; 
+   d="scan'208";a="353077815"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2023 09:20:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10708"; a="765219552"
+X-IronPort-AV: E=Sophos;i="5.99,269,1677571200"; 
+   d="scan'208";a="765219552"
+Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 12 May 2023 09:20:51 -0700
+Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pxVVi-0004y2-2B;
+        Fri, 12 May 2023 16:20:50 +0000
+Date:   Sat, 13 May 2023 00:20:28 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, javierm@redhat.com
+Cc:     oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
         Tomi Valkeinen <tomba@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        kernel@collabora.com
-In-Reply-To: <20230406160637.541702-1-dmitry.osipenko@collabora.com>
-References: <20230406160637.541702-1-dmitry.osipenko@collabora.com>
-Subject: Re: (subset) [PATCH v2 0/7] Move dma-buf mmap() reservation
- locking down to exporters
-Message-Id: <168390328031.185210.8399521458221830929.b4-ty@linaro.org>
-Date:   Fri, 12 May 2023 15:54:40 +0100
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [Intel-gfx] [PATCH 07/11] drm/omapdrm: Use regular fbdev I/O
+ helpers
+Message-ID: <202305130058.VuW3nBPS-lkp@intel.com>
+References: <20230512084152.31233-8-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230512084152.31233-8-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Thomas,
 
-On Thu, 06 Apr 2023 19:06:30 +0300, Dmitry Osipenko wrote:
-> This patchset makes dma-buf exporters responisble for taking care of
-> the reservation lock. I also included patch that moves drm-shmem to use
-> reservation lock, to let CI test the whole set. I'm going to take all
-> the patches via the drm-misc tree, please give an ack.
-> 
-> Previous policy stated that dma-buf core takes the lock around mmap()
-> callback. Which meant that both importers and exporters shouldn't touch
-> the reservation lock in the mmap() code path. This worked well until
-> Intel-CI found a deadlock problem in a case of self-imported dma-buf [1].
-> 
-> [...]
+kernel test robot noticed the following build errors:
 
-Applied, thanks!
+[auto build test ERROR on 451e49cfbaa90720149e63f4fa9c7824013c783d]
 
-[4/7] fastrpc: Don't assert held reservation lock for dma-buf mmapping
-      commit: 3f6b4c6f0bd0126f673f3578429239ae3860718b
+url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Zimmermann/drm-armada-Use-regular-fbdev-I-O-helpers/20230512-164432
+base:   451e49cfbaa90720149e63f4fa9c7824013c783d
+patch link:    https://lore.kernel.org/r/20230512084152.31233-8-tzimmermann%40suse.de
+patch subject: [Intel-gfx] [PATCH 07/11] drm/omapdrm: Use regular fbdev I/O helpers
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20230513/202305130058.VuW3nBPS-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/f9113ec6815b748d0b917f78527582b8b08deb40
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Thomas-Zimmermann/drm-armada-Use-regular-fbdev-I-O-helpers/20230512-164432
+        git checkout f9113ec6815b748d0b917f78527582b8b08deb40
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/gpu/drm/omapdrm/
 
-Best regards,
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202305130058.VuW3nBPS-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/gpu/drm/omapdrm/omap_fbdev.c:306:6: error: redefinition of 'omap_fbdev_setup'
+     306 | void omap_fbdev_setup(struct drm_device *dev)
+         |      ^~~~~~~~~~~~~~~~
+   In file included from drivers/gpu/drm/omapdrm/omap_fbdev.c:19:
+   drivers/gpu/drm/omapdrm/omap_fbdev.h:17:20: note: previous definition of 'omap_fbdev_setup' with type 'void(struct drm_device *)'
+      17 | static inline void omap_fbdev_setup(struct drm_device *dev)
+         |                    ^~~~~~~~~~~~~~~~
+
+
+vim +/omap_fbdev_setup +306 drivers/gpu/drm/omapdrm/omap_fbdev.c
+
+9e69bcd88e4593 Thomas Zimmermann 2023-04-03  305  
+9e69bcd88e4593 Thomas Zimmermann 2023-04-03 @306  void omap_fbdev_setup(struct drm_device *dev)
+
 -- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
