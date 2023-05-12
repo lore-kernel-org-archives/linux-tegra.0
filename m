@@ -2,127 +2,171 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F994C77B7C
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 08:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C73BC7EE2D
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 May 2023 08:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240367AbjELIJd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 May 2023 04:09:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36852 "EHLO
+        id S240210AbjELIl7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 May 2023 04:41:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240096AbjELIJA (ORCPT
+        with ESMTP id S240000AbjELIl5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 May 2023 04:09:00 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2053.outbound.protection.outlook.com [40.107.212.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FA611B56;
-        Fri, 12 May 2023 01:07:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i45mtqPOH4AjiMl0DUHivWkxzAVxT3Tudq4S3ekyMXKfGAQTptpaYTPcOAUkBzYARGBUAlRRD0C8oRlV5epjEz2KYkCGPZA8bFsQD2en7nxG4zk1RiGAZqnwSd7fMifkE2cxC89Pi3x6d0IgR1UG5EFmqaVdp0c7OS7qqJqYjH7jHIrz2ClY7Pe3FCA/vcnhNNn68BNfwPTqViCe/sNUMCdKdA3osgC24NKWI+kuiu5Itlz/q8xvZpikuyhAd6SGT4xyRIXm6egCJN31k2PiAfgPU3m1gJ2regohfhENwi5DwqjFIiJFeyvKk68adcGytfmEGAy8oX4GWzFYE+eIYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4//we3IhoNGzyNeBkW96AV0EdeKGiIT7YrztSsfn8iM=;
- b=AVC+0HDGcf6nRBvVfvLNGdiGptpG9vRFbx7Lf2AS+l6rBqIu70ZqZ8oZsbF2umlhNI/qq8NYazTn9LXbQIDyF4fvz6bWBiQczbrLbIUWUfn/EpN73wqO3MVFWMCDu2Sb7P2U3WXJFaxVP/n1TBCCcSHszFxexPnTpgs/qC9oloXDDawdbiYNJ8xl+fIEkQ6A9wOOwRm/0G/8RZjWiHH+HppT0ekr15Qj1WMUH582z+FC1UE6QNslCLB+2B2djXVOkgmEQU/f8TNReprLEYooNvEB7XD6zofRAMH1GE3eWunbAU8a4iwsnVXli1O6aCIrb/CHCKuA+PyNeSNwb0EUmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4//we3IhoNGzyNeBkW96AV0EdeKGiIT7YrztSsfn8iM=;
- b=WJzm5ApHTAshr4UypF8c2/x0R9mdIrPlFYcLET0sUjkqsTqZoWD5A+PECoB8QG413xXcf8JazCFPed3EdoVkSljmCVRMoH1KMEMLycc5/WPlkyHUGzxP9IHyPRMjhGNbBY84D2FHLlrSJakvI8peFYWR6mQz87eXVQXaadshPQMaHOTJxA3IXnfZB6/N53MM/OORubZeyOhzPnD8gTaN5Hw+vPSz89T1vLi+8noVMAsP4un43rGIBNXXRLRcHjLhinYVl4ZrZeKENk9QRsFMugFFn4BoB79XK7Nga5KSkvMnh/uONavbaVco0STRo3g8FU2Z7ENQc/Rp0SWfGNuNAw==
-Received: from CY5PR15CA0140.namprd15.prod.outlook.com (2603:10b6:930:67::10)
- by PH7PR12MB6564.namprd12.prod.outlook.com (2603:10b6:510:210::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.22; Fri, 12 May
- 2023 08:05:39 +0000
-Received: from CY4PEPF0000C969.namprd02.prod.outlook.com
- (2603:10b6:930:67:cafe::23) by CY5PR15CA0140.outlook.office365.com
- (2603:10b6:930:67::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.24 via Frontend
- Transport; Fri, 12 May 2023 08:05:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000C969.mail.protection.outlook.com (10.167.241.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6387.21 via Frontend Transport; Fri, 12 May 2023 08:05:38 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 12 May 2023
- 01:05:27 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 12 May
- 2023 01:05:26 -0700
-Received: from jilin-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Fri, 12 May 2023 01:05:25 -0700
-From:   Jim Lin <jilin@nvidia.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <mathias.nyman@intel.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-usb@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Henry Lin <henryl@nvidia.com>, Jim Lin <jilin@nvidia.com>
-Subject: [PATCH] usb: xhci: tegra: enable stream protocol support
-Date:   Fri, 12 May 2023 16:04:23 +0800
-Message-ID: <20230512080423.27978-1-jilin@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+        Fri, 12 May 2023 04:41:57 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A1364682;
+        Fri, 12 May 2023 01:41:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C77F020025;
+        Fri, 12 May 2023 08:41:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1683880914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DAAeGKzYoJOQjYPBCC6xf/WnpfnF9kmSpmaxPVYgctA=;
+        b=Zt0kSXtIJ6OJ0OmOGA6lnj12q/awpUHVOFNr1I4WrzX2UmKuInqYnRB0i13Z+SyNsWncPp
+        XqpIETO32eD2cnZXVpYLojw9uw7/rQ8v3NZv4c4rvhvVpvuCXajMDUZ9TaRsZ3KccTL5Vi
+        bP6x6lV85fvPTDtodgx4bW1UrO8hkQo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1683880914;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DAAeGKzYoJOQjYPBCC6xf/WnpfnF9kmSpmaxPVYgctA=;
+        b=LNEQ8JOApwOG2wXdEjeFP6JPByVBnAPQYuK+2LCZ86BgmyKrdiPCvn4FA6geiS0Fy6FLY5
+        0z+oRD3DMNQz/xBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8050D13A0A;
+        Fri, 12 May 2023 08:41:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 6K9THtL7XWQZKQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 12 May 2023 08:41:54 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     daniel@ffwll.ch, airlied@gmail.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 01/11] drm/armada: Use regular fbdev I/O helpers
+Date:   Fri, 12 May 2023 10:41:42 +0200
+Message-Id: <20230512084152.31233-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230512084152.31233-1-tzimmermann@suse.de>
+References: <20230512084152.31233-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000C969:EE_|PH7PR12MB6564:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23bc18fe-e3a5-4acb-ef5e-08db52bfac46
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BnoHcrprqzblLXOMlLVkOogsLLs4QLdNvHL8Hv4LYrIu/3BJd5t16DaCiVCw62PkJTiSW/NVWJ7ZlkkzomJiQ+mCIxjXeFxHr8IAy9WWangkuegRmCQCHKavdj/sf5PwEnd2eewednCFtkGrar+Vt3+T2DnXToasn/So7LPWQr2pNkKE3jOZpDuQ8P1oJuWW4fmXNII0RClTaeejr1iQh6dSlXnvZKPK2TOQm1sLN+O++tlQIPq0ihEb7Iiavr+GzhcVPhOV3oh44qi39aWRU1yN4KXbQXmNOfHKuEhrQI3i50JGfpLf3tBhxp9UGl01plbyibX3tPjzcfyXtMUwUq8Z5vxU4+PK8Fz63tmCfyZSouCYEYwa3HG4PvBx1fegAnb+ycPfjk4kZTVt9+UcyqeJcXTjL2ENmGsiMusjtoI8uy0pLXepBuW6H2Esfoo/iBNFYMkmUSUhuvRWPnMbkYiO8PnX3q4OygMuYJVDgcvgO+5BsfPBZKF4PpiPgVm6s8XpIG5mHVzZQ1dSr9V2OqecHf4amoIAFXzIpnsizwvcBwuwhLwpEUgHI5gK7dy4PWM5zDGF+xz7/KkmKFXSMUlje9zxSxEOziCu0w74mOZrsmEEYk4bJPY55VDyoZzzY7B+pofjbK/swCO9QUJk5XKiduOF5nBwZ2pq/rG1HY+YbSAZD8uuWeb+mdIuBwqEKnQ+RHcLLbcfDcv1YvrMk0xCPa/zTC1p5GwOI5PTqNOj3mCY2L9Pk+h7zaEkrOvh
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(396003)(346002)(376002)(451199021)(36840700001)(46966006)(40470700004)(86362001)(36756003)(54906003)(70586007)(70206006)(316002)(6916009)(4326008)(478600001)(7696005)(82310400005)(4744005)(40480700001)(5660300002)(8676002)(8936002)(2906002)(7636003)(41300700001)(356005)(82740400003)(2616005)(107886003)(26005)(1076003)(36860700001)(426003)(336012)(47076005)(186003)(40460700003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2023 08:05:38.4524
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23bc18fe-e3a5-4acb-ef5e-08db52bfac46
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000C969.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6564
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Henry Lin <henryl@nvidia.com>
+Use the regular fbdev helpers for framebuffer I/O instead of DRM's
+helpers. Armada does not use damage handling, so DRM's fbdev helpers
+are mere wrappers around the fbdev code.
 
-This commit enables stream transfer protocol for Tegra XHCI.
+Add CONFIG_DRM_ARMADA_FBDEV_EMULATION to select the necessary
+Kconfig options automatically. Make fbdev emulation depend on
+the new config option.
 
-Signed-off-by: Henry Lin <henryl@nvidia.com>
-Signed-off-by: Jim Lin <jilin@nvidia.com>
+By using fbdev helpers directly within each DRM fbdev emulation,
+we can eventually remove DRM's wrapper functions entirely.
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Russell King <linux@armlinux.org.uk>
 ---
+ drivers/gpu/drm/armada/Kconfig        | 8 ++++++++
+ drivers/gpu/drm/armada/Makefile       | 2 +-
+ drivers/gpu/drm/armada/armada_drm.h   | 2 +-
+ drivers/gpu/drm/armada/armada_fbdev.c | 9 ++++-----
+ 4 files changed, 14 insertions(+), 7 deletions(-)
 
- drivers/usb/host/xhci-tegra.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index c75d93244143..ea55e401c70e 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1828,6 +1828,9 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto remove_usb2;
- 	}
- 
-+	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
-+		xhci->shared_hcd->can_do_streams = 1;
+diff --git a/drivers/gpu/drm/armada/Kconfig b/drivers/gpu/drm/armada/Kconfig
+index f5c66d89ba99..054265d6fd26 100644
+--- a/drivers/gpu/drm/armada/Kconfig
++++ b/drivers/gpu/drm/armada/Kconfig
+@@ -2,6 +2,7 @@
+ config DRM_ARMADA
+ 	tristate "DRM support for Marvell Armada SoCs"
+ 	depends on DRM && HAVE_CLK && ARM && MMU
++	select DRM_ARMADA_FBDEV_EMULATION if DRM_FBDEV_EMULATION
+ 	select DRM_KMS_HELPER
+ 	help
+ 	  Support the "LCD" controllers found on the Marvell Armada 510
+@@ -11,3 +12,10 @@ config DRM_ARMADA
+ 	  This driver provides no built-in acceleration; acceleration is
+ 	  performed by other IP found on the SoC.  This driver provides
+ 	  kernel mode setting and buffer management to userspace.
 +
- 	err = usb_add_hcd(xhci->shared_hcd, tegra->xhci_irq, IRQF_SHARED);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to add shared HCD: %d\n", err);
++config DRM_ARMADA_FBDEV_EMULATION
++	bool
++	depends on DRM_ARMADA
++	select FB_CFB_COPYAREA
++	select FB_CFB_FILLRECT
++	select FB_CFB_IMAGEBLIT
+diff --git a/drivers/gpu/drm/armada/Makefile b/drivers/gpu/drm/armada/Makefile
+index dc75a7db9ed3..1c5671c94506 100644
+--- a/drivers/gpu/drm/armada/Makefile
++++ b/drivers/gpu/drm/armada/Makefile
+@@ -3,6 +3,6 @@ armada-y	:= armada_crtc.o armada_drv.o armada_fb.o \
+ 		   armada_gem.o armada_overlay.o armada_plane.o armada_trace.o
+ armada-y	+= armada_510.o
+ armada-$(CONFIG_DEBUG_FS) += armada_debugfs.o
+-armada-$(CONFIG_DRM_FBDEV_EMULATION) += armada_fbdev.o
++armada-$(CONFIG_DRM_ARMADA_FBDEV_EMULATION) += armada_fbdev.o
+ 
+ obj-$(CONFIG_DRM_ARMADA) := armada.o
+diff --git a/drivers/gpu/drm/armada/armada_drm.h b/drivers/gpu/drm/armada/armada_drm.h
+index c303e8c7ff6c..23a21c0fbd16 100644
+--- a/drivers/gpu/drm/armada/armada_drm.h
++++ b/drivers/gpu/drm/armada/armada_drm.h
+@@ -73,7 +73,7 @@ struct armada_private {
+ 
+ #define drm_to_armada_dev(dev) container_of(dev, struct armada_private, drm)
+ 
+-#if defined(CONFIG_DRM_FBDEV_EMULATION)
++#if defined(CONFIG_DRM_ARMADA_FBDEV_EMULATION)
+ void armada_fbdev_setup(struct drm_device *dev);
+ #else
+ static inline void armada_fbdev_setup(struct drm_device *dev)
+diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
+index 0a5fd1aa86eb..6c3bbaf53569 100644
+--- a/drivers/gpu/drm/armada/armada_fbdev.c
++++ b/drivers/gpu/drm/armada/armada_fbdev.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/errno.h>
++#include <linux/fb.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ 
+@@ -34,11 +35,9 @@ static void armada_fbdev_fb_destroy(struct fb_info *info)
+ static const struct fb_ops armada_fb_ops = {
+ 	.owner		= THIS_MODULE,
+ 	DRM_FB_HELPER_DEFAULT_OPS,
+-	.fb_read	= drm_fb_helper_cfb_read,
+-	.fb_write	= drm_fb_helper_cfb_write,
+-	.fb_fillrect	= drm_fb_helper_cfb_fillrect,
+-	.fb_copyarea	= drm_fb_helper_cfb_copyarea,
+-	.fb_imageblit	= drm_fb_helper_cfb_imageblit,
++	.fb_fillrect	= cfb_fillrect,
++	.fb_copyarea	= cfb_copyarea,
++	.fb_imageblit	= cfb_imageblit,
+ 	.fb_destroy	= armada_fbdev_fb_destroy,
+ };
+ 
 -- 
-2.17.1
+2.40.1
 
