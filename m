@@ -2,87 +2,115 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED06C77B7F
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 May 2023 11:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396C9C7EE23
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 May 2023 20:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236577AbjENLdU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 May 2023 07:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
+        id S233364AbjENUHE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 May 2023 16:07:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233442AbjENLdT (ORCPT
+        with ESMTP id S229585AbjENUHD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 May 2023 07:33:19 -0400
-X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 14 May 2023 04:33:18 PDT
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B4DE9119
-        for <linux-tegra@vger.kernel.org>; Sun, 14 May 2023 04:33:18 -0700 (PDT)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id y9rEps5u40mnzy9rEpymsF; Sun, 14 May 2023 13:25:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684063546;
-        bh=Tk5vW0hntOxhf9yNrtaC6tGBir59FsySHi0FcdBXXAI=;
-        h=From:To:Cc:Subject:Date;
-        b=FV2bx2ix6lKtmL7MYGq8pRxmng1uDjs+Xs2Kw89KaEbCz660xESHOksEtl/mA6Y6f
-         mWYet7tuNG1qLo6fQCaW+5rLv7BM9gsnz8Arv6CNNhVukWxc5JTHtcNxJLSpLBhA4K
-         x3/zwsBsy6n/9oZxuunAXoHED3ntqDWeLEzYCfolEscH+fSiVxE4669/chJSGfPKam
-         TX9Ueo8I/oMN/pB2hjXG0XfnaWBS7Lyx5JES0SR39M8JsRIwqvs3HMQb2Ney8ov7yi
-         bfjUysLAdqgcAzT/mbkFeZCA0ze8q1CMOrtoOFpnCKFTYyL/QS4EZ9rM+pTrB6e9tx
-         fdYhXYHd6QgaQ==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 May 2023 13:25:46 +0200
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
+        Sun, 14 May 2023 16:07:03 -0400
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584DC1BD;
+        Sun, 14 May 2023 13:06:59 -0700 (PDT)
+Received: from [192.168.1.103] (178.176.76.26) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Sun, 14 May
+ 2023 23:06:48 +0300
+Subject: Re: [PATCH] ata: libata: Make ata_platform_remove_one return void
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jeff Brasen <jbrasen@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] serial: 8250_tegra: Fix an error handling path in tegra_uart_probe()
-Date:   Sun, 14 May 2023 13:25:42 +0200
-Message-Id: <f8130f35339cc80edc6b9aac4bb2a60b60a226bf.1684063511.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        "open list:LIBATA SUBSYSTEM" <linux-ide@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>
+References: <20230512204646.137746-1-u.kleine-koenig@pengutronix.de>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <7a29c928-1e76-2b6b-5b8f-d79003f3359c@omp.ru>
+Date:   Sun, 14 May 2023 23:06:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <20230512204646.137746-1-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [178.176.76.26]
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 5.9.59, Database issued on: 05/14/2023 19:47:15
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 177305 [May 12 2023]
+X-KSE-AntiSpam-Info: Version: 5.9.59.0
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 510 510 bc345371020d3ce827abc4c710f5f0ecf15eaf2e
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.76.26 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;178.176.76.26:7.7.3;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.76.26
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 05/14/2023 19:56:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 5/14/2023 5:19:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If an error occurs after reset_control_deassert(), it must be re-asserted,
-as already done in the .remove() function.
+Hello!
 
-Fixes: c6825c6395b7 ("serial: 8250_tegra: Create Tegra specific 8250 driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/tty/serial/8250/8250_tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 5/12/23 11:46 PM, Uwe Kleine-König wrote:
 
-diff --git a/drivers/tty/serial/8250/8250_tegra.c b/drivers/tty/serial/8250/8250_tegra.c
-index 2509e7f74ccf..89956bbf34d9 100644
---- a/drivers/tty/serial/8250/8250_tegra.c
-+++ b/drivers/tty/serial/8250/8250_tegra.c
-@@ -113,13 +113,15 @@ static int tegra_uart_probe(struct platform_device *pdev)
- 
- 	ret = serial8250_register_8250_port(&port8250);
- 	if (ret < 0)
--		goto err_clkdisable;
-+		goto err_ctrl_assert;
- 
- 	platform_set_drvdata(pdev, uart);
- 	uart->line = ret;
- 
- 	return 0;
- 
-+err_ctrl_assert:
-+	reset_control_assert(uart->rst);
- err_clkdisable:
- 	clk_disable_unprepare(uart->clk);
- 
--- 
-2.34.1
+> The function returned zero unconditionally, so the function returning an
+> int is something between useless and irritating. With the goal to make
+> platform drivers' remove function return void, it's helpful to convert
+> the function accordingly. This converts several drivers to the new
+> .remove_new callback that was introduced to smoothen the platform driver
+> conversion.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+
+[...]
+
+MBR, Sergey
