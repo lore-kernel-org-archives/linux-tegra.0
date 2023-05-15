@@ -2,115 +2,133 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F347C77B7D
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 15:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C593C7EE2C
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 16:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241523AbjEOPLd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 May 2023 11:11:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56868 "EHLO
+        id S242501AbjEOQS4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 May 2023 12:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239554AbjEOPL3 (ORCPT
+        with ESMTP id S242300AbjEOQSo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 May 2023 11:11:29 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3529BD9;
-        Mon, 15 May 2023 08:11:28 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-965e4be7541so2245920566b.1;
-        Mon, 15 May 2023 08:11:28 -0700 (PDT)
+        Mon, 15 May 2023 12:18:44 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22910A3;
+        Mon, 15 May 2023 09:18:43 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-96622bca286so2067008766b.1;
+        Mon, 15 May 2023 09:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684163486; x=1686755486;
+        d=gmail.com; s=20221208; t=1684167521; x=1686759521;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xsvUBcMhOXjqd9ZDcNssy54SV6VYhmPfH6EPl2aTGuo=;
-        b=SUOsWuqoVICxibXu5xSHf8Z0wc7B1eU3oJwjbr2GaBlSNqD6QimfxV3isULv6T1sqa
-         ohUq01s1RmY1Sjpgo48anUM/RStTdiBNL7muGnj/U9V9qbZVrzyTNpMc0eSqcEC9iucA
-         s2DnHiW5D0Bv8PqFXMBJ8SmblAkH9vvJMKPwDVMtQyDe/knCsQwsZ4iCtEkg6ZAGOSQ1
-         47xb2Lxm5xHkrHK4kGFejDWeLdoSrdE+LlIYQrkrMyR5jJuEERh+av8VH0xlr6doydB+
-         fMnIJcOfK0rKiIz9T7jFqDobjLm2EK2b/BwpWd9yfLlGITR0QWC8hQy9fqKgpZqWPqrb
-         PGPw==
+        bh=fFPJu/bdf2To7OKUQNPH4m9IQexv87evllOs7pwaC0s=;
+        b=HOI4BtGRGKeREF4vFCjUoTunSeoZhYrwxv47tp75FfmjjcgWHsaU0LNYoVuKZrMktk
+         hqnIWnXQb2ZfIUWOuSigjbAmmxsWMLe3HoI9rUbL/UDVgYtGx5YtzY0RcqES+MTXVvR1
+         hDy5+Aj56e/EaKdD+mRC9hKUcKxf1WalvDAvcjlUFDy0GQprZivcrhDgOKsh5HvbvNrF
+         y6aeTIBOi2EYSWOYWNOJpYnIOLmYGiJUoP83ZTY7j+HcaEbEd6SN2u5/VbJsg9oOb4g4
+         EUMNKOklA2Cck+L3MZEP6xP4GMOVmdwDpEmt11g44Gg1sb2sR66mrk9filyfrArjC5cp
+         AoEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684163486; x=1686755486;
+        d=1e100.net; s=20221208; t=1684167521; x=1686759521;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xsvUBcMhOXjqd9ZDcNssy54SV6VYhmPfH6EPl2aTGuo=;
-        b=hz+eof0ErrjYBE5zrPVZj9NOklXUrUHGYIPnlVdJzpMgkIqsSJD9sGr1UMZEpvayP8
-         e0myn4TZ8xDD7xZZIlZnGCWBkydRgXC17rJhFO2AGfJbWQlvhnp0EaJjjdGecpnrlE9u
-         Q+y8EOuSgydVgGDVkqv7rTiMlQ7PRiaKW0tgMlbc+YglXuuNsOrYvR51aNzUASpn8XSw
-         GSFETed26wWnsdu+dTwgnRIVAsWYltSYDRuKQPCcgsUgTFA4G2RxUA2NoWeLLKXZYvZy
-         7XjQcsq2tLCLOP3wuLTEPcUCNqiEAMargGKfkM2BmJw1k1Cnnwpi9D79kmOS2LVD33gf
-         EISw==
-X-Gm-Message-State: AC+VfDwzlG7svMIqIGr5MVv99fIa3ENU94dZhTJwSwJUzZgaJU/dn4Ji
-        wOW6Txe41IF036GD9ChYsewDGLlwivu9+Q==
-X-Google-Smtp-Source: ACHHUZ7YBwqr/F4kfwrb+asV0F0rUDMrK6vKIRJEw+6w/Q+GtuWiyFCIKfCFQCRmpUrxC7SxmBYCIg==
-X-Received: by 2002:a17:907:d1c:b0:966:5912:c4b with SMTP id gn28-20020a1709070d1c00b0096659120c4bmr25950950ejc.76.1684163486444;
-        Mon, 15 May 2023 08:11:26 -0700 (PDT)
+        bh=fFPJu/bdf2To7OKUQNPH4m9IQexv87evllOs7pwaC0s=;
+        b=OaJgIFpzvW35q/x6rkvvpf7YrobK0jFQ8fE/cbupTpMk+UpEAy5PAFg7P0+xnRbEhl
+         uc7If/S6AudcW0s9bLuTXjTJvvVbftDyktkIMYFFScGc1UFFETmD2nMKvlngDoxSYcBn
+         QIY65JdlnkCoYiB7y2PqANYv5av2kouX1hL2yflE1QONSLTbiNsqvaLSmjMf9onpEdf5
+         jFtLwh5Jhd52DjoobJ0jry0rOFblDksgRmtxLUDq5e3AvrALaSlaxJBpi3HckibQjrtf
+         cVFoR3sqnk7Z2sz1mvj8ujltoQyQdzqmu3DELwMQpygjZQVJn2Bft2/eXrlTgNVd6Ur3
+         7DSA==
+X-Gm-Message-State: AC+VfDwMK/MPgzpe/jWPiLkeJ29OGvmyIbIlLjBj4sDD2Mk7gAkMEnnT
+        b6jfwq+t3JGNWB8xqnN6VqCxg1f7fLGjRg==
+X-Google-Smtp-Source: ACHHUZ7syZQng2BvbRJEc59vRXvP+m7Y4V8LOWuPg2Y+gG3U6DbYMfHN6uYfLKL8kbgDSe1ANhRheQ==
+X-Received: by 2002:a17:907:d91:b0:933:4d37:82b2 with SMTP id go17-20020a1709070d9100b009334d3782b2mr31727220ejc.57.1684167521167;
+        Mon, 15 May 2023 09:18:41 -0700 (PDT)
 Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id tc19-20020a1709078d1300b00969f2d5267asm9185757ejc.114.2023.05.15.08.11.25
+        by smtp.gmail.com with ESMTPSA id hg10-20020a1709072cca00b009659c23e78fsm9653018ejc.215.2023.05.15.09.18.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 08:11:25 -0700 (PDT)
-Date:   Mon, 15 May 2023 17:11:24 +0200
+        Mon, 15 May 2023 09:18:40 -0700 (PDT)
+Date:   Mon, 15 May 2023 18:18:38 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Shubhi Garg <shgarg@nvidia.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: tegra: Document compatible for IGX
-Message-ID: <ZGJLnKTfUx0ImP_B@orome>
-References: <20230508102733.1751527-1-shgarg@nvidia.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lpieralisi@kernel.org, helgaas@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
+        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch v8 0/8] Tegra234 Memory interconnect support
+Message-ID: <ZGJbXg88JOu4aiNe@orome>
+References: <20230511173211.9127-1-sumitg@nvidia.com>
+ <a032d9e6-6cb5-1856-9eda-28028bf05633@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AWy5YPLxdPOo+rxH"
+        protocol="application/pgp-signature"; boundary="8qg6A1xwpz6/pQdH"
 Content-Disposition: inline
-In-Reply-To: <20230508102733.1751527-1-shgarg@nvidia.com>
+In-Reply-To: <a032d9e6-6cb5-1856-9eda-28028bf05633@linaro.org>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---AWy5YPLxdPOo+rxH
+--8qg6A1xwpz6/pQdH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 08, 2023 at 10:27:32AM +0000, Shubhi Garg wrote:
-> Document the compatible strings used for Nvidia IGX Orin Development
-> kit which uses P3701 SKU8 and P3740 carrier board.
+On Sun, May 14, 2023 at 12:41:45PM +0200, Krzysztof Kozlowski wrote:
+> On 11/05/2023 19:32, Sumit Gupta wrote:
+> > Hi All,
+> >=20
+> > Have incorporated the suggestions in v7. Only changed 'patch 1' in v7
+> > to fix possible race when setting 'mc->bpmp' as pointed by Krzysztof.
+> > Requesting to merge the patch series.
+> >=20
 >=20
-> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
-> ---
->=20
-> v2: sorted IGX Orin position as per part number. Since
-> P3740 is designed prior to P3768, it is placed before Orin NX.
->=20
->  Documentation/devicetree/bindings/arm/tegra.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
+> Can I apply it since you request it? I asked you long time ago to
+> clearly state dependencies or merging limitations. It's v8 and cover
+> letter still does not state it. Neither the patches do.
 
-Both patches applied.
+I thought we had discussed and agreed to merge this through the Tegra
+tree, which is why you had provided Acked-bys on all the patches. I was
+waiting for a final Acked-by on patch 1, since that was the only one
+still being revised.
 
-Thanks,
+If you prefer to merge this, that works for me too. In that case, the
+series:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+Although it might be good if I pick up at least patch 8, just as a
+precautionary measure to avoid potential conflicts going forward. As I
+understand, it should be safe to apply that separately.
+
 Thierry
 
---AWy5YPLxdPOo+rxH
+--8qg6A1xwpz6/pQdH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRiS5wACgkQ3SOs138+
-s6F+tw//V7IBe5CmY9Ky5oBnDZAn1CoU2LbNEl/l3/MK1DLml1GtJ1lqK08n0rOZ
-xrdqIFoPmv8y8aJPCvmdvqA8X+xN6eEq8YDb2Xswz/Cd6LnEBiWn+Bes2ln8oy05
-kDbTG3wnzOIAGCCwSgyUVfb0DX9e0/80ysIRtO7riCrmN3wmXiNXmvDEljBt/5Ej
-wE9dODkYcNd4QsMDmIHyKKoOcuQA27uF6Uj5QCYkMdfe+aaEaFk20AIbDLbcvBPu
-j3F0l8YeESDzxmnMbh1QnqrWkkH3q1gz6GxzYtJpmbZi3L8Uy/ebH4pFhBtvT1Fo
-pEivtS7oeoXkOdpkfnpvnJ/T2NfbtUd60817mV4Obw1RTNz5wJ+HjA4vERhGS2AZ
-w8jek2/CVYoKgg5/aITN3aesWem7PTSeHenT5iex0Bzlbl6WAgPgmsVXjc78exXu
-3BOIDSLGIDLm8xgSIHOfaS4LUCdaUY8XRc2t+9uf7JvBMes82MAdcuNm87ipLLbL
-YFOWKJbmyQEsRDO+FTC5S5oZpaGTPnFn5pC4mwldZC8n7PDIw8ir+M196CGjcKid
-siqlzjjXsCG9HSLtl02sosThE70Qld/HIerSVHkA62BiMWoMRxOehce1W+IWR3v2
-iyek02J+reWP7JDbmnuozO0RWDNe2ccoHi4ZW+bb/KzpBO/Ocwc=
-=Wq7D
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRiW14ACgkQ3SOs138+
+s6Hwyg//UwQpQ0EtSE3NvPmUTkNdtOnRCNocLMvlMPxH/nQSEy+fKcNW1vtXrFWn
+2hOa0ZdmQaS+3M8ZECIQlnuu9AsBJuivyeuGhOvyf7FX96wiGqtgSxbZHk/mzljL
+N3n1dOX90QYos9kh2OvRxreV/CnSwutuvs3AmhXv3MS1MNHBSFCAJ/RIc+n8McqU
+WDxRDhdyUyPdfsaO7rEpdm3VbSQqcUSEnY6q93lJd6/I4xYacQDPsKxlSyurZT07
+pqn+6oPTXnfRJH2qhXPDLceVLV2RxJdj8dv5ig/cpZBGPUPSY7gDsVhpib8OikUt
+NXfT/TXX0GVwC+w0T7BXbFS1ZlHUeoA/cW+l5wOjz5zKHMNqkjpKYQ8gHDC3fX7p
+0Lm4Jpj+TRr5Crb0pXNdRk9t5ZxeFGndOyqOW2CZTEbVNKjSNVsEhGd5AmsEny0u
+6yk9+iLf1mcLrWwzAWF6WwzyYOcB45cDRv8YFbyaTy9HIVH0ZZuJi+anaYZQRcOF
+sK3ERbA9P/e+d0j7pRgN8J2DR44z71Qq5jP338tBUeyq4xG970h4ikdVd9rF7Arb
+8ZJyRhHJnQ4zfbhCRGioIU5aINj3yn87p9l1N5MIoFV4ZzsGiO2e1zAGBUh7QN/b
+5YxjVuIyMSsH+tYrb5GHHtrJPmBOV9swfnwQHkfXiIEMd1Lnn3c=
+=V4PZ
 -----END PGP SIGNATURE-----
 
---AWy5YPLxdPOo+rxH--
+--8qg6A1xwpz6/pQdH--
