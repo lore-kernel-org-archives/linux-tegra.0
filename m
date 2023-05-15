@@ -2,277 +2,137 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B646CC77B75
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 12:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E240DC77B7D
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 13:08:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241275AbjEOMtz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 May 2023 08:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39650 "EHLO
+        id S242183AbjEONI2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 May 2023 09:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241940AbjEOMtn (ORCPT
+        with ESMTP id S242288AbjEONIL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 May 2023 08:49:43 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 357D3173F
-        for <linux-tegra@vger.kernel.org>; Mon, 15 May 2023 05:49:40 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E66AFEC;
-        Mon, 15 May 2023 05:50:24 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EA8053F67D;
-        Mon, 15 May 2023 05:49:38 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     joro@8bytes.org
-Cc:     iommu@lists.linux.dev, will@kernel.org, jgg@nvidia.com,
-        digetx@gmail.com, thierry.reding@gmail.com,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 2/4] iommu/tegra-gart: Improve domain support
-Date:   Mon, 15 May 2023 13:49:30 +0100
-Message-Id: <11f282c5d1db884e9f187cc4639add28faa4ee13.1684154219.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
-In-Reply-To: <cover.1684154219.git.robin.murphy@arm.com>
-References: <cover.1684154219.git.robin.murphy@arm.com>
+        Mon, 15 May 2023 09:08:11 -0400
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C11E2107
+        for <linux-tegra@vger.kernel.org>; Mon, 15 May 2023 06:07:39 -0700 (PDT)
+Received: by mail-qt1-x82f.google.com with SMTP id d75a77b69052e-3f4de077aaaso60900391cf.1
+        for <linux-tegra@vger.kernel.org>; Mon, 15 May 2023 06:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1684156049; x=1686748049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r52VsGt7pCD5MqwU7Iz5hhf7etBKNWqtKNN+QQL4Wbs=;
+        b=c+5jOYw/nbV0ulxcZUPP/BwmGfGabE0GudFc4Pxot2MDSxnZOMjQBHanidAXv8AN4s
+         wCtL4vKPT/NQuQtyRosfY1v+Cc4PX94PKhH/K4vGQkh8BXrOSCykMzDtIWTaHdinMTlL
+         GTd1vPbd7jdhMb9Xp18vHEaSJ5oykF8Q18Co+JrFWfrSsGa06ytgp5MPhg2lAuMcBHY9
+         +cXuTSEKaaD6FCDHfVc+wlq2TFUxcMNkM8xdx//DfRqBb1wXlbXwUaZ0w2XcKKmJCXYm
+         rNhNdyMFvde5Wj2WqbjDnUEci9/JLzGroYUlyOEdGT2Q14DOTFUq69HjSZo3vkt1aQ7q
+         pxiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684156049; x=1686748049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r52VsGt7pCD5MqwU7Iz5hhf7etBKNWqtKNN+QQL4Wbs=;
+        b=TeNXnAhEZeHa2Z559wmDgn8Ooc9yI1e6r5T8zLHk+arSWpIh5r14GpF8e2eJ3YsFCh
+         nUB0nc15U3/qjkZAuG9XnKguftIOAUjidTcjdxuyO3YchWm/Pr5KdHBQxI4wLUNJJIT6
+         tkp8Piddbsu9XKuOuC5SVVJoHwx1XD9jSFDEpj2cqomJiWWQz78+wQtE43VVmHBLYpQH
+         E4wb/89YkJcUAIJZbmXtZA1iuixvhhgieiVyna+40h0EojF6g4BoJmMovSQhmfROQkji
+         WSu3ZZnmFFsuOaU1qpH3pGFGQJQ5s/fKPtvJe99QMXuw9TQIIHpOEW5k5mdO941ktTH8
+         tV2g==
+X-Gm-Message-State: AC+VfDybue/p4A/RbzcaliblFgENgGR8ERSImz6NkhXZWBMIuf+m+XLt
+        smNHnI56LN/8tDMa6LpYPpbHCw==
+X-Google-Smtp-Source: ACHHUZ6oq1rgsxAhha/L8rTgUYSyK7wV0xG3BSAlCLbWHRWP4j4vcs+gZ2cT74Vr/sFz2mlpsmeCpA==
+X-Received: by 2002:ac8:7f44:0:b0:3f3:928a:eae2 with SMTP id g4-20020ac87f44000000b003f3928aeae2mr42158943qtk.4.1684156049337;
+        Mon, 15 May 2023 06:07:29 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
+        by smtp.gmail.com with ESMTPSA id n27-20020ac81e1b000000b003e388264753sm5328251qtl.65.2023.05.15.06.07.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 May 2023 06:07:28 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1pyXvD-000xlt-MR;
+        Mon, 15 May 2023 10:07:27 -0300
+Date:   Mon, 15 May 2023 10:07:27 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Niklas Schnelle <schnelle@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Will Deacon <will@kernel.org>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v9 5/6] iommu/dma: Allow a single FQ in addition to
+ per-CPU FQs
+Message-ID: <ZGIuj2pRjOPffqZZ@ziepe.ca>
+References: <20230310-dma_iommu-v9-0-65bb8edd2beb@linux.ibm.com>
+ <20230310-dma_iommu-v9-5-65bb8edd2beb@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230310-dma_iommu-v9-5-65bb8edd2beb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Rework the saving of mappings over suspend/resume by moving the data
-from the GART instance to the domain itself, and keeping it actively up
-to date. This saves having to read everything back out of the hardware
-at suspend time, but also lets us make the attach path actually support
-the notion of multiple domains that it was already checking for. With
-this in place we'll then be ready to tackle the remaining assumptions...
+On Mon, May 15, 2023 at 11:15:55AM +0200, Niklas Schnelle wrote:
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/iommu/tegra-gart.c | 87 ++++++++++++++++++++++++--------------
- 1 file changed, 56 insertions(+), 31 deletions(-)
+> +/**
+> + * struct dma_iommu_options - Options for dma-iommu
+> + *
+> + * @flags: Flag bits for enabling/disabling dma-iommu settings
+> + *
+> + * This structure is intended to provide IOMMU drivers a way to influence the
+> + * behavior of the dma-iommu DMA API implementation. This allows optimizing for
+> + * example for a virtualized environment with slow IOTLB flushes.
+> + */
+> +struct dma_iommu_options {
+> +#define IOMMU_DMA_OPTS_PER_CPU_QUEUE	(0L << 0)
+> +#define IOMMU_DMA_OPTS_SINGLE_QUEUE	(1L << 0)
+> +	u64	flags;
+> +};
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index deedb9f0f380..a74648655dac 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -33,15 +33,19 @@
- /* bitmap of the page sizes currently supported */
- #define GART_IOMMU_PGSIZES	(GART_PAGE_SIZE)
- 
-+struct gart_domain {
-+	struct iommu_domain	domain;
-+	u32			*savedata;
-+};
-+
- struct gart_device {
- 	void __iomem		*regs;
--	u32			*savedata;
- 	unsigned long		iovmm_base;	/* offset to vmm_area start */
- 	unsigned long		iovmm_end;	/* offset to vmm_area end */
- 	spinlock_t		pte_lock;	/* for pagetable */
- 	spinlock_t		dom_lock;	/* for active domain */
- 	unsigned int		active_devices;	/* number of active devices */
--	struct iommu_domain	*active_domain;	/* current active domain */
-+	struct gart_domain	*active_domain;	/* current active domain */
- 	struct iommu_device	iommu;		/* IOMMU Core handle */
- 	struct device		*dev;
- };
-@@ -62,6 +66,16 @@ static bool gart_debug;
- 	     iova < gart->iovmm_end;					\
- 	     iova += GART_PAGE_SIZE)
- 
-+static struct gart_domain *to_gart_domain(const struct iommu_domain *domain)
-+{
-+	return container_of(domain, struct gart_domain, domain);
-+}
-+
-+static int gart_pte_index(struct gart_device *gart, unsigned long iova)
-+{
-+	return (iova - gart->iovmm_base) / GART_PAGE_SIZE;
-+}
-+
- static inline void gart_set_pte(struct gart_device *gart,
- 				unsigned long iova, unsigned long pte)
- {
-@@ -80,9 +94,10 @@ static inline unsigned long gart_read_pte(struct gart_device *gart,
- 	return pte;
- }
- 
--static void do_gart_setup(struct gart_device *gart, const u32 *data)
-+static void do_gart_setup(struct gart_device *gart)
- {
- 	unsigned long iova;
-+	const u32 *data = gart->active_domain ? gart->active_domain->savedata : NULL;
- 
- 	for_each_gart_pte(gart, iova)
- 		gart_set_pte(gart, iova, data ? *(data++) : 0);
-@@ -107,33 +122,44 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
- 				 struct device *dev)
- {
- 	struct gart_device *gart = gart_handle;
-+	struct gart_domain *prev;
- 	int ret = 0;
- 
- 	spin_lock(&gart->dom_lock);
- 
-+	prev = gart->active_domain;
- 	if (domain->type == IOMMU_DOMAIN_IDENTITY) {
- 		if (dev_iommu_priv_get(dev)) {
- 			dev_iommu_priv_set(dev, NULL);
- 			if (--gart->active_devices == 0)
- 				gart->active_domain = NULL;
- 		}
--	} else if (gart->active_domain && gart->active_domain != domain) {
-+	} else if (prev && &prev->domain != domain) {
- 		ret = -EINVAL;
- 	} else if (dev_iommu_priv_get(dev) != domain) {
- 		dev_iommu_priv_set(dev, domain);
--		gart->active_domain = domain;
-+		gart->active_domain = to_gart_domain(domain);
- 		gart->active_devices++;
- 	}
- 
- 	spin_unlock(&gart->dom_lock);
- 
-+	/* If the active domain has changed, sync our mappings */
-+	if (!ret && prev != gart->active_domain) {
-+		spin_lock(&gart->pte_lock);
-+		do_gart_setup(gart);
-+		spin_unlock(&gart->pte_lock);
-+	}
-+
- 	return ret;
- }
- 
- static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
- {
-+	struct gart_device *gart = gart_handle;
- 	static struct iommu_domain identity;
--	struct iommu_domain *domain;
-+	struct gart_domain *domain;
-+	int num_pages;
- 
- 	if (type == IOMMU_DOMAIN_IDENTITY)
- 		return &identity;
-@@ -142,18 +168,25 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
- 		return NULL;
- 
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
--	if (domain) {
--		domain->geometry.aperture_start = gart_handle->iovmm_base;
--		domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
--		domain->geometry.force_aperture = true;
--	}
-+	if (!domain)
-+		return NULL;
- 
--	return domain;
-+	domain->domain.geometry.aperture_start = gart->iovmm_base;
-+	domain->domain.geometry.aperture_end = gart->iovmm_end - 1;
-+	domain->domain.geometry.force_aperture = true;
-+
-+	num_pages = (gart->iovmm_end - gart->iovmm_base) / GART_PAGE_SIZE;
-+	domain->savedata = vcalloc(num_pages, sizeof(u32));
-+	if (!domain->savedata) {
-+		kfree(domain);
-+		return NULL;
-+	}
-+	return &domain->domain;
- }
- 
- static void gart_iommu_domain_free(struct iommu_domain *domain)
- {
--	WARN_ON(gart_handle->active_domain == domain);
-+	WARN_ON(&gart_handle->active_domain->domain == domain);
- 	if (domain->type != IOMMU_DOMAIN_IDENTITY)
- 		kfree(domain);
- }
-@@ -161,12 +194,16 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
- static inline int __gart_iommu_map(struct gart_device *gart, unsigned long iova,
- 				   unsigned long pa)
- {
-+	int idx = gart_pte_index(gart, iova);
-+	u32 pte = GART_ENTRY_PHYS_ADDR_VALID | pa;
-+
- 	if (unlikely(gart_debug && gart_pte_valid(gart, iova))) {
- 		dev_err(gart->dev, "Page entry is in-use\n");
- 		return -EINVAL;
- 	}
- 
--	gart_set_pte(gart, iova, GART_ENTRY_PHYS_ADDR_VALID | pa);
-+	gart->active_domain->savedata[idx] = pte;
-+	gart_set_pte(gart, iova, pte);
- 
- 	return 0;
- }
-@@ -190,11 +227,14 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
- static inline int __gart_iommu_unmap(struct gart_device *gart,
- 				     unsigned long iova)
- {
-+	int idx = gart_pte_index(gart, iova);
-+
- 	if (unlikely(gart_debug && !gart_pte_valid(gart, iova))) {
- 		dev_err(gart->dev, "Page entry is invalid\n");
- 		return -EINVAL;
- 	}
- 
-+	gart->active_domain->savedata[idx] = 0;
- 	gart_set_pte(gart, iova, 0);
- 
- 	return 0;
-@@ -285,9 +325,6 @@ static const struct iommu_ops gart_iommu_ops = {
- 
- int tegra_gart_suspend(struct gart_device *gart)
- {
--	u32 *data = gart->savedata;
--	unsigned long iova;
--
- 	/*
- 	 * All GART users shall be suspended at this point. Disable
- 	 * address translation to trap all GART accesses as invalid
-@@ -296,15 +333,12 @@ int tegra_gart_suspend(struct gart_device *gart)
- 	writel_relaxed(0, gart->regs + GART_CONFIG);
- 	FLUSH_GART_REGS(gart);
- 
--	for_each_gart_pte(gart, iova)
--		*(data++) = gart_read_pte(gart, iova);
--
- 	return 0;
- }
- 
- int tegra_gart_resume(struct gart_device *gart)
- {
--	do_gart_setup(gart, gart->savedata);
-+	do_gart_setup(gart);
- 
- 	return 0;
- }
-@@ -337,7 +371,7 @@ struct gart_device *tegra_gart_probe(struct device *dev, struct tegra_mc *mc)
- 	spin_lock_init(&gart->pte_lock);
- 	spin_lock_init(&gart->dom_lock);
- 
--	do_gart_setup(gart, NULL);
-+	do_gart_setup(gart);
- 
- 	err = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
- 	if (err)
-@@ -347,17 +381,8 @@ struct gart_device *tegra_gart_probe(struct device *dev, struct tegra_mc *mc)
- 	if (err)
- 		goto remove_sysfs;
- 
--	gart->savedata = vmalloc(resource_size(res) / GART_PAGE_SIZE *
--				 sizeof(u32));
--	if (!gart->savedata) {
--		err = -ENOMEM;
--		goto unregister_iommu;
--	}
--
- 	return gart;
- 
--unregister_iommu:
--	iommu_device_unregister(&gart->iommu);
- remove_sysfs:
- 	iommu_device_sysfs_remove(&gart->iommu);
- free_gart:
--- 
-2.39.2.101.g768bb238c484.dirty
+You need to hash it out with robin if we do something like this or use
+more untyped caps as he put in this series:
 
+https://lore.kernel.org/linux-iommu/cover.1683233867.git.robin.murphy@arm.com/
+
+Jason
