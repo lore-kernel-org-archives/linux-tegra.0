@@ -2,166 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6F0C7EE22
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 09:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089A4C7EE2C
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 10:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238441AbjEOJ4y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 May 2023 05:56:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
+        id S240971AbjEOK5j (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 May 2023 06:57:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239965AbjEOJ4b (ORCPT
+        with ESMTP id S229963AbjEOK5i (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 May 2023 05:56:31 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869A41BE5;
-        Mon, 15 May 2023 02:56:26 -0700 (PDT)
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34F9kL9E004814;
-        Mon, 15 May 2023 09:55:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=c69QNR7lfIqB6FKiUIhsojT+MsFH8qH65PiA7hty3/w=;
- b=XedJ+r9zfgtSzDIB4eSrPCYm0wWx4qeblaLActQ5QVrHh2HEZP56wPCN6nRfdD4hHuiP
- EhfoiT0R911OpM43d3K1kk0me4DLgXWV8s+zqgbHPChfQ3FYX4z+56AT5PA4aVx+B9K3
- S2qnW7+htzYKc4tFSAOQn6w6QayRbwJWQ5RN51Dqjzw/xNYJQr+c0ErxHoNskgUl8DFd
- yHHBmnlnMxV8YENBqZIFU66wF7Pf9Kv8sUifi612DboAhSZ7gyThFuv1UtnbRg8omvaJ
- FcXo0FBL1z6F1hLhK8K2P8bnpEOnHfIw7A8h7ehhYGnNcX/9/f9uXq9zPPOPPG4PGrtc 6g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qkd3mswqh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 09:55:53 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34F9bqmA009076;
-        Mon, 15 May 2023 09:55:51 GMT
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qkd3mswp5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 09:55:51 +0000
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34F8Tiqw000411;
-        Mon, 15 May 2023 09:33:32 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-        by ppma05fra.de.ibm.com (PPS) with ESMTPS id 3qj264rtm2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 09:33:32 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34F9XTPL45744626
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 May 2023 09:33:29 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E664720040;
-        Mon, 15 May 2023 09:33:28 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 413B62004B;
-        Mon, 15 May 2023 09:33:26 +0000 (GMT)
-Received: from [9.171.65.23] (unknown [9.171.65.23])
-        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 15 May 2023 09:33:26 +0000 (GMT)
-Message-ID: <670b01819f6f875364abaafa4accad9fa92e6177.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 0/6] iommu/dma: s390 DMA API conversion and optimized
- IOTLB flushing
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Date:   Mon, 15 May 2023 11:33:25 +0200
-In-Reply-To: <ZF5NRls92rhmzV7B@infradead.org>
-References: <20230310-dma_iommu-v8-0-2347dfbed7af@linux.ibm.com>
-         <ZF5NRls92rhmzV7B@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        Mon, 15 May 2023 06:57:38 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D374493;
+        Mon, 15 May 2023 03:57:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Btr6T0G/yC7QxBY32sjMYFXMS99v9MdLzBwxCwtSrYUTgal3j0uAgblGI/c6TlNMOcaOaemRh9xgCeyL3LvzQOp4rwYxOUPui7NFTiTRs/ObMhsVXXodz9PZ8vzDhTKe3kT+CrHw+uUo7KNFzIq4QTejyKZp6VKUiu3yFWGrfbaB/uRom1XlMEKKc37Iyf27LQwwP9rQQrUjh0dFpBeDDR04/KD6aIZlj+7ZP0aPfwJnFZ+EvqPaVpA+STrIrCpIfLRryGt33kfOQheVDWk+YspF0vKvXsIewk9GFiFyItHn5WTg8KA4fEVPMdEemhm9UvgziIJ5r2Lc2+bHOCQt6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bJOw3ltf55yXRRRLkl6eJw2L8EdRoG2qgOJnBEGqafg=;
+ b=Lck+/zsxxlp/ZjFGKFJirkG/nra/PjWEH3MZMhXLd9zddWEo4R16WoFg4vVOh0iB0gdV199oKcsCz9AZawx9RQkStlyiVlvPY0yJ0Mhty6o3EggUcPOOrUFVJNSJrmwQjaqtQA06RtjWQ5N121SdsUvMa+p63xjRAUx/ac4VGNgWOeUkXdBQEKbZu++4dx156MKoby9MzaoVbA1SGnZRrDcosvM1rXJYRStSbr2Mdf9eOaVWwEc+PAtIrn6BVBOAA0ks1lnLlqAqOzGXiBzNrrVzJ+0Axrkg3VsKvMsgnGC3PaOoHCBBTllup5S1IdN34RQPcWHEXTCNa99jj56rrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bJOw3ltf55yXRRRLkl6eJw2L8EdRoG2qgOJnBEGqafg=;
+ b=ZP6rhHbRsf6FWwCcJI7U9YxQVSRlD5dgQJ8Fnq5HotWStU5bNWv16fIveHSGId9CMfNFLi6BFvwU5XOm/+ErwMXPyEYQZxjSwQjOwzknaA4fdQ63rtuisvH41nWGptiemAVH+Q37oZJXujKVObic8fBBfWlha9uUcAJZP1tx4sB3pGd43E/IrMva7ZPj1p8143QCOGRHvGEO52TaG/jWk20A4lVvpdgOAfTrhZosbFYGW1Z8WzE9t0rgrTID2rF1G4XIpCSK19MLqOGxgoCx4ODJp+AXIUV2BF5+Z7V5cna2V0YUDVYB8hANBcOTeigs3mNNy/kGliU2MWAQ4D39mw==
+Received: from MW4PR03CA0223.namprd03.prod.outlook.com (2603:10b6:303:b9::18)
+ by MN2PR12MB4391.namprd12.prod.outlook.com (2603:10b6:208:269::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Mon, 15 May
+ 2023 10:57:34 +0000
+Received: from CO1NAM11FT069.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b9:cafe::3a) by MW4PR03CA0223.outlook.office365.com
+ (2603:10b6:303:b9::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30 via Frontend
+ Transport; Mon, 15 May 2023 10:57:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT069.mail.protection.outlook.com (10.13.174.129) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6411.14 via Frontend Transport; Mon, 15 May 2023 10:57:34 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 15 May 2023
+ 03:57:23 -0700
+Received: from [10.41.21.79] (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 15 May
+ 2023 03:57:17 -0700
+Message-ID: <6c8f0a58-ee37-8588-42fc-55697dd6dd37@nvidia.com>
+Date:   Mon, 15 May 2023 16:27:14 +0530
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: bs2KpFYuwoCp6-aBJBUXDadSE7HNCIPx
-X-Proofpoint-ORIG-GUID: d9-xVIyzWKoF0UTrrDTDDfGL5QDVi9C0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-15_06,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 clxscore=1011
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305150082
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [Patch v8 0/8] Tegra234 Memory interconnect support
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <treding@nvidia.com>, <dmitry.osipenko@collabora.com>,
+        <viresh.kumar@linaro.org>, <rafael@kernel.org>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+        <lpieralisi@kernel.org>, <helgaas@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <mmaddireddy@nvidia.com>,
+        <kw@linux.com>, <bhelgaas@google.com>, <vidyas@nvidia.com>,
+        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>, <ishah@nvidia.com>,
+        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <20230511173211.9127-1-sumitg@nvidia.com>
+ <a032d9e6-6cb5-1856-9eda-28028bf05633@linaro.org>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <a032d9e6-6cb5-1856-9eda-28028bf05633@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT069:EE_|MN2PR12MB4391:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13f27d27-ad9d-45f2-359d-08db5533303a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: osKsD75lLZ/NBHfCXVEt/32xfH8LPBZ7pHWzR9akWNXR6APFAda+29YII4Y9RRfPMUyAf6ZOC3ifL2etgUTDdZaM+wB7lIyC43J0DMHp7opHnIeN/81LWU4tZu5SYROl9vQBzPhQYrOo4zQe8FTIBo0TRiFErGOVBibfpPjLuIgBnDNZC83LbPU3yGq8nixQHS1f4aee0yKeW31glwuUsgVZfsBqcnEIv29IC2ugVFp+VTk5OhbZujJOt5+HzPtL7kd82FW6Zt+Txv3YK4qrrC5Dw5OHs3bN4PsXd3JDDwQ90l0XIyGpLxGuaOFqXdmsrO+tJZb4eaDso3EBQlovDDQtar85gdauSPWVuse4DWxaQlsqifSUgxAVUJS8MS/Es48CGmDQA10YQklvrURbg8uCIjSn9JMMk6xCj2xDkXYizIUZmm4a127R9HeJew2oFougqMSkLKuNivgSxSv2AfadoeKvcBklcwO6hcpCJWZl+b0n+M51JAAMsxqAQDBtDMuu/hiv5s84NTnlvr1fUZMDTSSyFplaYn4KQsRsYkoow+VSKKNlFgg40uFhf7H79IYIUegsEBGcKuDoBk6287VlP6J2T8FUBTBfIaRodfKym+zVf3lka7UElOsB4cI6tBNc2e9KMUAqiLuPuDEZBzXf9r3XQbtiZyK8Vo6Pt+MoUSTcXq3EJfsgjETPAEmvbXqlN9SK+5/8VgOC72+LdujqKaw2zYlQ7lo/571wxcNu2ha5kjEZGD0Fcln6CCyp/cnv6YWtQPQUGD/RUYpnqPRpWOiFYY6mNAyDfejPBXkmrSgqLf78OqM+9fGL/rmV
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(39860400002)(136003)(346002)(451199021)(46966006)(36840700001)(40470700004)(36756003)(86362001)(16576012)(54906003)(110136005)(316002)(4326008)(70206006)(70586007)(966005)(478600001)(4744005)(82310400005)(40480700001)(5660300002)(8676002)(8936002)(6666004)(2906002)(7416002)(7636003)(31696002)(356005)(82740400003)(41300700001)(16526019)(2616005)(186003)(53546011)(107886003)(26005)(336012)(36860700001)(83380400001)(426003)(47076005)(31686004)(40460700003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2023 10:57:34.2933
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13f27d27-ad9d-45f2-359d-08db5533303a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT069.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4391
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 2023-05-12 at 07:29 -0700, Christoph Hellwig wrote:
-> On Fri, Mar 10, 2023 at 05:07:45PM +0100, Niklas Schnelle wrote:
-> > Hi All,
-> >=20
-> > This patch series converts s390's PCI support from its platform specifi=
-c DMA
-> > API implementation in arch/s390/pci/pci_dma.c to the common DMA IOMMU l=
-ayer.
-> > The conversion itself is done in patches 3-4 with patch 2 providing the=
- final
-> > necessary IOMMU driver improvement to handle s390's special IOTLB flush
-> > out-of-resource indication in virtualized environments. Patches 1-2 may=
- be
-> > applied independently. The conversion itself only touches the s390 IOMM=
-U driver
-> > and s390 arch code moving over remaining functions from the s390 DMA AP=
-I
-> > implementation. No changes to common code are necessary.
->=20
-> It looks like this still hasn't made it upstream as of 6.4-rc1.  What's
-> holding this series up?
->=20
 
-I think with all the IOMMUFD work going on this got starved out of
-reviewer resources. I didn't have any open todos but I guess there is
-still some review needed around how the IOMMU driver tells the dma-
-iommu that it expects IOTLB flushes to be slow requiring a larger
-single flush queue. There was also a small conflict with commit
-49a22aae7d9c ("iommu: Replace device_lock() with group->mutex") that
-prevented this from applying to current upstream so I've just now sent
-out a v9 rebased on v6.4-rc2.
 
-Thanks,
-Niklas
+On 14/05/23 16:11, Krzysztof Kozlowski wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 11/05/2023 19:32, Sumit Gupta wrote:
+>> Hi All,
+>>
+>> Have incorporated the suggestions in v7. Only changed 'patch 1' in v7
+>> to fix possible race when setting 'mc->bpmp' as pointed by Krzysztof.
+>> Requesting to merge the patch series.
+>>
+> 
+> Can I apply it since you request it? 
+
+Yes, the patch series can be applied in current sequence except that
+the 'patch 4' comes before 'patch 3' (just realized).
+
+Would you please swap 'patch 4' with 'patch 3' while applying
+(or) you want me to re-send?
+
+I asked you long time ago to
+> clearly state dependencies or merging limitations. It's v8 and cover
+> letter still does not state it. Neither the patches do.
+> 
+I added the dependency list in previous versions [7] but removed
+thinking the patch series will now be applied altogether.
+
+[7] https://lore.kernel.org/lkml/20230424131337.20151-1-sumitg@nvidia.com/
+
+Thank you,
+Sumit Gupta
