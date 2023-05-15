@@ -2,133 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C593C7EE2C
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 16:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2F8C77B75
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 17:46:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242501AbjEOQS4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 May 2023 12:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
+        id S244644AbjEORp7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 May 2023 13:45:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242300AbjEOQSo (ORCPT
+        with ESMTP id S244643AbjEORpe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 May 2023 12:18:44 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22910A3;
-        Mon, 15 May 2023 09:18:43 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-96622bca286so2067008766b.1;
-        Mon, 15 May 2023 09:18:43 -0700 (PDT)
+        Mon, 15 May 2023 13:45:34 -0400
+Received: from mailrelay1-1.pub.mailoutpod2-cph3.one.com (mailrelay1-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:400::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E400A1B741
+        for <linux-tegra@vger.kernel.org>; Mon, 15 May 2023 10:43:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684167521; x=1686759521;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fFPJu/bdf2To7OKUQNPH4m9IQexv87evllOs7pwaC0s=;
-        b=HOI4BtGRGKeREF4vFCjUoTunSeoZhYrwxv47tp75FfmjjcgWHsaU0LNYoVuKZrMktk
-         hqnIWnXQb2ZfIUWOuSigjbAmmxsWMLe3HoI9rUbL/UDVgYtGx5YtzY0RcqES+MTXVvR1
-         hDy5+Aj56e/EaKdD+mRC9hKUcKxf1WalvDAvcjlUFDy0GQprZivcrhDgOKsh5HvbvNrF
-         y6aeTIBOi2EYSWOYWNOJpYnIOLmYGiJUoP83ZTY7j+HcaEbEd6SN2u5/VbJsg9oOb4g4
-         EUMNKOklA2Cck+L3MZEP6xP4GMOVmdwDpEmt11g44Gg1sb2sR66mrk9filyfrArjC5cp
-         AoEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684167521; x=1686759521;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fFPJu/bdf2To7OKUQNPH4m9IQexv87evllOs7pwaC0s=;
-        b=OaJgIFpzvW35q/x6rkvvpf7YrobK0jFQ8fE/cbupTpMk+UpEAy5PAFg7P0+xnRbEhl
-         uc7If/S6AudcW0s9bLuTXjTJvvVbftDyktkIMYFFScGc1UFFETmD2nMKvlngDoxSYcBn
-         QIY65JdlnkCoYiB7y2PqANYv5av2kouX1hL2yflE1QONSLTbiNsqvaLSmjMf9onpEdf5
-         jFtLwh5Jhd52DjoobJ0jry0rOFblDksgRmtxLUDq5e3AvrALaSlaxJBpi3HckibQjrtf
-         cVFoR3sqnk7Z2sz1mvj8ujltoQyQdzqmu3DELwMQpygjZQVJn2Bft2/eXrlTgNVd6Ur3
-         7DSA==
-X-Gm-Message-State: AC+VfDwMK/MPgzpe/jWPiLkeJ29OGvmyIbIlLjBj4sDD2Mk7gAkMEnnT
-        b6jfwq+t3JGNWB8xqnN6VqCxg1f7fLGjRg==
-X-Google-Smtp-Source: ACHHUZ7syZQng2BvbRJEc59vRXvP+m7Y4V8LOWuPg2Y+gG3U6DbYMfHN6uYfLKL8kbgDSe1ANhRheQ==
-X-Received: by 2002:a17:907:d91:b0:933:4d37:82b2 with SMTP id go17-20020a1709070d9100b009334d3782b2mr31727220ejc.57.1684167521167;
-        Mon, 15 May 2023 09:18:41 -0700 (PDT)
-Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id hg10-20020a1709072cca00b009659c23e78fsm9653018ejc.215.2023.05.15.09.18.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 09:18:40 -0700 (PDT)
-Date:   Mon, 15 May 2023 18:18:38 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
-        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
-        lpieralisi@kernel.org, helgaas@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
-        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
-        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v8 0/8] Tegra234 Memory interconnect support
-Message-ID: <ZGJbXg88JOu4aiNe@orome>
-References: <20230511173211.9127-1-sumitg@nvidia.com>
- <a032d9e6-6cb5-1856-9eda-28028bf05633@linaro.org>
+        d=ravnborg.org; s=rsa1;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=fqvFeHqmKCMHySPrpw7LmvcOX8WEkqN8R0ZmmJ8wedU=;
+        b=LuflRTNROY0CD/SiMRa00x4NM6Ba/5KTNjWTIw8iM/ymbOPFU7XTgc6q5gyZ/RxhcGu3BdwMovzCp
+         jkO2iHve1fpUDPs5+9sEyMW9owAADTy0xdwPW0I7B6mFXa8uI7kYxnTSgBbw5MbodbHGNWpUka4U21
+         7h4mUNZZX/nMZg5diOgd58PYk8p/9e90AdYpUcl38rMb+77YaK9AcriBKJ5UvxbVNk7QjI4MPHaVyF
+         s+s7BzbpNWkYsKbeS7jVjPPHWkqG4Mb0166SVe8vsZWwNVVX/aHNDon2Im1qM6q5MFmwgr1q7CV7Lj
+         I89SkTPK+tfPo/g4wL5kRwP0R5bKAxA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed1;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=fqvFeHqmKCMHySPrpw7LmvcOX8WEkqN8R0ZmmJ8wedU=;
+        b=m5Ru3cp+fr+MYVaiT66lh06RTG0M0Yo3MAHPI8gz+3ae51FIPn6TF9LZlN4ODMpJHOnJ+Mwz6Vd71
+         GaCU+trDA==
+X-HalOne-ID: fb2cb6b5-f347-11ed-8278-99461c6a3fe8
+Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay1 (Halon) with ESMTPSA
+        id fb2cb6b5-f347-11ed-8278-99461c6a3fe8;
+        Mon, 15 May 2023 17:43:22 +0000 (UTC)
+Date:   Mon, 15 May 2023 19:43:20 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     daniel@ffwll.ch, airlied@gmail.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, linux-samsung-soc@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        dri-devel@lists.freedesktop.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 03/12] drm/exynos: Use regular fbdev I/O helpers
+Message-ID: <20230515174320.GA1745913@ravnborg.org>
+References: <20230515094033.2133-1-tzimmermann@suse.de>
+ <20230515094033.2133-4-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8qg6A1xwpz6/pQdH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a032d9e6-6cb5-1856-9eda-28028bf05633@linaro.org>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+In-Reply-To: <20230515094033.2133-4-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Thomas,
 
---8qg6A1xwpz6/pQdH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 15, 2023 at 11:40:24AM +0200, Thomas Zimmermann wrote:
+> Use the regular fbdev helpers for framebuffer I/O instead of DRM's
+> helpers. Exynos does not use damage handling, so DRM's fbdev helpers
+> are mere wrappers around the fbdev code.
+> 
+> By using fbdev helpers directly within each DRM fbdev emulation,
+> we can eventually remove DRM's wrapper functions entirely.
+> 
+> v2:
+> 	* use FB_IO_HELPERS option
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/Kconfig            |  1 +
+>  drivers/gpu/drm/exynos/Makefile           |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 10 +++++-----
+>  3 files changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+> index 0cb92d651ff1..7ca7e1dab52c 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -7,6 +7,7 @@ config DRM_EXYNOS
+>  	select DRM_DISPLAY_HELPER if DRM_EXYNOS_DP
+>  	select DRM_KMS_HELPER
+>  	select VIDEOMODE_HELPERS
+> +	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
+>  	select SND_SOC_HDMI_CODEC if SND_SOC
+>  	help
+>  	  Choose this option if you have a Samsung SoC Exynos chipset.
+> diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
+> index 2fd2f3ee4fcf..233a66036584 100644
+> --- a/drivers/gpu/drm/exynos/Makefile
+> +++ b/drivers/gpu/drm/exynos/Makefile
+> @@ -6,7 +6,6 @@
+>  exynosdrm-y := exynos_drm_drv.o exynos_drm_crtc.o exynos_drm_fb.o \
+>  		exynos_drm_gem.o exynos_drm_plane.o exynos_drm_dma.o
+>  
+> -exynosdrm-$(CONFIG_DRM_FBDEV_EMULATION) += exynos_drm_fbdev.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS5433_DECON)	+= exynos5433_drm_decon.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS7_DECON)	+= exynos7_drm_decon.o
+> @@ -23,5 +22,6 @@ exynosdrm-$(CONFIG_DRM_EXYNOS_ROTATOR)	+= exynos_drm_rotator.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_SCALER)	+= exynos_drm_scaler.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_GSC)	+= exynos_drm_gsc.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_MIC)     += exynos_drm_mic.o
+> +exynosdrm-$(CONFIG_DRM_FBDEV_EMULATION)	+= exynos_drm_fbdev.o
+What does this change do?
+Maybe something that was left by accident?
 
-On Sun, May 14, 2023 at 12:41:45PM +0200, Krzysztof Kozlowski wrote:
-> On 11/05/2023 19:32, Sumit Gupta wrote:
-> > Hi All,
-> >=20
-> > Have incorporated the suggestions in v7. Only changed 'patch 1' in v7
-> > to fix possible race when setting 'mc->bpmp' as pointed by Krzysztof.
-> > Requesting to merge the patch series.
-> >=20
->=20
-> Can I apply it since you request it? I asked you long time ago to
-> clearly state dependencies or merging limitations. It's v8 and cover
-> letter still does not state it. Neither the patches do.
+	Sam
 
-I thought we had discussed and agreed to merge this through the Tegra
-tree, which is why you had provided Acked-bys on all the patches. I was
-waiting for a final Acked-by on patch 1, since that was the only one
-still being revised.
-
-If you prefer to merge this, that works for me too. In that case, the
-series:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
-Although it might be good if I pick up at least patch 8, just as a
-precautionary measure to avoid potential conflicts going forward. As I
-understand, it should be safe to apply that separately.
-
-Thierry
-
---8qg6A1xwpz6/pQdH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRiW14ACgkQ3SOs138+
-s6Hwyg//UwQpQ0EtSE3NvPmUTkNdtOnRCNocLMvlMPxH/nQSEy+fKcNW1vtXrFWn
-2hOa0ZdmQaS+3M8ZECIQlnuu9AsBJuivyeuGhOvyf7FX96wiGqtgSxbZHk/mzljL
-N3n1dOX90QYos9kh2OvRxreV/CnSwutuvs3AmhXv3MS1MNHBSFCAJ/RIc+n8McqU
-WDxRDhdyUyPdfsaO7rEpdm3VbSQqcUSEnY6q93lJd6/I4xYacQDPsKxlSyurZT07
-pqn+6oPTXnfRJH2qhXPDLceVLV2RxJdj8dv5ig/cpZBGPUPSY7gDsVhpib8OikUt
-NXfT/TXX0GVwC+w0T7BXbFS1ZlHUeoA/cW+l5wOjz5zKHMNqkjpKYQ8gHDC3fX7p
-0Lm4Jpj+TRr5Crb0pXNdRk9t5ZxeFGndOyqOW2CZTEbVNKjSNVsEhGd5AmsEny0u
-6yk9+iLf1mcLrWwzAWF6WwzyYOcB45cDRv8YFbyaTy9HIVH0ZZuJi+anaYZQRcOF
-sK3ERbA9P/e+d0j7pRgN8J2DR44z71Qq5jP338tBUeyq4xG970h4ikdVd9rF7Arb
-8ZJyRhHJnQ4zfbhCRGioIU5aINj3yn87p9l1N5MIoFV4ZzsGiO2e1zAGBUh7QN/b
-5YxjVuIyMSsH+tYrb5GHHtrJPmBOV9swfnwQHkfXiIEMd1Lnn3c=
-=V4PZ
------END PGP SIGNATURE-----
-
---8qg6A1xwpz6/pQdH--
+>  
+>  obj-$(CONFIG_DRM_EXYNOS)		+= exynosdrm.o
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index ea4b3d248aac..b3333dd1d087 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -8,6 +8,8 @@
+>   *	Seung-Woo Kim <sw0312.kim@samsung.com>
+>   */
+>  
+> +#include <linux/fb.h>
+> +
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_fb_helper.h>
+> @@ -49,11 +51,9 @@ static const struct fb_ops exynos_drm_fb_ops = {
+>  	.owner		= THIS_MODULE,
+>  	DRM_FB_HELPER_DEFAULT_OPS,
+>  	.fb_mmap        = exynos_drm_fb_mmap,
+> -	.fb_read	= drm_fb_helper_cfb_read,
+> -	.fb_write	= drm_fb_helper_cfb_write,
+> -	.fb_fillrect	= drm_fb_helper_cfb_fillrect,
+> -	.fb_copyarea	= drm_fb_helper_cfb_copyarea,
+> -	.fb_imageblit	= drm_fb_helper_cfb_imageblit,
+> +	.fb_fillrect	= cfb_fillrect,
+> +	.fb_copyarea	= cfb_copyarea,
+> +	.fb_imageblit	= cfb_imageblit,
+>  	.fb_destroy	= exynos_drm_fb_destroy,
+>  };
+>  
+> -- 
+> 2.40.1
