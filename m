@@ -2,178 +2,152 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27562C7EE22
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 14:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEF3C7EE22
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 15:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242040AbjEOOnr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 May 2023 10:43:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36888 "EHLO
+        id S242005AbjEOPHA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 May 2023 11:07:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242044AbjEOOna (ORCPT
+        with ESMTP id S241849AbjEOPG7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 May 2023 10:43:30 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B78A02D67;
-        Mon, 15 May 2023 07:43:24 -0700 (PDT)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34FEdfW2001912;
-        Mon, 15 May 2023 14:42:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=3xmrodnLEt3plr6PfR2NiDKXpK4TnrjIaL6sDzQ/7GU=;
- b=q+a2WxQK3J7w6NJiJUphIIf9ajPoK7dLJYqI+t2yd270W7CmFhfqcxPQ4sLDs8I3yoHG
- pxet7qhizsDe49r5qacnn0up7txnPYLcrU93fC8Bm+i3aeBN80Ggy2bsIoIYrG+r6kUc
- J1XYXBbpdTFIkOMbNS2Hzs4i6D8uAWoosggxD2ywApVOUoB3k+0BLdM34/EKgjTr0v0I
- M1Qugs2xEIxBRanx3Lb4zTEg+aHcUy6ykjy9rtQaZ1BfcKCrOV62c4cgy2n4HHtWIcJg
- tOJu+la3PVYmFqjAttTuVrNtJHuyBkPyuDeqcvdGca4YJcbHej4ZLYZBslN6wQePhEil xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qkpes0q07-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 14:42:47 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34FEe63m005221;
-        Mon, 15 May 2023 14:42:46 GMT
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qkpes0pvy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 14:42:46 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34FD2VOD016196;
-        Mon, 15 May 2023 14:42:43 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-        by ppma01fra.de.ibm.com (PPS) with ESMTPS id 3qj264rxmt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 14:42:42 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34FEgdw220447944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 May 2023 14:42:39 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4949420043;
-        Mon, 15 May 2023 14:42:39 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF9C920040;
-        Mon, 15 May 2023 14:42:36 +0000 (GMT)
-Received: from [9.171.65.23] (unknown [9.171.65.23])
-        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 15 May 2023 14:42:36 +0000 (GMT)
-Message-ID: <a2a9a2bdb431d7611588a9f9bdca64856ac56139.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 5/6] iommu/dma: Allow a single FQ in addition to
- per-CPU FQs
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Date:   Mon, 15 May 2023 16:42:36 +0200
-In-Reply-To: <ZGIuj2pRjOPffqZZ@ziepe.ca>
-References: <20230310-dma_iommu-v9-0-65bb8edd2beb@linux.ibm.com>
-         <20230310-dma_iommu-v9-5-65bb8edd2beb@linux.ibm.com>
-         <ZGIuj2pRjOPffqZZ@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: gNuxWXJsmokdhsaD92T6yUFS_UMSNhrG
-X-Proofpoint-ORIG-GUID: me_7t4m8_jWebgWrnvUvQ84qdxzJLwc5
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 15 May 2023 11:06:59 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E92D1BDF;
+        Mon, 15 May 2023 08:06:49 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-965fc25f009so2090756866b.3;
+        Mon, 15 May 2023 08:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684163207; x=1686755207;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ClsAc+MQWEbajrlHlPJBJiVswUOmZH90ORl3dfNFYBQ=;
+        b=O8zV0zQwfKIr5rH7o5lHONZT52pDSOBEsASAlgUsXYOwKSUCuOPOTKazqC7mndtM4K
+         86ZF26CFTysSxAJJnmuNKuUwQTDHoCR//VRc0lW3M69IUV8HLyshViBuA9Ksjae7psSz
+         34cDjjhRvuA2cqxuTR3Rc1fJMgwV3t6vw/8Mmdenf7kMCRt+122BkjExd2/OVO0rtv+k
+         N5s3aORmbyjfQ7WvrMF/V4HAU9Gy+Xt4SlBzUH9HceVYxDer8GMlisKRcx8jIEV5e9Sf
+         dDnP0uz4Un4SsiLmXBCD1u6cbblcczkIgfkAqfqTvHC+zeLvlAz6H1n83QFIGYkKyqEX
+         7hTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684163207; x=1686755207;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ClsAc+MQWEbajrlHlPJBJiVswUOmZH90ORl3dfNFYBQ=;
+        b=N1ZCZIcerVg+nbegPC+2+7tuFdK8dqUh10fEYeY+h2E9bSH2Rmt2dz1fn81dc554zS
+         M/OEJYcrP05TzE69HvW7qPlWrMtI6gSSayr1ncDjPmWSv5MJeaSciH9T0E5amzDG17x+
+         E90opbZVyAfOsWJIBeMaLwPnZGMKKWAq/YPFA+u4TfG+KuwxTBs9YDQ/N2ldganxuIyF
+         sgZmi76hze3tWJbv8Cg21gbOJcblOMoXQ3x6LpsEOIBzbuYK2n96YxulWdqo5vsgFg5V
+         5niCEJ47GrHXOpJ2gm5WTRPWmtEBIeT51Av1MJqmyPkc6kBu+UtWs4u8BNv+hSZHA2TR
+         bbkw==
+X-Gm-Message-State: AC+VfDxwNq+BJjv/VHlkY+B0nHkeQgm+yBgJSUBDGCE8gHYkxHovPDhs
+        gVFaLaEMkuK8JKlR/XQeOI2SLjbzil2nvg==
+X-Google-Smtp-Source: ACHHUZ7L/BMseVSQpyf69tujmTDgJlIjLXeqvkKh5mCCAWwCg9c7cxmQWtCE5GyuRsGBWMPUWkZ+Lg==
+X-Received: by 2002:a17:906:7312:b0:961:800b:3f5e with SMTP id di18-20020a170906731200b00961800b3f5emr31396103ejc.72.1684163207327;
+        Mon, 15 May 2023 08:06:47 -0700 (PDT)
+Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id lv4-20020a170906bc8400b00966293c06e9sm9499977ejb.126.2023.05.15.08.06.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 May 2023 08:06:46 -0700 (PDT)
+Date:   Mon, 15 May 2023 17:06:44 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/4] dt-bindings: Document additional Jetson Orin NX SKUs
+Message-ID: <ZGJKhGm-UAN88LN5@orome>
+References: <20230331163159.17145-1-thierry.reding@gmail.com>
+ <3a8724bc-fb44-0080-fd24-c04e3841385e@linaro.org>
+ <ZCwAnBbeYVVUMti8@orome>
+ <4129f3d5-1df8-a767-6783-1d7123b2e9d4@linaro.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-15_11,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 phishscore=0 spamscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=596 bulkscore=0 impostorscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2304280000 definitions=main-2305150121
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UzM2R6eGT/Bqb/nB"
+Content-Disposition: inline
+In-Reply-To: <4129f3d5-1df8-a767-6783-1d7123b2e9d4@linaro.org>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 2023-05-15 at 10:07 -0300, Jason Gunthorpe wrote:
-> On Mon, May 15, 2023 at 11:15:55AM +0200, Niklas Schnelle wrote:
->=20
-> > +/**
-> > + * struct dma_iommu_options - Options for dma-iommu
-> > + *
-> > + * @flags: Flag bits for enabling/disabling dma-iommu settings
-> > + *
-> > + * This structure is intended to provide IOMMU drivers a way to influe=
-nce the
-> > + * behavior of the dma-iommu DMA API implementation. This allows optim=
-izing for
-> > + * example for a virtualized environment with slow IOTLB flushes.
-> > + */
-> > +struct dma_iommu_options {
-> > +#define IOMMU_DMA_OPTS_PER_CPU_QUEUE	(0L << 0)
-> > +#define IOMMU_DMA_OPTS_SINGLE_QUEUE	(1L << 0)
-> > +	u64	flags;
-> > +};
->=20
-> You need to hash it out with robin if we do something like this or use
-> more untyped caps as he put in this series:
->=20
-> https://lore.kernel.org/linux-iommu/cover.1683233867.git.robin.murphy@arm=
-.com/
->=20
-> Jason
 
-Ok. I do wonder how to best represent this as a capability.
-Semantically I think a capability needs to be something positive i.e.
-while IOMMU_CAP_EXPENSIVE_FLUSH would technically work having slow
-IOTLB flushes really isn't a capability. So the best I can think of is
-maybe IOMMU_CAP_SHADOW_ON_FLUSH. It's a bit specific but does convey
-that the IOTLB flush does more than dropping hardware caches where the
-main cost is the then empty TLB not the operation itself. Or maybe to
-keep thing separate one would have to add capabilities for the existing
-users IOMMU_CAP_HW_FLUSH and IOMMU_CAP_CONCURRENT_FLUSH.
+--UzM2R6eGT/Bqb/nB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not sure though. It does feel more clunky than the tuning op I added
-and maybe instead these mechanisms should co-exist. After all even
-though the IOTLB flushes with shadowing are expensive they still
-benefit from the flush queue just with more entries and less
-parallelism.
+On Fri, Apr 07, 2023 at 10:52:58AM +0200, Krzysztof Kozlowski wrote:
+> On 04/04/2023 12:49, Thierry Reding wrote:
+> > On Fri, Mar 31, 2023 at 10:19:00PM +0200, Krzysztof Kozlowski wrote:
+> >> On 31/03/2023 18:31, Thierry Reding wrote:
+> >>> From: Thierry Reding <treding@nvidia.com>
+> >>>
+> >>> Beyond the original 16 GiB SKU (0), additional SKUs exist, such as th=
+e 8
+> >>> GiB SKU (1) and an internal-only SKU (2) that comes with an equipeed =
+SD
+> >>
+> >> typo: equipped
+> >>
+> >>> card slot.
+> >>
+> >> Is there a point in documenting all of them if there is no DTS? Also,
+> >> size of storage (eMMC?) pretty often is runtime-detectable, so you do =
+no
+> >> need a new DTS and new compatible.
+> >=20
+> > This is for the sake of completeness since these compatible strings
+> > correspond to the part numbers that will show up on stickers on these
+> > modules. In practice, yes, most of the differences will be runtime-
+> > detected and the DT updated to reflect the SKU differences by UEFI.
+>=20
+> Just because there is some sticker, it does not mean we need a
+> compatible. We actually omit dozen of versions per device - all PMICs,
+> I2C IIO and others have some packaging bins and revision numbers.
+>=20
+> Although here if I understand correctly, UEFI firmware will add these
+> compatibles?
 
-Thanks,
-Niklas
+That's the idea. UEFI does some probing of the hardware and currently
+writes information about the detected SKUs into the /chosen node. I
+think we could achieve the same effect in a more standard way by writing
+out the compatible strings instead.
+
+So while we likely won't have these compatible strings in the DTS files,
+we may very well end up having these in the DTB that is passed to the
+kernel. So we don't need these to be documented for validation within
+the kernel repository, but I'm concerned it could lead to confusion if
+people end up with undocumented compatible strings in the DTB.
+
+Perhaps that's not as big a deal as I think it is, so I'll drop this for
+now. We'll go with the "standard" SKU compatible strings for now and can
+revisit if this becomes an actual problem.
+
+Sorry for the delay, I hadn't seen your replies before.
+
+Thierry
+
+--UzM2R6eGT/Bqb/nB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRiSoIACgkQ3SOs138+
+s6El6w//Xg/pAHxUCf+hHGn4aycKajfi76NRWhI3+Lm99cGQ1/aX0/Ke8VT7Tdwn
+JpxSFF8k0wlUI83EmJF/4iIW7YWW4L/b5R1iti3emm53BdWCvoJk4ODydTpOA+sV
+YuX+PhPFKmXUUhz7Wu2wsLoGvcDvRampPA8NWWw4nCxGI3T8F/nea7CLIT+rWMiI
+gFjXRGk8oNdnFSkGRXnZN8mmfZj2Jvpx6yqEkuYL9st3YlCaYJd720F7GeloTvsY
+mkltj2tma7ly7ltYJ3FsguGPhU8PtuZ/J9+ZTsSScuopctDiHdK4egKJpEJqe5Kg
+DSIEu3HqC00MX0Bl9ZumrQikKrJ6WcCpuF4mXQV+iwukK7iNsvpXTgf9bw6o1Gl9
+j1oHNeVSH+bqX87GVdIKtTgZpRXYvH+cFsmv/4wvmdwYuOP2ccIm46QseokgyZUz
+i6EPtUDGWfAPIJ+k3uZvMhdur/qD6t2LfAATI925BS58QcyqkYx6cSF2wpyFkY1c
+zppAp2kp0GOo8t+EVj4PoC7S+aYgmcVDO1PkTjAt+onok7i6t3/Zb67+dRl0iQAj
+2qQLXEpU8D+leZT3Vcg96hmi1QS+Rc/8iPY7nEOEggpzCEhwZblEMAE/2qWjCSJj
+4bw3i1j6/h0EpzdekNy1w0MDHK4x/KaDJOT25mEO5vMqdqCWJEQ=
+=yUiS
+-----END PGP SIGNATURE-----
+
+--UzM2R6eGT/Bqb/nB--
