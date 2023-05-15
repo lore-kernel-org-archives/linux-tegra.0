@@ -2,33 +2,33 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45737C7EE23
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2ADFC7EE26
 	for <linux-tegra@archiver.kernel.org>; Mon, 15 May 2023 12:49:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241920AbjEOMty (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 May 2023 08:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39570 "EHLO
+        id S241613AbjEOMtz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 May 2023 08:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241439AbjEOMtm (ORCPT
+        with ESMTP id S241978AbjEOMto (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 May 2023 08:49:42 -0400
+        Mon, 15 May 2023 08:49:44 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1141E1728
-        for <linux-tegra@vger.kernel.org>; Mon, 15 May 2023 05:49:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5DB1BD2
+        for <linux-tegra@vger.kernel.org>; Mon, 15 May 2023 05:49:41 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A92A4B3;
-        Mon, 15 May 2023 05:50:23 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1B991063;
+        Mon, 15 May 2023 05:50:25 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B78C33F67D;
-        Mon, 15 May 2023 05:49:37 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2A89A3F67D;
+        Mon, 15 May 2023 05:49:40 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     joro@8bytes.org
 Cc:     iommu@lists.linux.dev, will@kernel.org, jgg@nvidia.com,
         digetx@gmail.com, thierry.reding@gmail.com,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 1/4] iommu/tegra-gart: Add default identity domain support
-Date:   Mon, 15 May 2023 13:49:29 +0100
-Message-Id: <3a243e6e796cea4566e28297da8270482457637c.1684154219.git.robin.murphy@arm.com>
+Subject: [PATCH 3/4] iommu/tegra-gart: Generalise domain support
+Date:   Mon, 15 May 2023 13:49:31 +0100
+Message-Id: <38e4c004c6b3d0120c5dc6739301bb97bb28fcf6.1684154219.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
 In-Reply-To: <cover.1684154219.git.robin.murphy@arm.com>
 References: <cover.1684154219.git.robin.murphy@arm.com>
@@ -38,105 +38,147 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The nature of a GART means that supporting identity domains is as easy
-as doing nothing, so bring the Tegra driver into the modern world of
-default domains with a trivial implementation. Identity domains are
-allowed to exist alongside any explicit domain for the translation
-aperture, since they both simply represent regions of the physical
-address space with no isolation from each other. As such we'll continue
-to do the "wrong" thing with groups to allow that to work, since the
-notion of isolation that groups represent is counterproductive to the
-GART's established usage model.
+Now that we have a clear notion of mappings being owned by a domain,
+rather than the GART instance, it's easy enough to support operating on
+them independently of whether the domain is currently active. This also
+makes the PTE checks for debugging as cheap as testing the gart_debug
+option itself, so we may as well just remove the option.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/tegra-gart.c | 39 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ drivers/iommu/tegra-gart.c | 46 ++++++++++++++------------------------
+ 1 file changed, 17 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index a482ff838b53..deedb9f0f380 100644
+index a74648655dac..0a121cbc17b8 100644
 --- a/drivers/iommu/tegra-gart.c
 +++ b/drivers/iommu/tegra-gart.c
-@@ -111,7 +111,13 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
+@@ -52,8 +52,6 @@ struct gart_device {
  
- 	spin_lock(&gart->dom_lock);
+ static struct gart_device *gart_handle; /* unique for a system */
  
--	if (gart->active_domain && gart->active_domain != domain) {
-+	if (domain->type == IOMMU_DOMAIN_IDENTITY) {
-+		if (dev_iommu_priv_get(dev)) {
-+			dev_iommu_priv_set(dev, NULL);
-+			if (--gart->active_devices == 0)
-+				gart->active_domain = NULL;
-+		}
-+	} else if (gart->active_domain && gart->active_domain != domain) {
- 		ret = -EINVAL;
- 	} else if (dev_iommu_priv_get(dev) != domain) {
- 		dev_iommu_priv_set(dev, domain);
-@@ -124,27 +130,14 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
- 	return ret;
+-static bool gart_debug;
+-
+ /*
+  * Any interaction between any block on PPSB and a block on APB or AHB
+  * must have these read-back to ensure the APB/AHB bus transaction is
+@@ -83,17 +81,6 @@ static inline void gart_set_pte(struct gart_device *gart,
+ 	writel_relaxed(pte, gart->regs + GART_ENTRY_DATA);
  }
  
--static void gart_iommu_set_platform_dma(struct device *dev)
+-static inline unsigned long gart_read_pte(struct gart_device *gart,
+-					  unsigned long iova)
 -{
--	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
--	struct gart_device *gart = gart_handle;
+-	unsigned long pte;
 -
--	spin_lock(&gart->dom_lock);
+-	writel_relaxed(iova, gart->regs + GART_ENTRY_ADDR);
+-	pte = readl_relaxed(gart->regs + GART_ENTRY_DATA);
 -
--	if (dev_iommu_priv_get(dev) == domain) {
--		dev_iommu_priv_set(dev, NULL);
--
--		if (--gart->active_devices == 0)
--			gart->active_domain = NULL;
--	}
--
--	spin_unlock(&gart->dom_lock);
+-	return pte;
 -}
 -
- static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
+ static void do_gart_setup(struct gart_device *gart)
  {
-+	static struct iommu_domain identity;
- 	struct iommu_domain *domain;
+ 	unsigned long iova;
+@@ -113,9 +100,9 @@ static inline bool gart_iova_range_invalid(struct gart_device *gart,
+ 			iova + bytes > gart->iovmm_end);
+ }
  
-+	if (type == IOMMU_DOMAIN_IDENTITY)
-+		return &identity;
-+
- 	if (type != IOMMU_DOMAIN_UNMANAGED)
- 		return NULL;
- 
-@@ -161,7 +154,8 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
- static void gart_iommu_domain_free(struct iommu_domain *domain)
+-static inline bool gart_pte_valid(struct gart_device *gart, unsigned long iova)
++static inline bool gart_pte_valid(u32 pte)
  {
- 	WARN_ON(gart_handle->active_domain == domain);
--	kfree(domain);
-+	if (domain->type != IOMMU_DOMAIN_IDENTITY)
-+		kfree(domain);
+-	return !!(gart_read_pte(gart, iova) & GART_ENTRY_PHYS_ADDR_VALID);
++	return pte & GART_ENTRY_PHYS_ADDR_VALID;
+ }
+ 
+ static int gart_iommu_attach_dev(struct iommu_domain *domain,
+@@ -192,18 +179,19 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
  }
  
  static inline int __gart_iommu_map(struct gart_device *gart, unsigned long iova,
-@@ -246,6 +240,11 @@ static struct iommu_device *gart_iommu_probe_device(struct device *dev)
- 	return &gart_handle->iommu;
+-				   unsigned long pa)
++				   unsigned long pa, struct gart_domain *domain)
+ {
+ 	int idx = gart_pte_index(gart, iova);
+ 	u32 pte = GART_ENTRY_PHYS_ADDR_VALID | pa;
+ 
+-	if (unlikely(gart_debug && gart_pte_valid(gart, iova))) {
++	if (unlikely(gart_pte_valid(domain->savedata[idx]))) {
+ 		dev_err(gart->dev, "Page entry is in-use\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	gart->active_domain->savedata[idx] = pte;
+-	gart_set_pte(gart, iova, pte);
++	domain->savedata[idx] = pte;
++	if (domain == gart->active_domain)
++		gart_set_pte(gart, iova, pte);
+ 
+ 	return 0;
+ }
+@@ -218,24 +206,26 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		return -EINVAL;
+ 
+ 	spin_lock(&gart->pte_lock);
+-	ret = __gart_iommu_map(gart, iova, (unsigned long)pa);
++	ret = __gart_iommu_map(gart, iova, (unsigned long)pa, to_gart_domain(domain));
+ 	spin_unlock(&gart->pte_lock);
+ 
+ 	return ret;
  }
  
-+static int gart_iommu_def_domain_type(struct device *dev)
-+{
-+	return IOMMU_DOMAIN_IDENTITY;
-+}
-+
- static int gart_iommu_of_xlate(struct device *dev,
- 			       struct of_phandle_args *args)
+ static inline int __gart_iommu_unmap(struct gart_device *gart,
+-				     unsigned long iova)
++				     unsigned long iova,
++				     struct gart_domain *domain)
  {
-@@ -270,9 +269,9 @@ static const struct iommu_ops gart_iommu_ops = {
- 	.domain_alloc	= gart_iommu_domain_alloc,
- 	.probe_device	= gart_iommu_probe_device,
- 	.device_group	= generic_device_group,
--	.set_platform_dma_ops = gart_iommu_set_platform_dma,
- 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
- 	.of_xlate	= gart_iommu_of_xlate,
-+	.def_domain_type = gart_iommu_def_domain_type,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
- 		.attach_dev	= gart_iommu_attach_dev,
- 		.map		= gart_iommu_map,
+ 	int idx = gart_pte_index(gart, iova);
+ 
+-	if (unlikely(gart_debug && !gart_pte_valid(gart, iova))) {
++	if (unlikely(!gart_pte_valid(domain->savedata[idx]))) {
+ 		dev_err(gart->dev, "Page entry is invalid\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	gart->active_domain->savedata[idx] = 0;
+-	gart_set_pte(gart, iova, 0);
++	domain->savedata[idx] = 0;
++	if (domain == gart->active_domain)
++		gart_set_pte(gart, iova, 0);
+ 
+ 	return 0;
+ }
+@@ -250,7 +240,7 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
+ 		return 0;
+ 
+ 	spin_lock(&gart->pte_lock);
+-	err = __gart_iommu_unmap(gart, iova);
++	err = __gart_iommu_unmap(gart, iova, to_gart_domain(domain));
+ 	spin_unlock(&gart->pte_lock);
+ 
+ 	return err ? 0 : bytes;
+@@ -261,12 +251,13 @@ static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
+ {
+ 	struct gart_device *gart = gart_handle;
+ 	unsigned long pte;
++	int idx = gart_pte_index(gart, iova);
+ 
+ 	if (gart_iova_range_invalid(gart, iova, GART_PAGE_SIZE))
+ 		return -EINVAL;
+ 
+ 	spin_lock(&gart->pte_lock);
+-	pte = gart_read_pte(gart, iova);
++	pte = to_gart_domain(domain)->savedata[idx];
+ 	spin_unlock(&gart->pte_lock);
+ 
+ 	return pte & GART_PAGE_MASK;
+@@ -390,6 +381,3 @@ struct gart_device *tegra_gart_probe(struct device *dev, struct tegra_mc *mc)
+ 
+ 	return ERR_PTR(err);
+ }
+-
+-module_param(gart_debug, bool, 0644);
+-MODULE_PARM_DESC(gart_debug, "Enable GART debugging");
 -- 
 2.39.2.101.g768bb238c484.dirty
 
