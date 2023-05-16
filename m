@@ -2,243 +2,172 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2ADC7EE24
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 00:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF4AC77B7F
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 07:40:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343665AbjEPABn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 May 2023 20:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45848 "EHLO
+        id S230411AbjEPHkR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 May 2023 03:40:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343646AbjEPAB1 (ORCPT
+        with ESMTP id S229761AbjEPHkR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 May 2023 20:01:27 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C63D07DA2;
-        Mon, 15 May 2023 17:01:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ey/8wJs8d9bBtVXEHnIo6jf2A8LEZYDEIlN6yIWq950BNsiN0KOss8Cz2UdOSfOgDUgR4qemLIdkJ0+wBJSBsRjjo6ZeVk5lez/AD8A+yK3Jr+mR/rHnOSO3STx7TIC7ggQrl4pCSHmBOi8wuBoUSg8jsveQO8RgEawG9qjiiSB9ndFiJCfhIiN3qRolh7cNjXdwma4kD+dcgAbYRWYOR7cPwzOparJFRrjMEi3+dTQ5VpyY11OxVu8cvjvF58/7gjb7EyCrMtr0yjlCZdED4Y3DghJEKyHaq5tvcbHcgo3bcGzHozPhQBkaJXB62v1AEgxd0+5uPwKbD1Q4XINjWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CUlj6QNPQM0PqEL9xSVjB1E/CR1+r9b80cHMZDuRDV8=;
- b=nHULWi2wOqWWVHY01hmKvT8CLDyrKEVekKjaCGidQjAhunDN7Mf9w0+qitmq0Z707CEjyOHc44qf1nnF71DKziEk13lnb5pnVU9CQbHMEBXkrXgM0wR8ZcgM1sfTLG+xXeq0ag3awjnzAAIxhgcUo6dR7gKZPVT6ZMvnChimKAEK5k3VaZ9Ux/3HFMpNi3h5LHzPHR8RQIX8e2FFlBvEaqKLGKv2xXMi7IbPPOJoDHpulbBepg97Gzd8UgQFabX9vIEdEcoT4lME0FgwI+jrLvnd3/tgk+fFNbg1AasnVJ5Ii7k6THfNaqnVNTp6mJSqbpgcUfTaxHpZ4HJqsa9hiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CUlj6QNPQM0PqEL9xSVjB1E/CR1+r9b80cHMZDuRDV8=;
- b=Udp1Bk2RQoyQDQX1iKNZg5mCf2b7i3tBR495U+lypuTRse5zATE+n1Gb6FNrPxAfx11x98tct3VL6TbndUf8NMQAxB+HG/i7LcaIXFanrd0N8G1fwz+u1+noQyThkaOAzUKCgji1I8S1gqXsrukjWGpNcTk+SR2LFfbdSvl2eUkDsZyMELiMY0+JfH2mm1UAkf6MFXbwsGP/frmTqTB1uvOwyhLMNlV6+xDJvDfYK60lZ8gmNWObs9Ui5uSVK3jLUCtmaElkfX/vsqirnL1iuzMha5BcUZ84EZsHF9V5cyfS1X5ZCjAKHhqsR0j1Q7r4Hqz9+gISDlouw4X+9MePOQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by PH7PR12MB6634.namprd12.prod.outlook.com (2603:10b6:510:211::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Tue, 16 May
- 2023 00:01:18 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6387.030; Tue, 16 May 2023
- 00:01:18 +0000
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        Tue, 16 May 2023 03:40:17 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2E71737;
+        Tue, 16 May 2023 00:40:16 -0700 (PDT)
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34G7aShZ005037;
+        Tue, 16 May 2023 07:39:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=oyXmAuPB2QwCsFmA09TyMaE9r5Wsa42TS9CvhNr4Xxo=;
+ b=jQyJnX2IE0Q9/uHuiK+tFFDM2ICZfdAS10yyEEvjakfFqK1quX2CS8p56sTYXWMVS9QP
+ hlMhqOQ+mI2WQwYJsEhn/wIKZL3WkKjRMXk6BZ5K5F/WPJmxqsampKPSkDiJmsAwxLPd
+ QY59SXf1QlQ2ey9cq+26TAma4O3D76d5TXhUj46eB6o4zAbnPGEbluM8Lr7Wt3ylPD0b
+ TxIDWKMJtEgDfyXMimQ6TXr011dMhE4PtQ4wOjElsEyFil+mkDcEqxqAJcWoxs0Fmgce
+ X8T8mgU2Vps3ESnTmGZo3FC5OP5dsorRnLIdraV+j9qiSgyKFAl3jwTnHpk6XFcyzama 7Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qm4y8hh1p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 May 2023 07:39:32 +0000
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34G7amRA007488;
+        Tue, 16 May 2023 07:39:31 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qm4y8hgpq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 May 2023 07:39:31 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34G3qs8k006665;
+        Tue, 16 May 2023 07:39:23 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3qj264sfp5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 May 2023 07:39:23 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+        by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34G7dKNV41615626
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 May 2023 07:39:20 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C0C320043;
+        Tue, 16 May 2023 07:39:20 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7498920040;
+        Tue, 16 May 2023 07:39:18 +0000 (GMT)
+Received: from [9.152.222.242] (unknown [9.152.222.242])
+        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Tue, 16 May 2023 07:39:18 +0000 (GMT)
+Message-ID: <168d8026-207a-e7ee-21b3-4a02ed00f0ce@linux.ibm.com>
+Date:   Tue, 16 May 2023 09:39:17 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v9 1/6] s390/ism: Set DMA coherent mask
+Content-Language: en-US
+To:     Niklas Schnelle <schnelle@linux.ibm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Will Deacon <will@kernel.org>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
         Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
         Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v2 16/25] iommu: Remove ops->set_platform_dma_ops()
-Date:   Mon, 15 May 2023 21:00:49 -0300
-Message-Id: <16-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
-In-Reply-To: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
-References: 
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR17CA0019.namprd17.prod.outlook.com
- (2603:10b6:208:15e::32) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|PH7PR12MB6634:EE_
-X-MS-Office365-Filtering-Correlation-Id: 340c12a3-5866-4fa1-5ecc-08db55a0a469
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ueIjFHLS6RNNIHznFVfmIJHl77/oHIT3qO+2UC984+IPK1XfZRcAE7bqkTkBP8G6KcpnWOyPsCtZspYFJhThsB+Fx8RxN/YfcLjFNHi7z3xyW8JiGq62iBlbFXLimmujDBWaa6uMcknMyCDmuG5gcvgvcl4ORW7c43EljcKeFQRcqzdlytx9AKbJC5Yx7jCZjq/s0vM/cJd5QpQYJq6V+e8Omt7WMMp0tGJDGA2oCBq21FG4kZRj96dq6Ig6+BDuikZVm6dY8WbLYQOCMVdgC4+v6bd2cOIn3aoll2caZtJ3NnN3aFwIjhvP/QU1g568HA28mDdrRsEQohHrVPB9nZiursafjpCQQgrkQcYDyz4dbD099v3Y0iPbxrrW6+Nc5SppkMSdx7+D9zIsiLXObntZVu6naRS4F3+wz6q2kanOFFXO6GyOHH5pnw+h7xBApZOHOs+TAoVUbspte6iJeigPBW8G9cD9BOd+n8ziBIIkEjrJd3cUQnNBRrjdTLuNWljIiJ/tOvBfuyCt0lo/+eGgUUlamfqcUcP4tyRe8LRLp6+uu/PBFIrZquNGiqjY1rfc/Cxb7g9vU48p19fcFgtsaMrzAyXaGG0orZvPESE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(346002)(366004)(136003)(376002)(451199021)(36756003)(110136005)(54906003)(478600001)(38100700002)(41300700001)(7416002)(7406005)(8676002)(8936002)(5660300002)(2906002)(316002)(921005)(4326008)(66476007)(66946007)(66556008)(6506007)(6512007)(107886003)(86362001)(26005)(186003)(83380400001)(2616005)(6486002)(6666004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ByLo6Q6HtMnsssJJxzfofWKM9dJUvjGNnQKArzO2pCpZ76GLCUQFRCBtYRkg?=
- =?us-ascii?Q?htyJN/H22/XhO5LjhB9EYk+f6tZGwrx6b5iebjzdVLTuHidKZqrdtRAZn3DN?=
- =?us-ascii?Q?1m1xQw8EJVR1f0y2FUkYD00x8/rDVIeAhS8Iq990uGDwEoNF/TtN+GKSfiFB?=
- =?us-ascii?Q?PKI8vUG507EcCtcfSSAHIk5JEhSM3i1vLWD31wb5LjY319fideb57ry/0Whl?=
- =?us-ascii?Q?l6w+xkZ5vAt7nz7ZaLVSoe27Kk4yhgu7k/SkG+xF12X9BpN5l6zYmkzf7UGH?=
- =?us-ascii?Q?H3JQAU8JVa6F3z9C0hsv88uCQjnFi2f5xdlJsVUnr49BwXhAF1fpNFYtVtcM?=
- =?us-ascii?Q?Xnuk+qHouF4w/G0xZVR+fYEDv7q0rHQXNuHga5rgeJh0edcqHzFk8q5NyPey?=
- =?us-ascii?Q?YSxvbzticd3KA1Nc6K0Btb/VWtfzEmFeP9BsANEaczFbWybV2kVe7p9ARd7E?=
- =?us-ascii?Q?9iKtTOPVnuGFmopu5+yAN/iR1XnjjwvFAUaoYqoMfrTDjKVXeIfuNVr8IrCw?=
- =?us-ascii?Q?ZIT4h1J1GFUU+bH2GsvB7N32iohvrQwkbaKOQ7BhaEgp3+GJACmtujZKnomR?=
- =?us-ascii?Q?3+llOjXHgPfcX7O9pqZeiqkvHl833NjbKRx0JrDEbCTJjTO0Gk9BgN3AtlZ6?=
- =?us-ascii?Q?6IDIL3uBBsLp4yL2c5ZwxCrHSqh9dHhb5pCAHRFK0aQE1/4/ljyRa2I9u3U6?=
- =?us-ascii?Q?mJrsUIwrMtbZnmf0wNzodBHeIbVhMXStFRarkAf2IjHx7AcE3xl1f0h+HQjT?=
- =?us-ascii?Q?8S56AdW5FqB49+FPOyfiHfQJHaNE/Mur4NT57MZ7Yn6itGAbM3Lvtg/9Bzpb?=
- =?us-ascii?Q?DPw8FTRlBClmYA8KhH6+eOm+Tbbm9hINsRITu2l/3BnIp1p2j8EfF9lxlM9V?=
- =?us-ascii?Q?iacueQ2qsdgw8MQdf48vFsV3iAvcBukRckHn7f3bsJAmK9jmxlizkvXdwzaH?=
- =?us-ascii?Q?GeMhXDRSZYjQbk9Q5AtX1DgjxDcQNOSUhq3jT8o00Bo/opjp4QVaV8d9PTXk?=
- =?us-ascii?Q?uqa2ym04ovdhFEtJjR/6/FPibbtIH/sGtLUYLMSCDq+Q5BTXvskws+uDl2tS?=
- =?us-ascii?Q?wjJ6ImE74WeickoxfH9Vx4FRkMrrTanPDeQB7fLIpXRZBRk2wN/8mqRXm4hw?=
- =?us-ascii?Q?rDZ+Txj8bgnrk0nnIntWNdqCxbzcj/NMoF+DFbSvxHtvDMGbFz1izith1Ekc?=
- =?us-ascii?Q?q87kXPGecpf6+ZCbKowpADZPsfGL9tDCuSubWBLcG8XEYunTEtd5HZrn+/rY?=
- =?us-ascii?Q?M5fYaLTO5kMdrFoeTzO2U6fw9kLi/+5XiaA+7rVdsXKtcycRFxqLHKmztOPt?=
- =?us-ascii?Q?U5g4nhGXnFtLLZ8BcEPs5nXZOQo+O8JLDvnfj8dV5JrWGDtTsB8l3wGfsiZF?=
- =?us-ascii?Q?qKgc4PhVzW+ZIJpESgpXO9EOJVAICOBocKEaodDDnoUsE2GNvAnc8U/KGcDC?=
- =?us-ascii?Q?UvngndOJuQZayYG1nGxy9IDGanWSrjlLQ8ucFAgvY3/INZeWnm5A7YLc4xwZ?=
- =?us-ascii?Q?5JWgaRwFPkfPNrX6TR2uX3OWslXqDtUJypigQldEMPWI3OdB+u6Dg1RIwrKx?=
- =?us-ascii?Q?fyyLUbjD0OmFbSjYyPzpjGNSnqCPewPt199aYg45?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 340c12a3-5866-4fa1-5ecc-08db55a0a469
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2023 00:01:05.4070
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OMcARWPa541VsuyjVtnOckCCrXqKGo/hnn1JO8L6BHjAQMiXZOHfxyKYaGObrrtO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6634
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20230310-dma_iommu-v9-0-65bb8edd2beb@linux.ibm.com>
+ <20230310-dma_iommu-v9-1-65bb8edd2beb@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+In-Reply-To: <20230310-dma_iommu-v9-1-65bb8edd2beb@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: J4ionigi6aUPze2O9mlNApMYAufA_hrk
+X-Proofpoint-GUID: i4d6Dd2ZX11emMnTTTHfoZmJwBDtd8nN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-16_02,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ clxscore=1011 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ mlxscore=0 impostorscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305160065
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All drivers are now using IDENTITY or PLATFORM domains for what this did,
-we can remove it now. It is no longer possible to attach to a NULL domain.
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Niklas Schnelle <schnelle@linux.ibm.com>
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
----
- drivers/iommu/iommu.c | 30 +++++-------------------------
- include/linux/iommu.h |  4 ----
- 2 files changed, 5 insertions(+), 29 deletions(-)
+On 5/15/23 11:15, Niklas Schnelle wrote:
+> A future change will convert the DMA API implementation from the
+> architecture specific arch/s390/pci/pci_dma.c to using the common code
+> drivers/iommu/dma-iommu.c which the utilizes the same IOMMU hardware
+> through the s390-iommu driver. Unlike the s390 specific DMA API this
+> requires devices to correctly call set the coherent mask to be allowed
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index f9f11ad918f673..af8b91d15462f3 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2259,21 +2259,8 @@ static int __iommu_group_set_domain_internal(struct iommu_group *group,
- 	if (group->domain == new_domain)
- 		return 0;
- 
--	/*
--	 * New drivers should support default domains, so set_platform_dma()
--	 * op will never be called. Otherwise the NULL domain represents some
--	 * platform specific behavior.
--	 */
--	if (!new_domain) {
--		for_each_group_device(group, gdev) {
--			const struct iommu_ops *ops = dev_iommu_ops(gdev->dev);
--
--			if (!WARN_ON(!ops->set_platform_dma_ops))
--				ops->set_platform_dma_ops(gdev->dev);
--		}
--		group->domain = NULL;
--		return 0;
--	}
-+	if (WARN_ON(!new_domain))
-+		return -EINVAL;
- 
- 	/*
- 	 * Changing the domain is done by calling attach_dev() on the new
-@@ -2309,19 +2296,15 @@ static int __iommu_group_set_domain_internal(struct iommu_group *group,
- 	 */
- 	last_gdev = gdev;
- 	for_each_group_device(group, gdev) {
--		const struct iommu_ops *ops = dev_iommu_ops(gdev->dev);
--
- 		/*
--		 * If set_platform_dma_ops is not present a NULL domain can
--		 * happen only for first probe, in which case we leave
--		 * group->domain as NULL and let release clean everything up.
-+		 * A NULL domain can happen only for first probe, in which case
-+		 * we leave group->domain as NULL and let release clean
-+		 * everything up.
- 		 */
- 		if (group->domain)
- 			WARN_ON(__iommu_device_set_domain(
- 				group, gdev->dev, group->domain,
- 				IOMMU_SET_DOMAIN_MUST_SUCCEED));
--		else if (ops->set_platform_dma_ops)
--			ops->set_platform_dma_ops(gdev->dev);
- 		if (gdev == last_gdev)
- 			break;
- 	}
-@@ -2935,9 +2918,6 @@ static int iommu_setup_default_domain(struct iommu_group *group,
- 	/*
- 	 * There are still some drivers which don't support default domains, so
- 	 * we ignore the failure and leave group->default_domain NULL.
--	 *
--	 * We assume that the iommu driver starts up the device in
--	 * 'set_platform_dma_ops' mode if it does not support default domains.
- 	 */
- 	dom = iommu_group_alloc_default_domain(group, req_type);
- 	if (!dom) {
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index ddd284f8e5b768..387746f8273c99 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -231,9 +231,6 @@ struct iommu_iotlb_gather {
-  * @release_device: Remove device from iommu driver handling
-  * @probe_finalize: Do final setup work after the device is added to an IOMMU
-  *                  group and attached to the groups domain
-- * @set_platform_dma_ops: Returning control back to the platform DMA ops. This op
-- *                        is to support old IOMMU drivers, new drivers should use
-- *                        default domains, and the common IOMMU DMA ops.
-  * @device_group: find iommu group for a particular device
-  * @get_resv_regions: Request list of reserved regions for a device
-  * @of_xlate: add OF master IDs to iommu grouping
-@@ -265,7 +262,6 @@ struct iommu_ops {
- 	struct iommu_device *(*probe_device)(struct device *dev);
- 	void (*release_device)(struct device *dev);
- 	void (*probe_finalize)(struct device *dev);
--	void (*set_platform_dma_ops)(struct device *dev);
- 	struct iommu_group *(*device_group)(struct device *dev);
- 
- 	/* Request/Free a list of reserved regions for a device */
--- 
-2.40.1
+
+s/call//
+
+
+> to use IOVAs >2^32 in dma_alloc_coherent(). This was however not done
+> for ISM devices. ISM requires such addresses since currently the DMA
+> aperture for PCI devices starts at 2^32 and all calls to
+> dma_alloc_coherent() would thus fail.
+>
+> Reviewed-by: Alexandra Winter <wintera@linux.ibm.com>
+> Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+>   drivers/s390/net/ism_drv.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/s390/net/ism_drv.c b/drivers/s390/net/ism_drv.c
+> index 8acb9eba691b..1399b5dc646c 100644
+> --- a/drivers/s390/net/ism_drv.c
+> +++ b/drivers/s390/net/ism_drv.c
+> @@ -660,7 +660,7 @@ static int ism_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>   	if (ret)
+>   		goto err_disable;
+>   
+> -	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+> +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+>   	if (ret)
+>   		goto err_resource;
+>   
+>
+Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
 
