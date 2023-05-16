@@ -2,199 +2,215 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6E2C77B7F
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 09:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE33DC77B75
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 09:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231919AbjEPJQz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 May 2023 05:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53692 "EHLO
+        id S230218AbjEPJfb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 May 2023 05:35:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231987AbjEPJQh (ORCPT
+        with ESMTP id S231586AbjEPJfa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 May 2023 05:16:37 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817D24EDD;
-        Tue, 16 May 2023 02:15:45 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-50bc5197d33so25225555a12.1;
-        Tue, 16 May 2023 02:15:45 -0700 (PDT)
+        Tue, 16 May 2023 05:35:30 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32E498;
+        Tue, 16 May 2023 02:35:28 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-965ab8ed1c0so2332821866b.2;
+        Tue, 16 May 2023 02:35:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684228495; x=1686820495;
+        d=gmail.com; s=20221208; t=1684229727; x=1686821727;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tWRz/dtuEAlvoTpK4wwHN8J++rGj37sontn+jndrmPM=;
-        b=Ecx6GH5pLKCyWaPjaCt8A98NT9jc7KikKMZl+YDWl70ubboIGL4S+BMYdWGAYxvx77
-         owY7/HOmWSQVbfvLaY1YlTQqVx3TOeD8MBIpwCc+9SW6I6/4dMEqUgOoPlfUR1FoYI66
-         CeueIUpF20fcplgX1d38vKT6tjt2MzuURE+9X0B2X+k2RPwudeiYHAYFQZrEL+6YcvZV
-         Ggl9zhjQp9Ztl/yz1TzBjaqLXW/8JNlS1kW6qo+9F8hLTREOhbe1n5lHCwIXu5/+9/6j
-         w8BE2bPiM9DYXwbhFW3KcFLebmBPSLhFqXZLUrq686lAUmxjlC5lwMctJ+tK1JVffaFR
-         VD4A==
+        bh=KqGNQlwMx1+Ogs6surmgImDAecFNm6DtkKzA0x5eExc=;
+        b=W96Obq6Kwcr4OetGcA3e6EA08+zU0vL9He1o7bfJHXzN17HPtSZReEWaIIMt2yt24g
+         Ew6cVSbA6jBoWKlen23blhnoHdyJbHi4ICb44jMpgAN5U9Xj/wYw7SQXbL7V4vZOnXr6
+         5BLCOGp4LdSMehP9ePLGGcIO7qz2vOcHfqA/vlAKTk9oNJsNNeoLlvuVSl7gC6qPVkBY
+         6pt+qidwNL4LjxnX9wjXIT5PTdtlkNUxoAPXc2h+n/O985M1RKlp52b/dhNoyFuN0+La
+         4mOfz3xDOpH3PqVrevMD+XLvac3yvwk5HAPNDCue8uCRvw4HHM8/k3ibClCNbVkKX2Q6
+         WFQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684228495; x=1686820495;
+        d=1e100.net; s=20221208; t=1684229727; x=1686821727;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tWRz/dtuEAlvoTpK4wwHN8J++rGj37sontn+jndrmPM=;
-        b=CtjdMsim2wXMvVdI216aoCNDDWirGZZlT2Xq8hzwQjmq2Wss7SLzzshXA6/nvvvTm2
-         65Aam9j7+gfh2HPRMNilV13YDwLTUhaorR/oGld2kKdZ3QK3FtnPDHKiVlaYBh7f16x5
-         MUGKGgpdTCJ5MaJnXR/ouBXlVozEw6Rk1BJwq4EPPLifnXHrMaBmsBfZNe5AxtJO9v8c
-         rL4xDBVfFWVnmUtnoLdlyGf0gu0X+YapUeS5EqCFPBfbwfWFUrIHb0dvIdZr4IqbxXWC
-         4a1SaSvx8VUGzmxa2dCfhD8tQfVlCKif+O3n0y3UkJEJuPkSv2aTcLR8nXlrTN71cujj
-         E8aA==
-X-Gm-Message-State: AC+VfDxpyzYPOT6jir9vSweGHlypAAStdDTlLoWi9zwDZaGpFgKu38LD
-        8IhaFsY0d2xfCyKaisRHqEs=
-X-Google-Smtp-Source: ACHHUZ72S8q+djK5XS8l8jM00K5FNc0ejOx8zT3psl9bAI6+DgUhqL04tf2ZZiw3IgdChZKZczUyNQ==
-X-Received: by 2002:a17:906:9b89:b0:96a:6939:11af with SMTP id dd9-20020a1709069b8900b0096a693911afmr15263419ejc.50.1684228494940;
-        Tue, 16 May 2023 02:14:54 -0700 (PDT)
+        bh=KqGNQlwMx1+Ogs6surmgImDAecFNm6DtkKzA0x5eExc=;
+        b=C6h7er3icxVWqPvV3GCTaFdyn0EIgx4WSSXr/3x6Rucpb1eiQYBnSNrw+mvDEKvU9l
+         zeC/fAsSuYJWO/RQ6W5CV9bYoK17pM8n+cXhCM8dDXx3TMZTu9hNH2aIszKzQulGJs0t
+         vHhJMWuTuGcvPzTbs4TO4quLMnYWVPAe4VbnBhkZI5A/cvkurV7P43WeLwEQ7cZEn/EH
+         /I4ZCPJMKvbaKsds1y49725gANFfgMlGHHtXAtS9CIMY78waGvJWh8wdFj2qnPY5WmMr
+         3EO5kouWif39/ZYKDMYUItOrbKhKYdSSnuldRg8lTy72T+5JeNi0gC/AJJxlw9F+Hs1D
+         NpCA==
+X-Gm-Message-State: AC+VfDxbqnWnUw7zBPrjIf12NBmfK2I2siJflciM+D2o5udOiCMhrKb1
+        8NYQfpmZK0eKYT0xVV3Z7nY=
+X-Google-Smtp-Source: ACHHUZ6EF+4ZmDxZNVD6IuepFP0JX54P53UIpTR/tniJEeIm1VuD8GcVE6QpIQqKBuSXvRhrU2K5MA==
+X-Received: by 2002:a17:907:5c5:b0:95f:56e8:1c3c with SMTP id wg5-20020a17090705c500b0095f56e81c3cmr34307227ejb.17.1684229726983;
+        Tue, 16 May 2023 02:35:26 -0700 (PDT)
 Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id kz23-20020a17090777d700b009659fed3612sm10589445ejc.24.2023.05.16.02.14.54
+        by smtp.gmail.com with ESMTPSA id la26-20020a170906ad9a00b00967a18df1easm10693805ejb.117.2023.05.16.02.35.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 02:14:54 -0700 (PDT)
-Date:   Tue, 16 May 2023 11:14:52 +0200
+        Tue, 16 May 2023 02:35:26 -0700 (PDT)
+Date:   Tue, 16 May 2023 11:35:24 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>, jonathanh@nvidia.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefank@nvidia.com
-Subject: Re: [PATCH v4 5/6] dt-bindings: Add support for tegra186-bpmp DRAM
- MRQ GSCs
-Message-ID: <ZGNJjFOUFZ2rYu5X@orome>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     jonathanh@nvidia.com, mperttunen@nvidia.com, sudeep.holla@arm.com,
+        talho@nvidia.com, robh@kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stefank@nvidia.com,
+        krzysztof.kozlowski@linaro.org
+Subject: Re: [PATCH v4 6/6] firmware: tegra: bpmp: Add support for DRAM MRQ
+ GSCs
+Message-ID: <ZGNOXO3rRtFx_12R@orome>
 References: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
- <20230511132048.1122075-6-pdeschrijver@nvidia.com>
- <80ff83ab-d5e9-7a00-1099-a752330ef28d@linaro.org>
+ <20230511132048.1122075-7-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9J2Kz8gt9fDKhsNu"
+        protocol="application/pgp-signature"; boundary="FcNmRFebYumcoH83"
 Content-Disposition: inline
-In-Reply-To: <80ff83ab-d5e9-7a00-1099-a752330ef28d@linaro.org>
+In-Reply-To: <20230511132048.1122075-7-pdeschrijver@nvidia.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---9J2Kz8gt9fDKhsNu
+--FcNmRFebYumcoH83
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 12, 2023 at 08:45:22AM +0200, Krzysztof Kozlowski wrote:
-> On 11/05/2023 15:20, Peter De Schrijver wrote:
-> > Add memory-region property to the tegra186-bpmp binding to support
-> > DRAM MRQ GSCs.
+On Thu, May 11, 2023 at 04:20:51PM +0300, Peter De Schrijver wrote:
+> Implement support for DRAM MRQ GSCs.
 >=20
-> Use subject prefixes matching the subsystem (which you can get for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching).
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/firmware/tegra/bpmp-tegra186.c | 232 ++++++++++++++++++-------
+>  drivers/firmware/tegra/bpmp.c          |   4 +-
+>  2 files changed, 168 insertions(+), 68 deletions(-)
 >=20
-> >=20
-> > Co-developed-by: Stefan Kristiansson <stefank@nvidia.com>
-> > Signed-off-by: Stefan Kristiansson <stefank@nvidia.com>
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  .../firmware/nvidia,tegra186-bpmp.yaml        | 37 +++++++++++++++++--
-> >  1 file changed, 34 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186=
--bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpm=
-p.yaml
-> > index 833c07f1685c..f3e02c9d090d 100644
-> > --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.y=
-aml
-> > +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.y=
-aml
-> > @@ -57,8 +57,11 @@ description: |
-> >    "#address-cells" or "#size-cells" property.
-> > =20
-> >    The shared memory area for the IPC TX and RX between CPU and BPMP are
-> > -  predefined and work on top of sysram, which is an SRAM inside the
-> > -  chip. See ".../sram/sram.yaml" for the bindings.
-> > +  predefined and work on top of either sysram, which is an SRAM inside=
- the
-> > +  chip, or in normal SDRAM.
-> > +  See ".../sram/sram.yaml" for the bindings for the SRAM case.
-> > +  See "../reserved-memory/nvidia,tegra264-bpmp-shmem.yaml" for binding=
-s for
-> > +  the SDRAM case.
-> > =20
-> >  properties:
-> >    compatible:
-> > @@ -81,6 +84,11 @@ properties:
-> >      minItems: 2
-> >      maxItems: 2
-> > =20
-> > +  memory-region:
-> > +    description: phandle to reserved memory region used for IPC between
-> > +      CPU-NS and BPMP.
-> > +    maxItems: 1
-> > +
-> >    "#clock-cells":
-> >      const: 1
-> > =20
-> > @@ -115,10 +123,15 @@ properties:
-> > =20
-> >  additionalProperties: false
-> > =20
-> > +oneOf:
-> > +  - required:
-> > +      - memory-region
-> > +  - required:
-> > +      - shmem
-> > +
-> >  required:
-> >    - compatible
-> >    - mboxes
-> > -  - shmem
-> >    - "#clock-cells"
-> >    - "#power-domain-cells"
-> >    - "#reset-cells"
-> > @@ -184,3 +197,21 @@ examples:
-> >              #thermal-sensor-cells =3D <1>;
-> >          };
-> >      };
-> > +
-> > +  - |
-> > +    #include <dt-bindings/mailbox/tegra186-hsp.h>
-> > +
-> > +    bpmp {
-> > +        compatible =3D "nvidia,tegra186-bpmp";
-> > +        interconnects =3D <&mc TEGRA186_MEMORY_CLIENT_BPMPR &emc>,
-> > +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPW &emc>,
-> > +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAR &emc>,
-> > +                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAW &emc>;
-> > +        interconnect-names =3D "read", "write", "dma-mem", "dma-write";
-> > +        mboxes =3D <&hsp_top1 TEGRA_HSP_MBOX_TYPE_DB
-> > +                            TEGRA_HSP_DB_MASTER_BPMP>;
-> > +        memory-region =3D <&dram_cpu_bpmp_mail>;
->=20
-> I am not sure if difference with one property justifies new example...
+> diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/te=
+gra/bpmp-tegra186.c
+> index 2e26199041cd..74575c9f0014 100644
+> --- a/drivers/firmware/tegra/bpmp-tegra186.c
+> +++ b/drivers/firmware/tegra/bpmp-tegra186.c
+> @@ -4,7 +4,9 @@
+>   */
+> =20
+>  #include <linux/genalloc.h>
+> +#include <linux/io.h>
+>  #include <linux/mailbox_client.h>
+> +#include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> =20
+>  #include <soc/tegra/bpmp.h>
+> @@ -13,12 +15,21 @@
+> =20
+>  #include "bpmp-private.h"
+> =20
+> +enum tegra_bpmp_mem_type { TEGRA_INVALID, TEGRA_SRAM, TEGRA_DRAM };
 
-It makes sense in this case, in my opinion, because both memory-region
-and shmem properties are mutually exclusive, so this is a good way to
-make sure both validation paths are tested.
+Still not convinced about this one.
+
+> +
+>  struct tegra186_bpmp {
+>  	struct tegra_bpmp *parent;
+> =20
+>  	struct {
+> -		struct gen_pool *pool;
+> -		void __iomem *virt;
+> +		union {
+> +			struct {
+> +				void __iomem *virt;
+> +				struct gen_pool *pool;
+> +			} sram;
+> +			struct {
+> +				void *virt;
+> +			} dram;
+> +		};
+
+The drawback of these unions is that they can lead to ambiguity, so you
+need the tegra_bpmp_mem_type enum to differentiate between the two.
+
+If you change this to something like:
+
+	struct {
+		struct gen_pool *pool;
+		void __iomem *sram;
+		void *dram;
+		dma_addr_t phys;
+	} tx, rx;
+
+you eliminate all ambiguity because you can either have pool and sram
+set, or you can have dram set, and depending on which are set you know
+which type of memory you're dealing with.
+
+Plus you then don't need the extra enum to differentiate between them.
+
+Another alternative would be to use something like:
+
+	union {
+		void __iomem *sram;
+		void *dram;
+	} virt;
+
+if you want to avoid the extra 8 bytes. But to be honest, I wouldn't
+bother.
+
+>  		dma_addr_t phys;
+>  	} tx, rx;
+> =20
+> @@ -26,6 +37,8 @@ struct tegra186_bpmp {
+>  		struct mbox_client client;
+>  		struct mbox_chan *channel;
+>  	} mbox;
+> +
+> +	enum tegra_bpmp_mem_type type;
+>  };
+> =20
+>  static inline struct tegra_bpmp *
+> @@ -118,8 +131,17 @@ static int tegra186_bpmp_channel_init(struct tegra_b=
+pmp_channel *channel,
+>  	queue_size =3D tegra_ivc_total_queue_size(message_size);
+>  	offset =3D queue_size * index;
+> =20
+> -	iosys_map_set_vaddr_iomem(&rx, priv->rx.virt + offset);
+> -	iosys_map_set_vaddr_iomem(&tx, priv->tx.virt + offset);
+> +	if (priv->type =3D=3D TEGRA_SRAM) {
+> +		iosys_map_set_vaddr_iomem(&rx, priv->rx.sram.virt + offset);
+> +		iosys_map_set_vaddr_iomem(&tx, priv->tx.sram.virt + offset);
+> +	} else if (priv->type =3D=3D TEGRA_DRAM) {
+> +		iosys_map_set_vaddr(&rx, priv->rx.dram.virt + offset);
+> +		iosys_map_set_vaddr(&tx, priv->tx.dram.virt + offset);
+> +	} else {
+> +		dev_err(bpmp->dev, "Inconsistent state %d of priv->type detected in %s=
+\n",
+> +				priv->type, __func__);
+> +		return -EINVAL;
+> +	}
+
+With an enum you need to do this because theoretically it could happen.
+But practically it will never happen and you can just rely on the pool
+variable, for example, to distinguish.
 
 Thierry
 
---9J2Kz8gt9fDKhsNu
+--FcNmRFebYumcoH83
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRjSYwACgkQ3SOs138+
-s6HJeA//V9jHTmp8k/QOCnT9ZE9dGCF6Ng9NBjuIxqan2up3nyUTy8UBwXnai5UP
-mop1HVvUeyfzHFo481s8QN9Luj5O94MaQuI14GeO+tmMAhQXiK7XPPOwpalrFgRn
-Y0FY1wb33xwRVfDat4AdrB/WFwRX5XpN0Is084sBCyQMXVcNDcoGq/4S9hOLF53Y
-YByRM6Np74N0Me30CgTEfWzOZ0s25D5YinlEB0TEVdShXlfdQdaKvNkv/j/4xQvp
-MMhV7QlVa/16EjftOvNPodJVmxauxa0nwSYWyP5Ia2xZRk1/DF54CWtETf5Dvca4
-1+mcMhuwtyPePkq88KtQorUSS6Pp8Nrey0YPPlrQxQDbw/M492fxDV7HFwhqmhfq
-sKcFohb/2767aEPDQld2Zr9yYvAeBZLSPmrqpyM+Ae3Aaz2yCkvbocCeYn1dKLGK
-T9pv6WPTQ5T1LKwwoyMjM/qhvN5r/bCdYYWjjRr4bRm7vR04QIqWfowckTdedfyq
-ZuvUEUtMEI1ckK8t3sJYkfM9GgmkNp4QhKxd2wPLmAPGWWkH1qBFmtW0ZGPQSThl
-nlaNMryce8HiL9d+LtNoHY9Dm/qGAhKINfmVkF2VOgP21QGyJl7OkHjRW7ILBRaf
-PGWK31d9loM3wm8XKsTp1J2NpAruywcDHT44yZXn2nHzpmTEiNw=
-=OXT8
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmRjTloACgkQ3SOs138+
+s6HTCxAAiwPF3YuFt2+2YuS9k1+CsKkjOjDesfjtMcnvO5MVQqrB1Ip3JfSaqlOR
+Jnfwm3BtscLNdppy1H91pVbPunZpBlLDPsb0jUpHz//rJBJv6zRPhGcgONJs9L5M
+EWlzz2wlAEraOggoTIIqh7Zk71l0hTl5IuZgiG8Kag2CONg1OzR1BI+nSSnoKH8Y
+1CyiYqzPNjYYm9n59XVEWhlfojVuHkaTzUFa4vb+JN4eC3v6iGkophBruh+M6YcA
+xk53akXqXGXJVL1OGOGAH/nmIccvpoWalTMB7PrMyaPa/Tm0hXIo1f1r3RhgqyNz
+rflto9GBIIwcNN85ojy8abrQHammczomtTsPmxkdWGanvqmFzx8jJQrAugGqAGgN
+6Mky76sUXGmwDsHJ3HX2T11xyYE0Sfc1jnIKNuZ12Z90ag545O8XNZJ8iflKCvgd
+nb3VwcMJz2ECHc9/80wB8ECJMxekrdccOhmedXwgC6sP127wrQTrDZbe2Bm07jTA
+23AiIWGLm8uptkq6NvzYHlexoYM9ma/3bk06rodXJIRmTrldLt+OFZsS3FcS/SaK
+BUBbFQLiKpNtRvVcnBzAkiNEu4Yu+oxqkeasC8VnWKTicenIb/M/5mpGyJ6PUBvy
+wCTV0MTG+FPONz855yiIj0Qz2a8G85whHcicZKsEKPMpDOyUXzg=
+=1YeJ
 -----END PGP SIGNATURE-----
 
---9J2Kz8gt9fDKhsNu--
+--FcNmRFebYumcoH83--
