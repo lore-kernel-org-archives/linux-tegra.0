@@ -2,172 +2,108 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF4AC77B7F
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 07:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E10C77B7A
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 07:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbjEPHkR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 May 2023 03:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40004 "EHLO
+        id S231411AbjEPHmI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 May 2023 03:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbjEPHkR (ORCPT
+        with ESMTP id S230468AbjEPHmH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 May 2023 03:40:17 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2E71737;
-        Tue, 16 May 2023 00:40:16 -0700 (PDT)
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34G7aShZ005037;
-        Tue, 16 May 2023 07:39:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=oyXmAuPB2QwCsFmA09TyMaE9r5Wsa42TS9CvhNr4Xxo=;
- b=jQyJnX2IE0Q9/uHuiK+tFFDM2ICZfdAS10yyEEvjakfFqK1quX2CS8p56sTYXWMVS9QP
- hlMhqOQ+mI2WQwYJsEhn/wIKZL3WkKjRMXk6BZ5K5F/WPJmxqsampKPSkDiJmsAwxLPd
- QY59SXf1QlQ2ey9cq+26TAma4O3D76d5TXhUj46eB6o4zAbnPGEbluM8Lr7Wt3ylPD0b
- TxIDWKMJtEgDfyXMimQ6TXr011dMhE4PtQ4wOjElsEyFil+mkDcEqxqAJcWoxs0Fmgce
- X8T8mgU2Vps3ESnTmGZo3FC5OP5dsorRnLIdraV+j9qiSgyKFAl3jwTnHpk6XFcyzama 7Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qm4y8hh1p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 May 2023 07:39:32 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34G7amRA007488;
-        Tue, 16 May 2023 07:39:31 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qm4y8hgpq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 May 2023 07:39:31 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34G3qs8k006665;
-        Tue, 16 May 2023 07:39:23 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3qj264sfp5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 May 2023 07:39:23 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-        by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34G7dKNV41615626
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 May 2023 07:39:20 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C0C320043;
-        Tue, 16 May 2023 07:39:20 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7498920040;
-        Tue, 16 May 2023 07:39:18 +0000 (GMT)
-Received: from [9.152.222.242] (unknown [9.152.222.242])
-        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-        Tue, 16 May 2023 07:39:18 +0000 (GMT)
-Message-ID: <168d8026-207a-e7ee-21b3-4a02ed00f0ce@linux.ibm.com>
-Date:   Tue, 16 May 2023 09:39:17 +0200
+        Tue, 16 May 2023 03:42:07 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE5119BF
+        for <linux-tegra@vger.kernel.org>; Tue, 16 May 2023 00:42:05 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so4324856a12.1
+        for <linux-tegra@vger.kernel.org>; Tue, 16 May 2023 00:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684222924; x=1686814924;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gZXzXb1KfBobQ3/S5Ajx1vdxSIw+IsxbJT3mEJpFQFk=;
+        b=SyW/B3o1Cvhb+mnJ/X5yMx1qFyuPznvCd95LH0MsgEjf8ckxW9z/DCxKplt4MsaoRS
+         RuVhDobvymXJVu+VrxNAN/FcmW12+a+YA0MKFY/qn4+vw9+WchqnCPaDsW8YgOgPkNnL
+         JgH2Pm/HxTZzlAvk6v3Q764WbWHhe/vi4hz4InorUwn/WJBw8jzTkmGnaKjcYAD+71Po
+         h4qd1qPJ8WGQgYDGgZkQDFJOH8uAf3nc+VKeGZL8ZIGglpCuS9q+74lOfvwqKQfJ5652
+         PUClBj2Qe03YNN3tNae+9rrzgvH0GZdv4+UCxsDPICRYIkCGdmpEAKC700ZobWwaKgJ0
+         ZJyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684222924; x=1686814924;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gZXzXb1KfBobQ3/S5Ajx1vdxSIw+IsxbJT3mEJpFQFk=;
+        b=NKvicF3KG+oc42yussyoXloasoXY7uGqsCURSYM/dfxvHvIN0cInR5f1Zb0NFGWLSu
+         4md1KPHuTh4EBty4K9mofdkC9Jde+ibcaRPZkmCM5/OMiLP77h0goO2JAKj2eTBW6foM
+         V6d1+MaHeJWh34BPsU2quIwN0HFclw69f9ghnlt1Mvuc2+h2rEHcLxEih52WAUWIWrmR
+         TT6AM226qL4T3VQLMczc06MhftEb5GQPFFKBB2y3M989A1pZbuoSrlJwTLOrQXJ5sp1R
+         p/WAjcSC7C5djHlUcymtDECScq69wjLjjmSYUJLBxTkD8Vde3LQXqOnJK+CQeS/1z6aL
+         DjKw==
+X-Gm-Message-State: AC+VfDx5VcqBc2u9iqrZwJD2sYKmaWZy1fbiSUE60R/go/N+tDGinWLX
+        MVuHdeiW9RPRf6NwXlqrplrjSQ==
+X-Google-Smtp-Source: ACHHUZ7Y5mGt2pCocBPB4HD9MPrv4mCmUe48c3hHfcI7LUxwItGZ2C1O6srfl8JUqAGzVhA6xZEVzQ==
+X-Received: by 2002:aa7:cb11:0:b0:504:a3ec:eacc with SMTP id s17-20020aa7cb11000000b00504a3eceaccmr31502223edt.4.1684222924086;
+        Tue, 16 May 2023 00:42:04 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:4d4a:9b97:62e:1439? ([2a02:810d:15c0:828:4d4a:9b97:62e:1439])
+        by smtp.gmail.com with ESMTPSA id n8-20020a056402514800b0050d8aac0a1esm7940579edd.19.2023.05.16.00.42.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 May 2023 00:42:03 -0700 (PDT)
+Message-ID: <418cc644-80c9-bf5c-d54b-b2d4dd725450@linaro.org>
+Date:   Tue, 16 May 2023 09:42:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v9 1/6] s390/ism: Set DMA coherent mask
+ Thunderbird/102.11.0
+Subject: Re: [Patch v8 0/8] Tegra234 Memory interconnect support
 Content-Language: en-US
-To:     Niklas Schnelle <schnelle@linux.ibm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20230310-dma_iommu-v9-0-65bb8edd2beb@linux.ibm.com>
- <20230310-dma_iommu-v9-1-65bb8edd2beb@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-In-Reply-To: <20230310-dma_iommu-v9-1-65bb8edd2beb@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
+        dmitry.osipenko@collabora.com, viresh.kumar@linaro.org,
+        rafael@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lpieralisi@kernel.org, helgaas@kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com, kw@linux.com,
+        bhelgaas@google.com, vidyas@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com, ishah@nvidia.com, bbasu@nvidia.com
+References: <20230511173211.9127-1-sumitg@nvidia.com>
+ <a032d9e6-6cb5-1856-9eda-28028bf05633@linaro.org> <ZGJbXg88JOu4aiNe@orome>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZGJbXg88JOu4aiNe@orome>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: J4ionigi6aUPze2O9mlNApMYAufA_hrk
-X-Proofpoint-GUID: i4d6Dd2ZX11emMnTTTHfoZmJwBDtd8nN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-16_02,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1011 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- mlxscore=0 impostorscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305160065
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 15/05/2023 18:18, Thierry Reding wrote:
+> On Sun, May 14, 2023 at 12:41:45PM +0200, Krzysztof Kozlowski wrote:
+>> On 11/05/2023 19:32, Sumit Gupta wrote:
+>>> Hi All,
+>>>
+>>> Have incorporated the suggestions in v7. Only changed 'patch 1' in v7
+>>> to fix possible race when setting 'mc->bpmp' as pointed by Krzysztof.
+>>> Requesting to merge the patch series.
+>>>
+>>
+>> Can I apply it since you request it? I asked you long time ago to
+>> clearly state dependencies or merging limitations. It's v8 and cover
+>> letter still does not state it. Neither the patches do.
+> 
+> I thought we had discussed and agreed to merge this through the Tegra
+> tree, which is why you had provided Acked-bys on all the patches. I was
+> waiting for a final Acked-by on patch 1, since that was the only one
+> still being revised.
+> 
+> If you prefer to merge this, that works for me too. In that case, the
+> series:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-On 5/15/23 11:15, Niklas Schnelle wrote:
-> A future change will convert the DMA API implementation from the
-> architecture specific arch/s390/pci/pci_dma.c to using the common code
-> drivers/iommu/dma-iommu.c which the utilizes the same IOMMU hardware
-> through the s390-iommu driver. Unlike the s390 specific DMA API this
-> requires devices to correctly call set the coherent mask to be allowed
+I have short memory and that's why we have cover letter. Solves all the
+problems. Let me ack it now.
 
-
-s/call//
-
-
-> to use IOVAs >2^32 in dma_alloc_coherent(). This was however not done
-> for ISM devices. ISM requires such addresses since currently the DMA
-> aperture for PCI devices starts at 2^32 and all calls to
-> dma_alloc_coherent() would thus fail.
->
-> Reviewed-by: Alexandra Winter <wintera@linux.ibm.com>
-> Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->   drivers/s390/net/ism_drv.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/s390/net/ism_drv.c b/drivers/s390/net/ism_drv.c
-> index 8acb9eba691b..1399b5dc646c 100644
-> --- a/drivers/s390/net/ism_drv.c
-> +++ b/drivers/s390/net/ism_drv.c
-> @@ -660,7 +660,7 @@ static int ism_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   	if (ret)
->   		goto err_disable;
->   
-> -	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
-> +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->   	if (ret)
->   		goto err_resource;
->   
->
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Best regards,
+Krzysztof
 
