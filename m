@@ -2,99 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2C5C77B7F
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 11:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02FFC7EE23
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 May 2023 12:16:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231642AbjEPLyC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 May 2023 07:54:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50190 "EHLO
+        id S232617AbjEPMQ1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 May 2023 08:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjEPLyB (ORCPT
+        with ESMTP id S231888AbjEPMQ0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 May 2023 07:54:01 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED03E6A6A;
-        Tue, 16 May 2023 04:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1684238019; x=1715774019;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7D3YaE5lYG3fnEdXFRAaVlDXMPi64yw97ieL1am27CI=;
-  b=LR/SpJ79H5BaVHb2CUkiotCuvV2Q8OglM9UiZGUuIKosGfu1NSPya3AH
-   2ZOpCoabNNGyAuYLQfyHEv4dqrVZCOulZpXSegSr7KE/6I9QUPYYbYHFn
-   eWeosypqvPTiHG9GVM5jcn/auda655mmzaw6zVzij5FhVy8N2lVQZzdrk
-   o8x2zo2YUv+2gp6Q+H6B4QvAyWNLHiJx3rxYJd/i0Lc2uMguj4isWxPYD
-   V4Wn8E4KIJB3F8vdwqEajJh7Hq8du+9f5CUXFEIjPrz/Oe/SQZhyO45wC
-   EPTfkpvw+KUm2J6k7aC1z2nt5b4IKHnerENoEYc66hNe7BuK2F8t2/Twq
-   w==;
-X-IronPort-AV: E=Sophos;i="5.99,278,1677567600"; 
-   d="asc'?scan'208";a="211506438"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 16 May 2023 04:53:36 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 16 May 2023 04:53:35 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Tue, 16 May 2023 04:53:33 -0700
-Date:   Tue, 16 May 2023 12:53:12 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Conor Dooley <conor@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stefank@nvidia.com>
-Subject: Re: [PATCH v4 4/6] dt-bindings: Add support for DRAM MRQ GSCs
-Message-ID: <20230516-cadet-enslave-208d91e66b32@wendy>
-References: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
- <20230511132048.1122075-5-pdeschrijver@nvidia.com>
- <20230511-carnivore-legend-17206803d713@spud>
- <ZGNJEoiFmtPiLC4p@orome>
+        Tue, 16 May 2023 08:16:26 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B748AFA
+        for <linux-tegra@vger.kernel.org>; Tue, 16 May 2023 05:16:25 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id 5614622812f47-38eb2984c82so4457582b6e.0
+        for <linux-tegra@vger.kernel.org>; Tue, 16 May 2023 05:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684239385; x=1686831385;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vJTLLzb95iDF+U7TC6zcnoMcQpJeTgiUu6Gi3Heef+s=;
+        b=Wvix5cPG/AAnP0NwB2UCmfUq22GVG2ZHMJi56Od5hjUJ99vSAa+2Q73WGyqynUnkuz
+         S4Yf6p+c0NKlRcso+cETWYl/LFztPppn/O3UVa82WAUK8r59dSrW6GbBNMz/jGdUYGQ4
+         LKgSFrvgiRJCQvdHnYIvSmsBrjjLRjEihRF6xPHg0Hbpg09uPaqVdgMQOf77OucuojRC
+         ostCWsSYcaVQoIfijW43hi84igtO4oSOChnUpt444yKtz1scxFpxlnZu7g1J/Q8pCktM
+         +BrMFzRDbwHMrv7qu3If/VSQmLHECoYZ/KFTQX0CmfWKjBJ7YPIujCo7+Ir7pn/CEFDH
+         qbzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684239385; x=1686831385;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vJTLLzb95iDF+U7TC6zcnoMcQpJeTgiUu6Gi3Heef+s=;
+        b=O1NSwkaYXNcVL7XXoYA7WpIzbGZyROzCWT7D6pIBk861UgLWqkgu8HXL0G+ZKDI2EC
+         D90d74+/eheE729qJierK0JHp2IwRCVNoY4RrSStxNJ4bMZCOQXXNq2lL5HAEDpjsmA3
+         17T67a9E/CzTtjraaGwhHBKoN1/bY9f/UhfAK0+0/Ui3XonCwDU6CfDD3G/MH/wPkHqq
+         kXxYeHTgZowzHH4h80ZvnUbUjNx4suKh0tKw4WWE1kppCurKgavbykXA7exuT8qImtSF
+         wgnc3rLOGZVUhc35HjQCxUXJYCHnUrKZBlDRKiw6zwvAPLQyg3ssJeG0dzKPPGA5U6+v
+         zVAA==
+X-Gm-Message-State: AC+VfDwSlCRWiihnMIBVFHklrvKbS1kROCp/k4jBX3Cfb55bOMV1urxB
+        z1g+4ZvdWg0Pui/QyGLmNSPXS8gyffrtR/0LUyY=
+X-Google-Smtp-Source: ACHHUZ6hCKLE4fpIzovSfFZkpibP/nHCjM5L7XwkUu2hQtjwFHnaOPkuEvb+NOIcYo1h4bvDOQsd9kJUF/kNmbLBR1I=
+X-Received: by 2002:a05:6808:1511:b0:395:48a:e694 with SMTP id
+ u17-20020a056808151100b00395048ae694mr8079810oiw.6.1684239384975; Tue, 16 May
+ 2023 05:16:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QkN7dRCmSJ1GEE8S"
-Content-Disposition: inline
-In-Reply-To: <ZGNJEoiFmtPiLC4p@orome>
+References: <cover.1684154219.git.robin.murphy@arm.com> <CABr+WTnzNPfOGbAmy-E3pH9U5XR0y2PdVmDd2gtnv67ByEb_0w@mail.gmail.com>
+ <11d8adf1-75f5-5728-2139-e32aae6e6c49@arm.com>
+In-Reply-To: <11d8adf1-75f5-5728-2139-e32aae6e6c49@arm.com>
+From:   Nicolas Chauvet <kwizart@gmail.com>
+Date:   Tue, 16 May 2023 14:16:13 +0200
+Message-ID: <CABr+WTm=SehaNVaFym5FM-tpCvh93Ma_xG3xX5PuGt6n9+xh4Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] iommu: tegra-gart cleanups
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     joro@8bytes.org, iommu@lists.linux.dev, will@kernel.org,
+        jgg@nvidia.com, digetx@gmail.com, thierry.reding@gmail.com,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
---QkN7dRCmSJ1GEE8S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Le mar. 16 mai 2023 =C3=A0 13:45, Robin Murphy <robin.murphy@arm.com> a =C3=
+=A9crit :
+>
+> On 2023-05-16 10:53, Nicolas Chauvet wrote:
+...
+> > For what it worth, I've tried to test this serie with "grate patches"
+> > (1) rebased on top on 6.4-rc2, that would make use of the tegra-gart.
+> > That was on PAZ00 (with only 512M of RAM and 96M CMA still allocated).
+> > Unfortunately, this lead to the following errors with display problems
+> > (no character displayed in lxt-terminal and etc)
+>
+> Thanks for testing - it's quite possible I've made a silly mistake
+> somewhere, but just to double-check, does the same happen with the
+> existing driver if you boot with "tegra-gart.gart_debug=3D1" (or at least
+> enable the parameter via sysfs before the DRM driver gets going)?
 
-On Tue, May 16, 2023 at 11:12:50AM +0200, Thierry Reding wrote:
-> I think Peter had to add these explicitly because the defaults are 2 and
-> 1, respectively, and DTC was warning about this. I suppose the "reg"
-> property could be adjusted to use the defaults, but on the other hand I
-> find that it's good if the examples match reality and we need size-cells
-> to be 2 on Tegra.
+Using echo 1 > /sys/module/tegra_gart/parameters/gart_debug shows the
+same messages and the same artefacts (missing refreshed window
+content).
+Using "echo 0 > /sys/module/tegra_gart/parameters/gart_debug" revert
+back to normal...
 
-Huh, caught out by an abnormal example!
-If it avoids an error & matches the use-case it seems like a good idea to
-leave it as-is. Here's an unqualified
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-instead of the previous qualified one.
-
-Thanks,
-Conor.
-
---QkN7dRCmSJ1GEE8S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGNuqAAKCRB4tDGHoIJi
-0ioQAP48UgZ1Wi699mzewpc4KOv1IsY/lRC+3goYNkTl3WgqfwEAnCJExTi8wZll
-rQgPKPiu0PhFv9OfeFZv4MGDWou76QA=
-=xTp2
------END PGP SIGNATURE-----
-
---QkN7dRCmSJ1GEE8S--
+[ 7661.026139] tegra-mc 7000f000.memory-controller: gart: Page entry is in-=
+use
+[ 7661.033189] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+mapping failed 4294967274 262144
+[ 7661.042197] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+failed size 262144: -12
+[ 7661.589552] tegra-mc 7000f000.memory-controller: gart: Page entry is in-=
+use
+[ 7661.596690] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+mapping failed 4294967274 262144
+[ 7661.605865] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+failed size 262144: -12
+[ 7662.078823] tegra-mc 7000f000.memory-controller: gart: Page entry is in-=
+use
+[ 7662.085987] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+mapping failed 4294967274 262144
+[ 7662.095137] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+failed size 262144: -12
+[ 7662.123677] tegra-mc 7000f000.memory-controller: gart: Page entry is in-=
+use
+[ 7662.130758] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+mapping failed 4294967274 262144
+[ 7662.140100] [drm:tegra_bo_gart_map_locked [tegra_drm]] *ERROR*
+failed size 262144: -12
