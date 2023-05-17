@@ -2,93 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E67C77B7D
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 14:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD76EC77B7D
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 16:14:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231749AbjEQOu5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 May 2023 10:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42966 "EHLO
+        id S229509AbjEQQOf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 May 2023 12:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231890AbjEQOu5 (ORCPT
+        with ESMTP id S229484AbjEQQOe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 May 2023 10:50:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF7C40C0;
-        Wed, 17 May 2023 07:50:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B29A36481A;
-        Wed, 17 May 2023 14:50:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEF2C433EF;
-        Wed, 17 May 2023 14:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684335052;
-        bh=8I67luAksBCL72+meHCMN8MBL7RhGxwexXQRG0RpqDQ=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=qUWfDk+i2yXv7J9MhJbZBLjKRMGgL6whFTdU7YNAeRKAslCwfkZ0uu36FniV0PGoD
-         2LKSjRxPljASyj1bfOozDGNrgsmGFwvlyb+oNv+iS70fjlEQpU5bHGYPhFnCGYyhLi
-         4kPl91ugCsgauLB+ix/5ci9SbDnPcBlIWgpkRFH2fLouplPEw/XHzzF2JrbR6wHZJ9
-         pOsDGy28GRzma75ffQTQgY/6M40lmW3vDnbWlNhIwgDq1tQkZaqIWJ2X0vLbWZgUdq
-         2mgFU/rPyj0yOY9sL5N7JTrNmMqzNGIPq1NI/0JMI3axFH6bqQb8ZI1VyM6xHzvKQq
-         hHxS0voC+lQRw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Min-Hua Chen <minhuadotchen@gmail.com>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20230516223700.185569-1-minhuadotchen@gmail.com>
-References: <20230516223700.185569-1-minhuadotchen@gmail.com>
-Subject: Re: [PATCH] ASoC: tegra: tegra210_adx: fix snd_pcm_format_t type
-Message-Id: <168433504910.453649.10010887587375335670.b4-ty@kernel.org>
-Date:   Wed, 17 May 2023 23:50:49 +0900
+        Wed, 17 May 2023 12:14:34 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C151BD3;
+        Wed, 17 May 2023 09:14:33 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-24e5d5782edso1051939a91.0;
+        Wed, 17 May 2023 09:14:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684340073; x=1686932073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gL6goea49SYl8SIiZ155r2n78LG9CV6q33QUPhCt4qI=;
+        b=hgZBPmMcIAI1NGuMwnD/+FNPi5gvsqdFnVtrxKKwrxZEaar1D86rcxYAMcO4/eEOsy
+         rwJ+thADvD8hakoSuZ9vgyrrs+R2oPlCG7ieKm8zohFHLcHjcRbaVBeow3HLeKE7shev
+         RkvMvnSVkiNe9w60uSAMGW4TwdkSL1q9f3xRvOLIcuMPhyzRFW40WOid2Fsh4bIcFoMD
+         FREnAJT4JjE9MV32JlZcD8XE+pFvQBSm5uC5JqUtCvLLmLi3iNqhTiqyfw9nbgxsWkqG
+         rx3O4MNThnt4X3u1j9wybrv4afj1rw9CIgI3q6gmD9Fuxmwnv32grHn2cYl72l6mrCcm
+         dUgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684340073; x=1686932073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gL6goea49SYl8SIiZ155r2n78LG9CV6q33QUPhCt4qI=;
+        b=BCVGVKwDIKss7tpOtJZpfyEJv+pJ6zBFrwBa2Npf/zkrUeODDvMzSn/QNk9KP22GP2
+         leltGCbr67bjWGeFQkfEo8H7fqOU1r3bR3dJfc4vV+4OIu2pyWswEH+DkrMVnhTll8/P
+         nks+Vxs6qcmAxVclJcZTZk23wxv4gAZd2tfYpZju1KkWrCCWQ43IndXpvoQtNB+0JsaF
+         QuTZZtzpHOHy0n033+jPhWdDcZbIIH8KlbDQoA0wLQ1XfuF4TTTs7zK33EZ9QKDuJ7KZ
+         +zj73Se9mcpiKfEYSrRQ1peolASD0I8ZJhsXtxW3hD89K96ojDvNnU9wjwga69BF8prU
+         I9hA==
+X-Gm-Message-State: AC+VfDwcGE+hOnJgQtZGnKQ6r031S0Acpt6o3WVUa1Lo51pF3x98Gr31
+        WLvmN3keYn6NsBLgAWrH5JM=
+X-Google-Smtp-Source: ACHHUZ4ieRwHTjDYMHB5vEin43PrJSaoymqyYu7Kt3ixC25Rb0hbAN+cdyTmf0OdBA7vrm0sq9jgww==
+X-Received: by 2002:a17:90a:43e4:b0:253:3481:84cf with SMTP id r91-20020a17090a43e400b00253348184cfmr257452pjg.10.1684340072755;
+        Wed, 17 May 2023 09:14:32 -0700 (PDT)
+Received: from Osmten.. ([103.84.150.101])
+        by smtp.gmail.com with ESMTPSA id v1-20020a17090a634100b0024e3bce323asm1759916pjs.26.2023.05.17.09.14.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 May 2023 09:14:32 -0700 (PDT)
+From:   Osama Muhammad <osmtendev@gmail.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        petlozup@nvidia.com, stefank@nvidia.com, sushilkumars@nvidia.com,
+        christophe.jaillet@wanadoo.fr, viresh.kumar@linaro.org,
+        dmitry.osipenko@collabora.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Osama Muhammad <osmtendev@gmail.com>
+Subject: [PATCH] soc/pmc.c: Fix error checking for debugfs_create_dir
+Date:   Wed, 17 May 2023 21:13:56 +0500
+Message-Id: <20230517161356.11416-1-osmtendev@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 17 May 2023 06:36:59 +0800, Min-Hua Chen wrote:
-> use snd_pcm_format_t instead of unsigned int to fix
-> the following sparse warnings:
-> 
-> sound/soc/tegra/tegra210_adx.c:125:14: sparse: warning: restricted snd_pcm_format_t degrades to integer
-> sound/soc/tegra/tegra210_adx.c:128:14: sparse: warning: restricted snd_pcm_format_t degrades to integer
-> sound/soc/tegra/tegra210_adx.c:131:14: sparse: warning: restricted snd_pcm_format_t degrades to integer
-> 
-> [...]
+This patch fixes the error checking in pmc.c in
+debugfs_create_dir. The correct way to check if an error occurred
+is 'IS_ERR' inline function.
 
-Applied to
+Signed-off-by: Osama Muhammad <osmtendev@gmail.com>
+---
+ drivers/soc/tegra/pmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: tegra: tegra210_adx: fix snd_pcm_format_t type
-      commit: 35f8a9d87ca4f920526e6063df570490b41295fc
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 5d17799524c9..ac468e4a225c 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1194,7 +1194,7 @@ static int tegra_powergate_debugfs_init(void)
+ {
+ 	pmc->debugfs = debugfs_create_file("powergate", S_IRUGO, NULL, NULL,
+ 					   &powergate_fops);
+-	if (!pmc->debugfs)
++	if (IS_ERR(pmc->debugfs))
+ 		return -ENOMEM;
+ 
+ 	return 0;
+-- 
+2.34.1
 
