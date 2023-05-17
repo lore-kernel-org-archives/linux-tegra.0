@@ -2,132 +2,94 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9046C77B75
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 09:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDA2C77B7F
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 11:04:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbjEQJu7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 May 2023 05:50:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52890 "EHLO
+        id S230036AbjEQLEY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 May 2023 07:04:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbjEQJu4 (ORCPT
+        with ESMTP id S230399AbjEQLEX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 May 2023 05:50:56 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CCBB4C3C;
-        Wed, 17 May 2023 02:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1684317052; x=1715853052;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dp4AjByrGPPW2+s+Gu4zde9gjuLVVm2MN56x4f0uc3E=;
-  b=2ap01Xs4Og0LcphINKfroNj4F6Ig0hCPNRVPokVwyffd5nS+aUsNR7L6
-   kquJJtfFdam5h1BCLXvh9ZeI1dSbULlV10ImPtKsb1PWrcNwRdPFETBnp
-   A7yMJTFI4vespT3DGSWZI8NeM/2u8Y+zhYlcdF1fo6SM9pZUETGeEa2CE
-   iFp4+ElmMfSKSUqqhhpoeE3w1oLcF92IWLbhCGpuOMtayiEP4BmwBf3Rd
-   4vLrIsCs9mQx5WPtjK9rawg2rgRYp/SyqykEqNfA0CuIR1VfoDOE+Pm+I
-   u5M6zrWuholnQ6mbxch4oO0JAYOqzIcaryPChCOOkbU+Hz8kFyXeMJHMN
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.99,281,1677567600"; 
-   d="scan'208";a="211699133"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 May 2023 02:50:50 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Wed, 17 May 2023 02:50:49 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Wed, 17 May 2023 02:50:37 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <perex@perex.cz>, <tiwai@suse.com>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <oder_chiou@realtek.com>,
-        <shengjiu.wang@gmail.com>, <Xiubo.Lee@gmail.com>,
-        <festevam@gmail.com>, <nicoleotsuka@gmail.com>,
-        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
-        <kernel@pengutronix.de>, <linux-imx@nxp.com>,
-        <cezary.rojewski@intel.com>,
-        <pierre-louis.bossart@linux.intel.com>,
-        <peter.ujfalusi@linux.intel.com>,
-        <yung-chuan.liao@linux.intel.com>,
-        <ranjani.sridharan@linux.intel.com>,
-        <kai.vehmanen@linux.intel.com>, <matthias.bgg@gmail.com>,
-        <angelogioacchino.delregno@collabora.com>,
-        <srinivas.kandagatla@linaro.org>, <bgoswami@quicinc.com>,
-        <vkoul@kernel.org>, <daniel.baluta@nxp.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <jarkko.nikula@bitmer.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <sound-open-firmware@alsa-project.org>,
-        <linux-tegra@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 2/2] ASoC: use pm.h instead of runtime_pm.h
-Date:   Wed, 17 May 2023 12:49:03 +0300
-Message-ID: <20230517094903.2895238-3-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230517094903.2895238-1-claudiu.beznea@microchip.com>
-References: <20230517094903.2895238-1-claudiu.beznea@microchip.com>
+        Wed, 17 May 2023 07:04:23 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0CC70ED
+        for <linux-tegra@vger.kernel.org>; Wed, 17 May 2023 04:03:55 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 923431FB;
+        Wed, 17 May 2023 03:55:46 -0700 (PDT)
+Received: from [10.57.84.7] (unknown [10.57.84.7])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 903B73F793;
+        Wed, 17 May 2023 03:55:00 -0700 (PDT)
+Message-ID: <864d2de3-a2d7-9d59-a24a-27fd33e29497@arm.com>
+Date:   Wed, 17 May 2023 11:54:56 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH 0/4] iommu: tegra-gart cleanups
+Content-Language: en-GB
+To:     Nicolas Chauvet <kwizart@gmail.com>
+Cc:     joro@8bytes.org, iommu@lists.linux.dev, will@kernel.org,
+        jgg@nvidia.com, digetx@gmail.com, thierry.reding@gmail.com,
+        linux-tegra@vger.kernel.org
+References: <cover.1684154219.git.robin.murphy@arm.com>
+ <CABr+WTnzNPfOGbAmy-E3pH9U5XR0y2PdVmDd2gtnv67ByEb_0w@mail.gmail.com>
+ <11d8adf1-75f5-5728-2139-e32aae6e6c49@arm.com>
+ <CABr+WTm=SehaNVaFym5FM-tpCvh93Ma_xG3xX5PuGt6n9+xh4Q@mail.gmail.com>
+ <aadb69ff-732d-cffc-ab44-398269a11d4e@arm.com>
+ <CABr+WT=qZvvW5QqCW_J0V20-56d_2+xkdPs0FcgiJZiY6K0CCg@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <CABr+WT=qZvvW5QqCW_J0V20-56d_2+xkdPs0FcgiJZiY6K0CCg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Do not include pm_runtime.h header in files where runtime PM support is
-not implemented. Use pm.h instead as suspend to RAM specific
-implementation is available.
+On 2023-05-16 16:15, Nicolas Chauvet wrote:
+> Le mar. 16 mai 2023 à 14:31, Robin Murphy <robin.murphy@arm.com> a écrit :
+>>
+>> On 2023-05-16 13:16, Nicolas Chauvet wrote:
+>>> Le mar. 16 mai 2023 à 13:45, Robin Murphy <robin.murphy@arm.com> a écrit :
+>>>>
+>>>> On 2023-05-16 10:53, Nicolas Chauvet wrote:
+>>> ...
+>>>>> For what it worth, I've tried to test this serie with "grate patches"
+>>>>> (1) rebased on top on 6.4-rc2, that would make use of the tegra-gart.
+>>>>> That was on PAZ00 (with only 512M of RAM and 96M CMA still allocated).
+>>>>> Unfortunately, this lead to the following errors with display problems
+>>>>> (no character displayed in lxt-terminal and etc)
+>>>>
+>>>> Thanks for testing - it's quite possible I've made a silly mistake
+>>>> somewhere, but just to double-check, does the same happen with the
+>>>> existing driver if you boot with "tegra-gart.gart_debug=1" (or at least
+>>>> enable the parameter via sysfs before the DRM driver gets going)?
+>>>
+>>> Using echo 1 > /sys/module/tegra_gart/parameters/gart_debug shows the
+>>> same messages and the same artefacts (missing refreshed window
+>>> content).
+>>> Using "echo 0 > /sys/module/tegra_gart/parameters/gart_debug" revert
+>>> back to normal...
+>>
+>> OK, cool, so it looks like a pre-existing bug in the caller, but I guess
+>> it does mean that unconditionally enabling the checks isn't ideal until
+>> that can be sorted out.
+> 
+> Seems like I had a non-default option with tegra-drm that was
+> controlling the way tegra-gart is used:
+> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/grate/gart.c#L19-L29
+> 
+> With option 4, occurrences of failing allocation are experienced more
+> often than the default 0 options when only "scattered BOs are mapped".
+> Also with the default option, no noticeable failure is seen.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- sound/soc/codecs/max98373-i2c.c | 2 +-
- sound/soc/qcom/lpass-sc7180.c   | 2 +-
- sound/soc/qcom/lpass-sc7280.c   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Oh, I see it now - the logic around tegra_bo_mm_evict_something() 
+actually depends on being able to map new PTEs over the top of existing 
+ones without an unmap :/
 
-diff --git a/sound/soc/codecs/max98373-i2c.c b/sound/soc/codecs/max98373-i2c.c
-index 3d6da4f133de..0fa5ceca62a2 100644
---- a/sound/soc/codecs/max98373-i2c.c
-+++ b/sound/soc/codecs/max98373-i2c.c
-@@ -9,7 +9,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
--#include <linux/pm_runtime.h>
-+#include <linux/pm.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/cdev.h>
-diff --git a/sound/soc/qcom/lpass-sc7180.c b/sound/soc/qcom/lpass-sc7180.c
-index 41db6617e2ed..56db852f4eab 100644
---- a/sound/soc/qcom/lpass-sc7180.c
-+++ b/sound/soc/qcom/lpass-sc7180.c
-@@ -12,7 +12,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/pm_runtime.h>
-+#include <linux/pm.h>
- #include <dt-bindings/sound/sc7180-lpass.h>
- #include <sound/pcm.h>
- #include <sound/soc.h>
-diff --git a/sound/soc/qcom/lpass-sc7280.c b/sound/soc/qcom/lpass-sc7280.c
-index d43f480cbae3..bcf18fe8e14d 100644
---- a/sound/soc/qcom/lpass-sc7280.c
-+++ b/sound/soc/qcom/lpass-sc7280.c
-@@ -8,7 +8,7 @@
- #include <linux/module.h>
- #include <sound/pcm.h>
- #include <sound/soc.h>
--#include <linux/pm_runtime.h>
-+#include <linux/pm.h>
- 
- #include <dt-bindings/sound/sc7180-lpass.h>
- 
--- 
-2.34.1
+The map/unmap overhead that that's trying to avoid could probably be 
+reduced quite significantly anyway by converting GART to the new 
+map_pages/unmap_pages callbacks.
 
+Thanks,
+Robin.
