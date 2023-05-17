@@ -2,373 +2,376 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20A5C77B75
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 02:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B038C77B7A
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 07:07:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231707AbjEQCEI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 May 2023 22:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60214 "EHLO
+        id S229662AbjEQHHL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 May 2023 03:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231704AbjEQCEH (ORCPT
+        with ESMTP id S229461AbjEQHHJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 May 2023 22:04:07 -0400
-X-Greylist: delayed 330 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 16 May 2023 19:04:04 PDT
-Received: from 189.cn (ptr.189.cn [183.61.185.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4538E4222;
-        Tue, 16 May 2023 19:04:04 -0700 (PDT)
-HMM_SOURCE_IP: 10.64.8.31:42626.2114773713
-HMM_ATTACHE_NUM: 0000
-HMM_SOURCE_TYPE: SMTP
-Received: from clientip-114.242.206.180 (unknown [10.64.8.31])
-        by 189.cn (HERMES) with SMTP id 7D6F9102973;
-        Wed, 17 May 2023 09:58:31 +0800 (CST)
-Received: from  ([114.242.206.180])
-        by gateway-151646-dep-75648544bd-2qvwx with ESMTP id 810a8ff56b7f48219248832b0e786209 for tzimmermann@suse.de;
-        Wed, 17 May 2023 09:58:33 CST
-X-Transaction-ID: 810a8ff56b7f48219248832b0e786209
-X-Real-From: 15330273260@189.cn
-X-Receive-IP: 114.242.206.180
-X-MEDUSA-Status: 0
-Sender: 15330273260@189.cn
-Message-ID: <80b4b615-0a71-89e8-3a58-fbeb8a9a06e8@189.cn>
-Date:   Wed, 17 May 2023 09:58:30 +0800
+        Wed, 17 May 2023 03:07:09 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34C58198A;
+        Wed, 17 May 2023 00:07:07 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CB18A22867;
+        Wed, 17 May 2023 07:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1684307225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o5dfaUGEc6PlBxpkjCnW6B33C5nsa3BC2PP/fCOylw8=;
+        b=h1Ocne9J/sSy1DMkbV8wjBHe1rSCRw6YMce1+jZYxeHzcRC5tOghTOL6Mxkj9oTxZzaPFv
+        cksDUpx7iyIftNk1AGCXB2Jtmj4tMcKS1KJKmygaoNS1qx1JU2Ry/9KkqFA3uKkxGUccWI
+        LSmtysbjFtCzAm6EEtRu1ZzF/7zOsNM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1684307225;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o5dfaUGEc6PlBxpkjCnW6B33C5nsa3BC2PP/fCOylw8=;
+        b=OlwRDqIAJ4DRupVwkn/eR+MDGjVLthvP6XttST5XSxwLD7EQw5CVQvzjAOCdkzcq9ty0bT
+        jwv6GHXH1uiezNAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 65F2813478;
+        Wed, 17 May 2023 07:07:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id iBjNFxl9ZGRKAgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 17 May 2023 07:07:05 +0000
+Message-ID: <28d2e7d5-7dde-b1f9-3b5f-0ba51f8eaaeb@suse.de>
+Date:   Wed, 17 May 2023 09:07:04 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
+ Thunderbird/102.10.1
 Subject: Re: [v2,11/12] drm/fbdev-generic: Implement dedicated fbdev I/O
  helpers
-To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+To:     Sui Jingfeng <15330273260@189.cn>, daniel@ffwll.ch,
         airlied@gmail.com, maarten.lankhorst@linux.intel.com,
         mripard@kernel.org, javierm@redhat.com, sam@ravnborg.org
 Cc:     linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         freedreno@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
 References: <20230515094033.2133-12-tzimmermann@suse.de>
+ <80b4b615-0a71-89e8-3a58-fbeb8a9a06e8@189.cn>
 Content-Language: en-US
-From:   Sui Jingfeng <15330273260@189.cn>
-In-Reply-To: <20230515094033.2133-12-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <80b4b615-0a71-89e8-3a58-fbeb8a9a06e8@189.cn>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------txN0CWP86R0WaoSFBua4I0XL"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi, Thomas
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------txN0CWP86R0WaoSFBua4I0XL
+Content-Type: multipart/mixed; boundary="------------6l90fuTO7TIYXqfZebkyhkav";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Sui Jingfeng <15330273260@189.cn>, daniel@ffwll.ch, airlied@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, javierm@redhat.com,
+ sam@ravnborg.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Message-ID: <28d2e7d5-7dde-b1f9-3b5f-0ba51f8eaaeb@suse.de>
+Subject: Re: [v2,11/12] drm/fbdev-generic: Implement dedicated fbdev I/O
+ helpers
+References: <20230515094033.2133-12-tzimmermann@suse.de>
+ <80b4b615-0a71-89e8-3a58-fbeb8a9a06e8@189.cn>
+In-Reply-To: <80b4b615-0a71-89e8-3a58-fbeb8a9a06e8@189.cn>
 
+--------------6l90fuTO7TIYXqfZebkyhkav
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-After apply your patch set, the kernel with 
-arch/loongarch/configs/loongson3_defconfig
+SGkNCg0KQW0gMTcuMDUuMjMgdW0gMDM6NTggc2NocmllYiBTdWkgSmluZ2Zlbmc6DQo+IEhp
+LCBUaG9tYXMNCj4gDQo+IA0KPiBBZnRlciBhcHBseSB5b3VyIHBhdGNoIHNldCwgdGhlIGtl
+cm5lbCB3aXRoIA0KPiBhcmNoL2xvb25nYXJjaC9jb25maWdzL2xvb25nc29uM19kZWZjb25m
+aWcNCj4gDQo+IGNhbiBub3QgZmluaXNoIGNvbXBpbGUgYW55bW9yZS7CoCBnY2MgY29tcGxh
+aW5zOg0KPiANCj4gDQo+ICDCoCBBUsKgwqDCoMKgwqAgZHJpdmVycy9ncHUvYnVpbHQtaW4u
+YQ0KPiAgwqAgQVLCoMKgwqDCoMKgIGRyaXZlcnMvYnVpbHQtaW4uYQ0KPiAgwqAgQVLCoMKg
+wqDCoMKgIGJ1aWx0LWluLmENCj4gIMKgIEFSwqDCoMKgwqDCoCB2bWxpbnV4LmENCj4gIMKg
+IExEwqDCoMKgwqDCoCB2bWxpbnV4Lm8NCj4gIMKgIE9CSkNPUFkgbW9kdWxlcy5idWlsdGlu
+Lm1vZGluZm8NCj4gIMKgIEdFTsKgwqDCoMKgIG1vZHVsZXMuYnVpbHRpbg0KPiAgwqAgR0VO
+wqDCoMKgwqAgLnZtbGludXgub2Jqcw0KPiAgwqAgTU9EUE9TVCBNb2R1bGUuc3ltdmVycw0K
+PiBFUlJPUjogbW9kcG9zdDogImZiX3N5c193cml0ZSIgW2RyaXZlcnMvZ3B1L2RybS9kcm1f
+a21zX2hlbHBlci5rb10gDQo+IHVuZGVmaW5lZCENCj4gRVJST1I6IG1vZHBvc3Q6ICJzeXNf
+aW1hZ2VibGl0IiBbZHJpdmVycy9ncHUvZHJtL2RybV9rbXNfaGVscGVyLmtvXSANCj4gdW5k
+ZWZpbmVkIQ0KPiBFUlJPUjogbW9kcG9zdDogInN5c19maWxscmVjdCIgW2RyaXZlcnMvZ3B1
+L2RybS9kcm1fa21zX2hlbHBlci5rb10gDQo+IHVuZGVmaW5lZCENCj4gRVJST1I6IG1vZHBv
+c3Q6ICJzeXNfY29weWFyZWEiIFtkcml2ZXJzL2dwdS9kcm0vZHJtX2ttc19oZWxwZXIua29d
+IA0KPiB1bmRlZmluZWQhDQo+IEVSUk9SOiBtb2Rwb3N0OiAiZmJfc3lzX3JlYWQiIFtkcml2
+ZXJzL2dwdS9kcm0vZHJtX2ttc19oZWxwZXIua29dIA0KPiB1bmRlZmluZWQhDQo+IG1ha2Vb
+MV06ICoqKiBbc2NyaXB0cy9NYWtlZmlsZS5tb2Rwb3N0OjEzNjogTW9kdWxlLnN5bXZlcnNd
+IEVycm9yIDENCj4gbWFrZTogKioqIFtNYWtlZmlsZToxOTc4OiBtb2Rwb3N0XSBFcnJvciAy
+DQoNClRoYW5rcyBmb3IgcmVwb3J0aW5nIHRoaXMgcHJvYmxlbS4gSSBmb3VuZCB0aGF0IGl0
+J3MgY2F1c2VkIGJ5IGEgdHlwbyBpbiANCnRoZSB2ZXJ5IGZpcnN0IHBhdGNoIDEvNywgd2hl
+cmUgdGhlc2UgaGVscGVycyBhcmUgbm90IHNlbGVjdGVkIA0KY29ycmVjdGx5LiBXaWxsIGJl
+IGZpeGVkIGluIHRoZSBuZXh0IHJvdW5kLg0KDQpCZXN0IHJlZ2FyZHMNClRob21hcw0KDQo+
+IA0KPiANCj4gT24gMjAyMy81LzE1IDE3OjQwLCBUaG9tYXMgWmltbWVybWFubiB3cm90ZToN
+Cj4+IEltcGxlbWVudCBkZWRpY2F0ZWQgZmJkZXYgaGVscGVycyBmb3IgZnJhbWVidWZmZXIg
+SS9PIGluc3RlYWQNCj4+IG9mIHVzaW5nIERSTSdzIGhlbHBlcnMuIEZiZGV2LWdlbmVyaWMg
+d2FzIHRoZSBvbmx5IGNhbGxlciBvZiB0aGUNCj4+IERSTSBoZWxwZXJzLCBzbyByZW1vdmUg
+dGhlbSBmcm9tIHRoZSBoZWxwZXIgbW9kdWxlLg0KPj4NCj4+IHYyOg0KPj4gwqDCoMKgwqAq
+IHVzZSBGQl9TWVNfSEVMUEVSU19ERUZFUlJFRCBvcHRpb24NCj4+DQo+PiBTaWduZWQtb2Zm
+LWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4NCj4+IC0tLQ0K
+Pj4gwqAgZHJpdmVycy9ncHUvZHJtL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+fMKgwqAgNiArLQ0KPj4gwqAgZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuY8KgwqDC
+oMKgIHwgMTA3IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+IMKgIGRyaXZlcnMv
+Z3B1L2RybS9kcm1fZmJkZXZfZ2VuZXJpYy5jIHzCoCA0NyArKysrKysrKysrLS0NCj4+IMKg
+IGluY2x1ZGUvZHJtL2RybV9mYl9oZWxwZXIuaMKgwqDCoMKgwqDCoMKgwqAgfMKgIDQxIC0t
+LS0tLS0tLS0tDQo+PiDCoCA0IGZpbGVzIGNoYW5nZWQsIDQzIGluc2VydGlvbnMoKyksIDE1
+OCBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL0tj
+b25maWcgYi9kcml2ZXJzL2dwdS9kcm0vS2NvbmZpZw0KPj4gaW5kZXggNzdmYjEwZGRkOGEy
+Li45MmE3ODI4MjdiN2IgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vS2NvbmZp
+Zw0KPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL0tjb25maWcNCj4+IEBAIC05NSw2ICs5NSw3
+IEBAIGNvbmZpZyBEUk1fS1VOSVRfVEVTVA0KPj4gwqAgY29uZmlnIERSTV9LTVNfSEVMUEVS
+DQo+PiDCoMKgwqDCoMKgIHRyaXN0YXRlDQo+PiDCoMKgwqDCoMKgIGRlcGVuZHMgb24gRFJN
+DQo+PiArwqDCoMKgIHNlbGVjdCBGQl9TWVNfSEVMUEVSU19ERUZFUlJFRCBpZiBEUk1fRkJE
+RVZfRU1VTEFUSU9ODQo+IA0KPiBIZXJlLCBzZWxlY3QgRkJfU1lTX0hFTFBFUlMgaGVscHMg
+cmVzb2x2ZSB0aGUgYWJvdmUgaXNzdWUgbWVudGlvbmVkLg0KPiANCj4+IMKgwqDCoMKgwqAg
+aGVscA0KPj4gwqDCoMKgwqDCoMKgwqAgQ1JUQyBoZWxwZXJzIGZvciBLTVMgZHJpdmVycy4N
+Cj4+IEBAIC0xMzUsMTEgKzEzNiw2IEBAIGNvbmZpZyBEUk1fRkJERVZfRU1VTEFUSU9ODQo+
+PiDCoMKgwqDCoMKgIHNlbGVjdCBGQl9DRkJfRklMTFJFQ1QNCj4+IMKgwqDCoMKgwqAgc2Vs
+ZWN0IEZCX0NGQl9DT1BZQVJFQQ0KPj4gwqDCoMKgwqDCoCBzZWxlY3QgRkJfQ0ZCX0lNQUdF
+QkxJVA0KPj4gLcKgwqDCoCBzZWxlY3QgRkJfREVGRVJSRURfSU8NCj4+IC3CoMKgwqAgc2Vs
+ZWN0IEZCX1NZU19GT1BTDQo+PiAtwqDCoMKgIHNlbGVjdCBGQl9TWVNfRklMTFJFQ1QNCj4+
+IC3CoMKgwqAgc2VsZWN0IEZCX1NZU19DT1BZQVJFQQ0KPj4gLcKgwqDCoCBzZWxlY3QgRkJf
+U1lTX0lNQUdFQkxJVA0KPj4gwqDCoMKgwqDCoCBzZWxlY3QgRlJBTUVCVUZGRVJfQ09OU09M
+RSBpZiAhRVhQRVJUDQo+PiDCoMKgwqDCoMKgIHNlbGVjdCBGUkFNRUJVRkZFUl9DT05TT0xF
+X0RFVEVDVF9QUklNQVJZIGlmIEZSQU1FQlVGRkVSX0NPTlNPTEUNCj4+IMKgwqDCoMKgwqAg
+ZGVmYXVsdCB5DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxw
+ZXIuYyANCj4+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYw0KPj4gaW5kZXgg
+ODcyNGUwOGM1MThiLi5iYTBhODA4ZjE0ZWUgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZHJtX2ZiX2hlbHBlci5jDQo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2Zi
+X2hlbHBlci5jDQo+PiBAQCAtNzI5LDExMyArNzI5LDYgQEAgdm9pZCBkcm1fZmJfaGVscGVy
+X2RlZmVycmVkX2lvKHN0cnVjdCBmYl9pbmZvIA0KPj4gKmluZm8sIHN0cnVjdCBsaXN0X2hl
+YWQgKnBhZ2VyZWZsaQ0KPj4gwqAgfQ0KPj4gwqAgRVhQT1JUX1NZTUJPTChkcm1fZmJfaGVs
+cGVyX2RlZmVycmVkX2lvKTsNCj4+IC0vKioNCj4+IC0gKiBkcm1fZmJfaGVscGVyX3N5c19y
+ZWFkIC0gSW1wbGVtZW50cyBzdHJ1Y3QgJmZiX29wcy5mYl9yZWFkIGZvciANCj4+IHN5c3Rl
+bSBtZW1vcnkNCj4+IC0gKiBAaW5mbzogZmJfaW5mbyBzdHJ1Y3QgcG9pbnRlcg0KPj4gLSAq
+IEBidWY6IHVzZXJzcGFjZSBidWZmZXIgdG8gcmVhZCBmcm9tIGZyYW1lYnVmZmVyIG1lbW9y
+eQ0KPj4gLSAqIEBjb3VudDogbnVtYmVyIG9mIGJ5dGVzIHRvIHJlYWQgZnJvbSBmcmFtZWJ1
+ZmZlciBtZW1vcnkNCj4+IC0gKiBAcHBvczogcmVhZCBvZmZzZXQgd2l0aGluIGZyYW1lYnVm
+ZmVyIG1lbW9yeQ0KPj4gLSAqDQo+PiAtICogUmV0dXJuczoNCj4+IC0gKiBUaGUgbnVtYmVy
+IG9mIGJ5dGVzIHJlYWQgb24gc3VjY2Vzcywgb3IgYW4gZXJyb3IgY29kZSBvdGhlcndpc2Uu
+DQo+PiAtICovDQo+PiAtc3NpemVfdCBkcm1fZmJfaGVscGVyX3N5c19yZWFkKHN0cnVjdCBm
+Yl9pbmZvICppbmZvLCBjaGFyIF9fdXNlciAqYnVmLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcykNCj4+IC17
+DQo+PiAtwqDCoMKgIHJldHVybiBmYl9zeXNfcmVhZChpbmZvLCBidWYsIGNvdW50LCBwcG9z
+KTsNCj4+IC19DQo+PiAtRVhQT1JUX1NZTUJPTChkcm1fZmJfaGVscGVyX3N5c19yZWFkKTsN
+Cj4+IC0NCj4+IC0vKioNCj4+IC0gKiBkcm1fZmJfaGVscGVyX3N5c193cml0ZSAtIEltcGxl
+bWVudHMgc3RydWN0ICZmYl9vcHMuZmJfd3JpdGUgZm9yIA0KPj4gc3lzdGVtIG1lbW9yeQ0K
+Pj4gLSAqIEBpbmZvOiBmYl9pbmZvIHN0cnVjdCBwb2ludGVyDQo+PiAtICogQGJ1ZjogdXNl
+cnNwYWNlIGJ1ZmZlciB0byB3cml0ZSB0byBmcmFtZWJ1ZmZlciBtZW1vcnkNCj4+IC0gKiBA
+Y291bnQ6IG51bWJlciBvZiBieXRlcyB0byB3cml0ZSB0byBmcmFtZWJ1ZmZlciBtZW1vcnkN
+Cj4+IC0gKiBAcHBvczogd3JpdGUgb2Zmc2V0IHdpdGhpbiBmcmFtZWJ1ZmZlciBtZW1vcnkN
+Cj4+IC0gKg0KPj4gLSAqIFJldHVybnM6DQo+PiAtICogVGhlIG51bWJlciBvZiBieXRlcyB3
+cml0dGVuIG9uIHN1Y2Nlc3MsIG9yIGFuIGVycm9yIGNvZGUgb3RoZXJ3aXNlLg0KPj4gLSAq
+Lw0KPj4gLXNzaXplX3QgZHJtX2ZiX2hlbHBlcl9zeXNfd3JpdGUoc3RydWN0IGZiX2luZm8g
+KmluZm8sIGNvbnN0IGNoYXIgDQo+PiBfX3VzZXIgKmJ1ZiwNCj4+IC3CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgc2l6ZV90IGNvdW50LCBsb2ZmX3QgKnBwb3MpDQo+PiAtew0K
+Pj4gLcKgwqDCoCBzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVyID0gaW5mby0+cGFyOw0K
+Pj4gLcKgwqDCoCBsb2ZmX3QgcG9zID0gKnBwb3M7DQo+PiAtwqDCoMKgIHNzaXplX3QgcmV0
+Ow0KPj4gLcKgwqDCoCBzdHJ1Y3QgZHJtX3JlY3QgZGFtYWdlX2FyZWE7DQo+PiAtDQo+PiAt
+wqDCoMKgIHJldCA9IGZiX3N5c193cml0ZShpbmZvLCBidWYsIGNvdW50LCBwcG9zKTsNCj4+
+IC3CoMKgwqAgaWYgKHJldCA8PSAwKQ0KPj4gLcKgwqDCoMKgwqDCoMKgIHJldHVybiByZXQ7
+DQo+PiAtDQo+PiAtwqDCoMKgIGlmIChoZWxwZXItPmZ1bmNzLT5mYl9kaXJ0eSkgew0KPj4g
+LcKgwqDCoMKgwqDCoMKgIGRybV9mYl9oZWxwZXJfbWVtb3J5X3JhbmdlX3RvX2NsaXAoaW5m
+bywgcG9zLCByZXQsIA0KPj4gJmRhbWFnZV9hcmVhKTsNCj4+IC3CoMKgwqDCoMKgwqDCoCBk
+cm1fZmJfaGVscGVyX2RhbWFnZShoZWxwZXIsIGRhbWFnZV9hcmVhLngxLCBkYW1hZ2VfYXJl
+YS55MSwNCj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRy
+bV9yZWN0X3dpZHRoKCZkYW1hZ2VfYXJlYSksDQo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBkcm1fcmVjdF9oZWlnaHQoJmRhbWFnZV9hcmVhKSk7DQo+
+PiAtwqDCoMKgIH0NCj4+IC0NCj4+IC3CoMKgwqAgcmV0dXJuIHJldDsNCj4+IC19DQo+PiAt
+RVhQT1JUX1NZTUJPTChkcm1fZmJfaGVscGVyX3N5c193cml0ZSk7DQo+PiAtDQo+PiAtLyoq
+DQo+PiAtICogZHJtX2ZiX2hlbHBlcl9zeXNfZmlsbHJlY3QgLSB3cmFwcGVyIGFyb3VuZCBz
+eXNfZmlsbHJlY3QNCj4+IC0gKiBAaW5mbzogZmJkZXYgcmVnaXN0ZXJlZCBieSB0aGUgaGVs
+cGVyDQo+PiAtICogQHJlY3Q6IGluZm8gYWJvdXQgcmVjdGFuZ2xlIHRvIGZpbGwNCj4+IC0g
+Kg0KPj4gLSAqIEEgd3JhcHBlciBhcm91bmQgc3lzX2ZpbGxyZWN0IGltcGxlbWVudGVkIGJ5
+IGZiZGV2IGNvcmUNCj4+IC0gKi8NCj4+IC12b2lkIGRybV9mYl9oZWxwZXJfc3lzX2ZpbGxy
+ZWN0KHN0cnVjdCBmYl9pbmZvICppbmZvLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBjb25zdCBzdHJ1Y3QgZmJfZmlsbHJlY3QgKnJlY3QpDQo+PiAtew0KPj4gLcKg
+wqDCoCBzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVyID0gaW5mby0+cGFyOw0KPj4gLQ0K
+Pj4gLcKgwqDCoCBzeXNfZmlsbHJlY3QoaW5mbywgcmVjdCk7DQo+PiAtDQo+PiAtwqDCoMKg
+IGlmIChoZWxwZXItPmZ1bmNzLT5mYl9kaXJ0eSkNCj4+IC3CoMKgwqDCoMKgwqDCoCBkcm1f
+ZmJfaGVscGVyX2RhbWFnZShoZWxwZXIsIHJlY3QtPmR4LCByZWN0LT5keSwgcmVjdC0+d2lk
+dGgsIA0KPj4gcmVjdC0+aGVpZ2h0KTsNCj4+IC19DQo+PiAtRVhQT1JUX1NZTUJPTChkcm1f
+ZmJfaGVscGVyX3N5c19maWxscmVjdCk7DQo+PiAtDQo+PiAtLyoqDQo+PiAtICogZHJtX2Zi
+X2hlbHBlcl9zeXNfY29weWFyZWEgLSB3cmFwcGVyIGFyb3VuZCBzeXNfY29weWFyZWENCj4+
+IC0gKiBAaW5mbzogZmJkZXYgcmVnaXN0ZXJlZCBieSB0aGUgaGVscGVyDQo+PiAtICogQGFy
+ZWE6IGluZm8gYWJvdXQgYXJlYSB0byBjb3B5DQo+PiAtICoNCj4+IC0gKiBBIHdyYXBwZXIg
+YXJvdW5kIHN5c19jb3B5YXJlYSBpbXBsZW1lbnRlZCBieSBmYmRldiBjb3JlDQo+PiAtICov
+DQo+PiAtdm9pZCBkcm1fZmJfaGVscGVyX3N5c19jb3B5YXJlYShzdHJ1Y3QgZmJfaW5mbyAq
+aW5mbywNCj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29uc3Qgc3RydWN0
+IGZiX2NvcHlhcmVhICphcmVhKQ0KPj4gLXsNCj4+IC3CoMKgwqAgc3RydWN0IGRybV9mYl9o
+ZWxwZXIgKmhlbHBlciA9IGluZm8tPnBhcjsNCj4+IC0NCj4+IC3CoMKgwqAgc3lzX2NvcHlh
+cmVhKGluZm8sIGFyZWEpOw0KPj4gLQ0KPj4gLcKgwqDCoCBpZiAoaGVscGVyLT5mdW5jcy0+
+ZmJfZGlydHkpDQo+PiAtwqDCoMKgwqDCoMKgwqAgZHJtX2ZiX2hlbHBlcl9kYW1hZ2UoaGVs
+cGVyLCBhcmVhLT5keCwgYXJlYS0+ZHksIGFyZWEtPndpZHRoLCANCj4+IGFyZWEtPmhlaWdo
+dCk7DQo+PiAtfQ0KPj4gLUVYUE9SVF9TWU1CT0woZHJtX2ZiX2hlbHBlcl9zeXNfY29weWFy
+ZWEpOw0KPj4gLQ0KPj4gLS8qKg0KPj4gLSAqIGRybV9mYl9oZWxwZXJfc3lzX2ltYWdlYmxp
+dCAtIHdyYXBwZXIgYXJvdW5kIHN5c19pbWFnZWJsaXQNCj4+IC0gKiBAaW5mbzogZmJkZXYg
+cmVnaXN0ZXJlZCBieSB0aGUgaGVscGVyDQo+PiAtICogQGltYWdlOiBpbmZvIGFib3V0IGlt
+YWdlIHRvIGJsaXQNCj4+IC0gKg0KPj4gLSAqIEEgd3JhcHBlciBhcm91bmQgc3lzX2ltYWdl
+YmxpdCBpbXBsZW1lbnRlZCBieSBmYmRldiBjb3JlDQo+PiAtICovDQo+PiAtdm9pZCBkcm1f
+ZmJfaGVscGVyX3N5c19pbWFnZWJsaXQoc3RydWN0IGZiX2luZm8gKmluZm8sDQo+PiAtwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29uc3Qgc3RydWN0IGZiX2ltYWdlICpp
+bWFnZSkNCj4+IC17DQo+PiAtwqDCoMKgIHN0cnVjdCBkcm1fZmJfaGVscGVyICpoZWxwZXIg
+PSBpbmZvLT5wYXI7DQo+PiAtDQo+PiAtwqDCoMKgIHN5c19pbWFnZWJsaXQoaW5mbywgaW1h
+Z2UpOw0KPj4gLQ0KPj4gLcKgwqDCoCBpZiAoaGVscGVyLT5mdW5jcy0+ZmJfZGlydHkpDQo+
+PiAtwqDCoMKgwqDCoMKgwqAgZHJtX2ZiX2hlbHBlcl9kYW1hZ2UoaGVscGVyLCBpbWFnZS0+
+ZHgsIGltYWdlLT5keSwgDQo+PiBpbWFnZS0+d2lkdGgsIGltYWdlLT5oZWlnaHQpOw0KPj4g
+LX0NCj4+IC1FWFBPUlRfU1lNQk9MKGRybV9mYl9oZWxwZXJfc3lzX2ltYWdlYmxpdCk7DQo+
+PiAtDQo+PiDCoCAvKioNCj4+IMKgwqAgKiBkcm1fZmJfaGVscGVyX2NmYl9yZWFkIC0gSW1w
+bGVtZW50cyBzdHJ1Y3QgJmZiX29wcy5mYl9yZWFkIGZvciANCj4+IEkvTyBtZW1vcnkNCj4+
+IMKgwqAgKiBAaW5mbzogZmJfaW5mbyBzdHJ1Y3QgcG9pbnRlcg0KPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJkZXZfZ2VuZXJpYy5jIA0KPj4gYi9kcml2ZXJzL2dw
+dS9kcm0vZHJtX2ZiZGV2X2dlbmVyaWMuYw0KPj4gaW5kZXggOGU1MTQ4YmY0MGJiLi5mNTNm
+YzQ5ZTM0YTQgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiZGV2X2dl
+bmVyaWMuYw0KPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYmRldl9nZW5lcmljLmMN
+Cj4+IEBAIC0zNCw2ICszNCw0MyBAQCBzdGF0aWMgaW50IGRybV9mYmRldl9nZW5lcmljX2Zi
+X3JlbGVhc2Uoc3RydWN0IA0KPj4gZmJfaW5mbyAqaW5mbywgaW50IHVzZXIpDQo+PiDCoMKg
+wqDCoMKgIHJldHVybiAwOw0KPj4gwqAgfQ0KPj4gK3N0YXRpYyBzc2l6ZV90IGRybV9mYmRl
+dl9nZW5lcmljX2ZiX3dyaXRlKHN0cnVjdCBmYl9pbmZvICppbmZvLCBjb25zdCANCj4+IGNo
+YXIgX191c2VyICpidWYsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHNpemVfdCBjb3VudCwgbG9mZl90ICpwcG9zKQ0KPj4gK3sNCj4+ICvCoMKg
+wqAgc3RydWN0IGRybV9mYl9oZWxwZXIgKmhlbHBlciA9IGluZm8tPnBhcjsNCj4+ICvCoMKg
+wqAgbG9mZl90IHBvcyA9ICpwcG9zOw0KPj4gK8KgwqDCoCBzc2l6ZV90IHJldDsNCj4+ICsN
+Cj4+ICvCoMKgwqAgcmV0ID0gZmJfc3lzX3dyaXRlKGluZm8sIGJ1ZiwgY291bnQsIHBwb3Mp
+Ow0KPj4gK8KgwqDCoCBpZiAocmV0ID4gMCkNCj4+ICvCoMKgwqDCoMKgwqDCoCBkcm1fZmJf
+aGVscGVyX2RhbWFnZV9yYW5nZShoZWxwZXIsIHBvcywgcmV0KTsNCj4+ICvCoMKgwqAgcmV0
+dXJuIHJldDsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIHZvaWQgZHJtX2ZiZGV2X2dlbmVy
+aWNfZmJfZmlsbHJlY3Qoc3RydWN0IGZiX2luZm8gKmluZm8sIGNvbnN0IA0KPj4gc3RydWN0
+IGZiX2ZpbGxyZWN0ICpyZWN0KQ0KPj4gK3sNCj4+ICvCoMKgwqAgc3RydWN0IGRybV9mYl9o
+ZWxwZXIgKmhlbHBlciA9IGluZm8tPnBhcjsNCj4+ICsNCj4+ICvCoMKgwqAgc3lzX2ZpbGxy
+ZWN0KGluZm8sIHJlY3QpOw0KPj4gK8KgwqDCoCBkcm1fZmJfaGVscGVyX2RhbWFnZShoZWxw
+ZXIsIHJlY3QtPmR4LCByZWN0LT5keSwgcmVjdC0+d2lkdGgsIA0KPj4gcmVjdC0+aGVpZ2h0
+KTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIHZvaWQgZHJtX2ZiZGV2X2dlbmVyaWNfZmJf
+Y29weWFyZWEoc3RydWN0IGZiX2luZm8gKmluZm8sIGNvbnN0IA0KPj4gc3RydWN0IGZiX2Nv
+cHlhcmVhICphcmVhKQ0KPj4gK3sNCj4+ICvCoMKgwqAgc3RydWN0IGRybV9mYl9oZWxwZXIg
+KmhlbHBlciA9IGluZm8tPnBhcjsNCj4+ICsNCj4+ICvCoMKgwqAgc3lzX2NvcHlhcmVhKGlu
+Zm8sIGFyZWEpOw0KPj4gK8KgwqDCoCBkcm1fZmJfaGVscGVyX2RhbWFnZShoZWxwZXIsIGFy
+ZWEtPmR4LCBhcmVhLT5keSwgYXJlYS0+d2lkdGgsIA0KPj4gYXJlYS0+aGVpZ2h0KTsNCj4+
+ICt9DQo+PiArDQo+PiArc3RhdGljIHZvaWQgZHJtX2ZiZGV2X2dlbmVyaWNfZmJfaW1hZ2Vi
+bGl0KHN0cnVjdCBmYl9pbmZvICppbmZvLCANCj4+IGNvbnN0IHN0cnVjdCBmYl9pbWFnZSAq
+aW1hZ2UpDQo+PiArew0KPj4gK8KgwqDCoCBzdHJ1Y3QgZHJtX2ZiX2hlbHBlciAqaGVscGVy
+ID0gaW5mby0+cGFyOw0KPj4gKw0KPj4gK8KgwqDCoCBzeXNfaW1hZ2VibGl0KGluZm8sIGlt
+YWdlKTsNCj4+ICvCoMKgwqAgZHJtX2ZiX2hlbHBlcl9kYW1hZ2UoaGVscGVyLCBpbWFnZS0+
+ZHgsIGltYWdlLT5keSwgaW1hZ2UtPndpZHRoLCANCj4+IGltYWdlLT5oZWlnaHQpOw0KPj4g
+K30NCj4+ICsNCj4+IMKgIHN0YXRpYyB2b2lkIGRybV9mYmRldl9nZW5lcmljX2ZiX2Rlc3Ry
+b3koc3RydWN0IGZiX2luZm8gKmluZm8pDQo+PiDCoCB7DQo+PiDCoMKgwqDCoMKgIHN0cnVj
+dCBkcm1fZmJfaGVscGVyICpmYl9oZWxwZXIgPSBpbmZvLT5wYXI7DQo+PiBAQCAtNTYsMTIg
+KzkzLDEyIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZmJfb3BzIA0KPj4gZHJtX2ZiZGV2X2dl
+bmVyaWNfZmJfb3BzID0gew0KPj4gwqDCoMKgwqDCoCAub3duZXLCoMKgwqDCoMKgwqDCoCA9
+IFRISVNfTU9EVUxFLA0KPj4gwqDCoMKgwqDCoCAuZmJfb3BlbsKgwqDCoCA9IGRybV9mYmRl
+dl9nZW5lcmljX2ZiX29wZW4sDQo+PiDCoMKgwqDCoMKgIC5mYl9yZWxlYXNlwqDCoMKgID0g
+ZHJtX2ZiZGV2X2dlbmVyaWNfZmJfcmVsZWFzZSwNCj4+IC3CoMKgwqAgLmZiX3JlYWTCoMKg
+wqAgPSBkcm1fZmJfaGVscGVyX3N5c19yZWFkLA0KPj4gLcKgwqDCoCAuZmJfd3JpdGXCoMKg
+wqAgPSBkcm1fZmJfaGVscGVyX3N5c193cml0ZSwNCj4+ICvCoMKgwqAgLmZiX3JlYWTCoMKg
+wqAgPSBmYl9zeXNfcmVhZCwNCj4+ICvCoMKgwqAgLmZiX3dyaXRlwqDCoMKgID0gZHJtX2Zi
+ZGV2X2dlbmVyaWNfZmJfd3JpdGUsDQo+PiDCoMKgwqDCoMKgIERSTV9GQl9IRUxQRVJfREVG
+QVVMVF9PUFMsDQo+PiAtwqDCoMKgIC5mYl9maWxscmVjdMKgwqDCoCA9IGRybV9mYl9oZWxw
+ZXJfc3lzX2ZpbGxyZWN0LA0KPj4gLcKgwqDCoCAuZmJfY29weWFyZWHCoMKgwqAgPSBkcm1f
+ZmJfaGVscGVyX3N5c19jb3B5YXJlYSwNCj4+IC3CoMKgwqAgLmZiX2ltYWdlYmxpdMKgwqDC
+oCA9IGRybV9mYl9oZWxwZXJfc3lzX2ltYWdlYmxpdCwNCj4+ICvCoMKgwqAgLmZiX2ZpbGxy
+ZWN0wqDCoMKgID0gZHJtX2ZiZGV2X2dlbmVyaWNfZmJfZmlsbHJlY3QsDQo+PiArwqDCoMKg
+IC5mYl9jb3B5YXJlYcKgwqDCoCA9IGRybV9mYmRldl9nZW5lcmljX2ZiX2NvcHlhcmVhLA0K
+Pj4gK8KgwqDCoCAuZmJfaW1hZ2VibGl0wqDCoMKgID0gZHJtX2ZiZGV2X2dlbmVyaWNfZmJf
+aW1hZ2VibGl0LA0KPj4gwqDCoMKgwqDCoCAuZmJfbW1hcMKgwqDCoCA9IGZiX2RlZmVycmVk
+X2lvX21tYXAsDQo+PiDCoMKgwqDCoMKgIC5mYl9kZXN0cm95wqDCoMKgID0gZHJtX2ZiZGV2
+X2dlbmVyaWNfZmJfZGVzdHJveSwNCj4+IMKgIH07DQo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVk
+ZS9kcm0vZHJtX2ZiX2hlbHBlci5oIGIvaW5jbHVkZS9kcm0vZHJtX2ZiX2hlbHBlci5oDQo+
+PiBpbmRleCA4MGM0MDJmNGUzNzkuLmUzMjQwZDc0OWE0MyAxMDA2NDQNCj4+IC0tLSBhL2lu
+Y2x1ZGUvZHJtL2RybV9mYl9oZWxwZXIuaA0KPj4gKysrIGIvaW5jbHVkZS9kcm0vZHJtX2Zi
+X2hlbHBlci5oDQo+PiBAQCAtMjU5LDE4ICsyNTksNiBAQCB2b2lkIGRybV9mYl9oZWxwZXJf
+ZGFtYWdlX3JhbmdlKHN0cnVjdCANCj4+IGRybV9mYl9oZWxwZXIgKmhlbHBlciwgb2ZmX3Qg
+b2ZmLCBzaXplX3QNCj4+IMKgIHZvaWQgZHJtX2ZiX2hlbHBlcl9kZWZlcnJlZF9pbyhzdHJ1
+Y3QgZmJfaW5mbyAqaW5mbywgc3RydWN0IA0KPj4gbGlzdF9oZWFkICpwYWdlcmVmbGlzdCk7
+DQo+PiAtc3NpemVfdCBkcm1fZmJfaGVscGVyX3N5c19yZWFkKHN0cnVjdCBmYl9pbmZvICpp
+bmZvLCBjaGFyIF9fdXNlciAqYnVmLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcyk7DQo+PiAtc3NpemVfdCBk
+cm1fZmJfaGVscGVyX3N5c193cml0ZShzdHJ1Y3QgZmJfaW5mbyAqaW5mbywgY29uc3QgY2hh
+ciANCj4+IF9fdXNlciAqYnVmLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcyk7DQo+PiAtDQo+PiAtdm9pZCBkcm1fZmJf
+aGVscGVyX3N5c19maWxscmVjdChzdHJ1Y3QgZmJfaW5mbyAqaW5mbywNCj4+IC3CoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29uc3Qgc3RydWN0IGZiX2ZpbGxyZWN0ICpyZWN0
+KTsNCj4+IC12b2lkIGRybV9mYl9oZWxwZXJfc3lzX2NvcHlhcmVhKHN0cnVjdCBmYl9pbmZv
+ICppbmZvLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb25zdCBzdHJ1
+Y3QgZmJfY29weWFyZWEgKmFyZWEpOw0KPj4gLXZvaWQgZHJtX2ZiX2hlbHBlcl9zeXNfaW1h
+Z2VibGl0KHN0cnVjdCBmYl9pbmZvICppbmZvLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGNvbnN0IHN0cnVjdCBmYl9pbWFnZSAqaW1hZ2UpOw0KPj4gLQ0KPj4g
+wqAgc3NpemVfdCBkcm1fZmJfaGVscGVyX2NmYl9yZWFkKHN0cnVjdCBmYl9pbmZvICppbmZv
+LCBjaGFyIF9fdXNlciAqYnVmLA0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcyk7DQo+PiDCoCBzc2l6ZV90
+IGRybV9mYl9oZWxwZXJfY2ZiX3dyaXRlKHN0cnVjdCBmYl9pbmZvICppbmZvLCBjb25zdCBj
+aGFyIA0KPj4gX191c2VyICpidWYsDQo+PiBAQCAtMzk4LDM1ICszODYsNiBAQCBzdGF0aWMg
+aW5saW5lIGludCBkcm1fZmJfaGVscGVyX2RlZmlvX2luaXQoc3RydWN0IA0KPj4gZHJtX2Zi
+X2hlbHBlciAqZmJfaGVscGVyKQ0KPj4gwqDCoMKgwqDCoCByZXR1cm4gLUVOT0RFVjsNCj4+
+IMKgIH0NCj4+IC1zdGF0aWMgaW5saW5lIHNzaXplX3QgZHJtX2ZiX2hlbHBlcl9zeXNfcmVh
+ZChzdHJ1Y3QgZmJfaW5mbyAqaW5mbywNCj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2hhciBfX3VzZXIgKmJ1Ziwgc2l6ZV90IGNvdW50
+LA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBsb2ZmX3QgKnBwb3MpDQo+PiAtew0KPj4gLcKgwqDCoCByZXR1cm4gLUVOT0RFVjsNCj4+
+IC19DQo+PiAtDQo+PiAtc3RhdGljIGlubGluZSBzc2l6ZV90IGRybV9mYl9oZWxwZXJfc3lz
+X3dyaXRlKHN0cnVjdCBmYl9pbmZvICppbmZvLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNvbnN0IGNoYXIgX191c2VyICpidWYs
+DQo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgc2l6ZV90IGNvdW50LCBsb2ZmX3QgKnBwb3MpDQo+PiAtew0KPj4gLcKgwqDCoCByZXR1
+cm4gLUVOT0RFVjsNCj4+IC19DQo+PiAtDQo+PiAtc3RhdGljIGlubGluZSB2b2lkIGRybV9m
+Yl9oZWxwZXJfc3lzX2ZpbGxyZWN0KHN0cnVjdCBmYl9pbmZvICppbmZvLA0KPj4gLcKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNvbnN0IHN0
+cnVjdCBmYl9maWxscmVjdCAqcmVjdCkNCj4+IC17DQo+PiAtfQ0KPj4gLQ0KPj4gLXN0YXRp
+YyBpbmxpbmUgdm9pZCBkcm1fZmJfaGVscGVyX3N5c19jb3B5YXJlYShzdHJ1Y3QgZmJfaW5m
+byAqaW5mbywNCj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBjb25zdCBzdHJ1Y3QgZmJfY29weWFyZWEgKmFyZWEpDQo+PiAtew0KPj4g
+LX0NCj4+IC0NCj4+IC1zdGF0aWMgaW5saW5lIHZvaWQgZHJtX2ZiX2hlbHBlcl9zeXNfaW1h
+Z2VibGl0KHN0cnVjdCBmYl9pbmZvICppbmZvLA0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29uc3Qgc3RydWN0IGZiX2ltYWdl
+ICppbWFnZSkNCj4+IC17DQo+PiAtfQ0KPj4gLQ0KPj4gwqAgc3RhdGljIGlubGluZSBzc2l6
+ZV90IGRybV9mYl9oZWxwZXJfY2ZiX3JlYWQoc3RydWN0IGZiX2luZm8gKmluZm8sIA0KPj4g
+Y2hhciBfX3VzZXIgKmJ1ZiwNCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgc2l6ZV90IGNvdW50LCBsb2ZmX3QgKnBwb3MpDQo+PiDC
+oCB7DQoNCi0tIA0KVGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERyaXZlciBEZXZlbG9w
+ZXINClNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KRnJhbmtlbnN0cmFz
+c2UgMTQ2LCA5MDQ2MSBOdWVybmJlcmcsIEdlcm1hbnkNCkdGOiBJdm8gVG90ZXYsIEFuZHJl
+dyBNeWVycywgQW5kcmV3IE1jRG9uYWxkLCBCb3VkaWVuIE1vZXJtYW4NCkhSQiAzNjgwOSAo
+QUcgTnVlcm5iZXJnKQ0K
 
-can not finish compile anymore.  gcc complains:
+--------------6l90fuTO7TIYXqfZebkyhkav--
 
+--------------txN0CWP86R0WaoSFBua4I0XL
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
-   AR      drivers/gpu/built-in.a
-   AR      drivers/built-in.a
-   AR      built-in.a
-   AR      vmlinux.a
-   LD      vmlinux.o
-   OBJCOPY modules.builtin.modinfo
-   GEN     modules.builtin
-   GEN     .vmlinux.objs
-   MODPOST Module.symvers
-ERROR: modpost: "fb_sys_write" [drivers/gpu/drm/drm_kms_helper.ko] 
-undefined!
-ERROR: modpost: "sys_imageblit" [drivers/gpu/drm/drm_kms_helper.ko] 
-undefined!
-ERROR: modpost: "sys_fillrect" [drivers/gpu/drm/drm_kms_helper.ko] 
-undefined!
-ERROR: modpost: "sys_copyarea" [drivers/gpu/drm/drm_kms_helper.ko] 
-undefined!
-ERROR: modpost: "fb_sys_read" [drivers/gpu/drm/drm_kms_helper.ko] undefined!
-make[1]: *** [scripts/Makefile.modpost:136: Module.symvers] Error 1
-make: *** [Makefile:1978: modpost] Error 2
+-----BEGIN PGP SIGNATURE-----
 
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmRkfRgFAwAAAAAACgkQlh/E3EQov+Bg
+wBAAn8z39KVtLFv3XvImQfDOqWiKfp4cKhm36uU7xmBD6zyqZxj3WPfR74gGFuMNy5zb9IJr/Klw
+spvAzX9u+WRovhK9l8il960JQN0v5ECGY6WR0ulAsWWw8+fDWWebttvrq5WQeZLX/KqiNvPKEKQ5
+AOEwCXzVBaLgTvE3azDiIiBO5VYCem3eMJA+5R0xlBR4brposlL0NFmdBTNfXKRIeb4cvQpa3wlB
+o5Qk5oyUaAy6rgzfKAB9aT+ceVOhOGbwctIvtrg4X7dRamdAF0lzsod16SX62YwCdwIUIDovKanH
+WNYG6nY7vmo9mAgFPJrLdN7yeyelAD9ZPI8z/u+ZVqfYJzoQTB4C9hn81so40jEvUeigMQjba+9f
+aVvypx4K4NQAwmEhAPkOa17+yqizCabqriH7l43UweHkuJiIvJeTlJuLO3aua8qQTPMTHCwh7t2N
+jbKH4/3FoqSgd2LB7xQnh5EZIKwtQZWqlEvc6d4yWqZOxqmbsbP4r27lmOfLA/Hbyk9BtfD5Aenu
+ZSYSzT6xFOtsLGEDZqg4Hwad7YOetJqMNqSTnQMFSGHmLDMNQzS55YILYkvVGefrwiRmdXv4ti55
+fnDLhFu8VGeS1TXTHk/d3xZBKyl4sXrvw8AA/VUxvVxhG2TwcJUtTz31eIh6Vv6xZxhQefn1ts/N
+QEA=
+=mekx
+-----END PGP SIGNATURE-----
 
-On 2023/5/15 17:40, Thomas Zimmermann wrote:
-> Implement dedicated fbdev helpers for framebuffer I/O instead
-> of using DRM's helpers. Fbdev-generic was the only caller of the
-> DRM helpers, so remove them from the helper module.
->
-> v2:
-> 	* use FB_SYS_HELPERS_DEFERRED option
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->   drivers/gpu/drm/Kconfig             |   6 +-
->   drivers/gpu/drm/drm_fb_helper.c     | 107 ----------------------------
->   drivers/gpu/drm/drm_fbdev_generic.c |  47 ++++++++++--
->   include/drm/drm_fb_helper.h         |  41 -----------
->   4 files changed, 43 insertions(+), 158 deletions(-)
->
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index 77fb10ddd8a2..92a782827b7b 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -95,6 +95,7 @@ config DRM_KUNIT_TEST
->   config DRM_KMS_HELPER
->   	tristate
->   	depends on DRM
-> +	select FB_SYS_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
-
-Here, select FB_SYS_HELPERS helps resolve the above issue mentioned.
-
->   	help
->   	  CRTC helpers for KMS drivers.
->   
-> @@ -135,11 +136,6 @@ config DRM_FBDEV_EMULATION
->   	select FB_CFB_FILLRECT
->   	select FB_CFB_COPYAREA
->   	select FB_CFB_IMAGEBLIT
-> -	select FB_DEFERRED_IO
-> -	select FB_SYS_FOPS
-> -	select FB_SYS_FILLRECT
-> -	select FB_SYS_COPYAREA
-> -	select FB_SYS_IMAGEBLIT
->   	select FRAMEBUFFER_CONSOLE if !EXPERT
->   	select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
->   	default y
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index 8724e08c518b..ba0a808f14ee 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -729,113 +729,6 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
->   }
->   EXPORT_SYMBOL(drm_fb_helper_deferred_io);
->   
-> -/**
-> - * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
-> - * @info: fb_info struct pointer
-> - * @buf: userspace buffer to read from framebuffer memory
-> - * @count: number of bytes to read from framebuffer memory
-> - * @ppos: read offset within framebuffer memory
-> - *
-> - * Returns:
-> - * The number of bytes read on success, or an error code otherwise.
-> - */
-> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
-> -			       size_t count, loff_t *ppos)
-> -{
-> -	return fb_sys_read(info, buf, count, ppos);
-> -}
-> -EXPORT_SYMBOL(drm_fb_helper_sys_read);
-> -
-> -/**
-> - * drm_fb_helper_sys_write - Implements struct &fb_ops.fb_write for system memory
-> - * @info: fb_info struct pointer
-> - * @buf: userspace buffer to write to framebuffer memory
-> - * @count: number of bytes to write to framebuffer memory
-> - * @ppos: write offset within framebuffer memory
-> - *
-> - * Returns:
-> - * The number of bytes written on success, or an error code otherwise.
-> - */
-> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
-> -				size_t count, loff_t *ppos)
-> -{
-> -	struct drm_fb_helper *helper = info->par;
-> -	loff_t pos = *ppos;
-> -	ssize_t ret;
-> -	struct drm_rect damage_area;
-> -
-> -	ret = fb_sys_write(info, buf, count, ppos);
-> -	if (ret <= 0)
-> -		return ret;
-> -
-> -	if (helper->funcs->fb_dirty) {
-> -		drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
-> -		drm_fb_helper_damage(helper, damage_area.x1, damage_area.y1,
-> -				     drm_rect_width(&damage_area),
-> -				     drm_rect_height(&damage_area));
-> -	}
-> -
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL(drm_fb_helper_sys_write);
-> -
-> -/**
-> - * drm_fb_helper_sys_fillrect - wrapper around sys_fillrect
-> - * @info: fbdev registered by the helper
-> - * @rect: info about rectangle to fill
-> - *
-> - * A wrapper around sys_fillrect implemented by fbdev core
-> - */
-> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
-> -				const struct fb_fillrect *rect)
-> -{
-> -	struct drm_fb_helper *helper = info->par;
-> -
-> -	sys_fillrect(info, rect);
-> -
-> -	if (helper->funcs->fb_dirty)
-> -		drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
-> -}
-> -EXPORT_SYMBOL(drm_fb_helper_sys_fillrect);
-> -
-> -/**
-> - * drm_fb_helper_sys_copyarea - wrapper around sys_copyarea
-> - * @info: fbdev registered by the helper
-> - * @area: info about area to copy
-> - *
-> - * A wrapper around sys_copyarea implemented by fbdev core
-> - */
-> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
-> -				const struct fb_copyarea *area)
-> -{
-> -	struct drm_fb_helper *helper = info->par;
-> -
-> -	sys_copyarea(info, area);
-> -
-> -	if (helper->funcs->fb_dirty)
-> -		drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
-> -}
-> -EXPORT_SYMBOL(drm_fb_helper_sys_copyarea);
-> -
-> -/**
-> - * drm_fb_helper_sys_imageblit - wrapper around sys_imageblit
-> - * @info: fbdev registered by the helper
-> - * @image: info about image to blit
-> - *
-> - * A wrapper around sys_imageblit implemented by fbdev core
-> - */
-> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
-> -				 const struct fb_image *image)
-> -{
-> -	struct drm_fb_helper *helper = info->par;
-> -
-> -	sys_imageblit(info, image);
-> -
-> -	if (helper->funcs->fb_dirty)
-> -		drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
-> -}
-> -EXPORT_SYMBOL(drm_fb_helper_sys_imageblit);
-> -
->   /**
->    * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
->    * @info: fb_info struct pointer
-> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-> index 8e5148bf40bb..f53fc49e34a4 100644
-> --- a/drivers/gpu/drm/drm_fbdev_generic.c
-> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
-> @@ -34,6 +34,43 @@ static int drm_fbdev_generic_fb_release(struct fb_info *info, int user)
->   	return 0;
->   }
->   
-> +static ssize_t drm_fbdev_generic_fb_write(struct fb_info *info, const char __user *buf,
-> +					  size_t count, loff_t *ppos)
-> +{
-> +	struct drm_fb_helper *helper = info->par;
-> +	loff_t pos = *ppos;
-> +	ssize_t ret;
-> +
-> +	ret = fb_sys_write(info, buf, count, ppos);
-> +	if (ret > 0)
-> +		drm_fb_helper_damage_range(helper, pos, ret);
-> +	return ret;
-> +}
-> +
-> +static void drm_fbdev_generic_fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
-> +{
-> +	struct drm_fb_helper *helper = info->par;
-> +
-> +	sys_fillrect(info, rect);
-> +	drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
-> +}
-> +
-> +static void drm_fbdev_generic_fb_copyarea(struct fb_info *info, const struct fb_copyarea *area)
-> +{
-> +	struct drm_fb_helper *helper = info->par;
-> +
-> +	sys_copyarea(info, area);
-> +	drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
-> +}
-> +
-> +static void drm_fbdev_generic_fb_imageblit(struct fb_info *info, const struct fb_image *image)
-> +{
-> +	struct drm_fb_helper *helper = info->par;
-> +
-> +	sys_imageblit(info, image);
-> +	drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
-> +}
-> +
->   static void drm_fbdev_generic_fb_destroy(struct fb_info *info)
->   {
->   	struct drm_fb_helper *fb_helper = info->par;
-> @@ -56,12 +93,12 @@ static const struct fb_ops drm_fbdev_generic_fb_ops = {
->   	.owner		= THIS_MODULE,
->   	.fb_open	= drm_fbdev_generic_fb_open,
->   	.fb_release	= drm_fbdev_generic_fb_release,
-> -	.fb_read	= drm_fb_helper_sys_read,
-> -	.fb_write	= drm_fb_helper_sys_write,
-> +	.fb_read	= fb_sys_read,
-> +	.fb_write	= drm_fbdev_generic_fb_write,
->   	DRM_FB_HELPER_DEFAULT_OPS,
-> -	.fb_fillrect	= drm_fb_helper_sys_fillrect,
-> -	.fb_copyarea	= drm_fb_helper_sys_copyarea,
-> -	.fb_imageblit	= drm_fb_helper_sys_imageblit,
-> +	.fb_fillrect	= drm_fbdev_generic_fb_fillrect,
-> +	.fb_copyarea	= drm_fbdev_generic_fb_copyarea,
-> +	.fb_imageblit	= drm_fbdev_generic_fb_imageblit,
->   	.fb_mmap	= fb_deferred_io_mmap,
->   	.fb_destroy	= drm_fbdev_generic_fb_destroy,
->   };
-> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-> index 80c402f4e379..e3240d749a43 100644
-> --- a/include/drm/drm_fb_helper.h
-> +++ b/include/drm/drm_fb_helper.h
-> @@ -259,18 +259,6 @@ void drm_fb_helper_damage_range(struct drm_fb_helper *helper, off_t off, size_t
->   
->   void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
->   
-> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
-> -			       size_t count, loff_t *ppos);
-> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
-> -				size_t count, loff_t *ppos);
-> -
-> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
-> -				const struct fb_fillrect *rect);
-> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
-> -				const struct fb_copyarea *area);
-> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
-> -				 const struct fb_image *image);
-> -
->   ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
->   			       size_t count, loff_t *ppos);
->   ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
-> @@ -398,35 +386,6 @@ static inline int drm_fb_helper_defio_init(struct drm_fb_helper *fb_helper)
->   	return -ENODEV;
->   }
->   
-> -static inline ssize_t drm_fb_helper_sys_read(struct fb_info *info,
-> -					     char __user *buf, size_t count,
-> -					     loff_t *ppos)
-> -{
-> -	return -ENODEV;
-> -}
-> -
-> -static inline ssize_t drm_fb_helper_sys_write(struct fb_info *info,
-> -					      const char __user *buf,
-> -					      size_t count, loff_t *ppos)
-> -{
-> -	return -ENODEV;
-> -}
-> -
-> -static inline void drm_fb_helper_sys_fillrect(struct fb_info *info,
-> -					      const struct fb_fillrect *rect)
-> -{
-> -}
-> -
-> -static inline void drm_fb_helper_sys_copyarea(struct fb_info *info,
-> -					      const struct fb_copyarea *area)
-> -{
-> -}
-> -
-> -static inline void drm_fb_helper_sys_imageblit(struct fb_info *info,
-> -					       const struct fb_image *image)
-> -{
-> -}
-> -
->   static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
->   					     size_t count, loff_t *ppos)
->   {
+--------------txN0CWP86R0WaoSFBua4I0XL--
