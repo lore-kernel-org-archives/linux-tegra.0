@@ -2,404 +2,171 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7344AC7EE22
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 23:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92ACCC7EE2C
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 23:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229553AbjEQXHQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 May 2023 19:07:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48990 "EHLO
+        id S229655AbjEQXcn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 May 2023 19:32:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjEQXHP (ORCPT
+        with ESMTP id S229468AbjEQXcm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 May 2023 19:07:15 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6026E88
-        for <linux-tegra@vger.kernel.org>; Wed, 17 May 2023 16:06:33 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pzQAe-0007j8-SV; Thu, 18 May 2023 01:03:00 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pzQAM-000wnW-Uj; Thu, 18 May 2023 01:02:42 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pzQAM-005UVF-2k; Thu, 18 May 2023 01:02:42 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Chen <peter.chen@kernel.org>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Prashanth K <quic_prashk@quicinc.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Lei YU <yulei.sh@bytedance.com>,
-        Neal Liu <neal_liu@aspeedtech.com>,
-        Henry Tian <tianxiaofeng@bytedance.com>,
-        Cristian Birsan <cristian.birsan@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        Al Cooper <alcooperx@gmail.com>, Li Yang <leoyang.li@nxp.com>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
-        Kalle Valo <kvalo@kernel.org>, Kang Chen <void0red@gmail.com>,
-        Shaomin Deng <dengshaomin@cdjrlc.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Richard Leitner <richard.leitner@linux.dev>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Zheng Wang <zyytlz.wz@163.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Rob Herring <robh@kernel.org>, Wayne Chang <waynec@nvidia.com>,
-        Haotien Hsu <haotienh@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-        Tang Bin <tangbin@cmss.chinamobile.com>,
-        Sing-Han Chen <singhanc@nvidia.com>,
-        Piyush Mehta <piyush.mehta@amd.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Darren Stevens <darren@stevens-zone.net>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Olav Kongas <ok@artecdesign.ee>,
-        Artur Bujdoso <artur.bujdoso@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-        Francesco Dolcini <francesco.dolcini@toradex.com>,
-        Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Dongliang Mu <mudongliangabcd@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dan Carpenter <error27@gmail.com>,
-        =?utf-8?q?Samuel_=C4=8Cavoj?= <samuel@cavoj.net>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     linux-usb@vger.kernel.org, kernel@pengutronix.de,
-        Roger Quadros <rogerq@kernel.org>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Wed, 17 May 2023 19:32:42 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6225F40EB;
+        Wed, 17 May 2023 16:32:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g2J+oE80v+B1Kweq6z+STuijyPtEkRwz8pWoXjK5/lQ4oTOz3mj7kQzuMqaizG9F3CDXxn1SPDZ12GUVIrss5lQvnO8AOsROrJUHU08jWds/Xwy2ni4vQ6NT3akOEHyDNXrU0AQf7GG7/ndMSDYssSOJNoOJW7BNYvWmlow4ZTg+0Z1R81JLQTzISBekPtY7ntcWV4mBmsXlEhhFfteRdZHsEOze+edxxSXD+de+gaZsjOsIXvAO6wJx60ga8lV5hSOXUMsHx0ZRZtxb0cbb5t0uynFY9iRHWxsQFsEsfk5XV5EcivwgSrhAade6XQ/BagWzw4JeIkEsqBhvyzz5og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SU7+OS0futKjoBt58LQ+nXP395IRweXRjQi4kW6PQLU=;
+ b=Oeo0w4/5iIve7I8iVusfV7B8W3I/Fz6Wxu2h+/W+gJKHNDn5maJ1ZKO016jx3O6IIRHXD4iEAEXDy+N3X3RJw5NDwwpb+S9cIgbKHcAafK0ONde0BZSBLcYpJvbwFpi4010MX9ajBY89qOqYnJMMHu5USl52el4hupiiJNKxyqnfTg8ptZvVkZHk+yTXIMGrvN7eQmUokftc15sZCRDH+bpPurGs1h3H7L43+Xrx5bh4uxSrLpW6Wx3ctNAc5Hx1SOQvtYS+chdssRAE2v0q1N55PQVj4Ay5uC5Nphu8dOe9Zn4ysQpWiHtzSLlqilkyffZxycabLwasEIhuoZaLAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=lists.ozlabs.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SU7+OS0futKjoBt58LQ+nXP395IRweXRjQi4kW6PQLU=;
+ b=T9dbxYfi0ePh8X7jY4DWSOh/1wX2Pd3qEz/X3enlbBpLhGYWh+9H9J8rgPwD7yquiJvDAeDLOhOt3pCQFi00U3NOIDUA+dUAlN02tFWC75pOM12ItgpPcDBhHd9ZpcYDl38kmQI1OsTb5REddcPhFx6Xh+wL59OQnHdxP1vmaSbLPy5tbCWpGE5+RUrMnr52BGOg0U50+SzNGm6CizbLS/swXInbWEdZZzWGEbUBf/F2IQJ9XEVzzQSnFTnxUKykC1E4AswHHdnhtQbiN/JngfDwbkNa4gGol5cIZ3UJUOhjcCjjt/pyJm2XsU9g6JPUnJJWxkFTHhHsR7JY/otAnw==
+Received: from MW4PR04CA0257.namprd04.prod.outlook.com (2603:10b6:303:88::22)
+ by SA0PR12MB4542.namprd12.prod.outlook.com (2603:10b6:806:73::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.17; Wed, 17 May
+ 2023 23:32:39 +0000
+Received: from CO1NAM11FT087.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:88:cafe::3c) by MW4PR04CA0257.outlook.office365.com
+ (2603:10b6:303:88::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.18 via Frontend
+ Transport; Wed, 17 May 2023 23:32:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1NAM11FT087.mail.protection.outlook.com (10.13.174.68) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6411.19 via Frontend Transport; Wed, 17 May 2023 23:32:38 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 17 May 2023
+ 16:32:32 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Wed, 17 May 2023 16:32:32 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Wed, 17 May 2023 16:32:29 -0700
+Date:   Wed, 17 May 2023 16:32:28 -0700
+From:   Nicolin Chen <nicolinc@nvidia.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+CC:     Andy Gross <agross@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
-        linux-aspeed@lists.ozlabs.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        openbmc@lists.ozlabs.org,
+        Bjorn Andersson <andersson@kernel.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org, Hongren Zheng <i@zenithal.me>
-Subject: [PATCH 00/97] usb: Convert to platform remove callback returning void
-Date:   Thu, 18 May 2023 01:01:02 +0200
-Message-Id: <20230517230239.187727-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, <iommu@lists.linux.dev>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+        <linux-tegra@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        <linuxppc-dev@lists.ozlabs.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "Niklas Schnelle" <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v2 00/25] iommu: Make default_domain's mandatory
+Message-ID: <ZGVkDB+MCrx3tQho@Asurada-Nvidia>
+References: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13896; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fqdhPP54usEi8baXSoJI3FzPlkc2fS3jhA8DcZSCQuk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkZVvo7YCpz/3hjEBffLjdT8PvX4si+92iw+jNb Tz6v0ULfQiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZGVb6AAKCRCPgPtYfRL+ TlYMCACAXHsbcSe2/YxZgpBERFMM+jw4JinGM2u2mtbpocRgDWydlQkNFy06NXz1h2u2LDPPSIk iwAWSLfyjZF5lILnnr1YPqSGMAud+fjVygVXeafiHtV2ZVmijZlE5qO5hIdvYYfYPm00rV346M1 0n6/klc5RNf6vwRbm5bfbW4TL9w/yh7gjm3FhYVqzy2qnbyWjW2RI51VigjlXmPY0yu7Fc+E3/g 977tkeVRRvrmYhF1SBhLzzklWCnQ98bnL+n69yxGNr1WiQY2NG+etq4cDuF0q8cOAYWpmmIt5MX nmIPrvIgStBnrRfZ8cNeWWPjB9kFO+x2K8B7eEv8WwwsqITu
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT087:EE_|SA0PR12MB4542:EE_
+X-MS-Office365-Filtering-Correlation-Id: 192db192-fae9-42d6-3f47-08db572f0083
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Xp1ANaCQqDkvQxMkDGNeVnZgg2QHq7mlxtx6A8BUGbMjgoK/P5t4maMzuKixtU7LOp1Uo51Vq1YlcBrFPWS0rnzkEwCuhDzcZeOuHx/19o9krkOp0BlyU+ELCWMUAa2hwCDlxWgHCeqWhgEmE/6HiMNQ3HaErUKoXy1VV+dz5h9TrvywnLzRpJS4c5bx3ly6mA5NODX6vzM91weyCKzGWGqSEKxblrcKPQn6ug8piZ8Bp71af5OIFJd4wIwY6r5tgQhZ/OWx3z6/vImdPUa7OL33h6NUI3X+UUCl3lwWLMfbYcf48h2em+LTnt8k2b/xfZfdLOwqtyB+/vcWiH0tUgSU3UCZFbEQlnWMm2dGI2NsnvZSke9uazUM3qy3KR6LdIVfXbnjrx9xpCEzwl9H0xvpZT7axGCMoG/RBVT/rjx0IO6nfxRmzCFQIRXTm245v+wimriyw7R8Z691v8EpdPwTZ+JsqDOSIdYsWIxL6jK14OaX+JShd8mKAe5d5V918vZ2AcBEpzMLOWu0zl+eOMkD6ihhybqSDfKBlYw5BFA+BxtQo0mXWF+7TCnGhGrvi/rGWPHYrKmd3RPzf0jRIRe1ckw48EBLqTTkA0QPyisnVLFgu2A+82FWUp2LDoyPUY1LjMGD65nnIxPjWZdUVjbHzaY9rvlgmAIWNrawbvWntCrWkGwAGa9aU59g/9Iwyk6RYfuMygImtPEcSX7+iCzGDeF7hBh5dMDabpdtET0nSRboAE8Ym/yNorJPawsljffBQTVY97BVKPn21CS5etWQxehgcoxSHpfuCz7vii6g6rpIQ9uyBl4A9UO5PmM9
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(39860400002)(136003)(376002)(451199021)(36840700001)(40470700004)(46966006)(36860700001)(82740400003)(7636003)(356005)(40460700003)(41300700001)(7416002)(7406005)(2906002)(6862004)(8676002)(5660300002)(33716001)(6636002)(8936002)(55016003)(86362001)(316002)(4326008)(70206006)(70586007)(40480700001)(82310400005)(83380400001)(966005)(336012)(186003)(47076005)(107886003)(426003)(9686003)(26005)(478600001)(54906003)(67856001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2023 23:32:38.5800
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 192db192-fae9-42d6-3f47-08db572f0083
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT087.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4542
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+On Mon, May 15, 2023 at 09:00:33PM -0300, Jason Gunthorpe wrote:
+ 
+> This is on github: https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
 
-this series convers the drivers below drivers/usb to the .remove_new()
-callback of struct platform_driver(). The motivation is to make the
-remove callback less prone for errors and wrong assumptions. See commit
-5c5a7680e67b ("platform: Provide a remove callback that returns no
-value") for a more detailed rationale.
+Ran some VFIO-passthrough sanity on x86 and ARM64, using this
+branch. It should cover partially this series. So, if I may:
 
-All drivers converted here already returned zero unconditionally in their
-.remove() callback, so converting them to .remove_new() is trivial.
+Tested-by: Nicolin Chen <nicolinc@nvidia.com>
 
-Best regards
-Uwe
+Thanks
+Nic
 
-Uwe Kleine-König (97):
-  usb: c67x00-drv: Convert to platform remove callback returning void
-  usb: cdns3-imx: Convert to platform remove callback returning void
-  usb: cdns3-plat: Convert to platform remove callback returning void
-  usb: cdns3-ti: Convert to platform remove callback returning void
-  usb: chipidea/ci_hdrc_imx: Convert to platform remove callback
-    returning void
-  usb: chipidea/ci_hdrc_msm: Convert to platform remove callback
-    returning void
-  usb: chipidea/ci_hdrc_tegra: Convert to platform remove callback
-    returning void
-  usb: chipidea/ci_hdrc_usb2: Convert to platform remove callback
-    returning void
-  usb: chipidea/core: Convert to platform remove callback returning void
-  usb: common: usb-conn-gpio: Convert to platform remove callback
-    returning void
-  usb: dwc2/platform: Convert to platform remove callback returning void
-  usb: core: Convert to platform remove callback returning void
-  usb: dwc3-am62: Convert to platform remove callback returning void
-  usb: dwc3-exynos: Convert to platform remove callback returning void
-  usb: dwc3-imx8mp: Convert to platform remove callback returning void
-  usb: dwc3-keystone: Convert to platform remove callback returning void
-  usb: dwc3-meson-g12a: Convert to platform remove callback returning
-    void
-  usb: dwc3-of-simple: Convert to platform remove callback returning
-    void
-  usb: dwc3-omap: Convert to platform remove callback returning void
-  usb: dwc3-qcom: Convert to platform remove callback returning void
-  usb: dwc3-st: Convert to platform remove callback returning void
-  usb: dwc3-xilinx: Convert to platform remove callback returning void
-  usb: fotg210: Convert to platform remove callback returning void
-  usb: gadget: hid: Convert to platform remove callback returning void
-  usb: gadget: aspeed: Convert to platform remove callback returning
-    void
-  usb: gadget/atmel_usba_udc: Convert to platform remove callback
-    returning void
-  usb: gadget/bcm63xx_udc: Convert to platform remove callback returning
-    void
-  usb: bdc: Convert to platform remove callback returning void
-  usb: gadget/dummy_hcd: Convert to platform remove callback returning
-    void
-  usb: gadget/fsl_qe_udc: Convert to platform remove callback returning
-    void
-  usb: gadget/fusb300_udc: Convert to platform remove callback returning
-    void
-  usb: gadget/m66592-udc: Convert to platform remove callback returning
-    void
-  usb: gadget/mv_u3d_core: Convert to platform remove callback returning
-    void
-  usb: gadget/mv_udc_core: Convert to platform remove callback returning
-    void
-  usb: gadget/net2272: Convert to platform remove callback returning
-    void
-  usb: gadget/omap_udc: Convert to platform remove callback returning
-    void
-  usb: gadget/pxa27x_udc: Convert to platform remove callback returning
-    void
-  usb: gadget/r8a66597-udc: Convert to platform remove callback
-    returning void
-  usb: gadget/renesas_usb3: Convert to platform remove callback
-    returning void
-  usb: gadget/renesas_usbf: Convert to platform remove callback
-    returning void
-  usb: gadget/rzv2m_usb3drd: Convert to platform remove callback
-    returning void
-  usb: gadget/snps_udc_plat: Convert to platform remove callback
-    returning void
-  usb: gadget/tegra-xudc: Convert to platform remove callback returning
-    void
-  usb: gadget/udc-xilinx: Convert to platform remove callback returning
-    void
-  usb: ehci-atmel: Convert to platform remove callback returning void
-  usb: ehci-brcm: Convert to platform remove callback returning void
-  usb: ehci-exynos: Convert to platform remove callback returning void
-  usb: ehci-fsl: Convert to platform remove callback returning void
-  usb: ehci-grlib: Convert to platform remove callback returning void
-  usb: ehci-mv: Convert to platform remove callback returning void
-  usb: ehci-npcm7xx: Convert to platform remove callback returning void
-  usb: ehci-omap: Convert to platform remove callback returning void
-  usb: ehci-orion: Convert to platform remove callback returning void
-  usb: ehci-platform: Convert to platform remove callback returning void
-  usb: ehci-ppc-of: Convert to platform remove callback returning void
-  usb: ehci-sh: Convert to platform remove callback returning void
-  usb: ehci-spear: Convert to platform remove callback returning void
-  usb: ehci-st: Convert to platform remove callback returning void
-  usb: ehci-xilinx-of: Convert to platform remove callback returning
-    void
-  usb: fsl-mph-dr-of: Convert to platform remove callback returning void
-  usb: isp116x-hcd: Convert to platform remove callback returning void
-  usb: isp1362-hcd: Convert to platform remove callback returning void
-  usb: octeon-hcd: Convert to platform remove callback returning void
-  usb: ohci-at91: Convert to platform remove callback returning void
-  usb: ohci-da8xx: Convert to platform remove callback returning void
-  usb: ohci-exynos: Convert to platform remove callback returning void
-  usb: ohci-nxp: Convert to platform remove callback returning void
-  usb: ohci-omap: Convert to platform remove callback returning void
-  usb: ohci-platform: Convert to platform remove callback returning void
-  usb: ohci-ppc-of: Convert to platform remove callback returning void
-  usb: ohci-pxa27x: Convert to platform remove callback returning void
-  usb: ohci-s3c2410: Convert to platform remove callback returning void
-  usb: ohci-sm501: Convert to platform remove callback returning void
-  usb: ohci-spear: Convert to platform remove callback returning void
-  usb: ohci-st: Convert to platform remove callback returning void
-  usb: oxu210hp-hcd: Convert to platform remove callback returning void
-  usb: r8a66597-hcd: Convert to platform remove callback returning void
-  usb: sl811-hcd: Convert to platform remove callback returning void
-  usb: uhci-grlib: Convert to platform remove callback returning void
-  usb: uhci-platform: Convert to platform remove callback returning void
-  usb: xhci-histb: Convert to platform remove callback returning void
-  usb: xhci-mtk: Convert to platform remove callback returning void
-  usb: xhci-plat: Convert to platform remove callback returning void
-  usb: xhci-tegra: Convert to platform remove callback returning void
-  usb: isp1760: Convert to platform remove callback returning void
-  usb: misc: eud: Convert to platform remove callback returning void
-  usb: misc: usb3503: Convert to platform remove callback returning void
-  usb: renesas_usbhs: Convert to platform remove callback returning void
-  usb: roles: intel_xhci: Convert to platform remove callback returning
-    void
-  usb: typec: mux: gpio-sbu: Convert to platform remove callback
-    returning void
-  usb: typec: intel_pmc_mux: Convert to platform remove callback
-    returning void
-  usb: typec: qcom-pmic-typec: Convert to platform remove callback
-    returning void
-  usb: typec: tcpci_mt6360: Convert to platform remove callback
-    returning void
-  usb: typec: tcpci_mt6360: Convert to platform remove callback
-    returning void
-  usb: typec: wcove: Convert to platform remove callback returning void
-  usb: typec: ucsi: acpi: Convert to platform remove callback returning
-    void
-  usbip: vhci_hcd: Convert to platform remove callback returning void
-
- drivers/usb/c67x00/c67x00-drv.c                |  6 ++----
- drivers/usb/cdns3/cdns3-imx.c                  |  6 ++----
- drivers/usb/cdns3/cdns3-plat.c                 |  5 ++---
- drivers/usb/cdns3/cdns3-ti.c                   |  6 ++----
- drivers/usb/chipidea/ci_hdrc_imx.c             |  6 ++----
- drivers/usb/chipidea/ci_hdrc_msm.c             |  6 ++----
- drivers/usb/chipidea/ci_hdrc_tegra.c           |  6 ++----
- drivers/usb/chipidea/ci_hdrc_usb2.c            |  6 ++----
- drivers/usb/chipidea/core.c                    |  6 ++----
- drivers/usb/common/usb-conn-gpio.c             |  6 ++----
- drivers/usb/dwc2/platform.c                    |  6 ++----
- drivers/usb/dwc3/core.c                        |  6 ++----
- drivers/usb/dwc3/dwc3-am62.c                   |  5 ++---
- drivers/usb/dwc3/dwc3-exynos.c                 |  6 ++----
- drivers/usb/dwc3/dwc3-imx8mp.c                 |  6 ++----
- drivers/usb/dwc3/dwc3-keystone.c               |  6 ++----
- drivers/usb/dwc3/dwc3-meson-g12a.c             |  6 ++----
- drivers/usb/dwc3/dwc3-of-simple.c              |  6 ++----
- drivers/usb/dwc3/dwc3-omap.c                   |  6 ++----
- drivers/usb/dwc3/dwc3-qcom.c                   |  6 ++----
- drivers/usb/dwc3/dwc3-st.c                     |  6 ++----
- drivers/usb/dwc3/dwc3-xilinx.c                 |  6 ++----
- drivers/usb/fotg210/fotg210-core.c             |  6 ++----
- drivers/usb/gadget/legacy/hid.c                |  6 ++----
- drivers/usb/gadget/udc/aspeed-vhub/core.c      |  8 +++-----
- drivers/usb/gadget/udc/atmel_usba_udc.c        |  6 ++----
- drivers/usb/gadget/udc/bcm63xx_udc.c           |  6 ++----
- drivers/usb/gadget/udc/bdc/bdc_core.c          |  5 ++---
- drivers/usb/gadget/udc/dummy_hcd.c             | 11 ++++-------
- drivers/usb/gadget/udc/fsl_qe_udc.c            |  6 ++----
- drivers/usb/gadget/udc/fusb300_udc.c           |  6 ++----
- drivers/usb/gadget/udc/m66592-udc.c            |  5 ++---
- drivers/usb/gadget/udc/mv_u3d_core.c           |  6 ++----
- drivers/usb/gadget/udc/mv_udc_core.c           |  6 ++----
- drivers/usb/gadget/udc/net2272.c               |  6 ++----
- drivers/usb/gadget/udc/omap_udc.c              |  6 ++----
- drivers/usb/gadget/udc/pxa27x_udc.c            |  6 ++----
- drivers/usb/gadget/udc/r8a66597-udc.c          |  6 ++----
- drivers/usb/gadget/udc/renesas_usb3.c          |  6 ++----
- drivers/usb/gadget/udc/renesas_usbf.c          |  6 ++----
- drivers/usb/gadget/udc/rzv2m_usb3drd.c         |  6 ++----
- drivers/usb/gadget/udc/snps_udc_plat.c         |  8 +++-----
- drivers/usb/gadget/udc/tegra-xudc.c            |  6 ++----
- drivers/usb/gadget/udc/udc-xilinx.c            |  6 ++----
- drivers/usb/host/ehci-atmel.c                  |  6 ++----
- drivers/usb/host/ehci-brcm.c                   |  5 ++---
- drivers/usb/host/ehci-exynos.c                 |  6 ++----
- drivers/usb/host/ehci-fsl.c                    |  6 ++----
- drivers/usb/host/ehci-grlib.c                  |  6 ++----
- drivers/usb/host/ehci-mv.c                     |  6 ++----
- drivers/usb/host/ehci-npcm7xx.c                |  6 ++----
- drivers/usb/host/ehci-omap.c                   |  6 ++----
- drivers/usb/host/ehci-orion.c                  |  6 ++----
- drivers/usb/host/ehci-platform.c               |  6 ++----
- drivers/usb/host/ehci-ppc-of.c                 |  6 ++----
- drivers/usb/host/ehci-sh.c                     |  6 ++----
- drivers/usb/host/ehci-spear.c                  |  6 ++----
- drivers/usb/host/ehci-st.c                     |  6 ++----
- drivers/usb/host/ehci-xilinx-of.c              |  6 ++----
- drivers/usb/host/fsl-mph-dr-of.c               |  5 ++---
- drivers/usb/host/isp116x-hcd.c                 |  7 +++----
- drivers/usb/host/isp1362-hcd.c                 |  6 ++----
- drivers/usb/host/octeon-hcd.c                  |  6 ++----
- drivers/usb/host/ohci-at91.c                   |  5 ++---
- drivers/usb/host/ohci-da8xx.c                  |  6 ++----
- drivers/usb/host/ohci-exynos.c                 |  6 ++----
- drivers/usb/host/ohci-nxp.c                    |  6 ++----
- drivers/usb/host/ohci-omap.c                   |  5 ++---
- drivers/usb/host/ohci-platform.c               |  6 ++----
- drivers/usb/host/ohci-ppc-of.c                 |  6 ++----
- drivers/usb/host/ohci-pxa27x.c                 |  5 ++---
- drivers/usb/host/ohci-s3c2410.c                |  5 ++---
- drivers/usb/host/ohci-sm501.c                  |  6 ++----
- drivers/usb/host/ohci-spear.c                  |  5 ++---
- drivers/usb/host/ohci-st.c                     |  6 ++----
- drivers/usb/host/oxu210hp-hcd.c                |  6 ++----
- drivers/usb/host/r8a66597-hcd.c                |  5 ++---
- drivers/usb/host/sl811-hcd.c                   |  5 ++---
- drivers/usb/host/uhci-grlib.c                  |  6 ++----
- drivers/usb/host/uhci-platform.c               |  6 ++----
- drivers/usb/host/xhci-histb.c                  |  6 ++----
- drivers/usb/host/xhci-mtk.c                    |  6 ++----
- drivers/usb/host/xhci-plat.c                   |  6 ++----
- drivers/usb/host/xhci-tegra.c                  |  6 ++----
- drivers/usb/isp1760/isp1760-if.c               |  6 ++----
- drivers/usb/misc/qcom_eud.c                    |  6 ++----
- drivers/usb/misc/usb3503.c                     |  6 ++----
- drivers/usb/renesas_usbhs/common.c             |  6 ++----
- drivers/usb/roles/intel-xhci-usb-role-switch.c |  6 ++----
- drivers/usb/typec/mux/gpio-sbu-mux.c           |  6 ++----
- drivers/usb/typec/mux/intel_pmc_mux.c          |  6 ++----
- drivers/usb/typec/qcom-pmic-typec.c            |  6 ++----
- drivers/usb/typec/tcpm/tcpci_mt6360.c          |  5 ++---
- drivers/usb/typec/tcpm/tcpci_mt6370.c          |  6 ++----
- drivers/usb/typec/tcpm/wcove.c                 |  6 ++----
- drivers/usb/typec/ucsi/ucsi_acpi.c             |  6 ++----
- drivers/usb/usbip/vhci_hcd.c                   |  6 ++----
- 97 files changed, 199 insertions(+), 379 deletions(-)
-
-
-base-commit: ac9a78681b921877518763ba0e89202254349d1b
--- 
-2.39.2
-
+> v2:
+>  - FSL is an IDENTITY domain
+>  - Delete terga-gart instead of trying to carry it
+>  - Use the policy determination from iommu_get_default_domain_type() to
+>    drive the arm_iommu mode
+>  - Reorganize and introduce new patches to do the above:
+>     * Split the ops->identity_domain to an independent earlier patch
+>     * Remove the UNMANAGED return from def_domain_type in mtk_v1 earlier
+>       so the new iommu_get_default_domain_type() can work
+>     * Make the driver's def_domain_type have higher policy priority than
+>       untrusted
+>     * Merge the set_platfom_dma_ops hunk from mtk_v1 along with rockchip
+>       into the patch that forced IDENTITY on ARM32
+>  - Revise sun50i to be cleaner and have a non-NULL internal domain
+>  - Reword logging in exynos
+>  - Remove the gdev from the group alloc path, instead add a new
+>    function __iommu_group_domain_alloc() that takes in the group
+>    and uses the first device. Split this to its own patch
+>  - New patch to make iommufd's mock selftest into a real driver
+>  - New patch to fix power's partial iommu driver
