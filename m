@@ -2,135 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5CAC77B7A
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 12:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E67C77B7D
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 May 2023 14:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231585AbjEQMvl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 May 2023 08:51:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34600 "EHLO
+        id S231749AbjEQOu5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 May 2023 10:50:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231790AbjEQMvl (ORCPT
+        with ESMTP id S231890AbjEQOu5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 May 2023 08:51:41 -0400
+        Wed, 17 May 2023 10:50:57 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B097E44
-        for <linux-tegra@vger.kernel.org>; Wed, 17 May 2023 05:51:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF7C40C0;
+        Wed, 17 May 2023 07:50:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D5E163BFE
-        for <linux-tegra@vger.kernel.org>; Wed, 17 May 2023 12:51:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 734CAC433D2;
-        Wed, 17 May 2023 12:51:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B29A36481A;
+        Wed, 17 May 2023 14:50:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEF2C433EF;
+        Wed, 17 May 2023 14:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684327898;
-        bh=2JoCzAya4ozHUzDjJra+EnUuUPNieFhbiHSZyLF00PA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=psTl8xOZaaVdlSpsfzROkdJ3SFvhphHBtGtz60jb/YMXr4VTHVXNht91DgJqAKtwM
-         H8sgLo39VR+p56amkVM+nizUQfoThZu3vREL8JG9oFCQqTcQvl5XAltpW5aIjg+VyD
-         SXMVUJckERKd+j3EukP8dpqLSfgIEoR3G9omf+hXqvZqa4axZsItV3gonpk6A8s/pN
-         aRgAqwHumvaCfTdfM+T1i/wkM1+WA1WCZDXLbBAa4slFyzUdR07YpZ1fzVfvgAKnkF
-         hRjaRUQDDdRbbO8HXsql899236rOEs5v2FskSLs7JyqngQT+3AHoxSsRmt0EUEYCTP
-         OSzvA1yy38gsw==
-Date:   Wed, 17 May 2023 18:21:34 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Guillaume Ranquet <granquet@baylibre.com>,
-        linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] phy: mediatek: Avoid floating point constants
-Message-ID: <ZGTN1vWnxmaR/XKM@matsya>
-References: <20230419122131.2167122-1-thierry.reding@gmail.com>
- <89583b89-ea8c-8096-b083-6ab773e6c281@nvidia.com>
+        s=k20201202; t=1684335052;
+        bh=8I67luAksBCL72+meHCMN8MBL7RhGxwexXQRG0RpqDQ=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=qUWfDk+i2yXv7J9MhJbZBLjKRMGgL6whFTdU7YNAeRKAslCwfkZ0uu36FniV0PGoD
+         2LKSjRxPljASyj1bfOozDGNrgsmGFwvlyb+oNv+iS70fjlEQpU5bHGYPhFnCGYyhLi
+         4kPl91ugCsgauLB+ix/5ci9SbDnPcBlIWgpkRFH2fLouplPEw/XHzzF2JrbR6wHZJ9
+         pOsDGy28GRzma75ffQTQgY/6M40lmW3vDnbWlNhIwgDq1tQkZaqIWJ2X0vLbWZgUdq
+         2mgFU/rPyj0yOY9sL5N7JTrNmMqzNGIPq1NI/0JMI3axFH6bqQb8ZI1VyM6xHzvKQq
+         hHxS0voC+lQRw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Min-Hua Chen <minhuadotchen@gmail.com>
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20230516223700.185569-1-minhuadotchen@gmail.com>
+References: <20230516223700.185569-1-minhuadotchen@gmail.com>
+Subject: Re: [PATCH] ASoC: tegra: tegra210_adx: fix snd_pcm_format_t type
+Message-Id: <168433504910.453649.10010887587375335670.b4-ty@kernel.org>
+Date:   Wed, 17 May 2023 23:50:49 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <89583b89-ea8c-8096-b083-6ab773e6c281@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-bfdf5
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17-05-23, 12:59, Jon Hunter wrote:
-> Hi Vinod,
+On Wed, 17 May 2023 06:36:59 +0800, Min-Hua Chen wrote:
+> use snd_pcm_format_t instead of unsigned int to fix
+> the following sparse warnings:
 > 
-> On 19/04/2023 13:21, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> > 
-> > When building with old versions of GCC (6.3 in this case), the compiler
-> > stumbles over the floating point constants in this driver:
-> > 
-> > 	: In function ‘mtk_hdmi_pll_prepare’:
-> > 	drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c:331:23: error: ‘-mgeneral-regs-only’ is incompatible with floating-point code
-> > 	  } else if (pixel_clk >= 74.175 * MEGA && pixel_clk <= 300 * MEGA) {
-> > 
-> > 	drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c:361:12: error: ‘-mgeneral-regs-only’ is incompatible with floating-point code
-> > 	 static int mtk_hdmi_pll_prepare(struct clk_hw *hw)
-> > 		    ^~~~~~~~~~~~~~~~~~~~
-> > 	drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c:361:12: error: ‘-mgeneral-regs-only’ is incompatible with floating-point code
-> > 
-> > Fix this by switching to the KILO macro instead and multiplying the
-> > constants by 1000 to get rid of the floating point.
-> > 
-> > Fixes: 45810d486bb4 ("phy: mediatek: add support for phy-mtk-hdmi-mt8195")
-> > Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >   drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c | 8 ++++----
-> >   1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c b/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
-> > index abfc077fb0a8..b10af26cad2f 100644
-> > --- a/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
-> > +++ b/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
-> > @@ -239,9 +239,9 @@ static int mtk_hdmi_pll_calc(struct mtk_hdmi_phy *hdmi_phy, struct clk_hw *hw,
-> >   		txposdiv = 8;
-> >   	else if (tmds_clk >= 54 * MEGA && tmds_clk < 148.35 * MEGA)
-> >   		txposdiv = 4;
-> > -	else if (tmds_clk >= 148.35 * MEGA && tmds_clk < 296.7 * MEGA)
-> > +	else if (tmds_clk >= 148350 * KILO && tmds_clk < 296700 * KILO)
-> >   		txposdiv = 2;
-> > -	else if (tmds_clk >= 296.7 * MEGA && tmds_clk <= 594 * MEGA)
-> > +	else if (tmds_clk >= 296700 * KILO && tmds_clk <= 594 * MEGA)
-> >   		txposdiv = 1;
-> >   	else
-> >   		return -EINVAL;
-> > @@ -328,12 +328,12 @@ static int mtk_hdmi_pll_drv_setting(struct clk_hw *hw)
-> >   		clk_channel_bias = 0x34; /* 20mA */
-> >   		impedance_en = 0xf;
-> >   		impedance = 0x36; /* 100ohm */
-> > -	} else if (pixel_clk >= 74.175 * MEGA && pixel_clk <= 300 * MEGA) {
-> > +	} else if (pixel_clk >= 74175 * KILO && pixel_clk <= 300 * MEGA) {
-> >   		data_channel_bias = 0x34; /* 20mA */
-> >   		clk_channel_bias = 0x2c; /* 16mA */
-> >   		impedance_en = 0xf;
-> >   		impedance = 0x36; /* 100ohm */
-> > -	} else if (pixel_clk >= 27 * MEGA && pixel_clk < 74.175 * MEGA) {
-> > +	} else if (pixel_clk >= 27 * MEGA && pixel_clk < 74175 * KILO) {
-> >   		data_channel_bias = 0x14; /* 10mA */
-> >   		clk_channel_bias = 0x14; /* 10mA */
-> >   		impedance_en = 0x0;
+> sound/soc/tegra/tegra210_adx.c:125:14: sparse: warning: restricted snd_pcm_format_t degrades to integer
+> sound/soc/tegra/tegra210_adx.c:128:14: sparse: warning: restricted snd_pcm_format_t degrades to integer
+> sound/soc/tegra/tegra210_adx.c:131:14: sparse: warning: restricted snd_pcm_format_t degrades to integer
 > 
-> 
-> This is breaking kernel compilation with older compilers such as GCC7. This
-> is now in the mainline and older compilers cannot build the kernel with this
-> driver enabled. The kernel docs say the min version supported is GCC 5.1
-> currently.
-> 
-> Can we get this merged as a fix for v6.4?
+> [...]
 
-Sorry I missed this one but I have already applied 03262a3f5b5b ("phy:
-mediatek: rework the floating point comparisons to fixed point") and
-this is in linux-next and should be hopefully in Linus's tree in next rc
+Applied to
 
-Thanks
--- 
-~Vinod
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: tegra: tegra210_adx: fix snd_pcm_format_t type
+      commit: 35f8a9d87ca4f920526e6063df570490b41295fc
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
