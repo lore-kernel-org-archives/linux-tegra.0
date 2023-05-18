@@ -2,89 +2,81 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA85C77B7D
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 May 2023 10:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3D7C77B7D
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 May 2023 11:15:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230217AbjERK4x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 May 2023 06:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36082 "EHLO
+        id S230025AbjERLPh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 May 2023 07:15:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbjERK4w (ORCPT
+        with ESMTP id S230113AbjERLPh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 May 2023 06:56:52 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0C83BE8;
-        Thu, 18 May 2023 03:56:51 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ED4D1FB;
-        Thu, 18 May 2023 03:57:35 -0700 (PDT)
-Received: from [10.1.39.62] (e122027.cambridge.arm.com [10.1.39.62])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1B433F793;
-        Thu, 18 May 2023 03:56:43 -0700 (PDT)
-Message-ID: <527c0d87-d727-8b59-e980-0a4a94aa639d@arm.com>
-Date:   Thu, 18 May 2023 11:56:41 +0100
+        Thu, 18 May 2023 07:15:37 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D65E0B8;
+        Thu, 18 May 2023 04:15:35 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-510d6e1f1b2so3034508a12.3;
+        Thu, 18 May 2023 04:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684408534; x=1687000534;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vurKMc/YYUUVzVXRRGSKlq0dOEViCUdOrU3bCkWvudc=;
+        b=LN+h7cb/nb0qiowQAIxQ7xI9Ql/JJl7xtJkMwlLkMQ910mYH8m8Brox5PwyRnbSxfB
+         5+lnat8wwGw0RzEHwcTza0xxVhxxHw8q6kVVze9lUMrbAVFC8/aBAY9nIa5qYFEFUop3
+         fXERp8YrhlnfMY+1DjtzVpifKAyPQCvGbwqqOTLNZT+H3beOGi6mxIbF/8va+8xk/SFj
+         9jSsXsoUp4WldbChB2x4425bJhc6XkioOur+ciFdghtzUGAjobxmsRTBzJ4eza8Dk7S/
+         e3VCyFku6YZyNwbYoeuNv5Q/YfbB7pLJbYJrzpR1zoQD+esapujWGlbrbwUGe/K+ZNcG
+         rRAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684408534; x=1687000534;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vurKMc/YYUUVzVXRRGSKlq0dOEViCUdOrU3bCkWvudc=;
+        b=GPDt6/F3YePFotVxESoztven1tKBfZ79pvBEpdHTWhoraV0FuzrFZtqdoVayf8K3MM
+         OF9u7Y79V0HBirW4et1rzRIHrMmgmkuGgcJc3UJlXRiUd2y0sftXoVXlD+n8A0e24kbA
+         RSgA2U8YJ7KEd4oT/dBBJu10uf+jnW1ei88B0yBek9TdOHtfYREoavVAp0gjc6X7xVH6
+         tduLD7/NIN/HEWans2Qk9DJA0cRv6BP+WRxgWjmtQR2bS+xnbcP9sTPniVR8DiDRc7xK
+         wDqvTS2xAqqdC30H4N7S6LhQiETkpv4d+YBxqrRrLQdK8xWzmMH9LT7AM+8MuHGCb+sG
+         NHTQ==
+X-Gm-Message-State: AC+VfDxXY8lOdf+eYtIL3mxS+BoX+IcVx9ItsMkblBCPN4kciVhdaTy9
+        NBrT4LKoLz9lyEt17GGLwu871ZLY+P2fsztENH4=
+X-Google-Smtp-Source: ACHHUZ6LQIkFPtBuZ0OyrS0HcgDd5vy9Wd9TjPUnd3b977BjmOzsfKRTH3S3mxrsqyBgZR7aECDlwm1IozoHKr5kRuo=
+X-Received: by 2002:a50:fb9a:0:b0:50c:3dc:2262 with SMTP id
+ e26-20020a50fb9a000000b0050c03dc2262mr4443211edq.39.1684408533952; Thu, 18
+ May 2023 04:15:33 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2 00/25] iommu: Make default_domain's mandatory
-To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Thierry Reding <treding@nvidia.com>
-References: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
-Content-Language: en-GB
-From:   Steven Price <steven.price@arm.com>
-In-Reply-To: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
+ <20230327-tegra-pmic-reboot-v6-4-af44a4cd82e9@skidata.com> <20230518094340.GC404509@google.com>
+In-Reply-To: <20230518094340.GC404509@google.com>
+From:   Benjamin Bara <bbara93@gmail.com>
+Date:   Thu, 18 May 2023 13:15:22 +0200
+Message-ID: <CAJpcXm6p4xL8XGfxbfKf8sXd6Qh8euO5FiWqhzqiLbaeYpe85g@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] mfd: tps6586x: use devm-based power off handler
+To:     Lee Jones <lee@kernel.org>
+Cc:     Wolfram Sang <wsa@kernel.org>, rafael.j.wysocki@intel.com,
+        dmitry.osipenko@collabora.com, peterz@infradead.org,
+        jonathanh@nvidia.com, richard.leitner@linux.dev,
+        treding@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16/05/2023 01:00, Jason Gunthorpe wrote:
-> This is on github: https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
+On Thu, 18 May 2023 at 11:43, Lee Jones <lee@kernel.org> wrote:
+> Do the 2 MFD patches depend on the others?
 
-Tested-by: Steven Price <steven.price@arm.com>
+They depend on 3/5, which is an extension to [1] and makes the
+respective device available to its sys-off handler.
 
-Works fine on my Firefly-RK3288.
+1/5 and 2/5 avoid a warning which is shown if the handler is called from
+an emergency restart (e.g. panic()). The reason behind it is that the
+i2c transfer currently doesn't recognize that it should be atomic in
+this phase and utilizes the DMA instead, which schedules out while
+waiting for completion ("Voluntary context switch within RCU read-side
+critical section!").
 
-Thanks,
-
-Steve
-
+[1] https://lore.kernel.org/lkml/20220509233235.995021-4-dmitry.osipenko@collabora.com/
