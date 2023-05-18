@@ -2,88 +2,89 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73970C7EE22
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 May 2023 09:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA85C77B7D
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 May 2023 10:56:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230240AbjERJoo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 May 2023 05:44:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60872 "EHLO
+        id S230217AbjERK4x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 May 2023 06:56:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbjERJom (ORCPT
+        with ESMTP id S229913AbjERK4w (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 May 2023 05:44:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89404198A;
-        Thu, 18 May 2023 02:44:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 15749609AE;
-        Thu, 18 May 2023 09:44:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B89C433D2;
-        Thu, 18 May 2023 09:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684403080;
-        bh=/lPdoMwbDkyCVE1IkFVr7tXpIhHSbQvwRgh7HQACvq8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tvSraOSmfZtc12HnYo4ihQ+iP9cVssbhyZhi8O7C33vWtym52vNlWe00pMFqzE9FF
-         Py7JkQPzXAOLnL4bjzxDRRw91+VTHkukV8uWb0zz8YsL8XbJphn9whZJmxSurGOSyO
-         Regydb0PS0jFKr7p79Td3CWUrtTqfhxVs0TatPkJZqBHdgsmX7wHAEYFoRkV2fVqd3
-         0Lysl15Ru6np2E6GmGtRkDD+STlJmpFrqjfyhwrpV2kT2Hfa/ITd20/MdmxICfRZeH
-         MLGHzxxXm/fSPC7XVD/JBYj5srtUDDnLz0lNEaUoGcCIhNEIm6MyrxlweVWiSZpP+1
-         BYbtEEWwQxOQA==
-Date:   Thu, 18 May 2023 10:44:34 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     Wolfram Sang <wsa@kernel.org>, rafael.j.wysocki@intel.com,
-        dmitry.osipenko@collabora.com, peterz@infradead.org,
-        jonathanh@nvidia.com, richard.leitner@linux.dev,
-        treding@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH v6 5/5] mfd: tps6586x: register restart handler
-Message-ID: <20230518094434.GD404509@google.com>
-References: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
- <20230327-tegra-pmic-reboot-v6-5-af44a4cd82e9@skidata.com>
+        Thu, 18 May 2023 06:56:52 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0C83BE8;
+        Thu, 18 May 2023 03:56:51 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ED4D1FB;
+        Thu, 18 May 2023 03:57:35 -0700 (PDT)
+Received: from [10.1.39.62] (e122027.cambridge.arm.com [10.1.39.62])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1B433F793;
+        Thu, 18 May 2023 03:56:43 -0700 (PDT)
+Message-ID: <527c0d87-d727-8b59-e980-0a4a94aa639d@arm.com>
+Date:   Thu, 18 May 2023 11:56:41 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230327-tegra-pmic-reboot-v6-5-af44a4cd82e9@skidata.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 00/25] iommu: Make default_domain's mandatory
+To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Thierry Reding <treding@nvidia.com>
+References: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
+Content-Language: en-GB
+From:   Steven Price <steven.price@arm.com>
+In-Reply-To: <0-v2-8d1dc464eac9+10f-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 09 May 2023, Benjamin Bara wrote:
+On 16/05/2023 01:00, Jason Gunthorpe wrote:
+> This is on github: https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
 
-> From: Benjamin Bara <benjamin.bara@skidata.com>
-> 
-> There are a couple of boards which use a tps6586x as
-> "ti,system-power-controller", e.g. the tegra20-tamonten.dtsi.
-> For these, the only registered restart handler is the warm reboot via
-> tegra's PMC. As the bootloader of the tegra20 requires the VDE, it must
-> be ensured that VDE is enabled (which is the case after a cold reboot).
-> For the "normal reboot", this is basically the case since 8f0c714ad9be.
-> However, this workaround is not executed in case of an emergency restart.
-> In case of an emergency restart, the system now simply hangs in the
-> bootloader, as VDE is not enabled (because it is not used).
-> 
-> The TPS658629-Q1 provides a SOFT RST bit in the SUPPLYENE reg to request
-> a (cold) reboot, which takes at least 20ms (as the data sheet states).
-> This avoids the hang-up.
-> 
-> Tested on a TPS658640.
-> 
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> ---
->  drivers/mfd/tps6586x.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+Tested-by: Steven Price <steven.price@arm.com>
 
-I plan to apply the whole set once you have all required Acks.
+Works fine on my Firefly-RK3288.
 
-For my own reference (apply this as-is to your sign-off block):
+Thanks,
 
-Acked-for-MFD-by: Lee Jones <lee@kernel.org>
+Steve
 
--- 
-Lee Jones [李琼斯]
