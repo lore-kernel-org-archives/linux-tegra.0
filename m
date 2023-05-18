@@ -2,42 +2,42 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B3DFC77B7A
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 May 2023 11:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41468C77B7A
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 May 2023 11:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231220AbjERLee (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 May 2023 07:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58826 "EHLO
+        id S231560AbjERLlI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 May 2023 07:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbjERLea (ORCPT
+        with ESMTP id S231480AbjERLkw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 May 2023 07:34:30 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C53DD19B2;
-        Thu, 18 May 2023 04:34:28 -0700 (PDT)
+        Thu, 18 May 2023 07:40:52 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 511631BC7;
+        Thu, 18 May 2023 04:40:30 -0700 (PDT)
 Received: from [192.168.2.250] (109-252-144-198.dynamic.spd-mgts.ru [109.252.144.198])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C504E6605961;
-        Thu, 18 May 2023 12:34:26 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 788F66605961;
+        Thu, 18 May 2023 12:40:21 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1684409667;
-        bh=QGfLG06H7/U3BYZ2IKDliNOlA1/w+8cf8eGRzQrKSkc=;
+        s=mail; t=1684410022;
+        bh=9s7JuhCsRWy8UUnc5Jev3wSLlYiHVqEY4WpnFD5bDyI=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ReEuLbo+ZoRiGPuEqfc355zLJYQLW/j0zJtoZKXX7WJ8tEgE6K/H/+pn7T+EJ6lFi
-         OI3oE0y4fE8XV9Zk8Cv47W/8A381cLjR2o58XCwkcGX3dB6meWTOuu3+dJXwmxB0lP
-         GZsnHQzJoKqlSHV8hiY2NYPvOALtrMsEPr5ZmnvTloTJyoYTusbbOfC7kLfOCyJQK/
-         zYZZClz9sffjwFVUIXgYiyO5zOAGTfcMSuz7pPhkZogrzPRA26o9hph3b3vHxK+IwW
-         CAiLOyQLCp3qRgHQM8pupTbCFkGEWmpoOFFuHOd+9czl220YX9QnjTwMJXfdnNMVeO
-         bzVptJnCr7dGA==
-Message-ID: <a0581bf1-8420-858f-6d9d-91c4824739a2@collabora.com>
-Date:   Thu, 18 May 2023 14:34:24 +0300
+        b=PzbmXSqD99QEEEgn8VlUSEUvOVGEBqtc3C+B1rXOUfCUk5S/lX3oHiiTYp0TSWtKy
+         dnBFhSsPui1XCmeJzJLl8xTGp3KAO7WNXGy1hB0mn1IrLZ7BN7P/CfheU5fjAkIUCS
+         V9qzDN8zcXoBbGS/iFKpO8V/+qsPDJAyrLkPSdfep+fVEQ6CAIhxs4UFW+8v/LLOe/
+         juz3HPNC7WcwjS2bat/JCmQsDT4++HvET81SKibvZDYXgFUq0YCtOiY1oTmEoXq8b4
+         MuOWhqxViddppo7hwvsmNndNqfBGzsqYFXxBGqZoN1YTqNJNJboOhy4RoX+wgofVL0
+         jRKt8paKPoK7g==
+Message-ID: <18254e89-4fc4-a265-3af6-7efc60a58b68@collabora.com>
+Date:   Thu, 18 May 2023 14:40:19 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH v6 2/5] i2c: core: run atomic i2c xfer when !preemptible
+Subject: Re: [PATCH v6 4/5] mfd: tps6586x: use devm-based power off handler
 Content-Language: en-US
 To:     Benjamin Bara <bbara93@gmail.com>, Wolfram Sang <wsa@kernel.org>,
         Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com
@@ -45,12 +45,11 @@ Cc:     peterz@infradead.org, jonathanh@nvidia.com,
         richard.leitner@linux.dev, treding@nvidia.com,
         linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>,
-        stable@vger.kernel.org
+        Benjamin Bara <benjamin.bara@skidata.com>
 References: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
- <20230327-tegra-pmic-reboot-v6-2-af44a4cd82e9@skidata.com>
+ <20230327-tegra-pmic-reboot-v6-4-af44a4cd82e9@skidata.com>
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20230327-tegra-pmic-reboot-v6-2-af44a4cd82e9@skidata.com>
+In-Reply-To: <20230327-tegra-pmic-reboot-v6-4-af44a4cd82e9@skidata.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -60,48 +59,69 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 On 5/9/23 22:03, Benjamin Bara wrote:
 > From: Benjamin Bara <benjamin.bara@skidata.com>
 > 
-> Since bae1d3a05a8b, i2c transfers are non-atomic if preemption is
-> disabled. However, non-atomic i2c transfers require preemption (e.g. in
-> wait_for_completion() while waiting for the DMA).
+> Convert the power off handler to a devm-based power off handler.
 > 
-> panic() calls preempt_disable_notrace() before calling
-> emergency_restart(). Therefore, if an i2c device is used for the
-> restart, the xfer should be atomic. This avoids warnings like:
-> 
-> [   12.667612] WARNING: CPU: 1 PID: 1 at kernel/rcu/tree_plugin.h:318 rcu_note_context_switch+0x33c/0x6b0
-> [   12.676926] Voluntary context switch within RCU read-side critical section!
-> ...
-> [   12.742376]  schedule_timeout from wait_for_completion_timeout+0x90/0x114
-> [   12.749179]  wait_for_completion_timeout from tegra_i2c_wait_completion+0x40/0x70
-> ...
-> [   12.994527]  atomic_notifier_call_chain from machine_restart+0x34/0x58
-> [   13.001050]  machine_restart from panic+0x2a8/0x32c
-> 
-> Use !preemptible() instead, which is basically the same check as
-> pre-v5.2.
-> 
-> Fixes: bae1d3a05a8b ("i2c: core: remove use of in_atomic()")
-> Cc: stable@vger.kernel.org # v5.2+
-> Suggested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> Acked-by: Wolfram Sang <wsa@kernel.org>
 > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
 > ---
->  drivers/i2c/i2c-core.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/mfd/tps6586x.c | 29 +++++++++++++++++++++--------
+>  1 file changed, 21 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
-> index 1247e6e6e975..05b8b8dfa9bd 100644
-> --- a/drivers/i2c/i2c-core.h
-> +++ b/drivers/i2c/i2c-core.h
-> @@ -29,7 +29,7 @@ int i2c_dev_irq_from_resources(const struct resource *resources,
->   */
->  static inline bool i2c_in_atomic_xfer_mode(void)
+> diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+> index 2d947f3f606a..b12c9e18970a 100644
+> --- a/drivers/mfd/tps6586x.c
+> +++ b/drivers/mfd/tps6586x.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/of.h>
+>  
+> @@ -457,13 +458,21 @@ static const struct regmap_config tps6586x_regmap_config = {
+>  	.cache_type = REGCACHE_RBTREE,
+>  };
+>  
+> -static struct device *tps6586x_dev;
+> -static void tps6586x_power_off(void)
+> +static int tps6586x_power_off_handler(struct sys_off_data *data)
 >  {
-> -	return system_state > SYSTEM_RUNNING && irqs_disabled();
-> +	return system_state > SYSTEM_RUNNING && !preemptible();
+> -	if (tps6586x_clr_bits(tps6586x_dev, TPS6586X_SUPPLYENE, EXITSLREQ_BIT))
+> -		return;
+> +	int ret;
+> +
+> +	/* Put the PMIC into sleep state. This takes at least 20ms. */
+> +	ret = tps6586x_clr_bits(data->dev, TPS6586X_SUPPLYENE, EXITSLREQ_BIT);
+> +	if (ret)
+> +		return notifier_from_errno(ret);
+> +
+> +	ret = tps6586x_set_bits(data->dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
+> +	if (ret)
+> +		return notifier_from_errno(ret);
+>  
+> -	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
+> +	mdelay(50);
+> +	return notifier_from_errno(-ETIME);
 >  }
 >  
->  static inline int __i2c_lock_bus_helper(struct i2c_adapter *adap)
+>  static void tps6586x_print_version(struct i2c_client *client, int version)
+> @@ -559,9 +568,13 @@ static int tps6586x_i2c_probe(struct i2c_client *client)
+>  		goto err_add_devs;
+>  	}
+>  
+> -	if (pdata->pm_off && !pm_power_off) {
+> -		tps6586x_dev = &client->dev;
+> -		pm_power_off = tps6586x_power_off;
+> +	if (pdata->pm_off) {
+> +		ret = devm_register_power_off_handler(&client->dev, &tps6586x_power_off_handler,
+> +						      NULL);
+> +		if (ret) {
+> +			dev_err(&client->dev, "register power off handler failed: %d\n", ret);
+> +			goto err_add_devs;
+> +		}
+>  	}
+>  
+>  	return 0;
 > 
 
 Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
