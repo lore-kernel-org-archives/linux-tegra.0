@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C59ECC7EE2A
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 May 2023 12:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E551DC7EE3A
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 May 2023 12:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233089AbjEVMZk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 22 May 2023 08:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56442 "EHLO
+        id S233751AbjEVMZm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 May 2023 08:25:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233694AbjEVMYo (ORCPT
+        with ESMTP id S232958AbjEVMYg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 22 May 2023 08:24:44 -0400
+        Mon, 22 May 2023 08:24:36 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1D635AF;
-        Mon, 22 May 2023 05:22:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 818DC35A2;
+        Mon, 22 May 2023 05:22:35 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7B6FE1FECD;
-        Mon, 22 May 2023 12:21:44 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B1B941FEC7;
+        Mon, 22 May 2023 12:21:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1684758104; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1684758102; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uiYTGLoGZBNir0OiYcExL2dl4KpON0koS7GTXu2ItZk=;
-        b=W+CjfatBINoDRSTUoiaknEaCb3dxbit6y39VCc0SS9ZVPbvP4j3PHfaTH+MD7omEI+vVVU
-        cX4+EyFDWiHKEElvRKyygDPLIBheM5ABkbP2NMki/ZjpIVGsMb8BcBiElcDfpZ/JbTQ1Jd
-        /+tZVKz4Jrr/yn2LeF51ZWMr6Lw3z8E=
+        bh=qGkac1HdIqU+i7Ud7/VAKd6AT3U03hUVehX00SukCog=;
+        b=szOxlukLwfPN5kJNdFizohO0Uk+ly3TNcBuU5MIL10jtUy+rzJ/Zfd8Gww5IitBnyv5Yvr
+        WDmusg2Onf7Dsq7muk1Quo8sX+nUtr4/KF9cyD0Bnu1uvKjZk1x6CpurWK2WEwwLb3sUCN
+        fqYEN1SwsJmxc26D/GUdHcA465oMEiU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1684758104;
+        s=susede2_ed25519; t=1684758102;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uiYTGLoGZBNir0OiYcExL2dl4KpON0koS7GTXu2ItZk=;
-        b=Xh0lEFl/3kiFKR4xsKnIEgslEleMZBb5rjwMD82Ylx6x4fmuIDQK2czVyr/9yzkZlhI1m+
-        voDgMq/s+RxC/SBA==
+        bh=qGkac1HdIqU+i7Ud7/VAKd6AT3U03hUVehX00SukCog=;
+        b=3Typvbf7HhJ22U2I1CW6ViCyCtDMPT94PIwMzrisfnPDDkCnbbKP0iG5R08GXHEstgV3lZ
+        59e50ALkWu4i0zAw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2E0CB13776;
-        Mon, 22 May 2023 12:21:44 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5F403139F5;
+        Mon, 22 May 2023 12:21:42 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id eOZBClhea2RYVAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 22 May 2023 12:21:44 +0000
+        id mEhKFlZea2RYVAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 22 May 2023 12:21:42 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
@@ -59,9 +59,9 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 06/12] drm/fbdev-dma: Use regular fbdev I/O helpers
-Date:   Mon, 22 May 2023 14:21:34 +0200
-Message-Id: <20230522122140.30131-7-tzimmermann@suse.de>
+Subject: [PATCH v3 01/12] fbdev: Add Kconfig options to select different fb_ops helpers
+Date:   Mon, 22 May 2023 14:21:29 +0200
+Message-Id: <20230522122140.30131-2-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230522122140.30131-1-tzimmermann@suse.de>
 References: <20230522122140.30131-1-tzimmermann@suse.de>
@@ -71,64 +71,51 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-helpers. Fbdev-dma does not use damage handling, so DRM's fbdev helpers
-are mere wrappers around the fbdev code.
+Many fbdev drivers use the same set of fb_ops helpers. Add Kconfig
+options to select them at once. This will help with making DRM's
+fbdev emulation code more modular, but can also be used to simplify
+fbdev's driver configs.
 
-By using fbdev helpers directly within each DRM fbdev emulation,
-we can eventually remove DRM's wrapper functions entirely.
-
-v2:
-	* use FB_SYS_HELPERS option
+v3:
+	* fix select statement (Jingfeng)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/Kconfig         |  1 +
- drivers/gpu/drm/drm_fbdev_dma.c | 12 +++++++-----
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/Kconfig | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index ba3fb04bb691..77fb10ddd8a2 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -223,6 +223,7 @@ config DRM_TTM_HELPER
- config DRM_GEM_DMA_HELPER
- 	tristate
- 	depends on DRM
-+	select FB_SYS_HELPERS if DRM_FBDEV_EMULATION
- 	help
- 	  Choose this if you need the GEM DMA helper functions
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 485e8c35d5c6..6e4b6ad9d8e6 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -158,6 +158,27 @@ config FB_DEFERRED_IO
+ 	bool
+ 	depends on FB
  
-diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
-index 728deffcc0d9..09a36dc38c43 100644
---- a/drivers/gpu/drm/drm_fbdev_dma.c
-+++ b/drivers/gpu/drm/drm_fbdev_dma.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: MIT
- 
-+#include <linux/fb.h>
++config FB_IO_HELPERS
++	bool
++	depends on FB
++	select FB_CFB_COPYAREA
++	select FB_CFB_FILLRECT
++	select FB_CFB_IMAGEBLIT
 +
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_helper.h>
-@@ -64,12 +66,12 @@ static const struct fb_ops drm_fbdev_dma_fb_ops = {
- 	.owner = THIS_MODULE,
- 	.fb_open = drm_fbdev_dma_fb_open,
- 	.fb_release = drm_fbdev_dma_fb_release,
--	.fb_read = drm_fb_helper_sys_read,
--	.fb_write = drm_fb_helper_sys_write,
-+	.fb_read = fb_sys_read,
-+	.fb_write = fb_sys_write,
- 	DRM_FB_HELPER_DEFAULT_OPS,
--	.fb_fillrect = drm_fb_helper_sys_fillrect,
--	.fb_copyarea = drm_fb_helper_sys_copyarea,
--	.fb_imageblit = drm_fb_helper_sys_imageblit,
-+	.fb_fillrect = sys_fillrect,
-+	.fb_copyarea = sys_copyarea,
-+	.fb_imageblit = sys_imageblit,
- 	.fb_destroy = drm_fbdev_dma_fb_destroy,
- 	.fb_mmap = drm_fbdev_dma_fb_mmap,
- };
++config FB_SYS_HELPERS
++	bool
++	depends on FB
++	select FB_SYS_COPYAREA
++	select FB_SYS_FILLRECT
++	select FB_SYS_FOPS
++	select FB_SYS_IMAGEBLIT
++
++config FB_SYS_HELPERS_DEFERRED
++	bool
++	depends on FB
++	select FB_DEFERRED_IO
++	select FB_SYS_HELPERS
++
+ config FB_HECUBA
+ 	tristate
+ 	depends on FB
 -- 
 2.40.1
 
