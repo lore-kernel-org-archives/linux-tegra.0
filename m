@@ -2,126 +2,366 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8478C7EE26
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 May 2023 13:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FCCC77B75
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 May 2023 13:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229987AbjEVNCk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 22 May 2023 09:02:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
+        id S230060AbjEVNVI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 May 2023 09:21:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233510AbjEVNCj (ORCPT
+        with ESMTP id S230089AbjEVNVH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 22 May 2023 09:02:39 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7323BC4;
-        Mon, 22 May 2023 06:02:32 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-ba81031424dso9135297276.2;
-        Mon, 22 May 2023 06:02:32 -0700 (PDT)
+        Mon, 22 May 2023 09:21:07 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43BEEAB
+        for <linux-tegra@vger.kernel.org>; Mon, 22 May 2023 06:21:06 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-561d5a16be0so79076167b3.2
+        for <linux-tegra@vger.kernel.org>; Mon, 22 May 2023 06:21:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684760551; x=1687352551;
+        d=linaro.org; s=google; t=1684761665; x=1687353665;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oz4bQfIt7cNLLI3/bZ4OW8kbHhUS+fQ0VE6AH/7bMg4=;
-        b=lYD92GRkYdjfbP3e8fwuaSxDduqy48npOK4Yg9ZaOEmHqS/JPtCrce+EnaTh9VmSna
-         RHT7GBkDPyiY/W1+jvLGjxkh51jn+zxmI9OqgHEoEtA6ZjAC30eCAWTw4zIpfk4rWBWy
-         A1qvHTQQwDt/NDBe21ApIde4nz/UtIN9QIixfms/Elp7oFDo+K/CLz+WFH9CtzPzcwlv
-         rzv+9GIwfuw+VDp4MMJbBA5/iN9yQMMF+KMxRFF3Ge3uNa1QastQ+/BM0jUqgxWGYyfz
-         cZTsz43RMk9g0VkTvoP1GJLBnZ9NmdVPAanL5bVUqBvc4fFhRPHb/wZFuV7qE7SuuDXI
-         bn1Q==
+        bh=te6QRcnpJlK5rz5MOROStak0xNaxvC/mgPjGBRZqrEw=;
+        b=yPR/vxi80ktVB9nBZ+gxEpqHthrrZrC1UyAfFROVYDLlGEj7ovedj6oNNIw+3f0MOf
+         z3zwG4IfOmSW6CRb2rra4QVS4Dhm2TqZRzp6HgRvvaaeKpSFf8N2Yd8ug0rjRC/BfsZs
+         0Gy3NEXsjoyB/EBGjX8QeHuYSJMq4akDiFD4zlp+27o8pOzHrwbnPA5E6zbc0RqXI60W
+         8SR4GG+hcdg1KyP/eOj+sSxGVrhDgL9HGieztXbL3dPEKD3uqSer40aIu2n05D326mxT
+         CiGzVH+sbPyN3jyR/zDyITYP5MRVcFqh9OzwxbizNsZYSfyV5JmeXs4Tn4jVCoTyqK6V
+         PzsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684760551; x=1687352551;
+        d=1e100.net; s=20221208; t=1684761665; x=1687353665;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Oz4bQfIt7cNLLI3/bZ4OW8kbHhUS+fQ0VE6AH/7bMg4=;
-        b=QkRWEiO2IIHJOOAEdRBBTBU2e41QUYk0OxJzA+NzLWIPJw3uTLdrdk4g30ukdes91O
-         5pgGw8VtSBSebJIC/dTjW09/xQAjrSLdo0xqdfAP/ocpNUCQs6NE8hvIFobqmnArt0fi
-         dL0/sd9ldyRxHDOayTJXEtNPq1GYvwVYS7ztGPp4vUvYhX/N8NQRgoLutT+PCzCxpqOu
-         OFPFFZvwWnScaohxWijZlmgK5kZcHTHg6Hvj1Vwi2kUfZJHraKeVTskJZVAD4a/j3UI9
-         88nYLWN4Kdudvx/Z5wLomJoR23CoF79DTvqziT2tMwdF5OAygz593Tit696N8zjNNEl1
-         rU5w==
-X-Gm-Message-State: AC+VfDwUUfhOfUoWjeS+HCft6a5OxjOoAGNEVZD/4x1kypr6fSeR8LdB
-        GpNKRnHnXaayzOyH9ENBWnvot9vRYzoq4R7wZj0=
-X-Google-Smtp-Source: ACHHUZ6H/V3aromhsm0WeKkw3qoE/viYGpCdWeB7qDuWQFt6qRv5I58EjllHW4obHGmBc+ZmdwVtPh7vvXJ6Cb4sGGM=
-X-Received: by 2002:a25:cdc5:0:b0:ba6:a445:3317 with SMTP id
- d188-20020a25cdc5000000b00ba6a4453317mr9276789ybf.39.1684760551555; Mon, 22
- May 2023 06:02:31 -0700 (PDT)
+        bh=te6QRcnpJlK5rz5MOROStak0xNaxvC/mgPjGBRZqrEw=;
+        b=W7VBuPgcej5OsIX2gmXWdByPII2+mfvOoU5DS7IhmezuqPFH8NVLoIxM/oixIFg8ed
+         kdO1YQWQIU9LCqi0+8b2SA19eY3VAjvWrbC4i4Z1oh0zjmeRKHLmdzuVopPyFj1yHqBg
+         9RGmgzN2KWLMB9ug4J49pZXX/UcFXLoBvJQL+XHWirwlbxizwE4b8aZFycDRfMkqLV3u
+         J+es9psK+vJ2vrHxDlxcUXFx/yCcEoBRMutvFwp1bX4cJRjFguA8XfZBnghNvP3mzVnb
+         1z+RHZKrKnIE+1yjCdsn4ikFYa66wAfCWrJXI44QlgtKS+xTMHF6ClHVyytGi92vq6AT
+         7PYQ==
+X-Gm-Message-State: AC+VfDzDUIa+vcaiH1Oj935oXCCIUBVrkra7giLMjbkLk9GcLrGCIa7G
+        RmW08Ttl37rQcYMPU05oI3XG+RMR++6GhnW2k4tCMQ==
+X-Google-Smtp-Source: ACHHUZ4V34k1+A48kW0LeNO8AJ5hzoROAawtKyJZuPIJnbOsbTP9EI8ZTFZxqxCOc9Oyb+Q5NVr2AGZu2kbPcQ886F8=
+X-Received: by 2002:a81:7b87:0:b0:559:f861:9e0b with SMTP id
+ w129-20020a817b87000000b00559f8619e0bmr12608824ywc.5.1684761664777; Mon, 22
+ May 2023 06:21:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230521205112.150206-1-dmitry.osipenko@collabora.com> <20230521205112.150206-7-dmitry.osipenko@collabora.com>
-In-Reply-To: <20230521205112.150206-7-dmitry.osipenko@collabora.com>
-From:   Emil Velikov <emil.l.velikov@gmail.com>
-Date:   Mon, 22 May 2023 14:02:19 +0100
-Message-ID: <CACvgo52QvmZw5k_9dmBHPB25rTdLZJzVG_vNFr8or+3f5sVO=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] drm/shmem-helper: Switch to reservation lock
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Liam Mark <lmark@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, kernel@collabora.com
+References: <20230522122140.30131-1-tzimmermann@suse.de> <20230522122140.30131-12-tzimmermann@suse.de>
+In-Reply-To: <20230522122140.30131-12-tzimmermann@suse.de>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Mon, 22 May 2023 16:20:53 +0300
+Message-ID: <CAA8EJpp4Q0P7JSK=1igsQ4gbLjbW2X670CKQrZSm_epzqusYug@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH v3 11/12] drm/fbdev-generic: Implement
+ dedicated fbdev I/O helpers
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     daniel@ffwll.ch, airlied@gmail.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        javierm@redhat.com, sam@ravnborg.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+On Mon, 22 May 2023 at 15:22, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>
+> Implement dedicated fbdev helpers for framebuffer I/O instead
+> of using DRM's helpers. Fbdev-generic was the only caller of the
+> DRM helpers, so remove them from the helper module.
+>
+> v2:
+>         * use FB_SYS_HELPERS_DEFERRED option
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/Kconfig             |   6 +-
+>  drivers/gpu/drm/drm_fb_helper.c     | 107 ----------------------------
+>  drivers/gpu/drm/drm_fbdev_generic.c |  47 ++++++++++--
+>  include/drm/drm_fb_helper.h         |  41 -----------
+>  4 files changed, 43 insertions(+), 158 deletions(-)
 
-Saw v3 fly by, so I had a quick look. Original RB still stands,
-although I noticed a couple of non-blocking nitpicks.
+Looking at this patch makes me wonder if we should have implemented
+fb_dirty for the MSM driver. We have drm_framebuffer_funcs::dirty()
+implemented (by wrapping the drm_atomic_helper_dirtyfb()).
 
-On Sun, 21 May 2023 at 22:00, Dmitry Osipenko
-<dmitry.osipenko@collabora.com> wrote:
-
-> -static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
-> +static int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
->  {
-
-Should this getter have a dma_resv_assert_held(shmem->base.resv); like
-it's put brethren?
-
-
-> -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
-> +static int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+>
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index 77fb10ddd8a2..92a782827b7b 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -95,6 +95,7 @@ config DRM_KUNIT_TEST
+>  config DRM_KMS_HELPER
+>         tristate
+>         depends on DRM
+> +       select FB_SYS_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
+>         help
+>           CRTC helpers for KMS drivers.
+>
+> @@ -135,11 +136,6 @@ config DRM_FBDEV_EMULATION
+>         select FB_CFB_FILLRECT
+>         select FB_CFB_COPYAREA
+>         select FB_CFB_IMAGEBLIT
+> -       select FB_DEFERRED_IO
+> -       select FB_SYS_FOPS
+> -       select FB_SYS_FILLRECT
+> -       select FB_SYS_COPYAREA
+> -       select FB_SYS_IMAGEBLIT
+>         select FRAMEBUFFER_CONSOLE if !EXPERT
+>         select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
+>         default y
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 8724e08c518b..ba0a808f14ee 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -729,113 +729,6 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
+>  }
+>  EXPORT_SYMBOL(drm_fb_helper_deferred_io);
+>
+> -/**
+> - * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
+> - * @info: fb_info struct pointer
+> - * @buf: userspace buffer to read from framebuffer memory
+> - * @count: number of bytes to read from framebuffer memory
+> - * @ppos: read offset within framebuffer memory
+> - *
+> - * Returns:
+> - * The number of bytes read on success, or an error code otherwise.
+> - */
+> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+> -                              size_t count, loff_t *ppos)
+> -{
+> -       return fb_sys_read(info, buf, count, ppos);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_read);
+> -
+> -/**
+> - * drm_fb_helper_sys_write - Implements struct &fb_ops.fb_write for system memory
+> - * @info: fb_info struct pointer
+> - * @buf: userspace buffer to write to framebuffer memory
+> - * @count: number of bytes to write to framebuffer memory
+> - * @ppos: write offset within framebuffer memory
+> - *
+> - * Returns:
+> - * The number of bytes written on success, or an error code otherwise.
+> - */
+> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+> -                               size_t count, loff_t *ppos)
+> -{
+> -       struct drm_fb_helper *helper = info->par;
+> -       loff_t pos = *ppos;
+> -       ssize_t ret;
+> -       struct drm_rect damage_area;
+> -
+> -       ret = fb_sys_write(info, buf, count, ppos);
+> -       if (ret <= 0)
+> -               return ret;
+> -
+> -       if (helper->funcs->fb_dirty) {
+> -               drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
+> -               drm_fb_helper_damage(helper, damage_area.x1, damage_area.y1,
+> -                                    drm_rect_width(&damage_area),
+> -                                    drm_rect_height(&damage_area));
+> -       }
+> -
+> -       return ret;
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_write);
+> -
+> -/**
+> - * drm_fb_helper_sys_fillrect - wrapper around sys_fillrect
+> - * @info: fbdev registered by the helper
+> - * @rect: info about rectangle to fill
+> - *
+> - * A wrapper around sys_fillrect implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -                               const struct fb_fillrect *rect)
+> -{
+> -       struct drm_fb_helper *helper = info->par;
+> -
+> -       sys_fillrect(info, rect);
+> -
+> -       if (helper->funcs->fb_dirty)
+> -               drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_fillrect);
+> -
+> -/**
+> - * drm_fb_helper_sys_copyarea - wrapper around sys_copyarea
+> - * @info: fbdev registered by the helper
+> - * @area: info about area to copy
+> - *
+> - * A wrapper around sys_copyarea implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -                               const struct fb_copyarea *area)
+> -{
+> -       struct drm_fb_helper *helper = info->par;
+> -
+> -       sys_copyarea(info, area);
+> -
+> -       if (helper->funcs->fb_dirty)
+> -               drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_copyarea);
+> -
+> -/**
+> - * drm_fb_helper_sys_imageblit - wrapper around sys_imageblit
+> - * @info: fbdev registered by the helper
+> - * @image: info about image to blit
+> - *
+> - * A wrapper around sys_imageblit implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -                                const struct fb_image *image)
+> -{
+> -       struct drm_fb_helper *helper = info->par;
+> -
+> -       sys_imageblit(info, image);
+> -
+> -       if (helper->funcs->fb_dirty)
+> -               drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_imageblit);
+> -
+>  /**
+>   * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
+>   * @info: fb_info struct pointer
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 8e5148bf40bb..f53fc49e34a4 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -34,6 +34,43 @@ static int drm_fbdev_generic_fb_release(struct fb_info *info, int user)
+>         return 0;
+>  }
+>
+> +static ssize_t drm_fbdev_generic_fb_write(struct fb_info *info, const char __user *buf,
+> +                                         size_t count, loff_t *ppos)
 > +{
-> +       int ret;
+> +       struct drm_fb_helper *helper = info->par;
+> +       loff_t pos = *ppos;
+> +       ssize_t ret;
 > +
-> +       dma_resv_assert_held(shmem->base.resv);
-> +
-> +       ret = drm_gem_shmem_get_pages(shmem);
-> +
+> +       ret = fb_sys_write(info, buf, count, ppos);
+> +       if (ret > 0)
+> +               drm_fb_helper_damage_range(helper, pos, ret);
 > +       return ret;
-
-With the assert_held in the getter, it would be less confusing to
-inline this and the unpin_locked functions.
-
 > +}
 > +
-> +static void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem)
->  {
-> -       mutex_lock(&shmem->pages_lock);
-> -       drm_gem_shmem_put_pages_locked(shmem);
-> -       mutex_unlock(&shmem->pages_lock);
-> +       dma_resv_assert_held(shmem->base.resv);
+> +static void drm_fbdev_generic_fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
+> +{
+> +       struct drm_fb_helper *helper = info->par;
 > +
-> +       drm_gem_shmem_put_pages(shmem);
+> +       sys_fillrect(info, rect);
+> +       drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
+> +}
+> +
+> +static void drm_fbdev_generic_fb_copyarea(struct fb_info *info, const struct fb_copyarea *area)
+> +{
+> +       struct drm_fb_helper *helper = info->par;
+> +
+> +       sys_copyarea(info, area);
+> +       drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
+> +}
+> +
+> +static void drm_fbdev_generic_fb_imageblit(struct fb_info *info, const struct fb_image *image)
+> +{
+> +       struct drm_fb_helper *helper = info->par;
+> +
+> +       sys_imageblit(info, image);
+> +       drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
+> +}
+> +
+>  static void drm_fbdev_generic_fb_destroy(struct fb_info *info)
+>  {
+>         struct drm_fb_helper *fb_helper = info->par;
+> @@ -56,12 +93,12 @@ static const struct fb_ops drm_fbdev_generic_fb_ops = {
+>         .owner          = THIS_MODULE,
+>         .fb_open        = drm_fbdev_generic_fb_open,
+>         .fb_release     = drm_fbdev_generic_fb_release,
+> -       .fb_read        = drm_fb_helper_sys_read,
+> -       .fb_write       = drm_fb_helper_sys_write,
+> +       .fb_read        = fb_sys_read,
+> +       .fb_write       = drm_fbdev_generic_fb_write,
+>         DRM_FB_HELPER_DEFAULT_OPS,
+> -       .fb_fillrect    = drm_fb_helper_sys_fillrect,
+> -       .fb_copyarea    = drm_fb_helper_sys_copyarea,
+> -       .fb_imageblit   = drm_fb_helper_sys_imageblit,
+> +       .fb_fillrect    = drm_fbdev_generic_fb_fillrect,
+> +       .fb_copyarea    = drm_fbdev_generic_fb_copyarea,
+> +       .fb_imageblit   = drm_fbdev_generic_fb_imageblit,
+>         .fb_mmap        = fb_deferred_io_mmap,
+>         .fb_destroy     = drm_fbdev_generic_fb_destroy,
+>  };
+> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+> index 80c402f4e379..e3240d749a43 100644
+> --- a/include/drm/drm_fb_helper.h
+> +++ b/include/drm/drm_fb_helper.h
+> @@ -259,18 +259,6 @@ void drm_fb_helper_damage_range(struct drm_fb_helper *helper, off_t off, size_t
+>
+>  void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
+>
+> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+> -                              size_t count, loff_t *ppos);
+> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+> -                               size_t count, loff_t *ppos);
+> -
+> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -                               const struct fb_fillrect *rect);
+> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -                               const struct fb_copyarea *area);
+> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -                                const struct fb_image *image);
+> -
+>  ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+>                                size_t count, loff_t *ppos);
+>  ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
+> @@ -398,35 +386,6 @@ static inline int drm_fb_helper_defio_init(struct drm_fb_helper *fb_helper)
+>         return -ENODEV;
+>  }
+>
+> -static inline ssize_t drm_fb_helper_sys_read(struct fb_info *info,
+> -                                            char __user *buf, size_t count,
+> -                                            loff_t *ppos)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline ssize_t drm_fb_helper_sys_write(struct fb_info *info,
+> -                                             const char __user *buf,
+> -                                             size_t count, loff_t *ppos)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -                                             const struct fb_fillrect *rect)
+> -{
+> -}
+> -
+> -static inline void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -                                             const struct fb_copyarea *area)
+> -{
+> -}
+> -
+> -static inline void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -                                              const struct fb_image *image)
+> -{
+> -}
+> -
+>  static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+>                                              size_t count, loff_t *ppos)
+>  {
+> --
+> 2.40.1
+>
 
-Side note: the putter has an assert_held so the extra one here seems quite odd.
 
-As said at the top - with or w/o these nitpicks, the original RB still stands.
-
-HTH o/
--Emil
+-- 
+With best wishes
+Dmitry
