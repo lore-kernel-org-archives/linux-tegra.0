@@ -2,143 +2,126 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F08C77B73
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 May 2023 12:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8478C7EE26
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 May 2023 13:02:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233916AbjEVMa2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 22 May 2023 08:30:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33988 "EHLO
+        id S229987AbjEVNCk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 May 2023 09:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234225AbjEVM35 (ORCPT
+        with ESMTP id S233510AbjEVNCj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 22 May 2023 08:29:57 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026C69E;
-        Mon, 22 May 2023 05:26:45 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 678801FECB;
-        Mon, 22 May 2023 12:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1684758103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G+jXxIm+6SQl8pNqKPP9fG1+JNcilSXWmHwdZQ4eT8I=;
-        b=XMXG4MLpsJOEB7/vdi3cNN+GyzFadIVCTQ60jmRzhE29xKEckTp80sPyY9IXDewzmNi8pj
-        lF72Ji8+FxZrz+5r4goTPm3NSvGygbZYHoS5axEzncq1Ncwvqtz9PIXOIvGOR6QswomA4S
-        K2GYYsbKlHqOZPLg8uv3mDeFQemOTFU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1684758103;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G+jXxIm+6SQl8pNqKPP9fG1+JNcilSXWmHwdZQ4eT8I=;
-        b=StoosslVVWp+/Zndrh+CaxY/Va/rV+istDzNRHI7tDshMuwEePMlBKbpvT7L0C+hsI1gbs
-        Q2KUx1G5c8OghjDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0A9E8139F5;
-        Mon, 22 May 2023 12:21:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EBK5AVdea2RYVAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Mon, 22 May 2023 12:21:43 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     daniel@ffwll.ch, airlied@gmail.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com, sam@ravnborg.org
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v3 03/12] drm/exynos: Use regular fbdev I/O helpers
-Date:   Mon, 22 May 2023 14:21:31 +0200
-Message-Id: <20230522122140.30131-4-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230522122140.30131-1-tzimmermann@suse.de>
-References: <20230522122140.30131-1-tzimmermann@suse.de>
+        Mon, 22 May 2023 09:02:39 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7323BC4;
+        Mon, 22 May 2023 06:02:32 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-ba81031424dso9135297276.2;
+        Mon, 22 May 2023 06:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684760551; x=1687352551;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oz4bQfIt7cNLLI3/bZ4OW8kbHhUS+fQ0VE6AH/7bMg4=;
+        b=lYD92GRkYdjfbP3e8fwuaSxDduqy48npOK4Yg9ZaOEmHqS/JPtCrce+EnaTh9VmSna
+         RHT7GBkDPyiY/W1+jvLGjxkh51jn+zxmI9OqgHEoEtA6ZjAC30eCAWTw4zIpfk4rWBWy
+         A1qvHTQQwDt/NDBe21ApIde4nz/UtIN9QIixfms/Elp7oFDo+K/CLz+WFH9CtzPzcwlv
+         rzv+9GIwfuw+VDp4MMJbBA5/iN9yQMMF+KMxRFF3Ge3uNa1QastQ+/BM0jUqgxWGYyfz
+         cZTsz43RMk9g0VkTvoP1GJLBnZ9NmdVPAanL5bVUqBvc4fFhRPHb/wZFuV7qE7SuuDXI
+         bn1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684760551; x=1687352551;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Oz4bQfIt7cNLLI3/bZ4OW8kbHhUS+fQ0VE6AH/7bMg4=;
+        b=QkRWEiO2IIHJOOAEdRBBTBU2e41QUYk0OxJzA+NzLWIPJw3uTLdrdk4g30ukdes91O
+         5pgGw8VtSBSebJIC/dTjW09/xQAjrSLdo0xqdfAP/ocpNUCQs6NE8hvIFobqmnArt0fi
+         dL0/sd9ldyRxHDOayTJXEtNPq1GYvwVYS7ztGPp4vUvYhX/N8NQRgoLutT+PCzCxpqOu
+         OFPFFZvwWnScaohxWijZlmgK5kZcHTHg6Hvj1Vwi2kUfZJHraKeVTskJZVAD4a/j3UI9
+         88nYLWN4Kdudvx/Z5wLomJoR23CoF79DTvqziT2tMwdF5OAygz593Tit696N8zjNNEl1
+         rU5w==
+X-Gm-Message-State: AC+VfDwUUfhOfUoWjeS+HCft6a5OxjOoAGNEVZD/4x1kypr6fSeR8LdB
+        GpNKRnHnXaayzOyH9ENBWnvot9vRYzoq4R7wZj0=
+X-Google-Smtp-Source: ACHHUZ6H/V3aromhsm0WeKkw3qoE/viYGpCdWeB7qDuWQFt6qRv5I58EjllHW4obHGmBc+ZmdwVtPh7vvXJ6Cb4sGGM=
+X-Received: by 2002:a25:cdc5:0:b0:ba6:a445:3317 with SMTP id
+ d188-20020a25cdc5000000b00ba6a4453317mr9276789ybf.39.1684760551555; Mon, 22
+ May 2023 06:02:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230521205112.150206-1-dmitry.osipenko@collabora.com> <20230521205112.150206-7-dmitry.osipenko@collabora.com>
+In-Reply-To: <20230521205112.150206-7-dmitry.osipenko@collabora.com>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Mon, 22 May 2023 14:02:19 +0100
+Message-ID: <CACvgo52QvmZw5k_9dmBHPB25rTdLZJzVG_vNFr8or+3f5sVO=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] drm/shmem-helper: Switch to reservation lock
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-helpers. Exynos does not use damage handling, so DRM's fbdev helpers
-are mere wrappers around the fbdev code.
+Hi Dmitry,
 
-By using fbdev helpers directly within each DRM fbdev emulation,
-we can eventually remove DRM's wrapper functions entirely.
+Saw v3 fly by, so I had a quick look. Original RB still stands,
+although I noticed a couple of non-blocking nitpicks.
 
-v3:
-	* don't reorder Makefile rules (Sam)
-v2:
-	* use FB_IO_HELPERS option
+On Sun, 21 May 2023 at 22:00, Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/gpu/drm/exynos/Kconfig            |  1 +
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 10 +++++-----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+> -static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
+> +static int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
+>  {
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 0cb92d651ff1..7ca7e1dab52c 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -7,6 +7,7 @@ config DRM_EXYNOS
- 	select DRM_DISPLAY_HELPER if DRM_EXYNOS_DP
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
-+	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
- 	select SND_SOC_HDMI_CODEC if SND_SOC
- 	help
- 	  Choose this option if you have a Samsung SoC Exynos chipset.
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index ea4b3d248aac..b3333dd1d087 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -8,6 +8,8 @@
-  *	Seung-Woo Kim <sw0312.kim@samsung.com>
-  */
- 
-+#include <linux/fb.h>
-+
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fb_helper.h>
-@@ -49,11 +51,9 @@ static const struct fb_ops exynos_drm_fb_ops = {
- 	.owner		= THIS_MODULE,
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_mmap        = exynos_drm_fb_mmap,
--	.fb_read	= drm_fb_helper_cfb_read,
--	.fb_write	= drm_fb_helper_cfb_write,
--	.fb_fillrect	= drm_fb_helper_cfb_fillrect,
--	.fb_copyarea	= drm_fb_helper_cfb_copyarea,
--	.fb_imageblit	= drm_fb_helper_cfb_imageblit,
-+	.fb_fillrect	= cfb_fillrect,
-+	.fb_copyarea	= cfb_copyarea,
-+	.fb_imageblit	= cfb_imageblit,
- 	.fb_destroy	= exynos_drm_fb_destroy,
- };
- 
--- 
-2.40.1
+Should this getter have a dma_resv_assert_held(shmem->base.resv); like
+it's put brethren?
 
+
+> -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
+> +static int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+> +{
+> +       int ret;
+> +
+> +       dma_resv_assert_held(shmem->base.resv);
+> +
+> +       ret = drm_gem_shmem_get_pages(shmem);
+> +
+> +       return ret;
+
+With the assert_held in the getter, it would be less confusing to
+inline this and the unpin_locked functions.
+
+> +}
+> +
+> +static void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem)
+>  {
+> -       mutex_lock(&shmem->pages_lock);
+> -       drm_gem_shmem_put_pages_locked(shmem);
+> -       mutex_unlock(&shmem->pages_lock);
+> +       dma_resv_assert_held(shmem->base.resv);
+> +
+> +       drm_gem_shmem_put_pages(shmem);
+
+Side note: the putter has an assert_held so the extra one here seems quite odd.
+
+As said at the top - with or w/o these nitpicks, the original RB still stands.
+
+HTH o/
+-Emil
