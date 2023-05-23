@@ -2,67 +2,64 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1176BC7EE30
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 May 2023 09:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB85AC7EE33
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 May 2023 10:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236280AbjEWJ0s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 May 2023 05:26:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49960 "EHLO
+        id S236429AbjEWK55 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 May 2023 06:57:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235945AbjEWJ0m (ORCPT
+        with ESMTP id S229750AbjEWK5z (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 May 2023 05:26:42 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478AE118;
-        Tue, 23 May 2023 02:26:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id CB4FE2046A;
-        Tue, 23 May 2023 09:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1684833998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VeeF7P+KGwlI3A5FT4CrZ0MRM4bqCgyOhKvZ384U0bw=;
-        b=fmBOz2XQkJ4XHhSdGh/HXGxJtyCnKClPp4X6MRT6VR5eXrTQZK9h5N6Toqfk+0GeD98iT3
-        ZDhHKznDkq0Y5mKvraQucwn+Wh9FeAeuFGHWgkercVl2rETq+mQKxe64zKr8IJWHxFZCKE
-        O8heNaNMsvS9Ka+Y0g3mOKcA0+3rNN0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1684833998;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VeeF7P+KGwlI3A5FT4CrZ0MRM4bqCgyOhKvZ384U0bw=;
-        b=zajPamxtH/5SGH5Qq9H7t7b5zBY3QOo+hV3Vqv/J4endm7d1fvc5Ztsv4d+st0dbhUYOxx
-        LgejBO7uUF0wFbCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4FA5A13588;
-        Tue, 23 May 2023 09:26:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id HfC5Es6GbGTEVAAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Tue, 23 May 2023 09:26:38 +0000
-Message-ID: <c63dc769-e020-5a82-335e-11c992543a3a@suse.cz>
-Date:   Tue, 23 May 2023 11:26:38 +0200
+        Tue, 23 May 2023 06:57:55 -0400
+Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F780121;
+        Tue, 23 May 2023 03:57:53 -0700 (PDT)
+Received: by mail-vk1-xa29.google.com with SMTP id 71dfb90a1353d-4573e1e6cb9so2023482e0c.0;
+        Tue, 23 May 2023 03:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684839472; x=1687431472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MPZGzse+EwoYxx5aP+jOlzsmNfWXOwQHS1xYrgjsec4=;
+        b=dOQwlVtHCe09Vk6RBJyv4UlmNvYYMnzQdN2fEZMcAJCu/TvLE+aT6q3cEIc8MDOmBx
+         HP4ow/lRyQjX5ou5gynKDIgwRGlxnKP17GdXlnjq6uz1ijUiCnacny3Md+zs9HDXlWpd
+         /vJJE9f2AKfUpQCBaZ86Lp475NcG+d8oj3/lzlNgDDkfbpoahI9iEBZqgJGax+ZttcuR
+         gxFYk69/1/g6u8rT0LmqyntNq4QgPOiylA448Fmme9hwmf33rBx4ObygcWDs9zyaVSfI
+         o7vxmAgMbJLQQXRgL/2ax63tRT4pKoFENMaUoAU0k0zcTFUWAtxubuxDUMY5St7Chco4
+         J29w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684839472; x=1687431472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MPZGzse+EwoYxx5aP+jOlzsmNfWXOwQHS1xYrgjsec4=;
+        b=bqnPw/3oG9T1IZXG2OwHJ3MGmqkalH5Fkgz66MZP88uTYBgqP4Ly/YCk7fRZjUlQ3r
+         l4cK4refT2uQnHkhb1/861TGQVzHeFBXFk3pmEpgNF3AuSoc8MoXryHpjY6309huCVl5
+         wfRExDBBNN2nYWMWo0FeBgvPqcM8pQ9/hOXj2m+0A7ldiE5mJW16DHY7r++WRMpCCznD
+         DGuL+bB1nTHnqzPJLAV5rAy0qKY/VWk4jm3alUZy7EC3rLpnEFqCXgEaTcewf6hWVe8c
+         boaP9O/bHXeQNib5+3j8TxBr6Ca7H1kgKY68Rd0+832JwHSBpucoJ42KubJPuDQGz2xP
+         X6oA==
+X-Gm-Message-State: AC+VfDzkNLnNJr0B6dO3+u5qLVrbX1uGYn4zAY7abBaRXelpb2OwCcCI
+        PzRkXbGOBsYin+/gT3GPIO2+cIWOBhjzSZ1qA+U=
+X-Google-Smtp-Source: ACHHUZ5BnP3gkAdc5bGRbbNu8BA4XYUOvijVFedQabDgzPfHyqbd3wbCe7zKvL1rqhCSR6cTKzJAQSc6wb3cCiUjneM=
+X-Received: by 2002:a1f:2cce:0:b0:440:4c82:6508 with SMTP id
+ s197-20020a1f2cce000000b004404c826508mr4142026vks.3.1684839472183; Tue, 23
+ May 2023 03:57:52 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
+References: <20230523091139.21449-1-vbabka@suse.cz>
+In-Reply-To: <20230523091139.21449-1-vbabka@suse.cz>
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date:   Tue, 23 May 2023 19:58:03 +0900
+Message-ID: <CAB=+i9RycsnDbJ1f1jTiJ6fXnGUmH95h23G37Ss6XNAA3VJ3_w@mail.gmail.com>
 Subject: Re: [PATCH] mm/slab: rename CONFIG_SLAB to CONFIG_SLAB_DEPRECATED
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
 Cc:     Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Vladimir Zapolskiy <vz@mleia.com>,
@@ -90,68 +87,79 @@ Cc:     Christoph Lameter <cl@linux.com>,
         linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
         linux-um@lists.infradead.org, linux-mm@kvack.org
-References: <20230523091139.21449-1-vbabka@suse.cz>
- <CAMuHMdWRZmA1iEG2aXdKZ+wWgSTgg-P7KY7pTTJx9EmvuEa58A@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CAMuHMdWRZmA1iEG2aXdKZ+wWgSTgg-P7KY7pTTJx9EmvuEa58A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/23/23 11:22, Geert Uytterhoeven wrote:
-> Hi Vlastimil,
-> 
-> Thanks for your patch!
-> 
-> On Tue, May 23, 2023 at 11:12 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->> As discussed at LSF/MM [1] [2] and with no objections raised there,
->> deprecate the SLAB allocator. Rename the user-visible option so that
->> users with CONFIG_SLAB=y get a new prompt with explanation during make
->> oldconfig, while make olddefconfig will just switch to SLUB.
->>
->> In all defconfigs with CONFIG_SLAB=y remove the line so those also
->> switch to SLUB. Regressions due to the switch should be reported to
->> linux-mm and slab maintainers.
-> 
-> Technically, removing these lines from the defconfig files does not
-> have any impact, right?
+On Tue, May 23, 2023 at 6:12=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> As discussed at LSF/MM [1] [2] and with no objections raised there,
+> deprecate the SLAB allocator. Rename the user-visible option so that
+> users with CONFIG_SLAB=3Dy get a new prompt with explanation during make
+> oldconfig, while make olddefconfig will just switch to SLUB.
+>
+> In all defconfigs with CONFIG_SLAB=3Dy remove the line so those also
+> switch to SLUB. Regressions due to the switch should be reported to
+> linux-mm and slab maintainers.
+>
+> [1] https://lore.kernel.org/all/4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse=
+.cz/
+> [2] https://lwn.net/Articles/932201/
+>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
 
-Well, it doesn't, but I thought it's at least a useful heads-up for the
-maintainers in case some have specific reasons for keeping SLAB there.
+<snip>
 
-> And it removes one more sync point indicating the last time some
-> defconfig files were (not) updated by their maintainers ;-)
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 7672a22647b4..b537c4436d18 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -218,11 +218,18 @@ choice
+>         help
+>            This option allows to select a slab allocator.
+>
+> -config SLAB
+> -       bool "SLAB"
+> +config SLAB_DEPRECATED
+> +       bool "SLAB (DEPRECATED)"
+>         depends on !PREEMPT_RT
+>         select HAVE_HARDENED_USERCOPY_ALLOCATOR
+>         help
+> +         Deprecated and scheduled for removal in a few cycles. Replaced =
+by
+> +         SLUB.
+> +
+> +         If you cannot migrate to SLUB, please contact linux-mm@kvack.or=
+g
+> +         and the people listed in the SLAB ALLOCATOR section of MAINTAIN=
+ERS
+> +         file, explaining why.
+> +
+>           The regular slab allocator that is established and known to wor=
+k
+>           well in all environments. It organizes cache hot objects in
+>           per cpu and per node queues.
+> @@ -240,6 +247,11 @@ config SLUB
+>
+>  endchoice
+>
+> +config SLAB
+> +       bool
+> +       default y
+> +       depends on SLAB_DEPRECATED
+> +
+>  config SLUB_TINY
+>         bool "Configure SLUB for minimal memory footprint"
+>         depends on SLUB && EXPERT
+> --
+> 2.40.1
 
-Sure, I can exclude yours (and anyone else who'd prefer that), the ack on
-the deprecation itself is sufficient.
+Thank you for the work!
+It looks good to me.
+let's see some users raise their voice.
 
->> [1] https://lore.kernel.org/all/4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz/
->> [2] https://lwn.net/Articles/932201/
->>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
->>  arch/m68k/configs/amiga_defconfig               |  1 -
->>  arch/m68k/configs/apollo_defconfig              |  1 -
->>  arch/m68k/configs/atari_defconfig               |  1 -
->>  arch/m68k/configs/bvme6000_defconfig            |  1 -
->>  arch/m68k/configs/hp300_defconfig               |  1 -
->>  arch/m68k/configs/mac_defconfig                 |  1 -
->>  arch/m68k/configs/multi_defconfig               |  1 -
->>  arch/m68k/configs/mvme147_defconfig             |  1 -
->>  arch/m68k/configs/mvme16x_defconfig             |  1 -
->>  arch/m68k/configs/q40_defconfig                 |  1 -
->>  arch/m68k/configs/sun3_defconfig                |  1 -
->>  arch/m68k/configs/sun3x_defconfig               |  1 -
-> 
-> Regardless,
-> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Thanks!
-
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-
+Acked-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
