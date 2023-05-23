@@ -2,116 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB319C77B75
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 May 2023 09:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFD4C7EE31
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 May 2023 09:22:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236423AbjEWJSR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 May 2023 05:18:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46570 "EHLO
+        id S236242AbjEWJWm convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 May 2023 05:22:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236370AbjEWJSI (ORCPT
+        with ESMTP id S233035AbjEWJWk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 May 2023 05:18:08 -0400
-Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 316B71BB
-        for <linux-tegra@vger.kernel.org>; Tue, 23 May 2023 02:17:51 -0700 (PDT)
-Received: by mail-vk1-xa35.google.com with SMTP id 71dfb90a1353d-4572fc781daso904097e0c.2
-        for <linux-tegra@vger.kernel.org>; Tue, 23 May 2023 02:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1684833470; x=1687425470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pk8OMJU/i+DL9domkx1SxECiIr/Cw8hUh9Jh7kwNm3g=;
-        b=Bdx1POUAqFJkjBgUi/GS0mdhya6BUMSBtxOpkjIYslelvZMDyOxdXjpHp6KFSmNEva
-         DoOqH5YE55cxw/OsjFJJBF7wk+RyoXA8VtxHSZvBNTT0mSO8EX9QoDi84yUx7KqeYkWM
-         oqiwIFlMfqGgdQYrLVnv/dQdV1Exbu+tyWFoImqXR8cukKC/BBLWaXTz+7CeDZc5dyUO
-         mv7Iigd20c11CjpzH0Rhi20M4szWE9i55a9Z3Y0CGMM6wTnhtwEoBPSPVTp1v1eRPpOD
-         jaQYgGUuWkjbZD8Ehm6yhyBOBpTB0prxNiEUCIpa25Ccs88q+Ero7ifnfv/B6SOMwhQ2
-         e/aw==
+        Tue, 23 May 2023 05:22:40 -0400
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9D4194;
+        Tue, 23 May 2023 02:22:38 -0700 (PDT)
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6af6f5fc42aso2517648a34.1;
+        Tue, 23 May 2023 02:22:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684833470; x=1687425470;
+        d=1e100.net; s=20221208; t=1684833758; x=1687425758;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pk8OMJU/i+DL9domkx1SxECiIr/Cw8hUh9Jh7kwNm3g=;
-        b=J9LFTyxjZVEAV1xASTK8W8ISYUpoqpEFuwO5guW+kMrA/3ISDZBNonfe72plTEv6M4
-         Q5rko1DUmFrW74Xvu8QsgXORjAj+6GAFGCVQUEXm6OyGGYpgQYwMA5kDXSGYIcTT5Rue
-         ODKAoWs0gPeXD87K3/4SP36T5yM1dF4ypDGzvay/15e0w3N3QhoEL8/jRMu+ie2pPDqA
-         tegmb16EdeUCkoNFoEM2ZZVHCGlqDqZ3Q2/pc3XF2nxbk9X1us+DXCO5+O8uhbSo1Nod
-         NV32vMz/ayd3dSMQodFonBcKFmYkrHfT2tGzl647BUoRvXD3YJJuQx/Ins8Z9DS78tQI
-         Nv+Q==
-X-Gm-Message-State: AC+VfDyONmv+/GvD96zy1/+EJDscW8m3GmWCOA1ZrEbYrLFSXVpFcykG
-        8TDgZoggUjSegRlTatBgQh6s4876aolFxYKDOUDB8w==
-X-Google-Smtp-Source: ACHHUZ7CHtarrucWGhxACF3S5WCro6uTcboj0GJAKcNxdbnYzGOU1NsbYTqH38dbQghvd72lmfdBvFudK2a6RwnqVzQ=
-X-Received: by 2002:a05:6102:2f4:b0:437:e5d1:a0e0 with SMTP id
- j20-20020a05610202f400b00437e5d1a0e0mr3647966vsj.19.1684833470145; Tue, 23
- May 2023 02:17:50 -0700 (PDT)
+        bh=ElqaZMSGIZr1PDsUyYzS4b4CKhVSDM9bJ+kKBcpqibs=;
+        b=igAbnxKmYpl8G8NR9kiR4zYtC5LarEkNJ48I8jVbUdztsToPdHwV/H1cTclSUHgvlz
+         V8t7jDAwvaD/26JYpEKAYuqgXx+Bd7U5AaA7uQvRMyGDBna13gZjiijZQhPBQEGvR2vD
+         Q7DzXjYw7LGVrFL42KApQzHM0ee94DlcwyGZWAg0Acb3zn5L1WkKtqZcNfMN6m2B92GE
+         RyUAQVwH3zMpvErA0x3KmaiNbNVwnb5joM93MkqOiPe42BNH/SYeGkaVU0157jhBhFUM
+         iUV/QlY0ywwJOI3OqpR6rUUPuNHf0FL4igJ1SEYI62TIaA6SyUBLlcD7HaxFBrNaD5yX
+         intQ==
+X-Gm-Message-State: AC+VfDwEdN8kj3+2vKE23zxEgczSzscvy5qnp4dlfbk5V1NF9uXM9fcg
+        UcBTXMY0iqrrt/B2zGsRrajMnozYcP8Blw==
+X-Google-Smtp-Source: ACHHUZ73qUy71q9MTXVPPU0P5dIaNf2Fg31SqM9zMkiPZVWbq62xSy0r1uHdaOsYAY3h+06OlL7i5w==
+X-Received: by 2002:a05:6830:20d8:b0:6af:7e6f:4959 with SMTP id z24-20020a05683020d800b006af7e6f4959mr2861399otq.21.1684833757696;
+        Tue, 23 May 2023 02:22:37 -0700 (PDT)
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
+        by smtp.gmail.com with ESMTPSA id y5-20020a9d6345000000b006ab1ea1af9esm3174383otk.68.2023.05.23.02.22.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 May 2023 02:22:37 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6af89b0f3e5so1005667a34.0;
+        Tue, 23 May 2023 02:22:37 -0700 (PDT)
+X-Received: by 2002:a81:5bc6:0:b0:562:16d7:e6eb with SMTP id
+ p189-20020a815bc6000000b0056216d7e6ebmr15255699ywb.40.1684833736388; Tue, 23
+ May 2023 02:22:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <Yz62XmiH8YG3Dtsf@orome> <20221007055936.5446-1-pshete@nvidia.com>
- <CACRpkdYkJdZ67kyTnDg3xFzO8MJhC0nHK98O+KJwCLBqV_5f-Q@mail.gmail.com> <1de5b7fb-a39e-183a-1407-7d6489f706b4@nvidia.com>
-In-Reply-To: <1de5b7fb-a39e-183a-1407-7d6489f706b4@nvidia.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 23 May 2023 11:17:39 +0200
-Message-ID: <CAMRc=MdCiieaYR3BeATm+2o8UDz+9D5vs=dTNDAavi19BmKZ8w@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: tegra186: Check GPIO pin permission before access.
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Prathamesh Shete <pshete@nvidia.com>, thierry.reding@gmail.com,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        smangipudi@nvidia.com, kyarlagadda@nvidia.com,
-        Manish Bhardwaj <mbhardwaj@nvidia.com>
+References: <20230523091139.21449-1-vbabka@suse.cz>
+In-Reply-To: <20230523091139.21449-1-vbabka@suse.cz>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 23 May 2023 11:22:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWRZmA1iEG2aXdKZ+wWgSTgg-P7KY7pTTJx9EmvuEa58A@mail.gmail.com>
+Message-ID: <CAMuHMdWRZmA1iEG2aXdKZ+wWgSTgg-P7KY7pTTJx9EmvuEa58A@mail.gmail.com>
+Subject: Re: [PATCH] mm/slab: rename CONFIG_SLAB to CONFIG_SLAB_DEPRECATED
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Qin Jian <qinjian@cqplus1.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, May 23, 2023 at 8:22=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 17/10/2022 10:31, Linus Walleij wrote:
-> > On Fri, Oct 7, 2022 at 7:59 AM Prathamesh Shete <pshete@nvidia.com> wro=
-te:
-> >
-> >> This change checks if we have the necessary permission to
-> >> access the GPIO. For devices that have support for virtualisation
-> >> we need to check both the TEGRA186_GPIO_VM_REG and the
-> >> TEGRA186_GPIO_SCR_REG registers. For device that do not have
-> >> virtualisation support for GPIOs we only need to check the
-> >> TEGRA186_GPIO_SCR_REG register.
-> >>
-> >> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-> >> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> >
-> > Very nice patch!
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
->
-> I did not see this anywhere in the mainline/next. However, I also
-> noticed that we don't have the correct email address for Bartosz (again).
->
+Hi Vlastimil,
 
-I have only ever changed my address in MAINTAINERS once, so "again" is
-not really the right term. And scripts/get_maintainer.pl should be
-used anyway every time when submitting patches.
+Thanks for your patch!
 
-> Bartosz, let me know if you can pick this up? Thierry also ack'ed
-> previously for Tegra too.
+On Tue, May 23, 2023 at 11:12 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+> As discussed at LSF/MM [1] [2] and with no objections raised there,
+> deprecate the SLAB allocator. Rename the user-visible option so that
+> users with CONFIG_SLAB=y get a new prompt with explanation during make
+> oldconfig, while make olddefconfig will just switch to SLUB.
 >
-> FWIW ...
->
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
->
+> In all defconfigs with CONFIG_SLAB=y remove the line so those also
+> switch to SLUB. Regressions due to the switch should be reported to
+> linux-mm and slab maintainers.
 
-This doesn't apply to v6.4-rc1. Prathmesh: could you rebase and resend?
+Technically, removing these lines from the defconfig files does not
+have any impact, right?
+And it removes one more sync point indicating the last time some
+defconfig files were (not) updated by their maintainers ;-)
 
-Bart
-
-> Thanks
-> Jon
+> [1] https://lore.kernel.org/all/4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz/
+> [2] https://lwn.net/Articles/932201/
 >
-> --
-> nvpublic
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+
+>  arch/m68k/configs/amiga_defconfig               |  1 -
+>  arch/m68k/configs/apollo_defconfig              |  1 -
+>  arch/m68k/configs/atari_defconfig               |  1 -
+>  arch/m68k/configs/bvme6000_defconfig            |  1 -
+>  arch/m68k/configs/hp300_defconfig               |  1 -
+>  arch/m68k/configs/mac_defconfig                 |  1 -
+>  arch/m68k/configs/multi_defconfig               |  1 -
+>  arch/m68k/configs/mvme147_defconfig             |  1 -
+>  arch/m68k/configs/mvme16x_defconfig             |  1 -
+>  arch/m68k/configs/q40_defconfig                 |  1 -
+>  arch/m68k/configs/sun3_defconfig                |  1 -
+>  arch/m68k/configs/sun3x_defconfig               |  1 -
+
+Regardless,
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
