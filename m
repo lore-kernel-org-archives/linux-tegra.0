@@ -2,107 +2,119 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7708FC7EE23
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 May 2023 19:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE7AC7EE31
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 May 2023 00:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238497AbjEWTuc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 May 2023 15:50:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51296 "EHLO
+        id S238701AbjEXA3g (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 May 2023 20:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238527AbjEWTuY (ORCPT
+        with ESMTP id S229539AbjEXA3e (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 May 2023 15:50:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAAA6139;
-        Tue, 23 May 2023 12:50:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 87B8F62701;
-        Tue, 23 May 2023 19:50:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24A4C433D2;
-        Tue, 23 May 2023 19:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684871422;
-        bh=UWa2AeMFPzYhFvGJKx4IJB8Xp9f2d2gLz7s4ekBTywI=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Od6/0EzqGQz2cgrAkFnoJfDZhlpLvRvrJXUJirKGy8xvBVAKj2KEqQcuNafYW3kFb
-         m8TrWyjlqKWDkdRogJXBpIHnKB3vmhkyCDEfAYpwUkNrvpZmTrACyZKIMqY/eMP4Ci
-         +KdZ41TiIHjbperNgsTXNCzen8sKMMFSmZJ1deK9TIgwE69Z7w1vjHgC7ef4peeUCz
-         UIin1KghHbDjSqjnZ4CTcY7uEZKspGmvRstEWvq2E5IlPkAemPog9AjbqRN+MMS/sp
-         mjqxHLhHbLPe2ICjJYnzuF4gJ2QX+eo1O5IgW1IYYZq/SL42GtXYF6hYFnGisc3VhP
-         ElFhSqCzyntGw==
-From:   Mark Brown <broonie@kernel.org>
-To:     perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com,
-        oder_chiou@realtek.com, shengjiu.wang@gmail.com,
-        Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        linux-imx@nxp.com, cezary.rojewski@intel.com,
-        pierre-louis.bossart@linux.intel.com,
-        peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
-        ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
-        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-        srinivas.kandagatla@linaro.org, bgoswami@quicinc.com,
-        vkoul@kernel.org, daniel.baluta@nxp.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, jarkko.nikula@bitmer.com,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        sound-open-firmware@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org
-In-Reply-To: <20230517094903.2895238-1-claudiu.beznea@microchip.com>
-References: <20230517094903.2895238-1-claudiu.beznea@microchip.com>
-Subject: Re: [PATCH v2 0/2] ASoC: do not include runtime_pm.h if not needed
-Message-Id: <168487141457.278276.14403684308927400047.b4-ty@kernel.org>
-Date:   Tue, 23 May 2023 20:50:14 +0100
+        Tue, 23 May 2023 20:29:34 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B791A1
+        for <linux-tegra@vger.kernel.org>; Tue, 23 May 2023 17:29:19 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1a950b982d4so8605ad.0
+        for <linux-tegra@vger.kernel.org>; Tue, 23 May 2023 17:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1684888159; x=1687480159;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+iGDu91GXvHaUJ4/GkDIwXiVromlKTEDnrVX/jdHHE=;
+        b=oCPd/VMBzehzBIwxKD0CUQlcv9XnCqSIGnZFpfNhT9159UiXp4+4s0dt1T5T+r2N8u
+         ejdMVEW9GWrQK3u8D/R+OgCl4fi8an2VY0K+/eeCPWT2cGGSET/E3kHkr5iqimXeopNz
+         1LhLEfNIl9101bv8HdubYyq2hpbrF89XLwyNahFvZOtnckCP7CoEZsh2L+2+OK9q9Yjc
+         K9vC86dI9TWXu3/6r3ILFI/gvIY8hkiVXH1FcP052iNl13PiuUL4NAyi+n5JDzxUMMjc
+         YVmWP+V4GT0WZnv89R5QJMFswFGyufptXG7L83ZUIfYIL/yWyXKcEjeZvi21gEBg088G
+         o5Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684888159; x=1687480159;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+iGDu91GXvHaUJ4/GkDIwXiVromlKTEDnrVX/jdHHE=;
+        b=PR6q1wpvSDox5fsfu6LyX6tT7j4r9eDqc/Gf4C8rx13zIjJxr8AgcsekaMJSmIfszQ
+         Gv/bGvcI7Cn1VaJBz29f70SsjbuXsTo9m0GQkYU09LFC3jT3acHfyrdOvnP89ntAWhB0
+         ged+bs/uJfh+M+x/dLzOOW8oUCirfqcsOncAWEYPE4pxBQY9XCsa5ZEFWiJ3q2STsK0G
+         yMSzMkcrPBZFvOfxfnNdx+ZAFCNFQdUu5EI7vkSHjORC+D3uhznnHvfrXNfMK6s6r2eP
+         G+CJRZRqfy4Zsd7RzfntCAZNc83u3bH5J1Nom78wEBntSVdsF5zRNDfdhyK//j1QFMG2
+         5HqA==
+X-Gm-Message-State: AC+VfDzkQOQsS6T1GVu9Fu4vQMvKKFXvS+/T+2sm4ak0zIpaOc1IulUk
+        oJbepRx/xWMS2MPFkBBcR0ik4A==
+X-Google-Smtp-Source: ACHHUZ4WC86fv/HCojVq6Z7bo1LnEN2P8Qa/JJdhSbqAvm7x1JKXoIG4BePTyVsmdwlyiuzkRQj4Vw==
+X-Received: by 2002:a17:902:e847:b0:1af:90ce:5263 with SMTP id t7-20020a170902e84700b001af90ce5263mr107385plg.26.1684888158675;
+        Tue, 23 May 2023 17:29:18 -0700 (PDT)
+Received: from [2620:0:1008:11:c789:c1fb:6667:1766] ([2620:0:1008:11:c789:c1fb:6667:1766])
+        by smtp.gmail.com with ESMTPSA id n20-20020a17090a929400b0024de0de6ec8sm137193pjo.17.2023.05.23.17.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 May 2023 17:29:18 -0700 (PDT)
+Date:   Tue, 23 May 2023 17:29:17 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Qin Jian <qinjian@cqplus1.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm/slab: rename CONFIG_SLAB to CONFIG_SLAB_DEPRECATED
+In-Reply-To: <20230523091139.21449-1-vbabka@suse.cz>
+Message-ID: <be109b49-8510-5887-72ae-738db9945619@google.com>
+References: <20230523091139.21449-1-vbabka@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 17 May 2023 12:49:01 +0300, Claudiu Beznea wrote:
-> Series removes the pm_runtime.h inclusion in files where
-> APIs exported though pm_runtime.h are not used. In case
-> of files that make use of pm.h which comes form pm_runtime.h
-> added patch 2/2.
+On Tue, 23 May 2023, Vlastimil Babka wrote:
+
+> As discussed at LSF/MM [1] [2] and with no objections raised there,
+> deprecate the SLAB allocator. Rename the user-visible option so that
+> users with CONFIG_SLAB=y get a new prompt with explanation during make
+> oldconfig, while make olddefconfig will just switch to SLUB.
 > 
-> Changes were built with allmodconfig on ARM and x86_64 and checked
-> all the changed files were built at least once.
+> In all defconfigs with CONFIG_SLAB=y remove the line so those also
+> switch to SLUB. Regressions due to the switch should be reported to
+> linux-mm and slab maintainers.
 > 
-> [...]
+> [1] https://lore.kernel.org/all/4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz/
+> [2] https://lwn.net/Articles/932201/
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Applied to
+Acked-by: David Rientjes <rientjes@google.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/2] ASoC: do not include pm_runtime.h if not used
-      commit: 2f3092e77f98fcfc0d653846591401bfe2a5232e
-[2/2] ASoC: use pm.h instead of runtime_pm.h
-      commit: a9392efae9f5de42673cfc1b81ac6fb88bdb26b2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+The Kconfig option says that SLAB will be removed in a few cycles.  I 
+think we should wait until at least the next LTS kernel is forked at the 
+end of the year so that users who upgrade to only the LTS releases can be 
+prompted for this change and surface any concerns.  Slab allocation is a 
+critical subsystem, so I presume this is the safest and most responsible 
+way to do the SLAB deprecation.  Hopefully that timeline works for 
+everybody.
