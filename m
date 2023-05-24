@@ -2,463 +2,368 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C7FC7EE2E
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 May 2023 14:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C41C77B7C
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 May 2023 20:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236396AbjEXO4a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 May 2023 10:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
+        id S236518AbjEXUXS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 May 2023 16:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236397AbjEXO4R (ORCPT
+        with ESMTP id S236479AbjEXUXS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 May 2023 10:56:17 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15E98E4A;
-        Wed, 24 May 2023 07:55:40 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34OEqdSS014961;
-        Wed, 24 May 2023 14:53:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : date : subject :
- mime-version : content-type : content-transfer-encoding : message-id :
- references : in-reply-to : to : cc; s=pp1;
- bh=OxbbK/xo+YqTYa3Amvn3iSXBUedeO5aCeCPTdX9nXCs=;
- b=UBJfkD+sBixOAoQ5DRAyxQP9MWJstA3Sr8myNm15Oyxr+cSV4OvxBx5ugutws7+5+KZP
- K9/BuHxmWZkPgW+S5NeEasSJnP8LHXr5/FB6MdjJXfw9vmRlIKT6WbhE11obRCKKLR/M
- 9QmydB2Vrb1Z6Is4dvBdL6htNqF4L6yE2wFN3+x1s+wT3SAAIpYRMg4uFe77w0J9+OZe
- pbNnk0fE6A71AJ8gYIyFlP0G69Ehk9mZ1ATzjuUGaESAPT1r29YJE0nZBC0Q7LRzpE/j
- pX5lP1hqXEsejBc0pYhKXydox0cx+9oQwPppgh1ENPVUarruTK0VmgcCEADi0RneXgiF hQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qsgnhqvb8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 14:53:30 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34OEeBIa004282;
-        Wed, 24 May 2023 14:53:29 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qsgnhqva7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 14:53:29 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34O2CCRW031438;
-        Wed, 24 May 2023 14:53:26 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-        by ppma06ams.nl.ibm.com (PPS) with ESMTPS id 3qppc3j0v2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 14:53:26 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34OErN1S63111470
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 May 2023 14:53:23 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3FE7F20040;
-        Wed, 24 May 2023 14:53:23 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 571692004B;
-        Wed, 24 May 2023 14:53:21 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 24 May 2023 14:53:21 +0000 (GMT)
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-Date:   Wed, 24 May 2023 16:53:05 +0200
-Subject: [PATCH v10 2/6] iommu: Allow .iotlb_sync_map to fail and handle
- s390's -ENOMEM return
+        Wed, 24 May 2023 16:23:18 -0400
+Received: from 189.cn (ptr.189.cn [183.61.185.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1406E119;
+        Wed, 24 May 2023 13:23:14 -0700 (PDT)
+HMM_SOURCE_IP: 10.64.8.43:58108.1468850436
+HMM_ATTACHE_NUM: 0000
+HMM_SOURCE_TYPE: SMTP
+Received: from clientip-114.242.206.180 (unknown [10.64.8.43])
+        by 189.cn (HERMES) with SMTP id B33AC100180;
+        Thu, 25 May 2023 04:23:11 +0800 (CST)
+Received: from  ([114.242.206.180])
+        by gateway-151646-dep-75648544bd-7vx9t with ESMTP id 2b835748eb104f6ba76bb66e8bd6e61b for tzimmermann@suse.de;
+        Thu, 25 May 2023 04:23:13 CST
+X-Transaction-ID: 2b835748eb104f6ba76bb66e8bd6e61b
+X-Real-From: 15330273260@189.cn
+X-Receive-IP: 114.242.206.180
+X-MEDUSA-Status: 0
+Sender: 15330273260@189.cn
+Message-ID: <9e7588e4-8d4e-99a9-e39f-7b94cc8e3ad4@189.cn>
+Date:   Thu, 25 May 2023 04:23:11 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [v4,12/13] drm/fbdev-generic: Implement dedicated fbdev I/O
+ helpers
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, javierm@redhat.com, sam@ravnborg.org
+Cc:     linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230524092150.11776-13-tzimmermann@suse.de>
+Content-Language: en-US
+From:   Sui Jingfeng <15330273260@189.cn>
+In-Reply-To: <20230524092150.11776-13-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230310-dma_iommu-v10-2-f1fbd8310854@linux.ibm.com>
-References: <20230310-dma_iommu-v10-0-f1fbd8310854@linux.ibm.com>
-In-Reply-To: <20230310-dma_iommu-v10-0-f1fbd8310854@linux.ibm.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11833;
- i=schnelle@linux.ibm.com; h=from:subject:message-id;
- bh=B3578UTKKKnUdXa2z3eDlFfDIX37EckB6qUZC8lKJIA=;
- b=owGbwMvMwCH2Wz534YHOJ2GMp9WSGFLyVO6ua8tKW/nscFp+mZJLyawlLeynSiR7dr4KnPjjz
- IyP8RlbOkpZGMQ4GGTFFFkWdTn7rSuYYronqL8DZg4rE8gQBi5OAZjIuW2MDM1Zq1/vC/p4xexk
- 4AP+E44TPvKZr9a899q6bu2hha6ymncYGb4Ub35dutD7envG2/tdS6f1b9XwtPfq3nEs9txlY4E
- dvRwA
-X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
- fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: k8q__QfLlzUMIxHyO6c9JFBv61z_cF33
-X-Proofpoint-ORIG-GUID: GN36Ei7HBn8OoaVS67vFvi-58O4Or9yE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-24_09,2023-05-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- priorityscore=1501 clxscore=1015 suspectscore=0 adultscore=0
- mlxlogscore=939 malwarescore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305240119
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On s390 when using a paging hypervisor, .iotlb_sync_map is used to sync
-mappings by letting the hypervisor inspect the synced IOVA range and
-updating a shadow table. This however means that .iotlb_sync_map can
-fail as the hypervisor may run out of resources while doing the sync.
-This can be due to the hypervisor being unable to pin guest pages, due
-to a limit on mapped addresses such as vfio_iommu_type1.dma_entry_limit
-or lack of other resources. Either way such a failure to sync a mapping
-should result in a DMA_MAPPING_ERROR.
+Tested-by: Sui Jingfeng <suijingfeng@loongson.cn>
 
-Now especially when running with batched IOTLB flushes for unmap it may
-be that some IOVAs have already been invalidated but not yet synced via
-.iotlb_sync_map. Thus if the hypervisor indicates running out of
-resources, first do a global flush allowing the hypervisor to free
-resources associated with these mappings as well a retry creating the
-new mappings and only if that also fails report this error to callers.
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com> # sun50i
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
----
- drivers/iommu/amd/iommu.c    |  5 +++--
- drivers/iommu/apple-dart.c   |  5 +++--
- drivers/iommu/intel/iommu.c  |  5 +++--
- drivers/iommu/iommu.c        | 20 ++++++++++++++++----
- drivers/iommu/msm_iommu.c    |  5 +++--
- drivers/iommu/mtk_iommu.c    |  5 +++--
- drivers/iommu/s390-iommu.c   | 29 +++++++++++++++++++++++------
- drivers/iommu/sprd-iommu.c   |  5 +++--
- drivers/iommu/sun50i-iommu.c |  6 ++++--
- drivers/iommu/tegra-gart.c   |  5 +++--
- include/linux/iommu.h        |  4 ++--
- 11 files changed, 66 insertions(+), 28 deletions(-)
+This version works fine, I have tested it On LoongArch with 
+drm/loongson(v14) as it is most handy for me.
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 4a314647d1f7..e5100da23207 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2196,14 +2196,15 @@ static int amd_iommu_attach_device(struct iommu_domain *dom,
- 	return ret;
- }
- 
--static void amd_iommu_iotlb_sync_map(struct iommu_domain *dom,
--				     unsigned long iova, size_t size)
-+static int amd_iommu_iotlb_sync_map(struct iommu_domain *dom,
-+				    unsigned long iova, size_t size)
- {
- 	struct protection_domain *domain = to_pdomain(dom);
- 	struct io_pgtable_ops *ops = &domain->iop.iop.ops;
- 
- 	if (ops->map_pages)
- 		domain_flush_np_cache(domain, iova, size);
-+	return 0;
- }
- 
- static int amd_iommu_map_pages(struct iommu_domain *dom, unsigned long iova,
-diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-index 8af64b57f048..d061493db634 100644
---- a/drivers/iommu/apple-dart.c
-+++ b/drivers/iommu/apple-dart.c
-@@ -506,10 +506,11 @@ static void apple_dart_iotlb_sync(struct iommu_domain *domain,
- 	apple_dart_domain_flush_tlb(to_dart_domain(domain));
- }
- 
--static void apple_dart_iotlb_sync_map(struct iommu_domain *domain,
--				      unsigned long iova, size_t size)
-+static int apple_dart_iotlb_sync_map(struct iommu_domain *domain,
-+				     unsigned long iova, size_t size)
- {
- 	apple_dart_domain_flush_tlb(to_dart_domain(domain));
-+	return 0;
- }
- 
- static phys_addr_t apple_dart_iova_to_phys(struct iommu_domain *domain,
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index b871a6afd803..84b603543cda 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4704,8 +4704,8 @@ static bool risky_device(struct pci_dev *pdev)
- 	return false;
- }
- 
--static void intel_iommu_iotlb_sync_map(struct iommu_domain *domain,
--				       unsigned long iova, size_t size)
-+static int intel_iommu_iotlb_sync_map(struct iommu_domain *domain,
-+				      unsigned long iova, size_t size)
- {
- 	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
- 	unsigned long pages = aligned_nrpages(iova, size);
-@@ -4715,6 +4715,7 @@ static void intel_iommu_iotlb_sync_map(struct iommu_domain *domain,
- 
- 	xa_for_each(&dmar_domain->iommu_array, i, info)
- 		__mapping_notify_one(info->iommu, dmar_domain, pfn, pages);
-+	return 0;
- }
- 
- static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid)
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index f1dcfa3f1a1b..51f816367205 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2440,8 +2440,17 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
- 		return -EINVAL;
- 
- 	ret = __iommu_map(domain, iova, paddr, size, prot, gfp);
--	if (ret == 0 && ops->iotlb_sync_map)
--		ops->iotlb_sync_map(domain, iova, size);
-+	if (ret == 0 && ops->iotlb_sync_map) {
-+		ret = ops->iotlb_sync_map(domain, iova, size);
-+		if (ret)
-+			goto out_err;
-+	}
-+
-+	return ret;
-+
-+out_err:
-+	/* undo mappings already done */
-+	iommu_unmap(domain, iova, size);
- 
- 	return ret;
- }
-@@ -2582,8 +2591,11 @@ ssize_t iommu_map_sg(struct iommu_domain *domain, unsigned long iova,
- 			sg = sg_next(sg);
- 	}
- 
--	if (ops->iotlb_sync_map)
--		ops->iotlb_sync_map(domain, iova, mapped);
-+	if (ops->iotlb_sync_map) {
-+		ret = ops->iotlb_sync_map(domain, iova, mapped);
-+		if (ret)
-+			goto out_err;
-+	}
- 	return mapped;
- 
- out_err:
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index 79d89bad5132..47926d3290e6 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -486,12 +486,13 @@ static int msm_iommu_map(struct iommu_domain *domain, unsigned long iova,
- 	return ret;
- }
- 
--static void msm_iommu_sync_map(struct iommu_domain *domain, unsigned long iova,
--			       size_t size)
-+static int msm_iommu_sync_map(struct iommu_domain *domain, unsigned long iova,
-+			      size_t size)
- {
- 	struct msm_priv *priv = to_msm_priv(domain);
- 
- 	__flush_iotlb_range(iova, size, SZ_4K, false, priv);
-+	return 0;
- }
- 
- static size_t msm_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index aecc7d154f28..843211672cff 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -793,12 +793,13 @@ static void mtk_iommu_iotlb_sync(struct iommu_domain *domain,
- 	mtk_iommu_tlb_flush_range_sync(gather->start, length, dom->bank);
- }
- 
--static void mtk_iommu_sync_map(struct iommu_domain *domain, unsigned long iova,
--			       size_t size)
-+static int mtk_iommu_sync_map(struct iommu_domain *domain, unsigned long iova,
-+			      size_t size)
- {
- 	struct mtk_iommu_domain *dom = to_mtk_domain(domain);
- 
- 	mtk_iommu_tlb_flush_range_sync(iova, size, dom->bank);
-+	return 0;
- }
- 
- static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
-diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-index fbf59a8db29b..6723d77489e8 100644
---- a/drivers/iommu/s390-iommu.c
-+++ b/drivers/iommu/s390-iommu.c
-@@ -205,6 +205,12 @@ static void s390_iommu_release_device(struct device *dev)
- 		__s390_iommu_detach_device(zdev);
- }
- 
-+static int zpci_refresh_all(struct zpci_dev *zdev)
-+{
-+	return zpci_refresh_trans((u64)zdev->fh << 32, zdev->start_dma,
-+				  zdev->end_dma - zdev->start_dma + 1);
-+}
-+
- static void s390_iommu_flush_iotlb_all(struct iommu_domain *domain)
- {
- 	struct s390_domain *s390_domain = to_s390_domain(domain);
-@@ -212,8 +218,7 @@ static void s390_iommu_flush_iotlb_all(struct iommu_domain *domain)
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(zdev, &s390_domain->devices, iommu_list) {
--		zpci_refresh_trans((u64)zdev->fh << 32, zdev->start_dma,
--				   zdev->end_dma - zdev->start_dma + 1);
-+		zpci_refresh_all(zdev);
- 	}
- 	rcu_read_unlock();
- }
-@@ -237,20 +242,32 @@ static void s390_iommu_iotlb_sync(struct iommu_domain *domain,
- 	rcu_read_unlock();
- }
- 
--static void s390_iommu_iotlb_sync_map(struct iommu_domain *domain,
--				      unsigned long iova, size_t size)
-+static int s390_iommu_iotlb_sync_map(struct iommu_domain *domain,
-+				     unsigned long iova, size_t size)
- {
- 	struct s390_domain *s390_domain = to_s390_domain(domain);
- 	struct zpci_dev *zdev;
-+	int ret = 0;
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(zdev, &s390_domain->devices, iommu_list) {
- 		if (!zdev->tlb_refresh)
- 			continue;
--		zpci_refresh_trans((u64)zdev->fh << 32,
--				   iova, size);
-+		ret = zpci_refresh_trans((u64)zdev->fh << 32,
-+					 iova, size);
-+		/*
-+		 * let the hypervisor discover invalidated entries
-+		 * allowing it to free IOVAs and unpin pages
-+		 */
-+		if (ret == -ENOMEM) {
-+			ret = zpci_refresh_all(zdev);
-+			if (ret)
-+				break;
-+		}
- 	}
- 	rcu_read_unlock();
-+
-+	return ret;
- }
- 
- static int s390_iommu_validate_trans(struct s390_domain *s390_domain,
-diff --git a/drivers/iommu/sprd-iommu.c b/drivers/iommu/sprd-iommu.c
-index 39e34fdeccda..18d61fe29ca0 100644
---- a/drivers/iommu/sprd-iommu.c
-+++ b/drivers/iommu/sprd-iommu.c
-@@ -343,8 +343,8 @@ static size_t sprd_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
- 	return size;
- }
- 
--static void sprd_iommu_sync_map(struct iommu_domain *domain,
--				unsigned long iova, size_t size)
-+static int sprd_iommu_sync_map(struct iommu_domain *domain,
-+			       unsigned long iova, size_t size)
- {
- 	struct sprd_iommu_domain *dom = to_sprd_domain(domain);
- 	unsigned int reg;
-@@ -356,6 +356,7 @@ static void sprd_iommu_sync_map(struct iommu_domain *domain,
- 
- 	/* clear IOMMU TLB buffer after page table updated */
- 	sprd_iommu_write(dom->sdev, reg, 0xffffffff);
-+	return 0;
- }
- 
- static void sprd_iommu_sync(struct iommu_domain *domain,
-diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
-index 74c5cb93e900..45c90fa27631 100644
---- a/drivers/iommu/sun50i-iommu.c
-+++ b/drivers/iommu/sun50i-iommu.c
-@@ -402,8 +402,8 @@ static void sun50i_iommu_flush_iotlb_all(struct iommu_domain *domain)
- 	spin_unlock_irqrestore(&iommu->iommu_lock, flags);
- }
- 
--static void sun50i_iommu_iotlb_sync_map(struct iommu_domain *domain,
--					unsigned long iova, size_t size)
-+static int sun50i_iommu_iotlb_sync_map(struct iommu_domain *domain,
-+				       unsigned long iova, size_t size)
- {
- 	struct sun50i_iommu_domain *sun50i_domain = to_sun50i_domain(domain);
- 	struct sun50i_iommu *iommu = sun50i_domain->iommu;
-@@ -412,6 +412,8 @@ static void sun50i_iommu_iotlb_sync_map(struct iommu_domain *domain,
- 	spin_lock_irqsave(&iommu->iommu_lock, flags);
- 	sun50i_iommu_zap_range(iommu, iova, size);
- 	spin_unlock_irqrestore(&iommu->iommu_lock, flags);
-+
-+	return 0;
- }
- 
- static void sun50i_iommu_iotlb_sync(struct iommu_domain *domain,
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index a482ff838b53..44966d7b07ba 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -252,10 +252,11 @@ static int gart_iommu_of_xlate(struct device *dev,
- 	return 0;
- }
- 
--static void gart_iommu_sync_map(struct iommu_domain *domain, unsigned long iova,
--				size_t size)
-+static int gart_iommu_sync_map(struct iommu_domain *domain, unsigned long iova,
-+			       size_t size)
- {
- 	FLUSH_GART_REGS(gart_handle);
-+	return 0;
- }
- 
- static void gart_iommu_sync(struct iommu_domain *domain,
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index e8c9a7da1060..58891eddc2c4 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -333,8 +333,8 @@ struct iommu_domain_ops {
- 			      struct iommu_iotlb_gather *iotlb_gather);
- 
- 	void (*flush_iotlb_all)(struct iommu_domain *domain);
--	void (*iotlb_sync_map)(struct iommu_domain *domain, unsigned long iova,
--			       size_t size);
-+	int (*iotlb_sync_map)(struct iommu_domain *domain, unsigned long iova,
-+			      size_t size);
- 	void (*iotlb_sync)(struct iommu_domain *domain,
- 			   struct iommu_iotlb_gather *iotlb_gather);
- 
+Also because it using fbdev-generic. fbdev of IGT report no error. Then 
+I run fbtest from geert[1],
 
--- 
-2.39.2
 
+Before apply your patch:
+
+
+Benchmarking... 10x10 squares: 468.39 Mpixels/s
+Benchmarking... 20x20 squares: 985.02 Mpixels/s
+Benchmarking... 50x50 squares: 2247.22 Mpixels/s
+Benchmarking... 100x100 squares: 2242.30 Mpixels/s
+Benchmarking... 200x200 squares: 2883.18 Mpixels/s
+Benchmarking... 500x500 squares: 3642.18 Mpixels/s
+Benchmarking... 1000x1000 squares: 3992.77 Mpixels/s
+Benchmarking... R5 circles: 261.90 Mpixels/s
+Benchmarking... R10 circles: 596.27 Mpixels/s
+Benchmarking... R25 circles: 1513.96 Mpixels/s
+Benchmarking... R50 circles: 1965.07 Mpixels/s
+Benchmarking... R100 circles: 2470.75 Mpixels/s
+Benchmarking... R250 circles: 3288.00 Mpixels/s
+Benchmarking... R500 circles: 3705.66 Mpixels/s
+
+
+After apply your patch:
+
+
+Benchmarking... 10x10 squares: 477.04 Mpixels/s
+Benchmarking... 20x20 squares: 1021.07 Mpixels/s
+Benchmarking... 50x50 squares: 2315.70 Mpixels/s
+Benchmarking... 100x100 squares: 2267.69 Mpixels/s
+Benchmarking... 200x200 squares: 3006.28 Mpixels/s
+Benchmarking... 500x500 squares: 3761.44 Mpixels/s
+Benchmarking... 1000x1000 squares: 4112.49 Mpixels/s
+Benchmarking... R5 circles: 269.19 Mpixels/s
+Benchmarking... R10 circles: 620.77 Mpixels/s
+Benchmarking... R25 circles: 1559.02 Mpixels/s
+Benchmarking... R50 circles: 2027.36 Mpixels/s
+Benchmarking... R100 circles: 2574.42 Mpixels/s
+Benchmarking... R250 circles: 3363.28 Mpixels/s
+Benchmarking... R500 circles: 3815.51 Mpixels/s
+
+
+It seems that this bring a little bit performance gain.
+
+Directly operate on video RAM is slower than have a shadow in system RAM.
+
+I also test this patch in intel i3-8100 @ 3.6Ghz, the results show that 
+i915 is a bit slower.
+
+Because it operate directly on device memory.
+
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/fbtest.git
+
+
+On 2023/5/24 17:21, Thomas Zimmermann wrote:
+> Implement dedicated fbdev helpers for framebuffer I/O instead
+> of using DRM's helpers. Use an fbdev generator macro for
+> deferred I/O to create the callbacks. Fbdev-generic was the
+> only caller of the DRM helpers, so remove them from the helper
+> module.
+>
+> v4:
+> 	* generate deferred-I/O helpers
+> 	* use initializer macros for fb_ops
+> v2:
+> 	* use FB_SYS_HELPERS_DEFERRED option
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>   drivers/gpu/drm/Kconfig             |   6 +-
+>   drivers/gpu/drm/drm_fb_helper.c     | 107 ----------------------------
+>   drivers/gpu/drm/drm_fbdev_generic.c |  11 ++-
+>   include/drm/drm_fb_helper.h         |  41 -----------
+>   4 files changed, 6 insertions(+), 159 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index 77fb10ddd8a2..92a782827b7b 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -95,6 +95,7 @@ config DRM_KUNIT_TEST
+>   config DRM_KMS_HELPER
+>   	tristate
+>   	depends on DRM
+> +	select FB_SYS_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
+>   	help
+>   	  CRTC helpers for KMS drivers.
+>   
+> @@ -135,11 +136,6 @@ config DRM_FBDEV_EMULATION
+>   	select FB_CFB_FILLRECT
+>   	select FB_CFB_COPYAREA
+>   	select FB_CFB_IMAGEBLIT
+> -	select FB_DEFERRED_IO
+> -	select FB_SYS_FOPS
+> -	select FB_SYS_FILLRECT
+> -	select FB_SYS_COPYAREA
+> -	select FB_SYS_IMAGEBLIT
+>   	select FRAMEBUFFER_CONSOLE if !EXPERT
+>   	select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
+>   	default y
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index cb03099fd2e3..bab6b252f02a 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -736,113 +736,6 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
+>   }
+>   EXPORT_SYMBOL(drm_fb_helper_deferred_io);
+>   
+> -/**
+> - * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
+> - * @info: fb_info struct pointer
+> - * @buf: userspace buffer to read from framebuffer memory
+> - * @count: number of bytes to read from framebuffer memory
+> - * @ppos: read offset within framebuffer memory
+> - *
+> - * Returns:
+> - * The number of bytes read on success, or an error code otherwise.
+> - */
+> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+> -			       size_t count, loff_t *ppos)
+> -{
+> -	return fb_sys_read(info, buf, count, ppos);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_read);
+> -
+> -/**
+> - * drm_fb_helper_sys_write - Implements struct &fb_ops.fb_write for system memory
+> - * @info: fb_info struct pointer
+> - * @buf: userspace buffer to write to framebuffer memory
+> - * @count: number of bytes to write to framebuffer memory
+> - * @ppos: write offset within framebuffer memory
+> - *
+> - * Returns:
+> - * The number of bytes written on success, or an error code otherwise.
+> - */
+> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+> -				size_t count, loff_t *ppos)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -	loff_t pos = *ppos;
+> -	ssize_t ret;
+> -	struct drm_rect damage_area;
+> -
+> -	ret = fb_sys_write(info, buf, count, ppos);
+> -	if (ret <= 0)
+> -		return ret;
+> -
+> -	if (helper->funcs->fb_dirty) {
+> -		drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
+> -		drm_fb_helper_damage(helper, damage_area.x1, damage_area.y1,
+> -				     drm_rect_width(&damage_area),
+> -				     drm_rect_height(&damage_area));
+> -	}
+> -
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_write);
+> -
+> -/**
+> - * drm_fb_helper_sys_fillrect - wrapper around sys_fillrect
+> - * @info: fbdev registered by the helper
+> - * @rect: info about rectangle to fill
+> - *
+> - * A wrapper around sys_fillrect implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -				const struct fb_fillrect *rect)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -
+> -	sys_fillrect(info, rect);
+> -
+> -	if (helper->funcs->fb_dirty)
+> -		drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_fillrect);
+> -
+> -/**
+> - * drm_fb_helper_sys_copyarea - wrapper around sys_copyarea
+> - * @info: fbdev registered by the helper
+> - * @area: info about area to copy
+> - *
+> - * A wrapper around sys_copyarea implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -				const struct fb_copyarea *area)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -
+> -	sys_copyarea(info, area);
+> -
+> -	if (helper->funcs->fb_dirty)
+> -		drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_copyarea);
+> -
+> -/**
+> - * drm_fb_helper_sys_imageblit - wrapper around sys_imageblit
+> - * @info: fbdev registered by the helper
+> - * @image: info about image to blit
+> - *
+> - * A wrapper around sys_imageblit implemented by fbdev core
+> - */
+> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -				 const struct fb_image *image)
+> -{
+> -	struct drm_fb_helper *helper = info->par;
+> -
+> -	sys_imageblit(info, image);
+> -
+> -	if (helper->funcs->fb_dirty)
+> -		drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
+> -}
+> -EXPORT_SYMBOL(drm_fb_helper_sys_imageblit);
+> -
+>   /**
+>    * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
+>    * @info: fb_info struct pointer
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 8e5148bf40bb..98ae703848a0 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -34,6 +34,10 @@ static int drm_fbdev_generic_fb_release(struct fb_info *info, int user)
+>   	return 0;
+>   }
+>   
+> +FB_GEN_DEFAULT_DEFERRED_SYS_OPS(drm_fbdev_generic,
+> +				drm_fb_helper_damage_range,
+> +				drm_fb_helper_damage_area);
+> +
+>   static void drm_fbdev_generic_fb_destroy(struct fb_info *info)
+>   {
+>   	struct drm_fb_helper *fb_helper = info->par;
+> @@ -56,13 +60,8 @@ static const struct fb_ops drm_fbdev_generic_fb_ops = {
+>   	.owner		= THIS_MODULE,
+>   	.fb_open	= drm_fbdev_generic_fb_open,
+>   	.fb_release	= drm_fbdev_generic_fb_release,
+> -	.fb_read	= drm_fb_helper_sys_read,
+> -	.fb_write	= drm_fb_helper_sys_write,
+> +	FB_DEFAULT_DEFERRED_OPS(drm_fbdev_generic),
+>   	DRM_FB_HELPER_DEFAULT_OPS,
+> -	.fb_fillrect	= drm_fb_helper_sys_fillrect,
+> -	.fb_copyarea	= drm_fb_helper_sys_copyarea,
+> -	.fb_imageblit	= drm_fb_helper_sys_imageblit,
+> -	.fb_mmap	= fb_deferred_io_mmap,
+>   	.fb_destroy	= drm_fbdev_generic_fb_destroy,
+>   };
+>   
+> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+> index 7d5804882be7..b50fd0c0b713 100644
+> --- a/include/drm/drm_fb_helper.h
+> +++ b/include/drm/drm_fb_helper.h
+> @@ -258,18 +258,6 @@ void drm_fb_helper_damage_area(struct fb_info *info, u32 x, u32 y, u32 width, u3
+>   
+>   void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
+>   
+> -ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
+> -			       size_t count, loff_t *ppos);
+> -ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
+> -				size_t count, loff_t *ppos);
+> -
+> -void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -				const struct fb_fillrect *rect);
+> -void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -				const struct fb_copyarea *area);
+> -void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -				 const struct fb_image *image);
+> -
+>   ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+>   			       size_t count, loff_t *ppos);
+>   ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
+> @@ -397,35 +385,6 @@ static inline int drm_fb_helper_defio_init(struct drm_fb_helper *fb_helper)
+>   	return -ENODEV;
+>   }
+>   
+> -static inline ssize_t drm_fb_helper_sys_read(struct fb_info *info,
+> -					     char __user *buf, size_t count,
+> -					     loff_t *ppos)
+> -{
+> -	return -ENODEV;
+> -}
+> -
+> -static inline ssize_t drm_fb_helper_sys_write(struct fb_info *info,
+> -					      const char __user *buf,
+> -					      size_t count, loff_t *ppos)
+> -{
+> -	return -ENODEV;
+> -}
+> -
+> -static inline void drm_fb_helper_sys_fillrect(struct fb_info *info,
+> -					      const struct fb_fillrect *rect)
+> -{
+> -}
+> -
+> -static inline void drm_fb_helper_sys_copyarea(struct fb_info *info,
+> -					      const struct fb_copyarea *area)
+> -{
+> -}
+> -
+> -static inline void drm_fb_helper_sys_imageblit(struct fb_info *info,
+> -					       const struct fb_image *image)
+> -{
+> -}
+> -
+>   static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
+>   					     size_t count, loff_t *ppos)
+>   {
