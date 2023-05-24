@@ -2,353 +2,286 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 964E8C87FE2
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 May 2023 09:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8897C77B7A
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 May 2023 10:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240714AbjEXJWl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 May 2023 05:22:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46698 "EHLO
+        id S230143AbjEXKun (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 May 2023 06:50:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240709AbjEXJWk (ORCPT
+        with ESMTP id S229517AbjEXKum (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 May 2023 05:22:40 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3585131;
-        Wed, 24 May 2023 02:22:13 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id EC1031FE27;
-        Wed, 24 May 2023 09:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1684920117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tNm/VjzKJfYTTelMWAwWaGOR8nslqSNZSJW0IOCyjHU=;
-        b=nXzQqku3whw80151lpW6EvXw1aCMuglbOLWh7yxjt165tl+cgc5XDSWv7cQrJMvzhyUsfq
-        253hJeB3Si/5q1SJSkG/iA0mTKkIPan4w/9jKx3hBVTvmJDYJwsjWEdiGJ3IhVPZPj0jHY
-        0CyLH1ZRVRNlr0BK6AWg6ilw0n1YwbA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1684920117;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tNm/VjzKJfYTTelMWAwWaGOR8nslqSNZSJW0IOCyjHU=;
-        b=UYtRX8Dwfbc6qDFhHIgkjxSZ20MW1+gmZTVzKERzDOP9iY+mRM7zyZq22EiEwKsFQfS6Xe
-        VuT3ZAhytvhKhIDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 91EE113A10;
-        Wed, 24 May 2023 09:21:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id eGLBIjXXbWTHewAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 24 May 2023 09:21:57 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     daniel@ffwll.ch, airlied@gmail.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com, sam@ravnborg.org
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>
-Subject: [PATCH v4 13/13] drm/i915: Implement dedicated fbdev I/O helpers
-Date:   Wed, 24 May 2023 11:21:50 +0200
-Message-Id: <20230524092150.11776-14-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230524092150.11776-1-tzimmermann@suse.de>
-References: <20230524092150.11776-1-tzimmermann@suse.de>
+        Wed, 24 May 2023 06:50:42 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2EE97;
+        Wed, 24 May 2023 03:50:40 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kcYEXQTDrY81jA8xNI4j1K7RzAfVqhP/a4tE4EWKOgOR3PRCnv9/lkiANoWgZNVc5ce+MKRK15BvfiQSpZ9i1jHXIvPMNyxesFU603x3lut4Jbzzg1wrHwnMBeYqdQO2fZqv226iCcmilCyjqiOZXgOioWXD5WWX3lEMfz3XjtJyZOwcHF8OD9p0PESObI2WJqDukhaYOUs6gDhPqgGQAQYKS59KA4Lq1TeCbZYIiZm9n4dnLFINtTjy8tjwfCGmFyJOvpAnJ6ugPX4irtDOP/oD2lSZFqbDOamwtISb/nCWuhY1Hl3zVaxD5wA1p5UbmAnSrXa1xdIat0d4cIB34Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5bZMrETjg/hEwmAUSMBY8Wleo490eLcpplxUE+F6Jxc=;
+ b=hH9ZL2BqljJo8N5j8Z0ApUlLGbviaf1M3zISQzhlmrw5F8Ae0I8SJKQF2XmrEwW+Goi/6zn95zcAoQFGGVNcPDorhiJ4kJ5eWMriUwsqnW+Z/y8XKMDddTKtlZTTomzR+qoSjzS9vMWT2Wsra3W5DkPdvtL0YA0MvE98lI++Lp4Nq08yZGxN9M7T+6ociyU0r0jt5a8eGbgSaDfAHcKA0g4qmEnPJaduA6m1S66F698vylghUtODaDlHYEjN3d9WKJqGMyYs+zDnhzB4bEGGYUHe4SWpFks9QjyJGAw9tICFEbp4VcgOky6Cq0Fov0xgrzRvCsXEtQglBdiGbHcWFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5bZMrETjg/hEwmAUSMBY8Wleo490eLcpplxUE+F6Jxc=;
+ b=FOipL5VmGxbR4tqzpGurYnwdARu0CiHqrG1dj/cakOFdSmSO5G52Ce/om4MJLIkjcTySS5iyMTbbHCFEWa6ZtmsZzuIV4b1MkSCeX1nRhj/8GlWSR/WAvkAsRGyXBVhxTMCYUK+k/ZQw+8dbHwI6OenF3jJ2wEinuXudBhJGFt/y/91MBmDH3RH13OHbxvhEeYYjytSonS41HITCsaiMCMSEcyYmHUElYxRP8qceH/gyyoKrFyg0xKlhHw6QIyb+2pHP1BptP7Q5XjFbWHtf1qZN1tbnBY/GQbwW/bJL0Qntt1mVfTkJem8ev0cyoMRmRb9LfZU6ms4jj+iPIdpG4w==
+Received: from MW4PR04CA0138.namprd04.prod.outlook.com (2603:10b6:303:84::23)
+ by MN2PR12MB4237.namprd12.prod.outlook.com (2603:10b6:208:1d6::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.28; Wed, 24 May
+ 2023 10:50:37 +0000
+Received: from CO1NAM11FT016.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:84:cafe::31) by MW4PR04CA0138.outlook.office365.com
+ (2603:10b6:303:84::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.14 via Frontend
+ Transport; Wed, 24 May 2023 10:50:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1NAM11FT016.mail.protection.outlook.com (10.13.175.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6411.30 via Frontend Transport; Wed, 24 May 2023 10:50:37 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 24 May 2023
+ 03:50:27 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Wed, 24 May 2023 03:50:26 -0700
+Received: from pshete-ubuntu.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Wed, 24 May 2023 03:50:24 -0700
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>,
+        Manish Bhardwaj <mbhardwaj@nvidia.com>
+Subject: [PATCH v4] gpio: tegra186: Check GPIO pin permission before access.
+Date:   Wed, 24 May 2023 16:20:21 +0530
+Message-ID: <20230524105021.9418-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <ZGztRb_CreLi_rYv@surfacebook>
+References: <ZGztRb_CreLi_rYv@surfacebook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT016:EE_|MN2PR12MB4237:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc554c52-7b10-464d-8c3d-08db5c44b564
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pyrXbjeiUaIUlAJwjC0sq0ZRrwr38ROdu5VZH2yUPXrQCgnsbMo9eooSUZW4Ttl21yQDk7oXY5d5pbD/hUUy92xot5uHdZnqDgu4wZiDxcjMnCEOzyavYewMmv+FGF5gK/Fb7GGb3oELyqsP6uU8pAf1C83y4vQMCcDaksYSg3I2xXRuj1cVq/khcCX2NHgZq6DBRZERIZ10+Rij2ioy6ByHtCMUv94OxSg01ggnNfNFHLMkImOAwgwUeSvXWBK4Y1HqTYM7ri40QdyUE3dVEo6g8jQ1PBiApSMg7ArNuTBslbUJwG+JZ6JVTuKjma1PVIa/k5RSNG0xFJljHKHyyUJ9X61ptGDf2aDxdTAE6cwUSwXhQxZzvfz35+aXeDpySoRP+LH3EQ1p25PkP70siXcswkdjyStEoGosS0cZ0bJ+7+yUvRqhpet902pk4nWXxCgZ8VD349eGEpS8wu0g+Wiu6qtRb1J1uTNpgkuR4VUTYPjlcCQlAHAI0uyHCXWhRQ0ihp2lJKjrX8CkEKqUkdijSFxWtH8WSr1OoGlyPtdfeBKe97beZTi9V+MeEZrEbOrdhVb7zeGxVkX8SmQzCbVZprRXePC7ysburoOfxRpF145Dv5ns//Nga1hrxNy7KXQehyXfhwYm7uHZm1QWbji4TCVR6KS3yMPNleSVZnFQYxd/sLTogREMX/Qkz0F67NzQh7W+goIUwso6dHFQCwrhhGu1eFqLAi28d9fFmleK0rmNylNVZ3NGF8j0l59q
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(346002)(376002)(39860400002)(396003)(451199021)(46966006)(36840700001)(40470700004)(54906003)(110136005)(47076005)(336012)(478600001)(86362001)(2616005)(426003)(36860700001)(70586007)(83380400001)(70206006)(2906002)(82310400005)(4326008)(186003)(26005)(1076003)(82740400003)(40480700001)(6666004)(316002)(107886003)(41300700001)(7696005)(36756003)(8676002)(5660300002)(40460700003)(356005)(7636003)(8936002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2023 10:50:37.2916
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc554c52-7b10-464d-8c3d-08db5c44b564
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT016.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4237
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement dedicated fbdev helpers for framebuffer I/O instead
-of using DRM's helpers. Use an fbdev generator macro for
-deferred I/O to create the fbdev callbacks. i915 was the only
-caller of the DRM helpers, so remove them from the helper module.
+This change checks if we have the necessary permission to
+access the GPIO. For devices that have support for virtualisation
+we need to check both the TEGRA186_GPIO_VM_REG and the
+TEGRA186_GPIO_SCR_REG registers. For device that do not have
+virtualisation support for GPIOs we only need to check the
+TEGRA186_GPIO_SCR_REG register.
 
-i915's fbdev emulation is still incomplete as it doesn't implement
-deferred I/O and damage handling for mmaped pages.
-
-v4:
-	* generate deferred-I/O helpers
-	* use initializer macros for fb_ops
-v2:
-	* use FB_IO_HELPERS options
-
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc: "Ville Syrjälä" <ville.syrjala@linux.intel.com>
+Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/gpu/drm/Kconfig                    |   3 -
- drivers/gpu/drm/drm_fb_helper.c            | 107 ---------------------
- drivers/gpu/drm/i915/Kconfig               |   1 +
- drivers/gpu/drm/i915/display/intel_fbdev.c |  14 +--
- include/drm/drm_fb_helper.h                |  39 --------
- 5 files changed, 9 insertions(+), 155 deletions(-)
+ drivers/gpio/gpio-tegra186.c | 78 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 92a782827b7b..bb2e48cc6cd6 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -133,9 +133,6 @@ config DRM_FBDEV_EMULATION
- 	bool "Enable legacy fbdev support for your modesetting driver"
- 	depends on DRM_KMS_HELPER
- 	depends on FB=y || FB=DRM_KMS_HELPER
--	select FB_CFB_FILLRECT
--	select FB_CFB_COPYAREA
--	select FB_CFB_IMAGEBLIT
- 	select FRAMEBUFFER_CONSOLE if !EXPERT
- 	select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
- 	default y
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index bab6b252f02a..9978147bbc8a 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -736,113 +736,6 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
- }
- EXPORT_SYMBOL(drm_fb_helper_deferred_io);
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index b904de0b1784..464b0ea3b6f1 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -27,6 +27,22 @@
  
--/**
-- * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
-- * @info: fb_info struct pointer
-- * @buf: userspace buffer to read from framebuffer memory
-- * @count: number of bytes to read from framebuffer memory
-- * @ppos: read offset within framebuffer memory
-- *
-- * Returns:
-- * The number of bytes read on success, or an error code otherwise.
-- */
--ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
--			       size_t count, loff_t *ppos)
--{
--	return fb_io_read(info, buf, count, ppos);
--}
--EXPORT_SYMBOL(drm_fb_helper_cfb_read);
--
--/**
-- * drm_fb_helper_cfb_write - Implements struct &fb_ops.fb_write for I/O memory
-- * @info: fb_info struct pointer
-- * @buf: userspace buffer to write to framebuffer memory
-- * @count: number of bytes to write to framebuffer memory
-- * @ppos: write offset within framebuffer memory
-- *
-- * Returns:
-- * The number of bytes written on success, or an error code otherwise.
-- */
--ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
--				size_t count, loff_t *ppos)
--{
--	struct drm_fb_helper *helper = info->par;
--	loff_t pos = *ppos;
--	ssize_t ret;
--	struct drm_rect damage_area;
--
--	ret = fb_io_write(info, buf, count, ppos);
--	if (ret <= 0)
--		return ret;
--
--	if (helper->funcs->fb_dirty) {
--		drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
--		drm_fb_helper_damage(helper, damage_area.x1, damage_area.y1,
--				     drm_rect_width(&damage_area),
--				     drm_rect_height(&damage_area));
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL(drm_fb_helper_cfb_write);
--
--/**
-- * drm_fb_helper_cfb_fillrect - wrapper around cfb_fillrect
-- * @info: fbdev registered by the helper
-- * @rect: info about rectangle to fill
-- *
-- * A wrapper around cfb_fillrect implemented by fbdev core
-- */
--void drm_fb_helper_cfb_fillrect(struct fb_info *info,
--				const struct fb_fillrect *rect)
--{
--	struct drm_fb_helper *helper = info->par;
--
--	cfb_fillrect(info, rect);
--
--	if (helper->funcs->fb_dirty)
--		drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
--}
--EXPORT_SYMBOL(drm_fb_helper_cfb_fillrect);
--
--/**
-- * drm_fb_helper_cfb_copyarea - wrapper around cfb_copyarea
-- * @info: fbdev registered by the helper
-- * @area: info about area to copy
-- *
-- * A wrapper around cfb_copyarea implemented by fbdev core
-- */
--void drm_fb_helper_cfb_copyarea(struct fb_info *info,
--				const struct fb_copyarea *area)
--{
--	struct drm_fb_helper *helper = info->par;
--
--	cfb_copyarea(info, area);
--
--	if (helper->funcs->fb_dirty)
--		drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
--}
--EXPORT_SYMBOL(drm_fb_helper_cfb_copyarea);
--
--/**
-- * drm_fb_helper_cfb_imageblit - wrapper around cfb_imageblit
-- * @info: fbdev registered by the helper
-- * @image: info about image to blit
-- *
-- * A wrapper around cfb_imageblit implemented by fbdev core
-- */
--void drm_fb_helper_cfb_imageblit(struct fb_info *info,
--				 const struct fb_image *image)
--{
--	struct drm_fb_helper *helper = info->par;
--
--	cfb_imageblit(info, image);
--
--	if (helper->funcs->fb_dirty)
--		drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
--}
--EXPORT_SYMBOL(drm_fb_helper_cfb_imageblit);
--
- /**
-  * drm_fb_helper_set_suspend - wrapper around fb_set_suspend
-  * @fb_helper: driver-allocated fbdev helper, can be NULL
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index e4f4d2e3fdfe..01b5a8272a27 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -17,6 +17,7 @@ config DRM_I915
- 	select DRM_KMS_HELPER
- 	select DRM_PANEL
- 	select DRM_MIPI_DSI
-+	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
- 	select RELAY
- 	select I2C
- 	select I2C_ALGOBIT
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index aab1ae74a8f7..eccaceaf8b9d 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-@@ -28,6 +28,7 @@
- #include <linux/console.h>
- #include <linux/delay.h>
- #include <linux/errno.h>
-+#include <linux/fb.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/mm.h>
-@@ -84,6 +85,10 @@ static void intel_fbdev_invalidate(struct intel_fbdev *ifbdev)
- 	intel_frontbuffer_invalidate(to_frontbuffer(ifbdev), ORIGIN_CPU);
- }
+ #define TEGRA186_GPIO_INT_ROUTE_MAPPING(p, x) (0x14 + (p) * 0x20 + (x) * 4)
  
-+FB_GEN_DEFAULT_DEFERRED_IO_OPS(intel_fbdev,
-+			       drm_fb_helper_damage_range,
-+			       drm_fb_helper_damage_area)
++#define  TEGRA186_GPIO_VM			0x00
++#define  TEGRA186_GPIO_VM_RW_MASK		0x03
++#define  TEGRA186_GPIO_SCR			0x04
++#define  TEGRA186_GPIO_SCR_PIN_SIZE		0x08
++#define  TEGRA186_GPIO_SCR_PORT_SIZE		0x40
++#define  TEGRA186_GPIO_SCR_SEC_WEN		BIT(28)
++#define  TEGRA186_GPIO_SCR_SEC_REN		BIT(27)
++#define  TEGRA186_GPIO_SCR_SEC_G1W		BIT(9)
++#define  TEGRA186_GPIO_SCR_SEC_G1R		BIT(1)
++#define  TEGRA186_GPIO_FULL_ACCESS		(TEGRA186_GPIO_SCR_SEC_WEN | \
++						 TEGRA186_GPIO_SCR_SEC_REN | \
++						 TEGRA186_GPIO_SCR_SEC_G1R | \
++						 TEGRA186_GPIO_SCR_SEC_G1W)
++#define  TEGRA186_GPIO_SCR_SEC_ENABLE		(TEGRA186_GPIO_SCR_SEC_WEN | \
++						 TEGRA186_GPIO_SCR_SEC_REN)
 +
- static int intel_fbdev_set_par(struct fb_info *info)
- {
- 	struct intel_fbdev *ifbdev = to_intel_fbdev(info->par);
-@@ -132,15 +137,12 @@ static int intel_fbdev_mmap(struct fb_info *info, struct vm_area_struct *vma)
- 
- static const struct fb_ops intelfb_ops = {
- 	.owner = THIS_MODULE,
-+	__FB_DEFAULT_DEFERRED_OPS_RDWR(intel_fbdev),
- 	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_set_par = intel_fbdev_set_par,
--	.fb_read = drm_fb_helper_cfb_read,
--	.fb_write = drm_fb_helper_cfb_write,
--	.fb_fillrect = drm_fb_helper_cfb_fillrect,
--	.fb_copyarea = drm_fb_helper_cfb_copyarea,
--	.fb_imageblit = drm_fb_helper_cfb_imageblit,
--	.fb_pan_display = intel_fbdev_pan_display,
- 	.fb_blank = intel_fbdev_blank,
-+	.fb_pan_display = intel_fbdev_pan_display,
-+	__FB_DEFAULT_DEFERRED_OPS_DRAW(intel_fbdev),
- 	.fb_mmap = intel_fbdev_mmap,
+ /* control registers */
+ #define TEGRA186_GPIO_ENABLE_CONFIG 0x00
+ #define  TEGRA186_GPIO_ENABLE_CONFIG_ENABLE BIT(0)
+@@ -81,6 +97,7 @@ struct tegra_gpio_soc {
+ 	unsigned int num_pin_ranges;
+ 	const char *pinmux;
+ 	bool has_gte;
++	bool has_vm_support;
  };
  
-diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-index b50fd0c0b713..4863b0f8299e 100644
---- a/include/drm/drm_fb_helper.h
-+++ b/include/drm/drm_fb_helper.h
-@@ -258,18 +258,6 @@ void drm_fb_helper_damage_area(struct fb_info *info, u32 x, u32 y, u32 width, u3
- 
- void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
- 
--ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
--			       size_t count, loff_t *ppos);
--ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
--				size_t count, loff_t *ppos);
--
--void drm_fb_helper_cfb_fillrect(struct fb_info *info,
--				const struct fb_fillrect *rect);
--void drm_fb_helper_cfb_copyarea(struct fb_info *info,
--				const struct fb_copyarea *area);
--void drm_fb_helper_cfb_imageblit(struct fb_info *info,
--				 const struct fb_image *image);
--
- void drm_fb_helper_set_suspend(struct drm_fb_helper *fb_helper, bool suspend);
- void drm_fb_helper_set_suspend_unlocked(struct drm_fb_helper *fb_helper,
- 					bool suspend);
-@@ -385,33 +373,6 @@ static inline int drm_fb_helper_defio_init(struct drm_fb_helper *fb_helper)
- 	return -ENODEV;
+ struct tegra_gpio {
+@@ -130,6 +147,58 @@ static void __iomem *tegra186_gpio_get_base(struct tegra_gpio *gpio,
+ 	return gpio->base + offset + pin * 0x20;
  }
  
--static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
--					     size_t count, loff_t *ppos)
--{
--	return -ENODEV;
--}
--
--static inline ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
--					      size_t count, loff_t *ppos)
--{
--	return -ENODEV;
--}
--
--static inline void drm_fb_helper_cfb_fillrect(struct fb_info *info,
--					      const struct fb_fillrect *rect)
--{
--}
--
--static inline void drm_fb_helper_cfb_copyarea(struct fb_info *info,
--					      const struct fb_copyarea *area)
--{
--}
--
--static inline void drm_fb_helper_cfb_imageblit(struct fb_info *info,
--					       const struct fb_image *image)
--{
--}
--
- static inline void drm_fb_helper_set_suspend(struct drm_fb_helper *fb_helper,
- 					     bool suspend)
++static void __iomem *tegra186_gpio_get_secure_base(struct tegra_gpio *gpio,
++						   unsigned int pin)
++{
++	const struct tegra_gpio_port *port;
++	unsigned int offset;
++
++	port = tegra186_gpio_get_port(gpio, &pin);
++	if (!port)
++		return NULL;
++
++	offset = port->bank * 0x1000 + port->port * TEGRA186_GPIO_SCR_PORT_SIZE;
++
++	return gpio->secure + offset + pin * TEGRA186_GPIO_SCR_PIN_SIZE;
++}
++
++static inline bool tegra186_gpio_is_accessible(struct tegra_gpio *gpio, unsigned int pin)
++{
++	void __iomem *secure;
++	u32 value;
++
++	secure = tegra186_gpio_get_secure_base(gpio, pin);
++
++	if (gpio->soc->has_vm_support) {
++		value = readl(secure + TEGRA186_GPIO_VM);
++		if ((value & TEGRA186_GPIO_VM_RW_MASK) != TEGRA186_GPIO_VM_RW_MASK)
++			return false;
++	}
++
++	value = __raw_readl(secure + TEGRA186_GPIO_SCR);
++
++	if ((value & TEGRA186_GPIO_SCR_SEC_ENABLE) == 0)
++		return true;
++
++	if ((value & TEGRA186_GPIO_FULL_ACCESS) == TEGRA186_GPIO_FULL_ACCESS)
++		return true;
++
++	return false;
++}
++
++static int tegra186_init_valid_mask(struct gpio_chip *chip,
++				    unsigned long *valid_mask, unsigned int ngpios)
++{
++	struct tegra_gpio *gpio = gpiochip_get_data(chip);
++	unsigned int j;
++
++	for (j = 0; j < ngpios; j++) {
++		if (!tegra186_gpio_is_accessible(gpio, j))
++			clear_bit(j, valid_mask);
++	}
++	return 0;
++}
++
+ static int tegra186_gpio_get_direction(struct gpio_chip *chip,
+ 				       unsigned int offset)
  {
+@@ -816,6 +885,7 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	gpio->gpio.set = tegra186_gpio_set;
+ 	gpio->gpio.set_config = tegra186_gpio_set_config;
+ 	gpio->gpio.add_pin_ranges = tegra186_gpio_add_pin_ranges;
++	gpio->gpio.init_valid_mask = tegra186_init_valid_mask;
+ 	if (gpio->soc->has_gte) {
+ 		gpio->gpio.en_hw_timestamp = tegra186_gpio_en_hw_ts;
+ 		gpio->gpio.dis_hw_timestamp = tegra186_gpio_dis_hw_ts;
+@@ -958,6 +1028,7 @@ static const struct tegra_gpio_soc tegra186_main_soc = {
+ 	.name = "tegra186-gpio",
+ 	.instance = 0,
+ 	.num_irqs_per_bank = 1,
++	.has_vm_support = false,
+ };
+ 
+ #define TEGRA186_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -985,6 +1056,7 @@ static const struct tegra_gpio_soc tegra186_aon_soc = {
+ 	.name = "tegra186-gpio-aon",
+ 	.instance = 1,
+ 	.num_irqs_per_bank = 1,
++	.has_vm_support = false,
+ };
+ 
+ #define TEGRA194_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -1040,6 +1112,7 @@ static const struct tegra_gpio_soc tegra194_main_soc = {
+ 	.num_pin_ranges = ARRAY_SIZE(tegra194_main_pin_ranges),
+ 	.pin_ranges = tegra194_main_pin_ranges,
+ 	.pinmux = "nvidia,tegra194-pinmux",
++	.has_vm_support = true,
+ };
+ 
+ #define TEGRA194_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -1065,6 +1138,7 @@ static const struct tegra_gpio_soc tegra194_aon_soc = {
+ 	.instance = 1,
+ 	.num_irqs_per_bank = 8,
+ 	.has_gte = true,
++	.has_vm_support = false,
+ };
+ 
+ #define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -1109,6 +1183,7 @@ static const struct tegra_gpio_soc tegra234_main_soc = {
+ 	.name = "tegra234-gpio",
+ 	.instance = 0,
+ 	.num_irqs_per_bank = 8,
++	.has_vm_support = true,
+ };
+ 
+ #define TEGRA234_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -1135,6 +1210,7 @@ static const struct tegra_gpio_soc tegra234_aon_soc = {
+ 	.instance = 1,
+ 	.num_irqs_per_bank = 8,
+ 	.has_gte = true,
++	.has_vm_support = false,
+ };
+ 
+ #define TEGRA241_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -1165,6 +1241,7 @@ static const struct tegra_gpio_soc tegra241_main_soc = {
+ 	.name = "tegra241-gpio",
+ 	.instance = 0,
+ 	.num_irqs_per_bank = 8,
++	.has_vm_support = false,
+ };
+ 
+ #define TEGRA241_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -1186,6 +1263,7 @@ static const struct tegra_gpio_soc tegra241_aon_soc = {
+ 	.name = "tegra241-gpio-aon",
+ 	.instance = 1,
+ 	.num_irqs_per_bank = 8,
++	.has_vm_support = false,
+ };
+ 
+ static const struct of_device_id tegra186_gpio_of_match[] = {
 -- 
-2.40.1
+2.17.1
 
