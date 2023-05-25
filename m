@@ -2,176 +2,120 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19829C77B7E
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 May 2023 13:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C733BC7EE2F
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 May 2023 16:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241223AbjEYNUA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 May 2023 09:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50688 "EHLO
+        id S230265AbjEYQUL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 May 2023 12:20:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241215AbjEYNT7 (ORCPT
+        with ESMTP id S240325AbjEYQT7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 May 2023 09:19:59 -0400
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [IPv6:2a0b:5c81:1c1::37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D5F18C;
-        Thu, 25 May 2023 06:19:58 -0700 (PDT)
-Received: from hillosipuli.retiisi.eu (82-181-192-243.bb.dnainternet.fi [82.181.192.243])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Thu, 25 May 2023 12:19:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42754195;
+        Thu, 25 May 2023 09:19:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sailus)
-        by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4QRpZ35Pkxz49Q76;
-        Thu, 25 May 2023 16:19:55 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-        t=1685020795;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0qetPBPgd9hVIq6M58pwalvrkrjuv/rSJBgHk7CnDNA=;
-        b=NQbDvhVxiaRGXJjuc+Jd2Ockby8SWIOEsMstnWOA5IhXCMoIrFElwCykOp3L+zm7yjC3cY
-        Zc/ZxrremUTWFoMLrTKD7ZtVZgYvUbqLwoWggnTZkRc9RgnD4stzgPLitp3bo4IrSytg5g
-        a6K1P/vufidWxIRLT29wj5/Gx/ixNpL1vO22RaXuvKEqSmOoda2hFwKK7DqnIqugOUvewa
-        KGh7/EDBCyK2Jumr6W/kxjajCjRj8PDbpdGKhUpEeWGw7PmDKcJys0ykJx2yRzTjROgJrv
-        pYmJMjlYdzQBker9uQbW2shaIQHjR+9a+POQ/RAu86zhGgIN1VNPFiGUTEaCHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-        s=lahtoruutu; t=1685020795;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0qetPBPgd9hVIq6M58pwalvrkrjuv/rSJBgHk7CnDNA=;
-        b=aoVtERg41iMgL2DTOyJXSGRwV7K+2GDB2coIVsnzxBxCJM1T5qJPdgHEM8VXokKQP6AVac
-        FZHWPY703xIl5IgXgMhnltcE8WI+GvRc0PCmsu8cpGRlyFUTp8WAocpJ0rqLzlLSVLl8k+
-        /8N7oh0TZxl/PmajclTT8a6qEmyCdHobC0H0+TS8RAwLa78V2SxWqaoWGpvp2GyERE0owk
-        k11fbNm8pJaFsnfb7NkxIjgm8fR9g1UpNM/hvrMHTrL+rNazB+d3kBOtRQhiO2C/Q4BxcY
-        JXh2bG79SNOUuxfaX1Neb9TawjBjyDo1tH6RJJOunXGpLZZfvzgsBpTElMVsew==
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1685020795; a=rsa-sha256;
-        cv=none;
-        b=efqD3vaGzuMwKAX5crbjHumwetM35Wf3CIlqu3vc9agehICnsodaIH9kn2um0WhroiJYQ5
-        usexy3uEPSzkIUoCyvfeed17Un/uE+WRdWg22XaC4z4N0iPZrLMQAaZrpr1qJ+ZF7c++cd
-        L5FKqTtMjiccuc8QZGghS0NBCxaoKB19NBpLs+IHCLr2tvwgy4ScjsvWI/9hcD3IkRgv38
-        zn+cGrxUXQu+uturY8ca20qAU1sc31M09LEnX8wZA3z+73efIXBYefQ1lwI/0kAviH4+YO
-        ZJFzLS+RxWaL4379SLh+isKa94hmQVjcNCslU4h/E4uUu8gOTrTLJkiXU+kCEg==
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 16BBE634C91;
-        Thu, 25 May 2023 16:19:55 +0300 (EEST)
-Date:   Thu, 25 May 2023 16:19:54 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Joe Tessler <jrt@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Bin Liu <bin.liu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 01/28] media: cec: ch7322: drop of_match_ptr for ID table
-Message-ID: <ZG9ger4WE2VWoVEF@valkosipuli.retiisi.eu>
-References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
- <98a77653-ec58-56c4-9893-3b424f67c87e@linaro.org>
- <5afcec8b-b8f6-35b0-278a-5de185e4a7a2@xs4all.nl>
- <ZG9XJCD98VWjGjTN@valkosipuli.retiisi.eu>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CA88B6476D;
+        Thu, 25 May 2023 16:19:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F130C433D2;
+        Thu, 25 May 2023 16:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685031596;
+        bh=PEtK4XQujJVRG9JuuhXTpXbXc0yGWo0XW1UzlJpTm1U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YcA9yR8zEjfdA5VDDZwvy77Vy/0MjDzX9ob95Yk3imwGam7iCSYqs0X9xCzObBqaf
+         Y+mcZ+FeGGlaXhw7D21JwyaP4LPYABmiaGUFPkcu/LcmlnMF9zyLnS0VZXkC+95UGY
+         hCdblKo1/U26KBEFEKdUt3paAZSj316ZlZRBGbLCnad5yTmXJAun1tepg+TIoIOMFv
+         k4VSrT/d5jdRUvZ3ruG7L8BPS2DgRRg7f2kEkhRPZcltyr5K6J5syUtHrKvSqvZ/UN
+         exnwWOjvsdwtDYKAxtHO4y8TgYVaygUvVLL6AF+BrPYQQFjzFAHkmR45xIAfYHwaMF
+         ZtuK3EeJ7w/ew==
+Date:   Thu, 25 May 2023 17:19:51 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: usb: tegra-xudc: Remove extraneous PHYs
+Message-ID: <20230525-pancake-amiable-903f8e96c58d@spud>
+References: <20230525094237.2846682-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6032cX2oMZzLCuYF"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZG9XJCD98VWjGjTN@valkosipuli.retiisi.eu>
+In-Reply-To: <20230525094237.2846682-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi folks,
 
-On Thu, May 25, 2023 at 03:40:04PM +0300, Sakari Ailus wrote:
-> Hi Hans,
-> 
-> On Sat, May 13, 2023 at 11:57:33AM +0200, Hans Verkuil wrote:
-> > On 12/05/2023 18:35, Krzysztof Kozlowski wrote:
-> > > On 12/03/2023 14:12, Krzysztof Kozlowski wrote:
-> > >> The driver can match only via the DT table so the table should be always
-> > >> used and the of_match_ptr does not have any sense (this also allows ACPI
-> > >> matching via PRP0001, even though it might not be relevant here).
-> > >>
-> > >>   drivers/media/cec/i2c/ch7322.c:583:34: error: ‘ch7322_of_match’ defined but not used [-Werror=unused-const-variable=]
-> > >>
-> > >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > >> ---
-> > > 
-> > > Hans, Sakari,
-> > > 
-> > > Can you pick up the patchset? There was positive feedback:
-> > > https://patchwork.linuxtv.org/project/linux-media/patch/20230312131318.351173-1-krzysztof.kozlowski@linaro.org/
-> > > 
-> > > but it seems it was not applied.
-> > 
-> > I see it is delegated to Sakari in patchwork and marked Under Review, but I don't
-> > see a corresponding pull request for this series.
-> > 
-> > Sakari, did something go wrong?
-> 
-> I spotted this as Hans notified me in IRC, I wasn't cc'd. Apologies for
-> this --- I intended to take these but I think I must have missed something
-> important in the process. I'll take them now.
-> 
-> Thanks.
+--6032cX2oMZzLCuYF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This no longer applied cleanly. Mostly there was fuzz near .of_match_table
-changes as probe_new (and remove_new?) changes have been recently merged.
-There were other issues as well, I marked a few patches in the set "not
-applicable" as other patches had already done equivalent changes earlier.
+On Thu, May 25, 2023 at 11:42:37AM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> The USB device controller on Tegra210 and later supports one USB 2/3
+> port, so only a single pair of PHYs is needed. Drop any of the extra
+> PHYs from the bindings.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-There were substance-changing changes in the 20th patch, replied to the
-disuccsion there.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-I've pushed the result here and intend to send PR to Mauro soon if there
-are no issues:
+Thanks,
+Conor.
 
-<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=of-match-ptr>
+> ---
+>  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml         | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml=
+ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+> index e2270ce0c56b..c6e661e8915c 100644
+> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
+> @@ -91,6 +91,7 @@ properties:
+> =20
+>    phys:
+>      minItems: 1
+> +    maxItems: 2
+>      description:
+>        Must contain an entry for each entry in phy-names.
+>        See ../phy/phy-bindings.txt for details.
+> @@ -99,13 +100,7 @@ properties:
+>      minItems: 1
+>      items:
+>        - const: usb2-0
+> -      - const: usb2-1
+> -      - const: usb2-2
+> -      - const: usb2-3
+>        - const: usb3-0
+> -      - const: usb3-1
+> -      - const: usb3-2
+> -      - const: usb3-3
+> =20
+>    avddio-usb-supply:
+>      description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
+> --=20
+> 2.40.1
+>=20
 
--- 
-Kind regards,
+--6032cX2oMZzLCuYF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Sakari Ailus
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG+KpwAKCRB4tDGHoIJi
+0jC4AQDylP8KaWqPnEBN44hFeAbp72VX8q8/FP2vVH7qdqpqiAEA8dY7ncKN7tjz
+mw3hkVsQWeBPoNshBboVWqINmLqnWQs=
+=kYkx
+-----END PGP SIGNATURE-----
+
+--6032cX2oMZzLCuYF--
