@@ -2,106 +2,142 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70221C77B7A
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 May 2023 09:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6BAC7EE2C
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 May 2023 09:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234515AbjEYJmo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 May 2023 05:42:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36526 "EHLO
+        id S234095AbjEYJvw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 May 2023 05:51:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234050AbjEYJmn (ORCPT
+        with ESMTP id S232250AbjEYJvv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 May 2023 05:42:43 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6679A191;
-        Thu, 25 May 2023 02:42:42 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-514454733b8so498932a12.3;
-        Thu, 25 May 2023 02:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685007761; x=1687599761;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6XQd90nNPC5bHeVCXpgMeDPAKRWOlZYVAdkPI9BTXzc=;
-        b=Q9zGzrF7z7hlFMbq0YtWmAN+STRLx6HxRirDP1yrRIwPbDuzGDlVvxPfTGXdsOaQ7u
-         TSZHnTYoRxvRycLXTzlxRRwmbKXjsVZ59OByukgyGazP4uLHjvcsI4BQa10cRCYd+ZF/
-         mRgVTkKAsw6Qw1hmI8fAmWnWiHo94fd7NzlQWw4ogyvNWzCvNNPT/zAvajc7uBmD2apl
-         VwVSM+BYOp+gcB+8cTVcdDVZDpR/nFk1qg/ppox4ecBEzvSLFF1Z+2intVEF6iA8psh7
-         bUHOLDPF6tyMEvyBeoIqHzPPdMuj2siasEQxr7kJuJMS1vSlXBSOiNUBa67ITzkCuhHT
-         /MMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685007761; x=1687599761;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6XQd90nNPC5bHeVCXpgMeDPAKRWOlZYVAdkPI9BTXzc=;
-        b=IIjmrC5xQe2nwpGNupkq/LuGRHwbV/Q3tWSlVrIYEn5EEpubBe8IZXeyRWy35VDyN9
-         V+mfxDSLv16SJJQsE58EJbQrXLUVKGGccisor5r7r3VVRka1TkvejMI7eOoYVHA3Dvda
-         S+2IIeVvha2aH8fb0+qZTEmLw+/9jEuE4y3oiW2oms9eaL/CGoGd1D8jkFfyPc+mIO15
-         zB4nUHgWivPD1phZbsmS2HEX0eJ3v5MpF2B9znSMRXFH5RKG/btswTuJ1Zc/N1PcMUGk
-         hSuZr0klQdgf6qDGKSA6dMVrqvirEi7/iQcng6+7X83wLrQwTLHYejf2UytxOt0KxLIe
-         c2aQ==
-X-Gm-Message-State: AC+VfDyhB3eCFIgF43rBAb1xWuq2nggM2TKDCi1ctbtEZ2EtqcZKoNYR
-        38tIEVQWBDSm4cs7ism7yOLkOwf1dE0=
-X-Google-Smtp-Source: ACHHUZ4hCYebNsaawH3EjvG+NnzYstOSTEu0rUk9IvAP//0je2d5iAzMdSrhBMjJbsacR0JCFY6KCA==
-X-Received: by 2002:a17:907:3faa:b0:970:c9f:2db6 with SMTP id hr42-20020a1709073faa00b009700c9f2db6mr905381ejc.63.1685007760531;
-        Thu, 25 May 2023 02:42:40 -0700 (PDT)
-Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id q18-20020a170906b29200b0095844605bb8sm617552ejz.10.2023.05.25.02.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 May 2023 02:42:40 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH] dt-bindings: usb: tegra-xudc: Remove extraneous PHYs
-Date:   Thu, 25 May 2023 11:42:37 +0200
-Message-Id: <20230525094237.2846682-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.40.1
+        Thu, 25 May 2023 05:51:51 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2C0E7;
+        Thu, 25 May 2023 02:51:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dvsnXH1HdfhWnpnM+ctRu1gyAkDALJ/bY287DAHwRrQwTquxX4BhRX8/EPMycZ71G82v/ZbxXvxuLftQWW67ex7bddM7GpbKY4JWLyqHMj9Z8VS021I4GEtep8zkjs5ohrJWk0SnIvKKkK8wFkuDJYxn7FBtMaVngME97E+L+W4iM1iOYyS4ABNlZ286tt3usDaCdFSYzpymgSdeGpiWbj/l9eopZDDanT4XLgyhCdKUJWobNuaAxiWpqzSpaUhn7W9xSPfhiOXifAHe3Q52ZI5O80DQzg/iO+M33ATf+vSgjzkXkC1lpCmU0KU4WnD/qzOMcVUcv5EcHpkLJ5x2Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5CRYoUZd9oqQ/r81zFcgdKwbMuV3X2wxIdvGxKTikfA=;
+ b=W8crbOaZxpkdGu2M8dC2FKFIAAFqiEubdI22ro2UyS+Bnz8NX+qWdL8u0jFoSkxvJ54eN2ARG907Z7jbo7u7zdQv4aMcIeGn//EqyKm0dsSBCY1ku4CUbfbahG1nHQUeFUR2tn2G0mOt+ATaW1PqA6Z1VddaQZMHvas3lTBN4asX66UI3oONlo1+QnQHt5yL+C7pneywSpGn2QDOH5ZLc5eKB3ocw+KymVSCNApno5DxJXOXIDFoU9UspYtGhF2L2Kl/9C+4/diRQ2DQbviYNC3Xj57eJufxBYymNOCQ5tZc22XlS/oqYcvKAGjVb2HKJyT7wCWhh1P/o5dfFf8Qow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5CRYoUZd9oqQ/r81zFcgdKwbMuV3X2wxIdvGxKTikfA=;
+ b=gMyfG2d1YD3rgguTBx2cvH7oKTRuTiZaaIr20vOyD023QTNoX7ZGAo7Kw16bzEjjYS7Kuok4SdbXIFictbWiRytwzTNSznEaVCRijtpL508QSbepUfeWRE4DsRIkqIvQAPlYIUN2X2MLYaz95Xz5HdlT+QJZRs+MzEF6uvmZw9MRoMUp2MUu5tJB8KyCMVXiBYbjSp55TQqGQVgL81/MiZvJnHiuaY+F+44+d/pAtc5SSxEbfniteHzE84Psqcb8k0jwUlDpLKBBBG9npcDRS3fz6bGPenrf/YGv26iA5k09Z+V8VJocY7hGsyehClAvXm4YFLQkkPZG2TKYlM1fQg==
+Received: from BN1PR13CA0011.namprd13.prod.outlook.com (2603:10b6:408:e2::16)
+ by PH0PR12MB8052.namprd12.prod.outlook.com (2603:10b6:510:28b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.15; Thu, 25 May
+ 2023 09:51:45 +0000
+Received: from BN8NAM11FT083.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:e2:cafe::7b) by BN1PR13CA0011.outlook.office365.com
+ (2603:10b6:408:e2::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.16 via Frontend
+ Transport; Thu, 25 May 2023 09:51:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN8NAM11FT083.mail.protection.outlook.com (10.13.177.75) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6433.17 via Frontend Transport; Thu, 25 May 2023 09:51:44 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 25 May 2023
+ 02:51:35 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Thu, 25 May 2023 02:51:35 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Thu, 25 May 2023 02:51:35 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <linux-tegra@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.3 000/363] 6.3.4-rc2 review
+In-Reply-To: <20230523164950.435226211@linuxfoundation.org>
+References: <20230523164950.435226211@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <b340114d-286e-4043-8fe6-8ed288c24bb5@drhqmail202.nvidia.com>
+Date:   Thu, 25 May 2023 02:51:35 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT083:EE_|PH0PR12MB8052:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97da9f67-67b0-4a5c-9817-08db5d05a666
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 8o+xuq7Ar5jmXveNiTZqxIymnWFSUaPPgRi9fvUeq4+CDmUjZOcfPCExG/RQAtcO9klsFwtgDNZlENtXyerisbGX2t87tBIlwenFovs172IeRs6lCuyHMs0y0O1Sr6hmzfLKOizMGR18jSzsJeX/5A9D55T/BBb2U50guXiLPerE/9zs6GDQkbT7pr7BYdCdhM9GyjBPXlXtVygP0FW03GE+T45AW5/xpj+PuDaofkOEqzwxi6HOczTtDuXcIODVWOqYw/+grlT5g5mbQKfYjCAsTwCAQUMDacb3uy5W+rsQI8M5FsEWPWG0GfjhlwI/jXkmox5KjwFd1qyiq8jXq5toN1cDJUAgQIu1OshSEYK+cu1NhVrxF32HA5AuZUcmKiI9CFgpYiWohrGRJ6laZbKC+728e0I8UsUUoP+gmDa10a45VgpimQvcJlXA555vJWqipVxywhZtOuzVWTnBmpFUNq2m6B22uzkP0Ryl8DPnfs/ivTunps2NKSmi2OYFltMDKTxcVGdFBzl1woaRQykk2Lj7WjAyRniRx+FtxA2VxBEk+rfYt3dhVh01UVzcTwE3KFoxpsAiEZ64qi81lj7rikLalGaqSFL21GMtt+i5ghhQe0PFNnbYuQQUjgbVNQpC1y2h/Zytzb4g7zE85p7gzO0XWp7iFK2Fn6K5tS/yDEtjzwXzITDfE7FStv6YI8rW24939zKOUYjfa8EsugY0ViG5cHTd3fkJA7I8HGcAf4JT4y1P/HQqUeaHgzZ4OtAcWxJcTfmw4AV1R/2gU2GVmLI94DHpz/rRY8YzmZg=
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(376002)(136003)(346002)(451199021)(36840700001)(40470700004)(46966006)(478600001)(31686004)(966005)(54906003)(26005)(186003)(70206006)(70586007)(6916009)(4326008)(82740400003)(5660300002)(356005)(82310400005)(426003)(336012)(41300700001)(36860700001)(40480700001)(86362001)(2906002)(8676002)(31696002)(8936002)(7636003)(7416002)(316002)(47076005)(40460700003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2023 09:51:44.9143
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97da9f67-67b0-4a5c-9817-08db5d05a666
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT083.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8052
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Tue, 23 May 2023 18:01:23 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.3.4 release.
+> There are 363 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 25 May 2023 16:48:37 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.3.4-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.3.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The USB device controller on Tegra210 and later supports one USB 2/3
-port, so only a single pair of PHYs is needed. Drop any of the extra
-PHYs from the bindings.
+All tests passing for Tegra ...
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml         | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Test results for stable-v6.3:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    130 tests:	130 pass, 0 fail
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-index e2270ce0c56b..c6e661e8915c 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-@@ -91,6 +91,7 @@ properties:
- 
-   phys:
-     minItems: 1
-+    maxItems: 2
-     description:
-       Must contain an entry for each entry in phy-names.
-       See ../phy/phy-bindings.txt for details.
-@@ -99,13 +100,7 @@ properties:
-     minItems: 1
-     items:
-       - const: usb2-0
--      - const: usb2-1
--      - const: usb2-2
--      - const: usb2-3
-       - const: usb3-0
--      - const: usb3-1
--      - const: usb3-2
--      - const: usb3-3
- 
-   avddio-usb-supply:
-     description: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
--- 
-2.40.1
+Linux version:	6.3.4-rc2-ga37c304c022d
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
