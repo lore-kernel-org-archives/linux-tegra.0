@@ -2,101 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5671EC77B7E
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 May 2023 19:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0D4C77B7E
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 May 2023 22:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229592AbjE2Tmm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 May 2023 15:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57560 "EHLO
+        id S229461AbjE2WF4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 May 2023 18:05:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229569AbjE2Tmm (ORCPT
+        with ESMTP id S229476AbjE2WFz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 May 2023 15:42:42 -0400
-Received: from mailrelay4-1.pub.mailoutpod2-cph3.one.com (mailrelay4-1.pub.mailoutpod2-cph3.one.com [46.30.211.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E03D2
-        for <linux-tegra@vger.kernel.org>; Mon, 29 May 2023 12:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=rsa1;
-        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
-         message-id:subject:cc:to:from:date:from;
-        bh=wUfXvnVscNDHokiq7vn1jObWtrFuRJJpIbqINcxXDJE=;
-        b=knGLUans50LTZIo5f1iVlVgufTKBN3qIzs+NSf9br/jM5jHjHmYBi5g2/FBkei1b0wJjoFKhxSShV
-         QSoZGiUz86hzh4UgxBsuS6euL3xR/ZonuALCFFhA8XiecTqW5AIGdTQoHEMPsH9rkMV1dpB468TCAG
-         JoeCW69AvlKmWm0o9tIxIDbln+tJ5/ckfNmXDeJWMVVpyyxlihT0HnD0BJeIZX1SnasSm/RgHLuTIk
-         F2e3h8bQ7f830k9spRcCLPbS4DJ9UgZqRFFqnLuzg2A9XlMmULp7Xdre3rmfleaPQthSb5WgHOa1Fe
-         EvHZd+/jsf5bfp2smSgvH5E4TzLlwCg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=ed1;
-        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
-         message-id:subject:cc:to:from:date:from;
-        bh=wUfXvnVscNDHokiq7vn1jObWtrFuRJJpIbqINcxXDJE=;
-        b=SPkPhAKKpLhNfEwhgL3ZL2sVscqxwpfUw6ze1N9enTq8D4Ch51D8bRwX0xHhLkO4hgMRMxnb09WWw
-         5HU9e0GDA==
-X-HalOne-ID: c141e50e-fe58-11ed-8a8a-592bb1efe9dc
-Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay4 (Halon) with ESMTPSA
-        id c141e50e-fe58-11ed-8a8a-592bb1efe9dc;
-        Mon, 29 May 2023 19:41:08 +0000 (UTC)
-Date:   Mon, 29 May 2023 21:41:07 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     daniel@ffwll.ch, airlied@gmail.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        javierm@redhat.com, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v4 13/13] drm/i915: Implement dedicated fbdev I/O helpers
-Message-ID: <20230529194107.GG1370714@ravnborg.org>
-References: <20230524092150.11776-1-tzimmermann@suse.de>
- <20230524092150.11776-14-tzimmermann@suse.de>
+        Mon, 29 May 2023 18:05:55 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7DBADB;
+        Mon, 29 May 2023 15:05:53 -0700 (PDT)
+Received: from [192.168.2.2] (109-252-150-34.dynamic.spd-mgts.ru [109.252.150.34])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 26C94660217A;
+        Mon, 29 May 2023 23:05:50 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1685397952;
+        bh=E8D9UsqcqdEvEaSPqwft+gP6ubYKoB1Svo0H0BTDyFA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=P6uFKmXC0TuQ4UYU9RsteNwepJOX/EuIwZ3L7kLP8gvVCzg0XXjllPHK/tLG5xcGx
+         VJDkSEKqLLRaaDkqDA2Hf3zPtNqI4QWffOKLx5/FByohz6tXFlgep4mKsnMP5uwn3J
+         ITdsL7oiuo7wEZNTU8EDVMvfsF+ONOzX1R+omxBBDun/jsdmTI3x84WaBr4jCTXgfr
+         tI6vDNXbD0B0JM8bMmC22PwJqZMhYPK/Q6UTa7HnDxLhfJH9ZyAYCFj8XL7I/p7eZ8
+         OMtQvEIhBWLr1Wmp8g1qFwPQodk8FA+dembDBoTf4wzxgIvxEG8mqJnTxmV0pQ8l/e
+         hmFRL6ZZZSLFg==
+Message-ID: <d813304a-cb9e-7e97-ebba-13b6126c6b9a@collabora.com>
+Date:   Tue, 30 May 2023 01:05:47 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230524092150.11776-14-tzimmermann@suse.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v3 6/6] drm/shmem-helper: Switch to reservation lock
+Content-Language: en-US
+To:     Emil Velikov <emil.l.velikov@gmail.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, kernel@collabora.com
+References: <20230521205112.150206-1-dmitry.osipenko@collabora.com>
+ <20230521205112.150206-7-dmitry.osipenko@collabora.com>
+ <CACvgo52QvmZw5k_9dmBHPB25rTdLZJzVG_vNFr8or+3f5sVO=Q@mail.gmail.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CACvgo52QvmZw5k_9dmBHPB25rTdLZJzVG_vNFr8or+3f5sVO=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thomas,
+On 5/22/23 16:02, Emil Velikov wrote:
+>> -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
+>> +static int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+>> +{
+>> +       int ret;
+>> +
+>> +       dma_resv_assert_held(shmem->base.resv);
+>> +
+>> +       ret = drm_gem_shmem_get_pages(shmem);
+>> +
+>> +       return ret;
+> With the assert_held in the getter, it would be less confusing to
+> inline this and the unpin_locked functions.
 
-On Wed, May 24, 2023 at 11:21:50AM +0200, Thomas Zimmermann wrote:
-> Implement dedicated fbdev helpers for framebuffer I/O instead
-> of using DRM's helpers. Use an fbdev generator macro for
-> deferred I/O to create the fbdev callbacks. i915 was the only
-> caller of the DRM helpers, so remove them from the helper module.
-> 
-> i915's fbdev emulation is still incomplete as it doesn't implement
-> deferred I/O and damage handling for mmaped pages.
-> 
-> v4:
-> 	* generate deferred-I/O helpers
-> 	* use initializer macros for fb_ops
-> v2:
-> 	* use FB_IO_HELPERS options
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-> Cc: "Ville Syrjälä" <ville.syrjala@linux.intel.com>
-> ---
->  drivers/gpu/drm/Kconfig                    |   3 -
->  drivers/gpu/drm/drm_fb_helper.c            | 107 ---------------------
->  drivers/gpu/drm/i915/Kconfig               |   1 +
->  drivers/gpu/drm/i915/display/intel_fbdev.c |  14 +--
->  include/drm/drm_fb_helper.h                |  39 --------
->  5 files changed, 9 insertions(+), 155 deletions(-)
+Sorry, missed this comment earlier. The reason why it's a separate
+function is because there will be another caller once we'll add the
+drm-shrinker.
 
-Nice diffstat!
-Assuming there is a good explanation on the dirty check:
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+-- 
+Best regards,
+Dmitry
+
