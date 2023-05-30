@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B547C7EE2C
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 May 2023 15:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F0AC77B7A
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 May 2023 15:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233001AbjE3PDS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 May 2023 11:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39906 "EHLO
+        id S233169AbjE3PMg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 May 2023 11:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232771AbjE3PDD (ORCPT
+        with ESMTP id S230015AbjE3PMf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 May 2023 11:03:03 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6892FF0;
-        Tue, 30 May 2023 08:03:00 -0700 (PDT)
+        Tue, 30 May 2023 11:12:35 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7054EF0;
+        Tue, 30 May 2023 08:12:32 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A81271FE09;
-        Tue, 30 May 2023 15:02:58 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CE88821A8B;
+        Tue, 30 May 2023 15:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1685458978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1685459550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CVW5aJsGfE5VOr+7NJFOTHYcDfsGVSKCoCoHPfylBpg=;
-        b=Sa9brq4n+z2d+Atlua3/46wqCr6bpNhNIMtkICaieTExnZdwAQINIfwslecOHTtzSb7hFM
-        vLmRYFvXgoiTBYG7nN+bLLabZKa0lxHuYil/T6RjR0i3/G1maO/xFxwJ/VVHhpqWjV2fMF
-        GdZ+fuKB5mMN5vkcu/xGL5MvZRD6kjQ=
+        bh=TGZcPjI3AiQUELBGwNSCUMdtE0mmX+tRT45kZe/lzdU=;
+        b=DNTq0Oin/gdVk4B8tf0mjdtJwjwYlprGkrRlwweyKcxQq5FOmaNgaOQABgFQvSUXdziGFO
+        hAaD4+Hyg7OwHU/o8+0tIke+pOcvWB16P6TIcJp0tn44ur77if/dVBsm8ZQZnSPwFA8K48
+        wxLwU/w7FuLpJYuUyw7PesNH/r3MW+M=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1685458978;
+        s=susede2_ed25519; t=1685459550;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CVW5aJsGfE5VOr+7NJFOTHYcDfsGVSKCoCoHPfylBpg=;
-        b=kY8gNDYeeiZZvDYg3K5thL9J85DXFQvblOT0XyVJJOi6s5CETJRdJGKO9srCc1d2k5MQOp
-        AjczBuEzzhq4/MDw==
+        bh=TGZcPjI3AiQUELBGwNSCUMdtE0mmX+tRT45kZe/lzdU=;
+        b=TRRM4HLhUVo4G/3b0AZZBvOtsuWdOjz4Grz+6exgrJId2pumsoN+VsKy68JIqtOp39ncUx
+        bM8Ek4pLDKR3xADA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 52AB113478;
-        Tue, 30 May 2023 15:02:58 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7A89513A21;
+        Tue, 30 May 2023 15:12:30 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id yGlqEyIQdmShegAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Tue, 30 May 2023 15:02:58 +0000
+        id OE74HF4SdmRjAQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Tue, 30 May 2023 15:12:30 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
@@ -59,271 +59,65 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v5 12/13] drm/fbdev-generic: Implement dedicated fbdev I/O helpers
-Date:   Tue, 30 May 2023 17:02:52 +0200
-Message-Id: <20230530150253.22758-13-tzimmermann@suse.de>
+Subject: [PATCH v5 01/13] fbdev: Add Kconfig options to select different fb_ops helpers
+Date:   Tue, 30 May 2023 17:12:16 +0200
+Message-Id: <20230530151228.22979-2-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230530150253.22758-1-tzimmermann@suse.de>
-References: <20230530150253.22758-1-tzimmermann@suse.de>
+In-Reply-To: <20230530151228.22979-1-tzimmermann@suse.de>
+References: <20230530151228.22979-1-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement dedicated fbdev helpers for framebuffer I/O instead
-of using DRM's helpers. Use an fbdev generator macro for
-deferred I/O to create the callbacks. Fbdev-generic was the
-only caller of the DRM helpers, so remove them from the helper
-module.
+Many fbdev drivers use the same set of fb_ops helpers. Add Kconfig
+options to select them at once. This will help with making DRM's
+fbdev emulation code more modular, but can also be used to simplify
+fbdev's driver configs.
 
-v4:
-	* generate deferred-I/O helpers
-	* use initializer macros for fb_ops
-v2:
-	* use FB_SYS_HELPERS_DEFERRED option
+v3:
+	* fix select statement (Jingfeng)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Tested-by: Sui Jingfeng <suijingfeng@loongson.cn>
 Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 ---
- drivers/gpu/drm/Kconfig             |   6 +-
- drivers/gpu/drm/drm_fb_helper.c     | 107 ----------------------------
- drivers/gpu/drm/drm_fbdev_generic.c |  11 ++-
- include/drm/drm_fb_helper.h         |  41 -----------
- 4 files changed, 6 insertions(+), 159 deletions(-)
+ drivers/video/fbdev/Kconfig | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 77fb10ddd8a2..92a782827b7b 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -95,6 +95,7 @@ config DRM_KUNIT_TEST
- config DRM_KMS_HELPER
- 	tristate
- 	depends on DRM
-+	select FB_SYS_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
- 	help
- 	  CRTC helpers for KMS drivers.
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index e8889035c882..6df9bd09454a 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -158,6 +158,27 @@ config FB_DEFERRED_IO
+ 	bool
+ 	depends on FB
  
-@@ -135,11 +136,6 @@ config DRM_FBDEV_EMULATION
- 	select FB_CFB_FILLRECT
- 	select FB_CFB_COPYAREA
- 	select FB_CFB_IMAGEBLIT
--	select FB_DEFERRED_IO
--	select FB_SYS_FOPS
--	select FB_SYS_FILLRECT
--	select FB_SYS_COPYAREA
--	select FB_SYS_IMAGEBLIT
- 	select FRAMEBUFFER_CONSOLE if !EXPERT
- 	select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
- 	default y
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 7071c810ba83..7f6e54967acb 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -736,113 +736,6 @@ void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagerefli
- }
- EXPORT_SYMBOL(drm_fb_helper_deferred_io);
- 
--/**
-- * drm_fb_helper_sys_read - Implements struct &fb_ops.fb_read for system memory
-- * @info: fb_info struct pointer
-- * @buf: userspace buffer to read from framebuffer memory
-- * @count: number of bytes to read from framebuffer memory
-- * @ppos: read offset within framebuffer memory
-- *
-- * Returns:
-- * The number of bytes read on success, or an error code otherwise.
-- */
--ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
--			       size_t count, loff_t *ppos)
--{
--	return fb_sys_read(info, buf, count, ppos);
--}
--EXPORT_SYMBOL(drm_fb_helper_sys_read);
--
--/**
-- * drm_fb_helper_sys_write - Implements struct &fb_ops.fb_write for system memory
-- * @info: fb_info struct pointer
-- * @buf: userspace buffer to write to framebuffer memory
-- * @count: number of bytes to write to framebuffer memory
-- * @ppos: write offset within framebuffer memory
-- *
-- * Returns:
-- * The number of bytes written on success, or an error code otherwise.
-- */
--ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
--				size_t count, loff_t *ppos)
--{
--	struct drm_fb_helper *helper = info->par;
--	loff_t pos = *ppos;
--	ssize_t ret;
--	struct drm_rect damage_area;
--
--	ret = fb_sys_write(info, buf, count, ppos);
--	if (ret <= 0)
--		return ret;
--
--	if (helper->funcs->fb_dirty) {
--		drm_fb_helper_memory_range_to_clip(info, pos, ret, &damage_area);
--		drm_fb_helper_damage(helper, damage_area.x1, damage_area.y1,
--				     drm_rect_width(&damage_area),
--				     drm_rect_height(&damage_area));
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL(drm_fb_helper_sys_write);
--
--/**
-- * drm_fb_helper_sys_fillrect - wrapper around sys_fillrect
-- * @info: fbdev registered by the helper
-- * @rect: info about rectangle to fill
-- *
-- * A wrapper around sys_fillrect implemented by fbdev core
-- */
--void drm_fb_helper_sys_fillrect(struct fb_info *info,
--				const struct fb_fillrect *rect)
--{
--	struct drm_fb_helper *helper = info->par;
--
--	sys_fillrect(info, rect);
--
--	if (helper->funcs->fb_dirty)
--		drm_fb_helper_damage(helper, rect->dx, rect->dy, rect->width, rect->height);
--}
--EXPORT_SYMBOL(drm_fb_helper_sys_fillrect);
--
--/**
-- * drm_fb_helper_sys_copyarea - wrapper around sys_copyarea
-- * @info: fbdev registered by the helper
-- * @area: info about area to copy
-- *
-- * A wrapper around sys_copyarea implemented by fbdev core
-- */
--void drm_fb_helper_sys_copyarea(struct fb_info *info,
--				const struct fb_copyarea *area)
--{
--	struct drm_fb_helper *helper = info->par;
--
--	sys_copyarea(info, area);
--
--	if (helper->funcs->fb_dirty)
--		drm_fb_helper_damage(helper, area->dx, area->dy, area->width, area->height);
--}
--EXPORT_SYMBOL(drm_fb_helper_sys_copyarea);
--
--/**
-- * drm_fb_helper_sys_imageblit - wrapper around sys_imageblit
-- * @info: fbdev registered by the helper
-- * @image: info about image to blit
-- *
-- * A wrapper around sys_imageblit implemented by fbdev core
-- */
--void drm_fb_helper_sys_imageblit(struct fb_info *info,
--				 const struct fb_image *image)
--{
--	struct drm_fb_helper *helper = info->par;
--
--	sys_imageblit(info, image);
--
--	if (helper->funcs->fb_dirty)
--		drm_fb_helper_damage(helper, image->dx, image->dy, image->width, image->height);
--}
--EXPORT_SYMBOL(drm_fb_helper_sys_imageblit);
--
- /**
-  * drm_fb_helper_cfb_read - Implements struct &fb_ops.fb_read for I/O memory
-  * @info: fb_info struct pointer
-diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index 8e5148bf40bb..98ae703848a0 100644
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -34,6 +34,10 @@ static int drm_fbdev_generic_fb_release(struct fb_info *info, int user)
- 	return 0;
- }
- 
-+FB_GEN_DEFAULT_DEFERRED_SYS_OPS(drm_fbdev_generic,
-+				drm_fb_helper_damage_range,
-+				drm_fb_helper_damage_area);
++config FB_IO_HELPERS
++	bool
++	depends on FB
++	select FB_CFB_COPYAREA
++	select FB_CFB_FILLRECT
++	select FB_CFB_IMAGEBLIT
 +
- static void drm_fbdev_generic_fb_destroy(struct fb_info *info)
- {
- 	struct drm_fb_helper *fb_helper = info->par;
-@@ -56,13 +60,8 @@ static const struct fb_ops drm_fbdev_generic_fb_ops = {
- 	.owner		= THIS_MODULE,
- 	.fb_open	= drm_fbdev_generic_fb_open,
- 	.fb_release	= drm_fbdev_generic_fb_release,
--	.fb_read	= drm_fb_helper_sys_read,
--	.fb_write	= drm_fb_helper_sys_write,
-+	FB_DEFAULT_DEFERRED_OPS(drm_fbdev_generic),
- 	DRM_FB_HELPER_DEFAULT_OPS,
--	.fb_fillrect	= drm_fb_helper_sys_fillrect,
--	.fb_copyarea	= drm_fb_helper_sys_copyarea,
--	.fb_imageblit	= drm_fb_helper_sys_imageblit,
--	.fb_mmap	= fb_deferred_io_mmap,
- 	.fb_destroy	= drm_fbdev_generic_fb_destroy,
- };
- 
-diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-index 7d5804882be7..b50fd0c0b713 100644
---- a/include/drm/drm_fb_helper.h
-+++ b/include/drm/drm_fb_helper.h
-@@ -258,18 +258,6 @@ void drm_fb_helper_damage_area(struct fb_info *info, u32 x, u32 y, u32 width, u3
- 
- void drm_fb_helper_deferred_io(struct fb_info *info, struct list_head *pagereflist);
- 
--ssize_t drm_fb_helper_sys_read(struct fb_info *info, char __user *buf,
--			       size_t count, loff_t *ppos);
--ssize_t drm_fb_helper_sys_write(struct fb_info *info, const char __user *buf,
--				size_t count, loff_t *ppos);
--
--void drm_fb_helper_sys_fillrect(struct fb_info *info,
--				const struct fb_fillrect *rect);
--void drm_fb_helper_sys_copyarea(struct fb_info *info,
--				const struct fb_copyarea *area);
--void drm_fb_helper_sys_imageblit(struct fb_info *info,
--				 const struct fb_image *image);
--
- ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
- 			       size_t count, loff_t *ppos);
- ssize_t drm_fb_helper_cfb_write(struct fb_info *info, const char __user *buf,
-@@ -397,35 +385,6 @@ static inline int drm_fb_helper_defio_init(struct drm_fb_helper *fb_helper)
- 	return -ENODEV;
- }
- 
--static inline ssize_t drm_fb_helper_sys_read(struct fb_info *info,
--					     char __user *buf, size_t count,
--					     loff_t *ppos)
--{
--	return -ENODEV;
--}
--
--static inline ssize_t drm_fb_helper_sys_write(struct fb_info *info,
--					      const char __user *buf,
--					      size_t count, loff_t *ppos)
--{
--	return -ENODEV;
--}
--
--static inline void drm_fb_helper_sys_fillrect(struct fb_info *info,
--					      const struct fb_fillrect *rect)
--{
--}
--
--static inline void drm_fb_helper_sys_copyarea(struct fb_info *info,
--					      const struct fb_copyarea *area)
--{
--}
--
--static inline void drm_fb_helper_sys_imageblit(struct fb_info *info,
--					       const struct fb_image *image)
--{
--}
--
- static inline ssize_t drm_fb_helper_cfb_read(struct fb_info *info, char __user *buf,
- 					     size_t count, loff_t *ppos)
- {
++config FB_SYS_HELPERS
++	bool
++	depends on FB
++	select FB_SYS_COPYAREA
++	select FB_SYS_FILLRECT
++	select FB_SYS_FOPS
++	select FB_SYS_IMAGEBLIT
++
++config FB_SYS_HELPERS_DEFERRED
++	bool
++	depends on FB
++	select FB_DEFERRED_IO
++	select FB_SYS_HELPERS
++
+ config FB_HECUBA
+ 	tristate
+ 	depends on FB
 -- 
 2.40.1
 
