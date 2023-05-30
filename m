@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C28C7EE32
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 May 2023 15:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EBFC7EE39
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 May 2023 15:03:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232834AbjE3PDF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 May 2023 11:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39734 "EHLO
+        id S232896AbjE3PDH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 May 2023 11:03:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232611AbjE3PC7 (ORCPT
+        with ESMTP id S232405AbjE3PDA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 May 2023 11:02:59 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FCD5E8;
+        Tue, 30 May 2023 11:03:00 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F244DBE;
         Tue, 30 May 2023 08:02:58 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id AD9D921ABD;
-        Tue, 30 May 2023 15:02:56 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4D09C1FDEE;
+        Tue, 30 May 2023 15:02:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1685458976; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        t=1685458977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6A8Pi7OykTxyfG7Hxlk+Dam5oT5Zam16nRF2el8SnhQ=;
-        b=DkHinaG52XZ4iIUiseTOQbLkME2XBos1W8nRJDDJjllkJzjhmhcy4vdhQW63kfLDjbFBfd
-        ZJdLCaYCxZhVOftcVNDDyyjFJAXUka5CgSPonWFo/A91Qdid3j5o7xrwUOVfbRCwWkGFVX
-        +oj3uwNTlJT+qcA0RPvxKHzybJz9H04=
+        bh=3n2SsNAjr5qOty3alzHmss/YxhKHEoBMb18ejYcH3Ec=;
+        b=KK9amnXb7HVLYkP4ITZRdSPda0DpQY6/vKfiv3hsuE0GMeVRAFSdZJJ1t2n8uKLtkH6VrB
+        jUYmgWZS2F2nYg1TJwmQ65Ftl15XET/Qyny2QVt4y+LKYRBc4xLJIwUJh13jpvuv+tE7xV
+        yCg6GH6A1JbKI61QOWhnZxM17RoeIK8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1685458976;
+        s=susede2_ed25519; t=1685458977;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+         mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6A8Pi7OykTxyfG7Hxlk+Dam5oT5Zam16nRF2el8SnhQ=;
-        b=07iaM2xj5oB2T/+up0PWPolWv3qzaMG4KP9ekiDka778UViV9sGNrn80g3j38AMtlvqaZI
-        21zpFi23P6HHwFCQ==
+        bh=3n2SsNAjr5qOty3alzHmss/YxhKHEoBMb18ejYcH3Ec=;
+        b=z7naeq0hVDyjthV5H8m5Q+ygIMQGHG2BBNWaR+8YmyItiMWeLPJmT8VBc7JKnCBoPpOKDu
+        KuafaYH8o/EogOBA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 543DB13478;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 01CA113478;
         Tue, 30 May 2023 15:02:56 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id qKemEyAQdmShegAAMHmgww
+        id gMs8OyAQdmShegAAMHmgww
         (envelope-from <tzimmermann@suse.de>); Tue, 30 May 2023 15:02:56 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com,
@@ -59,24 +59,21 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>
-Subject: [PATCH v5 06/13] drm/radeon: Use regular fbdev I/O helpers
-Date:   Tue, 30 May 2023 17:02:46 +0200
-Message-Id: <20230530150253.22758-7-tzimmermann@suse.de>
+        Tomi Valkeinen <tomba@kernel.org>
+Subject: [PATCH v5 08/13] drm/omapdrm: Use regular fbdev I/O helpers
+Date:   Tue, 30 May 2023 17:02:48 +0200
+Message-Id: <20230530150253.22758-9-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230530150253.22758-1-tzimmermann@suse.de>
 References: <20230530150253.22758-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-helpers. Radeon does not use damage handling, so DRM's fbdev helpers
+helpers. Omapdrm does not use damage handling, so DRM's fbdev helpers
 are mere wrappers around the fbdev code.
 
 By using fbdev helpers directly within each DRM fbdev emulation,
@@ -85,58 +82,61 @@ we can eventually remove DRM's wrapper functions entirely.
 v4:
 	* use initializer macros for struct fb_ops
 v2:
-	* use FB_IO_HELPERS option
+	* use FB_SYS_HELPERS option
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
 Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
+Cc: Tomi Valkeinen <tomba@kernel.org>
 ---
- drivers/gpu/drm/radeon/Kconfig        | 1 +
- drivers/gpu/drm/radeon/radeon_fbdev.c | 9 +++------
- 2 files changed, 4 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/omapdrm/Kconfig      |  1 +
+ drivers/gpu/drm/omapdrm/omap_fbdev.c | 11 +++--------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/Kconfig b/drivers/gpu/drm/radeon/Kconfig
-index e19d77d58810..fe498c8af1bb 100644
---- a/drivers/gpu/drm/radeon/Kconfig
-+++ b/drivers/gpu/drm/radeon/Kconfig
-@@ -11,6 +11,7 @@ config DRM_RADEON
- 	select DRM_SUBALLOC_HELPER
-         select DRM_TTM
- 	select DRM_TTM_HELPER
-+	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
- 	select SND_HDA_COMPONENT if SND_HDA_CORE
- 	select POWER_SUPPLY
- 	select HWMON
-diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/radeon/radeon_fbdev.c
-index fe76e29910ef..28212c2d6c98 100644
---- a/drivers/gpu/drm/radeon/radeon_fbdev.c
-+++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
-@@ -24,6 +24,7 @@
-  *     David Airlie
+diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
+index 76ded1568bd0..b4ac76c9f31b 100644
+--- a/drivers/gpu/drm/omapdrm/Kconfig
++++ b/drivers/gpu/drm/omapdrm/Kconfig
+@@ -4,6 +4,7 @@ config DRM_OMAP
+ 	depends on DRM && OF
+ 	depends on ARCH_OMAP2PLUS
+ 	select DRM_KMS_HELPER
++	select FB_SYS_HELPERS if DRM_FBDEV_EMULATION
+ 	select VIDEOMODE_HELPERS
+ 	select HDMI
+ 	default n
+diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+index b950e93b3846..b7ccce0704a3 100644
+--- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
++++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+@@ -4,6 +4,8 @@
+  * Author: Rob Clark <rob@ti.com>
   */
  
 +#include <linux/fb.h>
- #include <linux/pci.h>
- #include <linux/pm_runtime.h>
- #include <linux/vga_switcheroo.h>
-@@ -190,14 +191,10 @@ static void radeon_fbdev_fb_destroy(struct fb_info *info)
++
+ #include <drm/drm_drv.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_helper.h>
+@@ -95,20 +97,13 @@ static void omap_fbdev_fb_destroy(struct fb_info *info)
  
- static const struct fb_ops radeon_fbdev_fb_ops = {
+ static const struct fb_ops omap_fb_ops = {
  	.owner = THIS_MODULE,
--	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_open = radeon_fbdev_fb_open,
- 	.fb_release = radeon_fbdev_fb_release,
--	.fb_read = drm_fb_helper_cfb_read,
--	.fb_write = drm_fb_helper_cfb_write,
--	.fb_fillrect = drm_fb_helper_cfb_fillrect,
--	.fb_copyarea = drm_fb_helper_cfb_copyarea,
--	.fb_imageblit = drm_fb_helper_cfb_imageblit,
-+	FB_DEFAULT_IO_OPS,
-+	DRM_FB_HELPER_DEFAULT_OPS,
- 	.fb_destroy = radeon_fbdev_fb_destroy,
+-
++	FB_DEFAULT_SYS_OPS,
+ 	.fb_check_var	= drm_fb_helper_check_var,
+ 	.fb_set_par	= drm_fb_helper_set_par,
+ 	.fb_setcmap	= drm_fb_helper_setcmap,
+ 	.fb_blank	= drm_fb_helper_blank,
+ 	.fb_pan_display = omap_fbdev_pan_display,
+ 	.fb_ioctl	= drm_fb_helper_ioctl,
+-
+-	.fb_read = drm_fb_helper_sys_read,
+-	.fb_write = drm_fb_helper_sys_write,
+-	.fb_fillrect = drm_fb_helper_sys_fillrect,
+-	.fb_copyarea = drm_fb_helper_sys_copyarea,
+-	.fb_imageblit = drm_fb_helper_sys_imageblit,
+-
+ 	.fb_destroy = omap_fbdev_fb_destroy,
  };
  
 -- 
