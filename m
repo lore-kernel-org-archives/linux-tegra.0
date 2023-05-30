@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7F1C77B7A
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 May 2023 15:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E04C1C7EE43
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 May 2023 15:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230367AbjE3PDL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 May 2023 11:03:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39736 "EHLO
+        id S232772AbjE3PDP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 May 2023 11:03:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232587AbjE3PDA (ORCPT
+        with ESMTP id S232606AbjE3PDC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 May 2023 11:03:00 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210958F;
+        Tue, 30 May 2023 11:03:02 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE5CCA0;
         Tue, 30 May 2023 08:02:59 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A21E921AC5;
-        Tue, 30 May 2023 15:02:57 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4B7861FDDD;
+        Tue, 30 May 2023 15:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1685458977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1685458978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4jCsKRFR84UMDNELNVD7ch+vvbz7fuVluY9lendkATw=;
-        b=FeFhzvtgflMP6YtcSBdY1tbdFMQEEPeN91viHDJ643kLh04bT4+cScfVJM26+0lGkhkVmq
-        oMyHCO9IfLT+3W/pR+/ItnklaRMNGHCHgKiu+JpHnFlclMjBhCh2kqArWknUUL+aeppuRQ
-        LVeM2RzMZ1yoLBiH+sXfpntelj5u3FY=
+        bh=uxYllpKQhbai1tBnnkcR4/Qd2d1vWjgiYEDDoWVHuWc=;
+        b=hqULZdqb/eymlXJGUMfZ8LeXektwIptDbW5mF5PK4zyFA6m5DzKfdrW6Igwc9pUEzt4H17
+        msS5+sccMImvuBktElvzBFhYnBM8xMPetIdzv1r1JpT2Ydn+veTG7l6PBTATT+3vID/VWt
+        GY7iWl/MBx/BN7sOzZB8qLPeYr+N0Po=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1685458977;
+        s=susede2_ed25519; t=1685458978;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4jCsKRFR84UMDNELNVD7ch+vvbz7fuVluY9lendkATw=;
-        b=ezXNYqonWyMEYhDmFnKfP1Ay6wyaQOdUoemJkrnYkJTeomecKvz1bBmFqkEmIEAp9ZOPGr
-        qW2VnXU96LJbbqDw==
+        bh=uxYllpKQhbai1tBnnkcR4/Qd2d1vWjgiYEDDoWVHuWc=;
+        b=LgOrHHWaNRkDJ689mDctGbykuvCs2FloyhERQO6kkogu1GZGQejqO7x7qpOVlfzfxX+KK4
+        F4bc5O17LcZZWrAA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 519AB13478;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F03E813478;
         Tue, 30 May 2023 15:02:57 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id CGgxEyEQdmShegAAMHmgww
+        id SC+pOSEQdmShegAAMHmgww
         (envelope-from <tzimmermann@suse.de>); Tue, 30 May 2023 15:02:57 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@gmail.com,
@@ -59,12 +59,13 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v5 09/13] drm/tegra: Use regular fbdev I/O helpers
-Date:   Tue, 30 May 2023 17:02:49 +0200
-Message-Id: <20230530150253.22758-10-tzimmermann@suse.de>
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>
+Subject: [PATCH v5 11/13] drm/msm: Use regular fbdev I/O helpers
+Date:   Tue, 30 May 2023 17:02:51 +0200
+Message-Id: <20230530150253.22758-12-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230530150253.22758-1-tzimmermann@suse.de>
 References: <20230530150253.22758-1-tzimmermann@suse.de>
@@ -75,65 +76,88 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-helpers. Tegra does not use damage handling, so DRM's fbdev helpers
+helpers. Msm does not use damage handling, so DRM's fbdev helpers
 are mere wrappers around the fbdev code.
 
 By using fbdev helpers directly within each DRM fbdev emulation,
 we can eventually remove DRM's wrapper functions entirely.
 
+Msm's fbdev emulation has been incomplete as it didn't implement
+damage handling. Partilly fix this by implementing damage handling
+for write and draw operation. It is still missing for mmaped pages.
+
 v4:
 	* use initializer macros for struct fb_ops
+	* partially support damage handling
 v2:
 	* use FB_SYS_HELPERS option
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sean Paul <sean@poorly.run>
 ---
- drivers/gpu/drm/tegra/Kconfig | 1 +
- drivers/gpu/drm/tegra/fbdev.c | 8 +++-----
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/msm/Kconfig     |  1 +
+ drivers/gpu/drm/msm/msm_fbdev.c | 17 ++++++++---------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index 56453ca277c2..498313778175 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -12,6 +12,7 @@ config DRM_TEGRA
- 	select DRM_KMS_HELPER
- 	select DRM_MIPI_DSI
- 	select DRM_PANEL
+diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+index 85f5ab1d552c..a78662bd6273 100644
+--- a/drivers/gpu/drm/msm/Kconfig
++++ b/drivers/gpu/drm/msm/Kconfig
+@@ -21,6 +21,7 @@ config DRM_MSM
+ 	select DRM_BRIDGE
+ 	select DRM_PANEL_BRIDGE
+ 	select DRM_SCHED
 +	select FB_SYS_HELPERS if DRM_FBDEV_EMULATION
- 	select TEGRA_HOST1X
- 	select INTERCONNECT
- 	select IOMMU_IOVA
-diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
-index dca9eccae466..e74d9be981c7 100644
---- a/drivers/gpu/drm/tegra/fbdev.c
-+++ b/drivers/gpu/drm/tegra/fbdev.c
-@@ -8,6 +8,7 @@
+ 	select SHMEM
+ 	select TMPFS
+ 	select QCOM_SCM
+diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+index ce0ba6d1979a..fa9c1cbffae3 100644
+--- a/drivers/gpu/drm/msm/msm_fbdev.c
++++ b/drivers/gpu/drm/msm/msm_fbdev.c
+@@ -4,6 +4,8 @@
+  * Author: Rob Clark <robdclark@gmail.com>
   */
  
- #include <linux/console.h>
 +#include <linux/fb.h>
- #include <linux/vmalloc.h>
- 
++
  #include <drm/drm_drv.h>
-@@ -58,12 +59,9 @@ static void tegra_fbdev_fb_destroy(struct fb_info *info)
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_helper.h>
+@@ -23,6 +25,10 @@ module_param(fbdev, bool, 0600);
+  * fbdev funcs, to implement legacy fbdev interface on top of drm driver
+  */
  
- static const struct fb_ops tegra_fb_ops = {
++FB_GEN_DEFAULT_DEFERRED_SYS_OPS(msm_fbdev,
++				drm_fb_helper_damage_range,
++				drm_fb_helper_damage_area)
++
+ static int msm_fbdev_mmap(struct fb_info *info, struct vm_area_struct *vma)
+ {
+ 	struct drm_fb_helper *helper = (struct drm_fb_helper *)info->par;
+@@ -52,16 +58,9 @@ static void msm_fbdev_fb_destroy(struct fb_info *info)
+ 
+ static const struct fb_ops msm_fb_ops = {
  	.owner = THIS_MODULE,
-+	__FB_DEFAULT_SYS_OPS_RDWR,
++	__FB_DEFAULT_DEFERRED_OPS_RDWR(msm_fbdev),
  	DRM_FB_HELPER_DEFAULT_OPS,
+-
+-	/* Note: to properly handle manual update displays, we wrap the
+-	 * basic fbdev ops which write to the framebuffer
+-	 */
 -	.fb_read = drm_fb_helper_sys_read,
 -	.fb_write = drm_fb_helper_sys_write,
 -	.fb_fillrect = drm_fb_helper_sys_fillrect,
 -	.fb_copyarea = drm_fb_helper_sys_copyarea,
 -	.fb_imageblit = drm_fb_helper_sys_imageblit,
-+	__FB_DEFAULT_SYS_OPS_DRAW,
- 	.fb_mmap = tegra_fb_mmap,
- 	.fb_destroy = tegra_fbdev_fb_destroy,
++	__FB_DEFAULT_DEFERRED_OPS_DRAW(msm_fbdev),
+ 	.fb_mmap = msm_fbdev_mmap,
+ 	.fb_destroy = msm_fbdev_fb_destroy,
  };
 -- 
 2.40.1
