@@ -2,97 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C664FC77B7A
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 May 2023 07:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 258AEC7EE24
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 May 2023 08:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234672AbjEaHkK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 31 May 2023 03:40:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47866 "EHLO
+        id S231876AbjEaIUd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 31 May 2023 04:20:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232464AbjEaHkJ (ORCPT
+        with ESMTP id S234310AbjEaIUc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 31 May 2023 03:40:09 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67125E5;
-        Wed, 31 May 2023 00:40:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1685518807; x=1717054807;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=VA6PLEl6XdXdwvvyXjGG+l70IBfaxvdpG2t3qnCADZg=;
-  b=S9KKY9XZvNV1hi7mWjg2E9LQb/UFY2CMGI789O6G6pNCw4cQxp5Pw3wB
-   gXs/sXpTZNK9OGEe9dOWn0yNzFv3eR3JWG6C/BwKqweb8IYAyI0lffLGg
-   XLjVhUUXvbdkau1S30OXo/UDDlmYIINKR+2RciTsy9MKSKXC8YYFX03YB
-   SPZuWtkI8aJ4Pfidtb6IzSwWdNF83lOSXcwVN3Wv7/2938kJ+y8gphqT4
-   Zz4gCIr+0qH5GE/lB5qbyc5I87MNZN8nmwNEfYLndQ53MR1GcQEo8XxW9
-   IC224FeD8bIrtJXlmoz3eQsyxIXCltW7bcfVcW543/JdfxVP0Z46El90k
-   A==;
-X-IronPort-AV: E=Sophos;i="6.00,205,1681196400"; 
-   d="scan'208";a="216163366"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 May 2023 00:40:06 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Wed, 31 May 2023 00:40:05 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Wed, 31 May 2023 00:40:00 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <jckuo@nvidia.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <nkristam@nvidia.com>
-CC:     <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH] phy: tegra: xusb: check return value of devm_kzalloc()
-Date:   Wed, 31 May 2023 10:39:50 +0300
-Message-ID: <20230531073950.145339-1-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 31 May 2023 04:20:32 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8204793;
+        Wed, 31 May 2023 01:20:30 -0700 (PDT)
+Received: from [192.168.88.20] (91-154-35-171.elisa-laajakaista.fi [91.154.35.171])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AB62D7FC;
+        Wed, 31 May 2023 10:20:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1685521207;
+        bh=EL3RWdaIqfPKhp0EXpVPxPCT9ntFr8tTKWXlYphupWI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=MvSXDrHk7T4BnPJqHjbFiTX+4V0oyXpM4JlCJJT+bzOMxSOycyjTIr/UAfnt1xezv
+         qzMGM+1MWvguHV2odb3hKaYoA6dxUihmMViSPeeHPMA04EyWI4cWEcnv/H7riWMXBY
+         LXCYZwLPo9seo/aN3CtoiK5GheRzH+ZTTqCtxMHI=
+Message-ID: <c4146861-3e8c-7410-4fec-27e7bce7e2de@ideasonboard.com>
+Date:   Wed, 31 May 2023 11:20:24 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v5 08/13] drm/omapdrm: Use regular fbdev I/O helpers
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, javierm@redhat.com, sam@ravnborg.org,
+        suijingfeng@loongson.cn
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20230530150253.22758-1-tzimmermann@suse.de>
+ <20230530150253.22758-9-tzimmermann@suse.de>
+From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+In-Reply-To: <20230530150253.22758-9-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-devm_kzalloc() returns a pointer to dynamically allocated memory.
-Pointer could be NULL in case allocation fails. Check pointer validity.
-Identified with coccinelle (kmerr.cocci script).
+On 30/05/2023 18:02, Thomas Zimmermann wrote:
+> Use the regular fbdev helpers for framebuffer I/O instead of DRM's
+> helpers. Omapdrm does not use damage handling, so DRM's fbdev helpers
+> are mere wrappers around the fbdev code.
+> 
+> By using fbdev helpers directly within each DRM fbdev emulation,
+> we can eventually remove DRM's wrapper functions entirely.
+> 
+> v4:
+> 	* use initializer macros for struct fb_ops
+> v2:
+> 	* use FB_SYS_HELPERS option
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Tomi Valkeinen <tomba@kernel.org>
+> ---
+>   drivers/gpu/drm/omapdrm/Kconfig      |  1 +
+>   drivers/gpu/drm/omapdrm/omap_fbdev.c | 11 +++--------
+>   2 files changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
+> index 76ded1568bd0..b4ac76c9f31b 100644
+> --- a/drivers/gpu/drm/omapdrm/Kconfig
+> +++ b/drivers/gpu/drm/omapdrm/Kconfig
+> @@ -4,6 +4,7 @@ config DRM_OMAP
+>   	depends on DRM && OF
+>   	depends on ARCH_OMAP2PLUS
+>   	select DRM_KMS_HELPER
+> +	select FB_SYS_HELPERS if DRM_FBDEV_EMULATION
+>   	select VIDEOMODE_HELPERS
+>   	select HDMI
+>   	default n
+> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> index b950e93b3846..b7ccce0704a3 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> @@ -4,6 +4,8 @@
+>    * Author: Rob Clark <rob@ti.com>
+>    */
+>   
+> +#include <linux/fb.h>
+> +
+>   #include <drm/drm_drv.h>
+>   #include <drm/drm_crtc_helper.h>
+>   #include <drm/drm_fb_helper.h>
+> @@ -95,20 +97,13 @@ static void omap_fbdev_fb_destroy(struct fb_info *info)
+>   
+>   static const struct fb_ops omap_fb_ops = {
+>   	.owner = THIS_MODULE,
+> -
+> +	FB_DEFAULT_SYS_OPS,
+>   	.fb_check_var	= drm_fb_helper_check_var,
+>   	.fb_set_par	= drm_fb_helper_set_par,
+>   	.fb_setcmap	= drm_fb_helper_setcmap,
+>   	.fb_blank	= drm_fb_helper_blank,
+>   	.fb_pan_display = omap_fbdev_pan_display,
+>   	.fb_ioctl	= drm_fb_helper_ioctl,
+> -
+> -	.fb_read = drm_fb_helper_sys_read,
+> -	.fb_write = drm_fb_helper_sys_write,
+> -	.fb_fillrect = drm_fb_helper_sys_fillrect,
+> -	.fb_copyarea = drm_fb_helper_sys_copyarea,
+> -	.fb_imageblit = drm_fb_helper_sys_imageblit,
+> -
+>   	.fb_destroy = omap_fbdev_fb_destroy,
+>   };
+>   
 
-Fixes: f67213cee2b3 ("phy: tegra: xusb: Add usb-role-switch support")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-Hi,
-
-This has been addressed using kmerr.cocci script proposed for update
-at [1].
-
-Thank you,
-Claudiu Beznea
-
-[1] https://lore.kernel.org/all/20230530074044.1603426-1-claudiu.beznea@microchip.com/
-
- drivers/phy/tegra/xusb.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index ec335668563d..fe72bc74e7bc 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -675,6 +675,9 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
- 	port->dev.driver = devm_kzalloc(&port->dev,
- 					sizeof(struct device_driver),
- 					GFP_KERNEL);
-+	if (!port->dev.driver)
-+		return -ENOMEM;
-+
- 	port->dev.driver->owner	 = THIS_MODULE;
- 
- 	port->usb_role_sw = usb_role_switch_register(&port->dev,
--- 
-2.34.1
+  Tomi
 
