@@ -2,125 +2,287 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 258AEC7EE24
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 May 2023 08:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6258C77B7C
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 May 2023 08:46:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231876AbjEaIUd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 31 May 2023 04:20:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45958 "EHLO
+        id S235152AbjEaIqt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 31 May 2023 04:46:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234310AbjEaIUc (ORCPT
+        with ESMTP id S235201AbjEaIqW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 31 May 2023 04:20:32 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8204793;
-        Wed, 31 May 2023 01:20:30 -0700 (PDT)
-Received: from [192.168.88.20] (91-154-35-171.elisa-laajakaista.fi [91.154.35.171])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AB62D7FC;
-        Wed, 31 May 2023 10:20:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1685521207;
-        bh=EL3RWdaIqfPKhp0EXpVPxPCT9ntFr8tTKWXlYphupWI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=MvSXDrHk7T4BnPJqHjbFiTX+4V0oyXpM4JlCJJT+bzOMxSOycyjTIr/UAfnt1xezv
-         qzMGM+1MWvguHV2odb3hKaYoA6dxUihmMViSPeeHPMA04EyWI4cWEcnv/H7riWMXBY
-         LXCYZwLPo9seo/aN3CtoiK5GheRzH+ZTTqCtxMHI=
-Message-ID: <c4146861-3e8c-7410-4fec-27e7bce7e2de@ideasonboard.com>
-Date:   Wed, 31 May 2023 11:20:24 +0300
+        Wed, 31 May 2023 04:46:22 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA963E6F
+        for <linux-tegra@vger.kernel.org>; Wed, 31 May 2023 01:45:57 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2af278ca45eso57316421fa.1
+        for <linux-tegra@vger.kernel.org>; Wed, 31 May 2023 01:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685522756; x=1688114756;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/3JlIxLasZwW7mr2j+pxl+La/rNLrCab5UHw9h0z58=;
+        b=gdWaO4baQuS0ZAAYUcVS/XFUsDzGboa4bsGQFUenJXuDSaHYYGji/o8IdbrSYSRg7y
+         o9yybfwfnasnO6WrU6P6UD2FJ7xijopHmcxEG9pjQbGhnIdeCuEJFq4atsV6bZvLl0lA
+         0O9wFtIawZJCw5l3mJvht0om6mUWXu6wZp3SmG0lK7RjzBUqq+G9VvwftMBA1yFQi53L
+         DVKDacmBlfMGoioQxOwZbo7ljlF9pv7PP75flqMyKoUH1DqXW/R5js4vcJ9p/O5ScwFN
+         xMbTA6u9MfTW9w3yh1+oULrD9kNGJaiVK+8MXg0GvIX20cYOwZ+t693nRApPh4I+JD3I
+         LRYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685522756; x=1688114756;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/3JlIxLasZwW7mr2j+pxl+La/rNLrCab5UHw9h0z58=;
+        b=XvLKTSEYqZ7u3IwZ87KhF+ohFJhh38YQfLuVB0aAY+R+u2to1tOCK19JMnDuTU3LVl
+         8GSv651dAmCV34BDBoyTj5MaKddmyzAVTGEsLWLZ20VxPmTSjkEARk2hlqIXpOw/eQXD
+         v0S9jO33Hppw+BAfAzZenNOVDSFWsNSPd3EGKhj70CdoVTJHqKF/kC/iLKeXVmrxS1wQ
+         p0NHdyBxcAoJdxzFvXjkzaARzu1sSJ9qU0uOTdeQsTn6ao/vMklBh72s/B6j+9QyuBFc
+         ztEPULhPrBa4IPifGx164cTK3wleiwFmYFWxGwL93YgPCLR1ZFvHQfVi2JHcKc0DI2G+
+         K5Kg==
+X-Gm-Message-State: AC+VfDxT1cnS/H8ilgy0kNNBYOrgWTRnsPtU3MgJWNICVo3GqAwRg/QZ
+        3UUQVpuP1A6ntVF3DIwYfSf4sA==
+X-Google-Smtp-Source: ACHHUZ64HhVWxcf8nLYezJ3OusU222/lHWnip5OwBFZpTzlu8aIynYjFE2d2mXsNxg3VZ9+MX3mwuA==
+X-Received: by 2002:a2e:95c5:0:b0:2ad:a955:dfa3 with SMTP id y5-20020a2e95c5000000b002ada955dfa3mr2622137ljh.9.1685522755827;
+        Wed, 31 May 2023 01:45:55 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.199.204])
+        by smtp.gmail.com with ESMTPSA id o23-20020a056402039700b00501c96564b5sm5401873edv.93.2023.05.31.01.45.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 May 2023 01:45:55 -0700 (PDT)
+Message-ID: <f699da97-9cfc-50ae-60e7-03e692255197@linaro.org>
+Date:   Wed, 31 May 2023 10:45:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH v5 08/13] drm/omapdrm: Use regular fbdev I/O helpers
+Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Document Tegra234 pin
+ controllers
 Content-Language: en-US
-To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
-        airlied@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, javierm@redhat.com, sam@ravnborg.org,
-        suijingfeng@loongson.cn
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20230530150253.22758-1-tzimmermann@suse.de>
- <20230530150253.22758-9-tzimmermann@suse.de>
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-In-Reply-To: <20230530150253.22758-9-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20230530133654.1296480-1-thierry.reding@gmail.com>
+ <20230530133654.1296480-2-thierry.reding@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230530133654.1296480-2-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 30/05/2023 18:02, Thomas Zimmermann wrote:
-> Use the regular fbdev helpers for framebuffer I/O instead of DRM's
-> helpers. Omapdrm does not use damage handling, so DRM's fbdev helpers
-> are mere wrappers around the fbdev code.
+On 30/05/2023 15:36, Thierry Reding wrote:
+> From: Prathamesh Shete <pshete@nvidia.com>
 > 
-> By using fbdev helpers directly within each DRM fbdev emulation,
-> we can eventually remove DRM's wrapper functions entirely.
+> Tegra234 contains two pin controllers. Document their compatible strings
+> and describe the list of pins and functions that they provide.
 > 
-> v4:
-> 	* use initializer macros for struct fb_ops
-> v2:
-> 	* use FB_SYS_HELPERS option
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Acked-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Tomi Valkeinen <tomba@kernel.org>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   drivers/gpu/drm/omapdrm/Kconfig      |  1 +
->   drivers/gpu/drm/omapdrm/omap_fbdev.c | 11 +++--------
->   2 files changed, 4 insertions(+), 8 deletions(-)
+> Changes in v3:
+> - split up into multiple files (suggested by Krzysztof)
+> - do not permit underscore in pinmux node names
+> - reword commit message
 > 
-> diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
-> index 76ded1568bd0..b4ac76c9f31b 100644
-> --- a/drivers/gpu/drm/omapdrm/Kconfig
-> +++ b/drivers/gpu/drm/omapdrm/Kconfig
-> @@ -4,6 +4,7 @@ config DRM_OMAP
->   	depends on DRM && OF
->   	depends on ARCH_OMAP2PLUS
->   	select DRM_KMS_HELPER
-> +	select FB_SYS_HELPERS if DRM_FBDEV_EMULATION
->   	select VIDEOMODE_HELPERS
->   	select HDMI
->   	default n
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> index b950e93b3846..b7ccce0704a3 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -4,6 +4,8 @@
->    * Author: Rob Clark <rob@ti.com>
->    */
->   
-> +#include <linux/fb.h>
+>  .../pinctrl/nvidia,tegra234-pinmux-aon.yaml   |  61 ++++++++
+>  .../nvidia,tegra234-pinmux-common.yaml        |  65 ++++++++
+>  .../pinctrl/nvidia,tegra234-pinmux.yaml       | 141 ++++++++++++++++++
+>  3 files changed, 267 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
+> new file mode 100644
+> index 000000000000..9d7017a39408
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/nvidia,tegra234-pinmux-aon.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->   #include <drm/drm_drv.h>
->   #include <drm/drm_crtc_helper.h>
->   #include <drm/drm_fb_helper.h>
-> @@ -95,20 +97,13 @@ static void omap_fbdev_fb_destroy(struct fb_info *info)
->   
->   static const struct fb_ops omap_fb_ops = {
->   	.owner = THIS_MODULE,
-> -
-> +	FB_DEFAULT_SYS_OPS,
->   	.fb_check_var	= drm_fb_helper_check_var,
->   	.fb_set_par	= drm_fb_helper_set_par,
->   	.fb_setcmap	= drm_fb_helper_setcmap,
->   	.fb_blank	= drm_fb_helper_blank,
->   	.fb_pan_display = omap_fbdev_pan_display,
->   	.fb_ioctl	= drm_fb_helper_ioctl,
-> -
-> -	.fb_read = drm_fb_helper_sys_read,
-> -	.fb_write = drm_fb_helper_sys_write,
-> -	.fb_fillrect = drm_fb_helper_sys_fillrect,
-> -	.fb_copyarea = drm_fb_helper_sys_copyarea,
-> -	.fb_imageblit = drm_fb_helper_sys_imageblit,
-> -
->   	.fb_destroy = omap_fbdev_fb_destroy,
->   };
->   
+> +$ref: nvidia,tegra234-pinmux-common.yaml
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Keep it before properties:. That's really unexpected order.
 
-  Tomi
+
+> +
+> +title: NVIDIA Tegra234 AON Pinmux Controller
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra234-pinmux-aon
+> +
+> +  reg: true
+
+Drop this one.
+
+> +
+> +patternProperties:
+> +  "^pinmux(-[a-z0-9-]+)?$":
+> +    type: object
+> +
+> +    # pin groups
+> +    additionalProperties:
+
+Why do you need this? This binding looks odd...
+
+> +      properties:
+> +        nvidia,pins:
+
+min/maxItems? If variable, put some reasonable numbers.
+
+> +          items:
+> +            enum: [ can0_dout_paa0, can0_din_paa1, can1_dout_paa2,
+> +                    can1_din_paa3, can0_stb_paa4, can0_en_paa5,
+> +                    soc_gpio49_paa6, can0_err_paa7, can1_stb_pbb0,
+> +                    can1_en_pbb1, soc_gpio50_pbb2, can1_err_pbb3,
+> +                    spi2_sck_pcc0, spi2_miso_pcc1, spi2_mosi_pcc2,
+> +                    spi2_cs0_pcc3, touch_clk_pcc4, uart3_tx_pcc5,
+> +                    uart3_rx_pcc6, gen2_i2c_scl_pcc7, gen2_i2c_sda_pdd0,
+> +                    gen8_i2c_scl_pdd1, gen8_i2c_sda_pdd2,
+> +                    sce_error_pee0, vcomp_alert_pee1,
+> +                    ao_retention_n_pee2, batt_oc_pee3, power_on_pee4,
+> +                    soc_gpio26_pee5, soc_gpio27_pee6, bootv_ctl_n_pee7,
+> +                    hdmi_cec_pgg0,
+> +                    # drive groups
+> +                    drive_touch_clk_pcc4, drive_uart3_rx_pcc6,
+> +                    drive_uart3_tx_pcc5, drive_gen8_i2c_sda_pdd2,
+> +                    drive_gen8_i2c_scl_pdd1, drive_spi2_mosi_pcc2,
+> +                    drive_gen2_i2c_scl_pcc7, drive_spi2_cs0_pcc3,
+> +                    drive_gen2_i2c_sda_pdd0, drive_spi2_sck_pcc0,
+> +                    drive_spi2_miso_pcc1, drive_can1_dout_paa2,
+> +                    drive_can1_din_paa3, drive_can0_dout_paa0,
+> +                    drive_can0_din_paa1, drive_can0_stb_paa4,
+> +                    drive_can0_en_paa5, drive_soc_gpio49_paa6,
+> +                    drive_can0_err_paa7, drive_can1_stb_pbb0,
+> +                    drive_can1_en_pbb1, drive_soc_gpio50_pbb2,
+> +                    drive_can1_err_pbb3, drive_sce_error_pee0,
+> +                    drive_batt_oc_pee3, drive_bootv_ctl_n_pee7,
+> +                    drive_power_on_pee4, drive_soc_gpio26_pee5,
+> +                    drive_soc_gpio27_pee6, drive_ao_retention_n_pee2,
+> +                    drive_vcomp_alert_pee1, drive_hdmi_cec_pgg0 ]
+> +
+> +additionalProperties: false
+
+unevaluatedProperties: false
+
+> +...
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
+> new file mode 100644
+> index 000000000000..a09d050b7d37
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/nvidia,tegra234-pinmux-common.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra234 Pinmux Controller
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  compatible: true
+
+Drop, won't be needed with additionalProps true.
+
+> +
+> +  reg:
+> +    items:
+> +      - description: pinmux registers
+> +
+> +patternProperties:
+> +  "^pinmux(-[a-z0-9-]+)?$":
+> +    type: object
+> +    properties:
+> +      phandle: true
+
+No clue what's that but if you need it, something is broken. Remove it
+and we need to fix the root cause.
+
+
+> +
+> +    # pin groups
+> +    additionalProperties:
+
+I still don't get what you want to express here. We usually list the
+children with patternProperties for specific pattern. Your approach
+could work too, but did you really check it enforces proper type/ref?
+That it really works?
+
+> +      $ref: nvidia,tegra-pinmux-common.yaml
+> +      unevaluatedProperties: false
+> +      properties:
+> +        nvidia,function:
+> +          enum: [ gp, uartc, i2c8, spi2, i2c2, can1, can0, rsvd0, eth0, eth2,
+> +                  eth1, dp, eth3, i2c4, i2c7, i2c9, eqos, pe2, pe1, pe0, pe3,
+> +                  pe4, pe5, pe6, pe7, pe8, pe9, pe10, qspi0, qspi1, qpsi,
+> +                  sdmmc1, sce, soc, gpio, hdmi, ufs0, spi3, spi1, uartb, uarte,
+> +                  usb, extperiph2, extperiph1, i2c3, vi0, i2c5, uarta, uartd,
+> +                  i2c1, i2s4, i2s6, aud, spi5, touch, uartj, rsvd1, wdt, tsc,
+> +                  dmic3, led, vi0_alt, i2s5, nv, extperiph3, extperiph4, spi4,
+> +                  ccla, i2s1, i2s2, i2s3, i2s8, rsvd2, dmic5, dca, displayb,
+> +                  displaya, vi1, dcb, dmic1, dmic4, i2s7, dmic2, dspk0, rsvd3,
+> +                  tsc_alt, istctrl, vi1_alt, dspk1, igpu ]
+> +
+> +        nvidia,pins:
+> +          description: An array of strings. Each string contains the name
+> +            of a pin or group. Valid values for these names are listed
+> +            below.
+
+Drop, not needed.
+
+> +
+> +        nvidia,pull: true
+> +        nvidia,tristate: true
+> +        nvidia,schmitt: true
+> +        nvidia,enable-input: true
+> +        nvidia,open-drain: true
+> +        nvidia,lock: true
+> +        nvidia,drive-type: true
+> +        nvidia,io-hv: true
+
+Drop all these.
+
+> +
+> +      required:
+> +        - nvidia,pins
+> +
+> +additionalProperties: false
+
+We keep it "true" for common schema and then the users of this binding
+use unevaluatedProperties: false.
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+
+Keep it before additionalProperites:.
+
+> +...
+
+
+Best regards,
+Krzysztof
 
