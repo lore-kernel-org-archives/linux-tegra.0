@@ -2,321 +2,329 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62876C7EE23
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jun 2023 13:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BE4C7EE23
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jun 2023 13:55:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233159AbjFANrE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jun 2023 09:47:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
+        id S233488AbjFANzW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jun 2023 09:55:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232673AbjFANrD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jun 2023 09:47:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DFF18C;
-        Thu,  1 Jun 2023 06:47:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BA17863A2F;
-        Thu,  1 Jun 2023 13:46:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25D87C433EF;
-        Thu,  1 Jun 2023 13:46:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685627219;
-        bh=mOEn6NeS2G4CGLrOLxKezUd2ckRxiszYxmNid9U2Xbc=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=n3iM+CUR+Kj+zzMKxvrpZpz92Quwc35l+7G6G23qOxZfbFyaGXoXB18AgSA84ju6p
-         0vHyOOphHCdbQ62M7oL7p844c0uzqzeV6MwgU4cKPyfV3N5VFaN1wFkm7RyUDm4Kju
-         WpncHB4drQ8seKf39s+Jnjlx+haK20kCxiZfnpfUPR6gERuK0WSGedjs1HbAgnNyR+
-         jbeyklAAxlB7F5hHur3ZqYPuBVp24IQum7oYE2TNZ1evOGU0eDtzg4Ss0foDtxKjz3
-         EUQaYk6nqjZsfmjuKKqAhPx+LGQtB9Im4R5qiWDiCNcIEnZ38CngGG7N2AH6jx5FHx
-         Xqv4mengO66eQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id B526ACE03BD; Thu,  1 Jun 2023 06:46:58 -0700 (PDT)
-Date:   Thu, 1 Jun 2023 06:46:58 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Z qiang <qiang.zhang1211@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@meta.com,
-        rostedt@goodmis.org, hch@lst.de,
-        Sachin Sant <sachinp@linux.ibm.com>,
-        "Zhang, Qiang1" <qiang1.zhang@intel.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        with ESMTP id S233016AbjFANzU (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jun 2023 09:55:20 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFBEA188
+        for <linux-tegra@vger.kernel.org>; Thu,  1 Jun 2023 06:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=xqhRMpVRwKGnSR4yTg3S/+wq82xe
+        UEL1Dnls53yl8Mw=; b=zVwx/d3ot8d8N9TH4vhGyszu0niC+gq3K8uG69HepK4Y
+        t1CR6rvFAw11dWupGg+KHJZM9VXnrwmpTZ00C0OaIHORagTv0B9jH9XPBTNbwemP
+        vFoXYAeQFLs6rY1Vz3Ww188uwFKNR5sYWZndJ8YSYXkXS19jf7QjsglAtmCGf5U=
+Received: (qmail 1670469 invoked from network); 1 Jun 2023 15:54:54 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Jun 2023 15:54:54 +0200
+X-UD-Smtp-Session: l3s3148p1@qP6/xxH9ruwujnsI
+Date:   Thu, 1 Jun 2023 15:54:50 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Thor Thayer <thor.thayer@linux.intel.com>,
+        Elie Morisse <syniurge@gmail.com>,
+        Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jochen Friedrich <jochen@scram.de>,
+        Benson Leung <bleung@chromium.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Chris Pringle <chris.pringle@phabrix.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Khalil Blaiech <kblaiech@nvidia.com>,
+        Asmaa Mnebhi <asmaa@nvidia.com>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Michael Shych <michaelsh@nvidia.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Qii Wang <qii.wang@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Subject: Re: [PATCH rcu 11/20] srcu: Move grace-period fields from
- srcu_struct to srcu_usage
-Message-ID: <0a35ce9d-8eec-4e10-a607-a2e84c8fc5a0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <f1b6cd5f-f0b7-4748-abd5-0dcfef0ce126@paulmck-laptop>
- <20230330224726.662344-11-paulmck@kernel.org>
- <6549da46-dddc-67ac-73c4-966965addad7@nvidia.com>
- <CALm+0cVXGdLNQpfJxnAnq2j2Ybs_rVAEqNzxgLSq7bDJp1KnfA@mail.gmail.com>
+        Stefan Roese <sr@denx.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Andrew Lunn <andrew@lunn.ch>, Robert Richter <rric@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Vignesh R <vigneshr@ti.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>, Rob Herring <robh@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Robert Foss <rfoss@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Wei Chen <harperchen1110@gmail.com>,
+        George Cherian <gcherian@marvell.com>,
+        Peter Rosin <peda@axentia.se>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        linux-aspeed@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Jan Dabros <jsd@semihalf.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-riscv@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+        Benjamin Fair <benjaminfair@google.com>,
+        linux-rockchip@lists.infradead.org, openbmc@lists.ozlabs.org,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nancy Yuen <yuenn@google.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-sunxi@lists.linux.dev, Joel Stanley <joel@jms.id.au>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Patrick Venture <venture@google.com>,
+        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>, asahi@lists.linux.dev,
+        kernel@pengutronix.de, linuxppc-dev@lists.ozlabs.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 00/89] i2c: Convert to platform remove callback returning
+ void
+Message-ID: <ZHijKtBbH2sCSuT4@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        Elie Morisse <syniurge@gmail.com>,
+        Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jochen Friedrich <jochen@scram.de>,
+        Benson Leung <bleung@chromium.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Chris Pringle <chris.pringle@phabrix.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Khalil Blaiech <kblaiech@nvidia.com>,
+        Asmaa Mnebhi <asmaa@nvidia.com>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Michael Shych <michaelsh@nvidia.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Qii Wang <qii.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stefan Roese <sr@denx.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>,
+        Robert Richter <rric@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Vignesh R <vigneshr@ti.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        Rob Herring <robh@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Robert Foss <rfoss@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Wei Chen <harperchen1110@gmail.com>,
+        George Cherian <gcherian@marvell.com>,
+        Peter Rosin <peda@axentia.se>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        linux-aspeed@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Jan Dabros <jsd@semihalf.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-riscv@lists.infradead.org, Fabio Estevam <festevam@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+        Benjamin Fair <benjaminfair@google.com>,
+        linux-rockchip@lists.infradead.org, openbmc@lists.ozlabs.org,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nancy Yuen <yuenn@google.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-sunxi@lists.linux.dev, Joel Stanley <joel@jms.id.au>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Patrick Venture <venture@google.com>, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>, asahi@lists.linux.dev,
+        kernel@pengutronix.de, linuxppc-dev@lists.ozlabs.org,
+        linux-i2c@vger.kernel.org
+References: <20230508205306.1474415-1-u.kleine-koenig@pengutronix.de>
+ <20230601073322.ww25ajaurktqsryr@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gpYQGInw32d3wriv"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALm+0cVXGdLNQpfJxnAnq2j2Ybs_rVAEqNzxgLSq7bDJp1KnfA@mail.gmail.com>
+In-Reply-To: <20230601073322.ww25ajaurktqsryr@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jun 01, 2023 at 08:33:10PM +0800, Z qiang wrote:
-> >
-> > Hi Paul,
-> >
-> > On 30/03/2023 23:47, Paul E. McKenney wrote:
-> > > This commit moves the ->srcu_gp_seq, ->srcu_gp_seq_needed,
-> > > ->srcu_gp_seq_needed_exp, ->srcu_gp_start, and ->srcu_last_gp_end fields
-> > > from the srcu_struct structure to the srcu_usage structure to reduce
-> > > the size of the former in order to improve cache locality.
-> > >
-> > > Suggested-by: Christoph Hellwig <hch@lst.de>
-> > > Tested-by: Sachin Sant <sachinp@linux.ibm.com>
-> > > Tested-by: "Zhang, Qiang1" <qiang1.zhang@intel.com>
-> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> >
-> >
-> > I have noticed a suspend regression on some of our Tegra boards recently
-> with v6.4-rc and interestingly bisect is pointing to this commit. I was
-> unable revert this on top of the latest mainline but if I checkout this
-> commit suspend fails and if I checkout the previous commit is passes.
-> >
-> > Enabling more debug I was able to capture the following crash log I see
-> on one of the boards ...
-> >
-> > [   57.327645] PM: suspend entry (deep)
-> > [   57.331660] Filesystems sync: 0.000 seconds
-> > [   57.340147] Freezing user space processes
-> > [   57.347470] Freezing user space processes completed (elapsed 0.007
-> seconds)
-> > [   57.347501] OOM killer disabled.
-> > [   57.347508] Freezing remaining freezable tasks
-> > [   57.348834] Freezing remaining freezable tasks completed (elapsed
-> 0.001 seconds)
-> > [   57.349932] 8<--- cut here ---
-> > [   57.349943] Unable to handle kernel NULL pointer dereference at
-> virtual address 00000000 when write
-> > [   57.349960] [00000000] *pgd=00000000
-> > [   57.349986] Internal error: Oops: 805 [#1] PREEMPT SMP ARM
-> > [   57.350007] Modules linked in: tegra30_tsensor
-> > [   57.350033] CPU: 0 PID: 589 Comm: rtcwake Not tainted
-> 6.3.0-rc1-00011-g03200b5ca3b4-dirty #3
-> > [   57.350057] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> > [   57.350067] PC is at rcu_segcblist_enqueue+0x2c/0x38
-> > [   57.350120] LR is at srcu_gp_start_if_needed+0xe4/0x544
-> > [   57.350169] pc : [<c01a5120>]    lr : [<c0198b5c>]    psr: a0070093
-> > [   57.350183] sp : f0b2dd20  ip : 3b5870ef  fp : 00000000
-> > [   57.350194] r10: ef787d84  r9 : 00000000  r8 : ef787d80
-> > [   57.350205] r7 : 80070013  r6 : c131ec30  r5 : ef787d40  r4 : f0b2dd64
-> > [   57.350217] r3 : 00000000  r2 : 00000000  r1 : f0b2dd64  r0 : ef787d84
-> > [   57.350230] Flags: NzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
->  Segment none
-> > [   57.350251] Control: 10c5387d  Table: 81d8004a  DAC: 00000051
-> > [   57.350261] Register r0 information: non-slab/vmalloc memory
-> > [   57.350283] Register r1 information: 2-page vmalloc region starting at
-> 0xf0b2c000 allocated at kernel_clone+0xb4/0x3e4
-> > [   57.350322] Register r2 information: NULL pointer
-> > [   57.350337] Register r3 information: NULL pointer
-> > [   57.350350] Register r4 information: 2-page vmalloc region starting at
-> 0xf0b2c000 allocated at kernel_clone+0xb4/0x3e4
-> > [   57.350379] Register r5 information: non-slab/vmalloc memory
-> > [   57.350394] Register r6 information: non-slab/vmalloc memory
-> > [   57.350408] Register r7 information: non-paged memory
-> > [   57.350422] Register r8 information: non-slab/vmalloc memory
-> > [   57.350436] Register r9 information: NULL pointer
-> > [   57.350449] Register r10 information: non-slab/vmalloc memory
-> > [   57.350463] Register r11 information: NULL pointer
-> > [   57.350477] Register r12 information: non-paged memory
-> > [   57.350491] Process rtcwake (pid: 589, stack limit = 0x410bb531)
-> > [   57.350510] Stack: (0xf0b2dd20 to 0xf0b2e000)
-> > [   57.350534] dd20: 00000000 c1ee4a40 f0b2dd7c c0184f24 ef781495
-> 3b5870ef c1ee4a40 c1ee4a40
-> > [   57.350555] dd40: c131ec30 00000000 00000002 c0f3d1fc c3542ac0
-> c2abbb10 c1ee4a40 c0199044
-> > [   57.350574] dd60: 60070013 00000000 c0195924 00000000 00000000
-> f0b2dd74 f0b2dd74 3b5870ef
-> > [   57.350592] dd80: 00000000 c131ebc0 c120ab28 c0146d9c c2785b94
-> c2785b40 c0fee9f4 c0872590
-> > [   57.350611] dda0: c2785b40 c08c39cc c2785b40 c08c3a3c c2788c00
-> c08c40b0 c0f3d1fc c066f028
-> > [   57.350630] ddc0: f0b2de14 c2788c00 c1325ef4 c08c1d40 c2788c00
-> c1325ef4 c0fee9f4 c08c31cc
-> > [   57.350648] dde0: c13708a0 0000000d 00000000 c0681c10 c16afe84
-> 00000002 56508788 0000000d
-> > [   57.350665] de00: 00000002 c13708a0 10624dd3 56409580 0000000d
-> 00000000 00000002 c0f3d1fc
-> > [   57.350685] de20: c3542ac0 c2abbb10 c1ee4a40 c06824e4 00000000
-> ffffa900 00000000 c1386510
-> > [   57.350703] de40: 00000003 00000003 c1204f75 c017e8a8 c3542ac0
-> c2abbb10 00428228 c0171574
-> > [   57.350721] de60: 00000000 00000000 00000003 3b5870ef c1204f75
-> 00000000 00000003 c137aeb4
-> > [   57.350739] de80: c1204f75 c0f3d1fc c3542ac0 c2abbb10 00428228
-> c017f380 00000003 c0f38a54
-> > [   57.350757] dea0: 00000003 c1386524 00000004 c017d708 00000004
-> c2abbb00 00000000 00000000
-> > [   57.350775] dec0: c3542ac0 f0b2df28 c2abbb10 c03305b4 00000000
-> 00000000 c2953c00 c1ee4a40
-> > [   57.350794] dee0: 00429438 00000004 c0d18488 00004004 00000000
-> c02b1094 00000a55 c1d80010
-> > [   57.350812] df00: c1d80010 00000000 00000000 f0b2df78 01010006
-> 00000004 00000000 00429438
-> > [   57.350830] df20: 00000000 00000000 c2953c00 00000000 00000000
-> 00000000 00000000 00000000
-> > [   57.350848] df40: 00000000 00004004 00000000 00000000 0000006c
-> 3b5870ef c2953c00 c2953c00
-> > [   57.350866] df60: 00000000 00000000 c1ee4a40 00429438 00000004
-> c02b12c8 00000000 00000000
-> > [   57.350885] df80: 00001008 3b5870ef 0000006c 00429438 00428228
-> 00000004 c0100324 c1ee4a40
-> > [   57.350902] dfa0: 00000004 c01000c0 0000006c 00429438 00000004
-> 00429438 00000004 00000000
-> > [   57.350920] dfc0: 0000006c 00429438 00428228 00000004 00000004
-> 00000004 0041578c 00428228
-> > [   57.350938] dfe0: 00000004 becda9a8 b6e9bc0b b6e26206 600f0030
-> 00000004 00000000 00000000
-> > [   57.350960]  rcu_segcblist_enqueue from
-> srcu_gp_start_if_needed+0xe4/0x544
-> > [   57.351023]  srcu_gp_start_if_needed from
-> __synchronize_srcu.part.6+0x70/0x98
-> > [   57.351084]  __synchronize_srcu.part.6 from
-> srcu_notifier_chain_unregister+0x6c/0xdc
-> > [   57.351155]  srcu_notifier_chain_unregister from
-> cpufreq_unregister_notifier+0x60/0xbc
-> > [   57.351215]  cpufreq_unregister_notifier from
-> tegra_actmon_pause.part.0+0x1c/0x54
-> > [   57.351277]  tegra_actmon_pause.part.0 from tegra_actmon_stop+0x38/0x3c
-> > [   57.351324]  tegra_actmon_stop from
-> tegra_governor_event_handler+0x100/0x11c
-> > [   57.351373]  tegra_governor_event_handler from
-> devfreq_suspend_device+0x64/0xac
-> > [   57.351423]  devfreq_suspend_device from devfreq_suspend+0x30/0x64
-> > [   57.351467]  devfreq_suspend from dpm_suspend+0x34/0x33c
-> > [   57.351506]  dpm_suspend from dpm_suspend_start+0x90/0x98
-> > [   57.351528]  dpm_suspend_start from
-> suspend_devices_and_enter+0xe4/0x93c
-> > [   57.351573]  suspend_devices_and_enter from pm_suspend+0x280/0x3ac
-> > [   57.351614]  pm_suspend from state_store+0x6c/0xc8
-> > [   57.351654]  state_store from kernfs_fop_write_iter+0x118/0x1b4
-> > [   57.351696]  kernfs_fop_write_iter from vfs_write+0x314/0x3d4
-> > [   57.351733]  vfs_write from ksys_write+0xa0/0xd0
-> > [   57.351760]  ksys_write from ret_fast_syscall+0x0/0x54
-> > [   57.351788] Exception stack(0xf0b2dfa8 to 0xf0b2dff0)
-> > [   57.351809] dfa0:                   0000006c 00429438 00000004
-> 00429438 00000004 00000000
-> > [   57.351828] dfc0: 0000006c 00429438 00428228 00000004 00000004
-> 00000004 0041578c 00428228
-> > [   57.351843] dfe0: 00000004 becda9a8 b6e9bc0b b6e26206
-> > [   57.351863] Code: e2833001 e5803034 e5812000 e5903010 (e5831000)
-> > [   57.351875] ---[ end trace 0000000000000000 ]---
-> >
-> >
-> > I have not dug into this yet and so wanted to see if you have any
-> thoughts on this?
-> >
-> 
-> Hi, Jon
-> 
-> Please try it:
-> 
-> diff --git a/include/linux/notifier.h b/include/linux/notifier.h
-> index 2aba75145144..3ce6b59e02e5 100644
-> --- a/include/linux/notifier.h
-> +++ b/include/linux/notifier.h
-> @@ -110,6 +110,7 @@ extern void srcu_init_notifier_head(struct
-> srcu_notifier_head *nh);
->         {                                                       \
->                 .mutex = __MUTEX_INITIALIZER(name.mutex),       \
->                 .head = NULL,                                   \
-> +               .srcuu = __SRCU_USAGE_INIT(name.srcuu),         \
->                 .srcu = __SRCU_STRUCT_INIT(name.srcu, name.srcuu, pcpu), \
->         }
 
-Thank you both!
+--gpYQGInw32d3wriv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Huh.  It looks like Chen-Yu Tsai sent a patch to this effect and
-AngeloGioacchino Del Regno tested it.  No one has picked it up yet.
 
-https://lore.kernel.org/all/20230526073539.339203-1-wenst@chromium.org/
+> I wonder how this series will go in. My expectation was that Wolfram
+> picks up the whole series via his tree?!
 
-This is clearly a regression, and I don't see it in -next.  I will pick
-it up and send it along in a few days if Matthias or Rafael don't beat
-me to it.
+Will do. I am currently super-busy, though.
 
-In the meantime, I would be happy to add Jon's Reported-by and Tested-by,
-along with Qiang's Acked-by or Reviewed-by.
 
-							Thanx, Paul
 
-------------------------------------------------------------------------
+--gpYQGInw32d3wriv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-commit bf7da55fcdd1478839b21697cf0534be1f149a49
-Author: Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri May 26 15:35:37 2023 +0800
+-----BEGIN PGP SIGNATURE-----
 
-    notifier: Initialize new struct srcu_usage field
-    
-    In commit 95433f726301 ("srcu: Begin offloading srcu_struct fields to
-    srcu_update"), a new struct srcu_usage field was added, but was not
-    properly initialized. This led to a "spinlock bad magic" BUG when the
-    SRCU notifier was ever used. This was observed in the MediaTek CCI
-    devfreq driver on next-20230525. The trimmed stack trace is as follows:
-    
-        BUG: spinlock bad magic on CPU#4, swapper/0/1
-         lock: 0xffffff80ff529ac0, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
-        Call trace:
-         spin_bug+0xa4/0xe8
-         do_raw_spin_lock+0xec/0x120
-         _raw_spin_lock_irqsave+0x78/0xb8
-         synchronize_srcu+0x3c/0x168
-         srcu_notifier_chain_unregister+0x5c/0xa0
-         cpufreq_unregister_notifier+0x94/0xe0
-         devfreq_passive_event_handler+0x7c/0x3e0
-         devfreq_remove_device+0x48/0xe8
-    
-    Add __SRCU_USAGE_INIT() to SRCU_NOTIFIER_INIT() so that srcu_usage gets
-    initialized properly.
-    
-    Fixes: 95433f726301 ("srcu: Begin offloading srcu_struct fields to srcu_update")
-    Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-    Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-    Cc: Matthias Brugger <matthias.bgg@gmail.com>
-    Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-    Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
-    Cc: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-    Cc: Sachin Sant <sachinp@linux.ibm.com>
-    Cc: "Zhang, Qiang1" <qiang1.zhang@intel.com>
-    Cc: Joel Fernandes (Google) <joel@joelfernandes.org
-    Cc: Jon Hunter <jonathanh@nvidia.com>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmR4oyYACgkQFA3kzBSg
+KbYkxRAAgf5VeQe2YA/rv9xTTFOLsiZ2yYaKqe5cSG8ORritsNgMayx5mytBy0Eb
+vLblB6pyYYUuu3M8/UNmMh+ud1b9uX4klUjd/spaehbsehFeEKn6qXIp8cwcSIYf
+Urcj54jsziLug9CQlidx+Zv9cK5qBCkmgMqzf+Nsc/qUEnZFhpblZkoqV1cEMbkQ
+ZrFXWEauQuCK9R9A4x6GrmfmdMn3c792FdLYJIL6bVJ3YJbN27vqzC8e+5NJqhs4
+KxCJ0LH0/M3rfhuDi//PfKk116qlUNYOkukv86eih76CBDm8sef221IfgFmLQx0h
+Hhvgc9g5MZNb9gSZP3UBsdXIiQgOEMztVEnWROaMIPLhab4G/rJhF0YMEAq132/Q
+4F6E5uIBY055Hdc4rrfounk8Ia3VRfuqG9B7bmaujkDmOBkLTB33+93c+b9xsJMh
+njdGaRmhDm3FnKzUqe//7kjRC2Eh004VP4Yr4JZ4byJWDkHtLLx2foYlV/Vry+Ka
+vajzcCTXVcDghWSXcd60VkXpI8cePJeHF6pnJfq6gTGFSrE3nH27ERG0zM8T7ADq
+E3PRusML2KJhpLcPuqnF2ntYSo8cwt2MW5gtEtaFlizmjuIZ/sLCTrDZKRUN9XAX
+k3ic9QCDUVLlKLXBftokeMi0I1NEhto6+ck+Fc8SNGnNnWxYJZ8=
+=ijai
+-----END PGP SIGNATURE-----
 
-diff --git a/include/linux/notifier.h b/include/linux/notifier.h
-index 2aba75145144..86544707236a 100644
---- a/include/linux/notifier.h
-+++ b/include/linux/notifier.h
-@@ -106,12 +106,22 @@ extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
- #define RAW_NOTIFIER_INIT(name)	{				\
- 		.head = NULL }
- 
-+#ifdef CONFIG_TREE_SRCU
- #define SRCU_NOTIFIER_INIT(name, pcpu)				\
- 	{							\
- 		.mutex = __MUTEX_INITIALIZER(name.mutex),	\
- 		.head = NULL,					\
-+		.srcuu = __SRCU_USAGE_INIT(name.srcuu),		\
- 		.srcu = __SRCU_STRUCT_INIT(name.srcu, name.srcuu, pcpu), \
- 	}
-+#else
-+#define SRCU_NOTIFIER_INIT(name, pcpu)				\
-+	{							\
-+		.mutex = __MUTEX_INITIALIZER(name.mutex),	\
-+		.head = NULL,					\
-+		.srcu = __SRCU_STRUCT_INIT(name.srcu, name.srcuu, pcpu), \
-+	}
-+#endif
- 
- #define ATOMIC_NOTIFIER_HEAD(name)				\
- 	struct atomic_notifier_head name =			\
+--gpYQGInw32d3wriv--
