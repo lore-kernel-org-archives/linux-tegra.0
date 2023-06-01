@@ -2,134 +2,136 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4123DC77B7E
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jun 2023 12:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769C8C7EE29
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jun 2023 12:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231737AbjFAM1l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jun 2023 08:27:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36612 "EHLO
+        id S232678AbjFAMg5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jun 2023 08:36:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230268AbjFAM1k (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jun 2023 08:27:40 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8786B133;
-        Thu,  1 Jun 2023 05:27:39 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51456392cbbso4419810a12.0;
-        Thu, 01 Jun 2023 05:27:39 -0700 (PDT)
+        with ESMTP id S229589AbjFAMg4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jun 2023 08:36:56 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA6F119;
+        Thu,  1 Jun 2023 05:36:55 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-96f53c06babso99794066b.3;
+        Thu, 01 Jun 2023 05:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685622458; x=1688214458;
+        d=gmail.com; s=20221208; t=1685623014; x=1688215014;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ldhSPM8DY/S/KcQWSOQ5gju1alxBVqBhcPt+dp3nPQ0=;
-        b=HwgpRU8q0WU13FKHg3jk93qCrPsjwaN3fSSoi2ubwdaFdtIT1rgCKJXCgT6H9MC9/T
-         k4G/GYML1m6WVu2zSa0uR8cIuFfbdMV+TC2DMdvhYLJkY9s3ep0CufOhCbPNiOe3yAic
-         A+GR3AF84u1A5LGso+ew3xIF4n7j6Mm1yEsUWICgni4z6LHBib+MEAe1mETcrjmRmJtp
-         S6EmeASu0GCwhTcQW+s9IUhZmTtdI60MDZdyo9mf64COCh+eayOZxmOWoOHCEk4Mgi6N
-         0k7LkV33UoqHbJ6UEKOkkh0sDjfqm/cBoPfmeGKsox8f3Tyy/7j6psU1h0pTry+pVLRR
-         iOIA==
+        bh=ehHBfTfHpFq9gN1tp3vpZxZbCv0h8WUkNnRmVixaHus=;
+        b=IYocw7LtLTtELs1lzYQjnzI+3n69AYNQEshwVrvy9Prnghlr8U/plLV/F9I8cU//9g
+         Y3dhjiVb6PBaZjbXqngC3Iq07GkjEovEjrbqXve8vXuVnvRpzi3nfU3eqorEJeLYuI5/
+         S8nu1SzkkK7bD0PfKSgLnu2Rj7cS78wliniOUPnKU2bSsTvIxRgEaxLz24RMLkAypLPk
+         cCaJ64KPOLBtiW8BRSClQfZp3uoocrnUe/2PP3YDbWtdGHnfPc0ZzO5QbLqC4zeG3NDC
+         WkYTJXj1hSykRJF+vWZAvI064AtIcXHMkaOCEeB9ft3RcGitzHxbPZAlHyMhy+czzszR
+         55Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685622458; x=1688214458;
+        d=1e100.net; s=20221208; t=1685623014; x=1688215014;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ldhSPM8DY/S/KcQWSOQ5gju1alxBVqBhcPt+dp3nPQ0=;
-        b=N71QZjQMEYMZ6EZPTxfadu6h+7sT0WK2kWKdLaolxT2doVXhm3ehS9KMRCLNe2xlNX
-         dLM95IutZMn5CvEjbuyG+43RVoLcqX7DCfBHCX3eR9Ct+PKRLVy66FMpRadupEaM9nkE
-         nKYtAmKe558ErVqRwRCWIncbXKC0O1VkPXAMimre/KXkKKNrVhylsr34WgWtw8vFc8uO
-         WKABoqWTBb0Loerx6sP2D/MTGw5plabbDp++o9FmY+7WSxdtlvsx3wpAEpUe20Y1YvQs
-         C9EEUxuPCK6BQF9SAleZb3SfzniYXglINaqxHKYMkaonH+K/63gGIdlk2NWLzS2DN8Pf
-         dXhQ==
-X-Gm-Message-State: AC+VfDyik1YAxHUnglmXK5uHyl7OCiw/6tNCHr5nCbs8Y9t0UaUngUD9
-        hW5Fxi1wO6EVDJ8c+G0fvrQEkxWhzNk=
-X-Google-Smtp-Source: ACHHUZ55eJf5FAXWWroUSGH7a8LTNO9faoiLwg9lQmooASXS1nWHBgtYjwiYjIrzHPhYn+T3FVl5cA==
-X-Received: by 2002:a17:907:d13:b0:96f:8d00:43be with SMTP id gn19-20020a1709070d1300b0096f8d0043bemr1394049ejc.0.1685622457657;
-        Thu, 01 Jun 2023 05:27:37 -0700 (PDT)
+        bh=ehHBfTfHpFq9gN1tp3vpZxZbCv0h8WUkNnRmVixaHus=;
+        b=JTS3TS+86XlJOICKADT0OVs/Ca5p7HOuwG8dJHGYZiVXHPOlsfOM24agEcVSSIv30I
+         TDRWXCSJ8s5CTG2VPdvasjqcrHhQu4yj3oVeB/KELmEEgKvvizQg22pREGkqpbISh0j1
+         /rTK58Ut03QnSzIXwuu7oYoBBluCzxNsXjD5kOJWBBzdq7D+xjhXOVl4lJR4yl/Pnlra
+         JnKq21IRPHAu7ggXHYZCyTbDsmwPbB6ejbhmpyAOYzoHipJ/gcRz1hrpRVdmWHLSOxpV
+         xlm6JrGpnH1R0RlKWMaXNA055lxtBkvx/gk8sbAViT4BH4WWaPlqqdEVHT1uUz3qONch
+         7HMg==
+X-Gm-Message-State: AC+VfDzKA9xV66ygHHgR1cemQvG1dKkIgr2TbV5mDSgW9OsFJDsSv7Le
+        TIkZB3fZjCLYBepCRDV8fYM=
+X-Google-Smtp-Source: ACHHUZ73F5LLoOz2NNjkClTA4o4LIKaH39YUgnRg7PnrldgoFgqlQNVX1P6hwTrbD41XmMFEXq0S9w==
+X-Received: by 2002:a17:907:25c2:b0:973:8cb7:4d81 with SMTP id ae2-20020a17090725c200b009738cb74d81mr9144506ejc.49.1685623013899;
+        Thu, 01 Jun 2023 05:36:53 -0700 (PDT)
 Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id c6-20020a170906924600b0096f694609f3sm10590404ejx.31.2023.06.01.05.27.37
+        by smtp.gmail.com with ESMTPSA id se24-20020a170906ce5800b009662b4230cesm10664574ejb.148.2023.06.01.05.36.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jun 2023 05:27:37 -0700 (PDT)
-Date:   Thu, 1 Jun 2023 14:27:35 +0200
+        Thu, 01 Jun 2023 05:36:53 -0700 (PDT)
+Date:   Thu, 1 Jun 2023 14:36:51 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] pinctrl: tegra: Duplicate pinmux functions table
-Message-ID: <ZHiOt7Jsp_PP7Se4@orome>
-References: <20230530105308.1292852-1-thierry.reding@gmail.com>
- <CACRpkdaN2r24QrL5t-_SsUQ-9o=BhZx0eFgpbsA+QiFTicPnKg@mail.gmail.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [Patch V10 2/3] tpm_tis-spi: Add hardware wait polling
+Message-ID: <ZHiQ44gAL3YEZPUh@orome>
+References: <20230421091309.2672-3-kyarlagadda@nvidia.com>
+ <CS48A9Y752N4.QEM73WVMZYLQ@suppilovahvero>
+ <3df39f0b-70dc-4b42-bae1-72c07607cbc7@sirena.org.uk>
+ <ZEaWQD_QTs2usVl8@orome>
+ <5fae29cd-d5f4-4616-be1c-1cd4d5b9a538@sirena.org.uk>
+ <ZEag1lAonYcmNFXk@orome>
+ <DM4PR12MB5769BB69B97F77DBA9ED2935C3779@DM4PR12MB5769.namprd12.prod.outlook.com>
+ <DM4PR12MB5769499349B6B936FE46BF0CC3419@DM4PR12MB5769.namprd12.prod.outlook.com>
+ <ZHhW_wFvRWInR_iM@orome>
+ <dec901be-4bef-43e0-a125-23c5c4e92789@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="DqrzsBErqR2fs//S"
+        protocol="application/pgp-signature"; boundary="BiFkO/AwryVjPFkW"
 Content-Disposition: inline
-In-Reply-To: <CACRpkdaN2r24QrL5t-_SsUQ-9o=BhZx0eFgpbsA+QiFTicPnKg@mail.gmail.com>
+In-Reply-To: <dec901be-4bef-43e0-a125-23c5c4e92789@sirena.org.uk>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---DqrzsBErqR2fs//S
-Content-Type: text/plain; charset=utf-8
+--BiFkO/AwryVjPFkW
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 01, 2023 at 01:19:45PM +0200, Linus Walleij wrote:
-> On Tue, May 30, 2023 at 12:53=E2=80=AFPM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
+On Thu, Jun 01, 2023 at 12:04:59PM +0100, Mark Brown wrote:
+> On Thu, Jun 01, 2023 at 10:29:51AM +0200, Thierry Reding wrote:
 >=20
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > The function table is filled with group information based on other
-> > instance-specific data at runtime. However, the function table can be
-> > shared between multiple instances, causing the ->probe() function for
-> > one instance to overwrite the table of a previously probed instance.
-> >
-> > Fix this by sharing only the function names and allocating a separate
-> > function table for each instance.
-> >
-> > Fixes: 5a0047360743 ("pinctrl: tegra: Separate Tegra194 instances")
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > any ideas on how we can best get this merged? I guess at this point it
+> > could go through either tree since the SPI dependency has been in Linus'
+> > tree since v6.4-rc1.
 >=20
-> Both patches applied!
->=20
-> I can't figure out if the problem is urgent or just wasting memory, so
-> I applied it as non-urgent fix for now, tell me if this needs to go
-> upstream pronto.
+> I would expect it to go via whatever path TPM patches usually take given
+> that it's a TPM patch.
 
-I think you might be able to write a device tree that triggers this, but
-so far I've only seen it cause an WARN splat when accessing the debugfs
-attribute that reads out the pinmux functions. I think Prathamesh had
-mentioned it could also hang the system when you access debugfs.
+There might have been a misunderstanding. My recollection was that you
+had said a few weeks ago that you would pick this up. Going through the
+thread again I realize that may not have been what you meant. Perhaps
+Jarkko misinterpreted this in the same way.
 
-Overall I don't think this is very urgent. We only observed this as part
-of testing the Tegra234 patches that are under review, so it's probably
-uncommon for people to run the problematic code paths.
-
-No matter what you decide, the Fixes: tag should make sure it goes into
-stable releases which is probably good enough.
+Jarkko, can you pick this up for v6.5?
 
 Thierry
 
---DqrzsBErqR2fs//S
+--BiFkO/AwryVjPFkW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmR4jrUACgkQ3SOs138+
-s6Fb2w/+N6PHCT9n7J+hSBPSe/8M3IIc2rbY5EwGNyi7+iAZ8O2wlN88OyzMn8kC
-IxMt/n+0mKYo4FdpdsAk/z1VnKLz/1bu33czaaNd9a33QsvBLmXWvRYJ3V7i+ucS
-VsBVJivKmzzWDaAjJqUAckWyvZCvVxLpHTdVjdIrZyz+lD+JqP+adNFSan/il+nO
-T4jxj7IujkzbtgnSJAf7zu0+U146zxkPc5wxM+oLK43jb9+daLWrU1kU02sxOVLr
-SqpDdQ50IVWEuuF4DodLCJRs8u77zYELj78Dk8DzNb8Zs4O4KhE7N0gVcjSTP6JE
-b3BetqYgVFlCIPkRX7R5KbjwiTvsIo87Xf8IkTnxMlyoEwePs35SI84hGmunr5zW
-Uig4qoOtGI1GSZCKxo2rKr3WHOeq9M9ElhiFceOFhgHEItZPNq4I30ybfo1ewdXK
-S77eJqNFQXPn1MsSUVLHvuxrsQdZTTCGcPbfuXyBA4G3eqcDrylvflqxxCDvrE4U
-TKbZsOyz20x+WrbQJ7wjRfHgKnKVfPdO4euFYbEqbJULasI44TTiK5y5Mjy/wSdR
-WDxY2KNcum0a653atgyeMxPSRk5FbvHKOJWvZNugoCWN5H068mdlgDLhMIzOqwF/
-X0IaoIpWQFCPqKzevhs0IzwGzeJulohjL7XZpZOcfy4mevtYjtA=
-=0/Ig
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmR4kOMACgkQ3SOs138+
+s6GCWA//dGR7DSaUdohkzVJ5x9tBnEEhCZH9ZliQHAL6CV9h8/rs7jHZTlpmlgaa
+HUz4RPp/EMwziWPzhD6BHw8VTRqyhQhOiIRFqU9CA3x0VhClnIaH3gt6zqHSSCiC
+ie4Sn8IMKWq7ZERuwizxBiYS80x8VjWJq+DGcFP2V+DbraPL1GdsfEWbbRuwOtj2
+bqw0Uvo7wd1NCtcV/oYfv2vV7ebdsPnQ7cHmyAslmcYRzcZce0C/mYYRzr/BahkX
+nNwovE0ADj9jIma4qMgDfeVFq0IODhCSqOI+dThv7hfnL2vuV1zrbeWJ5N6jVq1j
+mV84Yq0TQDPeGgb7xXjYi22m2KF7FZAWdI/d3Ep+WOTR4r76aVYFSOO0mBaNn1f7
+BE3ZDBsRj06GHJifR8eW+Vrev0MIj5+1wvalhUiVQ8VmZt6hPirLjH8hzcUposOw
+c5as4w6IaoOeUQVl/iz0ScQg0BySTd2whg2Rk1tyYZEz+hY2ndmxF6yhz/lFK8ob
+8PtXQ+Sz/NFdPBRl/bpBzVMItOG8nT1DHsntVQZLxqt3W2B/oglUc7Fa+hZB0kN+
+LlzKZmFgYHX2jUeCYDEnmHnlyio3XqsHmkLqeeI4IJKBFTCazNXbiTJWWWSFXEkc
+qIJFEMOrUjFARVKsFbgNMD7wQ4zAYEOftP3GLpYi09SWbCCoVVI=
+=E3jj
 -----END PGP SIGNATURE-----
 
---DqrzsBErqR2fs//S--
+--BiFkO/AwryVjPFkW--
