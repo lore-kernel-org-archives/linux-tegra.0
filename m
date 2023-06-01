@@ -2,115 +2,321 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0ECC7EE29
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jun 2023 12:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62876C7EE23
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jun 2023 13:47:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232651AbjFAMkY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jun 2023 08:40:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40304 "EHLO
+        id S233159AbjFANrE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jun 2023 09:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbjFAMkX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jun 2023 08:40:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A54A0119;
-        Thu,  1 Jun 2023 05:40:22 -0700 (PDT)
+        with ESMTP id S232673AbjFANrD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jun 2023 09:47:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DFF18C;
+        Thu,  1 Jun 2023 06:47:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C02460BBA;
-        Thu,  1 Jun 2023 12:40:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A1AC433D2;
-        Thu,  1 Jun 2023 12:40:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BA17863A2F;
+        Thu,  1 Jun 2023 13:46:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25D87C433EF;
+        Thu,  1 Jun 2023 13:46:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685623221;
-        bh=7qqTSFuzN+5BAsf9nDoTRMBA/FCLSHSdLYJW3vp1ILc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DuDym9NHx1DIGY7ks5zS3LxttTt/Gp5ALbhSyLuwxTJG60Fnvm4bieKZoCRLvao5B
-         d3yBlAj1enLvnuAC6A6fUO3fdppTTMqOtScu1SSW6I68garnk6yrEhuBBQ9m9nkDKn
-         GsMIVC1ImFHGu6wlV0g2JIDbPz1D+SDtXxgDBsXkv+Rj8aJA0wt1+Q236dvi5VFRmh
-         4c9vbUcE856dKA8yFfI0I9ihdiW2phqGjjGsGwcXVuAw/NR7h6bm4vWKoopaxLg0if
-         9eMFuDhK0rxuvDrua6bGV8hxeTm/ILj3kXnTH6IqmMP7IvK+RwPeytg+Yu9qtABOBJ
-         bpP3F3BqukUtQ==
-Date:   Thu, 1 Jun 2023 13:40:08 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        s=k20201202; t=1685627219;
+        bh=mOEn6NeS2G4CGLrOLxKezUd2ckRxiszYxmNid9U2Xbc=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=n3iM+CUR+Kj+zzMKxvrpZpz92Quwc35l+7G6G23qOxZfbFyaGXoXB18AgSA84ju6p
+         0vHyOOphHCdbQ62M7oL7p844c0uzqzeV6MwgU4cKPyfV3N5VFaN1wFkm7RyUDm4Kju
+         WpncHB4drQ8seKf39s+Jnjlx+haK20kCxiZfnpfUPR6gERuK0WSGedjs1HbAgnNyR+
+         jbeyklAAxlB7F5hHur3ZqYPuBVp24IQum7oYE2TNZ1evOGU0eDtzg4Ss0foDtxKjz3
+         EUQaYk6nqjZsfmjuKKqAhPx+LGQtB9Im4R5qiWDiCNcIEnZ38CngGG7N2AH6jx5FHx
+         Xqv4mengO66eQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id B526ACE03BD; Thu,  1 Jun 2023 06:46:58 -0700 (PDT)
+Date:   Thu, 1 Jun 2023 06:46:58 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Z qiang <qiang.zhang1211@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@meta.com,
+        rostedt@goodmis.org, hch@lst.de,
+        Sachin Sant <sachinp@linux.ibm.com>,
+        "Zhang, Qiang1" <qiang1.zhang@intel.com>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [Patch V10 2/3] tpm_tis-spi: Add hardware wait polling
-Message-ID: <c0cf893d-8bc5-4f4b-a326-bb10dd0c84de@sirena.org.uk>
-References: <CS48A9Y752N4.QEM73WVMZYLQ@suppilovahvero>
- <3df39f0b-70dc-4b42-bae1-72c07607cbc7@sirena.org.uk>
- <ZEaWQD_QTs2usVl8@orome>
- <5fae29cd-d5f4-4616-be1c-1cd4d5b9a538@sirena.org.uk>
- <ZEag1lAonYcmNFXk@orome>
- <DM4PR12MB5769BB69B97F77DBA9ED2935C3779@DM4PR12MB5769.namprd12.prod.outlook.com>
- <DM4PR12MB5769499349B6B936FE46BF0CC3419@DM4PR12MB5769.namprd12.prod.outlook.com>
- <ZHhW_wFvRWInR_iM@orome>
- <dec901be-4bef-43e0-a125-23c5c4e92789@sirena.org.uk>
- <ZHiQ44gAL3YEZPUh@orome>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Subject: Re: [PATCH rcu 11/20] srcu: Move grace-period fields from
+ srcu_struct to srcu_usage
+Message-ID: <0a35ce9d-8eec-4e10-a607-a2e84c8fc5a0@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <f1b6cd5f-f0b7-4748-abd5-0dcfef0ce126@paulmck-laptop>
+ <20230330224726.662344-11-paulmck@kernel.org>
+ <6549da46-dddc-67ac-73c4-966965addad7@nvidia.com>
+ <CALm+0cVXGdLNQpfJxnAnq2j2Ybs_rVAEqNzxgLSq7bDJp1KnfA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IvavpcweNeB8Xkph"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZHiQ44gAL3YEZPUh@orome>
-X-Cookie: Positively no smoking.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALm+0cVXGdLNQpfJxnAnq2j2Ybs_rVAEqNzxgLSq7bDJp1KnfA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Jun 01, 2023 at 08:33:10PM +0800, Z qiang wrote:
+> >
+> > Hi Paul,
+> >
+> > On 30/03/2023 23:47, Paul E. McKenney wrote:
+> > > This commit moves the ->srcu_gp_seq, ->srcu_gp_seq_needed,
+> > > ->srcu_gp_seq_needed_exp, ->srcu_gp_start, and ->srcu_last_gp_end fields
+> > > from the srcu_struct structure to the srcu_usage structure to reduce
+> > > the size of the former in order to improve cache locality.
+> > >
+> > > Suggested-by: Christoph Hellwig <hch@lst.de>
+> > > Tested-by: Sachin Sant <sachinp@linux.ibm.com>
+> > > Tested-by: "Zhang, Qiang1" <qiang1.zhang@intel.com>
+> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >
+> >
+> > I have noticed a suspend regression on some of our Tegra boards recently
+> with v6.4-rc and interestingly bisect is pointing to this commit. I was
+> unable revert this on top of the latest mainline but if I checkout this
+> commit suspend fails and if I checkout the previous commit is passes.
+> >
+> > Enabling more debug I was able to capture the following crash log I see
+> on one of the boards ...
+> >
+> > [   57.327645] PM: suspend entry (deep)
+> > [   57.331660] Filesystems sync: 0.000 seconds
+> > [   57.340147] Freezing user space processes
+> > [   57.347470] Freezing user space processes completed (elapsed 0.007
+> seconds)
+> > [   57.347501] OOM killer disabled.
+> > [   57.347508] Freezing remaining freezable tasks
+> > [   57.348834] Freezing remaining freezable tasks completed (elapsed
+> 0.001 seconds)
+> > [   57.349932] 8<--- cut here ---
+> > [   57.349943] Unable to handle kernel NULL pointer dereference at
+> virtual address 00000000 when write
+> > [   57.349960] [00000000] *pgd=00000000
+> > [   57.349986] Internal error: Oops: 805 [#1] PREEMPT SMP ARM
+> > [   57.350007] Modules linked in: tegra30_tsensor
+> > [   57.350033] CPU: 0 PID: 589 Comm: rtcwake Not tainted
+> 6.3.0-rc1-00011-g03200b5ca3b4-dirty #3
+> > [   57.350057] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> > [   57.350067] PC is at rcu_segcblist_enqueue+0x2c/0x38
+> > [   57.350120] LR is at srcu_gp_start_if_needed+0xe4/0x544
+> > [   57.350169] pc : [<c01a5120>]    lr : [<c0198b5c>]    psr: a0070093
+> > [   57.350183] sp : f0b2dd20  ip : 3b5870ef  fp : 00000000
+> > [   57.350194] r10: ef787d84  r9 : 00000000  r8 : ef787d80
+> > [   57.350205] r7 : 80070013  r6 : c131ec30  r5 : ef787d40  r4 : f0b2dd64
+> > [   57.350217] r3 : 00000000  r2 : 00000000  r1 : f0b2dd64  r0 : ef787d84
+> > [   57.350230] Flags: NzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
+>  Segment none
+> > [   57.350251] Control: 10c5387d  Table: 81d8004a  DAC: 00000051
+> > [   57.350261] Register r0 information: non-slab/vmalloc memory
+> > [   57.350283] Register r1 information: 2-page vmalloc region starting at
+> 0xf0b2c000 allocated at kernel_clone+0xb4/0x3e4
+> > [   57.350322] Register r2 information: NULL pointer
+> > [   57.350337] Register r3 information: NULL pointer
+> > [   57.350350] Register r4 information: 2-page vmalloc region starting at
+> 0xf0b2c000 allocated at kernel_clone+0xb4/0x3e4
+> > [   57.350379] Register r5 information: non-slab/vmalloc memory
+> > [   57.350394] Register r6 information: non-slab/vmalloc memory
+> > [   57.350408] Register r7 information: non-paged memory
+> > [   57.350422] Register r8 information: non-slab/vmalloc memory
+> > [   57.350436] Register r9 information: NULL pointer
+> > [   57.350449] Register r10 information: non-slab/vmalloc memory
+> > [   57.350463] Register r11 information: NULL pointer
+> > [   57.350477] Register r12 information: non-paged memory
+> > [   57.350491] Process rtcwake (pid: 589, stack limit = 0x410bb531)
+> > [   57.350510] Stack: (0xf0b2dd20 to 0xf0b2e000)
+> > [   57.350534] dd20: 00000000 c1ee4a40 f0b2dd7c c0184f24 ef781495
+> 3b5870ef c1ee4a40 c1ee4a40
+> > [   57.350555] dd40: c131ec30 00000000 00000002 c0f3d1fc c3542ac0
+> c2abbb10 c1ee4a40 c0199044
+> > [   57.350574] dd60: 60070013 00000000 c0195924 00000000 00000000
+> f0b2dd74 f0b2dd74 3b5870ef
+> > [   57.350592] dd80: 00000000 c131ebc0 c120ab28 c0146d9c c2785b94
+> c2785b40 c0fee9f4 c0872590
+> > [   57.350611] dda0: c2785b40 c08c39cc c2785b40 c08c3a3c c2788c00
+> c08c40b0 c0f3d1fc c066f028
+> > [   57.350630] ddc0: f0b2de14 c2788c00 c1325ef4 c08c1d40 c2788c00
+> c1325ef4 c0fee9f4 c08c31cc
+> > [   57.350648] dde0: c13708a0 0000000d 00000000 c0681c10 c16afe84
+> 00000002 56508788 0000000d
+> > [   57.350665] de00: 00000002 c13708a0 10624dd3 56409580 0000000d
+> 00000000 00000002 c0f3d1fc
+> > [   57.350685] de20: c3542ac0 c2abbb10 c1ee4a40 c06824e4 00000000
+> ffffa900 00000000 c1386510
+> > [   57.350703] de40: 00000003 00000003 c1204f75 c017e8a8 c3542ac0
+> c2abbb10 00428228 c0171574
+> > [   57.350721] de60: 00000000 00000000 00000003 3b5870ef c1204f75
+> 00000000 00000003 c137aeb4
+> > [   57.350739] de80: c1204f75 c0f3d1fc c3542ac0 c2abbb10 00428228
+> c017f380 00000003 c0f38a54
+> > [   57.350757] dea0: 00000003 c1386524 00000004 c017d708 00000004
+> c2abbb00 00000000 00000000
+> > [   57.350775] dec0: c3542ac0 f0b2df28 c2abbb10 c03305b4 00000000
+> 00000000 c2953c00 c1ee4a40
+> > [   57.350794] dee0: 00429438 00000004 c0d18488 00004004 00000000
+> c02b1094 00000a55 c1d80010
+> > [   57.350812] df00: c1d80010 00000000 00000000 f0b2df78 01010006
+> 00000004 00000000 00429438
+> > [   57.350830] df20: 00000000 00000000 c2953c00 00000000 00000000
+> 00000000 00000000 00000000
+> > [   57.350848] df40: 00000000 00004004 00000000 00000000 0000006c
+> 3b5870ef c2953c00 c2953c00
+> > [   57.350866] df60: 00000000 00000000 c1ee4a40 00429438 00000004
+> c02b12c8 00000000 00000000
+> > [   57.350885] df80: 00001008 3b5870ef 0000006c 00429438 00428228
+> 00000004 c0100324 c1ee4a40
+> > [   57.350902] dfa0: 00000004 c01000c0 0000006c 00429438 00000004
+> 00429438 00000004 00000000
+> > [   57.350920] dfc0: 0000006c 00429438 00428228 00000004 00000004
+> 00000004 0041578c 00428228
+> > [   57.350938] dfe0: 00000004 becda9a8 b6e9bc0b b6e26206 600f0030
+> 00000004 00000000 00000000
+> > [   57.350960]  rcu_segcblist_enqueue from
+> srcu_gp_start_if_needed+0xe4/0x544
+> > [   57.351023]  srcu_gp_start_if_needed from
+> __synchronize_srcu.part.6+0x70/0x98
+> > [   57.351084]  __synchronize_srcu.part.6 from
+> srcu_notifier_chain_unregister+0x6c/0xdc
+> > [   57.351155]  srcu_notifier_chain_unregister from
+> cpufreq_unregister_notifier+0x60/0xbc
+> > [   57.351215]  cpufreq_unregister_notifier from
+> tegra_actmon_pause.part.0+0x1c/0x54
+> > [   57.351277]  tegra_actmon_pause.part.0 from tegra_actmon_stop+0x38/0x3c
+> > [   57.351324]  tegra_actmon_stop from
+> tegra_governor_event_handler+0x100/0x11c
+> > [   57.351373]  tegra_governor_event_handler from
+> devfreq_suspend_device+0x64/0xac
+> > [   57.351423]  devfreq_suspend_device from devfreq_suspend+0x30/0x64
+> > [   57.351467]  devfreq_suspend from dpm_suspend+0x34/0x33c
+> > [   57.351506]  dpm_suspend from dpm_suspend_start+0x90/0x98
+> > [   57.351528]  dpm_suspend_start from
+> suspend_devices_and_enter+0xe4/0x93c
+> > [   57.351573]  suspend_devices_and_enter from pm_suspend+0x280/0x3ac
+> > [   57.351614]  pm_suspend from state_store+0x6c/0xc8
+> > [   57.351654]  state_store from kernfs_fop_write_iter+0x118/0x1b4
+> > [   57.351696]  kernfs_fop_write_iter from vfs_write+0x314/0x3d4
+> > [   57.351733]  vfs_write from ksys_write+0xa0/0xd0
+> > [   57.351760]  ksys_write from ret_fast_syscall+0x0/0x54
+> > [   57.351788] Exception stack(0xf0b2dfa8 to 0xf0b2dff0)
+> > [   57.351809] dfa0:                   0000006c 00429438 00000004
+> 00429438 00000004 00000000
+> > [   57.351828] dfc0: 0000006c 00429438 00428228 00000004 00000004
+> 00000004 0041578c 00428228
+> > [   57.351843] dfe0: 00000004 becda9a8 b6e9bc0b b6e26206
+> > [   57.351863] Code: e2833001 e5803034 e5812000 e5903010 (e5831000)
+> > [   57.351875] ---[ end trace 0000000000000000 ]---
+> >
+> >
+> > I have not dug into this yet and so wanted to see if you have any
+> thoughts on this?
+> >
+> 
+> Hi, Jon
+> 
+> Please try it:
+> 
+> diff --git a/include/linux/notifier.h b/include/linux/notifier.h
+> index 2aba75145144..3ce6b59e02e5 100644
+> --- a/include/linux/notifier.h
+> +++ b/include/linux/notifier.h
+> @@ -110,6 +110,7 @@ extern void srcu_init_notifier_head(struct
+> srcu_notifier_head *nh);
+>         {                                                       \
+>                 .mutex = __MUTEX_INITIALIZER(name.mutex),       \
+>                 .head = NULL,                                   \
+> +               .srcuu = __SRCU_USAGE_INIT(name.srcuu),         \
+>                 .srcu = __SRCU_STRUCT_INIT(name.srcu, name.srcuu, pcpu), \
+>         }
 
---IvavpcweNeB8Xkph
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you both!
 
-On Thu, Jun 01, 2023 at 02:36:51PM +0200, Thierry Reding wrote:
-> On Thu, Jun 01, 2023 at 12:04:59PM +0100, Mark Brown wrote:
+Huh.  It looks like Chen-Yu Tsai sent a patch to this effect and
+AngeloGioacchino Del Regno tested it.  No one has picked it up yet.
 
-> > On Thu, Jun 01, 2023 at 10:29:51AM +0200, Thierry Reding wrote:
+https://lore.kernel.org/all/20230526073539.339203-1-wenst@chromium.org/
 
-> > > any ideas on how we can best get this merged? I guess at this point it
-> > > could go through either tree since the SPI dependency has been in Linus'
-> > > tree since v6.4-rc1.
+This is clearly a regression, and I don't see it in -next.  I will pick
+it up and send it along in a few days if Matthias or Rafael don't beat
+me to it.
 
-> > I would expect it to go via whatever path TPM patches usually take given
-> > that it's a TPM patch.
+In the meantime, I would be happy to add Jon's Reported-by and Tested-by,
+along with Qiang's Acked-by or Reviewed-by.
 
-> There might have been a misunderstanding. My recollection was that you
-> had said a few weeks ago that you would pick this up. Going through the
-> thread again I realize that may not have been what you meant. Perhaps
-> Jarkko misinterpreted this in the same way.
+							Thanx, Paul
 
-> Jarkko, can you pick this up for v6.5?
+------------------------------------------------------------------------
 
-No, I said that I had applied the SPI parts for v6.4 so there would be
-no blocker whenever people got round to reviewing the TPM side.
+commit bf7da55fcdd1478839b21697cf0534be1f149a49
+Author: Chen-Yu Tsai <wenst@chromium.org>
+Date:   Fri May 26 15:35:37 2023 +0800
 
---IvavpcweNeB8Xkph
-Content-Type: application/pgp-signature; name="signature.asc"
+    notifier: Initialize new struct srcu_usage field
+    
+    In commit 95433f726301 ("srcu: Begin offloading srcu_struct fields to
+    srcu_update"), a new struct srcu_usage field was added, but was not
+    properly initialized. This led to a "spinlock bad magic" BUG when the
+    SRCU notifier was ever used. This was observed in the MediaTek CCI
+    devfreq driver on next-20230525. The trimmed stack trace is as follows:
+    
+        BUG: spinlock bad magic on CPU#4, swapper/0/1
+         lock: 0xffffff80ff529ac0, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
+        Call trace:
+         spin_bug+0xa4/0xe8
+         do_raw_spin_lock+0xec/0x120
+         _raw_spin_lock_irqsave+0x78/0xb8
+         synchronize_srcu+0x3c/0x168
+         srcu_notifier_chain_unregister+0x5c/0xa0
+         cpufreq_unregister_notifier+0x94/0xe0
+         devfreq_passive_event_handler+0x7c/0x3e0
+         devfreq_remove_device+0x48/0xe8
+    
+    Add __SRCU_USAGE_INIT() to SRCU_NOTIFIER_INIT() so that srcu_usage gets
+    initialized properly.
+    
+    Fixes: 95433f726301 ("srcu: Begin offloading srcu_struct fields to srcu_update")
+    Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+    Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+    Cc: Matthias Brugger <matthias.bgg@gmail.com>
+    Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+    Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+    Cc: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+    Cc: Sachin Sant <sachinp@linux.ibm.com>
+    Cc: "Zhang, Qiang1" <qiang1.zhang@intel.com>
+    Cc: Joel Fernandes (Google) <joel@joelfernandes.org
+    Cc: Jon Hunter <jonathanh@nvidia.com>
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmR4kacACgkQJNaLcl1U
-h9AFRAf/YCqBhGfPsTf6l9zkrF2M3MzrJSBWRH5TVLxxZgKaiBKoCk9QnZbNGc4m
-gONpETWIBIYicFcaWyq4DNyXljgswehEkFjXShymxKAdU7KKrEtechKCQdCuPB4f
-k7hzTtG9h/A6fWBegnLjc+h6uxyjUS/LWzXuPjhajTVosZDiQEklVfclJuhqeM3q
-u588U4merDDBrmpQweo3jpuYtfsy4cdauIe/S1+H4SojnZvdsIxGdpipViYpxfV3
-glMZuwOlhyjeJLiH3NHjnh9HYd87ezrjnDG0MpGheGmLhJOXeEQFoNIJPxtdeGdF
-6RfdPvTrFSxpzgJuHVDe1DB8o6NFQQ==
-=rf99
------END PGP SIGNATURE-----
-
---IvavpcweNeB8Xkph--
+diff --git a/include/linux/notifier.h b/include/linux/notifier.h
+index 2aba75145144..86544707236a 100644
+--- a/include/linux/notifier.h
++++ b/include/linux/notifier.h
+@@ -106,12 +106,22 @@ extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
+ #define RAW_NOTIFIER_INIT(name)	{				\
+ 		.head = NULL }
+ 
++#ifdef CONFIG_TREE_SRCU
+ #define SRCU_NOTIFIER_INIT(name, pcpu)				\
+ 	{							\
+ 		.mutex = __MUTEX_INITIALIZER(name.mutex),	\
+ 		.head = NULL,					\
++		.srcuu = __SRCU_USAGE_INIT(name.srcuu),		\
+ 		.srcu = __SRCU_STRUCT_INIT(name.srcu, name.srcuu, pcpu), \
+ 	}
++#else
++#define SRCU_NOTIFIER_INIT(name, pcpu)				\
++	{							\
++		.mutex = __MUTEX_INITIALIZER(name.mutex),	\
++		.head = NULL,					\
++		.srcu = __SRCU_STRUCT_INIT(name.srcu, name.srcuu, pcpu), \
++	}
++#endif
+ 
+ #define ATOMIC_NOTIFIER_HEAD(name)				\
+ 	struct atomic_notifier_head name =			\
