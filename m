@@ -2,63 +2,60 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE942C7EE32
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Jun 2023 10:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AA2C7EE2C
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Jun 2023 10:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230175AbjFCK34 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 3 Jun 2023 06:29:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47754 "EHLO
+        id S230121AbjFCKqj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 3 Jun 2023 06:46:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbjFCK3z (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Jun 2023 06:29:55 -0400
-X-Greylist: delayed 4201 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 03 Jun 2023 03:29:53 PDT
-Received: from mail.webtopbits.pl (mail.webtopbits.pl [195.231.64.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C29C1A4
-        for <linux-tegra@vger.kernel.org>; Sat,  3 Jun 2023 03:29:52 -0700 (PDT)
-Received: by mail.webtopbits.pl (Postfix, from userid 1001)
-        id 52CACA3935; Fri,  2 Jun 2023 09:40:57 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=webtopbits.pl;
-        s=mail; t=1685695268;
-        bh=Eh8ECMiYd4baGAwPAzhz8mhJACXX7NSRkYjh+plaY18=;
-        h=Date:From:To:Subject:From;
-        b=R3oJscE5dBX4omfY4eGPpAQc0LR52vCv+wlZXmDSS5iAdwUG3U36c9JGJ6aqmcEO5
-         nHfojHhpiw3h3ZPDO2WNrZE/iSycfSD9MSTiotJWqqLN1miPWJ402YSC0YSKxYknJ1
-         aiFbCiAElkNWDNObNwbIoLDYf40ElJYItwEDFz6EgKdwPpuwirVTP5CAgQsjPPvJiO
-         pWwgIy/0ie+bz8rtg+a6H+Fdr/jGZMRMo1EX+J4rSbt1MpXA19PGuQmYC/QPHtfl8p
-         N6q4Ue+QFk09B/MxhIt542V+o5VGVOKfTR9YmOzijy/i4L7S2PBAlbyuHvQE2zW05+
-         8WrI0k3x9jl5g==
-Received: by mail.webtopbits.pl for <linux-tegra@vger.kernel.org>; Fri,  2 Jun 2023 08:40:50 GMT
-Message-ID: <20230602085530-0.1.8w.5ke3.0.b9h4b2da4w@webtopbits.pl>
-Date:   Fri,  2 Jun 2023 08:40:50 GMT
-From:   "Kamil Durjasz" <kamil.durjasz@webtopbits.pl>
-To:     <linux-tegra@vger.kernel.org>
-Subject: =?UTF-8?Q?Wy=C5=BCsza_konwersja_w_e-sklepie_?=
-X-Mailer: mail.webtopbits.pl
+        with ESMTP id S229620AbjFCKqh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Jun 2023 06:46:37 -0400
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622FACA
+        for <linux-tegra@vger.kernel.org>; Sat,  3 Jun 2023 03:46:34 -0700 (PDT)
+Received: from localhost (88-113-26-95.elisa-laajakaista.fi [88.113.26.95])
+        by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+        id e300efe2-01fb-11ee-b972-005056bdfda7;
+        Sat, 03 Jun 2023 13:46:25 +0300 (EEST)
+From:   andy.shevchenko@gmail.com
+Date:   Sat, 3 Jun 2023 13:46:25 +0300
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] pinctrl: tegra: Add Tegra234 pinmux driver
+Message-ID: <ZHsaAY1FQ57bsfC5@surfacebook>
+References: <20230602141445.3012550-1-thierry.reding@gmail.com>
+ <20230602141445.3012550-3-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230602141445.3012550-3-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Fri, Jun 02, 2023 at 04:14:44PM +0200, Thierry Reding kirjoitti:
+> From: Prathamesh Shete <pshete@nvidia.com>
+> 
+> This change adds support for the two pin controllers found on Tegra234.
 
-w jaki spos=C3=B3b docieraj=C4=85 Pa=C5=84stwo do odbiorc=C3=B3w?
+I'm not sure why my review got ignored. Did you receive it?
 
-Tworzymy pot=C4=99=C5=BCne narz=C4=99dzia sprzeda=C5=BCy, kt=C3=B3re pozw=
-alaj=C4=85 kompleksowo rozwi=C4=85za=C4=87 problemy potencjalnych klient=C3=
-=B3w i skutecznie wp=C5=82yn=C4=85=C4=87 na ich decyzje zakupowe.=20
+https://lore.kernel.org/linux-gpio/ZHlGTgdsqcGOmVN2@surfacebook/
 
-Skupiamy si=C4=99 na Pa=C5=84stwa potrzebach zwi=C4=85zanych z obs=C5=82u=
-g=C4=85 sklepu, oczekiwaniach i planach sprzeda=C5=BCowych. Szczeg=C3=B3=C5=
-=82owo dopasowujemy grafik=C4=99, funkcjonalno=C5=9Bci, struktur=C4=99 i =
-mikrointerakcje do Pa=C5=84stwa grupy docelowej, co przek=C5=82ada si=C4=99=
- na oczekiwane rezultaty.
+It seems most of the comments are actual even for this version.
+(Yes, you can ignore the struct pingroup usage as it's out of
+ the scope of this change, obviously.)
 
-Ch=C4=99tnie przedstawi=C4=99 dotychczasowe realizacje, aby mogli Pa=C5=84=
-stwo przekona=C4=87 si=C4=99 o naszych mo=C5=BCliwo=C5=9Bciach. Mog=C4=99=
- si=C4=99 skontaktowa=C4=87?
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Pozdrawiam
-Kamil Durjasz
