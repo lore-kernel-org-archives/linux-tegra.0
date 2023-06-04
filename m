@@ -2,60 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AA2C7EE2C
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Jun 2023 10:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74705C7EE2A
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Jun 2023 09:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjFCKqj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 3 Jun 2023 06:46:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
+        id S230396AbjFDJxj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 4 Jun 2023 05:53:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbjFCKqh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Jun 2023 06:46:37 -0400
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622FACA
-        for <linux-tegra@vger.kernel.org>; Sat,  3 Jun 2023 03:46:34 -0700 (PDT)
-Received: from localhost (88-113-26-95.elisa-laajakaista.fi [88.113.26.95])
-        by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-        id e300efe2-01fb-11ee-b972-005056bdfda7;
-        Sat, 03 Jun 2023 13:46:25 +0300 (EEST)
-From:   andy.shevchenko@gmail.com
-Date:   Sat, 3 Jun 2023 13:46:25 +0300
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] pinctrl: tegra: Add Tegra234 pinmux driver
-Message-ID: <ZHsaAY1FQ57bsfC5@surfacebook>
-References: <20230602141445.3012550-1-thierry.reding@gmail.com>
- <20230602141445.3012550-3-thierry.reding@gmail.com>
+        with ESMTP id S230413AbjFDJxg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Jun 2023 05:53:36 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2911ADF;
+        Sun,  4 Jun 2023 02:53:32 -0700 (PDT)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1q5kQR-000400-Pp; Sun, 04 Jun 2023 11:53:27 +0200
+Message-ID: <abf51606-b34b-0144-90a3-6d06cf4171b2@leemhuis.info>
+Date:   Sun, 4 Jun 2023 11:53:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230602141445.3012550-3-thierry.reding@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH rcu 11/20] srcu: Move grace-period fields from srcu_struct
+ to srcu_usage
+Content-Language: en-US, de-DE
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@meta.com,
+        rostedt@goodmis.org, hch@lst.de,
+        Sachin Sant <sachinp@linux.ibm.com>,
+        "Zhang, Qiang1" <qiang1.zhang@intel.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Linux kernel regressions list <regressions@lists.linux.dev>
+References: <f1b6cd5f-f0b7-4748-abd5-0dcfef0ce126@paulmck-laptop>
+ <20230330224726.662344-11-paulmck@kernel.org>
+ <6549da46-dddc-67ac-73c4-966965addad7@nvidia.com>
+From:   "Linux regression tracking #adding (Thorsten Leemhuis)" 
+        <regressions@leemhuis.info>
+In-Reply-To: <6549da46-dddc-67ac-73c4-966965addad7@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1685872413;bbed989d;
+X-HE-SMSGID: 1q5kQR-000400-Pp
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fri, Jun 02, 2023 at 04:14:44PM +0200, Thierry Reding kirjoitti:
-> From: Prathamesh Shete <pshete@nvidia.com>
+[CCing the regression list, as it should be in the loop for regressions:
+https://docs.kernel.org/admin-guide/reporting-regressions.html]
+
+[TLDR: I'm adding this report to the list of tracked Linux kernel
+regressions; the text you find below is based on a few templates
+paragraphs you might have encountered already in similar form.
+See link in footer if these mails annoy you.]
+
+On 01.06.23 13:14, Jon Hunter wrote:
 > 
-> This change adds support for the two pin controllers found on Tegra234.
+> On 30/03/2023 23:47, Paul E. McKenney wrote:
+>> This commit moves the ->srcu_gp_seq, ->srcu_gp_seq_needed,
+>> ->srcu_gp_seq_needed_exp, ->srcu_gp_start, and ->srcu_last_gp_end fields
+>> from the srcu_struct structure to the srcu_usage structure to reduce
+>> the size of the former in order to improve cache locality.
+>>
+>> Suggested-by: Christoph Hellwig <hch@lst.de>
+>> Tested-by: Sachin Sant <sachinp@linux.ibm.com>
+>> Tested-by: "Zhang, Qiang1" <qiang1.zhang@intel.com>
+>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> 
+> 
+> I have noticed a suspend regression on some of our Tegra boards recently
+> with v6.4-rc and interestingly bisect is pointing to this commit. I was
+> unable revert this on top of the latest mainline but if I checkout this
+> commit suspend fails and if I checkout the previous commit is passes.
 
-I'm not sure why my review got ignored. Did you receive it?
+Thanks for the report. To be sure the issue doesn't fall through the
+cracks unnoticed, I'm adding it to regzbot, the Linux kernel regression
+tracking bot:
 
-https://lore.kernel.org/linux-gpio/ZHlGTgdsqcGOmVN2@surfacebook/
+#regzbot ^introduced 95433f726301
+#regzbot title rcu: "spinlock bad magic" BUG when the SRCU notifier was
+ever used
+#regzbot monitor:
+https://lore.kernel.org/all/20230526073539.339203-1-wenst@chromium.org/
+#regzbot fix: notifier: Initialize new struct srcu_usage field
+#regzbot ignore-activity
 
-It seems most of the comments are actual even for this version.
-(Yes, you can ignore the struct pingroup usage as it's out of
- the scope of this change, obviously.)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
