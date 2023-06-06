@@ -2,65 +2,65 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01373C77B7A
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jun 2023 13:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A261C7EE31
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jun 2023 13:03:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237627AbjFFNDn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Jun 2023 09:03:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33068 "EHLO
+        id S237823AbjFFNDp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Jun 2023 09:03:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237650AbjFFNDn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Jun 2023 09:03:43 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C12012F;
-        Tue,  6 Jun 2023 06:03:40 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b1ac373c9eso58038411fa.0;
-        Tue, 06 Jun 2023 06:03:40 -0700 (PDT)
+        with ESMTP id S237745AbjFFNDo (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Jun 2023 09:03:44 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF88410C3;
+        Tue,  6 Jun 2023 06:03:41 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2b1b66a8fd5so48719801fa.0;
+        Tue, 06 Jun 2023 06:03:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686056618; x=1688648618;
+        d=gmail.com; s=20221208; t=1686056620; x=1688648620;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ppUEUXlfyDGcaV0Jk4+G607lI9ilV+0ZgoY188YnfSQ=;
-        b=Ut6Ha7/oKQLGtaZcztB4EZThpCKpwD1mPBhMjYcbC90aMnBsY+CE5/RZf0TdBX3kuv
-         /zN73+kZjhXDsEHIr3aaDJXpuKVXsNkuEHII/iq8pX6hmGzzgQuWYDX+6x4HvmUoGK/8
-         2o4Mc0vCZ9VuzCNJymNexG/sz4mw3BxsKYU4TSsXuupPV3qjBTsDpUsMMFvqnL/rbFo2
-         KQoklukO+7yNDzKbONPJo9b51t5We52YXoGhg6CFlxgrIcJIVlZK/i2wFJA2L7262CRv
-         renGC8gO7LTaraMXRCiDOU+kaF3YIo5/E3FJ+UiR5KZWDIDYoJ+9tdvtKlNIg/dXJiXe
-         IQug==
+        bh=BdODkH7Tzwxzse5RHfJ8oPMVo+b4RAflsc6QqGYYYko=;
+        b=CkQevDbkwxdmD/Uz4jnsPvgu6XqBsi93lBOoHn5ViBmVkiFDjex0kih25p1LdfTkdJ
+         q7Uu7FT9P7t3gUZVGZOKR0KUwD7iJNOdqrSpr5EilrbX64V7jfzfb8qUA1NeIy0+WobV
+         KL4xoMZsAl5/PiteheEgliQVtTCmEB1CxbkhPYIQdzloR83oSpB3E+S4KtEUzlELXeOL
+         K1oFp1GY6V8/sy6SDrvFQco4dZc5ygK1PnzndKRZfTDR0FFc6JKxwbYDk1IxM6zj0x7Y
+         ZRDGX5bKH9ykEaLyme4EgWqRznxmdl6hSjHhY+SI+j980He1hCmblU83lN8BliJf1lMu
+         O5hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686056618; x=1688648618;
+        d=1e100.net; s=20221208; t=1686056620; x=1688648620;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ppUEUXlfyDGcaV0Jk4+G607lI9ilV+0ZgoY188YnfSQ=;
-        b=Uk/ryi+BPMPNuUyhqUo5lpl2p/2Vw/mh0wjikbWP4qf4TJfZZXN7rMXZgZFgyPsx+4
-         U6PXu6yL8H2vFpRC4PCFz4+xTT3mNC84czceZV18kylAcG0k2mzmzynU3ycXe2UhIIoP
-         ssBU4KIKMrrITAAuNx7QCkYMJ9s8Hsdi9HaLa6FlhVsRAH+l2q280PNfZOuzl5AVvKwM
-         6CV3jDxhDhIEt8xa7bbE7OGzjAkYXPbSTdfrzyoW2hdajzt+VEqfiS1Z1s/Qo0B3q9Z4
-         7oLzhbhR4vW+QsymCYWxraUJsk/bJCBeR3nR/tWX8SfXTf6HR4wV/ToZzQa4kSRXa7lX
-         Mccg==
-X-Gm-Message-State: AC+VfDzlr1hbeYYfcXFfy3gQDE8SyEbk8DrD5IEEdukjOkxctfkkZglN
-        20+CQnE/ISOz+aBMdVacyZc=
-X-Google-Smtp-Source: ACHHUZ7c5v7ZUuZzUT2aRx9lo+JMnfZDIoxL3gPXVn+mYZ8BIM9S0INRJYrfcgSBOqnTW4JCIEw65Q==
-X-Received: by 2002:a2e:8e8d:0:b0:2b0:497a:2029 with SMTP id z13-20020a2e8e8d000000b002b0497a2029mr1229759ljk.23.1686056618099;
-        Tue, 06 Jun 2023 06:03:38 -0700 (PDT)
+        bh=BdODkH7Tzwxzse5RHfJ8oPMVo+b4RAflsc6QqGYYYko=;
+        b=gxApzkvluGQZCRLeNPGF5L8Y/mzAWT0fgBpSiBjct4FKH49JkyXC3/rTRf6iO+SdAP
+         YpRGeQB0i8Q3lNk5eezkxJHl9EBsHmyp4kRjcMk/yrbZZOBpQdZssqcyVa1K4Fm/TAuu
+         YeDiMA3z640IVaumZRgw/iKyxgpw4NBhVd629bw1cZpYL9kPxKCG5jo9DeqA7vJA4FCL
+         vIjx+6TCvbCH3r7P7q/LiZ8lQlpYggdz2DblvRCOGoOm1Zkdz3rKD1NMNLfWXnLcRx2y
+         kieCuQGeNFu15mahiKn2u766sVE4ZF6JP0/+qm/wuvns2qwXcB8aX6O1vjxmMWjF8mpr
+         7aSw==
+X-Gm-Message-State: AC+VfDx+VhqkBMkDVGuMK5LAJH5GcSzxbYUBL8PAdyrzDlUxfVbHXwaK
+        9tzSH/0im/wgFEA9BWG5gTg=
+X-Google-Smtp-Source: ACHHUZ4sxCC0WdIdOs/u71gU4mtYqBRsqlmFePCiqPj5uBDqjubTWioKwkSOxtsCGdafJpdp3D66rg==
+X-Received: by 2002:a05:651c:8a:b0:2ad:a9c0:1236 with SMTP id 10-20020a05651c008a00b002ada9c01236mr1137357ljq.6.1686056619647;
+        Tue, 06 Jun 2023 06:03:39 -0700 (PDT)
 Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b15-20020a056512024f00b004ec8b638115sm1452891lfo.193.2023.06.06.06.03.37
+        by smtp.gmail.com with ESMTPSA id e26-20020a2e985a000000b002ad1ba6ee36sm1796177ljj.140.2023.06.06.06.03.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 06:03:37 -0700 (PDT)
+        Tue, 06 Jun 2023 06:03:39 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v2 0/3] arm64: tegra: Support Jetson Orin Nano Developer Kit
-Date:   Tue,  6 Jun 2023 15:03:32 +0200
-Message-Id: <168605652835.2915879.11202169691767509843.b4-ty@nvidia.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3] dt-bindings: gpio: Remove FSI domain ports on Tegra234
+Date:   Tue,  6 Jun 2023 15:03:33 +0200
+Message-Id: <168605652833.2915879.6545121290981220193.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230516095850.2426604-1-thierry.reding@gmail.com>
-References: <20230516095850.2426604-1-thierry.reding@gmail.com>
+In-Reply-To: <20230530105108.1292681-1-thierry.reding@gmail.com>
+References: <20230530105108.1292681-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -71,22 +71,21 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Tue, 16 May 2023 11:58:47 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Tue, 30 May 2023 12:51:08 +0200, Thierry Reding wrote:
+> Ports S, T, U and V are in a separate controller that is part of the FSI
+> domain. Remove their definitions from the MAIN controller definitions to
+> get rid of the confusion.
 > 
-> Hi,
-> 
-> this series documents the compatible strings for the Jetson Orin Nano
-> module and the corresponding developer kit.
+> This technically breaks ABI compatibility with old device trees. However
+> it doesn't cause issues in practice. The GPIO pins impacted by this are
+> used for non-critical functionality.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: tegra: Document Jetson Orin Nano
-      commit: b4032e1726648cb156f45ae756c8730d6d39a5de
-[2/3] dt-bindings: tegra: Document Jetson Orin Nano Developer Kit
-      commit: 5f027147e4796e9fc11083b2ad50a91c1ac36ede
+[1/1] dt-bindings: gpio: Remove FSI domain ports on Tegra234
+      commit: 12382ad05110b569d95d29c637e16bbeb115acca
 
 Best regards,
 -- 
