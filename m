@@ -2,73 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6F1C7EE23
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Jun 2023 09:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852F4C7EE23
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Jun 2023 10:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239588AbjFGJj7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Jun 2023 05:39:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56432 "EHLO
+        id S239007AbjFGKzg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Jun 2023 06:55:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239894AbjFGJjt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Jun 2023 05:39:49 -0400
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B423EB;
-        Wed,  7 Jun 2023 02:39:47 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 081A26003C00;
-        Wed,  7 Jun 2023 10:39:45 +0100 (WEST)
-X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
-        tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
-        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
-        with LMTP id KLn4ceMhBpz2; Wed,  7 Jun 2023 10:39:42 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 93FDE600301C;
-        Wed,  7 Jun 2023 10:39:42 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
-        s=mail; t=1686130782;
-        bh=qzbtfG/1orL98pYWmgO/19VHpMxqF1o1TCM6v97C44A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=NFQw/reZmv8Udweim8jTuOAAaCg8M5kC7AGZLRhb67uXRQJkqwKHDOwR4knPYdAWY
-         xc2dKg8dCsB5kqDlmdHS6Shbo53t/iHriH+She9+j9xebeejNWDn6l9XDZfjLodY8f
-         OBkRNl7UDgONfu+rFCnF9f0ZgPeuodKKk2Nm1XfE=
-Received: from wslaptop (unknown [IPv6:2001:8a0:6a1a:e700:b1f6:8e31:237e:e5dd])
-        (Authenticated sender: ist187313)
-        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id BD773360075;
-        Wed,  7 Jun 2023 10:39:40 +0100 (WEST)
-Date:   Wed, 7 Jun 2023 10:39:36 +0100
-From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
-        daniel@ffwll.ch, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jonathanh@nvidia.com,
-        arnd@arndb.de, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     diogo.ivo@tecnico.ulisboa.pt
-Subject: Re: [PATCH v2 0/2] Enable GPU on Smaug
-Message-ID: <x3ifhffuxyyxpgmy6m3d4xzpglihovfzrfp5vudinccepzkwma@hxvtze36gszi>
-References: <20230516082829.15326-1-diogo.ivo@tecnico.ulisboa.pt>
+        with ESMTP id S235180AbjFGKzf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Jun 2023 06:55:35 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112F3124;
+        Wed,  7 Jun 2023 03:55:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G1E1aIKEVGyEKs6ow5q+jlQemKeYkSWhkBkqfMoRvwSzGg/7rvcL/su97eJCziY4VVhjUfuQ7VN81nRh4sMrHKYzsWzau5Vg2eUK3WHmHStf4F/PPEEo26XIm8y6H4/PdxOOAGpTh4utC3QqqEvmFNFgUZymyiNWQYsNTD7MG+xCU4G0Rn89Q30zSSezeeZpOdcDsuzY71TpFNIxQ5gE74g52sR8Alp+/5JWKTPP7Arcimw9eZlkuKNiY7DbFFwvgiHByoT7kWSNbjghKxpOZq5XP/IlCoS9tWen/rVkxb1hHxmS5CbJVdoD2VYF1FJ+tRWrLIN3R6YwEhth8pfE9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5gKXJNnGK4THNA3xxalpEvXt+TghwU5wmYAMcedYyWA=;
+ b=agtleSriJijtAq/TYmW0R6TzoS2bZFDcrDLFGwWOmui99zpN4NWRcj016q0hsngiwNoFe+P6z02r2Cr2Z0mYRpEYv00uJezjgG3KZeD0S0HW+hJ5gGF6ydnk6iyLY+x/GbaZTJ934NJzH3j7sIAwohxPiBBmUutgYIDTkbK436OcxNVfgGsTVw5XMhKia4Lqat2uLCZK71VRW7x079Dkul41VPqRPA/EDnonB+UkttfV7pR5CQqFKUX2MEW2FypuBSSuoMgJ6ir6mw9Mkd9gg9mgM/XOmeaBsg62piduWIVoUmw4ndBgf0BzVvmTdJo65iKJpxs+Gpf3O0OIkbyXKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5gKXJNnGK4THNA3xxalpEvXt+TghwU5wmYAMcedYyWA=;
+ b=Bf+gwcNeXu/e7e0NYMA9nMtZfusaoV41F4u7q+Ep/JRKftdaMomCdl6GZhhJadxT+V5c1JEAimKGvXMGwJ/vD71KVUhmqwptivQGwwMgJgZve8u/pJX7m0QFA9Y5GcHCrQue27LuUXehFDTzT1f810pmHf+Wfu6qJR1suIskbNqqhzvgPAxRM5Lo60/2GxPifVQVd9bgTXKc5NKV4ZQ1w6cJG6Fd1Dm5Tf/GKbASclj7WxVxgpEAyHqFW9d8+LToeLhu+AhPw+QdfRJov6ltVEiLuUEDKmfU2csWZHGdmcpFUz/MbbQcjlvHm/9VAfCjjUCJnIDmX540XoNq8ypw9g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ DS0PR12MB7725.namprd12.prod.outlook.com (2603:10b6:8:136::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6455.32; Wed, 7 Jun 2023 10:55:32 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::21ef:9d59:5b2d:f1e8]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::21ef:9d59:5b2d:f1e8%4]) with mapi id 15.20.6455.037; Wed, 7 Jun 2023
+ 10:55:32 +0000
+Message-ID: <496889ff-dd61-51af-c716-b9b9e2300be7@nvidia.com>
+Date:   Wed, 7 Jun 2023 11:55:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] gpio: tegra186: Check PMC driver status before any
+ request
+Content-Language: en-US
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Prathamesh Shete <pshete@nvidia.com>, linus.walleij@linaro.org,
+        brgl@bgdev.pl, thierry.reding@gmail.com,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
+References: <20230606071717.8088-1-pshete@nvidia.com>
+ <56dcfcff-3b36-25ea-eb72-2b9d2f8f3883@nvidia.com>
+In-Reply-To: <56dcfcff-3b36-25ea-eb72-2b9d2f8f3883@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0232.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::21) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230516082829.15326-1-diogo.ivo@tecnico.ulisboa.pt>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DS0PR12MB7725:EE_
+X-MS-Office365-Filtering-Correlation-Id: d67cb3c4-90e2-47eb-2cfe-08db6745b6a0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /KVwIlTCQ7sNKND4xn4anRWQwgXxBAAvY+4TM3TPc1zFT5gJvix5p+tj/gdm2Am2i4HogbCRixgdvVOdQSOGWfBb+2GcqbOr2MzARMRAWmLzyLF2jSq7TfXej5ArtJZiiOC0/iHsjsmxutiOGAk4cC/y5aN5PYGGSU1rC517f6tkoPgA/71k4DF9HdKniY90hIoIZfuFpy/6bLqGtD/e5rbEtnFXTPwObGcTtD2+gRoHYqP8YwwTLUhwzV6n2m5vump7z3q9mHcV/2hzjLde+e8S0Vvfcxnp+thsEK+YoEJ7MN6T0HgiT85VZ6f2aJwfY5jirfA1mbLuNugDiQUDpWjZVSdifbIjWZrceFnWpG/2DnheHUCsQkLAuTRfY2A3jooMgXhN96BMDuzEguoulMPNjJrjAL7fPN38bsQDC+2enMLSFdKsMDypcNAhaiGGAFVopkU3pE/wjuJNvt0beXoPEYqFb4rwn5IYkrQgPaMW7pDYzXBt4ua1kIwZ/jZ3ZAeBkRB4VTmqcC/P88mFio7AGcIXYIjbGxhwgwNq1QAf695I3DmsQpU8A1jx4PKDX4buUYMwElcnjmAlCxDUKmRGNGdPJN3KKM1bITjXN/MPM+5uTNv7rlweT5mEE0Ajs//pNSd7NmOV83bcQQM9hw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(376002)(366004)(396003)(136003)(346002)(451199021)(31696002)(4744005)(2906002)(83380400001)(2616005)(36756003)(86362001)(38100700002)(6486002)(41300700001)(6666004)(5660300002)(316002)(107886003)(8676002)(8936002)(478600001)(66556008)(66946007)(31686004)(66476007)(4326008)(6512007)(53546011)(6506007)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UGhqVlUyd0VHQ20xc1F2ajc4Tmx1S3F1eXVzQU1GeDFWQWd5L3JuTjlYVjNC?=
+ =?utf-8?B?bWg3NUtxcDNrM0xFWU9zZUV2ZjRiNGg2WnpEZXc0QzlYTkdTaEhLNUNTSTVZ?=
+ =?utf-8?B?TG9zaVhacXZRTUhnRTlrL0wvUFFmcFQvMXg5OWRYSEhoRThIc1d4V2hjbytq?=
+ =?utf-8?B?ZW9rU05XZzNJOXFIQmZYRHZZMzB0REdyS0hpNTU2VDdoS041bEVxa2RiSXk2?=
+ =?utf-8?B?Wjd0RFNJdXJZN2hwNGRKVEQwTEF5N3lxd2c5QmxteHRVeTlac1lmZjMvcnRO?=
+ =?utf-8?B?RVlUWjR1aTB1ZjlMMk52K3FaZzB5bGRZTE4yL1o2LytXejRLcU95OVluUFAy?=
+ =?utf-8?B?a0NvOG1ZUmRDWCs2OUlxL2hHMGZJa0plY3hhWWlmV2dsRXQvQ0JzWER3aDJL?=
+ =?utf-8?B?Ykdicnd5UzlJWHZ0SGFOU2N5dWo1aWtzU3ZTcDBCVUtnWjl4VnN1V1dLKzZM?=
+ =?utf-8?B?dkJHKzRnMWszbDlDbHpodSs0SG8rMCtUMGJzWmxYQmxEVzZreDZseThrb3Nk?=
+ =?utf-8?B?ZENGSSthYVVTK3NMUGduSnc5T0NKUEV6Qk1HdEVSYVVJdkdaZnA5NW9Qcm9H?=
+ =?utf-8?B?ZVFMemxXNWo1ZlNEK1luV0d6NVlzelp1bDkzTjNlaDl5Z0xlTitkZzUzZFVw?=
+ =?utf-8?B?TE45Um9IZGhKZEwzMFJORzNLY2hoV2hHZVorWkdTZkpHVjNPN2kvRzh0bEl6?=
+ =?utf-8?B?cDFGdS9qdmpZa2JKTXpTTVhzUTBoNGN0VUNPL1E3L0YxcElmclQ1SHRzNlF0?=
+ =?utf-8?B?SnREK1FsZXR0V25JS3R0YTVzTGlyT1l5NHpBS3NBRWpFREMzZ1IyZnlNa25B?=
+ =?utf-8?B?WDhOeUZEdjI3UGFZakhSZVhYL3VXZ21HZFM4clZhR0lHYmxSZkhHd2pHc1B1?=
+ =?utf-8?B?elpTZ1pqb2x3OU0zSmVqZ201d29wUFE3ZFBiZ3ZiSTQrN3lIbG5uelA1VjB4?=
+ =?utf-8?B?M29HNEhLamdvWjdWeTl2UlR1MmYvQ0ZObkdRTXdPYklMYmtwMmFEbm1vRU5z?=
+ =?utf-8?B?SUkvcno1dHpoNlE2U2psTmhSZE5sZjhDdXN6WlhScE1CZzhMaFRHVW5YRXJo?=
+ =?utf-8?B?WVJKcDRQR3lmUVNrUDJOYXMzdEJYV3huUWJaSzJ3TEZNZEk1YXIza2hoem8v?=
+ =?utf-8?B?V05UUnhTM2drSVhsVFZlMGdyOENxZFJkc3g2Y0hIb09mQkpQdis4RkJqY0Jv?=
+ =?utf-8?B?ZW1za0NaTHZVZGZLRVYzalZaSS9JcFdHNHAzaXpnc2hUMnJ0NnhKVW41Wmg2?=
+ =?utf-8?B?dEh6VDNlUEhRUExNM0pDS3dxVkc5T3FvWitVMVF5UVpJdTRCem91czkyb0t2?=
+ =?utf-8?B?SVhJcXFIbTZiYm5Md1lEWVhZdjdUSk1VY3lWWTJsMHBRUExBS2kyODh0OXAv?=
+ =?utf-8?B?MXF4TUEzaWlBeVA0L0FKZXlUUERsSEc5Z1B5UlhQVzBUTEw2Q213bWhwU09S?=
+ =?utf-8?B?T0RsQXA0WmVkUmhZTmNlb25LK3ZqSGNLQ0JncmZyUzIwZ0JaSmFocmkzbUZF?=
+ =?utf-8?B?RlJDVW5pbnRZc2xOV1lXUkw3dnFrYWhDSkRDaGFab0pGeEYzWkdGTjFXWnJz?=
+ =?utf-8?B?RWg3RU5pU25zRjRiOU4vT3huV3l3Vm11QmplQUFSdFFWTzgzMmlFbzBheXRk?=
+ =?utf-8?B?cU8wMEZYNkhlb3NkbkRkdHZHa3dCbmdQVkhaZTNIUVluTitiaGo0SVZRNFBs?=
+ =?utf-8?B?U0pHeXovWHM3OVZPT3U5c2djRzBiNzYvK3o3N0xaTmxkL245Y2o2aFIweW1T?=
+ =?utf-8?B?VG9lMExVa2JxckxSNWloaWZPTHF2MVl2a3hBeEoxM2ZhbTJZMThLNWs1WHRx?=
+ =?utf-8?B?c3hpWXo1RUdzdGpmRFBrSTlDTnFXWWFuSzhkSWZyaW83Q04xWXlOUXNMdEN1?=
+ =?utf-8?B?ZG1uM3V6eitiTUhYVE9wYjNnbWpScjRVQjV6M0VPVTVvZ2dXakc5RkN2YVR0?=
+ =?utf-8?B?Vmx5TDJjenptVWN6b1RhNFBFYTM1UXVLVVY2ckVSVEsvMmxCazQxZWlSMEVV?=
+ =?utf-8?B?Y29pc3BYR1VQUFFDSVYrT2VPa2lTNzVrQVVBSUJKdzBZelhtWXFtTW1IdlIw?=
+ =?utf-8?B?cGVxeUNMTVdYS3U4c1dIM1RzVjE5RE5zOEovZWJsUkpDalV0c3MwUnRzNU5Q?=
+ =?utf-8?B?THpWWHNzMXFuUUJRRkx6aFhDWjgzU2pFTUhtTEp4bnlTcklJVksrUGNVMzVn?=
+ =?utf-8?B?Q1ZTYWV3OE56b1NMblJtdHJ6US8wM3BVbjFxelY0UlBWUEx2UVRSSVg2WmFj?=
+ =?utf-8?B?VExqaEpKcms4UzF0NFpQOUU3SldnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d67cb3c4-90e2-47eb-2cfe-08db6745b6a0
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2023 10:55:32.0166
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7ltX42xOptV7xjGEJobxZ4xpPxe/h6eGiv6zdvbjybPu50F/wtBO3iohxvBXhL8tSenqysf/59GQ5NurPbMLKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7725
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, May 16, 2023 at 09:28:27AM +0100, Diogo Ivo wrote:
-> Hello,
+
+On 06/06/2023 09:53, Jon Hunter wrote:
 > 
-> This patch series enables the use of the GM20B GPU in the
-> Google Pixel C.
+> On 06/06/2023 08:17, Prathamesh Shete wrote:
+>> This patch fixes the issue where even if PMC driver status is
+>> disabled still we are trying to look up for the IRQ domain
+>> that PMC driver would've registered if it had been enabled.
 > 
-> Patch 1 adds the needed regulator DT node for the GPU.
+> It might be clearer to say ...
 > 
-> Patch 2 enables the GPU in the DT.
+> When the PMC device is disabled, probing of the Tegra186 GPIO driver 
+> fails because the IRQ domain that is registered by the PMC driver is not 
+> found. Fix this by checking to see if the PMC device is enabled before 
+> attempting to lookup the IRQ domain registered by the PMC.
 
-Hello,
+It could also be worth noting that it is OK to skip the PMC IRQ domain 
+in this case because this only impacts wake-ups and not GPIO 
+functionality in general.
 
-Gentle ping on these patches.
+Jon
 
-Thank you,
-
-Diogo Ivo
+-- 
+nvpublic
