@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C71C7EE25
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 16:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CE2C7EE25
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 16:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231540AbjFHQFk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jun 2023 12:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
+        id S232430AbjFHQMw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jun 2023 12:12:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232417AbjFHQFf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 12:05:35 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BC7E57;
-        Thu,  8 Jun 2023 09:05:30 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-978863fb00fso150044666b.3;
-        Thu, 08 Jun 2023 09:05:29 -0700 (PDT)
+        with ESMTP id S231650AbjFHQMv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 12:12:51 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D1D1FFE;
+        Thu,  8 Jun 2023 09:12:50 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-977c89c47bdso148478666b.2;
+        Thu, 08 Jun 2023 09:12:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686240328; x=1688832328;
+        d=gmail.com; s=20221208; t=1686240769; x=1688832769;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5NyFzu3M5YHjAUhNjjqGmUyI4M3GIKjPFz5WvZ/HN50=;
-        b=HE1FaZ0djIrml8eMov+fDSJFrgQBl/hQWzY+XLea0KVz5lPtf55SHtMFdx3EkbZbBM
-         zo9hN3dnOtCZVvo/eCUvdzGkIctC9Ts7xYUXl+9g+EeUEk0tR4tMYIBnWxqCyD9xw5sE
-         AK1I9yuI3aUT+GB+dJTdtd61d5AF839ntz3Nh11JtrJnPQ3yq+KbB3528Ts6K2EbsGMh
-         +PnzRgdnfam+46bhBS4yD2BJxpgDIZtTGpRT61sCcOIi2n3axr9QlYLOHX/MAgS5zWKR
-         Qv5KfwFLT4PIwHJyWkw308ZLPRbv7XpMidIDJcDIdGNcV01/0Vj9kfAwm4i+TTk+hN/M
-         jt7w==
+        bh=BhZMDOI1ABiSJTJBTG1Vk9XBaG+Nl+0VdaC+LZpHZs8=;
+        b=sdtRV/1HVYP5npXw0TpsZI7EIlrW94hJ7tghF8YrKA82jT7LaaV3H5F8pddYSwm75Z
+         1l3G7mhI8kZ1fzQ9u9kDjudeQNSpLOt3WRPV7Bml4LWhlF8OlUzZ1wEADU/jjIbHmPRN
+         sXm1EvLq/4gj7odd2OKq0tORn5Wd+CL9ogDVIO52mreH7iEuiZfpG/qvvOdBvDksWX02
+         sRc4Vd8ob8R/VtOrxIhEVz8t8MAzsY3TFWpe1MMWJFoaFsu+GeFWevRTlBKFrOTNgc+7
+         7GzH47g//vgdflAL8fI+g4JJe7h2ZbXZ0L0xD310cGnhOfhh24c91IiEvKipHE274fVY
+         3vIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686240328; x=1688832328;
+        d=1e100.net; s=20221208; t=1686240769; x=1688832769;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5NyFzu3M5YHjAUhNjjqGmUyI4M3GIKjPFz5WvZ/HN50=;
-        b=HEU6VIUORn2L4etUOwEre/WFs2iwZAVCTR08fi84y3B6o4LHePWD4x89WaXaN6IiOv
-         MkZFcJtQXXP2LbnOWTHck3/JL93OBU+VkWPD0Ttv1BtbNTn2ekN2AVxodM25h/w6LX57
-         vg4L7DYz5E76JosFVzUL6B9vDZlKttbdh6bsxzQMCDbh3XmHXc1qKKcqB/59+hQbTfju
-         nm0gSdTwWp3Byl4yF1fz5wuTmHvt3o8ZQIqB5c14EAmanzOR26sxLdM5STKAMFAPP1uL
-         Zfo5OrkB52Jh+LJk1q2/hEjfR6fDDQwTHKNKmlxrku0JTED+AXoNYMkp2+alnifpybEV
-         ivJQ==
-X-Gm-Message-State: AC+VfDwJQlnLHfXhkbEeFQwvdCwLuGSkytKd7cakGW5K9eFWy07QMUSw
-        wO2odUflk+57PiW2SFiW4y5TR1v3s+E=
-X-Google-Smtp-Source: ACHHUZ6askCyF71m+fUTSv0laJainyjk++nGWfgdfy3d1rc04bmtsRfpKQ8hQwmjFdFbhaIW9mnwtg==
-X-Received: by 2002:a17:907:6d2a:b0:978:ab6b:afd4 with SMTP id sa42-20020a1709076d2a00b00978ab6bafd4mr220202ejc.43.1686240327978;
-        Thu, 08 Jun 2023 09:05:27 -0700 (PDT)
+        bh=BhZMDOI1ABiSJTJBTG1Vk9XBaG+Nl+0VdaC+LZpHZs8=;
+        b=MC4GXjcm7DN3DqvZ88PfiUPxQ5pOvKUg2aPMCCuU8UMqG3xhGL9jOzr1eMn/Ivv+0i
+         6h7J3DUunh/QUjEuobJWDoMGfUj9SI57YGQa6/YthWpIcoBn7aSuKjCLQiAn2h4cxFzS
+         +0zH1xxkfwWY6YHMnNlkUT65teVP+eyCx5/oJnIaovUm2ov9uE8aXgzBaCTjCB7XKsGu
+         aMBbSIcrB8Y2ZQalqnNQ0qt1xLpTByke0FyXvOas3CSs+qUdKnyhOFiDYiH9Os1R9tgc
+         EI/PiHRQ3aacMcUICubeHYPp1OBCAi/Ul0khYbTsQVyDGlUBabDMREziar9a+aojnz3N
+         Vl8w==
+X-Gm-Message-State: AC+VfDw47CIq3C2NfYwvJnZRdmC7JMhIEvAoNoRsUhPffJSPBsNctoKt
+        JWREawyM5iRMVmGuOIMmn5k=
+X-Google-Smtp-Source: ACHHUZ781H9Iu3Wge6qoi0343fmdAsqXfDhvYI6WKu9AXXkpsBPpXPoK98bnbxKCvtC3W4YXYejV7g==
+X-Received: by 2002:a17:907:6d12:b0:94e:e97b:c65 with SMTP id sa18-20020a1709076d1200b0094ee97b0c65mr209967ejc.60.1686240768863;
+        Thu, 08 Jun 2023 09:12:48 -0700 (PDT)
 Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id qh16-20020a170906ecb000b0096a742beb68sm840197ejb.201.2023.06.08.09.05.27
+        by smtp.gmail.com with ESMTPSA id op26-20020a170906bcfa00b00965aee5be9asm10975ejb.170.2023.06.08.09.12.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 09:05:27 -0700 (PDT)
-Date:   Thu, 8 Jun 2023 18:05:25 +0200
+        Thu, 08 Jun 2023 09:12:48 -0700 (PDT)
+Date:   Thu, 8 Jun 2023 18:12:46 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     jonathanh@nvidia.com, mperttunen@nvidia.com, sudeep.holla@arm.com,
@@ -58,102 +58,37 @@ Cc:     jonathanh@nvidia.com, mperttunen@nvidia.com, sudeep.holla@arm.com,
         krzysztof.kozlowski@linaro.org
 Subject: Re: [PATCH v4 6/6] firmware: tegra: bpmp: Add support for DRAM MRQ
  GSCs
-Message-ID: <ZIH8RRBvuviey1KA@orome>
+Message-ID: <ZIH9_hFsWz2kKQJy@orome>
 References: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
  <20230511132048.1122075-7-pdeschrijver@nvidia.com>
  <ZGNOXO3rRtFx_12R@orome>
  <ZGNS9w+i9Y9gpz6R@44189d9-lcedt>
  <ZICo8wYqM8tmCEob@orome>
- <ZIGaMntRUmgatjZE@44189d9-lcedt>
+ <ZIG571modfPCnl2p@44189d9-lcedt>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iyFPYGRrJPE0J5Bb"
+        protocol="application/pgp-signature"; boundary="6AOjTCZJVyiG+eT9"
 Content-Disposition: inline
-In-Reply-To: <ZIGaMntRUmgatjZE@44189d9-lcedt>
+In-Reply-To: <ZIG571modfPCnl2p@44189d9-lcedt>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---iyFPYGRrJPE0J5Bb
+--6AOjTCZJVyiG+eT9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 08, 2023 at 12:06:58PM +0300, Peter De Schrijver wrote:
+On Thu, Jun 08, 2023 at 02:22:23PM +0300, Peter De Schrijver wrote:
 > On Wed, Jun 07, 2023 at 05:57:39PM +0200, Thierry Reding wrote:
-> > On Tue, May 16, 2023 at 12:55:03PM +0300, Peter De Schrijver wrote:
-> > > On Tue, May 16, 2023 at 11:35:24AM +0200, Thierry Reding wrote:
-> > > > On Thu, May 11, 2023 at 04:20:51PM +0300, Peter De Schrijver wrote:
-> > > > > Implement support for DRAM MRQ GSCs.
-> > > > >=20
-> > > > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > > > > ---
-> > > > >  drivers/firmware/tegra/bpmp-tegra186.c | 232 ++++++++++++++++++-=
-------
-> > > > >  drivers/firmware/tegra/bpmp.c          |   4 +-
-> > > > >  2 files changed, 168 insertions(+), 68 deletions(-)
-> > > > >=20
-> > > > > diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/fir=
-mware/tegra/bpmp-tegra186.c
-> > > > > index 2e26199041cd..74575c9f0014 100644
-> > > > > --- a/drivers/firmware/tegra/bpmp-tegra186.c
-> > > > > +++ b/drivers/firmware/tegra/bpmp-tegra186.c
-> > > > > @@ -4,7 +4,9 @@
-> > > > >   */
-> > > > > =20
-> > > > >  #include <linux/genalloc.h>
-> > > > > +#include <linux/io.h>
-> > > > >  #include <linux/mailbox_client.h>
-> > > > > +#include <linux/of_address.h>
-> > > > >  #include <linux/platform_device.h>
-> > > > > =20
-> > > > >  #include <soc/tegra/bpmp.h>
-> > > > > @@ -13,12 +15,21 @@
-> > > > > =20
-> > > > >  #include "bpmp-private.h"
-> > > > > =20
-> > > > > +enum tegra_bpmp_mem_type { TEGRA_INVALID, TEGRA_SRAM, TEGRA_DRAM=
- };
-> > > >=20
-> > > > Still not convinced about this one.
-> > > >=20
-> > > > > +
-> > > > >  struct tegra186_bpmp {
-> > > > >  	struct tegra_bpmp *parent;
-> > > > > =20
-> > > > >  	struct {
-> > > > > -		struct gen_pool *pool;
-> > > > > -		void __iomem *virt;
-> > > > > +		union {
-> > > > > +			struct {
-> > > > > +				void __iomem *virt;
-> > > > > +				struct gen_pool *pool;
-> > > > > +			} sram;
-> > > > > +			struct {
-> > > > > +				void *virt;
-> > > > > +			} dram;
-> > > > > +		};
-> > > >=20
-> > > > The drawback of these unions is that they can lead to ambiguity, so=
- you
-> > > > need the tegra_bpmp_mem_type enum to differentiate between the two.
-> > > >=20
-> > >=20
 > > > No, on the contrary, now it's clear you can either have void __iomem *
 > > > and struct gen_pool * or void *virt but not both.
 > >=20
 > > No, it's not clear. You can have one part of your driver write the
 > > sram.virt field and another read dram.virt and they'll end up pointing
 > > at the same memory location but with different meaning. That's why you
->=20
-> No. You can't the union in combination with the discriminating enum
-> tells you you should only either sram or dram.
-
-That's precisely my point. This only works in conjunction with the
-additional enum and it unnecessarily complicates things.
-
 > > need to introduce the enumeration in order to specify which one of the
 > > two you want to pick.
 > >=20
@@ -168,31 +103,47 @@ additional enum and it unnecessarily complicates things.
 > > source of truth, namely the pointers that you're going to use.
 > >=20
 >=20
-> I don't think pointers should be used as a discriminator.
+> There are 4 possible states for these pointers:
+> both NULL
+> both non-NULL
+> sram pointer NULL, dram pointer non-NULL
+> dram pointer NULL, sram pointer non-NULL
+>=20
+> So how is this one source of truth?
 
-I don't think we should extra data to discriminate when we can already
-discriminate using the existing data.
+If you add a tristate enum you turn this into 6 possible states, how is
+that any better?
+
+My point is that the pointer contents are enough to determine which mode
+we use. In either case we have to make sure that the state is consistent
+so we can't end up with both non-NULL. The difference is that without
+the enum we only have to make sure that the pointers are correct. With
+the additional enum we also need to make sure that that value is
+consistent with the values that we store in the pointers.
+
+Anyway, time is running out, so I'll just apply the series and "fix"
+this up myself.
 
 Thierry
 
---iyFPYGRrJPE0J5Bb
+--6AOjTCZJVyiG+eT9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSB/EUACgkQ3SOs138+
-s6F49A/9F+foaN+AVR7LMIrsqygrDSHbJ/YQnaK4yviJ0wGxlYJw2s2RIQ2j/p2B
-SUmGPImyXhtKdQVIWjeb1vTzr2theNjKZtKV7/zJSCUHY5clCR3dABAGg6Aj7WHm
-qtUs2SubBucR4lRNvn/Apmb8xD22Mdog02DKsYA1sOCCjpUKsTxghU3Xcd6YCU44
-oz2h4cjQJzkERy8fVrEIH8HMJu7pz515feO7xNMLTcObmpOgV2BvBeLLmbDmZNO5
-aXTXk0Cy704welOL/ZVr5uoe+KT4ilUsG0/XrFcSaFxxhjHHwJurZJsEpcbt9ZkT
-VDB35UK0U5XiRFaT0LTZY+vdXBQjT0nGRokzBrH7rbYSbRtERyqXHjgrf5Q1Y0Xe
-467/LqnwWAIRYjAxX6D3443TwpHESlO4MKoIsw2Iw3giq2p5THpcyXUHQMue0n8i
-geSashiuZA13d38iigUHPB8adxXEnwdATyKZ5WuSmHiixyNTGmsj8KCafrJidfpn
-Y49lL7GMGIoULlWQAW5BpwKSW9MjEruauhDXHajJ/01AWWY/WoBR9+hGAgizDTio
-EksqQGxFS/T12lFcKAb0+3/njbiyYzU/NOPAcGqZXkAXkNYZb38lEH6+3U0YrYnS
-CgTEiOqY+MxH/1VKvqBb1d8LCb/GW4yGdXLZy0v/Q3qtmk7Ir9A=
-=jN6O
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSB/f4ACgkQ3SOs138+
+s6FYIg//bIAsnX/x/dT+okl1hS6XmkCxBgUmpv1UQ8zI4WHEw5zLyv8zr8rCWJ6c
+YZ5jP+8tf7Z10rLfo5/fgMdlkblJDDHAnve5mMCfHwIpmZiBpEDGYVIsSTsBxIfi
+TZ3zAHyyAUQX2EHXGkFk3qH+wIH6hv6XpKP7zB6r/E79yLSh8tVMiqevdQWVgp6t
+5mb7q27n0aPLYVO2EVhFKydzYi3G/4t0zKGzZkW1Yccuksk04h9PfkLiMlJ9r24e
+SYfLZL2c0Sv3tNR5pCg5lJWg9VhbJPQMIXzeDjsjAISQxyGCU67nq58x8bhQ90af
+xHQfY01JiYF8g63olr8L3wkUnWIvtUsosxtTWoa5pJHGm1I5//FjJB6Z1bBD8u2w
+b9ZbmIG4cQqUM9wMSiQ6+RLM083x0ZMhAcuhjPKExAO4IIxcmdr6QHj8G96ildia
+kOW5Olgjg4yzYau9V59V1cGRdt5skkyrGk45Z7YE2K/LwvZKG6jCuqMHCJOqefcI
+Kh8Ly+M18PA+CtXkcqkHYQtJVv5qNLe87JdMD9OKJ6sEGdAZ7wCslexGxPkHEd3Z
+q9LftXQLjkAuzItlZaQedUJ5XvsJIwP/4kw0roU4NZe+5g6p8uzwzbPdHiUsQoco
+oqd1mhIyo0zJHf9oMmIBRTWJ1Z4AzxNvrr8lx/iVArc1jBeQZi4=
+=Frik
 -----END PGP SIGNATURE-----
 
---iyFPYGRrJPE0J5Bb--
+--6AOjTCZJVyiG+eT9--
