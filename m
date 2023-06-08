@@ -2,100 +2,120 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED90C7EE23
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 07:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A883CC7EE29
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 08:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233756AbjFHH4Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jun 2023 03:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46714 "EHLO
+        id S233544AbjFHIjM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jun 2023 04:39:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233801AbjFHH4O (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 03:56:14 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 276DF10F8;
-        Thu,  8 Jun 2023 00:56:12 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-977cf86aae5so53264266b.0;
-        Thu, 08 Jun 2023 00:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686210970; x=1688802970;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5pxxVNO1ebNs7IeCt2Qr1fNijVL9D+WeUV59wK9pdas=;
-        b=hZgL/HLD2zhbj6owMSmd8rlf8UKLUxz0MrZl5tRQMQgqNewucNTRaElZaqPDlgNUMN
-         QpjbTYXuXzjHiBV8M/mRMXvMKIS0p7/Gu6wpusVn+bhHb0680YR/oA4GY44k9z8NWa0b
-         vEySSHz3TXsUpnz7a4mzUKt9XcJTbwUsZwhcS9X1SYep7x6ik0qyPV7PEfKSt8/QCG17
-         Wou1cpRvxFjy77IWoAQn3wPegUc0SF45ZRlgCkdA3DfYO2QPel6hbUKDN4+EfZLjHwgm
-         KdDY2i2ltjOEDiQRPscatT3phkLCso9e+EgD6eKOteC7Vdy54i66vABGjjr/uwCD/DZE
-         L6OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686210970; x=1688802970;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5pxxVNO1ebNs7IeCt2Qr1fNijVL9D+WeUV59wK9pdas=;
-        b=eohCNbByOzcDpUQkveLkHsoJi6TkhkJNyAB26zMOgl0IUktzm+dqgMnLieoPVWxHje
-         WsmMX3KjbNRqLh5IvdApGHENc6LgMV2155fyykDIA3jcAeRMq2uhGLu79iBQYyopB8VC
-         bLvTe94bxoy/VB09VGF3NQ5gO8VbBGmKLV+p0ZDT9o+hFg6W3aJJ4zL6UjsMmwRMjnmP
-         HhqLBpQuSsBjTWMMMF1ueh+QYibwP8BBsH4DqHocd7V1sifcFBel6yUjLN8GwWuknXh9
-         TNSbOyvNhY+jh40Ua0G+QQULTs38udsj5BgwyY4c66zr7xNB4y8ErlUtB5H1UPB+vXT3
-         Q9jQ==
-X-Gm-Message-State: AC+VfDyJDuyor/UE+H9u+hAWwQ8+OA7666JyT4FV0LvkgRh92HwzkTgj
-        TOVbEoaJPVjC7U3cgRjJTvm/ijG+A0g=
-X-Google-Smtp-Source: ACHHUZ5EghSL+T2smSFXGaDDfGtSEs20h0mHG9wiXgx18PI4vRiqEqB1vTRkGMtyHfYeT+MGxnnm4Q==
-X-Received: by 2002:a17:907:a424:b0:960:ce5:20c0 with SMTP id sg36-20020a170907a42400b009600ce520c0mr8595282ejc.20.1686210970362;
-        Thu, 08 Jun 2023 00:56:10 -0700 (PDT)
-Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g11-20020a170906c18b00b009746023de34sm345781ejz.150.2023.06.08.00.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 00:56:10 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Wolfram Sang <wsa@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        with ESMTP id S233158AbjFHIjK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 04:39:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92E82106;
+        Thu,  8 Jun 2023 01:39:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2EFCF60FE2;
+        Thu,  8 Jun 2023 08:39:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24128C433D2;
+        Thu,  8 Jun 2023 08:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686213548;
+        bh=NIZop4+AV1Hej4fAByaybXPXuAlFsLjn2ujf7u8pOlk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VxUsW1XxbLmVOeJOAO9umWkV7zphA92ss0exCJGGr5sImRhWGhQrZ5rlpHBKiVVK4
+         2mU8VzY0UgLc/1r3qAUcvVIJQPqh2cE79RD/cLvhdKHyJ/fyGSwV6CzqmCjVyZVCck
+         /YXerGAy+bXGpELNjMFh6E36oc/f3TUHo02an/I9Ny3+/1taFIgI5HGzmMfwxkaZsA
+         wbHTnpLFN4/lhudKAn1GMRZ6hXLL1DwJW6EqCejltRuTPc0sCW5JhVWR0gJMV3OH9G
+         ZdZk5bMsVOZZNV5ScGr4XYXmj+rC/6x0Cyd0Go7ws2q5ekHmvsBfCk0VucPSF+x8oI
+         OAAzAnQiJ4bzQ==
+Date:   Thu, 8 Jun 2023 10:39:05 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Wolfram Sang <wsa@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
         Akhil R <akhilrajeev@nvidia.com>, linux-i2c@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH] i2c: tegra: Fix failure during probe deferral cleanup
-Date:   Thu,  8 Jun 2023 09:56:06 +0200
-Message-Id: <20230608075606.3590744-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.40.1
+Subject: Re: [PATCH] i2c: tegra: Fix failure during probe deferral cleanup
+Message-ID: <20230608083905.youqz3wt27sqda2f@intel.intel>
+References: <20230608075606.3590744-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230608075606.3590744-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Hi Thierry,
 
-If the driver fails to obtain a DMA channel, it will initiate cleanup
-and try to release the DMA channel that couldn't be retrieved. This will
-cause a crash because the cleanup will try to dereference an ERR_PTR()-
-encoded error code.
+On Thu, Jun 08, 2023 at 09:56:06AM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> If the driver fails to obtain a DMA channel, it will initiate cleanup
+> and try to release the DMA channel that couldn't be retrieved. This will
+> cause a crash because the cleanup will try to dereference an ERR_PTR()-
+> encoded error code.
+> 
+> However, there's nothing to clean up at this point yet, so we can avoid
+> this by simply propagating the error code.
+> 
+> Fixes: fcc8a89a1c83 ("i2c: tegra: Share same DMA channel for RX and TX")
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index f155e9028f94..0eab199900ae 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -458,10 +458,8 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+>  	 * with existing devicetrees.
+>  	 */
+>  	i2c_dev->dma_chan = dma_request_chan(i2c_dev->dev, "tx");
+> -	if (IS_ERR(i2c_dev->dma_chan)) {
+> -		err = PTR_ERR(i2c_dev->dma_chan);
+> -		goto err_out;
+> -	}
+> +	if (IS_ERR(i2c_dev->dma_chan))
+> +		return PTR_ERR(i2c_dev->dma_chan);
 
-However, there's nothing to clean up at this point yet, so we can avoid
-this by simply propagating the error code.
+Actually you are ignoring the case when the driver would use
+programmed i/o only as a backup plan.
 
-Fixes: fcc8a89a1c83 ("i2c: tegra: Share same DMA channel for RX and TX")
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+I think a possible fix could be:
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index f155e9028f94..0eab199900ae 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -458,10 +458,8 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 	 * with existing devicetrees.
- 	 */
- 	i2c_dev->dma_chan = dma_request_chan(i2c_dev->dev, "tx");
--	if (IS_ERR(i2c_dev->dma_chan)) {
--		err = PTR_ERR(i2c_dev->dma_chan);
--		goto err_out;
--	}
-+	if (IS_ERR(i2c_dev->dma_chan))
-+		return PTR_ERR(i2c_dev->dma_chan);
+@@ -460,7 +460,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+        i2c_dev->dma_chan = dma_request_chan(i2c_dev->dev, "tx");
+        if (IS_ERR(i2c_dev->dma_chan)) {
+                err = PTR_ERR(i2c_dev->dma_chan);
+-               goto err_out;
++               goto err_probe_defer;
+        }
  
- 	i2c_dev->dma_dev = i2c_dev->dma_chan->device->dev;
- 	i2c_dev->dma_buf_size = i2c_dev->hw->quirks->max_write_len +
--- 
-2.40.1
+        i2c_dev->dma_dev = i2c_dev->dma_chan->device->dev;
+@@ -482,6 +482,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+ 
+ err_out:
+        tegra_i2c_release_dma(i2c_dev);
++err_probe_defer:
+        if (err != -EPROBE_DEFER) {
+                dev_err(i2c_dev->dev, "cannot use DMA: %d\n", err);
+                dev_err(i2c_dev->dev, "falling back to PIO\n");
 
+Thank you,
+Andi
+
+(BTW, those are not dev_err's but they should be either dev_info
+or dev_warn())
+
+>  
+>  	i2c_dev->dma_dev = i2c_dev->dma_chan->device->dev;
+>  	i2c_dev->dma_buf_size = i2c_dev->hw->quirks->max_write_len +
+> -- 
+> 2.40.1
+> 
