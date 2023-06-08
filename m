@@ -2,115 +2,197 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2460C7EE45
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 16:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C71C7EE25
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 16:05:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbjFHQCw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jun 2023 12:02:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50466 "EHLO
+        id S231540AbjFHQFk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jun 2023 12:05:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231643AbjFHQC0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 12:02:26 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA18D2D69;
-        Thu,  8 Jun 2023 09:02:24 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f122ff663eso939602e87.2;
-        Thu, 08 Jun 2023 09:02:24 -0700 (PDT)
+        with ESMTP id S232417AbjFHQFf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 12:05:35 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BC7E57;
+        Thu,  8 Jun 2023 09:05:30 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-978863fb00fso150044666b.3;
+        Thu, 08 Jun 2023 09:05:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686240143; x=1688832143;
+        d=gmail.com; s=20221208; t=1686240328; x=1688832328;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3wC0K+zv5AaMummE4d3P8YjDZk92NoISkCSAunXVGk4=;
-        b=sSmdcvdTIKcbbWpE2/GUSdX3TbsaPEe0R9RRWqwIy/hanhX+Z/mQuGCPScaej4+i6k
-         kc/PMWRMTxJfMt1zprPQRUtcZOs6GrE3GSQ88x1+vheuTIB69V90L2Y/JkOQr8Fqm9z/
-         PvJdRqUVKwZ2uHAC8U2yFndha8vwswH8BzqDUxc5s0K28tKdwpsJpgIQzMcIZffPY+N1
-         B4TLEOFacaVwe2BKuQW12TKRkTEWpPDyEWFqKg4tYXe/dttLuTTH5UPTMNwmLykvDZtI
-         oSItoC9R/icV1J0gMkil+CfqiaxMn9Qu+jeoeicvFcLV82jSuD1u67aRl/UfsZzzs2AB
-         yOig==
+        bh=5NyFzu3M5YHjAUhNjjqGmUyI4M3GIKjPFz5WvZ/HN50=;
+        b=HE1FaZ0djIrml8eMov+fDSJFrgQBl/hQWzY+XLea0KVz5lPtf55SHtMFdx3EkbZbBM
+         zo9hN3dnOtCZVvo/eCUvdzGkIctC9Ts7xYUXl+9g+EeUEk0tR4tMYIBnWxqCyD9xw5sE
+         AK1I9yuI3aUT+GB+dJTdtd61d5AF839ntz3Nh11JtrJnPQ3yq+KbB3528Ts6K2EbsGMh
+         +PnzRgdnfam+46bhBS4yD2BJxpgDIZtTGpRT61sCcOIi2n3axr9QlYLOHX/MAgS5zWKR
+         Qv5KfwFLT4PIwHJyWkw308ZLPRbv7XpMidIDJcDIdGNcV01/0Vj9kfAwm4i+TTk+hN/M
+         jt7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686240143; x=1688832143;
+        d=1e100.net; s=20221208; t=1686240328; x=1688832328;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3wC0K+zv5AaMummE4d3P8YjDZk92NoISkCSAunXVGk4=;
-        b=jlHSgbyrRM5O8AoLAv5Pp+GCTNL9FE5vKbrAZdWV/1W/4gTAX1BK1IoY0p55J9oVB3
-         MagRvgIeKKPPT4Jn85T9yZ9Jl2QzRK1fpo7A5/zGA3+17g074yyl3gEOttswnADF2rw+
-         Bo6mdfgNzlgWkSIrzDW6I6NueQNySMdh+md6BjWoWn7iVfy06alRGXrVYFU3UeP8467O
-         H1ZIN5HSIFOepFtAOTn3hwCAu4Qe4LVQJ0XioZ3mML7UhTCSEgT8yY4n1B90FDE+O4pT
-         IFMlbWBfbOcTftCuljiCXSDM4Hjg8jaKHGEsj1Pu1LiY0DzhZg9UHfgxfjLfX+yM7dUU
-         8QTQ==
-X-Gm-Message-State: AC+VfDyJhxM6f0h232ECSVUIykGVEurhSm8c3cQO9U5X1XGvSoqZ5/5d
-        Sv00nYLT4UwJrbLFILf5pRk=
-X-Google-Smtp-Source: ACHHUZ5w3YwBhbIgXFXo2/U07gaxhtG8s+1zMFwADmxGA6MszF00HIz+sGxVpjrgliIAOGYzkGHgLg==
-X-Received: by 2002:ac2:5445:0:b0:4f1:26f5:77fb with SMTP id d5-20020ac25445000000b004f126f577fbmr2777125lfn.28.1686240142422;
-        Thu, 08 Jun 2023 09:02:22 -0700 (PDT)
+        bh=5NyFzu3M5YHjAUhNjjqGmUyI4M3GIKjPFz5WvZ/HN50=;
+        b=HEU6VIUORn2L4etUOwEre/WFs2iwZAVCTR08fi84y3B6o4LHePWD4x89WaXaN6IiOv
+         MkZFcJtQXXP2LbnOWTHck3/JL93OBU+VkWPD0Ttv1BtbNTn2ekN2AVxodM25h/w6LX57
+         vg4L7DYz5E76JosFVzUL6B9vDZlKttbdh6bsxzQMCDbh3XmHXc1qKKcqB/59+hQbTfju
+         nm0gSdTwWp3Byl4yF1fz5wuTmHvt3o8ZQIqB5c14EAmanzOR26sxLdM5STKAMFAPP1uL
+         Zfo5OrkB52Jh+LJk1q2/hEjfR6fDDQwTHKNKmlxrku0JTED+AXoNYMkp2+alnifpybEV
+         ivJQ==
+X-Gm-Message-State: AC+VfDwJQlnLHfXhkbEeFQwvdCwLuGSkytKd7cakGW5K9eFWy07QMUSw
+        wO2odUflk+57PiW2SFiW4y5TR1v3s+E=
+X-Google-Smtp-Source: ACHHUZ6askCyF71m+fUTSv0laJainyjk++nGWfgdfy3d1rc04bmtsRfpKQ8hQwmjFdFbhaIW9mnwtg==
+X-Received: by 2002:a17:907:6d2a:b0:978:ab6b:afd4 with SMTP id sa42-20020a1709076d2a00b00978ab6bafd4mr220202ejc.43.1686240327978;
+        Thu, 08 Jun 2023 09:05:27 -0700 (PDT)
 Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a12-20020aa7cf0c000000b00514b8d5eb29sm698757edy.43.2023.06.08.09.02.21
+        by smtp.gmail.com with ESMTPSA id qh16-20020a170906ecb000b0096a742beb68sm840197ejb.201.2023.06.08.09.05.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 09:02:21 -0700 (PDT)
-Date:   Thu, 8 Jun 2023 18:02:20 +0200
+        Thu, 08 Jun 2023 09:05:27 -0700 (PDT)
+Date:   Thu, 8 Jun 2023 18:05:25 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, smangipudi@nvidia.com,
-        Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: Re: [PATCH v2] gpio: tegra186: Check PMC driver status before any
- request
-Message-ID: <ZIH7jH09-Y7BIFPH@orome>
-References: <496889ff-dd61-51af-c716-b9b9e2300be7@nvidia.com>
- <20230607113104.11761-1-pshete@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     jonathanh@nvidia.com, mperttunen@nvidia.com, sudeep.holla@arm.com,
+        talho@nvidia.com, robh@kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stefank@nvidia.com,
+        krzysztof.kozlowski@linaro.org
+Subject: Re: [PATCH v4 6/6] firmware: tegra: bpmp: Add support for DRAM MRQ
+ GSCs
+Message-ID: <ZIH8RRBvuviey1KA@orome>
+References: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
+ <20230511132048.1122075-7-pdeschrijver@nvidia.com>
+ <ZGNOXO3rRtFx_12R@orome>
+ <ZGNS9w+i9Y9gpz6R@44189d9-lcedt>
+ <ZICo8wYqM8tmCEob@orome>
+ <ZIGaMntRUmgatjZE@44189d9-lcedt>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Jrqh871mn6iBEVvD"
+        protocol="application/pgp-signature"; boundary="iyFPYGRrJPE0J5Bb"
 Content-Disposition: inline
-In-Reply-To: <20230607113104.11761-1-pshete@nvidia.com>
+In-Reply-To: <ZIGaMntRUmgatjZE@44189d9-lcedt>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Jrqh871mn6iBEVvD
+--iyFPYGRrJPE0J5Bb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 07, 2023 at 05:01:04PM +0530, Prathamesh Shete wrote:
-> When the PMC device is disabled, probing of the Tegra186 GPIO driver
-> fails because the IRQ domain that is registered by the PMC driver is
-> not found. The PMC IRQ domain is only used for wake-up and does not
-> impact GPIO functionality in general. Therefore, if the PMC device is
-> disabled, skip looking up the PMC IRQ domain to allow the GPIO driver
-> to be probed.
+On Thu, Jun 08, 2023 at 12:06:58PM +0300, Peter De Schrijver wrote:
+> On Wed, Jun 07, 2023 at 05:57:39PM +0200, Thierry Reding wrote:
+> > On Tue, May 16, 2023 at 12:55:03PM +0300, Peter De Schrijver wrote:
+> > > On Tue, May 16, 2023 at 11:35:24AM +0200, Thierry Reding wrote:
+> > > > On Thu, May 11, 2023 at 04:20:51PM +0300, Peter De Schrijver wrote:
+> > > > > Implement support for DRAM MRQ GSCs.
+> > > > >=20
+> > > > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > > > > ---
+> > > > >  drivers/firmware/tegra/bpmp-tegra186.c | 232 ++++++++++++++++++-=
+------
+> > > > >  drivers/firmware/tegra/bpmp.c          |   4 +-
+> > > > >  2 files changed, 168 insertions(+), 68 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/fir=
+mware/tegra/bpmp-tegra186.c
+> > > > > index 2e26199041cd..74575c9f0014 100644
+> > > > > --- a/drivers/firmware/tegra/bpmp-tegra186.c
+> > > > > +++ b/drivers/firmware/tegra/bpmp-tegra186.c
+> > > > > @@ -4,7 +4,9 @@
+> > > > >   */
+> > > > > =20
+> > > > >  #include <linux/genalloc.h>
+> > > > > +#include <linux/io.h>
+> > > > >  #include <linux/mailbox_client.h>
+> > > > > +#include <linux/of_address.h>
+> > > > >  #include <linux/platform_device.h>
+> > > > > =20
+> > > > >  #include <soc/tegra/bpmp.h>
+> > > > > @@ -13,12 +15,21 @@
+> > > > > =20
+> > > > >  #include "bpmp-private.h"
+> > > > > =20
+> > > > > +enum tegra_bpmp_mem_type { TEGRA_INVALID, TEGRA_SRAM, TEGRA_DRAM=
+ };
+> > > >=20
+> > > > Still not convinced about this one.
+> > > >=20
+> > > > > +
+> > > > >  struct tegra186_bpmp {
+> > > > >  	struct tegra_bpmp *parent;
+> > > > > =20
+> > > > >  	struct {
+> > > > > -		struct gen_pool *pool;
+> > > > > -		void __iomem *virt;
+> > > > > +		union {
+> > > > > +			struct {
+> > > > > +				void __iomem *virt;
+> > > > > +				struct gen_pool *pool;
+> > > > > +			} sram;
+> > > > > +			struct {
+> > > > > +				void *virt;
+> > > > > +			} dram;
+> > > > > +		};
+> > > >=20
+> > > > The drawback of these unions is that they can lead to ambiguity, so=
+ you
+> > > > need the tegra_bpmp_mem_type enum to differentiate between the two.
+> > > >=20
+> > >=20
+> > > No, on the contrary, now it's clear you can either have void __iomem *
+> > > and struct gen_pool * or void *virt but not both.
+> >=20
+> > No, it's not clear. You can have one part of your driver write the
+> > sram.virt field and another read dram.virt and they'll end up pointing
+> > at the same memory location but with different meaning. That's why you
 >=20
-> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
->  drivers/gpio/gpio-tegra186.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> No. You can't the union in combination with the discriminating enum
+> tells you you should only either sram or dram.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+That's precisely my point. This only works in conjunction with the
+additional enum and it unnecessarily complicates things.
 
---Jrqh871mn6iBEVvD
+> > need to introduce the enumeration in order to specify which one of the
+> > two you want to pick.
+> >=20
+> > And that's exactly where you start introducing the potential for
+> > inconsistency: now you need to be extra careful that the enumeration and
+> > the unions are set correctly. You effectively have two sources of truth
+> > and they don't necessarily match. You can also end up (at least
+> > theoretically) with the invalid value, so you need an extra check for
+> > that too.
+> >=20
+> > You can avoid all of those inconsistencies if you reduce this to one
+> > source of truth, namely the pointers that you're going to use.
+> >=20
+>=20
+> I don't think pointers should be used as a discriminator.
+
+I don't think we should extra data to discriminate when we can already
+discriminate using the existing data.
+
+Thierry
+
+--iyFPYGRrJPE0J5Bb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSB+4sACgkQ3SOs138+
-s6HCdg//Qt5jiYtxE2B83Jj7uqx28hS+mfupMUfd7f7S0LWBG0WYLliSEg//PI6e
-s2EhsZckyZMpm323A05W3eO7DEA3iWHLa20Zw/fRSj6I4dRLoXWS4KEMQDkKEOeg
-0s0klJoxSx5bCfy5TiEgwqpk1uh3cIjItVoDj4inAF4cR38UDJwJlx9OgUmUaeBb
-n5xVj0JbWlyLJCw91wWnyPgWFYsVseG3n1isThfvUTRyG33TdezA7zlrsDh9CKi2
-Uas0BbA+HHbrgukdYVHXH+HUhXSmQOc+YK+HHTQMB/zbKx8mCAql4La1elK5PD1C
-DDJ5ys8mNdpE3HjvjEqxNNqWP+RTaPiiAelPa7qiw1bNHy8klaBCxLlqVLUB5d/h
-73tzNuNinWo4TzJ20gov93MbWOuK/7/7KuZUEIBrXMrLFD7G60D5aX/AhAfBe0sK
-GK+o7/k5EbXM/2UxWICOCkCQL0rp3Bxz68FtamaipMlQeeHffOQggQFlDxYKnTTT
-yQhdwJEFpGWhkrL3ArdyGkjnlESDAbznKd86LwEWQddRRmw8YLMeQ1rjiMKbrIJ+
-bTRe2imL6LEdjq57ZqV7DMabvnj86AIwpMvw8KLXbx7dSe8GZv4w9ny9IQmt/xVB
-smfy39RIQDNJXk7tf2rinqHPpq8DDk2hJpvsuYTmsEKBBaO/fhs=
-=LNUG
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSB/EUACgkQ3SOs138+
+s6F49A/9F+foaN+AVR7LMIrsqygrDSHbJ/YQnaK4yviJ0wGxlYJw2s2RIQ2j/p2B
+SUmGPImyXhtKdQVIWjeb1vTzr2theNjKZtKV7/zJSCUHY5clCR3dABAGg6Aj7WHm
+qtUs2SubBucR4lRNvn/Apmb8xD22Mdog02DKsYA1sOCCjpUKsTxghU3Xcd6YCU44
+oz2h4cjQJzkERy8fVrEIH8HMJu7pz515feO7xNMLTcObmpOgV2BvBeLLmbDmZNO5
+aXTXk0Cy704welOL/ZVr5uoe+KT4ilUsG0/XrFcSaFxxhjHHwJurZJsEpcbt9ZkT
+VDB35UK0U5XiRFaT0LTZY+vdXBQjT0nGRokzBrH7rbYSbRtERyqXHjgrf5Q1Y0Xe
+467/LqnwWAIRYjAxX6D3443TwpHESlO4MKoIsw2Iw3giq2p5THpcyXUHQMue0n8i
+geSashiuZA13d38iigUHPB8adxXEnwdATyKZ5WuSmHiixyNTGmsj8KCafrJidfpn
+Y49lL7GMGIoULlWQAW5BpwKSW9MjEruauhDXHajJ/01AWWY/WoBR9+hGAgizDTio
+EksqQGxFS/T12lFcKAb0+3/njbiyYzU/NOPAcGqZXkAXkNYZb38lEH6+3U0YrYnS
+CgTEiOqY+MxH/1VKvqBb1d8LCb/GW4yGdXLZy0v/Q3qtmk7Ir9A=
+=jN6O
 -----END PGP SIGNATURE-----
 
---Jrqh871mn6iBEVvD--
+--iyFPYGRrJPE0J5Bb--
