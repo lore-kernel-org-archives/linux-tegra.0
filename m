@@ -2,110 +2,122 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B146C7EE23
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 18:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B02C83003
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 20:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231852AbjFHStI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jun 2023 14:49:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51022 "EHLO
+        id S235612AbjFHUeN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jun 2023 16:34:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233710AbjFHStI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 14:49:08 -0400
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0121FDF;
-        Thu,  8 Jun 2023 11:49:06 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-777a4926555so37979639f.0;
-        Thu, 08 Jun 2023 11:49:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686250146; x=1688842146;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jIKmCroANEKPOHzkl2knynvAkLLXALNRwLAU/LLLoFY=;
-        b=HN4WVSgpUIux3s1+jg7G9Th0hEPUMa3fYDXz1HFHbzIPG7yyyuoneMc3qF4mLbwg/Q
-         iwL81yBa5Z0U2yDZ0U/fP5m2rjO11vSbADtrCXkaX5nYjtIo5k8dgDnYRxMUogUspDpI
-         hBV4rcIAPVMHMwj4EkDBn0flk5YGb9grETgwwYmVPFiuHFLvE1GgzBMCln7km1x81Xve
-         ksnx3fHrSi9D9dtLdjYH1kM5sN/oC9S3NjoHGCqDpr7mZWE7223gr19g5JJUj4llZP+8
-         pGyAyTpAXijeZOS6qXGjDoeb08qRis+xMeJH9vmr0d1f6jCE35WoUnCvBTcSfkYV1qky
-         mxyg==
-X-Gm-Message-State: AC+VfDwcycTB51NuUx00EA5lzGItmKBHdNnBn8lANPanVSdKmWNLG9Ac
-        5X/6VSp0VmigWQWFLGHUFTjNrqW4XA==
-X-Google-Smtp-Source: ACHHUZ40+TuJlTCIi/OKeN/bZ+QJqRylgyQjhG2PfjnerEU6twqk6MXkiUDgygcnfLixbmWfBb9FXQ==
-X-Received: by 2002:a5e:8907:0:b0:777:a6a7:e83d with SMTP id k7-20020a5e8907000000b00777a6a7e83dmr1785128ioj.4.1686250146061;
-        Thu, 08 Jun 2023 11:49:06 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id u13-20020a6be90d000000b0076c750dc780sm519421iof.29.2023.06.08.11.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 11:49:05 -0700 (PDT)
-Received: (nullmailer pid 3220171 invoked by uid 1000);
-        Thu, 08 Jun 2023 18:49:03 -0000
-Date:   Thu, 8 Jun 2023 12:49:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 0/5] of: More 'device' vs. 'module' cleanups
-Message-ID: <20230608184903.GA3200973-robh@kernel.org>
-References: <20230510154803.189096-1-miquel.raynal@bootlin.com>
+        with ESMTP id S229498AbjFHUeK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 16:34:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60167172E;
+        Thu,  8 Jun 2023 13:34:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E800F61520;
+        Thu,  8 Jun 2023 20:34:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5147AC4339B;
+        Thu,  8 Jun 2023 20:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686256448;
+        bh=sDQU8yDhZvEN0YygXlDwwk/pG5OO2+PNN+eimNV1mxQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fgaZ349JLx+w83grh2ZLXulv/+6NJAi3DgUkiDjdPUnEbtk4GQEssHtbOIddqu7NS
+         lPaC6AHuim2fJRANrT5DaAmdXiQpvBm+7mGFYRsrpE+oxJUOyxOcSTn5lKiyDxe1Or
+         n5YgMMfQ4bTaC2QJt/JnTYxj/givMqGUBBz3rUIry4SQD/wz5fgIIRzW+GMrEpzSFi
+         PbfnO38m/nfnN3xuhX7TtG4zZHxJFbZGDmEo4sAIkiZ9b2pSGKKgp/euyIGBlEVoLc
+         GjISgjtw2dBk6OSTF08aIBGYgRcFyZGTf1PvKvLV50bqV6sHmzKcOLVI2G/vh42+xc
+         r1JZZ8BI/NqLw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-4f624daccd1so1292163e87.0;
+        Thu, 08 Jun 2023 13:34:08 -0700 (PDT)
+X-Gm-Message-State: AC+VfDwOq1BLSa3kYFrjl204xs+74DUnDtlruVNmK1lWDymaPqXV4+8f
+        A/uDDTnEAEt06Flu5XXLisylgiePxXycxtwQbA==
+X-Google-Smtp-Source: ACHHUZ5SCj+1HRHRtKPyWx3l9LJOj9l0nyCPip7lrCiON1VeZXUrpVZAJ73MOZnz04qUR2b59Vv4/CBNUYxpj6dT0Jg=
+X-Received: by 2002:a2e:9cd6:0:b0:2b1:d91b:51c3 with SMTP id
+ g22-20020a2e9cd6000000b002b1d91b51c3mr4481468ljj.30.1686256446472; Thu, 08
+ Jun 2023 13:34:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230510154803.189096-1-miquel.raynal@bootlin.com>
+References: <20220328000915.15041-1-ansuelsmth@gmail.com> <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+ <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain> <CAL_Jsq+RQQ-ADMxLPUFwk6S6kGmb6oNDy4k52fnU0EtbUvqmSA@mail.gmail.com>
+ <CAMuHMdWNTE48MFy6fqxAsfMWz9b6E7dVNXtXtESP95sxk2PGwA@mail.gmail.com>
+ <CAL_JsqJthKTm8bhRF2B=ae1tvtPeYYXx_Tm76qQtSwLtH5C6VA@mail.gmail.com>
+ <720a2829-b6b5-411c-ac69-9a53e881f48d@app.fastmail.com> <CAL_JsqKCtmkwzKa01gyG65fH8ye6R3KhR41PJbJhOJ4X9j=znA@mail.gmail.com>
+ <ZFrPJQdwoxqFpzUO@probook>
+In-Reply-To: <ZFrPJQdwoxqFpzUO@probook>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 8 Jun 2023 14:33:53 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLTj_L-V8HR=TzO6+r9Xew=yivaKG1ngCn+NCjgPZwZzw@mail.gmail.com>
+Message-ID: <CAL_JsqLTj_L-V8HR=TzO6+r9Xew=yivaKG1ngCn+NCjgPZwZzw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-aspeed@lists.ozlabs.org,
+        linux-realtek-soc@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+        openbmc@lists.ozlabs.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel@dh-electronics.com, Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "linux-oxnas@groups.io" <linux-oxnas@groups.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, May 10, 2023 at 05:47:58PM +0200, Miquel Raynal wrote:
-> Hello,
-> 
-> As part of a previous series, Rob suggested that keeping too much logic
-> in of/device.c was backward and would benefit from a gradual cleanup
-> with the hope some day to move the remaining helpers into inline
-> functions wrapping the proper of_*() methods.
+On Tue, May 9, 2023 at 4:55=E2=80=AFPM Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
+>
+> On Tue, May 02, 2023 at 02:40:19PM -0500, Rob Herring wrote:
+> [...]
+> > I've dusted off my script and made a branch[1] with the result.
+> > There's just a couple of fixes needed after the script is run (see the
+> > top commit). The cross arch includes are all fixed up by the script.
+> > dtbs_install maintains a flat install. I compared the number of .dtbs
+> > before and after to check the script.
+> >
+> > I think the only issue remaining is finalizing the mapping of
+> > platforms to subdirs. What I have currently is a mixture of SoC
+> > families and vendors. The most notable are all the Freescale/NXP
+> > platforms, pxa, socfpga, and stm32. It's not consistent with arm64
+> > either. Once that's finalized, I still need to go update MAINTAINERS.
+> >
+> > Here's the current mapping:
+> >
+> > vendor_map =3D {
+> [...]
+> >     'aspeed' : 'aspeed',
+> >     'ast2' : 'aspeed',
+> >     'facebook' : 'aspeed',
+> >     'ibm' : 'aspeed',
+>
+> >     'openbmc' : 'aspeed',
+>
+> The openbmc flash layouts are currently only used by aspeed devicetrees,
+> but they don't really depend on any aspeed details. It would be possible
+> to reuse them in Nuvoton BMC devicetrees in the future, for example.
+>
+> In that sense, I think putting them in a separate "openbmc" directory
+> would be slightly better.
 
-Where I'm at on device.c is it should be functions that bus 
-implementations need. I have a ton of tree wide changes to disentangle 
-of_device.h and of_platform.h. Some of that landed in 6.4.
-
-uevents are pretty much tied to struct device and the bus, so I don't 
-think moving these parts to module.c makes sense unless there is a need 
-for the functionality without a struct device. 
-
-Also, perhaps we want to make module.c configurable?:
-
-obj-$(CONFIG_MODULE) += module.o
-
-The uevent stuff is certainly independent of module support.
-
-> Link: https://lore.kernel.org/lkml/CAL_JsqJE43qfYzHUuCJsbaPPBTbYX05Q7FFmPTjPFZ3Dmz_mXg@mail.gmail.com/
-> 
-> A few of these "conversions" happened in the series I was originally
-> working on. At this time I actually wrote a few other changes,
-> completely unrelated to my original series, but still following Rob's
-> cleanup idea: here they are.
-> 
-> Link: https://lore.kernel.org/lkml/20230307165359.225361-1-miquel.raynal@bootlin.com/
-> 
-> The last step of this series is to actually remove a copy of one of
-> these helpers which I think is not needed. This drivers/gpu/ patch
-> depends on the previous changes.
-> 
-> Thanks, Miquèl
-> 
-> Miquel Raynal (5):
->   of: module: Mutate of_device_modalias() into two helpers
->   of: module: Mutate of_device_uevent() into two helpers
->   of: module: Mutate of_device_uevent_modalias() into two helpers
->   of: module: Export of_uevent()
->   gpu: host1x: Stop open-coding of_device_uevent()
-
-This last patch is certainly worthwhile doing.
+Could be used on arm64 or riscv too at some point. We do some cross
+arch includes, but IMO it would be better to move to
+include/dt-bindings/ or somewhere outside of arch/. Other common
+things I didn't move. I could do that here too. I prefer to that the
+sub-directories are just chip vendors/families.
 
 Rob
