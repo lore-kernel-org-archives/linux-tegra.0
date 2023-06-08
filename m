@@ -2,114 +2,95 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14574C7EE29
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 11:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328AAC7EE29
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 15:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236043AbjFHLsl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jun 2023 07:48:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35102 "EHLO
+        id S236916AbjFHPTA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jun 2023 11:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235755AbjFHLsg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 07:48:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C2526B9;
-        Thu,  8 Jun 2023 04:48:25 -0700 (PDT)
+        with ESMTP id S236960AbjFHPSx (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 11:18:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335A72D5F;
+        Thu,  8 Jun 2023 08:18:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B3F8C61460;
-        Thu,  8 Jun 2023 11:48:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52451C433D2;
-        Thu,  8 Jun 2023 11:48:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C3B8060FAB;
+        Thu,  8 Jun 2023 15:18:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D19EC433D2;
+        Thu,  8 Jun 2023 15:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686224904;
-        bh=ugZB4JpowTSw5maVY2a7prvIYR/oQ04BV7q0yRRRuls=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=boJKNZpfHyX0Pb4WgHrFV1UsYZ6msrh4OLUMaQP9nJ98IrGgPfTGVm5H03J/JBb2p
-         SLhwn+nYzroyktEFi4LMh/Kh0J0bZHlvcV9geFOwv2Vnshdo7kQG7Bgtl4Ed/YDkM+
-         ysaDAIOBVk/BCwFTjteUAa7tAaW8OSDMLEU4DHQEcypW1FBPCZbyWDopxad4nXN448
-         boenL5l8QYJQY4ZkI75hv6Furka5OLj3sWCnbM1BU/ri6NtT7KQmUw+Xh766Cjd31w
-         ItfIAJs0xGH8RHGowJv/c+7USPmJxxTEbvPVspsls02rycaVazddqCIXzWS1bhasfD
-         f0AFOVYMU8ESA==
-Date:   Thu, 8 Jun 2023 17:18:19 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Haotien Hsu <haotienh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
+        s=k20201202; t=1686237530;
+        bh=/A54Gy0vU98edPnbqK2o8zydJ92zi9Oi8moAunyOrJE=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=RdrtpfvpzdGY8WkZ0yvWsGoaLstSARmD7jyc/8yluqGlgzTEUiib2fkv88fsFTwzt
+         VI0ugZcV7T46reJCxWdJP49kC98i6KrF1VDSRTrx0a8YXLvXBwYBpHShvV2XcfjwuC
+         PBtIASy0kct7WqQaV3CBy9zDKSY1CVdiUuNP7ht1SvF597BP95UxTyx71Rht2IrZ1i
+         xvrSIVjcj191w/VV5jb43kVBKMoj3fBHHc/RRaivw8TN7XrcYhSGWYA32hSIoqSFuM
+         Qtulm4/YMMgaxMJ61jE5WU8vConoEvRAd4bnIwBPUxbOZizfKzBfwCWVlbTFSTIqcG
+         TyTU0X4THN/vw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Wayne Chang <waynec@nvidia.com>,
-        EJ Hsu <ejh@nvidia.com>
-Subject: Re: [PATCH v2] phy: tegra: xusb: Fix use-after-free issue
-Message-ID: <ZIHAA6QwRkQ+lS45@matsya>
-References: <20230508100320.345673-1-haotienh@nvidia.com>
- <e7ae22f4-52c1-62a1-e5c2-71732bcb04b2@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+In-Reply-To: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
+References: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: tegra: Simplify code around clk_get_rate()
+ handling
+Message-Id: <168623752796.1002486.3534848547952230494.b4-ty@kernel.org>
+Date:   Thu, 08 Jun 2023 16:18:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7ae22f4-52c1-62a1-e5c2-71732bcb04b2@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-bfdf5
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 06-06-23, 10:39, Jon Hunter wrote:
-> Hi Vinod,
+On Thu, 08 Jun 2023 07:27:22 +0200, Christophe JAILLET wrote:
+> clk_get_rate() returns an unsigned long, so there is no point in storing it
+> in a long, and test for negative values.
 > 
-> On 08/05/2023 11:03, Haotien Hsu wrote:
-> > From: EJ Hsu <ejh@nvidia.com>
-> > 
-> > For the dual-role port, it will assign the phy dev to usb-phy dev and
-> > use the port dev driver as the dev driver of usb-phy.
-> > 
-> > When we try to destroy the port dev, it will destroy its dev driver
-> > as well. But we did not remove the reference from usb-phy dev. This
-> > might cause the use-after-free issue in KASAN.
-> > 
-> > Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
-> > Cc: stable@vger.kernel.org
-> > 
-> > Signed-off-by: EJ Hsu <ejh@nvidia.com>
-> > Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
-> > ---
-> > V1 -> V2: Remove extra movements to clarify the change
-> > ---
-> >   drivers/phy/tegra/xusb.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> > index 78045bd6c214..26b66a668f3b 100644
-> > --- a/drivers/phy/tegra/xusb.c
-> > +++ b/drivers/phy/tegra/xusb.c
-> > @@ -568,6 +568,7 @@ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
-> >   		usb_role_switch_unregister(port->usb_role_sw);
-> >   		cancel_work_sync(&port->usb_phy_work);
-> >   		usb_remove_phy(&port->usb_phy);
-> > +		port->usb_phy.dev->driver = NULL;
-> >   	}
-> >   	if (port->ops->remove)
+> So, turn 'parent_rate' into an unsigned long, simplify the sanity check,
+> the error message and the return value, in case of error (i.e. 0).
 > 
+> Doing so also turns 'i' and 'valid_rates' into unsigned long, but it is
+> fine and harmless.
 > 
-> Are you OK to pick this up now?
+> [...]
 
-Changes looks good to me. But title should describe the change, so if
-Haotien can change title to reflect the change in patch, I would be
-happy to apply
+Applied to
 
-> 
-> FWIW ...
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-ofc this should be carried too
+Thanks!
 
-> 
-> I believe Thierry already ACK'ed V1.
-> 
-> Jon
-> 
-> -- 
-> nvpublic
+[1/1] ASoC: tegra: Simplify code around clk_get_rate() handling
+      commit: 41a343cd6b7f8d0f70dd90c236086ccf8a84a7de
 
--- 
-~Vinod
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
