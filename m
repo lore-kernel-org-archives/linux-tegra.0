@@ -2,44 +2,44 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9945FC7EE29
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 09:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC87EC7EE25
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 09:37:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235755AbjFHJHO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jun 2023 05:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55184 "EHLO
+        id S235634AbjFHJhN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jun 2023 05:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234124AbjFHJHN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 05:07:13 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2061.outbound.protection.outlook.com [40.107.237.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2E61734;
-        Thu,  8 Jun 2023 02:07:12 -0700 (PDT)
+        with ESMTP id S232262AbjFHJhM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 05:37:12 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E82C7E4E;
+        Thu,  8 Jun 2023 02:37:10 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NJGZ3EMZ10qTWsw4hFrFCzn4KbdXF+8sUUubPAJplkKg7WpYUrZXBe01TunMaK85bYnNNSkIaSYbm7a/FZOwrRRPtBLCwOjll4NkA00U/Nng5tyoac9J8hin161MjwngwFvPixdG6991pxNwXh8wt12XblPJnur/dO2VKKR8GzvVC5vElXWNCN9+S1Ev3p6rwfw0ePULN8hOoIPOcPkyPuYhA5/vydF7TqcLfkNsaDSIL7cIY4NTzZVDw2WPJ+mKHPnAzz/6p+yFWXXsm37KLxo84d63cenNHuP25q0zFdS9V4G8QG5snsdETfh2tCvP5lf1/BWAQqXXXEYr1xOWoQ==
+ b=Z8iI16nho+7ze1AkFkWi7Jt8tjg57+CadoNnYTbefW42b5FU7vMiblo071CWlIKXqmanTow3Kkp6TAP5xkU1F6SyR0eOoqaVritA9VeiolU3UZb1tu9jqMhc3d4nUkx3scvjbxG18Iviyc4cCzq3a9PN4lJvwqZzxVW7urLOQqA17PRU6iV+2ryGAIjx0gwoLRqGm6eV4V9g3yBspvhartI0Yqn+EmhrIMOznvClhiKZzBIJbhtmCIRiSo6St4uqiz8mWTq8qcCvVxJ6k2lGOKZLYWBqo7nVrEgwuwriZPofSKz1cHcBE23tEWqQzEIYPAtxkbZEbd466TI1NnZcaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iRbnayNpo3dBeUWLhEkQJsnxKwdOEEe5t2sT36Lps1A=;
- b=XabIVumtClK7frzLBpXL/o2ZWOnDZgJaO6SRAqzQ+lpqwQ0X8EvoFQ3MGDy4jwgPlYGWfwcvKIKefKYHEnSbDYZ5+2Oj2vv8mYGfRBh+LySSNedF6byL8Qnc77cxVdjg/RlnmEdKriJG3Jafz5G/PHY0WpOdBOYpO1MUjo8QJXxIyecgsAUcyI07Il8ViPFrCK3jDgoULt6niQeebXybgG4llbwVdiVg8jhKd/cJIxFKgrQ/PqYvS5KEhHw3vIcjbOng/J2lpP22xahJeTtnc0HQqjoITPEJZ7RI3uRWyg+Clb4eaSwFrcDS6NYa0IybCwp/ho9jqcOv99JMWKBsWg==
+ bh=fl5G5HVh3aPVzpaNZoJRVqEuSii6FEWHaQozl8QYNXk=;
+ b=mtl2vuoa6wMGhnIVQEI0m5pPoqM0kXlgoN791grtz9r7r2tB7JnTbVdnOnhvzp9mlL6f3r9mT5VRVDc0akmPSo7xlQCjI92UHxCelRHnldIuzvEHS9nIGwW7Ncp6sTgCS2RO9u3GZFdnpZSfXNW2g01GqPlzH0c2suH9mPCrhGfuNIZ6y/N/+phThg9quIJyYcKr+HVmSwg8Lj5jr142NlMoNznb4Z5+4N/puhv9Zvz2XqC2GfitraAS9uCyOtL7mm1+EWNtQVdOEiGieEWZrF7TaQAyjIDTYW6QCgwER8DxXGJQjcZCVSTh2ZlBbdXg+b9mGOJnxDr35iEGuHOYSg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iRbnayNpo3dBeUWLhEkQJsnxKwdOEEe5t2sT36Lps1A=;
- b=Q2Ds3whc4XCUqYTPqiKGNWt8yuGS1qMWy7TyYY8x8op08FufDCvN93rzcpB6TspATFE5ozUq/Em7Zq+Bk97KRU/FK8JSCYPOBpqiDitUsNiNHMKOYUIoHfdst9qHiTU9drljW2nnYE7qGohCCHeFvF9BsTWPq1uqgcnxsKTpxnQ00Z6U7bq7OM+vZrtzKZe0/7pMZItrnmnyosh2WiCjHFtv2UWUgL90nQB1JgoBfID8MTlTRC1huzg4cTBfiH2PAXlvjeUHGVeJONLmOEmoDpao/+feWWYMq7TLraMaApJAG3ZK5BZR2Re2qhrEoOFo5vJH0U1YZrrLyLziMBS/8w==
-Received: from SN1PR12CA0057.namprd12.prod.outlook.com (2603:10b6:802:20::28)
- by PH7PR12MB7871.namprd12.prod.outlook.com (2603:10b6:510:27d::18) with
+ bh=fl5G5HVh3aPVzpaNZoJRVqEuSii6FEWHaQozl8QYNXk=;
+ b=juRQcz1p1xURX1zjn6KDahsIChs6fvUJK0rNxRcgEJdUc7Dp+VP7NtXAeHLsJ8qA5Z6iYYd5/gADrWGIcjEv/AWFwpqzLGqBE97epXpG1ClPNLjdWWhZNoO6zv3r0kPrZZVvB33VuuQhqxgmZfZKNoyn1U6eGsjEN+n9K/j8FrOX4mBGV0FgHEJh4r4mLPfybLtclOIowj0iWiMrW32gbTg3P2PVGcKbSmIgke+WzQ26tnJpkoi9Ama3N4caf4pgsovcv2B4z58soDH9wFfWFW59i95izC6Rll2i/agOewKlM9CcDUHA6l4sVwsZBxWaRZ6m1raBCkm0eQ6gk/2mgw==
+Received: from DS7PR05CA0077.namprd05.prod.outlook.com (2603:10b6:8:57::17) by
+ PH0PR12MB7080.namprd12.prod.outlook.com (2603:10b6:510:21d::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.38; Thu, 8 Jun
- 2023 09:07:09 +0000
-Received: from SN1PEPF0002529F.namprd05.prod.outlook.com
- (2603:10b6:802:20:cafe::bd) by SN1PR12CA0057.outlook.office365.com
- (2603:10b6:802:20::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33 via Frontend
- Transport; Thu, 8 Jun 2023 09:07:10 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33; Thu, 8 Jun
+ 2023 09:37:08 +0000
+Received: from CY4PEPF0000EDD7.namprd03.prod.outlook.com
+ (2603:10b6:8:57:cafe::92) by DS7PR05CA0077.outlook.office365.com
+ (2603:10b6:8:57::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.12 via Frontend
+ Transport; Thu, 8 Jun 2023 09:37:07 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -47,168 +47,137 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.118.232 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.118.232) by
- SN1PEPF0002529F.mail.protection.outlook.com (10.167.242.6) with Microsoft
+ CY4PEPF0000EDD7.mail.protection.outlook.com (10.167.241.211) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6477.13 via Frontend Transport; Thu, 8 Jun 2023 09:07:09 +0000
+ 15.20.6477.13 via Frontend Transport; Thu, 8 Jun 2023 09:37:07 +0000
 Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
  (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 8 Jun 2023
- 02:07:00 -0700
+ 02:37:00 -0700
 Received: from drhqmail202.nvidia.com (10.126.190.181) by
  drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Thu, 8 Jun 2023 02:06:59 -0700
-Received: from localhost (10.127.8.9) by mail.nvidia.com (10.126.190.181) with
- Microsoft SMTP Server id 15.2.986.37 via Frontend Transport; Thu, 8 Jun 2023
- 02:06:59 -0700
-Date:   Thu, 8 Jun 2023 12:06:58 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <sudeep.holla@arm.com>, <talho@nvidia.com>, <robh@kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stefank@nvidia.com>, <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 6/6] firmware: tegra: bpmp: Add support for DRAM MRQ
- GSCs
-Message-ID: <ZIGaMntRUmgatjZE@44189d9-lcedt>
-References: <20230511132048.1122075-1-pdeschrijver@nvidia.com>
- <20230511132048.1122075-7-pdeschrijver@nvidia.com>
- <ZGNOXO3rRtFx_12R@orome>
- <ZGNS9w+i9Y9gpz6R@44189d9-lcedt>
- <ZICo8wYqM8tmCEob@orome>
+ 15.2.986.37; Thu, 8 Jun 2023 02:36:59 -0700
+Received: from vidyas-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Thu, 8 Jun 2023 02:36:56 -0700
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <Sergey.Semin@baikalelectronics.ru>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
+Subject: [PATCH V1] Revert "PCI: tegra194: Enable support for 256 Byte payload"
+Date:   Thu, 8 Jun 2023 15:06:52 +0530
+Message-ID: <20230608093652.1409485-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZICo8wYqM8tmCEob@orome>
 X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529F:EE_|PH7PR12MB7871:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf414593-84eb-404d-0b62-08db67ffbdc0
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD7:EE_|PH0PR12MB7080:EE_
+X-MS-Office365-Filtering-Correlation-Id: 035b6a95-6aed-4c89-8bfb-08db6803ed57
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kBAlpkPmiBgwtmWGJ3S4RkLqPlOh+aG1gJ/dfpn/driNx1OQqrh0h0EJ29Rm19JMBe8j1Eg8QxBzKaoeyQ9PoF7dR4lZRojRb3SeaIde3BwvTJ8TsPrpgDtEYx/d/1qHwjVr5MmLcmZWjs89g0MBXWEHNDc5sA299tlxEbChquJLMV5M27aNF3HEqWJieD6rec4CFcf/2ZMRacmmRAuh/SLRIPf+/mbJiSb/W87psiz10C7PVNaIwu8DUzcZTzdFx8lpECJ5XoS6XohPLX4uQhfz1QRByQ3wrKrGgniuwDm9XF9p4EEEA6NvBqjPUwPSDaoGyOchqpQv7xuO7kuaaFMDDk/6DdZ/NMCM/9kXD2Iei6oEnaVW2AxVXKWiwPnbghjv4xlDu7mX2VWobPbkgm661CgsB3Z8vMpzV8Ogm8NxxCxGffo0f9gCv/4tA7hv14T4VGlIOuxnZjprU5JAUCV5QVO6kjgnDTKRQQI+8U3JhDwc8Zvlyretrk0HmoBCdX/wfcQ1rYUXMd7PQjhSaSZ4MCM7fHTpAPqP3aLjvhnBTn1mq9G+G4SZFXtOmAwTLtzV0fHLHu4ZQKZUo9ESHeQ9azE8YpvvpgXH9AWizX+RM6VvKiUpqIR+BfDwNwAtpRd2QBHyfu91XL1VeMRf7hmgP8Q3Bv9k4zrGwp0bVK8cTh+QtdiesvvN/Dr4qIWDEC6CSaBbDngYBnYNYQIFvzf4zD1RjbBh1JKbnpSD2pSn8shEEWdYpatOFQEsVigN
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230028)(7916004)(4636009)(396003)(136003)(376002)(39860400002)(346002)(451199021)(36840700001)(46966006)(40470700004)(316002)(5660300002)(2906002)(478600001)(41300700001)(54906003)(66899021)(70206006)(4326008)(6916009)(70586007)(8936002)(8676002)(9686003)(26005)(40460700003)(356005)(82740400003)(33716001)(186003)(40480700001)(47076005)(83380400001)(7636003)(36860700001)(82310400005)(336012)(426003)(86362001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: B5d+qXFdztGIQ1GP/833l0mN7b/obWcZK2TSTFnYL2+d9kFXTiBcVDwdtevzm9hzVu4kH94iJ5tgWcwdrfhQQdQxIlDqBZFR5cVzPu7E4KOzoDzOYf38/2ogG9UBvPn9i79FNM0bLDPs3rXOFDbevwZGeijFEs9Wv48d/XUVHWxurihoJ7kL+j/WE97BmE+7HNIYi9chZGs8tIvRAg9WiiJlISZdPmW0L4Pkvl70u7/xNdc6TEDZ3l2FH4abeme0jnz/fpzD5tRdUKHuTzmMIUtZn3BkWQuwKbPhmC2j8OILdGMKvlzjpQpFJj/nhMY6T9+s+/iuiQcDUlsgh/oat7oRQHM867gjb3eDO3HkykuumsmuzbWD89y+vWyKTV0zGpX42Z3hnHgf73BQadLTROFyGT65zo6AGCjts5JQyWmyhssaFeC1tSsCWAxXTX7Nrp+PsU7rK/vKFdj9YEtuFkB9dcvBlGhWFsPoA9PB2WB1hZxUnyjo3dFAYwO8MhTfOCLeUqEA8F++lxtBghF5GD3dA4NhJlOHh7bVbLvuQlXlAAsnMnaXHtWGUshqv0B3O0NytKUfq01Y6CPNVkZ2C2HqN4jNX36Ohk91c3UOZuUAfTjfAsmBQ/Yq5ku0ap9yo1f8B2O01lblmyjz4vUCaJNKGFzeEIqI9YQRaPint+SSSo+ikcizgec6CWYSjADohxfvspNOBLYtXj9BEDH6eaGjYvx+gNHSUwgXNFUDyWy1h5mYdEbjgedx8Hz5w7mU
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(396003)(136003)(346002)(39860400002)(451199021)(40470700004)(46966006)(36840700001)(36756003)(5660300002)(2906002)(82310400005)(86362001)(7416002)(40480700001)(6666004)(1076003)(83380400001)(40460700003)(36860700001)(336012)(426003)(7636003)(26005)(316002)(356005)(478600001)(54906003)(7696005)(110136005)(70586007)(82740400003)(4326008)(41300700001)(2616005)(186003)(70206006)(8936002)(47076005)(8676002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2023 09:07:09.9451
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2023 09:37:07.7935
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf414593-84eb-404d-0b62-08db67ffbdc0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 035b6a95-6aed-4c89-8bfb-08db6803ed57
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF0002529F.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EDD7.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7871
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7080
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 05:57:39PM +0200, Thierry Reding wrote:
-> On Tue, May 16, 2023 at 12:55:03PM +0300, Peter De Schrijver wrote:
-> > On Tue, May 16, 2023 at 11:35:24AM +0200, Thierry Reding wrote:
-> > > On Thu, May 11, 2023 at 04:20:51PM +0300, Peter De Schrijver wrote:
-> > > > Implement support for DRAM MRQ GSCs.
-> > > > 
-> > > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > > > ---
-> > > >  drivers/firmware/tegra/bpmp-tegra186.c | 232 ++++++++++++++++++-------
-> > > >  drivers/firmware/tegra/bpmp.c          |   4 +-
-> > > >  2 files changed, 168 insertions(+), 68 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/tegra/bpmp-tegra186.c
-> > > > index 2e26199041cd..74575c9f0014 100644
-> > > > --- a/drivers/firmware/tegra/bpmp-tegra186.c
-> > > > +++ b/drivers/firmware/tegra/bpmp-tegra186.c
-> > > > @@ -4,7 +4,9 @@
-> > > >   */
-> > > >  
-> > > >  #include <linux/genalloc.h>
-> > > > +#include <linux/io.h>
-> > > >  #include <linux/mailbox_client.h>
-> > > > +#include <linux/of_address.h>
-> > > >  #include <linux/platform_device.h>
-> > > >  
-> > > >  #include <soc/tegra/bpmp.h>
-> > > > @@ -13,12 +15,21 @@
-> > > >  
-> > > >  #include "bpmp-private.h"
-> > > >  
-> > > > +enum tegra_bpmp_mem_type { TEGRA_INVALID, TEGRA_SRAM, TEGRA_DRAM };
-> > > 
-> > > Still not convinced about this one.
-> > > 
-> > > > +
-> > > >  struct tegra186_bpmp {
-> > > >  	struct tegra_bpmp *parent;
-> > > >  
-> > > >  	struct {
-> > > > -		struct gen_pool *pool;
-> > > > -		void __iomem *virt;
-> > > > +		union {
-> > > > +			struct {
-> > > > +				void __iomem *virt;
-> > > > +				struct gen_pool *pool;
-> > > > +			} sram;
-> > > > +			struct {
-> > > > +				void *virt;
-> > > > +			} dram;
-> > > > +		};
-> > > 
-> > > The drawback of these unions is that they can lead to ambiguity, so you
-> > > need the tegra_bpmp_mem_type enum to differentiate between the two.
-> > > 
-> > 
-> > No, on the contrary, now it's clear you can either have void __iomem *
-> > and struct gen_pool * or void *virt but not both.
-> 
-> No, it's not clear. You can have one part of your driver write the
-> sram.virt field and another read dram.virt and they'll end up pointing
-> at the same memory location but with different meaning. That's why you
+This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
+support for 256 Byte payload")
 
-No. You can't the union in combination with the discriminating enum
-tells you you should only either sram or dram.
+Consider a PCIe hierarchy with a PCIe switch and a device connected
+downstream of the switch that has support for MPS which is the minimum
+in the hierarchy, and root port programmed with an MPS in its DevCtl
+register that is greater than the minimum. In this scenario, the default
+bus configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't
+configure the MPS settings in the hierarchy correctly resulting in the
+device with support for minimum MPS in the hierarchy receiving the TLPs
+of size more than that. Although this can be addresed by appending
+"pci=pcie_bus_safe" to the kernel command line, it doesn't seem to be a
+good idea to always have this commandline argument even for the basic
+functionality to work.
+Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
+Byte payload") avoids this requirement and ensures that the basic
+functionality of the devices irrespective of the hierarchy and the MPS of
+the devices in the hierarchy.
+To reap the benefits of having support for higher MPS, optionally, one can
+always append the kernel command line with "pci=pcie_bus_perf".
 
-> need to introduce the enumeration in order to specify which one of the
-> two you want to pick.
-> 
-> And that's exactly where you start introducing the potential for
-> inconsistency: now you need to be extra careful that the enumeration and
-> the unions are set correctly. You effectively have two sources of truth
-> and they don't necessarily match. You can also end up (at least
-> theoretically) with the invalid value, so you need an extra check for
-> that too.
-> 
-> You can avoid all of those inconsistencies if you reduce this to one
-> source of truth, namely the pointers that you're going to use.
-> 
+Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-I don't think pointers should be used as a discriminator.
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 4fdadc7b045f..877d81b13334 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -892,7 +892,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+ 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 val;
+-	u16 val_16;
+ 
+ 	pp->bridge->ops = &tegra_pci_ops;
+ 
+@@ -900,11 +899,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+ 							      PCI_CAP_ID_EXP);
+ 
+-	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+-	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+-	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+-	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+-
+ 	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
+ 	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
+ 	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
+@@ -1756,7 +1750,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 	struct device *dev = pcie->dev;
+ 	u32 val;
+ 	int ret;
+-	u16 val_16;
+ 
+ 	if (pcie->ep_state == EP_STATE_ENABLED)
+ 		return;
+@@ -1887,11 +1880,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+ 						      PCI_CAP_ID_EXP);
+ 
+-	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+-	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+-	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+-	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+-
+ 	/* Clear Slot Clock Configuration bit if SRNS configuration */
+ 	if (pcie->enable_srns) {
+ 		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+@@ -1900,7 +1888,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
+ 				   val_16);
+ 	}
+-
+ 	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+ 
+ 	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
+-- 
+2.25.1
 
-> Your variant would be slightly better if you omitted the invalid value
-> because then you could still have an internal inconsistency, but the
-> likelihood is much reduced.
-> 
-> > > If you change this to something like:
-> > > 
-> > > 	struct {
-> > > 		struct gen_pool *pool;
-> > > 		void __iomem *sram;
-> > > 		void *dram;
-> > > 		dma_addr_t phys;
-> > > 	} tx, rx;
-> > > 
-> > > you eliminate all ambiguity because you can either have pool and sram
-> > > set, or you can have dram set, and depending on which are set you know
-> > > which type of memory you're dealing with.
-> > > 
-> > 
-> > No. You just add ambiguity. It's not clear from looking at the data
-> > structure which fields are valid for which case.
-> 
-> That's easily fixed by adding comments explaining what you use them for.
-> But the code should make that pretty clear already.
-
-No. The code should follow the data structures, that's why unions exist.
-
-Peter.
