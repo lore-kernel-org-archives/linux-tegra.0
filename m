@@ -2,95 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328AAC7EE29
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 15:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527D2C83003
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jun 2023 15:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236916AbjFHPTA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jun 2023 11:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50560 "EHLO
+        id S233743AbjFHPsx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jun 2023 11:48:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236960AbjFHPSx (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 11:18:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335A72D5F;
-        Thu,  8 Jun 2023 08:18:51 -0700 (PDT)
+        with ESMTP id S235583AbjFHPsv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jun 2023 11:48:51 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A900230E0;
+        Thu,  8 Jun 2023 08:48:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C3B8060FAB;
-        Thu,  8 Jun 2023 15:18:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D19EC433D2;
-        Thu,  8 Jun 2023 15:18:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 31F0464EA0;
+        Thu,  8 Jun 2023 15:46:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7A29C433D2;
+        Thu,  8 Jun 2023 15:46:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686237530;
-        bh=/A54Gy0vU98edPnbqK2o8zydJ92zi9Oi8moAunyOrJE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=RdrtpfvpzdGY8WkZ0yvWsGoaLstSARmD7jyc/8yluqGlgzTEUiib2fkv88fsFTwzt
-         VI0ugZcV7T46reJCxWdJP49kC98i6KrF1VDSRTrx0a8YXLvXBwYBpHShvV2XcfjwuC
-         PBtIASy0kct7WqQaV3CBy9zDKSY1CVdiUuNP7ht1SvF597BP95UxTyx71Rht2IrZ1i
-         xvrSIVjcj191w/VV5jb43kVBKMoj3fBHHc/RRaivw8TN7XrcYhSGWYA32hSIoqSFuM
-         Qtulm4/YMMgaxMJ61jE5WU8vConoEvRAd4bnIwBPUxbOZizfKzBfwCWVlbTFSTIqcG
-         TyTU0X4THN/vw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
+        s=k20201202; t=1686239202;
+        bh=psBvk6mN593bIlBgtU6wkxUL3ZGst2R4Vx8Kkhe4M3M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UW02NtL8Fjy1LUBBkVDvMOiLTfqqjG4rdVzRLHS+d+X2PtkJov6QX7+BRfRoYiIc+
+         HB4YYXI8UFYzuBRam+RrVAuC9Kifdjmz05Nnr/eRIRoGlqYUQx2GgkCKMiP98KhOKx
+         LiA6ja35HQG0kahlijXRE7SJEscPykCkRgipmLYjrYJawdXFZl4SbyP6Z2RlzGaNug
+         Aoex1Dq9eJ/DhcYklNW+fIPLSbLxtS7TiKzO8KyKJ2Y8ZKLMZcHbiHsTgwMxF8p8P5
+         N/dwaxqgEPPOs2lheKsKHOuBoeibPrx/1s91s+DJGR9/kW/E+W+/Amj0na58ZHA3Em
+         lVUkmWafBmHzg==
+Date:   Thu, 8 Jun 2023 16:46:34 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Artur Weber <aweber.kernel@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-In-Reply-To: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
-References: <53f928290f08f50ff43031e17fe1d88443c2c441.1686202022.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: tegra: Simplify code around clk_get_rate()
- handling
-Message-Id: <168623752796.1002486.3534848547952230494.b4-ty@kernel.org>
-Date:   Thu, 08 Jun 2023 16:18:47 +0100
+        Helge Deller <deller@gmx.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Luca Weiss <luca@z3ntu.xyz>,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-pwm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: backlight: lp855x: convert to YAML
+ and modernize
+Message-ID: <20230608154634.GQ1930705@google.com>
+References: <20230519180728.2281-1-aweber.kernel@gmail.com>
+ <20230519180728.2281-2-aweber.kernel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230519180728.2281-2-aweber.kernel@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 08 Jun 2023 07:27:22 +0200, Christophe JAILLET wrote:
-> clk_get_rate() returns an unsigned long, so there is no point in storing it
-> in a long, and test for negative values.
+On Fri, 19 May 2023, Artur Weber wrote:
+
+> Notable changes:
+> - ROM child nodes use dashes instead of underscores; the driver
+>   reads all child nodes regardless of their names, so this doesn't
+>   break ABI.
+> - pwm-period argument is deprecated, as it effectively duplicates
+>   the period value provided in pwms. The driver continues to accept
+>   the property, so this should not break ABI.
 > 
-> So, turn 'parent_rate' into an unsigned long, simplify the sanity check,
-> the error message and the return value, in case of error (i.e. 0).
-> 
-> Doing so also turns 'i' and 'valid_rates' into unsigned long, but it is
-> fine and harmless.
-> 
-> [...]
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> Changed in v2:
+>  - Added additionalProperties to ROM patternProperties
+> ---
+>  .../leds/backlight/lp855x-backlight.yaml      | 149 ++++++++++++++++++
+>  .../bindings/leds/backlight/lp855x.txt        |  72 ---------
+>  2 files changed, 149 insertions(+), 72 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/lp855x-backlight.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/leds/backlight/lp855x.txt
 
-Applied to
+Applied, thanks
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: tegra: Simplify code around clk_get_rate() handling
-      commit: 41a343cd6b7f8d0f70dd90c236086ccf8a84a7de
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Lee Jones [李琼斯]
