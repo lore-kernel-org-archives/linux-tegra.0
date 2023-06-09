@@ -2,107 +2,96 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 815C6C7EE43
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jun 2023 14:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4755EC83003
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jun 2023 14:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240442AbjFIOH5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jun 2023 10:07:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36482 "EHLO
+        id S241052AbjFIOTk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jun 2023 10:19:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240765AbjFIOHn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jun 2023 10:07:43 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457513C28
-        for <linux-tegra@vger.kernel.org>; Fri,  9 Jun 2023 07:07:26 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-977d02931d1so274100666b.0
-        for <linux-tegra@vger.kernel.org>; Fri, 09 Jun 2023 07:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686319644; x=1688911644;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R1yU3QubXEzlvIVqe0FBrqWJQ2xtPQAVemT5Khnt0wM=;
-        b=LNfP72yCmAwQ/v0U2ueBWosYZjMzKusItqlpre9t4oVzkDZL+BX7y5K9cViTetyZy1
-         Nd2aLjrwSdkWn+lRyJgH6On1a9v517mhhB/vmSnHFEUZ5GL5NJ93F61e5NfkYfG3iGPf
-         rBE4WGGRtkLC/WI5J4/uPXzMM/kBctua1vKSnKxCuTKMThA/4mcLYO3R1f3h8tYtH199
-         vE8WSpt3wadApdUMtXqgosLMN+Vyhcsdne8siY9Va+9hxGCxk8JkAPwMelGt7R1h7Z/H
-         DV7n766ucmb/Q1viv5C2G0x61eHgaeVBs6v0N6hhtMF6jABd429SNp4J2VJfxhr2R5xA
-         aUEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686319644; x=1688911644;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R1yU3QubXEzlvIVqe0FBrqWJQ2xtPQAVemT5Khnt0wM=;
-        b=gs8A1heRgz3yqT7lQTJu2Kf6Hgncokk1OxkPNs0DwnBLZPCbUwApzZPdYu6v00FdjQ
-         lv2med6Rg8xqET0A1PVexilW5eycMXj7Tu+N9JOmGJVC7pAvMxicqGmGlI2FaH9LomAD
-         mCcYmTzkB5t81bxa2EHfvZ9hzj9KRgwcTzfv4obUYcJaXr2yVqmrF37b7N12CR7jOpSc
-         CoY9N8c74lDBx/83QZo6R7QtUmEZUxfDw4n0aN1brJOapHRzeZMo04yg97DaQiqXLZTe
-         ZgXRZdAgqptYAIIxSyMFrQ4eE3cxnH8sAd+z9K38U4WuZcw4W2YZ6/JivtoEO1hrmn7t
-         qAmQ==
-X-Gm-Message-State: AC+VfDxlaj118cbCCosQe8GMjL8dy+IoYtzJuuIqLoLVQiIabV4b0IcK
-        Jt+4cn6ZusnqiBoD4TXT7MtroQ==
-X-Google-Smtp-Source: ACHHUZ5PiCvWmVfl3y4Z9+jGF1gDaeU+xAsLZ75ziXqJ08jJgC3hSe1sysIuVF/zrCK6HemswyKQ8Q==
-X-Received: by 2002:a17:907:1626:b0:977:95f4:5cca with SMTP id hb38-20020a170907162600b0097795f45ccamr1762811ejc.54.1686319644668;
-        Fri, 09 Jun 2023 07:07:24 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id ce14-20020a170906b24e00b00977cc3d37a2sm1318150ejb.133.2023.06.09.07.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 07:07:24 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] dt-bindings: memory-controllers: drop unneeded quotes
-Date:   Fri,  9 Jun 2023 16:07:20 +0200
-Message-Id: <20230609140720.64743-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S232446AbjFIOTY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jun 2023 10:19:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD19730E7;
+        Fri,  9 Jun 2023 07:19:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5F1F46116E;
+        Fri,  9 Jun 2023 14:19:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566D9C433EF;
+        Fri,  9 Jun 2023 14:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686320361;
+        bh=K7lXT3opzeY5uB4rE9Ffi1Qh2lNzJNMMWwcGGwb9Ekw=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=NVOCgdjf9E0dLNTt2I5kZ2nivw7RdQSz72xA/fSLWl7yCM9Pz35MzMUDIQpaKn3Om
+         AkqNd+/kgytymA/UDpkoBJ57Q5+rYqYTJaTMTgdYzFfGJemP0fHo+I8mIrRHJOLYjN
+         ZBVvBj0T7P0qzSU/eNTfuvUF5pLvqUxL50eJUNV/jPreFgFnDAoHE1aeadQRd2hm3X
+         4oH5+YU19+A2/zjnaLrqn5K26QRmtTW90We6No/C19ExfoxvwJFrSDUJ80KdSlG3Pk
+         aJWwxYlOO2ybDJFzjPOt3bg5cR4prthVX1vDRWwvViUWc5KQbdQAfEPJf+FalAOqHQ
+         xpRl/nAqWdi3A==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 09 Jun 2023 17:19:15 +0300
+Message-Id: <CT86OCSDQS17.21FWH48JRKKI9@suppilovahvero>
+Cc:     "Krishna Yarlagadda" <kyarlagadda@nvidia.com>,
+        "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>,
+        "Sowjanya Komatineni" <skomatineni@nvidia.com>,
+        "Laxman Dewangan" <ldewangan@nvidia.com>
+Subject: Re: [Patch V10 2/3] tpm_tis-spi: Add hardware wait polling
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Mark Brown" <broonie@kernel.org>,
+        "Thierry Reding" <thierry.reding@gmail.com>
+X-Mailer: aerc 0.14.0
+References: <CS48A9Y752N4.QEM73WVMZYLQ@suppilovahvero>
+ <3df39f0b-70dc-4b42-bae1-72c07607cbc7@sirena.org.uk>
+ <ZEaWQD_QTs2usVl8@orome>
+ <5fae29cd-d5f4-4616-be1c-1cd4d5b9a538@sirena.org.uk>
+ <ZEag1lAonYcmNFXk@orome>
+ <DM4PR12MB5769BB69B97F77DBA9ED2935C3779@DM4PR12MB5769.namprd12.prod.outlook.com> <DM4PR12MB5769499349B6B936FE46BF0CC3419@DM4PR12MB5769.namprd12.prod.outlook.com> <ZHhW_wFvRWInR_iM@orome> <dec901be-4bef-43e0-a125-23c5c4e92789@sirena.org.uk> <ZHiQ44gAL3YEZPUh@orome> <c0cf893d-8bc5-4f4b-a326-bb10dd0c84de@sirena.org.uk>
+In-Reply-To: <c0cf893d-8bc5-4f4b-a326-bb10dd0c84de@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-checking for this can be enabled in yamllint.
+On Thu Jun 1, 2023 at 3:40 PM EEST, Mark Brown wrote:
+> On Thu, Jun 01, 2023 at 02:36:51PM +0200, Thierry Reding wrote:
+> > On Thu, Jun 01, 2023 at 12:04:59PM +0100, Mark Brown wrote:
+>
+> > > On Thu, Jun 01, 2023 at 10:29:51AM +0200, Thierry Reding wrote:
+>
+> > > > any ideas on how we can best get this merged? I guess at this point=
+ it
+> > > > could go through either tree since the SPI dependency has been in L=
+inus'
+> > > > tree since v6.4-rc1.
+>
+> > > I would expect it to go via whatever path TPM patches usually take gi=
+ven
+> > > that it's a TPM patch.
+>
+> > There might have been a misunderstanding. My recollection was that you
+> > had said a few weeks ago that you would pick this up. Going through the
+> > thread again I realize that may not have been what you meant. Perhaps
+> > Jarkko misinterpreted this in the same way.
+>
+> > Jarkko, can you pick this up for v6.5?
+>
+> No, I said that I had applied the SPI parts for v6.4 so there would be
+> no blocker whenever people got round to reviewing the TPM side.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/memory-controllers/nvidia,tegra20-emc.yaml         | 2 +-
- .../devicetree/bindings/memory-controllers/ti,gpmc.yaml         | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I'm totally cool with this: won't pick the patch then.
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-index 2fa44951cfde..f54e553e6c0e 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-@@ -165,7 +165,7 @@ patternProperties:
-         const: 0
- 
-       lpddr2:
--        $ref: "ddr/jedec,lpddr2.yaml#"
-+        $ref: ddr/jedec,lpddr2.yaml#
-         type: object
- 
-     patternProperties:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/ti,gpmc.yaml b/Documentation/devicetree/bindings/memory-controllers/ti,gpmc.yaml
-index bc9406929f6c..b049837ee669 100644
---- a/Documentation/devicetree/bindings/memory-controllers/ti,gpmc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/ti,gpmc.yaml
-@@ -129,7 +129,7 @@ patternProperties:
-       The child device node represents the device connected to the GPMC
-       bus. The device can be a NAND chip, SRAM device, NOR device
-       or an ASIC.
--    $ref: "ti,gpmc-child.yaml"
-+    $ref: ti,gpmc-child.yaml
- 
- 
- required:
--- 
-2.34.1
-
+BR, Jarkko
