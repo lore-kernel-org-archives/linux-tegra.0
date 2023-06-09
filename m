@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C43A0C7EE25
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jun 2023 19:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B5EC7EE29
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jun 2023 19:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231181AbjFITgl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jun 2023 15:36:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44218 "EHLO
+        id S231318AbjFITgm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jun 2023 15:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231871AbjFITge (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jun 2023 15:36:34 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB7430D0
-        for <linux-tegra@vger.kernel.org>; Fri,  9 Jun 2023 12:36:33 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5149aafef44so3215773a12.0
-        for <linux-tegra@vger.kernel.org>; Fri, 09 Jun 2023 12:36:33 -0700 (PDT)
+        with ESMTP id S231789AbjFITgf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jun 2023 15:36:35 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C152D44
+        for <linux-tegra@vger.kernel.org>; Fri,  9 Jun 2023 12:36:34 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51496f57e59so3069317a12.2
+        for <linux-tegra@vger.kernel.org>; Fri, 09 Jun 2023 12:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686339391; x=1688931391;
+        d=gmail.com; s=20221208; t=1686339393; x=1688931393;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZG5qiuB70s2QzuITA0PPQCAlcduZcJ39qIHHzmtXAh0=;
-        b=qOcoFkU/Z+OkqBNg6ziq0ijJCttUyV3XTHiThOP2t6XeA1PKC8cNh2naDxKxNH3EQR
-         okMnEempMGd3DOfXYbQ4iDx/Lf0PKb2RSili9rxu0MnAZvwVu0ZYqcr1kBKxjcuW1/yZ
-         aHplLoVdHk57gDXxG1pafbyO4lle8+feopUGQ668jGbTzq5UqPvRkiVus4cSIXMZIM0s
-         u4hyGtRILGGYN8Lc7IrAo0vkwXHsbTzlL0MWw2cgsRAxGoOy31EFlPjV4f19eV1MfN0m
-         6I2P7Qfrrc/JbAQFO9C2SAa4lVB6RDLYP1FdTTLUVh2fVnG4nHI/34zKTywI9iRWbFFw
-         Sb9A==
+        bh=5fRwrzCjp88t418nAkVEpU9kS4OdGnnMmJzDqEeTRBY=;
+        b=C3VYqj2iTBch94O7kQIm62iZ8Y9Yxt9J3+nD2sQOLh5ltPNEl0ThEscSZYWe13/b9l
+         Lxt8saKifQQWvJf9J0v+C4do+CA5ZybEA1XlTJX6uRYtTo4vyGCH13RBbx8tl6bBAWBu
+         /A/F6jZRJh3MzxFAoHi4OCYBHIkSpN+tOig+VxnLJkgQz61HC+aw/y2gSGzWVQ+mEbL7
+         0C9C5K3dV32+kKJysB0xgzJiotRsvh+bCo7AbrgcA2+JBFJEGYJUVPFhGvQ1GY9i6LIT
+         uGWjqq4YcXQhJdjqGdsoYP7vcSPGxBdsCAjsCBjdLqbncsuCCwk7SFFGdmbHH4Nm7+wO
+         LHHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686339391; x=1688931391;
+        d=1e100.net; s=20221208; t=1686339393; x=1688931393;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZG5qiuB70s2QzuITA0PPQCAlcduZcJ39qIHHzmtXAh0=;
-        b=ifehFzJ9bHS55alD+KBHTJmuXdWG+iZtENsLeENQq9NoB51vF6ubP2uIuaHEivFfUc
-         xNkLkR9DJqzC3JHI+PJTiYXqZgH42CWo8m81sbKAi+lUMbMCZ2zkTpEOOH9bl9R1VhOr
-         ehaOCE24AEzqH4eydexvpgoCKl6hfE5fwYu7+zgyTlUKHkbCtRHYqsgj0omcQ1vJYnZ9
-         8aeppZ3Gf5y91tI47WBizlsEQ8//C5F8umKHY3VbX0Di21Wy7DLhMzfltzi2Bk8MrHML
-         1FIgOT9Jb5NulIBZtmGxUsDzUabHgV4oqlbo3pqSxmPw+Y8m86LqDfFB7req0xmFXgXB
-         kD/A==
-X-Gm-Message-State: AC+VfDw7Z5w8+0Y703eZhmRQrIS9N7Su0F+W6BpAUJbMzAHYLsUN+28X
-        gPqkcqd7AwWI85A12F8RHp8=
-X-Google-Smtp-Source: ACHHUZ6roflLK6ayLPBq2LM2wA8LYzV9N09UBOIOo4xBbUF+9fs6m+Q2ntrz4uuM/zm9rTl76g0c/Q==
-X-Received: by 2002:aa7:d1d4:0:b0:514:9b64:e16b with SMTP id g20-20020aa7d1d4000000b005149b64e16bmr1767331edp.35.1686339391680;
-        Fri, 09 Jun 2023 12:36:31 -0700 (PDT)
+        bh=5fRwrzCjp88t418nAkVEpU9kS4OdGnnMmJzDqEeTRBY=;
+        b=V2Y6R+USFemKOFxZROfuNBgEzvgZeKuhPe5zo30MvasHmDm5NCQ3L4ium3OwfEt8+i
+         Ebp/TISDd6IIHggimobptgd53q6K/Mp4D1/Ik4actrWrQILe2XirykDXmpEYbid/zlQ+
+         7UHF6cETkgE8XjjV48NBvKB5Blr0vHwpFh3iYGGT9V6WNjQfx+ahABQRfosVTwpnkggr
+         t0eUZHp4hikRQpI1iU30OsyRiULHd9JpaDAq/Rh3cr1RyYPCkdMKJtLQcsHqUMWo9a/M
+         PMrSjDMZbPXqR837W5GUa+OgIhMjutfGWarx7cnXUBY2LT98WkFA+2zVv9f0KBVhdyLO
+         jmwQ==
+X-Gm-Message-State: AC+VfDxcmJloj0tNdAh+Y2RocdmYy+J6Tc1Qlb++4HamZEGt8R547Wip
+        NE8EGzFkeLCh/JTFoPa0u10=
+X-Google-Smtp-Source: ACHHUZ7UKbrsxsz++D3lw+J8Oo0aNvgCavYHLRyMTlv5TKpbD4FHS3AgCuHrOFUPp+Gm4TOFWsmIxg==
+X-Received: by 2002:a17:907:8a12:b0:969:7739:2eb7 with SMTP id sc18-20020a1709078a1200b0096977392eb7mr2688891ejc.4.1686339392907;
+        Fri, 09 Jun 2023 12:36:32 -0700 (PDT)
 Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id w18-20020aa7dcd2000000b00504ecc4fa96sm2061422edu.95.2023.06.09.12.36.31
+        by smtp.gmail.com with ESMTPSA id gv11-20020a170906f10b00b00947ed087a2csm1643638ejb.154.2023.06.09.12.36.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 12:36:31 -0700 (PDT)
+        Fri, 09 Jun 2023 12:36:32 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 5/6] PCI: tegra: Changes for v6.5-rc1
-Date:   Fri,  9 Jun 2023 21:36:19 +0200
-Message-Id: <20230609193620.2275240-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 6/6] arm64: tegra: Device tree changes for v6.5-rc1
+Date:   Fri,  9 Jun 2023 21:36:20 +0200
+Message-Id: <20230609193620.2275240-6-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230609193620.2275240-1-thierry.reding@gmail.com>
 References: <20230609193620.2275240-1-thierry.reding@gmail.com>
@@ -75,46 +75,82 @@ The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.5-pci
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.5-arm64-dt
 
-for you to fetch changes up to 9365bf006f53d04b69d560ef7e2bf4be4c4d693a:
+for you to fetch changes up to 6312e57b3250085b196d9630d2eeea6a583b97ef:
 
-  PCI: tegra194: Add interconnect support in Tegra234 (2023-05-16 12:11:36 +0200)
+  arm64: tegra: Enable thermal support on Jetson Orin Nano (2023-06-09 17:44:26 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-PCI: tegra: Changes for v6.5-rc1
+arm64: tegra: Device tree changes for v6.5-rc1
 
-This contains updates to the PCI driver for Tegra194 and later devices
-that depend on the memory controller interconnect changes.
+This introduces support for the IGX Orin and Jetson Orin Nano devices
+and enables various additional features on the Jetson AGX Orin and
+Jetson Orin NX. This also enables some basic thermal support to prevent
+the devices from overheating.
+
+Support for the GPU on the Google Pixel C is enabled and various minor
+issues are fixed and cleaned up.
 
 ----------------------------------------------------------------
-Shubhi Garg (1):
+Diogo Ivo (2):
+      arm64: tegra: Add GPU power rail regulator on Smaug
+      arm64: tegra: Enable GPU on Smaug
+
+Jon Hunter (3):
+      arm64: tegra: Fix PCIe regulator for Orin Jetson AGX
+      arm64: tegra: Enable USB device for Jetson AGX Orin
+      arm64: tegra: Update USB phy-name for Jetson Orin NX
+
+Krzysztof Kozlowski (1):
+      arm64: tegra: Add missing cache properties on Tegra210
+
+Prathamesh Shete (1):
+      arm64: tegra: Add Tegra234 pin controllers
+
+Shubhi Garg (2):
       dt-bindings: tegra: Document compatible for IGX
+      arm64: tegra: Add support for IGX Orin
 
-Sumit Gupta (7):
+Sumit Gupta (2):
       dt-bindings: tegra: Add ICC IDs for dummy memory clients
-      memory: tegra: Add interconnect support for DRAM scaling in Tegra234
-      memory: tegra: Add memory clients for Tegra234
-      memory: tegra: Add software memory clients in Tegra234
-      memory: tegra: Make CPU cluster BW request a multiple of MC channels
-      PCI: tegra194: Fix possible array out of bounds access
-      PCI: tegra194: Add interconnect support in Tegra234
+      arm64: tegra: Add CPU OPP tables and interconnects property
 
-Thierry Reding (2):
-      Merge branch 'for-6.5/dt-bindings' into for-6.5/memory
-      Merge branch 'for-6.5/memory' into for-6.5/pci
+Thierry Reding (8):
+      Merge branch 'for-6.5/dt-bindings' into for-6.5/arm64/dt
+      arm64: tegra: Support Jetson Orin Nano Developer Kit
+      arm64: tegra: Sort properties more logically
+      arm64: tegra: Add a few blank lines for better readability
+      arm64: tegra: Add Tegra234 thermal support
+      arm64: tegra: Enable thermal support on Jetson AGX Orin
+      arm64: tegra: Enable thermal support on Jetson Orin NX
+      arm64: tegra: Enable thermal support on Jetson Orin Nano
 
- Documentation/devicetree/bindings/arm/tegra.yaml |   5 +
- drivers/memory/tegra/mc.c                        |  24 +
- drivers/memory/tegra/mc.h                        |   1 +
- drivers/memory/tegra/tegra186-emc.c              | 133 +++++
- drivers/memory/tegra/tegra234.c                  | 595 ++++++++++++++++++++++-
- drivers/pci/controller/dwc/pcie-tegra194.c       |  44 +-
- include/dt-bindings/memory/tegra234-mc.h         |   5 +
- include/linux/tegra-icc.h                        |  65 +++
- include/soc/tegra/mc.h                           |   8 +
- 9 files changed, 871 insertions(+), 9 deletions(-)
- create mode 100644 include/linux/tegra-icc.h
+ Documentation/devicetree/bindings/arm/tegra.yaml   |   5 +
+ arch/arm64/boot/dts/nvidia/Makefile                |   4 +
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |  23 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   1 +
+ .../arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi |  24 +-
+ .../arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi | 111 +++++++
+ .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  |  46 ++-
+ .../arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi |   6 +
+ .../dts/nvidia/tegra234-p3740-0002+p3701-0008.dts  | 154 ++++++++++
+ .../arm64/boot/dts/nvidia/tegra234-p3740-0002.dtsi | 137 +++++++++
+ .../arm64/boot/dts/nvidia/tegra234-p3767-0005.dtsi |  14 +
+ arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi     |  60 +---
+ .../dts/nvidia/tegra234-p3768-0000+p3767-0000.dts  |  23 +-
+ .../dts/nvidia/tegra234-p3768-0000+p3767-0005.dts  |  33 ++
+ .../arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi |   3 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           | 341 +++++++++++++++++++++
+ include/dt-bindings/memory/tegra234-mc.h           |   5 +
+ .../dt-bindings/thermal/tegra234-bpmp-thermal.h    |  19 ++
+ 18 files changed, 937 insertions(+), 72 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3740-0002.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3767-0005.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dts
+ create mode 100644 include/dt-bindings/thermal/tegra234-bpmp-thermal.h
