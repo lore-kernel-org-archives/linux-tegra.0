@@ -2,175 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E61C7EE45
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jun 2023 12:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7157EC7EE23
+	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jun 2023 13:24:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234623AbjFJMEB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 10 Jun 2023 08:04:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33080 "EHLO
+        id S229483AbjFKNYa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 11 Jun 2023 09:24:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232370AbjFJMEA (ORCPT
+        with ESMTP id S229455AbjFKNY3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 10 Jun 2023 08:04:00 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830EE3AA6;
-        Sat, 10 Jun 2023 05:03:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TjGEzgGAq/zw5xPNUYL6NGnplhsDzHEBtl2X5ti5tHq6O76lxQyxPsJCdAEfg4FTJ5dJvRvwEZaYL8KXkl3bxPKHYx/P61nZetjLdmstqNTTd1yXoRtCKVooxy0PpVkRfrLXq5FriOJugv+8XtFmeptUnl6vkdi8QpwYQ8nb0uSONAeFF/HgFQxSEKrmkpFiS54DCOIz1DwcjsLSL9rkjdm3vF8Pxu4O5CzhCWXViy2wPdpn8omIeRqIrsAxkkepSHkLON4+438X4LhZb6QrQAe+ekdVL2JFOUjJ8wK9Onzq14DFjh+AOhFxxevKQeMiEt53xsPiiQDdO3FYTvlETQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=klal1Vz/qPejYayGBh2aS897x3En5tvWg0ZJR3RzSHo=;
- b=LZx6AExQMSSnyaBY52XNUWuY4e60SAvUd174ESI7PSqupfZIaqmA0S7Sogn4TBARCpGEnuzMtfJP0t0X6DdFPj2KR1Eg9xIVeLqj+pY08P0kUic1fdlDKsO1Vf1DIcstOgCuy5iGEZ5xvgHdB1e3+qb2eSyXj66zN2TSA5g8/395spaAQMkhIagZQhUi8C2x/PdObb5OYIjdmjJfd4lKmbtljXpMNAe1svnpl8rVVpuZMtKZ/ztPXyOp6jMo+bTVvlGHtVKulF3mE+0X/nHMlA72DRSoeJDmFoT83i4kGYM1DwSLYUUFSNpYH4/m+as/4TphjXCWZlpjQcRDseP8dA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=klal1Vz/qPejYayGBh2aS897x3En5tvWg0ZJR3RzSHo=;
- b=hthEUyYJHCzaEKYLL6dS6zH336pHqcOgQsPXh9QKuAP79VTayYeWgLsVLFXWNJbvntZDka28Ga37dihqTnigAHIc+TQJQffBGKcRc+cHHPtloyXSQ82b6GLlMjZbOBTYy87Jbo6dy42PhsQwM4CODetEiiLzFYy6aUFxJVDt3cAcXAc/DDqK4ci9JRGFNoeiGQtsop9LdtZoBuSP3vlUohhSb1aLroaO2iA++KPwF3n1GlMZvRUCEQdeN4oNfgb5s8pGb4MGMTPlAJ9cZ9ls5Rw+pi5xhT/h7lP8XGjAz4F7wV5FLhRIRt15NhW4ayjKVWuACJ4PkYUShN+iOwjnhg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by SA1PR12MB8858.namprd12.prod.outlook.com (2603:10b6:806:385::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.44; Sat, 10 Jun
- 2023 12:03:55 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6455.030; Sat, 10 Jun 2023
- 12:03:53 +0000
-Date:   Sat, 10 Jun 2023 09:03:52 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Baolu Lu <baolu.lu@linux.intel.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
+        Sun, 11 Jun 2023 09:24:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D8A7BC;
+        Sun, 11 Jun 2023 06:24:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A6FAC6125D;
+        Sun, 11 Jun 2023 13:24:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D4A6C433D2;
+        Sun, 11 Jun 2023 13:24:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686489866;
+        bh=g9njtkoojqRfUI49HT2MGfWzoAKuf1DOFdEq/kUvHsA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DGC5PWnLkcdaGgKC8g7aXKlp+cTXW37FdG3MVsm8EY5hOfYkx9wU/GrdAySg2Oi3E
+         dOVMl4KJhdYBu2De+eoiciAURQiPsCqJ9ietIqhfXZzIiJ/qHaNTEP+6cbbfGxU3OF
+         S1V2x+n0xz8qtn3BiYOFuIupPFOSQz5yy55SQRQJKpTgLcEvlJGss24Pfra8lHGfqX
+         flOVS0h/DWl7SNIHBe4o1Tckr5hlYu9wiNquAWD9glhB7l1BDGN6MfJfYQi4jaXF/p
+         CbfeGdAXGcgQoXEiIlRZ2gExfM0ZoxVnZVNTIqcbZJpWvcddhXHRqZboEHi89XhF++
+         jIjqIIdIQw+Hg==
+Received: by pali.im (Postfix)
+        id D08BB7FD; Sun, 11 Jun 2023 15:24:23 +0200 (CEST)
+Date:   Sun, 11 Jun 2023 15:24:23 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jim Quinlan <jim2101024@gmail.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v3 23/25] iommu: Add ops->domain_alloc_paging()
-Message-ID: <ZIRmqK1565B/COT8@nvidia.com>
-References: <23-v3-89830a6c7841+43d-iommu_all_defdom_jgg@nvidia.com>
- <b1225451-2a2d-0f06-da37-d476342db365@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1225451-2a2d-0f06-da37-d476342db365@linux.intel.com>
-X-ClientProxiedBy: BLAPR05CA0003.namprd05.prod.outlook.com
- (2603:10b6:208:36e::10) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Miaoqian Lin <linmq006@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org, kernel@pengutronix.de,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 00/15] PCI: Convert to platform remove callback returning
+ void
+Message-ID: <20230611132423.milnj2pnvjqzwino@pali>
+References: <20230530140742.ebbrxmpieuphbmz3@pengutronix.de>
+ <ZHphHkNLO4tEJIm/@bhelgaas>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|SA1PR12MB8858:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9ab38e6-aabb-4311-81ff-08db69aac2ba
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ob8YGfs3lBL0hMAbAtVYypTgACwFqNMu2IjYBtWONSs07VtU1kc6Bs75qw7ugJxJ3qPqdeAw/WiV8YtNp8PEs4awU0v/p+qJnsMeUHAFVSjUyC9IyMsMuzayN8VF73INsJFJjxoqOid6691jSMhdv4L43+tYmyGtDMcWgArunv8tY+iXbR29fs+4fKyOEvJd2UqDD65K7DRbU1WcMxbIZKBrrpeb8DBaULpiIED0OKQ+6xcSija/Oe2mpn6SLM4pErJN8divzgpmuhrfj9RhNUIcCF3EjvFZ/ciN+JpaEIP3ueq2MpCSKNnrTdWJDXiGR9hoglZyPxr0yUzZt5s11uDeDzThkB2nq6CV6qNLR8338lstJxlkelae9u7M1z2dBxRIjH4F1rhPzN78Aef2xolbS5MGE5xpYbXe846Jb3uR+nsw15iBD5358nBuyY0TQlCIkiAgyJLlBzggVvlNMyVKbfTB28bwM3VDJDj0UXP7ZeMyxtXtEjkOylr1tEMEQIhVS34arA8oTgPg6uPujOFPxy3q2GAKqEvR+tUbhS5tg8xrfXkbs14vg03Eh0ZG
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(39860400002)(396003)(366004)(136003)(451199021)(54906003)(478600001)(7416002)(5660300002)(7406005)(8936002)(8676002)(36756003)(86362001)(2906002)(66476007)(4326008)(66946007)(316002)(6916009)(66556008)(186003)(41300700001)(38100700002)(107886003)(6506007)(6512007)(26005)(6486002)(2616005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hXZIhjQOnUnXFiILxWmrU+BxuH7r7TDK+u8xI2tIrJ0tzf+Gj6fD/0pjqFKZ?=
- =?us-ascii?Q?e+8CBbeph/If7/K1EIJtp5pQ/hB+ZUaZAf2GGiXNqOwFVmlMvNXFx6jUUApC?=
- =?us-ascii?Q?2tNslLxMMzC2BM8CAq4dqtSbsrERCC4KeJ2t5xo5OvTBIorojlc+HRqQ0uyx?=
- =?us-ascii?Q?8EHU+Ok+5UKWuCxAo1ge8+0bquIX1u+5JKie7OC8CqBZdovcYtItNfqVf8RU?=
- =?us-ascii?Q?9+nBF4zyiYwl6vTEmAULx+xmGyCfbtyabgU281IA+sgYsMoPuaCbVdS9ZfnL?=
- =?us-ascii?Q?KCsMwkvMY+Q87fCLqvnUnLKqywa0ks7VKf6utXL6ld7lmvP9biq5rFkxMpAo?=
- =?us-ascii?Q?pJ0P59yiS5FiSfr9lqaFo6zPLtEQoI4bNs3CAjSn+X7ZN1wFVZze7/TQ4Z9G?=
- =?us-ascii?Q?B9+yxczgkYSbkKwj4EvUcjfDcGLeCsG5pj7kXJuCIs+bPNJKg4tpsDFp0BoV?=
- =?us-ascii?Q?1l2i40tNhVneVlPEgg0Ll0smhjCdAkMEpQRFzJMI5QKP32rbuuVU+vEr2fVw?=
- =?us-ascii?Q?rWOIQSRZiCM07b3SQSId5K1HWrVNKGKe9gcHpi7D6rKON1XMVB84+tKqeK2B?=
- =?us-ascii?Q?WIyzsvLGloPty3SYVy1zgUr1oaXf6giN1FAyP87pWRGYxdPi6GhXsOCAI55u?=
- =?us-ascii?Q?ao+qSrEYYb2lIRhORei2INr+mShtLrxzW5El8ZLzdzdnDoUi6jaz8RCYib3u?=
- =?us-ascii?Q?Lz50ArpwfTu8rrMlquj5GX6qYx5Htzh6NgUUaRVTT36L8yLaR5hoQMKiPDJU?=
- =?us-ascii?Q?AykAzoMawHZJqJTJUZGJfIbafbHzqmH0tR9G/cgjXJWqu7IyQya5jXb/Ta3v?=
- =?us-ascii?Q?4cWg0xOkXW/D38C3qYW/F73fY5pAuc1DD08q4ih3srFZasNYn3wsknsGPYt8?=
- =?us-ascii?Q?8E6JKGeGlBE17FaeBLQLEmbtGe3W9giIQxFOljweSwiRwi7aGjEAsxvGAOfA?=
- =?us-ascii?Q?+sfM/+qiwRUz/lA/CAjkzylWFLNwFGojuDs3KWNI3QJl5NFXcO6tmHYaRKry?=
- =?us-ascii?Q?hMGdXUpVYTrldGz9xiMum/vfS/1D0RXL489SaB+V4z4bCSt52FDYQHU1+S7T?=
- =?us-ascii?Q?Nb+LpebB/5/0sPEKZPbhMPMcMp8893MHatl8jBOSbhzmsgu//vNm9VOfcG7t?=
- =?us-ascii?Q?NYICpozBsExdh7iYMg70mYduGra5mcCK7XVsM97Obpi0n7zb3NljbEglv2nL?=
- =?us-ascii?Q?eAE11fxfhZvdwDjlpeZ384yCiL71hDWHp7Aov8ECnNiJBWbOcCTnAtOHXGEB?=
- =?us-ascii?Q?NPaivB6QcUkWR/HV/ZZAkupwT7TeOkBkcltz/ZOZ1i2bsOM+xQFPYRBZem6J?=
- =?us-ascii?Q?msZCZfjgAc/0SyShL4mw5HalH4gbERiiMzI4341VM8IgRtvJEfc+k7cQphZs?=
- =?us-ascii?Q?jazEPIo62d6/eBFLVUyu1clU897qflD6eV3hDXFlk5H0lKW+UNadjc8nQJES?=
- =?us-ascii?Q?LzbgkkN9BS1vxvnI0ONVb06fVCk6mKouovS2bupPaA1ikqE3M4HHNHY5Tttw?=
- =?us-ascii?Q?A9xxaAVM/3wQuipbUPOK9CRW6Bu4d3O0mw+Hvgu3PJinGNWbsfLnBSVywYxh?=
- =?us-ascii?Q?ArzY/KjTKrw2KYnuPBcOQeQ9izmND9nt+W7VGo3F?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9ab38e6-aabb-4311-81ff-08db69aac2ba
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2023 12:03:53.7279
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i0zZ9CjV0T/pAHrJO+X+0nPX2mvnViGoZBdi6LdECaIR8MZ+PCBhzuWBSHRGsp5R
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8858
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZHphHkNLO4tEJIm/@bhelgaas>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Jun 10, 2023 at 05:08:31PM +0800, Baolu Lu wrote:
-> > @@ -1992,8 +1993,13 @@ static struct iommu_domain *__iommu_domain_alloc(const struct iommu_ops *ops,
-> >   	if (alloc_type == IOMMU_DOMAIN_IDENTITY && ops->identity_domain)
-> >   		return ops->identity_domain;
-> > +	else if (type & __IOMMU_DOMAIN_PAGING) {
-> > +		domain = ops->domain_alloc_paging(dev);
+On Friday 02 June 2023 16:37:34 Bjorn Helgaas wrote:
+> On Tue, May 30, 2023 at 04:07:42PM +0200, Uwe Kleine-König wrote:
+> > Hello Bjorn,
+> > 
+> > On Tue, Mar 21, 2023 at 08:31:53PM +0100, Uwe Kleine-König wrote:
+> > > this series adapts the platform drivers below drivers/pci to use the
+> > > .remove_new() callback. Compared to the traditional .remove() callback
+> > > .remove_new() returns no value. This is a good thing because the driver core
+> > > doesn't (and cannot) cope for errors during remove. The only effect of a
+> > > non-zero return value in .remove() is that the driver core emits a warning. The
+> > > device is removed anyhow and an early return from .remove() usually yields a
+> > > resource leak.
+> > > 
+> > > By changing the remove callback to return void driver authors cannot
+> > > reasonably assume any more that there is some kind of cleanup later.
+> > > 
+> > > All drivers were easy to convert as they all returned zero in their
+> > > remove callback. Only for iproc the conversion wasn't trivial, the other
+> > > were converted using coccinelle.
+> > > 
+> > > There are no interdependencies between these patches. So even if there
+> > > are some concerns for individual patches, I ask you to apply the
+> > > remaining set. Then I only have to care for the review feedback of the
+> > > refused patches. (Having said that I don't expect any serious objection,
+> > > just things like squashing or separating patches, or maybe I picked a
+> > > wrong subject prefix.)
+> > 
+> > These patches wait for application for quite some time now. They apply
+> > just fine to v6.4-rc1 and next/master. Would be great to get them in
+> > during the next merge window and ideally give them some time in next
+> > before.
 > 
-> This might be problematic because not all IOMMU drivers implement this
-> callback now. In the missing cases, the code will always result in a
-> null pointer reference issue?
-
-Ah, thank you that is a rebasing error :(
-
-> >   struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus)
-> >   {
-> >   	if (bus == NULL || bus->iommu_ops == NULL)
-> >   		return NULL;
-> > -	return __iommu_domain_alloc(bus->iommu_ops, IOMMU_DOMAIN_UNMANAGED);
-> > +	return __iommu_domain_alloc(bus->iommu_ops, NULL,
-> > +				    IOMMU_DOMAIN_UNMANAGED);
+> Thanks, these seem fine to me, and Lorenzo normally takes care of
+> drivers/pci/controller/.  Lorenzo, if it's easier to have me apply
+> them, that's fine, too, just let me know.
 > 
-> Suppose that iommu_domain_alloc() is always called from device drivers
-> where device pointer is always available. Is it possible to convert it
-> to a real device pointer?
+> The only tweaks I would make would be:
+> 
+>   PCI: j721e: Convert to platform remove callback returning void
+>   PCI: dwc: Convert to platform remove callback returning void
+> 
+> to match the git history.
 
-Yes, Robin has a series for that
+Hello Bjorn, it should be expected that other changes for PCIe drivers
+sent by other people which were sent to the list before this patch
+series and are still waiting for the review (because are without
+comments), would be processed before and patches sent later.
 
-Jason
+Also I would like to point out that in past I have sent fixes for PCIe
+mvebu driver, which is currently in the broken state. And this is also
+on waiting on the list.
