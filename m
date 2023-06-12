@@ -2,143 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7157EC7EE23
-	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jun 2023 13:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ADDC7EE2E
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jun 2023 09:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229483AbjFKNYa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 11 Jun 2023 09:24:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
+        id S232494AbjFLJOf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Jun 2023 05:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjFKNY3 (ORCPT
+        with ESMTP id S230412AbjFLJNx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 11 Jun 2023 09:24:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D8A7BC;
-        Sun, 11 Jun 2023 06:24:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A6FAC6125D;
-        Sun, 11 Jun 2023 13:24:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D4A6C433D2;
-        Sun, 11 Jun 2023 13:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686489866;
-        bh=g9njtkoojqRfUI49HT2MGfWzoAKuf1DOFdEq/kUvHsA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DGC5PWnLkcdaGgKC8g7aXKlp+cTXW37FdG3MVsm8EY5hOfYkx9wU/GrdAySg2Oi3E
-         dOVMl4KJhdYBu2De+eoiciAURQiPsCqJ9ietIqhfXZzIiJ/qHaNTEP+6cbbfGxU3OF
-         S1V2x+n0xz8qtn3BiYOFuIupPFOSQz5yy55SQRQJKpTgLcEvlJGss24Pfra8lHGfqX
-         flOVS0h/DWl7SNIHBe4o1Tckr5hlYu9wiNquAWD9glhB7l1BDGN6MfJfYQi4jaXF/p
-         CbfeGdAXGcgQoXEiIlRZ2gExfM0ZoxVnZVNTIqcbZJpWvcddhXHRqZboEHi89XhF++
-         jIjqIIdIQw+Hg==
-Received: by pali.im (Postfix)
-        id D08BB7FD; Sun, 11 Jun 2023 15:24:23 +0200 (CEST)
-Date:   Sun, 11 Jun 2023 15:24:23 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Joyce Ooi <joyce.ooi@intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jim Quinlan <jim2101024@gmail.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Rahul Tanwar <rtanwar@maxlinear.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        Miaoqian Lin <linmq006@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org, kernel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 00/15] PCI: Convert to platform remove callback returning
- void
-Message-ID: <20230611132423.milnj2pnvjqzwino@pali>
-References: <20230530140742.ebbrxmpieuphbmz3@pengutronix.de>
- <ZHphHkNLO4tEJIm/@bhelgaas>
+        Mon, 12 Jun 2023 05:13:53 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50824C12
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Jun 2023 02:07:21 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-30fbf6603d2so885232f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Jun 2023 02:07:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686560829; x=1689152829;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1ALIq+EfBjjDuq9C6qScccN3SzZCAcSKnABbFzkS/tA=;
+        b=jUQCmi8C9INCz6PusbgHt8ozZvFHq+MkPgx7w99W4qdxMwkqzIwQrAgZX10wHogWs+
+         MWqQAbhHBX+xg/ZvKkgKnt/qT2htAo0Q/Lz/giT7tXbLvrY60RsRkyJrFFx1iwBbmFIf
+         7OSzNbu/aQ6B2qg3Ks4Cz8UsWIfaMACUoAW9EZEYdA9voeXu+M925i5D9RZ793o155aZ
+         OYZQs5LfjoTjIYefaKaClzFCSD6CO9f4HaFBjAaZgi75KLYfS2IgTsg8Ofha0xuEqVGl
+         gFUBi5OhX+evzMPkextYpITqK5+4MlD/S2nuEZYFzR/CJlbn89iAKBaEvWELDGNrN1A6
+         IgPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686560829; x=1689152829;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ALIq+EfBjjDuq9C6qScccN3SzZCAcSKnABbFzkS/tA=;
+        b=ELjp1DYkIKHIVLoWZ4s0bIbL4tmT9l7aCsN4EjO3iIrP4hhAaQPENiOpJDn8bnofg2
+         16o0fLyn8VMCXrasjBc3mnR+ip2ay8pVLSg+dUAnUNa30xilLU3DWOdPnhOpGE7S82M+
+         8aNXVFiMChBhQYPzVOBPMD3TQR6HIQoum8I3DNbAMowJYJg5GViRNvY+TxIylJBhvpRp
+         Emr0WJxZkzO6YuDwHb9lbXzsNWNTgcobBqnVnvrolZlNjBD5T89KEVDj6nKK/ft3srOu
+         h2/z9db4CHne5y6PUz6LnW933RSi16nKrLldwzmB7LiHGVdB6vjjspXgfFZPysMwqYL7
+         aIJw==
+X-Gm-Message-State: AC+VfDx9pFhbwsUJHiVJ20guaSx2+ocoF+OlRj2K0U73ASBXZgLtD2Wk
+        kUcp6sEkqQ7mAhpAqvpd6Tu75I5pRRL+YogaLI4=
+X-Google-Smtp-Source: ACHHUZ7zgf6EwcNan6tjDOVOTBgZ8Y8StQPZIaCrQwu+Z8SzaRmyK4CUlJlcW4Lvqec79vSW7GduCA==
+X-Received: by 2002:a5d:5050:0:b0:30f:c56c:b5a6 with SMTP id h16-20020a5d5050000000b0030fc56cb5a6mr887326wrt.4.1686560828937;
+        Mon, 12 Jun 2023 02:07:08 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:bb02:9baa:82d1:2486? ([2a05:6e02:1041:c10:bb02:9baa:82d1:2486])
+        by smtp.googlemail.com with ESMTPSA id u8-20020adfeb48000000b003062b2c5255sm11875361wrn.40.2023.06.12.02.07.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 02:07:08 -0700 (PDT)
+Message-ID: <3c501536-2620-0022-df93-415d490fc1a5@linaro.org>
+Date:   Mon, 12 Jun 2023 11:07:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] thermal: Allow selecting the bang-bang governor as
+ default
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230609124408.3788680-1-thierry.reding@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230609124408.3788680-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZHphHkNLO4tEJIm/@bhelgaas>
-User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Friday 02 June 2023 16:37:34 Bjorn Helgaas wrote:
-> On Tue, May 30, 2023 at 04:07:42PM +0200, Uwe Kleine-König wrote:
-> > Hello Bjorn,
-> > 
-> > On Tue, Mar 21, 2023 at 08:31:53PM +0100, Uwe Kleine-König wrote:
-> > > this series adapts the platform drivers below drivers/pci to use the
-> > > .remove_new() callback. Compared to the traditional .remove() callback
-> > > .remove_new() returns no value. This is a good thing because the driver core
-> > > doesn't (and cannot) cope for errors during remove. The only effect of a
-> > > non-zero return value in .remove() is that the driver core emits a warning. The
-> > > device is removed anyhow and an early return from .remove() usually yields a
-> > > resource leak.
-> > > 
-> > > By changing the remove callback to return void driver authors cannot
-> > > reasonably assume any more that there is some kind of cleanup later.
-> > > 
-> > > All drivers were easy to convert as they all returned zero in their
-> > > remove callback. Only for iproc the conversion wasn't trivial, the other
-> > > were converted using coccinelle.
-> > > 
-> > > There are no interdependencies between these patches. So even if there
-> > > are some concerns for individual patches, I ask you to apply the
-> > > remaining set. Then I only have to care for the review feedback of the
-> > > refused patches. (Having said that I don't expect any serious objection,
-> > > just things like squashing or separating patches, or maybe I picked a
-> > > wrong subject prefix.)
-> > 
-> > These patches wait for application for quite some time now. They apply
-> > just fine to v6.4-rc1 and next/master. Would be great to get them in
-> > during the next merge window and ideally give them some time in next
-> > before.
-> 
-> Thanks, these seem fine to me, and Lorenzo normally takes care of
-> drivers/pci/controller/.  Lorenzo, if it's easier to have me apply
-> them, that's fine, too, just let me know.
-> 
-> The only tweaks I would make would be:
-> 
->   PCI: j721e: Convert to platform remove callback returning void
->   PCI: dwc: Convert to platform remove callback returning void
-> 
-> to match the git history.
 
-Hello Bjorn, it should be expected that other changes for PCIe drivers
-sent by other people which were sent to the list before this patch
-series and are still waiting for the review (because are without
-comments), would be processed before and patches sent later.
+Hi Thierry,
 
-Also I would like to point out that in past I have sent fixes for PCIe
-mvebu driver, which is currently in the broken state. And this is also
-on waiting on the list.
+On 09/06/2023 14:44, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> For many setups the bang-bang governor is exactly what we want. Many
+> ARM SoC-based devices use fans to cool down the entire SoC and that
+> works well only with the bang-bang governor because it uses the
+> hysteresis in order to let the fan run for a while to cool the SoC
+> down below the trip point before switching it off again.
+
+Yeah, that trip point detection is screwed up at the moment, but we are 
+on the way to solve that. From there, we should be able to have the 
+step_wise governor working as the bang-bang governor and remove this one.
+
+Meanwhile, the change sounds ok for me.
+
+Rafael, may I pick this change?
+
+
+
+> The step-wise governor will behave strangely in these situations. It
+> doesn't use the hysteresis, so it can lead to situations where the fan
+> is turned on for only a very brief period and then is switched back off,
+> only to get switched back on again very quickly because the SoC hasn't
+> cooled down very much.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   drivers/thermal/Kconfig        | 8 ++++++++
+>   drivers/thermal/thermal_core.h | 2 ++
+>   2 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 4cd7ab707315..19a4b33cb564 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -130,6 +130,14 @@ config THERMAL_DEFAULT_GOV_POWER_ALLOCATOR
+>   	  system and device power allocation. This governor can only
+>   	  operate on cooling devices that implement the power API.
+>   
+> +config THERMAL_DEFAULT_GOV_BANG_BANG
+> +	bool "bang_bang"
+> +	depends on THERMAL_GOV_BANG_BANG
+> +	help
+> +	  Use the bang_bang governor as default. This throttles the
+> +	  devices one step at the time, taking into account the trip
+> +	  point hysteresis.
+> +
+>   endchoice
+>   
+>   config THERMAL_GOV_FAIR_SHARE
+> diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
+> index 3d4a787c6b28..17c1bbed734d 100644
+> --- a/drivers/thermal/thermal_core.h
+> +++ b/drivers/thermal/thermal_core.h
+> @@ -23,6 +23,8 @@
+>   #define DEFAULT_THERMAL_GOVERNOR       "user_space"
+>   #elif defined(CONFIG_THERMAL_DEFAULT_GOV_POWER_ALLOCATOR)
+>   #define DEFAULT_THERMAL_GOVERNOR       "power_allocator"
+> +#elif defined(CONFIG_THERMAL_DEFAULT_GOV_BANG_BANG)
+> +#define DEFAULT_THERMAL_GOVERNOR       "bang_bang"
+>   #endif
+>   
+>   /* Initial state of a cooling device during binding */
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
