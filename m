@@ -2,80 +2,134 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D75C88CB6
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jun 2023 17:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B76C88CB2
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jun 2023 18:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234281AbjFLRng convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Jun 2023 13:43:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50150 "EHLO
+        id S231517AbjFLSRc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Jun 2023 14:17:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234187AbjFLRnf (ORCPT
+        with ESMTP id S229742AbjFLSRc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Jun 2023 13:43:35 -0400
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2023C10D8;
-        Mon, 12 Jun 2023 10:43:32 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-974539fd9f0so90599366b.0;
-        Mon, 12 Jun 2023 10:43:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686591810; x=1689183810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cYgR5nhDdiJqEt5pcKq1yS5d2OMv5QXdG3YbAcYBSDM=;
-        b=ZYLfKd33Ahmm1d17XHAx+fjFlNI9bJjS1Ob/HSGkYNLp++DniPGee7K+45UAgyojRB
-         bEz3J5+zwGogw04O4oUzGJMIDPCtCjddeM0NYTMMKKSxF8V9mmEIam3xzFcsTGYv9oNX
-         mGsYe7Z5C/NZyyW2EYHS9do7nyKE6Pq5CJo8BkD5OqtOn/S5XM+1qQBw/wIX3XVIgVsT
-         DtmMyIkzWuSwHNbgQh0XvsDaNox7sN2Bp+EbSfUOUe0vhxUV/w5roUWdKqnsbrrYjevy
-         icaTI2v8RUUGfDAq74eUwG19Ji6lUgAAbMLQh6xporbeXmqg2PXCOJETq8c4PnSeA70/
-         SFMQ==
-X-Gm-Message-State: AC+VfDzcvd65fktlH1EGzdsI9leirZh4FKj8Pnrx7ARoFcT3BHs6lsIT
-        9RkhbVwijmbpWuTW4ZPceqdveXdCZbLNPaL+U4o=
-X-Google-Smtp-Source: ACHHUZ6MMjBs8FmD68ZIaJWus2HTgfbsYkWlMOyf0sDaOjoXLWJBzjaCHTN62Mw8MBKC2rTmGyz6x8JYIUKaGP1v1r0=
-X-Received: by 2002:a17:906:748a:b0:975:bb7:5dc3 with SMTP id
- e10-20020a170906748a00b009750bb75dc3mr8451381ejl.7.1686591810435; Mon, 12 Jun
- 2023 10:43:30 -0700 (PDT)
+        Mon, 12 Jun 2023 14:17:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D8693;
+        Mon, 12 Jun 2023 11:17:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A1F2662CAE;
+        Mon, 12 Jun 2023 18:17:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08B2C433EF;
+        Mon, 12 Jun 2023 18:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686593850;
+        bh=aIVis3zgOCngnfMmwgBuVeG+/iKrmnOowlmIUV+paHI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n5n/9orbod8cmo3ZlSZq+q3v9s1JEnf2Sa4uJLUMrgOII1qaquSOhuepHl3fIUF2n
+         +dncfZDS6aLE7N8e/fDxJJes4MFT7sS240EjejOXi0oHxsUrf8fhC1jiWKkOPIjQbW
+         newqIPRW6XIZzq8JySqv1eMuk1ZeGSksIt+JaOAbFd2NJ+vHD9K4BQR1vcHQjvyOFY
+         yojO9w2pWRuJXETvSoPOoKqIYvGSs3gAnEmbky9i+u83nxU9v8UtiLImEDmvnb31Ue
+         Io4TaH78Rz41ZMfnyO1IAijddSeTN0ZEvAZjX/feIO4kwYYP+zSxf7KmDUznHkciU+
+         MeB6+M43iQovA==
+Received: by pali.im (Postfix)
+        id A820E7EB; Mon, 12 Jun 2023 20:17:26 +0200 (CEST)
+Date:   Mon, 12 Jun 2023 20:17:26 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jim Quinlan <jim2101024@gmail.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Miaoqian Lin <linmq006@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org, kernel@pengutronix.de,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 00/15] PCI: Convert to platform remove callback returning
+ void
+Message-ID: <20230612181726.itcctpkq57tfmdmo@pali>
+References: <20230611132423.milnj2pnvjqzwino@pali>
+ <20230612161927.GA1335109@bhelgaas>
 MIME-Version: 1.0
-References: <20230609124408.3788680-1-thierry.reding@gmail.com> <3c501536-2620-0022-df93-415d490fc1a5@linaro.org>
-In-Reply-To: <3c501536-2620-0022-df93-415d490fc1a5@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 12 Jun 2023 19:43:19 +0200
-Message-ID: <CAJZ5v0jwZt3HOJi3sBGR50G01K+pHSAsJd1UVBfZofpWBAvnVA@mail.gmail.com>
-Subject: Re: [PATCH] thermal: Allow selecting the bang-bang governor as default
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230612161927.GA1335109@bhelgaas>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 11:07 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
->
-> Hi Thierry,
->
-> On 09/06/2023 14:44, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > For many setups the bang-bang governor is exactly what we want. Many
-> > ARM SoC-based devices use fans to cool down the entire SoC and that
-> > works well only with the bang-bang governor because it uses the
-> > hysteresis in order to let the fan run for a while to cool the SoC
-> > down below the trip point before switching it off again.
->
-> Yeah, that trip point detection is screwed up at the moment, but we are
-> on the way to solve that. From there, we should be able to have the
-> step_wise governor working as the bang-bang governor and remove this one.
->
-> Meanwhile, the change sounds ok for me.
->
-> Rafael, may I pick this change?
+On Monday 12 June 2023 11:19:27 Bjorn Helgaas wrote:
+> On Sun, Jun 11, 2023 at 03:24:23PM +0200, Pali Rohár wrote:
+> > On Friday 02 June 2023 16:37:34 Bjorn Helgaas wrote:
+> > > On Tue, May 30, 2023 at 04:07:42PM +0200, Uwe Kleine-König wrote:
+> > > > On Tue, Mar 21, 2023 at 08:31:53PM +0100, Uwe Kleine-König wrote:
+> > > > > this series adapts the platform drivers below drivers/pci to
+> > > > > use the .remove_new() callback. Compared to the traditional
+> > > > > .remove() callback .remove_new() returns no value. This is a
+> > > > > good thing because the driver core doesn't (and cannot) cope
+> > > > > for errors during remove. The only effect of a non-zero return
+> > > > > value in .remove() is that the driver core emits a warning.
+> > > > > The device is removed anyhow and an early return from
+> > > > > .remove() usually yields a resource leak.
+> > ...
+> 
+> > Hello Bjorn, it should be expected that other changes for PCIe drivers
+> > sent by other people which were sent to the list before this patch
+> > series and are still waiting for the review (because are without
+> > comments), would be processed before and patches sent later.
+> 
+> I don't think it's necessary to delay simple, easily-reviewed changes
+> behind more complicated ones.
+> 
+> > Also I would like to point out that in past I have sent fixes for PCIe
+> > mvebu driver, which is currently in the broken state. And this is also
+> > on waiting on the list.
+> 
+> Thanks for this reminder.  Would you mind reposting them?  I poked
+> around in patchwork and I must be doing something wrong because I
+> can't find *any* patches from you, though obviously there are many.
+> 
+> If you repost them at least we'll know unambiguously what is on the
+> table.
+> 
+> Bjorn
 
-Please do, thank you!
+Well, my patches I reposted more times. And some were also reposted by
+other people. I do not know if they are in patchwork, but they are in
+email archive. For example last repost of aardvark patches are here:
+https://lore.kernel.org/linux-pci/20220927141926.8895-1-kabel@kernel.org/
+And some other aardvark are also here:
+https://lore.kernel.org/linux-pci/20220711120626.11492-1-pali@kernel.org/
