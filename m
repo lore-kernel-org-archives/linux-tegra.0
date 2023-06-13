@@ -2,146 +2,103 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA7EC88CB8
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 09:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F427C7EE29
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 09:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240443AbjFMJ5r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Jun 2023 05:57:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39014 "EHLO
+        id S241988AbjFMJ6B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Jun 2023 05:58:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240450AbjFMJ5n (ORCPT
+        with ESMTP id S240695AbjFMJ5x (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Jun 2023 05:57:43 -0400
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2106.outbound.protection.outlook.com [40.107.255.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D4011BDC;
-        Tue, 13 Jun 2023 02:57:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=khbyOLYBVUPX93GhKQ169V9J5VenjcpeEmO8RBkycbF0E6gSAgKU6Gm+qf4lrMg9P64BRDMieDWnKTNs7/+ogt2PjSAG83tnew21FfM0wR8juKEX0X0/tlkWEJrPzBEHTq5ejYMcXYM95Ohd63uBak7duZRZVZ3XtWC2jPKES4IaiZRRgaz1Y0WIkY9Iq+FnjbTJEDAQvebOXwFdQAndNdtNCbswX1XDdsFkAigEeq6kqY7Oqtac5kNaf7RgLtY3lSb0hP44fPCY7C5KO/4uxOwdrV0UiCHl3Rz5og6uVcQsxzhL7yQCF9wODlpFtQQdLxZgXTr6xhKbencOujdVuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+3OBtGY/5chd6gxnhXKVzWiME3BSs4Qa259qqbn6U0M=;
- b=cxBJ42t+80G+QPLqo3pLLuCg82GP7uy801jvkq9CrOtmEp6cp4WTBS1y3X1RkMzJYezJueETspjwFIbY5xOLkhub1Xz/vT2ArJT3JhyNScwxqhH2SSwBbnq7jMCiOGxqCn3VSc+myoF8AR/gHqpD+jOhzRf8Yz1ZuZZflzEkQrMD3LWMNdtr3SESdTdiLTZBtsSige8GRluUE+IbEvb1p0k16TCd3bhBAzgEPBJg7X5ojLPGD1mctrCDgsU2AdLpafIyN3uMvgDSl93c9UNGkJXt9VoPfGEtj6eJa79l5sV0s0B0B5XSCoarKnxhn8kLjlBMChLYat5xnbfJmG/ltQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+3OBtGY/5chd6gxnhXKVzWiME3BSs4Qa259qqbn6U0M=;
- b=TwUcDeBUef26bO4uCt6sh5yKBTpgUeGePhzCOGb1LZ/4r7yTbEKfFcN30nMIcF0kWaVth0BVdjuSU1PEaSUFCVEiDOO2lKTnXwvaXTTTbmQeAK0XY2ZK5dvy/DKEzKxAHUZksvu/4O/bmlvWtfhhJsGpCXErV0XAm4WalmvsGX1IRcnyHqw6lGQ9AMXjUkHefpfTzgRJ1gShAoZy1ZaCNDeTA0/fft7rusDt517vTXNlQQEfvl8UjzKoCqwITAY/sS+FUdoPxVjPsrB55Yet67HaW8pRumSFZnv0tPv6aGBAUK9NvvE/aar4I8rM0gITmig9kwig0qn4ouXe0DY2Lg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SI2PR06MB4012.apcprd06.prod.outlook.com (2603:1096:4:f9::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.46; Tue, 13 Jun
- 2023 09:56:55 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::76d6:4828:7e80:2965]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::76d6:4828:7e80:2965%3]) with mapi id 15.20.6455.039; Tue, 13 Jun 2023
- 09:56:55 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     glaroque@baylibre.com, rafael@kernel.org,
-        daniel.lezcano@linaro.org, amitk@kernel.org, rui.zhang@intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, thara.gopinath@gmail.com,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        edubezval@gmail.com, j-keerthy@ti.com, f.fainelli@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        Yangtao Li <frank.li@vivo.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [RESEND 3/9] thermal/drivers/amlogic: remove redundant msg in amlogic_thermal_probe()
-Date:   Tue, 13 Jun 2023 17:56:18 +0800
-Message-Id: <20230613095624.78789-3-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230613095624.78789-1-frank.li@vivo.com>
-References: <20230613095624.78789-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0033.apcprd02.prod.outlook.com
- (2603:1096:3:18::21) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SI2PR06MB4012:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c2232c5-7e3b-4b7f-3968-08db6bf48534
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Fsjus5dFmEBfFKA4qpq9GakphRC06lbP0mje3pPnghpm785wWLbCf60cmkCMb7lVix0rhMp9gAn4uL8AYdZ4EVAsJdkyW9gipzAoDT37uTFQ9xCJ/dJpJw+Vh4kymBCoKz6YZR3ArdKUoQErtInjMl8yy6Up9Sj7F2YEvyoqMi6/eT+5Kmwxm2Drgq4FZKxMJgM4EcGsk77yrAIfqu53Dwq4pJ16x0E9h+DSYPuzB/h5Iq3IR2KnlUrXswvENxdoqWx8Xx93/DafPPZNTBsL3nfccwXKV3xuRlK3yUqG/ka40yJdUJykXHG92GQtq0jw3F0WwobxaeC1G0K5JcoGyFbmgDU5Mvp0onRFJxKsB/L6uXMMYnAOzeEBQdvo/1a6KH+vdoLUn1OMoP40+uJd3BHIAMsApTCbV/U2HSTNUutmXVlNqIj1q1jL7VT1BP2opbIplL84xXlsZGbWl82LqVH8QBulAGqtTzKvkzxeDSBu4r5oyOjJAST7slXxBFcfOPp/oqe5iIUfEuRyfJfPyT+l2gDBLL2QpUW1o6y+GLBmgYojhtNnLHLULrAGhZ0W1MflVEB8362CMmczy4we3MT3umYis/rhhrXYfmEGhGDqro5SE5/EHQxtNUQjDd263PB/JvNcrbasRy/ywD3nxg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(136003)(39860400002)(376002)(346002)(451199021)(4326008)(8936002)(66556008)(316002)(7406005)(7416002)(66476007)(41300700001)(186003)(2906002)(66946007)(54906003)(4744005)(478600001)(8676002)(5660300002)(6666004)(52116002)(6486002)(1076003)(921005)(6506007)(6512007)(26005)(36756003)(83380400001)(86362001)(38100700002)(2616005)(38350700002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gTX90PoWwoMxRelS+WiGSTCbhJAeBjo9ZNisLX6mslHPOS3vINt6vW8dyrjE?=
- =?us-ascii?Q?NSN1/VdgXH2ScIBr23JLgQA249Fj5+qURDjc2D+TOVh4HPKaWl3bUsT5FHJy?=
- =?us-ascii?Q?o+GC1YjQXjQ5N6xXWv4KVr+Qn/v1IL/a0BH2HIC3oQ9iL5R0fpjqVzjEqeVp?=
- =?us-ascii?Q?rFRIhpryTLNSlAMuT4O/Sdv1hxqAWCGd4XV1JGUL0pd1oPooClHRN3yaS1+n?=
- =?us-ascii?Q?MWlcir0YtLGuEIkAXAqQLsVEgeIRz9qxuXbroM3NxBelJdTAUR+NCq//SPHl?=
- =?us-ascii?Q?VEweQqd3hK9Ry4/nvh3EKrnd6alLK2VP/UlTNl3pA3oSUWKiN52iL7iNgoTf?=
- =?us-ascii?Q?eDaCR6c59bL/YhNgI/1NGYv0WCjl/RNL7+c3Osxn4S0KUCVU1BXYnRxTspOM?=
- =?us-ascii?Q?tk/IhV0d3+O8UBkRYEQ9PFkk+HGGAv7/+d9WBnpRU7o3jIUuIskW7600zb66?=
- =?us-ascii?Q?1/uSS8cyjZTo93S1h6Hf3PY4dAJqs7N8sfToI0Sa2KG3AXlkjotGLNeyZab2?=
- =?us-ascii?Q?ftICW8uqGJ1jj5HRG5ysza3nr7UrLhKktJZhHold4Eozqo78e3cw+iPBNzq2?=
- =?us-ascii?Q?9By3mRfxo1dUirL49BDNa4bjgPpkqFV3j7MGvMcA8gOOJAkiBRQvk5NFrcjs?=
- =?us-ascii?Q?+7wSsh4YccOV6Hn4V6cfaiOimWpuHRnNpK/nh3XlnhzTEYBcDxJXkFQdMw5V?=
- =?us-ascii?Q?rn/WujNLuqduY8bm5266T2U0A4EPWfzeRBqLoIya0f0lPt4TPdDxZp3f8OKJ?=
- =?us-ascii?Q?kY9RIyHHhhnS8ImT8k7rns3sEuNmkLqEuH6x2/dN9UP4IeI53AjbRq/pW9h9?=
- =?us-ascii?Q?q4nfyYOP+H9azhEn4ORQDnaW3EkNieIJjHx6ygo2edIZtB/GKm2jfEfvZBXA?=
- =?us-ascii?Q?WJfWG2kfg/2/W8nnbDT8hDIC1vgTQuu0Oo3rGY0xg23dMezQyF6f520fOfrD?=
- =?us-ascii?Q?bBvxhQLGbtAdzpTJnQm9J9BtBWxUxbnS6wCkxFyFYLg3B6yrRUIyCwyAtpJH?=
- =?us-ascii?Q?MhmIS22ea0FL88Sd0vLLQ06yKllwfUNq20o8DhbndakIFpy/5pP9bBCV5/x0?=
- =?us-ascii?Q?Wxupz9NhEPjP4dsO4hpZ38YL+I45t8Xe2TWHwFv1CDuDAbPKf9eDFg/A2Wlo?=
- =?us-ascii?Q?BD4ycS4482nj1ScbY7LXyycZLS9CQnGEy5yUpxHjNPyCPj4RgK1LPuP6if6N?=
- =?us-ascii?Q?KB1L3N3ylriwaKqzVTgTJd5jJ1JvKREYdb2aHVOQ+VgHZ0+BSLnv5oITQdlK?=
- =?us-ascii?Q?50YZujG3TG1rctVZ7bBebBi5EbenAMHglgB3S91i3fH7dUPDZAkTErMVkEvc?=
- =?us-ascii?Q?g3hfX0R0aa2ezkzilDjucvm73jSnt7jpEzv8l6yCykfeyifH/v/LVKD4U0nq?=
- =?us-ascii?Q?dtOkrzKfrup/I7CY0jDF9jzVmKFrsCR2YVhdoANqmcDNLfnqXYzM9aR18w/g?=
- =?us-ascii?Q?Ma82t10iDbgYgU+03MzJlvhrKaTADw4LsKuBt6MOVqR578/TYmDtHlzyT0CN?=
- =?us-ascii?Q?Gmwsqccdnci+/uVWGKAsFwxQW8NrrOW/JFuohs8/N7hAjmQGEKI5MdAn806d?=
- =?us-ascii?Q?yy9iBRrY7HCZSV/gVEUu4LHk/RKqqDiZFFkip8Du?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c2232c5-7e3b-4b7f-3968-08db6bf48534
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2023 09:56:55.6621
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S0qq/9W4wI/CoxCKo6g+84999w6STuBnPcH/SLaRw88OyIzRgxON9XvrWTYkfREiNkoQOfMEEo8R6XvLAn7GSQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB4012
+        Tue, 13 Jun 2023 05:57:53 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED80A10DC
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 02:57:26 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0AC8622650;
+        Tue, 13 Jun 2023 09:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686650245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ddtss2JKtl8IdHSH+rTT1DDkc07hiGaVvLqlIGQL+NA=;
+        b=TYxQMUNOyu+CXp3C2deWEA5RIcdfXFijfwv05YS8eVNDrZ3JJZTLIIppPOxhRCDKZRwzah
+        +KGm0rovRH7bex2a9RqO0KhjWmHvCoRuvBzgl6HoEoA+nHfyEt3NKx3hicJ5lZ9wAtSUkh
+        gcsYCH45gVSxpCXMBcrVTHWPpKZFJ5g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686650245;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ddtss2JKtl8IdHSH+rTT1DDkc07hiGaVvLqlIGQL+NA=;
+        b=tddclAA671VUEVuDPoq2DQdxikQPY7Jw4OLN3FshmFuS/u9BIg5tD0WvfTogA4qV3HDfGv
+        nTDwZkoWp4HD8FDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C324613345;
+        Tue, 13 Jun 2023 09:57:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id d0SNLoQ9iGTBYwAAMHmgww
+        (envelope-from <tiwai@suse.de>); Tue, 13 Jun 2023 09:57:24 +0000
+Date:   Tue, 13 Jun 2023 11:57:24 +0200
+Message-ID: <87legnelbv.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        "Oswald Buddenhagen" <oswald.buddenhagen@gmx.de>
+Subject: Re: [PATCH] ASoC: tegra: Fix Master Volume Control
+In-Reply-To: <87mt13elff.wl-tiwai@suse.de>
+References: <20230613093453.13927-1-jonathanh@nvidia.com>
+        <87mt13elff.wl-tiwai@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The upper-layer devm_thermal_add_hwmon_sysfs() function can directly
-print error information.
+On Tue, 13 Jun 2023 11:55:16 +0200,
+Takashi Iwai wrote:
+> 
+> On Tue, 13 Jun 2023 11:34:53 +0200,
+> Jon Hunter wrote:
+> > 
+> > Commit 3ed2b549b39f ("ALSA: pcm: fix wait_time calculations") corrected
+> > the PCM wait_time calculations and in doing so reduced the calculated
+> > wait_time. This exposed an issue with the Tegra Master Volume Control
+> > (MVC) device where the reduced wait_time caused the MVC to fail. For now
+> > fix this by setting the default wait_time for Tegra to be 500ms.
+> > 
+> > Fixes: 3ed2b549b39f ("ALSA: pcm: fix wait_time calculations")
+> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> Hm, it's still not clear why it fails.  The commit above changes the
+> timeout of wait_for_avail() to the full-buffer + 10% margin.  In
+> thoery, the loop should abort after the full buffer read, and that
+> must be enough.  If there were a large FIFO behind, it might be
+> overflow, but the fifo_size of Tegra driver seems 4, so it's
+> negligible.
+> 
+> If extending the timeout "fixes" the problem, it might indicate that
+> the period update IRQ is triggered too late.  Could you measure the
+> timing of each snd_pcm_period_elapsed() and wait_for_avail() call?
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/thermal/amlogic_thermal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+OTOH, it's already at a pretty late stage for 6.4, and we need an
+urgent regression fix.  So it's better to paper over it now, while
+hunting further for the real culprit.
 
-diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
-index 3abc2dcef408..756b218880a7 100644
---- a/drivers/thermal/amlogic_thermal.c
-+++ b/drivers/thermal/amlogic_thermal.c
-@@ -282,8 +282,7 @@ static int amlogic_thermal_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (devm_thermal_add_hwmon_sysfs(&pdev->dev, pdata->tzd))
--		dev_warn(&pdev->dev, "Failed to add hwmon sysfs attributes\n");
-+	devm_thermal_add_hwmon_sysfs(&pdev->dev, pdata->tzd);
- 
- 	ret = amlogic_thermal_initialize(pdata);
- 	if (ret)
--- 
-2.39.0
 
+Takashi
