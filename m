@@ -2,90 +2,285 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5834AC7EE2E
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 10:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6045C7EE2E
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 11:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240655AbjFMKlq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Jun 2023 06:41:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38076 "EHLO
+        id S234660AbjFMLCg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Jun 2023 07:02:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241953AbjFMKln (ORCPT
+        with ESMTP id S239077AbjFMLCY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Jun 2023 06:41:43 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 845D692
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 03:41:42 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-569386b7861so93551857b3.0
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 03:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686652901; x=1689244901;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qo000+tMfEFV9hbsc5XmyKHzqMjtEWqkHh6QiK4Kq7s=;
-        b=qMUmc60ww/4ajFHunUj0BtpTP4X/HfcNS3MKa4p2WgG2GkirJ5wh6AVhkXSgMZN22z
-         Tg+cUHVX38Krjy9r4TeuuGEiMhAQMFwvuEb/rFTmPb5YkHJksF1qkUfriT0Dobk/idEl
-         wc2TkevY8VmKoolqfq0bQMGg2nt2igg2mPb6rQQ2S6A8w6ZIVK400+ylusIvzoqeyOMN
-         2zdFbL1mSc5HYsluM4+o0IqHq6GyJY1FB/FJ9BAttq+pxouPyZ0r1cq06YOMXYbaUzW2
-         eCV3XdPDUpjnhod6HsdQssXqwRPe7SAXr8liMzszzJJIuk0pB7NRiOUZWv1Wqeyg6SL+
-         7sEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686652901; x=1689244901;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qo000+tMfEFV9hbsc5XmyKHzqMjtEWqkHh6QiK4Kq7s=;
-        b=B/RRFZ2Ve56Lcfod9alxbzCfiqLwaq7L2dOdGvB4oO4tRAq3MYNtTJG6JSxTSzD/4L
-         xOzvd2XSmXGHdFLYONsO7y1j5C/G3XCEuknzquUhbykFpLf1aP8/mOqEvKXhiRQ2jy4j
-         fbI+UWSZXbV5Ki6sYEkN2fw/O3QGb2MKAdrKGRsd9BdxjpcfuAtwU+F/6/enYh1L/Ydr
-         FcrLWPbjNfRVvQ6JNfWH0J2+FDRVmVI6ujmp2aIAxt336D75mzxzB/Vb4L6OMjB9ROUT
-         9psPFIXsvYpV0U88UcPM4mU6SN2n8MHzuXPrs7kwCKc0eDnWCM6Bq2O9DYEAyjaeoyXx
-         W/2w==
-X-Gm-Message-State: AC+VfDwy8vz3+7yRBH6Sz5hH2B7ueQ8o1A7XfY5C22Mi3yi9O2JtRziZ
-        c8R0k7hYVLeOryoxrjoM66D6Y1hPmFuTs3W0Y8EBtw==
-X-Google-Smtp-Source: ACHHUZ7wXx9rL56M5TKSV8kIC35q0vxCnpiKFzxTQQHuOUbix+dPl8Nt63ZFe8Rva1rLJeB/BK0wLo7CntP9BKwy9aY=
-X-Received: by 2002:a25:8d85:0:b0:bac:ada7:140e with SMTP id
- o5-20020a258d85000000b00bacada7140emr1130861ybl.9.1686652901179; Tue, 13 Jun
- 2023 03:41:41 -0700 (PDT)
+        Tue, 13 Jun 2023 07:02:24 -0400
+X-Greylist: delayed 1626 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 13 Jun 2023 04:02:21 PDT
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626CB10D4;
+        Tue, 13 Jun 2023 04:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=2wBSbgLa93Hhq7JFpc4GMQOjRKUGshimnZAjB38+QtI=; b=yYJKcFtBdrKHarHEciqy4jzIDT
+        SpixS67atMGA132TSamQorM4iLDuG4DX2YsEDKBFujshnJMUe+8yAx/rxmd9o2pdNFvl9hefM/Clk
+        A6uI9eZwGNWtOnSSZHKINlRE+am47MUzXQZ2W/USFVPaYgjJX3W7pFFvm4UJlIVs2WprlEtjhvJbA
+        S3UP9M7c1V+EZ/aQAjPuQX4cUQT5B/UOF4/2b/xkQpvCZKV8tDoqymBoLpj0WqXMpR/pdxIjzHKju
+        BzEU/e5fBBfaLiwSWCPfPchtsqzWbVK6eBoS1NxZCNnSz5TmznxUgMmMEC/BzYw0SEH9TKlMZGllc
+        Z4XHtY0w==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1q90hL-007a9U-JZ; Tue, 13 Jun 2023 12:52:23 +0300
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/tegra: Enable runtime PM during probe
+Date:   Tue, 13 Jun 2023 12:52:14 +0300
+Message-Id: <20230613095215.2497004-1-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-References: <20230613095624.78789-1-frank.li@vivo.com> <20230613095624.78789-9-frank.li@vivo.com>
-In-Reply-To: <20230613095624.78789-9-frank.li@vivo.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 13 Jun 2023 13:41:29 +0300
-Message-ID: <CAA8EJppgSg8TJOABkrNzBRYnyu33XuJF4DYmp2d++Pifx0Hpqw@mail.gmail.com>
-Subject: Re: [RESEND 9/9] thermal/drivers/qcom: remove redundant msg
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     glaroque@baylibre.com, rafael@kernel.org,
-        daniel.lezcano@linaro.org, amitk@kernel.org, rui.zhang@intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, thara.gopinath@gmail.com,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        edubezval@gmail.com, j-keerthy@ti.com, f.fainelli@gmail.com,
-        linux-pm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 13 Jun 2023 at 12:59, Yangtao Li <frank.li@vivo.com> wrote:
->
-> The upper-layer devm_thermal_add_hwmon_sysfs() function can directly
-> print error information.
->
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  drivers/thermal/qcom/qcom-spmi-adc-tm5.c    | 4 +---
->  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 4 +---
->  drivers/thermal/qcom/tsens.c                | 4 +---
->  3 files changed, 3 insertions(+), 9 deletions(-)
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Currently, engine drivers only enable runtime PM during the host1x
+init callback. This can happen slightly later than the probe, which
+can cause the power domain to intermittently not be turned off after
+probe.
 
+My hypothesis is that there is a race condition between the post-probe
+power domain poweroff that is done from a queued work, and the
+pm_runtime_enable call happening in the host1x init callback.
+If the pm_runtime_enable call happens first, everything is OK and
+the power off work can disable the power domain as PM runtime is
+enabled and the device is runtime suspended. If power off work runs
+first, PM runtime is still disabled for the device and the domain
+must be kept powered.
+
+Resolve the issue by moving the runtime PM enablement to the
+probe function.
+
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/drm/tegra/gr2d.c  | 16 +++++++---------
+ drivers/gpu/drm/tegra/gr3d.c  | 16 +++++++---------
+ drivers/gpu/drm/tegra/nvdec.c | 17 +++++++----------
+ drivers/gpu/drm/tegra/vic.c   | 17 +++++++----------
+ 4 files changed, 28 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+index 50f77fddda54..56468268df21 100644
+--- a/drivers/gpu/drm/tegra/gr2d.c
++++ b/drivers/gpu/drm/tegra/gr2d.c
+@@ -70,22 +70,15 @@ static int gr2d_init(struct host1x_client *client)
+ 		goto free;
+ 	}
+ 
+-	pm_runtime_enable(client->dev);
+-	pm_runtime_use_autosuspend(client->dev);
+-	pm_runtime_set_autosuspend_delay(client->dev, 200);
+-
+ 	err = tegra_drm_register_client(dev->dev_private, drm);
+ 	if (err < 0) {
+ 		dev_err(client->dev, "failed to register client: %d\n", err);
+-		goto disable_rpm;
++		goto detach_iommu;
+ 	}
+ 
+ 	return 0;
+ 
+-disable_rpm:
+-	pm_runtime_dont_use_autosuspend(client->dev);
+-	pm_runtime_force_suspend(client->dev);
+-
++detach_iommu:
+ 	host1x_client_iommu_detach(client);
+ free:
+ 	host1x_syncpt_put(client->syncpts[0]);
+@@ -299,6 +292,7 @@ static void gr2d_remove(struct platform_device *pdev)
+ {
+ 	struct gr2d *gr2d = platform_get_drvdata(pdev);
+ 
++	pm_runtime_disable(&pdev->dev);
+ 	host1x_client_unregister(&gr2d->client.base);
+ }
+ 
+@@ -372,6 +366,10 @@ static int __maybe_unused gr2d_runtime_resume(struct device *dev)
+ 		goto disable_clk;
+ 	}
+ 
++	pm_runtime_enable(dev);
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_set_autosuspend_delay(dev, 500);
++
+ 	return 0;
+ 
+ disable_clk:
+diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+index c026c2c916c1..46d213620b70 100644
+--- a/drivers/gpu/drm/tegra/gr3d.c
++++ b/drivers/gpu/drm/tegra/gr3d.c
+@@ -80,22 +80,15 @@ static int gr3d_init(struct host1x_client *client)
+ 		goto free;
+ 	}
+ 
+-	pm_runtime_enable(client->dev);
+-	pm_runtime_use_autosuspend(client->dev);
+-	pm_runtime_set_autosuspend_delay(client->dev, 200);
+-
+ 	err = tegra_drm_register_client(dev->dev_private, drm);
+ 	if (err < 0) {
+ 		dev_err(client->dev, "failed to register client: %d\n", err);
+-		goto disable_rpm;
++		goto detach_iommu;
+ 	}
+ 
+ 	return 0;
+ 
+-disable_rpm:
+-	pm_runtime_dont_use_autosuspend(client->dev);
+-	pm_runtime_force_suspend(client->dev);
+-
++detach_iommu:
+ 	host1x_client_iommu_detach(client);
+ free:
+ 	host1x_syncpt_put(client->syncpts[0]);
+@@ -554,6 +547,7 @@ static void gr3d_remove(struct platform_device *pdev)
+ {
+ 	struct gr3d *gr3d = platform_get_drvdata(pdev);
+ 
++	pm_runtime_disable(&pdev->dev);
+ 	host1x_client_unregister(&gr3d->client.base);
+ }
+ 
+@@ -607,6 +601,10 @@ static int __maybe_unused gr3d_runtime_resume(struct device *dev)
+ 		goto disable_clk;
+ 	}
+ 
++	pm_runtime_enable(dev);
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_set_autosuspend_delay(dev, 500);
++
+ 	return 0;
+ 
+ disable_clk:
+diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
+index ae78a81e5eef..2bc75f4d539f 100644
+--- a/drivers/gpu/drm/tegra/nvdec.c
++++ b/drivers/gpu/drm/tegra/nvdec.c
+@@ -177,13 +177,9 @@ static int nvdec_init(struct host1x_client *client)
+ 		goto free_channel;
+ 	}
+ 
+-	pm_runtime_enable(client->dev);
+-	pm_runtime_use_autosuspend(client->dev);
+-	pm_runtime_set_autosuspend_delay(client->dev, 500);
+-
+ 	err = tegra_drm_register_client(tegra, drm);
+ 	if (err < 0)
+-		goto disable_rpm;
++		goto free_syncpt;
+ 
+ 	/*
+ 	 * Inherit the DMA parameters (such as maximum segment size) from the
+@@ -193,10 +189,7 @@ static int nvdec_init(struct host1x_client *client)
+ 
+ 	return 0;
+ 
+-disable_rpm:
+-	pm_runtime_dont_use_autosuspend(client->dev);
+-	pm_runtime_force_suspend(client->dev);
+-
++free_syncpt:
+ 	host1x_syncpt_put(client->syncpts[0]);
+ free_channel:
+ 	host1x_channel_put(nvdec->channel);
+@@ -539,6 +532,10 @@ static int nvdec_probe(struct platform_device *pdev)
+ 		goto exit_falcon;
+ 	}
+ 
++	pm_runtime_enable(dev);
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_set_autosuspend_delay(dev, 500);
++
+ 	return 0;
+ 
+ exit_falcon:
+@@ -551,8 +548,8 @@ static void nvdec_remove(struct platform_device *pdev)
+ {
+ 	struct nvdec *nvdec = platform_get_drvdata(pdev);
+ 
++	pm_runtime_disable(&pdev->dev);
+ 	host1x_client_unregister(&nvdec->client.base);
+-
+ 	falcon_exit(&nvdec->falcon);
+ }
+ 
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index da7a038dca20..19125406cf32 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -143,13 +143,9 @@ static int vic_init(struct host1x_client *client)
+ 		goto free_channel;
+ 	}
+ 
+-	pm_runtime_enable(client->dev);
+-	pm_runtime_use_autosuspend(client->dev);
+-	pm_runtime_set_autosuspend_delay(client->dev, 500);
+-
+ 	err = tegra_drm_register_client(tegra, drm);
+ 	if (err < 0)
+-		goto disable_rpm;
++		goto free_syncpt;
+ 
+ 	/*
+ 	 * Inherit the DMA parameters (such as maximum segment size) from the
+@@ -159,10 +155,7 @@ static int vic_init(struct host1x_client *client)
+ 
+ 	return 0;
+ 
+-disable_rpm:
+-	pm_runtime_dont_use_autosuspend(client->dev);
+-	pm_runtime_force_suspend(client->dev);
+-
++free_syncpt:
+ 	host1x_syncpt_put(client->syncpts[0]);
+ free_channel:
+ 	host1x_channel_put(vic->channel);
+@@ -529,6 +522,10 @@ static int vic_probe(struct platform_device *pdev)
+ 		goto exit_falcon;
+ 	}
+ 
++	pm_runtime_enable(dev);
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_set_autosuspend_delay(dev, 500);
++
+ 	return 0;
+ 
+ exit_falcon:
+@@ -541,8 +538,8 @@ static void vic_remove(struct platform_device *pdev)
+ {
+ 	struct vic *vic = platform_get_drvdata(pdev);
+ 
++	pm_runtime_disable(&pdev->dev);
+ 	host1x_client_unregister(&vic->client.base);
+-
+ 	falcon_exit(&vic->falcon);
+ }
+ 
 -- 
-With best wishes
-Dmitry
+2.40.1
+
