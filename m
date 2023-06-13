@@ -2,93 +2,82 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504B5EB64D0
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 16:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842B4EB64DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 22:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjFMQ3Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Jun 2023 12:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55160 "EHLO
+        id S232623AbjFMW1T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Jun 2023 18:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbjFMQ3Z (ORCPT
+        with ESMTP id S231429AbjFMW1P (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Jun 2023 12:29:25 -0400
+        Tue, 13 Jun 2023 18:27:15 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55123A6
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 09:29:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2FA19B1;
+        Tue, 13 Jun 2023 15:27:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EF2B962BFC
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 16:29:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A638C433F0;
-        Tue, 13 Jun 2023 16:29:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AE03463B91;
+        Tue, 13 Jun 2023 22:27:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C3AEC433CC;
+        Tue, 13 Jun 2023 22:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686673762;
-        bh=b/2NAxVPLjyTsQ54uD0b0Z8iQWQQ+kB19gD3AtEcAHY=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=dsgD/DjZ8eOnZexUeVMG5J6CXAeEnUtf/IgstYOUe4zr+HygMtZsFXCprtm8lpyb9
-         KToIEjNthxomvWRhnHL2IFVWBAXK4jDC7l9yJ0hZA8pCJL6gGeNDqtmG+9joq4XVvu
-         ovi9WDleofwL35InbpNF13z749MNQeUOqHV8BWZt66TILdbNMDHrbhbr0Dl4F74AGg
-         pk6vMTLcoNQz2rxfk6L4Qxs0qPQcI5F5wdnLo3zF03mBlj6a3++P7/ZPAD3LtrySdk
-         X2a47haqxWkxSipqfgM1KVRdZm3b2TXtxq1zbbqcoVpo16Make33N/itU1dCEZtvgA
-         mjQqph3gie4pg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
+        s=k20201202; t=1686695232;
+        bh=tRJQBbwZtaJ6NQT1/dC04nb57z6Mm49syrgZQgiFZKQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=X0pHg8OA3PIfY7MEpiGS4CnR5QMTkebIhMLdLJmHcRcpVHwREOR1oYpB7Wggf+kZw
+         avODGCtlWEgJ4Y1b5LG31rvjyNps2PmPgKHclDT8EBRJ4K0TWlVvrrfYeAP4bfTuKS
+         Wmq8In4o92ccnRshzFA4bCKgC/If8ceFCzCEWzWr7jKG4g025woNc7wDw5ZZUABIho
+         awV0MmSL5+NGCve9LrduhLoQDS4DK1uQf19VDD4NIP7xk3uBuw23WSecOHoD+UIkiT
+         /ju2/cYcamhhlwUk7qqik25+aRhWlb87XNJgR7in1HU0DUuq+ogDvZWIIMy2qGRbE9
+         rrtnTp2wxtdlQ==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Artur Weber <aweber.kernel@gmail.com>, Lee Jones <lee@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-pwm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux-leds@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        Oswald Buddenhagen <oswald.buddenhagen@gmx.de>
-In-Reply-To: <20230613093453.13927-1-jonathanh@nvidia.com>
-References: <20230613093453.13927-1-jonathanh@nvidia.com>
-Subject: Re: [PATCH] ASoC: tegra: Fix Master Volume Control
-Message-Id: <168667376026.116493.5051777673041292813.b4-ty@kernel.org>
-Date:   Tue, 13 Jun 2023 17:29:20 +0100
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Helge Deller <deller@gmx.de>,
+        linux-kernel@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/4] video: backlight: lp855x: modernize bindings
+Date:   Tue, 13 Jun 2023 15:30:10 -0700
+Message-Id: <168669542896.1315701.6764382551599027707.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230519180728.2281-1-aweber.kernel@gmail.com>
+References: <20230519180728.2281-1-aweber.kernel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-bfdf5
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 13 Jun 2023 10:34:53 +0100, Jon Hunter wrote:
-> Commit 3ed2b549b39f ("ALSA: pcm: fix wait_time calculations") corrected
-> the PCM wait_time calculations and in doing so reduced the calculated
-> wait_time. This exposed an issue with the Tegra Master Volume Control
-> (MVC) device where the reduced wait_time caused the MVC to fail. For now
-> fix this by setting the default wait_time for Tegra to be 500ms.
+On Fri, 19 May 2023 20:07:24 +0200, Artur Weber wrote:
+> Convert TI LP855X backlight controller bindings from TXT to YAML and,
+> while we're at it, rework some of the code related to PWM handling.
+> Also correct existing DTS files to avoid introducing new dtb_check
+> errors.
 > 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > 
 > [...]
 
-Applied to
+Applied, thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+[4/4] arm64: dts: adapt to LP855X bindings changes
+      commit: ebdcfc8c42c2b9d5ca1b27d8ee558eefb3e904d8
 
-Thanks!
-
-[1/1] ASoC: tegra: Fix Master Volume Control
-      commit: f9fd804aa0a36f15a35ca070ec4c52650876cc29
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
