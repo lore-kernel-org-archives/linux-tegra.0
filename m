@@ -2,186 +2,227 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E13C7EE29
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 11:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CA9C88CB6
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 12:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237979AbjFML56 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Jun 2023 07:57:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
+        id S241707AbjFMMPS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Jun 2023 08:15:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233858AbjFML55 (ORCPT
+        with ESMTP id S241683AbjFMMPR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Jun 2023 07:57:57 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2109.outbound.protection.outlook.com [40.107.117.109])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D76E6C5;
-        Tue, 13 Jun 2023 04:57:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hvmfr2mf3bPyIOxkxgOKIk530/J9m31E7x9ImA31Y0t40VXqWLVmkC1lOFg7IYhMTJFWQClXWsnJSPCNYIOZ1u9o99BbxALvcCufMQbZRBfkW3/ecEiACheLdxw9DcnA6FwId4fjpAs5i2xvRQhNJKHN/TEM6j3zSvRovFcjAF8uwXUK10Q/N+ulvH/VYPdHnBmlZzn9Vq+yzc3JZayiIAgZZWZ91sJphxIHGAYp0PLxrVvT2JwScQ5+WOLFFvd+rmf+xP4eF83FiyXXU+7jZZDZyIoLhKURt7QdJspdYltZ4MwKo/1Upflbg6IrqJuiURwl37J3e1X4DiP2ehhH/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RYSFrsSD46dy/ks1gp3MVL0PADZFYMRoXvs5cJizewA=;
- b=KrG+JkDYrwWakAESJlbEP+Cy+Iim1m/i0aeXy7NQGy8aY0lJSX4ATLk9Quh6NMjSk2vDyt5VR+FhaUTOflUtR3WcmSVhtRyaqorZyE1/E2a8zHWya1kMCL8nDbzyZzfJc9qmB8QBT3C8cgqlfmQYSBEGeUbu0FEp6sozkbssxHhoG+4zkn8YF00vjw+4SjvH8/4LJ+SWvSOjX7+6gzLEVxqbg8Nhx2mE2P/Pax5pNLthnIc4YosycQr9In4xHlWpDHtD8ouE6ERBcAPYRl15lNLDvo5t5jU+NNPyfn0LOTYfJL4j6Y9nuBZDuEbYaNDVBV7KDNiYxe5vs0aZHNv/Tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RYSFrsSD46dy/ks1gp3MVL0PADZFYMRoXvs5cJizewA=;
- b=RGT1mfOtGErPAxKVOBX81tlT0NbdSPUYZ2Jm74tGBmx1FoLwOva6BBDP3xTGNgz9TMPlB/fJfx4StzweAnjKA8fU4d8Avn/lka/j0raTs0XNadDUieZ48/eMcPGDL3CzXnJQq/VFYOeoIebP8iQVoJkFe+8LkT4DyyH3jsUjgW+2JHhrvlMKlqUxflObfae4XRBcMJHtdV+rFXPar5TvJLF0kg5JRnZHQU2eSq3nw6QJHBYz2IRj2QeHwMjAv1nH50VQUMqx/s0IjaxsmvooQc/ZUEdpFEd7mdhib1oZ4cHSJ7oYwmJwgEQzEJYkTwe6QOQbE1gFYIEtYZBMNY6HoQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SEYPR06MB6009.apcprd06.prod.outlook.com (2603:1096:101:db::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.44; Tue, 13 Jun
- 2023 11:57:50 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::76d6:4828:7e80:2965]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::76d6:4828:7e80:2965%3]) with mapi id 15.20.6455.039; Tue, 13 Jun 2023
- 11:57:50 +0000
-Message-ID: <1431a1a9-6ce2-664e-080f-42483aa2b124@vivo.com>
-Date:   Tue, 13 Jun 2023 19:57:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [RESEND 1/9] thermal/hwmon: Add error information printing for
- devm_thermal_add_hwmon_sysfs()
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, glaroque@baylibre.com,
-        rafael@kernel.org, amitk@kernel.org, rui.zhang@intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, thara.gopinath@gmail.com,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        edubezval@gmail.com, j-keerthy@ti.com, f.fainelli@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20230613095624.78789-1-frank.li@vivo.com>
- <3ab066e3-97f5-8bd1-eaae-3d790432fb6f@linaro.org>
-From:   Yangtao Li <frank.li@vivo.com>
-In-Reply-To: <3ab066e3-97f5-8bd1-eaae-3d790432fb6f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SGXP274CA0012.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::24)
- To SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+        Tue, 13 Jun 2023 08:15:17 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F43E7D
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 05:15:14 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230613121512euoutp0278fb1118f1e1b1b415f7c8371a7f840a~oNvshJHNJ2354923549euoutp02P
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 12:15:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230613121512euoutp0278fb1118f1e1b1b415f7c8371a7f840a~oNvshJHNJ2354923549euoutp02P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1686658512;
+        bh=Y3ZNB5D8AVxoBSWeoCf3C/SoDBpipqf/QKoy2s3BHR8=;
+        h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+        b=B7wm5ixWroIJbQCNrxd0zNLWaJQRaHIc3+ZBnr0HnBmf5xjRwb3zRjIfrXEA0TnEh
+         nCuOkVy0iweygiAziGwSFVNPDBlHqsnwVKxlWcOhcGySQyPH4DdDM8gshANHhj5Uxx
+         rj8lHUmR+ePu8EFB0QAqvMIUUlFqltsCU3rczYOE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230613121512eucas1p1410760ed404d847dc9574bf9fa90dc24~oNvsG5s8I0929709297eucas1p1C;
+        Tue, 13 Jun 2023 12:15:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 76.4D.37758.0DD58846; Tue, 13
+        Jun 2023 13:15:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271~oNvrmw3Ie0194501945eucas1p2F;
+        Tue, 13 Jun 2023 12:15:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230613121511eusmtrp220be5860b6b8ae4a818b2d62cc3c6736~oNvrl_9MU1045810458eusmtrp2J;
+        Tue, 13 Jun 2023 12:15:11 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-29-64885dd05d25
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 68.A0.10549.FCD58846; Tue, 13
+        Jun 2023 13:15:11 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230613121510eusmtip1c33b374b07701936d08581bf48011228~oNvqyD9VF2427124271eusmtip1I;
+        Tue, 13 Jun 2023 12:15:10 +0000 (GMT)
+Message-ID: <c031bff5-6219-adf0-6e73-b688b8de205e@samsung.com>
+Date:   Tue, 13 Jun 2023 14:15:10 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB6009:EE_
-X-MS-Office365-Filtering-Correlation-Id: a52f53fc-6599-4b91-d5c5-08db6c05698a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: FNj6uT98/xwcYnFEBYk34ValRfGY69kbgOcM+M80K6EDhRtOv2qpFjp1FVuuEafG4wHl13IE0SH4hqvzDwXTAW9lctSggztwLHTkNULbDCpORHONlwOTE/xoxw25VOI/i4uUGktoA/3oOF3kuGJF0mRx4sOopeKk25t0RdahWkC3WdCZwTxlEMYJgt62nHl+CNUx0TDe/mscxx2Lfj0AuAHcy1odbfOI0fumeUSG2Iy6zBeumAjIcAr5ACIONsOda9J5DZoni5UE+tWZITymPckvU0Z2nRcajoOmWCytnC0oepO4XA+p9gklDEyTJJnRZ9kWcTBnu/j6cptk3e2KCQ5ZjAG5M0SzKgrwUWRRblYOtf6oUOzVW2Nteel8ZQrgqHYF/WfPNg5L9I5sY81Nfdr5kvlKTPxM8J67l0NkQroblreOok4oQZWvn1tuFFzvLIciufe6v0h1TRLjKvDOdrdx+iylXI9147qipLx1iRTv5RvlIPABIBMlp0fZN1fvhb7UeSTNBiafibptWf+64cGXCsrg7foHSQtwe2rQfGzCtqQcUGXtppb6E3/wT/BhVQNN+770ezuzvGe8SnrH8H4K+0fMAF8TVZnQ/8QOnUi7ayjzut9ZbOhZVi3ekmkufRcVJ5RBWtFvyqbcPE35nss+3ZpoaAlfSfZqUglrD3qU4BNAxkK0gFs+epF2UfdX
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(396003)(39860400002)(136003)(366004)(451199021)(4326008)(66556008)(66946007)(316002)(7406005)(7416002)(66476007)(31686004)(84970400001)(41300700001)(186003)(2906002)(478600001)(8676002)(8936002)(5660300002)(6666004)(966005)(52116002)(6486002)(6512007)(6506007)(53546011)(26005)(921005)(83380400001)(36756003)(86362001)(2616005)(31696002)(38100700002)(38350700002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aCtYRDBUdXBRVy9VZkEzVGNKNm5qeE8rSEVkRGorYjBCQTBGRzEyT2g0Y2tE?=
- =?utf-8?B?dEdKd0M0bTBGL1lpNFJJRllJcjBEaFhsMUgyTlMzNUxFK29QSHpSVG5XZ3Bl?=
- =?utf-8?B?YkVocDFaVGh0b2JYRmZIVHJGajdZTi8zNStKNW5CY1h5NzYzSlZwWmo5VzV1?=
- =?utf-8?B?QmNSeHkxSlg1TFlOMlg4VWdzSHRWRDIvK3YyWWpGWDBmeEFScUdOTnVTakw1?=
- =?utf-8?B?QjZEU1c0QXIyRVJ2TmFKckczdnVSbVhVUXFZOHZqU0pRWUtsMGp4WWZlenNK?=
- =?utf-8?B?MDRvazhrVmNXRXcrdzRiKzM0cGFjV3dtWFpxVkVTV2NGY08wWDY5VzVqd0JY?=
- =?utf-8?B?THArYlpiR3AxWmgzUHVpVFRyWTRkYlhIN2VZVHZaM01UMHBGRGVxS1ZIV2hD?=
- =?utf-8?B?NzFKNnhvRnJCS0UrTTl5SjBaQTR5OU81YjJ4TE5KSEtTUHF0VnV3Q1BlYzAy?=
- =?utf-8?B?WTRBaW0rYXpWaXdQRTJwSHhBZXB4cmxKZDZJSXpHRWZaRm1aY0dMSHZWMG1B?=
- =?utf-8?B?Q2FUSjJqRHh0ZG9rRzlnRDRKVnlNb3RVUGpoanlQRTBEdjl3NkFTbTB4YjNH?=
- =?utf-8?B?R3dSL0JhemROcVhwOW9pM1BXUWJ3eVVrS0ltOWFoY0poT0N5bytKRk5uZDlJ?=
- =?utf-8?B?NkxPU3JLMDE1cGVHZmtsMTRRWENuOURYbXNVNlpET1pqN09Na21qNGtjL2hR?=
- =?utf-8?B?QklTanErb3NOTnlicGwyd3NBUGY4OVZUbUlNalZMTm9MVTV2MTVwcm5hU25G?=
- =?utf-8?B?WDl3c0VqNUNRRzNMZ2h2Yy82dmtidHltb2hBSG10OUxIcEtzSGN2ZTZDNkI5?=
- =?utf-8?B?ejJ3ZXJtRkdNRlJjd3ZVaC93WjN4dXNmeEFvSGRERnhPVWpIZGNQUzIvaEVZ?=
- =?utf-8?B?emhFWThSRnVnZmN2NjVQYjA3czRzWGpJRXI1Z1d3VGdoV1dROTgyTzEzd0tw?=
- =?utf-8?B?VnRYYndocENEVTZqQmJ3alc0YldwWVdtZkJYU3ZGUTNlZUVDZEJhSmFxbU1Q?=
- =?utf-8?B?c3hKRG9xY3RWOWtSdGZ2NDNlZlFaNW9ZNlJESVRDRzF3cngxcXFZSGRUQTFF?=
- =?utf-8?B?VjFnOFA3Z0RuT3NJNUhoQm9iYmtKUHg3anZiQTFEdTJ2d1I3RlAwNlNOVWdE?=
- =?utf-8?B?bDh2NzBSMWNmdTR5TG95NExaQnRWbmhncHJmVlhsa25Ta0NNWC9wWGJ0aFA5?=
- =?utf-8?B?Mk1lZUFNYVBDKy9JRUhobE5CUDRTZWIzWlRxc0h4L01GUlAvRUlWTGs0Mk4r?=
- =?utf-8?B?N1NUSjNscytBWHY1NFJmdFJpTWlqbHFFL1k1UkVPUTk0dEFtbGtrVmo5cDIy?=
- =?utf-8?B?SzN6VnlIcE5OdkkvTHI1NkZ0akU4WTJGTElaQUFYT1BMTG04aUpXb0ZGNGlL?=
- =?utf-8?B?M2ViZ0MxRnZURjFEWG9rYzFVRW1EYjhFZnFhdXVxUUJqUWZGQlpGcXFGaEFo?=
- =?utf-8?B?TDdiREo4ZU9zTDNRNk0rRC9PbnE3bHZENEZISTE4Y05ZdHIva0J5eDRRZGZj?=
- =?utf-8?B?aTlzblZXOGlKZDUwMytXbUp1MUxTRy9Ob2hkZko0VnlrbTFvRlBKZXRzSXF3?=
- =?utf-8?B?SjJyYXhKNG9OdWdPdjk4WVFFWEsxaUY4ZS85Y3hsdVFQYzM4MDFZeVIyV3hT?=
- =?utf-8?B?Wk90NUFvUkViUlNNZUk5VmdTNlV4akNJL3kvQWFPUmVwZ2U3b091RkZ2Z0pO?=
- =?utf-8?B?Z3dRZ1hId1JVRWhiTkRYTmpYaUtHbFJwckk5MGtjZWxjSkZ0bkY1MDk2Z1cz?=
- =?utf-8?B?eWVkaDEzdjhvTzJwUCtMS3ZTdHhVM25Xay82YWtPYzJsc0thMm8yUU5qUnJq?=
- =?utf-8?B?eHR3N1liNzhId21oZkZwaXlKUTB3Tmc1MmtHa256RWZkQXF6bWxnUjBlV21T?=
- =?utf-8?B?VGhEaEs4elVXcVpNdDRzdUsveDJiUE01STNoU0NjSDZBSUJJSkllY0wzZ2RZ?=
- =?utf-8?B?UjdjUTBtWEpPcVZ1Q0xwTGszWlpRdFlZbVNEaUdoTXFINlcyNnNjc1NpVW9z?=
- =?utf-8?B?Zm92MjR2SFFiVm1VYmxrZWRrMTU3NE1weDdZMEZpN2FWMWFSMWQ1cWwwZkdq?=
- =?utf-8?B?Qmo2Y25VR2N0dE4wWm5hdEFHdU9sWThlOWdpTHVyZTFSZWF1R2NiY1FIT3ds?=
- =?utf-8?Q?KKKnUSrJaGGVl0zsVowkUxxS9?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a52f53fc-6599-4b91-d5c5-08db6c05698a
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2023 11:57:50.6351
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4l2J6ICqbOOnX6EGrDVjjScwdXOqFLWif6gDxFo3/BRNeEuFJrBPri5/aoS57Bipl0nhkG29Gt1YEBo/D7PLjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6009
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.11.2
+Subject: Re: [PATCH v4 03/68] clk: Move no reparent case into a separate
+ function
+Content-Language: en-US
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-actions@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+In-Reply-To: <b8d0272d-0193-fe40-3294-9e32a0235323@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAKsWRmVeSWpSXmKPExsWy7djPc7oXYjtSDJbs4rS48vU9m8WqqTtZ
+        LKY9aWKx2PT4GqvFx557rBZdv1YyW3Ru2spoMWHVNxaLrS/fMVkcW32FzaLr2hNWiyn7drFZ
+        dH6ZxWYx48c/RouLp1wt/l3byOIg4PH+Riu7x51z59k8Nq3qZPO4332cyWPzknqPF5tnMnps
+        fLeDyaP/r4HHwX2GHp83yQVwRXHZpKTmZJalFunbJXBlbDgwi7lgv1JF7/lLrA2MO2S7GDk5
+        JARMJKYcv8bcxcjFISSwglFiZ8cKKOcLo8Smvd9YIZzPjBJHjk1hgWn5NXMFO4gtJLCcUWL6
+        En2Ioo+MEl3fDrKCJHgF7CRuHf3ICGKzCKhKNOxuY4SIC0qcnPkEbJCoQKrE7msHwOqFBYIl
+        Lp08AmYzC4hL3HoynwnEZhMwlOh628UGYosIlEr8ezaVBWQZs8BRZomTV24zgyQ4BewlTv/+
+        DNUsL9G8dTbYDxIC+zklPnVMYIY420Vi0f5FUC8IS7w6voUdwpaR+L8TZBtIQzujxILf96Gc
+        CYwSDc9vMUJUWUvcOfcL6A4OoBWaEut36YOYEgKOEtf6+SFMPokbbwUhbuCTmLRtOjNEmFei
+        o00IYoaaxKzj6+C2HrxwiXkCo9IspGCZheT9WUi+mYWwdgEjyypG8dTS4tz01GLjvNRyveLE
+        3OLSvHS95PzcTYzARHj63/GvOxhXvPqod4iRiYPxEKMEB7OSCO9TjfYUId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rzatieThQTSE0tSs1NTC1KLYLJMHJxSDUzNSTyysVb/DqeItFR/16t8aGDd
+        fD0/x8JzclHa9SC/vxuFtqzU/t1m5WbX//FLqwpT+9xX3kYVfFU/LsQH3S54oHl06b8vVslJ
+        EVuDktr7dux+3bly6sWfCpu+T3M7GhYiZvGnOSiv3eL3Gh5OiUXOzCu6Q1hXxU+SO30m8+Gy
+        gzt6en5XzNT53x7/ZHXEDX03y7QpyZGedbV9T8yLrpXN3PtZN/yJ41QhiXU+Vlc0w2f6ZFRw
+        GKrFsE6TKP+yeW6fSqLCTvcnT6QmfDLOa1m7b9qThd3z1qdkStiKTy932X59un7wE0n3vGM5
+        pr9cgvNnr/v70uD+spzE3rVTPeI1n8c6F9XqX0l/Ex54W4mlOCPRUIu5qDgRAI8LSEXzAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCIsWRmVeSWpSXmKPExsVy+t/xu7rnYztSDJrbVS2ufH3PZrFq6k4W
+        i2lPmlgsNj2+xmrxseceq0XXr5XMFp2btjJaTFj1jcVi68t3TBbHVl9hs+i69oTVYsq+XWwW
+        nV9msVnM+PGP0eLiKVeLf9c2sjgIeLy/0crucefceTaPTas62Tzudx9n8ti8pN7jxeaZjB4b
+        3+1g8uj/a+BxcJ+hx+dNcgFcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK
+        +nY2Kak5mWWpRfp2CXoZGw7MYi7Yr1TRe/4SawPjDtkuRk4OCQETiV8zV7B3MXJxCAksZZT4
+        1dXIDpGQkTg5rYEVwhaW+HOtiw2i6D2jxNcFO5lBErwCdhK3jn5kBLFZBFQlGna3MULEBSVO
+        znzCAmKLCqRK3F3SzwZiCwsES1w6eQRsKLOAuMStJ/OZQGw2AUOJrrddYDUiAqUSn7fuZAFZ
+        xixwlFni58mFjBCbDzBKnDj/G6yKU8Be4vTvz1CTzCS6tnYxQtjyEs1bZzNPYBSaheSQWUgW
+        zkLSMgtJywJGllWMIqmlxbnpucWGesWJucWleel6yfm5mxiB0b/t2M/NOxjnvfqod4iRiYPx
+        EKMEB7OSCO9TjfYUId6UxMqq1KL8+KLSnNTiQ4ymwNCYyCwlmpwPTD95JfGGZgamhiZmlgam
+        lmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1MW61awrfcYU1eYyjbxbQyZWpClsfH+J1C
+        39nkK64/Uj2iV73xttj/XXNPzvwTINB1eEeI0P6Su7ah1kpqHOqKz1T2bGZbF8snuXPNrtTs
+        7KyWzhOxz3/H3X3BGZcYY1yStD7WP9isfYXzXB/+w/M75Vp7Amey2k54NT2J+9i7yc48Yqfl
+        YrV8mv2unBf35S46eP7ywRI+2bU5biefn2jb/j777/LkJQ4zXHIrJ/AtzFxhPbPhguj2zdPN
+        91xht/GxK2fmytuXudEgYnZpc8eHUzfitrpOyY+Z/TDNJ3XNp4f3Hm+7m7Dyof7JZBsxS3vl
+        unU3wj4tVXle+mO1yTe91a4BH5T/RB2TEmWflztLiaU4I9FQi7moOBEA7ZGLmYcDAAA=
+X-CMS-MailID: 20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+        <20221018-clk-range-checks-fixes-v4-3-971d5077e7d2@cerno.tech>
+        <b8d0272d-0193-fe40-3294-9e32a0235323@samsung.com>
+        <CGME20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023/6/13 18:20, Daniel Lezcano wrote:
-
-> On 13/06/2023 11:56, Yangtao Li wrote:
->> Ensure that all error handling branches print error information. In this
->> way, when this function fails, the upper-layer functions can directly
->> return an error code without missing debugging information. Otherwise,
->> the error message will be printed redundantly or missing.
+On 13.06.2023 13:15, Marek Szyprowski wrote:
+> On 05.05.2023 13:25, Maxime Ripard wrote:
+>> From: Stephen Boyd <sboyd@kernel.org>
 >>
->> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+>> We'll need to turn the code in clk_mux_determine_rate_flags() to deal
+>> with CLK_SET_RATE_NO_REPARENT into a helper clock drivers will be able
+>> to use if they don't want to allow reparenting.
+>>
+>> Cc: Abel Vesa <abelvesa@kernel.org>
+>> Cc: Alessandro Zummo <a.zummo@towertech.it>
+>> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>> Cc: "Andreas Färber" <afaerber@suse.de>
+>> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+>> Cc: Chen-Yu Tsai <wens@csie.org>
+>> Cc: Chen-Yu Tsai <wenst@chromium.org>
+>> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+>> Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+>> Cc: Daniel Vetter <daniel@ffwll.ch>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: David Lechner <david@lechnology.com>
+>> Cc: Dinh Nguyen <dinguyen@kernel.org>
+>> Cc: Fabio Estevam <festevam@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Jaroslav Kysela <perex@perex.cz>
+>> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+>> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+>> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+>> Cc: Liam Girdwood <lgirdwood@gmail.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> Cc: Manivannan Sadhasivam <mani@kernel.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Cc: Markus Schneider-Pargmann <msp@baylibre.com>
+>> Cc: Max Filippov <jcmvbkbc@gmail.com>
+>> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+>> Cc: Miles Chen <miles.chen@mediatek.com>
+>> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+>> Cc: Orson Zhai <orsonzhai@gmail.com>
+>> Cc: Paul Cercueil <paul@crapouillou.net>
+>> Cc: Peng Fan <peng.fan@nxp.com>
+>> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+>> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+>> Cc: Samuel Holland <samuel@sholland.org>
+>> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+>> Cc: Sekhar Nori <nsekhar@ti.com>
+>> Cc: Shawn Guo <shawnguo@kernel.org>
+>> Cc: Takashi Iwai <tiwai@suse.com>
+>> Cc: Thierry Reding <thierry.reding@gmail.com>
+>> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+>> Cc: Vinod Koul <vkoul@kernel.org>
+>> Cc: dri-devel@lists.freedesktop.org
+>> Cc: linux-actions@lists.infradead.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-mips@vger.kernel.org
+>> Cc: linux-phy@lists.infradead.org
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> Cc: linux-rtc@vger.kernel.org
+>> Cc: linux-stm32@st-md-mailman.stormreply.com
+>> Cc: linux-sunxi@lists.linux.dev
+>> Cc: linux-tegra@vger.kernel.org
+>> Cc: NXP Linux Team <linux-imx@nxp.com>
+>> Cc: patches@opensource.cirrus.com
+>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+>> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+>> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 >> ---
->> Resend patchset so that the changes to thermal/hwmon.c are copied to 
->> everyone.
->>   drivers/thermal/thermal_hwmon.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/thermal/thermal_hwmon.c 
->> b/drivers/thermal/thermal_hwmon.c
->> index fbe55509e307..a580add5a2f6 100644
->> --- a/drivers/thermal/thermal_hwmon.c
->> +++ b/drivers/thermal/thermal_hwmon.c
->> @@ -271,11 +271,14 @@ int devm_thermal_add_hwmon_sysfs(struct device 
->> *dev, struct thermal_zone_device
->>         ptr = devres_alloc(devm_thermal_hwmon_release, sizeof(*ptr),
->>                  GFP_KERNEL);
->> -    if (!ptr)
->> +    if (!ptr) {
->> +        dev_err(dev, "Failed to allocate device resource data\n");
->>           return -ENOMEM;
->> +    }
->>         ret = thermal_add_hwmon_sysfs(tz);
->>       if (ret) {
->> +        dev_err(dev, "Failed to add hwmon sysfs attributes\n");
->>           devres_free(ptr);
->>           return ret;
->>       }
 >
-> Sorry, I commented to quickly this patch. Please discard my last 
-> comment. I think it is a good improvement.
+> This patch landed in today's linux-next as commit 1b4e99fda73f ("clk: 
+> Move no reparent case into a separate function"). Unfortunately it 
+> causes serious regression of some of my test boards. Namely Exynos3250 
+> based boards are so slow after it, that my test scripts fail with a 
+> timeout waiting for them to finish booting. I will try to debug this 
+> later in the evening to check what has happened that some clocks got 
+> very low rate.
 >
-> Can you replace the dev_err to dev_warn ?
+I just got a few spare minutes, so I decided to take a look into this 
+issue. The following change fixed my problem:
 
-Based on the thermal/tuxsuite branch of daniel.lezcano/linux.git, patch 
-v3 was sent.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ffc9f03840b7..7ac9f7a8cb84 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -629,6 +629,7 @@ clk_core_determine_rate_no_reparent(struct clk_hw *hw,
+                 best = clk_core_get_rate_nolock(core);
+         }
 
-Included [1] for cleanup thermal-generic-adc.
++       req->best_parent_rate = best;
+         req->rate = best;
 
-[1] 
-https://patchwork.kernel.org/project/linux-pm/patch/20230613093054.2067340-1-wenst@chromium.org/
+         return 0;
 
+best_parent_rate is still being used somewhere in the code and needs to 
+be updated regardless of the CLK_SET_RATE_NO_REPARENT flag.
 
-Thx,
+ > ...
 
-Yangtao
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-
-> Thanks
->
