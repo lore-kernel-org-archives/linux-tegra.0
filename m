@@ -2,106 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C63EC7EE2E
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 12:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9846C83003
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jun 2023 13:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239868AbjFMM4e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Jun 2023 08:56:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51182 "EHLO
+        id S240612AbjFMNYA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Jun 2023 09:24:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239139AbjFMM4c (ORCPT
+        with ESMTP id S240273AbjFMNX7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Jun 2023 08:56:32 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 135EF1734;
-        Tue, 13 Jun 2023 05:56:30 -0700 (PDT)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 35DCtlqE086407;
-        Tue, 13 Jun 2023 07:55:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1686660947;
-        bh=m3aWRYVccVyv3TBm3CQBhQSLQ8Afh0rwU1mPnybKOSM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=YbXTTZrIY+UGenKDmM/cnVARAJ7p9b2bkDm1ar7gDhRT7bIkCvpkwibosjYvgjLae
-         63bZObWKZFTzLmbfN45ZlZJrDJ8wPl/j5e2se5bX19Uned4epzQ4Vb8vWd/pz3VDRN
-         bBdHMeZYl0QWiJWF/oAMLaC8k8N6YWMk5xGFlFcU=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 35DCtlO3121434
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Jun 2023 07:55:47 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
- Jun 2023 07:55:47 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 13 Jun 2023 07:55:47 -0500
-Received: from [10.250.64.104] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 35DCtZPm112555;
-        Tue, 13 Jun 2023 07:55:36 -0500
-Message-ID: <4ee9c4dc-7dfc-3cb8-089d-c1535ab2531c@ti.com>
-Date:   Tue, 13 Jun 2023 18:25:34 +0530
+        Tue, 13 Jun 2023 09:23:59 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 750AFE6
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Jun 2023 06:23:58 -0700 (PDT)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1q9401-00032v-61; Tue, 13 Jun 2023 15:23:53 +0200
+Message-ID: <8f00c62e-7e9b-4b5b-c1a3-2562117795e9@leemhuis.info>
+Date:   Tue, 13 Jun 2023 15:23:52 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v3 08/12] thermal/drivers/ti-soc: remove redundant msg in
- ti_thermal_expose_sensor()
-To:     Yangtao Li <frank.li@vivo.com>, <glaroque@baylibre.com>,
-        <rafael@kernel.org>, <daniel.lezcano@linaro.org>,
-        <amitk@kernel.org>, <rui.zhang@intel.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <thara.gopinath@gmail.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <anarsoul@gmail.com>, <tiny.windzz@gmail.com>, <wens@csie.org>,
-        <jernej.skrabec@gmail.com>, <samuel@sholland.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <edubezval@gmail.com>, <matthias.bgg@gmail.com>,
-        <angelogioacchino.delregno@collabora.com>, <bchihi@baylibre.com>,
-        <niklas.soderlund+renesas@ragnatech.se>, <wenst@chromium.org>
-CC:     <linux-pm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-        <linux-tegra@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-References: <20230613114904.15749-1-frank.li@vivo.com>
- <20230613114904.15749-8-frank.li@vivo.com>
-Content-Language: en-US
-From:   "J, KEERTHY" <j-keerthy@ti.com>
-In-Reply-To: <20230613114904.15749-8-frank.li@vivo.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH] ASoC: tegra: Fix Master Volume Control
+Content-Language: en-US, de-DE
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sameer Pujar <spujar@nvidia.com>
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
+        Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20230613093453.13927-1-jonathanh@nvidia.com>
+From:   "Linux regression tracking #adding (Thorsten Leemhuis)" 
+        <regressions@leemhuis.info>
+In-Reply-To: <20230613093453.13927-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1686662638;25072e10;
+X-HE-SMSGID: 1q9401-00032v-61
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+[CCing the regression list, as it should be in the loop for regressions:
+https://docs.kernel.org/admin-guide/reporting-regressions.html]
 
+[TLDR: I'm adding this report to the list of tracked Linux kernel
+regressions; the text you find below is based on a few templates
+paragraphs you might have encountered already in similar form.
+See link in footer if these mails annoy you.]
 
-On 6/13/2023 5:19 PM, Yangtao Li wrote:
-> The upper-layer devm_thermal_add_hwmon_sysfs() function can directly
-> print error information.
-
-Acked-by: Keerthy <j-keerthy@ti.com>
-
+On 13.06.23 11:34, Jon Hunter wrote:
+> Commit 3ed2b549b39f ("ALSA: pcm: fix wait_time calculations") corrected
+> the PCM wait_time calculations and in doing so reduced the calculated
+> wait_time. This exposed an issue with the Tegra Master Volume Control
+> (MVC) device where the reduced wait_time caused the MVC to fail. For now
+> fix this by setting the default wait_time for Tegra to be 500ms.
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Fixes: 3ed2b549b39f ("ALSA: pcm: fix wait_time calculations")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->   drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> index 6a5335931f4d..d414a4b7a94a 100644
-> --- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> +++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
-> @@ -182,8 +182,7 @@ int ti_thermal_expose_sensor(struct ti_bandgap *bgp, int id,
->   	ti_bandgap_write_update_interval(bgp, data->sensor_id,
->   					 TI_BANDGAP_UPDATE_INTERVAL_MS);
->   
-> -	if (devm_thermal_add_hwmon_sysfs(bgp->dev, data->ti_thermal))
-> -		dev_warn(bgp->dev, "failed to add hwmon sysfs attributes\n");
-> +	devm_thermal_add_hwmon_sysfs(bgp->dev, data->ti_thermal); >
->   	return 0;
->   }
+> [...]
+
+Thanks for the report. To be sure the issue doesn't fall through the
+cracks unnoticed, I'm adding it to regzbot, the Linux kernel regression
+tracking bot:
+
+#regzbot ^introduced 3ed2b549b39f
+#regzbot title ASoC: tegra: Master Volume Control broken
+#regzbot ignore-activity
+
+This isn't a regression? This issue or a fix for it are already
+discussed somewhere else? It was fixed already? You want to clarify when
+the regression started to happen? Or point out I got the title or
+something else totally wrong? Then just reply and tell me -- ideally
+while also telling regzbot about it, as explained by the page listed in
+the footer of this mail.
+
+Developers: When fixing the issue, remember to add 'Link:' tags pointing
+to the report (the parent of this mail). See page linked in footer for
+details.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
