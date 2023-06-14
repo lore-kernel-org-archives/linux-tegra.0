@@ -2,202 +2,144 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8406EB64D9
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jun 2023 08:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D702EB64DA
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jun 2023 09:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243671AbjFNIkX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jun 2023 04:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33316 "EHLO
+        id S233227AbjFNJ1M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Jun 2023 05:27:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233158AbjFNIkW (ORCPT
+        with ESMTP id S235220AbjFNJ1K (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jun 2023 04:40:22 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174EA1BC6
-        for <linux-tegra@vger.kernel.org>; Wed, 14 Jun 2023 01:40:21 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q9M2n-0006Xo-A7; Wed, 14 Jun 2023 10:39:57 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q9M2l-007JTu-5z; Wed, 14 Jun 2023 10:39:55 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q9M2j-00E9QN-TW; Wed, 14 Jun 2023 10:39:53 +0200
-Date:   Wed, 14 Jun 2023 10:39:53 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Artur Weber <aweber.kernel@gmail.com>
-Cc:     Lee Jones <lee@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-pwm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 2/4] video: backlight: lp855x: get PWM for PWM mode
- during probe
-Message-ID: <20230614083953.e4kkweddjz7wztby@pengutronix.de>
-References: <20230429104534.28943-1-aweber.kernel@gmail.com>
- <20230429104534.28943-3-aweber.kernel@gmail.com>
+        Wed, 14 Jun 2023 05:27:10 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B051713
+        for <linux-tegra@vger.kernel.org>; Wed, 14 Jun 2023 02:27:08 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-977c89c47bdso84494266b.2
+        for <linux-tegra@vger.kernel.org>; Wed, 14 Jun 2023 02:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686734827; x=1689326827;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4wQ6sXNSnoiLXE/DbardJ3wfMBPxkEflPlrPVrnR8kc=;
+        b=Pv/xsOk6BGAlH84yLUIM/cjp3Wh3JVsJc5jKSzfLlibRtXmWd7CQb0+1sLrj+Wt1sE
+         kkc/cg1ChQ0aozISeEF9H6J/zd8ARemoScMQgSpB7miB629CfdYSI8I9U2I09GOIfzpz
+         s80KrVjFwiWeLcUvrJlAWUw3Y6e9VTGgX4U2EvpeBQzDt8Apt7TVc4CmmwSSx3ncCuEX
+         72YeV46uB4LV8HE7ReCuz+5A0Hxx4Ifxn6yCnZbuv6Rv9UJGIyVQMaIa2Ia0Q7vw0rZe
+         bnIvNMJiWP2i83KvEDdRv6WtT0elVDSigQR7JOvDARLL1n9kAfQcjmOcFf8lc7FuibMB
+         XGgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686734827; x=1689326827;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4wQ6sXNSnoiLXE/DbardJ3wfMBPxkEflPlrPVrnR8kc=;
+        b=laJ+XeQGwdwdJ/OAz4WbiR6g8fw7oF6kRoSrGc6OzHVKpukz/rQnGDUfy685ItPE+q
+         AjZ+PAtkFUX0JtJVrAY83PZASno+8deT5YH/MlkdgaR1Ko6LnDN9Qf+g/KL7jIMAGyIU
+         9hQWZagoNbnMtHlaRr6Lgy2Lxp8q/QmR2InDFc7+RwaMDk57eD9g8FI3d3bhbELWybiP
+         G/6JjBchmOapQsVJTsOstIVyYmL5Y/3Paw/xw8EucSZfwLKKxpolgwOnQyysOPKoYagI
+         J3YbUjipPXGi0ycUDHrl7cTzvfUgK2UercVH2uCsMgy1xra2tF6xWX0ods5tD6VWqS0V
+         6pWA==
+X-Gm-Message-State: AC+VfDz0b519896Jndub2Ev1i77JCwCtuVm4kbHYfp/Q3G4keMAlRQN7
+        L17z62ZTHH+AO/IGgBWWaALidXXbC3A=
+X-Google-Smtp-Source: ACHHUZ4zb4lEwBTLKRU5rl2jzJYGuBHmFC+EM3N0NE4TNv4mMBQsS4XQiWcK9ylFMyz4NC/c4pQF6A==
+X-Received: by 2002:a17:906:730b:b0:973:bcf6:1d4 with SMTP id di11-20020a170906730b00b00973bcf601d4mr18042481ejc.76.1686734826688;
+        Wed, 14 Jun 2023 02:27:06 -0700 (PDT)
+Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id n24-20020a170906379800b0096a6bf89259sm7747066ejc.167.2023.06.14.02.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jun 2023 02:27:06 -0700 (PDT)
+Date:   Wed, 14 Jun 2023 11:27:04 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL 3/6] dt-bindings: Changes for v6.5-rc1
+Message-ID: <ZImH6MwUTGA6s16Q@orome>
+References: <20230609193620.2275240-1-thierry.reding@gmail.com>
+ <20230609193620.2275240-3-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ek7wuekooig4rg5c"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gxmdR8maKjlNkRiC"
 Content-Disposition: inline
-In-Reply-To: <20230429104534.28943-3-aweber.kernel@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20230609193620.2275240-3-thierry.reding@gmail.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---ek7wuekooig4rg5c
-Content-Type: text/plain; charset=iso-8859-1
+--gxmdR8maKjlNkRiC
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 29, 2023 at 12:45:32PM +0200, Artur Weber wrote:
-> Also deprecate the pwm-period DT property, as it is now redundant
-> (pwms property already contains period value).
+On Fri, Jun 09, 2023 at 09:36:17PM +0200, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
 >=20
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
->  drivers/video/backlight/lp855x_bl.c | 48 ++++++++++++++++-------------
->  1 file changed, 26 insertions(+), 22 deletions(-)
+> The following changes since commit ac9a78681b921877518763ba0e89202254349d=
+1b:
 >=20
-> diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backligh=
-t/lp855x_bl.c
-> index 81012bf29baf..21eb4943ed56 100644
-> --- a/drivers/video/backlight/lp855x_bl.c
-> +++ b/drivers/video/backlight/lp855x_bl.c
-> @@ -218,23 +218,10 @@ static int lp855x_configure(struct lp855x *lp)
-> =20
->  static void lp855x_pwm_ctrl(struct lp855x *lp, int br, int max_br)
->  {
-> -	struct pwm_device *pwm;
->  	struct pwm_state state;
-> =20
-> -	/* request pwm device with the consumer name */
-> -	if (!lp->pwm) {
-> -		pwm =3D devm_pwm_get(lp->dev, lp->chipname);
-> -		if (IS_ERR(pwm))
-> -			return;
-> -
-> -		lp->pwm =3D pwm;
-> -
-> -		pwm_init_state(lp->pwm, &state);
-> -	} else {
-> -		pwm_get_state(lp->pwm, &state);
-> -	}
-> +	pwm_get_state(lp->pwm, &state);
+>   Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
+a-for-6.5-dt-bindings
+>=20
+> for you to fetch changes up to 5f027147e4796e9fc11083b2ad50a91c1ac36ede:
+>=20
+>   dt-bindings: tegra: Document Jetson Orin Nano Developer Kit (2023-06-06=
+ 14:39:20 +0200)
+>=20
+> Thanks,
+> Thierry
+>=20
+> ----------------------------------------------------------------
+> dt-bindings: Changes for v6.5-rc1
+>=20
+> Several new modules and devices are documented and fixes incorporated
+> for the Tegra234 GPIO controller pin mappings as well as the possible
+> Tegra XUDC PHY connections.
+>=20
+> ----------------------------------------------------------------
+> Prathamesh Shete (1):
+>       dt-bindings: gpio: Remove FSI domain ports on Tegra234
 
-pwm_get_state returns an error code. Do you care if it fails? (You
-probably should.)
-> =20
-> -	state.period =3D lp->pdata->period_ns;
->  	state.duty_cycle =3D div_u64(br * state.period, max_br);
->  	state.enabled =3D state.duty_cycle;
-> =20
-> @@ -339,6 +326,7 @@ static int lp855x_parse_dt(struct lp855x *lp)
->  	of_property_read_string(node, "bl-name", &pdata->name);
->  	of_property_read_u8(node, "dev-ctrl", &pdata->device_control);
->  	of_property_read_u8(node, "init-brt", &pdata->initial_brightness);
-> +	/* Deprecated, specify period in pwms property instead */
->  	of_property_read_u32(node, "pwm-period", &pdata->period_ns);
-> =20
->  	/* Fill ROM platform data if defined */
-> @@ -399,6 +387,7 @@ static int lp855x_probe(struct i2c_client *cl)
->  	const struct i2c_device_id *id =3D i2c_client_get_device_id(cl);
->  	const struct acpi_device_id *acpi_id =3D NULL;
->  	struct device *dev =3D &cl->dev;
-> +	struct pwm_state pwmstate;
->  	struct lp855x *lp;
->  	int ret;
-> =20
-> @@ -457,11 +446,6 @@ static int lp855x_probe(struct i2c_client *cl)
->  		}
->  	}
-> =20
-> -	if (lp->pdata->period_ns > 0)
-> -		lp->mode =3D PWM_BASED;
-> -	else
-> -		lp->mode =3D REGISTER_BASED;
-> -
->  	lp->supply =3D devm_regulator_get(dev, "power");
->  	if (IS_ERR(lp->supply)) {
->  		if (PTR_ERR(lp->supply) =3D=3D -EPROBE_DEFER)
-> @@ -472,11 +456,31 @@ static int lp855x_probe(struct i2c_client *cl)
->  	lp->enable =3D devm_regulator_get_optional(dev, "enable");
->  	if (IS_ERR(lp->enable)) {
->  		ret =3D PTR_ERR(lp->enable);
-> -		if (ret =3D=3D -ENODEV) {
-> +		if (ret =3D=3D -ENODEV)
->  			lp->enable =3D NULL;
-> -		} else {
-> +		else
->  			return dev_err_probe(dev, ret, "getting enable regulator\n");
-> -		}
-> +	}
-> +
-> +	lp->pwm =3D devm_pwm_get(lp->dev, lp->chipname);
-> +	if (IS_ERR(lp->pwm)) {
-> +		ret =3D PTR_ERR(lp->pwm);
-> +		if (ret =3D=3D -ENODEV || ret =3D=3D -EINVAL)
+Hi Arnd, Olof,
 
-Why would you ignore EINVAL?
+turns out that this patch in particular is more problematic than
+initially thought and is causing issues for various distributions.
 
-> +			lp->pwm =3D NULL;
-> +		else
-> +			return dev_err_probe(dev, ret, "getting PWM\n");
-> +
-> +		lp->mode =3D REGISTER_BASED;
-> +		dev_dbg(dev, "mode: register based\n");
-> +	} else {
+I think we want to back out this one patch and replace it by a version
+that simply removes the wrong FSI ports without renumbering the
+subsequent ones.
 
-pwmstate could be declared here.
+The tegra-for-6.5-memory and tegra-for-6.5-arm64-dt tags are based on an
+earlier point of the dt-bindings branch, so it should be fine to pull
+those in irrespective of this.
 
-> +		pwm_init_state(lp->pwm, &pwmstate);
-> +		/* Legacy platform data compatibility */
-> +		if (lp->pdata->period_ns > 0)
-> +			pwmstate.period =3D lp->pdata->period_ns;
-> +		pwm_apply_state(lp->pwm, &pwmstate);
+Thierry
 
-This is a change in behaviour. Before lp855x_probe() didn't modify the
-state the bootloader left the backlight in. Now you're disabling it (I
-think). Is this intended?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---ek7wuekooig4rg5c
+--gxmdR8maKjlNkRiC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSJfNkACgkQj4D7WH0S
-/k5BdAgAs/Rb0sNvnazKhyxx1/2B+8B8l05A3se8y+qIfYwQkuhUfSSbRq80AX6G
-E3LMnbhe/ZeJSNWsxC27KTQfq0549+UgOrKjn6C4XgHk2hXOHTddWHmYDdwXu2WP
-Xioakfi2oNQxtyyGpx/moi+RLXGkiENoMqdoVdoXv/s4xY9vYHGOh1y6wf24yODH
-qSmd4fhumjKaqhl60wyH8n9JJJP2RFf3qIvH1Y4f421I8mZNriOjdPoou4b8ra5t
-o/MjffWe9Jx6h4IWGnl3YWM2t2c9jNnFcEnEtQKnSRBnCtFJC30WfKdGQPuxYYvh
-LF47pzLCWDJQBbJYpKZ6u02A8AOQog==
-=ZFS9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSJh+gACgkQ3SOs138+
+s6GHDg/8D38+6hVSWbefVVoEGmosbIwt/9mgBvgZiEG40e6E+LVpsptHuFU6/KBA
+Xh5NdHcO3LXFa7BAabgT3lYBsW7nR1QHI9sH1+nVlPouFk3UkSckZG+t/KEjgQbE
+vRYmBtDAaQC6oaQkAJIA+6ckrOInHL5OPFcd1kVGqoBPRHKq5GalVVFYKmgSbQF1
+3i13LWTcUnEvFPec4kPwIvFL2LyQW8DgE1bZRfzDsY6XD5NgvA5ZjvG1KXOeOzHr
+IPsEE+B+pPcDmMFOp71fHvORkDjpGbwo2GkqF8xXdL9yxzIUCWkVcJtgkO8aSn18
+ZGw5Q4DrlpIugdso4P7GY0tbsC1H2fxCio67hQrXuY9E8v6Teg6VBiQxf9VOtZVr
+XdPyXxCjJj1BgnkFiGXn9ICq0lgs/PBEk9+HH86t+X+9YZHC9MZV3jWydaLUvwqv
+6pWCQX40q8dmTPg3WuWyR6xVtFr+IUpWSC2oqX55Ziyd8heJwz3alcdW3ufIcQhl
+9XGCOkZuvxkg5lKYcfh2HSXcZzRa5tb+BCMGUWqRI3arxB7bqW4t7IKNCktZSCTo
+LLGYOBq2py7MtGQ1uc2tcRdAJISVcE/4ZI/PKU1acOOCi+fHgd1oICmx2XpRSmzm
+7++r/RM3CNu0pL+kxCJxMSL5Jot9C7UnZGKsCwGxftvsSXgvhcs=
+=CuIk
 -----END PGP SIGNATURE-----
 
---ek7wuekooig4rg5c--
+--gxmdR8maKjlNkRiC--
