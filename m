@@ -2,57 +2,105 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B126AEB64D9
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jun 2023 09:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E3BC001B1
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jun 2023 13:21:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245550AbjFOJ2s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Jun 2023 05:28:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
+        id S1343925AbjFONVQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Jun 2023 09:21:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232816AbjFOJ2R (ORCPT
+        with ESMTP id S240465AbjFONVO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Jun 2023 05:28:17 -0400
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653E51BE5
-        for <linux-tegra@vger.kernel.org>; Thu, 15 Jun 2023 02:28:16 -0700 (PDT)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id EA1BA86878; Thu, 15 Jun 2023 10:24:46 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1686821091; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=Whk/sBm0I1VO/8HKaSqGWzRXYX0IAXNsOzyURb9APQujRZIbqLg5nijg/C1pstWrt
-         uOy7oEB5L21rktX4mxUXZbObOcNvZQ/5IyaxOeaVmy0dOUlToOwwUFjdW+shY/93IQ
-         4zkGFrldxBOtRHoijzAlVhruJp0N0P2L5xkzsagToaPQkdb9S0f7By3XA/JkWfq4q1
-         a0u5relouFbSRYasmMfqS4QsnEf/2ToVxVBjGRFsdMtJYzLWJIXMcrf3WeyqsLrsuL
-         K/QMXjfl50VE36HPPdbeHZzLTFWghTghVXWFOOJqnpLqWiiemzztp5xRm0FDp5MsOl
-         BE3IrifqWl2bw==
-Received: by mail.lokoho.com for <linux-tegra@vger.kernel.org>; Thu, 15 Jun 2023 09:21:26 GMT
-Message-ID: <20230615094301-0.1.6n.2mcro.0.kqf6w4bsw4@lokoho.com>
-Date:   Thu, 15 Jun 2023 09:21:26 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-tegra@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        Thu, 15 Jun 2023 09:21:14 -0400
+Received: from mail11.truemail.it (mail11.truemail.it [IPv6:2001:4b7e:0:8::81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0583270D;
+        Thu, 15 Jun 2023 06:21:10 -0700 (PDT)
+Received: from francesco-nb.int.toradex.com (31-10-206-125.static.upc.ch [31.10.206.125])
+        by mail11.truemail.it (Postfix) with ESMTPA id 82320206E1;
+        Thu, 15 Jun 2023 15:21:08 +0200 (CEST)
+Date:   Thu, 15 Jun 2023 15:21:02 +0200
+From:   Francesco Dolcini <francesco@dolcini.it>
+To:     Nishanth Menon <nm@ti.com>
+Cc:     Benjamin Bara <bbara93@gmail.com>, Wolfram Sang <wsa@kernel.org>,
+        Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com,
+        dmitry.osipenko@collabora.com, peterz@infradead.org,
+        jonathanh@nvidia.com, richard.leitner@linux.dev,
+        treding@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v6 1/5] kernel/reboot: emergency_restart: set correct
+ system_state
+Message-ID: <ZIsQPutiZWACawec@francesco-nb.int.toradex.com>
+References: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
+ <20230327-tegra-pmic-reboot-v6-1-af44a4cd82e9@skidata.com>
+ <20230615000650.coyphnwdai7smww7@unblended>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230615000650.coyphnwdai7smww7@unblended>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Hello Nishanth,
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+On Wed, Jun 14, 2023 at 07:06:50PM -0500, Nishanth Menon wrote:
+> On 21:02-20230509, Benjamin Bara wrote:
+> > From: Benjamin Bara <benjamin.bara@skidata.com>
+> > 
+> > As the emergency restart does not call kernel_restart_prepare(), the
+> > system_state stays in SYSTEM_RUNNING.
+> > 
+> > Since bae1d3a05a8b, this hinders i2c_in_atomic_xfer_mode() from becoming
+> > active, and therefore might lead to avoidable warnings in the restart
+> > handlers, e.g.:
+> > 
+> > [   12.667612] WARNING: CPU: 1 PID: 1 at kernel/rcu/tree_plugin.h:318 rcu_note_context_switch+0x33c/0x6b0
+> > [   12.676926] Voluntary context switch within RCU read-side critical section!
+> > ...
+> > [   12.742376]  schedule_timeout from wait_for_completion_timeout+0x90/0x114
+> > [   12.749179]  wait_for_completion_timeout from tegra_i2c_wait_completion+0x40/0x70
+> > ...
+> > [   12.994527]  atomic_notifier_call_chain from machine_restart+0x34/0x58
+> > [   13.001050]  machine_restart from panic+0x2a8/0x32c
+> > 
+> > Avoid these by setting the correct system_state.
+> > 
+> > Fixes: bae1d3a05a8b ("i2c: core: remove use of in_atomic()")
+> > Cc: stable@vger.kernel.org # v5.2+
+> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> > ---
+> >  kernel/reboot.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/kernel/reboot.c b/kernel/reboot.c
+> > index 3bba88c7ffc6..6ebef11c8876 100644
+> > --- a/kernel/reboot.c
+> > +++ b/kernel/reboot.c
+> > @@ -74,6 +74,7 @@ void __weak (*pm_power_off)(void);
+> >  void emergency_restart(void)
+> >  {
+> >  	kmsg_dump(KMSG_DUMP_EMERG);
+> > +	system_state = SYSTEM_RESTART;
+> >  	machine_emergency_restart();
+> >  }
+> >  EXPORT_SYMBOL_GPL(emergency_restart);
+> > 
+> > -- 
+> > 2.34.1
+> > 
+> 
+> Tested-by: Nishanth Menon <nm@ti.com>
+> 
+> This in addition to a deeper bug in our driver seems to have helped
+> resolve a report we had been looking at. Tested on beagleplay platform
+> 
+> https://lore.kernel.org/all/ZGeHMjlnob2GFyHF@francesco-nb.int.toradex.com/
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+Is this patch going to fix the RCU warning I reported on that email or
+it is just part of a more complex solution?
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+Francesco
 
 
-Pozdrawiam
-Adam Charachuta
