@@ -2,190 +2,218 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018A6EB64D8
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jun 2023 16:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE30EB64D7
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jun 2023 19:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345295AbjFPQll (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 16 Jun 2023 12:41:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59536 "EHLO
+        id S1345752AbjFPTDJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 16 Jun 2023 15:03:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345302AbjFPQlk (ORCPT
+        with ESMTP id S1345770AbjFPTDD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 16 Jun 2023 12:41:40 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090A32D4E
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jun 2023 09:41:39 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qACVe-0007RG-0w; Fri, 16 Jun 2023 18:41:14 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qACVb-007rTD-Jq; Fri, 16 Jun 2023 18:41:11 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qACVb-00EopP-1G; Fri, 16 Jun 2023 18:41:11 +0200
-Date:   Fri, 16 Jun 2023 18:41:10 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Artur Weber <aweber.kernel@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Lee Jones <lee@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Andy Gross <agross@kernel.org>,
+        Fri, 16 Jun 2023 15:03:03 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2058.outbound.protection.outlook.com [40.107.237.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146C03AB5;
+        Fri, 16 Jun 2023 12:02:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JN/v3l4XbnD/HBcSlxckL3cYHxC4uVQKegCxjBiTQNrgSSdXQ2TMkPiMfm5MRi5PQa6k7VAwE2GLsoqvD3ZXnY4OpBsVtFDgAW4WwUuo7mQMrqp5Cl3sVgobGnEBvCVkfbIkm8UZdRe96ujqDdRMBBe5Wsa6ejP5kIay6sZkMYRvOCfrxzvLzVeF91hnDwVpueAMlZEAl5DSMab8byyXWbmbzrMxawsi7oxcubwi3Pe8xXMvmDg1ixFVLZ5lgLx1G2565Ls2aXW3wdr8ilv04WOKKi+S/fI9BAhlGm54rpNw+TPCg21QCqCukztlSeTcf9LqHkeFbLW/Jw95jLWEAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oc9+cmsyQ7ClyqBWCUJKmesYXwKbwskFnJn3iebEKMo=;
+ b=ckU45o6hE555WtzAMiaUZgbl9SKagy4MjW6GYJaUCcrC4tPPW88NIOrn4g5ujuSebkQ+nTdnF1MDcKvbmnHcK8okE7cgo55xGxhGit1I/VhYRIDK8I+n34DXdXQEuSglwWumH0YojslByADiJ8/xIXKeLoMoQ9K/syJTuzc5Sn2HEEfcV1gZt/ZKlFsCNHQVhg1WBxq3HeUnZs42+Zfu69B2ne7JSahvQDcs1AOaNR/GJy0SpfjcunZYoDw8dB1dYGVxROsGEZDTcaoH2lEOUimpLl/T20u8Sk94uLn3h3P0Mb6QwGiXCmtQyGbL1JnjD3PlXthQ+L/VGSvd0n6orQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oc9+cmsyQ7ClyqBWCUJKmesYXwKbwskFnJn3iebEKMo=;
+ b=FaffOsvV8xbHPY5E+gB/87OzK6CWY5NyETL1eT8n/+3R/yt8IRv1bnhESjAAV6fc6/YzHK5TuZDULkAcE3oSbdSXjfbonuxcfH962DyVB30nT80z/RIJBaJyCteqPwL1nnHNhBjDnT/KjN+eWBxkxOAoi/Ljgv+iRV3sKY29lvknaFKLa1C0Z0qc7CbW4XV6GfnoD+2zPkCB6W32AU+tOPA2cKTx/sEIWBTB/nJhWlXyAP82xHgi7/ewkqaybg9XuKEvDTGsaQcZkZiNT064qQuyPyfue8E/RLVz3MdR77svSFLkjMLLqKVHm/8k5vciF8OXsL9/bxuxSxnihIpveQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by DS7PR12MB5912.namprd12.prod.outlook.com (2603:10b6:8:7d::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.29; Fri, 16 Jun
+ 2023 19:02:55 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%7]) with mapi id 15.20.6477.037; Fri, 16 Jun 2023
+ 19:02:55 +0000
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-pwm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 2/4] video: backlight: lp855x: get PWM for PWM mode
- during probe
-Message-ID: <20230616164110.euw6n7mmubmav63l@pengutronix.de>
-References: <20230429104534.28943-1-aweber.kernel@gmail.com>
- <20230429104534.28943-3-aweber.kernel@gmail.com>
- <20230614083953.e4kkweddjz7wztby@pengutronix.de>
- <23f9f004-3e20-67b0-bddc-ab9700968c53@gmail.com>
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v4 07/25] iommu/mtk_iommu_v1: Implement an IDENTITY domain
+Date:   Fri, 16 Jun 2023 16:02:36 -0300
+Message-Id: <7-v4-874277bde66e+1a9f6-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <0-v4-874277bde66e+1a9f6-iommu_all_defdom_jgg@nvidia.com>
+References: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1P221CA0028.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c5::18) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4mqeubzcqronq6sk"
-Content-Disposition: inline
-In-Reply-To: <23f9f004-3e20-67b0-bddc-ab9700968c53@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DS7PR12MB5912:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba5fb741-ff9b-4aca-6bdf-08db6e9c4ab8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nDZX7Z0IMW7AIx81V45HVuwU/qcLbPpP6tYFrasRli8wZD8rSu39siksaXbtKytY4UZTlgcfGTJNoPWdLLKMaZRcvJzg1yH5M182hfvQ2mrgXn0eUWgqrqJ5jUXALS+Cs5fpEXFrjgScfYErNxJKp0/v4VciLZoTEVKME+7hmIzfDuedbs2Kth4WvkvQRtjZjaEJJ2QtK9VBJfZtzRkX4bPEukDiYBhsXuLBTdDUtESliiBZCEtlTfPXZ5ZihFGJVnP5+7KfHJzIC5+jQdbIXT42Bwr4thz9sml3fqg5NfKaOMQBThZ5q/E7d1+PuJtGmZT/UYsSFf3Siy12NKjFXAkxV7V9fcCCILOLLjmlKOlMeUT95FLrmfzEXZqJ/nYubOnKCFqKv1ydr6z7lUdDhTjNxAhMF3c5nmDBoyvOiCSCYEjzmC5cjQ1Jli99lzigk/MNBpyEEI0JTynWzxs3kDPKQSY/5iFZIMNZdVOkk/sj/o++Mxy2Vs7Q54Fs+X1Zn/nDczbir/veAu0NdoKRG28X93bof0st7WenQ+7xh8EyCI0jgNJzN7XNE0rQ/XZHziz1A8Ed2pfWsKfdg8fpMrK/ZE6RO8oPdxtt9MtLcgzeKs7Z+weiQbclqOk1TFcW
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(376002)(366004)(136003)(396003)(346002)(451199021)(36756003)(86362001)(110136005)(66556008)(66476007)(54906003)(4326008)(316002)(66946007)(107886003)(478600001)(6666004)(6486002)(7416002)(41300700001)(5660300002)(8936002)(8676002)(7406005)(2906002)(38100700002)(921005)(2616005)(83380400001)(6512007)(6506007)(186003)(26005)(4216001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AS4myCmkuekrawsO3bY9j1M1g53dgMnIP0UQvpuXizhCMlEpp6lk1UF6OfKM?=
+ =?us-ascii?Q?9zrVrnT9WNISSqsISEjJIujeMmNCi+9ptbkZC1J994axUQ66koVkt9rXZiP0?=
+ =?us-ascii?Q?6EUVMK3ppZ/P74xuChGgkHk9+WDAH03kSd5C6YfJVecyMJFU4wO0DbNzCgzF?=
+ =?us-ascii?Q?P1NPUjg9fZe0gYcogFfrrFCtZr7Hp0b/4Yl2tASTByB6Z/il5aTLRzh73IT7?=
+ =?us-ascii?Q?AY+iT2NVfVBbzpoWMCl7phohE/jr7DXYvhjGoDsDM+1BCaBv6Yj5Mdxqrp0Q?=
+ =?us-ascii?Q?Gfk8Snoxi3jPAWpHzRO6zz+OHfS9jQMZo+hbe4Tm7JVmoKF420D3lNUswv5v?=
+ =?us-ascii?Q?PBHTkLjun4DgY5Cv8nfnTD8ccuZ7kh3V7yoUfKSFdPpOrElxl2QgqxAlZ/0W?=
+ =?us-ascii?Q?3adrQB1656CAiM5xoJzAsXQYTpAbgkwN24uUPlfmFca3LZEFv9sk/hCNS5M8?=
+ =?us-ascii?Q?n/VAfh1hBXfvdYPDAj1IazqUTvP7f7Wj/01mpRIfUfZJnw8rwwLb4OHOivMg?=
+ =?us-ascii?Q?XC4ZNFZt6HTynkIEbPekExQKAAUp+pA5jFD/7EE++lsmSOcaj99ouKQY00vG?=
+ =?us-ascii?Q?jEk9xjTBEpytDjzvqF/7t1P+2v9ZDN7x/yLjgBZJ8eQb6YqI6vMGOnPziYCp?=
+ =?us-ascii?Q?AOyfEGx4mRX6gJjlb+ukSu4hNuRarHf2cVJpc8TbE/QWgw025CIOPL2HHLUi?=
+ =?us-ascii?Q?k/Yt1IAdNP733f7wN1UYzVwlENjc1Wkfgh6qzpROHcJ02lBbDEA9sYtZSClt?=
+ =?us-ascii?Q?6678rpjTCfI4R6jAAUOnUOmBvq3JJ9eJdNgqYkIRu2Rxi+tagZYPT5EJu/Ke?=
+ =?us-ascii?Q?ZJ8qPh2+kGObI1TgjzZqHybccUsxHdeGqeFHbQP8nO3rO59p0NBGQOZVAx31?=
+ =?us-ascii?Q?cUZS3ars2597cRBaVvulHjdAk4i6y09vSLwosSpD2CazLP88WmHj3DUEQxlN?=
+ =?us-ascii?Q?7MTL26fKU/2jnSl29b/fhb9vnc7Jz2ZaC7ZXGFrhyutUMIO6H/wRn2XtcrvG?=
+ =?us-ascii?Q?pl09uG2kQbIigmvMAb4R5gtAt1avSEpU+kg5AyHWW0ZYlAuBZJ7y8OWMzoLP?=
+ =?us-ascii?Q?xa+C4x724FWljg7fva1yo6NAnGPREQcoI0AjeB06ymnVfM9+Prs9NRd+x5N8?=
+ =?us-ascii?Q?dN3dgyTZ8MZaBt0gsC6vt/lFm9ckmJHTPmSEHp31O0aT2xQD77SGYOnWyELZ?=
+ =?us-ascii?Q?aW5+15gSoHwizq2glnkpwvDf1R89xltrgJ1xjxyHq1loyKwF1PFrY8PHeUvo?=
+ =?us-ascii?Q?7FU14D7erLMuvnxJzrVEm1TYJbS1tV+yA3kI5C09U8mJP0R2wEELXIrB/w0M?=
+ =?us-ascii?Q?LJI/u3d+uZLcs+QHF0T6hGIEygwR3FI7tVwdVdjKpyZCur00cww/napcY3ew?=
+ =?us-ascii?Q?InIweydrkXiMJeoqdLaQ9Csx+cb7kIjaqdvlnFcp8aBdIRnH5mrfKRYjHout?=
+ =?us-ascii?Q?xSlTtNkTaAO/gtgBeLCccvtO9V8KOlnC05TAmLAw6cHZ17+CN00dAFcezzCZ?=
+ =?us-ascii?Q?DtEK+4I+LC1OjBAFGwvlqOVkoqs9C8799POjlTAc7IwqE4cq+OE5X9JlOZZj?=
+ =?us-ascii?Q?dhcDdAhPB5ayiBeWSe95PWZkgBDaM16A/tdUvvh6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba5fb741-ff9b-4aca-6bdf-08db6e9c4ab8
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2023 19:02:55.2072
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UwZo/lNoIHKTt80v3ZaHUrj1Py/BIiENoJXEqIjPRtgbjThprjcO/YGyaa6WOCDo
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5912
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+What mtk does during mtk_iommu_v1_set_platform_dma() is actually putting
+the iommu into identity mode. Make this available as a proper IDENTITY
+domain.
 
---4mqeubzcqronq6sk
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The mtk_iommu_v1_def_domain_type() from
+commit 8bbe13f52cb7 ("iommu/mediatek-v1: Add def_domain_type") explains
+this was needed to allow probe_finalize() to be called, but now the
+IDENTITY domain will do the same job so change the returned
+def_domain_type.
 
-Hello,
+mkt_v1 is the only driver that returns IOMMU_DOMAIN_UNMANAGED from
+def_domain_type().  This allows the next patch to enforce an IDENTITY
+domain policy for this driver.
 
-On Fri, Jun 16, 2023 at 05:29:08PM +0200, Artur Weber wrote:
-> On 14/06/2023 10:39, Uwe Kleine-K=F6nig wrote:
-> > On Sat, Apr 29, 2023 at 12:45:32PM +0200, Artur Weber wrote:
-> >> Also deprecate the pwm-period DT property, as it is now redundant
-> >> (pwms property already contains period value).
-> >>
-> >> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> >> ---
-> >>  drivers/video/backlight/lp855x_bl.c | 48 ++++++++++++++++-------------
-> >>  1 file changed, 26 insertions(+), 22 deletions(-)
-> >>
-> >> diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backl=
-ight/lp855x_bl.c
-> >> index 81012bf29baf..21eb4943ed56 100644
-> >> --- a/drivers/video/backlight/lp855x_bl.c
-> >> +++ b/drivers/video/backlight/lp855x_bl.c
-> >> ...
-> >> @@ -472,11 +456,31 @@ static int lp855x_probe(struct i2c_client *cl)
-> >>  	lp->enable =3D devm_regulator_get_optional(dev, "enable");
-> >>  	if (IS_ERR(lp->enable)) {
-> >>  		ret =3D PTR_ERR(lp->enable);
-> >> -		if (ret =3D=3D -ENODEV) {
-> >> +		if (ret =3D=3D -ENODEV)
-> >>  			lp->enable =3D NULL;
-> >> -		} else {
-> >> +		else
-> >>  			return dev_err_probe(dev, ret, "getting enable regulator\n");
-> >> -		}
-> >> +	}
-> >> +
-> >> +	lp->pwm =3D devm_pwm_get(lp->dev, lp->chipname);
-> >> +	if (IS_ERR(lp->pwm)) {
-> >> +		ret =3D PTR_ERR(lp->pwm);
-> >> +		if (ret =3D=3D -ENODEV || ret =3D=3D -EINVAL)
-> >=20
-> > Why would you ignore EINVAL?
->=20
-> EINVAL is returned when the pwms property is not found in the DT node
-> for the backlight. Not sure if there's a better way of separately
-> detecting whether it's present (especially when taking into
-> consideration non-DT platforms that might use the driver). Would be nice
-> to have something like devm_regulator_get_optional but for PWMs...
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+---
+ drivers/iommu/mtk_iommu_v1.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-Ah, that is because of_pwm_get() calls of_property_match_string(np,
-"pwm-names", con_id) which returns -EINVAL if there is no pwm-names
-property. This is different for clocks. I wonder if pwm should adapt
-accordingly? Thierry?
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index 8a0a5e5d049f4a..cc3e7d53d33ad9 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -319,11 +319,27 @@ static int mtk_iommu_v1_attach_device(struct iommu_domain *domain, struct device
+ 	return 0;
+ }
+ 
+-static void mtk_iommu_v1_set_platform_dma(struct device *dev)
++static int mtk_iommu_v1_identity_attach(struct iommu_domain *identity_domain,
++					struct device *dev)
+ {
+ 	struct mtk_iommu_v1_data *data = dev_iommu_priv_get(dev);
+ 
+ 	mtk_iommu_v1_config(data, dev, false);
++	return 0;
++}
++
++static struct iommu_domain_ops mtk_iommu_v1_identity_ops = {
++	.attach_dev = mtk_iommu_v1_identity_attach,
++};
++
++static struct iommu_domain mtk_iommu_v1_identity_domain = {
++	.type = IOMMU_DOMAIN_IDENTITY,
++	.ops = &mtk_iommu_v1_identity_ops,
++};
++
++static void mtk_iommu_v1_set_platform_dma(struct device *dev)
++{
++	mtk_iommu_v1_identity_attach(&mtk_iommu_v1_identity_domain, dev);
+ }
+ 
+ static int mtk_iommu_v1_map(struct iommu_domain *domain, unsigned long iova,
+@@ -443,7 +459,7 @@ static int mtk_iommu_v1_create_mapping(struct device *dev, struct of_phandle_arg
+ 
+ static int mtk_iommu_v1_def_domain_type(struct device *dev)
+ {
+-	return IOMMU_DOMAIN_UNMANAGED;
++	return IOMMU_DOMAIN_IDENTITY;
+ }
+ 
+ static struct iommu_device *mtk_iommu_v1_probe_device(struct device *dev)
+@@ -578,6 +594,7 @@ static int mtk_iommu_v1_hw_init(const struct mtk_iommu_v1_data *data)
+ }
+ 
+ static const struct iommu_ops mtk_iommu_v1_ops = {
++	.identity_domain = &mtk_iommu_v1_identity_domain,
+ 	.domain_alloc	= mtk_iommu_v1_domain_alloc,
+ 	.probe_device	= mtk_iommu_v1_probe_device,
+ 	.probe_finalize = mtk_iommu_v1_probe_finalize,
+-- 
+2.40.1
 
-> Still, someone who's setting up the driver could check the debug
-> messages to see if the backlight was set up in PWM mode or register mode.
->=20
-> > ...
-> >> +		pwm_init_state(lp->pwm, &pwmstate);
-> >> +		/* Legacy platform data compatibility */
-> >> +		if (lp->pdata->period_ns > 0)
-> >> +			pwmstate.period =3D lp->pdata->period_ns;
-> >> +		pwm_apply_state(lp->pwm, &pwmstate);
-> >=20
-> > This is a change in behaviour. Before lp855x_probe() didn't modify the
-> > state the bootloader left the backlight in. Now you're disabling it (I
-> > think). Is this intended?
->=20
-> I didn't really consider the implication of this in this way, as on the
-> device I was testing this on (Exynos4212-based tablet) the PWM state
-> would get reset during PWM chip initialization in the kernel anyways,
-
-Which chip driver is in use here? That's a patch opportunity.
-
-> meaning that the state from the bootloader would be lost regardless of
-> this change. Either way, there's no guarantee that this would be the
-> same on other devices, though I'd assume that in most cases it's not
-> noticeable anyways as brightness is usually set somewhere in userspace
-> (or even earlier, in the driver, if the init-brt property is set).
-> Nonetheless, that's an oversight on my part.
->=20
-> As for the reasoning for this change in behavior - the previous behavior
-> was to silently fail if, while setting the brightness, the PWM could not
-
-This sounds wrong.
-
-> be set up. This seemed rather confusing to me (I encountered this while
-> I was initially working on the tablet, I added a "pwm" property instead
-> of "pwms" and was wondering why the backlight didn't work...)
->=20
-> Of course, that could be fixed by adding error detection in the
-> brightness set function, but since I was already working on it, it made
-> more sense to me for the PWM to be set up during the probing process,
-> given that this way we could 1. warn about errors early, and 2. catch
-> deferred probes and defer the backlight's probe if we're still waiting
-> for the PWM. That's why it's done the way it is in this patch.
->=20
-> If this is undesired behavior, let me know and I'll submit another patch
-> to revert it.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---4mqeubzcqronq6sk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSMkKYACgkQj4D7WH0S
-/k5aIgf/SKGaRvfH39P++n5jjD+2vTiF6VAra1GFSjVbAemXWn/xObeuAuXttlyq
-CE+cFGFp+1eFFOLONWN81+8U63juiEjRTcL9N5WKbvZp8M4Pd5UkT416BdpWwS7L
-I95v5E6qX4+Khs9cm1j7VzR3u388P+I2RVJVQdW/PMZqVmgroxJDunEjCP5doSFf
-ZdWVdbFE2ouPLTk+iphxV3XDjNyFREESRjP9IVK7qu/GE1l6e6NGUNkw0yWySot/
-JvnVTvEMx8xv1AbKAHIRa1QtyXaUpx4C2k6GR9evEVRnHH1JB5G9TtuxKXsrU1lo
-Zgdg1fCGFoWkoczbrHsYFpyUXw2V2g==
-=eNSY
------END PGP SIGNATURE-----
-
---4mqeubzcqronq6sk--
