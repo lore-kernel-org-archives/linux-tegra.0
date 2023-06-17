@@ -2,71 +2,64 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E84EFEB64D9
-	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jun 2023 18:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91D5EB64D9
+	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jun 2023 18:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbjFQSFe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 17 Jun 2023 14:05:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40338 "EHLO
+        id S232192AbjFQSq6 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 17 Jun 2023 14:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjFQSFd (ORCPT
+        with ESMTP id S229663AbjFQSq4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 17 Jun 2023 14:05:33 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B1B1732
-        for <linux-tegra@vger.kernel.org>; Sat, 17 Jun 2023 11:05:31 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-982acf0a4d2so264761566b.3
-        for <linux-tegra@vger.kernel.org>; Sat, 17 Jun 2023 11:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1687025129; x=1689617129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sD3IWEzBGQZ8mcTerhCj4o67e1f5v1lsAPNkuhRyMbk=;
-        b=Vnox8eNsc3z1h0i7Qz6zo8ubTeI84nPWZ1G0PcuFLgIDM7TfGGdPvSq1NDXbqK8elo
-         a4mBT1PzirGrvJMy0OcM+1hdWSRNggEGS98dc09/UhINUMIvKq9fkM5v0UBKPR1SiHtj
-         v5YH9+DiNNCsdA68R9XEvzFRfx/phW5Vnmwd4=
+        Sat, 17 Jun 2023 14:46:56 -0400
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F6F1B1;
+        Sat, 17 Jun 2023 11:46:54 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-9875c2d949eso144265966b.0;
+        Sat, 17 Jun 2023 11:46:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687025129; x=1689617129;
+        d=1e100.net; s=20221208; t=1687027613; x=1689619613;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sD3IWEzBGQZ8mcTerhCj4o67e1f5v1lsAPNkuhRyMbk=;
-        b=hk9V19qj2f7wa/3DiFARYQ7GPiJnLCR9EbNHj5pjS6SVkgfhVosjPDxA2J80k31j3z
-         WGNE3aNzXoWq01Qqi/cxMB/HPvBkpv4OJ6gKwj9f1QDgiagv8ZJINk6h12d0bordLh1T
-         L3QRmzsARGBzZNkj0+tlAngnyG6Et068uXSXr5VHtcPF/0wqw2N9hyiTFZ+PZME3WC4J
-         jRbib3ckrOwexEE0S3iBPR7v6UHe5aKlF1P70VlJTgffA4sRn4DKOZWyfMUqGWEb6H+/
-         rtWfFbJGU1P6RbguaEXQ59b3ZSJRGtJtldtIT6Ut5Kq+EO32C1KYPrmuNpAFmQSEi5Rv
-         FkxA==
-X-Gm-Message-State: AC+VfDwFLg7A/omSaOx/jA+x3E8KnfSBvz8Up6REiRbg+766hE/cqT//
-        CpSqeY8jtZrJfZvqg8XK9aHKiP8dQAyEknSoRktKwMv2HSE=
-X-Google-Smtp-Source: ACHHUZ6lSLWxjjf6zHDd0Y27HMiXrzIz91SdqEnrPfgShgaH5Rk3f1O4/cSs2KqXP1SEMWdxZUxCUA==
-X-Received: by 2002:a17:907:2d09:b0:982:66e5:64fc with SMTP id gs9-20020a1709072d0900b0098266e564fcmr5085131ejc.44.1687025129560;
-        Sat, 17 Jun 2023 11:05:29 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id u15-20020a170906068f00b009886aaeb722sm25592ejb.137.2023.06.17.11.05.29
-        for <linux-tegra@vger.kernel.org>
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IIAlmExRE6EbIYR/X1OU/hkRy+rZ5PC7Pr91ssHegm8=;
+        b=WwtG/tWWRtuI+IdssLECT1z/qWs6cSUndYLLcDE2wBFDig0lT692D+upLjKA/Q2rJF
+         wSUJ3sr61r2uKXrCuA3ISCCtVLu6L6Czq8+N9aMOJu0C6vf8zW/al9Sj1uulf5pt3UWl
+         kXay5lerCeOIFjCcKGXStK0VjxAGfRyL73hgXQwpapVSPD6PVliTmsbH1lqcQ07Wll/k
+         bOkpw4zlAjbXvQRNavAMCO7TbCm2rsrySqtJ5cZTn4jaB9iF5pvFlm1QJZMacbv2e6ei
+         xRU0LJt73nvrUnwDH41Nbr4RbQXPLLofVCsyTegL0LaMUZVbpuojGHZpQJ1u0samdTR7
+         UdIA==
+X-Gm-Message-State: AC+VfDycdJC6/ruk2PBHjHBN+zWRPnGWKGG8CBN9rdjoJ+2rY8Dm7HNZ
+        PkGwnT7lmoXS++/W/Ki02LgurPdBMquk3ltY
+X-Google-Smtp-Source: ACHHUZ7sTcQxpVRu8qkIQQ9dty7EabO/pUgqwSAdI5433RC4EXc6ay8SfsxZ7qMiVUfj13LN5QueXw==
+X-Received: by 2002:a19:9209:0:b0:4f6:25a3:95ab with SMTP id u9-20020a199209000000b004f625a395abmr3094783lfd.25.1687020704859;
+        Sat, 17 Jun 2023 09:51:44 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 9-20020ac24829000000b004f625831d85sm3530603lft.126.2023.06.17.09.51.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 Jun 2023 11:05:29 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-516500163b2so3292a12.1
-        for <linux-tegra@vger.kernel.org>; Sat, 17 Jun 2023 11:05:29 -0700 (PDT)
-X-Received: by 2002:a05:600c:444e:b0:3f4:2736:b5eb with SMTP id
- v14-20020a05600c444e00b003f42736b5ebmr491530wmn.1.1687024655682; Sat, 17 Jun
- 2023 10:57:35 -0700 (PDT)
+        Sat, 17 Jun 2023 09:51:44 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2b45c289615so21192341fa.1;
+        Sat, 17 Jun 2023 09:51:44 -0700 (PDT)
+X-Received: by 2002:a2e:9896:0:b0:2ad:8380:770d with SMTP id
+ b22-20020a2e9896000000b002ad8380770dmr3881903ljj.21.1687020704207; Sat, 17
+ Jun 2023 09:51:44 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
  <20230601154002.uv2wfatpb7b45duz@pengutronix.de> <CAD=FV=WvP--wJwBQtnSoW_xb57R1Wf9dH0XzWxe+NorczXfeAw@mail.gmail.com>
  <20230617161222.wy55pbomnrrlfy5u@pengutronix.de>
 In-Reply-To: <20230617161222.wy55pbomnrrlfy5u@pengutronix.de>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Sat, 17 Jun 2023 10:57:23 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U5gbMUNteyyFcTvHVBDWzfthM0aDirJC+yXGovDwMOBA@mail.gmail.com>
-Message-ID: <CAD=FV=U5gbMUNteyyFcTvHVBDWzfthM0aDirJC+yXGovDwMOBA@mail.gmail.com>
+Reply-To: wens@csie.org
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sun, 18 Jun 2023 00:51:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v676WBuHeN5cLNZEF0FHRu=jsNhVxN50pnZCMbqGFPYmLw@mail.gmail.com>
+Message-ID: <CAGb2v676WBuHeN5cLNZEF0FHRu=jsNhVxN50pnZCMbqGFPYmLw@mail.gmail.com>
 Subject: Re: patches dropped from drm-misc-next [Was: Re: [PATCH 00/53] drm:
  Convert to platform remove callback returning] void
 To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+Cc:     Doug Anderson <dianders@chromium.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
         Xinliang Liu <xinliang.liu@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         dri-devel@lists.freedesktop.org,
@@ -139,7 +132,6 @@ Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
         Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
         Xinwei Kong <kong.kongxinwei@hisilicon.com>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
         Mali DP Maintainers <malidp@foss.arm.com>,
         Joel Stanley <joel@jms.id.au>, nouveau@lists.freedesktop.org,
         Orson Zhai <orsonzhai@gmail.com>,
@@ -199,43 +191,33 @@ Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
         Raymond Tan <raymond.tan@intel.com>,
         Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Sat, Jun 17, 2023 at 9:15=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+On Sun, Jun 18, 2023 at 12:13 AM Uwe Kleine-König
 <u.kleine-koenig@pengutronix.de> wrote:
 >
 > [expanding recipents by the other affected persons]
 >
 > On Thu, Jun 08, 2023 at 09:08:15AM -0700, Doug Anderson wrote:
-> > On Thu, Jun 1, 2023 at 8:40=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+> > On Thu, Jun 1, 2023 at 8:40 AM Uwe Kleine-König
 > > <u.kleine-koenig@pengutronix.de> wrote:
 > > >
 > > > Hello,
 > > >
-> > > On Sun, May 07, 2023 at 06:25:23PM +0200, Uwe Kleine-K=C3=B6nig wrote=
-:
+> > > On Sun, May 07, 2023 at 06:25:23PM +0200, Uwe Kleine-König wrote:
 > > > > this patch series adapts the platform drivers below drivers/gpu/drm
-> > > > to use the .remove_new() callback. Compared to the traditional .rem=
-ove()
-> > > > callback .remove_new() returns no value. This is a good thing becau=
-se
-> > > > the driver core doesn't (and cannot) cope for errors during remove.=
- The
-> > > > only effect of a non-zero return value in .remove() is that the dri=
-ver
-> > > > core emits a warning. The device is removed anyhow and an early ret=
-urn
+> > > > to use the .remove_new() callback. Compared to the traditional .remove()
+> > > > callback .remove_new() returns no value. This is a good thing because
+> > > > the driver core doesn't (and cannot) cope for errors during remove. The
+> > > > only effect of a non-zero return value in .remove() is that the driver
+> > > > core emits a warning. The device is removed anyhow and an early return
 > > > > from .remove() usually yields a resource leak.
 > > > >
-> > > > By changing the remove callback to return void driver authors canno=
-t
-> > > > reasonably (but wrongly) assume any more that there happens some ki=
-nd of
+> > > > By changing the remove callback to return void driver authors cannot
+> > > > reasonably (but wrongly) assume any more that there happens some kind of
 > > > > cleanup later.
 > > >
 > > > I wonder if someone would volunteer to add the whole series to
@@ -254,52 +236,29 @@ nd of
 > >
 > > 71722685cd17 drm/xlnx/zynqmp_dpsub: Convert to platform remove
 > > callback returning void
-> > 1ed54a19f3b3 drm/vc4: Convert to platform remove callback returning voi=
-d
-> > b957812839f8 drm/v3d: Convert to platform remove callback returning voi=
-d
-> > e2fd3192e267 drm/tve200: Convert to platform remove callback returning =
-void
-> > 84e6da7ad553 drm/tiny: Convert to platform remove callback returning vo=
-id
-> > 34cdd1f691ad drm/tidss: Convert to platform remove callback returning v=
-oid
-> > d665e3c9d37a drm/sun4i: Convert to platform remove callback returning v=
-oid
-> > 0c259ab19146 drm/stm: Convert to platform remove callback returning voi=
-d
-> > 9a865e45884a drm/sti: Convert to platform remove callback returning voi=
-d
-> > 3c855610840e drm/rockchip: Convert to platform remove callback returnin=
-g void
-> > e41977a83b71 drm/panfrost: Convert to platform remove callback returnin=
-g void
-> > cef3776d0b5a drm/panel: Convert to platform remove callback returning v=
-oid
-> > bd296a594e87 drm/mxsfb: Convert to platform remove callback returning v=
-oid
-> > 38ca2d93d323 drm/meson: Convert to platform remove callback returning v=
-oid
-> > fd1457d84bae drm/mcde: Convert to platform remove callback returning vo=
-id
-> > 41a56a18615c drm/logicvc: Convert to platform remove callback returning=
- void
-> > 980ec6444372 drm/lima: Convert to platform remove callback returning vo=
-id
-> > 82a2c0cc1a22 drm/hisilicon: Convert to platform remove callback returni=
-ng void
-> > c3b28b29ac0a drm/fsl-dcu: Convert to platform remove callback returning=
- void
-> > a118fc6e71f9 drm/atmel-hlcdc: Convert to platform remove callback retur=
-ning void
-> > 9a32dd324c46 drm/aspeed: Convert to platform remove callback returning =
-void
-> > 2c7d291c498c drm/arm/malidp: Convert to platform remove callback return=
-ing void
-> > a920028df679 drm/arm/hdlcd: Convert to platform remove callback returni=
-ng void
-> > 1bf3d76a7d15 drm/komeda: Convert to platform remove callback returning =
-void
+> > 1ed54a19f3b3 drm/vc4: Convert to platform remove callback returning void
+> > b957812839f8 drm/v3d: Convert to platform remove callback returning void
+> > e2fd3192e267 drm/tve200: Convert to platform remove callback returning void
+> > 84e6da7ad553 drm/tiny: Convert to platform remove callback returning void
+> > 34cdd1f691ad drm/tidss: Convert to platform remove callback returning void
+> > d665e3c9d37a drm/sun4i: Convert to platform remove callback returning void
+> > 0c259ab19146 drm/stm: Convert to platform remove callback returning void
+> > 9a865e45884a drm/sti: Convert to platform remove callback returning void
+> > 3c855610840e drm/rockchip: Convert to platform remove callback returning void
+> > e41977a83b71 drm/panfrost: Convert to platform remove callback returning void
+> > cef3776d0b5a drm/panel: Convert to platform remove callback returning void
+> > bd296a594e87 drm/mxsfb: Convert to platform remove callback returning void
+> > 38ca2d93d323 drm/meson: Convert to platform remove callback returning void
+> > fd1457d84bae drm/mcde: Convert to platform remove callback returning void
+> > 41a56a18615c drm/logicvc: Convert to platform remove callback returning void
+> > 980ec6444372 drm/lima: Convert to platform remove callback returning void
+> > 82a2c0cc1a22 drm/hisilicon: Convert to platform remove callback returning void
+> > c3b28b29ac0a drm/fsl-dcu: Convert to platform remove callback returning void
+> > a118fc6e71f9 drm/atmel-hlcdc: Convert to platform remove callback returning void
+> > 9a32dd324c46 drm/aspeed: Convert to platform remove callback returning void
+> > 2c7d291c498c drm/arm/malidp: Convert to platform remove callback returning void
+> > a920028df679 drm/arm/hdlcd: Convert to platform remove callback returning void
+> > 1bf3d76a7d15 drm/komeda: Convert to platform remove callback returning void
 >
 > Together with the patches that were applied later the topmost commit
 > from this series is c2807ecb5290 ("drm/omap: Convert to platform remove
@@ -318,13 +277,12 @@ void
 > also not included with a different commit id). The 37 patches dropped
 > are 13cdd12a9f934158f4ec817cf048fcb4384aa9dc..c2807ecb5290:
 >
->         $ git shortlog -s 13cdd12a9f934158f4ec817cf048fcb4384aa9dc..c2807=
-ecb5290
+>         $ git shortlog -s 13cdd12a9f934158f4ec817cf048fcb4384aa9dc..c2807ecb5290
 >              1  Christophe JAILLET
 >              2  Jessica Zhang
 >              5  Karol Wachowski
 >              1  Laura Nao
->             27  Uwe Kleine-K=C3=B6nig
+>             27  Uwe Kleine-König
 >              1  Wang Jianzheng
 >
 >
@@ -332,24 +290,9 @@ ecb5290
 > my/these patches? Can c2807ecb5290 please be merged into drm-misc-next
 > again?
 
-Actually, it was probably a mistake that these patches got merged to
-linuxnext during the 4 days that you noticed. However, your patches
-aren't dropped and are still present in drm-misc-next.
+AFAIK drm-misc/for-linux-next cuts off at -rc6, at which point any patches
+merged get queued up for -next-next. I think that's what happened to your
+patches?
 
-drm-misc has a bit of a unique model and it's documented fairly well here:
 
-https://drm.pages.freedesktop.org/maintainer-tools/drm-misc.html
-
-The key is that committers can commit to drm-misc-next _at any time_
-regardless of the merge window. The drm-misc merge strategy makes this
-OK. Specifically, when it's late in the linux cycle then drm-misc-next
-is supposed to stop merging to linuxnext. Then, shortly after the
-merge window closes, patches will start flowing again.
-
-So basically your patches are landed and should even keep the same git
-hashes when they eventually make it to Linux. They just won't land for
-another release cycle of Linux.
-
-Hope that makes sense!
-
--Doug
+ChenYu
