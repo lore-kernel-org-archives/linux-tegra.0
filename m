@@ -2,117 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D27CEB64DA
-	for <linux-tegra@archiver.kernel.org>; Sun, 18 Jun 2023 05:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A1CEB64D8
+	for <linux-tegra@archiver.kernel.org>; Sun, 18 Jun 2023 08:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229552AbjFRF4H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 18 Jun 2023 01:56:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43620 "EHLO
+        id S229692AbjFRIvJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 18 Jun 2023 04:51:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjFRF4G (ORCPT
+        with ESMTP id S229690AbjFRIvH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 18 Jun 2023 01:56:06 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A184310D0;
-        Sat, 17 Jun 2023 22:56:04 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3090d3e9c92so2260807f8f.2;
-        Sat, 17 Jun 2023 22:56:04 -0700 (PDT)
+        Sun, 18 Jun 2023 04:51:07 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7BC10E5;
+        Sun, 18 Jun 2023 01:51:06 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31121494630so2487436f8f.3;
+        Sun, 18 Jun 2023 01:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687067762; x=1689659762;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+NX5ZV664S/3sQaZAuC+xeosJghTMxUMI70alZxPa5Y=;
-        b=paCHA7pjmnWe/IxKblZOvVLJCQMFIcAb2uKzUfv6t5CZ3G1g9hXPWQ58MUXkuXmstv
-         O6R1T7qbyg22aeMnmfS9GKuJZkCptCgv8gl02U7bx3vOy2jTgX9WGMkbt+o0JvCUs+kW
-         bA+mts79t+1rkGlZnKT8v1xPOjTDI1mljmSht/lqTrAYza1MktBdvcCYHnJBJ3J90SAU
-         firfpBvpMPctU6fXBfPySyg6YIq2gUqqEkiphtZ3ZvVVDwpz2lqwWwcsITHzvTMXTJzj
-         W+8jF/PwHqlykUASb2AVCXVaYe1soMWghMN1QCjmmR0zFF3GU948sIjFP62ppXVd7WfZ
-         ffYw==
+        d=gmail.com; s=20221208; t=1687078265; x=1689670265;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hmc9IwyZl6aMz+KHuXZhLsJGDOxYITeiAy/9M75qrxE=;
+        b=VArv5XEhbOMuRXTW55GI+jRO4qe5OYFVNPVGTpFHwWDLn8S0VUKNbJeCMXjvg7w+sc
+         P/Ec7YXrTzM53w9WOG9vAxSxIcFgOIh4NlzTjM0FZNFaRtXuiDGxnhpFAxKnDCvfgEes
+         k6tTxRvnhXCBTSBdJX7KZB658yHm99szm/nabNM9QrUvl6V5pb6JbjhGfqbgadF4KTEQ
+         W6ye1FLWjzYGKVRL/c+oaNHaJBcyOrFjpcMwcajZ7dYc3WD3ssLQpFwqrmvU8nGzk47X
+         x4hZN+FGUxIAjhbjngndMs3HmG/MaXQuhR9y5OWrt/fzBZrEcuW8/IiwwAD6g2jkpEnO
+         9CaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687067762; x=1689659762;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+NX5ZV664S/3sQaZAuC+xeosJghTMxUMI70alZxPa5Y=;
-        b=XTEPlWfZmGQJqteKwDhh3yd9fDvZKL6BlNYC7dZbN9tG3GPSZbyyL+aGJMyFtIGg4o
-         3RDNpWAteFnrXJ5yLDVcORZO2fKTjXjIEY5dt2bho042NxNGhvH2eCejxh9fK/yeXu9j
-         I01H5wQRVp4ClgIl0SmZBYjdNkJuhtOHuE8tHpokWKeTLTJM+HWpdq8wLTdABoY8ZZ2R
-         ojSHqojuEOwWfGfjKlmjAtPpGF1edcCjNngvqSCqEn8bGvSGiO/pukV5lDUrz1s3KeNB
-         1REGn6k22jzap3BCWqiWaleRlJLZKzlI9jMhcZAM5WNHtor2dixkhOQscSa1fqauB+q7
-         L0pQ==
-X-Gm-Message-State: AC+VfDydmw0oDciI9oFayGSNQis3NpHBTMGZICbezHJn5aXzMlHxxdAl
-        2gsRd3//jKXH7vav6MRsN24=
-X-Google-Smtp-Source: ACHHUZ6BOZ2LQ6J+Y8YIuDzGK/TfPStSIUARP0Kxc41zdevAjVxrE87pnYjBbRb1udZcUfffG4tAww==
-X-Received: by 2002:adf:f5c8:0:b0:307:9473:fe26 with SMTP id k8-20020adff5c8000000b003079473fe26mr4901839wrp.26.1687067762314;
-        Sat, 17 Jun 2023 22:56:02 -0700 (PDT)
-Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
-        by smtp.gmail.com with ESMTPSA id s14-20020a170906354e00b009888b71c368sm154616eja.152.2023.06.17.22.56.00
+        d=1e100.net; s=20221208; t=1687078265; x=1689670265;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hmc9IwyZl6aMz+KHuXZhLsJGDOxYITeiAy/9M75qrxE=;
+        b=DzYUR9qW1Wjqzpm/90A+8Y4ybKJ6z4p013fTwObKmETpVTN8dcDMwUEMEAJoXkCwLl
+         q3NeBPvnQzR8Yj8dEGrEF5fq3jEs1KBVgzk8eg4Iadwj6pLLYAQraVjssn134VrcZPb0
+         zrgJUei51KhKlRwDinr3i0EuG4gAX45LzSZlvsY1XmaxNVoBap04oRO9Uus85cdQc5qw
+         Na3hFyeva1Vf4aBusXCYzcK/OT/NlKMKKPoqeMYum8BTxKoBdAKZ6/sLnew7VXchnKVP
+         +rnqhrYiAPVVi2eb6o1lqXrkpX+vjZJpO/FaLzy9DijVwz+Xn1D+3YAMhg9Carry5fyi
+         bBzg==
+X-Gm-Message-State: AC+VfDxXga9luVwzcg84q4CRodGcw9uGuaO4ZN/dfz4e0vp9MWx7KuZS
+        XCho24/oGD42iqK6pz4x0hw=
+X-Google-Smtp-Source: ACHHUZ7ZV2jv1bt3JkvDFrYiAOcgGWw3QfOIOC2rnUu8s56kb/wlRP2xNkdJNi1qE4j6UrSMHWReLg==
+X-Received: by 2002:a5d:534f:0:b0:30f:d86b:ccab with SMTP id t15-20020a5d534f000000b0030fd86bccabmr6034312wrv.1.1687078264482;
+        Sun, 18 Jun 2023 01:51:04 -0700 (PDT)
+Received: from xeon.. ([188.163.112.79])
+        by smtp.gmail.com with ESMTPSA id i17-20020adfded1000000b00301a351a8d6sm6953550wrn.84.2023.06.18.01.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Jun 2023 22:56:01 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     glaroque@baylibre.com, rafael@kernel.org,
-        daniel.lezcano@linaro.org, amitk@kernel.org, rui.zhang@intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, thara.gopinath@gmail.com,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, wens@csie.org,
-        samuel@sholland.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, edubezval@gmail.com, j-keerthy@ti.com,
-        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-        bchihi@baylibre.com, niklas.soderlund+renesas@ragnatech.se,
-        wenst@chromium.org, Yangtao Li <frank.li@vivo.com>
-Cc:     linux-pm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, Yangtao Li <frank.li@vivo.com>
-Subject: Re: [PATCH v3 02/12] thermal/drivers/sun8i: remove redundant msg in
- sun8i_ths_register()
-Date:   Sun, 18 Jun 2023 07:55:59 +0200
-Message-ID: <2684470.mvXUDI8C0e@jernej-laptop>
-In-Reply-To: <20230613114904.15749-2-frank.li@vivo.com>
-References: <20230613114904.15749-1-frank.li@vivo.com>
- <20230613114904.15749-2-frank.li@vivo.com>
+        Sun, 18 Jun 2023 01:51:04 -0700 (PDT)
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 0/2] Support bridge/connector by Tegra HDMI
+Date:   Sun, 18 Jun 2023 11:50:44 +0300
+Message-Id: <20230618085046.10081-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dne torek, 13. junij 2023 ob 13:48:54 CEST je Yangtao Li napisal(a):
-> The upper-layer devm_thermal_add_hwmon_sysfs() function can directly
-> print error information.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+This patch adds support for the bridge/connector attached to the
+HDMI output, allowing to model the hardware properly. It keeps
+backwards compatibility with existing bindings and is required
+by devices which have a simple or MHL bridge connected to HDMI
+output like ASUS P1801-T or LG P880/P895 or HTC One X.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Tested on ASUS Transformers which have no dedicated bridge but
+have type d HDMI connector directly available. Tests went smoothly.
 
-Best regards,
-Jernej
+---
 
-> ---
->  drivers/thermal/sun8i_thermal.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
-> index 793ddce72132..066f9fed9b86 100644
-> --- a/drivers/thermal/sun8i_thermal.c
-> +++ b/drivers/thermal/sun8i_thermal.c
-> @@ -475,9 +475,7 @@ static int sun8i_ths_register(struct ths_device *tmdev)
->  		if (IS_ERR(tmdev->sensor[i].tzd))
->  			return PTR_ERR(tmdev->sensor[i].tzd);
->  
-> -		if (devm_thermal_add_hwmon_sysfs(tmdev->dev, tmdev->sensor[i].tzd))
-> -			dev_warn(tmdev->dev,
-> -				 "Failed to add hwmon sysfs attributes\n");
-> +		devm_thermal_add_hwmon_sysfs(tmdev->dev, tmdev->sensor[i].tzd);
->  	}
->  
->  	return 0;
-> 
+Chandes from v1:
+- no changes, re-sending
 
+---
 
+Maxim Schwalm (1):
+  drm/tegra: output: hdmi: Support bridge/connector
 
+Svyatoslav Ryhel (1):
+  ARM: tegra: transformers: add connector node
+
+ arch/arm/boot/dts/tegra20-asus-tf101.dts      | 22 ++++++++--
+ .../dts/tegra30-asus-transformer-common.dtsi  | 21 ++++++++-
+ drivers/gpu/drm/tegra/hdmi.c                  | 44 ++++++++++++++-----
+ 3 files changed, 71 insertions(+), 16 deletions(-)
+
+-- 
+2.39.2
 
