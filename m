@@ -2,332 +2,159 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54BDEB64D8
-	for <linux-tegra@archiver.kernel.org>; Sun, 18 Jun 2023 16:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4F3EB64DA
+	for <linux-tegra@archiver.kernel.org>; Sun, 18 Jun 2023 23:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229516AbjFRQcp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 18 Jun 2023 12:32:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39058 "EHLO
+        id S229574AbjFRXjH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 18 Jun 2023 19:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjFRQco (ORCPT
+        with ESMTP id S229456AbjFRXjG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 18 Jun 2023 12:32:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FAFDB4
-        for <linux-tegra@vger.kernel.org>; Sun, 18 Jun 2023 09:32:42 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qAvIE-0007iI-Ow; Sun, 18 Jun 2023 18:30:22 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qAvHk-008Jb7-8Z; Sun, 18 Jun 2023 18:29:52 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qAvHi-00FKRv-H8; Sun, 18 Jun 2023 18:29:50 +0200
-Date:   Sun, 18 Jun 2023 18:29:50 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Raymond Tan <raymond.tan@intel.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        dri-devel@lists.freedesktop.org,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Steven Price <steven.price@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org, Robert Foss <rfoss@kernel.org>,
-        Karol Herbst <kherbst@redhat.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Danilo Krummrich <dakr@redhat.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-sunxi@lists.linux.dev, Rob Clark <robdclark@gmail.com>,
-        Rahul T R <r-ravikumar@ti.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        etnaviv@lists.freedesktop.org, Stephen Boyd <swboyd@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Sean Paul <sean@poorly.run>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        linux-aspeed@lists.ozlabs.org,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        John Stultz <jstultz@google.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Liang He <windhl@126.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        lima@lists.freedesktop.org, Chunyan Zhang <zhang.lyra@gmail.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        linux-mips@vger.kernel.org, Liu Ying <victor.liu@nxp.com>,
-        linux-arm-msm@vger.kernel.org,
-        Wang Jianzheng <wangjianzheng@vivo.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        Brian Starkey <brian.starkey@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yuan Can <yuancan@huawei.com>, Stefan Agner <stefan@agner.ch>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-tegra@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Joel Stanley <joel@jms.id.au>, nouveau@lists.freedesktop.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Lyude Paul <lyude@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Alison Wang <alison.wang@nxp.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Deepak R Varma <drv@mailo.com>,
-        Karol Wachowski <karol.wachowski@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Emma Anholt <emma@anholt.net>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Laura Nao <laura.nao@collabora.com>,
-        David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
-        linux-renesas-soc@vger.kernel.org,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        Jayshri Pawar <jpawar@cadence.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Russell King <linux@armlinux.org.uk>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Melissa Wen <mwen@igalia.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Fabio Estevam <festevam@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Qiang Yu <yuq825@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: patches dropped from drm-misc-next [Was: Re: [PATCH 00/53] drm:
- Convert to platform remove callback returning] void
-Message-ID: <20230618162950.6th2yo66baqay5mv@pengutronix.de>
-References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
- <20230601154002.uv2wfatpb7b45duz@pengutronix.de>
- <CAD=FV=WvP--wJwBQtnSoW_xb57R1Wf9dH0XzWxe+NorczXfeAw@mail.gmail.com>
- <20230617161222.wy55pbomnrrlfy5u@pengutronix.de>
- <CAD=FV=U5gbMUNteyyFcTvHVBDWzfthM0aDirJC+yXGovDwMOBA@mail.gmail.com>
- <20230618123915.hmy66z7e532jhwgk@pengutronix.de>
- <jlq2xayh4dxfigfsh2fms2kt4hlrqcwxblffmqq7czbhqhhvz7@hsvol72f5i3y>
+        Sun, 18 Jun 2023 19:39:06 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035A018F;
+        Sun, 18 Jun 2023 16:39:03 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f8689fbf59so1258437e87.0;
+        Sun, 18 Jun 2023 16:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687131541; x=1689723541;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4eeAR9R8E9A8Z+bQ+zX5X1J755XJwi+6HLbi8oL22nI=;
+        b=QFB1ckMiJLUDtT0oYq3Jcqd3iPBnFkeLlPVywccCkR67oKxmJ9jBG579cAMN5qnAI1
+         aauCNBmR/7ZrLYfuczuZP/TDX1Qkt69pBwNJIUA6/rOobM6ha/NHvsszJLTWu4jaB6+p
+         7ZpSaA/hd6lNB9ujWQcKVECBBo8rYxc2Qiis+4QWN+b1T3a7ZIxgsM4ckp78JUqANORD
+         RnqhJIg1y7um2BRkaO1DcwHFKgClJz/9Rvmn60kDQEsAwyC9wq288CF+Uj9+Y/J0OZrx
+         ZeFS305qSefjRi7EPU+EEbgVvFEGWVij/G72SwSwnBzmysJfLqMVh+TNb2vwa8yy8M5N
+         A8wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687131541; x=1689723541;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4eeAR9R8E9A8Z+bQ+zX5X1J755XJwi+6HLbi8oL22nI=;
+        b=SGHXbqe/2riwl7kWGr0s6CS76GUKSh4GUeeDaELpwJUNf5Hd/tImBO1jsfnI68A/yy
+         5lefRaTfOHoVKJBGsPsi94Sk19g101moSts7S1xExdEKLYnLO4o6KornIpDid+pzKdPh
+         Y7qBgEv61Wu+wtkOGUVc504nH2Y09pTKVn2i7K/RfI5a3dylA1KhqrS5mYKuKKU1RpbL
+         4h/FsJMNglSwLGc29P3TK2R2MU3lj2U7uwF50A/pCCrH2JVW8JB7Es3xO66XrWaNCMdS
+         zA/pRO6lzQCe4j7ObOz2ZrEW0pzZCiY3W8+EAqGPWt1oYjyoHOGzZ7U0rIrBqsXUqhpX
+         EI4A==
+X-Gm-Message-State: AC+VfDyuNYqm4SG88aFBwZrgwWMTW7BWLXL6fRhXJxa6FiB4vZHGW9Uz
+        xbmJwZ7ZKjgEabFRTodj61kbK08FIng=
+X-Google-Smtp-Source: ACHHUZ76Inx58CustymSURuIxtp4MPSIAxJBVjNFXSgpv2fGM68JwEPT0rQ207uQz5TfPIh+Xei+bQ==
+X-Received: by 2002:a19:4f5a:0:b0:4f4:a656:2466 with SMTP id a26-20020a194f5a000000b004f4a6562466mr2747156lfk.15.1687131540651;
+        Sun, 18 Jun 2023 16:39:00 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-149-7.dynamic.spd-mgts.ru. [109.252.149.7])
+        by smtp.googlemail.com with ESMTPSA id m3-20020ac24283000000b004f76684329esm2112198lfh.234.2023.06.18.16.38.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Jun 2023 16:39:00 -0700 (PDT)
+Message-ID: <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
+Date:   Mon, 19 Jun 2023 02:38:59 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="56squ37ki3ucgp5d"
-Content-Disposition: inline
-In-Reply-To: <jlq2xayh4dxfigfsh2fms2kt4hlrqcwxblffmqq7czbhqhhvz7@hsvol72f5i3y>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+ <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+Content-Language: en-US
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+05.05.2023 14:26, Maxime Ripard пишет:
+> The Tegra super clocks implements a mux with a set_parent hook, but
+> doesn't provide a determine_rate implementation.
+> 
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+> 
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+> 
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+> 
+> The driver does implement round_rate() though, which means that we can
+> change the rate of the clock, but we will never get to change the
+> parent.
+> 
+> However, It's hard to tell whether it's been done on purpose or not.
+> 
+> Since we'll start mandating a determine_rate() implementation, let's
+> convert the round_rate() implementation to a determine_rate(), which
+> will also make the current behavior explicit. And if it was an
+> oversight, the clock behaviour can be adjusted later on.
+> 
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/tegra/clk-super.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+> index 3f3a7a203c5f..7ec47942720c 100644
+> --- a/drivers/clk/tegra/clk-super.c
+> +++ b/drivers/clk/tegra/clk-super.c
+> @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_super_mux_ops = {
+>  	.restore_context = clk_super_mux_restore_context,
+>  };
+>  
+> -static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
+> -				 unsigned long *parent_rate)
+> +static int clk_super_determine_rate(struct clk_hw *hw,
+> +				    struct clk_rate_request *req)
+>  {
+>  	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
+>  	struct clk_hw *div_hw = &super->frac_div.hw;
+> +	unsigned long rate;
+>  
+>  	__clk_hw_set_clk(div_hw, hw);
+>  
+> -	return super->div_ops->round_rate(div_hw, rate, parent_rate);
+> +	rate = super->div_ops->round_rate(div_hw, req->rate,
+> +					  &req->best_parent_rate);
+> +	if (rate < 0)
+> +		return rate;
+> +
+> +	req->rate = rate;
+> +	return 0;
+>  }
+>  
+>  static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
+> @@ -193,7 +200,7 @@ const struct clk_ops tegra_clk_super_ops = {
+>  	.get_parent = clk_super_get_parent,
+>  	.set_parent = clk_super_set_parent,
+>  	.set_rate = clk_super_set_rate,
+> -	.round_rate = clk_super_round_rate,
+> +	.determine_rate = clk_super_determine_rate,
+>  	.recalc_rate = clk_super_recalc_rate,
+>  	.restore_context = clk_super_restore_context,
+>  };
+> 
 
---56squ37ki3ucgp5d
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tegra30 doesn't boot anymore with this change. Best would be to keep the
+old behaviour for both sclk and periph tegra clocks.
 
-Hello Maxime,
-
-On Sun, Jun 18, 2023 at 04:32:55PM +0200, Maxime Ripard wrote:
-> On Sun, Jun 18, 2023 at 02:39:15PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > On Sat, Jun 17, 2023 at 10:57:23AM -0700, Doug Anderson wrote:
-> > > On Sat, Jun 17, 2023 at 9:15=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-> > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > Together with the patches that were applied later the topmost commit
-> > > > from this series is c2807ecb5290 ("drm/omap: Convert to platform re=
-move
-> > > > callback returning void"). This commit was part for the following n=
-ext
-> > > > tags:
-> > > >
-> > > >         $ git tag -l --contains c2807ecb5290
-> > > >         next-20230609
-> > > >         next-20230613
-> > > >         next-20230614
-> > > >         next-20230615
-> > > >
-> > > > However in next-20230616 they are missing. In next-20230616
-> > > > drm-misc/for-linux-next was cf683e8870bd4be0fd6b98639286700a3508866=
-0.
-> > > > Compared to c2807ecb5290 this adds 1149 patches but drops 37 (that =
-are
-> > > > also not included with a different commit id). The 37 patches dropp=
-ed
-> > > > are 13cdd12a9f934158f4ec817cf048fcb4384aa9dc..c2807ecb5290:
-> > > >
-> > > >         $ git shortlog -s 13cdd12a9f934158f4ec817cf048fcb4384aa9dc.=
-=2Ec2807ecb5290
-> > > >              1  Christophe JAILLET
-> > > >              2  Jessica Zhang
-> > > >              5  Karol Wachowski
-> > > >              1  Laura Nao
-> > > >             27  Uwe Kleine-K=C3=B6nig
-> > > >              1  Wang Jianzheng
-> > > >
-> > > >
-> > > > I guess this was done by mistake because nobody told me about dropp=
-ing
-> > > > my/these patches? Can c2807ecb5290 please be merged into drm-misc-n=
-ext
-> > > > again?
-> > >=20
-> > > Actually, it was probably a mistake that these patches got merged to
-> > > linuxnext during the 4 days that you noticed. However, your patches
-> > > aren't dropped and are still present in drm-misc-next.
-> > >=20
-> > > drm-misc has a bit of a unique model and it's documented fairly well =
-here:
-> > >=20
-> > > https://drm.pages.freedesktop.org/maintainer-tools/drm-misc.html
-> >=20
-> > Is there a flaw then in this unique model (or its implementation) when
-> > drm-misc/for-linux-next moves in a non-fast-forward manner? This isn't
-> > expected, is it?
->=20
-> There's no expectation afaik. Any tree merged in linux-next can be
-> rebased, drop a patch, amend one, etc. without any concern.
-
-I agree that there are no rules broken for a tree that is included in
-next and a maintainer is free to rewrite their tree independant of the
-tree being included in next.
-
-Still I think that shouldn't be used as an excuse. For me, if a
-maintainer puts some patch into next that's a statement saying
-(approximately) "I think this patch is fine and I intend to send it to
-Linus during the next merge window.". So my expectation is that if a
-patch is dropped again from next, there was a problem and it would be
-fair if the maintainer tells the author/submitter about this problem and
-that the patch was dropped.
-
-So my concern is not about rule breaking, but about the strange signal
-that is sent to contributors by including their work in next for some
-time and then dropping it again without comment.
-
-> It's also why linux-next is rebuilt entirely every day.
->=20
-> > > The key is that committers can commit to drm-misc-next _at any time_
-> > > regardless of the merge window. The drm-misc merge strategy makes this
-> > > OK. Specifically, when it's late in the linux cycle then drm-misc-next
-> > > is supposed to stop merging to linuxnext. Then, shortly after the
-> > > merge window closes, patches will start flowing again.
-> > >=20
-> > > So basically your patches are landed and should even keep the same git
-> > > hashes when they eventually make it to Linux. They just won't land for
-> > > another release cycle of Linux.
-> >=20
-> > OK, c2807ecb5290 is still included in drm-misc-next. So while I don't
-> > understand the whole model, the patches at least seem to be scheduled to
-> > go in during the next merge window.
->=20
-> It's not that complicated.
->=20
-> drm-misc-next is always open, and we start targeting release X + 2 when
-> X-rc6 is released.
->=20
-> This is due to Linus wanting all the commits sent as part of the PR in
-> linux-next for two weeks.
->=20
-> In order to converge towards (X + 1)-rc1 in linux-next, as soon as X-rc6
-> is released, we remove drm-misc-next from the linux-next branch. All the
-> patches in drm-misc-next that were targetting X + 1 are in drm/next by
-> then, so it's not a concern.
-
-So if I were a maintainer of drm-misc, I'd want that no commit from
-drm-misc-next migrates to next after -rc6.
-
-Also note that the branch head in question (i.e. c2807ecb5290) was
-included in next-20230609, while v6.4-rc6 was tagged on Jun 11. So
-according to the rules you described c2807ecb5290 could have been
-qualified to go into v6.5-rc1?!
-
-Best regards
-Uwe
-
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
-   |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---56squ37ki3ucgp5d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSPMP0ACgkQj4D7WH0S
-/k5slQf/QGa59eGA08Ft03sMAU0WPOe2pro9UKpdc0k/xBm24fC7BCSdOSlR7bXI
-Yk6FDfiYpZII3/lP8R+rQrHLhbqjpimjuGjXcKbGq60shljeQf3zOEMwL5Q4yUgD
-Rd/FHwMdOLAtsOPYEYABK+DXld46QIlTPcKncCp4HXgsTSP4hL68rUM1rBHehmwQ
-V9Au18gv810TLMbgaBZ32xzFXKId31Myw7Nya2Rhuv9iuardyCfKxfrh95WUVM2N
-iihFikVUtNTP0rOe0qJHF65A6l0wvexZ4OuL5fc3DZonv3/D6RNu5Jl/Tm4h2RgE
-EPFxcFKuIo9eFOU4Yvtn2yIKvB6YWQ==
-=ov7F
------END PGP SIGNATURE-----
-
---56squ37ki3ucgp5d--
