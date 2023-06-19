@@ -2,344 +2,188 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8BCEB64D9
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 09:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58041EB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 10:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbjFSJpv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Jun 2023 05:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35620 "EHLO
+        id S231432AbjFSK0d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Jun 2023 06:26:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231224AbjFSJpr (ORCPT
+        with ESMTP id S231508AbjFSK0W (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Jun 2023 05:45:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25FFE188;
-        Mon, 19 Jun 2023 02:45:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F99D60B20;
-        Mon, 19 Jun 2023 09:45:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082AAC433C9;
-        Mon, 19 Jun 2023 09:45:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687167940;
-        bh=Lp4u3T+2xiedusJigDkWh4ix2i0wqp11sPPDYaU3Yo0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uTs+Es5MJdQAH06s+4uVkVptqIjhO5PlC4tbhRLzHbhg/jvVFuwTvNh59ROQwqwlI
-         FXKrTblcrG9mDZ/TJcMmYqLR2B7PXuxSi+QUizGiyfHcrUjYh69jXXHHFYdHc8FQ8Z
-         utFJ+k51BLx2/k90s2dW6WrKqtXXnhUdkuS3Z5CJ1y3d6aKJ4O9d8A122C2R6Ym6c+
-         cUPXt0Zryk1mw0GYYVLBKXFlKgEGOJiVvQ2x4DktJoUVQCzZow35a2hUPFH9SbumWV
-         hxree4wzoiY6yiZMtFeAigy/yZsqjLyvq4ILxIMoPA7sCEJ1yQVV3K+UaP/p9aEdnF
-         3Ul7qcM/T/eqA==
-Date:   Mon, 19 Jun 2023 11:45:37 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Raymond Tan <raymond.tan@intel.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        dri-devel@lists.freedesktop.org,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Steven Price <steven.price@arm.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org, Robert Foss <rfoss@kernel.org>,
-        Karol Herbst <kherbst@redhat.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Danilo Krummrich <dakr@redhat.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-sunxi@lists.linux.dev, Rob Clark <robdclark@gmail.com>,
-        Rahul T R <r-ravikumar@ti.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        etnaviv@lists.freedesktop.org, Stephen Boyd <swboyd@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Sean Paul <sean@poorly.run>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        linux-aspeed@lists.ozlabs.org,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        John Stultz <jstultz@google.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Liang He <windhl@126.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        lima@lists.freedesktop.org, Chunyan Zhang <zhang.lyra@gmail.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        linux-mips@vger.kernel.org, Liu Ying <victor.liu@nxp.com>,
-        linux-arm-msm@vger.kernel.org,
-        Wang Jianzheng <wangjianzheng@vivo.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        Brian Starkey <brian.starkey@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yuan Can <yuancan@huawei.com>, Stefan Agner <stefan@agner.ch>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-tegra@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Joel Stanley <joel@jms.id.au>, nouveau@lists.freedesktop.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Lyude Paul <lyude@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Alison Wang <alison.wang@nxp.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Deepak R Varma <drv@mailo.com>,
-        Karol Wachowski <karol.wachowski@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Emma Anholt <emma@anholt.net>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Laura Nao <laura.nao@collabora.com>,
-        David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
-        linux-renesas-soc@vger.kernel.org,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        Jayshri Pawar <jpawar@cadence.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Russell King <linux@armlinux.org.uk>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Melissa Wen <mwen@igalia.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Fabio Estevam <festevam@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Qiang Yu <yuq825@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: patches dropped from drm-misc-next [Was: Re: [PATCH 00/53] drm:
- Convert to platform remove callback returning] void
-Message-ID: <vxjp5c4wojcvbnp3ghsspwkgrc4mjmskzl56jkuxlgfhcji7kx@m3hg525p7y6a>
-References: <20230507162616.1368908-1-u.kleine-koenig@pengutronix.de>
- <20230601154002.uv2wfatpb7b45duz@pengutronix.de>
- <CAD=FV=WvP--wJwBQtnSoW_xb57R1Wf9dH0XzWxe+NorczXfeAw@mail.gmail.com>
- <20230617161222.wy55pbomnrrlfy5u@pengutronix.de>
- <CAD=FV=U5gbMUNteyyFcTvHVBDWzfthM0aDirJC+yXGovDwMOBA@mail.gmail.com>
- <20230618123915.hmy66z7e532jhwgk@pengutronix.de>
- <jlq2xayh4dxfigfsh2fms2kt4hlrqcwxblffmqq7czbhqhhvz7@hsvol72f5i3y>
- <20230618162950.6th2yo66baqay5mv@pengutronix.de>
+        Mon, 19 Jun 2023 06:26:22 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A042FFD;
+        Mon, 19 Jun 2023 03:26:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cqisWt8jN0b28QM/TbPwJc6tZbHffCrDAmLeNzESiHPQuVkKctJQjlPps7XFhSV+B1T2YIOi1wgbHuQVI5TXVwykNCh6Wta+uB48V1/wmi8kH32k2b3tTu4G3e6qCi3+sgNb/Cve3RrAPVd8q10Lf27QIi1Mg9YeelKO3bqB+H2i2xl87kHkCUeTW8Npv88xZ5ubrAz4ua8D76+/gJrenBh9UumCNgLR6owuW4foOl9trJFatGEIhNWtmgX3cxxK15UgWQ/c8aR13ekXoPgEZuyTFznGYUeL/tQ1vIpfKUVohj5jAZBDpoZ2FqlUHrPQKZF5ILAf0TIz2T7r4nZEPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H28MgyNt1CF9P2tWsSysfPf3L9D1hgonlCR4ys7mQSk=;
+ b=hvpyiVIh4rb6uS0rk82HOqxFVNYoAP42KYjqrWTIg4Po5ela9I11Km0fg+BcNqHz9/rv3ws1nrdEtDp6ByEMjva4XXJBCfEt2iTiT3IR3b0U7rI9CcIT6RAm5idG2nLrGfnanvgmfgYkBpzWThnnZpLyh3LOJedeZRtD1BB9kPBs9Wd+AkG/1fYiujWKEXivRgVAWzriQ+FmYK0zleqJg7XeVtCWvYVzUlyrKAZ9aX9aEIc1x8P5/Mw0FJoSYa3QdQeFZn0qqXhwoE0dA+zrCY7IxRhaUxwcs7kyjgxgqQ1pyHBsgr61xNtnPNTfwLZlC17wWLe0kfS2qHlyuqBcgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H28MgyNt1CF9P2tWsSysfPf3L9D1hgonlCR4ys7mQSk=;
+ b=uJ/VydoyVsQJknJeeWpr+jd3gK9nxOKVAw6P8TbaH6bigUNolGuvAiH3Lf/QQycN7U0CInpYPrD2n0XFqbAAwTBolkWTfHh2x8US9rL/VbSZ20Waa3e/8OfIQmRTHKceMuEi1mTk6+2oykOyyxCJkQG5qvqIX0dZy87ggGm33ByZARFqIUzTihrnrNMGWvR0krqmwwDgKYiCGsIkoLLIOniVuV5QIu1rZ3Wp2dodXKRa7oVRuAHZZAHQCiJuNW85BYJrP+cxtqnmHwhc2pTzh5fwSu9qqh5vcY6U1CBAHxYFRZ2odcLb0mcovekFH7pCtG/pHZnJyUkdQSTpasDe3w==
+Received: from DM6PR07CA0082.namprd07.prod.outlook.com (2603:10b6:5:337::15)
+ by DM4PR12MB5913.namprd12.prod.outlook.com (2603:10b6:8:66::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.35; Mon, 19 Jun
+ 2023 10:26:17 +0000
+Received: from DM6NAM11FT057.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:337:cafe::d6) by DM6PR07CA0082.outlook.office365.com
+ (2603:10b6:5:337::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.37 via Frontend
+ Transport; Mon, 19 Jun 2023 10:26:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT057.mail.protection.outlook.com (10.13.172.252) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6500.37 via Frontend Transport; Mon, 19 Jun 2023 10:26:16 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 19 Jun 2023
+ 03:26:10 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 19 Jun
+ 2023 03:26:10 -0700
+Received: from vidyas-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Mon, 19 Jun 2023 03:26:06 -0700
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <Sergey.Semin@baikalelectronics.ru>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
+Subject: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte payload"
+Date:   Mon, 19 Jun 2023 15:56:04 +0530
+Message-ID: <20230619102604.3735001-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230619014218.1970846-1-vidyas@nvidia.com>
+References: <20230619014218.1970846-1-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gnbs5xikge2uwekh"
-Content-Disposition: inline
-In-Reply-To: <20230618162950.6th2yo66baqay5mv@pengutronix.de>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT057:EE_|DM4PR12MB5913:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb5eafc7-be32-4169-eb1c-08db70af9daf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ThXyNcdU84QXOCvOpM00q5rB5UwqGZsUVlDWJL6vwy2NRw475fYYLbdpKTGTyKerpv9iOsw25qN5NN2R4ctz6C8KGvKIU1Fa7V1jhgGQjwJLkFIQAo/mabkhg89LjMEKjIx+F+rrmiCbevOc8DW+KDB1/Bwwm78cdnt/ZP8VVGuhAAmt/7t28bssz6zvrMJyGtl+6fkzSKp4AOFneYbCKEYI+EQ3W23dQAYuFQxjYXXrTQhvNxmbfjzgbod3inVl3NkN8W+91HGJ38dlWxJUvXls+rdKkt2Dv8EheM737Lwc5Yj91sFvDrB2aDwRSYXARrkvmXh1q08pfrdGCds1fa1S5CZy7LSrjffzMBgmHjSYgtGmidFALkoKFE0CyX15xU6ShCeH7DpRtdL5safvgQomGKcPOMLpZBfLMDr8OciSY98kD6z/GIN66yB4/e1dnucv+WK6KNwOJV2W8puG8KtVcoH4n4gH31/FT2UUpEb9a5koY8S6vhdD5P/waKwbAhC4iXcTjpHPH4h72hJEEsLbofjJIcjJpetolQyxpRkTQghDg0mtvE9WESE8uXTkovtYzTyM2WE3oRKQYS2Da6iSAIMqi1Lz/bu7yIiG049swsbIR/775ifcDJPDpIYlXE/7X9ygOiOrh+SNbgWfc7XmuXs9Rwj/rJdxjkI+bvQeGwr/F7+yRy7WOBm2GuM0+BIuGguty9Z0/3qeHNmlYOBt/jYO2utNHVY7ESiFpaY5pYoWxSzApQx/QIlpvEHY
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39860400002)(376002)(346002)(451199021)(46966006)(36840700001)(40470700004)(356005)(7636003)(336012)(82740400003)(1076003)(186003)(2616005)(36860700001)(426003)(83380400001)(7416002)(47076005)(40480700001)(26005)(8936002)(41300700001)(8676002)(2906002)(5660300002)(4326008)(36756003)(478600001)(7696005)(70206006)(70586007)(316002)(40460700003)(54906003)(110136005)(86362001)(82310400005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2023 10:26:16.8790
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb5eafc7-be32-4169-eb1c-08db70af9daf
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT057.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5913
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
+support for 256 Byte payload").
 
---gnbs5xikge2uwekh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Consider a PCIe hierarchy with a PCIe switch and a device connected
+downstream of the switch that has support for MPS which is the minimum in
+the hierarchy, and root port programmed with an MPS in its DevCtl register
+that is greater than the minimum. In this scenario, the default bus
+configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
+MPS settings in the hierarchy correctly resulting in the device with
+support for minimum MPS in the hierarchy receiving the TLPs of size more
+than that. Although this can be addressed by appending "pci=pcie_bus_safe"
+to the kernel command line, it doesn't seem to be a good idea to always
+have this commandline argument even for the basic functionality to work.
 
-On Sun, Jun 18, 2023 at 06:29:50PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Maxime,
->=20
-> On Sun, Jun 18, 2023 at 04:32:55PM +0200, Maxime Ripard wrote:
-> > On Sun, Jun 18, 2023 at 02:39:15PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > > On Sat, Jun 17, 2023 at 10:57:23AM -0700, Doug Anderson wrote:
-> > > > On Sat, Jun 17, 2023 at 9:15=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-> > > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > > Together with the patches that were applied later the topmost com=
-mit
-> > > > > from this series is c2807ecb5290 ("drm/omap: Convert to platform =
-remove
-> > > > > callback returning void"). This commit was part for the following=
- next
-> > > > > tags:
-> > > > >
-> > > > >         $ git tag -l --contains c2807ecb5290
-> > > > >         next-20230609
-> > > > >         next-20230613
-> > > > >         next-20230614
-> > > > >         next-20230615
-> > > > >
-> > > > > However in next-20230616 they are missing. In next-20230616
-> > > > > drm-misc/for-linux-next was cf683e8870bd4be0fd6b98639286700a35088=
-660.
-> > > > > Compared to c2807ecb5290 this adds 1149 patches but drops 37 (tha=
-t are
-> > > > > also not included with a different commit id). The 37 patches dro=
-pped
-> > > > > are 13cdd12a9f934158f4ec817cf048fcb4384aa9dc..c2807ecb5290:
-> > > > >
-> > > > >         $ git shortlog -s 13cdd12a9f934158f4ec817cf048fcb4384aa9d=
-c..c2807ecb5290
-> > > > >              1  Christophe JAILLET
-> > > > >              2  Jessica Zhang
-> > > > >              5  Karol Wachowski
-> > > > >              1  Laura Nao
-> > > > >             27  Uwe Kleine-K=C3=B6nig
-> > > > >              1  Wang Jianzheng
-> > > > >
-> > > > >
-> > > > > I guess this was done by mistake because nobody told me about dro=
-pping
-> > > > > my/these patches? Can c2807ecb5290 please be merged into drm-misc=
--next
-> > > > > again?
-> > > >=20
-> > > > Actually, it was probably a mistake that these patches got merged to
-> > > > linuxnext during the 4 days that you noticed. However, your patches
-> > > > aren't dropped and are still present in drm-misc-next.
-> > > >=20
-> > > > drm-misc has a bit of a unique model and it's documented fairly wel=
-l here:
-> > > >=20
-> > > > https://drm.pages.freedesktop.org/maintainer-tools/drm-misc.html
-> > >=20
-> > > Is there a flaw then in this unique model (or its implementation) when
-> > > drm-misc/for-linux-next moves in a non-fast-forward manner? This isn't
-> > > expected, is it?
-> >=20
-> > There's no expectation afaik. Any tree merged in linux-next can be
-> > rebased, drop a patch, amend one, etc. without any concern.
->=20
-> I agree that there are no rules broken for a tree that is included in
-> next and a maintainer is free to rewrite their tree independant of the
-> tree being included in next.
->=20
-> Still I think that shouldn't be used as an excuse.
+Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
+Byte payload") avoids this requirement and ensures that the basic
+functionality of the devices irrespective of the hierarchy and the MPS of
+the devices in the hierarchy.
 
-As an excuse for what?
+To reap the benefits of having support for higher MPS, optionally, one can
+always append the kernel command line with "pci=pcie_bus_perf".
 
-> For me, if a maintainer puts some patch into next that's a statement
-> saying (approximately) "I think this patch is fine and I intend to
-> send it to Linus during the next merge window.".
+Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+---
+V3:
+* Fixed a build issue
 
-I mean, that's what we're saying and doing?
+V2:
+* Addressed review comments from Bjorn
 
-> So my expectation is that if a patch is dropped again from next, there
-> was a problem and it would be fair if the maintainer tells the
-> author/submitter about this problem and that the patch was dropped.
+ drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-But it wasn't dropped, it's still very much to be sent to Linus during
-the next merge window.
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 4fdadc7b045f..a772faff14b5 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -900,11 +900,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+ 							      PCI_CAP_ID_EXP);
+ 
+-	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+-	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+-	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+-	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+-
+ 	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
+ 	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
+ 	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
+@@ -1756,7 +1751,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 	struct device *dev = pcie->dev;
+ 	u32 val;
+ 	int ret;
+-	u16 val_16;
+ 
+ 	if (pcie->ep_state == EP_STATE_ENABLED)
+ 		return;
+@@ -1887,20 +1881,16 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+ 						      PCI_CAP_ID_EXP);
+ 
+-	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+-	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+-	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+-	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+-
+ 	/* Clear Slot Clock Configuration bit if SRNS configuration */
+ 	if (pcie->enable_srns) {
++		u16 val_16;
++
+ 		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+ 					   PCI_EXP_LNKSTA);
+ 		val_16 &= ~PCI_EXP_LNKSTA_SLC;
+ 		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
+ 				   val_16);
+ 	}
+-
+ 	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+ 
+ 	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
+-- 
+2.25.1
 
-> So my concern is not about rule breaking, but about the strange signal
-> that is sent to contributors by including their work in next for some
-> time and then dropping it again without comment.
->=20
-> > It's also why linux-next is rebuilt entirely every day.
-> >=20
-> > > > The key is that committers can commit to drm-misc-next _at any time_
-> > > > regardless of the merge window. The drm-misc merge strategy makes t=
-his
-> > > > OK. Specifically, when it's late in the linux cycle then drm-misc-n=
-ext
-> > > > is supposed to stop merging to linuxnext. Then, shortly after the
-> > > > merge window closes, patches will start flowing again.
-> > > >=20
-> > > > So basically your patches are landed and should even keep the same =
-git
-> > > > hashes when they eventually make it to Linux. They just won't land =
-for
-> > > > another release cycle of Linux.
-> > >=20
-> > > OK, c2807ecb5290 is still included in drm-misc-next. So while I don't
-> > > understand the whole model, the patches at least seem to be scheduled=
- to
-> > > go in during the next merge window.
-> >=20
-> > It's not that complicated.
-> >=20
-> > drm-misc-next is always open, and we start targeting release X + 2 when
-> > X-rc6 is released.
-> >=20
-> > This is due to Linus wanting all the commits sent as part of the PR in
-> > linux-next for two weeks.
-> >=20
-> > In order to converge towards (X + 1)-rc1 in linux-next, as soon as X-rc6
-> > is released, we remove drm-misc-next from the linux-next branch. All the
-> > patches in drm-misc-next that were targetting X + 1 are in drm/next by
-> > then, so it's not a concern.
->=20
-> So if I were a maintainer of drm-misc, I'd want that no commit from
-> drm-misc-next migrates to next after -rc6.
->=20
-> Also note that the branch head in question (i.e. c2807ecb5290) was
-> included in next-20230609, while v6.4-rc6 was tagged on Jun 11. So
-> according to the rules you described c2807ecb5290 could have been
-> qualified to go into v6.5-rc1?!
-
-Yes, could have, but barely missed the last drm-misc-next PR we sent to
-Dave that usually occurs on Thursday (8/6) so Dave can merge it on
-Friday (9/6), the last working day before -rc6 was released.
-
-Maxime
-
---gnbs5xikge2uwekh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJAjwQAKCRDj7w1vZxhR
-xYaiAQDfltJZK/mNcp80pbD5Rf8rxBnU/bjLH8PwdZ4323+NNAD6An01V/1Zatms
-3vBQYpLxFoCG3f+iuR0DoZgvGKSPVAw=
-=UgXg
------END PGP SIGNATURE-----
-
---gnbs5xikge2uwekh--
