@@ -2,181 +2,211 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602D1EB64D8
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 03:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133D4EB64DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 07:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229482AbjFSDnN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 18 Jun 2023 23:43:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36254 "EHLO
+        id S229462AbjFSH01 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Jun 2023 03:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjFSDnM (ORCPT
+        with ESMTP id S229454AbjFSH00 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 18 Jun 2023 23:43:12 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C95FC;
-        Sun, 18 Jun 2023 20:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687146186; x=1718682186;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t5NJVxXP5HMKsYrQDJqtpkg7zu4vWzJYowr7YxRo3qA=;
-  b=EzloyZKGFw5yHDK4/YjwvbD7nikbXg/MY0+DdimPzGB4L/wkT4b7zl25
-   6v8oA4N++6FTzk1hKTz5ybPTheBXEg+a1ElVaEDA7OtKWcgVQVIt+qbUw
-   EL2IAm2EFa01AFyAxdMacObiUkt0gz0UybjjRtU1snRfSPHaBD6ZjAM5T
-   AT33nFKJP4krz1NW5O1g8Ehfu+QkeMwaikf1uoREuPCxOGO03CJkMqxna
-   M63s9cZCP7sNFOBJ8HNFW84+vY6ibBSmfLbSHKAMcSN451KRbORfdQ7Qt
-   mbagVgcofST5wa8VDOi6N7HfFWYNfP9+sqMVN0ZCY5/efAC7vnpkOhksO
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10745"; a="425486593"
-X-IronPort-AV: E=Sophos;i="6.00,253,1681196400"; 
-   d="scan'208";a="425486593"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2023 20:43:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10745"; a="707741632"
-X-IronPort-AV: E=Sophos;i="6.00,253,1681196400"; 
-   d="scan'208";a="707741632"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 18 Jun 2023 20:43:02 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qB5nB-0004II-16;
-        Mon, 19 Jun 2023 03:43:01 +0000
-Date:   Mon, 19 Jun 2023 11:42:28 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Vidya Sagar <vidyas@nvidia.com>, lpieralisi@kernel.org,
-        kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        Sergey.Semin@baikalelectronics.ru
-Cc:     oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com,
-        sagar.tv@gmail.com
-Subject: Re: [PATCH V2] Revert "PCI: tegra194: Enable support for 256 Byte
- payload"
-Message-ID: <202306191113.M2RDKBvQ-lkp@intel.com>
-References: <20230619014218.1970846-1-vidyas@nvidia.com>
+        Mon, 19 Jun 2023 03:26:26 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EFE31A4;
+        Mon, 19 Jun 2023 00:26:25 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 1FEF05C01C1;
+        Mon, 19 Jun 2023 03:26:22 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 19 Jun 2023 03:26:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1687159582; x=1687245982; bh=ZN
+        Vhpvgukfm6Pxdscg2Aaz6zO8nOY6hpsxHfjM3TO50=; b=Wm64XCQC6PFy+qm63/
+        piDawXvmSvvsHQDW7W0vcVvwYrLqhasceDAtcJ1tWGbKEXv0qvYbCZn18oTcJjBB
+        4GUGEqrErxk5174k8A3Y5EAUdbdmawN5FK8tT8nzzifuxYn3nLfBKYFfq4Kcfcdq
+        iuGC1QvLBQXHaL1sSOITappNyxVkV/ur0W9hqDnQ01Xyci8Fm05U+WpXv81wr/FQ
+        9fnI3+vlkJ6hkdXLN2FJVA7LXDjOCnQhHGn3zh0I24RdM1ZWelRczz/eTp8nl63K
+        S93+8XqWDazMm3dslnJEoHBbdPuXNqbelH8WQEP4wYD80ZypOOPVDWWc8zv6I73Q
+        3ejg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1687159582; x=1687245982; bh=ZNVhpvgukfm6P
+        xdscg2Aaz6zO8nOY6hpsxHfjM3TO50=; b=H5ZkRC5y06qaujpMjpUvlve1hEHvl
+        zQRnE/9o2O2623CiHUDXViD5tRUr1uOtKsTXbLbBWkF3jDwxnW3lGUDEG+Rl0ZAP
+        WK1SJipDS9t373fFMWD1LFpMODkiaMozXAVphx98xfPwi5CMICnQhv0/Xq98MWK4
+        a0IDHPSwiIApdD0cfJMh02ZYJmqKlQZGSFIhcuqmI/IgnRB/hW5IZpyZjTi2Y2p8
+        QT3Ob4BSpB+8rx3bVbjDZx/tOwTetm8zBjjfuuledGHdwEMuOhN3RD2wZaFv1GGF
+        L+qm0MNCeqP+SyU6wTgj3f8u7W8cgS8e7V3kOGC5ihta5QSMpmDVdyzwQ==
+X-ME-Sender: <xms:HQOQZHcySC9lT2cvZKy045V6t9MhKvso0JIjQSlR8NXoOBhbLrWZbw>
+    <xme:HQOQZNOCvv6tXhuXaYVPWoHykdOXBUUWEA0VHzWPy9pcSLYuKVi993H_EQBtNASaN
+    T7aQYMDiUSxVqFOD_w>
+X-ME-Received: <xmr:HQOQZAieiyzw1LVITz50Z1S5ILBeLImdFz1iw28h5_FXAtOhc6Cn3vrteMApggIG0N7f_NkraJtqgAug2T8Y-A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeefuddguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttdejnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepueeuteetgfduveeuueejiedtvefgtefhgeeiieelfeeuuefgveduieel
+    gfffgfeknecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordht
+    vggthh
+X-ME-Proxy: <xmx:HQOQZI_lsEt4fEcwMngCM9sc9dGaM0XykO8Nel4O569x0S-vEr2DpA>
+    <xmx:HQOQZDv8pwbHSG7U5dlmC5o7DhV4k4F3iOPdkT23Fk_1UJy7kbOXRw>
+    <xmx:HQOQZHEDbvOP7jfhBDCr04Dqmqsm5Xd6d1W1EPXfJadm1glDYBDHGQ>
+    <xmx:HgOQZM9naoUyDJ8urtS-8MI8fq7jL6CQyQ-1f6VvpPTKf7-GkVSRdg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 19 Jun 2023 03:26:21 -0400 (EDT)
+Date:   Mon, 19 Jun 2023 09:26:19 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
+Message-ID: <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+ <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+ <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="csfklsakzv3gu57q"
 Content-Disposition: inline
-In-Reply-To: <20230619014218.1970846-1-vidyas@nvidia.com>
+In-Reply-To: <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Vidya,
 
-kernel test robot noticed the following build errors:
+--csfklsakzv3gu57q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus linus/master v6.4-rc7 next-20230616]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hi Dmitry,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vidya-Sagar/Revert-PCI-tegra194-Enable-support-for-256-Byte-payload/20230619-094403
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20230619014218.1970846-1-vidyas%40nvidia.com
-patch subject: [PATCH V2] Revert "PCI: tegra194: Enable support for 256 Byte payload"
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20230619/202306191113.M2RDKBvQ-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230619/202306191113.M2RDKBvQ-lkp@intel.com/reproduce)
+On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
+> 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > The Tegra super clocks implements a mux with a set_parent hook, but
+> > doesn't provide a determine_rate implementation.
+> >=20
+> > This is a bit odd, since set_parent() is there to, as its name implies,
+> > change the parent of a clock. However, the most likely candidate to
+> > trigger that parent change is a call to clk_set_rate(), with
+> > determine_rate() figuring out which parent is the best suited for a
+> > given rate.
+> >=20
+> > The other trigger would be a call to clk_set_parent(), but it's far less
+> > used, and it doesn't look like there's any obvious user for that clock.
+> >=20
+> > So, the set_parent hook is effectively unused, possibly because of an
+> > oversight. However, it could also be an explicit decision by the
+> > original author to avoid any reparenting but through an explicit call to
+> > clk_set_parent().
+> >=20
+> > The driver does implement round_rate() though, which means that we can
+> > change the rate of the clock, but we will never get to change the
+> > parent.
+> >=20
+> > However, It's hard to tell whether it's been done on purpose or not.
+> >=20
+> > Since we'll start mandating a determine_rate() implementation, let's
+> > convert the round_rate() implementation to a determine_rate(), which
+> > will also make the current behavior explicit. And if it was an
+> > oversight, the clock behaviour can be adjusted later on.
+> >=20
+> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> > Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: linux-tegra@vger.kernel.org
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >  drivers/clk/tegra/clk-super.c | 15 +++++++++++----
+> >  1 file changed, 11 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-supe=
+r.c
+> > index 3f3a7a203c5f..7ec47942720c 100644
+> > --- a/drivers/clk/tegra/clk-super.c
+> > +++ b/drivers/clk/tegra/clk-super.c
+> > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_super_mux_o=
+ps =3D {
+> >  	.restore_context =3D clk_super_mux_restore_context,
+> >  };
+> > =20
+> > -static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
+> > -				 unsigned long *parent_rate)
+> > +static int clk_super_determine_rate(struct clk_hw *hw,
+> > +				    struct clk_rate_request *req)
+> >  {
+> >  	struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw);
+> >  	struct clk_hw *div_hw =3D &super->frac_div.hw;
+> > +	unsigned long rate;
+> > =20
+> >  	__clk_hw_set_clk(div_hw, hw);
+> > =20
+> > -	return super->div_ops->round_rate(div_hw, rate, parent_rate);
+> > +	rate =3D super->div_ops->round_rate(div_hw, req->rate,
+> > +					  &req->best_parent_rate);
+> > +	if (rate < 0)
+> > +		return rate;
+> > +
+> > +	req->rate =3D rate;
+> > +	return 0;
+> >  }
+> > =20
+> >  static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
+> > @@ -193,7 +200,7 @@ const struct clk_ops tegra_clk_super_ops =3D {
+> >  	.get_parent =3D clk_super_get_parent,
+> >  	.set_parent =3D clk_super_set_parent,
+> >  	.set_rate =3D clk_super_set_rate,
+> > -	.round_rate =3D clk_super_round_rate,
+> > +	.determine_rate =3D clk_super_determine_rate,
+> >  	.recalc_rate =3D clk_super_recalc_rate,
+> >  	.restore_context =3D clk_super_restore_context,
+> >  };
+> >=20
+>=20
+> Tegra30 doesn't boot anymore with this change. Best would be to keep the
+> old behaviour for both sclk and periph tegra clocks.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306191113.M2RDKBvQ-lkp@intel.com/
+I took a closer look at the patch and can't find anything different to
+what the core is doing if there's a round_rate implementation:
+https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L1459
 
-All errors (new ones prefixed by >>):
+Also, it's not clear to me how that driver is used. It looks like
+div_ops is always supposed to be set, and super clocks are registered
+with either tegra_clk_register_super_clk() or tegra_clk_register_super_mux()
 
-   drivers/pci/controller/dwc/pcie-tegra194.c: In function 'tegra_pcie_dw_host_init':
->> drivers/pci/controller/dwc/pcie-tegra194.c:906:17: error: 'val_16' undeclared (first use in this function)
-     906 |                 val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
-         |                 ^~~~~~
-   drivers/pci/controller/dwc/pcie-tegra194.c:906:17: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/pci/controller/dwc/pcie-tegra194.c: In function 'pex_ep_event_pex_rst_deassert':
-   drivers/pci/controller/dwc/pcie-tegra194.c:1865:17: error: 'val_16' undeclared (first use in this function)
-    1865 |                 val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
-         |                 ^~~~~~
+tegra_clk_register_super_clk() sets the div_ops pointer to
+tegra_clk_super_ops, but tegra30 doesn't seem to call it.
 
+tegra_clk_register_super_mux() doesn't set the div_ops pointer, but is
+used by tegra30, so I would assume that it's the broken one. But I'm
+confused, since div_ops doesn't seem to be set anywhere?
 
-vim +/val_16 +906 drivers/pci/controller/dwc/pcie-tegra194.c
+Maxime
 
-56e15a238d9278 Vidya Sagar   2019-08-13  867  
-64451ac83fe6ab Bjorn Helgaas 2022-08-04  868  static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
-56e15a238d9278 Vidya Sagar   2019-08-13  869  {
-56e15a238d9278 Vidya Sagar   2019-08-13  870  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-f1ab409d578752 Vidya Sagar   2022-07-21  871  	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
-56e15a238d9278 Vidya Sagar   2019-08-13  872  	u32 val;
-56e15a238d9278 Vidya Sagar   2019-08-13  873  
-275e88b06a277c Rob Herring   2020-12-18  874  	pp->bridge->ops = &tegra_pci_ops;
-275e88b06a277c Rob Herring   2020-12-18  875  
-369b868f4a2ef8 Vidya Sagar   2020-11-26  876  	if (!pcie->pcie_cap_base)
-369b868f4a2ef8 Vidya Sagar   2020-11-26  877  		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
-369b868f4a2ef8 Vidya Sagar   2020-11-26  878  							      PCI_CAP_ID_EXP);
-369b868f4a2ef8 Vidya Sagar   2020-11-26  879  
-56e15a238d9278 Vidya Sagar   2019-08-13  880  	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
-56e15a238d9278 Vidya Sagar   2019-08-13  881  	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
-56e15a238d9278 Vidya Sagar   2019-08-13  882  	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
-56e15a238d9278 Vidya Sagar   2019-08-13  883  
-56e15a238d9278 Vidya Sagar   2019-08-13  884  	val = dw_pcie_readl_dbi(pci, PCI_PREF_MEMORY_BASE);
-56e15a238d9278 Vidya Sagar   2019-08-13  885  	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_DECODE;
-56e15a238d9278 Vidya Sagar   2019-08-13  886  	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_LIMIT_DECODE;
-56e15a238d9278 Vidya Sagar   2019-08-13  887  	dw_pcie_writel_dbi(pci, PCI_PREF_MEMORY_BASE, val);
-56e15a238d9278 Vidya Sagar   2019-08-13  888  
-56e15a238d9278 Vidya Sagar   2019-08-13  889  	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
-56e15a238d9278 Vidya Sagar   2019-08-13  890  
-56e15a238d9278 Vidya Sagar   2019-08-13  891  	/* Enable as 0xFFFF0001 response for CRS */
-56e15a238d9278 Vidya Sagar   2019-08-13  892  	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT);
-56e15a238d9278 Vidya Sagar   2019-08-13  893  	val &= ~(AMBA_ERROR_RESPONSE_CRS_MASK << AMBA_ERROR_RESPONSE_CRS_SHIFT);
-56e15a238d9278 Vidya Sagar   2019-08-13  894  	val |= (AMBA_ERROR_RESPONSE_CRS_OKAY_FFFF0001 <<
-56e15a238d9278 Vidya Sagar   2019-08-13  895  		AMBA_ERROR_RESPONSE_CRS_SHIFT);
-56e15a238d9278 Vidya Sagar   2019-08-13  896  	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT, val);
-56e15a238d9278 Vidya Sagar   2019-08-13  897  
-56e15a238d9278 Vidya Sagar   2019-08-13  898  	/* Configure Max lane width from DT */
-56e15a238d9278 Vidya Sagar   2019-08-13  899  	val = dw_pcie_readl_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP);
-56e15a238d9278 Vidya Sagar   2019-08-13  900  	val &= ~PCI_EXP_LNKCAP_MLW;
-56e15a238d9278 Vidya Sagar   2019-08-13  901  	val |= (pcie->num_lanes << PCI_EXP_LNKSTA_NLW_SHIFT);
-56e15a238d9278 Vidya Sagar   2019-08-13  902  	dw_pcie_writel_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP, val);
-56e15a238d9278 Vidya Sagar   2019-08-13  903  
-a54e190737181c Vidya Sagar   2022-07-21  904  	/* Clear Slot Clock Configuration bit if SRNS configuration */
-a54e190737181c Vidya Sagar   2022-07-21  905  	if (pcie->enable_srns) {
-a54e190737181c Vidya Sagar   2022-07-21 @906  		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
-a54e190737181c Vidya Sagar   2022-07-21  907  					   PCI_EXP_LNKSTA);
-a54e190737181c Vidya Sagar   2022-07-21  908  		val_16 &= ~PCI_EXP_LNKSTA_SLC;
-a54e190737181c Vidya Sagar   2022-07-21  909  		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
-a54e190737181c Vidya Sagar   2022-07-21  910  				   val_16);
-a54e190737181c Vidya Sagar   2022-07-21  911  	}
-a54e190737181c Vidya Sagar   2022-07-21  912  
-56e15a238d9278 Vidya Sagar   2019-08-13  913  	config_gen3_gen4_eq_presets(pcie);
-56e15a238d9278 Vidya Sagar   2019-08-13  914  
-56e15a238d9278 Vidya Sagar   2019-08-13  915  	init_host_aspm(pcie);
-56e15a238d9278 Vidya Sagar   2019-08-13  916  
-6b6fafc1abc7c0 Vidya Sagar   2020-12-03  917  	/* Disable ASPM-L1SS advertisement if there is no CLKREQ routing */
-6b6fafc1abc7c0 Vidya Sagar   2020-12-03  918  	if (!pcie->supports_clkreq) {
-6b6fafc1abc7c0 Vidya Sagar   2020-12-03  919  		disable_aspm_l11(pcie);
-6b6fafc1abc7c0 Vidya Sagar   2020-12-03  920  		disable_aspm_l12(pcie);
-6b6fafc1abc7c0 Vidya Sagar   2020-12-03  921  	}
-6b6fafc1abc7c0 Vidya Sagar   2020-12-03  922  
-a54e190737181c Vidya Sagar   2022-07-21  923  	if (!pcie->of_data->has_l1ss_exit_fix) {
-56e15a238d9278 Vidya Sagar   2019-08-13  924  		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
-56e15a238d9278 Vidya Sagar   2019-08-13  925  		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
-56e15a238d9278 Vidya Sagar   2019-08-13  926  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-a54e190737181c Vidya Sagar   2022-07-21  927  	}
-56e15a238d9278 Vidya Sagar   2019-08-13  928  
-56e15a238d9278 Vidya Sagar   2019-08-13  929  	if (pcie->update_fc_fixup) {
-56e15a238d9278 Vidya Sagar   2019-08-13  930  		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
-56e15a238d9278 Vidya Sagar   2019-08-13  931  		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
-56e15a238d9278 Vidya Sagar   2019-08-13  932  		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
-56e15a238d9278 Vidya Sagar   2019-08-13  933  	}
-56e15a238d9278 Vidya Sagar   2019-08-13  934  
-56e15a238d9278 Vidya Sagar   2019-08-13  935  	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
-56e15a238d9278 Vidya Sagar   2019-08-13  936  
-275e88b06a277c Rob Herring   2020-12-18  937  	return 0;
-275e88b06a277c Rob Herring   2020-12-18  938  }
-275e88b06a277c Rob Herring   2020-12-18  939  
+--csfklsakzv3gu57q
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJADGwAKCRDj7w1vZxhR
+xfiwAPwPgxvKf+gKQ5dGbQVX/L6f5eXnGdA/sgm/pCKCM4V8RAD/a/IvIwgq0Asy
+uMzj8S/CjwfhElVTrDigcvCAb6ZqLgc=
+=LWDU
+-----END PGP SIGNATURE-----
+
+--csfklsakzv3gu57q--
