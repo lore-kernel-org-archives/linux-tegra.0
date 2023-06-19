@@ -2,406 +2,170 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5BFC0015E
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 14:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA1BEB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 14:14:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232100AbjFSOCv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Jun 2023 10:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50900 "EHLO
+        id S231761AbjFSOOA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Jun 2023 10:14:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231199AbjFSOCu (ORCPT
+        with ESMTP id S232141AbjFSON4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Jun 2023 10:02:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAF4FB;
-        Mon, 19 Jun 2023 07:02:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 855A260C84;
-        Mon, 19 Jun 2023 14:02:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02FBC433C8;
-        Mon, 19 Jun 2023 14:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687183366;
-        bh=aoZIdKtakof1RrLG1uHfgHvEnjV5bAZA/iEPAGIdL1U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jV95SsXCscon9mjIrA85S4h2EdhGBkgNuFn8VZOUrDV+lIkF0pUNayXcf0CKyi8A6
-         N48rXJ2wuubn0Bti2ZkKUiijVrVqJoWAxGylrGc2P/8z2dpERee9fF4Un0UHHbArW4
-         auoHmiA8vzTlS8TEVa4jO3sKRu3sb8gHf+zbcrBovj5dR8bhFUe8fIUCFrs8zNtGMM
-         a8tAV38SZ7gAwjXhA1JwM4LL2kusu0pUESpxODTU+LmevESt4iijRlQuZNuPIRrx6/
-         xEJ/A1HJ21okj5noJ5wg00TGmdIesmam9MZrNHImWINT+iaS1huZnX+m6jmzDi4WVy
-         eOUJrD/hLSISQ==
-Date:   Mon, 19 Jun 2023 16:02:43 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Raymond Tan <raymond.tan@intel.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        dri-devel@lists.freedesktop.org,
-        Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org, Robert Foss <rfoss@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Danilo Krummrich <dakr@redhat.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-sunxi@lists.linux.dev, Rahul T R <r-ravikumar@ti.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        etnaviv@lists.freedesktop.org, Yuan Can <yuancan@huawei.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-aspeed@lists.ozlabs.org,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        John Stultz <jstultz@google.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Liang He <windhl@126.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        lima@lists.freedesktop.org, Chunyan Zhang <zhang.lyra@gmail.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Steven Price <steven.price@arm.com>,
-        linux-rockchip@lists.infradead.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Liu Ying <victor.liu@nxp.com>, linux-arm-msm@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Wang Jianzheng <wangjianzheng@vivo.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 19 Jun 2023 10:13:56 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C8E2E7C
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Jun 2023 07:13:51 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-519f6e1a16cso4162570a12.2
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Jun 2023 07:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687184029; x=1689776029;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jVJ0BYxgwjT3FqtgMQASJ1B7HEopYnAjVGB5hh3e82E=;
+        b=M9z4P28nrWagW+IjU4/HCdHHlcaQEqWX7EhrBPn1H9FU9ONO2pp1EL7jsnMEg7I4ll
+         8xceJ4/OUlji0kH8mkofXiti0XNSLOkB+0Wf65ZU6tfTxko/+anKk/1IzQtfC9nnhqSn
+         v0saRZq6uSUhQLNS5JT3kdhnjZ1/DyphBy0cqE3yW2OKeZHjRnC6OjUVX+4oCtNaiyT0
+         nEvPBH35+Sk+tWFKYpqAJs0dpnJouPKSb3L5KOAJ2FDdXEY0jtAzK+tNFs328b615JL0
+         /6vKlg8BGmt4r1XepjO9UvUPwEkZC6srmp/+i8Iy9RuuagsWQKejiIk0zVJtpTdvqsaa
+         zNpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687184029; x=1689776029;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jVJ0BYxgwjT3FqtgMQASJ1B7HEopYnAjVGB5hh3e82E=;
+        b=UkOfkjF6IU7ty4riHMicIQHRHBTSJap0/e8wnQ08HYsU8lFLfG0bnXcGnVC9AvJzhL
+         AnUY/kdn2Xs1UdQP/THwuaxHjsbPUVZEU2KcSAslthlUVrrIz5Cza7FBm61xoZ9Qmzjt
+         gYAEfOZq1GpxycoHFOHKotkO2f3jfPHVyMhDI6KETE0EgQL8JLsMVrGPNqrm7v/+hgnU
+         vCLn3QDfH7bTPnt+I2jpK92nQDVYe2zLZbJrHYD5nT38I4tj04K5WMHyTitQQXYGp9qp
+         hQ3Mvpx7/Bcmxz4N7QnTfQCylvaLGsxedjjSDUSYtJJehDfWJ2cbm7e0MzBhcO9kjq1/
+         WYDw==
+X-Gm-Message-State: AC+VfDzVL4Pldc9V9gOaVBGttUDtwSgo2VbDmp+7GAbDC4o0ufRzgy9G
+        +52v8gwwjeIIxLF+0ijilHl1nA==
+X-Google-Smtp-Source: ACHHUZ7O2sSAG3s4Vml5tVOvx0rnJQoDa5gdvDzwpYu+SWO687o/I76se/9w1hJ7dH9KrjVmuODOeQ==
+X-Received: by 2002:a05:6402:164c:b0:51a:4452:ae0c with SMTP id s12-20020a056402164c00b0051a4452ae0cmr4540560edx.35.1687184029619;
+        Mon, 19 Jun 2023 07:13:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id p4-20020a05640210c400b005158563be4asm13096759edu.33.2023.06.19.07.13.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jun 2023 07:13:49 -0700 (PDT)
+Message-ID: <158425ec-86e8-ca3e-eed8-e14b37c42730@linaro.org>
+Date:   Mon, 19 Jun 2023 16:13:44 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 01/28] media: cec: ch7322: drop of_match_ptr for ID table
+To:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Joe Tessler <jrt@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Neil Armstrong <neil.armstrong@linaro.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Joel Stanley <joel@jms.id.au>, nouveau@lists.freedesktop.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Lyude Paul <lyude@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Alison Wang <alison.wang@nxp.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Deepak R Varma <drv@mailo.com>,
-        Karol Wachowski <karol.wachowski@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Emma Anholt <emma@anholt.net>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Laura Nao <laura.nao@collabora.com>,
-        David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
-        linux-renesas-soc@vger.kernel.org,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        Jayshri Pawar <jpawar@cadence.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Russell King <linux@armlinux.org.uk>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Qiang Yu <yuq825@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Melissa Wen <mwen@igalia.com>,
-        linux-mediatek@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        linux-tegra@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Bin Liu <bin.liu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        linux-mips@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: patches dropped from drm-misc-next [Was: Re: [PATCH 00/53] drm:
- Convert to platform remove callback returning] void
-Message-ID: <vegkiv4puxederjvonyyqsg4j5swpi2h7ttg7ng6gq2tibk4gy@afa5vexshp7q>
-References: <CAD=FV=WvP--wJwBQtnSoW_xb57R1Wf9dH0XzWxe+NorczXfeAw@mail.gmail.com>
- <20230617161222.wy55pbomnrrlfy5u@pengutronix.de>
- <CAD=FV=U5gbMUNteyyFcTvHVBDWzfthM0aDirJC+yXGovDwMOBA@mail.gmail.com>
- <20230618123915.hmy66z7e532jhwgk@pengutronix.de>
- <jlq2xayh4dxfigfsh2fms2kt4hlrqcwxblffmqq7czbhqhhvz7@hsvol72f5i3y>
- <20230618162950.6th2yo66baqay5mv@pengutronix.de>
- <vxjp5c4wojcvbnp3ghsspwkgrc4mjmskzl56jkuxlgfhcji7kx@m3hg525p7y6a>
- <20230619105342.ugf5gz26gcalcsi6@pengutronix.de>
- <a6ex232lwyovzzazfh6jfvlwszppr2624czgcc5sa4nthkgecf@asauiw3rf4vi>
- <CAMuHMdWERLXOa4bQvsb7=gx+Q=Hn8v=XJZxahV0j3Vw1xKUYiQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="g5vgywptxejmww6t"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWERLXOa4bQvsb7=gx+Q=Hn8v=XJZxahV0j3Vw1xKUYiQ@mail.gmail.com>
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-rockchip@lists.infradead.org
+References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
+ <98a77653-ec58-56c4-9893-3b424f67c87e@linaro.org>
+ <5afcec8b-b8f6-35b0-278a-5de185e4a7a2@xs4all.nl>
+ <ZG9XJCD98VWjGjTN@valkosipuli.retiisi.eu>
+ <ZG9ger4WE2VWoVEF@valkosipuli.retiisi.eu>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZG9ger4WE2VWoVEF@valkosipuli.retiisi.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 25/05/2023 15:19, Sakari Ailus wrote:
+> Hi folks,
+> 
+> On Thu, May 25, 2023 at 03:40:04PM +0300, Sakari Ailus wrote:
+>> Hi Hans,
+>>
+>> On Sat, May 13, 2023 at 11:57:33AM +0200, Hans Verkuil wrote:
+>>> On 12/05/2023 18:35, Krzysztof Kozlowski wrote:
+>>>> On 12/03/2023 14:12, Krzysztof Kozlowski wrote:
+>>>>> The driver can match only via the DT table so the table should be always
+>>>>> used and the of_match_ptr does not have any sense (this also allows ACPI
+>>>>> matching via PRP0001, even though it might not be relevant here).
+>>>>>
+>>>>>   drivers/media/cec/i2c/ch7322.c:583:34: error: ‘ch7322_of_match’ defined but not used [-Werror=unused-const-variable=]
+>>>>>
+>>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>> ---
+>>>>
+>>>> Hans, Sakari,
+>>>>
+>>>> Can you pick up the patchset? There was positive feedback:
+>>>> https://patchwork.linuxtv.org/project/linux-media/patch/20230312131318.351173-1-krzysztof.kozlowski@linaro.org/
+>>>>
+>>>> but it seems it was not applied.
+>>>
+>>> I see it is delegated to Sakari in patchwork and marked Under Review, but I don't
+>>> see a corresponding pull request for this series.
+>>>
+>>> Sakari, did something go wrong?
+>>
+>> I spotted this as Hans notified me in IRC, I wasn't cc'd. Apologies for
+>> this --- I intended to take these but I think I must have missed something
+>> important in the process. I'll take them now.
+>>
+>> Thanks.
+> 
+> This no longer applied cleanly. Mostly there was fuzz near .of_match_table
+> changes as probe_new (and remove_new?) changes have been recently merged.
+> There were other issues as well, I marked a few patches in the set "not
+> applicable" as other patches had already done equivalent changes earlier.
+> 
+> There were substance-changing changes in the 20th patch, replied to the
+> disuccsion there.
+> 
+> I've pushed the result here and intend to send PR to Mauro soon if there
+> are no issues:
+> 
+> <URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=of-match-ptr>
 
---g5vgywptxejmww6t
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+One month later, I still don't see this set in the linux-next.  What's
+happening here?
 
-On Mon, Jun 19, 2023 at 03:25:28PM +0200, Geert Uytterhoeven wrote:
-> Hi Maxime,
->=20
-> CC sfr
->=20
-> On Mon, Jun 19, 2023 at 2:51=E2=80=AFPM Maxime Ripard <mripard@kernel.org=
-> wrote:
-> > On Mon, Jun 19, 2023 at 12:53:42PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > > On Mon, Jun 19, 2023 at 11:45:37AM +0200, Maxime Ripard wrote:
-> > > > On Sun, Jun 18, 2023 at 06:29:50PM +0200, Uwe Kleine-K=C3=B6nig wro=
-te:
-> > > > > On Sun, Jun 18, 2023 at 04:32:55PM +0200, Maxime Ripard wrote:
-> > > > > > On Sun, Jun 18, 2023 at 02:39:15PM +0200, Uwe Kleine-K=C3=B6nig=
- wrote:
-> > > > > > > On Sat, Jun 17, 2023 at 10:57:23AM -0700, Doug Anderson wrote:
-> > > > > > > > On Sat, Jun 17, 2023 at 9:15=E2=80=AFAM Uwe Kleine-K=C3=B6n=
-ig
-> > > > > > > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > > > > > > Together with the patches that were applied later the top=
-most commit
-> > > > > > > > > from this series is c2807ecb5290 ("drm/omap: Convert to p=
-latform remove
-> > > > > > > > > callback returning void"). This commit was part for the f=
-ollowing next
-> > > > > > > > > tags:
-> > > > > > > > >
-> > > > > > > > >         $ git tag -l --contains c2807ecb5290
-> > > > > > > > >         next-20230609
-> > > > > > > > >         next-20230613
-> > > > > > > > >         next-20230614
-> > > > > > > > >         next-20230615
-> > > > > > > > >
-> > > > > > > > > However in next-20230616 they are missing. In next-202306=
-16
-> > > > > > > > > drm-misc/for-linux-next was cf683e8870bd4be0fd6b986392867=
-00a35088660.
-> > > > > > > > > Compared to c2807ecb5290 this adds 1149 patches but drops=
- 37 (that are
-> > > > > > > > > also not included with a different commit id). The 37 pat=
-ches dropped
-> > > > > > > > > are 13cdd12a9f934158f4ec817cf048fcb4384aa9dc..c2807ecb529=
-0:
-> > > > > > > > >
-> > > > > > > > >         $ git shortlog -s 13cdd12a9f934158f4ec817cf048fcb=
-4384aa9dc..c2807ecb5290
-> > > > > > > > >              1  Christophe JAILLET
-> > > > > > > > >              2  Jessica Zhang
-> > > > > > > > >              5  Karol Wachowski
-> > > > > > > > >              1  Laura Nao
-> > > > > > > > >             27  Uwe Kleine-K=C3=B6nig
-> > > > > > > > >              1  Wang Jianzheng
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > I guess this was done by mistake because nobody told me a=
-bout dropping
-> > > > > > > > > my/these patches? Can c2807ecb5290 please be merged into =
-drm-misc-next
-> > > > > > > > > again?
-> > > > > > > >
-> > > > > > > > Actually, it was probably a mistake that these patches got =
-merged to
-> > > > > > > > linuxnext during the 4 days that you noticed. However, your=
- patches
-> > > > > > > > aren't dropped and are still present in drm-misc-next.
-> > > > > > > >
-> > > > > > > > drm-misc has a bit of a unique model and it's documented fa=
-irly well here:
-> > > > > > > >
-> > > > > > > > https://drm.pages.freedesktop.org/maintainer-tools/drm-misc=
-=2Ehtml
-> > > > > > >
-> > > > > > > Is there a flaw then in this unique model (or its implementat=
-ion) when
-> > > > > > > drm-misc/for-linux-next moves in a non-fast-forward manner? T=
-his isn't
-> > > > > > > expected, is it?
-> > > > > >
-> > > > > > There's no expectation afaik. Any tree merged in linux-next can=
- be
-> > > > > > rebased, drop a patch, amend one, etc. without any concern.
-> > > > >
-> > > > > I agree that there are no rules broken for a tree that is include=
-d in
-> > > > > next and a maintainer is free to rewrite their tree independant o=
-f the
-> > > > > tree being included in next.
-> > > > >
-> > > > > Still I think that shouldn't be used as an excuse.
-> > > >
-> > > > As an excuse for what?
-> > >
-> > > Just because the rules for trees in next allow the merged branch to be
-> > > rewritten, shouldn't be used to justify rewriting the branch.
-> > >
-> > > IMHO you still should ensure that only commits make it into any next
-> > > snapshot via your tree before X-rc1 for some X (e.g. v6.5) that you
-> > > intend to be included in X-rc1.
-> >
-> > That's never been a next rule either. Rust support has been in next for
-> > almost a year without being sent as a PR for example.
->=20
-> https://elixir.bootlin.com/linux/latest/source/Documentation/process/2.Pr=
-ocess.rst#L297
->=20
->    "The linux-next tree is, by design, a snapshot of what the mainline
->     is expected to look like after the next merge window closes."
->=20
-> The general rule for linux-next is that its contents are intended to end
-> up in the next kernel release, and that it should not contain commits
-> that are intended for the next-next release, cfr. what Stephen sends
-> out to new trees:
->=20
->    "You will need to ensure that the patches/commits in your tree/series =
-have
->     been:
->             [...]
->          * destined for the current or next Linux merge window."
->=20
-> and what he requests regularly in his announces, e.g.:
->=20
->    "Please do not add any v6.4 related commits to your linux-next included
->     branches until after v6.3-rc1 has been released."
+Best regards,
+Krzysztof
 
-Which is why those patches aren't in next anymore.
-
-> AFAIU, the exception to the rule is new, self-contained, and sometimes
-> controversial development, which may have to cook for a few more cycles,
-> if it ends up in a PR at all.
->=20
-> > > > > For me, if a maintainer puts some patch into next that's a statem=
-ent
-> > > > > saying (approximately) "I think this patch is fine and I intend to
-> > > > > send it to Linus during the next merge window.".
-> > > >
-> > > > I mean, that's what we're saying and doing?
-> > >
-> > > No, on 2023-06-09 I assumed that my patches will go into v6.5-rc1 (as=
- it
-> > > was part of next-20230609). A few days later however the patches were
-> > > dropped.
-> > >
-> > > The two options that would have made the experience smoother for me a=
-re:
-> > >
-> > >  a) keep c2807ecb5290 in next and send it for v6.5-rc1; or
-> >
-> > That's not an option. You were simply too late for v6.5-rc1, unless you
-> > expect us to get rid of timezones and work on week-ends. But surely you
-> > don't.
->=20
-> I don't think anyone expects you to do that...
->=20
-> > >  b) keep c2807ecb5290 in a branch that doesn't result it entering next
-> > >     before v6.5-rc1.
-> >
-> > All the drm-misc committers use dim. If that's a concern for you, feel
-> > free to send a patch addressing this to dim.
->=20
-> So you say this is an issue with the tooling? ;-)
-> If the tooling breaks the rules, perhaps the tooling should be fixed?
-
-We've been using dim for more than 5 years. It doesn't seem to work too bad?
-
-And it does feel like the goalposts are moving there: the discussion
-started by "you shouldn't rebase a tree" and is now at "patches should
-never be in a next branch if they can't reach the next merge window,
-even though it's not apparent yet"
-
-But yeah, I now that complaining about how much drm-misc sucks is fun
-and all, but it's still not clear to me what a potential solution to
-this would be?
-
-Knowing that we can't rebase or close drm-misc-next, and that it should
-be automated in dim somehow, what would that fix be?
-
-> > So yeah, sorry if it was confusing. At the end of the day, it's a
-> > compromise, and I can't find a better one for everyone involved
-> > (maintainers, contributors and committers alike) off the top of my head.
->=20
-> As I understand, the main issue Uwe is objecting to, is that his
-> patches ended up in linux-next first, only to be dropped again from
-> linux-next later, and that there was no communication about the
-> latter.
->=20
-> If you're not constantly working on a subsystem, it can be very hard
-> to keep track of the status of your own drive-by patches. When patches
-> get applied, appear in linux-next, and disappear from linux-next again
-> later, it's worse...
-
-Sure, I've worked with enough of these series to understand how it can
-be annoying.
-
-Maxime
-
---g5vgywptxejmww6t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJBgAwAKCRDj7w1vZxhR
-xbHrAQC2tbpr59FvWgo5UdT6HVaFbQ1eIt6cd77EE73rYdv7cQD7B85ixe8k46Oo
-fLEiK8/0rTPKuTVzkjY164VJRmNDYQ0=
-=LBiM
------END PGP SIGNATURE-----
-
---g5vgywptxejmww6t--
