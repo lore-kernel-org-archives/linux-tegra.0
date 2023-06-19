@@ -2,188 +2,133 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58041EB64D9
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 10:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F09C7C0015E
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 10:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231432AbjFSK0d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Jun 2023 06:26:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36458 "EHLO
+        id S229803AbjFSKhC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Jun 2023 06:37:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231508AbjFSK0W (ORCPT
+        with ESMTP id S231848AbjFSKgk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Jun 2023 06:26:22 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A042FFD;
-        Mon, 19 Jun 2023 03:26:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cqisWt8jN0b28QM/TbPwJc6tZbHffCrDAmLeNzESiHPQuVkKctJQjlPps7XFhSV+B1T2YIOi1wgbHuQVI5TXVwykNCh6Wta+uB48V1/wmi8kH32k2b3tTu4G3e6qCi3+sgNb/Cve3RrAPVd8q10Lf27QIi1Mg9YeelKO3bqB+H2i2xl87kHkCUeTW8Npv88xZ5ubrAz4ua8D76+/gJrenBh9UumCNgLR6owuW4foOl9trJFatGEIhNWtmgX3cxxK15UgWQ/c8aR13ekXoPgEZuyTFznGYUeL/tQ1vIpfKUVohj5jAZBDpoZ2FqlUHrPQKZF5ILAf0TIz2T7r4nZEPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H28MgyNt1CF9P2tWsSysfPf3L9D1hgonlCR4ys7mQSk=;
- b=hvpyiVIh4rb6uS0rk82HOqxFVNYoAP42KYjqrWTIg4Po5ela9I11Km0fg+BcNqHz9/rv3ws1nrdEtDp6ByEMjva4XXJBCfEt2iTiT3IR3b0U7rI9CcIT6RAm5idG2nLrGfnanvgmfgYkBpzWThnnZpLyh3LOJedeZRtD1BB9kPBs9Wd+AkG/1fYiujWKEXivRgVAWzriQ+FmYK0zleqJg7XeVtCWvYVzUlyrKAZ9aX9aEIc1x8P5/Mw0FJoSYa3QdQeFZn0qqXhwoE0dA+zrCY7IxRhaUxwcs7kyjgxgqQ1pyHBsgr61xNtnPNTfwLZlC17wWLe0kfS2qHlyuqBcgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H28MgyNt1CF9P2tWsSysfPf3L9D1hgonlCR4ys7mQSk=;
- b=uJ/VydoyVsQJknJeeWpr+jd3gK9nxOKVAw6P8TbaH6bigUNolGuvAiH3Lf/QQycN7U0CInpYPrD2n0XFqbAAwTBolkWTfHh2x8US9rL/VbSZ20Waa3e/8OfIQmRTHKceMuEi1mTk6+2oykOyyxCJkQG5qvqIX0dZy87ggGm33ByZARFqIUzTihrnrNMGWvR0krqmwwDgKYiCGsIkoLLIOniVuV5QIu1rZ3Wp2dodXKRa7oVRuAHZZAHQCiJuNW85BYJrP+cxtqnmHwhc2pTzh5fwSu9qqh5vcY6U1CBAHxYFRZ2odcLb0mcovekFH7pCtG/pHZnJyUkdQSTpasDe3w==
-Received: from DM6PR07CA0082.namprd07.prod.outlook.com (2603:10b6:5:337::15)
- by DM4PR12MB5913.namprd12.prod.outlook.com (2603:10b6:8:66::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.35; Mon, 19 Jun
- 2023 10:26:17 +0000
-Received: from DM6NAM11FT057.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:337:cafe::d6) by DM6PR07CA0082.outlook.office365.com
- (2603:10b6:5:337::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.37 via Frontend
- Transport; Mon, 19 Jun 2023 10:26:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT057.mail.protection.outlook.com (10.13.172.252) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.37 via Frontend Transport; Mon, 19 Jun 2023 10:26:16 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 19 Jun 2023
- 03:26:10 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 19 Jun
- 2023 03:26:10 -0700
-Received: from vidyas-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Mon, 19 Jun 2023 03:26:06 -0700
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <Sergey.Semin@baikalelectronics.ru>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte payload"
-Date:   Mon, 19 Jun 2023 15:56:04 +0530
-Message-ID: <20230619102604.3735001-1-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230619014218.1970846-1-vidyas@nvidia.com>
-References: <20230619014218.1970846-1-vidyas@nvidia.com>
+        Mon, 19 Jun 2023 06:36:40 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9DC10D3
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Jun 2023 03:36:35 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3094910b150so3267324f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Jun 2023 03:36:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687170994; x=1689762994;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ejTbf4LoKogG/Ln74Pk82fARkIEkMJUQlIgg7+Wp5uA=;
+        b=cZQ+XdV0cjSiIJUue049gOJ63z1o+Bm5BMwN6K6EFzSIeJ2SA4ke+YkuxraSHYmD0l
+         GS3bEUP9EtuBl1eb2X6tCSnGoII1m/WAJz06o4ET91pEjInQeQ42DiNbxpC/twP9V+/4
+         3Gj8yMNImEbdRJJwLeisOgfI/NoxFJuCHxF+VALOIrOzuhzEqhEIFBplsYCjF/a10tnI
+         93KH7LnGYk/4r4aEFokFTEp+oClEb9EyG5/Cu7axXD4WnV3YngObv9H6xS1EVDVCWXEg
+         JqEgrW4F7TutEVFS2z8zooJ30Ze8SDHs0hicd8RmpwFoOTWTm5I87VesPwdguUs099q/
+         0mFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687170994; x=1689762994;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejTbf4LoKogG/Ln74Pk82fARkIEkMJUQlIgg7+Wp5uA=;
+        b=MVSFBShxDI0jtNGM9z/jkSvVAJU/XEVbGukmv7JVF1nNMH18uvSYcMWd6hDFKSefgt
+         d3857w3oUCTiOPQoKR4sCRUrhMIT9MkIk7uI9MZqkR0tdlsNGWm/oSOXYI7Irs25BGk4
+         Pd09IJrWwSxKzB/T295/aAJMc7zs8awu4kwfS3QjzfEdBV1ywqBJJfR5ggYOTTCQsxOx
+         dJABpyJ2ryT0YEx52mYVpqse16EdscGTR62/IZlt8NZhPaAizTWJ9JLgEN1vaIh2rov2
+         YoIT/oVbijZs3FSWa21BnsLbIgEPKPwYDd4U69sDo89pv3yss3xTJ1y552mCDjHJAUdJ
+         qbhA==
+X-Gm-Message-State: AC+VfDyoKrv7oMDSjE++tPlHz0iXkG98QF4EDOdfr/YDKuPuj/O2ZDP6
+        in7/teUeYt/DYymPQiC9dE03FA==
+X-Google-Smtp-Source: ACHHUZ77/vPLkGtrYJe9RkVK0QQ5x+vBGoIstm3Y3I16fnaPGyjwJGTc1YvxW4AFSsIPL8eUKmuIaw==
+X-Received: by 2002:a05:600c:21d6:b0:3f9:a4e:190b with SMTP id x22-20020a05600c21d600b003f90a4e190bmr3629171wmj.7.1687170994150;
+        Mon, 19 Jun 2023 03:36:34 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:13d0:1b6c:ce40:5429? ([2a05:6e02:1041:c10:13d0:1b6c:ce40:5429])
+        by smtp.googlemail.com with ESMTPSA id l17-20020a1c7911000000b003f9b0f640b1sm2558593wme.22.2023.06.19.03.36.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jun 2023 03:36:33 -0700 (PDT)
+Message-ID: <e69ada00-dd2b-4b95-b639-346929832910@linaro.org>
+Date:   Mon, 19 Jun 2023 12:36:33 +0200
 MIME-Version: 1.0
-X-NVConfidentiality: public
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 00/10] thermal: tegra: Do not register cooling device
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20230414125721.1043589-1-thierry.reding@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230414125721.1043589-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT057:EE_|DM4PR12MB5913:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb5eafc7-be32-4169-eb1c-08db70af9daf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ThXyNcdU84QXOCvOpM00q5rB5UwqGZsUVlDWJL6vwy2NRw475fYYLbdpKTGTyKerpv9iOsw25qN5NN2R4ctz6C8KGvKIU1Fa7V1jhgGQjwJLkFIQAo/mabkhg89LjMEKjIx+F+rrmiCbevOc8DW+KDB1/Bwwm78cdnt/ZP8VVGuhAAmt/7t28bssz6zvrMJyGtl+6fkzSKp4AOFneYbCKEYI+EQ3W23dQAYuFQxjYXXrTQhvNxmbfjzgbod3inVl3NkN8W+91HGJ38dlWxJUvXls+rdKkt2Dv8EheM737Lwc5Yj91sFvDrB2aDwRSYXARrkvmXh1q08pfrdGCds1fa1S5CZy7LSrjffzMBgmHjSYgtGmidFALkoKFE0CyX15xU6ShCeH7DpRtdL5safvgQomGKcPOMLpZBfLMDr8OciSY98kD6z/GIN66yB4/e1dnucv+WK6KNwOJV2W8puG8KtVcoH4n4gH31/FT2UUpEb9a5koY8S6vhdD5P/waKwbAhC4iXcTjpHPH4h72hJEEsLbofjJIcjJpetolQyxpRkTQghDg0mtvE9WESE8uXTkovtYzTyM2WE3oRKQYS2Da6iSAIMqi1Lz/bu7yIiG049swsbIR/775ifcDJPDpIYlXE/7X9ygOiOrh+SNbgWfc7XmuXs9Rwj/rJdxjkI+bvQeGwr/F7+yRy7WOBm2GuM0+BIuGguty9Z0/3qeHNmlYOBt/jYO2utNHVY7ESiFpaY5pYoWxSzApQx/QIlpvEHY
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39860400002)(376002)(346002)(451199021)(46966006)(36840700001)(40470700004)(356005)(7636003)(336012)(82740400003)(1076003)(186003)(2616005)(36860700001)(426003)(83380400001)(7416002)(47076005)(40480700001)(26005)(8936002)(41300700001)(8676002)(2906002)(5660300002)(4326008)(36756003)(478600001)(7696005)(70206006)(70586007)(316002)(40460700003)(54906003)(110136005)(86362001)(82310400005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2023 10:26:16.8790
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb5eafc7-be32-4169-eb1c-08db70af9daf
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT057.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5913
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
-support for 256 Byte payload").
 
-Consider a PCIe hierarchy with a PCIe switch and a device connected
-downstream of the switch that has support for MPS which is the minimum in
-the hierarchy, and root port programmed with an MPS in its DevCtl register
-that is greater than the minimum. In this scenario, the default bus
-configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
-MPS settings in the hierarchy correctly resulting in the device with
-support for minimum MPS in the hierarchy receiving the TLPs of size more
-than that. Although this can be addressed by appending "pci=pcie_bus_safe"
-to the kernel command line, it doesn't seem to be a good idea to always
-have this commandline argument even for the basic functionality to work.
+Hi Thierry,
 
-Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
-Byte payload") avoids this requirement and ensures that the basic
-functionality of the devices irrespective of the hierarchy and the MPS of
-the devices in the hierarchy.
+are you planning to send a new version ?
 
-To reap the benefits of having support for higher MPS, optionally, one can
-always append the kernel command line with "pci=pcie_bus_perf".
 
-Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
-V3:
-* Fixed a build issue
+On 14/04/2023 14:57, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Hi,
+> 
+> this set of patches removes the registration of the SOCTHERM internal
+> throttling mechanism as cooling device. Since this throttling starts
+> automatically once a certain temperature threshold is crossed, it
+> doesn't make sense to represent it as a cooling device, which are
+> typically "manually" activated by the thermal framework when thermal
+> sensors report temperature thresholds being crossed.
+> 
+> Instead of using the cooling device mechanism, this statically programs
+> the throttling mechanism when it is configured in device tree. In order
+> to do this, an additional device tree property is needed to replace the
+> information that was previously contained in trip points.
+> 
+> There's a few preparatory patches to make the removal a bit simpler and
+> also some follow up cleanups included as well.
+> 
+> Thierry
+> 
+> Thierry Reding (10):
+>    dt-bindings: thermal: tegra: Document throttle temperature
+>    thermal: tegra: Use driver-private data consistently
+>    thermal: tegra: Constify SoC-specific data
+>    thermal: tegra: Do not register cooling device
+>    thermal: tegra: Use unsigned int where appropriate
+>    thermal: tegra: Avoid over-allocation of temporary array
+>    thermal: tegra: Remove gratuitous error assignment
+>    thermal: tegra: Minor stylistic cleanups
+>    arm64: tegra: Rework SOCTHERM on Tegra132 and Tegra210
+>    ARM: tegra: Rework SOCTHERM on Tegra124
+> 
+>   .../thermal/nvidia,tegra124-soctherm.yaml     |   7 +
+>   arch/arm/boot/dts/tegra124.dtsi               |  65 +--
+>   arch/arm64/boot/dts/nvidia/tegra132.dtsi      |  63 +--
+>   arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  83 +---
+>   drivers/thermal/tegra/soctherm.c              | 392 ++++++------------
+>   drivers/thermal/tegra/soctherm.h              |   1 +
+>   drivers/thermal/tegra/tegra124-soctherm.c     |   4 +
+>   drivers/thermal/tegra/tegra132-soctherm.c     |   4 +
+>   drivers/thermal/tegra/tegra210-soctherm.c     |   4 +
+>   9 files changed, 208 insertions(+), 415 deletions(-)
+> 
 
-V2:
-* Addressed review comments from Bjorn
-
- drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4fdadc7b045f..a772faff14b5 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -900,11 +900,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
- 							      PCI_CAP_ID_EXP);
- 
--	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
--	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
--	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
--	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
--
- 	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
- 	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
- 	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
-@@ -1756,7 +1751,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 	struct device *dev = pcie->dev;
- 	u32 val;
- 	int ret;
--	u16 val_16;
- 
- 	if (pcie->ep_state == EP_STATE_ENABLED)
- 		return;
-@@ -1887,20 +1881,16 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
- 						      PCI_CAP_ID_EXP);
- 
--	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
--	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
--	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
--	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
--
- 	/* Clear Slot Clock Configuration bit if SRNS configuration */
- 	if (pcie->enable_srns) {
-+		u16 val_16;
-+
- 		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
- 					   PCI_EXP_LNKSTA);
- 		val_16 &= ~PCI_EXP_LNKSTA_SLC;
- 		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
- 				   val_16);
- 	}
--
- 	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
- 
- 	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
 -- 
-2.25.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
