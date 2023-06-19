@@ -2,211 +2,108 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133D4EB64DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 07:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7007BEB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Jun 2023 08:56:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229462AbjFSH01 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Jun 2023 03:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33048 "EHLO
+        id S230476AbjFSI4S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Jun 2023 04:56:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjFSH00 (ORCPT
+        with ESMTP id S229609AbjFSIz0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Jun 2023 03:26:26 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EFE31A4;
-        Mon, 19 Jun 2023 00:26:25 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1FEF05C01C1;
-        Mon, 19 Jun 2023 03:26:22 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 19 Jun 2023 03:26:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1687159582; x=1687245982; bh=ZN
-        Vhpvgukfm6Pxdscg2Aaz6zO8nOY6hpsxHfjM3TO50=; b=Wm64XCQC6PFy+qm63/
-        piDawXvmSvvsHQDW7W0vcVvwYrLqhasceDAtcJ1tWGbKEXv0qvYbCZn18oTcJjBB
-        4GUGEqrErxk5174k8A3Y5EAUdbdmawN5FK8tT8nzzifuxYn3nLfBKYFfq4Kcfcdq
-        iuGC1QvLBQXHaL1sSOITappNyxVkV/ur0W9hqDnQ01Xyci8Fm05U+WpXv81wr/FQ
-        9fnI3+vlkJ6hkdXLN2FJVA7LXDjOCnQhHGn3zh0I24RdM1ZWelRczz/eTp8nl63K
-        S93+8XqWDazMm3dslnJEoHBbdPuXNqbelH8WQEP4wYD80ZypOOPVDWWc8zv6I73Q
-        3ejg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1687159582; x=1687245982; bh=ZNVhpvgukfm6P
-        xdscg2Aaz6zO8nOY6hpsxHfjM3TO50=; b=H5ZkRC5y06qaujpMjpUvlve1hEHvl
-        zQRnE/9o2O2623CiHUDXViD5tRUr1uOtKsTXbLbBWkF3jDwxnW3lGUDEG+Rl0ZAP
-        WK1SJipDS9t373fFMWD1LFpMODkiaMozXAVphx98xfPwi5CMICnQhv0/Xq98MWK4
-        a0IDHPSwiIApdD0cfJMh02ZYJmqKlQZGSFIhcuqmI/IgnRB/hW5IZpyZjTi2Y2p8
-        QT3Ob4BSpB+8rx3bVbjDZx/tOwTetm8zBjjfuuledGHdwEMuOhN3RD2wZaFv1GGF
-        L+qm0MNCeqP+SyU6wTgj3f8u7W8cgS8e7V3kOGC5ihta5QSMpmDVdyzwQ==
-X-ME-Sender: <xms:HQOQZHcySC9lT2cvZKy045V6t9MhKvso0JIjQSlR8NXoOBhbLrWZbw>
-    <xme:HQOQZNOCvv6tXhuXaYVPWoHykdOXBUUWEA0VHzWPy9pcSLYuKVi993H_EQBtNASaN
-    T7aQYMDiUSxVqFOD_w>
-X-ME-Received: <xmr:HQOQZAieiyzw1LVITz50Z1S5ILBeLImdFz1iw28h5_FXAtOhc6Cn3vrteMApggIG0N7f_NkraJtqgAug2T8Y-A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeefuddguddukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepueeuteetgfduveeuueejiedtvefgtefhgeeiieelfeeuuefgveduieel
-    gfffgfeknecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordht
-    vggthh
-X-ME-Proxy: <xmx:HQOQZI_lsEt4fEcwMngCM9sc9dGaM0XykO8Nel4O569x0S-vEr2DpA>
-    <xmx:HQOQZDv8pwbHSG7U5dlmC5o7DhV4k4F3iOPdkT23Fk_1UJy7kbOXRw>
-    <xmx:HQOQZHEDbvOP7jfhBDCr04Dqmqsm5Xd6d1W1EPXfJadm1glDYBDHGQ>
-    <xmx:HgOQZM9naoUyDJ8urtS-8MI8fq7jL6CQyQ-1f6VvpPTKf7-GkVSRdg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 Jun 2023 03:26:21 -0400 (EDT)
-Date:   Mon, 19 Jun 2023 09:26:19 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
-Message-ID: <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
- <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
- <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
+        Mon, 19 Jun 2023 04:55:26 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67AAC5
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Jun 2023 01:55:09 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-bb3a77abd7bso3456938276.0
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Jun 2023 01:55:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687164909; x=1689756909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ft00l+B0S41zwgia7w9UlSVKseJXy/VlgNeabdK8/w=;
+        b=tqrj4QM+V+4XvszlmFkNx3twtjmwRb3RCyqygXoi+BFpO+2dvyefbsmXNS8zTrF5MM
+         QjCoLK+SPOTHY+AoDJbkhSQzvxJNBCBWrGQrS1dpAUxNv7LSXW4qFGDIFw8iSqDDWut9
+         j9oqwUUVSQBK5tdk+Um3uh5k7BT+pjLVmYBPeRQ5CXqPS2Tgj+nix37iR1iFlBZ0KbjK
+         7zrSS9gOhuioNWaX2CGpCE6MwisuDCm1voP64JbFJ4rbBoUko2sMovMLtlY/CqEpjJmP
+         3UjMvBe8RnC5Lz1wiO+1NO4194YqGHksRw/Xuqhvq31sYzfbWJonjyncj5+5taBdk9cb
+         6xkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687164909; x=1689756909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ft00l+B0S41zwgia7w9UlSVKseJXy/VlgNeabdK8/w=;
+        b=IQE6GQrGn40kvmH6HT5OHdkUxWIpcNKXIUxeq1i4d2w20a+le+WzoUT4K0hL+5hRM/
+         u5em4L4Ma2g63mwqzQMcqwGIz+hFtxaKfic0FXBYGS776YUdsLr+t3p4WduWPnVht5ua
+         8DiqUw2XLHhghiE2q5d0bpT8u3pp5eNhPgI6ixKIHMOlJtrgUIhDM+gSv11k80qWHRwo
+         rSlMa3RjYmCGjnnmA2GW++mqB6pFHV0e8kugrTHpfwfT5Bx6/Y7cCmEUcqdnf4dV/MAo
+         S9GxuIHTPRRBjTAdN+p444eSRrHoloLIMt9NDerVcKLvXQqZtvAPIfNgwy8TkTYTJUJ6
+         ZHng==
+X-Gm-Message-State: AC+VfDwuNfGMVae1u20/3nhq8AfO+/YQzm0Acw5E6PRxU0TioXXhTWUH
+        r8vKZscOc24/ubD2DM4B7jeRvBCWstSpjfpvxlBtrA==
+X-Google-Smtp-Source: ACHHUZ5Gi3nydI31ECdsLbHHgh5S+9BWsb+nq/JajVzy6/jg8nkrVJHfSVbJkywNJ8EGpBtD/iKD3axOoL+1n2zfA6I=
+X-Received: by 2002:a25:cfd8:0:b0:b9d:8613:6936 with SMTP id
+ f207-20020a25cfd8000000b00b9d86136936mr6097091ybg.50.1687164909140; Mon, 19
+ Jun 2023 01:55:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="csfklsakzv3gu57q"
-Content-Disposition: inline
-In-Reply-To: <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
+References: <20230616161603.1127687-1-arnd@kernel.org>
+In-Reply-To: <20230616161603.1127687-1-arnd@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 19 Jun 2023 10:54:58 +0200
+Message-ID: <CACRpkdYyGFAJMKh+7KMKBjL+brGy+Co4B8WvJfchPEiUUp9r8w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: tegra: avoid duplicate field initializers
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Jun 16, 2023 at 6:16=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
 
---csfklsakzv3gu57q
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The drv_reg field is initialized both in the DRV_PINGROUP_ENTRY_N/DRV_PIN=
+GROUP_ENTRY_Y
+> macros and in DRV_PINGROUP_Y. Since each pingroup expands both macros, th=
+e are
+> always duplicate and turning on -Woverride-init (which is disabled by def=
+ault)
+> causes a huge amount of warnings like:
+>
+> drivers/pinctrl/tegra/pinctrl-tegra234.c:1384:27: error: initialized fiel=
+d overwritten [-Werror=3Doverride-init]
+>  1384 | #define DRV_PINGROUP_Y(r) ((r))
+>       |                           ^
+> drivers/pinctrl/tegra/pinctrl-tegra234.c:1397:28: note: in expansion of m=
+acro 'DRV_PINGROUP_Y'
+>  1397 |                 .drv_reg =3D DRV_PINGROUP_Y(r),                  =
+ \
+>       |                            ^~~~~~~~~~~~~~
+> drivers/pinctrl/tegra/pinctrl-tegra234.c:1447:49: note: in expansion of m=
+acro 'DRV_PINGROUP_ENTRY_Y'
+>  1447 | #define drive_soc_gpio08_pb0                    DRV_PINGROUP_ENTR=
+Y_Y(0x500c,    12,     5,      20,     5,      -1,     -1,     -1,     -1, =
+    0)
+>       |                                                 ^~~~~~~~~~~~~~~~~=
+~~~
+> ...
+>
+> Remove the intialization that is never used here.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Hi Dmitry,
+Patch applied!
 
-On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
-> 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > The Tegra super clocks implements a mux with a set_parent hook, but
-> > doesn't provide a determine_rate implementation.
-> >=20
-> > This is a bit odd, since set_parent() is there to, as its name implies,
-> > change the parent of a clock. However, the most likely candidate to
-> > trigger that parent change is a call to clk_set_rate(), with
-> > determine_rate() figuring out which parent is the best suited for a
-> > given rate.
-> >=20
-> > The other trigger would be a call to clk_set_parent(), but it's far less
-> > used, and it doesn't look like there's any obvious user for that clock.
-> >=20
-> > So, the set_parent hook is effectively unused, possibly because of an
-> > oversight. However, it could also be an explicit decision by the
-> > original author to avoid any reparenting but through an explicit call to
-> > clk_set_parent().
-> >=20
-> > The driver does implement round_rate() though, which means that we can
-> > change the rate of the clock, but we will never get to change the
-> > parent.
-> >=20
-> > However, It's hard to tell whether it's been done on purpose or not.
-> >=20
-> > Since we'll start mandating a determine_rate() implementation, let's
-> > convert the round_rate() implementation to a determine_rate(), which
-> > will also make the current behavior explicit. And if it was an
-> > oversight, the clock behaviour can be adjusted later on.
-> >=20
-> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: linux-tegra@vger.kernel.org
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
-> >  drivers/clk/tegra/clk-super.c | 15 +++++++++++----
-> >  1 file changed, 11 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-supe=
-r.c
-> > index 3f3a7a203c5f..7ec47942720c 100644
-> > --- a/drivers/clk/tegra/clk-super.c
-> > +++ b/drivers/clk/tegra/clk-super.c
-> > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_super_mux_o=
-ps =3D {
-> >  	.restore_context =3D clk_super_mux_restore_context,
-> >  };
-> > =20
-> > -static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
-> > -				 unsigned long *parent_rate)
-> > +static int clk_super_determine_rate(struct clk_hw *hw,
-> > +				    struct clk_rate_request *req)
-> >  {
-> >  	struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw);
-> >  	struct clk_hw *div_hw =3D &super->frac_div.hw;
-> > +	unsigned long rate;
-> > =20
-> >  	__clk_hw_set_clk(div_hw, hw);
-> > =20
-> > -	return super->div_ops->round_rate(div_hw, rate, parent_rate);
-> > +	rate =3D super->div_ops->round_rate(div_hw, req->rate,
-> > +					  &req->best_parent_rate);
-> > +	if (rate < 0)
-> > +		return rate;
-> > +
-> > +	req->rate =3D rate;
-> > +	return 0;
-> >  }
-> > =20
-> >  static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
-> > @@ -193,7 +200,7 @@ const struct clk_ops tegra_clk_super_ops =3D {
-> >  	.get_parent =3D clk_super_get_parent,
-> >  	.set_parent =3D clk_super_set_parent,
-> >  	.set_rate =3D clk_super_set_rate,
-> > -	.round_rate =3D clk_super_round_rate,
-> > +	.determine_rate =3D clk_super_determine_rate,
-> >  	.recalc_rate =3D clk_super_recalc_rate,
-> >  	.restore_context =3D clk_super_restore_context,
-> >  };
-> >=20
->=20
-> Tegra30 doesn't boot anymore with this change. Best would be to keep the
-> old behaviour for both sclk and periph tegra clocks.
-
-I took a closer look at the patch and can't find anything different to
-what the core is doing if there's a round_rate implementation:
-https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L1459
-
-Also, it's not clear to me how that driver is used. It looks like
-div_ops is always supposed to be set, and super clocks are registered
-with either tegra_clk_register_super_clk() or tegra_clk_register_super_mux()
-
-tegra_clk_register_super_clk() sets the div_ops pointer to
-tegra_clk_super_ops, but tegra30 doesn't seem to call it.
-
-tegra_clk_register_super_mux() doesn't set the div_ops pointer, but is
-used by tegra30, so I would assume that it's the broken one. But I'm
-confused, since div_ops doesn't seem to be set anywhere?
-
-Maxime
-
---csfklsakzv3gu57q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJADGwAKCRDj7w1vZxhR
-xfiwAPwPgxvKf+gKQ5dGbQVX/L6f5eXnGdA/sgm/pCKCM4V8RAD/a/IvIwgq0Asy
-uMzj8S/CjwfhElVTrDigcvCAb6ZqLgc=
-=LWDU
------END PGP SIGNATURE-----
-
---csfklsakzv3gu57q--
+Yours,
+Linus Walleij
