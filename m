@@ -2,61 +2,148 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE950EB64DC
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 17:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E26EB64D7
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 18:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230382AbjFURhe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Jun 2023 13:37:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40404 "EHLO
+        id S229628AbjFUSGc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Jun 2023 14:06:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbjFURhb (ORCPT
+        with ESMTP id S229544AbjFUSGb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Jun 2023 13:37:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA64F1BDA;
-        Wed, 21 Jun 2023 10:37:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 85006615FF;
-        Wed, 21 Jun 2023 17:37:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F7EFC433C0;
-        Wed, 21 Jun 2023 17:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687369048;
-        bh=Ofow7TPhTby78fiLDgvFRr9YEMU8BzTuo+3QlFVgybo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lcSfXMrPdldMiaJQp2qajwo1CJIGRK0b0TT5+todi+ByYMIHp/+iz46WCmF/qHTWI
-         xeLA/2Be/C0VpWNQC03aaSP66+R7uN1lEd70E0FgyZiC66F9S1Vnfv09rXlbgxTKLU
-         rRuw3+V6HSOVfOwvv1mjk0gkcp6X3E4945HBE+GE7Wt/yaSOjea0qmJJq3XhMl2pNE
-         9p4CDIaWAmGzfK+z6ChGnkxI23mNaBJyDTgF4Pe50tJ1KHE52Og6CTMW9RyFzisQEW
-         eqbk6CdnsYIZTiPhUG9ZQJSZNyLCJxryfzW9Dx0V9SrvscZ13ATLxdTkDC1NCnnG9X
-         vos3EDlyhA3/Q==
-Date:   Wed, 21 Jun 2023 23:07:23 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     jckuo@nvidia.com, kishon@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, nkristam@nvidia.com,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: tegra: xusb: check return value of devm_kzalloc()
-Message-ID: <ZJM1U9RPV4DUPgWp@matsya>
-References: <20230531073950.145339-1-claudiu.beznea@microchip.com>
+        Wed, 21 Jun 2023 14:06:31 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B385E41;
+        Wed, 21 Jun 2023 11:06:29 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-54f75f85a17so3342508a12.0;
+        Wed, 21 Jun 2023 11:06:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687370789; x=1689962789;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Az2bQMNiNgvxrY9glBfDppHJtPk+FnOiirU3h5SFUmI=;
+        b=GBwqsylX82eyyI6jaGm8GsagHkfo1ldmyJdiuXnqzkqc4ixPDGmBndPn+m5n78gbEX
+         grQ43KpF9obw2HM0F+0Da2EX7FG1TM+0L9uhuv2VxtTTh4Shtd4OnCRuABGudvVq5VNz
+         iQaWR9MzmTbR4azKVOEb4dzjdFL4zISHzQ8Xai7eC0gVhiFfJ7tVYQ5E9AAcbFn9q22k
+         8Ov5oteaP4Ey9KJbsK4m7VfpYJ2OGGic9pmnWe9y4g9aXPHbx1psYi9x54FtmJyaOHTJ
+         If9gncUlG0NfkZN0/Ht0Eesf6ACs38AOXcM3/k8dkmspSHj3mSTLO0ygf69hIR5HeY/c
+         7xjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687370789; x=1689962789;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Az2bQMNiNgvxrY9glBfDppHJtPk+FnOiirU3h5SFUmI=;
+        b=fqrko/XIq5Sojnp7wUTCpxw6RGyV40qUZ5O/rSE5LDXTmtHrtY300NkjNAhZtkprzI
+         Rhvs8wT0I3YCTNaThrddO8AnEyB/rMYIMOq5sI2tfxTZZFTZGTiJ1AnXaDssl36sEtKZ
+         IFBr36fZUQ01gM2rOKj4kvY0IBbAQFMlenAgBPkhVgG4UymXmL/kqn6LGA7M5s9z42Gt
+         QcRphIdKuL0m8O5Ud9VohtLpvCfbNJVTNJw5aHAFXnUHSB2rOplNGgtZnrvMbXhpgTZi
+         0b8nzh7uBqzW9uIEt9NtdgF1kTkuGiu9Ed5yDB3L/ApCY2bCbdil/zoNS9kjdEqpF52K
+         KeIw==
+X-Gm-Message-State: AC+VfDweWjG/eRHWISC+sLexIOMrpBoMKsCPg6/LxcfrsE+Y6kQM11t8
+        7ptEcEOlS2NtzmX9LfS+Az0=
+X-Google-Smtp-Source: ACHHUZ4rfAeGFSguwikDDJBGuQb8NhqAfqZhPlTkMSahmVCwaEWtuwULvNAqRQTIu3CqkjuDrOxkMw==
+X-Received: by 2002:a17:90a:bb85:b0:24d:fbaf:e0b1 with SMTP id v5-20020a17090abb8500b0024dfbafe0b1mr9657024pjr.19.1687370788961;
+        Wed, 21 Jun 2023 11:06:28 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id gq17-20020a17090b105100b00260e7c2cedesm1762390pjb.57.2023.06.21.11.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jun 2023 11:06:27 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Wed, 21 Jun 2023 11:06:26 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Joe Tessler <jrt@google.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Bin Liu <bin.liu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 01/28] media: cec: ch7322: drop of_match_ptr for ID table
+Message-ID: <dba2090c-e6b2-4a54-a233-9e8f309a20af@roeck-us.net>
+References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230531073950.145339-1-claudiu.beznea@microchip.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 31-05-23, 10:39, Claudiu Beznea wrote:
-> devm_kzalloc() returns a pointer to dynamically allocated memory.
-> Pointer could be NULL in case allocation fails. Check pointer validity.
-> Identified with coccinelle (kmerr.cocci script).
+On Sun, Mar 12, 2023 at 02:12:51PM +0100, Krzysztof Kozlowski wrote:
+> The driver can match only via the DT table so the table should be always
+> used and the of_match_ptr does not have any sense (this also allows ACPI
+> matching via PRP0001, even though it might not be relevant here).
+> 
+>   drivers/media/cec/i2c/ch7322.c:583:34: error: ‘ch7322_of_match’ defined but not used [-Werror=unused-const-variable=]
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Applied, thanks
+What happened wit hthis patch ? I still don't see it applied.
 
--- 
-~Vinod
+FWIW:
+
+Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
+
+Thanks,
+Guenter
+
+> ---
+>  drivers/media/cec/i2c/ch7322.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/cec/i2c/ch7322.c b/drivers/media/cec/i2c/ch7322.c
+> index 34fad7123704..3c6e6496a001 100644
+> --- a/drivers/media/cec/i2c/ch7322.c
+> +++ b/drivers/media/cec/i2c/ch7322.c
+> @@ -589,7 +589,7 @@ MODULE_DEVICE_TABLE(of, ch7322_of_match);
+>  static struct i2c_driver ch7322_i2c_driver = {
+>  	.driver = {
+>  		.name = "ch7322",
+> -		.of_match_table = of_match_ptr(ch7322_of_match),
+> +		.of_match_table = ch7322_of_match,
+>  	},
+>  	.probe_new	= ch7322_probe,
+>  	.remove		= ch7322_remove,
+> -- 
+> 2.34.1
+> 
