@@ -2,121 +2,283 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C950FEB64D7
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 13:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4873AEB64D8
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 13:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231912AbjFUNfw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Jun 2023 09:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
+        id S232602AbjFUNgB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Jun 2023 09:36:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbjFUNfw (ORCPT
+        with ESMTP id S232606AbjFUNgA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Jun 2023 09:35:52 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C98EE59;
-        Wed, 21 Jun 2023 06:35:50 -0700 (PDT)
+        Wed, 21 Jun 2023 09:36:00 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2065.outbound.protection.outlook.com [40.107.243.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BB31998;
+        Wed, 21 Jun 2023 06:35:55 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EKf8P3S1gVc/ZlCnlDeG72wdEKN7uvhtiX63EgF+O5hbfh7t382ajxQeaLqo4ofj2nfQ3fp9qmpxn944pXYq2VPuHp0h8sqLbcX7gJdmpjZCJkD6C7asFt3LeYHDsd9dCbxcx+Maiqoygwyj6P+7rnbWyDGglZj+d46h86CHx0BjuC/AQNX9miqYe2LvNDx/O42TEUGiwCHslGSb0gu+JTe5hNii9U6ZUBDg3rnOJACDg3dppufUE128yKdHamCMYtyRMdyxEv5bF/rhmZwso4tblgd8ezInrEInXptm6KJLadNZkvonxIAnkfe++KYQPu/jY9o21GiaVSPzXcA3vg==
+ b=cnBoRDi83W5tuMBRVRQ5yi66VO1Gel9MW5jsMkDSgL+tApHnnigZM0VgLcj3vbN8InegPhhqtNa8zJFN1B/SL/RYfvkjL/2Tfphk7TPekWq1jJGNCrOVfsPtp1h/OHnuhrMVjYW83zr+6lvwia02wo6vhVoQ6lLRjpyLUFbNTwyOLLtzHWGCoWvgEKANr3Lb3xQJFlLSEGDSVM1XdIa0TQS5mVYeDeN0f3Xx71gbydSJ6TSO33sQOKj+zZ3mB5oh3pwZaHlfLx1Z9aJYVO9ZATslY/Q6VeHN+hUexf8mqi7M78+/w40SGRlKhiaSj2fmFXMkstXpC4GBUyU7ZxyJdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fFwahwgyuzD6wb2hguaW43cuMHR5pwjsipJByOa+vBo=;
- b=j28RHngr6j0C9I2OEalN9vSUb6yFjU7iPqXeRVUcUFiekDwf9sTm2I7SzImT60EP2FWQFBtV/h8iJYIRkOHH9nKe7DVkOZNXa2ppUhxBtKWx40/TBbPRmSzV5DH9IJ2vjlIzBxOzu7K4ldR3g57yrJORGlgZQMTTKh961BkjLzg+3zPzFM7Kjqm5UsAx1W+hn6dn7H4hYEIXJfiVIE7UEMeHpOSyJXuzpvL9/NIeEtrjstGhClZpVsLXwMXvwmll5NnRg3u43J6xVxfP4/84W4FAtt+qUKvex7kImGc9C98QueXPQOTQM6ufzApgcwSv38xZLFzUj0vzlsFmoAEs/Q==
+ bh=/bxRUW89IS2RPob1CambtRNJDIe+vIWKZ6XXJlqituo=;
+ b=oYxK4kfDm85i6Z+NlrXaIV38bJ54d6QkUtloWqmzsDtYHGQZwy9FVtcxJyrXMOhS7UlgDEP+YJtaMQzbxT09H6DoFzP2J49+5wIGhPKpWU4lDQORGqogGjp+n+bydUi7XONpgDOFIM2YsODkI4YvYQSBWBOPHSeNBbaO52/f/9w5vYcPGLEM0DEAZKBtTJgcaputCILIXmfJQqN4AW8Bpp7uLH8x3zESkfrcvX7x5zszkxjWbnnA25HpNIAoudJki2gK5K97AlYWN3SQ3a4J5GqqQfMsDyUFpBNzaXyucbMxZRyvKol1QNgfgA/kmbnAHFUjO9O81Q3RPPxMPycFhA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fFwahwgyuzD6wb2hguaW43cuMHR5pwjsipJByOa+vBo=;
- b=U+XCzJvIJMgFfFDReLoO3+sJTd+E0uyAsMWrV9jI5JthV3wg31ClZ5tqWIPnnWZN9BWkNzXhmH8a3kvoIA2JumrzaYT3ph8yoYD4TyZvAxl2UgispKcpXdIqBBzszjDGmfKguhxuXtFiBU3sNsK5Kf/Jy6K93K5uhzuaCdTlS/hjPhrRc3eB6njtY1KShOXr8HB61Bl1TLVTyPTLJsl9WHGjQ28RMBUooVQRQrRrhpjoPQnWiil6yqABcQPXJySSl+ENlVd40ugLFWgB4E887AZ+xP1hRQB59Rm0FJj6H5xp2rOuvcqA2BJLWMrnfAWNpMRxiK9LZRoLkx0voWWcRg==
-Received: from MW4PR04CA0327.namprd04.prod.outlook.com (2603:10b6:303:82::32)
- by MW3PR12MB4442.namprd12.prod.outlook.com (2603:10b6:303:55::14) with
+ bh=/bxRUW89IS2RPob1CambtRNJDIe+vIWKZ6XXJlqituo=;
+ b=LPgkYUFP8KUIMKQKCaAHRXmPMAU8SMtjVl7ntk2zXzAJcpdEf820OlPOAtiVqdmCUZTiurqZMaW7A35mE8RKMfTL17I+WClVVEM4qgggCgPvi92ozrIcwMNAnEcWWMiA75YDY33Nkhc42spSSxWzgoC0EblV9EcAYsSLNbxFm6J6iKoWORHRJ+AESvmXGfs7t0PoiKgXfxgZq49k/uiUQ3tGIaJYkVGFpWUwzBjrkwxLpjf4qHT0krF15HKpOiRn7db7h3Fbguq6SAZlXNsqGvFStzDZNfkjwIiu6S6chJtk6S1p/bDkSoSpx8ts7cTkezu5yMc+CXvcJ/et7eiAaw==
+Received: from SA1P222CA0048.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2d0::23)
+ by SN7PR12MB7108.namprd12.prod.outlook.com (2603:10b6:806:2a3::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23; Wed, 21 Jun
- 2023 13:35:48 +0000
-Received: from CO1PEPF000042AA.namprd03.prod.outlook.com
- (2603:10b6:303:82:cafe::1c) by MW4PR04CA0327.outlook.office365.com
- (2603:10b6:303:82::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23 via Frontend
- Transport; Wed, 21 Jun 2023 13:35:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.37; Wed, 21 Jun
+ 2023 13:35:53 +0000
+Received: from SA2PEPF0000150A.namprd04.prod.outlook.com
+ (2603:10b6:806:2d0:cafe::3f) by SA1P222CA0048.outlook.office365.com
+ (2603:10b6:806:2d0::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.21 via Frontend
+ Transport; Wed, 21 Jun 2023 13:35:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000042AA.mail.protection.outlook.com (10.167.243.39) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF0000150A.mail.protection.outlook.com (10.167.242.42) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6521.17 via Frontend Transport; Wed, 21 Jun 2023 13:35:48 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.6521.17 via Frontend Transport; Wed, 21 Jun 2023 13:35:53 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 21 Jun 2023
- 06:35:32 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 06:35:40 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 21 Jun
- 2023 06:35:31 -0700
+ 2023 06:35:40 -0700
 Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Wed, 21 Jun 2023 06:35:29 -0700
+ Transport; Wed, 21 Jun 2023 06:35:38 -0700
 From:   Sumit Gupta <sumitg@nvidia.com>
 To:     <krzysztof.kozlowski@linaro.org>, <treding@nvidia.com>,
         <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>
 CC:     <bbasu@nvidia.com>, <talho@nvidia.com>, <sumitg@nvidia.com>
-Subject: [Patch 0/4] Tegra234 Memory Interconnect followup changes
-Date:   Wed, 21 Jun 2023 19:05:23 +0530
-Message-ID: <20230621133526.22492-1-sumitg@nvidia.com>
+Subject: [Patch 3/4] memory: tegra: add check if MRQ_EMC_DVFS_LATENCY is supported
+Date:   Wed, 21 Jun 2023 19:05:25 +0530
+Message-ID: <20230621133526.22492-3-sumitg@nvidia.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230621133526.22492-1-sumitg@nvidia.com>
+References: <20230621133526.22492-1-sumitg@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AA:EE_|MW3PR12MB4442:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7321921f-ca15-4468-48fb-08db725c6c59
+X-MS-TrafficTypeDiagnostic: SA2PEPF0000150A:EE_|SN7PR12MB7108:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8bec7874-e0a9-465d-3751-08db725c6f58
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: X5iTnFUgfxrVAh0CxmH6Kv6BNGGCzmFw3efaFU9+gWcB4eZin3GXGRlfntt20cCLZ01w7IdtxRVeJ3f/0ClP1VJz3ogA05rJKMmuG/S2/aBoZ4WKshi3oduOX0/DoxIkwPzdPxmrLALShO6rkAevphLqJsOuSFtOV+KCiL4ywupmJ0FIGIGkXxpFWJ/kqI0uyuiC5sFgAHKR3BGJR/mUQR9A+hnNzmYAzzTGiNTPO+xqJhhAFoHfPC68Oly4T5evBGCkDNQ22NT/7NYoRSSGCs+XXfKqthhLbRHaPMD3ooPF1YgmOFITMqP8yml00lOsNsfnX1eWQwPWpzbhhZqAoJDmWb2rraaKAj74H9CVrcpJTJXmkIIkysd642oU8oECNgyWQ9i1rAKAHhI4mYC3vWq2hyGx7BQ27tTm4OmlddC02bRU9hdvxQ0rWmOOnPRSxWqcyg/Bk6OseodWJfMJgmRwFg+wFx5ubFz3RF3MVwnQombsT4SwNJ6StbOhl69x6cmE6LOZFq97XBfpHBXk3vPuK0gE5fUeE9Zdx8V8PvyOKE936po2WS4EfJjPQOaN4USshUWXPKpPm8DlB7xCJhTuDdv9No090kDpBjBVYsGxPMI0cCpoO7qHzirQ4Ikby/0aq4s32SPB18fZ89xmS6FLHwMeCmqYjWILmrOLqq570z2RVaWgJoAyNHVXUPo3KMfoMuN069iHXgERi2av1psN8VqVGvmXcvCx1UdxayNG9wH2/PqPCyc7PF0AQ3G2
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(376002)(396003)(39860400002)(451199021)(36840700001)(46966006)(40470700004)(7696005)(478600001)(110136005)(70206006)(70586007)(6666004)(54906003)(83380400001)(2616005)(36860700001)(40480700001)(47076005)(426003)(336012)(36756003)(40460700003)(86362001)(4744005)(2906002)(82310400005)(186003)(107886003)(1076003)(26005)(7636003)(356005)(82740400003)(4326008)(316002)(41300700001)(8936002)(8676002)(5660300002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: fa9W9aBxVbDJaOsYODHmVIrZ7YbY7LT+XdeWWF8AlgQmLsZ1KFkdPHB/cljFphlLIbW7N36L9l3ehaQz6C9kJ9yO/EDAe5+4VMK+AxhFaaSqx25UMTOtTjy6K8blUlzSsVvgpsBrIyATys7U/YyJQCkHnHnpGMjAk6QppPcnNcSexXX7HFJOf9BBio1sfqvHGvOLyFPPnA07OGq173y4UJeXym7YNx8w+1KlkNN8P1Rsc4/YV5M+7EE8Kw1UPUcBcm4aTZ6xe9INH/mlUY48juYFWPvXDWKQ4wHr8SeJsl40xRlA8nV4jXcqYDkAbH/qPyOB/O8m00P4G4UlFiawYc46np1aozpTobCekRi4RFG8au11Zcag3PzKLCKG6W/iz0mwEf/EzlhfYA6zy6XwYh0eu5dnf8NTyqcD4xR3mH4NJ1Xgu4aDYs5uMqCJWJNTLdfV6/xnwhaAq4GlYwYHBGQGsJ0xxB0wlMs+kSQORMWA+RIg7bIXScVrCB9vtIWF/bOuJHQHmgYAbpm5y8K+xn3oOawDOjUbRNTPU5VdWg891jyGwdBYXLC5oQNag8hBaCMOi3IahKFGtEhxNyjDqrjVcOFgDKMfJ0ebkr+oB5zvTGM6NeXoSoFkw2/UvhkEnOiccNlTzzYFCqqfbQld1rxMUUEpsHYsPh7Ua1/AU6ANsx2fySwhAj8/qc+1MkXbv1E+0SYBdmQcj5KFzP0UecWb7ESAtmsde0dm7K1hvxAZk3adXk0MrOSurt669Nci
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(136003)(346002)(396003)(39860400002)(451199021)(36840700001)(46966006)(40470700004)(40460700003)(7696005)(478600001)(6666004)(36860700001)(336012)(47076005)(186003)(426003)(36756003)(83380400001)(82310400005)(86362001)(7636003)(2616005)(356005)(1076003)(82740400003)(40480700001)(107886003)(26005)(4326008)(70586007)(70206006)(316002)(8676002)(8936002)(5660300002)(41300700001)(2906002)(54906003)(110136005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2023 13:35:48.1843
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2023 13:35:53.2260
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7321921f-ca15-4468-48fb-08db725c6c59
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bec7874-e0a9-465d-3751-08db725c6f58
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042AA.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF0000150A.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4442
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7108
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch set adds VIC, NVDEC, NVENC, NVJPG, NVDISPLAY clients
-of Memory Controller to the Tegra234 MC clients table. It also
-improves error handling when some MRQ's are not supported by a
-platform. For Example:
-- Avoid "tegra186_emc_probe" failure if the "MRQ_EMC_DVFS_LATENCY"
-  is not supported.
-- Avoid Error returned by icc_set_bw() in the MC client drivers if
-  the "MRQ_BWMGR_INT" is not supported.
+Add check to ensure that "MRQ_EMC_DVFS_LATENCY" is supported by the
+BPMP-FW before making the MRQ request. Currently, if the BPMP-FW
+doesn't support this MRQ, then the "tegra186_emc_probe" fails.
+Due to this the Memory Interconnect initialization also doesn't
+happen. Memory Interconnect is not dependent on this MRQ and can
+initialize even when this MRQ is not supported in any platform.
+The check ensures that the MRQ is called only when it is supported
+by the BPMP-FW and Interconnect initializes independent of this MRQ.
+Also, moved the code to new function for better readability.
 
-Sumit Gupta (4):
-  memory: tegra: sort tegra234_mc_clients table as per register offsets
-  memory: tegra: Add clients used by DRM in Tegra234
-  memory: tegra: add check if MRQ_EMC_DVFS_LATENCY is supported
-  memory: tegra: make icc_set_bw return zero if BWMGR not supported
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/memory/tegra/tegra186-emc.c | 136 +++++++++++++++-------------
+ 1 file changed, 71 insertions(+), 65 deletions(-)
 
- drivers/memory/tegra/tegra186-emc.c | 136 ++++---
- drivers/memory/tegra/tegra234.c     | 604 +++++++++++++++++-----------
- 2 files changed, 435 insertions(+), 305 deletions(-)
-
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index 6ad8a4023dd7..83981ae3ea86 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -155,6 +155,73 @@ DEFINE_DEBUGFS_ATTRIBUTE(tegra186_emc_debug_max_rate_fops,
+ 			  tegra186_emc_debug_max_rate_get,
+ 			  tegra186_emc_debug_max_rate_set, "%llu\n");
+ 
++static int tegra186_emc_get_emc_dvfs_latency(struct tegra186_emc *emc)
++{
++	struct mrq_emc_dvfs_latency_response response;
++	struct tegra_bpmp_message msg;
++	unsigned int i;
++	int err;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.mrq = MRQ_EMC_DVFS_LATENCY;
++	msg.tx.data = NULL;
++	msg.tx.size = 0;
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	err = tegra_bpmp_transfer(emc->bpmp, &msg);
++	if (err < 0) {
++		dev_err(emc->dev, "failed to EMC DVFS pairs: %d\n", err);
++		return err;
++	}
++	if (msg.rx.ret < 0) {
++		dev_err(emc->dev, "EMC DVFS MRQ failed: %d (BPMP error code)\n", msg.rx.ret);
++		return -EINVAL;
++	}
++
++	emc->debugfs.min_rate = ULONG_MAX;
++	emc->debugfs.max_rate = 0;
++
++	emc->num_dvfs = response.num_pairs;
++
++	emc->dvfs = devm_kmalloc_array(emc->dev, emc->num_dvfs, sizeof(*emc->dvfs), GFP_KERNEL);
++	if (!emc->dvfs)
++		return -ENOMEM;
++
++	dev_dbg(emc->dev, "%u DVFS pairs:\n", emc->num_dvfs);
++
++	for (i = 0; i < emc->num_dvfs; i++) {
++		emc->dvfs[i].rate = response.pairs[i].freq * 1000;
++		emc->dvfs[i].latency = response.pairs[i].latency;
++
++		if (emc->dvfs[i].rate < emc->debugfs.min_rate)
++			emc->debugfs.min_rate = emc->dvfs[i].rate;
++
++		if (emc->dvfs[i].rate > emc->debugfs.max_rate)
++			emc->debugfs.max_rate = emc->dvfs[i].rate;
++
++		dev_dbg(emc->dev, "  %2u: %lu Hz -> %lu us\n", i,
++			emc->dvfs[i].rate, emc->dvfs[i].latency);
++	}
++
++	err = clk_set_rate_range(emc->clk, emc->debugfs.min_rate, emc->debugfs.max_rate);
++	if (err < 0) {
++		dev_err(emc->dev, "failed to set rate range [%lu-%lu] for %pC\n",
++			emc->debugfs.min_rate, emc->debugfs.max_rate, emc->clk);
++		return err;
++	}
++
++	emc->debugfs.root = debugfs_create_dir("emc", NULL);
++	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root,
++			    emc, &tegra186_emc_debug_available_rates_fops);
++	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
++			    emc, &tegra186_emc_debug_min_rate_fops);
++	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
++			    emc, &tegra186_emc_debug_max_rate_fops);
++
++	return 0;
++}
++
+ /*
+  * tegra_emc_icc_set_bw() - Set BW api for EMC provider
+  * @src: ICC node for External Memory Controller (EMC)
+@@ -251,10 +318,7 @@ static int tegra_emc_interconnect_init(struct tegra186_emc *emc)
+ static int tegra186_emc_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_mc *mc = dev_get_drvdata(pdev->dev.parent);
+-	struct mrq_emc_dvfs_latency_response response;
+-	struct tegra_bpmp_message msg;
+ 	struct tegra186_emc *emc;
+-	unsigned int i;
+ 	int err;
+ 
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+@@ -275,70 +339,12 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, emc);
+ 	emc->dev = &pdev->dev;
+ 
+-	memset(&msg, 0, sizeof(msg));
+-	msg.mrq = MRQ_EMC_DVFS_LATENCY;
+-	msg.tx.data = NULL;
+-	msg.tx.size = 0;
+-	msg.rx.data = &response;
+-	msg.rx.size = sizeof(response);
+-
+-	err = tegra_bpmp_transfer(emc->bpmp, &msg);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to EMC DVFS pairs: %d\n", err);
+-		goto put_bpmp;
+-	}
+-	if (msg.rx.ret < 0) {
+-		err = -EINVAL;
+-		dev_err(&pdev->dev, "EMC DVFS MRQ failed: %d (BPMP error code)\n", msg.rx.ret);
+-		goto put_bpmp;
+-	}
+-
+-	emc->debugfs.min_rate = ULONG_MAX;
+-	emc->debugfs.max_rate = 0;
+-
+-	emc->num_dvfs = response.num_pairs;
+-
+-	emc->dvfs = devm_kmalloc_array(&pdev->dev, emc->num_dvfs,
+-				       sizeof(*emc->dvfs), GFP_KERNEL);
+-	if (!emc->dvfs) {
+-		err = -ENOMEM;
+-		goto put_bpmp;
+-	}
+-
+-	dev_dbg(&pdev->dev, "%u DVFS pairs:\n", emc->num_dvfs);
+-
+-	for (i = 0; i < emc->num_dvfs; i++) {
+-		emc->dvfs[i].rate = response.pairs[i].freq * 1000;
+-		emc->dvfs[i].latency = response.pairs[i].latency;
+-
+-		if (emc->dvfs[i].rate < emc->debugfs.min_rate)
+-			emc->debugfs.min_rate = emc->dvfs[i].rate;
+-
+-		if (emc->dvfs[i].rate > emc->debugfs.max_rate)
+-			emc->debugfs.max_rate = emc->dvfs[i].rate;
+-
+-		dev_dbg(&pdev->dev, "  %2u: %lu Hz -> %lu us\n", i,
+-			emc->dvfs[i].rate, emc->dvfs[i].latency);
+-	}
+-
+-	err = clk_set_rate_range(emc->clk, emc->debugfs.min_rate,
+-				 emc->debugfs.max_rate);
+-	if (err < 0) {
+-		dev_err(&pdev->dev,
+-			"failed to set rate range [%lu-%lu] for %pC\n",
+-			emc->debugfs.min_rate, emc->debugfs.max_rate,
+-			emc->clk);
+-		goto put_bpmp;
++	if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_EMC_DVFS_LATENCY)) {
++		err = tegra186_emc_get_emc_dvfs_latency(emc);
++		if (err)
++			goto put_bpmp;
+ 	}
+ 
+-	emc->debugfs.root = debugfs_create_dir("emc", NULL);
+-	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root,
+-			    emc, &tegra186_emc_debug_available_rates_fops);
+-	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+-			    emc, &tegra186_emc_debug_min_rate_fops);
+-	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+-			    emc, &tegra186_emc_debug_max_rate_fops);
+-
+ 	if (mc && mc->soc->icc_ops) {
+ 		if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_BWMGR_INT)) {
+ 			mc->bwmgr_mrq_supported = true;
 -- 
 2.17.1
 
