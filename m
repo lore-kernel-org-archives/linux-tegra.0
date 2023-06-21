@@ -2,108 +2,121 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D6AEB64D7
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 18:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2332FEB64D7
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 18:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbjFUSSK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Jun 2023 14:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46002 "EHLO
+        id S230132AbjFUS0S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Jun 2023 14:26:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbjFUSR6 (ORCPT
+        with ESMTP id S230091AbjFUS0Q (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Jun 2023 14:17:58 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 285DB2139;
-        Wed, 21 Jun 2023 11:17:36 -0700 (PDT)
-Received: from [192.168.2.254] (109-252-154-132.dynamic.spd-mgts.ru [109.252.154.132])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 574366606FAC;
-        Wed, 21 Jun 2023 19:17:33 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687371454;
-        bh=zmKL+M3CGk6HThKHIP9ubJfE9b7029/+Mv8Ujzw+Hbk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=bVOzuhAOq2uJZVaj/5XigJdh/I6rgUGxJUrtMGIZ5RNOsTocyNU6xHMZLHSfb0qOK
-         BYAN6ioVATc9QAliy1MG/l7CSJVKuP21ALotoS/yqE8uZCZt4SP5TykgBFFyhxsgz9
-         XBAJSlSbFCBuBpoe3TMaaGPTBYBJM2wK5/dnZ50Hkf8GXcbeRwY5Gxo6VvBaCZ4M74
-         39eSteKg8Mlwp64C2wVVN/D6zzCt0xT6IaLw7m/iZE5evOkWrfOVbtnIH9ldGF++sG
-         InvwtE2fxcXzpXjtDI2irEMmVHLQT3TZ1AmOxXrZc3xfIEsUYtnLdq3lMyllOY1LLj
-         n+TS5qiJhS6VA==
-Message-ID: <9d800e80-3860-d58c-3a96-0f5e73cb9309@collabora.com>
-Date:   Wed, 21 Jun 2023 21:17:30 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.1
-Subject: Re: [PATCH v4 5/6] dma-buf: Change locking policy for mmap()
-Content-Language: en-US
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, kernel@collabora.com,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
+        Wed, 21 Jun 2023 14:26:16 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 361F31738
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Jun 2023 11:26:13 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-312826ffedbso2004674f8f.0
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Jun 2023 11:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1687371971; x=1689963971;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9YRCkfxlgVhLag2qZdreYDwQ2ugrCPfdILJ7ghjkiVg=;
+        b=u8ZAQRyJzdnE2piUbuVRCJwKkURKjchpnXy+eFI1urxv6Cd5d3XsXcG66xfVnGnxon
+         XDt32nCwF3aUUMgkmVUyFjUEM9VwRuNlkR3pcnz9eWy/Q5ZQK8v+G41ZrPc9qD9pZU3g
+         RZ0HcmroxwkfHdkQ/EkPDf/v5z98rhagKx57MVxw79caWc0Fb+f93WtwduDRjZs+NGa2
+         cxWgGQRrXI6MC/TtWBuNdmTxbcygfzeUVkYYs5f1NVZU02WReLQSCZSO52HASJvEo/B+
+         N5o0ao2itbeBnosegCy7tG8QlsBdbiJq/mgUjDBaFT3ZokQvbaYFB6+CIWNRcx+rxYnw
+         v/QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687371971; x=1689963971;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9YRCkfxlgVhLag2qZdreYDwQ2ugrCPfdILJ7ghjkiVg=;
+        b=UY6BQCqb8mOea2J8P9VuKVS4cOLuT3Edh7Fm86/iQCLo6XO0jgpYPqK9YAk6UwVWJd
+         orp9dJRWdFofhi+QMnsEj+WoFtU9uew51ZFmHshPuiQzkpTu6s9xC+FCtLZK+sZoaRuB
+         wUgjvQJRxWjdGfDzEiasy9J7awg5KX0OxGlqIZQp9/0+mpaHaLKj0M/aXNHevyX5K29m
+         +hgzuCu27vQs6puB9+v8Qi8yTCUuL6HFFpwYw0VBZpUUi+IRowwzGbTDoy70g4nXPerX
+         OfkVdSY+Aay8mRpbpxmhu1hSTBLZ8ZqT57uyioba8eEzIFt558FvogfzOfTKJT1T2Pdu
+         x+oQ==
+X-Gm-Message-State: AC+VfDyN9l3NMhPPIhto87Oe2sBK1T0xNRri7bwjIVYEro0ZIxymO9KC
+        fijccTKUrKShIfB9pwUBqPQcYQ==
+X-Google-Smtp-Source: ACHHUZ7AU0YR6t8YRNVDFi1hgZ+p3KaefWogW+t3JyVHWxfXMFp6sDeW7fgBuhh/aFdqIV4RQ9+IGw==
+X-Received: by 2002:adf:e4cd:0:b0:30e:3d5a:b2be with SMTP id v13-20020adfe4cd000000b0030e3d5ab2bemr12500462wrm.44.1687371971502;
+        Wed, 21 Jun 2023 11:26:11 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:a69f:8ee3:6907:ccdf])
+        by smtp.gmail.com with ESMTPSA id z13-20020adff74d000000b0030af15d7e41sm5176994wrp.4.2023.06.21.11.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jun 2023 11:26:11 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Emil Velikov <emil.l.velikov@gmail.com>
-References: <20230529223935.2672495-1-dmitry.osipenko@collabora.com>
- <20230529223935.2672495-6-dmitry.osipenko@collabora.com>
- <91466907-d4e1-1619-27a8-a49a01cbc8f1@collabora.com>
- <1a04706a-caee-114c-6b6e-e4fdb815e619@collabora.com>
- <3ddf2152-392f-095d-3db6-c0c5c56e0cbf@amd.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <3ddf2152-392f-095d-3db6-c0c5c56e0cbf@amd.com>
-Content-Type: text/plain; charset=UTF-8
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH net-next 00/12] net: stmmac: replace boolean fields in plat_stmmacenet_data with flags
+Date:   Wed, 21 Jun 2023 20:25:46 +0200
+Message-Id: <20230621182558.544417-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/21/23 08:42, Christian König wrote:
-> Am 20.06.23 um 17:58 schrieb Dmitry Osipenko:
->> On 5/31/23 22:58, Dmitry Osipenko wrote:
->>> On 5/30/23 01:39, Dmitry Osipenko wrote:
->>>> Change locking policy of mmap() callback, making exporters responsible
->>>> for handling dma-buf reservation locking. Previous locking policy
->>>> stated
->>>> that dma-buf is locked for both importers and exporters by the dma-buf
->>>> core, which caused a deadlock problem for DRM drivers in a case of
->>>> self-imported dma-bufs which required to take the lock from the DRM
->>>> exporter side.
->>>>
->>>> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
->>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->>>> ---
->>>>   drivers/dma-buf/dma-buf.c | 17 +++--------------
->>>>   1 file changed, 3 insertions(+), 14 deletions(-)
->>> Christian, you acked the drm patch of this series sometime ago, perhaps
->>> it also implies implicit ack to this patch, but I'd prefer to have the
->>> explicit ack. I'll apply this series to drm-misc later this week if
->>> you'll approve this dma-buf change. Thanks in advance!
->> I'll merge the patches tomorrow. If there are any additional comments,
->> then please don't hesitate to post them.
-> 
-> Sorry for not responding earlier, I have been moving both my office as
-> well as my household and still catching up.
-> 
-> I don't have time for an in-deep review, but my ack stands for the whole
-> series.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thanks! I'll add yours ack and merge patches soon
+As suggested by Jose Abreu: let's drop all 12 boolean fields in
+plat_stmmacenet_data and replace them with a common bitfield.
+
+Bartosz Golaszewski (12):
+  net: stmmac: replace has_integrated_pcs field with a flag
+  net: stmmac: replace the sph_disable field with a flag
+  net: stmmac: replace the use_phy_wol field with a flag
+  net: stmmac: replace the has_sun8i field with a flag
+  net: stmmac: replace the tso_en field with a flag
+  net: stmmac: replace the serdes_up_after_phy_linkup field with a flag
+  net: stmmac: replace the vlan_fail_q_en field with a flag
+  net: stmmac: replace the multi_msi_en field with a flag
+  net: stmmac: replace the ext_snapshot_en field with a flag
+  net: stmmac: replace the int_snapshot_en field with a flag
+  net: stmmac: replace the rx_clk_runs_in_lpi field with a flag
+  net: stmmac: replace the en_tx_lpi_clockgating field with a flag
+
+ .../stmicro/stmmac/dwmac-dwc-qos-eth.c        |  4 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c | 23 +++++------
+ .../ethernet/stmicro/stmmac/dwmac-mediatek.c  |  5 ++-
+ .../stmicro/stmmac/dwmac-qcom-ethqos.c        |  8 ++--
+ .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-tegra.c |  4 +-
+ .../ethernet/stmicro/stmmac/stmmac_hwtstamp.c |  4 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 40 +++++++++++--------
+ .../net/ethernet/stmicro/stmmac/stmmac_pci.c  |  2 +-
+ .../ethernet/stmicro/stmmac/stmmac_platform.c | 10 +++--
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  |  5 ++-
+ include/linux/stmmac.h                        | 26 ++++++------
+ 12 files changed, 76 insertions(+), 57 deletions(-)
 
 -- 
-Best regards,
-Dmitry
+2.39.2
 
