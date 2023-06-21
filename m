@@ -2,226 +2,169 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8A8EB64D7
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Jun 2023 21:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8C1C3DA40
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 05:43:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229905AbjFTVDq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Jun 2023 17:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43894 "EHLO
+        id S229757AbjFUFnL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Jun 2023 01:43:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbjFTVDq (ORCPT
+        with ESMTP id S229638AbjFUFnJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Jun 2023 17:03:46 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179B510F4;
-        Tue, 20 Jun 2023 14:03:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687295025; x=1718831025;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Qy2nBFndB7zMhlWJ7jbpgbfuTUNl9LWdB5UOeqaAxkc=;
-  b=jfrhnQdVvWzwyM/ilZwAcPreOLWNZrbj8zKQ2jO7qv8xNxtXuAIpoKWK
-   4oT6QzYbSUa+yTRWxxgbpJfHHyA8+in9PUawGxX3T4vywlVRl+WaXDnAJ
-   eXqd87iE49uVHljnKAcPTU5Ioc/bNmu2TweFxEMBrBHUI5digDqcDuiRw
-   YKc8aHKuh6uCUaaZrksxiJ904Csx4OHL8ZpzDCMNCMl9Df6JKIKoXnUuw
-   8IZs/YoK7w2gHTFgNBYWAEsoO/IpBhypg9OGPrUFrTg4FVbvqwnslkOnY
-   0fZFFxCAqS0f+UU6ACOsdRo/LHWjitoFs/BTsBYqXAJL/oGdxiRkxnc9I
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="363405827"
-X-IronPort-AV: E=Sophos;i="6.00,258,1681196400"; 
-   d="scan'208";a="363405827"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2023 14:03:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="888384781"
-X-IronPort-AV: E=Sophos;i="6.00,258,1681196400"; 
-   d="scan'208";a="888384781"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2023 14:03:31 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-        by kekkonen.fi.intel.com (Postfix) with ESMTP id CD3F811F89D;
-        Wed, 21 Jun 2023 00:03:27 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-        (envelope-from <sakari.ailus@linux.intel.com>)
-        id 1qBiVS-002jLy-1Z;
-        Wed, 21 Jun 2023 00:03:18 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     linux-media@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Joe Tessler <jrt@google.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Wed, 21 Jun 2023 01:43:09 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72FEDD;
+        Tue, 20 Jun 2023 22:42:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Az4ZBOegOTttbfbuk7eCeQOndgN+zKYk8XOxUNT54w69bUcS/hnXdQ9QzxJzwgb4O0eg9mcQt+QXv9tndbXAuoLfKGZGno/K7c6fwwGPTtueHllDXV+jkcgJYD4HtspRpRHUCrHi80JUJJYD93Q6mSmbrzV+uU3jzUEp1jwdm+pji/pOlWqqzVR9dFiDuWR0RHhVOVqgxOwPHwGEvLfihJrxXo7YHamd/+1Jhwfgyj0gjIdSj5V6dHqF9NGbjbyL+b8QJRIHjYf81PIQE8l+IiA9EBKZeYWSJc4eSwkYQuIe0LvUFx9NvkYQKHp9dSBZ4Sw5XWaM5o63KaqWWMgAiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zgZv+2gMHxu/0E0CpazjgZ4//rCP4La54AbpwNfO1aA=;
+ b=EHTfjOBnsoYbfpUfNHvz9ip4KR2tXsy5bqOa+NCN3NCixAEYWqBX9RZEzm2TP4lLjzjNP821BTDWS4oWe2hQcTS/+4rqxPAI0jCtkG3/FHpdpbfU6dILZwyDxbiKUlVJm3O7SIAmzuTfXXx8vNNev+C8CsUusWBppaOuqEtZnuklheonGwL3xYof6pJq/OSgTgsJWI095Vqr3SBPAHNghBbdQc6evcS+RhhUQ4KY6zKdt5JQ2aqYKxet6x5KsX3GEplvU3WyQGHUdyqQHVNuIvPUOtmQsmOjVkUdKDHADLAYzdigH5CyFwtM+2Lby+Kta5Cq/I/ZdsfTMOFTt+i/uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zgZv+2gMHxu/0E0CpazjgZ4//rCP4La54AbpwNfO1aA=;
+ b=q3IuvTgm83UzLvZGvlOf70xUbbpwTAcGa9k2sAlrgERSUvcHX0dNoO/XXdPR6TqbAQyhqbH+nLdxCVQMxm2rf3FTItKEcaUqUwMmXmusQxYPzIIGHnyE1ywIbDEYykhEs1WflxvxfWqRIKVps418EWx59OTww4ZQp2xeoK6/gBI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
+ by MN0PR12MB5978.namprd12.prod.outlook.com (2603:10b6:208:37d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.21; Wed, 21 Jun
+ 2023 05:42:51 +0000
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::384a:95a4:8819:ee84]) by BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::384a:95a4:8819:ee84%7]) with mapi id 15.20.6521.023; Wed, 21 Jun 2023
+ 05:42:51 +0000
+Message-ID: <3ddf2152-392f-095d-3db6-c0c5c56e0cbf@amd.com>
+Date:   Wed, 21 Jun 2023 07:42:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v4 5/6] dma-buf: Change locking policy for mmap()
+Content-Language: en-US
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, kernel@collabora.com,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Bin Liu <bin.liu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Young <sean@mess.org>, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 20/28] media: platform: jpeg: always reference OF data
-Date:   Wed, 21 Jun 2023 00:03:08 +0300
-Message-Id: <20230620210308.650986-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230312131318.351173-20-krzysztof.kozlowski@linaro.org>
-References: <20230312131318.351173-20-krzysztof.kozlowski@linaro.org>
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Emil Velikov <emil.l.velikov@gmail.com>
+References: <20230529223935.2672495-1-dmitry.osipenko@collabora.com>
+ <20230529223935.2672495-6-dmitry.osipenko@collabora.com>
+ <91466907-d4e1-1619-27a8-a49a01cbc8f1@collabora.com>
+ <1a04706a-caee-114c-6b6e-e4fdb815e619@collabora.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+In-Reply-To: <1a04706a-caee-114c-6b6e-e4fdb815e619@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0033.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1c::12) To BN8PR12MB3587.namprd12.prod.outlook.com
+ (2603:10b6:408:43::13)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3587:EE_|MN0PR12MB5978:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc5f793a-2ffb-487b-0b25-08db721a5a4e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: a+JD2ksYGqEZti4V8zVY0Yafmri8LuNsqeK+BWJ8R8zNRgGvBks0aZuLl/SXpoT1yQP2COmWB1TeYodpca+n0yAfBma2C9phFykp15DtrKpz+rbCgpd5CTZoVtDFu8GHdR/sEdAEvsbjacc8PyWGmSKHA2FT4xgkfwP9hYLI1JdtFQ6c7G73Ojdzzm6oSa0xgqHgn2IJmXWLyTytzn88joggKPtRWfAI0eCJF9/CT0A1XO6zC+950YSm4Tu13yfgiibIulDg2KUrO7DPOeMOxa4Rg9NMLlj24LGK4AaY00xziEXXkc2N39TwLlnk02NZx1FcTgyJhJIl744P4YMkVNoiruyFpN+Awa5/IsUdgX0YdPYJ6bhwPXLvT81UdbHXnY6lVb/DNosKjuc1/A3W2KrBFvgPXQUu3BJwVAUVcdwHeInJ7twUcXhr3gkx0Z87xdgE4fuNTw6yqc6R5YJyiALNq3J10EELsbMiK4pttNABAagCgJE84tn/K8PDnKISwZMFwCdobFk1Uy7l8P8DRoCKQQ2nQZfvx1QXT3JkhkEOoCWdPmzIeNKQmYFvDkajMxnoAoT2vWfcCFCi6i7obGd4uFU2pmXSJVoJ9BkqTJLoCq2tNx1GG6KmfDGBeCF+U0m1UydFhZZCop0JA+C01A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3587.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(136003)(396003)(376002)(366004)(451199021)(31696002)(36756003)(86362001)(31686004)(38100700002)(8676002)(8936002)(83380400001)(66476007)(186003)(6512007)(54906003)(41300700001)(6506007)(53546011)(316002)(2616005)(6666004)(478600001)(6486002)(66946007)(4326008)(66556008)(110136005)(7416002)(2906002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bHVqT2lFdGZ1NDFLVUF0Nm4ySFBmb1ozNEJ4T1pSMmVVdGpWaTNRMGpqNmtZ?=
+ =?utf-8?B?WFgwOHdaNEtHWm9oNG41ZFBXOTBweTJQbXlOVm04eDdCMXJ4U0NnZUQxMGFO?=
+ =?utf-8?B?Y1VoUWtpTGtSK2w4a3VaQWVDcmxzRUlkV2hma0FHdUhnWDNOYTNFSHYyekNP?=
+ =?utf-8?B?R3YySFcyeGU3akxSUllnSEgwSGhBVmtTY3R0Q3Z3b25BSUIxVnJ0RXhjTC92?=
+ =?utf-8?B?NDkyeEtPdVNvd3ZybXhJSDFBUXJQejJGWDNCdGpoeFQrM0Y0VzBLTTlkL3pV?=
+ =?utf-8?B?Mkp5cE1rZ001c2FMd0NxQ254SGZmMTM5T0N3V2xHVjNxaU5HU1luNkpCWWg5?=
+ =?utf-8?B?aXF1bG1jNVkvcmdueTlnRk1yNHBlZFJnN2FYcTcvWGFvc2xyMXNKUDRDUVVH?=
+ =?utf-8?B?bkx2QnUzMkJJNDF1aHE2cjkzYkVUTWpwQ3JRZVRmVWFiM2JYRUtRZ3MydGlu?=
+ =?utf-8?B?VktKWlh1RkpxRGVZQnBld2ZPS0lmK0U3S095d2dvN3JiQTY2Mnpaak1vVlgx?=
+ =?utf-8?B?NlhMNUwrWjJ4YVRDdjA4MHhZQU1IOUVBbDV4Vy9qSHVIWGFGa1JKTWdzbW9q?=
+ =?utf-8?B?TkVwdUJzdkV6NkZ6UUZ6L2ZyUmZ3TEpWOUE5dXA0T0NzaE9CRWttcHdjOUxx?=
+ =?utf-8?B?WWNMSndxMTlvdjhWeUx4VVVMdnhzM1FwQnZJQzZDSWFxZDlJWlVIOVY1WSt5?=
+ =?utf-8?B?eVpnbnVPL2k2TGJBeXNEZkRCWnYzV1JQS20wVlhaK3hXL01Ua0lvbEtrcFFv?=
+ =?utf-8?B?cE9NUXl5aytxWDVvT2g2ZURUTXVqbUxHOFZ1Vm0wcGF2RUZOYUlEUTcxUXQ0?=
+ =?utf-8?B?SEMrN2R0dVRmekpiOWJXQlN6TnpFSXZvazR4blZKdjVXY2x2TEQyLzFwSXlx?=
+ =?utf-8?B?OUJCcTNxVTFESTc4aWllNitoYlNZbkNKZi9IUVp3a0gxdy9oRzc0Rkxvazhw?=
+ =?utf-8?B?SldXYnVucTBGZi9XeFl0VXY5blp3ektCMTlCRGxiTHplTW81a2R6WGZpTi9Z?=
+ =?utf-8?B?ZXU3RmQxQ3d5MlRVWEtORUNBc1kzY3hEc0MxamhlbDA0aUpCZ0JCakVrUlox?=
+ =?utf-8?B?c0xWL29hS0RxTTRTbThqb2VTeDJHWmtyYklTUHBaS29HOEc3cXFrcVZGWFBv?=
+ =?utf-8?B?WllQMGszVzI1Ym5JSkNHVjJVdFF1bDJibmNHZXFxY25Oc09ZS2laK1hJWHRE?=
+ =?utf-8?B?czBwQXA1WW9UcVdMR0Rxc3M5NE5ranl1SFFUMmNwQk9UNmdGd0h3L2tVN0FJ?=
+ =?utf-8?B?RFBBTHQrZlpPU1pzK0FXUGtFaE9aMmxUYWJNemRkcmJTR2t3amZGTVF6WFFQ?=
+ =?utf-8?B?QU5paEFuZWpjMEU1bWhuYzFvZmpuQ21wVDRXUjExZWVxOWN6djRuU050TXNT?=
+ =?utf-8?B?SXg2aG1VekxKa2tMTFJnZ0IraWtIZnEyaEpnL2dTVTRkRjJkTzRMSjF3RnJs?=
+ =?utf-8?B?RHovQzYrWU9RYWEzNjRGMXJSUGN6NVBOd3BSVysxNDlGcFlrZ29HcERsaDE1?=
+ =?utf-8?B?TGIwWHlKeG14WGwzMG8yL2U0UVZSUmt6SS9PUE90ankzT1RQdEZxWmhEMUtv?=
+ =?utf-8?B?OWZad2dpdS9xUVhnSldFbGNHQXhERURnRnhURk02YTY4UlNtT3h6Y25QT1l1?=
+ =?utf-8?B?emdkMFdwcnYxTmN2cjRYcmZPR2tnR3ZFOHV3SXNtbFZzdzE5b3paTllobm9q?=
+ =?utf-8?B?aHdPUnlpTEJxS0FWT2NYNlFIcW9JNUpNVHRXZGFHbkEyeXBiby9vYnYxNW1t?=
+ =?utf-8?B?elRiMTY5ckIzS3g5VFRtS0ErVzBNMzJQVGxKeGxJZHliSnQxRUI3Z2tCa0p3?=
+ =?utf-8?B?MVVNSmNyNkI0T2ZZSGxwLzhnUWF0Y0pnWXlsb1NON2hiM3R0VWJ3Y1l1OWJH?=
+ =?utf-8?B?eVlZdy9IQ2hxSmQzSGc3SVZYSWhvd0ZtK3p0OSs5OStlMnNXYmhVSUQrLzE0?=
+ =?utf-8?B?U3BFY1d2RkNjWC9NN1VwZWQzOFMxZXpkaDFkbC83NmpWcllraDZtN21qNWRL?=
+ =?utf-8?B?MXR2c3BBVXYxZ2V3dUxjdDhJcVNVMExYcjhnTW9aNmtHa0R5MEF1djR0NU5K?=
+ =?utf-8?B?QnV1RDNwSGRTWWwyNEp4NlBOQ0J1cjhrUDJyc1JlWTNTWk9JUVF2VE95eHFZ?=
+ =?utf-8?B?R05sK1F1SjloUi9jeXpOaDNQd2d4ZldvZ3l5em5XVjkvY1M4N1A1eTd3TTdX?=
+ =?utf-8?Q?Gq8TtZtAEcr7Q8ghDZT5pmnCUon30ZL/HwIAY0NbKlvA?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc5f793a-2ffb-487b-0b25-08db721a5a4e
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2023 05:42:51.6345
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fVD5WqFgVauW4MlRepXYjDI9Zj/QWnTDo41v5J6n/IWZ8YvKmIux9c7pz/utnb9b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5978
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Am 20.06.23 um 17:58 schrieb Dmitry Osipenko:
+> On 5/31/23 22:58, Dmitry Osipenko wrote:
+>> On 5/30/23 01:39, Dmitry Osipenko wrote:
+>>> Change locking policy of mmap() callback, making exporters responsible
+>>> for handling dma-buf reservation locking. Previous locking policy stated
+>>> that dma-buf is locked for both importers and exporters by the dma-buf
+>>> core, which caused a deadlock problem for DRM drivers in a case of
+>>> self-imported dma-bufs which required to take the lock from the DRM
+>>> exporter side.
+>>>
+>>> Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
+>>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>> ---
+>>>   drivers/dma-buf/dma-buf.c | 17 +++--------------
+>>>   1 file changed, 3 insertions(+), 14 deletions(-)
+>> Christian, you acked the drm patch of this series sometime ago, perhaps
+>> it also implies implicit ack to this patch, but I'd prefer to have the
+>> explicit ack. I'll apply this series to drm-misc later this week if
+>> you'll approve this dma-buf change. Thanks in advance!
+> I'll merge the patches tomorrow. If there are any additional comments,
+> then please don't hesitate to post them.
 
-The driver can match only via the DT table so the table should be always
-used and the of_match_ptr does not have any sense (this also allows ACPI
-matching via PRP0001, even though it might not be relevant here).
+Sorry for not responding earlier, I have been moving both my office as 
+well as my household and still catching up.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-[Sakari Ailus: Rebased on media tree master, reword commit message,
-	       drop additional #if defined(CONFIG_OF)/#endif's.]
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c   | 6 +-----
- drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c | 4 +---
- drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c | 4 +---
- 3 files changed, 3 insertions(+), 11 deletions(-)
+I don't have time for an in-deep review, but my ack stands for the whole 
+series.
 
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-index 4768156181c99..40cb3cb87ba17 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-@@ -28,7 +28,6 @@
- #include "mtk_jpeg_core.h"
- #include "mtk_jpeg_dec_parse.h"
- 
--#if defined(CONFIG_OF)
- static struct mtk_jpeg_fmt mtk_jpeg_enc_formats[] = {
- 	{
- 		.fourcc		= V4L2_PIX_FMT_JPEG,
-@@ -102,7 +101,6 @@ static struct mtk_jpeg_fmt mtk_jpeg_dec_formats[] = {
- 		.flags		= MTK_JPEG_FMT_FLAG_CAPTURE,
- 	},
- };
--#endif
- 
- #define MTK_JPEG_ENC_NUM_FORMATS ARRAY_SIZE(mtk_jpeg_enc_formats)
- #define MTK_JPEG_DEC_NUM_FORMATS ARRAY_SIZE(mtk_jpeg_dec_formats)
-@@ -1455,7 +1453,6 @@ static const struct dev_pm_ops mtk_jpeg_pm_ops = {
- 	SET_RUNTIME_PM_OPS(mtk_jpeg_pm_suspend, mtk_jpeg_pm_resume, NULL)
- };
- 
--#if defined(CONFIG_OF)
- static int mtk_jpegenc_get_hw(struct mtk_jpeg_ctx *ctx)
- {
- 	struct mtk_jpegenc_comp_dev *comp_jpeg;
-@@ -1951,14 +1948,13 @@ static const struct of_device_id mtk_jpeg_match[] = {
- };
- 
- MODULE_DEVICE_TABLE(of, mtk_jpeg_match);
--#endif
- 
- static struct platform_driver mtk_jpeg_driver = {
- 	.probe = mtk_jpeg_probe,
- 	.remove_new = mtk_jpeg_remove,
- 	.driver = {
- 		.name           = MTK_JPEG_NAME,
--		.of_match_table = of_match_ptr(mtk_jpeg_match),
-+		.of_match_table = mtk_jpeg_match,
- 		.pm             = &mtk_jpeg_pm_ops,
- 	},
- };
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-index 869068fac5e2f..baa7be58ce691 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-@@ -39,7 +39,6 @@ enum mtk_jpeg_color {
- 	MTK_JPEG_COLOR_400		= 0x00110000
- };
- 
--#if defined(CONFIG_OF)
- static const struct of_device_id mtk_jpegdec_hw_ids[] = {
- 	{
- 		.compatible = "mediatek,mt8195-jpgdec-hw",
-@@ -47,7 +46,6 @@ static const struct of_device_id mtk_jpegdec_hw_ids[] = {
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mtk_jpegdec_hw_ids);
--#endif
- 
- static inline int mtk_jpeg_verify_align(u32 val, int align, u32 reg)
- {
-@@ -653,7 +651,7 @@ static struct platform_driver mtk_jpegdec_hw_driver = {
- 	.probe = mtk_jpegdec_hw_probe,
- 	.driver = {
- 		.name = "mtk-jpegdec-hw",
--		.of_match_table = of_match_ptr(mtk_jpegdec_hw_ids),
-+		.of_match_table = mtk_jpegdec_hw_ids,
- 	},
- };
- 
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-index 71e85b4bbf127..244018365b6f1 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-@@ -46,7 +46,6 @@ static const struct mtk_jpeg_enc_qlt mtk_jpeg_enc_quality[] = {
- 	{.quality_param = 97, .hardware_value = JPEG_ENC_QUALITY_Q97},
- };
- 
--#if defined(CONFIG_OF)
- static const struct of_device_id mtk_jpegenc_drv_ids[] = {
- 	{
- 		.compatible = "mediatek,mt8195-jpgenc-hw",
-@@ -54,7 +53,6 @@ static const struct of_device_id mtk_jpegenc_drv_ids[] = {
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mtk_jpegenc_drv_ids);
--#endif
- 
- void mtk_jpeg_enc_reset(void __iomem *base)
- {
-@@ -377,7 +375,7 @@ static struct platform_driver mtk_jpegenc_hw_driver = {
- 	.probe = mtk_jpegenc_hw_probe,
- 	.driver = {
- 		.name = "mtk-jpegenc-hw",
--		.of_match_table = of_match_ptr(mtk_jpegenc_drv_ids),
-+		.of_match_table = mtk_jpegenc_drv_ids,
- 	},
- };
- 
--- 
-2.39.2
-
+Regards,
+Christian.
