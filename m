@@ -2,182 +2,154 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CF0C001DD
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 15:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97E7EB64D7
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 16:59:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233597AbjFUPfc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Jun 2023 11:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41112 "EHLO
+        id S229920AbjFUQ7S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Jun 2023 12:59:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232527AbjFUPfO (ORCPT
+        with ESMTP id S229676AbjFUQ7R (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Jun 2023 11:35:14 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E81194;
-        Wed, 21 Jun 2023 08:35:13 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f9c2913133so7145585e9.1;
-        Wed, 21 Jun 2023 08:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687361712; x=1689953712;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eQQCdT9kFN5noSXpvp4FBe6GB2Q2xfzWCNR/tOO33ns=;
-        b=mgIRc+hnxngr1gDWnmJ9iMtI0dDiuTb/eSJcDavAw6DQPKqRd8r1Sb1ENbVPxRP4bl
-         dvRwvsF6p47dN0OQHmYcPHHwrIL9zuN5c9U1lVaAfUFwNNNRg9e00wTKfJ+1quN8Ugk2
-         TsWp2uV6DtBpq8PlMmnWqnHwzq+Pd/J81u3W8k0TTQk8LhpJ2vSRWstzhcoLgBrS9LDK
-         fCCyK6ON2sQ9H/2ntrAhftfxrDEdadLxcV6AFFW9ieTu+zTg6cCd+Qhnq2OxllPPF4Jn
-         X9xT+/JCLPD3pr8fu8zCSU18ZhvZJLxklioPmjlCAqchoutQzZU3sD+um5/9odfE1r72
-         LHkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687361712; x=1689953712;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eQQCdT9kFN5noSXpvp4FBe6GB2Q2xfzWCNR/tOO33ns=;
-        b=G8yeoSYy22XHkw14hhUpt5tNavu+BuuvSLepxg4PmQzXDbVRLE+kSTbzU+Babkxept
-         O/k+f6Q+plMvt6OATa4uLLloROvpdy7vjOKs9RleAT1pHgsCjmJZNM5urK8+u95h2QEA
-         kFYQlw0qiQKSA6xblkUeSV5ZvqREbKpkuBNYWTp+nKuUPbokjlRUbQGLhXhXGTUwftQE
-         rBJeYv+gj+Hrr9YjQXu+UVPidgFdV1GrS7NYE3sW1oGb3vtE/ymWAhaush09MUzbi+nt
-         ZYjRdE2r6B1TWBSMnxLP3iIlakay6/7jMlYLKXBwFHAKqLC27Xb/WjCKtNRVfJV/yF/N
-         ZXJw==
-X-Gm-Message-State: AC+VfDynkbyCvsxlLDNYNP8u/fdosCg8frEWB3E9zQy38G/xj8OnW4Dj
-        lvNRPhdpm45RafFUtp3+HNg=
-X-Google-Smtp-Source: ACHHUZ5W49puGNiRRZjADYwx2U2LpnoH5sf1f+o4kr2GCoxLquk53BaJyqdKKUr2Cc673tXBsNdU2g==
-X-Received: by 2002:a7b:cb4e:0:b0:3f7:f884:7be3 with SMTP id v14-20020a7bcb4e000000b003f7f8847be3mr12358924wmj.4.1687361711670;
-        Wed, 21 Jun 2023 08:35:11 -0700 (PDT)
-Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n6-20020a05600c294600b003f7e4639aabsm16462057wmd.10.2023.06.21.08.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jun 2023 08:35:10 -0700 (PDT)
-Date:   Wed, 21 Jun 2023 17:35:09 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
-Message-ID: <ZJMYrVl--rCcj1cB@orome>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
- <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
- <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
- <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
- <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org>
+        Wed, 21 Jun 2023 12:59:17 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58533C7;
+        Wed, 21 Jun 2023 09:59:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ghA1ts+CodbTcpn/nzjF3a33gDJpwmmPywVy8I3s+hp+Dt0yITJAvg2TQhUV/cibEX7ugW4tn8qzVdp4kkjX3oHg7MSjqHD60R2abwcZpewgMAgeMrkEWLSBHmbIJeBDGZKhi99qYeDuyZBbZDYxqwZnD9leHqfx8DTx7+F7kU+53irAyt6otWVyF3T5n3km3PpHposHvp9IyTTGAVazOvsZefJyg2wvTTrvMkJbK5tZ9Ae72VL96YmSz18KGcg17up24I3z16Qz7tZn/4e1n8Ugrp80bCRELCVRpOiMZ2P6l47+9dLPLnMaK92HZOzBvXxX3cnlK7wlrAYcFEf5tA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M5AAVOcVzor2yPgNtPQCu4sdFmAc2U1Zs6ETD4PG4sI=;
+ b=I7/XBn0dtqQUFsGwT1j4OmpSa6QlQeihBZ6ROczs4jeHG3rsyKIVB2/PkgYH2opWtmv1VWtzZMNHKT/VHgDglzSsG0uepHgZcOD3eBCOYmWuwceXFRcxXWuPDg6CeVB5KzwscvZfRnwNSiEUVybPN62hkzLOQA+zZ0qfGKMyiUiFPpUh9DhNtiD2MR3iYVcdc/e/UZYNioEcxbxAHcQzODQ3XXBxBIpu7Fb7UFtR6qhKGIvNHaERhR68NZjIEYI2AhUudkVunAoJpdoE7+5sM9N3kPKR92MVIc73JWiW7+VIO0T61xHRdHJnWcgGcyOvaUy4Syh+jrCPMoOWcZ5iiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=lunn.ch smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M5AAVOcVzor2yPgNtPQCu4sdFmAc2U1Zs6ETD4PG4sI=;
+ b=OwTFGOT96t4rvRuAnPaFMU5bm8rJbvc77+IhNT/XbqVDtZwcFgTq7JOZliOLOv7xrdNiWKw7yxbwJmKvCtoQCbejxDJJZ+G1Se/un9fZQTPLgbS6GIidlOaECyxxmwy64CEzxUyt7HcHiy3ee7BrRQlabSGtoOw9O6Z3buvP13Dbg0V5fCUDk880e1nY8KyZAGIuwwnEtHS9p5b1KxtpvpbTeyalI+oJoAGXM+BW0/1W3kv1+27/0sRBBzEPLdvpSA4ueCOsho/sEE1zfeKW49nfU55Av0gdYdShA0fpg/TP/bX/kXGTTIze5gQU5EvxssykZP9HUqjTmiB2ruBidQ==
+Received: from SJ0PR13CA0002.namprd13.prod.outlook.com (2603:10b6:a03:2c0::7)
+ by PH7PR12MB5617.namprd12.prod.outlook.com (2603:10b6:510:133::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23; Wed, 21 Jun
+ 2023 16:59:14 +0000
+Received: from MWH0EPF000971E8.namprd02.prod.outlook.com
+ (2603:10b6:a03:2c0:cafe::c0) by SJ0PR13CA0002.outlook.office365.com
+ (2603:10b6:a03:2c0::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.9 via Frontend
+ Transport; Wed, 21 Jun 2023 16:59:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MWH0EPF000971E8.mail.protection.outlook.com (10.167.243.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6521.17 via Frontend Transport; Wed, 21 Jun 2023 16:59:13 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 21 Jun 2023
+ 09:59:05 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Wed, 21 Jun 2023 09:59:04 -0700
+Received: from buildserver-hdc-comms.nvidia.com (10.127.8.12) by
+ mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.986.37
+ via Frontend Transport; Wed, 21 Jun 2023 09:59:02 -0700
+From:   Revanth Kumar Uppala <ruppala@nvidia.com>
+To:     <andrew@lunn.ch>, <hkallweit1@gmail.com>, <netdev@vger.kernel.org>
+CC:     <linux-tegra@vger.kernel.org>,
+        Revanth Kumar Uppala <ruppala@nvidia.com>,
+        Narayan Reddy <narayanr@nvidia.com>
+Subject: [PATCH] net: phy: Enhance fixed PHY to support 10G and 5G
+Date:   Wed, 21 Jun 2023 22:28:53 +0530
+Message-ID: <20230621165853.52273-1-ruppala@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0CHBxGtZUoMcPTc1"
-Content-Disposition: inline
-In-Reply-To: <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E8:EE_|PH7PR12MB5617:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd64788a-303f-4ca9-746f-08db7278d73c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: E+XPkYp/xyuLjXWweHIFy/OKx6kVGfr9x26ebcO3be42OURyrtwj2u4O5IY80aeOW5v9yDB9ke1Flx7WKkAV4dE0cfvFEAEWrjD5VcKgz/DiNZrKGoZu0CNGYGGnrqzqFND3TQx85oUk5xeFrq6yxrci9/9uepomTnQWVeWEww6Khp9wlUY7yPJ814vbNe5vUOLGCCaMi603Pp+6+9N2nMw8Z3FFk2flTVTgI8buPxvxYeefAs90hWszV8oip5zStdKHDsP89extqi5FA13+12FroR5NSyxmsycT89+loAgIRkxSv4NTzZdky82RGwUsn6+4vwsC8XoupjTM4v7X7REq+yzCQeR5go/V198Z1SQevfpTkv5Pc7h+NdudRXqPkNxR2+X2O/nFhCfIPb56XFUmRehVBjiof1UrSL1e6LJKYnP4kMOi01VxnJkl44XiHOp7Z4516yq0m2GJKueu+3V74Cga4mAdREuheCW3rwSW1YA5W1ZIaLVlvufrzroV5PX8MX0vXTMAStcZtH1QtaP1JO11PYsa8+BlnPAxlMdHPJXKoxsieyVRGC45dgklhP+7pgWu8yH+PPkZuRfZ0KRx+yKMCtH01f4pzeirT2Engc2FXp076O+1D5KsjwmKf7qyYrUTxQPyn9mnjSAIW7PYUZqqkdSBmTt+t+oVrd9Kv2NSSa0HcYGd8Fx/3gxHPr5UJzYfKUm2nDarX74kJ6+j+eT0iajPIhPaHDvHfjpBL+JMUoqMe/nufQBMhkM1
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(396003)(136003)(39860400002)(451199021)(40470700004)(46966006)(36840700001)(107886003)(186003)(26005)(1076003)(2616005)(336012)(82740400003)(54906003)(426003)(82310400005)(7696005)(36756003)(2906002)(47076005)(478600001)(36860700001)(6666004)(110136005)(40480700001)(4326008)(70586007)(70206006)(40460700003)(316002)(8676002)(86362001)(8936002)(41300700001)(7636003)(5660300002)(356005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2023 16:59:13.4981
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd64788a-303f-4ca9-746f-08db7278d73c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MWH0EPF000971E8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5617
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Add 10G and 5G speed entries for fixed PHY
+framework.These are needed for the platforms which
+doesn't have a PHY driver.
 
---0CHBxGtZUoMcPTc1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Revanth Kumar Uppala <ruppala@nvidia.com>
+Signed-off-by: Narayan Reddy <narayanr@nvidia.com>
+---
+ drivers/net/phy/swphy.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-On Tue, Jun 20, 2023 at 12:09:09PM -0700, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2023-06-19 00:26:19)
-> > On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
-> > > 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > >=20
-> > > > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-=
-super.c
-> > > > index 3f3a7a203c5f..7ec47942720c 100644
-> > > > --- a/drivers/clk/tegra/clk-super.c
-> > > > +++ b/drivers/clk/tegra/clk-super.c
-> > > > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_super_m=
-ux_ops =3D {
-> > > >     .restore_context =3D clk_super_mux_restore_context,
-> > > >  };
-> > > > =20
-> > > > -static long clk_super_round_rate(struct clk_hw *hw, unsigned long =
-rate,
-> > > > -                            unsigned long *parent_rate)
-> > > > +static int clk_super_determine_rate(struct clk_hw *hw,
-> > > > +                               struct clk_rate_request *req)
-> > > >  {
-> > > >     struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw);
-> > > >     struct clk_hw *div_hw =3D &super->frac_div.hw;
-> > > > +   unsigned long rate;
-> > > > =20
-> > > >     __clk_hw_set_clk(div_hw, hw);
-> > > > =20
-> > > > -   return super->div_ops->round_rate(div_hw, rate, parent_rate);
-> > > > +   rate =3D super->div_ops->round_rate(div_hw, req->rate,
-> > > > +                                     &req->best_parent_rate);
-> > > > +   if (rate < 0)
->=20
-> There's the report that this condition is never possible. Maybe the
-> previous code was relying on an error value sometimes. Can we add
-> determine_rate to the div_ops and simplify this code? I asked on the
-> list for that earlier.
+diff --git a/drivers/net/phy/swphy.c b/drivers/net/phy/swphy.c
+index 59f1ba4d49bc..5380f952e846 100644
+--- a/drivers/net/phy/swphy.c
++++ b/drivers/net/phy/swphy.c
+@@ -8,6 +8,7 @@
+  *         Anton Vorontsov <avorontsov@ru.mvista.com>
+  *
+  * Copyright (c) 2006-2007 MontaVista Software, Inc.
++ * Copyright (c) 2023, NVIDIA CORPORATION.  All rights reserved.
+  */
+ #include <linux/export.h>
+ #include <linux/mii.h>
+@@ -29,6 +30,8 @@ enum {
+ 	SWMII_SPEED_10 = 0,
+ 	SWMII_SPEED_100,
+ 	SWMII_SPEED_1000,
++	SWMII_SPEED_5000,
++	SWMII_SPEED_10000,
+ 	SWMII_DUPLEX_HALF = 0,
+ 	SWMII_DUPLEX_FULL,
+ };
+@@ -51,6 +54,10 @@ static const struct swmii_regs speed[] = {
+ 		.lpagb = LPA_1000FULL | LPA_1000HALF,
+ 		.estat = ESTATUS_1000_TFULL | ESTATUS_1000_THALF,
+ 	},
++	[SWMII_SPEED_5000] = {
++	},
++	[SWMII_SPEED_10000] = {
++	},
+ };
+ 
+ static const struct swmii_regs duplex[] = {
+@@ -71,6 +78,10 @@ static const struct swmii_regs duplex[] = {
+ static int swphy_decode_speed(int speed)
+ {
+ 	switch (speed) {
++	case 10000:
++		return SWMII_SPEED_10000;
++	case 5000:
++		return SWMII_SPEED_5000;
+ 	case 1000:
+ 		return SWMII_SPEED_1000;
+ 	case 100:
+-- 
+2.17.1
 
-I was able to reproduce this on a Tegra30 Beaver, but the problem is
-more straightforward than this. The crash I was seeing during boot was
-because cclk_super_determine_rate() was still calling the round_rate()
-callback from tegra_clk_super_ops, which this patch removed (and added
-determine_rate() instead).
-
-The following fixes the problem for me. It's basically converting the
-round_rate() call to an equivalent determine_rate() call.
-
-Dmitry, can you verify that this fixes the issue that you were seeing?
-
-Thierry
-
---- >8 ---
-diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/c=
-lk-tegra-super-cclk.c
-index 68d7bcd5fc8a..8a2bb4ae4fd2 100644
---- a/drivers/clk/tegra/clk-tegra-super-cclk.c
-+++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
-@@ -86,9 +86,16 @@ static int cclk_super_determine_rate(struct clk_hw *hw,
- 	if (rate <=3D pllp_rate) {
- 		if (super->flags & TEGRA20_SUPER_CLK)
- 			rate =3D pllp_rate;
--		else
--			rate =3D tegra_clk_super_ops.round_rate(hw, rate,
--							      &pllp_rate);
-+		else {
-+			struct clk_rate_request parent =3D {
-+				.rate =3D req->rate,
-+				.best_parent_rate =3D pllp_rate,
-+			};
-+
-+			tegra_clk_super_ops.determine_rate(hw, &parent);
-+			pllp_rate =3D parent.best_parent_rate;
-+			rate =3D parent.rate;
-+		}
-=20
- 		req->best_parent_rate =3D pllp_rate;
- 		req->best_parent_hw =3D pllp_hw;
---- >8 ---
-
---0CHBxGtZUoMcPTc1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSTGKoACgkQ3SOs138+
-s6EZQg/+O4ZRm3luIZ13ZHbeIFzu4acT+CgKduUPLsIj8pjh3U5kfaWiJ8zhvqUN
-L4Urspttq6V+ml1+d/uE/4UuPNo6llwhqgVOiostSvZb5Y001sm3hAArMNThqcsQ
-XPOITfDi2Y6ATzCbcmV7BK5dHm5P/AwVhv54V+YH8eMquaQ+Vdq0t9AiBneVsQ0R
-NxfCKeBPbdli/d0O9qMcSs9tBz2KYjTKb4BWiq9Oadn05eikjUiRI9zZeGbD8VCI
-cdm0p6EPPIJNJne+8NjMET8aXW4NGLrpCly1kTSw+k7EmvxUwJnVkKdL0rdzo0K1
-Q5NP2SWA6+i5+USIvJSGa9TxAD4pcp8a5SdjcxFTs1ZHIpAgNWpiaBp89x36sUsi
-MOytgJZsDMByNh39YxlGvz38E9fsmkWPqZZAoMAPL11PyodL9f0rwcw1DZGJOYUH
-+bGU+d4FWISHq2sg1rQ0AxpoCEw+3AswWKUDYeFXvGRNIe8wLmhkPEABugD+HHu2
-0TcDfBlMgJQWUX01T7IxuhwnOQf7a6qK4Gv+02Vu6YR+veVnx54MNdW1Nvo2NXMP
-DLZ/QBK7dP/iErjFKCfIxI31Y8m5tNShQewTvv5UOMgGLw8pe3AUtZ+JOFcmnjJX
-b/MePVJdb/MUNUUHhTraLhi5ERWYEatZiWGZNYDUIx9m/nFF5Bw=
-=UPiR
------END PGP SIGNATURE-----
-
---0CHBxGtZUoMcPTc1--
