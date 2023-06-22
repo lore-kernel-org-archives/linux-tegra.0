@@ -2,106 +2,187 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AC6EB64D8
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 07:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B12DEB64DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 11:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbjFVHH3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Jun 2023 03:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34502 "EHLO
+        id S230106AbjFVLYT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Jun 2023 07:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229757AbjFVHH3 (ORCPT
+        with ESMTP id S230087AbjFVLYS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Jun 2023 03:07:29 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 775901BD2
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Jun 2023 00:07:27 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-43f4167d2b5so2217104137.2
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Jun 2023 00:07:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1687417646; x=1690009646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=17q09EU5IzKoL+3uRvcJRVxW9WzlvX1kABapaCMfUac=;
-        b=0+Y6V7m9AwJTXt46LgUkmYfim0kFMAgmEx1WMAnwXRm9h0dDSj503PWiVpc80KV24O
-         KTY8IXnHqev0sM8Wb5C+Cl0yjpi/6y19OHSQMukXaniD2YHOOOVUOTvKYtXhPZVMbcpM
-         ulOevy0MmWgkN2XDTVz7bDCuntnRsnSDLmlbJi3KPdwPaQYvuClYduSlqeaikjIct1gi
-         nGZZui1U3Hb8LmO4j9X0yqNFX1575QQuY9mOWj4iwYVZEbvHZNK5qc/og9iqmwvh5Dfo
-         ASu0KGaBHmPs30hpp3a/u77l10PYqSUOZbg60pLMKAsdHShEZ5PMbtIS1OZfJZpaQ2oW
-         HOxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687417646; x=1690009646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=17q09EU5IzKoL+3uRvcJRVxW9WzlvX1kABapaCMfUac=;
-        b=UTCDGFQNVbPd5RqAnoDyh3qp/nlApr8PWO6o7w777Me5+uEsaUk25pa5G5o5FoADQi
-         YhFkGIU5G74hUjlQlHi721OTZ7WaOiDRtXs4EBCTfW44cKuhdy+tD6r+mU4xa4n6R1Kb
-         kK/J+t3YZ+bVAy61iYq4ar4/R/+MFt8i+rezdSt/dGsR50MhRakzVzWSUNTz21X0tGA7
-         DiHHNy8W3WcKykS6J/Z5sP49BefRlap5QpN0/Ee7O7WX7XL98JDaYsPsq0Q9JNxm/Jes
-         Hns5EjQDI6qzZNaaDSXKa7qbg7jk4M/u7sK2wgouCnouIrudetX2upV6QIo+7Ro8T84s
-         nxXg==
-X-Gm-Message-State: AC+VfDzG+Gh1GC+F8WrLO9QH4yDa23x2Fz8g/xEAgzSRhukQs/hAUBrN
-        Ac4Z230GaavD6RZkSq5JozvFR9lMd8u7Kd7SHYhJEQ==
-X-Google-Smtp-Source: ACHHUZ7kZNJcPPkpnbMNtbJXqOpZWeAzoHNc+qihd4tsRK7miMwwfvPuvxGMJdu+kyR+2dT9AG50FXasvP9ps+v0mWc=
-X-Received: by 2002:a67:f256:0:b0:43f:5036:677e with SMTP id
- y22-20020a67f256000000b0043f5036677emr7745188vsm.6.1687417646581; Thu, 22 Jun
- 2023 00:07:26 -0700 (PDT)
+        Thu, 22 Jun 2023 07:24:18 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA0519B7;
+        Thu, 22 Jun 2023 04:24:16 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 630BC5C0115;
+        Thu, 22 Jun 2023 07:24:15 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Thu, 22 Jun 2023 07:24:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1687433055; x=1687519455; bh=o2
+        MmCJ8HMUDAShZVi0Bh2snz/uRcvgvR9MHnuWwH1qI=; b=m93HAc0bh1BmldktsZ
+        RPyEeHvnYyyyx9uXDZMcXsKvt+1PVkw/kJ6FYXFHt83MnZZU98+sPdXGLc5sX8ds
+        VfJD5dUkj+tNuqEFaMMXob8Xnv3bTFplcntvTDFvS9fCtuIDEMVGqQuZStyydqjP
+        T+d/DiSxTDnlnvGOxSWf4jCK7aCKDqIHGpkJr0RVGceF9NcT7gi/IKeBp7WoovW5
+        XfnlY13bpYuLNF5R5iXVHO4/KpJRNWcwWnbZ66152n5i4a8aJBDVuZVBlHuE8/jJ
+        S/oUKqrWx0KYew6wVB+scbgC/83K2Qzltm6anrs9lZafFoAGf15QBw+7YDjiXgm/
+        zVGA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1687433055; x=1687519455; bh=o2MmCJ8HMUDAS
+        hZVi0Bh2snz/uRcvgvR9MHnuWwH1qI=; b=bzKsA0gys5YJNYQgtL/Y8WjnHXMIm
+        s/izMqemQfWem6l2paOlQBwlVQr3Wm8U/2tXbHcJNdWRhQIvplJv3zygy5GTi8p/
+        3eXieLsXa3eJgma+9pUCzUojGLAPQBsLcmEoaywIf0JPXLCFZVlskEcapnS9eSoF
+        WdE4h+qB9xzYmWnyvQ6WxmVyYpTuhDuDJNLg8hkvceajJxC4WEvCZZLsS7EWcjX/
+        XnhTQHzzYiPT5LfSxZ8mFtp+UyT1tczT4iE8dPmxQEUnYhtfUpT+AMrhGq51nUoC
+        3ejTp4ugql2ZHRd1KGWpHVRQTpMvJeqBhNX2olrGc4QiJsrK5FY60lCdQ==
+X-ME-Sender: <xms:Xy-UZAxJispdhHG6UKwIi82uXa-1pwJBUrR800gs-DZPQyNVJ6B4YA>
+    <xme:Xy-UZET-h4E3Q_XHfSLDljPpX7KyDiHef9Z-KnOl9grZa1c31cqG8SxZNAfxgZavM
+    8S1DGbdFxHtejcj4kQ>
+X-ME-Received: <xmr:Xy-UZCWzaKsUgAItvV16b5IwzaRikIMKPibzMKFGsPa5qL_APXoNKZ6OIJ7Fib0fVRRUDZb9waiiEWIgdVVckQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeguddggedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtjeenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeeludefgeduheevleejiefgheetvdffheejvdejvefhudeuveehueevvdev
+    veeuieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:Xy-UZOjwho2YoDC2tXK5E9OEVRsKFgRnGru31DhOL-jP8W-NxgaGeA>
+    <xmx:Xy-UZCDHCAGspnZxsAELENtVznumZmlKtlTqBa-jWsvq2knLbxRCVQ>
+    <xmx:Xy-UZPIkCiZzsBhtjYawiN87UgCeAnhEWchK7dN4AZ55fyAKa4M5fA>
+    <xmx:Xy-UZIChvZz4U7U7_emu6rqn8BlTMkFOqYCMUjbFdBP_bS_T1gvfeg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 22 Jun 2023 07:24:14 -0400 (EDT)
+Date:   Thu, 22 Jun 2023 13:24:12 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
+Message-ID: <p2qdhxxadsxakzgr2c5n6vs5tbfnjd22faynsl45jzooh7eejf@b5hzujmccljl>
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+ <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+ <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
+ <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
+ <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org>
+ <ZJMYrVl--rCcj1cB@orome>
 MIME-Version: 1.0
-References: <20230621182558.544417-1-brgl@bgdev.pl> <20230621131222.071b9fc3@kernel.org>
-In-Reply-To: <20230621131222.071b9fc3@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 22 Jun 2023 09:07:15 +0200
-Message-ID: <CAMRc=MddPhRq9aR3ebeEqWs6O_G50TZqBMtCtpDxo8KcRMoiww@mail.gmail.com>
-Subject: Re: [PATCH net-next 00/12] net: stmmac: replace boolean fields in
- plat_stmmacenet_data with flags
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gholgrwc3kzuoraf"
+Content-Disposition: inline
+In-Reply-To: <ZJMYrVl--rCcj1cB@orome>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 21, 2023 at 10:12=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
-rote:
->
-> On Wed, 21 Jun 2023 20:25:46 +0200 Bartosz Golaszewski wrote:
-> > As suggested by Jose Abreu: let's drop all 12 boolean fields in
-> > plat_stmmacenet_data and replace them with a common bitfield.
->
-> Is that what Jose meant, or:
->
-> -       bool has_integrated_pcs;
-> +       u32 has_integrated_pcs:1;
->
-> ?
 
-For that to work all fields would need to be gathered together (unless
-the structure is __packed - not a good idea) and all future fields
-would need to be added in a specific place in the structure definition
-as well. I think a bit field is clearer and harder to get wrong here.
+--gholgrwc3kzuoraf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bart
+Hi,
+
+On Wed, Jun 21, 2023 at 05:35:09PM +0200, Thierry Reding wrote:
+> On Tue, Jun 20, 2023 at 12:09:09PM -0700, Stephen Boyd wrote:
+> > Quoting Maxime Ripard (2023-06-19 00:26:19)
+> > > On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
+> > > > 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > >=20
+> > > > > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/cl=
+k-super.c
+> > > > > index 3f3a7a203c5f..7ec47942720c 100644
+> > > > > --- a/drivers/clk/tegra/clk-super.c
+> > > > > +++ b/drivers/clk/tegra/clk-super.c
+> > > > > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_super=
+_mux_ops =3D {
+> > > > >     .restore_context =3D clk_super_mux_restore_context,
+> > > > >  };
+> > > > > =20
+> > > > > -static long clk_super_round_rate(struct clk_hw *hw, unsigned lon=
+g rate,
+> > > > > -                            unsigned long *parent_rate)
+> > > > > +static int clk_super_determine_rate(struct clk_hw *hw,
+> > > > > +                               struct clk_rate_request *req)
+> > > > >  {
+> > > > >     struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw);
+> > > > >     struct clk_hw *div_hw =3D &super->frac_div.hw;
+> > > > > +   unsigned long rate;
+> > > > > =20
+> > > > >     __clk_hw_set_clk(div_hw, hw);
+> > > > > =20
+> > > > > -   return super->div_ops->round_rate(div_hw, rate, parent_rate);
+> > > > > +   rate =3D super->div_ops->round_rate(div_hw, req->rate,
+> > > > > +                                     &req->best_parent_rate);
+> > > > > +   if (rate < 0)
+> >=20
+> > There's the report that this condition is never possible. Maybe the
+> > previous code was relying on an error value sometimes. Can we add
+> > determine_rate to the div_ops and simplify this code? I asked on the
+> > list for that earlier.
+>=20
+> I was able to reproduce this on a Tegra30 Beaver, but the problem is
+> more straightforward than this. The crash I was seeing during boot was
+> because cclk_super_determine_rate() was still calling the round_rate()
+> callback from tegra_clk_super_ops, which this patch removed (and added
+> determine_rate() instead).
+>=20
+> The following fixes the problem for me. It's basically converting the
+> round_rate() call to an equivalent determine_rate() call.
+
+Thanks for figuring it out :)
+
+> Dmitry, can you verify that this fixes the issue that you were seeing?
+>=20
+> Thierry
+>=20
+> --- >8 ---
+> diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra=
+/clk-tegra-super-cclk.c
+> index 68d7bcd5fc8a..8a2bb4ae4fd2 100644
+> --- a/drivers/clk/tegra/clk-tegra-super-cclk.c
+> +++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+> @@ -86,9 +86,16 @@ static int cclk_super_determine_rate(struct clk_hw *hw,
+>  	if (rate <=3D pllp_rate) {
+>  		if (super->flags & TEGRA20_SUPER_CLK)
+>  			rate =3D pllp_rate;
+> -		else
+> -			rate =3D tegra_clk_super_ops.round_rate(hw, rate,
+> -							      &pllp_rate);
+> +		else {
+> +			struct clk_rate_request parent =3D {
+> +				.rate =3D req->rate,
+> +				.best_parent_rate =3D pllp_rate,
+> +			};
+
+If it works and you submit a patch later, this needs to be changed to
+clk_hw_init_rate_request()
+
+Maxime
+
+--gholgrwc3kzuoraf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJQvXAAKCRDj7w1vZxhR
+xTjxAP9ehs86l6sru4prW3L7eAyFmbShO1bdRkjCqNyQL7z5bAD6A012+Eo014am
+UvaiwGOrgvvMLCQzwa69Spo0j7liEws=
+=fuL3
+-----END PGP SIGNATURE-----
+
+--gholgrwc3kzuoraf--
