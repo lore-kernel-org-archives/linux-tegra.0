@@ -2,117 +2,106 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95066EB64D8
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 04:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AC6EB64D8
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 07:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230153AbjFVEKf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Jun 2023 00:10:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38328 "EHLO
+        id S229866AbjFVHH3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Jun 2023 03:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjFVEKe (ORCPT
+        with ESMTP id S229757AbjFVHH3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Jun 2023 00:10:34 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C917CDD;
-        Wed, 21 Jun 2023 21:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687407033; x=1718943033;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OpwDpPau9AQnWP8p0KdWhexr5emxOCDtM5hNbv3OmHY=;
-  b=UkzyzI8u1zgD7q/bApStxyDDvf1rSJpNawbGiAz9AGfVfJ7NawmhtS1R
-   QIfnVOSZBTQnp8ENwnLA0B1QsTuwlc/sft0Bwon5KjMtDRV/dHVHuVTOL
-   eQ09XXEOczMsMDAPSwT5RqI/QXmajYQNrwS70f2MJ3CFFLQijf4edmVG7
-   Rm0pbPtdkSKLZbAYJfruy0jMmAh4k8WQIQ4TEsLE2hjy6RvuRkN32o41J
-   ajIoWGu1kwwPyF74AQqNlo4DarozMUILumLw2OhfyfHkcmlkHzfhMzNz4
-   p1mAZ27FIu6LgczZZmdxVFjC9hHCArwAXiLBpHbK28En0LFqJFN/jwipj
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10748"; a="360397917"
-X-IronPort-AV: E=Sophos;i="6.00,262,1681196400"; 
-   d="scan'208";a="360397917"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2023 21:10:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10748"; a="804627027"
-X-IronPort-AV: E=Sophos;i="6.00,262,1681196400"; 
-   d="scan'208";a="804627027"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Jun 2023 21:10:29 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qCBeO-0007Jv-1j;
-        Thu, 22 Jun 2023 04:10:28 +0000
-Date:   Thu, 22 Jun 2023 12:10:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, suzuki.poulose@arm.com,
-        robin.murphy@arm.com, ilkka@os.amperecomputing.com,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
-        efunsten@nvidia.com, Besar Wicaksono <bwicaksono@nvidia.com>
-Subject: Re: [PATCH v4] perf: arm_cspmu: Separate Arm and vendor module
-Message-ID: <202306221135.Z877Um2S-lkp@intel.com>
-References: <20230620041438.32514-1-bwicaksono@nvidia.com>
+        Thu, 22 Jun 2023 03:07:29 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 775901BD2
+        for <linux-tegra@vger.kernel.org>; Thu, 22 Jun 2023 00:07:27 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-43f4167d2b5so2217104137.2
+        for <linux-tegra@vger.kernel.org>; Thu, 22 Jun 2023 00:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1687417646; x=1690009646;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=17q09EU5IzKoL+3uRvcJRVxW9WzlvX1kABapaCMfUac=;
+        b=0+Y6V7m9AwJTXt46LgUkmYfim0kFMAgmEx1WMAnwXRm9h0dDSj503PWiVpc80KV24O
+         KTY8IXnHqev0sM8Wb5C+Cl0yjpi/6y19OHSQMukXaniD2YHOOOVUOTvKYtXhPZVMbcpM
+         ulOevy0MmWgkN2XDTVz7bDCuntnRsnSDLmlbJi3KPdwPaQYvuClYduSlqeaikjIct1gi
+         nGZZui1U3Hb8LmO4j9X0yqNFX1575QQuY9mOWj4iwYVZEbvHZNK5qc/og9iqmwvh5Dfo
+         ASu0KGaBHmPs30hpp3a/u77l10PYqSUOZbg60pLMKAsdHShEZ5PMbtIS1OZfJZpaQ2oW
+         HOxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687417646; x=1690009646;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=17q09EU5IzKoL+3uRvcJRVxW9WzlvX1kABapaCMfUac=;
+        b=UTCDGFQNVbPd5RqAnoDyh3qp/nlApr8PWO6o7w777Me5+uEsaUk25pa5G5o5FoADQi
+         YhFkGIU5G74hUjlQlHi721OTZ7WaOiDRtXs4EBCTfW44cKuhdy+tD6r+mU4xa4n6R1Kb
+         kK/J+t3YZ+bVAy61iYq4ar4/R/+MFt8i+rezdSt/dGsR50MhRakzVzWSUNTz21X0tGA7
+         DiHHNy8W3WcKykS6J/Z5sP49BefRlap5QpN0/Ee7O7WX7XL98JDaYsPsq0Q9JNxm/Jes
+         Hns5EjQDI6qzZNaaDSXKa7qbg7jk4M/u7sK2wgouCnouIrudetX2upV6QIo+7Ro8T84s
+         nxXg==
+X-Gm-Message-State: AC+VfDzG+Gh1GC+F8WrLO9QH4yDa23x2Fz8g/xEAgzSRhukQs/hAUBrN
+        Ac4Z230GaavD6RZkSq5JozvFR9lMd8u7Kd7SHYhJEQ==
+X-Google-Smtp-Source: ACHHUZ7kZNJcPPkpnbMNtbJXqOpZWeAzoHNc+qihd4tsRK7miMwwfvPuvxGMJdu+kyR+2dT9AG50FXasvP9ps+v0mWc=
+X-Received: by 2002:a67:f256:0:b0:43f:5036:677e with SMTP id
+ y22-20020a67f256000000b0043f5036677emr7745188vsm.6.1687417646581; Thu, 22 Jun
+ 2023 00:07:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230620041438.32514-1-bwicaksono@nvidia.com>
+References: <20230621182558.544417-1-brgl@bgdev.pl> <20230621131222.071b9fc3@kernel.org>
+In-Reply-To: <20230621131222.071b9fc3@kernel.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 22 Jun 2023 09:07:15 +0200
+Message-ID: <CAMRc=MddPhRq9aR3ebeEqWs6O_G50TZqBMtCtpDxo8KcRMoiww@mail.gmail.com>
+Subject: Re: [PATCH net-next 00/12] net: stmmac: replace boolean fields in
+ plat_stmmacenet_data with flags
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Besar,
+On Wed, Jun 21, 2023 at 10:12=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
+rote:
+>
+> On Wed, 21 Jun 2023 20:25:46 +0200 Bartosz Golaszewski wrote:
+> > As suggested by Jose Abreu: let's drop all 12 boolean fields in
+> > plat_stmmacenet_data and replace them with a common bitfield.
+>
+> Is that what Jose meant, or:
+>
+> -       bool has_integrated_pcs;
+> +       u32 has_integrated_pcs:1;
+>
+> ?
 
-kernel test robot noticed the following build warnings:
+For that to work all fields would need to be gathered together (unless
+the structure is __packed - not a good idea) and all future fields
+would need to be added in a specific place in the structure definition
+as well. I think a bit field is clearer and harder to get wrong here.
 
-[auto build test WARNING on ea8d1c062a0e876e999e4f347daeb598d5e677ab]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Besar-Wicaksono/perf-arm_cspmu-Separate-Arm-and-vendor-module/20230620-121723
-base:   ea8d1c062a0e876e999e4f347daeb598d5e677ab
-patch link:    https://lore.kernel.org/r/20230620041438.32514-1-bwicaksono%40nvidia.com
-patch subject: [PATCH v4] perf: arm_cspmu: Separate Arm and vendor module
-config: arm64-randconfig-r011-20230621 (https://download.01.org/0day-ci/archive/20230622/202306221135.Z877Um2S-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20230622/202306221135.Z877Um2S-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306221135.Z877Um2S-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/perf/arm_cspmu/arm_cspmu.c:386:30: warning: no previous prototype for function 'arm_cspmu_impl_match_get' [-Wmissing-prototypes]
-     386 | struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
-         |                              ^
-   drivers/perf/arm_cspmu/arm_cspmu.c:386:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     386 | struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
-         | ^
-         | static 
-   1 warning generated.
-
-
-vim +/arm_cspmu_impl_match_get +386 drivers/perf/arm_cspmu/arm_cspmu.c
-
-   385	
- > 386	struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
-   387	{
-   388		struct arm_cspmu_impl_match *match = impl_match;
-   389	
-   390		for (; match->pmiidr_val; match++) {
-   391			u32 mask = match->pmiidr_mask;
-   392	
-   393			if ((match->pmiidr_val & mask) == (pmiidr & mask))
-   394				break;
-   395		}
-   396	
-   397		return match;
-   398	}
-   399	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bart
