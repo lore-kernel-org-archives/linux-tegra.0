@@ -2,131 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E33EB64D8
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 13:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1B5EB64DA
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 14:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231164AbjFVNK5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Jun 2023 09:10:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59282 "EHLO
+        id S230216AbjFVObp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Jun 2023 10:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbjFVNKz (ORCPT
+        with ESMTP id S229647AbjFVObp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Jun 2023 09:10:55 -0400
-Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2743119AB
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Jun 2023 06:10:54 -0700 (PDT)
-Received: by mail-vk1-xa35.google.com with SMTP id 71dfb90a1353d-47164fe4941so2232605e0c.1
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Jun 2023 06:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1687439453; x=1690031453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P2ExnUNvm4puj2j+jBwDuVgUcMJgNpTHsaeUbPYv1HA=;
-        b=yGJPcTf5yJ0LAQHbCs0//5u7zTlviWAP4S4kkO82hHeGqqVnJDo/C15mxkMnjVBse6
-         sfzsKQg/tJSVZGfVAk+tv2ZXymwjUI5lj9RIwv2zgWtET1Lze47M1HqsNjk9drvIftQ0
-         pVzHirWFhN1bcVZtplp/G3rDRFkBvIk7Ohha7vbGdSWN68j99aBXZCkf8V4jrhPnbTP+
-         nhOe8iYPriWxHdLafESB8L8s6g/NsqEs7txzboyYTOG09Qzhiu6TWoV4V1fLyW2wxBud
-         pWUKDeA7HjpbY62da6LVs0OiSI+2C/hOb/HcR/1eqFf7XNA9+3dGBuxxi6RAqth1l4dS
-         18Ig==
+        Thu, 22 Jun 2023 10:31:45 -0400
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BA6E1738;
+        Thu, 22 Jun 2023 07:31:44 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-780bd47ef93so61973539f.2;
+        Thu, 22 Jun 2023 07:31:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687439453; x=1690031453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P2ExnUNvm4puj2j+jBwDuVgUcMJgNpTHsaeUbPYv1HA=;
-        b=XLvkdsFq+XZxQCsjZVjuWHWDG36AlXw2diSlC0D02mjY9o1H6VDLbuLJHsYFUoL5dg
-         hobW66bFOzmnBO2HXfMfRS/bxH3fIPO4cKS9kZy0Bu+uqJtW2u9G3KGlf+CMGKx/kiOk
-         Mf1zM4YibwDlywHkI6HOhY8vUQ3F3up2J4Dn5IxX5kZstoktwjJx3p18kfFomY/Wbaxe
-         dPTPapVBdl4r70CsCdXMseeQLTb8gKeb4CMUMdpk5TO+9AKxxdT8Cwp/M9Kii9CA3/Dr
-         rFNL21eGGL6WFSDdRubVBimX2vggx/vzvzblr71NERH7D5Q/IUUxmiTVSx95y2UGW4Nd
-         7O+Q==
-X-Gm-Message-State: AC+VfDxZeo3KTmte5B2DNmn+wDTjdm2SE0K7PK1Q3wUoAo1U5QE32oZN
-        mKsjjwI+MRBw39PXsV7lXtQtxhhXjfQKzvSUo/Pb1A==
-X-Google-Smtp-Source: ACHHUZ51ts75wkyfRCqdLOdLzUY3leYxdAIzn0un4E/YRo60Xqah11aqcikjs7PUlI+S5vg4oKw+3YC6Mm8RyX4xhqs=
-X-Received: by 2002:a1f:e784:0:b0:471:6119:95cc with SMTP id
- e126-20020a1fe784000000b00471611995ccmr7694191vkh.14.1687439453218; Thu, 22
- Jun 2023 06:10:53 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687444303; x=1690036303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eNFS3vm6kC5W9sNmMv1a/vs78lFXzuLxWXC2teSXAwc=;
+        b=FNKxjbj5i/DIlJNS4jkLNglEDm1wq5L97QjsVYRCmJcG6OgrKX4kIYl57cJmbF+ySL
+         pfOp6hRuHEFeAVL2lFfH9bg95ft54dQRT3sHJQWcPwJyMMLn6pRP78/ythnQeXJFQ55Z
+         fG7/MBlM8bxjkMhqQNW+CDqgRo+HlLXETi771ft309perPxNFstsxLcsmtTu49HI2769
+         7hSGyedML96CYDExx7OGsSfTLuYS+lKaqLPRDJES0q4rG+tBSShGax9bvUXOTII/lp08
+         Vvt2mM0KFyu6yyMoQ/XrgjLCRwKfqKHkelXAfHS6N62wly9fK/sz1bsq1ILmNKPn3xeU
+         a/Yw==
+X-Gm-Message-State: AC+VfDxZQonr+knGc314wzAO9ylW7nqHjeOY+aTHDbZcwodw8FGwpMey
+        fuH9ULQEwaFToDNDTCFgbA==
+X-Google-Smtp-Source: ACHHUZ7Nz4ISv38/X0NPG83JDoYB3aNBNpw/wKDugP83+Mf3QVAzemrTn06s8xXkrpqqM1oE7q9v8g==
+X-Received: by 2002:a05:6602:218a:b0:76c:2759:5cbe with SMTP id b10-20020a056602218a00b0076c27595cbemr14962748iob.4.1687444303248;
+        Thu, 22 Jun 2023 07:31:43 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id y8-20020a6bd808000000b0077ac2261248sm2143034iob.5.2023.06.22.07.31.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jun 2023 07:31:42 -0700 (PDT)
+Received: (nullmailer pid 1657355 invoked by uid 1000);
+        Thu, 22 Jun 2023 14:31:40 -0000
+Date:   Thu, 22 Jun 2023 08:31:40 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        dri-devel@lists.freedesktop.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        devicetree@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-tegra@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH v2 2/2] gpu: host1x: Stop open-coding of_device_uevent()
+Message-ID: <20230622143140.GA1638531-robh@kernel.org>
+References: <20230609155634.1495338-1-miquel.raynal@bootlin.com>
+ <20230609155634.1495338-3-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-References: <20230621182558.544417-11-brgl@bgdev.pl> <202306220657.ikVUl0zU-lkp@intel.com>
-In-Reply-To: <202306220657.ikVUl0zU-lkp@intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 22 Jun 2023 15:10:42 +0200
-Message-ID: <CAMRc=McU+eo3TSFmpR71mak08qJsA19hz8rZo5qk=rMbxoKOzQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 10/12] net: stmmac: replace the int_snapshot_en
- field with a flag
-To:     kernel test robot <lkp@intel.com>
-Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, llvm@lists.linux.dev,
-        oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230609155634.1495338-3-miquel.raynal@bootlin.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jun 22, 2023 at 1:31=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Bartosz,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on net-next/main]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewsk=
-i/net-stmmac-replace-has_integrated_pcs-field-with-a-flag/20230622-022944
-> base:   net-next/main
-> patch link:    https://lore.kernel.org/r/20230621182558.544417-11-brgl%40=
-bgdev.pl
-> patch subject: [PATCH net-next 10/12] net: stmmac: replace the int_snapsh=
-ot_en field with a flag
-> config: i386-randconfig-i012-20230621 (https://download.01.org/0day-ci/ar=
-chive/20230622/202306220657.ikVUl0zU-lkp@intel.com/config)
-> compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git =
-8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-> reproduce: (https://download.01.org/0day-ci/archive/20230622/202306220657=
-.ikVUl0zU-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202306220657.ikVUl0zU-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c:612:2: error: use of=
- undeclared identifier 'priv'
->            priv->plat->flags &=3D ~STMMAC_FLAG_INT_SNAPSHOT_EN;
->            ^
->    1 error generated.
->
+On Fri, Jun 09, 2023 at 05:56:34PM +0200, Miquel Raynal wrote:
+> There is apparently no reasons to open-code of_device_uevent() besides:
+> - The helper receives a struct device while we want to use the of_node
+>   member of the struct device *parent*.
+> - of_device_uevent() could not be called by modules because of a missing
+>   EXPORT_SYMBOL*().
+> 
+> In practice, the former point is not very constraining, just calling
+> of_device_uevent(dev->parent, ...) would have made the trick.
+> 
+> The latter point is more an observation rather than a real blocking
+> point because nothing prevented of_uevent() (called by the inline
+> function of_device_uevent()) to be exported to modules. In practice,
+> this helper is now exported, so nothing prevent us from using
+> of_device_uevent() anymore.
+> 
+> Let's use the core helper directly instead of open-coding it.
+> 
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> 
+> ---
+> 
+> This patch depends on the changes performed earlier in the series under
+> the drivers/of/ folder.
+> ---
+>  drivers/gpu/host1x/bus.c | 29 ++++++-----------------------
+>  1 file changed, 6 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+> index 4d16a3396c4a..dae589b83be1 100644
+> --- a/drivers/gpu/host1x/bus.c
+> +++ b/drivers/gpu/host1x/bus.c
+> @@ -338,32 +338,15 @@ static int host1x_device_match(struct device *dev, struct device_driver *drv)
+>  	return strcmp(dev_name(dev), drv->name) == 0;
+>  }
+>  
+> +/*
+> + * Note that this is really only needed for backwards compatibility
+> + * with libdrm, which parses this information from sysfs and will
+> + * fail if it can't find the OF_FULLNAME, specifically.
+> + */
+>  static int host1x_device_uevent(const struct device *dev,
+>  				struct kobj_uevent_env *env)
+>  {
+> -	struct device_node *np = dev->parent->of_node;
+> -	unsigned int count = 0;
+> -	struct property *p;
+> -	const char *compat;
+> -
+> -	/*
+> -	 * This duplicates most of of_device_uevent(), but the latter cannot
+> -	 * be called from modules and operates on dev->of_node, which is not
+> -	 * available in this case.
+> -	 *
+> -	 * Note that this is really only needed for backwards compatibility
+> -	 * with libdrm, which parses this information from sysfs and will
+> -	 * fail if it can't find the OF_FULLNAME, specifically.
+> -	 */
+> -	add_uevent_var(env, "OF_NAME=%pOFn", np);
+> -	add_uevent_var(env, "OF_FULLNAME=%pOF", np);
+> -
+> -	of_property_for_each_string(np, "compatible", p, compat) {
+> -		add_uevent_var(env, "OF_COMPATIBLE_%u=%s", count, compat);
+> -		count++;
+> -	}
+> -
+> -	add_uevent_var(env, "OF_COMPATIBLE_N=%u", count);
+> +	of_device_uevent((const struct device *)&dev->parent, env);
 
-Eek, must have disabled this driver in my config by accident. Now fixed for=
- v2.
+Why do you have the cast and the "&"?
 
-Bart
+Rob
