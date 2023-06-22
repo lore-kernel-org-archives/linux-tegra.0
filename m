@@ -2,295 +2,116 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270D2EB64D7
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jun 2023 23:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95066EB64D8
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 04:10:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbjFUXbd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Jun 2023 19:31:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59670 "EHLO
+        id S230153AbjFVEKf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Jun 2023 00:10:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjFUXbc (ORCPT
+        with ESMTP id S229608AbjFVEKe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Jun 2023 19:31:32 -0400
+        Thu, 22 Jun 2023 00:10:34 -0400
 Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C275219C;
-        Wed, 21 Jun 2023 16:31:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C917CDD;
+        Wed, 21 Jun 2023 21:10:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687390290; x=1718926290;
+  t=1687407033; x=1718943033;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=mbA3y/MVYoWo9izwQqDwmacdQ1EryyxrYbMeFFr+8IQ=;
-  b=WvcjXg1eHT3I6y+8/VPoaBpMtZqB14GvplVMR6QhSvtzvFmIK3WJqSPt
-   zd2XOMy7mZO4HSokcT0wQSkziCu4ou0THvdEQCGGn0o8mPkdHwTGmfoEj
-   gCLZhO9JiQSxdh0yqvqZU3IQUk6ic9tcbPw4vn4A9KS6IDJ/nvHL1BkLu
-   LwPc40kqXejIbICmT+QteG63qxYDyKZki9etyEla4mYkRS2nmQ02pAmbL
-   woK+bpW2P2u9DEd+6aDKCEPXemiScZw5F2YKPCWEICjCVR2s36/SLvNnc
-   Td8pBqSq2CXGhbDUOzegFG3oj7QZrhw11IbdbZcp7aqCUiz30ASlr7km6
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10748"; a="360352046"
-X-IronPort-AV: E=Sophos;i="6.00,261,1681196400"; 
-   d="scan'208";a="360352046"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2023 16:31:29 -0700
+  bh=OpwDpPau9AQnWP8p0KdWhexr5emxOCDtM5hNbv3OmHY=;
+  b=UkzyzI8u1zgD7q/bApStxyDDvf1rSJpNawbGiAz9AGfVfJ7NawmhtS1R
+   QIfnVOSZBTQnp8ENwnLA0B1QsTuwlc/sft0Bwon5KjMtDRV/dHVHuVTOL
+   eQ09XXEOczMsMDAPSwT5RqI/QXmajYQNrwS70f2MJ3CFFLQijf4edmVG7
+   Rm0pbPtdkSKLZbAYJfruy0jMmAh4k8WQIQ4TEsLE2hjy6RvuRkN32o41J
+   ajIoWGu1kwwPyF74AQqNlo4DarozMUILumLw2OhfyfHkcmlkHzfhMzNz4
+   p1mAZ27FIu6LgczZZmdxVFjC9hHCArwAXiLBpHbK28En0LFqJFN/jwipj
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10748"; a="360397917"
+X-IronPort-AV: E=Sophos;i="6.00,262,1681196400"; 
+   d="scan'208";a="360397917"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2023 21:10:33 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10748"; a="692034376"
-X-IronPort-AV: E=Sophos;i="6.00,261,1681196400"; 
-   d="scan'208";a="692034376"
+X-IronPort-AV: E=McAfee;i="6600,9927,10748"; a="804627027"
+X-IronPort-AV: E=Sophos;i="6.00,262,1681196400"; 
+   d="scan'208";a="804627027"
 Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 21 Jun 2023 16:31:22 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Jun 2023 21:10:29 -0700
 Received: from kbuild by 783282924a45 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qC7IH-00079r-1V;
-        Wed, 21 Jun 2023 23:31:21 +0000
-Date:   Thu, 22 Jun 2023 07:30:25 +0800
+        id 1qCBeO-0007Jv-1j;
+        Thu, 22 Jun 2023 04:10:28 +0000
+Date:   Thu, 22 Jun 2023 12:10:26 +0800
 From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
+To:     Besar Wicaksono <bwicaksono@nvidia.com>, suzuki.poulose@arm.com,
+        robin.murphy@arm.com, ilkka@os.amperecomputing.com,
+        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
 Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH net-next 10/12] net: stmmac: replace the int_snapshot_en
- field with a flag
-Message-ID: <202306220657.ikVUl0zU-lkp@intel.com>
-References: <20230621182558.544417-11-brgl@bgdev.pl>
+        linux-tegra@vger.kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
+        efunsten@nvidia.com, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: Re: [PATCH v4] perf: arm_cspmu: Separate Arm and vendor module
+Message-ID: <202306221135.Z877Um2S-lkp@intel.com>
+References: <20230620041438.32514-1-bwicaksono@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230621182558.544417-11-brgl@bgdev.pl>
+In-Reply-To: <20230620041438.32514-1-bwicaksono@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Bartosz,
+Hi Besar,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on net-next/main]
+[auto build test WARNING on ea8d1c062a0e876e999e4f347daeb598d5e677ab]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/net-stmmac-replace-has_integrated_pcs-field-with-a-flag/20230622-022944
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20230621182558.544417-11-brgl%40bgdev.pl
-patch subject: [PATCH net-next 10/12] net: stmmac: replace the int_snapshot_en field with a flag
-config: i386-randconfig-i012-20230621 (https://download.01.org/0day-ci/archive/20230622/202306220657.ikVUl0zU-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce: (https://download.01.org/0day-ci/archive/20230622/202306220657.ikVUl0zU-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Besar-Wicaksono/perf-arm_cspmu-Separate-Arm-and-vendor-module/20230620-121723
+base:   ea8d1c062a0e876e999e4f347daeb598d5e677ab
+patch link:    https://lore.kernel.org/r/20230620041438.32514-1-bwicaksono%40nvidia.com
+patch subject: [PATCH v4] perf: arm_cspmu: Separate Arm and vendor module
+config: arm64-randconfig-r011-20230621 (https://download.01.org/0day-ci/archive/20230622/202306221135.Z877Um2S-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
+reproduce: (https://download.01.org/0day-ci/archive/20230622/202306221135.Z877Um2S-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306220657.ikVUl0zU-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306221135.Z877Um2S-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
->> drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c:612:2: error: use of undeclared identifier 'priv'
-           priv->plat->flags &= ~STMMAC_FLAG_INT_SNAPSHOT_EN;
-           ^
-   1 error generated.
+>> drivers/perf/arm_cspmu/arm_cspmu.c:386:30: warning: no previous prototype for function 'arm_cspmu_impl_match_get' [-Wmissing-prototypes]
+     386 | struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
+         |                              ^
+   drivers/perf/arm_cspmu/arm_cspmu.c:386:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     386 | struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
+         | ^
+         | static 
+   1 warning generated.
 
 
-vim +/priv +612 drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+vim +/arm_cspmu_impl_match_get +386 drivers/perf/arm_cspmu/arm_cspmu.c
 
-   446	
-   447	static int intel_mgbe_common_data(struct pci_dev *pdev,
-   448					  struct plat_stmmacenet_data *plat)
-   449	{
-   450		struct fwnode_handle *fwnode;
-   451		char clk_name[20];
-   452		int ret;
-   453		int i;
-   454	
-   455		plat->pdev = pdev;
-   456		plat->phy_addr = -1;
-   457		plat->clk_csr = 5;
-   458		plat->has_gmac = 0;
-   459		plat->has_gmac4 = 1;
-   460		plat->force_sf_dma_mode = 0;
-   461		plat->flags |= (STMMAC_FLAG_TSO_EN | STMMAC_FLAG_SPH_DISABLE);
-   462	
-   463		/* Multiplying factor to the clk_eee_i clock time
-   464		 * period to make it closer to 100 ns. This value
-   465		 * should be programmed such that the clk_eee_time_period *
-   466		 * (MULT_FACT_100NS + 1) should be within 80 ns to 120 ns
-   467		 * clk_eee frequency is 19.2Mhz
-   468		 * clk_eee_time_period is 52ns
-   469		 * 52ns * (1 + 1) = 104ns
-   470		 * MULT_FACT_100NS = 1
-   471		 */
-   472		plat->mult_fact_100ns = 1;
-   473	
-   474		plat->rx_sched_algorithm = MTL_RX_ALGORITHM_SP;
-   475	
-   476		for (i = 0; i < plat->rx_queues_to_use; i++) {
-   477			plat->rx_queues_cfg[i].mode_to_use = MTL_QUEUE_DCB;
-   478			plat->rx_queues_cfg[i].chan = i;
-   479	
-   480			/* Disable Priority config by default */
-   481			plat->rx_queues_cfg[i].use_prio = false;
-   482	
-   483			/* Disable RX queues routing by default */
-   484			plat->rx_queues_cfg[i].pkt_route = 0x0;
-   485		}
-   486	
-   487		for (i = 0; i < plat->tx_queues_to_use; i++) {
-   488			plat->tx_queues_cfg[i].mode_to_use = MTL_QUEUE_DCB;
-   489	
-   490			/* Disable Priority config by default */
-   491			plat->tx_queues_cfg[i].use_prio = false;
-   492			/* Default TX Q0 to use TSO and rest TXQ for TBS */
-   493			if (i > 0)
-   494				plat->tx_queues_cfg[i].tbs_en = 1;
-   495		}
-   496	
-   497		/* FIFO size is 4096 bytes for 1 tx/rx queue */
-   498		plat->tx_fifo_size = plat->tx_queues_to_use * 4096;
-   499		plat->rx_fifo_size = plat->rx_queues_to_use * 4096;
-   500	
-   501		plat->tx_sched_algorithm = MTL_TX_ALGORITHM_WRR;
-   502		plat->tx_queues_cfg[0].weight = 0x09;
-   503		plat->tx_queues_cfg[1].weight = 0x0A;
-   504		plat->tx_queues_cfg[2].weight = 0x0B;
-   505		plat->tx_queues_cfg[3].weight = 0x0C;
-   506		plat->tx_queues_cfg[4].weight = 0x0D;
-   507		plat->tx_queues_cfg[5].weight = 0x0E;
-   508		plat->tx_queues_cfg[6].weight = 0x0F;
-   509		plat->tx_queues_cfg[7].weight = 0x10;
-   510	
-   511		plat->dma_cfg->pbl = 32;
-   512		plat->dma_cfg->pblx8 = true;
-   513		plat->dma_cfg->fixed_burst = 0;
-   514		plat->dma_cfg->mixed_burst = 0;
-   515		plat->dma_cfg->aal = 0;
-   516		plat->dma_cfg->dche = true;
-   517	
-   518		plat->axi = devm_kzalloc(&pdev->dev, sizeof(*plat->axi),
-   519					 GFP_KERNEL);
-   520		if (!plat->axi)
-   521			return -ENOMEM;
-   522	
-   523		plat->axi->axi_lpi_en = 0;
-   524		plat->axi->axi_xit_frm = 0;
-   525		plat->axi->axi_wr_osr_lmt = 1;
-   526		plat->axi->axi_rd_osr_lmt = 1;
-   527		plat->axi->axi_blen[0] = 4;
-   528		plat->axi->axi_blen[1] = 8;
-   529		plat->axi->axi_blen[2] = 16;
-   530	
-   531		plat->ptp_max_adj = plat->clk_ptp_rate;
-   532		plat->eee_usecs_rate = plat->clk_ptp_rate;
-   533	
-   534		/* Set system clock */
-   535		sprintf(clk_name, "%s-%s", "stmmac", pci_name(pdev));
-   536	
-   537		plat->stmmac_clk = clk_register_fixed_rate(&pdev->dev,
-   538							   clk_name, NULL, 0,
-   539							   plat->clk_ptp_rate);
-   540	
-   541		if (IS_ERR(plat->stmmac_clk)) {
-   542			dev_warn(&pdev->dev, "Fail to register stmmac-clk\n");
-   543			plat->stmmac_clk = NULL;
-   544		}
-   545	
-   546		ret = clk_prepare_enable(plat->stmmac_clk);
-   547		if (ret) {
-   548			clk_unregister_fixed_rate(plat->stmmac_clk);
-   549			return ret;
-   550		}
-   551	
-   552		plat->ptp_clk_freq_config = intel_mgbe_ptp_clk_freq_config;
-   553	
-   554		/* Set default value for multicast hash bins */
-   555		plat->multicast_filter_bins = HASH_TABLE_SIZE;
-   556	
-   557		/* Set default value for unicast filter entries */
-   558		plat->unicast_filter_entries = 1;
-   559	
-   560		/* Set the maxmtu to a default of JUMBO_LEN */
-   561		plat->maxmtu = JUMBO_LEN;
-   562	
-   563		plat->flags |= STMMAC_FLAG_VLAN_FAIL_Q_EN;
-   564	
-   565		/* Use the last Rx queue */
-   566		plat->vlan_fail_q = plat->rx_queues_to_use - 1;
-   567	
-   568		/* For fixed-link setup, we allow phy-mode setting */
-   569		fwnode = dev_fwnode(&pdev->dev);
-   570		if (fwnode) {
-   571			int phy_mode;
-   572	
-   573			/* "phy-mode" setting is optional. If it is set,
-   574			 *  we allow either sgmii or 1000base-x for now.
-   575			 */
-   576			phy_mode = fwnode_get_phy_mode(fwnode);
-   577			if (phy_mode >= 0) {
-   578				if (phy_mode == PHY_INTERFACE_MODE_SGMII ||
-   579				    phy_mode == PHY_INTERFACE_MODE_1000BASEX)
-   580					plat->phy_interface = phy_mode;
-   581				else
-   582					dev_warn(&pdev->dev, "Invalid phy-mode\n");
-   583			}
-   584		}
-   585	
-   586		/* Intel mgbe SGMII interface uses pcs-xcps */
-   587		if (plat->phy_interface == PHY_INTERFACE_MODE_SGMII ||
-   588		    plat->phy_interface == PHY_INTERFACE_MODE_1000BASEX) {
-   589			plat->mdio_bus_data->has_xpcs = true;
-   590			plat->mdio_bus_data->xpcs_an_inband = true;
-   591		}
-   592	
-   593		/* For fixed-link setup, we clear xpcs_an_inband */
-   594		if (fwnode) {
-   595			struct fwnode_handle *fixed_node;
-   596	
-   597			fixed_node = fwnode_get_named_child_node(fwnode, "fixed-link");
-   598			if (fixed_node)
-   599				plat->mdio_bus_data->xpcs_an_inband = false;
-   600	
-   601			fwnode_handle_put(fixed_node);
-   602		}
-   603	
-   604		/* Ensure mdio bus scan skips intel serdes and pcs-xpcs */
-   605		plat->mdio_bus_data->phy_mask = 1 << INTEL_MGBE_ADHOC_ADDR;
-   606		plat->mdio_bus_data->phy_mask |= 1 << INTEL_MGBE_XPCS_ADDR;
-   607	
-   608		plat->int_snapshot_num = AUX_SNAPSHOT1;
-   609		plat->ext_snapshot_num = AUX_SNAPSHOT0;
-   610	
-   611		plat->crosststamp = intel_crosststamp;
- > 612		priv->plat->flags &= ~STMMAC_FLAG_INT_SNAPSHOT_EN;
-   613	
-   614		/* Setup MSI vector offset specific to Intel mGbE controller */
-   615		plat->msi_mac_vec = 29;
-   616		plat->msi_lpi_vec = 28;
-   617		plat->msi_sfty_ce_vec = 27;
-   618		plat->msi_sfty_ue_vec = 26;
-   619		plat->msi_rx_base_vec = 0;
-   620		plat->msi_tx_base_vec = 1;
-   621	
-   622		return 0;
-   623	}
-   624	
+   385	
+ > 386	struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
+   387	{
+   388		struct arm_cspmu_impl_match *match = impl_match;
+   389	
+   390		for (; match->pmiidr_val; match++) {
+   391			u32 mask = match->pmiidr_mask;
+   392	
+   393			if ((match->pmiidr_val & mask) == (pmiidr & mask))
+   394				break;
+   395		}
+   396	
+   397		return match;
+   398	}
+   399	
 
 -- 
 0-DAY CI Kernel Test Service
