@@ -2,137 +2,99 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A22C001B1
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 21:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9204EB64DD
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Jun 2023 22:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229956AbjFVVcX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Jun 2023 17:32:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38866 "EHLO
+        id S231331AbjFVWdz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Jun 2023 18:33:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbjFVVcV (ORCPT
+        with ESMTP id S231363AbjFVWdx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Jun 2023 17:32:21 -0400
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6FA1FCB;
-        Thu, 22 Jun 2023 14:32:19 -0700 (PDT)
-X-GND-Sasl: miquel.raynal@bootlin.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1687469538;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oBJxrt4i+LGbBD4mfrNY1AHWEbUyplXBhUqOZFUszxU=;
-        b=XienpFfNhC63YHZ+S/Fx+4DGtTlTsqVyWMH3tsLqTkagaycqRyv8C1MZzudWZb+RfSPxsv
-        qBzFgczekwDrWBaE3B8OghKq3ciYsPzy4ZqKdJncZBE/PD2DjKaa1s2wCTsZeALZNWl87C
-        in2DTs+xSyCdryfI9yKhWPKD3vsw2IeiPeX29n/8zE5Z/hwXKlERiEvyQRLohrQh0Q0Kmx
-        WrG5Sm1ZvfhAJ6bW44IWd78CJcdW9oD83ABrBRHSopa7Lmeq9JAaFtdw3X91z1u/yOPpbO
-        y0enAVd8Yy264z6A6QpnSnlbff/MCMKHoR1ui5jx+ojzM+XJXHopDp/f4hFYMw==
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 617C81BF206;
-        Thu, 22 Jun 2023 21:32:17 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 2/2] gpu: host1x: Stop open-coding of_device_uevent()
-Date:   Thu, 22 Jun 2023 23:32:14 +0200
-Message-Id: <20230622213214.3586530-3-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230622213214.3586530-1-miquel.raynal@bootlin.com>
-References: <20230622213214.3586530-1-miquel.raynal@bootlin.com>
+        Thu, 22 Jun 2023 18:33:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 616B61BE7;
+        Thu, 22 Jun 2023 15:33:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC43561924;
+        Thu, 22 Jun 2023 22:33:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69A6C433C8;
+        Thu, 22 Jun 2023 22:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687473229;
+        bh=ma8yFR5QnALuCTyQbyzW/gXgi2WHYs1DAJMOAeHZ5cM=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=qSKzWAxVTU4YlMrv/k79Lu0IAzA7Wuogok1jqFuTUcVQTZbDinrIT/ypsWQXoPztj
+         QGJfeDsP/MHMWyOvELrLXkMyUdX5/lC5PdIYronA+rNWHuZ4DKxycGqO/DXRMKfv+W
+         qqAXy9hmZA34ySWMUyggPp6Y/T26LS0hOcRbALM5HtFP9agcaia5ZXHoI9sbUPjQw0
+         dsIFDnYxlma7cTAIK4aQLEUWtgDoSZwLM0ufNS1q+AB4QecICkq/wB3jK//SXY7sJN
+         vPoYmPztsWKGbxVo9akSbHF/zBS2dhCvc79B2drdjiEWCEqTqzeka1jkJYWbJBbu91
+         tn+reAMp8lDCQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     robh+dt@kernel.org, krzk+dt@kernel.org, thierry.reding@gmail.com,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        Sameer Pujar <spujar@nvidia.com>
+Cc:     jonathanh@nvidia.com, mkumard@nvidia.com, sheetal@nvidia.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1687433656-7892-1-git-send-email-spujar@nvidia.com>
+References: <1687433656-7892-1-git-send-email-spujar@nvidia.com>
+Subject: Re: (subset) [PATCH 0/8] Few audio fixes on Tegra platforms
+Message-Id: <168747322434.318849.728081824901814342.b4-ty@kernel.org>
+Date:   Thu, 22 Jun 2023 23:33:44 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-c6835
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-There is apparently no reasons to open-code of_device_uevent() besides:
-- The helper receives a struct device while we want to use the of_node
-  member of the struct device *parent*.
-- of_device_uevent() could not be called by modules because of a missing
-  EXPORT_SYMBOL*().
+On Thu, 22 Jun 2023 17:04:08 +0530, Sameer Pujar wrote:
+> This series fixes some of the issues which were observed during an attempt to
+> enhance automated test coverage on Jetson AGX Orin. Below is a short summary
+> of the issues and fixes:
+> 
+>   * Sample rate coversion failures above 48kHz.
+>   * AMX and ADX test cases failures due to incorrect byte mask.
+>   * Atomic sleep in RT5640 codec which is present on Jetson AGX Orin.
+>   * AHUB clock fixes on Tegra234 and previous chips.
+>   * Minor cleanups in ASRC and AHUB driver.
+> 
+> [...]
 
-In practice, the former point is not very constraining, just calling
-of_device_uevent(dev->parent, ...) would have made the trick.
+Applied to
 
-The latter point is more an observation rather than a real blocking
-point because nothing prevented of_uevent() (called by the inline
-function of_device_uevent()) to be exported to modules. In practice,
-this helper is now exported, so nothing prevent us from using
-of_device_uevent() anymore.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Let's use the core helper directly instead of open-coding it.
+Thanks!
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/gpu/host1x/bus.c | 29 ++++++-----------------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
+[1/8] ASoC: tegra: Fix SFC conversion for few rates
+      (no commit info)
+[5/8] ASoC: tegra: Use normal system sleep for ASRC
+      commit: 2cc41db71a434844ca97b6e30c9a30a2464a996e
+[6/8] ASoC: tegra: Remove stale comments in AHUB
+      commit: f47d43283a4233528683deaaba95f0ee2cfe862d
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 4d16a3396c4a..84d042796d2e 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -338,32 +338,15 @@ static int host1x_device_match(struct device *dev, struct device_driver *drv)
- 	return strcmp(dev_name(dev), drv->name) == 0;
- }
- 
-+/*
-+ * Note that this is really only needed for backwards compatibility
-+ * with libdrm, which parses this information from sysfs and will
-+ * fail if it can't find the OF_FULLNAME, specifically.
-+ */
- static int host1x_device_uevent(const struct device *dev,
- 				struct kobj_uevent_env *env)
- {
--	struct device_node *np = dev->parent->of_node;
--	unsigned int count = 0;
--	struct property *p;
--	const char *compat;
--
--	/*
--	 * This duplicates most of of_device_uevent(), but the latter cannot
--	 * be called from modules and operates on dev->of_node, which is not
--	 * available in this case.
--	 *
--	 * Note that this is really only needed for backwards compatibility
--	 * with libdrm, which parses this information from sysfs and will
--	 * fail if it can't find the OF_FULLNAME, specifically.
--	 */
--	add_uevent_var(env, "OF_NAME=%pOFn", np);
--	add_uevent_var(env, "OF_FULLNAME=%pOF", np);
--
--	of_property_for_each_string(np, "compatible", p, compat) {
--		add_uevent_var(env, "OF_COMPATIBLE_%u=%s", count, compat);
--		count++;
--	}
--
--	add_uevent_var(env, "OF_COMPATIBLE_N=%u", count);
-+	of_device_uevent(dev->parent, env);
- 
- 	return 0;
- }
--- 
-2.34.1
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
