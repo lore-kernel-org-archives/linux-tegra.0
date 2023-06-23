@@ -2,195 +2,197 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065F2EB64DD
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jun 2023 14:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A81FBEB64DD
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jun 2023 14:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231743AbjFWOeZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Jun 2023 10:34:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33774 "EHLO
+        id S232109AbjFWOve (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Jun 2023 10:51:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231940AbjFWOeV (ORCPT
+        with ESMTP id S230348AbjFWOvd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Jun 2023 10:34:21 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8481992;
-        Fri, 23 Jun 2023 07:34:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EtVTlgzd1fKFXGOGsjLCsrYMbqoM7dgDYesliEISUyuceEzVFZ11gkn9UtYfDY0ysQyv7w/ZYEaRxhHP63kRa9z+Idpy3Z//RC/Z02CSd6a2+u+OhazUhgNWRwjwwUo83ANDjuoJofFMK1I+QwuBj0i9g84L59+p/ro0IEm0wzIjo0KEcTN/J0DeCAG7xQ5m3DitkmkFV1tZ7zCT1kP+ga4pdgQPxuNtIGKS3Po68CeeTGJFdYlqVJ8G9E1NPjgj6sL9huNX0JOIOfnmZOPzJzZa6CuZqiQzKqNDMUkyIm3PWQhaKvio2aHljdvUSPomLRrnzCZDoAA+XrdCSe9igg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PY2GWNHgRFckfBLUJJ0PiNtUGtbWGoW0EWS3nx+LSAE=;
- b=A+Z3IFCG3+4AVe/MBmBoi7bUAk4VVI5/8f/LohQ7GBcMnk1xnPIeWY7uaHNDdGXmOhVtmNnFxZg6M+2a7WdT96uOO2BGfdh0p9YZzARJuvyIeHznLkwqVsNuY32ieMfWZeEAfbyeM5GyYiN45ZLJT6APoNDEltKA/+GeZc0Z0XNfZA9siJTXr7Eq6X2JlSfZ+xsPEvHujWxbjgnpPdaXGAwAuCgx7JhkdUPN9USdHRsOKhAGtyuwleMX/sC2+z+XIEDLD8WKjZwPZY3e+ID2rxrdLHmikpfWZe4mB7weoOc5Fa2GXwpJTNT0uk2aC+JGJDYbnaZtrQo+XB5C2CZ3XQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PY2GWNHgRFckfBLUJJ0PiNtUGtbWGoW0EWS3nx+LSAE=;
- b=tZEUXFlycBVdb/ZrfS2YXM6icITgSNru4F9B6nsqmTteDmloN5/sSLIpl7k/TBgVGsTUWZ20WqwkiDUV+Z9l9dK9rO7/LfIxC1i3/vr4cMPcV8UAzUeSKMw/+CIXlgI0DK2g0n9TAleZGxwIqdtk/ClmkJ579iAjItwPk++EdGgW9YfO3UzuW73sHme+T59k53R3fvpVCLJgB1eHVJVIOXPUuOzhzWSEtUDqXKmEUB08brInlj1CMebceDfUYCilsm/2/TMPWUilP1SutkpOIOOMDPV/Y+rYBUZefjMm+mdbBkz5DLygQfBE+HN2csbLkMoGY/u2aE9aEEkYPs2ETQ==
-Received: from BN9PR03CA0602.namprd03.prod.outlook.com (2603:10b6:408:106::7)
- by DS0PR12MB6389.namprd12.prod.outlook.com (2603:10b6:8:cf::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6521.26; Fri, 23 Jun 2023 14:34:16 +0000
-Received: from BN8NAM11FT054.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:106:cafe::85) by BN9PR03CA0602.outlook.office365.com
- (2603:10b6:408:106::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26 via Frontend
- Transport; Fri, 23 Jun 2023 14:34:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT054.mail.protection.outlook.com (10.13.177.102) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.44 via Frontend Transport; Fri, 23 Jun 2023 14:34:15 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 23 Jun 2023
- 07:34:04 -0700
-Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 23 Jun
- 2023 07:33:59 -0700
-Message-ID: <691d3eb2-cd93-f0fc-a7a4-2a8c0d44262c@nvidia.com>
-Date:   Fri, 23 Jun 2023 20:03:56 +0530
+        Fri, 23 Jun 2023 10:51:33 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0855F13E;
+        Fri, 23 Jun 2023 07:51:32 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-311099fac92so865843f8f.0;
+        Fri, 23 Jun 2023 07:51:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687531890; x=1690123890;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4GWPNefMDyAgtV32k/k9l/iTX+NrL3zYtWQJRkI2m1Y=;
+        b=NNl4mtfIF8WBE4F6i7MROzM0ImHtSLxi7Hya+i1wfGV4EBPwpAcr+Hc9dAsuaGj0Z8
+         SVq9Ycnakb9iA8uThDmp8VdMH+afH6fHbMMO3njb8o1xMmpYve7dgNEszctyBPY/uso9
+         d/BTaRY4m2Gw3C4H/dqOV7nO98ViotLIcuvz8AD06vzWSBvrfjzoIIYooHq3dG3F44wF
+         iv+4BTVmeOg9ZGtNoC/NRnYLQ2vXrbLq3bPTEYE6BaiagXr2uUYnvbbjCDdSq/OiyQkS
+         b5mQJDIGNtEzt+RPV8P/0utYygiHV9zYFGNRfTqQ4BNhTg8VRGBTyYkpTGA2ILKG+lw8
+         gyuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687531890; x=1690123890;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4GWPNefMDyAgtV32k/k9l/iTX+NrL3zYtWQJRkI2m1Y=;
+        b=JhhQ1D546rimmtaS++PhUmzvuU2uPnXerK5jbnB7Ks98DcrRvl4QOB0i+8F5xxUT9/
+         fM/9DqOjnRH0rr74YgExjs6jCYVMFczS9RgmD0SqXhevJ/emta3X+pYzQrjs4/EVdHaM
+         mBRcBiwgxZbIpCdHlVFrc2dwCBPozf9U/gaIjw4Cs3Qev1iAvkF8fGl2ZdCO5KpKvIDv
+         XkJ2Nb5wfgIVgvy8xYQPirlU7jqaLIWr9VnTcA0n0rnSLhT2ATpmvBxpJl7Yul/Xj2DO
+         peytAACblpkjZz5xaDtW0XAWPPzEb0J3bLr8YV4aihrdpF4PWlLduT0GqbkydvqIyfE+
+         /GAQ==
+X-Gm-Message-State: AC+VfDwTr1Z4wp7UNtzE1gZT/S/tf5A4MqTYsrVzsGrTKWai41gpRVHq
+        XFT71L0tvtSA1mgbSG+aGsM=
+X-Google-Smtp-Source: ACHHUZ67a7sNPn2DrAUfig8qsrTDuH8nDqZc9PjE2leY+3VaCgEhkT+Wwj14GmCB3eKk5nPlIraXig==
+X-Received: by 2002:a5d:5608:0:b0:30e:3f55:ebc9 with SMTP id l8-20020a5d5608000000b0030e3f55ebc9mr18667510wrv.13.1687531890070;
+        Fri, 23 Jun 2023 07:51:30 -0700 (PDT)
+Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id m18-20020adfdc52000000b003113b3bc9d7sm9657765wrj.32.2023.06.23.07.51.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Jun 2023 07:51:29 -0700 (PDT)
+Date:   Fri, 23 Jun 2023 16:51:27 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
+Message-ID: <ZJWxbyCFQVr6K3d3@orome>
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+ <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+ <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
+ <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
+ <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org>
+ <ZJMYrVl--rCcj1cB@orome>
+ <p2qdhxxadsxakzgr2c5n6vs5tbfnjd22faynsl45jzooh7eejf@b5hzujmccljl>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] arm64: Provide an AMU-based version of
- arch_freq_get_on_cpu
-To:     Beata Michalska <beata.michalska@arm.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-        <mark.rutland@arm.com>, <will@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <sudeep.holla@arm.com>,
-        <ionela.voinescu@arm.com>, <yang@os.amperecomputing.com>,
-        <linux-tegra@vger.kernel.org>
-References: <20230606155754.245998-1-beata.michalska@arm.com>
- <8e755438-4b1f-b3d6-b2b8-a5efcca813bc@nvidia.com>
- <ZIwxB5ao96pVPaCc@e120325.cambridge.arm.com>
-Content-Language: en-US
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <ZIwxB5ao96pVPaCc@e120325.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT054:EE_|DS0PR12MB6389:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7bfe2e87-560d-4edf-eacf-08db73f6ebe1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hhaIrHe3TrvLYOpSLR/Ws3k4wIlaegP9+toQgkgwyn60FAZ9d6jXr9+AHWiQrjfIH0AJBzaJH3XEjW9msexjJA+cv5qyQqaT1v84dZ8EW+sYUV1jjAehU0/RVa40cqIqJEhdSd3PCOW1LqiEXr58/GWZEWF6rZ5UvoXHEByOWkc7c+1Vxmq0e+ySxVVISV8nNKkGA/E4nbsUd3SSxihb4zeF0mv8MElErUBJSLNCyc7f4Dz+zRE4OvrhfqafkqW5xkzqYBFIRAhiiZTHOerCb/tm060KTSgDvnBE1PVTBGLICgZ07vzy/Ot+E8ooWu0Zoby2g/gTrAGj1EiEVZ0PZgSeJq1uHrm0o7ouTcYtvcSX72/TaC+DiGPFHCbbDX8R49CsXyvGpinTF2sak7p22JfkZ+uk446yHzwEkfYpbYQqVJUFIwni01CNyWYO5QiDeiRiqEDXcs7ekr8QnsN6pdwoMNxvwtT5FTpctPlX3hlJrGfDQyP+dmpQY9x6LYyG0QRB/7oicfLvh5lHLbcFmPgj1Q7165fSZeCiM/1Up0Eu1zKDee53+SRpOOobbDM2Y+HySbpnuN+NCbTT74i3+3GC418WU+9jlJeUPorc9I8fg8mZPk7WzqpnmZ8Pa5EhD+t8M50qru4J2pS8jh1UXkNGagfPn7rAOKjB7MVlsjlFEJ3scv7dgYP2DG3E8WKf1T4r5/85IAhWQhciPoxSSTkIr1FgfFl1nuCI3RubKov1Xcllar5m+UahYZInTNEUGcMP80SZaJUrBaGMk16MX1Ozoyq31FuJqxG7aAvm3qvZxrqvx126yT01vbCgcO0stz2/MMQbwts9iaP79CsmAw+qP+wYlGwCQiJTte9Af2U=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(376002)(346002)(39860400002)(451199021)(36840700001)(40470700004)(46966006)(82310400005)(6666004)(40460700003)(86362001)(31696002)(966005)(82740400003)(36860700001)(186003)(26005)(426003)(336012)(2616005)(47076005)(40480700001)(36756003)(16526019)(53546011)(356005)(7636003)(83380400001)(8676002)(8936002)(2906002)(7416002)(6916009)(316002)(31686004)(4326008)(41300700001)(70206006)(70586007)(478600001)(54906003)(5660300002)(16576012)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2023 14:34:15.7626
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bfe2e87-560d-4edf-eacf-08db73f6ebe1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT054.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6389
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z74TEtZTFTDhuuuB"
+Content-Disposition: inline
+In-Reply-To: <p2qdhxxadsxakzgr2c5n6vs5tbfnjd22faynsl45jzooh7eejf@b5hzujmccljl>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
+--z74TEtZTFTDhuuuB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 16/06/23 15:23, Beata Michalska wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Thu, Jun 15, 2023 at 12:29:57AM +0530, Sumit Gupta wrote:
->>
->>
->> On 06/06/23 21:27, Beata Michalska wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> With the Frequency Invariance Engine (FIE) being already wired up with
->>> sched tick and making use of relevant (core counter and constant
->>> counter) AMU counters, getting the current frequency for a given CPU
->>> on supported platforms, can be achieved by utilizing the frequency scale
->>> factor which reflects an average CPU frequency for the last tick period
->>> length.
->>>
->>> With that at hand, arch_freq_get_on_cpu dedicated implementation
->>> gets enrolled into cpuinfo_cur_freq policy sysfs attribute handler,
->>> which is expected to represent the current frequency of a given CPU,
->>> as obtained by the hardware. This is exactly the type of feedback that
->>> cycle counters provide.
->>>
->>> In order to avoid calling arch_freq_get_on_cpu from the scaling_cur_freq
->>> attribute handler for platforms that do provide cpuinfo_cur_freq, and
->>> yet keeping things intact for those platform that do not, its use gets
->>> conditioned on the presence of cpufreq_driver (*get) callback (which also
->>> seems to be the case for creating cpuinfo_cur_freq attribute).
->>>
->>
->> Tested the change with frequency switch stress test but was getting big
->> delta between set and get freq.
-> Would you mind sharing some more data re your testing ?
-> The arch_freq_get_on_cpu will provided an average freq for last tick period,
-> with an updated occurring on each sched tick so the differences between set
-> and get might show up. With your stress testing, if the frequency change comes
-> at the end of current tick period, it might not be reflected until next one
-> elapses.
-> In case of idle states - if the CPU for which the current frequency is being
-> requested is in idle mode, the frequency returned will be the last one before
-> entering idle, which seems reasonable (?).
-> I guess the question here would be what is your tolerance level for those
-> differences.
+On Thu, Jun 22, 2023 at 01:24:12PM +0200, Maxime Ripard wrote:
+> Hi,
+>=20
+> On Wed, Jun 21, 2023 at 05:35:09PM +0200, Thierry Reding wrote:
+> > On Tue, Jun 20, 2023 at 12:09:09PM -0700, Stephen Boyd wrote:
+> > > Quoting Maxime Ripard (2023-06-19 00:26:19)
+> > > > On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
+> > > > > 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > > >=20
+> > > > > > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/=
+clk-super.c
+> > > > > > index 3f3a7a203c5f..7ec47942720c 100644
+> > > > > > --- a/drivers/clk/tegra/clk-super.c
+> > > > > > +++ b/drivers/clk/tegra/clk-super.c
+> > > > > > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_sup=
+er_mux_ops =3D {
+> > > > > >     .restore_context =3D clk_super_mux_restore_context,
+> > > > > >  };
+> > > > > > =20
+> > > > > > -static long clk_super_round_rate(struct clk_hw *hw, unsigned l=
+ong rate,
+> > > > > > -                            unsigned long *parent_rate)
+> > > > > > +static int clk_super_determine_rate(struct clk_hw *hw,
+> > > > > > +                               struct clk_rate_request *req)
+> > > > > >  {
+> > > > > >     struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw);
+> > > > > >     struct clk_hw *div_hw =3D &super->frac_div.hw;
+> > > > > > +   unsigned long rate;
+> > > > > > =20
+> > > > > >     __clk_hw_set_clk(div_hw, hw);
+> > > > > > =20
+> > > > > > -   return super->div_ops->round_rate(div_hw, rate, parent_rate=
+);
+> > > > > > +   rate =3D super->div_ops->round_rate(div_hw, req->rate,
+> > > > > > +                                     &req->best_parent_rate);
+> > > > > > +   if (rate < 0)
+> > >=20
+> > > There's the report that this condition is never possible. Maybe the
+> > > previous code was relying on an error value sometimes. Can we add
+> > > determine_rate to the div_ops and simplify this code? I asked on the
+> > > list for that earlier.
+> >=20
+> > I was able to reproduce this on a Tegra30 Beaver, but the problem is
+> > more straightforward than this. The crash I was seeing during boot was
+> > because cclk_super_determine_rate() was still calling the round_rate()
+> > callback from tegra_clk_super_ops, which this patch removed (and added
+> > determine_rate() instead).
+> >=20
+> > The following fixes the problem for me. It's basically converting the
+> > round_rate() call to an equivalent determine_rate() call.
+>=20
+> Thanks for figuring it out :)
+>=20
+> > Dmitry, can you verify that this fixes the issue that you were seeing?
+> >=20
+> > Thierry
+> >=20
+> > --- >8 ---
+> > diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/teg=
+ra/clk-tegra-super-cclk.c
+> > index 68d7bcd5fc8a..8a2bb4ae4fd2 100644
+> > --- a/drivers/clk/tegra/clk-tegra-super-cclk.c
+> > +++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+> > @@ -86,9 +86,16 @@ static int cclk_super_determine_rate(struct clk_hw *=
+hw,
+> >  	if (rate <=3D pllp_rate) {
+> >  		if (super->flags & TEGRA20_SUPER_CLK)
+> >  			rate =3D pllp_rate;
+> > -		else
+> > -			rate =3D tegra_clk_super_ops.round_rate(hw, rate,
+> > -							      &pllp_rate);
+> > +		else {
+> > +			struct clk_rate_request parent =3D {
+> > +				.rate =3D req->rate,
+> > +				.best_parent_rate =3D pllp_rate,
+> > +			};
+>=20
+> If it works and you submit a patch later, this needs to be changed to
+> clk_hw_init_rate_request()
 
-The test waits for 50ms before reading back the set frequency which is
-much more than a tick period.
+I've tried this and while it seems to work, this doesn't seem to be
+exactly the same as what the original code does. From what I understand
+the parent clock can be either pll-p or pll-x, but what we want to do in
+this branch is check what a configuration would look like for pll-p as
+the parent. clk_hw_init_rate_request() would initialize the request with
+data for the current parent, even if that's not pll-p, so I'm a bit
+hesitant to go with that instead of manually hard-coding this to pll-p.
 
-High delta value might be due to the reference counter increments
-happening in bursts in Tegra241 SoC as mentioned in [1].
-If the CPU is idle for most of the period then observation window will
-be small due to AMU counters stopping at WFI. This can cause more error
-in Tegra241 as increasing the observation time interval reduces error
-percentage.
+Thierry
 
-I created 100% CPU load and then the test is passing. So, looks like we 
-will have to create load before the frequency switch test. Please share
-if more suggestions.
-[1] https://lore.kernel.org/lkml/20230418113459.12860-5-sumitg@nvidia.com/
+--z74TEtZTFTDhuuuB
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> After passing "nohz=off" and commenting "wfi" in "cpu_do_idle()", the
->> delta is less. This confirms that more delta is due to AMU counters
->> stopping at "WFI".
->>
->>    +++ b/arch/arm64/kernel/idle.c
->>    @@ -27,7 +27,7 @@ void noinstr cpu_do_idle(void)
->>            arm_cpuidle_save_irq_context(&context);
->>
->>            dsb(sy);
->>    -       wfi();
->>    +//     wfi();
->>
->> I am not sure if the expected behavior here is right.
-> Both CPU_CYCLES and CNT_CYCLES are not incremented in WFI.
->> In our tests, we compare the last set frequency against the re-generated
->> value from counters to confirm that the CPU is actually running at the
->> requested frequency and the counters are working correct. But that won't
->> happen with this change.
->>
->> In [1] and later in the updated patch within [2], we are busy looping
->> on the target CPU and avoid WFI to get the actual frequency.
->>
->> Please share what you think is the right expected behavior.
->>
->> [1] https://lore.kernel.org/lkml/20230418113459.12860-7-sumitg@nvidia.com/
->> [2] https://lore.kernel.org/lkml/cde1d8a9-3a21-e82b-7895-40603a14d898@nvidia.com/T/#mb898a75fd0c72d166b26b04da3ad162afe068a82
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSVsW0ACgkQ3SOs138+
+s6FdHA//W2/6ccLPcG/8/sUaC/XVmd3gK0LNaPUZlgxMO2TTvmH3racL1A9vjpOw
+M2LIWVvfMeMbGjR7MOxpYRFCiFcao5K59ZEjEh8iIDhq53RmcVnK5V/Za1j178EG
+cuAWQQM249KGDgxBn00h9Z2KmbBr/umv1tYDH+46/l4txMw6Nk/82J6Zspt4xph8
+aTHFC/Q4FaeqONZqLbzz/cgNMz/xqYDvS7CWGWErPJSFn49PRyPrZaqoaDJsUnh5
+gtYwW1jRm33T+k46jazEQeI8IksZ2l7cbilrprviQ8Pn0e6CDSs/Q6Yhf6vAWgF5
+sPZmUC22nbVWkRb5XZJDw6LBpsDyxV4+Eh2euGcliCdzBJgjKtdL3xe4WJNmQTuu
+Wvv64rudJiWGxJpSO5MxHZQovMr0bngxBKuciI5M7j7xSGMAknvUMRwz93WfVqEL
+iFgWxU5/tyNlba0jIyRXUr8wY6Ug327jeiVqghTH5b/u5M0nssNIFOaLtvxUEPQ0
+Gj9vx1zAKA+IS3rys+2q6oqR26hrMis1CB+tx1Gs+uhRZkBxDAps5EbUEwN3iSO5
+H2TgJQctqX3tmrKrY65FPkLe3WtJKZQoLBVGMHJvX7zePxnmBVmiKE3xZMBbhyJZ
+WygGpbbzG2hykH8VW5/ATsZC+6t3+rjUP7rxHBHP4fG8v16b+Pk=
+=zjNc
+-----END PGP SIGNATURE-----
+
+--z74TEtZTFTDhuuuB--
