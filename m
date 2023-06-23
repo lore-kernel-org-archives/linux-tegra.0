@@ -2,208 +2,209 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5B3EB64D7
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jun 2023 15:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE75C00528
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jun 2023 21:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232214AbjFWPCt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Jun 2023 11:02:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
+        id S232847AbjFWVUE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Jun 2023 17:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231433AbjFWPCs (ORCPT
+        with ESMTP id S232937AbjFWVTo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Jun 2023 11:02:48 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F8010F6;
-        Fri, 23 Jun 2023 08:02:46 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id EF7E35C00E5;
-        Fri, 23 Jun 2023 11:02:42 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 23 Jun 2023 11:02:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1687532562; x=1687618962; bh=9H
-        BC451nYmRe1mMwl7YlJpIjFCmK1bCb8pE/bk/d8TA=; b=3C1bcvS7mOwr6y0PfA
-        U5DANpibBdDEqo6HUePEjacFKBr3Hk7dR+ud79/Ai4X6aG9tvyQ8/DVHCoZffWfV
-        43J6Wu6Vz/j1Be2LtTqjTsWjfxD+d4Jyfc/T30awy0He8mKHV6KYJDicY9dzfFsn
-        28Uh/uzAg+uXF3MpuTCwC/f6iiElx7rW3LkzqhL9zIJuPdXVZzniilCo+CyLxb2S
-        I9sP2rx0qMtBfQSZyFuWEiUWpVabqnKfY2/ltXi852T0NZD3D4ewdkXE/mVsk8o+
-        FCMjOmQIp1ebhGMvRWNtSidlcHD5RYtSlm/i4N2GWVI+W7IGetjYxl8xlE4uRGFK
-        NrpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1687532562; x=1687618962; bh=9HBC451nYmRe1
-        mMwl7YlJpIjFCmK1bCb8pE/bk/d8TA=; b=P3HDaludACD9PEwcD16ogmZcGvoia
-        ftNQhlzLXvG/lfQ06A/7U9sykIJz8TIdI6OXbY5Zpz5DA0MFuvyh2agVXZi7Qkrg
-        eg0Qj9t5Fw+ixhVPyrzZC9EPol7SYRfcgRrYU57CSCeO9UDSpv7vwvqEr+NVG0hC
-        2fiza7lXvW5X/vlZjefHZWKew+99vfV/MfOB2bfPEJWDXscvs2cAxSVc9Kkw++PQ
-        S6lgWzs6z74O6L9GZyQzkuhkSOh/XCt6Vkqej3B15SJkMaws73tUD44/XTwonpU1
-        GerZMJCc2RmhwKtMqFjWnewM5wAioh4dLVznfOaoll99F1UTgEJ0AhXyQ==
-X-ME-Sender: <xms:ErSVZKA1E2EERnFzwwDTaoWCn_f25kCQA3b0nG2cei2R6SUCOu9pwQ>
-    <xme:ErSVZEix0Q5PnIojS8FVsxtKevDGXIxcASKFM1vNoJvHlhm8t2Szpm-V0p2k4_CoY
-    PJH5HTzybg6NuvHYWo>
-X-ME-Received: <xmr:ErSVZNmDT4qiIThmdVKm9eQXKioi9gkweEOsrE4pidpyN4cFocKhwACQOg7oKVbEDtQ7m3rczbw0eUV-njP9GQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeggedgkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtjeenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeeludefgeduheevleejiefgheetvdffheejvdejvefhudeuveehueevvdev
-    veeuieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:ErSVZIyFP1Mjv60rMsKRfT4wqjg0GWonCK9UO1zbbrxinRwUc6ZB8A>
-    <xmx:ErSVZPRoW0UH-BrrSs9JJykTuOIsdxOa9yEPaMPs4C2NTZoiaJ63lw>
-    <xmx:ErSVZDaEDYKs_MPkCRNPeSoWRHkF0_qZu6kGPKwVcGCYhz-UMhiSFQ>
-    <xmx:ErSVZIQdqq3csLPqVu9XnaG9nOpKDs1FNNARZ3rl1sJiSNVkg15vjQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 23 Jun 2023 11:02:41 -0400 (EDT)
-Date:   Fri, 23 Jun 2023 17:02:34 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
-Message-ID: <ndbpoa3d53xzfcnpqilipvrt7jggn2ye6hld5idvgl5dty6qax@hh25esensjpy>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
- <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
- <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
- <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
- <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org>
- <ZJMYrVl--rCcj1cB@orome>
- <p2qdhxxadsxakzgr2c5n6vs5tbfnjd22faynsl45jzooh7eejf@b5hzujmccljl>
- <ZJWxbyCFQVr6K3d3@orome>
+        Fri, 23 Jun 2023 17:19:44 -0400
+X-Greylist: delayed 211 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 23 Jun 2023 14:18:49 PDT
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 095473A9A;
+        Fri, 23 Jun 2023 14:18:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yokMEiNdELJzyHFQdE73QSq1qzFaQMznhY0/hFJPXdI=;
+  b=PQ1b0Em2N9AUVeD/LpbU+ZN+rhktTH+Y6Q7VDw8Cf3pNA0l+BtcyhZxn
+   ojeRsFjGxDD8u0+Y/YOKGSuPFSO6phFB8O6SWqeWn+vMMRvPryqL5bt/o
+   lImhNqRZeaTWVm1/g7h+gT/Zhi5gA6YeaCo8RJpx27aob7O1b3mfST+O1
+   0=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.01,153,1684792800"; 
+   d="scan'208";a="59686157"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2023 23:15:09 +0200
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     linux-staging@lists.linux.dev
+Cc:     keescook@chromium.org, kernel-janitors@vger.kernel.org,
+        Tianshu Qiu <tian.shu.qiu@intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>, linux-sgx@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kasan-dev@googlegroups.com,
+        Andrey Konovalov <andreyknvl@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>, iommu@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-scsi@vger.kernel.org,
+        linux-rdma@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Shailend Chand <shailend@google.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        virtualization@lists.linux-foundation.org, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org,
+        VMware Graphics Reviewers 
+        <linux-graphics-maintainer@vmware.com>,
+        linux-hyperv@vger.kernel.org
+Subject: [PATCH 00/26] use array_size
+Date:   Fri, 23 Jun 2023 23:14:31 +0200
+Message-Id: <20230623211457.102544-1-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kiqchr65ncyvwplr"
-Content-Disposition: inline
-In-Reply-To: <ZJWxbyCFQVr6K3d3@orome>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Use array_size to protect against multiplication overflows.
 
---kiqchr65ncyvwplr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This follows up on the following patches by Kees Cook from 2018.
 
-On Fri, Jun 23, 2023 at 04:51:27PM +0200, Thierry Reding wrote:
-> On Thu, Jun 22, 2023 at 01:24:12PM +0200, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Wed, Jun 21, 2023 at 05:35:09PM +0200, Thierry Reding wrote:
-> > > On Tue, Jun 20, 2023 at 12:09:09PM -0700, Stephen Boyd wrote:
-> > > > Quoting Maxime Ripard (2023-06-19 00:26:19)
-> > > > > On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
-> > > > > > 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > > > > >=20
-> > > > > > > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegr=
-a/clk-super.c
-> > > > > > > index 3f3a7a203c5f..7ec47942720c 100644
-> > > > > > > --- a/drivers/clk/tegra/clk-super.c
-> > > > > > > +++ b/drivers/clk/tegra/clk-super.c
-> > > > > > > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_s=
-uper_mux_ops =3D {
-> > > > > > >     .restore_context =3D clk_super_mux_restore_context,
-> > > > > > >  };
-> > > > > > > =20
-> > > > > > > -static long clk_super_round_rate(struct clk_hw *hw, unsigned=
- long rate,
-> > > > > > > -                            unsigned long *parent_rate)
-> > > > > > > +static int clk_super_determine_rate(struct clk_hw *hw,
-> > > > > > > +                               struct clk_rate_request *req)
-> > > > > > >  {
-> > > > > > >     struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw=
-);
-> > > > > > >     struct clk_hw *div_hw =3D &super->frac_div.hw;
-> > > > > > > +   unsigned long rate;
-> > > > > > > =20
-> > > > > > >     __clk_hw_set_clk(div_hw, hw);
-> > > > > > > =20
-> > > > > > > -   return super->div_ops->round_rate(div_hw, rate, parent_ra=
-te);
-> > > > > > > +   rate =3D super->div_ops->round_rate(div_hw, req->rate,
-> > > > > > > +                                     &req->best_parent_rate);
-> > > > > > > +   if (rate < 0)
-> > > >=20
-> > > > There's the report that this condition is never possible. Maybe the
-> > > > previous code was relying on an error value sometimes. Can we add
-> > > > determine_rate to the div_ops and simplify this code? I asked on the
-> > > > list for that earlier.
-> > >=20
-> > > I was able to reproduce this on a Tegra30 Beaver, but the problem is
-> > > more straightforward than this. The crash I was seeing during boot was
-> > > because cclk_super_determine_rate() was still calling the round_rate()
-> > > callback from tegra_clk_super_ops, which this patch removed (and added
-> > > determine_rate() instead).
-> > >=20
-> > > The following fixes the problem for me. It's basically converting the
-> > > round_rate() call to an equivalent determine_rate() call.
-> >=20
-> > Thanks for figuring it out :)
-> >=20
-> > > Dmitry, can you verify that this fixes the issue that you were seeing?
-> > >=20
-> > > Thierry
-> > >=20
-> > > --- >8 ---
-> > > diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/t=
-egra/clk-tegra-super-cclk.c
-> > > index 68d7bcd5fc8a..8a2bb4ae4fd2 100644
-> > > --- a/drivers/clk/tegra/clk-tegra-super-cclk.c
-> > > +++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
-> > > @@ -86,9 +86,16 @@ static int cclk_super_determine_rate(struct clk_hw=
- *hw,
-> > >  	if (rate <=3D pllp_rate) {
-> > >  		if (super->flags & TEGRA20_SUPER_CLK)
-> > >  			rate =3D pllp_rate;
-> > > -		else
-> > > -			rate =3D tegra_clk_super_ops.round_rate(hw, rate,
-> > > -							      &pllp_rate);
-> > > +		else {
-> > > +			struct clk_rate_request parent =3D {
-> > > +				.rate =3D req->rate,
-> > > +				.best_parent_rate =3D pllp_rate,
-> > > +			};
-> >=20
-> > If it works and you submit a patch later, this needs to be changed to
-> > clk_hw_init_rate_request()
->=20
-> I've tried this and while it seems to work, this doesn't seem to be
-> exactly the same as what the original code does. From what I understand
-> the parent clock can be either pll-p or pll-x, but what we want to do in
-> this branch is check what a configuration would look like for pll-p as
-> the parent. clk_hw_init_rate_request() would initialize the request with
-> data for the current parent, even if that's not pll-p, so I'm a bit
-> hesitant to go with that instead of manually hard-coding this to pll-p.
+42bc47b35320 ("treewide: Use array_size() in vmalloc()")
+fad953ce0b22 ("treewide: Use array_size() in vzalloc()")
 
-Ah, yes, sorry.
+The changes were done using the following Coccinelle semantic patch,
+adapted from the one posted by Kees.
 
-Maybe we need some kind of variant to address this then, but for the
-time being you can at least set req->min_rate and req->max_rate using
-clk_hw_get_rate_range.
+// Drop single-byte sizes and redundant parens.
+@@
+    expression COUNT;
+    typedef u8;
+    typedef __u8;
+    type t = {u8,__u8,char,unsigned char};
+    identifier alloc = {vmalloc,vzalloc};
+@@
+      alloc(
+-           (sizeof(t)) * (COUNT)
++           COUNT
+      , ...)
 
-Maxime
+// 3-factor product with 2 sizeof(variable), with redundant parens removed.
+@@
+    expression COUNT;
+    size_t e1, e2, e3;
+    identifier alloc = {vmalloc,vzalloc};
+@@
 
---kiqchr65ncyvwplr
-Content-Type: application/pgp-signature; name="signature.asc"
+(    
+      alloc(
+-           (e1) * (e2) * (e3)
++           array3_size(e1, e2, e3)
+      ,...)
+|
+      alloc(
+-           (e1) * (e2) * (COUNT)
++           array3_size(COUNT, e1, e2)
+      ,...)
+)
 
------BEGIN PGP SIGNATURE-----
+// 3-factor product with 1 sizeof(type) or sizeof(expression), with
+// redundant parens removed.
+@@
+    expression STRIDE, COUNT;
+    size_t e;
+    identifier alloc = {vmalloc,vzalloc};
+@@
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJW0CgAKCRDj7w1vZxhR
-xck6AP47jjiyIfFjhhpeDI4+/14ZAIO+9jSyjHNkE/ehNkrcLwEA2RCqRJO2QWME
-zvVMKV63J34Zd1ilFsSnX7zvlRWu1w4=
-=Y4Yr
------END PGP SIGNATURE-----
+      alloc(
+-           (e) * (COUNT) * (STRIDE)
++           array3_size(COUNT, STRIDE, e)
+      ,...)
 
---kiqchr65ncyvwplr--
+// Any remaining multi-factor products, first at least 3-factor products
+// when they're not all constants...
+@@
+    expression E1, E2, E3;
+    constant C1, C2, C3;
+    identifier alloc = {vmalloc,vzalloc};
+@@
+    
+(
+      alloc(C1 * C2 * C3,...)
+|
+      alloc(
+-           (E1) * (E2) * (E3)
++           array3_size(E1, E2, E3)
+      ,...)
+)
+
+// 2-factor product with sizeof(type/expression) and identifier or constant.
+@@
+    size_t e1,e2;
+    expression COUNT;
+    identifier alloc = {vmalloc,vzalloc};
+@@
+
+(
+      alloc(
+-           (e1) * (e2)
++           array_size(e1, e2)
+      ,...)
+|
+      alloc(
+-           (e1) * (COUNT)
++           array_size(COUNT, e1)
+      ,...)
+)
+    
+// And then all remaining 2 factors products when they're not all constants.
+@@
+    expression E1, E2;
+    constant C1, C2;
+    identifier alloc = {vmalloc,vzalloc};
+@@
+    
+(
+      alloc(C1 * C2,...)
+|
+      alloc(
+-           (E1) * (E2)
++           array_size(E1, E2)
+      ,...)
+)
+
+
+---
+
+ arch/x86/kernel/cpu/sgx/main.c                    |    3 ++-
+ drivers/accel/habanalabs/common/device.c          |    3 ++-
+ drivers/accel/habanalabs/common/state_dump.c      |    6 +++---
+ drivers/bus/mhi/host/init.c                       |    4 ++--
+ drivers/comedi/comedi_buf.c                       |    4 ++--
+ drivers/dma-buf/heaps/system_heap.c               |    2 +-
+ drivers/gpu/drm/gud/gud_pipe.c                    |    2 +-
+ drivers/gpu/drm/i915/gvt/gtt.c                    |    6 ++++--
+ drivers/gpu/drm/vmwgfx/vmwgfx_devcaps.c           |    2 +-
+ drivers/infiniband/hw/bnxt_re/qplib_res.c         |    4 ++--
+ drivers/infiniband/hw/erdma/erdma_verbs.c         |    4 ++--
+ drivers/infiniband/sw/siw/siw_qp.c                |    4 ++--
+ drivers/infiniband/sw/siw/siw_verbs.c             |    6 +++---
+ drivers/iommu/tegra-gart.c                        |    4 ++--
+ drivers/net/ethernet/amd/pds_core/core.c          |    4 ++--
+ drivers/net/ethernet/freescale/enetc/enetc.c      |    4 ++--
+ drivers/net/ethernet/google/gve/gve_tx.c          |    2 +-
+ drivers/net/ethernet/marvell/octeon_ep/octep_rx.c |    2 +-
+ drivers/net/ethernet/microsoft/mana/hw_channel.c  |    2 +-
+ drivers/net/ethernet/pensando/ionic/ionic_lif.c   |    4 ++--
+ drivers/scsi/fnic/fnic_trace.c                    |    2 +-
+ drivers/scsi/qla2xxx/qla_init.c                   |    4 ++--
+ drivers/staging/media/ipu3/ipu3-mmu.c             |    2 +-
+ drivers/vdpa/vdpa_user/iova_domain.c              |    3 +--
+ drivers/virtio/virtio_mem.c                       |    6 +++---
+ fs/btrfs/zoned.c                                  |    5 +++--
+ kernel/kcov.c                                     |    2 +-
+ lib/test_vmalloc.c                                |   12 ++++++------
+ 28 files changed, 56 insertions(+), 52 deletions(-)
