@@ -2,123 +2,91 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF35EB64DC
-	for <linux-tegra@archiver.kernel.org>; Sat, 24 Jun 2023 14:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D3AEB64DC
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Jun 2023 18:51:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230192AbjFXOXf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 24 Jun 2023 10:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38882 "EHLO
+        id S229698AbjFYSv1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Jun 2023 14:51:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbjFXOXe (ORCPT
+        with ESMTP id S229510AbjFYSv0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 24 Jun 2023 10:23:34 -0400
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5EC1BD6;
-        Sat, 24 Jun 2023 07:23:33 -0700 (PDT)
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-666ecb21f86so1516276b3a.3;
-        Sat, 24 Jun 2023 07:23:33 -0700 (PDT)
+        Sun, 25 Jun 2023 14:51:26 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D471BD;
+        Sun, 25 Jun 2023 11:51:25 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-666eb03457cso1009060b3a.1;
+        Sun, 25 Jun 2023 11:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687719085; x=1690311085;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wkyFiQL0LMLlm6vDNBXN0hDgyxcnkHbsK3MjPnzklOk=;
+        b=W28doUtd2dlijy0QGV6h/6J3SOjezt65kQ5VmAV4+ARGvRKrhQOuSDOufCHqQO9fpK
+         m+MBGfEudzDl4LEpVGcn1vJvnD19hVKHXcsirCRGin7OZlPx9Jx1tJHMNOy/tYwUNyie
+         6gkSeEYW2OrvONoUWYuvzezOkemdytGv+O/klCUqY19V7bYECgM/0GXcU+7jDxXrktq+
+         KSmNpJXzKm/3tXqufDLSrhIyP1j0iK4gtNUE2GYbLo3sev4jJl9h//hgNlfz/RLWjH9B
+         hMkrYjJPtCuHk2jQCuuI23e/QWIEJyD8b2enbsOxTLazi/5h/f445gluaFjgFmHQKAR1
+         Q1oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687616613; x=1690208613;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l61WbsGIflGvlUxdvoJkBkB8edAun9mmIBPamQIpoWM=;
-        b=WlhZh2un2W+mSqxtEXiZl+aosNZr2GYzB6kzB7tAOnkWQ/Qs4zBKuDh2AJl+12AUSX
-         Q5UMywz4ZgGR5h2XJn4mfWukV+sS4MMLKuoYFyrGUkLI8yE+3qFXuEVc6l/MpL+8wEDk
-         GH9FEnwSq3liU5dRgBVreGcBUBNDwwN6nhkxdr7NxT9gjw7TaW+VAyJ0Y/e2t70lsT2p
-         oiNbAd10Zgujbyt6HPZT8l4KoQu+twbANJ/STAgH7z2e4AonJb6JkI+DEUASSozV+KHN
-         QJTyAYiTJIzsAIi7wg5bTIxj8GwaB7oMl3SBa4IaUD8S7jygc7BdZUbFL1VrZKiJA33M
-         ToZw==
-X-Gm-Message-State: AC+VfDz1UHbypIPUbQZbIlLAHv4xIBV/CkvulPH3/ABGpNwU0rmH5GHw
-        I/64kAJnAO/9yOKZAT08yqI=
-X-Google-Smtp-Source: ACHHUZ4/e98bK2UmPfEy4r3yCMJ6M+KXaviUSrYfc5Ra0ti+kRhvfGmLjPU3w2ysu/LA7SWvpPix5Q==
-X-Received: by 2002:a05:6a00:22d2:b0:668:7143:50b0 with SMTP id f18-20020a056a0022d200b00668714350b0mr26865595pfj.31.1687616613173;
-        Sat, 24 Jun 2023 07:23:33 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id j21-20020aa783d5000000b006580e98326esm1155839pfn.42.2023.06.24.07.23.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Jun 2023 07:23:32 -0700 (PDT)
-Date:   Sat, 24 Jun 2023 23:23:30 +0900
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rockchip@lists.infradead.org,
-        Joyce Ooi <joyce.ooi@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Rahul Tanwar <rtanwar@maxlinear.com>,
-        Jim Quinlan <jim2101024@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-msm@vger.kernel.org,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        linux-tegra@vger.kernel.org, kernel@pengutronix.de,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-Subject: Re: [PATCH 00/15] PCI: Convert to platform remove callback returning
- void
-Message-ID: <20230624142330.GC2636347@rocinante>
-References: <20230530140742.ebbrxmpieuphbmz3@pengutronix.de>
- <ZHphHkNLO4tEJIm/@bhelgaas>
- <20230606160234.elcvyqlz2j3mggih@pengutronix.de>
+        d=1e100.net; s=20221208; t=1687719085; x=1690311085;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wkyFiQL0LMLlm6vDNBXN0hDgyxcnkHbsK3MjPnzklOk=;
+        b=ILF/r1YWVBG1QS+fZVVrroc1Eu/X7/9JSJjc9PgI3b63yUjmPb66YiLoR2ksWtf4rR
+         XfqCmo+1plwcyJljmmdVJgmihB14rlPfz+8gTIUiDgDJJ6Lr6+lgFtS7XuULuKU01cNR
+         12ZmkYp+r+3HSx6Cewl0Zb/ddjwLR2GBUSANbY0Yz3Bh7XsrwgpXNRes2lMhZGOIZbjr
+         vw9e3OyfuoXODceUZoKubHowB86amPCMY70lrwLoH+o8+bO9kCwptUunVe1yqN7FTAx9
+         Tm1q0z7vY4noah6ZLiiKYpegwJqV8p5DiswvjdT8pWpLnO3f62/1mmsGKL2OVEQNh2xi
+         2Jug==
+X-Gm-Message-State: AC+VfDzGkmU9hgKo6q7dSKL9rhNrQuSwPOwSslMtdMWZL3dNVZUPBEyK
+        yWUDLxskyTSROmvySzrP3Mhgfxqe1OgaHOXEifPox0NJ
+X-Google-Smtp-Source: ACHHUZ5pDGUQ1/TP44+VyU6tpJ5rYd3i7I3W0S8JTeBpxvCH04V63sAfyIBNewDVzh1nfY64NYD4glP1efsJtY8DllA=
+X-Received: by 2002:a17:90a:fb52:b0:25b:b4c6:d13e with SMTP id
+ iq18-20020a17090afb5200b0025bb4c6d13emr17872825pjb.8.1687719085091; Sun, 25
+ Jun 2023 11:51:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230606160234.elcvyqlz2j3mggih@pengutronix.de>
+From:   Uros Milojkovic <uroshm@gmail.com>
+Date:   Sun, 25 Jun 2023 14:51:13 -0400
+Message-ID: <CAP=xWk67n_5jOvj7mM3KmxiaMn9Gm908MUU=Nrq9Tv1ASw4M2Q@mail.gmail.com>
+Subject: [PATCH] staging: nvec: udelay to usleep_range
+To:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+Checkpatch.pl alerted that usleep_range is preferred to udelay. This
+change was made in nvec.c file.
 
-[...]
-> > > These patches wait for application for quite some time now. They apply
-> > > just fine to v6.4-rc1 and next/master. Would be great to get them in
-> > > during the next merge window and ideally give them some time in next
-> > > before.
-> > 
-> > Thanks, these seem fine to me, and Lorenzo normally takes care of
-> > drivers/pci/controller/.  Lorenzo, if it's easier to have me apply
-> > them, that's fine, too, just let me know.
-> > 
-> > The only tweaks I would make would be:
-> > 
-> >   PCI: j721e: Convert to platform remove callback returning void
-> >   PCI: dwc: Convert to platform remove callback returning void
-> 
-> If it's easier for you (or Lorenzo) I can resend with these tweaks.
-> Otherwise if these are adapted when applying them, that's fine for me,
-> too. Just tell me if I should do anything here.
+Signed-off-by: umilojkovic <uroshm@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I took the entire series and tweaked the subject lines as Bjorn requested.
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 2823cacde130..8bb3b691d1f5 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -627,7 +627,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+         break;
+     case 2:        /* first byte after command */
+         if (status == (I2C_SL_IRQ | RNW | RCVD)) {
+-            udelay(33);
++            usleep_range(33, 200);
+             if (nvec->rx->data[0] != 0x01) {
+                 dev_err(nvec->dev,
+                     "Read without prior read command\n");
+@@ -714,7 +714,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+      * We experience less incomplete messages with this delay than without
+      * it, but we don't know why. Help is appreciated.
+      */
+-    udelay(100);
++    usleep_range(100, 200);
 
-Thank you!
-
-	Krzysztof
+     return IRQ_HANDLED;
+ }
+-- 
+2.34.1
