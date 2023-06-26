@@ -2,96 +2,99 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E827EB64D7
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 13:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8241C001B1
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 13:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230370AbjFZNBO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Jun 2023 09:01:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51476 "EHLO
+        id S229653AbjFZNF2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Jun 2023 09:05:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbjFZNBM (ORCPT
+        with ESMTP id S229766AbjFZNFZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Jun 2023 09:01:12 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADB310D
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Jun 2023 06:01:11 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3113da5260dso2735273f8f.2
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Jun 2023 06:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687784470; x=1690376470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PRFMtW1n5WTYQjYvVy/I9g/WOAZN488DDgX8HS+qDGc=;
-        b=Jrz1KAMAKfMtJJsQH6PyeitwpJnwbJBDFkHRjFASqFOFrua68iYG5NJNX1SZ6Lyb6t
-         Vp2ecpdBSPh68DWhtDeEqY4LgYXB+1/LBxmHE8xpgfl9/8k//O04MiYqNcu3XnZA4Jty
-         f3k0vA1YBFa9sMaumBZY6ff25exH4+izejZHjGQBmgxeDQJK2wlDdDUfpeSzXgBj92nD
-         4/uEr4SgdvOfwFejTqapjzsoPku8niMKfS4THYXhpIRL4sdQEBJT+yUKBuTVEDyKJ9Xi
-         ZjUmqJPdD9YZ0qVkh3U1Ub73VLZYreKw5pfrvwPt8nRNZB2PxpvuEcpJDeaMRBFUTe4W
-         H4Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687784470; x=1690376470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PRFMtW1n5WTYQjYvVy/I9g/WOAZN488DDgX8HS+qDGc=;
-        b=M0z/yjEbcbRcs8nlwUNVGmWDqsCnwPwIoFThQ/c4c7tekVfctrHZPC6WarOySb/qUf
-         imUmKGTIMgiU/YLcEuvu1QfuLag6JXrvea9BHud/cnNU+uz79TxFJA9OaCQ9PMVdGMXk
-         qUiyLwCNuKscQE3emwMs4s8TT3KD9TghV1g4EfDSUel+mlpAntWxNDkJ3cB7eurxaZzl
-         RJmdB77hIz3jfoHBABLt1/B8O+x1q6A7SwdhUaq+XZ8B8wgylzudmoA5msJ/VdkhIVT+
-         ry5UdPl70Y5hTlQCYO3mqAwxI7GXDoBNEhHGU6XtwQ4+tjf9JTlMoM9E9pq4jLBledVH
-         ovnQ==
-X-Gm-Message-State: AC+VfDzEBlh1HoOkcGkC3sPetkTgz/s9ZZvB5bt8DLkTnUH2ubBvqzQZ
-        WIQoev6r8r/COpKpLjncNO83Zg==
-X-Google-Smtp-Source: ACHHUZ6RIDygr3u+3XCSH//4Wvdyamoykdy3IJ7M9oTa5bNTdhSKtq/rdDRfYml9nEsfvcZsmswFMQ==
-X-Received: by 2002:a5d:68c6:0:b0:313:e952:e500 with SMTP id p6-20020a5d68c6000000b00313e952e500mr2855606wrw.7.1687784469960;
-        Mon, 26 Jun 2023 06:01:09 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id i18-20020a5d5232000000b003047ae72b14sm7373703wra.82.2023.06.26.06.01.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 06:01:08 -0700 (PDT)
-Date:   Mon, 26 Jun 2023 16:01:05 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Uros Milojkovic <uroshm@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, marvin24@gmx.de,
-        p.zabel@pengutronix.de, linux-tegra@vger.kernel.org,
-        linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: nvec: udelay to usleep_range
-Message-ID: <b7319d00-d8db-4e8b-9143-7926f8a34fbe@kadam.mountain>
-References: <CAP=xWk6GvVQxzTJ6jS2pQ9dKvgoFFHc=m4yMma101MGKgdcm5A@mail.gmail.com>
+        Mon, 26 Jun 2023 09:05:25 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 268E4C2;
+        Mon, 26 Jun 2023 06:05:22 -0700 (PDT)
+Received: from [192.168.2.254] (109-252-154-132.dynamic.spd-mgts.ru [109.252.154.132])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 265C96606EF9;
+        Mon, 26 Jun 2023 14:05:18 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1687784720;
+        bh=1sBMM2PRRV9h1R/j/rMSloE9aC2lpEqWGuljd40xwbM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=lGBeuXWb01fFSzJ2pFOwmMEqBs2rZQZVQpaA/TuCvDVDtXQgBurZ7wQBDEiRk+D0g
+         kFY6B96C8DgjTQOg4y+E15Bi2zbWx2hRzPT+TCeWBvlq/z3x9mLE/zZBSmqvOaVYg4
+         BNutK+oH87OC2/6/PhJ6UJyTyOQqs0eLny9I4cuW2DyKxbXTbei0YwBov4cLtLAWr1
+         NJrEfrJLFtxEKT4oyQogTfqonglyJRyKBfA5hiByacbQOSwuTg3+ej8OHo2WvybNiJ
+         5eb75PHN01929Km2K0XGC2iOSUpP7IGjp0mhGtjQI9Xhu87S4NVhdTC4ov//7BmKtx
+         YFN46CpVsU7WQ==
+Message-ID: <2b932742-0637-3b7a-acb5-ab643781caa3@collabora.com>
+Date:   Mon, 26 Jun 2023 16:05:14 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP=xWk6GvVQxzTJ6jS2pQ9dKvgoFFHc=m4yMma101MGKgdcm5A@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.1
+Subject: Re: [PATCH v4 6/6] drm/shmem-helper: Switch to reservation lock
+Content-Language: en-US
+To:     Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        kernel@collabora.com, linux-media@vger.kernel.org
+References: <20230529223935.2672495-1-dmitry.osipenko@collabora.com>
+ <20230529223935.2672495-7-dmitry.osipenko@collabora.com>
+ <20230626114014.2c837255@collabora.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20230626114014.2c837255@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Jun 25, 2023 at 02:55:35PM -0400, Uros Milojkovic wrote:
-> Checkpatch pl alerts that usleep_range is preferred to udelay. The
-> change is made.
-> Signed-off-by: umilojkovic <uroshm@gmail.com>
-> ---
->  drivers/staging/nvec/nvec.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 6/26/23 12:40, Boris Brezillon wrote:
+> Same problem with this renaming: it's confusing because this function
+> was previously taking care of the locking, and it's no longer the case.
+> That's actually true for other public functions your patching, but I
+> won't go over all of them.
 > 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 2823cacde130..8bb3b691d1f5 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -627,7 +627,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
->          break;
->      case 2:        /* first byte after command */
->          if (status == (I2C_SL_IRQ | RNW | RCVD)) {
-> -            udelay(33);
-> +            usleep_range(33, 200);
+> I know this patch has been under discussion for quite some time, and has
+> been validated by other devs/maintainers, but I'd like to understand the
+> reasoning behind these decisions. Not the decision to replace all locks
+> by dma_resv, which I kinda understand, but the decision to change the
+> behavior of functions without making the name reflect the new behavior
+> (_locked prefix), or the fact we now prohibit some functions to
+> succeed when the dma_resv lock is taken by the driver beforehand (which,
+> unless I'm mistaken, will happen in the VM_BIND logic, and can happen
+> in the SUBMIT ioctl too depending on the driver).
 
-These kind of patches are only allowed if you have actually tested it
-on real hardware.
+Adding explicit _locked/unlocked postfix to all function names indeed
+won't hurt to do. There was no decision made about the function names,
+the old functions kept the old name where possible to minimize code
+changes during transition to the resv lock. Improving the names could be
+the next step.
 
->              if (nvec->rx->data[0] != 0x01) {
->                  dev_err(nvec->dev,
->                      "Read without prior read command\n");
+Thanks for the feedback!
 
-regards,
-dan carpenter
+-- 
+Best regards,
+Dmitry
 
