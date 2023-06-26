@@ -2,88 +2,81 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4339EB64D7
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 13:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA5FEB64D7
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 14:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbjFZNFq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Jun 2023 09:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
+        id S230447AbjFZOdi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Jun 2023 10:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230268AbjFZNFl (ORCPT
+        with ESMTP id S229783AbjFZOdh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Jun 2023 09:05:41 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B35AE7A;
-        Mon, 26 Jun 2023 06:05:38 -0700 (PDT)
-Received: from [192.168.2.254] (109-252-154-132.dynamic.spd-mgts.ru [109.252.154.132])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BCCD36606EF9;
-        Mon, 26 Jun 2023 14:05:35 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687784737;
-        bh=UduXksLELXstu/IT+fN/u2qfAoyq+jaxriMeJJQvIMM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=NrgukjA1DHJj1g7zNjrN/5FsxxcF05ysjW5CddwQDyvmub9yTZmZfcfCi1zocvuQs
-         tKnhwifaeyEv0gyFrsBp6pXUKEIJ/jD1c/vVStDTe71ma2gejUp/lAZSQNd2YRsOtK
-         ZGqTay3e0HR9Y/knPtp+nSSlzp9ZoJ9w9E5wdGHJ5Yu0cCVFiNTAUJojSddZ/qoT5M
-         osqOer+obrMLx/wHp7XfRlUOn7AmJmt+eNmgm6D5uDi81CFyspZ0ecmB+tRUDOvqNs
-         b7ZDWOIvFbSmlfJL+d6Xs9g08fKOHWnL3rIJ65Re1zJ41jLzy/SMKKBFvqjwnhXW0Y
-         2kOyALaDANEeQ==
-Message-ID: <4f652b3b-8691-84f4-037a-64950a30d496@collabora.com>
-Date:   Mon, 26 Jun 2023 16:05:33 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.1
-Subject: Re: [PATCH v4 6/6] drm/shmem-helper: Switch to reservation lock
-Content-Language: en-US
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
+        Mon, 26 Jun 2023 10:33:37 -0400
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6BF83194;
+        Mon, 26 Jun 2023 07:33:34 -0700 (PDT)
+Received: from loongson.cn (unknown [10.20.42.43])
+        by gateway (Coremail) with SMTP id _____8CxqMW8oZlkiW8CAA--.3740S3;
+        Mon, 26 Jun 2023 22:33:32 +0800 (CST)
+Received: from openarena.loongson.cn (unknown [10.20.42.43])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxvM67oZlk7cUJAA--.43395S2;
+        Mon, 26 Jun 2023 22:33:31 +0800 (CST)
+From:   Sui Jingfeng <suijingfeng@loongson.cn>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        kernel@collabora.com, linux-media@vger.kernel.org
-References: <20230529223935.2672495-1-dmitry.osipenko@collabora.com>
- <20230529223935.2672495-7-dmitry.osipenko@collabora.com>
- <20230626114014.2c837255@collabora.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20230626114014.2c837255@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/tegra: Return an error code if fails
+Date:   Mon, 26 Jun 2023 22:33:30 +0800
+Message-Id: <20230626143331.640454-1-suijingfeng@loongson.cn>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8CxvM67oZlk7cUJAA--.43395S2
+X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
+X-Coremail-Antispam: 1Uk129KBj9xXoWrXr17Kr17Kw15Zw4UGF48AFc_yoWxXrgEk3
+        W0qr47X34IkF4DZF1qvry3Xryayas5uFs7Z3ySy3s3Gw47Zr13XryUuryDur13u3ZxGF98
+        t3yIqFn8t3Z3GosvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
+        s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+        cSsGvfJTRUUUb28YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+        vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+        WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+        6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+        Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
+        14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
+        0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+        7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+        C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+        04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+        CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j0sjUUUUUU=
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/26/23 12:40, Boris Brezillon wrote:
-> I think here is the major problem I have with this patch: you've made
-> drm_gem_shmem_{get_pages,pin}() private, which forces me to call
-> drm_gem_shmem_pin() in a path where I already acquired the resv lock
-> (using the drm_exec infra proposed by Christian). That would
-> probably work if you were letting ret == -EALREADY go through, but I'm
-> wondering if it wouldn't be preferable to expose
-> drm_gem_shmem_pin_locked().
+Return -ENOMEM if tegra_bo_mmap() fails.
 
-You should be free to expose the necessary functions. They are private
-because nobody need them so far and we don't want to export unused
-functions.
+Signed-off-by: Sui Jingfeng <suijingfeng@loongson.cn>
+---
+ drivers/gpu/drm/tegra/gem.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index dea38892d6e6..0ce22935fbd3 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -710,6 +710,8 @@ static int tegra_gem_prime_vmap(struct dma_buf *buf, struct iosys_map *map)
+ 	void *vaddr;
+ 
+ 	vaddr = tegra_bo_mmap(&bo->base);
++	if (!vaddr)
++		return -ENOMEM;
+ 	if (IS_ERR(vaddr))
+ 		return PTR_ERR(vaddr);
+ 
 -- 
-Best regards,
-Dmitry
+2.25.1
 
