@@ -2,333 +2,96 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9661EB64DC
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 09:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E827EB64D7
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 13:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbjFZJ6A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Jun 2023 05:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
+        id S230370AbjFZNBO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Jun 2023 09:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbjFZJ57 (ORCPT
+        with ESMTP id S230096AbjFZNBM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Jun 2023 05:57:59 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB3CE6;
-        Mon, 26 Jun 2023 02:57:57 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BF382660710F;
-        Mon, 26 Jun 2023 10:57:55 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687773476;
-        bh=/hdhmDCFRTOeND3zSbQZJ0R4+Q+Md/hGuoDZfv2/+Do=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UqsnVW1rtP9Z5G+2AIv0tg0dlyuCHapj2RhQYZEYa/rTMqT/8/gu7iu8hPZn5mGe1
-         6sgF+oCDR5YY3BX7iLc3yo3xZ7T4aA6tBGPs4ZQicyPSZvzt+SwIcKh/Br4cstesda
-         lCwNu3tvfLkWniz8/ZD5YVuv4j7ONaSv4HnevnusU5HAlkoeDYtJ7Nq3YXmvAPjc5A
-         qf/Q8LC8PEk5OFuLiDVX44EN/Kmz7ISjl1yVlC2zY/YtV7J13/p+qGP/iV4yTwJVzn
-         6kUlauEVSKYc77KEzrepEaRxSnDYzAUJ32V9OMhbfsfWznWU1rtBLqwWYqedJrYgzi
-         cDUOWV6B8cbpQ==
-Date:   Mon, 26 Jun 2023 11:57:52 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        kernel@collabora.com, linux-media@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] drm/shmem-helper: Switch to reservation lock
-Message-ID: <20230626115752.37ea8e6d@collabora.com>
-In-Reply-To: <20230626114014.2c837255@collabora.com>
-References: <20230529223935.2672495-1-dmitry.osipenko@collabora.com>
- <20230529223935.2672495-7-dmitry.osipenko@collabora.com>
- <20230626114014.2c837255@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
+        Mon, 26 Jun 2023 09:01:12 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADB310D
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Jun 2023 06:01:11 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3113da5260dso2735273f8f.2
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Jun 2023 06:01:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687784470; x=1690376470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PRFMtW1n5WTYQjYvVy/I9g/WOAZN488DDgX8HS+qDGc=;
+        b=Jrz1KAMAKfMtJJsQH6PyeitwpJnwbJBDFkHRjFASqFOFrua68iYG5NJNX1SZ6Lyb6t
+         Vp2ecpdBSPh68DWhtDeEqY4LgYXB+1/LBxmHE8xpgfl9/8k//O04MiYqNcu3XnZA4Jty
+         f3k0vA1YBFa9sMaumBZY6ff25exH4+izejZHjGQBmgxeDQJK2wlDdDUfpeSzXgBj92nD
+         4/uEr4SgdvOfwFejTqapjzsoPku8niMKfS4THYXhpIRL4sdQEBJT+yUKBuTVEDyKJ9Xi
+         ZjUmqJPdD9YZ0qVkh3U1Ub73VLZYreKw5pfrvwPt8nRNZB2PxpvuEcpJDeaMRBFUTe4W
+         H4Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687784470; x=1690376470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PRFMtW1n5WTYQjYvVy/I9g/WOAZN488DDgX8HS+qDGc=;
+        b=M0z/yjEbcbRcs8nlwUNVGmWDqsCnwPwIoFThQ/c4c7tekVfctrHZPC6WarOySb/qUf
+         imUmKGTIMgiU/YLcEuvu1QfuLag6JXrvea9BHud/cnNU+uz79TxFJA9OaCQ9PMVdGMXk
+         qUiyLwCNuKscQE3emwMs4s8TT3KD9TghV1g4EfDSUel+mlpAntWxNDkJ3cB7eurxaZzl
+         RJmdB77hIz3jfoHBABLt1/B8O+x1q6A7SwdhUaq+XZ8B8wgylzudmoA5msJ/VdkhIVT+
+         ry5UdPl70Y5hTlQCYO3mqAwxI7GXDoBNEhHGU6XtwQ4+tjf9JTlMoM9E9pq4jLBledVH
+         ovnQ==
+X-Gm-Message-State: AC+VfDzEBlh1HoOkcGkC3sPetkTgz/s9ZZvB5bt8DLkTnUH2ubBvqzQZ
+        WIQoev6r8r/COpKpLjncNO83Zg==
+X-Google-Smtp-Source: ACHHUZ6RIDygr3u+3XCSH//4Wvdyamoykdy3IJ7M9oTa5bNTdhSKtq/rdDRfYml9nEsfvcZsmswFMQ==
+X-Received: by 2002:a5d:68c6:0:b0:313:e952:e500 with SMTP id p6-20020a5d68c6000000b00313e952e500mr2855606wrw.7.1687784469960;
+        Mon, 26 Jun 2023 06:01:09 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id i18-20020a5d5232000000b003047ae72b14sm7373703wra.82.2023.06.26.06.01.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jun 2023 06:01:08 -0700 (PDT)
+Date:   Mon, 26 Jun 2023 16:01:05 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Uros Milojkovic <uroshm@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, marvin24@gmx.de,
+        p.zabel@pengutronix.de, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev
+Subject: Re: [PATCH] staging: nvec: udelay to usleep_range
+Message-ID: <b7319d00-d8db-4e8b-9143-7926f8a34fbe@kadam.mountain>
+References: <CAP=xWk6GvVQxzTJ6jS2pQ9dKvgoFFHc=m4yMma101MGKgdcm5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP=xWk6GvVQxzTJ6jS2pQ9dKvgoFFHc=m4yMma101MGKgdcm5A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 26 Jun 2023 11:40:14 +0200
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
+On Sun, Jun 25, 2023 at 02:55:35PM -0400, Uros Milojkovic wrote:
+> Checkpatch pl alerts that usleep_range is preferred to udelay. The
+> change is made.
+> Signed-off-by: umilojkovic <uroshm@gmail.com>
+> ---
+>  drivers/staging/nvec/nvec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 2823cacde130..8bb3b691d1f5 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -627,7 +627,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+>          break;
+>      case 2:        /* first byte after command */
+>          if (status == (I2C_SL_IRQ | RNW | RCVD)) {
+> -            udelay(33);
+> +            usleep_range(33, 200);
 
-> Hi Dmitry,
-> 
-> On Tue, 30 May 2023 01:39:35 +0300
-> Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-> 
-> > Replace all drm-shmem locks with a GEM reservation lock. This makes locks
-> > consistent with dma-buf locking convention where importers are responsible
-> > for holding reservation lock for all operations performed over dma-bufs,
-> > preventing deadlock between dma-buf importers and exporters.  
-> 
-> I've rebased some of my work on drm-misc-next this morning and noticed
-> that the drm_gem_shmem_get_pages() I was using to pin pages no longer
-> exists, so I ended looking at this patch to check what I should use
-> instead, and I have a few questions/comments.
-> 
-> > 
-> > Suggested-by: Daniel Vetter <daniel@ffwll.ch>
-> > Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
-> > Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> > ---
-> >  drivers/gpu/drm/drm_gem_shmem_helper.c        | 210 ++++++++----------
-> >  drivers/gpu/drm/lima/lima_gem.c               |   8 +-
-> >  drivers/gpu/drm/panfrost/panfrost_drv.c       |   7 +-
-> >  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |   6 +-
-> >  drivers/gpu/drm/panfrost/panfrost_mmu.c       |  19 +-
-> >  include/drm/drm_gem_shmem_helper.h            |  14 +-
-> >  6 files changed, 116 insertions(+), 148 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> > index 4ea6507a77e5..a783d2245599 100644
-> > --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-> > +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> > @@ -88,8 +88,6 @@ __drm_gem_shmem_create(struct drm_device *dev, size_t size, bool private)
-> >  	if (ret)
-> >  		goto err_release;
-> >  
-> > -	mutex_init(&shmem->pages_lock);
-> > -	mutex_init(&shmem->vmap_lock);
-> >  	INIT_LIST_HEAD(&shmem->madv_list);
-> >  
-> >  	if (!private) {
-> > @@ -141,11 +139,13 @@ void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
-> >  {
-> >  	struct drm_gem_object *obj = &shmem->base;
-> >  
-> > -	drm_WARN_ON(obj->dev, shmem->vmap_use_count);
-> > -
-> >  	if (obj->import_attach) {
-> >  		drm_prime_gem_destroy(obj, shmem->sgt);
-> >  	} else {
-> > +		dma_resv_lock(shmem->base.resv, NULL);
-> > +
-> > +		drm_WARN_ON(obj->dev, shmem->vmap_use_count);
-> > +
-> >  		if (shmem->sgt) {
-> >  			dma_unmap_sgtable(obj->dev->dev, shmem->sgt,
-> >  					  DMA_BIDIRECTIONAL, 0);
-> > @@ -154,22 +154,24 @@ void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
-> >  		}
-> >  		if (shmem->pages)
-> >  			drm_gem_shmem_put_pages(shmem);
-> > -	}
-> >  
-> > -	drm_WARN_ON(obj->dev, shmem->pages_use_count);
-> > +		drm_WARN_ON(obj->dev, shmem->pages_use_count);
-> > +
-> > +		dma_resv_unlock(shmem->base.resv);
-> > +	}
-> >  
-> >  	drm_gem_object_release(obj);
-> > -	mutex_destroy(&shmem->pages_lock);
-> > -	mutex_destroy(&shmem->vmap_lock);
-> >  	kfree(shmem);
-> >  }
-> >  EXPORT_SYMBOL_GPL(drm_gem_shmem_free);
-> >  
-> > -static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
-> > +static int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)  
-> 
-> I find this name change confusing, because the function requires the
-> GEM resv lock to be held, and the _locked suffix was making it pretty
-> clear.
-> 
-> >  {
-> >  	struct drm_gem_object *obj = &shmem->base;
-> >  	struct page **pages;
-> >  
-> > +	dma_resv_assert_held(shmem->base.resv);
-> > +
-> >  	if (shmem->pages_use_count++ > 0)
-> >  		return 0;
-> >  
-> > @@ -197,35 +199,16 @@ static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
-> >  }
-> >  
-> >  /*
-> > - * drm_gem_shmem_get_pages - Allocate backing pages for a shmem GEM object
-> > + * drm_gem_shmem_put_pages - Decrease use count on the backing pages for a shmem GEM object
-> >   * @shmem: shmem GEM object
-> >   *
-> > - * This function makes sure that backing pages exists for the shmem GEM object
-> > - * and increases the use count.
-> > - *
-> > - * Returns:
-> > - * 0 on success or a negative error code on failure.
-> > + * This function decreases the use count and puts the backing pages when use drops to zero.
-> >   */
-> > -int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
-> > +void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)  
-> 
-> Same comment about the name change. That's even more confusing since
-> this function was previously taking care of the locking. Also not sure
-> why you'd want to expose this _put() helper when the _get() helper is
-> private.
-> 
-> >  {
-> >  	struct drm_gem_object *obj = &shmem->base;
-> > -	int ret;
-> >  
-> > -	drm_WARN_ON(obj->dev, obj->import_attach);
-> > -
-> > -	ret = mutex_lock_interruptible(&shmem->pages_lock);
-> > -	if (ret)
-> > -		return ret;
-> > -	ret = drm_gem_shmem_get_pages_locked(shmem);
-> > -	mutex_unlock(&shmem->pages_lock);
-> > -
-> > -	return ret;
-> > -}
-> > -EXPORT_SYMBOL(drm_gem_shmem_get_pages);
-> > -
-> > -static void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object *shmem)
-> > -{
-> > -	struct drm_gem_object *obj = &shmem->base;
-> > +	dma_resv_assert_held(shmem->base.resv);
-> >  
-> >  	if (drm_WARN_ON_ONCE(obj->dev, !shmem->pages_use_count))
-> >  		return;
-> > @@ -243,20 +226,25 @@ static void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object *shmem)
-> >  			  shmem->pages_mark_accessed_on_put);
-> >  	shmem->pages = NULL;
-> >  }
-> > +EXPORT_SYMBOL(drm_gem_shmem_put_pages);
-> >  
-> > -/*
-> > - * drm_gem_shmem_put_pages - Decrease use count on the backing pages for a shmem GEM object
-> > - * @shmem: shmem GEM object
-> > - *
-> > - * This function decreases the use count and puts the backing pages when use drops to zero.
-> > - */
-> > -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
-> > +static int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
-> >  {
-> > -	mutex_lock(&shmem->pages_lock);
-> > -	drm_gem_shmem_put_pages_locked(shmem);
-> > -	mutex_unlock(&shmem->pages_lock);
-> > +	int ret;
-> > +
-> > +	dma_resv_assert_held(shmem->base.resv);
-> > +
-> > +	ret = drm_gem_shmem_get_pages(shmem);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem)
-> > +{
-> > +	dma_resv_assert_held(shmem->base.resv);
-> > +
-> > +	drm_gem_shmem_put_pages(shmem);
-> >  }
-> > -EXPORT_SYMBOL(drm_gem_shmem_put_pages);
-> >  
-> >  /**
-> >   * drm_gem_shmem_pin - Pin backing pages for a shmem GEM object
-> > @@ -271,10 +259,17 @@ EXPORT_SYMBOL(drm_gem_shmem_put_pages);
-> >  int drm_gem_shmem_pin(struct drm_gem_shmem_object *shmem)
-> >  {
-> >  	struct drm_gem_object *obj = &shmem->base;
-> > +	int ret;
-> >  
-> >  	drm_WARN_ON(obj->dev, obj->import_attach);
-> >  
-> > -	return drm_gem_shmem_get_pages(shmem);
-> > +	ret = dma_resv_lock_interruptible(shmem->base.resv, NULL);
-> > +	if (ret)
-> > +		return ret;  
-> 
-> I think here is the major problem I have with this patch: you've made
-> drm_gem_shmem_{get_pages,pin}() private, which forces me to call
-> drm_gem_shmem_pin() in a path where I already acquired the resv lock
-> (using the drm_exec infra proposed by Christian). That would
-> probably work if you were letting ret == -EALREADY go through, but I'm
-> wondering if it wouldn't be preferable to expose
-> drm_gem_shmem_pin_locked().
-> 
-> > +	ret = drm_gem_shmem_pin_locked(shmem);
-> > +	dma_resv_unlock(shmem->base.resv);
-> > +
-> > +	return ret;
-> >  }
-> >  EXPORT_SYMBOL(drm_gem_shmem_pin);
-> >  
-> > @@ -291,12 +286,29 @@ void drm_gem_shmem_unpin(struct drm_gem_shmem_object *shmem)
-> >  
-> >  	drm_WARN_ON(obj->dev, obj->import_attach);
-> >  
-> > -	drm_gem_shmem_put_pages(shmem);
-> > +	dma_resv_lock(shmem->base.resv, NULL);
-> > +	drm_gem_shmem_unpin_locked(shmem);
-> > +	dma_resv_unlock(shmem->base.resv);
-> >  }
-> >  EXPORT_SYMBOL(drm_gem_shmem_unpin);  
-> 
-> If we want to be consistent, let's just expose drm_gem_shmem_unpin()
-> and drm_gem_shmem_pin() and keep drm_gem_shmem_{get,put}_pages()
-> private, or even better, rename them drm_gem_shmem_{pin,unpin}_locked()
-> insert of having drm_gem_shmem_{pin,unpin}_locked() wrappers that just
-> forward the call to drm_gem_shmem_{get,put}_pages().
-> 
-> >  
-> > -static int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
-> > -				     struct iosys_map *map)
-> > +/*
-> > + * drm_gem_shmem_vmap - Create a virtual mapping for a shmem GEM object
-> > + * @shmem: shmem GEM object
-> > + * @map: Returns the kernel virtual address of the SHMEM GEM object's backing
-> > + *       store.
-> > + *
-> > + * This function makes sure that a contiguous kernel virtual address mapping
-> > + * exists for the buffer backing the shmem GEM object. It hides the differences
-> > + * between dma-buf imported and natively allocated objects.
-> > + *
-> > + * Acquired mappings should be cleaned up by calling drm_gem_shmem_vunmap().
-> > + *
-> > + * Returns:
-> > + * 0 on success or a negative error code on failure.
-> > + */
-> > +int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
-> > +		       struct iosys_map *map)  
-> 
-> Same problem with this renaming: it's confusing because this function
-> was previously taking care of the locking, and it's no longer the case.
-> That's actually true for other public functions your patching, but I
-> won't go over all of them.
+These kind of patches are only allowed if you have actually tested it
+on real hardware.
 
-vmap() is less of a problem, because we're not supposed to call
-drm_gem_shmem_vmap() directly, but rather go through drm_gem_vmap().
-This should probably be clarified in the doc though, with this sort of
-disclaimer: "don't use this function to map stuff, only use it to
-implement drm_gem_object_funcs::vmap()."
+>              if (nvec->rx->data[0] != 0x01) {
+>                  dev_err(nvec->dev,
+>                      "Read without prior read command\n");
 
-Also noticed that the drm_gem API has the _locked pattern reversed,
-with a few drm_gem_xxx_unlocked() helper that take the lock and call
-the drm_gem_xxx() function. Don't have a strong opinion on whether this
-is better than the xxx_locked() and xxx() pattern or not, but the fact
-things are inconsistent across the API (drm_gem_pin() is letting the
-backend take the lock before pinning pages, when drm_gem_vmap() is
-not) is super confusing.
+regards,
+dan carpenter
+
