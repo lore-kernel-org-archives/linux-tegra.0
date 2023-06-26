@@ -2,25 +2,25 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C167CEB64D7
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 14:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40CDEB64DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 17:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbjFZOzI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Jun 2023 10:55:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58616 "EHLO
+        id S230212AbjFZR6J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Jun 2023 13:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbjFZOzE (ORCPT
+        with ESMTP id S229698AbjFZR6I (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Jun 2023 10:55:04 -0400
+        Mon, 26 Jun 2023 13:58:08 -0400
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E050D9;
-        Mon, 26 Jun 2023 07:54:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E6F5B130;
+        Mon, 26 Jun 2023 10:58:06 -0700 (PDT)
 Received: from loongson.cn (unknown [10.20.42.43])
-        by gateway (Coremail) with SMTP id _____8DxtMTApplke3ACAA--.3778S3;
-        Mon, 26 Jun 2023 22:54:56 +0800 (CST)
+        by gateway (Coremail) with SMTP id _____8AxS8at0Zlk54kCAA--.3882S3;
+        Tue, 27 Jun 2023 01:58:05 +0800 (CST)
 Received: from openarena.loongson.cn (unknown [10.20.42.43])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxJ8zApplkbs4JAA--.2557S2;
-        Mon, 26 Jun 2023 22:54:56 +0800 (CST)
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Dx4eSt0ZlkojAKAA--.44182S2;
+        Tue, 27 Jun 2023 01:58:05 +0800 (CST)
 From:   Sui Jingfeng <suijingfeng@loongson.cn>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
@@ -29,88 +29,57 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/tegra: Kconfig: Express the dependency by using the depends on
-Date:   Mon, 26 Jun 2023 22:54:56 +0800
-Message-Id: <20230626145456.641252-1-suijingfeng@loongson.cn>
+Subject: [PATCH] drm/tegra: Fix potential memory leak if vmap() fail
+Date:   Tue, 27 Jun 2023 01:58:05 +0800
+Message-Id: <20230626175805.672589-1-suijingfeng@loongson.cn>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8DxJ8zApplkbs4JAA--.2557S2
+X-CM-TRANSID: AQAAf8Dx4eSt0ZlkojAKAA--.44182S2
 X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ArWfJF4xtr1kGr18CFy3Awc_yoW8Xw1fpF
-        s8tryFyrykJan8tw47Aa48GFy3Xa9xGFW5GrZxG3sxur4jy3s5Zryqyay3AryUZrs7trW3
-        KF93KF1UuF9rCrcCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-        sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-        0xBIdaVrnRJUUUk2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-        IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-        e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-        0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-        xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-        1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
-        67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
-        Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-        6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
-        vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE
-        42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
-        kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2ID7UUUUU
+X-Coremail-Antispam: 1Uk129KBj9xXoWrtF4DXFWxKw1UCr1kJFW5Arc_yoWfXFb_ua
+        48ur97W34UCF1kCF1ayrW2yFWYk345Zr48XayqyF93K347ZFs3W34DuryruFyUGFsrG3Z8
+        JF9rXr4fZa1S9osvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
+        s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+        cSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+        vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+        WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
+        JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+        xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
+        6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+        xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+        Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+        IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+        6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+        AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUUUUU==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Because using the 'depends on' is easy to understand and more obvious.
+The vmap function called in the tegra_fbdev_probe() function could fail,
+It doesn't matther. But if the error handling is necessary, it should
+also free the resources allocated by drm_fb_helper_alloc_info() function
+and the gem buffer object allocated by tegra_bo_create().
 
 Signed-off-by: Sui Jingfeng <suijingfeng@loongson.cn>
 ---
- drivers/gpu/drm/tegra/Kconfig | 6 ++----
- drivers/gpu/host1x/Kconfig    | 5 +----
- 2 files changed, 3 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/tegra/fbdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index 498313778175..e7e3856665b1 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -26,19 +26,17 @@ config DRM_TEGRA
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called tegra-drm.
+diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
+index e74d9be981c7..d2152b5eb77b 100644
+--- a/drivers/gpu/drm/tegra/fbdev.c
++++ b/drivers/gpu/drm/tegra/fbdev.c
+@@ -141,6 +141,8 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
  
--if DRM_TEGRA
--
- config DRM_TEGRA_DEBUG
- 	bool "NVIDIA Tegra DRM debug support"
-+	depends on DRM_TEGRA
- 	help
- 	  Say yes here to enable debugging support.
+ destroy:
+ 	drm_framebuffer_remove(fb);
++	drm_fb_helper_release_info(helper);
++	drm_gem_object_put(&bo->gem);
+ 	return err;
+ }
  
- config DRM_TEGRA_STAGING
- 	bool "Enable HOST1X interface"
-+	depends on DRM_TEGRA
- 	depends on STAGING
- 	help
- 	  Say yes if HOST1X should be available for userspace DRM users.
- 
- 	  If unsure, choose N.
--
--endif
-diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
-index e6c78ae2003a..36eb98d93637 100644
---- a/drivers/gpu/host1x/Kconfig
-+++ b/drivers/gpu/host1x/Kconfig
-@@ -17,14 +17,11 @@ config TEGRA_HOST1X
- 	  by host1x are referred to as clients. host1x includes some other
- 	  functionality, such as synchronization.
- 
--if TEGRA_HOST1X
--
- config TEGRA_HOST1X_FIREWALL
- 	bool "Enable HOST1X security firewall"
-+	depends on TEGRA_HOST1X
- 	default y
- 	help
- 	  Say yes if kernel should protect command streams from tampering.
- 
- 	  If unsure, choose Y.
--
--endif
 -- 
 2.25.1
 
