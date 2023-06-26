@@ -2,168 +2,333 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D06EB64D7
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 09:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9661EB64DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Jun 2023 09:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbjFZJmB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Jun 2023 05:42:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44386 "EHLO
+        id S230064AbjFZJ6A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Jun 2023 05:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbjFZJl7 (ORCPT
+        with ESMTP id S229526AbjFZJ57 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Jun 2023 05:41:59 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2061.outbound.protection.outlook.com [40.107.237.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4EEFBE;
-        Mon, 26 Jun 2023 02:41:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TZve5C71kPS/9MZOrJXJMVhTikb/QJRYUKp7GeMGUJFBSpl0WXO32IsmYzDd2rTgteUO+zB3r6tojXY2TVfirL2FkSHpQPI2FmmlZxlFMH5Ma4Kjkf2A5iWyHlAWawIus/HX6Nus436csX780PUR8P23DyfCAHgC5PxzO5GwbHOXYyILbx4Jp5jyrL0yY4QZ9R6+hupXrGbBRfQdH/803rv9KyM2SRbVwP40vXR7f46zCJ9rNg7wG+66eZka83ia6RGgIJLoZuxxSXJYFc1O07zJFlKd6Q7Pl3X1gQEoi8esB7ahgChizkHDEEi5yME2wwQyG5M4Yn+GIZa6QNKt7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RgBThYf/OW48m/AxcQhudrj3BtlSZyfLLI4HT5w3YeI=;
- b=YuUNlGlU8tuTHW6LrF2xlv2tNqZZCwqTbrFKNnsg8aD6tHR6SJdp2BAFcuRdCL3fmVco1GnKZ1h44Q0tI3OT17VFcK4kMo4nZqrmRE1saZAqt+2QUc0q47W7YOZDdkrErq8G673Br6Fkq2Q64mz0xWcF4CtJrYyi9BzJyxYddmoVgYNsI894D5Wm0lwJZOkFG2uKJGxnvfcfcchfocURkRBFXNQ7UdXHwmbthIZgMWb4zAwS/zHoUUQGch8pMPVyJW5+++Hxpn83RuYOer/wGjCXO6omU0ns/s+qfGZTnkTzZE444wszHraIk1Xd6oTY3BDAHOGjEppOwK2c9hm3xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RgBThYf/OW48m/AxcQhudrj3BtlSZyfLLI4HT5w3YeI=;
- b=RRTLMhAz2E8Zdov9CBkhZlrHTCSbQtuYg9bP3l+Gq7rmssP0X8o8edQGaxs/7a2BVjAm8gE+Eju9QOcS1Z3ZXCWR1050Lzzi3H4Tu+FR6HVypXAECi/HVcipmx2jmqF9LAtRmD1OYRo2hXovwpUaFzOwLn5zMcP0pIFGdCsFFB9i6e+ZyqHBIpNRtMImaI3iENB/nsWqeQGdseqJ8l/heZlFaSBz75gdjzpOdReq4eSOUrz5VAmut0dRdv5dI/qqi47n6Bg9hAqzPKgZCdjNTegLfYfIRvCJ0HxeC0LELWYQymRQdWOEsB/IEtUuUBkD4VdtDk08mfB0N4GS3cJZ9g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
- by SJ0PR12MB6992.namprd12.prod.outlook.com (2603:10b6:a03:483::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23; Mon, 26 Jun
- 2023 09:41:56 +0000
-Received: from BYAPR12MB3205.namprd12.prod.outlook.com
- ([fe80::bda0:2d44:96c3:c3fd]) by BYAPR12MB3205.namprd12.prod.outlook.com
- ([fe80::bda0:2d44:96c3:c3fd%4]) with mapi id 15.20.6521.024; Mon, 26 Jun 2023
- 09:41:55 +0000
-Message-ID: <020c7602-34c5-f31e-22aa-da0032854489@nvidia.com>
-Date:   Mon, 26 Jun 2023 15:11:45 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 2/8] ASoC: tegra: Fix AMX byte map
-To:     Mark Brown <broonie@kernel.org>
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, thierry.reding@gmail.com,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        jonathanh@nvidia.com, mkumard@nvidia.com, sheetal@nvidia.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <1687433656-7892-1-git-send-email-spujar@nvidia.com>
- <1687433656-7892-3-git-send-email-spujar@nvidia.com>
- <ad4b4dc9-7466-45a9-a008-c2301a7485dd@sirena.org.uk>
- <7893c366-e6aa-d606-c3d6-e85f73a345e0@nvidia.com>
- <ZJVwpE5KeL8rgvB9@finisterre.sirena.org.uk>
-Content-Language: en-US
-From:   Sameer Pujar <spujar@nvidia.com>
-In-Reply-To: <ZJVwpE5KeL8rgvB9@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0PR01CA0045.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:81::20) To BYAPR12MB3205.namprd12.prod.outlook.com
- (2603:10b6:a03:134::32)
+        Mon, 26 Jun 2023 05:57:59 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB3CE6;
+        Mon, 26 Jun 2023 02:57:57 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BF382660710F;
+        Mon, 26 Jun 2023 10:57:55 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1687773476;
+        bh=/hdhmDCFRTOeND3zSbQZJ0R4+Q+Md/hGuoDZfv2/+Do=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UqsnVW1rtP9Z5G+2AIv0tg0dlyuCHapj2RhQYZEYa/rTMqT/8/gu7iu8hPZn5mGe1
+         6sgF+oCDR5YY3BX7iLc3yo3xZ7T4aA6tBGPs4ZQicyPSZvzt+SwIcKh/Br4cstesda
+         lCwNu3tvfLkWniz8/ZD5YVuv4j7ONaSv4HnevnusU5HAlkoeDYtJ7Nq3YXmvAPjc5A
+         qf/Q8LC8PEk5OFuLiDVX44EN/Kmz7ISjl1yVlC2zY/YtV7J13/p+qGP/iV4yTwJVzn
+         6kUlauEVSKYc77KEzrepEaRxSnDYzAUJ32V9OMhbfsfWznWU1rtBLqwWYqedJrYgzi
+         cDUOWV6B8cbpQ==
+Date:   Mon, 26 Jun 2023 11:57:52 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        kernel@collabora.com, linux-media@vger.kernel.org
+Subject: Re: [PATCH v4 6/6] drm/shmem-helper: Switch to reservation lock
+Message-ID: <20230626115752.37ea8e6d@collabora.com>
+In-Reply-To: <20230626114014.2c837255@collabora.com>
+References: <20230529223935.2672495-1-dmitry.osipenko@collabora.com>
+ <20230529223935.2672495-7-dmitry.osipenko@collabora.com>
+ <20230626114014.2c837255@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3205:EE_|SJ0PR12MB6992:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34c67743-bbc0-4216-54cd-08db762993fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: z3ovdgN7JF6pqcFV3HMAh3fbv05wzbWFG1SO0ewm0GFwtTwuhZcb0jlDsh48FR6KhfpKRtJC9I8MrbRD5ioOdhelWYmP7CKtOF+r2D+HQRMfZiMgMbHi/vaXUEMUCFbgX2Fvb0mU3s6v6Sq6x5WiK81S2o3BLZeZXl4FxVzjPT7fidHT0L/xDnPOCtsh2ZtLUM3KZASIeusQHObgXyCQ2bL+c5NcqDGuFoQZXH7FZlhfXSPPfWNGhNpDA1gzXTMuw0FkrXDSQ/dzvihzVqqvySYK/ALuH3hFUMPLyhCi40uQBozxp3cEHRZXDNE8LId13jTOgnPgL3t99j/PZ5CWZ0VMQNBAT7n6rA4YJdVb/kBaPL+ivD7dl/jlqM4KfjJjxpQ8ZUiHwopLV8FKy+I9gdvY55gS1wbKUKnIpgbhk8KnJ/4qWHnvSjD04sPxcLwPd62YnCr5CKvQ3svg8HS5iJZe7zqSvJz5Z9RLs+xT2NahYHFxgnwp8uJ8JPdr6R3duKw+nSS5rQccB1UkGS0QjpgT7AdEah7EvBXcJto8P8Xq1a6s+N8YGu3TrrQyL6ye9HLcgxrB0qNNxNo9Qt4UHQ39vbqQenS0y69arRGqz+j5FsQUniAM9BcbtCPsG/zlBSnCRbBTToLGS/nZrGp+RA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3205.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(136003)(396003)(39860400002)(366004)(451199021)(8936002)(8676002)(66476007)(66556008)(4326008)(66946007)(41300700001)(6916009)(316002)(6506007)(53546011)(186003)(6512007)(26005)(2616005)(478600001)(6666004)(6486002)(2906002)(5660300002)(7416002)(38100700002)(36756003)(31696002)(31686004)(86362001)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WjFrODkyNkp0bG5SRnlXc01Vb3prTjYvL0lOTXNpMHVBREpUV29CZStHY2VH?=
- =?utf-8?B?cjJsVTh1aVlDbjZLaDBSS0xXVzc1cHhpb0FHTm9OdThDbmZNTmhEOEt5UHdR?=
- =?utf-8?B?bThSK0JIa3hGQktiMFdoQmwyeUNTL3VseVBXZGtKN2tjQTRSNWpPdDgwVFh6?=
- =?utf-8?B?bEc4akhkcVFPejlobmVPaWtaOERHWHczOUNRellVd0p5SEE2aWRLNkpFM3ZM?=
- =?utf-8?B?WjRVZ2NpVVZTRFloTlZnR3I3ZnpIWFV5aDFadFhHaDFldTZ4a2RLeWpVS2RL?=
- =?utf-8?B?U1lsak1wYWlnZVJZQ2N4OGUvSWlHL3JpMys0Z2d2ZWd4aHBzRUFNZVVYRk96?=
- =?utf-8?B?QWdYQ0dGSVhwclU3ZkNrcThIZUxGbnRvd3VqZmhpbmpKcjNUUHdwZnoxeWZR?=
- =?utf-8?B?eDJ1WkxGbHQ2RitGWmZPK0d0Zm1LSDdaMzZkQ3p1eFZEbnA3NlRDRzArMUwy?=
- =?utf-8?B?amgyL2kzNXJKbjdKaURVbDN6Y2p0MGZCSnVsWVA4enIxU3JmTVFpN2Zyb2N0?=
- =?utf-8?B?eDhlVkVnUGovVG9CeEJLVTlZaDBzMlNxa2VyN0JVcWF1TUJudnhSSGI3QzZt?=
- =?utf-8?B?MTFocVhJUzQwQUVjb1pYNDc2alowb0dDWkcyQUtWR2NuS3EzcGVZcTFRcUw4?=
- =?utf-8?B?SWg3MFB5TUdoNVIxQllXSERjVWVYbmM2RTc4ZkNiQTJPSVpWZktaQWw2WmhP?=
- =?utf-8?B?RTBFVVdoczdMdmdYT1Nwd3R5RkpiL0w0dTJkZURUYmFyd3J3amp1ZmpHZDRl?=
- =?utf-8?B?RUFrNmNjdjNOUEVOaWZ2NzRXeWk4QXZ0MUw0NkRKV1dFMDdYM0tYL2FETzRi?=
- =?utf-8?B?a2JDMHMrYWpkRVk4TEtUZjVHNzA3dVpNZzJWZWNqZGpkcjR6WU1EQ1liRlVW?=
- =?utf-8?B?c2FLU1lPaDF2L3pFWjVGenJqWDZkcm9hQ3dYT1g2UGJqTCtsNkZaeHdDVE42?=
- =?utf-8?B?OFdXOU95K3pRYmtTUG5qSVIxSlpIK3QrT1R0eHBNeDYvVnBCcW03RFlRMjRv?=
- =?utf-8?B?bzA1dVBQb21SYmZNa2pnNnZjQmhOUVJSYlRpRzlpdFBwZ0ttR1NoNFZ1aDJW?=
- =?utf-8?B?N0k0R0dOT1lWWEpSNGo3eXp2VXl6SW5mWG1zdzFJK3VCazhiNEhhR0tRVFEv?=
- =?utf-8?B?b21oTnFaVzl5U0FWUkNZYWE1VXBxa0xTNHcwak9OR1gvYTlCRm0zQTh1VDYv?=
- =?utf-8?B?cW5TQUNCbTBTakV5S2d6UHhxbTZjTlNjNzJTcVRtdzRLMVhFSnpIelAzUUtr?=
- =?utf-8?B?aVUrL1Q1aTcyRkkwYk5qL2VuajlYcmgvck8wbktKTEZ6SE0zUEw5QnVyM2kr?=
- =?utf-8?B?V3RmRVdhWlgvb1ZoZXBWVGc4VzVHUGdXUlliT0hyN2NRQ21jSHl4ZUdRQW9H?=
- =?utf-8?B?M3IvRXMxTnh5T0t4c0YrOE1LTTB5dDdiMXdCdUhpT0UyaTNZZmVQWjQwd3Ez?=
- =?utf-8?B?enBMKzBtOWxmbGhSczhJN3Q3bjYwN29yR3pqTnZERC9qc1JnMlA2K1MyMXNo?=
- =?utf-8?B?THA1Q29zVWJQV25SWnF2N21GNlh1TTZ6THBHSU94V2tSSVYyV3Rxb1FOWjhV?=
- =?utf-8?B?bEFHYlpwZldmdTdsVms2QnpTanE3dHVRTmZEQjQxZ3BRWjRKWlFvRENkb1dQ?=
- =?utf-8?B?Q0JyTjFLa255OFNvbUx2WW00Qk40eFM0WkNBZFlRUStuNEI5Z3ZWN3AvS0xm?=
- =?utf-8?B?UW1QbU8reDhpUW0vVWlRaVkvRkM4aytHSHFKSDlyUVdrWXJoNk1lUm8wRHpM?=
- =?utf-8?B?MDZEYkRuOFJwMkxtWHJZWmhDaGVXYUhiditRMjZ4dzk0aGF5RWpSVWdRa1pn?=
- =?utf-8?B?U2krYVRkeXduVVBBbGYycDJKWGVwdVNjdkFOMGNzcHE2dzhUckNZbGpzVEgx?=
- =?utf-8?B?R3lXWFJPYlgrcTFTQndHVHN4VEwzZFRLM2NJNWVjQ2F6RnFUNWxoYVI2S3U5?=
- =?utf-8?B?VEN3NzNUS0t4cTBJa2tuYmVpeEQzWWl2SGJ5eXRDd0VJRWpzRTJBNFBOeUxk?=
- =?utf-8?B?WnI2SE9XUU50NTVDazNKTW5lYTRScXlhSk5NV0k2QUg2aTdJTEl3RmIzS3Aw?=
- =?utf-8?B?bytDeUhsVkI3S2lrVnBFaGV0dXRiZVhHNzdycW5pdGkyOG5aTXZ2QTR2THdp?=
- =?utf-8?Q?rIPE0KbWqqWuqZKiRywwmI7AD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34c67743-bbc0-4216-54cd-08db762993fc
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2023 09:41:55.5838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WC88Bpg4plrPwkaZC8SQgstshcLqobzjtMHGvfoLu7876dsAAu4uAHxFlhyreFkWYlP+cKUEtvzInPr5WxSnyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6992
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, 26 Jun 2023 11:40:14 +0200
+Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
+> Hi Dmitry,
+> 
+> On Tue, 30 May 2023 01:39:35 +0300
+> Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+> 
+> > Replace all drm-shmem locks with a GEM reservation lock. This makes locks
+> > consistent with dma-buf locking convention where importers are responsible
+> > for holding reservation lock for all operations performed over dma-bufs,
+> > preventing deadlock between dma-buf importers and exporters.  
+> 
+> I've rebased some of my work on drm-misc-next this morning and noticed
+> that the drm_gem_shmem_get_pages() I was using to pin pages no longer
+> exists, so I ended looking at this patch to check what I should use
+> instead, and I have a few questions/comments.
+> 
+> > 
+> > Suggested-by: Daniel Vetter <daniel@ffwll.ch>
+> > Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > Reviewed-by: Emil Velikov <emil.l.velikov@gmail.com>
+> > Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > ---
+> >  drivers/gpu/drm/drm_gem_shmem_helper.c        | 210 ++++++++----------
+> >  drivers/gpu/drm/lima/lima_gem.c               |   8 +-
+> >  drivers/gpu/drm/panfrost/panfrost_drv.c       |   7 +-
+> >  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |   6 +-
+> >  drivers/gpu/drm/panfrost/panfrost_mmu.c       |  19 +-
+> >  include/drm/drm_gem_shmem_helper.h            |  14 +-
+> >  6 files changed, 116 insertions(+), 148 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> > index 4ea6507a77e5..a783d2245599 100644
+> > --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> > +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> > @@ -88,8 +88,6 @@ __drm_gem_shmem_create(struct drm_device *dev, size_t size, bool private)
+> >  	if (ret)
+> >  		goto err_release;
+> >  
+> > -	mutex_init(&shmem->pages_lock);
+> > -	mutex_init(&shmem->vmap_lock);
+> >  	INIT_LIST_HEAD(&shmem->madv_list);
+> >  
+> >  	if (!private) {
+> > @@ -141,11 +139,13 @@ void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
+> >  {
+> >  	struct drm_gem_object *obj = &shmem->base;
+> >  
+> > -	drm_WARN_ON(obj->dev, shmem->vmap_use_count);
+> > -
+> >  	if (obj->import_attach) {
+> >  		drm_prime_gem_destroy(obj, shmem->sgt);
+> >  	} else {
+> > +		dma_resv_lock(shmem->base.resv, NULL);
+> > +
+> > +		drm_WARN_ON(obj->dev, shmem->vmap_use_count);
+> > +
+> >  		if (shmem->sgt) {
+> >  			dma_unmap_sgtable(obj->dev->dev, shmem->sgt,
+> >  					  DMA_BIDIRECTIONAL, 0);
+> > @@ -154,22 +154,24 @@ void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
+> >  		}
+> >  		if (shmem->pages)
+> >  			drm_gem_shmem_put_pages(shmem);
+> > -	}
+> >  
+> > -	drm_WARN_ON(obj->dev, shmem->pages_use_count);
+> > +		drm_WARN_ON(obj->dev, shmem->pages_use_count);
+> > +
+> > +		dma_resv_unlock(shmem->base.resv);
+> > +	}
+> >  
+> >  	drm_gem_object_release(obj);
+> > -	mutex_destroy(&shmem->pages_lock);
+> > -	mutex_destroy(&shmem->vmap_lock);
+> >  	kfree(shmem);
+> >  }
+> >  EXPORT_SYMBOL_GPL(drm_gem_shmem_free);
+> >  
+> > -static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
+> > +static int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)  
+> 
+> I find this name change confusing, because the function requires the
+> GEM resv lock to be held, and the _locked suffix was making it pretty
+> clear.
+> 
+> >  {
+> >  	struct drm_gem_object *obj = &shmem->base;
+> >  	struct page **pages;
+> >  
+> > +	dma_resv_assert_held(shmem->base.resv);
+> > +
+> >  	if (shmem->pages_use_count++ > 0)
+> >  		return 0;
+> >  
+> > @@ -197,35 +199,16 @@ static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
+> >  }
+> >  
+> >  /*
+> > - * drm_gem_shmem_get_pages - Allocate backing pages for a shmem GEM object
+> > + * drm_gem_shmem_put_pages - Decrease use count on the backing pages for a shmem GEM object
+> >   * @shmem: shmem GEM object
+> >   *
+> > - * This function makes sure that backing pages exists for the shmem GEM object
+> > - * and increases the use count.
+> > - *
+> > - * Returns:
+> > - * 0 on success or a negative error code on failure.
+> > + * This function decreases the use count and puts the backing pages when use drops to zero.
+> >   */
+> > -int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
+> > +void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)  
+> 
+> Same comment about the name change. That's even more confusing since
+> this function was previously taking care of the locking. Also not sure
+> why you'd want to expose this _put() helper when the _get() helper is
+> private.
+> 
+> >  {
+> >  	struct drm_gem_object *obj = &shmem->base;
+> > -	int ret;
+> >  
+> > -	drm_WARN_ON(obj->dev, obj->import_attach);
+> > -
+> > -	ret = mutex_lock_interruptible(&shmem->pages_lock);
+> > -	if (ret)
+> > -		return ret;
+> > -	ret = drm_gem_shmem_get_pages_locked(shmem);
+> > -	mutex_unlock(&shmem->pages_lock);
+> > -
+> > -	return ret;
+> > -}
+> > -EXPORT_SYMBOL(drm_gem_shmem_get_pages);
+> > -
+> > -static void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object *shmem)
+> > -{
+> > -	struct drm_gem_object *obj = &shmem->base;
+> > +	dma_resv_assert_held(shmem->base.resv);
+> >  
+> >  	if (drm_WARN_ON_ONCE(obj->dev, !shmem->pages_use_count))
+> >  		return;
+> > @@ -243,20 +226,25 @@ static void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object *shmem)
+> >  			  shmem->pages_mark_accessed_on_put);
+> >  	shmem->pages = NULL;
+> >  }
+> > +EXPORT_SYMBOL(drm_gem_shmem_put_pages);
+> >  
+> > -/*
+> > - * drm_gem_shmem_put_pages - Decrease use count on the backing pages for a shmem GEM object
+> > - * @shmem: shmem GEM object
+> > - *
+> > - * This function decreases the use count and puts the backing pages when use drops to zero.
+> > - */
+> > -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
+> > +static int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+> >  {
+> > -	mutex_lock(&shmem->pages_lock);
+> > -	drm_gem_shmem_put_pages_locked(shmem);
+> > -	mutex_unlock(&shmem->pages_lock);
+> > +	int ret;
+> > +
+> > +	dma_resv_assert_held(shmem->base.resv);
+> > +
+> > +	ret = drm_gem_shmem_get_pages(shmem);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem)
+> > +{
+> > +	dma_resv_assert_held(shmem->base.resv);
+> > +
+> > +	drm_gem_shmem_put_pages(shmem);
+> >  }
+> > -EXPORT_SYMBOL(drm_gem_shmem_put_pages);
+> >  
+> >  /**
+> >   * drm_gem_shmem_pin - Pin backing pages for a shmem GEM object
+> > @@ -271,10 +259,17 @@ EXPORT_SYMBOL(drm_gem_shmem_put_pages);
+> >  int drm_gem_shmem_pin(struct drm_gem_shmem_object *shmem)
+> >  {
+> >  	struct drm_gem_object *obj = &shmem->base;
+> > +	int ret;
+> >  
+> >  	drm_WARN_ON(obj->dev, obj->import_attach);
+> >  
+> > -	return drm_gem_shmem_get_pages(shmem);
+> > +	ret = dma_resv_lock_interruptible(shmem->base.resv, NULL);
+> > +	if (ret)
+> > +		return ret;  
+> 
+> I think here is the major problem I have with this patch: you've made
+> drm_gem_shmem_{get_pages,pin}() private, which forces me to call
+> drm_gem_shmem_pin() in a path where I already acquired the resv lock
+> (using the drm_exec infra proposed by Christian). That would
+> probably work if you were letting ret == -EALREADY go through, but I'm
+> wondering if it wouldn't be preferable to expose
+> drm_gem_shmem_pin_locked().
+> 
+> > +	ret = drm_gem_shmem_pin_locked(shmem);
+> > +	dma_resv_unlock(shmem->base.resv);
+> > +
+> > +	return ret;
+> >  }
+> >  EXPORT_SYMBOL(drm_gem_shmem_pin);
+> >  
+> > @@ -291,12 +286,29 @@ void drm_gem_shmem_unpin(struct drm_gem_shmem_object *shmem)
+> >  
+> >  	drm_WARN_ON(obj->dev, obj->import_attach);
+> >  
+> > -	drm_gem_shmem_put_pages(shmem);
+> > +	dma_resv_lock(shmem->base.resv, NULL);
+> > +	drm_gem_shmem_unpin_locked(shmem);
+> > +	dma_resv_unlock(shmem->base.resv);
+> >  }
+> >  EXPORT_SYMBOL(drm_gem_shmem_unpin);  
+> 
+> If we want to be consistent, let's just expose drm_gem_shmem_unpin()
+> and drm_gem_shmem_pin() and keep drm_gem_shmem_{get,put}_pages()
+> private, or even better, rename them drm_gem_shmem_{pin,unpin}_locked()
+> insert of having drm_gem_shmem_{pin,unpin}_locked() wrappers that just
+> forward the call to drm_gem_shmem_{get,put}_pages().
+> 
+> >  
+> > -static int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
+> > -				     struct iosys_map *map)
+> > +/*
+> > + * drm_gem_shmem_vmap - Create a virtual mapping for a shmem GEM object
+> > + * @shmem: shmem GEM object
+> > + * @map: Returns the kernel virtual address of the SHMEM GEM object's backing
+> > + *       store.
+> > + *
+> > + * This function makes sure that a contiguous kernel virtual address mapping
+> > + * exists for the buffer backing the shmem GEM object. It hides the differences
+> > + * between dma-buf imported and natively allocated objects.
+> > + *
+> > + * Acquired mappings should be cleaned up by calling drm_gem_shmem_vunmap().
+> > + *
+> > + * Returns:
+> > + * 0 on success or a negative error code on failure.
+> > + */
+> > +int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
+> > +		       struct iosys_map *map)  
+> 
+> Same problem with this renaming: it's confusing because this function
+> was previously taking care of the locking, and it's no longer the case.
+> That's actually true for other public functions your patching, but I
+> won't go over all of them.
 
-On 23-06-2023 15:45, Mark Brown wrote:
-> On Fri, Jun 23, 2023 at 11:09:32AM +0530, Sameer Pujar wrote:
->> On 22-06-2023 17:37, Mark Brown wrote:
->>> On Thu, Jun 22, 2023 at 05:04:10PM +0530, Sameer Pujar wrote:
->>>> Byte mask for channel-1 of stream-1 is not getting enabled and this
->>>> causes failures during AMX use cases. The enable bit is not set during
->>>> put() callback of byte map mixer control.
->>>> This happens because the byte map value 0 matches the initial state
->>>> of byte map array and put() callback returns without doing anything.
->>>> Fix the put() callback by actually looking at the byte mask array
->>>> to identify if any change is needed and update the fields accordingly.
->>> I'm not quite sure I follow the logic here - I'd have expected this to
->>> mean that there's a bootstrapping issue and that we should be doing some
->>> more initialisation during startup such that the existing code which
->>> checks if there is a change will be doing the right thing?
->> The issue can happen in subsequent cycles as well if once the user disables
->> the byte map by putting 256. It happens because of following reason where
->> 256 value is reset to 0 since the byte map array is tightly packed and it
->> can't store 256 value.
-> ...
->
->>>> Also update get() callback to return 256 if the byte map is disabled.
->>> This will be a user visible change.  It's not clear to me why it's
->>> needed - it seems like it's a hack to push users to do an update in the
->>> case where they want to use channel 1 stream 1?
->> Though it looks like 256 value is forced, but actually the user sees
->> whatever value is set before. The 256 value storage is linked to byte mask
->> value.
->> I must admit that this is not easily readable. If you suggest to simplify
->> this, I can check if storage space increase for byte map value can make it
->> more readable. Thanks for your feedback.
-> This could definitely use more clarification I think.  It's not obvious
-> that storing 256 won't actually hold (and that should trigger a
-> complaint from mixer-test if that's what happens).
+vmap() is less of a problem, because we're not supposed to call
+drm_gem_shmem_vmap() directly, but rather go through drm_gem_vmap().
+This should probably be clarified in the doc though, with this sort of
+disclaimer: "don't use this function to map stuff, only use it to
+implement drm_gem_object_funcs::vmap()."
 
-OK. I will provide more clarifications in the commit message and the 
-driver for the existing failure. Will put a TODO item in the driver to 
-improve the logic and make it more readable.
+Also noticed that the drm_gem API has the _locked pattern reversed,
+with a few drm_gem_xxx_unlocked() helper that take the lock and call
+the drm_gem_xxx() function. Don't have a strong opinion on whether this
+is better than the xxx_locked() and xxx() pattern or not, but the fact
+things are inconsistent across the API (drm_gem_pin() is letting the
+backend take the lock before pinning pages, when drm_gem_vmap() is
+not) is super confusing.
