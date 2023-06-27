@@ -2,90 +2,153 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 219EAEB64D9
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Jun 2023 10:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF66C0015E
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Jun 2023 11:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231140AbjF0KsT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Jun 2023 06:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54176 "EHLO
+        id S231519AbjF0LBo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Jun 2023 07:01:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbjF0KsS (ORCPT
+        with ESMTP id S231355AbjF0LBj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Jun 2023 06:48:18 -0400
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB34F10D8;
-        Tue, 27 Jun 2023 03:48:17 -0700 (PDT)
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-66c729f5618so2867715b3a.1;
-        Tue, 27 Jun 2023 03:48:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687862897; x=1690454897;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N8kR5N8k1cATdBJ+KhZdRci8FZk5P5nCz0LfFdh3fX4=;
-        b=NWDaF18hqry3cIREP7vfFyG9g6N0hWt0Eiae0MFkQ+IjDTLgpS4w6ViKPrKKS7w4Ra
-         2kE3s31dAIUSJn7py54r/bPGUH4uLQ6bs4hStGMDVIi0SsPcFmxrJZ3SBeijQuF03Lhx
-         04IaY4LAgzxq63Z3TFwRsypIjlksV0zN8loBAimA3xTosGHQ0hDRJYGhVElY9xVNlJ22
-         Fl/r0fgi9g3aZRJzD/tGKG4nkM8DpH7qx3UOeqBRVJ9WSlYM06jzOROTNUfrtQmA1o63
-         ok4s+Q7q498Pa637JdL5XsDFdmAmvkYJRUM38RP2Fu1LoSiworitELQdCYhoXbd/4IXD
-         K28w==
-X-Gm-Message-State: AC+VfDwCRZAPHpfhLh3Xg9rteit7DhgDdQFX+u0VKLm+eyLPWz+8//Cj
-        TdkC2vDVk5RmaZFnmgo6vas=
-X-Google-Smtp-Source: ACHHUZ5tgtCulcm7hoVplGcarYJQ0IMFJCwGAz7GA7wJbXixNt/NX0oiVwmcSOn6w0VAWhJilFBySw==
-X-Received: by 2002:a05:6a00:c86:b0:676:76ea:e992 with SMTP id a6-20020a056a000c8600b0067676eae992mr6523213pfv.5.1687862897025;
-        Tue, 27 Jun 2023 03:48:17 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d25-20020aa78159000000b0064378c52398sm5184966pfn.25.2023.06.27.03.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 03:48:15 -0700 (PDT)
-Date:   Tue, 27 Jun 2023 19:48:14 +0900
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        Sergey.Semin@baikalelectronics.ru, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte
- payload"
-Message-ID: <20230627104814.GA3676313@rocinante>
-References: <20230619014218.1970846-1-vidyas@nvidia.com>
- <20230619102604.3735001-1-vidyas@nvidia.com>
+        Tue, 27 Jun 2023 07:01:39 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16E321BE7
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Jun 2023 04:01:38 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qE6R4-0007fq-JI; Tue, 27 Jun 2023 13:00:38 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qE6Qv-00AQAC-96; Tue, 27 Jun 2023 13:00:29 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qE6Qu-000ECV-GT; Tue, 27 Jun 2023 13:00:28 +0200
+Date:   Tue, 27 Jun 2023 13:00:25 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Yangtao Li <frank.li@vivo.com>
+Cc:     miquel.raynal@bootlin.com, rafael@kernel.org,
+        daniel.lezcano@linaro.org, amitk@kernel.org, rui.zhang@intel.com,
+        mmayer@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        florian.fainelli@broadcom.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, thara.gopinath@gmail.com,
+        heiko@sntech.de, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, tglx@linutronix.de, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com,
+        srinivas.pandruvada@linux.intel.com,
+        DLG-Adam.Ward.opensource@dm.renesas.com, shangxiaojing@huawei.com,
+        bchihi@baylibre.com, wenst@chromium.org,
+        hayashi.kunihiko@socionext.com,
+        niklas.soderlund+renesas@ragnatech.se, chi.minghao@zte.com.cn,
+        johan+linaro@kernel.org, jernej.skrabec@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 01/15] genirq/devres: Add error information printing
+ for devm_request_threaded_irq()
+Message-ID: <20230627110025.vgtplc6nluiiuvoh@pengutronix.de>
+References: <20230627101215.58798-1-frank.li@vivo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="t3yaxbxt6bm6emkg"
 Content-Disposition: inline
-In-Reply-To: <20230619102604.3735001-1-vidyas@nvidia.com>
+In-Reply-To: <20230627101215.58798-1-frank.li@vivo.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+
+--t3yaxbxt6bm6emkg
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
 Hello,
 
-> This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
-> support for 256 Byte payload").
-> 
-> Consider a PCIe hierarchy with a PCIe switch and a device connected
-> downstream of the switch that has support for MPS which is the minimum in
-> the hierarchy, and root port programmed with an MPS in its DevCtl register
-> that is greater than the minimum. In this scenario, the default bus
-> configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
-> MPS settings in the hierarchy correctly resulting in the device with
-> support for minimum MPS in the hierarchy receiving the TLPs of size more
-> than that. Although this can be addressed by appending "pci=pcie_bus_safe"
-> to the kernel command line, it doesn't seem to be a good idea to always
-> have this commandline argument even for the basic functionality to work.
-> 
-> Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
-> Byte payload") avoids this requirement and ensures that the basic
-> functionality of the devices irrespective of the hierarchy and the MPS of
-> the devices in the hierarchy.
-> 
-> To reap the benefits of having support for higher MPS, optionally, one can
-> always append the kernel command line with "pci=pcie_bus_perf".
+On Tue, Jun 27, 2023 at 06:12:01PM +0800, Yangtao Li wrote:
+> Ensure that all error handling branches print error information. In this
+> way, when this function fails, the upper-layer functions can directly
+> return an error code without missing debugging information. Otherwise,
+> the error message will be printed redundantly or missing.
+>=20
+> There are more than 700 calls to the devm_request_threaded_irq method.
+> Most drivers only request one interrupt resource, and these error
+> messages are basically the same. If error messages are printed
+> everywhere, more than 1000 lines of code can be saved by removing the
+> msg in the driver.
+>=20
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  kernel/irq/devres.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
+> index f6e5515ee077..fcb946ffb7ec 100644
+> --- a/kernel/irq/devres.c
+> +++ b/kernel/irq/devres.c
+> @@ -58,8 +58,10 @@ int devm_request_threaded_irq(struct device *dev, unsi=
+gned int irq,
+> =20
+>  	dr =3D devres_alloc(devm_irq_release, sizeof(struct irq_devres),
+>  			  GFP_KERNEL);
+> -	if (!dr)
+> +	if (!dr) {
+> +		dev_err(dev, "Failed to allocate device resource data\n");
+>  		return -ENOMEM;
+> +	}
+> =20
+>  	if (!devname)
+>  		devname =3D dev_name(dev);
+> @@ -67,6 +69,7 @@ int devm_request_threaded_irq(struct device *dev, unsig=
+ned int irq,
+>  	rc =3D request_threaded_irq(irq, handler, thread_fn, irqflags, devname,
+>  				  dev_id);
+>  	if (rc) {
+> +		dev_err_probe(dev, rc, "Failed to request threaded irq%d: %d\n", irq, =
+rc);
 
-Applied to controller/tegra194, thank you!
+This changes semantics because dev_err_probe() is only supposed to be
+called in probe functions. Not sure about devm_request_threaded_irq, but
+its friend request_irq is called in the setup_irq (or open IIRC)
+callback of serial drivers.
 
-[1/1] Revert "PCI: tegra194: Enable support for 256 Byte payload"
-      https://git.kernel.org/pci/pci/c/606295f16360
+While I assume changing to dev_err_probe is a result of my concern that
+no error should be printed when rc=3D-EPROBEDEFER, my other concern that
+adding an error message to a generic allocation function is a bad idea
+still stands.
 
-	Krzysztof
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--t3yaxbxt6bm6emkg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSawUgACgkQj4D7WH0S
+/k7nEAf/Sl6IkhcKwJ4ubKgDKscqGnFI0cXLbwVB+ka4iZfjqT5YcryVy/7nzzc4
+i3/0+bkJ03exSpcwA2tD+lYPOiEOGjeP/zlVkVO4yUom1zTqv5nxhhV9RlGNaOh4
+078C0cl2BRqDJoTleXNliumh2XZAQwQRCBGjZvxF5nbgbz72DN9KCae20rqtrNGx
+B8kXn6gLq7G3/LyeuUxanxoyk0ok5qPOhbp7fCwRV5FFaq8p4C0AEQKp+IxGwBLm
+YaRpSdThVEGAPaK+FvneVS7geTX5lliN3me02TSHTRDgE4WrMcITeJ3kyImTjU+A
+wSYX7roBs61l4eBj3iITpZkOBqw6ww==
+=xLpK
+-----END PGP SIGNATURE-----
+
+--t3yaxbxt6bm6emkg--
