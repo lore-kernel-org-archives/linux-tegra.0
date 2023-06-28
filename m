@@ -2,103 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4B3EB64DC
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Jun 2023 16:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D17EB64D7
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jun 2023 09:43:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232435AbjF0Qk2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Jun 2023 12:40:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbjF0Qk0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:40:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1DDEF4;
-        Tue, 27 Jun 2023 09:40:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 59458611EB;
-        Tue, 27 Jun 2023 16:40:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9D8F0C433C9;
-        Tue, 27 Jun 2023 16:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687884023;
-        bh=Mddr9IEnVSSEtvey/EPFRhLi4YnxlTkalZzmHZ6bmJ8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=XGRGiORnH0FmaQ+kclMjYIsE8aiZt7Gs4g5WBNw+zT0ASSus8daZkKZirfbcgaoBv
-         HsuO0nskJhLaiZxylU7zlINMijGNLl9q7WEg/ms3Lh/IrCmjj2LVp6pXCXh1uqP4W3
-         kOcx2VCa4pIOSzcMTF35giAc72J/A42BnFN7K4h/MvLUE7JXaOanngW1cFFib+5J4v
-         8N2ABirViOcrN32FYcrvP15sAv/TezaSVGJHU9rgp1d1sCUFbyUbMRRUsWjqDMoEYN
-         HlJlhL0V9YgQDqvmqEWLdtvBli6Q5b70JaJ8QNh8cP8DiB/xBCXlUB+GXHpoI+1ee3
-         oj4CRUwtvenNQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7B046C64458;
-        Tue, 27 Jun 2023 16:40:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        id S230007AbjF1JnM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Jun 2023 05:43:12 -0400
+Received: from mail.lokoho.com ([217.61.105.98]:44522 "EHLO mail.lokoho.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231542AbjF1Hz5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 28 Jun 2023 03:55:57 -0400
+Received: by mail.lokoho.com (Postfix, from userid 1001)
+        id 0D494889CC; Wed, 28 Jun 2023 08:52:53 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1687938779; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=TZoKnBnuHrDUX478kSVJ0fOu/twFFteXxpnDTbgCC7O8xXEizgzBeDL+m8Yqvg9Q4
+         fe//0nUL0wxQasia965C5D33yxWjSvfdUN60BfdZEj6nsx0RvmjGnFnuinIHigT9sP
+         71wO28t0P0Y3A/+QAE6DE8KwMB8f2qpfM9Pz1+FR/kOfaEUntHBTUEMcjuraHhMx6l
+         nvuRuiUPnqgyV1Ib5mKgyiZaP/MQNcJjEe1olXM3F1EL1NsETCoM5uTMoL9mfFFo9C
+         aL1r279Ol4IkACpQbCk7zX9KgAvOrQ3In3wrnKUeY1BbgE7GD23lhmtoeHro7fKkfF
+         tDHr+1O0G8X5w==
+Received: by mail.lokoho.com for <linux-tegra@vger.kernel.org>; Wed, 28 Jun 2023 07:50:51 GMT
+Message-ID: <20230628074502-0.1.6x.2simy.0.blah01bci0@lokoho.com>
+Date:   Wed, 28 Jun 2023 07:50:51 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <linux-tegra@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 00/24] use vmalloc_array and vcalloc
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168788402349.21860.17350888958370358926.git-patchwork-notify@kernel.org>
-Date:   Tue, 27 Jun 2023 16:40:23 +0000
-References: <20230627144339.144478-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20230627144339.144478-1-Julia.Lawall@inria.fr>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     linux-hyperv@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        keescook@chromium.org, christophe.jaillet@wanadoo.fr,
-        kuba@kernel.org, kasan-dev@googlegroups.com, andreyknvl@gmail.com,
-        dvyukov@google.com, iommu@lists.linux.dev,
-        linux-tegra@vger.kernel.org, robin.murphy@arm.com,
-        vdumpa@nvidia.com, virtualization@lists.linux-foundation.org,
-        xuanzhuo@linux.alibaba.com, linux-scsi@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        jstultz@google.com, Brian.Starkey@arm.com, labbott@redhat.com,
-        lmark@codeaurora.org, benjamin.gaignard@collabora.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, shailend@google.com,
-        linux-rdma@vger.kernel.org, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, dave.hansen@linux.intel.com,
-        hpa@zytor.com, linux-sgx@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello:
+Dzie=C5=84 dobry,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-On Tue, 27 Jun 2023 16:43:15 +0200 you wrote:
-> The functions vmalloc_array and vcalloc were introduced in
-> 
-> commit a8749a35c399 ("mm: vmalloc: introduce array allocation functions")
-> 
-> but are not used much yet.  This series introduces uses of
-> these functions, to protect against multiplication overflows.
-> 
-> [...]
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
-Here is the summary with links:
-  - [v2,02/24] octeon_ep: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/32d462a5c3e5
-  - [v2,04/24] gve: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/a13de901e8d5
-  - [v2,09/24] pds_core: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/906a76cc7645
-  - [v2,11/24] ionic: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/f712c8297e0a
-  - [v2,18/24] net: enetc: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/fa87c54693ae
-  - [v2,22/24] net: mana: use vmalloc_array and vcalloc
-    https://git.kernel.org/netdev/net-next/c/e9c74f8b8a31
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
 
+Pozdrawiam
+Adam Charachuta
