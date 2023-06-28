@@ -2,101 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF00EB64D7
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jun 2023 14:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE57EB64DD
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jun 2023 15:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231290AbjF1ORz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Jun 2023 10:17:55 -0400
-Received: from vps0.lunn.ch ([156.67.10.101]:40100 "EHLO vps0.lunn.ch"
+        id S232279AbjF1Pc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Jun 2023 11:32:29 -0400
+Received: from mga02.intel.com ([134.134.136.20]:53515 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231494AbjF1ORv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Jun 2023 10:17:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=k3suBQGB6dhKNJE7WpWQ+BzXLEWRoMzvBu3IwZiS1/I=; b=MfeRR2yZ+Mbu0ybDYiZIqlvFLe
-        7SMy89sz3/oNFPU/ksfQdopXqAkaQBi8wrG7iHgSDy1FkuAzrIaf8/CozhE3xZNPLlsb4SKpgnr2/
-        HA8liQci03v2jmq45zzRdSIfs/odwhgpYRfbJqa2Ux7pG1YrHfc1ROs/fNb8TIJriWn4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1qEVzP-0007hs-MG; Wed, 28 Jun 2023 16:17:47 +0200
-Date:   Wed, 28 Jun 2023 16:17:47 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Revanth Kumar Uppala <ruppala@nvidia.com>
-Cc:     linux@armlinux.org.uk, hkallweit1@gmail.com,
-        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Narayan Reddy <narayanr@nvidia.com>
-Subject: Re: [PATCH 4/4] net: phy: aqr113c: Enable Wake-on-LAN (WOL)
-Message-ID: <c1aedb1e-e750-40ce-a19a-dfb21e2a971f@lunn.ch>
-References: <20230628124326.55732-1-ruppala@nvidia.com>
- <20230628124326.55732-4-ruppala@nvidia.com>
+        id S232242AbjF1PcT (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 28 Jun 2023 11:32:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1687966338; x=1719502338;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ud9mOLRXe2468JTAmvr7pvOnXoRBmeLuDYPpo8mbgqM=;
+  b=XTWEzvdVo3V4B+QKMA+hJJgJXoIEMbZAq7lGNT3H1UwvyljQSQyUe0gI
+   22Vsxx6tFx8b5eDY8Spo1R7fBSu6tvjVEz2l7HRplpjaZx21B5bhSD1oJ
+   EzlntW6WtfqCHCdIOl5ryxm15aC8V+XX3EfGwa97R65lC1jlT5h8oeu3i
+   Rb2c9HdM6DHyPTm2ORJFdFvNAugFt9S5+GVXO2LXo3r+i7Wnu8tWb2pBe
+   pSBAx3ggdvNS7ECePE5mSsHQmJoPa/E0IGBd/4AEEOVg8WTrFdfj1ndWA
+   28eMaS67ejrTpw7aRkY0mjrbgSIiW17eGtSsHt1aBl77Wk4UyjXUyDDM2
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10755"; a="351666434"
+X-IronPort-AV: E=Sophos;i="6.01,165,1684825200"; 
+   d="scan'208";a="351666434"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2023 08:32:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10755"; a="720270171"
+X-IronPort-AV: E=Sophos;i="6.01,165,1684825200"; 
+   d="scan'208";a="720270171"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 28 Jun 2023 08:32:13 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 83997E1; Wed, 28 Jun 2023 18:32:14 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Andy Shevchenko <andy@kernel.org>
+Subject: [PATCH v1 0/4] clk: Add kstrdup_and_replace() helper and use it
+Date:   Wed, 28 Jun 2023 18:32:07 +0300
+Message-Id: <20230628153211.52988-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230628124326.55732-4-ruppala@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> +static int aqr113c_wol_enable(struct phy_device *phydev)
-> +{
-> +	struct aqr107_priv *priv = phydev->priv;
-> +	u16 val;
-> +	int ret;
-> +
-> +	/* Disables all advertised speeds except for the WoL
-> +	 * speed (100BASE-TX FD or 1000BASE-T)
-> +	 * This is set as per the APP note from Marvel
-> +	 */
-> +	ret = phy_set_bits_mmd(phydev, MDIO_MMD_AN, MDIO_AN_10GBT_CTRL,
-> +			       MDIO_AN_LD_LOOP_TIMING_ABILITY);
-> +	if (ret < 0)
-> +		return ret;
+There are a few existing users and more might come which would like
+to have the kstrdup_and_replace() functionality.
 
-Please take a look at phylink_speed_down() and
-phylink_speed_up(). Assuming the PHY is not reporting it can do 10Full
-and 10Half, it should end up in 100BaseFull. Assuming the link partner
-can do 100BaseFull....
+Provide this new API and reuse it in a few users.
 
-Russell points out you are making a lot of assumptions about the
-system side link. Ideally, you want to leave that to the PHY. Once the
-auto-neg at the lower speed has completed, it might change the system
-side link, e.g. to SGMII and the normal machinery should pass that
-onto the MAC, so it can follow. I would not force anything.
+Since most of that is under CCF, perhaps it makes sense to route it
+via that tree.
 
-> @@ -619,6 +784,31 @@ static int aqr107_config_init(struct phy_device *phydev)
->  	if (ret < 0)
->  		return ret;
->  
-> +	/* Configure Magic packet frame pattern (MAC address) */
-> +	ret = phy_write_mmd(phydev, MDIO_MMD_C22EXT, MDIO_C22EXT_MAGIC_PKT_PATTERN_0_2_15,
-> +			    phydev->attached_dev->dev_addr[0] |
-> +			    (phydev->attached_dev->dev_addr[1] << 8));
+Andy Shevchenko (4):
+  lib/string_helpers: Add kstrdup_and_replace() helper
+  driver core: Replace kstrdup() + strreplace() with
+    kstrdup_and_replace()
+  clk: tegra: Replace kstrdup() + strreplace() with
+    kstrdup_and_replace()
+  clk: ti: Replace kstrdup() + strreplace() with kstrdup_and_replace()
 
-I think most PHY drivers do this as part of enabling WOL. Doing it in
-aqr107_config_init() is early, is the MAC address stable yet? The user
-could change it. It could still be changed after wol is enabled, but
-at least the user has a clear point in time when WoL configuration
-happens.
+ drivers/base/core.c            |  5 ++---
+ drivers/clk/tegra/clk.c        |  6 ++----
+ drivers/clk/ti/clk.c           |  4 ++--
+ drivers/clk/ti/clkctrl.c       |  9 +++++----
+ include/linux/string_helpers.h |  2 ++
+ lib/string_helpers.c           | 15 +++++++++++++++
+ 6 files changed, 28 insertions(+), 13 deletions(-)
 
-> +static void aqr113c_get_wol(struct phy_device *phydev, struct ethtool_wolinfo *wol)
-> +{
-> +	int val;
-> +
-> +	val = phy_read_mmd(phydev, MDIO_MMD_AN, MDIO_AN_RSVD_VEND_STATUS3);
-> +	if (val < 0)
-> +		return;
-> +
-> +	wol->supported = WAKE_MAGIC;
-> +	if (val & 0x1)
-> +		wol->wolopts = WAKE_MAGIC;
+-- 
+2.40.0.1.gaa8946217a0b
 
-WoL seems to be tried to interrupts. So maybe you should actually
-check an interrupt is available? This is not going to work if the PHY
-is being polled. It does however get a bit messy, some boards might
-connect the 'interrupt' pin to PMIC. So there is not a true interrupt,
-but the PMIC can turn the power back on.
-
-    Andrew
