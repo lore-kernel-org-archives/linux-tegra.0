@@ -2,40 +2,48 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5644EB64DC
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jun 2023 08:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C982EB64D9
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jun 2023 10:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232578AbjF2ImX convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Jun 2023 04:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52236 "EHLO
+        id S229540AbjF2KPE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Jun 2023 06:15:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232403AbjF2IlQ (ORCPT
+        with ESMTP id S232033AbjF2KOe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Jun 2023 04:41:16 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9932E268F
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Jun 2023 01:38:12 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-86-mCyGUWdvOzqOD0rili5ykg-1; Thu, 29 Jun 2023 09:38:10 +0100
-X-MC-Unique: mCyGUWdvOzqOD0rili5ykg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 29 Jun
- 2023 09:38:09 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 29 Jun 2023 09:38:09 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Sameer Pujar' <spujar@nvidia.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
+        Thu, 29 Jun 2023 06:14:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14743C14;
+        Thu, 29 Jun 2023 03:11:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6C0BA61508;
+        Thu, 29 Jun 2023 10:11:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71EACC433C8;
+        Thu, 29 Jun 2023 10:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688033489;
+        bh=7QmvM1Ky6hyRub5lLoveiNRl1PkeunqIVXKu1oYNN5U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mtZqsGNK+DgvnRm8fscT4hbHI2v/AUqGUlG1cuN2mjP0rZKvE2LrZRmgyv7PlTGuD
+         cSZFRWTtytdvIsPSWmaufVFvW+vb3fPgcf6gfxovk08W3zROucmqbUjnSmOaS+5hBg
+         TKom+2aMfhRgnePIZAsD2/a+IYIC8KvFX4Ie0naZukKd4mhqY9UFMw67aM6Fwb1ilG
+         zOOpi6G8RnTml8MC6dydSr42HoAttiZQp480bbqh7WOD4aE6QoLW4HbtIrlFknujXh
+         HMa4LLT2X40B4J/RyyB+RuSW233o9w3RDGoSH9x/VOC7dfmvKkfHSbOWfbq8PXaEoB
+         KMlAFB1KVxGnA==
+Date:   Thu, 29 Jun 2023 11:11:23 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'Sameer Pujar' <spujar@nvidia.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
         "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
         "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>
-CC:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
         "mkumard@nvidia.com" <mkumard@nvidia.com>,
         "sheetal@nvidia.com" <sheetal@nvidia.com>,
         "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
@@ -44,104 +52,62 @@ CC:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         Oder Chiou <oder_chiou@realtek.com>
-Subject: RE: [PATCH v2 3/5] ASoC: rt5640: Fix sleep in atomic context
-Thread-Topic: [PATCH v2 3/5] ASoC: rt5640: Fix sleep in atomic context
-Thread-Index: AQHZqkh8hA8hSCOxA0KruUap8XcLma+hdFow
-Date:   Thu, 29 Jun 2023 08:38:09 +0000
-Message-ID: <bae9f041867e4625ad293d284566bb4f@AcuMS.aculab.com>
+Subject: Re: [PATCH v2 3/5] ASoC: rt5640: Fix sleep in atomic context
+Message-ID: <550e5c8f-0bfb-4ffc-9a43-1ecb153c6a02@sirena.org.uk>
 References: <1688015537-31682-1-git-send-email-spujar@nvidia.com>
  <1688015537-31682-4-git-send-email-spujar@nvidia.com>
-In-Reply-To: <1688015537-31682-4-git-send-email-spujar@nvidia.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+ <bae9f041867e4625ad293d284566bb4f@AcuMS.aculab.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+aXQRe9dUQ7rrBkZ"
+Content-Disposition: inline
+In-Reply-To: <bae9f041867e4625ad293d284566bb4f@AcuMS.aculab.com>
+X-Cookie: Surprise due today.  Also the rent.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Sameer Pujar
-> Sent: 29 June 2023 06:12
-> 
-> Following prints are observed while testing audio on Jetson AGX Orin which
-> has onboard RT5640 audio codec:
-> 
->   BUG: sleeping function called from invalid context at kernel/workqueue.c:3027
->   in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/0
->   preempt_count: 10001, expected: 0
->   RCU nest depth: 0, expected: 0
->   ------------[ cut here ]------------
->   WARNING: CPU: 0 PID: 0 at kernel/irq/handle.c:159 __handle_irq_event_percpu+0x1e0/0x270
->   ---[ end trace ad1c64905aac14a6 ]-
-> 
-> The IRQ handler rt5640_irq() runs in interrupt context and can sleep
-> during cancel_delayed_work_sync().
-> 
-> Fix this by running IRQ handler, rt5640_irq(), in thread context.
-> Hence replace request_irq() calls with devm_request_threaded_irq().
 
-My 'gut feel' is that this will just move the problem elsewhere.
+--+aXQRe9dUQ7rrBkZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If the ISR is responsible for adding audio buffers (etc) then it is
-also not unlikely that the scheduling delays in running a threaded ISR
-will cause audio glitches if the system is busy.
+On Thu, Jun 29, 2023 at 08:38:09AM +0000, David Laight wrote:
+> From: Sameer Pujar
 
-> 
-> Fixes: 051dade34695 ("ASoC: rt5640: Fix the wrong state of JD1 and JD2")
-> Cc: stable@vger.kernel.org
-> Cc: Oder Chiou <oder_chiou@realtek.com>
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  sound/soc/codecs/rt5640.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/rt5640.c b/sound/soc/codecs/rt5640.c
-> index 0ed4fa2..e24ed75 100644
-> --- a/sound/soc/codecs/rt5640.c
-> +++ b/sound/soc/codecs/rt5640.c
-> @@ -2567,9 +2567,10 @@ static void rt5640_enable_jack_detect(struct snd_soc_component *component,
->  	if (jack_data && jack_data->use_platform_clock)
->  		rt5640->use_platform_clock = jack_data->use_platform_clock;
-> 
-> -	ret = request_irq(rt5640->irq, rt5640_irq,
-> -			  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> -			  "rt5640", rt5640);
-> +	ret = devm_request_threaded_irq(component->dev, rt5640->irq,
-> +					NULL, rt5640_irq,
-> +					IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> +					"rt5640", rt5640);
+> > Following prints are observed while testing audio on Jetson AGX Orin wh=
+ich
+> > has onboard RT5640 audio codec:
+> >=20
+> >   BUG: sleeping function called from invalid context at kernel/workqueu=
+e.c:3027
+> >   in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swa=
+pper/0
 
-You need a comment saying this must be a threaded IRQ because the ISR
-calls cancel_delayed_work_sync().
+> My 'gut feel' is that this will just move the problem elsewhere.
 
-	David
+> If the ISR is responsible for adding audio buffers (etc) then it is
+> also not unlikely that the scheduling delays in running a threaded ISR
+> will cause audio glitches if the system is busy.
 
->  	if (ret) {
->  		dev_warn(component->dev, "Failed to reguest IRQ %d: %d\n", rt5640->irq, ret);
->  		rt5640_disable_jack_detect(component);
-> @@ -2622,8 +2623,9 @@ static void rt5640_enable_hda_jack_detect(
-> 
->  	rt5640->jack = jack;
-> 
-> -	ret = request_irq(rt5640->irq, rt5640_irq,
-> -			  IRQF_TRIGGER_RISING | IRQF_ONESHOT, "rt5640", rt5640);
-> +	ret = devm_request_threaded_irq(component->dev, rt5640->irq,
-> +					NULL, rt5640_irq, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +					"rt5640", rt5640);
->  	if (ret) {
->  		dev_warn(component->dev, "Failed to reguest IRQ %d: %d\n", rt5640->irq, ret);
->  		rt5640->irq = -ENXIO;
-> --
-> 2.7.4
+What makes you think this is anything to do with audio glitches?  The
+bug is literally what is described, it is not valid to sleep in atomic
+contexts and if we ever actually try things are likely to go badly.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+--+aXQRe9dUQ7rrBkZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmSdWMoACgkQJNaLcl1U
+h9AtaQf8CxjCsdB1iRGBoRv5utkgYwI0VNyGiPs7GW70GzZc456Z381WvE94jU01
+60leed9uBoJP3hs88KzS/G9Tg4StZFdmHQxVkjy78ArKLRUCPl4rMqc2bTODvWSf
+aYtTcgMRZZjgoY+mDHpBSFpPFJqB1DQs2CICy8BvoyOJDq05ghN8DU7dGQ+pl415
+QaHrjbbOJkj7d+e2PftSuXOHfcF7Y0mj5E8yFjWQn1WwVfMCAhbRJvhYtpbzry6X
+UBWlM5GC6Hi1rx8zvMiKx6LemyxK924I92k8HiIa+75Rq5jM8JxldvYj+FuWlgIE
+8BDY4GdfkgUBVHTn4ZJYjy2mb3nPEg==
+=eZLP
+-----END PGP SIGNATURE-----
+
+--+aXQRe9dUQ7rrBkZ--
