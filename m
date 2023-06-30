@@ -2,72 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB20EB64DD
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jun 2023 04:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B7EEB64DA
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jun 2023 11:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbjF3E52 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Jun 2023 00:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60016 "EHLO
+        id S232859AbjF3LMN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Jun 2023 07:12:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjF3E51 (ORCPT
+        with ESMTP id S232848AbjF3LL7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Jun 2023 00:57:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD222694;
-        Thu, 29 Jun 2023 21:57:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DBCC61666;
-        Fri, 30 Jun 2023 04:57:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90192C433C8;
-        Fri, 30 Jun 2023 04:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688101045;
-        bh=/Gv7k9nnR/yJX6bGTyZOrsOFmHR09BxZGIyqwbFXlOY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jPYSeUbh79HnMI9fKX+kCHPGRN0jYfA+GGTYWphA9GJkSI0VOuEZa2jYhyRa2JP3o
-         FXcsjv2okqZMIOo6ruvEFPf9TazwJFNGthtHqtZqZ8KgpiXQauUHXc8LznmGr1mtSy
-         J3wqZzSt/q73D/PIglqHoPHW1+8J4OXODN4XOZr5xhgItJg7nMLOqr+jTjPdcStH5P
-         TxF3DAk+BL3sdG53Dx/v9VT1NHioDEiLwYn+G33I7Snwx2UhR0HkaaQN/n7TtkWopE
-         h5YOyH3FRJAQ8CL3X98MFYum4x3BWrfotJjHK+NCZcEEdcxJAZwa16adfplXD+XoBU
-         1ftKg0NAF0WbQ==
-Message-ID: <862b52d5cd0f109709f6a47b03b6add6.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 30 Jun 2023 07:11:59 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF4735B6;
+        Fri, 30 Jun 2023 04:11:48 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1688123506;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LBi2xn+NWrUQzLbxhPhUtfNKTaMAus8XdZkjy6jHSNM=;
+        b=418LKbfzErO8aWbRiCy6RicHEfWmrfLoIcdhuAdqKEQ/ZbLyV5fOr9TL2jgmxbiB1UJ3bl
+        L7RSNcul7PGGKtMoVG58xOTYMswwl0fvl2x6Gy3oeK78nmBEYbydnR6FVElSSy3QDkkQS4
+        aNdClghzIVSlb1kIYZa+lxNsG6dKqXTENfkuKKK8H3fwdANqYJnMII3qHGkdR7RslbGNzH
+        rMZSPPYA/DaN+m+jbNSRocp1b1dwjRh2NBrN92RDYtVGXNSXIAHcc+RtRHjhZQcR/LI027
+        /C9gb1mFySWZHISgYn13LNhN7Izd0dCqTTysj0/z5qIQHqLoTPKk/6VDB9l9vg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1688123506;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LBi2xn+NWrUQzLbxhPhUtfNKTaMAus8XdZkjy6jHSNM=;
+        b=jVPJlwFMcCzb0wYuBYE9xW6cZEwUMtJR24us2ZwmMLiYkh/Ya8FPIpIwdTH1G8h/qMJoP9
+        yy6W7RPJnQ28ZkBA==
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Yangtao Li <frank.li@vivo.com>
+Cc:     miquel.raynal@bootlin.com, rafael@kernel.org,
+        daniel.lezcano@linaro.org, amitk@kernel.org, rui.zhang@intel.com,
+        mmayer@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        florian.fainelli@broadcom.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, thara.gopinath@gmail.com,
+        heiko@sntech.de, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com,
+        srinivas.pandruvada@linux.intel.com,
+        DLG-Adam.Ward.opensource@dm.renesas.com, shangxiaojing@huawei.com,
+        bchihi@baylibre.com, wenst@chromium.org,
+        hayashi.kunihiko@socionext.com,
+        niklas.soderlund+renesas@ragnatech.se, chi.minghao@zte.com.cn,
+        johan+linaro@kernel.org, jernej.skrabec@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 01/15] genirq/devres: Add error information printing
+ for devm_request_threaded_irq()
+In-Reply-To: <20230627110025.vgtplc6nluiiuvoh@pengutronix.de>
+References: <20230627101215.58798-1-frank.li@vivo.com>
+ <20230627110025.vgtplc6nluiiuvoh@pengutronix.de>
+Date:   Fri, 30 Jun 2023 13:11:46 +0200
+Message-ID: <87h6qpyzkd.ffs@tglx>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZJMYrVl--rCcj1cB@orome>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech> <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech> <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com> <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb> <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org> <ZJMYrVl--rCcj1cB@orome>
-Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-tegra@vger.kernel.org
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Thu, 29 Jun 2023 21:57:23 -0700
-User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2023-06-21 08:35:09)
->=20
-> I was able to reproduce this on a Tegra30 Beaver, but the problem is
-> more straightforward than this. The crash I was seeing during boot was
-> because cclk_super_determine_rate() was still calling the round_rate()
-> callback from tegra_clk_super_ops, which this patch removed (and added
-> determine_rate() instead).
->=20
-> The following fixes the problem for me. It's basically converting the
-> round_rate() call to an equivalent determine_rate() call.
->=20
-> Dmitry, can you verify that this fixes the issue that you were seeing?
->=20
+On Tue, Jun 27 2023 at 13:00, Uwe Kleine-K=C3=B6nig wrote:
+> On Tue, Jun 27, 2023 at 06:12:01PM +0800, Yangtao Li wrote:
+>
+> While I assume changing to dev_err_probe is a result of my concern that
+> no error should be printed when rc=3D-EPROBEDEFER, my other concern that
+> adding an error message to a generic allocation function is a bad idea
+> still stands.
 
-Can you send this as a proper patch? I'd like to send this early next
-week.
+I agree in general, but if you actually look at the call sites of
+devm_request_threaded_irq() then the vast majority of them print more or
+less lousy error messages. A quick grep/sed/awk/sort/uniq revealed
+
+     519 messages total (there are probably more)
+
+     352 unique messages
+
+     323 unique messages after lower casing
+
+         Those 323 are mostly just variants of the same patterns with slight
+         modifications in formatting and information provided.
+
+     186 of these messages do not deliver any useful information,
+         e.g. "no irq", "
+
+     The most useful one of all is: "could request wakeup irq: %d"
+
+So there is certainly an argument to be made that this particular
+function should print a well formatted and informative error message.
+
+It's not a general allocator like kmalloc(). It's specialized and in the
+vast majority of cases failing to request the interrupt causes the
+device probe to fail. So having proper and consistent information why
+the device cannot be used _is_ useful.
+
+Yangtao: The way how this is attempted is not useful at all.
+
+    1) The changelog is word salad and provides 0 rationale
+
+       Also such series require a cover letter...
+
+    2) The dev_err() which is added is not informative at all and cannot
+       replace actually useful error messages. It's not that hard to
+       make it useful.
+
+    2) Adding the printks unconditionally first will emit two messages
+       with different content.
+
+       This is not how such changes are done.
+
+       The proper approach is to create a wrapper function which emits
+       the error message:
+
+       wrapper(....., const char *info)
+       {
+            ret =3D devm_request_threaded_irq(....);
+            if (ret < 0) {
+               dev_err(dev, "Failed to request %sinterrupt %u %s %s: %d\n,
+                       thread_fn ? "threaded " : "",
+                       irq, devname, info ? : "", ret);
+            }
+            return ret;
+       }
+
+       Then convert the callsites over one by one with proper
+       changelogs and justification.
+
+       See?
+
+Thanks,
+
+        tglx
