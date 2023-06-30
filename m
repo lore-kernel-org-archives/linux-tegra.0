@@ -2,143 +2,114 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD218C001B0
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jun 2023 12:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADE8EB64DC
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jun 2023 13:07:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232377AbjF3MKI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Jun 2023 08:10:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50422 "EHLO
+        id S230235AbjF3NH4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Jun 2023 09:07:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232777AbjF3MJj (ORCPT
+        with ESMTP id S231176AbjF3NHz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Jun 2023 08:09:39 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2178249E9;
-        Fri, 30 Jun 2023 05:08:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UviX6xJS6L34PUPrW9yhmEV6gvNf0yEyewjUhmHDy8eTAXI/hFC4vAuQg8K1+MGAmzxZ/vcHGoTF+LCB/IJLxbfKaMW6bJ7k/CGOGBWOcH5y1Zza3+gMD6trwsqddC9cnES0p1r0Kpu922jOQeJrZ0M23iMKY/QM1r2rOuCWdLlvqUf0gZTkYPn7meHHFZ51AizKhQB29gCv0gO2dIYuhcP/9yaTmpt9SNw9ci5pLcI8wN5IkO0mmYO/uc8gwjnLm5UwKaHv5ApKzAgNO63E51j1klsU6gMXLwdaxQZOlt54U+kGiVvWpLwAvMwceIMP6XTuaM4VoJuWZ99b6f7D5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LFjBh44Fatv71WfoJc2LsAnfGfJKygyb77kgmlgPEPY=;
- b=NFH9NBBSfT1kYFY8Ev24NUxw/NDBx16SNrlft0rPaQk/CP3MXP2dxzpoUHYBSlS3tx9+aeb560Rhu5yrTqK4iufyvwJxfk620DUlPNHGNHkE3073SQeyjTRR+pUMKO8C1Uk9HCTQfaGKqLYtdrUWD7o0K9A0taKBAtrV5w2C15K7q6Cj137gMucJ1KDLR2WsYaNUtPHIpx30l32AoO1bnPsP9WJRVoMApKxIQnYlJRyLvlYWX8KLGz+Q5dXF86tdSDCfWIxZNNyNGOtutyBa3yFFtWrCmn56pIMqevs9rlxF9ejpAarOEaXtQmPnFVjIgqu9jrpTKEMBp4UTUVOfXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LFjBh44Fatv71WfoJc2LsAnfGfJKygyb77kgmlgPEPY=;
- b=gWed+vYtfPDpNWEeBLRvqGU6PF00UnkSzKT9435UmSYJRkFD4qOk/mQzj5clDM0WibieqAUsabLJuhxcDwsWn5g1TFn0Q4Gwi7AGuZ+DU+3Eb7Z9KHRpYnr7f2dGH/zYK1bzgjN3nVCNwj2ATV6aigilNxYA8I4mPc5//JG9eEXhXjwx6siukWkMiN8PHO1Yh/EH8oaxKtPyw8B2takulCZR14F2tJYVJ2Az5USCQreJgoqgp1GVNquqRqsuSHggX8Nrv6zsrCKtPD49EGllqnKKZSBgd75lNJuHVKBkCiFKTMNXD3d/T6l/tCmHP3vwWH/Pbyezo0f1QH49l+Cnwg==
-Received: from BN8PR03CA0028.namprd03.prod.outlook.com (2603:10b6:408:94::41)
- by BY5PR12MB4051.namprd12.prod.outlook.com (2603:10b6:a03:20c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.19; Fri, 30 Jun
- 2023 12:08:24 +0000
-Received: from BN8NAM11FT104.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:94:cafe::37) by BN8PR03CA0028.outlook.office365.com
- (2603:10b6:408:94::41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.22 via Frontend
- Transport; Fri, 30 Jun 2023 12:08:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN8NAM11FT104.mail.protection.outlook.com (10.13.177.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.49 via Frontend Transport; Fri, 30 Jun 2023 12:08:23 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 30 Jun 2023
- 05:08:20 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Fri, 30 Jun 2023 05:08:19 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
- Transport; Fri, 30 Jun 2023 05:08:19 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <conor@kernel.org>,
-        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 00/33] 6.1.37-rc3 review
-In-Reply-To: <20230630072124.944461414@linuxfoundation.org>
-References: <20230630072124.944461414@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Fri, 30 Jun 2023 09:07:55 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F29CD35B0;
+        Fri, 30 Jun 2023 06:07:53 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fb4146e8deso22967525e9.0;
+        Fri, 30 Jun 2023 06:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688130472; x=1690722472;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xzl3+jTL6C0kGnIPlN/x9+QiqT/1hwIAKox8W+NdYCs=;
+        b=LZ7UtkcOH1znq7tb1qjYGXepM3YrlocEENIucCxfPJSc1dUBTM35cd85KN53qyzi7u
+         0IVkUSRYPSoTpGkY6tccFylCJSP5a2+CSFpMNXHzR9XfcqSBRM/zR5Iy6OPkE6y87O6A
+         tWSk6Z4qhOL5Tn+c77IEMAXWUYoqvhsRTded0ACNY9tEOMw/ARPFqPGOJgWH9Swev6Oe
+         eEKcOedDGlbaIiilgPQZUzR8Qv6jyYquCVpAUgScORon1pnSkMvR2EUD70Xblr7Vn99O
+         VWvdcSJnGVtXcr3LkQT/ZPOJDql1/OadBfQNq/74d393DkGlEGZZEpxSO7onYqYZLUZd
+         V0cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688130472; x=1690722472;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xzl3+jTL6C0kGnIPlN/x9+QiqT/1hwIAKox8W+NdYCs=;
+        b=I2JB2lFwgv84aU/kJkhCgnj8QNqyU0yQ0kj6/ISkGGLQuDY5F8i512SKkXGvqzcH5j
+         CJ0uBaEzH00FcGYcuuqBPdEm7SOWfOk4XRqEKlq0rS5aOZJNDaoZrloq2DJ/z7qCjvwo
+         Ue7LB712X1rLq2KyPquYutw6y76QTvDegzopa/jU34LqwMSo+5nDOYPlF1FSHfXOdPrK
+         60exhMUvzRutc4EZYrdEo67RnX97CuWsb1ysxyxiv0o0EC5iEnaUgnbyigQWa2lHEc6A
+         Q9N9k8LaDtld9nuOjRQDP/xAx3GMLjCRDUgaGFA7fUSbSgMoLgm8IZq8zYmPhpJBG37/
+         kR9w==
+X-Gm-Message-State: AC+VfDyObYYqXWoMGVroNytIuTQYcibBQmYmvi9VF5M79o4jRP2Qtw8y
+        rfDaKMJQjTwUBl1BI++/Puk=
+X-Google-Smtp-Source: ACHHUZ5A+y/dozE/QyDUV6BQnLTm5asf6ABe+WnOmV3Ko4scQ3w0qClnajWzf1VQ7dM1Sf5uole5ZA==
+X-Received: by 2002:a1c:7914:0:b0:3fa:984d:7e94 with SMTP id l20-20020a1c7914000000b003fa984d7e94mr2511802wme.18.1688130471990;
+        Fri, 30 Jun 2023 06:07:51 -0700 (PDT)
+Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id w10-20020adfcd0a000000b003141f96ed36sm2037085wrm.0.2023.06.30.06.07.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jun 2023 06:07:51 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH] clk: tegra: Avoid calling an uninitialized function
+Date:   Fri, 30 Jun 2023 15:07:48 +0200
+Message-ID: <20230630130748.840729-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Message-ID: <f445ed10-2113-4eb4-ad7d-1a59b87485bb@drhqmail202.nvidia.com>
-Date:   Fri, 30 Jun 2023 05:08:19 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT104:EE_|BY5PR12MB4051:EE_
-X-MS-Office365-Filtering-Correlation-Id: f22ea541-96dd-4c59-113b-08db7962b3f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HZOIYftclc2QjQ8+pBV4O/prCEbvK7l8ObV9yO3KaSEHO4Aup9GtyEVM4I4bAfVeoWYosCDEZ5uLgyQOEuaSnyIyHuUBb/MNPks5pjQ69TUyx7lCigG5UbvQvwK42621OrbgFNpwHR+rZtBD4BouVL1RFfkGsJenlj8RoDj11BMviiiYVaYa70iktZkRX5X1FcLZWr18T1PruNhKJQk8b6Kn502wR8jmFD2v483jP5/gZkjekxUrallvoTEi+9Wjos/B01sPkkyriuLO9mBj98gO8bPVHhVR3KUBXsM7wY19iie9q5koO7AgchWKqtfJH4Iav3rMZhlQZWUY5FOiDLgwPCzMrdC22G3oXuOyOuwOivCUXYRVkMd108tE4/Q0ItvFE0y8Y01sFN+L+OKsE7xUN6Ad3WJl46UsQJo+OBfRVbkdR/ISXh0YBy6AP39P+/nAVx/WXZcPb6oed0k0jPRKdRWzowt4gE10Dyjm77x9pdCmapcvvT6EL/z0PcIfgMmqMb/f6ohtDa/LN8MEQMRV57JTsc8XRIAhS7hnipJrwHotSPvGK520Xr3GF/YbnLibRO2/IHMKcMdiqR8LdHea5BMDhtBO0lnIxR4TrK+WTUTPI/HmwE9HUibs83K7DOzsCTDXa4G4JeUWlyg7X3SQ6XBwGswUg8ocuUIiGt+V6NJiCO4ScIp2KvtO7fpSIZj42v4By4GgiFDzt64I7NnCX5dNiu4Y4bVtOBcLoPbkITRsCN0SBgIL/zOdB17A
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(346002)(376002)(396003)(451199021)(46966006)(36840700001)(336012)(426003)(47076005)(2906002)(7636003)(356005)(82740400003)(36860700001)(40480700001)(8936002)(8676002)(82310400005)(5660300002)(86362001)(31686004)(54906003)(966005)(41300700001)(6916009)(4326008)(70206006)(70586007)(316002)(478600001)(186003)(31696002)(7416002)(26005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2023 12:08:23.4120
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f22ea541-96dd-4c59-113b-08db7962b3f5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT104.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4051
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 30 Jun 2023 09:32:49 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.37 release.
-> There are 33 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 02 Jul 2023 07:21:12 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.37-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+From: Thierry Reding <treding@nvidia.com>
 
-All tests passing for Tegra ...
+Commit 493ffb046cf5 ("clk: tegra: super: Switch to determine_rate")
+replaced clk_super_round_rate() by clk_super_determine_rate(), but
+didn't update one callsite that was explicitly calling the old
+tegra_clk_super_ops.round_rate() function, which was now NULL. This
+resulted in a crash on Tegra30 systems during early boot.
 
-Test results for stable-v6.1:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+Switch this callsite over to the clk_super_determine_rate() equivalent
+to avoid the crash.
 
-Linux version:	6.1.37-rc3-gbb9014bd0a31
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Fixes: 493ffb046cf5 ("clk: tegra: super: Switch to determine_rate")
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra-super-cclk.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
+index 68d7bcd5fc8a..3b22a4d0dffc 100644
+--- a/drivers/clk/tegra/clk-tegra-super-cclk.c
++++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+@@ -86,9 +86,18 @@ static int cclk_super_determine_rate(struct clk_hw *hw,
+ 	if (rate <= pllp_rate) {
+ 		if (super->flags & TEGRA20_SUPER_CLK)
+ 			rate = pllp_rate;
+-		else
+-			rate = tegra_clk_super_ops.round_rate(hw, rate,
+-							      &pllp_rate);
++		else {
++			struct clk_rate_request parent = {
++				.rate = req->rate,
++				.best_parent_rate = pllp_rate,
++			};
++
++			clk_hw_get_rate_range(hw, &parent.min_rate,
++					      &parent.max_rate);
++			tegra_clk_super_ops.determine_rate(hw, &parent);
++			pllp_rate = parent.best_parent_rate;
++			rate = parent.rate;
++		}
+ 
+ 		req->best_parent_rate = pllp_rate;
+ 		req->best_parent_hw = pllp_hw;
+-- 
+2.41.0
 
-Jon
