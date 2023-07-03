@@ -2,135 +2,136 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23C0EB64DD
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Jul 2023 11:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40858EB64DC
+	for <linux-tegra@archiver.kernel.org>; Mon,  3 Jul 2023 11:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231298AbjGCLiP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Jul 2023 07:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52026 "EHLO
+        id S231144AbjGCLie (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 3 Jul 2023 07:38:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231255AbjGCLiK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Jul 2023 07:38:10 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0588D10E
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Jul 2023 04:38:09 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-51d7f350758so5653675a12.3
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Jul 2023 04:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688384287; x=1690976287;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X5HPd4zFbQ0E8syfNvWoZd2Jd08kmy2oDhqKMHkzCzU=;
-        b=WTSAIu0maOXQvTMLW5soPiv4CB8m8rJXos+Ot/4WhoAT3QcoySeaG03E3s4qyOsLAE
-         Fti+Zr+2ygJOfVCoGWf6TlPthhRoXpzr9z1/jgRcGtrGllnYf7UxA8w8Bs17b0pQZEW5
-         tvmISmZINVUix2PAApU6Osun8dVCilkx/R5h/GnAeZs1US2IfXem9jb1iEC+UzK7RTkg
-         Fa4TqSjhPZVbAQlznOuPTyNAlqvYzttRsp/lsMgeItRybVTA4RvQ34EpHtHgAxPlSVJh
-         nFb/hPJCev99wQuTGYl4XRx/TOKxJ9WppJPRuUH+ChxHLvd0uAGickcRDP7CWstI7fPj
-         4NWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688384287; x=1690976287;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X5HPd4zFbQ0E8syfNvWoZd2Jd08kmy2oDhqKMHkzCzU=;
-        b=jGIFDt1XCM6+Rv9g57lkS7QOSAzsF3S/FuFrVOpBthY9w0TUC0s7eF+WD58YVAgfrE
-         GKuM9sRl9bj33X2eodWZmj1WOTo3zr9tXaoBUtlUwtQPwqfaUevoVQ8iLRgDcnL2Jxyn
-         Qe55qVc136bLyrdMfEsgto2tJfR4kvYAEr1W9r19toNXMs4te/vIGjbzV40TtzTC6BMs
-         VLB61DX43qERkAI18p+nDKROgXILrnvnNzaEsh3XSG4huwiMalBtQAXDmmiVAQEI8Xup
-         rPDiIenEf2qSDMQ9RlUB67eIbg2aojY5rZ+I5vekndA4+t9XzTd1C7OU+TxdfYlfmosG
-         ELKQ==
-X-Gm-Message-State: ABy/qLZQQi0WMxApgjPwacOvjCGGGDNaHfKOYMldXdxJgexeaN0WkBhI
-        3v07ygbda2CqUIgOyQqWR4qBBw==
-X-Google-Smtp-Source: APBJJlFffSttED6PPzA0GMbvALnbcSFZlcl8peWg26b+PFdzfiWaPZ5DZ6BTAp/RMGL8Hcmd6Pnyng==
-X-Received: by 2002:a50:ff0d:0:b0:51b:df1d:ebc3 with SMTP id a13-20020a50ff0d000000b0051bdf1debc3mr6968185edu.25.1688384287387;
-        Mon, 03 Jul 2023 04:38:07 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id n22-20020a056402515600b0051e0f100c48sm1412583edd.22.2023.07.03.04.38.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jul 2023 04:38:06 -0700 (PDT)
-Message-ID: <20873d35-86f6-70e7-ed19-efaffb9eb25b@linaro.org>
-Date:   Mon, 3 Jul 2023 13:38:02 +0200
+        with ESMTP id S229944AbjGCLie (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Jul 2023 07:38:34 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF9910C1;
+        Mon,  3 Jul 2023 04:38:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IKrRfXiUPgcEy03269BbIW9pg4xM5JlLqcUfRmBSJmhkRbFKtp7yL6A3xISF+7t2rDN8NGiODAk3gY+pk1uGJoqhraB82Ry4cEfI6kq2KElgWoMq+sylFy9hr7Wo4fL5PpPmHZ/R+ryvcaQGy1KJhWDDCvQDWVqSz28oXBMrmVZN3E6MjVaayk3rlBeqQKVAP6b92MmTxXhb8x4XRbBCAgb1s6kzwmZJCIryg83STgtYC9xwO5505Nnyt6QO6H2pb3jhv5+yNZka8cv3TqPVfHS1WKPTplaCVR3dOJwQU1Q3YC9Zi8TCnycI9dvrGICTOnEXpCuSmz7Giet5OxdL5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PF2V9gsy+uPDkAUC0sWqnpWA349/+oxz6d/IkFueEdY=;
+ b=DKMxFwqI27Lp0gIVw9AG/vBVug4Ls5SMfcFihMEuUIVHj4+Tp9QfjDlWEaK0zjk0xqzEYnIoiR5wzx/93V01MUs7QWSswg/rLiPbm6ucAtmYnOJIoh8qSGmf4qpIbTSmUyP8VdWVtzHkLIAt7IvCUHW0eyND7ZRR4+nn4BlPb5f93WWGD1E8D1iVUcuEYdjoSixb7fLQcl1VOhZ9zxuB1KwCi0SN/f1lKZQl1KfcLvxApKZC1ffkmlGB6ea0TS53z4t8nsGz774f5/5sv3CuqqVlK1poMiCEUzPP9scs6/eJmK+S5O4fbgCQJhx7BedGLE8CAUgl5UlS/c9Wt10gCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PF2V9gsy+uPDkAUC0sWqnpWA349/+oxz6d/IkFueEdY=;
+ b=nkENCtJtiz3SP/oJrtabWh1Z7+ZGJL3zOrlpO2Deb/N0QvbVmJbXn11HfNSV3PKjAo8sxf9YrtbafMb9W5ZI1o2p6hKGxRNOZA7m9zpgRADg5bv3y4CM0jeIBszkA+AnDEoYoxOustGKLL/kqjhtYzbAdDJb9A+hZxP5+M2n9X8yteqpAGMuZEl6zNDVcnykJV3gLUYjFbsAL4bzByhybPz/joML9LJt4/ynJy+sZR3CtytAoA+nNwzTnPF49XrvcRSNeBnPZWQhlQXwyI6loXMuLwYNU0PC2vX/BTTLCIZ5zalEgBsZMqCU/0y1VHmtty8Xbl3dk0ZR/8amkPBDyg==
+Received: from BN1PR12CA0004.namprd12.prod.outlook.com (2603:10b6:408:e1::9)
+ by DM6PR12MB4284.namprd12.prod.outlook.com (2603:10b6:5:21a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.24; Mon, 3 Jul
+ 2023 11:38:18 +0000
+Received: from BN8NAM11FT115.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:e1:cafe::5b) by BN1PR12CA0004.outlook.office365.com
+ (2603:10b6:408:e1::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.30 via Frontend
+ Transport; Mon, 3 Jul 2023 11:38:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN8NAM11FT115.mail.protection.outlook.com (10.13.177.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6521.44 via Frontend Transport; Mon, 3 Jul 2023 11:38:17 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 3 Jul 2023
+ 04:38:07 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 3 Jul 2023
+ 04:38:06 -0700
+Received: from moonraker.home (10.127.8.14) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server id 15.2.986.37 via Frontend Transport; Mon, 3 Jul
+ 2023 04:38:04 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        "Thierry Reding" <thierry.reding@gmail.com>
+CC:     <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] serial: tegra: Don't print error on probe deferral
+Date:   Mon, 3 Jul 2023 12:37:59 +0100
+Message-ID: <20230703113759.75608-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 01/15] genirq/devres: Add error information printing for
- devm_request_threaded_irq()
-Content-Language: en-US
-To:     Yangtao Li <frank.li@vivo.com>, miquel.raynal@bootlin.com,
-        rafael@kernel.org, daniel.lezcano@linaro.org, amitk@kernel.org,
-        rui.zhang@intel.com, mmayer@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com,
-        florian.fainelli@broadcom.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, thara.gopinath@gmail.com,
-        heiko@sntech.de, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, tglx@linutronix.de, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com,
-        srinivas.pandruvada@linux.intel.com,
-        DLG-Adam.Ward.opensource@dm.renesas.com, shangxiaojing@huawei.com,
-        bchihi@baylibre.com, wenst@chromium.org,
-        u.kleine-koenig@pengutronix.de, hayashi.kunihiko@socionext.com,
-        niklas.soderlund+renesas@ragnatech.se, chi.minghao@zte.com.cn,
-        johan+linaro@kernel.org, jernej.skrabec@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20230627071707.77659-1-frank.li@vivo.com>
- <82dc5efc-35fe-15ff-d0ea-e1a19da71c5c@linaro.org>
- <db14ea3c-c224-e263-e134-70e9acc5008a@vivo.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <db14ea3c-c224-e263-e134-70e9acc5008a@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT115:EE_|DM6PR12MB4284:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8e297b3-7f28-468a-9414-08db7bb9fefe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vdsDixlu/+E0181s+AnacTqweYzqL7lQRkNrrAIS55pfdn8310bxIwKrF9KL4bRwS0MeVkJmb7RvgWszxQviS6tEsehatz7TZdHTzHvZC1dNHfYwXI0jet1WsVWtMyatX2JeBsl2cDoXSBfsk0GzJiR6ygR9x+gCs6Gat/fHdYOApDuU7LsjcwnMW3WyDaMrk6fRP+zD/nv1mG7sryOhHmkBE9MFJOjrKqQiupwVRCnijBU21Ec7PI3YhB92xx9gmdKvUwsBMD4GhsG07rAqlmCaKB7GoAtYJ0oLrQ1KyenCI//6Y6CaAAkGy8w/jyUIaZbZ4J2C9qbmVEF/lWxYvuh55sIMBhuzFNOZT4rXpD8eDch8nJzevkmXZmcBKQESx4g3/3XdKqXdUgo+u6/etwp41bsX8oIEUfwQ98pA52zQmTYukSd+UWx+UbigiWk+xrM4wVrKpkCA5T0gE8fm82Lnk3ZKY2tCE3EzKktM/h/nwSGdW6VR8RP7Ld+f4E3Ep6syAa+MF+Ej9ir8CjV1HMoBHJcgN748zpDUbuCrTqF/pFwgtDXd2OaLDdXCWxUNUtqX+Kb2B1+3uzc+cAUeqzrvDpbXCWx4S+zcWej7n5VhF0TQKGA3ff700tuCG2/4YNRbgb3jfeyDcOR62VK5vsxHsaG6lgEJ8tNXfbcXZpe+Vsxx5X3Heo8cphe+Qt3TwTj7vklOYlFx1hVb95OnBoUtm3rn4IWmV9lPciOg5bu8S/y65+/h0bguP9d0dgVt
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(396003)(136003)(39860400002)(451199021)(40470700004)(36840700001)(46966006)(110136005)(54906003)(2906002)(478600001)(26005)(41300700001)(6666004)(86362001)(8676002)(8936002)(5660300002)(36756003)(316002)(40460700003)(4326008)(70586007)(70206006)(1076003)(40480700001)(82740400003)(356005)(7636003)(2616005)(186003)(336012)(83380400001)(82310400005)(426003)(107886003)(47076005)(36860700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2023 11:38:17.8289
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8e297b3-7f28-468a-9414-08db7bb9fefe
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT115.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4284
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/07/2023 11:10, Yangtao Li wrote:
-> On 2023/6/27 15:43, Krzysztof Kozlowski wrote:
-> 
->> On 27/06/2023 09:16, Yangtao Li wrote:
->>> Ensure that all error handling branches print error information. In this
->>> way, when this function fails, the upper-layer functions can directly
->>> return an error code without missing debugging information. Otherwise,
->>> the error message will be printed redundantly or missing.
->>>
->>> There are more than 700 calls to the devm_request_threaded_irq method.
->>> If error messages are printed everywhere, more than 1000 lines of code
->>> can be saved by removing the msg in the driver.
->>>
->>> Signed-off-by: Yangtao Li <frank.li@vivo.com>
->>> ---
->>>   kernel/irq/devres.c | 5 ++++-
->>>   1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
->>> index f6e5515ee077..94039a915218 100644
->>> --- a/kernel/irq/devres.c
->>> +++ b/kernel/irq/devres.c
->>> @@ -58,8 +58,10 @@ int devm_request_threaded_irq(struct device *dev, unsigned int irq,
->>>   
->>>   	dr = devres_alloc(devm_irq_release, sizeof(struct irq_devres),
->>>   			  GFP_KERNEL);
->>> -	if (!dr)
->>> +	if (!dr) {
->>> +		dev_err(dev, "Failed to allocate device resource data\n");
->> Just like any memory allocation, I don't think we print anything for
->> devres failures. Why do you think we should start doing it?
-> 
-> 
-> And tglx point out that:
-> 
-> Having proper and consistent information why the device cannot be used 
-> _is_ useful.
+If the Tegra serial driver is probe before clocks are available then the
+following error is seen on boot:
 
-Where did tglx suggest printing devres allocation ENOMEM errors?
+ serial-tegra 3100000.serial: Couldn't get the clock
 
-Best regards,
-Krzysztof
+This has been observed on Jetson AGX Orin. Fix this by calling
+dev_err_probe() instead of dev_err() to avoid printing an error on probe
+deferral.
+
+Fixes: e9ea096dd225 ("serial: tegra: add serial driver")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/tty/serial/serial-tegra.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 1cf08b33456c..848ea53a26bd 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -1591,10 +1591,8 @@ static int tegra_uart_probe(struct platform_device *pdev)
+ 		return PTR_ERR(u->membase);
+ 
+ 	tup->uart_clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(tup->uart_clk)) {
+-		dev_err(&pdev->dev, "Couldn't get the clock\n");
+-		return PTR_ERR(tup->uart_clk);
+-	}
++	if (IS_ERR(tup->uart_clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(tup->uart_clk), "Couldn't get the clock");
+ 
+ 	tup->rst = devm_reset_control_get_exclusive(&pdev->dev, "serial");
+ 	if (IS_ERR(tup->rst)) {
+-- 
+2.34.1
 
