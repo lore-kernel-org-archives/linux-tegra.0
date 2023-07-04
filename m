@@ -2,68 +2,75 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179C8C001DB
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Jul 2023 14:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F844EB64DA
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Jul 2023 14:09:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230377AbjGDOIn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Jul 2023 10:08:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38154 "EHLO
+        id S230048AbjGDOJq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Jul 2023 10:09:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231760AbjGDOIg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 10:08:36 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74C110C1
-        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 07:08:33 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-313e742a787so4861398f8f.1
-        for <linux-tegra@vger.kernel.org>; Tue, 04 Jul 2023 07:08:33 -0700 (PDT)
+        with ESMTP id S231598AbjGDOJ2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 10:09:28 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0425AE76
+        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 07:09:17 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbc77e769cso52926555e9.0
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Jul 2023 07:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688479712; x=1691071712;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AKce7q+XY3D7V+BbPCIXaqQ9N33m7gnyDAJlD3IQrR8=;
-        b=Gf9PByhmQAiRqUIz5j4Bd+kN3DhclSbN3XlvhQvF2t4m7wigh7MxQ3ndBRc87zlPpF
-         Oo6Pz760zBOvTcIYWxNbYBTSa4Sy5AYvzfl3DW3iox9+zHS0zsaQNfdAUovybf5Ojl9t
-         of4ZE5lH9Nc4UkI6z6pkBipXlAN+KBdQf3uYrG2iSL0bdXm7CipIAroipt49cPD8g4oH
-         mUKxBuRNLl+une+MfB1CU0BTpOHhIBNHceZRQ6HrdT4lsA5ncKzn32bcioDHjHAX7ldp
-         +TxvzSvrzne9O4vsAaaonTqd21Ka0UweFep6c4Cu15giSPg5+zpV0L0xrMTVENh6QkRI
-         h5Hg==
+        d=linaro.org; s=google; t=1688479755; x=1691071755;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIGU+ozIO3paTEyKxH3vTYeSNSxsHSAjxm+XkAQu3uI=;
+        b=Fkb+4Jr9U/QktwlkKJ89eVRmLLvj8654lI+8tNecV1clBvxMJXwSkvXWrnllZsL5Gu
+         NEi/KagGsXfAUxjO9maUCLd//SZUNIMEvLn3WXkDIPexnkq3vf4F96sHjMxNVPVHZ+aV
+         hplis3EQqCWJIyzSXxLDHnPf0vBot58rA/cLBeynhCCWyyHDk3Jy6vPMyEbJkLFtuYSE
+         9v50tl/Yoj+/NC5Ua5LWZ/Efo/f1jPPNzAFvGNmEA0gohCLS0U2gEB+EJ8SRcHNd5T+i
+         7WsWQ42xcC4h9FUGsA7MKfPUOFlbHZg6GT9PfnpVRZvZdNaz0IYMbZHVRKRd/p/RRlAN
+         0K6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688479712; x=1691071712;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AKce7q+XY3D7V+BbPCIXaqQ9N33m7gnyDAJlD3IQrR8=;
-        b=EphuY5SpqaHAq1VNZRTkwp28wKRXN/MdSQrQYwx2c8dQdN8A0awI3KG4s64X4bZR4j
-         absdlRNmvipP/am0hQc4MHJDXvvJkbTJu2JglSZYLnz+xFkXDHLtryCDN0CG5Q3cx/FN
-         DNA5YV0mtrUwQMV998VsT36/aLpjuqCLWR0lTjcH7EL+f248dlrkj4Oiu+nTKH5OG4Qp
-         mGpBbFsv9O44hDWb5HXYPopV+FY8XVW2nUjYGyBTaybGCwgLT2k24U04Jzs4VOQHB85u
-         U2/RNXO9vp44bYzUVvOgCuQU2EnN6wppTSHawzZ1pyGsZNBqR95yMA258d1g09kSgW7m
-         ugvg==
-X-Gm-Message-State: ABy/qLY9oA9Ep/0o9o98JZJXttgOpqAbDQybpvKbvA0FgqijXz2R0dV4
-        CRD6eYdmYu+LnmMPJlB5RqBwAQ==
-X-Google-Smtp-Source: APBJJlF+GiSkRkLZetwheuVHeTCrH+d/7Y5VgBr1LhpSRaXzV9yr1x+YSCcqGrsz4/9+AUVFnbwT+A==
-X-Received: by 2002:adf:cc90:0:b0:306:3352:5b8c with SMTP id p16-20020adfcc90000000b0030633525b8cmr12884042wrj.7.1688479712282;
-        Tue, 04 Jul 2023 07:08:32 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688479755; x=1691071755;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oIGU+ozIO3paTEyKxH3vTYeSNSxsHSAjxm+XkAQu3uI=;
+        b=SzJZuugrGtz4etMrNFGYqr6sXKzLGxPSkPZIXkfzueddypu2CuAt5XCX2pDNZ3wrT7
+         blmqZAwVqN73ndok/vBKC4gFXMmQn8a1cYYSZBeU8QPy82kb/F+/67We3e7QuifC2Dve
+         1J+qbo5iQqwTNM3uEi03WiBXfMDvlquFRg9QY5jJosCET7+fnZiHCKtIk/1Mgr5/Svh1
+         fcEzPXgP9A0yXloxsqhn7YbQ/xEVcm4FmwvNF0s+N/tiyFCNUuQp9as/ebKmP7XIq6hG
+         Lz32kG3S34v0o/do50tSIU3UqNMcHoBXz3IWAG33si67hQdVk2FItWV9lwyZbELCwYnd
+         JTAg==
+X-Gm-Message-State: AC+VfDw7nEVWO7G8w1dka16xLyvPhCUPS5uuoBpgmcMEWFnzk2VZoBP7
+        r+T9Gp346U6BDOOK9e9dk2XkaA==
+X-Google-Smtp-Source: ACHHUZ6i0D1q3zY8REWtXtWMwnL+5jmpzWnT0HBZul57idM6AIrA7ojQBPv9vPsxPcb0FTlkr7nN6g==
+X-Received: by 2002:a7b:cd8f:0:b0:3fb:a1d0:a872 with SMTP id y15-20020a7bcd8f000000b003fba1d0a872mr11743025wmj.20.1688479755436;
+        Tue, 04 Jul 2023 07:09:15 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d17-20020adffbd1000000b002fb60c7995esm28473650wrs.8.2023.07.04.07.08.30
+        by smtp.gmail.com with ESMTPSA id y23-20020a7bcd97000000b003fbb2c0fce5sm17707338wmj.25.2023.07.04.07.09.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jul 2023 07:08:31 -0700 (PDT)
-Date:   Tue, 4 Jul 2023 17:08:27 +0300
+        Tue, 04 Jul 2023 07:09:14 -0700 (PDT)
+Date:   Tue, 4 Jul 2023 17:09:09 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Mathias Nyman <mathias.nyman@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 1/2] Revert "usb: xhci: tegra: Fix error check"
-Message-ID: <8baace8d-fb4b-41a4-ad5f-848ae643a23b@moroto.mountain>
+        Wayne Chang <waynec@nvidia.com>,
+        Sing-Han Chen <singhanc@nvidia.com>,
+        Jim Lin <jilin@nvidia.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-usb@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 2/2] Revert "usb: gadget: tegra-xudc: Fix error check in
+ tegra_xudc_powerdomain_init()"
+Message-ID: <ZKQoBa84U/ykEh3C@moroto>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <8baace8d-fb4b-41a4-ad5f-848ae643a23b@moroto.mountain>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This reverts commit 18fc7c435be3f17ea26a21b2e2312fcb9088e01f.
+This reverts commit f08aa7c80dac27ee00fa6827f447597d2fba5465.
 
 The reverted commit was based on static analysis and a misunderstanding
 of how PTR_ERR() and NULLs are supposed to work.  When a function
@@ -74,41 +81,40 @@ cannot work when that feature is disabled then the KConfig should
 enforce that the function cannot return NULL.  We should not need to
 test for it.
 
-In this code, the patch means that certain tegra_xusb_probe() will
-fail if the firmware supports power-domains but CONFIG_PM is disabled.
+In this driver, the bug means that probe cannot succeed when CONFIG_PM
+is disabled.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
 My patch also is based on static analysis and reviewing the code so,
 you know, probably best to be careful all round.
 
- drivers/usb/host/xhci-tegra.c | 8 ++++----
+ drivers/usb/gadget/udc/tegra-xudc.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 6ca8a37e53e1..4693d83351c6 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1145,15 +1145,15 @@ static int tegra_xusb_powerdomain_init(struct device *dev,
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 83eaa65ddde3..df6028f7b273 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -3718,15 +3718,15 @@ static int tegra_xudc_powerdomain_init(struct tegra_xudc *xudc)
  	int err;
  
- 	tegra->genpd_dev_host = dev_pm_domain_attach_by_name(dev, "xusb_host");
--	if (IS_ERR_OR_NULL(tegra->genpd_dev_host)) {
--		err = PTR_ERR(tegra->genpd_dev_host) ? : -ENODATA;
-+	if (IS_ERR(tegra->genpd_dev_host)) {
-+		err = PTR_ERR(tegra->genpd_dev_host);
- 		dev_err(dev, "failed to get host pm-domain: %d\n", err);
+ 	xudc->genpd_dev_device = dev_pm_domain_attach_by_name(dev, "dev");
+-	if (IS_ERR_OR_NULL(xudc->genpd_dev_device)) {
+-		err = PTR_ERR(xudc->genpd_dev_device) ? : -ENODATA;
++	if (IS_ERR(xudc->genpd_dev_device)) {
++		err = PTR_ERR(xudc->genpd_dev_device);
+ 		dev_err(dev, "failed to get device power domain: %d\n", err);
  		return err;
  	}
  
- 	tegra->genpd_dev_ss = dev_pm_domain_attach_by_name(dev, "xusb_ss");
--	if (IS_ERR_OR_NULL(tegra->genpd_dev_ss)) {
--		err = PTR_ERR(tegra->genpd_dev_ss) ? : -ENODATA;
-+	if (IS_ERR(tegra->genpd_dev_ss)) {
-+		err = PTR_ERR(tegra->genpd_dev_ss);
- 		dev_err(dev, "failed to get superspeed pm-domain: %d\n", err);
+ 	xudc->genpd_dev_ss = dev_pm_domain_attach_by_name(dev, "ss");
+-	if (IS_ERR_OR_NULL(xudc->genpd_dev_ss)) {
+-		err = PTR_ERR(xudc->genpd_dev_ss) ? : -ENODATA;
++	if (IS_ERR(xudc->genpd_dev_ss)) {
++		err = PTR_ERR(xudc->genpd_dev_ss);
+ 		dev_err(dev, "failed to get SuperSpeed power domain: %d\n", err);
  		return err;
  	}
 -- 
 2.39.2
-
