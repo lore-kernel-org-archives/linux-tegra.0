@@ -2,140 +2,113 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AA1EB64DD
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Jul 2023 13:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179C8C001DB
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Jul 2023 14:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231147AbjGDNiB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Jul 2023 09:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48742 "EHLO
+        id S230377AbjGDOIn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Jul 2023 10:08:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231573AbjGDNh5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 09:37:57 -0400
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2122.outbound.protection.outlook.com [40.107.255.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B510910EA;
-        Tue,  4 Jul 2023 06:37:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EZj2Z0mVgmvbJJTWb12zyptzZ7lc4gCH9XIZ/9udFrajQ3QAmShVUDtODp4/yMqyQSWDzSLlD1i8rYu+gIpYZXHhN6FOmWzFluF1SlgOCJNxpqY7iFEE+pf27RVYXw8jUT4wkQEqJkf+6LLb4OhmWXj21actMakA/56WeRhB1vWOmG/44I7gjaaDA/3B/ymkh3S/o15lY/TICEf2vw7+hPbUn/yWoqsrtNRgTz468cI036QKiSEAJaTCUByiLvUPjNQOjj8NtbeqmdC8aZ2NhWLl2qbGjxYjqdJLeN39nIPfjILonEFhgoopjgsKRIVLG+y5acg0aNYQH0J1Gk5TVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tpItvDxAV5J93DGBK4DnagyX3yo6vM6e66EADWHI3Q8=;
- b=aqH54kaqyMkV7lppEJ4i3E/+RTIeWSqDVWXIPGUA7mhz979eVRgdWYL2WH0MlqkoBX09u9r1FArrHmy9ig9/3qBTBLn2Rc9zXSGxqeZj1XzJB8hnVuJw98C5eX+Z83w6ICK1JlH6nziQkO6C4Q6TeDLjpI5YQyrwADKB2g9Qyof3BmmxxXx+NLnCDxSZtO7ILj0yiheruRPdKr8RNp/ZY8d6MxQvSffOdGD0Bwoi2NrFL3WvhEFhZr7W+VuUFa/SbB4+/IOogTrOfaBoOQhQIgR77+Zu4DKEjT+31D0o/l/blUkYnE62dP8AJAyeM9khne91Jn9lDFlJpH4evl/4vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tpItvDxAV5J93DGBK4DnagyX3yo6vM6e66EADWHI3Q8=;
- b=Or2pTv1eAp5pyaGmtvBVo5tP+h4o4+uIKY3yNhwh6ofmIBu71a27ttIJtFriHxn3F2Eiss1C/0a6CxbuwqIAivHmQfOqPcB5T6RsWmT2PwkCUP0Vpwn3Ra+nL5KaUAlS6BJ5Zh9c+pom+19VyF/28iSpV9KbYSbuA+sjr6ZTT83WHvzf2/chbbIOlTGYzakdKBc/lFZRhiy/lamAMRUA1xPWICrinFmERAyx1eKjb4xw2qqrshrVmXUhGNC+4HzfilgFuadUoeeOpyT6CffLUreCB2jR5ES6CbeBy4klushwmrgIoKN3XGq/Z5ArWSfJtINrX700+g9+/aQEFrgagg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TY0PR06MB5708.apcprd06.prod.outlook.com (2603:1096:400:270::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.24; Tue, 4 Jul
- 2023 13:37:42 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6544.024; Tue, 4 Jul 2023
- 13:37:42 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        with ESMTP id S231760AbjGDOIg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 10:08:36 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74C110C1
+        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 07:08:33 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-313e742a787so4861398f8f.1
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Jul 2023 07:08:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688479712; x=1691071712;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AKce7q+XY3D7V+BbPCIXaqQ9N33m7gnyDAJlD3IQrR8=;
+        b=Gf9PByhmQAiRqUIz5j4Bd+kN3DhclSbN3XlvhQvF2t4m7wigh7MxQ3ndBRc87zlPpF
+         Oo6Pz760zBOvTcIYWxNbYBTSa4Sy5AYvzfl3DW3iox9+zHS0zsaQNfdAUovybf5Ojl9t
+         of4ZE5lH9Nc4UkI6z6pkBipXlAN+KBdQf3uYrG2iSL0bdXm7CipIAroipt49cPD8g4oH
+         mUKxBuRNLl+une+MfB1CU0BTpOHhIBNHceZRQ6HrdT4lsA5ncKzn32bcioDHjHAX7ldp
+         +TxvzSvrzne9O4vsAaaonTqd21Ka0UweFep6c4Cu15giSPg5+zpV0L0xrMTVENh6QkRI
+         h5Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688479712; x=1691071712;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AKce7q+XY3D7V+BbPCIXaqQ9N33m7gnyDAJlD3IQrR8=;
+        b=EphuY5SpqaHAq1VNZRTkwp28wKRXN/MdSQrQYwx2c8dQdN8A0awI3KG4s64X4bZR4j
+         absdlRNmvipP/am0hQc4MHJDXvvJkbTJu2JglSZYLnz+xFkXDHLtryCDN0CG5Q3cx/FN
+         DNA5YV0mtrUwQMV998VsT36/aLpjuqCLWR0lTjcH7EL+f248dlrkj4Oiu+nTKH5OG4Qp
+         mGpBbFsv9O44hDWb5HXYPopV+FY8XVW2nUjYGyBTaybGCwgLT2k24U04Jzs4VOQHB85u
+         U2/RNXO9vp44bYzUVvOgCuQU2EnN6wppTSHawzZ1pyGsZNBqR95yMA258d1g09kSgW7m
+         ugvg==
+X-Gm-Message-State: ABy/qLY9oA9Ep/0o9o98JZJXttgOpqAbDQybpvKbvA0FgqijXz2R0dV4
+        CRD6eYdmYu+LnmMPJlB5RqBwAQ==
+X-Google-Smtp-Source: APBJJlF+GiSkRkLZetwheuVHeTCrH+d/7Y5VgBr1LhpSRaXzV9yr1x+YSCcqGrsz4/9+AUVFnbwT+A==
+X-Received: by 2002:adf:cc90:0:b0:306:3352:5b8c with SMTP id p16-20020adfcc90000000b0030633525b8cmr12884042wrj.7.1688479712282;
+        Tue, 04 Jul 2023 07:08:32 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d17-20020adffbd1000000b002fb60c7995esm28473650wrs.8.2023.07.04.07.08.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jul 2023 07:08:31 -0700 (PDT)
+Date:   Tue, 4 Jul 2023 17:08:27 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Mathias Nyman <mathias.nyman@intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 5/5] mailbox: tegra-hsp: Convert to devm_platform_ioremap_resource()
-Date:   Tue,  4 Jul 2023 21:37:26 +0800
-Message-Id: <20230704133726.28861-5-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230704133726.28861-1-frank.li@vivo.com>
-References: <20230704133726.28861-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0034.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::21)
- To SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 1/2] Revert "usb: xhci: tegra: Fix error check"
+Message-ID: <8baace8d-fb4b-41a4-ad5f-848ae643a23b@moroto.mountain>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TY0PR06MB5708:EE_
-X-MS-Office365-Filtering-Correlation-Id: da155f2d-aa50-4807-1b8a-08db7c93d7b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HT3YiY4uPJwquduRPdYNl4XSRwbYyDWm3O9e1ETUGyAOiAY9G9eL2qu3JEiWHU4v5MRN5XmyDcx9xha+7GyyCl5IT64lt1Eo60U/Vnn88LtYrftV5wk/AHPW6w/grWkNFVCdQxL5zUHVw+oHd9EGGXVphv0h8IOcgOOKg+wRK+KtjzmzrQZjlXBWiBANDbQKIQWEbfNux8sta2Y0f8NlhNnCQgML3Supi/ffgnNDu2rYyzXxHLEbrF+tfsKjaLG8ulfk0ojhRSHCtQzNbTe8PJtbRzknXcrF4Ad+roFFcf+VlwNBQLmvbZDub0YZjCCOlRkSIG+xK8vhsbrryuAdbIfy3Od/3N9waDLt3ophfCGoqYB1IGdC4Mygilp7+leYSt/l5wl7J6urP+YUPk37lNgi1ZvidHuGtazI4D6XQ1rkvntdER5FLgYflF4gsqWYDEagS44n852kRJ7WRxxAkTGM72CByQ7jvLQtS7/8SLOZxWYRZ+w81NoNnEgqgKDdfIQYF87L56rQ5KhvpQWfrPctu/T+wVc4uVKoLn8SZfl84y+jj7YgmSfBWQc/RNPOt9+hyaBzbKCZY8KJLBlGVTWTJlRqSjRCot8e+ZkzMWPIboSD9xlyMjr7uRDG+5l2
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(366004)(39860400002)(376002)(396003)(451199021)(4326008)(316002)(66946007)(66556008)(86362001)(186003)(26005)(6512007)(66476007)(1076003)(6506007)(83380400001)(2616005)(4744005)(2906002)(6486002)(38100700002)(6666004)(15650500001)(52116002)(38350700002)(5660300002)(478600001)(8676002)(110136005)(8936002)(41300700001)(36756003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Tpe/n5Jg43MgDrQnCeEwLCLCvoUF+XTAxj+EUvFwmPLSIfWi1Y5EFnHfutju?=
- =?us-ascii?Q?Qa8gcZxsDk85mtHWUFhMbij9Y8J7Lcvb4qHPrpncwe5WQUS7iIIvNLQILdS3?=
- =?us-ascii?Q?S1z2fHyRYaokAA5+HE1nOQqI8qCPQKCJ8oM/IqYa2AlxNGx05cGAb6NIRdWv?=
- =?us-ascii?Q?FBJLKfUSLhtcHIfCh7vz+isIuIaKxlfPe0+eypIwvNJUybr2qzbZ2jZve8w6?=
- =?us-ascii?Q?za/V7B6JDVOj+1Ll5hJFMKzO4O2xMLGWXdZFsnxBx7mhWkgi/0uY1qQYj2RS?=
- =?us-ascii?Q?tzKEyBgud4vKvY4LAEnpUjouNmHznsC4Y+opaG45Q/nWGz85UIZTejo+eHEh?=
- =?us-ascii?Q?Bs7opFV455ehaH/cNhFzpmuOalrgXjo9OHOY0+1LhSQN+/y3G9aX0BdjlEEY?=
- =?us-ascii?Q?861NMmZzToQ/LCIgvLQkQ9oKStBSNkhDgpn0pw6s6TWH33KLbSG8imxAqzf6?=
- =?us-ascii?Q?9rbHMixAG2wTxOjzIUQWKfWZXSqdIzgDwrVzV6mk0ZHo/WNmla5QJwJ1Lbo4?=
- =?us-ascii?Q?9+pWKNtNowXyh8h/LU/1kXvXDOyaf27CdypLIBQeQL+RSB8qh101flus+n+Q?=
- =?us-ascii?Q?phtyD0kC7E0acns9dqGul0hISgQst1wL9bgrbENY1HfiAEH3QnqMJyeQ+zUo?=
- =?us-ascii?Q?gBlTLuQ8HFDa8JTPGrPJoGF8eDAMfMhoPloS3R9UfAh6/j2B1P6TL1LpKvrf?=
- =?us-ascii?Q?HAa7Ira33dSXU8JHJWDdFvNLub1AkoG04mFsSkO1zJHYs+bzwxzE6rlYgL3u?=
- =?us-ascii?Q?Fy2Mn+G+SEpC2MxTHkFkLKBfPhVsRyVxPUOVm2NAh0eaQ7GyAdMiVBYr3QWY?=
- =?us-ascii?Q?iwbe1kitRvcEwZFv18bG1JmLQFmCPljeYr8FU8lPQs7ERkot+KO4l98o5Y0i?=
- =?us-ascii?Q?i9yxe6oSb3/oPdhsgGWCyNUjwdB/4zHok2xsTQQprN4YsnU4TnLit99KOXST?=
- =?us-ascii?Q?ESzYx9Ys+x83CHjgoHSlinh0AKej3wZfJdSGNBNnZVbPGnU5fHg4oV4691rt?=
- =?us-ascii?Q?zmnJLKtq877D9aVzDuvyfzVM1nJwMFukkebMc/5n2v3RGbuv3giuezg3hxZj?=
- =?us-ascii?Q?RYWN+P2Aq3HBsx+gGg7c64DS8xkZiOIwCLMBsUbG01IUBiD4o/ADVysqDoUE?=
- =?us-ascii?Q?Ie9wJBNcKVp0jV8s4m4aHfqu18hzgpe1OSKEDcDeJoSpmQdw+pB+zjbAdoi8?=
- =?us-ascii?Q?hVEXV1HtlwW7Fdshq/zziC0KL9+eB4cB39hU5aOQsXu6riwVS/HNJ/8/fgS9?=
- =?us-ascii?Q?QlHYoyk+OV8oXhS+QWaV5Nv949kkpPel+mLKIyEMv6WlvZotsYgvh505QmlH?=
- =?us-ascii?Q?MUzLZ36WGbbYWewyr4O3F5qtAwsF7j749S+JDUP6gLQzpGc4L5yLVmQsjHCy?=
- =?us-ascii?Q?j9SpFw9djqcJKhUHZymTIE35a2dahOSVUtdd9+ykZE72AtpDZxVX6sBPbt/c?=
- =?us-ascii?Q?3tUGE+ZV2N4WabeU0ncU7IACgu9dY9+WkFjLrWRQ584osOr/T0cH8o7q1L2S?=
- =?us-ascii?Q?HpS/ZFReh3vsGUlXWRMweAk3FGpYohoEw64AMDroI3vRHpYemebpv9CI0PW/?=
- =?us-ascii?Q?xawG2ASasIRc30mhLki6uyXyHQ4kHV/dGN+54Xkx?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da155f2d-aa50-4807-1b8a-08db7c93d7b4
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2023 13:37:42.6088
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yBdlGoZ5NqUldZOoNDjrP12pM+aZhlLlU/tfQlhAuEKHQsZnzxQEWJyU9uqKJTDUNZZURMKEwehjBCSiB/hV8g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5708
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+This reverts commit 18fc7c435be3f17ea26a21b2e2312fcb9088e01f.
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
+The reverted commit was based on static analysis and a misunderstanding
+of how PTR_ERR() and NULLs are supposed to work.  When a function
+returns both pointer errors and NULL then normally the NULL means
+"continue operating without a feature because it was deliberately
+turned off".  The NULL should not be treated as a failure.  If a driver
+cannot work when that feature is disabled then the KConfig should
+enforce that the function cannot return NULL.  We should not need to
+test for it.
+
+In this code, the patch means that certain tegra_xusb_probe() will
+fail if the firmware supports power-domains but CONFIG_PM is disabled.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/mailbox/tegra-hsp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+My patch also is based on static analysis and reviewing the code so,
+you know, probably best to be careful all round.
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 573481e436f5..1e82cc2661e8 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -727,7 +727,6 @@ static int tegra_hsp_request_shared_irq(struct tegra_hsp *hsp)
- static int tegra_hsp_probe(struct platform_device *pdev)
- {
- 	struct tegra_hsp *hsp;
--	struct resource *res;
- 	unsigned int i;
- 	u32 value;
+ drivers/usb/host/xhci-tegra.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 6ca8a37e53e1..4693d83351c6 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1145,15 +1145,15 @@ static int tegra_xusb_powerdomain_init(struct device *dev,
  	int err;
-@@ -741,8 +740,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	INIT_LIST_HEAD(&hsp->doorbells);
- 	spin_lock_init(&hsp->lock);
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	hsp->regs = devm_ioremap_resource(&pdev->dev, res);
-+	hsp->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(hsp->regs))
- 		return PTR_ERR(hsp->regs);
+ 	tegra->genpd_dev_host = dev_pm_domain_attach_by_name(dev, "xusb_host");
+-	if (IS_ERR_OR_NULL(tegra->genpd_dev_host)) {
+-		err = PTR_ERR(tegra->genpd_dev_host) ? : -ENODATA;
++	if (IS_ERR(tegra->genpd_dev_host)) {
++		err = PTR_ERR(tegra->genpd_dev_host);
+ 		dev_err(dev, "failed to get host pm-domain: %d\n", err);
+ 		return err;
+ 	}
  
+ 	tegra->genpd_dev_ss = dev_pm_domain_attach_by_name(dev, "xusb_ss");
+-	if (IS_ERR_OR_NULL(tegra->genpd_dev_ss)) {
+-		err = PTR_ERR(tegra->genpd_dev_ss) ? : -ENODATA;
++	if (IS_ERR(tegra->genpd_dev_ss)) {
++		err = PTR_ERR(tegra->genpd_dev_ss);
+ 		dev_err(dev, "failed to get superspeed pm-domain: %d\n", err);
+ 		return err;
+ 	}
 -- 
-2.39.0
+2.39.2
 
