@@ -2,117 +2,140 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A687AC001B0
-	for <linux-tegra@archiver.kernel.org>; Mon,  3 Jul 2023 16:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AA1EB64DD
+	for <linux-tegra@archiver.kernel.org>; Tue,  4 Jul 2023 13:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbjGCQJA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 3 Jul 2023 12:09:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44438 "EHLO
+        id S231147AbjGDNiB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Jul 2023 09:38:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbjGCQI6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 3 Jul 2023 12:08:58 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5B18E73
-        for <linux-tegra@vger.kernel.org>; Mon,  3 Jul 2023 09:08:50 -0700 (PDT)
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1qGM5a-0008OS-K9; Mon, 03 Jul 2023 18:07:46 +0200
-Message-ID: <a69a239b-bc62-7793-dd8c-ca6943f7dd8e@pengutronix.de>
-Date:   Mon, 3 Jul 2023 18:07:33 +0200
+        with ESMTP id S231573AbjGDNh5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 09:37:57 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2122.outbound.protection.outlook.com [40.107.255.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B510910EA;
+        Tue,  4 Jul 2023 06:37:55 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EZj2Z0mVgmvbJJTWb12zyptzZ7lc4gCH9XIZ/9udFrajQ3QAmShVUDtODp4/yMqyQSWDzSLlD1i8rYu+gIpYZXHhN6FOmWzFluF1SlgOCJNxpqY7iFEE+pf27RVYXw8jUT4wkQEqJkf+6LLb4OhmWXj21actMakA/56WeRhB1vWOmG/44I7gjaaDA/3B/ymkh3S/o15lY/TICEf2vw7+hPbUn/yWoqsrtNRgTz468cI036QKiSEAJaTCUByiLvUPjNQOjj8NtbeqmdC8aZ2NhWLl2qbGjxYjqdJLeN39nIPfjILonEFhgoopjgsKRIVLG+y5acg0aNYQH0J1Gk5TVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tpItvDxAV5J93DGBK4DnagyX3yo6vM6e66EADWHI3Q8=;
+ b=aqH54kaqyMkV7lppEJ4i3E/+RTIeWSqDVWXIPGUA7mhz979eVRgdWYL2WH0MlqkoBX09u9r1FArrHmy9ig9/3qBTBLn2Rc9zXSGxqeZj1XzJB8hnVuJw98C5eX+Z83w6ICK1JlH6nziQkO6C4Q6TeDLjpI5YQyrwADKB2g9Qyof3BmmxxXx+NLnCDxSZtO7ILj0yiheruRPdKr8RNp/ZY8d6MxQvSffOdGD0Bwoi2NrFL3WvhEFhZr7W+VuUFa/SbB4+/IOogTrOfaBoOQhQIgR77+Zu4DKEjT+31D0o/l/blUkYnE62dP8AJAyeM9khne91Jn9lDFlJpH4evl/4vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tpItvDxAV5J93DGBK4DnagyX3yo6vM6e66EADWHI3Q8=;
+ b=Or2pTv1eAp5pyaGmtvBVo5tP+h4o4+uIKY3yNhwh6ofmIBu71a27ttIJtFriHxn3F2Eiss1C/0a6CxbuwqIAivHmQfOqPcB5T6RsWmT2PwkCUP0Vpwn3Ra+nL5KaUAlS6BJ5Zh9c+pom+19VyF/28iSpV9KbYSbuA+sjr6ZTT83WHvzf2/chbbIOlTGYzakdKBc/lFZRhiy/lamAMRUA1xPWICrinFmERAyx1eKjb4xw2qqrshrVmXUhGNC+4HzfilgFuadUoeeOpyT6CffLUreCB2jR5ES6CbeBy4klushwmrgIoKN3XGq/Z5ArWSfJtINrX700+g9+/aQEFrgagg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TY0PR06MB5708.apcprd06.prod.outlook.com (2603:1096:400:270::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.24; Tue, 4 Jul
+ 2023 13:37:42 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6544.024; Tue, 4 Jul 2023
+ 13:37:42 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 5/5] mailbox: tegra-hsp: Convert to devm_platform_ioremap_resource()
+Date:   Tue,  4 Jul 2023 21:37:26 +0800
+Message-Id: <20230704133726.28861-5-frank.li@vivo.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230704133726.28861-1-frank.li@vivo.com>
+References: <20230704133726.28861-1-frank.li@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0034.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::21)
+ To SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v2 01/15] genirq/devres: Add error information printing
- for devm_request_threaded_irq()
-Content-Language: en-US
-To:     Yangtao Li <frank.li@vivo.com>, miquel.raynal@bootlin.com,
-        rafael@kernel.org, daniel.lezcano@linaro.org, amitk@kernel.org,
-        rui.zhang@intel.com, mmayer@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com,
-        florian.fainelli@broadcom.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, thara.gopinath@gmail.com,
-        heiko@sntech.de, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, tglx@linutronix.de, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com,
-        srinivas.pandruvada@linux.intel.com,
-        DLG-Adam.Ward.opensource@dm.renesas.com, shangxiaojing@huawei.com,
-        bchihi@baylibre.com, wenst@chromium.org,
-        u.kleine-koenig@pengutronix.de, hayashi.kunihiko@socionext.com,
-        niklas.soderlund+renesas@ragnatech.se, chi.minghao@zte.com.cn,
-        johan+linaro@kernel.org, jernej.skrabec@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20230627101215.58798-1-frank.li@vivo.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20230627101215.58798-1-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TY0PR06MB5708:EE_
+X-MS-Office365-Filtering-Correlation-Id: da155f2d-aa50-4807-1b8a-08db7c93d7b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HT3YiY4uPJwquduRPdYNl4XSRwbYyDWm3O9e1ETUGyAOiAY9G9eL2qu3JEiWHU4v5MRN5XmyDcx9xha+7GyyCl5IT64lt1Eo60U/Vnn88LtYrftV5wk/AHPW6w/grWkNFVCdQxL5zUHVw+oHd9EGGXVphv0h8IOcgOOKg+wRK+KtjzmzrQZjlXBWiBANDbQKIQWEbfNux8sta2Y0f8NlhNnCQgML3Supi/ffgnNDu2rYyzXxHLEbrF+tfsKjaLG8ulfk0ojhRSHCtQzNbTe8PJtbRzknXcrF4Ad+roFFcf+VlwNBQLmvbZDub0YZjCCOlRkSIG+xK8vhsbrryuAdbIfy3Od/3N9waDLt3ophfCGoqYB1IGdC4Mygilp7+leYSt/l5wl7J6urP+YUPk37lNgi1ZvidHuGtazI4D6XQ1rkvntdER5FLgYflF4gsqWYDEagS44n852kRJ7WRxxAkTGM72CByQ7jvLQtS7/8SLOZxWYRZ+w81NoNnEgqgKDdfIQYF87L56rQ5KhvpQWfrPctu/T+wVc4uVKoLn8SZfl84y+jj7YgmSfBWQc/RNPOt9+hyaBzbKCZY8KJLBlGVTWTJlRqSjRCot8e+ZkzMWPIboSD9xlyMjr7uRDG+5l2
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(366004)(39860400002)(376002)(396003)(451199021)(4326008)(316002)(66946007)(66556008)(86362001)(186003)(26005)(6512007)(66476007)(1076003)(6506007)(83380400001)(2616005)(4744005)(2906002)(6486002)(38100700002)(6666004)(15650500001)(52116002)(38350700002)(5660300002)(478600001)(8676002)(110136005)(8936002)(41300700001)(36756003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Tpe/n5Jg43MgDrQnCeEwLCLCvoUF+XTAxj+EUvFwmPLSIfWi1Y5EFnHfutju?=
+ =?us-ascii?Q?Qa8gcZxsDk85mtHWUFhMbij9Y8J7Lcvb4qHPrpncwe5WQUS7iIIvNLQILdS3?=
+ =?us-ascii?Q?S1z2fHyRYaokAA5+HE1nOQqI8qCPQKCJ8oM/IqYa2AlxNGx05cGAb6NIRdWv?=
+ =?us-ascii?Q?FBJLKfUSLhtcHIfCh7vz+isIuIaKxlfPe0+eypIwvNJUybr2qzbZ2jZve8w6?=
+ =?us-ascii?Q?za/V7B6JDVOj+1Ll5hJFMKzO4O2xMLGWXdZFsnxBx7mhWkgi/0uY1qQYj2RS?=
+ =?us-ascii?Q?tzKEyBgud4vKvY4LAEnpUjouNmHznsC4Y+opaG45Q/nWGz85UIZTejo+eHEh?=
+ =?us-ascii?Q?Bs7opFV455ehaH/cNhFzpmuOalrgXjo9OHOY0+1LhSQN+/y3G9aX0BdjlEEY?=
+ =?us-ascii?Q?861NMmZzToQ/LCIgvLQkQ9oKStBSNkhDgpn0pw6s6TWH33KLbSG8imxAqzf6?=
+ =?us-ascii?Q?9rbHMixAG2wTxOjzIUQWKfWZXSqdIzgDwrVzV6mk0ZHo/WNmla5QJwJ1Lbo4?=
+ =?us-ascii?Q?9+pWKNtNowXyh8h/LU/1kXvXDOyaf27CdypLIBQeQL+RSB8qh101flus+n+Q?=
+ =?us-ascii?Q?phtyD0kC7E0acns9dqGul0hISgQst1wL9bgrbENY1HfiAEH3QnqMJyeQ+zUo?=
+ =?us-ascii?Q?gBlTLuQ8HFDa8JTPGrPJoGF8eDAMfMhoPloS3R9UfAh6/j2B1P6TL1LpKvrf?=
+ =?us-ascii?Q?HAa7Ira33dSXU8JHJWDdFvNLub1AkoG04mFsSkO1zJHYs+bzwxzE6rlYgL3u?=
+ =?us-ascii?Q?Fy2Mn+G+SEpC2MxTHkFkLKBfPhVsRyVxPUOVm2NAh0eaQ7GyAdMiVBYr3QWY?=
+ =?us-ascii?Q?iwbe1kitRvcEwZFv18bG1JmLQFmCPljeYr8FU8lPQs7ERkot+KO4l98o5Y0i?=
+ =?us-ascii?Q?i9yxe6oSb3/oPdhsgGWCyNUjwdB/4zHok2xsTQQprN4YsnU4TnLit99KOXST?=
+ =?us-ascii?Q?ESzYx9Ys+x83CHjgoHSlinh0AKej3wZfJdSGNBNnZVbPGnU5fHg4oV4691rt?=
+ =?us-ascii?Q?zmnJLKtq877D9aVzDuvyfzVM1nJwMFukkebMc/5n2v3RGbuv3giuezg3hxZj?=
+ =?us-ascii?Q?RYWN+P2Aq3HBsx+gGg7c64DS8xkZiOIwCLMBsUbG01IUBiD4o/ADVysqDoUE?=
+ =?us-ascii?Q?Ie9wJBNcKVp0jV8s4m4aHfqu18hzgpe1OSKEDcDeJoSpmQdw+pB+zjbAdoi8?=
+ =?us-ascii?Q?hVEXV1HtlwW7Fdshq/zziC0KL9+eB4cB39hU5aOQsXu6riwVS/HNJ/8/fgS9?=
+ =?us-ascii?Q?QlHYoyk+OV8oXhS+QWaV5Nv949kkpPel+mLKIyEMv6WlvZotsYgvh505QmlH?=
+ =?us-ascii?Q?MUzLZ36WGbbYWewyr4O3F5qtAwsF7j749S+JDUP6gLQzpGc4L5yLVmQsjHCy?=
+ =?us-ascii?Q?j9SpFw9djqcJKhUHZymTIE35a2dahOSVUtdd9+ykZE72AtpDZxVX6sBPbt/c?=
+ =?us-ascii?Q?3tUGE+ZV2N4WabeU0ncU7IACgu9dY9+WkFjLrWRQ584osOr/T0cH8o7q1L2S?=
+ =?us-ascii?Q?HpS/ZFReh3vsGUlXWRMweAk3FGpYohoEw64AMDroI3vRHpYemebpv9CI0PW/?=
+ =?us-ascii?Q?xawG2ASasIRc30mhLki6uyXyHQ4kHV/dGN+54Xkx?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da155f2d-aa50-4807-1b8a-08db7c93d7b4
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2023 13:37:42.6088
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yBdlGoZ5NqUldZOoNDjrP12pM+aZhlLlU/tfQlhAuEKHQsZnzxQEWJyU9uqKJTDUNZZURMKEwehjBCSiB/hV8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5708
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27.06.23 12:12, Yangtao Li wrote:
-> Ensure that all error handling branches print error information. In this
-> way, when this function fails, the upper-layer functions can directly
-> return an error code without missing debugging information. Otherwise,
-> the error message will be printed redundantly or missing.
-> 
-> There are more than 700 calls to the devm_request_threaded_irq method.
-> Most drivers only request one interrupt resource, and these error
-> messages are basically the same. If error messages are printed
-> everywhere, more than 1000 lines of code can be saved by removing the
-> msg in the driver.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  kernel/irq/devres.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
-> index f6e5515ee077..fcb946ffb7ec 100644
-> --- a/kernel/irq/devres.c
-> +++ b/kernel/irq/devres.c
-> @@ -58,8 +58,10 @@ int devm_request_threaded_irq(struct device *dev, unsigned int irq,
->  
->  	dr = devres_alloc(devm_irq_release, sizeof(struct irq_devres),
->  			  GFP_KERNEL);
-> -	if (!dr)
-> +	if (!dr) {
-> +		dev_err(dev, "Failed to allocate device resource data\n");
+Use devm_platform_ioremap_resource() to simplify code.
 
-Why not use dev_err_probe too? Could turn this block into a oneliner.
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ drivers/mailbox/tegra-hsp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->  		return -ENOMEM;
-> +	}
->  
->  	if (!devname)
->  		devname = dev_name(dev);
-> @@ -67,6 +69,7 @@ int devm_request_threaded_irq(struct device *dev, unsigned int irq,
->  	rc = request_threaded_irq(irq, handler, thread_fn, irqflags, devname,
->  				  dev_id);
->  	if (rc) {
-> +		dev_err_probe(dev, rc, "Failed to request threaded irq%d: %d\n", irq, rc);
-
-No need to format rc with %d. dev_err_probe will already do this for you.
-
->  		devres_free(dr);
->  		return rc;
->  	}
-
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 573481e436f5..1e82cc2661e8 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -727,7 +727,6 @@ static int tegra_hsp_request_shared_irq(struct tegra_hsp *hsp)
+ static int tegra_hsp_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_hsp *hsp;
+-	struct resource *res;
+ 	unsigned int i;
+ 	u32 value;
+ 	int err;
+@@ -741,8 +740,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&hsp->doorbells);
+ 	spin_lock_init(&hsp->lock);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hsp->regs = devm_ioremap_resource(&pdev->dev, res);
++	hsp->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hsp->regs))
+ 		return PTR_ERR(hsp->regs);
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.39.0
 
