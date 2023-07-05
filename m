@@ -2,52 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EE8C001B3
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 06:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B6FC001DD
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 06:50:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231908AbjGEGuO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Jul 2023 02:50:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50460 "EHLO
+        id S231912AbjGEGuP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jul 2023 02:50:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231820AbjGEGtp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 02:49:45 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D4D19A4
-        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 23:49:13 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99364ae9596so352774966b.1
-        for <linux-tegra@vger.kernel.org>; Tue, 04 Jul 2023 23:49:13 -0700 (PDT)
+        with ESMTP id S231835AbjGEGtq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 02:49:46 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E006E1BD4
+        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 23:49:16 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9926623e367so728566466b.0
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Jul 2023 23:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688539746; x=1691131746;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnpj157c3whA4keAde4dkEQlANMe2n/WYXZtcdvXOtI=;
-        b=qnxKcQ+ogqw9SGXbUz4Lb1635OSrmEZ6jrj1QiIUI9pHSW2xyBXeWXoJkYt7F4Wg1x
-         Yv2XRaBwAzke9DDDYzRvzOQ38gwNtS/fjv36UtAM6/sSFy3SDTjazsWiMmeRFeFNBtPm
-         Y1mBAKtb2L4lUBQLuh34mw4aZ6gtsQTY3TJCPV44qp+OSEbHH6DmboKo5ZxUAeL/Oy/7
-         jiheg/CimLISbrJsCu1IJjMP8liOf2FOeV+8K+kItsDsuylSrEet/bCLCc2HzlKgPsrH
-         u/FPNYa8kJCuNP86/m3IMSXkVT/tcDaOBQ7hdpX/Tdl+XMFE4OoRdybOiHXjOfKhxXKw
-         2V7g==
+        d=linaro.org; s=google; t=1688539747; x=1691131747;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Btk0Xk8ehSaK2P10pmIt1e+0B7YcT15m+TnmX26R3bI=;
+        b=nmV7E24aBirkOoOViUWGRT1rHx4DzWZ45CFp6HO1qW1Ktr4BjyIw1NomU8GRC9Vden
+         M2+UppiBaDMDLqT2GFsJDNZGyhRympzdtaPYfnQeShLbjI2FA5oMBoC0M7TfZ/rW1czu
+         D1WwUmYOVUs9a4jAEYCbD4rL0oF8ZhxNX3i2BLJo9BmPWzkEb8NF35E+bEUm/nros6Mk
+         6hNrEatGQJ0ehrvhzB0sgzYs7pOYC5iclK+AQmt0RuTS5t1eLaiQmMfdMnWpfulY4VL3
+         QLGKTp7eo3RbRU+TFMfosuTHy9kjtmuCeeXBAdc7F3JEHhPDuq/jLTcVlExgQ4ig2IbO
+         7M9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688539746; x=1691131746;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gnpj157c3whA4keAde4dkEQlANMe2n/WYXZtcdvXOtI=;
-        b=P0QW+/bViTO+jVQzSBkhqXlMkwXkztXqq0ytJ2eCDWIB69uS+GjhqYbSKvk8w5jBJY
-         idYkCsE8WdjsVXP2fvp1jWC8022cZNNjDw7Zs9pQ8oZ32GJ8eHZKepXkysCTJBujh+4u
-         kquMXRNJu6y0AR9Ehruc+DyNpR4z2FUU2wpjcua/V2mDTuq2fg0SKWFdZ4z9H4hohIiO
-         x+12TiHSoME306V/8xKke6cmijJQvsBnlWR/iP6t91X0QMO8IpAk4tqbZnx+G+brMBno
-         XzHTlGsB28F07q4rI9IPGF2KTVZ9PFzAKTe99CmTcX2ve5u/iMya7u6V/7B8BQXR2yCL
-         fMzw==
-X-Gm-Message-State: ABy/qLbp5m3O95rl0hpnqswh0DxtfanSkhuQUKKBClMjcVm0BWJk2toG
-        A+f04mmnOtUsiuiZ8ijDyM/Mig==
-X-Google-Smtp-Source: APBJJlEv9Qie1QyGZE7X599Yi2UpWVPM1zDwcHS0k9EYYzxDgnLXI89gNsM3Zl16UKEQPrVgXCkkdg==
-X-Received: by 2002:a17:906:d8d1:b0:974:1ef1:81ad with SMTP id re17-20020a170906d8d100b009741ef181admr10699538ejb.4.1688539745878;
-        Tue, 04 Jul 2023 23:49:05 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688539747; x=1691131747;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Btk0Xk8ehSaK2P10pmIt1e+0B7YcT15m+TnmX26R3bI=;
+        b=BJ9jYhQLF/x5pWEz1DyjVgSEaVdxW27CVFLOpDtoY3KfyrwvHy9k6WcmxxvqBpA72t
+         0NtuaUWXaoSgAWnxteo/uvRtY8gpVv6OxvlWsrAlvkPCh3UOSXPkWWeh3sbSPCUN+1fq
+         bahJB6ebi3miHuOT7irmmAbFIbzzGh5s3V0DIkXxst7PxRjh/hACzDlcrezLTgjwKKfw
+         0EH9N0+gM5UOsd2fa/oPsSg8wEP4ROHZS7ebt+iclrWjhPKcyLi6NLRsM02XD93nMKrF
+         /3xVsZGAU5s3L33uVLZTthIPzXQPsj+tBqo3f7QoSPIMGO6JyVRKwjlkM1cR3QjZaMVK
+         OK6A==
+X-Gm-Message-State: ABy/qLbK56C//XUiARv4KQeOaAxcLWsf94RnpzdAlAyOS1jwx0XYSC8K
+        cCpPVIcuMHh3G+Lo8/cdH7CtbQ==
+X-Google-Smtp-Source: APBJJlH/lV0N5VSpd7XysIeV4btKyrXfkL9BcaOIuNEDolOKA5zH4R1OiHe86awZvK44Z9hWjVxUaA==
+X-Received: by 2002:a17:906:828a:b0:991:fd87:c6fd with SMTP id h10-20020a170906828a00b00991fd87c6fdmr11302813ejx.23.1688539747054;
+        Tue, 04 Jul 2023 23:49:07 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id w10-20020a170906130a00b00992b50fbbe9sm7849728ejb.90.2023.07.04.23.49.04
+        by smtp.gmail.com with ESMTPSA id w10-20020a170906130a00b00992b50fbbe9sm7849728ejb.90.2023.07.04.23.49.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jul 2023 23:49:05 -0700 (PDT)
+        Tue, 04 Jul 2023 23:49:06 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -57,10 +58,12 @@ To:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RFT PATCH 1/2] arm64: tegra: correct audio-codec interrupt flag in P2972-0000
-Date:   Wed,  5 Jul 2023 08:49:02 +0200
-Message-Id: <20230705064903.12690-1-krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 2/2] arm64: tegra: correct audio-codec interrupt flag in P3737-0000
+Date:   Wed,  5 Jul 2023 08:49:03 +0200
+Message-Id: <20230705064903.12690-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230705064903.12690-1-krzysztof.kozlowski@linaro.org>
+References: <20230705064903.12690-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -76,22 +79,22 @@ with this device.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 64a3398fe7a6..7c400e024332 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -2115,7 +2115,7 @@ rt5658: audio-codec@1a {
- 				compatible = "realtek,rt5658";
- 				reg = <0x1a>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+index cd13cf2381dd..ad5d7b9028cd 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+@@ -2025,7 +2025,7 @@ audio-codec@1c {
+ 				compatible = "realtek,rt5640";
+ 				reg = <0x1c>;
  				interrupt-parent = <&gpio>;
--				interrupts = <TEGRA194_MAIN_GPIO(S, 5) GPIO_ACTIVE_HIGH>;
-+				interrupts = <TEGRA194_MAIN_GPIO(S, 5) IRQ_TYPE_EDGE_FALLING>;
- 				clocks = <&bpmp TEGRA194_CLK_AUD_MCLK>;
+-				interrupts = <TEGRA234_MAIN_GPIO(AC, 5) GPIO_ACTIVE_HIGH>;
++				interrupts = <TEGRA234_MAIN_GPIO(AC, 5) IRQ_TYPE_EDGE_FALLING>;
+ 				clocks = <&bpmp TEGRA234_CLK_AUD_MCLK>;
  				clock-names = "mclk";
- 				realtek,jd-src = <2>;
+ 				realtek,dmic1-data-pin = <RT5640_DMIC1_DATA_PIN_NONE>;
 -- 
 2.34.1
 
