@@ -2,200 +2,197 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D47CC04A94
-	for <linux-tegra@archiver.kernel.org>; Tue,  4 Jul 2023 16:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A52BC001DB
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 02:10:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230357AbjGDQBs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Jul 2023 12:01:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56304 "EHLO
+        id S230361AbjGECKt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 4 Jul 2023 22:10:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230472AbjGDQBk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 12:01:40 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817E6B2;
-        Tue,  4 Jul 2023 09:01:39 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id F3B8A1FE0B;
-        Tue,  4 Jul 2023 16:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1688486497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EeqCJa62CjT6jK0krEwAw8+agoz+VI2X7/87e544sR8=;
-        b=Gg6MWKYRq0+T+yi1YSXzNHgL0z93Sy4Avhbidi8jfs9K82A3g2HsQNWJ2gnFV0N0iBr2oq
-        sWJlb5/bUu8jJmnR5M50T85OvENZdW66lgdSQPJRvygLcYShleG2Kix0fRQoty/LjfPKCf
-        o+keH+QOdvp/jL6qT/IhrqGawUrYuWE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1688486497;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EeqCJa62CjT6jK0krEwAw8+agoz+VI2X7/87e544sR8=;
-        b=h0G05qq/C17mmWNu/F7dL00TF1fOwY7Hj+/iL4RNbuA0nygzpO5jitcNiUe3tpKvWnvOGy
-        vG4f1q+m8WQAB4Bw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C1B80139ED;
-        Tue,  4 Jul 2023 16:01:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id UNtfLmBCpGTzLwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Tue, 04 Jul 2023 16:01:36 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     javierm@redhat.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: [PATCH 07/10] drm/omapdrm: Set VM flags in GEM-object mmap function
-Date:   Tue,  4 Jul 2023 17:50:04 +0200
-Message-ID: <20230704160133.20261-8-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230704160133.20261-1-tzimmermann@suse.de>
-References: <20230704160133.20261-1-tzimmermann@suse.de>
+        with ESMTP id S230126AbjGECKs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 22:10:48 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B8C10E3
+        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 19:10:45 -0700 (PDT)
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230705021041epoutp016dd825641ac560d40b2deb3b14b94c75~u1sKfd8MW1309513095epoutp01p
+        for <linux-tegra@vger.kernel.org>; Wed,  5 Jul 2023 02:10:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230705021041epoutp016dd825641ac560d40b2deb3b14b94c75~u1sKfd8MW1309513095epoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1688523041;
+        bh=4E+MzmqOKL2RtSjlP0QIVLmiF2vs0swS5EIe841yo2E=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=hSt0rjUTI2r09JM/oYIRzPAGrq5AiQVpRUTb6pS4zCohp5bMMyzyKz1/OhaR1hkv1
+         HLWhByt6hRjEn1bZO7rtOmquOsxfZbi927hgkvsXIeXP/B2HwBkkSfDLWOlJ8zyUGG
+         GX4ajwjBcghgsD27brdTkxAUPEXRltU+oIURwi7M=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20230705021041epcas1p3c9816f14c108d50d56b77f31536a987f~u1sJ8WNa00837808378epcas1p3S;
+        Wed,  5 Jul 2023 02:10:41 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.135]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4Qwjmv70kFz4x9Pr; Wed,  5 Jul
+        2023 02:10:39 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        86.88.12307.F11D4A46; Wed,  5 Jul 2023 11:10:39 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230705021039epcas1p4e94d1de39688cf905452a04d2ed53959~u1sIdBUam0754707547epcas1p4G;
+        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230705021039epsmtrp2d12b8fd3a52ef908527c7e39ccefd381~u1sIcJw_I0958409584epsmtrp2s;
+        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
+X-AuditID: b6c32a4c-cd7ff70000053013-52-64a4d11f3002
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        88.39.34491.F11D4A46; Wed,  5 Jul 2023 11:10:39 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230705021039epsmtip2ac67d7b1ff03b5cf87e11c4fc4fe5b2a~u1sIJ7YET1774717747epsmtip2i;
+        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
+From:   =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?= 
+        <inki.dae@samsung.com>
+To:     "'Thomas Zimmermann'" <tzimmermann@suse.de>, <javierm@redhat.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>
+Cc:     <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>,
+        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
+        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>
+In-Reply-To: <20230704160133.20261-6-tzimmermann@suse.de>
+Subject: RE: [PATCH 05/10] drm/exynos: Use fbdev DMA helpers
+Date:   Wed, 5 Jul 2023 11:10:39 +0900
+Message-ID: <00ec01d9aee5$e4c35290$ae49f7b0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="ks_c_5601-1987"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQHuhM/LBRmP0P1z6R6SIKtY9iGhpwG3SkJIAXEc4UKvZ3zNMA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmvq78xSUpBn+emFs8mLeNzeLK1/ds
+        FgunLWe02Pt6K7vF2aY37BabHl9jtTjR94HVYsb5fUwWnV9mAZV83Mpi0da5DCg2+SWbxZY3
+        E1kdeD02repk87hzbQ+bx7yTgR73u48zeWxeUu/xft9VNo++LasYPTafrvb4vEkugDMq2yYj
+        NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6GolhbLEnFKg
+        UEBicbGSvp1NUX5pSapCRn5xia1SakFKToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGvma9
+        ggNiFbc2bWRrYPwv1MXIySEhYCLR93QfWxcjF4eQwB5GiTXPfrCDJIQEPjFK/NxtD2F/Y5TY
+        OZ8fpuHE5POMEA17GSWufv7DClH0klFiwzFrEJtNIEPibvtiVpAiEYEmRokZ79vBHGaBX0wS
+        Pw6tZQap4hSwlLjas4gNxBYWsJFYtuwJ2GoWARWJlvsHwWxeoJqelY9ZIGxBiZMzn4DZzAJG
+        EktWz2eCsOUltr+dwwxxnoLEz6fLWCHiIhKzO9vA4iICThLv+06xgBwhIXCDQ2Lv7QmsEA0u
+        Ep37+9kgbGGJV8e3sEPYUhKf3+1lg2iYzChx5/oKqO4ZjBKHf15nhKgylti/dDIThK0osfP3
+        XEaI1XwS7772AG3gAIrzSnS0QUNbSeLYxRtQrRISF5ZMZJvAqDQLyXOzkDw3C8lzs5A8tICR
+        ZRWjVGpBcW56arJhgaFuXmo5PM6T83M3MYLTtZbPDsbv6//qHWJk4mA8xCjBwawkwrvi++IU
+        Id6UxMqq1KL8+KLSnNTiQ4ymwDCfyCwlmpwPzBh5JfGGJpYGJmZGxiYWhmaGSuK8MZ/aU4QE
+        0hNLUrNTUwtSi2D6mDg4pRqYHLdatfLM3d1pnn+t0M3p1v7a2N3b5kctdNxvLhuYIPSkNfqG
+        5ItI85NsxRvCTA5mySit6hRtlBVYIWLFaeY++8n62Rt/hZW69rx4I1ldrOKt+nM3S1k9Y+EM
+        iyr9WL41bj/Lc3yW359zbrfkQ+kdyamSwtonRFh2HrfddUvzZLoiw/U19+YLs3NrB8s/4z5x
+        1Vfma82mgufpQfMUA6ZL5QpO2iS+K2ZXfuZGFgfH7ZuiA09ES2r+3nTVn+WI6e2nMqKZR4va
+        Q+apqUi72fNuVTF890K0dJd09LyFczRmdrOWRk48wny+pvlHqYGuVvMJNc7TXpLnlOYdmSL7
+        tHfxC+2th5ekiR1YKjj5bJkSS3FGoqEWc1FxIgDmXc/7YAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSvK78xSUpBh3HxC0ezNvGZnHl63s2
+        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
+        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBnFZZOS
+        mpNZllqkb5fAlbGvWa/ggFjFrU0b2RoY/wt1MXJySAiYSJyYfJ6xi5GLQ0hgN6PE6y8tTF2M
+        HEAJCYktWzkgTGGJw4eLIUqeM0p8PD6NGaSXTSBNYtLc/awgCRGBNkaJRx//gznMAg3MEgtP
+        rWaHaNnOKLFizhlGkBZOAUuJqz2L2EBsYQEbiWXLnrCD2CwCKhIt9w+C2bxANT0rH7NA2IIS
+        J2c+AbOZgU5tPNwNZctLbH87hxniBQWJn0+XsULERSRmd7aBxUUEnCTe951imcAoPAvJqFlI
+        Rs1CMmoWkvYFjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCo1VLcwfj9lUf9A4x
+        MnEwHmKU4GBWEuFd8X1xihBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe8Re9KUIC6YklqdmpqQWp
+        RTBZJg5OqQYmtjPHOFyrTqzzsTEU1C6J+Xj1REpr6NmQUBW/26m3qiZ72/hGPrJ2XN/lOdmj
+        votH++pRvWsPYjbonHY2yIpIq1jQcfCTjZjCfY4Py673P1Fki3B8eXVeaM3Cq1wZ96rm3tj6
+        /G3k2czge3aHFvucvcSbqX6Uo088LH/d7GBVx+ZJfBxn3oR94jIRvJ20dXuFgFD2rCXR4TPl
+        nSf18IZ+n6l8v+B1MkfQR5bQu5+vbn4rcKhtBve19OTNrT3fjnX/7V++n2Va+KzXrg133zNs
+        T/2atNLVO26r1hlR3oTDKh96vF/m/4vMSOSNTHoiv583Tqpxmt2ZH1Xnln/Ym6q7/GgL//8f
+        t8O/zFdxcr2sxFKckWioxVxUnAgAr5utA0UDAAA=
+X-CMS-MailID: 20230705021039epcas1p4e94d1de39688cf905452a04d2ed53959
+X-Msg-Generator: CA
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230704160141epcas1p1059d0c1b202ddb900c530a47247824fc
+References: <20230704160133.20261-1-tzimmermann@suse.de>
+        <CGME20230704160141epcas1p1059d0c1b202ddb900c530a47247824fc@epcas1p1.samsung.com>
+        <20230704160133.20261-6-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use the mmap callback in struct drm_gem_object_funcs to set the
-VM flags. Replace a number of mmap helpers in omapdrm with their
-GEM helper counterparts. Generate DRM's file-operations instance
-with GEM's DEFINE_DRM_GEM_FOPS.
+Hi,
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/gpu/drm/omapdrm/omap_drv.c        | 12 +-----------
- drivers/gpu/drm/omapdrm/omap_gem.c        | 24 ++++++-----------------
- drivers/gpu/drm/omapdrm/omap_gem.h        |  3 ---
- drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c |  7 +------
- 4 files changed, 8 insertions(+), 38 deletions(-)
+> -----Original Message-----
+> From: Thomas Zimmermann <tzimmermann@suse.de>
+> Sent: Wednesday, July 5, 2023 12:50 AM
+> To: javierm@redhat.com; maarten.lankhorst@linux.intel.com;
+> mripard@kernel.org
+> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
+> fbdev@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>; Inki Dae
+> <inki.dae@samsung.com>; Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin
+> Park <kyungmin.park@samsung.com>; Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>
+> Subject: [PATCH 05/10] drm/exynos: Use fbdev DMA helpers
+> 
+> Use fbdev's DMA helpers for fbdev emulation. They drivers previously
+> used the I/O-memory helpers, while allocating DMA-able system memory.
+> This could (in theory) result in bus errors from accessing the memory
+> range.
+> 
+> This bug has been present since the exynos driver was first added.
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-index e2697fe80e62..afeeb7737552 100644
---- a/drivers/gpu/drm/omapdrm/omap_drv.c
-+++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-@@ -636,17 +636,7 @@ static int dev_open(struct drm_device *dev, struct drm_file *file)
- 	return 0;
- }
- 
--static const struct file_operations omapdriver_fops = {
--	.owner = THIS_MODULE,
--	.open = drm_open,
--	.unlocked_ioctl = drm_ioctl,
--	.compat_ioctl = drm_compat_ioctl,
--	.release = drm_release,
--	.mmap = omap_gem_mmap,
--	.poll = drm_poll,
--	.read = drm_read,
--	.llseek = noop_llseek,
--};
-+DEFINE_DRM_GEM_FOPS(omapdriver_fops);
- 
- static const struct drm_driver omap_drm_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM  |
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
-index 6b58a5bb7b44..c9c64ad17ce6 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.c
-@@ -524,26 +524,11 @@ static vm_fault_t omap_gem_fault(struct vm_fault *vmf)
- 	return ret;
- }
- 
--/** We override mainly to fix up some of the vm mapping flags.. */
--int omap_gem_mmap(struct file *filp, struct vm_area_struct *vma)
--{
--	int ret;
--
--	ret = drm_gem_mmap(filp, vma);
--	if (ret) {
--		DBG("mmap failed: %d", ret);
--		return ret;
--	}
--
--	return omap_gem_mmap_obj(vma->vm_private_data, vma);
--}
--
--int omap_gem_mmap_obj(struct drm_gem_object *obj,
--		struct vm_area_struct *vma)
-+static int omap_gem_object_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
- {
- 	struct omap_gem_object *omap_obj = to_omap_bo(obj);
- 
--	vm_flags_mod(vma, VM_MIXEDMAP, VM_PFNMAP);
-+	vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO | VM_MIXEDMAP);
- 
- 	if (omap_obj->flags & OMAP_BO_WC) {
- 		vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
-@@ -563,12 +548,14 @@ int omap_gem_mmap_obj(struct drm_gem_object *obj,
- 		 * address_space (so unmap_mapping_range does what we want,
- 		 * in particular in the case of mmap'd dmabufs)
- 		 */
--		vma->vm_pgoff = 0;
-+		vma->vm_pgoff -= drm_vma_node_start(&obj->vma_node);
- 		vma_set_file(vma, obj->filp);
- 
- 		vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
- 	}
- 
-+	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
-+
- 	return 0;
- }
- 
-@@ -1282,6 +1269,7 @@ static const struct vm_operations_struct omap_gem_vm_ops = {
- static const struct drm_gem_object_funcs omap_gem_object_funcs = {
- 	.free = omap_gem_free_object,
- 	.export = omap_gem_prime_export,
-+	.mmap = omap_gem_object_mmap,
- 	.vm_ops = &omap_gem_vm_ops,
- };
- 
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.h b/drivers/gpu/drm/omapdrm/omap_gem.h
-index 4d4488939f6b..fec3fa0e4c33 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.h
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.h
-@@ -57,9 +57,6 @@ int omap_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
- 		struct drm_mode_create_dumb *args);
- 
- /* mmap() Interface */
--int omap_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--int omap_gem_mmap_obj(struct drm_gem_object *obj,
--		struct vm_area_struct *vma);
- u64 omap_gem_mmap_offset(struct drm_gem_object *obj);
- size_t omap_gem_mmap_size(struct drm_gem_object *obj);
- 
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c b/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-index 8e194dbc9506..36f9ee4baad3 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c
-@@ -64,13 +64,8 @@ static int omap_gem_dmabuf_mmap(struct dma_buf *buffer,
- 		struct vm_area_struct *vma)
- {
- 	struct drm_gem_object *obj = buffer->priv;
--	int ret = 0;
- 
--	ret = drm_gem_mmap_obj(obj, omap_gem_mmap_size(obj), vma);
--	if (ret < 0)
--		return ret;
--
--	return omap_gem_mmap_obj(obj, vma);
-+	return drm_gem_mmap_obj(obj, omap_gem_mmap_size(obj), vma);
- }
- 
- static const struct dma_buf_ops omap_dmabuf_ops = {
--- 
-2.41.0
+Acked-by : Inki Dae <inki.dae@samsung.com>
+
+Thanks,
+Inki Dae
+
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Fixes: 1c248b7d2960 ("DRM: add DRM Driver for Samsung SoC EXYNOS4210.")
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/Kconfig            | 2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/Kconfig
+> b/drivers/gpu/drm/exynos/Kconfig
+> index 7ca7e1dab52c..661b42ad4873 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -7,7 +7,7 @@ config DRM_EXYNOS
+>  	select DRM_DISPLAY_HELPER if DRM_EXYNOS_DP
+>  	select DRM_KMS_HELPER
+>  	select VIDEOMODE_HELPERS
+> -	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
+> +	select FB_DMA_HELPERS if DRM_FBDEV_EMULATION
+>  	select SND_SOC_HDMI_CODEC if SND_SOC
+>  	help
+>  	  Choose this option if you have a Samsung SoC Exynos chipset.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index fdf65587f1fe..7ca3424b59ce 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -49,9 +49,9 @@ static void exynos_drm_fb_destroy(struct fb_info *info)
+> 
+>  static const struct fb_ops exynos_drm_fb_ops = {
+>  	.owner		= THIS_MODULE,
+> -	__FB_DEFAULT_IO_OPS_RDWR,
+> +	__FB_DEFAULT_DMA_OPS_RDWR,
+>  	DRM_FB_HELPER_DEFAULT_OPS,
+> -	__FB_DEFAULT_IO_OPS_DRAW,
+> +	__FB_DEFAULT_DMA_OPS_DRAW,
+>  	.fb_mmap        = exynos_drm_fb_mmap,
+>  	.fb_destroy	= exynos_drm_fb_destroy,
+>  };
+> --
+> 2.41.0
+
 
