@@ -2,141 +2,298 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EBBEB64DA
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 12:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E09AEB64DA
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 15:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbjGEM1E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Jul 2023 08:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41626 "EHLO
+        id S232095AbjGEPSK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jul 2023 11:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbjGEM1E (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 08:27:04 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2123.outbound.protection.outlook.com [40.107.117.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53C73B0;
-        Wed,  5 Jul 2023 05:26:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UCUasleyzLy8wKR14koojITIkJ47cdtw/j7EvXcffpp3F0BcrzXlKlxA4DVJNnxxpaRDT6tryz0NyH5SJV++XzRnY07jJq1kPw/uLmigKlYookaVbfJ4Yi870S1XPr6JUJKNcAcPzxs21os126icbZ52vObRPn4hbMS4ZapA5Pzbk+dT9aJSHrhTopszWOk143CiXJPuK/hxftauIFAE68d2PwYCLMOeOO/UhOMBOGXk0lOA/DjiaQhDP3mFpKFOwbQDHNuD92wELL/Z6XXKQ/PmsrgAg8iogOc+EgCLHLUvDqBdWyF96MBXRvSS6ewu+zUtlvKxX7tiFp+/dF0stA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9hDW4ykj5bPi2qKiSLnWOEALPOIdRubEXi8LqQYCLmA=;
- b=YJdKFPJSOJIlR0oGZdEawY5Nyux7HlQXry6EQNRq+ZDfCd6XmZkzRFJJ1j2hp/MtqW/q0lYEqAP/5rzAbOfUhFEFd1cYHVhH3FzlyzuC4fFn4bauvklnMmPReTAG1wg12pK8aAqC1LuZlL2Y7ec+WVuljEeo5q3jLrZF/jVIvWPKPZ7fEyKjs4ZYjJNRDmHtb+aHE6tGg8VL3rMef1K3QaKY7Adfk57Qum0eJ+lYzijK/n6BMka7Nw/akK1JBC45LAB+sQxs1bHd+TUQdsFFhKK/EX1tVuJquXx9PlnMqlxa7WpkcVugYGfrUNm+D07phNxOXBVarjo+TcSei3bbYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9hDW4ykj5bPi2qKiSLnWOEALPOIdRubEXi8LqQYCLmA=;
- b=bxaBJxr7alXocmY0ohZqFfm5WA2TFhCrJAsHyv/YypKs6DsyeTaO0GV7v5z8qIsR6bcSIR8KqYnwPOcoGR+Qvk5GnpsXb0Vg3OdTSjgiVCTSbJKS0vXh66ZJclpSk22vuebC4nR3RImaYSSamNCFdNV8I0Ebj52kk+uz0Q3A/u7SXk7eLkXMUr+xvg8ZfoeOuzvmLAww0r7NStRvxek3DMBga8m23NeOv5jyrfqu/uFx7XoyOsUr/FzGI4FLugP85UF55TPy7APwlCOE48Mc+33vLDuAR8cDRQLatl8q2iz174/G9imhtmO/47szN/wJog2bP4ufieNo63dUDrWeFg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by KL1PR0601MB5551.apcprd06.prod.outlook.com (2603:1096:820:c2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.17; Wed, 5 Jul
- 2023 12:26:55 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.016; Wed, 5 Jul 2023
- 12:26:55 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Yangtao Li <frank.li@vivo.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] soc/tegra: fuse: Use devm_platform_get_and_ioremap_resource()
-Date:   Wed,  5 Jul 2023 20:26:40 +0800
-Message-Id: <20230705122644.32236-2-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230705122644.32236-1-frank.li@vivo.com>
-References: <20230705122644.32236-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0001.apcprd04.prod.outlook.com
- (2603:1096:4:197::12) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+        with ESMTP id S230495AbjGEPSJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 11:18:09 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18ECA170B;
+        Wed,  5 Jul 2023 08:18:08 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-3112f5ab0b1so7571175f8f.0;
+        Wed, 05 Jul 2023 08:18:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688570286; x=1691162286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+rTM9zb9WY9Xvxel2SErjkaPh55ugzzbgIcOlX7MHw4=;
+        b=mk5aUeNMCsmeJqqc1eyESY1lW11bAcprGyGXPdJ33glrCXnGnXxdzoySWpxUhodgQf
+         7sA5wQPfmkta4s3zKgI+x9ku06bB9EivUCza+knU78/Up78E9pRezBrUs35kjucJhZOO
+         AFCP6DY74N5crn4bCU9rUUmMNu/eAJ6RNqFXpy3RRxfUpsVPCXQ5ee01uG7/rnupPO5k
+         sSt0E5uw59Pflsdlj+UPETEI9aqHthGRLqwZ7cY+EW62nD/HGrb24qNynBmVK0uGUipS
+         MspkLc3Ozf2XfL6JdvuE+6nP9pRM4lt1A1b4czD6/UwEcOCo8c0FiXhJyaFPW0xs9rmV
+         OPbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688570286; x=1691162286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+rTM9zb9WY9Xvxel2SErjkaPh55ugzzbgIcOlX7MHw4=;
+        b=LEhQ+hkU61SRNv2ja21mMLnpXb0g9CZrLBeGtSqYQU9+CuTwzQiXdONuaIZNSZ4m5M
+         Z2qYBzOWlAF042WUMNCDFVvzIkAofMIreexKeJOaI7yO1l16eOhw806FiSOKHMYHC/kZ
+         vid6vwPWHJ6nYwq92ZQPJefmnnE4xvAi25it9v9ufI+ooPHq9liqXW6KMmKm6mNYNR8C
+         Jc/TvPbaI1s1jOkBsbbKZoqXzhFVBbakTLmfvdwqzlZRmt37lZkBR4zjiXxZY4e6Bqk8
+         l+15IANXUITreuC2jY92/gGCJ8vCcFLgk6lXSgd9oK5/19WjwFi7Jm/3iwReg2qPu45g
+         jMVQ==
+X-Gm-Message-State: ABy/qLaaTDUJ4sYnwN+kmZPTEEOfTlxPaOK5hPE2xQtL9teZpBmH9/f6
+        1FJ1TyyFXoUazMnmB9TwcOQ=
+X-Google-Smtp-Source: APBJJlEchMqCocnXvYS1zea7yJILbF0CxML3vQJxCuE0v67B8tiU5h9lvjNzB+voY7Zz9TrzqiSVTA==
+X-Received: by 2002:adf:e604:0:b0:314:311d:1b9 with SMTP id p4-20020adfe604000000b00314311d01b9mr10159765wrm.47.1688570286000;
+        Wed, 05 Jul 2023 08:18:06 -0700 (PDT)
+Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id f3-20020a5d58e3000000b00314329f7d8asm10030876wrd.29.2023.07.05.08.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jul 2023 08:18:05 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: serial: tegra-hsuart: Convert to json-schema
+Date:   Wed,  5 Jul 2023 17:18:02 +0200
+Message-ID: <20230705151802.2512186-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KL1PR0601MB5551:EE_
-X-MS-Office365-Filtering-Correlation-Id: cedbd3fa-8f60-405f-ff5a-08db7d531e4f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: o48KgybcstMno6e0JpBD0Yrb60+JzSiIiKaGhAzCiJrEvlltMYu6FvVWZddHV9p+WvbgHa64EFo4l2sKJR1hiKzP7psUAJwnqVu+XRzabM5HRdFyqPySbDSSo7uDtSLDoCEbVMsjDGQkkn0EyyQD1VpAaK+M2Ud9RhrDKTEFT8Iv4JRjshSl+2FPUJdTZz1hAt6gySvtGWddHDtYrf0AH/8gKZo41tW51zkdwz5iFbZbgxVMndmGY2MbYygUbom/R2l/32gRQKJG3hlOFWzJZLI8e8oqxon5bEmi9XEpDDkGOwY47ApRx92mc/GLsL7QJpqwWNuKnua7AW1UubMnd1qJ8FdFdKkjBP+IGFwNSOlm3yfBpClpRGMt0k+uDnZJ3X/AN8Sticn9jT/1qNFDNeSUVrcKg0yWZ5dLCUJL+06UQ2K+Y4EszAPnDg9fAnBqU8vvXuosgkb3kyL5QmFF/6QVydFaIeF199CEZwNK3bC/Y4URHVh6eVDF7mI6EuGWKi6uae5JAHIIriAPQRdfEfcdiLlFqDMs3zR7PB0ZdD/Z+/qli0AM7j3ZHPEtv83k8NMRuZBxBtfG06FVvJpQOHDZtc+Tbnjjfa1oCPhNRb5mQ8PHoE18zYoE5BgyiYgp
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(376002)(136003)(346002)(396003)(366004)(451199021)(5660300002)(8936002)(8676002)(41300700001)(316002)(2906002)(83380400001)(2616005)(66476007)(66556008)(4326008)(66946007)(6506007)(38350700002)(38100700002)(86362001)(186003)(478600001)(26005)(110136005)(6666004)(1076003)(6486002)(52116002)(36756003)(6512007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?f/X6EUgrDD1lABn0JxDTJz/dwhX93QGkcZMB2lY5GG2/GYSpegXs5iKkE/1V?=
- =?us-ascii?Q?2kwDQUR3Oa1kjt64BORNybm7FxeurtDOal6H9G8qb17mWhQfYjnwIyTJNTVy?=
- =?us-ascii?Q?DeKrqZKmWck39EmhyvHaIGqCu8INbXOkqNO+gVLXW3panvuUkT4KUhCdgIiC?=
- =?us-ascii?Q?rTiKxRHhmSf7CePbDl6S0p9mBI5cQ8xbUPXujrlMStN515NTICFjOqfM7Jzj?=
- =?us-ascii?Q?oCEMQvG2Brv5b/R/EcJRZMs8vuoumXUztTWch7If7MhOm70t+VwJuM04PyNv?=
- =?us-ascii?Q?+xmnPJKrdLli9BAfIltnyNBgLX92cYNWjeE90uonwkVGezXHvJ4Xkm/3DSBx?=
- =?us-ascii?Q?vF5+JMOsBw1lSrt3RhRAMYB3xqxKrtFjIPm4U+9tL8zAJL4uNz3UG8OnHczs?=
- =?us-ascii?Q?U+iGFOS4KIm/s0RB4/cbCHDO2hls+3SAybmWCd8Yz/q9BH6i15JlVbQMFAEg?=
- =?us-ascii?Q?pAS1Vxb63y2n1NfKNcPunyb1Bv37YpTw5ja5f8hOV1Wzq8D/vXb9rktk8g18?=
- =?us-ascii?Q?37tmhjZCkMLUC/GaYeP1UdGQc891ueuVR1gT5Ov9wmGDMziePkedK9Q/xn47?=
- =?us-ascii?Q?2m7VDOKeuPcyn/GDJ2RxYK/WA7g8yUc8ITM1TZb917Qo61CRER1mm8lTx0+L?=
- =?us-ascii?Q?ytdnlQNvopCPRop/rsFP/B4nXRJ8U/2cMJjO+D9FNr+fOLf3SPJRe/oFkV8B?=
- =?us-ascii?Q?mCiFYoBoXmW/FJiUN308FRBgj4N8fM3AX43olTsckWZvu67z/vswBooqLSAw?=
- =?us-ascii?Q?8SHOG7uZAkbc2iEyhGTluzgW8ab8RldD4WzIp0XxDQl5AlBNb9zqrmu7kKKg?=
- =?us-ascii?Q?V+5rUu4wpSUee/OYqxV1/VWPe3nx5GvoRZFdoHbNPTMUTegVutMZJTsYdsMg?=
- =?us-ascii?Q?yyiboYqacidXsaSl6xESvRdPQJ/LUT23v2gXjEF3iru69emb+dR2BMvg8hhD?=
- =?us-ascii?Q?t2WJFMH8SqnjfIDzSLnnBks+7mbvUvD5cuxThf4hs9sSk/7xFyJUtFfdeKmr?=
- =?us-ascii?Q?pIouq5ItuJ7ZKwgiOZDsKpWBD3mtb5URXb0Uk2bOIbR9ddIKhTP7LF+IxFBd?=
- =?us-ascii?Q?WoKPAfA3+axQXp2g/HZm+vYY8eQqXnQZkuC5SMjzs4ZU9UsCESAo08LYJGo5?=
- =?us-ascii?Q?c7rb7znutMFxj8Atr2O3Knh8trkuZ9PKOD8xLP6pOcf7onpOUzB7bsIU86UD?=
- =?us-ascii?Q?kZMBEwWhj15P9jbb9vjx6j3A1qxRzRxMdwrG0nUhy/j5D/Hx2HcFcUf1S3m0?=
- =?us-ascii?Q?eA9e7KNfLE0gutThaj2C816cNHaaltFnT3nuwQJ+xrY2jnIKezRUFqmMRHSa?=
- =?us-ascii?Q?tzfBGy30vWSgbkyKVmMU6gasJtZiX70Jq4JJQeCiQY2pYn50FIWa0BTSXds7?=
- =?us-ascii?Q?C+v2EUkZZisN6pJ45urOUtaYC/M89NRr8Pp7FbrJUX+U2CuAdY8wwZlGHzze?=
- =?us-ascii?Q?BiSZMjvFFYZ+u/TyMcOP1d2J5tc3yoC3bTI/InuixMg4PppAyMrQW5fZbaix?=
- =?us-ascii?Q?J20l0Htu0qta8drX3Nc98pRXrqeaUB+PVc50dOR/Q3ROeJ3u1ZDiJzvYawaI?=
- =?us-ascii?Q?K3+euBDtl0hyCji40JAMuCYuQuAZc2bg1+A31Mwy?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cedbd3fa-8f60-405f-ff5a-08db7d531e4f
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2023 12:26:55.0025
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nP6wkJhsy+1WBjktKByhAZyYsiTmKZxds3qTWe7zVZeEWnBVAnpJcvWucCdmqJj+//e6NInS+VoEeE1+RqqMBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5551
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Convert platform_get_resource(), devm_ioremap_resource() to a single
-call to devm_platform_get_and_ioremap_resource(), as this is exactly
-what this function does.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Convert the Tegra High-Speed UART bindings from the free-form text
+format to json-schema.
+
+While at it, also fix fix the example to reflect the correct compatible
+string for Tegra30 chips.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Changes in v2:
+- add note about the corrected example to commit message
+- collate all single entry compatibles into an enum
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index d7a37f5d4527..a2c28f493a75 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -125,13 +125,10 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 		return err;
- 
- 	/* take over the memory region from the early initialization */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	fuse->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(fuse->base))
-+		return PTR_ERR(fuse->base);
- 	fuse->phys = res->start;
--	fuse->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(fuse->base)) {
--		err = PTR_ERR(fuse->base);
--		return err;
--	}
- 
- 	fuse->clk = devm_clk_get(&pdev->dev, "fuse");
- 	if (IS_ERR(fuse->clk)) {
+ .../bindings/serial/nvidia,tegra20-hsuart.txt |  73 ----------
+ .../serial/nvidia,tegra20-hsuart.yaml         | 125 ++++++++++++++++++
+ 2 files changed, 125 insertions(+), 73 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+
+diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
+deleted file mode 100644
+index f709304036c2..000000000000
+--- a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
++++ /dev/null
+@@ -1,73 +0,0 @@
+-NVIDIA Tegra20/Tegra30 high speed (DMA based) UART controller driver.
+-
+-Required properties:
+-- compatible : should be,
+-  "nvidia,tegra20-hsuart" for Tegra20,
+-  "nvidia,tegra30-hsuart" for Tegra30,
+-  "nvidia,tegra186-hsuart" for Tegra186,
+-  "nvidia,tegra194-hsuart" for Tegra194.
+-
+-- reg: Should contain UART controller registers location and length.
+-- interrupts: Should contain UART controller interrupts.
+-- clocks: Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-- resets : Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names : Must include the following entries:
+-  - serial
+-- dmas : Must contain an entry for each entry in dma-names.
+-  See ../dma/dma.txt for details.
+-- dma-names : Must include the following entries:
+-  - rx
+-  - tx
+-
+-Optional properties:
+-- nvidia,enable-modem-interrupt: Enable modem interrupts. Should be enable
+-		only if all 8 lines of UART controller are pinmuxed.
+-- nvidia,adjust-baud-rates: List of entries providing percentage of baud rate
+-  adjustment within a range.
+-  Each entry contains sets of 3 values. Range low/high and adjusted rate.
+-  <range_low range_high adjusted_rate>
+-  When baud rate set on controller falls within the range mentioned in this
+-  field, baud rate will be adjusted by percentage mentioned here.
+-  Ex: <9600 115200 200>
+-  Increase baud rate by 2% when set baud rate falls within range 9600 to 115200
+-
+-Baud Rate tolerance:
+-  Standard UART devices are expected to have tolerance for baud rate error by
+-  -4 to +4 %. All Tegra devices till Tegra210 had this support. However,
+-  Tegra186 chip has a known hardware issue. UART Rx baud rate tolerance level
+-  is 0% to +4% in 1-stop config. Otherwise, the received data will have
+-  corruption/invalid framing errors. Parker errata suggests adjusting baud
+-  rate to be higher than the deviations observed in Tx.
+-
+-  Tx deviation of connected device can be captured over scope (or noted from
+-  its spec) for valid range and Tegra baud rate has to be set above actual
+-  Tx baud rate observed. To do this we use nvidia,adjust-baud-rates
+-
+-  As an example, consider there is deviation observed in Tx for baud rates as
+-  listed below.
+-  0 to 9600 has 1% deviation
+-  9600 to 115200 2% deviation
+-  This slight deviation is expcted and Tegra UART is expected to handle it. Due
+-  to the issue stated above, baud rate on Tegra UART should be set equal to or
+-  above deviation observed for avoiding frame errors.
+-  Property should be set like this
+-  nvidia,adjust-baud-rates = <0 9600 100>,
+-  			     <9600 115200 200>;
+-
+-Example:
+-
+-serial@70006000 {
+-	compatible = "nvidia,tegra30-hsuart", "nvidia,tegra20-hsuart";
+-	reg = <0x70006000 0x40>;
+-	reg-shift = <2>;
+-	interrupts = <0 36 0x04>;
+-	nvidia,enable-modem-interrupt;
+-	clocks = <&tegra_car 6>;
+-	resets = <&tegra_car 6>;
+-	reset-names = "serial";
+-	dmas = <&apbdma 8>, <&apbdma 8>;
+-	dma-names = "rx", "tx";
+-	nvidia,adjust-baud-rates = <1000000 4000000 136>; /* 1.36% shift */
+-};
+diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+new file mode 100644
+index 000000000000..04d55fecf47c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+@@ -0,0 +1,125 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/serial/nvidia,tegra20-hsuart.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra20/Tegra30 high speed (DMA based) UART controller driver
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - nvidia,tegra20-hsuart
++          - nvidia,tegra30-hsuart
++          - nvidia,tegra186-hsuart
++          - nvidia,tegra194-hsuart
++      - items:
++          - const: nvidia,tegra124-hsuart
++          - const: nvidia,tegra30-hsuart
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: module clock
++
++  resets:
++    items:
++      - description: module reset
++
++  reset-names:
++    items:
++      - const: serial
++
++  dmas:
++    items:
++      - description: DMA channel used for reception
++      - description: DMA channel used for transmission
++
++  dma-names:
++    items:
++      - const: rx
++      - const: tx
++
++  nvidia,enable-modem-interrupt:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: Enable modem interrupts. Should be enable only if all 8 lines of UART controller
++      are pinmuxed.
++
++  nvidia,adjust-baud-rates:
++    $ref: /schemas/types.yaml#/definitions/uint32-matrix
++    description: |
++      List of entries providing percentage of baud rate adjustment within a range. Each entry
++      contains a set of 3 values: range low/high and adjusted rate. When the baud rate set on the
++      controller falls within the range mentioned in this field, the baud rate will be adjusted by
++      percentage mentioned here.
++
++      Example: <9600 115200 200>
++
++      Increase baud rate by 2% when set baud rate falls within range 9600 to 115200.
++
++      Standard UART devices are expected to have tolerance for baud rate error by -4 to +4 %. All
++      Tegra devices till Tegra210 had this support. However, Tegra186 chip has a known hardware
++      issue. UART RX baud rate tolerance level is 0% to +4% in 1-stop config. Otherwise, the
++      received data will have corruption/invalid framing errors. Parker errata suggests adjusting
++      baud rate to be higher than the deviations observed in TX.
++
++      TX deviation of connected device can be captured over scope (or noted from its spec) for
++      valid range and Tegra baud rate has to be set above actual TX baud rate observed. To do this
++      we use nvidia,adjust-baud-rates.
++
++      As an example, consider there is deviation observed in TX for baud rates as listed below. 0
++      to 9600 has 1% deviation 9600 to 115200 2% deviation. This slight deviation is expcted and
++      Tegra UART is expected to handle it. Due to the issue stated above, baud rate on Tegra UART
++      should be set equal to or above deviation observed for avoiding frame errors. Property
++      should be set like this:
++
++        nvidia,adjust-baud-rates = <0 9600 100>,
++                                   <9600 115200 200>;
++    items:
++      items:
++        - description: range lower bound
++        - description: range upper bound
++        - description: adjustment (in permyriad, i.e. 0.01%)
++
++allOf:
++  - $ref: serial.yaml
++
++unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - resets
++  - reset-names
++  - dmas
++  - dma-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra30-car.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    serial@70006000 {
++        compatible = "nvidia,tegra30-hsuart";
++        reg = <0x70006000 0x40>;
++        interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++        nvidia,enable-modem-interrupt;
++        clocks = <&tegra_car TEGRA30_CLK_UARTA>;
++        resets = <&tegra_car 6>;
++        reset-names = "serial";
++        dmas = <&apbdma 8>, <&apbdma 8>;
++        dma-names = "rx", "tx";
++        nvidia,adjust-baud-rates = <1000000 4000000 136>; /* 1.36% shift */
++    };
 -- 
-2.39.0
+2.41.0
 
