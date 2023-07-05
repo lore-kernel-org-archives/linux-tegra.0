@@ -2,74 +2,76 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40810EB64DA
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 09:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 712ABEB64DA
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 09:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231613AbjGEJfQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Jul 2023 05:35:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51470 "EHLO
+        id S231769AbjGEJyJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jul 2023 05:54:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231616AbjGEJfP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 05:35:15 -0400
+        with ESMTP id S231628AbjGEJyI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 05:54:08 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8921713
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Jul 2023 02:34:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA65171B
+        for <linux-tegra@vger.kernel.org>; Wed,  5 Jul 2023 02:53:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688549669;
+        s=mimecast20190719; t=1688550803;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=2l0oWn80w44VFK/52z7+jyoTd7jTP9Axkcdy88qxz40=;
-        b=Zu88lZ0XHkNjZtSSq/MId8+8oXq67YdE6bujPC3gLxrAC49UdcK7UNZmjXN2l2REJ8cPSv
-        6aO+UBIWP4jwAxtHHqMrj4Ss26EdqNZA6YRz3fpGMaYBcL5t5RFQL5mgozGHYo3or6GoDi
-        eUId6WDNkX5dAsieV4m96nFoNBmmC8U=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=DRNRYYR3em1ug3SJuQFxKqDHhttEDU94J84H5e4z6eY=;
+        b=Ho0SRWiB1vsu8wtiBoIv1J/ktZAEtRJW6/va5NNGBrZXCOlai6iLJYoxKWLRgfB7umhcj0
+        9lfN4aBXYXjg2M/qRRTEGsMYd52G5btIxArL2UPUtPC2vKVPmJofgjhC0DQ7YxKPcV0u2G
+        rbU978q+lqBLjYBQ+sywpHwUASkdBRk=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-uPnVJEnaO_yIepBm2cWA0Q-1; Wed, 05 Jul 2023 05:34:28 -0400
-X-MC-Unique: uPnVJEnaO_yIepBm2cWA0Q-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-4fb7d06a7e6so6259954e87.2
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Jul 2023 02:34:28 -0700 (PDT)
+ us-mta-28-6EYnYfoDOYCd4sgI1wdwGA-1; Wed, 05 Jul 2023 05:53:19 -0400
+X-MC-Unique: 6EYnYfoDOYCd4sgI1wdwGA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-4fb9087a677so5602331e87.1
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jul 2023 02:53:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688549667; x=1691141667;
+        d=1e100.net; s=20221208; t=1688550798; x=1691142798;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2l0oWn80w44VFK/52z7+jyoTd7jTP9Axkcdy88qxz40=;
-        b=PPOYiwEQY5LgQLkzN3Ny4rXTjfZMIjunm/A0H0WLVediQ6MjK/UhDJxRZEz66oBaGP
-         ZFK+BwA6qP0OG4u+RuOnYMHjKpRR7SIAzAEN6ERbFLKV6I1I5JlRlWdxatr78XLrtxKT
-         vTVVv0qeZbeDv85B4uMUxRnJwTS1rNL9hHag1uzTX2TBhefBlAw7gezQqLiEyrTrtwHM
-         2KGerXONOK5WSdLgoLGPWi/wc4raLazOY0HrtOq79XqzTzuprGihfJGjQjKbQl57wZn8
-         erSrfS0P8kYTbUbreTb6symHvIb9rBCEEYYv/H/KbHvvCjx0ijp+zKpI9pdJ1AbmkOpZ
-         o+GA==
-X-Gm-Message-State: ABy/qLa+mPC522FkCN6T9GTyvNcVcTrbWXrq52IaBgdJ0oh1l3cKLTGS
-        olmr4qiSH802Q7dEWij0K4aDEYrXYxE+0upKEdJugp8HeCV9xNfDxYjTG7F1mouW2O5s0LhPP/A
-        BFst2xdCtRPOd0O6SrpfBWMU=
-X-Received: by 2002:a05:6512:55c:b0:4fb:8603:f6aa with SMTP id h28-20020a056512055c00b004fb8603f6aamr10259736lfl.11.1688549667044;
-        Wed, 05 Jul 2023 02:34:27 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHdHXA+Wnp6hB3dyZ6CUVofgFnsSNYOrPiwVRr8+Xhwm5qD73pR2kC2waLM/BUW1Q1QrDqlPA==
-X-Received: by 2002:a05:6512:55c:b0:4fb:8603:f6aa with SMTP id h28-20020a056512055c00b004fb8603f6aamr10259712lfl.11.1688549666653;
-        Wed, 05 Jul 2023 02:34:26 -0700 (PDT)
+        bh=DRNRYYR3em1ug3SJuQFxKqDHhttEDU94J84H5e4z6eY=;
+        b=atSA2QO/dzXTBbv4/rJp8D+HwbMuowEjc/q2SbO0dvmTD84hUO4jE8+5ZxYhLnGv4T
+         SFpkPERaVF4AVuHpITeS0gNjGQsIt6HSZv0HkSFivKqdvgruJwuPiQfsFDVc9gWhcNnQ
+         kKXYtHVfAsURqN5iktCXAF95XSg0qQunfJcWczL1S/T2IOvGXzsePe20nhnYNrO0j2OT
+         N/xtFc16xa8yvNn9mo3sFI44IvmzWuWjC4l+SNJOFDpIvDL5nluQQ8ZrVhGbeuitPviq
+         ZWSRdtZISXhNOYln9ziPuoCoyQwYfgX2xk5dFORVWdfsFmzShkkxX2J3DNEm4SpOPrzU
+         CfEw==
+X-Gm-Message-State: ABy/qLa0fRio1vvEAgm5bgQZ0ODcIyzUAGlfcrjuLoqsLrHBbdLOTz21
+        QuQC6SKGE+em/979t/ggDtwj1zkd2rGrSrzOXJPZEw/qe3gEK9H/M6Z26h2erwKBr3emnJBzFQT
+        R3P5EPmPax9BRlkKW8RNKzfg=
+X-Received: by 2002:a05:6512:68c:b0:4fb:897e:21cc with SMTP id t12-20020a056512068c00b004fb897e21ccmr16115772lfe.67.1688550798485;
+        Wed, 05 Jul 2023 02:53:18 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGfRPzFk83Dq4TRvBUdnBTYWW72Dkqa6fZSxS4fGVLTYvFLeND2XwmxN1ZysjO2uVZDU0mefw==
+X-Received: by 2002:a05:6512:68c:b0:4fb:897e:21cc with SMTP id t12-20020a056512068c00b004fb897e21ccmr16115751lfe.67.1688550798187;
+        Wed, 05 Jul 2023 02:53:18 -0700 (PDT)
 Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id u22-20020a05600c00d600b003faa6ce54b2sm1630439wmm.2.2023.07.05.02.34.26
+        by smtp.gmail.com with ESMTPSA id z9-20020a05600c220900b003fbdf8292a7sm1606487wml.46.2023.07.05.02.53.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 02:34:26 -0700 (PDT)
+        Wed, 05 Jul 2023 02:53:17 -0700 (PDT)
 From:   Javier Martinez Canillas <javierm@redhat.com>
 To:     Thomas Zimmermann <tzimmermann@suse.de>,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org
 Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 04/10] drm/tegra: Set fbdev flags
-In-Reply-To: <f82635d8-4500-d420-f6ba-65aa515017e4@suse.de>
+        linux-fbdev@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 06/10] drm/exynos: Set fbdev flags
+In-Reply-To: <a69f00d6-d6f9-377a-a4a6-fc6cc4bd6b7f@suse.de>
 References: <20230704160133.20261-1-tzimmermann@suse.de>
- <20230704160133.20261-5-tzimmermann@suse.de>
- <87wmzerc2s.fsf@minerva.mail-host-address-is-not-set>
- <f82635d8-4500-d420-f6ba-65aa515017e4@suse.de>
-Date:   Wed, 05 Jul 2023 11:34:25 +0200
-Message-ID: <87a5war9b2.fsf@minerva.mail-host-address-is-not-set>
+ <20230704160133.20261-7-tzimmermann@suse.de>
+ <87r0pmrbdn.fsf@minerva.mail-host-address-is-not-set>
+ <a69f00d6-d6f9-377a-a4a6-fc6cc4bd6b7f@suse.de>
+Date:   Wed, 05 Jul 2023 11:53:17 +0200
+Message-ID: <877crer8fm.fsf@minerva.mail-host-address-is-not-set>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -78,41 +80,27 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 Thomas Zimmermann <tzimmermann@suse.de> writes:
 
+> Hi
+>
+> Am 05.07.23 um 10:49 schrieb Javier Martinez Canillas:
+
 [...]
-   
->>> +	info->flags |= FBINFO_VIRTFB;
+
 >> 
->> I see that all fbdev drivers just do: info->flags = FBINFO_FLAG_DEFAULT | FBINFO_VIRTFB
->> 
->> Guess you are doing in two assignments to be consistent with drm_fbdev_dma.c ?
->> I was just curious about the rationale for setting the flags in two steps.
+>> The #define FBINFO_FLAG_DEFAULT	FBINFO_DEFAULT seems to be there since the
+>> original v2.6.12-rc2 git import in commit 1da177e4c3f4, so is hard to know
+>> why was introduced. FBINFO_DEFAULT is more used, I will just stick to that:
 >
-> The _DEFAULT flag is really just a zero. And the other flags describe 
-> different aspects of the framebuffer.  I think it makes sense to set the 
-> flags together with the respective state. For example, _VIRTFB is set 
-> next to ->screen_buffer, because they belong together.
+> Thanks for commenting on this issue. I didn't notice that.
 >
-
-Yes, that makes sense.
-
-> _VIRTFB is currently only used in defio code at
+> I think I'll just remove these _DEFAULT assignments from the patchset.
 >
-> https://elixir.bootlin.com/linux/latest/source/drivers/video/fbdev/core/fb_defio.c#L232
->
-> I think the fbdev I/O helpers should also test this flag after all 
-> drivers have been annotated correctly. For example, fb_io_read() would 
-> WARN_ONCE if the _VIRTFB flag has been set; and fb_sys_read() would warn 
-> if it hasn't been set.  For the read helpers, it also makes sense to 
-> WARN_ONCE if the _READS_FAST flag has not been set.
+> And I think we should nuke them entirely everywhere. The _DEFAULT values 
+> are just 0 after commit 376b3ff54c9a1. So there's no value in assigning 
+> them at all.
 >
 
-Agreed. Maybe you could add those warn (or at least info or debug?) even
-if not all drivers have been annotated correctly. That way people can be
-aware that is missing and fix if there are remaining drivers.
-
-> Best regards
-> Thomas
->
+Agreed.
 
 -- 
 Best regards,
