@@ -2,62 +2,65 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FED3EB64DD
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 15:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90E5C04A6A
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 15:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233020AbjGEP0I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Jul 2023 11:26:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51720 "EHLO
+        id S232942AbjGEP0M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jul 2023 11:26:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjGEP0H (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 11:26:07 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 162291709;
-        Wed,  5 Jul 2023 08:26:06 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fbc0609cd6so68803255e9.1;
-        Wed, 05 Jul 2023 08:26:06 -0700 (PDT)
+        with ESMTP id S229645AbjGEP0J (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 11:26:09 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E85171D;
+        Wed,  5 Jul 2023 08:26:08 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-314172bb818so7724107f8f.1;
+        Wed, 05 Jul 2023 08:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688570764; x=1691162764;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ktD3trqPRBszeO1CIyX9rARFTNjc+YFjSkki0gN5auA=;
-        b=mNz8ZjwJmxf+M37Nol02bndwRYIyyzL0SX/ZuT4yJ3p7RS9RVqp9hmiqH4LtHzRK1F
-         VI16mKKcAIiyqNGiVa0DpRxoNgoTAzNhUleSDkoI3M3u34RssPvxFNc93zHIoHZvUwh5
-         RgREsAWrOWRnPL8u6LCpsmlb2PyTeJRLEMvsHQ5Pmfu5mU4tOBhLbL+aPz9ZWoTkLpn3
-         ZfyC2tawHTaBBphruJhndXULikQOv6MiggnbOV7sgKdxkl9LYYZga9F8Uo+Nu/NrFY7d
-         vNudcI0uJq7tImGBmUOhAaoo/hm8o3JQy9QKNV9CwjBx9yirnTZGLdOYhP3SnDRG7bC1
-         SxRg==
+        d=gmail.com; s=20221208; t=1688570766; x=1691162766;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cAOIOOaDv3Hyoka42okaEygSZgrjCeRWa0Pa8A8K5R0=;
+        b=XkdbbBXvST3kKGTWHUdm/9LN3K87V0FPzFppdO8Po66E/xOs4wg8z7M4CxBxkEiBFY
+         Pks7Uk23fKo+05PNYhLAo2R/Qxi2/5HEbcfioPP+6t5x5JV0WaPwHdGyqKNy2UzhGAo2
+         HpYrDwU9oLgOwgsIUWrk6VuW3dredn8rTQhgDxl2bFbaIT7f/8QcuR42SpdZaF50MtUh
+         MOqzyTQswqKPMOAAol6Wat/mD+wyWPIRx5REueWes3bS+OKCuf1lo53wev0e1csLTLsw
+         w5J/L7ABFtM3wt6Oqb6sbz64ubVjHz8n2sg9BdiUDschTOxrkbu2S8Y1WL8jbQNITdLq
+         QgdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688570764; x=1691162764;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ktD3trqPRBszeO1CIyX9rARFTNjc+YFjSkki0gN5auA=;
-        b=JNrX9kgklWqdmc6/UEDZvJz7lN7hzwC2zVxkyyp8xso4GvylwmqAS/YFFCI/BhNwuV
-         LuamteqD6WjL050t5gZP3/Jiq/Emn6xP444xT/3BvbUJ8oQUb3hZXRGpGMG8t7AyMYog
-         TuSPkvpZ0Fq5ulCDlZe7hOmqLCQO/hlSEDAlVXdJU4hZ7RGCmX3KwFMEkddFfHQhNyVS
-         S+ETPjcHq6qtiiyAxQSS6iEI4e5D5h+zG5RMXMQDJFSNdc+awTtOEnzCgcM0MYX4vE9f
-         saLqbykAZpyS5N+LjLnbEN1i5cdvNOEESj89KL3sdvsbNE+Pp472A6phMrahFesoe+nZ
-         xhZA==
-X-Gm-Message-State: AC+VfDxBBGhvAgsMLxPuWx2WPfAyWzqCOsaEJdWVZUlwulOeG1OEjXC4
-        ne8YiPS8JgDNmFbj0y9kjNc=
-X-Google-Smtp-Source: ACHHUZ7zB1CNHcO2DfMQRPhEc0SwBJGJ3zXwXTVLvEZAL7IJ22NxWcH6zuZm0CemN177m1vMhXodLg==
-X-Received: by 2002:a7b:ca48:0:b0:3f9:b7cc:723 with SMTP id m8-20020a7bca48000000b003f9b7cc0723mr12919247wml.21.1688570764181;
-        Wed, 05 Jul 2023 08:26:04 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688570766; x=1691162766;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cAOIOOaDv3Hyoka42okaEygSZgrjCeRWa0Pa8A8K5R0=;
+        b=dKtxI4Aip3WuMPmOqrXrps4RCFeB/ifrSDMT9N0AIDqOmw3eOj61wCEubHpq28Ygiv
+         sN6X5THm5Cd7SHHojgPdS5WWLKgHwZ3+wVwMYYaX1xbhgqKBIRYymwie5B3zYOI3ydoS
+         /kPO15X+d4kR9GNaxN0qEXEhp1u6Y6JmSETLGvSUR7ypwPg65SzAQMJA1/RkYiZuVkzC
+         95nMM9xVFyM2ruEcrw1/7rz0gmoAL+gkvrMWyWAIij/03DwZ4Py5/qFTJVbPpPNIxgYO
+         18W2dl92yKHYdu8gc26bfRjdzJtvc7EhHYjPVh/ayZ5GXco33JLS7KiTXQEhRtVDa9Ef
+         1Nlg==
+X-Gm-Message-State: ABy/qLYcE9VQEpr8lP9NhdGN7HKPVNb3izAX6ADn6JkR1rNa89Fvuekr
+        cppYrX3YRmcH05ekXO8OnP8=
+X-Google-Smtp-Source: APBJJlEQMDWwRsT6hOSrlOjX79PH108Tpxk1zRXef7wyaDkzFqpbRHcoxVDwVZnbIfow5e3GfPxnXw==
+X-Received: by 2002:a5d:440e:0:b0:314:3985:b291 with SMTP id z14-20020a5d440e000000b003143985b291mr7079903wrq.15.1688570766480;
+        Wed, 05 Jul 2023 08:26:06 -0700 (PDT)
 Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id y4-20020a1c4b04000000b003fbe4cecc5fsm2431099wma.34.2023.07.05.08.26.03
+        by smtp.gmail.com with ESMTPSA id c8-20020a056000104800b003143ba62cf4sm6339933wrx.86.2023.07.05.08.26.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 08:26:03 -0700 (PDT)
+        Wed, 05 Jul 2023 08:26:06 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: spi: tegra-slink: Convert to json-schema
-Date:   Wed,  5 Jul 2023 17:26:01 +0200
-Message-ID: <20230705152603.2514235-1-thierry.reding@gmail.com>
+Subject: [PATCH 3/3] dt-bindings: spi: Convert Tegra114 SPI to json-schema
+Date:   Wed,  5 Jul 2023 17:26:03 +0200
+Message-ID: <20230705152603.2514235-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230705152603.2514235-1-thierry.reding@gmail.com>
+References: <20230705152603.2514235-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -66,31 +69,33 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Convert the Tegra SLINK bindings from the free-form text format to
-json-schema.
+Convert the Tegra114 SPI controller device tree bindings from plain text
+to json-schema format.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/spi/nvidia,tegra20-slink.txt     | 37 --------
- .../bindings/spi/nvidia,tegra20-slink.yaml    | 90 +++++++++++++++++++
- 2 files changed, 90 insertions(+), 37 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt
- create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.yaml
+ .../bindings/spi/nvidia,tegra114-spi.txt      |  61 -----------
+ .../bindings/spi/nvidia,tegra114-spi.yaml     | 100 ++++++++++++++++++
+ 2 files changed, 100 insertions(+), 61 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.yaml
 
-diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt
+diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
 deleted file mode 100644
-index 40d80b93e327..000000000000
---- a/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt
+index db8e0d71c5bc..000000000000
+--- a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
 +++ /dev/null
-@@ -1,37 +0,0 @@
--NVIDIA Tegra20/Tegra30 SLINK controller.
+@@ -1,61 +0,0 @@
+-NVIDIA Tegra114 SPI controller.
 -
 -Required properties:
--- compatible : should be "nvidia,tegra20-slink", "nvidia,tegra30-slink".
--- reg: Should contain SLINK registers location and length.
--- interrupts: Should contain SLINK interrupts.
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
+-- compatible : For Tegra114, must contain "nvidia,tegra114-spi".
+-  Otherwise, must contain '"nvidia,<chip>-spi", "nvidia,tegra114-spi"' where
+-  <chip> is tegra124, tegra132, or tegra210.
+-- reg: Should contain SPI registers location and length.
+-- interrupts: Should contain SPI interrupts.
+-- clock-names : Must include the following entries:
+-  - spi
 -- resets : Must contain an entry for each entry in reset-names.
 -  See ../reset/reset.txt for details.
 -- reset-names : Must include the following entries:
@@ -100,39 +105,61 @@ index 40d80b93e327..000000000000
 -- dma-names : Must include the following entries:
 -  - rx
 -  - tx
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
 -
 -Recommended properties:
 -- spi-max-frequency: Definition as per
 -                     Documentation/devicetree/bindings/spi/spi-bus.txt
+-Optional properties:
+-- nvidia,tx-clk-tap-delay: Delays the clock going out to the external device
+-  with this tap value. This property is used to tune the outgoing data from
+-  Tegra SPI master with respect to outgoing Tegra SPI master clock.
+-  Tap values vary based on the platform design trace lengths from Tegra SPI
+-  to corresponding slave devices. Valid tap values are from 0 thru 63.
+-- nvidia,rx-clk-tap-delay: Delays the clock coming in from the external device
+-  with this tap value. This property is used to adjust the Tegra SPI master
+-  clock with respect to the data from the SPI slave device.
+-  Tap values vary based on the platform design trace lengths from Tegra SPI
+-  to corresponding slave devices. Valid tap values are from 0 thru 63.
 -
 -Example:
 -
 -spi@7000d600 {
--	compatible = "nvidia,tegra20-slink";
+-	compatible = "nvidia,tegra114-spi";
 -	reg = <0x7000d600 0x200>;
 -	interrupts = <0 82 0x04>;
 -	spi-max-frequency = <25000000>;
 -	#address-cells = <1>;
 -	#size-cells = <0>;
 -	clocks = <&tegra_car 44>;
+-	clock-names = "spi";
 -	resets = <&tegra_car 44>;
 -	reset-names = "spi";
 -	dmas = <&apbdma 16>, <&apbdma 16>;
 -	dma-names = "rx", "tx";
+-	<spi-client>@<bus_num> {
+-		...
+-		...
+-		nvidia,rx-clk-tap-delay = <0>;
+-		nvidia,tx-clk-tap-delay = <16>;
+-		...
+-	};
+-
 -};
-diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.yaml
+diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.yaml
 new file mode 100644
-index 000000000000..291c25ec015d
+index 000000000000..58222ffa53d7
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.yaml
-@@ -0,0 +1,90 @@
++++ b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.yaml
+@@ -0,0 +1,100 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/spi/nvidia,tegra20-slink.yaml#
++$id: http://devicetree.org/schemas/spi/nvidia,tegra114-spi.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: NVIDIA Tegra20/30 SLINK controller
++title: NVIDIA Tegra114 SPI controller
 +
 +maintainers:
 +  - Thierry Reding <thierry.reding@gmail.com>
@@ -140,9 +167,13 @@ index 000000000000..291c25ec015d
 +
 +properties:
 +  compatible:
-+    enum:
-+      - nvidia,tegra20-slink
-+      - nvidia,tegra30-slink
++    oneOf:
++      - const: nvidia,tegra114-spi
++      - items:
++          - enum:
++              - nvidia,tegra210-spi
++              - nvidia,tegra124-spi
++          - const: nvidia,tegra114-spi
 +
 +  reg:
 +    maxItems: 1
@@ -152,11 +183,15 @@ index 000000000000..291c25ec015d
 +
 +  clocks:
 +    items:
-+      - description: module clock
++      - description: SPI module clock
++
++  clock-names:
++    items:
++      - const: spi
 +
 +  resets:
 +    items:
-+      - description: module reset
++      - description: SPI module reset
 +
 +  reset-names:
 +    items:
@@ -164,20 +199,13 @@ index 000000000000..291c25ec015d
 +
 +  dmas:
 +    items:
-+      - description: DMA channel used for reception
-+      - description: DMA channel used for transmission
++      - description: DMA channel for the reception FIFO
++      - description: DMA channel for the transmission FIFO
 +
 +  dma-names:
 +    items:
 +      - const: rx
 +      - const: tx
-+
-+  operating-points-v2:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+  power-domains:
-+    items:
-+      - description: phandle to the core power domain
 +
 +  spi-max-frequency:
 +    description: Maximum SPI clocking speed of the controller in Hz.
@@ -193,6 +221,7 @@ index 000000000000..291c25ec015d
 +  - reg
 +  - interrupts
 +  - clocks
++  - clock-names
 +  - resets
 +  - reset-names
 +  - dmas
@@ -200,21 +229,29 @@ index 000000000000..291c25ec015d
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/tegra20-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
 +    spi@7000d600 {
-+        compatible = "nvidia,tegra20-slink";
++        compatible = "nvidia,tegra114-spi";
 +        reg = <0x7000d600 0x200>;
-+        interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+        spi-max-frequency = <25000000>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        clocks = <&tegra_car TEGRA20_CLK_SBC2>;
++        interrupts = <0 82 0x04>;
++        clocks = <&tegra_car 44>;
++        clock-names = "spi";
 +        resets = <&tegra_car 44>;
 +        reset-names = "spi";
 +        dmas = <&apbdma 16>, <&apbdma 16>;
 +        dma-names = "rx", "tx";
++
++        spi-max-frequency = <25000000>;
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        flash@0 {
++            compatible = "jedec,spi-nor";
++            reg = <0>;
++            spi-max-frequency = <20000000>;
++            nvidia,rx-clk-tap-delay = <0>;
++            nvidia,tx-clk-tap-delay = <16>;
++        };
 +    };
 -- 
 2.41.0
