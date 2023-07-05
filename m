@@ -2,197 +2,96 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A52BC001DB
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 02:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EE8C001B3
+	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jul 2023 06:50:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230361AbjGECKt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 4 Jul 2023 22:10:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52954 "EHLO
+        id S231908AbjGEGuO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jul 2023 02:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbjGECKs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 4 Jul 2023 22:10:48 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B8C10E3
-        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 19:10:45 -0700 (PDT)
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230705021041epoutp016dd825641ac560d40b2deb3b14b94c75~u1sKfd8MW1309513095epoutp01p
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Jul 2023 02:10:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230705021041epoutp016dd825641ac560d40b2deb3b14b94c75~u1sKfd8MW1309513095epoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1688523041;
-        bh=4E+MzmqOKL2RtSjlP0QIVLmiF2vs0swS5EIe841yo2E=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=hSt0rjUTI2r09JM/oYIRzPAGrq5AiQVpRUTb6pS4zCohp5bMMyzyKz1/OhaR1hkv1
-         HLWhByt6hRjEn1bZO7rtOmquOsxfZbi927hgkvsXIeXP/B2HwBkkSfDLWOlJ8zyUGG
-         GX4ajwjBcghgsD27brdTkxAUPEXRltU+oIURwi7M=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20230705021041epcas1p3c9816f14c108d50d56b77f31536a987f~u1sJ8WNa00837808378epcas1p3S;
-        Wed,  5 Jul 2023 02:10:41 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.135]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4Qwjmv70kFz4x9Pr; Wed,  5 Jul
-        2023 02:10:39 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        86.88.12307.F11D4A46; Wed,  5 Jul 2023 11:10:39 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230705021039epcas1p4e94d1de39688cf905452a04d2ed53959~u1sIdBUam0754707547epcas1p4G;
-        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230705021039epsmtrp2d12b8fd3a52ef908527c7e39ccefd381~u1sIcJw_I0958409584epsmtrp2s;
-        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
-X-AuditID: b6c32a4c-cd7ff70000053013-52-64a4d11f3002
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        88.39.34491.F11D4A46; Wed,  5 Jul 2023 11:10:39 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230705021039epsmtip2ac67d7b1ff03b5cf87e11c4fc4fe5b2a~u1sIJ7YET1774717747epsmtip2i;
-        Wed,  5 Jul 2023 02:10:39 +0000 (GMT)
-From:   =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?= 
-        <inki.dae@samsung.com>
-To:     "'Thomas Zimmermann'" <tzimmermann@suse.de>, <javierm@redhat.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>
-Cc:     <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>,
-        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
-        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>
-In-Reply-To: <20230704160133.20261-6-tzimmermann@suse.de>
-Subject: RE: [PATCH 05/10] drm/exynos: Use fbdev DMA helpers
-Date:   Wed, 5 Jul 2023 11:10:39 +0900
-Message-ID: <00ec01d9aee5$e4c35290$ae49f7b0$@samsung.com>
+        with ESMTP id S231820AbjGEGtp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jul 2023 02:49:45 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D4D19A4
+        for <linux-tegra@vger.kernel.org>; Tue,  4 Jul 2023 23:49:13 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99364ae9596so352774966b.1
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Jul 2023 23:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688539746; x=1691131746;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gnpj157c3whA4keAde4dkEQlANMe2n/WYXZtcdvXOtI=;
+        b=qnxKcQ+ogqw9SGXbUz4Lb1635OSrmEZ6jrj1QiIUI9pHSW2xyBXeWXoJkYt7F4Wg1x
+         Yv2XRaBwAzke9DDDYzRvzOQ38gwNtS/fjv36UtAM6/sSFy3SDTjazsWiMmeRFeFNBtPm
+         Y1mBAKtb2L4lUBQLuh34mw4aZ6gtsQTY3TJCPV44qp+OSEbHH6DmboKo5ZxUAeL/Oy/7
+         jiheg/CimLISbrJsCu1IJjMP8liOf2FOeV+8K+kItsDsuylSrEet/bCLCc2HzlKgPsrH
+         u/FPNYa8kJCuNP86/m3IMSXkVT/tcDaOBQ7hdpX/Tdl+XMFE4OoRdybOiHXjOfKhxXKw
+         2V7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688539746; x=1691131746;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gnpj157c3whA4keAde4dkEQlANMe2n/WYXZtcdvXOtI=;
+        b=P0QW+/bViTO+jVQzSBkhqXlMkwXkztXqq0ytJ2eCDWIB69uS+GjhqYbSKvk8w5jBJY
+         idYkCsE8WdjsVXP2fvp1jWC8022cZNNjDw7Zs9pQ8oZ32GJ8eHZKepXkysCTJBujh+4u
+         kquMXRNJu6y0AR9Ehruc+DyNpR4z2FUU2wpjcua/V2mDTuq2fg0SKWFdZ4z9H4hohIiO
+         x+12TiHSoME306V/8xKke6cmijJQvsBnlWR/iP6t91X0QMO8IpAk4tqbZnx+G+brMBno
+         XzHTlGsB28F07q4rI9IPGF2KTVZ9PFzAKTe99CmTcX2ve5u/iMya7u6V/7B8BQXR2yCL
+         fMzw==
+X-Gm-Message-State: ABy/qLbp5m3O95rl0hpnqswh0DxtfanSkhuQUKKBClMjcVm0BWJk2toG
+        A+f04mmnOtUsiuiZ8ijDyM/Mig==
+X-Google-Smtp-Source: APBJJlEv9Qie1QyGZE7X599Yi2UpWVPM1zDwcHS0k9EYYzxDgnLXI89gNsM3Zl16UKEQPrVgXCkkdg==
+X-Received: by 2002:a17:906:d8d1:b0:974:1ef1:81ad with SMTP id re17-20020a170906d8d100b009741ef181admr10699538ejb.4.1688539745878;
+        Tue, 04 Jul 2023 23:49:05 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id w10-20020a170906130a00b00992b50fbbe9sm7849728ejb.90.2023.07.04.23.49.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jul 2023 23:49:05 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 1/2] arm64: tegra: correct audio-codec interrupt flag in P2972-0000
+Date:   Wed,  5 Jul 2023 08:49:02 +0200
+Message-Id: <20230705064903.12690-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ks_c_5601-1987"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQHuhM/LBRmP0P1z6R6SIKtY9iGhpwG3SkJIAXEc4UKvZ3zNMA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmvq78xSUpBn+emFs8mLeNzeLK1/ds
-        FgunLWe02Pt6K7vF2aY37BabHl9jtTjR94HVYsb5fUwWnV9mAZV83Mpi0da5DCg2+SWbxZY3
-        E1kdeD02repk87hzbQ+bx7yTgR73u48zeWxeUu/xft9VNo++LasYPTafrvb4vEkugDMq2yYj
-        NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6GolhbLEnFKg
-        UEBicbGSvp1NUX5pSapCRn5xia1SakFKToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGvma9
-        ggNiFbc2bWRrYPwv1MXIySEhYCLR93QfWxcjF4eQwB5GiTXPfrCDJIQEPjFK/NxtD2F/Y5TY
-        OZ8fpuHE5POMEA17GSWufv7DClH0klFiwzFrEJtNIEPibvtiVpAiEYEmRokZ79vBHGaBX0wS
-        Pw6tZQap4hSwlLjas4gNxBYWsJFYtuwJ2GoWARWJlvsHwWxeoJqelY9ZIGxBiZMzn4DZzAJG
-        EktWz2eCsOUltr+dwwxxnoLEz6fLWCHiIhKzO9vA4iICThLv+06xgBwhIXCDQ2Lv7QmsEA0u
-        Ep37+9kgbGGJV8e3sEPYUhKf3+1lg2iYzChx5/oKqO4ZjBKHf15nhKgylti/dDIThK0osfP3
-        XEaI1XwS7772AG3gAIrzSnS0QUNbSeLYxRtQrRISF5ZMZJvAqDQLyXOzkDw3C8lzs5A8tICR
-        ZRWjVGpBcW56arJhgaFuXmo5PM6T83M3MYLTtZbPDsbv6//qHWJk4mA8xCjBwawkwrvi++IU
-        Id6UxMqq1KL8+KLSnNTiQ4ymwDCfyCwlmpwPzBh5JfGGJpYGJmZGxiYWhmaGSuK8MZ/aU4QE
-        0hNLUrNTUwtSi2D6mDg4pRqYHLdatfLM3d1pnn+t0M3p1v7a2N3b5kctdNxvLhuYIPSkNfqG
-        5ItI85NsxRvCTA5mySit6hRtlBVYIWLFaeY++8n62Rt/hZW69rx4I1ldrOKt+nM3S1k9Y+EM
-        iyr9WL41bj/Lc3yW359zbrfkQ+kdyamSwtonRFh2HrfddUvzZLoiw/U19+YLs3NrB8s/4z5x
-        1Vfma82mgufpQfMUA6ZL5QpO2iS+K2ZXfuZGFgfH7ZuiA09ES2r+3nTVn+WI6e2nMqKZR4va
-        Q+apqUi72fNuVTF890K0dJd09LyFczRmdrOWRk48wny+pvlHqYGuVvMJNc7TXpLnlOYdmSL7
-        tHfxC+2th5ekiR1YKjj5bJkSS3FGoqEWc1FxIgDmXc/7YAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSvK78xSUpBh3HxC0ezNvGZnHl63s2
-        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
-        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBnFZZOS
-        mpNZllqkb5fAlbGvWa/ggFjFrU0b2RoY/wt1MXJySAiYSJyYfJ6xi5GLQ0hgN6PE6y8tTF2M
-        HEAJCYktWzkgTGGJw4eLIUqeM0p8PD6NGaSXTSBNYtLc/awgCRGBNkaJRx//gznMAg3MEgtP
-        rWaHaNnOKLFizhlGkBZOAUuJqz2L2EBsYQEbiWXLnrCD2CwCKhIt9w+C2bxANT0rH7NA2IIS
-        J2c+AbOZgU5tPNwNZctLbH87hxniBQWJn0+XsULERSRmd7aBxUUEnCTe951imcAoPAvJqFlI
-        Rs1CMmoWkvYFjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCo1VLcwfj9lUf9A4x
-        MnEwHmKU4GBWEuFd8X1xihBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe8Re9KUIC6YklqdmpqQWp
-        RTBZJg5OqQYmtjPHOFyrTqzzsTEU1C6J+Xj1REpr6NmQUBW/26m3qiZ72/hGPrJ2XN/lOdmj
-        votH++pRvWsPYjbonHY2yIpIq1jQcfCTjZjCfY4Py673P1Fki3B8eXVeaM3Cq1wZ96rm3tj6
-        /G3k2czge3aHFvucvcSbqX6Uo088LH/d7GBVx+ZJfBxn3oR94jIRvJ20dXuFgFD2rCXR4TPl
-        nSf18IZ+n6l8v+B1MkfQR5bQu5+vbn4rcKhtBve19OTNrT3fjnX/7V++n2Va+KzXrg133zNs
-        T/2atNLVO26r1hlR3oTDKh96vF/m/4vMSOSNTHoiv583Tqpxmt2ZH1Xnln/Ym6q7/GgL//8f
-        t8O/zFdxcr2sxFKckWioxVxUnAgAr5utA0UDAAA=
-X-CMS-MailID: 20230705021039epcas1p4e94d1de39688cf905452a04d2ed53959
-X-Msg-Generator: CA
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230704160141epcas1p1059d0c1b202ddb900c530a47247824fc
-References: <20230704160133.20261-1-tzimmermann@suse.de>
-        <CGME20230704160141epcas1p1059d0c1b202ddb900c530a47247824fc@epcas1p1.samsung.com>
-        <20230704160133.20261-6-tzimmermann@suse.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+GPIO_ACTIVE_x flags are not correct in the context of interrupt flags.
+These are simple defines so they could be used in DTS but they will not
+have the same meaning: GPIO_ACTIVE_HIGH = 0 = IRQ_TYPE_NONE.
 
-> -----Original Message-----
-> From: Thomas Zimmermann <tzimmermann@suse.de>
-> Sent: Wednesday, July 5, 2023 12:50 AM
-> To: javierm@redhat.com; maarten.lankhorst@linux.intel.com;
-> mripard@kernel.org
-> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
-> fbdev@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>; Inki Dae
-> <inki.dae@samsung.com>; Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin
-> Park <kyungmin.park@samsung.com>; Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>
-> Subject: [PATCH 05/10] drm/exynos: Use fbdev DMA helpers
-> 
-> Use fbdev's DMA helpers for fbdev emulation. They drivers previously
-> used the I/O-memory helpers, while allocating DMA-able system memory.
-> This could (in theory) result in bus errors from accessing the memory
-> range.
-> 
-> This bug has been present since the exynos driver was first added.
+Correct the interrupt flags to a value used also in Tegra30 Beaver board
+with this device.
 
-Acked-by : Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Inki Dae
-
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Fixes: 1c248b7d2960 ("DRM: add DRM Driver for Samsung SoC EXYNOS4210.")
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/Kconfig            | 2 +-
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/Kconfig
-> b/drivers/gpu/drm/exynos/Kconfig
-> index 7ca7e1dab52c..661b42ad4873 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -7,7 +7,7 @@ config DRM_EXYNOS
->  	select DRM_DISPLAY_HELPER if DRM_EXYNOS_DP
->  	select DRM_KMS_HELPER
->  	select VIDEOMODE_HELPERS
-> -	select FB_IO_HELPERS if DRM_FBDEV_EMULATION
-> +	select FB_DMA_HELPERS if DRM_FBDEV_EMULATION
->  	select SND_SOC_HDMI_CODEC if SND_SOC
->  	help
->  	  Choose this option if you have a Samsung SoC Exynos chipset.
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index fdf65587f1fe..7ca3424b59ce 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -49,9 +49,9 @@ static void exynos_drm_fb_destroy(struct fb_info *info)
-> 
->  static const struct fb_ops exynos_drm_fb_ops = {
->  	.owner		= THIS_MODULE,
-> -	__FB_DEFAULT_IO_OPS_RDWR,
-> +	__FB_DEFAULT_DMA_OPS_RDWR,
->  	DRM_FB_HELPER_DEFAULT_OPS,
-> -	__FB_DEFAULT_IO_OPS_DRAW,
-> +	__FB_DEFAULT_DMA_OPS_DRAW,
->  	.fb_mmap        = exynos_drm_fb_mmap,
->  	.fb_destroy	= exynos_drm_fb_destroy,
->  };
-> --
-> 2.41.0
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+index 64a3398fe7a6..7c400e024332 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+@@ -2115,7 +2115,7 @@ rt5658: audio-codec@1a {
+ 				compatible = "realtek,rt5658";
+ 				reg = <0x1a>;
+ 				interrupt-parent = <&gpio>;
+-				interrupts = <TEGRA194_MAIN_GPIO(S, 5) GPIO_ACTIVE_HIGH>;
++				interrupts = <TEGRA194_MAIN_GPIO(S, 5) IRQ_TYPE_EDGE_FALLING>;
+ 				clocks = <&bpmp TEGRA194_CLK_AUD_MCLK>;
+ 				clock-names = "mclk";
+ 				realtek,jd-src = <2>;
+-- 
+2.34.1
 
