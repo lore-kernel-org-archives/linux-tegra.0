@@ -2,66 +2,60 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDF3C001E0
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 13:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEDDEB64D9
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 13:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbjGGNR0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jul 2023 09:17:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45608 "EHLO
+        id S231866AbjGGN0Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jul 2023 09:26:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231909AbjGGNRY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 09:17:24 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3461FC9;
-        Fri,  7 Jul 2023 06:17:22 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fbc5d5742eso20426775e9.3;
-        Fri, 07 Jul 2023 06:17:22 -0700 (PDT)
+        with ESMTP id S229661AbjGGN0W (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 09:26:22 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D168F1FEC;
+        Fri,  7 Jul 2023 06:26:21 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fbc0609cd6so19351155e9.1;
+        Fri, 07 Jul 2023 06:26:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688735841; x=1691327841;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ck6fwpfDkUHjqvfaLifjQqp/JbwbuNDqeDY5YxFVtno=;
-        b=Hr7dr6H8CgN04ZCDpXvkJtdNI67ekD5iDH65Zp+JrZKoIxrNgz1y/H14NYlKHaqenP
-         gSqelmD9Vtk68qLJQz5luTq+V0FL3CCq7qg8jsRHYqgu2ELa5vFhqWg84XD7HTHuStab
-         FxBXw27vGrkYdOZJL85uolv5OM3okJe/OQRfmn4vmRwd6VR28XR7U+4T63MZe3+CXman
-         kSwLh+7+XgoUohLDMBj/jlVamyT4st5ZaVPGGaf9VwNhhvbSMEjKweRhy9V1+NNoIC67
-         yr1gnN5Kdl3ZnnZfajkmRj0ocjLfrsOR87m2iZHIzSTQxcgNR5WK5KN0OTepCp3/iK4w
-         jxSw==
+        d=gmail.com; s=20221208; t=1688736380; x=1691328380;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fqJPRv6MIZ8ua4fCvSYsUcevIALkgdCAoznGZ8KNcv0=;
+        b=nuj6Edmf8JAi01cjjJ0hayp7K62W4CD+BEjUI5IZTmibHmKGm1Y/NI+w+MTcQpcJk4
+         Qf8GPFXq5oC90+NZE4jxXrSQetgUL432QGbJ32kiT5uMsYE/a5BN4zdECG658tWIrMVZ
+         OU+84bUA8OrGk4gBz+B8imZf5595scxjNQLmRZWaLskpumNuF0Qz/P6Q7CVAGuE8czXu
+         rwETWy7jRrCQGau7G6QndJvx+b0kW5klSUTi2r6Awsdsn0LLBW20iRzB0whK+c7z+8EU
+         RXPeiFgkm8mK/UJfBCTHef/Yc4j8ATdk6CWRnSl3KjQYktZM/IQSzB2U2wakWt9F67DO
+         t7ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688735841; x=1691327841;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ck6fwpfDkUHjqvfaLifjQqp/JbwbuNDqeDY5YxFVtno=;
-        b=iorx/ZrRZRaWVfEUhVJq+5+Z35y37jrr9DIm22RJZpchPm+UhNGv09GuAWNXY1+V91
-         0FTj99+2+enlnDESmFW7TOUgdoH2wrz2bSc+ixpdr8E4bJ5Es9bVRWp49/5rqYe9dDzY
-         BVDJxgOElYXdU+VWpDBnJftTRyeKUhC6eYe5gatm61uuzaw7doZTPB9OJX4BKoKrkYqD
-         giQKiQNi9HCzvHqpfSuf/8zPjgsfiRhwyU8sBICbM5SzabQzn67L8bsOvdaY2/idazVd
-         NYAVE/LsTdJB3TOUjUL8TrgsQCSzWlNs2CmVEtkGuVrKsVJQhIDPEV+P2bW5YYgYzANp
-         NbZQ==
-X-Gm-Message-State: ABy/qLZW1SYmsdTOxE6oxOutw712obIStiGHUt6evqQOCBgVAl0/p+cy
-        r8ujd3S7jrJmPcIYMt75nqU=
-X-Google-Smtp-Source: APBJJlHWjUWB5rq0ypMUZGTx/eAJvRL1aGSAM4KiDATeZyMRJR/LpcmhvyVwBzQ92jaa0fkF2qucSg==
-X-Received: by 2002:a05:600c:c8:b0:3fb:ce46:c0b3 with SMTP id u8-20020a05600c00c800b003fbce46c0b3mr4474728wmm.35.1688735841015;
-        Fri, 07 Jul 2023 06:17:21 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688736380; x=1691328380;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fqJPRv6MIZ8ua4fCvSYsUcevIALkgdCAoznGZ8KNcv0=;
+        b=ZbPAe2pc6p1GPrXGdPl5h4ZLQ36KIE1j12PAmUZyPYDk9AJpX8R2YuRZXrVkRy/EYx
+         8bvcq7J1VdQuMDn3l5TCp/nvYK8HMHkR96zD3i6mz/tZYCb6IWi2Djk5otCzuKWZeSmf
+         0ty5//l1XLkUmcwpitfJKmR3k3DTxJxsDcTBrIXSJ+gTKfvo8AL7LojE4lx5GZS2q203
+         UyXn6lXYlwl979qUZz2XSEk5Evm/LYnaIYSTOsgzMIiWokLdAqjyi3+lb3c8VoQKK17o
+         w7agcvhQPfqhRRLcXvQR6jAZUVMkW9ANrNOAFwq0U5Upsf0Op4LmAV5vep5BMhhzOA5G
+         oERA==
+X-Gm-Message-State: ABy/qLbTfOFXVm8HlTHwYaUQDIzLU3SRlQjsEsmb491XZkyb6VcQc3ML
+        YepakiUzUF6E8ttG+scjZnQ=
+X-Google-Smtp-Source: APBJJlGtDZuJw+usDqxCPN8oDZx+1jOmhFMx3YYRltev6rV/20kZvZSGHgcTV7lcW5UKITVWnsBF5Q==
+X-Received: by 2002:a05:600c:3786:b0:3fb:b890:128b with SMTP id o6-20020a05600c378600b003fbb890128bmr3944782wmr.27.1688736380160;
+        Fri, 07 Jul 2023 06:26:20 -0700 (PDT)
 Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id l11-20020a5d668b000000b003063db8f45bsm4444818wru.23.2023.07.07.06.17.20
+        by smtp.gmail.com with ESMTPSA id f23-20020a7bcd17000000b003fbb5506e54sm2469658wmj.29.2023.07.07.06.26.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 06:17:20 -0700 (PDT)
+        Fri, 07 Jul 2023 06:26:19 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 7/7] dt-bindings: arm: tegra: pmc: Relicense and move into soc/tegra directory
-Date:   Fri,  7 Jul 2023 15:17:11 +0200
-Message-ID: <20230707131711.2997956-7-thierry.reding@gmail.com>
+To:     Andi Shyti <andi.shyti@kernel.org>
+Cc:     Wolfram Sang <wsa@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2] i2c: tegra: Fix failure during probe deferral cleanup
+Date:   Fri,  7 Jul 2023 15:26:19 +0200
+Message-ID: <20230707132619.2998382-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230707131711.2997956-1-thierry.reding@gmail.com>
-References: <20230707131711.2997956-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -70,32 +64,36 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Dual-license this binding for consistency with other Tegra bindings and
-move it into the soc/tegra directory.
+If the driver fails to obtain a DMA channel, it will initiate cleanup
+and try to release the DMA channel that couldn't be retrieved. This will
+cause a crash because the cleanup will try to dereference an ERR_PTR()-
+encoded error code.
 
+However, there's nothing to clean up at this point yet, so we can avoid
+this by simply resetting the DMA channel to NULL instead of storing the
+error code.
+
+Fixes: fcc8a89a1c83 ("i2c: tegra: Share same DMA channel for RX and TX")
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/{arm => soc}/tegra/nvidia,tegra20-pmc.yaml       | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/{arm => soc}/tegra/nvidia,tegra20-pmc.yaml (99%)
+Changes in v2:
+- simplify patch by setting dma_chan = NULL on channel request failure
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-similarity index 99%
-rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-rename to Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-index f709a4a0853c..ef42f07e0572 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-+++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-@@ -1,7 +1,7 @@
--# SPDX-License-Identifier: GPL-2.0
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/arm/tegra/nvidia,tegra20-pmc.yaml#
-+$id: http://devicetree.org/schemas/soc/tegra/nvidia,tegra20-pmc.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+ drivers/i2c/busses/i2c-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index f155e9028f94..2a13f11edfd1 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -460,6 +460,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+ 	i2c_dev->dma_chan = dma_request_chan(i2c_dev->dev, "tx");
+ 	if (IS_ERR(i2c_dev->dma_chan)) {
+ 		err = PTR_ERR(i2c_dev->dma_chan);
++		i2c_dev->dma_chan = NULL;
+ 		goto err_out;
+ 	}
  
- title: Tegra Power Management Controller (PMC)
 -- 
 2.41.0
 
