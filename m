@@ -2,124 +2,87 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E34BEB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 14:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C52EB64D9
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 22:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232881AbjGGOFr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jul 2023 10:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41250 "EHLO
+        id S229557AbjGGW3p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jul 2023 18:29:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232770AbjGGOFa (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 10:05:30 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9894B2719
-        for <linux-tegra@vger.kernel.org>; Fri,  7 Jul 2023 07:05:06 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4fb73ba3b5dso3135697e87.1
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Jul 2023 07:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688738705; x=1691330705;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kubpqVY+wfLhuDXukhvTufqnNdzOkNaWWajItyQMxWM=;
-        b=Yup815+bfBG+qKfdbmDkUR3hKM6OAuBkkeYgoD2wvVs9x5tdisLBsy8u2bqr4f0DSn
-         2hpXqIDKiEHwTBDti5FM+cY06+KHs3ahD0ERG7JtxSrdcFY/d1TdG5zS2+1q6NZ2XDRa
-         nhT9l5Q5vWWicaDnhDKsO2gN6hgk+R07ln21n95e+IJM3QzONtlULjHog3dTjn/IcVoS
-         vueGTxyyKt5sKLmjkgv9J4FeijJ1//uc5tuUiHMULMUC6h/huzNPmq9niLaBJRCgKDM3
-         jBbufA5CCrqoJ06HpRS+dZycpRG2yg5STU724HPnDQgmA5NRhs4uY1pYfC5uX+WNnLKX
-         DoYg==
+        with ESMTP id S229573AbjGGW3p (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 18:29:45 -0400
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 382552125;
+        Fri,  7 Jul 2023 15:29:44 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-783698a37beso90808239f.0;
+        Fri, 07 Jul 2023 15:29:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688738705; x=1691330705;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kubpqVY+wfLhuDXukhvTufqnNdzOkNaWWajItyQMxWM=;
-        b=TEotYJyB2WVPKuVYfZSGv/ORljRrLB6tAAXC08fm9K4fEflYFMvYu8yCba6z/Rp7uM
-         TEd18rV5A84xC6ngSONxujhrKUU+0znuQn4zEFisCOLO2/Hm0eUFc4iMP+hR+1ZzYD8B
-         03/yOTAqosJXrcEVw7bVVcHIoIGbIilzfRHk+yNOnW8u3p/lDnvypXOC9L17UFiE876n
-         H1kxliFJD+OdmZRcvd3SrF9S0l37v5VeBF0eo49t4rPiQSQmz9EquHvkSr2jEDrg9Pax
-         6h+wH/L5sABxM1Tfah/nzFI94CusGPfVj97tJV2gs4uZDAP8UH2WvewX21AJgJPCHFHL
-         EjiQ==
-X-Gm-Message-State: ABy/qLYjcssemf8t+EJ3Pg3B+xWtpLS6/O/mbi46tHSVBX5NjzBLvtJ5
-        lfSHzIL/bRnjxT570YJ+2IEi9A==
-X-Google-Smtp-Source: APBJJlF67NbLX0eb6y4ugssNq0/Qewc5uDxjKQNtG/3DMiEh/RVTtC8ZQ2+0X4TTuC06eW+jJBdiPw==
-X-Received: by 2002:a2e:8745:0:b0:2b3:4ea3:d020 with SMTP id q5-20020a2e8745000000b002b34ea3d020mr3841130ljj.17.1688738704915;
-        Fri, 07 Jul 2023 07:05:04 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-94-254-63-18.NA.cust.bahnhof.se. [94.254.63.18])
-        by smtp.gmail.com with ESMTPSA id u21-20020a2e8555000000b002b6cb25e3f1sm760341ljj.108.2023.07.07.07.05.02
+        d=1e100.net; s=20221208; t=1688768983; x=1691360983;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=psEnD33Q4LbtjRBRJzCVPEQIimSo2c50Z8uxB8eIKAk=;
+        b=MaiT8S/Kx9yV8n7nGzLMrK4QOxFOQc1NJXJPJEDc2FsWlIjTDBxmnGx3nKjo7WwtAH
+         HI9jJpJOH0Wlg6JcyvMriK3egYPvMWRre/KRigS+zsKmLhgYxFW+GF7lPOv7FdeI6OAl
+         wL+IV1dcczZzYDatogexZ36gdWd+WJJc3jMLTs32aVehcu0zKBTwXQ37uBASY+jHuCvV
+         0tORfkq8vYd+dzdKDo+reRRk39RJR4/SDNy6jPSfAumRWP+9Fn2i4FugAVRfpZnntAE+
+         Tnric8hkgmZpWpgu4s3b96x5YwEMTBpZlgxqmyioQfC3KfyW/a69OwHg/sGfNrTXbSVH
+         yfGw==
+X-Gm-Message-State: ABy/qLYT4GIDNc5Uh9ivopIaxNIVDbznma+jeUw6qP9oaMPUlHpVBx+K
+        IFv50W2H1vD/gKfW1YjXoK19pk0Gtg==
+X-Google-Smtp-Source: APBJJlGqRJdlojCf+OXAmBHAqty4djhxd5U1wTgYVsaMRWWlzVDtbXRWKyHPvdirIljBYLLtIrdVmw==
+X-Received: by 2002:a5e:d70c:0:b0:780:ce12:6c50 with SMTP id v12-20020a5ed70c000000b00780ce126c50mr8096182iom.18.1688768983325;
+        Fri, 07 Jul 2023 15:29:43 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id a26-20020a029f9a000000b0042b45475212sm1567519jam.81.2023.07.07.15.29.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 07:05:03 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
+        Fri, 07 Jul 2023 15:29:42 -0700 (PDT)
+Received: (nullmailer pid 1085234 invoked by uid 1000);
+        Fri, 07 Jul 2023 22:29:41 -0000
+Date:   Fri, 7 Jul 2023 16:29:41 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 14/18] soc: tegra: Move powergate-bpmp driver to the genpd dir
-Date:   Fri,  7 Jul 2023 16:04:30 +0200
-Message-Id: <20230707140434.723349-15-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230707140434.723349-1-ulf.hansson@linaro.org>
-References: <20230707140434.723349-1-ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/7] dt-bindings: arm: tegra: pmc: Improve property
+ descriptions
+Message-ID: <20230707222941.GA1083838-robh@kernel.org>
+References: <20230707131711.2997956-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230707131711.2997956-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Let's moves the powergate-bpmp driver, while we leave the pmc driver in the
-soc directory. To move the latter, we first need to split it up in a few
-pieces so the genpd parts can be moved alone.
+On Fri, Jul 07, 2023 at 03:17:05PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Reformat the description of various properties to make them more
+> consistent with existing ones. Make use of json-schema's ability to
+> provide a description for individual list items to make improve the
+> documentation further.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 215 +++++++++---------
+>  1 file changed, 104 insertions(+), 111 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> index 89191cfdf619..a90f01678775 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> @@ -21,17 +21,14 @@ properties:
+>  
+>    reg:
+>      maxItems: 1
+> -    description:
+> -      Offset and length of the register set for the device.
+> +    description: Offset and length of the register set for the device.
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: <linux-tegra@vger.kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/genpd/Makefile                        | 1 +
- drivers/genpd/tegra/Makefile                  | 2 ++
- drivers/{soc => genpd}/tegra/powergate-bpmp.c | 0
- drivers/soc/tegra/Makefile                    | 1 -
- 4 files changed, 3 insertions(+), 1 deletion(-)
- create mode 100644 drivers/genpd/tegra/Makefile
- rename drivers/{soc => genpd}/tegra/powergate-bpmp.c (100%)
+nit: I'd add this to patch 2.
 
-diff --git a/drivers/genpd/Makefile b/drivers/genpd/Makefile
-index 76f2a411e6bc..e6f34d82e6a8 100644
---- a/drivers/genpd/Makefile
-+++ b/drivers/genpd/Makefile
-@@ -10,3 +10,4 @@ obj-y					+= rockchip/
- obj-y					+= samsung/
- obj-y					+= starfive/
- obj-y					+= sunxi/
-+obj-y					+= tegra/
-diff --git a/drivers/genpd/tegra/Makefile b/drivers/genpd/tegra/Makefile
-new file mode 100644
-index 000000000000..ec8acfd2c77c
---- /dev/null
-+++ b/drivers/genpd/tegra/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_SOC_TEGRA_POWERGATE_BPMP)	+= powergate-bpmp.o
-diff --git a/drivers/soc/tegra/powergate-bpmp.c b/drivers/genpd/tegra/powergate-bpmp.c
-similarity index 100%
-rename from drivers/soc/tegra/powergate-bpmp.c
-rename to drivers/genpd/tegra/powergate-bpmp.c
-diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
-index d722f512dc9d..01059619e764 100644
---- a/drivers/soc/tegra/Makefile
-+++ b/drivers/soc/tegra/Makefile
-@@ -5,7 +5,6 @@ obj-y += cbb/
- obj-y += common.o
- obj-$(CONFIG_SOC_TEGRA_FLOWCTRL) += flowctrl.o
- obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
--obj-$(CONFIG_SOC_TEGRA_POWERGATE_BPMP) += powergate-bpmp.o
- obj-$(CONFIG_SOC_TEGRA20_VOLTAGE_COUPLER) += regulators-tegra20.o
- obj-$(CONFIG_SOC_TEGRA30_VOLTAGE_COUPLER) += regulators-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_186_SOC) += ari-tegra186.o
--- 
-2.34.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
