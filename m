@@ -2,89 +2,180 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 775F4C0015E
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Jul 2023 23:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEADEB64DD
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 02:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231636AbjGFXfz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Jul 2023 19:35:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42746 "EHLO
+        id S229555AbjGGCBn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 Jul 2023 22:01:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231407AbjGFXfz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Jul 2023 19:35:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB2F1BC3;
-        Thu,  6 Jul 2023 16:35:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB41761208;
-        Thu,  6 Jul 2023 23:35:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5825C433C7;
-        Thu,  6 Jul 2023 23:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688686553;
-        bh=DP7fJGvKQ0uhwcbMQ4HpQrGiWbGBPP9soTviBQgpsZQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Q7IiS06KZPS2/0Au4NLJYv85CJJlKitaXhs2QzDXKtYT0bqaAlGzcfewrLv2vBIqJ
-         jBjiNxB2iFpxrHwBHOdJ5GFe5zdTj5Sw303fT8DTwzS1MNPYjUwsGoAjg5RXATGwUM
-         gY+xpiOK2qtEAxslDK9GPsOgm/cJfyGzjuu1GUhA61MPwRGTXgI0Pu0XjZnK8LZ9Jy
-         Y+dtZuLX1jfaUVBoJ6jlJSw1GrzMyOIOWSTa3Ot3iYxlYFwQP7HxZ9XN5JjcrtiLfz
-         e19fxmy0Shr/YaYyeIYNKPAlswcH9skyf/4So4HKy5tD45O8ZNqGUcLFjB7SsG8qiv
-         zpRZSTaVTDt2Q==
-Message-ID: <e6966fdb-e022-8fbe-4bc0-2c2b71138ed2@kernel.org>
-Date:   Fri, 7 Jul 2023 08:35:51 +0900
+        with ESMTP id S232144AbjGGCBk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Jul 2023 22:01:40 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA071FC4
+        for <linux-tegra@vger.kernel.org>; Thu,  6 Jul 2023 19:01:35 -0700 (PDT)
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230707020131epoutp04780d6cabadc2b5cda12551b39d387ef7~vc2uS0-e90310303103epoutp04y
+        for <linux-tegra@vger.kernel.org>; Fri,  7 Jul 2023 02:01:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230707020131epoutp04780d6cabadc2b5cda12551b39d387ef7~vc2uS0-e90310303103epoutp04y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1688695291;
+        bh=PelmqNjPk6oGqr+lcQscDDbKwoYt8iFv7lsSXZ03UmI=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=luyfCIl3bXzuI5QT1nWtKOisZrTtU+AP598MGtr7llexDzg7QLTvlu51sbumiqhyl
+         r9EvnSkkUGBvXRKdEceZ2WR7RJqlisYMHPwBtWvPfQVztcSQUTaDXrCKhH5lC/Kl2V
+         PxCNZlkf+2rWEf/RcxxBktdYu4cr1DfG8gXNeIe8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230707020130epcas1p23da995d70977a4d1729186a5652aa9c5~vc2tr7BDm2743927439epcas1p2u;
+        Fri,  7 Jul 2023 02:01:30 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.36.135]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4QxxTP33qWz4x9Pv; Fri,  7 Jul
+        2023 02:01:29 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FA.9C.22933.7F177A46; Fri,  7 Jul 2023 11:01:27 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230707020127epcas1p328fc9539cb01bf314f569e676c277f86~vc2q4MKf_1856118561epcas1p3b;
+        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230707020127epsmtrp12d135f5243a3857ae29611840fcd0c98~vc2q3S9-R0210602106epsmtrp1E;
+        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
+X-AuditID: b6c32a39-a83ff70000005995-51-64a771f7a53e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        83.16.34491.7F177A46; Fri,  7 Jul 2023 11:01:27 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230707020127epsmtip20f142e261c01eca40e56dc0c4330cec4~vc2qmQ3cU0804308043epsmtip2j;
+        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
+From:   =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?= 
+        <inki.dae@samsung.com>
+To:     "'Thomas Zimmermann'" <tzimmermann@suse.de>, <javierm@redhat.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>
+Cc:     <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>,
+        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
+        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>
+In-Reply-To: <20230706124905.15134-7-tzimmermann@suse.de>
+Subject: RE: [PATCH v2 06/11] drm/exynos: Set fbdev FBINFO_VIRTFB flag
+Date:   Fri, 7 Jul 2023 11:01:27 +0900
+Message-ID: <026c01d9b076$f090ef00$d1b2cd00$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 4/8] ahci: tegra: Convert to
- devm_platform_ioremap_resource()
-To:     Yangtao Li <frank.li@vivo.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230706124239.23366-1-frank.li@vivo.com>
- <20230706124239.23366-4-frank.li@vivo.com>
-Content-Language: en-US
-From:   Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20230706124239.23366-4-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ks_c_5601-1987"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQGcl+T1wpybQEf0N9BGhueYe3tDCQE/Zq+0Ao2EXCuwCVaXQA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmnu73wuUpBhPbDS0ezNvGZnHl63s2
+        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
+        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBmVbZOR
+        mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdLWSQlliTilQ
+        KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj7v2/
+        jAV7BCra7v1ibmDs4uti5OSQEDCRuPXrCWMXIxeHkMAORontV6+yQzifGCUmfZ/LCuF8Y5To
+        ufeJGablw+O/bBCJvYwSm1d+YYFwXjJKHFw8lx2kik0gQ+Ju+2KwdhGBJkaJGe/bwRxmgV9M
+        Ej8OrQWbxSlgKbHrwBEmEFtYwE2ibeEzsDiLgIrEry17wOK8QDVvTu5nhbAFJU7OfMICYjML
+        GEksWT2fCcKWl9j+dg7UfQoSP58uY4WIi0jM7mwDi4sIOEncuf8R7FUJgTscEh+WdUA1uEjc
+        X/gPyhaWeHV8CzuELSXxsr+NHaJhMqPEnesrWCCcGYwSh39eZ4SoMpbYv3QyE4StKLHz91xG
+        iNV8Eu++9gCdwQEU55XoaBOCKFGSOHbxBlSrhMSFJRPZJjAqzULy3Cwkz81C8twsJA8tYGRZ
+        xSiWWlCcm55abFhgCo/z5PzcTYzgdK1luYNx+tsPeocYmTgYDzFKcDArifAeO7MsRYg3JbGy
+        KrUoP76oNCe1+BCjKTC8JzJLiSbnAzNGXkm8oYmlgYmZkbGJhaGZoZI477m3vSlCAumJJanZ
+        qakFqUUwfUwcnFINTEqua06xiRRErXnivOXJ6V3BXZmM295VLiyd8qsrXyV3woLKH843e0UE
+        etTvMOt3T3RYofdG99XrPRO5bsTcMby4ylooqW/CAkOBIvnFwXZzuorcl4h9Fnidu//2IqfT
+        qp+KH0nob/omu8n+o1h4bqL/kt6UGoWHqw9fyn9+Ovd0f/D5D7OFT35jt/CevX/1l2DejTv3
+        at0+5vFAg810n6dX7tx5oXJpR9NNhafyKq+Jn6gQ+V+udU9asjjf0mCTGpVeDu5T3Q/VZzPb
+        cVvbzfW3kl3YEHzOYQfLiRWr4zjWB9sI3/q4Pl5neqyptpVfVli60qctPfr6Plpv9ly1r+AJ
+        EZlqz+f5yONS86ODSizFGYmGWsxFxYkAXJUZb2AEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSvO73wuUpBju7JCwezNvGZnHl63s2
+        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
+        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBnFZZOS
+        mpNZllqkb5fAlTH3/l/Ggj0CFW33fjE3MHbxdTFyckgImEh8ePyXrYuRi0NIYDejxML+Pcxd
+        jBxACQmJLVs5IExhicOHi0HKhQSeM0rMO6ELYrMJpElMmrufFaRVRKCNUeLRx/9gDrNAA7PE
+        wlOr2SGGbmeU2Nx5jQWkhVPAUmLXgSNMILawgJtE28JnzCA2i4CKxK8te8DivEA1b06CjAWx
+        BSVOznwC1ssMdGnj4W4oW15i+9s5zBAfKEj8fLqMFSIuIjG7sw0sLiLgJHHn/kfGCYzCs5CM
+        moVk1Cwko2YhaV/AyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4WrU0dzBuX/VB
+        7xAjEwfjIUYJDmYlEd5jZ5alCPGmJFZWpRblxxeV5qQWH2KU5mBREucVf9GbIiSQnliSmp2a
+        WpBaBJNl4uCUamDq5Vv+IuLKUY8d3xhu2BgyCjJkvrxX9O+kT/bXT7JFX60XG3x6vSNg/szA
+        eM95F87Nmi3w1CzrllnjM4PnQp+rJC4/Tz3d8emCVIvKknjjZb2XpBadFb2RfuvVpapfvwXN
+        4+4xqH/dO31x8hqDmdkdyQ8Y0v6LPMjnfNK/XYZzwUXD1qdSff/85KZnmt9sjmzZveD4+Zd2
+        mx7pV27a8V+4YoPWy+o4HWnx1q4/797u1erb/WDCVIHfvqbf76w4MumC0SJhoZWHY3zntbxa
+        kZC51vnGLwmnm/NLZbgq79hx7A3uu6SlraJ16uFFxpjyBheuLaWyFmJ2U/6dqC7c8MPGOlHk
+        U5GPjuWOiuRGWY7dSizFGYmGWsxFxYkANMGVdUUDAAA=
+X-CMS-MailID: 20230707020127epcas1p328fc9539cb01bf314f569e676c277f86
+X-Msg-Generator: CA
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230706125011epcas1p437211c1555189b16614f13aa212688db
+References: <20230706124905.15134-1-tzimmermann@suse.de>
+        <CGME20230706125011epcas1p437211c1555189b16614f13aa212688db@epcas1p4.samsung.com>
+        <20230706124905.15134-7-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 7/6/23 21:42, Yangtao Li wrote:
-> Use devm_platform_ioremap_resource() to simplify code.
+Hi,
 
-Please be consistent with the patch titles. This should be:
-
-ata: ahci_tegra: Convert to devm_platform_ioremap_resource()
-
+> -----Original Message-----
+> From: Thomas Zimmermann <tzimmermann@suse.de>
+> Sent: Thursday, July 6, 2023 9:47 PM
+> To: javierm@redhat.com; maarten.lankhorst@linux.intel.com;
+> mripard@kernel.org
+> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
+> fbdev@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>; Inki Dae
+> <inki.dae@samsung.com>; Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin
+> Park <kyungmin.park@samsung.com>; Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>
+> Subject: [PATCH v2 06/11] drm/exynos: Set fbdev FBINFO_VIRTFB flag
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Mark the framebuffer with FBINFO_VIRTFB. The framebuffer range is
+> in DMA-able memory and should be accessed with the CPU's regular
+> memory ops.
+> 
+> v2:
+> 	* drop FBINFO_FLAG_DEFAULT
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+> Acked-by: Maxime Ripard <mripard@kernel.org>
+
+Acked-by : Inki Dae <inki.dae@samsung.com>
+
+Thanks,
+Inki Dae
+
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
->  drivers/ata/ahci_tegra.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-> index 21c20793e517..d1a35da7e824 100644
-> --- a/drivers/ata/ahci_tegra.c
-> +++ b/drivers/ata/ahci_tegra.c
-> @@ -530,8 +530,7 @@ static int tegra_ahci_probe(struct platform_device *pdev)
->  	tegra->pdev = pdev;
->  	tegra->soc = of_device_get_match_data(&pdev->dev);
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -	tegra->sata_regs = devm_ioremap_resource(&pdev->dev, res);
-> +	tegra->sata_regs = devm_platform_ioremap_resource(pdev, 1);
->  	if (IS_ERR(tegra->sata_regs))
->  		return PTR_ERR(tegra->sata_regs);
->  
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index 7ca3424b59ce..828318de8529 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -79,6 +79,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper
+> *helper,
+>  	offset = fbi->var.xoffset * fb->format->cpp[0];
+>  	offset += fbi->var.yoffset * fb->pitches[0];
+> 
+> +	fbi->flags |= FBINFO_VIRTFB;
+>  	fbi->screen_buffer = exynos_gem->kvaddr + offset;
+>  	fbi->screen_size = size;
+>  	fbi->fix.smem_len = size;
+> --
+> 2.41.0
 
--- 
-Damien Le Moal
-Western Digital Research
 
