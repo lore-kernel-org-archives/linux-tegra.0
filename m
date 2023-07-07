@@ -2,180 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEADEB64DD
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 02:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C449DC001B0
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 07:21:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbjGGCBn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 Jul 2023 22:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49794 "EHLO
+        id S231732AbjGGHVC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jul 2023 03:21:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232144AbjGGCBk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 6 Jul 2023 22:01:40 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA071FC4
-        for <linux-tegra@vger.kernel.org>; Thu,  6 Jul 2023 19:01:35 -0700 (PDT)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230707020131epoutp04780d6cabadc2b5cda12551b39d387ef7~vc2uS0-e90310303103epoutp04y
-        for <linux-tegra@vger.kernel.org>; Fri,  7 Jul 2023 02:01:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230707020131epoutp04780d6cabadc2b5cda12551b39d387ef7~vc2uS0-e90310303103epoutp04y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1688695291;
-        bh=PelmqNjPk6oGqr+lcQscDDbKwoYt8iFv7lsSXZ03UmI=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=luyfCIl3bXzuI5QT1nWtKOisZrTtU+AP598MGtr7llexDzg7QLTvlu51sbumiqhyl
-         r9EvnSkkUGBvXRKdEceZ2WR7RJqlisYMHPwBtWvPfQVztcSQUTaDXrCKhH5lC/Kl2V
-         PxCNZlkf+2rWEf/RcxxBktdYu4cr1DfG8gXNeIe8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230707020130epcas1p23da995d70977a4d1729186a5652aa9c5~vc2tr7BDm2743927439epcas1p2u;
-        Fri,  7 Jul 2023 02:01:30 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.135]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4QxxTP33qWz4x9Pv; Fri,  7 Jul
-        2023 02:01:29 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FA.9C.22933.7F177A46; Fri,  7 Jul 2023 11:01:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230707020127epcas1p328fc9539cb01bf314f569e676c277f86~vc2q4MKf_1856118561epcas1p3b;
-        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230707020127epsmtrp12d135f5243a3857ae29611840fcd0c98~vc2q3S9-R0210602106epsmtrp1E;
-        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
-X-AuditID: b6c32a39-a83ff70000005995-51-64a771f7a53e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        83.16.34491.7F177A46; Fri,  7 Jul 2023 11:01:27 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230707020127epsmtip20f142e261c01eca40e56dc0c4330cec4~vc2qmQ3cU0804308043epsmtip2j;
-        Fri,  7 Jul 2023 02:01:27 +0000 (GMT)
-From:   =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?= 
-        <inki.dae@samsung.com>
-To:     "'Thomas Zimmermann'" <tzimmermann@suse.de>, <javierm@redhat.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>
-Cc:     <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>,
-        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
-        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>
-In-Reply-To: <20230706124905.15134-7-tzimmermann@suse.de>
-Subject: RE: [PATCH v2 06/11] drm/exynos: Set fbdev FBINFO_VIRTFB flag
-Date:   Fri, 7 Jul 2023 11:01:27 +0900
-Message-ID: <026c01d9b076$f090ef00$d1b2cd00$@samsung.com>
+        with ESMTP id S232037AbjGGHU7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 03:20:59 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2137.outbound.protection.outlook.com [40.107.255.137])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786D71FE5;
+        Fri,  7 Jul 2023 00:20:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bc5oUgqcqAZ83+kPq9UOp6pz7/+5OELBswLvEkEScDDrZK0i3c9N4IULuzXw92nyXDg+5r6EaKH5UurK4J/A4lndJYh6GE0UM7IuXoZbS+y9TGUvkoTvh4QOUWM8+VqLVFxuCRWdRmpRduhKRdke8DDbe7Xc1eSRyrngmJMX1nDL10VfAuj/YPTAbTYcC5gX2NMvLL0LSlvWEJPhdQERkx0dTmNVpaj8I/EPhi27CQEifXISq3QTsCvlaBIZJQAP/BA85ajOoJ9kFOWNa51Iz3MomY8d2VqmVF2iq33i51QZQ5bOHKjOuTp5zMcHwLjiLwrBr2kgrJsyzYXUfAAi1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GJZBSlaW2G6WCkDU5NYrFjf3UyvJxq8V/QCqrMhiABE=;
+ b=FgkBYUJtUskvaqGrInCkKefcYJIVHiqLNHnp1TvHh5Fu+RhSc42f0ELCxqRYQiaooyc3k6L8HDx1an8ssMpQn7sUp2UwljtJ1t5Rpgz+c3VACrQPJFaRy9GJOi+4VetaRkCWd0DqRnul6JGZ/6RT6Hc2lFDhasa7oqGEbq7838suq4a4iUNd/VRm/bqRQSDyTroXihIXfMDs5XMSbtxAQ0SPB7iyemyv3ru/kHFw+j0BZ1A7bi/4bYnHO/sWVTngxbqdgQGSM2Gg4Zq8TzAp7+sAszb90RfjLLDZA+IQ0tdMdFqmKh2qDxGeqgbXWnwELUmaPCuSJKw9mqZhjL3Jxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GJZBSlaW2G6WCkDU5NYrFjf3UyvJxq8V/QCqrMhiABE=;
+ b=jUtq8vDeGbrJBc3IpdQ5nx2hVpxevX3FWolJL4eQj2Mpot9z61ji5X1uMz133M/5rNeibbNy6vU7i6+W+KZsr4rJTuKuvcVX9+32z/0sl7cXcu17o1cOjcogOlw8vuIdDGqdyQt/+oAVrLwYfQ7vuBqXRLXbHW3sU4qaahuOnlPXGyenNiyUGu77mm7bcTRfRfSTwtHhrHNJK8ZJf3mVevX6yZ3Jwa9SqPUnGQf0bxPnhnjlsBTdIcR6Bb2zBpqJCijHglCVC2JW/wc8umObVaKVUIQNdFYw3JZfi2VucpaK3EwcbrvUpVgMJcZSShy50ukcNFVhpWk+dc8Hr2fZJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by KL1PR0601MB3954.apcprd06.prod.outlook.com (2603:1096:820:2d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.25; Fri, 7 Jul
+ 2023 07:20:55 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.025; Fri, 7 Jul 2023
+ 07:20:54 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Yangtao Li <frank.li@vivo.com>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 05/18] drm/tegra: hdmi: Convert to devm_platform_ioremap_resource()
+Date:   Fri,  7 Jul 2023 15:20:21 +0800
+Message-Id: <20230707072034.48977-5-frank.li@vivo.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230707072034.48977-1-frank.li@vivo.com>
+References: <20230707072034.48977-1-frank.li@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0129.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::33) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ks_c_5601-1987"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQGcl+T1wpybQEf0N9BGhueYe3tDCQE/Zq+0Ao2EXCuwCVaXQA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmnu73wuUpBhPbDS0ezNvGZnHl63s2
-        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
-        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBmVbZOR
-        mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdLWSQlliTilQ
-        KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj7v2/
-        jAV7BCra7v1ibmDs4uti5OSQEDCRuPXrCWMXIxeHkMAORontV6+yQzifGCUmfZ/LCuF8Y5To
-        ufeJGablw+O/bBCJvYwSm1d+YYFwXjJKHFw8lx2kik0gQ+Ju+2KwdhGBJkaJGe/bwRxmgV9M
-        Ej8OrQWbxSlgKbHrwBEmEFtYwE2ibeEzsDiLgIrEry17wOK8QDVvTu5nhbAFJU7OfMICYjML
-        GEksWT2fCcKWl9j+dg7UfQoSP58uY4WIi0jM7mwDi4sIOEncuf8R7FUJgTscEh+WdUA1uEjc
-        X/gPyhaWeHV8CzuELSXxsr+NHaJhMqPEnesrWCCcGYwSh39eZ4SoMpbYv3QyE4StKLHz91xG
-        iNV8Eu++9gCdwQEU55XoaBOCKFGSOHbxBlSrhMSFJRPZJjAqzULy3Cwkz81C8twsJA8tYGRZ
-        xSiWWlCcm55abFhgCo/z5PzcTYzgdK1luYNx+tsPeocYmTgYDzFKcDArifAeO7MsRYg3JbGy
-        KrUoP76oNCe1+BCjKTC8JzJLiSbnAzNGXkm8oYmlgYmZkbGJhaGZoZI477m3vSlCAumJJanZ
-        qakFqUUwfUwcnFINTEqua06xiRRErXnivOXJ6V3BXZmM295VLiyd8qsrXyV3woLKH843e0UE
-        etTvMOt3T3RYofdG99XrPRO5bsTcMby4ylooqW/CAkOBIvnFwXZzuorcl4h9Fnidu//2IqfT
-        qp+KH0nob/omu8n+o1h4bqL/kt6UGoWHqw9fyn9+Ovd0f/D5D7OFT35jt/CevX/1l2DejTv3
-        at0+5vFAg810n6dX7tx5oXJpR9NNhafyKq+Jn6gQ+V+udU9asjjf0mCTGpVeDu5T3Q/VZzPb
-        cVvbzfW3kl3YEHzOYQfLiRWr4zjWB9sI3/q4Pl5neqyptpVfVli60qctPfr6Plpv9ly1r+AJ
-        EZlqz+f5yONS86ODSizFGYmGWsxFxYkAXJUZb2AEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSvO73wuUpBju7JCwezNvGZnHl63s2
-        i4XTljNa7H29ld3ibNMbdotNj6+xWpzo+8BqMeP8PiaLzi+zgEo+bmWxaOtcBhSb/JLNYsub
-        iawOvB6bVnWyedy5tofNY97JQI/73ceZPDYvqfd4v+8qm0ffllWMHptPV3t83iQXwBnFZZOS
-        mpNZllqkb5fAlTH3/l/Ggj0CFW33fjE3MHbxdTFyckgImEh8ePyXrYuRi0NIYDejxML+Pcxd
-        jBxACQmJLVs5IExhicOHi0HKhQSeM0rMO6ELYrMJpElMmrufFaRVRKCNUeLRx/9gDrNAA7PE
-        wlOr2SGGbmeU2Nx5jQWkhVPAUmLXgSNMILawgJtE28JnzCA2i4CKxK8te8DivEA1b06CjAWx
-        BSVOznwC1ssMdGnj4W4oW15i+9s5zBAfKEj8fLqMFSIuIjG7sw0sLiLgJHHn/kfGCYzCs5CM
-        moVk1Cwko2YhaV/AyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4WrU0dzBuX/VB
-        7xAjEwfjIUYJDmYlEd5jZ5alCPGmJFZWpRblxxeV5qQWH2KU5mBREucVf9GbIiSQnliSmp2a
-        WpBaBJNl4uCUamDq5Vv+IuLKUY8d3xhu2BgyCjJkvrxX9O+kT/bXT7JFX60XG3x6vSNg/szA
-        eM95F87Nmi3w1CzrllnjM4PnQp+rJC4/Tz3d8emCVIvKknjjZb2XpBadFb2RfuvVpapfvwXN
-        4+4xqH/dO31x8hqDmdkdyQ8Y0v6LPMjnfNK/XYZzwUXD1qdSff/85KZnmt9sjmzZveD4+Zd2
-        mx7pV27a8V+4YoPWy+o4HWnx1q4/797u1erb/WDCVIHfvqbf76w4MumC0SJhoZWHY3zntbxa
-        kZC51vnGLwmnm/NLZbgq79hx7A3uu6SlraJ16uFFxpjyBheuLaWyFmJ2U/6dqC7c8MPGOlHk
-        U5GPjuWOiuRGWY7dSizFGYmGWsxFxYkANMGVdUUDAAA=
-X-CMS-MailID: 20230707020127epcas1p328fc9539cb01bf314f569e676c277f86
-X-Msg-Generator: CA
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230706125011epcas1p437211c1555189b16614f13aa212688db
-References: <20230706124905.15134-1-tzimmermann@suse.de>
-        <CGME20230706125011epcas1p437211c1555189b16614f13aa212688db@epcas1p4.samsung.com>
-        <20230706124905.15134-7-tzimmermann@suse.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KL1PR0601MB3954:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a10efd5-36aa-452e-f731-08db7ebab334
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: N6uSwssmNLrorKpE5Y5NK5ssX5pynBB5UBiviA9SxfvGHGFEYF4uKmYxCSFYIhsBr42nxrQ4599kvMlxzEz6JRjzVvW6hklUzyG/wADr5yNiCxQd/lC1bm7/qH6bq4kn1//tqp6dZErFp7PcQdq97bRVJrQpAE8Tub4gJaE8Hg93P7JdSzqLC0leBEPmUnK8WX+Er6hai0Pjjp7hiwfSegb7cgqiHnIzdD+hjEhcbeFWbYA0YaxL9PRYHIbLjBvbJSMO8SvbhK/gtOIzHKPKlG3amumOpYIrJyQOHp/pnfSfYd9uLOIJUeKwO15/ZLyc3TsouOiH3V4WaMUAACayKROB6Gsr0L3bMoArsVpjCfc3rD+K25GkLsup5tD8v38RyuwAWpXp0kuObBV/ABRc5fsFrtC2zpHqHpUQtQpM0PPsScZQqyy6QTy+dWAhHLnyfJsrouoK/3bhPyPhNshXouRpBwgKCMKnxNLUgeLqo9C2qSCBJtdrtVMOG8ZACRRf58F4EoG0aFwz8b0KOfmMyVBT7tbKGdu6tSToJG93HiHJLZrZQPcdDAN/JMRx3Nd5yCW9n6yBLCaDar8+oi6u31xGerd8ytTG1X2EA82SuyVV+0DXIvBqlkanYDCIUu8u
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(451199021)(4326008)(478600001)(316002)(38100700002)(38350700002)(36756003)(83380400001)(110136005)(66946007)(66476007)(66556008)(2616005)(6666004)(8676002)(8936002)(6506007)(186003)(86362001)(4744005)(26005)(1076003)(5660300002)(6486002)(52116002)(2906002)(41300700001)(6512007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?InnSHRoKe9PLJvoJzLb6mHYKk98o/sAT3SqW4h9iPd9OqR9l+lqVXfaD6joG?=
+ =?us-ascii?Q?l6dfQMRAFigKtCZG5AWtLxDTWiUdouX1VG2ztQHhOW/pPweN5WqMUhIo9CCr?=
+ =?us-ascii?Q?2ElWQPPlOgj+6kGbCqNQkuHskTl+oA4rUhCo1koj5NUFJtopo+UpxOdajP66?=
+ =?us-ascii?Q?Zj5CdQ7LtHrTuEFHd1NylWKaghu81GgR7rQbg4BgMl4fokX12rxxumpmh7tN?=
+ =?us-ascii?Q?WQtrPEuNKnSLWAFa2hJV1UVZKgf6K2ezeEs/UMTs9/zJCGCklKWKIaH14/Wi?=
+ =?us-ascii?Q?jwGL4nv7mimVulgbwazbeInmmwTMUTwYikIJfMjMAAluZt8qzHNwvR7dvTLW?=
+ =?us-ascii?Q?La8E8Ru5DcQwGHYHdedt+f6rUCOky4CTOj1OTAkjLCVhinpe/ZQ1d76d8KMD?=
+ =?us-ascii?Q?qfznygpuVzyxg7/MzQ9RSI2Rzr9GcA7A/tVdLc60dnwW7LNytMkhD549kZV1?=
+ =?us-ascii?Q?iwsFWk1rQ7x9sk+LQeBybwMEzT/SEdXrxMMKkeTd1KuVzkc0iK3WcG9q+PGP?=
+ =?us-ascii?Q?83rYzlEkE4xPXKCI6cUSPd7GUjFx3TPs7LAyYUJaZwJwU0CIJUvKxrG3J1OD?=
+ =?us-ascii?Q?DUNT0gNr9tbQtnvLp2uyUny6SYS0YRjTSzrywDXGpkXCxUbcW1j3F56Ds12j?=
+ =?us-ascii?Q?fKAiK0AnwOFZFEUr1SQT/v/5n351XKRKpq+u3a+NaOQCT1H1dnbKq6aUFB/6?=
+ =?us-ascii?Q?cVvSjknMYrB6ha/QYKAtfuc3g2qRkUNO1pB+1NIHFHlkd+2mUlS5gJySBwPh?=
+ =?us-ascii?Q?MSnPDe/hRYUWhOgYWNQznX7I8MyZYr1A+NXTI3twi2sYdTrrotSNG8/a5RB9?=
+ =?us-ascii?Q?mFSAvGcGJAzbgg9r54AX7h7W8LW/Zced4moGWrSrXmzOpIS6cvJ87/d3if/D?=
+ =?us-ascii?Q?Vm+ifcCKvBTzWLWiKlM1u/Snv7EKYkZ6MCInsN9wRUpJ3gyfQAA/7gtamfL3?=
+ =?us-ascii?Q?oC4rsgnQLQ4KSEBFJBLwrlth/9Ub1luOba3bKEIehBlPBiEod+m1vl52bnG5?=
+ =?us-ascii?Q?5FFlH8dpRWoGo8GbxpIo3v9P13NvxGqxYJWVHV/CGub7eKVGIxeZJyuqDTmq?=
+ =?us-ascii?Q?eXNUwThjNGpy8NJLvIvZwJMQemD9g8pKWkBTTBWAl/ldAyiEeVMlYX5pnAkN?=
+ =?us-ascii?Q?jBDQDvccJZbzlNzHeyp09GfGdoDwhV5wm723VUnEuS/QGKUOGlYFUrhQMcvm?=
+ =?us-ascii?Q?dpFXgKGjr/jwWQ7B4S7y/TKLZ/xLveOmp2z91Bd7EPHdk9Hlc2AiWhTDDa24?=
+ =?us-ascii?Q?YlYb+t5Jdy+IoL8jXotgTLnNk2inOB1RKDq9S2Jff0u9ydpsDqQQZWxNu4Ek?=
+ =?us-ascii?Q?4vdoY8Tau5Ke7u3C179GIBYI5hgs7qEbfGA3znmaxiPnDf1fGo+EvdwUby00?=
+ =?us-ascii?Q?l72nojHLBAkYd04/dcsj0ktjYv+NDHyjJn0ujs6cppt4+8Gq9SMEpFB23W2Z?=
+ =?us-ascii?Q?ugT8Zmz8vdqULND0onYZqGcQLEd8jMTkkxI2v9Udj+4m+btG4+GDQWIa0gB4?=
+ =?us-ascii?Q?tYiMCrvCH6yVr33qTfLtJ+38ef3HJvqUnRFkIjmUaNduBhEmmLbvVHz31e9U?=
+ =?us-ascii?Q?UCPfmsU3Dol8vBdudvgqjxDrkTNQV+mIpmkOpsm5?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a10efd5-36aa-452e-f731-08db7ebab334
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2023 07:20:54.0794
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EP1aBnP2rmWLK3ckrNo+qnUFKt2XOoSkmwJuav39k/CWgIaPCwri6IR0oia4ky+gfwNZAouEjz17M7d8S2sA9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB3954
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Use devm_platform_ioremap_resource() to simplify code.
 
-> -----Original Message-----
-> From: Thomas Zimmermann <tzimmermann@suse.de>
-> Sent: Thursday, July 6, 2023 9:47 PM
-> To: javierm@redhat.com; maarten.lankhorst@linux.intel.com;
-> mripard@kernel.org
-> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
-> fbdev@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>; Inki Dae
-> <inki.dae@samsung.com>; Seung-Woo Kim <sw0312.kim@samsung.com>; Kyungmin
-> Park <kyungmin.park@samsung.com>; Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>
-> Subject: [PATCH v2 06/11] drm/exynos: Set fbdev FBINFO_VIRTFB flag
-> 
-> Mark the framebuffer with FBINFO_VIRTFB. The framebuffer range is
-> in DMA-able memory and should be accessed with the CPU's regular
-> memory ops.
-> 
-> v2:
-> 	* drop FBINFO_FLAG_DEFAULT
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> Acked-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ drivers/gpu/drm/tegra/hdmi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Acked-by : Inki Dae <inki.dae@samsung.com>
-
-Thanks,
-Inki Dae
-
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 7ca3424b59ce..828318de8529 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -79,6 +79,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper
-> *helper,
->  	offset = fbi->var.xoffset * fb->format->cpp[0];
->  	offset += fbi->var.yoffset * fb->pitches[0];
-> 
-> +	fbi->flags |= FBINFO_VIRTFB;
->  	fbi->screen_buffer = exynos_gem->kvaddr + offset;
->  	fbi->screen_size = size;
->  	fbi->fix.smem_len = size;
-> --
-> 2.41.0
-
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 6eac54ae1205..f3a44ca87151 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1769,7 +1769,6 @@ static irqreturn_t tegra_hdmi_irq(int irq, void *data)
+ static int tegra_hdmi_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_hdmi *hdmi;
+-	struct resource *regs;
+ 	int err;
+ 
+ 	hdmi = devm_kzalloc(&pdev->dev, sizeof(*hdmi), GFP_KERNEL);
+@@ -1831,8 +1830,7 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		return err;
+ 
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hdmi->regs = devm_ioremap_resource(&pdev->dev, regs);
++	hdmi->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hdmi->regs))
+ 		return PTR_ERR(hdmi->regs);
+ 
+-- 
+2.39.0
 
