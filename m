@@ -2,177 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9F7EB64D9
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 13:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5044DEB64D9
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 13:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231616AbjGGNA3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jul 2023 09:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40862 "EHLO
+        id S232319AbjGGNBp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jul 2023 09:01:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjGGNA3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 09:00:29 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37BF610EC;
-        Fri,  7 Jul 2023 06:00:24 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3fbc0609cd6so19031995e9.1;
-        Fri, 07 Jul 2023 06:00:24 -0700 (PDT)
+        with ESMTP id S231587AbjGGNBo (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 09:01:44 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159E6170C;
+        Fri,  7 Jul 2023 06:01:43 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3143798f542so1870425f8f.2;
+        Fri, 07 Jul 2023 06:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688734822; x=1691326822;
+        d=gmail.com; s=20221208; t=1688734901; x=1691326901;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S0tEyMRY0wJEgL0LRi5OxuCMsiSdYV1eK+Ww5nubhkc=;
-        b=I9E8fq5cJrGGHhxKAersMUIKvUxWnFGxAKbQFCzGy8emJHCFncKks7Sfc3unVQTXD2
-         lG1x5Mo6K4iwvAWMWHHbOI/urz7WJsy5s5mxpaMLN8BK/udjLURTUxeeHK0GWswXPmwP
-         Nyq32vkeIQR97oKY5y6dViHppujxfR+3/iYfw+eIPd2XI9lhVLfolU4lzUubFEOHJfc5
-         Y5YZ4VQrP8VGJ91b4a0cfeGjsOodD/s7eNTSjVelKw4qUV389Onrch/ilBsjCeBVVe34
-         7WFgVizaIHAz/TrC09nHZJXZ8HYebzPeN8GFaBvZEZNXeaNmQ3vd4B6sqVs5eJcfWVYh
-         rzsA==
+        bh=oEPdhA9OqeXhZvOSKX/1N2XG0OPdz7SbUSadjEjucFM=;
+        b=Y4p7/j4T4Jf2fWQetVUXTC5PW0H6mRK4mv8utqnJ6/awuuEdbPgYTiu9uffI//xi1m
+         lUcGcmx6BdmYI3P/A3ydfzVYdmn7E3iquPCRxamyBNpHG6SAL6FofSacJ5hKpoo7EOhV
+         +YLiay1MdyA4SLDbpClewkb44ptMmL0ThIIE6ofg/jqN0Y2NpKJ4+l6mI5ykru9zDruw
+         N9JwG2nLzMXtn/NzGgA6dIT0uWRb9FH2e2kSY0/8hjLYOljCN3iHr2DpyNxQt0OmdSZ9
+         z3H6l/5CyyhGV3COMIhXQJlQBVmZdNqTY1Gde5II4/4+ssmZ4VfCltdoq9vdv3q+qP/8
+         IhHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688734822; x=1691326822;
+        d=1e100.net; s=20221208; t=1688734901; x=1691326901;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S0tEyMRY0wJEgL0LRi5OxuCMsiSdYV1eK+Ww5nubhkc=;
-        b=VkkJNb0wL37NUaNhNJAud2glVM5HJo+2c9ZDnVFbjCsrtoE7Y9Z75XJG0IT/LwxdaB
-         U6SCtx30onmETarG1PjfY307guilUPzwNW2GS76maUyPvo2WMCPfG1MZonHioSpyKupF
-         YdliyiZzc4ymHF/xBbJYzOoWn+6Awhhwjb93CrB4L4aG1NolhMOtn4gBQivrqITx2ROV
-         gk/2kISPRzNtsJ5X2SFPCdr8UG/WNeL9gSQkEokhaybFA6F8XjkmUrj/OFSAIrJQ6Jtc
-         lxeGcx8w/jqqtCkTf461w+Ey0Q7J8k0rkTTGoZvoXSMdVqkqMNuPrp4G/LEWpWicvxwG
-         6AJw==
-X-Gm-Message-State: ABy/qLaI2izcDqpYvUvWGPlLrmc6MchfrvhwC6ywBDnr84YrcBX1cfbi
-        DTR7KrFFFito3T7SdTr5XdE=
-X-Google-Smtp-Source: APBJJlGb2G1eIpAgNIPsNZYiwtVXCyK9aq49QJPYhf5vHmH7mdsk6bKNhVt+ix/h16rZveqHcwjXoA==
-X-Received: by 2002:a05:600c:cc:b0:3fb:b53c:1a32 with SMTP id u12-20020a05600c00cc00b003fbb53c1a32mr3765656wmm.34.1688734822340;
-        Fri, 07 Jul 2023 06:00:22 -0700 (PDT)
+        bh=oEPdhA9OqeXhZvOSKX/1N2XG0OPdz7SbUSadjEjucFM=;
+        b=WPudWT7X7XJuld7s4iDgKwwTjxIN3vlix45zQoPeVMCZm4igrtLCsVlwCEFHRml+Ha
+         6s+piyzH+lAW7VE1D1Yfpr7wppbyDYOlSfUcQWOcxzxpg1UUW26meQuPb26UsCsbTk7l
+         YtxEkpQzdTAJUsBJOlT6syvLS6+qYCzTLm6mZS8vcOGa5q9QlIbbHIqsiMkDD2fKtH/W
+         WvSnK1dH721DDQYvSN2slynx/cvbU5rROnTko0P3mM4bH8iZx2S23d0mMqG+HBL3ZVjS
+         Ic6ln7wFALPrBJXKwZQmaQ+nMPibJOHeOywEZm2ZYgxQaeAf1xuPMpaiDVB9egXOa4KL
+         ERbA==
+X-Gm-Message-State: ABy/qLZeq/GjrVoJjOSA+KncsNPiGVbd/Qew00rkf63GZtvXby+d6s0g
+        X2IicCtje7MmTZH1KRfjIzI=
+X-Google-Smtp-Source: APBJJlG5HpoMLxOYPEEeQS0rU1s/3xuEzsqJA6ntbQ2Di0r+V/zWqOTk99GUcKK1Yasp6kU0pJS7nQ==
+X-Received: by 2002:adf:cf0b:0:b0:314:39d0:26f6 with SMTP id o11-20020adfcf0b000000b0031439d026f6mr3828713wrj.18.1688734901265;
+        Fri, 07 Jul 2023 06:01:41 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 10-20020a05600c22ca00b003f9b155b148sm2397838wmg.34.2023.07.07.06.00.21
+        by smtp.gmail.com with ESMTPSA id m22-20020a7bce16000000b003fc01189b0dsm858476wmc.42.2023.07.07.06.01.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 06:00:21 -0700 (PDT)
-Date:   Fri, 7 Jul 2023 15:00:20 +0200
+        Fri, 07 Jul 2023 06:01:40 -0700 (PDT)
+Date:   Fri, 7 Jul 2023 15:01:39 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Gautham Srinivasan <gauthams@nvidia.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+To:     Yangtao Li <frank.li@vivo.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: tegra: Enable soctherm for Orin Nano Devkit
-Message-ID: <ZKgMZEpE0Y_h6MJ-@orome>
-References: <20230706005545.1813584-1-gauthams@nvidia.com>
- <20230706005545.1813584-2-gauthams@nvidia.com>
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] spi: tegra20-slink: Use
+ devm_platform_get_and_ioremap_resource()
+Message-ID: <ZKgMs3aDA9J_8h5K@orome>
+References: <20230706032727.9180-1-frank.li@vivo.com>
+ <20230706032727.9180-6-frank.li@vivo.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rU0G3spu97e5FvdA"
+        protocol="application/pgp-signature"; boundary="LA5n/9LcFjbpAUwR"
 Content-Disposition: inline
-In-Reply-To: <20230706005545.1813584-2-gauthams@nvidia.com>
+In-Reply-To: <20230706032727.9180-6-frank.li@vivo.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---rU0G3spu97e5FvdA
+--LA5n/9LcFjbpAUwR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 06, 2023 at 12:55:45AM +0000, Gautham Srinivasan wrote:
-> Enable soctherm for Orin Nano Devkit. This is needed for the CPU
-> fan to operate.
+On Thu, Jul 06, 2023 at 11:27:25AM +0800, Yangtao Li wrote:
+> Convert platform_get_resource(), devm_ioremap_resource() to a single
+> call to devm_platform_get_and_ioremap_resource(), as this is exactly
+> what this function does.
 >=20
-> Signed-off-by: Gautham Srinivasan <gauthams@nvidia.com>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > ---
->  .../arm64/boot/dts/nvidia/tegra234-p3767.dtsi | 38 +++++++++++++++++++
->  1 file changed, 38 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra234-p3767.dtsi
-> index a8aa6e7d8fbc..cb76b08e15b9 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
-> @@ -98,6 +98,12 @@
->  		vin-supply =3D <&vdd_5v0_sys>;
->  	};
-> =20
-> +	bpmp {
-> +		thermal {
-> +			status =3D "okay";
-> +		};
-> +	};
+>  drivers/spi/spi-tegra20-slink.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
 
-I cannot find where we set status =3D "disabled" for this node and given
-that status =3D "okay" is the default, there doesn't seem to be any reason
-to set this.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
->  	thermal-zones {
->  		tj-thermal {
->  			polling-delay =3D <1000>;
-> @@ -118,5 +124,37 @@
->  				};
->  			};
->  		};
-> +
-> +		cpu-thermal {
-> +			status =3D "okay";
-> +		};
-> +
-> +		gpu-thermal {
-> +			status =3D "okay";
-> +		};
-> +
-> +		cv0-thermal {
-> +			status =3D "okay";
-> +		};
-> +
-> +		cv1-thermal {
-> +			status =3D "okay";
-> +		};
-> +
-> +		cv2-thermal {
-> +			status =3D "okay";
-> +		};
-> +
-> +		soc0-thermal {
-> +			status =3D "okay";
-> +		};
-> +
-> +		soc1-thermal {
-> +			status =3D "okay";
-> +		};
-> +
-> +		soc2-thermal {
-> +			status =3D "okay";
-> +		};
-
-Why are these needed? Previous discussions concluded that we don't want
-to use any of these for monitoring temperatures because they are too
-fine-grained for fan control.
-
-I guess it could make sense to enable all of these so that they can be
-monitored using sysfs if that's something we want, but in that case it
-might be better to enable them in the top-level tegra234.dtsi.
-
-Thierry
-
---rU0G3spu97e5FvdA
+--LA5n/9LcFjbpAUwR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSoDGEACgkQ3SOs138+
-s6EtQhAAj9e5ncxw4XyB1m7IPClAHJI4J+5BX/r9y/AMVmMzsUXUm+ujtfSInosB
-CiTOdQgSQCFTfIOCOPrO+6lv8ToJA4i0ci3IY5k/w+gM0r5eJLh0ZLSY/ToxTlgr
-Y654zcdpYFQ5eowRqnInDL7tdjxCYtZwgWBwyzuWf9vmbXHg5k6tniqU458SU7CD
-Qi3VW9Trhl8TmvrnC6T3mS1WDYAEqgIWsyOV0Iel2TRAyZBFduB/C6KX73eESls3
-73w2IQgfeg3KsCt9pnluPc7ANN+WiS1NLtdZuBTaDzthqtQ2HUq7VQVq8HR8/Nlz
-xtuIuNiwipockS9AbOzWaW8xw9m0dUQ40T38PbS6cEpSOxZX5gZ412yCqFLsR7sI
-XnnBIb8yuixHM84ue5cu/q3FhkND0QARswTZwUw6SWlgf0ZjAUmIk64QEKqoL02R
-/Sp1h/E/FUXxI60s8WGBNK0pCCcETkvjKvnn2k41IjwRy14zUv6HOwVjjpGN1jHD
-YJhc4EAeqlFQcY0FW7V0Uwu/QrjRonIfqIoG5SKkZoBJKiS6qlXbm/M1byZvyrZg
-8hZa7zGzFTeApfoVDSkeo0pwZ8jdvRQHj6uljOhi/MiPpLCsozp048nSw+rbeJS8
-nqxp4JUpn1KofMFvmTduHL1qywVohcGTC6uhy5Qew3RuC98BL4U=
-=aTvL
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSoDLMACgkQ3SOs138+
+s6Elyg//Zb/mAM94ehClI9NR6HYzc9Y0SSCu5Wc69VKe3CyRLndF5uMHEtXlXa0r
+m5Es9WdAaKkLlI5eV7cX4HvL3iZFP587MDT5JOQoc08jct+q47nJqJ7sRFE1Bi6p
+rP36Js5as2Pzn710LGAt45W6Wre/tZCt5dwwPtcI6ETHT6jSYqJaDnw0Mmpx3ttM
+fN7ruXPwLZect9Q8Cq0OuutlHcd6+tYHgVCzDAvpEtVfMWDpki6dHydGKsZfQo+Y
+MiLaixhY7/Xvz2KBkYcaCHYPaYjM0saptwDsyub4PWoYtn+baMC4jcGcvBIk04HS
+voFNRXRIITfMEWX0q4rbueBOpbxYE9S2WkTyMyzgR1Z0/QOK3Vb+klpdgNGff1hV
+EdutLDn/PnCDJCBIbz5cUNpi4oba9YQ0nOac6OoxzcIX+sOjPfRNnqZAcmn0nK3n
+cSczzUjMxOjoJVuTL+9itSkuMEHbx8TMpQWwaRQlqdrTMp6ZwaGePk8Zc40j+Iv6
+ISZsm/RwrWdBZNy8My6qk5Rts4fLk9Fp90g3fMr74YSq9VxDAe00RtE711zoWHOV
+DEb6OEI6TFiqiNcceQBKWi8bwrBKXk5KXoHI7U0pShVY1lwCRJ2X7dtcMpAfuewI
+EXM3Pi7PrVXddepUdKQNXMqRtJplet8zntoObf70MtQOuvAloTk=
+=HYBv
 -----END PGP SIGNATURE-----
 
---rU0G3spu97e5FvdA--
+--LA5n/9LcFjbpAUwR--
