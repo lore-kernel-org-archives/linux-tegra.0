@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1756DEB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 13:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDF3C001E0
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 13:17:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbjGGNRY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jul 2023 09:17:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45562 "EHLO
+        id S229955AbjGGNR0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jul 2023 09:17:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231950AbjGGNRX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 09:17:23 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB241FEA;
-        Fri,  7 Jul 2023 06:17:21 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fb7dc16ff0so2859731e87.2;
-        Fri, 07 Jul 2023 06:17:21 -0700 (PDT)
+        with ESMTP id S231909AbjGGNRY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 09:17:24 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3461FC9;
+        Fri,  7 Jul 2023 06:17:22 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fbc5d5742eso20426775e9.3;
+        Fri, 07 Jul 2023 06:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688735839; x=1691327839;
+        d=gmail.com; s=20221208; t=1688735841; x=1691327841;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AunBb31YzZUjwaJ31r+ZHgWQ+d/p+0mUIZp67J/ATuk=;
-        b=olVa44fi0B69r8C4Ey4sS0yWJUwbihHtJUndtukfR03C1OM7CQtjjvdw4IdvcIB+Ob
-         0e3TnBw94LzO+9rC5Ce/oPJpRPDqDDt6/tm9LU1c/PzYlZRv1c1jXqU7cO4PeNz6nyQo
-         lPNuVSgNWbkaiLVr99ehCiX8uBI33PPZ1k8h1QpgrR0h0eeOeo2uxfWmZHZRoV7kWsCT
-         dPGYZ0hGIDL9e5VkA51GnRH586vKa7/yJ/qORhCJjxfyZ2WLLroMZWNpqDD4uqYF00bD
-         mjpTXgNuSV6TjdB1HW1nb4p2i3OZX/aTDaxZ5Rz77WFSx0+p1JtPBwsBQHH68N35rlRG
-         Yf8A==
+        bh=Ck6fwpfDkUHjqvfaLifjQqp/JbwbuNDqeDY5YxFVtno=;
+        b=Hr7dr6H8CgN04ZCDpXvkJtdNI67ekD5iDH65Zp+JrZKoIxrNgz1y/H14NYlKHaqenP
+         gSqelmD9Vtk68qLJQz5luTq+V0FL3CCq7qg8jsRHYqgu2ELa5vFhqWg84XD7HTHuStab
+         FxBXw27vGrkYdOZJL85uolv5OM3okJe/OQRfmn4vmRwd6VR28XR7U+4T63MZe3+CXman
+         kSwLh+7+XgoUohLDMBj/jlVamyT4st5ZaVPGGaf9VwNhhvbSMEjKweRhy9V1+NNoIC67
+         yr1gnN5Kdl3ZnnZfajkmRj0ocjLfrsOR87m2iZHIzSTQxcgNR5WK5KN0OTepCp3/iK4w
+         jxSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688735839; x=1691327839;
+        d=1e100.net; s=20221208; t=1688735841; x=1691327841;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AunBb31YzZUjwaJ31r+ZHgWQ+d/p+0mUIZp67J/ATuk=;
-        b=ToEgtHMNRzV6CF0SYpY+c4ZguRLF8h3VARYuIaFIq7A9W/qHHsKNXr1RW0gfze7fbw
-         H/OUw2IvnMg1+XwAywFU80tql44vWtBzlnQxyA5pz7hE6rAagAVK7OUAdOTWKWoz7rux
-         pie3oHGqWg/CvgOFVUGz48YqCVgS9Ao5gxF5OhvZBsxToojRd0wG01oC32dC/NeZoLqp
-         93ZhA0X6AbvmUsBd2GUj3+voUWoNxr1iHkmr1qHMmTRbw+3mA0I93L22zgkttQ6ZszB0
-         ApS5bQCsETVmZd6QjMdDszxn/udHLGZoZygNEGRlgP7tAIC7hRVPo1oh0MK0qP6cS5Nl
-         K5Xg==
-X-Gm-Message-State: ABy/qLZMu7gLuLi2TOau85pNnqBhJNBDKIcE3ejYq+boIv5SL27v3JkV
-        3IG7WG5KluIMM1oauUFB20U=
-X-Google-Smtp-Source: APBJJlFi6xuMV5WqYTrbfSF9nbIsc9fvHJC1b3N0TSlFzrEp5v3x6vjRFsEz5OLhnO1Jj2NUJFhxLA==
-X-Received: by 2002:a05:6512:2005:b0:4f9:b032:5361 with SMTP id a5-20020a056512200500b004f9b0325361mr3620424lfb.10.1688735839167;
-        Fri, 07 Jul 2023 06:17:19 -0700 (PDT)
+        bh=Ck6fwpfDkUHjqvfaLifjQqp/JbwbuNDqeDY5YxFVtno=;
+        b=iorx/ZrRZRaWVfEUhVJq+5+Z35y37jrr9DIm22RJZpchPm+UhNGv09GuAWNXY1+V91
+         0FTj99+2+enlnDESmFW7TOUgdoH2wrz2bSc+ixpdr8E4bJ5Es9bVRWp49/5rqYe9dDzY
+         BVDJxgOElYXdU+VWpDBnJftTRyeKUhC6eYe5gatm61uuzaw7doZTPB9OJX4BKoKrkYqD
+         giQKiQNi9HCzvHqpfSuf/8zPjgsfiRhwyU8sBICbM5SzabQzn67L8bsOvdaY2/idazVd
+         NYAVE/LsTdJB3TOUjUL8TrgsQCSzWlNs2CmVEtkGuVrKsVJQhIDPEV+P2bW5YYgYzANp
+         NbZQ==
+X-Gm-Message-State: ABy/qLZW1SYmsdTOxE6oxOutw712obIStiGHUt6evqQOCBgVAl0/p+cy
+        r8ujd3S7jrJmPcIYMt75nqU=
+X-Google-Smtp-Source: APBJJlHWjUWB5rq0ypMUZGTx/eAJvRL1aGSAM4KiDATeZyMRJR/LpcmhvyVwBzQ92jaa0fkF2qucSg==
+X-Received: by 2002:a05:600c:c8:b0:3fb:ce46:c0b3 with SMTP id u8-20020a05600c00c800b003fbce46c0b3mr4474728wmm.35.1688735841015;
+        Fri, 07 Jul 2023 06:17:21 -0700 (PDT)
 Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v10-20020a05600c470a00b003f9b3829269sm10363055wmo.2.2023.07.07.06.17.18
+        by smtp.gmail.com with ESMTPSA id l11-20020a5d668b000000b003063db8f45bsm4444818wru.23.2023.07.07.06.17.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 06:17:18 -0700 (PDT)
+        Fri, 07 Jul 2023 06:17:20 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 5/7] dt-bindings: arm: tegra: pmc: Restructure pad configuration node schema
-Date:   Fri,  7 Jul 2023 15:17:09 +0200
-Message-ID: <20230707131711.2997956-5-thierry.reding@gmail.com>
+Subject: [PATCH 7/7] dt-bindings: arm: tegra: pmc: Relicense and move into soc/tegra directory
+Date:   Fri,  7 Jul 2023 15:17:11 +0200
+Message-ID: <20230707131711.2997956-7-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230707131711.2997956-1-thierry.reding@gmail.com>
 References: <20230707131711.2997956-1-thierry.reding@gmail.com>
@@ -70,216 +70,32 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The pad configuration node schema in its current form can accidentally
-match other properties as well. Restructure the schema to better match
-how the device trees are using these.
+Dual-license this binding for consistency with other Tegra bindings and
+move it into the soc/tegra directory.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../arm/tegra/nvidia,tegra20-pmc.yaml         | 181 ++++++++++++------
- 1 file changed, 120 insertions(+), 61 deletions(-)
+ .../bindings/{arm => soc}/tegra/nvidia,tegra20-pmc.yaml       | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/{arm => soc}/tegra/nvidia,tegra20-pmc.yaml (99%)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-index 82070d47ac7c..271aa8f80a65 100644
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
+similarity index 99%
+rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+rename to Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
+index f709a4a0853c..ef42f07e0572 100644
 --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-@@ -245,69 +245,82 @@ properties:
-           - resets
-           - '#power-domain-cells'
++++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
+@@ -1,7 +1,7 @@
+-# SPDX-License-Identifier: GPL-2.0
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/arm/tegra/nvidia,tegra20-pmc.yaml#
++$id: http://devicetree.org/schemas/soc/tegra/nvidia,tegra20-pmc.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--patternProperties:
--  "^[a-f0-9]+-[a-f0-9]+$":
-+  pinmux:
-     type: object
--    description:
--      This is a Pad configuration node. On Tegra SOCs a pad is a set of
--      pins which are configured as a group. The pin grouping is a fixed
--      attribute of the hardware. The PMC can be used to set pad power state
--      and signaling voltage. A pad can be either in active or power down mode.
--      The support for power state and signaling voltage configuration varies
--      depending on the pad in question. 3.3V and 1.8V signaling voltages
--      are supported on pins where software controllable signaling voltage
--      switching is available.
--
--      The pad configuration state nodes are placed under the pmc node and they
--      are referred to by the pinctrl client properties. For more information
--      see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
--      The pad name should be used as the value of the pins property in pin
--      configuration nodes.
--
--      The following pads are present on Tegra124 and Tegra132
--      audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdmi, hsic,
--      hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2, pex-cntrl,
--      sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2, usb_bias.
--
--      The following pads are present on Tegra210
--      audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
--      debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio, hdmi,
--      hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
--      sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias.
--
-     properties:
--      pins:
--        $ref: /schemas/types.yaml#/definitions/string
--        description: Must contain name of the pad(s) to be configured.
--
--      low-power-enable:
--        $ref: /schemas/types.yaml#/definitions/flag
--        description: Configure the pad into power down mode.
--
--      low-power-disable:
--        $ref: /schemas/types.yaml#/definitions/flag
--        description: Configure the pad into active mode.
--
--      power-source:
--        $ref: /schemas/types.yaml#/definitions/uint32
--        description:
--          Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
--          TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
--          The values are defined in
--          include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
--          Power state can be configured on all Tegra124 and Tegra132
--          pads. None of the Tegra124 or Tegra132 pads support signaling
--          voltage switching.
--          All of the listed Tegra210 pads except pex-cntrl support power
--          state configuration. Signaling voltage switching is supported
--          on below Tegra210 pads.
--          audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1,
--          sdmmc3, spi, spi-hv, and uart.
--
--    required:
--      - pins
--
--    additionalProperties: false
-+      status: true
-+
-+    additionalProperties:
-+      type: object
-+      description: |
-+        This is a pad configuration node. On Tegra SoCs a pad is a set of pins
-+        which are configured as a group. The pin grouping is a fixed attribute
-+        of the hardware. The PMC can be used to set pad power state and
-+        signaling voltage. A pad can be either in active or power down mode.
-+        The support for power state and signaling voltage configuration varies
-+        depending on the pad in question. 3.3V and 1.8V signaling voltages are
-+        supported on pins where software controllable signaling voltage
-+        switching is available.
-+
-+        The pad configuration state nodes are placed under the pmc node and
-+        they are referred to by the pinctrl client properties. For more
-+        information see:
-+
-+          Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+
-+        The pad name should be used as the value of the pins property in pin
-+        configuration nodes.
-+
-+        The following pads are present on Tegra124 and Tegra132:
-+
-+          audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdmi,
-+          hsic, hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2,
-+          pex-cntrl, sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2,
-+          usb_bias
-+
-+        The following pads are present on Tegra210:
-+
-+          audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
-+          debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio,
-+          hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl,
-+          sdmmc1, sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias
-+      additionalProperties: false
-+      properties:
-+        pins:
-+          $ref: /schemas/types.yaml#/definitions/string-array
-+          description: Must contain name of the pad(s) to be configured.
-+
-+        low-power-enable:
-+          $ref: /schemas/types.yaml#/definitions/flag
-+          description: Configure the pad into power down mode.
-+
-+        low-power-disable:
-+          $ref: /schemas/types.yaml#/definitions/flag
-+          description: Configure the pad into active mode.
-+
-+        power-source:
-+          $ref: /schemas/types.yaml#/definitions/uint32
-+          description: |
-+            Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-+            TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages. The
-+            values are defined in:
-+
-+              include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-+
-+            Power state can be configured on all Tegra124 and Tegra132 pads.
-+            None of the Tegra124 or Tegra132 pads support signaling voltage
-+            switching. All of the listed Tegra210 pads except pex-cntrl support
-+            power state configuration. Signaling voltage switching is supported
-+            on the following Tegra210 pads:
-+
-+              audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3,
-+              spi, spi-hv, uart
-+
-+        phandle:
-+          $ref: /schemas/types.yaml#/definitions/uint32
-+
-+      required:
-+        - pins
- 
- required:
-   - compatible
-@@ -316,6 +329,52 @@ required:
-   - clocks
-   - '#clock-cells'
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra124-pmc
-+    then:
-+      properties:
-+        pinmux:
-+          properties:
-+            status: true
-+
-+          additionalProperties:
-+            type: object
-+            properties:
-+              pins:
-+                items:
-+                  enum: [ audio, bb, cam, comp, csia, csb, cse, dsi, dsib,
-+                          dsic, dsid, hdmi, hsic, hv, lvds, mipi-bias, nand,
-+                          pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
-+                          sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2,
-+                          usb_bias ]
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra210-pmc
-+    then:
-+      properties:
-+        pinmux:
-+          properties:
-+            status: true
-+
-+          additionalProperties:
-+            type: object
-+            properties:
-+              pins:
-+                items:
-+                  enum: [ audio, audio-hv, cam, csia, csib, csic, csid, csie,
-+                          csif, dbg, debug-nonao, dmic, dp, dsi, dsib, dsic,
-+                          dsid, emmc, emmc2, gpio, hdmi, hsic, lvds, mipi-bias,
-+                          pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
-+                          sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3,
-+                          usb-bias ]
-+
- additionalProperties: false
- 
- dependencies:
+ title: Tegra Power Management Controller (PMC)
 -- 
 2.41.0
 
