@@ -2,117 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F913EB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 12:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00682EB64D9
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 12:28:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232532AbjGGM1g (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jul 2023 08:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57494 "EHLO
+        id S231666AbjGGM2Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jul 2023 08:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232483AbjGGM1g (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 08:27:36 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E761FEA;
-        Fri,  7 Jul 2023 05:27:35 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbc5d5746cso20010605e9.2;
-        Fri, 07 Jul 2023 05:27:34 -0700 (PDT)
+        with ESMTP id S231492AbjGGM2Y (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 08:28:24 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6282172B;
+        Fri,  7 Jul 2023 05:28:23 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-3143b88faebso1966859f8f.3;
+        Fri, 07 Jul 2023 05:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688732853; x=1691324853;
+        d=gmail.com; s=20221208; t=1688732902; x=1691324902;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dypW8BsEWWZsovJctMw3yW536uGbhaVcw8r4jC5Ja+E=;
-        b=hG7sxEFM5aGgj1CH/1QZbRPnJwjDdUIXhoYag5HgrLh3j1ZpzsyvXyaP4SI/aTJOoj
-         RQjkA79gbUSoNWMBE5QdrD9kPSQrJXJeVkjzdA86U8M2+P44vp+oDGWxEG5XH4sVNzqG
-         TLCGSWMPQfEfdHZtHwmprpAWJ4qzKW7DteGO/nKmhHF3Iy8GsBtvxlIKgI097quNc5SJ
-         j/HOE1D67LFkrV1wdpfxoRqCdBleq0VoP91qel92RmRCIZbKTWCkgakgN7ZNfifcGZDl
-         Q+94GoezlVnMR1ABibH2FLf1vNCwtgrbmAHoFfoARdhnY/H7BR7Hf4oKE0q7jQl4zMMb
-         aC4g==
+        bh=rJA6+/g6hyQtclq9OA+60uWzgmpTlAiLIyqyQBByGJo=;
+        b=atGuYPEU5d8ttk2i/U9gnbpEE4VH7IYHznzcHE2YFGDaXUSXZPbWWiSKJo9smMCcm9
+         QanNiFXqWkMHtvwoAfquB56dS1SLhkBJKXkysGit8pu6kdhw4mjeHwiAXcJVl2QYJFwV
+         LuktSzppQnRXpfSO5jS8t3NyAoq6icvGiVhaDm0ctYXpo9hbjdLmh5HbKdF1dymTrvkA
+         Vm0KsP1KGwPj0cSDGV/ByLnhp4L+Iim8Ikw8AB2cAXZYwDqNvqiaHGEycjlRMT+eqo1a
+         D+R/iITQVozvANPIy+r/1c6juSWDHwhOAJRSdXD3z4dVtyftbiOrC6GdpT1JIwz6dZuS
+         UEvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688732853; x=1691324853;
+        d=1e100.net; s=20221208; t=1688732902; x=1691324902;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dypW8BsEWWZsovJctMw3yW536uGbhaVcw8r4jC5Ja+E=;
-        b=CSyyTKdMqpb81UqIxw0fnDaABefFKiNV2IIK2lSEzy7g/aA/MbRpbaeVDmQmq9tukW
-         Eo+EUdcvPfrihje44+4B2Hp7IUqEWQCuCi7VgS4Cbz9AzUasqLFeCSYSYW9AF29bTeLn
-         ONUtzwMVfOVgPx0DOBAKapKIpQ6ccR4S+c7evk55gikds6vyGTwdY+VWzrPTwao2XSpZ
-         pTp44KTrHEBemKkePYRmd9A3DrrJh3fJ8kHPxXIo2iUqDj8BYSRSNZDeAgRtMiAUVAYc
-         LsGilzWkA6vNK+WVZd24uzKKWHRwSGWZsrKkZjKD3eEBUIpgg/k5jEOq5Sp0VOJkg8kR
-         PVCA==
-X-Gm-Message-State: ABy/qLZkJh3rpcIOoHyoavatr2rDsu59803FWWP+IdlcWF64sZQzUlXG
-        TNckDw2vA1qkYIhorBAnfgI=
-X-Google-Smtp-Source: APBJJlFQxcxvQFF3XXJedcUh3eRvg2XJlHCEQBMUj41c6vzHYI9PX35dbCTZRBFEm9k0oq3muhCStw==
-X-Received: by 2002:a7b:cd15:0:b0:3fc:8e:4287 with SMTP id f21-20020a7bcd15000000b003fc008e4287mr971782wmj.12.1688732853027;
-        Fri, 07 Jul 2023 05:27:33 -0700 (PDT)
+        bh=rJA6+/g6hyQtclq9OA+60uWzgmpTlAiLIyqyQBByGJo=;
+        b=d2gSoD3JUf9vsVrU4sq4traiJviX3fP4akWeaerMiuvJXu6HCOFlRGRF3h5pCpvrc5
+         4nWuaWQMjQRthGj3Gdw2XXCVmMYfsPmLRBecSGRCaHJTfLCYpwLjD+EUAi0SE6Fz7MUT
+         +k+78wiGuApWR/NFinXGjB/SmiRuV8aZS0I0TGwNG20q0WhGa88uPvF4Bfy8dpc9X/K9
+         G0LFl+EL4sVDwvvNoeSa8QDUQxRoxnss7Pw77lxYS8s9tAR2t7mJLPLCZ6DsUS0kKODe
+         QKtCCSrKPoUrTDmcbJ26MrS5tIePNw1/AR3akgAJKo5wJYDTjNGzXBgFsa6OUKI7EqgA
+         9dBQ==
+X-Gm-Message-State: ABy/qLaVpG7MYHW5v6Q3pwhveX2oYuWUvAWHM71lAHgGIAxNMxIOynLv
+        0nc0PK/XRnGqezpvw2bLbvc=
+X-Google-Smtp-Source: APBJJlEAIrjPu2Q1b2mUmPFXZHE/mktSLFqXqOh8lDPkDerFqD9Tl2Il12cwVSatuF8JIu+Q+UpnBg==
+X-Received: by 2002:a5d:460c:0:b0:314:41e9:9a92 with SMTP id t12-20020a5d460c000000b0031441e99a92mr4294457wrq.24.1688732901438;
+        Fri, 07 Jul 2023 05:28:21 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id q5-20020a1ce905000000b003fbc9d178a8sm2383772wmc.4.2023.07.07.05.27.32
+        by smtp.gmail.com with ESMTPSA id i14-20020adffdce000000b003141f96ed36sm4418753wrs.0.2023.07.07.05.28.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 05:27:32 -0700 (PDT)
-Date:   Fri, 7 Jul 2023 14:27:31 +0200
+        Fri, 07 Jul 2023 05:28:21 -0700 (PDT)
+Date:   Fri, 7 Jul 2023 14:28:19 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     javierm@redhat.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v3 05/12] drm/tegra: Store pointer to vmap'ed framebuffer
- in screen_buffer
-Message-ID: <ZKgEswjWsLVu85L5@orome>
-References: <20230707083422.18691-1-tzimmermann@suse.de>
- <20230707083422.18691-6-tzimmermann@suse.de>
+To:     Yangtao Li <frank.li@vivo.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/18] drm/tegra: dpaux: Convert to
+ devm_platform_ioremap_resource()
+Message-ID: <ZKgE407-trIp_7HV@orome>
+References: <20230707072034.48977-1-frank.li@vivo.com>
+ <20230707072034.48977-12-frank.li@vivo.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dPbMojJjJjFKYDud"
+        protocol="application/pgp-signature"; boundary="qEQdviPueCKP2hNt"
 Content-Disposition: inline
-In-Reply-To: <20230707083422.18691-6-tzimmermann@suse.de>
+In-Reply-To: <20230707072034.48977-12-frank.li@vivo.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---dPbMojJjJjFKYDud
+--qEQdviPueCKP2hNt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 07, 2023 at 10:31:56AM +0200, Thomas Zimmermann wrote:
-> Tegra uses DMA-able memory, which has to be acessed with CPU ops
-> for system-memory. Store the framebuffer's vmap address in struct
-> fb_info.screen_buffer. The currently used field 'screen_base' is
-> for I/O memory.
+On Fri, Jul 07, 2023 at 03:20:28PM +0800, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
 >=20
-> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > ---
->  drivers/gpu/drm/tegra/fbdev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/dpaux.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+> index 4d2677dcd831..f120897ce4b3 100644
+> --- a/drivers/gpu/drm/tegra/dpaux.c
+> +++ b/drivers/gpu/drm/tegra/dpaux.c
+> @@ -447,7 +447,6 @@ static const struct pinmux_ops tegra_dpaux_pinmux_ops=
+ =3D {
+>  static int tegra_dpaux_probe(struct platform_device *pdev)
+>  {
+>  	struct tegra_dpaux *dpaux;
+> -	struct resource *regs;
+>  	u32 value;
+>  	int err;
+> =20
+> @@ -461,14 +460,13 @@ static int tegra_dpaux_probe(struct platform_device=
+ *pdev)
+>  	INIT_LIST_HEAD(&dpaux->list);
+>  	dpaux->dev =3D &pdev->dev;
+> =20
+> -	regs =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	dpaux->regs =3D devm_ioremap_resource(&pdev->dev, regs);
+> +	dpaux->regs =3D devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(dpaux->regs))
+>  		return PTR_ERR(dpaux->regs);
+> =20
+>  	dpaux->irq =3D platform_get_irq(pdev, 0);
+>  	if (dpaux->irq < 0)
+> -		return -ENXIO;
+> +		return dpaux->irq;
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+This change has nothing to do with what the commit message says. It
+looks correct, but it should be a separate patch.
 
---dPbMojJjJjFKYDud
+Thierry
+
+--qEQdviPueCKP2hNt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSoBLIACgkQ3SOs138+
-s6FBKA/6AxW6TZPBIu9pzagIb0wUw+TTwCv63Z4skn1VdYDW/dghAfMVoXfT0vOZ
-Xk4H2fMnrfegbSn2w9XMtD47FnnjLVx0ZLqz9ve87xqEm1MY/vNBQs+wi3XpUGpq
-jFdYMB591WBZSSCMpU37Uemt3ltwIhXCWL1gsiM/S3VRQhMXBds4VSFnr5Gmi9lK
-tSolrVlLvfaTAvSRAkkGaN72/PI09OCNg0ZS8y4dsL1J3UwAVudw9kK+V1zji0RV
-xdXNvfcgF1spfFdIYpD+J3YOHhfoglZxPuGpLIiqVjHB8r4+98sJ7tKb6L90WNSm
-ZuHUHnZr0S/EaxAKO1NFuMzdT75WtqaYjaxaCraOroXVDzlY6hpvC78YhHjKJuKc
-Ak6VrjobRuTZS0guyhsw5O/a99r5LVtYksuzWQDU71DCF0kmscWqQ0Gf+pnRkuJ3
-M+yTGO9pKaOogAads3bighTN0UFYemq7tRY+eY5kh16OtR5Zihe+e6eXVTyKobc6
-WD3Hairolc20tPyMmX2kn1sCf++b/GZBaPk+azSHjKLGwjPjx3l/ba0hGuaDPZlp
-xyS8lB9Aj9LhqulMoamVK9LiLL4WnlQyOWl4R7vOh32FuUBLnJh+eh+oJpJu8RN6
-Q/tDvmisSKyNirVLOiTFdSk7jG1A8Hq+UEnEv+PNcG8fcl69rT8=
-=JRtn
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSoBOMACgkQ3SOs138+
+s6E1Cg/7BwHVxlGOZc5s4JgJCBnTWhzOzzu19uGD50cxCUqf+eWXsgMq60G9QhLU
+1AlrpwVh8W+1+Iig9hcMUPM365j5a4PmiLcxTp1FFKkQKQB0DdKk2mAWFgbD4RXt
+WlmMXFbelc5qw1YNF3nNYZtuGE8lLzCGI0LV4hOs24KmXJBx0sRSuKkwVB7rGb86
+pjVGv8XMLCtr0Ij8p8Zp1q3rne4F5WUOhS5BP/+p4HP4eNlXD31mwHsRhZkirNUC
+ncsT+vGmle/FjBiyEFxOFnaii2O4bkvV8b9KbUVHjV3kDDPCqVMvUidKkXVY8Vjw
+8S3Agm8dz6dLcWqeqpQhg9pCcMs+m+6wkAAYgIb2H9vZXmyg/UXH+oLceF/MyYnR
+tKGzr4AutYFm3aar7bVwfy9taSkcFScfP3yJauZSEkLFc9/4rsY+FbBsZwYmarq6
++rME9qUjwapHEyppQXiAV9FOA2GVVAc5X19RCmG9Da/LA/lDPrinhkE2/ngZZsQH
+nf5cN25ravD+qKcDgYtJlda72nSwo4H2zXbPE4q1poLr7B7Mye8Qvuups0Ninsem
+IqlqueYQXfgprwTG3WyQbpXJ3cSV8CaGqW6svI4MtcQiRVKfLWMrFj+HJ/1MRI46
+QlC0mhvtb015qqQuDdB9nqy04Xm88lmiPXxFSnA+CiQWbT1M+6M=
+=k0Vf
 -----END PGP SIGNATURE-----
 
---dPbMojJjJjFKYDud--
+--qEQdviPueCKP2hNt--
