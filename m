@@ -2,143 +2,127 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04937EB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 07:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC2DEB64D9
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jul 2023 08:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbjGGHXy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jul 2023 03:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56632 "EHLO
+        id S232509AbjGGIe3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jul 2023 04:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232055AbjGGHXw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 03:23:52 -0400
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2120.outbound.protection.outlook.com [40.107.215.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44078269A;
-        Fri,  7 Jul 2023 00:23:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mEFF59vhho6A4E64kYcLeSoZM0hzBVM3g7uGzXbsUAgRdcXkkYRofMbf/lrazDQTsdFZBHKWXbry9AMNpa3IeA0Vr1cAbaFAQtnVjFpMqY3dorgSX4QRhUmB0dHd6z8HJfF6lBLgueqFarB4ZVZh/mtHBCXsL9W4ef/urw3h3g70Echj0SSrw5IzN1Aog0eVTL5taRnUIHlXZ14HiTq0Xlbg1n81Clva83afeZlEsy9m8SATKz7nGUX2QzBPCJ4qMD+QnUi5+UtgTgi/rN3fxEZ9LPmBjcOEEq3zDlsgw7UF8Pk/t6tBiXwSV6j98tsSg69myDhGrC2fzaJd6zxIcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6lPI3daS+UM0ggiLDXQPd3BbYxuHM1WOWXBknGZQuNk=;
- b=R7lmUqGgvb9JBphAMtTmogAn+ncKeyc9N2Lj1+AuKcrKMCS4tdm6s59F2YiludBu6OhsUxAFXgb4uHG+jB7PPKyWjIr0d3ClfXqchHutTxnS2VCS+RSRfmGGyKpZqoUDVefo+aaVHmXKyiXUVjF5ZCLVVsLSg9Xiss8onofndWJtS7HLAy4iaLQZl0WgFW05qDmXDQbg4+rUZazvXAkUQZow+Ve8WVH4NDjX4wIAbU/hu/tDOgBigMopFviGG5Wt5B99q+hR9pBKU8zxPddqUlpKvhalWiK/5m18IlcAc3LnwGQSe2pv3O47N627PB/HNHeanXz3DT7zlL5Uy4UzGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6lPI3daS+UM0ggiLDXQPd3BbYxuHM1WOWXBknGZQuNk=;
- b=mFKVO85Is7y+wu7ax9XevM8opExFtWFcd8gVerpPWKzNmguXrzI0+EUjMSpRzkeS3U2XRXpGjXJIpExiwhHPEzbzv9gz4JweWm28dxVaNlbNH8Ivr+oR5HW8jCwPMlrhjS1ubMfwEcYKvstYAID54/LzoXcPZ7zDK6CaapbUe4jOBQTGbFDW9VK6vkvEVSTlkwHXYSt7YXeRHruHClwGwQS0D7dWAcoAe9Gb73wNmYevsy32wRNc26XYjcshaHqP7ax7ibEiQ/CqWrVbZ4xo4PzBFlsx/LjpGPWsXxONO9N8OeUnV1Z86pCmggO0inLQg3Py1Kvhyk/qfOHt9kGaPQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by KL1PR0601MB3954.apcprd06.prod.outlook.com (2603:1096:820:2d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.25; Fri, 7 Jul
- 2023 07:21:32 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.025; Fri, 7 Jul 2023
- 07:21:32 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Yangtao Li <frank.li@vivo.com>, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 15/18] drm/tegra: sor: Convert to devm_platform_ioremap_resource()
-Date:   Fri,  7 Jul 2023 15:20:31 +0800
-Message-Id: <20230707072034.48977-15-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230707072034.48977-1-frank.li@vivo.com>
-References: <20230707072034.48977-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0129.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::33) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+        with ESMTP id S231461AbjGGIe2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jul 2023 04:34:28 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDC6B90;
+        Fri,  7 Jul 2023 01:34:27 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7989C227B0;
+        Fri,  7 Jul 2023 08:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1688718866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Pvfj/OY6eCHI5adzX5a09+e+OBxPRPHmLMKqJIGthDI=;
+        b=1GFi3pIGlBjSZkCD/VYvTY5TMcveaTo2LhruYtHhaMYNkMV8bjN6ZvuZScTeBSuIj1N951
+        S3p7n9wct/WmCXVSVsJwYTbsHbMY7Ph3loJvwC9HKAfMc99osCFJJ0uLMtoDdTQAxL57JT
+        Kgy4uydqkc5Ah9uaFHeNHY9ziHw1P8c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1688718866;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Pvfj/OY6eCHI5adzX5a09+e+OBxPRPHmLMKqJIGthDI=;
+        b=3ZFfdrcNBnX0QGiMOP/uCo/tK0c3jzRLvVLQMdkCfhlkjQGhUmk/NQ1hsItKS5pHpbvyme
+        02tuatFhYQSDuQCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4697B1346D;
+        Fri,  7 Jul 2023 08:34:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0qwgEBLOp2RdQAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 07 Jul 2023 08:34:26 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     javierm@redhat.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-fbdev@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 00/12] drm: Improve fbdev emulation for DMA-able framebuffers
+Date:   Fri,  7 Jul 2023 10:31:51 +0200
+Message-ID: <20230707083422.18691-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KL1PR0601MB3954:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1516ac7c-f56a-407b-f5ee-08db7ebac9fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: U+WgG+oP9X+3L5uL3FEjRzC3gPfUm1qVavcGALaJA+OwCB6SmAWJci5zA7+gdXmPOCJVGwY3ECS+FhOW0auHVKLraZYwnEguYv8zXd+i0UbFNCmw6UjT572uWZECwYFQIP2KvHSAbNm6rG7TYnGfdpOsDOie+tRcuqCT3wf3EE+/oe8y1ySdhDINwpYR70jfZrUyy/rKB2LI59jFZKQCj/E6MWAeugSgMBz52M1JdoGPDV8WFYh5VHFE1SASqu1p2AcrUqNH1EblQ2uq+L2VOGlqjXOXzA5323V3zcxaLK8ppc4PkRB6OzuZ7yIEXgF8cuzBQHUXPXn2vhtCyk6X1f4lM6KoNv3yKuxMeFGla1jxBtYe8sDCDLxO0qssmhPNn2CRg9IoGDw3/yIaGhmQ07ejCo6thMWy9UQow+b4iKTErmXH2Y5Ht281p7c2iOEEJjmDeUcvvhx8L9KBxQXW4fg2I/1ka2lGvhh91ZLFJFPC0r+f1m76moZqHr6yJyl6G6sRcZgaFlIPX0XFWysemZxq5xyGfLmm3ScSPZR0EsQLRHzxe0czLUKuH/SxnJDISmsF11w4T76dYmX3nOgbrq9BPwY3DQaQApQl1ENLM0+HaZuG3Tz+yeezWWCoi6Wz
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(451199021)(4326008)(478600001)(316002)(38100700002)(38350700002)(36756003)(83380400001)(110136005)(66946007)(66476007)(66556008)(2616005)(8676002)(8936002)(6506007)(186003)(86362001)(4744005)(26005)(1076003)(5660300002)(6486002)(52116002)(2906002)(41300700001)(6512007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5jBYFMHFkmOo8hmolyFPLTxzcfiX3Jcr/lJzrVKcl+6sK2iAPU0tFrohryDg?=
- =?us-ascii?Q?6lk8j9mkNKrvkaLHxG7UDtkUGBoBxoula7uTgYqd6HjxQVSK4Se14b+Kbcko?=
- =?us-ascii?Q?QY+08q8Hjkopgt5VaGVudsnfLHrw/q9kC5tRfCAy7utW4OjAzvtp5HxLxx/h?=
- =?us-ascii?Q?xttHYdzMYm7xVD4Jgi290Z2eUff8hKGne78oRrNxSbcH1VTzQuML/TSz0TkJ?=
- =?us-ascii?Q?S9IR5pZgaiJkceq4/kSaQ4llPI2jEYpIAcDQeT3uA0TkaAJ2KlLL92P6ZQoq?=
- =?us-ascii?Q?o15aR08155FapORQ0xV/Z+wQWQ6OcjfgcDO4l3XmNKGdVmC7+0lpwMt+bdud?=
- =?us-ascii?Q?6jFQOS54s2vM7PeVdbGnuU2dm4TI4pz9iqA1z/rjL4eqTzABFNK1c5XNVFkP?=
- =?us-ascii?Q?kIJg9vI+/Zcq4eJOTl0PgNzdjwgSaVK+fEyDIDe4fA49S0vPbX87w/Gsz+Mm?=
- =?us-ascii?Q?ETjvUmSSesLYgTkOoIpNJhMF+ij1W9NUcIG17smJ1dt+oTw1yvazBglR1Yrd?=
- =?us-ascii?Q?+VZoF0u9qQFJRB396MwF7qzn9Zn36QQ4Ne8S2HnZakBuNxSCOiG7dBzy1bzt?=
- =?us-ascii?Q?NyzFF+12eoYfBfpW7Si0dzQ/G6F/5qQ8e15x2Vqy6KP6XUYPeowEVjAnGl/F?=
- =?us-ascii?Q?lVggpf+hFWuECSTwgCPoBSmBMBNBs6DO1bsABc/lk+GsTE21rxjLFm1HgCWx?=
- =?us-ascii?Q?Rd/0Se0sECt0J2F+FmlGed3mSyIs9tpVRAwXua+LHu5cgOSXxmGrZS7FSg1B?=
- =?us-ascii?Q?t373UGBXYbb0XKFLOJDYxcACs9DrSh97gvRMgz6mh6rBYpHboFhl8XihFbUz?=
- =?us-ascii?Q?1exLhPnq+0ibrjgHb0Iy8ORoZ5tWilLlrqT00578zn6NKCCcj8HYPdGfJtQ6?=
- =?us-ascii?Q?ZCvw/yhn/nhfc362EovQ3FI994DuXrPSmA+vMb4fjLJn/L9aq5NMInsS+M/7?=
- =?us-ascii?Q?O4qGjL+kRh8FeNNQc8QcD2oicf8wDwzALbyysCBjN14pagx/KYH4GnbUYGNT?=
- =?us-ascii?Q?blo3f2YXqFyRddRTfknsVme6DGiV/LddxKZYWZzywkoNtacrA2m0vtGOFDql?=
- =?us-ascii?Q?feepGelwvJHubGrg7c2EhzHTuZPKmzKh3LUdCurgMbBio2RJ7MLJ1qeaTDfK?=
- =?us-ascii?Q?uDet3HFqZsw8et1kar813oNy3XOJTsGYvm823Lu6pcEiP7LR6Aadf0MSNOsV?=
- =?us-ascii?Q?d3+78GP8OTnRyrO9iMzKE51T9/4hkMRELxox/9dNouASLt/R/SgaBHIZxEbG?=
- =?us-ascii?Q?MdU9NZmTvG8ozAnqBLm1aEryeNoVwEmF7jGMzDBqAVxRiTuQeLumk3C1u9Et?=
- =?us-ascii?Q?DyHMRwd6sXNKv2ek7+w5DViW4VVtgdchvWCU7R7z76JwoflqdJ1gRBCKpMCa?=
- =?us-ascii?Q?E9ns2BRwT+QbUj0Po4zlXgY+GHRQN0a9DKIGqj/yluowSi7LK10t1spIycOV?=
- =?us-ascii?Q?O2scJX3+n257L0ZTiFkQ75TfN4xDYjyER01emkBm8u34GMzR453IGgEHZc/2?=
- =?us-ascii?Q?XD28fs+Z87sHIV3ucmr92NnNIJbK8s2eWJ+65uCOTf0ed3Rrwwmrr/MArBlw?=
- =?us-ascii?Q?zPxMacIDAEzdqj5mlp+Yv8aMFWg4rEfrVQ2s7P55?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1516ac7c-f56a-407b-f5ee-08db7ebac9fd
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2023 07:21:32.3103
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZHQcM1VlZfBWbINtpEAgR7kBSKKnPjlarm6LAPNSVZiyAaTBbrMuq6eMmdfXlfx5RNk1XVayX5HySOuYVuPD9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB3954
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+Add fbdev helpers for framebuffers in DMA-able memory and update
+fbdev emulation in the respective DRM drivers. DMA memory used to
+handled as system memory. Improve this and prepare for possible
+future changes.
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
----
- drivers/gpu/drm/tegra/sor.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Patch 1 adds initializer macros for struct fb_ops and a Kconfig
+token for framebuffers in DMA memory.
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index abd6e3b92293..f23d54626883 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -3708,7 +3708,6 @@ static int tegra_sor_probe(struct platform_device *pdev)
- {
- 	struct device_node *np;
- 	struct tegra_sor *sor;
--	struct resource *regs;
- 	int err;
- 
- 	sor = devm_kzalloc(&pdev->dev, sizeof(*sor), GFP_KERNEL);
-@@ -3781,8 +3780,7 @@ static int tegra_sor_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	sor->regs = devm_ioremap_resource(&pdev->dev, regs);
-+	sor->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(sor->regs)) {
- 		err = PTR_ERR(sor->regs);
- 		goto remove;
+Patches 2 to 5 update fbdev-dma and tegra. No functional changes
+are expected as both used system memory before.
+
+Patches 6 and 7 update exynos to use DMA helpers. Exynos incorrectly
+used fbdev's I/O-memory helpers. Fix this.
+
+Patches 8 to 10 update omapdrm to use DMA helpers. Patch 7 first
+reworks the driver's mmap to current best practices. This also makes
+it suitable for use with fbdev, which patches 8 and 9 implement.
+
+Patchies 11 removes some fbdev macros for system memory that are now
+unused; patch 12 fixes some comments.
+
+The patchset would ideally go through drm-misc-next. Future patches
+can build upon it and update fbdev drivers in similar ways.
+
+v3:
+	* set screen_buffer in tegra (Thierry)
+v2:
+	* fix omap mmap flags
+	* drop FBINFO_DEFAULT from patches
+	* minor cleanups
+
+Thomas Zimmermann (12):
+  fbdev: Add fb_ops init macros for framebuffers in DMA-able memory
+  drm/fbdev-dma: Use fbdev DMA helpers
+  drm/tegra: Use fbdev DMA helpers
+  drm/tegra: Set fbdev FBINFO_VIRTFB flag
+  drm/tegra: Store pointer to vmap'ed framebuffer in screen_buffer
+  drm/exynos: Use fbdev DMA helpers
+  drm/exynos: Set fbdev FBINFO_VIRTFB flag
+  drm/omapdrm: Set VM flags in GEM-object mmap function
+  drm/omapdrm: Use GEM mmap for fbdev emulation
+  drm/omapdrm: Set fbdev FBINFO_VIRTFB flag
+  fbdev: Remove FB_DEFAULT_SYS_OPS
+  fbdev: Harmonize some comments in <linux/fb.h>
+
+ drivers/gpu/drm/Kconfig                   |  2 +-
+ drivers/gpu/drm/drm_fbdev_dma.c           |  4 ++--
+ drivers/gpu/drm/exynos/Kconfig            |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  5 ++--
+ drivers/gpu/drm/omapdrm/Kconfig           |  2 +-
+ drivers/gpu/drm/omapdrm/omap_drv.c        | 12 +---------
+ drivers/gpu/drm/omapdrm/omap_fbdev.c      | 16 +++++++++++--
+ drivers/gpu/drm/omapdrm/omap_gem.c        | 24 +++++--------------
+ drivers/gpu/drm/omapdrm/omap_gem.h        |  3 ---
+ drivers/gpu/drm/omapdrm/omap_gem_dmabuf.c |  7 +-----
+ drivers/gpu/drm/tegra/Kconfig             |  2 +-
+ drivers/gpu/drm/tegra/fbdev.c             |  7 +++---
+ drivers/video/fbdev/Kconfig               |  8 +++++++
+ include/linux/fb.h                        | 29 ++++++++++-------------
+ 14 files changed, 56 insertions(+), 67 deletions(-)
+
 -- 
-2.39.0
+2.41.0
 
