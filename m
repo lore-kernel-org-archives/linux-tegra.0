@@ -2,137 +2,263 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77474EB64DC
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 03:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A30EB64DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 08:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230213AbjGJD22 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 9 Jul 2023 23:28:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57336 "EHLO
+        id S232530AbjGJIJ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jul 2023 04:09:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230034AbjGJD16 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 9 Jul 2023 23:27:58 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2072d.outbound.protection.outlook.com [IPv6:2a01:111:f403:704b::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F143919BD;
-        Sun,  9 Jul 2023 20:26:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MGE5F6oSsCYoAZsW5Mxia5nDoVMkL8Upz1vBnP2lFQv6QoGlSqxYPpjC9Oi7rSNXzu6fdTQcMQBaAjKO/ba88+WttNUqYRC+7GLFTCio7K5UCV457LnSoGi1GUpEHYzDJEqE0S7H/DAF/y+CxBeb9MVR92Vos8NiydUaryPgBaDF6ti0CjxhXCZ+3Itf54g+O4hYwjUSwu6lWZxcGM1MXq5PGR9MBQDV6hbftTGJjjFrdpfXfLNWbH7w5VePTgiPduIwy6jpH7fVf1thuDuuQUB282Jqjp4nFdxa6TDQGjHtXUchIJ9XRp4N45/AVbNMZxz27ikktet4CSADieJqKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gK9FuGMKcBBbyuDk4sJW5vpeLpB47BAwKFQje1KuYEc=;
- b=GwMCjgfXE5IMqT7VT6gpmqaRoo5oNK0jr1wWmKHBsiyLuNzeukPFgM/TvEcq8sVeOe33XyZWTYivaO3T3xtrMEvMUeVsEVEqWDHd/B00mW4kmtwx8533bSer7HGWZf+gCK19yVrr8HX5ll7oZ88/ujdLssSXvmFCnKxDXau32brQ7yudM2wFpAhbsgjMCpGRKZWFFhKp27QsuV340BPoZ45ei7tqJxSbD8q1Adc4IavtYW4SqVFoNwvj3UpHIl8xpjb89Dl/sFHNHmGSIIb7P3oxl38dPp5boPnFc1zm7/Dj/P7oRZPXM3N8zoK5h6+fzD0CUnttArVRcsdyImbgtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gK9FuGMKcBBbyuDk4sJW5vpeLpB47BAwKFQje1KuYEc=;
- b=VgblIRppIet+1bXdVbPWrxXzcE3smOU28Wnlhu6Y8ZoqnJEkPrG/Hmz/saTA5Nii0kshXU/Jio5MeE78HQZVL4MCbkowRJNYQSwhaQlskE8YtNSAO+XIdtChPDWdHMKUC8T2KClHQNx+g05hm7YmVl5HGsmiOJe0sAvLvvQMql93srYk8t93CRK8yPxmby14pq5hUK/6c9gik9T+E02JRLmnmE7I+jpdYmTP+e256vglevWQOlluIFL4DkH/0OCHgFnJNh/wYMghG3zzYG5J4aXnNeniFjX+3hgXP/6wIdEW5E0oa4owcMRxgNw8jQWq+OwcK8txvJGV2Yz+s9HfCw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TYSPR06MB6472.apcprd06.prod.outlook.com (2603:1096:400:47b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.30; Mon, 10 Jul
- 2023 03:24:39 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.028; Mon, 10 Jul 2023
- 03:24:39 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Yangtao Li <frank.li@vivo.com>,
-        Thierry Reding <treding@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/19] drm/tegra: dpaux: Fix incorrect return value of platform_get_irq
-Date:   Mon, 10 Jul 2023 11:23:49 +0800
-Message-Id: <20230710032355.72914-13-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230710032355.72914-1-frank.li@vivo.com>
-References: <20230710032355.72914-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGXP274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::32)
- To SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+        with ESMTP id S231394AbjGJIJ2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 10 Jul 2023 04:09:28 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDD0E1
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 01:09:26 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9923833737eso477346366b.3
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 01:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688976565; x=1691568565;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ai5VPz1A3P6zIF7jpvLukucy9yK0spksXLW5++Hkwu0=;
+        b=hYB7np9XfCdqXie44QMhTkunjecFnATwad8Cyyo3cA9qi6t2sLlUyjZCOYKCXDlGBV
+         nPna4VI9M6GkZXB4xK6fNvW+h2no2VMNwFyLvVwppl0bLdpvu/ViZMPwORarP9e4pqQF
+         lCxPiKrh08E9NC8wgQMqe7MX7c82bz1j1fyJbRi4LmFUhdBTWfCLjcI1DRNuJE9BUOgQ
+         NCbjeoEirKXeWOUVREL+B+SDFq2LpNio6UIYpZzxzFqQe5T50i08sQaBkFKxGvg+coHX
+         R0sEgDEIDAjlfjNLg7nQur6OoGDxjONrnhAyMW4YEaGc3jO98Y7RMsITypd4VHglyA0R
+         AtQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688976565; x=1691568565;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ai5VPz1A3P6zIF7jpvLukucy9yK0spksXLW5++Hkwu0=;
+        b=PqhSQ4vlr8e0dqN8nlg7JY5DYBRYf4CnBcVSBozco1LUMw/2oBBtKme5egavDAK9D+
+         Rnq9HoUL5vDha/Q6ivrOmI/VDTHGcW+XgYnfT+ze85Dzo8UhhYRk55WxSvpgwXwbLcCO
+         htwlU51OOZbyAWxqe7tPQBS5vvG6/odUW5dagQ+51teWwoq4sy9DJtPT5gv8Reuf1QSf
+         APculr84Ym6O5WV1gbkeR3RouUufgBHYr5Spr2LnAygncR9+5sDeOdJ0DicRnSjZPf99
+         5vuLOKQDKESZKHjCfjeKQcdAh6L5nRBHKtAjGFnhPrDCFTwTqHAuhPMr2NfiCgmx1fhs
+         tCag==
+X-Gm-Message-State: ABy/qLYbX6cG+DZL3YFMjPD6+rFeIWh8i81bwI6lbyhIG9ZG8RqgftuW
+        4xgCQux0n05h5iTUSNX9QuQ3Xw==
+X-Google-Smtp-Source: APBJJlFFTpAolmaqeCsAlbJoBZcfe0TaJ9E4fo1wShcyU+Kz/UIB/z6U65faCFChzdghvGoQPNILgQ==
+X-Received: by 2002:a17:907:cca1:b0:974:771e:6bf0 with SMTP id up33-20020a170907cca100b00974771e6bf0mr10941305ejc.56.1688976564772;
+        Mon, 10 Jul 2023 01:09:24 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id xa20-20020a170907b9d400b00993004239a4sm5738182ejc.215.2023.07.10.01.09.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jul 2023 01:09:24 -0700 (PDT)
+Message-ID: <d6386a66-4cc2-9358-e65e-b09e614800c3@linaro.org>
+Date:   Mon, 10 Jul 2023 10:09:18 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYSPR06MB6472:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbc6072d-1b4f-4173-4900-08db80f5319d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xHdabf4w8W1sAhciEG8ip8bya0k+LVscXQaQlH/V/PR+5R/xUZhdMfKjfiepr7Wx1uHw1611iBxOFhyYQE1peTxx1Krrt8Yq982cRod/KpnbVkP0Vw2+fX5tXVVL05jAxAXgKZpH2JrS55bpNKFRue1/GxUpHNKoYJBKxpOxmQyclTfcAF1u55vYr9R+5z4/bYpBHPHYTZiB1wh+KAcAI6py82OPIMzZmQenNcLmLE8IKf2T7FEgQMClB/jG0qRGwQ4J4utfAgG3FfKMRDEqUoh3Xv/c/Tq7ok3I1vj3eVgQsjXBvE2swkFToLSJoi2Iy/6e7/Q7Ed0MjnMoXGYUR1IAFMbD7pgueO9CPK9m5h+qfPbW8KTH9oQwjk21oMRqNQTHtTAE17qkxF34EHfwQ71cSs95QfApV97gnVlbclhC2JUXGCaQxupU0FNB6wqBUGAxjzMn0H7GvDK1uRT0y5g3NQXfqXPaN7UoKIaiZNaKiW5zlNa6PbdXvSPEotjdP2jXqGOMFWhHHRdo4l/dx8/qrjtKoNMM2HSZCZoxCSXPh5NPyODmGlGy2rMlEV5Fd0dgeu8lN4rGVsyWGpKnSRj0cCChIhqfcM3e0ZhS7mj1RqQl4Tp6PbIQxXQpd3nE
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(376002)(346002)(136003)(396003)(451199021)(186003)(6506007)(26005)(1076003)(2616005)(6512007)(83380400001)(4744005)(41300700001)(4326008)(2906002)(66556008)(316002)(5660300002)(8676002)(8936002)(66476007)(478600001)(66946007)(6486002)(52116002)(6666004)(110136005)(54906003)(36756003)(86362001)(38100700002)(38350700002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qKap0KcjueWj0OZ9xBDDiolsE0PiKFV7k4HXu2NiszOYcp2Jdd4rfl2trfSJ?=
- =?us-ascii?Q?RlpYClqaYtZvSFjtskAL8LpV70leGQjK9LEV+r/CaAX99qegkrEqkRuFgoQB?=
- =?us-ascii?Q?HCmvM8rShs8BX+0oNHSxtwsnwUthQ235b8p3Jbq2U3y8QCEdtPAWsLEQeucz?=
- =?us-ascii?Q?K5GK7VYYFPXdzs7b6PLhchn9+NMtyK8qB+jcBuXEedpBjPF3R9aEi1rFrfCP?=
- =?us-ascii?Q?ZeVwpqCSktMVc6wRYViJ3ya3eMor1zjY72EZSLwqfqoQhT2q/3gbhdRNNsIt?=
- =?us-ascii?Q?UYM89G+fbFlcMCFSzTyva2oZ6hu4raYLNrdqgMhx36A/1W9m/NuN6v+qkcbO?=
- =?us-ascii?Q?hFI6LMKDsPRKJFbZ7YqOaUHAHvn1U0kktBtKCJuezBp3+Hh2NGuQXjpxXndv?=
- =?us-ascii?Q?CD9Hj+5UmJ/FAb+ofqxo6+Rdi6k7217X3C30H0nfS0FYvq7MSSBvTkPSSbyk?=
- =?us-ascii?Q?fzCutwtQTkPsktaChc8TtNKXjG577WE9JGpzinlQMKPd27PnX6hiN8CPjuib?=
- =?us-ascii?Q?g8IPEqV2xF3bI8eLlzMKE6Bap0lJE/bla2XqiJJBgUoRuJkEikfA+bml4lXF?=
- =?us-ascii?Q?oZlL08PsGsfFVC2IUqeW1TtslqC+RxCL/SO7gSi1I5K6yhuG2q54rcBhAlox?=
- =?us-ascii?Q?AFo4UXRYVkyPBySwC4jGTiBz+xXc3jd8WzSyHgKi8G60al76Kssbl4THIkHA?=
- =?us-ascii?Q?GQvUr8Sv6anP0RQdaLr/s+CmVrJvfcQW7zdyiXttHMCXYIPMSplJKoPofwZj?=
- =?us-ascii?Q?3X65KYQLQCY171WpWM4rtyG+4ffrmIVhF7LgHg663aHz/jNRTCKHOpyHMhw3?=
- =?us-ascii?Q?QaLBf6sh2b+WeIhjKLDbi6uX3KB/5wUveyrP36Nhgc4nv6UohOnpSCD1XiFd?=
- =?us-ascii?Q?Kp9+AReK51ua9gj4I6Nifc9MEsAGGkuF2D8uUlcqoS8aAG7PGim5Tn4+23Ml?=
- =?us-ascii?Q?wJKhBcf245ZNo/vK8Gtd1gDiINj8qt9HKnjdd0y+CYazQLVM9Ob2Jg+/ZsW0?=
- =?us-ascii?Q?XdcfE2j2HKqPo6v2Brw6BMzFPXIJQWeQONJ4IWj4Vo+4A3mHxkt5qyJjksxj?=
- =?us-ascii?Q?CHsWrdY/21AgWzQVQNqpsanTIfW+2cTLflD9RwoXigLemRiyWAY5LF0E8qmj?=
- =?us-ascii?Q?bZQdL7DH8SLlbIHRMp8gZSeEKOTaV+Ay7foIa7Ki2Ea60DN3ZSa9JIetpMds?=
- =?us-ascii?Q?7AvWZ9/qQJdFPzpXfiksm4aPxu3sf69wFrjJJbFQV5ApckI0yfe5YdKDCxEw?=
- =?us-ascii?Q?+nAHz/H8JeDsAb+fy3CORbpyxONffEUagd4m5C/cPh1GGX+MkitbH0JmHcxr?=
- =?us-ascii?Q?MiDw1hA2ypWa1v+m5M/xuIjDhhaCPuauYed8qt0WqCVg1fTi9js9KsuCyIIS?=
- =?us-ascii?Q?Vn1T2xzBQq7aRS0uzF+l7VE7v/7idt3bLCJl+XwxOoTGgSctCLECA7+dyhr/?=
- =?us-ascii?Q?Ns1ZeD9IZ/oVi658CebbG3T7hRXhrPym+PY2YbwF0ag8ilaP6ZvT4W3JTfz5?=
- =?us-ascii?Q?IW/nkoKmnqK/lOF2pBErNzy7eOwJEdFujrTEBOdwJ4hVVpXuLuXUxZ3DjLSl?=
- =?us-ascii?Q?v2lYLSZS9pSDUbwviv613V4fNxPVcWspu7oL/LSh?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbc6072d-1b4f-4173-4900-08db80f5319d
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2023 03:24:39.2916
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 75KM/uAo4k0vng/f8Z3ft+9v+nqCylhQ5IDCl4stZ2r6SXX/q5zmgxSsD2Wk3OHkPCfqcodLgOJ23B80CGO5og==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6472
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] dt-bindings: thermal: tegra: Convert to json-schema
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20230707133333.2998802-1-thierry.reding@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230707133333.2998802-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-When platform_get_irq fails, we should return dpaux->irq
-instead of -ENXIO.
+On 07/07/2023 15:33, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Convert the Tegra thermal bindings from the free-form text format to
+> json-schema.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Fixes: 6b6b604215c6 ("drm/tegra: Add eDP support")
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
----
- drivers/gpu/drm/tegra/dpaux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for your patch. There is something to discuss/improve.
 
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index 4699def04190..f120897ce4b3 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -466,7 +466,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 
- 	dpaux->irq = platform_get_irq(pdev, 0);
- 	if (dpaux->irq < 0)
--		return -ENXIO;
-+		return dpaux->irq;
- 
- 	if (!pdev->dev.pm_domain) {
- 		dpaux->rst = devm_reset_control_get(&pdev->dev, "dpaux");
--- 
-2.39.0
+...
+
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra124-soctherm
+> +      - nvidia,tegra132-soctherm
+> +      - nvidia,tegra210-soctherm
+> +
+> +  reg:
+> +    minItems: 2
+
+Drop minItems, not needed if equals to maxItems.
+
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    minItems: 2
+
+Drop minItems, not needed if equals to maxItems.
+
+
+> +    maxItems: 2
+> +
+> +  interrupts:
+> +    items:
+> +      - description: module interrupt
+> +      - description: EDP interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: thermal
+> +      - const: edp
+> +
+> +  clocks:
+> +    items:
+> +      - description: thermal sensor clock
+> +      - description: module clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: tsensor
+> +      - const: soctherm
+> +
+> +  resets:
+> +    items:
+> +      - description: module reset
+> +
+> +  reset-names:
+> +    items:
+> +      - const: soctherm
+> +
+> +  "#thermal-sensor-cells":
+> +    const: 1
+> +
+> +  throttle-cfgs:
+> +    $ref: thermal-cooling-devices.yaml
+
+Missing unevaluatedProperties: false on this level.
+
+> +    description: A sub-node which is a container of configuration for each
+> +      hardware throttle events. These events can be set as cooling devices.
+> +      Throttle event sub-nodes must be named as "light" or "heavy".
+> +    patternProperties:
+> +      "^(light|heavy)$":
+> +        type: object
+> +        properties:
+> +          nvidia,priority:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            minimum: 1
+> +            maximum: 100
+> +            description: Each throttles has its own throttle settings, so the
+> +              SW need to set priorities for various throttle, the HW arbiter
+> +              can select the final throttle settings. Bigger value indicates
+> +              higher priority, In general, higher priority translates to lower
+> +              target frequency. SW needs to ensure that critical thermal
+> +              alarms are given higher priority, and ensure that there is no
+> +              race if priority of two vectors is set to the same value.
+> +
+> +          nvidia,cpu-throt-percent:
+
+Missing type
+
+> +            description: This property is for Tegra124 and Tegra210. It is the
+> +              throttling depth of pulse skippers, it's the percentage
+> +              throttling.
+> +
+> +          nvidia,cpu-throt-level:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            description: This property is only for Tegra132, it is the level
+> +              of pulse skippers, which used to throttle clock frequencies. It
+> +              indicates cpu clock throttling depth, and the depth can be
+> +              programmed.
+> +            enum:
+> +              # none (TEGRA_SOCTHERM_THROT_LEVEL_NONE)
+> +              - 0
+> +              # low (TEGRA_SOCTHERM_THROT_LEVEL_LOW)
+> +              - 1
+> +              # medium (TEGRA_SOCTHERM_THROT_LEVEL_MED)
+> +              - 2
+> +              # high (TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
+> +              - 3
+> +
+> +          nvidia,gpu-throt-level:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            description: This property is for Tegra124 and Tegra210. It is the
+> +              level of pulse skippers, which used to throttle clock
+> +              frequencies. It indicates gpu clock throttling depth and can be
+> +              programmed to any of the following values which represent a
+> +              throttling percentage.
+> +            enum:
+> +              # none (0%, TEGRA_SOCTHERM_THROT_LEVEL_NONE)
+> +              - 0
+> +              # low (50%, TEGRA_SOCTHERM_THROT_LEVEL_LOW)
+> +              - 1
+> +              # medium (75%, TEGRA_SOCTHERM_THROT_LEVEL_MED)
+> +              - 2
+> +              # high (85%, TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
+> +              - 3
+> +
+> +          # optional
+> +          # Tegra210 specific and valid only for OCx throttle events
+> +          nvidia,count-threshold:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            description: Specifies the number of OC events that are required
+> +              for triggering an interrupt. Interrupts are not triggered if the
+> +              property is missing. A value of 0 will interrupt on every OC
+> +              alarm.
+> +
+> +          nvidia,polarity-active-low:
+> +            $ref: /schemas/types.yaml#/definitions/flag
+> +            description: Configures the polarity of the OC alaram signal. If
+> +              present, this means assert low, otherwise assert high.
+> +
+> +          nvidia,alarm-filter:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            description: Number of clocks to filter event. When the filter
+> +              expires (which means the OC event has not occurred for a long
+> +              time), the counter is cleared and filter is rearmed.
+> +            default: 0
+> +
+> +          nvidia,throttle-period-us:
+> +            description: Specifies the number of microseconds for which
+> +              throttling is engaged after the OC event is deasserted.
+> +            default: 0
+> +
+> +  # optional
+> +  nvidia,thermtrips:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+
+Missing items describing the matrix.
+
+> +    description: |
+> +      When present, this property specifies the temperature at which the
+> +      SOCTHERM hardware will assert the thermal trigger signal to the Power
+> +      Management IC, which can be configured to reset or shutdown the device.
+> +      It is an array of pairs where each pair represents a tsensor ID followed
+> +      by a temperature in milli Celcius. In the absence of this property the
+> +      critical trip point will be used for thermtrip temperature.
+> +
+> +      Note:
+> +      - the "critical" type trip points will be used to set the temperature at
+> +        which the SOCTHERM hardware will assert a thermal trigger if the
+> +        "nvidia,thermtrips" property is missing.  When the thermtrips property
+> +        is present, the breach of a critical trip point is reported back to
+> +        the thermal framework to implement software shutdown.
+> +
+> +      - the "hot" type trip points will be set to SOCTHERM hardware as the
+> +        throttle temperature.  Once the temperature of this thermal zone is
+> +        higher than it, it will trigger the HW throttle event.
+> +
+
+
+Best regards,
+Krzysztof
 
