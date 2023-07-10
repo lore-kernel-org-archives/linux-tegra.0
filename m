@@ -2,358 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403BFEB64DA
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 13:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A911EB64DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 14:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230255AbjGJN57 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Jul 2023 09:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56710 "EHLO
+        id S230389AbjGJOZv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jul 2023 10:25:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbjGJN56 (ORCPT
+        with ESMTP id S229683AbjGJOZt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Jul 2023 09:57:58 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 029A0DF;
-        Mon, 10 Jul 2023 06:57:57 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fc0aecf107so17032175e9.2;
-        Mon, 10 Jul 2023 06:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688997475; x=1691589475;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YyelWds9qkSV46amRpfEwVbW08oi+5c7F/CoNfQrxlE=;
-        b=K/B86ERryINnH1MBsbLF6tG1t1o8EMuZrTB9SN7rA5bbE6p4Lgbq+e48iWgv10Klq8
-         6n4bXHZs6rfY4WMvoc+4OwG1D6XjsdGvlTbL8FXfY2WARWOgDQikrwpLeL8j36pT3sE/
-         NaVFgVIXym7BtHeAEC9zC54IbPEKDizh/opXQEzl/WK7JR0XTII5VxGNNYYAY5wLq8ed
-         AjoVgDR+86He33UFLZEV2cCqpnUJMaek16Duob//uCPcnIPLd94xTpShXfVMm0vdrqLX
-         SeuGGVtCuMGD/2ipv1uPKifH85cdvTMX82YuaRqrQIBEAbP48IZ2955cEeC9p5rulcy1
-         m0LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688997475; x=1691589475;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YyelWds9qkSV46amRpfEwVbW08oi+5c7F/CoNfQrxlE=;
-        b=FGxJtS+pzILrIGB0ZbTKM62FPSMMX+njsOvNgj9n08SeK1avPN2UIMOiapy9pdXgmr
-         auUB1zXXKjIyPbCASVqsklj95eYLEP+rEh4D4rHvsRdOyiAF9Vxo8dGqp3UtEF1dafZv
-         HsQJzya6HXnA/LUi1DQ87WNbbDAV6lYSGq8AB4VnWB/nQj1/mRYJ7rvb1105/rPo8soP
-         hqmuqbSlPu/G9BeXmYmk3+ABsvNdazuf1Hh5VlBNbhwlxRVfxXBJjbkeuqAhB+JywGXw
-         3hP29vaJ1EHZJejn1ftu8uXkafg5wuNs2JMC3P288l2sEB8DYfaTUeoJqA9gEVYMwcPc
-         vC0g==
-X-Gm-Message-State: ABy/qLaiXKpXWzj7DCJK+FbAtxbHhKLRsoxOesWDHkPRc0DKXfQaQgK/
-        1UqSVdUKm3w3rm79L2LftSo=
-X-Google-Smtp-Source: APBJJlEIjGS5Fcw9aTWeb4ohn9KB/foFJbSLJaF/zlDghlCokvrKAwCJgTNBDk6a5xIqgg2IR6H7iw==
-X-Received: by 2002:a5d:51cc:0:b0:314:121d:8cbf with SMTP id n12-20020a5d51cc000000b00314121d8cbfmr6621593wrv.25.1688997475165;
-        Mon, 10 Jul 2023 06:57:55 -0700 (PDT)
-Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r20-20020a056402035400b0051e2549c4f9sm5880942edw.47.2023.07.10.06.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 06:57:54 -0700 (PDT)
-Date:   Mon, 10 Jul 2023 15:57:53 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5/7] dt-bindings: arm: tegra: pmc: Restructure pad
- configuration node schema
-Message-ID: <ZKwOYYWTM3PoXfMc@orome>
-References: <20230707131711.2997956-1-thierry.reding@gmail.com>
- <20230707131711.2997956-5-thierry.reding@gmail.com>
- <20230707223503.GA1087110-robh@kernel.org>
+        Mon, 10 Jul 2023 10:25:49 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2085.outbound.protection.outlook.com [40.107.92.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD9FD8E;
+        Mon, 10 Jul 2023 07:25:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gmzKagS3aCXvf70PyTSnxSwoz4tA90RrAcVXbrH60gGY0xiI8WO1WmIyjqKaPnc+vD4kQF2SIncrS/xlCNLUHAn4BIuuOri9BbxAcfQYe9/XZNH2Uj9nRCX4tBhOESlsu5T4xPjpCoHDGyluh6R4oeKUk6tTzMnZjyU0yO4Z5B1Yb+bYDZOwJXCdxTXlSnaizcQyPwtShfAuIGl/KFAzHFHyQSy4V1m1gajsaHL77h+0HK2VZloqB/UVXrjs8Li59OCsPzIytsOKZ8bgsYGOI1OcWxrFqYB5B8UEkKrnmGj1kxdDURXUVIKWDTeiIZW1ER+0wEqDLGGdeSbfYgOKFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tGWXnivAhK5xqwDL/2Np+ZgNZm3pKMigZEOVjUsJreM=;
+ b=dLu7zprzIin+p0cIz0firE0vSVxiD1zGHHmWYPzcpZ/pWS9RF7uDeNPmOgxs9JFIBHzYz8URc0jnhYxu8MeRn/pSO3YmW+YGS1XBgXZW+7p3AYjCNEn+muS+8uX0Q3TDY5X/ZGp5SvGc2wQ2sAeOZtxyiRZpQmqqcnYZKGTHnxZdNxrBwRIGHW8VtTcaFVWdnRq24lntOPsVajmeU2dIqrS0Vt5FhANPmBu8rTV18VUA+A22LiOULqXgFWrzuJYi4ZqIh9KEuOouBdSPRuaRb5kR2/+5ilalmKSOuCn7lOQYG+riFYNvjC8PBUdE7dY/bWom2s05afaNqJcEeATYWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tGWXnivAhK5xqwDL/2Np+ZgNZm3pKMigZEOVjUsJreM=;
+ b=JI/sABkf351tsMidYlZW6ID1j4174fD8LJRh7QTFgBgb3a7V9Lre+CAO+2IDUAmowQ3ZFDJmRiFuyLRMhrBov5wr2A+/JSZI4xx01S6UexT7M1CIeHIp7gAgssrIK8YB1e7B0jJ8Ww47N+sio0NoWERRsXwiHMvVRI1WRYKU3SHaVqHFJdyIPnjxq+A7sNzFfL0O+081Q4nzYUUWL2JrqDziRaq9piDOuiuZZZFuUcw604R50XwgmMgY8ZTbr9XvskJbSuvQKY116dpqu+OC8sw3Qo7ASQtV5GAKHLI6IA/XYZ+xTaOVZCP9SzuhjqF8Gsulv67vH8BVU6bfWZI3CQ==
+Received: from BYAPR01CA0002.prod.exchangelabs.com (2603:10b6:a02:80::15) by
+ IA0PR12MB8975.namprd12.prod.outlook.com (2603:10b6:208:48f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.26; Mon, 10 Jul
+ 2023 14:25:42 +0000
+Received: from DM6NAM11FT102.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:a02:80:cafe::74) by BYAPR01CA0002.outlook.office365.com
+ (2603:10b6:a02:80::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.30 via Frontend
+ Transport; Mon, 10 Jul 2023 14:25:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DM6NAM11FT102.mail.protection.outlook.com (10.13.173.172) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6588.19 via Frontend Transport; Mon, 10 Jul 2023 14:25:42 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 10 Jul 2023
+ 07:25:28 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Mon, 10 Jul 2023 07:25:28 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Mon, 10 Jul 2023 07:25:28 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/17] 5.15.120-rc2 review
+In-Reply-To: <20230704084610.981452877@linuxfoundation.org>
+References: <20230704084610.981452877@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MxNARzSc7XkZiC67"
-Content-Disposition: inline
-In-Reply-To: <20230707223503.GA1087110-robh@kernel.org>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+Message-ID: <263b32ba-d409-41f2-b597-2785bd111e94@drhqmail203.nvidia.com>
+Date:   Mon, 10 Jul 2023 07:25:28 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT102:EE_|IA0PR12MB8975:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2324d814-4700-4b1f-2ab0-08db81518abc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: af40kMjYDdcShYPdshv9pOflfjoLGXtSttcNUN0Obded/czE2vBYAhVD0mXzzpnCb49S92I5ofbL5nO1mffBHk1aRaDBsWDxrvC1mLVMH73db30dlalk+jYV7bpKQjR8jjzK6h12AP6uj8Yz3YFMp7xkkYg+k8fe2tRTi5iSBDwzvaDPutn6gLhW5ihQcQH0u9YVNGe0z4kxSdtMonKKRRUK88csAnqcbC5EBipE8jQr+NnvpWZMiUEJfnp6P3P8sErbRRwlql1bUEjJxFBw/z3u/tv5U1tbeQAjqFW8v0F2CCMEMrnk0l/l4O+IRfoPqDEfj2ba6Htvfc7HO++5LzDHz9giP4E1amUOouC7INJresPXOxhYxowzdlU7e4QFX19MN8CGG0eZB2EjDcxGmx1ln2+pDewC2BO8jXS296aQzVLb4XFFNeRgmlbTBqV50z1/6UsmEowQrrQ7Uz0thE6+w7xAtfrEAHQgKpf1bGsm4Wagz/u9GzxYkVsWkl2CKA3fLGAmfmDwQbk9OU1JGOc1H+OPMpFZa45NysfLmhuZZjuuWlK9Jy8rzF0dl/6a0U3D1zbqxR39r4BKCmfxju52iiw5kpx+qUw4VvpUtdgbqiRIRomI5mEFCyZz/zFJRlCs2gzc5P9jUEIr2rsFUe05STDuj7KwbsNatdOQ/f99f2mI0IaODN1eXzQNoEcUL1sK7a+/tKrDI4aLOj4T5V/G4gsnWg5JQ23WcuxwkajfsgjVnh6pwm/LAz21pOhwHp2UluUM6GOBwmGzFPX0+amMZhL3ntIcPcATagQfcPw=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(376002)(346002)(39860400002)(396003)(451199021)(40470700004)(46966006)(36840700001)(41300700001)(5660300002)(7416002)(31686004)(54906003)(40480700001)(316002)(2906002)(8676002)(8936002)(966005)(4326008)(6916009)(70206006)(70586007)(40460700003)(426003)(478600001)(336012)(186003)(86362001)(31696002)(82740400003)(82310400005)(356005)(7636003)(47076005)(36860700001)(26005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2023 14:25:42.1416
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2324d814-4700-4b1f-2ab0-08db81518abc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT102.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8975
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, 04 Jul 2023 09:48:47 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.120 release.
+> There are 17 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 06 Jul 2023 08:46:01 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.120-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---MxNARzSc7XkZiC67
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+All tests passing for Tegra ...
 
-On Fri, Jul 07, 2023 at 04:35:03PM -0600, Rob Herring wrote:
-> On Fri, Jul 07, 2023 at 03:17:09PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The pad configuration node schema in its current form can accidentally
-> > match other properties as well. Restructure the schema to better match
-> > how the device trees are using these.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 181 ++++++++++++------
-> >  1 file changed, 120 insertions(+), 61 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20=
--pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.=
-yaml
-> > index 82070d47ac7c..271aa8f80a65 100644
-> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.ya=
-ml
-> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.ya=
-ml
-> > @@ -245,69 +245,82 @@ properties:
-> >            - resets
-> >            - '#power-domain-cells'
-> > =20
-> > -patternProperties:
-> > -  "^[a-f0-9]+-[a-f0-9]+$":
-> > +  pinmux:
-> >      type: object
-> > -    description:
-> > -      This is a Pad configuration node. On Tegra SOCs a pad is a set of
-> > -      pins which are configured as a group. The pin grouping is a fixed
-> > -      attribute of the hardware. The PMC can be used to set pad power =
-state
-> > -      and signaling voltage. A pad can be either in active or power do=
-wn mode.
-> > -      The support for power state and signaling voltage configuration =
-varies
-> > -      depending on the pad in question. 3.3V and 1.8V signaling voltag=
-es
-> > -      are supported on pins where software controllable signaling volt=
-age
-> > -      switching is available.
-> > -
-> > -      The pad configuration state nodes are placed under the pmc node =
-and they
-> > -      are referred to by the pinctrl client properties. For more infor=
-mation
-> > -      see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.t=
-xt.
-> > -      The pad name should be used as the value of the pins property in=
- pin
-> > -      configuration nodes.
-> > -
-> > -      The following pads are present on Tegra124 and Tegra132
-> > -      audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdm=
-i, hsic,
-> > -      hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2, pex-cnt=
-rl,
-> > -      sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2, usb_bia=
-s.
-> > -
-> > -      The following pads are present on Tegra210
-> > -      audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
-> > -      debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio,=
- hdmi,
-> > -      hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl, =
-sdmmc1,
-> > -      sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias.
-> > -
-> >      properties:
-> > -      pins:
-> > -        $ref: /schemas/types.yaml#/definitions/string
-> > -        description: Must contain name of the pad(s) to be configured.
-> > -
-> > -      low-power-enable:
-> > -        $ref: /schemas/types.yaml#/definitions/flag
-> > -        description: Configure the pad into power down mode.
-> > -
-> > -      low-power-disable:
-> > -        $ref: /schemas/types.yaml#/definitions/flag
-> > -        description: Configure the pad into active mode.
-> > -
-> > -      power-source:
-> > -        $ref: /schemas/types.yaml#/definitions/uint32
-> > -        description:
-> > -          Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> > -          TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltage=
-s.
-> > -          The values are defined in
-> > -          include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-> > -          Power state can be configured on all Tegra124 and Tegra132
-> > -          pads. None of the Tegra124 or Tegra132 pads support signaling
-> > -          voltage switching.
-> > -          All of the listed Tegra210 pads except pex-cntrl support pow=
-er
-> > -          state configuration. Signaling voltage switching is supported
-> > -          on below Tegra210 pads.
-> > -          audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1,
-> > -          sdmmc3, spi, spi-hv, and uart.
-> > -
-> > -    required:
-> > -      - pins
-> > -
-> > -    additionalProperties: false
-> > +      status: true
->=20
-> If you need this, that's a bug in dtschema.
+Test results for stable-v5.15:
+    7 builds:	7 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    90 tests:	90 pass, 0 fail
 
-Looks like I don't need it here...
+Linux version:	5.15.120-rc2-g492521f41846
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
->=20
-> > +
-> > +    additionalProperties:
-> > +      type: object
-> > +      description: |
-> > +        This is a pad configuration node. On Tegra SoCs a pad is a set=
- of pins
-> > +        which are configured as a group. The pin grouping is a fixed a=
-ttribute
-> > +        of the hardware. The PMC can be used to set pad power state and
-> > +        signaling voltage. A pad can be either in active or power down=
- mode.
-> > +        The support for power state and signaling voltage configuratio=
-n varies
-> > +        depending on the pad in question. 3.3V and 1.8V signaling volt=
-ages are
-> > +        supported on pins where software controllable signaling voltage
-> > +        switching is available.
-> > +
-> > +        The pad configuration state nodes are placed under the pmc nod=
-e and
-> > +        they are referred to by the pinctrl client properties. For more
-> > +        information see:
-> > +
-> > +          Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.t=
-xt
-> > +
-> > +        The pad name should be used as the value of the pins property =
-in pin
-> > +        configuration nodes.
-> > +
-> > +        The following pads are present on Tegra124 and Tegra132:
-> > +
-> > +          audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid,=
- hdmi,
-> > +          hsic, hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk=
-2,
-> > +          pex-cntrl, sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1=
-, usb2,
-> > +          usb_bias
-> > +
-> > +        The following pads are present on Tegra210:
-> > +
-> > +          audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, db=
-g,
-> > +          debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, g=
-pio,
-> > +          hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, p=
-ex-cntrl,
-> > +          sdmmc1, sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, u=
-sb-bias
-> > +      additionalProperties: false
-> > +      properties:
-> > +        pins:
-> > +          $ref: /schemas/types.yaml#/definitions/string-array
-> > +          description: Must contain name of the pad(s) to be configure=
-d.
-> > +
-> > +        low-power-enable:
-> > +          $ref: /schemas/types.yaml#/definitions/flag
-> > +          description: Configure the pad into power down mode.
-> > +
-> > +        low-power-disable:
-> > +          $ref: /schemas/types.yaml#/definitions/flag
-> > +          description: Configure the pad into active mode.
-> > +
-> > +        power-source:
-> > +          $ref: /schemas/types.yaml#/definitions/uint32
-> > +          description: |
-> > +            Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> > +            TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling volta=
-ges. The
-> > +            values are defined in:
-> > +
-> > +              include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-> > +
-> > +            Power state can be configured on all Tegra124 and Tegra132=
- pads.
-> > +            None of the Tegra124 or Tegra132 pads support signaling vo=
-ltage
-> > +            switching. All of the listed Tegra210 pads except pex-cntr=
-l support
-> > +            power state configuration. Signaling voltage switching is =
-supported
-> > +            on the following Tegra210 pads:
-> > +
-> > +              audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1=
-, sdmmc3,
-> > +              spi, spi-hv, uart
-> > +
-> > +        phandle:
-> > +          $ref: /schemas/types.yaml#/definitions/uint32
->=20
-> ditto
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-=2E.. and not this either. Might be some leftovers from testing with
-earlier versions of dtschema. I've dropped them now.
-
->=20
-> > +
-> > +      required:
-> > +        - pins
-> > =20
-> >  required:
-> >    - compatible
-> > @@ -316,6 +329,52 @@ required:
-> >    - clocks
-> >    - '#clock-cells'
-> > =20
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: nvidia,tegra124-pmc
-> > +    then:
-> > +      properties:
-> > +        pinmux:
-> > +          properties:
-> > +            status: true
-
-However I do get complaints if I drop this one:
-
-	Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml: allOf=
-:0:then:properties:pinmux: 'anyOf' conditional failed, one must be fixed:
-		'type' is a required property
-		'properties' is a required property
-		'patternProperties' is a required property
-		hint: 'additionalProperties' depends on 'properties' or 'patternPropertie=
-s'
-		from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-	Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml: allOf=
-:1:then:properties:pinmux: 'anyOf' conditional failed, one must be fixed:
-		'type' is a required property
-		'properties' is a required property
-		'patternProperties' is a required property
-		hint: 'additionalProperties' depends on 'properties' or 'patternPropertie=
-s'
-		from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-
-Would you consider that a bug in dtschema as well that I should try to
-fix or is that expected?
-
-Thanks,
-Thierry
-
---MxNARzSc7XkZiC67
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSsDl0ACgkQ3SOs138+
-s6HkchAAvP/1i6ddgbXDsCZbe/cEiNs6Bbkf8S+y14pn/W6FJ4bIl0sIXwQ/Ee55
-1E8TE8TxRKnAkgq1xx+BVRSS+mnPU3uvyma9aFqrygWo3HoCAc/DkyF89feQZhUi
-J6JLb+Poh1e4n9Z6B6w9wGWDePZbvuDSA/TBJBZI/5C19MRWe4Qsri1mST1Kld6H
-s+NGP2CEQaBsI8nvFy2RylvQm9jjXZZw+so21dKFQfg/X5OAbIbCuzuK30rtnmu+
-vuZ6OJD9TY+Wl5UxdrHaXv9sAoPAIxTQ1N0qKBCuopJqHYK8GKuTQgh0pwo3nKLV
-dexGGXJp5t3KpWi4zALbudubnIvA0A0tIBqt8BD7YK9NhBvz7yax25JQ0MCg8bjJ
-5oDuT2RtYBNSmyIV8MGwslRjha3WFF+EluhHZwzqIU4mHuKd5h0vx6pOU5n7J7yQ
-W8ZfPoclGVXAXGBMh4uz/xTwt05OLA86wd2kzRFE02T//WSq+a+fQKV7WiBBhQX9
-6VqwfHiO3xg4H1v5uyocjTQ83kLlD6AhTpic2ZEPGBMDyBk19XJlVH2V2m1gSO4I
-avXXlQYLX88J2FrbD8sJkmLw5H5KvGFL0MppQz4FpnhZLPR93k7u2kV58Rwn1anN
-3GAe2xU+BJmglNrn4N/MjM0aThUKY83+XAuvNU4rnK84fDZIa80=
-=FUfq
------END PGP SIGNATURE-----
-
---MxNARzSc7XkZiC67--
+Jon
