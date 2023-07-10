@@ -2,102 +2,184 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66F9EB64D9
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 15:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186DBEB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 15:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbjGJPOA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Jul 2023 11:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38734 "EHLO
+        id S231269AbjGJPcY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jul 2023 11:32:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233548AbjGJPN7 (ORCPT
+        with ESMTP id S230144AbjGJPcX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Jul 2023 11:13:59 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D48A7
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 08:13:57 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-3142970df44so4413524f8f.3
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 08:13:57 -0700 (PDT)
+        Mon, 10 Jul 2023 11:32:23 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625B0D1
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 08:32:19 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b701e1c80fso69123251fa.2
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 08:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689002036; x=1691594036;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=85ipMnKhTmCRR/+ctL9Ale6MVh3KnIeTA4oNiNxzq0Y=;
-        b=ZL1I+X9kQ2ElwDmG+AEK8KwT/B08w/my8Sc4CIOHtVXTwmQ+PgCzzFJZ3Akw2b3y3T
-         1fnzKN5De4XH/rii8aIyjr73nPV2T28m7SZ2fCN2RHnnhWQlkGaA9R+/rPAyUrsqjsXV
-         VsAXMW2D8OlEfiPvhovXj47rzAu0Unx5urxgY/u6fxTUrilLOAq7wmavdMr1bkb+JIxt
-         zVNEDySJWILQPgM1DJAHSdMOwDmDJatkQBQrsjhkDumSpBw40PtY0tZpViOIVZz+Vh+B
-         CcOuj7FvNWveG1KXUD4UFxU6CAa1jGrSfaV3bI97KaGKRLEJOl8DjrPHo83nd0CXDLJ5
-         1UIg==
+        d=gmail.com; s=20221208; t=1689003137; x=1691595137;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ysR6h0x3IStYvYYYSt3JxXl38Mz+KmVD3cCVI5r0rsg=;
+        b=igwdVzokAwXEdL3WzQIpj+lW5tWLI2cqhOJwKZItjT5arL1HLwshd/z/r23uV0Q4TR
+         HHkL1h6lYetO4J+DTUA41IL+wNILkMwPdpgYTg6MHuFtYGfqJCElqq4WX2u7UbX3jDn5
+         2aowk/Tq6p+Trdy49l0zrE4Pc1KLMaDqoczceuoCLNTLe6lIrbdr/Xq0A286lfwSd/6I
+         qEq2JnD6t7mQFh3D8oxrXHhUiKMJ8wX0JgwQNFDhu4zt/5BKqh2ruF0mJf3zsGM8cTwf
+         Ybo321TcDAM1tFXsATBflCDrEaG7ZaKVFn2Kq91ZPqIqOw20uEx28H3u3lxxyW6C4Yhz
+         479Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689002036; x=1691594036;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=85ipMnKhTmCRR/+ctL9Ale6MVh3KnIeTA4oNiNxzq0Y=;
-        b=g70RVyRe6RfieFmxeiWwlhP1/SW6qR6UjbW2Ednjot9R5N09ImFf+kKymrK7u3HMxs
-         XIBitQLgQZXKXn62ox5TvvVQRrBXJ1i3s3h8bQB3QlUVBiPLLYlj61JYDxjzoguo8/Cq
-         roQCBynrLeutRFWZpl4x3srCjyCYuMFgmUwIwTTUvT4wYFmKXbDmzGZUnT+Lik+sqG5I
-         mLfApevrxcL2ui3u+IU65N3bpLAlgabL4Hnk6pheL2ESrH0p3O8lSw4ME1Wyx/fhKUp6
-         XYr3/KaXQbMY2+AgjLCCUmU2ZiHF4gDpsQmtp6lGaOc9BgjJexH4EY7Qhh8HgtSyg+Aw
-         W5Sw==
-X-Gm-Message-State: ABy/qLbSLztEPYx93e1AM+lsH4JyYqW3mMz9ID6ZhzBKHG41lQ316feg
-        sabIsuY92mYyQ0i2G6E8DlayPA==
-X-Google-Smtp-Source: APBJJlGNw8LoIwWE17CDwj/ZPC8coYJt6YKpgmsEOFoHFqk4VAZJrlyE7FZLzg584jpHlBes6qR02Q==
-X-Received: by 2002:adf:e0cf:0:b0:314:4bf5:2c73 with SMTP id m15-20020adfe0cf000000b003144bf52c73mr636696wri.64.1689002036327;
-        Mon, 10 Jul 2023 08:13:56 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id s26-20020a056402165a00b0051df1797222sm5805120edx.11.2023.07.10.08.13.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jul 2023 08:13:55 -0700 (PDT)
-Message-ID: <a184cf8c-19c1-e2fe-d4f4-adeaf0b8d42e@linaro.org>
-Date:   Mon, 10 Jul 2023 17:13:53 +0200
+        d=1e100.net; s=20221208; t=1689003137; x=1691595137;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ysR6h0x3IStYvYYYSt3JxXl38Mz+KmVD3cCVI5r0rsg=;
+        b=bZQt1sSrWmIZ62sct5m7INIUe6jer+cE/nvM4oihM/7tleQ7ITRy4BYnFHQzF3G0XM
+         Ikfjs+cV9BPzLVZhJDDn1gJab5Pt0e7FaFrnzfVt5em+OiKiGVDYg+y7NfOIg3+0ciTQ
+         WU0ggku+0A4BL88N05+URF6ylw+Hx6YTjdEsXQQSHz6C4/Wg8F2Gjv9m5tYg7I53SYrD
+         yt8Wz3+zYQcMTQ0UVJqhN877gbMXib/kmL3UmrRDAgwj0bPSeCQo79S5OhTxMj+7Y0et
+         zeaDIMM/iE3yKmXLvW3YKRztrO2b0hoG3Bp4AnL/rwTGKbD19BiOcD9K1f4PUrTmQ+CY
+         1ecA==
+X-Gm-Message-State: ABy/qLaUzbSmeWlPTCmdgv9SIsJ0sKADxSHVHfx88/o1fIZGj/sQiXPz
+        nW3ng/kG7W/HO+5JZU6nZKY=
+X-Google-Smtp-Source: APBJJlGq8InKEDDWqnUaaGzBtlAIeJzKcitiiLl6fxHU3lB2HzuHxeyrJo5nqX2UyQ8+iLGV0FrYMw==
+X-Received: by 2002:a2e:6e0e:0:b0:2b6:eb5a:d377 with SMTP id j14-20020a2e6e0e000000b002b6eb5ad377mr10355017ljc.5.1689003137275;
+        Mon, 10 Jul 2023 08:32:17 -0700 (PDT)
+Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id r2-20020a170906364200b00988dbbd1f7esm6225813ejb.213.2023.07.10.08.32.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 08:32:16 -0700 (PDT)
+Date:   Mon, 10 Jul 2023 17:32:15 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jonathanh@nvidia.com, arnd@arndb.de, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: smaug: Add EMC frequency change tables
+Message-ID: <ZKwkf7hJzuR4FEDj@orome>
+References: <20230319194255.124589-1-diogo.ivo@tecnico.ulisboa.pt>
+ <ZC11H7mXfHX_mGXh@orome>
+ <pn6jovxrx7bkxfxq6qarlo357mvsf3ggxznzidz7pfdteefvvd@rqwbx4onwnky>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] dt-bindings: thermal: tegra: Convert to json-schema
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20230707133333.2998802-1-thierry.reding@gmail.com>
- <d6386a66-4cc2-9358-e65e-b09e614800c3@linaro.org> <ZKwW58xHD0cGfxvM@orome>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZKwW58xHD0cGfxvM@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fFO7o6KWCIbQhKbW"
+Content-Disposition: inline
+In-Reply-To: <pn6jovxrx7bkxfxq6qarlo357mvsf3ggxznzidz7pfdteefvvd@rqwbx4onwnky>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/07/2023 16:34, Thierry Reding wrote:
-> On Mon, Jul 10, 2023 at 10:09:18AM +0200, Krzysztof Kozlowski wrote:
->> On 07/07/2023 15:33, Thierry Reding wrote:
-> [...]
->>> +          nvidia,cpu-throt-percent:
->>
->> Missing type
-> 
-> Isn't this already taken care of by core/property-units.yaml?
 
-You are right, I did not notice unit suffix.
+--fFO7o6KWCIbQhKbW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Apr 10, 2023 at 10:17:56AM +0100, Diogo Ivo wrote:
+> On Wed, Apr 05, 2023 at 03:18:23PM +0200, Thierry Reding wrote:
+> > On Sun, Mar 19, 2023 at 07:42:55PM +0000, Diogo Ivo wrote:
+> > > Add the reserved-memory regions of the nominal and derated tables set=
+up by
+> > > the bootloader so that the EMC frequency change code can access them.
+> > >=20
+> > > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> > > ---
+> > >  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 21 +++++++++++++++++=
+++
+> > >  1 file changed, 21 insertions(+)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm=
+64/boot/dts/nvidia/tegra210-smaug.dts
+> > > index 709f3f417a19..a74826ae97b4 100644
+> > > --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> > > +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> > > @@ -30,6 +30,22 @@ memory {
+> > >  		reg =3D <0x0 0x80000000 0x0 0xc0000000>;
+> > >  	};
+> > > =20
+> > > +	reserved-memory {
+> > > +		#address-cells =3D <2>;
+> > > +		#size-cells =3D <2>;
+> > > +		ranges;
+> > > +
+> > > +		nominal: emc-table@f67cc000 {
+> > > +			compatible =3D "nvidia,tegra210-emc-table";
+> > > +			reg =3D <0x0 0xf67cc000 0x0 0xbea0>;
+> > > +		};
+> > > +
+> > > +		derated: emc-table@f67d7ea0 {
+> > > +			compatible =3D "nvidia,tegra210-emc-table";
+> > > +			reg =3D <0x0 0xf67d7ea0 0x0 0xbea0>;
+> > > +		};
+> > > +	};
+> > > +
+> >=20
+> > These tables are typically generated by the firmware/bootloader at
+> > runtime. Often they'll use heap allocations for these, so the addresses
+> > are not guaranteed to be static.
+> >=20
+> > Can you share a few details about what set of components you've used to
+> > set this up? If we add these we want to be as specific as possible that
+> > people use exactly the same set of firmware files.
+> >=20
+> > Thierry
+>=20
+> In the case of the Pixel C, coreboot takes care of copying these tables
+> into a static cbmem region. The actual function taking care of this is
+> tegra210_run_mtc(), found in [1], and from here it is possible to
+> construct the cbmem memory layout. I have confirmed that the device is
+> actually running this version of coreboot from the cbmem_console logs,
+> where the commits are explicitly stated. These logs also indicate where
+> the tables are located,
+>=20
+> Wrote coreboot table at: 00000000f66ca000, 0x2c0 bytes, checksum 3601
+> coreboot table: 728 bytes.
+> CBMEM ROOT  0. f67ff000 00001000
+> CONSOLE     1. f67ef000 00010000
+> TIME STAMP  2. f67ee000 00001000
+> VBOOT       3. f67ed000 00001000
+> VPD         4. f67e4000 00009000
+> MTC         5. f67cc000 00018000
+> RAMOOPS     6. f66cc000 00100000
+> COREBOOT    7. f66ca000 00002000
+>=20
+> and
+>=20
+> MTC: Copied 0x17d40 bytes from 0000000081008b70 to 00000000f67cc000
 
-> That has
-> anything matching "-percent$" marked as int32-array. I suppose I could
-> override this with just uint32 to narrow it further down, but I was
-> under the impression that overriding standard properties this way was
-> frowned upon.
+Okay, so this sounds good. My only worry is what could happen if
+somebody were to run a slightly different version of coreboot that puts
+these tables elsewhere. It's been a long time since I looked at
+coreboot, but do you think perhaps it would be possible to update
+coreboot to update the DTB at runtime to always point at the correct
+location?
 
-Yep.
+Alternatively, do we have an easy way of checking that the tables are
+valid? Looking at the data structure that we're mapping, there's very
+limited data there that could be used for validation, so garbage could
+easily be mistaken for an actual table and mess things up.
 
-Best regards,
-Krzysztof
+Thierry
 
+--fFO7o6KWCIbQhKbW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSsJH8ACgkQ3SOs138+
+s6EXpw//SZXBsCLgXyaYDeoBoUhdijhWCUF8Xw1jWuUv+r4l063aX13kHuLN1WNZ
+q08qI6OTyLOLiVbQLO+y5WBw7L6knySocbkJoq+Xt+JKiPnoEk5IXDwnX14QdhTj
+veEAmEqyet+W6AYJeK9kuYrzrI/Jsl3JWMKDV7koI0EPopokpq9j/9oAdLsRaM0z
+eP6F0fUmPyRqL2Pv9l2oQyo3pFzykcWcahly/GrWx2eV68c7bnhuUmHrbgX4rSTm
++hhIq9K4PQ432aDmCdYS8H6J+Pl/f9tYKVcbm3MO/aCEOLj11UmYagmzRt2/CnCQ
+9mB+cZfxlPi2WwtvUspZFNg7EuKRneEzV50LtWLQbzCPeD9tCgCJEtwt7KQaeB8M
+0WJiqrvR1PD+oQjwfunpq4/vmeczkdIUzOYi+c6jgnyh9oqxaVZLhkbZXO6gyT0N
+Srhl08hJaqW9UiwCmt3W9kItDvVETiw7Unf3kwSJumeHj6Qf70cOkUBsg3iXJ7rd
+r2mTqzO337+HqSsA1v513fG+qLnvQas7Iz8jO+2h8z8FMkNZT5VNJyWaLJITxElH
+PMevSNsDR9V3G0VE2ouZoNWl1s3T8oKAtAHvETp9prJO9+MCo5XFIPDkOP/qFE7P
+KrutZ8gFc9h0bYcdRTozmRUI0KD4kxy+nxPDoDMieWpxKK2KBNI=
+=igAQ
+-----END PGP SIGNATURE-----
+
+--fFO7o6KWCIbQhKbW--
