@@ -2,147 +2,128 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2C3EB64D9
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 08:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D778AEB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 09:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232964AbjGJIXp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Jul 2023 04:23:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43440 "EHLO
+        id S231977AbjGJJAP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jul 2023 05:00:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232549AbjGJIXe (ORCPT
+        with ESMTP id S230169AbjGJJAO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Jul 2023 04:23:34 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F64E106;
-        Mon, 10 Jul 2023 01:23:30 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2FBA51F38D;
-        Mon, 10 Jul 2023 08:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1688977409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=dirNkRoYAPOKgnokI62rBUKnm7Cm3Bq2fLafnXLX2rM=;
-        b=2WvQvESn1/36HSzhMXVcSdjik+t5nYMXFKF1KG0UIusg8sySF8R7ITMWNIFtYhJeqKxy2O
-        2KPFJpEbMJJaKLPNuVQjBi00LhQBwiIaRrPmGrF4blFthGkD+N2RyyqB/WriWGWOjCFh2N
-        cdQ+D4xx8pVLj0yAENQAG3kCj9N2/Ww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1688977409;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=dirNkRoYAPOKgnokI62rBUKnm7Cm3Bq2fLafnXLX2rM=;
-        b=SOrq1aFHj7y8/rOc5/XQp3i66j+CCZYnz5Q8FmAeO+0g1n+bwvV7x4RLNNfRR9K8JGsuoH
-        /EGw8tcK+oLYHoBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B91FA13A05;
-        Mon, 10 Jul 2023 08:23:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id pNAqKwDAq2QcDAAAMHmgww
-        (envelope-from <svarbanov@suse.de>); Mon, 10 Jul 2023 08:23:28 +0000
-From:   Stanimir Varbanov <svarbanov@suse.de>
-To:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Stanimir Varbanov <svarbanov@suse.de>
-Subject: [RFC PATCH] iommu: arm-smmu-nvidia: Add default domain type implementation op
-Date:   Mon, 10 Jul 2023 11:22:52 +0300
-Message-ID: <20230710082252.9702-1-svarbanov@suse.de>
-X-Mailer: git-send-email 2.41.0
+        Mon, 10 Jul 2023 05:00:14 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7A9C3
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 02:00:13 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b703c900e3so63612751fa.1
+        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 02:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1688979611; x=1691571611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pi0neW334vEUn9BnnI+UYaAU5ZZLFAfHbjZLAic+fdQ=;
+        b=EqBWfD3g9G1f2j+bgRXH5wRADIaccx1W0vEhGOo3hNKnmlyLuJx4VJJ7mTzA/k0i2d
+         F+7KfZoiLqYu9xNbaAdf4xyciku5hdX7Fm7MXl/i+Ycd9Zn7qWq+IsBhcwjC+zwJBXpq
+         ghM9Bf2gyNLr2cbrh48lSiYil8EFiWr+pFopsMPdriUzrqEuCE4KE1eRE/E7SKosr4MF
+         Dd9xTvJ6brdf1TpX+x3ThA/7st5nwDz71MIAWAZTG6Cds93Vh46UdxVVSJCZ9MMbIGaG
+         SflTHiNb4yIx1+hAc//E50HZyvTzAQHZFZrKtppJ+7GmP6up/KqbHNltSfszxujOo+BU
+         qsSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688979611; x=1691571611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pi0neW334vEUn9BnnI+UYaAU5ZZLFAfHbjZLAic+fdQ=;
+        b=NDpRkd13Zz8IjGvINPKElRDDXwRH0LAfTy0h1fs7KdPQGw7Umdh3Tk5cndFxlXU11D
+         2miuXc0Z6c56Ht2BMgYLFppDKlrziqZ6GzZFUgt/sDOexl+D9S92d6ABBA4kGMr0b3t+
+         P5lBky+pSnUwibECE4p+kRuPcCqXgovjwBDmWeDNUc7Z9mod2oAQ0G+rfjeVCQ1p78jl
+         e8vTqBTGlvpcylk7slfh39frhSs0S4EyGV94mDHCsTwW3PdPypkKob80DSYHApA8P0M1
+         QxK3h+B1jX7XcBi95OSUII3tX6kqLNSwiY6uD1PYjq28t2bLoy0F9erqzcEW0tE/u2S6
+         Hk1A==
+X-Gm-Message-State: ABy/qLYDUQRn98zXUScyKarSL98N3vI6bE4/fGwhS1SjCa8y9DZkSkBD
+        Bo6eKWXYkMeU3d+sq544frwSqA==
+X-Google-Smtp-Source: APBJJlEjnwa6aLt1S4/l0UmZLQcAqJFRGPgprZQ9W+4d6fTrF3qCcNsLykNlD/mAdr8AMz3+iYLvsA==
+X-Received: by 2002:a2e:b0c6:0:b0:2b6:a7dd:e22 with SMTP id g6-20020a2eb0c6000000b002b6a7dd0e22mr9274754ljl.48.1688979610963;
+        Mon, 10 Jul 2023 02:00:10 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:6002:540:6954:abdd])
+        by smtp.gmail.com with ESMTPSA id k6-20020a05600c0b4600b003fc00702f65sm8581045wmr.46.2023.07.10.02.00.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 02:00:10 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH net-next v3 00/12] net: stmmac: replace boolean fields in plat_stmmacenet_data with flags
+Date:   Mon, 10 Jul 2023 10:59:49 +0200
+Message-Id: <20230710090001.303225-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add def_domain_type implementation op and override default IOMMU
-domain Kconfig option (CONFIG_IOMMU_DEFAULT_PASSTHROUGH=y), which
-could be enabled on some distros. The current quirk has been done
-for Tegra234 machine, because I found the issue on it. The issue
-itself appears on USB host controller which cannot be initialized
-without IOMMU translation. Something more, we proved that IOMMU
-translation is needed for display and GPU drivers as well.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I evaluated few possible options to solve that:
+As suggested by Jose Abreu: let's drop all 12 boolean fields in
+plat_stmmacenet_data and replace them with a common bitfield.
 
- a) select default IOMMU domain from .def_domain_type op
- b) Unset CONFIG_IOMMU_DEFAULT_PASSTHROUGH=n
- c) add iommu.passthrough=0 on the kernel cmdline
- d) firmware - ACPI / DT
+v2 -> v3:
+- fix build on intel platforms even more
+- collect review tags from Andrew
 
-a) This option is implemented in the proposed patch.
+v1 -> v2:
+- fix build on intel platforms
 
-b) Since that the community has agreed that pass-through is preferred
-as a default IOMMU domain option because this will avoid performance
-impacts on some of the platforms [1]. On the other side we have examples
-where you cannot even install Linux distribution on a machine where the
-storage media cannot be detected and the system just hangs.
+Bartosz Golaszewski (12):
+  net: stmmac: replace the has_integrated_pcs field with a flag
+  net: stmmac: replace the sph_disable field with a flag
+  net: stmmac: replace the use_phy_wol field with a flag
+  net: stmmac: replace the has_sun8i field with a flag
+  net: stmmac: replace the tso_en field with a flag
+  net: stmmac: replace the serdes_up_after_phy_linkup field with a flag
+  net: stmmac: replace the vlan_fail_q_en field with a flag
+  net: stmmac: replace the multi_msi_en field with a flag
+  net: stmmac: replace the ext_snapshot_en field with a flag
+  net: stmmac: replace the int_snapshot_en field with a flag
+  net: stmmac: replace the rx_clk_runs_in_lpi field with a flag
+  net: stmmac: replace the en_tx_lpi_clockgating field with a flag
 
-c) - This option involves installer's knowledge of platforms/devices
-which needs IOMMU translations.
+ .../stmicro/stmmac/dwmac-dwc-qos-eth.c        |  4 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c | 23 +++++------
+ .../ethernet/stmicro/stmmac/dwmac-mediatek.c  |  5 ++-
+ .../stmicro/stmmac/dwmac-qcom-ethqos.c        |  8 ++--
+ .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-tegra.c |  4 +-
+ .../ethernet/stmicro/stmmac/stmmac_hwtstamp.c |  4 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 40 +++++++++++--------
+ .../net/ethernet/stmicro/stmmac/stmmac_pci.c  |  2 +-
+ .../ethernet/stmicro/stmmac/stmmac_platform.c | 10 +++--
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  |  5 ++-
+ include/linux/stmmac.h                        | 26 ++++++------
+ 12 files changed, 76 insertions(+), 57 deletions(-)
 
-d) - IORT ACPI table / DT - I'm not sure is that option even possible
-but firmware looks like a good place for such.
-
-Please, treat this as an RFC and a call for proper solution.
-
-[1] https://marc.info/?l=linux-arm-kernel&m=148864682514762
-
-Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-index 87bf522b9d2e..691b57d1e699 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-@@ -286,6 +286,22 @@ static int nvidia_smmu_init_context(struct arm_smmu_domain *smmu_domain,
- 	return 0;
- }
- 
-+static int nvidia_smmu_def_domain_type(struct device *dev)
-+{
-+	if (of_machine_is_compatible("nvidia,tegra234"))
-+		return IOMMU_DOMAIN_DMA;
-+
-+	return 0;
-+}
-+
-+static int nvidia_smmu_single_def_domain_type(struct device *dev)
-+{
-+	if (of_machine_is_compatible("nvidia,tegra234"))
-+		return IOMMU_DOMAIN_DMA;
-+
-+	return 0;
-+}
-+
- static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.read_reg = nvidia_smmu_read_reg,
- 	.write_reg = nvidia_smmu_write_reg,
-@@ -297,11 +313,13 @@ static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.context_fault = nvidia_smmu_context_fault,
- 	.probe_finalize = nvidia_smmu_probe_finalize,
- 	.init_context = nvidia_smmu_init_context,
-+	.def_domain_type = nvidia_smmu_def_domain_type,
- };
- 
- static const struct arm_smmu_impl nvidia_smmu_single_impl = {
- 	.probe_finalize = nvidia_smmu_probe_finalize,
- 	.init_context = nvidia_smmu_init_context,
-+	.def_domain_type = nvidia_smmu_single_def_domain_type,
- };
- 
- struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
 -- 
-2.41.0
+2.39.2
 
