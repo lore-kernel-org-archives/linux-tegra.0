@@ -2,218 +2,126 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 190F7EB64D9
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 10:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C06EB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 13:07:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbjGJKku (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Jul 2023 06:40:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47572 "EHLO
+        id S229963AbjGJNHx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jul 2023 09:07:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbjGJKkh (ORCPT
+        with ESMTP id S232140AbjGJNHf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Jul 2023 06:40:37 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBC7EE;
-        Mon, 10 Jul 2023 03:40:31 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9741caaf9d4so497058066b.0;
-        Mon, 10 Jul 2023 03:40:31 -0700 (PDT)
+        Mon, 10 Jul 2023 09:07:35 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85FB312E;
+        Mon, 10 Jul 2023 06:07:16 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f122ff663eso6929997e87.2;
+        Mon, 10 Jul 2023 06:07:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688985630; x=1691577630;
+        d=gmail.com; s=20221208; t=1688994405; x=1691586405;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=67xmh9LVZnEPITxD2YUcmJFqrGxMBcWoYDKnu4sd8OU=;
-        b=MkvayJ0Jv4m9lUG9hPeO2Sk9U7JdJTItupZQZNN0hK0qhYLlxr7Yypva2rkiiuOwYG
-         Z6L9Rzl6YMpdkaIRcvx/+M2KapmF7H62wQjv8FunJu9xTRVF+/FOcewCj6YDRWUtxZ5E
-         170gBHvl/dBUHNhnxFV8YbiCLUVUXEwe7B1klfxyq0T0eMoKQg/mr63Bh+WeSBPx7Vin
-         FW+LEFgQm9jL+62O80oF/2LdMbFUdBBfQ6eW3wy4Cj0QbjzsTkJ94hsZazBJDvVlcqdT
-         1ao91Ri6huYsg3U8qL5rADNu5c4rnPLyXDwJIk6/8sHcbvQulBVEogjEipkLD6xAygEf
-         eR2Q==
+        bh=3/nxRPesClMjOankXm61+x0K4/qIvWcmoNLhKg/B1eQ=;
+        b=jJSLWRC2FVyuksKxI4+Gs2oj6PeFqZfh1J7PB9Mmb9jESBy2FeTqQ13UflTRUu/wSG
+         +Uj9Qw3NTqnM45/9Q2m8XMxs6WuTj+pKu8ym+u92zbAEbmPgeSx89S2tArmWeDxHx57L
+         rgYLd/3/leu/CT4+NcaEl5yHb4R3QeEfkAXOcsOryurCJI/rZB7d4npTwsekv/5Q3Q2M
+         tQGw3zMOs6KnggFm3VP9PR6xn4Kdtosc7JdGwwUiAGwoCI98DixNYeID+zftm31U/aR8
+         1qXFPTo1TW2wNt3H4SOL5dpJ1ugSDYHI3UbGe09HUuqbYDF1PaAKBslq46l0foaRsVlD
+         e5/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688985630; x=1691577630;
+        d=1e100.net; s=20221208; t=1688994405; x=1691586405;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=67xmh9LVZnEPITxD2YUcmJFqrGxMBcWoYDKnu4sd8OU=;
-        b=UXPr7th2boJSwyiQiYXJnCBgnwWba0tYWUZR1mq57V5jqsGa0SEdkiRp5tf3wq2EYe
-         nWbWvKIWH2t9TQhZMLR1ATqC7iOfQGdAtk4ksM+Er7clxgC6xTGmzz78JA52GpzztNh4
-         iT+wFtZcNGy+CIrObVn927URnlwGFr3+txmHbCYvKTvhQdpK7Tzz+LTAoUoRBNJ6ZhKb
-         eGo3GnDUyQkm9H5r0FaNdGT8EznBw8YzYfeUliTRK7xrfR+MHhegVDpqCBPqwzAFW3R9
-         M5a8sGVX/KGEzaKLQ16k3Pc/vSWAtFmYkHMIOTwDCCLXZ7OdOF/1OL8nGTulqa50mKUh
-         E6sw==
-X-Gm-Message-State: ABy/qLbod14pZvMAFOhIixvRIblBkllAilHuC4dowYCrF1q61sq69HCo
-        IqaBSpgkh55GuUwfoykxcyQ=
-X-Google-Smtp-Source: APBJJlHEl/N+Os9L08/l1QjO2uw8ozmQRNKcElRRC0XE2Nyi2fEqOHcZd5I3eMYuRCGyGmGHOvypUg==
-X-Received: by 2002:a17:906:1de:b0:993:fdb4:327f with SMTP id 30-20020a17090601de00b00993fdb4327fmr5526132ejj.4.1688985629738;
-        Mon, 10 Jul 2023 03:40:29 -0700 (PDT)
+        bh=3/nxRPesClMjOankXm61+x0K4/qIvWcmoNLhKg/B1eQ=;
+        b=Hf7+4iMkg07ErwfYSPQUYwE/INamzwX78633gncWutkIrxJkpeSqGx1LhiR6DGXee9
+         pmrRY8QVRytBsPu5AylYE/L0jNBZ7HK+S4nHuowJW2iMhj6edSE+Em/wU6FVlVyi72gz
+         7ovkKOjfRVA0R6Oo8bgkDKIXPzZUFC6ZniNdHmR6S6P6/etLHRQH8jqNrKPw3nJ6xOkC
+         bl6OFNqVCXajdrM0oRty7/t2LhBeH6Fyt3bBxopfcTTNorwvZe3m1+oJIpftuclqz4op
+         c/7YsKFntj+RAVpvOUSp8MmaOlxbeAkY/ezWo5S3OnSarDX9FxfiwWoKONpf1mpG7mC5
+         kQJw==
+X-Gm-Message-State: ABy/qLYH3tTb2ShONlqO2tP/oN4+G38iSnlrEbX3KX01OpYUjZWd3mnl
+        CjjhMpcbXlmiJE28nhc3RIE=
+X-Google-Smtp-Source: APBJJlHVeZ+X5JEt7YY+DHxxaqOwbUT35YCrYWEmxZycQtAQgYXYOlUwmRR15tH6T8caZViMoxfM+A==
+X-Received: by 2002:a05:6512:2344:b0:4fb:7675:1c16 with SMTP id p4-20020a056512234400b004fb76751c16mr10573987lfu.49.1688994404346;
+        Mon, 10 Jul 2023 06:06:44 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id gg11-20020a170906e28b00b0098921e1b064sm5893786ejb.181.2023.07.10.03.40.28
+        by smtp.gmail.com with ESMTPSA id b9-20020aa7d489000000b0051ded17b30bsm5701695edr.40.2023.07.10.06.06.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 03:40:29 -0700 (PDT)
-Date:   Mon, 10 Jul 2023 12:40:27 +0200
+        Mon, 10 Jul 2023 06:06:43 -0700 (PDT)
+Date:   Mon, 10 Jul 2023 15:06:42 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stanimir Varbanov <svarbanov@suse.de>
-Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [RFC PATCH] iommu: arm-smmu-nvidia: Add default domain type
- implementation op
-Message-ID: <ZKvgG4-IzqiYPSUT@orome>
-References: <20230710082252.9702-1-svarbanov@suse.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memory: tegra: Add dummy implementation on Tegra194
+Message-ID: <ZKwCYjKXtuDsOF9E@orome>
+References: <20230629160132.768940-1-thierry.reding@gmail.com>
+ <1fd1d5d7-7296-0e62-9f65-7347ac0f0500@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pT5OYcSxwNIoLEou"
+        protocol="application/pgp-signature"; boundary="3MIRVxCUgwh5Njm1"
 Content-Disposition: inline
-In-Reply-To: <20230710082252.9702-1-svarbanov@suse.de>
+In-Reply-To: <1fd1d5d7-7296-0e62-9f65-7347ac0f0500@linaro.org>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---pT5OYcSxwNIoLEou
+--3MIRVxCUgwh5Njm1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 10, 2023 at 11:22:52AM +0300, Stanimir Varbanov wrote:
-> Add def_domain_type implementation op and override default IOMMU
-> domain Kconfig option (CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dy), which
-> could be enabled on some distros. The current quirk has been done
-> for Tegra234 machine, because I found the issue on it. The issue
-> itself appears on USB host controller which cannot be initialized
-> without IOMMU translation. Something more, we proved that IOMMU
-> translation is needed for display and GPU drivers as well.
+On Mon, Jul 10, 2023 at 12:10:43PM +0200, Krzysztof Kozlowski wrote:
+> On 29/06/2023 18:01, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > With the introduction of commit 9365bf006f53 ("PCI: tegra194: Add
+> > interconnect support in Tegra234"), the PCI driver on Tegra194 and later
+> > requires an interconnect provider. However, a provider is currently only
+> > exposed on Tegra234 and this causes PCI on Tegra194 to defer probe
+> > indefinitely.
+> >=20
+> > Fix this by adding a dummy implementation on Tegra194. This allows nodes
+> > to be provided to interconnect consumers, but doesn't do any bandwidth
+> > accounting or frequency scaling.
+> >=20
+> > Fixes: 9365bf006f53 ("PCI: tegra194: Add interconnect support in Tegra2=
+34")
+> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
 >=20
-> I evaluated few possible options to solve that:
->=20
->  a) select default IOMMU domain from .def_domain_type op
->  b) Unset CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dn
->  c) add iommu.passthrough=3D0 on the kernel cmdline
->  d) firmware - ACPI / DT
->=20
-> a) This option is implemented in the proposed patch.
->=20
-> b) Since that the community has agreed that pass-through is preferred
-> as a default IOMMU domain option because this will avoid performance
-> impacts on some of the platforms [1]. On the other side we have examples
-> where you cannot even install Linux distribution on a machine where the
-> storage media cannot be detected and the system just hangs.
+> Applied with checkpatch warning. Please be sure you run checkpatch
+> before sending the patches.
 
-That's not how I read that thread. It sounds more to me like Will and
-Robin had ideas on how to improve the performance and were planning to
-address these issues. It doesn't exactly sound to me like there was
-concensus to make passthrough the default.
+Are you referring to the Reported-by/Closes complaint? I didn't include
+a URL here because this came from an internal test report and there's no
+corresponding public reference.
 
-Having said that, given that it's possible for distributions and users
-to set CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dy, I think it would be useful in
-general to have a way of enforcing IOMMU translations if it's needed by
-the hardware.
+I suppose I could've left out the Reported-by altogether.
 
-I'm not sure I fully understand the particular problems that you're
-seeing on Tegra234, though. I'm not aware of anything in the USB host
-controller driver (or hardware, for that matter) that would require the
-IOMMU to be enabled. The only peculiarity that I can think of is the
-firmware, which is typically loaded by an early bootloader and therefore
-might perhaps need the IOMMU to properly map this in the kernel.
-However, my understanding is that this firmware is loaded into special
-carveout regions which don't require remapping.
-
-However, passthrough is admittedly not something that we've thoroughly
-tested, so it's possible you're running into a use-case that I'm not
-aware of. In that case, could you provide a few more specifics (such as
-the DTB and .config) of your build configuration so that I can try and
-reproduce?
-
-Thanks,
 Thierry
 
->=20
-> c) - This option involves installer's knowledge of platforms/devices
-> which needs IOMMU translations.
->=20
-> d) - IORT ACPI table / DT - I'm not sure is that option even possible
-> but firmware looks like a good place for such.
->=20
-> Please, treat this as an RFC and a call for proper solution.
->=20
-> [1] https://marc.info/?l=3Dlinux-arm-kernel&m=3D148864682514762
->=20
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->=20
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu=
-/arm/arm-smmu/arm-smmu-nvidia.c
-> index 87bf522b9d2e..691b57d1e699 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-> @@ -286,6 +286,22 @@ static int nvidia_smmu_init_context(struct arm_smmu_=
-domain *smmu_domain,
->  	return 0;
->  }
-> =20
-> +static int nvidia_smmu_def_domain_type(struct device *dev)
-> +{
-> +	if (of_machine_is_compatible("nvidia,tegra234"))
-> +		return IOMMU_DOMAIN_DMA;
-> +
-> +	return 0;
-> +}
-> +
-> +static int nvidia_smmu_single_def_domain_type(struct device *dev)
-> +{
-> +	if (of_machine_is_compatible("nvidia,tegra234"))
-> +		return IOMMU_DOMAIN_DMA;
-> +
-> +	return 0;
-> +}
-> +
->  static const struct arm_smmu_impl nvidia_smmu_impl =3D {
->  	.read_reg =3D nvidia_smmu_read_reg,
->  	.write_reg =3D nvidia_smmu_write_reg,
-> @@ -297,11 +313,13 @@ static const struct arm_smmu_impl nvidia_smmu_impl =
-=3D {
->  	.context_fault =3D nvidia_smmu_context_fault,
->  	.probe_finalize =3D nvidia_smmu_probe_finalize,
->  	.init_context =3D nvidia_smmu_init_context,
-> +	.def_domain_type =3D nvidia_smmu_def_domain_type,
->  };
-> =20
->  static const struct arm_smmu_impl nvidia_smmu_single_impl =3D {
->  	.probe_finalize =3D nvidia_smmu_probe_finalize,
->  	.init_context =3D nvidia_smmu_init_context,
-> +	.def_domain_type =3D nvidia_smmu_single_def_domain_type,
->  };
-> =20
->  struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *sm=
-mu)
-> --=20
-> 2.41.0
->=20
-
---pT5OYcSxwNIoLEou
+--3MIRVxCUgwh5Njm1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSr4BgACgkQ3SOs138+
-s6F74g//VwtSTp6dhR5zDoIqJA8hR6PncaF9faNfSTqWj83cNF/5VG2zJxdS2JIm
-f2EHElN8YUvlQympiraEQP+DnE1SdLNbsG2j+DSQQS3h0HYmYhh2V8sLVNnY5AJ2
-pacvdCD7GZfZX3E19MBcMXsqRv+IFZNFg99bMZBJeYjWm2QKtFn16piOYdzuqmLG
-HuxG5u0un0WKnAM/Q35uGVdSBMueOF24pq8WrHc5FNVmzE7Z3sJ30V1g9IqJoIcU
-NhqHbAfsQHt20n2r9KRnn742fj7GD0IrOI185n8B/NxoedyfhkGIJDocTiYMxgcv
-x7lNmrWwzqRHE8QM96YPfqiTnokkTtZmcgH82E8mCvbHiHD3ekp83xZBfN8eY1qD
-Zx3iJgs08FfFjnYFuV0Ijv+pVLNyxPZkTSv7Dy0jz7l4yYjdn9LYmw2FuX1HRZkA
-NFJNVDZk2YXSEbaUgbD4qwhvRBn6veucBP3DcSfmoXB9ljF7t5LuuA1eDBEj/2j2
-YknEMjnmjmScpxsNKHY55sraVWaS9Am3mQ3oXAKh6qPVxTkpMYE0EkjsBqOSlVmy
-LrFXeh28dZ9oxmB/bMC3B45TDoVbljsAwV7Azm1zOSC14bccrHQlwTRMWBj57w4i
-ZgAZUW1TAACUaDinTehCvBfuZisRqt/GWwm8/G0nFl7R8C6jE5w=
-=9RJq
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSsAl8ACgkQ3SOs138+
+s6GayBAAoF44unOxDy0NOjwd5FhOsshvPhGM1/4T9i9sWAXmPZ04kbwEz/YhQo/O
+HZ44HV2CqsM+509pGa9svyZ0tgrbwhXAciCw50d851DwtPv7ao5mSPHUiWB7qkuz
+FFiXRGItlrYdfdsmbqRqi204kTskvjiigsaD2OOEtQPFLKdJWtG22uZeVA/aFHUn
+6rSYUL2Hl8ikShxmiTy555envyztF61FAvTTdFqiq/+uNMbsqfXGclspzOPW97aR
+X5Ci7wRIkffi9S/4yG94sKt3XSUhkcTkGYhwEJHCF4H8RMjWTfpGE7GmznyBy21H
+WEvEJCU9uhCLL181uyA6RrnuHGGghJAcrNqkcmMQX/OTtMnDjOlzc3ZEdoPYiLLF
+2OwDqWZ0qEGl3kFZ3V0KCYrHp5P2EvZCEz1njkPxJHnGbyZrLzRIrRL8KYqshOCJ
+BQHSDF8v4/gcX92Q/PUN8RMNIR+WiA+0+wqaIMdwAO09SX3/f8UqfZ9NjgUDCkFO
+SiyMGj0OLo/CtkSDyoxufqJj4wuSxqSA3KV6ftZTLcekFDT5jOpWmG9K1JTAyI+c
+glWu52782GobBDOTGJO8g+0tbbySzT7JbG5Mlm/clv//4cRFXGKF77I/e0nKAeX0
+W2G55XgDytzucDULRaVNKl8UVSdBboKHv9vAPb6r6U2sB3/94CY=
+=YpDw
 -----END PGP SIGNATURE-----
 
---pT5OYcSxwNIoLEou--
+--3MIRVxCUgwh5Njm1--
