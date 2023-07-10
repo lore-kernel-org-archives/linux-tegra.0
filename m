@@ -2,191 +2,135 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADA5EB64DC
-	for <linux-tegra@archiver.kernel.org>; Sun,  9 Jul 2023 17:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C235EB64DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 02:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbjGIRTn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 9 Jul 2023 13:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35536 "EHLO
+        id S230313AbjGJCqU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 9 Jul 2023 22:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbjGIRTm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 9 Jul 2023 13:19:42 -0400
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FD4C137
-        for <linux-tegra@vger.kernel.org>; Sun,  9 Jul 2023 10:19:40 -0700 (PDT)
-Received: from submission (posteo.de [185.67.36.169]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id 450EF240029
-        for <linux-tegra@vger.kernel.org>; Sun,  9 Jul 2023 19:19:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1688923178; bh=IpCRT4PQk7DlnuUgJCIbzC9/+vGQLjShcVYXvAcsweU=;
-        h=Date:From:To:cc:Subject:Message-ID:MIME-Version:From;
-        b=ddg/N4oXaQ06mqAiNkIg6rIGqgAcFF+1boA6NKyytYp+zLMl11gFUtyy5uZAF37CQ
-         kgO4+wm8NgcOGCl3FwQb4QAlRNza3YBFxk5cVdMfL120hjXbzMbLR77HkaLGuGpC/T
-         3YYb0DiId2L+aozEclsHxHWyB5v7/lasjtbYlpGv4mv966i/5ypu+Bfw1OtcTLqxJS
-         yOyJl2QdU3vcSlxR0Lr5aa3ai8OBbp89NWaXABuO3395gfx6XWNhRLaTf74hSyDi3J
-         EnW5wQc7JDyewTixgci4ShhQjjW5MsjEuWqnH/wePPSDKxjwzN9FM2abaoru/hY3Q3
-         IoLqxy1CE0lvA==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4QzYls0KMlz9rxD;
-        Sun,  9 Jul 2023 19:19:37 +0200 (CEST)
-Date:   Sun, 9 Jul 2023 19:19:36 +0200 (CEST)
-From:   Marc Dietrich <marvin24@posteo.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-cc:     Rob Herring <robh@kernel.org>, Marc Dietrich <marvin24@gmx.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: arm: tegra: nvec: Convert to
- json-schema
-In-Reply-To: <ZKbEEDWg5N8r8s-b@orome>
-Message-ID: <25075252-8e38-a5f5-ebbf-cddca1508210@posteo.de>
-References: <20230705155222.2519728-1-thierry.reding@gmail.com> <20230705155222.2519728-3-thierry.reding@gmail.com> <20230705205013.GA1871916-robh@kernel.org> <ZKbEEDWg5N8r8s-b@orome>
+        with ESMTP id S229837AbjGJCqP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 9 Jul 2023 22:46:15 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2107.outbound.protection.outlook.com [40.107.117.107])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0EDE7;
+        Sun,  9 Jul 2023 19:46:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KY2f0bnL9jl9wKvDqEQKoO52ytq+SjPMvqOpXBevMQFHcmGt8kh6txRLlOzeuFTA5sDacefCamGfZ4FkvbTsQU/ajkav3brLE0fw5MB7tzHASuKWxLNEh9G4qzKTRiJsMEMgTJYLD4zfjT4Rclz9HEFjPqTaEg2O6X2VSvFSF/2S3gZISgsy3/Wx1EHyxzpr0c2HS1mv5S7r9aaZJrk4TbXqJZStDtRs4k52Al97OmjATga9W+Yi7dEcLUHbx1cpWCANQk6NTCqo15wWPjLFDbrngKvYLwT+GRICjl14Z07oKz1CkctTTVhxfgOrssdKBqh4DRwLNV/Z1nB0E0AOow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z9xFBA9s/AaoFvOWhJGrw75YQRui/TIjlzelOzhrGWs=;
+ b=Jpl8a8QOkt9mgm7mVfwy3VFGW1I/4gsRpmnGIGr/zoKp1LYJEGFrN1CB3V8f6rVfy8+4cal30ziI7w2BV0I3tEbEmOvfGl/e+UZXj2x3hX+xgRvPhxp6cV3BUHMVYH5aWkZ9DVKhfhK+H9o8mr40nDT0rr61jII/dx7ejGd/bczy5QOcTheE7a+q5oxAlxBwYrfho0wBpZ0QvgaW4FhjGFr59Lf0M0xG7pFnRL6e+GMvNESerc8OJcug8pSgoP+85RGpyQ9mdRq2KrnD4s63q9zedTSBfsgv6DG5leYocl5PLftbBVt8nUKDwZPrtscOYAhV5Xyyr1gasS+z71CKiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z9xFBA9s/AaoFvOWhJGrw75YQRui/TIjlzelOzhrGWs=;
+ b=obn9cH/1+r3UwuN8gZrejYicuxdUrsDu2+4CEcDm3I13cjfK8zxMfLYW6+Y3L9MfCIKRZbAGCtJwsGTWfE5cDOjm2HLvZv2etgpy6X8y/EC+UwStDQPH7XMRT2ojyWD5X1IPTTrLf6xQd1jonuU2rfzDyhnIJo+EuWRreJ2+j+UmEegfen8Wu9Wb7wrdJ47Gh8ikawEJYAvpTi6I6nT6A44KW0r/f1rB2JLcL9WCFliEvNAnhEum5UXeuFaRMI7sKpCjrbGfZ5YE/LcCjJXaXLtURF4igwL3YG6d3k1/LcrbfkQ8701imRSvSrF4fjsEojEgKvNHKzArQttJRtEQqw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEYPR06MB6357.apcprd06.prod.outlook.com (2603:1096:101:13e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.30; Mon, 10 Jul
+ 2023 02:46:10 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.028; Mon, 10 Jul 2023
+ 02:46:10 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     Damien Le Moal <dlemoal@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Yangtao Li <frank.li@vivo.com>,
+        Thierry Reding <treding@nvidia.com>, linux-ide@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 04/11] ata: ahci_tegra: Convert to devm_platform_ioremap_resource()
+Date:   Mon, 10 Jul 2023 10:45:43 +0800
+Message-Id: <20230710024550.59544-4-frank.li@vivo.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230710024550.59544-1-frank.li@vivo.com>
+References: <20230710024550.59544-1-frank.li@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0100.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::28) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB6357:EE_
+X-MS-Office365-Filtering-Correlation-Id: c16ec319-d0cd-4bf6-850b-08db80efd125
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MwYS/oWEdFfpRIK5T+h48aWwY9rmnAYbsS3dDFUBwoM6FddPsyQgFjvHY1WIJytjPUxjKK750nabTjpraJ4pBF8D2Q+O6CXBNeJxLcJWdROeRu12Mv3/1GFnen6TRXmoXQ6+atyXMd9+E5qFtRb3ZvUNep9CYR1ZgVdB1vNo5vwWKWaWhN0fUvDnJANJ71apTzVnmTHZajNvLJZfBZdaeecYyXI7+wj+rwpqGm0hXfZaLd3ns7n/1kFkxi94rgPU4355MLTfigq4zydf90D7LP8wDG7HWuWUr0uezf2X+SIQiNTYgwMTdjvH2ggGpr4QErHQZp6yHfxTr7pkjBaJS+WuVxL6+GlOEu9LkiOluUaLVlKkin2xYNDRzdMhitZqnyYf6seDhfME+vk9BUYK4p58OE6trLMv/nCrqPaUyCjqbHpZ1m2M/3WJnMswYdsIimSuHJzcMBrYPFqukUjvWwRq7qiV8XzbqiFsWOAa5vfSDQaMOs/PHoEWMnotknr8aszyql5MdkmQacoCSM0KG3BZH29ULtzsDw7HSVLt4Xtwei2nTbpVELGfRuXcsDnSg12nWH1UXuoAgNGGaa66hEP78zSRXKG39oKaIE9fqK3RJqeEg9QVdfNcjsOwMrrG
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(346002)(136003)(396003)(366004)(451199021)(186003)(6506007)(26005)(2616005)(6512007)(1076003)(83380400001)(4744005)(41300700001)(4326008)(2906002)(66556008)(316002)(5660300002)(8676002)(8936002)(66476007)(478600001)(66946007)(6486002)(52116002)(6666004)(110136005)(54906003)(36756003)(86362001)(38100700002)(38350700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Tjx4DkYqsWBa+Bn/EBrfwDaw0MmuX7SM/3nK8I84s+JNklZVa0UQaF1xYp89?=
+ =?us-ascii?Q?cM2yfGQm0aakscCviys7QM9/YUxuTng3Qnj8yjT37zvV+RPSvleWoOzYBGpn?=
+ =?us-ascii?Q?sds/pdV2cL//6SlPPkoR0O1APiZplQuc7zm7/BuDEGM9ax1ahOb3hMx9a7GF?=
+ =?us-ascii?Q?0tAXMw95fgMlMNCV34BFUd+PT33+Y99rBJ7KNPqdDHjHpkNl2o/dUnvxidtX?=
+ =?us-ascii?Q?B+wzPFR7i8gPT/1dxIvSeUmj1A2nfZK5YSBe64t2Kr4Pfkgw3CNe/LFPXmpp?=
+ =?us-ascii?Q?P/Pa2g/blOvlvLy8h9JtxRW151oU6R8nS2VQqhygglAUMGyNUxhP3bvP6+mg?=
+ =?us-ascii?Q?RJC6Jx7UY8Ky/Cmi9BNLeROJlOBWde3NN+mh+XZVp5722dG1yz7ShlHLpCM9?=
+ =?us-ascii?Q?5+5OLthI2ycAvoFdNBLOjsOXXTJ2C8d9No38H38dE+do3VufUrNJ3nZCSzYq?=
+ =?us-ascii?Q?GDUSeEivLzc2jf3H/xCGYFAOfC3JjW8er9TO0w0lpYeKrh5LVzPoeHEblMKu?=
+ =?us-ascii?Q?M3S7k8LQxwUGj1QkvAtlWQ5EPB7A5yTd49VoWGaObBXdr8cTYDnywdXz36mG?=
+ =?us-ascii?Q?Xa+bT0Epp5jVDfhcZUO2O9fN3BOkIVqRoan7lX+r9xrIbcMdLdd8qyZOOgq8?=
+ =?us-ascii?Q?bzuEptY+mKe8kaKNS47yBzFjTUFN5lohyWlWQSkWQEZl+ZS4lCUpxZjixeAx?=
+ =?us-ascii?Q?YYrlQg6MaheR7AiKoPzpiaywNb06Flq8nzIFjQYXrqeKCfauVhvzDy3m4hQW?=
+ =?us-ascii?Q?yl1ExHRsSszsi5zpf2k2Tcc2Rl9d/qOzZASt6PY5WsyUHiplreqiewVT7DwE?=
+ =?us-ascii?Q?fJX70v+z31YpqIoTDFEdc0xq+iAi60lZWP/XU8jx0wFxNJFfCwJ9tqsGhSkQ?=
+ =?us-ascii?Q?iJf+GTCNRvpB6QlrArUn2savrmraDTL+Xj54g9KMoJdwInAnZS6ZzQs2XGWy?=
+ =?us-ascii?Q?KM0QPVTXske0H8Y+Ihqd3gRtO4javyPVedd273uVTEtnelLyS/jy3pfPVeFF?=
+ =?us-ascii?Q?/6lx9ESjRpzD7Qrhj8nYvVilP4SXxxNY8bHaGmZdy9Bg0sDW6oN8+bNXXGq+?=
+ =?us-ascii?Q?99z5Dl3MRQy99eNSwyXNuKGp2CVHOJII7O16+8+NDwrrskJhOLBCGOJwnHNs?=
+ =?us-ascii?Q?f9KkK1ulcY+Cd7qTFIoupn6thgC+KOxGF1mx0eAehcZvTwLe6I2+1CahXwRL?=
+ =?us-ascii?Q?Swv/4ir2tumsao/i6Dv5bTsJRK3A2sHp17ChWM9oFZ4BCy+AVOWydYyEPZJO?=
+ =?us-ascii?Q?pRzDJRuJFMI08HzbNWok5E19X6yjiCurOMwbYzZLdxPS+WsGYMf8uiOHDmyS?=
+ =?us-ascii?Q?lSyCoqZPyvg0MboKzQFYfbiofT2r60DyxOI3cBfCEk90cGXW+nh+AEVoBAdq?=
+ =?us-ascii?Q?YP2uebSN+OnRnGan+Z93EeJpcaWphzpmb5iUI+GSSnQ2dDfuExZwTBvfUzDR?=
+ =?us-ascii?Q?2MiuwbYuPR6sbEyI24WhhP6bPHFnIhNzuIYyJYa+TZMdfgiJyZvHXtt5j9B8?=
+ =?us-ascii?Q?o2xBWWd1EsmMc0yOVQH8uluZa7viuSLK0nRR1bTk4XujV2KQRtBW1Gzp/elD?=
+ =?us-ascii?Q?QQ6qpo/94iiWh4sTaauq6e3MMzY/dNbq5nMXdvVp?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c16ec319-d0cd-4bf6-850b-08db80efd125
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2023 02:46:10.0024
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cOlJfGXLsIHz8DuPcOJw8CuPt3zJnIyzriTngj2o1/L1xfQosegN9Ozjlq3QkqzFUoHG0ikapc0+eskw64sSvw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6357
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+Use devm_platform_ioremap_resource() to simplify code.
 
-On Thu, 6 Jul 2023, Thierry Reding wrote:
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/ata/ahci_tegra.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> On Wed, Jul 05, 2023 at 02:50:13PM -0600, Rob Herring wrote:
->> On Wed, Jul 05, 2023 at 05:52:22PM +0200, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Convert the NVIDIA embedded controller bindings from the free-form text
->>> format to json-schema.
->>>
->>> Acked-by: Marc Dietrich <marvin24@gmx.de>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>> Changes in v2:
->>> - drop $ref for standard clock-frequency property
->>> - use 4 spaces for indentation in example
->>> - move to soc/tegra directory
->>>
->>>  .../bindings/arm/tegra/nvidia,nvec.txt        | 21 -----
->>>  .../bindings/soc/tegra/nvidia,nvec.yaml       | 92 +++++++++++++++++++
->>>  2 files changed, 92 insertions(+), 21 deletions(-)
->>>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,nvec.txt
->>>  create mode 100644 Documentation/devicetree/bindings/soc/tegra/nvidia,nvec.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,nvec.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,nvec.txt
->>> deleted file mode 100644
->>> index 5ae601e7f51f..000000000000
->>> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,nvec.txt
->>> +++ /dev/null
->>> @@ -1,21 +0,0 @@
->>> -NVIDIA compliant embedded controller
->>> -
->>> -Required properties:
->>> -- compatible : should be "nvidia,nvec".
->>> -- reg : the iomem of the i2c slave controller
->>> -- interrupts : the interrupt line of the i2c slave controller
->>> -- clock-frequency : the frequency of the i2c bus
->>> -- gpios : the gpio used for ec request
->>> -- slave-addr: the i2c address of the slave controller
->>> -- clocks : Must contain an entry for each entry in clock-names.
->>> -  See ../clocks/clock-bindings.txt for details.
->>> -- clock-names : Must include the following entries:
->>> -  Tegra20/Tegra30:
->>> -  - div-clk
->>> -  - fast-clk
->>> -  Tegra114:
->>> -  - div-clk
->>> -- resets : Must contain an entry for each entry in reset-names.
->>> -  See ../reset/reset.txt for details.
->>> -- reset-names : Must include the following entries:
->>> -  - i2c
->>> diff --git a/Documentation/devicetree/bindings/soc/tegra/nvidia,nvec.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,nvec.yaml
->>> new file mode 100644
->>> index 000000000000..0b4f898b2a1d
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,nvec.yaml
->>> @@ -0,0 +1,92 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/soc/tegra/nvidia,nvec.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: NVIDIA compliant embedded controller
->>> +
->>> +maintainers:
->>> +  - Thierry Reding <thierry.reding@gmail.com>
->>> +  - Jon Hunter <jonathanh@nvidia.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: nvidia,nvec
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    minItems: 1
->>> +    items:
->>> +      - description: divider clock
->>> +      - description: fast clock
->>> +
->>> +  clock-names:
->>> +    minItems: 1
->>> +    items:
->>> +      - const: div-clk
->>> +      - const: fast-clk
->>> +
->>> +  resets:
->>> +    items:
->>> +      - description: module reset
->>> +
->>> +  reset-names:
->>> +    items:
->>> +      - const: i2c
->>> +
->>> +  clock-frequency: true
->>> +
->>> +  request-gpios:
->>> +    description: phandle to the GPIO used for EC request
->>> +
->>> +  slave-addr:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: I2C address of the slave controller
->>> +
->>> +  "#address-cells":
->>> +    const: 1
->>> +
->>> +  "#size-cells":
->>> +    const: 0
->>
->> You don't have any child nodes defined, so these 2 properties are
->> pointless.
->
-> Good point. Looking at this a bit more, I think perhaps we should also
-> rename the node representing this to i2c@7000c500 because this is really
-> only a repurposed I2C controller, which is probably also where these
-> stray #address-cells and #size-cells come from.
->
-> In DT we basically duplicate i2c@7000c500 and nvec@7000c500, but we can
-> probably also reuse most of i2c@7000c500 and just drop some things that
-> NVEC can't use (such as dmas and dma-names) and add the slave specific
-> bits (such as clock-frequency, slave-addr and request-gpios).
->
-> Marc, any thoughts?
+diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+index 21c20793e517..d1a35da7e824 100644
+--- a/drivers/ata/ahci_tegra.c
++++ b/drivers/ata/ahci_tegra.c
+@@ -530,8 +530,7 @@ static int tegra_ahci_probe(struct platform_device *pdev)
+ 	tegra->pdev = pdev;
+ 	tegra->soc = of_device_get_match_data(&pdev->dev);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	tegra->sata_regs = devm_ioremap_resource(&pdev->dev, res);
++	tegra->sata_regs = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(tegra->sata_regs))
+ 		return PTR_ERR(tegra->sata_regs);
+ 
+-- 
+2.39.0
 
-the idea was indeed to convert the driver to the i2c-slave sub-sys and add
-the EC sub-functions (keyboard, mouse, power, ...) as children below the
-controllers node, which are currently hard-coded. As this didn't happen 
-yet these entries could be removed for now.
-Using i2c instead of nvec as the node name also makes sense, because that
-is the real hardware described by the following properties. On the other 
-hand, I'm not sure if it is worth the effort (u-boot would also need this 
-change).
-
-Best regards,
-
-Marc
