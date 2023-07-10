@@ -2,184 +2,131 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186DBEB64D9
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 15:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB998EB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 16:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbjGJPcY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Jul 2023 11:32:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43604 "EHLO
+        id S230304AbjGJQtO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jul 2023 12:49:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjGJPcX (ORCPT
+        with ESMTP id S230016AbjGJQtN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Jul 2023 11:32:23 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625B0D1
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 08:32:19 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b701e1c80fso69123251fa.2
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Jul 2023 08:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689003137; x=1691595137;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ysR6h0x3IStYvYYYSt3JxXl38Mz+KmVD3cCVI5r0rsg=;
-        b=igwdVzokAwXEdL3WzQIpj+lW5tWLI2cqhOJwKZItjT5arL1HLwshd/z/r23uV0Q4TR
-         HHkL1h6lYetO4J+DTUA41IL+wNILkMwPdpgYTg6MHuFtYGfqJCElqq4WX2u7UbX3jDn5
-         2aowk/Tq6p+Trdy49l0zrE4Pc1KLMaDqoczceuoCLNTLe6lIrbdr/Xq0A286lfwSd/6I
-         qEq2JnD6t7mQFh3D8oxrXHhUiKMJ8wX0JgwQNFDhu4zt/5BKqh2ruF0mJf3zsGM8cTwf
-         Ybo321TcDAM1tFXsATBflCDrEaG7ZaKVFn2Kq91ZPqIqOw20uEx28H3u3lxxyW6C4Yhz
-         479Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689003137; x=1691595137;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ysR6h0x3IStYvYYYSt3JxXl38Mz+KmVD3cCVI5r0rsg=;
-        b=bZQt1sSrWmIZ62sct5m7INIUe6jer+cE/nvM4oihM/7tleQ7ITRy4BYnFHQzF3G0XM
-         Ikfjs+cV9BPzLVZhJDDn1gJab5Pt0e7FaFrnzfVt5em+OiKiGVDYg+y7NfOIg3+0ciTQ
-         WU0ggku+0A4BL88N05+URF6ylw+Hx6YTjdEsXQQSHz6C4/Wg8F2Gjv9m5tYg7I53SYrD
-         yt8Wz3+zYQcMTQ0UVJqhN877gbMXib/kmL3UmrRDAgwj0bPSeCQo79S5OhTxMj+7Y0et
-         zeaDIMM/iE3yKmXLvW3YKRztrO2b0hoG3Bp4AnL/rwTGKbD19BiOcD9K1f4PUrTmQ+CY
-         1ecA==
-X-Gm-Message-State: ABy/qLaUzbSmeWlPTCmdgv9SIsJ0sKADxSHVHfx88/o1fIZGj/sQiXPz
-        nW3ng/kG7W/HO+5JZU6nZKY=
-X-Google-Smtp-Source: APBJJlGq8InKEDDWqnUaaGzBtlAIeJzKcitiiLl6fxHU3lB2HzuHxeyrJo5nqX2UyQ8+iLGV0FrYMw==
-X-Received: by 2002:a2e:6e0e:0:b0:2b6:eb5a:d377 with SMTP id j14-20020a2e6e0e000000b002b6eb5ad377mr10355017ljc.5.1689003137275;
-        Mon, 10 Jul 2023 08:32:17 -0700 (PDT)
-Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r2-20020a170906364200b00988dbbd1f7esm6225813ejb.213.2023.07.10.08.32.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 08:32:16 -0700 (PDT)
-Date:   Mon, 10 Jul 2023 17:32:15 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jonathanh@nvidia.com, arnd@arndb.de, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: smaug: Add EMC frequency change tables
-Message-ID: <ZKwkf7hJzuR4FEDj@orome>
-References: <20230319194255.124589-1-diogo.ivo@tecnico.ulisboa.pt>
- <ZC11H7mXfHX_mGXh@orome>
- <pn6jovxrx7bkxfxq6qarlo357mvsf3ggxznzidz7pfdteefvvd@rqwbx4onwnky>
+        Mon, 10 Jul 2023 12:49:13 -0400
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2064.outbound.protection.outlook.com [40.107.212.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF9AE3;
+        Mon, 10 Jul 2023 09:49:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jFGr/OkyJzCeI+yoXKWVEOBjEDXmDQ/A1qPBjTom3t1GvAvwqDnRargSI4V+NAcQ/o5SzGVF5sAfO0bs5FkGjoYiMeBi8TKM57CbXv0Nuw8tbsNZKdPRf/2XL+sJDVaDCTBne/LwzJRnUos7sH4f7vY3r/zUGhQIljCshWWFivsePOxBBSqRgQWS+m3+znbOQZYff4BkQjHZJOtuGCZJe7k5TynJ2Dn/fqDp704m703qDD880YSoGNuMc3353axUs8qp+YaNveAbI9m+ehs7ij01mYHgJ88090HcgsS1idWsgP1xP72uiriL2Ti/hNhjQpFGORHW5Ee2LKEZobNK+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Om2foE28y4cQh0VV+Z80jREBuxTv4o2la43unlNbJHw=;
+ b=hyWfOSSdxrrfLr8awvIh4JmVnYKoywmh3YZMdADCZexalzr/JMExD1Q0k8z0Y1nV/Av/8QiJm4GpHnxWYrIEr2V7i+GynDIJ/olYZPrX3QwkwdAPxPm/jldrK9EjZopW+H9p/M3iTC9pJ1gwwEXA/oL7pyk2Li5gMqtbbm65PkpD9m8/RT7rNoFH/rXws3OwJvoZxdBC6JlcSyAOlRNfAsb021Ba7S9mIJxkAxhXGN00BH7dNNEbfYFD2t2AoL0Bv4j58ZvvXKzG4mGlf9isjNMWRot1sb2U26S46Qzb3YzQvk0Luhik4SRHdvGV3Q2+N3jrSlrxPRJKH5QNa5LkzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Om2foE28y4cQh0VV+Z80jREBuxTv4o2la43unlNbJHw=;
+ b=gwagM/xZfnDUmZHQ8iUI5SdgJSbtIy1TOKe5WkCc8L1uOarDOBBPbST+dobka0O0q2t64o0OK2hynecj0i/bYfnPhqIC01fp6qg+/W0ArsD93/LhyzIuUrWi8Va+k5lFYUMTxtJCF5JyjpK0HtINQjkzTSDvAxhi6Qmt9vN3mvhBJ0zsk8EGcJ0rWw5b7iq55f/kBTbpy6rfsTuwDNkVTF47rieZ4c5kgzy75bW670SZmBp7CA+JpxPRhk8NFCXx9ELpRE7AyFUmgT2/4BV3sRjLxZQ4f50xeJBVuroWNGsfBXBYzbQmUrVXA2BbWA1xtLglSg0Myxm6f/ZMiEdp/A==
+Received: from DM6PR04CA0006.namprd04.prod.outlook.com (2603:10b6:5:334::11)
+ by SA1PR12MB9247.namprd12.prod.outlook.com (2603:10b6:806:3af::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.30; Mon, 10 Jul
+ 2023 16:49:10 +0000
+Received: from DM6NAM11FT016.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:334:cafe::cd) by DM6PR04CA0006.outlook.office365.com
+ (2603:10b6:5:334::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.31 via Frontend
+ Transport; Mon, 10 Jul 2023 16:49:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DM6NAM11FT016.mail.protection.outlook.com (10.13.173.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6588.18 via Frontend Transport; Mon, 10 Jul 2023 16:49:10 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 10 Jul 2023
+ 09:49:00 -0700
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 10 Jul
+ 2023 09:48:56 -0700
+Message-ID: <ac9e9e2a-00b8-c9e7-00c7-215cba139a39@nvidia.com>
+Date:   Mon, 10 Jul 2023 22:18:54 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fFO7o6KWCIbQhKbW"
-Content-Disposition: inline
-In-Reply-To: <pn6jovxrx7bkxfxq6qarlo357mvsf3ggxznzidz7pfdteefvvd@rqwbx4onwnky>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch RESEND 1/4] memory: tegra: sort tegra234_mc_clients table
+ as per register offsets
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <talho@nvidia.com>
+References: <20230621134400.23070-1-sumitg@nvidia.com>
+ <20230621134400.23070-2-sumitg@nvidia.com>
+ <abdff39a-5306-b431-ae28-1e1a03c0a555@linaro.org>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <abdff39a-5306-b431-ae28-1e1a03c0a555@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT016:EE_|SA1PR12MB9247:EE_
+X-MS-Office365-Filtering-Correlation-Id: 78a3560f-15a9-4a63-3736-08db816595a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: JTE4zEOqzIuqcJORsUyQiy+XQzmRvDjEwkSflmaa+SYjQooetBKb1in+yLk4R1Ct+jtt15zPnY+h07uNBay5gkcx46H0tOdQvZoosOR1WX/Nv59YgCB8WzjBbFT65v5o4JmEWIKkSVVuH39sFC9FRqPTDorHc/lsMfv4oifnLIwd1go9uBLXiFBkCegfJ2YFBOcbLE7vK+xdYVLI22e0pYfsT39/MxHbbz78W2j6M3yN0j7+JxBPV7oq1mhznFXumsxw4du4dvMEGSGVgUXvvpbxzPlrAAVkCfOdMl+rXRc+D6Eskd6/bw+KSCn4VSraTLBy6A/o0Cwp+l65WYTvt5xtzgSJQ+hSKJ2WBkFCYaRH8ytSd1RqOoCAbm2B8nF64nQ+oVsTchnaXXTx6NhXYjNFCl/K7bbYa+nzsdm4QkKI/b0C49z/g4JOUTo0nH9ce/N8T8tam2nSQgr1xvGddhybt75aOfvOMVEdpeMvpUlUhBm1hchv2FTjSSAjpQEMCO0lZqu72ejXa2EndW67k+69uHhytj5Qc+umOyJOKKtNDJWveJj2CGH8hR9l17s32KvjCja3sjnDBbE8LB2tLbvn1A/ClB/UiH9fwyjLe5t1GVaI9G8xAn5rIOVIuGSY2jp8y0aSKKCwQzxjEafsZgf6scMI2+0jY7St238T2qtyqNABeC+ChysJ8vB1GJUVGBXDP69YPjAclW/+lmHEI10QM1YbiiuPJVlbvfxfiRyHnjB+hXiPDu0ctYt6iSnlK+1EG5odSLh65UVjxe7DKQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(39860400002)(376002)(396003)(346002)(451199021)(36840700001)(46966006)(40470700004)(40460700003)(186003)(53546011)(16526019)(26005)(2616005)(36860700001)(107886003)(426003)(83380400001)(336012)(47076005)(4744005)(41300700001)(4326008)(2906002)(316002)(5660300002)(8936002)(8676002)(478600001)(70586007)(70206006)(110136005)(54906003)(16576012)(40480700001)(36756003)(356005)(7636003)(82310400005)(86362001)(31696002)(82740400003)(31686004)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2023 16:49:10.3938
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78a3560f-15a9-4a63-3736-08db816595a7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT016.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9247
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---fFO7o6KWCIbQhKbW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 10, 2023 at 10:17:56AM +0100, Diogo Ivo wrote:
-> On Wed, Apr 05, 2023 at 03:18:23PM +0200, Thierry Reding wrote:
-> > On Sun, Mar 19, 2023 at 07:42:55PM +0000, Diogo Ivo wrote:
-> > > Add the reserved-memory regions of the nominal and derated tables set=
-up by
-> > > the bootloader so that the EMC frequency change code can access them.
-> > >=20
-> > > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> > > ---
-> > >  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 21 +++++++++++++++++=
-++
-> > >  1 file changed, 21 insertions(+)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm=
-64/boot/dts/nvidia/tegra210-smaug.dts
-> > > index 709f3f417a19..a74826ae97b4 100644
-> > > --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> > > +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> > > @@ -30,6 +30,22 @@ memory {
-> > >  		reg =3D <0x0 0x80000000 0x0 0xc0000000>;
-> > >  	};
-> > > =20
-> > > +	reserved-memory {
-> > > +		#address-cells =3D <2>;
-> > > +		#size-cells =3D <2>;
-> > > +		ranges;
-> > > +
-> > > +		nominal: emc-table@f67cc000 {
-> > > +			compatible =3D "nvidia,tegra210-emc-table";
-> > > +			reg =3D <0x0 0xf67cc000 0x0 0xbea0>;
-> > > +		};
-> > > +
-> > > +		derated: emc-table@f67d7ea0 {
-> > > +			compatible =3D "nvidia,tegra210-emc-table";
-> > > +			reg =3D <0x0 0xf67d7ea0 0x0 0xbea0>;
-> > > +		};
-> > > +	};
-> > > +
-> >=20
-> > These tables are typically generated by the firmware/bootloader at
-> > runtime. Often they'll use heap allocations for these, so the addresses
-> > are not guaranteed to be static.
-> >=20
-> > Can you share a few details about what set of components you've used to
-> > set this up? If we add these we want to be as specific as possible that
-> > people use exactly the same set of firmware files.
-> >=20
-> > Thierry
->=20
-> In the case of the Pixel C, coreboot takes care of copying these tables
-> into a static cbmem region. The actual function taking care of this is
-> tegra210_run_mtc(), found in [1], and from here it is possible to
-> construct the cbmem memory layout. I have confirmed that the device is
-> actually running this version of coreboot from the cbmem_console logs,
-> where the commits are explicitly stated. These logs also indicate where
-> the tables are located,
->=20
-> Wrote coreboot table at: 00000000f66ca000, 0x2c0 bytes, checksum 3601
-> coreboot table: 728 bytes.
-> CBMEM ROOT  0. f67ff000 00001000
-> CONSOLE     1. f67ef000 00010000
-> TIME STAMP  2. f67ee000 00001000
-> VBOOT       3. f67ed000 00001000
-> VPD         4. f67e4000 00009000
-> MTC         5. f67cc000 00018000
-> RAMOOPS     6. f66cc000 00100000
-> COREBOOT    7. f66ca000 00002000
->=20
-> and
->=20
-> MTC: Copied 0x17d40 bytes from 0000000081008b70 to 00000000f67cc000
+On 10/07/23 15:38, Krzysztof Kozlowski wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 21/06/2023 15:43, Sumit Gupta wrote:
+>> Sort the MC client entries in "tegra234_mc_clients" table as per the
+>> override and security register offsets. This will help to avoid
+>> creating duplicate entries.
+> 
+> If person cannot search for existing symbol before adding new entry, I
+> doubt that sorting would solve it. OTOH, this patch makes backporting
+> changes trickier, so I don't think this is good approach. Are all other
+> Tegra files ordered in this matter?
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Okay, so this sounds good. My only worry is what could happen if
-somebody were to run a slightly different version of coreboot that puts
-these tables elsewhere. It's been a long time since I looked at
-coreboot, but do you think perhaps it would be possible to update
-coreboot to update the DTB at runtime to always point at the correct
-location?
+They are in order for previous T194 SoC.
+For T234 also, initially the entries were in order.
 
-Alternatively, do we have an easy way of checking that the tables are
-valid? Looking at the data structure that we're mapping, there's very
-limited data there that could be used for validation, so garbage could
-easily be mistaken for an actual table and mess things up.
-
-Thierry
-
---fFO7o6KWCIbQhKbW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSsJH8ACgkQ3SOs138+
-s6EXpw//SZXBsCLgXyaYDeoBoUhdijhWCUF8Xw1jWuUv+r4l063aX13kHuLN1WNZ
-q08qI6OTyLOLiVbQLO+y5WBw7L6knySocbkJoq+Xt+JKiPnoEk5IXDwnX14QdhTj
-veEAmEqyet+W6AYJeK9kuYrzrI/Jsl3JWMKDV7koI0EPopokpq9j/9oAdLsRaM0z
-eP6F0fUmPyRqL2Pv9l2oQyo3pFzykcWcahly/GrWx2eV68c7bnhuUmHrbgX4rSTm
-+hhIq9K4PQ432aDmCdYS8H6J+Pl/f9tYKVcbm3MO/aCEOLj11UmYagmzRt2/CnCQ
-9mB+cZfxlPi2WwtvUspZFNg7EuKRneEzV50LtWLQbzCPeD9tCgCJEtwt7KQaeB8M
-0WJiqrvR1PD+oQjwfunpq4/vmeczkdIUzOYi+c6jgnyh9oqxaVZLhkbZXO6gyT0N
-Srhl08hJaqW9UiwCmt3W9kItDvVETiw7Unf3kwSJumeHj6Qf70cOkUBsg3iXJ7rd
-r2mTqzO337+HqSsA1v513fG+qLnvQas7Iz8jO+2h8z8FMkNZT5VNJyWaLJITxElH
-PMevSNsDR9V3G0VE2ouZoNWl1s3T8oKAtAHvETp9prJO9+MCo5XFIPDkOP/qFE7P
-KrutZ8gFc9h0bYcdRTozmRUI0KD4kxy+nxPDoDMieWpxKK2KBNI=
-=igAQ
------END PGP SIGNATURE-----
-
---fFO7o6KWCIbQhKbW--
+Thank you,
+Sumit Gupta
