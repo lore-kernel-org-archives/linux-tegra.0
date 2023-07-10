@@ -2,126 +2,137 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD3DC001DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 13:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C72EB64D9
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jul 2023 13:11:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230344AbjGJNJL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Jul 2023 09:09:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54264 "EHLO
+        id S229637AbjGJNL3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jul 2023 09:11:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233617AbjGJNIc (ORCPT
+        with ESMTP id S229608AbjGJNL1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Jul 2023 09:08:32 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A1B128;
-        Mon, 10 Jul 2023 06:08:22 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99364ae9596so577511166b.1;
-        Mon, 10 Jul 2023 06:08:22 -0700 (PDT)
+        Mon, 10 Jul 2023 09:11:27 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E58B7A8;
+        Mon, 10 Jul 2023 06:11:26 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-992dcae74e0so590220566b.3;
+        Mon, 10 Jul 2023 06:11:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688994500; x=1691586500;
+        d=gmail.com; s=20221208; t=1688994685; x=1691586685;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t4Yu4nZ9o/MAugiHNW1oP2TWBog7+wh9NiTblk14kDg=;
-        b=ViKLx3vuJ5Z2OZiH/tMNs7+36C5ErzoM+wXhMsBLmBioA4d/87VvFYg9xu7yF9NYI7
-         eW0cRRSun9o7/uBwbj9nMt1MxZ2ILgZ8TJL6Qbw0qOjL3bsRT3ZUoCACT5dzlbz+CGVp
-         t9wLe+JD8luMvDMLgGkXaC6r/WstGA6qKjIKBmIAn8B2ibPW+yuWsRN7leV1a+r4uxNj
-         u+hZVI2YPLOuz3AeCDWCh2PiCBEMstSEL2fBx8AVNUXNq28fWnwYpknz6ZRs8fdzmGFB
-         KpjD24mWQEkMUYbgDUeKuX3D9Tr0BjxOh9BA1kgHsmGbRKIljItY/qy8B4DcqhccOgkC
-         y3fQ==
+        bh=7+Sj+CwJeYIb9YiBPuGCzCzTBVYAtf6z/Ku6fc72G2E=;
+        b=FS46eo5yjS6DqXLbArty/6G2Q/3VjDmv9tgGS3BEb/KgL1glnMzOS7VcrOhzhUo13U
+         Pe9s5zG6Nqdt9sfeBKWZH5BnuRCiVvIHkKZqQOxZhKTdt5xT0kGQ62MPL/rCdrgkFkov
+         tJz0roaWL5/c9t8+qTOYZLJjMb2fUhvqLFyrECikyUVj1RltOq1FAZ0NdD3YVKDxTGga
+         A8CavPcYyjYAro3umKDprZp0uquDnZKhayLJVLtBoG+G90+hkLwuFecdF2P37632e/Tz
+         5MTD4yZNdFbbGjr77GhIf2omgHCVAdglPvw0eoYiYUwtXxBnuzBHp8e1bP4Ljc8+M7Ak
+         pBJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688994500; x=1691586500;
+        d=1e100.net; s=20221208; t=1688994685; x=1691586685;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t4Yu4nZ9o/MAugiHNW1oP2TWBog7+wh9NiTblk14kDg=;
-        b=WirI5RBBL8Jd9POeObAP2ic3AidoARfZZNLBO4/aTN345lvjR6N/1h41q18gpkjYt+
-         mTPHyNKkvv5CkUpsgZ5EBw4+2cY/U+6oXW2DNgFBXs2GaUrBvudy6pbTp9oMGLLv8l3J
-         ECm72GuAQtJJ0oms6V5Ih2TEnX4eCAdNs05FtXJwWkEgiSp6/k0NWcesrVPxN7Zyfa+J
-         X7Bik6eKV2yWOeM3aS4vG0biZjvDzgE6NkA/Agj3efKgAiJJESdyCSbPhyRSbBmiYMwB
-         iiIoWOYSE536GF/IoGm2uETHiF//JyQv7OlX1AZO3CTEMpnMLH47k/yNlQM3u8x9/H1T
-         q2Dg==
-X-Gm-Message-State: ABy/qLbUwDvkNR42qEsNylS9w9btTStPt8r+4vMgGikUlZsLB3eAxJLR
-        QOH9roAI/OKm020OKUcMbak=
-X-Google-Smtp-Source: APBJJlEZSid4m5LqiMkjIuq9pqoFUus2yiqHgqNIdRxQzpkVtb3ChiIS1Aia+iMuLU7ts1DBLslKyg==
-X-Received: by 2002:a17:907:9008:b0:988:9621:d85f with SMTP id ay8-20020a170907900800b009889621d85fmr11123647ejc.58.1688994500400;
-        Mon, 10 Jul 2023 06:08:20 -0700 (PDT)
+        bh=7+Sj+CwJeYIb9YiBPuGCzCzTBVYAtf6z/Ku6fc72G2E=;
+        b=Tde6/dpPKFHxo3YiKaVuA6DA+583LuV2hgyz4/U8SwFgxWff5Ursu9EXxiaMQt1/kP
+         qfCwnotrYhaGenD5ZbcKbGCiNIEJ/lLrJc1ui6Zosa31kqlOexJW84+ixoo1EqYb2DYN
+         +O71Vg3h41eetO9reRdkpCM+QRxMf2QhwP3XuYYuvgWY1IUBn+A5Hb+LJwuUk69Q8rWa
+         xGhHsS0PlUZhd9V2A9kkTaYCd/5lihMd78U3TvVK0b3HPjdwB8TjzknJvv3GcoWMIZc9
+         I2cNjZh3vWOELhmosNMH7i5eacKZLgRHzc39kDwr9pFHEVscCBDOh/fXCaghizK5BEuT
+         u6LA==
+X-Gm-Message-State: ABy/qLaFRoGhaMKlUZGc4aYz/lEU8RAlwuw38l/mBcE4aIUq1TVTqNW4
+        3UyuMezcb1OOlVDb/E5GnJ79lrtvvus=
+X-Google-Smtp-Source: APBJJlF1kaMLPpu8IWN45q9maOQ/+xLzkln+KHH7qgAVhCq/HJqmld6n7/tnKAoQDNfgm229y8lJsQ==
+X-Received: by 2002:a17:906:728a:b0:993:d54b:3e4a with SMTP id b10-20020a170906728a00b00993d54b3e4amr10626237ejl.15.1688994685133;
+        Mon, 10 Jul 2023 06:11:25 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i18-20020a170906851200b0098669cc16b2sm6048866ejx.83.2023.07.10.06.08.19
+        by smtp.gmail.com with ESMTPSA id h13-20020a17090634cd00b0099316c56db9sm6056440ejb.127.2023.07.10.06.11.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 06:08:19 -0700 (PDT)
-Date:   Mon, 10 Jul 2023 15:08:18 +0200
+        Mon, 10 Jul 2023 06:11:24 -0700 (PDT)
+Date:   Mon, 10 Jul 2023 15:11:23 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 14/18] soc: tegra: Move powergate-bpmp driver to the
- genpd dir
-Message-ID: <ZKwCwqHwqCEIHMKv@orome>
-References: <20230707140434.723349-1-ulf.hansson@linaro.org>
- <20230707140434.723349-15-ulf.hansson@linaro.org>
+        linux-input@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: tegra-kbc - use devm_platform_ioremap_resource
+Message-ID: <ZKwDe77yPmaaNoiE@orome>
+References: <20230709134109.182418-1-martin@kaiser.cx>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bFL+MChN9/7KXUcr"
+        protocol="application/pgp-signature"; boundary="o7S8PluLd+rG5rXR"
 Content-Disposition: inline
-In-Reply-To: <20230707140434.723349-15-ulf.hansson@linaro.org>
+In-Reply-To: <20230709134109.182418-1-martin@kaiser.cx>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---bFL+MChN9/7KXUcr
+--o7S8PluLd+rG5rXR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 07, 2023 at 04:04:30PM +0200, Ulf Hansson wrote:
-> Let's moves the powergate-bpmp driver, while we leave the pmc driver in t=
-he
-> soc directory. To move the latter, we first need to split it up in a few
-> pieces so the genpd parts can be moved alone.
+On Sun, Jul 09, 2023 at 03:41:08PM +0200, Martin Kaiser wrote:
+> devm_platform_get_and_ioremap_resource maps a resource and returns its
+> physical address. If we don't need the physical address, we should call
+> devm_platform_ioremap_resource instead.
 >=20
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> Cc: <linux-tegra@vger.kernel.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 > ---
->  drivers/genpd/Makefile                        | 1 +
->  drivers/genpd/tegra/Makefile                  | 2 ++
->  drivers/{soc =3D> genpd}/tegra/powergate-bpmp.c | 0
->  drivers/soc/tegra/Makefile                    | 1 -
->  4 files changed, 3 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/genpd/tegra/Makefile
->  rename drivers/{soc =3D> genpd}/tegra/powergate-bpmp.c (100%)
+>  drivers/input/keyboard/tegra-kbc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fine with me:
+Different variations of these have been going around for a while now. I
+don't really see much use in these tiny conversions.
+
+But the patch also isn't wrong, so while I'm at it:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---bFL+MChN9/7KXUcr
+
+>=20
+> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/=
+tegra-kbc.c
+> index d5a6c7d8eb25..c9a823ea45d0 100644
+> --- a/drivers/input/keyboard/tegra-kbc.c
+> +++ b/drivers/input/keyboard/tegra-kbc.c
+> @@ -640,7 +640,7 @@ static int tegra_kbc_probe(struct platform_device *pd=
+ev)
+> =20
+>  	timer_setup(&kbc->timer, tegra_kbc_keypress_timer, 0);
+> =20
+> -	kbc->mmio =3D devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+> +	kbc->mmio =3D devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(kbc->mmio))
+>  		return PTR_ERR(kbc->mmio);
+> =20
+> --=20
+> 2.30.2
+>=20
+
+--o7S8PluLd+rG5rXR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSsAsIACgkQ3SOs138+
-s6GpGw/+PL9CvgiLkda1wJNl1l2p4aij2hHBUbv5HmJ26j99KaMSJHfXSr+FU8zE
-hY/w1nVVm2hUjn0k3rLo6Pe/vNGw4XzeA+Ifp17KoqHhEk2aboOZdLyLK/KULYS+
-ADH9C+s2nunBpXTbwODqP8/8GysMwTotkKPGn3l0VvD7pzKE6Bsx4cUdi0LV1vwr
-AVfHAOBOy1HB27K3oM5tppuA3OiRcwCUJPtFty3FMv5UDHFOcKmYOYLRK6R0PIA5
-o+SANCTlpioBcQIW8rQo4yJwFHvllTr6j8slRvzbmuL++vwKYNZTPoZXhiy2rKD7
-squsr1qQNjJRHayNKoapV1ElZNan1L7X8zgoqW29FAGuJeuRx6ecqlBTEiD0bgsp
-daoiZAdfPLc9ZmR+A9aNDtXzM5owlXoxG6ZRLqo4J93nQDT+8S1PyN3cbIWQB7PL
-uq/m/aFpLGzfsw+82q9XfVdtZpjEe9F4JcEhAeP5ZrdmMthzAra/aYxd+IyGDdE0
-I34tGGKOLOw4EeCYJ/4XlLrCVEz4oHlXHEJtqmrMFUM1fKwvZY12X2RIfOw9v+Mk
-f4Jej8JDO4LkYaQKZh2myc/XoqniY5FR5NMRbhSEiKDAqq9MIBhCPfBqIRA1U79s
-TfYkYPBbSqZ2QtJLSeIrH61+7CkXCySKqSNU+lRJk3DUbERgnYo=
-=rRak
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSsA3oACgkQ3SOs138+
+s6F5cw//YZueXXDV1NfMlou+p4d28iz0CUuuGL06TRczgNlcyG4RS67X93IejGAP
+mmEMgX4CN0chNM/rdwTIXg9+jJ05ri5SuM+PPtzLstDWmoJ+S3ySLU89m0Tj8P81
+Xrk/JAEXxMTbVPvQPoG1MlQssNrA80Kis+ZLvQNAavkTIidBBeUnvojhsoMTbCkK
+eG06ldA0XvUNhFfdyQk1cNM2BpnEQEKgH7s4LMmHkc6HbHFUDpCZNzL3OCpluPi+
+uEWE3BCs2uMuhdYTvjd2gCMhQDrkTx+DLDM4Xvz+J0n1UbFWwGz7u/NPMwwnzEbZ
+UtN4NjqhWTKW/dF2m9mtiVahMXBLjGRumgwgupxK80fPdpVWQkwLCQklb/1mwqe3
+1ARD145VNSe0Qi7mvsXpO8gz9ZdpUyqZZ2muNBWfDSkRVm9qDRsbtfkwG/smw8rv
+vb/tN+rwnDu75QnGeGzifk9VldnODoATkAiOClLwmE3oBU6MXd7x59qmSZb8JguJ
+bMlE/zL+Z5wzjdGxn63aCFaz4QEuZ/JBe1JUeDzUE5a8V9U9T6m000oXnRTnB0pC
+hf1yd39lw7BPssSNFUhrCxOZqB8DM7HzEw3GbXitBFJcVVQHf0LGUYGAM7mvgIX/
+c5a7YgodKGCa8kHBwC9ATGKQ3gxvv6ZdvdbZGcnEmWd8gQOOgCI=
+=AfGr
 -----END PGP SIGNATURE-----
 
---bFL+MChN9/7KXUcr--
+--o7S8PluLd+rG5rXR--
