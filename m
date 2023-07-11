@@ -2,115 +2,223 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A8DEB64DC
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jul 2023 15:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF4CC0015E
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jul 2023 15:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232689AbjGKPqY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Jul 2023 11:46:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59614 "EHLO
+        id S232448AbjGKPzR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Jul 2023 11:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232519AbjGKPqX (ORCPT
+        with ESMTP id S231322AbjGKPzQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Jul 2023 11:46:23 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6466ED;
-        Tue, 11 Jul 2023 08:46:16 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31434226a2eso6754713f8f.1;
-        Tue, 11 Jul 2023 08:46:16 -0700 (PDT)
+        Tue, 11 Jul 2023 11:55:16 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E739C;
+        Tue, 11 Jul 2023 08:55:15 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-993a37b79e2so741903166b.1;
+        Tue, 11 Jul 2023 08:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689090375; x=1691682375;
+        d=gmail.com; s=20221208; t=1689090914; x=1691682914;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TSHzWr4gaLs4jyK9BMNn2YEQIAnAbtQY/+dliKHHYxs=;
-        b=UYS+7tIh6u+ojy0oVfob+Sev7z0uPPCQbErkQpQk1O+aw22pl77XLL8DNQLpZ5C5VX
-         dCLihQlJnJ2hS7roLef3cvntWUiIFWKvkGFPW37HzuzQzBMUXcgPXlBvk7JQt0jeFzRk
-         GSF2ADgVJthd+Qi0UAOuuE2Gao+crsO42QZZBLl7v9vw5LYSUPEBMOa5vu5nXPXmLWqT
-         nBEeunutG3xUBZx4X438J7tJP5tIhQ6J8b0ofwTJtF1nRUrQC9oKcUX5KUGBp6ll3BQG
-         iP/pNUCvbqlB0OZVZCzt4a1wNWzPP7ox5rY6xj4Cu3w/cp7ojsfkbSK9AihF3dHbANXY
-         V5bw==
+        bh=hYTjCAF9/fZ07M5FVCiddDapg0DDmm7Ez7WqU3Ctpmo=;
+        b=eJ6avkAjUrcl2AOaDC1x9fRuiXP5S8wsNgafxWsxUlzYwPAMTjpqCAaeuiXNpJ/PUL
+         WvwQzsfPU1rHuiwJh2ti/kCN86wU0wIv7HSYsE6pH1TsFGzJDbJDp0jnkElFj3Zj0yjk
+         DJWssVlFqkteXbC4qCUDeFMoPH9dmOw0K8yfUrZ/1NB9Xn/EUY7KObn+vtWfYVISZvUO
+         B+kelN/2KOjy08q7z+qLP39L/Tip+r9WaIHyKoaCZhZmDjmpNvfD1XWljYjsqYjaygQv
+         WovxVAp3EdOoCR2fhtqxnpfRDZzrKtZLjtxXOytPsTuHnho4GFKSVD3EyK7pL9KvUgXN
+         o2Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689090375; x=1691682375;
+        d=1e100.net; s=20221208; t=1689090914; x=1691682914;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TSHzWr4gaLs4jyK9BMNn2YEQIAnAbtQY/+dliKHHYxs=;
-        b=ax0n6vajVtonQpVQwMj2dUkMapAqiEMKm3uZbtPZ2KWKAZzf6Slhli7+WAeImyRhVh
-         GSymB38GTilSYA0StbdnJDMVMTKMH7UYJUWQLpdVkjZxyqjAW8jAJQ0GhI84oH4eaRVm
-         P/vUegjaAV0z14+j6hwjZpkIz31k1iq69gqrzfQuldB5mzueVrg+LGFpuj2FzIgim3MC
-         V93W6ddMJzDWHjgECO1cd2gbMf6Qww6RXAsFI0RMIowKftEadzdeCeTPMW6GYYiyF8Eb
-         XF0fmVzBXHaSwJOIdrWQgOzJ9fpglQzxlzla1vW7UCGp7zcwBpGYQjXpTmHUjBbd6PXR
-         tMUg==
-X-Gm-Message-State: ABy/qLZKe/M+9J+EswLKVw9Xm07ktCOQHtlkLsHreSRbj33IIad6PkX/
-        sJeVBN8zWsi0LJT3j1Fe8QaRNmjFlwY=
-X-Google-Smtp-Source: APBJJlHYOoGUWXHQEGRrv1wSYYMjVMio85ATQTXMSE8aJyyC4C8fPFL3liKN90fsUX65qG2C6jlrNQ==
-X-Received: by 2002:adf:e290:0:b0:30f:c012:b529 with SMTP id v16-20020adfe290000000b0030fc012b529mr21025161wri.56.1689090374932;
-        Tue, 11 Jul 2023 08:46:14 -0700 (PDT)
+        bh=hYTjCAF9/fZ07M5FVCiddDapg0DDmm7Ez7WqU3Ctpmo=;
+        b=DYuM8k4AJVGRg3LH/betcHbsHX8VEB8qEg08cA/JB4+hda7vz7SR4LOYGZ1UC09T8P
+         OZpkvTSw11b4LzVtWbxw73asJFnCTR9Gw7nmPZ2JnHLFAZ16cWvXY1l+6FVFHpuSGzs3
+         2Ovikouyx6QwmTP8+5S1E+b/AfZOii7oSnetKCqxXswI1Av/0ttjFLqtO4BtxxyJZKgn
+         fIEF0hOP0jwem1QZGA38+zsxYC+GqpHNTFOsW7rIC2fD8/mX2BNILQg9/K9L9hkYHIdE
+         KJh65OAiFmBaMixWmuyBvGuQISYBY1bMsAPUVgeXpOwJ2MZ+jb0fPZ+Jw2rblwYBrBtU
+         7mEA==
+X-Gm-Message-State: ABy/qLbF+s2OqKj+dPOYyoUjO15vXE8/C4/vCNuTL0SGm+NaqtSsKDN8
+        8RRdF7pCNrdQZ8j72UgHTgg=
+X-Google-Smtp-Source: APBJJlHIAlXp42vE8l8nTJTI/lRc7djKnatf6O3T+cmSLBw80ZcEWxdvYalKp8tWUflpNS59k4+0vw==
+X-Received: by 2002:a17:907:2177:b0:982:be38:a5df with SMTP id rl23-20020a170907217700b00982be38a5dfmr16118443ejb.63.1689090913481;
+        Tue, 11 Jul 2023 08:55:13 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g12-20020a5d46cc000000b0031455482d1fsm2568456wrs.47.2023.07.11.08.46.14
+        by smtp.gmail.com with ESMTPSA id g11-20020a170906394b00b00982b204678fsm1285462eje.207.2023.07.11.08.55.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 08:46:14 -0700 (PDT)
-Date:   Tue, 11 Jul 2023 17:46:12 +0200
+        Tue, 11 Jul 2023 08:55:13 -0700 (PDT)
+Date:   Tue, 11 Jul 2023 17:55:11 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] ASoC: tegra: tegra20_ac97: Use
- devm_platform_get_and_ioremap_resource()
-Message-ID: <ZK15ROig1u7kaXfO@orome>
-References: <20230711034846.69437-1-frank.li@vivo.com>
- <20230711034846.69437-5-frank.li@vivo.com>
+To:     Stanimir Varbanov <stanimir.varbanov@suse.com>
+Cc:     Stanimir Varbanov <svarbanov@suse.de>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, Krishna Reddy <vdumpa@nvidia.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [RFC PATCH] iommu: arm-smmu-nvidia: Add default domain type
+ implementation op
+Message-ID: <ZK17X4ueSI5rWKVL@orome>
+References: <20230710082252.9702-1-svarbanov@suse.de>
+ <ZKvgG4-IzqiYPSUT@orome>
+ <93026b47-3b72-8439-486e-e0cda21dd0fe@suse.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yrPPLIbhK53dQkQ8"
+        protocol="application/pgp-signature"; boundary="g9eZH3dUKMN+lQZU"
 Content-Disposition: inline
-In-Reply-To: <20230711034846.69437-5-frank.li@vivo.com>
+In-Reply-To: <93026b47-3b72-8439-486e-e0cda21dd0fe@suse.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---yrPPLIbhK53dQkQ8
+--g9eZH3dUKMN+lQZU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 11, 2023 at 11:48:45AM +0800, Yangtao Li wrote:
-> Convert platform_get_resource(), devm_ioremap_resource() to a single
-> call to devm_platform_get_and_ioremap_resource(), as this is exactly
-> what this function does.
+On Tue, Jul 11, 2023 at 01:58:34PM +0300, Stanimir Varbanov wrote:
+> Hi Thierry,
 >=20
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  sound/soc/tegra/tegra20_ac97.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Thank you for the comments!
+>=20
+> On 7/10/23 13:40, Thierry Reding wrote:
+> > On Mon, Jul 10, 2023 at 11:22:52AM +0300, Stanimir Varbanov wrote:
+> >> Add def_domain_type implementation op and override default IOMMU
+> >> domain Kconfig option (CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dy), which
+> >> could be enabled on some distros. The current quirk has been done
+> >> for Tegra234 machine, because I found the issue on it. The issue
+> >> itself appears on USB host controller which cannot be initialized
+> >> without IOMMU translation. Something more, we proved that IOMMU
+> >> translation is needed for display and GPU drivers as well.
+> >>
+> >> I evaluated few possible options to solve that:
+> >>
+> >>  a) select default IOMMU domain from .def_domain_type op
+> >>  b) Unset CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dn
+> >>  c) add iommu.passthrough=3D0 on the kernel cmdline
+> >>  d) firmware - ACPI / DT
+> >>
+> >> a) This option is implemented in the proposed patch.
+> >>
+> >> b) Since that the community has agreed that pass-through is preferred
+> >> as a default IOMMU domain option because this will avoid performance
+> >> impacts on some of the platforms [1]. On the other side we have exampl=
+es
+> >> where you cannot even install Linux distribution on a machine where the
+> >> storage media cannot be detected and the system just hangs.
+> >=20
+> > That's not how I read that thread. It sounds more to me like Will and
+> > Robin had ideas on how to improve the performance and were planning to
+> > address these issues. It doesn't exactly sound to me like there was
+> > concensus to make passthrough the default.
+> >=20
+> > Having said that, given that it's possible for distributions and users
+> > to set CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dy, I think it would be useful=
+ in
+> > general to have a way of enforcing IOMMU translations if it's needed by
+> > the hardware.
+>=20
+> Exactly, the problem is that some platforms prefer passthrough to avoid
+> performance impacts but others cannot even boot the kernel (and thus
+> installation failure). Passing iommu.passthrough=3D0 should be an
+> administrator decision, balancing between security and performance.
+>=20
+> On the other hand the aforementioned mail thread gave some performance
+> numbers which might be are outdated having the improvements made in smmu
+> driver in mind. Unfortunately, I cannot confirm that the performance has
+> been improved during that time.
+>=20
+> >=20
+> > I'm not sure I fully understand the particular problems that you're
+> > seeing on Tegra234, though. I'm not aware of anything in the USB host
+> > controller driver (or hardware, for that matter) that would require the
+> > IOMMU to be enabled. The only peculiarity that I can think of is the
+> > firmware, which is typically loaded by an early bootloader and therefore
+> > might perhaps need the IOMMU to properly map this in the kernel.
+> > However, my understanding is that this firmware is loaded into special
+> > carveout regions which don't require remapping.
+>=20
+> On Jetson Orin AGX (R35.2.1) I see these errors:
+>=20
+> tegra-mc 2c00000.memory-controller: unknown: write @0x0000000000000080:
+> EMEM address decode error (EMEM decode error)
+>=20
+> tegra-xusb 3610000.usb: Error while assigning device slot ID
+> tegra-xusb 3610000.usb: Max number of devices this xHCI host supports is =
+36.
+> usb usb2-port3: couldn't allocate usb_device
+> tegra-mc 2c00000.memory-controller: unknown: write @0x0000000000000090:
+> EMEM address decode error (EMEM decode error)
+> tegra-xusb 3610000.usb: Error while assigning device slot ID
+> tegra-xusb 3610000.usb: Max number of devices this xHCI host supports is =
+36.
+> usb usb1-port3: couldn't allocate usb_device
+>=20
+> tegra-mc 2c00000.memory-controller: unknown: write @0x00000000000000a0:
+> EMEM address decode error (EMEM decode error)
+> tegra-xusb 3610000.usb: Error while assigning device slot ID
+> tegra-xusb 3610000.usb: Max number of devices this xHCI host supports is =
+36.
+> usb usb1-port4: couldn't allocate usb_device
+>=20
+> >=20
+> > However, passthrough is admittedly not something that we've thoroughly
+> > tested, so it's possible you're running into a use-case that I'm not
+> > aware of. In that case, could you provide a few more specifics (such as
+> > the DTB and .config) of your build configuration so that I can try and
+> > reproduce?
+>=20
+> To reproduce you have to add iommu.passthrough=3D1 on kernel cmdline. The
+> dtb is from Jetpack.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+I was able to reproduce this on Jetson Orin NX (the differences to AGX
+Orin should be negligible in this context), though I ended up patching
+the DTB to disable all SMMUs. What fixed it for me was to drop the
+dma-coherent property from the usb@3610000 node. Can you try that on
+your end to see if that works for you as well?
 
---yrPPLIbhK53dQkQ8
+Not that that's a proper solution, of course, but just trying to find
+out if there's perhaps something else going on.
+
+=46rom the looks of it, it seems like these devices aren't actually DMA
+coherent inherently, but rather the SMMU translations make the accesses
+to memory coherent. I'm trying to find out the exact details, but if it
+turns out to be the case, then what we really want is a way for an IOMMU
+to mark any devices that get attached to it as DMA coherent. It's not
+sufficient to hard-code this in DT because there are various ways in
+which device can end up not attached to an IOMMU despite what the DT
+says.
+
+Jason, or anyone of the IOMMU folks, any thoughts on how this could be
+achieved? DT already has a way of walking up the "DMA hierarchy" looking
+for a DMA coherent parent, but again, making this rely entirely on DT
+seems insufficient.
+
+Thierry
+
+--g9eZH3dUKMN+lQZU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSteUQACgkQ3SOs138+
-s6GNFRAAoGU/u5P+4DbrdieXiUfZLIqdhM4uAmLJHkY7i7xuluvvsk35OBeA4Fj1
-I4mpibVDYTja7Wx6j4C8BGr5B8kk1V0dOu4wk6gQaN4zjGb2tN8bkA7v8R/6saP+
-OD3H/0t7ZZrtm/XDBD9R2Pv5gdbptYfwA/j5NpWwGSSc7iQ2gyInzbk0UKIrW4ci
-6GEKBL3qYk2dhgyD3QgSnBQecfMbkzbGzcqyT+7P8axhjclJstTZs2dlozBIC2tf
-L/Yd8n+S/3GfIH7oI0qgGbaPuoWqEmXgAL6dvddR8021kcQQJvnAl//w0EudtLXh
-Ae/auR0eLEt9YklWLXWgEIoBmGvcdqvnE29vW885RS331+th29aK39oOfRptroBJ
-FZ8MuXyUwDO0GQNkFIm6WyNuXmqxf9yzRfauGDDuPAlpPHe8plW2Zr+iTBMbjPp0
-Y72o6OCRKLyBlECkT3xYxzOwDj5qcxGgChPxKTPgyYOZ3Etz6CWys3YO+Mn+0q3s
-ilFNpaHpER/TkiWHaf1f1Afoszbic/DV/wBZf6zOZD8Ggfs6Q6QhaTJfGvUqBNVI
-AqW5hC2Ya06qUrUpB5G+NR2/F+QX8VS0ub428mai6SUemlmYat8PvDlUMpWbj06p
-JN7dyctd89Gxw+iiQgF9euFNixjCIha5XTgdXGny+Zp+802AJGQ=
-=zwSX
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSte18ACgkQ3SOs138+
+s6Hw0Q//SZoAAhfg3rxkjWZQD8oOKqqp9u8yvEQxnpl6wxRLJwS7j1tMxWV5WUim
+rRHhhOiAYKX3boI7H/wC1d0104dCNz5eRC07rRKWcV2HgDjmROcVEN+RhnqvQ+RQ
+uuq6GkTKS5P36s8CeRHhCDYZIrmWgtORbc1KQ8o2fjRlhassj4Bzc4m+ciIufcI7
+bFWJBmUvGeQgAA7OQwF7piK6GfTKJI2G4xO+HqeOW4OE7MRvQfShuifbwoE/S4rh
+fdGGXAEcBdQLZJ77ReR+f4XtZ3E2L8XmW0VdH+tJyu1+uJuzaOO3wmDE+m5uKp6y
+tBvsX2rNNQD5s+/7geIRZbrSPFy0ttMdxBiTkJPHfq9SIzNzh8jw5PojJcbKQpgn
+p4gLVMrDUJBPSaFRGGvjYcr7E8gXRS3B0yMZi552/RL1OYeCORedPsMrNTzIGoWE
+wgwIdPMGy6mJj+FsaIr10OeYdDDBHZLE4rIHMRA7lR7Ty0/fgQ6aOZwlw5WzEjh3
+Teyr3SD2KcxRTaunjLfglfVHuZ2sbpM4UyDbtgLzEFXXFWc866spp4bZ9DQg9UbZ
+ejmX+rom2XKXDgwioAy2SHIdmH0eo/iS3fzBvv/lzeVFWelvZt7o5vQqGsNzCN00
+q9kQlNjg2mcGdAxf16ocSL3u7y0H3zfI6J0mWdFIurryvk3yGjs=
+=yplD
 -----END PGP SIGNATURE-----
 
---yrPPLIbhK53dQkQ8--
+--g9eZH3dUKMN+lQZU--
