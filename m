@@ -2,182 +2,135 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76196EB64DD
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jul 2023 06:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E98C0015E
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jul 2023 08:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230021AbjGKGH3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Jul 2023 02:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44992 "EHLO
+        id S231260AbjGKIZV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Jul 2023 04:25:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbjGKGH2 (ORCPT
+        with ESMTP id S231163AbjGKIZU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Jul 2023 02:07:28 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C692CD2;
-        Mon, 10 Jul 2023 23:07:27 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7EC6C20462;
-        Tue, 11 Jul 2023 06:07:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1689055646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SNB82qjZdLZ7yUY3NNXPS6LIosP+r/Oq/i6spbJvFKk=;
-        b=uGwAmGri6HCVTDVupX3AnI3pntTkCdCYgBe4MXKpKqrFFM9L58lddK9Gt4ijMk4oe12EKn
-        wkZlNhXoT6cUArvw8yZhpNIa/MdNQ2aoLAzzkOX+GJZ8zZTBVtIho0NqepELBnDZss5J1q
-        Qz4ED8AO8IXfoitx78CrV1zzRaCsFFs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1689055646;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SNB82qjZdLZ7yUY3NNXPS6LIosP+r/Oq/i6spbJvFKk=;
-        b=GIPxzBl4JRtB2A6zRvJSVOga3qJTO27JVaOO67Q1PDgWQ8Q7AxmxjwVP1QcGLy5J5JrJYb
-        2W+F1yRrdWlZNaBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F20F21391C;
-        Tue, 11 Jul 2023 06:07:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id fIv0OZ3xrGRCBwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Tue, 11 Jul 2023 06:07:25 +0000
-Message-ID: <117aea3d-c316-509d-7be7-ade155b4ae85@suse.de>
-Date:   Tue, 11 Jul 2023 08:07:25 +0200
+        Tue, 11 Jul 2023 04:25:20 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7648E6F
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Jul 2023 01:25:18 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-314417861b9so5456669f8f.0
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Jul 2023 01:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689063917; x=1691655917;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EOhERrgy4Dgjs1P4t5ImERMArKjBrmI2sHen3jN1qjo=;
+        b=LS74P2YoURG3ehmDJp1iLPkX0Bo0ilrIYDp3dKd0yDLZsbZ882ufspia//GC2AcYSa
+         1Ft/zd3IVkhyc5OtI1iUMA+IfrjPGnL01cr0or9aQ6ma7JpU+aqHp4ID0CpBpk9nUljr
+         MwmERasykKAUBobMO1DP8NVNHZO5egj22CtJCfLZyt54LTpqF4RL5SBqTJjitOWFdgLz
+         EephXe92oeDQyPW/iGR+DIlGtpoGi5BvtEQbozxyORO8VZGxNXwrJZtwiB2DGO2XwWhY
+         DJob1ke+TCO7t0KOWTUsxSKp7jtlKiNOgaORqmsDYLB+aS+H0DYfCJMdSkFimpFxZBT1
+         S3qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689063917; x=1691655917;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EOhERrgy4Dgjs1P4t5ImERMArKjBrmI2sHen3jN1qjo=;
+        b=HCPcpfg5higs7M+S0dT383YN7wkf6uNCgOZDynGv2acC5qp4Rt84vNzy7gdj/lXsvq
+         fL8zv1IuMQ8B20DadAOkdqP1E+nxW74WNk4fPKtT9122FNLj8hskxv5Z6n8c/O35cTYl
+         ZJpYkdB+KFKUqriha3YXsB51YVkg2sUvslUdosZBBm9u0VN3uy6TBZI+NpQ9AXs4aAdL
+         Al2Se4jG8L4Eu5svFQ0zYVNa3VPlGwSc3Nb3xdWrvUgGpywj0tRxNDLGE1mdydmd+4SK
+         jXvPnLGHWiB83uflkl2PldcObeZmPaDDh8ZI5wc3oSDRgopkOmiRtGeQseqNYfEdHqN6
+         lJeQ==
+X-Gm-Message-State: ABy/qLaBGNxev9ZyZxdfPzzOutIWq2gHb11kWUFO+Varqimt/hI4/gvh
+        kG1NCx8FOH7VXCU4kv3BE5yq8w==
+X-Google-Smtp-Source: APBJJlE3w01jPs+NmtLyAG6IutWVWSah77FRCEWjeKjgj7Ip7BzfgLj9TZulACDBTiiiSsi+ILKGbA==
+X-Received: by 2002:a05:6000:923:b0:314:10d8:b483 with SMTP id cx3-20020a056000092300b0031410d8b483mr14553642wrb.64.1689063917242;
+        Tue, 11 Jul 2023 01:25:17 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id r8-20020a056000014800b0030fa3567541sm1583751wrx.48.2023.07.11.01.25.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jul 2023 01:25:16 -0700 (PDT)
+Message-ID: <fa218582-0ac1-ea8e-fcaf-222bdcf2bc6a@linaro.org>
+Date:   Tue, 11 Jul 2023 10:25:16 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] drm/client: Send hotplug event after registering a client
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 00/10] thermal: tegra: Do not register cooling device
 Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, javierm@redhat.com,
-        noralf@tronnes.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        amd-gfx@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Paul Schyska <pschyska@gmail.com>,
-        Torsten Krah <krah.tm@gmail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        freedreno@lists.freedesktop.org,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Moritz Duge <MoritzDuge@kolahilft.de>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20230710091029.27503-1-tzimmermann@suse.de>
- <325dad0e-38ff-9f60-efc9-0fd711d63267@linaro.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <325dad0e-38ff-9f60-efc9-0fd711d63267@linaro.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------kv6LGauRuWxMfjHq4DW99D2e"
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20230414125721.1043589-1-thierry.reding@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230414125721.1043589-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------kv6LGauRuWxMfjHq4DW99D2e
-Content-Type: multipart/mixed; boundary="------------0zZdJ0TsnxmlWUefzoq8m39A";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, javierm@redhat.com,
- noralf@tronnes.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>, amd-gfx@lists.freedesktop.org,
- linux-samsung-soc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Paul Schyska
- <pschyska@gmail.com>, Torsten Krah <krah.tm@gmail.com>,
- linux-arm-msm@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Maxime Ripard <mripard@kernel.org>, linux-tegra@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, freedreno@lists.freedesktop.org,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alex Deucher <alexander.deucher@amd.com>,
- Moritz Duge <MoritzDuge@kolahilft.de>,
- =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <117aea3d-c316-509d-7be7-ade155b4ae85@suse.de>
-Subject: Re: [PATCH] drm/client: Send hotplug event after registering a client
-References: <20230710091029.27503-1-tzimmermann@suse.de>
- <325dad0e-38ff-9f60-efc9-0fd711d63267@linaro.org>
-In-Reply-To: <325dad0e-38ff-9f60-efc9-0fd711d63267@linaro.org>
+Hi Thierry,
 
---------------0zZdJ0TsnxmlWUefzoq8m39A
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+do you have an update for this series?
 
-SGkNCg0KQW0gMTAuMDcuMjMgdW0gMjM6MTEgc2NocmllYiBEbWl0cnkgQmFyeXNoa292Og0K
-Wy4uLl0NCj4+IC0tLQ0KPj4gwqAgZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZmJk
-ZXYuY8KgwqDCoMKgIHzCoCA0IC0tLS0NCj4+IMKgIGRyaXZlcnMvZ3B1L2RybS9kcm1fY2xp
-ZW50LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDIxICsrKysrKysrKysrKysrKysr
-KysrKw0KPj4gwqAgZHJpdmVycy9ncHUvZHJtL2RybV9mYmRldl9kbWEuY8KgwqDCoMKgwqDC
-oMKgwqDCoMKgIHzCoCA0IC0tLS0NCj4+IMKgIGRyaXZlcnMvZ3B1L2RybS9kcm1fZmJkZXZf
-Z2VuZXJpYy5jwqDCoMKgwqDCoMKgIHzCoCA0IC0tLS0NCj4+IMKgIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jIHzCoCA0IC0tLS0NCj4+IMKgIGRyaXZlcnMv
-Z3B1L2RybS9nbWE1MDAvZmJkZXYuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDQgLS0t
-LQ0KPj4gwqAgZHJpdmVycy9ncHUvZHJtL21zbS9tc21fZmJkZXYuY8KgwqDCoMKgwqDCoMKg
-wqDCoMKgIHzCoCA0IC0tLS0NCj4gDQo+IFJldmlld2VkLWJ5OiBEbWl0cnkgQmFyeXNoa292
-IDxkbWl0cnkuYmFyeXNoa292QGxpbmFyby5vcmc+ICMgbXNtDQoNClRoYW5rcy4NCg0KPiAN
-Cj4+IMKgIGRyaXZlcnMvZ3B1L2RybS9vbWFwZHJtL29tYXBfZmJkZXYuY8KgwqDCoMKgwqAg
-fMKgIDQgLS0tLQ0KPj4gwqAgZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fZmJkZXYu
-Y8KgwqDCoMKgIHzCoCA0IC0tLS0NCj4+IMKgIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYmRl
-di5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCA0IC0tLS0NCj4+IMKgIDEwIGZpbGVz
-IGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKyksIDM2IGRlbGV0aW9ucygtKQ0KPiANCj4gQlRX
-OiBBcyB5b3UgaGF2ZSBiZWVuIGNsZWFyaW5nIHRoaXMgYXJlYS4gSSBzZWUgdGhhdCBzaWdu
-aWZpY2FudCBhbW91bnQgDQo+IG9mIERSTSBkcml2ZXJzIHVzZSBleGFjdGx5IHRoZSBzYW1l
-IGNvZGUgZm9yIG1zbV9mYmRldl9jbGllbnRfZnVuY3MgYW5kIA0KPiBmb3IgdGhlIHNpZ25p
-ZmljYW50IHBhcnQgb2YgZm9vX2ZiZGV2X3NldHVwKCkuIERvIHlvdSBoYXZlIGFueSBwbGFu
-cyBmb3IgDQo+IG1vdmluZyB0aGF0IGludG8gYSBsaWJyYXJ5IC8gZ2VuZXJpYyBjb2RlPyBJ
-ZiBub3QsIEkgY2FuIHRha2UgYSBsb29rIGF0IA0KPiBjcmFmdGluZyB0aGUgcGF0Y2guDQo+
-IA0KDQpZb3UncmUgbm90IHRoZSBmaXJzdCB0byBhc2suIDopIEkndmUgc28gZmFyIG5vdCBh
-dHRlbXB0ZWQgdG8gYWRkcmVzcyANCnRoaXMgZHVwbGljYXRpb24uIEkndmUgYmVlbiBiaXR0
-ZW4gYnkgcHJlbWF0dXJlIGhlbHBlcml6YXRpb24gYmVmb3JlLCBzbyANCkkgd2FudGVkIHRv
-IHdhaXQgYSBiaXQgbG9uZ2VyLiBBIGxvdCBvZiB0aGUgZmJkZXYgYW5kIGNsaWVudCBjb2Rl
-IGlzIA0KY2hhbmdpbmcgcXVpdGUgYSBiaXQuIEFmdGVyIHRoaW5ncyBzdGFiaWxpemVkLCBJ
-IHdhbnQgdG8gdG8gdHJ5IHRvIGRvIA0Kc29tZSBtb3JlIGNvZGUgc2hhcmluZy4NCg0KQmVz
-dCByZWdhcmRzDQpUaG9tYXMNCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3Mg
-RHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJI
-DQpGcmFua2Vuc3RyYXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2
-byBUb3RldiwgQW5kcmV3IE15ZXJzLCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1h
-bg0KSFJCIDM2ODA5IChBRyBOdWVybmJlcmcpDQo=
+Thanks
 
---------------0zZdJ0TsnxmlWUefzoq8m39A--
+   -- Daniel
 
---------------kv6LGauRuWxMfjHq4DW99D2e
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+On 14/04/2023 14:57, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Hi,
+> 
+> this set of patches removes the registration of the SOCTHERM internal
+> throttling mechanism as cooling device. Since this throttling starts
+> automatically once a certain temperature threshold is crossed, it
+> doesn't make sense to represent it as a cooling device, which are
+> typically "manually" activated by the thermal framework when thermal
+> sensors report temperature thresholds being crossed.
+> 
+> Instead of using the cooling device mechanism, this statically programs
+> the throttling mechanism when it is configured in device tree. In order
+> to do this, an additional device tree property is needed to replace the
+> information that was previously contained in trip points.
+> 
+> There's a few preparatory patches to make the removal a bit simpler and
+> also some follow up cleanups included as well.
+> 
+> Thierry
+> 
+> Thierry Reding (10):
+>    dt-bindings: thermal: tegra: Document throttle temperature
+>    thermal: tegra: Use driver-private data consistently
+>    thermal: tegra: Constify SoC-specific data
+>    thermal: tegra: Do not register cooling device
+>    thermal: tegra: Use unsigned int where appropriate
+>    thermal: tegra: Avoid over-allocation of temporary array
+>    thermal: tegra: Remove gratuitous error assignment
+>    thermal: tegra: Minor stylistic cleanups
+>    arm64: tegra: Rework SOCTHERM on Tegra132 and Tegra210
+>    ARM: tegra: Rework SOCTHERM on Tegra124
+> 
+>   .../thermal/nvidia,tegra124-soctherm.yaml     |   7 +
+>   arch/arm/boot/dts/tegra124.dtsi               |  65 +--
+>   arch/arm64/boot/dts/nvidia/tegra132.dtsi      |  63 +--
+>   arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  83 +---
+>   drivers/thermal/tegra/soctherm.c              | 392 ++++++------------
+>   drivers/thermal/tegra/soctherm.h              |   1 +
+>   drivers/thermal/tegra/tegra124-soctherm.c     |   4 +
+>   drivers/thermal/tegra/tegra132-soctherm.c     |   4 +
+>   drivers/thermal/tegra/tegra210-soctherm.c     |   4 +
+>   9 files changed, 208 insertions(+), 415 deletions(-)
+> 
 
------BEGIN PGP SIGNATURE-----
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmSs8Z0FAwAAAAAACgkQlh/E3EQov+Cd
-3RAAplv7WxkxYt9N5gWJ/rlj3B0OIploEOnOdhJzsoMpnmg5IExLL5tbSbEydTMAZy4OV1UbFNlu
-gB4XDUfES5IOfn/YMVl8L5uC+FXRrnZfbLqjBKsfycA6CdbMg3GEpiW0u/OUquqkTx7mT4+iICLD
-IrLoigA9AHh5KCeXC8aj9TTntbujd8PNfrP0QbBdjOm/81BEVpQTRwHNaqnJcvKXiq9kxARrnZ/1
-4TUkPXNiMLdVUX42yN5pEdnUESTsYu6aDCDGN2e67l86wZ4v2Wt5Pi2Y+F3Z5rRLVe0XU1vak1be
-vDHhEM5ZSvnJhI/jfJWnx+025vHZ0JqX1jTZ+OrMlREn13ktSJ1R6lQwLSSEMAXAscvvhWEejSGj
-xtWwmQ/bzfjuQ7/1TWZDu3MRqKby9U0LOcyOkUakhTKUX8VbZ3Rih7HFxZiEvloiYGVT68sfEyg+
-e4z0ahGgZ7gOKpSuIoN6iFfIFg3BfOoGe1UqJKcQLzhmUCv+FutskpJ8ZVZZ+5JeOCFF0Kfe/0AT
-kru8rxC7cOVpFqtUEtaX+PwdBAqM5sRLKBx4k+PpoqXzOSAfXgAQUk9Ga53GRQHgW3ekTBedj50a
-uGhCCyQHr0fj7qlDjwAbv9hBQ4eN4cDTeeRaHj81jnEeDTldB5P0QZIa+HjgCA8NUHSUEWQJ74zS
-dXk=
-=E/ok
------END PGP SIGNATURE-----
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
---------------kv6LGauRuWxMfjHq4DW99D2e--
