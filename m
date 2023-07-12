@@ -2,119 +2,100 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AFFEB64DA
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 15:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EC4C001DC
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 15:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233081AbjGLPGt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jul 2023 11:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55128 "EHLO
+        id S230381AbjGLP6x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jul 2023 11:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233257AbjGLPGn (ORCPT
+        with ESMTP id S233083AbjGLP6v (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jul 2023 11:06:43 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E6CB1FCB;
-        Wed, 12 Jul 2023 08:06:28 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-5149aafef44so8800559a12.0;
-        Wed, 12 Jul 2023 08:06:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689174387; x=1691766387;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QAqFn71nQK08Pou4CkH2NPss/L+GdIam9CN05EpYNIc=;
-        b=nbPWlgxXJOL4dI/TWjZZjGA881ecooijeYaa7A59TAFTu/7ta/1ak2mJE9y30ofkmD
-         BF0htwPneL0XL668CZnRYbjrnohya/FgUg56ZWDNHSrhQ3U6+33z2rk8dDUwytaUo45v
-         X6LDtKebsMYqIAkb3r1UtkzXvOmUr8TNpdbGDBnbWmvx7KUW+lz08RMp6fvXqsXvwdQ5
-         P4XUslTE0drDqqHRszRMq0nobpy8CZKt7VhHdhXJyO4TGGjzZ5GfJXi8bm6tcxS23OFd
-         0JmHdJ7OeEPnhcY6RnP4dLC69iXK7LyrHq3l/7MBqpK4E+hQs0mii/Rcf5PnYxfCDjN4
-         1Bwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689174387; x=1691766387;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QAqFn71nQK08Pou4CkH2NPss/L+GdIam9CN05EpYNIc=;
-        b=kfQsb3vIhOpfVc8L9+DmuOwmfgtuw3txF3vqBRtGycqJWOBym5Vh57c9L+NWaJUbe+
-         HPT+8Z3tKINyGVrOw9vVR/xOVNer9Ir+8vCeNdQzyKcnkKMUWZDx/2ZTD00FPvlGxRRS
-         vH/99N766v7t24g1OFmkKaSiJ1OagIYaGAE0r2RwRBbGCo7Fq4lqQuqwrgeN7MqXkHF1
-         cUXcaMtfF06KXKgYFlOXvSN+7+fDpC36C8KWZzQ2YBeY9bWR17eKYEgE1hQWdok3/MBQ
-         srIYmhyss3aS+Pt8UibfVFCvbtz32BqNsAN87vVf1v3pSM+eiFlqH7DsGjG/5bo4cxw6
-         qVsw==
-X-Gm-Message-State: ABy/qLZTwqR1VZjaQ0l8goQjfLOacpTH8dpyh7fzDxePWknqWrf19IRg
-        N+5Mlbk5DEC+iPzy36qOmyQ=
-X-Google-Smtp-Source: APBJJlHzve3iZeeHXb7AehNG/sB9CJPZqJqrxjdvooUQ5HMbOUXlUSt1k7mAHBZEmhTvmDOtPcDrew==
-X-Received: by 2002:aa7:d90c:0:b0:51e:57ba:cb8e with SMTP id a12-20020aa7d90c000000b0051e57bacb8emr5468311edr.5.1689174386710;
-        Wed, 12 Jul 2023 08:06:26 -0700 (PDT)
-Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id c24-20020aa7d618000000b0051df1797222sm2905904edr.11.2023.07.12.08.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 08:06:26 -0700 (PDT)
-Date:   Wed, 12 Jul 2023 17:06:24 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     =?utf-8?B?5p2c5pWP5p2w?= <duminjie@vivo.com>
-Cc:     Krishna Reddy <vdumpa@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>,
-        "open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>,
-        open list <linux-kernel@vger.kernel.org>,
-        "opensource.kernel" <opensource.kernel@vivo.com>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= v1] iommu: fix
- parameter check in tegra_smmu_debugfs_init()
-Message-ID: <ZK7BcFc-sdm15Sv9@orome>
-References: <20230712113145.12888-1-duminjie@vivo.com>
- <ZK6a-f2Se3HWjU7D@orome>
- <SG2PR06MB52889E70309210CD49400A64AE36A@SG2PR06MB5288.apcprd06.prod.outlook.com>
+        Wed, 12 Jul 2023 11:58:51 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0C21BF9;
+        Wed, 12 Jul 2023 08:58:46 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2B7791C0007;
+        Wed, 12 Jul 2023 15:58:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1689177525;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+1Zhaf288c6QgZc0cVQIG/zrggMJajpMOeOYvAdfLSs=;
+        b=LHBnv7EoIEQqNpbXaWGGJm61J1W/U840LsDsteL3KiaM7v6/HH3Ow4nzlXntEOWUPvMicw
+        DsgR33JyIlfh5z9LDKunk0dP9O/zximA/8B99hQ8mBjpso3iL64R4DU2GBnbM5SwA5gq7X
+        C17ApIcYqsc1HofddyEiw44mT3tba9UFtwC80jRUsnKDUscnDVsOcEmYmLf5iKXf97nGH/
+        eR9PC//du22kMhBXweLn3GS/pIYGKGWHzLgVTaCcW+T4FEEkRI/QmHodQiqfnhF27orrMh
+        lm0+CckLvqLMbspIx3qKYRArOTdKHjzPwlMu6haVUtwjMsSkLYTFNcakkc94SA==
+Date:   Wed, 12 Jul 2023 17:58:42 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 0/2] Small of/device cleanup
+Message-ID: <20230712175842.12ee7e8c@xps-13>
+In-Reply-To: <20230622213214.3586530-1-miquel.raynal@bootlin.com>
+References: <20230622213214.3586530-1-miquel.raynal@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cuXJAWyeTLyXBBIi"
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB52889E70309210CD49400A64AE36A@SG2PR06MB5288.apcprd06.prod.outlook.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hello,
 
---cuXJAWyeTLyXBBIi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+miquel.raynal@bootlin.com wrote on Thu, 22 Jun 2023 23:32:12 +0200:
 
-On Wed, Jul 12, 2023 at 12:37:02PM +0000, =E6=9D=9C=E6=95=8F=E6=9D=B0 wrote:
-> Hi Thierry!
+> My previous attempt to slightly clean the OF core wrt device structures
+> was rather unsuccessful as the idea behind the discussed cleanup was
+> more impacting than what I thought, leading to most of the previous
+> series to be dropped. However, aside, two patches seemed actually
+> relevant, so here they are, alone.
 >=20
-> >I think we can just drop the error check altogether since
-> >debugfs_create_file() will simply return early if smmu->debugfs is an er=
-ror pointer.
+> Link: https://lore.kernel.org/all/20230608184903.GA3200973-robh@kernel.or=
+g/
+
+I expect this small series to go through the drm tree, but as I actually
+sent it right before the beginning of the merge window and because I am
+not an experienced drm contributor, I would like to know if I am
+required to resend the patches or if they are fine as-is (I don't
+expect any conflicts with v6.5-rc1).
+
+Just let me know if a re-send is expected.
+
+Cheers,
+Miqu=C3=A8l
+
 >=20
-> So do you mean maybe delete the smmu->debugfs check is better?
-> Maybe I can resubmit a new patch.
+> Thanks,
+> Miqu=C3=A8l
+>=20
+> Changes in v3:
+> * Fixed the dev->parent referencing in the host1x driver.
+> * Collected Rob's Acked-by.
+>=20
+> Changes in v2:
+> * Dropped all the of_device.h/of_module.h changes
+> * Directly used of_device_uevent() from the host1x driver
+>=20
+>=20
+> Miquel Raynal (2):
+>   of: module: Export of_device_uevent()
+>   gpu: host1x: Stop open-coding of_device_uevent()
+>=20
+>  drivers/gpu/host1x/bus.c | 29 ++++++-----------------------
+>  drivers/of/device.c      |  1 +
+>  2 files changed, 7 insertions(+), 23 deletions(-)
+>=20
 
-Yes, I think that would be preferable.
-
-Thierry
-
---cuXJAWyeTLyXBBIi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSuwXAACgkQ3SOs138+
-s6H0PA//VLaQAJjH3N7V9v3NLx9PQULtmoSXBfL5JfIIoc9cexTsdngBqR8wR7ZG
-ZNZWra1q34gXlc+zLW7gEqfku+pAb+WX//IMr9GuiRPjch49lW+xRILJBFuv09mx
-yEakEvaJ9XvewOVUTwbJZnVKCJokTtwK5U1RJ+BiYHLa318AXZmZsKANETHBULeS
-OzMaeHHqWmUKC9ESB/Rj3gNQBbk250UxpMa7GGJfvF/ZQ51qXAHOBIZFbeYVpixK
-itr1RHkQvcAiA3MMMkJFxw/iK07ArPnHffDUoB3KPpICWXAsnOjwcLtxwdj09sMx
-7e3P7kCywGlP9k9T4kvuE+z7Kl0GTN8y51miEwzOI0s3pcROjKciU5EstRXuaM8T
-juKVO/62dYDhDFSwKM8g1xDuhV1+Cr+zbdLKO2EFOHeXXTfVGeC4HuIEoytVKt39
-KFXgi0v530JUuQeZVHGmBxd68HTAcEzH/cVjVkxWnnLv/SBWV4bUK2uEZBWgrBrj
-IlGK5kZTC5ozeOcZ2h9aOvhEL5p1DHsOd9stFLUri9xlrlITYjhklFUkLIk5nTxi
-hiyyZ1YI8De9H3YGSh3N5JDuR12uxvGcyyORg8du8pio/ZPl886VRnv5TAlM/2n8
-7t1KWPrnt9Kq1smEiU9aG3cOXe4Xd7hgunNrvCtD9Xiq73/sNwo=
-=4eXe
------END PGP SIGNATURE-----
-
---cuXJAWyeTLyXBBIi--
