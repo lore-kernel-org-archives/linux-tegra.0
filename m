@@ -2,125 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B99EBEB64DD
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 03:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6484BEB64DA
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 06:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbjGLDkw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Jul 2023 23:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41386 "EHLO
+        id S232110AbjGLG3a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jul 2023 02:29:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbjGLDku (ORCPT
+        with ESMTP id S232062AbjGLG3X (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Jul 2023 23:40:50 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 165F410CB;
-        Tue, 11 Jul 2023 20:40:48 -0700 (PDT)
-Received: from [192.168.2.153] (109-252-154-2.dynamic.spd-mgts.ru [109.252.154.2])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 01C596607014;
-        Wed, 12 Jul 2023 04:40:45 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689133246;
-        bh=P1cQzKsmV8LbrW6Wj8l7TnueahVg8cKJ8w/t+HhvxN4=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=Rhbio64lU4fRrIQHy8F23uqGuJmJSUfLVOmK4sQFF+nWQMwmZj2uXBhYDUyHuxGFu
-         epOLqVL5wMq3mRwQOf/B/8vdoXRIBTIVm5xR5ybWasu0+fyJYIMeUfowivJxwQB+IZ
-         mbxIxPDWwUqkax4Oagdo3HMPMd5svJcwtNKk4K0FF7x40YpfqtSMNxaInlnXHJwFnF
-         0bg2Ej1TeHRRPneVLnX6qnHkg5ckV/8WpNGWtVa/w62m8PL9tKlqGzT9zQ1KTg9xeG
-         Mc3EMFxBjS08wfPcd5aXJiCkrY3qS3Bn5+d3o45vPeL8baNkUN7OwNMlXAtQBsIhxr
-         a8EMn0BmY5HIw==
-Message-ID: <6522d921-ca35-4359-cc10-645e6278422e@collabora.com>
-Date:   Wed, 12 Jul 2023 06:40:43 +0300
+        Wed, 12 Jul 2023 02:29:23 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2092.outbound.protection.outlook.com [40.107.255.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F05431726;
+        Tue, 11 Jul 2023 23:29:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wa12cQVy3qfmyk+MIBzJoPT7b/T1ehW3S53t2UQhaDZkA2gq6/vTUUOnX4J1a8El2fDBRMJWYhRLntu+jLG/ThldTnfhtyslHcHiyo/sCmvHva2VOnupRHaCLpEW1PWWEFKsHHlqJZIPjzel6/pufqxu9yhFtKisa+tUx/JrXsl5q89CKtgrvwXXjsevIgjdX9ouMe+GB134sEQop9wPA/WuzwPI5vfgVd0MTMrW6q3cF8NYsP8o7eg3gJi25a+e10+aZVj+ZfLBP62SrUGUBplYPE+M+ewxaYIHf3ZLXLRr2+GNQG+e/iA9YW+Xc6mlGFG8ir5A00t9/V/WLLPERA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6PFUlov9zhAF0HfbeF/uNM7Av8vzeBAp49doKrDhJi4=;
+ b=T822QeQ0gaSDL0SckjYejv8NvHy/D/Z2X2q0po166krwda5lZhofAceijCjSXm1s4M1Gp+pcv1on2HabZIu5lhp5tPa+j8Rbd10I9dodVM5frNR7NlKKRjJHeXhOZKwXDKPdMzGEXazrndwUAnwQ9L1rmNnHCL5KYljS5gPEwx3N7wdFK+wLnc2FaEM+Obql7VS9jrWO1o5iSVbgmT05j2ysAnajlIxbh4WfVGDKhpMYMLMWxH4BynW+vWd7paFIMEMv9ZleGNz6nALL4WOEWit0kNb+d9kiYW3fIF+orxBNiItN1GkfWl0Bfxp1SUVh2PXPIuIAbrp6pEZO9j/kXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6PFUlov9zhAF0HfbeF/uNM7Av8vzeBAp49doKrDhJi4=;
+ b=AYHXuUyaXRaAlZlY/faUz4+Y49WppsTLT7a/0l+QFQk4MYIRRxKy1hL/AHxjxy1aONa0M+nvpuY9ggwmY3cX8T7tvUXtQr6EXC7sduWGwR0BYO1o2lehVxr+oYgABUQy3DyjpW4x2Ds8RKdGRYPL91IVST0MVyajw5FgJ4XA3kv3970qa0QzBWbl+fQSmDOFcdrLYL2hNjwL8MnSWrUjG0u2DmjO0ua+PI8KHOUS4jx/RC5r8rGTia+wwMFMJYZIuycMl68By04mLpIugU0YUEw5tzhpAESymu5Ql3zsC2BLPAWBNhpW2ppqR1eBjQB4Wb0SSyLEYo7STXJryhKXbg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by KL1PR06MB6672.apcprd06.prod.outlook.com (2603:1096:820:101::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.20; Wed, 12 Jul
+ 2023 06:29:17 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.028; Wed, 12 Jul 2023
+ 06:29:16 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Yangtao Li <frank.li@vivo.com>, linux-serial@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 05/15] serial: tegra: Use devm_platform_get_and_ioremap_resource()
+Date:   Wed, 12 Jul 2023 14:28:43 +0800
+Message-Id: <20230712062853.11007-5-frank.li@vivo.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230712062853.11007-1-frank.li@vivo.com>
+References: <20230712062853.11007-1-frank.li@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0024.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::20) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.1
-Subject: Re: [PATCH v6 5/5] mfd: tps6586x: register restart handler
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To:     Benjamin Bara <bbara93@gmail.com>, Wolfram Sang <wsa@kernel.org>,
-        Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com
-Cc:     peterz@infradead.org, jonathanh@nvidia.com,
-        richard.leitner@linux.dev, treding@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-References: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
- <20230327-tegra-pmic-reboot-v6-5-af44a4cd82e9@skidata.com>
- <7eddaf8c-ab04-7670-fc45-15f0fce5eff2@collabora.com>
-Content-Language: en-US
-In-Reply-To: <7eddaf8c-ab04-7670-fc45-15f0fce5eff2@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KL1PR06MB6672:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76d294eb-8e0c-48f1-f4f6-08db82a1511b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tBkJuTuiXSzj5jmqnvzpH3Sqe++qjdZRLLI4tC5k1F0aDakG5yAagsRKsjsoU1YGH3hC5HA2Kvs8J1L78JO3fQue6eV5ShbNCZQ17WN9hi1BuBMT0Oz3faTkcbhrCdVroRPYNZq3VS+aJzs9jOery21Q6Llt6HJOtWYQ4EoY/sBS8XaVHrUJRe91hgWeZAy/hkTezoQq6pL3kALbM9sNXKGOevkD/aMiuV+YESVQbaXTKmZCQT/AHeZjxOABfdt9r1ZJ8Yc41M8qFHAUbYerxyJss+7zJof0MLQQHcmb/VwzDPepW+KZFUv7lcM70gZQ3EmasiRISu8Dek4EvctgNpJFrm5CmWiTBNBhHY7uim3AV7BdIoiRy935Lu+Vl1I4rB8u5lJMEuIqFtXJf8HksodhPOEE8ZUv2sdA6bhXfYUec+a56iY9oqUKsgHurHccIq/+tejppvoNE2Ai+qnqywax77c+Lp3O/PznY41M+Ht+a113IouGcA9ZO7F6CsgSOlQpuP+Z0zodTPGYiAq6HZkHbrGGITZkKRfFUw93flpH8vtug4xWgxVCkOR2rtnLZBI1ulVT1vOZuiovm9bJNQpqqX9O9+KpVJ3hqHC3ZFxFSCLVynb+CgpQwmeTrQpa
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(39860400002)(346002)(376002)(396003)(366004)(451199021)(86362001)(38350700002)(38100700002)(4326008)(316002)(110136005)(478600001)(41300700001)(66556008)(66476007)(66946007)(5660300002)(6506007)(8936002)(8676002)(2906002)(6486002)(6512007)(6666004)(52116002)(26005)(186003)(1076003)(83380400001)(36756003)(2616005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Xj1qsItw8I1i88YKPIcyib7NJ+1axSBB/8lPKh4vrWs5h2zR/DLP1jr0uV6C?=
+ =?us-ascii?Q?Kdw+qDNzx869jkXoIYhUHQKexDnnI/chsM6O+5BuW4YCM6AYfF5Y62Dxeh9C?=
+ =?us-ascii?Q?BxjK08tuZ7xmACxUCQXoXBM8u76wwmsd3Mq2YuTgGdgNEnWa6b9+j4IyBOFL?=
+ =?us-ascii?Q?GhU6H2uGHh+5G/mZuwcHISzrgNeSTZ131qEW3mJHP/UxvIs2wAoocYPVZOfp?=
+ =?us-ascii?Q?Um2NjkziLG7voIfQRila+KN+8RsP/451kJrSn+NqpL6u6pgvsRtBdFyYcuqF?=
+ =?us-ascii?Q?1XcccfW2fwv6aDRGi+EhDpo8zAEkkBij4HhuO6haXGtDu2sLPKnjx9373sVf?=
+ =?us-ascii?Q?tP7VPCVAYKCIYtD1ikXoWbCFuRerXMt4pv9GANc7oCm+xliPaqlZS+URDNTP?=
+ =?us-ascii?Q?o8Pns+VCoL6KvXcTBa//xUetjmDYS4S/7b0AiicKNk2WMw2CuwLqKUXMM7Gf?=
+ =?us-ascii?Q?+AbWLrQIL4W1PTz1vQCAJ73GWr9bktqUni9jmf56gZ2Js7i+ovQOjnjib5W9?=
+ =?us-ascii?Q?duVsCzNCHFQK3cP6C12IHAhuSp2Jwcag6g/MtHMHvfHOkHjgFbt3bzRAUFrL?=
+ =?us-ascii?Q?UUB+iwLpWyqlaB+8PeZpG5Ghb8ty7eaqvmQxZYt3lbn8ILjFzz+U2OvvZGpq?=
+ =?us-ascii?Q?rXXCE0qrgXAi9G7WIlORX/6A+Tli8bdNMvzhxIxUwWZYMgIWHNYVXNw9kFTp?=
+ =?us-ascii?Q?SmzHA3ri0hy5tEZUW9xWqglhRNIoyPipef8KeaQrCg8sONngnUqnXfemkBGQ?=
+ =?us-ascii?Q?Dxfo7DIB0WipJ8kx03IBxWSw8KiaXipV0m1e5/rrt++HW58WHL4gkDbpB9TP?=
+ =?us-ascii?Q?M7bvR88h55YTeZtl10MwVhJTV2IctaOg1wj8bOrG3V1QiJQsEkOvTvLUVitu?=
+ =?us-ascii?Q?MxHKPVVAaXCQzHH+mEhE9zCoVPz/1bSgSoH3oVy3uypUQV+pBqJ9Mq+kLMVO?=
+ =?us-ascii?Q?CEmC8ol0NaqNz2lOQVabIqYgeRLwDGTIdK+Hf6z7Qpz2xyoNhy0CvNL5nLY9?=
+ =?us-ascii?Q?tkwTQh6sHigFv0gqzdQ246HfR867uvf+usDo6IQOdAyymYfoQkJxRshhCtNp?=
+ =?us-ascii?Q?F6EGBeFu5z06kmHJBG02SRe7d9Lq53nUyHBbEqYYCk5/9H3bed7XRXbOpsq7?=
+ =?us-ascii?Q?suHX3uny6snWc2J0i/Afg3bmgZowCGMEseK887tfrLFj8sLkGIWibLNwCMtX?=
+ =?us-ascii?Q?OII9dA5NoaoHPCCqVr66rTzSu0FIaRB+q12TJJz9B1Wo5xm9seIuq0hcw78c?=
+ =?us-ascii?Q?08YG/0PjF5UsN2bFQ91X0xMlEOuS8WF+EFYLujKWyhksZi6nMp6qi9GBAiRr?=
+ =?us-ascii?Q?xRR5glN5dJApcnUeipjnSnx0+wqW+E+CxWRgNWQuDDdWWdzcw7UIcPXKuGZA?=
+ =?us-ascii?Q?TInYAa0sxsEdENhX1iCoVcLbgCNa/JUGkx0nN94EBFqurE5GqGo2GK2gVbP4?=
+ =?us-ascii?Q?N+D5uWHAw4MM0RZu8UYuWkfQEiwTLbV67VnOcSR4rIv1a0a002fEOUO/gg+N?=
+ =?us-ascii?Q?/qSxix7ngDhkdv6JGyMSmHziUmk4+/0p2vdc4k+xYW1P8qIFeKx1zJ3NUtWA?=
+ =?us-ascii?Q?eLbeS0ki1HAgjDc5pvi1lGaC11C3TRDXhlkmxaXJ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76d294eb-8e0c-48f1-f4f6-08db82a1511b
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2023 06:29:16.7861
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zAxnpdcOROZaCWAcT4xH4F99i1qAvdDW+65rlQOkwYUh5RAXjpiNamSbWVdSi+yH7jfX+uFWvO9dSgA2mghJMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6672
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/18/23 14:48, Dmitry Osipenko wrote:
-> On 5/9/23 22:03, Benjamin Bara wrote:
->> From: Benjamin Bara <benjamin.bara@skidata.com>
->>
->> There are a couple of boards which use a tps6586x as
->> "ti,system-power-controller", e.g. the tegra20-tamonten.dtsi.
->> For these, the only registered restart handler is the warm reboot via
->> tegra's PMC. As the bootloader of the tegra20 requires the VDE, it must
->> be ensured that VDE is enabled (which is the case after a cold reboot).
->> For the "normal reboot", this is basically the case since 8f0c714ad9be.
->> However, this workaround is not executed in case of an emergency restart.
->> In case of an emergency restart, the system now simply hangs in the
->> bootloader, as VDE is not enabled (because it is not used).
->>
->> The TPS658629-Q1 provides a SOFT RST bit in the SUPPLYENE reg to request
->> a (cold) reboot, which takes at least 20ms (as the data sheet states).
->> This avoids the hang-up.
->>
->> Tested on a TPS658640.
->>
->> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
->> ---
->>  drivers/mfd/tps6586x.c | 26 ++++++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>
->> diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
->> index b12c9e18970a..3b8faa058e59 100644
->> --- a/drivers/mfd/tps6586x.c
->> +++ b/drivers/mfd/tps6586x.c
->> @@ -30,6 +30,7 @@
->>  #include <linux/mfd/tps6586x.h>
->>  
->>  #define TPS6586X_SUPPLYENE	0x14
->> +#define SOFT_RST_BIT		BIT(0)
->>  #define EXITSLREQ_BIT		BIT(1)
->>  #define SLEEP_MODE_BIT		BIT(3)
->>  
->> @@ -475,6 +476,24 @@ static int tps6586x_power_off_handler(struct sys_off_data *data)
->>  	return notifier_from_errno(-ETIME);
->>  }
->>  
->> +static int tps6586x_restart_handler(struct sys_off_data *data)
->> +{
->> +	int ret;
->> +
->> +	/* TPS6586X only provides a hard/cold reboot, skip others. */
->> +	if (data->mode != REBOOT_UNDEFINED && data->mode != REBOOT_COLD &&
->> +	    data->mode != REBOOT_HARD)
->> +		return NOTIFY_DONE;
-> 
-> Not sure whether it's worthwhile to care about the reboot mode. If we
-> would really care, then the supported modes should be a part of sys-off
-> handler definition. Maybe Rafael could comment on it.
-> 
-> Otherwise looks good.
-> 
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Convert platform_get_resource(), devm_ioremap_resource() to a single
+call to devm_platform_get_and_ioremap_resource(), as this is exactly
+what this function does.
 
-Benjamin, could you please add acks and review tags to the commits and
-send v7? I'd also suggest to drop the "data->mode" checks unless there
-is a good practical reason to keep them. There are no other drivers in
-kernel that do such checks.
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ drivers/tty/serial/serial-tegra.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 1cf08b33456c..1edb4c381888 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -1579,16 +1579,11 @@ static int tegra_uart_probe(struct platform_device *pdev)
+ 	tup->cdata = cdata;
+ 
+ 	platform_set_drvdata(pdev, tup);
+-	resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!resource) {
+-		dev_err(&pdev->dev, "No IO memory resource\n");
+-		return -ENODEV;
+-	}
+ 
+-	u->mapbase = resource->start;
+-	u->membase = devm_ioremap_resource(&pdev->dev, resource);
++	u->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &resource);
+ 	if (IS_ERR(u->membase))
+ 		return PTR_ERR(u->membase);
++	u->mapbase = resource->start;
+ 
+ 	tup->uart_clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(tup->uart_clk)) {
 -- 
-Best regards,
-Dmitry
+2.39.0
 
