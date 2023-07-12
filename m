@@ -2,77 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98942EB64DC
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 03:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99EBEB64DD
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 03:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230285AbjGLDVT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Jul 2023 23:21:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34488 "EHLO
+        id S231136AbjGLDkw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Jul 2023 23:40:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjGLDVS (ORCPT
+        with ESMTP id S229772AbjGLDku (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Jul 2023 23:21:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5EDB93;
-        Tue, 11 Jul 2023 20:21:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Tue, 11 Jul 2023 23:40:50 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 165F410CB;
+        Tue, 11 Jul 2023 20:40:48 -0700 (PDT)
+Received: from [192.168.2.153] (109-252-154-2.dynamic.spd-mgts.ru [109.252.154.2])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 613B961628;
-        Wed, 12 Jul 2023 03:21:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01898C433C7;
-        Wed, 12 Jul 2023 03:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689132075;
-        bh=/NuFIWfEtVjk5MvroN0JIwWzQv+7JB4TBDHgC9DyCxM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nsHuyOFlOfGP8W5cNrlZS+JZtz4WNfbJ3xNhO/Diz6kJf1YahQVGjiWGISpV7KKkO
-         SirSzT6+Iey/kn0zRhDR5DEKmJRQRDUDYaIOJXh+ahNGgXUyRs/qMWi9Glh+7rhHx3
-         XTcq9L/IpBB/hq6c+CgQ4A+aTeOrE3SGjsDTzhzPuJDCEBVcOEdkrR0xBM0ns9TtBs
-         tQKqpy6SrlL5py4Ykit+ZGJ/2RIwTeaZHeIPEyg3vqiug1bzHGvpQ8LvFiTbXieuwv
-         xAnG92vdQu8FVifLfMdDuJjN3sBdbWU0WzPk+1Wi0aVV4FFcLtH7kVGdpvpv+0dXFJ
-         lQF0uJuPrGRSA==
-Date:   Tue, 11 Jul 2023 20:21:14 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH net-next v3 00/12] net: stmmac: replace boolean fields
- in plat_stmmacenet_data with flags
-Message-ID: <20230711202114.5e4f1dcd@kernel.org>
-In-Reply-To: <20230710090001.303225-1-brgl@bgdev.pl>
-References: <20230710090001.303225-1-brgl@bgdev.pl>
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 01C596607014;
+        Wed, 12 Jul 2023 04:40:45 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1689133246;
+        bh=P1cQzKsmV8LbrW6Wj8l7TnueahVg8cKJ8w/t+HhvxN4=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=Rhbio64lU4fRrIQHy8F23uqGuJmJSUfLVOmK4sQFF+nWQMwmZj2uXBhYDUyHuxGFu
+         epOLqVL5wMq3mRwQOf/B/8vdoXRIBTIVm5xR5ybWasu0+fyJYIMeUfowivJxwQB+IZ
+         mbxIxPDWwUqkax4Oagdo3HMPMd5svJcwtNKk4K0FF7x40YpfqtSMNxaInlnXHJwFnF
+         0bg2Ej1TeHRRPneVLnX6qnHkg5ckV/8WpNGWtVa/w62m8PL9tKlqGzT9zQ1KTg9xeG
+         Mc3EMFxBjS08wfPcd5aXJiCkrY3qS3Bn5+d3o45vPeL8baNkUN7OwNMlXAtQBsIhxr
+         a8EMn0BmY5HIw==
+Message-ID: <6522d921-ca35-4359-cc10-645e6278422e@collabora.com>
+Date:   Wed, 12 Jul 2023 06:40:43 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.1
+Subject: Re: [PATCH v6 5/5] mfd: tps6586x: register restart handler
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To:     Benjamin Bara <bbara93@gmail.com>, Wolfram Sang <wsa@kernel.org>,
+        Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com
+Cc:     peterz@infradead.org, jonathanh@nvidia.com,
+        richard.leitner@linux.dev, treding@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>
+References: <20230327-tegra-pmic-reboot-v6-0-af44a4cd82e9@skidata.com>
+ <20230327-tegra-pmic-reboot-v6-5-af44a4cd82e9@skidata.com>
+ <7eddaf8c-ab04-7670-fc45-15f0fce5eff2@collabora.com>
+Content-Language: en-US
+In-Reply-To: <7eddaf8c-ab04-7670-fc45-15f0fce5eff2@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 10 Jul 2023 10:59:49 +0200 Bartosz Golaszewski wrote:
-> As suggested by Jose Abreu: let's drop all 12 boolean fields in
-> plat_stmmacenet_data and replace them with a common bitfield.
+On 5/18/23 14:48, Dmitry Osipenko wrote:
+> On 5/9/23 22:03, Benjamin Bara wrote:
+>> From: Benjamin Bara <benjamin.bara@skidata.com>
+>>
+>> There are a couple of boards which use a tps6586x as
+>> "ti,system-power-controller", e.g. the tegra20-tamonten.dtsi.
+>> For these, the only registered restart handler is the warm reboot via
+>> tegra's PMC. As the bootloader of the tegra20 requires the VDE, it must
+>> be ensured that VDE is enabled (which is the case after a cold reboot).
+>> For the "normal reboot", this is basically the case since 8f0c714ad9be.
+>> However, this workaround is not executed in case of an emergency restart.
+>> In case of an emergency restart, the system now simply hangs in the
+>> bootloader, as VDE is not enabled (because it is not used).
+>>
+>> The TPS658629-Q1 provides a SOFT RST bit in the SUPPLYENE reg to request
+>> a (cold) reboot, which takes at least 20ms (as the data sheet states).
+>> This avoids the hang-up.
+>>
+>> Tested on a TPS658640.
+>>
+>> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+>> ---
+>>  drivers/mfd/tps6586x.c | 26 ++++++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+>> index b12c9e18970a..3b8faa058e59 100644
+>> --- a/drivers/mfd/tps6586x.c
+>> +++ b/drivers/mfd/tps6586x.c
+>> @@ -30,6 +30,7 @@
+>>  #include <linux/mfd/tps6586x.h>
+>>  
+>>  #define TPS6586X_SUPPLYENE	0x14
+>> +#define SOFT_RST_BIT		BIT(0)
+>>  #define EXITSLREQ_BIT		BIT(1)
+>>  #define SLEEP_MODE_BIT		BIT(3)
+>>  
+>> @@ -475,6 +476,24 @@ static int tps6586x_power_off_handler(struct sys_off_data *data)
+>>  	return notifier_from_errno(-ETIME);
+>>  }
+>>  
+>> +static int tps6586x_restart_handler(struct sys_off_data *data)
+>> +{
+>> +	int ret;
+>> +
+>> +	/* TPS6586X only provides a hard/cold reboot, skip others. */
+>> +	if (data->mode != REBOOT_UNDEFINED && data->mode != REBOOT_COLD &&
+>> +	    data->mode != REBOOT_HARD)
+>> +		return NOTIFY_DONE;
+> 
+> Not sure whether it's worthwhile to care about the reboot mode. If we
+> would really care, then the supported modes should be a part of sys-off
+> handler definition. Maybe Rafael could comment on it.
+> 
+> Otherwise looks good.
+> 
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Peppe, please take a look.
+Benjamin, could you please add acks and review tags to the commits and
+send v7? I'd also suggest to drop the "data->mode" checks unless there
+is a good practical reason to keep them. There are no other drivers in
+kernel that do such checks.
+
+-- 
+Best regards,
+Dmitry
+
