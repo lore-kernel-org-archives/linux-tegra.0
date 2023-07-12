@@ -2,93 +2,77 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C483C001DC
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jul 2023 22:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98942EB64DC
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 03:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231608AbjGKWEN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Jul 2023 18:04:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
+        id S230285AbjGLDVT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Jul 2023 23:21:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231724AbjGKWEJ (ORCPT
+        with ESMTP id S229742AbjGLDVS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Jul 2023 18:04:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA34B1986;
-        Tue, 11 Jul 2023 15:04:07 -0700 (PDT)
+        Tue, 11 Jul 2023 23:21:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5EDB93;
+        Tue, 11 Jul 2023 20:21:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6E920615FF;
-        Tue, 11 Jul 2023 22:04:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489BDC433C7;
-        Tue, 11 Jul 2023 22:04:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 613B961628;
+        Wed, 12 Jul 2023 03:21:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01898C433C7;
+        Wed, 12 Jul 2023 03:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689113046;
-        bh=WZFBYnlBH0nabsea0EgGhIkFx++Poh0q/PfFbXQbviw=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Ph2Q1Skexi74PjjyajBlIKdntO7u+CL65M1XUgzexfi6H3zQiGnmOzrafU9ad+3IG
-         L61ESRw/Tmzu4fhwPlhSPbQRccH1z/zw65Lk55RNUKpBUHSXaPENU4qFPJlx4xCoHO
-         Gltjwy8+YJ8I6rT+KgWV4CsnUlaImnHjnGv2xH0S644Efb2QzCeshIza4zkUrIVa0N
-         sLK4RAwtOoD5pSvH0A2si3d5WPxqEJYD3kZiFjxqG9CWdmDag4GfrCLsmyYXbt+CJU
-         OZj2/qG5cDFGHaZowRNDsoyKsCATQEtEH92XbpqEYby7/a8KpjPG+ggkSHn/98u1Sv
-         HbQpyhGrm8EPA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-In-Reply-To: <20230705152603.2514235-1-thierry.reding@gmail.com>
-References: <20230705152603.2514235-1-thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: spi: tegra-slink: Convert to
- json-schema
-Message-Id: <168911304501.642798.11023438191378643161.b4-ty@kernel.org>
-Date:   Tue, 11 Jul 2023 23:04:05 +0100
+        s=k20201202; t=1689132075;
+        bh=/NuFIWfEtVjk5MvroN0JIwWzQv+7JB4TBDHgC9DyCxM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nsHuyOFlOfGP8W5cNrlZS+JZtz4WNfbJ3xNhO/Diz6kJf1YahQVGjiWGISpV7KKkO
+         SirSzT6+Iey/kn0zRhDR5DEKmJRQRDUDYaIOJXh+ahNGgXUyRs/qMWi9Glh+7rhHx3
+         XTcq9L/IpBB/hq6c+CgQ4A+aTeOrE3SGjsDTzhzPuJDCEBVcOEdkrR0xBM0ns9TtBs
+         tQKqpy6SrlL5py4Ykit+ZGJ/2RIwTeaZHeIPEyg3vqiug1bzHGvpQ8LvFiTbXieuwv
+         xAnG92vdQu8FVifLfMdDuJjN3sBdbWU0WzPk+1Wi0aVV4FFcLtH7kVGdpvpv+0dXFJ
+         lQF0uJuPrGRSA==
+Date:   Tue, 11 Jul 2023 20:21:14 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH net-next v3 00/12] net: stmmac: replace boolean fields
+ in plat_stmmacenet_data with flags
+Message-ID: <20230711202114.5e4f1dcd@kernel.org>
+In-Reply-To: <20230710090001.303225-1-brgl@bgdev.pl>
+References: <20230710090001.303225-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 05 Jul 2023 17:26:01 +0200, Thierry Reding wrote:
-> Convert the Tegra SLINK bindings from the free-form text format to
-> json-schema.
-> 
-> 
+On Mon, 10 Jul 2023 10:59:49 +0200 Bartosz Golaszewski wrote:
+> As suggested by Jose Abreu: let's drop all 12 boolean fields in
+> plat_stmmacenet_data and replace them with a common bitfield.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/3] dt-bindings: spi: tegra-slink: Convert to json-schema
-      commit: 8c87a46e2ce3d5aaf315ffb61dcda62417e41bbf
-[2/3] dt-bindings: spi: tegra-sflash: Convert to json-schema
-      commit: 17a9ab02f72c832293155a432895c889842b7da4
-[3/3] dt-bindings: spi: Convert Tegra114 SPI to json-schema
-      commit: b8968c388b69d9cf31d7f5b1721ac7fe9f932cb9
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Peppe, please take a look.
