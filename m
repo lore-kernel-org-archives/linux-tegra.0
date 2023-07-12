@@ -2,168 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B22EB64DA
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 09:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5100EB64D9
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 09:47:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231680AbjGLJgB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jul 2023 05:36:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48534 "EHLO
+        id S233145AbjGLJrZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jul 2023 05:47:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbjGLJfg (ORCPT
+        with ESMTP id S232525AbjGLJrY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jul 2023 05:35:36 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2108.outbound.protection.outlook.com [40.107.117.108])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D8E1BD0;
-        Wed, 12 Jul 2023 02:34:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BIZ3eTciWWlQ3bkqW/ah/mjxztvXh1163axUCcviXNO4uulo5OYRvuTyLc0jgag7aC3WHAE47S9x6F6K5yQZtmZcZKS/cbfTSC+RpwdAp7a/rYT7BfRoPMplYv5Pr6kqTXaan3wYaAPILju3y6yZ9SgDRLMQqheZQBIrJ1ILIXsRr3+TaT5Ry2FwqQwtpC3mtPKtJ2EtIU27CVpfxalQ9Izwe5rp4bdGw2pgb5ZLis0COW/2DmhWmotoJ3bkwJwo1bQoCHZGki7B0GDKgaFGrSwhMK3/uz/039TFybI/0CVl8A89f7otUL+39doWp+/gNtVxkmlqtfhlFJ0BhRmAzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xxd4pDuQMQTbe3wajRQCtOORyTdekhjvyWLURZTgnKU=;
- b=ULc3kncwFTQ/cvNkYc9BnEII6+AtsEu/gXIDZGz9cTwgIa1//Obk0wwg/LyWuMvATKRfMnM9zRYfYFrKn5t8+7PS46nv/M1nd5Gc3qJdxy/Xqp+2NLpWglBj1CTlPi6uN+rZpw251QCJqv0MSamMwk+piDF/P186poGibXbpevSYhU1a+RQ2EGzz+9IIJyBokjcL2gfAHDdOpjX1clrRAiv7cFCneA+jXSZADpwlOvKF2jCfS+YBvqSWkxZx3b20F5nQRHYo+0u/1A/WsAE2bhqQnYRoAPENBza3VTlmpyY+oh09jH+XWXs3hWXyyjJIXUG1fYE+T3TCOtaEwc60Tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xxd4pDuQMQTbe3wajRQCtOORyTdekhjvyWLURZTgnKU=;
- b=JelU4UIaK2FM2KHpCnoCybAOyPuXY4rwUMjzY/p3Ju0EW2H+RSnNTdUljJ1+lwKn6I2aMbsDAoho/Cr/lmGKmTRE84/Xug8oJcUYzdltMETXPwvnDrgVExPcE3H1xswmj9YnqrrvRXWtoM319AZtyRoVDp1PNcRQNODyagRSk+Kwm6WJMImphBP+a3nygptB8Smnq3fQEgNGvS1jeSrh5Cdb1iavB+SXDe4pmrwrF/PuyEWreYYEBIJmlKmZmr1uoUW8BcfOG9gSsPijxG+0KlM25pfLfC/r3fCR3YK26ZP0JgRnmpXkOuIQGWH4rkJ9TOGY3NIF2x2WXTKvs4159g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SEYPR06MB5985.apcprd06.prod.outlook.com (2603:1096:101:de::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.20; Wed, 12 Jul
- 2023 09:34:01 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::fa0e:6c06:7474:285c%5]) with mapi id 15.20.6565.028; Wed, 12 Jul 2023
- 09:34:01 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Wed, 12 Jul 2023 05:47:24 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E154B0
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Jul 2023 02:47:23 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qJWRI-0001fb-Hy; Wed, 12 Jul 2023 11:47:16 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qJWRG-00Dr6f-VH; Wed, 12 Jul 2023 11:47:14 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qJWRE-004GUN-Fq; Wed, 12 Jul 2023 11:47:12 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Yangtao Li <frank.li@vivo.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 16/19] cpufreq: tegra186: Convert to platform remove callback returning void
-Date:   Wed, 12 Jul 2023 17:33:19 +0800
-Message-Id: <20230712093322.37322-16-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230712093322.37322-1-frank.li@vivo.com>
-References: <20230712093322.37322-1-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR01CA0172.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::28) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH RFC v1 39/52] drm/tegra: Use struct drm_crtc::drm_dev instead of struct drm_crtc::dev
+Date:   Wed, 12 Jul 2023 11:46:49 +0200
+Message-Id: <20230712094702.1770121-40-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
+References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB5985:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01e25c38-2bbb-4e3d-5c93-08db82bb2027
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1KQf9C/pnrOcaSMLCTTi54ctYqJn/7yVdUzCbkrLBqrza1yFnZ67pPXey48Jqjf85tNuOcJE20VLkyfe/VM1JobcjLzWmV/zL1bAkNZ59yaNKFxK9b1VQBxegjXG4a4+Px5zzo15Hpxrc6uumaUlj/M7wG86QtrxkX8fXgLVMCKXkuWZCNJJXI3yr1RbmN7T0j95gT6SeVzzuyG60mCdoHg7EG7AitKW7G3Abbh5XQ83rqux7AzF3hCrn+inS7NWeZFjVwAR8zVtgw70SZ2NtQEePqdVbbg/Irl9WGtO8lLkYpGaqtsrptNozGcZbK4ShGmQ+Bw7wK2siRicTlcW49YyxVac8JAAoEqJebCDHKBWtXCZ1U52a6U2CpwHubuWYXOZed/O72InpLWXenMxrO/Sb1I8Nm6Wo4Kmbzx+cacj7ns1g5EqvkI0C8agHIkfHY9FZBIOgQ+xxi8w5WF85nvMcTRYHpUUJ2kP0jSK7W4EHbv7rCv94pMogYva/MDhyxSlcBmxQe8ABwIhRO6eCm9My/d6AvzSvvpLhjINBN0/yPHcq8YNQXDsQFSFDto8qFQVzNeWH/61iyGntoLYyNCr/rKM3xDJjialrRRmg0FkFdNGpm8O2vilxtP26DYV
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(366004)(376002)(39860400002)(136003)(451199021)(186003)(2616005)(110136005)(54906003)(38350700002)(38100700002)(5660300002)(8936002)(52116002)(6666004)(6486002)(86362001)(8676002)(478600001)(316002)(41300700001)(2906002)(4326008)(66476007)(66556008)(66946007)(6506007)(83380400001)(26005)(1076003)(6512007)(36756003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T2l6ZWdJdHNLUnFHK3N6QXdDVWdQM2w0WDhYTkNBTDJuZm9kUEZDdDM0SkE1?=
- =?utf-8?B?QnFtdVJGdHJwaHZyaGdPdHdGekFDOGFaQXNud2tzU3hjQTR2Qy9nLzh2NlFt?=
- =?utf-8?B?Rzd3UWZhQllXU3BaWXFITlhSY1YxaGVUMUdOS0tlQWRsTlBIUWp0Q1NzRnFo?=
- =?utf-8?B?cmlXOGNRR1ZoQmEyeUFLZ0hlQkdOS1lQSDdXRk95N3d1NkVCdWNqVDZ4WkNa?=
- =?utf-8?B?VnRUOWIzWVdTUjJaWk4vbmN1emRPOEltWEtYZGRTSjJUemIrRGlJMEo1QXFZ?=
- =?utf-8?B?T25OdDBQRXNPc2pJRUs1T2hoRXZ0R0JOTFJaaGFFOS82emxxZzc1KzNidWdV?=
- =?utf-8?B?dU9Pa2ZlZEF6VC93MnkwZ0tjSzIvaEZ3Ni91bzYwckRQUlVqeGxsM2U1UlZP?=
- =?utf-8?B?SVY1c292MTI1ZDVxNVh2T1lYeTdwaXVGaTZreWpUdkVuMGo1RXBtTzZUNXRr?=
- =?utf-8?B?cWZ1SlVsSStjY0k3VForTGE5TGwvNzRxazF4ek1NRVhudmY1RTVLQjJHLzNk?=
- =?utf-8?B?cXdIZGpPNEd4dkt4TWp3Ymp5eVlYcm00bkhqK0I2Wlp3M25DTXEyTm9HVk54?=
- =?utf-8?B?RExxOWgyUHZJWmpYNjV2OGx4d0FXZzZRWUVvWHlORzM5clNyRTRJVyswNi9K?=
- =?utf-8?B?QytnY1dQV1pqNVdpOHpHUW94dkVqOEthZVB2RVl4NFpYM1Fla3gyQ1poQUZQ?=
- =?utf-8?B?dkQvd3VXOVVIWWpFeHY5YnZOaWZvZHJvN1Zhb0lBWDBRcm1vZDhkR3Jzb2lB?=
- =?utf-8?B?S1JLd2FiWW11M2tQcWpsR0hjcWFxaHo3Z2xwN1Rxa3dFakZhWENPOXlpd2dX?=
- =?utf-8?B?R3YySnJUdkVHaUhCRUFZWlpvaERZbnBoMDNSdWxqVDV5SXFGdHBSUDdKbjY1?=
- =?utf-8?B?SmMyUWllR1lEeDBDb3VYaC9Id1IwRXhaYUpveldIcXFRK0htWm1nb3BjOTB1?=
- =?utf-8?B?VVhQSjhERDdVZXdFenNsTzlwclduNXAyZUpjSFk5djE3aEgzV0FheTF0Umkw?=
- =?utf-8?B?RWdYTUN0VTl0UzZZL1BMRUhzMGkzY2llVnNUL1Fnb3E4N2ptWHo5UnJEazhj?=
- =?utf-8?B?bVB6dXZOWElLcU5GSFhYa3lCZEUxQ3dYUHJETmlXVmRLWDR5emx4UExHaHlM?=
- =?utf-8?B?blU0cVhCdkNvUTgzVWkwVUJkOEs1WXlIRUJYZENzbmxMSk1YVVBvWkh1QTd1?=
- =?utf-8?B?cTRSV1N2TitHUStoVExaUXloRFk2SGhrZ0hSZ0g3Z0QrNDg5M1VibGIwdXNL?=
- =?utf-8?B?ZXMvOVhJL3ZpREdSelkrVFZISVVoOE1WZEVZTG94ci92MTdRTVZBb2JYeCtK?=
- =?utf-8?B?N3ZYZFcvbUxLMUQwM1dFbGZ4aTI4N2xZVEMxVE9rQzRiVTFQZGt3a25Ca3Qx?=
- =?utf-8?B?bzZYbWV6eENUbjNlcVRvNVF4Y0VnUlJNMDM3b3FTMTR3RE9LTXNLSHV5VXpF?=
- =?utf-8?B?Qkx2aEdybE1ST1lFNjNIUWZkeHNaSWFEdGVLQzFMNFc0TzN4QU9zOGxNaXdo?=
- =?utf-8?B?WElKWkd0Z1FwVlhQV2RKaXd5cyt3YkVMK2creldQUmRLNmdENFlObEFmZUw4?=
- =?utf-8?B?VDhUajB6T05rclVVd3NFYnc2bmdqZGtNTWVpUlpzaUV1Z2xzbEpWQUpTandp?=
- =?utf-8?B?WlJpT1VjVFVWVUlRTHRNbzA5Q1kxYUcwQTFOTXo2MmVvWkVXNDhCcFVEODdw?=
- =?utf-8?B?ei8ybDMrUzcrbG8wK1Y3UTRkTmU2ZGtmYXFmMThheXJKd1BsVXo2UlFjbmsz?=
- =?utf-8?B?K2hZVG81UFIzb2VxbkVJVDJDM0FyNXpPZkkxMjdDWmVxbzhlOVYzNnZHU0Zr?=
- =?utf-8?B?ZUZZUVpXLzBjMSt6cllKcHhlU3JsR1NIbkdRYzZKWXNpTzVXVnRZUmFUOEdU?=
- =?utf-8?B?aFFyME1RQm5xcHBac1g3TmZ2dUlzNUtiQ1FjSVhnZUVYMEhydDlmSUV3Nngz?=
- =?utf-8?B?WlR6M2ZSeXZjVEVBR0VjQVVUcHZ3S2FqVjN2SUd3N1FKU1NEdFBCL0N6YjNk?=
- =?utf-8?B?SjUrSE9oamVEaVU4YmVtVmt2amkzS2hxZmU1cGtoVVhnaHBHejFVSjdxUElY?=
- =?utf-8?B?dnFxZTlTQkI5bjJuZHJITlNNeVM0bnhnS1pPOVNSYjVLQ2wwdWFQWmhPaDdy?=
- =?utf-8?Q?mySptyps+5+OHW5DM5snb7V0/?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01e25c38-2bbb-4e3d-5c93-08db82bb2027
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2023 09:34:01.4646
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VKVUeC6+7XJkbTCA5KIsiU0tds/yuWWXxNhn190hM+7TPKW6kSKpy//ONQE9tdoS9Mc7wVyI0UDAGS19MoilWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5985
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2446; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=Ax8ONDcRHv76lsDxxbFHdUOnp1kAQSD0oQKcbrCxnXg=; b=owGbwMvMwMXY3/A7olbonx/jabUkhpR1Zc2iV/rsl4vufry8QoNxP+MhoYldVU9fqu85L7JMw /LkMqeTnYzGLAyMXAyyYoos9o1rMq2q5CI71/67DDOIlQlkCgMXpwBM5CUPB8O2qIjLYYyuriYi utMMZmr1ls9j3GpfPifQuWPJmcofXgGL3S+fmp93Q4lNY63N5mV1pY6aN3V4XH7ci8hsuJuvdW+ 7g3eEcfevC8HeKdn8AotWsHXc1mGzCWOqibpdEHoto8B9RTM3WzCjtw571XLnovY0je1HxF7v9j 4fuaLGYzlTbXpjdpiuh7aB7Z7z22ur92kl62/6KPHu/5bt/tPnfLh8fOr7JQKKD1NvttdYu73rN ePN2h929RDDnhfefRv7ZTYZpe+o+PXEL9Ss6TX7BCYFK7ufe46272V/GhtdsE/pqv4K8UceeRJP p9fGJK1fkreEW4iX40rx01NpDPtDNXa9+X5fKSJTM7cGAA==
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is (mostly) ignored
-and this typically results in resource leaks. To improve here there is a
-quest to make the remove callback return void. In the first step of this
-quest all drivers are converted to .remove_new() which already returns
-void.
+Prepare dropping the alias "dev" for struct drm_crtc::drm_dev. "drm_dev"
+is the better name as "dev" is usually a struct device pointer.
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+No semantic changes.
 
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/cpufreq/tegra186-cpufreq.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index f98f53bf1011..7b8fcfa55038 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -259,11 +259,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 	return err;
- }
- 
--static int tegra186_cpufreq_remove(struct platform_device *pdev)
-+static void tegra186_cpufreq_remove(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 6e78416e64b0..05504fe99a77 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1717,7 +1717,7 @@ static struct drm_info_list debugfs_files[] = {
+ static int tegra_dc_late_register(struct drm_crtc *crtc)
  {
- 	cpufreq_unregister_driver(&tegra186_cpufreq_driver);
--
--	return 0;
- }
+ 	unsigned int i, count = ARRAY_SIZE(debugfs_files);
+-	struct drm_minor *minor = crtc->dev->primary;
++	struct drm_minor *minor = crtc->drm_dev->primary;
+ 	struct dentry *root;
+ 	struct tegra_dc *dc = to_tegra_dc(crtc);
  
- static const struct of_device_id tegra186_cpufreq_of_match[] = {
-@@ -278,7 +276,7 @@ static struct platform_driver tegra186_cpufreq_platform_driver = {
- 		.of_match_table = tegra186_cpufreq_of_match,
- 	},
- 	.probe = tegra186_cpufreq_probe,
--	.remove = tegra186_cpufreq_remove,
-+	.remove_new = tegra186_cpufreq_remove,
- };
- module_platform_driver(tegra186_cpufreq_platform_driver);
+@@ -1743,7 +1743,7 @@ static int tegra_dc_late_register(struct drm_crtc *crtc)
+ static void tegra_dc_early_unregister(struct drm_crtc *crtc)
+ {
+ 	unsigned int count = ARRAY_SIZE(debugfs_files);
+-	struct drm_minor *minor = crtc->dev->primary;
++	struct drm_minor *minor = crtc->drm_dev->primary;
+ 	struct tegra_dc *dc = to_tegra_dc(crtc);
  
+ 	drm_debugfs_remove_files(dc->debugfs_files, count, minor);
+@@ -2119,14 +2119,14 @@ static void tegra_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	tegra_dc_stats_reset(&dc->stats);
+ 	drm_crtc_vblank_off(crtc);
+ 
+-	spin_lock_irq(&crtc->dev->event_lock);
++	spin_lock_irq(&crtc->drm_dev->event_lock);
+ 
+ 	if (crtc->state->event) {
+ 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+ 		crtc->state->event = NULL;
+ 	}
+ 
+-	spin_unlock_irq(&crtc->dev->event_lock);
++	spin_unlock_irq(&crtc->drm_dev->event_lock);
+ 
+ 	err = host1x_client_suspend(&dc->client);
+ 	if (err < 0)
+@@ -2279,14 +2279,14 @@ static void tegra_crtc_atomic_begin(struct drm_crtc *crtc,
+ 	tegra_crtc_update_memory_bandwidth(crtc, state, true);
+ 
+ 	if (crtc->state->event) {
+-		spin_lock_irqsave(&crtc->dev->event_lock, flags);
++		spin_lock_irqsave(&crtc->drm_dev->event_lock, flags);
+ 
+ 		if (drm_crtc_vblank_get(crtc) != 0)
+ 			drm_crtc_send_vblank_event(crtc, crtc->state->event);
+ 		else
+ 			drm_crtc_arm_vblank_event(crtc, crtc->state->event);
+ 
+-		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
++		spin_unlock_irqrestore(&crtc->drm_dev->event_lock, flags);
+ 
+ 		crtc->state->event = NULL;
+ 	}
 -- 
-2.39.0
+2.39.2
 
