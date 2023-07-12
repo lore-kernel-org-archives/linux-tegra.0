@@ -2,385 +2,174 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC42C00528
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 13:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 765F8EB64DA
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jul 2023 13:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbjGLNyU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jul 2023 09:54:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36960 "EHLO
+        id S233315AbjGLN4W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jul 2023 09:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbjGLNyR (ORCPT
+        with ESMTP id S232888AbjGLN4R (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jul 2023 09:54:17 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B6110C7;
-        Wed, 12 Jul 2023 06:54:15 -0700 (PDT)
+        Wed, 12 Jul 2023 09:56:17 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2068.outbound.protection.outlook.com [40.107.237.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB9A0E74;
+        Wed, 12 Jul 2023 06:56:15 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lg/wJHH/ZFJfBXf0dR+HzSa8gUzcCNvgEVvSP267D7MPQK3c5Exm7efzcpBuo/uHQ9WOvoGqGIVxG40Rc82ll6k2VkBtY1yuAaYceR/K//D14Gm0caoArWB3nfjKis14Vskkl0gSEIzUbyz8mqAk0gEsHi+duohyuMOg2sGtjJab7KWtg4+aigLjIevXMT9EMyH4/8k/rcdxC8VEE1KEbQateFBjVetDl1pvJneGzw3czwTtBQciw04ZgfocQhHIfF9cClYcvKS59o75Obf7g7CcFeutjC4KZIDbPZC2MrPgdhHt9VK7C82QtwlM63cm1vipNSn0EqwbJk05JoZkOg==
+ b=GFSMDgMPnw0iZLYnlBBk2vSSO8G7TBpyMFrEayYlS6hm5q/0vrben5twI7Wu4ya6Mqp6kluVQDFb+KfyIwvbG0tHytikepJO7B9yoUPTtPj4d29qralE/3T6TvZ9JT1hCAuQR6fpjJKGo/ug49ShalWAALTKQUhmk1izoLn5EBccuiiCrwsYdDG4eC9ofBvj80TvbLrpMY2Q5HzQoEOGndBNfrXnWIlRbfing9FyzqVUdcIOOx8jIeLTWAu7nceVZefJBO207jRlU9vuPjr6Lqs94/RAnXXlqw3M/yVUQlnKPOJtIl858xxcSQUHyRhgrp/nr04H74eKCCVxke3zPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XgHMqA6NR6xwi31+5UQb02kpONt6s3GFuikZRULOVgI=;
- b=XcpEFbGo4dujwilE05EBLxUAB4zsdSGoZgIAg7JhFWRakc8T6Z5SxWzlFR5OPi0yEBzVwcBJVx21N6zDlJrw88liyEa3Qb3q1tRUxUvgCgu23cpv2gVXUPTy5SdiEVvy/MP/iWQAFMSC9E1HkUKoUWYyz4UCwrODoIGzQR7Stf1uViO9Mo0aFUcTck0fYCVUyXWgjyrJscV3vgmjbnlWa3cUf2F+tLcmQYpMJH+oddSKYKdJNiM/NmBHSoYjjUCDePj/XpsawdOanzetUfInWzoimAoLBVt45F9UDG0yd1mG3gf7G8OwxPWh/RL7pIZwKiGJvxdfLrhBI+roBotxUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=JlYdk8/p6mziXf1V7PfmgrZT2H3lLeIUfQQm6xZNAAA=;
+ b=nljQy7opcQS4fiUo9kW2UKLwVEl3D74cXaUEHKAisgR5u+5eqSiCy6O3qtqdgAccQV+UPHqjc4uv2nGdP6bkKY5Il4T4Q3sFfdE4c+BIZcTBkgwPN0yc6dJ1Ch0zXncyshkpKmJqAHlGhbvJHLOv8yHRiUkNTuR99hA8Mpp3Mf31FneQXnK0NsGL87DkHlBa0yYExPVaa162WVhv/UOjJMMAKNTaAubt6NLlheEnpyC92lXIoxJPPz69NptDbqDGZtUHNyyt6ScXRHkr1xURYrM9MLAT9cNPQzmgJOqDIwH6190TdJs64vWrasvP/So0uJBqVqf3RYtxo+uqt/TtuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XgHMqA6NR6xwi31+5UQb02kpONt6s3GFuikZRULOVgI=;
- b=VsTwGxlovAH+46yi04iJt6VNhWVApnJMd0mPZ5sw1AqorHxPRvBJGBkrD52FaJ9tbEji7+v0jusEoLcCNJqN5huTd57Zq9u6F31SQth6QTv2sU53YqkDgGQDd2Lj2tG/LZx4c+pqyQW2Di8ZFFsObxdpo62OpsNeTEiAtUV1kqo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
- by SN7PR12MB8004.namprd12.prod.outlook.com (2603:10b6:806:341::7) with
+ bh=JlYdk8/p6mziXf1V7PfmgrZT2H3lLeIUfQQm6xZNAAA=;
+ b=c6l9QIIQGEc41+2M35RFsEaTZ3YIUfSWOiOHLNBfRpJYGcXY3BlHlSSpy9uMH8SdFYI8GykjOtqediW6TNOkh6Luv9vfCsecCqJ/z5CDh4hmuCM0SQfo09meFqa89jkI0UFhhkElUZZAupnuLkkeJXJlND9M+d8tWAJOVVGSlJvXC/y0S3rr6rHq0Qk9oD2DgYQ3hucAOnxt8RkygZL946/Mcf4AjEU2GdYXTSnix+5zofsFILerxmKSpxpsukONaWwEZMd5YmTslNTkfFRQ4y/FkXNI5DoeL6jAL6RLJVNOczDNMdWS7ojt0eEqWzMFnbKXLfKTpGWlzGOOIcyZIA==
+Received: from DS7PR07CA0011.namprd07.prod.outlook.com (2603:10b6:5:3af::22)
+ by CY8PR12MB7563.namprd12.prod.outlook.com (2603:10b6:930:96::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.30; Wed, 12 Jul
- 2023 13:54:11 +0000
-Received: from BN8PR12MB3587.namprd12.prod.outlook.com
- ([fe80::669f:5dca:d38a:9921]) by BN8PR12MB3587.namprd12.prod.outlook.com
- ([fe80::669f:5dca:d38a:9921%4]) with mapi id 15.20.6588.017; Wed, 12 Jul 2023
- 13:54:11 +0000
-Message-ID: <603f0b69-71d3-ad8f-4b5e-53b63a6fd521@amd.com>
-Date:   Wed, 12 Jul 2023 15:53:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH RFC v1 00/52] drm/crtc: Rename struct drm_crtc::dev to
- drm_dev
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-        Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
-        dri-devel@lists.freedesktop.org,
-        Vandita Kulkarni <vandita.kulkarni@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Arun R Murthy <arun.r.murthy@intel.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Liu Shixin <liushixin2@huawei.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Wenjing Liu <wenjing.liu@amd.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
-        Danilo Krummrich <dakr@redhat.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        spice-devel@lists.freedesktop.org,
-        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
-        linux-sunxi@lists.linux.dev, Stylon Wang <stylon.wang@amd.com>,
-        Tim Huang <Tim.Huang@amd.com>,
-        Suraj Kandpal <suraj.kandpal@intel.com>,
-        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@igalia.com>,
-        Andi Shyti <andi.shyti@linux.intel.com>,
-        Yifan Zhang <yifan1.zhang@amd.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Hersen Wu <hersenxs.wu@amd.com>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        =?UTF-8?Q?=c5=81ukasz_Bartosik?= <lb@semihalf.com>,
-        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Zack Rusin <zackr@vmware.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
-        Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>,
-        =?UTF-8?Q?Jos=c3=a9_Roberto_de_Souza?= <jose.souza@intel.com>,
-        virtualization@lists.linux-foundation.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        Fei Yang <fei.yang@intel.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        David Lechner <david@lechnology.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
-        "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-        David Francis <David.Francis@amd.com>,
-        Aaron Liu <aaron.liu@amd.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Vinod Polimera <quic_vpolimer@quicinc.com>,
-        linux-rockchip@lists.infradead.org,
-        Fangzhi Zuo <jerry.zuo@amd.com>,
-        Aurabindo Pillai <aurabindo.pillai@amd.com>,
-        VMware Graphics Reviewers 
-        <linux-graphics-maintainer@vmware.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        =?UTF-8?Q?Jouni_H=c3=b6gander?= <jouni.hogander@intel.com>,
-        Dave Airlie <airlied@redhat.com>, linux-mips@vger.kernel.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Animesh Manna <animesh.manna@intel.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-amlogic@lists.infradead.org, Evan Quan <evan.quan@amd.com>,
-        Michal Simek <michal.simek@amd.com>,
-        linux-arm-kernel@lists.infradead.org, Sean Paul <sean@poorly.run>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Qingqing Zhuo <qingqing.zhuo@amd.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Swati Sharma <swati2.sharma@intel.com>,
-        John Stultz <jstultz@google.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Drew Davenport <ddavenport@chromium.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Anusha Srivatsa <anusha.srivatsa@intel.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        linux-hyperv@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Melissa Wen <melissa.srw@gmail.com>,
-        =?UTF-8?Q?Ma=c3=adra_Canal?= <mairacanal@riseup.net>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Likun Gao <Likun.Gao@amd.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Deepak Rawat <drawat.floss@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Joel Stanley <joel@jms.id.au>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Alan Liu <haoping.liu@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org,
-        Alison Wang <alison.wang@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Gustavo Sousa <gustavo.sousa@intel.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Deepak R Varma <drv@mailo.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>, Chia-I Wu <olvaffe@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Khaled Almahallawy <khaled.almahallawy@intel.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Emma Anholt <emma@anholt.net>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Imre Deak <imre.deak@intel.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Roman Li <roman.li@amd.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rob Clark <robdclark@gmail.com>,
-        Hamza Mahfooz <hamza.mahfooz@amd.com>,
-        David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        xen-devel@lists.xenproject.org, Guchun Chen <guchun.chen@amd.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Leo Li <sunpeng.li@amd.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Mika Kahola <mika.kahola@intel.com>,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
-        Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Vinod Govindapillai <vinod.govindapillai@intel.com>,
-        linux-tegra@vger.kernel.org,
-        =?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <marek.olsak@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        =?UTF-8?Q?Joaqu=c3=adn_Ignacio_Aramend=c3=ada?= 
-        <samsagax@gmail.com>, Melissa Wen <mwen@igalia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        David Tadokoro <davidbtadokoro@usp.br>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        amd-gfx@lists.freedesktop.org, Jyri Sarha <jyri.sarha@iki.fi>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Wayne Lin <Wayne.Lin@amd.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Nirmoy Das <nirmoy.das@intel.com>, Lang Yu <Lang.Yu@amd.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
- <94eb6e4d-9384-152f-351b-ebb217411da9@amd.com>
- <20230712110253.paoyrmcbvlhpfxbf@pengutronix.de>
- <o3dc4q27ap6rajsvpfwfvs3z3afekkwbhnclvswkaietciy2kc@unjf67gz5tur>
- <20230712133803.rf26cbg5wz7wsmgl@pengutronix.de>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20230712133803.rf26cbg5wz7wsmgl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR3P281CA0182.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a4::17) To BN8PR12MB3587.namprd12.prod.outlook.com
- (2603:10b6:408:43::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.32; Wed, 12 Jul
+ 2023 13:56:13 +0000
+Received: from DM6NAM11FT079.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3af:cafe::33) by DS7PR07CA0011.outlook.office365.com
+ (2603:10b6:5:3af::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.22 via Frontend
+ Transport; Wed, 12 Jul 2023 13:56:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT079.mail.protection.outlook.com (10.13.173.4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6588.22 via Frontend Transport; Wed, 12 Jul 2023 13:56:13 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 12 Jul 2023
+ 06:55:58 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 12 Jul
+ 2023 06:55:58 -0700
+Received: from pshete-ubuntu.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Wed, 12 Jul 2023 06:55:56 -0700
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     <linus.walleij@linaro.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-gpio@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <pshete@nvidia.com>
+Subject: [PATCH] pinctrl: tegra: Add support to display pin function
+Date:   Wed, 12 Jul 2023 19:25:53 +0530
+Message-ID: <20230712135553.25162-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3587:EE_|SN7PR12MB8004:EE_
-X-MS-Office365-Filtering-Correlation-Id: 671d3312-9a10-4462-11d9-08db82df77d0
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT079:EE_|CY8PR12MB7563:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ce5320b-b3c2-409f-09b6-08db82dfc141
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Q+CjsHYjoEoIKYhGUtD4L6IdokqTfF3/rDoqE4aTyfCbPLgsxxuVuGUsuYCA35P4DktoBo4NaYU33T1d8TbAYeptCtWe1B55Dc7oLzVxiycliZfDBnEm8XarwPg0ryzzSJwJvhapixHLvylLlitF0v/N12hzY0tfsoDFfKqumWSnLuk5x9Kn4zL6bJWU91FmrGKdnYdHX5drfEhP8xT5CwqxgEcEcA6YmR3c+YE5hsNLi/9CstC4LyCaAp5+lOrfLNlEjbdWekywxde7dpFY5E5s2/endwHQUHrz1bB9ykbxzYdRfCd0i9JW7/R6RC1xHH6+RRBRUIVRg1hDT66tr9wgyeCj9kKh/5b2fvBgeIJAefMeQ4DQGX2ABfSJY1ODzvBXYMRjaaJvv2MH5lBW1Wdn+4LhArrIoqD0ox+pZbg4DAYjKVelomflcL76YONd3m/Nm+A7Hl4KYkmN3O9uoF8v3kUa4pH8JvdeVkcLPt6rn2HtEznZol9p06p+UQwoRqyFsHPi7xBhaQmHP/1s/M/8/S29cNU3SALPZIHU7nlxbjBCA4vScSL+4SOd+JOPhDgQZTqOQ2+2X3KoAk0XpNvhaWjTc9kOmWYNTsNJP8BQ2Q3Gk9OICAtK/ERCMFrWI2Rxa4J2jJ36saRcsxOVNQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3587.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(366004)(396003)(39860400002)(136003)(451199021)(8676002)(8936002)(7336002)(83380400001)(2906002)(66574015)(2616005)(36756003)(38100700002)(31696002)(86362001)(7406005)(7416002)(7366002)(7276002)(5660300002)(6506007)(186003)(31686004)(6666004)(66556008)(66476007)(4326008)(6486002)(110136005)(54906003)(66946007)(41300700001)(6512007)(316002)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cWZnOXNSRjdOTkRMN2twRmhhNlZKUU04WHhCY2Z0bUFVMmd0ZzMzZldoayts?=
- =?utf-8?B?elhFTXRKeWVNRUpHQ01yaTVaa1Ztakt4R216MWlHODdMUmhQYjdhMWRWUk9K?=
- =?utf-8?B?OFRpNCtPWlhuR003dy83ZXZySTlIcExnU1c0aHFEaWlya2hyRDliSjlkYlg1?=
- =?utf-8?B?bDNlV3I3b3VsWXN6VStIZDhhd1hzcW5OblM5Z0ZwWmp2b0FTMTVpdE5zTC9J?=
- =?utf-8?B?SGFRSm5PVmVhSjJSWnd6V2dYcE9RenYzbEg0UEpZTGRvbFQzUVFWQUZERjRu?=
- =?utf-8?B?bE5ncmc4N0xPZkZEbURQTjIwYlpYSFNzUC91TUxYZVZ2bHgvQmNNak5aNHp2?=
- =?utf-8?B?SG5kdnIvdmliUitLc2lYbnVpdjJOOHJLYkhMK3doOFdIZGtlckJSRmt1WHZ5?=
- =?utf-8?B?VTM4QldNT0JwV29jQXF4SzVaMzhpRmhCcmlJOVJTVFp0VzE0RGtUYmIrb3dJ?=
- =?utf-8?B?MnQvb0tRaFpVWlBjVE5OdE9heDVyYjNkUExTN3BxaWNCOE1WVTFoQkh6R3V6?=
- =?utf-8?B?eHhYS0FMVURYRFp0VXA5ZFBUNmV2QU5tMzVxK2FERFc5aFFObEkzKyt6ekpX?=
- =?utf-8?B?YlM4VElnWStHaVNhY2dsdWdDSGh4TkNEZnpveVk1c3I4RCtIOHJJTTNIbTF2?=
- =?utf-8?B?U3NtaTF5OWZ6Z0FpSFRLcHdBVFlpcEpoTVU1TjJnZ1J4YW9qVmlUSHViNlVL?=
- =?utf-8?B?emNONXFSYzhSM04xc0xkNmFidGw3cWNrbEs1OHVOTENPamFlRzB5SzVWNFlN?=
- =?utf-8?B?T0tIQWc0T0JNT2VxR25wKzFjSE00NVg3cWxMNGxtOC9ubHRlOTN1QXllQkhZ?=
- =?utf-8?B?a2RJVjF1RjhleWdlMzZkcDVMTForNU13UllNVUdBYldTYXJnTXdEVjBIZlVZ?=
- =?utf-8?B?R1lNOUM4VGhGV2NYMDExWU1tNG1VTUlEMzQrQjI3S0JvTjQ3aStLdlUrU2xn?=
- =?utf-8?B?MkdRdFR0eXl3VEtWL2p2WWRNb1pIMFNERHVxdm1tSHVyRkN6elVOcjBDVUw0?=
- =?utf-8?B?cGRVdlpCdVJFb1dHYk03VlVUZzl3NE8vVlN6bksrZGd3SEx0d1QwNmVKeVBT?=
- =?utf-8?B?ZHVkWXRCMjIvem9VOTl1ZnJQVEVCbUtuWElLY0ZTRWxnM3VPVFh6V1MvZnJO?=
- =?utf-8?B?ZG9zQ3VaQnFLUjZ1OXdGNEFMS1JWOS9BSTRYQkxPMHVxckYzaGFxcmtlcXgz?=
- =?utf-8?B?VXhrcE9CT2twUXYwQVYxSHk4UEJsdlVwMnF0YmxkUmh6cUMrdlI3SE9GUDVU?=
- =?utf-8?B?MzVxUUpHQXNOL1Z1REY2dTc0cEQwUGlHZVdqUmlzbHd6Nk1jdExTMjZDMXlQ?=
- =?utf-8?B?elJxMDZOWEhibURhenV4RHNwdUdXWDhxNXMwcVVucHBGOUI0WndLeXRmLzVz?=
- =?utf-8?B?UUxGUVhLaHEwK1NOd0pHYk9Lb2dnSGhqNU9LN3NWTlhxKzBXd3UxOUlWaEtI?=
- =?utf-8?B?UmIxeHUzOXdvNmtOM0hXbVJIYW5tWUFGMi94ck5Yb0VHUitCeFc1SlphVXJZ?=
- =?utf-8?B?cm1xaW1nL1NjQmdLQUd3dXUyQ2wyblJZMWZ0RGxGSXN3T296N1Y3dDk4dUhN?=
- =?utf-8?B?TVpGYWllcmdvYXFhUVdlanB1V3F5RzM2Zm9RSjZpNk5wSWZpWmhiYzNSVS9r?=
- =?utf-8?B?SDY5U1BHQlVrWTgvd1M1Y0tCUkFMK0RHNnBxUjQ5ZnQ5dU8yKzdvSC9JWXRP?=
- =?utf-8?B?V0pLTytkVTlEUkNWOTgyZ3QyL1BnOEpwNzB0YjMvUEVzazhiY2owVGg2RWdq?=
- =?utf-8?B?Mmh4R2JINXdPK3B0QnVxQjNJaTBTeUtzSE5oYlNtQjBvMnZCb2hleEc4RkJm?=
- =?utf-8?B?Q3lzZ3J6MjU4a1pLaDFnalFBT0FvTFZtYkZHckExSFRtU3NHbHY1Sjd0NFB3?=
- =?utf-8?B?WDg2MU1PaC93VE9vYVFZdmZ4dmh1R0RzYlRtcmdTUTh1MjZoR2NVUVErZVRy?=
- =?utf-8?B?aCtjeWp2dk1IWWg2anFrZDQ2WWMzSGtWY0xBT3FPZXJBMXY0U2xGNkY0eFZ3?=
- =?utf-8?B?QnpHWjJ2WXBGdjBBRTUvcXVkeC8yYkdXSWRJMDZIOUNSOHdsR2JhYWVNMkU5?=
- =?utf-8?B?T1FQQk9YVVFTL2RLcllWZXhWdGt0YWxxc2JJYVpwYlRRc3AxZGpLYTdLaXU4?=
- =?utf-8?B?K0hSNmJqS3BVUG04aWhWdlBvM2lBSTZQZU9kaDBwT2tJRkozSjdRZVNZSmkr?=
- =?utf-8?Q?wZiHYk+qO2DJStqXYi3DikavUdxGeplCKcXkmFW5lXc7?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 671d3312-9a10-4462-11d9-08db82df77d0
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2023 13:54:10.5983
+X-Microsoft-Antispam-Message-Info: zLpzmVxLNMAQ482nGg1RukQYzkRC36BWTsBfWeitTasCO5hqREDBtfZwnJeStuV+A9mSJ9YVB1g1tG2+L/3Qmb/yPBiynrgb/UliTQ8LoeqRnQIWqO2sasrPvbkbY5Uk1qizJBWn1792cDMfqU267oRaGv6hFDxqJbXH/daRN8RzLjRRwl0crmqnDDHdWNVEVa+6JJDCVz7/cD5y4HJoCAVlkaaWmBhfYdCr+tElYHTt8l99xRqQhedu2Dgs4Vk8nYP8jAEBSo6qxGm+ZT4z3kttVAp3pUL9IRxBu+WTxgBngx0MjH4dm6F6EWWDIgt0qia8N6yPDHUKkWBqRuNm4E3jjHY35mePCu9Ukoi7XmTmgva/kUWomSOcGORUY7gQ1qEcmcxwrdbxiLPzOfoev8nsG8W61cXbAb2P5UO3xObtDGU9xpPHhcj18LCNuG259fxKcTKLBFQjD6xpbTwDlIxJqlP/oekfvbz0UgTUd3WK+/GbF6Pu9FU5dlL8xwKdvIm1kANY5FOEdN1T7hegGpq+Z1ZvMQd8anu+E8nd96gIOj8EUG390GtXWPOspIoSL9yfEtXhuzZP9BV42nc1svBWIvYncryOuOuxAr7In9hxfTHBLTx2su7lz/dslO5Rt19vx1WOnQLqJQ1A2yspjXNYCOCAk9pqsvfTf5SMHiZFPS4uV1Yr7CCFb54hxhMNV4Owfw7gmKJxCRYN1S7s57Qo0s4XwVl2g6JbmxwuYSSOdHGRBlG0WQHQTG8F+vxf
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(376002)(346002)(39860400002)(451199021)(46966006)(36840700001)(40470700004)(6666004)(7696005)(40460700003)(478600001)(110136005)(356005)(7636003)(82740400003)(8936002)(8676002)(36756003)(2906002)(5660300002)(86362001)(82310400005)(4326008)(40480700001)(316002)(70206006)(70586007)(41300700001)(107886003)(1076003)(26005)(36860700001)(336012)(426003)(47076005)(83380400001)(186003)(2616005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2023 13:56:13.3233
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ISzr+3rCUPYNUMLw1tOBcCfws4G9gt0O8QB3ANwU8gXg/6JBx2yCDaCKDG7kwoD8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8004
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ce5320b-b3c2-409f-09b6-08db82dfc141
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT079.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7563
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Am 12.07.23 um 15:38 schrieb Uwe Kleine-König:
-> Hello Maxime,
->
-> On Wed, Jul 12, 2023 at 02:52:38PM +0200, Maxime Ripard wrote:
->> On Wed, Jul 12, 2023 at 01:02:53PM +0200, Uwe Kleine-König wrote:
->>>> Background is that this makes merge conflicts easier to handle and detect.
->>> Really?
->> FWIW, I agree with Christian here.
->>
->>> Each file (apart from include/drm/drm_crtc.h) is only touched once. So
->>> unless I'm missing something you don't get less or easier conflicts by
->>> doing it all in a single patch. But you gain the freedom to drop a
->>> patch for one driver without having to drop the rest with it.
->> Not really, because the last patch removed the union anyway. So you have
->> to revert both the last patch, plus that driver one. And then you need
->> to add a TODO to remove that union eventually.
-> Yes, with a single patch you have only one revert (but 194 files changed,
-> 1264 insertions(+), 1296 deletions(-)) instead of two (one of them: 1
-> file changed, 9 insertions(+), 1 deletion(-); the other maybe a bit
-> bigger). (And maybe you get away with just reverting the last patch.)
->
-> With a single patch the TODO after a revert is "redo it all again (and
-> prepare for a different set of conflicts)" while with the split series
-> it's only "fix that one driver that was forgotten/borked" + reapply that
-> 10 line patch.
+The current function for a given pin is not displayed via the debugfs.
+Add support to display the current function that is set for each pin.
 
-Yeah, but for a maintainer the size of the patches doesn't matter. 
-That's only interesting if you need to manually review the patch, which 
-you hopefully doesn't do in case of something auto-generated.
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 19 +++++++++++++++++--
+ drivers/pinctrl/tegra/pinctrl-tegra.h |  2 ++
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
-In other words if the patch is auto-generated re-applying it completely 
-is less work than fixing things up individually.
-
->   As the one who gets that TODO, I prefer the latter.
-
-Yeah, but your personal preferences are not a technical relevant 
-argument to a maintainer.
-
-At the end of the day Dave or Daniel need to decide, because they need 
-to live with it.
-
-Regards,
-Christian.
-
->
-> So in sum: If your metric is "small count of reverted commits", you're
-> right. If however your metric is: Better get 95% of this series' change
-> in than maybe 0%, the split series is the way to do it.
->
-> With me having spend ~3h on this series' changes, it's maybe
-> understandable that I did it the way I did.
->
-> FTR: This series was created on top of v6.5-rc1. If you apply it to
-> drm-misc-next you get a (trivial) conflict in patch #2. If I consider to
-> be the responsible maintainer who applies this series, I like being able
-> to just do git am --skip then.
->
-> FTR#2: In drm-misc-next is a new driver
-> (drivers/gpu/drm/loongson/lsdc_crtc.c) so skipping the last patch for
-> now might indeed be a good idea.
->
->>> So I still like the split version better, but I'm open to a more
->>> verbose reasoning from your side.
->> You're doing only one thing here, really: you change the name of a
->> structure field. If it was shared between multiple maintainers, then
->> sure, splitting that up is easier for everyone, but this will go through
->> drm-misc, so I can't see the benefit it brings.
-> I see your argument, but I think mine weights more.
->
-> Best regards
-> Uwe
->
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 4547cf66d03b..2752c914f628 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -96,6 +96,7 @@ static const struct cfg_param {
+ 	{"nvidia,slew-rate-falling",	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING},
+ 	{"nvidia,slew-rate-rising",	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING},
+ 	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
++	{"nvidia,func",			TEGRA_PINCONF_PARAM_FUNCTION},
+ };
+ 
+ static int tegra_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+@@ -470,6 +471,12 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
+ 		*bit = g->drvtype_bit;
+ 		*width = 2;
+ 		break;
++	case TEGRA_PINCONF_PARAM_FUNCTION:
++		*bank = g->mux_bank;
++		*reg = g->mux_reg;
++		*bit = g->mux_bit;
++		*width = 2;
++		break;
+ 	default:
+ 		dev_err(pmx->dev, "Invalid config param %04x\n", param);
+ 		return -ENOTSUPP;
+@@ -620,6 +627,7 @@ static void tegra_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 	s8 bank, bit, width;
+ 	s32 reg;
+ 	u32 val;
++	u8 idx;
+ 
+ 	g = &pmx->soc->groups[group];
+ 
+@@ -633,8 +641,15 @@ static void tegra_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 		val >>= bit;
+ 		val &= (1 << width) - 1;
+ 
+-		seq_printf(s, "\n\t%s=%u",
+-			   strip_prefix(cfg_params[i].property), val);
++		if (cfg_params[i].param == TEGRA_PINCONF_PARAM_FUNCTION) {
++			idx = pmx->soc->groups[group].funcs[val];
++			seq_printf(s, "\n\t%s=%s",
++				   strip_prefix(cfg_params[i].property),
++					 pmx->functions[idx].name);
++		} else {
++			seq_printf(s, "\n\t%s=%u",
++				   strip_prefix(cfg_params[i].property), val);
++		}
+ 	}
+ }
+ 
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index b3289bdf727d..e728efeaa4de 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -54,6 +54,8 @@ enum tegra_pinconf_param {
+ 	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING,
+ 	/* argument: Integer, range is HW-dependant */
+ 	TEGRA_PINCONF_PARAM_DRIVE_TYPE,
++	/* argument: pinmux settings */
++	TEGRA_PINCONF_PARAM_FUNCTION,
+ };
+ 
+ enum tegra_pinconf_pull {
+-- 
+2.17.1
 
