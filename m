@@ -2,112 +2,117 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 276F6C0015E
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jul 2023 15:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E12C0015E
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jul 2023 15:03:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbjGMPBL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Jul 2023 11:01:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37076 "EHLO
+        id S232265AbjGMPDM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Jul 2023 11:03:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbjGMPBK (ORCPT
+        with ESMTP id S231730AbjGMPC4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Jul 2023 11:01:10 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F25B4;
-        Thu, 13 Jul 2023 08:01:10 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51e48e1f6d1so989721a12.1;
-        Thu, 13 Jul 2023 08:01:09 -0700 (PDT)
+        Thu, 13 Jul 2023 11:02:56 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D148419B4;
+        Thu, 13 Jul 2023 08:02:53 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fb73ba3b5dso1490051e87.1;
+        Thu, 13 Jul 2023 08:02:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689260468; x=1691852468;
+        d=gmail.com; s=20221208; t=1689260572; x=1691852572;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x1vO4HyX+dM3nnt0QQhUfusx4FETmmoiGwrCI9gpUQk=;
-        b=AdROyq8PWx5I33HhVwj6cQSeVa4kusq9Drklx7invVq8fZ+RQ2CgYN0yhL65E+ezU7
-         8DAhqClYqnsrIdhtq6959J3N/C5bqRQBYVd2MM2iyKWEYOGRGHvUaOUx+lA2LoqynFn+
-         1aI3IiauyGDJvwfnCyOuYMHSQWefYYF9UfGKH+fHB5JdOt3Y/IJNoaM/ope3yD0cpqqv
-         M7MUOZs+Kstgkzd2HdE6FfoHZ/ZLYtXy0afVHUyLGD/w3QpRKIrDwPi0PDN/rmYKN+U+
-         Mz6YRuZUHrvkNOh/aHirwbIDBoYIsLISJ+BeRL+lirkESy9e5aPW3niiProKASLun/p+
-         c5LQ==
+        bh=mgOoYheic/1eveJmfA6+ivqPQJzF4lSPnsSfcznjE1w=;
+        b=TtZO/8Z7Rn8rxh9PM7P3iQKoy5vK0LxpK6FQWolQLHTSMfkrSOBz+/NMejVGied4DS
+         oKaJbjMkd96DY3Fw4Br9Fh5oMdniQVUVchiFpaDUOsIXaSqsTZXImOxEfLtbpobs8dME
+         Rfmb9WEzPYnVGTykWbG0WGVng1sVjWBLgPKh3CoUlM0WJPX+KkuYhgzAxEK7jrJ3+Eof
+         kJUQU5l0XHbT7W7Pw0xnxjmV0EZVyxk1iBBs4tN1RBHPOCKwH82xZN58eej3+goUzIDz
+         dJO8X+rtwfw+iSeLPm1qkuEO0+qN4hnb+zotKClQEQ0JW84gP8Bl8f/KyqOvSLX5xvfM
+         TAuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689260468; x=1691852468;
+        d=1e100.net; s=20221208; t=1689260572; x=1691852572;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x1vO4HyX+dM3nnt0QQhUfusx4FETmmoiGwrCI9gpUQk=;
-        b=BsWh2YfSQFsy0td0QxB1QqC3FWwQIZr3kn1RTdFGWJuRi9q8iidP34vdQ1O261IN1P
-         AVvTxaLIffX7HbtbiLDsfxTaYcBNul7Ztj2r+Y8m8PZls2p5XHszFcIjYpwzlwL2Q0z+
-         32/S8BUKz39jAgfeD7D74jIzS4HdKLqgV+fMRI7N4sCja6rulxCiLFTvZ84tgwfzusD5
-         zDPhddmRaS5C21Zetmfni8LZK0kDgQ0ETK+2w4p6n/uVFZQ5vXgCy8kmtbZIKY4MXxIO
-         NgHhg1ol+HZAmk6kCwOYIKrQ4m0XX7JoQEQuwWbq4RsakHKvfoCcdHMhcYSvGJRZQZiJ
-         LZlw==
-X-Gm-Message-State: ABy/qLaHjONWNHQ2pTiVAxb5mGXTFR/G3ZqIOzMlS7kJbUVO3U64y1zV
-        T4A8gwjyK7ul9tXd9RUfxW0iruEQVmA=
-X-Google-Smtp-Source: APBJJlGKhezTxxMVg06X7T7JInUDq51n8yxXTqPFludajuUp5XpLio81sYZgrIUjaiiE4JGzHd6grg==
-X-Received: by 2002:aa7:c3d8:0:b0:51f:f1a4:edc6 with SMTP id l24-20020aa7c3d8000000b0051ff1a4edc6mr1459117edr.37.1689260468233;
-        Thu, 13 Jul 2023 08:01:08 -0700 (PDT)
+        bh=mgOoYheic/1eveJmfA6+ivqPQJzF4lSPnsSfcznjE1w=;
+        b=CPnFykMJHD1YLpX/CTBPziWYs8BjdKRjmhHz8GEcKnWCby3XmFs2soonKvQ4HeqkFo
+         PlP/Rcl02ftUNKrsnItI2QtTOEFhXDM9PTkSrDGZ8hO39ndurPijjH8wG5wPdncSNJv+
+         4BTaKwXs2OIF6Y55dF2V/Hpy0xG1Ap4M5dD4NdYtR52zRIll4UAFh4H37LYdvvoqW77g
+         OTrOIHxzAZR9OC/xnYpzo4kaKdvLvLn9GyFc6UhsOhjopIkqRTu9ReEgHio0yvkqcFxV
+         +IKXzANCzyIG64kF9JHff0OUpVAFgjUgA6VgGOtHOtIxzB2mExH0PiLLK/s0hGafcBVQ
+         kCPQ==
+X-Gm-Message-State: ABy/qLZ2EEFROCXN1PpVxg8O2CCp0fpj/GqSUGPrxVVoyBnsUG7/0iCB
+        lncz+XSKXXIFQci0k5VC5MDPc5975BA=
+X-Google-Smtp-Source: APBJJlEmG+ltFMXIcdiSeKFINz8Lg+v1AW3Hl+VhX1mBiswe4VMKVqi45MsvijxZpTbY7Na4rcZLhQ==
+X-Received: by 2002:a05:6512:23a6:b0:4f9:5a0c:85b8 with SMTP id c38-20020a05651223a600b004f95a0c85b8mr1686964lfv.36.1689260571576;
+        Thu, 13 Jul 2023 08:02:51 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r18-20020aa7c152000000b0051a5cf5fcaasm4297446edp.23.2023.07.13.08.01.07
+        by smtp.gmail.com with ESMTPSA id w25-20020a170906481900b00992ddf46e65sm4082160ejq.46.2023.07.13.08.02.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 08:01:07 -0700 (PDT)
-Date:   Thu, 13 Jul 2023 17:01:06 +0200
+        Thu, 13 Jul 2023 08:02:51 -0700 (PDT)
+Date:   Thu, 13 Jul 2023 17:02:49 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Sumit Gupta <sumitg@nvidia.com>
 Cc:     krzysztof.kozlowski@linaro.org, treding@nvidia.com,
         jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, bbasu@nvidia.com, talho@nvidia.com,
-        Johnny Liu <johnliu@nvidia.com>
-Subject: Re: [Patch RESEND 2/4] memory: tegra: Add clients used by DRM in
- Tegra234
-Message-ID: <ZLARsuP9bVFsHtFW@orome>
+        linux-tegra@vger.kernel.org, bbasu@nvidia.com, talho@nvidia.com
+Subject: Re: [Patch RESEND 3/4] memory: tegra: add check if
+ MRQ_EMC_DVFS_LATENCY is supported
+Message-ID: <ZLASGT0mN9aj9ewL@orome>
 References: <20230621134400.23070-1-sumitg@nvidia.com>
- <20230621134400.23070-3-sumitg@nvidia.com>
+ <20230621134400.23070-4-sumitg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Dfwuwz9HQNADQ4kE"
+        protocol="application/pgp-signature"; boundary="2X/dZqFCgg7nkckt"
 Content-Disposition: inline
-In-Reply-To: <20230621134400.23070-3-sumitg@nvidia.com>
+In-Reply-To: <20230621134400.23070-4-sumitg@nvidia.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Dfwuwz9HQNADQ4kE
+--2X/dZqFCgg7nkckt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 21, 2023 at 07:13:58PM +0530, Sumit Gupta wrote:
-> Add entries for VIC, NVDEC, NVENC, NVJPG memory controller
-> clients into the 'tegra_234_mc_clients' table.
+On Wed, Jun 21, 2023 at 07:13:59PM +0530, Sumit Gupta wrote:
+> Add check to ensure that "MRQ_EMC_DVFS_LATENCY" is supported by the
+> BPMP-FW before making the MRQ request. Currently, if the BPMP-FW
+> doesn't support this MRQ, then the "tegra186_emc_probe" fails.
+> Due to this the Memory Interconnect initialization also doesn't
+> happen. Memory Interconnect is not dependent on this MRQ and can
+> initialize even when this MRQ is not supported in any platform.
+> The check ensures that the MRQ is called only when it is supported
+> by the BPMP-FW and Interconnect initializes independent of this MRQ.
+> Also, moved the code to new function for better readability.
 >=20
-> Signed-off-by: Johnny Liu <johnliu@nvidia.com>
 > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  drivers/memory/tegra/tegra234.c | 120 ++++++++++++++++++++++++++++++++
->  1 file changed, 120 insertions(+)
+>  drivers/memory/tegra/tegra186-emc.c | 136 +++++++++++++++-------------
+>  1 file changed, 71 insertions(+), 65 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---Dfwuwz9HQNADQ4kE
+--2X/dZqFCgg7nkckt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSwEbIACgkQ3SOs138+
-s6GLGg/6AsiRyBX+973/d8nscIozRRU1qZAH7Cr2fhgWuZfgDk7KP1UfZmlq7AgR
-gZrBTCriTROq9NWr22EZcv75LyxCSzBOKsPlkC4u4fR2Ee1vm+xkb2qvJrJubTtu
-/7xmYekUr0vfO5Ko3f/MIAUaOmQp280oa9O/gxVI6ym/ELe28/ZEjGLcdkTNv4tA
-bg02a5Ii+e9tl2Mj6aoYDyy747nlltqLEPNLaYdzlrnVOPI1zC2NKY2rhOIQWtHY
-4LFQLbu5U2hqJl0w89wodyin+52xzmj9Z1qktCT10ClMssTzltYJvXrI9kcGicNA
-Yzr1lwgYn/xFK3MalM/0o9DP8KaMagmi4hj28FCeebd8V/hUn97WCPudCwgATXs3
-1s4IDXCAqBk2GIXz7I8ok9BAyj74jEvtMMKGuTzayVhfXbyDYLfoDFceU0NXwlr7
-4WykxU7/vZzuwADp4Vj3lESmSRviIPUYHN3K4XlHAqUlj6+vmGAqY7Dsf0zZXU8J
-lPDA3OELeOzqcTyZhbu522Q7/TY4XmWoLqTgDoZOXu6cimBAJUIKlgNX11ETtVVV
-3pbl6X+O70jfJPbqd5jopEJ+LLy2vlz4eTWfEdsQa/4R8+1RyDknsLA1uAVYGNFW
-3Hxw1qLnW0BH3mBaWkrZO4iTW1KV7mplMkgPjWqBc++/Xm/VHE8=
-=r80B
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSwEhkACgkQ3SOs138+
+s6Gy9Q/+IsxukfQ8tganMMPYwgRuKrnjxIKtvwCN6YIFLd3u8LbzS7Un+gbc/RtT
+cZN1+GiiXoHm1oHjEGhU9NVxU8OgVzlut5nL9z2ieRIyk53+SxZlU6E2acV7xNNM
+Ti2BhH3JpMTGt+/rjUkYelnIpkTf5q7CLQv+mcL1SlLgn1T24oz/RgflzE9hERha
+TJ8nVJ1uduFeQJIRF/NcQtbsCMJUWrXBm+yQkt0L65JomKSteApyUJNw/3hj1KYY
+d775QHaAZxAva+FRfNWMI8P+gfMe22vavSZhS70KMLn1MtyKUkXqDm+HYTZYlu2j
+il8SJhbPLOaiuHG2nczkZWSoGZCvgTjIs86boqq8/7ovygJRzTeyFxKCDhmQhIHB
+WzC4oTnguqLqSwhAU2eLFjgPQE1H4LFeRVclfMYm3MCIEO8JfgksGWmHyx8RYw/c
+GXmD6K887AwY+QOegsx9zTsgwSmr2ijK4VPfyjUi3JER8/7SWxH57Mz99hpJLx/0
+7aHGQu43BeeH5VR9oo+VC3d80DZQDhqdO//olNCPSD58/MiHDZSgdUzws5dV/q1v
+jGhajhavgEOvb6XO2mldOIUcYjRl4sjdr8qNSEHRHdWTLi5i8LsyvKwVavthMoUv
+kyIRmLmSCmDW2aBAqnSl+9DeEGNRr0CtrTuP/7CATpQ7LVN8frs=
+=PBIz
 -----END PGP SIGNATURE-----
 
---Dfwuwz9HQNADQ4kE--
+--2X/dZqFCgg7nkckt--
