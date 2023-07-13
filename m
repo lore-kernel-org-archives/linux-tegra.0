@@ -2,97 +2,322 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BEDC001DE
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jul 2023 15:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EED5C04A6A
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jul 2023 15:15:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233516AbjGMPPG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Jul 2023 11:15:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49138 "EHLO
+        id S233597AbjGMPPv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Jul 2023 11:15:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233486AbjGMPPF (ORCPT
+        with ESMTP id S229916AbjGMPPt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Jul 2023 11:15:05 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C6E5106;
-        Thu, 13 Jul 2023 08:15:03 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9924ac01f98so123244966b.1;
-        Thu, 13 Jul 2023 08:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689261301; x=1691853301;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ejWIQTJ8MrmjvLsNIW9S8vt55JHQjtyx46a8r32tq1g=;
-        b=kwu1l+2NxOFNYyFrFJ50wUPA5KuDc9reRIUJeO6GfB4hdFhvchS3utDFJnFdb9Dm3N
-         vlGKRDF1rgoIx9ZS9Fsc3DUV148QyeWpu/xdxUU5Xk9cGMMLcimPdlfeO1NHKIxKkBCW
-         e/Z9K5Th34uLR+N0YOi1JenYNinzkGOpDt+AqrA2GzAYYPnDtjCqlkXY7u4ZBAT1qQTk
-         qsMrPxfxVJJEjNUOcZFdftxBaHdHOBmv/MhmtLUJpX3r5++XKrbM/6BmFH5Hbgr19jRZ
-         TwE68jDuDk0SS+I5/HU/pjSVF0AMNMbKDxXoTbReRDa+iZ8FX5c2SNp44O/GhWboC5MF
-         gZHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689261301; x=1691853301;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ejWIQTJ8MrmjvLsNIW9S8vt55JHQjtyx46a8r32tq1g=;
-        b=OU5K7mcTcz1s9r8boLXKNRSaZYQQTl31lAP9YxCdLDF159/cfE9mxuJ4z2KGryopbY
-         9APbCu+LRwU13mxkOhDcx0n011Rn9s+y7XBG3ur5OgJ+C3Q76DoeHHvGAr4hcbMbqhdM
-         jaxJ3sBdxH4pq3wAuGlHEDKnoD6L6OZtyCuNGA2ANlIx7Vv/ElChFB8CJ0h3dD6s9cfC
-         M+pUHNbG/XUl8gAlAgVPn2OQgzlu3WpPP14o4orjBnc+4SdIuKB7uxsj7DywrWBJFwz8
-         KK3xgnt3mf43DdQkpmVB5yx5H6b+svKeUlsUzEpfzneLBPGSKK9GT6mUwokhsCkMiOhq
-         daAQ==
-X-Gm-Message-State: ABy/qLYbP4/vUeArckR/4037s4vT0yX5SBwop7xvCQ7tkgE5LOt2Pdgx
-        rb6Yjt6LHotB3xw3pv44Wgw=
-X-Google-Smtp-Source: APBJJlEL0pC3JqIMQMikXRbZwitjsByBW5SfrCFuOY1Lr/Bl1Du4uLIo8HflRw+hJFgTQ5yz94uvjA==
-X-Received: by 2002:a17:906:2308:b0:98d:e7e3:5ab7 with SMTP id l8-20020a170906230800b0098de7e35ab7mr1781567eja.11.1689261301300;
-        Thu, 13 Jul 2023 08:15:01 -0700 (PDT)
-Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id hb24-20020a170906b89800b00977c7566ccbsm4043692ejb.164.2023.07.13.08.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 08:15:00 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     broonie@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
-        thierry.reding@gmail.com, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com, Sameer Pujar <spujar@nvidia.com>
-Cc:     jonathanh@nvidia.com, mkumard@nvidia.com, sheetal@nvidia.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/5] Few audio fixes on Tegra platforms
-Date:   Thu, 13 Jul 2023 17:14:56 +0200
-Message-ID: <168926127035.2339191.6180837272583412024.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <1688015537-31682-1-git-send-email-spujar@nvidia.com>
-References: <1688015537-31682-1-git-send-email-spujar@nvidia.com>
+        Thu, 13 Jul 2023 11:15:49 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB2EA2;
+        Thu, 13 Jul 2023 08:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689261347; x=1720797347;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FdV+ihBB75TX4OJUKwPysdCuraDJ8JqOsAXrG1NV6Qw=;
+  b=XdGzFJhISwDiDbnWBAYeUC4zJhZMbuZfQYsgCs3V8XtGKbcbkDzg+upH
+   txq/U57jv5mpjolZu18qryVqA916tu/0TXOCShnci127EuC4+BRL70Fp7
+   d0Acc92wVR9HsFcQ5YHhzYoK3W3EooSCdF56SKXOlL6Bjh9vWgZsuYmog
+   YaNwg8iU7PQGml94JycoI+kr74eyStfrO1xJnHdZ1yiVU9M31ZkNOsv4E
+   ezj2G69i6yChQSzMru2O9eSvUmv2FSadzvlYJjNB71dremcK92v8P+SUD
+   gJ9FT02JXZx2yFsR4MNlOtWaUB9/xERDqf/t7dlte8lrIN/8nCMYE0Zhv
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="350089204"
+X-IronPort-AV: E=Sophos;i="6.01,203,1684825200"; 
+   d="scan'208";a="350089204"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 08:15:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="968656199"
+X-IronPort-AV: E=Sophos;i="6.01,203,1684825200"; 
+   d="scan'208";a="968656199"
+Received: from apaulaux-mobl.ger.corp.intel.com (HELO [10.213.206.56]) ([10.213.206.56])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 08:14:58 -0700
+Message-ID: <d6160aeb-6344-b272-775a-cb665dca46ac@linux.intel.com>
+Date:   Thu, 13 Jul 2023 16:14:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Freedreno] [PATCH RFC v1 00/52] drm/crtc: Rename struct
+ drm_crtc::dev to drm_dev
+Content-Language: en-US
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Sean Paul <seanpaul@chromium.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Jani Nikula <jani.nikula@intel.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+        Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
+        dri-devel@lists.freedesktop.org,
+        Vandita Kulkarni <vandita.kulkarni@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Arun R Murthy <arun.r.murthy@intel.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Samuel Holland <samuel@sholland.org>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Wenjing Liu <wenjing.liu@amd.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
+        Danilo Krummrich <dakr@redhat.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        spice-devel@lists.freedesktop.org,
+        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
+        linux-sunxi@lists.linux.dev, Stylon Wang <stylon.wang@amd.com>,
+        Tim Huang <Tim.Huang@amd.com>,
+        Suraj Kandpal <suraj.kandpal@intel.com>,
+        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@igalia.com>,
+        Andi Shyti <andi.shyti@linux.intel.com>,
+        Yifan Zhang <yifan1.zhang@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Hersen Wu <hersenxs.wu@amd.com>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        =?UTF-8?Q?=c5=81ukasz_Bartosik?= <lb@semihalf.com>,
+        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
+        freedreno@lists.freedesktop.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Zack Rusin <zackr@vmware.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
+        Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>,
+        =?UTF-8?Q?Jos=c3=a9_Roberto_de_Souza?= <jose.souza@intel.com>,
+        virtualization@lists.linux-foundation.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Yongqin Liu <yongqin.liu@linaro.org>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Fei Yang <fei.yang@intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        David Lechner <david@lechnology.com>,
+        Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
+        "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+        David Francis <David.Francis@amd.com>,
+        Aaron Liu <aaron.liu@amd.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Vinod Polimera <quic_vpolimer@quicinc.com>,
+        linux-rockchip@lists.infradead.org,
+        Fangzhi Zuo <jerry.zuo@amd.com>,
+        Aurabindo Pillai <aurabindo.pillai@amd.com>,
+        VMware Graphics Reviewers 
+        <linux-graphics-maintainer@vmware.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        =?UTF-8?Q?Jouni_H=c3=b6gander?= <jouni.hogander@intel.com>,
+        Dave Airlie <airlied@redhat.com>, linux-mips@vger.kernel.org,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org,
+        Animesh Manna <animesh.manna@intel.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-amlogic@lists.infradead.org, Evan Quan <evan.quan@amd.com>,
+        Michal Simek <michal.simek@amd.com>,
+        linux-arm-kernel@lists.infradead.org, Sean Paul <sean@poorly.run>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Qingqing Zhuo <qingqing.zhuo@amd.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Swati Sharma <swati2.sharma@intel.com>,
+        John Stultz <jstultz@google.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Drew Davenport <ddavenport@chromium.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Anusha Srivatsa <anusha.srivatsa@intel.com>,
+        Dan Carpenter <error27@gmail.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        linux-hyperv@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Melissa Wen <melissa.srw@gmail.com>,
+        =?UTF-8?Q?Ma=c3=adra_Canal?= <mairacanal@riseup.net>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Likun Gao <Likun.Gao@amd.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Deepak Rawat <drawat.floss@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Joel Stanley <joel@jms.id.au>,
+        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Alan Liu <haoping.liu@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org,
+        Alison Wang <alison.wang@nxp.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Gustavo Sousa <gustavo.sousa@intel.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Deepak R Varma <drv@mailo.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Chia-I Wu <olvaffe@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Khaled Almahallawy <khaled.almahallawy@intel.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Emma Anholt <emma@anholt.net>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Imre Deak <imre.deak@intel.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Roman Li <roman.li@amd.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Clark <robdclark@gmail.com>,
+        Hamza Mahfooz <hamza.mahfooz@amd.com>,
+        David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        xen-devel@lists.xenproject.org, Guchun Chen <guchun.chen@amd.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Uma Shankar <uma.shankar@intel.com>,
+        Mika Kahola <mika.kahola@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
+        Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+        Vinod Govindapillai <vinod.govindapillai@intel.com>,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <marek.olsak@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?UTF-8?Q?Joaqu=c3=adn_Ignacio_Aramend=c3=ada?= 
+        <samsagax@gmail.com>, Melissa Wen <mwen@igalia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-mediatek@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        David Tadokoro <davidbtadokoro@usp.br>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        amd-gfx@lists.freedesktop.org, Jyri Sarha <jyri.sarha@iki.fi>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Wayne Lin <Wayne.Lin@amd.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Nirmoy Das <nirmoy.das@intel.com>, Lang Yu <Lang.Yu@amd.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
+ <87fs5tgpvv.fsf@intel.com>
+ <CAOw6vbLO_UaXDbTCtAQJgthXOUMPqEV+c2MQhP-1DuK44OhGxw@mail.gmail.com>
+ <20230713130337.fd2l67r23g2irifx@pengutronix.de>
+ <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
+ <78be52b8-5ffb-601a-84b2-ead2894973a6@suse.de>
+From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Organization: Intel Corporation UK Plc
+In-Reply-To: <78be52b8-5ffb-601a-84b2-ead2894973a6@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-
-On Thu, 29 Jun 2023 10:42:12 +0530, Sameer Pujar wrote:
-> This series fixes some of the issues which were observed during an attempt to
-> enhance automated test coverage on Jetson AGX Orin. Below is a short summary
-> of the issues and fixes:
+On 13/07/2023 16:09, Thomas Zimmermann wrote:
+> Hi
 > 
->   * Sample rate coversion failures above 48kHz.
->   * AMX and ADX test cases failures due to incorrect byte mask.
->   * Atomic sleep in RT5640 codec which is present on Jetson AGX Orin.
->   * AHUB clock fixes on Tegra234 and previous chips.
->   * Minor cleanups in ASRC and AHUB driver.
+> Am 13.07.23 um 16:41 schrieb Sean Paul:
+>> On Thu, Jul 13, 2023 at 9:04 AM Uwe Kleine-König
+>> <u.kleine-koenig@pengutronix.de> wrote:
+>>>
+>>> hello Sean,
+>>>
+>>> On Wed, Jul 12, 2023 at 02:31:02PM -0400, Sean Paul wrote:
+>>>> I'd really prefer this patch (series or single) is not accepted. This
+>>>> will cause problems for everyone cherry-picking patches to a
+>>>> downstream kernel (LTS or distro tree). I usually wouldn't expect
+>>>> sympathy here, but the questionable benefit does not outweigh the cost
+>>>> IM[biased]O.
+>>>
+>>> I agree that for backports this isn't so nice. However with the split
+>>> approach (that was argumented against here) it's not soo bad. Patch #1
+>>> (and similar changes for the other affected structures) could be
+>>> trivially backported and with that it doesn't matter if you write dev or
+>>> drm (or whatever name is chosen in the end); both work in the same way.
+>>
+>> Patch #1 avoids the need to backport the entire set, however every
+>> change occuring after the rename patches will cause conflicts on
+>> future cherry-picks. Downstream kernels will have to backport the
+>> whole set. Backporting the entire set will create an epoch in
+>> downstream kernels where cherry-picking patches preceding this set
+>> will need to undergo conflict resolution as well. As mentioned in my
+>> previous email, I don't expect sympathy here, it's part of maintaining
+>> a downstream kernel, but there is a real cost to kernel consumers.
+>>
+>>>
+>>> But even with the one-patch-per-rename approach I'd consider the
+>>> renaming a net win, because ease of understanding code has a big value.
+>>> It's value is not so easy measurable as "conflicts when backporting",
+>>> but it also matters in say two years from now, while backporting
+>>> shouldn't be an issue then any more.
+>>
+>> You've rightly identified the conjecture in your statement. I've been
+>> on both sides of the argument, having written/maintained drm code
+>> upstream and cherry-picked changes to a downstream kernel. Perhaps
+>> it's because drm's definition of dev is ingrained in my muscle memory,
+>> or maybe it's because I don't do a lot of upstream development these
+>> days, but I just have a hard time seeing the benefit here.
 > 
-> [...]
+> I can only second what Sean writes. I've done quite a bit of backporting 
+> of DRM code. It's hard already. And this kind of change is going to to 
+> affect almost every backported DRM patch in the coming years. Not just 
+> for distribution kernels, but also for upstream's stable series. It's 
+> really only possible to do this change over many releases while keeping 
+> compatible with the old name. So the more I think about it, the less I 
+> like this change.
 
-Applied, thanks!
+I've done my share of backporting, and still am doing it, so I can say I 
+dislike it as much as anyone, however.. Is this an argument which the 
+kernel as a wider entity typically accepts? If not could it be a 
+slippery slope to start a precedent?
 
-[4/5] arm64: tegra: Update AHUB clock parent and rate on Tegra234
-      commit: e483fe34adab3197558b7284044c1b26f5ede20e
-[5/5] arm64: tegra: Update AHUB clock parent and rate
-      commit: dc6d5d85ed3a3fe566314f388bce4c71a26b1677
+It is a honest question - I am not familiar if there were or were not 
+any similar discussions in the past.
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+My gut feeling is that *if* there is a consensus that something 
+_improves_ the code base significantly, backporting pains should 
+probably not be weighted very heavily as a contra argument.
+
+Regards,
+
+Tvrtko
