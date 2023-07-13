@@ -2,302 +2,169 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D6FC001B0
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jul 2023 15:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2A6C001B0
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jul 2023 21:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234780AbjGMPkB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Jul 2023 11:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42706 "EHLO
+        id S230483AbjGMVj6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Jul 2023 17:39:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231772AbjGMPj7 (ORCPT
+        with ESMTP id S230212AbjGMVj5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Jul 2023 11:39:59 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B31982686
-        for <linux-tegra@vger.kernel.org>; Thu, 13 Jul 2023 08:39:57 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qJyPr-00033a-NE; Thu, 13 Jul 2023 17:39:39 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qJyPp-00E9Ic-HG; Thu, 13 Jul 2023 17:39:37 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qJyPo-004aZX-PQ; Thu, 13 Jul 2023 17:39:36 +0200
-Date:   Thu, 13 Jul 2023 17:39:36 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Sean Paul <seanpaul@chromium.org>
-Cc:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
-        dri-devel@lists.freedesktop.org,
-        Vandita Kulkarni <vandita.kulkarni@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Arun R Murthy <arun.r.murthy@intel.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Wenjing Liu <wenjing.liu@amd.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
-        Danilo Krummrich <dakr@redhat.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        spice-devel@lists.freedesktop.org,
-        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-sunxi@lists.linux.dev,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stylon Wang <stylon.wang@amd.com>,
-        Tim Huang <Tim.Huang@amd.com>,
-        Suraj Kandpal <suraj.kandpal@intel.com>,
-        =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-        Mika Kahola <mika.kahola@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Hersen Wu <hersenxs.wu@amd.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        =?utf-8?Q?=C5=81ukasz?= Bartosik <lb@semihalf.com>,
-        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Zack Rusin <zackr@vmware.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
-        Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>,
-        =?utf-8?B?Sm9zw6k=?= Roberto de Souza <jose.souza@intel.com>,
-        virtualization@lists.linux-foundation.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        Fei Yang <fei.yang@intel.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        David Francis <David.Francis@amd.com>,
-        Vinod Govindapillai <vinod.govindapillai@intel.com>,
-        Aaron Liu <aaron.liu@amd.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Vinod Polimera <quic_vpolimer@quicinc.com>,
-        linux-rockchip@lists.infradead.org,
-        Fangzhi Zuo <jerry.zuo@amd.com>,
-        Aurabindo Pillai <aurabindo.pillai@amd.com>,
-        VMware Graphics Reviewers 
-        <linux-graphics-maintainer@vmware.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Jouni =?utf-8?B?SMO2Z2FuZGVy?= <jouni.hogander@intel.com>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Animesh Manna <animesh.manna@intel.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-amlogic@lists.infradead.org, Evan Quan <evan.quan@amd.com>,
-        Michal Simek <michal.simek@amd.com>,
-        linux-arm-kernel@lists.infradead.org, Sean Paul <sean@poorly.run>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Qingqing Zhuo <qingqing.zhuo@amd.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Swati Sharma <swati2.sharma@intel.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Anusha Srivatsa <anusha.srivatsa@intel.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        linux-hyperv@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Melissa Wen <melissa.srw@gmail.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Likun Gao <Likun.Gao@amd.com>,
-        "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-        Emma Anholt <emma@anholt.net>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Deepak Rawat <drawat.floss@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Chia-I Wu <olvaffe@gmail.com>, Alan Liu <haoping.liu@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org,
-        Alison Wang <alison.wang@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Gustavo Sousa <gustavo.sousa@intel.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Yifan Zhang <yifan1.zhang@amd.com>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Deepak R Varma <drv@mailo.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        John Stultz <jstultz@google.com>, Roman Li <roman.li@amd.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Khaled Almahallawy <khaled.almahallawy@intel.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Imre Deak <imre.deak@intel.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Hamza Mahfooz <hamza.mahfooz@amd.com>,
-        David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Lang Yu <Lang.Yu@amd.com>, xen-devel@lists.xenproject.org,
-        Guchun Chen <guchun.chen@amd.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Andi Shyti <andi.shyti@linux.intel.com>,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
-        Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-        David Lechner <david@lechnology.com>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        =?utf-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= 
-        <samsagax@gmail.com>, Melissa Wen <mwen@igalia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        linux-tegra@vger.kernel.org,
-        David Tadokoro <davidbtadokoro@usp.br>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        amd-gfx@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        linux-mips@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wayne Lin <Wayne.Lin@amd.com>,
-        Drew Davenport <ddavenport@chromium.org>,
-        Nirmoy Das <nirmoy.das@intel.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [Freedreno] [PATCH RFC v1 00/52] drm/crtc: Rename struct
- drm_crtc::dev to drm_dev
-Message-ID: <20230713153936.k2m6aj34vptj5vf7@pengutronix.de>
-References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
- <87fs5tgpvv.fsf@intel.com>
- <CAOw6vbLO_UaXDbTCtAQJgthXOUMPqEV+c2MQhP-1DuK44OhGxw@mail.gmail.com>
- <20230713130337.fd2l67r23g2irifx@pengutronix.de>
- <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
+        Thu, 13 Jul 2023 17:39:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE691FC0;
+        Thu, 13 Jul 2023 14:39:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6795361B6C;
+        Thu, 13 Jul 2023 21:39:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC2EC433C7;
+        Thu, 13 Jul 2023 21:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689284395;
+        bh=fJgb0wn8cM5E3LZjSiMmJS/ati1UElaHXC724dGS2pA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=HIWRKduB/7c1UiEq4oBIcRWc4NvMCDFYMLfNvcdRy+kMqwMVH9YcNAkuQTCHzd3h9
+         g5CmzktmSrO1iQ9qYYHC5NceVQQTrdp2T5JcjnrcyzEbQRJbRGhUtQaJFhBr9INqXD
+         TF43nE0Qps0DEH+ulexMu7W07KLV85vM+GGG+SMAu/nAWUUt2WXpsG+PJTXL8PrNLa
+         DZnQ/4a34qYMgAfnjyntrPoXJMuku9E1kFCeB7bPlaqar9VOwlw5ZWNYDPTsVv9VY1
+         SVuKGmb4o/9YTpzs5cw9nBJ0GzrmMfKosdiMBIPvqYH8ctFkwhL9Yo7VDd7EgXXC1J
+         DlOdT4tB3Inrg==
+Date:   Thu, 13 Jul 2023 16:39:53 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte
+ payload"
+Message-ID: <20230713213953.GA331829@bhelgaas>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mnk65dkcvejfh2ja"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20230619102604.3735001-1-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Jun 19, 2023 at 03:56:04PM +0530, Vidya Sagar wrote:
+> This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
+> support for 256 Byte payload").
+> 
+> Consider a PCIe hierarchy with a PCIe switch and a device connected
+> downstream of the switch that has support for MPS which is the minimum in
+> the hierarchy, and root port programmed with an MPS in its DevCtl register
+> that is greater than the minimum. In this scenario, the default bus
+> configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
+> MPS settings in the hierarchy correctly resulting in the device with
+> support for minimum MPS in the hierarchy receiving the TLPs of size more
+> than that. Although this can be addressed by appending "pci=pcie_bus_safe"
+> to the kernel command line, it doesn't seem to be a good idea to always
+> have this commandline argument even for the basic functionality to work.
 
---mnk65dkcvejfh2ja
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think this has some irrelevant detail (IIUC the problem should
+happen even without a switch) and could be more specific (I think the
+problem case is RP MPS=256, EP only supports MPS=128).
 
-On Thu, Jul 13, 2023 at 10:41:45AM -0400, Sean Paul wrote:
-> On Thu, Jul 13, 2023 at 9:04=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-> > But even with the one-patch-per-rename approach I'd consider the
-> > renaming a net win, because ease of understanding code has a big value.
-> > It's value is not so easy measurable as "conflicts when backporting",
-> > but it also matters in say two years from now, while backporting
-> > shouldn't be an issue then any more.
->=20
-> You've rightly identified the conjecture in your statement. I've been
-> on both sides of the argument, having written/maintained drm code
-> upstream and cherry-picked changes to a downstream kernel. Perhaps
-> it's because drm's definition of dev is ingrained in my muscle memory,
-> or maybe it's because I don't do a lot of upstream development these
-> days, but I just have a hard time seeing the benefit here.
+> Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
+> Byte payload") avoids this requirement and ensures that the basic
+> functionality of the devices irrespective of the hierarchy and the MPS of
+> the devices in the hierarchy.
 
-I see that my change doesn't immediately benefit those who are already
-at home in drivers/gpu/drm. So it's quite understandable that someone in
-a senior role (long time contributor or maintainer) doesn't see a big
-upside.
+"Ensure" is a transitive verb, so "... ensures that the basic
+functionality ..." is missing whatever the object should be.
 
-In contrast I think my change (with its indisputable cost) lowers the
-bar for new contributors to drm. IMHO that's something a maintainer has
-to have on their radar, too, and that's easily undervalued in my
-experience.
+Maybe something like the following?
 
-Of course in the end it's about weighting the ups and downs.=20
+  After 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
+  payload"), we set MPS=256 for tegra194 Root Ports.
 
-Thanks
-Uwe
+  By default (CONFIG_PCIE_BUS_DEFAULT set and no "pci=pcie_bus_*"
+  parameter), Linux configures the MPS of every device to match the
+  upstream bridge, which is impossible if the Root Port has MPS=256
+  and a device only supports MPS=128.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
-   |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+  This scenario results in uncorrectable Malformed TLP errors if the
+  Root Port sends TLPs with payloads larger than 128 bytes.  These
+  errors can be avoided by using the "pci=pcie_bus_safe" parameter,
+  but it doesn't seem to be a good idea to always have this parameter
+  even for basic functionality to work.
 
---mnk65dkcvejfh2ja
-Content-Type: application/pgp-signature; name="signature.asc"
+  Revert 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
+  payload") so the Root Ports default to MPS=128, which all devices
+  support.
 
------BEGIN PGP SIGNATURE-----
+  If peer-to-peer DMA is not required, one can use "pci=pcie_bus_perf" 
+  to get the benefit of larger MPS settings.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSwGrcACgkQj4D7WH0S
-/k5Z8gf+L2DppHWGxGaiKRiYvHQTrpom5T4lLxWIcMzNp/SZXGce+FkxNCXXp4ev
-Fm4EE5lHyGkTfeMAeH8KSvtkAT3Lf/Bifz3Ij2fmsLRLCJdOxIA9Zra8u3cWmLdd
-JX+wb8zFJARzb/u+kG6ZD4IgJ+39LqIZ9JLUqaV4jyZZps2Vf8cvPDNYp96vAwdB
-GUECE+pPcMQvSkBdwy5pCGdEatjq9O12xWwv6uvNcJqbIbToJVVsUHLBjTGEJfGI
-PgyrtoM72NQY/p5d9veqBKCQTkKUBW5Ly+HbKzey9Dy/IPWeSU1Q/1WH/hUphbbs
-k0+Jh4Ot72m5BF8rwKgRu0NikQcP4A==
-=OtIn
------END PGP SIGNATURE-----
-
---mnk65dkcvejfh2ja--
+> To reap the benefits of having support for higher MPS, optionally, one can
+> always append the kernel command line with "pci=pcie_bus_perf".
+> 
+> Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+> V3:
+> * Fixed a build issue
+> 
+> V2:
+> * Addressed review comments from Bjorn
+> 
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 4fdadc7b045f..a772faff14b5 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -900,11 +900,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+>  		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>  							      PCI_CAP_ID_EXP);
+>  
+> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+> -
+>  	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
+>  	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
+>  	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
+> @@ -1756,7 +1751,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>  	struct device *dev = pcie->dev;
+>  	u32 val;
+>  	int ret;
+> -	u16 val_16;
+>  
+>  	if (pcie->ep_state == EP_STATE_ENABLED)
+>  		return;
+> @@ -1887,20 +1881,16 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>  	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>  						      PCI_CAP_ID_EXP);
+>  
+> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+> -
+>  	/* Clear Slot Clock Configuration bit if SRNS configuration */
+>  	if (pcie->enable_srns) {
+> +		u16 val_16;
+> +
+>  		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+>  					   PCI_EXP_LNKSTA);
+>  		val_16 &= ~PCI_EXP_LNKSTA_SLC;
+>  		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
+>  				   val_16);
+>  	}
+> -
+>  	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+>  
+>  	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
+> -- 
+> 2.25.1
+> 
