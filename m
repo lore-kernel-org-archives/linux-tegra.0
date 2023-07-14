@@ -2,169 +2,100 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2A6C001B0
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jul 2023 21:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F52EB64DD
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 02:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230483AbjGMVj6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Jul 2023 17:39:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
+        id S233024AbjGNCbh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Jul 2023 22:31:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbjGMVj5 (ORCPT
+        with ESMTP id S231547AbjGNCbg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Jul 2023 17:39:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE691FC0;
-        Thu, 13 Jul 2023 14:39:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6795361B6C;
-        Thu, 13 Jul 2023 21:39:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC2EC433C7;
-        Thu, 13 Jul 2023 21:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689284395;
-        bh=fJgb0wn8cM5E3LZjSiMmJS/ati1UElaHXC724dGS2pA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=HIWRKduB/7c1UiEq4oBIcRWc4NvMCDFYMLfNvcdRy+kMqwMVH9YcNAkuQTCHzd3h9
-         g5CmzktmSrO1iQ9qYYHC5NceVQQTrdp2T5JcjnrcyzEbQRJbRGhUtQaJFhBr9INqXD
-         TF43nE0Qps0DEH+ulexMu7W07KLV85vM+GGG+SMAu/nAWUUt2WXpsG+PJTXL8PrNLa
-         DZnQ/4a34qYMgAfnjyntrPoXJMuku9E1kFCeB7bPlaqar9VOwlw5ZWNYDPTsVv9VY1
-         SVuKGmb4o/9YTpzs5cw9nBJ0GzrmMfKosdiMBIPvqYH8ctFkwhL9Yo7VDd7EgXXC1J
-         DlOdT4tB3Inrg==
-Date:   Thu, 13 Jul 2023 16:39:53 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte
- payload"
-Message-ID: <20230713213953.GA331829@bhelgaas>
+        Thu, 13 Jul 2023 22:31:36 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C502D51;
+        Thu, 13 Jul 2023 19:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689301895; x=1720837895;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LTlIrAiXfWEDV4oSn2gI8/laRP8AGaQoE0T52JoYWNI=;
+  b=Y8KphvsHChNDiOuqtrrtcl8ILMkdbymkX+4WWC6ypFtGWmT3NrZ3d9Ym
+   y2EPmLhFBKINjgzv0Lq0kWrtfKJ+2YxGGWc/kE/jusbsuL2KCaDZhwNd5
+   mteQ3jAoJ4gkZEt46AacKND64ZAWli+rbonzivgd+SG8wCdk68X+GlsrS
+   UQriPhg8Lu0fvg/7B6nGCHMghfgv//xsqkqJQOd/FpbJRYqFJIBqw8UG1
+   KILHq1B4wrjy9DSv1xLiGYbaut1cq/p5fsYZZDmMMkpByjMgwRT0EKBW7
+   KZMqSDjYOw+F9GcYeh/Tn0C84W6Ybyj0cLgAmZji/HDa3iNkstOytbYdX
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="451732564"
+X-IronPort-AV: E=Sophos;i="6.01,204,1684825200"; 
+   d="scan'208";a="451732564"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 19:31:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="812262745"
+X-IronPort-AV: E=Sophos;i="6.01,204,1684825200"; 
+   d="scan'208";a="812262745"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.252.191.49]) ([10.252.191.49])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 19:31:29 -0700
+Message-ID: <61f31b3e-b618-88db-a07c-f6761c1c7d06@linux.intel.com>
+Date:   Fri, 14 Jul 2023 10:31:26 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230619102604.3735001-1-vidyas@nvidia.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Cc:     baolu.lu@linux.intel.com, opensource.kernel@vivo.com,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v4] iommu: remove redundant parameter check in
+ tegra_smmu_debugfs_init()
+Content-Language: en-US
+To:     Minjie Du <duminjie@vivo.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>,
+        "open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20230713072825.10348-1-duminjie@vivo.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20230713072825.10348-1-duminjie@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jun 19, 2023 at 03:56:04PM +0530, Vidya Sagar wrote:
-> This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
-> support for 256 Byte payload").
+On 2023/7/13 15:28, Minjie Du wrote:
+> debugfs_create_file() will return early if smmu->debugfs is an error
+> pointer, so an extra error check is not needed.
 > 
-> Consider a PCIe hierarchy with a PCIe switch and a device connected
-> downstream of the switch that has support for MPS which is the minimum in
-> the hierarchy, and root port programmed with an MPS in its DevCtl register
-> that is greater than the minimum. In this scenario, the default bus
-> configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
-> MPS settings in the hierarchy correctly resulting in the device with
-> support for minimum MPS in the hierarchy receiving the TLPs of size more
-> than that. Although this can be addressed by appending "pci=pcie_bus_safe"
-> to the kernel command line, it doesn't seem to be a good idea to always
-> have this commandline argument even for the basic functionality to work.
-
-I think this has some irrelevant detail (IIUC the problem should
-happen even without a switch) and could be more specific (I think the
-problem case is RP MPS=256, EP only supports MPS=128).
-
-> Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
-> Byte payload") avoids this requirement and ensures that the basic
-> functionality of the devices irrespective of the hierarchy and the MPS of
-> the devices in the hierarchy.
-
-"Ensure" is a transitive verb, so "... ensures that the basic
-functionality ..." is missing whatever the object should be.
-
-Maybe something like the following?
-
-  After 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
-  payload"), we set MPS=256 for tegra194 Root Ports.
-
-  By default (CONFIG_PCIE_BUS_DEFAULT set and no "pci=pcie_bus_*"
-  parameter), Linux configures the MPS of every device to match the
-  upstream bridge, which is impossible if the Root Port has MPS=256
-  and a device only supports MPS=128.
-
-  This scenario results in uncorrectable Malformed TLP errors if the
-  Root Port sends TLPs with payloads larger than 128 bytes.  These
-  errors can be avoided by using the "pci=pcie_bus_safe" parameter,
-  but it doesn't seem to be a good idea to always have this parameter
-  even for basic functionality to work.
-
-  Revert 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
-  payload") so the Root Ports default to MPS=128, which all devices
-  support.
-
-  If peer-to-peer DMA is not required, one can use "pci=pcie_bus_perf" 
-  to get the benefit of larger MPS settings.
-
-> To reap the benefits of having support for higher MPS, optionally, one can
-> always append the kernel command line with "pci=pcie_bus_perf".
-> 
-> Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Signed-off-by: Minjie Du <duminjie@vivo.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 > ---
-> V3:
-> * Fixed a build issue
+>   drivers/iommu/tegra-smmu.c | 2 --
+>   1 file changed, 2 deletions(-)
+
+Next time when you send a new version of a patch, please don't forget to
+add the change log after the tear line. This way, people can know how
+the patch evolved into this way.
+
+Best regards,
+baolu
+
 > 
-> V2:
-> * Addressed review comments from Bjorn
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 4fdadc7b045f..a772faff14b5 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -900,11 +900,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
->  		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
->  							      PCI_CAP_ID_EXP);
->  
-> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
-> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
-> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
-> -
->  	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
->  	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
->  	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
-> @@ -1756,7 +1751,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  	struct device *dev = pcie->dev;
->  	u32 val;
->  	int ret;
-> -	u16 val_16;
->  
->  	if (pcie->ep_state == EP_STATE_ENABLED)
->  		return;
-> @@ -1887,20 +1881,16 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
->  						      PCI_CAP_ID_EXP);
->  
-> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
-> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
-> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
-> -
->  	/* Clear Slot Clock Configuration bit if SRNS configuration */
->  	if (pcie->enable_srns) {
-> +		u16 val_16;
-> +
->  		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
->  					   PCI_EXP_LNKSTA);
->  		val_16 &= ~PCI_EXP_LNKSTA_SLC;
->  		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
->  				   val_16);
->  	}
-> -
->  	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
->  
->  	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
-> -- 
-> 2.25.1
-> 
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index 1cbf063cc..2137040b7 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -1056,8 +1056,6 @@ DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
+>   static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
+>   {
+>   	smmu->debugfs = debugfs_create_dir("smmu", NULL);
+> -	if (!smmu->debugfs)
+> -		return;
+>   
+>   	debugfs_create_file("swgroups", S_IRUGO, smmu->debugfs, smmu,
+>   			    &tegra_smmu_swgroups_fops);
+
