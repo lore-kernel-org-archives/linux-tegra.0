@@ -2,73 +2,74 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039FDC001DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 19:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BBFC04A6A
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 22:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236583AbjGNTxP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 15:53:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48072 "EHLO
+        id S230101AbjGNWbp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 18:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229915AbjGNTxO (ORCPT
+        with ESMTP id S229437AbjGNWbo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 15:53:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E2D2D57;
-        Fri, 14 Jul 2023 12:53:13 -0700 (PDT)
+        Fri, 14 Jul 2023 18:31:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B6042D48;
+        Fri, 14 Jul 2023 15:31:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 89FDB61DE3;
-        Fri, 14 Jul 2023 19:53:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1AAC43397;
-        Fri, 14 Jul 2023 19:53:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F2B6461E0C;
+        Fri, 14 Jul 2023 22:31:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE9BC433C7;
+        Fri, 14 Jul 2023 22:31:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689364392;
-        bh=DnEjVGiuXfP3swFolvK4a+TN59hjw2gEVcLZQUXBvDY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FXKiP07/uyYnn3J52Pv/xGbI+H0dryvs1yPK9kNiAMLZ37UglPGpr5hwF8t9AgGFR
-         MbIgF/qFjKJ0zZE4JovQWRruybyKuF8xDZ1GJGD2TnPr5JS687MRuqJUXrlRbe9upM
-         awQsA1ywU6bfbkYq1156RNRo6klGk5DtuE3hAs5Dr7gqosk7Nnh0v9e1sSdKlaFjI8
-         +26/qgf8uY+Bn785pgvNo3KxQ6je6+toUywNN7cX9E+dIlZMUc5naKyO1BPxRYk8VC
-         jGYUIPR3evafAcz/Wcra6MNLR45SJWOMsDsqQ2XDSbumIY7WxofkDLNV3q2ai3RKXC
-         iR2h6K4R4H+Ww==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-4fb7dc16ff0so3872508e87.2;
-        Fri, 14 Jul 2023 12:53:11 -0700 (PDT)
-X-Gm-Message-State: ABy/qLbJMWbxAhbaUBKgPpELt8dPXaa8xqUmIDrdAlujMEGhiY9ODESO
-        4nMnqD00Pn9OOP6yh/NibeJPQ/EtEFQCKT+40Q==
-X-Google-Smtp-Source: APBJJlFIVq6SSfDGp/7zlzMmel1HUM1zDWT3EoUpkE1rCFI61SUoU0+rrNxJc3PIb6p4Jh4x1E4RyP9tWO4eKUbbP0E=
-X-Received: by 2002:a2e:9a8a:0:b0:2b4:765b:f6ee with SMTP id
- p10-20020a2e9a8a000000b002b4765bf6eemr4915096lji.41.1689364389871; Fri, 14
- Jul 2023 12:53:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230714175008.4064592-1-robh@kernel.org> <CAJZ5v0i-OByOSjpxrj5d9S9QHRySK-MEUo+bK_J_4ihsCBmnSg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0i-OByOSjpxrj5d9S9QHRySK-MEUo+bK_J_4ihsCBmnSg@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 14 Jul 2023 13:52:57 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com>
-Message-ID: <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Guillaume La Roque <glaroque@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+        s=k20201202; t=1689373902;
+        bh=LNIw34qBX2V8Elz1G1PACLsCQHf7o2a3bkEmgF+nghQ=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=a5xPJKj8IlTbIOuPnQXt8GteRC9OLgnCno7Ijmn5WRzeYBKefbplVia9GSvy5KUgh
+         gXP+k9+GA/G84FRziLIATN2Kv0TcpGUHYAfErQw1bi117SEVskaWLBFYte4V4iAxYd
+         h7wdQcZ0H9102nfO4m9UJvGktHE55k4EfbKXYiE3VN/IG4jnDykYOWUydV0XwCumJA
+         8wa9sv14ToVMeaQBpg1vEKyfsM0d+oHHj5txFXg82qc+QYvb8zsacMTaJG9wyGfGAs
+         75lkK72oMdSBWtQS4mOpj3EeDlTkBJN0qUn2B2iSa9M0PR8l0DKL/zpS8B8qcS1xcX
+         uNHp8zR0M9YLg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Radu Pirea <radu_nicolae.pirea@upb.ro>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         Florian Fainelli <florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
+        Vladimir Oltean <olteanv@gmail.com>, Han Xu <han.xu@nxp.com>,
+        Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Haibo Chen <haibo.chen@nxp.com>,
+        Yogesh Gaur <yogeshgaur.83@gmail.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Orson Zhai <orsonzhai@gmail.com>,
@@ -76,55 +77,74 @@ Cc:     Guillaume La Roque <glaroque@baylibre.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Michal Simek <michal.simek@amd.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+In-Reply-To: <20230714174955.4064174-1-robh@kernel.org>
+References: <20230714174955.4064174-1-robh@kernel.org>
+Subject: Re: [PATCH] spi: Explicitly include correct DT includes
+Message-Id: <168937389002.266788.5461737923596867983.b4-ty@kernel.org>
+Date:   Fri, 14 Jul 2023 23:31:30 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-099c9
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 12:54=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
->
-> On Fri, Jul 14, 2023 at 7:51=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
-te:
-> >
-> > The DT of_device.h and of_platform.h date back to the separate
-> > of_platform_bus_type before it as merged into the regular platform bus.
-> > As part of that merge prepping Arm DT support 13 years ago, they
-> > "temporarily" include each other. They also include platform_device.h
-> > and of.h. As a result, there's a pretty much random mix of those includ=
-e
-> > files used throughout the tree. In order to detangle these headers and
-> > replace the implicit includes with struct declarations, users need to
-> > explicitly include the correct includes.
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
->
-> Acked-by: Rafael J. Wysocki <rafael@kernel.org>
->
-> or please let me know if you want me to pick this up.
+On Fri, 14 Jul 2023 11:49:52 -0600, Rob Herring wrote:
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+> 
+> [...]
 
-Single patch in your subsystem with no dependencies. Please pick it up.
+Applied to
 
-Rob
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: Explicitly include correct DT includes
+      commit: 749396cb29a7d82cb5e324bf61be3fc948d97141
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
