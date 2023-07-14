@@ -2,162 +2,101 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4587EB64DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 15:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8ADEB64DC
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 15:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235407AbjGNPA7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 11:00:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35586 "EHLO
+        id S236246AbjGNPBV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 11:01:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbjGNPA6 (ORCPT
+        with ESMTP id S235671AbjGNPBV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 11:00:58 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14111BD4
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 08:00:56 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-98df3dea907so260286466b.3
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 08:00:56 -0700 (PDT)
+        Fri, 14 Jul 2023 11:01:21 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6828D1BD4;
+        Fri, 14 Jul 2023 08:01:19 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so6752197a12.1;
+        Fri, 14 Jul 2023 08:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689346855; x=1691938855;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9uOrVwHr7OQS9p4ayO3nVYA0C95WLl/kvfNm4fKN/rE=;
-        b=sm7Ntlzod2OijN+YIzWc5pOk+BaEaFB4UhQjT9gmdbpOLcL9O4c8xTE0bTyHe0PMX4
-         g+g+psGO5Bats2152YWrQs0vu17OCi3/0+5X93idK7oJqd4KmMoGbN1YUF+AsIp7kibs
-         Z3M96RNC4K+SAlAn14TPqzwWMP7zd4S9lSvn8Y9mYaiB1HGCejEKnq4DEe8dYAJ0lh6n
-         RZmkjPv9jkJ0iBPobaALfv4OiXDTrbsThjH6iChseEHwYF6cdXcV72R1kvzkzneQUuHB
-         9zjC3+TpD3cUTkTubQXiNHmTxdK+VZ+oKpDp+x/JLgvpw0v7zjmiLTNrI2iqvSUpeLNx
-         bZ+Q==
+        d=gmail.com; s=20221208; t=1689346878; x=1691938878;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OBiuXyNTy9aeHUsfvyqBHVosTB7b4gg8TsCFhpUvqn4=;
+        b=XfAD/DafZbSVSiMjR9lYFamyWdiGMGRrT8yuGyCxh7lAj0OF48e8VBQERSx7/Kz3Jy
+         FZmWDto+LoelVYG/6sMMkJ0UOX8lIOn9WxnX41onAVpo/97SacKCvUCB4zgS53zLLc5j
+         H5WV9ltzloa725w/qrVuRJY3HsCZtgCXPnxOm966vKFPM3STSg99jTndNuhP9UZQ36Tq
+         L6EgkReMesSodfuWKbvXnZn5xkONXP4pZpHJNHPIMfmOmSE6jzVQCG9r+mnl7W6tp2no
+         BmGKKed2QWBVN9kvOzYYCOVxZrr4Z5Hxo/CIcya9Vz4h57uWTnvO/KDUWw/tTBK/0Krs
+         xEWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689346855; x=1691938855;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9uOrVwHr7OQS9p4ayO3nVYA0C95WLl/kvfNm4fKN/rE=;
-        b=C6lP5TwAQijgdfAA/XZhjsIFxpR+bWI34EITQvqqXsq0Ircg1uk11yhn+/bklIygL+
-         6hLjEV7d9cGCUQNfC+ZU0r9pxwWmw9D3hv4euUHvSjbo6gTh6H+jwqY10XIl8bHYri4N
-         CWso8gA94OBcPXJ1CgT3smPnGxQS0GXL//ed23phgVcxpH1RLMGN5BnLssQ7sXAgRAlC
-         q4666w2y+rLPQYfnbknZc1WUXGnQz1X/ugiloXACWI57iu5275FgaXGF0pnBLJdzSsGa
-         jCxFbvxqq+NIz1JyCW2Nlt4sYKZNp6waSwRmer/h+q9fO2842jZS+VFM+Hx0jsSC2lFx
-         yO5g==
-X-Gm-Message-State: ABy/qLZWSidnEvr/iq3g1vnYC9HvWA4TimHdwU00ausHPWB0CEPpYgZR
-        Z6ckFjLOv9WyW/E3Yxnt9IwnFUlXQUr0I2k4ehQ=
-X-Google-Smtp-Source: APBJJlG5snDPttJ67VsvKkXJ12sl/Ix4krta+TI3a121onLx590ZhDLFmv0Pl8ROqR+TGLzH81afCq9SSBG+NYxn/s0=
-X-Received: by 2002:a17:906:3914:b0:993:f081:2c5b with SMTP id
- f20-20020a170906391400b00993f0812c5bmr3812370eje.11.1689346855022; Fri, 14
- Jul 2023 08:00:55 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689346878; x=1691938878;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OBiuXyNTy9aeHUsfvyqBHVosTB7b4gg8TsCFhpUvqn4=;
+        b=gWApjvDbEHugxD3h8SDknbcV3FNI1kg5JP1vb1+paUzWebMmb7LqrKgD4Dc/79JFIv
+         1vbadwXHMgkrb/ulye1Zvov9ADvExL8uw4cmpzZFN4yk31SSNWRggZclXlzwm2bMKcKT
+         reW8FoNDqQ5bGtvKnfD9hh+eDMbiFLdEmcsWVcasctEjEaVjKwN/d5nxoINILWEVmZjW
+         6FNYf0VUuofxn2taMX8EcWUtQZYqmRW2eQCqwidggShoktg1Q3syhHgq5+uhuaEg34+v
+         saepN4YjFgplHo0gmfNrQSX86kY+vKBKqbsXJ/qGzf4KCswiH/B3EpJhjPUf6qQLtwxD
+         zN0Q==
+X-Gm-Message-State: ABy/qLZJ4Zp7sw4VHBrPwZhquQy6Y7q4+aZgOd256hZC++aQvfClIgNL
+        C8q0NRWtDjOkcDxZXamHM1w=
+X-Google-Smtp-Source: APBJJlGZSJEhe35uZt2LG+EAKzrk1g4oIdIDQc/dv4+9CYi4WJ8TsT9Xpt0xtHjhWZZ6jlvq+Fww6w==
+X-Received: by 2002:a17:906:20dd:b0:993:d920:87d2 with SMTP id c29-20020a17090620dd00b00993d92087d2mr3581918ejc.30.1689346877330;
+        Fri, 14 Jul 2023 08:01:17 -0700 (PDT)
+Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id i7-20020a17090671c700b0098cf565d98asm5495728ejk.22.2023.07.14.08.01.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jul 2023 08:01:16 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] memory: tegra: Prefer octal over symbolic permissions
+Date:   Fri, 14 Jul 2023 17:01:16 +0200
+Message-ID: <20230714150116.2823766-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-References: <ZLFd_L_Uw1PmpSep@orome>
-In-Reply-To: <ZLFd_L_Uw1PmpSep@orome>
-From:   Svyatoslav Ryhel <clamor95@gmail.com>
-Date:   Fri, 14 Jul 2023 18:00:43 +0300
-Message-ID: <CAPVz0n3fj77JEzJbYve9-5pjjVt+yJHNcFGqJr0HFSJnaOtbzw@mail.gmail.com>
-Subject: Re: LVDS panel compatible strings
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Ion Agorria <ion@agorria.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        =?UTF-8?Q?Pedro_=C3=82ngelo?= <pangelo@void.io>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Zack Pearsall <zpearsall@yahoo.com>,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-=D0=BF=D1=82, 14 =D0=BB=D0=B8=D0=BF. 2023=E2=80=AF=D1=80. =D0=BE 17:38 Thie=
-rry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hi everyone,
->
-> I've been working on converting all Tegra-related device tree bindings
-> to json-schema so that eventually we can fully validate device tree
-> files. Getting all the bindings reviewed and merged has been slow, but
-> I have a local tree where pretty much all validation errors and warnings
-> have been fixed. The remaining warnings that I'm not sure how to resolve
-> are these:
->
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: displ=
-ay-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a7=
-11-panel']
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: displ=
-ay-panel: compatible: ['panel-lvds'] is too short
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: displ=
-ay-panel: Unevaluated properties are not allowed ('compatible' was unexpect=
-ed)
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: displ=
-ay-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a7=
-11-panel']
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: displ=
-ay-panel: compatible: ['panel-lvds'] is too short
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: displ=
-ay-panel: Unevaluated properties are not allowed ('compatible' was unexpect=
-ed)
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: displ=
-ay-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a7=
-11-panel']
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: displ=
-ay-panel: compatible: ['panel-lvds'] is too short
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: displ=
-ay-panel: Unevaluated properties are not allowed ('compatible' was unexpect=
-ed)
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-panel:=
- compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a711-panel'=
-]
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-panel:=
- compatible: ['panel-lvds'] is too short
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
->     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-panel:=
- Unevaluated properties are not allowed ('compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/display/panel/pane=
-l-lvds.yaml#
+From: Thierry Reding <treding@nvidia.com>
 
-Hello Thierry! Pegatron Chagall uses a Hannstar similar to one used in
-ASUS TF201 but unfortunately it is not compatible with existing simple
-panel setup (blurry image if used). My assumption is that chagall as
-different revision of this panel like HSD101PWW3-B00 or
-HSD101PWW1-A00 which is more likely or panel is highly modified which
-is unlikely. I propose to use "hannstar,hsd101pww1" which is more wide
-spread.
+checkpatch recommends using octal permissions instead of symbolic
+permissions. Switch the debugfs files to use the former to silence
+these warnings.
 
-Best regards,
-Svyatoslav R.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/memory/tegra/tegra186-emc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
->
-> The reason for these is that the device tree files use:
->
->         compatible =3D "panel-lvds";
->
-> but that's not valid as per the bindings. So what we really want is a
-> specific compatible string that specifies the exact panel that each of
-> these devices uses in addition to the "panel-lvds" fallback. Do you guys
-> have information about these that could help fix up the DT files?
->
-> Thanks,
-> Thierry
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index 83981ae3ea86..4007f4e16d74 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -212,12 +212,12 @@ static int tegra186_emc_get_emc_dvfs_latency(struct tegra186_emc *emc)
+ 	}
+ 
+ 	emc->debugfs.root = debugfs_create_dir("emc", NULL);
+-	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root,
+-			    emc, &tegra186_emc_debug_available_rates_fops);
+-	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+-			    emc, &tegra186_emc_debug_min_rate_fops);
+-	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+-			    emc, &tegra186_emc_debug_max_rate_fops);
++	debugfs_create_file("available_rates", 0444, emc->debugfs.root, emc,
++			    &tegra186_emc_debug_available_rates_fops);
++	debugfs_create_file("min_rate", 0644, emc->debugfs.root, emc,
++			    &tegra186_emc_debug_min_rate_fops);
++	debugfs_create_file("max_rate", 0644, emc->debugfs.root, emc,
++			    &tegra186_emc_debug_max_rate_fops);
+ 
+ 	return 0;
+ }
+-- 
+2.41.0
+
