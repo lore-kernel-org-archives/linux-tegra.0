@@ -2,93 +2,109 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C855DC04A94
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 17:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AA7C05052
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 17:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236517AbjGNRwe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 13:52:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39294 "EHLO
+        id S236594AbjGNRxM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 13:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236489AbjGNRwb (ORCPT
+        with ESMTP id S236692AbjGNRxF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 13:52:31 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C5A35A9;
-        Fri, 14 Jul 2023 10:51:56 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id e9e14a558f8ab-345f4a3ff76so9691275ab.2;
-        Fri, 14 Jul 2023 10:51:56 -0700 (PDT)
+        Fri, 14 Jul 2023 13:53:05 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBCD34224;
+        Fri, 14 Jul 2023 10:52:40 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id e9e14a558f8ab-345f1e0abf9so9307365ab.3;
+        Fri, 14 Jul 2023 10:52:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689356967; x=1691948967;
+        d=1e100.net; s=20221208; t=1689357030; x=1691949030;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HhnvM9gixJIVMpRuI188FUpVFikttdi1fELDz+40xxo=;
-        b=Zc6xNUENVqvHeTm4U/sC2bPBHFbc6gy+ymQ9KN8W63K/Tyk96DSDBApr2Z0AlJqL/U
-         qTN+JpwT4rh/Xso4t4uUmMzhKqz2VYhuCXYL5FDBWwCVPyq54IKMXqwx9f3QfGwoNMKh
-         +57dadkkDCxjoNTmRZzgUlhKfLPYHKQ/ZzxlzPGpeSubLekFVvic7z0QgXbleWXCIEw+
-         7gE/qC/fpaLszfWkqIiuTk47NzprtTJrotxycuEWFbcI9WS2FgmIwJVqH69Mm3csVB3A
-         2KooKAz/9PpFSOFlBe1RF3XCkK04PAlfGQFr+cPqQiSHfTArxg9XAfa8be95KLEGwE1w
-         24jg==
-X-Gm-Message-State: ABy/qLZqkeemywqxSvX1QWs4IogORXaCQmDaFTQw0YiswI7k2ziYPI4F
-        Z6LEretdEPE6O4SusdNpfg==
-X-Google-Smtp-Source: APBJJlFh6RzBTn97GyDHCLrzfUOzaI6U5n6O355tArHJ1Cl54zjAGWC4PSZzgdrU82ofGimkiOYsMg==
-X-Received: by 2002:a92:60c:0:b0:345:cf3f:2fd with SMTP id x12-20020a92060c000000b00345cf3f02fdmr5243543ilg.13.1689356966826;
-        Fri, 14 Jul 2023 10:49:26 -0700 (PDT)
+        bh=lIJPdGkN8uLn9mONHPYVKKU3qJXRSOU2BNXEaUK7xdI=;
+        b=cR+0El/khkpBO4lCTbXmuHLdUhoKVsfNZuDPoSIptxu0nTtY752eOHHSZv1Z/uTGgH
+         10/xfxv9tnP/eVvg539T0o4MbrdyWdDaAsZP+L6fp/x9gptJfztNfvdG7dFWTgJpR7/Y
+         m9terc+9sjRh+bIRd2uglg9UnSYLTu9InJ45n0iyPiMWIDvpfX+XyfixVpRM1IFVrFOo
+         XM4rjE3KgqvSyJfemiC6AxkNE4+XuUnnIWtqApCkr3lWe1HV/Hlq+rSSK+YlnGPyalRi
+         iYDFEiQMsrmxd5EgaM0pNtpbMHXyznwmGmRdsOheNiD9VAUTAZy29+0S4wHLWPVu8GXr
+         yUeA==
+X-Gm-Message-State: ABy/qLaQkLJi25gDxqh3Ln32Z4KLPYB/fJbIBTaHi3vJkR13oOlGsNUI
+        zeUsYfWqp0hqZOvwt6HfXQ==
+X-Google-Smtp-Source: APBJJlF5AyU+U7hHqgWVqLEm81f6v5Dto0Z6wXBlIVFoH22Ciigj5qFW2mT+yzr1/iyAvgE53/OLLQ==
+X-Received: by 2002:a92:da4f:0:b0:345:cea0:a676 with SMTP id p15-20020a92da4f000000b00345cea0a676mr5038625ilq.10.1689357030329;
+        Fri, 14 Jul 2023 10:50:30 -0700 (PDT)
 Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id o2-20020a92dac2000000b003460b697bc0sm2883862ilq.59.2023.07.14.10.49.23
+        by smtp.gmail.com with ESMTPSA id u10-20020a92d1ca000000b00345ad48aa94sm2910179ilg.58.2023.07.14.10.50.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 10:49:26 -0700 (PDT)
-Received: (nullmailer pid 4062354 invoked by uid 1000);
-        Fri, 14 Jul 2023 17:48:54 -0000
+        Fri, 14 Jul 2023 10:50:29 -0700 (PDT)
+Received: (nullmailer pid 4064368 invoked by uid 1000);
+        Fri, 14 Jul 2023 17:50:00 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+To:     Mark Brown <broonie@kernel.org>,
+        Radu Pirea <radu_nicolae.pirea@upb.ro>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Vladimir Oltean <olteanv@gmail.com>, Han Xu <han.xu@nxp.com>,
+        Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Michael Walle <michael@walle.cc>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Haibo Chen <haibo.chen@nxp.com>,
+        Yogesh Gaur <yogeshgaur.83@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Orson Zhai <orsonzhai@gmail.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc:     devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] pwm: Explicitly include correct DT includes
-Date:   Fri, 14 Jul 2023 11:48:50 -0600
-Message-Id: <20230714174852.4062251-1-robh@kernel.org>
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Michal Simek <michal.simek@amd.com>
+Cc:     devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: [PATCH] spi: Explicitly include correct DT includes
+Date:   Fri, 14 Jul 2023 11:49:52 -0600
+Message-Id: <20230714174955.4064174-1-robh@kernel.org>
 X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -107,393 +123,601 @@ explicitly include the correct includes.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pwm/core.c               | 1 +
- drivers/pwm/pwm-apple.c          | 1 +
- drivers/pwm/pwm-atmel-hlcdc.c    | 1 +
- drivers/pwm/pwm-atmel-tcb.c      | 3 +--
- drivers/pwm/pwm-atmel.c          | 1 -
- drivers/pwm/pwm-berlin.c         | 1 +
- drivers/pwm/pwm-cros-ec.c        | 1 +
- drivers/pwm/pwm-fsl-ftm.c        | 3 +--
- drivers/pwm/pwm-hibvt.c          | 2 +-
- drivers/pwm/pwm-imx1.c           | 1 -
- drivers/pwm/pwm-jz4740.c         | 2 +-
- drivers/pwm/pwm-lp3943.c         | 1 +
- drivers/pwm/pwm-lpc18xx-sct.c    | 1 +
- drivers/pwm/pwm-mediatek.c       | 1 -
- drivers/pwm/pwm-meson.c          | 1 -
- drivers/pwm/pwm-microchip-core.c | 2 +-
- drivers/pwm/pwm-mtk-disp.c       | 1 -
- drivers/pwm/pwm-pxa.c            | 1 +
- drivers/pwm/pwm-sifive.c         | 1 +
- drivers/pwm/pwm-sl28cpld.c       | 1 +
- drivers/pwm/pwm-sprd.c           | 1 +
- drivers/pwm/pwm-sun4i.c          | 1 -
- drivers/pwm/pwm-sunplus.c        | 1 +
- drivers/pwm/pwm-tegra.c          | 1 -
- drivers/pwm/pwm-tiecap.c         | 2 +-
- drivers/pwm/pwm-tiehrpwm.c       | 2 +-
- drivers/pwm/pwm-visconti.c       | 2 +-
- drivers/pwm/pwm-vt8500.c         | 5 +----
- 28 files changed, 21 insertions(+), 21 deletions(-)
+ drivers/spi/spi-ar934x.c          | 3 ++-
+ drivers/spi/spi-armada-3700.c     | 3 +--
+ drivers/spi/spi-at91-usart.c      | 1 -
+ drivers/spi/spi-bcm2835.c         | 2 +-
+ drivers/spi/spi-bcm2835aux.c      | 4 +---
+ drivers/spi/spi-cadence-quadspi.c | 1 -
+ drivers/spi/spi-cadence-xspi.c    | 1 -
+ drivers/spi/spi-davinci.c         | 1 -
+ drivers/spi/spi-fsl-dspi.c        | 3 ++-
+ drivers/spi/spi-fsl-lib.c         | 3 ++-
+ drivers/spi/spi-fsl-lpspi.c       | 1 -
+ drivers/spi/spi-fsl-qspi.c        | 1 -
+ drivers/spi/spi-gpio.c            | 1 -
+ drivers/spi/spi-gxp.c             | 1 -
+ drivers/spi/spi-imx.c             | 1 -
+ drivers/spi/spi-ingenic.c         | 2 +-
+ drivers/spi/spi-lantiq-ssc.c      | 3 ++-
+ drivers/spi/spi-loopback-test.c   | 2 +-
+ drivers/spi/spi-lp8841-rtc.c      | 1 -
+ drivers/spi/spi-meson-spicc.c     | 1 -
+ drivers/spi/spi-mt7621.c          | 2 ++
+ drivers/spi/spi-mtk-nor.c         | 3 ++-
+ drivers/spi/spi-mtk-snfi.c        | 3 ++-
+ drivers/spi/spi-npcm-fiu.c        | 2 +-
+ drivers/spi/spi-nxp-fspi.c        | 1 -
+ drivers/spi/spi-orion.c           | 1 -
+ drivers/spi/spi-qcom-qspi.c       | 2 +-
+ drivers/spi/spi-qup.c             | 1 -
+ drivers/spi/spi-rspi.c            | 2 +-
+ drivers/spi/spi-s3c64xx.c         | 1 -
+ drivers/spi/spi-sc18is602.c       | 1 -
+ drivers/spi/spi-sh-msiof.c        | 1 -
+ drivers/spi/spi-sn-f-ospi.c       | 2 +-
+ drivers/spi/spi-sprd-adi.c        | 1 -
+ drivers/spi/spi-sprd.c            | 1 -
+ drivers/spi/spi-stm32-qspi.c      | 1 -
+ drivers/spi/spi-sun6i.c           | 2 +-
+ drivers/spi/spi-tegra114.c        | 1 -
+ drivers/spi/spi-tegra20-slink.c   | 1 -
+ drivers/spi/spi-tegra210-quad.c   | 1 -
+ drivers/spi/spi-ti-qspi.c         | 1 -
+ drivers/spi/spi-wpcm-fiu.c        | 3 +--
+ drivers/spi/spi-zynqmp-gqspi.c    | 4 +---
+ 43 files changed, 26 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 3dacceaef4a9..d37617c60eae 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/acpi.h>
+diff --git a/drivers/spi/spi-ar934x.c b/drivers/spi/spi-ar934x.c
+index 9dcada8c4cb9..58b98cea31d9 100644
+--- a/drivers/spi/spi-ar934x.c
++++ b/drivers/spi/spi-ar934x.c
+@@ -14,7 +14,8 @@
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
  #include <linux/module.h>
+-#include <linux/of_device.h>
 +#include <linux/of.h>
- #include <linux/pwm.h>
- #include <linux/radix-tree.h>
- #include <linux/list.h>
-diff --git a/drivers/pwm/pwm-apple.c b/drivers/pwm/pwm-apple.c
-index a38a62edd713..8e7d67fb5fbe 100644
---- a/drivers/pwm/pwm-apple.c
-+++ b/drivers/pwm/pwm-apple.c
-@@ -12,6 +12,7 @@
-  * - When APPLE_PWM_CTRL is set to 0, the output is constant low
-  */
++#include <linux/platform_device.h>
+ #include <linux/spi/spi.h>
  
-+#include <linux/mod_devicetable.h>
+ #define DRIVER_NAME "spi-ar934x"
+diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
+index a7fb7c94e70e..0103ac0158c0 100644
+--- a/drivers/spi/spi-armada-3700.c
++++ b/drivers/spi/spi-armada-3700.c
+@@ -17,8 +17,7 @@
+ #include <linux/kernel.h>
  #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
-diff --git a/drivers/pwm/pwm-atmel-hlcdc.c b/drivers/pwm/pwm-atmel-hlcdc.c
-index 96a709a9d49a..3c42061e721a 100644
---- a/drivers/pwm/pwm-atmel-hlcdc.c
-+++ b/drivers/pwm/pwm-atmel-hlcdc.c
-@@ -10,6 +10,7 @@
- #include <linux/delay.h>
- #include <linux/mfd/atmel-hlcdc.h>
+ #include <linux/of.h>
+-#include <linux/of_irq.h>
+-#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/spi/spi.h>
+ 
+diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
+index 7854d9790fe9..fb9c8da57b0c 100644
+--- a/drivers/spi/spi-at91-usart.c
++++ b/drivers/spi/spi-at91-usart.c
+@@ -13,7 +13,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
  #include <linux/module.h>
-+#include <linux/of.h>
+-#include <linux/of_platform.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/pinctrl/consumer.h>
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/regmap.h>
-diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
-index 4a116dc44f6e..563162d660d8 100644
---- a/drivers/pwm/pwm-atmel-tcb.c
-+++ b/drivers/pwm/pwm-atmel-tcb.c
-@@ -19,8 +19,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index 3b253da98c05..b247ee887562 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -24,7 +24,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/machine.h> /* FIXME: using chip internals */
+ #include <linux/gpio/driver.h> /* FIXME: using chip internals */
+diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
+index 288f7b994b36..8ace417c0a29 100644
+--- a/drivers/spi/spi-bcm2835aux.c
++++ b/drivers/spi/spi-bcm2835aux.c
+@@ -20,9 +20,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_address.h>
 -#include <linux/of_device.h>
 -#include <linux/of_irq.h>
-+#include <linux/of.h>
++#include <linux/platform_device.h>
  #include <linux/regmap.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spinlock.h>
+diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
+index abf10f92415d..e1a8cf08ef66 100644
+--- a/drivers/spi/spi-cadence-quadspi.c
++++ b/drivers/spi/spi-cadence-quadspi.c
+@@ -21,7 +21,6 @@
+ #include <linux/kernel.h>
+ #include <linux/log2.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
+index ce4a3145f065..11d623cbba2e 100644
+--- a/drivers/spi/spi-cadence-xspi.c
++++ b/drivers/spi/spi-cadence-xspi.c
+@@ -11,7 +11,6 @@
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index b04811c911e2..7052783dcfb4 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -15,7 +15,6 @@
+ #include <linux/dmaengine.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi_bitbang.h>
  #include <linux/slab.h>
- #include <soc/at91/atmel_tcb.h>
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index 5f7d286871cf..4b243c0e8490 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -25,7 +25,6 @@
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 674cfe05f411..ca41c8a8ba42 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -13,7 +13,8 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/regmap.h>
+ #include <linux/spi/spi.h>
+diff --git a/drivers/spi/spi-fsl-lib.c b/drivers/spi/spi-fsl-lib.c
+index 76e1192eb025..885757c29fbb 100644
+--- a/drivers/spi/spi-fsl-lib.c
++++ b/drivers/spi/spi-fsl-lib.c
+@@ -18,7 +18,8 @@
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
+-#include <linux/of_platform.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/spi/spi.h>
+ #ifdef CONFIG_FSL_SOC
+ #include <sysdev/fsl_soc.h>
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index fb68c72df171..a9d3919487e8 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -17,7 +17,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma/imx-dma.h>
+diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
+index 8ade61e5ebc0..e3de81248893 100644
+--- a/drivers/spi/spi-fsl-qspi.c
++++ b/drivers/spi/spi-fsl-qspi.c
+@@ -34,7 +34,6 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_qos.h>
+ #include <linux/sizes.h>
+diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
+index 092afc7679d4..0a7f7b0188a1 100644
+--- a/drivers/spi/spi-gpio.c
++++ b/drivers/spi/spi-gpio.c
+@@ -10,7 +10,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ 
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi_bitbang.h>
+diff --git a/drivers/spi/spi-gxp.c b/drivers/spi/spi-gxp.c
+index 684d63f402f3..88ab3032736b 100644
+--- a/drivers/spi/spi-gxp.c
++++ b/drivers/spi/spi-gxp.c
+@@ -3,7 +3,6 @@
+ 
+ #include <linux/iopoll.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi-mem.h>
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index 528ae46c087f..548eea7a0a90 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -20,7 +20,6 @@
+ #include <linux/spi/spi.h>
+ #include <linux/types.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/property.h>
+ 
+ #include <linux/dma/imx-dma.h>
+diff --git a/drivers/spi/spi-ingenic.c b/drivers/spi/spi-ingenic.c
+index 7d4b515a160d..cfa665a80bc6 100644
+--- a/drivers/spi/spi-ingenic.c
++++ b/drivers/spi/spi-ingenic.c
+@@ -12,7 +12,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/iopoll.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/spi/spi.h>
+diff --git a/drivers/spi/spi-lantiq-ssc.c b/drivers/spi/spi-lantiq-ssc.c
+index 8d6ecc5d6f70..65568272cfd9 100644
+--- a/drivers/spi/spi-lantiq-ssc.c
++++ b/drivers/spi/spi-lantiq-ssc.c
+@@ -6,7 +6,8 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/clk.h>
  #include <linux/io.h>
+ #include <linux/delay.h>
+diff --git a/drivers/spi/spi-loopback-test.c b/drivers/spi/spi-loopback-test.c
+index 675a73cf1579..bbf2015d8e5c 100644
+--- a/drivers/spi/spi-loopback-test.c
++++ b/drivers/spi/spi-loopback-test.c
+@@ -14,8 +14,8 @@
+ #include <linux/ktime.h>
+ #include <linux/list.h>
+ #include <linux/list_sort.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
+ #include <linux/printk.h>
+ #include <linux/vmalloc.h>
+ #include <linux/spi/spi.h>
+diff --git a/drivers/spi/spi-lp8841-rtc.c b/drivers/spi/spi-lp8841-rtc.c
+index 2d436541d6c2..d732ac1ee73c 100644
+--- a/drivers/spi/spi-lp8841-rtc.c
++++ b/drivers/spi/spi-lp8841-rtc.c
+@@ -15,7 +15,6 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/spi/spi.h>
+ 
+ #define DRIVER_NAME	"spi_lp8841_rtc"
+diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+index 141562c882f1..2d254cfaece5 100644
+--- a/drivers/spi/spi-meson-spicc.c
++++ b/drivers/spi/spi-meson-spicc.c
+@@ -15,7 +15,6 @@
+ #include <linux/kernel.h>
  #include <linux/module.h>
  #include <linux/of.h>
 -#include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
-diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
-index 0c5992a046b2..0971c666afd1 100644
---- a/drivers/pwm/pwm-berlin.c
-+++ b/drivers/pwm/pwm-berlin.c
-@@ -13,6 +13,7 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
-diff --git a/drivers/pwm/pwm-cros-ec.c b/drivers/pwm/pwm-cros-ec.c
-index 74e863aa1d8d..7f7e4e892930 100644
---- a/drivers/pwm/pwm-cros-ec.c
-+++ b/drivers/pwm/pwm-cros-ec.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pwm/pwm-fsl-ftm.c b/drivers/pwm/pwm-fsl-ftm.c
-index 5caadbd6194e..b7c6045c5d08 100644
---- a/drivers/pwm/pwm-fsl-ftm.c
-+++ b/drivers/pwm/pwm-fsl-ftm.c
-@@ -11,8 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
--#include <linux/of_address.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/pwm.h>
-diff --git a/drivers/pwm/pwm-hibvt.c b/drivers/pwm/pwm-hibvt.c
-index b95df1a96127..f7ba6fe9a349 100644
---- a/drivers/pwm/pwm-hibvt.c
-+++ b/drivers/pwm/pwm-hibvt.c
-@@ -10,7 +10,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/types.h>
+diff --git a/drivers/spi/spi-mt7621.c b/drivers/spi/spi-mt7621.c
+index 3e9d396b33bd..91600e5c22e4 100644
+--- a/drivers/spi/spi-mt7621.c
++++ b/drivers/spi/spi-mt7621.c
+@@ -14,7 +14,9 @@
  #include <linux/delay.h>
  #include <linux/io.h>
  #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/reset.h>
+ #include <linux/spi/spi.h>
+ 
+diff --git a/drivers/spi/spi-mtk-nor.c b/drivers/spi/spi-mtk-nor.c
+index baa7a5353987..cf4ee8b19e42 100644
+--- a/drivers/spi/spi-mtk-nor.c
++++ b/drivers/spi/spi-mtk-nor.c
+@@ -13,7 +13,8 @@
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
 -#include <linux/of_device.h>
 +#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi-mem.h>
+diff --git a/drivers/spi/spi-mtk-snfi.c b/drivers/spi/spi-mtk-snfi.c
+index bed8317cd205..4433a8a9299f 100644
+--- a/drivers/spi/spi-mtk-snfi.c
++++ b/drivers/spi/spi-mtk-snfi.c
+@@ -76,7 +76,8 @@
+ #include <linux/interrupt.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/iopoll.h>
+-#include <linux/of_platform.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/mtd/nand-ecc-mtk.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi-mem.h>
+diff --git a/drivers/spi/spi-npcm-fiu.c b/drivers/spi/spi-npcm-fiu.c
+index eb353561509a..9e8c914ff26c 100644
+--- a/drivers/spi/spi-npcm-fiu.c
++++ b/drivers/spi/spi-npcm-fiu.c
+@@ -12,7 +12,7 @@
+ #include <linux/io.h>
+ #include <linux/vmalloc.h>
+ #include <linux/regmap.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/spi/spi-mem.h>
+ #include <linux/mfd/syscon.h>
+ 
+diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+index 544017655787..2d7a2f702453 100644
+--- a/drivers/spi/spi-nxp-fspi.c
++++ b/drivers/spi/spi-nxp-fspi.c
+@@ -47,7 +47,6 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
+ #include <linux/pm_qos.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+index ad9e83e34297..0ffe3777f97d 100644
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -16,7 +16,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_device.h>
+ #include <linux/clk.h>
+ #include <linux/sizes.h>
+ #include <asm/unaligned.h>
+diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
+index a8a683d6145c..08b060dd7bb8 100644
+--- a/drivers/spi/spi-qcom-qspi.c
++++ b/drivers/spi/spi-qcom-qspi.c
+@@ -9,7 +9,7 @@
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_platform.h>
++#include <linux/platform_device.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/pm_opp.h>
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index 00e5e88e72c4..fd16acb1f578 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -11,7 +11,6 @@
+ #include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/spi/spi.h>
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 08ceebbaf69b..abc97e9bf109 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -19,7 +19,7 @@
+ #include <linux/clk.h>
+ #include <linux/dmaengine.h>
+ #include <linux/dma-mapping.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/pm_runtime.h>
  #include <linux/reset.h>
-diff --git a/drivers/pwm/pwm-imx1.c b/drivers/pwm/pwm-imx1.c
-index 1f2eb1c8ff6c..0651983bed19 100644
---- a/drivers/pwm/pwm-imx1.c
-+++ b/drivers/pwm/pwm-imx1.c
+ #include <linux/sh_dma.h>
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index fd55697144cc..29982839d971 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
 @@ -14,7 +14,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/spi/spi.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ 
+ #include <linux/platform_data/spi-s3c64xx.h>
+ 
+diff --git a/drivers/spi/spi-sc18is602.c b/drivers/spi/spi-sc18is602.c
+index d52ed67243f7..c67a24daaaf9 100644
+--- a/drivers/spi/spi-sc18is602.c
++++ b/drivers/spi/spi-sc18is602.c
+@@ -12,7 +12,6 @@
+ #include <linux/i2c.h>
+ #include <linux/delay.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/of_device.h>
+ #include <linux/of.h>
+ #include <linux/platform_data/sc18is602.h>
+ #include <linux/gpio/consumer.h>
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 9e90b4f8b357..5c75b5c58d97 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -20,7 +20,6 @@
  #include <linux/kernel.h>
  #include <linux/module.h>
  #include <linux/of.h>
 -#include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index 3b7067f6cd0d..ef1293f2a897 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -15,7 +15,7 @@
- #include <linux/mfd/ingenic-tcu.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/regmap.h>
-diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
-index 35675e4058c6..a931d3f7a3fc 100644
---- a/drivers/pwm/pwm-lp3943.c
-+++ b/drivers/pwm/pwm-lp3943.c
-@@ -10,6 +10,7 @@
- #include <linux/err.h>
- #include <linux/mfd/lp3943.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
-diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-index b9bf5b366f4b..9ff6311bd472 100644
---- a/drivers/pwm/pwm-lpc18xx-sct.c
-+++ b/drivers/pwm/pwm-lpc18xx-sct.c
-@@ -22,6 +22,7 @@
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
-diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-index 7a51d210a877..6adb0ed01906 100644
---- a/drivers/pwm/pwm-mediatek.c
-+++ b/drivers/pwm/pwm-mediatek.c
-@@ -14,7 +14,6 @@
- #include <linux/module.h>
- #include <linux/clk.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
-diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-index 22f54db3ae8e..25519cddc2a9 100644
---- a/drivers/pwm/pwm-meson.c
-+++ b/drivers/pwm/pwm-meson.c
-@@ -37,7 +37,6 @@
- #include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
-diff --git a/drivers/pwm/pwm-microchip-core.c b/drivers/pwm/pwm-microchip-core.c
-index 8750b57684a9..e7525c98105e 100644
---- a/drivers/pwm/pwm-microchip-core.c
-+++ b/drivers/pwm/pwm-microchip-core.c
-@@ -37,7 +37,7 @@
- #include <linux/math.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/sh_dma.h>
+diff --git a/drivers/spi/spi-sn-f-ospi.c b/drivers/spi/spi-sn-f-ospi.c
+index d64d3f75c726..85e4a01bc8b0 100644
+--- a/drivers/spi/spi-sn-f-ospi.c
++++ b/drivers/spi/spi-sn-f-ospi.c
+@@ -10,7 +10,7 @@
+ #include <linux/iopoll.h>
  #include <linux/module.h>
  #include <linux/mutex.h>
 -#include <linux/of_device.h>
 +#include <linux/of.h>
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
- 
-diff --git a/drivers/pwm/pwm-mtk-disp.c b/drivers/pwm/pwm-mtk-disp.c
-index 2401b6733241..a83bd6e18b07 100644
---- a/drivers/pwm/pwm-mtk-disp.c
-+++ b/drivers/pwm/pwm-mtk-disp.c
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi-mem.h>
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index 22e39c4c12c4..42786b28cd35 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
 @@ -11,7 +11,6 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
-diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
-index 762429d5647f..c8314053bcb0 100644
---- a/drivers/pwm/pwm-pxa.c
-+++ b/drivers/pwm/pwm-pxa.c
-@@ -15,6 +15,7 @@
-  *   input clock (PWMCR_SD is set) and the output is driven to inactive.
-  */
- 
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
  #include <linux/kernel.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
-index ae49d67ab2b1..3743b2de4597 100644
---- a/drivers/pwm/pwm-sifive.c
-+++ b/drivers/pwm/pwm-sifive.c
-@@ -13,6 +13,7 @@
-  */
- #include <linux/clk.h>
- #include <linux/io.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
-diff --git a/drivers/pwm/pwm-sl28cpld.c b/drivers/pwm/pwm-sl28cpld.c
-index e64900ad4ba1..d497e87f5e03 100644
---- a/drivers/pwm/pwm-sl28cpld.c
-+++ b/drivers/pwm/pwm-sl28cpld.c
-@@ -38,6 +38,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/pwm.h>
- #include <linux/regmap.h>
- 
-diff --git a/drivers/pwm/pwm-sprd.c b/drivers/pwm/pwm-sprd.c
-index d43a6fa3f4e0..1499c8c1fe37 100644
---- a/drivers/pwm/pwm-sprd.c
-+++ b/drivers/pwm/pwm-sprd.c
-@@ -7,6 +7,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/math64.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
-diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-index a8790a8fc53e..c84fcf1a13dc 100644
---- a/drivers/pwm/pwm-sun4i.c
-+++ b/drivers/pwm/pwm-sun4i.c
-@@ -17,7 +17,6 @@
- #include <linux/jiffies.h>
  #include <linux/module.h>
  #include <linux/of.h>
 -#include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
+ #include <linux/reboot.h>
+ #include <linux/spi/spi.h>
+diff --git a/drivers/spi/spi-sprd.c b/drivers/spi/spi-sprd.c
+index 518c7eaca84e..95377cf748c0 100644
+--- a/drivers/spi/spi-sprd.c
++++ b/drivers/spi/spi-sprd.c
+@@ -11,7 +11,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/of_dma.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
+index 2b6804aa6901..def74ae9b5f6 100644
+--- a/drivers/spi/spi-stm32-qspi.c
++++ b/drivers/spi/spi-stm32-qspi.c
+@@ -14,7 +14,6 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
+index 30d541612253..1aa32094d7c9 100644
+--- a/drivers/spi/spi-sun6i.c
++++ b/drivers/spi/spi-sun6i.c
+@@ -14,7 +14,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
  #include <linux/reset.h>
-diff --git a/drivers/pwm/pwm-sunplus.c b/drivers/pwm/pwm-sunplus.c
-index d6ebe9f03b35..7705c7b86c3a 100644
---- a/drivers/pwm/pwm-sunplus.c
-+++ b/drivers/pwm/pwm-sunplus.c
-@@ -23,6 +23,7 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 488df681eaef..ca4bdd45f56e 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -20,7 +20,6 @@
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 5810abf66e2a..a169a34e0778 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -41,7 +41,6 @@
- #include <linux/io.h>
- #include <linux/module.h>
+ #include <linux/pm_runtime.h>
  #include <linux/of.h>
 -#include <linux/of_device.h>
+ #include <linux/reset.h>
+ #include <linux/spi/spi.h>
+ 
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index c2915f7672cc..8feba07a1980 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -21,7 +21,6 @@
  #include <linux/pm_opp.h>
- #include <linux/pwm.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
-index 109449956307..8c94b266c1b2 100644
---- a/drivers/pwm/pwm-tiecap.c
-+++ b/drivers/pwm/pwm-tiecap.c
-@@ -12,7 +12,7 @@
- #include <linux/clk.h>
  #include <linux/pm_runtime.h>
- #include <linux/pwm.h>
+ #include <linux/of.h>
 -#include <linux/of_device.h>
-+#include <linux/of.h>
+ #include <linux/reset.h>
+ #include <linux/spi/spi.h>
  
- /* ECAP registers and bits definitions */
- #define CAP1			0x08
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index bb3959ace6b4..ecbfd7e954ec 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -12,7 +12,7 @@
- #include <linux/err.h>
- #include <linux/clk.h>
- #include <linux/pm_runtime.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- 
- /* EHRPWM registers and bits definitions */
- 
-diff --git a/drivers/pwm/pwm-visconti.c b/drivers/pwm/pwm-visconti.c
-index e3fb79b3e2a7..7f7591a2384c 100644
---- a/drivers/pwm/pwm-visconti.c
-+++ b/drivers/pwm/pwm-visconti.c
-@@ -21,7 +21,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index fbd14dd7be44..e9ad9b0b598b 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -18,7 +18,6 @@
  #include <linux/platform_device.h>
- #include <linux/pwm.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/reset.h>
+ #include <linux/spi/spi.h>
+ #include <linux/acpi.h>
+diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+index 5914335ff63d..1cfc97c20928 100644
+--- a/drivers/spi/spi-ti-qspi.c
++++ b/drivers/spi/spi-ti-qspi.c
+@@ -22,7 +22,6 @@
+ #include <linux/slab.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/spi/spi-wpcm-fiu.c b/drivers/spi/spi-wpcm-fiu.c
+index f15312fdcdaf..852ffe013d32 100644
+--- a/drivers/spi/spi-wpcm-fiu.c
++++ b/drivers/spi/spi-wpcm-fiu.c
+@@ -3,9 +3,8 @@
  
-diff --git a/drivers/pwm/pwm-vt8500.c b/drivers/pwm/pwm-vt8500.c
-index d2c48fd98706..6d46db51daac 100644
---- a/drivers/pwm/pwm-vt8500.c
-+++ b/drivers/pwm/pwm-vt8500.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2010 Alexey Charkov <alchark@gmail.com>
-  */
- 
+ #include <linux/clk.h>
+ #include <linux/mfd/syscon.h>
 +#include <linux/mod_devicetable.h>
  #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
-@@ -18,10 +19,6 @@
- 
- #include <asm/div64.h>
- 
--#include <linux/of.h>
--#include <linux/of_device.h>
 -#include <linux/of_address.h>
--
- /*
-  * SoC architecture allocates register space for 4 PWMs but only
-  * 2 are currently implemented.
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/spi/spi-mem.h>
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index fb2ca9b90eab..a6b892d01038 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -14,9 +14,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/of_irq.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/spi/spi.h>
 -- 
 2.40.1
 
