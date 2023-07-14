@@ -2,160 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C00EB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 08:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF36C001B0
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 09:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234072AbjGNIlJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 04:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49640 "EHLO
+        id S234417AbjGNJDN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 05:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232566AbjGNIlJ (ORCPT
+        with ESMTP id S231235AbjGNJDM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 04:41:09 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF111BFA;
-        Fri, 14 Jul 2023 01:41:08 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fb96e2b573so2749734e87.3;
-        Fri, 14 Jul 2023 01:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689324066; x=1691916066;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=twF/Y7Vm111Vdk9HXu/qA9ex8Z+v4RDuvFO115VvSJI=;
-        b=iJzlMCfoclbfcoVMsCj7SNlRZBajmIFdcjjH457xfKYcnXlibJdMmNyjK7Bpj/DtPY
-         2sWM+v7lGiWJMOMvIQLOGx4hlNvDKr7296fmmXFxWuM84GBXkaRKBlHqBFEW3rKlpbqX
-         xtqy3Gn5MS1x/v6NHWXJDGNgCdyd3VZ9iNr+scoWFeacfxnbIhcxTwwAxmMk5cuiruGZ
-         UlJ9iItp0lt+OaUH5O+7s9Xpm1bkA8Aak8bTUcRq8z4FK1e2OvyExA9KhJv7kyA6Taoc
-         FAtgIvxL07qylPGPtyPigQZ2zXBAB65JQn9YIXE2tkoo340M4swZ5UIqLZAFp/3bM06Z
-         Dmkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689324066; x=1691916066;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=twF/Y7Vm111Vdk9HXu/qA9ex8Z+v4RDuvFO115VvSJI=;
-        b=T8g97RhF73N4rWE+rpPtBOH/K2OSJbg+gvdVMDAWMHMKeHkAAsMX1iIp5mJY40+pSH
-         4rpsEsE1mHymyJh7SnTuuIuAwtjTNJTj1RWuPz3tG/5c7Mnv5tFUsW2fezRol+/xOYUf
-         sjOA/MZsM7uWNIsfyIIhsp56BAPqe+YBc7CcI6nF5WhNjBKUOuWlCVeK3L7nfbm+At81
-         lwNVrE4hPOVuMch6Alob2TeynkYYdjt3jVYXI8uXQVMGHQfUoHe1tgM00hWvm8HFPwju
-         Jm8qkJP/iHtxTkQ0ttpPyp8VX1Wp70QoNEs7ptZ1c3+bpQzCv3XbsNkOKgHbZMWe4bAQ
-         sIQg==
-X-Gm-Message-State: ABy/qLZKMkpFiLb1qOTz+rco5tFdGD6fhnaXMqbk6qbEBXoI6m3/fIEg
-        y+ki96HRWoON+VXD9MTSeHU=
-X-Google-Smtp-Source: APBJJlFkZ6sXsjf7XXOkr/VpR8s76bV1lGcCGSFUwouDb0eTxaZcqDHqdOXwaEFt4UkmmKmniPGzBw==
-X-Received: by 2002:a05:6512:344a:b0:4fb:ca59:42d7 with SMTP id j10-20020a056512344a00b004fbca5942d7mr2994144lfr.33.1689324065877;
-        Fri, 14 Jul 2023 01:41:05 -0700 (PDT)
-Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v15-20020a056402184f00b0051df6c2bb7asm5455704edy.38.2023.07.14.01.41.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 01:41:05 -0700 (PDT)
-Date:   Fri, 14 Jul 2023 10:41:03 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     =?utf-8?B?5p2c5pWP5p2w?= <duminjie@vivo.com>
-Cc:     Baolu Lu <baolu.lu@linux.intel.com>,
+        Fri, 14 Jul 2023 05:03:12 -0400
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2099.outbound.protection.outlook.com [40.107.215.99])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17EEBE65;
+        Fri, 14 Jul 2023 02:03:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hBSDf2PLk6E79d7LHq8D7y1GorY9Z0gDdejgSUsSn5Mww8sm97MjD4QUTjwmBK4dgCD8NqLSTFsC/XVERKPbOVqqC2yTyReZmMx/R8m+xiCZlo8/qOYhAOEABoWC+0NkGc6qdp3QwDVjvdadQF9HxRXbFaiehnuGwg2NKha17Cb/kN2r5O19bHzrlzz1RlUGENI2ZysRZjHk13WvIgw6emk2w5IWfKnkaVCwjAwCiWp+zCiAAWC2iYCM8UwfqbK8/33igiQTVesyR1IN7DPaDiyBEH7BtzMWxqpqB66PnBfcA09Njjfcq8V0/2m9ACw5snEO7mO1EdLCGFfpzaYoig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CftbofGv/HGd+6USRkNfX5115oDEgvPSwWUq757MPJU=;
+ b=lP4+Q1NkuhIm0t8dQRv/Lw2clyz3coZltD8+MKdRQIMwnemRxASxM5zBIyd9DH5tmvo0KU81y89e75wM1qBU/2ZJFhkz6SMn8sUVyXjU8I1WHO1S6TKFYnACspnF+6yiNcUuvJSVN0kQiZVVPrqJa3IDBwMIyNJUp9rdNnjz/MUtphdrXdSu6jUzfyHsORjnTC84NYUWTlK9R7ClMbreLE4M1n/5r5zWoYBXET4aJPENwe9juYQga0FhgDagmtXotR0TEptjZg95Y6czwWWHU0o0iFRxJ4bXv5bbfrA+G3l7xRRB2j7UXJVnkxpZ0oi6Imc971bgmBt0mK8FfHTrRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CftbofGv/HGd+6USRkNfX5115oDEgvPSwWUq757MPJU=;
+ b=MEEoeFSbOh1ZaknDDmHuRFO2sT7sXM4XW/z4K9GmhtExB5onH+7dBqQMdScK4CYYjnncrFuvEI6n9Mz7EWjBKSn8rznN2N4oxRQTek24z6EUz21yQMKx2Mvisjo65iv/EUPsL12SF+WrETIImgLPUjTHxi81Zuy4NJIrIxfN44SA8Bi4dTWUWhCZx+qXXHLvqQcriyLExdfFIAloRYERVukpHpkKyOveTS6eWK50o9DJaf4an8GuALtXhFMuNdu6e4/Fj93Y6u7JjWc9s412eBqS+3JvnG1iocgy7qcQv2plP2kM0NHoAw9Le7Nq7qDJjpyR/UlLjuKjjSzh6FlckA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SG2PR06MB5288.apcprd06.prod.outlook.com (2603:1096:4:1dc::9) by
+ TYZPR06MB6596.apcprd06.prod.outlook.com (2603:1096:400:44d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.27; Fri, 14 Jul
+ 2023 09:03:05 +0000
+Received: from SG2PR06MB5288.apcprd06.prod.outlook.com
+ ([fe80::f9b8:80b5:844e:f49a]) by SG2PR06MB5288.apcprd06.prod.outlook.com
+ ([fe80::f9b8:80b5:844e:f49a%6]) with mapi id 15.20.6565.037; Fri, 14 Jul 2023
+ 09:03:05 +0000
+From:   Minjie Du <duminjie@vivo.com>
+To:     baolu.lu@linux.intel.com,
+        Thierry Reding <thierry.reding@gmail.com>,
         Krishna Reddy <vdumpa@nvidia.com>,
         Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>,
-        "open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>,
-        open list <linux-kernel@vger.kernel.org>,
-        "opensource.kernel" <opensource.kernel@vivo.com>,
+        linux-tegra@vger.kernel.org (open list:TEGRA IOMMU DRIVERS),
+        iommu@lists.linux.dev (open list:IOMMU SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Cc:     opensource.kernel@vivo.com, Minjie Du <duminjie@vivo.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjRdIGlv?=
- =?utf-8?Q?mmu=3A_remov?= =?utf-8?Q?e?= redundant parameter check in
- tegra_smmu_debugfs_init()
-Message-ID: <ZLEKH8ixyRH7IzLK@orome>
-References: <20230713072825.10348-1-duminjie@vivo.com>
- <362e4343-dcf1-58fc-7ac9-756c65bb0df6@linux.intel.com>
- <SG2PR06MB5288ED578DB3CE7DA2B25AB5AE34A@SG2PR06MB5288.apcprd06.prod.outlook.com>
+Subject: [PATCH v4] iommu: remove redundant parameter check in tegra_smmu_debugfs_init()
+Date:   Fri, 14 Jul 2023 17:02:44 +0800
+Message-Id: <20230714090245.2614-1-duminjie@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0145.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::25) To SG2PR06MB5288.apcprd06.prod.outlook.com
+ (2603:1096:4:1dc::9)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sWp9+yLAQfcZfBiY"
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB5288ED578DB3CE7DA2B25AB5AE34A@SG2PR06MB5288.apcprd06.prod.outlook.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PR06MB5288:EE_|TYZPR06MB6596:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00b9ccb2-7204-444b-d170-08db844922bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GZc4Gg8BCzlRjjJ1MjbmLPGcQM8zhk2kr+2NjpKcGo1jW07xCZq00RxWGvIs2tIjWlF4LmDPP+fYPAXc5dXH3/WxhTwMlsZK4aguOqZKjjswhFT9x22QKrCWoELrg397PqHsv7ao24Jdb75GQ4V5zlBRaKDJR948In1WlKmiJGTEPkWNKwBmP77JQMczbtneI/AFhxaTi1/xJfV9KpZDjxqPsi7xpLXHTUcSmbkt2q+nhvcpEzwaobfbJb6XAlTYvKZ5gNa6u73N27+iyaEuQYkAJoRxM+UwJ/2lER2cLjs7UzE9WcDcmFeCIoz7ZHdpiycJBowQBGEo5r6oM6dv0O5zABDxHkdXAZPnzHcX9o636jrysOnENKw+wybBRqFJhC8BXBDzVsSz7FWQavNFzXTtNrHX8K/TH5Buv43II9Y2o8UlQpQr3IZDE9JYqM54qfdlMJro7j7enMFL8K3Dkp8ZG4rO9mhMAEsfo2ilQ9zHrOL6ADndCpkIoA5/hEKFc/RGE/dDo7Bo7MJhCQS/R6D+NEQM6+bi9P9ZjSnQJqC+fNFjc4JlbsmLkCSw+4bCzuu9YJhe8uZ9/GPNZXQ8Fhk/erHKW5fP2RQ5ohTxQ6P4rGmUdif+tOZropB6yQp6oIqR2BkDYRhtOd5u8RELlQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR06MB5288.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(136003)(396003)(39850400004)(376002)(346002)(451199021)(6486002)(478600001)(52116002)(110136005)(54906003)(6666004)(83380400001)(2616005)(36756003)(86362001)(2906002)(26005)(186003)(1076003)(6506007)(6512007)(316002)(38100700002)(38350700002)(921005)(66556008)(66476007)(4326008)(41300700001)(8936002)(8676002)(5660300002)(7416002)(66946007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fyr9UXBQnrqSFNnzoqdJi2UI2PSq6kp4f6KYC2QPmugKpS276kM3tZM5K9RD?=
+ =?us-ascii?Q?UMrclYsNOHqVBmjIMN+GyhDV7Do35d7naeIK4Fx1X4RT7hBkJO8uZvWykGFS?=
+ =?us-ascii?Q?o8jgPFB4E8ZLGRtlgRFYfLjSakGG2aNYPRYgqj9SqILU0A+W+L4aa7mpE30D?=
+ =?us-ascii?Q?bBL4ExKtJNqpO20szmXt+mXUxLArS+D4H9QzOrQFceJ+p9u14fma0DxMwyka?=
+ =?us-ascii?Q?yWRmFQaFf0HGg+1LQ2td0kwgvk9g947KPhdnM3vBat+XneQHxfyYvY2TZ1Th?=
+ =?us-ascii?Q?sPDXYsl54y2eh3MWCPaMBFXmKQ8xygYkF40Fohx1JvGujHdRWiZ9Mn+bIOQT?=
+ =?us-ascii?Q?zG4GArjk0Z48lL+23zdnmJnSQIdBwjBoAPZ7U3ypoazZRFh8ca3M8CzqqOSE?=
+ =?us-ascii?Q?xppR0oTUgwPfGgv4/+HirfRTdXzrjLcF+VzSeMJkL12TdijxWCFjD5cH4ULc?=
+ =?us-ascii?Q?VevqHpEUXs9BhjX89/esgf4W+DXpVSHmGHuotUX52SVfUL+V84N0G2p0PfNT?=
+ =?us-ascii?Q?uXJceNeaRE97VrtBh7zWAnbddbbxzIFB8HUpbkXIBJMccS6pfAKENBHC9CoN?=
+ =?us-ascii?Q?ULwdsEHTshCcoxWEwMIzFHOz0kgXLI6spXnl0cbHzQsxzNMpBHr88D6IdGJJ?=
+ =?us-ascii?Q?8p7VTYJ44X3rm20xwzgODZE5Osl8z9R5qjkcIpmqOd/ywlm18oBnU1SGipf1?=
+ =?us-ascii?Q?/bW8WlCHuV2QOJ78kdu7uHUWnZ/2fiU4cOJpGi0qUsvvKDGXKcDsYdomfXNd?=
+ =?us-ascii?Q?SsteuH6SRes4X3kddTqHcElt8WGdDYotR8/3r+PYGdfvCRGbTv1AQ+Qo8/X+?=
+ =?us-ascii?Q?n/qMW+sIum3p5eEqC3+Tm5Qk25su5qhmz5UPM3tgOVmnttis1feNaE3xRLMh?=
+ =?us-ascii?Q?O6eu7LghQ3XC+UVnSt/tthlCHARwgcFZTUuCbQP9sgYNxrvqIVIx7Ltlk87d?=
+ =?us-ascii?Q?buGHNYZ5YOxLNi+cKAFAzSEMAxQuCU4dMdT01h4uw+eYlZYM6BXgUN7odYgr?=
+ =?us-ascii?Q?22GxyIyyoBE1TlUd3PdRWQAyLK7QY2UBOI1gBaqofYCsSnoAp2FSYgRjb7bC?=
+ =?us-ascii?Q?lvavl8d5j4HcSDYBIr1/XUWnZHVW2luwPioH0YuL8LWHLJWnsBlXjVJJ9/Xz?=
+ =?us-ascii?Q?QnNQpOj4/fQ84hz+PrEpbHO07QwWzo9yW2q0WrvLoOPOVhsbKHKARx3HFygx?=
+ =?us-ascii?Q?05XGMZMMqI6HOXwbMfMhQClEbtnb2zDbI7Rxj2xE65+EkAz/lR1mYr5y2NA/?=
+ =?us-ascii?Q?pyiHubC2cMkoFL6iGpU3iEjwld+00i0w4KoZwivJ+iXeUhyNfRVn57abTW9x?=
+ =?us-ascii?Q?lrBUVlfafqOe4NmjF4TzZbSoGIxf9yeulAzOY3jvHAMMYrptJ0/x2looY+sd?=
+ =?us-ascii?Q?vF0m+GflvSajTMY4dLLYykcw/WLh460CI2Poi5IWA5UjgIHLL5tMn1cSTTcC?=
+ =?us-ascii?Q?7itpYr2HUrsx9cQhZfMfHgrId+Dg9YsmyDbotQFdb+daVO7JcDxhvFI+l48w?=
+ =?us-ascii?Q?Kigz0IJ5uF03zWZgTaNTciBdSGE871XUxXkxCnk7Bo1fW12pWyr9oG3AMEhJ?=
+ =?us-ascii?Q?feGpOTTePg//DBLFKwcd1Fmc7nt0t+gmfrNEG4Bj?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00b9ccb2-7204-444b-d170-08db844922bd
+X-MS-Exchange-CrossTenant-AuthSource: SG2PR06MB5288.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2023 09:03:05.4898
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jVXrT32iv3TIVowA14VbcZsIJpQtSV9FIgDh0bzZjDeFJJMKWEH/7oV9jyzDDnoOryyQuCRBbVSWtn8Oy8QYNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6596
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+debugfs_create_file() will return early if smmu->debugfs is an error
+pointer, so an extra error check is not needed.
 
---sWp9+yLAQfcZfBiY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Minjie Du <duminjie@vivo.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+V4 -> V6: Add 'Reviewed-by' tag on the basis of V4.
+V5: error patch, should be discarded.
+V3 -> V4: fix expression about patch.
+V2 -> V3: fix expression about patch.
+V1 -> V2: remove the error check.
+V1: use IS_ERR() to error check.
+---
+ drivers/iommu/tegra-smmu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Fri, Jul 14, 2023 at 03:21:47AM +0000, =E6=9D=9C=E6=95=8F=E6=9D=B0 wrote:
-> Hi Baolu!
->=20
-> It seems that 'smmu->debugfs' check is still needed.
-> Then I will modify the patch.
-> Thanks!
->=20
-> regards,
-> Minjie
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 1cbf063cc..2137040b7 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -1056,8 +1056,6 @@ DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
+ static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
+ {
+ 	smmu->debugfs = debugfs_create_dir("smmu", NULL);
+-	if (!smmu->debugfs)
+-		return;
+ 
+ 	debugfs_create_file("swgroups", S_IRUGO, smmu->debugfs, smmu,
+ 			    &tegra_smmu_swgroups_fops);
+-- 
+2.39.0
 
-Don't top-post, please. See Documentation/process/2.Process.rst and
-Documentation/process/submitting-patches.rst.
-
-Also, how did you come to the above conclusion? Baolu said that Greg
-keeps reminding people that we shouldn't do error handling for debugfs
-and gave a Reviewed-by:, so why the 180?
-
-Thierry
-
-> -----=E9=82=AE=E4=BB=B6=E5=8E=9F=E4=BB=B6-----
-> =E5=8F=91=E4=BB=B6=E4=BA=BA: Baolu Lu <baolu.lu@linux.intel.com>=20
-> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2023=E5=B9=B47=E6=9C=8814=E6=97=A5 =
-10:58
-> =E6=94=B6=E4=BB=B6=E4=BA=BA: =E6=9D=9C=E6=95=8F=E6=9D=B0 <duminjie@vivo.c=
-om>; Thierry Reding <thierry.reding@gmail.com>; Krishna Reddy <vdumpa@nvidi=
-a.com>; Joerg Roedel <joro@8bytes.org>; Will Deacon <will@kernel.org>; Robi=
-n Murphy <robin.murphy@arm.com>; Jonathan Hunter <jonathanh@nvidia.com>; op=
-en list:TEGRA IOMMU DRIVERS <linux-tegra@vger.kernel.org>; open list:IOMMU =
-SUBSYSTEM <iommu@lists.linux.dev>; open list <linux-kernel@vger.kernel.org>
-> =E6=8A=84=E9=80=81: baolu.lu@linux.intel.com; opensource.kernel <opensour=
-ce.kernel@vivo.com>; Thierry Reding <treding@nvidia.com>
-> =E4=B8=BB=E9=A2=98: Re: [PATCH v4] iommu: remove redundant parameter chec=
-k in tegra_smmu_debugfs_init()
->=20
-> [Some people who received this message don't often get email from baolu.l=
-u@linux.intel.com. Learn why this is important at https://aka.ms/LearnAbout=
-SenderIdentification ]
->=20
-> On 2023/7/13 15:28, Minjie Du wrote:
-> > debugfs_create_file() will return early if smmu->debugfs is an error=20
-> > pointer, so an extra error check is not needed.
-> >
-> > Signed-off-by: Minjie Du<duminjie@vivo.com>
-> > Acked-by: Thierry Reding<treding@nvidia.com>
->=20
-> Greg keeps reminding that no error branch for debugfs, so
->=20
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
->=20
-> Best regards,
-> baolu
-
---sWp9+yLAQfcZfBiY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSxCh0ACgkQ3SOs138+
-s6FoQxAAqLECF0cZvl6wXvAO8Kz53hrol4zJ2QZiSt+XzufD1uZDKVW/EYFWs90x
-0q7zpyohghBoiffKQ3byPHg7NZtLjdfxFEBR9i15/YSCTO6hxjQOUItA4uvS/40p
-R2hyTEAdwPa/UvsZbrldAOCq4gy9jaymvtZe3GLSiZmL60rDT+U2uti0WzXhRdQE
-drthzwKIdkOE46D4gDtQAT/L2I1KTkyc+b79484vB5rnQ4iFLLvp3FjtS2q9dZtx
-ppzSHlUvsxSHf3ujtjTrKEi8cF6p4m5pXhYCSyuClxeqHZmf6i9y06e7AGZaj2J5
-3OQLH4l7ppVroDhpM+6HEHUEtJNr9ORk7PmNKvfcMJuc+8AYCr939BXKloPEFTGC
-4Wdl6nCRNCPc53EYGbCw0S9ma3re6bwzAwjNwpME1rITQpkTJtPBTUCjX+8LM1HZ
-ZOBubBQ+iWCzSZVSsJMlJpb71D+b4ztzC9e0fyDwdLQXc7lQMfawnwHuh0tzvFdo
-mNM4baUFrvuuGjL0ItkS3cXRqSmdlrKzRrBhEDBByXAvsgP1Bsit8jTJUpqiAT45
-wDxm8AxmdY6uXBQv3Ar5Uov5XQ30OzLLbPtarX3ya7f/oFBcmDbVUitf9woQf0nv
-xYVfSXJAJDDvqLQ9UfEl/6TtVMI6VnIyd91ByJrV7mmXOXgTl9A=
-=yASD
------END PGP SIGNATURE-----
-
---sWp9+yLAQfcZfBiY--
