@@ -2,171 +2,145 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE762EB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 11:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADD1C0015E
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 14:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234843AbjGNLgI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 07:36:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41144 "EHLO
+        id S236007AbjGNOi7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 10:38:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233017AbjGNLgI (ORCPT
+        with ESMTP id S236075AbjGNOi6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 07:36:08 -0400
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2052.outbound.protection.outlook.com [40.107.95.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35BB92D79;
-        Fri, 14 Jul 2023 04:36:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y60L/8U6iK19ZjO+w7Z+sIEaGhngXj5eyvoOxY2vmIN1VNK4ITJbN/ZcXUwdLgNUlcrpXnNEYFL0cZZmmKRM2Sg2MF0RkClbNik7glYdNhXuybXlujgJQ/4HPX+Ypw3OH1DAEwP3xDA0H3Q3SaO9IStvUbYkTJgNHi8wFs7wCjg6kREIsXb7A+wFk9HW7r+Jn0Hd/++zz9OFuDAKJkqbJ83rUUlQExs3mM8c5Pc6QOaFAG/U+fJf7FlGeq5nTTh9N4XnvtWsP6cGNxMCDbyINZ9IcRxhCx5MAwJKNmVE5vP6C0wEswYXuxuyDdUg1ntSEJryg57z7oE9xpE39nFrhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z32NVmj7ycKKg3qLHvoWtnfvGw4/6pZvIPdu9kLXKSk=;
- b=KIcNmbT0mTyba/jrjc/JsHoyPB9DiPwLtqNKpmf7QpBkKgIySZbfbOjXi3dAdhMdf6MMK4Fy3xyx98OfAEG3bKUxI4DDb1JWk35zvtA/18Swqw4kR5Dh1DJT0kxwn3BPGqOzx5/loenIXt/IjQamZkLoeQNNVFfqpu7/VtE1UwEOtGA8CQfcCtTCQydIjhnDLW4H1/0LwUqregQIYTqGwA7bUppeLxmccAU7f4ZNER44F9N9YQ5IWVDrNprJ7Wan68RbMDOBfu21hnD5uLi+ihfatWW/I3Knw/pOKQBMwBrVtduV6ohpzAJICfLmTX7MRWZDPCUj6e2BxlHKLkqsaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z32NVmj7ycKKg3qLHvoWtnfvGw4/6pZvIPdu9kLXKSk=;
- b=CLKsbCwZCwquMPVLOIlKJVef/kqlvBr01DMepb3V+Hc0nljDo8ua5KKvhOAU8P2hZ/+zCfu2BfvcLX3rB058jc3SS2ePVX+4eM3ml7t7HdtVCerDciI+Q+PBFBMLE2O8nCczlWdgs7V102PfLuH4cQXTjWJ/ylShHY+sIqj2Xi7ARV6dRJCsuKjl42EsPk5yIFHetN93QLUzjuiyg142dNvCUiGNOs7nJLt+ZSuHQYOe/EGQSsp7P8r8FbfDKTUmcWvw4XyHwKxBkW6M5ARP634qUFLvGt5kxI5i8aBsUJyTwNcu8jyW66H5nVgi/tf5TZbSS37MV6eVfhnQ0x3tFg==
-Received: from MW4PR03CA0253.namprd03.prod.outlook.com (2603:10b6:303:b4::18)
- by CH3PR12MB7738.namprd12.prod.outlook.com (2603:10b6:610:14e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.27; Fri, 14 Jul
- 2023 11:36:05 +0000
-Received: from CO1NAM11FT053.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b4:cafe::a9) by MW4PR03CA0253.outlook.office365.com
- (2603:10b6:303:b4::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.28 via Frontend
- Transport; Fri, 14 Jul 2023 11:36:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1NAM11FT053.mail.protection.outlook.com (10.13.175.63) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6588.27 via Frontend Transport; Fri, 14 Jul 2023 11:36:03 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 14 Jul 2023
- 04:35:52 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 14 Jul
- 2023 04:35:52 -0700
-Received: from pshete-ubuntu.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Fri, 14 Jul 2023 04:35:50 -0700
-From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <linus.walleij@linaro.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-gpio@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <pshete@nvidia.com>
-Subject: [PATCH v3] pinctrl: tegra: Add support to display pin function
-Date:   Fri, 14 Jul 2023 17:05:47 +0530
-Message-ID: <20230714113547.15384-1-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <0cf720bf-ae4b-5780-bda4-5c9bbb2d1d67@nvidia.com>
-References: <0cf720bf-ae4b-5780-bda4-5c9bbb2d1d67@nvidia.com>
+        Fri, 14 Jul 2023 10:38:58 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD5A10EA
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 07:38:56 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51e344efd75so4025272a12.1
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 07:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689345535; x=1691937535;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n6vYaE9i4kUmXWP2uhG546h2t4lLH2hiTxzCGfy/HD0=;
+        b=WPxXETSCLOBLlPTO2OE2LAB5VsyFYEGaFwIMldjNOhUvfB0kFPzyid/hwNiFtW79ZM
+         szXBJ0Bbu7KvmJ0+Vt3ygNtawt83j2017J6QOexrhuzXCYCORYq2xyeUartZI1PaoaHI
+         WmaVwMXOJdXOut6LZWVFFXaQIpV3DJe/w57z3lWwKLeacu0qJl+Op506CM7awEdaI1Xq
+         9daoQQKwIm5a+kPvwYwz9iFHIMpoFM1JOI10q9WOKXXwVqfJJ7Et+DmnyqJ1SXYIZL9c
+         ZQtMKJL16DQaptvwsyRicgtxDQRMweHtKLyXmwWAOAk/273L4vpuMJ+USzM+2D/eSg5A
+         8Vxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689345535; x=1691937535;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n6vYaE9i4kUmXWP2uhG546h2t4lLH2hiTxzCGfy/HD0=;
+        b=fLZVekpgDiFhr9m5IGkPLMsC5wu64CWFAioeUdc8rgV04NLv4pg0hhOXLXNLKGLeAk
+         bwmWDf1pgRAmFiATxRiA7waOUGrOEQ+FLQp+bP56uhKfea0QBmTEkWS6N9p3RASjGIPD
+         n9QBTKfdANqZXMcIAAKV4nVsOJxeyae19WZbLznNjlbKMWhl1bG6PX04GYTrf36rNwAX
+         +KAMvIgrMPELf7U+aUm1ruyE7JQ98mmHp9bPEyqaYU683j1Uflxyfmwv68vbIsLbPqGP
+         LZK85pvNliQQoEN97kjdCeJ8qkbhA4c1ztinWWbYEgDZb6oKiWx0x6wC4FMGHvplHBj/
+         Xv+g==
+X-Gm-Message-State: ABy/qLYBfaRqHiqQ7VmEH73fgF5t3pf8MWjl3lU70kRt5ofdUeajn+2+
+        SV6EzQw+ePK4dmHStEfkJfQ=
+X-Google-Smtp-Source: APBJJlFRUsrNT8DUUfRt9Ntt/VBb45O5P+B1wYnrlckGiH7ZLLdkZ5EAh5hcp4Aa5rEbUHVRu0iOxw==
+X-Received: by 2002:a50:ef19:0:b0:51f:f079:875f with SMTP id m25-20020a50ef19000000b0051ff079875fmr3483382eds.4.1689345534710;
+        Fri, 14 Jul 2023 07:38:54 -0700 (PDT)
+Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id k20-20020aa7c054000000b005215eb17bb7sm993298edo.88.2023.07.14.07.38.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jul 2023 07:38:54 -0700 (PDT)
+Date:   Fri, 14 Jul 2023 16:38:52 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Ion Agorria <ion@agorria.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Pedro =?utf-8?Q?=C3=82ngelo?= <pangelo@void.io>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Zack Pearsall <zpearsall@yahoo.com>,
+        linux-tegra@vger.kernel.org
+Subject: LVDS panel compatible strings
+Message-ID: <ZLFd_L_Uw1PmpSep@orome>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT053:EE_|CH3PR12MB7738:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4596a86b-e2e0-4364-9da4-08db845e81a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nSa10qUi6BPGCFTRo+cudKOBjHQnMComccOdusNzdaIr/AV+ZZ/T8L6mpgz70oaojq05pGKU92zt/mLJ/+B2xnsyyKKutE4YOebIkG2a+/UpCYL/s96LZtk1wEitT4bI14upmDrJ9UTEyszQRLUQ4SQmzmr1BkHSl9O0QHERdpaTgSIP89vibaVP5glZvqTI9qrcMWOceaeRV7rjB8Gui8YVMdc/7DFNk1jC448pmBSM0eNK2RVKOAYbkuww/iTM1xqziQxALb2jw5am9xz/WkURykqSbLk/46iT6vv7bGFkNoJ0mynODLyd6Awzl4uDqejIcCKwn7wsGBZOXunVjJqEPG4a0vrxXR5C2tQ9rzksdpcYMvbX6Xxw5egTgWH1MUNePeU8tiD2iJ65JMRhAs42eoY9ac5WsDfv1fI6h7BTiD+edC/k2JwelIDuRfoiU+An4JyZB5ExNVJ9F5e3YYBNW79Y5WKAflEs3eSCmc+hEo0pdi8fs4eAhjavW32JonCfvE622Q1lb2CPLKaArFHTTY89154GASdfqFCgrP2NxTp20akvPmuylMT7pGD3dWjUErwsoXaKxa/pNeCPHnvWgI0K4LXSTAKVQzopD0ErZTkJoQ5HrFgcNozYmhtR9BT67fd5F1C8dISBMk5B0vqPLuPpiSPTGhdn4b3SrbQcdDioAB3vK8pAFuOusre6UStmYSMx+BWMb0TO415347K5fMpvXF4fLWUbCqt6VwJPtTOaIymJfkFThzYEh12/
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(39860400002)(396003)(346002)(376002)(451199021)(36840700001)(40470700004)(46966006)(5660300002)(8936002)(8676002)(316002)(82740400003)(356005)(7636003)(41300700001)(40480700001)(40460700003)(86362001)(2906002)(26005)(1076003)(107886003)(6666004)(7696005)(2616005)(47076005)(82310400005)(36756003)(336012)(426003)(83380400001)(36860700001)(186003)(478600001)(110136005)(4326008)(70206006)(70586007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2023 11:36:03.8673
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4596a86b-e2e0-4364-9da4-08db845e81a2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT053.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7738
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7XCPdwxkz+h0ZUBm"
+Content-Disposition: inline
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The current function for a given pin is not displayed via the debugfs.
-Add support to display the current function that is set for each pin.
 
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra.c | 19 +++++++++++++++++--
- drivers/pinctrl/tegra/pinctrl-tegra.h |  2 ++
- 2 files changed, 19 insertions(+), 2 deletions(-)
+--7XCPdwxkz+h0ZUBm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 4547cf66d03b..cb1d67239cd0 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -96,6 +96,7 @@ static const struct cfg_param {
- 	{"nvidia,slew-rate-falling",	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING},
- 	{"nvidia,slew-rate-rising",	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING},
- 	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
-+	{"nvidia,function",		TEGRA_PINCONF_PARAM_FUNCTION},
- };
- 
- static int tegra_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
-@@ -470,6 +471,12 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
- 		*bit = g->drvtype_bit;
- 		*width = 2;
- 		break;
-+	case TEGRA_PINCONF_PARAM_FUNCTION:
-+		*bank = g->mux_bank;
-+		*reg = g->mux_reg;
-+		*bit = g->mux_bit;
-+		*width = 2;
-+		break;
- 	default:
- 		dev_err(pmx->dev, "Invalid config param %04x\n", param);
- 		return -ENOTSUPP;
-@@ -633,8 +640,16 @@ static void tegra_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
- 		val >>= bit;
- 		val &= (1 << width) - 1;
- 
--		seq_printf(s, "\n\t%s=%u",
--			   strip_prefix(cfg_params[i].property), val);
-+		if (cfg_params[i].param == TEGRA_PINCONF_PARAM_FUNCTION) {
-+			u8 idx = pmx->soc->groups[group].funcs[val];
-+
-+			seq_printf(s, "\n\t%s=%s",
-+				   strip_prefix(cfg_params[i].property),
-+					 pmx->functions[idx].name);
-+		} else {
-+			seq_printf(s, "\n\t%s=%u",
-+				   strip_prefix(cfg_params[i].property), val);
-+		}
- 	}
- }
- 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index b3289bdf727d..e728efeaa4de 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -54,6 +54,8 @@ enum tegra_pinconf_param {
- 	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING,
- 	/* argument: Integer, range is HW-dependant */
- 	TEGRA_PINCONF_PARAM_DRIVE_TYPE,
-+	/* argument: pinmux settings */
-+	TEGRA_PINCONF_PARAM_FUNCTION,
- };
- 
- enum tegra_pinconf_pull {
--- 
-2.17.1
+Hi everyone,
 
+I've been working on converting all Tegra-related device tree bindings
+to json-schema so that eventually we can fully validate device tree
+files. Getting all the bindings reviewed and merged has been slow, but
+I have a local tree where pretty much all validation errors and warnings
+have been fixed. The remaining warnings that I'm not sure how to resolve
+are these:
+
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: display-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a711-panel']
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: display-panel: compatible: ['panel-lvds'] is too short
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: display-panel: Unevaluated properties are not allowed ('compatible' was unexpected)
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: display-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a711-panel']
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: display-panel: compatible: ['panel-lvds'] is too short
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: display-panel: Unevaluated properties are not allowed ('compatible' was unexpected)
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: display-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a711-panel']
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: display-panel: compatible: ['panel-lvds'] is too short
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: display-panel: Unevaluated properties are not allowed ('compatible' was unexpected)
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a711-panel']
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-panel: compatible: ['panel-lvds'] is too short
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+    arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-panel: Unevaluated properties are not allowed ('compatible' was unexpected)
+        from schema $id: http://devicetree.org/schemas/display/panel/panel-lvds.yaml#
+
+The reason for these is that the device tree files use:
+
+	compatible = "panel-lvds";
+
+but that's not valid as per the bindings. So what we really want is a
+specific compatible string that specifies the exact panel that each of
+these devices uses in addition to the "panel-lvds" fallback. Do you guys
+have information about these that could help fix up the DT files?
+
+Thanks,
+Thierry
+
+--7XCPdwxkz+h0ZUBm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSxXfkACgkQ3SOs138+
+s6E0ohAAv50no9Jgg78MylyowK5/JVWcWE4XgxaMGBRRfb5qblMtPGE3F9Q1xK3W
+/Hc3vbiEKLN77OiNrzUVFAgrJM0XsD0m19XDzlmH/a+ZkLnuJvM47f0Z1Q2RwZd3
+xxATlXFPFd1HfChWtukR5SuyJ8+/bJ8WIm5sPZbHQp13oXqDC6T5IdtR8mBmF0x8
+zkqXnGZYMx+aYVRcANRtcoLycJRh6Y6jDXCXB9579xz6SUZqcoESq0Ojh7YFl4Lt
+OroVYdjC1wlNNA0mQpwRR+SMpxSPMiFagvjRGGNGLOGBcKzNS9Z7lnE2DGVV4lMg
+J070fAo5+7vqDNyuuWXLjg+f2RJokVHELK46lcEftej9byhORQKefUh+bPQ9DoPj
+HPfLVNgb8yDeixXtL2GtSt8ZhZ6jLf26PR3Rj8+JXN2YdbbbbigB8wtPr5JKvF8+
+8UwfedTAHJxmGtK5CvtEzqCL06TxY/PkEn0K1hAE83ryPEq3L8WKDK0JYj5XdJtX
+A9xddRWB4PluGgReHq6aijPhOhALkoGsJL3QvoaMhjfqV/wSz2jKM676XSzO9z7K
+87/gpSLzYHKZsnqM1GV27phr4QjbNyEE7dGshJI+IB79ecWPFXXUvsKET/qaLSj1
+N4lLrBGPPbH0OTJxHH0HIGiLUFnpThcpT4ZcjFdyXXIFPXmFWrI=
+=v4Ow
+-----END PGP SIGNATURE-----
+
+--7XCPdwxkz+h0ZUBm--
