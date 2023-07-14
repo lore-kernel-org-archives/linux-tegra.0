@@ -2,96 +2,95 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 420A9C00528
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 18:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240E3C04E69
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 18:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235954AbjGNSCh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 14:02:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49116 "EHLO
+        id S236696AbjGNSDX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 14:03:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236822AbjGNSCZ (ORCPT
+        with ESMTP id S236690AbjGNSCi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 14:02:25 -0400
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F8BB422B;
-        Fri, 14 Jul 2023 11:01:50 -0700 (PDT)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4036507ddadso16167571cf.3;
-        Fri, 14 Jul 2023 11:01:50 -0700 (PDT)
+        Fri, 14 Jul 2023 14:02:38 -0400
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266B8358C;
+        Fri, 14 Jul 2023 11:01:59 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-66869feb7d1so1541777b3a.3;
+        Fri, 14 Jul 2023 11:01:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689357640; x=1691949640;
+        d=1e100.net; s=20221208; t=1689357655; x=1691949655;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tPaYytlE/dKDiPWONYGoHn0bUH6RRDwZOcpAYre31YM=;
-        b=lB3AE4oDZZ//mEqMKHZFj9FRFeGjQCVMkdDM/a0sBGXVM7AC7Kj3IqUR3TUQAGURBx
-         i7VPTXGXTd0nNdB/FsO0KXCxXcAAQ5h8xyCPh/dshfMsno+Ho/dXkzDIE7n6d1Jrp+dr
-         rE/PDC2F1TucvtSS0U2ttziupIvgWjBPdp97i3/1A4zWjkfb2O+sKoNq+CI2NU5pfxTM
-         8f5xeWH5iCDHOyEUiJRm8iLPDKmz+jLu6CfYasHAtAsTglnMJ70HU9/hsO/aHrJFxLa3
-         r5PegNDiX8dzVrGTHJ/vChQQicNIJbkNY3Nu5NYtC+QOgccVIdyiaSbLWJ4jP0aoU6I0
-         LzAw==
-X-Gm-Message-State: ABy/qLY3KWUn6R2pfPRAUivwQIDCdcwydnqoavmiT93rLkxOMC9DMonV
-        njryLXNib2D6SZ/X63LdX0gEI5sufhMA
-X-Google-Smtp-Source: APBJJlH0WZnWwucCN4gIdX66/gpDTQftSzdkzROwtscf9sh83/FTUUIIdbYbwXJ47kHQSsWbeUOR1g==
-X-Received: by 2002:a92:da88:0:b0:346:6d97:ffd1 with SMTP id u8-20020a92da88000000b003466d97ffd1mr4998380iln.18.1689357058408;
-        Fri, 14 Jul 2023 10:50:58 -0700 (PDT)
+        bh=zBtCJ1Wj7uyT3akzTe+POqH017QGVk7t8G9DBPGwg8k=;
+        b=TUeZaO75Vv4v/tepCTDNeIblEJPzFCNrxe0bptYKSJaMywz9GDBsVfYj0/s8Rd9mrB
+         h9J/gi8wVmoDXAoeo9PxlGAvpBbxKCSqqd9EK74yJGPwfmwHXKZ1YLY5QlYO4s+QRG8A
+         BIXLQCv7GRmpQQqNgLv+gZAB2MormbFrCvWz/h9zWkWBBldEx8v9wQcX3XrpDCEZ5TDS
+         EvRvYs+EP20XG3K3mEd/orKkbQhlXwgQ1hurSSGWe4JeeGN3YmhHVUFiz6YDxa8hg2b2
+         NEgNMF/ny8HVbzoXnfA3rg2jTuH8C5ZeSBV+JRPkbIqs58PIcCGZQMnXyr0KPWyzNGmS
+         JZlg==
+X-Gm-Message-State: ABy/qLauDdni5rLQc80zKOTD650W7EoZY171bUA3Vtutf2vntO8bT7kx
+        FFrXZoirryMOGVACZbLZqACfxJYXVSjR
+X-Google-Smtp-Source: APBJJlF8/H7PmCypetZ49vRz8/piqGg71JXmwKFXt4Fz7m/Z/JPp9nESxuf4M6YPl/KXPamXOPxMZw==
+X-Received: by 2002:a6b:a04:0:b0:776:fd07:3c96 with SMTP id z4-20020a6b0a04000000b00776fd073c96mr5721801ioi.7.1689356924343;
+        Fri, 14 Jul 2023 10:48:44 -0700 (PDT)
 Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id n13-20020a02a90d000000b0042b7b76b29fsm2629924jam.174.2023.07.14.10.50.54
+        by smtp.gmail.com with ESMTPSA id u14-20020a6be30e000000b00786f5990435sm2843368ioc.7.2023.07.14.10.48.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 10:50:57 -0700 (PDT)
-Received: (nullmailer pid 4064720 invoked by uid 1000);
-        Fri, 14 Jul 2023 17:50:11 -0000
+        Fri, 14 Jul 2023 10:48:43 -0700 (PDT)
+Received: (nullmailer pid 4061709 invoked by uid 1000);
+        Fri, 14 Jul 2023 17:48:31 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Guillaume La Roque <glaroque@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Markus Mayer <mmayer@broadcom.com>,
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Chuanhua Lei <lchuanhua@maxlinear.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] thermal: Explicitly include correct DT includes
-Date:   Fri, 14 Jul 2023 11:50:07 -0600
-Message-Id: <20230714175008.4064592-1-robh@kernel.org>
+        Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH] PCI: Explicitly include correct DT includes
+Date:   Fri, 14 Jul 2023 11:48:25 -0600
+Message-Id: <20230714174827.4061572-1-robh@kernel.org>
 X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -110,333 +109,428 @@ explicitly include the correct includes.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/thermal/amlogic_thermal.c           | 2 --
- drivers/thermal/broadcom/bcm2711_thermal.c  | 2 +-
- drivers/thermal/broadcom/brcmstb_thermal.c  | 2 +-
- drivers/thermal/hisi_thermal.c              | 2 +-
- drivers/thermal/imx8mm_thermal.c            | 1 -
- drivers/thermal/imx_sc_thermal.c            | 1 -
- drivers/thermal/imx_thermal.c               | 2 +-
- drivers/thermal/k3_bandgap.c                | 2 +-
- drivers/thermal/k3_j72xx_bandgap.c          | 2 +-
- drivers/thermal/mediatek/auxadc_thermal.c   | 1 -
- drivers/thermal/mediatek/lvts_thermal.c     | 2 +-
- drivers/thermal/qcom/qcom-spmi-adc-tm5.c    | 1 -
- drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
- drivers/thermal/rcar_gen3_thermal.c         | 2 +-
- drivers/thermal/rcar_thermal.c              | 2 +-
- drivers/thermal/rzg2l_thermal.c             | 2 +-
- drivers/thermal/samsung/exynos_tmu.c        | 2 +-
- drivers/thermal/sprd_thermal.c              | 2 +-
- drivers/thermal/st/stm_thermal.c            | 2 --
- drivers/thermal/sun8i_thermal.c             | 2 +-
- drivers/thermal/tegra/tegra30-tsensor.c     | 2 +-
- drivers/thermal/thermal_of.c                | 3 +--
- drivers/thermal/uniphier_thermal.c          | 1 -
- 23 files changed, 15 insertions(+), 26 deletions(-)
+ drivers/pci/controller/cadence/pci-j721e.c           | 2 +-
+ drivers/pci/controller/cadence/pcie-cadence-plat.c   | 3 +--
+ drivers/pci/controller/cadence/pcie-cadence.c        | 1 +
+ drivers/pci/controller/dwc/pci-dra7xx.c              | 2 +-
+ drivers/pci/controller/dwc/pci-exynos.c              | 2 +-
+ drivers/pci/controller/dwc/pci-imx6.c                | 2 +-
+ drivers/pci/controller/dwc/pci-keystone.c            | 1 -
+ drivers/pci/controller/dwc/pci-meson.c               | 2 +-
+ drivers/pci/controller/dwc/pcie-artpec6.c            | 2 +-
+ drivers/pci/controller/dwc/pcie-designware-plat.c    | 2 +-
+ drivers/pci/controller/dwc/pcie-designware.c         | 2 +-
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c        | 2 +-
+ drivers/pci/controller/dwc/pcie-intel-gw.c           | 2 ++
+ drivers/pci/controller/dwc/pcie-kirin.c              | 3 +--
+ drivers/pci/controller/dwc/pcie-qcom.c               | 2 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c           | 1 -
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c        | 2 +-
+ drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 3 ---
+ drivers/pci/controller/pci-ftpci100.c                | 3 +--
+ drivers/pci/controller/pci-host-common.c             | 2 +-
+ drivers/pci/controller/pci-ixp4xx.c                  | 3 +--
+ drivers/pci/controller/pci-loongson.c                | 2 +-
+ drivers/pci/controller/pci-v3-semi.c                 | 3 +--
+ drivers/pci/controller/pcie-altera.c                 | 5 ++---
+ drivers/pci/controller/pcie-rockchip-host.c          | 4 +---
+ drivers/pci/controller/pcie-rockchip.c               | 1 +
+ drivers/pci/endpoint/pci-epc-core.c                  | 1 -
+ drivers/pci/probe.c                                  | 1 -
+ 28 files changed, 25 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
-index 756b218880a7..81ebbf6de0de 100644
---- a/drivers/thermal/amlogic_thermal.c
-+++ b/drivers/thermal/amlogic_thermal.c
-@@ -22,8 +22,6 @@
+diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+index e70213c9060a..2c87e7728a65 100644
+--- a/drivers/pci/controller/cadence/pci-j721e.c
++++ b/drivers/pci/controller/cadence/pci-j721e.c
+@@ -14,8 +14,8 @@
+ #include <linux/irqdomain.h>
  #include <linux/mfd/syscon.h>
- #include <linux/module.h>
  #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/pci.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ 
+diff --git a/drivers/pci/controller/cadence/pcie-cadence-plat.c b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+index bac0541317c1..371ffc1f00f8 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence-plat.c
++++ b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+@@ -6,11 +6,10 @@
+  * Author: Tom Joseph <tjoseph@cadence.com>
+  */
+ #include <linux/kernel.h>
 -#include <linux/of_address.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/broadcom/bcm2711_thermal.c b/drivers/thermal/broadcom/bcm2711_thermal.c
-index c243a76a3471..03ac2d02e9d4 100644
---- a/drivers/thermal/broadcom/bcm2711_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2711_thermal.c
-@@ -15,8 +15,8 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
 +#include <linux/of.h>
+ #include <linux/of_pci.h>
  #include <linux/platform_device.h>
--#include <linux/of_device.h>
- #include <linux/regmap.h>
- #include <linux/thermal.h>
- 
-diff --git a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
-index 72d1dbe60b8f..0b73abdaa792 100644
---- a/drivers/thermal/broadcom/brcmstb_thermal.c
-+++ b/drivers/thermal/broadcom/brcmstb_thermal.c
-@@ -17,8 +17,8 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/of_device.h>
- #include <linux/thermal.h>
- 
- #define AVS_TMON_STATUS			0x00
-diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index 3f09ef8be41a..fb54ed4bf6f0 100644
---- a/drivers/thermal/hisi_thermal.c
-+++ b/drivers/thermal/hisi_thermal.c
-@@ -13,9 +13,9 @@
- #include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
--#include <linux/of_device.h>
- #include <linux/thermal.h>
- 
- #define HI6220_TEMP0_LAG			(0x0)
-diff --git a/drivers/thermal/imx8mm_thermal.c b/drivers/thermal/imx8mm_thermal.c
-index d4b40869c7d7..e89b11b3f2b9 100644
---- a/drivers/thermal/imx8mm_thermal.c
-+++ b/drivers/thermal/imx8mm_thermal.c
-@@ -12,7 +12,6 @@
- #include <linux/module.h>
- #include <linux/nvmem-consumer.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
-index 8d6b4ef23746..7224f8d21db9 100644
---- a/drivers/thermal/imx_sc_thermal.c
-+++ b/drivers/thermal/imx_sc_thermal.c
-@@ -8,7 +8,6 @@
- #include <linux/firmware/imx/sci.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-index a94ec0a0c9dd..826358cbe810 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -11,7 +11,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/thermal.h>
- #include <linux/nvmem-consumer.h>
-diff --git a/drivers/thermal/k3_bandgap.c b/drivers/thermal/k3_bandgap.c
-index 1c3e590157ec..68f59b3735d3 100644
---- a/drivers/thermal/k3_bandgap.c
-+++ b/drivers/thermal/k3_bandgap.c
-@@ -11,7 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
  #include <linux/pm_runtime.h>
- #include <linux/thermal.h>
- #include <linux/types.h>
-diff --git a/drivers/thermal/k3_j72xx_bandgap.c b/drivers/thermal/k3_j72xx_bandgap.c
-index 5be1f09eeb2c..a5a0fc9b9356 100644
---- a/drivers/thermal/k3_j72xx_bandgap.c
-+++ b/drivers/thermal/k3_j72xx_bandgap.c
-@@ -10,10 +10,10 @@
+-#include <linux/of_device.h>
+ #include "pcie-cadence.h"
+ 
+ #define CDNS_PLAT_CPU_TO_BUS_ADDR	0x0FFFFFFF
+diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+index 13c4032ca379..4251fac5e310 100644
+--- a/drivers/pci/controller/cadence/pcie-cadence.c
++++ b/drivers/pci/controller/cadence/pcie-cadence.c
+@@ -4,6 +4,7 @@
+ // Author: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+ 
+ #include <linux/kernel.h>
++#include <linux/of.h>
+ 
+ #include "pcie-cadence.h"
+ 
+diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+index 4ae807e7cf79..b445ffe95e3f 100644
+--- a/drivers/pci/controller/dwc/pci-dra7xx.c
++++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+@@ -16,7 +16,7 @@
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
  #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index ec5611005566..6319082301d6 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -14,11 +14,11 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
  #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/err.h>
- #include <linux/types.h>
--#include <linux/of_platform.h>
- #include <linux/io.h>
- #include <linux/thermal.h>
- #include <linux/of.h>
-diff --git a/drivers/thermal/mediatek/auxadc_thermal.c b/drivers/thermal/mediatek/auxadc_thermal.c
-index f59d36de20a0..c537aed71017 100644
---- a/drivers/thermal/mediatek/auxadc_thermal.c
-+++ b/drivers/thermal/mediatek/auxadc_thermal.c
-@@ -15,7 +15,6 @@
- #include <linux/nvmem-consumer.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
 -#include <linux/of_device.h>
+ #include <linux/pci.h>
  #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index b693fac2d677..054c965ae5e1 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -13,7 +13,7 @@
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/nvmem-consumer.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-index 5ddc39b2be32..756ac6842ff9 100644
---- a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-+++ b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-@@ -14,7 +14,6 @@
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-index 0e8ebfcd84c5..78c5cfe6a0c0 100644
---- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-+++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-@@ -10,7 +10,6 @@
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 9029d01e029b..bd2fb8c2e968 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -11,7 +11,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index b8571f7090aa..293f8dd9fe0a 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -11,7 +11,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/reboot.h>
-diff --git a/drivers/thermal/rzg2l_thermal.c b/drivers/thermal/rzg2l_thermal.c
-index b56981f85306..6b2bf3426f52 100644
---- a/drivers/thermal/rzg2l_thermal.c
-+++ b/drivers/thermal/rzg2l_thermal.c
-@@ -9,8 +9,8 @@
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/math.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regulator/consumer.h>
 +#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 45e5c840d130..58f4d8f7a3fd 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -15,7 +15,7 @@
- #include <linux/io.h>
- #include <linux/interrupt.h>
+ 
+ #include "pcie-designware.h"
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 27aaa2a6bf39..d123797a06a2 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -17,8 +17,8 @@
+ #include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
+ #include <linux/mfd/syscon/imx7-iomuxc-gpr.h>
  #include <linux/module.h>
--#include <linux/of_device.h>
 +#include <linux/of.h>
+ #include <linux/of_gpio.h>
+-#include <linux/of_device.h>
  #include <linux/of_address.h>
- #include <linux/of_irq.h>
+ #include <linux/pci.h>
  #include <linux/platform_device.h>
-diff --git a/drivers/thermal/sprd_thermal.c b/drivers/thermal/sprd_thermal.c
-index 2fb90fdad76e..e27c4bdc8912 100644
---- a/drivers/thermal/sprd_thermal.c
-+++ b/drivers/thermal/sprd_thermal.c
-@@ -6,7 +6,7 @@
- #include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/nvmem-consumer.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/thermal.h>
-diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-index 903fcf1763f1..142a7e5d12f4 100644
---- a/drivers/thermal/st/stm_thermal.c
-+++ b/drivers/thermal/st/stm_thermal.c
-@@ -14,8 +14,6 @@
- #include <linux/iopoll.h>
- #include <linux/module.h>
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 78818853af9e..49aea6ce3e87 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -19,7 +19,6 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/msi.h>
  #include <linux/of.h>
--#include <linux/of_address.h>
 -#include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/phy/phy.h>
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index c1527693bed9..973b0fc81315 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -9,7 +9,6 @@
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/gpio/consumer.h>
+-#include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pci.h>
  #include <linux/platform_device.h>
- #include <linux/thermal.h>
- 
-diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
-index 195f3c5d0b38..cca16d632d9f 100644
---- a/drivers/thermal/sun8i_thermal.c
-+++ b/drivers/thermal/sun8i_thermal.c
-@@ -14,7 +14,7 @@
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/nvmem-consumer.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
-index c243e9d76d3c..d911fa60f100 100644
---- a/drivers/thermal/tegra/tegra30-tsensor.c
-+++ b/drivers/thermal/tegra/tegra30-tsensor.c
-@@ -18,7 +18,7 @@
- #include <linux/iopoll.h>
- #include <linux/math.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/reset.h>
-diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-index 6fb14e521197..c36c7d235cba 100644
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -10,8 +10,7 @@
- 
- #include <linux/err.h>
- #include <linux/export.h>
--#include <linux/of_device.h>
--#include <linux/of_platform.h>
-+#include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/thermal.h>
+@@ -17,6 +16,7 @@
+ #include <linux/resource.h>
  #include <linux/types.h>
-diff --git a/drivers/thermal/uniphier_thermal.c b/drivers/thermal/uniphier_thermal.c
-index aef6119cc004..6f32ab61d174 100644
---- a/drivers/thermal/uniphier_thermal.c
-+++ b/drivers/thermal/uniphier_thermal.c
-@@ -12,7 +12,6 @@
+ #include <linux/phy/phy.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ 
+ #include "pcie-designware.h"
+diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
+index 98102079e26d..9b572a2b2c9a 100644
+--- a/drivers/pci/controller/dwc/pcie-artpec6.c
++++ b/drivers/pci/controller/dwc/pcie-artpec6.c
+@@ -10,7 +10,7 @@
+ #include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+ #include <linux/resource.h>
+diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
+index 1fcfb840f238..b625841e98aa 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-plat.c
++++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
+@@ -12,7 +12,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+ #include <linux/resource.h>
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index c87848cd8686..2459f2a61b9b 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -16,7 +16,7 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/ioport.h>
+ #include <linux/of.h>
+-#include <linux/of_platform.h>
++#include <linux/platform_device.h>
+ #include <linux/sizes.h>
+ #include <linux/types.h>
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+index c1e7653e508e..2fe42c70097f 100644
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -14,7 +14,7 @@
+ #include <linux/irqdomain.h>
  #include <linux/mfd/syscon.h>
  #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_irq.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+index 9c7caed9e706..c9c93524e01d 100644
+--- a/drivers/pci/controller/dwc/pcie-intel-gw.c
++++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+@@ -9,9 +9,11 @@
+ #include <linux/clk.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/iopoll.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/pci_regs.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/reset.h>
+ 
+ #include "../../pci.h"
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index d09507f822a7..d93bc2906950 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -16,8 +16,7 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/syscon.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/of_pci.h>
+ #include <linux/phy/phy.h>
+diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+index 7a87a47eb7ed..cee4e400a695 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -19,7 +19,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pci.h>
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index e1db909f53ec..383ba71d1e8f 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -20,7 +20,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
  #include <linux/of.h>
 -#include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+index 4d0a587c0ba5..cba3c88fcf39 100644
+--- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
++++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+@@ -11,7 +11,7 @@
+ #include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/iopoll.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/pci.h>
+ #include <linux/phy/phy.h>
  #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/thermal.h>
+diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+index 31a7bdebe540..45b97a4b14db 100644
+--- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
++++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+@@ -17,9 +17,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/msi.h>
+-#include <linux/of_address.h>
+-#include <linux/of_irq.h>
+-#include <linux/of_platform.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pci-ftpci100.c b/drivers/pci/controller/pci-ftpci100.c
+index 6e7981d2ed5e..ffdeed25e961 100644
+--- a/drivers/pci/controller/pci-ftpci100.c
++++ b/drivers/pci/controller/pci-ftpci100.c
+@@ -15,8 +15,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+diff --git a/drivers/pci/controller/pci-host-common.c b/drivers/pci/controller/pci-host-common.c
+index d3924a44db02..6be3266cd7b5 100644
+--- a/drivers/pci/controller/pci-host-common.c
++++ b/drivers/pci/controller/pci-host-common.c
+@@ -9,8 +9,8 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_device.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci-ecam.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pci-ixp4xx.c b/drivers/pci/controller/pci-ixp4xx.c
+index e44252db6085..acb85e0d5675 100644
+--- a/drivers/pci/controller/pci-ixp4xx.c
++++ b/drivers/pci/controller/pci-ixp4xx.c
+@@ -19,8 +19,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pci-loongson.c b/drivers/pci/controller/pci-loongson.c
+index fe0f732f6e43..d45e7b8dc530 100644
+--- a/drivers/pci/controller/pci-loongson.c
++++ b/drivers/pci/controller/pci-loongson.c
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2020 Jiaxun Yang <jiaxun.yang@flygoat.com>
+  */
+ 
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/pci_ids.h>
+diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
+index ca44b0c83d1b..0917f571bb6d 100644
+--- a/drivers/pci/controller/pci-v3-semi.c
++++ b/drivers/pci/controller/pci-v3-semi.c
+@@ -20,8 +20,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
+index c95a29fff8bf..a9536dc4bf96 100644
+--- a/drivers/pci/controller/pcie-altera.c
++++ b/drivers/pci/controller/pcie-altera.c
+@@ -9,11 +9,10 @@
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqchip/chained_irq.h>
++#include <linux/irqdomain.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
+-#include <linux/of_irq.h>
++#include <linux/of.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+index 2438bc9b3a1a..afbbdccd195d 100644
+--- a/drivers/pci/controller/pcie-rockchip-host.c
++++ b/drivers/pci/controller/pcie-rockchip-host.c
+@@ -24,10 +24,8 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_pci.h>
+-#include <linux/of_platform.h>
+ #include <linux/pci.h>
+ #include <linux/pci_ids.h>
+ #include <linux/phy/phy.h>
+diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+index 1aa84035a8bc..0ef2e622d36e 100644
+--- a/drivers/pci/controller/pcie-rockchip.c
++++ b/drivers/pci/controller/pcie-rockchip.c
+@@ -15,6 +15,7 @@
+ #include <linux/delay.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/iopoll.h>
++#include <linux/of.h>
+ #include <linux/of_pci.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 6c54fa5684d2..5a4a8b0be626 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -9,7 +9,6 @@
+ #include <linux/device.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
+ 
+ #include <linux/pci-epc.h>
+ #include <linux/pci-epf.h>
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 8bac3ce02609..31fb02fbb2cc 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -8,7 +8,6 @@
+ #include <linux/init.h>
+ #include <linux/pci.h>
+ #include <linux/msi.h>
+-#include <linux/of_device.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci_hotplug.h>
+ #include <linux/slab.h>
 -- 
 2.40.1
 
