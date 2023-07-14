@@ -2,163 +2,327 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F6EB64DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 15:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7477CC001E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 17:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235470AbjGNP5Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 11:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38482 "EHLO
+        id S236191AbjGNRld (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 13:41:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbjGNP5P (ORCPT
+        with ESMTP id S236185AbjGNRlU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 11:57:15 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34CE330F8
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 08:57:14 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-992b27e1c55so267581666b.2
-        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 08:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689350232; x=1691942232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PjfU7A8+zMWROepAmHvqUQaf89QkGELk+WYBvrX4LEc=;
-        b=LLhbPaEvjO8tDvUoDB0FtxH0JimQsoSlDzSfrvVpwjkI5Nq1mPrPfFOpXRM00Ufh+P
-         H1aoSdUIrT8nummA6t135/MVT5GnS8mSWP2h7TEZIe1o7hcQUquEnCUH2Is8Kvtv2oA0
-         J6ZQprpB0ABRf+UpdYa8PzYD+2gDehb68TnALVpCJLAS3mqXDurGUTJhL/xG895OnLZP
-         UXSucFfumGz+ooxX1gYsmN22H64Qe0cxAEtCTabrxM4JkgS9yhfpzGOxio2ODvXIN4vb
-         9uRYpxSsFyKSNCGin6pc3x1WHFtwgGDip7jblRRjguMCoeXw3Kfo6Zc+s6fVP3aO0+AJ
-         rvOg==
+        Fri, 14 Jul 2023 13:41:20 -0400
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D73F3A94;
+        Fri, 14 Jul 2023 10:41:01 -0700 (PDT)
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3464c774f23so9739975ab.1;
+        Fri, 14 Jul 2023 10:41:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689350232; x=1691942232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PjfU7A8+zMWROepAmHvqUQaf89QkGELk+WYBvrX4LEc=;
-        b=XPLgbtUHkYhHaK51suxhNLDCWEMGyiItqHELuHQbMJMWc488KikePXAWOm5PRdYi24
-         X86OfHXlbovgLS82VnJo0BI6BeZWbuy79klSqHh7/gpv3wKvBseN1oX+J5qizdx+GwEz
-         +mCt0GghCGkJ2A1S1Z8uyr4jOrI+gw3IZrF1+aNisNp/75DDCp31+VGdcLQ0Wj0rg4rC
-         359+VSPQjZd9he8wMVfDV23y/0EEn5fWSL7nHRPheOuvYkOQMNkEHTAYEP93ULblkjh/
-         LR4PJLkzzx3rWwLNZhlj5c7r91E8Oy08Y+G1XJG9nwF6pceDODCu1QHuZW7HGdN4/W6J
-         Mv+g==
-X-Gm-Message-State: ABy/qLYxTUM2WMHm0te0P4oODAFII19+/dI4itqogCSnQ7Cta+PSD4kS
-        tzMUNx2D4nxLN6YCCIqjCbZkclDN8pDzEpTk3Qw=
-X-Google-Smtp-Source: APBJJlED3nBNoH+UF/wWAUstRcU7dz38nU+0C80W4VoHzZeLEgJUI91ucAwWcz8rM14YI5cGWqAg0TS6LG3xPSfZrHM=
-X-Received: by 2002:a17:906:73cb:b0:982:2586:f85 with SMTP id
- n11-20020a17090673cb00b0098225860f85mr4369622ejl.65.1689350232418; Fri, 14
- Jul 2023 08:57:12 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689356460; x=1691948460;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0nF64AgviBwnTvGXpFHPhLphTeIuPzPi+rOMKEmbw+I=;
+        b=hmdFlUJUy2lDh5SshmHnFf8ioB/CXF7l9OKcrlYLJfnfBs1mRaN9tB2k2E3ZAWrQvF
+         6TAWDqVff/23ZfF4CDfLOwltIXbwRWXvDO4EgZmmY9XbTY0DNa4nPV1zvc2saSDI2TdM
+         t1bXJC0HD8Yx7TBzZ7zWRd8RTA7ShUDofBsTrIXefM8BHhnXGYNAf4jMvGnb0cU+Wiub
+         FP6QHacs9Obmi8Tc9lIrx/ghVGiFSm5fsSCAENdwXoQ7j13LIRl6RIQpbKeO79wL9a9k
+         l4qo5JfO12v5J9pzEx5WuiOy8dikZnOtq93Af2eQurqSOBwRKevMuwBu2FaYpVJ7VAB6
+         oUKA==
+X-Gm-Message-State: ABy/qLYjWjatIfZXSJUaWM9SW9KG9TFanj1xrjeJlyuYW8d9jjpyatI/
+        MVj+VpsVLp6HaE4+VFdUlg==
+X-Google-Smtp-Source: APBJJlH9NaBuTChDzkbkQxSnB0XE9piLIFxIY23t7ZsfCjG193zwK2iuYIz72I1BFGKnh4wMIAevAg==
+X-Received: by 2002:a92:d6ca:0:b0:345:cdbe:833c with SMTP id z10-20020a92d6ca000000b00345cdbe833cmr4917548ilp.28.1689356460193;
+        Fri, 14 Jul 2023 10:41:00 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id q16-20020a056e02079000b00345d5a3748csm2850148ils.63.2023.07.14.10.40.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jul 2023 10:40:59 -0700 (PDT)
+Received: (nullmailer pid 4041019 invoked by uid 1000);
+        Fri, 14 Jul 2023 17:40:57 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Damien Le Moal <dlemoal@kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] ata: Explicitly include correct DT includes
+Date:   Fri, 14 Jul 2023 11:40:50 -0600
+Message-Id: <20230714174052.4040857-1-robh@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-References: <ZLFd_L_Uw1PmpSep@orome> <CAPVz0n3fj77JEzJbYve9-5pjjVt+yJHNcFGqJr0HFSJnaOtbzw@mail.gmail.com>
- <ZLFmxuVuO2FWy1as@orome>
-In-Reply-To: <ZLFmxuVuO2FWy1as@orome>
-From:   Svyatoslav Ryhel <clamor95@gmail.com>
-Date:   Fri, 14 Jul 2023 18:57:01 +0300
-Message-ID: <CAPVz0n0sYJvKJRmwBRpp_aUx7HbgbcLnkAJAV82XryHVeeYcHA@mail.gmail.com>
-Subject: Re: LVDS panel compatible strings
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Ion Agorria <ion@agorria.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        =?UTF-8?Q?Pedro_=C3=82ngelo?= <pangelo@void.io>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Zack Pearsall <zpearsall@yahoo.com>,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-=D0=BF=D1=82, 14 =D0=BB=D0=B8=D0=BF. 2023=E2=80=AF=D1=80. =D0=BE 18:16 Thie=
-rry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Fri, Jul 14, 2023 at 06:00:43PM +0300, Svyatoslav Ryhel wrote:
-> > =D0=BF=D1=82, 14 =D0=BB=D0=B8=D0=BF. 2023=E2=80=AF=D1=80. =D0=BE 17:38 =
-Thierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > Hi everyone,
-> > >
-> > > I've been working on converting all Tegra-related device tree binding=
-s
-> > > to json-schema so that eventually we can fully validate device tree
-> > > files. Getting all the bindings reviewed and merged has been slow, bu=
-t
-> > > I have a local tree where pretty much all validation errors and warni=
-ngs
-> > > have been fixed. The remaining warnings that I'm not sure how to reso=
-lve
-> > > are these:
-> > >
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: d=
-isplay-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tb=
-s,a711-panel']
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: d=
-isplay-panel: compatible: ['panel-lvds'] is too short
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: d=
-isplay-panel: Unevaluated properties are not allowed ('compatible' was unex=
-pected)
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: d=
-isplay-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tb=
-s,a711-panel']
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: d=
-isplay-panel: compatible: ['panel-lvds'] is too short
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: d=
-isplay-panel: Unevaluated properties are not allowed ('compatible' was unex=
-pected)
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: d=
-isplay-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tb=
-s,a711-panel']
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: d=
-isplay-panel: compatible: ['panel-lvds'] is too short
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: d=
-isplay-panel: Unevaluated properties are not allowed ('compatible' was unex=
-pected)
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-pa=
-nel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a711-pa=
-nel']
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-pa=
-nel: compatible: ['panel-lvds'] is too short
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> > >     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-pa=
-nel: Unevaluated properties are not allowed ('compatible' was unexpected)
-> > >         from schema $id: http://devicetree.org/schemas/display/panel/=
-panel-lvds.yaml#
-> >
-> > Hello Thierry! Pegatron Chagall uses a Hannstar similar to one used in
-> > ASUS TF201 but unfortunately it is not compatible with existing simple
-> > panel setup (blurry image if used). My assumption is that chagall as
-> > different revision of this panel like HSD101PWW3-B00 or
-> > HSD101PWW1-A00 which is more likely or panel is highly modified which
-> > is unlikely. I propose to use "hannstar,hsd101pww1" which is more wide
-> > spread.
->
-> Interesting. So is the problem the HSD101PWW2 timings that are off, or
-> is it because the panel-lvds code does something special to make this
-> blurry image go away?
->
-timings are different
+The DT of_device.h and of_platform.h date back to the separate
+of_platform_bus_type before it as merged into the regular platform bus.
+As part of that merge prepping Arm DT support 13 years ago, they
+"temporarily" include each other. They also include platform_device.h
+and of.h. As a result, there's a pretty much random mix of those include
+files used throughout the tree. In order to detangle these headers and
+replace the implicit includes with struct declarations, users need to
+explicitly include the correct includes.
 
-> Thierry
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/ata/ahci_ceva.c        | 2 +-
+ drivers/ata/ahci_dwc.c         | 2 +-
+ drivers/ata/ahci_mtk.c         | 1 +
+ drivers/ata/ahci_mvebu.c       | 2 +-
+ drivers/ata/ahci_qoriq.c       | 2 --
+ drivers/ata/ahci_seattle.c     | 1 -
+ drivers/ata/ahci_sunxi.c       | 2 +-
+ drivers/ata/ahci_tegra.c       | 2 +-
+ drivers/ata/libahci_platform.c | 1 +
+ drivers/ata/pata_ftide010.c    | 3 +--
+ drivers/ata/pata_mpc52xx.c     | 3 ++-
+ drivers/ata/sata_dwc_460ex.c   | 3 +--
+ drivers/ata/sata_fsl.c         | 6 +++---
+ drivers/ata/sata_gemini.c      | 3 +--
+ drivers/ata/sata_highbank.c    | 2 +-
+ drivers/ata/sata_rcar.c        | 2 +-
+ 16 files changed, 17 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/ata/ahci_ceva.c b/drivers/ata/ahci_ceva.c
+index c2b6be083af4..64f7f7d6ba84 100644
+--- a/drivers/ata/ahci_ceva.c
++++ b/drivers/ata/ahci_ceva.c
+@@ -10,7 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/libata.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+ #include "ahci.h"
+diff --git a/drivers/ata/ahci_dwc.c b/drivers/ata/ahci_dwc.c
+index 9604a2f6ed48..ed263de3fd70 100644
+--- a/drivers/ata/ahci_dwc.c
++++ b/drivers/ata/ahci_dwc.c
+@@ -15,7 +15,7 @@
+ #include <linux/log2.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/ata/ahci_mtk.c b/drivers/ata/ahci_mtk.c
+index 5083fb6c4927..adc851cd5578 100644
+--- a/drivers/ata/ahci_mtk.c
++++ b/drivers/ata/ahci_mtk.c
+@@ -11,6 +11,7 @@
+ #include <linux/libata.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/ata/ahci_mvebu.c b/drivers/ata/ahci_mvebu.c
+index 764501518582..f3187351e8a6 100644
+--- a/drivers/ata/ahci_mvebu.c
++++ b/drivers/ata/ahci_mvebu.c
+@@ -15,7 +15,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mbus.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include "ahci.h"
+ 
+diff --git a/drivers/ata/ahci_qoriq.c b/drivers/ata/ahci_qoriq.c
+index 3d01b118c9a1..7bb9ad40605e 100644
+--- a/drivers/ata/ahci_qoriq.c
++++ b/drivers/ata/ahci_qoriq.c
+@@ -12,9 +12,7 @@
+ #include <linux/pm.h>
+ #include <linux/ahci_platform.h>
+ #include <linux/device.h>
+-#include <linux/of_address.h>
+ #include <linux/of.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/libata.h>
+ #include "ahci.h"
+diff --git a/drivers/ata/ahci_seattle.c b/drivers/ata/ahci_seattle.c
+index 2c32d58c6ae7..adb33afee2b9 100644
+--- a/drivers/ata/ahci_seattle.c
++++ b/drivers/ata/ahci_seattle.c
+@@ -12,7 +12,6 @@
+ #include <linux/module.h>
+ #include <linux/pm.h>
+ #include <linux/device.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/libata.h>
+ #include <linux/ahci_platform.h>
+diff --git a/drivers/ata/ahci_sunxi.c b/drivers/ata/ahci_sunxi.c
+index 04531fa95e40..58b2683954dd 100644
+--- a/drivers/ata/ahci_sunxi.c
++++ b/drivers/ata/ahci_sunxi.c
+@@ -13,8 +13,8 @@
+ #include <linux/clk.h>
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ #include "ahci.h"
+diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+index 21c20793e517..223b60a7c8c7 100644
+--- a/drivers/ata/ahci_tegra.c
++++ b/drivers/ata/ahci_tegra.c
+@@ -12,7 +12,7 @@
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index 9a8d43f54adc..581704e61f28 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -20,6 +20,7 @@
+ #include <linux/ahci_platform.h>
+ #include <linux/phy/phy.h>
+ #include <linux/pm_runtime.h>
++#include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/reset.h>
+ #include "ahci.h"
+diff --git a/drivers/ata/pata_ftide010.c b/drivers/ata/pata_ftide010.c
+index 6f6734c09b11..9409fbd48c5a 100644
+--- a/drivers/ata/pata_ftide010.c
++++ b/drivers/ata/pata_ftide010.c
+@@ -14,8 +14,7 @@
+ #include <linux/module.h>
+ #include <linux/libata.h>
+ #include <linux/bitops.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/clk.h>
+ #include "sata_gemini.h"
+ 
+diff --git a/drivers/ata/pata_mpc52xx.c b/drivers/ata/pata_mpc52xx.c
+index 66c9dea4ea6e..56fad9a5bc65 100644
+--- a/drivers/ata/pata_mpc52xx.c
++++ b/drivers/ata/pata_mpc52xx.c
+@@ -19,9 +19,10 @@
+ #include <linux/gfp.h>
+ #include <linux/delay.h>
+ #include <linux/libata.h>
++#include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+-#include <linux/of_platform.h>
++#include <linux/platform_device.h>
+ #include <linux/types.h>
+ 
+ #include <asm/cacheflush.h>
+diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
+index fabdd1e380f9..d699c5f35153 100644
+--- a/drivers/ata/sata_dwc_460ex.c
++++ b/drivers/ata/sata_dwc_460ex.c
+@@ -18,9 +18,8 @@
+ #include <linux/module.h>
+ #include <linux/device.h>
+ #include <linux/dmaengine.h>
+-#include <linux/of_address.h>
++#include <linux/of.h>
+ #include <linux/of_irq.h>
+-#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/phy/phy.h>
+ #include <linux/libata.h>
+diff --git a/drivers/ata/sata_fsl.c b/drivers/ata/sata_fsl.c
+index ccd99b9aa9ff..16415eb09302 100644
+--- a/drivers/ata/sata_fsl.c
++++ b/drivers/ata/sata_fsl.c
+@@ -12,6 +12,9 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ 
+@@ -19,9 +22,6 @@
+ #include <scsi/scsi_cmnd.h>
+ #include <linux/libata.h>
+ #include <asm/io.h>
+-#include <linux/of_address.h>
+-#include <linux/of_irq.h>
+-#include <linux/of_platform.h>
+ 
+ static unsigned int intr_coalescing_count;
+ module_param(intr_coalescing_count, int, S_IRUGO);
+diff --git a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
+index c42cc9bbbc4e..ca56d43df149 100644
+--- a/drivers/ata/sata_gemini.c
++++ b/drivers/ata/sata_gemini.c
+@@ -12,8 +12,7 @@
+ #include <linux/regmap.h>
+ #include <linux/delay.h>
+ #include <linux/reset.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/pinctrl/consumer.h>
+diff --git a/drivers/ata/sata_highbank.c b/drivers/ata/sata_highbank.c
+index d6b324d03e59..7a6d41b7a02d 100644
+--- a/drivers/ata/sata_highbank.c
++++ b/drivers/ata/sata_highbank.c
+@@ -13,7 +13,7 @@
+ #include <linux/io.h>
+ #include <linux/spinlock.h>
+ #include <linux/device.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/libata.h>
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index 34790f15c1b8..d4e40cf4c371 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -11,7 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/ata.h>
+ #include <linux/libata.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/err.h>
+-- 
+2.40.1
+
