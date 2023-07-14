@@ -2,113 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A932AEB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 04:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4ADEB64DA
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 04:10:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjGNEA0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 00:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57210 "EHLO
+        id S234942AbjGNEKM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 00:10:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbjGNEAZ (ORCPT
+        with ESMTP id S229463AbjGNEKK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 00:00:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE58326B7;
-        Thu, 13 Jul 2023 21:00:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4920C61BF4;
-        Fri, 14 Jul 2023 04:00:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 988B2C433D9;
-        Fri, 14 Jul 2023 04:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689307223;
-        bh=6bPJwDcuSz1rKBjG/24ejrCn4JBeXx8kMtEpTwCEv2U=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=AAU+8ZLPWahRElzfzmALzyJASlYHee9u0PGrejGSQIwx5fo25CRbvg4uxgfJ6rEqf
-         RXL16BSxfG7kART5wIhq3dxChc2wTsmVl1yAfGiMPHb3codCrZYAX0ElN6vp+qwTlM
-         O/vWd7nokniqxUVN2Ve9HbEZl610bfjNAMMvnbqt2xq+i5O76kpNZjvj4blQKgYT4z
-         xiCmnj/LiVwqBddhhniXy5srW7jbbEpN2AvTNNC3bXILfPUCFP+EJAqvSCiergccsW
-         YS5ywkC9aI11si9SNweKTYwHKYWoz4FVlUcu8tkTNN1QQy1gCJ2Y42r2IpQiHzb2Wk
-         Bu54B8qkv5xRg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7FF81E29F45;
-        Fri, 14 Jul 2023 04:00:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 14 Jul 2023 00:10:10 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271CA271E
+        for <linux-tegra@vger.kernel.org>; Thu, 13 Jul 2023 21:10:09 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9928abc11deso193292466b.1
+        for <linux-tegra@vger.kernel.org>; Thu, 13 Jul 2023 21:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689307807; x=1691899807;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LQeLL7yucbWziupvS5Xb8lpNweQHJYTP0AzdJBC+cOA=;
+        b=JJbN3WNatS/+7/otmtG1ut5N43O0WU2oCSGIbfu0MUL9+HAYUFhHYtD6qLcvvQpRjJ
+         7krgBcG4KOYrQPYiCqjgOv+oEduSBAcEhiqyPlAnq0+6v47zZbVX1/cHoDjgvlz4bjog
+         9naz+BbioEiN1MkvMss7grPLAVGgpPwxFaHYqYh0me/W4rTe8iNUpQ0OgDJBPp7lQFPW
+         2YZfUpFnycPEnd8NersiU4HY7MB6+h+eBRT3RVnvuHlMscf5zKBe47YwQOo33nAP8F21
+         VqG6PJOkZGw0Pozl6Z0Zbf9Z8jLWiXyQaRNgui5xUynRluhQ/LrhbAFx18UroHOSgBvK
+         ZRtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689307807; x=1691899807;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LQeLL7yucbWziupvS5Xb8lpNweQHJYTP0AzdJBC+cOA=;
+        b=FJRECk7G53JSOFN0t+SztlS7nnl0KWbLrcnUyjdLqA+CkrBu1kgz/RYhcF8PUuHrkS
+         4e/AxfLQBiuJzdRANROHnYoYKgfdETvN7DB5TmIQFanknPvgSoPck4TlGWG5Gu0ZuJX9
+         Ciq5jufNjw+owBOwcmj1nqNj9IQsxVNEf0mQyRZKQXZu4r2wJctR6osoHXD5WWmxMUqT
+         XOzXvxpp78OU73eL0CtPuEmEWcGwTzcgI/00w7hYbAl0bsh58cHZdJ9nCXaCfDNJmvbV
+         YSXvQxdxG6p2KIemKrqBWXgN7+ZmHaRGF6lx05QJm/SysaIaR2dD/67cXu4y5xfqcfIf
+         U36A==
+X-Gm-Message-State: ABy/qLZT1gtmpfcFInG2izU35IlwyputGUUdDCyDDAPVWcOPq8DoZSxA
+        GsuMq01/NQbZmbiDbPPoEMpXDw==
+X-Google-Smtp-Source: APBJJlEvSuFIaTgobSWO26XSkfmzThp3Re5ekkZqgTD13PdPbzSAZZZZUjDhEkH06V7JpD7uKAvieQ==
+X-Received: by 2002:a17:906:7a0b:b0:994:4ebe:7a6d with SMTP id d11-20020a1709067a0b00b009944ebe7a6dmr357321ejo.19.1689307807456;
+        Thu, 13 Jul 2023 21:10:07 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id ss14-20020a170907038e00b009926928d486sm4818308ejb.35.2023.07.13.21.10.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jul 2023 21:10:06 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     treding@nvidia.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Sumit Gupta <sumitg@nvidia.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        bbasu@nvidia.com, talho@nvidia.com
+Subject: Re: [Patch RESEND 0/4] Tegra234 Memory Interconnect followup changes
+Date:   Fri, 14 Jul 2023 06:10:04 +0200
+Message-Id: <168930776405.4539.5215502650424893821.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230621134400.23070-1-sumitg@nvidia.com>
+References: <20230621134400.23070-1-sumitg@nvidia.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 00/12] net: stmmac: replace boolean fields in
- plat_stmmacenet_data with flags
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168930722351.11211.15860000420900768155.git-patchwork-notify@kernel.org>
-Date:   Fri, 14 Jul 2023 04:00:23 +0000
-References: <20230710090001.303225-1-brgl@bgdev.pl>
-In-Reply-To: <20230710090001.303225-1-brgl@bgdev.pl>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-        vkoul@kernel.org, bhupesh.sharma@linaro.org, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        richardcochran@gmail.com, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, bartosz.golaszewski@linaro.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 10 Jul 2023 10:59:49 +0200 you wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> As suggested by Jose Abreu: let's drop all 12 boolean fields in
-> plat_stmmacenet_data and replace them with a common bitfield.
-> 
-> v2 -> v3:
-> - fix build on intel platforms even more
-> - collect review tags from Andrew
+On Wed, 21 Jun 2023 19:13:56 +0530, Sumit Gupta wrote:
+> This patch set adds VIC, NVDEC, NVENC, NVJPG, NVDISPLAY clients
+> of Memory Controller to the Tegra234 MC clients table. It also
+> improves error handling when some MRQ's are not supported by a
+> platform. For Example:
+> - Avoid "tegra186_emc_probe" failure if the "MRQ_EMC_DVFS_LATENCY"
+>   is not supported.
+> - Avoid Error returned by icc_set_bw() in the MC client drivers if
+>   the "MRQ_BWMGR_INT" is not supported.
 > 
 > [...]
 
-Here is the summary with links:
-  - [net-next,v3,01/12] net: stmmac: replace the has_integrated_pcs field with a flag
-    https://git.kernel.org/netdev/net-next/c/d26979f1cef7
-  - [net-next,v3,02/12] net: stmmac: replace the sph_disable field with a flag
-    https://git.kernel.org/netdev/net-next/c/309efe6eb499
-  - [net-next,v3,03/12] net: stmmac: replace the use_phy_wol field with a flag
-    https://git.kernel.org/netdev/net-next/c/fd1d62d80ebc
-  - [net-next,v3,04/12] net: stmmac: replace the has_sun8i field with a flag
-    https://git.kernel.org/netdev/net-next/c/d8daff284e30
-  - [net-next,v3,05/12] net: stmmac: replace the tso_en field with a flag
-    https://git.kernel.org/netdev/net-next/c/68861a3bcc1c
-  - [net-next,v3,06/12] net: stmmac: replace the serdes_up_after_phy_linkup field with a flag
-    https://git.kernel.org/netdev/net-next/c/efe92571bfc3
-  - [net-next,v3,07/12] net: stmmac: replace the vlan_fail_q_en field with a flag
-    https://git.kernel.org/netdev/net-next/c/fc02152bdbb2
-  - [net-next,v3,08/12] net: stmmac: replace the multi_msi_en field with a flag
-    https://git.kernel.org/netdev/net-next/c/956c3f09b9c4
-  - [net-next,v3,09/12] net: stmmac: replace the ext_snapshot_en field with a flag
-    https://git.kernel.org/netdev/net-next/c/aa5513f5d95f
-  - [net-next,v3,10/12] net: stmmac: replace the int_snapshot_en field with a flag
-    https://git.kernel.org/netdev/net-next/c/621ba7ad7891
-  - [net-next,v3,11/12] net: stmmac: replace the rx_clk_runs_in_lpi field with a flag
-    https://git.kernel.org/netdev/net-next/c/743dd1db85f4
-  - [net-next,v3,12/12] net: stmmac: replace the en_tx_lpi_clockgating field with a flag
-    https://git.kernel.org/netdev/net-next/c/9d0c0d5ebd63
+Applied, thanks!
 
-You are awesome, thank you!
+[1/4] memory: tegra: sort tegra234_mc_clients table as per register offsets
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/01c70c8e52c5579de0c3fff81f81778a570a8643
+[2/4] memory: tegra: Add clients used by DRM in Tegra234
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/9d0bd0e535953886cd1a1335941c5afbe4d7df32
+[3/4] memory: tegra: add check if MRQ_EMC_DVFS_LATENCY is supported
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/8fda1018ca68e7b8fa860087e3069c3be476148f
+
+Checkpatch errors (I guess expected due to code move):
+WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
+#86: FILE: drivers/memory/tegra/tegra186-emc.c:215:
++	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root,
+
+WARNING: Symbolic permissions 'S_IRUGO | S_IWUSR' are not preferred. Consider using octal permissions '0644'.
+#88: FILE: drivers/memory/tegra/tegra186-emc.c:217:
++	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+
+WARNING: Symbolic permissions 'S_IRUGO | S_IWUSR' are not preferred. Consider using octal permissions '0644'.
+#90: FILE: drivers/memory/tegra/tegra186-emc.c:219:
++	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
+
+
+[4/4] memory: tegra: make icc_set_bw return zero if BWMGR not supported
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/3d7cfb8d6142c1d681eb70eae7fb1950b59fc0dc
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
