@@ -2,389 +2,187 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64581EB64DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 15:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F48EB64DC
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 15:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235725AbjGNPMW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 11:12:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        id S235825AbjGNPQ2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 11:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234930AbjGNPMV (ORCPT
+        with ESMTP id S235588AbjGNPQ2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 11:12:21 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2CB92715;
-        Fri, 14 Jul 2023 08:12:19 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-314172bb818so2058086f8f.1;
-        Fri, 14 Jul 2023 08:12:19 -0700 (PDT)
+        Fri, 14 Jul 2023 11:16:28 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5A42702
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 08:16:26 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-992f6d7c7fbso268633666b.3
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 08:16:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689347538; x=1691939538;
+        d=gmail.com; s=20221208; t=1689347785; x=1691939785;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YemdjRn27suAOVJjvdM0QqZXigCE1VyZ3bUcYyzsv74=;
-        b=fP540VEPkHChpy9IaBZiVmLhSLqgfQ2x4mCHsNTaHjjvXQF8rLPVblGXvdDDZ5kYVS
-         UdmzJEXbQ7zzkTSx/lGVTB0LVaWc3rUET90akLKi0QPcDtsIElv+XkEdbqDDoiWuvU1w
-         DHceyo1p1oDYJq4h0qqINyTT6d8tK/jMNU4qukFt+KQQgXK//rllJ2Iw4JER8jnaDKFc
-         RCb3Ik+GJOlsys65XYgCt6WeD8WwcPqeNb8dl54EPI5k7gHwHYBKiYDYxPNCz2RDXyEn
-         cc110sU5j3TObLS0oZJx0NlZHIaYSOsLZfm5X6pzClsyns8bHOErWCwTPAmxwPfrbQJx
-         XiDQ==
+        bh=tTLGuXDFzImwaRpNe95xm4WgKHTnAEcD/16SgEV7LAw=;
+        b=euVCZ1gJcZqYv5LzFXGm1i0eZYkxtri45SweyulgO0Vxf6yPyP0qPwO0dbZDvD7onk
+         y58eSxuacw2MXG9b627HKIUoeqRQ/NuiMsnTvT46knYqBjPR4BeyG7pQ4d/rG53zERz9
+         my427EkunUFJd9S3p7NlYK6vRRcHcVDpj5aesVPSKfbhWEjBfnXI/+8OhvskxO9gGlIk
+         M2AWsEOrE7OyiJ1Y0Iaf3J0LOTo0xA1jIib/lxx4i/iUx3aoIeHyvVNo0FQcTcSxvSbx
+         brNqKlupJVOvcxa8HeuuhUqq4HMfK9UeXgylQMrnDVyqrep7VdWtqCHN/STLCf7Y6q2F
+         oheg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689347538; x=1691939538;
+        d=1e100.net; s=20221208; t=1689347785; x=1691939785;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YemdjRn27suAOVJjvdM0QqZXigCE1VyZ3bUcYyzsv74=;
-        b=W2Rl7+tWgqm7KWRCXUmFHtXTkQyX+l4OY22IsmWnovQZd6CdhGP96GaDNmqHcknaOs
-         nDoKZXaNK+mab3SF5te+KXl42QEp7DEYkFyLIco1Heyz5Sia1/cAwnU0bQ8UITdlIJO5
-         pRJdQiFTKsEej/HOHIRgY5T4UyeXrmkhRZGmUpHEXTPDkPVq1knRSLBNbXdJyk27ZMb3
-         Ymy5weGjrxQ3sT4ZJfPAuQmIMEY8jifHFQfpkERfqIC6ANsgIabivp403ynk5nQ5HQcb
-         mhZJQ6G0SXMJtxxFnk1usqUr0SkAcIMyQlicAKyNoN6Ohk5cBMRfUXOel9xztiX+LfGp
-         /mpA==
-X-Gm-Message-State: ABy/qLbbolr5JYuGkYPW64eNovoxY+AurSOidha1tdpDt/3W01YtRVRL
-        7mUXVnIgEMWd25hOvNTvf9I=
-X-Google-Smtp-Source: APBJJlF0f8LrTVPFiMop4JQtczvQPP/gttmFG7dUpJOP0dJnzD4nqQGp/5seQv/KuF0/EndyQSdAXA==
-X-Received: by 2002:a5d:53d2:0:b0:30f:ce4f:5675 with SMTP id a18-20020a5d53d2000000b0030fce4f5675mr5052109wrw.59.1689347538168;
-        Fri, 14 Jul 2023 08:12:18 -0700 (PDT)
+        bh=tTLGuXDFzImwaRpNe95xm4WgKHTnAEcD/16SgEV7LAw=;
+        b=h6yG37GJfu2GOO0FJKKEY45fabMlKi1tlNTa5C4ud9pzLzK3hiC+awtqDOqiOrF+D5
+         0ExRuzoRPORQnXG/wx2nHtnxBqiX5EpXifXZoZYXFe+qplch8eyMn9HN147mqwnGLrUe
+         D0EpYILuSTt+ZmLipr86BF/tPyGsqdLPO5YOj7L5IFFP9RcDfOEyjXTZ+fw+PZ9Lp1/U
+         C9k9J6Pq7/he5LuTuO27GPb0wFiPhNy6hbei2JQErWrHkVDFyJvIXRcJgCb2QcHpRofZ
+         6bqBf2ZKjFRNMMj26nc7csa9vRpdJXmUfVxF5X0X8D0WD2x0eTlYn/3mUywwz65cXelD
+         Rtcg==
+X-Gm-Message-State: ABy/qLbzuPD0bkcF1wROPfzGB+kM48zGzSNWl06fQqD8RxSekjczD2ZA
+        dHsOsEsUsJybKHLSVYKwE3w=
+X-Google-Smtp-Source: APBJJlGGdwhjQATtzFEjaq35hGHodIJMu4x7Hu57gIGOu1N3RQ4vsgmOPDVEtECU/7yPj5ta0efUkw==
+X-Received: by 2002:a17:906:51d1:b0:994:539d:f97f with SMTP id v17-20020a17090651d100b00994539df97fmr1316573ejk.37.1689347784784;
+        Fri, 14 Jul 2023 08:16:24 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ss25-20020a170907039900b0098921e1b064sm5487329ejb.181.2023.07.14.08.12.17
+        by smtp.gmail.com with ESMTPSA id md11-20020a170906ae8b00b009828e26e519sm5483843ejb.122.2023.07.14.08.16.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 08:12:17 -0700 (PDT)
-Date:   Fri, 14 Jul 2023 17:12:16 +0200
+        Fri, 14 Jul 2023 08:16:24 -0700 (PDT)
+Date:   Fri, 14 Jul 2023 17:16:22 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+To:     Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Ion Agorria <ion@agorria.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Pedro =?utf-8?Q?=C3=82ngelo?= <pangelo@void.io>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Zack Pearsall <zpearsall@yahoo.com>,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5/7] dt-bindings: arm: tegra: pmc: Restructure pad
- configuration node schema
-Message-ID: <ZLFl0LgbmV7Snhyp@orome>
-References: <20230707131711.2997956-1-thierry.reding@gmail.com>
- <20230707131711.2997956-5-thierry.reding@gmail.com>
- <20230707223503.GA1087110-robh@kernel.org>
- <ZKwOYYWTM3PoXfMc@orome>
+Subject: Re: LVDS panel compatible strings
+Message-ID: <ZLFmxuVuO2FWy1as@orome>
+References: <ZLFd_L_Uw1PmpSep@orome>
+ <CAPVz0n3fj77JEzJbYve9-5pjjVt+yJHNcFGqJr0HFSJnaOtbzw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p/OdnSRSn+bFUUQq"
+        protocol="application/pgp-signature"; boundary="jaRx9L7WuvZyKljW"
 Content-Disposition: inline
-In-Reply-To: <ZKwOYYWTM3PoXfMc@orome>
+In-Reply-To: <CAPVz0n3fj77JEzJbYve9-5pjjVt+yJHNcFGqJr0HFSJnaOtbzw@mail.gmail.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---p/OdnSRSn+bFUUQq
-Content-Type: text/plain; charset=us-ascii
+--jaRx9L7WuvZyKljW
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 10, 2023 at 03:57:53PM +0200, Thierry Reding wrote:
-> On Fri, Jul 07, 2023 at 04:35:03PM -0600, Rob Herring wrote:
-> > On Fri, Jul 07, 2023 at 03:17:09PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >=20
-> > > The pad configuration node schema in its current form can accidentally
-> > > match other properties as well. Restructure the schema to better match
-> > > how the device trees are using these.
-> > >=20
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > >  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 181 ++++++++++++----=
---
-> > >  1 file changed, 120 insertions(+), 61 deletions(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra=
-20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pm=
-c.yaml
-> > > index 82070d47ac7c..271aa8f80a65 100644
-> > > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.=
-yaml
-> > > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.=
-yaml
-> > > @@ -245,69 +245,82 @@ properties:
-> > >            - resets
-> > >            - '#power-domain-cells'
-> > > =20
-> > > -patternProperties:
-> > > -  "^[a-f0-9]+-[a-f0-9]+$":
-> > > +  pinmux:
-> > >      type: object
-> > > -    description:
-> > > -      This is a Pad configuration node. On Tegra SOCs a pad is a set=
- of
-> > > -      pins which are configured as a group. The pin grouping is a fi=
-xed
-> > > -      attribute of the hardware. The PMC can be used to set pad powe=
-r state
-> > > -      and signaling voltage. A pad can be either in active or power =
-down mode.
-> > > -      The support for power state and signaling voltage configuratio=
-n varies
-> > > -      depending on the pad in question. 3.3V and 1.8V signaling volt=
-ages
-> > > -      are supported on pins where software controllable signaling vo=
-ltage
-> > > -      switching is available.
-> > > -
-> > > -      The pad configuration state nodes are placed under the pmc nod=
-e and they
-> > > -      are referred to by the pinctrl client properties. For more inf=
-ormation
-> > > -      see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings=
-=2Etxt.
-> > > -      The pad name should be used as the value of the pins property =
-in pin
-> > > -      configuration nodes.
-> > > -
-> > > -      The following pads are present on Tegra124 and Tegra132
-> > > -      audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, h=
-dmi, hsic,
-> > > -      hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2, pex-c=
-ntrl,
-> > > -      sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2, usb_b=
-ias.
-> > > -
-> > > -      The following pads are present on Tegra210
-> > > -      audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
-> > > -      debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpi=
-o, hdmi,
-> > > -      hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl=
-, sdmmc1,
-> > > -      sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias.
-> > > -
-> > >      properties:
-> > > -      pins:
-> > > -        $ref: /schemas/types.yaml#/definitions/string
-> > > -        description: Must contain name of the pad(s) to be configure=
-d.
-> > > -
-> > > -      low-power-enable:
-> > > -        $ref: /schemas/types.yaml#/definitions/flag
-> > > -        description: Configure the pad into power down mode.
-> > > -
-> > > -      low-power-disable:
-> > > -        $ref: /schemas/types.yaml#/definitions/flag
-> > > -        description: Configure the pad into active mode.
-> > > -
-> > > -      power-source:
-> > > -        $ref: /schemas/types.yaml#/definitions/uint32
-> > > -        description:
-> > > -          Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> > > -          TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling volta=
-ges.
-> > > -          The values are defined in
-> > > -          include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-> > > -          Power state can be configured on all Tegra124 and Tegra132
-> > > -          pads. None of the Tegra124 or Tegra132 pads support signal=
-ing
-> > > -          voltage switching.
-> > > -          All of the listed Tegra210 pads except pex-cntrl support p=
-ower
-> > > -          state configuration. Signaling voltage switching is suppor=
-ted
-> > > -          on below Tegra210 pads.
-> > > -          audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1,
-> > > -          sdmmc3, spi, spi-hv, and uart.
-> > > -
-> > > -    required:
-> > > -      - pins
-> > > -
-> > > -    additionalProperties: false
-> > > +      status: true
-> >=20
-> > If you need this, that's a bug in dtschema.
+On Fri, Jul 14, 2023 at 06:00:43PM +0300, Svyatoslav Ryhel wrote:
+> =D0=BF=D1=82, 14 =D0=BB=D0=B8=D0=BF. 2023=E2=80=AF=D1=80. =D0=BE 17:38 Th=
+ierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > Hi everyone,
+> >
+> > I've been working on converting all Tegra-related device tree bindings
+> > to json-schema so that eventually we can fully validate device tree
+> > files. Getting all the bindings reviewed and merged has been slow, but
+> > I have a local tree where pretty much all validation errors and warnings
+> > have been fixed. The remaining warnings that I'm not sure how to resolve
+> > are these:
+> >
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: dis=
+play-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,=
+a711-panel']
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: dis=
+play-panel: compatible: ['panel-lvds'] is too short
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-tilapia-E1565.dtb: dis=
+play-panel: Unevaluated properties are not allowed ('compatible' was unexpe=
+cted)
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: dis=
+play-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,=
+a711-panel']
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: dis=
+play-panel: compatible: ['panel-lvds'] is too short
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-E1565.dtb: dis=
+play-panel: Unevaluated properties are not allowed ('compatible' was unexpe=
+cted)
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: dis=
+play-panel: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,=
+a711-panel']
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: dis=
+play-panel: compatible: ['panel-lvds'] is too short
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: dis=
+play-panel: Unevaluated properties are not allowed ('compatible' was unexpe=
+cted)
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-pane=
+l: compatible:0: 'panel-lvds' is not one of ['auo,b101ew05', 'tbs,a711-pane=
+l']
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-pane=
+l: compatible: ['panel-lvds'] is too short
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
+> >     arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: display-pane=
+l: Unevaluated properties are not allowed ('compatible' was unexpected)
+> >         from schema $id: http://devicetree.org/schemas/display/panel/pa=
+nel-lvds.yaml#
 >=20
-> Looks like I don't need it here...
->=20
-> >=20
-> > > +
-> > > +    additionalProperties:
-> > > +      type: object
-> > > +      description: |
-> > > +        This is a pad configuration node. On Tegra SoCs a pad is a s=
-et of pins
-> > > +        which are configured as a group. The pin grouping is a fixed=
- attribute
-> > > +        of the hardware. The PMC can be used to set pad power state =
-and
-> > > +        signaling voltage. A pad can be either in active or power do=
-wn mode.
-> > > +        The support for power state and signaling voltage configurat=
-ion varies
-> > > +        depending on the pad in question. 3.3V and 1.8V signaling vo=
-ltages are
-> > > +        supported on pins where software controllable signaling volt=
-age
-> > > +        switching is available.
-> > > +
-> > > +        The pad configuration state nodes are placed under the pmc n=
-ode and
-> > > +        they are referred to by the pinctrl client properties. For m=
-ore
-> > > +        information see:
-> > > +
-> > > +          Documentation/devicetree/bindings/pinctrl/pinctrl-bindings=
-=2Etxt
-> > > +
-> > > +        The pad name should be used as the value of the pins propert=
-y in pin
-> > > +        configuration nodes.
-> > > +
-> > > +        The following pads are present on Tegra124 and Tegra132:
-> > > +
-> > > +          audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsi=
-d, hdmi,
-> > > +          hsic, hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-c=
-lk2,
-> > > +          pex-cntrl, sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, us=
-b1, usb2,
-> > > +          usb_bias
-> > > +
-> > > +        The following pads are present on Tegra210:
-> > > +
-> > > +          audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, =
-dbg,
-> > > +          debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2,=
- gpio,
-> > > +          hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2,=
- pex-cntrl,
-> > > +          sdmmc1, sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3,=
- usb-bias
-> > > +      additionalProperties: false
-> > > +      properties:
-> > > +        pins:
-> > > +          $ref: /schemas/types.yaml#/definitions/string-array
-> > > +          description: Must contain name of the pad(s) to be configu=
-red.
-> > > +
-> > > +        low-power-enable:
-> > > +          $ref: /schemas/types.yaml#/definitions/flag
-> > > +          description: Configure the pad into power down mode.
-> > > +
-> > > +        low-power-disable:
-> > > +          $ref: /schemas/types.yaml#/definitions/flag
-> > > +          description: Configure the pad into active mode.
-> > > +
-> > > +        power-source:
-> > > +          $ref: /schemas/types.yaml#/definitions/uint32
-> > > +          description: |
-> > > +            Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> > > +            TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling vol=
-tages. The
-> > > +            values are defined in:
-> > > +
-> > > +              include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-> > > +
-> > > +            Power state can be configured on all Tegra124 and Tegra1=
-32 pads.
-> > > +            None of the Tegra124 or Tegra132 pads support signaling =
-voltage
-> > > +            switching. All of the listed Tegra210 pads except pex-cn=
-trl support
-> > > +            power state configuration. Signaling voltage switching i=
-s supported
-> > > +            on the following Tegra210 pads:
-> > > +
-> > > +              audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmm=
-c1, sdmmc3,
-> > > +              spi, spi-hv, uart
-> > > +
-> > > +        phandle:
-> > > +          $ref: /schemas/types.yaml#/definitions/uint32
-> >=20
-> > ditto
->=20
-> ... and not this either. Might be some leftovers from testing with
-> earlier versions of dtschema. I've dropped them now.
+> Hello Thierry! Pegatron Chagall uses a Hannstar similar to one used in
+> ASUS TF201 but unfortunately it is not compatible with existing simple
+> panel setup (blurry image if used). My assumption is that chagall as
+> different revision of this panel like HSD101PWW3-B00 or
+> HSD101PWW1-A00 which is more likely or panel is highly modified which
+> is unlikely. I propose to use "hannstar,hsd101pww1" which is more wide
+> spread.
 
-[Quoting the above in full for reference]
-
-Scratch that. This isn't triggered by the example, but I do see a
-warning when trying to validate DTS files that have pad configuration
-nodes that are referenced by phandle. You can see this in various board
-DTS files derived from tegra210.dtsi.
-
-One slight improvement to this might be to do:
-
-	phandle: true
-
-instead. However, given that this is completely standard, maybe that's
-not what we want.
-
-Any idea what might be causing this to be required? We do have
-additionalProperties: false, but I thought the likes of phandle, status,
-etc. were exempt from that.
-
-> > > +      required:
-> > > +        - pins
-> > > =20
-> > >  required:
-> > >    - compatible
-> > > @@ -316,6 +329,52 @@ required:
-> > >    - clocks
-> > >    - '#clock-cells'
-> > > =20
-> > > +allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: nvidia,tegra124-pmc
-> > > +    then:
-> > > +      properties:
-> > > +        pinmux:
-> > > +          properties:
-> > > +            status: true
->=20
-> However I do get complaints if I drop this one:
->=20
-> 	Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml: all=
-Of:0:then:properties:pinmux: 'anyOf' conditional failed, one must be fixed:
-> 		'type' is a required property
-> 		'properties' is a required property
-> 		'patternProperties' is a required property
-> 		hint: 'additionalProperties' depends on 'properties' or 'patternPropert=
-ies'
-> 		from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> 	Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml: all=
-Of:1:then:properties:pinmux: 'anyOf' conditional failed, one must be fixed:
-> 		'type' is a required property
-> 		'properties' is a required property
-> 		'patternProperties' is a required property
-> 		hint: 'additionalProperties' depends on 'properties' or 'patternPropert=
-ies'
-> 		from schema $id: http://devicetree.org/meta-schemas/core.yaml#
->=20
-> Would you consider that a bug in dtschema as well that I should try to
-> fix or is that expected?
-
-I guess this is a special case in a way because typically we would use
-patternProperties for this. However, there really aren't any rules as to
-what's valid here as a name or not. We could of course make something up
-but this is description that most closely reflects reality.
+Interesting. So is the problem the HSD101PWW2 timings that are off, or
+is it because the panel-lvds code does something special to make this
+blurry image go away?
 
 Thierry
 
---p/OdnSRSn+bFUUQq
+--jaRx9L7WuvZyKljW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSxZc0ACgkQ3SOs138+
-s6EOKQ/+IBUwVBeQ8jJ29LwKi5o1Tfj8oxFXKoa//OhwfXAZfJ7WEDHGNor1GWyh
-JA56t0ltOe6pDw3IXQKvPBmFhczc3NekOihuAvGU2HNggq2i0gHf5D3tHWAHgVuq
-OpoYgptci31X0ZnIrlBNCoHf9J/G229z7eyd/ucyksil9vPf7FZUdIl38FVYivFF
-iShXKiKdBMoyQ4oPLTffPpABOYlNcsTGeqLdM/kObKxWtgMNU3bHF4eicICC8Qkj
-iqWsnoBjMY4hBvKbhl9JbU/uuIjRwcmowkkS0VX4RyjPCl9GSAog6p+48exLqyGb
-h9UvGjoif8juIEaefned4H8nWFVFi+vYcLtcOr96woVKtdaem3n5askJ8KPpG4t7
-tTxtdyTuVpC7tO00XBtlOwR6fZE50ZLlN1wqROI9/uBARuCHxSMss6d9R6aeUNyg
-CLMtdceEzoNaxTMOVAs0TW1eJ2Gqau8Ay8KRgZXwZdUoVaAsgMsWt699KXKLjLmA
-AHZFvIg5U2p+fap5iL51FZHbh28ISbWDt2/F3VHv57VTfkk5gNLFHopYDKfDsnNI
-yuP3PZBUkLqXq1vcVqqRGjo4+4N7hZOCJjtRtc5DgoD8GUTjAE8Fj5otuGk+yFAI
-me2e2r4xJrkPfJEJCsoOdtqJ1KsiViSC1oc4H4b9i1LVEKwwz8s=
-=ieGg
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSxZsYACgkQ3SOs138+
+s6HWYRAAgUAnGEK4QPQ4H+6KkQSngrtbKh7u30gjxTz3Fykn0thqCZdKqgvs8Avc
+RYlMnjLx+k5Takz5zQiJXw+O95/7kb1jZ6zHUpvj+QmR4iwTfdnTlWuElPPwwO9j
+B/0gMxmPQsN+dnt0RApLJeQho+SSmzvH/Z9W3ReOCy2UZDZi2SA8aCP4irtCZDlB
+2K6ys61QQKFRdFvG1eilQsMb2qzeYPuEepC95/P9/KSZ1hZ6Zzm+rO7Q7jgIsOtL
+vVUpQL2QJ4uxPGbGvKSaRvFEUzEzjo/p5FWnE/f9UDGjqOiXb505DoHG/C8Ef422
+UCd6lrusvph1/ZG2JtRt48nsabfopCDKobbdK7/Pp1l94TgKfeXClognWreJXhrH
+mobDDsSgOX57HdfCbkTJYO5eXciFX133gRgFFRtaINarveD89c7Qq3FIVIG/mSX2
+1QFYm9nU9TE/FpQgAYtF6iz4tyFn81ZKq2qkNePSM7WkDCmzSCRLvSyE1qCyB6A6
+YVLMxb9Qe6vbbKQlm2GHiIoKkJdkkxBYgmM5dVBgfHfE5gWBoTyh4PG9lhJ8I0dS
+SCkkXxZztkrXQTE5WOvtus82LX+D61QEOR1UNAhzpjFGTMUTk5OH8OfSvEe3NcyR
+Ave+ontnecNSc3rKcj6V0azNKzQVB54EbjC/bmjS8zQ/b+wc1k0=
+=2VNz
 -----END PGP SIGNATURE-----
 
---p/OdnSRSn+bFUUQq--
+--jaRx9L7WuvZyKljW--
