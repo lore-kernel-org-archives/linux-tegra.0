@@ -2,357 +2,538 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597A4EB64DA
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 06:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F164CEB64DA
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 07:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232239AbjGNG4x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jul 2023 02:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
+        id S234016AbjGNHjF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jul 2023 03:39:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232692AbjGNG4v (ORCPT
+        with ESMTP id S232770AbjGNHjD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jul 2023 02:56:51 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FF631FF1;
-        Thu, 13 Jul 2023 23:56:49 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-51d95aed33aso1778925a12.3;
-        Thu, 13 Jul 2023 23:56:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689317807; x=1691909807;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wPb0IpHExepFSS8AXjqT5uPHoWnDc8tyYxdhzyJGpP4=;
-        b=Tn/tFtotoj3kKWGu/JeFCWLAdynH7BSSFEU2fT6alKvccsV98nUG36uaNDdrSJH7uX
-         sug4xoJ4Joim8NEL2ut/TLKgwOG1Ukr6nd4GnOeuCpP55/m2d7bH1PdG1ntxsI1/9udE
-         ZTDPrjBWC9xn2L2bukiBiuS+UqWiEO3QXjPhby85+ZJZdP0Zs0cHDYSj/Ru0z+ubKF1v
-         tE6WLqQZa72GPLZ2NtWtkVKTc65j+m+5xwRx96KSjRA7M5LTUjtgePQLs7gthHUEhvh8
-         NnnPAi/5UnluiHCywIFJ+1xMvNYWmBn+8qKu0AOMuZJw6S+k9reoVEuBiYh7BWKjYxdt
-         klGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689317807; x=1691909807;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wPb0IpHExepFSS8AXjqT5uPHoWnDc8tyYxdhzyJGpP4=;
-        b=R1aFFYrsSvx02iipFuVNXGa47iJzDkDt/kepTvDjBeJXgDazsfQV7qVvv8PwY8IpwU
-         wz26KcM7o6eMEf30jtp40MGZ0WIVfE/1fa0hEgVZgAVjpkksj1giH6Q3A1I88dUdFc+9
-         Q9hB9aDmaCCSptfRuKNEh+JD06Lw9ly1PGYREU7G/spIKmYrESrOIRDuhNfiiIS3myNV
-         qo2Yy4wUWvciizdfz1wJ5eIXUtorUeGqFJ1C8LNu/SjLtNmJdqX+slL+eM8v2lPs2Bah
-         X1KE1sM8FAlftsLiTJsisQ6uAS3nHPvg29AyD17wOAQmzhMU85MuwKcfzSNWiHJs8ymZ
-         4Q8g==
-X-Gm-Message-State: ABy/qLbyP+K8FSBDLvxP4qBtvnCeXLV32qvdzRbjDVf0xTCe+V2MsNVx
-        E+zECXdzf5BFuTYEF00Y5To=
-X-Google-Smtp-Source: APBJJlHP8ZGSCoWsVEJI8fyskK0DGjUW9zRUPX9p4poeYfNF02mfyM0n6gDfoS1lWJSkrsQTKOFDGg==
-X-Received: by 2002:a05:6402:b26:b0:51d:92bf:e6ae with SMTP id bo6-20020a0564020b2600b0051d92bfe6aemr3724889edb.18.1689317807282;
-        Thu, 13 Jul 2023 23:56:47 -0700 (PDT)
-Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d3-20020aa7c1c3000000b0051de52f8adesm5288703edp.32.2023.07.13.23.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 23:56:46 -0700 (PDT)
-Date:   Fri, 14 Jul 2023 08:56:44 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Baolu Lu <baolu.lu@linux.intel.com>
-Cc:     Stanimir Varbanov <stanimir.varbanov@suse.com>,
-        Stanimir Varbanov <svarbanov@suse.de>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH] iommu: arm-smmu-nvidia: Add default domain type
- implementation op
-Message-ID: <ZLDxrDMoLsniQx4x@orome>
-References: <20230710082252.9702-1-svarbanov@suse.de>
- <ZKvgG4-IzqiYPSUT@orome>
- <93026b47-3b72-8439-486e-e0cda21dd0fe@suse.com>
- <ZK17X4ueSI5rWKVL@orome>
- <ZK_8uU2XJAWMk23M@orome>
- <2a6fe812-3881-8dc9-1e7e-237ce7490155@linux.intel.com>
+        Fri, 14 Jul 2023 03:39:03 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B242D77
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jul 2023 00:39:02 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D9831220A5;
+        Fri, 14 Jul 2023 07:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1689320340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nMWGIzR5HguJc3P736wDMWr57FecGJdaqmJS12K5GD8=;
+        b=OV/gdDYm2uAVKIOz4nhzePkYLXrydA5b3efhEo7z+cVzoc69jEcZ9YUPxA/NhvPVXLWvEK
+        vJIvaON/yN1mFbFrVG7sKhziYU63JMVKYJGeW1n98N87iPjWLM8zYVr6K0n35gCWrr5LeV
+        JgA1RKDnRqnC54CoGkXQO7OYQ/3TZwA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1689320340;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nMWGIzR5HguJc3P736wDMWr57FecGJdaqmJS12K5GD8=;
+        b=nMR4Tsarzd8uBtjx+g3rJCIL8W+d0+uFe/ZArcyeUxAaSOobgaEVTX4FctsZNVklH+ZvS6
+        4af1u0Io24CrO6Dw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4805313A15;
+        Fri, 14 Jul 2023 07:38:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 3v5aEJH7sGTTOwAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Fri, 14 Jul 2023 07:38:57 +0000
+Message-ID: <ebc6167a-0696-11d2-cb20-bcc7d23427aa@suse.de>
+Date:   Fri, 14 Jul 2023 09:38:56 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [Freedreno] [PATCH RFC v1 00/52] drm/crtc: Rename struct
+ drm_crtc::dev to drm_dev
+To:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Jani Nikula <jani.nikula@intel.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+        Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
+        dri-devel@lists.freedesktop.org,
+        Vandita Kulkarni <vandita.kulkarni@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Arun R Murthy <arun.r.murthy@intel.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Liu Shixin <liushixin2@huawei.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Samuel Holland <samuel@sholland.org>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Wenjing Liu <wenjing.liu@amd.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
+        Danilo Krummrich <dakr@redhat.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        spice-devel@lists.freedesktop.org,
+        Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
+        linux-sunxi@lists.linux.dev, Stylon Wang <stylon.wang@amd.com>,
+        Tim Huang <Tim.Huang@amd.com>,
+        Suraj Kandpal <suraj.kandpal@intel.com>,
+        =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@igalia.com>,
+        Andi Shyti <andi.shyti@linux.intel.com>,
+        Yifan Zhang <yifan1.zhang@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Hersen Wu <hersenxs.wu@amd.com>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        =?UTF-8?Q?=c5=81ukasz_Bartosik?= <lb@semihalf.com>,
+        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        kernel@pengutronix.de, Alex Deucher <alexander.deucher@amd.com>,
+        freedreno@lists.freedesktop.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Zack Rusin <zackr@vmware.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
+        Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>,
+        =?UTF-8?Q?Jos=c3=a9_Roberto_de_Souza?= <jose.souza@intel.com>,
+        virtualization@lists.linux-foundation.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Yongqin Liu <yongqin.liu@linaro.org>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Fei Yang <fei.yang@intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        David Lechner <david@lechnology.com>,
+        Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
+        "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+        David Francis <David.Francis@amd.com>,
+        Aaron Liu <aaron.liu@amd.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Vinod Polimera <quic_vpolimer@quicinc.com>,
+        linux-rockchip@lists.infradead.org,
+        Fangzhi Zuo <jerry.zuo@amd.com>,
+        Aurabindo Pillai <aurabindo.pillai@amd.com>,
+        VMware Graphics Reviewers 
+        <linux-graphics-maintainer@vmware.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        =?UTF-8?Q?Jouni_H=c3=b6gander?= <jouni.hogander@intel.com>,
+        Dave Airlie <airlied@redhat.com>, linux-mips@vger.kernel.org,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org,
+        Animesh Manna <animesh.manna@intel.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-amlogic@lists.infradead.org, Evan Quan <evan.quan@amd.com>,
+        Michal Simek <michal.simek@amd.com>,
+        linux-arm-kernel@lists.infradead.org, Sean Paul <sean@poorly.run>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Qingqing Zhuo <qingqing.zhuo@amd.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Swati Sharma <swati2.sharma@intel.com>,
+        John Stultz <jstultz@google.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Drew Davenport <ddavenport@chromium.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Anusha Srivatsa <anusha.srivatsa@intel.com>,
+        Dan Carpenter <error27@gmail.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        linux-hyperv@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Melissa Wen <melissa.srw@gmail.com>,
+        =?UTF-8?Q?Ma=c3=adra_Canal?= <mairacanal@riseup.net>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Likun Gao <Likun.Gao@amd.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Deepak Rawat <drawat.floss@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Joel Stanley <joel@jms.id.au>,
+        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Alan Liu <haoping.liu@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org,
+        Alison Wang <alison.wang@nxp.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Gustavo Sousa <gustavo.sousa@intel.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Deepak R Varma <drv@mailo.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Chia-I Wu <olvaffe@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Khaled Almahallawy <khaled.almahallawy@intel.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Emma Anholt <emma@anholt.net>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Imre Deak <imre.deak@intel.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Roman Li <roman.li@amd.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Clark <robdclark@gmail.com>,
+        Hamza Mahfooz <hamza.mahfooz@amd.com>,
+        David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        xen-devel@lists.xenproject.org, Guchun Chen <guchun.chen@amd.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Uma Shankar <uma.shankar@intel.com>,
+        Mika Kahola <mika.kahola@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Jiasheng Jiang <jiasheng@iscas.ac.cn>,
+        Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+        Vinod Govindapillai <vinod.govindapillai@intel.com>,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <marek.olsak@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?UTF-8?Q?Joaqu=c3=adn_Ignacio_Aramend=c3=ada?= 
+        <samsagax@gmail.com>, Melissa Wen <mwen@igalia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-mediatek@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        David Tadokoro <davidbtadokoro@usp.br>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        amd-gfx@lists.freedesktop.org, Jyri Sarha <jyri.sarha@iki.fi>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Wayne Lin <Wayne.Lin@amd.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Nirmoy Das <nirmoy.das@intel.com>, Lang Yu <Lang.Yu@amd.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
+ <87fs5tgpvv.fsf@intel.com>
+ <CAOw6vbLO_UaXDbTCtAQJgthXOUMPqEV+c2MQhP-1DuK44OhGxw@mail.gmail.com>
+ <20230713130337.fd2l67r23g2irifx@pengutronix.de>
+ <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
+ <78be52b8-5ffb-601a-84b2-ead2894973a6@suse.de>
+ <d6160aeb-6344-b272-775a-cb665dca46ac@linux.intel.com>
+Content-Language: en-US
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <d6160aeb-6344-b272-775a-cb665dca46ac@linux.intel.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="I3VsAWuDrtgMS3gi"
-Content-Disposition: inline
-In-Reply-To: <2a6fe812-3881-8dc9-1e7e-237ce7490155@linux.intel.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+ protocol="application/pgp-signature";
+ boundary="------------jeLFGePkiFpCJh0eHqRS7GTg"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------jeLFGePkiFpCJh0eHqRS7GTg
+Content-Type: multipart/mixed; boundary="------------NtcVQEWFF5WDzksvmBN1dmoE";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+ Sean Paul <seanpaul@chromium.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Jani Nikula <jani.nikula@intel.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?=
+ <heiko@sntech.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Xinliang Liu <xinliang.liu@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
+ dri-devel@lists.freedesktop.org,
+ Vandita Kulkarni <vandita.kulkarni@intel.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Arun R Murthy <arun.r.murthy@intel.com>, Jerome Brunet
+ <jbrunet@baylibre.com>, Liu Shixin <liushixin2@huawei.com>,
+ linux-samsung-soc@vger.kernel.org, Samuel Holland <samuel@sholland.org>,
+ Matt Roper <matthew.d.roper@intel.com>, Wenjing Liu <wenjing.liu@amd.com>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
+ Danilo Krummrich <dakr@redhat.com>, NXP Linux Team <linux-imx@nxp.com>,
+ spice-devel@lists.freedesktop.org,
+ Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>,
+ linux-sunxi@lists.linux.dev, Stylon Wang <stylon.wang@amd.com>,
+ Tim Huang <Tim.Huang@amd.com>, Suraj Kandpal <suraj.kandpal@intel.com>,
+ =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@igalia.com>,
+ Andi Shyti <andi.shyti@linux.intel.com>, Yifan Zhang <yifan1.zhang@amd.com>,
+ Leo Li <sunpeng.li@amd.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Lucas De Marchi <lucas.demarchi@intel.com>, Inki Dae <inki.dae@samsung.com>,
+ Hersen Wu <hersenxs.wu@amd.com>, Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
+ Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+ =?UTF-8?Q?=c5=81ukasz_Bartosik?= <lb@semihalf.com>,
+ Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
+ Andrew Jeffery <andrew@aj.id.au>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, kernel@pengutronix.de,
+ Alex Deucher <alexander.deucher@amd.com>, freedreno@lists.freedesktop.org,
+ Claudiu Beznea <claudiu.beznea@microchip.com>, Zack Rusin
+ <zackr@vmware.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org,
+ Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>,
+ =?UTF-8?Q?Jos=c3=a9_Roberto_de_Souza?= <jose.souza@intel.com>,
+ virtualization@lists.linux-foundation.org,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Yongqin Liu <yongqin.liu@linaro.org>,
+ Mario Limonciello <mario.limonciello@amd.com>, Fei Yang
+ <fei.yang@intel.com>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
+ <ville.syrjala@linux.intel.com>, David Lechner <david@lechnology.com>,
+ Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ David Francis <David.Francis@amd.com>, Aaron Liu <aaron.liu@amd.com>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Vinod Polimera <quic_vpolimer@quicinc.com>,
+ linux-rockchip@lists.infradead.org, Fangzhi Zuo <jerry.zuo@amd.com>,
+ Aurabindo Pillai <aurabindo.pillai@amd.com>,
+ VMware Graphics Reviewers <linux-graphics-maintainer@vmware.com>,
+ Ben Skeggs <bskeggs@redhat.com>, =?UTF-8?Q?Jouni_H=c3=b6gander?=
+ <jouni.hogander@intel.com>, Dave Airlie <airlied@redhat.com>,
+ linux-mips@vger.kernel.org, Gurchetan Singh <gurchetansingh@chromium.org>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-arm-msm@vger.kernel.org, Animesh Manna <animesh.manna@intel.com>,
+ linux-renesas-soc@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+ Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-amlogic@lists.infradead.org,
+ Evan Quan <evan.quan@amd.com>, Michal Simek <michal.simek@amd.com>,
+ linux-arm-kernel@lists.infradead.org, Sean Paul <sean@poorly.run>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Boris Brezillon <bbrezillon@kernel.org>, Chunyan Zhang
+ <zhang.lyra@gmail.com>, Qingqing Zhuo <qingqing.zhuo@amd.com>,
+ Sandy Huang <hjc@rock-chips.com>, Swati Sharma <swati2.sharma@intel.com>,
+ John Stultz <jstultz@google.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Drew Davenport <ddavenport@chromium.org>, Kevin Hilman
+ <khilman@baylibre.com>, Hawking Zhang <Hawking.Zhang@amd.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Anusha Srivatsa <anusha.srivatsa@intel.com>,
+ Dan Carpenter <error27@gmail.com>, Karol Herbst <kherbst@redhat.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ linux-hyperv@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+ Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=c3=adra_Canal?=
+ <mairacanal@riseup.net>, Luca Coelho <luciano.coelho@intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Likun Gao <Likun.Gao@amd.com>,
+ Sam Ravnborg <sam@ravnborg.org>, Alain Volmat <alain.volmat@foss.st.com>,
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Deepak Rawat <drawat.floss@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Joel Stanley <joel@jms.id.au>, Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+ Harry Wentland <harry.wentland@amd.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Alan Liu <haoping.liu@amd.com>,
+ Philip Yang <Philip.Yang@amd.com>, Lyude Paul <lyude@redhat.com>,
+ intel-gfx@lists.freedesktop.org, Alison Wang <alison.wang@nxp.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Gustavo Sousa <gustavo.sousa@intel.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Tomi Valkeinen <tomba@kernel.org>, Deepak R Varma <drv@mailo.com>,
+ "Pan, Xinhui" <Xinhui.Pan@amd.com>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Chia-I Wu <olvaffe@gmail.com>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Tian Tao <tiantao6@hisilicon.com>, Shawn Guo <shawnguo@kernel.org>,
+ =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+ Khaled Almahallawy <khaled.almahallawy@intel.com>,
+ linux-stm32@st-md-mailman.stormreply.com, Emma Anholt <emma@anholt.net>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, Imre Deak <imre.deak@intel.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Roman Li
+ <roman.li@amd.com>, Paul Cercueil <paul@crapouillou.net>,
+ Rob Clark <robdclark@gmail.com>, Hamza Mahfooz <hamza.mahfooz@amd.com>,
+ David Airlie <airlied@gmail.com>, Marek Vasut <marex@denx.de>,
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+ xen-devel@lists.xenproject.org, Guchun Chen <guchun.chen@amd.com>,
+ Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Russell King <linux@armlinux.org.uk>, Uma Shankar <uma.shankar@intel.com>,
+ Mika Kahola <mika.kahola@intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Jiasheng Jiang <jiasheng@iscas.ac.cn>,
+ Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+ Vinod Govindapillai <vinod.govindapillai@intel.com>,
+ linux-tegra@vger.kernel.org, =?UTF-8?B?TWFyZWsgT2zFocOhaw==?=
+ <marek.olsak@amd.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,
+ =?UTF-8?Q?Joaqu=c3=adn_Ignacio_Aramend=c3=ada?= <samsagax@gmail.com>,
+ Melissa Wen <mwen@igalia.com>, Hans de Goede <hdegoede@redhat.com>,
+ linux-mediatek@lists.infradead.org, Fabio Estevam <festevam@gmail.com>,
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ David Tadokoro <davidbtadokoro@usp.br>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Orson Zhai <orsonzhai@gmail.com>, amd-gfx@lists.freedesktop.org,
+ Jyri Sarha <jyri.sarha@iki.fi>, Yannick Fertre <yannick.fertre@foss.st.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Philippe Cornu <philippe.cornu@foss.st.com>, Daniel Vetter
+ <daniel@ffwll.ch>, Wayne Lin <Wayne.Lin@amd.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Nirmoy Das <nirmoy.das@intel.com>, Lang Yu <Lang.Yu@amd.com>,
+ Lucas Stach <l.stach@pengutronix.de>
+Message-ID: <ebc6167a-0696-11d2-cb20-bcc7d23427aa@suse.de>
+Subject: Re: [Freedreno] [PATCH RFC v1 00/52] drm/crtc: Rename struct
+ drm_crtc::dev to drm_dev
+References: <20230712094702.1770121-1-u.kleine-koenig@pengutronix.de>
+ <87fs5tgpvv.fsf@intel.com>
+ <CAOw6vbLO_UaXDbTCtAQJgthXOUMPqEV+c2MQhP-1DuK44OhGxw@mail.gmail.com>
+ <20230713130337.fd2l67r23g2irifx@pengutronix.de>
+ <CAOw6vbKtjyUm+OqO7LSV1hDOMQATwkEWP4GzBbbXib0i5EviUQ@mail.gmail.com>
+ <78be52b8-5ffb-601a-84b2-ead2894973a6@suse.de>
+ <d6160aeb-6344-b272-775a-cb665dca46ac@linux.intel.com>
+In-Reply-To: <d6160aeb-6344-b272-775a-cb665dca46ac@linux.intel.com>
 
---I3VsAWuDrtgMS3gi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--------------NtcVQEWFF5WDzksvmBN1dmoE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-On Fri, Jul 14, 2023 at 11:14:08AM +0800, Baolu Lu wrote:
-> On 2023/7/13 21:31, Thierry Reding wrote:
-> > On Tue, Jul 11, 2023 at 05:55:11PM +0200, Thierry Reding wrote:
-> > > On Tue, Jul 11, 2023 at 01:58:34PM +0300, Stanimir Varbanov wrote:
-> > > > Hi Thierry,
-> > > >=20
-> > > > Thank you for the comments!
-> > > >=20
-> > > > On 7/10/23 13:40, Thierry Reding wrote:
-> > > > > On Mon, Jul 10, 2023 at 11:22:52AM +0300, Stanimir Varbanov wrote:
-> > > > > > Add def_domain_type implementation op and override default IOMMU
-> > > > > > domain Kconfig option (CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dy), w=
-hich
-> > > > > > could be enabled on some distros. The current quirk has been do=
-ne
-> > > > > > for Tegra234 machine, because I found the issue on it. The issue
-> > > > > > itself appears on USB host controller which cannot be initializ=
-ed
-> > > > > > without IOMMU translation. Something more, we proved that IOMMU
-> > > > > > translation is needed for display and GPU drivers as well.
-> > > > > >=20
-> > > > > > I evaluated few possible options to solve that:
-> > > > > >=20
-> > > > > >   a) select default IOMMU domain from .def_domain_type op
-> > > > > >   b) Unset CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dn
-> > > > > >   c) add iommu.passthrough=3D0 on the kernel cmdline
-> > > > > >   d) firmware - ACPI / DT
-> > > > > >=20
-> > > > > > a) This option is implemented in the proposed patch.
-> > > > > >=20
-> > > > > > b) Since that the community has agreed that pass-through is pre=
-ferred
-> > > > > > as a default IOMMU domain option because this will avoid perfor=
-mance
-> > > > > > impacts on some of the platforms [1]. On the other side we have=
- examples
-> > > > > > where you cannot even install Linux distribution on a machine w=
-here the
-> > > > > > storage media cannot be detected and the system just hangs.
-> > > > >=20
-> > > > > That's not how I read that thread. It sounds more to me like Will=
- and
-> > > > > Robin had ideas on how to improve the performance and were planni=
-ng to
-> > > > > address these issues. It doesn't exactly sound to me like there w=
-as
-> > > > > concensus to make passthrough the default.
-> > > > >=20
-> > > > > Having said that, given that it's possible for distributions and =
-users
-> > > > > to set CONFIG_IOMMU_DEFAULT_PASSTHROUGH=3Dy, I think it would be =
-useful in
-> > > > > general to have a way of enforcing IOMMU translations if it's nee=
-ded by
-> > > > > the hardware.
-> > > >=20
-> > > > Exactly, the problem is that some platforms prefer passthrough to a=
-void
-> > > > performance impacts but others cannot even boot the kernel (and thus
-> > > > installation failure). Passing iommu.passthrough=3D0 should be an
-> > > > administrator decision, balancing between security and performance.
-> > > >=20
-> > > > On the other hand the aforementioned mail thread gave some performa=
-nce
-> > > > numbers which might be are outdated having the improvements made in=
- smmu
-> > > > driver in mind. Unfortunately, I cannot confirm that the performanc=
-e has
-> > > > been improved during that time.
-> > > >=20
-> > > > >=20
-> > > > > I'm not sure I fully understand the particular problems that you'=
-re
-> > > > > seeing on Tegra234, though. I'm not aware of anything in the USB =
-host
-> > > > > controller driver (or hardware, for that matter) that would requi=
-re the
-> > > > > IOMMU to be enabled. The only peculiarity that I can think of is =
-the
-> > > > > firmware, which is typically loaded by an early bootloader and th=
-erefore
-> > > > > might perhaps need the IOMMU to properly map this in the kernel.
-> > > > > However, my understanding is that this firmware is loaded into sp=
-ecial
-> > > > > carveout regions which don't require remapping.
-> > > >=20
-> > > > On Jetson Orin AGX (R35.2.1) I see these errors:
-> > > >=20
-> > > > tegra-mc 2c00000.memory-controller: unknown: write @0x0000000000000=
-080:
-> > > > EMEM address decode error (EMEM decode error)
-> > > >=20
-> > > > tegra-xusb 3610000.usb: Error while assigning device slot ID
-> > > > tegra-xusb 3610000.usb: Max number of devices this xHCI host suppor=
-ts is 36.
-> > > > usb usb2-port3: couldn't allocate usb_device
-> > > > tegra-mc 2c00000.memory-controller: unknown: write @0x0000000000000=
-090:
-> > > > EMEM address decode error (EMEM decode error)
-> > > > tegra-xusb 3610000.usb: Error while assigning device slot ID
-> > > > tegra-xusb 3610000.usb: Max number of devices this xHCI host suppor=
-ts is 36.
-> > > > usb usb1-port3: couldn't allocate usb_device
-> > > >=20
-> > > > tegra-mc 2c00000.memory-controller: unknown: write @0x0000000000000=
-0a0:
-> > > > EMEM address decode error (EMEM decode error)
-> > > > tegra-xusb 3610000.usb: Error while assigning device slot ID
-> > > > tegra-xusb 3610000.usb: Max number of devices this xHCI host suppor=
-ts is 36.
-> > > > usb usb1-port4: couldn't allocate usb_device
-> > > >=20
-> > > > >=20
-> > > > > However, passthrough is admittedly not something that we've thoro=
-ughly
-> > > > > tested, so it's possible you're running into a use-case that I'm =
-not
-> > > > > aware of. In that case, could you provide a few more specifics (s=
-uch as
-> > > > > the DTB and .config) of your build configuration so that I can tr=
-y and
-> > > > > reproduce?
-> > > >=20
-> > > > To reproduce you have to add iommu.passthrough=3D1 on kernel cmdlin=
-e. The
-> > > > dtb is from Jetpack.
-> > >=20
-> > > I was able to reproduce this on Jetson Orin NX (the differences to AGX
-> > > Orin should be negligible in this context), though I ended up patching
-> > > the DTB to disable all SMMUs. What fixed it for me was to drop the
-> > > dma-coherent property from the usb@3610000 node. Can you try that on
-> > > your end to see if that works for you as well?
-> > >=20
-> > > Not that that's a proper solution, of course, but just trying to find
-> > > out if there's perhaps something else going on.
-> > >=20
-> > >  From the looks of it, it seems like these devices aren't actually DMA
-> > > coherent inherently, but rather the SMMU translations make the access=
-es
-> > > to memory coherent. I'm trying to find out the exact details, but if =
-it
-> > > turns out to be the case, then what we really want is a way for an IO=
-MMU
-> > > to mark any devices that get attached to it as DMA coherent. It's not
-> > > sufficient to hard-code this in DT because there are various ways in
-> > > which device can end up not attached to an IOMMU despite what the DT
-> > > says.
-> > >=20
-> > > Jason, or anyone of the IOMMU folks, any thoughts on how this could be
-> > > achieved? DT already has a way of walking up the "DMA hierarchy" look=
-ing
-> > > for a DMA coherent parent, but again, making this rely entirely on DT
-> > > seems insufficient.
-> >=20
-> > I've got a bit more information on what's happening here. There are
-> > three different ways that a device's memory accesses can coherent on
-> > Tegra: 1) when translated through the ARM SMMU, 2) some devices can
-> > force coherency through configuration registers and 3) each device can
-> > be forced to be coherent via the memory controller.
-> >=20
-> > Option 3) is not something we have much control over because this is
-> > configured during early boot and the corresponding registers locked
-> > down, so the OS can at maximum read out the configuration.
-> >=20
-> > Option 1) is what is typically used, so a common pattern is that if we
-> > enable IOMMU translations via DT, we also set dma-coherent. Conversely,
-> > if IOMMU translations are disabled via DT, the dma-coherent property
-> > should also be removed because by default most devices will not be
-> > hardcoded to be DMA coherent via option 3). Most device drivers will
-> > also not program the device's configuration registers.
-> >=20
-> > As a result the desired configuration is to always enable SMMU and rely
-> > on the SMMU translations to provide DMA coherency. As we've seen this
-> > can be problematic, because the device tree doesn't always tell the true
-> > story. For example even if the iommus property exists, the device may
-> > not end up attached to the IOMMU for a number of reasons (the IOMMU
-> > could itself be disabled, a kernel command-line option could prevent the
-> > attachment, or a device could even be detached explicitly).
-> >=20
-> > So I think what we want to avoid is to mark all device tree nodes as
-> > dma-coherent because it can lead to inconsistencies. A better option
-> > would be to have this property inherited via the IOMMU if the IOMMU
-> > translations themselves cause the coherency to be established. Now it
-> > seems like DT already contains a way of doing that via the "DMA parent".
-> > This works by looking up a special interconnects path called "dma-mem".
-> > We already use this on Tegra to make the memory controller the DMA
-> > parent of all memory clients (i.e. all DMA capable hardware blocks) in
-> > order to enforce a bus-level DMA mask.
-> >=20
-> > However, in order for the DMA parent mechanism to work for IOMMU, we'd
-> > need to redirect the DMA parent to be the IOMMU, but in that case we
-> > loose the link to the memory controller. Unless, perhaps, if there's a
-> > way to construct an ICC path from device to IOMMU and then to memory
-> > controller and external memory controller (EMC).
-> >=20
-> > For reference, here's roughly what the data path looks like on Tegra:
-> >=20
-> > 	device --> MC --> SMMU enabled --> SMMU --> EMC --> DRAM
-> > 	              |                          ^
-> > 	              --> SMMU bypass -----------|
-> >=20
-> > SMMU can be enabled/disabled per device via a stream ID override
-> > register in the memory controller.
-> >=20
-> > The biggest downside of that mechanism is still that it's a static
-> > configuration and doesn't respect the actual runtime attachment of a
-> > device to an IOMMU.
-> >=20
-> > Adding the DT folks to see if they have any good ideas on how best to
-> > represent this from a DT point of view. Would it perhaps be an option
-> > to consider the iommus property when walking up the DMA ancestry?
->=20
-> Is it possible to handle this dynamically in the code? Say, set device
-> to be DMA coherent in probe_finalize callback of Tegra iommu driver if
-> the IOMMU translation for this device is on. And clear it in the iommu
-> release device path.
->=20
-> Normally we switch the DMA ops in the probe_finalize callback and iommu
-> device release.
+SGkNCg0KQW0gMTMuMDcuMjMgdW0gMTc6MTQgc2NocmllYiBUdnJ0a28gVXJzdWxpbjoNCj4g
+DQo+IE9uIDEzLzA3LzIwMjMgMTY6MDksIFRob21hcyBaaW1tZXJtYW5uIHdyb3RlOg0KPj4g
+SGkNCj4+DQo+PiBBbSAxMy4wNy4yMyB1bSAxNjo0MSBzY2hyaWViIFNlYW4gUGF1bDoNCj4+
+PiBPbiBUaHUsIEp1bCAxMywgMjAyMyBhdCA5OjA04oCvQU0gVXdlIEtsZWluZS1Lw7ZuaWcN
+Cj4+PiA8dS5rbGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPiB3cm90ZToNCj4+Pj4NCj4+
+Pj4gaGVsbG8gU2VhbiwNCj4+Pj4NCj4+Pj4gT24gV2VkLCBKdWwgMTIsIDIwMjMgYXQgMDI6
+MzE6MDJQTSAtMDQwMCwgU2VhbiBQYXVsIHdyb3RlOg0KPj4+Pj4gSSdkIHJlYWxseSBwcmVm
+ZXIgdGhpcyBwYXRjaCAoc2VyaWVzIG9yIHNpbmdsZSkgaXMgbm90IGFjY2VwdGVkLiBUaGlz
+DQo+Pj4+PiB3aWxsIGNhdXNlIHByb2JsZW1zIGZvciBldmVyeW9uZSBjaGVycnktcGlja2lu
+ZyBwYXRjaGVzIHRvIGENCj4+Pj4+IGRvd25zdHJlYW0ga2VybmVsIChMVFMgb3IgZGlzdHJv
+IHRyZWUpLiBJIHVzdWFsbHkgd291bGRuJ3QgZXhwZWN0DQo+Pj4+PiBzeW1wYXRoeSBoZXJl
+LCBidXQgdGhlIHF1ZXN0aW9uYWJsZSBiZW5lZml0IGRvZXMgbm90IG91dHdlaWdoIHRoZSBj
+b3N0DQo+Pj4+PiBJTVtiaWFzZWRdTy4NCj4+Pj4NCj4+Pj4gSSBhZ3JlZSB0aGF0IGZvciBi
+YWNrcG9ydHMgdGhpcyBpc24ndCBzbyBuaWNlLiBIb3dldmVyIHdpdGggdGhlIHNwbGl0DQo+
+Pj4+IGFwcHJvYWNoICh0aGF0IHdhcyBhcmd1bWVudGVkIGFnYWluc3QgaGVyZSkgaXQncyBu
+b3Qgc29vIGJhZC4gUGF0Y2ggIzENCj4+Pj4gKGFuZCBzaW1pbGFyIGNoYW5nZXMgZm9yIHRo
+ZSBvdGhlciBhZmZlY3RlZCBzdHJ1Y3R1cmVzKSBjb3VsZCBiZQ0KPj4+PiB0cml2aWFsbHkg
+YmFja3BvcnRlZCBhbmQgd2l0aCB0aGF0IGl0IGRvZXNuJ3QgbWF0dGVyIGlmIHlvdSB3cml0
+ZSANCj4+Pj4gZGV2IG9yDQo+Pj4+IGRybSAob3Igd2hhdGV2ZXIgbmFtZSBpcyBjaG9zZW4g
+aW4gdGhlIGVuZCk7IGJvdGggd29yayBpbiB0aGUgc2FtZSB3YXkuDQo+Pj4NCj4+PiBQYXRj
+aCAjMSBhdm9pZHMgdGhlIG5lZWQgdG8gYmFja3BvcnQgdGhlIGVudGlyZSBzZXQsIGhvd2V2
+ZXIgZXZlcnkNCj4+PiBjaGFuZ2Ugb2NjdXJpbmcgYWZ0ZXIgdGhlIHJlbmFtZSBwYXRjaGVz
+IHdpbGwgY2F1c2UgY29uZmxpY3RzIG9uDQo+Pj4gZnV0dXJlIGNoZXJyeS1waWNrcy4gRG93
+bnN0cmVhbSBrZXJuZWxzIHdpbGwgaGF2ZSB0byBiYWNrcG9ydCB0aGUNCj4+PiB3aG9sZSBz
+ZXQuIEJhY2twb3J0aW5nIHRoZSBlbnRpcmUgc2V0IHdpbGwgY3JlYXRlIGFuIGVwb2NoIGlu
+DQo+Pj4gZG93bnN0cmVhbSBrZXJuZWxzIHdoZXJlIGNoZXJyeS1waWNraW5nIHBhdGNoZXMg
+cHJlY2VkaW5nIHRoaXMgc2V0DQo+Pj4gd2lsbCBuZWVkIHRvIHVuZGVyZ28gY29uZmxpY3Qg
+cmVzb2x1dGlvbiBhcyB3ZWxsLiBBcyBtZW50aW9uZWQgaW4gbXkNCj4+PiBwcmV2aW91cyBl
+bWFpbCwgSSBkb24ndCBleHBlY3Qgc3ltcGF0aHkgaGVyZSwgaXQncyBwYXJ0IG9mIG1haW50
+YWluaW5nDQo+Pj4gYSBkb3duc3RyZWFtIGtlcm5lbCwgYnV0IHRoZXJlIGlzIGEgcmVhbCBj
+b3N0IHRvIGtlcm5lbCBjb25zdW1lcnMuDQo+Pj4NCj4+Pj4NCj4+Pj4gQnV0IGV2ZW4gd2l0
+aCB0aGUgb25lLXBhdGNoLXBlci1yZW5hbWUgYXBwcm9hY2ggSSdkIGNvbnNpZGVyIHRoZQ0K
+Pj4+PiByZW5hbWluZyBhIG5ldCB3aW4sIGJlY2F1c2UgZWFzZSBvZiB1bmRlcnN0YW5kaW5n
+IGNvZGUgaGFzIGEgYmlnIHZhbHVlLg0KPj4+PiBJdCdzIHZhbHVlIGlzIG5vdCBzbyBlYXN5
+IG1lYXN1cmFibGUgYXMgImNvbmZsaWN0cyB3aGVuIGJhY2twb3J0aW5nIiwNCj4+Pj4gYnV0
+IGl0IGFsc28gbWF0dGVycyBpbiBzYXkgdHdvIHllYXJzIGZyb20gbm93LCB3aGlsZSBiYWNr
+cG9ydGluZw0KPj4+PiBzaG91bGRuJ3QgYmUgYW4gaXNzdWUgdGhlbiBhbnkgbW9yZS4NCj4+
+Pg0KPj4+IFlvdSd2ZSByaWdodGx5IGlkZW50aWZpZWQgdGhlIGNvbmplY3R1cmUgaW4geW91
+ciBzdGF0ZW1lbnQuIEkndmUgYmVlbg0KPj4+IG9uIGJvdGggc2lkZXMgb2YgdGhlIGFyZ3Vt
+ZW50LCBoYXZpbmcgd3JpdHRlbi9tYWludGFpbmVkIGRybSBjb2RlDQo+Pj4gdXBzdHJlYW0g
+YW5kIGNoZXJyeS1waWNrZWQgY2hhbmdlcyB0byBhIGRvd25zdHJlYW0ga2VybmVsLiBQZXJo
+YXBzDQo+Pj4gaXQncyBiZWNhdXNlIGRybSdzIGRlZmluaXRpb24gb2YgZGV2IGlzIGluZ3Jh
+aW5lZCBpbiBteSBtdXNjbGUgbWVtb3J5LA0KPj4+IG9yIG1heWJlIGl0J3MgYmVjYXVzZSBJ
+IGRvbid0IGRvIGEgbG90IG9mIHVwc3RyZWFtIGRldmVsb3BtZW50IHRoZXNlDQo+Pj4gZGF5
+cywgYnV0IEkganVzdCBoYXZlIGEgaGFyZCB0aW1lIHNlZWluZyB0aGUgYmVuZWZpdCBoZXJl
+Lg0KPj4NCj4+IEkgY2FuIG9ubHkgc2Vjb25kIHdoYXQgU2VhbiB3cml0ZXMuIEkndmUgZG9u
+ZSBxdWl0ZSBhIGJpdCBvZiANCj4+IGJhY2twb3J0aW5nIG9mIERSTSBjb2RlLiBJdCdzIGhh
+cmQgYWxyZWFkeS4gQW5kIHRoaXMga2luZCBvZiBjaGFuZ2UgaXMgDQo+PiBnb2luZyB0byB0
+byBhZmZlY3QgYWxtb3N0IGV2ZXJ5IGJhY2twb3J0ZWQgRFJNIHBhdGNoIGluIHRoZSBjb21p
+bmcgDQo+PiB5ZWFycy4gTm90IGp1c3QgZm9yIGRpc3RyaWJ1dGlvbiBrZXJuZWxzLCBidXQg
+YWxzbyBmb3IgdXBzdHJlYW0ncyANCj4+IHN0YWJsZSBzZXJpZXMuIEl0J3MgcmVhbGx5IG9u
+bHkgcG9zc2libGUgdG8gZG8gdGhpcyBjaGFuZ2Ugb3ZlciBtYW55IA0KPj4gcmVsZWFzZXMg
+d2hpbGUga2VlcGluZyBjb21wYXRpYmxlIHdpdGggdGhlIG9sZCBuYW1lLiBTbyB0aGUgbW9y
+ZSBJIA0KPj4gdGhpbmsgYWJvdXQgaXQsIHRoZSBsZXNzIEkgbGlrZSB0aGlzIGNoYW5nZS4N
+Cj4gDQo+IEkndmUgZG9uZSBteSBzaGFyZSBvZiBiYWNrcG9ydGluZywgYW5kIHN0aWxsIGFt
+IGRvaW5nIGl0LCBzbyBJIGNhbiBzYXkgSSANCj4gZGlzbGlrZSBpdCBhcyBtdWNoIGFzIGFu
+eW9uZSwgaG93ZXZlci4uIElzIHRoaXMgYW4gYXJndW1lbnQgd2hpY2ggdGhlIA0KPiBrZXJu
+ZWwgYXMgYSB3aWRlciBlbnRpdHkgdHlwaWNhbGx5IGFjY2VwdHM/IElmIG5vdCBjb3VsZCBp
+dCBiZSBhIA0KPiBzbGlwcGVyeSBzbG9wZSB0byBzdGFydCBhIHByZWNlZGVudD8NCg0KSU1I
+TyB1cHN0cmVhbSBwYXRjaGVzIHNob3VsZCBvbmx5IGJlIGp1ZGdlZCBieSB0aGVpciBlZmZl
+Y3Qgb24gdGhlIA0KdXBzdHJlYW0uIEJhY2twb3J0aW5nLCBBUEkgc3RhYmlsaXR5LCBvdXQt
+b2YtdHJlZSBkcml2ZXJzLCBldGMgc2hvdWxkIA0Kbm90IGJlIGEgY29uY2Vybi4gSSB0aGlu
+ayB0aGF0IHdlICh0aGUgRFJNIGRldnMpIGFyZSBtb3N0bHkgbGl2aW5nIHVwIHRvIA0KdGhh
+dCBpZGVhbC4gT1RPSCBpZiBhIGNoYW5nZSBoYXMgYmVlbiBhY2NlcHRlZCwgaXQncyBmYWly
+IHRvIGFzayBob3cgdG8gDQptYWtlIGl0IGluIHRoZSBsZWFzdCBpbnRydXNpdmUgd2F5Lg0K
+DQpCdXQgd2l0aCB0aGlzIGNoYW5nZSwgaXQgZG9lc24ndCBhZGQgdXAgZm9yIG1lLiBUaGUg
+YmVuZWZpdCB0byBMaW51eCBpcyANCnJhdGhlciBjb3NtZXRpYy4gQW5kIHRoZSBwb3NzaWJs
+ZSBkb3duc2lkZXMgYXJlIHNpZ25pZmljYW50IGV2ZW4gaWYgd2UgDQppZ25vcmUgZG93bnN0
+cmVhbSBkaXN0cmlidXRpb24ga2VybmVscy4gTWVyZ2luZyBiZXR3ZWVuIERSTSB0cmVlcyB3
+aWxsIA0KYmUgYWZmZWN0ZWQsIGJhY2twb3J0aW5nIGludG8gc3RhYmxlIGtlcm5lbHMgYXMg
+d2VsbCwgdGhlIHJlbmFtZSB3aWxsIA0KbWVzcyB1cCBnaXQgYmxhbWUgd2l0aCByZW5hbWUg
+Y29tbWl0cy4NCg0KQmVzdCByZWdhcmRzDQpUaG9tYXMNCg0KPiANCj4gSXQgaXMgYSBob25l
+c3QgcXVlc3Rpb24gLSBJIGFtIG5vdCBmYW1pbGlhciBpZiB0aGVyZSB3ZXJlIG9yIHdlcmUg
+bm90IA0KPiBhbnkgc2ltaWxhciBkaXNjdXNzaW9ucyBpbiB0aGUgcGFzdC4NCj4gDQo+IE15
+IGd1dCBmZWVsaW5nIGlzIHRoYXQgKmlmKiB0aGVyZSBpcyBhIGNvbnNlbnN1cyB0aGF0IHNv
+bWV0aGluZyANCj4gX2ltcHJvdmVzXyB0aGUgY29kZSBiYXNlIHNpZ25pZmljYW50bHksIGJh
+Y2twb3J0aW5nIHBhaW5zIHNob3VsZCANCj4gcHJvYmFibHkgbm90IGJlIHdlaWdodGVkIHZl
+cnkgaGVhdmlseSBhcyBhIGNvbnRyYSBhcmd1bWVudC4NCj4gDQo+IFJlZ2FyZHMsDQo+IA0K
+PiBUdnJ0a28NCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERl
+dmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpGcmFua2Vu
+c3RyYXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2byBUb3Rldiwg
+QW5kcmV3IE15ZXJzLCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1hbg0KSFJCIDM2
+ODA5IChBRyBOdWVybmJlcmcpDQo=
 
-Yeah, I had looked into this as well. Intel, AMD and VirtIO all seem to
-do this during .probe_finalize(), whereas on ARM64 this happens as part
-of the bus' .dma_configure() callback.
+--------------NtcVQEWFF5WDzksvmBN1dmoE--
 
-One thing that we could potentially do is fiddle with the struct device
-=2Edma_coherent member in .probe_finalize() and .release_device(), but I'm
-not sure about the potential ramifications. That is, do we have places
-in the code that assume dev->dma_coherent to be statically set during
-device instantiation?
-
-We would have to default to not marking devices as dma-coherent in DT
-for that to work, though, because otherwise if someone were to disable
-the IOMMU altogether, .probe_finalize() and .release_device() would
-never get called and we'd never get a chance to override.
-
-I wonder if we could also use this to dynamically switch a device into
-coherent mode. For example, if it is marked as dma-coherent in device
-tree but doesn't end up as dev->dma_coherent when the driver probes, we
-could try and force coherency via the device's configuration registers.
-
-I don't know yet if that's really a good idea, though. For correctness
-it would be enough if we can detect at runtime whether a device is DMA
-coherent or not via the IOMMU.
-
-Thierry
-
---I3VsAWuDrtgMS3gi
-Content-Type: application/pgp-signature; name="signature.asc"
+--------------jeLFGePkiFpCJh0eHqRS7GTg
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSw8aoACgkQ3SOs138+
-s6EWbhAAwo/8z3JSQ1oOm2xnLriiNX/bJG4zIyVFglxa+6W27VnYdvEhuGSLQ2+H
-6PXcTKE10qxYAGgC/Rdldl6NGAmmE4UXcmP2c+lJ8MRg5e2s5DkHNKu8VfbduX7i
-qznQAJp5DrQ6HAZGCVLUph2pYJhF46edMXWfoueyFJO31XudIp/Ycq7wbFA6F83y
-sASHvixoAPA6BJQG0C1KTN1b0PJuBxw58BTGcaNQdoNMBEQoABbm0L0r7VCsC6P6
-2krh9j3HnCvNdOgLLV+5DHsIFjDeqqiHD/HqQHQHpi2RxjuGAmEoJkQ68invySfa
-4rBzLo8C+UOFrROvhG1TW7QkcyFGMFj2RSZpvxrH04z4d6IbYSCBHPMz7/J3VWzO
-PtlJ1A6/QGDbdngYvWAyhbE2Wa8n++G4SB5/QJXDGZydHJTErQHBTroVJJNpm3cl
-yjZ49iBAs94R2NevNp9d3D9q0zXlCElNeVw8YuMuSZHo+WNnBeQArQJnzKIHnwWe
-L+liXsMMO+/HjVcYbtMIHPuPuqmV7aKVKWpB0jWpZ1yYQ5iPlcojkt7Sy/ff655m
-SSOEoJq8702zf20Nkld8yymiTnu4VB+MHwp3Hm8rS6y57OFUvYSeStZ6crk6NuIw
-WK8Hd6/fpdz316dUSronCZJZtSWVSzDHKflwPpKeEeZX4sMhof8=
-=8DJA
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmSw+5AFAwAAAAAACgkQlh/E3EQov+CJ
+FRAAs3UnPVAh602q8J7TFsiuYzv75xdkD8C1ihsIF3xnPxQT4AwrlZzGu4Uelh/Db1o8yFEitfnA
+Ghk92aBwnLnf5crMh+qux1g/HHhYMLAGvmiGbR8H1tIx7VO3n4E/gm8OMkVG7xQ0Tz4+Qs8oTiJK
+kFpsq/h6tqmJTjGbBnwTCMeHoYGFZM4h+KfSAYrMkT3lD/WSYbFmKrtSrmVcUbax/trVPRyEDyV1
+D5uAUaWHZYEIZMmHPD65yfbjmAKKvXkCFbaHS0dwfGfuNjTS/tVtoFSohLsKThhgn3lSHnPpzx3K
+4r83L4KZRQCDTM9vsTG2JYxJoq+Liw70fLe8gFXO6xD0Z8IWSTG+a8kgeKYtJ1kDtw9nfzZlUoZh
+zFxr2af/nGZRpLjA1enMf0GRisUvW3CtTmvdYQwBoEULHpAwUqGoDVAvz1lMUgew/Ezm65E/qO0X
+9mjGUHNEne4/DZ1y1cO68JQO+F3mgFTOM6nRrlboy+wGlyxLwthlMkSfsCwF3elI3/zC1NXqNfk+
+9qkQfSm4QsV+6amus2nwk3HuV1i4oRdy9YpQ+k2NvFAKjh6AS4JxTEBCtoZ4pq5Z4z92GrWpBS8P
+tVzDaIy4+/mZeIQbou1prQZzpZdPSVKLCpfys3YCEeT+G4s0WAXhsOpvkh/Qc3ob7418D7bqWFti
+6q8=
+=i/hH
 -----END PGP SIGNATURE-----
 
---I3VsAWuDrtgMS3gi--
+--------------jeLFGePkiFpCJh0eHqRS7GTg--
