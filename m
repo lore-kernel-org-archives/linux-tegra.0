@@ -2,55 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8AAC0015E
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 02:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E051EB64DD
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jul 2023 02:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232372AbjGNCvU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Jul 2023 22:51:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59176 "EHLO
+        id S234595AbjGNC5z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Jul 2023 22:57:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234066AbjGNCvS (ORCPT
+        with ESMTP id S234671AbjGNC5x (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Jul 2023 22:51:18 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA2D52D6B;
-        Thu, 13 Jul 2023 19:51:07 -0700 (PDT)
+        Thu, 13 Jul 2023 22:57:53 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 344542D61;
+        Thu, 13 Jul 2023 19:57:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689303067; x=1720839067;
+  t=1689303473; x=1720839473;
   h=message-id:date:mime-version:cc:subject:to:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=3ItH7GDLekgA6ZJq1QFTHSD2GE2/QqQMe4ZG5EQNPz4=;
-  b=CN0vSYmwiDh3p/zuVm9jZrfAgRkn3uE4+MtK38IGFFHvuSxbunmr1mqB
-   ihzdjfe8wrOR57eYoL/LT0x7tZpZZbazas3utxTqj9WUEuIYUBjgEm8G+
-   svehUu4ndn/JT/n2G3XaYWvQrXpsuZzx9AzV+g9guhR+H2/HqbVj0tYF0
-   JDqf7+84rPDIj6VO5yZ9lnztGz++XdiaGIXtx28t2ISAkpzk2pcVxVbUw
-   QId3loo1EjEqxYHGFnErVJeVNWSMqRQmq4fAUOR2g8kshnimEBGTuWIwn
-   u7MRiwbRhOrzi94czmLr2DOQDexxZCS60I1TZEZWLvFni7p4PO8xfOTcv
+  bh=Tkvgh+OdvlZ0aXoaPxIcbLqEf8O6M8/JMk2iz07gXdU=;
+  b=JlwmdNv6xDQoOrsFPvj6d6W4eET3fgu4bf70+KmSQ8CNKvOrz6/C2jpr
+   xP7W4dgvnn6VAFDEdF2Kn6RzPl3ALmtgdR9k5HSaQ4A6Z22NGCGUpPQ32
+   CD+gZxTselkUuveATPNu2kBk2wP9e1w9lE5HMCdaTiEYYOTmZMUPfRgj4
+   EVVTo06hbJUa4UG61WIxRlJmisfHEUrb2yrklLWboTZK41rAsv17miaFp
+   kFlpKvFmCBG0Y3xsqGWSTPzAWUdfr4+V6wlot040bB1BPA+WJv4N92iul
+   G3aD6l1DrcfWxCUm7n3Y0v+110fL+hs7nEMcVKBL6oA0thxewCrgv/aDq
    A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="362837721"
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="368927127"
 X-IronPort-AV: E=Sophos;i="6.01,204,1684825200"; 
-   d="scan'208";a="362837721"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 19:51:07 -0700
+   d="scan'208";a="368927127"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 19:57:52 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="716174394"
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="846303604"
 X-IronPort-AV: E=Sophos;i="6.01,204,1684825200"; 
-   d="scan'208";a="716174394"
+   d="scan'208";a="846303604"
 Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.252.191.49]) ([10.252.191.49])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 19:51:01 -0700
-Message-ID: <ed4200bb-d7e8-b8b5-bfb6-510bebbb8808@linux.intel.com>
-Date:   Fri, 14 Jul 2023 10:50:57 +0800
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 19:57:45 -0700
+Message-ID: <362e4343-dcf1-58fc-7ac9-756c65bb0df6@linux.intel.com>
+Date:   Fri, 14 Jul 2023 10:57:38 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Cc:     baolu.lu@linux.intel.com,
-        "opensource.kernel" <opensource.kernel@vivo.com>,
+Cc:     baolu.lu@linux.intel.com, opensource.kernel@vivo.com,
         Thierry Reding <treding@nvidia.com>
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIIHY0XSBpb21tdTogcmVtb3ZlIHJlZHVu?=
- =?UTF-8?Q?dant_parameter_check_in_tegra=5fsmmu=5fdebugfs=5finit=28=29?=
+Subject: Re: [PATCH v4] iommu: remove redundant parameter check in
+ tegra_smmu_debugfs_init()
 Content-Language: en-US
-To:     =?UTF-8?B?5p2c5pWP5p2w?= <duminjie@vivo.com>,
+To:     Minjie Du <duminjie@vivo.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Krishna Reddy <vdumpa@nvidia.com>,
         Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
@@ -60,26 +59,24 @@ To:     =?UTF-8?B?5p2c5pWP5p2w?= <duminjie@vivo.com>,
         "open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>,
         open list <linux-kernel@vger.kernel.org>
 References: <20230713072825.10348-1-duminjie@vivo.com>
- <61f31b3e-b618-88db-a07c-f6761c1c7d06@linux.intel.com>
- <SG2PR06MB5288E9FC9B6EA21E20BB011EAE34A@SG2PR06MB5288.apcprd06.prod.outlook.com>
 From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <SG2PR06MB5288E9FC9B6EA21E20BB011EAE34A@SG2PR06MB5288.apcprd06.prod.outlook.com>
+In-Reply-To: <20230713072825.10348-1-duminjie@vivo.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023/7/14 10:38, 杜敏杰 wrote:
-> Hi baolu!
+On 2023/7/13 15:28, Minjie Du wrote:
+> debugfs_create_file() will return early if smmu->debugfs is an error
+> pointer, so an extra error check is not needed.
 > 
-> Thanks for your suggestion!
-> 
-> You say:
->> Next time when you send a new version of a patch, please don't forget to add the change log after the tear line. This way, people can know how the patch evolved into this way.
-> Do I need to submit a new patch?
+> Signed-off-by: Minjie Du<duminjie@vivo.com>
+> Acked-by: Thierry Reding<treding@nvidia.com>
 
-Oh no. Just a kind remind. :-)
+Greg keeps reminding that no error branch for debugfs, so
+
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
 Best regards,
 baolu
