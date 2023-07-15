@@ -2,143 +2,91 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573F8C00528
-	for <linux-tegra@archiver.kernel.org>; Sat, 15 Jul 2023 09:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D242C001DE
+	for <linux-tegra@archiver.kernel.org>; Sat, 15 Jul 2023 10:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbjGOJ0z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 15 Jul 2023 05:26:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
+        id S229981AbjGOKAP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 15 Jul 2023 06:00:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbjGOJ0w (ORCPT
+        with ESMTP id S229482AbjGOKAO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 15 Jul 2023 05:26:52 -0400
-Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A156B2D75;
-        Sat, 15 Jul 2023 02:26:50 -0700 (PDT)
-Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-1ba4460f0a4so1016438fac.0;
-        Sat, 15 Jul 2023 02:26:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689413210; x=1692005210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wHphB4LnIXM8B5KTzxaE1knTLhvmv4UUsDUmEXJtUjc=;
-        b=KNtkg40Donc1RJ+Y/N6bMmujMSl9cywEa6fXVSQYqV4W4lT8G1IFlO5DKCTqezy9NY
-         lefwY54PRhNWProidCgY7SJny7AEfavu3g+BjFgAL5dZzNMIElbAwgo4QZnm4OLwjy+V
-         CVJWSo1L7gWOhYkpGKP0r9oukax6+UlfkfofBx8xxPcLUf3ek7zbTjABn/JHDdvTWXCu
-         WWDX31kpkxyfmd7Q/WE+0i7y3grMAoIl2p8ABV+V0g6ZwAueUBzPNbjvXwLF4/1Voo58
-         THpoQ4ecU8W2lHElPdLC420Acx2PDSK/3KkrYlQGhj1Cbwmy3bV4wSFCbbKfSoIqtJyV
-         8cKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689413210; x=1692005210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wHphB4LnIXM8B5KTzxaE1knTLhvmv4UUsDUmEXJtUjc=;
-        b=JiGU52lQ8FfyJkp6QjJQSRzyHbk7kqyAUFscruPUEYIw7RNWvZZ21NHMBrIeQbhqD1
-         6GtMln/NTVUZw49joEErfXV/f6tgMdbGdAZnOfAP2YKB4uuCv6bIGP4HTyjTqlGjSoac
-         grXLh0eefJph+lUq1Z4xoT1vHI8tR8OZP223JRtIXP5ozuQBw1UGNmT266Qc7uFcqybh
-         vajWY4OVbOaEcuuvLzlH5too7GCT7CssvOXAt81dSvNxxrimlcQBf3SlZbhnQKh3/LCx
-         DHTC23/Jwgn4onqFXjA+V5CvyStnfidFSV8/OCeIFgGH00MADcc+bbkWEbELFNACTjkj
-         NYRA==
-X-Gm-Message-State: ABy/qLaY+efmPdXrwZqHx79HVnpLXMlNT08ZV5WWBpmQIssnVrzkVTFm
-        vcyCdAU0RNP7yc8sKOtjzkCWTdpLZNeNCQprWPM=
-X-Google-Smtp-Source: APBJJlGwdJmxyzGjSGIAgoqFi7CGlWiMJBmcsPBzo9lxW5BLyYxxPOYfHlixbBaupkZxkAV8b0mEWpZJ8j8VMX6oWRI=
-X-Received: by 2002:a05:6870:328d:b0:177:a158:9ef6 with SMTP id
- q13-20020a056870328d00b00177a1589ef6mr6679986oac.52.1689413209848; Sat, 15
- Jul 2023 02:26:49 -0700 (PDT)
+        Sat, 15 Jul 2023 06:00:14 -0400
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10EE6132;
+        Sat, 15 Jul 2023 03:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1689415209;
+        bh=UpVM55kDs942KIyIZCbP7/8cjNZBSlpLjQ3vWtUWbAI=;
+        h=From:To:Cc:Subject:Date;
+        b=mjrS4xN36G6gqCuJ+K2TGaUmS9VWkkkW0bMCmGq9tRO/aevaEki1OQKtG8Q2O1nMa
+         O7yolZhUOZg+/3uDTF54Mnj/jOxlLaK65DzIfmrO6mmOIqYANJ/lvlEAUF8ACvhJ3U
+         KRRxk6Ntsrmv4gJUOOpJJmss/lRFDopL641hN9oM=
+Received: from KernelDevBox.byted.org ([180.184.49.4])
+        by newxmesmtplogicsvrszb6-0.qq.com (NewEsmtp) with SMTP
+        id D792BC5A; Sat, 15 Jul 2023 17:53:57 +0800
+X-QQ-mid: xmsmtpt1689414837tvr97vcsh
+Message-ID: <tencent_4D4974DE0CD4266C25819179B42888A3E20A@qq.com>
+X-QQ-XMAILINFO: Mdc3TkmnJyI/P5bMlDWHt42XZlbuAP7IOtLgcr56S2b6SFl47cFJLKPDw3Zd8x
+         p72EqDQVEnDzcOZQqqmhByqXK8hxcSLfaPCRg4e9rhEtnRxG3BFTa8JlgI9gUga4gTdY6aAMJgjb
+         uO73jir/95rKCRCGaMBS1O/u72LcaEqkhsUUIJ6kLCxYNCVihnxZqi1dSdGGxFTuWAWg5XhX4uYz
+         NLLFfBRIsz5lXGqeUYTGu8Z4jG49IggTtTRsuiSJy+bQ/d1GVy2Sr/YYpsGTMub3zwA4RCg3AuKE
+         vXPfbuwpaaBuWZnmDI2o8D898OVekZXDffwdFe/lPrZJ+0wzXcbfVrG9DsgsmNel4EfKZpKuScy0
+         kgy63qaTX3XM3xLqbS9tQjrUQBe9jRKGoW1BCHvte7lbUOE/v+DZckCncnuodiPdDYy8ftk5mK+a
+         e1IuXipIcPalRtYDtS4O7gr+6UQ02TU6F2uu4ld8hDT3qCOcX8nnvl9wPOmmjcabau6wnvztLXsd
+         HGDN9IOORlBtFktWBI1u5RXGBaLUSyCPdKRVtHSjS54F46u7aeCfvl3GPjRc6XdcT7WTD3NHtDQI
+         7O+mcRLN58lxMaScCByj3HR/TrITaM0Dwqe8/pbC+cbzAK+pAdzu+mcGlRzBZBsbS+A6NMiw5AQ8
+         nT5eCBk4GWKkn8Tl2kiPrGpXnrc9Ys9F5kQ41+U0pMXk91/1OK2TCZloIVnxNY27umx/1w081Ewl
+         NsZXUYuoOtFVO0JdYFUS62CwGJaXiY1RWXrk8Mr+HCK8aSRRGJOIAauFrAuRmnh/w7JBpdTRqOxK
+         7AeMQFm6VWs67FEqJ2h6gHhhxvQ5oka3tMz+LyQDEKv1xcc9gIxMg/ZB2z7j9K2beJhyTFxiO0WN
+         tea16zM+YjzZHGi3a+LKx5/SsKLjX93iF5GF3V4Pr5RuioilrEGkFEGup/sL/aNOHGtEf2ltbxNf
+         9cTN4AAnomRfGfmD5S47CFu23xOIOPYHt/GWJ0mAD0+ClDPapn8+Ruo8gCS1LwgC+KgRA07UC9Oa
+         T2La0xSw==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From:   Zhang Shurong <zhang_shurong@foxmail.com>
+To:     ldewangan@nvidia.com
+Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zhang Shurong <zhang_shurong@foxmail.com>
+Subject: [PATCH] spi: tegra20-sflash: Fix signedness bug in tegra_sflash_probe
+Date:   Sat, 15 Jul 2023 17:53:56 +0800
+X-OQ-MSGID: <20230715095356.1507787-1-zhang_shurong@foxmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20230714174841.4061919-1-robh@kernel.org>
-In-Reply-To: <20230714174841.4061919-1-robh@kernel.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Sat, 15 Jul 2023 11:26:38 +0200
-Message-ID: <CAMhs-H-6tAV-+U-4zZDKs47eKCJr+kZ-Op8vR4SyJyE5LK_2aw@mail.gmail.com>
-Subject: Re: [PATCH] phy: Explicitly include correct DT includes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Justin Chen <justin.chen@broadcom.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Alban Bedel <albeu@free.fr>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vincent Shih <vincent.sunplus@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>, devicetree@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 7:49=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
->
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/phy/ralink/phy-mt7621-pci.c                   | 3 +--
+The "tsd->irq" variable is unsigned so this error handling
+code will not work.
 
-Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Fix this by adding error handling statement
 
-Thanks,
-    Sergio Paracuellos
+Fixes: 8528547bcc33 ("spi: tegra: add spi driver for sflash controller")
+Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
+---
+ drivers/spi/spi-tegra20-sflash.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
+index 4286310628a2..4c18337de813 100644
+--- a/drivers/spi/spi-tegra20-sflash.c
++++ b/drivers/spi/spi-tegra20-sflash.c
+@@ -455,7 +455,11 @@ static int tegra_sflash_probe(struct platform_device *pdev)
+ 		goto exit_free_master;
+ 	}
+ 
+-	tsd->irq = platform_get_irq(pdev, 0);
++	ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
++		goto exit_free_master;
++
++	tsd->irq = ret;
+ 	ret = request_irq(tsd->irq, tegra_sflash_isr, 0,
+ 			dev_name(&pdev->dev), tsd);
+ 	if (ret < 0) {
+-- 
+2.30.2
+
