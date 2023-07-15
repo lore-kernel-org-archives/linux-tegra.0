@@ -2,148 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5D3C04FE2
-	for <linux-tegra@archiver.kernel.org>; Sat, 15 Jul 2023 07:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573F8C00528
+	for <linux-tegra@archiver.kernel.org>; Sat, 15 Jul 2023 09:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230424AbjGOHxr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 15 Jul 2023 03:53:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36532 "EHLO
+        id S229895AbjGOJ0z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 15 Jul 2023 05:26:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbjGOHxq (ORCPT
+        with ESMTP id S229665AbjGOJ0w (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 15 Jul 2023 03:53:46 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E6935B3;
-        Sat, 15 Jul 2023 00:53:45 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3fbef8ad9bbso24223965e9.0;
-        Sat, 15 Jul 2023 00:53:45 -0700 (PDT)
+        Sat, 15 Jul 2023 05:26:52 -0400
+Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A156B2D75;
+        Sat, 15 Jul 2023 02:26:50 -0700 (PDT)
+Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-1ba4460f0a4so1016438fac.0;
+        Sat, 15 Jul 2023 02:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689407624; x=1691999624;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cO8MaIrmzLIgpAh79j/PTcb6h7we+UptA1d76S5ZSws=;
-        b=S0yWZlEfOXQCIdfQ7MJ/pLor2v4HmMmfN9UlsoKQIFHefBL4zXFQXlEFgONXXWVska
-         yQev/sBOgNu08yX6LX/1S1dWqBlm9HVCLPnbVNUbi5RtP18YMGtiLxjcOA4jViUCfD28
-         Ek7fKcPmlKPSEIOgJ+Uaq3iKtPnB/P936EDPHSo7JaeMAZ1fm1jyZSKE++/1XSDTce/w
-         uzvdU7nc/SdoK5kfjpF/r/8cbNFkE85OeSFlbztuRFmCCimEswkNMV2af8AM/4ziq9xe
-         CRCFl2qBwDBxVo54zLGeTEhT5HVF11+7yZ2slZ21TocaPHIfDAnoutrPXOd0xEkBxyTX
-         t+AQ==
+        d=gmail.com; s=20221208; t=1689413210; x=1692005210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wHphB4LnIXM8B5KTzxaE1knTLhvmv4UUsDUmEXJtUjc=;
+        b=KNtkg40Donc1RJ+Y/N6bMmujMSl9cywEa6fXVSQYqV4W4lT8G1IFlO5DKCTqezy9NY
+         lefwY54PRhNWProidCgY7SJny7AEfavu3g+BjFgAL5dZzNMIElbAwgo4QZnm4OLwjy+V
+         CVJWSo1L7gWOhYkpGKP0r9oukax6+UlfkfofBx8xxPcLUf3ek7zbTjABn/JHDdvTWXCu
+         WWDX31kpkxyfmd7Q/WE+0i7y3grMAoIl2p8ABV+V0g6ZwAueUBzPNbjvXwLF4/1Voo58
+         THpoQ4ecU8W2lHElPdLC420Acx2PDSK/3KkrYlQGhj1Cbwmy3bV4wSFCbbKfSoIqtJyV
+         8cKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689407624; x=1691999624;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1689413210; x=1692005210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cO8MaIrmzLIgpAh79j/PTcb6h7we+UptA1d76S5ZSws=;
-        b=XG8APEn6gt6GVcoYBFjlKb++LuKoJERvTTITFzqixMAFe9zVnl6v27F0nIQa9LZKpq
-         k8z1aums1zSvxlAwpjdpYN9qBJTlkuZf3E3yIFoWcAm1+C1GG8XgfUmr+lnGP9l9hF5n
-         iqht54BCiPd9nA1v8oeAJ3i72GYGFllnJNrj3WlSzvacctuepHmlUMj6pREWP+Y0cAb6
-         m17iISO/pIN9hCfzsAjg4uaGp/HsmP+jjWjKB0it2ff7aCDhBDtVVwfdE30FMGAjZ8Ri
-         1m8VBRIJru9SLMmGrTFD7u0CuQvC05/8O02lVEEEFtp0VD6QlDalsZn+b1rzMsGIUFry
-         aS4A==
-X-Gm-Message-State: ABy/qLYlN4/OKdhyVK6a2//aZPle8AJtef81sD1NpgqEPj7osYXaQ08i
-        L25CN3WoXtrzubSXTY8H1OA=
-X-Google-Smtp-Source: APBJJlGro5VHrnSJt5gm25Ax8kAN55eHOQJS1zTEspa+DjFeZWNzb+DbAda48F6OBIRsbIG1wX1WEg==
-X-Received: by 2002:a1c:cc15:0:b0:3fc:48e:581e with SMTP id h21-20020a1ccc15000000b003fc048e581emr5990254wmb.24.1689407624088;
-        Sat, 15 Jul 2023 00:53:44 -0700 (PDT)
-Received: from [127.0.1.1] ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id f6-20020adff586000000b003142eb75724sm13001271wro.24.2023.07.15.00.53.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jul 2023 00:53:43 -0700 (PDT)
-From:   Benjamin Bara <bbara93@gmail.com>
-Date:   Sat, 15 Jul 2023 09:53:27 +0200
-Subject: [PATCH v7 5/5] mfd: tps6586x: register restart handler
+        bh=wHphB4LnIXM8B5KTzxaE1knTLhvmv4UUsDUmEXJtUjc=;
+        b=JiGU52lQ8FfyJkp6QjJQSRzyHbk7kqyAUFscruPUEYIw7RNWvZZ21NHMBrIeQbhqD1
+         6GtMln/NTVUZw49joEErfXV/f6tgMdbGdAZnOfAP2YKB4uuCv6bIGP4HTyjTqlGjSoac
+         grXLh0eefJph+lUq1Z4xoT1vHI8tR8OZP223JRtIXP5ozuQBw1UGNmT266Qc7uFcqybh
+         vajWY4OVbOaEcuuvLzlH5too7GCT7CssvOXAt81dSvNxxrimlcQBf3SlZbhnQKh3/LCx
+         DHTC23/Jwgn4onqFXjA+V5CvyStnfidFSV8/OCeIFgGH00MADcc+bbkWEbELFNACTjkj
+         NYRA==
+X-Gm-Message-State: ABy/qLaY+efmPdXrwZqHx79HVnpLXMlNT08ZV5WWBpmQIssnVrzkVTFm
+        vcyCdAU0RNP7yc8sKOtjzkCWTdpLZNeNCQprWPM=
+X-Google-Smtp-Source: APBJJlGwdJmxyzGjSGIAgoqFi7CGlWiMJBmcsPBzo9lxW5BLyYxxPOYfHlixbBaupkZxkAV8b0mEWpZJ8j8VMX6oWRI=
+X-Received: by 2002:a05:6870:328d:b0:177:a158:9ef6 with SMTP id
+ q13-20020a056870328d00b00177a1589ef6mr6679986oac.52.1689413209848; Sat, 15
+ Jul 2023 02:26:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230327-tegra-pmic-reboot-v7-5-18699d5dcd76@skidata.com>
-References: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
-In-Reply-To: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
-To:     Wolfram Sang <wsa@kernel.org>, Lee Jones <lee@kernel.org>,
-        rafael.j.wysocki@intel.com,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     dmitry.osipenko@collabora.com, peterz@infradead.org,
-        jonathanh@nvidia.com, richard.leitner@linux.dev,
-        treding@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-X-Mailer: b4 0.12.2
+References: <20230714174841.4061919-1-robh@kernel.org>
+In-Reply-To: <20230714174841.4061919-1-robh@kernel.org>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Sat, 15 Jul 2023 11:26:38 +0200
+Message-ID: <CAMhs-H-6tAV-+U-4zZDKs47eKCJr+kZ-Op8vR4SyJyE5LK_2aw@mail.gmail.com>
+Subject: Re: [PATCH] phy: Explicitly include correct DT includes
+To:     Rob Herring <robh@kernel.org>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Justin Chen <justin.chen@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Yu Chen <chenyu56@huawei.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Alban Bedel <albeu@free.fr>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vincent Shih <vincent.sunplus@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>, devicetree@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Benjamin Bara <benjamin.bara@skidata.com>
+On Fri, Jul 14, 2023 at 7:49=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/phy/ralink/phy-mt7621-pci.c                   | 3 +--
 
-There are a couple of boards which use a tps6586x as
-"ti,system-power-controller", e.g. the tegra20-tamonten.dtsi.
-For these, the only registered restart handler is the warm reboot via
-tegra's PMC. As the bootloader of the tegra20 requires the VDE, it must
-be ensured that VDE is enabled (which is the case after a cold reboot).
-For the "normal reboot", this is basically the case since 8f0c714ad9be.
-However, this workaround is not executed in case of an emergency restart.
-In case of an emergency restart, the system now simply hangs in the
-bootloader, as VDE is not enabled (because it is not used).
+Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-The TPS658629-Q1 provides a SOFT RST bit in the SUPPLYENE reg to request
-a (cold) reboot, which takes at least 20ms (as the data sheet states).
-This avoids the hang-up.
-
-Tested on a TPS658640.
-
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Acked-for-MFD-by: Lee Jones <lee@kernel.org>
-Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
----
- drivers/mfd/tps6586x.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index b12c9e18970a..1777d8d3a990 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -30,6 +30,7 @@
- #include <linux/mfd/tps6586x.h>
- 
- #define TPS6586X_SUPPLYENE	0x14
-+#define SOFT_RST_BIT		BIT(0)
- #define EXITSLREQ_BIT		BIT(1)
- #define SLEEP_MODE_BIT		BIT(3)
- 
-@@ -475,6 +476,19 @@ static int tps6586x_power_off_handler(struct sys_off_data *data)
- 	return notifier_from_errno(-ETIME);
- }
- 
-+static int tps6586x_restart_handler(struct sys_off_data *data)
-+{
-+	int ret;
-+
-+	/* Put the PMIC into hard reboot state. This takes at least 20ms. */
-+	ret = tps6586x_set_bits(data->dev, TPS6586X_SUPPLYENE, SOFT_RST_BIT);
-+	if (ret)
-+		return notifier_from_errno(ret);
-+
-+	mdelay(50);
-+	return notifier_from_errno(-ETIME);
-+}
-+
- static void tps6586x_print_version(struct i2c_client *client, int version)
- {
- 	const char *name;
-@@ -575,6 +589,13 @@ static int tps6586x_i2c_probe(struct i2c_client *client)
- 			dev_err(&client->dev, "register power off handler failed: %d\n", ret);
- 			goto err_add_devs;
- 		}
-+
-+		ret = devm_register_restart_handler(&client->dev, &tps6586x_restart_handler,
-+						    NULL);
-+		if (ret) {
-+			dev_err(&client->dev, "register restart handler failed: %d\n", ret);
-+			goto err_add_devs;
-+		}
- 	}
- 
- 	return 0;
-
--- 
-2.34.1
-
+Thanks,
+    Sergio Paracuellos
