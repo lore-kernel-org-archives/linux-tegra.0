@@ -2,367 +2,130 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FFAC001B0
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 16:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B65FFEB64DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 17:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231733AbjGQQds (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jul 2023 12:33:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43432 "EHLO
+        id S229789AbjGQRQB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jul 2023 13:16:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231627AbjGQQdm (ORCPT
+        with ESMTP id S229674AbjGQRQA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jul 2023 12:33:42 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A7910DC;
-        Mon, 17 Jul 2023 09:33:34 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-51e5e4c6026so6686855a12.0;
-        Mon, 17 Jul 2023 09:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689611612; x=1692203612;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x0BtPzFopRLJh1Z6oxc0O6GlOfPDHfoi+8ZzkHDGuMc=;
-        b=StnQKlXnYIIyzDLScfaiAj04w7kTJY9S5ja1KzFHvp7YbgHY8o8B1jUWd4gDSpcBRF
-         DU6P8E60PtZUx6SgkR8FXPSjKnQsHfIRXSH0TUPqg9WYSMrTz/yd1yRCROgKFWkjfMa2
-         X3WxhYeBUVOqdjYAE/3XEVvEkdYszNRsGApDlDtIaiHdwKHeyHBzzQiYPdAJCAOk/Yuh
-         xQm1S+OiQUOlFXsvVkfdrArTAVH0pmqxYbzbSyQOdPk+Y25kxI1Kwg7OtuQzNoCeUzvh
-         cpid2749SHlroTyrsNkz2AibGjONuXmO0VaYPuMtjtmt9G91JPHoiEg/JstZHHClQrZB
-         2Byw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689611612; x=1692203612;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x0BtPzFopRLJh1Z6oxc0O6GlOfPDHfoi+8ZzkHDGuMc=;
-        b=DCrfVV17c9FVpRechpddfTdyYsdRLCcXGQ0m04J75Meq3Swqii0pyLEw2MzcwFmoZS
-         TW7nBMY8EIWV+L09K5/b5aOVcSa+g61DmLBRfclghUzhLagvnnb/1Euo714y/25iPwbz
-         RA+AXdi6tbytCE2KeETa0EqcvnTPCjQ61T+hBCo9IgE9nziz43TWgzrOPIATd/bjq2Zl
-         znPgo73vQnWn9TFBDx/474y5Jezcab06uYXAuCjHT5gXLs1lk9HWQePRxHRCuUK++ORL
-         nZqwo266YqtkapYHFS/dWzcbyB7vbsYjtvUVi5ZLzEYD81OpUNmzXFQiTe+yqL+5HaoT
-         /09A==
-X-Gm-Message-State: ABy/qLbTd6Aqpt4bc5PUXcdJnMUJLER5dHpTm+oRohYw6TJxpOxNbmJZ
-        WVxLYEbhRnMTebnBdBGiMuqlDJ/ABqY=
-X-Google-Smtp-Source: APBJJlGR9q/UcU8HhmHdJCx/TVbDqOknVDhyO3/7lKV89yEhJ+H1xalLmmQFmyO4s96hHxyz5Vv6Gg==
-X-Received: by 2002:aa7:d7c7:0:b0:51d:d27a:6d3 with SMTP id e7-20020aa7d7c7000000b0051dd27a06d3mr12644975eds.11.1689611612230;
-        Mon, 17 Jul 2023 09:33:32 -0700 (PDT)
-Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a2-20020aa7d902000000b0051e0eba608bsm10156196edr.19.2023.07.17.09.33.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 09:33:31 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 3/3] ARM: tegra: Add missing reset-names for Tegra HS UART
-Date:   Mon, 17 Jul 2023 18:33:29 +0200
-Message-ID: <20230717163329.1033725-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230717163329.1033725-1-thierry.reding@gmail.com>
-References: <20230717163329.1033725-1-thierry.reding@gmail.com>
+        Mon, 17 Jul 2023 13:16:00 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2069.outbound.protection.outlook.com [40.107.244.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 657AE18C;
+        Mon, 17 Jul 2023 10:15:59 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ABpAjmu5r9rvhCbFGRSJrmcUr6vCfz6cZmTZRnxOkaPu22w6uzTgqj64yMubdQOYPpMG3IOLWbWgLMP4MWyTdQTQkOQjz79YQ5xyUNfVvDKr6Tt+04Zcq78t/9DxRymcntBTQKc2Ru6rHES4XqXVrHPH+gK4N5VR+tSYxcBkqmWEyKUcirKtT+X38MALqOLVVQPvUeKvoUtScgTxVud4+26E1WCXn2CTxcuyLQILdB76Q7ge0QMtNeT3JFsOkz0XLX7ho/9JiboUWWcYTnFMQxYv+fLtctBsIutwQ9Mfg1Hew7Bvzb2uN0qzwXm9WCchs3tpGiOd4pEyjBl9jgYV3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4DKXyd2nVn/Al6+bWYa0XjUp5+q4hVUCOGxECApXioM=;
+ b=UrvyqynctCramcR/1m6NONpWifYot78ySXSjAjNwshE8H9h85KLMqjS46dgvFMp/caDTup0MhowRao7D3fKD5uXu3SEGz2rjXoLNCgyib/7qH8JtuX9KA2wpETFTXJZx5m89dkMLNubh4MnJI2jHCn8SmiVTLe/WVpNEj3OomFpUVz6+NbKw0E4rCtsys/jrEBeJH99lxEBxeHhVe/QvjBrj9J7A+gOqvcUaLcwAozYvRqKVy5Y8KLOoGDxVsMUseUmaLFkDCVDozJtadgO4lbl5tw9ygmJffVxxtodVYp5dKGxK3EJ1K5wKGSoCiB5MOvgpcK9J5FHP3u7jnjMAEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4DKXyd2nVn/Al6+bWYa0XjUp5+q4hVUCOGxECApXioM=;
+ b=GIiOwgRyzwSSN0kGMyWVL6s8gN2pMvRb+i1PL/UeY3Z7JW4zx3qCLGjovE56UslpVjqOVISKsns+wT7hMjDHwXSb9nGc4CqyTcrLalwpZt23JQsxNJx6auAqiNH+EKnQniDu/bEkn86NJjXJFkEV3OrYBCke7Hm8aqTDusy2qMkqFJS2FtPJIQ/W2tLMi5qtHH4Xv1vMP8d8vVlWcUb7lpkhlz2E/iYg95PnzzStVJeVbKEnh3aw07mfnEwDHaN5oB3xaFn2Nh40ysFPW4Dtoofd0oSl3bWFl20K75ucKj3Kag31FFMiVA1QZVQzDZLChAIAP4Ef2sal0QfUfYhjMw==
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com (2603:10b6:a03:454::10)
+ by SA3PR12MB8812.namprd12.prod.outlook.com (2603:10b6:806:312::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.31; Mon, 17 Jul
+ 2023 17:15:57 +0000
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::f7e8:a8fa:e46f:e68c]) by SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::f7e8:a8fa:e46f:e68c%7]) with mapi id 15.20.6588.031; Mon, 17 Jul 2023
+ 17:15:57 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+CC:     "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Shanker Donthineni <sdonthineni@nvidia.com>
+Subject: Re: [PATCH v2] i2c: tegra: Fix failure during probe deferral cleanup
+Thread-Topic: Re: [PATCH v2] i2c: tegra: Fix failure during probe deferral
+ cleanup
+Thread-Index: Adm40O4J1IhnmPnySpiT43OL09jZWA==
+Date:   Mon, 17 Jul 2023 17:15:57 +0000
+Message-ID: <SJ1PR12MB6339382ED219ED363041659FC03BA@SJ1PR12MB6339.namprd12.prod.outlook.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR12MB6339:EE_|SA3PR12MB8812:EE_
+x-ms-office365-filtering-correlation-id: f1cc34be-3af5-44c0-bc0f-08db86e97c29
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 0r8ygOXPiSuRDd7ySvMGsEy75m0PoS2pFrbuXO7WSGdWKj9uFHPieHyQygR3U3hZm370FYM9zNGaGRBjsFgy/bPKzKGQumQNHro+WCjrSfQ6fl5YGSuBg48j3EtdgxMRZ/Qxnu76r7frZkriV1X/5r3JLd8lZLovf9K98iLXB98CXjRSw41QUteaDxG/Bgj1CGkeJr5YRwoc5ewGYBWMFk4FH9oPwEvx21cDHWlhvdC+boL+HBQ9efn602hTjDcuVKAa7JxBgSSSySnUCSGlVbQdoi8uUnICiFe1WoYx4hzVRcOg6dj8/ebJFCly5zXA6URd6iyPP/CYthhPntynv3J0PsgtDf4r2mgV00oaNYQdZYegIzmLMqv2vpiy5Iat8eXTqUP3pPkcP30Xx7xQddpRCbcB9wKoTSCz9Lkx5SKstjKh8Docd9HlTNkiaUneGCdRZ70LYlukqjY1xv7QL4XQPRGtY5XYkoZBPIs7tM6Lmk+O9Q2OVSQj0l8CyYrpFbXejeMnDXB5Ock8eUgeGcDftfy6TQ0BIYKmhCYIeB1JVqPZD2FrBagfisGeQp4O3MvpXl4EnARDTz0n2OpTC4zonWK2bqgBzuMxL687PKGBwg6GFrv5C3VVoB7tyBqP
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6339.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(136003)(366004)(396003)(39860400002)(451199021)(7696005)(54906003)(71200400001)(478600001)(33656002)(86362001)(38070700005)(55016003)(4744005)(76116006)(2906002)(26005)(186003)(6506007)(9686003)(107886003)(122000001)(38100700002)(6916009)(66476007)(64756008)(66446008)(66946007)(66556008)(41300700001)(4326008)(316002)(8676002)(5660300002)(52536014)(8936002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0T0GqgT+e4OWQSsBsHVN97AHZvt+2Ebri75W6jNJUEACMKs3na/hEIWSmZA5?=
+ =?us-ascii?Q?aGMxiTuW6MPOHjQZq8pr4mchGz6GHrMJ+E5AO/p9QChg4TZn2bl/f0HOf9+G?=
+ =?us-ascii?Q?kys0MwUTvrnM5G32vpDp+KrJ/alnm/Qcb+u0QSTDICx/Q+WC+ZTftUevURgF?=
+ =?us-ascii?Q?qvxncdSC03q9RLScrZxvHa2mL8ad7EgX+3PTosDYbfQk6DXb0jhNmhMNC9iw?=
+ =?us-ascii?Q?LiTWyinIovxUswOtTFGzr3p+zLuUqIqzBjURsqPZTLECDlxgYXZbJ51PBnP/?=
+ =?us-ascii?Q?6cGqMOsNRJV7b6dBRPi6lTnBL6kP5jS33trJDBTjiajUYRygLgsybMx6ZU/8?=
+ =?us-ascii?Q?boYtLuZ1xG93mVj9GQ4GAJwAV7umYIQHmZmZQEGlW93YIpHrjxQ4dhBwOp03?=
+ =?us-ascii?Q?vpMcay+jGEZx0b9zxI71lSp4xGo9C4IPO7njQ/B1YIeRetVY6WHDaoQ5kule?=
+ =?us-ascii?Q?lYCl9s87DyUlytfrGFHeISy5f5V8Dw1j33fMUkoXSf/VrfMP9LW+COrF1nG9?=
+ =?us-ascii?Q?eS+kUUaj5M2rnHfqS1Tk+3fxPyFjs9gyisWmQJX/xZ9imIeBdhDeJ8IRoikc?=
+ =?us-ascii?Q?fip3aYJETruNd4SWLhVucFZaERzJvxUhQFcrRwUnZvh/4CKxohWP0FgKUsJk?=
+ =?us-ascii?Q?iP3gpG9PC8SaXh2G7KG7T9WzG1IjxBV00ketdJgUA1C6OP5Balfcs5YWwfeH?=
+ =?us-ascii?Q?eLDZMLj8kQ/L19BcXg/Zd4hOoFJ/jGiLpGhAb7fwAyn1/k1Ca1TJZ45qpxFn?=
+ =?us-ascii?Q?sFGXnKU2gQ4i8xqJqdZHUdrfkFemeZuNmJbV0cw1jdXvdJzi1FkP0xdZ6J5d?=
+ =?us-ascii?Q?/07uncwm+5Gchsyt42aS9WYwG3U1QFXkMgw3CHYDF7vZIjXKWvGDVOI6Tsz6?=
+ =?us-ascii?Q?QWHcNbUCk6NAEQDQBLw6d8ZZ6GEoIRxP7luEEi/v0Mmzj3VOqphp+jY8jTRb?=
+ =?us-ascii?Q?+WcjmS3OANEZqPEPWveR8NJsr7ovF6Xey4Dl25JFpbh/OpOzeamj/uL0Ipb+?=
+ =?us-ascii?Q?D/nOi1jaDGWbwgJ+wljL109nu/R5eBw/V/zmiONGSBkyCnEquB8hnfNUM78J?=
+ =?us-ascii?Q?3hcpSkjqLKVxQGnSBSF7+bEldRmYealmhjLFAyKz/sn94NN9XAAxl4446UIx?=
+ =?us-ascii?Q?SAMurrSTIpMfUCkYF5WgtNHsFFwti28+elpXo5yM/8m5TheWsul8r3nTSAjZ?=
+ =?us-ascii?Q?6Cyq2ErDP445ZmfkYBWQEyz+8eQE2QHjggVpsMKFJLKe2TaCR5WQuB5mMAsG?=
+ =?us-ascii?Q?hKf1l8SC9PF7xXbRFpf4mVyFyODU6uFIxExPQ2k1xpmUp///dA+eG7f3bptt?=
+ =?us-ascii?Q?UVClJNkYY5wMQPmE8Uz/1FoYD8cDCkWDR0TrMED9EW4fpS/lFfGPh+yHG5B/?=
+ =?us-ascii?Q?n+uw9ZgrJL1egjAVn6Mod8gJHFnqywonuNV7+qLfL1unLwtavp+BNWhHV+F6?=
+ =?us-ascii?Q?ZudnOM92nHzTXRa7IlY5DJXuR9RlxkXOlDUxRq0DHus8dYHGIPJwBd/Ca2pW?=
+ =?us-ascii?Q?6/NgO/fdz7j+UEgkMf3P+EQfm9cu3g+WjllrCkLo2zCDDtLogVd9sjlLisOb?=
+ =?us-ascii?Q?r/BE+/EDcBtgx/N2EUSMmHKSOKuOSyVV4m6pidqC?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6339.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1cc34be-3af5-44c0-bc0f-08db86e97c29
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2023 17:15:57.1066
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sfCZd2zhMhJ1tlYj1xafYAiwspceHqDXu7xH/MCOGuUvOiskwjXjcsA4hPjUPeeaePw5VOhBArkPFzMvIRT2Jg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8812
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+>If the driver fails to obtain a DMA channel, it will initiate cleanup
+>and try to release the DMA channel that couldn't be retrieved. This will
+>cause a crash because the cleanup will try to dereference an ERR_PTR()-
+>encoded error code.
+>
+>However, there's nothing to clean up at this point yet, so we can avoid
+>this by simply resetting the DMA channel to NULL instead of storing the
+>error code.
+>
+>Fixes: fcc8a89a1c83 ("i2c: tegra: Share same DMA channel for RX and TX")
+>Signed-off-by: Thierry Reding mailto:treding@nvidia.com
 
-The device tree bindings for the Tegra high-speed UART require the
-reset-names property, so add it whenever the compatible string for the
-serial port is overwritten.
+This fixed the crash issue seen when there is no dmas property in the devic=
+e tree.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2.dtsi             | 3 +++
- arch/arm/boot/dts/nvidia/tegra124-apalis.dtsi                  | 3 +++
- arch/arm/boot/dts/nvidia/tegra124-jetson-tk1.dts               | 2 ++
- arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts         | 2 ++
- arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts                | 2 ++
- arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi                  | 2 ++
- arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi              | 3 +++
- arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi                   | 3 +++
- .../boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi    | 2 ++
- arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi  | 2 ++
- arch/arm/boot/dts/nvidia/tegra30-cardhu.dtsi                   | 1 +
- arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi                  | 2 ++
- arch/arm/boot/dts/nvidia/tegra30-ouya.dts                      | 1 +
- arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts          | 2 ++
- 14 files changed, 30 insertions(+)
-
-diff --git a/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2.dtsi
-index 75cfe718737c..54b7da4b6920 100644
---- a/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2.dtsi
-@@ -1557,16 +1557,19 @@ sdmmc3-clk-lb-out-pee4 { /* NC */
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124-apalis.dtsi b/arch/arm/boot/dts/nvidia/tegra124-apalis.dtsi
-index 554c8089491c..c5a0d6aebaec 100644
---- a/arch/arm/boot/dts/nvidia/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124-apalis.dtsi
-@@ -1550,16 +1550,19 @@ sdmmc3-clk-lb-out-pee4 { /* NC */
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/nvidia/tegra124-jetson-tk1.dts
-index 00b62ed243ec..f09109be1152 100644
---- a/arch/arm/boot/dts/nvidia/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra124-jetson-tk1.dts
-@@ -1385,6 +1385,7 @@ dsi_b {
- 	 */
- 	serial@70006000 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 	};
-@@ -1398,6 +1399,7 @@ serial@70006000 {
- 	 */
- 	serial@70006040 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 	};
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts
-index 08b42952f4de..486fd244291e 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts
-@@ -393,12 +393,14 @@ tegra_i2s1: i2s@70002800 {
- 
- 	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		/* GPS BCM4751 */
- 	};
- 
- 	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-index 494d2d07def3..a3757b7daeda 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-@@ -450,12 +450,14 @@ i2s@70002800 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		/* GPS BCM4751 */
- 	};
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi b/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
-index 0e03910abbe6..16b374e6482f 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
-@@ -453,11 +453,13 @@ tegra_ac97: ac97@70002000 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi
-index f08a8c5f5e3e..bed869722b0b 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi
-@@ -829,16 +829,19 @@ pv0 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi b/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi
-index f4a3b3704618..3601f407e539 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi
-@@ -820,16 +820,19 @@ pv0 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-index c0062353c1f1..4fa6b20c4fdb 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -798,12 +798,14 @@ drive_gma {
- 
- 	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		/* GPS BCM4751 */
- 	};
- 
- 	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-index bdb898ad6262..ead95306840f 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-@@ -1088,6 +1088,7 @@ drive_sdio1 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
-@@ -1096,6 +1097,7 @@ serial@70006040 {
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-cardhu.dtsi b/arch/arm/boot/dts/nvidia/tegra30-cardhu.dtsi
-index caefa7c2adda..0120859d6d72 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-cardhu.dtsi
-@@ -177,6 +177,7 @@ serial@70006000 {
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 	};
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi b/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi
-index b61d30bd82ea..da2f5860ad54 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi
-@@ -710,11 +710,13 @@ pv0 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-ouya.dts b/arch/arm/boot/dts/nvidia/tegra30-ouya.dts
-index e3309908b1ca..7e3de26ca960 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-ouya.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-ouya.dts
-@@ -2004,6 +2004,7 @@ drive_groups {
- 
- 	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts b/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-index 8d10eb8b48b9..c81d5875c31c 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-@@ -1110,6 +1110,7 @@ drive_lcd2 {
- 
- 	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
-@@ -1118,6 +1119,7 @@ uartb: serial@70006040 {
- 
- 	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
- 		/delete-property/ reg-shift;
- 		status = "okay";
- 
--- 
-2.41.0
-
+Tested-by: Akhil R <akhilrajeev@nvidia.com>
