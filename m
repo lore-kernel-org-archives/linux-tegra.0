@@ -2,100 +2,129 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4361DEB64DC
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 07:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C82C04A6A
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 07:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbjGQHqi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jul 2023 03:46:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47882 "EHLO
+        id S231164AbjGQHvz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jul 2023 03:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230080AbjGQHqh (ORCPT
+        with ESMTP id S231133AbjGQHvv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jul 2023 03:46:37 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CAF21735
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Jul 2023 00:46:12 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qLItl-0005e3-Cd; Mon, 17 Jul 2023 09:44:01 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qLIte-0004Us-4z; Mon, 17 Jul 2023 09:43:54 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qLItd-005WwB-3s; Mon, 17 Jul 2023 09:43:53 +0200
-Date:   Mon, 17 Jul 2023 09:43:52 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
+        Mon, 17 Jul 2023 03:51:51 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FDD7170D;
+        Mon, 17 Jul 2023 00:51:47 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7C3486607008;
+        Mon, 17 Jul 2023 08:51:41 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1689580305;
+        bh=RUiiRCfy3iVrquDdB1nCxa7+nhTsVZi2TwPLLRWk7+k=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Xkh/XfVOuPmhakdB5TixNssNK07j1XQnplGs/FJW5j5/zYKBx4oS7N5YsmbfftJJq
+         5t85PTycD+cAMaLv4m0zExzB237qkYooGrp6it7EOjrgx1hGoXuJBZLHFQJSsbr2um
+         HfP7PnDPSbB7LcUxYt7ckbG29biHfO2YJ38FjGU9p0g3QW6igojF6w+oz0/zExKbqD
+         6eShHnawsHU5eH523alqjBNH+UewhtrkghtxR7SjACeQsg05gnet0AWCcDfx3WbIGa
+         J2bCuIYnMk5n+OxcAEW8UsDTk9JUhba/ItvrqtOg2iqazy9jbECmXn39Jk5+HUz1Qo
+         3qS9Lo4HR6IZw==
+Message-ID: <4aaef7c6-7b1d-d707-d38a-71f36f7d4aec@collabora.com>
+Date:   Mon, 17 Jul 2023 09:51:39 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] clk: Explicitly include correct DT includes
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
-        Michael Walle <michael@walle.cc>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
         Orson Zhai <orsonzhai@gmail.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@starfivetech.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
+        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        asahi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] pwm: Explicitly include correct DT includes
-Message-ID: <20230717074352.dz3ex7fwi77loayc@pengutronix.de>
-References: <20230714174852.4062251-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3pw4fff6xzsrv6pf"
-Content-Disposition: inline
-In-Reply-To: <20230714174852.4062251-1-robh@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Michal Simek <michal.simek@amd.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-oxnas@groups.io,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+References: <20230714174342.4052882-1-robh@kernel.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230714174342.4052882-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---3pw4fff6xzsrv6pf
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 14, 2023 at 11:48:50AM -0600, Rob Herring wrote:
+Il 14/07/23 19:43, Rob Herring ha scritto:
 > The DT of_device.h and of_platform.h date back to the separate
 > of_platform_bus_type before it as merged into the regular platform bus.
 > As part of that merge prepping Arm DT support 13 years ago, they
@@ -104,110 +133,11 @@ On Fri, Jul 14, 2023 at 11:48:50AM -0600, Rob Herring wrote:
 > files used throughout the tree. In order to detangle these headers and
 > replace the implicit includes with struct declarations, users need to
 > explicitly include the correct includes.
-
-so the eventual goal here is to prepare for:
-
- - drop #include <linux/of_device.h> from include/linux/of_platform.h
- - drop #include <linux/of.h> from include/linux/of_device.h
- - drop #include <linux/of_platform.h> from include/linux/of_device.h
- - drop #include <linux/platform_device.h> from include/linux/of_device.h
- - drop #include <linux/platform_device.h> from include/linux/of_platform.h
-
+> 
 > Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/pwm/core.c               | 1 +
->  drivers/pwm/pwm-apple.c          | 1 +
->  drivers/pwm/pwm-atmel-hlcdc.c    | 1 +
->  drivers/pwm/pwm-atmel-tcb.c      | 3 +--
->  drivers/pwm/pwm-atmel.c          | 1 -
->  drivers/pwm/pwm-berlin.c         | 1 +
->  drivers/pwm/pwm-cros-ec.c        | 1 +
->  drivers/pwm/pwm-fsl-ftm.c        | 3 +--
->  drivers/pwm/pwm-hibvt.c          | 2 +-
->  drivers/pwm/pwm-imx1.c           | 1 -
->  drivers/pwm/pwm-jz4740.c         | 2 +-
->  drivers/pwm/pwm-lp3943.c         | 1 +
->  drivers/pwm/pwm-lpc18xx-sct.c    | 1 +
->  drivers/pwm/pwm-mediatek.c       | 1 -
->  drivers/pwm/pwm-meson.c          | 1 -
->  drivers/pwm/pwm-microchip-core.c | 2 +-
->  drivers/pwm/pwm-mtk-disp.c       | 1 -
->  drivers/pwm/pwm-pxa.c            | 1 +
->  drivers/pwm/pwm-sifive.c         | 1 +
->  drivers/pwm/pwm-sl28cpld.c       | 1 +
->  drivers/pwm/pwm-sprd.c           | 1 +
->  drivers/pwm/pwm-sun4i.c          | 1 -
->  drivers/pwm/pwm-sunplus.c        | 1 +
->  drivers/pwm/pwm-tegra.c          | 1 -
->  drivers/pwm/pwm-tiecap.c         | 2 +-
->  drivers/pwm/pwm-tiehrpwm.c       | 2 +-
->  drivers/pwm/pwm-visconti.c       | 2 +-
->  drivers/pwm/pwm-vt8500.c         | 5 +----
->  28 files changed, 21 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 3dacceaef4a9..d37617c60eae 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -8,6 +8,7 @@
-> =20
->  #include <linux/acpi.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/pwm.h>
->  #include <linux/radix-tree.h>
->  #include <linux/list.h>
 
-This file includes neither of_device.h nor of_platform.h and up to now
-gets of.h via <linux/pwm.h>.
+For MediaTek clocks
 
-What is your plan for <linux/pwm.h>'s include? I think it would only need
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-	struct of_phandle_args;
 
-to replace that. (But that would need another patch like this one, as
-then e.g. drivers/pwm/pwm-sl28cpld.c fails to compile because
-device_property_read_u32() is undeclared. It would need to #include
-<linux/property.h> which now it gets transitively via <linux/of.h>.)
-
-If <linux/pwm.h> is planed to continue #including <linux/of.h>, the
-explicit include here isn't necessary (and probably elsewhere).
-
-I don't care much either way, but maybe your quest would be a bit
-simpler if you only touch files that include the two files you want to
-modify?
-
-*shrug*, this patch is still an improvement so:
-
-Acked-by: Uwe Kleine-K=F6ng <u.kleine-koenig@pengutronix.de>
-
-Another thing I wonder is: How did you identify the files that need
-these includes. I guess you have a list of types for each header and
-search for files that use any of the types but doesn't include the
-respecitve header? I wonder if tracking this type -> header mapping in
-machine readable form somewhere would be nice, to e.g. make checkpatch
-warn if a file uses struct of_node but only gets it by chance?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---3pw4fff6xzsrv6pf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmS08TgACgkQj4D7WH0S
-/k6d7QgAjn09jbMtpLkxkAPiHCL/fUXRMWWMV76Fu8uZjs4221J2gsMK6PDWTeiP
-ybzv24/V+5/OyOeBVsFqZPw0gxNhTh8zmtyIdEvZO8eMBcZOX6JPcm/DI4YG3WU+
-6nYSRGc7D+AV+eD7s5CxHboHtOwY7RC2RGyPCNPA0yIYNTLYpdIVHYyn+8BpfeXj
-wnBKUiJAcJH7+JGUSFhRV7Xpd4RenRBnT3l8KEm9HUjJlEvqmNpueg64ho1bSXAH
-+fbd5TtrHh001xp2BdyJ57uhh+KQggrhgLPhOSiiBQ7+oaro/jiO4IxUODUDCTia
-LGNDfrMHQ1gjS2ZQQPQwRr0vdmwd2w==
-=DUiw
------END PGP SIGNATURE-----
-
---3pw4fff6xzsrv6pf--
