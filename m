@@ -2,154 +2,158 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8AFEB64DC
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 17:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9838C001DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 17:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231447AbjGQRa0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jul 2023 13:30:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46178 "EHLO
+        id S230293AbjGQRq6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jul 2023 13:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231535AbjGQRaK (ORCPT
+        with ESMTP id S229940AbjGQRq4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jul 2023 13:30:10 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E2519B1;
-        Mon, 17 Jul 2023 10:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689614987; x=1721150987;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WzIdieUjIIIcjkcN9h2WZt4G3gLcBLgRvdk3paxMv94=;
-  b=hJrFayGSOoqabwbJUBYQrIG77bKHR6P/OfRciOA9rMcFRsWXM1wbqOqN
-   RQbS1ZqGHRs4NH1X9lTJTsNSjSIUQZWf/p3paHZcDcS1X2vLhv1tkuZeh
-   g30k6q8cm8wB6n5K4XHXyhHzOCOFYzUplPVmUm3DlTeFE+97YNZRrCbNy
-   utjJmj4D4sGEP9hPRB7UJ8LJfNm/iNhUjbNYBA0UlDg2UmTHfOycdudVe
-   YlOJO4OFaHQPXeVKqJBbeJqMh0gOrIXb5AHYMzJ4tHWtyasZDn8v3GnJ5
-   7svAGBzuLsT3hBuUP1ditS/0P5POsuBAz10DZY7FGK98H/+9eJyA6kSgw
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="350854514"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="350854514"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 10:28:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="813426656"
-X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="813426656"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Jul 2023 10:28:33 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0D2A65FC; Mon, 17 Jul 2023 20:28:40 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
+        Mon, 17 Jul 2023 13:46:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA70189;
+        Mon, 17 Jul 2023 10:46:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F146611A5;
+        Mon, 17 Jul 2023 17:46:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCE7C433CB;
+        Mon, 17 Jul 2023 17:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689616014;
+        bh=aTPuf0Zd8OpbwoKQZ65jJYeSg9DTodI+njCE2/27PY8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fBMcwhUNcM0V4autvJVgcKQnhFbO7brLAEesnhEzKxTvyYBZsqjwc+cojOZv8v9UC
+         C1fFtr+snZnoCQBuIjCC+uqbL1txzClbWIi6/Eqa6m+4RGip54iRnMoz47f6udL2oG
+         QgKwwUVcwaxROldmVq5NNT3ndThlYFno/GItwYo30sXRqpZ3vtfi8rmQeHUZPSZsw8
+         nBomaa0tVX346pR41e0rqob0iI2Yo27n4Om1YAlYa9235UCWZuLT6xOi/p3K5HKm5U
+         yiAaqVLPCkUZKmnHgR84LUxhUnkrP+Q15V/RcRNk1rR8kEkcW0/GgWyopYhnj8btQ/
+         HW5N4J95bcJrg==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-992b27e1c55so627045266b.2;
+        Mon, 17 Jul 2023 10:46:54 -0700 (PDT)
+X-Gm-Message-State: ABy/qLYHsdcjkilx0BN7/t1n4Ml1FGgPfUozaQr7DJMRdOQG1eYr+Xez
+        pIFJhaGijYNxuSNKXyBT+K794cSdGc3vqW3RdQ==
+X-Google-Smtp-Source: APBJJlEaii1O/P4FM3AIiFrxrm+c2/2j2dMof6/ew372YwZ9YuuOJ20F60zHYXA1FfdAlxaKv4uhiryEoY4fwMAMSwI=
+X-Received: by 2002:a2e:7a1a:0:b0:2b5:bc27:d6eb with SMTP id
+ v26-20020a2e7a1a000000b002b5bc27d6ebmr8861286ljc.8.1689615991907; Mon, 17 Jul
+ 2023 10:46:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230714174745.4060260-1-robh@kernel.org>
+In-Reply-To: <20230714174745.4060260-1-robh@kernel.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 17 Jul 2023 11:46:19 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+H5jcTfuAdE=XvcWP+Td3xn9hdq1QA3HKouPJDaedwYg@mail.gmail.com>
+Message-ID: <CAL_Jsq+H5jcTfuAdE=XvcWP+Td3xn9hdq1QA3HKouPJDaedwYg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: Explicitly include correct DT includes
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
+        Robert Richter <rric@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Haibo Chen <haibo.chen@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michal Simek <michal.simek@amd.com>,
+        Eugen Hristev <eugen.hristev@collabora.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Ben Dooks <ben-linux@fluff.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v2 04/10] pinctrl: intel: Switch to use DEFINE_NOIRQ_DEV_PM_OPS() helper
-Date:   Mon, 17 Jul 2023 20:28:15 +0300
-Message-Id: <20230717172821.62827-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
-In-Reply-To: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
-References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-actions@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Since pm.h provides a helper for system no-IRQ PM callbacks,
-switch the driver to use it instead of open coded variant.
+On Fri, Jul 14, 2023 at 11:48=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
+e:
+>
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/mmc/host/atmel-mci.c                  | 1 -
+>  drivers/mmc/host/cavium-octeon.c              | 2 ++
+>  drivers/mmc/host/cavium-thunderx.c            | 1 +
+>  drivers/mmc/host/davinci_mmc.c                | 1 -
+>  drivers/mmc/host/meson-gx-mmc.c               | 2 +-
+>  drivers/mmc/host/mtk-sd.c                     | 4 +---
+>  drivers/mmc/host/mxcmmc.c                     | 1 -
+>  drivers/mmc/host/mxs-mmc.c                    | 1 -
+>  drivers/mmc/host/owl-mmc.c                    | 3 ++-
+>  drivers/mmc/host/pxamci.c                     | 1 -
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 3 ++-
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 3 ++-
+>  drivers/mmc/host/sdhci-bcm-kona.c             | 1 -
+>  drivers/mmc/host/sdhci-cadence.c              | 2 +-
+>  drivers/mmc/host/sdhci-esdhc-imx.c            | 2 +-
+>  drivers/mmc/host/sdhci-iproc.c                | 2 +-
+>  drivers/mmc/host/sdhci-msm.c                  | 2 +-
+>  drivers/mmc/host/sdhci-of-arasan.c            | 3 ++-
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 5 +----
- drivers/pinctrl/intel/pinctrl-intel.h | 9 ++-------
- 2 files changed, 3 insertions(+), 11 deletions(-)
+Not visible in the diff, but there's a double include of of.h. v2 coming.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 64c3e62b4348..40e45c4889ee 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -929,7 +929,7 @@ static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned int offset,
-  *
-  * Return: a GPIO offset, or negative error code if translation can't be done.
-  */
--static __maybe_unused int intel_pin_to_gpio(struct intel_pinctrl *pctrl, int pin)
-+static int intel_pin_to_gpio(struct intel_pinctrl *pctrl, int pin)
- {
- 	const struct intel_community *community;
- 	const struct intel_padgroup *padgrp;
-@@ -1488,7 +1488,6 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
- 	if (!communities)
- 		return -ENOMEM;
- 
--
- 	for (i = 0; i < pctrl->ncommunities; i++) {
- 		struct intel_community *community = &pctrl->communities[i];
- 		u32 *intmask, *hostown;
-@@ -1712,7 +1711,6 @@ const struct intel_pinctrl_soc_data *intel_pinctrl_get_soc_data(struct platform_
- }
- EXPORT_SYMBOL_GPL(intel_pinctrl_get_soc_data);
- 
--#ifdef CONFIG_PM_SLEEP
- static bool __intel_gpio_is_direct_irq(u32 value)
- {
- 	return (value & PADCFG0_GPIROUTIOXAPIC) && (value & PADCFG0_GPIOTXDIS) &&
-@@ -1913,7 +1911,6 @@ int intel_pinctrl_resume_noirq(struct device *dev)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(intel_pinctrl_resume_noirq);
--#endif
- 
- MODULE_AUTHOR("Mathias Nyman <mathias.nyman@linux.intel.com>");
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index 1faf2ada480a..65b1699a2ed5 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -255,15 +255,10 @@ struct intel_pinctrl {
- int intel_pinctrl_probe_by_hid(struct platform_device *pdev);
- int intel_pinctrl_probe_by_uid(struct platform_device *pdev);
- 
--#ifdef CONFIG_PM_SLEEP
- int intel_pinctrl_suspend_noirq(struct device *dev);
- int intel_pinctrl_resume_noirq(struct device *dev);
--#endif
- 
--#define INTEL_PINCTRL_PM_OPS(_name)					\
--const struct dev_pm_ops _name = {					\
--	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend_noirq,	\
--				      intel_pinctrl_resume_noirq)	\
--}
-+#define INTEL_PINCTRL_PM_OPS(_name)								\
-+	DEFINE_NOIRQ_DEV_PM_OPS(_name, intel_pinctrl_suspend_noirq, intel_pinctrl_resume_noirq)
- 
- #endif /* PINCTRL_INTEL_H */
--- 
-2.40.0.1.gaa8946217a0b
-
+>  drivers/mmc/host/sdhci-of-at91.c              | 2 +-
+>  drivers/mmc/host/sdhci-of-dwcmshc.c           | 2 +-
+>  drivers/mmc/host/sdhci-of-sparx5.c            | 2 +-
+>  drivers/mmc/host/sdhci-omap.c                 | 1 -
+>  drivers/mmc/host/sdhci-pxav2.c                | 1 -
+>  drivers/mmc/host/sdhci-s3c.c                  | 1 -
+>  drivers/mmc/host/sdhci-sprd.c                 | 1 -
+>  drivers/mmc/host/sdhci-tegra.c                | 1 -
+>  drivers/mmc/host/sh_mmcif.c                   | 1 -
+>  drivers/mmc/host/uniphier-sd.c                | 1 -
+>  drivers/mmc/host/wmt-sdmmc.c                  | 1 -
+>  29 files changed, 20 insertions(+), 29 deletions(-)
