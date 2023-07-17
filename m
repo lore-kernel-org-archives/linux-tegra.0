@@ -2,140 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3046C04A6A
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 16:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0E6C001B0
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 16:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231709AbjGQQDQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jul 2023 12:03:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54540 "EHLO
+        id S229887AbjGQQbZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jul 2023 12:31:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232240AbjGQQDM (ORCPT
+        with ESMTP id S232230AbjGQQbP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jul 2023 12:03:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18EF910F8;
-        Mon, 17 Jul 2023 09:03:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C72061129;
-        Mon, 17 Jul 2023 16:03:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B9CC433CB;
-        Mon, 17 Jul 2023 16:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689609784;
-        bh=aZICCOVfKf1PqTHgRCOupCS9EkykRJONrhoP14RlBbY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RjTKbIlOKFKAdT9+GbcTkdLrDGOHEezkmDutGTRyLx2lp53JR+Nz+OR6K+D9kTAaq
-         AiKAEbcjoQm/6Y4ZH2T94uqpkUTXE/ivwfxwwzCs3GX629h8bGy6BxqwTffITGuDgz
-         lrWsuT+VfZUJhf5khJL01hNYIk7FTk420NOk02QnaYVF3z8+Md13oy8ytRu/scv6uO
-         jhYu7UHeznp3ruJwr/tNBSXy4ect2sUkWAgSioVZjPhu5oeLzhGDc4zky934XT//wF
-         jZx/4IwrsVwoVvV1FzoAV+rY/02+4k0C0RSeWmeEazP8s1BxvRca5gX6K46WO7ajgV
-         sJK4ccBDA5WTQ==
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3142970df44so4499379f8f.3;
-        Mon, 17 Jul 2023 09:03:03 -0700 (PDT)
-X-Gm-Message-State: ABy/qLZDVDEolBs+MgxPnz4UnJwlcq1RqZOSAH4vwYajl6RGbwtz0iLd
-        89wGea8/XZYb0vnOZyIKzllnCu6V8oRnXcz9oQ==
-X-Google-Smtp-Source: APBJJlGT3Z4OwG+5PD2iOuBmukBKYkwOVI4cYi2ZBHphRuP2mDYunFyhxEBn+UEFg93NJOzQaxqKN1Nt2m8NdZz6Fm0=
-X-Received: by 2002:a2e:9455:0:b0:2b4:6f0c:4760 with SMTP id
- o21-20020a2e9455000000b002b46f0c4760mr8630130ljh.11.1689609761393; Mon, 17
- Jul 2023 09:02:41 -0700 (PDT)
+        Mon, 17 Jul 2023 12:31:15 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9636D10E6
+        for <linux-tegra@vger.kernel.org>; Mon, 17 Jul 2023 09:30:56 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-521662a6c9cso4787447a12.1
+        for <linux-tegra@vger.kernel.org>; Mon, 17 Jul 2023 09:30:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689611441; x=1692203441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V+6phzlyk9W/amav360WyGK5I/Ac9LQEydcq2azpQFI=;
+        b=cyOi6bq/P9v+9mvlyA7cXQtEOTddh49zWBu5X0Q6sM+CnY/6GOPBb4ZM/ubuxYTqLs
+         dPSuw/II+B84uYOm1FpNFdCoRMuug/z2t1Gq8va38hAIb5vSF/4Y5CEYS90oemGFqSNc
+         Cs+ahCtsQfITV7mBCs+FNvYk7lZUlUnKOGXktoAli6U0u2mgvHjQhG+DJSscP5NMfiz2
+         Bvo9jJYD20wWzA8nCbCNka58E2VVUzcrYwe947K2xSATyRGjB5us06VtOCDV71mQqxEJ
+         EGsLAWNkipMNyHkzYAzAoLaQ4SOeODXtpO7wdHrL6YxItFXG8Pfzh3TiAD7lUogLquRz
+         L3lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689611441; x=1692203441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V+6phzlyk9W/amav360WyGK5I/Ac9LQEydcq2azpQFI=;
+        b=gbUrmDnTMP6XhXTnuyZ9bXHeu1UG4VO7J2V5yd4/SQqHaHUC9Ik/pXoMpoVazmknC3
+         CG4hlQ7bCIR3cHUc+hXr6vhSdQHxCiV7h7pDkt2qZ9PuQmzhaLu55t+wEAgKJSd1ax9B
+         v6kvEVrdw2SODDcapAA8aQ0J4l9GBP08vWNq68NwUxxClcLrykBwJWFlxdlAyVJJd5PC
+         jIKd/WGYhgOIHYAs7i8FPDBMEEhmbxRIyCz7RonyrydG98wbpAT7n9lhBNs1VQ73UlBJ
+         ZVFM4CCvGiu27Lvk7QP1czWLOZToDPxAlULbM+D0wb9a5gqMPI+LIdamfrpDHMSQCoji
+         vUyQ==
+X-Gm-Message-State: ABy/qLavn9WeFzOikHUAQdFqg7AzZVXyGKLMsHYVo9z1rvZaPFSIk35m
+        YpNHxo8YneBwburDeLvfuLti/tQR18M=
+X-Google-Smtp-Source: APBJJlHsgfVzUjL9ixP6IfKHeTwfiFE474jrClzdwHp8d66lPqkAEUCNtrUPIXrQlKV8Atb3ZUTApg==
+X-Received: by 2002:a17:906:5195:b0:973:daa0:2f6 with SMTP id y21-20020a170906519500b00973daa002f6mr11311825ejk.3.1689611441333;
+        Mon, 17 Jul 2023 09:30:41 -0700 (PDT)
+Received: from localhost (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id qw5-20020a170906fca500b00992ed412c74sm9326908ejb.88.2023.07.17.09.30.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jul 2023 09:30:41 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, Yi-Wei Wang <yiweiw@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH] =?UTF-8?q?arm64:=20tegra:=20Add=2035=C2=B0C=20trip=20poin?= =?UTF-8?q?t=20for=20Jetson=20Orin=20NX/Nano?=
+Date:   Mon, 17 Jul 2023 18:30:37 +0200
+Message-ID: <20230717163037.1033429-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-References: <20230714174430.4054533-1-robh@kernel.org>
-In-Reply-To: <20230714174430.4054533-1-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 17 Jul 2023 10:02:28 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+qcoFd7_wWUZeHgqWpB0JfdE0j4qLCxfJwD_Cqkz-HgA@mail.gmail.com>
-Message-ID: <CAL_Jsq+qcoFd7_wWUZeHgqWpB0JfdE0j4qLCxfJwD_Cqkz-HgA@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: Explicitly include correct DT includes
-To:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Vinod Koul <vkoul@kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Li Yang <leoyang.li@nxp.com>, Zhang Wei <zw@zh-kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sinan Kaya <okaya@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Michal Simek <michal.simek@amd.com>
-Cc:     devicetree@vger.kernel.org, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 11:44=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
-e:
->
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/dma/apple-admac.c                      | 3 ++-
->  drivers/dma/at_hdmac.c                         | 2 +-
->  drivers/dma/bcm-sba-raid.c                     | 4 +++-
->  drivers/dma/bestcomm/bestcomm.c                | 4 +---
+From: Thierry Reding <treding@nvidia.com>
 
-v2 coming for this:
+It turns out that these devices can get quite hot to the touch with the
+standard cooling configuration, so add another trip point at 35°C along
+with a cooling map to help keep the system reasonably cool at very low
+system load.
 
->> drivers/dma/bestcomm/bestcomm.
-c:80:13: error: call to undeclared function 'irq_of_parse_and_map';
-ISO C99 and later do not support implicit function declarations
-[-Wimplicit-function-declaration]
-      80 |         tsk->irq =3D irq_of_parse_and_map(bcom_eng->ofnode,
-tsk->tasknum);
-         |                    ^
->> drivers/dma/bestcomm/bestcomm.c:105:4: error: call to undeclared functio=
-n 'irq_dispose_mapping'; ISO C99 and later do not support implicit function=
- declarations [-Wimplicit-function-declaration]
-     105 |                         irq_dispose_mapping(tsk->irq);
-         |                         ^
-   drivers/dma/bestcomm/bestcomm.c:128:2: error: call to undeclared
-function 'irq_dispose_mapping'; ISO C99 and later do not support
-implicit function declarations [-Wimplicit-function-declaration]
-     128 |         irq_dispose_mapping(tsk->irq);
-         |         ^
-   3 errors generated.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi            | 8 +++++++-
+ .../boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts    | 7 ++++++-
+ .../boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dts    | 7 ++++++-
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
+index a8aa6e7d8fbc..5f592f1d81e2 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
+@@ -106,12 +106,18 @@ tj-thermal {
+ 
+ 			trips {
+ 				tj_trip_active0: active-0 {
+-					temperature = <74000>;
++					temperature = <35000>;
+ 					hysteresis = <4000>;
+ 					type = "active";
+ 				};
+ 
+ 				tj_trip_active1: active-1 {
++					temperature = <74000>;
++					hysteresis = <4000>;
++					type = "active";
++				};
++
++				tj_trip_active2: active-2 {
+ 					temperature = <95000>;
+ 					hysteresis = <4000>;
+ 					type = "active";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
+index 2de2f8ac640d..072e45ce2631 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
+@@ -205,7 +205,7 @@ key-suspend {
+ 	};
+ 
+ 	pwm-fan {
+-		cooling-levels = <0 187 255>;
++		cooling-levels = <0 88 187 255>;
+ 	};
+ 
+ 	vdd_3v3_pcie: regulator-vdd-3v3-pcie {
+@@ -233,6 +233,11 @@ map-active-1 {
+ 					cooling-device = <&fan 1 2>;
+ 					trip = <&tj_trip_active1>;
+ 				};
++
++				map-active-2 {
++					cooling-device = <&fan 2 3>;
++					trip = <&tj_trip_active2>;
++				};
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dts
+index 9b86aa6f7dbe..9e9bb9ca8be4 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0005.dts
+@@ -12,7 +12,7 @@ / {
+ 	model = "NVIDIA Jetson Orin Nano Developer Kit";
+ 
+ 	pwm-fan {
+-		cooling-levels = <0 187 255>;
++		cooling-levels = <0 88 187 255>;
+ 	};
+ 
+ 	thermal-zones {
+@@ -27,6 +27,11 @@ map-active-1 {
+ 					cooling-device = <&fan 1 2>;
+ 					trip = <&tj_trip_active1>;
+ 				};
++
++				map-active-2 {
++					cooling-device = <&fan 2 3>;
++					trip = <&tj_trip_active2>;
++				};
+ 			};
+ 		};
+ 	};
+-- 
+2.41.0
+
