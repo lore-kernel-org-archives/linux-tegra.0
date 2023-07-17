@@ -2,196 +2,198 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB8BEB64DC
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 13:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29A1C001DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 14:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230100AbjGQN0O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jul 2023 09:26:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36110 "EHLO
+        id S231140AbjGQO1t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jul 2023 10:27:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231461AbjGQN0F (ORCPT
+        with ESMTP id S230096AbjGQO1s (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jul 2023 09:26:05 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CBB1725
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Jul 2023 06:25:41 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-997c4107d62so126867366b.0
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Jul 2023 06:25:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689600310; x=1692192310;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EvM3T8Cg5TXi9seGSlBKC+bWoDRu4d8zPJc+pcxi5hk=;
-        b=In0nX9WRH0oPM890xyv/iUaf8vlZrXao5deHpOled6ColQnnRguZL91hX+m63wCxJS
-         EAAfpFbKsPq6yhIqLeA1O47ytDswHBA+3Pf8Q5OgBLbMxrBmYf+NWB4AvCoT8Rxsd/ZF
-         OZ0JfaSmxN60pfp2BLLD4YOmzzPAChcwbj53/8lB+qEv5vgQ0FOOSJjgxWcIEk6Ihm7N
-         ldVj781nQwQd01HpF3HtI7hXpKrsSjFiyrB75tJKae+lJFTE+1XzZFrpWKWyPF5h1OM6
-         1lMr6kY0k3YJBWyaLsck1koEmvPMjhYJnAUIrbdd1rsDpZFcx7xrLaLwAdcg1alWPGF3
-         JlFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689600310; x=1692192310;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EvM3T8Cg5TXi9seGSlBKC+bWoDRu4d8zPJc+pcxi5hk=;
-        b=DZdDbfhjdXV+8Wt9IrjT1ET6tWpJnfr7HgNl6YUx7kKE+9cisP/Vu+g+w1qZrp2vD9
-         8sH8jbSdx5K84WWGq3rHmfKnqtd0VyptrdFoAABIzfeP78ns3W0+e5g8HRDTlUBKvhJ6
-         p1PUu+kMcJk6cAG1jPQh4Mwz4L9JkqxZrnizcLcdvFja3sLS4R6o1s1TWl2o+ksPpjgG
-         hFPG8bz1biEXyeCEu2MEU0WOGobRvuyQvvjjA7HmBJBUeDS494VRHBbl7YHypNFx1jjS
-         UTGcoV+t3Rf/ZZJ5CSN6/vetetWs9BLdX4xsfEabNKkMaXuyRh1C7ePTfebBJV0z9cyP
-         YDfA==
-X-Gm-Message-State: ABy/qLY7Z0Fn2gXzVD4wZ8sk4k7+b0aipuPIntZeh5p0Ofty7TB4J7jI
-        NKa1krvbPrROho6IIbR4dNA=
-X-Google-Smtp-Source: APBJJlHXt8TEBIXWnjhgKx7MmgFkP2VORRCMaTLik+iepJe1ST/nhdPQyd8LW17/3sg5wDDxxF74rA==
-X-Received: by 2002:a17:907:1dd2:b0:992:13c7:563 with SMTP id og18-20020a1709071dd200b0099213c70563mr11680161ejc.75.1689600309596;
-        Mon, 17 Jul 2023 06:25:09 -0700 (PDT)
-Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id mj6-20020a170906af8600b00988781076e2sm9224352ejb.78.2023.07.17.06.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 06:25:09 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 15:25:07 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Svyatoslav Ryhel <clamor95@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Ion Agorria <ion@agorria.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Pedro =?utf-8?Q?=C3=82ngelo?= <pangelo@void.io>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Zack Pearsall <zpearsall@yahoo.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: LVDS panel compatible strings
-Message-ID: <ZLVBM23xjgzN_-ZV@orome>
-References: <ZLFd_L_Uw1PmpSep@orome>
- <CAPVz0n3fj77JEzJbYve9-5pjjVt+yJHNcFGqJr0HFSJnaOtbzw@mail.gmail.com>
- <ZLFmxuVuO2FWy1as@orome>
- <CAPVz0n0sYJvKJRmwBRpp_aUx7HbgbcLnkAJAV82XryHVeeYcHA@mail.gmail.com>
- <ZLTq3KXeV-tT_HFG@orome>
- <78ba744f-d7f6-2388-0330-1a5105c9dca5@gmail.com>
+        Mon, 17 Jul 2023 10:27:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048DEC0;
+        Mon, 17 Jul 2023 07:27:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7F081610A5;
+        Mon, 17 Jul 2023 14:27:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE66CC433BC;
+        Mon, 17 Jul 2023 14:27:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689604065;
+        bh=rkLKjJGA9W9V1hgJstWBCmZrxpmjuvUsbHV5ieMMp8c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tbqM5G1Bre2zBYNYlSaGpYvtGMUIHymVMKeK/TzG0KjBzCmaAHwEaXmM+fnWr8QHf
+         A5IwGR12akMgYWcxzwUULBkB0mekTRl4kMKQRSfx+pzkXO2wU5OR+OPuWWdNpyb/9Y
+         27H/XVZnsbuLv2tvpMFxcyKcBrfhw24Ct3Dtn6k2jIwf9fiUxfMZRE5qGgbeygcQZ2
+         vy5S/pTq31758S5Um6WTDPfgsWL212q22eKGrybewvdX7t97Q3XcLfmDw1+8j8e8ow
+         KnsnOeGJcjyYNIZVOv3JTTaB9YED46K0NRnfA2+aAkAVdCs2rPfSquk+go0eGVrLFe
+         3iKfcFajgoGdg==
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3128fcd58f3so4906778f8f.1;
+        Mon, 17 Jul 2023 07:27:45 -0700 (PDT)
+X-Gm-Message-State: ABy/qLZghUs7lncWXZM1dChUiBvE2K96n+Y7rN059Pv2fwxl6iHVk14T
+        6ODXg/fvJP4CsTxsqg2NjYnOS2p4QPrexgZRBA==
+X-Google-Smtp-Source: APBJJlFSY1EKmbumZhe1Fkfe0qsodiNyBdGN/d2gmlGF1ZwWgImoQ1RpodF7t1ooNJHJiRju6eg8DIGKKeloqUgo0eo=
+X-Received: by 2002:a2e:8945:0:b0:2b9:48f1:b195 with SMTP id
+ b5-20020a2e8945000000b002b948f1b195mr576527ljk.44.1689604043579; Mon, 17 Jul
+ 2023 07:27:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="X7db3DuSi1x05WRv"
-Content-Disposition: inline
-In-Reply-To: <78ba744f-d7f6-2388-0330-1a5105c9dca5@gmail.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+References: <20230714174545.4056287-1-robh@kernel.org> <114500369.nniJfEyVGO@phil>
+In-Reply-To: <114500369.nniJfEyVGO@phil>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 17 Jul 2023 08:27:10 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
+Message-ID: <CAL_JsqJMo4LHRmsfRQAr-j6oNESbS=q+eFU+B7e720emjf+8nA@mail.gmail.com>
+Subject: Re: [PATCH] drm: Explicitly include correct DT includes
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Liviu Dudau <liviu.dudau@arm.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Yongqin Liu <yongqin.liu@linaro.org>,
+        John Stultz <jstultz@google.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Qiang Yu <yuq825@gmail.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
+        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Jianhua Lu <lujianhua000@gmail.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Artur Weber <aweber.kernel@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Emma Anholt <emma@anholt.net>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        devicetree@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-mips@vger.kernel.org, lima@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Sun, Jul 16, 2023 at 3:26=E2=80=AFAM Heiko Stuebner <heiko@sntech.de> wr=
+ote:
+>
+> Am Freitag, 14. Juli 2023, 19:45:34 CEST schrieb Rob Herring:
+> > The DT of_device.h and of_platform.h date back to the separate
+> > of_platform_bus_type before it as merged into the regular platform bus.
+> > As part of that merge prepping Arm DT support 13 years ago, they
+> > "temporarily" include each other. They also include platform_device.h
+> > and of.h. As a result, there's a pretty much random mix of those includ=
+e
+> > files used throughout the tree. In order to detangle these headers and
+> > replace the implicit includes with struct declarations, users need to
+> > explicitly include the correct includes.
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+>
+> [...]
+>
+> > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/=
+gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> > index 917e79951aac..2744d8f4a6fa 100644
+> > --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> > +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> > @@ -12,7 +12,9 @@
+> >  #include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of_device.h>
+> > +#include <linux/of_platform.h>
+> >  #include <linux/phy/phy.h>
+> > +#include <linux/platform_device.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/regmap.h>
+>
+> I'm not sure if I'm just misreading something, but in all other places
+> of_device.h gets removed while here is stays as an include. Is this
+> correct this way?
 
---X7db3DuSi1x05WRv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, because of_match_device() is used.
 
-On Mon, Jul 17, 2023 at 11:50:03AM +0300, Dmitry Osipenko wrote:
-> 17.07.2023 10:16, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > For cases where the timings are the only things that differ, the DT
-> > bindings allow overriding the timings specifically. So you might get
-> > away with using one of the existing panels if it is close enough and
-> > patch up the timings in DT.
->=20
-> If panel-simple supported timings override from DT, then panel-lvds
-> indeed could be removed. But panel-simple doesn't support it:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?=
-id=3Da21f18a993c56566db94ba836684bc32c070a82c
-
-I clearly didn't look at that patch closely enough. panel-simple has
-supported override modes since:
-
-commit b8a2948fa2b3a5a6da67fd57aa01c7318d795125
-Author: Sean Paul <seanpaul@chromium.org>
-Date:   Thu Jul 11 13:34:53 2019 -0700
-
-    drm/panel: simple: Add ability to override typical timing
-   =20
-    This patch adds the ability to override the typical display timing for a
-    given panel. This is useful for devices which have timing constraints
-    that do not apply across the entire display driver (eg: to avoid
-    crosstalk between panel and digitizer on certain laptops). The rules are
-    as follows:
-   =20
-    - panel must not specify fixed mode (since the override mode will
-      either be the same as the fixed mode, or we'll be unable to
-      check the bounds of the overried)
-    - panel must specify at least one display_timing range which will be
-      used to ensure the override mode fits within its bounds
-   =20
-    Changes in v2:
-     - Parse the full display-timings node (using the native-mode) (Rob)
-    Changes in v3:
-     - No longer parse display-timings subnode, use panel-timing (Rob)
-    Changes in v4:
-     - Don't add mode from timing if override was specified (Thierry)
-     - Add warning if timing and fixed mode was specified (Thierry)
-     - Don't add fixed mode if timing was specified (Thierry)
-     - Refactor/rename a bit to avoid extra indentation from "if" tests
-     - i should be unsigned (Thierry)
-     - Add annoying WARN_ONs for some cases (Thierry)
-     - Simplify 'No display_timing found' handling (Thierry)
-     - Rename to panel_simple_parse_override_mode() (Thierry)
-    Changes in v5:
-     - Added Heiko's Tested-by
-    Changes in v6:
-     - Rebased to drm-misc next
-     - Added tags
-   =20
-    Cc: Doug Anderson <dianders@chromium.org>
-    Cc: Eric Anholt <eric@anholt.net>
-    Cc: Heiko Stuebner <heiko@sntech.de>
-    Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-    Cc: Rob Herring <robh+dt@kernel.org>
-    Cc: St=C3=A9phane Marchesin <marcheu@chromium.org>
-    Cc: Thierry Reding <thierry.reding@gmail.com>
-    Cc: devicetree@vger.kernel.org
-    Cc: dri-devel@lists.freedesktop.org
-    Signed-off-by: Sean Paul <seanpaul@chromium.org>
-    Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-    Signed-off-by: Douglas Anderson <dianders@chromium.org>
-    Tested-by: Heiko Stuebner <heiko@sntech.de>
-    Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-    Acked-by: Thierry Reding <thierry.reding@gmail.com>
-    Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-    Link: https://patchwork.freedesktop.org/patch/msgid/20190711203455.1256=
-67-2-dianders@chromium.org
-
-Looking at the error message cited in the linked commit, the problem is
-that the Chunghwa panel has a fixed mode listed in the driver. However I
-don't see a reason why we can't get rid of that. The only place where I
-can find the compatible string for that used is for the Nexus 7, so we
-should be able to replace the fixed mode with the timings for that panel
-and remove the fixed mode.
-
-The initial Chunghwa panel driver support doesn't seem to have been
-based on the Nexus 7, so I suppose if we make the above change we could
-technically be breaking some setup out there, but since we have no way
-of knowing which device this was on, or if anybody still has access, the
-best we can do is hope that nothing breaks and fix things up if somebody
-complains.
-
-Thierry
-
---X7db3DuSi1x05WRv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS1QTAACgkQ3SOs138+
-s6HkgxAAgWtTOcf+zRMFN2Ink1aBdURgA97iK8LMR7oxLbHh4kz+pI6QkzE/TxNu
-2kq44Xqcdl9iqHFspUcNVjGVyv18ywqTRt/KoE8QeRefAlqFv7hq6wzehwroat7X
-os8yZy77ikfu0GFin/yQ9fRj5glTx90wOj39nZ40l8Az3se1KVuIdOycaaWcl22k
-6dPUvMmFNOHbwyBTexX/qpAOJxl0QAqwmhk32KGzQ2QJbXVP0FlUedU+CkWXNWFJ
-QS/L1fbgdi405Ha8nnu7JlYNSSbPRf4MIPgduRutma5aVTeFKGUef5WFmPrldc5k
-LdETB/sWnLrCfe0pyvHtLtTvXXfZW62ezBZ6mnFNBgVcV+Ctpd59SjTziwGX0fco
-XqkvU3nAEIhlbv6fg4VrQL8j9OkEjPHnfqa8L1egrs5B8UVhnSY5yB/3b04Q9PsL
-+mqjfjxusk0uDXYe6WG850YW4jl+++28DCR/Y+eKxq7ekP54xS7eDMA3xc1hYpJf
-2ecEBHrWeCyvr6uNIuP4k2Efwuaklw5Bx3GTKyPS5NzfcgKyVTMeZgRjBXga8SnX
-qyoClUfFJAsORpxfOAcaAmtpaQHC9dC8VeXFciQpKRJgoBlTCFiOPDuU2GwHyWR4
-IdsDyu0mGX/Gz8g2N9SYWaCdFBTSvHIOvopT4lhIqpFTZo1taP0=
-=ENI6
------END PGP SIGNATURE-----
-
---X7db3DuSi1x05WRv--
+Rob
