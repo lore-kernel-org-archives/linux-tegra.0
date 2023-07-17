@@ -2,158 +2,156 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9838C001DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 17:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 332A2C001B0
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 19:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230293AbjGQRq6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jul 2023 13:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57298 "EHLO
+        id S231211AbjGQTHG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jul 2023 15:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjGQRq4 (ORCPT
+        with ESMTP id S230408AbjGQTHF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jul 2023 13:46:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA70189;
-        Mon, 17 Jul 2023 10:46:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F146611A5;
-        Mon, 17 Jul 2023 17:46:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCE7C433CB;
-        Mon, 17 Jul 2023 17:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689616014;
-        bh=aTPuf0Zd8OpbwoKQZ65jJYeSg9DTodI+njCE2/27PY8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fBMcwhUNcM0V4autvJVgcKQnhFbO7brLAEesnhEzKxTvyYBZsqjwc+cojOZv8v9UC
-         C1fFtr+snZnoCQBuIjCC+uqbL1txzClbWIi6/Eqa6m+4RGip54iRnMoz47f6udL2oG
-         QgKwwUVcwaxROldmVq5NNT3ndThlYFno/GItwYo30sXRqpZ3vtfi8rmQeHUZPSZsw8
-         nBomaa0tVX346pR41e0rqob0iI2Yo27n4Om1YAlYa9235UCWZuLT6xOi/p3K5HKm5U
-         yiAaqVLPCkUZKmnHgR84LUxhUnkrP+Q15V/RcRNk1rR8kEkcW0/GgWyopYhnj8btQ/
-         HW5N4J95bcJrg==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-992b27e1c55so627045266b.2;
-        Mon, 17 Jul 2023 10:46:54 -0700 (PDT)
-X-Gm-Message-State: ABy/qLYHsdcjkilx0BN7/t1n4Ml1FGgPfUozaQr7DJMRdOQG1eYr+Xez
-        pIFJhaGijYNxuSNKXyBT+K794cSdGc3vqW3RdQ==
-X-Google-Smtp-Source: APBJJlEaii1O/P4FM3AIiFrxrm+c2/2j2dMof6/ew372YwZ9YuuOJ20F60zHYXA1FfdAlxaKv4uhiryEoY4fwMAMSwI=
-X-Received: by 2002:a2e:7a1a:0:b0:2b5:bc27:d6eb with SMTP id
- v26-20020a2e7a1a000000b002b5bc27d6ebmr8861286ljc.8.1689615991907; Mon, 17 Jul
- 2023 10:46:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230714174745.4060260-1-robh@kernel.org>
-In-Reply-To: <20230714174745.4060260-1-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 17 Jul 2023 11:46:19 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+H5jcTfuAdE=XvcWP+Td3xn9hdq1QA3HKouPJDaedwYg@mail.gmail.com>
-Message-ID: <CAL_Jsq+H5jcTfuAdE=XvcWP+Td3xn9hdq1QA3HKouPJDaedwYg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: Explicitly include correct DT includes
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mon, 17 Jul 2023 15:07:05 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A60CDA;
+        Mon, 17 Jul 2023 12:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1689620817;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EUbYZ8pSTKDyookB+Z63SW+UrzvlNrmn7Cc06biQ1RY=;
+        b=Vy1ZpdaCi5k3cwLDqwOtFWg7A3zS5kYwD68mlYCpmulFhmikPGznp1UU+O/FzmpYurkTQU
+        dE1B9mWihM5B463eQv1jcypFaAEP/zRd2Wqcerui3nFeqrtlJnmHBxpmHHYUQq6LE2xUnR
+        df3C1TFbJNELgy4uN2FVXJBkJfK6YxA=
+Message-ID: <f48a35d596694839665bc5883260cbae3ae01d9c.camel@crapouillou.net>
+Subject: Re: [PATCH v2 07/10] pinctrl: mediatek: Switch to use
+ DEFINE_NOIRQ_DEV_PM_OPS() helper
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Robert Richter <rric@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     Andy Shevchenko <andy@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michal Simek <michal.simek@amd.com>,
-        Eugen Hristev <eugen.hristev@collabora.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Ben Dooks <ben-linux@fluff.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-actions@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Date:   Mon, 17 Jul 2023 21:06:54 +0200
+In-Reply-To: <20230717172821.62827-8-andriy.shevchenko@linux.intel.com>
+References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
+         <20230717172821.62827-8-andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 11:48=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
-e:
->
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Hi Andy,
+
+
+Le lundi 17 juillet 2023 =C3=A0 20:28 +0300, Andy Shevchenko a =C3=A9crit=
+=C2=A0:
+> Since pm.h provides a helper for system no-IRQ PM callbacks,
+> switch the driver to use it instead of open coded variant.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/mmc/host/atmel-mci.c                  | 1 -
->  drivers/mmc/host/cavium-octeon.c              | 2 ++
->  drivers/mmc/host/cavium-thunderx.c            | 1 +
->  drivers/mmc/host/davinci_mmc.c                | 1 -
->  drivers/mmc/host/meson-gx-mmc.c               | 2 +-
->  drivers/mmc/host/mtk-sd.c                     | 4 +---
->  drivers/mmc/host/mxcmmc.c                     | 1 -
->  drivers/mmc/host/mxs-mmc.c                    | 1 -
->  drivers/mmc/host/owl-mmc.c                    | 3 ++-
->  drivers/mmc/host/pxamci.c                     | 1 -
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 3 ++-
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 3 ++-
->  drivers/mmc/host/sdhci-bcm-kona.c             | 1 -
->  drivers/mmc/host/sdhci-cadence.c              | 2 +-
->  drivers/mmc/host/sdhci-esdhc-imx.c            | 2 +-
->  drivers/mmc/host/sdhci-iproc.c                | 2 +-
->  drivers/mmc/host/sdhci-msm.c                  | 2 +-
->  drivers/mmc/host/sdhci-of-arasan.c            | 3 ++-
+> =C2=A0drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 5 +----
+> =C2=A0drivers/pinctrl/mediatek/pinctrl-paris.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 9 +++------
+> =C2=A02 files changed, 4 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index 665dec419e7c..2bf5082d3aa9 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -922,10 +922,7 @@ static int mtk_eint_resume(struct device
+> *device)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return mtk_eint_do_resume=
+(pctl->eint);
+> =C2=A0}
+> =C2=A0
+> -const struct dev_pm_ops mtk_eint_pm_ops =3D {
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.suspend_noirq =3D mtk_eint_su=
+spend,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.resume_noirq =3D mtk_eint_res=
+ume,
+> -};
+> +DEFINE_NOIRQ_DEV_PM_OPS(mtk_eint_pm_ops, mtk_eint_suspend,
+> mtk_eint_resume);
+> =C2=A0
+> =C2=A0static int mtk_pctrl_build_state(struct platform_device *pdev)
+> =C2=A0{
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c
+> b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> index 33d6c3fb7908..b1cbd5bafa2e 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> @@ -1119,24 +1119,21 @@ int mtk_paris_pinctrl_probe(struct
+> platform_device *pdev)
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_GPL(mtk_paris_pinctrl_probe);
+> =C2=A0
+> -static int mtk_paris_pinctrl_suspend(struct device *device)
+> +static int mtk_paris_suspend(struct device *device)
+> =C2=A0{
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mtk_pinctrl *pctl =
+=3D dev_get_drvdata(device);
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return mtk_eint_do_suspen=
+d(pctl->eint);
+> =C2=A0}
+> =C2=A0
+> -static int mtk_paris_pinctrl_resume(struct device *device)
+> +static int mtk_paris_resume(struct device *device)
+> =C2=A0{
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mtk_pinctrl *pctl =
+=3D dev_get_drvdata(device);
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return mtk_eint_do_resume=
+(pctl->eint);
+> =C2=A0}
+> =C2=A0
+> -const struct dev_pm_ops mtk_paris_pinctrl_pm_ops =3D {
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.suspend_noirq =3D mtk_paris_p=
+inctrl_suspend,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.resume_noirq =3D mtk_paris_pi=
+nctrl_resume,
+> -};
+> +DEFINE_NOIRQ_DEV_PM_OPS(mtk_paris_pinctrl_pm_ops, mtk_paris_suspend,
+> mtk_paris_resume);
 
-Not visible in the diff, but there's a double include of of.h. v2 coming.
+It's a bit more work, but I think you should use EXPORT_GPL_DEV_PM_OPS
+(or even better, EXPORT_NS_GPL_DEV_PM_OPS) so that the dev_pm_ops is
+conditionally exported. All callers would have to be updated to use
+pm_ptr().
 
->  drivers/mmc/host/sdhci-of-at91.c              | 2 +-
->  drivers/mmc/host/sdhci-of-dwcmshc.c           | 2 +-
->  drivers/mmc/host/sdhci-of-sparx5.c            | 2 +-
->  drivers/mmc/host/sdhci-omap.c                 | 1 -
->  drivers/mmc/host/sdhci-pxav2.c                | 1 -
->  drivers/mmc/host/sdhci-s3c.c                  | 1 -
->  drivers/mmc/host/sdhci-sprd.c                 | 1 -
->  drivers/mmc/host/sdhci-tegra.c                | 1 -
->  drivers/mmc/host/sh_mmcif.c                   | 1 -
->  drivers/mmc/host/uniphier-sd.c                | 1 -
->  drivers/mmc/host/wmt-sdmmc.c                  | 1 -
->  29 files changed, 20 insertions(+), 29 deletions(-)
+Cheers,
+-Paul
+
+> =C2=A0
+> =C2=A0MODULE_LICENSE("GPL v2");
+> =C2=A0MODULE_DESCRIPTION("MediaTek Pinctrl Common Driver V2 Paris");
+
