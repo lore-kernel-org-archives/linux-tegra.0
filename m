@@ -2,142 +2,163 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 086C3EB64DC
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 07:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EA6C04A6A
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jul 2023 07:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbjGQHah (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jul 2023 03:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39204 "EHLO
+        id S230446AbjGQHlq convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jul 2023 03:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjGQHag (ORCPT
+        with ESMTP id S229476AbjGQHlp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jul 2023 03:30:36 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22883F7;
-        Mon, 17 Jul 2023 00:30:35 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51bece5d935so5984525a12.1;
-        Mon, 17 Jul 2023 00:30:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689579033; x=1692171033;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u4GVZUqLECesnO++vcJqOUpxug7iu+l6bIIX+pZ/7ds=;
-        b=pa3cxSO43O5rhLwbjslcgkooBp6j/b2jMD3FV3oA2MtfQ7B6sJaLtbIU/6Tu3bjR+U
-         uA/7f9/iNcqN6eJNAUiqDoSifOCFixsWGJmj8tV8ysY8efeKAEZNzbbNEE8MXoHNPgYd
-         awFph86iUycJHPh2gBjUmnHQcFbZVsx0almr3IlatF4Ovy2v3TuwIyEfpRCiJQBSgJUW
-         NrCMnW7HUD8t22eZTy5eZlbp4KWZKvb+kp9bUbbY7iK/JxdTU188qhNecNivpkHSd3fF
-         K0khN+EVLRQjjY4v0VPeRmGxQd9gnJ77kAk3sxfo6U4fiJmW32TWgxInx/k0H75/JH8U
-         o/VQ==
+        Mon, 17 Jul 2023 03:41:45 -0400
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB32E54;
+        Mon, 17 Jul 2023 00:41:44 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6687096c6ddso2508047b3a.0;
+        Mon, 17 Jul 2023 00:41:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689579033; x=1692171033;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1689579703; x=1692171703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u4GVZUqLECesnO++vcJqOUpxug7iu+l6bIIX+pZ/7ds=;
-        b=QSC3gueemqHE8+svPMJhxXL1nTOXzKCLkLdiAIkzSDA0em8w5RqeLc3Fpqmt5bRaBJ
-         4YDmzONFo++64AIsSm67WlpY6WmGFI7dEU+VayeNRxVHWK0a21nSPwX6J21V7yssBp5v
-         Jdkck88gkMzhItvbWbfsFzoW8+Qb2RDPj0+//csl7AhkEaWFCwwCrNuH4XfPRCTVZq6C
-         uJleIcjRVQgO1asfROCHMoTFbjOgoRq5ZLpp0CKdBgM+IwEELJiB+9q20/2Wyhsmcsmq
-         T9aNpsgl5J0QI9KfW3M1Pt/cOFk1gV7NDNCI+Fqkid82zFqa8JWcQiaOqv6zbZDb354C
-         qSSg==
-X-Gm-Message-State: ABy/qLZr3VfU/LMD2TmJyr1jpTdmwjKbdeZR85PYIYJpl6dY+TdX62Py
-        lfkzRMcWeGgz/F6HiWP5Z/QcejgMjEo=
-X-Google-Smtp-Source: APBJJlEKebMHwsWjis1A2PlL7OiBb4/ylj2V9P4gqCP/xh3JvCKXin32nhBCnErW9CQqrvtJKfUALQ==
-X-Received: by 2002:a17:906:46c6:b0:982:89b3:8650 with SMTP id k6-20020a17090646c600b0098289b38650mr9909495ejs.64.1689579033385;
-        Mon, 17 Jul 2023 00:30:33 -0700 (PDT)
-Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b21-20020a1709065e5500b009934855d8f1sm8793395eju.34.2023.07.17.00.30.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 00:30:33 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 09:30:31 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Zhang Shurong <zhang_shurong@foxmail.com>
-Cc:     ldewangan@nvidia.com, broonie@kernel.org, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: tegra20-sflash: Fix signedness bug in
- tegra_sflash_probe
-Message-ID: <ZLTuFyYewf8pUiRw@orome>
-References: <tencent_4D4974DE0CD4266C25819179B42888A3E20A@qq.com>
+        bh=EUvC4vvxIfMz+5toOkjqLhwq7X8FXptFWezRZuPzIyE=;
+        b=GS/gL5DwZ2w8qGbeNev5hfWcTsUnVFTjw2iUptvSjbU+lVraIIdQXs7VBSUWqSW9Vv
+         2NkXtuWoNOxhMH/YFUShFrzmXoTlLbUELbHqUh6yy/AZXfjU1lSVtg2GWDf6bzikC8En
+         73I3LKBt0kEup7QOk4KwViKJH5kz/Vz8DL+bE0qr556AI8x1c1g9PaLrrcCYuXOQeUZ8
+         m1ZKY7G1aU3NNz/J2c5KV75MxCbYstexCDTKnhGC6CrUdreez8wapwGT5p293pm99QgW
+         R13LuD/+a0x4qTCh6iDDwPh+kDewl6Y+cfACrMdF0xZBJelqm+a1onFGkie+uJKaXvxr
+         FS6g==
+X-Gm-Message-State: ABy/qLYIMQdmZOSyhZ9GarDw/NBspLwKPCTzMJQ1oqo4kyUFFsVDkYtl
+        d+Otf63DhrYep7KHYFm2H78igtzDgwAFTA==
+X-Google-Smtp-Source: APBJJlHMZXNoxABTd0F4E5VKOb4zcztqiJTL5j+cSpAyyEvMS7/4J+FnkuLWFqNjUi4QcmdIIsk4lw==
+X-Received: by 2002:a05:6a20:728b:b0:129:3bb4:77f1 with SMTP id o11-20020a056a20728b00b001293bb477f1mr10574878pzk.0.1689579703221;
+        Mon, 17 Jul 2023 00:41:43 -0700 (PDT)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com. [209.85.214.180])
+        by smtp.gmail.com with ESMTPSA id v1-20020a63b641000000b0055fec4c165dsm3175315pgt.78.2023.07.17.00.41.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jul 2023 00:41:42 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1b89d47ffb6so22195185ad.2;
+        Mon, 17 Jul 2023 00:41:42 -0700 (PDT)
+X-Received: by 2002:a81:65d6:0:b0:571:11ea:b2dd with SMTP id
+ z205-20020a8165d6000000b0057111eab2ddmr11237476ywb.32.1689579681652; Mon, 17
+ Jul 2023 00:41:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9cyN+Lexs+8sRPGX"
-Content-Disposition: inline
-In-Reply-To: <tencent_4D4974DE0CD4266C25819179B42888A3E20A@qq.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+References: <20230714174342.4052882-1-robh@kernel.org>
+In-Reply-To: <20230714174342.4052882-1-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 17 Jul 2023 09:41:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUUWy3Knk6Jqao12KULam_3XpYc=cGqRXe4reH7FPVZsg@mail.gmail.com>
+Message-ID: <CAMuHMdUUWy3Knk6Jqao12KULam_3XpYc=cGqRXe4reH7FPVZsg@mail.gmail.com>
+Subject: Re: [PATCH] clk: Explicitly include correct DT includes
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-oxnas@groups.io,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Jul 14, 2023 at 7:44 PM Rob Herring <robh@kernel.org> wrote:
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
---9cyN+Lexs+8sRPGX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>  drivers/clk/renesas/rcar-usb2-clock-sel.c        | 1 -
+>  drivers/clk/renesas/renesas-cpg-mssr.c           | 1 -
+>  drivers/clk/renesas/rzg2l-cpg.c                  | 3 +--
 
-On Sat, Jul 15, 2023 at 05:53:56PM +0800, Zhang Shurong wrote:
-> The "tsd->irq" variable is unsigned so this error handling
-> code will not work.
->=20
-> Fix this by adding error handling statement
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This doesn't really make sense. First you say that the error handling
-will not work and then you say you fix that by adding error handling.
+Gr{oetje,eeting}s,
 
-So the bug here is that there is no error checking in the first place,
-so you should probably reword that commit message.
+                        Geert
 
-Thierry
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->=20
-> Fixes: 8528547bcc33 ("spi: tegra: add spi driver for sflash controller")
-> Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
-> ---
->  drivers/spi/spi-tegra20-sflash.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-s=
-flash.c
-> index 4286310628a2..4c18337de813 100644
-> --- a/drivers/spi/spi-tegra20-sflash.c
-> +++ b/drivers/spi/spi-tegra20-sflash.c
-> @@ -455,7 +455,11 @@ static int tegra_sflash_probe(struct platform_device=
- *pdev)
->  		goto exit_free_master;
->  	}
-> =20
-> -	tsd->irq =3D platform_get_irq(pdev, 0);
-> +	ret =3D platform_get_irq(pdev, 0);
-> +	if (ret < 0)
-> +		goto exit_free_master;
-> +
-> +	tsd->irq =3D ret;
->  	ret =3D request_irq(tsd->irq, tegra_sflash_isr, 0,
->  			dev_name(&pdev->dev), tsd);
->  	if (ret < 0) {
-> --=20
-> 2.30.2
->=20
-
---9cyN+Lexs+8sRPGX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS07hQACgkQ3SOs138+
-s6FWsw//ejk+7MtZ9+XJ1pY/45JPEu2E9UgxMwjg2ZEIprSO5LM/gofh7Y0MrKTU
-2yv0deTR+tTqN7Ks8gMLjyt+FkA2wu5KjiMZpuI9YNGZwvbugKL/m4KWsTosXpso
-s5puXPqLAdschSFrIG3L7K+N/G5yziMT6MgZuLhF0KT9HYJE057ABc9ZjjYm+3pq
-6yFubaU7Q5xNB0C3+91Fs71ZB6hoxCYg/3Yw5/WP4byzFXwalM/RftBAHyQlZ6fE
-I+uKpvsuDpnSsCi3iwHPCXMmXmjaiH8Td1lgusGeQUG7taIp7a4stZ09M8vj+doK
-QZAQljCVKX4lA4CB6WjGUXUEUq5GNsdsDbdhD80RJuh82hZ/ekkG9hGoAL+WV1wm
-Hs1AsJr8QyfeQVLL01h0wU5sqDIAIZXjEXEC99HP/GV5H70qu1R1DSXZMOHjPQrP
-BAzlKxrHB1OI6V8EXyq17jkNxrr9J/tk8G3CtQQMt6TEXhq6750MxLeqVUYhaemY
-mynHAXwj5rElzdyQqWQdbg+QJQjDkQJTr56LF6bS8BYYabQAQkgK4uDbGEnPVHpi
-Lj4vJBnGzmOx3MhsSWbg3cK6YWIfza0Nd6pPUv9tQiRZwtkFujHtNXa9VIfFXSCl
-IwekZaVsY3aC/3FHylXy5KLTRDQFZg9D1iEGWPezgXuTbj7s8K0=
-=tho+
------END PGP SIGNATURE-----
-
---9cyN+Lexs+8sRPGX--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
