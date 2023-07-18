@@ -2,94 +2,135 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348C6EB64DA
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 04:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B594EC04A6A
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 06:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbjGREqz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jul 2023 00:46:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56952 "EHLO
+        id S231147AbjGRGcK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jul 2023 02:32:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjGREqy (ORCPT
+        with ESMTP id S231286AbjGRGcE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jul 2023 00:46:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86DC7BB;
-        Mon, 17 Jul 2023 21:46:52 -0700 (PDT)
-Received: from [192.168.2.126] (109-252-154-2.dynamic.spd-mgts.ru [109.252.154.2])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dmitry.osipenko)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D0F0F66020AE;
-        Tue, 18 Jul 2023 05:46:49 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689655610;
-        bh=2U3/DuKXVaD37YXWSHso96n1NJbQ0J+Obxkz1ExT5m8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=e+P3BrGO/Aps8Tg9FBk584ntwR55t3R8pCm7t5GhqmEqo1DiGtjm5PE8kuZ+eGWkx
-         s34r9V2C3fX5GnAWL2/56UYHhpG61Ekp9eyuG5uAhTHKNwvJSwPzJpJO0E9Sj3wFOZ
-         ArP8xd+BCbqWNwBMqH10aUt88CYyFF3/V7QnWj+c+f4PFvlv60Pf8WdMzT/OyCwdMd
-         mWXKC1ihS60Ion1qjwE3WKYmfBc2ohOZLA/GBpPwgOeMiLet9TxigTs2nD4+1meRTn
-         9rSa2hYbc96X7l8kM/MZpK4cbJ38fEduHzoFR4q7gucogtQ1JWEV+KnHxO0c8YkSPA
-         sdRJ0F3zVjBNw==
-Message-ID: <215679f1-a866-1e92-1bab-9c80918927a6@collabora.com>
-Date:   Tue, 18 Jul 2023 07:46:47 +0300
+        Tue, 18 Jul 2023 02:32:04 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7EE136;
+        Mon, 17 Jul 2023 23:32:01 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E080220008;
+        Tue, 18 Jul 2023 06:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1689661919;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RpKAtUiUinq9Lhw+v54h3QcTHPMMcdg2W9j58F9msCI=;
+        b=lVsAfqer8xWiySiEq4z7Whp9otUwyCQXKtPI1tRr5f7imi5WmvidsvbXpCUGXwxk1c+lvE
+        oUHmSljh698Kg7YXWz38yD7YKynczdgakNvh9W31vXeG3ASFtYmUbHMMJvu2jAXs6WXMFe
+        qDOvnq5fNCwuhkU5Pv9JkSJ8uAbs1yjvZIjT+WnxMiQeDJLtUHfZO7aM8YIAG7auX7E6KB
+        neoUdUzoHRJnTzkhM6WLVgYwYyzcHYvDk8cc5I9mppjSrEmHREOSYJaDUdNw61xuiMD/34
+        m7I4N+6JbCgr4Op1Mxo+kriyEeSldJsgWRrKtcIj3mGk+C0lffE+F3dHz9dysw==
+Date:   Tue, 18 Jul 2023 08:31:49 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Peter Chen <peter.chen@kernel.org>,
+        Pawel Laszczak <pawell@cadence.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Li Yang <leoyang.li@nxp.com>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Michal Simek <michal.simek@amd.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Richard Leitner <richard.leitner@linux.dev>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Paul Cercueil <paul@crapouillou.net>, Bin Liu <b-liu@ti.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] usb: Explicitly include correct DT includes
+Message-ID: <20230718083149.77fa57ef@bootlin.com>
+In-Reply-To: <20230714175027.4065135-1-robh@kernel.org>
+References: <20230714175027.4065135-1-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.1
-Subject: Re: [PATCH v7 5/5] mfd: tps6586x: register restart handler
-Content-Language: en-US
-To:     Benjamin Bara <bbara93@gmail.com>, Wolfram Sang <wsa@kernel.org>,
-        Lee Jones <lee@kernel.org>, rafael.j.wysocki@intel.com,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     peterz@infradead.org, jonathanh@nvidia.com,
-        richard.leitner@linux.dev, treding@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-References: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
- <20230327-tegra-pmic-reboot-v7-5-18699d5dcd76@skidata.com>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20230327-tegra-pmic-reboot-v7-5-18699d5dcd76@skidata.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.07.2023 10:53, Benjamin Bara пишет:
-> From: Benjamin Bara <benjamin.bara@skidata.com>
+Hi Rob,
+
+On Fri, 14 Jul 2023 11:50:23 -0600
+Rob Herring <robh@kernel.org> wrote:
+
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
 > 
-> There are a couple of boards which use a tps6586x as
-> "ti,system-power-controller", e.g. the tegra20-tamonten.dtsi.
-> For these, the only registered restart handler is the warm reboot via
-> tegra's PMC. As the bootloader of the tegra20 requires the VDE, it must
-> be ensured that VDE is enabled (which is the case after a cold reboot).
-> For the "normal reboot", this is basically the case since 8f0c714ad9be.
-> However, this workaround is not executed in case of an emergency restart.
-> In case of an emergency restart, the system now simply hangs in the
-> bootloader, as VDE is not enabled (because it is not used).
-> 
-> The TPS658629-Q1 provides a SOFT RST bit in the SUPPLYENE reg to request
-> a (cold) reboot, which takes at least 20ms (as the data sheet states).
-> This avoids the hang-up.
-> 
-> Tested on a TPS658640.
-> 
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> Acked-for-MFD-by: Lee Jones <lee@kernel.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-Acked-for-MFD-by isn't a valid tag, scripts/checkpatch.pl should tell
-you about it.
+[...]
 
-In general you may add a comment to a tag, like this:
+> diff --git a/drivers/usb/gadget/udc/renesas_usbf.c b/drivers/usb/gadget/udc/renesas_usbf.c
+> index 6cd0af83e91e..3482b41d0646 100644
+> --- a/drivers/usb/gadget/udc/renesas_usbf.c
+> +++ b/drivers/usb/gadget/udc/renesas_usbf.c
+> @@ -12,10 +12,9 @@
+>  #include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+>  #include <linux/kfifo.h>
+> +#include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> -#include <linux/of_address.h>
+> -#include <linux/of_irq.h>
+> -#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/types.h>
+>  #include <linux/usb/composite.h>
 
-  Acked-by: Lee Jones <lee@kernel.org> # for MFD
+Acked-by: Herve Codina <herve.codina@bootlin.com>
 
-In this particular case, the comment is unnecessary because Lee is the
-MFD maintainer, hence his ack itself implies the MFD subsys.
-
--- 
 Best regards,
-Dmitry
-
+Hervé
