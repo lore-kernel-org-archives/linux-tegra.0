@@ -2,102 +2,83 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05449EB64DD
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 10:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2940DEB64DA
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 11:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231222AbjGRKL7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jul 2023 06:11:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33766 "EHLO
+        id S230041AbjGRLJT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jul 2023 07:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231506AbjGRKLr (ORCPT
+        with ESMTP id S229512AbjGRLJR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jul 2023 06:11:47 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF8A0188;
-        Tue, 18 Jul 2023 03:11:46 -0700 (PDT)
-Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4R4vmD14XFz67nfn;
-        Tue, 18 Jul 2023 18:08:28 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 18 Jul
- 2023 11:11:43 +0100
-Date:   Tue, 18 Jul 2023 11:11:43 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        "Claudiu Beznea" <claudiu.beznea@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        "Jonathan Hunter" <jonathanh@nvidia.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v2 10/10] pinctrl: tegra: Switch to use
- DEFINE_NOIRQ_DEV_PM_OPS() helper
-Message-ID: <20230718111143.000067dc@Huawei.com>
-In-Reply-To: <20230717172821.62827-11-andriy.shevchenko@linux.intel.com>
-References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
-        <20230717172821.62827-11-andriy.shevchenko@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+        Tue, 18 Jul 2023 07:09:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0249A10F2;
+        Tue, 18 Jul 2023 04:09:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 82E9861517;
+        Tue, 18 Jul 2023 11:09:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B93C433C8;
+        Tue, 18 Jul 2023 11:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689678555;
+        bh=455lvYV9bPgscAxyzAWQXxft7jceX9o1s3xKXlHBZik=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=aMM3R+fM3DMEEnetyIC2xArN6N0MGT95Q/dz4zsH5s7iBCvPdKdHDUUhKxyciRaEx
+         PR0qBOqXqqqppec3xDWedOQNQ5hG3X4HHPGkRIoo9pSgG7FXiSJ8w99VwQPYcgOMYI
+         3nNE0sBI60OwD/7vyx1NdlvCEZbvaDutB2nGFp2Qaug497sfNJ3ykOD/QkH0iwbttl
+         S0PmEpDbGvojOuimVGLEn8wIbIoXkov51ZzKXQOnistorEzuYGnIJ5ez7p4EYj7L5O
+         kfHWKMv5z+fBvY4dlHiif1CeY9pXOYIW7RAjCnZK5NMZr1PM5Nehuiq5aHbxJKW2ZY
+         qFyQyhXwHlecQ==
+Date:   Tue, 18 Jul 2023 06:09:13 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte
+ payload"
+Message-ID: <20230718110913.GA475601@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.76]
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6bc71b88-1c8c-0c2c-d9e1-22096f928ad5@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 17 Jul 2023 20:28:21 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Tue, Jul 18, 2023 at 08:03:47AM +0530, Vidya Sagar wrote:
+> On 7/14/2023 3:09 AM, Bjorn Helgaas wrote:
+> > On Mon, Jun 19, 2023 at 03:56:04PM +0530, Vidya Sagar wrote:
+> > > This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
+> > > support for 256 Byte payload").
+> > > 
+> > > Consider a PCIe hierarchy with a PCIe switch and a device connected
+> > > downstream of the switch that has support for MPS which is the minimum in
+> > > the hierarchy, and root port programmed with an MPS in its DevCtl register
+> > > that is greater than the minimum. In this scenario, the default bus
+> > > configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
+> > > MPS settings in the hierarchy correctly resulting in the device with
+> > > support for minimum MPS in the hierarchy receiving the TLPs of size more
+> > > than that. Although this can be addressed by appending "pci=pcie_bus_safe"
+> > > to the kernel command line, it doesn't seem to be a good idea to always
+> > > have this commandline argument even for the basic functionality to work.
+> > 
+> > I think this has some irrelevant detail (IIUC the problem should
+> > happen even without a switch) and could be more specific (I think the
+> > problem case is RP MPS=256, EP only supports MPS=128).
+>
+> The issue is present only if there is a switch.
 
-> Since pm.h provides a helper for system no-IRQ PM callbacks,
-> switch the driver to use it instead of open coded variant.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+So if there's no switch, and an EP that only supports MPS=128, the PCI
+core changes the RP MPS setting to 128?  Just based on reading the
+code, I thought we would leave RP MPS=256 and EP MPS=128, which would
+be a problem.  But maybe the PCI core changes the RP down to MPS=128?
 
-No pm_sleep_ptr()?
-
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 4547cf66d03b..734c71ef005b 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -747,10 +747,7 @@ static int tegra_pinctrl_resume(struct device *dev)
->  	return 0;
->  }
->  
-> -const struct dev_pm_ops tegra_pinctrl_pm = {
-> -	.suspend_noirq = &tegra_pinctrl_suspend,
-> -	.resume_noirq = &tegra_pinctrl_resume
-> -};
-> +DEFINE_NOIRQ_DEV_PM_OPS(tegra_pinctrl_pm, tegra_pinctrl_suspend, tegra_pinctrl_resume);
->  
->  static bool tegra_pinctrl_gpio_node_has_range(struct tegra_pmx *pmx)
->  {
-
+Bjorn
