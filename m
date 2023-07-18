@@ -2,125 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6ECEB64DC
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 08:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C579EB64DA
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 08:59:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232004AbjGRInQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jul 2023 04:43:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60012 "EHLO
+        id S230285AbjGRI7n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jul 2023 04:59:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232030AbjGRIm7 (ORCPT
+        with ESMTP id S231378AbjGRI7m (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jul 2023 04:42:59 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77F1A6;
-        Tue, 18 Jul 2023 01:42:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1689669770;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lvBHRW1hX7jSHUc5Dd1yf8Vt754q3/Qv7wxhKNRg9lU=;
-        b=maEuuMJ23VwXgPP1BYNWDWH9FoDi8ssbRkcHwVHdHZ+2liVDNNtSFXoi/Ucm7tD8fFcWkz
-        Y1+1pyzlgXX8KdYt9Wa7GKYCY48VbAbD6BnoH3PHwrKdfGz5uVVGeT1MlJH1yeEkON6JDi
-        BIcoju3Ka9xM3kidK/COzZ4sCOkXIp0=
-Message-ID: <5e4b5bc23f3edb3ed30cb465420a51ffceceb53d.camel@crapouillou.net>
-Subject: Re: [PATCH v2 10/10] pinctrl: tegra: Switch to use
- DEFINE_NOIRQ_DEV_PM_OPS() helper
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Date:   Tue, 18 Jul 2023 10:42:47 +0200
-In-Reply-To: <ZLZDL27zzDpY4q8E@orome>
-References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
-         <20230717172821.62827-11-andriy.shevchenko@linux.intel.com>
-         <13f7153786cfcdc3c6185a3a674686f7fbf480dc.camel@crapouillou.net>
-         <ZLZDL27zzDpY4q8E@orome>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 18 Jul 2023 04:59:42 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2043.outbound.protection.outlook.com [40.107.237.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF09EB5;
+        Tue, 18 Jul 2023 01:59:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eTAi8LlDcl6MRWEy0bQdDl5n6WxAAKnzT9yVH6Yo9o6i8Sb14WsfLFM3jo7jJK6DmJhx47qE2biPpVsdldE0hH9kopH0/IHbL4lvklIlkutj8jlV+W937y/hu7jXDIoCV66iDTORApauG2D3nneHzgK4lqEziSuPcsyFms6xmrbq2AQs3NTzPxj/nUvl+QdeSjYoQcfGpsUJl7T9EyCu5EfDE6afraU7Hn+lgfrJMs/Y2P5f2I1Yz5VEPwvG1hHSkLByAD/3dzkXya3qkkHVSlBRERqcw6R/av2VcoKv8YfvkSWGSVsBT+3dA6fxJn5jQopFS3E5109L+bdIpOuXsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bIyIRjGKx7PJh2GUtj2zTJGRUlziKpwjHPbwd92fsHg=;
+ b=l+/33Har2GdjLeQk5OV22+8TyERIXJ1uXERk/k0N++lYJ2d7WdAqQytOaeFaMJzrz31RT+XA6BBSkqHPziYzaxrEFETNJIyd18j1K4pvhXpBcBRRaBcQ4fbHsQt2tIT7GLqItYsnK9iJ7k4n0SOkI7nIHGHkjZoMw77/oZNLQRx8CEJArNvUZ6tVaAdOnweVqg+6H10wt6UuWYCgeTfS8k9P6U0SlgI/AqEP+oOBuIZ45o1/0oARjiZuMRa5lMysP/OOI+qs7dmUt9ZypXDitmitSocZ6ARcHplugpKCsi6rstxj/ta6jticCBmnx52tpT7otZFoBcgIy3R+phulrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bIyIRjGKx7PJh2GUtj2zTJGRUlziKpwjHPbwd92fsHg=;
+ b=UV62iY4OV+uh4ZVxXjSUBgkJU0G5bcTTClIxl/oyD3PJcldz6SxdiFfbGJpD5yd5fDUiOw4nVNpEhXt1FJYMR/z4DQ6kAjk4A3l/1itPs2yJfchJzroEMz81Hwce8zI6+4i6flVXB/Dug+N5XANCloOsXxBLOXusbKVnD3yNodfzOHOisqFCkzOOcXiv7S26h9gZmqZCGuMhcRKiamIwDMPlfmU8KIZKeE5/7LPmUtV9/sywmUnFZVYJhDU6ZGYJi1n+0ziNiJNdO2pAZC/rZh12R74SelVuSFcMLq5YTlBqkTio77UHFQqZAwnXI3jn8Cz3Tmp0t3jtzVbkpFAu/g==
+Received: from BN9PR03CA0197.namprd03.prod.outlook.com (2603:10b6:408:f9::22)
+ by PH7PR12MB7284.namprd12.prod.outlook.com (2603:10b6:510:20b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.31; Tue, 18 Jul
+ 2023 08:59:39 +0000
+Received: from BN8NAM11FT007.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f9:cafe::2e) by BN9PR03CA0197.outlook.office365.com
+ (2603:10b6:408:f9::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.33 via Frontend
+ Transport; Tue, 18 Jul 2023 08:59:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN8NAM11FT007.mail.protection.outlook.com (10.13.177.109) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6588.33 via Frontend Transport; Tue, 18 Jul 2023 08:59:39 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 18 Jul 2023
+ 01:59:29 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Tue, 18 Jul 2023 01:59:28 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Tue, 18 Jul 2023 01:59:28 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/589] 6.1.39-rc3 review
+In-Reply-To: <20230717201547.359923764@linuxfoundation.org>
+References: <20230717201547.359923764@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
+Message-ID: <f6955e78-c23b-457e-a635-126f5fdab4ca@drhqmail202.nvidia.com>
+Date:   Tue, 18 Jul 2023 01:59:28 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT007:EE_|PH7PR12MB7284:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f4455f6-1d45-4a96-595b-08db876d51a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Q5jD7IkTggOaNab+fjVDXI6p6MEpaBpEDnmLc2W0I4x4GkWh558H6hZw78HY+BzNOuxQtS7e20bX7PayRTFWe1q1Ue9KcqgZDMLMEnUtWqZrMEVur6GN+ws+zwe16W+NmNaCalgWHhCvVwJZFy13qMPC7W0KQbwoQalkjbXV3CNQrL8kdP4sPyPmK6sQcYl2nimTfDDEs+tA+0IGTqfd9CrKgUe/1Y8rZz1OCpzJiI/ABQUJVSbHY81HqVXnqJ8PkRJDZcaAOm6ZxNcIdPjM2ryjdsjSZIwycJ/OVwCHF07C1JHyWL+bh8omQaYN1PU0WYiuOCBe/IJ4WP/msTRdHikTkKu17RoYgjEC47ZPUULEBctJhY9rgPsNu0zsdTibd4ky1HgCzZvJx0XVrDCBkWOgcV3+qganrRQ85ixIlOExEfdeqOjfFH3XeBBi1By62Ncm5I+ijQsJjN7CBLCN0nrnsMbC7QsWtP4rhebQznYL0IcnqClkyvZZoToOdEDFqpiGMtqHpN5jKo3AEwO58MrqHjrAHyIPByEIBgnuL4fITA51v5E9tNat87ylkh6cKO9l8MJyNpGD3EGRbcvhDA0UqDGMBc9j1QSURr/b8e7qXoi2ABkg3OwhWTLThOp4hcdMeXYL7BGbWU29rsq6OLVfbPR8KUGTTQqtDBYl2rslxJdngZBc9hbhPK7Eu3hEj8ZkN6xlRADzgU5XsdRn+r+6BqSQY2WfJ4y4/+5cMRYFOIqVGxQej1oOwqcVOFowXAcWLWFyFYoKmaMTObSiYQZu94SUTHWkMj+RpGJAhzQ=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(346002)(39860400002)(376002)(82310400008)(451199021)(46966006)(40470700004)(36840700001)(966005)(40480700001)(26005)(40460700003)(70206006)(70586007)(5660300002)(54906003)(7416002)(31696002)(2906002)(316002)(41300700001)(4326008)(8676002)(8936002)(6916009)(86362001)(478600001)(82740400003)(7636003)(356005)(31686004)(36860700001)(47076005)(426003)(186003)(336012);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2023 08:59:39.2223
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f4455f6-1d45-4a96-595b-08db876d51a6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT007.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7284
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+On Mon, 17 Jul 2023 22:34:23 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.39 release.
+> There are 589 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 19 Jul 2023 20:14:46 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.39-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Le mardi 18 juillet 2023 =C3=A0 09:45 +0200, Thierry Reding a =C3=A9crit=C2=
-=A0:
-> On Mon, Jul 17, 2023 at 09:14:12PM +0200, Paul Cercueil wrote:
-> > Hi Andy,
-> >=20
-> > Le lundi 17 juillet 2023 =C3=A0 20:28 +0300, Andy Shevchenko a =C3=A9cr=
-it=C2=A0:
-> > > Since pm.h provides a helper for system no-IRQ PM callbacks,
-> > > switch the driver to use it instead of open coded variant.
-> > >=20
-> > > Signed-off-by: Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com>
-> > > ---
-> > > =C2=A0drivers/pinctrl/tegra/pinctrl-tegra.c | 5 +----
-> > > =C2=A01 file changed, 1 insertion(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > index 4547cf66d03b..734c71ef005b 100644
-> > > --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > @@ -747,10 +747,7 @@ static int tegra_pinctrl_resume(struct
-> > > device
-> > > *dev)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> > > =C2=A0}
-> > > =C2=A0
-> > > -const struct dev_pm_ops tegra_pinctrl_pm =3D {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.suspend_noirq =3D &tegra_=
-pinctrl_suspend,
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.resume_noirq =3D &tegra_p=
-inctrl_resume
-> > > -};
-> > > +DEFINE_NOIRQ_DEV_PM_OPS(tegra_pinctrl_pm, tegra_pinctrl_suspend,
-> > > tegra_pinctrl_resume);
-> > > =C2=A0
-> > > =C2=A0static bool tegra_pinctrl_gpio_node_has_range(struct tegra_pmx
-> > > *pmx)
-> > > =C2=A0{
-> >=20
-> > Another driver where using EXPORT_GPL_DEV_PM_OPS() would make more
-> > sense.
->=20
-> We don't currently export these PM ops because none of the Tegra
-> pinctrl
-> drivers can be built as a module.
+All tests passing for Tegra ...
 
-This doesn't change anything. You'd want to use EXPORT_GPL_DEV_PM_OPS
-(or better, the namespaced version) so that the PM ops can be defined
-in one file and referenced in another, while still having them garbage-
-collected when CONFIG_PM is disabled.
+Test results for stable-v6.1:
+    7 builds:	7 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    104 tests:	104 pass, 0 fail
 
-Cheers,
--Paul
+Linux version:	6.1.39-rc3-gce7ec1011187
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
