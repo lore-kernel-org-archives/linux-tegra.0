@@ -2,123 +2,166 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2898EB64DA
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 07:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1670EB64DD
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 07:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231387AbjGRHm2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jul 2023 03:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50948 "EHLO
+        id S231395AbjGRHp6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jul 2023 03:45:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231316AbjGRHmZ (ORCPT
+        with ESMTP id S230373AbjGRHp5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jul 2023 03:42:25 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CC610FC;
-        Tue, 18 Jul 2023 00:42:22 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-52173d4e9f9so4458423a12.0;
-        Tue, 18 Jul 2023 00:42:21 -0700 (PDT)
+        Tue, 18 Jul 2023 03:45:57 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27675DD;
+        Tue, 18 Jul 2023 00:45:56 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51e48e1f6d1so7250562a12.1;
+        Tue, 18 Jul 2023 00:45:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689666140; x=1692258140;
+        d=gmail.com; s=20221208; t=1689666354; x=1692258354;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V6CEt4B1fiWeTE+geiMZjI5qydRTvLiaSco1FgfeUmY=;
-        b=V2rWDQk8E/ABfOMfMDHDxfVngQWN75ZYx7R48wiPpD4Zlg8u9Q7xX33AJFk46fxR3B
-         pGK+4Z/43tGuISlZOznN9e2LLU5DeSvxqoHVxhedJdq+OU3nBREwW6gTKc1pu/Rz6K0l
-         rXmq2aPXyLVg1z78jtoRHD0JxtK3nRFQptk6xUaLu08F/wPNbw/UByteIIoDP86MgzAy
-         DE8Pvn4thpfKpvGnsVEyPWAxmrDcRIXUb+U+KUmaQK5qo6t20w5fLbR0Jd1+07ziK7YK
-         QjbA4pBHsEBac7pIEM1dIloLvGZpT2PVOJyGyC2MMDO25Az4AFPvJk1XS7CHrYk/hT92
-         3clg==
+        bh=XgoXCsaS2C8T63iw0Ey5t0C4UKRq0GEpZhQp7ds0RYw=;
+        b=f39YUFrJDUhhZxuS6hFWWTKiL58Bl+A9uFWkDZJUSd5vLVCe095S4TzcDAKrSeBFhg
+         67QDUoh4u3FfH8Aisz++yS92FBJegkaGbodLy0xIbJNAZh1dO1Ak4d1ago2lB3JBkOUt
+         i6F68cVuyixXOxR/FSSliCgDyrbvqbfd8C/FSx3z2llLLC9WxUFbgVe35EI0RZfn5kUZ
+         xYCGyejBAoRrgmof3FcfOaYjnQmZOhi+nqjjv8ANYiSdstXckwhD19NqVz+3wc/d7Kfk
+         StANGJAJz2j00CsgQzq2j0jEHZ7dL9Drs14R6tDmFmGiJSjWgXYGcT5QVX5fMnLAdlO7
+         K9rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689666140; x=1692258140;
+        d=1e100.net; s=20221208; t=1689666354; x=1692258354;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V6CEt4B1fiWeTE+geiMZjI5qydRTvLiaSco1FgfeUmY=;
-        b=b6o+i8m8TO7ElYF6+/8oLyUCVnPolttfCySROM0GCMnCLdFkmTrbGPTG47Jw9SYpCw
-         9KKV7XoaF9krVpJ3/XO1PXOown8KJbhjNWaCpukSAZMIklZkoASQheDIhqCokdGK6odc
-         9zbFQetSrxUjtLlgsUNxPSBeTD+EogUQeg2xeiT00hgUxByHnPn+PdrV+NFkNZphzhIn
-         H3lB5hvjdIuhE5ZtQxEDevLerAcMlqqdkERm00jcFENZDF+PTH6mHvKdFhO1svAU8fDR
-         X71s9Wim8C4O538+Zg/zCHacni9/i4P+tFxK+andodEREJIXmvTDTPPK9oODVssxTsqY
-         UmtA==
-X-Gm-Message-State: ABy/qLbYDlJhDL1x9SDtPiLBaIshNtXhjXCnchGA3jzVOfMcuvGJDjx8
-        p4Aujqi8RriTJObJa0EHlaU=
-X-Google-Smtp-Source: APBJJlFqQGf1DNrlb7Ot8ofForkF08KcO+GVJXPEQiilmJU/t+JjMKkCCG0AfF7SV+65Ei+Dit2rtQ==
-X-Received: by 2002:a50:ee0e:0:b0:51d:9ddf:f0f6 with SMTP id g14-20020a50ee0e000000b0051d9ddff0f6mr13518393eds.36.1689666140279;
-        Tue, 18 Jul 2023 00:42:20 -0700 (PDT)
+        bh=XgoXCsaS2C8T63iw0Ey5t0C4UKRq0GEpZhQp7ds0RYw=;
+        b=A3YtJDUtc/8JUYjHmhk4WwX8iyA0TKn0ykmoQ8kA3ugYSfN+ue1GyxwwJMk8HpL96f
+         VZCr0zGRlIvZFpz1YE0nEn9etXkdakJGaeOGUwQz9jqPTxfnAPwdhQdslIGj1Q+EpkTu
+         SK8KuTu3ivHZ3C4fUPRXdakYb8m3Tiq+Sm8/NT9uOCYML2apL7iic8ym1Avv6I8I2gHq
+         1ejXcdcxaqzyFL1WmEMKtL205WTN5JFwuZ08RkKuXGUyt8WSXI9P8JOU8q5TOwa9qiT4
+         TwQxyxXtKLZj6UYz/iYdCuMGnvPWa2PGHsZl1sR3yOk4UOh3sINv5QPUT+va6aB6FUd+
+         kHLg==
+X-Gm-Message-State: ABy/qLZEJcqu5kipUxj+49qDul4OqDocr/s5F3T/WAfnXb3fg9AjnSJj
+        8ptAHipL+OEeLHaDvDHU8Hk=
+X-Google-Smtp-Source: APBJJlHNN+UfI4mMJACRlXNcvMgEJJl7q1fQMpJLNe0EjzLet3w62Y8m4100hJ2OaqQIy1TaCe0Uhw==
+X-Received: by 2002:a17:907:3a49:b0:988:f1ec:7400 with SMTP id fc9-20020a1709073a4900b00988f1ec7400mr10816811ejc.36.1689666354374;
+        Tue, 18 Jul 2023 00:45:54 -0700 (PDT)
 Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i15-20020aa7c70f000000b0051a2d2f82fdsm816558edq.6.2023.07.18.00.42.19
+        by smtp.gmail.com with ESMTPSA id n26-20020a170906119a00b00991e2b5a27dsm671067eja.37.2023.07.18.00.45.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 00:42:19 -0700 (PDT)
-Date:   Tue, 18 Jul 2023 09:42:18 +0200
+        Tue, 18 Jul 2023 00:45:54 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 09:45:51 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Haotien Hsu <haotienh@nvidia.com>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Wayne Chang <waynec@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>, WK Tsai <wtsai@nvidia.com>,
-        Henry Lin <henryl@nvidia.com>
-Subject: Re: [PATCH] usb: xhci: tegra: Add shutdown callback for Tegra XUSB
-Message-ID: <ZLZCWgJTm5Wk-glL@orome>
-References: <20230718072057.233011-1-haotienh@nvidia.com>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 10/10] pinctrl: tegra: Switch to use
+ DEFINE_NOIRQ_DEV_PM_OPS() helper
+Message-ID: <ZLZDL27zzDpY4q8E@orome>
+References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
+ <20230717172821.62827-11-andriy.shevchenko@linux.intel.com>
+ <13f7153786cfcdc3c6185a3a674686f7fbf480dc.camel@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i1iMksCSr7RDaYjM"
+        protocol="application/pgp-signature"; boundary="YpHy1Bd1lMbYUgMr"
 Content-Disposition: inline
-In-Reply-To: <20230718072057.233011-1-haotienh@nvidia.com>
+In-Reply-To: <13f7153786cfcdc3c6185a3a674686f7fbf480dc.camel@crapouillou.net>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---i1iMksCSr7RDaYjM
-Content-Type: text/plain; charset=us-ascii
+--YpHy1Bd1lMbYUgMr
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 18, 2023 at 03:20:57PM +0800, Haotien Hsu wrote:
-> From: Henry Lin <henryl@nvidia.com>
+On Mon, Jul 17, 2023 at 09:14:12PM +0200, Paul Cercueil wrote:
+> Hi Andy,
 >=20
-> If memory accesses by the Tegra XUSB controller are translated through
-> the SMMU (System MMU), the hardware may continue accessing memory even
-> after the SMMU translations have been disabled during the shutdown
-> process and this can in turn cause unpredictable crashes.
-> Fix this by adding a shutdown implementation that ensures the hardware
-> is turned off during system reboot or shutdown.
+> Le lundi 17 juillet 2023 =C3=A0 20:28 +0300, Andy Shevchenko a =C3=A9crit=
+=C2=A0:
+> > Since pm.h provides a helper for system no-IRQ PM callbacks,
+> > switch the driver to use it instead of open coded variant.
+> >=20
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> > =C2=A0drivers/pinctrl/tegra/pinctrl-tegra.c | 5 +----
+> > =C2=A01 file changed, 1 insertion(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> > b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> > index 4547cf66d03b..734c71ef005b 100644
+> > --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> > +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> > @@ -747,10 +747,7 @@ static int tegra_pinctrl_resume(struct device
+> > *dev)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> > =C2=A0}
+> > =C2=A0
+> > -const struct dev_pm_ops tegra_pinctrl_pm =3D {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.suspend_noirq =3D &tegra_pi=
+nctrl_suspend,
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.resume_noirq =3D &tegra_pin=
+ctrl_resume
+> > -};
+> > +DEFINE_NOIRQ_DEV_PM_OPS(tegra_pinctrl_pm, tegra_pinctrl_suspend,
+> > tegra_pinctrl_resume);
+> > =C2=A0
+> > =C2=A0static bool tegra_pinctrl_gpio_node_has_range(struct tegra_pmx *p=
+mx)
+> > =C2=A0{
 >=20
-> Signed-off-by: Henry Lin <henryl@nvidia.com>
-> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
-> ---
->  drivers/usb/host/xhci-tegra.c | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
+> Another driver where using EXPORT_GPL_DEV_PM_OPS() would make more
+> sense.
 
-I just noticed that there's a typo in the linux-usb@vger.kernel.org
-mailing list address, so you may want to resend this to make sure this
-goes to the patch tracker and all.
+We don't currently export these PM ops because none of the Tegra pinctrl
+drivers can be built as a module.
 
 Thierry
 
---i1iMksCSr7RDaYjM
+--YpHy1Bd1lMbYUgMr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS2QloACgkQ3SOs138+
-s6Efdw/+JJgyH70jYy1UUCT2AkarMe45v3dXfFD+Rpr1irftfLTX57TAqQUEBTpV
-4wsvkLQNR/PtRdDO2XCddHmfhWRrf06RNpznVGyfUJo0CZ1HZ/Hd79K1aASUBDI0
-1eVs58qaCCtU238XJOpdqhNqqpfw2Hm3T0Dnm82vJ6QUODvtF/lp4HNUn8ByCTch
-aH7W+U0rcFS+sHewLLdY9tpA/+i9VO5dGzLKsYwIny7f9bkNGp5igv4VLqyyH278
-pMhjxuzvo/EZbaAqQrwxnrjEPVJHSOas2LabX3yL/0+EScQXV29SkDregRCoFLis
-dJ8mzFcQuVKe9lys/XDOVuEdUo5Rf/qCedEWQjzlxAWa9T1ZXXnH0RvMCT2ttvj0
-WD1tHyYYeeHM4JCzpUvmM8jjfcpNUfspVIqSsVuAne3fAtyLzbjl3BqMzg+QSEW7
-vebi0SReY86kgwAbdgmo3BxR1kp/e5i9/LESUhNnfaqZ18TmP9DzOl+IhvYMzBcq
-/EFX7L+KDIqRCQgqMJz4QsQWkT2Pky1M9XHEkJKVe5TqiPQPlUfi9ugP1SQc+BPc
-L9m9Fk9xbzq8vBGMyAb2aKpAAec4Ngs4l9zeigvCM1VPCiMXXTyu1iKGb7musgGT
-cSlkkZBKQlLO+NVq/ZxV9n9hhCJ+5wK+QvNqO5NxhdW/CGLDcAc=
-=BU6p
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS2Qy8ACgkQ3SOs138+
+s6E2zA//adgY1czrgMP7ZiR05NoGmst/GDCFMtTNNjoFKJ+5qLILfen7dukvYsaX
+thipJMAflV2Dwp6V8qH+E07id61JFjOPdr7/swudmhqZvmXNmCuZpzwHyEDQRnO2
+iKg3hMJeAbUBH11v8REz5mKMYLVHrqY3p0CrDENV5fi82reSfhzrl2dPfq4N1kTi
+S2oaewVmBniiPcL+3mTwHP95sbvFdku/bazMrqzVXUYdBqqFaoKdTpbGW6znNxCt
+UzPqJsINFesWbGNNsEACeurrn5tCCFKxa+mxCFuS4/NkZHflNGS0sofQD8kKIWP+
+uuAOIz2OUWmenYbdRe7JauuO7+yotpcyJv7X+HOp1BXwd8hAoD1weqf5RPO71mTc
+9PWzSvVMfQMb0s3LFkAEBYebGOpfXS4lwXRDxr1+L/1H0GoHoo1lrubRLsFj8e1G
+3GpCXNukxSq5Fqjp+fR31U/r/wF6UhIwUz0466nQGmVYtCbNKDo3jLaHqDpEoRr/
+7x/+KOjTuZ0NEFcNIGBPg1aB/YSCLfbh3IWf25KqhzOSUbaRs0TVHC0g3cweZWSi
+KzGaKQlaD8MQifTlcdtOUKKvTxZO68BWTqCxElRrDSGUXHIoRVPP9x/+xqLHhlj9
+6Zv9zW/zhvy5mWQojaAsrFEbLtMY7QtP/V9rFY9fo3GFMFtEL3k=
+=ww71
 -----END PGP SIGNATURE-----
 
---i1iMksCSr7RDaYjM--
+--YpHy1Bd1lMbYUgMr--
