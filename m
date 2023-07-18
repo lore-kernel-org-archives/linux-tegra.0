@@ -2,179 +2,119 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79340EB64DC
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 07:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62563EB64DA
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 07:35:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbjGRHV0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jul 2023 03:21:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
+        id S231217AbjGRHfU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jul 2023 03:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbjGRHVZ (ORCPT
+        with ESMTP id S229708AbjGRHfU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jul 2023 03:21:25 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92AA4EC;
-        Tue, 18 Jul 2023 00:21:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eksCvzfmAbGxX5DoWqFX4dLKw9p6DMCT82Ht5Mg8MNDhN33NTA8kNM+a4AD+rDI6YjnpEcNMGfL/vC4ucVv3Lo7Hk5J2KdWiHqVm1ISpHkd727IupHYMFHxUC20vJ+E+WP50XKatmfGDKiEPS+m/742muGPgRE8AT+iYvmXN6NuP8DaFqYYqWa07qkrCooRn34X6+b8wZLMiJ6ovZqoeBOEJyjjO/5/mL+WpjcehnS3VRHThUL43+GTjvfnwDhXbUcJOHGpAwiYifJRavkZV3aWKq2UtyT79TuWwDATYOzHSG5GIiKivOmA9hqt7AgnDqm6n98L90Oms4Fl3p3/I3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/Bxv0tcbTsNipSGKcjMHCOl8Nlagbnn4Nrym5qIR4/A=;
- b=KWo44TmTzZ48YJ/vXlJjR4pk4d59PuY+tCJErDCUDC3IN3bwqxe6viWA6Gxj0UqBYaoM48dAPVlqF4dqvMAAn2Nia95TqfTyOiXEBJQRjMYdUrJyrfjfxdqxKtONd8z9e3Fk2iNdfjheSo3TGUrTgItB7luWfP3BKr9ItneKMnwNjZBoT7de+ETSzkvBqw4LTqJ0SITimsaga9e0Atfpw/xGGQFGjv/aRbqS/pZ/f3XLzlDljebQoTkHS64M69sVlRo0dQ9b3qdwTp4NHVXEY3mKF6Uc8iBrBQ3MofIVmMwsvLnzlHAsdK73RDOS8Et2N2znG5b7Ugknwd341VJyAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/Bxv0tcbTsNipSGKcjMHCOl8Nlagbnn4Nrym5qIR4/A=;
- b=s8dxfERcw/zpS30BTpqCkYpPaG0mf0t01VzOutPX1nlSTMwt8Tukdh4JqOlaPlXA94Fy6q71bYkHG24rqQ4rD11lmmEyif4LCHR1H23HaqAALiE4u7XZqBArWUndJLvq4+DHpWXt9fK2j6VtGpu0RuEGymPP1L9K/tern6YWurisXsyxECUrt+F5SmudVTbG8j7+QqIc10WpUKpBBLLcf0sUI2BWkpiVj8mnm2ro86FDvQLH7R4Pnob1NHILaWAgefhNRmbzvIptMgx8QaTG7YhoNKe4LczU6BdfyVxCEyXxHIqzwoDzsY1gdXZGCsoYAyB+wAbLg5tCblZuj44a6A==
-Received: from MW4PR03CA0027.namprd03.prod.outlook.com (2603:10b6:303:8f::32)
- by BN9PR12MB5163.namprd12.prod.outlook.com (2603:10b6:408:11c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.32; Tue, 18 Jul
- 2023 07:21:22 +0000
-Received: from CO1NAM11FT064.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8f:cafe::e8) by MW4PR03CA0027.outlook.office365.com
- (2603:10b6:303:8f::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.33 via Frontend
- Transport; Tue, 18 Jul 2023 07:21:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1NAM11FT064.mail.protection.outlook.com (10.13.175.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6588.33 via Frontend Transport; Tue, 18 Jul 2023 07:21:21 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 18 Jul 2023
- 00:21:09 -0700
-Received: from 0e64808-lcelt.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Tue, 18 Jul 2023 00:21:07 -0700
-From:   Haotien Hsu <haotienh@nvidia.com>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Tue, 18 Jul 2023 03:35:20 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86064116;
+        Tue, 18 Jul 2023 00:35:18 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9922d6f003cso745732366b.0;
+        Tue, 18 Jul 2023 00:35:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689665717; x=1692257717;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DR4V+aJkLkCM/JmLo15q5+va3R94sRKLeNW/ZLFTIUI=;
+        b=Pp1hHkfi/Vv9ZqXwqD6RoytdWryBzgLJuLp5Um9ru109TzbWCyJ8c8nzgut3r3wj3i
+         9mI07koNLBXrrTUxktLP9Os+bUaffRRjSAidFZVHHUZPTiY4SPvHPVdlX+Yizlyviqoi
+         hJtLDurb8uJDgGUzFt1T12pLyq17exk/XLp3OAe+6QLCr8ubXd1K7l6e9wFZhVOakO3j
+         Qeqz/W/QJbEC4DuL3LtUBVlArCXYiAKqB5X0BWzTxn3lIIZPDF7pJA8lz5Tqajj4HNgm
+         SU1SkN78LwnTL/u4CFJQi8sSrr10VhQEB6c7wVAXhwk3l2HMf5RoMTqRm6lm24CvacWG
+         K46Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689665717; x=1692257717;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DR4V+aJkLkCM/JmLo15q5+va3R94sRKLeNW/ZLFTIUI=;
+        b=OVeR+uLbiJ2w83FbTk7ThcdDluKo79UZH4KVt73nzQec4Y1g77eDcYqmKwM5o1y0QL
+         BK/xcTnLDdcRzyyWg5psY9tV+Vqk0iiwcgwH3958PREkUVajswc1TlTV4IO4/5Rv3pa1
+         gxhlec3FX1PY4i8XxsEhrvQfwjwmGj2v/TVWNh+Y0tJbuZ8OnEfv9POHZlfFXNXZACML
+         cBcFJPgMGlo+PatkvX0Euoyxthbxj2Q7TT0Ut7BEQ2VwH024/OmIpvk5Ocy5G9Pg6ZU1
+         OP3p/FFfcnLMwSkvPIMmcBXksSOlD5bm50pOHpBsbhCCdkawMCafZQdSjLXYZgJnGtyT
+         DSjQ==
+X-Gm-Message-State: ABy/qLZFX4KYYu2aenUaI89cFojm0A8MYyujgdJsHueJgGi1lRucE4B5
+        c2x/eQnWtioYOkf7LhE45HvFRLCj064=
+X-Google-Smtp-Source: APBJJlHe/1AMuJmS6dry+PYpYsby+JNjUJxqCaFQSHts6iBUDi2tuT3m9Lhpyp4FXYYHELg6qxiYAw==
+X-Received: by 2002:a17:906:7393:b0:993:f6db:1589 with SMTP id f19-20020a170906739300b00993f6db1589mr13119982ejl.2.1689665716888;
+        Tue, 18 Jul 2023 00:35:16 -0700 (PDT)
+Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id qn5-20020a170907210500b009937e7c4e54sm659618ejb.39.2023.07.18.00.35.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 00:35:16 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 09:35:14 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Haotien Hsu <haotienh@nvidia.com>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        <inux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Wayne Chang <waynec@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
-        WK Tsai <wtsai@nvidia.com>, Henry Lin <henryl@nvidia.com>,
-        Haotien Hsu <haotienh@nvidia.com>
-Subject: [PATCH] usb: xhci: tegra: Add shutdown callback for Tegra XUSB
-Date:   Tue, 18 Jul 2023 15:20:57 +0800
-Message-ID: <20230718072057.233011-1-haotienh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        inux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Wayne Chang <waynec@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>, WK Tsai <wtsai@nvidia.com>,
+        Henry Lin <henryl@nvidia.com>
+Subject: Re: [PATCH] usb: xhci: tegra: Add shutdown callback for Tegra XUSB
+Message-ID: <ZLZAso-kaNwCbWCT@orome>
+References: <20230718072057.233011-1-haotienh@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT064:EE_|BN9PR12MB5163:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d63ef67-e135-4f63-63b4-08db875f968d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Ht9nDMfJSq9oy/P8YrYFadt4PVXWbX7WMu5jxb6ZGHXhNL47d5HnqHdmLncOKKbdjhBnQrgBXpPsRSj+h41QeJML4mhJYh0twarPhM1iuX1OsTeZRvWuBdmgPS5niKrEdvKwvsYJJ0xyiDQrr0/MbUZmELRkqxLWQ2l4Ys041Nef2Fsi5lSQp/bF1P1vLfNAojK/yRcprDnjaXsJerZIYue+xkgRM3olE2IVhYz8iESbBprUPO5eTFEGuh8/KUpXwF4ciAU7zrSLoMf41qXq98WaldLs8xgdyYG9trF9g19tPOTcVTys7z0tNX28K1YY3wdqzQ5ndVJQt69VxsaMHhDqsk/yl4p1RoRz6VCTSXuE5rXhGheYm3E6qcWcC2Pu92FmhsP2/ViIN4ZRw2SenFq4Tat+JUK2a50yaras7TAOyw/gkZ4IZmD1PvEKAjwKnX0NgVkg+HzKXvw8KA4YHjl9WT6PkOanrRGF+98O2BH9ZdpKei+DthbV48JwArLaSnDOqm9XhpcgwE95N67tYDvaQ8kWsw9QtAHeLEmfsOgZT/mGhfXMED+87qNUW1fn3C2B49RoY7KkAxRwd42GgYYIIAzzmp+0SCiQmWngIsbpFzuDO/g8q9mS2XSNpLQrNCR9lOQ3AEIY9HDpidRkYLvn3daDlw1jwvK5N4Jwv6Z2lqzXbopvMP34V/ZcAnArTfchMawfwjjxDFk5jEoAk6VTmvUpiZUvEFz3ytmi4xpnMtPEs+DL38Ng62HrsDG0
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(39860400002)(396003)(136003)(82310400008)(451199021)(46966006)(36840700001)(40470700004)(7696005)(54906003)(6666004)(478600001)(110136005)(82740400003)(36860700001)(83380400001)(47076005)(2616005)(426003)(40460700003)(86362001)(40480700001)(70586007)(2906002)(186003)(16526019)(336012)(1076003)(107886003)(26005)(356005)(7636003)(70206006)(41300700001)(4326008)(316002)(36756003)(8676002)(5660300002)(8936002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2023 07:21:21.9611
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d63ef67-e135-4f63-63b4-08db875f968d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT064.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5163
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="QfX9Jz0QAjHjoW3v"
+Content-Disposition: inline
+In-Reply-To: <20230718072057.233011-1-haotienh@nvidia.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Henry Lin <henryl@nvidia.com>
 
-If memory accesses by the Tegra XUSB controller are translated through
-the SMMU (System MMU), the hardware may continue accessing memory even
-after the SMMU translations have been disabled during the shutdown
-process and this can in turn cause unpredictable crashes.
-Fix this by adding a shutdown implementation that ensures the hardware
-is turned off during system reboot or shutdown.
+--QfX9Jz0QAjHjoW3v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Henry Lin <henryl@nvidia.com>
-Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+On Tue, Jul 18, 2023 at 03:20:57PM +0800, Haotien Hsu wrote:
+> From: Henry Lin <henryl@nvidia.com>
+>=20
+> If memory accesses by the Tegra XUSB controller are translated through
+> the SMMU (System MMU), the hardware may continue accessing memory even
+> after the SMMU translations have been disabled during the shutdown
+> process and this can in turn cause unpredictable crashes.
+> Fix this by adding a shutdown implementation that ensures the hardware
+> is turned off during system reboot or shutdown.
+>=20
+> Signed-off-by: Henry Lin <henryl@nvidia.com>
+> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index a56cc81b9404..6ef2eac9835d 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1925,6 +1925,15 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+static void tegra_xusb_disable(struct tegra_xusb *tegra)
-+{
-+	tegra_xusb_powergate_partitions(tegra);
-+	tegra_xusb_powerdomain_remove(tegra->dev, tegra);
-+	tegra_xusb_phy_disable(tegra);
-+	tegra_xusb_clk_disable(tegra);
-+	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
-+}
-+
- static int tegra_xusb_remove(struct platform_device *pdev)
- {
- 	struct tegra_xusb *tegra = platform_get_drvdata(pdev);
-@@ -1947,18 +1956,22 @@ static int tegra_xusb_remove(struct platform_device *pdev)
- 
- 	pm_runtime_put(&pdev->dev);
- 
--	tegra_xusb_powergate_partitions(tegra);
--
--	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
--
--	tegra_xusb_phy_disable(tegra);
--	tegra_xusb_clk_disable(tegra);
--	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
-+	tegra_xusb_disable(tegra);
- 	tegra_xusb_padctl_put(tegra->padctl);
- 
- 	return 0;
- }
- 
-+static void tegra_xusb_shutdown(struct platform_device *pdev)
-+{
-+	struct tegra_xusb *tegra = platform_get_drvdata(pdev);
-+
-+	pm_runtime_get_sync(&pdev->dev);
-+	disable_irq(tegra->xhci_irq);
-+	xhci_shutdown(tegra->hcd);
-+	tegra_xusb_disable(tegra);
-+}
-+
- static bool xhci_hub_ports_suspended(struct xhci_hub *hub)
- {
- 	struct device *dev = hub->hcd->self.controller;
-@@ -2666,6 +2679,7 @@ MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
- static struct platform_driver tegra_xusb_driver = {
- 	.probe = tegra_xusb_probe,
- 	.remove = tegra_xusb_remove,
-+	.shutdown = tegra_xusb_shutdown,
- 	.driver = {
- 		.name = "tegra-xusb",
- 		.pm = &tegra_xusb_pm_ops,
--- 
-2.25.1
+Acked-by: Thierry Reding <treding@nvidia.com>
 
+--QfX9Jz0QAjHjoW3v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS2QLIACgkQ3SOs138+
+s6E2EA//Ti2gGtziy55L8HXPtNfWoeobc4xQ5CSAGfFVAyzYBTSnz+iRmeBY6j3k
+zuz8OvbMLy7w83wGuuQ8XPPrVoPcuF2kJGa1Qy+IenUWIe6SXq11I7xRCmCCDmTh
+wx4n/dxooOV6ol6TbbeswYDYKklpupVfrvYCMm5DChNRpYTC7feDtCl+hOda4Mxp
+nPvu05tzxlP4w6DGJnsKT3Zm29RJxfGHZdTiJGq32YAYrtVHcyoez2z6UX2Fa/dw
+glk//oe0XBZ7BeygGe2maWYICOALVWRNAOqQ5hMLYsOTEMpz+zx2KxHIv7ipfcJG
+p9pFfjCeBUEQKnLAKKO3b7o0uBxN18EumteasHQXXjJmLRQj77hSGtaUcGoJYRUl
+f6gLI+wmNUzhmD8vZA93M9uazLVmE6Tu8xAf2RpeucCxuWzPQH+R5+AWBr742Ba/
+jntEFbyCZpy+jOvyfiVDkAn9e4gDY14RM5N3XBqQSiovSeSmno/RQ1nL3iPBdHZf
+SUtkiD4fuXSnLMdljUu0gQw9odvK3MNiCiHK29pKZ3A6GHU3u5gpnq0p1Pa+I3bF
+rSpS1AZ9so+9EEQIK/HNif/d7bGl6Z9ZsY35npKkvzGZXRK7tIWUOrVruc2CuEtC
+GatyLzpWSLvXkiBeHMSsAOOVzWU2Puy8+xGzNewzANueEoS4wR8=
+=t53d
+-----END PGP SIGNATURE-----
+
+--QfX9Jz0QAjHjoW3v--
