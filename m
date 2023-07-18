@@ -2,83 +2,176 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2940DEB64DA
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 11:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11287EB64DC
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 11:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230041AbjGRLJT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jul 2023 07:09:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59940 "EHLO
+        id S231489AbjGRLfL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jul 2023 07:35:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjGRLJR (ORCPT
+        with ESMTP id S229496AbjGRLfK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jul 2023 07:09:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0249A10F2;
-        Tue, 18 Jul 2023 04:09:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 82E9861517;
-        Tue, 18 Jul 2023 11:09:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B93C433C8;
-        Tue, 18 Jul 2023 11:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689678555;
-        bh=455lvYV9bPgscAxyzAWQXxft7jceX9o1s3xKXlHBZik=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=aMM3R+fM3DMEEnetyIC2xArN6N0MGT95Q/dz4zsH5s7iBCvPdKdHDUUhKxyciRaEx
-         PR0qBOqXqqqppec3xDWedOQNQ5hG3X4HHPGkRIoo9pSgG7FXiSJ8w99VwQPYcgOMYI
-         3nNE0sBI60OwD/7vyx1NdlvCEZbvaDutB2nGFp2Qaug497sfNJ3ykOD/QkH0iwbttl
-         S0PmEpDbGvojOuimVGLEn8wIbIoXkov51ZzKXQOnistorEzuYGnIJ5ez7p4EYj7L5O
-         kfHWKMv5z+fBvY4dlHiif1CeY9pXOYIW7RAjCnZK5NMZr1PM5Nehuiq5aHbxJKW2ZY
-         qFyQyhXwHlecQ==
-Date:   Tue, 18 Jul 2023 06:09:13 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte
- payload"
-Message-ID: <20230718110913.GA475601@bhelgaas>
+        Tue, 18 Jul 2023 07:35:10 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B38198;
+        Tue, 18 Jul 2023 04:35:09 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fbf1f6c771so9145692e87.1;
+        Tue, 18 Jul 2023 04:35:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689680107; x=1692272107;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=558NNqLSydmCtufja3yaXYAikd07Os786z1m0zlHWWY=;
+        b=E/7ooIMi7CamrmGly3+l1A7dDsrvC3XBkUkzZTladYs0HRal4h4kwGIlj4ssnbFpY5
+         7d5io1U/q45FolUMlZfNrJLn/5oPtaUJ/trrKPCZ0/LhmgNTsthTHaw/12GxZaGzQScN
+         +ky+63IZRgakq8zdLgNG7fXTt6AfUqtb4lMfGxYiCrAogaX5thP52tAg9/JUBqTQ0BmY
+         1YUXvr0UrZYBgNUhbaRJVRKDzld2cla8xACCplaknaZ8/QTpug2wjBK96xZAxVitcBOx
+         fa30mthT5NqoYc2E4nk9SVDKgRltwrnYYyfllq5DN/pJgqSzyxMrxKYiA0r7E+NdE/St
+         v1qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689680107; x=1692272107;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=558NNqLSydmCtufja3yaXYAikd07Os786z1m0zlHWWY=;
+        b=PqeRiF1n3Y4YZuAI/looqSwb4mOnuM/X5sR49/WwP0E5wC+P4kr+qKo98Ata3enXey
+         Cu5UKnWMpSFpNsa86zL5eTsZB/p62+i3lc6uepMyiTg2TAXg5XZtBi8vVEOkNmfMYULU
+         24obk7rLG04uEFONJi8TdHTQ6jaR87+8p19daSdFYL5iYrWCW0nY31u/v/mpsv6WBP+K
+         C7sb3DpB/OKY5ViLZWbVki9o2s0vKF2dgdq89JT+sDa1ZOkOULozLbiU7Pl4alBEWZEi
+         MT5eLg5sHbcnPcVqam9wLg5OSYvKQtJg0nQ8XhEvNBenBvcw7NGpicfGVaKGpVkKTfjW
+         3C/Q==
+X-Gm-Message-State: ABy/qLazH5WsKa08veESXfRabjlqUdDFIFuXR308p/tl/w+koYBZulMg
+        qNZ2FUNjOED5aF52tKy1vhw=
+X-Google-Smtp-Source: APBJJlFYESW3usU7APpYleOHD+Xy9RuSGKLPcoSl+VlmpwiezgQkXAl6V4lF0/FRuOChmTl6wdbrrQ==
+X-Received: by 2002:a05:6512:3da6:b0:4f8:68a3:38e2 with SMTP id k38-20020a0565123da600b004f868a338e2mr12421232lfv.0.1689680107115;
+        Tue, 18 Jul 2023 04:35:07 -0700 (PDT)
+Received: from orome (p200300e41f4b7100f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:7100:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id r3-20020aa7cfc3000000b0051df67eaf62sm1099053edy.42.2023.07.18.04.35.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 04:35:06 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 13:35:05 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Oliver Neukum <oneukum@suse.com>
+Cc:     Haotien Hsu <haotienh@nvidia.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Wayne Chang <waynec@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>, WK Tsai <wtsai@nvidia.com>,
+        Henry Lin <henryl@nvidia.com>
+Subject: Re: [PATCH v2] usb: xhci: tegra: Add shutdown callback for Tegra XUSB
+Message-ID: <ZLZ46fPCdPt1Bpul@orome>
+References: <20230718091425.307589-1-haotienh@nvidia.com>
+ <525bc794-b797-9a53-7f59-debcfca9edd8@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="KDREtPOnoIrM9MEt"
 Content-Disposition: inline
-In-Reply-To: <6bc71b88-1c8c-0c2c-d9e1-22096f928ad5@nvidia.com>
+In-Reply-To: <525bc794-b797-9a53-7f59-debcfca9edd8@suse.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 08:03:47AM +0530, Vidya Sagar wrote:
-> On 7/14/2023 3:09 AM, Bjorn Helgaas wrote:
-> > On Mon, Jun 19, 2023 at 03:56:04PM +0530, Vidya Sagar wrote:
-> > > This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
-> > > support for 256 Byte payload").
-> > > 
-> > > Consider a PCIe hierarchy with a PCIe switch and a device connected
-> > > downstream of the switch that has support for MPS which is the minimum in
-> > > the hierarchy, and root port programmed with an MPS in its DevCtl register
-> > > that is greater than the minimum. In this scenario, the default bus
-> > > configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
-> > > MPS settings in the hierarchy correctly resulting in the device with
-> > > support for minimum MPS in the hierarchy receiving the TLPs of size more
-> > > than that. Although this can be addressed by appending "pci=pcie_bus_safe"
-> > > to the kernel command line, it doesn't seem to be a good idea to always
-> > > have this commandline argument even for the basic functionality to work.
-> > 
-> > I think this has some irrelevant detail (IIUC the problem should
-> > happen even without a switch) and could be more specific (I think the
-> > problem case is RP MPS=256, EP only supports MPS=128).
->
-> The issue is present only if there is a switch.
 
-So if there's no switch, and an EP that only supports MPS=128, the PCI
-core changes the RP MPS setting to 128?  Just based on reading the
-code, I thought we would leave RP MPS=256 and EP MPS=128, which would
-be a problem.  But maybe the PCI core changes the RP down to MPS=128?
+--KDREtPOnoIrM9MEt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bjorn
+On Tue, Jul 18, 2023 at 11:18:25AM +0200, Oliver Neukum wrote:
+>=20
+>=20
+> On 18.07.23 11:14, Haotien Hsu wrote:
+> > From: Henry Lin <henryl@nvidia.com>
+> >=20
+> > If memory accesses by the Tegra XUSB controller are translated through
+> > the SMMU (System MMU), the hardware may continue accessing memory even
+> > after the SMMU translations have been disabled during the shutdown
+> > process and this can in turn cause unpredictable crashes.
+> > Fix this by adding a shutdown implementation that ensures the hardware
+> > is turned off during system reboot or shutdown.
+> >=20
+> > Signed-off-by: Henry Lin <henryl@nvidia.com>
+> > Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
+> > Acked-by: Thierry Reding <treding@nvidia.com>
+> >=20
+> > ---
+> > V1 -> V2: Resend for the typo in the mailing list
+> > ---
+> >   drivers/usb/host/xhci-tegra.c | 28 +++++++++++++++++++++-------
+> >   1 file changed, 21 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegr=
+a.c
+> > index a56cc81b9404..6ef2eac9835d 100644
+> > --- a/drivers/usb/host/xhci-tegra.c
+> > +++ b/drivers/usb/host/xhci-tegra.c
+> > @@ -1925,6 +1925,15 @@ static int tegra_xusb_probe(struct platform_devi=
+ce *pdev)
+> >   	return err;
+> >   }
+> > +static void tegra_xusb_disable(struct tegra_xusb *tegra)
+> > +{
+> > +	tegra_xusb_powergate_partitions(tegra);
+> > +	tegra_xusb_powerdomain_remove(tegra->dev, tegra);
+> > +	tegra_xusb_phy_disable(tegra);
+> > +	tegra_xusb_clk_disable(tegra);
+> > +	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+> > +}
+> > +
+> >   static int tegra_xusb_remove(struct platform_device *pdev)
+> >   {
+> >   	struct tegra_xusb *tegra =3D platform_get_drvdata(pdev);
+> > @@ -1947,18 +1956,22 @@ static int tegra_xusb_remove(struct platform_de=
+vice *pdev)
+> >   	pm_runtime_put(&pdev->dev);
+> > -	tegra_xusb_powergate_partitions(tegra);
+> > -
+> > -	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+> > -
+> > -	tegra_xusb_phy_disable(tegra);
+> > -	tegra_xusb_clk_disable(tegra);
+> > -	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+> > +	tegra_xusb_disable(tegra);
+> >   	tegra_xusb_padctl_put(tegra->padctl);
+> >   	return 0;
+> >   }
+> > +static void tegra_xusb_shutdown(struct platform_device *pdev)
+> > +{
+> > +	struct tegra_xusb *tegra =3D platform_get_drvdata(pdev);
+> > +
+> > +	pm_runtime_get_sync(&pdev->dev);
+>=20
+> Where is this balanced?
+
+Well, I suppose we could add a pm_runtime_put() at the end of this
+function, but since we expect the system to shut down after this, at
+which point any runtime PM accounting is going to go bye-bye anyway,
+do we really want to bother?
+
+Thierry
+
+--KDREtPOnoIrM9MEt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS2eOYACgkQ3SOs138+
+s6G2DhAAqDAGSWBzjm2Ul3XGEIDkj9UxFJ5HEhBxD3+oeW1RvnFMMjj54xRV+GwE
+J0+4KDAaQVKEp8k29X6hDHR4jDqoMsAWpZj5FGIC2IQBiZUflILX0zajOlTI3l3e
+IjS2GUQyQ0/XqJ7fN/tsIK3tY+Phpz+GvttXAqb8srhaY8gA+/n1+/fePx/vYCyw
+Ne3Ajz0WLKzOfdUv16uZdlNKVGD6kyUZsgnFjCZpFGxteAUcyEjoJayYMsoJF0ch
+SiAI5XWeDM6pxDxJnOX+hk2QF3Wpgv0anxm/3IAu3P923t5+QuIbSEvmOvWiJeXe
+ACSpQD/RY5ID5llsr3PxGcTZsOqQ5YRUbq0bcEgfoH6s5WmsEkme1YpVt1YBC96m
+Z8yO2IpOiSQOVkBm8s9bg1SYJBZ8hcSgOWX7kXU89TGzz9UrC5bQo7qK+EVDhpXo
+HWdDdTdnSCoZSjsln1j3cPkQMAXgb9PSaE7yZUqOj8KTvwRcELp3IrIOhfZ15H+0
+3nsPb97Rp3olURkqZIQv0Ex+1OLKMZXmHd2genONATMqHq6Jb4na1svHq/pUx1EK
+K4B2MS2ZF8l2QMog0FbWIB3WWyfTurUQ06/usGnG2P9eWfKDOLagApFyHLwDmYul
+sDKZqgru6gD+WYgilAoBUgLbhwD8lm9ELvUQ0ncQUuqvwHhJ/Ss=
+=nUaM
+-----END PGP SIGNATURE-----
+
+--KDREtPOnoIrM9MEt--
