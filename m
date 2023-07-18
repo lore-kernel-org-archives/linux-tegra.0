@@ -2,119 +2,144 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D1CEB64DD
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 09:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD553EB64DC
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jul 2023 09:48:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232353AbjGRJ2I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jul 2023 05:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
+        id S230414AbjGRJrr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jul 2023 05:47:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232320AbjGRJ2G (ORCPT
+        with ESMTP id S231827AbjGRJrp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jul 2023 05:28:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFAF710C0
-        for <linux-tegra@vger.kernel.org>; Tue, 18 Jul 2023 02:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689672437;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z0vyMeOfw7fSC/qxKnZBBj+xlz8lL8pZMksMNnnuzCg=;
-        b=Q2+7fGF0YkjJPjxBfiXUIFkyFK5IRcBIC8/xhlL+kpaCbfiCSxwWapD7JXhNS7srOtvUqS
-        idSrC9/xzjOeMZ/M8q6XgyTv9hMgFnvyY/sllrd8LeFgIm4k5nuBQ93iP4SiKvPFB6UUz+
-        ZN478OsyWDXLgMv7hDKdnoKQ5HpMCPE=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-646-kR8OmgYsNaW_TrjcVWj3QQ-1; Tue, 18 Jul 2023 05:27:16 -0400
-X-MC-Unique: kR8OmgYsNaW_TrjcVWj3QQ-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-63c9463c116so5251346d6.0
-        for <linux-tegra@vger.kernel.org>; Tue, 18 Jul 2023 02:27:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689672436; x=1690277236;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z0vyMeOfw7fSC/qxKnZBBj+xlz8lL8pZMksMNnnuzCg=;
-        b=jY+/nAk8tilAgFJYwduijGL4zHKGhQmw+kkXWLyQ0DNn+n7GJbPF4Vf+93P9VQ8o59
-         EBA4aak8zcggrsye/ShEGsPo1hFNqq+D45Jbbx2llqv3RYZX4sbnjcxmZzL9Prq44Xra
-         HUeYwvfZ3x3VtWJzpgu4urJ62cCGyOash2JAfrHFb39OeVF8xN9fK7BdUkcq95YaKuR1
-         nL19j0L/Q97s9tcsNTqC7RwHvptoqL+HKoYdSbdwm09eq0JLaTCBAMv3yu1Op5SVCzUy
-         tHeH2fbHICWlk4AUpw4piMwqKvBMNGMYpXuGvKbp5jOIgS2wWMA7AIXykwsSatYycqVr
-         4P2g==
-X-Gm-Message-State: ABy/qLbW6QIhHyyGaAH6fbmXEwPHxxPLNUOAjwiwoJ2o8mnf9jJMZZM+
-        O/T4t2ZhESlrtMyV3cysHNp48qnumlORFqhQlQZe33e2dCbGKAaErzCBnDs5a1ivTE5+g7pvFrW
-        IB7ECg7Xoiey/sdjar2AI9k0=
-X-Received: by 2002:a05:6214:509d:b0:63c:7427:e7e9 with SMTP id kk29-20020a056214509d00b0063c7427e7e9mr12261337qvb.6.1689672436176;
-        Tue, 18 Jul 2023 02:27:16 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFYFNw7x3jThmvZICEe6iXFu0qG+zQql7vEpRKMvc0qVPxJUK7o8zW+ji84Z85dUEkIw+qD2g==
-X-Received: by 2002:a05:6214:509d:b0:63c:7427:e7e9 with SMTP id kk29-20020a056214509d00b0063c7427e7e9mr12261327qvb.6.1689672435965;
-        Tue, 18 Jul 2023 02:27:15 -0700 (PDT)
-Received: from gerbillo.redhat.com (146-241-226-170.dyn.eolo.it. [146.241.226.170])
-        by smtp.gmail.com with ESMTPSA id h10-20020a0cf20a000000b00635fc10afd6sm592785qvk.70.2023.07.18.02.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 02:27:15 -0700 (PDT)
-Message-ID: <ee31215ededd386eba19fb62b0de8d0bad78d687.camel@redhat.com>
-Subject: Re: [PATCH] net: Explicitly include correct DT includes
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Alex Elder <elder@ieee.org>, Rob Herring <robh@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-oxnas@groups.io,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-wpan@vger.kernel.org, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-        wcn36xx@lists.infradead.org
-Date:   Tue, 18 Jul 2023 11:27:10 +0200
-In-Reply-To: <1c6175fc-496a-843c-c8c5-2173e065eaa8@ieee.org>
-References: <20230714174809.4060885-1-robh@kernel.org>
-         <1c6175fc-496a-843c-c8c5-2173e065eaa8@ieee.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        Tue, 18 Jul 2023 05:47:45 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE45128;
+        Tue, 18 Jul 2023 02:47:44 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 792D1660704F;
+        Tue, 18 Jul 2023 10:47:41 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1689673662;
+        bh=xlkvCFSIyUU/M7gkrwgIXP7wr6bqg7L/fte3NfnuGE4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=kpNw5uiQpRxgVIR/cZolWOBcgtgrIh5Qjc90he0kMFkFvs1JnWQ4MgAnaw9HgDhan
+         J+x56N3uYtgBjZoxA6i5Ljwzng0/OHxWegzoPcveF0qv8BhdHpqkgHPswzycJ8Iu5j
+         mT96yOFMrX+tDz7Ezg7vg1tvSr/HmUSjZVHcUdslSvKmr3Pii+2u833Og6T+Wc831J
+         VMzRDzaw3bLI2vrqJdkM51ygFoAaf1KxokL046C2rSmYNJlztSwIdnQz9OHvYm9A7s
+         OtGccP6zdwc2De1Lh9M1fthZwYbRUsXKsL9+QPj0Cnewr3C3oiYOGpsZAw/cFTzJjP
+         F5bEbkHAJiFxw==
+Message-ID: <64741cb9-3bcb-ba50-6e09-f30847bda669@collabora.com>
+Date:   Tue, 18 Jul 2023 11:47:38 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v2 07/10] pinctrl: mediatek: Switch to use
+ DEFINE_NOIRQ_DEV_PM_OPS() helper
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     Andy Shevchenko <andy@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
+ <20230717172821.62827-8-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230717172821.62827-8-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Il 17/07/23 19:28, Andy Shevchenko ha scritto:
+> Since pm.h provides a helper for system no-IRQ PM callbacks,
+> switch the driver to use it instead of open coded variant.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>   drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 5 +----
+>   drivers/pinctrl/mediatek/pinctrl-paris.c      | 9 +++------
+>   2 files changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index 665dec419e7c..2bf5082d3aa9 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -922,10 +922,7 @@ static int mtk_eint_resume(struct device *device)
+>   	return mtk_eint_do_resume(pctl->eint);
+>   }
+>   
+> -const struct dev_pm_ops mtk_eint_pm_ops = {
+> -	.suspend_noirq = mtk_eint_suspend,
+> -	.resume_noirq = mtk_eint_resume,
+> -};
+> +DEFINE_NOIRQ_DEV_PM_OPS(mtk_eint_pm_ops, mtk_eint_suspend, mtk_eint_resume);
+>   
+>   static int mtk_pctrl_build_state(struct platform_device *pdev)
+>   {
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> index 33d6c3fb7908..b1cbd5bafa2e 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> @@ -1119,24 +1119,21 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev)
+>   }
+>   EXPORT_SYMBOL_GPL(mtk_paris_pinctrl_probe);
+>   
+> -static int mtk_paris_pinctrl_suspend(struct device *device)
+> +static int mtk_paris_suspend(struct device *device)
+>   {
+>   	struct mtk_pinctrl *pctl = dev_get_drvdata(device);
+>   
+>   	return mtk_eint_do_suspend(pctl->eint);
+>   }
+>   
+> -static int mtk_paris_pinctrl_resume(struct device *device)
+> +static int mtk_paris_resume(struct device *device)
 
-On Sat, 2023-07-15 at 10:11 -0500, Alex Elder wrote:
-> On 7/14/23 12:48 PM, Rob Herring wrote:
-> > The DT of_device.h and of_platform.h date back to the separate
-> > of_platform_bus_type before it as merged into the regular platform bus.
-> > As part of that merge prepping Arm DT support 13 years ago, they
-> > "temporarily" include each other. They also include platform_device.h
-> > and of.h. As a result, there's a pretty much random mix of those includ=
-e
-> > files used throughout the tree. In order to detangle these headers and
-> > replace the implicit includes with struct declarations, users need to
-> > explicitly include the correct includes.
-> >=20
-> > Signed-off-by: Rob Herring <robh@kernel.org>
->=20
-> (I significantly reduced the addressee list to permit the message
-> to be sent.)
->=20
-> For "drivers/net/ipa/ipa_main.c":
->=20
-> Acked-by: Alex Elder <elder@linaro.org>
+What's the reason why you changed the suspend/resume function names?
+I don't really mind, but please at least mention that in the commit description.
 
-The patch does not apply cleanly to net-next. Rob, could you please re-
-spin it? While at that, have you considered splitting it in a few
-smaller patches (e.g. can, dsa, freescale, ibm, marvel, mediatek,
-stmmicro,  sun, ti, xilinx, wireless, remaining)?
+Thanks,
+Angelo
 
-Thanks!
-
-Paolo
+>   {
+>   	struct mtk_pinctrl *pctl = dev_get_drvdata(device);
+>   
+>   	return mtk_eint_do_resume(pctl->eint);
+>   }
+>   
+> -const struct dev_pm_ops mtk_paris_pinctrl_pm_ops = {
+> -	.suspend_noirq = mtk_paris_pinctrl_suspend,
+> -	.resume_noirq = mtk_paris_pinctrl_resume,
+> -};
+> +DEFINE_NOIRQ_DEV_PM_OPS(mtk_paris_pinctrl_pm_ops, mtk_paris_suspend, mtk_paris_resume);
+>   
+>   MODULE_LICENSE("GPL v2");
+>   MODULE_DESCRIPTION("MediaTek Pinctrl Common Driver V2 Paris");
 
