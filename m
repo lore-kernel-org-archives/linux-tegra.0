@@ -2,95 +2,103 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AF6C001DC
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 08:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B955CC0015E
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 10:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjGSIo5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Jul 2023 04:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41108 "EHLO
+        id S231337AbjGSKhq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Jul 2023 06:37:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229763AbjGSIo5 (ORCPT
+        with ESMTP id S231211AbjGSKhh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Jul 2023 04:44:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 906A1FC;
-        Wed, 19 Jul 2023 01:44:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 28F3F60AE3;
-        Wed, 19 Jul 2023 08:44:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF850C433C7;
-        Wed, 19 Jul 2023 08:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689756295;
-        bh=lVZ6jv8hW/ZY+njtz6wW0DRddCPA64EmfRAFyCC/CaY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nkgonrvTzSZZouPaj9uxHZza15B96zRK2yWFn36YXsnQbL0acCVbB0QivX1CaJ2H7
-         Ko7h4VnLtxuVw7KvZd/lwHuATVZP19cHo3cMg5Jx41GtAOngbfQOTe5932bRWZwQUV
-         CaIVDMZxS6WakprryPu0nantsB5Jh+mfxyRhn53WAt+V2/R0AlehWDDK/iSooMtypq
-         5moxdoG3HKkzzyTPn/94rD6LO3yNFq94Lbwnm5dJkhXguIJeabR1j8ZDVy7ny41gYk
-         h8vfM3IEz6r8SLI514xtouc7GnGWtjfYG7gW7nL0Fm3WnJCDdM+o2YcmPUhTTiC9Tz
-         70VKXqSIawsAw==
-Date:   Wed, 19 Jul 2023 09:44:49 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     dmitry.osipenko@collabora.com, konstantin@linuxfoundation.org,
-        benjamin.bara@skidata.com, jonathanh@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, peterz@infradead.org,
-        rafael.j.wysocki@intel.com, richard.leitner@linux.dev,
-        treding@nvidia.com, wsa+renesas@sang-engineering.com,
-        wsa@kernel.org
-Subject: Re: [PATCH v7 5/5] mfd: tps6586x: register restart handler
-Message-ID: <20230719084449.GH1082701@google.com>
-References: <215679f1-a866-1e92-1bab-9c80918927a6@collabora.com>
- <20230719082251.3501424-1-bbara93@gmail.com>
+        Wed, 19 Jul 2023 06:37:37 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18BABE4C;
+        Wed, 19 Jul 2023 03:37:35 -0700 (PDT)
+Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4R5XJM4DzNz6J6X0;
+        Wed, 19 Jul 2023 18:34:59 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 19 Jul
+ 2023 11:37:32 +0100
+Date:   Wed, 19 Jul 2023 11:37:31 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        "Claudiu Beznea" <claudiu.beznea@microchip.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Len Brown" <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Ludovic Desroches" <ludovic.desroches@microchip.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2 04/10] pinctrl: intel: Switch to use
+ DEFINE_NOIRQ_DEV_PM_OPS() helper
+Message-ID: <20230719113731.00007248@Huawei.com>
+In-Reply-To: <ZLaZWcyJAnQMK87f@smile.fi.intel.com>
+References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
+        <20230717172821.62827-5-andriy.shevchenko@linux.intel.com>
+        <20230718110451.00001227@Huawei.com>
+        <ZLaZWcyJAnQMK87f@smile.fi.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230719082251.3501424-1-bbara93@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.76]
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 19 Jul 2023, Benjamin Bara wrote:
+On Tue, 18 Jul 2023 16:53:29 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-> Hi Dmitry,
+> On Tue, Jul 18, 2023 at 11:04:51AM +0100, Jonathan Cameron wrote:
+> > On Mon, 17 Jul 2023 20:28:15 +0300
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:  
 > 
-> thanks for the feedback!
+> ...
 > 
-> On Tue, 18 Jul 2023 at 06:46, Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
-> > 15.07.2023 10:53, Benjamin Bara пишет:
-> > >
-> > > Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> > > Acked-for-MFD-by: Lee Jones <lee@kernel.org>
-> >
-> > Acked-for-MFD-by isn't a valid tag, scripts/checkpatch.pl should tell
-> > you about it.
-> >
-> > In general you may add a comment to a tag, like this:
-> >
-> >   Acked-by: Lee Jones <lee@kernel.org> # for MFD
-> >
-> > In this particular case, the comment is unnecessary because Lee is the
-> > MFD maintainer, hence his ack itself implies the MFD subsys.
+> > >  EXPORT_SYMBOL_GPL(intel_pinctrl_resume_noirq);  
+> > 
+> > Can you check if this is successfully removed?  I think it won't be.
+> > Not immediately obvious how to tidy that up given these are used
+> > in a macro called from lots of drivers.  
 > 
-> I saw the warning, but Lee requested to add it like this [1].
+> That's what Paul noticed I think with his proposal to export only the ops
+> variable and make these to be static.
 > 
-> @Konstantin:
-> Do you think it makes sense to print a warning when adding "non-standard
-> trailers" during running "b4 trailers -u", maybe around the
-> find_trailers() checks? I could provide a RFC, if considered useful.
-> [1] https://lore.kernel.org/all/20230518094434.GD404509@google.com/
+> > Maybe just leaving the ifdef is best we can do here.  
+> 
+> See above.
+> 
+Ah. I noticed it was a macro, but not that all it did was
+set the name of the resulting structure (so thought you couldn't
+use the export approach).
 
-Dmitry, Benjamin,
+Indeed that's the best option here
 
-The warning is valid.  The patch will not be applied like this.
+Jonathan
 
-I will remove it when I merge the patch.
 
--- 
-Lee Jones [李琼斯]
