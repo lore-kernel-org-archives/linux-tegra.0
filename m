@@ -2,94 +2,69 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B20EB64DA
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 14:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 439D8C001B0
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 18:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230120AbjGSO52 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Jul 2023 10:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47198 "EHLO
+        id S230052AbjGSSae (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Jul 2023 14:30:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbjGSO51 (ORCPT
+        with ESMTP id S229724AbjGSSad (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Jul 2023 10:57:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06ED1C7;
-        Wed, 19 Jul 2023 07:57:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DC0761722;
-        Wed, 19 Jul 2023 14:57:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E58C433C7;
-        Wed, 19 Jul 2023 14:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689778645;
-        bh=ioxh6o118q6+dHWAukEdaC/0qLhTOk/cq+k9l/QZjHQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=uJFJ+VCsuyrn1Svp5t1Yx2Zm9gBP1Mm9qqO4AEmXa7WFYgjyBaS4owi8p88sBr0Qo
-         6hnApno9OOFsXr7LJ+0VlGFYrVHcZFFikRVi3mB/gIqeXMeXdxYsnfZoQSm6NK1nsi
-         QoVbZ6Osihgz5Tq3aw56aDkfXswV5kH2dl7PsJQgekkqs+J6Re790NPUAGLUHGX5eL
-         7q4GWrpv6+9lNOI6rJOnJgxVBOmDRU4dkaF3MlRhMvthq9exuZLcTWiqaP3uZJu/DN
-         9W3lr5d9TYHoEy9uIEoXTFNNDdBdwQTeKAtL/DJJRGM74WQv/wsKKRdTbIR+BnuXCf
-         kYlGS4SRINgYg==
-Date:   Wed, 19 Jul 2023 09:57:22 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte
- payload"
-Message-ID: <20230719145722.GA501156@bhelgaas>
+        Wed, 19 Jul 2023 14:30:33 -0400
+X-Greylist: delayed 477 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 19 Jul 2023 11:30:32 PDT
+Received: from out-48.mta0.migadu.com (out-48.mta0.migadu.com [91.218.175.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D790BB6
+        for <linux-tegra@vger.kernel.org>; Wed, 19 Jul 2023 11:30:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43a9ab32-c030-1906-7e7d-c529e6c9c70d@nvidia.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1689790953;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=U+h7nF3iHJyXPGTjQCGPc4jOSdU2SFBb4VhoriSzvmw=;
+        b=Mbu00FFURdQu9G26tCptH/9qN208NliBSpa/YWw7dlECzT5NyEOnLR7wUuD0kg/NU2XbvU
+        4OAlFJTZF4XaJaWu1rVQdLU/t3+h53J2M/H0op2r3NCU1RryfiTvW7JEidUC+ZAHzW+7bM
+        eOSoidOQ+eINfYGKuGPARqi9urbNJw0=
+Date:   Wed, 19 Jul 2023 18:22:32 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   "Konstantin Ryabitsev" <konstantin.ryabitsev@linux.dev>
+Message-ID: <58d0c47502218fd689c5ecd100ba0d5d02d89926@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v7 5/5] mfd: tps6586x: register restart handler
+To:     "Benjamin Bara" <bbara93@gmail.com>, dmitry.osipenko@collabora.com,
+        konstantin@linuxfoundation.org
+Cc:     bbara93@gmail.com, benjamin.bara@skidata.com, jonathanh@nvidia.com,
+        lee@kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        peterz@infradead.org, rafael.j.wysocki@intel.com,
+        richard.leitner@linux.dev, treding@nvidia.com,
+        wsa+renesas@sang-engineering.com, wsa@kernel.org
+In-Reply-To: <20230719082251.3501424-1-bbara93@gmail.com>
+References: <20230719082251.3501424-1-bbara93@gmail.com>
+ <215679f1-a866-1e92-1bab-9c80918927a6@collabora.com>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jul 19, 2023 at 04:31:13PM +0530, Vidya Sagar wrote:
-> On 7/18/2023 4:39 PM, Bjorn Helgaas wrote:
-> > On Tue, Jul 18, 2023 at 08:03:47AM +0530, Vidya Sagar wrote:
-> > > On 7/14/2023 3:09 AM, Bjorn Helgaas wrote:
-> > > > On Mon, Jun 19, 2023 at 03:56:04PM +0530, Vidya Sagar wrote:
-> > > > > This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
-> > > > > support for 256 Byte payload").
-> > > > > 
-> > > > > Consider a PCIe hierarchy with a PCIe switch and a device connected
-> > > > > downstream of the switch that has support for MPS which is the minimum in
-> > > > > the hierarchy, and root port programmed with an MPS in its DevCtl register
-> > > > > that is greater than the minimum. In this scenario, the default bus
-> > > > > configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
-> > > > > MPS settings in the hierarchy correctly resulting in the device with
-> > > > > support for minimum MPS in the hierarchy receiving the TLPs of size more
-> > > > > than that. Although this can be addressed by appending "pci=pcie_bus_safe"
-> > > > > to the kernel command line, it doesn't seem to be a good idea to always
-> > > > > have this commandline argument even for the basic functionality to work.
-> > > > 
-> > > > I think this has some irrelevant detail (IIUC the problem should
-> > > > happen even without a switch) and could be more specific (I think the
-> > > > problem case is RP MPS=256, EP only supports MPS=128).
-> > > 
-> > > The issue is present only if there is a switch.
-> > 
-> > So if there's no switch, and an EP that only supports MPS=128, the PCI
-> > core changes the RP MPS setting to 128?  Just based on reading the
->
-> Yes. The code after the if condition here takes care of that.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/probe.c?h=v6.5-rc2#n2049
+July 19, 2023 at 4:22 AM, "Benjamin Bara" <bbara93@gmail.com> wrote:=20
+>=20@Konstantin:
+> Do you think it makes sense to print a warning when adding "non-standar=
+d
+> trailers" during running "b4 trailers -u", maybe around the
+> find_trailers() checks? I could provide a RFC, if considered useful.
 
-Oh, right, thanks.  I vaguely remember the logic that if the immediate
-parent is a Root Port, there are no other branches in the hierarchy to
-worry about, so we can just configure the Root Port MPS to match the
-device.
+With b4 being used for other projects than just the Linux kernel, I don't=
+ think it makes sense for us to track what is a valid and what is an inva=
+lid "person-trailer". I know that we could make it configurable, but I do=
+n't think this will actually improve the situation.
 
-> > code, I thought we would leave RP MPS=256 and EP MPS=128, which would
-> > be a problem.  But maybe the PCI core changes the RP down to MPS=128?
-> > 
-> > Bjorn
+One goal for b4 is to allow defining validation tests and requiring them =
+prior to "b4 send", so I think this is a better mechanism for dealing wit=
+h such situations.
+
+-K
