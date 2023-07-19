@@ -2,113 +2,161 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92BCEB64DA
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 11:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF19DC001DE
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 12:58:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbjGSLYr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Jul 2023 07:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
+        id S230131AbjGSM6C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Jul 2023 08:58:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjGSLYq (ORCPT
+        with ESMTP id S230128AbjGSM5y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Jul 2023 07:24:46 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95AC310CB
-        for <linux-tegra@vger.kernel.org>; Wed, 19 Jul 2023 04:24:45 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id a1e0cc1a2514c-7918b56b1e1so2452540241.2
-        for <linux-tegra@vger.kernel.org>; Wed, 19 Jul 2023 04:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689765884; x=1690370684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZSrWDc/cBveds+xSFFWhnQ/pzCd4lTeY64B0PPEGW0=;
-        b=T1IMgiireLSvSXiTqLXmFjq9F8EsjIjVEm5sr6vcGRZMB9arVcgUqsKwzTbbVZ5B0d
-         ajVxvut0epp7SNwmwKzEJMgdJvXYkYEb8jBPrsW0yDzJnFFxJoO/RQdh2N1yZJ5O9MRS
-         Ev8Qg9vc4kY2/ME9SqOM+vCW3ViGaZsYa86Kxz9XR/ZPgndF9vzesGT0RksXS5eMc04h
-         ell7+2PcrXlKisrXM96SjKXJ5kwoMY57qLfIyeplwiEJjo9Q4LxRnOriSbtInNjcqq+o
-         I6RYEDjc39Gn0ddNJHe53OJEYZqvaM+hrQhZij6E4WH+TgsfMnxGoOOW7yjSfGQETgYn
-         U63A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689765884; x=1690370684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OZSrWDc/cBveds+xSFFWhnQ/pzCd4lTeY64B0PPEGW0=;
-        b=XAbUv4qD3NH0ELZkBF9rpTqSNNHseYSo56Apo6VCb5AGvMlD5/5U6LsmpqVCrEjvCA
-         C4i/l5Heu4kOy7T0rpL3kguZIm/nNqqvjxHdw6pZ3YjqsVFrqJbVd9OCKpdEQyvKJSnp
-         voOCQcck201R3zmmlKDCcnjdJqIfruefYUXmptoAvq/4qN0KZrQqk+GeGiuerwm2Ht4K
-         wfPKMb/kUfAuEPzSJKRkvKxs+wcQ9fPsBXCKaK1DTz9OQ2gU5cWuz7HXSyRYEXmTt3NE
-         +JxnkY7s6dNPWMwoflaxK/aQbIM1D8sR4tk1hydOt0I6y8q+VCyevN+X7ZxbVfI6zKSH
-         0Ctw==
-X-Gm-Message-State: ABy/qLYFB5syF4O7wU18VhX+e57WSQH7dj/M+8Fl/pP4q2b0En7eEyJ1
-        aY+sAo0FbdcSNi++nviFcKtSho7kLQzT7E/dTUlA+Q==
-X-Google-Smtp-Source: APBJJlETfEXohyULgSqD+dtrZrcCLBAUgDaqwYgYehWjp3RUYrt8J/1ty1q/3ivKhd5XQbecf0XzDYFagtzXJqIh+lM=
-X-Received: by 2002:a67:fa85:0:b0:443:7503:a537 with SMTP id
- f5-20020a67fa85000000b004437503a537mr8935739vsq.28.1689765884686; Wed, 19 Jul
- 2023 04:24:44 -0700 (PDT)
+        Wed, 19 Jul 2023 08:57:54 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C9910FE;
+        Wed, 19 Jul 2023 05:57:53 -0700 (PDT)
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36JC13Ru024043;
+        Wed, 19 Jul 2023 12:57:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=vTJllK3QIosIdkN/l1AacXcP7ML5CIMxUDU9jzrNDpA=;
+ b=GHGbdYQASDxavATVPpsM1WgWPgS/2U+jpxlUluO2wbWS1BpTVRZM8xxmRTAV1D/cAVHi
+ XMox148U3Y6AQV/wV2Lcv1gOs8iqwGdwFBmztXjyvLWrVAhBRti1qz6bdmzG6JuVTWJE
+ iBAOYNMouQ6G9DEGC9GBTNkFBJDR5VJcMGx5nb/LMQKumQan3RxQM/+U4Al4cklaXLs0
+ Gqm2kb6gA91dWbgE/RpDricOxcKG+9H4PqTxPKheRrurwtEpAD0Ps7f4yUPxjVdBNrip
+ ymHqrKhWUJ5QXPGY9qF+VNtFg5s6YJ239xLilYrda5QsVmSMjGAaJITNOPaU15Bd0PLC 7Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxcen6vht-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 12:57:02 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36JBoV6T007562;
+        Wed, 19 Jul 2023 12:57:01 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxcen6vhc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 12:57:01 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36JBUgeR007434;
+        Wed, 19 Jul 2023 12:57:00 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3rv80j7bq8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 12:57:00 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36JCuxQC61866456
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jul 2023 12:56:59 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0697A58056;
+        Wed, 19 Jul 2023 12:56:59 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 069AB58052;
+        Wed, 19 Jul 2023 12:56:56 +0000 (GMT)
+Received: from [9.61.44.182] (unknown [9.61.44.182])
+        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Jul 2023 12:56:55 +0000 (GMT)
+Message-ID: <3663c0e7-4108-c2cc-06cf-ac569f65d101@linux.ibm.com>
+Date:   Wed, 19 Jul 2023 08:56:55 -0400
 MIME-Version: 1.0
-References: <20230714174525.4055475-1-robh@kernel.org>
-In-Reply-To: <20230714174525.4055475-1-robh@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 19 Jul 2023 13:24:33 +0200
-Message-ID: <CAMRc=MeR=uEufQ3p2cqN2ABL1w9V0QHRSYLv_WVZ97q8C4AgJQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Explicitly include correct DT includes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Alban Bedel <albeu@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Doug Berger <opendmb@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v11 4/6] iommu/s390: Force ISM devices to use
+ IOMMU_DOMAIN_DMA
+Content-Language: en-US
+To:     Niklas Schnelle <schnelle@linux.ibm.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
         Orson Zhai <orsonzhai@gmail.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Heiko Stuebner <heiko@sntech.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        Srinivas Neeli <srinivas.neeli@amd.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Nandor Han <nandor.han@ge.com>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20230717-dma_iommu-v11-0-a7a0b83c355c@linux.ibm.com>
+ <20230717-dma_iommu-v11-4-a7a0b83c355c@linux.ibm.com>
+From:   Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <20230717-dma_iommu-v11-4-a7a0b83c355c@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mAn_ySuLThAyex-XKSILyYpwW2wAL_f5
+X-Proofpoint-ORIG-GUID: p_U8uENcifu8d_t15JnMCmjpsu3eYgTy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-19_08,2023-07-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ adultscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 clxscore=1011 mlxscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307190113
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 7:45=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
->
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+On 7/17/23 7:00 AM, Niklas Schnelle wrote:
+> ISM devices are virtual PCI devices used for cross-LPAR communication.
+> Unlike real PCI devices ISM devices do not use the hardware IOMMU but
+> inspects IOMMU translation tables directly on IOTLB flush (s390 RPCIT
+> instruction).
+> 
+> While ISM devices keep their DMA allocations static and only very rarely
+> DMA unmap at all, For each IOTLB flush that occurs after unmap the ISM
+> devices will inspect the area of the IOVA space indicated by the flush.
+> This means that for the global IOTLB flushes used by the flush queue
+> mechanism the entire IOVA space would be inspected. In principle this
+> would be fine, albeit potentially unnecessarily slow, it turns out
+> however that ISM devices are sensitive to seeing IOVA addresses that are
+> currently in use in the IOVA range being flushed. Seeing such in-use
+> IOVA addresses will cause the ISM device to enter an error state and
+> become unusable.
+> 
+> Fix this by forcing IOMMU_DOMAIN_DMA to be used for ISM devices. This
+> makes sure IOTLB flushes only cover IOVAs that have been unmapped and
+> also restricts the range of the IOTLB flush potentially reducing latency
+> spikes.
+> 
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
-Applied, thanks!
+This makes sense to me.
 
-Bart
+Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+
+
