@@ -2,161 +2,94 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF19DC001DE
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 12:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B20EB64DA
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jul 2023 14:57:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbjGSM6C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Jul 2023 08:58:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36136 "EHLO
+        id S230120AbjGSO52 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Jul 2023 10:57:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230128AbjGSM5y (ORCPT
+        with ESMTP id S229816AbjGSO51 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Jul 2023 08:57:54 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C9910FE;
-        Wed, 19 Jul 2023 05:57:53 -0700 (PDT)
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36JC13Ru024043;
-        Wed, 19 Jul 2023 12:57:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=vTJllK3QIosIdkN/l1AacXcP7ML5CIMxUDU9jzrNDpA=;
- b=GHGbdYQASDxavATVPpsM1WgWPgS/2U+jpxlUluO2wbWS1BpTVRZM8xxmRTAV1D/cAVHi
- XMox148U3Y6AQV/wV2Lcv1gOs8iqwGdwFBmztXjyvLWrVAhBRti1qz6bdmzG6JuVTWJE
- iBAOYNMouQ6G9DEGC9GBTNkFBJDR5VJcMGx5nb/LMQKumQan3RxQM/+U4Al4cklaXLs0
- Gqm2kb6gA91dWbgE/RpDricOxcKG+9H4PqTxPKheRrurwtEpAD0Ps7f4yUPxjVdBNrip
- ymHqrKhWUJ5QXPGY9qF+VNtFg5s6YJ239xLilYrda5QsVmSMjGAaJITNOPaU15Bd0PLC 7Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxcen6vht-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Jul 2023 12:57:02 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 36JBoV6T007562;
-        Wed, 19 Jul 2023 12:57:01 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rxcen6vhc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Jul 2023 12:57:01 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36JBUgeR007434;
-        Wed, 19 Jul 2023 12:57:00 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3rv80j7bq8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Jul 2023 12:57:00 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36JCuxQC61866456
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jul 2023 12:56:59 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0697A58056;
-        Wed, 19 Jul 2023 12:56:59 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 069AB58052;
-        Wed, 19 Jul 2023 12:56:56 +0000 (GMT)
-Received: from [9.61.44.182] (unknown [9.61.44.182])
-        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Jul 2023 12:56:55 +0000 (GMT)
-Message-ID: <3663c0e7-4108-c2cc-06cf-ac569f65d101@linux.ibm.com>
-Date:   Wed, 19 Jul 2023 08:56:55 -0400
+        Wed, 19 Jul 2023 10:57:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06ED1C7;
+        Wed, 19 Jul 2023 07:57:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DC0761722;
+        Wed, 19 Jul 2023 14:57:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E58C433C7;
+        Wed, 19 Jul 2023 14:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689778645;
+        bh=ioxh6o118q6+dHWAukEdaC/0qLhTOk/cq+k9l/QZjHQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=uJFJ+VCsuyrn1Svp5t1Yx2Zm9gBP1Mm9qqO4AEmXa7WFYgjyBaS4owi8p88sBr0Qo
+         6hnApno9OOFsXr7LJ+0VlGFYrVHcZFFikRVi3mB/gIqeXMeXdxYsnfZoQSm6NK1nsi
+         QoVbZ6Osihgz5Tq3aw56aDkfXswV5kH2dl7PsJQgekkqs+J6Re790NPUAGLUHGX5eL
+         7q4GWrpv6+9lNOI6rJOnJgxVBOmDRU4dkaF3MlRhMvthq9exuZLcTWiqaP3uZJu/DN
+         9W3lr5d9TYHoEy9uIEoXTFNNDdBdwQTeKAtL/DJJRGM74WQv/wsKKRdTbIR+BnuXCf
+         kYlGS4SRINgYg==
+Date:   Wed, 19 Jul 2023 09:57:22 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V3] Revert "PCI: tegra194: Enable support for 256 Byte
+ payload"
+Message-ID: <20230719145722.GA501156@bhelgaas>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v11 4/6] iommu/s390: Force ISM devices to use
- IOMMU_DOMAIN_DMA
-Content-Language: en-US
-To:     Niklas Schnelle <schnelle@linux.ibm.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20230717-dma_iommu-v11-0-a7a0b83c355c@linux.ibm.com>
- <20230717-dma_iommu-v11-4-a7a0b83c355c@linux.ibm.com>
-From:   Matthew Rosato <mjrosato@linux.ibm.com>
-In-Reply-To: <20230717-dma_iommu-v11-4-a7a0b83c355c@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mAn_ySuLThAyex-XKSILyYpwW2wAL_f5
-X-Proofpoint-ORIG-GUID: p_U8uENcifu8d_t15JnMCmjpsu3eYgTy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-19_08,2023-07-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- adultscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 clxscore=1011 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2307190113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43a9ab32-c030-1906-7e7d-c529e6c9c70d@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 7/17/23 7:00 AM, Niklas Schnelle wrote:
-> ISM devices are virtual PCI devices used for cross-LPAR communication.
-> Unlike real PCI devices ISM devices do not use the hardware IOMMU but
-> inspects IOMMU translation tables directly on IOTLB flush (s390 RPCIT
-> instruction).
-> 
-> While ISM devices keep their DMA allocations static and only very rarely
-> DMA unmap at all, For each IOTLB flush that occurs after unmap the ISM
-> devices will inspect the area of the IOVA space indicated by the flush.
-> This means that for the global IOTLB flushes used by the flush queue
-> mechanism the entire IOVA space would be inspected. In principle this
-> would be fine, albeit potentially unnecessarily slow, it turns out
-> however that ISM devices are sensitive to seeing IOVA addresses that are
-> currently in use in the IOVA range being flushed. Seeing such in-use
-> IOVA addresses will cause the ISM device to enter an error state and
-> become unusable.
-> 
-> Fix this by forcing IOMMU_DOMAIN_DMA to be used for ISM devices. This
-> makes sure IOTLB flushes only cover IOVAs that have been unmapped and
-> also restricts the range of the IOTLB flush potentially reducing latency
-> spikes.
-> 
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+On Wed, Jul 19, 2023 at 04:31:13PM +0530, Vidya Sagar wrote:
+> On 7/18/2023 4:39 PM, Bjorn Helgaas wrote:
+> > On Tue, Jul 18, 2023 at 08:03:47AM +0530, Vidya Sagar wrote:
+> > > On 7/14/2023 3:09 AM, Bjorn Helgaas wrote:
+> > > > On Mon, Jun 19, 2023 at 03:56:04PM +0530, Vidya Sagar wrote:
+> > > > > This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
+> > > > > support for 256 Byte payload").
+> > > > > 
+> > > > > Consider a PCIe hierarchy with a PCIe switch and a device connected
+> > > > > downstream of the switch that has support for MPS which is the minimum in
+> > > > > the hierarchy, and root port programmed with an MPS in its DevCtl register
+> > > > > that is greater than the minimum. In this scenario, the default bus
+> > > > > configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't configure the
+> > > > > MPS settings in the hierarchy correctly resulting in the device with
+> > > > > support for minimum MPS in the hierarchy receiving the TLPs of size more
+> > > > > than that. Although this can be addressed by appending "pci=pcie_bus_safe"
+> > > > > to the kernel command line, it doesn't seem to be a good idea to always
+> > > > > have this commandline argument even for the basic functionality to work.
+> > > > 
+> > > > I think this has some irrelevant detail (IIUC the problem should
+> > > > happen even without a switch) and could be more specific (I think the
+> > > > problem case is RP MPS=256, EP only supports MPS=128).
+> > > 
+> > > The issue is present only if there is a switch.
+> > 
+> > So if there's no switch, and an EP that only supports MPS=128, the PCI
+> > core changes the RP MPS setting to 128?  Just based on reading the
+>
+> Yes. The code after the if condition here takes care of that.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/probe.c?h=v6.5-rc2#n2049
 
-This makes sense to me.
+Oh, right, thanks.  I vaguely remember the logic that if the immediate
+parent is a Root Port, there are no other branches in the hierarchy to
+worry about, so we can just configure the Root Port MPS to match the
+device.
 
-Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
-
-
+> > code, I thought we would leave RP MPS=256 and EP MPS=128, which would
+> > be a problem.  But maybe the PCI core changes the RP down to MPS=128?
+> > 
+> > Bjorn
