@@ -2,123 +2,140 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FAEEB64DA
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jul 2023 15:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54570EB64DA
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jul 2023 16:40:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232862AbjGTPnc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Jul 2023 11:43:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48264 "EHLO
+        id S231360AbjGTQkR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Jul 2023 12:40:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232946AbjGTPnF (ORCPT
+        with ESMTP id S231342AbjGTQj5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Jul 2023 11:43:05 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060d.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eaa::60d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D8312F;
-        Thu, 20 Jul 2023 08:43:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mURY/a0msPZ6KB/DlepI7/agicbGH7wainmwhu8jqFHwEMWvfQsLgsV8CY2FGx9Fo27cB92UqAlfE9d6wq5BeHaFDvhbbwYVe+IFMTAbquSimfuxg7DA1vWoJZblO+Tx7gIab5w5hSIqJQbpwlbqltiIBfjF5xrDjg61FjZhvy6tINfTdbNQQGjDr5v7K//UTRer5L7ZUpr8xpBUfus1sgi/ZHBpJtQmrwIzNRqBHMbZWPKGrs50NnRg0bxfzGgkKWt++bhmRnH3jtKRpuKJvv6fJ5XMUfXmDTObF2U0pa00MuqzvidgpKj/2gsBfh9KsR9ZnIMRdilA+ph8p0epaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kcP0y42JYpiULTkasN25jXQD7fSLObdGsEr9+Aps0CE=;
- b=Gx9FftEytMOxvwnSbjsZ6SjSKEcnuJaaB7T9TAyYrycKp/ClGXkcK2Rp3JKpSh0ElZWP0jai8s6YSPdxvLtkGpVRKZK8+0GtYOzQM/uoCoqKuTSUXLwQ5eChh0EO8Dy+rTYNMiIJPkpXTZiOJ92gvGVMbWR07mi9oghQc6YnzSVTtFij+kdayVblSikPE9723nlnxCxxCMrWIPumKCCvIcmXk3lrzR1LuvDGMxcaSzvxnDOWFfEUYOQNQW1hgMyjLHr8YmPA2TeY3X4ww9t/eqqM4dCFohARKv2VHr2xPfPqwvYdzDfNMmkZxpou9rbKZ5r6EuvlDgsn3MZJztMbIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kcP0y42JYpiULTkasN25jXQD7fSLObdGsEr9+Aps0CE=;
- b=lbsOAroRvZhCRvkXVU/u32inkmnOuiJqj4fHNoMJ/J1q/YviXXbnAMVAGeKLntRxzK9fN9Y4CT/12ICB4kPX0KKBOw5LqDHpmEHzrxJZtn5HDnHTQPL0bHqqsKNOPTGmmPSziP0IyZyvSobuGt2CDrXuXTEHxUIERwc/s2rUSPgKQg47UIamaSaz3KGjvP1n4IjI9Dv88PED2KaVWNKVjVvkLmKyLY9I2IoEcJprBf6Af660+Rx6kAZc+fC5aE1+B8C5QIUr6PgkvT54YzPW/RavQF6hKi/cvy5DbxdL+PToqp3rnk3Iq1GBCwSx2Mt5lePDLIidh+zu7tVMa67JHw==
-Received: from DM6PR03CA0086.namprd03.prod.outlook.com (2603:10b6:5:333::19)
- by SJ2PR12MB8830.namprd12.prod.outlook.com (2603:10b6:a03:4d0::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.25; Thu, 20 Jul
- 2023 15:43:01 +0000
-Received: from DM6NAM11FT097.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:333:cafe::a5) by DM6PR03CA0086.outlook.office365.com
- (2603:10b6:5:333::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.28 via Frontend
- Transport; Thu, 20 Jul 2023 15:43:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DM6NAM11FT097.mail.protection.outlook.com (10.13.172.72) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6588.34 via Frontend Transport; Thu, 20 Jul 2023 15:43:00 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 20 Jul 2023
- 08:42:49 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 20 Jul
- 2023 08:42:49 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Thu, 20 Jul 2023 08:42:46 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <thierry.reding@gmail.com>
-CC:     <andi.shyti@kernel.org>, <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <wsa@kernel.org>, <akhilrajeev@nvidia.com>,
-        <sdonthineni@nvidia.com>
-Subject: Re: [PATCH v2] i2c: tegra: Fix failure during probe deferral cleanup
-Date:   Thu, 20 Jul 2023 21:12:43 +0530
-Message-ID: <20230720154243.12779-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230707132619.2998382-1-thierry.reding@gmail.com>
-References: <20230707132619.2998382-1-thierry.reding@gmail.com>
-X-NVConfidentiality: public
+        Thu, 20 Jul 2023 12:39:57 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AAE22106;
+        Thu, 20 Jul 2023 09:39:37 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e5da802afso1370727a12.3;
+        Thu, 20 Jul 2023 09:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689871175; x=1690475975;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AEx6nUL4YZM5bantpgSzvZE+5jKhxmLmiP9voK482Gs=;
+        b=JtOkNZXisfBISFNljbWys1+mJJ9nauBq2uu8sBaOYpaGx03meu1bRyVPtZfQwRAYIX
+         bqwvGbvn5T4zbuoZdzbd11YwfhMMttB/JrR/4goX7zUSdfYAoEDCh8KnXZJFKCFQCErS
+         5ibDKWBhWisBth4PoAgaJ2JNJzODaNYx4GCtNZyzkSWdb9KUEnHqcyNMEgnt42rj55YE
+         mWqyebIcapcDsM5csWlq74shP9MJ2CoX0UN+i8YAiEe1wPnLH1DIhy0DgQt0GbY3A4Ks
+         cc2DpoeUXQYWrO/Yn+eEgoVAGFfSJ04Tkdf/guXY14U3GtqGcAr1ILnRaXRbtwYpvM5s
+         dIXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689871175; x=1690475975;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AEx6nUL4YZM5bantpgSzvZE+5jKhxmLmiP9voK482Gs=;
+        b=dnM+LdwraqSAGQDUm6VNZVEvuA2poNJLGiOMDvb3z7GLTtSMqo4kizwJDNv9Q5r20h
+         UF7AmZw7PJ+fqxDDmBTqpzox1fSBh/URKwzWEWMH9H9ERJDJWazAyjCOjbXu1F8cYPqS
+         Tlv1xvZ1ekRbw8b5CJdpNXJzEteZ3GsSeYI5HCUWici9v5WmVMsg9B9wMuwZo+0K/dB3
+         vvC7ENXbE92hcmZqGNoyxfF9zDzV40mwADoS+vKsxosJu2JnQ1gLcImFaY2E3FgVQzTj
+         NM1TNvjKyjFFBJbQvLODnlgJiX7bFMhItCd7L7PHVqq8Du0mDr74z4r+SLJGwPiwZ6fY
+         NcZw==
+X-Gm-Message-State: ABy/qLaFkoL/1CsC36qc2vA7mZXqvkSYrsk8eKLtfCnJsDftk7+1xL4M
+        IlRWfgWHlr4qEaXDbvqTeEIks6+Foro=
+X-Google-Smtp-Source: APBJJlHYCMNmMGqKYdtvfQsqdV5XYjoKIQGDNiCvPuXEhILZtCufK9sYXpxeyeaTcvWu7n4Qp1jIqg==
+X-Received: by 2002:aa7:d80f:0:b0:51e:cb4:2b40 with SMTP id v15-20020aa7d80f000000b0051e0cb42b40mr2416173edq.6.1689871175158;
+        Thu, 20 Jul 2023 09:39:35 -0700 (PDT)
+Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id b23-20020aa7df97000000b005219864c7cfsm975038edy.39.2023.07.20.09.39.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jul 2023 09:39:34 -0700 (PDT)
+Date:   Thu, 20 Jul 2023 18:39:32 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mohan Kumar <mkumard@nvidia.com>
+Cc:     treding@nvidia.com, jonathanh@nvidia.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, spujar@nvidia.com
+Subject: Re: [PATCH] arm64: tegra: Add audio support for IGX Orin
+Message-ID: <ZLljRBBHl_3jsKGg@orome>
+References: <20230620155847.14598-1-mkumard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT097:EE_|SJ2PR12MB8830:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcd1b8c1-1e52-443c-9d35-08db8937ffbb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RgVJflLUO5QF5F1k9uAdWQRcVjgEVHNcjOP79E91D8ZjBjuVRIy7z0mpPK1l6IlcJqpQ7smoKg0U9FH+7fv3XtIfpRjA9ldHTl7jv84rL9aNf0rwF621VjuAgTsD/3g2G2eFB7H17KP3TKybJsXZC+v55ebSj6I19349NewUGI56N4d1qEUr5hHy9B1Q7g5qmDa+ARwB3rNnl12YF9ANbmAd4InlNF/9+0Tvcq++shlVZKOUilh0opZwpKlu9nC4XmrAQCbZQg+TxAkrFjGl+gD9j60uFh3QWMoU470Ih1w7rbV2+QFat0clErZbCO54Ym3HQ7n4SnUd5XxvWd1/6QFgr8M8pUEtd0fAN7AuBPXyY0X60CBRX1Z4A6ZEATVqerLzSkXgFk5r43AuKZ+oruMEl+P3d61I1n4/QD+ZNjwZ/LmiOkFSCgsH0/2eUYJQRbaZDnm6ARqm2eNFf1TYG+t+yt/wzF/fmCB7KJiJl06t4XYajfw93FQe9N0tpW7WMV9YDX9ebZU2vqW+uj1n/w2tM1CPZNU8wtcW/xjnvpFcPk9k/taedC0x9eomCV9VmY8FMTfnjo+7ErgJuUo4LeCIU/iaa0tPB542SOm2N52c09OSQzqr0GkUNl7PqMKTjHrb/6+GOS5EUFsWRIaMojSUaHYYyDZQUguLlprnKuKLx7B1gTI/4Tjm6vxsWsK6YcqYY4KHO5ks++P/DvZxk0W13uVGCrwzKvcMNyZkexermCHrqY2FN+cVccobrupe
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(376002)(136003)(396003)(82310400008)(451199021)(46966006)(36840700001)(40470700004)(41300700001)(26005)(186003)(107886003)(1076003)(336012)(478600001)(4326008)(6916009)(70206006)(70586007)(316002)(40480700001)(8936002)(8676002)(5660300002)(6666004)(7696005)(54906003)(356005)(426003)(2616005)(47076005)(36860700001)(2906002)(4744005)(40460700003)(7636003)(82740400003)(36756003)(86362001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2023 15:43:00.8343
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcd1b8c1-1e52-443c-9d35-08db8937ffbb
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT097.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8830
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vLEOq6j5hPYuBGgG"
+Content-Disposition: inline
+In-Reply-To: <20230620155847.14598-1-mkumard@nvidia.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
->If the driver fails to obtain a DMA channel, it will initiate cleanup 
->and try to release the DMA channel that couldn't be retrieved. This 
->will cause a crash because the cleanup will try to dereference an 
->ERR_PTR()- encoded error code.
->
->However, there's nothing to clean up at this point yet, so we can avoid 
->this by simply resetting the DMA channel to NULL instead of storing the 
->error code.
->
->Fixes: fcc8a89a1c83 ("i2c: tegra: Share same DMA channel for RX and 
->TX")
->Signed-off-by: Thierry Reding mailto:treding@nvidia.com
 
-This fixed the crash issue seen when there is no dmas property in
-the device tree.
+--vLEOq6j5hPYuBGgG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Resending this with the correct headers to get it recorded by
-patchwork.
+On Tue, Jun 20, 2023 at 09:28:47PM +0530, Mohan Kumar wrote:
+> Add audio support for the NVIDIA IGX Orin development kit having P3701
+> module with P3740 carrier board.
+>=20
+> Move the common device-tree nodes to a new file tegra234-p3701.dtsi and
+> use this for Jetson AGX Orin and NVIDIA IGX Orin platforms
+>=20
+> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> ---
+>  .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |    1 +
+>  .../boot/dts/nvidia/tegra234-p3701-0008.dtsi  |    1 +
+>  .../arm64/boot/dts/nvidia/tegra234-p3701.dtsi | 1991 ++++++++++++++++
+>  .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 2009 -----------------
+>  .../boot/dts/nvidia/tegra234-p3737-0000.dtsi  |   41 +
+>  .../nvidia/tegra234-p3740-0002+p3701-0008.dts |   91 +-
+>  .../boot/dts/nvidia/tegra234-p3740-0002.dtsi  |   56 +
+>  7 files changed, 2176 insertions(+), 2014 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi
+[...]
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dt=
+s b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
+> index 43d797e5544f..2b7856b303b4 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
+[...]
+> @@ -103,7 +99,7 @@
+>  		};
+> =20
+>  		hda@3510000 {
+> -			nvidia,model =3D "NVIDIA IGX HDA";
+> +			nvidia,model =3D "NVIDIA Jetson IGX Orin HDA";
+[...]
+> @@ -151,4 +147,89 @@
+[...]
+> +		label =3D "NVIDIA Jetson IGX Orin APE";
+[...]
 
-Tested-by: Akhil R <akhilrajeev@nvidia.com>
+The platform is called "NVIDIA IGX Orin Development Kit", so shouldn't
+these be "NVIDIA IGX Orin HDA" and "NVIDIA IGX Orin APE", respectively?
 
+Thierry
+
+--vLEOq6j5hPYuBGgG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS5Y0QACgkQ3SOs138+
+s6Fb6Q//XqMgA3W+sUybflSZbh5Kq41ThyM1yVl9KE0/v8+0uPwRwT7zGwXft/pB
+O6BFHvPaSCMQHQ2FKcTOVAnIp1bIRGWb8taI7W4zDI57KqWiJYrBk68sdj8HvrsY
+GZ/z5o1ethG5vkf+S4HxlLCjEsFqsStbzg21sMThMQb/Vwwr0YMBy9/3o+uVvSSe
+SEQJoki2ExzpTCX9VNPQL6xz9O289pgFXYpAbZ3AFtmVn1Yqpvlj9BvtnsZKQB46
+Q+dVQg965UOXYROYFirbh/ecj4zn4Eqi24pSZMv9QU4Peuiu7QDXUbBgTjXkzt5J
+2e2uHMNGhU6KC4/hgpNizSqN4ITN6WGwmgl77Bq9lD/K+Y0WRCiROvvt24Eh4dhY
+NTvtJXoorFlBD3fD+sJbUZyEXrJ0FYeFpC6vZX7XNW38sKizEn8XBOxYpqTuehva
+JZK++p6GEFNnMzJyGgmP/wnk3e/MsfQnrAENqZRkQshXqLgVSpJMl3MOwFDvn26f
+k8su8sr9hEF6SSQyuSsKddN9HLC8sSjfPpUZNHUbikQBGyQl2SSWoTCd12S0eX8/
+Bwmiek7riu4yx1xwHWzpXdXy4lAFrTuY+UHJvRJVvvufach+xyiwn+h9t7deEnMS
+Sv9vIdvTIA3GgK7jjSRdOh2ypc0NcsOJ3/5ivBWR27nGW0R9JJ0=
+=YtvD
+-----END PGP SIGNATURE-----
+
+--vLEOq6j5hPYuBGgG--
