@@ -2,144 +2,124 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450D0EB64DC
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jul 2023 16:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31EFC04A6A
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jul 2023 18:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230324AbjGTQkq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Jul 2023 12:40:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34890 "EHLO
+        id S229666AbjGTSuy convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Jul 2023 14:50:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbjGTQkb (ORCPT
+        with ESMTP id S229563AbjGTSuw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Jul 2023 12:40:31 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430582D7B;
-        Thu, 20 Jul 2023 09:40:07 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9924ac01f98so171831166b.1;
-        Thu, 20 Jul 2023 09:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689871205; x=1690476005;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iKmIFijaEmUWC1R9DDCzFee/X/7A/Y1/d/lZq/EmF1g=;
-        b=enB5DmORrPSRZeikuhIGbNddAmNhSn7NNkmZg2PW+9VB0rRQiu/QVioD6Z0WMgXm49
-         NQ+HyZJ8nU+VckliV2dmfCal+TP1E9Wt/+kVZ8nk2j9d+aJwBbPHUNfaimN0rjqN7xuP
-         KW8XHrkO6JuXXQ6psbcPMw0CCpsoyg3DVN7z78zAMRDODvf6kh22XBv1O4ShIgmkRu7s
-         619h50cU636rWLwoRAc3YKHKrLiCsqaLLrrSwVpIscNTVRdTiWvCFLLsnQi/Y+cw6YNu
-         z+/thf1jBKi2u4vvaeU+M5bc0wOvRoP5qMF6tFQfBgh3pUFOlXhIdvOfVaxMn8+DM51Q
-         jH6w==
+        Thu, 20 Jul 2023 14:50:52 -0400
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39EBF2D54;
+        Thu, 20 Jul 2023 11:50:31 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-94ea38c90ccso34165966b.1;
+        Thu, 20 Jul 2023 11:50:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689871205; x=1690476005;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1689879029; x=1690483829;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iKmIFijaEmUWC1R9DDCzFee/X/7A/Y1/d/lZq/EmF1g=;
-        b=Bubm6tx3No+jSMg/q+MaXM0IaUrPeP7bM3VvFblRUbdxI389l9b2mlLqDLApIre7Z9
-         0M+5J5TjT0Fg9ChbWn5/LOKDFJPVMsS5pA87vPxp69/HjIgN5t2jJtyH9rpua0qOeWHD
-         NL9CmH+XfC2SaqYiHCUA6YSv54Gh5I6eAuWJJFq3uXDq3YDar4gEBt000nvA42wtCjQI
-         fT807ctRm1JGoWBzefAdvZA5Wrg5+5YiK4RqhTYXZmc828epV2Ccmu0ldcIE7gcDYTGl
-         fxo7+K1ixu7wL0inKZrnhlry8UYffJRLaGiabffxGJpCs38gLPrZlWwIw1Dr03Y+xnDZ
-         it6w==
-X-Gm-Message-State: ABy/qLZayNSiO5qRW2BU3p6bphGU3lXMcGgf69v0TSdlGAjE083/La98
-        ak61fead0LJwBRoIt/IncBk=
-X-Google-Smtp-Source: APBJJlG5r35HcKt3DTeAiZ1ufcKGjxglt9PjACpRLBOg3fWCmldlwbAKHKLI+TyEw7EYesj3Kqp0TQ==
-X-Received: by 2002:a17:906:10cd:b0:993:d97f:ae06 with SMTP id v13-20020a17090610cd00b00993d97fae06mr5363264ejv.13.1689871204569;
-        Thu, 20 Jul 2023 09:40:04 -0700 (PDT)
-Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id kd7-20020a17090798c700b00992a8a54f32sm904704ejc.139.2023.07.20.09.40.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 09:40:04 -0700 (PDT)
-Date:   Thu, 20 Jul 2023 18:40:02 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mohan Kumar <mkumard@nvidia.com>
-Cc:     treding@nvidia.com, jonathanh@nvidia.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, spujar@nvidia.com
-Subject: Re: [PATCH] arm64: tegra: Add audio support for IGX Orin
-Message-ID: <ZLljYqE_gDzh_WgT@orome>
-References: <20230620155847.14598-1-mkumard@nvidia.com>
- <ZLljRBBHl_3jsKGg@orome>
+        bh=8Ri7fimkcHumz6u7/WZYeGYX85HXnNnQ+B/CYo4XrX0=;
+        b=PASJCP1x+y2EzoDAYUI5XcK0Z0/GmzxaQ6NyZY/o7xzT5BAJIufjy5WjFLbFOdJeh1
+         BNSavTc46dKgIChv7K3ZPZdetGzDhnAhrfh/D0mXpvxYJk8BYu6yrtTD5t9ThZK8lQom
+         YjAzMZQDIjlzSQnzjnsE2mFK7V1CL+IY1Jx8aN4GfEtQCudrJGxBpL1VIN+yKqvk3w+N
+         y3/zRYqsHkRaed25+48T/tqgPYsdCQgsFwI2Pn/d+FekGiIeYIcV07/XsDOsWOeGQYiv
+         BtXVm+8Xa9IVTK/6bH9byfomZ3WHXPTg2x+UcC4DL3sVlzQkP9kC/j0eln2e7tkr08Ju
+         C8Fw==
+X-Gm-Message-State: ABy/qLY4CmK/Gn12bX59thNFlb4of4ggQwMb7t8vexd5PfMbqluAuuJw
+        3Az+zTpWl6J9zRHzfKTo7jWredHw6fv+9/Ah5qM=
+X-Google-Smtp-Source: APBJJlHi91lqNeNV5b3NsqRozieOcqVx3nEK9H5IGaNOQgSl+w6cuVzQPslNMDSGV1xCPVo92lepZZT6y5Duc+GvbWI=
+X-Received: by 2002:a17:906:7a11:b0:993:d90e:3101 with SMTP id
+ d17-20020a1709067a1100b00993d90e3101mr2893837ejo.1.1689879029584; Thu, 20 Jul
+ 2023 11:50:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="23DfovU3nZbHCktE"
-Content-Disposition: inline
-In-Reply-To: <ZLljRBBHl_3jsKGg@orome>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+References: <20230714175008.4064592-1-robh@kernel.org> <CAJZ5v0i-OByOSjpxrj5d9S9QHRySK-MEUo+bK_J_4ihsCBmnSg@mail.gmail.com>
+ <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 20 Jul 2023 20:50:18 +0200
+Message-ID: <CAJZ5v0hM63nVphwkYK1bL4uf_dXSew2+LBuG9kuhvvLdrhLxAw@mail.gmail.com>
+Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
+To:     Rob Herring <robh@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Jul 14, 2023 at 9:53 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Jul 14, 2023 at 12:54 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Fri, Jul 14, 2023 at 7:51 PM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > The DT of_device.h and of_platform.h date back to the separate
+> > > of_platform_bus_type before it as merged into the regular platform bus.
+> > > As part of that merge prepping Arm DT support 13 years ago, they
+> > > "temporarily" include each other. They also include platform_device.h
+> > > and of.h. As a result, there's a pretty much random mix of those include
+> > > files used throughout the tree. In order to detangle these headers and
+> > > replace the implicit includes with struct declarations, users need to
+> > > explicitly include the correct includes.
+> > >
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> >
+> > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> >
+> > or please let me know if you want me to pick this up.
+>
+> Single patch in your subsystem with no dependencies. Please pick it up.
 
---23DfovU3nZbHCktE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 20, 2023 at 06:39:32PM +0200, Thierry Reding wrote:
-> On Tue, Jun 20, 2023 at 09:28:47PM +0530, Mohan Kumar wrote:
-> > Add audio support for the NVIDIA IGX Orin development kit having P3701
-> > module with P3740 carrier board.
-> >=20
-> > Move the common device-tree nodes to a new file tegra234-p3701.dtsi and
-> > use this for Jetson AGX Orin and NVIDIA IGX Orin platforms
-> >=20
-> > Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
-> > ---
-> >  .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |    1 +
-> >  .../boot/dts/nvidia/tegra234-p3701-0008.dtsi  |    1 +
-> >  .../arm64/boot/dts/nvidia/tegra234-p3701.dtsi | 1991 ++++++++++++++++
-> >  .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 2009 -----------------
-> >  .../boot/dts/nvidia/tegra234-p3737-0000.dtsi  |   41 +
-> >  .../nvidia/tegra234-p3740-0002+p3701-0008.dts |   91 +-
-> >  .../boot/dts/nvidia/tegra234-p3740-0002.dtsi  |   56 +
-> >  7 files changed, 2176 insertions(+), 2014 deletions(-)
-> >  create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi
-> [...]
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.=
-dts b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-> > index 43d797e5544f..2b7856b303b4 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-> [...]
-> > @@ -103,7 +99,7 @@
-> >  		};
-> > =20
-> >  		hda@3510000 {
-> > -			nvidia,model =3D "NVIDIA IGX HDA";
-> > +			nvidia,model =3D "NVIDIA Jetson IGX Orin HDA";
-> [...]
-> > @@ -151,4 +147,89 @@
-> [...]
-> > +		label =3D "NVIDIA Jetson IGX Orin APE";
-> [...]
->=20
-> The platform is called "NVIDIA IGX Orin Development Kit", so shouldn't
-> these be "NVIDIA IGX Orin HDA" and "NVIDIA IGX Orin APE", respectively?
-
-Oh, and no need to resend, I can fix this up when I apply.
-
-Thierry
-
---23DfovU3nZbHCktE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS5Y2IACgkQ3SOs138+
-s6ESVhAAsTZP40c5ASBe4C7mUMahAduFRPg/8KOdje4Zxwq/DvhgDcsR7Sv/IRYB
-lS5IIuF6idOgCxKzrthBAUaKexkNhFZzLO7Try0PiaCHkq6MrqoYpdDFL00O0sFJ
-HwYguX0kFQ/+IbI/tTbjcU9LY6R7tYb3Q39vLy5D7XEB/fpbBwlP5U9w8yhJqe/t
-9/e1QYe1CVAP+SQVmmiOkt+vM80KRiGXjXVBdjh1UOR/Ted46r2jfWSA6BFRpyyj
-vdztzCEY8bxGZDTHrmWkrAUmcWQpVJdMoKtscI6r8tlFol9ZWZ7gZ7w2wXBnUxHG
-LWA7xr8LrRZVoemNqCKBIr6RbLQ01PMzxv/5/EeXLuEiX/+LYxw0/E27SKhtdMz7
-TI6FZgEDheiozzWHNakYkEOM+0evcfze08mGCZ8euJdUxrh/wAnMS/JVsVJZlfKt
-h5rV8wnhkwX5Sz8tY8Uf2Ij8/UMnCfwD2rcJycYXgls0STw7hfAVy4S1IxH85RqP
-J6A2sPrfbfUhcQQDgTOlG9zDfHfuBkx4w542kigrVH49TxtqOCcri22k7+uoGqQT
-vzr6dKZPN4IBNIkYkrT1NrFeXENYZAunVtlnOu2P/o41fjT1jvNhGLZEDUBNt/YT
-VyIU41CqVAetdm5hSPrUuHTWKDzK1+j31MKVdDLdS/bCX95YrN0=
-=UCk9
------END PGP SIGNATURE-----
-
---23DfovU3nZbHCktE--
+Done, thanks!
