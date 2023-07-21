@@ -2,144 +2,136 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7C2EB64DD
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jul 2023 19:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E076EB64DC
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 06:22:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230522AbjGTTm1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Jul 2023 15:42:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46722 "EHLO
+        id S230513AbjGUGWj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 02:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbjGTTm0 (ORCPT
+        with ESMTP id S229786AbjGUGWO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Jul 2023 15:42:26 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1839426A9
-        for <linux-tegra@vger.kernel.org>; Thu, 20 Jul 2023 12:42:24 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-cfd4ea89978so1011375276.2
-        for <linux-tegra@vger.kernel.org>; Thu, 20 Jul 2023 12:42:24 -0700 (PDT)
+        Fri, 21 Jul 2023 02:22:14 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D0530C0;
+        Thu, 20 Jul 2023 23:21:47 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9936b3d0286so253688666b.0;
+        Thu, 20 Jul 2023 23:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689882143; x=1690486943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1689920506; x=1690525306;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6uboV9zE5viSPMUN9jRcO0cjpaJKLGwKotI/bN04OyY=;
-        b=Is+h2NeaSzJfFfsZ98ro8BWc2npdTi8/mAPrWVvtpsxb716Whq2DsR1nkUJ5zX14Xz
-         79qaflwC3BG2VYXCeK0ijBZtmZDQ1AwFmwaxjZDd/vn/AKdit/VHpHHNt7ZvyrLIlMK1
-         rAvvaKIi1pdCGIE6T6PamxnnJ1xdepfGuegPYvjWZ/2v5uqSbyOmvOqKrH1HZMZxxQ9u
-         TipBUYHRAcaq7G2V/lDcSoviQy3dB4LjRa8c+TMTdx5eHkXHMxyv/6aRPA0MgnDthZDb
-         /qNXdFoMB9q33L3QYVfMXu7JSq0qiwBR5arRe8VeAjZhX1/RRVS46BZipMLM8QxKUS/8
-         /7lg==
+        bh=G/41dQ3c/Hx+YYfhvABXVnfSE5c1C3EeGcDjRGR6LcU=;
+        b=TBKZ8kJYY8zbOME4XyLOOZat7TUECE52lPSxv1W8+V0Fx+BLL5OJml3Ct+eZyUGIgu
+         bUVjFx4bi9l2OFvQVFXWno5WOLK7uMl0j5Wde0hoORKXlcjztXPfglm8Gh8OwX1dMYLQ
+         NDVWf4lqD0U9tTDVwjUDFJqPFj2EswN/aECtFlREcUZOT+lgLx07Pk9WOIltUdgL/mH5
+         Bh8/XaWLhZihH0ISzXsNov/wB+zgsTnMjss6ObeC7mufaYEpoFxqUAN3KsmPU/7o5kgT
+         pq35Ari+lXPBSXb03keIPnmrzUvCi6/S29tFj8EfnS4XeN0ViE0Y32+meneo+Eyavu7/
+         jtTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689882143; x=1690486943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1689920506; x=1690525306;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6uboV9zE5viSPMUN9jRcO0cjpaJKLGwKotI/bN04OyY=;
-        b=KegqMfN3JQAjvJHRvAT55UDXuipz+kneDRjsJHvtJ4YfbUfNNxBekWU9mljmnxd21r
-         clD8wl6rw0QBQy9TS17Ol1OKVaZMvODuYo8YGZy7HHjEesn7UVkRXd9cRaJfEelhcGe3
-         8X/KLtDX4JXOLJJYxNnNtGcIo5tyAf7U8cdAy0hXk1FWX/MAFSCs3XW0K+nHeMtY5PGY
-         1gGgfWsPNGbnZaa2TOzDgnuu8T9bYPl+e/ifMBEtTfRfyjZKy4T16sx8cnG+G1llVWSd
-         uWhD5hq+tTISjg1dfPIYDJibVNwu3WDHI6Ny8alajtnT1GCGT6mipB4evIjTHkpGagUc
-         lBQw==
-X-Gm-Message-State: ABy/qLbEBiT0WiaCs/eipkNwVJqP1o4iMvMUeCeBdLw/n4YNLzumIMl9
-        dHlizL1I0XN3NqB0HAPrJJvZ3Ag0WvES3nSwotGWoA==
-X-Google-Smtp-Source: APBJJlE7cBabIqsDgOVse9OOZ6aTjmPoq/DJCfwfg6nCOEVEXRqRJUSYnSIJLuoYJ0UvKAptp1crbwCoFVPdkqeY7hY=
-X-Received: by 2002:a25:c50b:0:b0:cdd:6635:a1f8 with SMTP id
- v11-20020a25c50b000000b00cdd6635a1f8mr5819173ybe.15.1689882143201; Thu, 20
- Jul 2023 12:42:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230714174901.4062397-1-robh@kernel.org>
-In-Reply-To: <20230714174901.4062397-1-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 20 Jul 2023 21:42:12 +0200
-Message-ID: <CACRpkdYe9b4ZpvYZqkcMq0Jjni_VD_75Zt5oKv4+v9f3pmJbVA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: Explicitly include correct DT includes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Chester Lin <clin@suse.com>, NXP S32 Linux Team <s32@nxp.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Dvorkin Dmitry <dvorkin@tibbo.com>,
-        Wells Lu <wellslutw@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        bh=G/41dQ3c/Hx+YYfhvABXVnfSE5c1C3EeGcDjRGR6LcU=;
+        b=IH6QyYtN5LCCu5eBsGeX8vqFcWYtwo2zX8KM0PxlAmCrLGcRYDJXG7KoXYeBbDDa1M
+         BK/aI+S5Ntkr2LrAURgwj5nZm3gTtMZag56iMMtwdUrDncnMGi/LkoVbg672Ek1P3fVi
+         UqKyp9GzYUzlWzPQGA7BF25rZTojCTk8WVVY4yQvfXUuxrWHYEBvNAD+o0kCq0H9GPP0
+         xC7qZ6po+/tkSDSXwiE9rsbQnyrUg7zIcywz0kTr/GqaC/J4wMd/WdczjSdIk6Kda47g
+         KBu5Fp8FWWtPbIbAeLRJfmdmQdgNL4Sthj+BuHf24LDrE7rxWNTbecNzi5mcA5mxdgwj
+         YnRg==
+X-Gm-Message-State: ABy/qLa02rdM4UZHSOtrP5aIJpUYJrmlkGqcpapAF8dVZlBikOVl+qsD
+        cGKMEEDPBlVRk212e3FKGB0=
+X-Google-Smtp-Source: APBJJlEGxWm0ii6ImSsWnu6tI2qzk9YhtYkizLb7RvEs3vljuD4rrfYDwgkTF5RriCdLcU+OZNq5Kg==
+X-Received: by 2002:a17:907:75f7:b0:982:89b3:8650 with SMTP id jz23-20020a17090775f700b0098289b38650mr960139ejc.64.1689920505732;
+        Thu, 20 Jul 2023 23:21:45 -0700 (PDT)
+Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id cb14-20020a170906a44e00b00992eabc0ad8sm1677859ejb.42.2023.07.20.23.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jul 2023 23:21:45 -0700 (PDT)
+Date:   Fri, 21 Jul 2023 08:21:44 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Brad Griffis <bgriffis@nvidia.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-oxnas@groups.io, linux-rockchip@lists.infradead.org,
-        linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: tegra: fix p3767 card detect polarity
+Message-ID: <ZLoj-JgLqL619m70@orome>
+References: <20230626180920.318774-1-bgriffis@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CrT3QqnvATO8hR6T"
+Content-Disposition: inline
+In-Reply-To: <20230626180920.318774-1-bgriffis@nvidia.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 7:49=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
 
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+--CrT3QqnvATO8hR6T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It still applied cleanly so I just applied it.
+On Mon, Jun 26, 2023 at 06:09:19PM +0000, Brad Griffis wrote:
+> The card detect pin on Orin Nano SKU5 (p3767-0005) is active-low.
+>=20
+> Fixes: 13b0aca303e9 ("arm64: tegra: Support Jetson Orin NX")
+> Signed-off-by: Brad Griffis <bgriffis@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for attention to detail.
+This DTS include is also used by Jetson Orin NX, but I assume that the
+same polarity applies to that as well?
 
-Yours,
-Linus Walleij
+Actually, looking at the Orin NX, I don't see an SD card slot and
+judging by the documentation that I was able to find it's not documented
+for Orin Nano either. Or is it only certain variants that were equipped
+with the SD slot?
+
+Thierry
+
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi b/arch/arm64/=
+boot/dts/nvidia/tegra234-p3767.dtsi
+> index bd60478fa75e..831a553ec387 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
+> @@ -42,7 +42,7 @@ flash@0 {
+>  		mmc@3400000 {
+>  			status =3D "okay";
+>  			bus-width =3D <4>;
+> -			cd-gpios =3D <&gpio TEGRA234_MAIN_GPIO(G, 7) GPIO_ACTIVE_HIGH>;
+> +			cd-gpios =3D <&gpio TEGRA234_MAIN_GPIO(G, 7) GPIO_ACTIVE_LOW>;
+>  			disable-wp;
+>  		};
+> =20
+> --=20
+> 2.25.1
+>=20
+
+--CrT3QqnvATO8hR6T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS6I/UACgkQ3SOs138+
+s6Hveg/8DZbfqL2oqL9OnjVIqsIpwupmXZO3lB2HQhDi1lX86Kd5vPJz18PTq77O
+9deOfQQksh9N5U93A6UQ2Kgi/H3wctAUCA/c3/CHPV9SITSYlI/HV2TfCpThVpZH
+E2PCtDFKRsbJ3hKg4IZxC9sar2X4NdKS4TERH+LLBW3BU6ofUYRLeUC2yoEDZVCl
+5qLrdHoIgOmahyMS9Udpt5rLQUJxECt+MOdF1tmGDBRDD2G5q5kQNF/83NwTqbYI
+FAd1QNR2wZLrQbA0yW4OAiihfPqiIpYf8duOQ4R8PcxHekz0ZAmX3QnwYo3Yxsqk
+tgARqGtQ7onITVtg13c8jOXg/7i4sHeQvD1QuqoGdlbsnf5Rbp7qCugvMDxFflxp
+Xz8xQh7vjishOiVkBJM54cTnLIDl5MyxhU7G/gWUr+5Y3LaDm/2JCKpLyDCiSmIr
+aQko/iMRcQg5Uaaq0THnGt3xKGatR4taFz5IURhNwA+L9qZwiHYwjoLB3mIpxlsI
+rWDD0rNxOXBWiIvsCnK7mhq11K2C/XK+C1U4ZaqxebVSvf5/C+u3+pAmxhafs6wL
+vqDiQYDt16N8pAJ9ntedOXS/mZFuPXTlF8G9IjCmmy/0SX6lXFPE5J3UD7N0LMBx
+OOWCuq9agaT07R3LNjCG0E1qpyx0K3CMxLQtWTyBq9eapktG7QE=
+=ERAi
+-----END PGP SIGNATURE-----
+
+--CrT3QqnvATO8hR6T--
