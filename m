@@ -2,136 +2,234 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B00EB64DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 06:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FEFC00528
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 08:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230281AbjGUG0M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jul 2023 02:26:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57534 "EHLO
+        id S230472AbjGUIXT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 04:23:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230233AbjGUG0K (ORCPT
+        with ESMTP id S231676AbjGUIXN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jul 2023 02:26:10 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B7881BDC;
-        Thu, 20 Jul 2023 23:26:09 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fa48b5dc2eso2494158e87.1;
-        Thu, 20 Jul 2023 23:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689920767; x=1690525567;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yMTlYYHgKUFYrPYOcInw2lMvT7R3+MV1/I/kdo90khA=;
-        b=ArpKhygVDGljLqU6TfjMwFC5k0xCYWEveKD0AgvZ8e3ep12C8Q7TGKsbb6dUN00NMR
-         GwfoelbqnekpOyc/6FreGxakVpZdLfiFbJS3Hjz++0k4Vp0PQZt3urx+2ZSMjFaDgkVg
-         O/TosvPlTCqFNPfCLKEY4yzapQnoShW3jUY4KoAWLQOBW+Xt0FdcCW/QZVTxoZ/Vlqzh
-         mgab3FkuKuzaDBFGNBExllD3LY/DiwcIMYvrZMHYeYh1sbfH6PXoSmRp6ILtH2XsMIbK
-         Vc8bPOfacsBZfihi2srPaF8uSk45dcOMjhYqel0S6op1dfULK+GfNo7C3m+vElwsyZqW
-         pfDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689920767; x=1690525567;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yMTlYYHgKUFYrPYOcInw2lMvT7R3+MV1/I/kdo90khA=;
-        b=cusNA9w4ChU0e+4c7Q+s55ZwevhapvAtV/AYgZ6hZa+5R+p+3yCOnIeLNdAmDmk98V
-         fc+WDwz7wdjVX1e9MdSXfY6GO0bNs7BS7QT4z3CWvwgSWhJkcnG4sts822Lo3jyIVG9C
-         sJ6xot4ZKXYSdhANyjA6+dxcZ6ZJnJ+5JNsPDVQWuQwXmvXywyyCdcaUwI8TaoxQWrAG
-         t/7js/Vmq/VLxLEH0Oz1t4yWqSiem5bR+Ede1IlEmWOoUpMXRsd52pvxAxJM93jZMPky
-         MpxMNCIrle1wuX/DNrkozb0WtKuwP/EG0l36Ehlv6TKJo/atOHZ41c0swJX6uBm9FELq
-         eIcQ==
-X-Gm-Message-State: ABy/qLZy7MjSzD0iW3dC7xWwxzKVmXGDymh4liS+5xisl8oCq839viQt
-        4MENhiPtk08JXtKJJah1l2E1f6iF4AA=
-X-Google-Smtp-Source: APBJJlG+6nCjpTSlxDyjAhyBeiz3WZJZ2nv1aiu1aioALiZiqSCUkv52bDCQMNjavxsP/fpR+eqdzA==
-X-Received: by 2002:ac2:4db5:0:b0:4fd:c399:eb25 with SMTP id h21-20020ac24db5000000b004fdc399eb25mr502530lfe.50.1689920767266;
-        Thu, 20 Jul 2023 23:26:07 -0700 (PDT)
-Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g26-20020a50ee1a000000b0051e2549c4f9sm1682516eds.47.2023.07.20.23.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 23:26:06 -0700 (PDT)
-Date:   Fri, 21 Jul 2023 08:26:04 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Brad Griffis <bgriffis@nvidia.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: tegra: fix p3767 QSPI speed
-Message-ID: <ZLok_Lg6B_ggDzR9@orome>
-References: <20230626180920.318774-1-bgriffis@nvidia.com>
- <20230626180920.318774-2-bgriffis@nvidia.com>
+        Fri, 21 Jul 2023 04:23:13 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0B4273A;
+        Fri, 21 Jul 2023 01:23:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M5UNyGqTlyIFGHTWJauQevkTHAKSUaOB58Xjkpgt5uO5qDg6ZO80No8Qz+QlXGXD8mL70eo/CneftLnH8RRh3zike6FI9h06sJ56mrflyCARb0pQFBQOfp+2rtD9jun8zlCcaRxGuGs2NZzu2JijZR3sjvWq3HyePfq6fGGJBtsborgZSlIh0HYHhpy+06CLSlPNxC2CNkuB9u00tCLPSR0QLLF+Aq1cuNHoVnqPttaQq2a8//fiyezr+ydlbU20BRx7drypJbeDOwO3/Zs/xvvEXR/v3lPQmV6JSVVUb7GxRX8IeY/Xz/8E75A6QKaa807khkIEAmvA2q5n8Z2Vng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/jyzbgGtCCxWDYcma3W/oQX5MJ9OJGbs7QwutL2uYvM=;
+ b=LBE0e9nZv5U2cgDnXHwuBIH5xer9BLXz01TTMPub31Onjyp9krgy420UJkXubG+CVMbL24lWGG5EHP0Le3E2F39k8W4RqedsZnQCKCN8e6681eC1IkLAvqSyCqTeaQv88ffT3INneYShO7lxzr5t+gMQFVD1hMQJDAlJhwqmsunsxMNzjOmVyPiw16aZ/nWvKM96PTZx9LiRG86v5dvecx7awaqF4+ZxSVRqT0DsL+FY+TTu4HE6rttAtcJOiKZHAHyM2mi9to0syJWUihLH8orkcDZsvVXeG1tEPss5dXcTDaYf7M8gjbxSv3PHmQggVplqkObuymoa3kzJ+VKjug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/jyzbgGtCCxWDYcma3W/oQX5MJ9OJGbs7QwutL2uYvM=;
+ b=pzJx/RW8pv3dDQNVTor6AsPM4jj8AumkHhKeCRk9UF9XopM+gNdgzZz633rZu+370lijT0npQvVXsd7df24IQn1BxO2gDgOeSYx24J7VYuXBxE2hubnToalmbrqyR4UVGSJkLhzbGudcTDx47U84ictaKaTpv7PVRJJhVLGBEUthXkLq78UqlC9/yV0eb5kw9zdlYkc6Wum5QFiMjp8N5o+tMiGVsX6L2xHdWEzfw4xX1LAYa/5riIT99spKNnzYmOTrsbBtXsc21ccxRBC4hYeiadDI5AokIyULB8HvWdFqDbRS4gMsVc4jhbAzkiOX9WUjaikowPPk+jWWqPS8gQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ LV2PR12MB5896.namprd12.prod.outlook.com (2603:10b6:408:172::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.31; Fri, 21 Jul
+ 2023 08:23:08 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ab4c:b09f:b445:be6e]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ab4c:b09f:b445:be6e%6]) with mapi id 15.20.6609.026; Fri, 21 Jul 2023
+ 08:23:08 +0000
+Message-ID: <53d1bf79-4353-49b5-76b6-c2266535c778@nvidia.com>
+Date:   Fri, 21 Jul 2023 09:23:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH V4] Revert "PCI: tegra194: Enable support for 256 Byte
+ payload"
+To:     Vidya Sagar <vidyas@nvidia.com>, lpieralisi@kernel.org,
+        kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+        thierry.reding@gmail.com, Sergey.Semin@baikalelectronics.ru
+Cc:     linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+References: <20230619102604.3735001-1-vidyas@nvidia.com>
+ <20230718025221.4001329-1-vidyas@nvidia.com>
+Content-Language: en-US
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20230718025221.4001329-1-vidyas@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO3P123CA0024.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:388::7) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="T5KJ6+6g4DwwNEek"
-Content-Disposition: inline
-In-Reply-To: <20230626180920.318774-2-bgriffis@nvidia.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|LV2PR12MB5896:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d1f9da1-0efc-4282-a761-08db89c3b6b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: khMPaA9N8tb8hVXk5jZdv5jU+ktVJLPf45MmpRF9PZHBkK3dZ+pnDAz9GknLOsrXreXlWffKIiU/Ojy/0L1BfzgOsy9V4jsW6Pi0A137B493YXnZLl0R3hO25mUdkyanTfdgNceSIRFQtlc7o9yVotc4eJoD2uma5TMg8VjqwLw7d4Cj/awAvCXignwkO0bdryoTfA8Dn5bxlovsnxTPb6wqCbdWPERIP+RXu65EXgPaJKgLYy3kuwbO6EgmxqDyPqJU9nA/JUIfV7tcDGgDNn/Ukd28OrHjDDgwfrYJYY9skiC8SZsJSY8uSrqRIFvwHOlNcjxu8PNFxYtrQ1jr7aisF+NUqqkZQh1z3p7+avoCcnUAoHfzEYrZ5q+pawP14G1SCuRneEDafR7qTaENh1bWuVfc4ej0C3ds8raFDnqwqTM5fLBprJPVayTdjpHyCsE7q2HyEyTUhQ45oegUPeg8zwPZkeQyNsO1k009s5X66MCvnNdFTueJnYFVwq9zgTyz9MWM0VleDqRPasBpv0LAwDFR5wXFF626taPUHt23/DC7cbtNlnZjkrYrN+va7lJq+RR9U7yTlEeqZ8D0r8RFuD7Ivd7H8mpScDFnlP+bhy30DusdP5yd5Cc+1TXyemGOZhVXn07HZE57PTXbQLpDwO2uMsEP0HCmTaqvGeL04Rkb1Zm98YcMgRvbT58V
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(346002)(396003)(136003)(376002)(39860400002)(451199021)(31686004)(36756003)(86362001)(31696002)(186003)(38100700002)(478600001)(6486002)(6666004)(83380400001)(966005)(53546011)(2616005)(6506007)(6512007)(7416002)(8676002)(2906002)(5660300002)(4326008)(8936002)(316002)(66476007)(66946007)(41300700001)(66556008)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UWRHVnFxNjZ2UUpCRGlzWHAzeWE0WWh3ckdIMGVVaUtIbHdZTy9JbWZReUgy?=
+ =?utf-8?B?OXlXNDNKWGhoU0h3TVQ2L1VkQ1gxY2VoNmVoQjBiZy9tc2RSQnlhS05CUWcv?=
+ =?utf-8?B?b3AxK3NKMzZ1Zmx3VkxKR2RRcDJNRFlTSVJKcS9NQ2FraEZIRkpQakNIMWVO?=
+ =?utf-8?B?S3I3Q0wwdEFMV1N4SzJaZGFtSmlFYi91NmhrdktaL0dicEFndDVYZlplcGtI?=
+ =?utf-8?B?T08xRzRkNFdzZkxLR2JaSzRKdy8yTW1vQnlIZEFvY2dHcERFdTFRS0NibXl6?=
+ =?utf-8?B?MlozeW5zVkFwNXpNenZOTmlQbFJvaXdkM2F6VkVkbnE5TmNINGU5ZUxJamVE?=
+ =?utf-8?B?bjd3YW5qQmtJR0ZHSUVNRHV1MURIYlMyV1M0clNUWHlWWUQrVzl6TkVHdkV1?=
+ =?utf-8?B?b1hScjRpb2JhYVl0RWNXLy9CTlpyRDkvY1NJM3gxY3p1ME4yUHUzdmcybmFa?=
+ =?utf-8?B?OVZaL2dpWG1wVGZYVzIzcDhpZDFaaW9tWUpVMVJkV1Brdmpvb0FUUm0zSUdR?=
+ =?utf-8?B?cityWnFHZS9aUlpLUGlYcS9ZOUVYdGd0VTZmNldneW8wcERBdHRWNU1GM0FS?=
+ =?utf-8?B?NVZwY0p2VHRXN1QwMmRhVjd4VWhvNk5qeUlrRnlyUk9oKzlLRjFjVWlQVkZ1?=
+ =?utf-8?B?cU1pOEhHK3VNNk05UzBRd0src2tRNUdabzZGWE1TalZ0VDk1NjQ2Mmp1VUgx?=
+ =?utf-8?B?MzA0TXVhSVNZWGRIWFFNRVJCT0J6bCs3bWMxTSsycU1tTTl6RkRoRVZ2enhN?=
+ =?utf-8?B?V0EzYWJ4cmRpTWhTc2ZWMHc1anczakczSWFsWnY2b0RLOXlkenN5bWRIRWlu?=
+ =?utf-8?B?RDVYby9HcjBXZEdxM1BqeElDaDdJRzJOY3pjdlQyWTBENVFkYTJKcjdSNHdE?=
+ =?utf-8?B?anVNK3U3K2pyMUNqS2lKcmpZWE9oUFU5Nk1LSUdIYnlldVoxN0Y4ZWNvZCt1?=
+ =?utf-8?B?QUcydkM0V2lPN1hFNU81djM0OWJpK1VBNy8vNHU1Z3JvTW1oY2dHRWNFVUlW?=
+ =?utf-8?B?a0FZdXVZcklFdHVyUE9yUGZNR2ZHZ0hyWFN5TkNWWjVOUGFYNk5Qd01mUjcy?=
+ =?utf-8?B?R3E3ak16bFdKc1lhK2x5OUZXS1Vud0hLcDlEb0JOb0xSdjF0MW5xcXlEd1pP?=
+ =?utf-8?B?NjBBV0lCUmtPcDNadFFqQ0RuY0NRcXVhSTFzVW5JcnBQR0s1MnlFd0plbG03?=
+ =?utf-8?B?OVgyRHdZTmtVdlBSWnNZa0xXVHFMbXFSb01jUnRpMWVVeGNkaE90eDVJY0Na?=
+ =?utf-8?B?SCs1Nkp1TVROOVV3cUpMSGpuWGpyVDhXSGkyWkx1NitlQllDYWlERzRTbm1P?=
+ =?utf-8?B?YzhyRW5DR2h0OTkydndrWmZRTkVxMVFWMWZNaDRkU3FrMFVnYzZTWU16RHkr?=
+ =?utf-8?B?YXYzdFFhOFFMSUo3cCtPeDdoQStoZTZVbFl0dnBzR3JIQmI1enBVV1JrTXJR?=
+ =?utf-8?B?SEFaNkw3QlY4WkdZSUV5YlIxNThoTWs4ODJiZzFrYTAveG4vVVJyblFweUYw?=
+ =?utf-8?B?UDc1N3JhUWp4NkVnWEl2VFV2bmpNVHV5QjRZTWR3azdqMktnck9ZdW1oMnJz?=
+ =?utf-8?B?U0FXYlpoc0RUK2Z0Sk9tQ0FTbDZwblJyNlNkeTNEdlMveFBiOHl6amx0QVg0?=
+ =?utf-8?B?MDJjUFd6L3BMcWJJbkxSOWNXTldDWTRtZVJLZXdJd3drU3BkenlnU2s4cDJU?=
+ =?utf-8?B?L3JXVFlhNExyZU0zdHJrVjR4OEZuVFJpZG5xNkVoZzJJdGRKUUtlYW92azgw?=
+ =?utf-8?B?enZFbXNraTNtZSt3d3ZEYk5vdlpKeEVEd0xHUWVnQWFWZVpqMXcvTG1zU2M2?=
+ =?utf-8?B?eXNKZ3g5K2hveUM0L1lmS2JFYWJUdG5RWUMwL2FpaEVuYzZ0ci9FbnBQZlZ2?=
+ =?utf-8?B?K2VSS25MV1pSTlUzWTFKWUkvMFNTZjlCeFU1ZjRBc0dOeUl0RHNxZDBqNGJI?=
+ =?utf-8?B?NXBCVjRlNFlpbDk5QlYvdHhkUDg2RXFhTFlKb05hQXVDTW5CNDA4dEFjeTQ4?=
+ =?utf-8?B?b1Rmc2pqaFRwaWUzUTY0Z2NtK2ZOVEdvbVRtWU9DSk9pdHJFcWlkTlRnM1c4?=
+ =?utf-8?B?U0xhVHZVekVKVU9wY1MxWGtjSHhDZzNjZUxMVVJ4U2FwZEF5NFJFckxKeXNu?=
+ =?utf-8?B?ODB0TVhhTXg1MXdWUHZnSGpFZk1pNU54aGoyM2JrVFhvVStlQUM5MnVQYlpl?=
+ =?utf-8?B?aXpkK05oS1JNQnJLOWRKT0dVcmxGcm9mdW5FbldHbDQ5YmpkWUxzSEUzVENl?=
+ =?utf-8?B?RE54RHVob0N5Mm5ocFQ3ZFpxb0J3PT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d1f9da1-0efc-4282-a761-08db89c3b6b5
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2023 08:23:08.3435
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j4iLFQY0kQki4QQAV7rWvRb0ERS5a4QoXQJacxo3xFQRZVfdDXjO2/mfDTtaqCCMKBy2W8UFEcizQOPw0OuXPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5896
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Krzysztof, Bjorn,
 
---T5KJ6+6g4DwwNEek
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jun 26, 2023 at 06:09:20PM +0000, Brad Griffis wrote:
-> The QSPI device used in Jetson Orin NX and Nano modules (p3767) is
-> the same as Jetson AGX Orin (p3701) and should have a max speed of
-> 102 MHz.
->=20
-> Fixes: 13b0aca303e9 ("arm64: tegra: Support Jetson Orin NX")
-> Signed-off-by: Brad Griffis <bgriffis@nvidia.com>
+On 18/07/2023 03:52, Vidya Sagar wrote:
+> After commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
+> payload"), we set MPS=256 for tegra194 Root Ports.
+> 
+> By default (CONFIG_PCIE_BUS_DEFAULT set and no "pci=pcie_bus_*"
+> parameter), Linux configures the MPS of every device to match the
+> upstream bridge, which is impossible if the Root Port has MPS=256
+> and a device only supports MPS=128.
+> 
+> This scenario results in uncorrectable Malformed TLP errors if the
+> Root Port sends TLPs with payloads larger than 128 bytes.  These
+> errors can be avoided by using the "pci=pcie_bus_safe" parameter,
+> but it doesn't seem to be a good idea to always have this parameter
+> even for basic functionality to work.
+> 
+> Revert commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
+> payload") so the Root Ports default to MPS=128, which all devices
+> support.
+> 
+> If peer-to-peer DMA is not required, one can use "pci=pcie_bus_perf"
+> to get the benefit of larger MPS settings.
+> 
+> [ rewrote commit message based on Bjorn's suggestion ]
+> 
+> Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> V4:
+> * Rewrote commit message based on Bjorn's suggestion
+> 
+> V3:
+> * Fixed a build issue
+> 
+> V2:
+> * Addressed review comments from Bjorn
+> 
+>   drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++------------
+>   1 file changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 4fdadc7b045f..a772faff14b5 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -900,11 +900,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+>   		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>   							      PCI_CAP_ID_EXP);
+>   
+> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+> -
+>   	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
+>   	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
+>   	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
+> @@ -1756,7 +1751,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>   	struct device *dev = pcie->dev;
+>   	u32 val;
+>   	int ret;
+> -	u16 val_16;
+>   
+>   	if (pcie->ep_state == EP_STATE_ENABLED)
+>   		return;
+> @@ -1887,20 +1881,16 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>   	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>   						      PCI_CAP_ID_EXP);
+>   
+> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+> -
+>   	/* Clear Slot Clock Configuration bit if SRNS configuration */
+>   	if (pcie->enable_srns) {
+> +		u16 val_16;
+> +
+>   		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+>   					   PCI_EXP_LNKSTA);
+>   		val_16 &= ~PCI_EXP_LNKSTA_SLC;
+>   		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
+>   				   val_16);
+>   	}
+> -
+>   	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+>   
+>   	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
 
-This was originally copied from the downstream DTB and I see 136 MHz for
-both P3701 and P3767 there. So now I wonder which one is correct. Should
-perhaps the P3701 be updated to 136 MHz instead if that's what is being
-used downstream?
 
-Thierry
 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi b/arch/arm64/=
-boot/dts/nvidia/tegra234-p3767.dtsi
-> index 831a553ec387..980f15ac674d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi
-> @@ -28,7 +28,7 @@ spi@3270000 {
->  			flash@0 {
->  				compatible =3D "jedec,spi-nor";
->  				reg =3D <0>;
-> -				spi-max-frequency =3D <136000000>;
-> +				spi-max-frequency =3D <102000000>;
->  				spi-tx-bus-width =3D <4>;
->  				spi-rx-bus-width =3D <4>;
->  			};
-> --=20
-> 2.25.1
->=20
+I see a version of this patch here ...
 
---T5KJ6+6g4DwwNEek
-Content-Type: application/pgp-signature; name="signature.asc"
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/tegra194
 
------BEGIN PGP SIGNATURE-----
+However, I don't see this in -next yet. If you are happy with this 
+latest version, could we get this into -next?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS6JPwACgkQ3SOs138+
-s6FMZw//fcfN/m8XheePjOs1wJLGh8XuaC6qGInAlcZWucfqXOjdoZrWt4QncepE
-wAYKM6AW47p0wFA2NSrtYLi/sCTuEBbi9HkjrHPpD4PpEvjyTgK8xzJ87cngorPM
-tHXCmJJ2igwU7z9gUA7PFEb0coDjy3b5TFyFvilQc+DNG9LvYRjY0g9b1HYYpqeu
-sP7V3wtpGr/cGTw7C0DMq+IwI36EPdfDv5e73vpvwB2I5lu/KMi/p2p6OFpuS+o/
-3d3eyGbyMVWQf7zpOJpJzwqbb8zCLYrYmwAqqnjRed3VKHn/4asLffzjAhkBhO0I
-7u99DOPbXfJKtxUbBxMO0rvLAcs2nqlcKbZOuMRooAbTF/mD9vcrBYKdQPnGPckn
-ES+MFT2oVbC5foFuZmnroAd47t90uJ8Unw9sXBxdfyrqmbtgOiijKsqecUkhYBdu
-GoTWkrD3J58pdfXEeR3URrkvmapbV9EKT3MqFkHGljfaI4ZZbnGDMy/WcUZ8wFsO
-3huVzQYsOJHegi6CKHH68TaNmgFYnbERJXDEPKYIQa9y2Ks7Mw3S3uOe/Cm52AsU
-8vBubPJeeIMZnQl/KR8xR99Bhn0keXJR6OIoWD0gPE++mEvS6sbLff+qXyYiHNOb
-oRVe3UDsUXUDTyLjSh2DprEIHnp1TfXJ+ufxu4TaU+F8h7ExFXc=
-=TKGC
------END PGP SIGNATURE-----
+FWIW ...
 
---T5KJ6+6g4DwwNEek--
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks!
+Jon
+
+-- 
+nvpublic
