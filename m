@@ -2,532 +2,219 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1905FC04A94
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 13:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECEDC001DC
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 13:19:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbjGUNNe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jul 2023 09:13:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56466 "EHLO
+        id S231138AbjGUNT2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 09:19:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbjGUNNb (ORCPT
+        with ESMTP id S230414AbjGUNTZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jul 2023 09:13:31 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6336830D6;
-        Fri, 21 Jul 2023 06:13:25 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4fbc0314a7bso3016436e87.2;
-        Fri, 21 Jul 2023 06:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689945203; x=1690550003;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKp4EUDs9OHCFkv+axFZbsC3Ahabb0v9/dhztZiePdI=;
-        b=bd73b6TkOKCvKMHQnERHzMpaHq3wmJsqFt7I6tFD1Di3uxlYsCwG6PBjsdR0K37lAu
-         YADTF2xwGS1L73w6n5KFi+Yo0ahFqVxhaAULxA6W2aD355Aq6lZ8k4T2EuiuIDD5F0AR
-         G7WbJiDezL2QOf/GY1t11wCFYL7qbyjHDIumMcvae3CEnJrS4gmFVzd1RRKpLv1F0Vv/
-         kqJlqD2NK3kEuWPjjn09kDovNONtzWMwyeYMV5CQ5zMCBT04WRg3ntSWka9WGNcD2/Pa
-         TQzz0D6ntzz4WDS0T317Q14CZvGhV9YYCUJ7U4LO7WrH1kui4EIELu3XoNP43iGf2WBw
-         DUzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689945203; x=1690550003;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FKp4EUDs9OHCFkv+axFZbsC3Ahabb0v9/dhztZiePdI=;
-        b=GIiOmzbHOqFD7uxkrPVCiagSupW6F4683SMKdJ8gqAcRcvYdj0Oohyhhs2m21m1SKU
-         Mr//fOd1aM9c0m/D8l02ehYP0ZWuu65CNAaa4wf9rc5AFcb411oK247uYYtvOVBX/wG9
-         SSuaVyf7dysPj6UASq9ScKDOtq6WQDGcL1hDrSTR2TPkdU1QbLM8ixIJC1Bq1RbxY/Pm
-         gdI9a39Qkc0Ur64AxdROFiL6iDlr5D9njmGyoSQ+tbu3y1Tf8ooPG5Un52G6PP0gFDqj
-         Y0xeFhJO37Va1Qxb6ozWmYtP+q3/DA9p5buxvrbVqoIWL3fa37ViMniTLCiaKQlSJ7xr
-         EFHg==
-X-Gm-Message-State: ABy/qLZNazrANDoQbYu76ix/fEIjg6ufh0XjW1fexbGFVH9A5lVyftfE
-        5Wx/wCTZ1EAGZRFbK0eVssg=
-X-Google-Smtp-Source: APBJJlGgRa5fkLyoLyyYbzTWpSRETOKwIrpz5GNnH9C4vxqs4snB4WJuEZRIXFid9okA+g+NuG91UQ==
-X-Received: by 2002:a05:6512:3e1d:b0:4f8:710c:e2c7 with SMTP id i29-20020a0565123e1d00b004f8710ce2c7mr2003014lfv.33.1689945203225;
-        Fri, 21 Jul 2023 06:13:23 -0700 (PDT)
-Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n2-20020aa7c782000000b00521953ce6e0sm2074329eds.93.2023.07.21.06.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 06:13:22 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: clock: tegra124-dfll: Convert to json-schema
-Date:   Fri, 21 Jul 2023 15:13:21 +0200
-Message-ID: <20230721131322.2991364-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.41.0
-MIME-Version: 1.0
+        Fri, 21 Jul 2023 09:19:25 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2041.outbound.protection.outlook.com [40.107.94.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABB335B1;
+        Fri, 21 Jul 2023 06:19:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EkgqfPsSG/kMzWyyQyCcdW1jvt5gZ0S4iN7S1a8n4KlmAexf8PZ/qp1Mxk0ntOy4atSOBsxOhO+dsAX1jZYkiyHvGMICOheYpzLVqJEovC6GhRKaRLFLrXOZsZjSBx6nCHz9EYYdy1dwqoDwL5z0gzFqoaDzy9ab93Cj7EIb6EGIF8QFKA+Qjk3psAdc/IiTNO0ml+lAqohQZc6D4JCiWfOEPlABFkEQC4WNFn6klqujwVV9G7Xd4gFBAZDccxgwjZmSZerTLCL68XFVuQkG6nhIwhcvbSMWh+tsp0ocCeJCp224ai4bPsfGoa1w3vi+cR+XJobXcEvj68T/LmrgjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QysEKlw668b5p85Fumbw63VMwEgP691djzaMPIHITPU=;
+ b=arm7t7bP23QYvkEK9Ch1zp3nFl6s0f+WG8eF9mJm/YruPbRBkyl4K2yL4JoU6aNCqPfj3N6cj791fl0QkoTtr99oqQR1HsX9Aft+KLwFpPZKtPcCxDn0WWZZd9vQH/F3WAcwkdRqnxtSACBO9CS4HbuEKkevwNghXmvpnHJkU6/QAjbXjg1WMCVCe2jaJpmp7NvRBn1Ds5WpQVYF76BzooM0dPctBsT/q1dcLnV9OpqrCCWrWW3aF3dI/YhYgmKOSrM8r/xQw1ZRgfUFfpPfNbhk7XjFbmBfsnHKggcoxBTBPCVIhNK8gbegCJR9nUz6VWLIEHFrNN0iIffxwKby8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QysEKlw668b5p85Fumbw63VMwEgP691djzaMPIHITPU=;
+ b=GAXLyxvFaKI+RgffDIELISF1jsAQoB583nZcTTGeMGwR+oI6jsBMKzQgceI3gaznPRk5G8NDHDKDH+ngqnzQZPUZ72Q5gU3E8boEqe6dFqtipp0UUA9tJfQpcH/Soxv0cJh/XBj+w2AF9Z74WRjvYHj9u8n4PG7W3P3M1LKsFSvum/XnujdFLNmpo0OI8Qz9DtvOkYts0TdDUAaNM0ZoO0yrGacJEkNGUdGHnU1xPGX5M9O+DZYFSvT3UV++m5veWpUHlXbGR/iSwaQ6dXa0IEdSgVCVYubK3eLC6Ew/XWfaORTEDipJ/JJMynZLVDZKpxKANdVdhCQCGv+qzCYqxg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ DS0PR12MB7801.namprd12.prod.outlook.com (2603:10b6:8:140::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6609.28; Fri, 21 Jul 2023 13:19:07 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ab4c:b09f:b445:be6e]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ab4c:b09f:b445:be6e%6]) with mapi id 15.20.6609.026; Fri, 21 Jul 2023
+ 13:19:07 +0000
+Message-ID: <fdcf25f6-c84a-a46f-dc4d-2d822abfab63@nvidia.com>
+Date:   Fri, 21 Jul 2023 14:19:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] module: Ignore RISC-V mapping symbols too
+Content-Language: en-US
+To:     Palmer Dabbelt <palmer@rivosinc.com>, mcgrof@kernel.org,
+        rdunlap@infradead.org, thomas@t-8ch.de
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20230707160051.2305-2-palmer@rivosinc.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20230707160051.2305-2-palmer@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO2P265CA0297.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a5::21) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DS0PR12MB7801:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40ef1397-d4d3-4597-eef2-08db89ed0fd4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uavEASFXMr4zylN4/XNLBcVg3oh5QB2uH7z2IKTEqgdKQRmfsKKic5VcCP6rUyca4zZJIjpUsGit/ZHJYv21vO+Me/Rds3G6Fui4gyUO74WXvuc1oQi5QhEASohUOPjjmNMY3pjtFMOLiCbatcreBWrlcrkTcZq0kVVuStBdwx1nBI0j0H5j8Y9GUVaTmIt/x4fEpAMWpXccj/tkgLuAnurVOP75J201k0XYuLupQScj/GlyINh7mXc8fqkSGP95f0xgCyxQz+78b+mAvn+PPEHwk18RYzCl8vej+VC8VbjwGb5O685jQmZKhYAmFFvSyFMrc4M80ekqFFoaguTcs6VV5vlY890U3ujqXYovRqammPMYe9ix6UWtA/4WVSLZ+W2JeZvYDwk2yNgpW1T9Y+V1BOmZk1dhTuYyudxCCQL+D8bl3DE4uTzTMAeZxKXVkevQ5d3sqvcZsYSkdMvla4RB2RkFaIs466xFitC5OE1bfUmiBqNPigFZnMzbSnzrtj9Yu3uYQYzuBqlu8F96C1Tp/H1J0t+ocg/QsVQ96RMNQFaMSuvsXjz/5FJGM2BNk8PFQk/ZE+itYo0Hj0a64pRzLsXJg8OHXuOfeK4ujP3TcUT9rr48mDF0s9APYUisFtH8XTj09uUyv3oOZiJ+FG1ylRyxoqkXc34nA428THcONq0chmFr4qxPCfaTq9/L
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(366004)(346002)(376002)(136003)(451199021)(5660300002)(31686004)(2616005)(41300700001)(83380400001)(53546011)(8936002)(8676002)(6506007)(186003)(4326008)(316002)(66476007)(66556008)(66946007)(86362001)(31696002)(6486002)(6512007)(6666004)(966005)(38100700002)(36756003)(2906002)(478600001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N1pIVzh4cFgzOTZZdCs3Nm9rYlVQdk1UbmR0dEhFT0lhNU5zbjFGc1AyTURh?=
+ =?utf-8?B?a0ZQRGQyNnVIZG1TV3pYQ1R1ajVEVEZoNk5BMElsZEZpWTMxRG5jQkdFcDMy?=
+ =?utf-8?B?R2JqalRBRVM1SEFWRWlrd01Ha1RjRzVKdmhOR1RTSU5rdW8wTjZHR1pyZGFI?=
+ =?utf-8?B?STNUUFlsb3I0aEJ1N05CemkzSGJHcDB5bHA3MjVsajg0VUNqN2VlQitMV3JH?=
+ =?utf-8?B?L2Rha2dRZGprTWZoRGI0UU1leCtjaUExWFBaVVJjdVM2YktaT2JLMGpVaVNx?=
+ =?utf-8?B?U1pzTnFab2lJQ2o4dUNTS3hFZy9wUU9YeHVqK1JnYWkwbDhSanp6bjg4N0dN?=
+ =?utf-8?B?bWNqRkdOdmtZU2dBU0RJTXJFZHhKQjVmVUVuUkRhbFdlTUl1cmI4ajIvR3ZJ?=
+ =?utf-8?B?bFBJMnd1WTVNTzhYcUdZK1dFa2NzMXdjRHlUT0dwQ3ZvNW1rREFseGdkbmpo?=
+ =?utf-8?B?V054TCs1a25DMmszS1NWWnFBcUdaSmpQNHkrZDRrQUJ0bDVab1BkbDhvcEtt?=
+ =?utf-8?B?YVRaUVQyeFJQYmtZUmIyekxqMktJQmZVYWs3SVFoZkJCelp6MGxvT281RmRT?=
+ =?utf-8?B?eXRNczdkM3BEUkZ2enFIUWZNZFhWU0lhYlkyS2YzN1ptR20rcVphM1VNUjZG?=
+ =?utf-8?B?c3EvcWc4b0ZOYnpkSTlJME9DcURJWkdQTjVhckxMc2JDUzdwY0tUSmNCOWx1?=
+ =?utf-8?B?Zklud04xMmkxdlRqMlBBVUJXd0gzV0s1QlpKbERJSUVnaTdMNk1zWkEwaUpN?=
+ =?utf-8?B?d0lzNFhPaU1PWnd0RlFEdVl6SVkwTmVPUjFOdFlZR2tEQ1ViTjlBYzQ3MUYy?=
+ =?utf-8?B?TzFSbHNuOFdnT1VpSTFtdnBGeVNEc3YxNWtoV3VLem5ucmUxM29yZ3RtbE1V?=
+ =?utf-8?B?SEU4dXBNaWd2c0p4SGVIQlgxVkdrbUVMK2JmRk1Bc2ZWNHo2YkNIaElFOWUr?=
+ =?utf-8?B?UXFhdHg2S0VrTmEzM0xGaXdReTBzSWVnRzNPREl0ZERmMTkwMElsWkdsRmY2?=
+ =?utf-8?B?SlZBZkhJUmdiYU5ab0tGZ3o5NGJQL1lTYW9DbXJ6ZUtON1R3bnRteVpZZS8x?=
+ =?utf-8?B?VUh5WWxNbk1PbytwMFZXUjA1OWlvVnhBR2kwM2ttd2x5RVhybGhRU3NzckVq?=
+ =?utf-8?B?c1l4MUJkK0NFQVdJMmRjcUVuWG5xeitVZzNwRjBUNWhQSUk3STBhUjJ6TEpY?=
+ =?utf-8?B?ZlZkTFB6WFNUVk1OSXM0Zkg4MGgvVUhRL3ppVThvWms2emErZXRVWnVPZFN4?=
+ =?utf-8?B?R283MzNHTUdMSHdMLy85Y3ViUjlUNldpNVdPUWpRSlNhd1g5NDRNRWphL09j?=
+ =?utf-8?B?blNvaGxtbkIwM1hsVzhBUFhwQWJKNVBtU3NtNVhsMXZPQUcrZ09RUVFMd3Mw?=
+ =?utf-8?B?Nitnb0Fzc1JZckxiZGZ3ZmdKL2kra0RVb2lQdFhzMTVKdlVFcWRTZXVLT0NB?=
+ =?utf-8?B?cUtieEhtdDF5enRpZXZkS1pRaE1Jd1pzZmFwbXBYcjVVS3ExTEFxMU5YMjM2?=
+ =?utf-8?B?MjVuVDc4d0N1S0JrTzNwNjQ1SG5zSlNoYVlFckNHMHZCQWxxSkVSK09ZakRG?=
+ =?utf-8?B?RCtWdXp5VDI2a2ZoMjVPV01zZmU2dUtuQ3Joc0ZHRXZtZWRDL052L25sZlA4?=
+ =?utf-8?B?ZXRHcVVWUi9yOXR5c2JxeVNRM01TMWtGQVpTcVNGbmVGTGVac3dLRWNqdkRl?=
+ =?utf-8?B?TGJhbTdqUlBIQTM1LzNBYldSbloyUmZUc0VGWHJsWmFCZit0QXN5ODk3Wmk0?=
+ =?utf-8?B?SkdybWdSTk94SzhNZkF5UzF3OG9PMkpPbTFGbXl3ZW1MZ3hCRnAyQ3pxaUZS?=
+ =?utf-8?B?TGVGcDV1dndCYk52cEVJZEZyOTlFakc2MU1uQ214WjVVUGNkNUY3V0NkMGNQ?=
+ =?utf-8?B?UWRXdTFZdnhXS0JMZUJEeSszT1RZQ2xzeENrU2RVTmJ5SExJRnJoYzEzc1VF?=
+ =?utf-8?B?RGJwaGpYZkluQVd0ckxXTTRHWEl6NHhQMm9FQnY3YVNheWJiNDlKQ1dBajZ1?=
+ =?utf-8?B?bEMvcHQ3QVNpaFhtK2pjeEM4ckV2ZjJ1cWpjQTVMQVZ2WWZYN1VnSzNveEJL?=
+ =?utf-8?B?djZOcWF3RFdIQTM0V29DRk9NN1k0UDhFK0ljdDQzeHJMMU1uTmRzNlBBRXI4?=
+ =?utf-8?B?K0RNSFVtY2FlWU1EQjhwM2hDbjc2OG5UaC9TNUkrY29rOGFwZk5kWHFHT1g0?=
+ =?utf-8?B?d1I2aHNuczVqbW5reHIvOXhkRFJNOElUZTg0TGdRN0lkVEliQW5VTjE5VVFx?=
+ =?utf-8?B?WlVCek1UOTE0cDloQlZiVEN0cXRBPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40ef1397-d4d3-4597-eef2-08db89ed0fd4
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2023 13:19:07.0347
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: smysserbrLDPfeka/NskuUkQYE4WWgyrqm7eHOgc+KupvcISrW9KBieMFsXkzpTQYtxPT1Nb+jYVSU8CpOIB8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7801
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Hello!
 
-Convert the Tegra124 (and later) DFLL bindings from the free-form text
-format to json-schema.
+On 07/07/2023 17:00, Palmer Dabbelt wrote:
+> RISC-V has an extended form of mapping symbols that we use to encode
+> the ISA when it changes in the middle of an ELF.  This trips up modpost
+> as a build failure, I haven't yet verified it yet but I believe the
+> kallsyms difference should result in stacks looking sane again.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Closes: https://lore.kernel.org/all/9d9e2902-5489-4bf0-d9cb-556c8e5d71c2@infradead.org/
+> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> ---
+> Changes since v1 <20230707054007.32591-1-palmer@rivosinc.com/>:
+> 
+> * Drop the unnecessary IS_RISCV define and just inline it.
+> ---
+>   include/linux/module_symbol.h | 12 +++++++++++-
+>   kernel/module/kallsyms.c      |  2 +-
+>   scripts/mod/modpost.c         |  2 +-
+>   3 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/module_symbol.h b/include/linux/module_symbol.h
+> index 7ace7ba30203..5b799942b243 100644
+> --- a/include/linux/module_symbol.h
+> +++ b/include/linux/module_symbol.h
+> @@ -3,12 +3,22 @@
+>   #define _LINUX_MODULE_SYMBOL_H
+>   
+>   /* This ignores the intensely annoying "mapping symbols" found in ELF files. */
+> -static inline int is_mapping_symbol(const char *str)
+> +static inline int is_mapping_symbol(const char *str, int is_riscv)
+>   {
+>   	if (str[0] == '.' && str[1] == 'L')
+>   		return true;
+>   	if (str[0] == 'L' && str[1] == '0')
+>   		return true;
+> +	/*
+> +	 * RISC-V defines various special symbols that start with "$".  The
+> +	 * mapping symbols, which exist to differentiate between incompatible
+> +	 * instruction encodings when disassembling, show up all over the place
+> +	 * and are generally not meant to be treated like other symbols.  So
+> +	 * just ignore any of the special symbols.
+> +	 */
+> +	if (is_riscv)
+> +		return str[0] == '$';
+> +
+>   	return str[0] == '$' &&
+>   	       (str[1] == 'a' || str[1] == 'd' || str[1] == 't' || str[1] == 'x')
+>   	       && (str[2] == '\0' || str[2] == '.');
+> diff --git a/kernel/module/kallsyms.c b/kernel/module/kallsyms.c
+> index ef73ae7c8909..78a1ffc399d9 100644
+> --- a/kernel/module/kallsyms.c
+> +++ b/kernel/module/kallsyms.c
+> @@ -289,7 +289,7 @@ static const char *find_kallsyms_symbol(struct module *mod,
+>   		 * and inserted at a whim.
+>   		 */
+>   		if (*kallsyms_symbol_name(kallsyms, i) == '\0' ||
+> -		    is_mapping_symbol(kallsyms_symbol_name(kallsyms, i)))
+> +		    is_mapping_symbol(kallsyms_symbol_name(kallsyms, i), IS_ENABLED(CONFIG_RISCV)))
+>   			continue;
+>   
+>   		if (thisval <= addr && thisval > bestval) {
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index b29b29707f10..7c71429d6502 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1052,7 +1052,7 @@ static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
+>   
+>   	if (!name || !strlen(name))
+>   		return 0;
+> -	return !is_mapping_symbol(name);
+> +	return !is_mapping_symbol(name, elf->hdr->e_machine == EM_RISCV);
+>   }
+>   
+>   /* Look up the nearest symbol based on the section and the address */
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- should now validate properly because pinmux bindings have been merged
 
- .../bindings/clock/nvidia,tegra124-dfll.txt   | 155 ----------
- .../bindings/clock/nvidia,tegra124-dfll.yaml  | 277 ++++++++++++++++++
- 2 files changed, 277 insertions(+), 155 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+Since this commit was added, our builders are failing with the following 
+error ...
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-deleted file mode 100644
-index f7d347385b57..000000000000
---- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-+++ /dev/null
-@@ -1,155 +0,0 @@
--NVIDIA Tegra124 DFLL FCPU clocksource
--
--This binding uses the common clock binding:
--Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--The DFLL IP block on Tegra is a root clocksource designed for clocking
--the fast CPU cluster. It consists of a free-running voltage controlled
--oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
--control module that will automatically adjust the VDD_CPU voltage by
--communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
--
--Required properties:
--- compatible : should be one of:
--  - "nvidia,tegra124-dfll": for Tegra124
--  - "nvidia,tegra210-dfll": for Tegra210
--- reg : Defines the following set of registers, in the order listed:
--        - registers for the DFLL control logic.
--        - registers for the I2C output logic.
--        - registers for the integrated I2C master controller.
--        - look-up table RAM for voltage register values.
--- interrupts: Should contain the DFLL block interrupt.
--- clocks: Must contain an entry for each entry in clock-names.
--  See clock-bindings.txt for details.
--- clock-names: Must include the following entries:
--  - soc: Clock source for the DFLL control logic.
--  - ref: The closed loop reference clock
--  - i2c: Clock source for the integrated I2C master.
--- resets: Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names: Must include the following entries:
--  - dvco: Reset control for the DFLL DVCO.
--- #clock-cells: Must be 0.
--- clock-output-names: Name of the clock output.
--- vdd-cpu-supply: Regulator for the CPU voltage rail that the DFLL
--  hardware will start controlling. The regulator will be queried for
--  the I2C register, control values and supported voltages.
--
--Required properties for the control loop parameters:
--- nvidia,sample-rate: Sample rate of the DFLL control loop.
--- nvidia,droop-ctrl: See the register CL_DVFS_DROOP_CTRL in the TRM.
--- nvidia,force-mode: See the field DFLL_PARAMS_FORCE_MODE in the TRM.
--- nvidia,cf: Numeric value, see the field DFLL_PARAMS_CF_PARAM in the TRM.
--- nvidia,ci: Numeric value, see the field DFLL_PARAMS_CI_PARAM in the TRM.
--- nvidia,cg: Numeric value, see the field DFLL_PARAMS_CG_PARAM in the TRM.
--
--Optional properties for the control loop parameters:
--- nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
--
--Optional properties for mode selection:
--- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
--
--Required properties for I2C mode:
--- nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
--
--Required properties for PWM mode:
--- nvidia,pwm-period-nanoseconds: period of PWM square wave in nanoseconds.
--- nvidia,pwm-tristate-microvolts: Regulator voltage in micro volts when PWM
--  control is disabled and the PWM output is tristated. Note that this voltage is
--  configured in hardware, typically via a resistor divider.
--- nvidia,pwm-min-microvolts: Regulator voltage in micro volts when PWM control
--  is enabled and PWM output is low. Hence, this is the minimum output voltage
--  that the regulator supports when PWM control is enabled.
--- nvidia,pwm-voltage-step-microvolts: Voltage increase in micro volts
--  corresponding to a 1/33th increase in duty cycle. Eg the voltage for 2/33th
--  duty cycle would be: nvidia,pwm-min-microvolts +
--  nvidia,pwm-voltage-step-microvolts * 2.
--- pinctrl-0: I/O pad configuration when PWM control is enabled.
--- pinctrl-1: I/O pad configuration when PWM control is disabled.
--- pinctrl-names: must include the following entries:
--  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
--  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
--
--Example for I2C:
--
--clock@70110000 {
--        compatible = "nvidia,tegra124-dfll";
--        reg = <0 0x70110000 0 0x100>, /* DFLL control */
--              <0 0x70110000 0 0x100>, /* I2C output control */
--              <0 0x70110100 0 0x100>, /* Integrated I2C controller */
--              <0 0x70110200 0 0x100>; /* Look-up table RAM */
--        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
--        clocks = <&tegra_car TEGRA124_CLK_DFLL_SOC>,
--                 <&tegra_car TEGRA124_CLK_DFLL_REF>,
--                 <&tegra_car TEGRA124_CLK_I2C5>;
--        clock-names = "soc", "ref", "i2c";
--        resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
--        reset-names = "dvco";
--        #clock-cells = <0>;
--        clock-output-names = "dfllCPU_out";
--        vdd-cpu-supply = <&vdd_cpu>;
--
--        nvidia,sample-rate = <12500>;
--        nvidia,droop-ctrl = <0x00000f00>;
--        nvidia,force-mode = <1>;
--        nvidia,cf = <10>;
--        nvidia,ci = <0>;
--        nvidia,cg = <2>;
--
--        nvidia,i2c-fs-rate = <400000>;
--};
--
--Example for PWM:
--
--clock@70110000 {
--	compatible = "nvidia,tegra124-dfll";
--	reg = <0 0x70110000 0 0x100>, /* DFLL control */
--	      <0 0x70110000 0 0x100>, /* I2C output control */
--	      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
--	      <0 0x70110200 0 0x100>; /* Look-up table RAM */
--	interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
--	clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
--	         <&tegra_car TEGRA210_CLK_DFLL_REF>,
--		 <&tegra_car TEGRA124_CLK_I2C5>;;
--	clock-names = "soc", "ref", "i2c";
--	resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
--	reset-names = "dvco";
--	#clock-cells = <0>;
--	clock-output-names = "dfllCPU_out";
--
--	nvidia,sample-rate = <25000>;
--	nvidia,droop-ctrl = <0x00000f00>;
--	nvidia,force-mode = <1>;
--	nvidia,cf = <6>;
--	nvidia,ci = <0>;
--	nvidia,cg = <2>;
--
--	nvidia,pwm-min-microvolts = <708000>; /* 708mV */
--	nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
--	nvidia,pwm-to-pmic;
--	nvidia,pwm-tristate-microvolts = <1000000>;
--	nvidia,pwm-voltage-step-microvolts = <19200>; /* 19.2mV */
--
--	pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
--	pinctrl-0 = <&dvfs_pwm_active_state>;
--	pinctrl-1 = <&dvfs_pwm_inactive_state>;
--};
--
--/* pinmux nodes added for completeness. Binding doc can be found in:
-- * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
-- */
--
--pinmux: pinmux@700008d4 {
--	dvfs_pwm_active_state: dvfs_pwm_active {
--		dvfs_pwm_pbb1 {
--			nvidia,pins = "dvfs_pwm_pbb1";
--			nvidia,tristate = <TEGRA_PIN_DISABLE>;
--		};
--	};
--	dvfs_pwm_inactive_state: dvfs_pwm_inactive {
--		dvfs_pwm_pbb1 {
--			nvidia,pins = "dvfs_pwm_pbb1";
--			nvidia,tristate = <TEGRA_PIN_ENABLE>;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
-new file mode 100644
-index 000000000000..4a9a48613ec6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
-@@ -0,0 +1,277 @@
-+# SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/nvidia,tegra124-dfll.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra124 (and later) DFLL FCPU clocksource
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+description:
-+  The DFLL IP block on Tegra is a root clocksource designed for clocking
-+  the fast CPU cluster. It consists of a free-running voltage controlled
-+  oscillator connected to the CPU voltage rail (VDD_CPU), and a closed
-+  loop control module that will automatically adjust the VDD_CPU voltage
-+  by communicating with an off-chip PMIC either via an I2C bus or via
-+  PWM signals.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - nvidia,tegra124-dfll
-+      - nvidia,tegra210-dfll
-+
-+  reg:
-+    items:
-+      - description: DFLL control logic
-+      - description: I2C output logic
-+      - description: integrated I2C controller
-+      - description: look-up table RAM for voltage register values
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: clock source for the DFLL control logic
-+      - description: closed loop reference clock
-+      - description: clock source for the integrated I2C controller
-+
-+  clock-names:
-+    items:
-+      - const: soc
-+      - const: ref
-+      - const: i2c
-+
-+  resets:
-+    minItems: 1
-+    maxItems: 2
-+
-+  reset-names:
-+    minItems: 1
-+    maxItems: 2
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clock-output-names:
-+    description: name of the clock output
-+
-+  vdd-cpu-supply:
-+    description: Regulator for the CPU voltage rail that the DFLL
-+      hardware will start controlling. The regulator will be queried for
-+      the I2C register, control values and supported voltages.
-+
-+  nvidia,sample-rate:
-+    description: Sample rate of the DFLL control loop.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,droop-ctrl:
-+    description: See the register CL_DVFS_DROOP_CTRL in the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,force-mode:
-+    description: See the field DFLL_PARAMS_FORCE_MODE in the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,cf:
-+    description: Numeric value, see the field DFLL_PARAMS_CF_PARAM in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,ci:
-+    description: Numeric value, see the field DFLL_PARAMS_CI_PARAM in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,cg:
-+    description: Numeric value, see the field DFLL_PARAMS_CG_PARAM in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  # optional properties
-+  nvidia,cg-scale:
-+    description: Boolean value, see the field DFLL_PARAMS_CG_SCALE in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/flag
-+
-+  nvidia,pwm-to-pmic:
-+    description: Use PWM to control regulator rather then I2C.
-+    $ref: /schemas/types.yaml#/definitions/flag
-+
-+  nvidia,i2c-fs-rate:
-+    description: I2C transfer rate, if using full speed mode.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  # required properties for PWM mode
-+  nvidia,pwm-period-nanoseconds:
-+    description: period of PWM square wave in nanoseconds.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,pwm-tristate-microvolts:
-+    description: Regulator voltage in micro volts when PWM control is
-+      disabled and the PWM output is tristated. Note that this voltage
-+      is configured in hardware, typically via a resistor divider.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,pwm-min-microvolts:
-+    description: Regulator voltage in micro volts when PWM control is
-+      enabled and PWM output is low. Hence, this is the minimum output
-+      voltage that the regulator supports when PWM control is enabled.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,pwm-voltage-step-microvolts:
-+    description: |
-+      Voltage increase in micro volts corresponding to a 1/33th increase
-+      in duty cycle. Eg the voltage for 2/33th duty cycle would be:
-+
-+        nvidia,pwm-min-microvolts + nvidia,pwm-voltage-step-microvolts * 2
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  pinctrl-names:
-+    items:
-+      # I/O pad configuration when PWM control is enabled
-+      - const: dvfs_pwm_enable
-+      # I/O pad configuration when PWM control is disabled
-+      - const: dvfs_pwm_disable
-+
-+  pinctrl-0: true
-+  pinctrl-1: true
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra124-dfll
-+    then:
-+      properties:
-+        resets:
-+          items:
-+            - description: DFLL DVCO reset
-+
-+        reset-names:
-+          items:
-+            - const: dvco
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra210-dfll
-+    then:
-+      properties:
-+        resets:
-+          items:
-+            - description: DFLL DVCO reset
-+            - description: DFLL reset
-+
-+        reset-names:
-+          items:
-+            - const: dvco
-+            - const: dfll
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra124-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
-+    #include <dt-bindings/reset/tegra124-car.h>
-+
-+    clock@70110000 {
-+        compatible = "nvidia,tegra124-dfll";
-+        reg = <0x70110000 0x100>, /* DFLL control */
-+              <0x70110000 0x100>, /* I2C output control */
-+              <0x70110100 0x100>, /* Integrated I2C controller */
-+              <0x70110200 0x100>; /* Look-up table RAM */
-+        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA124_CLK_DFLL_SOC>,
-+                 <&tegra_car TEGRA124_CLK_DFLL_REF>,
-+                 <&tegra_car TEGRA124_CLK_I2C5>;
-+        clock-names = "soc", "ref", "i2c";
-+        resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
-+        reset-names = "dvco";
-+        #clock-cells = <0>;
-+        clock-output-names = "dfllCPU_out";
-+        vdd-cpu-supply = <&vdd_cpu>;
-+
-+        nvidia,sample-rate = <12500>;
-+        nvidia,droop-ctrl = <0x00000f00>;
-+        nvidia,force-mode = <1>;
-+        nvidia,cf = <10>;
-+        nvidia,ci = <0>;
-+        nvidia,cg = <2>;
-+
-+        nvidia,i2c-fs-rate = <400000>;
-+    };
-+
-+  - |
-+    #include <dt-bindings/clock/tegra210-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
-+    #include <dt-bindings/reset/tegra210-car.h>
-+
-+    clock@70110000 {
-+        compatible = "nvidia,tegra210-dfll";
-+        reg = <0x70110000 0x100>, /* DFLL control */
-+              <0x70110000 0x100>, /* I2C output control */
-+              <0x70110100 0x100>, /* Integrated I2C controller */
-+              <0x70110200 0x100>; /* Look-up table RAM */
-+        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
-+                 <&tegra_car TEGRA210_CLK_DFLL_REF>,
-+                 <&tegra_car TEGRA210_CLK_I2C5>;
-+        clock-names = "soc", "ref", "i2c";
-+        resets = <&tegra_car TEGRA210_RST_DFLL_DVCO>,
-+                 <&tegra_car 155>;
-+        reset-names = "dvco", "dfll";
-+        #clock-cells = <0>;
-+        clock-output-names = "dfllCPU_out";
-+
-+        nvidia,sample-rate = <25000>;
-+        nvidia,droop-ctrl = <0x00000f00>;
-+        nvidia,force-mode = <1>;
-+        nvidia,cf = <6>;
-+        nvidia,ci = <0>;
-+        nvidia,cg = <2>;
-+
-+        nvidia,pwm-min-microvolts = <708000>; /* 708mV */
-+        nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
-+        nvidia,pwm-to-pmic;
-+        nvidia,pwm-tristate-microvolts = <1000000>;
-+        nvidia,pwm-voltage-step-microvolts = <19200>; /* 19.2mV */
-+
-+        pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-+        pinctrl-0 = <&dvfs_pwm_active_state>;
-+        pinctrl-1 = <&dvfs_pwm_inactive_state>;
-+    };
-+
-+    /*
-+     * pinmux nodes added for completeness. Binding doc can be found in:
-+     * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
-+     */
-+
-+    pinmux: pinmux@700008d4 {
-+        compatible = "nvidia,tegra210-pinmux";
-+        reg = <0x700008d4 0x29c>, /* Pad control registers */
-+              <0x70003000 0x294>; /* Mux registers */
-+
-+        dvfs_pwm_active_state: pinmux-dvfs-pwm-active {
-+            dvfs_pwm_pbb1 {
-+                nvidia,pins = "dvfs_pwm_pbb1";
-+                nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+            };
-+        };
-+
-+        dvfs_pwm_inactive_state: pinmux-dvfs-pwm-inactive {
-+            dvfs_pwm_pbb1 {
-+                nvidia,pins = "dvfs_pwm_pbb1";
-+                nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+            };
-+        };
-+    };
+kernel/scripts/mod/modpost.c: In function ‘is_valid_name’:
+kernel/scripts/mod/modpost.c:1055:57: error: ‘EM_RISCV’ undeclared 
+(first use in this function)
+   return !is_mapping_symbol(name, elf->hdr->e_machine == EM_RISCV);
+                                                          ^
+
+We have had some cases of this before [0] and was fixed by ensuring this 
+is defined if it is not.
+
+Thanks
+Jon
+
+[0] 
+https://patchwork.kernel.org/project/linux-mm/patch/20210924224338.8vuOlQPWr%25akpm@linux-foundation.org/
+
 -- 
-2.41.0
-
+nvpublic
