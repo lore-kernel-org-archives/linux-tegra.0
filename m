@@ -2,34 +2,34 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8B1C04A94
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 16:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 463D5C001DC
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 19:19:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232544AbjGUQOm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:14:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39078 "EHLO
+        id S232063AbjGUTTn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 15:19:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231803AbjGUQO2 (ORCPT
+        with ESMTP id S232052AbjGUTTi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jul 2023 12:14:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0E03AA3;
-        Fri, 21 Jul 2023 09:13:57 -0700 (PDT)
+        Fri, 21 Jul 2023 15:19:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4E13A90;
+        Fri, 21 Jul 2023 12:19:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 79A8161D14;
-        Fri, 21 Jul 2023 16:13:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D258C433C7;
-        Fri, 21 Jul 2023 16:13:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A843861D6D;
+        Fri, 21 Jul 2023 19:19:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F65FC433C7;
+        Fri, 21 Jul 2023 19:19:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1689956035;
-        bh=qbnodRkJmbR4UceeOvYhu4OqsChhMCKncTD483gVVBA=;
+        s=korg; t=1689967173;
+        bh=VknH39d+fypFBtbpKy9Ks9499orhFKGibNkjywSPOo8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BKJQdgm6wWlvcl36q2AvT84cIFnAUmjcnX4iS32xI7tdvu4zJMBAcEPxfFfxUdInz
-         TpczzgeEZKj67r4k9VYV3PO8lnYYYZYB3xl121za9h/+UVs+GJPi99z8tcYSbBulIS
-         LXvvVCbqmq0JpUAqgBi1uDfSvY6nKHPmGEPVNLpc=
+        b=TwfHAh4dqdvIDSnWyOrbWr4scVHbxbgthT5ieOlaqy9DMKSJDh/azXW9+8q7icfQb
+         wvRcfGgYIhspri592yY+F/y5s6+jXjcl2RfEEwIIjIoC9fx8IpiP6x9A/DEmqpzAWA
+         aLcNZXU3sch42MqttSnd6swrBUacSkcUR6j6I6js=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -62,14 +62,14 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org,
+        linux-tegra@vger.kernel.org, alexandru.gagniuc@hp.com,
         Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH 6.4 111/292] drm/client: Send hotplug event after registering a client
-Date:   Fri, 21 Jul 2023 18:03:40 +0200
-Message-ID: <20230721160533.588771953@linuxfoundation.org>
+Subject: [PATCH 6.1 069/223] drm/client: Send hotplug event after registering a client
+Date:   Fri, 21 Jul 2023 18:05:22 +0200
+Message-ID: <20230721160523.804204932@linuxfoundation.org>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230721160528.800311148@linuxfoundation.org>
-References: <20230721160528.800311148@linuxfoundation.org>
+In-Reply-To: <20230721160520.865493356@linuxfoundation.org>
+References: <20230721160520.865493356@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -166,22 +166,35 @@ Cc: <stable@vger.kernel.org> # v5.2+
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
 Link: https://patchwork.freedesktop.org/patch/msgid/20230710091029.27503-1-tzimmermann@suse.de
+(cherry picked from commit 27655b9bb9f0d9c32b8de8bec649b676898c52d5)
 [ Dropped changes to drivers/gpu/drm/armada/armada_fbdev.c as
   174c3c38e3a2 drm/armada: Initialize fbdev DRM client
-  was introduced in 6.5-rc1 ]
+  was introduced in 6.5-rc1.
+
+  Dropped changes to exynos, msm, omapdrm, radeon, tegra drivers
+  as missing code these commits introduced:
+
+  99286486d674 drm/exynos: Initialize fbdev DRM client
+  841ef552b141 drm/msm: Initialize fbdev DRM client
+  9e69bcd88e45 drm/omapdrm: Implement fbdev emulation as in-kernel client
+  e317a69fe891 drm/radeon: Implement client-based fbdev emulation
+  9b926bcf2636 drm/radeon: Only build fbdev if DRM_FBDEV_EMULATION is set
+  25dda38e0b07 drm/tegra: Initialize fbdev DRM client
+  8f1aaccb04b7 drm/gma500: Implement client-based fbdev emulation
+  b79fe9abd58b drm/fbdev-dma: Implement fbdev emulation for GEM DMA helpers
+
+  Move code for drm-fbdev-generic.c to matching file in 6.1.y because
+  these commits haven't happened in 6.1.y.
+  8ab59da26bc0 drm/fb-helper: Move generic fbdev emulation into separate source file
+  b9c93f4ec737 drm/fbdev-generic: Rename symbols ]
+Cc: alexandru.gagniuc@hp.com
+Link: https://lore.kernel.org/stable/SJ0PR84MB20882EEA1ABB36F60E845E378F5AA@SJ0PR84MB2088.NAMPRD84.PROD.OUTLOOK.COM/
 Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/drm_client.c              |   21 +++++++++++++++++++++
- drivers/gpu/drm/drm_fbdev_dma.c           |    4 ----
- drivers/gpu/drm/drm_fbdev_generic.c       |    4 ----
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    4 ----
- drivers/gpu/drm/gma500/fbdev.c            |    4 ----
- drivers/gpu/drm/msm/msm_fbdev.c           |    4 ----
- drivers/gpu/drm/omapdrm/omap_fbdev.c      |    4 ----
- drivers/gpu/drm/radeon/radeon_fbdev.c     |    4 ----
- drivers/gpu/drm/tegra/fbdev.c             |    4 ----
- 9 files changed, 21 insertions(+), 32 deletions(-)
+ drivers/gpu/drm/drm_client.c    |   21 +++++++++++++++++++++
+ drivers/gpu/drm/drm_fb_helper.c |    4 ----
+ 2 files changed, 21 insertions(+), 4 deletions(-)
 
 --- a/drivers/gpu/drm/drm_client.c
 +++ b/drivers/gpu/drm/drm_client.c
@@ -220,109 +233,18 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	mutex_unlock(&dev->clientlist_mutex);
  }
  EXPORT_SYMBOL(drm_client_register);
---- a/drivers/gpu/drm/drm_fbdev_dma.c
-+++ b/drivers/gpu/drm/drm_fbdev_dma.c
-@@ -253,10 +253,6 @@ void drm_fbdev_dma_setup(struct drm_devi
- 		goto err_drm_client_init;
- 	}
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -2634,10 +2634,6 @@ void drm_fbdev_generic_setup(struct drm_
+ 		preferred_bpp = 32;
+ 	fb_helper->preferred_bpp = preferred_bpp;
  
--	ret = drm_fbdev_dma_client_hotplug(&fb_helper->client);
+-	ret = drm_fbdev_client_hotplug(&fb_helper->client);
 -	if (ret)
 -		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
 -
  	drm_client_register(&fb_helper->client);
- 
- 	return;
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -340,10 +340,6 @@ void drm_fbdev_generic_setup(struct drm_
- 		goto err_drm_client_init;
- 	}
- 
--	ret = drm_fbdev_generic_client_hotplug(&fb_helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&fb_helper->client);
- 
- 	return;
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -216,10 +216,6 @@ void exynos_drm_fbdev_setup(struct drm_d
- 	if (ret)
- 		goto err_drm_client_init;
- 
--	ret = exynos_drm_fbdev_client_hotplug(&fb_helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&fb_helper->client);
- 
- 	return;
---- a/drivers/gpu/drm/gma500/fbdev.c
-+++ b/drivers/gpu/drm/gma500/fbdev.c
-@@ -330,10 +330,6 @@ void psb_fbdev_setup(struct drm_psb_priv
- 		goto err_drm_fb_helper_unprepare;
- 	}
- 
--	ret = psb_fbdev_client_hotplug(&fb_helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&fb_helper->client);
- 
- 	return;
---- a/drivers/gpu/drm/msm/msm_fbdev.c
-+++ b/drivers/gpu/drm/msm/msm_fbdev.c
-@@ -227,10 +227,6 @@ void msm_fbdev_setup(struct drm_device *
- 		goto err_drm_fb_helper_unprepare;
- 	}
- 
--	ret = msm_fbdev_client_hotplug(&helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&helper->client);
- 
- 	return;
---- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-@@ -323,10 +323,6 @@ void omap_fbdev_setup(struct drm_device
- 
- 	INIT_WORK(&fbdev->work, pan_worker);
- 
--	ret = omap_fbdev_client_hotplug(&helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&helper->client);
- 
- 	return;
---- a/drivers/gpu/drm/radeon/radeon_fbdev.c
-+++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
-@@ -386,10 +386,6 @@ void radeon_fbdev_setup(struct radeon_de
- 		goto err_drm_client_init;
- 	}
- 
--	ret = radeon_fbdev_client_hotplug(&fb_helper->client);
--	if (ret)
--		drm_dbg_kms(rdev->ddev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&fb_helper->client);
- 
- 	return;
---- a/drivers/gpu/drm/tegra/fbdev.c
-+++ b/drivers/gpu/drm/tegra/fbdev.c
-@@ -227,10 +227,6 @@ void tegra_fbdev_setup(struct drm_device
- 	if (ret)
- 		goto err_drm_client_init;
- 
--	ret = tegra_fbdev_client_hotplug(&helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&helper->client);
- 
- 	return;
+ }
+ EXPORT_SYMBOL(drm_fbdev_generic_setup);
 
 
