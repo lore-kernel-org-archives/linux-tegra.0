@@ -2,96 +2,82 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E43C001E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 10:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 865CAEB64DC
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 10:18:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232081AbjGUKRn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jul 2023 06:17:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52888 "EHLO
+        id S231297AbjGUKSp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 06:18:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231596AbjGUKRC (ORCPT
+        with ESMTP id S232235AbjGUKSY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jul 2023 06:17:02 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83CC6423B;
-        Fri, 21 Jul 2023 03:16:05 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-993a37b79e2so278848066b.1;
-        Fri, 21 Jul 2023 03:16:05 -0700 (PDT)
+        Fri, 21 Jul 2023 06:18:24 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F293C35;
+        Fri, 21 Jul 2023 03:17:14 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51e57874bfdso2427032a12.0;
+        Fri, 21 Jul 2023 03:17:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689934536; x=1690539336;
+        d=gmail.com; s=20221208; t=1689934573; x=1690539373;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Xtjou4bw3TzoaU4pkxO6dL/R//dx1dOT1P8B0FqrHKA=;
-        b=Tfm+30DQEJ60lYnGshB1LHllAG8vV6tZJlWJu8MaEzgnMoMC4s8xR3p8apQLvVNXrU
-         SsCdfj06a4f9s62gn1+m13FZeT8JIaTbP/QLsdb58Wl+Bx3Sk7VWJYPoYNaVX5mC3+q0
-         Rs2KjsZnmNUozrNcZGl15QnXalxAHlU6ZCHrH5lsGabvw9HEXfz1EAYPQdbs9ZtUgGmu
-         ODgtKVUF0wY54I/IMZWbmr8tof5c0D/hfoTkIzmRnUg+uw27Hm23MiuKX3PpzfRWwdpX
-         JSpcBybDwjUfvHgOaPY78806miQgOTtCRT1cm5IQNhbaumSj/5htxDsdm3D+hUCmwISK
-         gyVQ==
+        bh=I9pbsGWRmQhFYBMY/NJD5z7H5GccL1796KX7w2BJdUk=;
+        b=sW2HstlhQOPYQt5Hw7uJQSwQ4UtzmoY5z/4vM740TYB2/SGN+uqlSU1h7MfaX3jLfv
+         SG+u5TQV7A9JnRvoVQOr+pZfo3iCcT1HsL6GkWGRC7kgshtYDmdklYdhXY9Nc5pOp2No
+         PWXnUqFloCggSTG7CPewpL0+QIyDkMS3I/2RpPOIDIwFkuc9a7CVKa28PfzMaRRDcpsm
+         2yG6RgXxjeXPuJv3GMHLnZFoZ9dZxqO4Fdw0zZ8prMnZf16D+Vkdq35PMibd6b5wUIOx
+         fkp5t1fbyyOrl1Fj0fQoIiIRv+J1M5Q25cSh9vdXtx6AhVNCV5AuSJavU+/OxGtukbte
+         6gwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689934536; x=1690539336;
+        d=1e100.net; s=20221208; t=1689934573; x=1690539373;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Xtjou4bw3TzoaU4pkxO6dL/R//dx1dOT1P8B0FqrHKA=;
-        b=k9QLjJ8ghcpgtwdejkANrZg+avd0E2glqxl3VxmZQhSSyIH5Y+Puu/0Ht1hL8YwJ66
-         OWXzv1PGvyCjS8VXpmYSCKeOpl4YTpJDkBWcS/K88K7WAwkRmBJvSWnBZs3wQ7kZgk08
-         GwzS4BR/IVpQJnYplG+49uoeVOdns5R4R9ikuYZ4DaAVMipbBIdSejgV++Rp4ohhY6OM
-         c1ZT83Db3WM8AqthNF9X3jTCTjGGsPthZGnU27WhOAz/r+NAtJqLtYwpo8OKSmfgbADt
-         mojHhcAH3OTgY4TYj9T6hng09EeXDX1bw8NqzvVNhFmzsonQPHiglnG9EMDuCJMh7UFb
-         5LcQ==
-X-Gm-Message-State: ABy/qLbsKKFtPHisTQniv+aLWhGgIE08xhtVtZgVs540paY8w92eA8nP
-        +RRCw1y8g3bbgoovC+zsIto=
-X-Google-Smtp-Source: APBJJlFMSTNXVoDP1pttaZXsGetq1EYUvcvS8mVgRKzhexw1wKgMd76fhF1INGqDgTxi6Ne6bb3VQA==
-X-Received: by 2002:a17:906:7691:b0:991:c566:979 with SMTP id o17-20020a170906769100b00991c5660979mr1229678ejm.36.1689934535180;
-        Fri, 21 Jul 2023 03:15:35 -0700 (PDT)
+        bh=I9pbsGWRmQhFYBMY/NJD5z7H5GccL1796KX7w2BJdUk=;
+        b=CHrOHZXKmrUL54ROjQzTWZiIhYN1uLEn50TPhuAQL4N46jyKwaSsH/TGnf+4G/VC/r
+         4uOoj018kg3OA60G503xV8dlkGu6JtRJQNChING6ft8gG2DkufPqcIxVrlOiSDzDsQ9h
+         nH49rO/51ejqxOWPu7cdRI180yJUVc5eXuQ9zqTC5QK6Fw6UFS2pjYzEt767xKX8ReqJ
+         0giC0kjwOLmGm5OWQ3uOZepw1tuFQAyrp59/kGCruPwB1CXgHETVKad0Zd+/dyRQBoHX
+         mmBSPTiN4sIs0dEZWs5d8diRKh+gkitd6YbQfqjsajwQbjhaKsHNVS6IO2gooxN6IB9Y
+         JZBw==
+X-Gm-Message-State: ABy/qLYRHjJcGTP/OQhiJ9O8WWqOcEA/9AO7TlgELTEC+dh21epwmrLP
+        DT8ql4g6R3HO96hB36nCSOQ=
+X-Google-Smtp-Source: APBJJlEG42wOwEYSG/XTXRiaQNAwS0FxDO+0N4WtgeWi+e7+3SPSBAvmdZViEOuur5CuBKK7xXxnHg==
+X-Received: by 2002:a05:6402:713:b0:51f:f168:a83 with SMTP id w19-20020a056402071300b0051ff1680a83mr1269892edx.33.1689934573033;
+        Fri, 21 Jul 2023 03:16:13 -0700 (PDT)
 Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id o19-20020a17090608d300b0098d2f703408sm1960285eje.118.2023.07.21.03.15.34
+        by smtp.gmail.com with ESMTPSA id f20-20020a50ee94000000b00521ce1f04b8sm1894946edr.12.2023.07.21.03.16.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 03:15:34 -0700 (PDT)
-Date:   Fri, 21 Jul 2023 12:15:32 +0200
+        Fri, 21 Jul 2023 03:16:12 -0700 (PDT)
+Date:   Fri, 21 Jul 2023 12:16:11 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Rob Herring <robh@kernel.org>
-Cc:     Liviu Dudau <liviu.dudau@arm.com>,
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
         David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-mips@vger.kernel.org, lima@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH] drm: Explicitly include correct DT includes
-Message-ID: <ZLpaYPUI5gPd4jK_@orome>
-References: <20230714174545.4056287-1-robh@kernel.org>
+        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpu/host1x: Explicitly include correct DT includes
+Message-ID: <ZLpa6yezfXUx_x8w@orome>
+References: <20230714174549.4056675-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qaVvuRtXrCn2kCOF"
+        protocol="application/pgp-signature"; boundary="QM4hLCGNIRW16k8r"
 Content-Disposition: inline
-In-Reply-To: <20230714174545.4056287-1-robh@kernel.org>
+In-Reply-To: <20230714174549.4056675-1-robh@kernel.org>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---qaVvuRtXrCn2kCOF
+--QM4hLCGNIRW16k8r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 14, 2023 at 11:45:34AM -0600, Rob Herring wrote:
+On Fri, Jul 14, 2023 at 11:45:49AM -0600, Rob Herring wrote:
 > The DT of_device.h and of_platform.h date back to the separate
 > of_platform_bus_type before it as merged into the regular platform bus.
 > As part of that merge prepping Arm DT support 13 years ago, they
@@ -102,31 +88,33 @@ On Fri, Jul 14, 2023 at 11:45:34AM -0600, Rob Herring wrote:
 > explicitly include the correct includes.
 >=20
 > Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/gpu/host1x/context.c | 2 +-
+>  drivers/gpu/host1x/dev.c     | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
 
-[Trimming the recipient list so that Google will let me send this]
-
-Test builds were fine, so I've pushed this to drm-misc now.
+Applied to drm-misc, thanks.
 
 Thierry
 
---qaVvuRtXrCn2kCOF
+--QM4hLCGNIRW16k8r
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS6WsQACgkQ3SOs138+
-s6HK1A//QgDGQj/2Xez0LhGk60CphNT160FLxq+/4O2qQdzBoldz2WfYizMz+Qyv
-OCph/RC4Vp2VJEySeVU8jjojJZtqnu3iVQ9LGC/L7EFFJQOwaNlGusy3FoWAp5i1
-tAMhZUBH/QCvLjoc7kQXt+MjZGx/ccGHcmckwnjP1DVERdSUqXtq8VU1FHDxiQ2Q
-WfE9WhlNsXzJzcGXKC9qEKcn/OdrvPHgmAMJ7ypyjQ9z1x1/oEsJH6Bj0oIaiF2+
-R1Lt+KO5tvnL4ozutwZoHX4rPL9qQ9NvBwvk3DdxxaDs4R5Hhin5rkKhs6SvVbBX
-8bOTy7u1WaKQWaGEhGnnQzpaK3bp1n9L9Ooc/VtUaBx1iRZ8EsJmVfdNC8527L14
-0pH0DNOHHZDuTKd14C/W8JKsSrMtqPml41UClQC8AQ69iSfq95AbcajnFXcpamF6
-nYbTpBL+EOukFj5EJppNc0Bg3R0HdXvz9DmBx0qMt9cFAbq05D+4ke/aTKCDv0nM
-eQij9GV8h4g7wsmXWfFYqnbVk2K8G8KqsjEZakqkbUYE0i4tUs+O8g1piw1aXQis
-gX6QIVmBbi4PjPh2TWik5FCLogKMIqVDCuUfG/LJIQzypr/7QnSP6XpvyqjWiWua
-t1LWo/rbraFTe/hnaRqOUgOfKnfXRN3fZFxHW5CHGIwET0BUK9s=
-=UVD4
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS6WuoACgkQ3SOs138+
+s6ECow/+NNmR0ClidT/qBm/ZSwIdWoje3YSoYYTlv9kySXuMHCdqe7IubPeLAv1N
+KIjZwqkCNJDM3z5+ycXxV3jBONIsHn3bnZkQYs58vr3hoJpFFg4yGCfGq4V9wwyh
+2caMfzXdzlBum4P88aHQk35fIgOAMk4u1SmGWNH1y/uHFY+PMekH0kTYqdupRGpP
+NYzOL1QbZHZtnViy8tOt10olTI8ke0+jzGBVgB1gFrlXmgruU+94ljNey1KZZBJp
+uzotsjI0E8tcU+/sVk2ODAmNuNfqSbmQRpLht9nlGBPnyOs2UN+Df9SLDu4GyFKC
+3AtyyckgYmpKo/tROB67+QC6oh+MD6vyE595LVjX0geYMgxEi4oSX4h8DWm8R1z1
+IEGJ/8zPZk1gkadYhc3BnBStrGj8BIIaKfmGN3e/wwClPUsLjHWAK7PwCEm+uGwG
+wA0j5A/0oH0i4Yd+Pbghw7grY+lgzZi8LT/NYOFQaN4HTz8vsr7uWBNdsMWocZZC
+VF36CYD9BAWjY607pO8FAM3jfLZy+Iw2aCduIBQZ3hsi1zORLZ/HXExOApQuk7Av
+pE+yFTgHs4/xTFinowmz4OsIuk6i82pbgSomJulOR5TsS0UT5h2LOBwtoKREmLah
+Q01LASs1XGN6e/sc16O61cq8eGPSRgb0ULiuAZB1IfJ3rA+bOqU=
+=F+K4
 -----END PGP SIGNATURE-----
 
---qaVvuRtXrCn2kCOF--
+--QM4hLCGNIRW16k8r--
