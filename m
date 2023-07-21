@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5C6EB64DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 13:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FBEC001E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 13:58:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbjGUN6c (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jul 2023 09:58:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55326 "EHLO
+        id S231502AbjGUN6d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 09:58:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230343AbjGUN6a (ORCPT
+        with ESMTP id S231556AbjGUN6b (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jul 2023 09:58:30 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9C63AA8;
-        Fri, 21 Jul 2023 06:58:04 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-991da766865so307497166b.0;
-        Fri, 21 Jul 2023 06:58:04 -0700 (PDT)
+        Fri, 21 Jul 2023 09:58:31 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FF130FF;
+        Fri, 21 Jul 2023 06:58:05 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-992b27e1c55so306475766b.2;
+        Fri, 21 Jul 2023 06:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20221208; t=1689947883; x=1690552683;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sYtxsERINvfOgj4TjnONVaidkuvzw8sv8zecGnhSGTU=;
-        b=GOyp6a7CNYyq6UbVYr7VmE8D+bXYRGraPwUeI19n4sLxVnheM07+DNEvz0nc9QFUr2
-         eovpJvbftUONq3cQcAMOMDcz0lJBl3FLsqpDw4ijThHqOFi6WcrlINXWyCcTP90Qm+Q5
-         OySY9C1ldFpHPLU+5AzSOu//YVfdJ0fnjeAGx86qo1DjZYdx8g31jnh9NpNE2UR5ShwQ
-         bbt2zEWxLFN5Tetcw21Q0gSFUCA0u/0FVZWlTQHPBFDC5Mv/5PfHwQXBd4O0Ol+uakYR
-         Nac0IJkvkpO4/qS1sx+QBVJ8uG+WOWrFuvmxyJ7dzNl+wYtpB6D+vZKlBtv/X1hoP7P8
-         7CLQ==
+        bh=FRDa+hXtdMdC6ZYOUEjHUlfDPteWrj1xebQwjE7g54o=;
+        b=Q4zYfoCFspo6eRw6dSpFr4ss/iTcfDE61aduF8axDGPX1B7AM1e86J0/f9slVgfGhs
+         I62z//MixkWJSLndiO11zDHMeStPjmb8oH08bsYjighwx1Y+shsP+x+qqzKge6V/KjYc
+         Ed3oeYunr1S+SlqMoCiDyGe/StgYAGHN272cwJG3dIH/FJVBr+csnda6WgPAVvOWcRIO
+         r8qPCcp+3cyL/mt2w8Nug9RNmGUSdowrXTtRs87EcnqWHttOoXjyiLZlslIfTi+cJLGB
+         R4DXSEBbDP9WCvdd8B/rInXMMAZlVWFPsaPVDTY9XBpSny+2lHhRgayQ4vhwaNGTvZ0j
+         9gsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20221208; t=1689947883; x=1690552683;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sYtxsERINvfOgj4TjnONVaidkuvzw8sv8zecGnhSGTU=;
-        b=MXo+81xVjba+58d5evBuUe7Kh4X0cB2yltSnYF8A19MW4O6FwZamSCSynh3btheXLP
-         flt/g/ykrioJNgtjo9d8asd8U2q5X2CExirtaZio1xkjyduAFjUwaMrywP1gjf5dhyS5
-         PAq1hh8Upzufh26KKXew3RS2QLADYpQe99sMako0815zsGQZkbWySyueViNeoECWx2tv
-         LM77a2pGyHtCQKLeYWNWW2zwdQilnUT6CiFbopv3gxtTPthGCbpndOj88pEYSTRU/iFW
-         xmXdq0p6NJLqLmkRPYfqqGkZXxnjrKIb5xpL7q/Cc2nQ2XfY5SIAnWy2/u4AjoExDUqD
-         inRA==
-X-Gm-Message-State: ABy/qLbR9YKLBxV316hjp5uo1rTArEYfC1JghrvVbtZTU8x6Mr8e8jsK
-        YvWYswC1uyja4nvT5ZRHrrA=
-X-Google-Smtp-Source: APBJJlGK5sNXwgeiMcH8XhtWrLWaHd4qRoqbwtzBqKGyIcOyamL7eg1DMuX41JgiwBfo5/S2VJy3WQ==
-X-Received: by 2002:a17:906:2086:b0:991:fef4:bb7 with SMTP id 6-20020a170906208600b00991fef40bb7mr1641707ejq.73.1689947882619;
-        Fri, 21 Jul 2023 06:58:02 -0700 (PDT)
+        bh=FRDa+hXtdMdC6ZYOUEjHUlfDPteWrj1xebQwjE7g54o=;
+        b=K4+YEunUKUqnqqZdFCg1tPbtj6Hi3Jwbjw4sXbKfZi2m4epXxa6EtXOaYXhnEFl9md
+         qPttoQs48RdU/jeWQSj/giFB0dxFDXeMqxmDPBD3tAds6tGUDwQHxMLuJ7LDAfTlfLpP
+         ftBOGjNo0BzYCwiBfk2H9SgqPyDuG7FZAhD5JuNXx3JzikGT44yhieStolt24hivN8jQ
+         ifvMbOMTX+tRITrxIaYY4OgHHsJDEX/ws6cPNKAgAM1p//C6QFkbhGFsw/xZGrg47vpU
+         B+iBdvSPyb3tGg1XT1G8NHbllJ9/3kAuRrgs4SuflP0UUw4L2GnQGmzxqI+KdZGMi3Jt
+         VjQg==
+X-Gm-Message-State: ABy/qLa+ZbF5Xsr2BX1RqrW2UB9DaxSP0kCnXErfb42BG5SCuSNS8vbG
+        rKKk5YWeQ0Km2q1L+92pONc=
+X-Google-Smtp-Source: APBJJlGXo6KJTtBvDxpzKoa0Ll06/93qqmYqGLS3iXNOGuxfLbZEIYNingZpfW6vsOFMLwngcnYOSA==
+X-Received: by 2002:a17:906:cc13:b0:99b:4bd4:df5d with SMTP id ml19-20020a170906cc1300b0099b4bd4df5dmr1652607ejb.42.1689947883591;
+        Fri, 21 Jul 2023 06:58:03 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id p2-20020a17090628c200b00997e99a662bsm2193899ejd.20.2023.07.21.06.58.00
+        by smtp.gmail.com with ESMTPSA id qp7-20020a170907206700b00992b66e54e9sm2208013ejb.214.2023.07.21.06.58.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 06:58:01 -0700 (PDT)
+        Fri, 21 Jul 2023 06:58:03 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -57,9 +57,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 2/7] dt-bindings: arm: tegra: pmc: Remove useless boilerplate descriptions
-Date:   Fri, 21 Jul 2023 15:57:54 +0200
-Message-ID: <20230721135759.2994770-2-thierry.reding@gmail.com>
+Subject: [PATCH v2 3/7] dt-bindings: arm: tegra: pmc: Move additionalProperties
+Date:   Fri, 21 Jul 2023 15:57:55 +0200
+Message-ID: <20230721135759.2994770-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230721135759.2994770-1-thierry.reding@gmail.com>
 References: <20230721135759.2994770-1-thierry.reding@gmail.com>
@@ -71,61 +71,74 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The descriptions for the clocks and resets properties are no longer
-useful in the context of json-schema, so drop them.
+For indented subschemas it can be difficult to understand which block an
+additionalProperties property belongs to. Moving it closer to the
+beginning of a block is a good way to clarify this.
 
 Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
 Changes in v2:
-- drop description of "reg" property
 - add Reviewed-by: from Rob
 
- .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml      | 13 -------------
- 1 file changed, 13 deletions(-)
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml         | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-index 38fe66142547..0ac258bc7be0 100644
+index 0ac258bc7be0..d6f2c5862841 100644
 --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
 +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-@@ -21,8 +21,6 @@ properties:
+@@ -126,6 +126,7 @@ properties:
+     description: The vast majority of hardware blocks of Tegra SoC belong to a
+       core power domain, which has a dedicated voltage rail that powers the
+       blocks.
++    additionalProperties: false
+     properties:
+       operating-points-v2:
+         description: Should contain level, voltages and opp-supported-hw
+@@ -139,12 +140,11 @@ properties:
+       - operating-points-v2
+       - "#power-domain-cells"
  
-   reg:
-     maxItems: 1
--    description:
--      Offset and length of the register set for the device.
+-    additionalProperties: false
+-
+   i2c-thermtrip:
+     type: object
+     description: On Tegra30, Tegra114 and Tegra124 if i2c-thermtrip subnode
+       exists, hardware-triggered thermal reset will be enabled.
++    additionalProperties: false
+     properties:
+       nvidia,i2c-controller-id:
+         $ref: /schemas/types.yaml#/definitions/uint32
+@@ -176,10 +176,9 @@ properties:
+       - nvidia,reg-addr
+       - nvidia,reg-data
  
-   clock-names:
-     items:
-@@ -33,9 +31,6 @@ properties:
- 
-   clocks:
-     maxItems: 2
--    description:
--      Must contain an entry for each entry in clock-names.
--      See ../clocks/clocks-bindings.txt for details.
- 
-   '#clock-cells':
-     const: 1
-@@ -234,18 +229,10 @@ properties:
+-    additionalProperties: false
+-
+   powergates:
+     type: object
++    additionalProperties: false
+     description: |
+       This node contains a hierarchy of power domain nodes, which should match
+       the powergates on the Tegra SoC. Each powergate node represents a power-
+@@ -224,7 +223,6 @@ properties:
+       "^[a-z0-9]+$":
+         type: object
+         additionalProperties: false
+-
+         properties:
            clocks:
              minItems: 1
-             maxItems: 8
--            description:
--              Must contain an entry for each clock required by the PMC
--              for controlling a power-gate.
--              See ../clocks/clock-bindings.txt document for more details.
+@@ -246,8 +244,6 @@ properties:
+           - resets
+           - '#power-domain-cells'
  
-           resets:
-             minItems: 1
-             maxItems: 8
--            description:
--              Must contain an entry for each reset required by the PMC
--              for controlling a power-gate.
--              See ../reset/reset.txt for more details.
- 
-           power-domains:
-             maxItems: 1
+-    additionalProperties: false
+-
+ patternProperties:
+   "^[a-f0-9]+-[a-f0-9]+$":
+     type: object
 -- 
 2.41.0
 
