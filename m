@@ -2,187 +2,327 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D472BEB64DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 16:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8B1C04A94
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 16:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232495AbjGUQMA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39376 "EHLO
+        id S232544AbjGUQOm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 12:14:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232471AbjGUQLp (ORCPT
+        with ESMTP id S231803AbjGUQO2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jul 2023 12:11:45 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03B8A4219;
-        Fri, 21 Jul 2023 09:11:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NaO5yzqWYq0jnw6Zc6L8iKgxsdGTQKVXqkkwFtedpEJVGh+x5NfdFOSYX9G1CmZsGy+NTyNtNm+zDQ37ys++fDOf0AGKPCGKxfn0nLZXDkAsBbnZSGVlRrm8QuHgy7teHTQ7bBdhdkE0P1obgudQ7yhSvLi2kqb6m4+EGgutsP1xddbfet6f0Tt/byDrmYtHDYo6eVgs4LHcZuhVLm8Crg4F8OHuxPNMcHR1KL6IIcFCI+DXM0GtEZtKe6jnLysO/bwf8T5vQiQ9k0l6h1Z8XKFtlgnSGuKnPsmbEeECy9KASY+uKQDlcjOe9hWbT1ZfWmOm8CzrwlFT3+RFWcH88A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JXSAAfD46HgI6bFXeC6kBWY1LTcCW7HHnHsXegNun3E=;
- b=hQq+ecVsk8Q9JtoXV3V2XHhCEKybzCWMRtd511ABwS+n3PZ72D9VTwRJsthwR1Q4nqBKlyMRXC321RsPH7YUFEqWsdI/kbT+/Cc4G4lXOXwYu/u3AxLdL0EYuEa4eCHb66RxdDRFDoTd3u7q475YrTPxgVOKech1rQOpfNIaYGEx6WqEyMsDGoyCZ8jFMwdpkwhkKQdxX8ehc9l91Dm6kJcopAk2p2O7og7pDDlqEvAtsFFA3zbzZszPFPVE3HBAjb4U2L/ofOYG+KYsNTBb6ODf/Y5MfF8SZSkA1KpTHO16aul5LSwVBpldR2/M7QqwobowZXSF/SgHyTLlPKmdQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JXSAAfD46HgI6bFXeC6kBWY1LTcCW7HHnHsXegNun3E=;
- b=XZ5BBZImm+ay7QpF/SeA7AcqKMYgdvnawyuXHGMnV9XEo+4KJjenOnak7Ffd5+cyWBM06hHpWRPuRaK1YEDdfCgVvE9GxNaS38KXynArWgyZQxbG0BamTsR3qsAz+ET+BgH1hKmL6/l/1dCgR7VpbIRkWromNuN6i+7XM6VM7cZjqPAE1IHXR5NVRR8CJjT5daRycn7M0wxzwPKzYCgxxh9eh45Iz5jYaC25lXqSYw2FgEbsit4jDUSPYkGECY/97KEyYkUlTFOrUAYguKZiNRSzkm3l52c77P/UVgOhhpq1DwF3dG8rPbHmEDQjX0fG5LwmquY+95SA/bstuAeJSA==
-Received: from BN9PR03CA0149.namprd03.prod.outlook.com (2603:10b6:408:fe::34)
- by BL1PR12MB5378.namprd12.prod.outlook.com (2603:10b6:208:31d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.26; Fri, 21 Jul
- 2023 16:11:10 +0000
-Received: from BN8NAM11FT109.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:fe:cafe::28) by BN9PR03CA0149.outlook.office365.com
- (2603:10b6:408:fe::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.28 via Frontend
- Transport; Fri, 21 Jul 2023 16:11:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN8NAM11FT109.mail.protection.outlook.com (10.13.176.221) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6609.25 via Frontend Transport; Fri, 21 Jul 2023 16:11:10 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 21 Jul 2023
- 09:10:58 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 21 Jul
- 2023 09:10:58 -0700
-Received: from build-gauthams-20230504T093912783.nvidia.com (10.127.8.14) by
- mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via
- Frontend Transport; Fri, 21 Jul 2023 09:10:58 -0700
-From:   Gautham Srinivasan <gauthams@nvidia.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-CC:     Gautham Srinivasan <gauthams@nvidia.com>
-Subject: [PATCH] arm64: tegra: Add SPI definition for T234 devices
-Date:   Fri, 21 Jul 2023 16:10:50 +0000
-Message-ID: <20230721161050.3480492-1-gauthams@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Jul 2023 12:14:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0E03AA3;
+        Fri, 21 Jul 2023 09:13:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 79A8161D14;
+        Fri, 21 Jul 2023 16:13:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D258C433C7;
+        Fri, 21 Jul 2023 16:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1689956035;
+        bh=qbnodRkJmbR4UceeOvYhu4OqsChhMCKncTD483gVVBA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BKJQdgm6wWlvcl36q2AvT84cIFnAUmjcnX4iS32xI7tdvu4zJMBAcEPxfFfxUdInz
+         TpczzgeEZKj67r4k9VYV3PO8lnYYYZYB3xl121za9h/+UVs+GJPi99z8tcYSbBulIS
+         LXvvVCbqmq0JpUAqgBi1uDfSvY6nKHPmGEPVNLpc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, Moritz Duge <MoritzDuge@kolahilft.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Torsten Krah <krah.tm@gmail.com>,
+        Paul Schyska <pschyska@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        David Airlie <airlied@gmail.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH 6.4 111/292] drm/client: Send hotplug event after registering a client
+Date:   Fri, 21 Jul 2023 18:03:40 +0200
+Message-ID: <20230721160533.588771953@linuxfoundation.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230721160528.800311148@linuxfoundation.org>
+References: <20230721160528.800311148@linuxfoundation.org>
+User-Agent: quilt/0.67
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT109:EE_|BL1PR12MB5378:EE_
-X-MS-Office365-Filtering-Correlation-Id: 81d40aaa-baca-4d22-95bb-08db8a05194c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qbdE4OPRzX4xoYZYSEqmFZxR2+JdxtODEbeyh2GckTCCft0fL2W8/Q6sj4GPik+rQydo3450QZIeSMoaCxUneCo8dLuhDrvHMk/+YLlYuBT3Xnx8cVfzGXexQqlvSHQiIGQ0yetL8oUBM9ZKMsNXfkND4K9uS1KwijI3ZsOgjG+DpXzuA7DBo7ueeAYgTRROGFJIuKz0xIFg2FYK/tZMgWHhBkGwu1DrDa+K2oXyv6v3Ljn8gaRNc7SqqCTyh4+lUj2fszN5BGmbGM3r2FltOkvgx9tBCRYQ6fGCuiNfhycZGRth577L/4Cusu54OY7dIPHAv9FDSmdt4cAabmq67wxQsmr83nefbCo5GjC66eNUu1GnzFMWUhh4+kocvvfjp9wpNfvPUTz5HanxL40CBvheXYSf+ZFz/plRuL9X7Ggwb/sH89wfPkmREBb7C/QncTNn/zMSqYEaSIcPFdRz4t+JLClTmCE2Q+fvYlKQ00gKHRktLX5N8fvwSZceRzYFisn0TpBMcbWSpdzNzSL2eiCErqNnlvYojZ6pmIqVvmIrASbDQScjBsg6sSuiz5TFtvtP35zDmTrFNoKe51I7znPT3M4Rqv7A0OVIS1jBvPgOjmyAR6cJHR1uTpj0J9/97GGdZhCUqNYTuzrwtEVvBnM0rQtYW327mfdpLicqBczs8h1ZQA1dEcctqnOC3ClafImLHwrhXVhm9qGuDabgmOK+k++9twRJxT1VdCXKACIR/w3ZYJFWdUROELTBPjNI
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(396003)(39860400002)(136003)(451199021)(82310400008)(46966006)(36840700001)(40470700004)(36756003)(40480700001)(2616005)(426003)(336012)(186003)(36860700001)(316002)(47076005)(6666004)(83380400001)(41300700001)(478600001)(70206006)(70586007)(4326008)(1076003)(110136005)(107886003)(26005)(82740400003)(7636003)(356005)(86362001)(2906002)(7696005)(8676002)(8936002)(5660300002)(40460700003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2023 16:11:10.5101
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81d40aaa-baca-4d22-95bb-08db8a05194c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT109.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5378
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Create infrastructure to facilitate usage of SPI1, SPI2,
-and SPI3 for Tegra234.
+From: Thomas Zimmermann <tzimmermann@suse.de>
 
-Signed-off-by: Gautham Srinivasan <gauthams@nvidia.com>
+commit 27655b9bb9f0d9c32b8de8bec649b676898c52d5 upstream.
+
+Generate a hotplug event after registering a client to allow the
+client to configure its display. Remove the hotplug calls from the
+existing clients for fbdev emulation. This change fixes a concurrency
+bug between registering a client and receiving events from the DRM
+core. The bug is present in the fbdev emulation of all drivers.
+
+The fbdev emulation currently generates a hotplug event before
+registering the client to the device. For each new output, the DRM
+core sends an additional hotplug event to each registered client.
+
+If the DRM core detects first output between sending the artificial
+hotplug and registering the device, the output's hotplug event gets
+lost. If this is the first output, the fbdev console display remains
+dark. This has been observed with amdgpu and fbdev-generic.
+
+Fix this by adding hotplug generation directly to the client's
+register helper drm_client_register(). Registering the client and
+receiving events are serialized by struct drm_device.clientlist_mutex.
+So an output is either configured by the initial hotplug event, or
+the client has already been registered.
+
+The bug was originally added in commit 6e3f17ee73f7 ("drm/fb-helper:
+generic: Call drm_client_add() after setup is done"), in which adding
+a client and receiving a hotplug event switched order. It was hidden,
+as most hardware and drivers have at least on static output configured.
+Other drivers didn't use the internal DRM client or still had struct
+drm_mode_config_funcs.output_poll_changed set. That callback handled
+hotplug events as well. After not setting the callback in amdgpu in
+commit 0e3172bac3f4 ("drm/amdgpu: Don't set struct
+drm_driver.output_poll_changed"), amdgpu did not show a framebuffer
+console if output events got lost. The bug got copy-pasted from
+fbdev-generic into the other fbdev emulation.
+
+Reported-by: Moritz Duge <MoritzDuge@kolahilft.de>
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/2649
+Fixes: 6e3f17ee73f7 ("drm/fb-helper: generic: Call drm_client_add() after setup is done")
+Fixes: 8ab59da26bc0 ("drm/fb-helper: Move generic fbdev emulation into separate source file")
+Fixes: b79fe9abd58b ("drm/fbdev-dma: Implement fbdev emulation for GEM DMA helpers")
+Fixes: 63c381552f69 ("drm/armada: Implement fbdev emulation as in-kernel client")
+Fixes: 49953b70e7d3 ("drm/exynos: Implement fbdev emulation as in-kernel client")
+Fixes: 8f1aaccb04b7 ("drm/gma500: Implement client-based fbdev emulation")
+Fixes: 940b869c2f2f ("drm/msm: Implement fbdev emulation as in-kernel client")
+Fixes: 9e69bcd88e45 ("drm/omapdrm: Implement fbdev emulation as in-kernel client")
+Fixes: e317a69fe891 ("drm/radeon: Implement client-based fbdev emulation")
+Fixes: 71ec16f45ef8 ("drm/tegra: Implement fbdev emulation as in-kernel client")
+Fixes: 0e3172bac3f4 ("drm/amdgpu: Don't set struct drm_driver.output_poll_changed")
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Tested-by: Moritz Duge <MoritzDuge@kolahilft.de>
+Tested-by: Torsten Krah <krah.tm@gmail.com>
+Tested-by: Paul Schyska <pschyska@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: freedreno@lists.freedesktop.org
+Cc: amd-gfx@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v5.2+
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
+Link: https://patchwork.freedesktop.org/patch/msgid/20230710091029.27503-1-tzimmermann@suse.de
+[ Dropped changes to drivers/gpu/drm/armada/armada_fbdev.c as
+  174c3c38e3a2 drm/armada: Initialize fbdev DRM client
+  was introduced in 6.5-rc1 ]
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 57 ++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ drivers/gpu/drm/drm_client.c              |   21 +++++++++++++++++++++
+ drivers/gpu/drm/drm_fbdev_dma.c           |    4 ----
+ drivers/gpu/drm/drm_fbdev_generic.c       |    4 ----
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    4 ----
+ drivers/gpu/drm/gma500/fbdev.c            |    4 ----
+ drivers/gpu/drm/msm/msm_fbdev.c           |    4 ----
+ drivers/gpu/drm/omapdrm/omap_fbdev.c      |    4 ----
+ drivers/gpu/drm/radeon/radeon_fbdev.c     |    4 ----
+ drivers/gpu/drm/tegra/fbdev.c             |    4 ----
+ 9 files changed, 21 insertions(+), 32 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 64a9d0d0b5a4..5d36f65d4ecf 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -809,6 +809,44 @@
- 			dma-names = "rx", "tx";
- 		};
+--- a/drivers/gpu/drm/drm_client.c
++++ b/drivers/gpu/drm/drm_client.c
+@@ -122,13 +122,34 @@ EXPORT_SYMBOL(drm_client_init);
+  * drm_client_register() it is no longer permissible to call drm_client_release()
+  * directly (outside the unregister callback), instead cleanup will happen
+  * automatically on driver unload.
++ *
++ * Registering a client generates a hotplug event that allows the client
++ * to set up its display from pre-existing outputs. The client must have
++ * initialized its state to able to handle the hotplug event successfully.
+  */
+ void drm_client_register(struct drm_client_dev *client)
+ {
+ 	struct drm_device *dev = client->dev;
++	int ret;
  
-+		spi@3210000 {
-+			compatible = "nvidia,tegra210-spi";
-+			reg = <0x0 0x03210000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&bpmp TEGRA234_CLK_SPI1>;
-+			assigned-clocks = <&bpmp TEGRA234_CLK_SPI1>;
-+			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clock-names = "spi";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			resets = <&bpmp TEGRA234_RESET_SPI1>;
-+			reset-names = "spi";
-+			dmas = <&gpcdma 15>, <&gpcdma 15>;
-+			dma-names = "rx", "tx";
-+			dma-coherent;
-+			status = "disabled";
-+		};
+ 	mutex_lock(&dev->clientlist_mutex);
+ 	list_add(&client->list, &dev->clientlist);
 +
-+		spi@3230000 {
-+			compatible = "nvidia,tegra210-spi";
-+			reg = <0x0 0x03230000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&bpmp TEGRA234_CLK_SPI3>;
-+			clock-names = "spi";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			assigned-clocks = <&bpmp TEGRA234_CLK_SPI3>;
-+			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			resets = <&bpmp TEGRA234_RESET_SPI3>;
-+			reset-names = "spi";
-+			dmas = <&gpcdma 17>, <&gpcdma 17>;
-+			dma-names = "rx", "tx";
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
- 		spi@3270000 {
- 			compatible = "nvidia,tegra234-qspi";
- 			reg = <0x0 0x3270000 0x0 0x1000>;
-@@ -1734,6 +1772,25 @@
- 			dma-names = "rx", "tx";
- 		};
++	if (client->funcs && client->funcs->hotplug) {
++		/*
++		 * Perform an initial hotplug event to pick up the
++		 * display configuration for the client. This step
++		 * has to be performed *after* registering the client
++		 * in the list of clients, or a concurrent hotplug
++		 * event might be lost; leaving the display off.
++		 *
++		 * Hold the clientlist_mutex as for a regular hotplug
++		 * event.
++		 */
++		ret = client->funcs->hotplug(client);
++		if (ret)
++			drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
++	}
+ 	mutex_unlock(&dev->clientlist_mutex);
+ }
+ EXPORT_SYMBOL(drm_client_register);
+--- a/drivers/gpu/drm/drm_fbdev_dma.c
++++ b/drivers/gpu/drm/drm_fbdev_dma.c
+@@ -253,10 +253,6 @@ void drm_fbdev_dma_setup(struct drm_devi
+ 		goto err_drm_client_init;
+ 	}
  
-+		spi@c260000 {
-+			compatible = "nvidia,tegra210-spi";
-+			reg = <0x0 0x0c260000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&bpmp TEGRA234_CLK_SPI2>;
-+			clock-names = "spi";
-+			iommus = <&smmu_niso0 TEGRA234_SID_GPCDMA>;
-+			assigned-clocks = <&bpmp TEGRA234_CLK_SPI2>;
-+			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			resets = <&bpmp TEGRA234_RESET_SPI2>;
-+			reset-names = "spi";
-+			dmas = <&gpcdma 19>, <&gpcdma 19>;
-+			dma-names = "rx", "tx";
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
- 		rtc@c2a0000 {
- 			compatible = "nvidia,tegra234-rtc", "nvidia,tegra20-rtc";
- 			reg = <0x0 0x0c2a0000 0x0 0x10000>;
--- 
-2.17.1
+-	ret = drm_fbdev_dma_client_hotplug(&fb_helper->client);
+-	if (ret)
+-		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&fb_helper->client);
+ 
+ 	return;
+--- a/drivers/gpu/drm/drm_fbdev_generic.c
++++ b/drivers/gpu/drm/drm_fbdev_generic.c
+@@ -340,10 +340,6 @@ void drm_fbdev_generic_setup(struct drm_
+ 		goto err_drm_client_init;
+ 	}
+ 
+-	ret = drm_fbdev_generic_client_hotplug(&fb_helper->client);
+-	if (ret)
+-		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&fb_helper->client);
+ 
+ 	return;
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -216,10 +216,6 @@ void exynos_drm_fbdev_setup(struct drm_d
+ 	if (ret)
+ 		goto err_drm_client_init;
+ 
+-	ret = exynos_drm_fbdev_client_hotplug(&fb_helper->client);
+-	if (ret)
+-		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&fb_helper->client);
+ 
+ 	return;
+--- a/drivers/gpu/drm/gma500/fbdev.c
++++ b/drivers/gpu/drm/gma500/fbdev.c
+@@ -330,10 +330,6 @@ void psb_fbdev_setup(struct drm_psb_priv
+ 		goto err_drm_fb_helper_unprepare;
+ 	}
+ 
+-	ret = psb_fbdev_client_hotplug(&fb_helper->client);
+-	if (ret)
+-		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&fb_helper->client);
+ 
+ 	return;
+--- a/drivers/gpu/drm/msm/msm_fbdev.c
++++ b/drivers/gpu/drm/msm/msm_fbdev.c
+@@ -227,10 +227,6 @@ void msm_fbdev_setup(struct drm_device *
+ 		goto err_drm_fb_helper_unprepare;
+ 	}
+ 
+-	ret = msm_fbdev_client_hotplug(&helper->client);
+-	if (ret)
+-		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&helper->client);
+ 
+ 	return;
+--- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
++++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+@@ -323,10 +323,6 @@ void omap_fbdev_setup(struct drm_device
+ 
+ 	INIT_WORK(&fbdev->work, pan_worker);
+ 
+-	ret = omap_fbdev_client_hotplug(&helper->client);
+-	if (ret)
+-		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&helper->client);
+ 
+ 	return;
+--- a/drivers/gpu/drm/radeon/radeon_fbdev.c
++++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
+@@ -386,10 +386,6 @@ void radeon_fbdev_setup(struct radeon_de
+ 		goto err_drm_client_init;
+ 	}
+ 
+-	ret = radeon_fbdev_client_hotplug(&fb_helper->client);
+-	if (ret)
+-		drm_dbg_kms(rdev->ddev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&fb_helper->client);
+ 
+ 	return;
+--- a/drivers/gpu/drm/tegra/fbdev.c
++++ b/drivers/gpu/drm/tegra/fbdev.c
+@@ -227,10 +227,6 @@ void tegra_fbdev_setup(struct drm_device
+ 	if (ret)
+ 		goto err_drm_client_init;
+ 
+-	ret = tegra_fbdev_client_hotplug(&helper->client);
+-	if (ret)
+-		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
+-
+ 	drm_client_register(&helper->client);
+ 
+ 	return;
+
 
