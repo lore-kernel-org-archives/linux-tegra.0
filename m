@@ -2,249 +2,176 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 463D5C001DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jul 2023 19:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34048C001DC
+	for <linux-tegra@archiver.kernel.org>; Sat, 22 Jul 2023 01:26:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232063AbjGUTTn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jul 2023 15:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40678 "EHLO
+        id S229566AbjGVB0a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jul 2023 21:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232052AbjGUTTi (ORCPT
+        with ESMTP id S229752AbjGVB02 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jul 2023 15:19:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4E13A90;
-        Fri, 21 Jul 2023 12:19:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A843861D6D;
-        Fri, 21 Jul 2023 19:19:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F65FC433C7;
-        Fri, 21 Jul 2023 19:19:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1689967173;
-        bh=VknH39d+fypFBtbpKy9Ks9499orhFKGibNkjywSPOo8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TwfHAh4dqdvIDSnWyOrbWr4scVHbxbgthT5ieOlaqy9DMKSJDh/azXW9+8q7icfQb
-         wvRcfGgYIhspri592yY+F/y5s6+jXjcl2RfEEwIIjIoC9fx8IpiP6x9A/DEmqpzAWA
-         aLcNZXU3sch42MqttSnd6swrBUacSkcUR6j6I6js=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Moritz Duge <MoritzDuge@kolahilft.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Torsten Krah <krah.tm@gmail.com>,
-        Paul Schyska <pschyska@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, alexandru.gagniuc@hp.com,
-        Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH 6.1 069/223] drm/client: Send hotplug event after registering a client
-Date:   Fri, 21 Jul 2023 18:05:22 +0200
-Message-ID: <20230721160523.804204932@linuxfoundation.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230721160520.865493356@linuxfoundation.org>
-References: <20230721160520.865493356@linuxfoundation.org>
-User-Agent: quilt/0.67
+        Fri, 21 Jul 2023 21:26:28 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433AE3C11
+        for <linux-tegra@vger.kernel.org>; Fri, 21 Jul 2023 18:26:07 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b703caf344so36371691fa.1
+        for <linux-tegra@vger.kernel.org>; Fri, 21 Jul 2023 18:26:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689989165; x=1690593965;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ku5l1Q2HPneJ+dGgicp//h4thZVkb5U6gm1puza6Dc=;
+        b=Wt2MAv2a+xyAMD18akci7l13deDm4qVMKOF4CAFx9BjiJvcluksru/gkyIL13qP4WK
+         Wl51buQg8tJ/cvpd5hYMG9Zs/bOM8kPb/ShgFkDLnt2Z+EIKqWfvKb5fQhDcXb/A47Ze
+         XdEWF3nphsALspPowkucL1iYq1eCNjtk7ERB+XRQ2vkmPWjkh6JSS/2RpOGAgWahDxvp
+         HJQJgkZaCvHaXaS9NC8Qcvo6hTT4z0EEI16jD4lQfm/iT3sgQIoaE9KlS20h7tBpUSSa
+         rB4pCr/OoAeypAUqurMKgOsJQoYOl73ENIx3xdsnSkVOZrtXdkTiu50qAZ0CxfFzERZk
+         NBOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689989165; x=1690593965;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ku5l1Q2HPneJ+dGgicp//h4thZVkb5U6gm1puza6Dc=;
+        b=HNuDT8OaTTGBmvzfZf+cyrIuePbo0W9hjOxp6e1h/Nv8W5DqBAlL2yWIdtGMJkFo8X
+         LjHEimH0fNP0vaoEIyatnOBWzu154065KK01316QoNS4aaCJ5g/gBS6swuR30txm1cQZ
+         tcABjuJ+kL0bm2pxu+AUD95UhoCZeo+2U3N+IxB3BltBg3yPuDpyw8KZ5qgdF27dvvmn
+         0C80X/oq07AJapr9wJH6awgWwKGLQOEmrZy/cTmS1sCDe4GwYR/bQrc72MyO3Qpg00vs
+         A3E9JzrF8K1Gca38WsF92j/wK54f2EOrYB9XIyfiAXbGrGFsjoQQw3XCsufGLBr1FBuT
+         FcOA==
+X-Gm-Message-State: ABy/qLYuuFy14dJmiiXeY+sXDTrSifxiYTL8wevfbegptgGQbjrhrl+y
+        1HqNsN75pLbJps0JIG/JplFcZ7B4R6M=
+X-Google-Smtp-Source: APBJJlEKd2PjQybLVzajbEZFF6cyhlHW/gsBvn+G3oIvWB4/bHwYA3TrnsoIlOtcKAXRgZpTYEn0vQ==
+X-Received: by 2002:a2e:9193:0:b0:2b6:cb55:72bc with SMTP id f19-20020a2e9193000000b002b6cb5572bcmr3045915ljg.1.1689989165223;
+        Fri, 21 Jul 2023 18:26:05 -0700 (PDT)
+Received: from [192.168.2.146] (109-252-150-127.dynamic.spd-mgts.ru. [109.252.150.127])
+        by smtp.googlemail.com with ESMTPSA id n12-20020a2e878c000000b002b70a64d4desm1248655lji.46.2023.07.21.18.26.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jul 2023 18:26:04 -0700 (PDT)
+Message-ID: <5a45a344-3809-6674-6694-8eef936bc935@gmail.com>
+Date:   Sat, 22 Jul 2023 04:26:03 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: LVDS panel compatible strings
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Svyatoslav Ryhel <clamor95@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Ion Agorria <ion@agorria.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        =?UTF-8?Q?Pedro_=c3=82ngelo?= <pangelo@void.io>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Zack Pearsall <zpearsall@yahoo.com>,
+        linux-tegra@vger.kernel.org
+References: <ZLFd_L_Uw1PmpSep@orome>
+ <CAPVz0n3fj77JEzJbYve9-5pjjVt+yJHNcFGqJr0HFSJnaOtbzw@mail.gmail.com>
+ <ZLFmxuVuO2FWy1as@orome>
+ <CAPVz0n0sYJvKJRmwBRpp_aUx7HbgbcLnkAJAV82XryHVeeYcHA@mail.gmail.com>
+ <ZLTq3KXeV-tT_HFG@orome> <78ba744f-d7f6-2388-0330-1a5105c9dca5@gmail.com>
+ <ZLVBM23xjgzN_-ZV@orome>
+Content-Language: en-US
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <ZLVBM23xjgzN_-ZV@orome>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thomas Zimmermann <tzimmermann@suse.de>
+17.07.2023 16:25, Thierry Reding пишет:
+> On Mon, Jul 17, 2023 at 11:50:03AM +0300, Dmitry Osipenko wrote:
+>> 17.07.2023 10:16, Thierry Reding пишет:
+>>> For cases where the timings are the only things that differ, the DT
+>>> bindings allow overriding the timings specifically. So you might get
+>>> away with using one of the existing panels if it is close enough and
+>>> patch up the timings in DT.
+>>
+>> If panel-simple supported timings override from DT, then panel-lvds
+>> indeed could be removed. But panel-simple doesn't support it:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=a21f18a993c56566db94ba836684bc32c070a82c
+> 
+> I clearly didn't look at that patch closely enough. panel-simple has
+> supported override modes since:
+> 
+> commit b8a2948fa2b3a5a6da67fd57aa01c7318d795125
+> Author: Sean Paul <seanpaul@chromium.org>
+> Date:   Thu Jul 11 13:34:53 2019 -0700
+> 
+>     drm/panel: simple: Add ability to override typical timing
+>     
+>     This patch adds the ability to override the typical display timing for a
+>     given panel. This is useful for devices which have timing constraints
+>     that do not apply across the entire display driver (eg: to avoid
+>     crosstalk between panel and digitizer on certain laptops). The rules are
+>     as follows:
+>     
+>     - panel must not specify fixed mode (since the override mode will
+>       either be the same as the fixed mode, or we'll be unable to
+>       check the bounds of the overried)
+>     - panel must specify at least one display_timing range which will be
+>       used to ensure the override mode fits within its bounds
+>     
+>     Changes in v2:
+>      - Parse the full display-timings node (using the native-mode) (Rob)
+>     Changes in v3:
+>      - No longer parse display-timings subnode, use panel-timing (Rob)
+>     Changes in v4:
+>      - Don't add mode from timing if override was specified (Thierry)
+>      - Add warning if timing and fixed mode was specified (Thierry)
+>      - Don't add fixed mode if timing was specified (Thierry)
+>      - Refactor/rename a bit to avoid extra indentation from "if" tests
+>      - i should be unsigned (Thierry)
+>      - Add annoying WARN_ONs for some cases (Thierry)
+>      - Simplify 'No display_timing found' handling (Thierry)
+>      - Rename to panel_simple_parse_override_mode() (Thierry)
+>     Changes in v5:
+>      - Added Heiko's Tested-by
+>     Changes in v6:
+>      - Rebased to drm-misc next
+>      - Added tags
+>     
+>     Cc: Doug Anderson <dianders@chromium.org>
+>     Cc: Eric Anholt <eric@anholt.net>
+>     Cc: Heiko Stuebner <heiko@sntech.de>
+>     Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
+>     Cc: Rob Herring <robh+dt@kernel.org>
+>     Cc: Stéphane Marchesin <marcheu@chromium.org>
+>     Cc: Thierry Reding <thierry.reding@gmail.com>
+>     Cc: devicetree@vger.kernel.org
+>     Cc: dri-devel@lists.freedesktop.org
+>     Signed-off-by: Sean Paul <seanpaul@chromium.org>
+>     Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>     Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>     Tested-by: Heiko Stuebner <heiko@sntech.de>
+>     Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+>     Acked-by: Thierry Reding <thierry.reding@gmail.com>
+>     Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+>     Link: https://patchwork.freedesktop.org/patch/msgid/20190711203455.125667-2-dianders@chromium.org
+> 
+> Looking at the error message cited in the linked commit, the problem is
+> that the Chunghwa panel has a fixed mode listed in the driver. However I
+> don't see a reason why we can't get rid of that. The only place where I
+> can find the compatible string for that used is for the Nexus 7, so we
+> should be able to replace the fixed mode with the timings for that panel
+> and remove the fixed mode.
+> 
+> The initial Chunghwa panel driver support doesn't seem to have been
+> based on the Nexus 7, so I suppose if we make the above change we could
+> technically be breaking some setup out there, but since we have no way
+> of knowing which device this was on, or if anybody still has access, the
+> best we can do is hope that nothing breaks and fix things up if somebody
+> complains.
 
-commit 27655b9bb9f0d9c32b8de8bec649b676898c52d5 upstream.
+Sounds good. For the Chunghwa there is no other user than N7 in upstream
+kernel, nothing to worry about. Indeed, it should be timing ranges and
+not the fixed mode.
 
-Generate a hotplug event after registering a client to allow the
-client to configure its display. Remove the hotplug calls from the
-existing clients for fbdev emulation. This change fixes a concurrency
-bug between registering a client and receiving events from the DRM
-core. The bug is present in the fbdev emulation of all drivers.
-
-The fbdev emulation currently generates a hotplug event before
-registering the client to the device. For each new output, the DRM
-core sends an additional hotplug event to each registered client.
-
-If the DRM core detects first output between sending the artificial
-hotplug and registering the device, the output's hotplug event gets
-lost. If this is the first output, the fbdev console display remains
-dark. This has been observed with amdgpu and fbdev-generic.
-
-Fix this by adding hotplug generation directly to the client's
-register helper drm_client_register(). Registering the client and
-receiving events are serialized by struct drm_device.clientlist_mutex.
-So an output is either configured by the initial hotplug event, or
-the client has already been registered.
-
-The bug was originally added in commit 6e3f17ee73f7 ("drm/fb-helper:
-generic: Call drm_client_add() after setup is done"), in which adding
-a client and receiving a hotplug event switched order. It was hidden,
-as most hardware and drivers have at least on static output configured.
-Other drivers didn't use the internal DRM client or still had struct
-drm_mode_config_funcs.output_poll_changed set. That callback handled
-hotplug events as well. After not setting the callback in amdgpu in
-commit 0e3172bac3f4 ("drm/amdgpu: Don't set struct
-drm_driver.output_poll_changed"), amdgpu did not show a framebuffer
-console if output events got lost. The bug got copy-pasted from
-fbdev-generic into the other fbdev emulation.
-
-Reported-by: Moritz Duge <MoritzDuge@kolahilft.de>
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/2649
-Fixes: 6e3f17ee73f7 ("drm/fb-helper: generic: Call drm_client_add() after setup is done")
-Fixes: 8ab59da26bc0 ("drm/fb-helper: Move generic fbdev emulation into separate source file")
-Fixes: b79fe9abd58b ("drm/fbdev-dma: Implement fbdev emulation for GEM DMA helpers")
-Fixes: 63c381552f69 ("drm/armada: Implement fbdev emulation as in-kernel client")
-Fixes: 49953b70e7d3 ("drm/exynos: Implement fbdev emulation as in-kernel client")
-Fixes: 8f1aaccb04b7 ("drm/gma500: Implement client-based fbdev emulation")
-Fixes: 940b869c2f2f ("drm/msm: Implement fbdev emulation as in-kernel client")
-Fixes: 9e69bcd88e45 ("drm/omapdrm: Implement fbdev emulation as in-kernel client")
-Fixes: e317a69fe891 ("drm/radeon: Implement client-based fbdev emulation")
-Fixes: 71ec16f45ef8 ("drm/tegra: Implement fbdev emulation as in-kernel client")
-Fixes: 0e3172bac3f4 ("drm/amdgpu: Don't set struct drm_driver.output_poll_changed")
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Tested-by: Moritz Duge <MoritzDuge@kolahilft.de>
-Tested-by: Torsten Krah <krah.tm@gmail.com>
-Tested-by: Paul Schyska <pschyska@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Noralf Trønnes <noralf@tronnes.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: freedreno@lists.freedesktop.org
-Cc: amd-gfx@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: <stable@vger.kernel.org> # v5.2+
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
-Link: https://patchwork.freedesktop.org/patch/msgid/20230710091029.27503-1-tzimmermann@suse.de
-(cherry picked from commit 27655b9bb9f0d9c32b8de8bec649b676898c52d5)
-[ Dropped changes to drivers/gpu/drm/armada/armada_fbdev.c as
-  174c3c38e3a2 drm/armada: Initialize fbdev DRM client
-  was introduced in 6.5-rc1.
-
-  Dropped changes to exynos, msm, omapdrm, radeon, tegra drivers
-  as missing code these commits introduced:
-
-  99286486d674 drm/exynos: Initialize fbdev DRM client
-  841ef552b141 drm/msm: Initialize fbdev DRM client
-  9e69bcd88e45 drm/omapdrm: Implement fbdev emulation as in-kernel client
-  e317a69fe891 drm/radeon: Implement client-based fbdev emulation
-  9b926bcf2636 drm/radeon: Only build fbdev if DRM_FBDEV_EMULATION is set
-  25dda38e0b07 drm/tegra: Initialize fbdev DRM client
-  8f1aaccb04b7 drm/gma500: Implement client-based fbdev emulation
-  b79fe9abd58b drm/fbdev-dma: Implement fbdev emulation for GEM DMA helpers
-
-  Move code for drm-fbdev-generic.c to matching file in 6.1.y because
-  these commits haven't happened in 6.1.y.
-  8ab59da26bc0 drm/fb-helper: Move generic fbdev emulation into separate source file
-  b9c93f4ec737 drm/fbdev-generic: Rename symbols ]
-Cc: alexandru.gagniuc@hp.com
-Link: https://lore.kernel.org/stable/SJ0PR84MB20882EEA1ABB36F60E845E378F5AA@SJ0PR84MB2088.NAMPRD84.PROD.OUTLOOK.COM/
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/drm_client.c    |   21 +++++++++++++++++++++
- drivers/gpu/drm/drm_fb_helper.c |    4 ----
- 2 files changed, 21 insertions(+), 4 deletions(-)
-
---- a/drivers/gpu/drm/drm_client.c
-+++ b/drivers/gpu/drm/drm_client.c
-@@ -122,13 +122,34 @@ EXPORT_SYMBOL(drm_client_init);
-  * drm_client_register() it is no longer permissible to call drm_client_release()
-  * directly (outside the unregister callback), instead cleanup will happen
-  * automatically on driver unload.
-+ *
-+ * Registering a client generates a hotplug event that allows the client
-+ * to set up its display from pre-existing outputs. The client must have
-+ * initialized its state to able to handle the hotplug event successfully.
-  */
- void drm_client_register(struct drm_client_dev *client)
- {
- 	struct drm_device *dev = client->dev;
-+	int ret;
- 
- 	mutex_lock(&dev->clientlist_mutex);
- 	list_add(&client->list, &dev->clientlist);
-+
-+	if (client->funcs && client->funcs->hotplug) {
-+		/*
-+		 * Perform an initial hotplug event to pick up the
-+		 * display configuration for the client. This step
-+		 * has to be performed *after* registering the client
-+		 * in the list of clients, or a concurrent hotplug
-+		 * event might be lost; leaving the display off.
-+		 *
-+		 * Hold the clientlist_mutex as for a regular hotplug
-+		 * event.
-+		 */
-+		ret = client->funcs->hotplug(client);
-+		if (ret)
-+			drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
-+	}
- 	mutex_unlock(&dev->clientlist_mutex);
- }
- EXPORT_SYMBOL(drm_client_register);
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -2634,10 +2634,6 @@ void drm_fbdev_generic_setup(struct drm_
- 		preferred_bpp = 32;
- 	fb_helper->preferred_bpp = preferred_bpp;
- 
--	ret = drm_fbdev_client_hotplug(&fb_helper->client);
--	if (ret)
--		drm_dbg_kms(dev, "client hotplug ret=%d\n", ret);
--
- 	drm_client_register(&fb_helper->client);
- }
- EXPORT_SYMBOL(drm_fbdev_generic_setup);
+For the Hydis panel there is no definition in panel-simple, it needs to
+be added. It also should be in a form of timing ranges, though I don't
+see ranges in the datasheet, not sure where to get them.
 
 
