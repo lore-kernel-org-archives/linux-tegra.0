@@ -2,80 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68D6C001B0
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 11:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AE7C0015E
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 11:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbjGXLwK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jul 2023 07:52:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34946 "EHLO
+        id S229826AbjGXL57 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jul 2023 07:57:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjGXLwI (ORCPT
+        with ESMTP id S229645AbjGXL57 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jul 2023 07:52:08 -0400
+        Mon, 24 Jul 2023 07:57:59 -0400
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF971E78;
-        Mon, 24 Jul 2023 04:52:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 627531B1;
+        Mon, 24 Jul 2023 04:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dFv08xg9HCEZeX/IpQAY/FCMvhcm28/wsJC6QmXws2U=; b=uRJfH/alHjeF7UV7W/ckiQtSyp
-        PxbLh1ne240IwoAHSN9auV+gtuXp2WbQL+GuRh5mgZJfKJvr+MPkzQqSvAY4ox5H9GpE6Cp1+9fdW
-        w+Yko2jULXDwFFOpNIClMFiZlUSgM5tBzoFJC8Kufgwxk8Xsww7HeHH4mDGAt0tVTc3ZRLYT3qktm
-        Lu2YMmWNi7I8SBoK1C+29xAmHxgDJ8hQtnZT44f9/Qcrp66aN9MBfI/t1dgkOtPvjlbflAGkdZhw7
-        Jkn+4r5ErKDUvcGUE9i3s1EmvUuMO2v2IjBlNgmhdXcE9/PbZNL72qrMF1OEFbUqNnL6CctLp/f6Z
-        wtURIvsA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41896)
+        bh=soyMhpZcIJrJxMhkmZ1JJAZp/WUFHI/6qg/v9ZpPSVg=; b=mC+HME3GwTW1U5etzIqgvfxOeV
+        gjzzOioQ+PdwJpFMOpJooPKDRWlKOFwnXA/hWiT/72Vr77mZ1ohBi5CfhUXcS5KtRbLNQwdhtTs3v
+        46KHvxrcsamzBwsNMrXj1p8ExUkiwnZdi2EBdRJ/fUGYGWI9aAQi/AiGF3S/r4g0rGywk3rh2H4MP
+        zAOmR+p/a4Hr5B0y5fzCIN1C9dd+xJszobTx7nIea+LwB7QkhsEpv6vK5veQd6xDWHLO5JMI6EiC3
+        PGBhLx/vsbL9YkUovPzstlvYreK+3PtY+0XIX1DO60TucGOsP4Cdj0fwTTTDUcILbec8r9we0y7dV
+        j4/Uvtww==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44102)
         by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.96)
         (envelope-from <linux@armlinux.org.uk>)
-        id 1qNu6d-0008QN-0x;
-        Mon, 24 Jul 2023 12:52:03 +0100
+        id 1qNuCJ-0008Qe-2B;
+        Mon, 24 Jul 2023 12:57:55 +0100
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
         (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1qNu6d-0000m0-Bq; Mon, 24 Jul 2023 12:52:03 +0100
-Date:   Mon, 24 Jul 2023 12:52:03 +0100
+        id 1qNuCJ-0000m9-F8; Mon, 24 Jul 2023 12:57:55 +0100
+Date:   Mon, 24 Jul 2023 12:57:55 +0100
 From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
 To:     Revanth Kumar Uppala <ruppala@nvidia.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
+Cc:     "andrew@lunn.ch" <andrew@lunn.ch>,
         "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Narayan Reddy <narayanr@nvidia.com>
-Subject: Re: [PATCH 2/4] net: phy: aquantia: Enable MAC Controlled EEE
-Message-ID: <ZL5l44e5cdODvwna@shell.armlinux.org.uk>
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 3/4] net: phy: aquantia: Poll for TX ready at PHY system
+ side
+Message-ID: <ZL5nQxCyj8x+5lWk@shell.armlinux.org.uk>
 References: <20230628124326.55732-1-ruppala@nvidia.com>
- <20230628124326.55732-2-ruppala@nvidia.com>
- <57493101-413c-4f68-a064-f25e75fc2783@lunn.ch>
- <BL3PR12MB64504E1E36E01EF76ADB3946C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
+ <20230628124326.55732-3-ruppala@nvidia.com>
+ <ZJw2u6BIShe2ZGsw@shell.armlinux.org.uk>
+ <BL3PR12MB64504E3A40CD6D8EAB7FF0C8C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BL3PR12MB64504E1E36E01EF76ADB3946C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
+In-Reply-To: <BL3PR12MB64504E3A40CD6D8EAB7FF0C8C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
 Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 11:29:28AM +0000, Revanth Kumar Uppala wrote:
-> > Ideally, you should only do SmartEEE, if the SoC MAC is dumb and does not have
-> > EEE itself. I guess if you are doing rate adaptation, or MACSEC in the PHY, then
-> > you might be forced to use SmartEEE since the SoC MAC is somewhat decoupled
-> > from the PHY.
+On Mon, Jul 24, 2023 at 11:29:33AM +0000, Revanth Kumar Uppala wrote:
+> > -----Original Message-----
+> > From: Russell King <linux@armlinux.org.uk>
+> > Sent: Wednesday, June 28, 2023 7:04 PM
+> > To: Revanth Kumar Uppala <ruppala@nvidia.com>
+> > Cc: andrew@lunn.ch; hkallweit1@gmail.com; netdev@vger.kernel.org; linux-
+> > tegra@vger.kernel.org
+> > Subject: Re: [PATCH 3/4] net: phy: aquantia: Poll for TX ready at PHY system side
 > > 
-> > At the moment, we don't have a good story for SmartEEE. It should be
-> > configured in the same way as normal EEE, ethtool --set-eee etc. I've got a
-> > rewrite of normal EEE in the works. Once that is merged i hope SmartEEE will be
-> > next.
-> "ethtool --set-eee" is a dynamic way of enabling normal EEE and here we are doing the same normal EEE but configuring it by default in aqr107_config_init() instead of doing it dynamically.
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Wed, Jun 28, 2023 at 06:13:25PM +0530, Revanth Kumar Uppala wrote:
+> > > +     /* Lane bring-up failures are seen during interface up, as interface
+> > > +      * speed settings are configured while the PHY is still initializing.
+> > > +      * To resolve this, poll until PHY system side interface gets ready
+> > > +      * and the interface speed settings are configured.
+> > > +      */
+> > > +     ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_PHYXS,
+> > MDIO_PHYXS_VEND_IF_STATUS,
+> > > +                                     val, (val & MDIO_PHYXS_VEND_IF_STATUS_TX_READY),
+> > > +                                     20000, 2000000, false);
+> > 
+> > What does this actually mean when the condition succeeds? Does it mean that
+> > the system interface is now fully configured (but may or may not have link)?
+> Yes, your understanding is correct.
+> It means that the system interface is now fully configured and has the link.
 
-So, setting the MAC_CNTRL_EEE bits is just enabling the standard IEEE
-paths in the PHY to allow the IEEE defined EEE architecture to work?
+As you indicate that it also indicates that the system interface has
+link, then you leave me no option but to NAK this patch, sorry. The
+reason is:
 
-If that's all its doing, I wonder why they aren't set by default...
-seems rather strange.
+> > ... If it doesn't succeed because the system
+> > interface doesn't have link, then that would be very bad, because _this_ function
+> > needs to return so the MAC side can then be configured to gain link with the PHY
+> > with the appropriate link parameters.
+
+Essentially, if the PHY changes its host interface because the media
+side has changed, we *need* the read_status() function to succeed, tell
+us that the link is up, and what the parameters are for the media side
+link _and_ the host side interface.
+
+At this point, if the PHY has changed its host-side interface, then the
+link with the host MAC will be _down_ because the MAC driver is not yet
+aware of the new parameters for the link. read_status() has to succeed
+and report the new parameters to the MAC so that the MAC (or phylink)
+can reconfigure the MAC and PCS for the PHY's new operating mode.
+
+Sorry, but NAK.
 
 -- 
 RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
