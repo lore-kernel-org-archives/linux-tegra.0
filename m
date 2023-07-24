@@ -2,61 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F829C001B0
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 11:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAACC001E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 11:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbjGXL3X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jul 2023 07:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49678 "EHLO
+        id S231744AbjGXL3d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jul 2023 07:29:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbjGXL3W (ORCPT
+        with ESMTP id S231671AbjGXL3b (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jul 2023 07:29:22 -0400
+        Mon, 24 Jul 2023 07:29:31 -0400
 Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2087.outbound.protection.outlook.com [40.107.101.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D09FE54;
-        Mon, 24 Jul 2023 04:29:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E04D7E66;
+        Mon, 24 Jul 2023 04:29:29 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GskoFfXZ+mIRJWqiapEoRX7Qgh5FWAy+d6vgqiVz94GL09+wkk8CtB3gsvWqPqihG9Hh6nqozX/teyCLwuxAcWX6U+ITpRlOf2gm+0IjU0nIHon6NZCFKlFmr5lC/7Kma+onNln1MM3VIeChGjDAM4X/QJ1hczj3KJHBa0VQ6txQXCrajnVZYcIK9sGsph4DLN69JhZ+SjhHi/V6Ug7Pl96yJ6y7iLbOSECIuruKbmQAoXlD/XUT1AzmipWGi3zrRfEv2lHSlJXQVP6hLVFEg+0mpfxY6oWR7pe3qhE1RVt0t7/4mKzV8/DHaNYwEqz2DSGu5YGdjnoRN3Htv5rf2Q==
+ b=GkVjdBJX3k/gP6xiIheD8L5J97i+7AkvG/4VlA0nZdCvBxU3I8xshrrwpPb2Vn2BtNWfX04Otzh8cr3TZWvrdok+SjrSS8lE4SfTA0Ugf8gCRCPQ0dAPjiYoPjIF5yotUpTn2FoJD1/bEbP5g0WH7s9swYT2+yfx6eW2aQaGWj9sV+NJpwxDqR/w+uIvfpZsrPitQT1ExnqzPwAC9Drq28jNb4wsNAiQVcQmhDDZKQ74AcOvgrrgAxk1tOK76UJfet/WlhPsibxa3RoUPffm/196Ez2cckzqK9xWOX67pPAeQiFb283mfAXKo9vpnGIGBX/OWuW5Z8ouy7wCZkivtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K/HEcDwGW1j2TTnHqB4zMwbSsdre41jJvauX8pVaVvE=;
- b=n8kB5JBZSdL93Sfp9KoMTqLHZvBnZdDXUfiL6GDV8zB8QKzWDduhd1no6mu4ewvfxev78qGI5V8YjghtQbrxd/f2HkSK13R8tvvrjUOiM0kX6cIqV0ZWTpZ2cKVwm6WHSxLv/ZjYK6yZnG6yEIQP/2Sen4Bi5pGrZt5fgtv9rZ5pVE2gWe5OuI9UKvl2wOYStm6Ccjb7GDv0B2yYqSySlWkydeiS5Q4djzxSz0eDCT/DZyRTUPs7d2buCH2d94I5+WhMfO+FrkvnSJ70iFvYnDsU9B8MI0wGGzDmVNh0FlEu3gZZjTWniGCqO8oL1eCi5Zwcwjd9JNofasdYW4TJWw==
+ bh=RfDxM/8CZVIVty73BxML3RHhZHP6SB7ImKKL5KwP88Y=;
+ b=fONhOxYtQfvTL6iQisMJ8CDcrFi8cg5DC3Vzv0+7BYOlaNBFEJGZg9V6uRiCi8iNley4gIimSPD2xZ0XHIJOSDqM7EduN2HQ9pYe3ZqgKnwmaT4oror8GBpQm5Za9xxTPCglnrGmSuLpwdFDblopIvgHTZySiji1hguMujLPo3UTQBoTP9uT2ehzNUfIz8RvUIDblc7ZB2LCzgKucpMttw3VeXtkzdJUJh05K6c0BUOwS5Z5psVd+bpZ02h9zu3t6tbCVvbIOKXWQ2/UL2v9E3Llk95fh8uTzEvQhvlr+YUDpPyx2Ck6dyVOKN52luWDsA1v2WtCbrbvbHZVHGMnAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K/HEcDwGW1j2TTnHqB4zMwbSsdre41jJvauX8pVaVvE=;
- b=liA4vAhwq769uuq/kFxEXV8dUd+0+ZtmmC7UiMxoDglj0vaMGVTRU6ocwlI8XAhLKXhWJURoxG0wLBpGNk7GLPh/y7ST2BkQhDMs5ZkOeGErXYMhPbeQ7R9wFj7shr1bRhV4UFCj7FWcBhEn6+1SW7PUoQCKcqlgIVavPXbJQ9A4P9zmvjJYpko6JQliXG2lM3S033RilZs7Ln0YPlgHeTtyUuEcr7tFsil8mbhIBR+adnJjsDC9d5h3kUx7LFuFCGRD8Xs9/SbhydLGvkeG5fpRYqTR55Z1B6ElT6js6hqoe5aiWEkC3MyCNPj3dt6/Xlb/jeKoBMEKAY2IfzIvfA==
+ bh=RfDxM/8CZVIVty73BxML3RHhZHP6SB7ImKKL5KwP88Y=;
+ b=q4jaHKEUjmAnDNHBtsspXN0Na7kxoNTAlqCh34s8a/XfrXc65A21VVuXDZ8XNpld1pzr7YixcYMp7NNFGh7ReU1qT4IflTN7JsbuQ897wgtWBRK7ZqOSrwyO6vMdsn/ZCsnwuhMmoEvGwbFImpXud0YJHjiEQAvHAko5GdtfFeLLpnnUO4AOVQ/iISi8822vVzuEYxxamje4PBIIJz0m84auYEdyQ5GdQN66uaC2AVEGAMjRfQgE61yt1E7+e2kCXwSoS+6NX8haurBJM6c1BVHsg97LWx1UJyChTH+O9ESY6weor7U+S+/XpfLslOpSIf+ugBJVIh/Lu+JZmHV8oQ==
 Received: from BL3PR12MB6450.namprd12.prod.outlook.com (2603:10b6:208:3b9::22)
  by DM4PR12MB7528.namprd12.prod.outlook.com (2603:10b6:8:110::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.32; Mon, 24 Jul
- 2023 11:29:19 +0000
+ 2023 11:29:28 +0000
 Received: from BL3PR12MB6450.namprd12.prod.outlook.com
  ([fe80::8dd4:fb0b:cea7:fce0]) by BL3PR12MB6450.namprd12.prod.outlook.com
  ([fe80::8dd4:fb0b:cea7:fce0%4]) with mapi id 15.20.6609.022; Mon, 24 Jul 2023
- 11:29:18 +0000
+ 11:29:28 +0000
 From:   Revanth Kumar Uppala <ruppala@nvidia.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC:     "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         Narayan Reddy <narayanr@nvidia.com>
-Subject: RE: [PATCH 1/4] net: phy: aquantia: Enable Tx/Rx pause frame support
- in aquantia PHY
-Thread-Topic: [PATCH 1/4] net: phy: aquantia: Enable Tx/Rx pause frame support
- in aquantia PHY
-Thread-Index: AQHZqb4y/UnCFG0OJkmo9e/Tj/o/pq+gNgMAgAAEfoCAKKujIA==
-Date:   Mon, 24 Jul 2023 11:29:18 +0000
-Message-ID: <BL3PR12MB6450050A7423D4ADF4E4CFE9C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
+Subject: RE: [PATCH 2/4] net: phy: aquantia: Enable MAC Controlled EEE
+Thread-Topic: [PATCH 2/4] net: phy: aquantia: Enable MAC Controlled EEE
+Thread-Index: AQHZqb4zE0+3gNH5y0S+VfOwBdv5qa+gPJ8AgCiqUtA=
+Date:   Mon, 24 Jul 2023 11:29:28 +0000
+Message-ID: <BL3PR12MB64504E1E36E01EF76ADB3946C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
 References: <20230628124326.55732-1-ruppala@nvidia.com>
- <ZJw2CKtgqbRU/3Z6@shell.armlinux.org.uk>
- <ce4c10b5-c2cf-489d-b096-19b5bcd8c49e@lunn.ch>
-In-Reply-To: <ce4c10b5-c2cf-489d-b096-19b5bcd8c49e@lunn.ch>
+ <20230628124326.55732-2-ruppala@nvidia.com>
+ <57493101-413c-4f68-a064-f25e75fc2783@lunn.ch>
+In-Reply-To: <57493101-413c-4f68-a064-f25e75fc2783@lunn.ch>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,53 +63,53 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: BL3PR12MB6450:EE_|DM4PR12MB7528:EE_
-x-ms-office365-filtering-correlation-id: d0818721-dcd1-45ef-c887-08db8c393832
+x-ms-office365-filtering-correlation-id: d522cf5d-506b-44fa-a38f-08db8c393de5
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: LfR2lQKjOWRGbTkaK9IQfg5S615MyGqRjpufIYxE+P/hGFoU+/nydtJQeiAspP0d0jNBKJ+n3ArIuw5G+GQasAi96YUSGZiEkn9Uw8ur9d8krzo0L0tAR9fzQk3aTpeOap+LTImQcMn/I+UrNDy38xtBR9PP5n8Ebj0ndjP9caYw8awrUBezFHgvLCIVj+/VT4Y5UpmeEzQsjLbJ8Rxk+EkYEsiU7VkkPdENPeLpZOArCdcjP21OkxjOqNvPNb8UN01zVo+9U3lq4pVABN71dwXp2ywaHzJqXIOLCkzsrXXBcdPB9W8n7xcmZBJM/qcf2aR6d6tJcfqCZMAZnVILx3u2ep/l7U5gZaT6heMYavVYBGJFwIf02XDhHjyMs5EhMteXCENg+iAmyZIM3hOeWnAbX5xgmzjdtFpZ7OIH777CWhYFt9HWKfOBHNUqYdMchyTZFqDQZ58L7XmUDp+n93ScVKIARAbOP3ARgmtoINT6Nmr0b+xWt7YCTICKAmzukP18F91R7Df5VyAVN5nImNpOKimIxv+V2TiYQ7QW2EpX82o2Zn/QHnE2AHn7InEWS0G53DLgf0+Oy5P/nPZ7ZDoadSyoR9XDiigJLjrj04nuMgDe6iG4CQ1x3rQ6m4/E
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6450.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(346002)(376002)(366004)(39860400002)(451199021)(66556008)(66446008)(66476007)(66946007)(64756008)(8676002)(8936002)(316002)(4326008)(86362001)(76116006)(33656002)(38070700005)(83380400001)(122000001)(2906002)(41300700001)(52536014)(38100700002)(5660300002)(478600001)(110136005)(55016003)(54906003)(71200400001)(107886003)(6506007)(7696005)(9686003)(53546011)(186003)(26005);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: sl/1CppLdhOh4ePSakoe3BR0ZvMNq45VYKA/zp6QB0NqjWj6Fw4Ibi+BJwyxDWI3QFB3x1YedLHKoh1nBFjB9qgUFV4ofbzJTB2E4RG0bkarjYdfIPP1PvECHtSkBfd6yuyQ0SS3Angazut3+lgSeH6wn1beT92QXBwzSW3exefHvxm42am3a5BHvIgjT/sAcppljbXFGBAXs3DHrtp2Z+fjZdTVQLMk78BBZqwRRPciCi/23qqEb8+1vTg3tmp0EU9swto6ug1R/Iq0DH8/dUh2sk/abEAb28J7JWkzpAcJmMCh5wBcvfsmyclrUqwkPecvvn1i5UNouN/z055F07l70qo+lNb4FCR3nLCOxFyUGHRbj1hVogRI+gTriOJ7+t/yyQigxv+8ipLaxBZkzINyLuPyNw8hatjFKbV9j+Io+FVjV8G/+V5W+DiDuxC8dK8aYHkMZoKfzmxs4tVjGKXkFxklBiQBgH9E7OH1AQQmDRn6CuKyRcA4krK1hYlPCwQWpdGV6GmA+DZh9a+BpfnLp9FRRhfUcepzOs82NgKrYxvsgtmlW/MgwNdVp4xlBwdUI49AHPoB4Fe470PPbo/5hTRaT30yH0ekB5KqVom81Q6TMZkqecsZBcVTL+tT
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6450.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(346002)(376002)(366004)(39860400002)(451199021)(66556008)(66446008)(66476007)(66946007)(64756008)(8676002)(8936002)(6916009)(316002)(4326008)(86362001)(76116006)(33656002)(38070700005)(66899021)(83380400001)(122000001)(2906002)(41300700001)(52536014)(38100700002)(5660300002)(478600001)(55016003)(54906003)(71200400001)(107886003)(6506007)(7696005)(9686003)(53546011)(186003)(26005);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0JHQ4T8bzdrGbPjBOQpKx6wuTBli97iO3vGG6zzPd27FymBjSE5kOQlmIQZ6?=
- =?us-ascii?Q?4B/oAuk7OtrG5d7kXOGJhdWLIRTRpURpKAisaFME+LpxYuzww/6PJq0rHp9V?=
- =?us-ascii?Q?85Ssz1N9WNFjxdbOAVnvigYzhc3kdPb+HLDrufJdLy8vJFULP3T3DYajZytm?=
- =?us-ascii?Q?GIr0jkfiUoiejXrgwmF4j5kM07LAvlgNpAYM2AaReWuuAltSjKUTZObUhJpX?=
- =?us-ascii?Q?MbrDZV/ULl4L/tanM90VzyoTTBbVU0/lpo8pjHuBIL0b+FZqF1WUVKjQQ5gU?=
- =?us-ascii?Q?xD8UrzmSXeQg6tboctfOGUppB31Pr4TmVS0uaXNZX4TP4VyVFhsQdMXjTxYG?=
- =?us-ascii?Q?nRQt+iXKPukHTPoRRf7g6rPbNbOrSX+7i/rekV6/YqlEtPjHni4PAh6kgn35?=
- =?us-ascii?Q?gH+1EroXbHusHASBZLjqS9b5gyElsaPxFmWUapQPTEb5w1XmOVO1t4oGG23b?=
- =?us-ascii?Q?eZ7rfvuQIuUhNX/MScwO2ciwQaE31iwVDhlqKDa96Y4RFoSK5Hx6b2rRDFI6?=
- =?us-ascii?Q?+dwyyHumE+xrnp6rmsMl15JrJqv8fvH9YcybbqgrejcjxZMUi0cZLDQa03yC?=
- =?us-ascii?Q?znMZRWZtaSxtGyuHs155QFRdUvHtUVxJh7GbCqT4uJTJMeKYcK2qFicgSg0z?=
- =?us-ascii?Q?ax5aEbyoM0gGXXMqPTV1m/501210aDIXKBeECDieUz6sBH8T2OgTxAx+tljj?=
- =?us-ascii?Q?A3LkoHMaVmKiWSkguKKcbP64H9q+oRjEqsJVckMXmZ0LJGC1egpffkuKDWb5?=
- =?us-ascii?Q?rG7g5F6Ki1ofocSebgzUQn45qaP8Jfi1GGVh1OHu6fYOkOW0R+9bxpBqVgmE?=
- =?us-ascii?Q?sd5iJtrh4P5+cksIbNMNupgkZqIO+u6X7jXlO69R+yVuoEPnquWVKLW9/OZu?=
- =?us-ascii?Q?3U7t/d0Af+o44vsfdv92cLPQzyQI1B8wMA/LHRC4Ze9dfsxDljvAQAqCzvwI?=
- =?us-ascii?Q?DwOHnSiMO0jbjkQrqhkO0nt/EupJNKa41CuTfrpTNMpY1zrapLWgVqBTBJ4t?=
- =?us-ascii?Q?ZEXw6O1n4fu/QbB6Qg55/ALmYX20Cr6IZB83kGohuoQ5Jn2o9wyMc7+y507t?=
- =?us-ascii?Q?7nL7r7mz06nXGIhSUhGD+YgqcNQRT4MyuGTgrwTM3i+1SoZYLvvu0n5VLKks?=
- =?us-ascii?Q?MAVI7TgfxjY4AC+I8QuWYTt9PvyVnNcAdzjxmkZX6Kzuq3Pvs3EZl7B71Z/U?=
- =?us-ascii?Q?3+T3+LNqDX9X/Y+9XVlggneio7OJeVA0ls1BjtQQgm7PVVwFm/6ZvY1q1b2I?=
- =?us-ascii?Q?7ogHBatAgOa+oWE+JSjhLMAaRTg5SvzmnLaeqFhMqDkMy8n+al7FeUEeGLhL?=
- =?us-ascii?Q?8ox92t4cEG9EWFMorEiQheNU3ifhWNZPndLs1jtA6YzQeMba84sfp59aWNSt?=
- =?us-ascii?Q?P0zd+XW+Lm+GYrEGlMxBxSC56UKmSTORI4p8nDeLFMEFe+78iQ3RAebF2Lta?=
- =?us-ascii?Q?Rv8M6CIuXa+d1ove2Om8KcnR4v9ouOyPo/A0wp6LXwTIR3vkQGbdFDgV5FoK?=
- =?us-ascii?Q?n2TiNLzr/ADC/uVSuHcWlWWfZv50K9vc3SvUAKjcU/GHY5jAVhcLwMFcnvyX?=
- =?us-ascii?Q?r1E27+8A4GOUXOkkFgbJhJ6TQo9imRNvFGa6puoB?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0sb8CH1Pw6Es8nz37ury7M3A8Ctyhwp+M5ISaCr28XeeZhT59VD1NS46zBWO?=
+ =?us-ascii?Q?e9QiDynoGHOARDFN5QeyhZJ26A55ylm63snxtypE1g3hw0t1f4e43beqK7a0?=
+ =?us-ascii?Q?8SX+YXMsx6m0ZO5Mwvma7mEMd3GqijDkMxvQx1fUJVw5OsiX+bZjErdy6Qc3?=
+ =?us-ascii?Q?VLhBOM1wrVCUt2os5cF3p+K5ffv8iAGyxCiGn0joDwiExEjFj+dvrIuSa4a9?=
+ =?us-ascii?Q?9dSZmD8e3LdR4qF6b6/ESH0R+OL66hV0t49HFm/LF/qp563fTQRtsqmI4rKL?=
+ =?us-ascii?Q?I76bPIPJbKMqOKooPjy4R7fnWaq3zP18XcQe9JomS4aW2JtG3q81uYnqcLMy?=
+ =?us-ascii?Q?fgCMOiUar9bDGATLOIi/tg/ac24kdJZzVjArwdj80JBv/8XRUQ1m0Fhx/qrf?=
+ =?us-ascii?Q?gfIy4ZPUIWs0MjCvyEx5gOXEmBZuxCJcRMcOXFG1Qb3DGwfdKC551edvqgLC?=
+ =?us-ascii?Q?2/0VehMYALQ55n5yvkKlU4GTKQq9MufTFuEAdr9iFlH3cF8crMqRqF8WHx4O?=
+ =?us-ascii?Q?Kl007Z1dgITLENP+jHjSHZd0mkDd7l2w2HSlW09s5if17asfulP4lhLT1W+3?=
+ =?us-ascii?Q?dcYLIDAOamNIGExtH2eWvvtVSjBlEg3q/DGqZvRQcDKcsLliNa8oSFSytQtV?=
+ =?us-ascii?Q?aXU6g6gflY6x1xZkOx5/MYrfaZis/3CcloOj67ZYtDiIrF+TpzoDYTehHceE?=
+ =?us-ascii?Q?50HgrlxJDeNi8BpG9kd1/Iyis0W+B8Dg9tBDoVWyE4PaozHjM2KJ41UmzdSV?=
+ =?us-ascii?Q?vjdCVViO4ZN+CGI4O/91nMlIqGdaE9WHnoJj1Rv3aB5vY3Mm7ppoiRPPTbiV?=
+ =?us-ascii?Q?beE6GxPjG9aIqKambKFOLFqSYLuqg32BcJyQw/ecgDedwUFc8MStaJkTSyjv?=
+ =?us-ascii?Q?DhdxgMnpDMB4mexfrbAynWYJYEYiffIVIZ7Jz7JRZ13zBMpik3llgGzbXuae?=
+ =?us-ascii?Q?NSx0oKwmvXGDMC4Emd1TmWNDr8DAjaos5Wx9ix4tvTj259/NJd8fqnBQzGam?=
+ =?us-ascii?Q?DPq6Xx7RgkgLXlrS/XSBpTecvEkEnmC/JrmdH7zcw15EvX003FAQIhbSBuB+?=
+ =?us-ascii?Q?Ll1DZtQlRpxbiJs0+BR4iroNqhFcT+M4QpSHMCgfHSN0CW6vNQutIfxRt/Hx?=
+ =?us-ascii?Q?KGqC5PpVvmnp7+aKd+BINOyFzaqogNH7P28KeVn4qPI/9t3Fs3E6K4yQ4IrN?=
+ =?us-ascii?Q?GDsj0RCbR+e5lehYQbf04YoRBo+8c6IC/xRHT7RJ3sC9+8HVI5zc7ypplXrN?=
+ =?us-ascii?Q?uImstMROtSAbwwbddN0TgcIK1kQhgvxaAJYYFUZDEnXJmW48+7/xsMWiJtil?=
+ =?us-ascii?Q?3+0FMMnAZlqrB9CVqYrPh2I/6mMPKGKO0dYCjUUifXCrJayKGNjI2Oa5dNdc?=
+ =?us-ascii?Q?j1ijQ6P9rdDruXExUon5L6O7rV651dv2T90/N+N5w+L2oKEqWKSccDREZveD?=
+ =?us-ascii?Q?zLPfCDpOdcBAeRytZJmMBv4iusBjJljAEYeR8G+G+5MX0KryWkFy/IQipKhj?=
+ =?us-ascii?Q?TzxST9xiRH7YGyzzNgimVGZrviCQNCU6nyzKLWLwIfr8ACyV9Vejy8HHKDAD?=
+ =?us-ascii?Q?BLA2yVF/MGZLGUDxO2/BhGRKEFM3m4+85LtC7/Yv?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6450.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0818721-dcd1-45ef-c887-08db8c393832
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2023 11:29:18.6904
+X-MS-Exchange-CrossTenant-Network-Message-Id: d522cf5d-506b-44fa-a38f-08db8c393de5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2023 11:29:28.1999
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: x6z5yXl3kx58SJiQaX5+Vr++UHUunkWcXeWO9dRiUCMDVmEfyaDZycTz4BEMINvJyVsFlUMLauqB3957cdkO4A==
+X-MS-Exchange-CrossTenant-userprincipalname: PkPOmG4PLIlnjKX1OCo6ajP3EWgv9ESR7eFzzTiIqY7oAQZPe2au1Cm2iQB5MkBtG1ntvn9GA1ryuvMElCWwyQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7528
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -121,76 +119,44 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 > -----Original Message-----
 > From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Wednesday, June 28, 2023 7:17 PM
-> To: Russell King (Oracle) <linux@armlinux.org.uk>
-> Cc: Revanth Kumar Uppala <ruppala@nvidia.com>; hkallweit1@gmail.com;
-> netdev@vger.kernel.org; linux-tegra@vger.kernel.org; Narayan Reddy
-> <narayanr@nvidia.com>
-> Subject: Re: [PATCH 1/4] net: phy: aquantia: Enable Tx/Rx pause frame sup=
-port
-> in aquantia PHY
+> Sent: Wednesday, June 28, 2023 7:24 PM
+> To: Revanth Kumar Uppala <ruppala@nvidia.com>
+> Cc: linux@armlinux.org.uk; hkallweit1@gmail.com; netdev@vger.kernel.org;
+> linux-tegra@vger.kernel.org; Narayan Reddy <narayanr@nvidia.com>
+> Subject: Re: [PATCH 2/4] net: phy: aquantia: Enable MAC Controlled EEE
 >=20
 > External email: Use caution opening links or attachments
 >=20
 >=20
-> On Wed, Jun 28, 2023 at 02:30:48PM +0100, Russell King (Oracle) wrote:
-> > On Wed, Jun 28, 2023 at 06:13:23PM +0530, Revanth Kumar Uppala wrote:
-> > > From: Narayan Reddy <narayanr@nvidia.com>
-> > >
-> > > Enable flow control support using pause frames in aquantia phy driver=
-.
-> > >
-> > > Signed-off-by: Narayan Reddy <narayanr@nvidia.com>
-> > > Signed-off-by: Revanth Kumar Uppala <ruppala@nvidia.com>
-> >
-> > I think this is over-complex.
-> >
-> > >  #define MDIO_PHYXS_VEND_IF_STATUS          0xe812
-> > >  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK        GENMASK(7, 3)
-> > >  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_KR  0 @@ -583,6 +585,17
-> @@
-> > > static int aqr107_config_init(struct phy_device *phydev)
-> > >     if (!ret)
-> > >             aqr107_chip_info(phydev);
-> > >
-> > > +   /* Advertize flow control */
-> > > +   linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev-
-> >supported);
-> > > +   linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev-
-> >supported);
-> > > +   linkmode_copy(phydev->advertising, phydev->supported);
-> >
-> > This is the wrong place to be doing this, since pause support depends
-> > not only on the PHY but also on the MAC. There are phylib interfaces
-> > that MACs should call so that phylib knows that the MAC supports pause
-> > frames.
-> >
-> > Secondly, the PHY driver needs to tell phylib that the PHY supports
-> > pause frames, and that's done through either setting the .features
-> > member in the PHY driver, or by providing a .get_features
-> > implementation.
-> >
-> > Configuration of the pause advertisement should already be happening
-> > through the core phylib code.
+> On Wed, Jun 28, 2023 at 06:13:24PM +0530, Revanth Kumar Uppala wrote:
+> > Enable MAC controlled energy efficient ethernet (EEE) so that MAC can
+> > keep the PHY in EEE sleep mode when link utilization is low to reduce
+> > energy consumption.
 >=20
-> I really should do a LPC netdev talk "Everybody gets pause wrong..."
+> This needs more explanation. Is this 'SmartEEE', in that the PHY is doing=
+ EEE
+> without the SoC MAC being involved?
+No, this is not Smart EEE.
 >=20
-> genphy_c45_an_config_aneg() will configure pause advertisement. The PHY
-> driver does not need to configure it, if the PHY follows the standard and=
- has the
-> configuration in the correct place. As Russell said, please check the PHY=
-s ability
-> to advertise pause is being reported correctly, by .get_features, of the =
-default
-> implementation of .get_features if that is being used. And then check you=
-r MAC
-> driver is also indicating it supports pause.
-From .get_features, it is not possible to check PHY's ability to advertise =
-pause is being reported as there is no such register present for AQR PHY to=
- check capabilities in its datasheet.
-Hence, we are directly configuring the pause frames from  aqr107_config_ini=
-t().
+> Ideally, you should only do SmartEEE, if the SoC MAC is dumb and does not=
+ have
+> EEE itself. I guess if you are doing rate adaptation, or MACSEC in the PH=
+Y, then
+> you might be forced to use SmartEEE since the SoC MAC is somewhat decoupl=
+ed
+> from the PHY.
+>=20
+> At the moment, we don't have a good story for SmartEEE. It should be
+> configured in the same way as normal EEE, ethtool --set-eee etc. I've got=
+ a
+> rewrite of normal EEE in the works. Once that is merged i hope SmartEEE w=
+ill be
+> next.
+"ethtool --set-eee" is a dynamic way of enabling normal EEE and here we are=
+ doing the same normal EEE but configuring it by default in aqr107_config_i=
+nit() instead of doing it dynamically.
+So, is there any concern for this?
 Thanks,
 Revanth Uppala
 >=20
->         Andrew
+>     Andrew
