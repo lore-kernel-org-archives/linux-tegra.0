@@ -2,83 +2,82 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C35C001B0
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 16:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C6FC001B0
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 16:06:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbjGXQEu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jul 2023 12:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38830 "EHLO
+        id S229735AbjGXQGY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jul 2023 12:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjGXQEt (ORCPT
+        with ESMTP id S229495AbjGXQGX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jul 2023 12:04:49 -0400
+        Mon, 24 Jul 2023 12:06:23 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C44828E;
-        Mon, 24 Jul 2023 09:04:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C558E;
+        Mon, 24 Jul 2023 09:06:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 61E946123D;
-        Mon, 24 Jul 2023 16:04:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332D2C433C8;
-        Mon, 24 Jul 2023 16:04:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CEAA6123C;
+        Mon, 24 Jul 2023 16:06:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B71C433C7;
+        Mon, 24 Jul 2023 16:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690214687;
-        bh=HbpZ9oQ3b4U8JfwdURL1FRlf1QZwT8Ze6kLldfPeBy4=;
+        s=k20201202; t=1690214781;
+        bh=wzILIiktygSkczKQwKNbT4xkne6f5Z3SbGziCkcoM/c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F32vopvrm41nFh64D682kgb8RZmA115oSC4d2LvuG8h4P2kVkUhYLVoIzcEXfUnOD
-         KrRMIjqy7E32PNPbNNILSY6y1hSVpE0gnJe1IRGwmGbTioW6Gncjx/FoiMjN6E+MPA
-         6z1Ty/wt5IfKZDuCxNHuDfQs45FhTIQJ95fBfd04IqbTfxNFVTlrRqhtOVoPW7MqUT
-         yEhbU6UcTEi12oKrd4E/q2hW2LtlLQMQBeVPmN9rmJGG7BcxiIVQ0txyVGVPbQrx7/
-         IAesopocZlRtcez/ztb5KPwpTVyEJbP4k0VdXZonlvs9jyCPDrHs0dVw9PsEhbisok
-         +yLNP6gjL21sg==
-Received: (nullmailer pid 3628418 invoked by uid 1000);
-        Mon, 24 Jul 2023 16:04:46 -0000
-Date:   Mon, 24 Jul 2023 10:04:46 -0600
+        b=ShgOSX/YcapLsLBr4mgiNNeTxkDsZrey4+inAmYcBZY1Ugf7LaGLNUMNQK6Osc2IE
+         ayg++5bmISQm5M/fBfUWQJNKaT2WbpvTPxqvmy1iPbAdXzPAS3VPvvnZiRzJmZTuzC
+         WOzPcVcAWeqL49oUem4aPSij+F6HYuYo1EurjouatuePD8QkVp+62YAmJYO3MaXzUa
+         XhkjK0AqSpVSHopWja+iyCmUuVIDPZDTl5tGrE2Ya4v9bmOwMcuIc4wUF4zuRpatJk
+         xDFlbsxi54Mwq4vWYZruPNS+NKzYVoqbOEwaZAyCeEwOBG4pDb+e5vxRKuI+v6UAUm
+         Q8GTMAzk5DsWg==
+Received: (nullmailer pid 3630338 invoked by uid 1000);
+        Mon, 24 Jul 2023 16:06:19 -0000
+Date:   Mon, 24 Jul 2023 10:06:19 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Conor Dooley <conor+dt@kernel.org>,
-        Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH v3] dt-bindings: arm: tegra: nvec: Convert to json-schema
-Message-ID: <169021468589.3628360.8918610789656519699.robh@kernel.org>
-References: <20230721124623.2988445-1-thierry.reding@gmail.com>
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH v2] dt-bindings: thermal: tegra: Convert to json-schema
+Message-ID: <169021477856.3630278.10231413984365263357.robh@kernel.org>
+References: <20230721130306.2990112-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230721124623.2988445-1-thierry.reding@gmail.com>
+In-Reply-To: <20230721130306.2990112-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On Fri, 21 Jul 2023 14:46:23 +0200, Thierry Reding wrote:
+On Fri, 21 Jul 2023 15:03:06 +0200, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Convert the NVIDIA embedded controller bindings from the free-form text
-> format to json-schema.
+> Convert the Tegra thermal bindings from the free-form text format to
+> json-schema.
 > 
-> Acked-by: Marc Dietrich <marvin24@gmx.de>
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> Changes in v3:
-> - rename node to i2c to clarify that it's a repurposed I2C controller
-> - drop unused #address-cells and #size-cells
-> 
 > Changes in v2:
-> - drop $ref for standard clock-frequency property
-> - use 4 spaces for indentation in example
-> - move to soc/tegra directory
-> ---
->  .../bindings/arm/tegra/nvidia,nvec.txt        | 21 -----
->  .../bindings/soc/tegra/nvidia,nvec.yaml       | 84 +++++++++++++++++++
->  2 files changed, 84 insertions(+), 21 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,nvec.txt
->  create mode 100644 Documentation/devicetree/bindings/soc/tegra/nvidia,nvec.yaml
+> - add minimum and maximum values for cpu-throt-percent property
+> - add missing unevaluatedProperties for throttle event nodes
+> - drop unneeded minItems where it equals maxItems
+> - add missing items for uint32-matrix
+> - document OC1 throttle event
+> 
+>  .../thermal/nvidia,tegra124-soctherm.txt      | 238 -----------
+>  .../thermal/nvidia,tegra124-soctherm.yaml     | 380 ++++++++++++++++++
+>  2 files changed, 380 insertions(+), 238 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+>  create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
