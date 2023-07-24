@@ -2,209 +2,167 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F56C001B0
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 11:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CA0C001B0
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 11:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbjGXLaR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jul 2023 07:30:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50118 "EHLO
+        id S229667AbjGXLr2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jul 2023 07:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbjGXLaN (ORCPT
+        with ESMTP id S229685AbjGXLr1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jul 2023 07:30:13 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2077.outbound.protection.outlook.com [40.107.101.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25A3E7D;
-        Mon, 24 Jul 2023 04:30:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O3sehT9LhTO+v5AEYCG1tId9vS7X3g+qhNPZDlNlTs1U9BR7veGsCI4ef9ZbpR6NxU+1NBDVpHI+pZ0lE8wlDv4CRtBCm7eJYH1FDves6ftLxGWhdNIHpbHujaki0gHvy+pEHSsE3nqRqN9HSW6Wtlm64F4PVwQwZTIDAZ7UhPVEhH66eX4s2Wwhovz3OueZJ8UkzlxirDFNbej9G9+Jrc72s+PktUU3qPZaIomIrlo9zF9pMjkM4JgDN/enNB1zc8hi8+DMsFWqoF2er9x95BFGArFNIbkv2ZKZHfLYPxqCFbwCoqkrhcnGxS4Z3Ig2C0hpMdbczrGJUwa0aew1+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KY4E+TgABKEna02Q9ai7LFqrXvlDSBO4xcsPrOUmJTA=;
- b=C1ogp/9JFiOusaP/3i0dD6gaCdqVyOtWRx8zWPzIzPSgmoY4nZM5FJWsaqVSUTLj74GM0NZSWw+P6ZPZMxzaYOnpcoQ7K9d/hRNmZoFiyTFP2Duz6AdZcD/edzpMX/5mCzsqc5d0roUQVDz9x+fCaxyED//P8HKZmA+WiwQu2C/IHekNq6jZT5szJ0TNFfPJ8dTfkz7VnRjYjr8hQ/hlPC2/eJdUC2Zyd8dmYfGi+ykiV4tlKtJKNKAGxlUZPsorUbpu+4MJjdtx2pkJCZof6WV0hh4Tec9R0M384qI6ZwwFjg8xTDsJSf+a9192Z603tLhtp8pFDqx1IeiviUN7Qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KY4E+TgABKEna02Q9ai7LFqrXvlDSBO4xcsPrOUmJTA=;
- b=MulrrslbQOUc4uN7Itbhpq1wo0HvKuZ88pmDvEZ1C3C/pQ5D/hiG2fefhIDsrNWFRPRW0BOqihoAlJtlVAEkWKtmOxwS2nuxMDeZlO5HF9bHcZUZIwtSRnTChdwVFj89padS5aPiLn2KiaBgiyQTr+XXUowv71ThxYv5OJLleUObPcPPbrDz1pJbfGrT8LqKEtXn4CmpKUlSkwp5sxBXvw87Veti+WtPMPPJfrcHgJCp2lE9IaNtgkZdtTafr9FgBQqvWASzA8i0OOHvc5KMqFt+Mn9oToBriMuQzbripjlht0uRKaZa/v0vczzdvh3juxJNFsVZlAPQyiUaWtLMsw==
-Received: from BL3PR12MB6450.namprd12.prod.outlook.com (2603:10b6:208:3b9::22)
- by DM4PR12MB7528.namprd12.prod.outlook.com (2603:10b6:8:110::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.32; Mon, 24 Jul
- 2023 11:30:09 +0000
-Received: from BL3PR12MB6450.namprd12.prod.outlook.com
- ([fe80::8dd4:fb0b:cea7:fce0]) by BL3PR12MB6450.namprd12.prod.outlook.com
- ([fe80::8dd4:fb0b:cea7:fce0%4]) with mapi id 15.20.6609.022; Mon, 24 Jul 2023
- 11:30:09 +0000
-From:   Revanth Kumar Uppala <ruppala@nvidia.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        Mon, 24 Jul 2023 07:47:27 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB77EE61;
+        Mon, 24 Jul 2023 04:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=qt65iVIysC/IYhlufKXMzTRfFYaF4aQEGwEXCapI7ik=; b=JbDQLqfjBSwW/9ggul3F1GqbCB
+        xNAgJQxJCwI3fwzwiQ2ce97DiGqTCjLOHj1nkKzZ7EA8CrqpOU8/AEmCMB/Rnob5+NY8B0SKIFufj
+        fVrugwMS620YEFuAgb8rDryTITDjJC8X5sjp4qfSU2qCPsdj6e2hRLaHPUyYLH+eYdM1DB5JhRoWL
+        V4o6JzaCBG6BEVzLSVUI5qBHEIaOyyHTnZUzqYujkdmr5ccAiXDAPCROxXqGuz/eVzMMeE4rEqTI7
+        uMU6P6XWK9wP/AKAlbGNco4JRKwNe3pNgI8k/wjFQMCFjUH5cyUSHjG/N4LIw7Zlqphi+xi/dv0uI
+        eaDbpSCA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57574)
+        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.96)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1qNu22-0008Pt-2Y;
+        Mon, 24 Jul 2023 12:47:18 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1qNu22-0000lp-Fd; Mon, 24 Jul 2023 12:47:18 +0100
+Date:   Mon, 24 Jul 2023 12:47:18 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Revanth Kumar Uppala <ruppala@nvidia.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
         "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         Narayan Reddy <narayanr@nvidia.com>
-Subject: RE: [PATCH 4/4] net: phy: aqr113c: Enable Wake-on-LAN (WOL)
-Thread-Topic: [PATCH 4/4] net: phy: aqr113c: Enable Wake-on-LAN (WOL)
-Thread-Index: AQHZqb430S9qped/xEmn85gOamKO/a+gQyOAgCiqcEA=
-Date:   Mon, 24 Jul 2023 11:30:09 +0000
-Message-ID: <BL3PR12MB645041618E60758B5DBAD149C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
+Subject: Re: [PATCH 1/4] net: phy: aquantia: Enable Tx/Rx pause frame support
+ in aquantia PHY
+Message-ID: <ZL5kxvUOJb6xHiPR@shell.armlinux.org.uk>
 References: <20230628124326.55732-1-ruppala@nvidia.com>
- <20230628124326.55732-4-ruppala@nvidia.com>
- <c1aedb1e-e750-40ce-a19a-dfb21e2a971f@lunn.ch>
-In-Reply-To: <c1aedb1e-e750-40ce-a19a-dfb21e2a971f@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL3PR12MB6450:EE_|DM4PR12MB7528:EE_
-x-ms-office365-filtering-correlation-id: fa56efcc-8045-4c46-aed5-08db8c395648
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NrhcDZR0gOk8S8bP3sR2n5U7O34DZUMmQQ4m0yLu/JKvujpCNkyA0a9P+347MYikQpXx4tdwoGdiNY7RBmpaKtTklZwU4oZXw+K0yQNrpCtjKEJxNpDpcaBQ9gMIbGrDmdLc/HDhcnkK2SnIYnTyYpz62UrzSqQzEB9wwmMPnlcsZGJVuQl+daaiqTmg52azBnFpxewqdR6gpwy+ChqL86Ra/+w3xMdmtkvWkAUQbHm4GPnDkuGeV7XohFkQ+21w1XQdoXvtI6QFlbZUEzobbmJZ9HgdkTJNLEmUxnNf0ESA6KxKPj4eQja3dbYLTxHO5G5S6nW5fXD7zsr+hSC7zXuzia3vb95fTprCMY59kDjYsS4k9mrprGcZis5H9VhmNFntSqa+3+Mbu+NLAf2C7GWEWGFHbrbbeyeB6wptFrPwDQHsD9F25UKbelHFBTH5tg0pSYREh8qvfA3/W3MvYQQx6w3AmRE2OdzDMKV36l/yYngQKcLb6FIvC41SYGXV2zCqmVUtnQkMXRy2eB2LPqT59TyxpRJayBv/dHLy4K9LCO5xK0A8DQsc/PemueL7L8hYysMny83CKFFGuTwZCI0xptABoF5cTks5v6k8X4n7ChDftn1+vEnFIikTJaon
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6450.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(346002)(376002)(366004)(39860400002)(451199021)(66556008)(66446008)(66476007)(66946007)(64756008)(8676002)(8936002)(6916009)(316002)(4326008)(86362001)(76116006)(33656002)(38070700005)(66899021)(83380400001)(122000001)(2906002)(41300700001)(52536014)(38100700002)(5660300002)(478600001)(55016003)(54906003)(71200400001)(107886003)(6506007)(7696005)(9686003)(53546011)(186003)(26005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?/7Qg6KstdEI6MnCzrNpAShDBJihNZBhrkPqYy2ILUWaQwB14EtxUAuBsJQLd?=
- =?us-ascii?Q?psQZffTHOYd4JwMJ7jBEkAAXk8N71XGQF8dll9wnnTSD33U933LqDxdadKpT?=
- =?us-ascii?Q?4PJbPBhtsM3922mPuqUDKFXihTGOty0DAz+MATs82QydhvmHF4zjuFBHr+79?=
- =?us-ascii?Q?jNicgiP0lj6OJQ1nwIT9PYtb46Y1lsWj7mBKOwg6Cq8vBu5wTzsnVg8OgZNK?=
- =?us-ascii?Q?u+qLToYoDYFGK6r90U9VIINN+Yh4+kABxAVxn9koLa9Q8fhF6A6+Dvni5rfA?=
- =?us-ascii?Q?kt0BHtOSyt5b8qzKnf3c8c5STDwvOp60Q0GfNnoGDWaxZVYYHalomh8BhIo9?=
- =?us-ascii?Q?8PYE+q3dCMr+TSHJfTfyVY+M9GGZnwQMTzFht3CKXmbh1iZexiECQGbhaxSz?=
- =?us-ascii?Q?cTIHmTuEg2dVi1gOthn1TQtUyU03erid/RpjWZSt1WV7xRHAH1O2AjBbrtKX?=
- =?us-ascii?Q?9VbKGpapgmXxgzaPAgLmm7uoEoSl1G0tLSIZfd9TcygLo6m2Zwfd8u+swHPT?=
- =?us-ascii?Q?g5NraL8UdHFqcjDYxc21ixVZAzJ0/cWFViUJQnX3GJ+r8OjcyleQmOJ8ck3G?=
- =?us-ascii?Q?EgILsoLgwY/e5Mp1qVEcXddbtz7g6/MiknMTIo7jbI3AJH+bEtSHoFbJhsds?=
- =?us-ascii?Q?xfVA0J1qT7muISCHMBLBt+GV+ZwEXNUh2W4y3B29EfjV4WaFkyf42sa4yO4E?=
- =?us-ascii?Q?hDB21WaHorpkyzfUOEYMGv+7VNSiJVM2aIch3smKvaVs7Str6nKXawT0GRaz?=
- =?us-ascii?Q?Tmy+jf3wCIL5ElMbC29hNqp+HlcQwoSBg+85Uy2+PDlunkxQKZtA38F4i3Wi?=
- =?us-ascii?Q?F6ZoMO0IRBzxtjkoa4WzJKwu36BMlhVmIeM6HcmsbFBBIp+l3mSe1kLXoUjC?=
- =?us-ascii?Q?W/sXHpWvewdzltJsqy7744QvgOFGVgehYV6S5/0jDLi8M2wBYX0UYTnUlbYD?=
- =?us-ascii?Q?H7dCb3gwlIt429BMQmiPLd1LA6vjiWVUW1bzyWONZLY0xwX4NKBRfCCOxrb6?=
- =?us-ascii?Q?FzZH/VGRU/FXwwUQH5Z8AowevIFTEM7DD48qQ650YRqhGmttepftwWYcfQO3?=
- =?us-ascii?Q?6ZpiZbNwadtPgFvqjIu73LNYE2nXLuMuQIOGO9bXsWFsQEV8UvSqKPaSeO3W?=
- =?us-ascii?Q?KRICbKrcMrZtptuBK+qN9InfYeoqrfCVWkzMfKEbSAHjQpdWxYz/54GbK7We?=
- =?us-ascii?Q?s1VD7HbdlD5N2ymJQq2JFz63Pfj3IeEnsCpfKzbIq017PIyR/MLaEfUDZPOc?=
- =?us-ascii?Q?RsqwCdbCV3Gp8hIvBx3VfhCIcbsGqu2tDaf0HNJwO9CmFnrN7MLBrVqJ9dEW?=
- =?us-ascii?Q?zehoYv0g40I3ISchOJb7YjcRc0Pf/fFfaKHunt8S9N/OPvEyYe3FLeh+dPAy?=
- =?us-ascii?Q?SCi1A16MCzGAI7Gs9FJvy/giu7vGJf8uz5GVW9y6QbY4nsUMZOEUc7fvgRSH?=
- =?us-ascii?Q?e93fwobCKDUiJlsx4I3Y/tg1MZyhw9G5ZTKROEGhd1/gWDnCcw+UvtEmJlOr?=
- =?us-ascii?Q?VKzerghLy0sEHCxyeVEW/+9+FM94NeiYzIbekusQf5AoBsro5O+ynJ+8H7CQ?=
- =?us-ascii?Q?W4fqnpzWCXztbhg31VUiA1uv3EmpRb/LW09TS32N?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <ZJw2CKtgqbRU/3Z6@shell.armlinux.org.uk>
+ <ce4c10b5-c2cf-489d-b096-19b5bcd8c49e@lunn.ch>
+ <BL3PR12MB6450050A7423D4ADF4E4CFE9C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6450.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa56efcc-8045-4c46-aed5-08db8c395648
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2023 11:30:09.1180
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IYMWLhFEoCtiompi/soB0jDqnBVIBGTqwv2euy0EbaxpwRS2k5y+hwlyAW2IRehZykYxZ+ySWbRTjfTtT1+uHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7528
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BL3PR12MB6450050A7423D4ADF4E4CFE9C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Jul 24, 2023 at 11:29:18AM +0000, Revanth Kumar Uppala wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > Sent: Wednesday, June 28, 2023 7:17 PM
+> > To: Russell King (Oracle) <linux@armlinux.org.uk>
+> > Cc: Revanth Kumar Uppala <ruppala@nvidia.com>; hkallweit1@gmail.com;
+> > netdev@vger.kernel.org; linux-tegra@vger.kernel.org; Narayan Reddy
+> > <narayanr@nvidia.com>
+> > Subject: Re: [PATCH 1/4] net: phy: aquantia: Enable Tx/Rx pause frame support
+> > in aquantia PHY
+> > 
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Wed, Jun 28, 2023 at 02:30:48PM +0100, Russell King (Oracle) wrote:
+> > > On Wed, Jun 28, 2023 at 06:13:23PM +0530, Revanth Kumar Uppala wrote:
+> > > > From: Narayan Reddy <narayanr@nvidia.com>
+> > > >
+> > > > Enable flow control support using pause frames in aquantia phy driver.
+> > > >
+> > > > Signed-off-by: Narayan Reddy <narayanr@nvidia.com>
+> > > > Signed-off-by: Revanth Kumar Uppala <ruppala@nvidia.com>
+> > >
+> > > I think this is over-complex.
+> > >
+> > > >  #define MDIO_PHYXS_VEND_IF_STATUS          0xe812
+> > > >  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK        GENMASK(7, 3)
+> > > >  #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_KR  0 @@ -583,6 +585,17
+> > @@
+> > > > static int aqr107_config_init(struct phy_device *phydev)
+> > > >     if (!ret)
+> > > >             aqr107_chip_info(phydev);
+> > > >
+> > > > +   /* Advertize flow control */
+> > > > +   linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev-
+> > >supported);
+> > > > +   linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev-
+> > >supported);
+> > > > +   linkmode_copy(phydev->advertising, phydev->supported);
+> > >
+> > > This is the wrong place to be doing this, since pause support depends
+> > > not only on the PHY but also on the MAC. There are phylib interfaces
+> > > that MACs should call so that phylib knows that the MAC supports pause
+> > > frames.
+> > >
+> > > Secondly, the PHY driver needs to tell phylib that the PHY supports
+> > > pause frames, and that's done through either setting the .features
+> > > member in the PHY driver, or by providing a .get_features
+> > > implementation.
+> > >
+> > > Configuration of the pause advertisement should already be happening
+> > > through the core phylib code.
+> > 
+> > I really should do a LPC netdev talk "Everybody gets pause wrong..."
+> > 
+> > genphy_c45_an_config_aneg() will configure pause advertisement. The PHY
+> > driver does not need to configure it, if the PHY follows the standard and has the
+> > configuration in the correct place. As Russell said, please check the PHYs ability
+> > to advertise pause is being reported correctly, by .get_features, of the default
+> > implementation of .get_features if that is being used. And then check your MAC
+> > driver is also indicating it supports pause.
+> From .get_features, it is not possible to check PHY's ability to advertise pause is being reported as there is no such register present for AQR PHY to check capabilities in its datasheet.
+> Hence, we are directly configuring the pause frames from  aqr107_config_init().
 
+... and thus creating a trashy implementation... so NAK.
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Wednesday, June 28, 2023 7:48 PM
-> To: Revanth Kumar Uppala <ruppala@nvidia.com>
-> Cc: linux@armlinux.org.uk; hkallweit1@gmail.com; netdev@vger.kernel.org;
-> linux-tegra@vger.kernel.org; Narayan Reddy <narayanr@nvidia.com>
-> Subject: Re: [PATCH 4/4] net: phy: aqr113c: Enable Wake-on-LAN (WOL)
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> > +static int aqr113c_wol_enable(struct phy_device *phydev) {
-> > +     struct aqr107_priv *priv =3D phydev->priv;
-> > +     u16 val;
-> > +     int ret;
-> > +
-> > +     /* Disables all advertised speeds except for the WoL
-> > +      * speed (100BASE-TX FD or 1000BASE-T)
-> > +      * This is set as per the APP note from Marvel
-> > +      */
-> > +     ret =3D phy_set_bits_mmd(phydev, MDIO_MMD_AN,
-> MDIO_AN_10GBT_CTRL,
-> > +                            MDIO_AN_LD_LOOP_TIMING_ABILITY);
-> > +     if (ret < 0)
-> > +             return ret;
->=20
-> Please take a look at phylink_speed_down() and phylink_speed_up(). Assumi=
-ng
-> the PHY is not reporting it can do 10Full and 10Half, it should end up in
-> 100BaseFull. Assuming the link partner can do 100BaseFull....
->=20
-> Russell points out you are making a lot of assumptions about the system s=
-ide
-> link. Ideally, you want to leave that to the PHY. Once the auto-neg at th=
-e lower
-> speed has completed, it might change the system side link, e.g. to SGMII =
-and the
-> normal machinery should pass that onto the MAC, so it can follow. I would=
- not
-> force anything.
-As per my reply to Russel's comment, we are following the app note AN-N4209=
- by Marvell semiconductors for enabling and disabling of WOL and above logi=
-c is part of the same app note.
->=20
-> > @@ -619,6 +784,31 @@ static int aqr107_config_init(struct phy_device
-> *phydev)
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > +     /* Configure Magic packet frame pattern (MAC address) */
-> > +     ret =3D phy_write_mmd(phydev, MDIO_MMD_C22EXT,
-> MDIO_C22EXT_MAGIC_PKT_PATTERN_0_2_15,
-> > +                         phydev->attached_dev->dev_addr[0] |
-> > +                         (phydev->attached_dev->dev_addr[1] << 8));
->=20
-> I think most PHY drivers do this as part of enabling WOL. Doing it in
-> aqr107_config_init() is early, is the MAC address stable yet? The user co=
-uld
-> change it. It could still be changed after wol is enabled, but at least t=
-he user has
-> a clear point in time when WoL configuration happens.
-Yes, your assumption is correct.
-Will move this logic to aqr113c_wol_enable() function to take care of above=
- scenario.
-Thanks,
-Revanth Uppala
+The first thing to get straight is that in "normal" non-rate adapting
+setups, pause frames are no different from normal Ethernet frames as
+far as a PHY is concerned. The PHY should be doing absolutely nothing
+special with pause frames - it should merely forward them to the MAC,
+and it's the MAC that deals with pause frames.
 
->=20
-> > +static void aqr113c_get_wol(struct phy_device *phydev, struct
-> > +ethtool_wolinfo *wol) {
-> > +     int val;
-> > +
-> > +     val =3D phy_read_mmd(phydev, MDIO_MMD_AN,
-> MDIO_AN_RSVD_VEND_STATUS3);
-> > +     if (val < 0)
-> > +             return;
-> > +
-> > +     wol->supported =3D WAKE_MAGIC;
-> > +     if (val & 0x1)
-> > +             wol->wolopts =3D WAKE_MAGIC;
->=20
-> WoL seems to be tried to interrupts. So maybe you should actually check a=
-n
-> interrupt is available? This is not going to work if the PHY is being pol=
-led. It does
-> however get a bit messy, some boards might connect the 'interrupt' pin to=
- PMIC.
-> So there is not a true interrupt, but the PMIC can turn the power back on=
-.
->=20
->     Andrew
+The only thing that a non-rate adapting baseT PHY has to deal with is
+the media advertisement and nothing else.
+
+So, whether pause frames are supported has more to do with the MAC
+than the PHY.
+
+The way phylib works is that when a PHY is probed, phy_probe() will
+set the Pause and Asym_Pause bits in the ->supported bitmap. It is
+then up to the MAC driver (or phylink) to call phy_support_asym_pause()
+or phy_support_sym_pause() to tell phylib what the MAC supports.
+
+PHY drivers must *not* override this in their config_init() function,
+and most certainly must not copy the supported bitmap to the advertising
+bitmap there either.
+
+If you need pause-mode rate adaption, this has nothing to do with the
+media side, and ->supported and ->advertising are not relevant for
+that. Non-phylink based MAC drivers have to use phy_get_rate_matching()
+to find out whether the PHY will be using rate adaption and act
+accordingly. phylink based MAC drivers have this dealt with for them
+and as long as they do what phylink tells them to do, everything
+should be fine.
+
+So, basically, do not mess with setting bits in the ->supported bitmap
+nor the ->advertising bitmap in config_init. It is wrong, and we will
+NAK it.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
