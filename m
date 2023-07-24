@@ -2,37 +2,37 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B015C41513
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 01:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6820C001DC
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 01:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbjGXBPJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Jul 2023 21:15:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
+        id S230260AbjGXBXY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 23 Jul 2023 21:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbjGXBPH (ORCPT
+        with ESMTP id S230453AbjGXBWp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Jul 2023 21:15:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115FA170A;
-        Sun, 23 Jul 2023 18:14:42 -0700 (PDT)
+        Sun, 23 Jul 2023 21:22:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF4B172A;
+        Sun, 23 Jul 2023 18:22:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 953CC60F02;
-        Mon, 24 Jul 2023 01:14:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B707C433C8;
-        Mon, 24 Jul 2023 01:14:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9ACEE60DFE;
+        Mon, 24 Jul 2023 01:21:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65007C433C8;
+        Mon, 24 Jul 2023 01:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690161281;
-        bh=PYOavwGcygOGYPZzvc0V7F5KkDH7Ah87tySoWBYVl6U=;
+        s=k20201202; t=1690161711;
+        bh=2QNGaY2DaRrBjCfM5fLks9ZRa+p0jKlZ1NmYBYgutRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OhEe4oELobaGZtiGRKA22vQjKQmpseAYhlX/SYjS6D48HE5V2D9c8s6OJa1VhSSgu
-         kFwIClNGvl21q8gXSmSkGAD5JaoSn1pMOBYEODvvARiOzcjmgyiGpanv6bq32ieKgl
-         bCc+V9/iojRuwZAj62LsgszYczMu7mQ5ZKGg2rEcTSZs3EwQi84AEt39WibSEI8Ihq
-         Bb44UfXlmr7npfhonUXxJd+fhtHzVjU5N5LL7An85UtU1cCUPb5mNtWEyaLaoLNg0T
-         ktVk5E+xl/WAGF0NmUdyDowSBJ7DCfEj+TtactbZZAcCWfwMugn2J6bplLMVaUmA6A
-         H52pg5905ciIA==
+        b=L7AXFRdCY3k8a0nmLGtIFCUZaGQ3Whjt2KD0g/Dq2QBNnrxYSiWYl6C3X6LmNwa3J
+         YyKnySzb4nxn0ZUWnicQzsNTQ7HV7U3aMeFUMtyApX3rK6v7Nqhrzj8mRZvRPP30Ed
+         QOEoZIyPCAQO86O1BQwSwKXE8W7ykM/gaxfO9Y5P4mBOE2T/0f6dpkh2xDuHJXW6/b
+         ZfVtNi6qoOtyC6um/TUpi7yEL2uT+qTdEZkRt8SBjafag0Lcxr+g7zxlTkxSoDGCOG
+         yZgMzjtd3Tt56m3st3TB9ffM/xdtgMA8ypNAYVadzSLreugFBeBcY5NbIDg5WdMgEL
+         3qptm4RPKH8Mg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sumit Gupta <sumitg@nvidia.com>,
@@ -43,18 +43,18 @@ Cc:     Sumit Gupta <sumitg@nvidia.com>,
         bhelgaas@google.com, thierry.reding@gmail.com,
         jonathanh@nvidia.com, mani@kernel.org,
         Sergey.Semin@baikalelectronics.ru, robh@kernel.org,
-        dmitry.baryshkov@linaro.org, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.4 12/58] PCI: tegra194: Fix possible array out of bounds access
-Date:   Sun, 23 Jul 2023 21:12:40 -0400
-Message-Id: <20230724011338.2298062-12-sashal@kernel.org>
+        johan+linaro@kernel.org, dmitry.baryshkov@linaro.org,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 09/41] PCI: tegra194: Fix possible array out of bounds access
+Date:   Sun, 23 Jul 2023 21:20:42 -0400
+Message-Id: <20230724012118.2316073-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230724011338.2298062-1-sashal@kernel.org>
-References: <20230724011338.2298062-1-sashal@kernel.org>
+In-Reply-To: <20230724012118.2316073-1-sashal@kernel.org>
+References: <20230724012118.2316073-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.4.5
+X-stable-base: Linux 6.1.40
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -81,10 +81,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 09825b4a075e5..e6eec85480ca9 100644
+index 1b6b437823d22..528e73ccfa43e 100644
 --- a/drivers/pci/controller/dwc/pcie-tegra194.c
 +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -223,6 +223,7 @@
+@@ -224,6 +224,7 @@
  #define EP_STATE_ENABLED	1
  
  static const unsigned int pcie_gen_freq[] = {
@@ -92,7 +92,7 @@ index 09825b4a075e5..e6eec85480ca9 100644
  	GEN1_CORE_CLK_FREQ,
  	GEN2_CORE_CLK_FREQ,
  	GEN3_CORE_CLK_FREQ,
-@@ -459,7 +460,11 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
+@@ -455,7 +456,11 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
  
  	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
  		PCI_EXP_LNKSTA_CLS;
@@ -105,7 +105,7 @@ index 09825b4a075e5..e6eec85480ca9 100644
  
  	if (pcie->of_data->has_ltr_req_fix)
  		return IRQ_HANDLED;
-@@ -1020,7 +1025,11 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+@@ -1016,7 +1021,11 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
  
  	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
  		PCI_EXP_LNKSTA_CLS;
