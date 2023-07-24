@@ -2,154 +2,122 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3E9C001DC
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Jul 2023 20:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B015C41513
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 01:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbjGWUYV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Jul 2023 16:24:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35694 "EHLO
+        id S229666AbjGXBPJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 23 Jul 2023 21:15:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjGWUYU (ORCPT
+        with ESMTP id S229557AbjGXBPH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Jul 2023 16:24:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF50B1BB;
-        Sun, 23 Jul 2023 13:24:19 -0700 (PDT)
+        Sun, 23 Jul 2023 21:15:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115FA170A;
+        Sun, 23 Jul 2023 18:14:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4407260E97;
-        Sun, 23 Jul 2023 20:24:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F886C433C8;
-        Sun, 23 Jul 2023 20:24:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 953CC60F02;
+        Mon, 24 Jul 2023 01:14:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B707C433C8;
+        Mon, 24 Jul 2023 01:14:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690143858;
-        bh=f8gObTjVO0ERFlmH3AL/oRX017qbf1NfDe3+e3e3X1c=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=B76f5Ogiw5r+ZSnn4N6mc/puCTJCuYQEDJq+DYeWnOLidGSnc2Z3RuO09pWNEQr1U
-         Od6xSr7PB9qQJpENwyCDWgQoWieE1x/9iuwMHvintNhJNDiDHIBgJjiw0y3heGLGAz
-         ToLj2vuYb8J5kojRYF+IiLsOibiE0TqgEezapcRPeUYNXL4H8s8LbhGbTqDS7Mdpy/
-         ZHdCddNFbNRTd1oKGuURq7TGolqT0n6yW5wZxXyVDpk96AdYFygUEBwlCiy5nlTCPa
-         IlT+q75wKR3lodezANXotV8ujPgcIYuAyYzqQqA/WxEmzxDiDh3KEJiPJ+m3xc5Zvc
-         k7Pv54rli/baA==
-Message-ID: <87dfe310-520d-b3d7-a3ff-2bf5a19f9155@kernel.org>
-Date:   Mon, 24 Jul 2023 05:24:12 +0900
+        s=k20201202; t=1690161281;
+        bh=PYOavwGcygOGYPZzvc0V7F5KkDH7Ah87tySoWBYVl6U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OhEe4oELobaGZtiGRKA22vQjKQmpseAYhlX/SYjS6D48HE5V2D9c8s6OJa1VhSSgu
+         kFwIClNGvl21q8gXSmSkGAD5JaoSn1pMOBYEODvvARiOzcjmgyiGpanv6bq32ieKgl
+         bCc+V9/iojRuwZAj62LsgszYczMu7mQ5ZKGg2rEcTSZs3EwQi84AEt39WibSEI8Ihq
+         Bb44UfXlmr7npfhonUXxJd+fhtHzVjU5N5LL7An85UtU1cCUPb5mNtWEyaLaoLNg0T
+         ktVk5E+xl/WAGF0NmUdyDowSBJ7DCfEj+TtactbZZAcCWfwMugn2J6bplLMVaUmA6A
+         H52pg5905ciIA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sumit Gupta <sumitg@nvidia.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, kw@linux.com,
+        bhelgaas@google.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, mani@kernel.org,
+        Sergey.Semin@baikalelectronics.ru, robh@kernel.org,
+        dmitry.baryshkov@linaro.org, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.4 12/58] PCI: tegra194: Fix possible array out of bounds access
+Date:   Sun, 23 Jul 2023 21:12:40 -0400
+Message-Id: <20230724011338.2298062-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230724011338.2298062-1-sashal@kernel.org>
+References: <20230724011338.2298062-1-sashal@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] devfreq: imx: Explicitly include correct DT includes
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20230714174425.4054393-1-robh@kernel.org>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-In-Reply-To: <20230714174425.4054393-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.4.5
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 23. 7. 15. 02:44, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/devfreq/imx-bus.c         | 2 +-
->  drivers/devfreq/imx8m-ddrc.c      | 2 +-
->  drivers/devfreq/mtk-cci-devfreq.c | 1 -
->  drivers/devfreq/tegra30-devfreq.c | 2 +-
->  4 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/devfreq/imx-bus.c b/drivers/devfreq/imx-bus.c
-> index a727067980fb..86850b7dea09 100644
-> --- a/drivers/devfreq/imx-bus.c
-> +++ b/drivers/devfreq/imx-bus.c
-> @@ -7,7 +7,7 @@
->  #include <linux/devfreq.h>
->  #include <linux/device.h>
->  #include <linux/module.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
->  #include <linux/pm_opp.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
-> index 16636973eb10..e1348490c8aa 100644
-> --- a/drivers/devfreq/imx8m-ddrc.c
-> +++ b/drivers/devfreq/imx8m-ddrc.c
-> @@ -3,9 +3,9 @@
->   * Copyright 2019 NXP
->   */
->  
-> +#include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  #include <linux/device.h>
-> -#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/devfreq.h>
->  #include <linux/pm_opp.h>
-> diff --git a/drivers/devfreq/mtk-cci-devfreq.c b/drivers/devfreq/mtk-cci-devfreq.c
-> index 6354622eda65..83a73f0ccd80 100644
-> --- a/drivers/devfreq/mtk-cci-devfreq.c
-> +++ b/drivers/devfreq/mtk-cci-devfreq.c
-> @@ -8,7 +8,6 @@
->  #include <linux/minmax.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_opp.h>
->  #include <linux/regulator/consumer.h>
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 503376b894b6..4a4f0106ab9d 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -13,7 +13,7 @@
->  #include <linux/io.h>
->  #include <linux/irq.h>
->  #include <linux/module.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_opp.h>
->  #include <linux/reset.h>
+From: Sumit Gupta <sumitg@nvidia.com>
 
-Looks good to me.
-But, need to change the patch title with 'PM / ' prefix 
-to keep the consistency of previous devfreq patch and then
-this patch touched the other devfreq drivers except for imx drivers.
+[ Upstream commit 205b3d02d57ce6dce96f6d2b9c230f56a9bf9817 ]
 
-So that I think that it is better to change the patch title as following
-and then applied it. Thanks.
-- "PM / devfreq: Explicitly include correct DT includes"
+Add check to fix the possible array out of bounds violation by
+making speed equal to GEN1_CORE_CLK_FREQ when its value is more
+than the size of "pcie_gen_freq" array. This array has size of
+four but possible speed (CLS) values are from "0 to 0xF". So,
+"speed - 1" values are "-1 to 0xE".
 
+Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+Link: https://lore.kernel.org/lkml/72b9168b-d4d6-4312-32ea-69358df2f2d0@nvidia.com/
+Acked-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 09825b4a075e5..e6eec85480ca9 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -223,6 +223,7 @@
+ #define EP_STATE_ENABLED	1
+ 
+ static const unsigned int pcie_gen_freq[] = {
++	GEN1_CORE_CLK_FREQ,	/* PCI_EXP_LNKSTA_CLS == 0; undefined */
+ 	GEN1_CORE_CLK_FREQ,
+ 	GEN2_CORE_CLK_FREQ,
+ 	GEN3_CORE_CLK_FREQ,
+@@ -459,7 +460,11 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
+ 
+ 	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
+ 		PCI_EXP_LNKSTA_CLS;
+-	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
++
++	if (speed >= ARRAY_SIZE(pcie_gen_freq))
++		speed = 0;
++
++	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
+ 
+ 	if (pcie->of_data->has_ltr_req_fix)
+ 		return IRQ_HANDLED;
+@@ -1020,7 +1025,11 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+ 
+ 	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
+ 		PCI_EXP_LNKSTA_CLS;
+-	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
++
++	if (speed >= ARRAY_SIZE(pcie_gen_freq))
++		speed = 0;
++
++	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed]);
+ 
+ 	tegra_pcie_enable_interrupts(pp);
+ 
 -- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+2.39.2
 
