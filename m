@@ -2,123 +2,192 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9F4C001DE
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 10:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AD3C05051
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 10:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232957AbjGYKUX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jul 2023 06:20:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43938 "EHLO
+        id S230270AbjGYKyG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jul 2023 06:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjGYKUW (ORCPT
+        with ESMTP id S233088AbjGYKxN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jul 2023 06:20:22 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E51210CB
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:20:21 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9922d6f003cso914304266b.0
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690280420; x=1690885220;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+jIVNYaHHmeDQiXmoP9m789p3Mzn0tkwmSrMiWxE+uY=;
-        b=CfsxZ9259skla4lUSHgp4lTpPTYElCjewiULtELpmzhpzegOTMrUaBaJ7OvAYXEVJK
-         /pjs8RLYyuXyth4xF+5fYndWo2Om+b9t8VXOfZEMY5fWAS2uPZn3dxj4E1XnFJlFPZHZ
-         ZeEHROCRal5I0OubsqBedHfYf1qjpOrKP75Svv+ZzL6rj+A16mZRZuPaTOYkStqLtj3c
-         ETncB5auQfnoLJF5k+5QeaKNOl8gsK5O0MQ/h88iDtKU4xzvy2JfT6PQhzXUV8oOK/tQ
-         kUwfOeVgdfQHlmZSFeSqeCuAGCA7UERCZhnRSkcg5OZR51SzLIQ770uFOgI3IXuKPSA4
-         rWfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690280420; x=1690885220;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+jIVNYaHHmeDQiXmoP9m789p3Mzn0tkwmSrMiWxE+uY=;
-        b=iowFq03wQ7yZm1tVN7ya2fvZ2iahqoIs8+j0oc5dQiGNlKLC1jjMO8CiFGYJ/9cMof
-         E0mPjUQyAQg21t5N9OezgV16od5s1xTTk9RPxecfw7gZnnDKK9EQrTh+xPesbTJoh8Ss
-         R6RIzhBNTueg3zUtjkAEwLrMUGguYw2vpe4crw/9ZuJBFUJO+9/Q6F1/Fd7ZcVCqAjug
-         tIdfPkBt17fUvGOc7RZOphoW8HYY9XVcmemHlNU0CYxZNTzQ1ddFxC0bxvDYG6A9juuB
-         84T4HqKTH50AS9IFj/GBA6B3eS1cOyosXpzD7OoMLmr1gtDoavwIxSUQqJOhsmG5VvGA
-         djFA==
-X-Gm-Message-State: ABy/qLbzJSKBbYuCXZhzLeTs8PZ5XDUuQ4PKM9k1C6LyCXP2zMtgV0X0
-        nsfYJ1ayXhXGBq4GqKQSoGKw8GyVHLDYjmjByjY=
-X-Google-Smtp-Source: APBJJlHY9X0+bqoFGop+ibsHnoN7/6ELpRtMC0j6aM2Jx6xFfYTFRrxPc5iTwGKP7zYcJICSUetA8Q==
-X-Received: by 2002:a17:906:1059:b0:993:d6e8:2389 with SMTP id j25-20020a170906105900b00993d6e82389mr14174629ejj.26.1690280419992;
-        Tue, 25 Jul 2023 03:20:19 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id h25-20020a170906855900b00993017b64a9sm7937211ejy.223.2023.07.25.03.20.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jul 2023 03:20:19 -0700 (PDT)
-Message-ID: <40b7765e-5e6a-dca9-980b-62123b3779bf@linaro.org>
-Date:   Tue, 25 Jul 2023 12:20:18 +0200
+        Tue, 25 Jul 2023 06:53:13 -0400
+Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACD330EA;
+        Tue, 25 Jul 2023 03:51:46 -0700 (PDT)
+Received: from hillosipuli.retiisi.eu (dkzdf0gkyyyyyyyyyyyyt-3.rev.dnainternet.fi [IPv6:2001:14ba:4506:4f15::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sailus)
+        by meesny.iki.fi (Postfix) with ESMTPSA id 4R9DNk1zV3zyRB;
+        Tue, 25 Jul 2023 13:51:33 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+        t=1690282303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nVTFYmNWV1jP27+FDM4eqhSzMI/cuSd7gi5VmMNOAfg=;
+        b=OIKPneVysIIsOt0iRF7c9GoTrhfIJR3pJ1fYanttlyHbKxBnxdV50h3BXqREUF1tnvN/8H
+        ttNqApgMpAYqB7vDQZc+xH2UvgGKtx66Hw1y+pGiPqPEw8hU2G2wzUdMtgPO8868lDUEuC
+        mAamey/Dq8fuzD8h9oyCJhONbjrEu28=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+        s=meesny; t=1690282303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nVTFYmNWV1jP27+FDM4eqhSzMI/cuSd7gi5VmMNOAfg=;
+        b=B8bdNu9uBV5ZXRnWapFwaJRrCRvDVUeUl1pyKdPWhaxXOVJ824gQaLzPRbWHbGIpGc9grs
+        jqcDmI9Bw1kzqTupLqxIloBqC/4NgCsOXWuXufhnKIg2jSO/0Ve1RtJU6Ax3Z+d0PLJPoe
+        dAV05DsdXtLCk2N97Jcdz7E1wVO/iwM=
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1690282303; a=rsa-sha256; cv=none;
+        b=vct141sa+XcGyQ1kVIQejOrk1qw2TvdjLqv5zflvOIbiywY4zEj5ryKGPtYOfkQM0he69/
+        7oqKcieTLFTTIM75qqs7mrU3HO4obQNPfyig41htRHqPfObXhKwFeAh5H9FyPca2wIIHTX
+        Wvb5rALlBcEDu3u29PPObFj7UthU4Mw=
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 304E7634C23;
+        Tue, 25 Jul 2023 13:51:33 +0300 (EEST)
+Date:   Tue, 25 Jul 2023 10:51:33 +0000
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Joe Tessler <jrt@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Bin Liu <bin.liu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 01/28] media: cec: ch7322: drop of_match_ptr for ID table
+Message-ID: <ZL+pNUYymeXv5EoU@valkosipuli.retiisi.eu>
+References: <20230312131318.351173-1-krzysztof.kozlowski@linaro.org>
+ <98a77653-ec58-56c4-9893-3b424f67c87e@linaro.org>
+ <5afcec8b-b8f6-35b0-278a-5de185e4a7a2@xs4all.nl>
+ <ZG9XJCD98VWjGjTN@valkosipuli.retiisi.eu>
+ <ZG9ger4WE2VWoVEF@valkosipuli.retiisi.eu>
+ <158425ec-86e8-ca3e-eed8-e14b37c42730@linaro.org>
+ <ce217ae6-6dd5-26ea-2ce7-95d97ef791c4@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] memory: tegra: Add dummy implementation on Tegra194
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230629160132.768940-1-thierry.reding@gmail.com>
- <1fd1d5d7-7296-0e62-9f65-7347ac0f0500@linaro.org> <ZKwCYjKXtuDsOF9E@orome>
- <1ebfbbec-d5cf-c6ac-2cf1-eab970903500@linaro.org>
- <cab267a2-28a0-969a-44cd-c87c8fe65218@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <cab267a2-28a0-969a-44cd-c87c8fe65218@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ce217ae6-6dd5-26ea-2ce7-95d97ef791c4@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25/07/2023 12:14, Jon Hunter wrote:
-> Hi Krzysztof,
-> 
-> On 10/07/2023 14:29, Krzysztof Kozlowski wrote:
->> On 10/07/2023 15:06, Thierry Reding wrote:
->>> On Mon, Jul 10, 2023 at 12:10:43PM +0200, Krzysztof Kozlowski wrote:
->>>> On 29/06/2023 18:01, Thierry Reding wrote:
->>>>> From: Thierry Reding <treding@nvidia.com>
->>>>>
->>>>> With the introduction of commit 9365bf006f53 ("PCI: tegra194: Add
->>>>> interconnect support in Tegra234"), the PCI driver on Tegra194 and later
->>>>> requires an interconnect provider. However, a provider is currently only
->>>>> exposed on Tegra234 and this causes PCI on Tegra194 to defer probe
->>>>> indefinitely.
->>>>>
->>>>> Fix this by adding a dummy implementation on Tegra194. This allows nodes
->>>>> to be provided to interconnect consumers, but doesn't do any bandwidth
->>>>> accounting or frequency scaling.
->>>>>
->>>>> Fixes: 9365bf006f53 ("PCI: tegra194: Add interconnect support in Tegra234")
->>>>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
->>>>
->>>> Applied with checkpatch warning. Please be sure you run checkpatch
->>>> before sending the patches.
->>>
->>> Are you referring to the Reported-by/Closes complaint?
->>
->> Yes.
->>
->>> I didn't include
->>> a URL here because this came from an internal test report and there's no
->>> corresponding public reference.
->>
->> Ah, ok, apologies for pickiness then. :)
->>
->>>
->>> I suppose I could've left out the Reported-by altogether.
->>
->> I think it is fine. Checkpatch warning is just advisory.
-> 
-> 
-> We need this in v6.5 as a fix, because without this change PCIe support 
-> is broken on Tegra194 devices. Would you be able to send as a fix for v6.5?
+Hi Krzysztof,
 
-Thanks for letting me know. I'll send it soon.
+On Thu, Jul 13, 2023 at 08:46:58AM +0200, Krzysztof Kozlowski wrote:
+> On 19/06/2023 16:13, Krzysztof Kozlowski wrote:
+> > On 25/05/2023 15:19, Sakari Ailus wrote:
+> >> Hi folks,
+> >>
+> >> On Thu, May 25, 2023 at 03:40:04PM +0300, Sakari Ailus wrote:
+> >>> Hi Hans,
+> >>>
+> >>> On Sat, May 13, 2023 at 11:57:33AM +0200, Hans Verkuil wrote:
+> >>>> On 12/05/2023 18:35, Krzysztof Kozlowski wrote:
+> >>>>> On 12/03/2023 14:12, Krzysztof Kozlowski wrote:
+> >>>>>> The driver can match only via the DT table so the table should be always
+> >>>>>> used and the of_match_ptr does not have any sense (this also allows ACPI
+> >>>>>> matching via PRP0001, even though it might not be relevant here).
+> >>>>>>
+> >>>>>>   drivers/media/cec/i2c/ch7322.c:583:34: error: ‘ch7322_of_match’ defined but not used [-Werror=unused-const-variable=]
+> >>>>>>
+> >>>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>>>>> ---
+> >>>>>
+> >>>>> Hans, Sakari,
+> >>>>>
+> >>>>> Can you pick up the patchset? There was positive feedback:
+> >>>>> https://patchwork.linuxtv.org/project/linux-media/patch/20230312131318.351173-1-krzysztof.kozlowski@linaro.org/
+> >>>>>
+> >>>>> but it seems it was not applied.
+> >>>>
+> >>>> I see it is delegated to Sakari in patchwork and marked Under Review, but I don't
+> >>>> see a corresponding pull request for this series.
+> >>>>
+> >>>> Sakari, did something go wrong?
+> >>>
+> >>> I spotted this as Hans notified me in IRC, I wasn't cc'd. Apologies for
+> >>> this --- I intended to take these but I think I must have missed something
+> >>> important in the process. I'll take them now.
+> >>>
+> >>> Thanks.
+> >>
+> >> This no longer applied cleanly. Mostly there was fuzz near .of_match_table
+> >> changes as probe_new (and remove_new?) changes have been recently merged.
+> >> There were other issues as well, I marked a few patches in the set "not
+> >> applicable" as other patches had already done equivalent changes earlier.
+> >>
+> >> There were substance-changing changes in the 20th patch, replied to the
+> >> disuccsion there.
+> >>
+> >> I've pushed the result here and intend to send PR to Mauro soon if there
+> >> are no issues:
+> >>
+> >> <URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=of-match-ptr>
+> > 
+> > One month later, I still don't see this set in the linux-next.  What's
+> > happening here?
+> > 
+> 
+> I don't think this was merged in v6.5-rc1. It's not in linux-next,
+> either. Another month passed...
 
-Best regards,
-Krzysztof
+These are now in the media-stage tree
+<URL:https://git.linuxtv.org/media_stage.git/log/>. Assuming nothing goes
+wrong, these should end up in Linus's tree for 6.6.
 
+The issues related to media tree maintenance are being addressed as we're
+changing the process how the tree is maintained. The patches will
+eventually get in still, also expect this to improve in the future.
+
+-- 
+Regards,
+
+Sakari Ailus
