@@ -2,190 +2,287 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16185C0015E
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jul 2023 22:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8F7EB64DD
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 00:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbjGXWXE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jul 2023 18:23:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51274 "EHLO
+        id S229675AbjGYALG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jul 2023 20:11:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbjGXWXC (ORCPT
+        with ESMTP id S229470AbjGYALG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jul 2023 18:23:02 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E760D19A1
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Jul 2023 15:22:29 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b6f97c7115so68566131fa.2
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Jul 2023 15:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690237333; x=1690842133;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=358vZqiTvej61X45civfUiKJd7hpr9GfM3mB5tO/1oY=;
-        b=CWyKsn+fyo8A461uDHxlWqqNhJomz0p6jdiOowLbkzTOopNmfoNhBambSUtyEO5LNP
-         8ZQxB7OKJaeWWTdMhye3/FhUuSUb6YLLGS6tLS8eTeyjps6Os2KMTEOOdQUN1ADiCs3y
-         tA0O7NC2tWbxVi7BepJAcNSNZkhixC7NKrkyP0vhsnEwjCiYipyYGlcql329pVK4BS47
-         IfmJj/dcHadTRR7pUVMVGXVFDeOJiREG11Vvrqk5HFB7zqjuhkzKS+VYHT76+UwT2Gws
-         qaFPHFJZm9lmjfRt0gfHRI/55a+4obs2xjmHv1pvycZ69nHjRtSM9uYLS680TirWHpGK
-         c0cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690237333; x=1690842133;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=358vZqiTvej61X45civfUiKJd7hpr9GfM3mB5tO/1oY=;
-        b=jRKE8qUpWpRM57BtWZLFhBoxI6x2J8/ISyPbzfWVME4bAU0J+Ma38/jI29amKQSesn
-         IuCPUSAhxw2cDcZCaBlFtbpRbIwlltuG8uEmD8m7IakGBfKlzvrrkRs7W1lPMniMuK/v
-         n5FTo6Qso/0EpnpqVmu4sYiAA9pzfn9cWAzZ0p+ghOz4LLgzl20vAEEjOa/oeGE/V+4S
-         Qc1/wT68vjKq54t48GmbsyccdX/5tgV0fqOgGY4hYfGH/dUO81AGPp8Zb4IVR+n9WZ86
-         KxUT3ivQpErKZG4EcdWoX89PNrPoqSYBbXiVe1//q7X1AH49uQnKEpu5z3a9sb5JuErQ
-         xvgQ==
-X-Gm-Message-State: ABy/qLbeEPgFgOm1fGTvRMse/WXx9aXw+Xlb1vFHJcUtXRWz4RtFioXI
-        XH0YOXeNy/KIKBJ1rf0cW4R0VA==
-X-Google-Smtp-Source: APBJJlGRGPfacjmUq1tdWpenzld24E4eJsyR1C29jO0mKIDTugwb8qJZ+ixEzpUc6MmlTv/TGWeMgQ==
-X-Received: by 2002:a05:6512:2036:b0:4f6:d7b:2f19 with SMTP id s22-20020a056512203600b004f60d7b2f19mr5787071lfs.24.1690237332390;
-        Mon, 24 Jul 2023 15:22:12 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id x27-20020ac25ddb000000b004fbb69d8791sm2391586lfq.79.2023.07.24.15.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jul 2023 15:22:11 -0700 (PDT)
-Message-ID: <7b250095-8245-53be-e593-cecbc3cc6763@linaro.org>
-Date:   Tue, 25 Jul 2023 01:22:11 +0300
+        Mon, 24 Jul 2023 20:11:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2B5171E;
+        Mon, 24 Jul 2023 17:11:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4532961467;
+        Tue, 25 Jul 2023 00:11:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8DCC433C8;
+        Tue, 25 Jul 2023 00:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690243863;
+        bh=0f2ttxObuYH3kDd/r78eCuJHpxg65FCD42MXIUNZc1Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZG6+w9Zc367Oayte8zOqmiLKktK09ZHAtOC3feJuhjcl1WBJmurVXc/GJ+MEoYAGC
+         RC2InksF1As6MvGjkbS3Spks37kC/0ed7n6CTFNzvAjzVDZrChyXUZqiO6KWhW9IbE
+         +lICHsSpoKxezQOxDnqsfd1IZ+Q53aW4DEKnuyaITbCAQRQEuWhbFVRl9ACyezHEvk
+         oFO7Cf8AmR81/rNbgG6LMwUM/JgTTGwLCH/v43SyOPdzaRw/IBRaeK+6j2RG6bCRra
+         Tm70Sv6PN5IkVaXcU3rcfswJ0DtP4oP2gGApgS9yBt6rlFdD0Jl7clqCJ7Gejmeb1d
+         Xl8+ojaRjLCmA==
+Received: (nullmailer pid 1209990 invoked by uid 1000);
+        Tue, 25 Jul 2023 00:11:01 -0000
+Date:   Mon, 24 Jul 2023 18:11:01 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] dt-bindings: arm: tegra: pmc: Restructure pad
+ configuration node schema
+Message-ID: <20230725001101.GA1125953-robh@kernel.org>
+References: <20230721135759.2994770-1-thierry.reding@gmail.com>
+ <20230721135759.2994770-5-thierry.reding@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v5 14/25] iommu/msm: Implement an IDENTITY domain
-Content-Language: en-GB
-To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-References: <14-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <14-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230721135759.2994770-5-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 24/07/2023 20:22, Jason Gunthorpe wrote:
-> What msm does during omap_iommu_set_platform_dma() is actually putting the
-
-typo: msm driver doesn't use/provide omap_iommu_set_platform_dma().
-
-> iommu into identity mode.
+On Fri, Jul 21, 2023 at 03:57:57PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Move to the new core support for ARM_DMA_USE_IOMMU by defining
-> ops->identity_domain.
+> The pad configuration node schema in its current form can accidentally
+> match other properties as well. Restructure the schema to better match
+> how the device trees are using these.
 > 
-> This driver does not support IOMMU_DOMAIN_DMA, however it cannot be
-> compiled on ARM64 either. Most likely it is fine to support dma-iommu.c
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   drivers/iommu/msm_iommu.c | 23 +++++++++++++++++++----
->   1 file changed, 19 insertions(+), 4 deletions(-)
+> Changes in v2:
+> - highlight quirks working around possible core schema
+> - use phandle: true instead of fully redefining it
+> - drop unneeded status property definition
 > 
-> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-> index 79d89bad5132b7..26ed81cfeee897 100644
-> --- a/drivers/iommu/msm_iommu.c
-> +++ b/drivers/iommu/msm_iommu.c
-> @@ -443,15 +443,20 @@ static int msm_iommu_attach_dev(struct iommu_domain *domain, struct device *dev)
->   	return ret;
->   }
->   
-> -static void msm_iommu_set_platform_dma(struct device *dev)
-> +static int msm_iommu_identity_attach(struct iommu_domain *identity_domain,
-> +				     struct device *dev)
->   {
->   	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
-> -	struct msm_priv *priv = to_msm_priv(domain);
-> +	struct msm_priv *priv;
->   	unsigned long flags;
->   	struct msm_iommu_dev *iommu;
->   	struct msm_iommu_ctx_dev *master;
-> -	int ret;
-> +	int ret = 0;
->   
-> +	if (domain == identity_domain || !domain)
-> +		return 0;
+>  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 184 ++++++++++++------
+>  1 file changed, 122 insertions(+), 62 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> index a336a75d8b82..0cbc16ec4267 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> @@ -244,69 +244,79 @@ properties:
+>            - resets
+>            - '#power-domain-cells'
+>  
+> -patternProperties:
+> -  "^[a-f0-9]+-[a-f0-9]+$":
+> +  pinmux:
+>      type: object
+> -    description:
+> -      This is a Pad configuration node. On Tegra SOCs a pad is a set of
+> -      pins which are configured as a group. The pin grouping is a fixed
+> -      attribute of the hardware. The PMC can be used to set pad power state
+> -      and signaling voltage. A pad can be either in active or power down mode.
+> -      The support for power state and signaling voltage configuration varies
+> -      depending on the pad in question. 3.3V and 1.8V signaling voltages
+> -      are supported on pins where software controllable signaling voltage
+> -      switching is available.
+> -
+> -      The pad configuration state nodes are placed under the pmc node and they
+> -      are referred to by the pinctrl client properties. For more information
+> -      see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> -      The pad name should be used as the value of the pins property in pin
+> -      configuration nodes.
+> -
+> -      The following pads are present on Tegra124 and Tegra132
+> -      audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdmi, hsic,
+> -      hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2, pex-cntrl,
+> -      sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2, usb_bias.
+> -
+> -      The following pads are present on Tegra210
+> -      audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
+> -      debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio, hdmi,
+> -      hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
+> -      sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias.
+> -
+> -    properties:
+> -      pins:
+> -        $ref: /schemas/types.yaml#/definitions/string
+> -        description: Must contain name of the pad(s) to be configured.
+> -
+> -      low-power-enable:
+> -        $ref: /schemas/types.yaml#/definitions/flag
+> -        description: Configure the pad into power down mode.
+> -
+> -      low-power-disable:
+> -        $ref: /schemas/types.yaml#/definitions/flag
+> -        description: Configure the pad into active mode.
+> -
+> -      power-source:
+> -        $ref: /schemas/types.yaml#/definitions/uint32
+> -        description:
+> -          Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
+> -          TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
+> -          The values are defined in
+> -          include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+> -          Power state can be configured on all Tegra124 and Tegra132
+> -          pads. None of the Tegra124 or Tegra132 pads support signaling
+> -          voltage switching.
+> -          All of the listed Tegra210 pads except pex-cntrl support power
+> -          state configuration. Signaling voltage switching is supported
+> -          on below Tegra210 pads.
+> -          audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1,
+> -          sdmmc3, spi, spi-hv, and uart.
+> -
+> -    required:
+> -      - pins
+> -
+> -    additionalProperties: false
+> +    additionalProperties:
+> +      type: object
+> +      description: |
+> +        This is a pad configuration node. On Tegra SoCs a pad is a set of pins
+> +        which are configured as a group. The pin grouping is a fixed attribute
+> +        of the hardware. The PMC can be used to set pad power state and
+> +        signaling voltage. A pad can be either in active or power down mode.
+> +        The support for power state and signaling voltage configuration varies
+> +        depending on the pad in question. 3.3V and 1.8V signaling voltages are
+> +        supported on pins where software controllable signaling voltage
+> +        switching is available.
 > +
-> +	priv = to_msm_priv(domain);
->   	free_io_pgtable_ops(priv->iop);
->   
->   	spin_lock_irqsave(&msm_iommu_lock, flags);
-> @@ -468,8 +473,18 @@ static void msm_iommu_set_platform_dma(struct device *dev)
->   	}
->   fail:
->   	spin_unlock_irqrestore(&msm_iommu_lock, flags);
-> +	return ret;
->   }
->   
-> +static struct iommu_domain_ops msm_iommu_identity_ops = {
-> +	.attach_dev = msm_iommu_identity_attach,
-> +};
+> +        The pad configuration state nodes are placed under the pmc node and
+> +        they are referred to by the pinctrl client properties. For more
+> +        information see:
 > +
-> +static struct iommu_domain msm_iommu_identity_domain = {
-> +	.type = IOMMU_DOMAIN_IDENTITY,
-> +	.ops = &msm_iommu_identity_ops,
-> +};
+> +          Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 > +
->   static int msm_iommu_map(struct iommu_domain *domain, unsigned long iova,
->   			 phys_addr_t pa, size_t pgsize, size_t pgcount,
->   			 int prot, gfp_t gfp, size_t *mapped)
-> @@ -675,10 +690,10 @@ irqreturn_t msm_iommu_fault_handler(int irq, void *dev_id)
->   }
->   
->   static struct iommu_ops msm_iommu_ops = {
-> +	.identity_domain = &msm_iommu_identity_domain,
->   	.domain_alloc = msm_iommu_domain_alloc,
->   	.probe_device = msm_iommu_probe_device,
->   	.device_group = generic_device_group,
-> -	.set_platform_dma_ops = msm_iommu_set_platform_dma,
->   	.pgsize_bitmap = MSM_IOMMU_PGSIZES,
->   	.of_xlate = qcom_iommu_of_xlate,
->   	.default_domain_ops = &(const struct iommu_domain_ops) {
+> +        The pad name should be used as the value of the pins property in pin
+> +        configuration nodes.
+> +
+> +        The following pads are present on Tegra124 and Tegra132:
+> +
+> +          audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdmi,
+> +          hsic, hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2,
+> +          pex-cntrl, sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2,
+> +          usb_bias
+> +
+> +        The following pads are present on Tegra210:
+> +
+> +          audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
+> +          debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio,
+> +          hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl,
+> +          sdmmc1, sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias
+> +      additionalProperties: false
+> +      properties:
+> +        pins:
+> +          $ref: /schemas/types.yaml#/definitions/string-array
+> +          description: Must contain name of the pad(s) to be configured.
+> +
+> +        low-power-enable:
+> +          $ref: /schemas/types.yaml#/definitions/flag
+> +          description: Configure the pad into power down mode.
+> +
+> +        low-power-disable:
+> +          $ref: /schemas/types.yaml#/definitions/flag
+> +          description: Configure the pad into active mode.
+> +
+> +        power-source:
+> +          $ref: /schemas/types.yaml#/definitions/uint32
+> +          description: |
+> +            Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
+> +            TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages. The
+> +            values are defined in:
+> +
+> +              include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> +
+> +            Power state can be configured on all Tegra124 and Tegra132 pads.
+> +            None of the Tegra124 or Tegra132 pads support signaling voltage
+> +            switching. All of the listed Tegra210 pads except pex-cntrl support
+> +            power state configuration. Signaling voltage switching is supported
+> +            on the following Tegra210 pads:
+> +
+> +              audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3,
+> +              spi, spi-hv, uart
+> +
+> +        # XXX why is this needed?
 
--- 
-With best wishes
-Dmitry
+It shouldn't be and is a bug. I have a fix. Will test some more and 
+commit it tomorrow.
 
+> +        phandle: true
+> +
+> +      required:
+> +        - pins
+>  
+>  required:
+>    - compatible
+> @@ -315,6 +325,56 @@ required:
+>    - clocks
+>    - '#clock-cells'
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra124-pmc
+> +    then:
+> +      properties:
+> +        pinmux:
+> +          # XXX shouldn't be needed, but the DT validator complains about
+> +          # "additionalProperties" if "properties" doesn't exist
+> +          properties:
+> +            status: true
+
+'type: object' should work here too. That may need the same fix as above 
+though.
+
+> +
+> +          additionalProperties:
+> +            type: object
+> +            properties:
+> +              pins:
+> +                items:
+> +                  enum: [ audio, bb, cam, comp, csia, csb, cse, dsi, dsib,
+> +                          dsic, dsid, hdmi, hsic, hv, lvds, mipi-bias, nand,
+> +                          pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
+> +                          sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2,
+> +                          usb_bias ]
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra210-pmc
+> +    then:
+> +      properties:
+> +        pinmux:
+> +          # XXX shouldn't be needed, but the DT validator complains about
+> +          # "additionalProperties" if "properties" doesn't exist
+> +          properties:
+> +            status: true
+> +
+> +          additionalProperties:
+> +            type: object
+> +            properties:
+> +              pins:
+> +                items:
+> +                  enum: [ audio, audio-hv, cam, csia, csib, csic, csid, csie,
+> +                          csif, dbg, debug-nonao, dmic, dp, dsi, dsib, dsic,
+> +                          dsid, emmc, emmc2, gpio, hdmi, hsic, lvds, mipi-bias,
+> +                          pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
+> +                          sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3,
+> +                          usb-bias ]
+> +
+>  additionalProperties: false
+>  
+>  dependencies:
+> -- 
+> 2.41.0
+> 
