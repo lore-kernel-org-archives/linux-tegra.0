@@ -2,229 +2,170 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E581C04FE0
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 10:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA706C001DE
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 10:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232606AbjGYKEC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jul 2023 06:04:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60402 "EHLO
+        id S231572AbjGYKOg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jul 2023 06:14:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233807AbjGYKD3 (ORCPT
+        with ESMTP id S229713AbjGYKOf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jul 2023 06:03:29 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50FDE171E
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:03:10 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-666e97fcc60so3028871b3a.3
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690279390; x=1690884190;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=omQl0KsY23ZTTqxsvNji4YWJ3tGKpnfvrjqf4UJUwos=;
-        b=C9FzHzeclNQcNPiVPE4DGrEpTPSKSXfpAFB3Pts30shmPBvzBwDAyjjloLCwhPCM8k
-         s6RraUiJTWUQQrvvj2+OB3PjaGqQn9cJDFbRn+u4CT8QtW8P/ZRpwgYLT2oRQoW+s9j9
-         TRYPmtwaBaQInazcRPhfhUmXJ6qKvfBAkssM/aH99kfTz9d8YFcWOJeOZCT+2nDRTFpb
-         S0dXfhlf+EbFs7rPlMW2xcHgJbMbwZhCypxghuKOSUxYgNKO58djPuoCyrncHEwbfK0L
-         De86mVbDD5HacAugf1hQU2DnEN9Dex3Hd6bpDPbf0pmWU/PthUlJx6ejWgZSKOzQfpIr
-         ZgXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690279390; x=1690884190;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=omQl0KsY23ZTTqxsvNji4YWJ3tGKpnfvrjqf4UJUwos=;
-        b=cTpQ9ydU9+20VaEk33+VY7lE9zh1zxyWHiRNprcEmjm+yfdcJb0URWqeFYeyCrYNTg
-         F2kiN40JVT+paxZibH4HI0tSQ/f3beUKzL92QRKQBeJ2iaAkpvlLOY7fIlInsf83gKx4
-         IJ7+xgXP5lg3BD02MshmYrsFlCfOkK43fDou/jUgwQlOht5MVQBLRmouC2hm/N11vIrM
-         NXzaZlSbqW7yZ54b8thXAejYEDxD4QM47PLDzfFyGLBCwjQI50QH3xksw57wYfiU4SjT
-         6Pf8HXwvTKgv4gmQTr8YwId44QKYwIRF36v8cYPahM4vPBioGpPm4N7mfAxC/rFZteWh
-         PUEQ==
-X-Gm-Message-State: ABy/qLbBq/qY+hru3A/E4yRiQneuDjjUtPdbiTLqskQhSQbYE8zUoqX/
-        FGv04tpbKFCszh1IcF6G/1tf
-X-Google-Smtp-Source: APBJJlEQ/Tr6zv7e7sgeMAaofqM/o/IS22CuvDSLgWCsWUoOcXam0olW16i+FwLejoKb8plfrHxPYg==
-X-Received: by 2002:a05:6a20:1d0:b0:137:7add:b7cc with SMTP id 16-20020a056a2001d000b001377addb7ccmr9589211pzz.22.1690279389725;
-        Tue, 25 Jul 2023 03:03:09 -0700 (PDT)
-Received: from thinkpad ([117.206.117.206])
-        by smtp.gmail.com with ESMTPSA id jm24-20020a17090304d800b001b9cdf11764sm10622156plb.31.2023.07.25.03.03.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 03:03:09 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 15:33:02 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V1] Revert "PCI: tegra194: Enable support for 256 Byte
- payload"
-Message-ID: <20230725100302.GD22139@thinkpad>
-References: <20230608093652.1409485-1-vidyas@nvidia.com>
- <20230725075159.GB22139@thinkpad>
- <815d102d-be0c-8e5d-ac12-1500d90628da@nvidia.com>
- <20230725083030.GC22139@thinkpad>
- <770da5a3-ea02-ce87-8515-beb246082de8@nvidia.com>
+        Tue, 25 Jul 2023 06:14:35 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2086.outbound.protection.outlook.com [40.107.237.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D95A10C9;
+        Tue, 25 Jul 2023 03:14:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gKV67uOJkhatVyAZ6j8c4X0YQ4ams1+YfKagWHT41IKfDBctb6h8Sk38gxI+Ww7iGmnMXF8FTp9F/W4dwerKQiurv+tAjgspIc1ZtQBvi7nvWNuLZtZuWkoh9MHFhdkRjPlX5HVyXPFbivoBxkJXSUNXP+bGBcenMfQTBdPW2YvpfAC/kr+4x/wH8rebLZ/ZtK7WiHjjHzGyaO6QkDw32+dJc44TW/dQ8a2nkBzFJgxkmpEk/xzXrf7PUNXqhbsZB1UYgwqIb9m5Ijj+Pi2ZjRK5GeU/G+BRRVaJn46sWYUzMuUEdm/2oXaA8GVnjdunswti5O60Cw790uHqtW1lWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nOBz9xj518IgJdnMKd4YzAZiNBZGPi8R2mE6U7dv7po=;
+ b=ZFEAiCpg0jGGlI4Uyw+UfQyvzs1ldfZclywmreyNyUo4aNF7l/2y6SoLys7cRN+uCHdIy1FuK+/LGAf7NWkBifXpMDcPvMiIio9kIIdQHm0V0toycpiejICsGtNEFOnnxGHOH3za6VsFAPGB2FApMkXCJZFMp5tDh973oVkijI8XnZyartugUA0vg7+I30q8XyTfShHsFEf1pMyRbSTfimUcuJud6ew0zCQEu0Dy6maQ3iqtQ2FJfUOVkd3bLxpSozlN6KiJAklMFX+c5uzWy5WS6SR1iGGfk5kWbE0ZPA0mLeIkeJ5K83SHtAwDcCCCTZe0stj6xEAFf01Oo1G9Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nOBz9xj518IgJdnMKd4YzAZiNBZGPi8R2mE6U7dv7po=;
+ b=XhVFUtn0IDvHdhupV9TZoSleDv81cvznMjL0k0LxaLdTAhdZlVjl7XVzZm/xjiocZoo7UgAcqFifjZJPW8aZ7ROKVa4DXTbpD9Fzd0mWbFB8BqAZEzMJ5ptK5swi2O+CemAn5vHwsQ06c21Go2Y4It6+/PhRVOfL/RuEYYUoFF1S5r3shOrpFdc2uQI9Ah/5YyjlGULiV3zVJecfAkl28PeEO09GukGeM5G5oSApxjCY72oWIBzd5PPXsZRiQoniL0mjLb0rkn3tlB93zpVHciPd4s1py/Ae5NJa78NEEov6x/GleBfzRz88PEsHYg7ypUjKX5vMsybQxZO3roep3A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ DM8PR12MB5429.namprd12.prod.outlook.com (2603:10b6:8:29::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6609.33; Tue, 25 Jul 2023 10:14:32 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::8833:f1bb:7d8b:dce7]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::8833:f1bb:7d8b:dce7%4]) with mapi id 15.20.6609.032; Tue, 25 Jul 2023
+ 10:14:32 +0000
+Message-ID: <cab267a2-28a0-969a-44cd-c87c8fe65218@nvidia.com>
+Date:   Tue, 25 Jul 2023 11:14:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] memory: tegra: Add dummy implementation on Tegra194
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sumit Gupta <sumitg@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230629160132.768940-1-thierry.reding@gmail.com>
+ <1fd1d5d7-7296-0e62-9f65-7347ac0f0500@linaro.org> <ZKwCYjKXtuDsOF9E@orome>
+ <1ebfbbec-d5cf-c6ac-2cf1-eab970903500@linaro.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <1ebfbbec-d5cf-c6ac-2cf1-eab970903500@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0344.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:d::20) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <770da5a3-ea02-ce87-8515-beb246082de8@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DM8PR12MB5429:EE_
+X-MS-Office365-Filtering-Correlation-Id: b931f46b-d5fe-4245-443e-08db8cf7f044
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: O9ikhJW9PEkpodvxRTcTn3IOiarwmqMlD5qbIvhAP7P1s5LjBaER9/aUhMkHa7dGgPTFlBksEGD0Ukwc7O3hwSk66nLB6zkM9KFPC6p3eV5663lb18WjwSDC/RRR2y+XU6CSCwelniltY7acejODkNwzMjfrM5pVlFlapE7/qcM9mvJs/gllhaWRshRhcjhSGCdzZeHQmEmwagwpN5oeoWxDRS68GceslJ8zeW4qqeyK61FTl8bcMcxa5+sTW/c/viCYIw7jCXGe0jZMpFQPC+6nBbtlgY0aO/5iJBqKvL1tSWT1HazTmv7CcegzklpMHQdxQ7hROW44ZOXAgNx6qy3FDtDy9CDNh2zYZHegLKxNbUdCWsHrOAcQyI3Eje077ezaPpL7jOO1ifnUjbgfRtazKEpFi7p/BTe4otxswgUaEvwL/QUlB1re0G/sYySjvAZQlHrFeRgxnrpFOdRAfNnfTtYXmONo6IY+MIPSBsypkfTcKP8v6z+C/3b4ggynGBQRYioQmYZYKhd8thWuZFMI2E7MK3OOPKj9jm9JL5Y/4Sl61nRq46Bljca58MujULncG0mHOcbc2Z2QIn2lLL8UBeGJ459icBY7oscWFMnJ30jYQHzG/xap44NKH30RjtCpyTeh8pLRR4EWVLAt6g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(376002)(39860400002)(396003)(346002)(451199021)(2616005)(6486002)(6666004)(478600001)(86362001)(6512007)(31696002)(36756003)(55236004)(26005)(53546011)(6506007)(5660300002)(41300700001)(316002)(8676002)(8936002)(4326008)(2906002)(110136005)(66946007)(38100700002)(66476007)(66556008)(186003)(83380400001)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dHJiYVhpWFdoc09TQmxoQ3dRN1lrcGphNVBVWUlaenBkQjRGcmtIb3cxQm5p?=
+ =?utf-8?B?Vkt0MXNJOU1ZeEkySXRSVXdZZmVUenNsWUxpZTFJcHBTWUtjd2YrYVpyTXg5?=
+ =?utf-8?B?L2ZZZkxmNHB3Nm5vNlc3eUdqaDlpdjhjUWFRZ2ZZUGNNOTZjNzZkOC9RV0ZK?=
+ =?utf-8?B?cVM0NUhYdnRvbCtNNG8xYVJ0Q05FckxVNnllWFE0QUtObEpBYWJpRGMwd2po?=
+ =?utf-8?B?Y21pZEZaTzRxWXJTTFJ1Nm9aWG1ndisrVXc4N0pqV0lVQkt1T1JJNUJLOHpC?=
+ =?utf-8?B?RWo2VitPTXhpUUg5MXVndGxaVE5BbTlvUXJHUGVzV25jcVJLcS9aQzc0Z2hG?=
+ =?utf-8?B?VkdqNnBKUlZIb3NNL2s4ZVdGSEFEN1NUNnMzZWxOam9IdmF3dk9wSGxpQ01H?=
+ =?utf-8?B?TTJrOVFsbkwwSTlzR0xGbjB2cUVWQmlEbHU2M2hHSzIwSHdFWEYxeEdnNVJB?=
+ =?utf-8?B?L3NSVHd3NVo0NUFFa29pQkFSd2NzSzNjbFp2dlpBSzZnWHlQOHhtdk9FQ0FT?=
+ =?utf-8?B?RXhJdVh5aThLY2Z2K0hMMHlBa3FXZ01ZTUFnWktydndKWmlBSnBWcE1nalpk?=
+ =?utf-8?B?aVBlUHZRU3IzQXlNdHEwL2hDYmFBRHpmZEtuM1NlbDVpV2U3OHp2a2VZbVg3?=
+ =?utf-8?B?VitkWDhqQ2d3RnBONmtsWU80UEpucUMzRHNRSHk4TUt2eFBXRGxLdWJMSklz?=
+ =?utf-8?B?dEdLcVdaaGJXR1NraXZHSWhPditFU1JmTkFYUk1wYWxkeGpVUnlqRzZkZUVx?=
+ =?utf-8?B?K080Tm9OSDJkQ0Fjb2k5aDhZbGZyL3BxUjJyNmpnc3JTK0tONEhFWGd1bWFP?=
+ =?utf-8?B?azNUVEc4S1JJUmo2ek5JRFUrTGlLK2R6bm8vV0RQOGsxUzcvWUIyaGFvaElC?=
+ =?utf-8?B?T0htQ1YyNEtvWDk0eENJT1orT0hXcUNYUjNDdHhuUGFuOUhvN1l4aVJtQmtW?=
+ =?utf-8?B?TFZNSDYzMkVlajNVY3gvMmtISldCVWtxOCtpbkNDek9XME1VZDhCWEdsYVVQ?=
+ =?utf-8?B?TlNEM3IzYms0VW82aHhxWjVab2xRQWVQU1Y4bWJ2YXFQRXN2VkhURjhMTm03?=
+ =?utf-8?B?ZmZBRm5IdXB4Q1Q2T1FQVk1vMUxTNElsMFUwcGF0eCtQSEk5M1lYRXI3Ri9G?=
+ =?utf-8?B?MG5ONmFvVlpKK2FpNnh0UnNqRFRkOU1UOXVtMzdudlVHc2hDWTdZQ3U0Vzhn?=
+ =?utf-8?B?QmU1WmVaUGpJRFFsS0Zub1ZFMUNwWkg5NTBMTS9ZOU45d3QzYlVNN0JqQ2o4?=
+ =?utf-8?B?T3NmUWhxVERkdUZPMVh0ZUlIdnEzSHkvWVVFNkhQRUsyaXRra2lpUXBvdG5I?=
+ =?utf-8?B?Uk1yYytSQU15L01meWhUcElWWThCWTBadEpIaW80d016VjE2M1FDb0tRcnEv?=
+ =?utf-8?B?eU5idjV6UDNKcmp5b0JxWFJjeXhXVHhhY0I1KzVUQ1RUTkdyOGQyR0kxbVhC?=
+ =?utf-8?B?Y09XcmtpKzlrYXRuSm9xczNmdVBoVEtja21KVG5KNmJyZzdWcWJqcnduVmE2?=
+ =?utf-8?B?aGdBVEVSZGloQUNsWEtObXVkK3BieWZkM2EydEVGZ1Y0bkZOdk9TNEZFNm16?=
+ =?utf-8?B?MUhlbWdNUFNPRTlISy9mN0YyckdHT204RzJVZi90dzhjS3NqVGpwZTZvc2Jy?=
+ =?utf-8?B?Q3Rxcjh1alE3Z2cyZHJHQmNUd0lacVdQZGlsOWhOVGErOEZvWCtOZkd2OEVD?=
+ =?utf-8?B?VWJuQ3ZRRGxoSWRpcVIvbTRoMHJ5NXdvZDg3My9yVmFKTjd3Q1ZyY2txN0U4?=
+ =?utf-8?B?VEp0dm42NnVPbU9WeitwY1pnVmxYdnNXNktES05lOTJXWjlVWk9CSkd1ZDVP?=
+ =?utf-8?B?Zncrd1pYaUw5RVB5ajdUWXVBN1VIZVdSYlVvcjFzTE1SSUtiSUZ2djRuNy8z?=
+ =?utf-8?B?OForcnh3eEtCck4vTFl0OHR3ZDFmUGNWZk9OeXRmRmVDaFArNDZuaDloUFNt?=
+ =?utf-8?B?L2pvTFpHK2xtaFNMTjhydlBEQXY2czV1eDBMOGYvOWd0WHZOZzAwcFpQTHgx?=
+ =?utf-8?B?WnBvQm1QQm5wMEZxdWQ5enRrKzhmNGZvbVN5M2JseVR4VDNLbjlocG0zbnBw?=
+ =?utf-8?B?cm5EeEVxamNQTDJ0K3FrYUliQ3ZTMGdDQWEwb2ZuZjIxeUx4TWxBc2xuaGlO?=
+ =?utf-8?Q?jKd6N6tpGp5erNeDzeaJ9nzHH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b931f46b-d5fe-4245-443e-08db8cf7f044
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2023 10:14:32.0864
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4Wz8yjOAnAs6cYzQ2G143NSqR3Xq3kBL/SdF0JtuivvXUW6ypqURfr0fHRuMYZI+3fqS7a8/mCzxbCTZI9aYXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5429
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 02:51:10PM +0530, Vidya Sagar wrote:
-> 
-> 
-> On 7/25/2023 2:00 PM, Manivannan Sadhasivam wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Tue, Jul 25, 2023 at 01:49:35PM +0530, Vidya Sagar wrote:
-> > > 
-> > > 
-> > > On 7/25/2023 1:21 PM, Manivannan Sadhasivam wrote:
-> > > > External email: Use caution opening links or attachments
-> > > > 
-> > > > 
-> > > > On Thu, Jun 08, 2023 at 03:06:52PM +0530, Vidya Sagar wrote:
-> > > > > This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
-> > > > > support for 256 Byte payload")
-> > > > > 
-> > > > > Consider a PCIe hierarchy with a PCIe switch and a device connected
-> > > > > downstream of the switch that has support for MPS which is the minimum
-> > > > > in the hierarchy, and root port programmed with an MPS in its DevCtl
-> > > > > register that is greater than the minimum. In this scenario, the default
-> > > > > bus configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't
-> > > > > configure the MPS settings in the hierarchy correctly resulting in the
-> > > > > device with support for minimum MPS in the hierarchy receiving the TLPs
-> > > > > of size more than that. Although this can be addresed by appending
-> > > > > "pci=pcie_bus_safe" to the kernel command line, it doesn't seem to be a
-> > > > > good idea to always have this commandline argument even for the basic
-> > > > > functionality to work.
-> > > > > Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
-> > > > > Byte payload") avoids this requirement and ensures that the basic
-> > > > > functionality of the devices irrespective of the hierarchy and the MPS of
-> > > > > the devices in the hierarchy.
-> > > > > To reap the benefits of having support for higher MPS, optionally, one can
-> > > > > always append the kernel command line with "pci=pcie_bus_perf".
-> > > > > 
-> > > > > Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
-> > > > > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > > 
-> > > > I know that this patch is merged. But I happen to test a similar change on Qcom
-> > > > platform during a patch review and found that the PCI core changes MPS to 128
-> > > > when a 128byte supported device is found:
-> > > > 
-> > > > [    3.174290] pci 0000:01:00.0: Upstream bridge's Max Payload Size set to 128 (was 256, max 128)
-> > > > [    3.186538] pci 0000:01:00.0: Max Payload Size set to 128 (was 128, max 128)
-> > > > 
-> > > > This was just randomly tested on a platform whose Root port DEVCAP was 128, but
-> > > > it shouldn't matter. And I didn't change the default bus configuration.
-> > > > 
-> > > > Wondering how you ended up facing issues with it.
-> > > 
-> > > If the endpiont device that has support only for 128byte MPS is connected
-> > > directly to the root port, then, I agree that the PCIe sub-system takes care
-> > > of changing the MPS to the common lowest MPS, but if the endpoint device is
-> > > connected behind a PCIe switch, then the PCIe subsystem doesn't configure
-> > > the MPS properly.
-> > > 
-> > 
-> > Ah, I missed the fact that your issue only happens with a PCIe switch. But
-> > shouldn't this be fixed in the PCI core instead?
-> > 
-> > I mean, PCI core should use 128byte in your case for Root port unless it is not
-> > allowed in the spec (which I doubt).
-> well, if the RP's DevCtl is set to 256MPS by default, then, the core
-> wouldn't do it automatically unless either 'pcie_bus_safe' or
-> 'pcie_bus_perf' is passed.
-> 
+Hi Krzysztof,
 
-That's what I'm referring to. The default configuration shouldn't cause Root
-port to send TLPs with unsupported payload. Moreover, this is not the case for
-immediate children. So definitely the PCI core should exhibit the same behavior
-for all downstream devices. 
-
-- Mani
-
+On 10/07/2023 14:29, Krzysztof Kozlowski wrote:
+> On 10/07/2023 15:06, Thierry Reding wrote:
+>> On Mon, Jul 10, 2023 at 12:10:43PM +0200, Krzysztof Kozlowski wrote:
+>>> On 29/06/2023 18:01, Thierry Reding wrote:
+>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>
+>>>> With the introduction of commit 9365bf006f53 ("PCI: tegra194: Add
+>>>> interconnect support in Tegra234"), the PCI driver on Tegra194 and later
+>>>> requires an interconnect provider. However, a provider is currently only
+>>>> exposed on Tegra234 and this causes PCI on Tegra194 to defer probe
+>>>> indefinitely.
+>>>>
+>>>> Fix this by adding a dummy implementation on Tegra194. This allows nodes
+>>>> to be provided to interconnect consumers, but doesn't do any bandwidth
+>>>> accounting or frequency scaling.
+>>>>
+>>>> Fixes: 9365bf006f53 ("PCI: tegra194: Add interconnect support in Tegra234")
+>>>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+>>>
+>>> Applied with checkpatch warning. Please be sure you run checkpatch
+>>> before sending the patches.
+>>
+>> Are you referring to the Reported-by/Closes complaint?
 > 
-> > 
-> > - Mani
-> > 
-> > > -Vidya Sagar
-> > > 
-> > > > 
-> > > > - Mani
-> > > > 
-> > > > > ---
-> > > > >    drivers/pci/controller/dwc/pcie-tegra194.c | 13 -------------
-> > > > >    1 file changed, 13 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > > index 4fdadc7b045f..877d81b13334 100644
-> > > > > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > > @@ -892,7 +892,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
-> > > > >         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > > >         struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
-> > > > >         u32 val;
-> > > > > -     u16 val_16;
-> > > > > 
-> > > > >         pp->bridge->ops = &tegra_pci_ops;
-> > > > > 
-> > > > > @@ -900,11 +899,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
-> > > > >                 pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
-> > > > >                                                               PCI_CAP_ID_EXP);
-> > > > > 
-> > > > > -     val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
-> > > > > -     val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> > > > > -     val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
-> > > > > -     dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
-> > > > > -
-> > > > >         val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
-> > > > >         val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
-> > > > >         dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
-> > > > > @@ -1756,7 +1750,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
-> > > > >         struct device *dev = pcie->dev;
-> > > > >         u32 val;
-> > > > >         int ret;
-> > > > > -     u16 val_16;
-> > > > > 
-> > > > >         if (pcie->ep_state == EP_STATE_ENABLED)
-> > > > >                 return;
-> > > > > @@ -1887,11 +1880,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
-> > > > >         pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
-> > > > >                                                       PCI_CAP_ID_EXP);
-> > > > > 
-> > > > > -     val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
-> > > > > -     val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> > > > > -     val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
-> > > > > -     dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
-> > > > > -
-> > > > >         /* Clear Slot Clock Configuration bit if SRNS configuration */
-> > > > >         if (pcie->enable_srns) {
-> > > > >                 val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
-> > > > > @@ -1900,7 +1888,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
-> > > > >                 dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
-> > > > >                                    val_16);
-> > > > >         }
-> > > > > -
-> > > > >         clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
-> > > > > 
-> > > > >         val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
-> > > > > --
-> > > > > 2.25.1
-> > > > > 
-> > > > 
-> > > > --
-> > > > மணிவண்ணன் சதாசிவம்
-> > 
-> > --
-> > மணிவண்ணன் சதாசிவம்
+> Yes.
+> 
+>> I didn't include
+>> a URL here because this came from an internal test report and there's no
+>> corresponding public reference.
+> 
+> Ah, ok, apologies for pickiness then. :)
+> 
+>>
+>> I suppose I could've left out the Reported-by altogether.
+> 
+> I think it is fine. Checkpatch warning is just advisory.
+
+
+We need this in v6.5 as a fix, because without this change PCIe support 
+is broken on Tegra194 devices. Would you be able to send as a fix for v6.5?
+
+Thanks!
+Jon
 
 -- 
-மணிவண்ணன் சதாசிவம்
+nvpublic
