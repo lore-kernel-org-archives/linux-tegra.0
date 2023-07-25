@@ -2,287 +2,132 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8F7EB64DD
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 00:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F904C00528
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 06:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbjGYALG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jul 2023 20:11:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54236 "EHLO
+        id S232306AbjGYGvf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jul 2023 02:51:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjGYALG (ORCPT
+        with ESMTP id S231147AbjGYGv1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jul 2023 20:11:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2B5171E;
-        Mon, 24 Jul 2023 17:11:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4532961467;
-        Tue, 25 Jul 2023 00:11:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8DCC433C8;
-        Tue, 25 Jul 2023 00:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690243863;
-        bh=0f2ttxObuYH3kDd/r78eCuJHpxg65FCD42MXIUNZc1Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZG6+w9Zc367Oayte8zOqmiLKktK09ZHAtOC3feJuhjcl1WBJmurVXc/GJ+MEoYAGC
-         RC2InksF1As6MvGjkbS3Spks37kC/0ed7n6CTFNzvAjzVDZrChyXUZqiO6KWhW9IbE
-         +lICHsSpoKxezQOxDnqsfd1IZ+Q53aW4DEKnuyaITbCAQRQEuWhbFVRl9ACyezHEvk
-         oFO7Cf8AmR81/rNbgG6LMwUM/JgTTGwLCH/v43SyOPdzaRw/IBRaeK+6j2RG6bCRra
-         Tm70Sv6PN5IkVaXcU3rcfswJ0DtP4oP2gGApgS9yBt6rlFdD0Jl7clqCJ7Gejmeb1d
-         Xl8+ojaRjLCmA==
-Received: (nullmailer pid 1209990 invoked by uid 1000);
-        Tue, 25 Jul 2023 00:11:01 -0000
-Date:   Mon, 24 Jul 2023 18:11:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] dt-bindings: arm: tegra: pmc: Restructure pad
- configuration node schema
-Message-ID: <20230725001101.GA1125953-robh@kernel.org>
-References: <20230721135759.2994770-1-thierry.reding@gmail.com>
- <20230721135759.2994770-5-thierry.reding@gmail.com>
+        Tue, 25 Jul 2023 02:51:27 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE1310C9
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Jul 2023 23:51:26 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qOBsF-0008CR-QE; Tue, 25 Jul 2023 08:50:23 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qOBs7-001wAn-Vc; Tue, 25 Jul 2023 08:50:15 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qOBs7-007bOg-45; Tue, 25 Jul 2023 08:50:15 +0200
+Date:   Tue, 25 Jul 2023 08:50:14 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jacky Huang <ychuang3@nuvoton.com>,
+        Shan-Chun Hung <schung@nuvoton.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] tty: Explicitly include correct DT includes
+Message-ID: <20230725065014.kjdcos77kzepprvw@pengutronix.de>
+References: <20230724205440.767071-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="egg3m5pjvujeb37y"
 Content-Disposition: inline
-In-Reply-To: <20230721135759.2994770-5-thierry.reding@gmail.com>
+In-Reply-To: <20230724205440.767071-1-robh@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 03:57:57PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The pad configuration node schema in its current form can accidentally
-> match other properties as well. Restructure the schema to better match
-> how the device trees are using these.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v2:
-> - highlight quirks working around possible core schema
-> - use phandle: true instead of fully redefining it
-> - drop unneeded status property definition
-> 
->  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 184 ++++++++++++------
->  1 file changed, 122 insertions(+), 62 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-> index a336a75d8b82..0cbc16ec4267 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
-> @@ -244,69 +244,79 @@ properties:
->            - resets
->            - '#power-domain-cells'
->  
-> -patternProperties:
-> -  "^[a-f0-9]+-[a-f0-9]+$":
-> +  pinmux:
->      type: object
-> -    description:
-> -      This is a Pad configuration node. On Tegra SOCs a pad is a set of
-> -      pins which are configured as a group. The pin grouping is a fixed
-> -      attribute of the hardware. The PMC can be used to set pad power state
-> -      and signaling voltage. A pad can be either in active or power down mode.
-> -      The support for power state and signaling voltage configuration varies
-> -      depending on the pad in question. 3.3V and 1.8V signaling voltages
-> -      are supported on pins where software controllable signaling voltage
-> -      switching is available.
-> -
-> -      The pad configuration state nodes are placed under the pmc node and they
-> -      are referred to by the pinctrl client properties. For more information
-> -      see Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-> -      The pad name should be used as the value of the pins property in pin
-> -      configuration nodes.
-> -
-> -      The following pads are present on Tegra124 and Tegra132
-> -      audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdmi, hsic,
-> -      hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2, pex-cntrl,
-> -      sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2, usb_bias.
-> -
-> -      The following pads are present on Tegra210
-> -      audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
-> -      debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio, hdmi,
-> -      hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
-> -      sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias.
-> -
-> -    properties:
-> -      pins:
-> -        $ref: /schemas/types.yaml#/definitions/string
-> -        description: Must contain name of the pad(s) to be configured.
-> -
-> -      low-power-enable:
-> -        $ref: /schemas/types.yaml#/definitions/flag
-> -        description: Configure the pad into power down mode.
-> -
-> -      low-power-disable:
-> -        $ref: /schemas/types.yaml#/definitions/flag
-> -        description: Configure the pad into active mode.
-> -
-> -      power-source:
-> -        $ref: /schemas/types.yaml#/definitions/uint32
-> -        description:
-> -          Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> -          TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages.
-> -          The values are defined in
-> -          include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-> -          Power state can be configured on all Tegra124 and Tegra132
-> -          pads. None of the Tegra124 or Tegra132 pads support signaling
-> -          voltage switching.
-> -          All of the listed Tegra210 pads except pex-cntrl support power
-> -          state configuration. Signaling voltage switching is supported
-> -          on below Tegra210 pads.
-> -          audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1,
-> -          sdmmc3, spi, spi-hv, and uart.
-> -
-> -    required:
-> -      - pins
-> -
-> -    additionalProperties: false
-> +    additionalProperties:
-> +      type: object
-> +      description: |
-> +        This is a pad configuration node. On Tegra SoCs a pad is a set of pins
-> +        which are configured as a group. The pin grouping is a fixed attribute
-> +        of the hardware. The PMC can be used to set pad power state and
-> +        signaling voltage. A pad can be either in active or power down mode.
-> +        The support for power state and signaling voltage configuration varies
-> +        depending on the pad in question. 3.3V and 1.8V signaling voltages are
-> +        supported on pins where software controllable signaling voltage
-> +        switching is available.
-> +
-> +        The pad configuration state nodes are placed under the pmc node and
-> +        they are referred to by the pinctrl client properties. For more
-> +        information see:
-> +
-> +          Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> +
-> +        The pad name should be used as the value of the pins property in pin
-> +        configuration nodes.
-> +
-> +        The following pads are present on Tegra124 and Tegra132:
-> +
-> +          audio, bb, cam, comp, csia, csb, cse, dsi, dsib, dsic, dsid, hdmi,
-> +          hsic, hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2,
-> +          pex-cntrl, sdmmc1, sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2,
-> +          usb_bias
-> +
-> +        The following pads are present on Tegra210:
-> +
-> +          audio, audio-hv, cam, csia, csib, csic, csid, csie, csif, dbg,
-> +          debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2, gpio,
-> +          hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2, pex-cntrl,
-> +          sdmmc1, sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3, usb-bias
-> +      additionalProperties: false
-> +      properties:
-> +        pins:
-> +          $ref: /schemas/types.yaml#/definitions/string-array
-> +          description: Must contain name of the pad(s) to be configured.
-> +
-> +        low-power-enable:
-> +          $ref: /schemas/types.yaml#/definitions/flag
-> +          description: Configure the pad into power down mode.
-> +
-> +        low-power-disable:
-> +          $ref: /schemas/types.yaml#/definitions/flag
-> +          description: Configure the pad into active mode.
-> +
-> +        power-source:
-> +          $ref: /schemas/types.yaml#/definitions/uint32
-> +          description: |
-> +            Must contain either TEGRA_IO_PAD_VOLTAGE_1V8 or
-> +            TEGRA_IO_PAD_VOLTAGE_3V3 to select between signaling voltages. The
-> +            values are defined in:
-> +
-> +              include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-> +
-> +            Power state can be configured on all Tegra124 and Tegra132 pads.
-> +            None of the Tegra124 or Tegra132 pads support signaling voltage
-> +            switching. All of the listed Tegra210 pads except pex-cntrl support
-> +            power state configuration. Signaling voltage switching is supported
-> +            on the following Tegra210 pads:
-> +
-> +              audio, audio-hv, cam, dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3,
-> +              spi, spi-hv, uart
-> +
-> +        # XXX why is this needed?
 
-It shouldn't be and is a bug. I have a fix. Will test some more and 
-commit it tomorrow.
+--egg3m5pjvujeb37y
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +        phandle: true
-> +
-> +      required:
-> +        - pins
->  
->  required:
->    - compatible
-> @@ -315,6 +325,56 @@ required:
->    - clocks
->    - '#clock-cells'
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra124-pmc
-> +    then:
-> +      properties:
-> +        pinmux:
-> +          # XXX shouldn't be needed, but the DT validator complains about
-> +          # "additionalProperties" if "properties" doesn't exist
-> +          properties:
-> +            status: true
+Hello Rob,
 
-'type: object' should work here too. That may need the same fix as above 
-though.
+On Mon, Jul 24, 2023 at 02:54:38PM -0600, Rob Herring wrote:
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-> +
-> +          additionalProperties:
-> +            type: object
-> +            properties:
-> +              pins:
-> +                items:
-> +                  enum: [ audio, bb, cam, comp, csia, csb, cse, dsi, dsib,
-> +                          dsic, dsid, hdmi, hsic, hv, lvds, mipi-bias, nand,
-> +                          pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
-> +                          sdmmc3, sdmmc4, sys_ddc, uart, usb0, usb1, usb2,
-> +                          usb_bias ]
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra210-pmc
-> +    then:
-> +      properties:
-> +        pinmux:
-> +          # XXX shouldn't be needed, but the DT validator complains about
-> +          # "additionalProperties" if "properties" doesn't exist
-> +          properties:
-> +            status: true
-> +
-> +          additionalProperties:
-> +            type: object
-> +            properties:
-> +              pins:
-> +                items:
-> +                  enum: [ audio, audio-hv, cam, csia, csib, csic, csid, csie,
-> +                          csif, dbg, debug-nonao, dmic, dp, dsi, dsib, dsic,
-> +                          dsid, emmc, emmc2, gpio, hdmi, hsic, lvds, mipi-bias,
-> +                          pex-bias, pex-clk1, pex-clk2, pex-cntrl, sdmmc1,
-> +                          sdmmc3, spi, spi-hv, uart, usb0, usb1, usb2, usb3,
-> +                          usb-bias ]
-> +
->  additionalProperties: false
->  
->  dependencies:
-> -- 
-> 2.41.0
-> 
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de> # for imx
+
+Thanks for your efforts!
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--egg3m5pjvujeb37y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmS/cKYACgkQj4D7WH0S
+/k5DeQf/XZ9i2MKupQ474foZd/xSXDoeGP/mzcur4EO3Bu06s1VDyknWODS3IU5p
+VGN/GNMpV8QCC4UBbhddhyqP60D9vYNBqbyw6ZsVZTH5+9Ld4Dmfi8jTYeTNiYYc
++EmM4HrAdY1GVXkdkip00c1GWdcPsHQA6JgSwV1z2cjiJU/7AeRdF6FTB7LPtxCO
+lHZ+at0pra4cRma7o2dZyjIZCa3M05OFqBIX5FAbCCptQsRYlnfTJbOuA2Fr3aTq
+mn7uHJbHPuX+r4PnWXzeq/IC4eEynkYfcINsTmQtG2H2ecI+GvJGttDpTrZstKr7
+ThQy424A1jo0R00lnwmfFmOG/Q7gKQ==
+=p7gV
+-----END PGP SIGNATURE-----
+
+--egg3m5pjvujeb37y--
