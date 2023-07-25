@@ -2,128 +2,128 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 111EDEB64DD
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 20:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2373EEB64DD
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 20:13:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229448AbjGYULS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jul 2023 16:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51546 "EHLO
+        id S229509AbjGYUNQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jul 2023 16:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjGYULR (ORCPT
+        with ESMTP id S229606AbjGYUNO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jul 2023 16:11:17 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4651A1BE2
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 13:11:16 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b9a828c920so14180451fa.1
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 13:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690315874; x=1690920674;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7O+I1J6EYVnwgKOmqsEKJkPBtq7V8p2nt+4NZWxtynA=;
-        b=InoYR4rNPb/gWV8AqP/ZiBjK21BiUoNM8z5z9DSMKMLeT/TPWYc7wpuWpqa1IFiTdG
-         RQQ37OMc6Jt0yGEO+g5OjRTrZ5SKIYNurDDLUksosIbMnLQ/IXl1amHJ+f7810h1uYmu
-         2IJPM//OmJ6DuUXgCYeGig3Ph83RyfHhtuZHwlYwwh21ttcBfhh1qrlA2vB+jKdnHu1u
-         swePhvo3T/+eXHF5btDs9TO1T1fH0qwfDIXbOjeLGBrzMlkVWno/kltdtGjJuaZYKfg2
-         giuUn7vpUpUnLEaSIwsUmKNM+bjmH4L62diPocYG9uKpd36ruoLG4Rb6MAi0ZCF5j7nW
-         cP2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690315874; x=1690920674;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7O+I1J6EYVnwgKOmqsEKJkPBtq7V8p2nt+4NZWxtynA=;
-        b=NXpnN+Fmx5+xfvvEZjheIju5eKgvcmBy8ZMeYWcYaOFsaWn7zGcTuMy63Joztdogxi
-         jSdCiXaQpnRPv9sRZT9NeSJ36D9j7xZjCOtq2LjqilIxrzn7dmXLUwc91pHgwjPB7IAW
-         8MpVOlsv2iLiawlw7iwjaGotwR7BpgxoOr2XV+PeHY8K4vGKCV06dhhLL6H+Z/kCbh36
-         Ppoo3LTrChKs0wSnI1Ce4s6ZLqL3kPU3ah6wFvB8rzzUid8wFpjD8ROeThX8MpVJOdiW
-         wKF4hcX3iy9Ah6z1WR3uQy/Nd5VSwnrjpMDMZ8l3WcsmHEVCuqnZM20tO/ioRQaY7cH8
-         Zhng==
-X-Gm-Message-State: ABy/qLYdvV3SkkhmAb7qyuQZNkFn3u3GmKb9eH67epn48XIIOtNx7A6l
-        ddTzpcvjKfx5N1AvRjcteTTw4w==
-X-Google-Smtp-Source: APBJJlHKZs34yLkzenFmeMhBQoMJmhzcYqDMZBPkq1CsuwmUNRZdK+Cs/MSP4YQ7u5mQC2SN7m9NAw==
-X-Received: by 2002:a2e:808a:0:b0:2b3:4ea3:d020 with SMTP id i10-20020a2e808a000000b002b34ea3d020mr9317838ljg.17.1690315874458;
-        Tue, 25 Jul 2023 13:11:14 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id n10-20020a170906164a00b00977cad140a8sm8601292ejd.218.2023.07.25.13.11.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jul 2023 13:11:13 -0700 (PDT)
-Message-ID: <3a75c310-1eb3-ebcf-82e0-99897e5e37c9@linaro.org>
-Date:   Tue, 25 Jul 2023 22:11:11 +0200
+        Tue, 25 Jul 2023 16:13:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38B61FCF;
+        Tue, 25 Jul 2023 13:13:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A2DB618CC;
+        Tue, 25 Jul 2023 20:13:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A78CC433C7;
+        Tue, 25 Jul 2023 20:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690315992;
+        bh=/oB+WbRmcJ8xryE+2WxCR9Kz6yQKxMihN6JK4Kun4Qs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BjZe8mvL40hjXlWwA8cBP1WjvlLsIxnZrWCdd2RdwQefC+RnbmnhebJ2+RvQTbR1N
+         HKTGsecWj/7oQXfU0oAVP99AkoOfOYuPgiTCMfUvVpkLFtn4ALbSwhbT6w2uexLxuJ
+         qoZC+gPCbEDfOIhtlCy8bATwxZcWcYKDwXz0M/iHYWEgWrqUY9CHIwVzvrnA0h+nxr
+         facSA5+3smH8Wb8Pt3IkV7vml/UZHcSauq7Oai7ZdvtSinntGhU/1B2GJ670JiCEEo
+         54zIRa/UbgOOVT/cHZpPX5kOR5jYvm5y1isI2mFU0GqYBHLAM3HIRLD4F0r5LipZB7
+         sNZI2gUj+YFjA==
+Date:   Tue, 25 Jul 2023 21:13:08 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: clock: tegra124-dfll: Convert to
+ json-schema
+Message-ID: <20230725-ferocity-landfall-3cb67f60f039@spud>
+References: <20230725162046.1426970-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [Patch RESEND 4/4] memory: tegra: make icc_set_bw return zero if
- BWMGR not supported
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
-        treding@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     bbasu@nvidia.com, talho@nvidia.com
-References: <20230621134400.23070-1-sumitg@nvidia.com>
- <20230621134400.23070-5-sumitg@nvidia.com>
- <df57e126-fe89-8a43-42aa-f0b4a5a404dc@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <df57e126-fe89-8a43-42aa-f0b4a5a404dc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pxEfUobMQuzGKX1s"
+Content-Disposition: inline
+In-Reply-To: <20230725162046.1426970-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25/07/2023 20:29, Jon Hunter wrote:
-> Hi Krzysztof,
-> 
-> On 21/06/2023 14:44, Sumit Gupta wrote:
->> Return zero from icc_set_bw() to MC client driver if MRQ_BWMGR_INT
->> is not supported by the BPMP-FW. Currently, 'EINVAL' is returned
->> which causes error message in client drivers even when the platform
->> doesn't support scaling.
->>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->> ---
->>   drivers/memory/tegra/tegra234.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
->> index bc73be7fe143..07aba301a173 100644
->> --- a/drivers/memory/tegra/tegra234.c
->> +++ b/drivers/memory/tegra/tegra234.c
->> @@ -951,7 +951,7 @@ static int tegra234_mc_icc_set(struct icc_node *src, struct icc_node *dst)
->>   		return 0;
->>   
->>   	if (!mc->bwmgr_mrq_supported)
->> -		return -EINVAL;
->> +		return 0;
->>   
->>   	if (!mc->bpmp) {
->>   		dev_err(mc->dev, "BPMP reference NULL\n");
->> @@ -998,7 +998,7 @@ static int tegra234_mc_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
->>   	struct tegra_mc *mc = icc_provider_to_tegra_mc(p);
->>   
->>   	if (!mc->bwmgr_mrq_supported)
->> -		return -EINVAL;
->> +		return 0;
->>   
->>   	if (node->id == TEGRA_ICC_MC_CPU_CLUSTER0 ||
->>   	    node->id == TEGRA_ICC_MC_CPU_CLUSTER1 ||
-> 
-> 
-> I have also found that this change is needed for Linux v6.5 in order to 
-> work with current BPMP firmware. Without this patch PCIe does not work 
-> on Tegra234. We should probably also add the following fixes tag for 
-> this patch ...
-> 
-> Fixes: 9365bf006f53 ("PCI: tegra194: Add interconnect support in Tegra234")
 
-Thank you, I moved the commit to fixes branch. I hope other patches do
-not depend on the order (it was part of the patchset as 3/4 commit).
+--pxEfUobMQuzGKX1s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Since I re-shuffled everything, I will send pull for current RC
-tomorrow, not today.
+Hey,
 
-Best regards,
-Krzysztof
+On Tue, Jul 25, 2023 at 06:20:46PM +0200, Thierry Reding wrote:
+> +  nvidia,pwm-to-pmic:
+> +    description: Use PWM to control regulator rather then I2C.
+> +    $ref: /schemas/types.yaml#/definitions/flag
 
+> +  # required properties for PWM mode
+> +  nvidia,pwm-period-nanoseconds:
+> +    description: period of PWM square wave in nanoseconds.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1000
+> +    maximum: 1000000000
+> +
+> +  nvidia,pwm-tristate-microvolts:
+> +    description: Regulator voltage in micro volts when PWM control is
+> +      disabled and the PWM output is tristated. Note that this voltage
+> +      is configured in hardware, typically via a resistor divider.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 3300000
+> +
+> +  nvidia,pwm-min-microvolts:
+> +    description: Regulator voltage in micro volts when PWM control is
+> +      enabled and PWM output is low. Hence, this is the minimum output
+> +      voltage that the regulator supports when PWM control is enabled.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 3300000
+> +
+> +  nvidia,pwm-voltage-step-microvolts:
+> +    description: |
+> +      Voltage increase in micro volts corresponding to a 1/33th increase
+> +      in duty cycle. Eg the voltage for 2/33th duty cycle would be:
+> +
+> +        nvidia,pwm-min-microvolts + nvidia,pwm-voltage-step-microvolts * 2
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 1000000
+> +
+> +  pinctrl-names:
+> +    items:
+> +      # I/O pad configuration when PWM control is enabled
+> +      - const: dvfs_pwm_enable
+> +      # I/O pad configuration when PWM control is disabled
+> +      - const: dvfs_pwm_disable
+
+Should "nvidia,pwm-to-pmic" not have a dependencies thing like:
+"nvidia,suspend-mode": ["nvidia,core-pwr-off-time", "nvidia,cpu-pwr-off-time"]
+to ensure that the required properties are set?
+
+Thanks,
+Conor.
+
+--pxEfUobMQuzGKX1s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMAs1AAKCRB4tDGHoIJi
+0qbKAP9H3kAVy3HAtlhFPpBLwA29CcRle6CooaM/arRX/t0cYgD/bAIM71Tq7E/H
+73GhoaZL0kN2VCjX84kVKzfmdSwFPwU=
+=eksT
+-----END PGP SIGNATURE-----
+
+--pxEfUobMQuzGKX1s--
