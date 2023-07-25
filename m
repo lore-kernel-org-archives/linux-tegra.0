@@ -2,132 +2,174 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F904C00528
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 06:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5D4C04A6A
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 07:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232306AbjGYGvf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jul 2023 02:51:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
+        id S231751AbjGYHwK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jul 2023 03:52:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231147AbjGYGv1 (ORCPT
+        with ESMTP id S231690AbjGYHwJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jul 2023 02:51:27 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE1310C9
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Jul 2023 23:51:26 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qOBsF-0008CR-QE; Tue, 25 Jul 2023 08:50:23 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qOBs7-001wAn-Vc; Tue, 25 Jul 2023 08:50:15 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qOBs7-007bOg-45; Tue, 25 Jul 2023 08:50:15 +0200
-Date:   Tue, 25 Jul 2023 08:50:14 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jacky Huang <ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] tty: Explicitly include correct DT includes
-Message-ID: <20230725065014.kjdcos77kzepprvw@pengutronix.de>
-References: <20230724205440.767071-1-robh@kernel.org>
+        Tue, 25 Jul 2023 03:52:09 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5194C4
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 00:52:07 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-666e5f0d60bso2926115b3a.3
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 00:52:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690271527; x=1690876327;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OmasqMUtJENc1u5aTvRQMoAivuz8HYaIGy1Y1ma70D8=;
+        b=UmB4B6smVGikTJLcujt/b4P3lhWQmrB9TXbcM8coHikIALIEXs1/pL5rpjkQ6mkOBg
+         9jdW6ZLlvh3LBvJBTKtiSpHy6kFaoD/dlfYjrIPOlVPUog3SqjHQLIRj8oTdSXg78fvn
+         m61/3xqmr/R17ONxQGI9CeXnaU3Vb4KdloupShqgK4bKG8vA00liUGyZbtyMvSDMdlpJ
+         JJwGvfNbxfNt5f90YM7FGx1FzeDO2f85WF3Q1SjrVqcPI6qrI5bk0oycevJ4rcbVOkyQ
+         YVl7pwZ8wacbaGW8mhlw2Jsuwoho2+2ApJFwmznFj1N0jVAMyUhiADVYIsGyl8YLipYG
+         NGGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690271527; x=1690876327;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OmasqMUtJENc1u5aTvRQMoAivuz8HYaIGy1Y1ma70D8=;
+        b=W1Ov0gKpgO3kJAzS1DY2gL+z8s3z0kXBmHA2aq2ixVqOP+7RzL+5qOaSojuY2LtJj4
+         Zg6js/9v3h9wG6iA/VJM8YLCMswjktmXpcd6ZFP93LP9msW7KU5KEzc+O3NvyA+dX2P2
+         7fu9jPLGIqF5Y0OOpno1FfuN0t27/kffYwsKxnxS4WWvU2n/w3LADXqG1zo6OWZAwoHL
+         GpCFBU7LMnlxEhupwujfi2qJsid8ImMadnZKkSW74clXK11DGpl5aGXZrdDtxR7Yl5YM
+         9xcIHeqSqoJ8z5N8Xo5FEE3UC8T5bp6vS6vwAshsUUP4ltcnFxvWWAUtWdsV5IBVjBuh
+         fMDQ==
+X-Gm-Message-State: ABy/qLaTvAGgQvv94UghjQrTKof2ek5S7j5MUvyghWgH3G4wAxWIxZNR
+        k4EougAoVGGPoT/RSD8gVYpj
+X-Google-Smtp-Source: APBJJlEFsFBmcbu+kGDXRDjdPf4YlThrOLcJmvZxtOGuaDCNZbKmlWT96t6835OyA8ouWWRJyxLeJw==
+X-Received: by 2002:a05:6a20:3b30:b0:137:26b9:f403 with SMTP id c48-20020a056a203b3000b0013726b9f403mr9308853pzh.49.1690271527205;
+        Tue, 25 Jul 2023 00:52:07 -0700 (PDT)
+Received: from thinkpad ([117.206.117.206])
+        by smtp.gmail.com with ESMTPSA id a13-20020aa780cd000000b006863240ef3bsm9267172pfn.171.2023.07.25.00.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jul 2023 00:52:06 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 13:21:59 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V1] Revert "PCI: tegra194: Enable support for 256 Byte
+ payload"
+Message-ID: <20230725075159.GB22139@thinkpad>
+References: <20230608093652.1409485-1-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="egg3m5pjvujeb37y"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230724205440.767071-1-robh@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230608093652.1409485-1-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Jun 08, 2023 at 03:06:52PM +0530, Vidya Sagar wrote:
+> This reverts commit 4fb8e46c1bc4 ("PCI: tegra194: Enable
+> support for 256 Byte payload")
+> 
+> Consider a PCIe hierarchy with a PCIe switch and a device connected
+> downstream of the switch that has support for MPS which is the minimum
+> in the hierarchy, and root port programmed with an MPS in its DevCtl
+> register that is greater than the minimum. In this scenario, the default
+> bus configuration of the kernel i.e. "PCIE_BUS_DEFAULT" doesn't
+> configure the MPS settings in the hierarchy correctly resulting in the
+> device with support for minimum MPS in the hierarchy receiving the TLPs
+> of size more than that. Although this can be addresed by appending
+> "pci=pcie_bus_safe" to the kernel command line, it doesn't seem to be a
+> good idea to always have this commandline argument even for the basic
+> functionality to work.
+> Reverting commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256
+> Byte payload") avoids this requirement and ensures that the basic
+> functionality of the devices irrespective of the hierarchy and the MPS of
+> the devices in the hierarchy.
+> To reap the benefits of having support for higher MPS, optionally, one can
+> always append the kernel command line with "pci=pcie_bus_perf".
+> 
+> Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 
---egg3m5pjvujeb37y
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I know that this patch is merged. But I happen to test a similar change on Qcom
+platform during a patch review and found that the PCI core changes MPS to 128
+when a 128byte supported device is found:
 
-Hello Rob,
+[    3.174290] pci 0000:01:00.0: Upstream bridge's Max Payload Size set to 128 (was 256, max 128)
+[    3.186538] pci 0000:01:00.0: Max Payload Size set to 128 (was 128, max 128)
 
-On Mon, Jul 24, 2023 at 02:54:38PM -0600, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
+This was just randomly tested on a platform whose Root port DEVCAP was 128, but
+it shouldn't matter. And I didn't change the default bus configuration.
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de> # for imx
+Wondering how you ended up facing issues with it.
 
-Thanks for your efforts!
+- Mani
 
-Best regards
-Uwe
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 13 -------------
+>  1 file changed, 13 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 4fdadc7b045f..877d81b13334 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -892,7 +892,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>  	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+>  	u32 val;
+> -	u16 val_16;
+>  
+>  	pp->bridge->ops = &tegra_pci_ops;
+>  
+> @@ -900,11 +899,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+>  		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>  							      PCI_CAP_ID_EXP);
+>  
+> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+> -
+>  	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
+>  	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
+>  	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
+> @@ -1756,7 +1750,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>  	struct device *dev = pcie->dev;
+>  	u32 val;
+>  	int ret;
+> -	u16 val_16;
+>  
+>  	if (pcie->ep_state == EP_STATE_ENABLED)
+>  		return;
+> @@ -1887,11 +1880,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>  	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>  						      PCI_CAP_ID_EXP);
+>  
+> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
+> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
+> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
+> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
+> -
+>  	/* Clear Slot Clock Configuration bit if SRNS configuration */
+>  	if (pcie->enable_srns) {
+>  		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+> @@ -1900,7 +1888,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>  		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
+>  				   val_16);
+>  	}
+> -
+>  	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+>  
+>  	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
+> -- 
+> 2.25.1
+> 
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---egg3m5pjvujeb37y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmS/cKYACgkQj4D7WH0S
-/k5DeQf/XZ9i2MKupQ474foZd/xSXDoeGP/mzcur4EO3Bu06s1VDyknWODS3IU5p
-VGN/GNMpV8QCC4UBbhddhyqP60D9vYNBqbyw6ZsVZTH5+9Ld4Dmfi8jTYeTNiYYc
-+EmM4HrAdY1GVXkdkip00c1GWdcPsHQA6JgSwV1z2cjiJU/7AeRdF6FTB7LPtxCO
-lHZ+at0pra4cRma7o2dZyjIZCa3M05OFqBIX5FAbCCptQsRYlnfTJbOuA2Fr3aTq
-mn7uHJbHPuX+r4PnWXzeq/IC4eEynkYfcINsTmQtG2H2ecI+GvJGttDpTrZstKr7
-ThQy424A1jo0R00lnwmfFmOG/Q7gKQ==
-=p7gV
------END PGP SIGNATURE-----
-
---egg3m5pjvujeb37y--
+-- 
+மணிவண்ணன் சதாசிவம்
