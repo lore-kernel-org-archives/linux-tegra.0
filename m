@@ -2,107 +2,123 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FCDC001E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 10:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9F4C001DE
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 10:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233460AbjGYKQ5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jul 2023 06:16:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41774 "EHLO
+        id S232957AbjGYKUX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jul 2023 06:20:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232983AbjGYKQs (ORCPT
+        with ESMTP id S229449AbjGYKUW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jul 2023 06:16:48 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94591BE2
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:16:29 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-993d1f899d7so915886366b.2
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:16:29 -0700 (PDT)
+        Tue, 25 Jul 2023 06:20:22 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E51210CB
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:20:21 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9922d6f003cso914304266b.0
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Jul 2023 03:20:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690280188; x=1690884988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qh91NfZ3U4C6egIsotV0MBnxWbLv8ptyWOp86GqgOLI=;
-        b=y1Trlnb4gB4mMV4VUMtKvQCOE5d+e2N3T7I2rUWDAWcYxUHtecj9Bh8rgMshZVdikm
-         1O/Ct4WQ3Xkr4rSfYFzsaZXtoNjQq5CK2Ct1OKaQ/rawtrP0juyFtU/X0c5uRCc6KAa4
-         22j3tPkoy7NOi722CIRS2UkiWX7gQfC9zMQXnFQhE0BxTxscDLsUo/v/mzwPgIyAZutJ
-         0ULT/0ordlkAJ+E7vp0EnJGosyjsm0/ETV52MAKTb+CjFU/QL5lf7soUEjBV9dpYjMiO
-         qElMpzbIFwxB4rwZKJmBTf8ylm5Uya9Futfaf9Vd6OBFxLzyMfq4ZYvabARM0aHe7F4Y
-         uB3A==
+        d=linaro.org; s=google; t=1690280420; x=1690885220;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+jIVNYaHHmeDQiXmoP9m789p3Mzn0tkwmSrMiWxE+uY=;
+        b=CfsxZ9259skla4lUSHgp4lTpPTYElCjewiULtELpmzhpzegOTMrUaBaJ7OvAYXEVJK
+         /pjs8RLYyuXyth4xF+5fYndWo2Om+b9t8VXOfZEMY5fWAS2uPZn3dxj4E1XnFJlFPZHZ
+         ZeEHROCRal5I0OubsqBedHfYf1qjpOrKP75Svv+ZzL6rj+A16mZRZuPaTOYkStqLtj3c
+         ETncB5auQfnoLJF5k+5QeaKNOl8gsK5O0MQ/h88iDtKU4xzvy2JfT6PQhzXUV8oOK/tQ
+         kUwfOeVgdfQHlmZSFeSqeCuAGCA7UERCZhnRSkcg5OZR51SzLIQ770uFOgI3IXuKPSA4
+         rWfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690280188; x=1690884988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qh91NfZ3U4C6egIsotV0MBnxWbLv8ptyWOp86GqgOLI=;
-        b=D4Wmu00lt2vYycNiLK9m3C83425P10rNh08esV3uI1t+XqPu6qYFgyT1ZoviXVxcTu
-         nJ9R4e35bj6jzWVHD6g+yu76gKIqG30g6IafumZzCAQfvGBKsB2dCIlnqu4JSG594SSx
-         aUcwIVBJoMY2y+Qb0o6Iyd3esrEVJAN1reD15KDq7ddw9ksywEQLJkMQTEPMj9xEbrDh
-         p3vMpiZHy3ibaaDf2i8I7hvqWyzzNcvTuugDItvEuf0UPRaZTOCDNG1s8o0TEYTfBUNl
-         dSvW5z8jLbRseKUYhtxq4K+GlCd3ZxRLJemkxgL0Ll11FwvIgLy2S6U9a1cMKoSl4cBR
-         5vxQ==
-X-Gm-Message-State: ABy/qLbYNL5pIc5iVAG0P5GXb93fEWqT4J/83QuXmRt/X7JXoKJ5ZK14
-        rI1HRTXtp8raG4sqa6NrRhswjQ==
-X-Google-Smtp-Source: APBJJlH33uo36eZTl/SakfzC2vCOa5Iq3OoPoR12EwPKr7KqHe676HH+tsYFj1dM6TCCidzg3zGjDA==
-X-Received: by 2002:a17:906:15b:b0:993:e9b8:90f4 with SMTP id 27-20020a170906015b00b00993e9b890f4mr13107763ejh.8.1690280188528;
-        Tue, 25 Jul 2023 03:16:28 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id l23-20020a1709065a9700b00997e00e78e6sm7944779ejq.112.2023.07.25.03.16.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 03:16:28 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-        Sylvain Petinot <sylvain.petinot@foss.st.com>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] media: dt-bindings: drop unneeded status from examples
-Date:   Tue, 25 Jul 2023 12:16:25 +0200
-Message-Id: <20230725101625.75162-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20221208; t=1690280420; x=1690885220;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+jIVNYaHHmeDQiXmoP9m789p3Mzn0tkwmSrMiWxE+uY=;
+        b=iowFq03wQ7yZm1tVN7ya2fvZ2iahqoIs8+j0oc5dQiGNlKLC1jjMO8CiFGYJ/9cMof
+         E0mPjUQyAQg21t5N9OezgV16od5s1xTTk9RPxecfw7gZnnDKK9EQrTh+xPesbTJoh8Ss
+         R6RIzhBNTueg3zUtjkAEwLrMUGguYw2vpe4crw/9ZuJBFUJO+9/Q6F1/Fd7ZcVCqAjug
+         tIdfPkBt17fUvGOc7RZOphoW8HYY9XVcmemHlNU0CYxZNTzQ1ddFxC0bxvDYG6A9juuB
+         84T4HqKTH50AS9IFj/GBA6B3eS1cOyosXpzD7OoMLmr1gtDoavwIxSUQqJOhsmG5VvGA
+         djFA==
+X-Gm-Message-State: ABy/qLbzJSKBbYuCXZhzLeTs8PZ5XDUuQ4PKM9k1C6LyCXP2zMtgV0X0
+        nsfYJ1ayXhXGBq4GqKQSoGKw8GyVHLDYjmjByjY=
+X-Google-Smtp-Source: APBJJlHY9X0+bqoFGop+ibsHnoN7/6ELpRtMC0j6aM2Jx6xFfYTFRrxPc5iTwGKP7zYcJICSUetA8Q==
+X-Received: by 2002:a17:906:1059:b0:993:d6e8:2389 with SMTP id j25-20020a170906105900b00993d6e82389mr14174629ejj.26.1690280419992;
+        Tue, 25 Jul 2023 03:20:19 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id h25-20020a170906855900b00993017b64a9sm7937211ejy.223.2023.07.25.03.20.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jul 2023 03:20:19 -0700 (PDT)
+Message-ID: <40b7765e-5e6a-dca9-980b-62123b3779bf@linaro.org>
+Date:   Tue, 25 Jul 2023 12:20:18 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] memory: tegra: Add dummy implementation on Tegra194
+Content-Language: en-US
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sumit Gupta <sumitg@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230629160132.768940-1-thierry.reding@gmail.com>
+ <1fd1d5d7-7296-0e62-9f65-7347ac0f0500@linaro.org> <ZKwCYjKXtuDsOF9E@orome>
+ <1ebfbbec-d5cf-c6ac-2cf1-eab970903500@linaro.org>
+ <cab267a2-28a0-969a-44cd-c87c8fe65218@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <cab267a2-28a0-969a-44cd-c87c8fe65218@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Example DTS should not have 'status' property.
+On 25/07/2023 12:14, Jon Hunter wrote:
+> Hi Krzysztof,
+> 
+> On 10/07/2023 14:29, Krzysztof Kozlowski wrote:
+>> On 10/07/2023 15:06, Thierry Reding wrote:
+>>> On Mon, Jul 10, 2023 at 12:10:43PM +0200, Krzysztof Kozlowski wrote:
+>>>> On 29/06/2023 18:01, Thierry Reding wrote:
+>>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>>
+>>>>> With the introduction of commit 9365bf006f53 ("PCI: tegra194: Add
+>>>>> interconnect support in Tegra234"), the PCI driver on Tegra194 and later
+>>>>> requires an interconnect provider. However, a provider is currently only
+>>>>> exposed on Tegra234 and this causes PCI on Tegra194 to defer probe
+>>>>> indefinitely.
+>>>>>
+>>>>> Fix this by adding a dummy implementation on Tegra194. This allows nodes
+>>>>> to be provided to interconnect consumers, but doesn't do any bandwidth
+>>>>> accounting or frequency scaling.
+>>>>>
+>>>>> Fixes: 9365bf006f53 ("PCI: tegra194: Add interconnect support in Tegra234")
+>>>>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+>>>>
+>>>> Applied with checkpatch warning. Please be sure you run checkpatch
+>>>> before sending the patches.
+>>>
+>>> Are you referring to the Reported-by/Closes complaint?
+>>
+>> Yes.
+>>
+>>> I didn't include
+>>> a URL here because this came from an internal test report and there's no
+>>> corresponding public reference.
+>>
+>> Ah, ok, apologies for pickiness then. :)
+>>
+>>>
+>>> I suppose I could've left out the Reported-by altogether.
+>>
+>> I think it is fine. Checkpatch warning is just advisory.
+> 
+> 
+> We need this in v6.5 as a fix, because without this change PCIe support 
+> is broken on Tegra194 devices. Would you be able to send as a fix for v6.5?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml       | 1 -
- Documentation/devicetree/bindings/media/i2c/st,st-mipid02.yaml   | 1 -
- 2 files changed, 2 deletions(-)
+Thanks for letting me know. I'll send it soon.
 
-diff --git a/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml b/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
-index 369c48fd9bf9..a6b73498bc21 100644
---- a/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
-+++ b/Documentation/devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml
-@@ -53,6 +53,5 @@ examples:
-         interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-         clocks = <&tegra_car TEGRA124_CLK_CEC>;
-         clock-names = "cec";
--        status = "disabled";
-         hdmi-phandle = <&hdmi>;
-     };
-diff --git a/Documentation/devicetree/bindings/media/i2c/st,st-mipid02.yaml b/Documentation/devicetree/bindings/media/i2c/st,st-mipid02.yaml
-index 19a39d753aad..b68141264c0e 100644
---- a/Documentation/devicetree/bindings/media/i2c/st,st-mipid02.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/st,st-mipid02.yaml
-@@ -143,7 +143,6 @@ examples:
-         mipid02: csi2rx@14 {
-             compatible = "st,st-mipid02";
-             reg = <0x14>;
--            status = "okay";
-             clocks = <&clk_ext_camera_12>;
-             clock-names = "xclk";
-             VDDE-supply = <&vdd>;
--- 
-2.34.1
+Best regards,
+Krzysztof
 
