@@ -2,144 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CC4C0015E
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 16:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2792FC001DE
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jul 2023 16:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230143AbjGYQZk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jul 2023 12:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56826 "EHLO
+        id S229689AbjGYQ1t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jul 2023 12:27:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjGYQZj (ORCPT
+        with ESMTP id S229496AbjGYQ1s (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jul 2023 12:25:39 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E3B9B;
-        Tue, 25 Jul 2023 09:25:38 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-52240b64407so1908708a12.0;
-        Tue, 25 Jul 2023 09:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690302337; x=1690907137;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=opEm+NbJrRy11XcZkr0LS4bqRah+SsErui7KFoWzfu8=;
-        b=dzO+p5k79gtV73Kt67RWF2+5SbOn5g1cXmQFz4KHZKv542lDp/uNAHUdqSS5U7vefQ
-         +7GlGZh1zcyRDqRVzljuqavrt5n8WteDUuZmfXyLviKor8kTQhgbans09CFAUcRzKeVF
-         6fTul+1h0Tfs5KITxxGJGxh4MTF3fJVOWkTtj7saI5cskRFLX7TaB1Cbve0f6e4+ycGc
-         CleNupZX9N8CJf2womGbKDVr10z7ML5klAgwZ8yy4Qg1H4v/K//q+8apybucx7PneqKS
-         1X5z7NVG5PWkMWwBxdMZoke040olVSa6LK2rD95xDU3Mq+MYqNMdEjk8CNV0Bav8YOuf
-         gHMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690302337; x=1690907137;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=opEm+NbJrRy11XcZkr0LS4bqRah+SsErui7KFoWzfu8=;
-        b=j3p6TtrhsUUUBHDUblwcCbXjUzfdwa8BAUJtiYgu33Ael5KLvP72nm+xQGYTi+5VTz
-         TWMeJmx0wR8VXshIpRIS4MJgVIXKpsI5bi0nfT0bRl6xHdB2mvgtWX0VZhGycr+832bD
-         hkZP4pbiX4S1wrMxxOvtwCFtxv/AnwAunizCp/uv7k/lEsFmJw/H2Pf9NK3toREz8Cid
-         i857EmpEy031qn8Z0FfJVp/878lBBG8vSPYoNYm8vbE3MFN9/ib5mWCNDau5kaBMQsn9
-         qujvSSZgmuhJOAhDB15+FMhIj0uxAEKCLRdJVmvny/M98K+NkuFIF6duAIga+In0APAX
-         B9xg==
-X-Gm-Message-State: ABy/qLY5bU6w52dSNPJ4IrsgvGTYivtqQpMyqUx3KkFKneVRgx5peYhW
-        rlHhb6KyNqm1/MLc44vcBuw=
-X-Google-Smtp-Source: APBJJlF7CN6/xRi5xikOo099I/cPnS0zctQyDhc1pz7caL0MLFaJglPdXQDshJiDcvfXmAnQNTK5+g==
-X-Received: by 2002:a17:906:3282:b0:994:81d:2ac3 with SMTP id 2-20020a170906328200b00994081d2ac3mr12267759ejw.18.1690302336600;
-        Tue, 25 Jul 2023 09:25:36 -0700 (PDT)
-Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id xo22-20020a170907bb9600b0098860721959sm8339056ejc.198.2023.07.25.09.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 09:25:36 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 18:25:34 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Andi Shyti <andi.shyti@kernel.org>
-Cc:     Wolfram Sang <wsa@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: tegra: Fix failure during probe deferral cleanup
-Message-ID: <ZL_3fhE-ve08ZZRp@orome>
-References: <20230707132619.2998382-1-thierry.reding@gmail.com>
+        Tue, 25 Jul 2023 12:27:48 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2064.outbound.protection.outlook.com [40.107.101.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCD5611A;
+        Tue, 25 Jul 2023 09:27:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HFsov5C4eUYt8khrh4GD0cg6FoNec5JBSvGUaSylyv7m3xrx796Y+BENYXMF1FXMRR+kPwywHJCeMre5dnrTTHTmq0IIhyixY0l2pcQTJLjO4RuLsbJAM/04f0lnV3udvmlFCknL/V3kyFQxllrfYr0PzLJH2kH8sSy2xjGkxrHCErOs2wh969m8RahfrgILgtGb2c1OPH4NR0ZQ/EvReI6b3HEgs2NX0xcxrb5hCtyfl/7Zij+s2Dq5B1VXK3ACWCYsnibIeXTGfS0ZJuSi7SqZcw2xONvJtuSjTuEXR2F8++Klbs6TH5JfL1xClNHsqsDZ63p3UyDwdJWik+Bwxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O+DtaNZ/3XG7+DHiplzwoSIfXnvpDKmjI4ixjwaUzqk=;
+ b=c/MMp8atSr0yMzre6gF5SVbrZ5Wm0OPgBGZEnzUMM1/0dm182ZKRDNzslm5jccc01aXU7KRai/rtSqUzgcfEDwrkBH1FsjMARCb3NWj5nqdPs/etIOtHqmzK5g4/VrNRK78dGj6aERNZG5EcEoxPJQgc2XP36KXo1K0LuHrELsNZCPCSxweu9ehxTtiHe8Gqhjl9zFIv/MP00Tjo45BzZAaWN+bcJ1H8Q5bIAlGfObO0S2+L0zUMoIE/t99o4L0NpGaNl0/NxI/LOqA1/U0RYm5bO7l9dldNVaHsq+K8WCwxbmczJiaDQqto2LzKWWS6ez8KqchfDB9eXMvojcFwOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O+DtaNZ/3XG7+DHiplzwoSIfXnvpDKmjI4ixjwaUzqk=;
+ b=pgZImOeEKLa56bnaZLgfocAm8ZFs86oG4vlQHP+14M5qNKd1mmLCPSgaesSmTKowaSiRJnIAJZemJjawEJSY2ceG60LjXcVxDLggUzNJfXqSp70mugBtcrIGzMqD1w8RTBljsuVz4eJX7vid1bx0LtmFn/ziLscEoGkHDH2OJq6Tv7T3IrClpXAGhxrYyo2jTI/xg7qY5WvFDdVtKxu5bDqHRd/zKVEcqQVDaGNpsLtZcp15IUqMMcS8KMqzxSEnu+ZVkZqj9LkPI64Ym1ibwCnklG1JCT38FQGETdkdQLMhlB+z4eiM2o/DJ1WJfrE5tLHPoxeDm2BG5HCDSyAzqw==
+Received: from SJ0PR03CA0377.namprd03.prod.outlook.com (2603:10b6:a03:3a1::22)
+ by BY5PR12MB4917.namprd12.prod.outlook.com (2603:10b6:a03:1d1::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.33; Tue, 25 Jul
+ 2023 16:27:40 +0000
+Received: from CO1NAM11FT051.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:a03:3a1:cafe::15) by SJ0PR03CA0377.outlook.office365.com
+ (2603:10b6:a03:3a1::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.33 via Frontend
+ Transport; Tue, 25 Jul 2023 16:27:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1NAM11FT051.mail.protection.outlook.com (10.13.174.114) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6631.25 via Frontend Transport; Tue, 25 Jul 2023 16:27:39 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 25 Jul 2023
+ 09:27:30 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Tue, 25 Jul 2023 09:27:30 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Tue, 25 Jul 2023 09:27:30 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/313] 5.4.251-rc1 review
+In-Reply-To: <20230725104521.167250627@linuxfoundation.org>
+References: <20230725104521.167250627@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n6r1FjvzXBt2KPvx"
-Content-Disposition: inline
-In-Reply-To: <20230707132619.2998382-1-thierry.reding@gmail.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+Message-ID: <9131881b-ea1e-461d-822a-088a5df4ad6c@drhqmail202.nvidia.com>
+Date:   Tue, 25 Jul 2023 09:27:30 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT051:EE_|BY5PR12MB4917:EE_
+X-MS-Office365-Filtering-Correlation-Id: 642b38d8-e93e-41ff-f4b3-08db8d2c107e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /qymqQCe4NGPtX8OecO9mv0xsql3Fc2hWPx9HzEFbXzmAQtqcME0k/CjAKzz2mf4orqKth71kSS3rffPePBariPCQ6MOLuLtVTy9H4iMY2xFEqYnQR2AlvYq6rf9PEDJWGbgJECpc4gojp+sZv2eKffFLl2GtUVAR+ulwCAPLqAa0CuvICdlprZdgjN+H5XQsVwNHxM1m74rwJD34xeNqZBhPHSOKWel/nq+wJ0ETk0MFsf3PreLaBF3es1S8LPTtpwFHHBj52El1hOzy3mRyASPfGlvQbhkJZpIJRptTDhFKJ/SomuLUHfY+4lWkwCvIiHfozwAp0mhhUZAjIp5LTGmmlYDyZ9EpOQ6b818zrE01huzS+/u2Gxpf9szrs2ImQd9TLlb9OG+lNj4JWwn94lM5qUzZZj3lDDyc2XIxVCkydlBssqGgNQuiPD14b5Nte3giN8SA8Mf99Tg+01hxskM0Ybr7A6CnyoH7GC8yuJfw7W00hDriVYM+de+ZphmDzAnj7WfqzYID4Kb5Rhynhuk/oTfF55qPFPIleH0FtoNTDgN+87CqG0XcamyjCY7RshLioPkMV4qtJ7EQw6Bmy3/qmWfuk/52+gREfPUKJ8Efzjb3ut8PEAicfjXbYJS6OCT1VtK6oaZwVKYzL4e/jjJAQT+5KXfgwViJhURoz3XOJGu2XCQ4Sg3BVq7EdI0NDMzXwwuLCCgxSVq35bxRtclXf4R3bFBynsBkLB8YGK2TUYpgihcQGR3Rf8l5NMKEkax3ilApVmFb/B/R0/dxSiDEDQeRT6yiptfRjF96o4=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(136003)(396003)(39860400002)(346002)(451199021)(82310400008)(36840700001)(46966006)(40470700004)(186003)(336012)(26005)(40480700001)(40460700003)(36860700001)(426003)(54906003)(7636003)(47076005)(356005)(82740400003)(31696002)(86362001)(478600001)(70206006)(41300700001)(4326008)(316002)(70586007)(6916009)(2906002)(8936002)(8676002)(5660300002)(7416002)(966005)(31686004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2023 16:27:39.6952
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 642b38d8-e93e-41ff-f4b3-08db8d2c107e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT051.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4917
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, 25 Jul 2023 12:42:33 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.251 release.
+> There are 313 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 27 Jul 2023 10:44:26 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.251-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---n6r1FjvzXBt2KPvx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+All tests passing for Tegra ...
 
-On Fri, Jul 07, 2023 at 03:26:19PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> If the driver fails to obtain a DMA channel, it will initiate cleanup
-> and try to release the DMA channel that couldn't be retrieved. This will
-> cause a crash because the cleanup will try to dereference an ERR_PTR()-
-> encoded error code.
->=20
-> However, there's nothing to clean up at this point yet, so we can avoid
-> this by simply resetting the DMA channel to NULL instead of storing the
-> error code.
->=20
-> Fixes: fcc8a89a1c83 ("i2c: tegra: Share same DMA channel for RX and TX")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v2:
-> - simplify patch by setting dma_chan =3D NULL on channel request failure
->=20
->  drivers/i2c/busses/i2c-tegra.c | 1 +
->  1 file changed, 1 insertion(+)
+Test results for stable-v5.4:
+    11 builds:	11 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
-Hi Andy, Wolfram,
+Linux version:	5.4.251-rc1-g1362bbd1b27c
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-do you have any reservations about this? This fixes a bug that was
-introduced in v6.5-rc1, so it'd be great if this could make v6.5.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Thanks,
-Thierry
-
->=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index f155e9028f94..2a13f11edfd1 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -460,6 +460,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i=
-2c_dev)
->  	i2c_dev->dma_chan =3D dma_request_chan(i2c_dev->dev, "tx");
->  	if (IS_ERR(i2c_dev->dma_chan)) {
->  		err =3D PTR_ERR(i2c_dev->dma_chan);
-> +		i2c_dev->dma_chan =3D NULL;
->  		goto err_out;
->  	}
-> =20
-> --=20
-> 2.41.0
->=20
-
---n6r1FjvzXBt2KPvx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmS/934ACgkQ3SOs138+
-s6Hw2xAAkBAxapO9hGNyRwKVzGoldIj1fQUPxwva/YDVms8AK1Cd4bjW4jJInbaa
-6UhzzqQZUlULuGUYw+UmlfTAl6FNAAn/+WHJw4f/L/Cc/xionbSamQDPmn+Ltpng
-JrDGwf/3hQ5aGs/iqIGbIesYq9dBLt1PnUsn7EaWfiIsEzAaZTOr1pLbmx2epgvY
-mUqXlKf6gB4M75bs0HBZ0PBl+/8ycwL0I5bH0ofqCwEnuIpDNZcGhNO+sL5fv5kK
-RV5fh/3O3fHewltm7aurg/Z+dsrAJCU9IV7coQUE8mstJQIiLTaIbfx3l4UciG3B
-Tk4iW4QWaM7zhSfl3P/5EXdxpjYO4EyKjd5QBXsTwR4bvQS3qKGOffalLbUeMlJi
-vWMXXxynEaDNGUIZVvW87zxch2wLX1rveoTa3/rGQ4Kpz2oSBfESnAxEYF/obsLh
-pi9mHpl7xmBr8395wQWM6ZX9C8EOPtm6HDYt3AD/Ph159PqRB4Sl9TTzsty0G/L9
-GD64KqKiaiAPzUVSGLjXobEdQnMZq0OZsISdP7MDVOpsSyt7XCqii8a7X42+jvIW
-C9l/1GC9GXeMgbdyH3nR8ZULd8wcLYrjQfF+IY3107bcvWD38WmU9jNczFiN1DFb
-6j0C6fYKAnpjnIjWAXGNUXEmkOF7nuXnvlhHNZOJDPwpeFv2BwI=
-=gRhC
------END PGP SIGNATURE-----
-
---n6r1FjvzXBt2KPvx--
+Jon
