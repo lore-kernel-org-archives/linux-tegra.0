@@ -2,60 +2,59 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84743C001B0
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 16:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2597AC001DC
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 18:25:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbjGZQn0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Jul 2023 12:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57882 "EHLO
+        id S229567AbjGZSZj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Jul 2023 14:25:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231345AbjGZQnY (ORCPT
+        with ESMTP id S229980AbjGZSZi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Jul 2023 12:43:24 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D93A02723;
-        Wed, 26 Jul 2023 09:43:20 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9891c73e0fbso266017866b.1;
-        Wed, 26 Jul 2023 09:43:20 -0700 (PDT)
+        Wed, 26 Jul 2023 14:25:38 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63511FC4
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Jul 2023 11:25:37 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-98e39784a85so285753466b.1
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Jul 2023 11:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690389799; x=1690994599;
+        d=gmail.com; s=20221208; t=1690395936; x=1691000736;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uac4TMT6K0WrGk+/Xni8ZZMxvWd8V1Ykq9jESeaCBX4=;
-        b=RI/5+c57NCPqML1Sk5EQCmok6NVr2ImWU6BiNPSizMMpBBsxJumME8gcSsVgxPGhnC
-         KnXQNpMvHc+IBIBMBExIuBTrersTMpAnll1Hm8vjTBSHVItP/7IG4OssPQrq6SOw8bd5
-         cGNGhmq8fCyspe2MhwW/XQtWuqX/kY2pzQee1vSVC97K8r8E4Beww+z4NiDGHrQHrmI2
-         3J8R6/GuFDhzB9mfPfCh5mWWhO8d0ZGTFNwVBvaztcejWCtuiwK4h0xFLQmsw8zJuPM7
-         xbsKjdWb2BdMo2vj0jLYaumwj/JpqZdaXwg9hAHAO4NcaqzKWvDkFKYpBty4xlTPN1Eb
-         l3IQ==
+        bh=TjbPDKd6tzYf+dxp22VkRgDO+M84x0+s26OUcGchntc=;
+        b=q7GL5EWpYYe9FnUMYRvQV6bS22/oNGVswzDAJRamZh09+bNycByOWPlk1rdK7D9xI1
+         IU/fKIiYMNf6YVUynEcfhOyIxbz6xUesjgK28d73TWzJe8+RuPJ8IrGtYUcsdr2tMZKp
+         giiO6NqrMLGE9O9blhBH6D3AO+6PZuF52tDZHlWXNdSk9mVsIwsjcYFoE5Eob3zW9+YJ
+         aAXv3KPmpnzdpKAP1z93LrTPQ89J+aHUjtSrmDhEiPYO0i55N3s852RSJFEIiSLkiyJX
+         w8Tk8qn/YpmLB6tN/3JyBFKzM7TxiYibQMDdrgyIwsKUCYwInQARvy8F98GgOzXaIyU5
+         b4lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690389799; x=1690994599;
+        d=1e100.net; s=20221208; t=1690395936; x=1691000736;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uac4TMT6K0WrGk+/Xni8ZZMxvWd8V1Ykq9jESeaCBX4=;
-        b=W6H8uQF6uO8FaXjX1rGpkV+fo6F7p4CKY8JFFooFJ3tqt/wAj6pa3W9g2Am+tLs7In
-         6QA23e2O4ZBhiiArf3wrFxzVCzbBl5eUJWhIQvHVnWYAjevLBD489L3CEAPefKnrcHpt
-         0a5bVMOijrOLOT/u4plUFS4DuV5L2fh6cMG4esgFc0r1V6QuVsA10BFujn26HdYgcC+U
-         EPnAby0HlrN+uBYN9yRiQYHyAwRTQ9NY0PPH/BTfDFBPcXrSKRUe4FDh+n9Ln+oZBSwo
-         tMoeDRK5ulavFyxhIS10Sv3QVgE9riTIW00MALR04qwK/ZGeskURBp20ZuNoCP3rc54G
-         9T2Q==
-X-Gm-Message-State: ABy/qLYT0AFK5Jwt3xz9QDdU48S7rl6qxEBw6JKPnJM2mtL3y5xMHseV
-        kjAlZbvsrBcQriGsHrjQLZFDu1NVLBQ=
-X-Google-Smtp-Source: APBJJlFIlu9ygvby/YyIM5zjjHUTL3lAUAgm7oAf7X/EJYkZB0GgcVO7+9mCEmrTtQOq973w4vKJ7Q==
-X-Received: by 2002:a17:906:304e:b0:989:450:e565 with SMTP id d14-20020a170906304e00b009890450e565mr44266ejd.23.1690389799035;
-        Wed, 26 Jul 2023 09:43:19 -0700 (PDT)
+        bh=TjbPDKd6tzYf+dxp22VkRgDO+M84x0+s26OUcGchntc=;
+        b=QqE/WqPu60ef247Vqlm95JwNJQt0nEpWmxjz6r1gvbrkzp7x+gWWVov7sjgC+IF3/0
+         5bwtoP+ZdzzK20gVShvGQIuEyv7tu+FQqP4dbQDzWEHEzTjROBuKfg/q2taVvlX08Ci+
+         5XKU1RuICbRCG3QiRMeXkkTy2BVQWG71+YShbJA3Dm5EsUZ9mOHfUR0jaU/YGBKbOdN5
+         m+QaUHIFzafadMIyVWjbtpedtxCuB8y6jVvzd5gjMnhfGpArrBWj4jz/o9aB81EdgSni
+         86X6MwiMUIBKSF6rD+woxoykEOzJunYDsR4UgvIje7UtA7FNQ+gnSDOkvHpSwwviYLLB
+         d8ug==
+X-Gm-Message-State: ABy/qLadGUvTA7L1RwghYnalQVzmHvnkhJAvp35ZUvgpQwzJabU9sYxa
+        /qpyDF9/iZM4lyTh3FRYNks=
+X-Google-Smtp-Source: APBJJlEn6b2p15kCflljVkhG4f2jQ81ji7qoxGHQbPafcHEg5j898T9PnFKPHv7SFff2FQz8LAM2Dg==
+X-Received: by 2002:a17:907:7887:b0:98e:2413:952f with SMTP id ku7-20020a170907788700b0098e2413952fmr338297ejc.18.1690395935685;
+        Wed, 26 Jul 2023 11:25:35 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id re16-20020a170906d8d000b00992e4d8cc89sm9895601ejb.57.2023.07.26.09.43.18
+        by smtp.gmail.com with ESMTPSA id b19-20020a170906039300b0099364d9f0e2sm9940553eja.98.2023.07.26.11.25.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 09:43:18 -0700 (PDT)
+        Wed, 26 Jul 2023 11:25:35 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] arm64: tegra: Remove {clock,reset}-names from VIC powergate
-Date:   Wed, 26 Jul 2023 18:43:18 +0200
-Message-ID: <20230726164318.2172859-1-thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: [PATCH] arm64: tegra: Add blank lines for better readability
+Date:   Wed, 26 Jul 2023 20:25:32 +0200
+Message-ID: <20230726182532.2291302-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,28 +64,82 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-According to the device tree bindings, the powergate definition nodes
-don't contain clock-names and reset-names properties, so remove them.
+Add a few blank lines to visually separate blocks in the Jetson AGX Orin
+device tree.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ .../boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts    | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 083120849e4b..630a04bfc931 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -916,9 +916,7 @@ pd_venc: venc {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+index ba0c1f03c3b5..201a7a8a01cd 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+@@ -181,6 +181,7 @@ usb2-0 {
+ 					mode = "otg";
+ 					usb-role-switch;
+ 					status = "okay";
++
+ 					port {
+ 						hs_typec_p1: endpoint {
+ 							remote-endpoint = <&hs_ucsi_ccg_p1>;
+@@ -191,6 +192,7 @@ hs_typec_p1: endpoint {
+ 				usb2-1 {
+ 					mode = "host";
+ 					status = "okay";
++
+ 					port {
+ 						hs_typec_p0: endpoint {
+ 							remote-endpoint = <&hs_ucsi_ccg_p0>;
+@@ -211,6 +213,7 @@ usb2-3 {
+ 				usb3-0 {
+ 					nvidia,usb2-companion = <1>;
+ 					status = "okay";
++
+ 					port {
+ 						ss_typec_p0: endpoint {
+ 							remote-endpoint = <&ss_ucsi_ccg_p0>;
+@@ -221,6 +224,7 @@ ss_typec_p0: endpoint {
+ 				usb3-1 {
+ 					nvidia,usb2-companion = <0>;
+ 					status = "okay";
++
+ 					port {
+ 						ss_typec_p1: endpoint {
+ 							remote-endpoint = <&ss_ucsi_ccg_p1>;
+@@ -302,6 +306,7 @@ ports {
  
- 			pd_vic: vic {
- 				clocks = <&tegra_car TEGRA210_CLK_VIC03>;
--				clock-names = "vic";
- 				resets = <&tegra_car 178>;
--				reset-names = "vic";
- 				#power-domain-cells = <0>;
- 			};
+ 						port@0 {
+ 							reg = <0>;
++
+ 							hs_ucsi_ccg_p0: endpoint {
+ 								remote-endpoint = <&hs_typec_p0>;
+ 							};
+@@ -309,6 +314,7 @@ hs_ucsi_ccg_p0: endpoint {
  
+ 						port@1 {
+ 							reg = <1>;
++
+ 							ss_ucsi_ccg_p0: endpoint {
+ 								remote-endpoint = <&ss_typec_p0>;
+ 							};
+@@ -328,6 +334,7 @@ ports {
+ 
+ 						port@0 {
+ 							reg = <0>;
++
+ 							hs_ucsi_ccg_p1: endpoint {
+ 								remote-endpoint = <&hs_typec_p1>;
+ 							};
+@@ -335,6 +342,7 @@ hs_ucsi_ccg_p1: endpoint {
+ 
+ 						port@1 {
+ 							reg = <1>;
++
+ 							ss_ucsi_ccg_p1: endpoint {
+ 								remote-endpoint = <&ss_typec_p1>;
+ 							};
 -- 
 2.41.0
 
