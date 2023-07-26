@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4DBC001DE
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 06:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9209CC001DC
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 06:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbjGZGL1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Jul 2023 02:11:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45130 "EHLO
+        id S231320AbjGZGYu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Jul 2023 02:24:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231866AbjGZGLV (ORCPT
+        with ESMTP id S229472AbjGZGYs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Jul 2023 02:11:21 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A441995;
-        Tue, 25 Jul 2023 23:11:17 -0700 (PDT)
+        Wed, 26 Jul 2023 02:24:48 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B9713E;
+        Tue, 25 Jul 2023 23:24:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690351877; x=1721887877;
+  t=1690352688; x=1721888688;
   h=message-id:date:mime-version:cc:subject:to:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=WDQtGHcWzopAoO6Fwuln0OAiUSdM4jJjH8FxFV/d+w0=;
-  b=L0oM9r/23+H3sVWogYiqutCoV0Qtk12jbeCxMQ1utzZz7FNYek0diqlr
-   o+QtLunvFzxxYppdLDNDpQDcQ2ejAMsw4HrVU1rnvZC6smnEnxrKgqOH5
-   JA+ZjSMMXLK6Xu2GhyrORfn71R/u18MAq+zcGIXVQM2HpeaHKsFGJPu++
-   2gJJUdudnoXoTDb0t7adxhrFu7k41RI5UOqRsYRLV8iP+BU/LjfKnVCz8
-   ksX7cRZnPjiMWICEupRg2T4jX3YrTeNtG27QLhis6RYuIwkM3p1hFLPTo
-   pqglFT+hp0cZWheg4iyDMXtlKvN+J2ROPbZKc9T8JFyPtCwJlT6SQkFUx
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="434186756"
+  bh=DlKsXPAKvUQNyaHWuLEMn+YeZGej9B0RE5XdM6qJwbQ=;
+  b=Bv8tYZ49F6dheDLmRpqj8/J75MVfhlWP0F9nDiiTZ+s0ox8wWNjJkruz
+   2kt5mok9zllXjAEB6IqNAldq0hb4jQTKc+b8Z850JCKv/x/7HDgDeDpNK
+   tnXVI4v59JfeYyIBqp0nQpBR/lACqzJ9AYDD/93F7l8rXXyWYsRRjJudO
+   0OgwEmdn8C3JC8txNbOiiSvGG5SR89JDor7ZZkjTA5s0R+EoptH9e5KPL
+   L8xTxUiuYjFsQha2Rc5BFlfJ+vcNvTctKg/o1T0IVw5rWCp2UTKhvel1W
+   GZpgQfE8ozDYmzu71aQv2OtB/kxUuBCTyJfQs8aZUQ+5EaqJLvQge7Fis
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="365384331"
 X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
-   d="scan'208";a="434186756"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:11:16 -0700
+   d="scan'208";a="365384331"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:24:30 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="816538258"
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="1057075644"
 X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
-   d="scan'208";a="816538258"
+   d="scan'208";a="1057075644"
 Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.208.129]) ([10.254.208.129])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:11:06 -0700
-Message-ID: <aa41d168-09b7-22c0-191d-28ecec023152@linux.intel.com>
-Date:   Wed, 26 Jul 2023 14:11:04 +0800
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:24:20 -0700
+Message-ID: <7186790f-abed-61ba-2d19-6ab66640f30a@linux.intel.com>
+Date:   Wed, 26 Jul 2023 14:24:18 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
@@ -50,7 +50,7 @@ Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Steven Price <steven.price@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v5 01/25] iommu: Add iommu_ops->identity_domain
+Subject: Re: [PATCH v5 02/25] iommu: Add IOMMU_DOMAIN_PLATFORM
 Content-Language: en-US
 To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -86,9 +86,9 @@ To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
         Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
         Yong Wu <yong.wu@mediatek.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>
-References: <1-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+References: <2-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
 From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <1-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <2-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -96,27 +96,17 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 2023/7/25 1:21, Jason Gunthorpe wrote:
-> This allows a driver to set a global static to an IDENTITY domain and
-> the core code will automatically use it whenever an IDENTITY domain
-> is requested.
+> This is used when the iommu driver is taking control of the dma_ops,
+> currently only on S390 and power spapr. It is designed to preserve the
+> original ops->detach_dev() semantic that these S390 was built around.
 > 
-> By making it always available it means the IDENTITY can be used in error
-> handling paths to force the iommu driver into a known state. Devices
-> implementing global static identity domains should avoid failing their
-> attach_dev ops.
+> Provide an opaque domain type and a 'default_domain' ops value that allows
+> the driver to trivially force any single domain as the default domain.
 > 
-> Convert rockchip to use the new mechanism.
-> 
-> Tested-by: Steven Price<steven.price@arm.com>
-> Tested-by: Marek Szyprowski<m.szyprowski@samsung.com>
-> Tested-by: Nicolin Chen<nicolinc@nvidia.com>
 > Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
 > ---
->   drivers/iommu/iommu.c          | 3 +++
->   drivers/iommu/rockchip-iommu.c | 9 +--------
->   include/linux/iommu.h          | 3 +++
->   3 files changed, 7 insertions(+), 8 deletions(-)
-
-I will later convert the VT-d driver to use iommu_ops->identity_domain.
+>   drivers/iommu/iommu.c | 14 +++++++++++++-
+>   include/linux/iommu.h |  6 ++++++
+>   2 files changed, 19 insertions(+), 1 deletion(-)
 
 Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
