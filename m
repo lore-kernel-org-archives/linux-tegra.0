@@ -2,59 +2,68 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2597AC001DC
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 18:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57290C001DF
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 18:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjGZSZj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Jul 2023 14:25:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59310 "EHLO
+        id S232057AbjGZStE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Jul 2023 14:49:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbjGZSZi (ORCPT
+        with ESMTP id S231857AbjGZStE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Jul 2023 14:25:38 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63511FC4
-        for <linux-tegra@vger.kernel.org>; Wed, 26 Jul 2023 11:25:37 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-98e39784a85so285753466b.1
-        for <linux-tegra@vger.kernel.org>; Wed, 26 Jul 2023 11:25:37 -0700 (PDT)
+        Wed, 26 Jul 2023 14:49:04 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03831FEC;
+        Wed, 26 Jul 2023 11:49:02 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99bc512526cso4723366b.1;
+        Wed, 26 Jul 2023 11:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690395936; x=1691000736;
+        d=gmail.com; s=20221208; t=1690397341; x=1691002141;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TjbPDKd6tzYf+dxp22VkRgDO+M84x0+s26OUcGchntc=;
-        b=q7GL5EWpYYe9FnUMYRvQV6bS22/oNGVswzDAJRamZh09+bNycByOWPlk1rdK7D9xI1
-         IU/fKIiYMNf6YVUynEcfhOyIxbz6xUesjgK28d73TWzJe8+RuPJ8IrGtYUcsdr2tMZKp
-         giiO6NqrMLGE9O9blhBH6D3AO+6PZuF52tDZHlWXNdSk9mVsIwsjcYFoE5Eob3zW9+YJ
-         aAXv3KPmpnzdpKAP1z93LrTPQ89J+aHUjtSrmDhEiPYO0i55N3s852RSJFEIiSLkiyJX
-         w8Tk8qn/YpmLB6tN/3JyBFKzM7TxiYibQMDdrgyIwsKUCYwInQARvy8F98GgOzXaIyU5
-         b4lg==
+        bh=/oLV7w7SIF+Bv+zH3Qb2ls3MvE0jKohS7No6ukAqg6A=;
+        b=AbH/YwBF91CiamzcW+WTjw3r6jdIk6nPsizJ/9atOPv2rQ17BuN2k+KO2mSAgVAdQB
+         xR8RF+BPH6J/DhSHO6pm5OtQLuh9qqVkd1LuQ/PaSamwKLMtfRe0rJqkLe7Lw3qFR8ry
+         sIhGfUvwL80Zj0ZahuTBRSTlh9zIbH1QoQQ6vx3oWKtiTYKt8qNy3OvtBvHdWTRG8bC9
+         W/1e8MfHZxwnE51JMOaXoGkVu2Pu3tF3M3EU9JfB/g7ER1Mr5LKw9Ld4Fbe+m7JkaCC2
+         9NyYc64+I5SgeRRYM5/D4aYVvdsYlLzU6gJQwObM8wB6UUyyiTSuKD2AtTDFmdLtUQxi
+         Ap9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690395936; x=1691000736;
+        d=1e100.net; s=20221208; t=1690397341; x=1691002141;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TjbPDKd6tzYf+dxp22VkRgDO+M84x0+s26OUcGchntc=;
-        b=QqE/WqPu60ef247Vqlm95JwNJQt0nEpWmxjz6r1gvbrkzp7x+gWWVov7sjgC+IF3/0
-         5bwtoP+ZdzzK20gVShvGQIuEyv7tu+FQqP4dbQDzWEHEzTjROBuKfg/q2taVvlX08Ci+
-         5XKU1RuICbRCG3QiRMeXkkTy2BVQWG71+YShbJA3Dm5EsUZ9mOHfUR0jaU/YGBKbOdN5
-         m+QaUHIFzafadMIyVWjbtpedtxCuB8y6jVvzd5gjMnhfGpArrBWj4jz/o9aB81EdgSni
-         86X6MwiMUIBKSF6rD+woxoykEOzJunYDsR4UgvIje7UtA7FNQ+gnSDOkvHpSwwviYLLB
-         d8ug==
-X-Gm-Message-State: ABy/qLadGUvTA7L1RwghYnalQVzmHvnkhJAvp35ZUvgpQwzJabU9sYxa
-        /qpyDF9/iZM4lyTh3FRYNks=
-X-Google-Smtp-Source: APBJJlEn6b2p15kCflljVkhG4f2jQ81ji7qoxGHQbPafcHEg5j898T9PnFKPHv7SFff2FQz8LAM2Dg==
-X-Received: by 2002:a17:907:7887:b0:98e:2413:952f with SMTP id ku7-20020a170907788700b0098e2413952fmr338297ejc.18.1690395935685;
-        Wed, 26 Jul 2023 11:25:35 -0700 (PDT)
+        bh=/oLV7w7SIF+Bv+zH3Qb2ls3MvE0jKohS7No6ukAqg6A=;
+        b=Npt8cJJPfeZTAdZiEsfUffK0PWuTcCi6vpE/NPl/lThlTgdFRrECVTJyg57pDLd4EH
+         cNSq6a633/jXbodIWD+L5Oo1c5HJ26cZADgTPwBr3wljIurvyfbQIejiQfoJVBh9zA3U
+         pp5pItxt/jXKeZqGhauW57DbMQcKbsvwL8VpSHTEJb328hObj2supLd47AjoaAerTwiC
+         DUv7G0kl4QuxAqRXcMRix81xLKA1OzFNZYv0GVISqKY2rlu73RO9EJef8A2vM9B1INxA
+         KPnjIT7+61c/RTQ2ZcykMwZcxTkfilWu1NHoesuJ43zDx+Zpbn9nnuNR4ZqF6tG+MOmE
+         ieBA==
+X-Gm-Message-State: ABy/qLZvLhQ1IC+MTyK2/2sKJ5ImqrYOK0ca42MTlbzUOLlpByx4EBWN
+        IjzQ62mAsdtX1hD6KcDJI38=
+X-Google-Smtp-Source: APBJJlGvUn5xoPOVC5T6TZHAsC/4CEhjmryknm7tSeNAaIc94kXuXSDB5odtY3hKreXXYe1hxCJnZw==
+X-Received: by 2002:a17:906:84:b0:994:539d:f97f with SMTP id 4-20020a170906008400b00994539df97fmr36098ejc.37.1690397341172;
+        Wed, 26 Jul 2023 11:49:01 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id b19-20020a170906039300b0099364d9f0e2sm9940553eja.98.2023.07.26.11.25.35
+        by smtp.gmail.com with ESMTPSA id m26-20020a170906849a00b00982a352f078sm9734357ejx.124.2023.07.26.11.49.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 11:25:35 -0700 (PDT)
+        Wed, 26 Jul 2023 11:49:00 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH] arm64: tegra: Add blank lines for better readability
-Date:   Wed, 26 Jul 2023 20:25:32 +0200
-Message-ID: <20230726182532.2291302-1-thierry.reding@gmail.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: display: panel: Move HannStar HSD101PWW2 to LVDS
+Date:   Wed, 26 Jul 2023 20:48:55 +0200
+Message-ID: <20230726184857.2294570-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,82 +73,41 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add a few blank lines to visually separate blocks in the Jetson AGX Orin
-device tree.
+The HannStar HSD101PWW2 is an LVDS panel, so move it to the correct
+bindings file.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts    | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/devicetree/bindings/display/panel/panel-lvds.yaml | 2 ++
+ .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 --
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-index ba0c1f03c3b5..201a7a8a01cd 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-@@ -181,6 +181,7 @@ usb2-0 {
- 					mode = "otg";
- 					usb-role-switch;
- 					status = "okay";
-+
- 					port {
- 						hs_typec_p1: endpoint {
- 							remote-endpoint = <&hs_ucsi_ccg_p1>;
-@@ -191,6 +192,7 @@ hs_typec_p1: endpoint {
- 				usb2-1 {
- 					mode = "host";
- 					status = "okay";
-+
- 					port {
- 						hs_typec_p0: endpoint {
- 							remote-endpoint = <&hs_ucsi_ccg_p0>;
-@@ -211,6 +213,7 @@ usb2-3 {
- 				usb3-0 {
- 					nvidia,usb2-companion = <1>;
- 					status = "okay";
-+
- 					port {
- 						ss_typec_p0: endpoint {
- 							remote-endpoint = <&ss_ucsi_ccg_p0>;
-@@ -221,6 +224,7 @@ ss_typec_p0: endpoint {
- 				usb3-1 {
- 					nvidia,usb2-companion = <0>;
- 					status = "okay";
-+
- 					port {
- 						ss_typec_p1: endpoint {
- 							remote-endpoint = <&ss_ucsi_ccg_p1>;
-@@ -302,6 +306,7 @@ ports {
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml b/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
+index 929fe046d1e7..344e5df40c2f 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
+@@ -40,6 +40,8 @@ properties:
+     items:
+       - enum:
+           - auo,b101ew05
++          # HannStar Display Corp. HSD101PWW2 10.1" WXGA (1280x800) LVDS panel
++          - hannstar,hsd101pww2
+           - tbs,a711-panel
  
- 						port@0 {
- 							reg = <0>;
-+
- 							hs_ucsi_ccg_p0: endpoint {
- 								remote-endpoint = <&hs_typec_p0>;
- 							};
-@@ -309,6 +314,7 @@ hs_ucsi_ccg_p0: endpoint {
- 
- 						port@1 {
- 							reg = <1>;
-+
- 							ss_ucsi_ccg_p0: endpoint {
- 								remote-endpoint = <&ss_typec_p0>;
- 							};
-@@ -328,6 +334,7 @@ ports {
- 
- 						port@0 {
- 							reg = <0>;
-+
- 							hs_ucsi_ccg_p1: endpoint {
- 								remote-endpoint = <&hs_typec_p1>;
- 							};
-@@ -335,6 +342,7 @@ hs_ucsi_ccg_p1: endpoint {
- 
- 						port@1 {
- 							reg = <1>;
-+
- 							ss_ucsi_ccg_p1: endpoint {
- 								remote-endpoint = <&ss_typec_p1>;
- 							};
+       - const: panel-lvds
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+index df1cec8fd21b..f4d9da4afefd 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+@@ -168,8 +168,6 @@ properties:
+       - hannstar,hsd070pww1
+         # HannStar Display Corp. HSD100PXN1 10.1" XGA LVDS panel
+       - hannstar,hsd100pxn1
+-        # HannStar Display Corp. HSD101PWW2 10.1" WXGA (1280x800) LVDS panel
+-      - hannstar,hsd101pww2
+         # Hitachi Ltd. Corporation 9" WVGA (800x480) TFT LCD panel
+       - hit,tx23d38vm0caa
+         # InfoVision Optoelectronics M133NWF4 R0 13.3" FHD (1920x1080) TFT LCD panel
 -- 
 2.41.0
 
