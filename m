@@ -2,173 +2,121 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC31C001DE
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 04:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4DBC001DE
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 06:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231221AbjGZEH2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Jul 2023 00:07:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55892 "EHLO
+        id S231915AbjGZGL1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Jul 2023 02:11:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231176AbjGZEGq (ORCPT
+        with ESMTP id S231866AbjGZGLV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Jul 2023 00:06:46 -0400
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2070b.outbound.protection.outlook.com [IPv6:2a01:111:f400:feab::70b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F01635B7;
-        Tue, 25 Jul 2023 21:03:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n+5TNHiqleWCIH/+9g/U7+ocgdnbvZCb+4tmCfkMalmEqUNuQ022LPdOsiseQ4wgY5MXgfoJwOQ6ybFD9FozD90WoeFlxUoa0o1d2BH0e+img+77tpSOunB9Y5VcEjA9KqbYRprYLTWHoVgjy1wb522Te9+oL8+4ltKH+5gjEKtL8qdB2hWRSMk43SURWk6kQ0CX2djgt+c9ctXoiN7WABpqr+1YQnEmmTDiPahiAxdGreOmCtvRaFkj2FeLNwLjsfQSGAdagCTTGYsjh1yEnwR14XhokIB4LL7rNy1LJrSlOcCiwGVT5bvyRGgVur7/9FkVV7EMOz60rDuC4cLTHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vyhbeNXUgBwkQepDAzaYajBffSTDYfSaQABURS0z/Nc=;
- b=SWX8e3QHPYzEBpXESt95y8xEs6WfsOI5cxTqs1erwlJbUHjbhMWLPNczWRO5jKD4yujQxm+pStjqUB2R5WA4WzBKJJiZqyZch2MXtKTuVKd5B15yU6KS2qUJMJE1NY3nBscRVq0TPdIZ50nYe1ktZhlsiNYup1Fzp5/XnyGlb5oAdmYcug6r8X3bxhjOPZGZulIGNJ3gYr/vq5qJTiVMZYubug4o7m1RbfJxJev58NUbhowMzP6ngUDg1RKcEfjol1qYRX2QUF1Lvr/L0QUatlsvvG5bPlrhExohLdqhX6cdER+s3zh4Yp9QuZTIFktcZH6m7AyvAvbKMTfF2EnvYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vyhbeNXUgBwkQepDAzaYajBffSTDYfSaQABURS0z/Nc=;
- b=K7qIgoDEYmQjHHv6rwMfmhvUY0Z6VNIJv4uc22BozO7YhRHl4ta4KWxgTI/pDUXoubJQ2ZEGcCtiisxjc4F9Sj5A+iBMPvbM60y3zcl0Q0j0i+pfVsiO/Bjz5zXTqqWB/I+XWOJ35AXnY1LtvgaDiUntjShGROVi8xBoEx5Ng6YGq7o9GRX2zNn05nZ+j7F2iEgGeOn8Qltu1ZKgpA79Ze3+/zc4WH3pyxeesVTR25YTYAuSSg/hZzy+8/Cmwaf7n9UfefAUNp4jsECKhrQxHh48pxSJrWa8IfQ3XSQILOIgJxfBi1rav15wg1STqw/82kSIUv6k/AVo8uH3ySLePQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by SI2PR06MB5139.apcprd06.prod.outlook.com (2603:1096:4:1ae::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.29; Wed, 26 Jul
- 2023 04:02:25 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::732f:ea1d:45a1:1e0b]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::732f:ea1d:45a1:1e0b%3]) with mapi id 15.20.6631.026; Wed, 26 Jul 2023
- 04:02:25 +0000
-From:   Yangtao Li <frank.li@vivo.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Yangtao Li <frank.li@vivo.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 37/61] mmc: sdhci-tegra: Convert to platform remove callback returning void
-Date:   Wed, 26 Jul 2023 12:00:17 +0800
-Message-Id: <20230726040041.26267-37-frank.li@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230726040041.26267-1-frank.li@vivo.com>
-References: <20230726040041.26267-1-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0093.apcprd02.prod.outlook.com
- (2603:1096:4:90::33) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+        Wed, 26 Jul 2023 02:11:21 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A441995;
+        Tue, 25 Jul 2023 23:11:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690351877; x=1721887877;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WDQtGHcWzopAoO6Fwuln0OAiUSdM4jJjH8FxFV/d+w0=;
+  b=L0oM9r/23+H3sVWogYiqutCoV0Qtk12jbeCxMQ1utzZz7FNYek0diqlr
+   o+QtLunvFzxxYppdLDNDpQDcQ2ejAMsw4HrVU1rnvZC6smnEnxrKgqOH5
+   JA+ZjSMMXLK6Xu2GhyrORfn71R/u18MAq+zcGIXVQM2HpeaHKsFGJPu++
+   2gJJUdudnoXoTDb0t7adxhrFu7k41RI5UOqRsYRLV8iP+BU/LjfKnVCz8
+   ksX7cRZnPjiMWICEupRg2T4jX3YrTeNtG27QLhis6RYuIwkM3p1hFLPTo
+   pqglFT+hp0cZWheg4iyDMXtlKvN+J2ROPbZKc9T8JFyPtCwJlT6SQkFUx
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="434186756"
+X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
+   d="scan'208";a="434186756"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:11:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="816538258"
+X-IronPort-AV: E=Sophos;i="6.01,231,1684825200"; 
+   d="scan'208";a="816538258"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.208.129]) ([10.254.208.129])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 23:11:06 -0700
+Message-ID: <aa41d168-09b7-22c0-191d-28ecec023152@linux.intel.com>
+Date:   Wed, 26 Jul 2023 14:11:04 +0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SI2PR06MB5139:EE_
-X-MS-Office365-Filtering-Correlation-Id: f4e702cd-3a7e-4bcd-1b5c-08db8d8d115f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Ioyyv0vlWHmSbvE1dObAAe9sQe6zl3nXNC42xzl/A2afPKpI4t+28Sl9ce4vmtx+29w2w9jGiwYIS+C/a7ZgKDOChgyR6mIfKd4vs/Ox2lyPuS4O56Gs5mPaGbz9u8oErge9MbCet/UPp5OsBixD244YfnlEc2AFeiX0QP09VlayrR4Pra3aFqPTZPYcEYforpN/oNWnpcR3F5xiXzTU2/6RnD+kYlUcaFv5q3Gjr1FSPdvZ3gA0814H/5qDC8U4zpD06lKHrYLLB0W48YNl5MbFB/qywmjgSe/gG391Lhhc1ycO7orC9B8jmWlH9dy0zWF59RxvwLDFgoZxF6wkQKsED6sIixesySsgbWXpMSygFcuwoa77lGda+UczrgJDsYkywCnMhLi5+gmiRqJiIZefBNG3MMVtuK8eUXM9sPoDqduvdjcGE+rYbHQZ3VTEiXuiTnFwy4GkCBMC3bpccOymhw9kMuDETzBqawqVExiXiMWdzb6TUCzD9kWuzFivv8yW7cEudt1baz/KeFIZxx+rMTeYTK7Dss0da3WdGGB9flnM/mzLtcss3x8Q6J7/ZDnkivypV79Yk62WhVW5tGTalPprcI3XA5J/RqQPORmlivTMvj+QQmFrVoOD0RBO
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(346002)(366004)(376002)(136003)(451199021)(110136005)(54906003)(38350700002)(6512007)(38100700002)(52116002)(6486002)(6666004)(478600001)(41300700001)(5660300002)(2616005)(8936002)(8676002)(66556008)(4326008)(66476007)(66946007)(316002)(186003)(83380400001)(66574015)(6506007)(26005)(1076003)(86362001)(2906002)(36756003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Qm55RE4vRXFtSzArZjhKMzBsK2VYOVlCUm52aTdKUWNoTUgwc05XcThXY0pw?=
- =?utf-8?B?R3dlUExTSGJ6NHg5NFFPaWo5UzhpSnVLWW9pVmkwM2FsN2pFVUd0OG9QRWkv?=
- =?utf-8?B?Wk9DdTdCNXlEOHgySTJDSUJaM3pIRDhiTUxDUk1FTCt1Q2x5UjhIV0trUGo2?=
- =?utf-8?B?ZklHdGJrUHBkYXVxQ2VwUjY0SWdzY1JmZ0lPcVJUNzFXdjZIb0FTakM5QXdR?=
- =?utf-8?B?YUcrSjIvZEtTZGM2MnlWYWZ6YUlGN3BEQUNZQkE5cEtvK25ieW12MGdOK0lM?=
- =?utf-8?B?cUl5L1Y1cmVMaFpYWHJ6WXNDbXpueG5MTnEvZ0d5TDFuYmlWZlg0bm9oQSto?=
- =?utf-8?B?d3pVMUxlczJ4THBSWC9KK1A4KzNlOFFydmJJMDRFV3pacEYxT2IzeEpISnlR?=
- =?utf-8?B?YjNodXBwQzlqNlZaUzFPdjlDRi9WRGpjUUZSOGptWXpndUozTEJkTXpVd2lL?=
- =?utf-8?B?bGxjR2x5NUo2TTUwR1N5RnJzeHdNSnJDbm83a01yRVN4WnlWUTZxc1kzMkxx?=
- =?utf-8?B?cG9WeVhDKzJjUkFzMWZVV3BNT0s4aG5QY0dXMjBuaFFDbUNPY08xclB4K0xW?=
- =?utf-8?B?c09BK2FGZ3AxUFNKMThSYW05VG9ZZXUxTEtaRWdicGJXRURCTWh0QStHYnN4?=
- =?utf-8?B?ZlpDTUVnL2YxN1ZueDNMem5tODVqVUxSWUZHaFhEQ0ZHNnJLWVFpNURiZXhp?=
- =?utf-8?B?V2FrRHc3QW5yRGgyaHZlb1JRYzRxM3pjMzdFeS9KTEJ0UWsyN2Rzdk8wSHda?=
- =?utf-8?B?WitxNmlkb2xHYkdwdkNEcm9yQjFZbUpMK1dlYy8wV3BaZERyeUZKazd2eVRM?=
- =?utf-8?B?V2NkVmc1Mml6RHhHV3J6STFYZmhyM054aExwM1pTUVNPbi85TDBGQzF3a1hx?=
- =?utf-8?B?Q1FFdDd6U05aTXNla3hZc0xKMWwvcEk0NUtROUxXa3JxYlV4VWtYcVU4U3BR?=
- =?utf-8?B?MmlJQW80RTdncHo0RlBBSC9xMjErbnZTd1dmRTBkU0NRdjlVZEtwMmFHZVBU?=
- =?utf-8?B?U0Q4eis2bnFIbjRMUldySUtZcG10bCtrRWNvZWI5dEt0aktwRGwxODRTMGxz?=
- =?utf-8?B?K3RRTW5JR3lwMXcwck52NHBVaW5tRndZQXdtVG5rZ0Z6VndsN0NaM3RPLzNy?=
- =?utf-8?B?c0pVNk44ZjMrb3dxWnVzamdveDZTVVZ2QThibkVyV1lPcFBmMGJySVBteGFo?=
- =?utf-8?B?akFlbkpudVR0VktKbHNodnQyNnZKdWo2S3YrOEFaY1QxRzZLeDdkNmEyL2pT?=
- =?utf-8?B?ZzNTKzdvSkNuNXdkWDBhaklHVHdjd0ZWRi90ZU91bkZtMDhmT2ZzT29HWURH?=
- =?utf-8?B?UkJTeGtNbGNkUTF0UVA0aU9OakR3T05sSmY5cG03VmNuMThwUHB1anBIK3Fk?=
- =?utf-8?B?dkhScUN2S2lhbFI0Ris1eHRKVi9lU3daSWxoakFPbUlkanI2ZDNBNktiYTZ5?=
- =?utf-8?B?djQ1akZCY0VsRFo0VkEwNzg3UTd5VG0wck5KQUI3NitNMkk5Y1ZLVXRUbEpk?=
- =?utf-8?B?YjZhd09iNjE5OHJNSUhzWC80MFNvKzBlMkhlT28vVmVCbkpRYmdZdHl5WXVh?=
- =?utf-8?B?dmt3TTZmUlE2dDdhWHVsTEdUU0crbFdvZ2o3T1NQcU9XNnN3VmpxQ0dVVUZP?=
- =?utf-8?B?RmFBaU1ETG9nSmlPazNZVUtVZjE3Vm1aTGxiU3FkNjE5U1NkMWxhcTZ4ZVRq?=
- =?utf-8?B?a0IyMmJFU0lrV2QwN3A5cDE3ajFTWUZvaGVPYjBHRVptUzhpVjN1b3N2dGdH?=
- =?utf-8?B?K3FtK3lCYVNKMVBqWUJFV0lKZEt2VzBlcXhZOXprcWM4N1hrUVpBTnI5eit6?=
- =?utf-8?B?U0ZwK1k5V0o5V0tkZ3JHaTVXbGNYdVQ5N3EwK2xvUjdsNUhDS2RFSlFpMG1w?=
- =?utf-8?B?MW5DV2VSM2dzSDg5VmZ5VW16aXhRa2NhNlFRalpmT1BWUmMwU3FhY2Zzb2xv?=
- =?utf-8?B?WFRjSFptcHlUSE1GY3NlOXkrWEd5eldicmZ1Nk5OTG05WDRwU1hNbmlHamxV?=
- =?utf-8?B?RXZmb3AwQ1FoOXQzbXd6cmVrcG5kdkdiQjk2aHZkc3k0OTBSY3c0QXlnQ3dE?=
- =?utf-8?B?QVBkajdoNmMrdCtnNC9LRytTUXRXZGtoVElQZi9yQzJXdTJEWUdlYVR0MkNQ?=
- =?utf-8?Q?vbHyrZIYur2ZHkWeWzP4UitEX?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4e702cd-3a7e-4bcd-1b5c-08db8d8d115f
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2023 04:02:02.5632
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XidedTjoX/aLnEy9wT9E6UyMdi4EBcR1Ulc+Wi5ID4cs0xUxFPh13d0WsN+21v2tUa7lCbYPWSJO4C1czcIc1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5139
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v5 01/25] iommu: Add iommu_ops->identity_domain
+Content-Language: en-US
+To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <1-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <1-v5-d0a204c678c7+3d16a-iommu_all_defdom_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is (mostly) ignored
-and this typically results in resource leaks. To improve here there is a
-quest to make the remove callback return void. In the first step of this
-quest all drivers are converted to .remove_new() which already returns
-void.
+On 2023/7/25 1:21, Jason Gunthorpe wrote:
+> This allows a driver to set a global static to an IDENTITY domain and
+> the core code will automatically use it whenever an IDENTITY domain
+> is requested.
+> 
+> By making it always available it means the IDENTITY can be used in error
+> handling paths to force the iommu driver into a known state. Devices
+> implementing global static identity domains should avoid failing their
+> attach_dev ops.
+> 
+> Convert rockchip to use the new mechanism.
+> 
+> Tested-by: Steven Price<steven.price@arm.com>
+> Tested-by: Marek Szyprowski<m.szyprowski@samsung.com>
+> Tested-by: Nicolin Chen<nicolinc@nvidia.com>
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> ---
+>   drivers/iommu/iommu.c          | 3 +++
+>   drivers/iommu/rockchip-iommu.c | 9 +--------
+>   include/linux/iommu.h          | 3 +++
+>   3 files changed, 7 insertions(+), 8 deletions(-)
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+I will later convert the VT-d driver to use iommu_ops->identity_domain.
 
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
----
- drivers/mmc/host/sdhci-tegra.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index bff084f178c9..6a50413afc8d 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1818,7 +1818,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	return rc;
- }
- 
--static int sdhci_tegra_remove(struct platform_device *pdev)
-+static void sdhci_tegra_remove(struct platform_device *pdev)
- {
- 	struct sdhci_host *host = platform_get_drvdata(pdev);
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -1834,8 +1834,6 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(tegra_host->tmclk);
- 	sdhci_pltfm_free(pdev);
--
--	return 0;
- }
- 
- static int __maybe_unused sdhci_tegra_runtime_suspend(struct device *dev)
-@@ -1933,7 +1931,7 @@ static struct platform_driver sdhci_tegra_driver = {
- 		.pm	= &sdhci_tegra_dev_pm_ops,
- 	},
- 	.probe		= sdhci_tegra_probe,
--	.remove		= sdhci_tegra_remove,
-+	.remove_new	= sdhci_tegra_remove,
- };
- 
- module_platform_driver(sdhci_tegra_driver);
--- 
-2.39.0
-
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
