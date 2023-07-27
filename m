@@ -2,117 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707A8C04A6A
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 16:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1A6EB64DD
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 19:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232287AbjG0Qx0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 12:53:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60630 "EHLO
+        id S232185AbjG0T7A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jul 2023 15:59:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232398AbjG0QxZ (ORCPT
+        with ESMTP id S232438AbjG0T6t (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 12:53:25 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44F530ED;
-        Thu, 27 Jul 2023 09:53:20 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-522382c4840so1558745a12.2;
-        Thu, 27 Jul 2023 09:53:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690476799; x=1691081599;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lTwQIB4IHOiPoYJY4vojAM9a3MV+iKb7V2dGlSdgHxw=;
-        b=lI+AusB1AaWv/rUwEtomngUgmeaCNMA23w3lJGt8P3qhWbe7l1112+dgzS1rVShHAN
-         dIVSqBy5yiOwE8epqwToLeKP9uW81zQy+SpTxxYFVoHryXvPU8+RbAAHiTiLHQlfpNN4
-         gbPwI/wwnZl0Lh15vioPDJ/9ZLQ1Xw8Uz1MZTcHJZQCm/YGMVoBF6M+bzSkntaAtcTRa
-         sPJVTtORWsiwJv0os6HFzQiCEnomn5cYhoCIesiy0F1hyC6Dx38VrNLYWgSfgZLKAtgh
-         I6cd8wRd9NCwh9ysBMJveHWAYgeU9yczgnvF1Hzk8RShl5zZB3qgCS2EHzJHkdNgg8kO
-         RZtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690476799; x=1691081599;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lTwQIB4IHOiPoYJY4vojAM9a3MV+iKb7V2dGlSdgHxw=;
-        b=Sw2JEdMHiQB2shMu3NWrw5pIhHA5NvYn2I0FyZg3YbEOXO2jNi/8FO7YSUnWDQi+FV
-         6JepH5BgnewvByfnEEFFXPCrlz08am2e+F4/Sen3tnf3Yl7c2ylM0yHkyjz94yGIMkW9
-         b2LSAjDmlqAHgDoaOCfT0FhsDviOWzchuyePHaOVEpH5W20JYgRSPwWE4s/e5uwp/Gsw
-         RWO1xsj3x/PJiwgm4QzXgXBz5rz+itdo0QrXEoR+jqlkKH46YHxlsdw2KmPSEyyT25w8
-         9fm1oLPKPNB/MWvLhZ8RWNcNNO7brAdOjfxW3U/sno3nxe5VWfdR3IemfVP78OxO3c0e
-         iWqw==
-X-Gm-Message-State: ABy/qLb1uXM+bRHcWAiSRGXVbM20Y9eA7h4OTBEU2jKEH8s1sfBA8Y3x
-        YwOFqET8eIrkKjPWrwstMRo=
-X-Google-Smtp-Source: APBJJlHZlSD//sZi4Yqmub9w5kwyDbnGQTGIeGaiZDIEWz7z51ZYCOPYl43sQuHnSGiYfY//1+v0lw==
-X-Received: by 2002:aa7:d4d0:0:b0:522:79e8:e530 with SMTP id t16-20020aa7d4d0000000b0052279e8e530mr2321644edr.16.1690476799063;
-        Thu, 27 Jul 2023 09:53:19 -0700 (PDT)
-Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n13-20020a05640206cd00b005223fb6d511sm832093edy.28.2023.07.27.09.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 09:53:18 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 18:53:16 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     Lee Jones <lee@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Jerome Neanne <jneanne@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH 3/6] soc/tegra: pmc: Specify restart mode
-Message-ID: <ZMKg_ONgb8GokxgU@orome>
-References: <20230727-pca9450-reboot-v1-0-c8edb27bf404@skidata.com>
- <20230727-pca9450-reboot-v1-3-c8edb27bf404@skidata.com>
+        Thu, 27 Jul 2023 15:58:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC37130D6;
+        Thu, 27 Jul 2023 12:58:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C5AB161F25;
+        Thu, 27 Jul 2023 19:57:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81505C433C8;
+        Thu, 27 Jul 2023 19:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690487855;
+        bh=56ZtGTGNX0Q1hSDQ8QFwkA2S7F4L6MfkDzeKlTph/CA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iV24V3/CFJuA8ohd7sSKjp/g9CwR1SyBZUOSjhJ+hnyrW+OgtSvCgyDlXvfaTe1xe
+         11jEgRYrPBYknzE245JvINtj+PLyK7duAbGZcy9K4HIeOEG+XDonZg4w1Ki7RjKl5e
+         unxdQFJTV/OeR0Lo/12EGBltSc0A/B+LG8XrHCiX/z96hl3Oc/S9o1/TGw6BHNoKJx
+         //jZwh5JAWBpd1wjIkLRIpwf+LWR0fo/wQu0giWp8+kOZtLlHLlMdsd+pG+80hYk3B
+         iRgtgyDZ+dDBtzW+evhMWX2dWQ+/dG2X1rrRWRO/XsB9XhhVB7h1jdY2waysgK0Vta
+         /6ltz350xUE8Q==
+Date:   Thu, 27 Jul 2023 21:57:26 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Wolfram Sang <wsa@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: tegra: Fix failure during probe deferral cleanup
+Message-ID: <20230727195726.ueowrrb7zhnyz5jb@intel.intel>
+References: <20230707132619.2998382-1-thierry.reding@gmail.com>
+ <20230725213404.gj3fjiuz3wh4ak2i@intel.intel>
+ <ZMKHs9WwPNhR3Z_o@orome>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="T57b0I5ES1wJOef9"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230727-pca9450-reboot-v1-3-c8edb27bf404@skidata.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+In-Reply-To: <ZMKHs9WwPNhR3Z_o@orome>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Thierry,
 
---T57b0I5ES1wJOef9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > > If the driver fails to obtain a DMA channel, it will initiate cleanup
+> > > and try to release the DMA channel that couldn't be retrieved. This will
+> > > cause a crash because the cleanup will try to dereference an ERR_PTR()-
+> > > encoded error code.
+> > 
+> > while this is a valid solution I think the best thing here is to
+> > clear the exit path by adding another goto label.
+> > 
+> > By setting dma_chan = NULL you would go through some extra checks
+> > that are not needed.
+> > 
+> > I guess that by doing this we could even remove the
+> > 
+> > 	if (i2c_dev->dma_buf)
+> > 	if (i2c_dev->dma_chan)
+> > 
+> > in tegra_i2c_release_dma(). However you see it cleaner. I'm not
+> > going to be picky, though. Let me know if you are up for some
+> > more clean up, otherwise I can give you an r-b... after a little
+> > clarification...
+> 
+> The problem is that DMA support is optional, so we will typically
+> succeed probe even when the DMA channel cannot be retrieved. The
+> tegra_i2c_release_dma() is going to get called in any case and if
+> we were to remove those checks, it would try and release a NULL
+> buffer and a NULL channel for the non-DMA case.
+> 
+> That's also the reason why we set dma_chan = NULL rather than use
+> an error label. We could technically skip tegra_i2c_release_dma()
+> when we fail to get the channel, but we do want to run it when we
+> fail to allocate the DMA buffer. So that would mean we end up with
+> two different cleanup paths rather than just one. So overall the
+> cleanup is simpler if we treat both code paths the same.
 
-On Thu, Jul 27, 2023 at 05:26:38PM +0200, Benjamin Bara wrote:
-> From: Benjamin Bara <benjamin.bara@skidata.com>
->=20
-> Specify the implemented restart handler as a warm one.
->=20
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> ---
->  drivers/soc/tegra/pmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+that's indeed an easy one-liner fix... that's why I proposed my
+r-b in the earlier mail.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> > > However, there's nothing to clean up at this point yet, so we can avoid
+> > > this by simply resetting the DMA channel to NULL instead of storing the
+> > > error code.
+> > > 
+> > > Fixes: fcc8a89a1c83 ("i2c: tegra: Share same DMA channel for RX and TX")
+> > 
+> > ... is this the correct commit that is getting fixed? I think
+> > it's this one:
+> > 
+> > Fixes: 86c92b9965ff ("i2c: tegra: Add DMA support")
+> > Cc: <stable@vger.kernel.org> # v5.1+
+> 
+> The original DMA support patch didn't have this issue because it was
+> storing the DMA channel (or error code) in a local variable first and
+> only assigned it to the i2c_dev->{rx,tx}_dma_channel fields after
+> checking for errors. Hence, those fields would never end up with an
+> error code and therefore this wasn't causing any issues previously.
 
---T57b0I5ES1wJOef9
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, you are right! the patch commit you mentioned is actually
+releasing the channel by checking i2c_dev->dma_chan which might
+store the error number and therefore is not NULL.
 
------BEGIN PGP SIGNATURE-----
+Thanks for the clarification!
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmTCoPwACgkQ3SOs138+
-s6Glsw//e8DvHgzuym/bjCuZStCD5jcg6Guk1u18gsSrJ+lOk0jCn7/RIffJmNzW
-2C6ITO9D6jmW/XqWXo+VUgk/g/CZ3KygGh/Rz1BSptw0VTYUNIwMQgmqkmU8mxsu
-xUmU0F2nA6NUqEXvJgrzYpW5mlsqRG9Mh7XqoL2CIzUQKnMafcHYpOvIEzDZ4V+5
-2PWSzkkESMIb2MtwnLmQUNy+6XftwkrINrCh0b93cSEJ7OkiWZ7m1J67oYUXVFwU
-6+156zr/CrG86g/mAHi1IOCn9j2oZ2BtcTQT53gARyVHHrnODrNTR7VxR6S3cTPl
-J2TsWMxeaNpecJ/2v+kEvqcMlpEVKsTGrrA2UzGinZAbzP2SrH8cy0Vi8MYOiWda
-iTXbUwvrznjg4Fj5vkpCqUosS2oEgbXEvbadqV77WWxbwENbHzDAMZZ88F88+vk5
-b8fE1kmP1qvsvPQ+pJSZajtvxWqZRfOD7cVL5UCjmPas6m3XE4iZBNRYJYYRdpFL
-mvttd3rC4iQOXFYeq6c2BvggP5Sy2I776hTI69nBf9EWBhP43MxW6B+KGzYcNivq
-9YqbNGpZU8Y+qr9fmxtFhc4i4f0hC9HkTWxwgEUddf3ssmCSh9ysTXuGi62yLWEM
-BsJNMaZkO2LDn/NFEULpGhXd3zmFF60L2CfoYJoxF46gME54TDE=
-=Zaii
------END PGP SIGNATURE-----
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
 
---T57b0I5ES1wJOef9--
+Andi
+
+> I hope that answers all your questions.
+> 
+> Thanks,
+> Thierry
+
+
