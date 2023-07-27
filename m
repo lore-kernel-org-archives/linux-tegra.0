@@ -2,95 +2,121 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10532C0729B
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 15:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFFAC001E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 15:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233640AbjG0PSM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 11:18:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
+        id S233144AbjG0P0v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jul 2023 11:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234627AbjG0PSH (ORCPT
+        with ESMTP id S234181AbjG0P0t (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 11:18:07 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F132E19BA;
-        Thu, 27 Jul 2023 08:18:06 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f95bf5c493so1929793e87.3;
-        Thu, 27 Jul 2023 08:18:06 -0700 (PDT)
+        Thu, 27 Jul 2023 11:26:49 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39962D6A;
+        Thu, 27 Jul 2023 08:26:47 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-31786b71fdcso193632f8f.2;
+        Thu, 27 Jul 2023 08:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690471085; x=1691075885;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pds1Vy2+pwsRJRkXlFVbHEDst9llli3Uzlt9C1boHh0=;
-        b=F38F4xUuHs3DLGHROrGvlfe0XfKSbVlc0PdeQYFgp5ibV8BKmmlVmdA2keBGfGkSEk
-         8C3WuVqM+HyXQylRhA9Rpu/3uR1fMB9tGCAqn2cHNBC8Axt/chns6nW7QBKMm6xywSZi
-         tlrVdeXLHZMogeT6IuUuhG2FSPkdIQqAw4pKbvkmk+PKLTkOU8DeGRBx8MJRgv6j8K3g
-         RgAa2ewXbhMdr+SufVuYuAb08nj8KN6YxVvuTRvrk3uPNnLqNfUMMfM9gwVN7+inAYxB
-         xfQOy+INH3HXpoVPjI16Si1tuZeFPDUh3OfY4figrR0z4r2REZT2Hj7SnNncXpEB8wC7
-         Jqdw==
+        d=gmail.com; s=20221208; t=1690471606; x=1691076406;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GUQyuOtfNbWPvY5eKKHj+k484zL92SmCITGys5Zq2is=;
+        b=S5gVWoDdcvk+NvnLtoMM/XBJt3y/MmZuwC5G5oxghFxemupZ0CBfTN+v+UmMpmU0tl
+         zhEM8zPsQSCrKd5X3rY9BzOPoS1xVN3xyQzM11u3akp2ujSq7mK9DtTSO0zK01t+4PIp
+         sJZj7h5y9n+Rtq8KGcHURqbMdXo45mCcjaoizPKKHLfFogQ1/WSXgxrXrKlZxTdb2Oem
+         tGnsRynkAXv1m5tk4vKI3Zjq/iLf0dy3VUI2KLGCWxxzAe/N/WKqaQq57dgmcvzLTHIl
+         tZ/kxxIB4APH9XRitIjd7kN7pqWpcGUR84oWYorGPNY79Wfm/2wAB+gfdYK5Jkg2k6fI
+         yvkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690471085; x=1691075885;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pds1Vy2+pwsRJRkXlFVbHEDst9llli3Uzlt9C1boHh0=;
-        b=Cn4+KWgLZCUPZSEHSFj8jtA1mV6CbuksZPhxt1Dv9uBPNvqS+kwxHELp2SH6JMQdeh
-         7aTPY+HnAdt3YlQurt53nGAlW1rdCv6DwVXQj9iz1GEFqtrAk23A1OdAwa5jyDi0xUix
-         yG9x2dmSD2o2yZMpD/ajpBAjFm1zDoFSUhp5jrTrG7WeO5scwv0xu6cvWYoEVEIWi2Kd
-         6yBjv/6MFSl+P9sjBLVqRh3lxcqtc/39J4xcblFuPfkVYADjRwq2DMtfq4vtIMiOt/P2
-         IWHD2haoo1QxRYxBJTQtBzPRUmShLoOVRAViPU1cK5B8/e0W2GO6ijLj9Zas6+PhQCCI
-         bA1Q==
-X-Gm-Message-State: ABy/qLbLj7CbN5fBlYJ2fMgCFxIMzy/0jZ8bds21PsH1WqodWCqHTnmi
-        jwGfi5WyC6MXjGla3oiBzRw=
-X-Google-Smtp-Source: APBJJlF4UNubx9KCg9zR1Y9DiqzxUEKRVmaWwggVoyGb23W9jr0nMOIS+lLGfn2/dyx3DDtdKanrlg==
-X-Received: by 2002:a05:6512:15a4:b0:4fb:be3c:d8b7 with SMTP id bp36-20020a05651215a400b004fbbe3cd8b7mr2361173lfb.51.1690471085058;
-        Thu, 27 Jul 2023 08:18:05 -0700 (PDT)
-Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id va16-20020a17090711d000b00992aea2c55dsm882182ejb.153.2023.07.27.08.18.04
+        d=1e100.net; s=20221208; t=1690471606; x=1691076406;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GUQyuOtfNbWPvY5eKKHj+k484zL92SmCITGys5Zq2is=;
+        b=DPWNZHjtZoikXdICy9qTclcYuFjHYr6oyXVbGBLZRBxqIzGROKs87Uwx1dpO1HjNEs
+         McoRyy9G9822M8REYp9Jyc4p6rxkS0whAIMJK9t4oPbiuCTqonm++RXNTFScHIoW7HGn
+         +WUBR/vOYz3UKIsNhw7dB4+DrUtfjMy3Aayx1nay5+7D8wZxG5no2l9m7ujqPMuIuV9i
+         D7FyuZcVwumexCBwBUvDStB8cHhYW70faEzmfA4EX1R22z7giXNLDty6ZbPlmg9JYv9j
+         HiaR9Tt2N+305qwrOVKkNnlf8otsv7tgftmw35cmu5kQe9GHpgoUasZL09Zk4g8gGR5H
+         nqnw==
+X-Gm-Message-State: ABy/qLZ5D1MZnoIMSJJ9E8i/Qz6iQX8gSfZQT8XAuQ2JdR4KYW0k2yOG
+        uhCI1q6C5Qh6Y8JcXlcUJUI=
+X-Google-Smtp-Source: APBJJlHFzL6FoulKIhle8aYNwxrIqQJXRUpz53AOkn4fETi3AZ/P3ovRQGBkowuZ76zu/M+VYY4Tfw==
+X-Received: by 2002:a5d:658b:0:b0:317:6d9d:1250 with SMTP id q11-20020a5d658b000000b003176d9d1250mr1938309wru.61.1690471605833;
+        Thu, 27 Jul 2023 08:26:45 -0700 (PDT)
+Received: from [127.0.1.1] ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id b17-20020adfde11000000b003143765e207sm2350622wrm.49.2023.07.27.08.26.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 08:18:04 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/3] dt-bindings: display: panel: Move HannStar HSD101PWW2 to LVDS
-Date:   Thu, 27 Jul 2023 17:18:00 +0200
-Message-ID: <169047096701.3031511.2458289034154287387.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230726184857.2294570-1-thierry.reding@gmail.com>
-References: <20230726184857.2294570-1-thierry.reding@gmail.com>
+        Thu, 27 Jul 2023 08:26:45 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+Subject: [PATCH 0/6] regulator: pca9450: register restart handlers
+Date:   Thu, 27 Jul 2023 17:26:35 +0200
+Message-Id: <20230727-pca9450-reboot-v1-0-c8edb27bf404@skidata.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKuMwmQC/x3MQQqAIBBA0avErBNsMqyuEi3UxpqNhkYE0t2Tl
+ m/xf4FMiSnD3BRIdHPmGCq6tgF3mLCT4K0aUGIvNSpxOjOpQYpENsZLSNsjdqN32iDU6Ezk+fm
+ Hy/q+H+CkDbhgAAAA
+To:     Lee Jones <lee@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        Jerome Neanne <jneanne@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Hi!
 
+This series implements two restart handler registrations for the pca9450
+(6/6). As the pca9450 supports both, cold and warm resets, and there
+exist at least one other PMIC implementation which also implements a
+warm and a cold reset (tps65219), 1-5/6 should simplify/clarify the
+distinction process between warm/soft and cold/hard resets/restarts.
+Instead of deciding in the handler, this should be done during
+registration. The series is a follow-up to Dmitry's feedback, regarding
+checking the reboot_mode in the handler [1].
 
-On Wed, 26 Jul 2023 20:48:55 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The HannStar HSD101PWW2 is an LVDS panel, so move it to the correct
-> bindings file.
-> 
-> 
+This series is based on linux-next and 6/6 depends on [2].
 
-Applied, thanks!
+Thanks & best regards,
+Benjamin
 
-[3/3] ARM: tegra: Use Hannstar HSD101PWW2 on Pegatron Chagall
-      commit: b28d3af99ac4885f136f6330fec6499b15ad5b25
+[1] https://lore.kernel.org/all/7eddaf8c-ab04-7670-fc45-15f0fce5eff2@collabora.com/
+[2] https://lore.kernel.org/all/20230327-tegra-pmic-reboot-v7-3-18699d5dcd76@skidata.com/
+
+---
+Benjamin Bara (6):
+      kernel/reboot: distinguish between cold and warm
+      mfd: rk8xx: Specify restart mode
+      soc/tegra: pmc: Specify restart mode
+      mfd: tps65219: Specify restart mode
+      kernel/reboot: remove generic restart mode
+      regulator: pca9450: register restart handlers
+
+ drivers/mfd/rk8xx-core.c              |  3 +-
+ drivers/mfd/tps65219.c                | 17 ++++++--
+ drivers/regulator/pca9450-regulator.c | 59 +++++++++++++++++++++++++
+ drivers/soc/tegra/pmc.c               |  2 +-
+ include/linux/reboot.h                | 23 +++++++---
+ include/linux/regulator/pca9450.h     |  7 +++
+ kernel/reboot.c                       | 82 +++++++++++++++++++++++++++++------
+ 7 files changed, 167 insertions(+), 26 deletions(-)
+---
+base-commit: 4d2c646ac07cf4a35ef1c4a935a1a4fd6c6b1a36
+change-id: 20230724-pca9450-reboot-0b32218fc7a2
 
 Best regards,
 -- 
-Thierry Reding <treding@nvidia.com>
+Benjamin Bara <benjamin.bara@skidata.com>
+
