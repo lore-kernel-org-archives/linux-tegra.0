@@ -2,124 +2,90 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404D2C001DC
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 16:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10757C001DC
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 16:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231880AbjG0Q0d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 12:26:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42280 "EHLO
+        id S229959AbjG0Qru (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jul 2023 12:47:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjG0Q0c (ORCPT
+        with ESMTP id S230061AbjG0Qru (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 12:26:32 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA2911984;
-        Thu, 27 Jul 2023 09:26:31 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fbc5d5742eso12993215e9.3;
-        Thu, 27 Jul 2023 09:26:31 -0700 (PDT)
+        Thu, 27 Jul 2023 12:47:50 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E78F2704;
+        Thu, 27 Jul 2023 09:47:49 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-52164adea19so1487732a12.1;
+        Thu, 27 Jul 2023 09:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690475190; x=1691079990;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tchYlHZMwfEha29OltN4SIaODl/6Qjb64Vc3sLHb8+Y=;
-        b=PXB4tyAG2ehkamoaVnyGUUno9lFYnR4PLwIvLkeH9s+c9DaGYGMFY9sU9EEPhcYp/s
-         C12h9gajnR6cC68M+ooloClgqVAOZCF1NQpy1/GN6EsKIbzsdheC2VZco0Kq3dUcvG8r
-         JibXeFuWi9kOX37MkNjQe+oRYElXvpVPZUR6DugrwiZGDof5PKEcsdbXl2ASC5TraxyH
-         Pw1fDLOp1cGq6QtqPLz1aCqdsv68kEWGLkY8K5T+qPP5jLZOxWlwaZ0OXVSkFHgiDG1n
-         Qi5jK/UUjyLf/Fz8Hu+avkQXHSNxR4penrtFx11PAjDwYeivcYAh/hFZ1mQREaQq9Sj+
-         QXdQ==
+        d=gmail.com; s=20221208; t=1690476467; x=1691081267;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s3gsQ/z+5cLrXPpwpVaTZvQsvN9FODKSUkdcyjzCiwU=;
+        b=WISleUu8k7GFgZS9rTGQ7cB9ImJwmBpIA7sy3L+MrjSk2mS0YEUYfLqRfd/X2WcTJ3
+         C1oNku7OG7wHXFGIrU2f4TK7PAk93TAwSwTtOc7LHtd9q0IvswtebEc42W6W/mWiDgiE
+         QvCcJhJeY0UlajqCi3iD98Zhzl9+LoNK6iltG6Qp9EBnUg9TgKTSfgcRfGdm6oGdx/7T
+         xcF+yMFHI+VY3e0HvMTnfgna0zBSE//5s1e5MLoWtw9eUu1SjDJTX90HwD7HLC9esNyJ
+         pWOjcOa+pBc6jINP3kH4i1ArDP0FS3TaW2k4pNVgKXIvbgLyNXPYXbQybJNZLj1j8LfF
+         uTMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690475190; x=1691079990;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tchYlHZMwfEha29OltN4SIaODl/6Qjb64Vc3sLHb8+Y=;
-        b=JmpBeCccUtfRZ/TxFYLf5CgY/0TIGu8IODfwYa57+UX2Ri+fdVjT2gTeWQjHBI9s8Q
-         /Ec5NhTTIIOlHMoxE7DrS/12kSC9GzHIGpiAz/6usjztHk1cAgxNACOHyv9VB1DsY6Q8
-         TiOk2eo4drp5G9xlf8I1giOQtvV4nTHHFrOMoxZOjR0PtrmoBYmtTErnIKSlLzYGSOlG
-         KU8/AbNunePUJuhmA7bl67kd+BEPju3AaNwbv2JNClYhlcSmGalSMioJ8K+kXIV/UyNJ
-         D8OuikXu8Fd9b6KxfLB511xm8g4CQCaGuA+XH7+puAJZn6AAxVd5FvMZDwP2TEj4F9Pa
-         COKA==
-X-Gm-Message-State: ABy/qLYQOP5Dpt0VHAiM/cYeSa0qtPDSnIywRLrunlydgixokCSwRYar
-        OB3N7bmndpy1bUyez/21eAA=
-X-Google-Smtp-Source: APBJJlGawCHttDuITQqdJcf15YH9xdR1nYtbyMSt+zes+gOlZU/94bNaWVZtNPWSoQzctCMMY7lURg==
-X-Received: by 2002:a7b:ce08:0:b0:3fa:99d6:4798 with SMTP id m8-20020a7bce08000000b003fa99d64798mr2126312wmc.37.1690475189887;
-        Thu, 27 Jul 2023 09:26:29 -0700 (PDT)
-Received: from [127.0.0.1] ([46.211.28.141])
-        by smtp.gmail.com with ESMTPSA id h14-20020a05600c260e00b003fbca942499sm5118934wma.14.2023.07.27.09.26.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 09:26:29 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 19:26:28 +0300
-From:   Svyatoslav Ryhel <clamor95@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 2/2] ARM: tegra: transformers: add connector node
-User-Agent: K-9 Mail for Android
-In-Reply-To: <ZMKJE1G87-jWeg2_@orome>
-References: <20230618085046.10081-1-clamor95@gmail.com> <20230618085046.10081-3-clamor95@gmail.com> <ZMKJE1G87-jWeg2_@orome>
-Message-ID: <5A2447D3-DB49-4788-AA05-182AF0F04ED2@gmail.com>
+        d=1e100.net; s=20221208; t=1690476467; x=1691081267;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s3gsQ/z+5cLrXPpwpVaTZvQsvN9FODKSUkdcyjzCiwU=;
+        b=kNSI2lHs8h+mZ13UGpbvDri5S4fPeTE9cJMYBdDcauW2YdF95KYe8I8sQHq0amLESm
+         7bry1AI5UZ6vfzZDPHwT6k03VRBZuPxHCHMI3rTP3Z9zMP2/uCYHEjF2uEhc2jPtBcUL
+         xpBjGIqCNXkdaJrzmUBEyRNK3Wqdr4gf3OD5aK9hUQPpVsCCd8AUQx0+XoSOpUViy1U8
+         8h1b9vBzR3z8Q/NcWmQ7RGxYvUW8HHOrQFrL3Rihee3qc/Zjvq31Oz/cndjK2MxKL3ke
+         Np7febKExWd7z9EqNVrwqM3z9yHe+0pP8VV98Vh6DOljWU12abm/4uO3hyfeM29IFalf
+         B5VA==
+X-Gm-Message-State: ABy/qLaYSJG1+6//uZQrWsRd+ACCn0UbuG2pOnK8GkDRHUq+I/J5HW35
+        GR2gewUJjZA5bPcmuf1mQIg=
+X-Google-Smtp-Source: APBJJlGxcnSGnb2HHxKkn5SM8nEwRi9FqOiTOcxIvGTjKsYuOy7oIgXGrBVHcpPau0IuAeQyqxh10A==
+X-Received: by 2002:aa7:d7c3:0:b0:522:2a3c:6eb with SMTP id e3-20020aa7d7c3000000b005222a3c06ebmr1656540eds.39.1690476467343;
+        Thu, 27 Jul 2023 09:47:47 -0700 (PDT)
+Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id l1-20020a056402028100b005224d15d3dfsm832370edv.87.2023.07.27.09.47.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jul 2023 09:47:46 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     jonathanh@nvidia.com,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH] soc/tegra: cbb: Remove unnecessary print function dev_err()
+Date:   Thu, 27 Jul 2023 18:47:41 +0200
+Message-ID: <169047644218.3097949.1702711496048962025.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230506090735.23936-1-jiapeng.chong@linux.alibaba.com>
+References: <20230506090735.23936-1-jiapeng.chong@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
 
-27 =D0=BB=D0=B8=D0=BF=D0=BD=D1=8F 2023 =D1=80=2E 18:11:15 GMT+03:00, Thier=
-ry Reding <thierry=2Ereding@gmail=2Ecom> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=
-=B0=D0=B2(-=D0=BB=D0=B0):
->On Sun, Jun 18, 2023 at 11:50:46AM +0300, Svyatoslav Ryhel wrote:
->> All ASUS Transformers have micro-HDMI connector directly available=2E
->> After Tegra HDMI got bridge/connector support, we should use connector
->> framework for proper HW description=2E
->>=20
->> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo=2Ecom> # ASUS TF T30
->> Tested-by: Robert Eckelmann <longnoserob@gmail=2Ecom> # ASUS TF101 T20
->> Tested-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom> # ASUS TF201 T30
->> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
->> ---
->>  arch/arm/boot/dts/tegra20-asus-tf101=2Edts      | 22 ++++++++++++++++-=
---
->>  =2E=2E=2E/dts/tegra30-asus-transformer-common=2Edtsi  | 21 +++++++++++=
-+++++--
->>  2 files changed, 38 insertions(+), 5 deletions(-)
->>=20
->> diff --git a/arch/arm/boot/dts/tegra20-asus-tf101=2Edts b/arch/arm/boot=
-/dts/tegra20-asus-tf101=2Edts
->> index c2a9c3fb5b33=2E=2E97350f566539 100644
->> --- a/arch/arm/boot/dts/tegra20-asus-tf101=2Edts
->> +++ b/arch/arm/boot/dts/tegra20-asus-tf101=2Edts
->> @@ -82,9 +82,11 @@ hdmi@54280000 {
->>  			pll-supply =3D <&hdmi_pll_reg>;
->>  			hdmi-supply =3D <&vdd_hdmi_en>;
->> =20
->> -			nvidia,ddc-i2c-bus =3D <&hdmi_ddc>;
->> -			nvidia,hpd-gpio =3D <&gpio TEGRA_GPIO(N, 7)
->> -				GPIO_ACTIVE_HIGH>;
->> +			port@0 {
->> +				hdmi_out: endpoint {
->> +					remote-endpoint =3D <&connector_in>;
->> +				};
->> +			};
->
->Does this need a bindings change? nvidia,tegra20-hdmi currently doesn't
->support OF graphs, so this would probably fail to validate if we merge
->it without a corresponding DT bindings update=2E
+On Sat, 06 May 2023 17:07:35 +0800, Jiapeng Chong wrote:
+> The print function dev_err() is redundant because platform_get_irq()
+> already prints an error.
+> 
+> ./drivers/soc/tegra/cbb/tegra-cbb.c:130:3-10: line 130 is redundant because platform_get_irq() already prints an error.
+> ./drivers/soc/tegra/cbb/tegra-cbb.c:140:2-9: line 140 is redundant because platform_get_irq() already prints an error.
+> 
+> 
+> [...]
 
-drm/tegra patch is backwards compatible and connector node is optional=2E
+Applied, thanks!
 
->Thierry
+[1/1] soc/tegra: cbb: Remove unnecessary print function dev_err()
+      commit: 10f975f8b0e8e563bf1e5c2f5e4ebada29fa7edc
+
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
