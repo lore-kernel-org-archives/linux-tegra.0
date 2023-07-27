@@ -2,55 +2,55 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960FBC001E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 16:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A381C41513
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 16:52:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231622AbjG0Qun (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 12:50:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58450 "EHLO
+        id S230036AbjG0Qwg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jul 2023 12:52:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231882AbjG0Qum (ORCPT
+        with ESMTP id S230523AbjG0Qwf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 12:50:42 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE292D7D;
-        Thu, 27 Jul 2023 09:50:39 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-51d95aed33aso1512935a12.3;
-        Thu, 27 Jul 2023 09:50:39 -0700 (PDT)
+        Thu, 27 Jul 2023 12:52:35 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58ED3271B;
+        Thu, 27 Jul 2023 09:52:34 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-992dcae74e0so155182466b.3;
+        Thu, 27 Jul 2023 09:52:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690476637; x=1691081437;
+        d=gmail.com; s=20221208; t=1690476753; x=1691081553;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8ca83DArfwYSOrij3GU5MKEjp3+Tob7zF8j3oLiLUAA=;
-        b=JsK+YR6oU0GmuhsKrZ4QxdQWBVSJF1UVlnChg0t3Ys/MRkQ9z7tcZS/yZMnZXipBjk
-         DbfXFC+HDoPPMJ8jU2NSNQLQx+NhXYhMkZfGw6ZgciyE1B4qw7sVjYTAcVhTtoozJRlY
-         fcBL7jlboWgjpL+/6OjYq7UF8E70Vqx1MiYoBQfm7V1q9Sk99s5h9N9l/gHYShLwUgyn
-         eELVNFFZP1OUZq+YA3JLCFGlsuHSy78NhpG4Wep2M3avKybHCfdDJOibIZSo8K+E2k0/
-         GvEe3YY/2Gj2ftbxyvBfod7UaPTlsGf/6ki2Gk/fKEpw+BcamsTBJLzt6uYcHXXv88pt
-         WyOA==
+        bh=xJllZA/hraC0sGa6pdxU7i7KaLRbEl/1PrBlJ7UILBI=;
+        b=h4p6ZXuU1vBEdSNIlOBnFuw7qqVQhirfehuF2YLpk2ocsttal5BhgebbKvctlmB4F0
+         XyKMJP7UueyCw0y1Mgz+fk+fqt81Lhxb8Jbdy7ihMZ9HRmsA6jq0iZQn+k9P6Aq/8fWJ
+         A1aeurTe7LQy+rN5H65VZH9i+o1m128BkwIRPkn+659fev3T1ABYOl0CbJGmsTOyri96
+         J2NgAZ4zBY5SCfiAlIGYbC6oRtC2vx8b27YZuj10xGTqN7RzXxqJBexCfHKx2cm98S7Q
+         JHN7C5stc/2PAkrl3+MercEf0DNKcAjUAJ5j90AOHT5MVaqVPcUQgr/nYB9gO34dZ3w1
+         BRsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690476637; x=1691081437;
+        d=1e100.net; s=20221208; t=1690476753; x=1691081553;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8ca83DArfwYSOrij3GU5MKEjp3+Tob7zF8j3oLiLUAA=;
-        b=hW3Gn9tY7WdV/MPRi3l7WAvUk3tPQeTywpjKIeVvPxh44z8mPG71qDXVXiApvSDiWa
-         Zfd5kTzr0PUXaKhYhDp0xDGxJuxWY5yDJOBUGFPqtZafeGSSvxR6KdEGWgGf2GTZvrYL
-         TlvOLnV8+8k6jXX2hx6TqVqafzuHk6w6oY49BJHx3LebqnAvfm1+lRWmTBXFd/HfgdpC
-         Cy5Uf5Rfnefg5VuEM+BILRu08hH29XM8SkYDuSEVZp3ZT4GZXvX++B2OQsxz0hT/2MlL
-         UH9trHCwl+r+4Sowil1BeBOBtmIGuTSeETM+Dz9lVI/rJcLWNx+a4POJRv5hIgg0Q+PG
-         SXPg==
-X-Gm-Message-State: ABy/qLbU7qLGwXbO1ACISlLXe2pKTFDAKiKPg5mNoh4U/Pdv0iUmBCwR
-        SY8F7sPPLZ3Ci2rqV/xV28A=
-X-Google-Smtp-Source: APBJJlEkIyXdNLPB+S5kMe28Kp9+/FTHl5FfWx3i+zKwBred5WR3IrCEgA5Zrs4IKOLFdiXpviY2BA==
-X-Received: by 2002:aa7:d049:0:b0:51d:9ddf:f0f3 with SMTP id n9-20020aa7d049000000b0051d9ddff0f3mr2008193edo.31.1690476637348;
-        Thu, 27 Jul 2023 09:50:37 -0700 (PDT)
+        bh=xJllZA/hraC0sGa6pdxU7i7KaLRbEl/1PrBlJ7UILBI=;
+        b=OSiCMdKjEI/qLN+jLAgLSU44Nb9JxF68VzEEUB5ODwrHlNih7pXgRK/+cyBd52IEiK
+         rS6JQcZgmN1JKuRpAp6QRcNYkfu7bczk9ytypSlX3qq6ctgE0Lb3UWzeo8FeLBu/ii+h
+         5N8Roe0OlymUDP+n4/OwjC+qkHTwkQpFFHdOSXsY30/Q2IN6WCRBIHXZAHSQpDPk4Bdj
+         SPOmdOqDx5GFSNgmeam1cPo5oE5DZDa+4s6nhkHlTFiIJYi84GnLkQz/hWLKsjhmTK57
+         MqqjylUGZYVRFw6pIByHbYQdSOtth9pWvYvhd67paYG3LOjCanEUBMKVIGPVKUL2ntxO
+         3NDw==
+X-Gm-Message-State: ABy/qLY7p35pYIvJRKLbEVbi0paedHwG0L1zobQjFTWdJ1Jct7UD1tF4
+        nt3dZkJLbNcvf7cOBnKLp/s=
+X-Google-Smtp-Source: APBJJlExqeBOXFYv5p5Mp+mstGgDsEmtwT2utg6+6JlXRrZAxSp13C7iJaOCi05XZSssVb3al3ifxw==
+X-Received: by 2002:a17:906:292:b0:992:4250:5462 with SMTP id 18-20020a170906029200b0099242505462mr2748008ejf.50.1690476752525;
+        Thu, 27 Jul 2023 09:52:32 -0700 (PDT)
 Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s11-20020aa7c54b000000b0051df54c6a27sm832509edr.56.2023.07.27.09.50.36
+        by smtp.gmail.com with ESMTPSA id k13-20020a170906970d00b009893f268b92sm983139ejx.28.2023.07.27.09.52.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 09:50:36 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 18:50:35 +0200
+        Thu, 27 Jul 2023 09:52:32 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 18:52:30 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Svyatoslav Ryhel <clamor95@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -64,95 +64,81 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 2/2] ARM: tegra: transformers: add connector node
-Message-ID: <ZMKgW6eYpJVqeZJM@orome>
+Subject: Re: [PATCH v2 0/2] Support bridge/connector by Tegra HDMI
+Message-ID: <ZMKgzmVCCGqpuVEQ@orome>
 References: <20230618085046.10081-1-clamor95@gmail.com>
- <20230618085046.10081-3-clamor95@gmail.com>
- <ZMKJE1G87-jWeg2_@orome>
- <5A2447D3-DB49-4788-AA05-182AF0F04ED2@gmail.com>
+ <ZMKIonuTnoXcuc95@orome>
+ <97EE0F0B-D1EE-43B1-A13E-510DB8FA2798@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+quuNHqy5nY6+XIF"
+        protocol="application/pgp-signature"; boundary="NiHFY5kYNQQB57jG"
 Content-Disposition: inline
-In-Reply-To: <5A2447D3-DB49-4788-AA05-182AF0F04ED2@gmail.com>
+In-Reply-To: <97EE0F0B-D1EE-43B1-A13E-510DB8FA2798@gmail.com>
 User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---+quuNHqy5nY6+XIF
+--NiHFY5kYNQQB57jG
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 27, 2023 at 07:26:28PM +0300, Svyatoslav Ryhel wrote:
+On Thu, Jul 27, 2023 at 07:24:56PM +0300, Svyatoslav Ryhel wrote:
 >=20
 >=20
-> 27 =D0=BB=D0=B8=D0=BF=D0=BD=D1=8F 2023 =D1=80. 18:11:15 GMT+03:00, Thierr=
+> 27 =D0=BB=D0=B8=D0=BF=D0=BD=D1=8F 2023 =D1=80. 18:09:22 GMT+03:00, Thierr=
 y Reding <thierry.reding@gmail.com> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=
 =B2(-=D0=BB=D0=B0):
-> >On Sun, Jun 18, 2023 at 11:50:46AM +0300, Svyatoslav Ryhel wrote:
-> >> All ASUS Transformers have micro-HDMI connector directly available.
-> >> After Tegra HDMI got bridge/connector support, we should use connector
-> >> framework for proper HW description.
+> >On Sun, Jun 18, 2023 at 11:50:44AM +0300, Svyatoslav Ryhel wrote:
+> >> This patch adds support for the bridge/connector attached to the
+> >> HDMI output, allowing to model the hardware properly. It keeps
+> >> backwards compatibility with existing bindings and is required
+> >> by devices which have a simple or MHL bridge connected to HDMI
+> >> output like ASUS P1801-T or LG P880/P895 or HTC One X.
 > >>=20
-> >> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # ASUS TF T30
-> >> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # ASUS TF101 T20
-> >> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # ASUS TF201 T30
-> >> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> >> ---
-> >>  arch/arm/boot/dts/tegra20-asus-tf101.dts      | 22 ++++++++++++++++---
-> >>  .../dts/tegra30-asus-transformer-common.dtsi  | 21 ++++++++++++++++--
-> >>  2 files changed, 38 insertions(+), 5 deletions(-)
-> >>=20
-> >> diff --git a/arch/arm/boot/dts/tegra20-asus-tf101.dts b/arch/arm/boot/=
-dts/tegra20-asus-tf101.dts
-> >> index c2a9c3fb5b33..97350f566539 100644
-> >> --- a/arch/arm/boot/dts/tegra20-asus-tf101.dts
-> >> +++ b/arch/arm/boot/dts/tegra20-asus-tf101.dts
-> >> @@ -82,9 +82,11 @@ hdmi@54280000 {
-> >>  			pll-supply =3D <&hdmi_pll_reg>;
-> >>  			hdmi-supply =3D <&vdd_hdmi_en>;
-> >> =20
-> >> -			nvidia,ddc-i2c-bus =3D <&hdmi_ddc>;
-> >> -			nvidia,hpd-gpio =3D <&gpio TEGRA_GPIO(N, 7)
-> >> -				GPIO_ACTIVE_HIGH>;
-> >> +			port@0 {
-> >> +				hdmi_out: endpoint {
-> >> +					remote-endpoint =3D <&connector_in>;
-> >> +				};
-> >> +			};
+> >> Tested on ASUS Transformers which have no dedicated bridge but
+> >> have type d HDMI connector directly available. Tests went smoothly.
 > >
-> >Does this need a bindings change? nvidia,tegra20-hdmi currently doesn't
-> >support OF graphs, so this would probably fail to validate if we merge
-> >it without a corresponding DT bindings update.
+> >If I understand correctly, we still need the drm/tegra patch to be
+> >applied before the DT change, otherwise the driver won't know what to do
+> >about the connector, right?
+> >
+> >That shouldn't be big problem, but it means that the patches need to be
+> >staged in correctly to avoid breaking things.
 >=20
-> drm/tegra patch is backwards compatible and connector node is optional.
+> Patchset contains drm/tegra patch
 
-We still need to document the connector node, otherwise the DT
-validation will complain about port@0 being used here, won't it?
+I understand, but my point is that if we apply the DT patch before the
+driver patch, then the display won't be correctly initialized because
+the old driver code only looks within the HDMI node for the additional
+properties. Only after the drm/tegra patch is applied will the move in
+DT be recognized by the driver.
+
+So for now I've picked up the drm/tegra patch and then I'll apply the DT
+change later on.
 
 Thierry
 
---+quuNHqy5nY6+XIF
+--NiHFY5kYNQQB57jG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmTCoFoACgkQ3SOs138+
-s6FMdxAAr/lh5lLTiYBGhpZ6nbI8bKAjx08EQ5zqrB179pkIC7+ZATpv+6u/WBWN
-MONzJyFIGz+Kr9yg1Qz0o9u3sRatuQo4XZbTdhKb6t0nscEwD+IZDJRWYCSPmady
-YEN0hJ0iZcQhZwVFioduYkzAnClbILg6qgs7fTATD9X0Di8bmqVAwdg3MDNs8sC9
-R49WsfVg2CHC7SL3NKhw8qpUihEJs6+C7Pu9WfGDERlOf9XdpJPs2KJungGjPznp
-58/XAeDHGMSZ+Rs3RC/HM2PGjfkUdyf616NHW8YCInl4Jiie4NZpYiZNBOdQN5/4
-/B9LbgNuOS/HM8qKtsksYJDGNzQqYuXsqBWz0SS5LEeRTraurkuhuGkbbasmWssS
-DxJfbFbnxxul2+ItpTcAG2c4+/N9fVDqVvV8zRpaN3V5RZjC8pT0XLrWSkbIQV7E
-rxphLww7zuPDOjGXUKZIji8PUuZ0g++sO5isAkCaZESkdF7cHQcEq5WTXpT+78my
-D6NqkVjJr0YNrBsisJGgewrXxx6YjSKpMp7KJYOVJOKOjdnOZucCcyhbOpdF2Pmf
-CIy6rUOymPzzAVOYvrWBDTnM+U5bwTwhQGOLJfBZvRNyi0hkfQwO/4xJe3LHVuYF
-ykJcAKiU3slOXD5EKNVSqbbhgkuY+bvnz7K8gfVEQ2eF73vrcIQ=
-=d9x5
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmTCoM4ACgkQ3SOs138+
+s6EMFg/8DWd4RP4PN5NZCmhwr4RSpxepUKij2HEMxzuYsXkeK4MnmAV3WfQi9eWT
+6X4gUfyxo+OenRA80NfmbkmfTg6XnS3UwcMXXtPvwWTrbsQsxB6PiTQ+LgV2Az9w
+pTtaP2bUSxVm8T6QPq+mAsoXLHJivaT+ynAbPZXDdAIJ8p+72QNkyQO2QjFSoEbl
+QoCMCKWcnp4yxnmrCYtTKBQNYKZC15Bwi8VLkQCmaQQ+30ioe6BYfSoKNvmClKMu
+ZLu7sbVVQrzddTVVng0gt/04eQuqMSbBgp0gRGmcwGZav3b7RwMK4ZUpbyCFN2De
+TqtJOhR3XzWhPx98IGmsN0NbcfGPk4lBXYvcD9SxL2aZwMzwTCwpAsorH+tTBI1I
+bjCa5Iebi3aqIl88Te+z3ec4vxHk2X+++7YZOaid8JBtOXlPR+ece8KA551MBgUJ
+8zHP5ESGPm1onjW07aotlTLOIBYYVGA+wKtBtaHbFVWLGWEzZPKAwjcgqAanSwyv
+jYICptKYIsK/HIhTdIHP3kXEuXUk9MDKMseBky4gVrq2odu8qQG8zGZJjDVakCMx
+nQKwA8T5xYlr3/eAqZ9fFnDWRfVuC7Il5Z/CHwRRJr6S5dqlUjp1EFlVvqkKqrfC
+j/h/dz/fVouHa8Spx0W03i1sWaFckYcYELF3u/aJSYnnzr4tFC0=
+=QV1N
 -----END PGP SIGNATURE-----
 
---+quuNHqy5nY6+XIF--
+--NiHFY5kYNQQB57jG--
