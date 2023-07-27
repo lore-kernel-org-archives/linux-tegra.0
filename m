@@ -2,91 +2,165 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC62C00528
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 10:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA30C001E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 11:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231839AbjG0KDM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 06:03:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
+        id S233384AbjG0Ltq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jul 2023 07:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231671AbjG0KDL (ORCPT
+        with ESMTP id S232372AbjG0Lto (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 06:03:11 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C7CC9128;
-        Thu, 27 Jul 2023 03:03:08 -0700 (PDT)
-Received: from loongson.cn (unknown [10.20.42.43])
-        by gateway (Coremail) with SMTP id _____8DxqOrbQMJkUqwKAA--.17105S3;
-        Thu, 27 Jul 2023 18:03:07 +0800 (CST)
-Received: from [10.20.42.43] (unknown [10.20.42.43])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxzM7OQMJkkus8AA--.31968S3;
-        Thu, 27 Jul 2023 18:03:07 +0800 (CST)
-Message-ID: <3dd819d8-69a1-f2e0-de53-5a4b2a6dd39d@loongson.cn>
-Date:   Thu, 27 Jul 2023 18:02:54 +0800
+        Thu, 27 Jul 2023 07:49:44 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2099.outbound.protection.outlook.com [40.107.243.99])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED980F0;
+        Thu, 27 Jul 2023 04:49:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CIkbN6S4seBKnxmu4W0DJMeizpqF2/ORpyAdmYV6zvvV05p0NqeJmqgKwigjG5IxLgd6vXygkMfOIyccYZZG9Ms+z+RN4vXH+LcpZUxVM6q9JLkyYODbm9eSNdPbgz6VoGzPXA0K2iUVSXnizjgll7eqXCpXlWLOp00ExJZCofo+GQ8YoTiedccxuuNISMZByc4WwO2h29Sr2zwF5k1rXoS+uMZbCnM91WpNsi4Yec6i2vTTDXSW1wwhHtEtJSlr5LfbdiyNu3RIl5BEAzodJy4YOqHyPGwnzN50NNxf6kmRhYdfDdMbzSSg/0Zooxcde09rMu9otrHo1se3G6rGKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9qWO5Jr/SyXxiG4dPlPyQfhtqVTqhsPoHN1yxilfEt0=;
+ b=eWpwAuuO8BmN2NMMy+C6Ecvlb6RAB67S2j1OTrP7YtLPANTTKBpYoVTrT1ylvmLAgW0KiXREi/foo/U554xu2/wJalq1MqY6HgT5pjj0eU6FulErox6btDwWQdQmfV8rsN/Tl+cYX2+Am1N43nq7gy5Et0NG+qwdevbp/0zAAzSSuojLcWGj+6O51g6kxXUC0iPXo29okLcBaUcNzIns5FFOwjmbtt8Q2TAiRJRc+h7544HwDtrdJJrVn9jWTlEgw/xhACQ9YhclSLLCpHdW6I/vJNFlh64IZwUEwicG/wRctmfzvns3iH8l91ilMjPzMRnYyRAghIKqQDPp1nzUhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9qWO5Jr/SyXxiG4dPlPyQfhtqVTqhsPoHN1yxilfEt0=;
+ b=XxFpIJHZsVaO4JPornyaAKBOxBD6hDUkrbFRHLyUDNR5/BCHz+Nzl5WfpIb/tNmm0UBYhXSQ6kkh1J3sd6ESgs4mPM/gZnGlzKRy2lnE8/R1QyRS3tMwDMRki18nPFcLOPBU6Qm8QPd/oiXR6pIgGt2J/yxQXU7q356dxT0w+cc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by SA1PR13MB4959.namprd13.prod.outlook.com (2603:10b6:806:18b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.29; Thu, 27 Jul
+ 2023 11:49:40 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::fde7:9821:f2d9:101d]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::fde7:9821:f2d9:101d%7]) with mapi id 15.20.6631.026; Thu, 27 Jul 2023
+ 11:49:40 +0000
+Date:   Thu, 27 Jul 2023 13:49:33 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Revanth Kumar Uppala <ruppala@nvidia.com>,
+        Bhadram Varka <vbhadram@nvidia.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] net: stmmac: tegra: Properly allocate clock bulk data
+Message-ID: <ZMJZzfqBxRNSeLxc@corigine.com>
+References: <20230726163200.2138394-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230726163200.2138394-1-thierry.reding@gmail.com>
+X-ClientProxiedBy: AM0PR03CA0068.eurprd03.prod.outlook.com (2603:10a6:208::45)
+ To PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [1/2] drm/tegra: Return an error code if fails
-From:   suijingfeng <suijingfeng@loongson.cn>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20230626143331.640454-1-suijingfeng@loongson.cn>
-Content-Language: en-US
-In-Reply-To: <20230626143331.640454-1-suijingfeng@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf8DxzM7OQMJkkus8AA--.31968S3
-X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Gw1rCF17Xr17trWUuFWfWFX_yoWxKFcEkw
-        109rWxW34xuF4DWF1qyry3ZryayF95uF4xX39av34fGw17Zr18X34UuryUu3W3JF13GF9x
-        t3yqqFn0y3Z3GosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
-        s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-        cSsGvfJTRUUUbfAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-        vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-        6F4UJVW0owAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-        Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_
-        WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-        CYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-        6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-        AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-        0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-        v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-        xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8EeHDUUUUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|SA1PR13MB4959:EE_
+X-MS-Office365-Filtering-Correlation-Id: bfb4f60e-185c-4305-6a32-08db8e978f73
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HGYZXKrSXyXZqOw4mV9E60F3ljs9E94DBFiAMxkD2LU9dVwYOxsH3HaJoWwAxkIeTjU8wtRKmrdoGJW4OfiatNDMC8GY+LAHv+cQOCblhvLyfgS7faKEd38uosgmofW4QRrDBgZ4iUgNR0MwX2Ly44q3W9Mso5+Prpe64Vyzmt0Cl4Yr6L3vzq9RaoXd0WIbdSaJXQk1bJaHZEXIqpMSM6IcJTv0G3zHdwX4UQCF6Q0pzT9lt/JjnNMPd/RI7bY0CJlA+zTl0exl3ldUBHIBdbfdMz+ZwCuGQe4NIUBSsSaLqoCs4iRb0+84P5F3yR58q9DGQ5wrdN/6BSXc76ol6tLPWiyWAT9CS3epYRQX2gUKm2PYzaw0hvkyXGGAdYwMJZmTXlRRqYq4YW2y9hHxWxhv4pSAkdMObGJERF4rKGBL/FOsiOmLmnCovufbHP7DfIREGH4MSImM5hef92fUvhfYRJLCCfuhNvpGe/z8Bg5BVAtjkHd5rjtVJQfweLcxKfYd56zUJ/FUBbFjseuFYXmiIcOkAdnTzWxxXPQXOugVCa+l5MLABao0QFY+dzWx1ycSTWyJADYN5VYRO5HcwDyDqauD/hkE8HD0dY7loAc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39840400004)(346002)(396003)(136003)(376002)(451199021)(2906002)(41300700001)(44832011)(316002)(8676002)(7416002)(8936002)(5660300002)(36756003)(86362001)(6512007)(6506007)(6486002)(478600001)(6666004)(83380400001)(186003)(2616005)(38100700002)(66476007)(66556008)(66946007)(4326008)(6916009)(54906003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kGnCOoZsbbNnhi1RPRQOXoxaDMnZLj6ufmV55bRzlAZfZ3Yqpy1F5pYSq/kM?=
+ =?us-ascii?Q?iwQNyBaW2uBXMVK0ejNGXf8535JUPbIGNxJg3RH/1Bc2/ZEViKWit/gvCF1y?=
+ =?us-ascii?Q?fW4OeNq6+NxEse9YW/ysCHCRkPka3FLGpw4M1qWHpScLOlDZbGE1epNL479x?=
+ =?us-ascii?Q?QVmH40lMUBD/alfIodiXIqyG22Ye1CY/BjQ8IyT0eBEYv55ZBOdtbX20eVpD?=
+ =?us-ascii?Q?k+4MD4fLJz3bFyR8aPlBKFUzjLG9j2pwKudCFRym4dwRyM/jDtY7e1z9ZMxJ?=
+ =?us-ascii?Q?XcbowzxD0zVST66C7Rr/4KlaW26oxz3405bZe6Ui2CXmOU0ILwmQvaQ5lObQ?=
+ =?us-ascii?Q?Fhe+uI3eI4Qn0pB9BSwDx6yIM32b2wTaj1rxVQBNPzco8mxH+RDRqVEziRUx?=
+ =?us-ascii?Q?6kZ8l6oocHKgOF8dxcUx5XteWT/5EVqu1bk5/cMtzxL3LbNe8kpuBsgcphMw?=
+ =?us-ascii?Q?QMAG/nIEmlvk/8N/k44n6FpJHYtBNCDwptWK0JBhjsjpyDPFfMs6c6v2rrP/?=
+ =?us-ascii?Q?vXbDsVSsp2miUkKjBCpsHy2YnmGoHYv9skLbXfhVUopLqFy06rxxmTtlC+e+?=
+ =?us-ascii?Q?IeNhhq7AsWM1qcJd0RuUR6zfEgsoGSA/kGNSygcoMEMo6mbaA+IxI15bYC6U?=
+ =?us-ascii?Q?7Ktx3ySXvLohwXzFUXgSJpfgMw29SnJ3sLERPBsoKeiM3xrJ9G6CBogEBNbU?=
+ =?us-ascii?Q?Ye9s6LRhTnB5bQ0T6tY61kB1mimpLTfagloQarAbvrTatqzHhNt4EgmpRlL+?=
+ =?us-ascii?Q?R64lO6dLyVlc8EapT/6F+KROQ+h+ift7fKycK+lM1XwXzfgkSZWl4pVun6Nm?=
+ =?us-ascii?Q?9JMseZE3c5q2829rmgLXU3P+FWgSz9hrb5p3/LoNmS9uGHBUKz2r2JA8yPwE?=
+ =?us-ascii?Q?oyXRWEQ1RJ1nE8ukTY4R7xspUP17ZQrZIG23a1wbeMALieNQe0REQQeLtjXV?=
+ =?us-ascii?Q?zbXk7+eOJ6bZUIcQXcwkIQ9D8pkAsWVvFnC/TIRrW94QYd0AZBRnHSUsNcOW?=
+ =?us-ascii?Q?dswiFJ+H0r49YZJ+u0yzI6XosywkTVXqq+32tODys13+14EcetwYyfuAxVf4?=
+ =?us-ascii?Q?m8MucK6fJWozbyuBxJx2RpDmeuL9+wn+M07B/fUYFJcXUgSX9qT7ZBeDMD9f?=
+ =?us-ascii?Q?vFfKx+TiDWI9vLkUdcuucq+TsR0wqaJykyK1H08i6fKOC+YBWdyVZ0S83pTQ?=
+ =?us-ascii?Q?Zs6azSGboA5Bg2Jfo/aiD7cih5soJCIdoZBa6Fgnrmiryc/CMOmJtRzWnuFG?=
+ =?us-ascii?Q?+3S5WZGwJcp07b6YXnLIwRk0ONFujgKZ4ZArZ3FPOLyOkgtMKNBGHbUedu5b?=
+ =?us-ascii?Q?XEbl+u9x0xvqrRqGdcxKzaG7wJfaS6qD47KdIfOHSLA4J77A3j/JMsbSzrJT?=
+ =?us-ascii?Q?A9Hp3oNZZiUiNkqGmwUUXRoRjYKKp2CCUShbLQJq7XKDoWOjTkWY4nEj4S57?=
+ =?us-ascii?Q?sY2twKXQHt/PBenkNCsqrZbBGRSq0B8e8vX9WX9Qw0sRIa//1dGhQ/4lvDXs?=
+ =?us-ascii?Q?Gdxm/HJB/mxrTOzK5iOcZIOaUGSxdiO/xTPfEUN48BRD+Ysjdc+yX7EClRVs?=
+ =?us-ascii?Q?8KTvdZqwFpkDlHhYktcjgDktbZZft+NS7xtNNlC62t98vPeXo2+5DHla8EDd?=
+ =?us-ascii?Q?e1PZtC+tddHbbxrtxkeQjLUmCxFdpJojItakR+ys4ojK8LHhw7aYkZi0Eb/V?=
+ =?us-ascii?Q?pr1U9Q=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfb4f60e-185c-4305-6a32-08db8e978f73
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2023 11:49:40.2169
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6qb+yL+9sA3Ci6n0QWID8apROEKKusTSs/vV0I7asiwVpoPyt6MNJq4k/2gQfp2+blBRJrgpUlDIvvJu+uN2+TRtHUnVCP1Sn+OWotgydC4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR13MB4959
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On Wed, Jul 26, 2023 at 06:32:00PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 
-Gentle ping for this series.
++  Revanth Kumar Uppala <ruppala@nvidia.com>,
+   Bhadram Varka <vbhadram@nvidia.com>,
+   Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+   linux-arm-kernel@lists.infradead.org,
+   linux-stm32@st-md-mailman.stormreply.com
 
+   As per the output of
+   ./scripts/get_maintainer.pl --git-min-percent 25 this.patch
+   which is the preferred method to determine the CC list for
+   Networking patches.
 
-On 2023/6/26 22:33, Sui Jingfeng wrote:
-> Return -ENOMEM if tegra_bo_mmap() fails.
->
-> Signed-off-by: Sui Jingfeng <suijingfeng@loongson.cn>
+> The clock data is an array of struct clk_bulk_data, so make sure to
+> allocate enough memory.
+> 
+> Fixes: d8ca113724e7 ("net: stmmac: tegra: Add MGBE support")
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
+
 > ---
->   drivers/gpu/drm/tegra/gem.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index dea38892d6e6..0ce22935fbd3 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -710,6 +710,8 @@ static int tegra_gem_prime_vmap(struct dma_buf *buf, struct iosys_map *map)
->   	void *vaddr;
->   
->   	vaddr = tegra_bo_mmap(&bo->base);
-> +	if (!vaddr)
-> +		return -ENOMEM;
->   	if (IS_ERR(vaddr))
->   		return PTR_ERR(vaddr);
->   
-
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+> index 99e2e5a5cd60..78a492b91bc6 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+> @@ -234,7 +234,8 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
+>  	res.addr = mgbe->regs;
+>  	res.irq = irq;
+>  
+> -	mgbe->clks = devm_kzalloc(&pdev->dev, sizeof(*mgbe->clks), GFP_KERNEL);
+> +	mgbe->clks = devm_kcalloc(&pdev->dev, ARRAY_SIZE(mgbe_clks),
+> +				  sizeof(*mgbe->clks), GFP_KERNEL);
+>  	if (!mgbe->clks)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.41.0
+> 
+> 
