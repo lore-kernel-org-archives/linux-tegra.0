@@ -2,63 +2,64 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AE8C001DC
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 14:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2E2C001E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 14:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234101AbjG0Otc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S232757AbjG0Otc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Thu, 27 Jul 2023 10:49:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41556 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234163AbjG0OtM (ORCPT
+        with ESMTP id S233019AbjG0OtN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 10:49:12 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1109B2D54
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Jul 2023 07:48:52 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso71061866b.1
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Jul 2023 07:48:51 -0700 (PDT)
+        Thu, 27 Jul 2023 10:49:13 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 145A82D5D;
+        Thu, 27 Jul 2023 07:48:53 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so4834618a12.1;
+        Thu, 27 Jul 2023 07:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690469330; x=1691074130;
+        d=gmail.com; s=20221208; t=1690469331; x=1691074131;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CbLzEhTo1lrmJmJN+lSWIA8CKDomMFjl3FjK7/BIt70=;
-        b=BK44O9+gRvTetVIVPHvHIaUUxKgt5JN/xI6XlQHyXQM8QmXRW1nKHW4fLLzxsoBiAz
-         AnrhjSISO3CKC8CB6nWhJqqBQT7ZMxMIwu94cHKDQN9hvFeozAOUGJ32aZcjzQYotVfD
-         4wYXVQYAOJ5KXrPg9O44DEy5O+OE9VQ7k87EGo25cP04jgzPjIPX7pIlzlSe7w7xns0D
-         /zC55GgvEwNYkfSxMbJWHop81H3uKzIg0QFtu/ylgR6PSAnG5OPZnT9CxH9U6SekIw2O
-         2hUeB13630vDKDAuil/slktS5E1ptR2JBsq5MGgXXPgAdxJ6U5xk1J8wTPXIKNbqjDNw
-         MttA==
+        bh=vloA2isMyxI7aS0XNNyJjobfeNZEdizCBFfkCUSfiq0=;
+        b=Oickxo9oblvx0EA24/d9J9LYjIxozOVfC7Vi8/NxmqtKR4Fr3NVgGnp6QOMz7qHnFe
+         3vRsTUoyj489GW7B/JHGxXmj1HuG4WEljaWp5a+QOveSTRg0EyQcCdzG6QTsLvTb2Tf0
+         QS03xlcSsGfijDbN4phwwt0XySlmq8DKvZDV2uC98NX5pfW6MGKEVlTFkpdz/9LAPLCF
+         V+7v+ZbJNq8Yi0mHy2YFS2weq8ManGlHnfLSU1i6MqhhGa+x8NNpWDJ2norYStRlN2ab
+         uf8pmpFj5XbEENA7W269lZ5UBxwBjKx/RlLHqTljqZYK9IYV8VzsG7T7OkQd/vu/FCHz
+         9KEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690469330; x=1691074130;
+        d=1e100.net; s=20221208; t=1690469331; x=1691074131;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CbLzEhTo1lrmJmJN+lSWIA8CKDomMFjl3FjK7/BIt70=;
-        b=Oh2EEun09vB0lmiM+zO7SPQHjE9C9POJc5x7jPnFdyrOmFvDNB4WG1scA+MsUk9kpU
-         yVKhfL4nkYN3iqp/xtnYRwkdvp0rAzgbzKt1EcsQxlX8xGA3jCBQHQrwRGINYZf0AiX/
-         8zi/KGLW4Mh2xDK3hVuksXobiPzUTiS5e0LD08BvfvZmrRwfYF3w9Dfpg588YnkMSGvg
-         0B5JD16thizZh7ob6nZ37taEiaR7nhmPMRcSprhx7huhe69mygByWBZ8AeLTMhcPanHS
-         c/0To3xTKSwEYro6/4kPCJ8nZWmQCMBjcRtdzOnwmVXVYinh/HBK5CkceUgSzOZYbUqv
-         eXaA==
-X-Gm-Message-State: ABy/qLbdreIL8Yw+czx3ZCVntsy4Ilk0kAPeWhd478OoRLps+jmkwG5Q
-        esKZW186BeWMQmhQIskU7gI=
-X-Google-Smtp-Source: APBJJlEKblSC2vTKPvPACcQDK6rhCN456jx2lienpb6IiqhMJHJK1c6udOf7DZp9QqRuBSFmSGsCKQ==
-X-Received: by 2002:a17:907:a057:b0:997:decf:11e7 with SMTP id gz23-20020a170907a05700b00997decf11e7mr2211058ejc.12.1690469330210;
-        Thu, 27 Jul 2023 07:48:50 -0700 (PDT)
+        bh=vloA2isMyxI7aS0XNNyJjobfeNZEdizCBFfkCUSfiq0=;
+        b=emBgrQeZNG3iO7NvyTPYk2HT9N2TXKLrj9KNaKBUpgGtbsyL6YMriEPhiXUSQidG4c
+         U+EuL+LugrybydeuXCFi1U9UCe5nQcxFE4HI2lLlG5sXXhPP1u+ZdrvPODokzfmyc6dx
+         gM5AmZKUzWCC4LbR9rRJ4qO5LBhM2TWFzwaCsRGwdYbRnYsLMnqDm88HO2MlW6TZbocD
+         jA/l1W67U7HvalPrTsXYqModBS2z+Ibl0z9990YgQBJHN09qOsVkGrdNsAJmpE7GgGxz
+         lVE7ZAj8WC+4VQDKM+VCqkkrSrIpDGvbT7JybmIEh6o6u8fnmfkcA6uUJyo7ZuIqqCuo
+         pN4A==
+X-Gm-Message-State: ABy/qLYS2FMF3FxlcwTmO/6B+z++R9fsAdgS8+NAsFV8CIaRUrNmiTtu
+        5zaly3AhQk5DBjmX928YzIU=
+X-Google-Smtp-Source: APBJJlF7AavxtdletEcIOMLFle+5V6sNQJTXLUASWQOGQ6sgiV36FaptbdeumSF47ik9x+qj+qrARg==
+X-Received: by 2002:a05:6402:34c5:b0:51e:4218:b91b with SMTP id w5-20020a05640234c500b0051e4218b91bmr2904063edc.1.1690469331356;
+        Thu, 27 Jul 2023 07:48:51 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id br9-20020a170906d14900b0099bc8bd9066sm847133ejb.150.2023.07.27.07.48.49
+        by smtp.gmail.com with ESMTPSA id e12-20020a50ec8c000000b0051e0eba608bsm718172edr.19.2023.07.27.07.48.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 07:48:49 -0700 (PDT)
+        Thu, 27 Jul 2023 07:48:50 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: Add blank lines for better readability
-Date:   Thu, 27 Jul 2023 16:48:47 +0200
-Message-ID: <169046931555.2753072.15216484759861506773.b4-ty@nvidia.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: tegra: Remove {clock,reset}-names from VIC powergate
+Date:   Thu, 27 Jul 2023 16:48:48 +0200
+Message-ID: <169046931555.2753072.5032719991681297028.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230726182532.2291302-1-thierry.reding@gmail.com>
-References: <20230726182532.2291302-1-thierry.reding@gmail.com>
+In-Reply-To: <20230726164318.2172859-1-thierry.reding@gmail.com>
+References: <20230726164318.2172859-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -69,16 +70,16 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Wed, 26 Jul 2023 20:25:32 +0200, Thierry Reding wrote:
-> Add a few blank lines to visually separate blocks in the Jetson AGX Orin
-> device tree.
+On Wed, 26 Jul 2023 18:43:18 +0200, Thierry Reding wrote:
+> According to the device tree bindings, the powergate definition nodes
+> don't contain clock-names and reset-names properties, so remove them.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] arm64: tegra: Add blank lines for better readability
-      commit: d7fb6468ec9f18db52ef3c84eb44a9025021c830
+[1/1] arm64: tegra: Remove {clock,reset}-names from VIC powergate
+      commit: 6e752d4a2f5abfda9d395eec5ac28085e36e5c81
 
 Best regards,
 -- 
