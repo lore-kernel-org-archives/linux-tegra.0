@@ -2,103 +2,103 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC96C04A94
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 15:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1401EC0015E
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 16:25:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232010AbjG0Pai (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 11:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41852 "EHLO
+        id S233595AbjG0QZB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jul 2023 12:25:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230156AbjG0Pah (ORCPT
+        with ESMTP id S230331AbjG0QZA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 11:30:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5C561BE8;
-        Thu, 27 Jul 2023 08:30:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A94561EB7;
-        Thu, 27 Jul 2023 15:30:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D39D7C433C7;
-        Thu, 27 Jul 2023 15:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690471834;
-        bh=LV9IdMEKBlOBEGAGePEhzi2kc2fezNPmOEVfMNlLjys=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FZy/ku0cvhtPJi8f2uLN5ISCJ1Wb27sZg+Y5bgUW1OaVXOmAN5LZ5jrqXKoMz31lv
-         lIP9TD8kZLHbFrMOAlhfwPna908tLjt10hpaV8Cxi8cUIFOfMOdCF/79aBNfgUP2K5
-         tpLZcYlPjXfcF60ZHVgzixdZeu+MYhyH6e+QgUZMOhDdYhCD5sjN9UjHrgk+h4ljTS
-         B3vmvyiOFPivULQbcUHX7F0wkpGN1Nb2iZ/rKde+/KwDT8qu3AM4DTjiC8GqQY/qd6
-         rYCGDBXbH/wjvnW1ZisUsGVASvuqqcqLZaJNNe2dHW85cvDiH8sliXOhgQoxnr+Zem
-         kQM0/bpWqollw==
-Date:   Thu, 27 Jul 2023 16:30:28 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     Lee Jones <lee@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Thu, 27 Jul 2023 12:25:00 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702DF1984;
+        Thu, 27 Jul 2023 09:24:59 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fb4146e8ceso12169025e9.0;
+        Thu, 27 Jul 2023 09:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690475098; x=1691079898;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9Dtb8/XWikrPjhh1ZH6jlcJvc4+s8I+X0vtKuEd4mMc=;
+        b=akxN6PqS7K8KjKHHO4u8jzlPtXTSPnqPrDK4GrhDg/d1kWuMxW6wunjd0hoy0JTkiw
+         PYSznbnThXx34aSaXUSyDdWuDuv3IcruuomCIWB0zIwGDb1rg+v1zfS4v4N5FvCDb/1d
+         j/ShUUgf73BKW5aaO9Sktjna54v/Y/QjR6+j2xNB5na4tYsYOl5Zy1XPmi9m29k3h1b/
+         sfOFTRnB5OIgoanLgCpZ0iujZyUwsn3pQxiCgF4qVgZ49O3ndsKl0UaptrkDpDsKuWGm
+         0CTWkdM1ewgRCIU3g8/Q7DbdwIhC8veOpaXO51Z8yxYCd5efA3Rd888qq9/xUUj+jH14
+         unwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690475098; x=1691079898;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9Dtb8/XWikrPjhh1ZH6jlcJvc4+s8I+X0vtKuEd4mMc=;
+        b=jQyfrOO0eLA6/e+y6fxr2p5XBa+ALfgoJVKzfU1SilOBoebBUeDwrAZvO3o3TQKhZZ
+         EzySUrZyjDBN9Vo27qtNyXSHX15Gj6joSQ/Ic8WwTVPwQhfK+cJduYvw5FG01kGGwurp
+         +Kr4xmkpwkQPjDs3n29Hy/PXju7KaXYHFterV+Ews5+75sG3hdOoFlPmJ7Vvcl1x7jPu
+         t5aVAoC9BcD9C2gIDtfRG4BxUH391iZ4qag28Nn0tST0H7lVzE+p769ey4qU+PbVO5or
+         uoUZpETAoo15bP4MXsl0p9f+u0OShbjmKAyKXwvxToldt2AWx9UB2B/x+upXoiffHEih
+         E5Lw==
+X-Gm-Message-State: ABy/qLbJx17CtMkFRIPqWoLq2oxUXfKA5BOr/oaSO4TkvxPmz69gPLt6
+        /kM5Gp+SbL6mDTP1Eh9rrGo=
+X-Google-Smtp-Source: APBJJlELdV2E51r0DbzX80QIKtgJQqds7CnqjhWhCRk68TR+/SG2Y3BxIAb/3ANSX/BU4owykrCV8Q==
+X-Received: by 2002:a05:600c:2294:b0:3fb:9ef2:157 with SMTP id 20-20020a05600c229400b003fb9ef20157mr2104746wmf.28.1690475097580;
+        Thu, 27 Jul 2023 09:24:57 -0700 (PDT)
+Received: from [127.0.0.1] ([46.211.28.141])
+        by smtp.gmail.com with ESMTPSA id 25-20020a05600c025900b003fbb25da65bsm2188169wmj.30.2023.07.27.09.24.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jul 2023 09:24:57 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 19:24:56 +0300
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Jerome Neanne <jneanne@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH 6/6] regulator: pca9450: register restart handlers
-Message-ID: <c24f49f3-0c92-4da4-b307-1b4faabed626@sirena.org.uk>
-Mail-Followup-To: Benjamin Bara <bbara93@gmail.com>,
-        Lee Jones <lee@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Jerome Neanne <jneanne@baylibre.com>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-References: <20230727-pca9450-reboot-v1-0-c8edb27bf404@skidata.com>
- <20230727-pca9450-reboot-v1-6-c8edb27bf404@skidata.com>
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/2] Support bridge/connector by Tegra HDMI
+User-Agent: K-9 Mail for Android
+In-Reply-To: <ZMKIonuTnoXcuc95@orome>
+References: <20230618085046.10081-1-clamor95@gmail.com> <ZMKIonuTnoXcuc95@orome>
+Message-ID: <97EE0F0B-D1EE-43B1-A13E-510DB8FA2798@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="U32jEgo6AMZIU2Ba"
-Content-Disposition: inline
-In-Reply-To: <20230727-pca9450-reboot-v1-6-c8edb27bf404@skidata.com>
-X-Cookie: Go 'way!  You're bothering me!
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---U32jEgo6AMZIU2Ba
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 27, 2023 at 05:26:41PM +0200, Benjamin Bara wrote:
-> From: Benjamin Bara <benjamin.bara@skidata.com>
->=20
-> The PCA9450 supports both, a warm and a cold reset. Implement both and
-> register the respective handlers.
+27 =D0=BB=D0=B8=D0=BF=D0=BD=D1=8F 2023 =D1=80=2E 18:09:22 GMT+03:00, Thier=
+ry Reding <thierry=2Ereding@gmail=2Ecom> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=
+=B0=D0=B2(-=D0=BB=D0=B0):
+>On Sun, Jun 18, 2023 at 11:50:44AM +0300, Svyatoslav Ryhel wrote:
+>> This patch adds support for the bridge/connector attached to the
+>> HDMI output, allowing to model the hardware properly=2E It keeps
+>> backwards compatibility with existing bindings and is required
+>> by devices which have a simple or MHL bridge connected to HDMI
+>> output like ASUS P1801-T or LG P880/P895 or HTC One X=2E
+>>=20
+>> Tested on ASUS Transformers which have no dedicated bridge but
+>> have type d HDMI connector directly available=2E Tests went smoothly=2E
+>
+>If I understand correctly, we still need the drm/tegra patch to be
+>applied before the DT change, otherwise the driver won't know what to do
+>about the connector, right?
+>
+>That shouldn't be big problem, but it means that the patches need to be
+>staged in correctly to avoid breaking things=2E
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Patchset contains drm/tegra patch
 
---U32jEgo6AMZIU2Ba
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTCjZAACgkQJNaLcl1U
-h9CkKQf/beIKM3fR6bqol0blFHGwSkmD0ijxm51wpTgD2lbkX1z5qxND/LzBw7Y9
-oPL/RyyiKHcwC2wSWNCD5VOwu55xQoYPUJZRUYdgszlBzwto+M3rj5i/RLxQiovd
-U/GZxtoS1Il9FTobQ3Xc5m9cwuoIpDeLFebaD8BbCNhCXWgaDMhSskcq3ZP3Ojjs
-NnNKQZuWzXTtQ+3V3Ec06w+P4X7180eqgAYcrn36dm4QvCBWhvoiKZlvhxzyaSr0
-hUHFK3mNqUgOd1sqUZqS78XaTojE1QkxbtfmWybyl3P/wOzPrkOsqtvwCIURKAfH
-3+S1kTeDpSbXG198uAOtbQZVIbRg7A==
-=uM02
------END PGP SIGNATURE-----
-
---U32jEgo6AMZIU2Ba--
+>Thierry
