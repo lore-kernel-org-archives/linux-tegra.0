@@ -2,61 +2,71 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF17BC001DC
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 14:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D26C41513
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 14:44:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233785AbjG0OdG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 10:33:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
+        id S231339AbjG0Oo2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jul 2023 10:44:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233803AbjG0Ocy (ORCPT
+        with ESMTP id S233714AbjG0Oo0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 10:32:54 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3DD30DD
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Jul 2023 07:32:51 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-992dcae74e0so135067866b.3
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Jul 2023 07:32:51 -0700 (PDT)
+        Thu, 27 Jul 2023 10:44:26 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E22130E1;
+        Thu, 27 Jul 2023 07:44:23 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4fdd14c1fbfso1871821e87.1;
+        Thu, 27 Jul 2023 07:44:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690468370; x=1691073170;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0PIxTpKMJWAbGnUBIprLmE7vyufivnhYtR7ksqqkN8=;
-        b=hCnbjDPIcCiVh8TUZlcvOQfQGVj1ymLhxatIMnFaHitM3KjFZoTgl4JwTCsM3JnDtS
-         jZroyzKzBkfyz8f6BD5aYt8gKiryfDi6YqznidDnJ8+Xa32/c3tD3yg1rHZb7/q2UJdG
-         Xe+sCiYBjDMpnxpe///fcOToM1+9qhSamNwdX0u3QcD/JitFEoAkyVAovjGzEPcCA3Pr
-         2UimcOyjBzd5AGOKgscwU+DT4YEms348ufwqY42XKQIyFoNCr6ET2M0W9zIUi4Ht7z/c
-         ANagKlH3Mq+D8zi++aMAT7DANBXKahlSLhQCMKOC6wEEli+GKv894NjWgGzOHnWsZZDy
-         iWNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690468370; x=1691073170;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20221208; t=1690469061; x=1691073861;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C0PIxTpKMJWAbGnUBIprLmE7vyufivnhYtR7ksqqkN8=;
-        b=axX4RpO0Py3loz67+rqPjNyS6xE8adowrk0hftOlFK8S3I3HuSMtODFmJtPKpYhmBA
-         moAfqKQerJz7Kl/DQNuyjCDyqECQeTBrYqkSfPcWMjNJqkJjDWxHXPKBfn9YmcmxpFiH
-         B4JX1An9HfXPghBF8wle2ne+UYtUDnzHRLi7OHAhDhgmpLPhzDPOEmpAd6y5OEv5mXJC
-         z+O9GjQqOjjavrYLZF65PIFHhzkcCdyV5od/u0xdHKGWzZ8KQvM2aKtGOjfBn2QC6Y69
-         l6z1Qyi7tdmf6Ni+MXceESF9tYhhEWJQDYNF2RAKCfaD8i+IEYPd4a69ITwIDXrZuwIb
-         qAmg==
-X-Gm-Message-State: ABy/qLbBKaJcTrgxWTMW3zmhsNzj7z8O6IAszk2f7KYKozYkGVTOzKQ2
-        BhlpgpDBpAn0FD/tlrFqVPqpZ4NTsb8=
-X-Google-Smtp-Source: APBJJlF2qXbg1qikNI1v/m0Yis4MUYiG/8VPxzEXO30rojaD6bEPDBIG/MmJgx+fVs3rLww6DLOwIQ==
-X-Received: by 2002:a17:906:20d5:b0:997:e79c:99dc with SMTP id c21-20020a17090620d500b00997e79c99dcmr2368668ejc.74.1690468369520;
-        Thu, 27 Jul 2023 07:32:49 -0700 (PDT)
+        bh=4mk9QO1bKZiIQkt31EU6v0cWU3DnzKcyZ55zrIVFVXQ=;
+        b=IpK1iC7NS9CiKwi/w4XI87n1ZJtnTpYFgLP4DvzS2jI6I+/4q4WLVOQbUdat2O/JSJ
+         rSvY4KagbrRNh45MAb3OiMvA6TEobPpT93XcPOuwNxkZwkHRk2RkePF70naYd4zkx09I
+         w67L2Cort7+WjNnw+1Eiz+T5YDPa9uVnPzEbIYbg+5Ve2ggsopJhpdRGPNd/TJ0qKcrY
+         2nGgNPzvUSlWWU5cffyypJbGm4SVfdSQT+hJE3Lp5t61JHgOaSegV98A6aQIy2GYfAvi
+         7LOfIgCo/NEM+NOycT9CMd4O0HYDd6/3ZTAMasTtcqpn8lU+vU/mDqInP8ODtj57q+DZ
+         khaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690469061; x=1691073861;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4mk9QO1bKZiIQkt31EU6v0cWU3DnzKcyZ55zrIVFVXQ=;
+        b=gyxkXnzjXVhA3fv5em6+oSg46WpfNENxxv+MTnxX9eR/FFkgNBY+3aBSO82a9oezLJ
+         EHMIWeY5Kx8G68OWa3LPTSqWJSeiYl8VXB1Anq4RhrDaV99BogPZr7wBSoE3YEUft2o2
+         p+XPJG4lbtCsJFAV0XRLuQjqSofn8VO8/U2e6WLLBJCAPIE6IbXn8yl2Agg1pRlaXlDe
+         mKep92rF7+rj1LQHWBXeGmsdsZd0VkoFMTkyk2B2xa4YzY66sQyD8FfVqlJBFo8xkM9L
+         SQ+5YQOnjzjP0+N19I3NuPU1rnMVeplsBFoU7E0GYdVv/shGGvAgZqVrp4TwoY3u30ox
+         7F9A==
+X-Gm-Message-State: ABy/qLbY93S5Ec9h6oyHbJuuNPRM051bNGjx2/xugrgRW31lkL1pH6OU
+        ID28N7rJABx+7qOwatuS/Oo=
+X-Google-Smtp-Source: APBJJlFzT6s3SyADMOTPk6sW46OAgAY1F3TERUhdvCNgcDBfNJL+HaDuFPlWuv9By+p26FUAur2QMQ==
+X-Received: by 2002:a05:6512:15a4:b0:4fb:be3c:d8b7 with SMTP id bp36-20020a05651215a400b004fbbe3cd8b7mr2268062lfb.51.1690469061262;
+        Thu, 27 Jul 2023 07:44:21 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id f19-20020a170906495300b00992c4103cb5sm834611ejt.129.2023.07.27.07.32.48
+        by smtp.gmail.com with ESMTPSA id y20-20020a17090629d400b00992e14af9b9sm846080eje.134.2023.07.27.07.44.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 07:32:49 -0700 (PDT)
+        Thu, 27 Jul 2023 07:44:20 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH] soc/tegra: fuse: Sort includes alphabetically
-Date:   Thu, 27 Jul 2023 16:32:46 +0200
-Message-ID: <20230727143246.2749936-1-thierry.reding@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] arm64: dts: tegra: drop incorrect maxim,disable-etr in Smaug
+Date:   Thu, 27 Jul 2023 16:44:16 +0200
+Message-ID: <169046903884.2751933.4445869430176134815.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230725142638.157449-1-krzysztof.kozlowski@linaro.org>
+References: <20230725142638.157449-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -64,33 +74,20 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The includes were slightly out of order, so sort them correctly.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, 25 Jul 2023 16:26:38 +0200, Krzysztof Kozlowski wrote:
+> There is no "maxim,disable-etr" property (but there is
+> maxim,enable-etr), neither in the bindings nor in the Linux driver:
+> 
+>   tegra210-smaug.dtb: regulator@1c: Unevaluated properties are not allowed ('maxim,disable-etr' was unexpected)
+> 
+> 
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index eb0a1d924526..da970f3dbf35 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -4,13 +4,13 @@
-  */
- 
- #include <linux/export.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/io.h>
- 
--#include <soc/tegra/fuse.h>
- #include <soc/tegra/common.h>
-+#include <soc/tegra/fuse.h>
- 
- #include "fuse.h"
- 
+Applied, thanks!
+
+[1/1] arm64: dts: tegra: drop incorrect maxim,disable-etr in Smaug
+      (no commit info)
+
+Best regards,
 -- 
-2.41.0
-
+Thierry Reding <treding@nvidia.com>
