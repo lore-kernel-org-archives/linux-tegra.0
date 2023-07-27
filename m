@@ -2,89 +2,131 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 443DCC001E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jul 2023 19:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663FEC04A6A
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jul 2023 00:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbjGZTBb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Jul 2023 15:01:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51840 "EHLO
+        id S231131AbjG0Aj6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Jul 2023 20:39:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbjGZTBa (ORCPT
+        with ESMTP id S229697AbjG0Aj4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Jul 2023 15:01:30 -0400
+        Wed, 26 Jul 2023 20:39:56 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8E7212D;
-        Wed, 26 Jul 2023 12:01:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68DD819BF;
+        Wed, 26 Jul 2023 17:39:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A201C61C0A;
-        Wed, 26 Jul 2023 19:01:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71471C433C7;
-        Wed, 26 Jul 2023 19:01:26 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 062D761C9C;
+        Thu, 27 Jul 2023 00:39:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAFE0C433C7;
+        Thu, 27 Jul 2023 00:39:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690398088;
-        bh=NlpD57Q9uo82dlo2KwzGSqFvnnE9hFFJnOUASgQEM2U=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=fNzXwah7yJYCua91BM9jXjfkdv4Tw/yCf1sqMY5htOgSrAYbp6a3tCRLWurxwRVp+
-         I7MB95PGiR48bVJqUxvVY0kNR5KuF3sW2VRKIpK3+6O93QNo6ZR8wYhhQmqlymcdpF
-         VoXhXSNVGduq3rcApXMxnRN2xSgNky6A5LxKqOgFKyjJCa3VvvYppKl66pKWMVLuRt
-         nOmUFwzV3K1gMnwsFxDfJtS0/RFyJWO06LCmIThw/DWTooLgApBEk5MwXRqAAFV0CE
-         tyOUKsrryPV8Gs8gIBZ0yIA8rHGFNqVXozeHmsg3wxrzPX3quEkTIuyDJ0lVUrAb7R
-         tnN+viVjH0eew==
-From:   Mark Brown <broonie@kernel.org>
-To:     thierry.reding@gmail.com, Zhang Shurong <zhang_shurong@foxmail.com>
-Cc:     ldewangan@nvidia.com, jonathanh@nvidia.com, p.zabel@pengutronix.de,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <tencent_71FC162D589E4788C2152AAC84CD8D5C6D06@qq.com>
-References: <tencent_71FC162D589E4788C2152AAC84CD8D5C6D06@qq.com>
-Subject: Re: [PATCH v2] spi: tegra20-sflash: fix to check return value of
- platform_get_irq() in tegra_sflash_probe()
-Message-Id: <169039808617.123111.4823461346107082698.b4-ty@kernel.org>
-Date:   Wed, 26 Jul 2023 20:01:26 +0100
+        s=k20201202; t=1690418394;
+        bh=hjLR4NUeMP4IVUC9ETRe2AQg79Rs8N5wqjGvIEE1P00=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HnMhty9UoZVYTW2+QGN9V5v0VmCGklzjGs/NcHhcqmP7o5s77N+NrhxYytPNdPYSz
+         cPvttFygDUPA6wFU6n0bunWdzCfsZvDk7ZNUOMkqL4S776tkebPFD7MIggAXnpqnVS
+         ID2FI1GaiZFtfsX5LoixIIXJP0jJpftfK7jHAQ/hHona7EIP8lGMLtH2ggAAMd5L/e
+         vlrk6qsAP/CjTn6GpLjsG7fkWifsXMd/j4O7ahabsR9ZQJrqhGnyNi+TsWLjwVq6E2
+         eDci/Cd+dvSGavZJBkJmF3gLVVOIs3vxRy7nD3xFF0RN+iCspjMdqfe+NKdpZDhMVf
+         THCzdK9MIDqnw==
+Date:   Thu, 27 Jul 2023 02:39:51 +0200
+From:   Andi Shyti <andi.shyti@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Jochen Friedrich <jochen@scram.de>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Khalil Blaiech <kblaiech@nvidia.com>,
+        Asmaa Mnebhi <asmaa@nvidia.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Qii Wang <qii.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Stefan Roese <sr@denx.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Peter Rosin <peda@axentia.se>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-actions@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] I2C: Explicitly include correct DT includes
+Message-ID: <20230727003951.q7vyps26t4kjfwmm@intel.intel>
+References: <20230714174619.4057577-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230714174619.4057577-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, 22 Jul 2023 23:49:09 +0800, Zhang Shurong wrote:
-> The platform_get_irq might be failed and return a negative result. So
-> there should have an error handling code.
+Hi Rob,
+
+On Fri, Jul 14, 2023 at 11:46:16AM -0600, Rob Herring wrote:
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
 > 
-> Fixed this by adding an error handling code.
-> 
-> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Applied to
+I went through all of the changes and they look fine to me.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: tegra20-sflash: fix to check return value of platform_get_irq() in tegra_sflash_probe()
-      commit: 29a449e765ff70a5bd533be94babb6d36985d096
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org> 
 
 Thanks,
-Mark
-
+Andi
