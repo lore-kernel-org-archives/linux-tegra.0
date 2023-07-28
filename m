@@ -2,97 +2,84 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 777C4C0015E
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jul 2023 09:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC6AC001E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jul 2023 10:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233462AbjG1J7m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Jul 2023 05:59:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35532 "EHLO
+        id S236014AbjG1KhB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Jul 2023 06:37:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbjG1J7l (ORCPT
+        with ESMTP id S235355AbjG1Kge (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Jul 2023 05:59:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2671FC9;
-        Fri, 28 Jul 2023 02:59:40 -0700 (PDT)
+        Fri, 28 Jul 2023 06:36:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2C44ED0;
+        Fri, 28 Jul 2023 03:33:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A03F62099;
-        Fri, 28 Jul 2023 09:59:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A05C0C433C9;
-        Fri, 28 Jul 2023 09:59:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8210C620D5;
+        Fri, 28 Jul 2023 10:33:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F4DC433C8;
+        Fri, 28 Jul 2023 10:33:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690538379;
-        bh=HfFbszyOKjVnbQrQRzUOs7y1BwB5d6vKlmyH1txlQ5g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lF0oPOxPue7tbTceV7yKoljL4gLjeSl1AeXZ6oRFM0lCtehkimlY/6Td/0mwOsFeD
-         6WHapNogJ8B3YLvlAcCRlo5thpeqdmfTKCektkk3gCkN8HN99nLF5zgdWddHX85mQY
-         agi881tjsGvQJhoAjwqCqGAS/Ud2wSIn4DXp9VPJPfNvwbuXfsHoKCa4k2xgqoJonz
-         BcOBq+4rcDIfGQQYV+mEyXOnU8mN9oNPeLcLGuohZJ8dpCNuF1Vk/Ff9WRJF15Svwy
-         Khj8fT0JMibIk6XdfHa51UmrnPygXJmzZ2iUeTMcS3Z+YYJCJkxwM0TYQhH4tnyojl
-         BfVJPBqIBOE/A==
-Date:   Fri, 28 Jul 2023 10:59:33 +0100
+        s=k20201202; t=1690540433;
+        bh=De0OBn9WOW/3B2pyULgUhwXszW9Q66YIYLoomDnSz0A=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=s40RjITnwRE+UpjErTp94GWb29V+u+SmEbqR0uyoFiZ3xkMSjVe2/kHLv7R1pac4d
+         W/3R9F3RmhhOvq3xpLOp6pZRkh4mDYj0uNAZWgL9PYkx8VwCNcewPhP0chbgYGeodn
+         T97/1IzzNglMCq+KaDqNrYW2rZEMKby0iEhWahLqMnTDOSpEweWADjvUa5yE/hn2d3
+         vjem3Nd/PC4ZHYaIZvucc5y0sGlbEgsgXYqb7clt21r2+8KlZJreZZSAQtw+7eO1Ry
+         A0rJ9f6dyl8Psr0UxtF8WLgPmIAi9NZBN/OKvvi93GnavA5+wFF9eJLmGf5bCen/0r
+         BXZAJcdn5s8Cw==
 From:   Lee Jones <lee@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Jerome Neanne <jneanne@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH 2/6] mfd: rk8xx: Specify restart mode
-Message-ID: <20230728095933.GG8175@google.com>
-References: <20230727-pca9450-reboot-v1-0-c8edb27bf404@skidata.com>
- <20230727-pca9450-reboot-v1-2-c8edb27bf404@skidata.com>
+To:     Wolfram Sang <wsa@kernel.org>, Lee Jones <lee@kernel.org>,
+        rafael.j.wysocki@intel.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Benjamin Bara <bbara93@gmail.com>
+Cc:     dmitry.osipenko@collabora.com, peterz@infradead.org,
+        jonathanh@nvidia.com, richard.leitner@linux.dev,
+        treding@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        stable@vger.kernel.org, Nishanth Menon <nm@ti.com>
+In-Reply-To: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
+References: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
+Subject: Re: [PATCH v7 0/5] mfd: tps6586x: register restart handler
+Message-Id: <169054042966.328674.7411378579702852995.b4-ty@kernel.org>
+Date:   Fri, 28 Jul 2023 11:33:49 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230727-pca9450-reboot-v1-2-c8edb27bf404@skidata.com>
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 27 Jul 2023, Benjamin Bara wrote:
-
-> From: Benjamin Bara <benjamin.bara@skidata.com>
+On Sat, 15 Jul 2023 09:53:22 +0200, Benjamin Bara wrote:
+> The Tegra20 requires an enabled VDE power domain during startup. As the
+> VDE is currently not used, it is disabled during runtime.
+> Since 8f0c714ad9be, there is a workaround for the "normal restart path"
+> which enables the VDE before doing PMC's warm reboot. This workaround is
+> not executed in the "emergency restart path", leading to a hang-up
+> during start.
 > 
-> Specify the implemented restart handler as a cold one.
+> [...]
 
- * The current implementation is an issue because ...
- * If this is not fixed, the following will happen ...
- * By fixing this in this way and not another way has ... advantages ...
+Applied, thanks!
 
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> ---
->  drivers/mfd/rk8xx-core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/rk8xx-core.c b/drivers/mfd/rk8xx-core.c
-> index e8fc9e2ab1d0..15e8e6a9943a 100644
-> --- a/drivers/mfd/rk8xx-core.c
-> +++ b/drivers/mfd/rk8xx-core.c
-> @@ -697,7 +697,8 @@ int rk8xx_probe(struct device *dev, int variant, unsigned int irq, struct regmap
->  		case RK809_ID:
->  		case RK817_ID:
->  			ret = devm_register_sys_off_handler(dev,
-> -							    SYS_OFF_MODE_RESTART, SYS_OFF_PRIO_HIGH,
-> +							    SYS_OFF_MODE_RESTART_COLD,
-> +							    SYS_OFF_PRIO_HIGH,
->  							    &rk808_restart, rk808);
->  			if (ret)
->  				dev_warn(dev, "failed to register rst handler, %d\n", ret);
-> 
-> -- 
-> 2.34.1
-> 
+[1/5] kernel/reboot: emergency_restart: set correct system_state
+      commit: 60466c067927abbcaff299845abd4b7069963139
+[2/5] i2c: core: run atomic i2c xfer when !preemptible
+      commit: aa49c90894d06e18a1ee7c095edbd2f37c232d02
+[3/5] kernel/reboot: add device to sys_off_handler
+      commit: db2d6038c5e795cab4f0a8d3e86b4f7e33338629
+[4/5] mfd: tps6586x: use devm-based power off handler
+      commit: 8bd141b17cedcbcb7d336df6e0462e4f4a528ab1
+[5/5] mfd: tps6586x: register restart handler
+      commit: 510f276df2b91efd73f6c53be62b7e692ff533c1
 
--- 
+--
 Lee Jones [李琼斯]
+
