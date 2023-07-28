@@ -2,62 +2,65 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A09C00528
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jul 2023 09:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41941C04A94
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jul 2023 09:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233570AbjG1Jlg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Jul 2023 05:41:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52924 "EHLO
+        id S233765AbjG1Jlh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Jul 2023 05:41:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233520AbjG1Jlf (ORCPT
+        with ESMTP id S233520AbjG1Jlg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Jul 2023 05:41:35 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44F612C
-        for <linux-tegra@vger.kernel.org>; Fri, 28 Jul 2023 02:41:34 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52229f084beso2750607a12.2
-        for <linux-tegra@vger.kernel.org>; Fri, 28 Jul 2023 02:41:34 -0700 (PDT)
+        Fri, 28 Jul 2023 05:41:36 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5175E4F
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Jul 2023 02:41:35 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-98de21518fbso276483666b.0
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Jul 2023 02:41:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690537293; x=1691142093;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E3R4wjBnDBMtOFENnE25FnGBV6r3mcWK08y5v73y74o=;
-        b=rqARx47UfymMOYmczBXyKBnvWA0E2hC+5Dah5oW3rOCSMSmhd6Y49Y6f+E6u83ZxXm
-         2vRj+AN93RZ1WnpAwDUXECvBF1Q4jYyv0B+I7XD4/9Wtirp2g5eyG4tWWijoar0gJazF
-         8iTsaL86sOBbj5mEkUmPRIvaIpNCgMyiCaDAzscy2U5GnCCAD8yf8/mVgKSgal3Co9hI
-         7UTLFgI2iVr1hALUKPuyFjFy6iY3hyIhXakNjT+SefSXggdT8sK9qahS5jAmmDWwHxm5
-         PPjejlGjmn3hWPbb92wvbEBXQwdqdCjQMZnRfdx9+XzZuK9yD1v5wvmjxnpkpbb13HEH
-         yx8w==
+        d=gmail.com; s=20221208; t=1690537294; x=1691142094;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wHnrs0avNcz6B2UJJhrTanCpbWKAitcwJk0lhG8vNOI=;
+        b=nq1j+cDmvvM/cFLkO2PCdUy0mCEorEoCUp7V75USc4JOSQiSHxc1JjQtzgjYFnYWsk
+         hszYXM1VYE+Xb2h+L2S1nh81S9yiELuI6XSKrMbgBA3qjPuq7nHtDObJmQWX3waonvni
+         Zm9YcpkEjlprJeooO246/Ite+MB9YRUDr2tmcDAXkix3wmWZ9LXySEehvT1VzhJ+GY2P
+         duqqcRd2Su2GYvbHEL4nivbmhWGTANsj3G/eiQQMxsCxot2OKZv8/lfg1P2v3kKrxu3b
+         AwGwpsSWIQiDaOLpc3pGGB90Q0k8cjT/Z/89aA88Li57+IuAimLnnNoHOULMesKsrl+O
+         q0ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690537293; x=1691142093;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E3R4wjBnDBMtOFENnE25FnGBV6r3mcWK08y5v73y74o=;
-        b=Q8LGIZpmRjaQU2SfzrK0dtUQQBYhU5su9BaWrfkSTflLeWctVfry18QntlubXDvmHH
-         /bxmw3Bx3z1gEKtX5FAs7FfrV3D79zUXOviDqMTKd5l+C/VX0wr6E95OXXllyCNXWAf0
-         TLVoQa5om2xaCjbCqRkEkexdKCpi4f5MUGYQcJQoea5WO25/hpx+GASQahGTaqI0lcCG
-         Ky44/3IDdlGSxxb8LusSA+DwKBpSppS8oiTTZr3kE0KOAiGo5XEtdBXn1Dsx7yu0kGp/
-         VEyhpUZ5fPm0q9mfWNotM3uayZROhXDq3Vyl84SW+GrZqs+5z5uH6m60lhqalKwwbMJw
-         y9Sw==
-X-Gm-Message-State: ABy/qLacgGKN3SrMB84yDLUKRsyNpxQBMrKzXzUmA8ZoeqIilwCsjJ+o
-        XRvMzWPPr1WQC/RAPnNKFtA=
-X-Google-Smtp-Source: APBJJlEDOX6YqWMymx/XeVyFp1/FBsxAmn1xCe5AQCPwQYymOBAKKg/VrTTWbk2IsdMQ7Uq2tQkVpA==
-X-Received: by 2002:a05:6402:10c1:b0:522:200f:cc50 with SMTP id p1-20020a05640210c100b00522200fcc50mr1795924edu.19.1690537292887;
-        Fri, 28 Jul 2023 02:41:32 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1690537294; x=1691142094;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wHnrs0avNcz6B2UJJhrTanCpbWKAitcwJk0lhG8vNOI=;
+        b=YlLaXYgEL/xANT0F8JR9G+O3fuagRbJrFTxXibnpW6GX8Tg/rVGtsqian4u15dakut
+         Zy58DS4MGVOBGtYs7aHO34VM/LJOPWBVP6XsNYj3+gSetBhP3vqaQBx7+pk48ukVDZ7u
+         XZEHjVPcJIlRtKWeHY9PPuEx7D7HFMLW5OgMO+JNn4ME8bB0qqPSJnjTuDhJKqu0wcBL
+         6/jSv0KIuyYeevZnXCwkchCQ5YQt2LLKDICiMZrjP0eOcLJx27LcQQozCUbBQlrXLBCU
+         Rnhl8Y1EEaoApoUJiAfnrfszjYwxkdBfD9/4hL5Qz0an03dADLtfBS3c9olVynmiW2Kb
+         8sEg==
+X-Gm-Message-State: ABy/qLZ0mkMH7iaCB0BULbV4ZRgiJgP4t6i30ItSdBZVT71MVG09oF1T
+        16JeYL6tNsdwNDpym+6fRGs=
+X-Google-Smtp-Source: APBJJlHmr33LD+0DHO7wtjDs/BUKC7oFI9D+QfOf9EVlI4wBpHIEXMpgAed/LodvyY38WW4xeGoq6A==
+X-Received: by 2002:a17:906:518c:b0:993:dd1d:8251 with SMTP id y12-20020a170906518c00b00993dd1d8251mr2239977ejk.28.1690537293992;
+        Fri, 28 Jul 2023 02:41:33 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id u19-20020aa7d993000000b005222aee9ef9sm1567322eds.97.2023.07.28.02.41.32
+        by smtp.gmail.com with ESMTPSA id u17-20020a1709060b1100b00992bea2e9d2sm1855588ejg.62.2023.07.28.02.41.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jul 2023 02:41:32 -0700 (PDT)
+        Fri, 28 Jul 2023 02:41:33 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/4] soc/tegra: Changes for v6.6-rc1
-Date:   Fri, 28 Jul 2023 11:41:25 +0200
-Message-ID: <20230728094129.3587109-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/4] dt-bindings: Changes for v6.6-rc1
+Date:   Fri, 28 Jul 2023 11:41:26 +0200
+Message-ID: <20230728094129.3587109-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230728094129.3587109-1-thierry.reding@gmail.com>
+References: <20230728094129.3587109-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -73,40 +76,59 @@ The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.6-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.6-dt-bindings
 
-for you to fetch changes up to 10f975f8b0e8e563bf1e5c2f5e4ebada29fa7edc:
+for you to fetch changes up to 72738fdeccd172210539a786e23b09b67565d509:
 
-  soc/tegra: cbb: Remove unnecessary print function dev_err() (2023-07-27 18:46:37 +0200)
+  dt-bindings: firmware: Add support for tegra186-bpmp DRAM MRQ GSCs (2023-07-26 18:23:42 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v6.6-rc1
+dt-bindings: Changes for v6.6-rc1
 
-This contains a selection of minor cleanups.
+A number of Tegra-specific bindings are converted to json-schema and the
+reserved-memory and BPMP bindings get support for Tegra264.
 
 ----------------------------------------------------------------
-Jiapeng Chong (1):
-      soc/tegra: cbb: Remove unnecessary print function dev_err()
+Peter De Schrijver (2):
+      dt-bindings: reserved-memory: Add support for DRAM MRQ GSCs
+      dt-bindings: firmware: Add support for tegra186-bpmp DRAM MRQ GSCs
 
-Rob Herring (1):
-      soc/tegra: Explicitly include correct DT includes
+Thierry Reding (7):
+      dt-bindings: arm: tegra: flowctrl: Convert to json-schema
+      dt-bindings: arm: tegra: ahb: Convert to json-schema
+      dt-bindings: serial: tegra-hsuart: Convert to json-schema
+      dt-bindings: cpu: Document NVIDIA Tegra186 CCPLEX cluster
+      dt-bindings: clock: tegra: Document Tegra132 compatible
+      dt-bindings: arm: tegra: nvec: Convert to json-schema
+      dt-bindings: thermal: tegra: Convert to json-schema
 
-Thierry Reding (1):
-      soc/tegra: fuse: Sort includes alphabetically
-
-Yangtao Li (2):
-      soc/tegra: fuse: Use devm_platform_get_and_ioremap_resource()
-      bus: tegra-gmi: Convert to devm_platform_ioremap_resource()
-
- drivers/bus/tegra-gmi.c                |  4 +---
- drivers/soc/tegra/cbb/tegra-cbb.c      | 12 ++----------
- drivers/soc/tegra/cbb/tegra194-cbb.c   |  4 +---
- drivers/soc/tegra/cbb/tegra234-cbb.c   |  3 ---
- drivers/soc/tegra/fuse/fuse-tegra.c    |  9 +++------
- drivers/soc/tegra/fuse/fuse-tegra20.c  |  2 +-
- drivers/soc/tegra/fuse/fuse-tegra30.c  |  2 --
- drivers/soc/tegra/fuse/tegra-apbmisc.c |  4 ++--
- 8 files changed, 10 insertions(+), 30 deletions(-)
+ .../devicetree/bindings/arm/tegra/nvidia,nvec.txt  |  21 --
+ .../bindings/arm/tegra/nvidia,tegra20-ahb.txt      |  17 -
+ .../bindings/arm/tegra/nvidia,tegra20-flowctrl.txt |  18 -
+ .../bindings/clock/nvidia,tegra124-car.yaml        |   4 +-
+ .../cpu/nvidia,tegra186-ccplex-cluster.yaml        |  37 ++
+ .../bindings/firmware/nvidia,tegra186-bpmp.yaml    |  39 ++-
+ .../nvidia,tegra264-bpmp-shmem.yaml                |  47 +++
+ .../bindings/serial/nvidia,tegra20-hsuart.txt      |  73 ----
+ .../bindings/serial/nvidia,tegra20-hsuart.yaml     | 125 +++++++
+ .../devicetree/bindings/soc/tegra/nvidia,nvec.yaml |  84 +++++
+ .../bindings/soc/tegra/nvidia,tegra20-ahb.yaml     |  40 +++
+ .../soc/tegra/nvidia,tegra20-flowctrl.yaml         |  41 +++
+ .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 238 -------------
+ .../bindings/thermal/nvidia,tegra124-soctherm.yaml | 380 +++++++++++++++++++++
+ 14 files changed, 791 insertions(+), 373 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,nvec.txt
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
+ delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/cpu/nvidia,tegra186-ccplex-cluster.yaml
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml
+ delete mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/tegra/nvidia,nvec.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-ahb.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-flowctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+ create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
