@@ -2,122 +2,111 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720CCC001E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jul 2023 03:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A09C00528
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jul 2023 09:41:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232664AbjG1Dk1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jul 2023 23:40:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58000 "EHLO
+        id S233570AbjG1Jlg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Jul 2023 05:41:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231135AbjG1DkZ (ORCPT
+        with ESMTP id S233520AbjG1Jlf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jul 2023 23:40:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EBF170D;
-        Thu, 27 Jul 2023 20:40:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 129F961FC4;
-        Fri, 28 Jul 2023 03:40:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6E700C43391;
-        Fri, 28 Jul 2023 03:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690515623;
-        bh=nh7VNF71Px8+ehWsNezgTEu3Q5hpaEOt5oKxXH92/qA=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=n5OOA0hexFDJfGiqn8bTgbsd1NxuBlbkYDKSx4jve1A1uhS5AnTOvFTQV4JWG7aBf
-         g/w60ZUiuyy1xVob0CGewYJXVq1VL+QTFR/Web3ZJJ2NNh+cY5USv/q3z7SDcq/wTR
-         lonQnxK346qjNlcQZfWCfeuaLMI8E7TUSZjSKMLEMehF+DgMrtLu+XmXsACHxfUrce
-         uCl8v7KPKSe+YopRiOOHSvNs0MFFYZuVftoYlnB7ke0VUB/3LypcDS6Ej2rHAU9kNd
-         8tKWHNxo+5s5dfDX+o4x42ap7+FrTJwJM45yRjAs4oZ8Nub3PfEMVbrmDiV7UKUGPk
-         vMj95R4jHRhaw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 417E1C691EE;
-        Fri, 28 Jul 2023 03:40:23 +0000 (UTC)
+        Fri, 28 Jul 2023 05:41:35 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44F612C
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Jul 2023 02:41:34 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52229f084beso2750607a12.2
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Jul 2023 02:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690537293; x=1691142093;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E3R4wjBnDBMtOFENnE25FnGBV6r3mcWK08y5v73y74o=;
+        b=rqARx47UfymMOYmczBXyKBnvWA0E2hC+5Dah5oW3rOCSMSmhd6Y49Y6f+E6u83ZxXm
+         2vRj+AN93RZ1WnpAwDUXECvBF1Q4jYyv0B+I7XD4/9Wtirp2g5eyG4tWWijoar0gJazF
+         8iTsaL86sOBbj5mEkUmPRIvaIpNCgMyiCaDAzscy2U5GnCCAD8yf8/mVgKSgal3Co9hI
+         7UTLFgI2iVr1hALUKPuyFjFy6iY3hyIhXakNjT+SefSXggdT8sK9qahS5jAmmDWwHxm5
+         PPjejlGjmn3hWPbb92wvbEBXQwdqdCjQMZnRfdx9+XzZuK9yD1v5wvmjxnpkpbb13HEH
+         yx8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690537293; x=1691142093;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E3R4wjBnDBMtOFENnE25FnGBV6r3mcWK08y5v73y74o=;
+        b=Q8LGIZpmRjaQU2SfzrK0dtUQQBYhU5su9BaWrfkSTflLeWctVfry18QntlubXDvmHH
+         /bxmw3Bx3z1gEKtX5FAs7FfrV3D79zUXOviDqMTKd5l+C/VX0wr6E95OXXllyCNXWAf0
+         TLVoQa5om2xaCjbCqRkEkexdKCpi4f5MUGYQcJQoea5WO25/hpx+GASQahGTaqI0lcCG
+         Ky44/3IDdlGSxxb8LusSA+DwKBpSppS8oiTTZr3kE0KOAiGo5XEtdBXn1Dsx7yu0kGp/
+         VEyhpUZ5fPm0q9mfWNotM3uayZROhXDq3Vyl84SW+GrZqs+5z5uH6m60lhqalKwwbMJw
+         y9Sw==
+X-Gm-Message-State: ABy/qLacgGKN3SrMB84yDLUKRsyNpxQBMrKzXzUmA8ZoeqIilwCsjJ+o
+        XRvMzWPPr1WQC/RAPnNKFtA=
+X-Google-Smtp-Source: APBJJlEDOX6YqWMymx/XeVyFp1/FBsxAmn1xCe5AQCPwQYymOBAKKg/VrTTWbk2IsdMQ7Uq2tQkVpA==
+X-Received: by 2002:a05:6402:10c1:b0:522:200f:cc50 with SMTP id p1-20020a05640210c100b00522200fcc50mr1795924edu.19.1690537292887;
+        Fri, 28 Jul 2023 02:41:32 -0700 (PDT)
+Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id u19-20020aa7d993000000b005222aee9ef9sm1567322eds.97.2023.07.28.02.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jul 2023 02:41:32 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/4] soc/tegra: Changes for v6.6-rc1
+Date:   Fri, 28 Jul 2023 11:41:25 +0200
+Message-ID: <20230728094129.3587109-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.41.0
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3] net: Explicitly include correct DT includes
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <169051562326.23821.4231940284607437337.git-patchwork-notify@kernel.org>
-Date:   Fri, 28 Jul 2023 03:40:23 +0000
-References: <20230727014944.3972546-1-robh@kernel.org>
-In-Reply-To: <20230727014944.3972546-1-robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     andreas@gaisler.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, iyappan@os.amperecomputing.com,
-        keyur@os.amperecomputing.com, chris.snook@gmail.com,
-        nicolas.ferre@microchip.com, claudiu.beznea@microchip.com,
-        madalin.bucur@nxp.com, claudiu.manoil@nxp.com,
-        vladimir.oltean@nxp.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
-        xiaoning.wang@nxp.com, linux-imx@nxp.com, sean.anderson@seco.com,
-        pantelis.antoniou@gmail.com, leoyang.li@nxp.com,
-        yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        dougmill@linux.ibm.com, mw@semihalf.com, linux@armlinux.org.uk,
-        taras.chornyi@plvision.eu, mlindner@marvell.com,
-        stephen@networkplumber.org, nbd@nbd.name, john@phrozen.org,
-        sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
-        lorenzo@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com,
-        horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
-        alexandre.belloni@bootlin.com, timur@kernel.org, s.shtylyov@omp.ru,
-        steve.glendinning@shawell.net, hayashi.kunihiko@socionext.com,
-        peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, neil.armstrong@linaro.org,
-        khilman@baylibre.com, jbrunet@baylibre.com,
-        martin.blumenstingl@googlemail.com, vkoul@kernel.org,
-        bhupesh.sharma@linaro.org, kernel@esmil.dk,
-        samin.guo@starfivetech.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, grygorii.strashko@ti.com,
-        kevinbrace@bracecomputerlab.com, romieu@fr.zoreil.com,
-        michal.simek@amd.com, radhey.shyam.pandey@amd.com,
-        alex.aring@gmail.com, stefan@datenfreihafen.org,
-        miquel.raynal@bootlin.com, elder@kernel.org, andrew@lunn.ch,
-        hkallweit1@gmail.com, richardcochran@gmail.com, elder@linaro.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-oxnas@groups.io,
-        linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-wpan@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello:
+Hi ARM SoC maintainers,
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
-On Wed, 26 Jul 2023 19:49:39 -0600 you wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
-> 
-> [...]
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-Here is the summary with links:
-  - [net-next,v3] net: Explicitly include correct DT includes
-    https://git.kernel.org/netdev/net-next/c/3d40aed86287
+are available in the Git repository at:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.6-soc
 
+for you to fetch changes up to 10f975f8b0e8e563bf1e5c2f5e4ebada29fa7edc:
 
+  soc/tegra: cbb: Remove unnecessary print function dev_err() (2023-07-27 18:46:37 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+soc/tegra: Changes for v6.6-rc1
+
+This contains a selection of minor cleanups.
+
+----------------------------------------------------------------
+Jiapeng Chong (1):
+      soc/tegra: cbb: Remove unnecessary print function dev_err()
+
+Rob Herring (1):
+      soc/tegra: Explicitly include correct DT includes
+
+Thierry Reding (1):
+      soc/tegra: fuse: Sort includes alphabetically
+
+Yangtao Li (2):
+      soc/tegra: fuse: Use devm_platform_get_and_ioremap_resource()
+      bus: tegra-gmi: Convert to devm_platform_ioremap_resource()
+
+ drivers/bus/tegra-gmi.c                |  4 +---
+ drivers/soc/tegra/cbb/tegra-cbb.c      | 12 ++----------
+ drivers/soc/tegra/cbb/tegra194-cbb.c   |  4 +---
+ drivers/soc/tegra/cbb/tegra234-cbb.c   |  3 ---
+ drivers/soc/tegra/fuse/fuse-tegra.c    |  9 +++------
+ drivers/soc/tegra/fuse/fuse-tegra20.c  |  2 +-
+ drivers/soc/tegra/fuse/fuse-tegra30.c  |  2 --
+ drivers/soc/tegra/fuse/tegra-apbmisc.c |  4 ++--
+ 8 files changed, 10 insertions(+), 30 deletions(-)
