@@ -2,554 +2,130 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CABBC41513
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Jul 2023 19:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE39C0015E
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Aug 2023 12:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbjGaT7I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Jul 2023 15:59:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40820 "EHLO
+        id S232021AbjHAMKs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Aug 2023 08:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjGaT7H (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Jul 2023 15:59:07 -0400
-Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC1E88F;
-        Mon, 31 Jul 2023 12:59:05 -0700 (PDT)
-Received: by mail-vk1-xa32.google.com with SMTP id 71dfb90a1353d-48645045826so1804409e0c.2;
-        Mon, 31 Jul 2023 12:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690833545; x=1691438345;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ZUTLiq4ztiz7isOwicgVn1yrySYaXh6uY6SY2kyAgc=;
-        b=alub0lGpoNrEu8OhfNnTDBvCPSj1fLLYheu1NSkrdZBpAQF2064AvbHKWmUzslufOt
-         YLbmv/TcCGYjgrvq4FRS6M9Devdql3Q2P/9rAVoRybjgi+kffYQQcVZMV2WEYizsOr2j
-         BpXNHtgVetIAcGNhWkkx03vGGYpzA9ZHMcvgmI3ZOe9kQRjymhlNgRuOilfBt3UBsdLl
-         7kW4WBonGTFZhUn6/mlIWDl6LSRqENUo0fbkIW9lN3zqVFnZ6fDFQSK0eFG8BS8nJDme
-         CuPuGTgehfNxRLyhKRbEAW+Bg56YyqY+gh0K04pfKLwmKFpNb4K28NQR1KJZ8WogUkSd
-         NjQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690833545; x=1691438345;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ZUTLiq4ztiz7isOwicgVn1yrySYaXh6uY6SY2kyAgc=;
-        b=gA74iNotS2V1mPwcNymg9o8cG2cv6Hs+0jtWfWSc+9m8bRDCV7W7knyzvVXxTNNPTr
-         b0NcXXztWSZoeV66+m7dNJZznRcWFxv+NdtKODEG+uDF+CjAk/DMjK6ee13AynPSg7QM
-         I9lvT9Jda7JeUnnP6jQJZtjBgXgtw+tkJ8dRStYUkiBP7HMJr1IuyojbO+zWBKI9j3Xd
-         k//k+FaJD2qMpf41AsYPsf6iHwEVlfSXz1aEx8/KQYmRDclq86AlmVQYydvvTbCsVGw9
-         RpfaNgL9vSYcIJ96bpMBdc6xK4vCh3dP3jtmuVsV8f8MpVCzFWWU/8jlUhTXzvAEIfjL
-         KHxA==
-X-Gm-Message-State: ABy/qLZZ54c9wNOtsWoY+1dzr6wvAh8apmbE99SEN0NeE7tzxkeJwR1w
-        4SIvT7NYGhNiOakeIpDOURE=
-X-Google-Smtp-Source: APBJJlHSqrneeA6ywQrgc7CJdlArRC0LDzjpwpRAo2sgvPLInS00+l5lLpxZfcAOQnXT689xDRSr7w==
-X-Received: by 2002:a1f:5fd7:0:b0:47e:1105:1f5e with SMTP id t206-20020a1f5fd7000000b0047e11051f5emr984710vkb.1.1690833544731;
-        Mon, 31 Jul 2023 12:59:04 -0700 (PDT)
-Received: from errol.ini.cmu.edu ([72.95.245.133])
-        by smtp.gmail.com with ESMTPSA id g22-20020a0caad6000000b006365b23b5dfsm4046264qvb.23.2023.07.31.12.59.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 12:59:04 -0700 (PDT)
-Date:   Mon, 31 Jul 2023 15:59:01 -0400
-From:   "Gabriel L. Somlo" <gsomlo@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jacky Huang <ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2] tty: Explicitly include correct DT includes
-Message-ID: <ZMgShZVvEyIN58/o@errol.ini.cmu.edu>
-References: <20230724205440.767071-1-robh@kernel.org>
+        with ESMTP id S231904AbjHAMKs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Aug 2023 08:10:48 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2058.outbound.protection.outlook.com [40.107.220.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2964A1982;
+        Tue,  1 Aug 2023 05:10:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OvMgITCZYbfJumqVaQMtjOB9/8RBE/fMxi9Tebzv7jHGGuCuNRsfrFZNQEIoN12w6E3IUCme5YEZaSVIGQ8UmsKSiQlSrsk8IAFnc9OmNZ+fps2HCpppJBhZL/ISP1sjl3bG+f6nsvu+0zqMPJlLTPWfmaOjbFVuJxWiWDqxjJ5PHrntbBLFysNmLGbOFe0MRfG/amBU4xjD4Xpa6kLhTnftY1oNmeJWM6LLqEDneGgOUjg4QboqgXtCZEzSrJlHMF0FnNnAydnlpQ6gwNlo/S+4+Ttrz6SS6z62VetCTqnusqHYlFoHyRnuUE8hG9Sl80vFLV9mGwrXtRt3LfTM/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zuCuYizUkfvDWba+8DB+ujr9FBfshAf5oPH7He5U1Pw=;
+ b=g0PESqrT01teVPTHvu4u0x1XUrKFNbisGgF33H35cfu0EdOSxVGtrwA0MaTLx8EX99nJPXbyJf5Xg/LQ2RHcDc0xYlQKkCRWnIBlTul06vEpm3iI13rqjo8EMEDE2ksa3XmQNY0E0Lp1KzhoXXD4QspwFHcy5FMoajyhOBxAGRke5KUe6zgB8Rk/Q+WJWEPI44vwRGu7sK/VvYNkKf8x7tfSLr8nhIZ3yGf4BJYG5cRj3Tzi7ocKH0fIpU0mns42/qVf/gDuBogTXbv0mx7x84j919+21fcJPGBxF93lF15KNWvnmCPoWRfmvf2V9IpGAHxWkwEb/W70jVyYDCYYbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zuCuYizUkfvDWba+8DB+ujr9FBfshAf5oPH7He5U1Pw=;
+ b=EzIQmohv+21JVnBBe+rfdmJ61+lq6WvjfBa+OL3iJtlsv3uBNvrgKgoCnWxqGdwNGPQljdJtVgAVXrzWeQ8sJXFmPuOriMMBKLNrSPMyI1r1ewAMpP0tW6ki4ODIBO6qpZTnpEPBA7pPJ1hxv+iyQivhH6KhpkdJHoN1MNL0OxL/Ibzn3tOc0xJzio3ic1Zg6iREpf7LHESrMeGJVqaX0CoXo6+04moM+vinGUZi5r1tgBkd5ajwKyvQPsL0qMUsUbb8Q6fjQXKCfjgtj4pFSWsAIT9FNHtu7H8NBTp3G6ThbBqxD/aOX45tHFsGv7PFz/Ls63+oXJRBfZrusBbm9g==
+Received: from CY5PR22CA0099.namprd22.prod.outlook.com (2603:10b6:930:65::24)
+ by PH7PR12MB6394.namprd12.prod.outlook.com (2603:10b6:510:1fe::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.44; Tue, 1 Aug
+ 2023 12:10:41 +0000
+Received: from CY4PEPF0000EDD0.namprd03.prod.outlook.com
+ (2603:10b6:930:65:cafe::8a) by CY5PR22CA0099.outlook.office365.com
+ (2603:10b6:930:65::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45 via Frontend
+ Transport; Tue, 1 Aug 2023 12:10:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EDD0.mail.protection.outlook.com (10.167.241.204) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6631.22 via Frontend Transport; Tue, 1 Aug 2023 12:10:40 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 1 Aug 2023
+ 05:10:28 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 1 Aug 2023
+ 05:10:28 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Tue, 1 Aug 2023 05:10:26 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <krzysztof.kozlowski+dt@linaro.org>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [Patch] memory: tegra: add MC client for Tegra234 GPU
+Date:   Tue, 1 Aug 2023 17:40:23 +0530
+Message-ID: <20230801121023.27841-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230724205440.767071-1-robh@kernel.org>
-X-Clacks-Overhead: GNU Terry Pratchett
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD0:EE_|PH7PR12MB6394:EE_
+X-MS-Office365-Filtering-Correlation-Id: a98d1820-eacb-4ff5-fa9e-08db92885304
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YUfx6dpO102xxMEVdnoLRr5JezI80InhjL25S7X4RnidhHnnmNKZl/FBjStdIxR0i0yapoHOFMOprpdBIodzFbRKcmkBYexlbAaZQDl1KH4Y3W5eJEa5msuihx61TI7LyCcLURgHbMTYeZzx/kyxbobOiN7Pxi9RhLcx6mt5tORw64MUvTeioIVdb9u55LD9cyjwggg83SEg/oj6mXv3/cI6HeiYDkMqgqNBE4prhPnbh05MrLsbF4VV2U2H2DmK5TZdP76eWfqy1pPjdUNCSPDOJb2qDSlY4U6nSnNyZz03BW/TpN3FrML19MJcVn9O7FJ0FZBUgILVkPZ/nmrivVt95AB+uP+Np/W+yNjfAgX0VHBkMTq8mdzSVyeL8EdbE7Xe9/++1lPDfvlitEvtoys16jICf2lyh9kK30CkVIFXrpxWmb5yld5M2+CVXTtPzf6epqhP/Ajf7kSwCjTJMrgEtFHPI2ZIf4NNnvEYrgNS85UpWRyqj+Zl3mYB7+HphfjnY4vlnwhDEOige6EtZjdpXFYOu8A2AsEeOxU0j9sIwMnJGLABBMpPYs81GnvcFKaZPmMS1mYU9DVHYDpqFLO6WzaLNXtcs+08TcYwUzXQ6h/weY1hW6HhB+aegzBf1dMmOwNYQ1KPY+AwSC99sMXwN1FfQuh/OXuSKtUp5E8LDCB52g1FVmExgdLwe3MBInw3FiOnxJpW4TwcRWudpJ9n9DOvC4oxNdxmgPuvLYgrkwfMiBQkhRn9G3+6nKbi
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(136003)(346002)(376002)(396003)(39860400002)(82310400008)(451199021)(36840700001)(40470700004)(46966006)(356005)(7636003)(40460700003)(36756003)(36860700001)(40480700001)(70586007)(70206006)(316002)(4326008)(8936002)(8676002)(107886003)(41300700001)(186003)(1076003)(26005)(110136005)(5660300002)(336012)(54906003)(478600001)(7696005)(6666004)(82740400003)(4744005)(2906002)(2616005)(426003)(47076005)(86362001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2023 12:10:40.7693
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a98d1820-eacb-4ff5-fa9e-08db92885304
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EDD0.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6394
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 02:54:38PM -0600, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+Add the Non-ISO MC client for the Tegra234 GPU to the
+tegra234_mc_clients table.
 
-Acked-by: Gabriel Somlo <gsomlo@gmail.com> # for liteuart
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/memory/tegra/tegra234.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks much,
---Gabriel
+diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
+index 7954f339ca79..9e5b5dbd9c8d 100644
+--- a/drivers/memory/tegra/tegra234.c
++++ b/drivers/memory/tegra/tegra234.c
+@@ -916,6 +916,16 @@ static const struct tegra_mc_client tegra234_mc_clients[] = {
+ 		.name = "sw_cluster2",
+ 		.bpmp_id = TEGRA_ICC_BPMP_CPU_CLUSTER2,
+ 		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA234_MEMORY_CLIENT_NVL1R,
++		.name = "nvl1r",
++		.bpmp_id = TEGRA_ICC_BPMP_GPU,
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA234_MEMORY_CLIENT_NVL1W,
++		.name = "nvl1w",
++		.bpmp_id = TEGRA_ICC_BPMP_GPU,
++		.type = TEGRA_ICC_NISO,
+ 	},
+ };
+ 
+-- 
+2.17.1
 
-> v2:
->  - Add mpc52xx_uart
-> ---
->  drivers/tty/hvc/hvc_opal.c             | 2 +-
->  drivers/tty/serial/8250/8250_early.c   | 1 -
->  drivers/tty/serial/8250/8250_ingenic.c | 1 -
->  drivers/tty/serial/8250/8250_omap.c    | 1 -
->  drivers/tty/serial/amba-pl011.c        | 2 +-
->  drivers/tty/serial/apbuart.c           | 3 ---
->  drivers/tty/serial/atmel_serial.c      | 1 -
->  drivers/tty/serial/fsl_linflexuart.c   | 2 +-
->  drivers/tty/serial/fsl_lpuart.c        | 2 +-
->  drivers/tty/serial/imx.c               | 1 -
->  drivers/tty/serial/lantiq.c            | 3 ++-
->  drivers/tty/serial/liteuart.c          | 3 +--
->  drivers/tty/serial/ma35d1_serial.c     | 2 +-
->  drivers/tty/serial/mpc52xx_uart.c      | 2 +-
->  drivers/tty/serial/mps2-uart.c         | 1 -
->  drivers/tty/serial/mxs-auart.c         | 2 +-
->  drivers/tty/serial/pic32_uart.c        | 1 -
->  drivers/tty/serial/qcom_geni_serial.c  | 1 -
->  drivers/tty/serial/serial-tegra.c      | 1 -
->  drivers/tty/serial/sh-sci.c            | 1 -
->  drivers/tty/serial/sunhv.c             | 4 ++--
->  drivers/tty/serial/sunsab.c            | 3 ++-
->  drivers/tty/serial/sunsu.c             | 4 ++--
->  drivers/tty/serial/sunzilog.c          | 4 ++--
->  drivers/tty/serial/tegra-tcu.c         | 1 -
->  drivers/tty/serial/uartlite.c          | 3 ---
->  drivers/tty/serial/ucc_uart.c          | 3 ++-
->  drivers/tty/serial/vt8500_serial.c     | 2 +-
->  28 files changed, 21 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/tty/hvc/hvc_opal.c b/drivers/tty/hvc/hvc_opal.c
-> index 794c7b18aa06..992e199e0ea8 100644
-> --- a/drivers/tty/hvc/hvc_opal.c
-> +++ b/drivers/tty/hvc/hvc_opal.c
-> @@ -14,7 +14,7 @@
->  #include <linux/console.h>
->  #include <linux/of.h>
->  #include <linux/of_irq.h>
-> -#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
->  #include <linux/export.h>
->  #include <linux/interrupt.h>
->  
-> diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
-> index 4299a8bd83d9..9837a27739fd 100644
-> --- a/drivers/tty/serial/8250/8250_early.c
-> +++ b/drivers/tty/serial/8250/8250_early.c
-> @@ -27,7 +27,6 @@
->  #include <linux/init.h>
->  #include <linux/console.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/serial_reg.h>
->  #include <linux/serial.h>
->  #include <linux/serial_8250.h>
-> diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-> index 617b8ce60d6b..4c4c4da73ad0 100644
-> --- a/drivers/tty/serial/8250/8250_ingenic.c
-> +++ b/drivers/tty/serial/8250/8250_ingenic.c
-> @@ -13,7 +13,6 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_fdt.h>
-> -#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/serial_8250.h>
->  #include <linux/serial_core.h>
-> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-> index d48a82f1634e..26dd089d8e82 100644
-> --- a/drivers/tty/serial/8250/8250_omap.c
-> +++ b/drivers/tty/serial/8250/8250_omap.c
-> @@ -18,7 +18,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/of_gpio.h>
->  #include <linux/of_irq.h>
->  #include <linux/delay.h>
-> diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-> index c5c3f4674459..a1e594b79890 100644
-> --- a/drivers/tty/serial/amba-pl011.c
-> +++ b/drivers/tty/serial/amba-pl011.c
-> @@ -20,6 +20,7 @@
->  #include <linux/ioport.h>
->  #include <linux/init.h>
->  #include <linux/console.h>
-> +#include <linux/platform_device.h>
->  #include <linux/sysrq.h>
->  #include <linux/device.h>
->  #include <linux/tty.h>
-> @@ -36,7 +37,6 @@
->  #include <linux/delay.h>
->  #include <linux/types.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/sizes.h>
->  #include <linux/io.h>
-> diff --git a/drivers/tty/serial/apbuart.c b/drivers/tty/serial/apbuart.c
-> index 915ee4b0d594..f3defc6da3df 100644
-> --- a/drivers/tty/serial/apbuart.c
-> +++ b/drivers/tty/serial/apbuart.c
-> @@ -22,9 +22,6 @@
->  #include <linux/kthread.h>
->  #include <linux/device.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
-> -#include <linux/of_platform.h>
-> -#include <linux/of_irq.h>
->  #include <linux/platform_device.h>
->  #include <linux/io.h>
->  #include <linux/serial_core.h>
-> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-> index 3467a875641a..7ac477344aa3 100644
-> --- a/drivers/tty/serial/atmel_serial.c
-> +++ b/drivers/tty/serial/atmel_serial.c
-> @@ -21,7 +21,6 @@
->  #include <linux/tty_flip.h>
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/dmaengine.h>
->  #include <linux/atmel_pdc.h>
-> diff --git a/drivers/tty/serial/fsl_linflexuart.c b/drivers/tty/serial/fsl_linflexuart.c
-> index 6fc21b6684e6..f697751c2ad5 100644
-> --- a/drivers/tty/serial/fsl_linflexuart.c
-> +++ b/drivers/tty/serial/fsl_linflexuart.c
-> @@ -11,7 +11,7 @@
->  #include <linux/irq.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
->  #include <linux/serial_core.h>
->  #include <linux/slab.h>
->  #include <linux/tty_flip.h>
-> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-> index 4d80fae20177..e1a8d5415718 100644
-> --- a/drivers/tty/serial/fsl_lpuart.c
-> +++ b/drivers/tty/serial/fsl_lpuart.c
-> @@ -18,9 +18,9 @@
->  #include <linux/irq.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/of_dma.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/serial_core.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> index 7341d060f85c..3ed5083a7108 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -25,7 +25,6 @@
->  #include <linux/rational.h>
->  #include <linux/slab.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/io.h>
->  #include <linux/dma-mapping.h>
->  
-> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-> index bcaa479608d8..3adb60c683f7 100644
-> --- a/drivers/tty/serial/lantiq.c
-> +++ b/drivers/tty/serial/lantiq.c
-> @@ -17,7 +17,8 @@
->  #include <linux/ioport.h>
->  #include <linux/lantiq.h>
->  #include <linux/module.h>
-> -#include <linux/of_platform.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
->  #include <linux/serial.h>
->  #include <linux/serial_core.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/tty/serial/liteuart.c b/drivers/tty/serial/liteuart.c
-> index 80de3a42b67b..d881cdd2a58f 100644
-> --- a/drivers/tty/serial/liteuart.c
-> +++ b/drivers/tty/serial/liteuart.c
-> @@ -11,8 +11,7 @@
->  #include <linux/litex.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_address.h>
-> -#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
->  #include <linux/serial.h>
->  #include <linux/serial_core.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
-> index 2604b4d9fb78..789593495a80 100644
-> --- a/drivers/tty/serial/ma35d1_serial.c
-> +++ b/drivers/tty/serial/ma35d1_serial.c
-> @@ -8,7 +8,7 @@
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/of.h>
-> -#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
->  #include <linux/iopoll.h>
->  #include <linux/serial_core.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/tty/serial/mpc52xx_uart.c b/drivers/tty/serial/mpc52xx_uart.c
-> index 384ca195e3d5..916507b8f31d 100644
-> --- a/drivers/tty/serial/mpc52xx_uart.c
-> +++ b/drivers/tty/serial/mpc52xx_uart.c
-> @@ -40,7 +40,7 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
-> -#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
->  #include <linux/clk.h>
->  
->  #include <asm/mpc52xx.h>
-> diff --git a/drivers/tty/serial/mps2-uart.c b/drivers/tty/serial/mps2-uart.c
-> index 860d161fa594..5da88cbeec73 100644
-> --- a/drivers/tty/serial/mps2-uart.c
-> +++ b/drivers/tty/serial/mps2-uart.c
-> @@ -16,7 +16,6 @@
->  #include <linux/console.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
-> -#include <linux/of_device.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/serial_core.h>
-> diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
-> index a368f4293967..3974ca6ad86c 100644
-> --- a/drivers/tty/serial/mxs-auart.c
-> +++ b/drivers/tty/serial/mxs-auart.c
-> @@ -30,7 +30,7 @@
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/dmaengine.h>
->  
-> diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-> index 196a4e678451..e308d5022b3f 100644
-> --- a/drivers/tty/serial/pic32_uart.c
-> +++ b/drivers/tty/serial/pic32_uart.c
-> @@ -11,7 +11,6 @@
->  #include <linux/kernel.h>
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/of_irq.h>
->  #include <linux/of_gpio.h>
->  #include <linux/init.h>
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 444c74eeab7d..5607b668588b 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -11,7 +11,6 @@
->  #include <linux/irq.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/pm_opp.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-> index 1cf08b33456c..cbe641727f2a 100644
-> --- a/drivers/tty/serial/serial-tegra.c
-> +++ b/drivers/tty/serial/serial-tegra.c
-> @@ -20,7 +20,6 @@
->  #include <linux/irq.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/pagemap.h>
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 7c9457962a3d..115271d2f82d 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -35,7 +35,6 @@
->  #include <linux/module.h>
->  #include <linux/mm.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
-> diff --git a/drivers/tty/serial/sunhv.c b/drivers/tty/serial/sunhv.c
-> index 7d38c33ef506..c671d674bce4 100644
-> --- a/drivers/tty/serial/sunhv.c
-> +++ b/drivers/tty/serial/sunhv.c
-> @@ -17,11 +17,11 @@
->  #include <linux/slab.h>
->  #include <linux/delay.h>
->  #include <linux/init.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
->  
->  #include <asm/hypervisor.h>
->  #include <asm/spitfire.h>
-> -#include <asm/prom.h>
->  #include <asm/irq.h>
->  #include <asm/setup.h>
->  
-> diff --git a/drivers/tty/serial/sunsab.c b/drivers/tty/serial/sunsab.c
-> index 48b39fdb0397..40eeaf835bba 100644
-> --- a/drivers/tty/serial/sunsab.c
-> +++ b/drivers/tty/serial/sunsab.c
-> @@ -33,7 +33,8 @@
->  #include <linux/slab.h>
->  #include <linux/delay.h>
->  #include <linux/init.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
->  
->  #include <linux/io.h>
->  #include <asm/irq.h>
-> diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
-> index fed052a0b931..58a4342ad0f9 100644
-> --- a/drivers/tty/serial/sunsu.c
-> +++ b/drivers/tty/serial/sunsu.c
-> @@ -37,11 +37,11 @@
->  #include <linux/serial_reg.h>
->  #include <linux/init.h>
->  #include <linux/delay.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
->  
->  #include <linux/io.h>
->  #include <asm/irq.h>
-> -#include <asm/prom.h>
->  #include <asm/setup.h>
->  
->  #include <linux/serial_core.h>
-> diff --git a/drivers/tty/serial/sunzilog.c b/drivers/tty/serial/sunzilog.c
-> index 0fbeb3dbd843..c8c71c56264c 100644
-> --- a/drivers/tty/serial/sunzilog.c
-> +++ b/drivers/tty/serial/sunzilog.c
-> @@ -33,11 +33,11 @@
->  #include <linux/serio.h>
->  #endif
->  #include <linux/init.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
->  
->  #include <linux/io.h>
->  #include <asm/irq.h>
-> -#include <asm/prom.h>
->  #include <asm/setup.h>
->  
->  #include <linux/serial_core.h>
-> diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
-> index 23500b342da7..65069daf36ec 100644
-> --- a/drivers/tty/serial/tegra-tcu.c
-> +++ b/drivers/tty/serial/tegra-tcu.c
-> @@ -7,7 +7,6 @@
->  #include <linux/mailbox_client.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/serial.h>
->  #include <linux/serial_core.h>
-> diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
-> index 679574893ebe..b225a78f6175 100644
-> --- a/drivers/tty/serial/uartlite.c
-> +++ b/drivers/tty/serial/uartlite.c
-> @@ -20,9 +20,6 @@
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
->  #include <linux/of.h>
-> -#include <linux/of_address.h>
-> -#include <linux/of_device.h>
-> -#include <linux/of_platform.h>
->  #include <linux/clk.h>
->  #include <linux/pm_runtime.h>
->  
-> diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
-> index 404230c1ebb2..284b293fade6 100644
-> --- a/drivers/tty/serial/ucc_uart.c
-> +++ b/drivers/tty/serial/ucc_uart.c
-> @@ -17,15 +17,16 @@
->   */
->  
->  #include <linux/module.h>
-> +#include <linux/platform_device.h>
->  #include <linux/serial.h>
->  #include <linux/serial_core.h>
->  #include <linux/slab.h>
->  #include <linux/tty.h>
->  #include <linux/tty_flip.h>
->  #include <linux/io.h>
-> +#include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
-> -#include <linux/of_platform.h>
->  #include <linux/dma-mapping.h>
->  
->  #include <linux/fs_uart_pd.h>
-> diff --git a/drivers/tty/serial/vt8500_serial.c b/drivers/tty/serial/vt8500_serial.c
-> index cc9157df732f..32433e9b3e5f 100644
-> --- a/drivers/tty/serial/vt8500_serial.c
-> +++ b/drivers/tty/serial/vt8500_serial.c
-> @@ -14,6 +14,7 @@
->  #include <linux/irq.h>
->  #include <linux/init.h>
->  #include <linux/console.h>
-> +#include <linux/platform_device.h>
->  #include <linux/tty.h>
->  #include <linux/tty_flip.h>
->  #include <linux/serial_core.h>
-> @@ -21,7 +22,6 @@
->  #include <linux/slab.h>
->  #include <linux/clk.h>
->  #include <linux/of.h>
-> -#include <linux/of_device.h>
->  #include <linux/err.h>
->  
->  /*
-> -- 
-> 2.40.1
-> 
