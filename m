@@ -2,163 +2,140 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66D0C0015E
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Aug 2023 20:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A4BC0015E
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Aug 2023 21:29:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232455AbjHAUkU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Aug 2023 16:40:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53018 "EHLO
+        id S231633AbjHAV31 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Aug 2023 17:29:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbjHAUkT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Aug 2023 16:40:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A8418D;
-        Tue,  1 Aug 2023 13:40:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 26730616CA;
-        Tue,  1 Aug 2023 20:40:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF66C433C8;
-        Tue,  1 Aug 2023 20:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690922417;
-        bh=Qk0jErerHl/harcMzMcc3VfUky6x5Mflzj5HbZTXslI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=o5Qh/RHEjFsOWShDVGHcoBOiJVuHpYrrKGo3SS3qIUy0d3CX6scMm8DELo3na94Iq
-         XEuthhBca/Ah3Y3ppAMrkgX/2SLQIIylvi+p3DeiI7qulQbVmeqfgn6dcFb1ZkX6PQ
-         zTcIuQfrGIxvquZYngmzIdF/Zidwluc1xhquzR+2f74ZndojtdsQ74Smp3RZT6pdP9
-         ulA7IwBpwpBsXHlrsD0326qvsvn041Bk1mi4ewwbu21Pp+CnA3kY7YYMgQhf3dDzR8
-         PuUzXcLc6zqUxE3FBGF7F2BUAFgvg/4YFkVl5fL0/FFfZ/z+kOpLCR2MPQD88JQ4tw
-         SxWE5Uq/7e3EA==
-Date:   Tue, 1 Aug 2023 15:40:15 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, Sergey.Semin@baikalelectronics.ru,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4] Revert "PCI: tegra194: Enable support for 256 Byte
- payload"
-Message-ID: <20230801204015.GA49719@bhelgaas>
+        with ESMTP id S229557AbjHAV30 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Aug 2023 17:29:26 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00723C3;
+        Tue,  1 Aug 2023 14:29:24 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fe12820bffso37197365e9.3;
+        Tue, 01 Aug 2023 14:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690925363; x=1691530163;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dvrJDYhMh0ipsbPLtlBKb2BJs11MXVwQDoPuVVK7f6M=;
+        b=kEgM6t5w0gCQ99Zb4xGrUZS/0V5cGqtyVWtNpJAJJakP73exH890uNC5PtuWpR4/6l
+         Q4x6tZNiHP8N43YvRzLN+TpWGkFv0I1ByF7pr146qk6ws9Ih773A38HbpPGYfFoZMAsv
+         DYKODbyrKsn8aauPjYrlT+Ycf2KBFRca+mhEHQbI2AO4cHBwVDvb0pCz3IQUTdgGKeZz
+         CKk7wpICDKe1BvCsfSMt2Hjt7QeNLYaZNsumcHjp5RPeduKmvsEp2EeDdkGQG6YmycOI
+         chmHwTlBLcDeuN0fbHp/8A9WtLx4r5y8gRJ+LSEaXk67yyCCR5faGlsbTv2DlV45TbUk
+         aSnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690925363; x=1691530163;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dvrJDYhMh0ipsbPLtlBKb2BJs11MXVwQDoPuVVK7f6M=;
+        b=H8yyVtuqvQyQpDXWDNj/ss/EnqpDVL5/3PogRX4yg86QagEzGH0kttx/l6zi0yeg8k
+         9MCwCC46bb9odEuTU4aMawdCz5ibJUjYnBzflCHjJsd0EFufg6xqxwFU7mbpCZmIhdnt
+         g8dXB4NlfjdHBFNTyfVyzWnivgFgyBGBd+WM9+8uhBkHze4xaJFKsxvIRPjTpexHAw4r
+         hLUL4D+VomrOt75lEs0Ta+ypd7q0AO8KFSg8elQp8dYeKe1g48F7V6s+S32c+lOS8Jve
+         UIfqSdbu7gauBcnkesn80yWBWbqkiD25L4WxkvAsmXA/fkegjgIBv+o/pW5l9xewhh8f
+         nZRA==
+X-Gm-Message-State: ABy/qLbM+OWENUBfj+h7df1zZsHIDQa9wytDr7+R63swr5tcS4BAlxM8
+        Pfjftu0mCWwa/NaCRaJvvdBt8TM/9/qH0iTY
+X-Google-Smtp-Source: APBJJlFTwE67qCLWrvjvM7nS+hdpSjfdyeAfkDg+wdrDBPbNEjGvOKRgjysckZ0D0y+5wqUUwc/tIg==
+X-Received: by 2002:adf:ef8b:0:b0:307:8c47:a266 with SMTP id d11-20020adfef8b000000b003078c47a266mr3095894wro.61.1690925363133;
+        Tue, 01 Aug 2023 14:29:23 -0700 (PDT)
+Received: from ?IPV6:2a02:908:8b3:1840:e7fa:7d4d:a96f:4b43? ([2a02:908:8b3:1840:e7fa:7d4d:a96f:4b43])
+        by smtp.gmail.com with ESMTPSA id z1-20020adfd0c1000000b0031424f4ef1dsm17257809wrh.19.2023.08.01.14.29.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Aug 2023 14:29:22 -0700 (PDT)
+Message-ID: <310fda11-c74a-118a-9975-40e2cfd26465@gmail.com>
+Date:   Tue, 1 Aug 2023 23:29:21 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230718025221.4001329-1-vidyas@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 2/2] ARM: tegra: transformers: add connector node
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20230618085046.10081-1-clamor95@gmail.com>
+ <20230618085046.10081-3-clamor95@gmail.com> <ZMKJE1G87-jWeg2_@orome>
+ <5A2447D3-DB49-4788-AA05-182AF0F04ED2@gmail.com> <ZMKgW6eYpJVqeZJM@orome>
+From:   Maxim Schwalm <maxim.schwalm@gmail.com>
+In-Reply-To: <ZMKgW6eYpJVqeZJM@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 08:22:21AM +0530, Vidya Sagar wrote:
-> After commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
-> payload"), we set MPS=256 for tegra194 Root Ports.
-> 
-> By default (CONFIG_PCIE_BUS_DEFAULT set and no "pci=pcie_bus_*"
-> parameter), Linux configures the MPS of every device to match the
-> upstream bridge, which is impossible if the Root Port has MPS=256
-> and a device only supports MPS=128.
+Hi,
 
-Thanks for pointing out that I broke this log by omitting the mention
-of a switch.  Is the rewording below better?  If so, Krzysztof can
-amend the commit.
+On 27.07.23 18:50, Thierry Reding wrote:
+> On Thu, Jul 27, 2023 at 07:26:28PM +0300, Svyatoslav Ryhel wrote:
+>>
+>>
+>> 27 липня 2023 р. 18:11:15 GMT+03:00, Thierry Reding <thierry.reding@gmail.com> написав(-ла):
+>>> On Sun, Jun 18, 2023 at 11:50:46AM +0300, Svyatoslav Ryhel wrote:
+>>>> All ASUS Transformers have micro-HDMI connector directly available.
+>>>> After Tegra HDMI got bridge/connector support, we should use connector
+>>>> framework for proper HW description.
+>>>>
+>>>> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # ASUS TF T30
+>>>> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # ASUS TF101 T20
+>>>> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # ASUS TF201 T30
+>>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>>>> ---
+>>>>  arch/arm/boot/dts/tegra20-asus-tf101.dts      | 22 ++++++++++++++++---
+>>>>  .../dts/tegra30-asus-transformer-common.dtsi  | 21 ++++++++++++++++--
+>>>>  2 files changed, 38 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/tegra20-asus-tf101.dts b/arch/arm/boot/dts/tegra20-asus-tf101.dts
+>>>> index c2a9c3fb5b33..97350f566539 100644
+>>>> --- a/arch/arm/boot/dts/tegra20-asus-tf101.dts
+>>>> +++ b/arch/arm/boot/dts/tegra20-asus-tf101.dts
+>>>> @@ -82,9 +82,11 @@ hdmi@54280000 {
+>>>>  			pll-supply = <&hdmi_pll_reg>;
+>>>>  			hdmi-supply = <&vdd_hdmi_en>;
+>>>>  
+>>>> -			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+>>>> -			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+>>>> -				GPIO_ACTIVE_HIGH>;
+>>>> +			port@0 {
+>>>> +				hdmi_out: endpoint {
+>>>> +					remote-endpoint = <&connector_in>;
+>>>> +				};
+>>>> +			};
+>>>
+>>> Does this need a bindings change? nvidia,tegra20-hdmi currently doesn't
+>>> support OF graphs, so this would probably fail to validate if we merge
+>>> it without a corresponding DT bindings update.
+>>
+>> drm/tegra patch is backwards compatible and connector node is optional.
+> 
+> We still need to document the connector node, otherwise the DT
+> validation will complain about port@0 being used here, won't it?
 
-  After commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
-  payload"), we initialize MPS=256 for tegra194 Root Ports before enumerating
-  the hierarchy.
+this change indeed causes several new warnings:
 
-  Consider an Endpoint that supports only MPS=128.  In the default situation
-  (CONFIG_PCIE_BUS_DEFAULT set and no "pci=pcie_bus_*" parameter), Linux
-  tries to configure the MPS of every device to match the upstream bridge.
-  If the Endpoint is directly below the Root Port, Linux can reduce the Root
-  Port MPS to 128 to match the Endpoint.  But if there's a switch in the
-  middle, Linux doesn't reduce the Root Port MPS because other devices below
-  the switch may already be configured with MPS larger than 128.
+    /mnt/linux/.output/arch/arm/boot/dts/tegra20-asus-tf101.dtb: hdmi@54280000: 'port@0' does not match any of the regexes: 'pinctrl-[0-9]+'
+            From schema: /mnt/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
+    /mnt/linux/.output/arch/arm/boot/dts/tegra20-asus-tf101.dtb: hdmi@54280000: 'nvidia,ddc-i2c-bus' is a required property
+            From schema: /mnt/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
+    /mnt/linux/.output/arch/arm/boot/dts/tegra20-asus-tf101.dtb: hdmi@54280000: 'nvidia,hpd-gpio' is a required property
+            From schema: /mnt/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
 
-> This scenario results in uncorrectable Malformed TLP errors if the
-> Root Port sends TLPs with payloads larger than 128 bytes.  These
-> errors can be avoided by using the "pci=pcie_bus_safe" parameter,
-> but it doesn't seem to be a good idea to always have this parameter
-> even for basic functionality to work.
-> 
-> Revert commit 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte
-> payload") so the Root Ports default to MPS=128, which all devices
-> support.
-> 
-> If peer-to-peer DMA is not required, one can use "pci=pcie_bus_perf"
-> to get the benefit of larger MPS settings.
-> 
-> [ rewrote commit message based on Bjorn's suggestion ]
-> 
-> Fixes: 4fb8e46c1bc4 ("PCI: tegra194: Enable support for 256 Byte payload")
+BTW, the parallel RGB port isn't properly documented in nvidia,tegra20-dc either.
 
-4fb8e46c1bc4 appeared in v6.0-rc1, so this wouldn't be a candidate for
-v6.5, but it does sound like it should be tagged for stable?  If so,
-Krzysztof can probably add that as well.
-
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> V4:
-> * Rewrote commit message based on Bjorn's suggestion
-> 
-> V3:
-> * Fixed a build issue
-> 
-> V2:
-> * Addressed review comments from Bjorn
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 4fdadc7b045f..a772faff14b5 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -900,11 +900,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
->  		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
->  							      PCI_CAP_ID_EXP);
->  
-> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
-> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
-> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
-> -
->  	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
->  	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
->  	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
-> @@ -1756,7 +1751,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  	struct device *dev = pcie->dev;
->  	u32 val;
->  	int ret;
-> -	u16 val_16;
->  
->  	if (pcie->ep_state == EP_STATE_ENABLED)
->  		return;
-> @@ -1887,20 +1881,16 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
->  						      PCI_CAP_ID_EXP);
->  
-> -	val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL);
-> -	val_16 &= ~PCI_EXP_DEVCTL_PAYLOAD;
-> -	val_16 |= PCI_EXP_DEVCTL_PAYLOAD_256B;
-> -	dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_DEVCTL, val_16);
-> -
->  	/* Clear Slot Clock Configuration bit if SRNS configuration */
->  	if (pcie->enable_srns) {
-> +		u16 val_16;
-> +
->  		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
->  					   PCI_EXP_LNKSTA);
->  		val_16 &= ~PCI_EXP_LNKSTA_SLC;
->  		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
->  				   val_16);
->  	}
-> -
->  	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
->  
->  	val = (ep->msi_mem_phys & MSIX_ADDR_MATCH_LOW_OFF_MASK);
-> -- 
-> 2.25.1
-> 
+Best regards,
+Maxim
