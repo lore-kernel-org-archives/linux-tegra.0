@@ -2,142 +2,219 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E1CC41513
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Aug 2023 09:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1DEC04E69
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Aug 2023 14:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234729AbjHCJsy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Aug 2023 05:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
+        id S234287AbjHCOKE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Aug 2023 10:10:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234589AbjHCJsu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Aug 2023 05:48:50 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2066.outbound.protection.outlook.com [40.107.243.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5FD30FD;
-        Thu,  3 Aug 2023 02:48:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IzQqOrM1OhGI8KM46x3oX/fFfgjRydIc6YVT3b5ubgui+BPpv9xtCMGb6LgQ4HL90WvNvoo9Z/h8YpdPl9NCzLQ+sBKkyYmSeqndOJT8ItBdhJQsiRkrF3ReqgMyQX4zZl93jh97oYmE62Yq5wYBJrRHmobPVGSt9bk2C50qkC0C/kBeBBhdpQ4OT4PTuLkuV9QPeAW/qWv75gYvmkJkMdsOd2XITara+mOgbysD5RkKr8+PBYBAs74dT3pKDaEbFiKyoSigvfpgrV+qUuB434kKAq3gUZOcg3qnnFZtIfSkoFO0kNgSE3vvS7/cANOC8KaGPM+r8atdPv/d/42ByA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C//fq13CR3epgikt3GI279IWcsong20vMOEv2/hJKIs=;
- b=nvIrEqXxZiuT/3i18hzFR6xjHbpnAaR4F2YlOUBrI96hFdULxsmPpTaiMgAgBfIYnt5s5A0MZ5gPIAdAH7wW3XOSmLGK50LoaPktRQIgznak+2ZzPRz54zJS/ujGjfrLB5d7YsnbOTs+R7NHE/XJYLB/WafQQIagmvYFerBfEA4EShrRyEXrzruimgZ+sqg4nH0599b76/CWYNOohbJUc/zC50zNqeiZfMWJDtLBtxY8XrkQvPgNjgjR63WCK12+JHA65WnCuj7OGJuI1KinQKQTDtXjKN2DOv8j/MgGOgUIY3/Kr+noisYUdVY3c96mtDJ9fvRioiTTrLEvui0cGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C//fq13CR3epgikt3GI279IWcsong20vMOEv2/hJKIs=;
- b=trPssQAMqP5fNgm6QOqej1mtvgZ9XyLUWWXLC1XsMjKjal7TPncKPNq4Jeofng+XwL9lz5BLFqivrfJ5C1yXcN/e+H+73rDzvv+IZkULkkByVlqzB9Qx1Jyiyugceaz8bc7V8HzGM5kPeqAi/GU/ioPFZk2u6AWnwdrCwu//m6/7sZ08SQebsxWyJI4Wli2Y6sQV6jGnOQX2a1x1v9eTDQTtAYI+j0iRlL+0Y04LrISuV83KTfoFDo29SDzfjQfCO93mLG9g9KI991l+tUDTupsoD9A9u5I52YrHxCiqVibvYyC3gVMZu735KO/2cJuKhbC4rux+WqwMqroD/JdxWA==
-Received: from DS7PR03CA0220.namprd03.prod.outlook.com (2603:10b6:5:3ba::15)
- by PH7PR12MB5655.namprd12.prod.outlook.com (2603:10b6:510:138::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45; Thu, 3 Aug
- 2023 09:48:40 +0000
-Received: from CY4PEPF0000EE3F.namprd03.prod.outlook.com
- (2603:10b6:5:3ba:cafe::3) by DS7PR03CA0220.outlook.office365.com
- (2603:10b6:5:3ba::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.19 via Frontend
- Transport; Thu, 3 Aug 2023 09:48:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CY4PEPF0000EE3F.mail.protection.outlook.com (10.167.242.19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6652.19 via Frontend Transport; Thu, 3 Aug 2023 09:48:39 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 3 Aug 2023
- 02:48:31 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Thu, 3 Aug 2023 02:48:31 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
- Transport; Thu, 3 Aug 2023 02:48:31 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <conor@kernel.org>,
-        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.4 000/235] 6.4.8-rc2 review
-In-Reply-To: <20230802065501.780725463@linuxfoundation.org>
-References: <20230802065501.780725463@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S236146AbjHCOJu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Aug 2023 10:09:50 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC66F3ABC
+        for <linux-tegra@vger.kernel.org>; Thu,  3 Aug 2023 07:08:52 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qRYyZ-0006mV-Nr; Thu, 03 Aug 2023 16:06:51 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qRYyN-000rBF-In; Thu, 03 Aug 2023 16:06:39 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qRYyM-00A9kB-Jk; Thu, 03 Aug 2023 16:06:38 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee@kernel.org>, Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Michael Walle <michael@walle.cc>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Sean Anderson <sean.anderson@seco.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev
+Subject: [PATCH 0/2] pwm: Manage owner assignment implicitly for drivers
+Date:   Thu,  3 Aug 2023 16:06:30 +0200
+Message-Id: <20230803140633.138165-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Message-ID: <e570790a-ac82-4614-b17b-c290e573913a@drhqmail201.nvidia.com>
-Date:   Thu, 3 Aug 2023 02:48:31 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3F:EE_|PH7PR12MB5655:EE_
-X-MS-Office365-Filtering-Correlation-Id: ecbe0506-aa97-4cff-8c44-08db9406d0a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9WUwTpj9wo2IT98L+NHUcPM5xpZTs46UOvwHB9Yj5S80u45ZNqmXShnsB+blnxEni9oJew3j31NAsH5bEEDAVmnCMJSnoZXIedvlmjkkSMfxZAGvAPOx6J6Kua8ESwCL1IXwnqB9yp4J0rWZXT5ZX73/idcEOrJet7Ia+gKMAF5IBL739vRjxc5rHvEcKYKJ7frTXJOT3b0xMBmBU0nbZFQg8KD4tpGRchc+qj/mXnK11H4919zKGqO89N6JDZ3V+Yn/AkfuGZ+xMwlMfEjXZOEIpBFjVxgUiTIL/xZCOsuoCO4gYEjsjcEwf7CmLM8Hq6yjSTmkDCadsiCv5D+NK52hC18CARp0h6PzcxK2hojYth8DHWhUdC5DUJz/rOgxoctQFbcto+Xngv5bqQ+tl3mDS/Rk76plUTZalLqr3hB3fJ2PW3sJugk1AAlNPuqGLZz5VPM3coPAayucT02OyZqoKDfNKgF3h7xKBEIyv5v6cTe0MegyXuZfr4H+4FGEstauCc+LVDa4jDcrfx9INmfxToD9grwDvx6PX2v3OBXIbWb7V+atc51hw9x+1wcWLyHX/lVYVSIKqKpeZO+kGQQ3qSN9UK5emGC3T90HdFMVp3EhDcibZzrPLtNKc14j9x6XB3LK+abXn/r7l5gIJ+zyKCFYmjxXq/RzPWP25WslKZLCNe5MxKigD7GkOhYJI55gyaJ0l8doO+kLxXHqdr1QRnxGU9uXSE0mjB5mF4NW3IEQyQOs6E+vgmoQuQL2kbZTXkESwfWn5pKiRhJ0Da1p9/3onuSJjWgFIk5G7pY=
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(136003)(376002)(396003)(82310400008)(451199021)(40470700004)(36840700001)(46966006)(40480700001)(40460700003)(336012)(186003)(966005)(316002)(86362001)(478600001)(54906003)(7636003)(4326008)(356005)(31696002)(6916009)(70586007)(70206006)(82740400003)(41300700001)(26005)(426003)(5660300002)(8676002)(8936002)(47076005)(2906002)(36860700001)(7416002)(31686004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2023 09:48:39.3541
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecbe0506-aa97-4cff-8c44-08db9406d0a8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EE3F.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5655
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4136; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fUIfC654WxtfT7CEJ8mGT4DHYTt22edc6EeQOO0mgBU=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBky7RhOm8jkQTlEYB5GsZS8El0/H9apHFEdsZFO x8y+5Ja40OJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZMu0YQAKCRCPgPtYfRL+ TsJcB/90L6hN+ip+TjX3AzflYEmXfAvsD7DvqLlndSD4q7tLpczaexF3R7J6u81XciSqOUe2jgL ZFH92dwUdpov0xdqiWraRK+aZJ+b0W4jpGsrqqlhoMdolr0pAB7fIFytPguywOKD62dbKy1CvL1 Dhl29UAwsXqsIV7jcTR/3lRLsFUwN9/STI8/IVeD4JJHoLv16c1Q61uVC/I22L/ivskcK9F/YQX 7it5vFhz9lfLpr79GuNQ3+d+atoBJRDfjCnDak/HWaR9JRk7b7F8pb+oq6ih+R2INrvw1jlBxDW 1b3cg6OWSLaXTh/Y3/NSkgaZz/kG8/JbVRjAFD6tfDS0KfZO
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 02 Aug 2023 09:42:04 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.4.8 release.
-> There are 235 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 04 Aug 2023 06:54:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.4.8-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hello,
 
-All tests passing for Tegra ...
+while working on the pwm core I noticed that pwm-crc doesn't assign
+.owner in its pwm_ops structure. This isn't a problem in practise though
+as this driver can only be compiled built-in (up to now).
 
-Test results for stable-v6.4:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    130 tests:	130 pass, 0 fail
+Still prevent future pwm drivers not assigning .owner by wrapping
+pwmchip_add() in a macro that automates owner handling simplifying each
+driver a (tiny) bit.
 
-Linux version:	6.4.8-rc2-g6a44ac630b76
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+I also found that there is no hard reason to only compile pwm-crc as a
+built-in on x86, so this limitation is lifted in the second patch.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Best regards
+Uwe
 
-Jon
+Uwe Kleine-König (2):
+  pwm: Manage owner assignment implicitly for drivers
+  pwm: crc: Allow compilation as module and with COMPILE_TEST
+
+ drivers/gpio/gpio-mvebu.c             |  1 -
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c |  1 -
+ drivers/leds/rgb/leds-qcom-lpg.c      |  1 -
+ drivers/pwm/Kconfig                   |  4 ++--
+ drivers/pwm/core.c                    | 20 +++++++++++---------
+ drivers/pwm/pwm-ab8500.c              |  1 -
+ drivers/pwm/pwm-apple.c               |  1 -
+ drivers/pwm/pwm-atmel-hlcdc.c         |  1 -
+ drivers/pwm/pwm-atmel-tcb.c           |  1 -
+ drivers/pwm/pwm-atmel.c               |  1 -
+ drivers/pwm/pwm-bcm-iproc.c           |  1 -
+ drivers/pwm/pwm-bcm-kona.c            |  1 -
+ drivers/pwm/pwm-bcm2835.c             |  1 -
+ drivers/pwm/pwm-berlin.c              |  1 -
+ drivers/pwm/pwm-brcmstb.c             |  1 -
+ drivers/pwm/pwm-clk.c                 |  1 -
+ drivers/pwm/pwm-clps711x.c            |  1 -
+ drivers/pwm/pwm-crc.c                 |  5 ++++-
+ drivers/pwm/pwm-cros-ec.c             |  1 -
+ drivers/pwm/pwm-dwc.c                 |  1 -
+ drivers/pwm/pwm-ep93xx.c              |  1 -
+ drivers/pwm/pwm-fsl-ftm.c             |  1 -
+ drivers/pwm/pwm-hibvt.c               |  1 -
+ drivers/pwm/pwm-img.c                 |  1 -
+ drivers/pwm/pwm-imx-tpm.c             |  1 -
+ drivers/pwm/pwm-imx1.c                |  1 -
+ drivers/pwm/pwm-imx27.c               |  1 -
+ drivers/pwm/pwm-intel-lgm.c           |  1 -
+ drivers/pwm/pwm-iqs620a.c             |  1 -
+ drivers/pwm/pwm-jz4740.c              |  1 -
+ drivers/pwm/pwm-keembay.c             |  1 -
+ drivers/pwm/pwm-lp3943.c              |  1 -
+ drivers/pwm/pwm-lpc18xx-sct.c         |  1 -
+ drivers/pwm/pwm-lpc32xx.c             |  1 -
+ drivers/pwm/pwm-lpss.c                |  1 -
+ drivers/pwm/pwm-mediatek.c            |  1 -
+ drivers/pwm/pwm-meson.c               |  1 -
+ drivers/pwm/pwm-microchip-core.c      |  1 -
+ drivers/pwm/pwm-mtk-disp.c            |  1 -
+ drivers/pwm/pwm-mxs.c                 |  1 -
+ drivers/pwm/pwm-ntxec.c               |  1 -
+ drivers/pwm/pwm-omap-dmtimer.c        |  1 -
+ drivers/pwm/pwm-pca9685.c             |  1 -
+ drivers/pwm/pwm-pxa.c                 |  1 -
+ drivers/pwm/pwm-raspberrypi-poe.c     |  1 -
+ drivers/pwm/pwm-rcar.c                |  1 -
+ drivers/pwm/pwm-renesas-tpu.c         |  1 -
+ drivers/pwm/pwm-rockchip.c            |  1 -
+ drivers/pwm/pwm-rz-mtu3.c             |  1 -
+ drivers/pwm/pwm-samsung.c             |  1 -
+ drivers/pwm/pwm-sifive.c              |  1 -
+ drivers/pwm/pwm-sl28cpld.c            |  1 -
+ drivers/pwm/pwm-spear.c               |  1 -
+ drivers/pwm/pwm-sprd.c                |  1 -
+ drivers/pwm/pwm-sti.c                 |  1 -
+ drivers/pwm/pwm-stm32-lp.c            |  1 -
+ drivers/pwm/pwm-stm32.c               |  1 -
+ drivers/pwm/pwm-stmpe.c               |  1 -
+ drivers/pwm/pwm-sun4i.c               |  1 -
+ drivers/pwm/pwm-sunplus.c             |  1 -
+ drivers/pwm/pwm-tegra.c               |  1 -
+ drivers/pwm/pwm-tiecap.c              |  1 -
+ drivers/pwm/pwm-tiehrpwm.c            |  1 -
+ drivers/pwm/pwm-twl-led.c             |  2 --
+ drivers/pwm/pwm-twl.c                 |  2 --
+ drivers/pwm/pwm-visconti.c            |  1 -
+ drivers/pwm/pwm-vt8500.c              |  1 -
+ drivers/pwm/pwm-xilinx.c              |  1 -
+ drivers/staging/greybus/pwm.c         |  1 -
+ include/linux/pwm.h                   |  8 +++++---
+ 70 files changed, 22 insertions(+), 83 deletions(-)
+
+
+base-commit: 3ccb179aa40d931eb00ef8910d7b812a95659563
+-- 
+2.39.2
+
