@@ -2,100 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE1FC04E69
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 14:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5C4C41513
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 14:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231810AbjHDOjT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Aug 2023 10:39:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58338 "EHLO
+        id S229738AbjHDOqf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Aug 2023 10:46:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231797AbjHDOjR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 10:39:17 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B1C46B3;
-        Fri,  4 Aug 2023 07:39:16 -0700 (PDT)
+        with ESMTP id S229883AbjHDOqe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 10:46:34 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D258B49C3;
+        Fri,  4 Aug 2023 07:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691159957; x=1722695957;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JWDzbwlS50ws/taA8DxOR95OzxbQkw4nudsfTFbqpA4=;
-  b=FqTv1cP8yirsBF2dtc1NTix/1Arw4pJP90lJklIVQCiZz42e8tBv+mS9
-   nIjCH1cK954wI6/3fnj1j043AG7RxjtcIuvFNjnaEYkZMsK3359VyS8Wy
-   qrF++1/Xne5/59SQIuRYV4TxzyHKmj2icUAbnTw5T4llPwU4/vOh5pxbE
-   NO0PF9z7ZjI8odpPvehQCW90D4q0sO5Arrc6ZxcQfeNU7Gns4XmXKMiAy
-   wVr490n1juUnxAeg54NuR3Y2+/SvdTy+I2Zbmoyi9RtbDejfBJJ16Nf6k
-   3Pk5GzG3Apn993w1idDWYduag/E1Reddq9Ejsm6Fo5EFFumb0V/jx5nM6
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="373816847"
+  t=1691160394; x=1722696394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=5MPFyRSfG0xkTnPukKOMqtAE4tC8J3r3tMjEcen5nx8=;
+  b=au7H20ExS+ZIMSDzwIS1hALGsRcxZE3G4BUM5To8VGPre3KLzNUt+XZ3
+   Mohd+pwEULY6zL8PlI50GAdmZyOH3J6SbuecSfwkI6ojPXh7rsRMcsGuG
+   wS0SrNZ9VJ/1PaBN9nUoA2dZHKD+8tUZ0wlEielXLzI3kSJ37I2GI3WTF
+   FLUVM5V6a1+ub3iXYdB3EyANHseZ1pcBTxqGxdzHtNIzdAOWaKRUh5K5Y
+   RSpZ3X+8aC4M/nSzbfzbfakoeix1W//cvEGPyNNmtQdbqWDj0J9Za84l4
+   12sdUR2N8csLd4s7BkCcftvZ2KLsXfpOZQUYUv4FxklaJN+isWF4pL8R/
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="434017742"
 X-IronPort-AV: E=Sophos;i="6.01,255,1684825200"; 
-   d="scan'208";a="373816847"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2023 07:39:15 -0700
+   d="scan'208";a="434017742"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2023 07:46:20 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="723678948"
+X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="707047754"
 X-IronPort-AV: E=Sophos;i="6.01,255,1684825200"; 
-   d="scan'208";a="723678948"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 04 Aug 2023 07:39:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5E77F45B; Fri,  4 Aug 2023 17:39:14 +0300 (EEST)
+   d="scan'208";a="707047754"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006.jf.intel.com with ESMTP; 04 Aug 2023 07:46:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qRw4E-00CpIK-0B;
+        Fri, 04 Aug 2023 17:46:14 +0300
+Date:   Fri, 4 Aug 2023 17:46:13 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Dario Binacchi <dario.binacchi@amarulasolutions.com>,
         Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-hardening@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-omap@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v2 0/4] clk: Add kstrdup_and_replace() helper and use it
-Date:   Fri,  4 Aug 2023 17:39:06 +0300
-Message-Id: <20230804143910.15504-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+        Tero Kristo <kristo@kernel.org>
+Subject: Re: [PATCH v1 2/4] driver core: Replace kstrdup() + strreplace()
+ with kstrdup_and_replace()
+Message-ID: <ZM0PNW6Emks7+Edk@smile.fi.intel.com>
+References: <20230628153211.52988-1-andriy.shevchenko@linux.intel.com>
+ <20230628153211.52988-3-andriy.shevchenko@linux.intel.com>
+ <2023080456-ride-unrobed-b738@gregkh>
+ <CAHp75Vcb-uTh0r4YKACAcBwePHjs8Rn0R44NN+oyz11tbCG0Sw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75Vcb-uTh0r4YKACAcBwePHjs8Rn0R44NN+oyz11tbCG0Sw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-There are a few existing users and more might come which would like
-to have the kstrdup_and_replace() functionality.
+On Fri, Aug 04, 2023 at 05:30:49PM +0300, Andy Shevchenko wrote:
+> On Fri, Aug 4, 2023 at 5:10 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Wed, Jun 28, 2023 at 06:32:09PM +0300, Andy Shevchenko wrote:
 
-Provide this new API and reuse it in a few users.
+...
 
-Since most of that is under CCF, perhaps it makes sense to route it
-via that tree.
+> Stephen, can you take the series now (okay, I think I need to send a
+> new version with all tags and typos fixed)?
 
-Changelog v2:
-- added tag to patch 2 (Greg KH)
-- fixed typo in three commit messages
-
-Andy Shevchenko (4):
-  lib/string_helpers: Add kstrdup_and_replace() helper
-  driver core: Replace kstrdup() + strreplace() with
-    kstrdup_and_replace()
-  clk: tegra: Replace kstrdup() + strreplace() with
-    kstrdup_and_replace()
-  clk: ti: Replace kstrdup() + strreplace() with kstrdup_and_replace()
-
- drivers/base/core.c            |  5 ++---
- drivers/clk/tegra/clk.c        |  6 ++----
- drivers/clk/ti/clk.c           |  4 ++--
- drivers/clk/ti/clkctrl.c       |  9 +++++----
- include/linux/string_helpers.h |  2 ++
- lib/string_helpers.c           | 15 +++++++++++++++
- 6 files changed, 28 insertions(+), 13 deletions(-)
+v2 has been sent: 20230804143910.15504-1-andriy.shevchenko@linux.intel.com
 
 -- 
-2.40.0.1.gaa8946217a0b
+With Best Regards,
+Andy Shevchenko
+
 
