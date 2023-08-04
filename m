@@ -2,112 +2,105 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAEFC00528
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 09:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C96C001DB
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 14:10:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjHDJwS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Aug 2023 05:52:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51590 "EHLO
+        id S231578AbjHDOKH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Aug 2023 10:10:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230505AbjHDJwR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 05:52:17 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A074EA9;
-        Fri,  4 Aug 2023 02:52:15 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E0F0113E;
-        Fri,  4 Aug 2023 02:52:58 -0700 (PDT)
-Received: from bogus (unknown [10.57.96.101])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 756D23F6C4;
-        Fri,  4 Aug 2023 02:52:03 -0700 (PDT)
-Date:   Fri, 4 Aug 2023 10:51:27 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     soc@kernel.org, Patrice Chotard <patrice.chotard@foss.st.com>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jean-Marie Verdun <verdun@hpe.com>,
-        Nick Hawkins <nick.hawkins@hpe.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Sh iraz Has him <shiraz.linux.kernel@gmail.com>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Jay Fang <f.fangjian@huawei.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
+        with ESMTP id S230089AbjHDOKG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 10:10:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69674198C;
+        Fri,  4 Aug 2023 07:10:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E6C906203B;
+        Fri,  4 Aug 2023 14:10:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5682C433C8;
+        Fri,  4 Aug 2023 14:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1691158204;
+        bh=UWitlbycvGbarZEVsXx6MkJ1vRTMyQOcOFtKt+TUFAk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DtdZzMIvpQdTMIuitLzYZGRQMzQinbKsL3ia9lAXkVYBjGP4QtByWEioWeLQjNDTj
+         gkrKCF1IfzwuCy45JI7eXrI96q2Y5TYwXrVR0DMB/q4nqClark4es3Nmxx0oFCDGjB
+         s5B3MpG6RIVTETqK3lzdNkkrrb9/xOgMiDFdPH6M=
+Date:   Fri, 4 Aug 2023 16:10:01 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Li Yang <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-rockchip@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-pm@vger.kernel.org,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2 17/23] firmware: Explicitly include correct DT includes
-Message-ID: <20230804095127.w74m6aphiwkaqlim@bogus>
-References: <20230803-dt-header-cleanups-for-soc-v2-0-d8de2cc88bff@kernel.org>
- <20230803-dt-header-cleanups-for-soc-v2-17-d8de2cc88bff@kernel.org>
+        Tero Kristo <kristo@kernel.org>,
+        Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v1 2/4] driver core: Replace kstrdup() + strreplace()
+ with kstrdup_and_replace()
+Message-ID: <2023080456-ride-unrobed-b738@gregkh>
+References: <20230628153211.52988-1-andriy.shevchenko@linux.intel.com>
+ <20230628153211.52988-3-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230803-dt-header-cleanups-for-soc-v2-17-d8de2cc88bff@kernel.org>
+In-Reply-To: <20230628153211.52988-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Aug 03, 2023 at 04:42:57PM -0600, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
+On Wed, Jun 28, 2023 at 06:32:09PM +0300, Andy Shevchenko wrote:
+> Replace open coded functionalify of kstrdup_and_replace() with a call.
 > 
-> Acked-by: Dinh Nguyen <dinguyen@kernel.org>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/firmware/arm_scmi/driver.c | 4 ++--
->  drivers/firmware/scpi_pm_domain.c  | 3 ++-
+>  drivers/base/core.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 3dff5037943e..af0ee691520a 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/kstrtox.h>
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+> -#include <linux/string.h>
+>  #include <linux/kdev_t.h>
+>  #include <linux/notifier.h>
+>  #include <linux/of.h>
+> @@ -28,6 +27,7 @@
+>  #include <linux/netdevice.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/sched/mm.h>
+> +#include <linux/string_helpers.h>
+>  #include <linux/swiotlb.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/dma-map-ops.h> /* for dma_default_coherent */
+> @@ -3910,10 +3910,9 @@ const char *device_get_devnode(const struct device *dev,
+>  		return dev_name(dev);
+>  
+>  	/* replace '!' in the name with '/' */
+> -	s = kstrdup(dev_name(dev), GFP_KERNEL);
+> +	s = kstrdup_and_replace(dev_name(dev), '!', '/', GFP_KERNEL);
+>  	if (!s)
+>  		return NULL;
+> -	strreplace(s, '!', '/');
+>  	return *tmp = s;
+>  }
+>  
+> -- 
+> 2.40.0.1.gaa8946217a0b
+> 
 
-(For SCMI changes)
-
-Acked-by:  Sudeep Holla <sudeep.holla@arm.com>
-
--- 
-Regards,
-Sudeep
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
