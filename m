@@ -2,93 +2,148 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5C4C41513
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 14:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0238CC04A6A
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 15:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjHDOqf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Aug 2023 10:46:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33644 "EHLO
+        id S230235AbjHDPDs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Aug 2023 11:03:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbjHDOqe (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 10:46:34 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D258B49C3;
-        Fri,  4 Aug 2023 07:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691160394; x=1722696394;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=5MPFyRSfG0xkTnPukKOMqtAE4tC8J3r3tMjEcen5nx8=;
-  b=au7H20ExS+ZIMSDzwIS1hALGsRcxZE3G4BUM5To8VGPre3KLzNUt+XZ3
-   Mohd+pwEULY6zL8PlI50GAdmZyOH3J6SbuecSfwkI6ojPXh7rsRMcsGuG
-   wS0SrNZ9VJ/1PaBN9nUoA2dZHKD+8tUZ0wlEielXLzI3kSJ37I2GI3WTF
-   FLUVM5V6a1+ub3iXYdB3EyANHseZ1pcBTxqGxdzHtNIzdAOWaKRUh5K5Y
-   RSpZ3X+8aC4M/nSzbfzbfakoeix1W//cvEGPyNNmtQdbqWDj0J9Za84l4
-   12sdUR2N8csLd4s7BkCcftvZ2KLsXfpOZQUYUv4FxklaJN+isWF4pL8R/
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="434017742"
-X-IronPort-AV: E=Sophos;i="6.01,255,1684825200"; 
-   d="scan'208";a="434017742"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2023 07:46:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="707047754"
-X-IronPort-AV: E=Sophos;i="6.01,255,1684825200"; 
-   d="scan'208";a="707047754"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006.jf.intel.com with ESMTP; 04 Aug 2023 07:46:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qRw4E-00CpIK-0B;
-        Fri, 04 Aug 2023 17:46:14 +0300
-Date:   Fri, 4 Aug 2023 17:46:13 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230282AbjHDPDq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 11:03:46 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 446BC49CC;
+        Fri,  4 Aug 2023 08:03:40 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 374E2pI0015686;
+        Fri, 4 Aug 2023 17:03:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+        message-id:date:mime-version:subject:to:cc:references:from
+        :in-reply-to:content-type:content-transfer-encoding; s=
+        selector1; bh=/l8mjvbY2Ki+4Tb7GK63bNwXO8roQow7emINs+UmEls=; b=Zd
+        4WDuisoN6vSXRACnvp2/VGWNtTpQsGB9xZ2KYVQCVJV9nMODt04ScwlNVd++0dQ8
+        +SmB+iPBO+sJYllSey/4UOrdiVNGMBSTP81bgIOf4R1wuODLtf5SAQWFvaXoHT/m
+        3SFTdQDt2XH2ytoOUfDHKoQLrh57h6iLKneYmbKUsKQJDoDCvB+t44SxYRNfv2G5
+        CO9MDqDSxzcZWqMefoiT+3bkQC12oiYCgbNg5hfTl+vlqs5JiJePBtnlmjro7dZ5
+        JyMJpO/XkUM3tOQTcWjU5NjeAM11bxpoiaH6xkAK9UA/GGsp7Obgo49mR7djiR0l
+        Hg8pkHSv1olXQrqH1ikQ==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3s92rf89se-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Aug 2023 17:03:03 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6C5D0100053;
+        Fri,  4 Aug 2023 17:03:00 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5175A2248C6;
+        Fri,  4 Aug 2023 17:03:00 +0200 (CEST)
+Received: from [10.201.20.38] (10.201.20.38) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Fri, 4 Aug
+ 2023 17:02:58 +0200
+Message-ID: <baaebecd-d3d9-c3b1-dd7c-f5a39c194d4b@foss.st.com>
+Date:   Fri, 4 Aug 2023 17:02:57 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 02/23] ARM: sti: Drop unused includes
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>, <soc@kernel.org>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Has him <shiraz.linux.kernel@gmail.com>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jay Fang <f.fangjian@huawei.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Tero Kristo <kristo@kernel.org>
-Subject: Re: [PATCH v1 2/4] driver core: Replace kstrdup() + strreplace()
- with kstrdup_and_replace()
-Message-ID: <ZM0PNW6Emks7+Edk@smile.fi.intel.com>
-References: <20230628153211.52988-1-andriy.shevchenko@linux.intel.com>
- <20230628153211.52988-3-andriy.shevchenko@linux.intel.com>
- <2023080456-ride-unrobed-b738@gregkh>
- <CAHp75Vcb-uTh0r4YKACAcBwePHjs8Rn0R44NN+oyz11tbCG0Sw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Vcb-uTh0r4YKACAcBwePHjs8Rn0R44NN+oyz11tbCG0Sw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Michal Simek <michal.simek@amd.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Li Yang <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-sunxi@lists.linux.dev>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-aspeed@lists.ozlabs.org>,
+        <linux-pm@vger.kernel.org>
+References: <20230803-dt-header-cleanups-for-soc-v2-0-d8de2cc88bff@kernel.org>
+ <20230803-dt-header-cleanups-for-soc-v2-2-d8de2cc88bff@kernel.org>
+From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20230803-dt-header-cleanups-for-soc-v2-2-d8de2cc88bff@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.201.20.38]
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-04_14,2023-08-03_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Aug 04, 2023 at 05:30:49PM +0300, Andy Shevchenko wrote:
-> On Fri, Aug 4, 2023 at 5:10 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Wed, Jun 28, 2023 at 06:32:09PM +0300, Andy Shevchenko wrote:
-
-...
-
-> Stephen, can you take the series now (okay, I think I need to send a
-> new version with all tags and typos fixed)?
-
-v2 has been sent: 20230804143910.15504-1-andriy.shevchenko@linux.intel.com
-
--- 
-With Best Regards,
-Andy Shevchenko
 
 
+On 8/4/23 00:42, Rob Herring wrote:
+> Several includes are not needed, so drop them.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  arch/arm/mach-sti/board-dt.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-sti/board-dt.c b/arch/arm/mach-sti/board-dt.c
+> index ffecbf29646f..488084b61b4a 100644
+> --- a/arch/arm/mach-sti/board-dt.c
+> +++ b/arch/arm/mach-sti/board-dt.c
+> @@ -4,8 +4,6 @@
+>   * Author(s): Srinivas Kandagatla <srinivas.kandagatla@st.com>
+>   */
+>  
+> -#include <linux/irq.h>
+> -#include <linux/of_platform.h>
+>  #include <asm/hardware/cache-l2x0.h>
+>  #include <asm/mach/arch.h>
+>  
+> 
+Acked-by: Patrice Chotard <patrice.chotard@foss.st.com>
+
+Thanks
+Patrice
