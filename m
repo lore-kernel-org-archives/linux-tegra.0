@@ -2,97 +2,158 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAFBC04A94
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 14:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCB4C04A94
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Aug 2023 14:38:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231737AbjHDOba (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Aug 2023 10:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54484 "EHLO
+        id S231772AbjHDOiS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Aug 2023 10:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231728AbjHDOb2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 10:31:28 -0400
-Received: from mail-oo1-xc32.google.com (mail-oo1-xc32.google.com [IPv6:2607:f8b0:4864:20::c32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F7749D4;
-        Fri,  4 Aug 2023 07:31:26 -0700 (PDT)
-Received: by mail-oo1-xc32.google.com with SMTP id 006d021491bc7-56ced49d51aso1464387eaf.1;
-        Fri, 04 Aug 2023 07:31:26 -0700 (PDT)
+        with ESMTP id S229448AbjHDOiR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Aug 2023 10:38:17 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8903D46B2;
+        Fri,  4 Aug 2023 07:38:16 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fbea147034so20705885e9.0;
+        Fri, 04 Aug 2023 07:38:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691159486; x=1691764286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1691159895; x=1691764695;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QYpBxe18O9ebx8igO3q7NyRd87YtCT0rdfN3zvPApgI=;
-        b=oijhw6yEfQ/Gr63RM7nAd84ZnPjQT+kXrBumKbnAHcZ4rHRReLEa3+OYzfOI7ES2+E
-         wepTnpwSnOATN4OWihc3m/kXP+2Uaz636mAO83udM/+B1nJXj3FJ+YGGSfdbvmeKvo9k
-         S6JQkEs052p8EV+sJRgCRme6glKP0tiuCJLAYITu7JzxSmRB+i5/+ma1dgrAikK5C3aU
-         l/z0GakzVcs4b3FcdPnxVuQksom/v49f2EaY33QX2Md4YKqZM3GbNHOURg+TcgL0Hjp/
-         6bZyr4f+EHt1CSnLLHPaViy8eMwP8OXjjzfwK5IMH/cwAIc59gzvViZVyiX9XTiKQd/V
-         TdSg==
+        bh=BM5R+rkSeL9WIp21l2emysOOucIRf/CjafaqigjE3ns=;
+        b=P52o47d9dHG1aUMZwk0pd23gUMU1gSEcAaorjtm0PUBSc4CTskirX886xdzRJezLg6
+         M4MtQIA6juxB9+sFPFH3EPWi9hMPTVDd1wwyWh3PmXuu1po0m+repmiBQFo72mEPoUaF
+         CKzmuVyB06487jxO3URnO0OYZ2cjQP/ZYPY+Ly4YmQO1h8Ul1MwxJiS6CzfTEpBkUg4D
+         GvHC2AtRasiPCNfOkLFtYCr2iYrhUrXdaNuwr9xpfY5akGkjLPDtWAHv3doGspA8ZqzA
+         BVho52Djxf/ClpbDDROl0ciKQJHwoe5ELFkv+xQsoTFDKnytt8GlFd+Ntd6Geakv25p/
+         LA8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691159486; x=1691764286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1691159895; x=1691764695;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QYpBxe18O9ebx8igO3q7NyRd87YtCT0rdfN3zvPApgI=;
-        b=WlwFI0JEVP6gN3pfaIuViKCAaukVDiGClpACGNs8934MYnXSuxrGsQvSit+A/jZOJ5
-         XcIUNXnpHgrZtzrzKjczgz8hjrOZiRAw7i5GB66LSI2F0rcdsnalX5JjEPYssk4snrrA
-         xiVRosjo5cM8CQAeXEuDkOMHUAujNeOqb1hW0xJDBuNdoqqddjMWzMklGJVnquRvOT0r
-         Hml6YEP0jqhFCHj5/6rE++g6jhLM7fAFVAmlIJcAndAFT26DtLepl9tgI9ICDJKR7Bj9
-         f5nutuvuG/ZtUy/f0r9hwLXZRt8sfUjl/g9XMFVbb+VTYAIUHHC6mXroUECdubfJ5iMF
-         uUVA==
-X-Gm-Message-State: AOJu0Ywno39+e3MPWbSD8D8lwjPD/tidRsfN8JCP6MVOvuLNFcHTMJPB
-        M4aXl5tkkutHh10Xyi+M1a+qvu4kj/RRjs07yXc=
-X-Google-Smtp-Source: AGHT+IESHPgcOp8j8ide4iiYmR9cnMaZoujqhuQMLW3XIceF7oxnQJ75jegw8XXhWyQ1VXTyTa35EFzqtZUoEOsBi0I=
-X-Received: by 2002:a4a:ce98:0:b0:56c:d045:2aba with SMTP id
- f24-20020a4ace98000000b0056cd0452abamr1782436oos.4.1691159485904; Fri, 04 Aug
- 2023 07:31:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230628153211.52988-1-andriy.shevchenko@linux.intel.com>
- <20230628153211.52988-3-andriy.shevchenko@linux.intel.com> <2023080456-ride-unrobed-b738@gregkh>
-In-Reply-To: <2023080456-ride-unrobed-b738@gregkh>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 4 Aug 2023 17:30:49 +0300
-Message-ID: <CAHp75Vcb-uTh0r4YKACAcBwePHjs8Rn0R44NN+oyz11tbCG0Sw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] driver core: Replace kstrdup() + strreplace() with kstrdup_and_replace()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        bh=BM5R+rkSeL9WIp21l2emysOOucIRf/CjafaqigjE3ns=;
+        b=RzuENfrf4WDdQiNx2JfdKQd4j0iAj6GskMAll5mFiqF2hbDgW+8Jgh+tvXEZPF4dq3
+         agFe/M4H1nG+elZoO2ZEI/2vXTaKY9YmuG5STIU2XxscYTKOveUkDbpn3kl6xuutg/s/
+         30zmgm7LWV5AiZ1zvfKZCXC5rApMaiSokthK2179175DZMG9gInvvPPQ1jyTBRzYJ/We
+         1CVyRyXUq1i8C2yyc+0zUq4Vk7RFY53zuQv0XP7OGiAWCDKefzTwK8YZoKQpLby1tMOf
+         pvRQWabiuVDvdX1I9cj9vHlL1wqWgfrp+4GIeH1qaOCeyB6cweBuo8dBnZgVxPKPo36N
+         WeIg==
+X-Gm-Message-State: AOJu0YyKk+vedSQRcxOEDUOWb0772KeJ6HvdG9HbfG6ifgdoj0XGfkOs
+        g8iueHMP0px2V1qj3WrVQwk=
+X-Google-Smtp-Source: AGHT+IFR8gDqjRYqyXRMOxF0JJDJ3mrxElW64dDSszEM8SNr/lPevhKIntH0L12mO9e2OcoWVt3KOw==
+X-Received: by 2002:a1c:7c05:0:b0:3fb:e4ce:cc65 with SMTP id x5-20020a1c7c05000000b003fbe4cecc65mr1591896wmc.25.1691159894687;
+        Fri, 04 Aug 2023 07:38:14 -0700 (PDT)
+Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
+        by smtp.gmail.com with ESMTPSA id f9-20020a7bc8c9000000b003fba92fad35sm6833727wml.26.2023.08.04.07.38.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Aug 2023 07:38:14 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     soc@kernel.org, Patrice Chotard <patrice.chotard@foss.st.com>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <atenart@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Has him <shiraz.linux.kernel@gmail.com>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jay Fang <f.fangjian@huawei.com>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Andy Shevchenko <andy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Michal Simek <michal.simek@amd.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Li Yang <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-rockchip@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 21/23] soc: sunxi: Explicitly include correct DT includes
+Date:   Fri, 04 Aug 2023 16:38:11 +0200
+Message-ID: <2690872.mvXUDI8C0e@jernej-laptop>
+In-Reply-To: <20230803-dt-header-cleanups-for-soc-v2-21-d8de2cc88bff@kernel.org>
+References: <20230803-dt-header-cleanups-for-soc-v2-0-d8de2cc88bff@kernel.org>
+ <20230803-dt-header-cleanups-for-soc-v2-21-d8de2cc88bff@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Aug 4, 2023 at 5:10=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Jun 28, 2023 at 06:32:09PM +0300, Andy Shevchenko wrote:
-> > Replace open coded functionalify of kstrdup_and_replace() with a call.
+Dne petek, 04. avgust 2023 ob 00:43:01 CEST je Rob Herring napisal(a):
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Oh, here is a typo.
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-...
+Should I take this through sunxi tree?
 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Best regards,
+Jernej
 
-Thank you, Greg!
+> ---
+> v2:
+>  - Drop sun20i-ppu.c which moved
+> ---
+>  drivers/soc/sunxi/sunxi_sram.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+> index 4c4864cd2342..4458b2e0562b 100644
+> --- a/drivers/soc/sunxi/sunxi_sram.c
+> +++ b/drivers/soc/sunxi/sunxi_sram.c
+> @@ -15,7 +15,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/of_device.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
 
-Stephen, can you take the series now (okay, I think I need to send a
-new version with all tags and typos fixed)?
 
---=20
-With Best Regards,
-Andy Shevchenko
+
+
