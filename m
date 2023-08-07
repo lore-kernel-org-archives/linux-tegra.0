@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29D6C41513
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Aug 2023 14:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D76C00528
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Aug 2023 14:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234238AbjHGOfm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Aug 2023 10:35:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46768 "EHLO
+        id S234341AbjHGOfn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Aug 2023 10:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234127AbjHGOfk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Aug 2023 10:35:40 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF1810DD;
-        Mon,  7 Aug 2023 07:35:38 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-977e0fbd742so631682366b.2;
-        Mon, 07 Aug 2023 07:35:38 -0700 (PDT)
+        with ESMTP id S234092AbjHGOfj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Aug 2023 10:35:39 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBD310DC;
+        Mon,  7 Aug 2023 07:35:35 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-986d8332f50so628620466b.0;
+        Mon, 07 Aug 2023 07:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691418937; x=1692023737;
+        d=gmail.com; s=20221208; t=1691418934; x=1692023734;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IyTj/EAHU86MCmjIDTneVFZ/F0zuNFke5LJEBRUozL0=;
-        b=d+b9Bgxt8jjhWPSZN8YGF+VhD2yHLtLkBYtZCPk9VS2usI+5pUfv1lOceCn2jCEhU3
-         bIXRbL27djBDBnqqN6oEN6+zL5NYrceLq0i488o53TZCGQ9g+F5ut9NM7WVJghK8/Fw/
-         /JKY5z3wXjvNJXPIKVJ7ZLq/o+GCim1f3WomPX3IWHCesbIGdoYgh2uynrRgvUZThunI
-         VBZvOvrsOHt7Kw79NU8zNgc7dZtR4lngga+ZXSMu7xyzTdTwpA2Cv8OPxmnQ1md4kEQ9
-         tNHTLcXku1SrjPQqHtGPMl9UCg74r3bE1LZXfXjSsVqaZaF/8z7yHDyd14E8WfburjHE
-         AZiw==
+        bh=/ZvPUmeI/1EMGUSu/xpT/NIbYPZbxTYJRvOXwkEg1y4=;
+        b=nx3VdgiKuT2WAB9KWAoKXJPbURnaLo0c7g2k8OCRZ8JX+DDucBlkvE79w7wqREmoAv
+         5m7FMByQLnWy4CKH1Dv4uJlEb3ClC3MUvCJCJzVOELztu8Bwb8UvEnYwfynQk/JUNYSx
+         +MS/6zWN36ApBG3RZEbKdTwu3whwBIpZDKUFQpIUwgJBVeslLFD0WUa2KIR4gjIZl0AR
+         31Tjy5cxqNBWmZjIo90FvvCkObwmUMp2i/HPzTAGn9i021AaopRAcOp1bHgvGI7+UelC
+         FTRsHz8dxGIa9J04nv8A/KMFn9WutCosf0k7vXOoVhhYkk8k4Kd+RcEaQUl3NQ63Oe8z
+         EwyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691418937; x=1692023737;
+        d=1e100.net; s=20221208; t=1691418934; x=1692023734;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IyTj/EAHU86MCmjIDTneVFZ/F0zuNFke5LJEBRUozL0=;
-        b=Civ82Bggp8UthH2005D1brhFcPCLOr91mDxuB/FVjTMJjTSnh/QqVTKjGvOdHYi7tT
-         H/3r4rgT2Yyc8NlCb33nFgCKrM6ZLsdMxyh3cSs8MTP6D2c3QE3+WRJXWTYyh3GaMG/3
-         WPyhoK2BpI9sqHro6bO3HDl1HGG1HxmtPnlEIwYzIvJLJU/AYLACX+iq5HacT3X20scL
-         64YJsguXeYXLYnTBP8HA6+w4JPbu2Nu4FeAnWM/ARxtwxPFCYjNAQ4+TNDBgNWt4hJuV
-         9UNV6LhUl1C2Gt908gdr7FpEoofkM6cBCZT+/kb7jdZmcowmLnOjKftr4wovu4kOUOwX
-         bEtw==
-X-Gm-Message-State: AOJu0YyVFNArFxRfLMdvHtgKE9IMI0bmarctIi++SGud/G+rcYIV6Sgg
-        eAud4mTnoBjBoQvWbtrOJ5M=
-X-Google-Smtp-Source: AGHT+IEBOTjjQty4GTArfLewTs7sbydLqR0FAVIlgxNIR8H11ce7m0dYpelCzN4OBZskoCwE97nmYA==
-X-Received: by 2002:a17:906:51c8:b0:991:c566:979 with SMTP id v8-20020a17090651c800b00991c5660979mr8427229ejk.36.1691418937036;
-        Mon, 07 Aug 2023 07:35:37 -0700 (PDT)
+        bh=/ZvPUmeI/1EMGUSu/xpT/NIbYPZbxTYJRvOXwkEg1y4=;
+        b=EKb8WFtT3EhYXvtgAQ4cPG2sh6KjF+5T7lqNSsDTxVlNpH66qV1XJbzy8j8w7eB2Yd
+         Xq6kif49UGJVSiZQx5P090j/oIR+lQK0SH1m4sNIDeeI/xCCXNJHAD4xFHo0YC50RMZb
+         VwIU+xtpSOWYCqL4FZ4jK8dDq0IB3L+RSW88KuPiGrk9Z7B7Oa/iSMR8pkzkl8xFGaDA
+         OqhlSwUckPkcg0xW8UgpKGv1ejJXMxKlmUo0q2rPht7ezidzHq0Pqc8j9LS17+3/ULlY
+         UMWiy/Cp1U5dtES8QWAJmOQhTEDAePYsoSTN2g96RSDvfGBKGAA6q/7cPfSmSO5z3q5M
+         +7lQ==
+X-Gm-Message-State: AOJu0YxHxJcXa7oACUedlQbAgH0Op523ckHVlepmNLEhVloKW0MBsabg
+        01YucjW6iew2ed+6INx5hHg=
+X-Google-Smtp-Source: AGHT+IFieJ8bZzt1TPzOApOQ7/Q2X9S0DhUWYiPxMLc7XZT0uMY2JEoLmpSSXlAl5GIQWxhXlFs4wA==
+X-Received: by 2002:a17:907:b09:b0:99c:5707:f458 with SMTP id h9-20020a1709070b0900b0099c5707f458mr6661271ejl.72.1691418933549;
+        Mon, 07 Aug 2023 07:35:33 -0700 (PDT)
 Received: from xeon.. ([188.163.112.48])
-        by smtp.gmail.com with ESMTPSA id e3-20020a170906504300b0099329b3ab67sm5323292ejk.71.2023.08.07.07.35.36
+        by smtp.gmail.com with ESMTPSA id e3-20020a170906504300b0099329b3ab67sm5323292ejk.71.2023.08.07.07.35.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 07:35:36 -0700 (PDT)
+        Mon, 07 Aug 2023 07:35:33 -0700 (PDT)
 From:   Svyatoslav Ryhel <clamor95@gmail.com>
 To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,9 +62,9 @@ To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
         Dmitry Osipenko <digetx@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] ARM: tegra: transformers: add connector node
-Date:   Mon,  7 Aug 2023 17:35:15 +0300
-Message-Id: <20230807143515.7882-6-clamor95@gmail.com>
+Subject: [PATCH v3 2/5] dt-bindings: display: tegra: nvidia,tegra20-dc: Add parallel RGB output port node
+Date:   Mon,  7 Aug 2023 17:35:12 +0300
+Message-Id: <20230807143515.7882-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230807143515.7882-1-clamor95@gmail.com>
 References: <20230807143515.7882-1-clamor95@gmail.com>
@@ -74,98 +74,59 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All ASUS Transformers have micro-HDMI connector directly available.
-After Tegra HDMI got bridge/connector support, we should use connector
-framework for proper HW description.
+From: Maxim Schwalm <maxim.schwalm@gmail.com>
 
-Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # ASUS TF T30
-Tested-by: Robert Eckelmann <longnoserob@gmail.com> # ASUS TF101 T20
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # ASUS TF201 T30
+Either this node, which is optional, or the nvidia,panel property can be
+present.
+
+Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../boot/dts/nvidia/tegra20-asus-tf101.dts    | 22 ++++++++++++++++---
- .../tegra30-asus-transformer-common.dtsi      | 21 ++++++++++++++++--
- 2 files changed, 38 insertions(+), 5 deletions(-)
+ .../display/tegra/nvidia,tegra20-dc.yaml      | 31 +++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-index e118809dc6d9..cd6acbea0318 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-@@ -82,9 +82,11 @@ hdmi@54280000 {
- 			pll-supply = <&hdmi_pll_reg>;
- 			hdmi-supply = <&vdd_hdmi_en>;
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+index 69be95afd562..102304703062 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+@@ -127,6 +127,37 @@ allOf:
+               $ref: /schemas/types.yaml#/definitions/phandle
+               description: phandle of a display panel
  
--			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
--			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
--				GPIO_ACTIVE_HIGH>;
-+			port {
-+				hdmi_out: endpoint {
-+					remote-endpoint = <&connector_in>;
-+				};
-+			};
- 		};
- 	};
- 
-@@ -967,6 +969,20 @@ clk32k_in: clock-32k-in {
- 		#clock-cells = <0>;
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "d";
++            port:
++              $ref: /schemas/graph.yaml#/$defs/port-base
++              description: Parallel RGB output port
 +
-+		hpd-gpios = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+		ddc-i2c-bus = <&hdmi_ddc>;
++              properties:
++                endpoint:
++                  $ref: /schemas/media/video-interfaces.yaml#
++                  unevaluatedProperties: false
 +
-+		port {
-+			connector_in: endpoint {
-+				remote-endpoint = <&hdmi_out>;
-+			};
-+		};
-+	};
++              unevaluatedProperties: false
 +
- 	cpus {
- 		cpu0: cpu@0 {
- 			cpu-supply = <&vdd_cpu>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-index ead95306840f..9b658b3de7a4 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-@@ -80,8 +80,11 @@ hdmi: hdmi@54280000 {
- 			pll-supply = <&vdd_1v8_vio>;
- 			vdd-supply = <&vdd_3v3_sys>;
- 
--			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
--			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
-+			port {
-+				hdmi_out: endpoint {
-+					remote-endpoint = <&connector_in>;
-+				};
-+			};
- 		};
- 	};
- 
-@@ -1494,6 +1497,20 @@ clk32k_in: clock-32k {
- 		clock-output-names = "pmic-oscillator";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "d";
++          anyOf:
++            - if:
++                not:
++                  properties:
++                    nvidia,panel: false
++              then:
++                not:
++                  properties:
++                    port: true
++            - if:
++                not:
++                  properties:
++                    port: false
++              then:
++                not:
++                  properties:
++                    nvidia,panel: true
 +
-+		hpd-gpios = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+		ddc-i2c-bus = <&hdmi_ddc>;
++          additionalProperties: false
 +
-+		port {
-+			connector_in: endpoint {
-+				remote-endpoint = <&hdmi_out>;
-+			};
-+		};
-+	};
-+
- 	cpus {
- 		cpu0: cpu@0 {
- 			cpu-supply = <&vdd_cpu>;
+   - if:
+       properties:
+         compatible:
 -- 
 2.39.2
 
