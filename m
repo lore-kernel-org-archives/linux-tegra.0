@@ -2,82 +2,117 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C6FC04FE1
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Aug 2023 13:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCB7C001B0
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Aug 2023 14:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232550AbjHGNeS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Aug 2023 09:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49276 "EHLO
+        id S232724AbjHGOfi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Aug 2023 10:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234167AbjHGNeK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Aug 2023 09:34:10 -0400
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE8B519B1;
-        Mon,  7 Aug 2023 06:33:54 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id DBCC6600242E;
-        Mon,  7 Aug 2023 14:33:25 +0100 (WEST)
-X-Virus-Scanned: by amavisd-new-2.11.0 (20160426) (Debian) at
-        tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
-        by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavisd-new, port 10025)
-        with LMTP id jwQtDMDht4KN; Mon,  7 Aug 2023 14:33:23 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-        by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 42B4A600143B;
-        Mon,  7 Aug 2023 14:33:23 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tecnico.ulisboa.pt;
-        s=mail; t=1691415203;
-        bh=H5hhN2nUvrYrpsj/r9S4Esws1c0S6hScQpltOI+aAC4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=cN+yTGa2zZR0sQK1pYkEgWgVJmVg1G3SPtaldiK85BGL2YwQqd7G+G2DomZqHpzUY
-         fjP3rD5n6YB6lrq00qiKCXicAuX/p/P1MRUYRl4wCz6ZMsWEdsRW7Wxpjq00sB1zTp
-         y2WDN0YClV39tdWLMam17M1SmiCp4QR2kCxqA01A=
-Received: from diogo-gram.Home (unknown [IPv6:2001:8a0:fbe7:6700:e50a:b22:79be:5827])
-        (Authenticated sender: ist187313)
-        by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id F0053360077;
-        Mon,  7 Aug 2023 14:33:22 +0100 (WEST)
-From:   Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Subject: [PATCH v3 3/5] arm64: dts: smaug: Add DSI/CSI regulator
-Date:   Mon,  7 Aug 2023 14:33:03 +0100
-Message-ID: <20230807133307.27456-4-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230807133307.27456-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20230807133307.27456-1-diogo.ivo@tecnico.ulisboa.pt>
+        with ESMTP id S229948AbjHGOfh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Aug 2023 10:35:37 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 023EC10DD;
+        Mon,  7 Aug 2023 07:35:33 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-986d8332f50so628613566b.0;
+        Mon, 07 Aug 2023 07:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691418931; x=1692023731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vGYSWbN7PMS0f5vrz8dhv/rjh9hiks1eC9dOt9xyQUM=;
+        b=bp1TLXRvHNSid4EjH1/QveY/HipnZUWNjWTL5jsgeD/1GT95iQ1tNH9UoS77Cgxxwf
+         PA09gwHTQ9j0TUlMLBvpWzgAWeabnUjzi2fXJknfKo7Zt4/TtOoYVniwGpAvlDreHeOF
+         YmwYf8QKyb1Y743cM1NE40xIouKeM5kzNTi6+H6yKeqEcrB7LMsSKTB4TrYqKWBgtnE5
+         9n8w+b8eE3ibBIGzon+rySTEDJWOeWPtzmsWG1PtRInWngIrQYv2rWq/rrPF4qHPEuM3
+         biiRq5gWk8fbaOWN+6lUFmcXZMQmdXEIsTtPyhLUoMcxBN9uYSCb30bFP5BFNAsxNhOl
+         ZSBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691418931; x=1692023731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vGYSWbN7PMS0f5vrz8dhv/rjh9hiks1eC9dOt9xyQUM=;
+        b=AWvxnu/YsA+LIEI3LcL2L9VFSCczyJVBR7+fLTEeI1+CYazrebjXnUACnARUzzlQiS
+         3gqsT5hHo92xxdzy7NZYvwgCdrDy75KGOxLAaOV6xcTVNEHkxqeGO/mX5BQROB8I/45J
+         svWirIXmRxp2g2xU8xBXnXFF3pITp5UOnV8J/SNc+y1kXSjKGq3fLVuC71WhfINunSzr
+         Gzu3mSVcUORbXqHSuCA5Ni7P4BqXsaV9JF+xrlkWhA9BDyT0SG1/3+Elzf/p3YVBe87Z
+         gh8y/xS8vvYd32cVYW6sfit87zE2B1eyOw3/eVWAxgyM8QmwIzAdCNR0nvk4Ywv5juko
+         LH3g==
+X-Gm-Message-State: AOJu0YyM6HPNZ3Ea6KtsGlCwy2Urn5Cer1hylMmz8YOEOajp9IwVaIbF
+        bv6Tf+V9rg2Lt+ASF+S2j/U=
+X-Google-Smtp-Source: AGHT+IFjTFWA/gj0Ka2hniiSJFmIIgLMsQotBuRcjNn9ShgdWt8Pp/COmTMd1mmaUYbit0xS6Zorjw==
+X-Received: by 2002:a17:907:a068:b0:99c:20f0:dec0 with SMTP id ia8-20020a170907a06800b0099c20f0dec0mr7106521ejc.43.1691418931285;
+        Mon, 07 Aug 2023 07:35:31 -0700 (PDT)
+Received: from xeon.. ([188.163.112.48])
+        by smtp.gmail.com with ESMTPSA id e3-20020a170906504300b0099329b3ab67sm5323292ejk.71.2023.08.07.07.35.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Aug 2023 07:35:31 -0700 (PDT)
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+To:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] Support bridge/connector by Tegra HDMI
+Date:   Mon,  7 Aug 2023 17:35:10 +0300
+Message-Id: <20230807143515.7882-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the node for the DSI/CSI regulator in the Pixel C.
+This patch adds support for the bridge/connector attached to the
+HDMI output, allowing to model the hardware properly. It keeps
+backwards compatibility with existing bindings and is required
+by devices which have a simple or MHL bridge connected to HDMI
+output like ASUS P1801-T or LG P880/P895 or HTC One X.
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Tested on ASUS Transformers which have no dedicated bridge but
+have type d HDMI connector directly available. Tests went smoothly.
+
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes from v2:
+- added missing descriptions to tegra dc and hdmi yamls
+- fixed "Warning (unit_address_vs_reg): /host1x@50000000/
+  dc@54200000/rgb/port@0: node has a unit name, but no reg or
+  ranges property"
+- dropped reg from port to avoid same warning with hdmi ports
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 7de4da9a0191..bfdb0f8531f6 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1929,4 +1929,12 @@ usbc_vbus: regulator-usbc-vbus {
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 	};
-+
-+	vdd_dsi_csi: regulator-vdd-dsi-csi {
-+		compatible = "regulator-fixed";
-+		regulator-name = "AVDD_DSI_CSI_1V2";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&pp1200_avdd>;
-+	};
- };
+Changes from v1:
+- no changes, re-sending
+---
+
+Maxim Schwalm (4):
+  ARM: dts: tegra: Drop unit-address from parallel RGB output port
+  dt-bindings: display: tegra: nvidia,tegra20-dc: Add parallel RGB
+    output port node
+  dt-bindings: display: tegra: nvidia,tegra20-hdmi: Add HDMI output port
+    node
+  drm/tegra: output: hdmi: Support bridge/connector
+
+Svyatoslav Ryhel (1):
+  ARM: tegra: transformers: add connector node
+
+ .../display/tegra/nvidia,tegra20-dc.yaml      | 31 +++++++++++++
+ .../display/tegra/nvidia,tegra20-hdmi.yaml    | 32 +++++++++++++-
+ .../dts/nvidia/tegra20-acer-a500-picasso.dts  |  2 +-
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    | 24 ++++++++--
+ .../dts/nvidia/tegra30-asus-lvds-display.dtsi |  2 +-
+ .../boot/dts/nvidia/tegra30-asus-tf700t.dts   |  2 +-
+ .../tegra30-asus-transformer-common.dtsi      | 21 ++++++++-
+ drivers/gpu/drm/tegra/hdmi.c                  | 44 ++++++++++++++-----
+ 8 files changed, 136 insertions(+), 22 deletions(-)
+
 -- 
-2.41.0
+2.39.2
 
