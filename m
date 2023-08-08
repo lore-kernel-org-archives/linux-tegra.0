@@ -2,116 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B3BC41513
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Aug 2023 16:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7517EC001DE
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Aug 2023 17:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232694AbjHHQ3d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Aug 2023 12:29:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36020 "EHLO
+        id S229990AbjHHRzT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:55:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232747AbjHHQ2i (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Aug 2023 12:28:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90AEA1252B;
-        Tue,  8 Aug 2023 08:51:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S229980AbjHHRy4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Aug 2023 13:54:56 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9918DA5D2;
+        Tue,  8 Aug 2023 09:24:43 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5308D6148B;
-        Tue,  8 Aug 2023 13:23:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C1C5C433C8;
-        Tue,  8 Aug 2023 13:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691501000;
-        bh=Ej5BSAcAFQoRKPEbSvr0EDDMbbunYGKnJRjORk2jT44=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R/gcp1zkiO6/9zQgU4exHjrYiN/xwMjr15N8BGZNjHmqU0y8lyh09FNNyLLQUReAz
-         laXy0oBtOFI++WgrR00YOmYy674YKdd4NXIURtcrvwc+C+99DTJakcysGChJpev5Ts
-         FEEaBZD1fGL9RidM/eAE4So6BtKx5tAtx7fu9hJRvVXCNGS++8x4WQHsCIiiNDvtvf
-         YJ6QujQFKhLxa0Caa8ZZU1gj8gWMpn8MuhP8ePwDaNoZHxkoi30/gvJqR7vsSHOh3t
-         8hxJSiq5SEdlnsgrHDeC+Hw08BhYPuR2F/6cC7+PiZ94qPxE1K3007dbSxDdNpJ9wk
-         fCTnxIJwpfS/w==
-Date:   Tue, 8 Aug 2023 15:23:17 +0200
-From:   Andi Shyti <andi.shyti@kernel.org>
-To:     Parker Newman <pnewman@connecttech.com>
-Cc:     Akhil R <akhilrajeev@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D810D1F45E;
+        Tue,  8 Aug 2023 12:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1691498786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sTTAM2ewHCdNL83Dn8kQGuHuJBbBf1ARyCINKwKh7S8=;
+        b=LGtjAWgwhvMtYdsh4CDF8bs3PBoq9wjj8RAHQINh/lmm6yUz6ZijmsHNnRqme0yIcKDnRc
+        avZxRP55eUl0waV2+YyCESxmfOvW7hc9NewyzzzhsfkpFxc77lAjN9fLnQye9M2uLhT/rg
+        8bB5FBAsWQJOlhKVBKO2P2TOQqblS7M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1691498786;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sTTAM2ewHCdNL83Dn8kQGuHuJBbBf1ARyCINKwKh7S8=;
+        b=HB19ZP5A+Ezp68cGH3OplEVuBpjs1Ie0b/cj+gcQ8xZz1TUVn0/dLkDZvuWCuo5nqUzKxv
+        SkBij4uGd1YSp8Cw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9CE9D139D1;
+        Tue,  8 Aug 2023 12:46:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id LfdbJSI50mTxAgAAMHmgww
+        (envelope-from <tiwai@suse.de>); Tue, 08 Aug 2023 12:46:26 +0000
+Date:   Tue, 08 Aug 2023 14:46:26 +0200
+Message-ID: <87o7jhhfbx.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Justin Stitt <justinstitt@google.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: tegra: Fix i2c-tegra DMA config option processing
-Message-ID: <20230808132317.e6wxml5mo4hz7fjo@intel.intel>
-References: <fcfcf9b3-c8c4-9b34-2ff8-cd60a3d490bd@connecttech.com>
- <20230804215631.wc22pkyetsyyt5ye@intel.intel>
- <DS7PR12MB63358D8D877BBC81BF94C53AC00FA@DS7PR12MB6335.namprd12.prod.outlook.com>
- <eb8ceb2b-3a23-8cef-91b5-ef416fbc3594@connecttech.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb8ceb2b-3a23-8cef-91b5-ef416fbc3594@connecttech.com>
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/tegra: refactor deprecated strncpy
+In-Reply-To: <20230807-sound-pci-hda-v1-1-6d9cdcd085ca@google.com>
+References: <20230807-sound-pci-hda-v1-1-6d9cdcd085ca@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Parker,
-
-On Tue, Aug 08, 2023 at 12:42:28PM +0000, Parker Newman wrote:
-> On 2023-08-06 10:21, Akhil R wrote:
-> >>
-> >> BTW...
-> >>
-> >> On Thu, Aug 03, 2023 at 05:10:02PM +0000, Parker Newman wrote:
-> >>>
-> >>
-> >> you have a blank line here.
-> >>
-> >>> This patch fixes the Tegra DMA config option processing in the
-> >>> i2c-tegra driver.
-> >>>
-> >>> Tegra processors prior to Tegra186 used APB DMA for I2C requiring
-> >>> CONFIG_TEGRA20_APB_DMA=y while Tegra186 and later use GPC DMA
-> >>> requiring CONFIG_TEGRA186_GPC_DMA=y.
-> >>>
-> >>> The check for if the processor uses APB DMA is inverted and so the
-> >>> wrong DMA config options are checked.
-> >>>
-> >>> This means if CONFIG_TEGRA20_APB_DMA=y but
-> >> CONFIG_TEGRA186_GPC_DMA=n
-> >>> with a Tegra186 or later processor the driver will incorrectly think
-> >>> DMA is enabled and attempt to request DMA channels that will never be
-> >>> availible, leaving the driver in a perpetual EPROBE_DEFER state.
-> >>>
-> >>> Signed-off-by: Parker Newman <pnewman@connecttech.com>
-> >>
-> >> As this is a fix you also need to add
-> >>
-> >> Fixes: 48cb6356fae1 ("i2c: tegra: Add GPCDMA support")
-> >> Cc: Akhil R <akhilrajeev@nvidia.com>
-> >> Cc: <stable@vger.kernel.org> # v6.1+
-> >>
-> >> Cc'eing Akhil as well for his opinion on this.
-> > The fix looks valid to me. Must have been a typo there.
-> > 
-> > Regards,
-> > Akhil
-> > 
-> Yes it appears to be a simple typo and if you have both DMA Config options 
-> set the bug would get missed. 
+On Mon, 07 Aug 2023 19:49:28 +0200,
+Justin Stitt wrote:
 > 
-> I am new to the Linux mailing list, should I send a new message to 
-> stable@vger.kernel.org or CC them on this one?
+> `strncpy` is deprecated for use on NUL-terminated destination strings [1].
+> 
+> A suitable replacement is `strscpy` [2] due to the fact that it
+> guarantees NUL-termination on its destination buffer argument which is
+> _not_ the case for `strncpy`!
+> 
+> It should be noted that the current implementation is unlikely to have a
+> bug because `drv_name` is a string literal with a size of 9 while
+> `card->driver` has a size of 16. However, it is probably worthwhile to
+> switch to a more robust and less ambiguous interface.
+> 
+> [1]: www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
+> [2]: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+> 
+> Link: https://github.com/KSPP/linux/issues/90
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
 
-First of all... welcome to the Linux mailing list :)
+Thanks, applied.
 
-No need to resend, I can add it... I was hoping for an official
-ack, but as that's not coming, I will ack it
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org> 
-
-Thank you Parker and wishing to see more patches from you ;)
-
-Andi
+Takashi
