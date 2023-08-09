@@ -2,90 +2,135 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D694C04A6A
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Aug 2023 15:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E2BC001DE
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Aug 2023 19:25:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233648AbjHIPmg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Aug 2023 11:42:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34746 "EHLO
+        id S233787AbjHITZf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Aug 2023 15:25:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233605AbjHIPmf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Aug 2023 11:42:35 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA37E7F;
-        Wed,  9 Aug 2023 08:42:35 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fe167d4a18so65595665e9.0;
-        Wed, 09 Aug 2023 08:42:35 -0700 (PDT)
+        with ESMTP id S233462AbjHITZU (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Aug 2023 15:25:20 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D5D54691;
+        Wed,  9 Aug 2023 12:24:17 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fe4cdb72b9so993375e9.0;
+        Wed, 09 Aug 2023 12:24:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691595753; x=1692200553;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OyZNEgArShADQF9PvMzNpSn4eyGg1gUeWUuFAHYPIIc=;
-        b=U2G50LDm2r3hBiOOTBh+mEYkReDXT9VmOUo8QvYZDTsYxdt3A3HrUzdH4u9yYaD2to
-         2Eyl+/A13HoPXcDYgC9XXf7J4f0w4Iu5wGyaf/He4O/PSu1ZBkCSX9eBx6xvy9l3UgN8
-         wIvfJZQJ7v7JKtejHBgBiWz7LemS+McjSGmhQPbauobiBtJcOr9jHu0gupzsZk7zq2hK
-         kFko1iaJOXGd3Fg+lGcEBHanlniEx9MQpSq7i3ri4gFFNDmrZtLfTdjc7mEn/aTX0pL5
-         cHGzCu0aBZqovPGa0L+l3xJU7RohXb6fICDiVKUxyaOBGgk/EQwRGOWaHenZBqk5tjXU
-         hSow==
+        d=gmail.com; s=20221208; t=1691609056; x=1692213856;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v0OupzEUCI9LUKIXmkOERrh940bGOq6qhg8B+pfcxgs=;
+        b=HV2fSypLOEmAvKFieQ92XaiApHN6K95hfIOek/2M6i8dqTdlYi8Gs9lj1HkpIJ4+DX
+         lYuHRnDZMsPGS9XeEyRwVUodGtUN608KVx2uupAwc95D/Jmx3itbMUgFBqJaf4BuPlJ6
+         UmFI+QOczemah6/HHgs+YXJD/sxerHPhr+EsBfoD2OXxl3uKd+XiTLTYQHyqJ09k8L94
+         NLN/ijhpcV5gvFH4I6KBndXdmkSGILOISdnhuSQymd9Fk84CqubeMTm1nLeNT5xiyRgm
+         q0ZGXb5gNvmHKcdaJ5CF24+F+EVvTtx/y84yiD+A+fv8S7iJIU3ZXWWt1ba69RdWcOoT
+         6VMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691595753; x=1692200553;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1691609056; x=1692213856;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OyZNEgArShADQF9PvMzNpSn4eyGg1gUeWUuFAHYPIIc=;
-        b=bWDfX3fjGhrmX0L2TRqA709Cv/YCJk4H4MOw3P44E+tlW3oCz52IxtsKQAxxyPe7WA
-         Dg/qjd+jc7aPP3XYTOGWTr/PHkvSTg/jtOzrseDRhVTIPA7xumTdxEeK5V8gTKd8syWf
-         cOP5Rz8U0rZiFfayM+rStRYohsYTvj65XTHrbbaz/EzwP9AyWwqtdAFfpGcmGidytd1O
-         GbUMu3/wIGklLK1WgKQNsx84rh5ss9vimHIxc2aaoBEWPOrNbWlWf6DYJVKcPLjaJbLx
-         JXERal4fLQ9BgVEz3kMA9aR2xkINNfg/MMflNpNc5B5VrLdAsrY+M1EC3qKuPn6UUnDX
-         kq6Q==
-X-Gm-Message-State: AOJu0Yze3ICmQhiggfWOjmJv9WLcvXLvgwuQ90T+dDEfLiaRsyxXNAtF
-        nzBmy0vpsnrtF1xJ4Jg70JbTXrMxChRxsw==
-X-Google-Smtp-Source: AGHT+IE6f00sGS03vtl8WnoLUu/HwU4lXGGrrbsBQ9ZtumkQc2d4KbMY8YJWW9U6q2xkdTVxwRbYAQ==
-X-Received: by 2002:a1c:790d:0:b0:3fe:4e4e:beeb with SMTP id l13-20020a1c790d000000b003fe4e4ebeebmr2627300wme.38.1691595753349;
-        Wed, 09 Aug 2023 08:42:33 -0700 (PDT)
-Received: from localhost.localdomain ([92.85.190.61])
-        by smtp.gmail.com with ESMTPSA id f21-20020a1c6a15000000b003fc02218d6csm2296527wmc.25.2023.08.09.08.42.32
+        bh=v0OupzEUCI9LUKIXmkOERrh940bGOq6qhg8B+pfcxgs=;
+        b=QzhuKt4oGudelpJ4ly0txl43KWpZxOaNOhn/IEEjrYK5MfgNKKBrI8i3vOiOOWRPsR
+         EHoPf03U4KB0RtWlbezm7u0qRvyyPijc0tGoe3KcirqmHiktJnLBNXWAvNccNyMMNfZc
+         ymZY6evArHRgPPrVB+xU3YGz2F2FpJYK8MFP7X/EMRobrNtDpNyvY12NtLDE4T9z5J8t
+         BIpxq9MI+pnO7gt4m0FvLR+mfMAO46yKsPyLI/wfhWTDEtIiMFfY9qCUTGidvYfTxX7B
+         kzD+N3msQUyPeiIgU50xrEBADM3G8hiAy0PrMrirt3zTtw70CxMkNz4G/aLjrX/h73pa
+         W2Aw==
+X-Gm-Message-State: AOJu0YzFljwbRjlJO9F5fMXJd3cHxO2Ba9Tl7ASehiwpNP6JtAIbQsOB
+        4ZvHFUTpxLiPLHm3l4/rvEA=
+X-Google-Smtp-Source: AGHT+IEDQ0jEC9DLkLjjDcq9vtTgHzcHQeZHytemLaVScSTO7uZiV8+UdY7Oq7vRBWlqUo3xR6nIwQ==
+X-Received: by 2002:a7b:c395:0:b0:3fe:18a3:b3c with SMTP id s21-20020a7bc395000000b003fe18a30b3cmr62612wmj.12.1691609055409;
+        Wed, 09 Aug 2023 12:24:15 -0700 (PDT)
+Received: from [127.0.1.1] ([91.230.2.244])
+        by smtp.gmail.com with ESMTPSA id y9-20020a7bcd89000000b003fba6a0c881sm2776208wmj.43.2023.08.09.12.24.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Aug 2023 08:42:32 -0700 (PDT)
-From:   Andrei Coardos <aboutphysycs@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
-Cc:     gregkh@linuxfoundation.org, marvin24@gmx.de, alex@shruggie.ro,
-        Andrei Coardos <aboutphysycs@gmail.com>
-Subject: [PATCH] staging: nvec: paz00: remove unneeded call to platform_set_drvdata()
-Date:   Wed,  9 Aug 2023 18:42:11 +0300
-Message-Id: <20230809154211.15741-1-aboutphysycs@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 09 Aug 2023 12:24:15 -0700 (PDT)
+From:   Benjamin Bara <bbara93@gmail.com>
+Subject: [PATCH v2 0/6] regulator: pca9450: register restart handlers
+Date:   Wed, 09 Aug 2023 21:24:02 +0200
+Message-Id: <20230809-pca9450-reboot-v2-0-b98b4f8139d5@skidata.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANLn02QC/13MQQrCMBCF4auUWRtJppFUV95DukjSiR3EpiShK
+ KV3NxbcuPwfvG+FTIkpw6VZIdHCmeNUAw8N+NFOdxI81AaU2EqDWszenvVJikQuxiKkaxFVF7y
+ xCPU0Jwr82sFbX3vkXGJ67/6ivuuPMv/UooQUvqPBoXFBS33NDx5ssUcfn9Bv2/YB8Pchw64AA
+ AA=
+To:     Lee Jones <lee@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        peng.fan@oss.nxp.com, rafael.j.wysocki@intel.com,
+        Jerome Neanne <jneanne@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        Thierry Reding <treding@nvidia.com>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This function call was found to be unnecessary as there is no equivalent
-platform_get_drvdata() call to access the private data of the driver. Also,
-the private data is defined in this driver, so there is no risk of it being
-accessed outside of this driver file.
+Hi!
 
-Signed-off-by: Andrei Coardos <aboutphysycs@gmail.com>
+This series implements two restart handler registrations for the pca9450
+(6/6). As the pca9450 supports both, cold and warm resets, and there
+exist at least one other PMIC implementation which also implements a
+warm and a cold reset (tps65219), 1-5/6 should simplify/clarify the
+distinction process between warm/soft and cold/hard resets/restarts.
+Instead of deciding in the handler, this should be done during
+registration. The series is a follow-up to Dmitry's feedback, regarding
+checking the reboot_mode in the handler [1].
+
+As the cold handler queue is executed before the warm handler queue
+(when the reboot_mode is not changed/specified), cold handlers are
+implicitly executed with a higher prio and therefore the default
+registration can be used.
+
+This series is based on linux-next and 6/6 depends on [2].
+
+Thanks & best regards,
+Benjamin
+
+[1] https://lore.kernel.org/all/7eddaf8c-ab04-7670-fc45-15f0fce5eff2@collabora.com/
+[2] https://lore.kernel.org/all/20230327-tegra-pmic-reboot-v7-3-18699d5dcd76@skidata.com/
+
 ---
- drivers/staging/nvec/nvec_paz00.c | 2 --
- 1 file changed, 2 deletions(-)
+Changes in v2:
+- rebase to next-20230809
+- improve commit messages
+- use helper (with implicit priority) instead of explicit priority
+- fallback to warm handler if hard/cold requested but failed
+- Link to v1: https://lore.kernel.org/r/20230727-pca9450-reboot-v1-0-c8edb27bf404@skidata.com
 
-diff --git a/drivers/staging/nvec/nvec_paz00.c b/drivers/staging/nvec/nvec_paz00.c
-index 55d59840fca4..9c01c51f0ab5 100644
---- a/drivers/staging/nvec/nvec_paz00.c
-+++ b/drivers/staging/nvec/nvec_paz00.c
-@@ -53,8 +53,6 @@ static int nvec_paz00_probe(struct platform_device *pdev)
- 	led->cdev.flags |= LED_CORE_SUSPENDRESUME;
- 	led->nvec = nvec;
- 
--	platform_set_drvdata(pdev, led);
--
- 	ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
- 	if (ret < 0)
- 		return ret;
+---
+Benjamin Bara (6):
+      kernel/reboot: distinguish between cold and warm
+      mfd: rk8xx: Specify restart mode
+      soc/tegra: pmc: Specify restart mode
+      mfd: tps65219: Specify restart mode
+      kernel/reboot: remove generic restart mode
+      regulator: pca9450: register restart handlers
+
+ drivers/mfd/rk8xx-core.c              |  6 +--
+ drivers/mfd/tps65219.c                | 17 +++++--
+ drivers/regulator/pca9450-regulator.c | 59 ++++++++++++++++++++++++
+ drivers/soc/tegra/pmc.c               |  2 +-
+ include/linux/reboot.h                | 23 +++++++---
+ include/linux/regulator/pca9450.h     |  7 +++
+ kernel/reboot.c                       | 84 +++++++++++++++++++++++++++++------
+ 7 files changed, 170 insertions(+), 28 deletions(-)
+---
+base-commit: 21ef7b1e17d039053edaeaf41142423810572741
+change-id: 20230724-pca9450-reboot-0b32218fc7a2
+
+Best regards,
 -- 
-2.34.1
+Benjamin Bara <benjamin.bara@skidata.com>
 
