@@ -2,150 +2,114 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 755BDC04A94
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Aug 2023 13:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66498C41513
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Aug 2023 13:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231284AbjHINiU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Aug 2023 09:38:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
+        id S229920AbjHIN61 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Aug 2023 09:58:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjHINiT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Aug 2023 09:38:19 -0400
-Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71CF01986;
-        Wed,  9 Aug 2023 06:38:16 -0700 (PDT)
-Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id 18516124F;
-        Wed,  9 Aug 2023 15:38:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1691588293;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8Btky6tTdvG25ZLsauzNmPRJKTtp0p2jrZzqQzvClL8=;
-        b=r4wKl3ihNbNJWLLG5hf4K10pWKB/qcqJZWT79pdX14Hwy6cFCNoDp523ysrGvSxR0hF0sV
-        S19UUVxjs0tcqcFDwaa/NkVjQnAj2+cyBE5RQNYWGpyiW44j/FWxQygtTL+wtS+237ZPBi
-        AtOsW9She/DFFxiMreuzoOh5io7RuXTgqIlbCCUn4LHHa90Z+A4PZo97sfdrSy4KQLmkYs
-        hhFi301ZV0pK+bOMSJlqwINPWSXFfHk08E4h61f4wk1UScNwCWh6iBthi3AlIm+EDBA4U6
-        GVakjg8rtPJGDbRJZnIXlKnvbOR8bknUPLybW2kI3kAAfIaJexJ1gSpJk2GYOw==
-MIME-Version: 1.0
-Date:   Wed, 09 Aug 2023 15:38:12 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>, Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Shawn Guo <shawnguo@kernel.org>,
+        with ESMTP id S230226AbjHIN61 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Aug 2023 09:58:27 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E93AA98;
+        Wed,  9 Aug 2023 06:58:24 -0700 (PDT)
+Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1qTjgu-0007Qm-Nw; Wed, 09 Aug 2023 15:57:36 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Daniel Mack <daniel@zonque.org>, Jay Fang <f.fangjian@huawei.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Benjamin Fair <benjaminfair@google.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Cristian Marussi <cristian.marussi@arm.com>, soc@kernel.org,
+        Nick Hawkins <nick.hawkins@hpe.com>,
+        Patrick Venture <venture@google.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Jean-Marie Verdun <verdun@hpe.com>,
         Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?Q?Jonathan_Neusch?= =?UTF-8?Q?=C3=A4fer?= 
-        <j.neuschaefer@gmx.net>, Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Shiraz Has him <shiraz.linux.kernel@gmail.com>,
+        Stuart Yoder <stuyoder@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anjelique Melendez <quic_amelende@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] pwm: Manage owner assignment implicitly for
- drivers
-In-Reply-To: <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
-References: <20230804142707.412137-1-u.kleine-koenig@pengutronix.de>
- <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
-Message-ID: <a6ba206a709b2f4f1c817df8c868a683@walle.cc>
-X-Sender: michael@walle.cc
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Antoine Tenart <atenart@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-sunxi@lists.linux.dev, openbmc@lists.ozlabs.org,
+        linux-aspeed@lists.ozlabs.org
+Subject: Re: (subset) [PATCH v2 00/23] ARM: DT include cleanups
+Date:   Wed,  9 Aug 2023 15:57:33 +0200
+Message-Id: <169158939237.3288791.15504684466280859190.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230803-dt-header-cleanups-for-soc-v2-0-d8de2cc88bff@kernel.org>
+References: <20230803-dt-header-cleanups-for-soc-v2-0-d8de2cc88bff@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
-
-> Instead of requiring each driver to care for assigning the owner member
-> of struct pwm_ops, handle that implicitly using a macro. Note that the
-> owner member has to be moved to struct pwm_chip, as the ops structure
-> usually lives in read-only memory and so cannot be modified.
+On Thu, 03 Aug 2023 16:42:40 -0600, Rob Herring wrote:
+> Arnd, This is all the remaining ARM and SoC related patches of DT
+> include cleanups which have not be applied by sub-arch maintainers.
 > 
-> The upside is that new lowlevel drivers cannot forget the assignment 
-> and
-> save one line each. The pwm-crc driver didn't assign .owner, that's not
-> a problem in practise though as the driver cannot be compiled as a
-> module.
+> A few of these are v2, but most are just resends of v1.
 > 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> 
 
-...
+Applied, thanks!
 
->  drivers/pwm/pwm-sl28cpld.c            |  1 -
+I didn't find a reply to the thread in terms of it going
+in alltogether, so went forward and picked the Rockchip things
+I missed before.
 
-Acked-by: Michael Walle <michael@walle.cc>
+
+[12/23] ARM: rockchip: Drop unused includes
+        commit: 8cbdf5d2880923070198c240534f4cca3e04dfb1
+[20/23] soc: rockchip: Explicitly include correct DT includes
+        commit: fc7696e2ae81404c6ca176e7ebbddd4b19c40953
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
