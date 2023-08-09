@@ -2,67 +2,136 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29033C001DB
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Aug 2023 03:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EDAC04A6A
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Aug 2023 12:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjHIDFT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Aug 2023 23:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44438 "EHLO
+        id S230446AbjHIMaS convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Aug 2023 08:30:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjHIDFT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Aug 2023 23:05:19 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0451F1995
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Aug 2023 20:05:17 -0700 (PDT)
-Received: from canpemm500007.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RLFDq6SP3zNnN3;
-        Wed,  9 Aug 2023 11:00:59 +0800 (CST)
-Received: from localhost (10.174.179.215) by canpemm500007.china.huawei.com
- (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 9 Aug
- 2023 11:04:28 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <thierry.reding@gmail.com>, <mperttunen@nvidia.com>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <jonathanh@nvidia.com>,
-        <tzimmermann@suse.de>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
-        <yuehaibing@huawei.com>
-Subject: [PATCH -next] drm/tegra: Remove two unused function declarations
-Date:   Wed, 9 Aug 2023 11:02:26 +0800
-Message-ID: <20230809030226.3412-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        with ESMTP id S229567AbjHIMaR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Aug 2023 08:30:17 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96AE910F3;
+        Wed,  9 Aug 2023 05:30:14 -0700 (PDT)
+Received: from [194.95.143.137] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1qTiJH-00071M-LR; Wed, 09 Aug 2023 14:29:07 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee@kernel.org>, Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Jonathan =?ISO-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Michael Walle <michael@walle.cc>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Sean Anderson <sean.anderson@seco.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anjelique Melendez <quic_amelende@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] pwm: Manage owner assignment implicitly for drivers
+Date:   Wed, 09 Aug 2023 14:29:04 +0200
+Message-ID: <5316381.7s5MMGUR32@phil>
+In-Reply-To: <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
+References: <20230804142707.412137-1-u.kleine-koenig@pengutronix.de>
+ <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.174.179.215]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500007.china.huawei.com (7.192.104.62)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit 776dc3840367 ("drm/tegra: Move subdevice infrastructure to host1x")
-removed the implementation but not the declaration.
+Am Freitag, 4. August 2023, 16:27:06 CEST schrieb Uwe Kleine-König:
+> Instead of requiring each driver to care for assigning the owner member
+> of struct pwm_ops, handle that implicitly using a macro. Note that the
+> owner member has to be moved to struct pwm_chip, as the ops structure
+> usually lives in read-only memory and so cannot be modified.
+> 
+> The upside is that new lowlevel drivers cannot forget the assignment and
+> save one line each. The pwm-crc driver didn't assign .owner, that's not
+> a problem in practise though as the driver cannot be compiled as a
+> module.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/tegra/drm.h | 3 ---
- 1 file changed, 3 deletions(-)
+>  drivers/pwm/pwm-rockchip.c            |  1 -
 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index f9d18e8cf6ab..ccb5d74fa227 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -120,9 +120,6 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
- int host1x_client_iommu_attach(struct host1x_client *client);
- void host1x_client_iommu_detach(struct host1x_client *client);
- 
--int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm);
--int tegra_drm_exit(struct tegra_drm *tegra);
--
- void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size, dma_addr_t *iova);
- void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
- 		    dma_addr_t iova);
--- 
-2.34.1
+Acked-by: Heiko Stuebner <heiko@sntech.de> #pwm-rockchip
+
+
 
