@@ -2,85 +2,133 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA77C001DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Aug 2023 04:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB21C001DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Aug 2023 05:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbjHJE7V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Aug 2023 00:59:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48644 "EHLO
+        id S231843AbjHJFbc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Aug 2023 01:31:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231208AbjHJE7U (ORCPT
+        with ESMTP id S229489AbjHJFbb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Aug 2023 00:59:20 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A83D12115
-        for <linux-tegra@vger.kernel.org>; Wed,  9 Aug 2023 21:59:19 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-307d20548adso511370f8f.0
-        for <linux-tegra@vger.kernel.org>; Wed, 09 Aug 2023 21:59:19 -0700 (PDT)
+        Thu, 10 Aug 2023 01:31:31 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3908B2
+        for <linux-tegra@vger.kernel.org>; Wed,  9 Aug 2023 22:31:30 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-686efa1804eso373377b3a.3
+        for <linux-tegra@vger.kernel.org>; Wed, 09 Aug 2023 22:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691643558; x=1692248358;
+        d=linaro.org; s=google; t=1691645490; x=1692250290;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=euAie5sbhK9BZf83ob1dTMY0SFdxl8s8/ookcEMMCEs=;
-        b=I+PAaO+y1JB40rnflIsP6qBHBb7+RnISJLYhNDdFx/8rkwSCvoaZCc9WUcfgKVmo9O
-         36xL2Axim6NdRpTxC7LOXn+MCe57LcPQwiKMaGU+6b5iQDiFueAJ3QkN8pfTcz40G4eV
-         mBtdYd4xjLoyp3tiS3Mgdvsvy2gRrYYdComQMx9D1KHS598qJomyTYFKrnlkXN0paRfQ
-         uSP2N5O6ucvbMYPUubns+lOLKg6xDYOJmDenW29Kwd2dFUDo5SHyXLTi1CXoVtXQ04TM
-         mMYdyq9+lWKvOljC/jKm7kODtA5Nh8Svg+YsXwgjEbaZYjxfW4qCOqXUmVoOtsp5CIRE
-         TDtg==
+        bh=X5ljNanWHdg+wPtc/Kk05lnhsdHx9EY+uf3rbi8Jyl0=;
+        b=I27rOOPr2QKMxXmLmFoN3O2gZmbSvC3MTJNLfcaN3hBLpGcR7pFrfX9LOdQYB0v9UX
+         FS8XX3MUSQ5L0gIICKO8NssntbaRGqlbEqzwuKa+pLKtWuk06X2yhmtS7VTVlYfAnI+v
+         WKxiNAcp+vPFU60KAunF3U/BZyA32W/Ac8SeviyR9THNiFH71X16XZrWx6cievakG9Z7
+         qeKr3mJrkHEkcCc8UCFXIxrAuloRn3IsRd7EGOfEwAuiwEwnkCtEqAUiTDdX1epyJN4u
+         NsVG9PR6QKeaAkBlE7WjbLaffCm+7NAoUI1/55O8nPeAMcM2OgaDml3Ca2EP+OQEWLYi
+         iecg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691643558; x=1692248358;
+        d=1e100.net; s=20221208; t=1691645490; x=1692250290;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=euAie5sbhK9BZf83ob1dTMY0SFdxl8s8/ookcEMMCEs=;
-        b=TT0gTpnvflRWOzN9x38bEMufwnJICqQWVmgiU6nhSwrmsEzJmQWj0/dgYAJYyZhB0f
-         OMu5yrOj/s/ccis2bw4qi3e9Mgy0LVDltX8P3ENe57yu3Bs8l/clwzC2At2YJJZ3mX0S
-         7syCiMQzM66Ed7eIV6ezlbJIgWzM8ZW3hXvOR6p3EMf/vzPNF1+oKt6fvDEiQK3gXJ1S
-         vrm/t+ztl+xXZnNBShI8cMkCFS0lp6f5/lzVLQNyXNh513ol6wkKQz/hHvkfBBJAFNLW
-         yEQCEoGUKQYzZHElI+O3N5ERx6fjxuPv3olkBxNm+1T6wWsi/hpu9hOcQolRCp4K8jUg
-         VC/g==
-X-Gm-Message-State: AOJu0YwXUiTRALHO00oQzCj7AQUMc6V0f1egI8rHFPEM/7eQ1fZ0LEnx
-        rEicOuDx5tLw/m6qfxov+TV24g==
-X-Google-Smtp-Source: AGHT+IE3qMjYxsryjuXtRo6j6co1x8mQdJoIMUPhdqd9mvnf9/A15YHII3zIiOejSOGEayfI8ONtNg==
-X-Received: by 2002:adf:d0c2:0:b0:315:a043:5e0a with SMTP id z2-20020adfd0c2000000b00315a0435e0amr1029294wrh.56.1691643558126;
-        Wed, 09 Aug 2023 21:59:18 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id i8-20020a5d4388000000b0030647449730sm779008wrq.74.2023.08.09.21.59.17
+        bh=X5ljNanWHdg+wPtc/Kk05lnhsdHx9EY+uf3rbi8Jyl0=;
+        b=hucicsEmNwBJUo5SAR20vOmWpLxD3kERIiY/Wm3TASv8mC9smpgDSLDTcjQjhLelLo
+         mCHP4HYICMDy4UK/LK1DqcBSPUe6V5FsPqVMhv4Czh1Agcm29w4Q7ZycjJFqsrlx5odg
+         GdW04py5pvWdFgG7MCuAOacyJCGldBfBtqC1crOR7tvTNMcyiz8ziP9H5ylhOXkNvlgo
+         bRpDDs6ks1P/PR2ixW/FvqF2NJ1XbMyls1l/038dQUpRvZIWhxPE/5/wbrag9tw8dite
+         3eYgwBbrCOcDmlgT6SS9tXUEYNQDTZiF6QV7wJlMElS9W/wh9qWOyDbC2DpJeyeIPNwJ
+         D0bw==
+X-Gm-Message-State: AOJu0Yybm+cfj7Y02L9TE8IWUX+WrXQifcsCtRmjKKEel2P0xtVQCeUZ
+        TFoTveAL1HTpiUbRZKJhjSFlIQ==
+X-Google-Smtp-Source: AGHT+IF8M6ULj5qBpYswknmIk/UC9uqMvQ52qHszDjMGFcxfrplMUEDi6y9znOX9SLT1wRvxKfXt4Q==
+X-Received: by 2002:a05:6a00:884:b0:687:5415:7282 with SMTP id q4-20020a056a00088400b0068754157282mr1456448pfj.23.1691645490418;
+        Wed, 09 Aug 2023 22:31:30 -0700 (PDT)
+Received: from localhost ([122.172.87.195])
+        by smtp.gmail.com with ESMTPSA id p11-20020a637f4b000000b005501b24b1c9sm581374pgn.62.2023.08.09.22.31.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Aug 2023 21:59:17 -0700 (PDT)
-Date:   Thu, 10 Aug 2023 07:59:15 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Andrei Coardos <aboutphysycs@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, ac100@lists.launchpad.net,
-        gregkh@linuxfoundation.org, marvin24@gmx.de, alex@shruggie.ro
-Subject: Re: [PATCH] staging: nvec: paz00: remove unneeded call to
- platform_set_drvdata()
-Message-ID: <fb1cc561-926e-478d-a6ce-9d97fa0dd0e1@kadam.mountain>
-References: <20230809154211.15741-1-aboutphysycs@gmail.com>
+        Wed, 09 Aug 2023 22:31:29 -0700 (PDT)
+Date:   Thu, 10 Aug 2023 11:01:27 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rafael@kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bbasu@nvidia.com
+Subject: Re: [Patch] cpufreq: tegra194: remove opp table in exit hook
+Message-ID: <20230810053127.y4wmumlggkro7r66@vireshk-i7>
+References: <20230809153455.29056-1-sumitg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230809154211.15741-1-aboutphysycs@gmail.com>
+In-Reply-To: <20230809153455.29056-1-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Aug 09, 2023 at 06:42:11PM +0300, Andrei Coardos wrote:
-> This function call was found to be unnecessary as there is no equivalent
-> platform_get_drvdata() call to access the private data of the driver. Also,
-> the private data is defined in this driver, so there is no risk of it being
-> accessed outside of this driver file.
+On 09-08-23, 21:04, Sumit Gupta wrote:
+> Add exit hook and remove OPP table when all the CPU's in a policy
+> are offlined. It will fix the below error messages when onlining
+> first CPU from a policy whose all CPU's were previously offlined.
 > 
-> Signed-off-by: Andrei Coardos <aboutphysycs@gmail.com>
+>  debugfs: File 'cpu5' in directory 'opp' already present!
+>  debugfs: File 'cpu6' in directory 'opp' already present!
+>  debugfs: File 'cpu7' in directory 'opp' already present!
+> 
+> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
+>  drivers/cpufreq/tegra194-cpufreq.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+> index c90b30469165..66a9c23544db 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -454,6 +454,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+>  		if (ret < 0)
+>  			return ret;
+>  
+> +		dev_pm_opp_put(opp);
+> +
+>  		freq_table[j].driver_data = pos->driver_data;
+>  		freq_table[j].frequency = pos->frequency;
+>  		j++;
+> @@ -508,6 +510,16 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>  	return 0;
+>  }
+>  
+> +static int tegra194_cpufreq_exit(struct cpufreq_policy *policy)
+> +{
+> +	struct device *cpu_dev = get_cpu_device(policy->cpu);
+> +
+> +	dev_pm_opp_remove_all_dynamic(cpu_dev);
+> +	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
+> +
+> +	return 0;
+> +}
+> +
+>  static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>  				       unsigned int index)
+>  {
+> @@ -535,6 +547,7 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
+>  	.target_index = tegra194_cpufreq_set_target,
+>  	.get = tegra194_get_speed,
+>  	.init = tegra194_cpufreq_init,
+> +	.exit = tegra194_cpufreq_exit,
+>  	.attr = cpufreq_generic_attr,
+>  };
 
-I think you are right, but why are we doing this?  That one line is
-hardly a huge eyesore.  It's all risk and no reward.
+If it is only about hotplugging of the CPUs, then you can also do this I guess.
 
-Have you tested this change on real hardware?
+commit 263abfe74b5f ("cpufreq: dt: Implement online/offline() callbacks")
 
-regards,
-dan carpenter
+But since your driver is capable of being built as a module, I suggest you try
+to build it as one and insert remove it multiple times. It must cause you some
+trouble as you don't implement an .exit() before this patch.
 
+Eventually, I think you need to do both, what this patch and 263abfe74b5f do.
+Just that the reasons need to be correct for both the changes.
+
+-- 
+viresh
