@@ -2,58 +2,58 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901B5C001B0
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Aug 2023 08:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9885C001DE
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Aug 2023 08:19:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232289AbjHJISq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Aug 2023 04:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55096 "EHLO
+        id S234142AbjHJITU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Aug 2023 04:19:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjHJISq (ORCPT
+        with ESMTP id S234146AbjHJITT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Aug 2023 04:18:46 -0400
+        Thu, 10 Aug 2023 04:19:19 -0400
 Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76825E2
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Aug 2023 01:18:45 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-d35a9d7a5bdso588374276.0
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Aug 2023 01:18:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE56E56
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Aug 2023 01:19:18 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-d62bdd1a97dso586369276.3
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Aug 2023 01:19:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691655524; x=1692260324;
+        d=linaro.org; s=google; t=1691655558; x=1692260358;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N1S3yE96sxZWitB4oiJ30vpkB3MWLEMpL6UDMSJWZXU=;
-        b=sKRwat/bRypjQs0GDj+E5aX6U0l+rdH2Ppp7jgbUiwQQsqjEaK0abvIScLRA0wD+XB
-         V+k33vveoWCeS1c6XgCqjjXWr//cl1HyFtdD8ttwfDC6tU5h0yWEtUhgAWWlSrBAqi9t
-         tXTEm4YMv0WM1uBDtQtenVY2VwUD4UxTzpZEwHsGCFe7Z/2lAj6TisZ1wfKRqkKtHkMv
-         q4kQ3tqQ3kjjJBlQFVfvfmjVGvTI9ZG6qPa9xIgWc3cwJulHzC1kKt6V4uv2UEb2aMy8
-         OAS7Hff9YtpzqDV058P27LVyQvRktH36oLc1Ux2VOWBYO61uLfbyzTdGhTV/qpGrAtF8
-         glUQ==
+        bh=78OX4fId0Em709uz0mp6uxgk8bb4IwlDXBz/uTj2fjY=;
+        b=YAetKf4q0nZa/dO71z7++J7KKpe1E1CC7O3ahafQ7APpHv5jmvyn5BBv2mwDpYC5is
+         aCqkyV5eahWJcbkNVk0H4ZuATN+jOIeGgJTiNul2i5t9tXVMigNJA6VlxX/a8OMvNSIA
+         YaLs/IE+usEOobqLkPYKtN3CknTSd/aP7iBrjDMEftqOkGi4Hzn8W27JugL/elhtZAtS
+         lvN5G1ptPirqDO85jdOp47BWA9MJm/z4Kcuzuh6yVL2pnLpcF/Uw4mERq/Siv1vZ2eMQ
+         WGKJAkQHqeDReRN5me9rxTKini4wIOwCZjirxG0wunRnpyvqVfZs1EDQzXiZjCK8xLxA
+         VFLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691655524; x=1692260324;
+        d=1e100.net; s=20221208; t=1691655558; x=1692260358;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N1S3yE96sxZWitB4oiJ30vpkB3MWLEMpL6UDMSJWZXU=;
-        b=VOehi0+G4A1QUc7TQ3zqu9j8yDcH/4qdMEiFKvtqtszRnRipKrrb4yFeZpgXsIVv/g
-         Idp2NxHpabD5hVLuSmK4xAe418EHbBojiW54CG/3mDS8bbEiSaMmQ6lMCMLHKVj2ljuK
-         BuWaBbzbUKnE2Hdx6+nkyGAkU3jBEiOCak7TMBKuSumnAVPSh9iiXy95V935/W3uiJLB
-         NoqUDdcurqlS7D34UKDfBlZDJxKrkourE/s2Wr+M+Rn+vhPOOSfjPklO3L/t5I77h3rf
-         mFFlL5reCFgr/ZmwU61rdqGKtsHCDCOL1bj3WWefS15C9LvWMBhjuZYcGd04E6q320pw
-         8WLg==
-X-Gm-Message-State: AOJu0YyvHwxLu+nXFjDaOFbgY66BfvJQu0vu5nZ4/1dkdlgshYJLrclw
-        JhoO6tEHvulgBRZWYR6Tzhg1BagJD1g20fJe08k4ew==
-X-Google-Smtp-Source: AGHT+IE+UnSxHykLJJfIQch1e5QQ0u1bPECfUCUFUDCntbpI1NXH0v2rJAWr/evYDXltegUQu7z4Swu4ag0Zr1/V/sw=
-X-Received: by 2002:a25:3611:0:b0:d4c:aa71:8294 with SMTP id
- d17-20020a253611000000b00d4caa718294mr1849966yba.33.1691655524705; Thu, 10
- Aug 2023 01:18:44 -0700 (PDT)
+        bh=78OX4fId0Em709uz0mp6uxgk8bb4IwlDXBz/uTj2fjY=;
+        b=gCoyu48lKasjxzgAUjyAGLZGWya/zpv9Frn60BrY/UK3kzdx7QD1fqrvMTer5L9iqV
+         0QgYw4UcfYRyBBVwwNwQ3hxuzV2/MxkVB55PZKYxrFR+HQb6DFzrIwOdua8n/knntSQS
+         OsausJhl9VG0NOn7ZH1EWFpESXSnsPi0O7ClCMOYTiUaD46UybzxuAPX7mwHxPOGqLaX
+         DPfNabZELvfiCdxvv7+HQtMft+j3IBtJl3sb1hIeCHVgudqxQxXmITu9PGRzxQG/25Lc
+         QxZDsnCT2+rZoPsQp17ZKQZj5Lryyba3whfxADIvIklw5us6CHWvS7dM0h6G9IbatFa0
+         QKhg==
+X-Gm-Message-State: AOJu0YznedJbXvghaZEgB/qMv6nQeqbQ5K1Cof1jowCjevT1y/lfll6f
+        9v3sYeUj6tlZiQlAk385oC2OC+RzH1tRSE+g830nJA==
+X-Google-Smtp-Source: AGHT+IG5aWoH89NQGXx33HlD2q+rxamc3JsaObqeeE5H8gH+u446bjvEEFYnXEHJg1VQn5y6v1yXRNGsOkfTWSlQZaU=
+X-Received: by 2002:a25:d711:0:b0:d1a:b59c:502d with SMTP id
+ o17-20020a25d711000000b00d1ab59c502dmr1894292ybg.18.1691655558135; Thu, 10
+ Aug 2023 01:19:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230803-dt-header-cleanups-for-soc-v2-0-d8de2cc88bff@kernel.org> <20230803-dt-header-cleanups-for-soc-v2-8-d8de2cc88bff@kernel.org>
-In-Reply-To: <20230803-dt-header-cleanups-for-soc-v2-8-d8de2cc88bff@kernel.org>
+References: <20230803-dt-header-cleanups-for-soc-v2-0-d8de2cc88bff@kernel.org> <20230803-dt-header-cleanups-for-soc-v2-13-d8de2cc88bff@kernel.org>
+In-Reply-To: <20230803-dt-header-cleanups-for-soc-v2-13-d8de2cc88bff@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 10 Aug 2023 10:18:33 +0200
-Message-ID: <CACRpkdaX=nABoxGMAK+3uEHOt1imucK6LXXRrNuAYFiH3-jt7g@mail.gmail.com>
-Subject: Re: [PATCH v2 08/23] ARM: nomadik: Drop unused includes
+Date:   Thu, 10 Aug 2023 10:19:07 +0200
+Message-ID: <CACRpkdYsdKCrQpfoXZFv1XqT-o1skX=TDY-WJ1CSpgavMb+UrQ@mail.gmail.com>
+Subject: Re: [PATCH v2 13/23] ARM: versatile: Drop unused includes
 To:     Rob Herring <robh@kernel.org>
 Cc:     soc@kernel.org, Patrice Chotard <patrice.chotard@foss.st.com>,
         Tsahee Zidenberg <tsahee@annapurnalabs.com>,
@@ -112,18 +112,14 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Aug 4, 2023 at 12:44=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+On Fri, Aug 4, 2023 at 12:43=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
 :
 
 > Several includes are not needed, so drop them.
 >
 > Signed-off-by: Rob Herring <robh@kernel.org>
 
-Thanks for cleaning out this.
-
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Will you funnel this to ARM SoC with the rest?
 
 Yours,
 Linus Walleij
