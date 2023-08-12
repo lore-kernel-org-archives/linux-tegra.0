@@ -2,563 +2,204 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13717C001B0
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Aug 2023 11:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739F1C04A6A
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Aug 2023 01:36:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236441AbjHKL26 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Aug 2023 07:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
+        id S235864AbjHLBgs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Aug 2023 21:36:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236416AbjHKL26 (ORCPT
+        with ESMTP id S229573AbjHLBgs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Aug 2023 07:28:58 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B59AEE62;
-        Fri, 11 Aug 2023 04:28:56 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAEE3D75;
-        Fri, 11 Aug 2023 04:29:38 -0700 (PDT)
-Received: from [10.57.91.12] (unknown [10.57.91.12])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 521A53F6C4;
-        Fri, 11 Aug 2023 04:28:54 -0700 (PDT)
-Message-ID: <e98abbc3-dab6-414d-8ce7-8b9572be41a0@arm.com>
-Date:   Fri, 11 Aug 2023 12:28:52 +0100
+        Fri, 11 Aug 2023 21:36:48 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D41130F8;
+        Fri, 11 Aug 2023 18:36:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691804207; x=1723340207;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=InQwijdXw9W+QsSLGg97dJTKcOqeU8+07ewmIVxJV4I=;
+  b=mvSGxcEfJHBWtXYluUgJ0C6zu5ZlZ1H2yYzXTO/vCqIkcJ8CMa0OQHHJ
+   giZXNZb281Tbb2iEg4xKhlpcNyl19b46JNdqDWiXRYcBcaRRE24jcpmUg
+   h0uO4whoWLmzTscf7feeXOFi/dfC8139aitEs9/RdW2Lat3tmhityGiHJ
+   UoG1tuZbv0rBoK6ozvKKmC+Hn3OzjDKw/bF+aCwXrWwajLMcrepVfYdi+
+   svBorweuXS3n2zS3gZqFmzsDu1G61oqB4E27A5e4SeuQIm8eH6RHXn3Wf
+   doMXDVL9UUQWzxMEg8zN2jktclZfY48dWveG3D9oCb0C1kly1TkZIaO5/
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10799"; a="371797629"
+X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
+   d="scan'208";a="371797629"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2023 18:36:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10799"; a="1063472658"
+X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
+   d="scan'208";a="1063472658"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.215.79]) ([10.254.215.79])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2023 18:36:35 -0700
+Message-ID: <dde32ea5-2b1a-1148-c329-3c52ffcb71a7@linux.intel.com>
+Date:   Sat, 12 Aug 2023 09:36:33 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.13.0
-Subject: Re: [PATCH v5] perf: arm_cspmu: Separate Arm and vendor module
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, robin.murphy@arm.com,
-        ilkka@os.amperecomputing.com, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
-        efunsten@nvidia.com
-References: <20230705104745.52255-1-bwicaksono@nvidia.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20230705104745.52255-1-bwicaksono@nvidia.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v6 02/25] iommu: Add IOMMU_DOMAIN_PLATFORM
+To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <2-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
+Content-Language: en-US
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <2-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 05/07/2023 11:47, Besar Wicaksono wrote:
-> Arm Coresight PMU driver consists of main standard code and
-> vendor backend code. Both are currently built as a single module.
-> This patch adds vendor registration API to separate the two to
-> keep things modular. The main driver requests each known backend
-> module during initialization and defer device binding process.
-> The backend module then registers an init callback to the main
-> driver and continue the device driver binding process.
+On 2023/8/3 8:07, Jason Gunthorpe wrote:
+> This is used when the iommu driver is taking control of the dma_ops,
+> currently only on S390 and power spapr. It is designed to preserve the
+> original ops->detach_dev() semantic that these S390 was built around.
 > 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-
-Apologies for the delay.
-
+> Provide an opaque domain type and a 'default_domain' ops value that allows
+> the driver to trivially force any single domain as the default domain.
+> 
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
+>   drivers/iommu/iommu.c | 14 +++++++++++++-
+>   include/linux/iommu.h |  6 ++++++
+>   2 files changed, 19 insertions(+), 1 deletion(-)
 > 
-> Changes from v4:
->   * Fix warning reported by kernel test robot
-> v4: https://lore.kernel.org/linux-arm-kernel/20230620041438.32514-1-bwicaksono@nvidia.com/T/#u
-> 
-> Changes from v3:
->   * Move impl registration module back to main driver module.
->   * Rebase from will (for-next/perf)
-> Thanks to Robin for the feedback.
-> v3: https://lore.kernel.org/linux-arm-kernel/20230505005956.22837-1-bwicaksono@nvidia.com/T/#u
-> 
-> Changes from v2:
->   * Move sysfs_event/format_show definition to arm_cspmu.h and move impl
->     registration API definition to a separate module so main driver and vendor
->     module are independent.
->   * The registration API now just sets the impl_init_ops callback, no reprobe.
->   * Add PMIIDR table that maps to the vendor module name. During device probe,
->     main driver requests the vendor module if PMIIDR is matching.
->   * Keeping the name of the main driver module as arm_cspmu_module.
-> Thanks to Robin and Suzuki for the feedback.
-> v2:  https://lore.kernel.org/linux-arm-kernel/20230418062030.45620-1-bwicaksono@nvidia.com/T/#u
-> 
-> Changes from v1:
->   * Added separate Kconfig entry for nvidia backend
->   * Added lock to protect accesses to the lists
->   * Added support for matching subset devices from a vendor
->   * Added state tracking to avoid reprobe when a device is in use
-> Thanks to Suzuki for the feedback.
-> v1: https://lore.kernel.org/linux-arm-kernel/20230403163905.20354-1-bwicaksono@nvidia.com/T/#u
-> 
-> ---
->   drivers/perf/arm_cspmu/Kconfig        |   9 +-
->   drivers/perf/arm_cspmu/Makefile       |   6 +-
->   drivers/perf/arm_cspmu/arm_cspmu.c    | 166 +++++++++++++++++++++-----
->   drivers/perf/arm_cspmu/arm_cspmu.h    |  24 +++-
->   drivers/perf/arm_cspmu/nvidia_cspmu.c |  34 +++++-
->   drivers/perf/arm_cspmu/nvidia_cspmu.h |  17 ---
->   6 files changed, 199 insertions(+), 57 deletions(-)
->   delete mode 100644 drivers/perf/arm_cspmu/nvidia_cspmu.h
-> 
-> diff --git a/drivers/perf/arm_cspmu/Kconfig b/drivers/perf/arm_cspmu/Kconfig
-> index 25d25ded0983..d5f787d22234 100644
-> --- a/drivers/perf/arm_cspmu/Kconfig
-> +++ b/drivers/perf/arm_cspmu/Kconfig
-> @@ -1,6 +1,6 @@
->   # SPDX-License-Identifier: GPL-2.0
->   #
-> -# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> +# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 5e3cdc9f3a9e78..c64365169b678d 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1705,6 +1705,17 @@ iommu_group_alloc_default_domain(struct iommu_group *group, int req_type)
 >   
->   config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
->   	tristate "ARM Coresight Architecture PMU"
-> @@ -10,3 +10,10 @@ config ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
->   	  based on ARM CoreSight PMU architecture. Note that this PMU
->   	  architecture does not have relationship with the ARM CoreSight
->   	  Self-Hosted Tracing.
-> +
-> +config NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU
-> +	tristate "NVIDIA Coresight Architecture PMU"
-> +	depends on ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU
-> +	help
-> +	  Provides NVIDIA specific attributes for performance monitoring unit
-> +	  (PMU) devices based on ARM CoreSight PMU architecture.
-> diff --git a/drivers/perf/arm_cspmu/Makefile b/drivers/perf/arm_cspmu/Makefile
-> index fedb17df982d..0309d2ff264a 100644
-> --- a/drivers/perf/arm_cspmu/Makefile
-> +++ b/drivers/perf/arm_cspmu/Makefile
-> @@ -1,6 +1,8 @@
-> -# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> +# Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
->   #
->   # SPDX-License-Identifier: GPL-2.0
+>   	lockdep_assert_held(&group->mutex);
 >   
->   obj-$(CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += arm_cspmu_module.o
-> -arm_cspmu_module-y := arm_cspmu.o nvidia_cspmu.o
-> +arm_cspmu_module-y := arm_cspmu.o
-> +
-> +obj-$(CONFIG_NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU) += nvidia_cspmu.o
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> index e2b7827c4563..04be94b4aa48 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -16,7 +16,7 @@
->    * The user should refer to the vendor technical documentation to get details
->    * about the supported events.
->    *
-> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
->    *
->    */
->   
-> @@ -26,11 +26,11 @@
->   #include <linux/interrupt.h>
->   #include <linux/io-64-nonatomic-lo-hi.h>
->   #include <linux/module.h>
-> +#include <linux/mutex.h>
->   #include <linux/perf_event.h>
->   #include <linux/platform_device.h>
->   
->   #include "arm_cspmu.h"
-> -#include "nvidia_cspmu.h"
->   
->   #define PMUNAME "arm_cspmu"
->   #define DRVNAME "arm-cs-arch-pmu"
-> @@ -112,11 +112,10 @@
->    */
->   #define HILOHI_MAX_POLL	1000
->   
-> -/* JEDEC-assigned JEP106 identification code */
-> -#define ARM_CSPMU_IMPL_ID_NVIDIA		0x36B
-> -
->   static unsigned long arm_cspmu_cpuhp_state;
->   
-> +static DEFINE_MUTEX(arm_cspmu_lock);
-> +
->   static struct acpi_apmt_node *arm_cspmu_apmt_node(struct device *dev)
->   {
->   	return *(struct acpi_apmt_node **)dev_get_platdata(dev);
-> @@ -373,27 +372,37 @@ static struct attribute_group arm_cspmu_cpumask_attr_group = {
->   	.attrs = arm_cspmu_cpumask_attrs,
->   };
->   
-> -struct impl_match {
-> -	u32 pmiidr;
-> -	u32 mask;
-> -	int (*impl_init_ops)(struct arm_cspmu *cspmu);
-> -};
-> -
-> -static const struct impl_match impl_match[] = {
-> +static struct arm_cspmu_impl_match impl_match[] = {
->   	{
-> -	  .pmiidr = ARM_CSPMU_IMPL_ID_NVIDIA,
-> -	  .mask = ARM_CSPMU_PMIIDR_IMPLEMENTER,
-> -	  .impl_init_ops = nv_cspmu_init_ops
-> +		.module_name	= "nvidia_cspmu",
-> +		.pmiidr_val	= ARM_CSPMU_IMPL_ID_NVIDIA,
-> +		.pmiidr_mask	= ARM_CSPMU_PMIIDR_IMPLEMENTER,
-> +		.module		= NULL,
-> +		.impl_init_ops	= NULL,
->   	},
-> -	{}
-> +	{0}
->   };
->   
-> +static struct arm_cspmu_impl_match *arm_cspmu_impl_match_get(u32 pmiidr)
-> +{
-> +	struct arm_cspmu_impl_match *match = impl_match;
-> +
-> +	for (; match->pmiidr_val; match++) {
-> +		u32 mask = match->pmiidr_mask;
-> +
-> +		if ((match->pmiidr_val & mask) == (pmiidr & mask))
-> +			break;
+> +	/*
+> +	 * Allow legacy drivers to specify the domain that will be the default
+> +	 * domain. This should always be either an IDENTITY or PLATFORM domain.
+> +	 * Do not use in new drivers.
+> +	 */
+> +	if (bus->iommu_ops->default_domain) {
+> +		if (req_type)
+> +			return ERR_PTR(-EINVAL);
+> +		return bus->iommu_ops->default_domain;
 > +	}
 > +
-> +	return match;
-> +}
-> +
->   static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
->   {
-> -	int ret;
-> +	int ret = 0;
->   	struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
->   	struct acpi_apmt_node *apmt_node = arm_cspmu_apmt_node(cspmu->dev);
-> -	const struct impl_match *match = impl_match;
-> +	struct arm_cspmu_impl_match *match;
+>   	if (req_type)
+>   		return __iommu_group_alloc_default_domain(bus, group, req_type);
 >   
->   	/*
->   	 * Get PMU implementer and product id from APMT node.
-> @@ -405,16 +414,31 @@ static int arm_cspmu_init_impl_ops(struct arm_cspmu *cspmu)
->   				       readl(cspmu->base0 + PMIIDR);
->   
->   	/* Find implementer specific attribute ops. */
-> -	for (; match->pmiidr; match++) {
-> -		const u32 mask = match->mask;
-> +	match = arm_cspmu_impl_match_get(cspmu->impl.pmiidr);
-> +
-> +	/* Load implementer module and initialize the callbacks. */
-> +	if (match) {
-> +		mutex_lock(&arm_cspmu_lock);
-> +
-> +		if (match->impl_init_ops) {
-> +			if (try_module_get(match->module)) {
-> +				cspmu->impl.match = match;
-> +				ret = match->impl_init_ops(cspmu);
-> +				module_put(match->module);
-> +			} else {
-> +				WARN(1, "arm_cspmu failed to get module: %s\n",
-> +					match->module_name);
-> +				ret = -EINVAL;
-> +			}
-> +		} else {
-> +			request_module_nowait(match->module_name);
-> +			ret = -EPROBE_DEFER;
-> +		}
->   
-> -		if ((match->pmiidr & mask) == (cspmu->impl.pmiidr & mask)) {
-> -			ret = match->impl_init_ops(cspmu);
-> -			if (ret)
-> -				return ret;
-> +		mutex_unlock(&arm_cspmu_lock);
->   
-> -			break;
-> -		}
-> +		if (ret)
-> +			return ret;
->   	}
->   
->   	/* Use default callbacks if implementer doesn't provide one. */
-> @@ -478,11 +502,6 @@ arm_cspmu_alloc_attr_group(struct arm_cspmu *cspmu)
->   	struct attribute_group **attr_groups = NULL;
->   	struct device *dev = cspmu->dev;
->   	const struct arm_cspmu_impl_ops *impl_ops = &cspmu->impl.ops;
-> -	int ret;
-> -
-> -	ret = arm_cspmu_init_impl_ops(cspmu);
-> -	if (ret)
-> -		return NULL;
->   
->   	cspmu->identifier = impl_ops->get_identifier(cspmu);
->   	cspmu->name = impl_ops->get_name(cspmu);
-> @@ -1129,6 +1148,11 @@ static int arm_cspmu_get_cpus(struct arm_cspmu *cspmu)
->   	return arm_cspmu_acpi_get_cpus(cspmu);
+> @@ -1967,7 +1978,8 @@ void iommu_domain_free(struct iommu_domain *domain)
+>   	if (domain->type == IOMMU_DOMAIN_SVA)
+>   		mmdrop(domain->mm);
+>   	iommu_put_dma_cookie(domain);
+> -	domain->ops->free(domain);
+> +	if (domain->ops->free)
+> +		domain->ops->free(domain);
 >   }
+>   EXPORT_SYMBOL_GPL(iommu_domain_free);
 >   
-> +static inline struct module *arm_cspmu_get_module(struct arm_cspmu *cspmu)
-> +{
-> +	return (cspmu->impl.match) ? cspmu->impl.match->module : THIS_MODULE;
-> +}
-> +
->   static int arm_cspmu_register_pmu(struct arm_cspmu *cspmu)
->   {
->   	int ret, capabilities;
-> @@ -1149,7 +1173,7 @@ static int arm_cspmu_register_pmu(struct arm_cspmu *cspmu)
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index e05c93b6c37fba..87aebba474e093 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -64,6 +64,7 @@ struct iommu_domain_geometry {
+>   #define __IOMMU_DOMAIN_DMA_FQ	(1U << 3)  /* DMA-API uses flush queue    */
 >   
->   	cspmu->pmu = (struct pmu){
->   		.task_ctx_nr	= perf_invalid_context,
-> -		.module		= THIS_MODULE,
-> +		.module		= arm_cspmu_get_module(cspmu),
-
-We are accessing the module field without the mutex and the
-impl.match->module could be reset ?
-
->   		.pmu_enable	= arm_cspmu_enable,
->   		.pmu_disable	= arm_cspmu_disable,
->   		.event_init	= arm_cspmu_event_init,
-> @@ -1196,6 +1220,10 @@ static int arm_cspmu_device_probe(struct platform_device *pdev)
->   	if (ret)
->   		return ret;
+>   #define __IOMMU_DOMAIN_SVA	(1U << 4)  /* Shared process address space */
+> +#define __IOMMU_DOMAIN_PLATFORM	(1U << 5)
 >   
-> +	ret = arm_cspmu_init_impl_ops(cspmu);
-> +	if (ret)
-> +		return ret;
-> +
->   	ret = arm_cspmu_register_pmu(cspmu);
->   	if (ret)
->   		return ret;
-> @@ -1300,6 +1328,80 @@ static void __exit arm_cspmu_exit(void)
->   	cpuhp_remove_multi_state(arm_cspmu_cpuhp_state);
->   }
->   
-> +int arm_cspmu_impl_register(const struct arm_cspmu_impl_match *impl_match)
-> +{
-> +	struct arm_cspmu_impl_match *match;
-> +	int ret = 0;
-> +
-> +	match = arm_cspmu_impl_match_get(impl_match->pmiidr_val);
-> +
-> +	if (match) {
-> +		mutex_lock(&arm_cspmu_lock);
-> +
-> +		if (!match->impl_init_ops) {
-> +			match->module = impl_match->module;
-> +			match->impl_init_ops = impl_match->impl_init_ops;
-> +		} else {
-> +			/* Broken match table may contain non-unique entries */
-> +			WARN(1, "arm_cspmu backend already registered for module: %s, pmiidr: 0x%x, mask: 0x%x\n",
-> +				match->module_name,
-> +				match->pmiidr_val,
-> +				match->pmiidr_mask);
-> +
-> +			ret = -EINVAL;
-> +		}
-> +
-> +		mutex_unlock(&arm_cspmu_lock);
-> +
-> +		if (!ret)
-> +			ret = driver_attach(&arm_cspmu_driver.driver);
-> +	} else {
-> +		pr_err("arm_cspmu reg failed, unable to find a match for pmiidr: 0x%x\n",
-> +			impl_match->pmiidr_val);
-> +
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(arm_cspmu_impl_register);
-> +
-> +static int arm_cspmu_match_device(struct device *dev, const void *match)
-> +{
-> +	struct arm_cspmu *cspmu = platform_get_drvdata(to_platform_device(dev));
-> +
-> +	return (cspmu && cspmu->impl.match == match) ? 1 : 0;
-> +}
-> +
-> +void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match *impl_match)
-> +{
-> +	struct device *dev;
-> +	struct arm_cspmu_impl_match *match;
-> +
-> +	match = arm_cspmu_impl_match_get(impl_match->pmiidr_val);
-> +
-> +	WARN_ON(!match);
-> +
-> +	if (match) {
-> +		/* Unbind the driver from all matching backend devices. */
-> +dev_release:
-> +		dev = driver_find_device(&arm_cspmu_driver.driver, NULL,
-> +			match, arm_cspmu_match_device);
-> +		if (dev) {
-> +			device_release_driver(dev);
-> +			goto dev_release;
-> +		}
-
-minor nit: We could simply do :
-
-static int arm_cspmu_release_driver(struct device *dev, void *data)
-{
-	struct arm_cspmu *cspmu = platform_get_drvdata(to_platform_device(dev));
-
-	if (cspmu && cspmu->impl.match == match)
-		device_release_driver(dev);
-	return 0;
-}
-
-		ret = driver_for_each_device(&driver, NULL, match, 
-arm_csmpu_release_driver);
-
-
-Rest looks fine to me.
-
-Suzuki
-
-> +
-> +		mutex_lock(&arm_cspmu_lock);
-> +
-> +		match->module = NULL;
-> +		match->impl_init_ops = NULL;
-> +
-> +		mutex_unlock(&arm_cspmu_lock);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
-> +
->   module_init(arm_cspmu_init);
->   module_exit(arm_cspmu_exit);
->   
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
-> index 83df53d1c132..e5c6dff2ce7f 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
-> @@ -1,7 +1,7 @@
->   /* SPDX-License-Identifier: GPL-2.0
->    *
->    * ARM CoreSight Architecture PMU driver.
-> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
->    *
->    */
->   
-> @@ -69,6 +69,9 @@
->   #define ARM_CSPMU_PMIIDR_IMPLEMENTER	GENMASK(11, 0)
->   #define ARM_CSPMU_PMIIDR_PRODUCTID	GENMASK(31, 20)
->   
-> +/* JEDEC-assigned JEP106 identification code */
-> +#define ARM_CSPMU_IMPL_ID_NVIDIA	0x36B
-> +
->   struct arm_cspmu;
->   
->   /* This tracks the events assigned to each counter in the PMU. */
-> @@ -106,9 +109,22 @@ struct arm_cspmu_impl_ops {
->   					 struct attribute *attr, int unused);
->   };
->   
-> +/* Vendor/implementer registration parameter. */
-> +struct arm_cspmu_impl_match {
-> +	/* Backend module. */
-> +	struct module *module;
-> +	const char *module_name;
-> +	/* PMIIDR value/mask. */
-> +	u32 pmiidr_val;
-> +	u32 pmiidr_mask;
-> +	/* Callback to vendor backend to init arm_cspmu_impl::ops. */
-> +	int (*impl_init_ops)(struct arm_cspmu *cspmu);
-> +};
-> +
->   /* Vendor/implementer descriptor. */
->   struct arm_cspmu_impl {
->   	u32 pmiidr;
-> +	struct arm_cspmu_impl_match *match;
->   	struct arm_cspmu_impl_ops ops;
->   	void *ctx;
->   };
-> @@ -147,4 +163,10 @@ ssize_t arm_cspmu_sysfs_format_show(struct device *dev,
->   				    struct device_attribute *attr,
->   				    char *buf);
->   
-> +/* Register vendor backend. */
-> +int arm_cspmu_impl_register(const struct arm_cspmu_impl_match *impl_match);
-> +
-> +/* Unregister vendor backend. */
-> +void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match *impl_match);
-> +
->   #endif /* __ARM_CSPMU_H__ */
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index 72ef80caa3c8..0382b702f092 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -1,14 +1,15 @@
->   // SPDX-License-Identifier: GPL-2.0
+>   #define IOMMU_DOMAIN_ALLOC_FLAGS ~__IOMMU_DOMAIN_DMA_FQ
 >   /*
-> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> + * Copyright (c) 2022-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
->    *
+> @@ -81,6 +82,8 @@ struct iommu_domain_geometry {
+>    *				  invalidation.
+>    *	IOMMU_DOMAIN_SVA	- DMA addresses are shared process addresses
+>    *				  represented by mm_struct's.
+> + *	IOMMU_DOMAIN_PLATFORM	- Legacy domain for drivers that do their own
+> + *				  dma_api stuff. Do not use in new drivers.
 >    */
+>   #define IOMMU_DOMAIN_BLOCKED	(0U)
+>   #define IOMMU_DOMAIN_IDENTITY	(__IOMMU_DOMAIN_PT)
+> @@ -91,6 +94,7 @@ struct iommu_domain_geometry {
+>   				 __IOMMU_DOMAIN_DMA_API |	\
+>   				 __IOMMU_DOMAIN_DMA_FQ)
+>   #define IOMMU_DOMAIN_SVA	(__IOMMU_DOMAIN_SVA)
+> +#define IOMMU_DOMAIN_PLATFORM	(__IOMMU_DOMAIN_PLATFORM)
 >   
->   /* Support for NVIDIA specific attributes. */
->   
-> +#include <linux/module.h>
->   #include <linux/topology.h>
->   
-> -#include "nvidia_cspmu.h"
-> +#include "arm_cspmu.h"
->   
->   #define NV_PCIE_PORT_COUNT           10ULL
->   #define NV_PCIE_FILTER_ID_MASK       GENMASK_ULL(NV_PCIE_PORT_COUNT - 1, 0)
-> @@ -351,7 +352,7 @@ static char *nv_cspmu_format_name(const struct arm_cspmu *cspmu,
->   	return name;
->   }
->   
-> -int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
-> +static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->   {
->   	u32 prodid;
->   	struct nv_cspmu_ctx *ctx;
-> @@ -395,6 +396,31 @@ int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->   
->   	return 0;
->   }
-> -EXPORT_SYMBOL_GPL(nv_cspmu_init_ops);
-> +
-> +/* Match all NVIDIA Coresight PMU devices */
-> +static const struct arm_cspmu_impl_match nv_cspmu_param = {
-> +	.pmiidr_val	= ARM_CSPMU_IMPL_ID_NVIDIA,
-> +	.module		= THIS_MODULE,
-> +	.impl_init_ops	= nv_cspmu_init_ops
-> +};
-> +
-> +static int __init nvidia_cspmu_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = arm_cspmu_impl_register(&nv_cspmu_param);
-> +	if (ret)
-> +		pr_err("nvidia_cspmu backend registration error: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static void __exit nvidia_cspmu_exit(void)
-> +{
-> +	arm_cspmu_impl_unregister(&nv_cspmu_param);
-> +}
-> +
-> +module_init(nvidia_cspmu_init);
-> +module_exit(nvidia_cspmu_exit);
->   
->   MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.h b/drivers/perf/arm_cspmu/nvidia_cspmu.h
-> deleted file mode 100644
-> index 71e18f0dc50b..000000000000
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.h
-> +++ /dev/null
-> @@ -1,17 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0
-> - *
-> - * Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> - *
-> - */
-> -
-> -/* Support for NVIDIA specific attributes. */
-> -
-> -#ifndef __NVIDIA_CSPMU_H__
-> -#define __NVIDIA_CSPMU_H__
-> -
-> -#include "arm_cspmu.h"
-> -
-> -/* Allocate NVIDIA descriptor. */
-> -int nv_cspmu_init_ops(struct arm_cspmu *cspmu);
-> -
-> -#endif /* __NVIDIA_CSPMU_H__ */
-> 
-> base-commit: ea8d1c062a0e876e999e4f347daeb598d5e677ab
+>   struct iommu_domain {
+>   	unsigned type;
+> @@ -256,6 +260,7 @@ struct iommu_iotlb_gather {
+>    * @owner: Driver module providing these ops
+>    * @identity_domain: An always available, always attachable identity
+>    *                   translation.
+> + * @default_domain: If not NULL this will always be set as the default domain.
+>    */
+>   struct iommu_ops {
+>   	bool (*capable)(struct device *dev, enum iommu_cap);
+> @@ -290,6 +295,7 @@ struct iommu_ops {
+>   	unsigned long pgsize_bitmap;
+>   	struct module *owner;
+>   	struct iommu_domain *identity_domain;
+> +	struct iommu_domain *default_domain;
 
+I am imaging whether we can merge above two pointers into a single one.
+It is either an IDENTITY or PLATFORM domain and the core will choose it
+as the default domain of a group if iommu_group_alloc_default_domain()
+fails to allocate one through the iommu dev_ops.
+
+Those iommu drivers that could result in a NULL default domain could
+provide such domain and guarantee that this domain is always usable for
+devices.
+
+Probably we could give it a more meaningful name? For example,
+supplemental_domain or rescue_domain?
+
+I am not sure whether this can address the NULL-default-domain issues
+of all drivers this series tries to address. So just for discussion
+purpose.
+
+Best regards,
+baolu
