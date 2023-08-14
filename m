@@ -2,127 +2,256 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B16A5C04A94
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Aug 2023 07:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48678C04FE2
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Aug 2023 07:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233968AbjHNHBO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Aug 2023 03:01:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49606 "EHLO
+        id S234213AbjHNHle (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Aug 2023 03:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233947AbjHNHAn (ORCPT
+        with ESMTP id S234303AbjHNHl2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Aug 2023 03:00:43 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA435E6D;
-        Mon, 14 Aug 2023 00:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691996442; x=1723532442;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EaawVzEhamol9o/NUQ5Jv/MrePZQM2J7gDQCUGCqzz4=;
-  b=BceuyjFqBS8blZGqfCmYon0JRg2YN1ofZBIvGZyjx0WLf6+6y/BlcuZD
-   ghr0pvbzxtA6ZC0ljLwDYU6ZfSgfO5ILqteIc8utRJ1QulziWzhByTmJ5
-   w0eWmVDFErZIoljc+aUp8m4oPo1Aaw4g07GbcmPuadqSeGuaCV02aI2cl
-   5Uq31M1JBJUtw7Efidg5ZQ+jNcWPObjo5ONiygR3yOrZeHqetyTHQwqFZ
-   313t1saa8TXnE5Va661YCQ4adAHf773WYI3kygE6/37r0fgMJlc78S9Yu
-   sahBAgewBDpDV3D1054UpAJteCJOskRx16vIWBGJ6bjB+ozZegvsPtTWp
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="402961384"
-X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
-   d="scan'208";a="402961384"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2023 00:00:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="1063959613"
-X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
-   d="scan'208";a="1063959613"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.215.205]) ([10.254.215.205])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2023 00:00:31 -0700
-Message-ID: <f6999029-9f94-9198-ce1d-2d04f02ad000@linux.intel.com>
-Date:   Mon, 14 Aug 2023 15:00:29 +0800
+        Mon, 14 Aug 2023 03:41:28 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66729E73
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Aug 2023 00:41:27 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fea0640d88so1820255e9.2
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Aug 2023 00:41:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691998886; x=1692603686;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zitqku576TZpQnQPr3Oh2ohHuEFbeZPBBxEvo1sZc+Q=;
+        b=c2ibWsrtxlpOl2l93H8I7dwO30O1xssdh4p/RrE2q8N2J8sUQOiLfPy4jrHUDNecWQ
+         B9Xl7UbuevI0/fpeC3Cqz4JjJBdAc1fM3Sx+NRxxOWZwKyMRK3wSy1FRjBCN1vRcCJ3V
+         iNaGpXWAcpuPTu7ilq8+T4iAp1Du1dTft6ZdWvtZ4YteQjS4RMAl8rEkUzkK3U48fPQ3
+         Ta+6PDHsz/O7Bxk8FyAYZKsv9wLW0hBYeG+zmWBSRbPB9cFQZwP3sWc7W4O0II/GdFDH
+         XLs0zYerpdo1H3GjEXSiYzl+d1vN7CnfVNDwP6MnTibEClBZjnwlup1Vh8wpi7JEvqyE
+         zjQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691998886; x=1692603686;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zitqku576TZpQnQPr3Oh2ohHuEFbeZPBBxEvo1sZc+Q=;
+        b=hj7iUo4/5WEKa+FbytNY4aassGHKdp98oGOuKy7hYHQIKa5Z18tr0CQKkKDB5BQHkG
+         XqZqQdBSIJtqFWxYyqovEbIljvCdxzvkLy4GNwVF4BTzOX128tZCZA0Yk5iYpg+xVEAS
+         XqQc2J0Mo+hqKp0v0iIqKp6HMfV77Yg1CphZ5JEjpJZUSTU8ic8dVW1Qc9+dnYtU1xgX
+         hXyAMjfufpNgtymiyFOwcn9vMPomKZ7VLNGAx8c/VQB4cn4vEwJ8ixDwLnNkVgBS2/z5
+         sp6js7jndOIuhU4f4XDa4eenrZmLvg9psTmwwCUp4NcT7Cc1OG8qD+rcYiJe+B+08PD8
+         yEAw==
+X-Gm-Message-State: AOJu0YwMT4k7QG8K2wNXF5JXSaAr4wyFJ2x+ZtDvl/aK6XQ3tGOe9KF+
+        gAMdnTAHzPX7CO6j49sJeKvKXg==
+X-Google-Smtp-Source: AGHT+IFYfAjXxtZPBAO6xzW1e3FH1h7mkoQ3yNtVsbL8sLdvSW5eTgH/X76mW18QMBp5iOQDIcXGqw==
+X-Received: by 2002:adf:ee87:0:b0:317:5e0d:c249 with SMTP id b7-20020adfee87000000b003175e0dc249mr6776837wro.35.1691998885785;
+        Mon, 14 Aug 2023 00:41:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a3d8:b217:d82c:9bc0? ([2a01:e0a:982:cbb0:a3d8:b217:d82c:9bc0])
+        by smtp.gmail.com with ESMTPSA id k3-20020a5d6283000000b00317643a93f4sm13507243wru.96.2023.08.14.00.41.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Aug 2023 00:41:25 -0700 (PDT)
+Message-ID: <81500a13-0fed-e9d4-7f51-552b888a98e1@linaro.org>
+Date:   Mon, 14 Aug 2023 09:41:21 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Cc:     baolu.lu@linux.intel.com, Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v6 25/25] iommu: Convert remaining simple drivers to
- domain_alloc_paging()
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 1/2] pwm: Manage owner assignment implicitly for
+ drivers
 Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee@kernel.org>, Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        Heiko Stuebner <heiko@sntech.de>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Michael Walle <michael@walle.cc>,
         Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
         Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <25-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <25-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Sean Anderson <sean.anderson@seco.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anjelique Melendez <quic_amelende@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev
+References: <20230804142707.412137-1-u.kleine-koenig@pengutronix.de>
+ <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
+Organization: Linaro Developer Services
+In-Reply-To: <20230804142707.412137-2-u.kleine-koenig@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023/8/3 8:08, Jason Gunthorpe wrote:
-> These drivers don't support IOMMU_DOMAIN_DMA, so this commit effectively
-> allows them to support that mode.
+On 04/08/2023 16:27, Uwe Kleine-König wrote:
+> Instead of requiring each driver to care for assigning the owner member
+> of struct pwm_ops, handle that implicitly using a macro. Note that the
+> owner member has to be moved to struct pwm_chip, as the ops structure
+> usually lives in read-only memory and so cannot be modified.
 > 
-> The prior work to require default_domains makes this safe because every
-> one of these drivers is either compilation incompatible with dma-iommu.c,
-> or already establishing a default_domain. In both cases alloc_domain()
-> will never be called with IOMMU_DOMAIN_DMA for these drivers so it is safe
-> to drop the test.
+> The upside is that new lowlevel drivers cannot forget the assignment and
+> save one line each. The pwm-crc driver didn't assign .owner, that's not
+> a problem in practise though as the driver cannot be compiled as a
+> module.
 > 
-> Removing these tests clarifies that the domain allocation path is only
-> about the functionality of a paging domain and has nothing to do with
-> policy of how the paging domain is used for UNMANAGED/DMA/DMA_FQ.
-> 
-> Tested-by: Niklas Schnelle<schnelle@linux.ibm.com>
-> Tested-by: Steven Price<steven.price@arm.com>
-> Tested-by: Marek Szyprowski<m.szyprowski@samsung.com>
-> Tested-by: Nicolin Chen<nicolinc@nvidia.com>
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 > ---
->   drivers/iommu/msm_iommu.c    | 7 ++-----
->   drivers/iommu/mtk_iommu_v1.c | 7 ++-----
->   drivers/iommu/omap-iommu.c   | 7 ++-----
->   drivers/iommu/s390-iommu.c   | 7 ++-----
->   4 files changed, 8 insertions(+), 20 deletions(-)
+>   drivers/gpio/gpio-mvebu.c             |  1 -
+>   drivers/gpu/drm/bridge/ti-sn65dsi86.c |  1 -
+>   drivers/leds/rgb/leds-qcom-lpg.c      |  1 -
+>   drivers/pwm/core.c                    | 24 ++++++++++++++----------
+>   drivers/pwm/pwm-ab8500.c              |  1 -
+>   drivers/pwm/pwm-apple.c               |  1 -
+>   drivers/pwm/pwm-atmel-hlcdc.c         |  1 -
+>   drivers/pwm/pwm-atmel-tcb.c           |  1 -
+>   drivers/pwm/pwm-atmel.c               |  1 -
+>   drivers/pwm/pwm-bcm-iproc.c           |  1 -
+>   drivers/pwm/pwm-bcm-kona.c            |  1 -
+>   drivers/pwm/pwm-bcm2835.c             |  1 -
+>   drivers/pwm/pwm-berlin.c              |  1 -
+>   drivers/pwm/pwm-brcmstb.c             |  1 -
+>   drivers/pwm/pwm-clk.c                 |  1 -
+>   drivers/pwm/pwm-clps711x.c            |  1 -
+>   drivers/pwm/pwm-cros-ec.c             |  1 -
+>   drivers/pwm/pwm-dwc.c                 |  1 -
+>   drivers/pwm/pwm-ep93xx.c              |  1 -
+>   drivers/pwm/pwm-fsl-ftm.c             |  1 -
+>   drivers/pwm/pwm-hibvt.c               |  1 -
+>   drivers/pwm/pwm-img.c                 |  1 -
+>   drivers/pwm/pwm-imx-tpm.c             |  1 -
+>   drivers/pwm/pwm-imx1.c                |  1 -
+>   drivers/pwm/pwm-imx27.c               |  1 -
+>   drivers/pwm/pwm-intel-lgm.c           |  1 -
+>   drivers/pwm/pwm-iqs620a.c             |  1 -
+>   drivers/pwm/pwm-jz4740.c              |  1 -
+>   drivers/pwm/pwm-keembay.c             |  1 -
+>   drivers/pwm/pwm-lp3943.c              |  1 -
+>   drivers/pwm/pwm-lpc18xx-sct.c         |  1 -
+>   drivers/pwm/pwm-lpc32xx.c             |  1 -
+>   drivers/pwm/pwm-lpss.c                |  1 -
+>   drivers/pwm/pwm-mediatek.c            |  1 -
+>   drivers/pwm/pwm-meson.c               |  1 -
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Acked-by: Neil Armstrong <neil.armstrong@linaro.org> # pwm-meson
 
-Best regards,
-baolu
+>   drivers/pwm/pwm-microchip-core.c      |  1 -
+>   drivers/pwm/pwm-mtk-disp.c            |  1 -
+>   drivers/pwm/pwm-mxs.c                 |  1 -
+>   drivers/pwm/pwm-ntxec.c               |  1 -
+>   drivers/pwm/pwm-omap-dmtimer.c        |  1 -
+>   drivers/pwm/pwm-pca9685.c             |  1 -
+>   drivers/pwm/pwm-pxa.c                 |  1 -
+>   drivers/pwm/pwm-raspberrypi-poe.c     |  1 -
+>   drivers/pwm/pwm-rcar.c                |  1 -
+>   drivers/pwm/pwm-renesas-tpu.c         |  1 -
+>   drivers/pwm/pwm-rockchip.c            |  1 -
+>   drivers/pwm/pwm-rz-mtu3.c             |  1 -
+>   drivers/pwm/pwm-samsung.c             |  1 -
+>   drivers/pwm/pwm-sifive.c              |  1 -
+>   drivers/pwm/pwm-sl28cpld.c            |  1 -
+>   drivers/pwm/pwm-spear.c               |  1 -
+>   drivers/pwm/pwm-sprd.c                |  1 -
+>   drivers/pwm/pwm-sti.c                 |  1 -
+>   drivers/pwm/pwm-stm32-lp.c            |  1 -
+>   drivers/pwm/pwm-stm32.c               |  1 -
+>   drivers/pwm/pwm-stmpe.c               |  1 -
+>   drivers/pwm/pwm-sun4i.c               |  1 -
+>   drivers/pwm/pwm-sunplus.c             |  1 -
+>   drivers/pwm/pwm-tegra.c               |  1 -
+>   drivers/pwm/pwm-tiecap.c              |  1 -
+>   drivers/pwm/pwm-tiehrpwm.c            |  1 -
+>   drivers/pwm/pwm-twl-led.c             |  2 --
+>   drivers/pwm/pwm-twl.c                 |  2 --
+>   drivers/pwm/pwm-visconti.c            |  1 -
+>   drivers/pwm/pwm-vt8500.c              |  1 -
+>   drivers/pwm/pwm-xilinx.c              |  1 -
+>   drivers/staging/greybus/pwm.c         |  1 -
+>   include/linux/pwm.h                   | 10 ++++++----
+>   68 files changed, 20 insertions(+), 82 deletions(-)
+> 
+
+<snip>
+
+> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+> index 25519cddc2a9..5bea53243ed2 100644
+> --- a/drivers/pwm/pwm-meson.c
+> +++ b/drivers/pwm/pwm-meson.c
+> @@ -335,7 +335,6 @@ static const struct pwm_ops meson_pwm_ops = {
+>   	.free = meson_pwm_free,
+>   	.apply = meson_pwm_apply,
+>   	.get_state = meson_pwm_get_state,
+> -	.owner = THIS_MODULE,
+>   };
+>   
+>   static const char * const pwm_meson8b_parent_names[] = {
+
+<snip>
+
