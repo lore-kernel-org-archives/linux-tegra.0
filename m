@@ -2,208 +2,170 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7782C05052
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Aug 2023 15:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44841C04A94
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Aug 2023 15:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230396AbjHNPvB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Aug 2023 11:51:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36168 "EHLO
+        id S231189AbjHNPzR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Aug 2023 11:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbjHNPuo (ORCPT
+        with ESMTP id S231292AbjHNPzB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Aug 2023 11:50:44 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D53BA3
-        for <linux-tegra@vger.kernel.org>; Mon, 14 Aug 2023 08:50:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        sang-engineering.com; h=date:from:to:cc:subject:message-id
-        :references:mime-version:content-type:in-reply-to; s=k1; bh=FYep
-        wEYtDzQvBpaqNq01ju5b6nuQwAUfmhoLQUMczxo=; b=hW+W0wmzjGTNGIoKy/ap
-        lEHAoznAyAfVL7icFHh183O6QhmQ/RFFz1bBxMIFqN4sVGcow6I1ev2ZyDM2yY5a
-        F0+vrfaAjzKbzTMTKdFnmxIFmX/mX5oTizcVu7pBpP3CXXNzXZBPkfpbSm8fZD3p
-        47yT+S4QJ0m1XyEsNDwmnV2MIbyGCMdsu+wttTFMTjG3HwB1o4JmmWtii6wfbTh9
-        WiiGlmpGudcaDNcJ1BVQCga1C1QXrrtJ+p18X1Sk5WWD8G29cY2FHbz9oITK8IW4
-        1Ias5CaMQ6Dm+VoLFhG49pbAADA+vtcd8Wj/FXZxUFPGFr3SfY0eknRzKvcJU8F/
-        Lg==
-Received: (qmail 95061 invoked from network); 14 Aug 2023 17:50:30 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Aug 2023 17:50:30 +0200
-X-UD-Smtp-Session: l3s3148p1@9OabBeQC6KAgAwDPXxIFAOXxDpD4UZq0
-Date:   Mon, 14 Aug 2023 17:50:30 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Jochen Friedrich <jochen@scram.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Jean-Marie Verdun <verdun@hpe.com>,
-        Nick Hawkins <nick.hawkins@hpe.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khalil Blaiech <kblaiech@nvidia.com>,
-        Asmaa Mnebhi <asmaa@nvidia.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Qii Wang <qii.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Stefan Roese <sr@denx.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Mon, 14 Aug 2023 11:55:01 -0400
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2119.outbound.protection.outlook.com [40.107.115.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6EB8109;
+        Mon, 14 Aug 2023 08:54:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MRES5OVOg7HTPhUg3IyMKErTSAPBrC+svUPdkzZrReNsyjFPb1bdmXIgrYNNXMKrpzZAFmUsq2dPqXBGIIvjd9cyTj04SRH9UgCrYrzSVhN5SufYFTyRyxWMrjDaPgfzQhUDx7q+KuROFmL3urm9sUakONCF28DhR0iriWqMk0upwTXZClEJSMVrnyzFFYFIFO8f9dTuL9ZD1+qX1OoYrX1jmeHGEKMEER9l+cxO2JOc1u8Z3bG2krnGb5bWDKMXVGQMFkamoTSOSSBF+rnkoxekrNf1uaVKGzx55Egq5+F+t/So49zDWdLuuHEELweWOYem+n7O0o5+50s1BX5fKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=95iq9/IgMrmj77QpLUw1O7QIAagmMYIACPpcenbSAsY=;
+ b=gGC32swed/7H8T6MV6G3LK5lJQA6KRCeGyb5FJFazS4B2nziO+68bE0LqrPzY13jqoRSMxCTTv7ZLQ30oFA1uvP0Rk5E4PeykJHPQKS49dkHP8gY2AaqlMSfF4SsF3Usiyhe6ETeuHk/sMO44ILGopaZjM/11R+4t1RqmLQ/Z5ktmK2oB1XfQ2d5pOz8SvQM80bGV9pYreeawA5CqeadIKvMiGmFy7/NqJ+7gVtah+EPXBDdfQ2i1h12ELtc7ZIjiIF1pu+nu4M7owUJIkEBRohcxt/rQhsnmJ3iirGCn0Wx2hPv/14LeaucggLlTTIeGk8GDWkDyzLSZIoA3wHBOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=connecttech.com; dmarc=pass action=none
+ header.from=connecttech.com; dkim=pass header.d=connecttech.com; arc=none
+Received: from YT1PR01MB4124.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:2b::11)
+ by YT1PR01MB8554.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:c5::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.24; Mon, 14 Aug
+ 2023 15:54:57 +0000
+Received: from YT1PR01MB4124.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::7fe0:2f38:7134:6e7d]) by YT1PR01MB4124.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::7fe0:2f38:7134:6e7d%7]) with mapi id 15.20.6678.025; Mon, 14 Aug 2023
+ 15:54:56 +0000
+From:   Parker Newman <pnewman@connecttech.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Andi Shyti <andi.shyti@kernel.org>
+CC:     Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Peter Rosin <peda@axentia.se>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-actions@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] I2C: Explicitly include correct DT includes
-Message-ID: <ZNpNRlLSdjR7Zfv0@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh@kernel.org>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Jochen Friedrich <jochen@scram.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Jean-Marie Verdun <verdun@hpe.com>,
-        Nick Hawkins <nick.hawkins@hpe.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Khalil Blaiech <kblaiech@nvidia.com>,
-        Asmaa Mnebhi <asmaa@nvidia.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Qii Wang <qii.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Stefan Roese <sr@denx.de>, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>, Peter Rosin <peda@axentia.se>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-actions@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20230714174619.4057577-1-robh@kernel.org>
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] i2c: tegra: Fix i2c-tegra DMA config option processing
+Thread-Topic: [PATCH] i2c: tegra: Fix i2c-tegra DMA config option processing
+Thread-Index: AQHZxi1X/DFR5Xjq7k2794y4/1T6O6/arpsAgA9MIQCAAAhAAA==
+Date:   Mon, 14 Aug 2023 15:54:56 +0000
+Message-ID: <2702e51d-1e7e-a71b-f07b-ab224b9eff31@connecttech.com>
+References: <fcfcf9b3-c8c4-9b34-2ff8-cd60a3d490bd@connecttech.com>
+ <20230804214902.entkn6xkklz5lh3h@intel.intel>
+ <5594f66d-1aec-ee2f-d3d1-1185ca9cb06f@gmail.com>
+In-Reply-To: <5594f66d-1aec-ee2f-d3d1-1185ca9cb06f@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=connecttech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: YT1PR01MB4124:EE_|YT1PR01MB8554:EE_
+x-ms-office365-filtering-correlation-id: c4d483f6-78d0-4f04-3e5c-08db9cdecec8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: IJgvixI0fEKG82LIekEdjPvbID2E+/qW55OJ5spfaLO5uX4wb/xtbp9GmW5eFGjWKpAXOkIZeyrMWZ+YmHpaC6rdOBpRxZvXLYU/zNNyHAM4vpUc8hJ7dVq799CFT9scJp/vvSf0kIGrbREgVjM7wZGjnkN6kSrkIZ06awI46tpiacX9HIUjrnFFKfuuE3P9RZ/V4K5ktFAr1/cEwsNUJmA4OyJch/fmr6e1PNBoY0HRKSRqmFQVMm+PGbdn/RyNQJLyr63XWOuULSS5nfpcOUnQmuXFXSYq7o+gkVxOMcyuwchFzdN9fH6sVtn+Abw73SFKyaiEjQhp4Kp987lvFBWowW7M/45yrjWVHdVFSu4Xw+06+PvPJOP6DQlFefrACSVFUvqtj9vLcQgZ5YPmarha+usd8ahbpxy2wFTOvnzRp9HXZgUV/5yddjCe2L4aFRuXMY84qr83E4WKVfgIl7E0qilDNXLaj3/bavyA3Cn6RmtFQ+LP4Zx3CcF8NyhsFDq5O60+PVFAWpBDFGbj6p4/PE9edPgi2ePDeUPiX9dOzSxZVcnuUrAtTGC36q6wBkKPMWO027VzNBnkkG1c9uOL4d5HYmgPQvnKZwAx+95/+OgUnVMVvNzIXjaf1YmGrfTGVxjSLYTU2gS/icseuQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT1PR01MB4124.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(366004)(346002)(39840400004)(396003)(376002)(136003)(451199021)(1800799006)(186006)(31686004)(71200400001)(6486002)(76116006)(110136005)(6506007)(478600001)(36756003)(86362001)(31696002)(83380400001)(6512007)(26005)(66946007)(53546011)(2616005)(2906002)(38070700005)(38100700002)(122000001)(316002)(4326008)(66556008)(64756008)(66476007)(8676002)(54906003)(66446008)(5660300002)(8936002)(41300700001)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dnJ6aWczSGpFYnkvMVZlaExmT3J1R3lVYXQydUF3ZGhaVmwyRHdiQmQ1WHpO?=
+ =?utf-8?B?ZWVQb1ZoTTN5b1N0VzFPdjJkZmtETk93cUZkTEtab041UTdjV3BxOXd5RGFN?=
+ =?utf-8?B?djhQRmJ1K0w3eDhZbldKdjlBOFd1RTZVZlNIYkI5TW5uV1hHdkJNYzJTV1Zr?=
+ =?utf-8?B?Q3VZVXlqNkhNcGdMTldCSjJOM2ovRDZYeGpYOFZyQ0Y4SEhnU0I0aVFicGRF?=
+ =?utf-8?B?VWk3Z050QlZzbTNoSUx3RkczbGE1WDNLWWs5WnBEYk5OdnpEcks5Sm1PQTVv?=
+ =?utf-8?B?RFpwbndIQmU4MnRTZFNwQVI2YXJYNnV4K1F3empYeGZJdG04aW94K1VNbTgz?=
+ =?utf-8?B?cGJzbVkrWWdkR0M0Vmg5QXI4bVhZY2VhbERGT2dWbkxSVDJ0cTNJTUZ6THBY?=
+ =?utf-8?B?Skl6Zno2Z3VqS21VTEhhQlN0RXJPeXZvSXJPN3FWZFF1VGJJa2s3eG1iRVll?=
+ =?utf-8?B?L3ZjVXdTRlJrZGhRV204QmNTcG0zU3FBcFNtc3p5N0VnMmRrOHl0dThjQkZl?=
+ =?utf-8?B?WldCU1RLNHRiWkg2KzBaZVJodmZucTExcStBbjkySmVCTW43dWZEQTMySDJX?=
+ =?utf-8?B?c2Q0MVE3WGJWYjBKdlFvOXpIbmVwNjZqdENZUUlkVXhNbkd2ZEhXVVorbGJv?=
+ =?utf-8?B?T1F1Rk5wOGd1M000MVQzL2s3MjIrYVFlb3pmcllldEVsd3VjVS9zODUxSlp0?=
+ =?utf-8?B?Q1oxb295UjhJL29FUkdXN29BbFl4dEtndWlpdjNiVVJqd1lSOUJVMkpkV1Ft?=
+ =?utf-8?B?cmk4a1ZSZWl1YmZzL0ZxVUl2RGNiSFlMakRkY2lOTTRXaXBzNnVqWFViN3hz?=
+ =?utf-8?B?YklSeXZJQmE4NjRveFZCRE56NW1sUHhRcXl4dHRCWk0wMGZld0dveWh6VGI1?=
+ =?utf-8?B?OHAxdVJOa0tzQ1FTQUMrdGxZQXBvSjdiN0dnU0ZMMXgzWmZGUHVhTG5EYVJZ?=
+ =?utf-8?B?RkE3NWRkall1MWVqOVBMaFJ3WGcwdHpaTGtkS3hjZ2hQaTZkMSt2dkhXMFk5?=
+ =?utf-8?B?YTlnemRlenhNazBhM0pYRjlYaURqcy92cWVUci9UOTJpWVprd2QzOWVoVVZ0?=
+ =?utf-8?B?Z0JLb2t3Q0g2cTQvcndYRlU0Zzl4blFMNkR2VVpVMlRBM0ZNVUNEazcxOUFK?=
+ =?utf-8?B?WDhPTDRtWVY4SXJsdEwyUXY4ckc5ZXRXSmZ6RWxDSXN5dWpLdDBQTVdrUGFv?=
+ =?utf-8?B?RlROeWNHWGE0ZjNHaTg1Q29ESTBtVnVaYlppbys5bHRmSlczWXVyOTNpajlG?=
+ =?utf-8?B?ejFFdXVtWWx1WnNPOGFUcHBQRkFCa2xhZmZESy94K2FuYll5RnB6WWRjbkRV?=
+ =?utf-8?B?SUlFNHVZdlNaK1JJdkxsc20vUWFBak5ucUNJWmhNT0FOTEV6Q0d3SnlNWHh4?=
+ =?utf-8?B?YU5yR1hGNTBhcW9tVDBDa0xiRFRkNjZRcEVOMGdCajc4KzVWbHhUYUNsNWtW?=
+ =?utf-8?B?b1pvcTlDblZFTkJvc3FMVzR5Z2JGYVBoYW95enJ6VDdiVStYbjIrK3d4N1Zi?=
+ =?utf-8?B?eW1ZVUhZb2JKOCtRd0NvOW16QkFnUWkzcFVyUUVKeUU2ZjcyS2VLem5obXN0?=
+ =?utf-8?B?QWtHend5SnRaNVVvQUpKK3orZmRMcXhJbldjbit5SGhtOEZidVY0RmUwMkFi?=
+ =?utf-8?B?dUV2WnF1eFo1NlFJVHFJMlcycVo2SXlHbUptK0RMd29XNGJLanpDRERwbU9Z?=
+ =?utf-8?B?V0l3ZE1qclM5aGRwSVlrejc0dFBhQ2VnNmIzOGYwbHZBL1Q0elYvTkowaWpi?=
+ =?utf-8?B?dlJZaGd0TUtnNENTZ1hsR21UV2w1STNJbUFNWks1L1huamd1eEZVSVhtVnhi?=
+ =?utf-8?B?eFhNbForTFErbW1VUytrNk9RYlFPd2ZVOGlGRStaK2RFOEFsR21nNjFidk1R?=
+ =?utf-8?B?SnZ3ay85eGhSdzZYalBjU2lhRjh6VWNBZDFqMXdQMFc1aTZyQjFrbVVQWWd0?=
+ =?utf-8?B?d0xuN0dLYUplcEhzUE1Ic0tnUU44SHluZFlPZ09tbDkyelBYbVkwMENoN0VW?=
+ =?utf-8?B?bTZuUitqV0hGbGR1VUIwek9CWlZUcmEzanp0Y0gwV3RVQXhRS1h4QitjUTVh?=
+ =?utf-8?B?d21Tak5VaHBQVzNzYUtIRW1helk1akpoQWdpUDdBd0JEZStBN2pjZlErNlBT?=
+ =?utf-8?Q?OvvEHrHMHuVtfvGMGpoMvVpJd?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9F0963693F821D43A65C3D0388EC3502@CANPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="17Pm2F6dlWUYnS2d"
-Content-Disposition: inline
-In-Reply-To: <20230714174619.4057577-1-robh@kernel.org>
+X-OriginatorOrg: connecttech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: YT1PR01MB4124.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4d483f6-78d0-4f04-3e5c-08db9cdecec8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2023 15:54:56.8593
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d33071ec-da55-4b12-8469-920f998c36b3
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZiBq/pYBIezh1j45SnyIgatshs171ZoUW0pHr+37cAVLY6ysELhFSmbeJh29IILAhIe0fvQIzOuUVCZxtgmfJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PR01MB8554
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---17Pm2F6dlWUYnS2d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 14, 2023 at 11:46:16AM -0600, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Applied to for-next, thanks!
-
-
---17Pm2F6dlWUYnS2d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmTaTUIACgkQFA3kzBSg
-KbZaIg//XMJpFp3VA+SvgguI2F+p7s5pQ1LhS3BPR9cxnpeb9QOe8vkSLthUd35o
-9ImYsH82xfRxJL0/+gJ0axhPMMdC1Sf8wudKBxibLmYvlZnFyVXjzXPSjEbpuwjR
-JjrM8toQVug/vn3nAiHwd3PMG/rtWFhfv/sGSb7IscOaQOtJ52qdGzJWFlU81blQ
-4SXETUaeM+l3O10jJBpcL+WI/J5Gog31ORqi14hh4AMOO/GkEZrMBO1smByiPiGU
-oOWPfXyBDmT6O9e3MTtn5TCtrDHdcWI/JHnpl1pyiEjBFV6GmjcA+Ra36+L7RwCc
-1kIDHKc3OOLluAkbuZF+28s/SqDEXoued+TUfDTYtyR1PgqCDEM/W0G3pcfV49uM
-41m2pavMgKoYY6FnGaaS5/qghLvKAzqn9X+JqpH0TzvTaS3rIZl6izdrCvauL1Cg
-b+/wb9BUtfV3EgCUV0ruuvvlIgjGaBu9WW7vMPhmkfRMVjFTVgI+NTEIGfpDc8+i
-OVluYvBPotiiUP/SYw6Gy8jqgZmVByWr5RsGu3b/1x8Sqq9ia8Jh66UaUUUhLSRW
-MUoxnGxJb7gQTYQSv3q1ZDJJhHAhsTT1HMN5q7n3ueAXL1Ef3HmZ4Q/87YU5jJbn
-nNHpy13KwdwzqPw2iKii9Ab8GWvWjN8siNfPM2GCJvEH2/TfoyY=
-=PhdP
------END PGP SIGNATURE-----
-
---17Pm2F6dlWUYnS2d--
+T24gMjAyMy0wOC0xNCAxMToyNSwgRG1pdHJ5IE9zaXBlbmtvIHdyb3RlOg0KPiAwNS4wOC4yMDIz
+IDAwOjQ5LCBBbmRpIFNoeXRpINC/0LjRiNC10YI6DQo+PiBIaSBMYXhtYW4gYW5kL29yIERtaXRy
+eSwNCj4+DQo+PiBPbiBUaHUsIEF1ZyAwMywgMjAyMyBhdCAwNToxMDowMlBNICswMDAwLCBQYXJr
+ZXIgTmV3bWFuIHdyb3RlOg0KPj4+DQo+Pj4gVGhpcyBwYXRjaCBmaXhlcyB0aGUgVGVncmEgRE1B
+IGNvbmZpZyBvcHRpb24gcHJvY2Vzc2luZyBpbiB0aGUNCj4+PiBpMmMtdGVncmEgZHJpdmVyLg0K
+Pj4+DQo+Pj4gVGVncmEgcHJvY2Vzc29ycyBwcmlvciB0byBUZWdyYTE4NiB1c2VkIEFQQiBETUEg
+Zm9yIEkyQyByZXF1aXJpbmcNCj4+PiBDT05GSUdfVEVHUkEyMF9BUEJfRE1BPXkgd2hpbGUgVGVn
+cmExODYgYW5kIGxhdGVyIHVzZSBHUEMgRE1BIHJlcXVpcmluZw0KPj4+IENPTkZJR19URUdSQTE4
+Nl9HUENfRE1BPXkuDQo+Pj4NCj4+PiBUaGUgY2hlY2sgZm9yIGlmIHRoZSBwcm9jZXNzb3IgdXNl
+cyBBUEIgRE1BIGlzIGludmVydGVkIGFuZCBzbyB0aGUgd3JvbmcNCj4+PiBETUEgY29uZmlnIG9w
+dGlvbnMgYXJlIGNoZWNrZWQuDQo+Pj4NCj4+PiBUaGlzIG1lYW5zIGlmIENPTkZJR19URUdSQTIw
+X0FQQl9ETUE9eSBidXQgQ09ORklHX1RFR1JBMTg2X0dQQ19ETUE9bg0KPj4+IHdpdGggYSBUZWdy
+YTE4NiBvciBsYXRlciBwcm9jZXNzb3IgdGhlIGRyaXZlciB3aWxsIGluY29ycmVjdGx5IHRoaW5r
+IERNQSBpcw0KPj4+IGVuYWJsZWQgYW5kIGF0dGVtcHQgdG8gcmVxdWVzdCBETUEgY2hhbm5lbHMg
+dGhhdCB3aWxsIG5ldmVyIGJlIGF2YWlsaWJsZSwNCj4+PiBsZWF2aW5nIHRoZSBkcml2ZXIgaW4g
+YSBwZXJwZXR1YWwgRVBST0JFX0RFRkVSIHN0YXRlLg0KPj4+DQo+Pj4gU2lnbmVkLW9mZi1ieTog
+UGFya2VyIE5ld21hbiA8cG5ld21hbkBjb25uZWN0dGVjaC5jb20+DQo+Pj4gLS0tDQo+Pj4gIGRy
+aXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyB8IDIgKy0NCj4+PiAgMSBmaWxlIGNoYW5nZWQs
+IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+Pj4NCj4+PiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdy
+YS5jDQo+Pj4gaW5kZXggYmNiYmYyM2FhNTMwLi5kYzZlZDNhOGQ2OWUgMTAwNjQ0DQo+Pj4gLS0t
+IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+Pj4gKysrIGIvZHJpdmVycy9pMmMv
+YnVzc2VzL2kyYy10ZWdyYS5jDQo+Pj4gQEAgLTQ0Miw3ICs0NDIsNyBAQCBzdGF0aWMgaW50IHRl
+Z3JhX2kyY19pbml0X2RtYShzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2RldikNCj4+PiAgICAg
+aWYgKElTX1ZJKGkyY19kZXYpKQ0KPj4+ICAgICAgICAgcmV0dXJuIDA7DQo+Pj4NCj4+PiAtICAg
+aWYgKCFpMmNfZGV2LT5ody0+aGFzX2FwYl9kbWEpIHsNCj4+PiArICAgaWYgKGkyY19kZXYtPmh3
+LT5oYXNfYXBiX2RtYSkgew0KPj4+ICAgICAgICAgaWYgKCFJU19FTkFCTEVEKENPTkZJR19URUdS
+QTIwX0FQQl9ETUEpKSB7DQo+Pj4gICAgICAgICAgICAgZGV2X2RiZyhpMmNfZGV2LT5kZXYsICJB
+UEIgRE1BIHN1cHBvcnQgbm90IGVuYWJsZWRcbiIpOw0KPj4+ICAgICAgICAgICAgIHJldHVybiAw
+Ow0KPj4NCj4+IENhbiBJIGhhdmUgeW91ciBvcGluaW9uIGhlcmUsIHBsZWFzZT8NCj4gDQo+IFRo
+ZSBwYXRjaCBsb29rcyBnb29kLCB0aGFua3MgUGFya2VyIGZvciBmaXhpbmcgaXQuIEknbGwgYmUg
+YWJsZSB0byB0ZXN0DQo+IGl0IG9ubHkgc29tZXRpbWUgbGF0ZXIgYW5kIGxldCB5b3UgYWxsIGtu
+b3cgaWYgdGhlcmUgd2lsbCBiZSBhbnkNCj4gcHJvYmxlbS4gUHJldmlvdXNseSBJIGhhdmVuJ3Qg
+bm90aWNlZCBhbnkgVGVncmEgSTJDIHJlZ3Jlc3Npb25zLCBtYXliZQ0KPiB3ZSBzaG91bGQgY2hh
+bmdlIHRoYXQgZGV2X2RiZyB0byBkZXZfd2Fybi4NCj4gDQoNCkhpIERtaXRyeSwNCg0KWW91IHdp
+bGwgbm90IG5vdGljZSBhbnkgaXNzdWVzIGlmIGJvdGggb3B0aW9ucyBhcmUgc2V0IChvciBub3Qg
+c2V0KSBhcyBpdCANCndpbGwgZmFsbCB0aHJvdWdoIGFuZCBjb25maWd1cmUgdGhlIERNQSBvciBz
+a2lwIERNQSBzZXR1cCBhcyBleHBlY3RlZC4gDQoNCkkgb25seSBub3RpY2VkIHRoZSBpc3N1ZSBh
+ZnRlciBJIGVuYWJsZWQgQ09ORklHX1RFR1JBMjBfQVBCX0RNQSB3aGljaCBpcyBhIA0KS0NvbmZp
+ZyByZXF1aXJlbWVudCBmb3IgdGhlIFRlZ3JhIEhTLVVBUlQgZHJpdmVyIGFuZCBteSBJMkMgc3Rv
+cHBlZCB3b3JraW5nLiANCg0KV2hpY2ggbm93IGFzIEkgd3JpdGUgdGhpcyBJIHJlYWxpemUgaXMg
+cG9zc2libHkgYW5vdGhlciAiYnVnIi4uLiBBcyBmYXIgYXMgSSBrbm93DQp0aGUgSFMgVUFSVHMg
+YWxzbyB1c2UgR1BDIERNQSBvbiBUMTg2IG9yIGxhdGVyPyBJIHdvdWxkIG5lZWQgdG8gbG9vayBp
+bnRvIHRoYXQuDQoNCkkgZG9uJ3QgdGhpbmsgdGhlIHByaW50IG5lZWRzIHRvIGJlIGEgd2Fybmlu
+Zywgbm90IGhhdmluZyBETUEgZW5hYmxlZA0KaXMgYSB2YWxpZCBvcHRpb24sIGl0IGp1c3QgbmVl
+ZGVkIHRoZSBjb3JyZWN0IENPTkZJRyBvcHRpb25zIHRvIGJlIGNoZWNrZWQgZm9yIA0KdGhlIERN
+QSB0eXBlIChBUEIgdmVyc3VzIEdQQykuDQoNCi1QYXJrZXINCg==
