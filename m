@@ -2,144 +2,122 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE6EC41513
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Aug 2023 14:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AB2C41513
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Aug 2023 15:26:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjHNOz3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Aug 2023 10:55:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49696 "EHLO
+        id S232678AbjHNPZw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Aug 2023 11:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232613AbjHNOzM (ORCPT
+        with ESMTP id S233018AbjHNPZ3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Aug 2023 10:55:12 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46A12183;
-        Mon, 14 Aug 2023 07:55:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MF12mdAlNv8vvvPRQ0xlLPGbqQx+c6aDqZurz89Vyau031uYsjz5kGl8TXuLOdLKyRofbOVdd2E0vVUmWsAszu2rtHtSuqi3zRcMKxl/fgvokFMBsHtcAHHQf/x5uEC3QjS5JzGvvDS42/zzq2w13Rq7ycomaoM/RTzbxCtljmMg44m9bg0X9/suA98M/EJMMyeDtJbWCR+WYcl/StSGMs5KqK2J5ZmQhx6qYANnbt/jLOAdiWVRbY40lUuBb1hPRTStl2U+HrH4s0yPrbtleK/IPgvyR1Iwy2wTUiiVst3IOuJ2sL7pCD6ZYS8jU49mIUJaR5Z7HUP90tk0JuutvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ctaEZZxwNkLxppmX05kks1kEcurKPD6MAiMEbJIS+cI=;
- b=hH4D/InEARKWsm76F7hadP9LuhDx7V1761SFr0zi2fTG+vARr0zVpCajPYxe90vHPwxbmzh2dE+51uWDqUc9R9MMQRvoiGQAi4BXJYYcnjFi4LQgalEGIHPD0hYto+tzmmlLgo9hilp0AXZMaBHioDP1ZyFtaw1nhvfy0ZT2g233P9qZk/Z0SpoQXVKxsylaL3C+kUBpI7eQhN2Sn/OyWTIyl9RjNnotucwo6wLwkgZDi+NpRfLoXUQPTEUQscEEjE/dOqhTq2DbeisiAyEjv2JtGkOcWPyJQq/99OoURhLvqVhOxd1nZO2xkwQSHtjbn0PDPG3hpD+odlJMXuR7Kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ctaEZZxwNkLxppmX05kks1kEcurKPD6MAiMEbJIS+cI=;
- b=JasAo7JjOh+MA9zJVsDmCa07B+nX8eWog1cofNkRXEBkMbVctcbeHwNW75uStW/LsuX98mr+C0coF4QEqWp6Qlo0NTLA3nPKrFy2lwyk1TPAIc7rZifGTuZ33O2VNA8l6N2sfgNMdwd2ffpaxScYmMsOllGg+7K3tcbfPKWCrD8OZqbOqfe+tPtzauegRe135x6j5w2bqzGrnCPD7esZJlqH4Y9AMLxG+YV9URtiYA4lV6TDzZeXg9JDrYTBf3xitW3mcgD/XLVu4S4QV0oZlMIrrYK372lpbW3380ISY25z6xkzRpG9lJaYggm4OfT4SThP0UtP30mR+LJ3xwVTkQ==
-Received: from CYXPR03CA0091.namprd03.prod.outlook.com (2603:10b6:930:d3::14)
- by DM6PR12MB4170.namprd12.prod.outlook.com (2603:10b6:5:219::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.24; Mon, 14 Aug
- 2023 14:55:04 +0000
-Received: from CY4PEPF0000EE36.namprd05.prod.outlook.com
- (2603:10b6:930:d3:cafe::f6) by CYXPR03CA0091.outlook.office365.com
- (2603:10b6:930:d3::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.33 via Frontend
- Transport; Mon, 14 Aug 2023 14:55:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000EE36.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.12 via Frontend Transport; Mon, 14 Aug 2023 14:55:04 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 14 Aug 2023
- 07:54:58 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 14 Aug
- 2023 07:54:57 -0700
-Received: from orome.fritz.box (10.127.8.12) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
- Transport; Mon, 14 Aug 2023 07:54:53 -0700
-From:   Thierry Reding <treding@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <conor@kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/68] 5.10.191-rc1 review
-In-Reply-To: <20230813211708.149630011@linuxfoundation.org>
-References: <20230813211708.149630011@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 14 Aug 2023 11:25:29 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD54C10E2;
+        Mon, 14 Aug 2023 08:25:27 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4fe0e34f498so7066297e87.2;
+        Mon, 14 Aug 2023 08:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692026726; x=1692631526;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R8YILAp3/EDICXZPGCGGCjADGpVxhYGATqQ8GeXwGKE=;
+        b=XOamVmaEUyVJSKBWvI30lLqNFH84CtHogAwMWMsoEyYzCJnRmTj16CBXkEOc66Nwm4
+         vekvdEJd9RIgcCXs69Du9pbZAMlJs7GJ949wSKxh2zj00hb+VlPISzyJCKlnl8Vey1RN
+         7AKTHH8+cQY40/m79Jq5oViEyjeQYJlAsbheqWKdBoUbrflBuB637Q7LpGiOBJKsx86+
+         851sWzuFFFgrRxVgOlbDjYgNomGaGHyMvxdQL+nAjiZEn+wZq9GrUtvvYgIl9ip3zOZS
+         sDhVhBjbqt2aDd2fhz88HWiUB1LqPYhlFsuo1MqZaCD8K/PH+6mYFxG0FcQihk7lQfxT
+         Kyiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692026726; x=1692631526;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R8YILAp3/EDICXZPGCGGCjADGpVxhYGATqQ8GeXwGKE=;
+        b=WvJbqIx8jFNwxU5zGFs8XqX555iwlFyyerAd9TWIbmwVVGi51hRC+O9F1SKU/ELmfJ
+         1T2Dr68lUqs93nLZ/Qw8wlLEkRSkKlHr4HST/xXO5QqOh00du917g5TnOkwO12lff/kt
+         ipdQBu4HUNEs9TXNQgaSQdHxyLiwS0neBLix7JYCOulfVKxqCST3+CPM5QnFaPmipJ4k
+         LysvBbmikqEgabyD9Lz1CwRZGhgFj5WBAgOhMn+Ye0dTW2hIA7PRw68LhoBMfauqD2bG
+         bpUMwFAq/rDtt8Tc6Ryx3KQIriGBppOGXq0zTXhURu7YlqZSdIg4657yEDtT32mDaNkA
+         RFjA==
+X-Gm-Message-State: AOJu0YwKtPR4vX6ciQ/CMQphg7iOpsTDiicVSmdkuLA+b5kvY7eRjaWr
+        vM/POsvGZQAqeuIHalPYy+M=
+X-Google-Smtp-Source: AGHT+IHhqfehopCy/2TywU8IbidZWFUIqwvUKLZ1oTB/azd9a0hwX8l1Pdk+Clx+wqeoZIx3pw9Pew==
+X-Received: by 2002:ac2:514f:0:b0:4fd:d08c:fa3e with SMTP id q15-20020ac2514f000000b004fdd08cfa3emr6235024lfd.42.1692026725707;
+        Mon, 14 Aug 2023 08:25:25 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-150-127.dynamic.spd-mgts.ru. [109.252.150.127])
+        by smtp.googlemail.com with ESMTPSA id c27-20020ac244bb000000b004fb85ffc82csm1999232lfm.10.2023.08.14.08.25.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Aug 2023 08:25:25 -0700 (PDT)
+Message-ID: <5594f66d-1aec-ee2f-d3d1-1185ca9cb06f@gmail.com>
+Date:   Mon, 14 Aug 2023 18:25:24 +0300
 MIME-Version: 1.0
-Message-ID: <b8e5ccc4-2ac9-463a-b654-c5fa27353a32@rnnvmail201.nvidia.com>
-Date:   Mon, 14 Aug 2023 07:54:53 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE36:EE_|DM6PR12MB4170:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62066ecf-c212-46f0-4fa0-08db9cd6715d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: G9tarbSWF78jNWjbpzMAvb5fOHLRC9A0hJGXf/Do4LTu7b9NCMs/f+FR7jd4CCD3B1MoH0NW4MNEm3stk8YeMKboRLRiUTjmJTFJKj2UIeCbIscrvI/0aGelfJ1oFc+Nmkvu6f3xSmtYBB3hlLwyodctWnaoxRsHm4Hmtqa/yATixEz1YIcoQWVUoYJMbmJJg5FPdo4pl/96QGnd2+3NTe3UxGlDEu2zF8/fOpAaBraaeue529tiIUkh8wAPfgZI55H/mcQleJrY3ysPCB4Hl2VsaIL8+uk1+9bv8DvwAJTsSIprBKNIVNcMEl7Qb+yp1P+iAnX9yAMFe9pcMhq7exp5wHf6cB0UUUbavkmDpgZsIi4kHY7xsNBQP3zDVmr1QJHCUf1bTmc+jklgMTmOabHzwiVzju4q0zG/FXP6hmBfVkj6QdVvtxyE6MvVOHG9VAr5b2EHkbCsoE5vSIuyhM2LFtBoikRMOOrVhCvTpLY4AE6NuEyF6eSIJOO1xyCA8g6f61dpJYnUcA7aceXb3cYvpeqMMcGBNNxjMHrBiZMqkhZKiXqtLiuhEOZVvlb27bKTeOVbNoqiD58SEA/l0w3FidUgsn0NDSAjJFlXGThj515O8DegBjJGMqJD9sachpuMSbOnQr8m7NFiWLA6k10CKsMkvbUsNILQg4PaKJPPStfkZ3p66QgTVrWkYe8NQaOXvfZLWt4fCg9dsRAnL/5+pp8PFIiG9XZaI7AYcQy+V4vfAiiu2Ocv9+Nsfrx397QPihd/tkqXS9UPtMTDG02Ai/dxbBLLz239k+ubR58=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(396003)(136003)(376002)(186006)(1800799006)(82310400008)(451199021)(40470700004)(46966006)(36840700001)(31686004)(966005)(31696002)(86362001)(356005)(82740400003)(47076005)(36860700001)(7636003)(26005)(2906002)(336012)(110136005)(54906003)(478600001)(40480700001)(426003)(8936002)(5660300002)(8676002)(70586007)(7416002)(40460700003)(41300700001)(316002)(4326008)(70206006);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2023 14:55:04.0838
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62066ecf-c212-46f0-4fa0-08db9cd6715d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EE36.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4170
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] i2c: tegra: Fix i2c-tegra DMA config option processing
+To:     Andi Shyti <andi.shyti@kernel.org>,
+        Parker Newman <pnewman@connecttech.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <fcfcf9b3-c8c4-9b34-2ff8-cd60a3d490bd@connecttech.com>
+ <20230804214902.entkn6xkklz5lh3h@intel.intel>
+Content-Language: en-US
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20230804214902.entkn6xkklz5lh3h@intel.intel>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 13 Aug 2023 23:19:01 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.191 release.
-> There are 68 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Tue, 15 Aug 2023 21:16:53 +0000.
-> Anything received after that time might be too late.
->=20
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.191-=
-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git l=
-inux-5.10.y
-> and the diffstat can be found below.
->=20
-> thanks,
->=20
-> greg k-h
+05.08.2023 00:49, Andi Shyti пишет:
+> Hi Laxman and/or Dmitry,
+> 
+> On Thu, Aug 03, 2023 at 05:10:02PM +0000, Parker Newman wrote:
+>>
+>> This patch fixes the Tegra DMA config option processing in the
+>> i2c-tegra driver.
+>>
+>> Tegra processors prior to Tegra186 used APB DMA for I2C requiring
+>> CONFIG_TEGRA20_APB_DMA=y while Tegra186 and later use GPC DMA requiring
+>> CONFIG_TEGRA186_GPC_DMA=y.
+>>
+>> The check for if the processor uses APB DMA is inverted and so the wrong
+>> DMA config options are checked.
+>>
+>> This means if CONFIG_TEGRA20_APB_DMA=y but CONFIG_TEGRA186_GPC_DMA=n
+>> with a Tegra186 or later processor the driver will incorrectly think DMA is
+>> enabled and attempt to request DMA channels that will never be availible,
+>> leaving the driver in a perpetual EPROBE_DEFER state.
+>>
+>> Signed-off-by: Parker Newman <pnewman@connecttech.com>
+>> ---
+>>  drivers/i2c/busses/i2c-tegra.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index bcbbf23aa530..dc6ed3a8d69e 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -442,7 +442,7 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
+>>     if (IS_VI(i2c_dev))
+>>         return 0;
+>>
+>> -   if (!i2c_dev->hw->has_apb_dma) {
+>> +   if (i2c_dev->hw->has_apb_dma) {
+>>         if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA)) {
+>>             dev_dbg(i2c_dev->dev, "APB DMA support not enabled\n");
+>>             return 0;
+> 
+> Can I have your opinion here, please?
 
-All tests passing for Tegra ...
-
-Test results for stable-v5.10:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    75 tests:	75 pass, 0 fail
-
-Linux version:	5.10.191-rc1-g5b1776cc14bf
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Thierry Reding <treding@nvidia.com>
+The patch looks good, thanks Parker for fixing it. I'll be able to test
+it only sometime later and let you all know if there will be any
+problem. Previously I haven't noticed any Tegra I2C regressions, maybe
+we should change that dev_dbg to dev_warn.
 
