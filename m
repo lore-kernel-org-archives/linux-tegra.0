@@ -2,147 +2,130 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977AAC001E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Aug 2023 01:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10C5C0015E
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Aug 2023 09:24:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233867AbjHOBfB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Aug 2023 21:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60090 "EHLO
+        id S236065AbjHOJXm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Aug 2023 05:23:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233873AbjHOBeo (ORCPT
+        with ESMTP id S236152AbjHOJWX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Aug 2023 21:34:44 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E995D172A;
-        Mon, 14 Aug 2023 18:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692063284; x=1723599284;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=jkr/6uy80FBJ1zVM9rO0oVAo4kuNs+82saVQaD5txn0=;
-  b=O91pmpZhWOUplfzsbpbaCjTCf7t4R+uB2LvPPMUqGuCJBQ0n6GjD2iuN
-   MPSURO3h6uidav/BdE0r2nDvWTEV3WQtG2i0gdFWiySiuVDqJ8CZRFXDf
-   yHrBKnl+lVWdz6oY8DsoBCA6jvE4zGP9bLXrZzbxRLfKGCzFf4w6ERDBB
-   WLkqqAevRC/u2IU8E3up9qbeNa32b/UfltBmy2PbSPrYwa8lEN/QsFIRx
-   eeRpN06XnDqD4QveUCnQxjuU0fu8zSHtAfICoZ3OH+G4KZvFRMIBOkOw0
-   duXZNZOiCEsNamJLolm+OH90M9WLK1tP1x5nxfAZpW63eBJq8FR58FNa5
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10802"; a="436073284"
-X-IronPort-AV: E=Sophos;i="6.01,173,1684825200"; 
-   d="scan'208";a="436073284"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2023 18:34:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10802"; a="768654964"
-X-IronPort-AV: E=Sophos;i="6.01,173,1684825200"; 
-   d="scan'208";a="768654964"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.215.149]) ([10.254.215.149])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2023 18:34:30 -0700
-Message-ID: <7fdbf6a5-87a2-65c1-7c1e-d7b936dd3a67@linux.intel.com>
-Date:   Tue, 15 Aug 2023 09:34:28 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Cc:     baolu.lu@linux.intel.com, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
+        Tue, 15 Aug 2023 05:22:23 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AC9A19AF;
+        Tue, 15 Aug 2023 02:21:53 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fe0d5f719dso8580903e87.2;
+        Tue, 15 Aug 2023 02:21:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692091311; x=1692696111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mty89Zsn743QA235zlInIryimxQpDYJ277HbsbXhdWg=;
+        b=m3yx0WGmf+HfuxGalGmrrQxAwumeWYg2dYkjAl9VgThDO6j8+PLy8YyX0K/uCFc7HD
+         JV/2Sb+zL4P3tMoO67fSdnfcH2FCQVT04NW+98IX+6l0SCwx4UoM4leYFvis4IlvrsuC
+         jY8hZD1kTTKesHHrV+OISKuxF34LnShdgfy6FDUH11J4dI+9KwumLlb9ya7zcbq8qar/
+         QM36P6vzlSP+Yb2z4o60A3dBSG0+lHNE3sHnS9cjDvXrKKwN/du+NDGf/wc9yeAzDSpp
+         MqP0EpF1F0LGhrG/oHjddJmm7sOMW3fSHiXsLolPCSoJNtUik3pRaTGGrRemc/LpzlJJ
+         t0iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692091311; x=1692696111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mty89Zsn743QA235zlInIryimxQpDYJ277HbsbXhdWg=;
+        b=CDExglijKaIeM/ytlZbRn5ACTTH/cI7CI2W2l2X/pgKqwEXNo8dCXUioIXAhv5wvYu
+         l05tXB8eNxZ/raRI0lUUrNQGbk8bum6c7qNq/6vsWhuQ4ZB2Gd9mRDr7FSLPzAtJwo7p
+         +Z5j5+Pl2AGoKFnUk889mCaEJLqnnmz2NSYXQvd2jTKV/mnH0ZdlQEA5JfjAsx0D6m8s
+         avFwIlqVW+K03stgiIeqjWvmOLmHaNtlM7or0tkblIBFN0lyqLcqN/0Je3a6RVIayX3Z
+         atySHa6nrsg0FnpVgMZ2QFps9q3F4wEHTrDKIO95sYs83AD85K95FfFoiN2FmYe5+4hW
+         Hc4w==
+X-Gm-Message-State: AOJu0YyH6mF7l7HGMG53y6izJcom2IBFPbZ0RB3H4t5GuIeQ3zrhC2F3
+        MA4NKdR1KGLMQPQkYaNemhs4tyNYnBwVBgSU
+X-Google-Smtp-Source: AGHT+IHqwcMfn+ov/HY3PvEe3qzwNYh+mZoAO2ekpyvjQAAlCFVl4ozDxPwwO9IbXdqt1b/CTvWU6w==
+X-Received: by 2002:a05:6512:4004:b0:4fd:fef7:95a1 with SMTP id br4-20020a056512400400b004fdfef795a1mr9543796lfb.53.1692091311136;
+        Tue, 15 Aug 2023 02:21:51 -0700 (PDT)
+Received: from DESKTOP-BUQC5RC.localdomain ([178.155.5.98])
+        by smtp.gmail.com with ESMTPSA id a5-20020a19f805000000b004fb9536bc99sm2353569lff.169.2023.08.15.02.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Aug 2023 02:21:50 -0700 (PDT)
+From:   Alexander Danilenko <al.b.danilenko@gmail.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>
+Cc:     Alexander Danilenko <al.b.danilenko@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v6 00/25] iommu: Make default_domain's mandatory
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>
-References: <0-v6-e8114faedade+425-iommu_all_defdom_jgg@nvidia.com>
- <50feed07-f89a-dfc2-d8a8-16f9bf0fe937@linux.intel.com>
- <ZNpksUtIY+3N1Hn3@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <ZNpksUtIY+3N1Hn3@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mason Zhang <Mason.Zhang@mediatek.com>,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: [PATCH] spi: tegra114: Remove unnecessary NULL-pointer checks
+Date:   Tue, 15 Aug 2023 12:20:58 +0300
+Message-Id: <20230815092058.4083-1-al.b.danilenko@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023/8/15 1:30, Jason Gunthorpe wrote:
-> On Mon, Aug 14, 2023 at 04:43:23PM +0800, Baolu Lu wrote:
-> 
->>> This is on github:https://github.com/jgunthorpe/linux/commits/iommu_all_defdom
->> It seems that after this series, all ARM iommu drivers are able to
->> support the IDENTITY default domain, hence perhaps we can remove below
->> code?
-> Yes, but this code is still used
-> 
->> If I remember it correctly, the background of this part of code is
->> that some arm drivers didn't support IDENTITY domain, so fall back to
->> DMA domain if IDENTITY domain allocation fails.
-> Not quite..
-> 
-> 	if (req_type)
-> 		return __iommu_group_alloc_default_domain(group, req_type);
-> 
-> req_type == 0 can still happen because it depends on what
-> def_domain_type returns, which is still 0 in alot of cases
-> 
-> 	/* The driver gave no guidance on what type to use, try the default */
-> 	dom = __iommu_group_alloc_default_domain(group, iommu_def_domain_type);
-> 	if (dom)
-> 		return dom;
-> 
-> So we try the default which might be IDENTITY/DMA/DMA_FQ - still have
-> to do this.
-> 
-> 	/* Otherwise IDENTITY and DMA_FQ defaults will try DMA */
-> 	if (iommu_def_domain_type == IOMMU_DOMAIN_DMA)
-> 		return NULL;
-> 	dom = __iommu_group_alloc_default_domain(group, IOMMU_DOMAIN_DMA);
-> 	if (!dom)
-> 		return NULL;
-> 
-> 	pr_warn("Failed to allocate default IOMMU domain of type %u for group %s - Falling back to IOMMU_DOMAIN_DMA",
-> 		iommu_def_domain_type, group->name);
-> 
-> And this hunk is primarily a fallback in case the DMA_FQ didn't
-> work. Then we try normal DMA.
-> 
-> That it also protected against not implementing IDENTITY is a side
-> effect, so I think we have to keep all of this still.
+cs_setup, cs_hold and cs_inactive points to fields of spi_device struct,
+so there is no sense in checking them for NULL.
 
-Okay, fair enough. Thanks for the explanation.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Best regards,
-baolu
+Fixes: 04e6bb0d6bb1 ("spi: modify set_cs_timing parameter")
+Signed-off-by: Alexander Danilenko <al.b.danilenko@gmail.com>
+---
+ drivers/spi/spi-tegra114.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 488df681eaef..2226d77a5d20 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -723,27 +723,23 @@ static int tegra_spi_set_hw_cs_timing(struct spi_device *spi)
+ 	struct spi_delay *setup = &spi->cs_setup;
+ 	struct spi_delay *hold = &spi->cs_hold;
+ 	struct spi_delay *inactive = &spi->cs_inactive;
+-	u8 setup_dly, hold_dly, inactive_dly;
++	u8 setup_dly, hold_dly;
+ 	u32 setup_hold;
+ 	u32 spi_cs_timing;
+ 	u32 inactive_cycles;
+ 	u8 cs_state;
+ 
+-	if ((setup && setup->unit != SPI_DELAY_UNIT_SCK) ||
+-	    (hold && hold->unit != SPI_DELAY_UNIT_SCK) ||
+-	    (inactive && inactive->unit != SPI_DELAY_UNIT_SCK)) {
++	if (setup->unit != SPI_DELAY_UNIT_SCK ||
++	    hold->unit != SPI_DELAY_UNIT_SCK ||
++	    inactive->unit != SPI_DELAY_UNIT_SCK) {
+ 		dev_err(&spi->dev,
+ 			"Invalid delay unit %d, should be SPI_DELAY_UNIT_SCK\n",
+ 			SPI_DELAY_UNIT_SCK);
+ 		return -EINVAL;
+ 	}
+ 
+-	setup_dly = setup ? setup->value : 0;
+-	hold_dly = hold ? hold->value : 0;
+-	inactive_dly = inactive ? inactive->value : 0;
+-
+-	setup_dly = min_t(u8, setup_dly, MAX_SETUP_HOLD_CYCLES);
+-	hold_dly = min_t(u8, hold_dly, MAX_SETUP_HOLD_CYCLES);
++	setup_dly = min_t(u8, setup->value, MAX_SETUP_HOLD_CYCLES);
++	hold_dly = min_t(u8, hold->value, MAX_SETUP_HOLD_CYCLES);
+ 	if (setup_dly && hold_dly) {
+ 		setup_hold = SPI_SETUP_HOLD(setup_dly - 1, hold_dly - 1);
+ 		spi_cs_timing = SPI_CS_SETUP_HOLD(tspi->spi_cs_timing1,
+@@ -755,7 +751,7 @@ static int tegra_spi_set_hw_cs_timing(struct spi_device *spi)
+ 		}
+ 	}
+ 
+-	inactive_cycles = min_t(u8, inactive_dly, MAX_INACTIVE_CYCLES);
++	inactive_cycles = min_t(u8, inactive->value, MAX_INACTIVE_CYCLES);
+ 	if (inactive_cycles)
+ 		inactive_cycles--;
+ 	cs_state = inactive_cycles ? 0 : 1;
+-- 
+2.34.1
+
