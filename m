@@ -2,98 +2,95 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D3AC41513
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Aug 2023 16:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539C2C41513
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Aug 2023 16:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245317AbjHPQlI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Aug 2023 12:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36414 "EHLO
+        id S233949AbjHPQ4p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Aug 2023 12:56:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245043AbjHPQk4 (ORCPT
+        with ESMTP id S1344996AbjHPQ4U (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Aug 2023 12:40:56 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6DB199B;
-        Wed, 16 Aug 2023 09:40:55 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-98377c5d53eso877724066b.0;
-        Wed, 16 Aug 2023 09:40:55 -0700 (PDT)
+        Wed, 16 Aug 2023 12:56:20 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8B011BE7
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Aug 2023 09:56:19 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fe4cdb724cso63513295e9.1
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Aug 2023 09:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692204054; x=1692808854;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZnAg5Sl149z7ViygrBQ3MpmOtkYN8kNq0j+PK91FRkA=;
-        b=k9PU1QbtDp9pJtbV4tv5vbKng3HPJRyWMCPUe9pVPfy8bT0yzusB13SoSbhte0puc+
-         5XHiO2d1lEF3NIwP3O5sb737ciKUU+Ihg2EWPjr9eFk6Qwcz2gfpqkU8twkJut7+xrpP
-         Dl5BqQT/k9CquUrrr9tNIeWINdJhpf0d+k20aXtBWDDbzhzZJoYx290mpEuxi4LGnuVv
-         u3lSiP4wsfPgcBU6H1VK4HXXHtjW6EvP61RppgvERXwFZMyztWKDyrrEEAAzJW5y9ALZ
-         n1ISny/JnhFIqA1UoVKVajGVT+xb4r85ywDp3Pfsa9RS7l2y9TAnvQF1bdqGDRDAOQqm
-         0KOw==
+        d=linaro.org; s=google; t=1692204978; x=1692809778;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YJ/7Ue64ruuo8T+szNkGJZsk2gUYlOBeVjiXucVPa+Q=;
+        b=VMTtyyFLbaM8ukHAPJMeiQFvUX98mL+upTHrbM2TGki1GaW8qNRkiEvW6Mz6tM4x16
+         KNGQzUCE+1lW9g3rI45gGogF8Jz87QpuIqQt5NT1jFrQtkifHhfC1v5Cg+E6URHXRDuI
+         6Pl1JJRtBTKvL3+JeVrUPAMN7sdCxFzkty/eu6L6ouZL1UZzTEaLdrkERPQjPsafFs/L
+         /7TKs/0gz8pqc963c9uCF07LluiafM68H8Elie42pa+gSt0siq/p89ATD0I1X4sZbPM7
+         h56uUpoLbJd0dK0K4RvGxA2K/Ret12VRy9KY96d2GLg+/qVzE+sn22x42VgqOaWfSFZy
+         7khg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692204054; x=1692808854;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZnAg5Sl149z7ViygrBQ3MpmOtkYN8kNq0j+PK91FRkA=;
-        b=LEZsts+48Zmmr+SJgJ1YKejXSxh3gBn7nNGFxwABWMVMR4cA+xoIZzAE1ErFw1jiOI
-         6U7F6usWB8/D023V9gel701JmRw3RDo6+0ZHWYEeGvZ01N6LNkZxV5xPgOwlrQUv/IqS
-         vaSkU6qaBtMDBet7ejwLuB2Id8Ut0AJ8nItEo1VsF6j/ngvAiqr9MC8yXouvuSGK07GT
-         IzxUXh9wAqFCZL2C4Rrd7Dv0T2xfSHh9OSiC+P6TzIsbNDl0iuzv7P8uztar5eu/yEo9
-         GgAc4bV5TNmjZF3X6isfz08pdToOCvD2IvebETB1z9i0w2BiC0z8ifALlSBOe2hqh19e
-         pr2Q==
-X-Gm-Message-State: AOJu0YxcITmcIiKokjmuW/M30CDYrAK/DImmOT2BpyGNwDgn6itQwk+v
-        P0hpjj8hZstdFoq1IXiX2xw=
-X-Google-Smtp-Source: AGHT+IEjxT84OgkQa8mveW5q/Es+b+AQV5j79gPtNTYmi7XhBX86o72+WMhwZmmu4GbNc7iqC7Xp0g==
-X-Received: by 2002:a17:907:75f8:b0:99b:4908:1a6d with SMTP id jz24-20020a17090775f800b0099b49081a6dmr1832648ejc.52.1692204053659;
-        Wed, 16 Aug 2023 09:40:53 -0700 (PDT)
-Received: from [127.0.0.1] ([46.211.8.232])
-        by smtp.gmail.com with ESMTPSA id qx22-20020a170906fcd600b0099cd008c1a4sm8726210ejb.136.2023.08.16.09.40.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Aug 2023 09:40:53 -0700 (PDT)
-Date:   Wed, 16 Aug 2023 19:40:52 +0300
-From:   Svyatoslav Ryhel <clamor95@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_1/1=5D_ARM=3A_tegra=3A_trans?= =?US-ASCII?Q?former=3A_use_labels_for_mmc_in_aliases?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <ZNz6VyWASDV2Srie@orome>
-References: <20230730125150.4716-1-clamor95@gmail.com> <20230730125150.4716-2-clamor95@gmail.com> <ZNz6VyWASDV2Srie@orome>
-Message-ID: <900CEBDC-61FB-4123-9E1F-18D18FF0B2CD@gmail.com>
+        d=1e100.net; s=20221208; t=1692204978; x=1692809778;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YJ/7Ue64ruuo8T+szNkGJZsk2gUYlOBeVjiXucVPa+Q=;
+        b=RqUYtfdRuO4y0LlqEv3jceOXxaQh88mYbku+thVHfowv2z4zkmf06O6M1ry2DNl8oE
+         JShwmhuHyJz/Xpf5jz/ZPre47PUdk9RWfBUFyuVgX3qdQozQ8bJlzTpJZ0VFDvFQZS1A
+         sZ7V49/7wsLy2h+UAvQklhAxJMhavB0TCn94vzP4NRoJ4fetHkjfqX2gfGV1XxVot+CH
+         iznUqFhrpgbqPfsEtjgmbhEyUGqI5H+3Kf5IIJiQ5yIeng7TaNWDWurPHNrL1DaNvpmp
+         TQx/GqqocOta2JSOmFsy6bU37aGAVWhmRD629z4Z1VIRVcrR6hrT3eQLQ5zctMB56z6X
+         chqA==
+X-Gm-Message-State: AOJu0YxCymeiwamGJ+bPm+SWFWVGUXbqCL/kaXMJwVaKr0r/C3Tb/DYg
+        YfzYXgUlV9/M5MvFIv35NVWNKg==
+X-Google-Smtp-Source: AGHT+IGRD2GPdHF+WwbQeFKbhUDof/P08J1k3Vva93Q9LEWKai3kN+RBUYPs+ZycDdnTV78cytNS8g==
+X-Received: by 2002:a1c:4b08:0:b0:3fb:e206:ca5f with SMTP id y8-20020a1c4b08000000b003fbe206ca5fmr1891670wma.31.1692204978103;
+        Wed, 16 Aug 2023 09:56:18 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id k7-20020adfe3c7000000b003176c6e87b1sm21935525wrm.81.2023.08.16.09.56.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Aug 2023 09:56:17 -0700 (PDT)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+To:     sam@ravnborg.org, airlied@gmail.com, daniel@ffwll.ch,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, thierry.reding@gmail.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20230807133307.27456-1-diogo.ivo@tecnico.ulisboa.pt>
+References: <20230807133307.27456-1-diogo.ivo@tecnico.ulisboa.pt>
+Subject: Re: (subset) [PATCH v3 0/5] Add JDI LPM102A188A display panel
+ support
+Message-Id: <169220497726.2977065.3236775969816366659.b4-ty@linaro.org>
+Date:   Wed, 16 Aug 2023 18:56:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi,
 
+On Mon, 07 Aug 2023 14:33:00 +0100, Diogo Ivo wrote:
+> These patches add support for the JDI LPM102A188A display panel,
+> found in the Google Pixel C.
+> 
+> Patch 1 adds the DT bindings for the panel.
+> 
+> Patch 2 adds the panel driver, which is based on the downstream
+> kernel driver published by Google and developed by Sean Paul.
+> 
+> [...]
 
-16 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2023 =D1=80=2E 19:33:27 GMT+03:00,=
- Thierry Reding <thierry=2Ereding@gmail=2Ecom> =D0=BD=D0=B0=D0=BF=D0=B8=D1=
-=81=D0=B0=D0=B2(-=D0=BB=D0=B0):
->On Sun, Jul 30, 2023 at 03:51:50PM +0300, Svyatoslav Ryhel wrote:
->> Use phandle references for mmc instead of path in aliases=2E
->>=20
->> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
->> ---
->>  arch/arm/boot/dts/tegra114-asus-tf701t=2Edts           | 12 ++++++----=
---
->>  =2E=2E=2E/boot/dts/tegra30-asus-transformer-common=2Edtsi    | 12 ++++=
-++------
->>  2 files changed, 12 insertions(+), 12 deletions(-)
->
->The commit message doesn't describe why this is useful and without any
->clarification I don't see any benefit in doing this=2E
+Thanks, Applied to https://anongit.freedesktop.org/git/drm/drm-misc.git (drm-misc-next)
 
-1=2E Simplify comprehension of aliases, path is harder to read then a labe=
-l
-2=2E Unify with other t20 and t30 trees (paz00, tf101, grouper, picasso et=
-c)
+[1/5] dt-bindings: display: Add bindings for JDI LPM102A188A
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=a913a739ab6e6ef10c0c47cb85dd4a105b3d9df7
+[2/5] drm/panel: Add driver for JDI LPM102A188A
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=25205087df1ffe06ccea9302944ed1f77dc68c6f
 
->Thierry
+-- 
+Neil
+
