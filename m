@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A27C2FC39
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D5DC30624
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Aug 2023 14:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351768AbjHQOOW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Aug 2023 10:14:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39634 "EHLO
+        id S1351773AbjHQOOX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Aug 2023 10:14:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351860AbjHQOOS (ORCPT
+        with ESMTP id S1351858AbjHQOOQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Aug 2023 10:14:18 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 477B32D5F
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:17 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bccc9ec02so1076848566b.2
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:17 -0700 (PDT)
+        Thu, 17 Aug 2023 10:14:16 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19BA42D5F
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:15 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fe15bfb1adso12564338e87.0
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692281656; x=1692886456;
+        d=gmail.com; s=20221208; t=1692281653; x=1692886453;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u2MC56X1arK1Dw8Cm4mCvKUQ1vvfwiBeKxieKUaU5fA=;
-        b=ratbWB+29zPV016eE5VJrgj5aNDJajI1deUdLWqKQCoY/YmLHjKKji2wEk31dsRHod
-         qHuhdzkXffNxim5f4ex/W3yPU3/lGV8IvLHeTFE4MCkJCqctVlwquiXAlCp1NyiCAMBC
-         ObPcw+W9+Gooj/eELNAQd//vW7fRkBHQuvjlN7CBI3yIUoF967RoL7/nlG7kQMgNYF5N
-         SmevWR5B+w8/DQlIy0MLkHgLbiZ8MdMg5i44SMWeBngLXUxKd5Y0RAdnSJ69sdx9xhLs
-         HC+glb1jYxyLScRSO2l7OPIBg3P0mvqjP8hrQOBXnKuuMkz1FnLjdlXyhJQrUeWUAq9t
-         e+bg==
+        bh=TWzPdt3S0jQVQwpfXzH3IM4XGyT0WqsoVCFzt2KeJbc=;
+        b=RjqsxpgRCFRe/l+xqzTFylBl7WOXp/KIYRNQTPeHxDGz9OVJiiVfLwR9Zatdoa01gE
+         Q2vIG/m5vo2wXCiX3XSx0KRZU8yvmDeLpffzlTgj50Gsu+F3Ak5+04qy0nBurlxr09Mc
+         zjp0Jgy4MJyAAPi90LMB037LGzg+E44aDnOlFoZppw3muII6+9MvBuzS2CBv+WzPZu9R
+         JrNKcpeVuBIuB9xjUJ84GVvENowkxR7/ih76wYGkUnktpQLNfoJXWry70I3DW1/kW06V
+         0MpKIlJjRkO3hAyG7L0JlV9byCbJKej6JF+Qu3XfR6wnpNk8jGbqcxzplXL20ntqAgjz
+         dvDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692281656; x=1692886456;
+        d=1e100.net; s=20221208; t=1692281653; x=1692886453;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u2MC56X1arK1Dw8Cm4mCvKUQ1vvfwiBeKxieKUaU5fA=;
-        b=heBGbJVbZ5ph7XfLuU8Sue3f26wnHAaWurg02Uy4N9Mhtu3PZhbELadr0xvxbbYlKi
-         e3AGsM1BiU0UeysKDAf+MLLqZJUalfvCy5HeIXmmJbmmgwUKgnNGDc9JttE1wmWcAQCK
-         cYzRmYB+/t45HhozLNRUITTkAw53VCOatGQZJle6NPJ3oJUDr8YOuO8d3x4ScQISnU83
-         n5tLaLUU5kQLaW+wbx6zRNnzKOj0YWdIWoYrjwxwBF9qP9pkOOiQS/VOvexfEkhvC1oH
-         CziBN+a4gvxji6SIBAQKr8gKTdNKLwlyTtL+sAWuT2nb3bAFFBL8JYnUb4ZjNU8CGeRF
-         6y1A==
-X-Gm-Message-State: AOJu0Yy2YVUpvwaii5qem+cPGW65OlEIMf471qaQH95K0xq2AtWLojR6
-        BYZz9nBmvyyp63roUQMQ9Mg=
-X-Google-Smtp-Source: AGHT+IHLkjb3PFQ1UF4Y3pEWlPq9/VZMnik+4h3PNh+kQnL6PMRCODbUeTEjVTB1Qr7mTljU94Xqog==
-X-Received: by 2002:a17:907:318b:b0:99b:cf57:11e3 with SMTP id xe11-20020a170907318b00b0099bcf5711e3mr4967689ejb.59.1692281655539;
-        Thu, 17 Aug 2023 07:14:15 -0700 (PDT)
+        bh=TWzPdt3S0jQVQwpfXzH3IM4XGyT0WqsoVCFzt2KeJbc=;
+        b=YTZ+8rv6YgSQbHaEbytFzM/tGKT4/5FMz9KhlezKIYt9eGCYF9xjmVBNZmpflZTiRT
+         iRbwFBzIkb6VE9pS+WbuFMCqOe+tWsL1avePppNcwtyKmRdeqFO7iGbjMHNGlb6yPO/V
+         Pxinp2+4CWehugUHb5qE6z4F3AgXSzl4YyvAkmLTqF8sA7gouIf0YGHZhyAzfimzcKeK
+         LK75OHT9Ind5ZdWaVAnw5zaKDKvxGcjocPbtFjKFv0p3TcCNX8Gekix61/1a6O+pO2V1
+         3DcN8QF/FefmiVYGRhCHtzvdzBQCpjTIrlmWWyAdDPY2Rjmx/fJbCy8k9Zxv0qi6sPjF
+         h2OQ==
+X-Gm-Message-State: AOJu0Yw/Qf9Peua+3G1yK0sQQSs/i9GK8RQYc0961v0QGxCfKbqsjIQc
+        BeK1A1FDOMvK/a4t5xSeqOrd+3PaNew=
+X-Google-Smtp-Source: AGHT+IGs78l03PX372DZFBCWfWwWZjOQ22751VLnSDYHCqiKtgQG1bDP4sTwFdwYIUZpfIizANH7Ug==
+X-Received: by 2002:ac2:58f2:0:b0:4f8:7325:bcd4 with SMTP id v18-20020ac258f2000000b004f87325bcd4mr4287937lfo.0.1692281653155;
+        Thu, 17 Aug 2023 07:14:13 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g11-20020a17090613cb00b00992d0de8762sm10136990ejc.216.2023.08.17.07.14.14
+        by smtp.gmail.com with ESMTPSA id p22-20020a170906229600b00977c7566ccbsm10140847eja.164.2023.08.17.07.14.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 07:14:14 -0700 (PDT)
+        Thu, 17 Aug 2023 07:14:12 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/5] arm64: tegra: Use correct format for clocks property
-Date:   Thu, 17 Aug 2023 16:14:05 +0200
-Message-ID: <20230817141407.3678613-4-thierry.reding@gmail.com>
+Subject: [PATCH 1/5] arm64: tegra: Add missing current-speed for SBSA UART
+Date:   Thu, 17 Aug 2023 16:14:03 +0200
+Message-ID: <20230817141407.3678613-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230817141407.3678613-1-thierry.reding@gmail.com>
 References: <20230817141407.3678613-1-thierry.reding@gmail.com>
@@ -68,106 +68,40 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-phandle and clock specifier pairs should be enclosed in angular
-brackets.
+The SBSA UART device tree bindings require a current-speed property that
+specifies the baud rate configured by the firmware. Add it on Jetson AGX
+Orin and Jetson Orin Nano/NX.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 32 ++++++++++++------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts | 1 +
+ arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi           | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 7bb5fc60699b..066b87ef7e41 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -743,8 +743,8 @@ gen1_i2c: i2c@3160000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			clock-frequency = <400000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C1
--				  &bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C1>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C1>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
-@@ -762,8 +762,8 @@ cam_i2c: i2c@3180000 {
- 			#size-cells = <0>;
- 			status = "disabled";
- 			clock-frequency = <400000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C3
--				&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C3>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C3>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
-@@ -781,8 +781,8 @@ dp_aux_ch1_i2c: i2c@3190000 {
- 			#size-cells = <0>;
- 			status = "disabled";
- 			clock-frequency = <100000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C4
--				&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C4>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C4>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
-@@ -800,8 +800,8 @@ dp_aux_ch0_i2c: i2c@31b0000 {
- 			#size-cells = <0>;
- 			status = "disabled";
- 			clock-frequency = <100000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C6
--				&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C6>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C6>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
-@@ -819,8 +819,8 @@ dp_aux_ch2_i2c: i2c@31c0000 {
- 			#size-cells = <0>;
- 			status = "disabled";
- 			clock-frequency = <100000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C7
--				&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C7>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C7>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
-@@ -845,8 +845,8 @@ dp_aux_ch3_i2c: i2c@31e0000 {
- 			#size-cells = <0>;
- 			status = "disabled";
- 			clock-frequency = <100000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C9
--				&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C9>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C9>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
-@@ -1810,8 +1810,8 @@ gen2_i2c: i2c@c240000 {
- 			#size-cells = <0>;
- 			status = "disabled";
- 			clock-frequency = <100000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C2
--				&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C2>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C2>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
-@@ -1829,8 +1829,8 @@ gen8_i2c: i2c@c250000 {
- 			#size-cells = <0>;
- 			status = "disabled";
- 			clock-frequency = <400000>;
--			clocks = <&bpmp TEGRA234_CLK_I2C8
--				&bpmp TEGRA234_CLK_PLLP_OUT0>;
-+			clocks = <&bpmp TEGRA234_CLK_I2C8>,
-+				 <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			clock-names = "div-clk", "parent";
- 			assigned-clocks = <&bpmp TEGRA234_CLK_I2C8>;
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+index 201a7a8a01cd..b4a6cee0b9e3 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+@@ -121,6 +121,7 @@ serial@3100000 {
+ 		};
+ 
+ 		serial@31d0000 {
++			current-speed = <115200>;
+ 			status = "okay";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi
+index 45c4282b63e3..90490f429074 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000.dtsi
+@@ -31,6 +31,7 @@ eeprom@57 {
+ 		};
+ 
+ 		serial@31d0000 {
++			current-speed = <115200>;
+ 			status = "okay";
+ 		};
+ 
 -- 
 2.41.0
 
