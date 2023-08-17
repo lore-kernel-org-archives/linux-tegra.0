@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F8FC2FC37
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Aug 2023 14:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320BCC41513
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Aug 2023 14:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351762AbjHQOOV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Aug 2023 10:14:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39636 "EHLO
+        id S1351770AbjHQOOX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Aug 2023 10:14:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351861AbjHQOOT (ORCPT
+        with ESMTP id S1351859AbjHQOOR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Aug 2023 10:14:19 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4862D62
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:18 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99df431d4bfso215968866b.1
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:18 -0700 (PDT)
+        Thu, 17 Aug 2023 10:14:17 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1AD19A1
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:16 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99357737980so1027200666b.2
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 07:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692281657; x=1692886457;
+        d=gmail.com; s=20221208; t=1692281654; x=1692886454;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ENNpTWDc6lYkkbnsKJjWTnWpHMyiAwPlCSe44qUKvZk=;
-        b=Duk19O9u9umN0L9RpFTfPuhH+d/K5vUDZ6dle/b6nz49naVWxKKWCaW41TaFb/PnM8
-         /u0EJSum0DlGABwzSeIMcz0hOvijbF8WqTHGoQX74UArLLDx2qw6Mw9Cc2zkdV+FGw2w
-         cYZpP9j+ScE3O7Cimmjl1kL9NA9H0P2/zGsqdENADBlwKNStKtOQTaPsUDZjJ+OPEQPq
-         K8N5PCVE8JNF+auD1CHDyydB6T4o4M/hrfFHYuE/AZyU1gY6rvFyV4xUXRYG+lbzwLqf
-         CK6SqdorFTZN1Ho5KoYdR3HkodHI8pCga1VX6w2+m5b5vhh823EhL3HzUpERcljT97Xz
-         CFrQ==
+        bh=QvC17pQ0MckM4cMoMks+jYN8SAjVrF0smMZ9co8N6Y8=;
+        b=GwhqqYUx/AERcfNsemuOWjspXWM7xEjBIOcrdUaqiu+/Vz/fNbTZMMb3pm5vSt70Eo
+         U2AgZbpGQKKcQiNwdSk25uoMYp1Sv7lDjWbNup5V2Re3z0wXhVFcV3Gx5Oo1ZK+Tw4bj
+         E8uiTALATumnUctLQjxTSI0w4eZlpdN2j0F1+aK6pUvlXwvj7fSS9MpnAfFsDYWhkYzZ
+         ZwKzulXRAxZOxoQJX0zfgTfF+nYLa9KO8o6B2T/JhEhiwBietzvIUn/xSiojbwtJJNZ3
+         7NgLAkRHDzx4fC0rNBbWs5LxQx5D2xiai7nrO9/p4oFirJ1G/GAfbH5CqoO8uCZztiQB
+         rH+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692281657; x=1692886457;
+        d=1e100.net; s=20221208; t=1692281654; x=1692886454;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ENNpTWDc6lYkkbnsKJjWTnWpHMyiAwPlCSe44qUKvZk=;
-        b=fokhlo2B9gUosOyNmeFMnH+nPhp/KmKa3KfVGz6cdz4/fonGXSng1N+1LBkxHIWiyY
-         yyt65aD1xf2uMML4LAIMJu3pvp2lHERNkK4DEXHp6V6SAFwhtFbBrhNP24fhJ12u66s7
-         IPqlHUSxJ8g78Kxq6ct8HqR4rEicjfavfAq9sKjFjFTVU2hfgnR4R8byHesbW3fINY1Q
-         UEwhO6T6o3rZrNfkizHJrgjOQkSGJvPBqgiDcSREpM2NUQWtJdlRMQ0c7/aLNFsSuRsL
-         5mmfDBBvg2kdz9z74uEOrzCNMtFctkMgC55V3Uqm7SS+AL4nrB5JToHcaoaxRYSxLk25
-         L3Nw==
-X-Gm-Message-State: AOJu0Yw1YzgxbtXF77kjFhdYce+TXgaU5SSqqN0l5S+ukkelOdvH9xGw
-        JFHpr59MdbH3/aB8Ptp65mc=
-X-Google-Smtp-Source: AGHT+IHXVJdGMSppKQ/IvalpNpND5vxqkTCXGYyP4470DdscmV9AlhFYylJNxOizhz3n4/APT8X/8g==
-X-Received: by 2002:a17:906:27c8:b0:99d:ed5e:cc7f with SMTP id k8-20020a17090627c800b0099ded5ecc7fmr4082966ejc.13.1692281656799;
-        Thu, 17 Aug 2023 07:14:16 -0700 (PDT)
+        bh=QvC17pQ0MckM4cMoMks+jYN8SAjVrF0smMZ9co8N6Y8=;
+        b=GiKuvB4QypuBkbzK6G7iJuqFUWsw/p1RCaRd2cLb8Xrk+h7uYgk4wT/G6850ziFbYD
+         ya632uWbhc08EaGm5X3SHcCTamqJM1BdD/AAR+NrG4HO328fYxfYq1v3XfRF28NEVkbc
+         Sqo+wj+QmivEvGR7+McggXNCciCjG53c/7awaA2pclzn1OnJrlu1Fm6yVa+/gZbCw/V0
+         FC76sxVRXRARBgmhRTWo9HakyKOl2Ksr0nItW+VPd2O477p0VJfluziZfxNqP9D8xY8m
+         pSOu4fSj3yPC+lmd8DgRQxZgEyRGkrpE42CI0SS62fbrE0/bbAMbwiCw2t7j5WYjPGlf
+         mcxQ==
+X-Gm-Message-State: AOJu0YwRFnpOYO+2FlpmuZxrjvr9Zr0oHLs6sM61Zugd9abPzBUwmnBH
+        RCSk3nlepmy/FwLIVhSxkp4=
+X-Google-Smtp-Source: AGHT+IEyCyhvxcIaxCfSIVeJDQ5+DigBuFF1119wULL4b2jKQcGcuaU6E7OpCxVjMl6fi4OkwfFV2g==
+X-Received: by 2002:a17:907:7613:b0:994:555a:e49f with SMTP id jx19-20020a170907761300b00994555ae49fmr5346827ejc.31.1692281654322;
+        Thu, 17 Aug 2023 07:14:14 -0700 (PDT)
 Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ox11-20020a170907100b00b00989828a42e8sm10131727ejb.154.2023.08.17.07.14.16
+        by smtp.gmail.com with ESMTPSA id kk16-20020a170907767000b00997e99a662bsm10100276ejc.20.2023.08.17.07.14.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 07:14:16 -0700 (PDT)
+        Thu, 17 Aug 2023 07:14:13 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/5] arm64: tegra: Add dmas and dma-names for Tegra234 UARTE
-Date:   Thu, 17 Aug 2023 16:14:06 +0200
-Message-ID: <20230817141407.3678613-5-thierry.reding@gmail.com>
+Subject: [PATCH 2/5] arm64: tegra: Remove duplicate nodes on Jetson Orin NX
+Date:   Thu, 17 Aug 2023 16:14:04 +0200
+Message-ID: <20230817141407.3678613-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230817141407.3678613-1-thierry.reding@gmail.com>
 References: <20230817141407.3678613-1-thierry.reding@gmail.com>
@@ -68,29 +68,56 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Commit 940acdac99b2 ("arm64: tegra: Add UARTE device tree node on
-Tegra234") added the device tree node for the UARTE on Tegra234 but
-didn't include the "dmas" and "dma-names" properties required for this
-device when it's used in high-speed mode.
+The SBSA UART and TCU as well as the TCU alias and the stdout-path are
+configured via the P3768 carrier board DTS include, so the can be
+removed from the system DTS file.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ .../dts/nvidia/tegra234-p3768-0000+p3767-0000.dts     | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 066b87ef7e41..50db1b1e982b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -732,6 +732,8 @@ uarte: serial@3140000 {
- 			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&bpmp TEGRA234_CLK_UARTE>;
- 			resets = <&bpmp TEGRA234_RESET_UARTE>;
-+			dmas = <&gpcdma 20>, <&gpcdma 20>;
-+			dma-names = "rx", "tx";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
+index 3b7cd0e2af21..c923b865a69f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3768-0000+p3767-0000.dts
+@@ -24,14 +24,11 @@ fb: framebuffer@0 {
+ 	};
+ 
+ 	aliases {
+-		serial0 = &tcu;
+ 		serial1 = &uarta;
+ 		serial2 = &uarte;
+ 	};
+ 
+ 	chosen {
+-		stdout-path = "serial0:115200n8";
+-
+ 		framebuffer {
+ 			compatible = "simple-framebuffer";
  			status = "disabled";
+@@ -126,10 +123,6 @@ serial@3140000 {
+ 			status = "okay";
  		};
  
+-		serial@31d0000 {
+-			status = "okay";
+-		};
+-
+ 		pwm@32a0000 {
+ 			assigned-clocks = <&bpmp TEGRA234_CLK_PWM3>;
+ 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
+@@ -186,10 +179,6 @@ vdd_3v3_pcie: regulator-vdd-3v3-pcie {
+ 		enable-active-high;
+ 	};
+ 
+-	serial {
+-		status = "okay";
+-	};
+-
+ 	thermal-zones {
+ 		tj-thermal {
+ 			cooling-maps {
 -- 
 2.41.0
 
