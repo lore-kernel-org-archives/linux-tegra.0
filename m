@@ -2,64 +2,65 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB61C7113C
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 03:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C71BC05052
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 03:56:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357778AbjHRDyo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Aug 2023 23:54:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33468 "EHLO
+        id S1357796AbjHRDzs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Aug 2023 23:55:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357810AbjHRDy3 (ORCPT
+        with ESMTP id S1357823AbjHRDzl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Aug 2023 23:54:29 -0400
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309D135BE;
-        Thu, 17 Aug 2023 20:54:27 -0700 (PDT)
-Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
+        Thu, 17 Aug 2023 23:55:41 -0400
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 872A33A82;
+        Thu, 17 Aug 2023 20:55:39 -0700 (PDT)
+Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
         by cmsmtp with ESMTP
-        id We1mqgRQ5yYOwWqZ7q2Wu1; Fri, 18 Aug 2023 03:54:26 +0000
+        id WmuKqfi5LEoVsWqaJqJCfD; Fri, 18 Aug 2023 03:55:39 +0000
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with ESMTPS
-        id WqZ6qcVbM234eWqZ7qOt0Q; Fri, 18 Aug 2023 03:54:25 +0000
-X-Authority-Analysis: v=2.4 cv=cPzzD3SN c=1 sm=1 tr=0 ts=64deeb71
+        id WqaIqtay2h9i0WqaIqTvAx; Fri, 18 Aug 2023 03:55:38 +0000
+X-Authority-Analysis: v=2.4 cv=ZMPEJF3b c=1 sm=1 tr=0 ts=64deebba
  a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
  a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
  a=IkcTkHD0fZMA:10 a=UttIx32zK-AA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=7U2zQXYeb2txnVgCXwAA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=xmb-EsYY8bH0VWELuYED:22
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=cm27Pg_UAAAA:8 a=HvF037n1xESchLcPDVoA:9
+ a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=xmb-EsYY8bH0VWELuYED:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eQY7eDC80m9ueawTIc2Di+0+U+AtfXqsds2PmKWodwA=; b=qXEgSDyhtTdCPlGtX0luTEt9uK
-        XAZka4p7hGGzJ5GQdnPwFYEuneC+5kN8psw04dH58nimNsYOLizuwvbr6tJ6RakZjpeq8PcI1/vPR
-        cXms4asLXn1M+82iPQvYbiBiqsek2qnboH71bvR7y52WRheZmAYU51y1f04Ozxh8iOvvFSzxOR6qP
-        eyAklbAm3XMskNcThFzT+jQJxIe31CCPAFe3iuiA5dnK/BcBlwwxCUgXWg3uI7/dXyurlCZSjNHSJ
-        2Vm2tjSdANuKidDa0b25tCVEaHS/te143lRFPXk7iXBDBJjvvXCJ2TMV4z4CWMK5Bjjtq1zsrXDRB
-        Os9SwCTA==;
-Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:54772 helo=[192.168.15.8])
+        bh=/CaltAbw9kXoOTkGA4OE5zZGNtQe7YqeZHvxU27zSHI=; b=VFqmbvP9jPcq9FBHlW1rFOuXzs
+        4RdFRuq2koYRsFuYDT1gW+hRskGxauToUbJXGS7bg6l1gqxSnac7swgcT2LY1YO88rrKxDk9SrHtK
+        YJmfIrT0+m9POf2vT+fntaW8A3jvgxmiAykLEc/XWdXWptNurdcYARUYDdj6kNhZWE4hTBEXGw7A8
+        GcJ8yfJTqrVqDr8mQv7ZnZSXEKAHcR2RkXjhqZDp1huw1Ab9cKICWRU4YLFBJmJA/BG2Yvmix4cWZ
+        hl7RpAwdNwdXoxnTGnxvW+0O4orZrO7i0zKMuBTpnz5ubwDz4XlWL4uxKZKQbax9TcRP3Wnu/NEaI
+        KzssiFFQ==;
+Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:51454 helo=[192.168.15.8])
         by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.96)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1qWoze-001AjK-2G;
-        Thu, 17 Aug 2023 21:13:42 -0500
-Message-ID: <eab36e1b-94e8-a78a-f240-56414dafbaf9@embeddedor.com>
-Date:   Thu, 17 Aug 2023 20:14:41 -0600
+        id 1qWp0a-001CPk-2l;
+        Thu, 17 Aug 2023 21:14:40 -0500
+Message-ID: <a21ec18e-21be-2715-f125-a7ec67c2cb02@embeddedor.com>
+Date:   Thu, 17 Aug 2023 20:15:39 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 03/21] dmaengine: axi-dmac: Annotate struct axi_dmac_desc
+Subject: Re: [PATCH 18/21] dmaengine: ti: omap-dma: Annotate struct omap_desc
  with __counted_by
 Content-Language: en-US
 To:     Kees Cook <keescook@chromium.org>, Vinod Koul <vkoul@kernel.org>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org,
-        Hector Martin <marcan@marcan.st>,
+Cc:     Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        dmaengine@vger.kernel.org, Hector Martin <marcan@marcan.st>,
         Sven Peter <sven@svenpeter.dev>,
         Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         Tudor Ambarus <tudor.ambarus@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
         Zhou Wang <wangzhou1@hisilicon.com>,
         Jie Hai <haijie1@huawei.com>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -74,7 +75,6 @@ Cc:     Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Jon Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Yu Kuai <yukuai3@huawei.com>,
@@ -90,9 +90,9 @@ Cc:     Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org,
         linux-tegra@vger.kernel.org, llvm@lists.linux.dev,
         linux-hardening@vger.kernel.org
 References: <20230817235428.never.111-kees@kernel.org>
- <20230817235859.49846-3-keescook@chromium.org>
+ <20230817235859.49846-18-keescook@chromium.org>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20230817235859.49846-3-keescook@chromium.org>
+In-Reply-To: <20230817235859.49846-18-keescook@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -103,20 +103,20 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 187.162.21.192
 X-Source-L: No
-X-Exim-ID: 1qWoze-001AjK-2G
+X-Exim-ID: 1qWp0a-001CPk-2l
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:54772
+X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:51454
 X-Source-Auth: gustavo@embeddedor.com
 X-Email-Count: 9
 X-Org:  HG=hgshared;ORG=hostgator;
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfOSZsZVeaumByXPYsV8jWYfeZlhupJpGfbxOFdaem+Eucas/oSLiGhtpwWUZkoQ1gJUUHV022xPM2vdJMokqfa61qrKX2HaZ+s//JBvKsZhW+vqkJz90
- 1IDbnoY83Yl+5QJ7jJ3Ihn2E6maodrJDdbmh1l/cdXdpwSmF5RTnVfAhwyQ8xWgwJvO2bL0hlFfixiT+kjsH/4kb1+I1t+KGJcIqkPFiUScg+9YUddI1/lKN
- aJt0229ArUrAZU6Xh366E3tE4pMjSh93VMlgj8VsANwiYtzLr8nLrkPWPvRLUGq/uC3ukFrJwo2yfg4Qh6fPhXI4/Z8s7Z1qzNOtMH6fYnVRnxTe4YewFK5l
- l7oWmJ7Jfvz9/mmUtlq7O8pev/ft375KuslmzXKQ6A7464ictts=
+X-CMAE-Envelope: MS4xfND4vuGCh7HUS1msHzN58c/4pVINLIF4yrrlEuVjwTw3H2ALo2ppZmrw52trF8gP09oGFeEv/14/kv0rKHXBjWpeSM7xr2SCTKDx64uIIZlKeDr2/+W5
+ oqVk4HTiTeFx7UjG/cQqoQw+bQxZlKFwIBaXePxeBdFKqN7SziTiuQZn1ASHX7eYVYuAv/ukNuhVa7ZRfMiDnihsOdEIT2aRX0pKuL5YA8v2BUCkgQ/T0Cm6
+ GdSFzFe5C3QoB85l3+JbskVFgJbx0IqFpvpxbe/gtYaRhZ6E6hzD6rHtXDUCXtqU3PKkyt4iv90i0XmMxI/+csAfllILaILi0PCh28gaWMF6KNKXu/aJ0ldF
+ fm96qJ/i7ZqY1GisyfB96t0kvPmV/LD+N2GkzAkKDDl7YL+81Vw=
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -130,14 +130,14 @@ On 8/17/23 17:58, Kees Cook wrote:
 > (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
 > functions).
 > 
-> As found with Coccinelle[1], add __counted_by for struct axi_dmac_desc.
+> As found with Coccinelle[1], add __counted_by for struct omap_desc.
 > Additionally, since the element count member must be set before accessing
 > the annotated flexible array member, move its initialization earlier.
 > 
 > [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
 > 
 > Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Peter Ujfalusi <peter.ujfalusi@gmail.com>
 > Cc: dmaengine@vger.kernel.org
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
@@ -148,33 +148,36 @@ Thanks
 Gustavo
 
 > ---
->   drivers/dma/dma-axi-dmac.c | 5 ++---
+>   drivers/dma/ti/omap-dma.c | 5 ++---
 >   1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
-> index fc7cdad37161..b9f85cb20d3e 100644
-> --- a/drivers/dma/dma-axi-dmac.c
-> +++ b/drivers/dma/dma-axi-dmac.c
-> @@ -117,7 +117,7 @@ struct axi_dmac_desc {
->   	unsigned int num_submitted;
->   	unsigned int num_completed;
->   	unsigned int num_sgs;
-> -	struct axi_dmac_sg sg[];
-> +	struct axi_dmac_sg sg[] __counted_by(num_sgs);
+> diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+> index cf96cf915c0c..11ac3fc0a52a 100644
+> --- a/drivers/dma/ti/omap-dma.c
+> +++ b/drivers/dma/ti/omap-dma.c
+> @@ -124,7 +124,7 @@ struct omap_desc {
+>   	uint32_t csdp;		/* CSDP value */
+>   
+>   	unsigned sglen;
+> -	struct omap_sg sg[];
+> +	struct omap_sg sg[] __counted_by(sglen);
 >   };
 >   
->   struct axi_dmac_chan {
-> @@ -484,12 +484,11 @@ static struct axi_dmac_desc *axi_dmac_alloc_desc(unsigned int num_sgs)
->   	desc = kzalloc(struct_size(desc, sg, num_sgs), GFP_NOWAIT);
->   	if (!desc)
+>   enum {
+> @@ -1005,6 +1005,7 @@ static struct dma_async_tx_descriptor *omap_dma_prep_slave_sg(
+>   	d = kzalloc(struct_size(d, sg, sglen), GFP_ATOMIC);
+>   	if (!d)
 >   		return NULL;
-> +	desc->num_sgs = num_sgs;
+> +	d->sglen = sglen;
 >   
->   	for (i = 0; i < num_sgs; i++)
->   		desc->sg[i].id = AXI_DMAC_SG_UNUSED;
+>   	d->dir = dir;
+>   	d->dev_addr = dev_addr;
+> @@ -1120,8 +1121,6 @@ static struct dma_async_tx_descriptor *omap_dma_prep_slave_sg(
+>   		}
+>   	}
 >   
-> -	desc->num_sgs = num_sgs;
+> -	d->sglen = sglen;
 > -
->   	return desc;
->   }
->   
+>   	/* Release the dma_pool entries if one allocation failed */
+>   	if (ll_failed) {
+>   		for (i = 0; i < d->sglen; i++) {
