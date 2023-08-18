@@ -2,68 +2,67 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AEBC77B7F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 16:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C3CC7EE2A
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 16:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241760AbjHRQXC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Aug 2023 12:23:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48306 "EHLO
+        id S1378823AbjHRQuc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Aug 2023 12:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378613AbjHRQWi (ORCPT
+        with ESMTP id S241410AbjHRQuK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Aug 2023 12:22:38 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2076.outbound.protection.outlook.com [40.107.237.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D04EA30F1;
-        Fri, 18 Aug 2023 09:22:32 -0700 (PDT)
+        Fri, 18 Aug 2023 12:50:10 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2049.outbound.protection.outlook.com [40.107.95.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8733D2D64;
+        Fri, 18 Aug 2023 09:50:07 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nfqbhJYcO2cnY2nkCucOVe5UYEy+gKr3wPBfxizG9nVR8OYoVOzoBvkN6qX68QsotL395VMADxO5RMqM3EVTFSLAT+RZJqyMzHit+WZX2hyeikfl5JBTrD4KM6DL6pSQyYh1JlD8E4/eLjiRmSiuP1tnDq8BMKXjdoRDPdyOoz7F+IQV3JjIVu9CRKPTONXMtVW1tx2uNHRaq9I0GCJmCyb3t8s+Iqj1m0QXj204KUauh0B8DbREa7DR5INqpRfLt2ZeRIKhXvksdP/CFyCD+eflW1NRY6adeTn0X9WRO4GnVlbKG0u9hlapt60UFf+J6AKur/skNrG6pSm+1ssKGA==
+ b=CrRyZIxc/Q4QK/znetdT78GmdBfZ828DBLgnqZSWfNAxqfsxvF8R6DzfjwVSXcnpcA1Sl4h9parrIwuDQ8QF3dazraUd20NzTJoQTyty2L5o21MjprwtokxxFkiFoa8qING4wsIry4RakPJWsrjw+jCBCC4mmLa++fEqco8RQBS2K0nSuQvNU0Z/DJSQT+/AMiiqOI/YgrspbcTSVQreSU89CFRXUv/KoAs6g09m5e2VCr4+mRZ73MXIVZoQNNgTeyLMF2tT2ovVuWCRgdpKugsijFymseDQrLKaruw86CmkTBJMP02+8wwHJ4YVdtxCRSTFVD6nZ2tNbchocaBokQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cNrhzVQlwY9xjcGczycK0aP7PMZE4c70Ht1ss8Avv2Y=;
- b=RO5Qk5SVTzEwcYQuMZ2fXAhf/SZCO+8fLxM3ET7wzpp/ev6KY/6sFcMy/8qO1Yg/fqjcUuBwVWzD8wCFw53K+AdqpwDotRORbAjk3A4nt3pb1oyDhxpepbs2/AN0mnHtIpHGFK0mLdyK8jQqV9dstNosN2/dKsSbG5QF9pZLDCZFK05byJCDTgOhh3E3aosesv1BB8qANXOmcMbHqe/WJdn415T+h0iNkkvC+0twYEIZVfilC3pr8mf3/njKu1MVwpaPodIgZplM6msbG+U3ogm8zgFzgLtuEzWszAWPdEnmkIYnqhSZQZkQTNazcyN/jpYDCGx7Skit6Fw+mqka7w==
+ bh=CB4qXlChKXG8c63sQi0EVUaEAq8VIJ3RRkfBH64WjqM=;
+ b=fL5shIhXQVdASi+qkJVQrT9wLjvEIN31scse/wP0nnm8aF4Em+mwKATSWMfwGSD33TAyVEKs3iuC7M0CpFcGShjuJoPV7r5Anc4gGr6IdFBKmSGjqLo+1F9UHNcxixjEeXBGXRdyMZVe+CRyVcPHLskE2Qd8nDrDCdaf3odkZjNcc/aMS2plY6izNjhdFgArlV8JiV/7UNU35P5QPge0iD7GBZrfVGQWNBabUaVsSikNZ+w1QutPpKAEpoXQvnVAJcKxXtWS0PY91QZhe+lcb7pZEqXC1fjY+ZPWDkPpK/38HAz+WsfV3E9zNWBgq6K9RfrzEJFSFvAmd4lce8S9tw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cNrhzVQlwY9xjcGczycK0aP7PMZE4c70Ht1ss8Avv2Y=;
- b=B/LanWm4/tD33LRV2UKss1dKJNlBlXpi37bNJ0SbzBGFDEbL3HCkv5gd6WtCWsrwnJVRoX24aOfNkW9mpOAvrMoBVuY0pu9alkkzWzYHpkW2Ds9x+c0NUj8K+CSxwMl5MSCs08UlpsM5t1KazUwazfXs9jwTir6/jjtH87vesyhlMFzKR8Bkjkeqyq7IIss5DRP7S+koanyMnmgMeFEZUkXXnC1uHVJ0Yf5IiC7eiUDyedzZfubpc5RHD2rHN3ELoiyAB6v+ie1Uz39PS6HwlLxQC4SRWhfxyYsKY6+98CBRwtGGdy3T7tcK1KK7WK7WAqWnwZ2PTf7phIZU2Mj8NQ==
-Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
- by IA1PR12MB8358.namprd12.prod.outlook.com (2603:10b6:208:3fa::17) with
+ bh=CB4qXlChKXG8c63sQi0EVUaEAq8VIJ3RRkfBH64WjqM=;
+ b=AhztYxsyj7aWlD/KcBRSA4AS9OkUmsLCu04zzn+Ce2lS1u/FtKhmnuzh4a28MoauY0SQNleX9EHqHVAKdKqV/HVHnwHZ0sP8y9SuK9p68NFy0LK/+aKj40sxw3xDfNsULffR9IPQdQKgoFO9luC8XJjLabts+2TEfCFjQkYxWCWGpgwPDeAyrqOUuPVN1a2ZxDLYNNeVpVRcumguoYaT5wdjbgZwkTumMKPnyk1RVNQWveBsjRC3RMCFm58q5w8B+ZLSPxVBDgXbr/Nw4Sv6on+gODLOV5cl7YInv4hgSl6kqhE2PFhAfv3JmPQgWO7F4OY804xweiN6ZMKAxMtX2Q==
+Received: from DM6PR12MB3371.namprd12.prod.outlook.com (2603:10b6:5:116::27)
+ by PH7PR12MB7793.namprd12.prod.outlook.com (2603:10b6:510:270::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20; Fri, 18 Aug
- 2023 16:22:30 +0000
-Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
- ([fe80::9e01:4d19:224d:219]) by SJ0PR12MB5676.namprd12.prod.outlook.com
- ([fe80::9e01:4d19:224d:219%7]) with mapi id 15.20.6678.031; Fri, 18 Aug 2023
- 16:22:30 +0000
-From:   Besar Wicaksono <bwicaksono@nvidia.com>
-To:     Will Deacon <will@kernel.org>
-CC:     "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "ilkka@os.amperecomputing.com" <ilkka@os.amperecomputing.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
+ 2023 16:50:04 +0000
+Received: from DM6PR12MB3371.namprd12.prod.outlook.com
+ ([fe80::ed2:99a4:2e77:89bc]) by DM6PR12MB3371.namprd12.prod.outlook.com
+ ([fe80::ed2:99a4:2e77:89bc%5]) with mapi id 15.20.6678.031; Fri, 18 Aug 2023
+ 16:50:04 +0000
+From:   Jeshua Smith <jeshuas@nvidia.com>
+To:     "Luck, Tony" <tony.luck@intel.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "gpiccoli@igalia.com" <gpiccoli@igalia.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "bp@alien8.de" <bp@alien8.de>
+CC:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>,
-        Richard Wiley <rwiley@nvidia.com>,
-        Eric Funsten <efunsten@nvidia.com>
-Subject: RE: [PATCH v5] perf: arm_cspmu: Separate Arm and vendor module
-Thread-Topic: [PATCH v5] perf: arm_cspmu: Separate Arm and vendor module
-Thread-Index: AQHZry4xzcjbD21RhUuAD3F0nYoHCq/wfUkAgAAALoCAAAOWkA==
-Date:   Fri, 18 Aug 2023 16:22:30 +0000
-Message-ID: <SJ0PR12MB5676F8FC98DBA22EC462C1A8A01BA@SJ0PR12MB5676.namprd12.prod.outlook.com>
-References: <20230705104745.52255-1-bwicaksono@nvidia.com>
- <20230818160536.GA16119@willie-the-truck>
- <20230818160614.GB16119@willie-the-truck>
-In-Reply-To: <20230818160614.GB16119@willie-the-truck>
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: RE: [PATCH V2] ACPI: APEI: Use ERST timeout for slow devices
+Thread-Topic: [PATCH V2] ACPI: APEI: Use ERST timeout for slow devices
+Thread-Index: AQHZtREytrmSwIEvT06Ibqr95x6guq/abXNggAAKnoCAAI5FkIAVd3Tw
+Date:   Fri, 18 Aug 2023 16:50:04 +0000
+Message-ID: <DM6PR12MB3371FA3AEEA4D17D94C889D5DB1BA@DM6PR12MB3371.namprd12.prod.outlook.com>
+References: <20230712223448.145079-1-jeshuas@nvidia.com>
+ <DM6PR12MB3371BA50E3B76D2266273901DB09A@DM6PR12MB3371.namprd12.prod.outlook.com>
+ <SJ1PR11MB6083426D3C663F47E707CF1AFC09A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <DM6PR12MB3371D86F80417641B8479B28DB0EA@DM6PR12MB3371.namprd12.prod.outlook.com>
+In-Reply-To: <DM6PR12MB3371D86F80417641B8479B28DB0EA@DM6PR12MB3371.namprd12.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -71,105 +70,110 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|IA1PR12MB8358:EE_
-x-ms-office365-filtering-correlation-id: b29e4b27-d4e9-4f4b-3dee-08dba0075201
+x-ms-traffictypediagnostic: DM6PR12MB3371:EE_|PH7PR12MB7793:EE_
+x-ms-office365-filtering-correlation-id: 26cba827-58e0-4299-a118-08dba00b2bb5
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: EEhSN+SCwsARfliJzCzerIp7id7RTWZ3fAL7QToqxmTyzL8Er3VH1dGB72bYHjjoJxyPQGVw6H9FsKNG6oDTTZYP2u2dp4Uj54OD/ANW4CTNOeSc8N7IPgfNxxcBwrP8uCUNAd+dxkiasjC+fRo8RNtdiPVSZQOl/zq0ymJh5mFenQTwwlOn6boAPaUyoSzRlSn/UzuT5pSaHqsp5CME38TOg3HnCFNF+5myJpUQD1iOsBAazOaMzaqOm36ueygivorPy0ur9QpODnrz5b9Z0WtByqxsMVZXRxGRvNMYTfWwj1yjVUCeXT5DuAAMYChIv0D+J/aGa845I429fEVKesxvVNwqfSk5fhF51+nbf6KIU8XRYTawMVWb9Dcqua/WToRS5MdUgBhyedP5y9fUP0MtR5gkd51F5VpPF5LQ+dAep0sNsKvvUOlPlq2c/G2lwwfphERD+/TaxpSJ2quwadio9GBEaE8erzzpf0Uz5lUhiMu+UlT3FoPak1MtjTRkKsL6p5/ESL9B1Oh6DSOPZcKFnaUn2sxI0325OvgGWa/NenAyn/57IA7kZbCs0KTioThq5YoH4rjcWtk1AHwzCOeSBU/3NIDutGG2G0D5kW9AJJPosnplTtUCA6FOpJrKqIovewoFqLh0TrnyV6R3aIn/hwsMKAN9YsDd41ydTts=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(346002)(366004)(376002)(396003)(39860400002)(186009)(1800799009)(451199024)(71200400001)(7696005)(6506007)(38070700005)(38100700002)(9686003)(122000001)(53546011)(86362001)(107886003)(55016003)(26005)(83380400001)(33656002)(2906002)(54906003)(64756008)(66476007)(66446008)(66556008)(316002)(6916009)(66946007)(41300700001)(76116006)(5660300002)(8676002)(4326008)(52536014)(8936002)(478600001)(966005);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: /60S9pLtugxZulwl2uWMCUEJX2Gos9+Q1Say3MI6LU1oFVUBg1PeyNATftkkAMib70cD05vdChkTibM/lsJuD2g+zT8PCLArD9IQnapT9xWjHd7b0GvxTfg3m9pKrGK4lhlJqugISZzmTfc5Qd1utI+lkCo89eeVIhh7tYWwn0cGwFhuGWYQN9OwQN0wiM+FgPalhT68Zsw6C6XwYnDZV7JSqAag7uImH4zhIr+p7+6zMjW73GjKU+chJ2RnXRGiwpUDqqP7hTqZHnXvkX/2O6a8tWn2fOlUUyDlp7K/pboV894pv1XZiQDmw5Lw9uAtVdaspLWQ2fFaMyP+LkqpKxD/LsnbsbYvCWQfMn6GJvc3VGJKzLad2Rs+dS5/F8hrY0eBe8gCKwLo7jkLTXlFaNdM2+owh5CPhXNZIBK3KYaFAEGOiAFo8nQwFaMLJVcVqjrJo2AiTpt1nfkolmuAt48KDSe1Frj8ojDn6+9f7DsNTY17Rmx0lp3L3x6TJ9nCuYQuQEhbDF0BeNmMSpTP2PIAV4v2GHFMxZRhyZmPLp6EhAJG2maT3t+2+/dHCbdI0COxI7z7EGRi0h4Zp60qjz1ftN7TI9MU2M+wdGW+90hARYRggTvrKVutrKteGy/zTIPvbpgkd7Nml+FQMI6S/7/EtHa2t8Rj7cTPUV+3qwA=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3371.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(39860400002)(396003)(376002)(346002)(136003)(451199024)(186009)(1800799009)(110136005)(76116006)(5660300002)(33656002)(41300700001)(2906002)(66556008)(316002)(66446008)(66946007)(66476007)(64756008)(54906003)(966005)(7416002)(8676002)(4326008)(52536014)(8936002)(478600001)(86362001)(71200400001)(53546011)(38070700005)(9686003)(38100700002)(6506007)(7696005)(122000001)(83380400001)(107886003)(55016003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?MrNeLiOx/y6zEBTMvuiKhLW6JIBBl81Gk8BxmLMDw02mRcy63KsRC05S6BcL?=
- =?us-ascii?Q?+R/6MCfumxhhRSlpSJ1qMxqSaCrilUB3ZUz/PR2CGUwXa9qtFEctGQyXGwMd?=
- =?us-ascii?Q?VrKnqwhYDD0hfmBfWrbtDb/cD3wxO3B+YTCVCxDTZ4n7qO+T+8g0NL0LDS49?=
- =?us-ascii?Q?24kYaqqI2Sp0FG7tRrQsatU+5fI8hONA5z9XKKU7dgkTMJmbt7TKm+0WTRtr?=
- =?us-ascii?Q?/X7/P3KC2ii8aeU+imVT6Xu79ErQGhoj52Gc9nkAFonFNGbAXL/lGo/5TtJB?=
- =?us-ascii?Q?z6JfYknNcCX+nWb6U9sNtIwlLwP16u8PvpJgTlQKqK+mlYiTqU+2c8Uj1xdG?=
- =?us-ascii?Q?hup1TIeGC1cJgOHcWxrW1sr8xBurINsact8AdDB/uWshkBz1QgWteLeLEQPS?=
- =?us-ascii?Q?axasQTcdyGDI20Q9/Wf4/qsfTqHP5VhFkUGD1FvymXVJrxwPlqoA2H68ESzn?=
- =?us-ascii?Q?pIeprkGf0PvKFOJUdLPKSqIXYpXEan9u5IlmoRsVg/DO7W56o7N/09+XcOWx?=
- =?us-ascii?Q?q8igotzkirQtR9yZScXhiiurMRUFESGDnCO9+GjEnjqYXEsbSU5iPS/MzV14?=
- =?us-ascii?Q?54xBnLyfos2tZNRVP9YnDrWYj0USYbXcDXB9k/yp+ObRjWV0gsV1Dh2WqpPx?=
- =?us-ascii?Q?hMNbJtDmotPm2vXrJ77eNuGE9NA+QJIzTjHk6S7umZTTCeh1317ONJiDZlrC?=
- =?us-ascii?Q?xwfCo7usYzFyKvpgrjCV1zkxi3MV97Za3AQkcO48lmgfHYvnAFV8BG+Gf5Fh?=
- =?us-ascii?Q?Olz7e4rv20Tmo3RePzW0KZs9IL/OUVBDsXHSl72eBVeNgefQBeoQjKRRv5pI?=
- =?us-ascii?Q?DFXSLudON+TM0SwbkVczKin+g1qtZ9oVRdrmKE/CmuKRyab7XvBfKb2IcDuk?=
- =?us-ascii?Q?HSb0Zpa/FHo68+N4xu7nfJ9+yawzXBjgWdZf33FPklDkGFDMzPwoStAHgrXQ?=
- =?us-ascii?Q?HYnkXfpWZHgRMAgFPAGpyM9NHDr73zFCofTOIabBQ5qLV6g8p7Mfvnp66ZOk?=
- =?us-ascii?Q?3BHo9LefaNkqXJQsQo5OIjFTqaovLLhNHKVq3xvOFYx7SkLI2VH0rC2iTPUj?=
- =?us-ascii?Q?5lWXDtLdaaL6ZfYrF7/huGqLMCgZVPcPMeAUUprHMV6KBo9Eq+DsI0sl7fTT?=
- =?us-ascii?Q?MYdEzwdLSDIz2IJobD6Nnj7I11576kUk0+lfrMdjxzJuiWghlV5SRkk/5uC1?=
- =?us-ascii?Q?nZs5Qd8GHE/FUITt3naMvVagxyN7nbhJpW3fohW49syeqajtsFRWzO+n3NRr?=
- =?us-ascii?Q?C/nyT9IE/N3n4Te4SioI4jfjjKGuOZXmo401d8nLOAJQC4bVgGuVCAJME785?=
- =?us-ascii?Q?omawbrFhqM45bGEG76YC61JvmxKN9MtM6nyTP0bWK/9cQEPGeMh1jJrqL3Hi?=
- =?us-ascii?Q?ZToCzgV383irnxPO8eM8ks1dHXTn0nEzlW0SMYAao84uquKwSJ8r6pfR+YgT?=
- =?us-ascii?Q?FukVqUld5jBmn4oMdkQzk9NVEoiqmIoSSTUOgXXWXhI7esasgyfqvjf6h9uy?=
- =?us-ascii?Q?0auUEKe9WKNBEvPCCKT1d/ujmJDhawfZzRlsB4IX3X7fWdL52bErwlPujcHQ?=
- =?us-ascii?Q?XVlYy9GYlA0jTMQTWw3+MhtzEmDCM1fGxihj9ub8?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?CyCcNoDVNyCFBwLqF7bN72g1beY9PrPw+zdSz8/6ITGlwRDAQvHvp2PwYgNx?=
+ =?us-ascii?Q?oviyguWh8y1CVynCgY7n8orhg04XxwBzJPUmSQcKu1cm4n3a3z+mWuY4c8JE?=
+ =?us-ascii?Q?F/oxdEphqjduTM77owgsZDR0JvAF0Rgh6K8AdRcMyHREO32mNqe//ICYcBW0?=
+ =?us-ascii?Q?41HAVSmg//Yg2sE3qouXW3edHiUgr/RCR/6aa91JAvsTJLnAmbiI6xDy3lR6?=
+ =?us-ascii?Q?/CzEKUGUxuHJN+3vfquTqgVXt5xu7mGLkS3HtswvPPmkuADtKPVKO0z6W7b1?=
+ =?us-ascii?Q?IsU/yhIgDTRzhS+Rov9VoNsZgNFY/7Vm6zfnLa5gXAzIxQ2LtS8kmSjjnmbb?=
+ =?us-ascii?Q?hw5jEmxXDeN/0NLYhteH8ePsHQ/t6fYoMgW3zABEpc+jmoZ9B+bveuIBlozK?=
+ =?us-ascii?Q?oPvduCvDYEbGD0DM/vJFtdPpEdcMWhif69o6TA3Go79uGey8j4v/LSpPh/OU?=
+ =?us-ascii?Q?jXKj/okSYPEcs6C1RzkaAA2eXr8FdCxtbCYMdgIuQxNVNelGQgZLIw/VFvC1?=
+ =?us-ascii?Q?yyWAFMx9fthmMoMOvC7h2PhPGSHQZ03qWUNweFd0U9g8uZAFRZaqOUYcMm4c?=
+ =?us-ascii?Q?6He5SLo5zbWUOGkNj0voeljXiE15X9mOb2j2of7KSkFSjNGh+tejuxc0QmEa?=
+ =?us-ascii?Q?n7MXQg1bydM4MrlG7Krx+6YErMYIySXp4iJ1m4gfTTeYAs7c19BVt1aQSHmG?=
+ =?us-ascii?Q?WmWUyuKg0avhTtFFek5C6g62LF2JX0hZdrstyO9CyFtvfAwidwXMgJGh/EIo?=
+ =?us-ascii?Q?0lmmdHYepW7QS2CyF9olwssNfEbXgopKUwd47Xgf4jMaj4PxMlk36Ft5HyA+?=
+ =?us-ascii?Q?FyvNenB7fPa6wrQuhfmWQSrvZ4L5pOnQLEDy7guClaXC03zp7ESRFe15RRR0?=
+ =?us-ascii?Q?uF+VWt3miyBPwkubWgqYJZJCAJ9eiqQUPcAopuAW97Gxj8UKrpHsy7XRQAsT?=
+ =?us-ascii?Q?UGQ0oVpj+DURCIPrnuFV3o8164/KNjMdXWCq7wN5rSudWmgyMrufVVbR23p3?=
+ =?us-ascii?Q?/HiItuSnhEsNudQ2xqcMSSQXkrsZ16oihxFN/7OyHizhbpl670o8rwiV30pG?=
+ =?us-ascii?Q?xHnBSjVz6lsRdTOwNnDWw5Y2XPf9WiprlZeocLbE9Widl7OwB46QJvbBfFX9?=
+ =?us-ascii?Q?E213aH8Vj6O1kR+THGEyRUV9Ti9+HepuntIYXnfhfmbVH1J4KG1JA5dmD9IO?=
+ =?us-ascii?Q?ejNreoXZ440lcoyjuAECKcrF0FIguljSVVA/4zRzfELGfLqmFRILhtOPTWin?=
+ =?us-ascii?Q?mM3uDPKLxg+NaG9vxg8fZhMG7LipVJqG1w9tvAElkbSLojtdLQwLzy6RaPyY?=
+ =?us-ascii?Q?LQvzq7d94qM68ewPLnleg4OiEpNvbZewn/DcTTLWoLi7ADwtcfBCJwsg/X/w?=
+ =?us-ascii?Q?JyrKrScMSN2gBV9gjvE3Ec6qAZB9Xj6fX3xiEuVXw/A/4hQJEZE48BvtU8U5?=
+ =?us-ascii?Q?0Y8xKlFUu/ly0wG/vgCk2SJ87lxhEthpVCudMsxAsHRb17FuQGP8D0G0vJja?=
+ =?us-ascii?Q?L9f0c+yK5CGdANClyrDBjgxMayEdPcuoaJyjFCfXDbq2Yc8EtK4yNwoPNVzG?=
+ =?us-ascii?Q?0ZPratsLXEOVy734olRvD3ABW3gfaiENsfz2mDSutNdM1zYnhyoAnP0VOeqV?=
+ =?us-ascii?Q?OpGLOZjNyYQvwXQPxtHpVos=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b29e4b27-d4e9-4f4b-3dee-08dba0075201
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2023 16:22:30.3856
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3371.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26cba827-58e0-4299-a118-08dba00b2bb5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2023 16:50:04.1150
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /CDliKDxXgWASCpb44022GvyxvXTSHpHCIX8NLL5otKLfjw7m1G2o8OR1FDVPHgROZQqV+yFQeRpYecc410z5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8358
+X-MS-Exchange-CrossTenant-userprincipalname: Ei2M0p2AWHdMyrLuPVpqQn5iCu4J6mr4OF0y+mKA3DiAOTSoNW1WY+oGQ2OGdxEBOrZcWeeVqRDX/pcRVUZ4rg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7793
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Will,
+Any further questions? Anything else holding up this patch?
+
+-----Original Message-----
+From: Jeshua Smith <jeshuas@nvidia.com>=20
+Sent: Friday, August 4, 2023 7:05 PM
+To: Luck, Tony <tony.luck@intel.com>; keescook@chromium.org; gpiccoli@igali=
+a.com; rafael@kernel.org; lenb@kernel.org; james.morse@arm.com; bp@alien8.d=
+e
+Cc: linux-acpi@vger.kernel.org; linux-kernel@vger.kernel.org; linux-hardeni=
+ng@vger.kernel.org; linux-tegra@vger.kernel.org; Thierry Reding <treding@nv=
+idia.com>; Jonathan Hunter <jonathanh@nvidia.com>
+Subject: RE: [PATCH V2] ACPI: APEI: Use ERST timeout for slow devices
+
+Thanks for the reply.
+
+It's not very easy to see. It's just a bit down from the link you sent. It'=
+s the last possible action in the Serialization Actions table:
+https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#serializa=
+tion-actions
+
+18.5.1.1. Serialization Actions
+
+GET_EXECUTE-_OPERATION_TIMINGS
+
+Returns an encoded QWORD:
+[63:32] value in microseconds that the platform expects would be the maximu=
+m amount of time it will take to process and complete an EXECUTE_OPERATION.
+[31:0] value in microseconds that the platform expects would be the nominal=
+ amount of time it will take to process and complete an EXECUTE_OPERATION.
+
+-----Original Message-----
+From: Luck, Tony <tony.luck@intel.com>=20
+Sent: Friday, August 4, 2023 10:31 AM
+To: Jeshua Smith <jeshuas@nvidia.com>; keescook@chromium.org; gpiccoli@igal=
+ia.com; rafael@kernel.org; lenb@kernel.org; james.morse@arm.com; bp@alien8.=
+de
+Cc: linux-acpi@vger.kernel.org; linux-kernel@vger.kernel.org; linux-hardeni=
+ng@vger.kernel.org; linux-tegra@vger.kernel.org; Thierry Reding <treding@nv=
+idia.com>; Jonathan Hunter <jonathanh@nvidia.com>
+Subject: RE: [PATCH V2] ACPI: APEI: Use ERST timeout for slow devices
+
+External email: Use caution opening links or attachments
 
 
-> -----Original Message-----
-> From: Will Deacon <will@kernel.org>
-> Sent: Friday, August 18, 2023 11:06 AM
-> To: Besar Wicaksono <bwicaksono@nvidia.com>
-> Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
-> ilkka@os.amperecomputing.com; catalin.marinas@arm.com;
-> mark.rutland@arm.com; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; linux-tegra@vger.kernel.org; Thierry Reding
-> <treding@nvidia.com>; Jonathan Hunter <jonathanh@nvidia.com>; Vikram
-> Sethi <vsethi@nvidia.com>; Richard Wiley <rwiley@nvidia.com>; Eric Funste=
-n
-> <efunsten@nvidia.com>
-> Subject: Re: [PATCH v5] perf: arm_cspmu: Separate Arm and vendor module
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> On Fri, Aug 18, 2023 at 05:05:36PM +0100, Will Deacon wrote:
-> > On Wed, Jul 05, 2023 at 05:47:45AM -0500, Besar Wicaksono wrote:
-> > > Arm Coresight PMU driver consists of main standard code and
-> > > vendor backend code. Both are currently built as a single module.
-> > > This patch adds vendor registration API to separate the two to
-> > > keep things modular. The main driver requests each known backend
-> > > module during initialization and defer device binding process.
-> > > The backend module then registers an init callback to the main
-> > > driver and continue the device driver binding process.
-> > >
-> > > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> > > ---
-> > >
-> > > Changes from v4:
-> > >  * Fix warning reported by kernel test robot
-> > > v4: https://lore.kernel.org/linux-arm-kernel/20230620041438.32514-1-
-> bwicaksono@nvidia.com/T/#u
-> >
-> > Do you plan to send a v5 addressing Suzuki's comments? This series is
-> > blocking the Ampere work from Ilkka.
->=20
-> s/v5/v6/ !
->=20
+> Can the maintainers please respond to my patch?
 
-Sorry for the delay.
-I will send a follow up patch soon.
+Can you give a reference to the ACPI spec where this timing information is =
+documented? I'm looking at ACPI 6.5 and don't see anything about this.
 
-Regards,
-Besar
+https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#error-ser=
+ialization
+
+-Tony
