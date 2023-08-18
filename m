@@ -2,60 +2,63 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CFBC71144
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 00:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6D1C71130
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 01:24:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356596AbjHRAJs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Aug 2023 20:09:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49858 "EHLO
+        id S1356884AbjHRBXz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Aug 2023 21:23:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356602AbjHRAJU (ORCPT
+        with ESMTP id S1356966AbjHRBXt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Aug 2023 20:09:20 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 557E010C0
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 17:08:57 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id 41be03b00d2f7-565f24a5c20so253543a12.1
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 17:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1692317320; x=1692922120;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qT5yfa4Cz4QzC/iMXODWK/jT5XcC4ni8TfIgPVQR0nQ=;
-        b=itkn5j7gTMv3uvk6CK5XGtZxLhTAsu/BRNKLIHV5Nnpsn0DQcWV/bu/9ci4nn5kqu6
-         x/vVLpnevUmcAXCDiwYw6eVp3accunlMdofKtMwNRcr5uMKlvpjrUYi85scz/+E8dzk/
-         cjD/8aiEiGvBn0IkoDGWMOkYZKB31rr4FdBjc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692317320; x=1692922120;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qT5yfa4Cz4QzC/iMXODWK/jT5XcC4ni8TfIgPVQR0nQ=;
-        b=jBcP3oBMvu56N3leZDK/PvoL+7shE9e4vk+eLlbXlNkDcy+1jcraB5Wt7vkxOZFjNr
-         Dn6N5BCYoFVrjRKoC1QUO3CBsL5AT7s7aTSSwctHw0yRtRWf+f7cwOLv8NUvTDAomjUC
-         RiJCBDAeqDSGFKteFa9sORc/CSbKTNJR+OYup+jDGLfHx1vIGygNFrg2dneGjO9IMsos
-         MjerBCKBfzllqnWE8RqjxJauiPHePWUWMxPJp6U7YQguxPOyDcJzA7cFJkDK4Tmxh9t/
-         ctSSl/H6buil57VvkQXVqMwjYOghLmf3VY+skb5k2WDA1e4LSxaTdXwvcNavx4hK6PcB
-         tdSg==
-X-Gm-Message-State: AOJu0YyOMsmfT2EGoExEIGAiJA2Twe7giRviwA6NctlPRXG7em9rOaGS
-        catlrEEg0dwZIRHWBypRJ75ccQ==
-X-Google-Smtp-Source: AGHT+IFAdwycmNkiJIGGqs23SxKqdoqgeSyw3+9sSzFc7X4kCoBM12cHThav0cZ1Ffgr5OQWXAzJ6A==
-X-Received: by 2002:a17:90b:3908:b0:268:2f6:61c4 with SMTP id ob8-20020a17090b390800b0026802f661c4mr1106012pjb.12.1692317319812;
-        Thu, 17 Aug 2023 17:08:39 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 27-20020a17090a031b00b00264040322desm384590pje.40.2023.08.17.17.08.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 17:08:35 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
+        Thu, 17 Aug 2023 21:23:49 -0400
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002713C33
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Aug 2023 18:22:52 -0700 (PDT)
+Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
+        by cmsmtp with ESMTP
+        id WcbgqX4r1WU1cWoBZqSPJK; Fri, 18 Aug 2023 01:21:58 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with ESMTPS
+        id WoBZq0gTZZeaBWoBZqZdYF; Fri, 18 Aug 2023 01:21:57 +0000
+X-Authority-Analysis: v=2.4 cv=APmGYa2N c=1 sm=1 tr=0 ts=64dec7b5
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
+ a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
+ a=IkcTkHD0fZMA:10 a=UttIx32zK-AA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=cm27Pg_UAAAA:8 a=HvF037n1xESchLcPDVoA:9
+ a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
+ a=xmb-EsYY8bH0VWELuYED:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4qj0EaSxUo2+DCTF/hymWHxE6YXJwkpWmEuGBo/Dmbc=; b=n+XJDOIpS3chhDQvGjusg83aqL
+        kotuJV5YiiK7mhcxygIaK8gdEM36MVhuQumYgfktIfM4pIfdSPHgO69oI+LdslniQgvuflhAVhsvz
+        xTXwA4g2mz7+3cP/vlCYfRUJRbeRp/lvUHGyz7Xt/PLQ1/Me2V1ZLKkEyJTiBRdSjL1a8IYIXz+bn
+        4hVFZYiEiosfCDz5DC5dGVY/bVDGQd9vKe5ii60dGxZswHz+UohqjZc4Yxvo3LTSAGMDiEQGGLi+3
+        CD935yKR04s/TRMESuoUI6TgTU7RYtcs6eqnbgLFnUOZzubddNm6hANkkI26WoiVkc9I+mm5N0gEu
+        JaN4KC1Q==;
+Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:40700 helo=[192.168.15.8])
+        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.96)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1qWoBR-000THf-37;
+        Thu, 17 Aug 2023 20:21:50 -0500
+Message-ID: <1e22a311-0cb4-f31c-4439-65421147a50e@embeddedor.com>
+Date:   Thu, 17 Aug 2023 19:22:33 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 01/21] dmaengine: apple-admac: Annotate struct admac_data
+ with __counted_by
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>, Vinod Koul <vkoul@kernel.org>
+Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
         Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        dmaengine@vger.kernel.org,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         Tudor Ambarus <tudor.ambarus@linaro.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
@@ -74,6 +77,8 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Jon Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Yu Kuai <yukuai3@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jordy Zomer <jordy@pwning.systems>,
@@ -81,69 +86,82 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Nathan Chancellor <nathan@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
-        asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-tegra@vger.kernel.org, llvm@lists.linux.dev,
         linux-hardening@vger.kernel.org
-Subject: [PATCH 20/21] dmaengine: uniphier-xdmac: Annotate struct uniphier_xdmac_device with __counted_by
-Date:   Thu, 17 Aug 2023 16:58:57 -0700
-Message-Id: <20230817235859.49846-20-keescook@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230817235428.never.111-kees@kernel.org>
 References: <20230817235428.never.111-kees@kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1312; i=keescook@chromium.org;
- h=from:subject; bh=TzxuhTylPZttiSXw3eB5K0of3I8ZRlEWmKuAA7ewWgw=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBk3rRBNlqs1jMDul+rCbPRl5IanBSTAmRt18Urs
- VUPCwAZkBGJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZN60QQAKCRCJcvTf3G3A
- Jj/vEACgKhQ04Z609itYquBNxujyMweJdRbIgh30/21Mgn5/8pqXvn9PamYB94xNq7EuxfsrHgg
- BfrY9XZwI0BbPWqpzOwd13V3w8MNSmWPPxjxbDK18H4lSSrMfdbwG+ZXbR/Mrkm6r+ewkhk5tCX
- LNckCGMOXw5pYdEPiOHxHBPyHRK2OUPaA/D/CswQOYpMtc70xMaDBKK1YwJ1k/5oqKX9JjSO+Qv
- MosoBTfYUdVWAU7lx/OXktaVoj9YReHDBe/lF229xnT/4LXdE7LkpDMD9KUdmVidGycZqslxls2
- j/iTQ2M5MHh3i1MrAzmA8eybFyv8op9MxshEIoFiKLKm8o1t05P9JJb1d7i2YiultKBawX7C50o
- nQ4nKKCNu8+1+RyPbbC3Fj0wfAPgqVavdxGu7EjHK7j+bwOkZbLUutLBYiUS/3fgIUxbKWZU2f7
- /+UF7uJ0homH/xhtQPyRPdVZHyZ3zyCoPNUd39frSPlhNU1UCCJ7NbvUJV47NJz4NUNvSo5xXAs
- QdHUHemFMaxU5rO46ZWO63FDVyUhW5Z5driVbx2ZYQHrlQ1ViGcV4RJ1wM/Us57AMxkrago/s31
- AJzT5I+dXVGnlXFFAtBmqz94NHV4iwpXxj/JWJzCfWer+sF0qKRKEsFFUMtMP9+Z8x+wpbuRERT kZ57NubjvqXhnMQ==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+ <20230817235859.49846-1-keescook@chromium.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20230817235859.49846-1-keescook@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.21.192
+X-Source-L: No
+X-Exim-ID: 1qWoBR-000THf-37
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:40700
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Org:  HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDjxOvD1eVq7DIFRLJR0h4T3aNt/DqVs6fqTauKv/kYOFFRv0gc9a8TJxvpcYlTwNIQhEpfCz21wk3WjaGsCwrDsvxaBfzwanVlkDOlvSwbjSSCCAFst
+ KNuSi5PjX25SBz33umHtpJggUpEE5or0xoyrPwj3htpcnY4Ic/iCfk0AEwSoOO7lSqBDbnsVC+XE1mr6f+E2tX+Wswgzbf943eEfniTsBgIvB71K+kDI2Clr
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Prepare for the coming implementation by GCC and Clang of the __counted_by
-attribute. Flexible array members annotated with __counted_by can have
-their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-(for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-functions).
 
-As found with Coccinelle[1], add __counted_by for struct uniphier_xdmac_device.
 
-[1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+On 8/17/23 17:58, Kees Cook wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
+> 
+> As found with Coccinelle[1], add __counted_by for struct admac_data.
+> 
+> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+> 
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Hector Martin <marcan@marcan.st>
+> Cc: Sven Peter <sven@svenpeter.dev>
+> Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+> Cc: asahi@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: dmaengine@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: dmaengine@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/dma/uniphier-xdmac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-diff --git a/drivers/dma/uniphier-xdmac.c b/drivers/dma/uniphier-xdmac.c
-index dd51522879a7..3a8ee2b173b5 100644
---- a/drivers/dma/uniphier-xdmac.c
-+++ b/drivers/dma/uniphier-xdmac.c
-@@ -97,7 +97,7 @@ struct uniphier_xdmac_device {
- 	struct dma_device ddev;
- 	void __iomem *reg_base;
- 	int nr_chans;
--	struct uniphier_xdmac_chan channels[];
-+	struct uniphier_xdmac_chan channels[] __counted_by(nr_chans);
- };
- 
- static struct uniphier_xdmac_chan *
--- 
-2.34.1
+Thanks
+--
+Gustavo
 
+> ---
+>   drivers/dma/apple-admac.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/apple-admac.c b/drivers/dma/apple-admac.c
+> index 3af795635c5c..ff46260b6ebc 100644
+> --- a/drivers/dma/apple-admac.c
+> +++ b/drivers/dma/apple-admac.c
+> @@ -128,7 +128,7 @@ struct admac_data {
+>   	int irq;
+>   	int irq_index;
+>   	int nchannels;
+> -	struct admac_chan channels[];
+> +	struct admac_chan channels[] __counted_by(nchannels);
+>   };
+>   
+>   struct admac_tx {
