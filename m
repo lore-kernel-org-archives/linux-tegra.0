@@ -2,66 +2,66 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF46BC678DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 09:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C89C71136
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 09:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359124AbjHRJbf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Aug 2023 05:31:35 -0400
+        id S1359183AbjHRJbh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Aug 2023 05:31:37 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359192AbjHRJbN (ORCPT
+        with ESMTP id S1359221AbjHRJbQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Aug 2023 05:31:13 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2075.outbound.protection.outlook.com [40.107.244.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB88135A4;
-        Fri, 18 Aug 2023 02:30:58 -0700 (PDT)
+        Fri, 18 Aug 2023 05:31:16 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2054.outbound.protection.outlook.com [40.107.95.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C96F83C27;
+        Fri, 18 Aug 2023 02:31:06 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=chA4Z6yFxwa9z5XjFLdXhe9vjALcHIK35ecgiHsbgbAJ2LByrez4qnRlSrHF7rL9IJQq3HRcqX4opHd9wVTzw81PK/s6+1Fyocq+qjTdGITygJZS6WgkHjkxihI0j4F6nniNoOQn8EZfO36GmpFY4IEwZ/60kgXQG64EVpaXR9gFyuzVjRAz1kKXSVGfdNTM+od5Gca696oLfcSWsTRPRdRxy2KCpBvx9UQGki4OPD+PYXnawlw1c5vAadEYazq4isQiTq8mucRL9SXBNRSKzWVRK56vwd2EAYYeSoCcXYGPFVyeZyIUUWi9ljZexXEnSPLkxk7oDdC/zKw8WnXY1Q==
+ b=i0LpIErdeBQATDODVWKCW6Y7qioa9HH82k3ycHzMCmzCgKCUPFXruTs7qwdxEBS26QzFikw8c1XAOPp9FgB7Bf/hcBCRdUOklrJ0OBX+s+9d2H6D+iI0eNrwUo3C67UF/9sgrtqBidcX3Paw/V9XCiRQJgy2v9qLH8SfLy7sOVy8f0f0fB+Wny6Yra2xDussuVBniOTvep+yyMBklGfLldizYihTndEicl8FePn/GL9Qin6WP0Jw9z7ko3FddUBCMgcwBhqiUg4JNS/T8HAERFUSlfz4QKfNVXkwgdZSavRpEHi/K0JkmhRySrHHPWW5LbJG0LcerhvcagKTi+kW0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5CmJV1KPTF0L1ePs0VdF8SloT+IzphLKWsZQG4WLaHE=;
- b=R9EFrGHw5afZqLv+ueCb/lujyjdAuTS6VKLiUKhwhRK0ZA8OI02tYOcZw87GTi/bWJUyLn+LhHlrTO6xnefENYGDNT7WU1F1CEqV5k0f8HCms6GIXUftINF1C6gfNihwCbp2PtPwY4F2lsbWgAyhcCpYfQw2fisA6n+rqV/8IWL2cxPWVu6KyvS66uu9+7xBM2bIcOeCzEFce8DrgTg9ZSRKWZ8oWfFOhxXhjW8pQO0RtZmxA8HwlYpKxMI/BIZi8y6BxUWiVE4syr76Exa7f2mLAniQ0ia5gF7LiZRjrAU0AZVXr5t2yOYgem1K1Jz19MIN3JlaAveDxCOUdoxHsw==
+ bh=OKsPtqJaane6upZ0d9uK3PX7zervTKIc8w2QONHL8lM=;
+ b=cyvuFMzcOn1FOdwMDw6bpfaXD0ERBfJSjE+FGAMKWT1nbP6HaBw4g7uJ+lWnoNKUNHuxr23Z6KZRWPsygqB6Xvwvk2UFdFa8c5/rmkBsub0M0GeyedGrrcWJAyfLSbMnqXzl7aEYQIginc9XmnfHkdJmmmGMqzfSG6mWAJnj8MuloWq72uDsVYqLZYBpp/p+3OosCz8u/HVfLI8klbB1N5QIj2WW05rKm32q3FIRRrK4foqMVmpMhwQVfIt/uHX1Xw2KZS0UEy8XFiuStBoXnv1mWeGpreEthm7IrRVmPMSZYQniOhOk9ay5ELavK7rmcKl4u9HNGx8tDMksHTQ1mw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5CmJV1KPTF0L1ePs0VdF8SloT+IzphLKWsZQG4WLaHE=;
- b=L2/zfLATb8K8TeB1D6eZbzbpsoVy4rbSMgqHLRyQsk24FBCa+/xY2c7mtCM6PaOCnklHPhwNER2UsfbHNqSP/sl6Vl5kt7MFXqknE35ze/JDVwQ8zu7DGtGDLq+hjZSHEQllUdHoXynP4thFVIhZiIhniq5QQD8ogCYBDBgFq/ELigSoqkrCgiULTvDcamWVJuSglxpR+YWv5H2fLYdHXa70dqUqCEWhx/mR1idFJ8QDpsjbVSJZpONYqPSu5RVGS+umTfh281fyX0fSA/BBZ1EHcst3C8u8yXSZaKiElyH8rUrz7VD11H6kI28w5b4p0Q8hz8INjTP0Llo/3dL4LA==
-Received: from SJ0PR05CA0090.namprd05.prod.outlook.com (2603:10b6:a03:332::35)
- by CY5PR12MB6551.namprd12.prod.outlook.com (2603:10b6:930:41::9) with
+ bh=OKsPtqJaane6upZ0d9uK3PX7zervTKIc8w2QONHL8lM=;
+ b=iwGiUJ9vxYPuj7N7R2i1TnHBbA+Y6qTwOHmDx2UrCXYeXRZKK6TRZ5QbWRfXLg0gdOhoQcJ3ptZuh8uUbF5TGDxxXgRarHSwhX6mTzPw5bGZXBB7j4twAy3KBYjdVRmPgEws4LIGy9ivaz0VJ7vFvs7h+/t89m9OMUTsdmz4rWsamPROSHTEzUSq6IzomfVXMVcMlyfM0b0hfn56yhmkC/bdyLqiDl57BFmfOOvrC7QiBVrQnuNPI1J3IcYQ1ek2ADy9PUXg/UIs4RMdqJueqoo2TAiO0lWeOhYz9ksChVyhxFTC0MBcZRQJuQSkAYC8yUTJRwgld220o9VYhe8knA==
+Received: from CY8PR11CA0025.namprd11.prod.outlook.com (2603:10b6:930:4a::19)
+ by DM4PR12MB8498.namprd12.prod.outlook.com (2603:10b6:8:183::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.31; Fri, 18 Aug
- 2023 09:30:56 +0000
-Received: from CO1PEPF000042A8.namprd03.prod.outlook.com
- (2603:10b6:a03:332:cafe::41) by SJ0PR05CA0090.outlook.office365.com
- (2603:10b6:a03:332::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.15 via Frontend
- Transport; Fri, 18 Aug 2023 09:30:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20; Fri, 18 Aug
+ 2023 09:31:05 +0000
+Received: from CY4PEPF0000E9D1.namprd03.prod.outlook.com
+ (2603:10b6:930:4a:cafe::cd) by CY8PR11CA0025.outlook.office365.com
+ (2603:10b6:930:4a::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.17 via Frontend
+ Transport; Fri, 18 Aug 2023 09:31:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1PEPF000042A8.mail.protection.outlook.com (10.167.243.37) with Microsoft
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY4PEPF0000E9D1.mail.protection.outlook.com (10.167.241.144) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.14 via Frontend Transport; Fri, 18 Aug 2023 09:30:56 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.6699.14 via Frontend Transport; Fri, 18 Aug 2023 09:31:04 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 18 Aug 2023
- 02:30:41 -0700
+ 02:30:51 -0700
 Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Fri, 18 Aug 2023 02:30:40 -0700
+ 15.2.986.37; Fri, 18 Aug 2023 02:30:51 -0700
 Received: from localhost.localdomain (10.127.8.13) by mail.nvidia.com
  (10.126.190.181) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Fri, 18 Aug 2023 02:30:36 -0700
+ Transport; Fri, 18 Aug 2023 02:30:46 -0700
 From:   Kartik <kkartik@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <sumitg@nvidia.com>, <arnd@arndb.de>, <pshete@nvidia.co>,
@@ -70,10 +70,12 @@ To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <frank.li@vivo.com>, <robh@kernel.org>, <stefank@nvidia.com>,
         <pdeschrijver@nvidia.com>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/6] soc/tegra: fuse: Add ACPI support
-Date:   Fri, 18 Aug 2023 15:00:22 +0530
-Message-ID: <20230818093028.7807-1-kkartik@nvidia.com>
+Subject: [PATCH 2/6] soc/tegra: fuse: Add function to register nvmem
+Date:   Fri, 18 Aug 2023 15:00:24 +0530
+Message-ID: <20230818093028.7807-3-kkartik@nvidia.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230818093028.7807-1-kkartik@nvidia.com>
+References: <20230818093028.7807-1-kkartik@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
@@ -81,47 +83,121 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042A8:EE_|CY5PR12MB6551:EE_
-X-MS-Office365-Filtering-Correlation-Id: b27c185a-c766-4836-766c-08db9fcdd34c
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D1:EE_|DM4PR12MB8498:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c52defb-38a2-4316-94e5-08db9fcdd852
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zAbAROL+G57R+K6/+jZSJyVOiYe+XQfxTAVv55vtgMbHC+BHSv6Yep1JjOfCyLVhWd+3D/ciP7BCrjH2KoM/jzRwHtry4glPDOP+ZqadtIj8pU2qgT92QUyj03vrQE9IuZnoc+XQopoNt/rwG1t3OYcBFHQwQWgzAeZiScW3g9r2GrPUGS1Q7te5iI/SnxraIC0iUSArD5hQV9E5b4DoY8v6tyDy1M3gIftRtEei5u64aVqAfavrcWw0u5ntOfMdZd9TsnCx21/W8R36Ch3w8Zf0zv1CycG+wQGRNcyuTrfF5YxlwRl+o+5qBOXpOV8fySfY8EwvbNTQdS+Vh1OwgEoTlvvSRjvkkLtZUZHMtnZa+5z+GQawnHW7BmRwFyfIOwR80cuxuJwJw5MNZyMOVBx6U8e4Z+NXF3dC9tm0NSCEHKsJj3BYGPFomE/Pz0M2IBu+TKXD0WuQ13E84DhicJmPk4TKLr7ZOCJI8wgSyD5gKAOgi8V+ZFcO1Qfi1WIatupFlIb2wWOtxBoV5UA8HMm6/ZkyopHiZlaCcYuuoT7wTuh2T8dRN6/ie3q2TxmeWN2QQAdohX91boytyvZooe1xy/hvyc/8KSShPSlnKK87NioopfjMnGPOjBbtqINkNAy8ru2kQrRRY5gDpHDDU70KfOk/OhU30QbrD7RWWWfH8BhzopYWGrMqZOVMm04wqaCjztLN66xm6OTNqIEtyPUXYRGOeINK+yo9eBGj4XCXMFyM2joDOnTidCeSmPZ40JACQJxBI9WJyf0xIa1cEA==
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(136003)(346002)(376002)(1800799009)(451199024)(186009)(82310400011)(40470700004)(36840700001)(46966006)(5660300002)(83380400001)(40480700001)(40460700003)(82740400003)(70586007)(316002)(70206006)(478600001)(110136005)(921005)(356005)(7416002)(7636003)(2906002)(4744005)(41300700001)(8936002)(8676002)(47076005)(2616005)(426003)(6666004)(1076003)(336012)(26005)(36860700001)(86362001)(36756003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: eMXrbx6c3KvNWEHM0RHbC/kNq8ld/TZ6Ff9JhjFcQWrPKzMyHYHTInn5s9hrAtJ4grnhUDJHlxMG4ggbysDLC268LIzc5PMXJMsq740TViAlpogGlclvYpsZTMa2XXgonYNV+VUUvrdPSm5CbVJ+QQrSDvdBRIpOusA2JDq5pNVyjYegm227CpnwEvfFnzl5ra2JXxrro+dMCbY7xpFomehaCxe3HIwr4qNCTZC8zMzKqpy47ccV6okW/oDTt/q78kGqfV+NuEhoCSlQi0tck/sAK/p+kRfh89LdXnaBPZZJtfgS/mlzX4cnVe7INmqiQSQc6KFqB6Ig1s0Vd5KjiysFa0ErXaEEjYs/1+QN0hysjR7sN3RKfoT5OktgBcYYvSjxpjd8X4h5TrBlaVCQiRQrXVyEk4ystuzTZR0b8BauiE8houvmxvESNvpwxIpMy11N8mQhw5D9rYTMw8hiZzhlBijdUhq1qpPsgwbrfCwJGbFVaXNtN4QU66x7oQ32mAceZC+TlgoOI+NYCIxVW8+kkyIRWI9t6t3sFR0mS6L7t6+OBb31vdk5ABMzBl+xyzRvXxvLDlZEZtP1gw031puBkJwrCqShDA+I8Y3QsReexi58rJVnOe6fTp5HZ6hmEI2ExDvTeft7hZUfqv3610upkykeDGrlGl81Gj39R79DogtHnpw5yx69mFrSa7vKfus8FrPbBaeIGuFzjDUZcgSqhBnFwqMkWxcXI9ExayHy3PWvEGnz+n8crYFLENFPup0EAAUu1lkN8rpiQ71eKA==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(376002)(136003)(346002)(451199024)(82310400011)(186009)(1800799009)(36840700001)(46966006)(40470700004)(110136005)(70586007)(70206006)(5660300002)(2616005)(41300700001)(2906002)(316002)(7416002)(8676002)(8936002)(478600001)(86362001)(40460700003)(6666004)(36860700001)(47076005)(82740400003)(921005)(356005)(7636003)(36756003)(336012)(426003)(83380400001)(1076003)(40480700001)(26005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2023 09:30:56.4391
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2023 09:31:04.8522
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b27c185a-c766-4836-766c-08db9fcdd34c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c52defb-38a2-4316-94e5-08db9fcdd852
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042A8.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D1.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6551
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8498
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This series of patches add ACPI support for Tegra194 and Tegra234 in
-Tegra fuse and apbmisc drivers. It also adds support for Tegra241
-which uses ACPI boot
+Add helper function tegra_fuse_nvmem_register() to register
+Tegra Fuse nvmem and use it in tegra_fuse_probe(). So, this can be
+shared between device-tree and ACPI probe, which is to be introduced
+later.
 
-Kartik (6):
-  soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
-  soc/tegra: fuse: Add function to register nvmem
-  soc/tegra: fuse: Add function to add lookups
-  soc/tegra: fuse: Add function to print SKU info
-  soc/tegra: fuse: Add ACPI support for Tegra194 and Tegra234
-  soc/tegra: fuse: Add support for Tegra241
+Signed-off-by: Kartik <kkartik@nvidia.com>
+---
+ drivers/soc/tegra/fuse/fuse-tegra.c | 62 +++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 25 deletions(-)
 
- drivers/soc/tegra/Kconfig              |   5 +
- drivers/soc/tegra/fuse/fuse-tegra.c    | 180 +++++++++++++++++++------
- drivers/soc/tegra/fuse/fuse-tegra30.c  |  25 ++++
- drivers/soc/tegra/fuse/fuse.h          |   5 +
- drivers/soc/tegra/fuse/tegra-apbmisc.c |  74 +++++++---
- include/soc/tegra/fuse.h               |   1 +
- 6 files changed, 235 insertions(+), 55 deletions(-)
-
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index a2c28f493a75..45784ac6393d 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -113,10 +113,44 @@ static void tegra_fuse_restore(void *base)
+ 	fuse->clk = NULL;
+ }
+ 
++static int tegra_fuse_nvmem_register(struct tegra_fuse *fuse,
++				     struct device *dev)
++{
++	struct nvmem_config nvmem;
++	int err;
++
++	memset(&nvmem, 0, sizeof(nvmem));
++	nvmem.dev = dev;
++	nvmem.name = "fuse";
++	nvmem.id = -1;
++	nvmem.owner = THIS_MODULE;
++	nvmem.cells = fuse->soc->cells;
++	nvmem.ncells = fuse->soc->num_cells;
++	nvmem.keepout = fuse->soc->keepouts;
++	nvmem.nkeepout = fuse->soc->num_keepouts;
++	nvmem.type = NVMEM_TYPE_OTP;
++	nvmem.read_only = true;
++	nvmem.root_only = false;
++	nvmem.reg_read = tegra_fuse_read;
++	nvmem.size = fuse->soc->info->size;
++	nvmem.word_size = 4;
++	nvmem.stride = 4;
++	nvmem.priv = fuse;
++
++	fuse->nvmem = devm_nvmem_register(dev, &nvmem);
++	if (IS_ERR(fuse->nvmem)) {
++		err = PTR_ERR(fuse->nvmem);
++		dev_err(dev, "failed to register NVMEM device: %d\n",
++			err);
++		return err;
++	}
++
++	return 0;
++}
++
+ static int tegra_fuse_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base = fuse->base;
+-	struct nvmem_config nvmem;
+ 	struct resource *res;
+ 	int err;
+ 
+@@ -152,31 +186,9 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+ 			return err;
+ 	}
+ 
+-	memset(&nvmem, 0, sizeof(nvmem));
+-	nvmem.dev = &pdev->dev;
+-	nvmem.name = "fuse";
+-	nvmem.id = -1;
+-	nvmem.owner = THIS_MODULE;
+-	nvmem.cells = fuse->soc->cells;
+-	nvmem.ncells = fuse->soc->num_cells;
+-	nvmem.keepout = fuse->soc->keepouts;
+-	nvmem.nkeepout = fuse->soc->num_keepouts;
+-	nvmem.type = NVMEM_TYPE_OTP;
+-	nvmem.read_only = true;
+-	nvmem.root_only = false;
+-	nvmem.reg_read = tegra_fuse_read;
+-	nvmem.size = fuse->soc->info->size;
+-	nvmem.word_size = 4;
+-	nvmem.stride = 4;
+-	nvmem.priv = fuse;
+-
+-	fuse->nvmem = devm_nvmem_register(&pdev->dev, &nvmem);
+-	if (IS_ERR(fuse->nvmem)) {
+-		err = PTR_ERR(fuse->nvmem);
+-		dev_err(&pdev->dev, "failed to register NVMEM device: %d\n",
+-			err);
++	err = tegra_fuse_nvmem_register(fuse, &pdev->dev);
++	if (err)
+ 		return err;
+-	}
+ 
+ 	fuse->rst = devm_reset_control_get_optional(&pdev->dev, "fuse");
+ 	if (IS_ERR(fuse->rst)) {
 -- 
 2.34.1
 
