@@ -2,105 +2,183 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20F1C678DC
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 10:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58351C71147
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 13:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244622AbjHRKQc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Aug 2023 06:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33440 "EHLO
+        id S1377020AbjHRNW0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Aug 2023 09:22:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358628AbjHRKQZ (ORCPT
+        with ESMTP id S1377091AbjHRNWI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Aug 2023 06:16:25 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C182F30C2
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Aug 2023 03:16:23 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fed7c2ec92so657155e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Aug 2023 03:16:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692353782; x=1692958582;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hXTabiaJxmNJ9oq0XkR6nAkvHWMygGA5C17EAhns0wg=;
-        b=Re1LexwemUlpCxdH5CwQry+LacDXBZ3xU8v+wzoqheIa2Cq6/9Yk9uMG87xllqHH7X
-         wmQ+4TJOo0skEVkVECkUA55wgxIX/sfKRdWuJ9J5zC2fzQLGdFx9CpwGc1/wXSwhuQLC
-         MU9sAwriA9fuaSCfYSZJKABxo/VPxIxWmxn+6Go27BgmDd8QSW5IbS0RIyOLM0pABZju
-         tj/gKtz5JpB2OkFOhwcxkREeaTyRQmZAZzaeOFINxEF+otVLfdWEh4kkEzhTkf+Fcfnd
-         GU3IVtc2KWbP3mHmfnaama0dLjKMyakYLdqni4hZYjZoCcAcBFJEb0um3Z8Hxr+7iEom
-         blTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692353782; x=1692958582;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXTabiaJxmNJ9oq0XkR6nAkvHWMygGA5C17EAhns0wg=;
-        b=bEceM0TKC8zZTQqohn61JqXgy2RLBkX+kVOm9GwKTvc2hUjfrVBlYHvBBIso1FzF4e
-         C+H/nYT4+3fZ4YDxHhyOLiZHEjXwGjOTiuQ8vHznfc/NrAmHojgdSpoUzrZ+WJAxWGfY
-         mR0RWYfxbrEhqodggUUrLbs9ETdAzjyv1cp2ZWCSFMnQX4Xpdv/w/K6vopzbrid5T35C
-         fkUKvYsAmQPIbvcEgYlJQu/TMjaabBXmtk40dSe6Y4L40ASj5ZQ7ZPmiTL40Ha54fNrE
-         kWbeK2ipyM7U9Yl/YrfzM1d/eiWWMy60vhrKHuqE1KJ18A7Qwt6yeKk2CM8AbIKbzXH4
-         pOSA==
-X-Gm-Message-State: AOJu0Yxu9O2vOH7DcF8aTPJn96moYNp9r2GxrnI1qQQtHXEFGq+GyXW0
-        QXkdcn+e6TlobFwzqDtLSiosOg==
-X-Google-Smtp-Source: AGHT+IF0yzR5wFadKQBSeUgKZJ0RQXMaeexJUOe03PNuqST7rF77V1m15KKYyPooKo53sQenEX6Brg==
-X-Received: by 2002:a05:600c:5111:b0:3fe:1c57:3be with SMTP id o17-20020a05600c511100b003fe1c5703bemr4769676wms.8.1692353782169;
-        Fri, 18 Aug 2023 03:16:22 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id c15-20020a05600c0acf00b003fbc9b9699dsm2303355wmr.45.2023.08.18.03.16.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Aug 2023 03:16:21 -0700 (PDT)
-Message-ID: <cb967ebc-0e15-b0e6-badb-4f9d2ba09178@linaro.org>
-Date:   Fri, 18 Aug 2023 12:16:20 +0200
+        Fri, 18 Aug 2023 09:22:08 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25122D50;
+        Fri, 18 Aug 2023 06:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692364924; x=1723900924;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vgxxsOfmDVAcjlOYZKLBE8eC4gwtXVJBmu+efUxvds0=;
+  b=POM9KzhXjvxD8/vPPHUfsnUXEw7ofn/lEa1WafIo1MT8wou7EyCyo+u5
+   4tjCxUosmWwH3V1mfCxFatnO24MK29YOQ/vkBU82Z7diqoIYESO7ZPZuA
+   NLUK1DYH22jhvH/tvWaMglU8/YpUPvBfMkmQA2yBci3UqCslItGitwYk1
+   w5LobOKrpf4b2HRfPwQwLnjHbekeiHCkijc24qk4OUzjPHL7ZMHT0OsWc
+   LRxA06AIPfxarAWs0ugkCqzlFoTt8+QUk4+XjpKQVvf2QNjyvc3/79gYZ
+   X+m+ZD3jVNuBxzYzRGI8HNrkBjXSHF4FujMZTI8MsXEoxT0Uluf5lvLrC
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10806"; a="376859494"
+X-IronPort-AV: E=Sophos;i="6.01,183,1684825200"; 
+   d="scan'208";a="376859494"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2023 06:22:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10806"; a="805148491"
+X-IronPort-AV: E=Sophos;i="6.01,183,1684825200"; 
+   d="scan'208";a="805148491"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Aug 2023 06:21:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qWzQL-009aaH-1X;
+        Fri, 18 Aug 2023 16:21:57 +0300
+Date:   Fri, 18 Aug 2023 16:21:57 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com,
+        arnd@arndb.de, pshete@nvidia.co, digetx@gmail.com,
+        petlozup@nvidia.com, windhl@126.com, frank.li@vivo.com,
+        robh@kernel.org, stefank@nvidia.com, pdeschrijver@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
+Message-ID: <ZN9wdTLK1rwnVK/e@smile.fi.intel.com>
+References: <20230818093028.7807-1-kkartik@nvidia.com>
+ <20230818093028.7807-2-kkartik@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] clocksource: Explicitly include correct DT includes
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Jean-Marie Verdun <verdun@hpe.com>,
-        Nick Hawkins <nick.hawkins@hpe.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20230714174409.4053843-1-robh@kernel.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20230714174409.4053843-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230818093028.7807-2-kkartik@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/07/2023 19:44, Rob Herring wrote:
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
+On Fri, Aug 18, 2023 at 03:00:23PM +0530, Kartik wrote:
+> In preparation to ACPI support in Tegra fuse driver add function
+> tegra_acpi_init_apbmisc() and move common code used for both ACPI and
+> device-tree into a new helper function tegra_init_apbmisc_base().
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+> Note that function tegra_acpi_init_apbmisc() is not placed in the __init
+> section, because it will be called during probe.
 
-Applied, thanks
+...
 
+>  void tegra_init_revision(void);
+>  void tegra_init_apbmisc(void);
+> +void tegra_acpi_init_apbmisc(void);
+
+Why do you  need a separate function?
+
+...
+
+> +static const struct acpi_device_id apbmisc_acpi_match[] = {
+> +	{ .id = "NVDA2010", 0 },
+
+We rarely use C99 initializers for ACPI ID table.
+Also 0 is not needed.
+
+> +	{ /* sentinel */ }
+> +};
+
+...
+
+> +	if (!apbmisc_base)
+> +		pr_err("failed to map APBMISC registers\n");
+> +	else
+> +		chipid = readl_relaxed(apbmisc_base + 4);
+
+Why not positive conditional as you have two branches anyway?
+
+...
+
+> +	if (!strapping_base) {
+> +		pr_err("failed to map strapping options registers\n");
+> +	} else {
+> +		strapping = readl_relaxed(strapping_base);
+> +		iounmap(strapping_base);
+> +	}
+
+Ditto.
+
+...
+
+> -	apbmisc_base = ioremap(apbmisc.start, resource_size(&apbmisc));
+> -	if (!apbmisc_base) {
+> -		pr_err("failed to map APBMISC registers\n");
+> -	} else {
+> -		chipid = readl_relaxed(apbmisc_base + 4);
+> -	}
+> -
+> -	strapping_base = ioremap(straps.start, resource_size(&straps));
+> -	if (!strapping_base) {
+> -		pr_err("failed to map strapping options registers\n");
+> -	} else {
+> -		strapping = readl_relaxed(strapping_base);
+> -		iounmap(strapping_base);
+> -	}
+> -
+> +	tegra_init_apbmisc_base(&apbmisc, &straps);
+
+This split can be done in a separate precursor patch.
+
+...
+
+> +void tegra_acpi_init_apbmisc(void)
+> +{
+> +	struct acpi_device *adev = NULL;
+> +	struct resource *apbmisc, *straps;
+> +	struct list_head resource_list;
+> +	struct resource_entry *rentry;
+> +	int rcount;
+> +
+> +	adev = acpi_dev_get_first_match_dev(apbmisc_acpi_match[0].id, NULL, -1);
+> +	if (!adev)
+> +		return;
+> +
+> +	INIT_LIST_HEAD(&resource_list);
+> +
+> +	rcount = acpi_dev_get_memory_resources(adev, &resource_list);
+> +	if (rcount != 2) {
+> +		pr_err("failed to get APBMISC memory resources");
+
+(1)
+
+> +		return;
+> +	}
+
+> +	rentry = list_first_entry(&resource_list, struct resource_entry, node);
+> +	apbmisc = rentry->res;
+> +	rentry = list_next_entry(rentry, node);
+> +	straps = rentry->res;
+
+We don't do like this, we walk through them and depending on the type and index
+do something. The above if error prone and not scalable code.
+
+> +	tegra_init_apbmisc_base(apbmisc, straps);
+
+> +	acpi_dev_free_resource_list(&resource_list);
+
+Not okay in (1).
+
+> +	acpi_dev_put(adev);
+
+Not okay in (1).
+
+> +}
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+With Best Regards,
+Andy Shevchenko
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
