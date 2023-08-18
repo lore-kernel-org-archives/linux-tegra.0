@@ -2,111 +2,79 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB313C7115C
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 15:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7771C77B7C
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 16:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377971AbjHRPKX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Aug 2023 11:10:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51820 "EHLO
+        id S1357685AbjHRQGM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Aug 2023 12:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378016AbjHRPKQ (ORCPT
+        with ESMTP id S1378236AbjHRQFp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Aug 2023 11:10:16 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E683A99;
-        Fri, 18 Aug 2023 08:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692371413; x=1723907413;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q/jZ37qbijWW62BdQY9/xP7Bfe8jDPnF+3L2ur66xwc=;
-  b=Q0kW1HpydSnEV7HMXHa/HQB+X8tvDiP6ys5SvZ8XFU3q99d94fI77agl
-   P8P0rMaOZ5ebSRYA7K3z0TTrgu7r8usIHeOH+ZwlBsqmOdZqexE6/qO3C
-   0DwYtyxLraH/RgRaaHzTXuVBT91ORHOdyaFGyeGSDaAySaIX0ylvN7Ab4
-   pR3Sip1gfXddwD6tGsJWQ4FMU+UPM10G7U/QrDT1JMuUVhLbnVWCRmlVU
-   mjppLIF6/2QTlP5J95eX9p7lZSobdKPUE/4p6r+k4Kr1iRspc94t91XV/
-   YlF4jpoaqTuqhcuRABROaYPK4wNadtzC3LjFqqovx+2Sg/te0gptObuaD
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10806"; a="437030699"
-X-IronPort-AV: E=Sophos;i="6.01,183,1684825200"; 
-   d="scan'208";a="437030699"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2023 08:10:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10806"; a="908913322"
-X-IronPort-AV: E=Sophos;i="6.01,183,1684825200"; 
-   d="scan'208";a="908913322"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga005.jf.intel.com with ESMTP; 18 Aug 2023 08:10:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qX16z-00DFbG-28;
-        Fri, 18 Aug 2023 18:10:05 +0300
-Date:   Fri, 18 Aug 2023 18:10:05 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Kartik <kkartik@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com,
-        arnd@arndb.de, pshete@nvidia.co, digetx@gmail.com,
-        petlozup@nvidia.com, windhl@126.com, frank.li@vivo.com,
-        robh@kernel.org, stefank@nvidia.com, pdeschrijver@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] soc/tegra: fuse: Add support for Tegra241
-Message-ID: <ZN+Jzbsci3RLtEnW@smile.fi.intel.com>
-References: <20230818093028.7807-1-kkartik@nvidia.com>
- <20230818093028.7807-7-kkartik@nvidia.com>
+        Fri, 18 Aug 2023 12:05:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F234AE42;
+        Fri, 18 Aug 2023 09:05:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 78D0C61B22;
+        Fri, 18 Aug 2023 16:05:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B77DC433C8;
+        Fri, 18 Aug 2023 16:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692374742;
+        bh=BJY/X/OrUTc9OCn8r+cSv43KgNc/JdpyK6t6hn30eMU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C4A0gtQwRiaLc8WQm077/wVlUth7fUXjeSRI6M1xXbomD8PZyUsjfVeuLS3owV73x
+         DHz8UDOO/SzX/V1XcSi2leTNQCltIYQL5QBhFSAdemETf97DjKqNncXMAB+iqEKw2g
+         U4C6Mwkd71psq0rREQIEbyjfPPzKPusHn/nDZhO2hgxmnQDtGGoFNiz0sM4N/Ohu9q
+         rT8mWAhPOXYqriSUqeBq7xNdTukIHJd++YcfHo3IYihquJ0Vd29sqyG/jeMo3qoaXd
+         8LLJjVbeaEUrXAw3aDoHwGf5FxP1qBKMJEw+ntNt/K4l/023tEvKzRalo6HocM6XCQ
+         yigf2+UgJOxmA==
+Date:   Fri, 18 Aug 2023 17:05:36 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Besar Wicaksono <bwicaksono@nvidia.com>
+Cc:     suzuki.poulose@arm.com, robin.murphy@arm.com,
+        ilkka@os.amperecomputing.com, catalin.marinas@arm.com,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+        rwiley@nvidia.com, efunsten@nvidia.com
+Subject: Re: [PATCH v5] perf: arm_cspmu: Separate Arm and vendor module
+Message-ID: <20230818160536.GA16119@willie-the-truck>
+References: <20230705104745.52255-1-bwicaksono@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230818093028.7807-7-kkartik@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20230705104745.52255-1-bwicaksono@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Aug 18, 2023 at 03:00:28PM +0530, Kartik wrote:
-> Add support for Tegra241 which use ACPI boot.
+Hi Besar,
 
-...
+On Wed, Jul 05, 2023 at 05:47:45AM -0500, Besar Wicaksono wrote:
+> Arm Coresight PMU driver consists of main standard code and
+> vendor backend code. Both are currently built as a single module.
+> This patch adds vendor registration API to separate the two to
+> keep things modular. The main driver requests each known backend
+> module during initialization and defer device binding process.
+> The backend module then registers an init callback to the main
+> driver and continue the device driver binding process.
+> 
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> ---
+> 
+> Changes from v4:
+>  * Fix warning reported by kernel test robot
+> v4: https://lore.kernel.org/linux-arm-kernel/20230620041438.32514-1-bwicaksono@nvidia.com/T/#u
 
->  	case TEGRA234:
->  		fuse->soc = &tegra234_fuse_soc;
->  		break;
-> +#endif
-> +#if defined(CONFIG_ARCH_TEGRA_241_SOC)
-> +	case TEGRA241:
-> +		fuse->soc = &tegra241_fuse_soc;
-> +		break;
->  #endif
+Do you plan to send a v5 addressing Suzuki's comments? This series is
+blocking the Ampere work from Ilkka.
 
-Have you tried --patience when formatting patches?
-Does it help them to look better?
+Thanks,
 
-...
-
-> +const struct tegra_fuse_soc tegra241_fuse_soc = {
-> +	.init = tegra30_fuse_init,
-> +	.info = &tegra241_fuse_info,
-
-> +	.lookups = NULL,
-> +	.num_lookups = 0,
-> +	.cells = NULL,
-> +	.num_cells = 0,
-
-Isn't it the default?
-
-> +	.keepouts = tegra241_fuse_keepouts,
-> +	.num_keepouts = ARRAY_SIZE(tegra241_fuse_keepouts),
-> +	.soc_attr_group = &tegra194_soc_attr_group,
-
-> +	.clk_suspend_on = false,
-
-Ditto.
-
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Will
