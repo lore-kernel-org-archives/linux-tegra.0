@@ -2,127 +2,329 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050C5EE49A1
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Aug 2023 22:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C136EE49A2
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Aug 2023 01:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241721AbjHRWrl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Aug 2023 18:47:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56958 "EHLO
+        id S243377AbjHSBKW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Aug 2023 21:10:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241708AbjHRWr2 (ORCPT
+        with ESMTP id S243275AbjHSBJ5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Aug 2023 18:47:28 -0400
+        Fri, 18 Aug 2023 21:09:57 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 471034214;
-        Fri, 18 Aug 2023 15:47:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C1592D59;
+        Fri, 18 Aug 2023 18:09:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D018763ACE;
-        Fri, 18 Aug 2023 22:47:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5936C433C8;
-        Fri, 18 Aug 2023 22:47:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A5C506142D;
+        Sat, 19 Aug 2023 01:09:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517F7C433C9;
+        Sat, 19 Aug 2023 01:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692398846;
-        bh=GERRINsAE4jFIhYWdb4073xkrV0e7fJw3JwzPleFkGE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cyuL5Iht3FYQhRsQPZ882/GmkeF4L5szu8lARMrLLwnl/0ywm7mtvMs22mHQfpQEV
-         PfMAoZI9wLWJ88CsiWMyPcyIZlbf2PVYElReCYpEyqPx79/9xEz0p2o24WJqS7cfEd
-         3ppg3GlffC8lgib60tR67hmDMT96+jDVyO7khBg5IfTrrrzO8vR2si+EvKu7D/bwFl
-         BOQJwbKJE47igkOtaP04PX5ASifTwmFRyzEb76CWj1pq1lFsCFcdYnoSNsmw3bbopA
-         jb4Cy2tCBGbxN1MIv7KK7Nkz6ZeGN4hzis7MN6B2iZymCsTslqic6QQ0etjZshT3RI
-         t7o66s2q1HFRw==
-Date:   Fri, 18 Aug 2023 23:47:11 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Andy Gross <agross@kernel.org>, David Airlie <airlied@gmail.com>,
-        alsa-devel@alsa-project.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        dri-devel@lists.freedesktop.org, Emma Anholt <emma@anholt.net>,
-        etnaviv@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Frank Rowand <frowand.list@gmail.com>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kalle Valo <kvalo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Sean Paul <sean@poorly.run>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        s=k20201202; t=1692407394;
+        bh=0XvaoLkX8SfTQSjDLN60fvMvpwG6yb+pFrQkc7aaaCw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KdQKqmY8VWQlteyoypQ1P+UiskpvFwOzv6aYS+J09+/pyrLETrMppOHg5JyFJcZmm
+         cwsnysFJBbToziMO3aGhctjWM63/QXGHl/ZDdj2biEV0RZtYxf58hdF46TIbC6gtuh
+         4TPfn76+ofAS35Gk/XZmZTs8w+eo+Je/DCHVJQ+3rIAgJZeVGbappQvyHNjMu61iHf
+         ZrNkzcMLtiE7lXn43TS/PktTddY903GKgJjy3aTfeYE/5Ywu30g84vtm1wULYLfjof
+         I26cUwnVbo4NrwSZjTPKm4FC9XW7PSekpOsd8NqpLarRPjNGhvYgr3hykEHiRhVhAy
+         IQLus4z79AB/Q==
+Received: (nullmailer pid 916899 invoked by uid 1000);
+        Sat, 19 Aug 2023 01:09:51 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH] iommu: Remove the device_lock_assert() from
- __iommu_probe_device()
-Message-ID: <1b53ea1e-3522-43db-a7db-dd4b460f0bc6@sirena.org.uk>
-References: <0-v1-98d20e768c66+7-of_dma_lock_jgg@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dt-bindings: pinctrl: Drop 'phandle' properties
+Date:   Fri, 18 Aug 2023 20:09:44 -0500
+Message-Id: <20230819010946.916772-1-robh@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sBznzgBGlLdaocvC"
-Content-Disposition: inline
-In-Reply-To: <0-v1-98d20e768c66+7-of_dma_lock_jgg@nvidia.com>
-X-Cookie: Your aim is high and to the right.
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+'phandle' properties are implicitly supported on all nodes, so it
+shouldn't be listed in schemas.
 
---sBznzgBGlLdaocvC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+dtschema had a bug where 'phandle' and other implicit properties weren't
+being added under 'additionalProperties' schemas. That was fixed in
+v2023.07 release.
 
-On Fri, Aug 18, 2023 at 06:32:28PM -0300, Jason Gunthorpe wrote:
-> It turns out several drivers are calling of_dma_configure() outside the
-> expected bus_type.dma_configure op. This ends up being mis-locked and
-> triggers a lockdep assertion, or instance:
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/pinctrl/ingenic,pinctrl.yaml          | 4 ----
+ .../devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml   | 2 --
+ .../devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml   | 2 --
+ .../devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml   | 2 --
+ .../devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml    | 2 --
+ .../devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml   | 2 --
+ .../devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml    | 2 --
+ Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml    | 4 ----
+ .../devicetree/bindings/pinctrl/renesas,rza1-ports.yaml       | 4 ----
+ .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    | 4 ----
+ .../devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml     | 4 ----
+ .../devicetree/bindings/pinctrl/renesas,rzv2m-pinctrl.yaml    | 4 ----
+ .../bindings/pinctrl/socionext,uniphier-pinctrl.yaml          | 2 --
+ 13 files changed, 38 deletions(-)
 
-Acked-by: Mark Brown <broonie@kernel.org>
+diff --git a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+index 35723966b70a..890961826c6f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+@@ -135,7 +135,6 @@ additionalProperties:
+         - $ref: pinmux-node.yaml#
+ 
+       properties:
+-        phandle: true
+         function: true
+         groups: true
+         pins: true
+@@ -147,8 +146,6 @@ additionalProperties:
+       additionalProperties: false
+ 
+     - type: object
+-      properties:
+-        phandle: true
+       additionalProperties:
+         type: object
+         allOf:
+@@ -156,7 +153,6 @@ additionalProperties:
+           - $ref: pinmux-node.yaml#
+ 
+         properties:
+-          phandle: true
+           function: true
+           groups: true
+           pins: true
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml
+index 065dedb3573a..1690c0ef553a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml
+@@ -22,8 +22,6 @@ properties:
+ patternProperties:
+   "^pinmux(-[a-z0-9-_]+)?$":
+     type: object
+-    properties:
+-      phandle: true
+ 
+     # pin groups
+     additionalProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml
+index f924652bef0d..9b7368bd3862 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml
+@@ -32,8 +32,6 @@ properties:
+ patternProperties:
+   "^pinmux(-[a-z0-9-_]+)?$":
+     type: object
+-    properties:
+-      phandle: true
+ 
+     # pin groups
+     additionalProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
+index 60a4bdf01bf2..87b6f4f42f25 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
+@@ -23,8 +23,6 @@ properties:
+ patternProperties:
+   "^pinmux(-[a-z0-9-_]+)?$":
+     type: object
+-    properties:
+-      phandle: true
+ 
+     # pin groups
+     additionalProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml
+index 432ea40209a8..63cd743a30e0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml
+@@ -24,8 +24,6 @@ properties:
+ patternProperties:
+   "^pinmux(-[a-z0-9-_]+)?$":
+     type: object
+-    properties:
+-      phandle: true
+ 
+     # pin groups
+     additionalProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
+index 28ae2e6d0cbc..e99387a6da5e 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
+@@ -22,8 +22,6 @@ properties:
+ patternProperties:
+   "^pinmux(-[a-z0-9-_]+)?$":
+     type: object
+-    properties:
+-      phandle: true
+ 
+     # pin groups
+     additionalProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml
+index c0eda7848767..36c8f3301a8f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml
+@@ -22,8 +22,6 @@ properties:
+ patternProperties:
+   "^pinmux(-[a-z0-9-_]+)?$":
+     type: object
+-    properties:
+-      phandle: true
+ 
+     # pin groups
+     additionalProperties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+index 0fc3c0f52c19..181cd1676c0a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+@@ -107,7 +107,6 @@ additionalProperties:
+         Client device subnodes use below standard properties.
+ 
+       properties:
+-        phandle: true
+         function: true
+         groups: true
+         pins: true
+@@ -127,9 +126,6 @@ additionalProperties:
+       additionalProperties: false
+ 
+     - type: object
+-      properties:
+-        phandle: true
+-
+       additionalProperties:
+         $ref: "#/additionalProperties/anyOf/0"
+ 
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml
+index 83800fcf0ce4..2bd7d47d0fdb 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml
+@@ -108,7 +108,6 @@ additionalProperties:
+             Integers values in "pinmux" argument list are assembled as:
+             ((PORT * 16 + PIN) | MUX_FUNC << 16)
+ 
+-        phandle: true
+         input-enable: true
+         output-enable: true
+ 
+@@ -118,9 +117,6 @@ additionalProperties:
+       additionalProperties: false
+ 
+     - type: object
+-      properties:
+-        phandle: true
+-
+       additionalProperties:
+         $ref: "#/additionalProperties/anyOf/0"
+ 
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+index 9ce1a07fc015..145c5442f268 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+@@ -83,7 +83,6 @@ additionalProperties:
+         Client device subnodes use below standard properties.
+ 
+       properties:
+-        phandle: true
+         pinmux:
+           description:
+             Values are constructed from GPIO port number, pin number, and
+@@ -106,9 +105,6 @@ additionalProperties:
+         line-name: true
+ 
+     - type: object
+-      properties:
+-        phandle: true
+-
+       additionalProperties:
+         $ref: "#/additionalProperties/anyOf/0"
+ 
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml
+index 19d4d2facfb4..816688580e33 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml
+@@ -74,7 +74,6 @@ additionalProperties:
+             offset by 10.  Additional identifiers are provided to specify the
+             MDIO source peripheral.
+ 
+-        phandle: true
+         bias-disable: true
+         bias-pull-up:
+           description: Pull up the pin with 50 kOhm
+@@ -91,9 +90,6 @@ additionalProperties:
+         $ref: "#/additionalProperties/anyOf/0"
+ 
+     - type: object
+-      properties:
+-        phandle: true
+-
+       additionalProperties:
+         $ref: "#/additionalProperties/anyOf/0"
+ 
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzv2m-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzv2m-pinctrl.yaml
+index c87161f2954f..cb81a17bd0b1 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rzv2m-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzv2m-pinctrl.yaml
+@@ -63,7 +63,6 @@ additionalProperties:
+         Client device subnodes use below standard properties.
+ 
+       properties:
+-        phandle: true
+         pinmux:
+           description:
+             Values are constructed from GPIO port number, pin number, and
+@@ -87,9 +86,6 @@ additionalProperties:
+         line-name: true
+ 
+     - type: object
+-      properties:
+-        phandle: true
+-
+       additionalProperties:
+         $ref: "#/additionalProperties/anyOf/0"
+ 
+diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+index a6f34df82e90..880da721a927 100644
+--- a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+@@ -32,7 +32,6 @@ additionalProperties:
+     - $ref: pinmux-node.yaml#
+ 
+   properties:
+-    phandle: true
+     function: true
+     groups: true
+     pins: true
+@@ -49,7 +48,6 @@ additionalProperties:
+       - $ref: pinmux-node.yaml#
+ 
+     properties:
+-      phandle: true
+       function: true
+       groups: true
+       pins: true
+-- 
+2.40.1
 
---sBznzgBGlLdaocvC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTf9O4ACgkQJNaLcl1U
-h9CQkgf/U+glO2B163vQwi/fCAxSj8fyw/4Fx89WMOmUEwj0C05hkeR75k8U4pW8
-4U0vPSpT0yaPcjKGpztFpE3uMIf/40CZ1SbbKuvZ4RcYoumOqLIWVcQzYmEiQSml
-M4NjnYXvs3xppLRtxlnWYCzwmvijPoQfs/Ot1VBn9TsoGz70YwLD3JfjHXnztUHF
-y9wAVvMF5OgDayDuWedbuh63H4kRGS7LIhIu9cPgnV14RWL9SmYat6UKcto2FePd
-th2ai/d8CMoJ8oHV7BOaf86sQXul26EvMiWSqgyc9uGX/ag9RYCA465U/QXlVQZc
-M7hwZKW9rlZZsKXxSdbNPklRZ/Mdqg==
-=cHW/
------END PGP SIGNATURE-----
-
---sBznzgBGlLdaocvC--
