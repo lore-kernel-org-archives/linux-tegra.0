@@ -2,124 +2,236 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D38F5EE4996
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 11:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38FAEE4996
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 11:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232579AbjHULbB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Aug 2023 07:31:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39594 "EHLO
+        id S231388AbjHULc7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Aug 2023 07:32:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231774AbjHULbA (ORCPT
+        with ESMTP id S230438AbjHULc7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Aug 2023 07:31:00 -0400
-X-Greylist: delayed 2615 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 21 Aug 2023 04:30:52 PDT
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6A7118;
-        Mon, 21 Aug 2023 04:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Ous1oN9CqolOB1bkwGJLUiDZKO4d3gQIesYeEOsNOUI=; b=h2G2rNzQe1nSmA9SHdIazGnxMG
-        3NB73LdIpo+IQ/AN7YRPmTX1er8EXGSMxssQTmFN1vQQkZIuWJa3uWBIwliB5EtcUPbhNOvQvhL2t
-        vV1LE4HPVhE3rMLm6D/W45KzdSjJEemCtHeSeeDW27bu8zinP2fd6zODPMsE2valCQ+L21r2Vvt8e
-        NmfG9fBHVItJzRJ1O4M/CCcPaWxK9BMM97QLlY2H4ZMsA0PzA348EnIUMRNDfQDHm36O9NWiBE3TL
-        9Vr/I9LwT2c8mabNXvZ24V91BdsjcWJNFHKbGT7T/z9AW5c4FcxhAlzHh0s9ITG7g7RKjc1FRObxZ
-        iRjI4f6A==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.96)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1qY1pq-007HdP-2Y;
-        Mon, 21 Aug 2023 13:08:34 +0300
-Message-ID: <7c342b0c-9657-ffd1-6fad-ef6433ddc793@kapsi.fi>
-Date:   Mon, 21 Aug 2023 13:08:34 +0300
+        Mon, 21 Aug 2023 07:32:59 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79253DC;
+        Mon, 21 Aug 2023 04:32:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=abMAsgHvf8UTXvOqybpN5sEjZl8jUPrpB3hAiP2hUAOXQzygRVoTEtgjaIxSXApQiYbKUSYw6TlF87kPD3vumUXGqJbvmik/rZ1XuECeSBOU5DVC4Z/wIoCo8URA5PygdBSkkweuGM60SxELfBi3zfcynPoZkGmRvJNRpvikdvqqr0NcULRsm6wJV+OeLoP6/6YXZqcEfIBK2RKsY5YlXQxlxqVkybbAgUBqfZJCWNFgY8Z0CYHbRj8w5W+Y11PEwI+xFiHn9CAEhfy+5uSxancSg9uDdIaVFahYiLMqR3iJS7EZsb492F4uAuELZB2+7yn/FOGle6QgYpmkBHHZgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tj2k9QKhzk8ibs4jhXtOpYb4JC/CQI6Xgkeu2pfMvGQ=;
+ b=JsO4pzZx2KIC1q75OImBVQPDsVDOpND6mXPkr68edwnKq70moQNqbZu5vLimm02zauOa1QqGJu/QFyTKDLvXZTKMe9AfI1HVFMoZgoZs2RvwD+WNo5aZi7yWPumgOZPgxYczb8h1i/m4MO3vFtiN1kU2ZUK+l70CxTOFABOoaVXzjfFvL75vlZSjGL9rzNwx6sA5Pc/wwjlKdFJtWa/DFkOAI8oRtpaoFf6qNLoTUkGNsWN5B/DTSRND+8R0eSIjT1XNHDv00Kss1gEe9uCzPYNgD9c2B0Jueg3IUUUZ5Zq/uafNiN8VGH+sI5PjK+o0NldkalPRSuNanp8Rw/1qWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tj2k9QKhzk8ibs4jhXtOpYb4JC/CQI6Xgkeu2pfMvGQ=;
+ b=Vx0G+79qFvkkZQ3RBpme1+DxyRk/z2tIIARA3ssWdAR8g2w1H6AwQvdTEUGO7YNljwAMWuKQcrzdSbrVQ6IJVag48iBwGBR76x6zF/y9IrLmJ4AvpzPl2jmrEIi1j0WchSUQ0+SLIIM6ioUK9392Yy6JmbUYA06lb54CTbWDtJWxeT7E+omRXQbT5TFYiRd5mx+/ACaPg40CGQXGZYWiIcOW6fZdhTHhRObHPfY37I7rLeSctg/tsXaNkn3m1PueQtk8vIPqRyMWBlEYgUvtpQuTS/MLZOEQZKTsv+1PGJur3nuyXZCmzbql3GWEsxrZEzEeu69aW+pFE0d2QeJIeA==
+Received: from MW4PR03CA0300.namprd03.prod.outlook.com (2603:10b6:303:b5::35)
+ by BY5PR12MB4998.namprd12.prod.outlook.com (2603:10b6:a03:1d4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.24; Mon, 21 Aug
+ 2023 11:32:54 +0000
+Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
+ (2603:10b6:303:b5:cafe::1b) by MW4PR03CA0300.outlook.office365.com
+ (2603:10b6:303:b5::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20 via Frontend
+ Transport; Mon, 21 Aug 2023 11:32:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6699.15 via Frontend Transport; Mon, 21 Aug 2023 11:32:54 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 21 Aug 2023
+ 04:32:34 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Mon, 21 Aug 2023 04:32:33 -0700
+Received: from localhost.localdomain (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Mon, 21 Aug 2023 04:32:29 -0700
+From:   Kartik <kkartik@nvidia.com>
+To:     <andriy.shevchenko@linux.intel.com>
+CC:     <arnd@arndb.de>, <digetx@gmail.com>, <frank.li@vivo.com>,
+        <jonathanh@nvidia.com>, <kkartik@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <pdeschrijver@nvidia.com>, <petlozup@nvidia.com>,
+        <pshete@nvidia.com>, <robh@kernel.org>, <stefank@nvidia.com>,
+        <sumitg@nvidia.com>, <thierry.reding@gmail.com>, <windhl@126.com>
+Subject: Re: [PATCH 1/6] soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
+Date:   Mon, 21 Aug 2023 17:02:20 +0530
+Message-ID: <20230821113220.4255-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZN9wdTLK1rwnVK/e@smile.fi.intel.com>
+References: <ZN9wdTLK1rwnVK/e@smile.fi.intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] thermal: tegra-bpmp: Check if BPMP supports trip points
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20221129153914.2699041-1-cyndis@kapsi.fi>
- <Y9KTrO+WqJJwuEDf@orome> <a08355e1-c393-2b2e-4a44-360e08607bb9@linaro.org>
- <Y9KfcSwYt7utbcg5@orome> <e716eda4-edfc-5946-4e6f-42aab5f73b0f@linaro.org>
- <d7435a96-3480-280e-d996-73fea690c373@nvidia.com>
- <2c37a786-0ae5-273e-f82b-4f9c82663053@linaro.org>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <2c37a786-0ae5-273e-f82b-4f9c82663053@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|BY5PR12MB4998:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3dd33289-f95a-409b-760c-08dba23a5c41
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vVd23gkdr93hDSsRjXAyxFrtwdILQ1BP8fXlEnF1n89gTfQW+OiCyHt3qwXNhR+KlubEWV979gBKL3Us2flJR71K457FMRg46f3LRrjcIr+eAU5W/HNNVi7u0nSsq1n3PLtY5a2TwhWziJDmpuQvh4kC5+rDRz5t+TZgk5kw8p4U43QBJWribLq2dVTJ/63xo9jbWkT5rT5eMEYgxEnFjjabU1u/Gs2i9l4v+oj6mHxUX90OgVJeZLepd0Wy8d/IjEdhGB8Erh5eYq9iGNbkoP4xtSIhRzp/7qs1AhlLumnvYU6qtartRC+RMEKmqPHGDvdv8/3aHs2GDOaR55abADaR3MjNLHv+QA40aqR6pdzB5ymalb7hIYM4RORuhwI0t2vvtJKDFTSfpOgJdOFmq+7LT0rBMJ+6vOXIm+qoloeAWs0v3S55QaNUMvJoAfQyLV6wUBRG+JIbqFWH71WdeHJv0ckOoOcl7cmzy8KS/AViU/zadk9JTHCuhGDuocHI8z36d9miykKz+KEEpsuHWkGuZucqTbIQtKRe8PQ9W5emeMcxtskI540BVp7mgoWV/LVhitQkLsbLjFT2k11E0wgZNJtDqb7wjgor6Mz6atarnPP8KmaBa6KWvUrk1LGsOZqsWu/Q2of+ojuBoLhMtWUjlJSjtfPdCnJPVaPZEwR//lGoyLP9l0+Pmo2urcdjmtTX8Z1G4/R+qF1KdYJBbg==
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39850400004)(376002)(346002)(136003)(396003)(451199024)(82310400011)(186009)(1800799009)(46966006)(36840700001)(2906002)(40480700001)(83380400001)(5660300002)(336012)(426003)(26005)(86362001)(36860700001)(47076005)(8676002)(2616005)(8936002)(4326008)(70206006)(316002)(54906003)(6916009)(70586007)(478600001)(82740400003)(356005)(6666004)(36756003)(41300700001)(7636003)(1076003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2023 11:32:54.1716
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dd33289-f95a-409b-760c-08dba23a5c41
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MWH0EPF000971E3.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4998
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 4/3/23 13:26, Daniel Lezcano wrote:
-> On 03/04/2023 12:22, Jon Hunter wrote:
->> Hi Daniel,
->>
->> On 26/01/2023 16:07, Daniel Lezcano wrote:
->>> On 26/01/2023 16:42, Thierry Reding wrote:
->>>> On Thu, Jan 26, 2023 at 04:08:03PM +0100, Daniel Lezcano wrote:
->>>>>
->>>>> Hi Thierry,
->>>>>
->>>>> On 26/01/2023 15:52, Thierry Reding wrote:
->>>>>> On Tue, Nov 29, 2022 at 05:39:14PM +0200, Mikko Perttunen wrote:
->>>>>>> From: Mikko Perttunen <mperttunen@nvidia.com>
->>>>>>>
->>>>>>> Check if BPMP supports thermal trip points, and if not,
->>>>>>> do not expose the .set_trips callback to the thermal core
->>>>>>> framework. This can happen in virtualized environments
->>>>>>> where asynchronous communication with VM BPMP drivers is not
->>>>>>> available.
->>>>>>>
->>>>>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>>>>> ---
->>>>>>>    drivers/thermal/tegra/tegra-bpmp-thermal.c | 52 
->>>>>>> +++++++++++++++++++++-
->>>>>>>    1 file changed, 51 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> Applied, thanks.
->>>>>
->>>>> I prefer you provide an Acked-by and I take the thermal related 
->>>>> patches.
->>>>> Especially in this period where we are reworking the framework with 
->>>>> the
->>>>> thermal trip points ;)
->>>>
->>>> Sorry, my bad. I misread this as belonging to drivers/firmware/tegra
->>>> which goes in via ARM SoC.
->>>
->>> No worries ;)
->>>
->>>> I'll drop this from the Tegra tree. Feel free
->>>> to pick this up:
->>>
->>> Ok, thanks
->>>
->>>> Acked-by: Thierry Reding <treding@nvidia.com>
->>
->>
->> I don't see this one in -next. Are you able to pick this one up now?
-> 
-> Before going in -next, it will go through bleeding-edge then -next, 
-> logically tomorrow.
-> 
-> 
+Thanks for reviewing the patches Andy!
 
-Hi, still not seeing this in -next.
+On Fri, 2023-08-18 at 16:21 +0300, Andy Shevchenko wrote:
+>>  void tegra_init_revision(void);
+>>  void tegra_init_apbmisc(void);
+>> +void tegra_acpi_init_apbmisc(void);
+>
+>Why do you  need a separate function?
 
-Cheers,
-Mikko
+Function tegra_init_apbmisc() is called from tegra_init_fuse() which
+is invoked at early init and it also has `__init` keyword. If we use
+the same function for both ACPI/DT, then we will get init section
+mismatches when the Tegra Fuse driver probes using ACPI.
+
+We can use the same function by dropping the `init` keyword. But
+the way we are getting the resources for device-tree and on ACPI is
+slightly different. Hence, I kept a separate function for ACPI
+and move the common bits to a function shared between
+tegra_init_apbmisc() and tegra_acpi_init_apbmisc().
+
+>
+>
+>> +static const struct acpi_device_id apbmisc_acpi_match[] = {
+>> +	{ .id = "NVDA2010", 0 },
+>
+>We rarely use C99 initializers for ACPI ID table.
+>Also 0 is not needed.
+>
+
+I will update this in the next patch.
+
+...
+
+>> +	if (!apbmisc_base)
+>> +		pr_err("failed to map APBMISC registers\n");
+>> +	else
+>> +		chipid = readl_relaxed(apbmisc_base + 4);
+>
+>Why not positive conditional as you have two branches anyway?
+>
+>...
+>
+>> +	if (!strapping_base) {
+>> +		pr_err("failed to map strapping options registers\n");
+>> +	} else {
+>> +		strapping = readl_relaxed(strapping_base);
+>> +		iounmap(strapping_base);
+>> +	}
+>
+>Ditto.
+>
+>...
+>
+
+Sure, I will update these in the next patch.
+
+...
+
+>> -	apbmisc_base = ioremap(apbmisc.start, resource_size(&apbmisc));
+>> -	if (!apbmisc_base) {
+>> -		pr_err("failed to map APBMISC registers\n");
+>> -	} else {
+>> -		chipid = readl_relaxed(apbmisc_base + 4);
+>> -	}
+>> -
+>> -	strapping_base = ioremap(straps.start, resource_size(&straps));
+>> -	if (!strapping_base) {
+>> -		pr_err("failed to map strapping options registers\n");
+>> -	} else {
+>> -		strapping = readl_relaxed(strapping_base);
+>> -		iounmap(strapping_base);
+>> -	}
+>> -
+>> +	tegra_init_apbmisc_base(&apbmisc, &straps);
+>
+>This split can be done in a separate precursor patch.
+
+ACK.
+
+...
+
+>> +void tegra_acpi_init_apbmisc(void)
+>> +{
+>> +	struct acpi_device *adev = NULL;
+>> +	struct resource *apbmisc, *straps;
+>> +	struct list_head resource_list;
+>> +	struct resource_entry *rentry;
+>> +	int rcount;
+>> +
+>> +	adev = acpi_dev_get_first_match_dev(apbmisc_acpi_match[0].id, NULL, -1);
+>> +	if (!adev)
+>> +		return;
+>> +
+>> +	INIT_LIST_HEAD(&resource_list);
+>> +
+>> +	rcount = acpi_dev_get_memory_resources(adev, &resource_list);
+>> +	if (rcount != 2) {
+>> +		pr_err("failed to get APBMISC memory resources");
+>
+>(1)
+>
+>> +		return;
+>> +	}
+>
+>> +	rentry = list_first_entry(&resource_list, struct resource_entry, node);
+>> +	apbmisc = rentry->res;
+>> +	rentry = list_next_entry(rentry, node);
+>> +	straps = rentry->res;
+>
+>We don't do like this, we walk through them and depending on the type and index
+>do something. The above if error prone and not scalable code.
+
+I will fix this logic in next patch.
+
+>
+>> +	tegra_init_apbmisc_base(apbmisc, straps);
+>
+>> +	acpi_dev_free_resource_list(&resource_list);
+>
+>Not okay in (1).
+>
+>> +	acpi_dev_put(adev);
+>
+>Not okay in (1).
+
+Yes, these won't be called when rcount is `1`. I will update this
+in the next patch set.
+
+> +}
+
+Regards,
+Kartik
