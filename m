@@ -2,69 +2,113 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFBEEE4996
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 08:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A125BEE4996
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 09:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230299AbjHUIlP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Aug 2023 04:41:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50752 "EHLO
+        id S234348AbjHUJ3a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Aug 2023 05:29:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbjHUIlP (ORCPT
+        with ESMTP id S234326AbjHUJ33 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Aug 2023 04:41:15 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D9ACA6
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Aug 2023 01:41:13 -0700 (PDT)
-Received: from kwepemm600014.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RTm7j08byzNnJP;
-        Mon, 21 Aug 2023 16:37:36 +0800 (CST)
-Received: from ubuntu1804.huawei.com (10.67.175.28) by
- kwepemm600014.china.huawei.com (7.193.23.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Mon, 21 Aug 2023 16:41:10 +0800
-From:   Yi Yang <yiyang13@huawei.com>
-To:     <stefan@agner.ch>, <dev@lynxeye.de>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <vigneshr@ti.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-mtd@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH] mtd: rawnand: tegra: add missing check for platform_get_irq()
-Date:   Mon, 21 Aug 2023 16:40:46 +0800
-Message-ID: <20230821084046.217025-1-yiyang13@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 21 Aug 2023 05:29:29 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3D41291;
+        Mon, 21 Aug 2023 02:29:28 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA6F32F4;
+        Mon, 21 Aug 2023 02:30:08 -0700 (PDT)
+Received: from [10.57.3.137] (unknown [10.57.3.137])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07EC23F762;
+        Mon, 21 Aug 2023 02:29:25 -0700 (PDT)
+Message-ID: <2f1beb3e-c9df-46c5-fe5d-0d688a730521@arm.com>
+Date:   Mon, 21 Aug 2023 10:29:22 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.175.28]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600014.china.huawei.com (7.193.23.54)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v5] perf: arm_cspmu: Separate Arm and vendor module
+Content-Language: en-GB
+To:     Besar Wicaksono <bwicaksono@nvidia.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     "ilkka@os.amperecomputing.com" <ilkka@os.amperecomputing.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vikram Sethi <vsethi@nvidia.com>,
+        Richard Wiley <rwiley@nvidia.com>,
+        Eric Funsten <efunsten@nvidia.com>
+References: <20230705104745.52255-1-bwicaksono@nvidia.com>
+ <e98abbc3-dab6-414d-8ce7-8b9572be41a0@arm.com>
+ <SJ0PR12MB5676F7D0749A35DCB185452EA018A@SJ0PR12MB5676.namprd12.prod.outlook.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <SJ0PR12MB5676F7D0749A35DCB185452EA018A@SJ0PR12MB5676.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the missing check for platform_get_irq() and return error code
-if it fails.
+On 2023-08-19 21:11, Besar Wicaksono wrote:
+[...]
+>>> +void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match
+>> *impl_match)
+>>> +{
+>>> +     struct device *dev;
+>>> +     struct arm_cspmu_impl_match *match;
+>>> +
+>>> +     match = arm_cspmu_impl_match_get(impl_match->pmiidr_val);
+>>> +
+>>> +     WARN_ON(!match);
 
-Fixes: d7d9f8ec77fe ("mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver")
-Signed-off-by: Yi Yang <yiyang13@huawei.com>
----
- drivers/mtd/nand/raw/tegra_nand.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Nit: do "if (WARN_ON(!match)) return;" rather than indenting almost the 
+whole function.
 
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
-index eb0b9d16e8da..a553e3ac8ff4 100644
---- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -1197,6 +1197,10 @@ static int tegra_nand_probe(struct platform_device *pdev)
- 	init_completion(&ctrl->dma_complete);
- 
- 	ctrl->irq = platform_get_irq(pdev, 0);
-+	if (ctrl->irq < 0) {
-+		err = ctrl->irq;
-+		goto err_put_pm;
-+	}
- 	err = devm_request_irq(&pdev->dev, ctrl->irq, tegra_nand_irq, 0,
- 			       dev_name(&pdev->dev), ctrl);
- 	if (err) {
--- 
-2.17.1
+>>> +
+>>> +     if (match) {
+>>> +             /* Unbind the driver from all matching backend devices. */
+>>> +dev_release:
+>>> +             dev = driver_find_device(&arm_cspmu_driver.driver, NULL,
+>>> +                     match, arm_cspmu_match_device);
+>>> +             if (dev) {
+>>> +                     device_release_driver(dev);
+>>> +                     goto dev_release;
+>>> +             }
+>>
+>> minor nit: We could simply do :
+>>
+>> static int arm_cspmu_release_driver(struct device *dev, void *data)
+>> {
+>>          struct arm_cspmu *cspmu =
+>> platform_get_drvdata(to_platform_device(dev));
+>>
+>>          if (cspmu && cspmu->impl.match == match)
+>>                  device_release_driver(dev);
+>>          return 0;
+>> }
+>>
+>>                  ret = driver_for_each_device(&driver, NULL, match,
+>> arm_csmpu_release_driver);
+>>
+> 
+> It doesn’t seem to work for me.
+> Is it safe to release while iterating via driver_for_each_device ?
 
+Looking at the klist code it doesn't *obviously* appear safe to modify 
+the list during iteration, so probably best not to risk it anyway. 
+However, please try to write this loop as an actual loop, e.g.:
+
+	while ((dev = driver_find_device()))
+		device_release_driver();
+
+At first glance I thought there was a bug here that it's only processing 
+a single device, then eventually I saw the goto and my thought changed 
+to "Eww..."
+
+Thanks,
+Robin.
