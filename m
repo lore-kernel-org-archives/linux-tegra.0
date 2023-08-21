@@ -2,113 +2,95 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A125BEE4996
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 09:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01CDEE49AC
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 10:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234348AbjHUJ3a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Aug 2023 05:29:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55994 "EHLO
+        id S234718AbjHUKbJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Aug 2023 06:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234326AbjHUJ33 (ORCPT
+        with ESMTP id S234714AbjHUKbG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Aug 2023 05:29:29 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3D41291;
-        Mon, 21 Aug 2023 02:29:28 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA6F32F4;
-        Mon, 21 Aug 2023 02:30:08 -0700 (PDT)
-Received: from [10.57.3.137] (unknown [10.57.3.137])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07EC23F762;
-        Mon, 21 Aug 2023 02:29:25 -0700 (PDT)
-Message-ID: <2f1beb3e-c9df-46c5-fe5d-0d688a730521@arm.com>
-Date:   Mon, 21 Aug 2023 10:29:22 +0100
+        Mon, 21 Aug 2023 06:31:06 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2563ED8
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Aug 2023 03:31:04 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-d746d030a86so2115669276.1
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Aug 2023 03:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692613863; x=1693218663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9fEE32aL5Rb4gj0b/8MH38oOPs9iq+wkUzldyyh0kHg=;
+        b=oAQKaXXAOfvZMkVX1sZGkpxGXS4x4DaEZAWSEzowre8QtNUoAchfv2KRvdP6crS+Pr
+         WDSsX/G78kKRR3Q6icaIVKmRfHqZ49jDPsCnjVZFu9pxT+pV4LgaJpFlNAl+rh9U5ym6
+         cGUgkOdXHKQido7b+x34hw+9bPoFveQFqCq14YAO/Nu3hrmbdK4rIubb9YaeOeAtjirJ
+         WX4Duc+OployEFuX6GTT8BcocEs1ASHhlVSH1/ULvCKFxtexBucwa7bk4PQgWTY+3Mes
+         smZCCQIw8FHs19sIyVbD2gUyzfnPDQPcs7l/34HSESQNVNyf+rLwuk90LcPB4IHaGbtA
+         7nIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692613863; x=1693218663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fEE32aL5Rb4gj0b/8MH38oOPs9iq+wkUzldyyh0kHg=;
+        b=d9vxvTEHootbZwKLKUp/hKx9Ux3YFjBLOqLVKvYnvwtIGX3Ty94a79ZVy12bQOajjn
+         Lr9U1AFvzn9MMCQD9PVj1beSDhUBVEOh4EYz05k0IO+QsrhMUgfB4SCsiJxSKBrNq5XS
+         pvleTTuLr3hH03qmegCwaHqlCw/NLpQMM1KziV3oHaT6zifQsWdc7WfWu7dH/AA0YU7j
+         2pzhvgI9tHmWLW1N4DvHwPIk8H02/d4Cxd1vRHF8Km86rXg4iXydfY4fy7sBXZx8cL//
+         zkawSXsijw+Aj6cVEdlNV9+fqpjKE1rFhTLoIgtlZbY17d65iNTB+AV7xYI6wL3Wa7t8
+         ljAw==
+X-Gm-Message-State: AOJu0YzWbgngeLPF5dTsOJmQ9ZTZvZcE98Yy0qC5PgCvkmERj43IDq2Z
+        kxQZXVELKX52oEVHMII06O+GgHvYbnkus0e4b2irrQ==
+X-Google-Smtp-Source: AGHT+IF6Mfo/+8vVARSN95eC1x7RexyXH+sNO3+jYibcHUydhVyzIiiYt4PyLHBfRnqEn7V+mLG3SANopIr+t8lBV5U=
+X-Received: by 2002:a25:6b45:0:b0:c60:1036:2082 with SMTP id
+ o5-20020a256b45000000b00c6010362082mr6274051ybm.22.1692613863152; Mon, 21 Aug
+ 2023 03:31:03 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v5] perf: arm_cspmu: Separate Arm and vendor module
-Content-Language: en-GB
-To:     Besar Wicaksono <bwicaksono@nvidia.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     "ilkka@os.amperecomputing.com" <ilkka@os.amperecomputing.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
+References: <20230819010946.916772-1-robh@kernel.org>
+In-Reply-To: <20230819010946.916772-1-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 21 Aug 2023 12:30:51 +0200
+Message-ID: <CACRpkdb6J65TjD357z4fZgjO5UR55L8v9tX2Wo4-rhFk6q0T3Q@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: Drop 'phandle' properties
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikram Sethi <vsethi@nvidia.com>,
-        Richard Wiley <rwiley@nvidia.com>,
-        Eric Funsten <efunsten@nvidia.com>
-References: <20230705104745.52255-1-bwicaksono@nvidia.com>
- <e98abbc3-dab6-414d-8ce7-8b9572be41a0@arm.com>
- <SJ0PR12MB5676F7D0749A35DCB185452EA018A@SJ0PR12MB5676.namprd12.prod.outlook.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <SJ0PR12MB5676F7D0749A35DCB185452EA018A@SJ0PR12MB5676.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023-08-19 21:11, Besar Wicaksono wrote:
-[...]
->>> +void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match
->> *impl_match)
->>> +{
->>> +     struct device *dev;
->>> +     struct arm_cspmu_impl_match *match;
->>> +
->>> +     match = arm_cspmu_impl_match_get(impl_match->pmiidr_val);
->>> +
->>> +     WARN_ON(!match);
+On Sat, Aug 19, 2023 at 3:09=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
 
-Nit: do "if (WARN_ON(!match)) return;" rather than indenting almost the 
-whole function.
+> 'phandle' properties are implicitly supported on all nodes, so it
+> shouldn't be listed in schemas.
+>
+> dtschema had a bug where 'phandle' and other implicit properties weren't
+> being added under 'additionalProperties' schemas. That was fixed in
+> v2023.07 release.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
->>> +
->>> +     if (match) {
->>> +             /* Unbind the driver from all matching backend devices. */
->>> +dev_release:
->>> +             dev = driver_find_device(&arm_cspmu_driver.driver, NULL,
->>> +                     match, arm_cspmu_match_device);
->>> +             if (dev) {
->>> +                     device_release_driver(dev);
->>> +                     goto dev_release;
->>> +             }
->>
->> minor nit: We could simply do :
->>
->> static int arm_cspmu_release_driver(struct device *dev, void *data)
->> {
->>          struct arm_cspmu *cspmu =
->> platform_get_drvdata(to_platform_device(dev));
->>
->>          if (cspmu && cspmu->impl.match == match)
->>                  device_release_driver(dev);
->>          return 0;
->> }
->>
->>                  ret = driver_for_each_device(&driver, NULL, match,
->> arm_csmpu_release_driver);
->>
-> 
-> It doesn’t seem to work for me.
-> Is it safe to release while iterating via driver_for_each_device ?
+Patch applied, thanks for fixing this!
 
-Looking at the klist code it doesn't *obviously* appear safe to modify 
-the list during iteration, so probably best not to risk it anyway. 
-However, please try to write this loop as an actual loop, e.g.:
-
-	while ((dev = driver_find_device()))
-		device_release_driver();
-
-At first glance I thought there was a bug here that it's only processing 
-a single device, then eventually I saw the goto and my thought changed 
-to "Eww..."
-
-Thanks,
-Robin.
+Yours,
+Linus Walleij
