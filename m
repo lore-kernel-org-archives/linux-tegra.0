@@ -2,132 +2,121 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D06EE49A6
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 16:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A84FEE4993
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 17:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236451AbjHUQOq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Aug 2023 12:14:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46628 "EHLO
+        id S236813AbjHURAf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Aug 2023 13:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235930AbjHUQOq (ORCPT
+        with ESMTP id S231397AbjHURAf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Aug 2023 12:14:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBED1DB;
-        Mon, 21 Aug 2023 09:14:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5977D63D4C;
-        Mon, 21 Aug 2023 16:14:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C80C433C9;
-        Mon, 21 Aug 2023 16:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692634483;
-        bh=HaFkRLw39AyOlg5LKd8SotMyWHrCrbNB/b2ma+dX5y8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=myuDm5eSozfKEjyhuaqU7d0d4v22QuzKSsoALDNAcO0PQsZxqSM5MqFcAAmaUA3ZP
-         bORAcnrX2DkATzZL14uUuXGLoAWj5fvoIeSrvawx+9hHgchfk9pwiMMNQsnbzer5Nh
-         wu1lv+Y4Qqt71o7uejj6YTHKTj8tp5Z0NwKWm9/pG6ixpZF6GZ8aOSrIlqyftbpHCD
-         WVVX4Y1+oiad4C/0e7D60pV/0vDsyouUgLTGHFDzwNcUlr8Ix4dtnxEG3ChJCAAqXT
-         56v5gNOukSk0clim19s/DWuu4wXoGVOYeZBJcg0W5Jil88IbmRULxNAiCBiGnsV+L/
-         NZq12WSVw2RXw==
-Received: (nullmailer pid 1830598 invoked by uid 1000);
-        Mon, 21 Aug 2023 16:14:41 -0000
-Date:   Mon, 21 Aug 2023 11:14:41 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        Mon, 21 Aug 2023 13:00:35 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F0010F;
+        Mon, 21 Aug 2023 10:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692637218; x=1724173218;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n7S/UFEeowdzIZmbsuVfPC9j0Vf3rJq/KFb1fvy2s7A=;
+  b=m0OiH4fvmlXCOg8qHcR9OuNUs9bOoFVFdJYAIS7UGNVK78ZYJfh6nUB3
+   n2r7Ri4anQbzS9BO7vhJ8LSkgSQomGbopYrcO+k+3V6hS8LIalT1hXWnq
+   M7rtqTqDL62hdjPTIZtiCk08u2I7cCEDoQZp84YqyPGXVoAeVeV7LPu58
+   L7WdVhdF/DaFx1GUxRygbxu2eYCYBwa5gkBqwFfbNb9E3FHqGxdcG8g47
+   7gMxp2sEaps5mahBLHsLflERFcrmqwdvatsIS6OXyJNP9hpxO4VjKpjdP
+   14NS/ZvFwTj60kQzVpEC3EQa/y8lOKMB/4lYhVIBqO/uX0HY8cFVkoJ2c
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="372546682"
+X-IronPort-AV: E=Sophos;i="6.01,190,1684825200"; 
+   d="scan'208";a="372546682"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2023 10:00:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="826004434"
+X-IronPort-AV: E=Sophos;i="6.01,190,1684825200"; 
+   d="scan'208";a="826004434"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Aug 2023 10:00:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qY8G7-005X2E-2I;
+        Mon, 21 Aug 2023 20:00:07 +0300
+Date:   Mon, 21 Aug 2023 20:00:07 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Balsam CHIHI <bchihi@baylibre.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Thierry Reding <thierry.reding@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: display: tegra: nvidia,tegra20-dc:
- Add parallel RGB output port node
-Message-ID: <20230821161441.GA1743870-robh@kernel.org>
-References: <20230807143515.7882-1-clamor95@gmail.com>
- <20230807143515.7882-3-clamor95@gmail.com>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 00/10] pinctrl: Provide NOIRQ PM helper and use it
+Message-ID: <ZOOYFxDktwce79Yc@smile.fi.intel.com>
+References: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230807143515.7882-3-clamor95@gmail.com>
+In-Reply-To: <20230717172821.62827-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Aug 07, 2023 at 05:35:12PM +0300, Svyatoslav Ryhel wrote:
-> From: Maxim Schwalm <maxim.schwalm@gmail.com>
+On Mon, Jul 17, 2023 at 08:28:11PM +0300, Andy Shevchenko wrote:
+> Intel pin control drivers use NOIRQ variant of the PM callbacks.
+> Besides that several other drivers do similar. Provide a helper
+> to make them smaller and less error prone against different
+> kernel configurations (with possible defined but not used variables).
 > 
-> Either this node, which is optional, or the nvidia,panel property can be
-> present.
-> 
-> Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra20-dc.yaml      | 31 +++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
-> index 69be95afd562..102304703062 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
-> @@ -127,6 +127,37 @@ allOf:
->                $ref: /schemas/types.yaml#/definitions/phandle
->                description: phandle of a display panel
->  
-> +            port:
-> +              $ref: /schemas/graph.yaml#/$defs/port-base
-> +              description: Parallel RGB output port
-> +
-> +              properties:
-> +                endpoint:
-> +                  $ref: /schemas/media/video-interfaces.yaml#
+> The idea is to have an immutable branch that PM tree can pull as well as
+> main pin control one. We also can do other way around, if Rafael prefers
+> that.
 
-Just to make sure, what properties are you using from this? Usually 
-we'll list them though not a hard requirement. If none, then you just 
-need to ref graph.yaml#/properties/port instead and can drop the rest.
+I have partially applied the series to my review and testing queue with
+the following changes (besides the tags added):
+- split pm_ptr() patches to be first with lynxpoint commit message updated
+- fixed wording in the pm.h comment
+- amended cherryview to wrap long line
+- explained __maybe_unused and pm_ptr() changes in at91 commit message
+- added pm_sleep_ptr() and explained that in the tegra commit message
+- renesas and mvebu went as is
+- intel and mediatek left aside for better rework
 
-> +                  unevaluatedProperties: false
-> +
-> +              unevaluatedProperties: false
+ drivers/pinctrl/intel/pinctrl-baytrail.c    | 11 +++--------
+ drivers/pinctrl/intel/pinctrl-cherryview.c  | 10 +++-------
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c   |  7 +++----
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 14 +++-----------
+ drivers/pinctrl/pinctrl-at91.c              | 10 ++++------
+ drivers/pinctrl/renesas/core.c              | 16 +++++++---------
+ drivers/pinctrl/tegra/pinctrl-tegra.c       |  5 +----
+ drivers/pinctrl/tegra/pinctrl-tegra210.c    |  2 +-
+ include/linux/pm.h                          |  9 +++++++++
+ 9 files changed, 34 insertions(+), 50 deletions(-)
 
-In the indented cases, it's easier to read if this is before 
-properties/patternProperties.
 
-> +
-> +          anyOf:
-> +            - if:
-> +                not:
-> +                  properties:
-> +                    nvidia,panel: false
-> +              then:
-> +                not:
-> +                  properties:
-> +                    port: true
-> +            - if:
-> +                not:
-> +                  properties:
-> +                    port: false
-> +              then:
-> +                not:
-> +                  properties:
-> +                    nvidia,panel: true
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I would prefer to drop this and mark "nvidia,panel" as deprecated. 
-Eventually I plan to add a mode to the tools to warn on using deprecated 
-properties. Having both could be perfectly fine too. You have the 
-"nvidia,panel" for compatibility with an old OS version and 'port' to 
-work with newer users.
 
-> +
-> +          additionalProperties: false
-
-Move this up too.
-
-Rob
