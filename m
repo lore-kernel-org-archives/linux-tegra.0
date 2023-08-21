@@ -2,109 +2,98 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56272EE49AA
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 12:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA26EE49A6
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Aug 2023 12:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234878AbjHUM1y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Aug 2023 08:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59818 "EHLO
+        id S234957AbjHUMdp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Aug 2023 08:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230526AbjHUM1x (ORCPT
+        with ESMTP id S234940AbjHUMdp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Aug 2023 08:27:53 -0400
-Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 81CB6C2;
-        Mon, 21 Aug 2023 05:27:51 -0700 (PDT)
-Received: from 8bytes.org (pd9fe95be.dip0.t-ipconnect.de [217.254.149.190])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.8bytes.org (Postfix) with ESMTPSA id 14D6D28194F;
-        Mon, 21 Aug 2023 14:27:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-        s=default; t=1692620870;
-        bh=FixGPDbY1JGUzoXJGnGCpBH8LX7vfPyc85NTwmVIvZk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1GNfM2qXUHu69LlGLcBH8KY7o7o7XmY+SCrGkW/UUIs2KGTpDHXZZbMpPGz6QSYZs
-         UPnFUxDcsVEY3pjS1DruthDw9f83ySojUQCSB+rWg+GUD0/AhHwU/y7CvGp4ChZNfv
-         PF0U1t4Yrw0S3cKVt3Z1VBJMi6C4Yubn+JBgQ0h8akaCgHt2/SoukE6zqp52PyQtal
-         mSBFlaAtIaUSfX6biqD/5UJPh1qGAUoCalqefQ1b2bqiPcVjHwugqG0e+YrG5Eef+K
-         UDBnBPokoAbTS28F+RA/gZgu4I/tGuWG+hC4PlSSGwOqv9iwEYEE1WLsVZflD78r+Z
-         CJt+ubMPFXzmw==
-Date:   Mon, 21 Aug 2023 14:27:47 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Jason Gunthorpe <jgg@nvidia.com>, Andy Gross <agross@kernel.org>,
-        David Airlie <airlied@gmail.com>, alsa-devel@alsa-project.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
-        Mark Brown <broonie@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        dri-devel@lists.freedesktop.org, Emma Anholt <emma@anholt.net>,
-        etnaviv@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Frank Rowand <frowand.list@gmail.com>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Kalle Valo <kvalo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Sean Paul <sean@poorly.run>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Vinod Koul <vkoul@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH] iommu: Remove the device_lock_assert() from
- __iommu_probe_device()
-Message-ID: <ZONYQyMSG17YMc_b@8bytes.org>
-References: <0-v1-98d20e768c66+7-of_dma_lock_jgg@nvidia.com>
- <78114fd6-9b83-92ba-418f-6cc7bda9df9b@arm.com>
+        Mon, 21 Aug 2023 08:33:45 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183F8106;
+        Mon, 21 Aug 2023 05:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692621221; x=1724157221;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gsKKmGxyq06MklhX85/TgQrIKXsf+G0L4vEqXIDJDr4=;
+  b=gg8guL1rYPjOrFLk/2Jy5ytacuUAj8LWNts7CI/L4nipIJCC/SJg9e+2
+   XGqPh4SkYvyp6HUd+1utcEqPh5X1vH6YgDc1lADN1Z+mj+yBk9NeG1tBy
+   OEa531tbY6B7+K0LlG6Sp58VdzFV0u/TF7cJcK6kvcwgcSLbRWIWw33Ip
+   K5Z30QvMzs+I2AJHJ7r02tz0EhPMQxZgvusfRvUnSvz5loJpUNk4k+3Rj
+   iWxb3TQgkDfA+nUyzzaAfR7IFPSA2C4ktu8+GiJlVhq3SC8DG0vWm3ykk
+   iTusqZkQSkHxPpQWtItSuG6MKesY0O/2qrt4tmGU782e4roivPR13pvVU
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="459943788"
+X-IronPort-AV: E=Sophos;i="6.01,190,1684825200"; 
+   d="scan'208";a="459943788"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2023 05:32:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="982447566"
+X-IronPort-AV: E=Sophos;i="6.01,190,1684825200"; 
+   d="scan'208";a="982447566"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga006.fm.intel.com with ESMTP; 21 Aug 2023 05:32:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qY45J-00DxF8-1L;
+        Mon, 21 Aug 2023 15:32:41 +0300
+Date:   Mon, 21 Aug 2023 15:32:41 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     arnd@arndb.de, digetx@gmail.com, frank.li@vivo.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, pdeschrijver@nvidia.com,
+        petlozup@nvidia.com, pshete@nvidia.com, robh@kernel.org,
+        stefank@nvidia.com, sumitg@nvidia.com, thierry.reding@gmail.com,
+        windhl@126.com
+Subject: Re: [PATCH 1/6] soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
+Message-ID: <ZONZaZ1QaWKBCMYj@smile.fi.intel.com>
+References: <ZN9wdTLK1rwnVK/e@smile.fi.intel.com>
+ <20230821113220.4255-1-kkartik@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <78114fd6-9b83-92ba-418f-6cc7bda9df9b@arm.com>
+In-Reply-To: <20230821113220.4255-1-kkartik@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Aug 21, 2023 at 12:06:40PM +0100, Robin Murphy wrote:
-> The solution is to drop those locking patches entirely and rethink the whole
-> thing.
+On Mon, Aug 21, 2023 at 05:02:20PM +0530, Kartik wrote:
+> On Fri, 2023-08-18 at 16:21 +0300, Andy Shevchenko wrote:
 
-Agreed, that was exactly what I thought when looking at this patch.
+...
 
-I dropped the original 10 patches and the 4 fixes on-top from the IOMMU
-tree. This needs more investigation and adaption of the actual API users
-before it can be reconsidered.
+> >>  void tegra_init_revision(void);
+> >>  void tegra_init_apbmisc(void);
+> >> +void tegra_acpi_init_apbmisc(void);
+> >
+> >Why do you  need a separate function?
+> 
+> Function tegra_init_apbmisc() is called from tegra_init_fuse() which
+> is invoked at early init and it also has `__init` keyword. If we use
+> the same function for both ACPI/DT, then we will get init section
+> mismatches when the Tegra Fuse driver probes using ACPI.
+> 
+> We can use the same function by dropping the `init` keyword. But
+> the way we are getting the resources for device-tree and on ACPI is
+> slightly different. Hence, I kept a separate function for ACPI
+> and move the common bits to a function shared between
+> tegra_init_apbmisc() and tegra_acpi_init_apbmisc().
 
-Regards,
+So, you mean that behaviour is different for ACPI and DT cases.
+Then obvious question why DT case can't be delayed to not so early
+stage to be run? This requires some explanations, more than given
+in the commit message and here.
 
-	Joerg
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
