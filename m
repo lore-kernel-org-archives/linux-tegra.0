@@ -2,105 +2,144 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891F9EE4996
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Aug 2023 12:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E7EEE49B4
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Aug 2023 22:38:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235762AbjHVMn3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Aug 2023 08:43:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40342 "EHLO
+        id S231431AbjHVWix (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Aug 2023 18:38:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233446AbjHVMn3 (ORCPT
+        with ESMTP id S230187AbjHVWiw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Aug 2023 08:43:29 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE02CC6
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Aug 2023 05:43:26 -0700 (PDT)
-Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RVTW61HQ8zrSV5;
-        Tue, 22 Aug 2023 20:41:54 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi500008.china.huawei.com (7.221.188.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Tue, 22 Aug 2023 20:43:22 +0800
-Message-ID: <fbb6c33a-fd0b-b0d7-4832-450c730b3fad@huawei.com>
-Date:   Tue, 22 Aug 2023 20:43:21 +0800
+        Tue, 22 Aug 2023 18:38:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9DECCDD;
+        Tue, 22 Aug 2023 15:38:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 442E563D4B;
+        Tue, 22 Aug 2023 22:38:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3BACC433B6;
+        Tue, 22 Aug 2023 22:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692743929;
+        bh=U15eYY76gsnD/RHRrRp2WW4I4OCWvlLasJey1YPS3bA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Jn4NXR0lfbWYS5Bph9NDsU+CUS6oKPixIBuJYm6y13c3Oey4zsZFxl5LEbilQxJik
+         FeYi4hk81hW93Pito7BlDOIWLAaYnB0RhnPhbkxJtYjIwxdi5/i0pNyJyNN/nCccuI
+         fmY+ssuFxpfa7I30gkLK8YDwU53i5SgxztwwtwOd89uEzAB/wmwwNcI4B7etE38nUX
+         1KT94QzqmI87253Kc52MD6Y8fou1jBGiX1pJkpWJMnTdedMpWf+KZdUDC39Y5QFc9X
+         pamJJqabcmOvoF7HZyud2tyJQOPli0tj7WP4SaXb0FkLx82tm9eotCxnMBwonE7SUu
+         gzqa24AIGrPmA==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2bcb89b4767so43872971fa.3;
+        Tue, 22 Aug 2023 15:38:49 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyZus2vU2dDMD/W5mtDf7ItNOiHAf94VYBt93eGRNIVi07Bba4y
+        YLO+AhO3AfymF9WV/yf61eGt2ld82IGHHHEKPA==
+X-Google-Smtp-Source: AGHT+IF0JLsyZnXZQBcgCFuF2kEmLMhxys3SoS78ueuZDPswTtorzz1H8NCRQqi/aO+jact/25/WQ07MKCBccdqUsKI=
+X-Received: by 2002:a2e:9919:0:b0:2bb:8d96:6041 with SMTP id
+ v25-20020a2e9919000000b002bb8d966041mr7975933lji.45.1692743927592; Tue, 22
+ Aug 2023 15:38:47 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next 2/2] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify
- code
-Content-Language: en-US
-To:     Mikko Perttunen <cyndis@kapsi.fi>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <thierry.reding@gmail.com>, <mperttunen@nvidia.com>,
-        <jonathanh@nvidia.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-tegra@vger.kernel.org>
-References: <20230822071503.178000-1-ruanjinjie@huawei.com>
- <20230822071503.178000-3-ruanjinjie@huawei.com>
- <37df88bd-a429-c325-c80a-17d7d17f689c@kapsi.fi>
-From:   Ruan Jinjie <ruanjinjie@huawei.com>
-In-Reply-To: <37df88bd-a429-c325-c80a-17d7d17f689c@kapsi.fi>
+References: <20230714175008.4064592-1-robh@kernel.org> <CAJZ5v0i-OByOSjpxrj5d9S9QHRySK-MEUo+bK_J_4ihsCBmnSg@mail.gmail.com>
+ <CAL_JsqLy22S5bTFu-ZKXhSMtMPPq9z1Gdb5kJMVmhui55miDsQ@mail.gmail.com> <CAJZ5v0hM63nVphwkYK1bL4uf_dXSew2+LBuG9kuhvvLdrhLxAw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hM63nVphwkYK1bL4uf_dXSew2+LBuG9kuhvvLdrhLxAw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 22 Aug 2023 17:38:32 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJGoDPLKgu8awJfuWpqzg8HOuruDa1z4s-Swb7Cm5OaJw@mail.gmail.com>
+Message-ID: <CAL_JsqJGoDPLKgu8awJfuWpqzg8HOuruDa1z4s-Swb7Cm5OaJw@mail.gmail.com>
+Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Guillaume La Roque <glaroque@baylibre.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.109.254]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi500008.china.huawei.com (7.221.188.139)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Jul 20, 2023 at 1:50=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Fri, Jul 14, 2023 at 9:53=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
+te:
+> >
+> > On Fri, Jul 14, 2023 at 12:54=E2=80=AFPM Rafael J. Wysocki <rafael@kern=
+el.org> wrote:
+> > >
+> > > On Fri, Jul 14, 2023 at 7:51=E2=80=AFPM Rob Herring <robh@kernel.org>=
+ wrote:
+> > > >
+> > > > The DT of_device.h and of_platform.h date back to the separate
+> > > > of_platform_bus_type before it as merged into the regular platform =
+bus.
+> > > > As part of that merge prepping Arm DT support 13 years ago, they
+> > > > "temporarily" include each other. They also include platform_device=
+.h
+> > > > and of.h. As a result, there's a pretty much random mix of those in=
+clude
+> > > > files used throughout the tree. In order to detangle these headers =
+and
+> > > > replace the implicit includes with struct declarations, users need =
+to
+> > > > explicitly include the correct includes.
+> > > >
+> > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > >
+> > > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> > >
+> > > or please let me know if you want me to pick this up.
+> >
+> > Single patch in your subsystem with no dependencies. Please pick it up.
+>
+> Done, thanks!
 
+I'm not seeing this in linux-next.
 
-On 2023/8/22 20:32, Mikko Perttunen wrote:
-> On 8/22/23 10:15, Jinjie Ruan wrote:
->> Return PTR_ERR_OR_ZERO() instead of return 0 or PTR_ERR() to
->> simplify code.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>   drivers/gpu/drm/tegra/drm.c | 5 +----
->>   drivers/gpu/drm/tegra/gem.c | 5 +----
->>   2 files changed, 2 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->> index ff36171c8fb7..4e29d76da1be 100644
->> --- a/drivers/gpu/drm/tegra/drm.c
->> +++ b/drivers/gpu/drm/tegra/drm.c
->> @@ -354,10 +354,7 @@ static int tegra_gem_create(struct drm_device
->> *drm, void *data,
->>         bo = tegra_bo_create_with_handle(file, drm, args->size,
->> args->flags,
->>                        &args->handle);
->> -    if (IS_ERR(bo))
->> -        return PTR_ERR(bo);
->> -
->> -    return 0;
->> +    return PTR_ERR_OR_ZERO(bo);
->>   }
->>     static int tegra_gem_mmap(struct drm_device *drm, void *data,
->> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
->> index a4023163493d..11ef0f8cb1e1 100644
->> --- a/drivers/gpu/drm/tegra/gem.c
->> +++ b/drivers/gpu/drm/tegra/gem.c
->> @@ -533,10 +533,7 @@ int tegra_bo_dumb_create(struct drm_file *file,
->> struct drm_device *drm,
->>         bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
->>                        &args->handle);
->> -    if (IS_ERR(bo))
->> -        return PTR_ERR(bo);
->> -
->> -    return 0;
->> +    return PTR_ERR_OR_ZERO(bo);
->>   }
->>     static vm_fault_t tegra_bo_fault(struct vm_fault *vmf)
-> 
-> NAK. See
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20230822&id=b784c77075023e1a71bc06e6b4f711acb99e9c73
-
-Thank you! It is right.
-
-> 
-> Mikko
+Rob
