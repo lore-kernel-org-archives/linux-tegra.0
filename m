@@ -2,109 +2,109 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFF4EE49A8
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Aug 2023 07:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B02EE4996
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Aug 2023 12:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232741AbjHVHzg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Aug 2023 03:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42282 "EHLO
+        id S232456AbjHVMck (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Aug 2023 08:32:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231759AbjHVHzf (ORCPT
+        with ESMTP id S235509AbjHVMci (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Aug 2023 03:55:35 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49F9D12C;
-        Tue, 22 Aug 2023 00:55:34 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3179ed1dfbbso3902627f8f.1;
-        Tue, 22 Aug 2023 00:55:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692690933; x=1693295733;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Pyw7HPK+xHieuJcUWxvPWFNip6TqzROQ+caJEui+Sw=;
-        b=hNxYkbqaXZY6G1gX3OHllwQY96THYAEYI6lmNEJ06Rp4qaMJiMQuL4dSXUvmRR5yHH
-         IehXqKAwxryb6T8TLbqE6DhCN9NTE0SScbhKIb2wbRVNBuRNclghNolhaX+kWUiOAiq7
-         aTwHaaVsfG3qwuh+GNS+U9s48LZJg+1ZaeMH3UhAv/e0UEibKGgwRiAIYuEXwM7rAy5k
-         7hsqiM4dFr9e2AjEsNy5mLaX6ga0XMUdFvAtbmHdqr7EsrFjpMZ27MGXQJh5HWX8e1QD
-         Xc349GvZHCfLoReXzZ4gKmC2y6Qrge4pYfwnfcPKBYgKQUvR9ouz95OsY50+KpsQbden
-         TGTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692690933; x=1693295733;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Pyw7HPK+xHieuJcUWxvPWFNip6TqzROQ+caJEui+Sw=;
-        b=FpBjzK1n7vjOosOK9vBnGnNjycocu66G3tiDav3t2RAR06m5oslsYHGTuiBYAt2969
-         XaYsH7N2gs2y4RWEb4f5bAL8AD9FeKMsXcs1Fp265X3fqsw00WKbxTN5D+NH/BSwdtR1
-         YZQYggFyfYO159KvSyJTpjcEseoRHiTeri71CNfLpvraHIjPEYAwZLNAZm6OzYTny/Lb
-         wZi4k9eTQV8xknXzzctF7Cxn7McOEXqBZYyEgBd4jY7vlr4dii9JJA8W/V+DtPTXZS8u
-         93ePqAUs6lgQvN+gcWAIdRgNw2u+42HEoKjrkgjjF2KrruxbSifIz2k2RMTNYJR+4/D/
-         ebsw==
-X-Gm-Message-State: AOJu0YxCR7wauT36xEQPsDdTBtc1m9shc3Z1yuOCPuMZj2iOhyVcF1Ov
-        xePvWcLpJovGZsq9RP2gR9xTAN+YY4w=
-X-Google-Smtp-Source: AGHT+IFmBEpq5gk7+dXAFv8bYJ2V6eP47ALqdwODVT0Pl7xU05uLvOja2iHwLjTzNYErcCVzdrG7mw==
-X-Received: by 2002:a05:6000:10b:b0:317:6849:2d39 with SMTP id o11-20020a056000010b00b0031768492d39mr6291650wrx.10.1692690932594;
-        Tue, 22 Aug 2023 00:55:32 -0700 (PDT)
-Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s7-20020a5d69c7000000b0031c5ee51638sm2049572wrw.109.2023.08.22.00.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Aug 2023 00:55:32 -0700 (PDT)
-Date:   Tue, 22 Aug 2023 09:55:30 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kartik <kkartik@nvidia.com>
-Cc:     jonathanh@nvidia.com, sumitg@nvidia.com, arnd@arndb.de,
-        pshete@nvidia.co, andriy.shevchenko@linux.intel.com,
-        digetx@gmail.com, petlozup@nvidia.com, windhl@126.com,
-        frank.li@vivo.com, robh@kernel.org, stefank@nvidia.com,
-        pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] soc/tegra: fuse: Add function to print SKU info
-Message-ID: <ZORp8n6c3TrpiFiA@orome>
-References: <20230818093028.7807-1-kkartik@nvidia.com>
- <20230818093028.7807-5-kkartik@nvidia.com>
+        Tue, 22 Aug 2023 08:32:38 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC3619A
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Aug 2023 05:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+        s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=NiIfwJ+orzV2xnqi90Ph1qRaFhDIyZsacQEQFP11MHM=; b=fNGeQwjvoeg3lVcA0jXOYZzgyo
+        4ZaqxkFUZCFxDPfEgBOJpNcWoQOGl6b9Z/hwX5vnNI2ogcgWyeRhkZ4OaLk1j0YusUB1pn5gNjKNI
+        iRioa3T2guTf8vJ552Lnku1Fjdb7RBRm/lsMMjyiiBXkyHiVmInT9UAiMAt/dWjSC9KUUGuTj/js6
+        1K4idXwTzd0Wko4ZIGyiVzwhTipifUU2/LV4wrXkaSs+h65GiGzX4obrnOrt2ltBobwFThCeiQkYI
+        B05Kt8pr3zoRxWEgpGAMizektmhhFUJwqJ7wPnk+9kjB2l51xrkcGBmqrKOPxL6UqdBHM+fxxHE8h
+        bbDJkoZA==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.96)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1qYQYG-00HAQ8-24;
+        Tue, 22 Aug 2023 15:32:04 +0300
+Message-ID: <37df88bd-a429-c325-c80a-17d7d17f689c@kapsi.fi>
+Date:   Tue, 22 Aug 2023 15:32:04 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RKs60H4+8uOWGCre"
-Content-Disposition: inline
-In-Reply-To: <20230818093028.7807-5-kkartik@nvidia.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH -next 2/2] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify
+ code
+Content-Language: en-US
+To:     Jinjie Ruan <ruanjinjie@huawei.com>, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, airlied@gmail.com, daniel@ffwll.ch,
+        thierry.reding@gmail.com, mperttunen@nvidia.com,
+        jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
+References: <20230822071503.178000-1-ruanjinjie@huawei.com>
+ <20230822071503.178000-3-ruanjinjie@huawei.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <20230822071503.178000-3-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 8/22/23 10:15, Jinjie Ruan wrote:
+> Return PTR_ERR_OR_ZERO() instead of return 0 or PTR_ERR() to
+> simplify code.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>   drivers/gpu/drm/tegra/drm.c | 5 +----
+>   drivers/gpu/drm/tegra/gem.c | 5 +----
+>   2 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index ff36171c8fb7..4e29d76da1be 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -354,10 +354,7 @@ static int tegra_gem_create(struct drm_device *drm, void *data,
+>   
+>   	bo = tegra_bo_create_with_handle(file, drm, args->size, args->flags,
+>   					 &args->handle);
+> -	if (IS_ERR(bo))
+> -		return PTR_ERR(bo);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(bo);
+>   }
+>   
+>   static int tegra_gem_mmap(struct drm_device *drm, void *data,
+> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+> index a4023163493d..11ef0f8cb1e1 100644
+> --- a/drivers/gpu/drm/tegra/gem.c
+> +++ b/drivers/gpu/drm/tegra/gem.c
+> @@ -533,10 +533,7 @@ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
+>   
+>   	bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
+>   					 &args->handle);
+> -	if (IS_ERR(bo))
+> -		return PTR_ERR(bo);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(bo);
+>   }
+>   
+>   static vm_fault_t tegra_bo_fault(struct vm_fault *vmf)
 
---RKs60H4+8uOWGCre
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+NAK. See 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20230822&id=b784c77075023e1a71bc06e6b4f711acb99e9c73
 
-On Fri, Aug 18, 2023 at 03:00:26PM +0530, Kartik wrote:
-> Add helper function tegra_fuse_pr_sku_info() to print Tegra SKU
-
-Nit: I'd prefer tegra_fuse_print_sku_info(). This is already quite long,
-so the extra 3 characters aren't going to make things a lot worse, but
-they improve readability quite a bit.
-
-Thierry
-
---RKs60H4+8uOWGCre
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmTkafIACgkQ3SOs138+
-s6EFDRAAnYqGBgan06elWAHrHHRw2s75niOr04MaZs4dxVPwY5JZBtnq58e4xEzA
-NX2Q58ZNWe5llkvQbJJltM9V2WYlstDd/5dhrdAH/HYAZwDhDj8DimggwblkBNdS
-iYQ5ABx26KDZNGPNFGKA2gsLoPTpTgiWwT9JW4q7KZalku0fJmeQ8z5tldZ1qShk
-ffVboREpI8xpIjQSwZ3IrluKJ/aTNBqmWoyyIDwI2eS2Urx8kgStgyotobEhSHfO
-D2Ef1JAS9YoggHsKwUdz0M72IMp3GTL+Gg1XrNCjaf2SBWh8EPI+sh3nahK0/X6R
-wKtCXEeuQL+qc2HfUYPqqhCm4tyLw4+Ler50el2n7Dtvz6JfkhP72ZVpxF7IzFtx
-35BV/YmVoPBFRCQYtSXqfE4fxk5ZxBGzPhKsxlpv2fEo78L/QFxIYIQonJMv15az
-gYVLy40A4/rTHgYRnHTNfAHuB6/57TMIVmaCyGj0Zk2EnX2EytAM/HMcwTvQ3IBb
-qChok/+XMT90cu1M9eAuHJf1jCrFv075XkI95KxoUJLsjjDs8D/+C5bbF3Ac1bk9
-8w0AhKcZjvn4Lb43u7U1dSjqGTZ6tX92OSSTXvhEov5cVKORcXEVfcTPn54Q3HNY
-fFI63I3odn8r8YjQ1Qtdnk4rxcEH0IQCx5tQXpEsc5j/LN1Gx7M=
-=L1cY
------END PGP SIGNATURE-----
-
---RKs60H4+8uOWGCre--
+Mikko
