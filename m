@@ -2,48 +2,48 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7143EE49A3
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Aug 2023 03:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38871EE49A3
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Aug 2023 04:02:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232447AbjHVDNl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Aug 2023 23:13:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40376 "EHLO
+        id S232529AbjHVECk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Aug 2023 00:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232443AbjHVDNk (ORCPT
+        with ESMTP id S232517AbjHVECe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Aug 2023 23:13:40 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2E03186;
-        Mon, 21 Aug 2023 20:13:38 -0700 (PDT)
+        Tue, 22 Aug 2023 00:02:34 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D408187;
+        Mon, 21 Aug 2023 21:02:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692674018; x=1724210018;
+  t=1692676952; x=1724212952;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=sIDWcw3K9YRBhz6ckYRBx/0tiDNsLHzeB+cXxebBkfY=;
-  b=TzBECRDFZc/e42VvN4/SIFiRx6FOInB5inQRZ0pWJtz1bUIde82OhGD8
-   eEfS+2cmznjR9tbFhWNYz4i4u0WJFLM43T2LhR6Qasw0PJgd20VUfW/Nz
-   eoOR502OrL7SiHVf/a4pnHONwE+DWr/UiYJ4vGoZGD/zQ3HopM90MTj1W
-   jlnlv4+d4W+LcXN7f24sXZAqby5BVEi0w7JbeVfdoVjWuhHOxh8M/V6bd
-   NQh1ac3FAItk7BLWGZt/tzQ6fB9dzbkVTqMcHQ8vEwePp39tAzOgbruj1
-   yd2COCCcEQQWh8Vwusei4gwPg9Xrh/oYYxSXmnXLWpIeApuhQ4sN3HxXP
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="373735371"
+  bh=Np9K9D7gW60gwdVKyUbkrixG4oCRBzuj6aPMVEF47M8=;
+  b=mFS5vNrA741qCw3t13VCFtBgOuMOpPfl4g5Ot3ZHJIOuB0WNvo9mIRh4
+   vL+qEIFY2lmOs/cuChlpKR3xRITnC+S6k3PccAs064JNnAUuOUTfQFqy4
+   fxrgYrbm/gmOBPFqMN//iEsAP5Sk+cmh2T+HGNKnBHqFFdoL4n1dMTtIE
+   6pHamg2QB+AF0gjZN45/ceWw7oA6isTX1oStumZHRCzXb72pRtKYaUadV
+   bmIIiiKYR7yRw+XRuOsCKwrNvoO6fH+6lVU8/2gMcOoB4UcZJxmh4h9Gk
+   L7nnhNALntMIrhj5aTWP2afc19+eB1Is1zDDEaXSN8FQZhIkVcZiwOoH2
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="376506626"
 X-IronPort-AV: E=Sophos;i="6.01,191,1684825200"; 
-   d="scan'208";a="373735371"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2023 20:13:38 -0700
+   d="scan'208";a="376506626"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2023 21:02:31 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="729653448"
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="771211418"
 X-IronPort-AV: E=Sophos;i="6.01,191,1684825200"; 
-   d="scan'208";a="729653448"
+   d="scan'208";a="771211418"
 Received: from lkp-server02.sh.intel.com (HELO 6809aa828f2a) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 21 Aug 2023 20:13:33 -0700
+  by orsmga001.jf.intel.com with ESMTP; 21 Aug 2023 21:02:26 -0700
 Received: from kbuild by 6809aa828f2a with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qYHpk-0001Hi-1w;
-        Tue, 22 Aug 2023 03:13:32 +0000
-Date:   Tue, 22 Aug 2023 11:12:41 +0800
+        id 1qYIb3-0001KN-2y;
+        Tue, 22 Aug 2023 04:02:25 +0000
+Date:   Tue, 22 Aug 2023 12:01:09 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Kartik <kkartik@nvidia.com>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, sumitg@nvidia.com, arnd@arndb.de,
@@ -52,9 +52,9 @@ To:     Kartik <kkartik@nvidia.com>, thierry.reding@gmail.com,
         frank.li@vivo.com, robh@kernel.org, stefank@nvidia.com,
         pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Cc:     oe-kbuild-all@lists.linux.dev
 Subject: Re: [PATCH 1/6] soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
-Message-ID: <202308221133.L1WzlvN7-lkp@intel.com>
+Message-ID: <202308221124.bP9Do9ir-lkp@intel.com>
 References: <20230818093028.7807-2-kkartik@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -79,27 +79,29 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Kartik/soc-tegra-fuse-Add
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
 patch link:    https://lore.kernel.org/r/20230818093028.7807-2-kkartik%40nvidia.com
 patch subject: [PATCH 1/6] soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
-config: arm-randconfig-r004-20230822 (https://download.01.org/0day-ci/archive/20230822/202308221133.L1WzlvN7-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20230822/202308221133.L1WzlvN7-lkp@intel.com/reproduce)
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20230822/202308221124.bP9Do9ir-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20230822/202308221124.bP9Do9ir-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202308221133.L1WzlvN7-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308221124.bP9Do9ir-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> drivers/soc/tegra/fuse/tegra-apbmisc.c:268:11: error: call to undeclared function 'acpi_dev_get_memory_resources'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   drivers/soc/tegra/fuse/tegra-apbmisc.c: In function 'tegra_acpi_init_apbmisc':
+>> drivers/soc/tegra/fuse/tegra-apbmisc.c:268:18: error: implicit declaration of function 'acpi_dev_get_memory_resources'; did you mean 'acpi_get_event_resources'? [-Werror=implicit-function-declaration]
      268 |         rcount = acpi_dev_get_memory_resources(adev, &resource_list);
-         |                  ^
->> drivers/soc/tegra/fuse/tegra-apbmisc.c:280:2: error: call to undeclared function 'acpi_dev_free_resource_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                  acpi_get_event_resources
+>> drivers/soc/tegra/fuse/tegra-apbmisc.c:280:9: error: implicit declaration of function 'acpi_dev_free_resource_list' [-Werror=implicit-function-declaration]
      280 |         acpi_dev_free_resource_list(&resource_list);
-         |         ^
-   2 errors generated.
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
 
-vim +/acpi_dev_get_memory_resources +268 drivers/soc/tegra/fuse/tegra-apbmisc.c
+vim +268 drivers/soc/tegra/fuse/tegra-apbmisc.c
 
    253	
    254	void tegra_acpi_init_apbmisc(void)
