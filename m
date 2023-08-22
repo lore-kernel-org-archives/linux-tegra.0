@@ -2,107 +2,79 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EFCEE49A5
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Aug 2023 23:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0918EE49A3
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Aug 2023 01:41:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231621AbjHVXFV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Aug 2023 19:05:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
+        id S232030AbjHWBlR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Aug 2023 21:41:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjHVXFU (ORCPT
+        with ESMTP id S230025AbjHWBlQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Aug 2023 19:05:20 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1685CD1;
-        Tue, 22 Aug 2023 16:05:18 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso665568266b.1;
-        Tue, 22 Aug 2023 16:05:18 -0700 (PDT)
+        Tue, 22 Aug 2023 21:41:16 -0400
+X-Greylist: delayed 903 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Aug 2023 18:41:14 PDT
+Received: from symantec4.comsats.net.pk (symantec4.comsats.net.pk [203.124.41.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F04E4C
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Aug 2023 18:41:13 -0700 (PDT)
+X-AuditID: cb7c291e-06dff70000002aeb-51-64e54b4aaff9
+Received: from iesco.comsatshosting.com (iesco.comsatshosting.com [210.56.28.11])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        by symantec4.comsats.net.pk (Symantec Messaging Gateway) with SMTP id 29.6B.10987.A4B45E46; Wed, 23 Aug 2023 04:56:59 +0500 (PKT)
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
+        d=iesco.com.pk; s=default;
+        h=received:content-type:mime-version:content-transfer-encoding
+          :content-description:subject:to:from:date:reply-to;
+        b=gHF2w1OQWksRObt0TEJQ5UzvejA+AsrzTZBhcs/n+cpA2Kgm1gopGPmwm9NdxABpD
+          BsOPLBtVA5EwXIJwT5pV7qLu9fB8Ox9cQCXNveyYDe8DAghASzeZeBrKzuIqDdXHl
+          jlOUiAFLthDkLQEChnwoxQcBFysD38pUGef/ca8qQ=
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692745517; x=1693350317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tl1tPAJsY+6HeQIjw/xN1e5yMc1WTSncxxsEvTVmB8M=;
-        b=J3AHJmH5FH5EWYJY8LWPuAdZqR9BdWQ9dx2Mj9W8vbp91TJ1UXiMgOCaUxI2aniiPB
-         f1leJ9g1sr121JreOI3n55cXPjQ7zA4o+tr/7Xj74XSjU5xhQVWLAfv65/vuYbr+kS+Q
-         /ovh7L4fXD1jtqk7udukzQ4S+YSX4HiRJ6H32pFUdajFJgi8zouIDKUDCUd8weXZcFy5
-         ZQdQmjTtG2icVUMVYzlmKfRIHEZx+3QyGoKxKz9zH+LFSEbggDHgyj35mT8loDz5Q5Ms
-         keThPZVmZN3bIb4H+MsLBJ3MXYDN+EbaYcEO8+DwlnB7dfUrh5WDAO80g84MD1k1IB9r
-         87Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692745517; x=1693350317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tl1tPAJsY+6HeQIjw/xN1e5yMc1WTSncxxsEvTVmB8M=;
-        b=bpSOXZCQg6AZilc/N7UwfYo6CMI5GyuDYWHKNCf4thadvtQALvap6CJBcGhdgeqIvB
-         S8o0UmgLb5kxrGl1EfpTLpEWp0lnOJyqCrg2vmFZeh4aIAiNxTMfKMiBb0HbzlR4ydjd
-         1qTjkMJENfkE63zRPgW6b5S3O77V1Y8mGgzSJUuk4TDqR2UKPaYamneOg4cmYfP1c/w4
-         xsaYmN4u0p30VQ7SrtUgmon4SAVQYC809iozizgvm6E2+QPFX14547BwRuUAriLbNsdM
-         CeaQSCQN1UUdNfwU98bdbVLgcYvFixiOMeIbORC6hSQJUhqfo8h3IMLRqFteQzzBHHLK
-         LqJA==
-X-Gm-Message-State: AOJu0YxYtLzzTfNGMX3IY729jIJbyoNMLxD/V0MXn4lJUzRs2UuW3nUJ
-        fu/8kYC60E2ZSpoO+0hfY6IHRc1dMi+tvxti4h0=
-X-Google-Smtp-Source: AGHT+IGc4vnfO5SO2rv82RsYq+TW7/uByZDfWyswWgwX0GX8iv3xt75IkRdZmjAU5aKwi0tBJtJFC8zrCiSUE6S0eJg=
-X-Received: by 2002:a17:906:535d:b0:98e:f13:e908 with SMTP id
- j29-20020a170906535d00b0098e0f13e908mr9494142ejo.60.1692745517251; Tue, 22
- Aug 2023 16:05:17 -0700 (PDT)
+        d=iesco.com.pk; s=default;
+        h=reply-to:date:from:to:subject:content-description
+          :content-transfer-encoding:mime-version:content-type;
+        bh=GMzYzcyTxDsE6wX/XHG6MHqAdAiHrhqbmmLQ/TZ1QnQ=;
+        b=kL50LBYTvvcQe3bztW1SA1tKEnQZt70bwvvldqi3uua8VLbIlwH117c8lbM+/qbe1
+          0UcZd5PPZK4MxkRexRSRv6FXBTRYFbsd1uBFOB6sdKM22Lhrz5WrG3jL22gFuvfUS
+          ZgS7ZwjKp3/RmNOIpg+qltPaYhXhdk/IUxdPujEK8=
+Received: from [94.156.6.90] (UnknownHost [94.156.6.90]) by iesco.comsatshosting.com with SMTP;
+   Wed, 23 Aug 2023 04:31:08 +0500
+Message-ID: <29.6B.10987.A4B45E46@symantec4.comsats.net.pk>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <20230714174702.4059100-1-robh@kernel.org>
-In-Reply-To: <20230714174702.4059100-1-robh@kernel.org>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Tue, 22 Aug 2023 18:05:06 -0500
-Message-ID: <CABb+yY0ZEkU2fEoFcihDM0GPuNBkCJHYXfkq-+bLJY1xtbf5Jw@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: Explicitly include correct DT includes
-To:     Rob Herring <robh@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@amd.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Re; Interest,
+To:     linux-tegra@vger.kernel.org
+From:   "Chen Yun" <pso.chairmanbod@iesco.com.pk>
+Date:   Tue, 22 Aug 2023 16:31:22 -0700
+Reply-To: chnyne@gmail.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsVyyUKGW9fb+2mKwe6/7BadX2axOTB6fN4k
+        F8AYxWWTkpqTWZZapG+XwJWxZN0FloLdzBVt/YtYGhgfM3UxcnJICJhI/Dl2m7mLkYtDSGAP
+        k8TKyVeYQBwWgdXMEguvXGAGqWIReMgs0f/VHaKqmVGi+8QjsASvgLXEjj8v2EFsZgE9iRtT
+        p7BBxAUlTs58wgIR15ZYtvA1UD0HkK0m8bWrBCQsLCAm8WnaMnaQsIiAvERHeyBImE1AX2LF
+        12ZGiLWqElNON4AdKiQgJbHxynq2CYz8s5Asm4Vk2Swky2YhLFvAyLKKUaK4MjcRGGjJJnrJ
+        +bnFiSXFenmpJXoF2ZsYgUF4ukZTbgfj0kuJhxgFOBiVeHh/rnuSIsSaWAbUdYhRgoNZSYRX
+        +vvDFCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8tkLPkoUE0hNLUrNTUwtSi2CyTBycUg2MQjts
+        pt2+/eowC3fUSr2da0OYFk+6/MXr+WvLQywPH4ZfvHHqZstyfzuzFwGsPzurxJ1LzpxRusUV
+        Xcjg/uXVkrnM7bytyS+nvCuNnfgvsG/71cOecvvCJx561OhjfNtFbL1y4KJL27Rnz3TcL/PJ
+        Qpz3Y5fsSduz8r9dXiXZSWwW79GdvSbCRYmlOCPRUIu5qDgRAHRzzWo+AgAA
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 12:47=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
-e:
->
-> The DT of_device.h and of_platform.h date back to the separate
-> of_platform_bus_type before it as merged into the regular platform bus.
-> As part of that merge prepping Arm DT support 13 years ago, they
-> "temporarily" include each other. They also include platform_device.h
-> and of.h. As a result, there's a pretty much random mix of those include
-> files used throughout the tree. In order to detangle these headers and
-> replace the implicit includes with struct declarations, users need to
-> explicitly include the correct includes.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
->
-I thought I was to pick the patch. But I see you intend to do it. Np.
+Re; Interest,
 
-Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+I am interested in discussing the Investment proposal as I explained
+in my previous mail. May you let me know your interest and the
+possibility of a cooperation aimed for mutual interest.
 
-thanks
+Looking forward to your mail for further discussion.
+
+Regards
+
+------
+Chen Yun - Chairman of CREC
+China Railway Engineering Corporation - CRECG
+China Railway Plaza, No.69 Fuxing Road, Haidian District, Beijing, P.R.
+China
+
