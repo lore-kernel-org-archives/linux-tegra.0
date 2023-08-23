@@ -2,79 +2,115 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0918EE49A3
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Aug 2023 01:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DB8EE4993
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Aug 2023 07:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232030AbjHWBlR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Aug 2023 21:41:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
+        id S233599AbjHWHu4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Aug 2023 03:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbjHWBlQ (ORCPT
+        with ESMTP id S233598AbjHWHuz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Aug 2023 21:41:16 -0400
-X-Greylist: delayed 903 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Aug 2023 18:41:14 PDT
-Received: from symantec4.comsats.net.pk (symantec4.comsats.net.pk [203.124.41.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F04E4C
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Aug 2023 18:41:13 -0700 (PDT)
-X-AuditID: cb7c291e-06dff70000002aeb-51-64e54b4aaff9
-Received: from iesco.comsatshosting.com (iesco.comsatshosting.com [210.56.28.11])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        by symantec4.comsats.net.pk (Symantec Messaging Gateway) with SMTP id 29.6B.10987.A4B45E46; Wed, 23 Aug 2023 04:56:59 +0500 (PKT)
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
-        d=iesco.com.pk; s=default;
-        h=received:content-type:mime-version:content-transfer-encoding
-          :content-description:subject:to:from:date:reply-to;
-        b=gHF2w1OQWksRObt0TEJQ5UzvejA+AsrzTZBhcs/n+cpA2Kgm1gopGPmwm9NdxABpD
-          BsOPLBtVA5EwXIJwT5pV7qLu9fB8Ox9cQCXNveyYDe8DAghASzeZeBrKzuIqDdXHl
-          jlOUiAFLthDkLQEChnwoxQcBFysD38pUGef/ca8qQ=
+        Wed, 23 Aug 2023 03:50:55 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9618ECE6
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Aug 2023 00:50:53 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fee17aebc8so38278775e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Aug 2023 00:50:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=iesco.com.pk; s=default;
-        h=reply-to:date:from:to:subject:content-description
-          :content-transfer-encoding:mime-version:content-type;
-        bh=GMzYzcyTxDsE6wX/XHG6MHqAdAiHrhqbmmLQ/TZ1QnQ=;
-        b=kL50LBYTvvcQe3bztW1SA1tKEnQZt70bwvvldqi3uua8VLbIlwH117c8lbM+/qbe1
-          0UcZd5PPZK4MxkRexRSRv6FXBTRYFbsd1uBFOB6sdKM22Lhrz5WrG3jL22gFuvfUS
-          ZgS7ZwjKp3/RmNOIpg+qltPaYhXhdk/IUxdPujEK8=
-Received: from [94.156.6.90] (UnknownHost [94.156.6.90]) by iesco.comsatshosting.com with SMTP;
-   Wed, 23 Aug 2023 04:31:08 +0500
-Message-ID: <29.6B.10987.A4B45E46@symantec4.comsats.net.pk>
-Content-Type: text/plain; charset="iso-8859-1"
+        d=linaro.org; s=google; t=1692777052; x=1693381852;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P+2FN7G3eyYYkhDUmvsMFL/gLA2nmLv/bVLmgPvX5x8=;
+        b=WCF47nydVfAWb+ufLmnZ8/s5gIespS2nG1nk8bJRxgB1/wlf+lHUeg5vcGZMVedVYS
+         2fR0xUagE+ECrVqpxjHIwyYzgIskHwhvqBW39A+OXfkOHB/+9K+r0/GHkNyppJxOjGPV
+         qDGm5FXj8zO+kIBIhznp4cSjN5WQPpN0ynXRHWJW6I+6v3ecoA6W0T4PryfKwAu+6baV
+         JKU0l8OKHm+M8fTwk2wb1m0+v+q6bl4aDtXajdOC8XJ99UUVIyS+IertDwcoNjSuaf1Y
+         PLixayZC6aXPpMsE1d00Fs32rOGhTnUtSL2Ngl0KM4UXUq0o6Jlr1Y5BPVgPctwlr/Jx
+         AwpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692777052; x=1693381852;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P+2FN7G3eyYYkhDUmvsMFL/gLA2nmLv/bVLmgPvX5x8=;
+        b=AtYAV2lV0YsR2oXJmNxta0oxjYUghALV6DtKHQkDN9n//QK/lDMpMGmTUS6+gtwOc3
+         Px9SAesD9MQ8TvAwRRO79Q8EohaTJrZpxSatydaoFlewq6sC+BsMsQFxKhZr8KqGCGhw
+         oXQSodXb1/hlk7UdX6bbXkS302tzf/7rKs7xHRLo5A8TOTcXWm4xTR/Vu/dgp18nuj03
+         Myg2PGYLKXDgtK0HOgKK6u84iwGxBZvrP8j8JK+dP42sNl0EOAIc0jAACHcWtvVjzQaJ
+         v2ewWmdIus4ylTzCvUOuJZWQWOj0AeVh1RrWUtYzOCEmhwjYUlDCpdB6ptqOBFZVF0QY
+         vhcQ==
+X-Gm-Message-State: AOJu0YwywX3k2BINJvWz1GAiBJiJL+EM0ylS0yFQiYtWENBpE9zTySSJ
+        6yil37By2yrkAoAK23vh0bYv8g==
+X-Google-Smtp-Source: AGHT+IHliTw/1uQuYtcsGVJC8NunfbGQTeq0qoFKdTLFBz2buL2gFvFX+Kn9wTjsUTs5zvK0H2IG5w==
+X-Received: by 2002:a7b:cb89:0:b0:3fe:fe71:14df with SMTP id m9-20020a7bcb89000000b003fefe7114dfmr2022507wmi.35.1692777051936;
+        Wed, 23 Aug 2023 00:50:51 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 1-20020a05600c020100b003ffca80edb8sm648850wmi.15.2023.08.23.00.50.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Aug 2023 00:50:51 -0700 (PDT)
+Message-ID: <e299d921-1609-70fa-33f6-97e51fe0b646@linaro.org>
+Date:   Wed, 23 Aug 2023 09:50:50 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Re; Interest,
-To:     linux-tegra@vger.kernel.org
-From:   "Chen Yun" <pso.chairmanbod@iesco.com.pk>
-Date:   Tue, 22 Aug 2023 16:31:22 -0700
-Reply-To: chnyne@gmail.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsVyyUKGW9fb+2mKwe6/7BadX2axOTB6fN4k
-        F8AYxWWTkpqTWZZapG+XwJWxZN0FloLdzBVt/YtYGhgfM3UxcnJICJhI/Dl2m7mLkYtDSGAP
-        k8TKyVeYQBwWgdXMEguvXGAGqWIReMgs0f/VHaKqmVGi+8QjsASvgLXEjj8v2EFsZgE9iRtT
-        p7BBxAUlTs58wgIR15ZYtvA1UD0HkK0m8bWrBCQsLCAm8WnaMnaQsIiAvERHeyBImE1AX2LF
-        12ZGiLWqElNON4AdKiQgJbHxynq2CYz8s5Asm4Vk2Swky2YhLFvAyLKKUaK4MjcRGGjJJnrJ
-        +bnFiSXFenmpJXoF2ZsYgUF4ukZTbgfj0kuJhxgFOBiVeHh/rnuSIsSaWAbUdYhRgoNZSYRX
-        +vvDFCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8tkLPkoUE0hNLUrNTUwtSi2CyTBycUg2MQjts
-        pt2+/eowC3fUSr2da0OYFk+6/MXr+WvLQywPH4ZfvHHqZstyfzuzFwGsPzurxJ1LzpxRusUV
-        Xcjg/uXVkrnM7bytyS+nvCuNnfgvsG/71cOecvvCJx561OhjfNtFbL1y4KJL27Rnz3TcL/PJ
-        Qpz3Y5fsSduz8r9dXiXZSWwW79GdvSbCRYmlOCPRUIu5qDgRAHRzzWo+AgAA
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] thermal: tegra-bpmp: Check if BPMP supports trip points
+Content-Language: en-US
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20221129153914.2699041-1-cyndis@kapsi.fi>
+ <Y9KTrO+WqJJwuEDf@orome> <a08355e1-c393-2b2e-4a44-360e08607bb9@linaro.org>
+ <Y9KfcSwYt7utbcg5@orome> <e716eda4-edfc-5946-4e6f-42aab5f73b0f@linaro.org>
+ <d7435a96-3480-280e-d996-73fea690c373@nvidia.com>
+ <2c37a786-0ae5-273e-f82b-4f9c82663053@linaro.org>
+ <7c342b0c-9657-ffd1-6fad-ef6433ddc793@kapsi.fi>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <7c342b0c-9657-ffd1-6fad-ef6433ddc793@kapsi.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Re; Interest,
+On 21/08/2023 12:08, Mikko Perttunen wrote:
+> On 4/3/23 13:26, Daniel Lezcano wrote:
+>> On 03/04/2023 12:22, Jon Hunter wrote:
+>>> Hi Daniel,
+>>>
+>>> On 26/01/2023 16:07, Daniel Lezcano wrote:
+>>>> On 26/01/2023 16:42, Thierry Reding wrote:
+>>>>> On Thu, Jan 26, 2023 at 04:08:03PM +0100, Daniel Lezcano wrote:
+>>>>>>
+>>>>>> Hi Thierry,
+>>>>>>
+>>>>>> On 26/01/2023 15:52, Thierry Reding wrote:
+>>>>>>> On Tue, Nov 29, 2022 at 05:39:14PM +0200, Mikko Perttunen wrote:
+>>>>>>>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>>>>>>>>
+>>>>>>>> Check if BPMP supports thermal trip points, and if not,
+>>>>>>>> do not expose the .set_trips callback to the thermal core
+>>>>>>>> framework. This can happen in virtualized environments
+>>>>>>>> where asynchronous communication with VM BPMP drivers is not
+>>>>>>>> available.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>>>>>>>> ---
 
-I am interested in discussing the Investment proposal as I explained
-in my previous mail. May you let me know your interest and the
-possibility of a cooperation aimed for mutual interest.
+Thanks for the head up, that should be fixed now.
 
-Looking forward to your mail for further discussion.
 
-Regards
 
-------
-Chen Yun - Chairman of CREC
-China Railway Engineering Corporation - CRECG
-China Railway Plaza, No.69 Fuxing Road, Haidian District, Beijing, P.R.
-China
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
