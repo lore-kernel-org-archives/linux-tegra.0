@@ -2,618 +2,245 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 697DCEE49B0
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Aug 2023 14:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3B5EE4993
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Aug 2023 16:47:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235908AbjHWOWV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Aug 2023 10:22:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43656 "EHLO
+        id S237555AbjHWQrr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Aug 2023 12:47:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231387AbjHWOWU (ORCPT
+        with ESMTP id S231450AbjHWQrq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Aug 2023 10:22:20 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F55EE47;
-        Wed, 23 Aug 2023 07:22:18 -0700 (PDT)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37NE8rt8005615;
-        Wed, 23 Aug 2023 14:21:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=+TsSWkSYRTaX0WS+tPSk/pBn9LXXJ36HN+j2+umC9iQ=;
- b=afQff/mlbo8kr9ze6PD0tqQVLXw0JyrJMYjc2vTLMs+oEY6t+EtIrSllFCuMF9CC9TNh
- RuyT5tUVSWoryEF9AprJxqDD5H0+iWsdm8S3Fh97OWVy539cN54uYFA3VnRwkH7rSSdA
- wBFUK1YvlrYNhn4ry3HG1r6ImXFxKUGyeRsBFFdUA9+0PVSKkjcADVuVzoE6m7Dlpp0a
- VOcQfSitn5xPqbIlzFp74skmgMJ7tvjx6AaxMAn3zmE3J4rq4ZZsKbs+ntcA84Rcp/fA
- bH1fFigp/sBczhjL1QvhXYXu0q4eRxVJXlARdWZ8zQIbc909HdQBUoz5OU4tzGyi68Re Zg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3snk7v1171-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Aug 2023 14:21:24 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37NEAG6F013425;
-        Wed, 23 Aug 2023 14:21:23 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3snk7v1162-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Aug 2023 14:21:23 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37NCCYkX027348;
-        Wed, 23 Aug 2023 14:21:21 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-        by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3sn20seyb9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Aug 2023 14:21:20 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37NELHdP21955090
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Aug 2023 14:21:17 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A475D20043;
-        Wed, 23 Aug 2023 14:21:17 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D7BF420040;
-        Wed, 23 Aug 2023 14:21:14 +0000 (GMT)
-Received: from [9.171.92.225] (unknown [9.171.92.225])
-        by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Aug 2023 14:21:14 +0000 (GMT)
-Message-ID: <b46210ce00b46ce42b8487e5670cc56b4458031f.camel@linux.ibm.com>
-Subject: Re: [PATCH v11 5/6] iommu/dma: Allow a single FQ in addition to
- per-CPU FQs
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
+        Wed, 23 Aug 2023 12:47:46 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2074.outbound.protection.outlook.com [40.107.94.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FAF11F;
+        Wed, 23 Aug 2023 09:47:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d1/4SPi53tvCjkLsJZ9Wy/g/8a4UlzX/OPha1EuEQ5S/amQLuI6IC1oOtetOvBpJo+8H14PZZlHfOnFCb0JDp7DS+peusz66U6u8+z1i2K4TvdqNpTwzsMPYLR3XBZkVbD14YvVJVe6aHOYqvLUw7/Ih8jdu8j7aqd4bceSE1s/Tqto0uHlra9VaWbCJiYU8PUsR4mqSHidQ9ObL7vZiA9Ff7bQzX1gVg4DvWM9es6ayi2PyhbVP2s/qvprp0NbqtezbQvJzVOnT1awIkwd872N0nKIEJzC8RD7hfltPTFmJGtHi+0qR74XYB42jesnc5Bc6YCTfc7CosjfWuLYahw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8i1/nr4BZ72rdgQlfM4bhM6VAGgmmnzEdUflAW1+U/M=;
+ b=fcX2cMqENQrGc5KB9mszGUhDGsHuwrld785wg8UWm9hVe6aSdxBhk89R3jBU/nPv0GRqX58qkLxz7BSXH8P0LPc4zvuzDLxlFsReh6D0KEdPVVTPR5TnpkkcOYKdniImgHXZCR1nkGd+YQqyHggbRN/VU/twmIG7yCm6hL0Ol+Ior3JiYv/BwwWRU32uWIBT1qReOyR0D2cddZK/7UqgTROi09pJl9bwA32UkZRSVgPPNWgqI+H9l058X7etigGKl5yueeldtbmc5ufmSE9gACpvyvUDhhQ3wwxEeI5bfRSseGesYdQQg2EcAQbA5V4+Bh1ZvOa7cmURAkUFJM0z1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8i1/nr4BZ72rdgQlfM4bhM6VAGgmmnzEdUflAW1+U/M=;
+ b=btxXwF9VXiGFDSwbNiytD/00vKC6DR/xcKjGRj/YMUdICc8TEIWzMu6fqkt4PR2lZDd2N4kWl0jErQ+3dH0A8h+3ZCl1ROtfm1HDk7OhbnAB1jE8svaXOaGUib+x7FwtR5ql9YqmjU7PwM38OCqpJqztMKOLQLZDaDoPkHj7a4CFseEM0r+pCFS1tqOOJ43vYH1n8KTKyCWJYHhokAr64m5NXJxpwc8jP6JGl1FOwJMC2i1BVK4XDRhqZRiQpgCk/JzVvv8CO30Jaf1MIhfFUuXk83MBSekH2EcBqqQ8ktR93wB68i4U4N6O5mWZqD4wm0lI9l9JIwRAk5X1dKGGhg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by IA1PR12MB6459.namprd12.prod.outlook.com (2603:10b6:208:3a9::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.26; Wed, 23 Aug
+ 2023 16:47:41 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::5111:16e8:5afe:1da1]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::5111:16e8:5afe:1da1%6]) with mapi id 15.20.6699.020; Wed, 23 Aug 2023
+ 16:47:40 +0000
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
         Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Date:   Wed, 23 Aug 2023 16:21:14 +0200
-In-Reply-To: <9a466109-01c5-96b0-bf03-304123f435ee@arm.com>
-References: <20230717-dma_iommu-v11-0-a7a0b83c355c@linux.ibm.com>
-         <20230717-dma_iommu-v11-5-a7a0b83c355c@linux.ibm.com>
-         <9a466109-01c5-96b0-bf03-304123f435ee@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Ey2FPN0jRMPc4eTPWYB6VrcIiIPiosv2
-X-Proofpoint-ORIG-GUID: TFGD4evL0UP8ULVcdKt-aUOtpHarBMQh
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v7 03/24] powerpc/iommu: Setup a default domain and remove set_platform_dma_ops
+Date:   Wed, 23 Aug 2023 13:47:17 -0300
+Message-ID: <3-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <0-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+References: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH0PR03CA0419.namprd03.prod.outlook.com
+ (2603:10b6:610:11b::8) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-23_09,2023-08-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 priorityscore=1501
- malwarescore=0 phishscore=0 clxscore=1015 mlxscore=0 mlxlogscore=787
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308230128
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|IA1PR12MB6459:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee25eebd-9ec4-4942-c7f9-08dba3f8aa00
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9QmUv7AQmHuiZTLWskn45qphkWnw3jm+53GJDKoYa0pkR70mYs/GJtf1R5s/EA/i2zWSxKv9CF1R+HEm6pn2+8qbO6sFGiCco/7/1F3nb2IDpGyvTzsUE2ctEcWWceO3AAzh10cZN8z2zrW0oVY5kG39IB4MxKVHa9C/qjZXSnTSGOwUnq/QEmceFVIb6BtUj8rzqkASoqghZGuQyPpqsA2pn+CqFClGMFWHD3sPB1zeBMUCMZ8eCHEx/UHMnu5/OPVZQvRXFeHgwsfEY5zeKx4WWtmX9Xwm2xHp9gJJ0nIzFzmPM71WHY59geEzfMt+b0nkcCTeC3Se/DiB1bXH6TBDqC/RxLt+V15MmKqun528WtmFN9u6hbRQwRBE+cl5ZJ7/b9BsHwFPU5m86kmxu28t/UI/P+y0JBdOR9j5bh0NkM87OYFPIofXC3r5CbwwrQHU0anm11UVWXXtefehGqgMtcIIj87ugireynBXRxsStBTY/5saxFLr2Hk8AnXrT4adXLpJqcVaEvptwPSWwijwEvtJvlMDtsHK8sxdDvJnwh5iM0Zn9p9lpYRkspYwmnCwG2ls7VUtk2oj8oJXQ+ajLdFrBHJ8PbByRHkHIss95/IPPQn3Kh3wPaNRCbC0
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(39860400002)(136003)(366004)(396003)(376002)(451199024)(186009)(1800799009)(36756003)(478600001)(86362001)(6486002)(6506007)(66476007)(66556008)(316002)(54906003)(110136005)(66946007)(6666004)(41300700001)(6512007)(38100700002)(8676002)(4326008)(8936002)(5660300002)(107886003)(921005)(26005)(2616005)(7406005)(7416002)(83380400001)(2906002)(4216001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IoZIr+l0Z7n4irMu7mwMpt1tJjzsEA+n2/U1smioZW2CGhDREejM2gpeBMbb?=
+ =?us-ascii?Q?yDSvMQi+vuCeuEtXKf3I7oG2nXp+x6ICcP7Pp0UWABEMiNW66q7YCS0rLFP3?=
+ =?us-ascii?Q?LQaFKzZlcWOilIGo+/fcQFGTfDxEAvPU6dCY54Ny45Y5yjTwELN01BPm/qnP?=
+ =?us-ascii?Q?7tWR/2ItTA6XQz8YdIouUDsYWsMdYhwbRKq4VKzcdS6MazqlOvXZaGDzrSaw?=
+ =?us-ascii?Q?hOZBAey5ah+Xkbk5+9NXXy0mFb5CV4YzJ7Zg004/HqU92fO0w2fcfD8WHDm5?=
+ =?us-ascii?Q?1SCygrogkgNnQ3O9PhGSh02cII3equQhdzJvYZ3S4RcBI9pO8TEdZ7WghrsO?=
+ =?us-ascii?Q?OGEGCnxopUCzc/ZviCMeRVVYQ7DQgpBwXWTaMd7XAeKe1Jb6XihzKTjMJ5d5?=
+ =?us-ascii?Q?c1sfOYCfiW6/20qoPewGnt/I1IWAuNNDi4EsgIDcDCTyBQakjR7M1KHxUSfi?=
+ =?us-ascii?Q?kDivkRZuImFd5cmTbFl8l/l5wxcnT3rXBREaaPLVXjMdhojwiYYulN4tm8FJ?=
+ =?us-ascii?Q?zp8vHGKSuNLRwri8hCvrOM3jw+bDUo0Rq8b2NrNFyg/AbSDBxZkqXtnuJkWz?=
+ =?us-ascii?Q?P4LlKlcvEqY29Quv+UrKL+1IdI9k/9j+2sTjy0KRA7JlipJVEoLoUim0j5Z/?=
+ =?us-ascii?Q?MPsWq87dbIQOxQ8Bn+A3kPYPGJ1lyhVH8p6Aqziwll5/s/g+W+6LibRkO3w3?=
+ =?us-ascii?Q?F09C/9ElkIvAQ9v4D3DfZ/UvqUbzivODTAX+q5jNccvN9oLXJfKFief9Tps6?=
+ =?us-ascii?Q?hc9h0bosfmMlzSSuXvN85arh5h70yNHxVqQUxidcTPeq/YKeVUnShVzPQ0Gz?=
+ =?us-ascii?Q?QiL5rlh0B4RC9uNfTXdq2cS1sFMeeGv6yMsRQy+JDKwdOREMJIXqqofn+NYk?=
+ =?us-ascii?Q?cwYlSgiW12SpAyeTznDwVOcCcl8Ls1tW5mq7twLpMnY5bzpV70ImPrqlmf3v?=
+ =?us-ascii?Q?sA+fSoknj3UuuMKiYo8squ90VhDjc5puAgNmNjSILklF2b9Ltz0myf/sIC3R?=
+ =?us-ascii?Q?DVuBM9VTwpb2gn24g5VJVcLXkUPQd3o0P6Or+htFtmKnlibg+FUo9RjMFON2?=
+ =?us-ascii?Q?xmSMjEKuwfBdZ9iPcWXhqaPJgDHvM1Bwe3d0urTy/GXhQyI37UND7Q+23HvB?=
+ =?us-ascii?Q?+rb0AdDG5BMpUt7rsO8jr2Tpxx4xDvin97Rr2H7TxHnFQreoyZ9TFSm35NjS?=
+ =?us-ascii?Q?5/23exnvj57BVfKAJMZJ8K0YlTm1ERHuSv4tLmV8l6EzaEDHsf6Keg3HD0Hz?=
+ =?us-ascii?Q?v3tnJlqHZmN+nP2ALZMKZsOa3gtb2Xm+eukL49Drwq16aVjuVDQJsvLbYoQE?=
+ =?us-ascii?Q?0REpwXFwffnArohDVoV9krJDkswc5Sq+p4A8lMqe8e5lMl+JqFUet5G3hlKU?=
+ =?us-ascii?Q?cPHxcVpfkNUA9yT1BvqdPJXm32/EUGLMp6+K22tZUbkx3Jax/SZl5ASr1qXL?=
+ =?us-ascii?Q?V1cEcvBdnj0AUBsldm1vfrsnV3GyPlWgVKFUjc+wyDlnMsGq/Oz/EVL2DHHP?=
+ =?us-ascii?Q?Yw+bbv+/xhUIMrDdeEzVnkcLiTbi/uFgYpGMV3HP53ZtcMEN4ghNeSCTlBFg?=
+ =?us-ascii?Q?xFmcg2fNMPRIO+Gh7lIkaJI2IhdZuufN0xp/Aoaj?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee25eebd-9ec4-4942-c7f9-08dba3f8aa00
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2023 16:47:40.6191
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pc2yeaneATsbLKmvqQBD9H+xPw76qVDsulx86fSTKIE+UgIqZ4cmgvM7UCw879Ro
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6459
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 2023-08-18 at 19:16 +0100, Robin Murphy wrote:
-> On 2023-07-17 12:00, Niklas Schnelle wrote:
-> > In some virtualized environments, including s390 paged memory guests,
-> > IOTLB flushes are used to update IOMMU shadow tables. Due to this, they
-> > are much more expensive than in typical bare metal environments or
-> > non-paged s390 guests. In addition they may parallelize poorly in
-> > virtualized environments. This changes the trade off for flushing IOVAs
-> > such that minimizing the number of IOTLB flushes trumps any benefit of
-> > cheaper queuing operations or increased paralellism.
-> >=20
-> > In this scenario per-CPU flush queues pose several problems. Firstly
-> > per-CPU memory is often quite limited prohibiting larger queues.
-> > Secondly collecting IOVAs per-CPU but flushing via a global timeout
-> > reduces the number of IOVAs flushed for each timeout especially on s390
-> > where PCI interrupts may not be bound to a specific CPU.
-> >=20
-> > Let's introduce a single flush queue mode that reuses the same queue
-> > logic but only allocates a single global queue. This mode is selected by
-> > dma-iommu if a newly introduced .shadow_on_flush flag is set in struct
-> > dev_iommu. As a first user the s390 IOMMU driver sets this flag during
-> > probe_device. With the unchanged small FQ size and timeouts this setting
-> > is worse than per-CPU queues but a follow up patch will make the FQ size
-> > and timeout variable. Together this allows the common IOVA flushing code
-> > to more closely resemble the global flush behavior used on s390's
-> > previous internal DMA API implementation.
-> >=20
-> > Link: https://lore.kernel.org/linux-iommu/3e402947-61f9-b7e8-1414-fde00=
-6257b6f@arm.com/
-> > Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com> #s390
-> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> > ---
-> >   drivers/iommu/dma-iommu.c  | 178 +++++++++++++++++++++++++++++++++---=
----------
-> >   drivers/iommu/iommu.c      |  20 +----
->=20
-> The hunks in iommu.c appear to be an inadvertent reversion of patch #1?
->=20
-> A few bonus nits below which you can take or leave, but otherwise, with=20
-> the rebase-mishap fixed:
->=20
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
->=20
-> >   drivers/iommu/s390-iommu.c |   3 +
-> >   include/linux/iommu.h      |   2 +
-> >   4 files changed, 142 insertions(+), 61 deletions(-)
-> >=20
-> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > index e57724163835..4ada8b9749c9 100644
-> > --- a/drivers/iommu/dma-iommu.c
-> > +++ b/drivers/iommu/dma-iommu.c
-> > @@ -43,14 +43,23 @@ enum iommu_dma_cookie_type {
-> >   	IOMMU_DMA_MSI_COOKIE,
-> >   };
-> >=20=20=20
-> > +struct dma_iommu_options {
-> > +#define IOMMU_DMA_OPTS_PER_CPU_QUEUE	0L
->=20
-> Nit: if the intent is to add more flags then that will no longer make=20
-> sense, and if not then we may as well just have a bool ;)
->=20
-> > +#define IOMMU_DMA_OPTS_SINGLE_QUEUE	BIT(0)
+POWER is using the set_platform_dma_ops() callback to hook up its private
+dma_ops, but this is buired under some indirection and is weirdly
+happening for a BLOCKED domain as well.
 
-My thinking was that the above two options are mutually exclusive with
-per-CPU encoded as BIT(0) unset and single queue as set. Then other
-options could still use the other bits. It's true though that the below
-use of IOMMU_DMA_OPTS_PER_CPU_QUEUE is a nop so maybe just drop that?
-Or we could use an enum even if I don't forsee more than these 2 queue
-types.
+For better documentation create a PLATFORM domain to manage the dma_ops,
+since that is what it is for, and make the BLOCKED domain an alias for
+it. BLOCKED is required for VFIO.
 
-> > +	u64	flags;
-> > +};
-> > +
-> >  =C2=A0
----8<---
-> >=20=20=20
-> > +static void fq_ring_free(struct iommu_dma_cookie *cookie, struct iova_=
-fq *fq)
-> > +{
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&fq->lock, flags);
-> > +	fq_ring_free_locked(cookie, fq);
-> > +	spin_unlock_irqrestore(&fq->lock, flags);
-> > +}
-> > +
-> >   static void fq_flush_iotlb(struct iommu_dma_cookie *cookie)
-> >   {
-> >   	atomic64_inc(&cookie->fq_flush_start_cnt);
-> > @@ -152,23 +172,29 @@ static void fq_flush_iotlb(struct iommu_dma_cooki=
-e *cookie)
-> >   	atomic64_inc(&cookie->fq_flush_finish_cnt);
-> >   }
-> >=20=20=20
-> > +static void fq_flush_percpu(struct iommu_dma_cookie *cookie)
-> > +{
-> > +	int cpu;
-> > +
-> > +	for_each_possible_cpu(cpu) {
-> > +		struct iova_fq *fq;
-> > +
-> > +		fq =3D per_cpu_ptr(cookie->percpu_fq, cpu);
-> > +		fq_ring_free(cookie, fq);
-> > +	}
-> > +}
-> > +
-> >   static void fq_flush_timeout(struct timer_list *t)
-> >   {
-> >   	struct iommu_dma_cookie *cookie =3D from_timer(cookie, t, fq_timer);
-> > -	int cpu;
-> >=20=20=20
-> >   	atomic_set(&cookie->fq_timer_on, 0);
-> >   	fq_flush_iotlb(cookie);
-> >=20=20=20
-> > -	for_each_possible_cpu(cpu) {
-> > -		unsigned long flags;
-> > -		struct iova_fq *fq;
-> > -
-> > -		fq =3D per_cpu_ptr(cookie->fq, cpu);
-> > -		spin_lock_irqsave(&fq->lock, flags);
-> > -		fq_ring_free(cookie, fq);
-> > -		spin_unlock_irqrestore(&fq->lock, flags);
-> > -	}
-> > +	if (cookie->options.flags & IOMMU_DMA_OPTS_SINGLE_QUEUE)
-> > +		fq_ring_free(cookie, cookie->single_fq);
-> > +	else
-> > +		fq_flush_percpu(cookie);
->=20
-> Nit: honestly I'd just inline that as:
->=20
-> 	else for_each_possible_cpu(cpu)
-> 		fq_ring_free(cookie, per_cpu_ptr(cookie->percpu_fq, cpu));
->=20
-> (possibly with extra braces if you don't feel brave enough to join the=20
-> elite "else for" club...)
+Also removes the leaky allocation of the BLOCKED domain by using a global
+static.
 
-I might but it looks like checkpatch.pl isn't a fan:
-...
-ERROR: trailing statements should be on next line
-#119: FILE: drivers/iommu/dma-iommu.c:185:
-+       else for_each_possible_cpu(cpu)
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+---
+ arch/powerpc/kernel/iommu.c | 38 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
-So braces it is.
-
->=20
-> >   }
-> >=20=20=20
-> >   static void queue_iova(struct iommu_dma_cookie *cookie,
-> > @@ -188,7 +214,11 @@ static void queue_iova(struct iommu_dma_cookie *co=
-okie,
-> >   	 */
-> >   	smp_mb();
-> >=20=20=20
-> > -	fq =3D raw_cpu_ptr(cookie->fq);
-> > +	if (cookie->options.flags & IOMMU_DMA_OPTS_SINGLE_QUEUE)
-> > +		fq =3D cookie->single_fq;
-> > +	else
-> > +		fq =3D raw_cpu_ptr(cookie->percpu_fq);
-> > +
-> >   	spin_lock_irqsave(&fq->lock, flags);
-> >=20=20=20
-> >   	/*
-> > @@ -196,11 +226,11 @@ static void queue_iova(struct iommu_dma_cookie *c=
-ookie,
-> >   	 * flushed out on another CPU. This makes the fq_full() check below =
-less
-> >   	 * likely to be true.
-> >   	 */
-> > -	fq_ring_free(cookie, fq);
-> > +	fq_ring_free_locked(cookie, fq);
-> >=20=20=20
-> >   	if (fq_full(fq)) {
-> >   		fq_flush_iotlb(cookie);
-> > -		fq_ring_free(cookie, fq);
-> > +		fq_ring_free_locked(cookie, fq);
-> >   	}
-> >=20=20=20
-> >   	idx =3D fq_ring_add(fq);
-> > @@ -219,31 +249,90 @@ static void queue_iova(struct iommu_dma_cookie *c=
-ookie,
-> >   			  jiffies + msecs_to_jiffies(IOVA_FQ_TIMEOUT));
-> >   }
-> >=20=20=20
-> > -static void iommu_dma_free_fq(struct iommu_dma_cookie *cookie)
-> > +static void iommu_dma_free_fq_single(struct iova_fq *fq)
-> > +{
-> > +	int idx;
-> > +
-> > +	if (!fq)
-> > +		return;
->=20
-> Nit: That should never be true if cookie->fq_domain was set
-
-True and the _percpu variant doesn't check it either so will drop.
-
->=20
-> > +	fq_ring_for_each(idx, fq)
-> > +		put_pages_list(&fq->entries[idx].freelist);
-> > +	vfree(fq);
-> > +}
-> > +
-> > +static void iommu_dma_free_fq_percpu(struct iova_fq __percpu *percpu_f=
-q)
-> >   {
-> >   	int cpu, idx;
-> >=20=20=20
-> > -	if (!cookie->fq)
-> > -		return;
-> > -
-> > -	del_timer_sync(&cookie->fq_timer);
-> >   	/* The IOVAs will be torn down separately, so just free our queued p=
-ages */
-> >   	for_each_possible_cpu(cpu) {
-> > -		struct iova_fq *fq =3D per_cpu_ptr(cookie->fq, cpu);
-> > +		struct iova_fq *fq =3D per_cpu_ptr(percpu_fq, cpu);
-> >=20=20=20
-> >   		fq_ring_for_each(idx, fq)
-> >   			put_pages_list(&fq->entries[idx].freelist);
-> >   	}
-> >=20=20=20
-> > -	free_percpu(cookie->fq);
-> > +	free_percpu(percpu_fq);
-> > +}
-> > +
-> > +static void iommu_dma_free_fq(struct iommu_dma_cookie *cookie)
-> > +{
-> > +	if (!cookie->fq_domain)
-> > +		return;
-> > +
-> > +	del_timer_sync(&cookie->fq_timer);
-> > +	if (cookie->options.flags & IOMMU_DMA_OPTS_SINGLE_QUEUE)
-> > +		iommu_dma_free_fq_single(cookie->single_fq);
-> > +	else
-> > +		iommu_dma_free_fq_percpu(cookie->percpu_fq);
-> > +}
-> > +
-> > +static void iommu_dma_init_one_fq(struct iova_fq *fq)
-> > +{
-> > +	int i;
-> > +
-> > +	fq->head =3D 0;
-> > +	fq->tail =3D 0;
-> > +
-> > +	spin_lock_init(&fq->lock);
-> > +
-> > +	for (i =3D 0; i < IOVA_FQ_SIZE; i++)
-> > +		INIT_LIST_HEAD(&fq->entries[i].freelist);
-> > +}
-> > +
-> > +static int iommu_dma_init_fq_single(struct iommu_dma_cookie *cookie)
-> > +{
-> > +	struct iova_fq *queue;
-> > +
-> > +	queue =3D vzalloc(sizeof(*queue));
->=20
-> Nit: vmalloc() - no need to zero the whole thing when the percpu path=20
-> doesn't.
-
-Done
-
->=20
-> > +	if (!queue)
-> > +		return -ENOMEM;
-> > +	iommu_dma_init_one_fq(queue);
-> > +	cookie->single_fq =3D queue;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int iommu_dma_init_fq_percpu(struct iommu_dma_cookie *cookie)
-> > +{
-> > +	struct iova_fq __percpu *queue;
-> > +	int cpu;
-> > +
-> > +	queue =3D alloc_percpu(struct iova_fq);
-> > +	if (!queue)
-> > +		return -ENOMEM;
-> > +
-> > +	for_each_possible_cpu(cpu)
-> > +		iommu_dma_init_one_fq(per_cpu_ptr(queue, cpu));
-> > +	cookie->percpu_fq =3D queue;
-> > +	return 0;
-> >   }
-> >=20=20=20
-> >   /* sysfs updates are serialised by the mutex of the group owning @dom=
-ain */
-> >   int iommu_dma_init_fq(struct iommu_domain *domain)
-> >   {
-> >   	struct iommu_dma_cookie *cookie =3D domain->iova_cookie;
-> > -	struct iova_fq __percpu *queue;
-> > -	int i, cpu;
-> > +	int rc;
-> >=20=20=20
-> >   	if (cookie->fq_domain)
-> >   		return 0;
-> > @@ -251,26 +340,16 @@ int iommu_dma_init_fq(struct iommu_domain *domain)
-> >   	atomic64_set(&cookie->fq_flush_start_cnt,  0);
-> >   	atomic64_set(&cookie->fq_flush_finish_cnt, 0);
-> >=20=20=20
-> > -	queue =3D alloc_percpu(struct iova_fq);
-> > -	if (!queue) {
-> > +	if (cookie->options.flags & IOMMU_DMA_OPTS_SINGLE_QUEUE)
-> > +		rc =3D iommu_dma_init_fq_single(cookie);
-> > +	else
-> > +		rc =3D iommu_dma_init_fq_percpu(cookie);
-> > +
-> > +	if (rc) {
-> >   		pr_warn("iova flush queue initialization failed\n");
-> >   		return -ENOMEM;
-> >   	}
-> >=20=20=20
-> > -	for_each_possible_cpu(cpu) {
-> > -		struct iova_fq *fq =3D per_cpu_ptr(queue, cpu);
-> > -
-> > -		fq->head =3D 0;
-> > -		fq->tail =3D 0;
-> > -
-> > -		spin_lock_init(&fq->lock);
-> > -
-> > -		for (i =3D 0; i < IOVA_FQ_SIZE; i++)
-> > -			INIT_LIST_HEAD(&fq->entries[i].freelist);
-> > -	}
-> > -
-> > -	cookie->fq =3D queue;
-> > -
-> >   	timer_setup(&cookie->fq_timer, fq_flush_timeout, 0);
-> >   	atomic_set(&cookie->fq_timer_on, 0);
-> >   	/*
-> > @@ -297,6 +376,7 @@ static struct iommu_dma_cookie *cookie_alloc(enum i=
-ommu_dma_cookie_type type)
-> >   	if (cookie) {
-> >   		INIT_LIST_HEAD(&cookie->msi_page_list);
-> >   		cookie->type =3D type;
-> > +		cookie->options.flags =3D IOMMU_DMA_OPTS_PER_CPU_QUEUE;
->=20
-> You see, this confused me into thinking it does something and I had to=20
-> go back and check ;)
-
-I have no real preference we can drop it, make it an enum, a bool or
-keep it. I felt like this explicit assignment documented per-CPU as the
-default so see my variant below but yes it does nothing since the
-cookie was already kzalloced.
->=20
-> >   	}
-> >   	return cookie;
-> >   }
-> > @@ -614,10 +694,18 @@ static int iommu_dma_init_domain(struct iommu_dom=
-ain *domain, dma_addr_t base,
-> >   	if (ret)
-> >   		goto done_unlock;
-> >=20=20=20
-> > -	/* If the FQ fails we can simply fall back to strict mode */
-> > -	if (domain->type =3D=3D IOMMU_DOMAIN_DMA_FQ &&
-> > -	    (!device_iommu_capable(dev, IOMMU_CAP_DEFERRED_FLUSH) || iommu_dm=
-a_init_fq(domain)))
-> > -		domain->type =3D IOMMU_DOMAIN_DMA;
-> > +	if (domain->type =3D=3D IOMMU_DOMAIN_DMA_FQ) {
-> > +		/* Expensive shadowing IOTLB flushes require some tuning */
-> > +		if (dev->iommu->shadow_on_flush)
-> > +			cookie->options.flags |=3D IOMMU_DMA_OPTS_SINGLE_QUEUE;
->=20
-> It would probably be better to set this regardless of the domain type,=20
-> in case the FQ is only brought up later via sysfs.
->=20
-> > +
-> > +		/* If the FQ fails we can simply fall back to strict mode */
-> > +		if (!device_iommu_capable(dev, IOMMU_CAP_DEFERRED_FLUSH) ||
-> > +		    iommu_dma_init_fq(domain)) {
-> > +			domain->type =3D IOMMU_DOMAIN_DMA;
-> > +			cookie->options.flags &=3D ~IOMMU_DMA_OPTS_SINGLE_QUEUE;
->=20
-> ...and either way there should be no need to clear it again - if it was=20
-> true once it will always be true.
->=20
-> Cheers,
-> Robin.
->=20
-
-I'm now experimenting with an iommu_dma_init_options() helper that gets
-called from the main path of iommu_dma_init() here is how it looks like
-at the end:
-
-static void iommu_dma_init_options(struct iommu_dma_options *options, struc=
-t device *dev)
-{
-	/* Expensive shadowing IOTLB flushes do better with a single large queue */
-	if (dev->iommu->shadow_on_flush) {
-		options->flags =3D IOMMU_DMA_OPTS_SINGLE_QUEUE;
-		options->fq_timeout =3D IOVA_SINGLE_FQ_TIMEOUT;
-		options->fq_size =3D IOVA_SINGLE_FQ_SIZE;
-	} else {
-		options->flags =3D IOMMU_DMA_OPTS_PER_CPU_QUEUE;
-		options->fq_size =3D IOVA_DEFAULT_FQ_SIZE;
-		options->fq_timeout =3D IOVA_DEFAULT_FQ_TIMEOUT;
-	}
-}
-
-Also I noticed that my options struct used the prefix "dma_iommu_"
-while everything else is "iommu_dma_" so that got fixed too.
-
-> > +		}
-> > +	}
-> >=20=20=20
-> >   	ret =3D iova_reserve_iommu_regions(dev, domain);
-> >=20=20=20
-> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> > index fd9f79731d6a..caaf563d38ae 100644
-> > --- a/drivers/iommu/iommu.c
-> > +++ b/drivers/iommu/iommu.c
-> > @@ -2413,17 +2413,8 @@ int iommu_map(struct iommu_domain *domain, unsig=
-ned long iova,
-> >   		return -EINVAL;
-> >=20=20=20
-> >   	ret =3D __iommu_map(domain, iova, paddr, size, prot, gfp);
-> > -	if (ret =3D=3D 0 && ops->iotlb_sync_map) {
-> > -		ret =3D ops->iotlb_sync_map(domain, iova, size);
-> > -		if (ret)
-> > -			goto out_err;
-> > -	}
-> > -
-> > -	return ret;
-> > -
-> > -out_err:
-> > -	/* undo mappings already done */
-> > -	iommu_unmap(domain, iova, size);
-> > +	if (ret =3D=3D 0 && ops->iotlb_sync_map)
-> > +		ops->iotlb_sync_map(domain, iova, size);
-> >=20=20=20
-> >   	return ret;
-> >   }
-> > @@ -2564,11 +2555,8 @@ ssize_t iommu_map_sg(struct iommu_domain *domain=
-, unsigned long iova,
-> >   			sg =3D sg_next(sg);
-> >   	}
-> >=20=20=20
-> > -	if (ops->iotlb_sync_map) {
-> > -		ret =3D ops->iotlb_sync_map(domain, iova, mapped);
-> > -		if (ret)
-> > -			goto out_err;
-> > -	}
-> > +	if (ops->iotlb_sync_map)
-> > +		ops->iotlb_sync_map(domain, iova, mapped);
-> >   	return mapped;
-
-Good find that is indeed a rebase mishap ;-(
-
-> >=20=20=20
-> >   out_err:
-> > diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-> > index 020cc538e4c4..63c56a440c9d 100644
-> > --- a/drivers/iommu/s390-iommu.c
-> > +++ b/drivers/iommu/s390-iommu.c
-> > @@ -468,6 +468,9 @@ static struct iommu_device *s390_iommu_probe_device=
-(struct device *dev)
-> >   	if (zdev->end_dma > ZPCI_TABLE_SIZE_RT - 1)
-> >   		zdev->end_dma =3D ZPCI_TABLE_SIZE_RT - 1;
-> >=20=20=20
-> > +	if (zdev->tlb_refresh)
-> > +		dev->iommu->shadow_on_flush =3D 1;
-> > +
-> >   	return &zdev->iommu_dev;
-> >   }
-> >=20=20=20
-> > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> > index 182cc4c71e62..c3687e066ed7 100644
-> > --- a/include/linux/iommu.h
-> > +++ b/include/linux/iommu.h
-> > @@ -409,6 +409,7 @@ struct iommu_fault_param {
-> >    * @priv:	 IOMMU Driver private data
-> >    * @max_pasids:  number of PASIDs this device can consume
-> >    * @attach_deferred: the dma domain attachment is deferred
-> > + * @shadow_on_flush: IOTLB flushes are used to sync shadow tables
-> >    *
-> >    * TODO: migrate other per device data pointers under iommu_dev_data,=
- e.g.
-> >    *	struct iommu_group	*iommu_group;
-> > @@ -422,6 +423,7 @@ struct dev_iommu {
-> >   	void				*priv;
-> >   	u32				max_pasids;
-> >   	u32				attach_deferred:1;
-> > +	u32				shadow_on_flush:1;
-> >   };
-> >=20=20=20
-> >   int iommu_device_register(struct iommu_device *iommu,
-> >=20
+diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
+index c52449ae6936ad..ffe8d1411a9d56 100644
+--- a/arch/powerpc/kernel/iommu.c
++++ b/arch/powerpc/kernel/iommu.c
+@@ -1269,7 +1269,7 @@ struct iommu_table_group_ops spapr_tce_table_group_ops = {
+ /*
+  * A simple iommu_ops to allow less cruft in generic VFIO code.
+  */
+-static int spapr_tce_blocking_iommu_attach_dev(struct iommu_domain *dom,
++static int spapr_tce_platform_iommu_attach_dev(struct iommu_domain *dom,
+ 					       struct device *dev)
+ {
+ 	struct iommu_group *grp = iommu_group_get(dev);
+@@ -1286,17 +1286,22 @@ static int spapr_tce_blocking_iommu_attach_dev(struct iommu_domain *dom,
+ 	return ret;
+ }
+ 
+-static void spapr_tce_blocking_iommu_set_platform_dma(struct device *dev)
+-{
+-	struct iommu_group *grp = iommu_group_get(dev);
+-	struct iommu_table_group *table_group;
++static const struct iommu_domain_ops spapr_tce_platform_domain_ops = {
++	.attach_dev = spapr_tce_platform_iommu_attach_dev,
++};
+ 
+-	table_group = iommu_group_get_iommudata(grp);
+-	table_group->ops->release_ownership(table_group);
+-}
++static struct iommu_domain spapr_tce_platform_domain = {
++	.type = IOMMU_DOMAIN_PLATFORM,
++	.ops = &spapr_tce_platform_domain_ops,
++};
+ 
+-static const struct iommu_domain_ops spapr_tce_blocking_domain_ops = {
+-	.attach_dev = spapr_tce_blocking_iommu_attach_dev,
++static struct iommu_domain spapr_tce_blocked_domain = {
++	.type = IOMMU_DOMAIN_BLOCKED,
++	/*
++	 * FIXME: SPAPR mixes blocked and platform behaviors, the blocked domain
++	 * also sets the dma_api ops
++	 */
++	.ops = &spapr_tce_platform_domain_ops,
+ };
+ 
+ static bool spapr_tce_iommu_capable(struct device *dev, enum iommu_cap cap)
+@@ -1313,18 +1318,9 @@ static bool spapr_tce_iommu_capable(struct device *dev, enum iommu_cap cap)
+ 
+ static struct iommu_domain *spapr_tce_iommu_domain_alloc(unsigned int type)
+ {
+-	struct iommu_domain *dom;
+-
+ 	if (type != IOMMU_DOMAIN_BLOCKED)
+ 		return NULL;
+-
+-	dom = kzalloc(sizeof(*dom), GFP_KERNEL);
+-	if (!dom)
+-		return NULL;
+-
+-	dom->ops = &spapr_tce_blocking_domain_ops;
+-
+-	return dom;
++	return &spapr_tce_blocked_domain;
+ }
+ 
+ static struct iommu_device *spapr_tce_iommu_probe_device(struct device *dev)
+@@ -1360,12 +1356,12 @@ static struct iommu_group *spapr_tce_iommu_device_group(struct device *dev)
+ }
+ 
+ static const struct iommu_ops spapr_tce_iommu_ops = {
++	.default_domain = &spapr_tce_platform_domain,
+ 	.capable = spapr_tce_iommu_capable,
+ 	.domain_alloc = spapr_tce_iommu_domain_alloc,
+ 	.probe_device = spapr_tce_iommu_probe_device,
+ 	.release_device = spapr_tce_iommu_release_device,
+ 	.device_group = spapr_tce_iommu_device_group,
+-	.set_platform_dma_ops = spapr_tce_blocking_iommu_set_platform_dma,
+ };
+ 
+ static struct attribute *spapr_tce_iommu_attrs[] = {
+-- 
+2.41.0
 
