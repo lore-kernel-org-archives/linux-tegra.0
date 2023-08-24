@@ -2,96 +2,138 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E4FC3DA6F
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Aug 2023 07:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F05C6FA8F
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Aug 2023 09:00:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236103AbjHXHiP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Aug 2023 03:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37878 "EHLO
+        id S230303AbjHXJAX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Aug 2023 05:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240417AbjHXHiL (ORCPT
+        with ESMTP id S238995AbjHXJAB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Aug 2023 03:38:11 -0400
+        Thu, 24 Aug 2023 05:00:01 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65DACC7;
-        Thu, 24 Aug 2023 00:38:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862AF1987;
+        Thu, 24 Aug 2023 01:59:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 04EEE65936;
-        Thu, 24 Aug 2023 07:38:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B0BC433CA;
-        Thu, 24 Aug 2023 07:38:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2530C664C2;
+        Thu, 24 Aug 2023 08:59:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED30C433C7;
+        Thu, 24 Aug 2023 08:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692862688;
-        bh=Ud+JmrQSf+WR8fLk9PtmUGKmnz/n+mzcTHuAf4DcxX4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u5ji2+9DHanRfav04RicE1BpnqasiNzCcJCY2gklfVBpwKZTDHXBnfRI2zPvHMR6b
-         EDhSsPp9uIbNp0XLq4wmsg5rQl1GVmwm+KGFyMv7ED3vMGkja+GQKQmvoOWTmaLiTf
-         rkQwt73vqm4LSSOyqNdGHff79+P77BUQiGk54ItBMwFHwusnjsamjymWUp3I/tY8R8
-         pyqQhtTglLhNR1viLM6VVH7wuZSev3eBVvkF+7srRuni8wsseL4fMmlmlctOySpWdF
-         Rzd7UzjZBnBztEE+Lr0XPWru9W5onfLE0NSPSduzJHZKqV5keWJTCIk2d0BcJNKQe1
-         hhXLhGInGs3SA==
-From:   Lee Jones <lee@kernel.org>
-To:     lee@kernel.org
+        s=k20201202; t=1692867597;
+        bh=pRjABeYbdZ7kYm0kauhfXEU9jP8GasEtUcwhn21dCxc=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=ectU467xo6X3YBcQDP+/ngOU7WPTPgRDxCHrpluWN392Mlc60axx3vIIX48VsgoDN
+         PpRyrP5/+WdC+2ykQLyOeTetMwu/huJ3eZd8i0LSxlom3CPb3lrf4rgBp8s0eX8avr
+         BGfWzbgxOTfIlW+pAY0WIEqoHeTxo/6sOY5QZAkYbyAkN19q9/PRObJOfOAPQjH1uq
+         yuz+qZ9oGjn0YECu1cNAX2T+ncu2eKxivxlqKZpSZVNj2O7+WanBFUfataSOnZA+79
+         SeT2jrZPjluftwVKxhf8sdBqKhIPd8Cn9wX8U0ZFVrF46L28H4hVpTzZP/2UJTdUE/
+         2QZdbUc7UizJQ==
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Lee Jones <lee@kernel.org>
 Cc:     linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        amd-gfx@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
         Daniel Vetter <daniel@ffwll.ch>,
+        Danilo Krummrich <dakr@redhat.com>,
+        David Airlie <airlied@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Gourav Samaiya <gsamaiya@nvidia.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Jerome Glisse <glisse@freedesktop.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linaro-mm-sig@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Luben Tuikov <luben.tuikov@amd.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        nouveau@lists.freedesktop.org, NXP Linux Team <linux-imx@nxp.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 15/20] drm/tegra/hub: Increase buffer size to ensure all possible values can be stored
-Date:   Thu, 24 Aug 2023 08:37:00 +0100
-Message-ID: <20230824073710.2677348-16-lee@kernel.org>
-X-Mailer: git-send-email 2.42.0.rc1.204.g551eb34607-goog
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shashank Sharma <shashank.sharma@amd.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanley Yang <Stanley.Yang@amd.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Michal Simek <michal.simek@amd.com>
 In-Reply-To: <20230824073710.2677348-1-lee@kernel.org>
 References: <20230824073710.2677348-1-lee@kernel.org>
+Subject: Re: [PATCH (set 1) 00/20] Rid W=1 warnings from GPU
+Message-Id: <169286759481.453038.12943953579128536191.b4-ty@kernel.org>
+Date:   Thu, 24 Aug 2023 10:59:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-When converting from int to string, we must allow for up to 10-chars (2147483647).
+On Thu, 24 Aug 2023 08:36:45 +0100, Lee Jones wrote:
+> This set is part of a larger effort attempting to clean-up W=1
+> kernel builds, which are currently overwhelmingly riddled with
+> niggly little warnings.
+> 
+> Cc: Alex Deucher <alexander.deucher@amd.com>
+> Cc: amd-gfx@lists.freedesktop.org
+> Cc: Ben Skeggs <bskeggs@redhat.com>
+> Cc: "Christian König" <christian.koenig@amd.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Danilo Krummrich <dakr@redhat.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Gourav Samaiya <gsamaiya@nvidia.com>
+> Cc: Hawking Zhang <Hawking.Zhang@amd.com>
+> Cc: Hyun Kwon <hyun.kwon@xilinx.com>
+> Cc: Jerome Glisse <glisse@freedesktop.org>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Karol Herbst <kherbst@redhat.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linaro-mm-sig@lists.linaro.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Luben Tuikov <luben.tuikov@amd.com>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: "Maíra Canal" <mairacanal@riseup.net>
+> Cc: Mario Limonciello <mario.limonciello@amd.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Michal Simek <michal.simek@xilinx.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: nouveau@lists.freedesktop.org
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: "Pan, Xinhui" <Xinhui.Pan@amd.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shashank Sharma <shashank.sharma@amd.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stanley Yang <Stanley.Yang@amd.com>
+> Cc: Sumit Semwal <sumit.semwal@linaro.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> 
+> [...]
 
-Fixes the following W=1 kernel build warning(s):
+Applied to drm/drm-misc (drm-misc-fixes).
 
- drivers/gpu/drm/tegra/hub.c: In function ‘tegra_display_hub_probe’:
- drivers/gpu/drm/tegra/hub.c:1106:47: warning: ‘%u’ directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
- drivers/gpu/drm/tegra/hub.c:1106:42: note: directive argument in the range [0, 4294967294]
- drivers/gpu/drm/tegra/hub.c:1106:17: note: ‘snprintf’ output between 6 and 15 bytes into a destination of size 8
-
-Signed-off-by: Lee Jones <lee@kernel.org>
----
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
----
- drivers/gpu/drm/tegra/hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index 1af5f8318d914..f21e57e8599ee 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -1101,7 +1101,7 @@ static int tegra_display_hub_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < hub->soc->num_wgrps; i++) {
- 		struct tegra_windowgroup *wgrp = &hub->wgrps[i];
--		char id[8];
-+		char id[16];
- 
- 		snprintf(id, sizeof(id), "wgrp%u", i);
- 		mutex_init(&wgrp->lock);
--- 
-2.42.0.rc1.204.g551eb34607-goog
+Thanks!
+Maxime
 
