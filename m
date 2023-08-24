@@ -2,49 +2,44 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAD9C7113B
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Aug 2023 09:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655C3C6FA8F
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Aug 2023 09:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbjHXJEH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Aug 2023 05:04:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36398 "EHLO
+        id S231779AbjHXJRB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Aug 2023 05:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237902AbjHXJDe (ORCPT
+        with ESMTP id S236673AbjHXJQ4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Aug 2023 05:03:34 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D3B51708;
-        Thu, 24 Aug 2023 02:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692867813; x=1724403813;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=1ZAkSY/wD+Wa94fJkUCZoVioGpTkV1ceBb5QI3d2I6E=;
-  b=lMsJWXqzqJuFvqOZhQBdv7/wx8+MUA9Ias5vNAwIUH5rGFGoixmqGZk9
-   eBISrl50Kolk1bN9mHcWgIGa9U0/T/c5IEQtlAsmjgODNGVlXwATrjUku
-   FtBhZ5ycM0PtH1g2J9JAXUuCusXUOuFAQLBIJHBZ7h60BuyM3c89oykHG
-   lAJLInCaPmUy5apyEOWR24dPePiJpX0xilGzf/R9ou0pakv0/7KchYJXM
-   aAemZmCg/7WYSBhSitm7lm6O9UgAvKzqmSK4Y943eF0dDFW2tHw+QYVCH
-   afCkSa734lKW23ho6PkSeMuSWGiWQEAOPvqDKfIdZu7QExoGqRGRherCf
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10811"; a="364561584"
-X-IronPort-AV: E=Sophos;i="6.01,195,1684825200"; 
-   d="scan'208";a="364561584"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2023 02:03:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10811"; a="736973743"
-X-IronPort-AV: E=Sophos;i="6.01,195,1684825200"; 
-   d="scan'208";a="736973743"
-Received: from andrzejk-mobl.ger.corp.intel.com (HELO localhost) ([10.252.46.90])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2023 02:03:23 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Lee Jones <lee@kernel.org>, lee@kernel.org
-Cc:     Karol Herbst <kherbst@redhat.com>, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
+        Thu, 24 Aug 2023 05:16:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB053E67;
+        Thu, 24 Aug 2023 02:16:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 448A065FAE;
+        Thu, 24 Aug 2023 09:16:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23845C433C8;
+        Thu, 24 Aug 2023 09:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692868613;
+        bh=CK8K59YUSjL1xNRSA2L3H9ryMd1YgDDJ0Z4R5P4hlKQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rMfiUcU+r8StcsuNXLiXVRVuNozQ3m7/INGX5Bn3oWmlVIAOoCZ29NDSJyvrv5J4C
+         3FhBhrWdEKlMFE2/ltWxQSb6iMzVFdLM+MIcxCT9/FSRXQEDunYAPgiA0oWOUVDh+1
+         udCbunZY04xzrkYZk7hh4l2S9NMaghj3pHreMCWS/m0/lU9GWyWwrVZ1jY62VTWrIK
+         h3e0/azQPDZBVAAnxcziTw9uFys3FVh7F2oQ4SrJ909pnXS7OWtR0LACIgLHU7kIZr
+         JlxetDuvbPnvY0gtpZJl0Av0mvAuct8w3WCgOqoDgcBdRvIUkVY8I8cleiwCOJSJuo
+         NSx4tFkmi+qpA==
+Date:   Thu, 24 Aug 2023 11:16:51 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Lee Jones <lee@kernel.org>, Karol Herbst <kherbst@redhat.com>,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         Mikko Perttunen <mperttunen@nvidia.com>,
-        =?utf-8?Q?Ma=C3=ADra?= Canal <mairacanal@riseup.net>,
+        =?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>,
         Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -59,7 +54,6 @@ Cc:     Karol Herbst <kherbst@redhat.com>, nouveau@lists.freedesktop.org,
         Stanley Yang <Stanley.Yang@amd.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Maxime Ripard <mripard@kernel.org>,
         linaro-mm-sig@lists.linaro.org, linux-tegra@vger.kernel.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-arm-kernel@lists.infradead.org,
@@ -70,41 +64,59 @@ Cc:     Karol Herbst <kherbst@redhat.com>, nouveau@lists.freedesktop.org,
         Alex Deucher <alexander.deucher@amd.com>,
         Gourav Samaiya <gsamaiya@nvidia.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
         Hawking Zhang <Hawking.Zhang@amd.com>
 Subject: Re: [PATCH (set 1) 00/20] Rid W=1 warnings from GPU
-In-Reply-To: <20230824073710.2677348-1-lee@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-ID: <vkoj32cjbaozwcgfrp2mowkm6koqtl6espou6vms2pvfhxr5z7@ofabj6kd2j4r>
 References: <20230824073710.2677348-1-lee@kernel.org>
-Date:   Thu, 24 Aug 2023 12:03:20 +0300
-Message-ID: <87wmxk4xt3.fsf@intel.com>
+ <87wmxk4xt3.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="utl4vsmjm3ff53l2"
+Content-Disposition: inline
+In-Reply-To: <87wmxk4xt3.fsf@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 24 Aug 2023, Lee Jones <lee@kernel.org> wrote:
-> This set is part of a larger effort attempting to clean-up W=1
-> kernel builds, which are currently overwhelmingly riddled with
-> niggly little warnings.
 
-The next question is, how do we keep it W=1 clean going forward?
+--utl4vsmjm3ff53l2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Most people don't use W=1 because it's too noisy, so it's a bit of a
-catch-22.
+On Thu, Aug 24, 2023 at 12:03:20PM +0300, Jani Nikula wrote:
+> On Thu, 24 Aug 2023, Lee Jones <lee@kernel.org> wrote:
+> > This set is part of a larger effort attempting to clean-up W=3D1
+> > kernel builds, which are currently overwhelmingly riddled with
+> > niggly little warnings.
+>=20
+> The next question is, how do we keep it W=3D1 clean going forward?
+>=20
+> Most people don't use W=3D1 because it's too noisy, so it's a bit of a
+> catch-22.
+>=20
+> In i915, we enable a lot of W=3D1 warnings using subdir-ccflags-y in our
+> Makefile. For CI/developer use we also enable kernel-doc warnings by
+> default.
+>=20
+> Should we start enabling some of those warning flags in drm/Makefile to
+> to keep the entire subsystem warning free?
 
-In i915, we enable a lot of W=1 warnings using subdir-ccflags-y in our
-Makefile. For CI/developer use we also enable kernel-doc warnings by
-default.
+I think that's a good idea. At least the documentation fixes I just
+merged could have been easily caught before submission.
 
-Should we start enabling some of those warning flags in drm/Makefile to
-to keep the entire subsystem warning free?
+Maxime
 
+--utl4vsmjm3ff53l2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-BR,
-Jani.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZOcgAgAKCRDj7w1vZxhR
+xRGuAQDGwZPeKdcZoqTDIIBQZmkNfIvC9zdZcx372SnD7nYQuAEA+1cA8HP2QUBw
+CvoouWKq/gGveaBLwNG3zjffzRx2agE=
+=eJTh
+-----END PGP SIGNATURE-----
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+--utl4vsmjm3ff53l2--
