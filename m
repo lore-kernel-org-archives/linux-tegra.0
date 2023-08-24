@@ -2,152 +2,219 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7FCC27C40
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Aug 2023 13:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842E7C7EE2C
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Aug 2023 15:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbjHXNqb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Aug 2023 09:46:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54664 "EHLO
+        id S241661AbjHXPRm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Aug 2023 11:17:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241508AbjHXNqF (ORCPT
+        with ESMTP id S242204AbjHXPRQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Aug 2023 09:46:05 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2359319B4;
-        Thu, 24 Aug 2023 06:45:58 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-52a39a1c4d5so2487035a12.3;
-        Thu, 24 Aug 2023 06:45:58 -0700 (PDT)
+        Thu, 24 Aug 2023 11:17:16 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34391FD2
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Aug 2023 08:16:59 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-51b4ef5378bso4805346a12.1
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Aug 2023 08:16:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692884756; x=1693489556;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tkTLLhogJKRjJPVkEq8LcD1kIKEz4h0143EwcojipQc=;
-        b=b7WMEb8iUoO6sOsXYQeIVTLiFnSq9TphO2y09CS0HWyUlxYfNqXDrpkzVyjldnHBSS
-         cB65NP+42XVjQhcModDaFzL91XF6/m/WCUm6Jlq+AdpwjYPOtZ7kYewqx7FLszpG5EXb
-         ohVkx6SgXv/SzpSuzu2ts5b1LMUw7zbSAudevDydZi1F8CUP+QfaqUHM31RlRvRVZvTZ
-         0ZQ22zpYmbGUiJgwZMwI2TicpAfx6sLvriK7jny84l92hCoxrU3ERwfyBA5vUaMEJF1Y
-         BYOUV1JWu5msbXgzeOovWHQuAtMJngeBBus0cHs+YWLu1MRYoqFezJVdKhcJbFdCoXAw
-         6xAg==
+        d=broadcom.com; s=google; t=1692890219; x=1693495019;
+        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=R/Ny/623s5kTCuIFW/IfR6MmjDVrDEYVExFFORKQbnY=;
+        b=GBbSVasSyk5ql55bW7DC7ZAJEiZbaTNGUw9xuGeZ4ZWUyPqKj+j4O5plVgSa0wL/mZ
+         RsDbc0DeP7bmpq5QvawJQdPSUG1ypz6Q516idtT+q/j4+EKAVvxvbxR6ezsSuN9TmXl2
+         cSlVvxCJJrWWV1zMD5ZFJrPcTu7sFhbvuTFgQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692884756; x=1693489556;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tkTLLhogJKRjJPVkEq8LcD1kIKEz4h0143EwcojipQc=;
-        b=OD3uvgSYIPwHiu8ma0y4FBHUNmiceK2QdE3Zw5SqCWZbyBzlC9XXYw8lILqI5IE7iI
-         Lld+26540yPBD2B2ghpsQDLcPNv+DDpaFlaqT2FK0FVCNNoktHh8cQwGPtIQzlkHOtUk
-         1p1eCY2bBCIGkAGbM2de0ilw6tyiA73d5RHiYcj+KnbCaq7lQmizVlsgOo8odobDfpGz
-         wYNN5LCqCvi2l8YN1dF+Nk7eG1jejWw65bGtxu250aMvkb3s9QZ22lXAnMnpwosu36h1
-         dYvrYDvYlSz1cGqnr/TYp1OGUsUudN41JiEvN+MLkPUZBOaOuPCzocJ0m9Y360RTftyA
-         giHA==
-X-Gm-Message-State: AOJu0Yzooe+P+HEWOLkR7/Ymnz5/BA3rLv8BUiMKpWZi2YVP7rEVmxqi
-        YOe/Xvdisc07ZHm2VZmLIYs=
-X-Google-Smtp-Source: AGHT+IEAXKY6oy8+zcO/qKJkrPKVuq7hID5IGx1gL4tu9aBJmvqNkS89qmFuJ8ZaMIGK8PRzG5Lofw==
-X-Received: by 2002:a05:6402:6d2:b0:52a:1c3c:2ecf with SMTP id n18-20020a05640206d200b0052a1c3c2ecfmr6284246edy.28.1692884756458;
-        Thu, 24 Aug 2023 06:45:56 -0700 (PDT)
-Received: from orome (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id g21-20020aa7c855000000b005255f5735adsm10584916edt.24.2023.08.24.06.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Aug 2023 06:45:56 -0700 (PDT)
-Date:   Thu, 24 Aug 2023 15:45:54 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lee Jones <lee@kernel.org>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 15/20] drm/tegra/hub: Increase buffer size to ensure all
- possible values can be stored
-Message-ID: <ZOdfEg9vF1umkEyO@orome>
-References: <20230824073710.2677348-1-lee@kernel.org>
- <20230824073710.2677348-16-lee@kernel.org>
- <ZOciEaJlHhp4xnFv@orome>
- <87r0ns4weq.fsf@intel.com>
- <20230824120124.GR1380343@google.com>
+        d=1e100.net; s=20221208; t=1692890219; x=1693495019;
+        h=in-reply-to:from:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R/Ny/623s5kTCuIFW/IfR6MmjDVrDEYVExFFORKQbnY=;
+        b=UDVgFFz0JFjF81uIUevIAjvQS/0EpzQG6GJ1u4IcfRq2wuAwur6aPLdYMNmunx+/g0
+         1s5gY8uw9u9msRkLqbHNFlUPFC1YDfc2I+pe8HrEf7zwZUmkLKv0nxKFjaG54P20TGXx
+         EV6OpOjR+cBmGIK3pfPCiUBM3gylRflxIk82nv5iob4FpNuekWYJIGGl8LnWTZG0oWtO
+         aa7RwNABaxWjnd6QJAYC+i81MJV4mw9xo11dryqexIJSHs0Ri+42Mj+8vRn2fl7Dgkbx
+         vJbp+7+8BoBPuPszkfjouDx/hGYEmctHKrnSFXiGV+RNme2FJPPeRMhz42pQ2FjvMvCW
+         4wag==
+X-Gm-Message-State: AOJu0YwmsrDmWmk0B0LDq2Nm+GMkJhD5bjdSOP+wbO+uK+ZyyGTzQFC7
+        ctQBp0oWlks1TZa2lu+0MgG1vA==
+X-Google-Smtp-Source: AGHT+IHWD+IJ6SHtmSytHItm4n3pme/UFCVhe1Ydiq1H229vBi/c5qSM2mWdoh5w2nY5vU73BHdwVw==
+X-Received: by 2002:a05:6a20:8e01:b0:135:4527:efe4 with SMTP id y1-20020a056a208e0100b001354527efe4mr20898796pzj.10.1692890219164;
+        Thu, 24 Aug 2023 08:16:59 -0700 (PDT)
+Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
+        by smtp.gmail.com with ESMTPSA id y4-20020aa78544000000b006862b2a6b0dsm11535368pfn.15.2023.08.24.08.16.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Aug 2023 08:16:58 -0700 (PDT)
+Message-ID: <bd0a1e56-be02-6c3e-374b-0610116d94aa@broadcom.com>
+Date:   Thu, 24 Aug 2023 08:16:54 -0700
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TRPIkzK4mQ5lndJ1"
-Content-Disposition: inline
-In-Reply-To: <20230824120124.GR1380343@google.com>
-User-Agent: Mutt/2.2.10 (2023-03-25)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] thermal: Explicitly include correct DT includes
+To:     Rob Herring <robh@kernel.org>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+References: <20230714175008.4064592-1-robh@kernel.org>
+From:   Florian Fainelli <florian.fainelli@broadcom.com>
+In-Reply-To: <20230714175008.4064592-1-robh@kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="0000000000002d81e40603acb889"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+--0000000000002d81e40603acb889
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---TRPIkzK4mQ5lndJ1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 24, 2023 at 01:01:24PM +0100, Lee Jones wrote:
-> On Thu, 24 Aug 2023, Jani Nikula wrote:
->=20
-> > On Thu, 24 Aug 2023, Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > On Thu, Aug 24, 2023 at 08:37:00AM +0100, Lee Jones wrote:
-> > >> When converting from int to string, we must allow for up to 10-chars=
- (2147483647).
-> > >>=20
-> > >> Fixes the following W=3D1 kernel build warning(s):
-> > >>=20
-> > >>  drivers/gpu/drm/tegra/hub.c: In function =E2=80=98tegra_display_hub=
-_probe=E2=80=99:
-> > >>  drivers/gpu/drm/tegra/hub.c:1106:47: warning: =E2=80=98%u=E2=80=99 =
-directive output may be truncated writing between 1 and 10 bytes into a reg=
-ion of size 4 [-Wformat-truncation=3D]
-> > >>  drivers/gpu/drm/tegra/hub.c:1106:42: note: directive argument in th=
-e range [0, 4294967294]
-> > >>  drivers/gpu/drm/tegra/hub.c:1106:17: note: =E2=80=98snprintf=E2=80=
-=99 output between 6 and 15 bytes into a destination of size 8
-> > >
-> > > I wish there was (perhaps there is?) a better way to annotate that i
-> > > will always be within a given range. In practice this is always going=
- to
-> > > be smaller than 10 and even in future hardware I wouldn't expect this=
- to
-> > > ever exceed anything like 32 or 64, so 8 characters is already genero=
-us.
-> >=20
-> > I assume you could do
-> >=20
-> > 	snprintf(id, sizeof(id), "wgrp%u", (unsigned char)i);
-> >=20
-> > but it's perhaps less obvious than just increasing the size of the
-> > buffer.
->=20
-> I had the very same thought process.
 
-It's not a big deal, this happens all on the stack, so adding a couple
-of bytes isn't going to hurt very much. Still with all the tooling that
-we have it'd be nice if something could be added. Perhaps an alternative
-would be to reject values for num_wgrp that are bigger than 32. With
-that the compiler might have enough information not to warn about this.
+On 7/14/2023 10:50 AM, Rob Herring wrote:
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>   drivers/thermal/amlogic_thermal.c           | 2 --
+>   drivers/thermal/broadcom/bcm2711_thermal.c  | 2 +-
+>   drivers/thermal/broadcom/brcmstb_thermal.c  | 2 +-
 
-Anyway, no need to spend any more time on this, I'm fine with the patch
-as-is.
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com> # broadcom
+-- 
+Florian
 
-Thierry
+--0000000000002d81e40603acb889
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
---TRPIkzK4mQ5lndJ1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmTnXw0ACgkQ3SOs138+
-s6FCnRAAiccnAvmrJuZHMV5kFF1FRacmxg9JoUVPfX69Fn9T4PgT7LK3yatfk/cn
-AfbXILrbjz4w1czp1YqXJBSPXiBegHtjTe0Ur7+iKvdSNA8vx/Xfg0zAViBwNWKW
-KWEXTUmtozR1WQdiZUz9EC1b3aCgFjbXo4fth4+eAhSeyasP78SXUzx5/OPTcSIB
-xZKsuyjsGIJW3e+XCWXdr5XYq+CVQWE5iMPTk4gP1JemQIL9zYavblGrudf57mQL
-952RwlqLuBpEAHLb3Ro4kd05UcZ09zXFyG3fPKXGtToWEZ6/H7uubgdMGNwoDTe6
-i4dQ+93anS6T+jDr+3WtHlj9HwzRnfIRw8ptvlbIoOxAKOqv7rmwmCV6W0yhrRm4
-iIiJfKuvsNl1jwoa/ylQ7Jyq2vuxd0piJjaeuf6Ci0qtCzvmD/ow2HeNBDCSaNGj
-kQAxZ8i6TD2/g+S3ni9Imo8jE2spwi2wzpMTg1AOu69qG+S7K9uzXs+bj5vYNjlE
-yvPTwDTKeGodC0i5b+jXDVRB43SWDmG0WSr9gjvdCp9k/gLhR/5GxMlAzid7KpAz
-KPi+zTnHmUdQ2VDggxY2LFZE2KLTdvClB/Rvlc0drrXFO7B/dHTK9h/R44ygSNbX
-oOBntjwNEpmputS9cFM35D47UPXLefm5EbKSecxiGI7E9jaC+sM=
-=P/OA
------END PGP SIGNATURE-----
-
---TRPIkzK4mQ5lndJ1--
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIDAkara8lJPPBhCq
+t6v04LaDsVizwC4qkLKimmoSP16fMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTIzMDgyNDE1MTY1OVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBN41iIKZurmzTDDnuys23uH2al+WNIaYYH
+ZPi9ocbUCT/ikybgUePbne7VGwBRw8uCkvT27C584EqExUHb48XnsF5YmUcxSiS6P8Jum7Bm0PIN
+TrATKzhawVgJnjasjC6N+jOSvShJHUUPXo1E9v9j13ZFK2d1lLMoQLxNyOBbNwdFdBIsIM4rHfdq
+C5taTXmiv/fUtCRJietWBtCdWcc3I/FCPJwVKuXqvm+LMIx1mKGcbaAuM/S8C5ZtiPbm9jkEXkm1
+o8yCJMYpcdf6aQLxtEbLJuj9iZYDPf5WSXuWFx959hlBTJIm1ddKskMXcmTO8qGoGrVM1VIUurvo
+GCsT
+--0000000000002d81e40603acb889--
