@@ -2,149 +2,204 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C807C3DA66
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Aug 2023 11:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B33C88CB2
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Aug 2023 11:34:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238850AbjHYLU2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Aug 2023 07:20:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
+        id S233750AbjHYLeX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Aug 2023 07:34:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240370AbjHYLUF (ORCPT
+        with ESMTP id S240694AbjHYLdy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Aug 2023 07:20:05 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B19C21FF7;
-        Fri, 25 Aug 2023 04:19:42 -0700 (PDT)
+        Fri, 25 Aug 2023 07:33:54 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2060.outbound.protection.outlook.com [40.107.92.60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 288551FD7;
+        Fri, 25 Aug 2023 04:33:52 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KwPzoVEweXL5A/9HK7J9rkeuT902LJ79IotFBR9CBmjuYtKQD6JLQUbGlXsZHkncOC7ggUc0KbOL6S+yEuMLMTl+nqi8XAw0Bf9n2glJWVyoj2i9ciBmc5IiyF1DbyvFeiTs1/OFlRk6xh3HZpAkT91CniInIrmKwk5DzakWKsDd0n4NvrwGqhByN5o9wBY3jsrVqvcRsXoG9WQ/5KC8V1DqsuShR0xkTr56vpmCah0feXbYj5MXgNBhg2afHIGGwl/3prY/aSkaQi9A9PpP5A1eLiurkoN0CTWVC+rveaDzzZHvsBtk0H0Zu9PNnQn+E1x+K/DpMHrKmme6hcCktw==
+ b=H+erQsb1nw5OK+nYcOaIItpqHoqfNesOIkhpgC5LFfxNMZUVPWVUwirx6ZC9/7OizJTsg2TEytxgqot4PkQzHI81AUvUkYNbK2WvuJe7i3Wg83FukacrwjqEbqXCPbnvmGLHVbxn5yJEWqFMovJ/bgPez01Nuc1MgSe5NLwpO5Q05w4eYs/b/qIqQpBXmvJJFEdFfVeiHfYlOCKg8jxHcvwQbYj0hzXsWlUlaK6dq6BduArMGkftjYu86/4SJTCChabgBfqk/9wcAR9/o35NJxaBEeItIYWu660Q/1eOiDVKnJ3eNJ6s/Qw+QrWycRb7zwS56WvzXBomgQpXzUMHLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zHN0gqgIX/RiDR0udQ99rjjs3l4Q1zSqyCh62ojc9/M=;
- b=ViEjdisXYYOt04MCIc4Ndzo6p/Y1vaJswuIdIN4KmOuiVH+cf+QzynSUshYUa7dJGcKCPaY1N/RYuZOjIuZcnvRR7qdkOGEaxXo6iMEMZBQ4s/dTAGJ/qFoShe/uXhCyqeXDcrVWYdiiwxUkKAE392NPpdB/ojXYkFEkfTr6njg6uE/VOX1WUKhCZcpRM6vDHyJlxGebqU/bMjCyg0LAJ2qpfuK0yPrzHyAOUjkM2lcyBskj2FE7ns+HESt63H28SwihBiBe6P46xxawrIXRIXx7zDdhO7szu4SE4gexzkXn8VWXfTbFay6VH/VZRAOAX97yOfSOl0vwo6st0eblqQ==
+ bh=ymp+iHYDIG1jZB+PKaiOWJZWXFca8nrsnUbgxibJT/Q=;
+ b=PPKJIro/hbDNP+BEkXuFgSCL8K8G4yZNk9uhst3BmFZ7uoDRHBGUW7pUwT1WaDghRfJKMd9zUTfbO0U/6uInv8uqUb25v5UE9PJ2hNB0i/nn51x4U6syzbZVfVtV4rtN4q42ipmplM78qCJelDKz1yv16xJZR4YmJ1JQG4sh2dInmnB2S3EeOmMrNKaoFbXHh63wmkGOwSsdSPq4pDnTgReMzp3WQ3buEXYQuExMVkUnUZOfrSIDuoGBorrE/pTuSu2TTT9khfFzaRgLP/oP85Nk4/x0FDrumWpivSmmfwPc1OPC1BeM06tmU0NT4kPgLNTGfBqzAUN/1ZRUL1rE5A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zHN0gqgIX/RiDR0udQ99rjjs3l4Q1zSqyCh62ojc9/M=;
- b=i+LzJRvW+tJAq+/TtBEerw+Ag1yjD57xfuQAHXfktWVvXvqK/akz6QFVt9OrAHsHi6NhP1XWHRj1l2bUBRjsGT9x8yCwIcIFHhyZvcTNJBfSPamZ6CevGfC6lAbCPexjo+KAIKriE5FhRoVBcqhvAJyGONyOrc0b+x58IPuiF/bEFkv87RFjLsisPpKdUg2ZjD9pxliqT632kfp7AsGbcZ3cpdrpheOKck+lOWhzYpkeLjXEd6M0SdIPhmiS4CVZvCL9v6V03gaOuXMdPnrto6c8XQZAJgc0aT0mZns6cU65kUzwa85/MYvcjlxYAmJco71qAvEb/BZjECGt2CM9iQ==
-Received: from SA0PR11CA0122.namprd11.prod.outlook.com (2603:10b6:806:131::7)
- by DM4PR12MB6085.namprd12.prod.outlook.com (2603:10b6:8:b3::16) with
+ bh=ymp+iHYDIG1jZB+PKaiOWJZWXFca8nrsnUbgxibJT/Q=;
+ b=HAUi0dRkMnYyi+Xf/hRAchslRsu1yHv2ehQOmlWKqAl4VnvU5ARORnL4HYIm+aSFzsvKKW3Zjx2MTeNI0ZlNkY+mvBP21CAkEhYx5AdOMTeAfP4QeeAzOODi+ZkVYtEOlBkY58uPLyMjFVjddWjB59ou9W9hKGqA8ZDkEWn5lfU5TPr5P29X8lyabu4LGdsUVyZEZtdvvKSPOqWHIV/0DYDyzwEBDncR8gFqnmssi1yMkP0+Orjzpkacadly2gr3+VHDsDx04sb+H2+Huz+a2wPKjKxNcFuQFtJq7NE36mCjVPdMLmwEbiQAaQ18oeEfPxIwDz6Xl6k+GM5DUzUDVg==
+Received: from BY3PR05CA0050.namprd05.prod.outlook.com (2603:10b6:a03:39b::25)
+ by CH0PR12MB5331.namprd12.prod.outlook.com (2603:10b6:610:d6::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.29; Fri, 25 Aug
- 2023 11:19:40 +0000
-Received: from SN1PEPF000252A3.namprd05.prod.outlook.com
- (2603:10b6:806:131:cafe::83) by SA0PR11CA0122.outlook.office365.com
- (2603:10b6:806:131::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.30 via Frontend
- Transport; Fri, 25 Aug 2023 11:19:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.30; Fri, 25 Aug
+ 2023 11:33:50 +0000
+Received: from CO1PEPF000042AE.namprd03.prod.outlook.com
+ (2603:10b6:a03:39b:cafe::ef) by BY3PR05CA0050.outlook.office365.com
+ (2603:10b6:a03:39b::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.15 via Frontend
+ Transport; Fri, 25 Aug 2023 11:33:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SN1PEPF000252A3.mail.protection.outlook.com (10.167.242.10) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000042AE.mail.protection.outlook.com (10.167.243.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.14 via Frontend Transport; Fri, 25 Aug 2023 11:19:40 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.6699.15 via Frontend Transport; Fri, 25 Aug 2023 11:33:49 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 25 Aug 2023
- 04:19:25 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Fri, 25 Aug 2023 04:19:25 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Fri, 25 Aug 2023 04:19:22 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [Patch] cpufreq: tegra194: add online/offline hooks
-Date:   Fri, 25 Aug 2023 16:49:20 +0530
-Message-ID: <20230825111920.8257-1-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+ 04:33:34 -0700
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 25 Aug
+ 2023 04:33:30 -0700
+Message-ID: <e8114572-3e4b-1b1c-40fa-1dbc44d4f098@nvidia.com>
+Date:   Fri, 25 Aug 2023 17:03:27 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch] cpufreq: tegra194: remove opp table in exit hook
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <rafael@kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bbasu@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>
+References: <20230809153455.29056-1-sumitg@nvidia.com>
+ <20230810053127.y4wmumlggkro7r66@vireshk-i7>
+ <17b11665-874a-5b06-bc97-70f5202f238b@nvidia.com>
+ <20230816033402.3abmugb5goypvllm@vireshk-i7>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <20230816033402.3abmugb5goypvllm@vireshk-i7>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A3:EE_|DM4PR12MB6085:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7adb663-42ce-4817-31f0-08dba55d2cc5
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042AE:EE_|CH0PR12MB5331:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a61d9d7-d7b0-416d-712d-08dba55f270d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3xm7L1tOn7AiXwxX1GaMX4BT79VSnhhwdXcgtdJiVa+KPT0f5txH2ZHnPSB1ndaHd5Bu4JDNp7Ve0seSKHjN5HLLsq6SG8r4Yyifojvcu5eG0N9c/BbCicMfqWaSVVGLWLW9DcWyGnVTvXlGknSlEPJr/jUzrEqeGiRPWK5pXPRvSuyCNrJjzEey5maQHfxasY3zj88RNnzk5oZrKpp1cEDrmOmsCn9S/pVGukTc9YsE5TDLQdnHB6E3TyKmpq8O6PYV4fL3xav5/W/Ya9RSaPbXpaKMFek60wZkH8Q46ohVLnfvFlcc6UPl5YthVA958PufBY7Nrmb9Hw1hTmlFI7lJjCTlkmyQdAVtm4Iv6BPt/Dyg6Bfei4YqoAzOHKUyjCoM1Jh8itdZNdMbVMZLbqhljb5PULrjXKDOFzB+rQdgFwAS+UVmReg4Edv2YVymBJQUrWb9DGf8Jc/63CFnxNBlOl/Vh2ZnmaiQznX76s4iCgYRIxMB0OS32ctRXGXLZbB3pzYGtAOcoW7xobon+M6fvVl/GKMMxwfSFolXpBwbom7CGIUu1uosercSP9EiyiZfa/kR+LVfHA7zNGr/Ay098vRAtEHDsWnBsT+KBm3Auu277A6X8pjPwxvT1pDDaqSgTFIRR5rK59BFoSuRdQNSukh55c/s5YmtnrgzcOyIa7Mv51zxMv5Lq3pM1pXfBTchN+8EoJXUhoFOGAVjjL0QIwYjmCOn5gH6LWh4tpXX138xttGUxUT8dgmtXZuUqZ2vuliuj1zq+Uifw7hSqPZm0V1/QEXyT1vCST23+X1lndvJEHF1GjstgDU8zd0p0tgLYiPG3Fdp74yyKigjEQ==
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(376002)(396003)(346002)(451199024)(82310400011)(1800799009)(186009)(36840700001)(46966006)(40470700004)(82740400003)(7636003)(356005)(40460700003)(8676002)(4326008)(8936002)(54906003)(41300700001)(316002)(36756003)(7696005)(110136005)(70586007)(70206006)(86362001)(40480700001)(47076005)(26005)(478600001)(336012)(36860700001)(1076003)(83380400001)(966005)(2906002)(2616005)(107886003)(426003)(5660300002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: +8ScwLKLp6eGH5rhemhsGG9q78QGGF2g5h90tiXK2jVsYD8MXobg/rgr0EAs/XVJZzsgzoeRDf3DdZtV0U7/+v1n4zXD+YmNTfbp0lMyo2rQPuIlIUJhVln5uko6qyOgk72T/8ZgPAac+TcvIXUtVVL/FbE7rrsK2nd3/V+v0ZWYhPWCJezga03fs3vIg6PvL9PXBNNp7aBcrmSAb/tQwZBdnALB0cGcEUIQNWoENnnEvVy6M707RvSXvazZ7SBtoqSpGwS8IDG6afaGwLQDQsvMRnpkKxl2fRzuY35wWwh7rrhzA5dVSCpdIrEE04gjjT2OKN2Bq2+p485iuLBifes9kQmC1z7t29ArwgCZsaF0Lvy6zm+aeqKrrodqT5xGCHjGNe1E5XTPhw3K4KSxjQwDXyNnAcQjrjBH2XJBv7oWmEUVnktRmg0Ec5MxyfVksic/F8DGAi8swYL+vf2+ZZV/9C0dgz6f7YtnghMQIuiYiUIIWPUC6KcrO2Es5h2KG05wSdI4KAuKAMZhNCjwM9iwNwGtHvSP5y1G7xcWCADUv37Iw1zuceQLZ8Ajl2CnUvWbUTnUIHo9ZT2PtWI7TyBnA/aHnJUUFvInh/eqGRIKzH8D3uFYt6pLF/gCnPn1sylu3MQ01CICUYoDkyCr2OWfKRyepBegCcI9CAbTPayEQ4eweIEL3MHli9PftdEKdVvfXoGB2u3+bKTAw4V0oOmHodfgGzow5pQBT75tGExagB8HFalwJqMna5JTxONJqfOCGQbbAI9CcL4rWOMAxSdu24Vy2jJ+XYPnvwOGkNYXGY0h/tHEX0w1BS6kq6Yh
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(376002)(346002)(396003)(136003)(186009)(82310400011)(1800799009)(451199024)(36840700001)(40470700004)(46966006)(40460700003)(6666004)(83380400001)(336012)(426003)(82740400003)(356005)(7636003)(86362001)(31696002)(36860700001)(36756003)(47076005)(16526019)(40480700001)(26005)(2616005)(107886003)(316002)(2906002)(6916009)(54906003)(70586007)(16576012)(70206006)(41300700001)(31686004)(4326008)(8676002)(8936002)(5660300002)(478600001)(966005)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2023 11:19:40.3469
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2023 11:33:49.7788
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7adb663-42ce-4817-31f0-08dba55d2cc5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a61d9d7-d7b0-416d-712d-08dba55f270d
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF000252A3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042AE.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6085
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5331
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement the light-weight tear down and bring up helpers to reduce the
-amount of work to do on CPU offline/online operation.
-This change helps to make the hotplugging paths much faster.
 
-Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-Link: https://lore.kernel.org/lkml/20230816033402.3abmugb5goypvllm@vireshk-i7/
----
- drivers/cpufreq/tegra194-cpufreq.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+>>>> Add exit hook and remove OPP table when all the CPU's in a policy
+>>>> are offlined. It will fix the below error messages when onlining
+>>>> first CPU from a policy whose all CPU's were previously offlined.
+>>>>
+>>>>    debugfs: File 'cpu5' in directory 'opp' already present!
+>>>>    debugfs: File 'cpu6' in directory 'opp' already present!
+>>>>    debugfs: File 'cpu7' in directory 'opp' already present!
+>>>>
+>>>> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
+>>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>>> ---
+>>>>    drivers/cpufreq/tegra194-cpufreq.c | 13 +++++++++++++
+>>>>    1 file changed, 13 insertions(+)
+>>>>
+>>>> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+>>>> index c90b30469165..66a9c23544db 100644
+>>>> --- a/drivers/cpufreq/tegra194-cpufreq.c
+>>>> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+>>>> @@ -454,6 +454,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+>>>>                 if (ret < 0)
+>>>>                         return ret;
+>>>>
+>>>> +             dev_pm_opp_put(opp);
+>>>> +
+>>>>                 freq_table[j].driver_data = pos->driver_data;
+>>>>                 freq_table[j].frequency = pos->frequency;
+>>>>                 j++;
+>>>> @@ -508,6 +510,16 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>>>>         return 0;
+>>>>    }
+>>>>
+>>>> +static int tegra194_cpufreq_exit(struct cpufreq_policy *policy)
+>>>> +{
+>>>> +     struct device *cpu_dev = get_cpu_device(policy->cpu);
+>>>> +
+>>>> +     dev_pm_opp_remove_all_dynamic(cpu_dev);
+>>>> +     dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
+>>>> +
+>>>> +     return 0;
+>>>> +}
+>>>> +
+>>>>    static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>>>>                                        unsigned int index)
+>>>>    {
+>>>> @@ -535,6 +547,7 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
+>>>>         .target_index = tegra194_cpufreq_set_target,
+>>>>         .get = tegra194_get_speed,
+>>>>         .init = tegra194_cpufreq_init,
+>>>> +     .exit = tegra194_cpufreq_exit,
+>>>>         .attr = cpufreq_generic_attr,
+>>>>    };
+>>>
+>>> If it is only about hotplugging of the CPUs, then you can also do this I guess.
+>>>
+>>> commit 263abfe74b5f ("cpufreq: dt: Implement online/offline() callbacks")
+> 
+> You should do this as well, this makes hotplugging paths much faster. i.e. on
+> top of this patch.
+> 
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 66a9c23544db..09582696b83d 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -510,6 +510,21 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
-+static int tegra194_cpufreq_online(struct cpufreq_policy *policy)
-+{
-+	/* We did light-weight tear down earlier, nothing to do here */
-+	return 0;
-+}
-+
-+static int tegra194_cpufreq_offline(struct cpufreq_policy *policy)
-+{
-+	/*
-+	 * Preserve policy->driver_data and don't free resources on light-weight
-+	 * tear down.
-+	 */
-+	return 0;
-+}
-+
- static int tegra194_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct device *cpu_dev = get_cpu_device(policy->cpu);
-@@ -548,6 +563,8 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
- 	.get = tegra194_get_speed,
- 	.init = tegra194_cpufreq_init,
- 	.exit = tegra194_cpufreq_exit,
-+	.online = tegra194_cpufreq_online,
-+	.offline = tegra194_cpufreq_offline,
- 	.attr = cpufreq_generic_attr,
- };
- 
--- 
-2.17.1
+Sent a separate patch to add online/offline callbacks.
+   https://lore.kernel.org/lkml/20230825111920.8257-1-sumitg@nvidia.com/
 
+Also, sent v2 of this patch with updated commit description.
+   https://lore.kernel.org/lkml/20230825111617.8069-1-sumitg@nvidia.com/
+
+Thank you,
+Sumit Gupta
+
+>>> But since your driver is capable of being built as a module, I suggest you try
+>>> to build it as one and insert remove it multiple times. It must cause you some
+>>> trouble as you don't implement an .exit() before this patch.
+>>>
+>>> Eventually, I think you need to do both, what this patch and 263abfe74b5f do.
+>>> Just that the reasons need to be correct for both the changes.
+>>>
+>>> --
+>>> viresh
+>>
+>> Hi Viresh,
+>> I got the same message on inserting and removing the module multiple times
+>> as you suggested. After applying this change, the message is not coming. So,
+>> the current change is resolving both scenarios as __cpufreq_offline() calls
+>> either exit() or offline().
+>> I can update the commit message to mention both scenarios and keep change as
+>> it is?
+>>
+>>    cpufreq_remove_dev
+>>    |-__cpufreq_offline
+>>    |--tegra194_cpufreq_exit
+>>
+>>    cpuhp_cpufreq_offline
+>>    |-__cpufreq_offline
+>>    |--tegra194_cpufreq_exit
+> 
+> --
+> viresh
