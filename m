@@ -2,60 +2,60 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAEDC83F17
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 21:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90098C83F14
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 23:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233736AbjH1VdN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Aug 2023 17:33:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48568 "EHLO
+        id S234077AbjH1XTb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Aug 2023 19:19:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233868AbjH1Vck (ORCPT
+        with ESMTP id S233044AbjH1XTK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Aug 2023 17:32:40 -0400
+        Mon, 28 Aug 2023 19:19:10 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A983E188
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 14:31:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD6AC2
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 16:18:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693258313;
+        s=mimecast20190719; t=1693264701;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=dVb5tmc8EbITtSkSc6gJJy1RyzNckSiwLu+iLvVILak=;
-        b=cnAcr7o5rP1q9MKsD+VtkwRBor2hYoTpsxruQbCd5Ka6XbwOZgKpxq4N1qZ1TDZogM/Zxo
-        gpV9hFM4qrou8E5J6OT+HyxuC7dRrfJSWnT1IcJTcpq95hHfl7j15EjEVEWu2klL/cDMzg
-        xv+eLRuPJaJ0u3TR2Lckpy65xwXXrd4=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=NqA+se+NtJmo6VZ6Aa5eIZ0Mw7Oak0MLDxzh66FDHNk=;
+        b=d6xNKgjlS9CH+ZuDN2utM1wWpXH3ZlAI9xdkvTOfQIWcTqMw4skyDDlOOhYdAQb2p8cH3E
+        HUuCIaRrcRI46Wy/wxnzsy+QF1nYctYE+NZzVopuwie0mEKBXe0xaW4PvPRsiGBaMrEWjs
+        7s1JRMFM8lPK/cAnNEH/50XxrgwRQSs=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-h4o71I6SMs6d6li3zBfWPw-1; Mon, 28 Aug 2023 17:31:52 -0400
-X-MC-Unique: h4o71I6SMs6d6li3zBfWPw-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-76e26652e6fso464271785a.2
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 14:31:52 -0700 (PDT)
+ us-mta-90-EwntgXI8MdKJ9yGxCbqYZA-1; Mon, 28 Aug 2023 19:18:19 -0400
+X-MC-Unique: EwntgXI8MdKJ9yGxCbqYZA-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1bf58d92bd9so38618075ad.3
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 16:18:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693258312; x=1693863112;
+        d=1e100.net; s=20221208; t=1693264698; x=1693869498;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dVb5tmc8EbITtSkSc6gJJy1RyzNckSiwLu+iLvVILak=;
-        b=WK/kFDGvTo7ErPKr9bQtAGIZUT49bFR68qXnKRfe6/skcJxDbYPvkdoFqp4n9KIPwA
-         ZQpMrVccuze0hTPT76nY7Lf/ZGc8nUl/A1IXWgH64sO4wLrF62fE6bmWjZ8eoS9NjCl0
-         NGu+xGYgYVVQXUPetppluElNqr3CjnZXdkXw2sDyTfK8GuMYhnxKSiLC35NmykPShseW
-         knD4XlOJeYHWdSTi3UNLvJEy86+szxgBmE+zGst3fMjYkpj4g1pxvE7eHhUYNRW8TRwO
-         mv/eRcHXtGHAsXCnapcTqgbcyMYbzPRwSu8tXgRtb/dVsBWmjuvdg0h6tXjam6yzKa7U
-         JRbQ==
-X-Gm-Message-State: AOJu0YzXITaRw17i9XtenYWdT2k31Vo6xRILVKmPXiP3rIHS8RM+rHe+
-        TIf5VRNE7K7Pr6T+jTqUtmH/l8+IGSw/O+iYYuXZU+PcgbD7i6kwTCLBONu5OJzu5eLYfvNp0Gy
-        LBhd9Cht5nxRx19CKyvZyKiM=
-X-Received: by 2002:a05:620a:9c7:b0:766:fe28:35a3 with SMTP id y7-20020a05620a09c700b00766fe2835a3mr28616601qky.32.1693258312047;
-        Mon, 28 Aug 2023 14:31:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHuVcTMTBbnLPs86MnCDU8eGTgJIDkNhQ+SHq++g5N+BlxbjD8TqX467y2sj6EMGyNhF/9w9w==
-X-Received: by 2002:a05:620a:9c7:b0:766:fe28:35a3 with SMTP id y7-20020a05620a09c700b00766fe2835a3mr28616567qky.32.1693258311828;
-        Mon, 28 Aug 2023 14:31:51 -0700 (PDT)
+        bh=NqA+se+NtJmo6VZ6Aa5eIZ0Mw7Oak0MLDxzh66FDHNk=;
+        b=Mny+xLdqTS/KNyD/1p5Gd4Idcxmqm2wcaGRuZGqLuu3V54a1y8Uei8XrGmUZiddBzS
+         8fmaNyo2+7AXf8XE8Wx/iuHAbpUDoEgLya16DgRNpPvv/en6t/iMoiHtfbsd9h8nsd6F
+         cRdNeou6Iypb+bdpQ+f+ZZLmQ8miKQw5c09/vGPnC0lqDqOadrcdjJ0hH8M3uxpEIGBF
+         M30UpGOLYMpsIpLHXzawgZgINIhVRqqtE+/mt+xZLKuKmVG6Y7xO7QSnkw0EyYCj+OgC
+         GJ5a/C6WC4TEL+vp77R92+er6L46+vUJgTyYc84RdGGCe51db9XJgQpCQ56IzvcYzJoX
+         XKXw==
+X-Gm-Message-State: AOJu0YwQ7LgcbQKP4nY6G5BrY43d9pXGKAWeYRDy9skeRsm9m9sFrEVx
+        H6sM/fp8dkvARTaXMM4RpPgbtp6lqSdGxmHBz4bC1RTnrTxX8HZVPl8R5Ckxuc3ZHQmcvZzzRew
+        +SAoUtL29m5YONZweK2lVeIo=
+X-Received: by 2002:a17:902:ea08:b0:1c0:a30e:2388 with SMTP id s8-20020a170902ea0800b001c0a30e2388mr17734022plg.31.1693264698546;
+        Mon, 28 Aug 2023 16:18:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4PLIDBi9wZuEsVkyH1S0PFnZ5haeuWus0luN/Yrn+a4DV04N4xayoEkUTdP5JJP349iuJ+Q==
+X-Received: by 2002:a17:902:ea08:b0:1c0:a30e:2388 with SMTP id s8-20020a170902ea0800b001c0a30e2388mr17733983plg.31.1693264698231;
+        Mon, 28 Aug 2023 16:18:18 -0700 (PDT)
 Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id a12-20020a05620a124c00b0076f16a00693sm697233qkl.47.2023.08.28.14.31.50
+        by smtp.gmail.com with ESMTPSA id f11-20020a170902ce8b00b001b53953f306sm7947728plg.178.2023.08.28.16.18.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Aug 2023 14:31:51 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 14:31:49 -0700
+        Mon, 28 Aug 2023 16:18:17 -0700 (PDT)
+Date:   Mon, 28 Aug 2023 16:18:16 -0700
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     Jason Gunthorpe <jgg@nvidia.com>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -99,21 +99,35 @@ Cc:     Andy Gross <agross@kernel.org>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Steven Price <steven.price@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v7 21/24] iommu: Add __iommu_group_domain_alloc()
-Message-ID: <dwrebxdzqjhnryum3czsh6zroapbhpjre7untly3cvl2tn3nij@hpckzx65oxx6>
+Subject: Re: [PATCH v7 22/24] iommu: Add ops->domain_alloc_paging()
+Message-ID: <6wbamqxazr3yxu25haul2vcbyt5da5py4i2pemga77pg74knov@htfe53txxkzx>
 References: <0-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
- <21-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+ <22-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <21-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <22-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 01:47:35PM -0300, Jason Gunthorpe wrote:
-> Allocate a domain from a group. Automatically obtains the iommu_ops to use
-> from the device list of the group. Convert the internal callers to use it.
+On Wed, Aug 23, 2023 at 01:47:36PM -0300, Jason Gunthorpe wrote:
+> This callback requests the driver to create only a __IOMMU_DOMAIN_PAGING
+> domain, so it saves a few lines in a lot of drivers needlessly checking
+> the type.
+> 
+> More critically, this allows us to sweep out all the
+> IOMMU_DOMAIN_UNMANAGED and IOMMU_DOMAIN_DMA checks from a lot of the
+> drivers, simplifying what is going on in the code and ultimately removing
+> the now-unused special cases in drivers where they did not support
+> IOMMU_DOMAIN_DMA.
+> 
+> domain_alloc_paging() should return a struct iommu_domain that is
+> functionally compatible with ARM_DMA_USE_IOMMU, dma-iommu.c and iommufd.
+> 
+> Be forwards looking and pass in a 'struct device *' argument. We can
+> provide this when allocating the default_domain. No drivers will look at
+> this.
 > 
 > Tested-by: Steven Price <steven.price@arm.com>
 > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -121,6 +135,10 @@ On Wed, Aug 23, 2023 at 01:47:35PM -0300, Jason Gunthorpe wrote:
 > Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
+>  drivers/iommu/iommu.c | 17 ++++++++++++++---
+>  include/linux/iommu.h |  3 +++
+>  2 files changed, 17 insertions(+), 3 deletions(-)
+> 
 
 Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
