@@ -2,60 +2,60 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C38C83F12
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 21:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46359C83F15
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 21:04:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233230AbjH1VCQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Aug 2023 17:02:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37514 "EHLO
+        id S232800AbjH1VDz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Aug 2023 17:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233462AbjH1VBt (ORCPT
+        with ESMTP id S233485AbjH1VDc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Aug 2023 17:01:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA6C613E
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 14:00:54 -0700 (PDT)
+        Mon, 28 Aug 2023 17:03:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFDF713D
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 14:02:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693256453;
+        s=mimecast20190719; t=1693256564;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=mPucHT4vAUhtQdeHUtkBDDGaES5ThoGt/JYy///1HlU=;
-        b=HzYaN8RBYe/PFKVckKpPmuF/VFZs69CNqOaaSHhtA58gn4SREE1TM/On8OQ+fOYFdOV2hC
-        NdYMoltCLF35keijEjvtHy3EbnI8s5ACCvcm4SgPUSkMc6clTLkMn2m3mUsZDG3M+Cqij4
-        mma/33nn+8FoG+AOcKXbKdkCqJ0WKc0=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=P4Hc7lOVUb37Hr8DSGTvFTUMZzvNY/pqjNxxEvyeHyI=;
+        b=M8r6rZBU9LrEhYHADcGLbqegvB5OrT+yqsmTY6nOHKHxLQ1nrGK2/uEQXIXFEHg8Q3driv
+        pyAtaFjvSwVxaudrN5ZnqTOU51V4wqVUi6EHEJrsVE8xYRAF+SB0PXX16b4vtbsseUfjlH
+        Jwpws3KdZAnsQdz9VaC5nCMkUUToLs8=
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com
+ [209.85.217.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-73-b4Rrd6UENK2sd252yvRVwg-1; Mon, 28 Aug 2023 17:00:52 -0400
-X-MC-Unique: b4Rrd6UENK2sd252yvRVwg-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-76ef4ff3aecso511564385a.1
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 14:00:52 -0700 (PDT)
+ us-mta-326-E9FLwkEuP4e2WhWKkiHUIA-1; Mon, 28 Aug 2023 17:02:42 -0400
+X-MC-Unique: E9FLwkEuP4e2WhWKkiHUIA-1
+Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-44d4b7993c3so1620714137.0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 14:02:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693256452; x=1693861252;
+        d=1e100.net; s=20221208; t=1693256562; x=1693861362;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mPucHT4vAUhtQdeHUtkBDDGaES5ThoGt/JYy///1HlU=;
-        b=S+3yawoXR2+xcKp3XSO/jazyScmggNSqMDWoYcA0uH0Lz0BqVkjvJlXSLvLZE+qVyn
-         zqHFZMVYFFnlhXVZHVX7bgn+lNNOa62zI0pACdKEWJR10hzRPoHijBmo1JyZ9WNsa/wv
-         0UF0HUjm7YX3dJAvquyCeWu9qyPVWTRutX2zJQ6LTAZENN7sBci2cEJLZM6lo0X/Q40C
-         ISnsw6m58cU+93xTBRIknClP7/yANgHfP0SAAK2ls4qT3frTIlP2wAMaQvgpLJ1Hf5tW
-         0xVSbqhWDHtF9ZanBz1+mxQgjh+aXmvird2wbuyrlpzi6cdY067hbce+raM3E48ehs0x
-         W6Lg==
-X-Gm-Message-State: AOJu0YwDuWE4AYMN/yYtCzicw74BbWnYZ4g2kefgd5R4JVOk6je/JDE9
-        SqVJpBoFRjQDpINLXg3VgF3KmPIcpoZORrjZWsIz+f/TGnNX0zHRoqXsZlziYtuiZOQ+OqTqa5L
-        rFWVqmupbShxv3BwVLiQE/AQ=
-X-Received: by 2002:a05:620a:254e:b0:767:dd2c:9a1 with SMTP id s14-20020a05620a254e00b00767dd2c09a1mr32435893qko.20.1693256452115;
-        Mon, 28 Aug 2023 14:00:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFc76gVDSQjoSi7VzVoCzv2VufWTRTR2JHknan7WgS/aaS2xw9REImaP5+SJVlVkj2Kooggog==
-X-Received: by 2002:a05:620a:254e:b0:767:dd2c:9a1 with SMTP id s14-20020a05620a254e00b00767dd2c09a1mr32435844qko.20.1693256451852;
-        Mon, 28 Aug 2023 14:00:51 -0700 (PDT)
+        bh=P4Hc7lOVUb37Hr8DSGTvFTUMZzvNY/pqjNxxEvyeHyI=;
+        b=PaCTylU3/d2h+DI7jAU7NQ+bk4wYZQTBapiVZSXsM4pYizb1d2Nv7RA/rl2iwOcmjw
+         C+OQxt4EAWT5turIjFBf4Yt3CT7kIBrtre5OJDQPKBdSXRgglHS6xha5Mz4nrVl14CuY
+         3yTDJg63Gqhm+pVNFvboijFTX2CxE0srf6Y7d2TTh/6TjDVGJfO/nUx/QvhcX96/tZFR
+         8hoBDxgMlS++uJANdhlO7wimGXU52IbRHyoaDK3VmItxwcGiyYfpsGtT9yMN0iyZTJug
+         rMGcCcF3IV7Fo4sg4IYmRvL/+3jC9ozXFnjym/rHSukeIj67EuZjRoqSiW5qY0wmDogx
+         ZVxw==
+X-Gm-Message-State: AOJu0Yxu3kVXsg05QXJz+foOepPuqkfKOmuKXeBuYG75Jh4YFmy41hJH
+        lvExZoR6m6+EpAKz9vUXuGX98BlUWdBW8Hw3EAksKWiJ8iS/y9/urjSqgiEusBL5dyTknLgBf1n
+        yKqHMZ5TdfVk4MzJyisib2zQ=
+X-Received: by 2002:a67:ad1a:0:b0:44d:4196:f374 with SMTP id t26-20020a67ad1a000000b0044d4196f374mr21657409vsl.14.1693256562244;
+        Mon, 28 Aug 2023 14:02:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1O+ulqQs16fLrviLhIDcWj2NFGLF73P8fTFl1IfopkK1Ei1hjIoNJD//dyDhnkd8Fjfj6aA==
+X-Received: by 2002:a67:ad1a:0:b0:44d:4196:f374 with SMTP id t26-20020a67ad1a000000b0044d4196f374mr21657332vsl.14.1693256561816;
+        Mon, 28 Aug 2023 14:02:41 -0700 (PDT)
 Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id v14-20020ae9e30e000000b00767d2870e39sm2642220qkf.41.2023.08.28.14.00.51
+        by smtp.gmail.com with ESMTPSA id j10-20020a0cf50a000000b0064f732aa45csm2873129qvm.133.2023.08.28.14.02.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Aug 2023 14:00:51 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 14:00:50 -0700
+        Mon, 28 Aug 2023 14:02:41 -0700 (PDT)
+Date:   Mon, 28 Aug 2023 14:02:40 -0700
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     Jason Gunthorpe <jgg@nvidia.com>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -99,28 +99,31 @@ Cc:     Andy Gross <agross@kernel.org>,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         Steven Price <steven.price@arm.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v7 16/24] iommu/qcom_iommu: Add an IOMMU_IDENTITIY_DOMAIN
-Message-ID: <cfl4ixqvcradllxpjzbmyikl6jtr5q53tipn4p3bka7obavxjj@novxolxpv7sr>
+Subject: Re: [PATCH v7 17/24] iommu/ipmmu: Add an IOMMU_IDENTITIY_DOMAIN
+Message-ID: <ftxla3xdnxqknqg4k6qxwh6nquhdpzfmzyuvkzg7gwjxf42p6w@7ek73gnk5mue>
 References: <0-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
- <16-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+ <17-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <16-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <17-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 01:47:30PM -0300, Jason Gunthorpe wrote:
+On Wed, Aug 23, 2023 at 01:47:31PM -0300, Jason Gunthorpe wrote:
 > This brings back the ops->detach_dev() code that commit
 > 1b932ceddd19 ("iommu: Remove detach_dev callbacks") deleted and turns it
 > into an IDENTITY domain.
 > 
+> Also reverts commit 584d334b1393 ("iommu/ipmmu-vmsa: Remove
+> ipmmu_utlb_disable()")
+> 
 > Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->  drivers/iommu/arm/arm-smmu/qcom_iommu.c | 39 +++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+>  drivers/iommu/ipmmu-vmsa.c | 43 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
 > 
 
 Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
