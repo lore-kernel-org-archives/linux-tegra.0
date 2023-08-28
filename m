@@ -2,90 +2,137 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F08C83F16
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Aug 2023 10:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3723EC83F11
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 06:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231904AbjHZKJs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 26 Aug 2023 06:09:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
+        id S229441AbjH1GLh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Aug 2023 02:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231996AbjHZKJ1 (ORCPT
+        with ESMTP id S229684AbjH1GLW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 26 Aug 2023 06:09:27 -0400
-Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183FA1A6;
-        Sat, 26 Aug 2023 03:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1693044559;
-        bh=E32l48gh74u0wKPcn5axJaB36BSlQqywiLukbAdXIo0=;
-        h=From:To:Cc:Subject:Date;
-        b=pMw0dHheqOETx/42m5JkQ3GvhEjCypxNmxhjYof43QPa0mI0zhCuxA5cN8MbELzLH
-         aD862MVItTkqqrSObW6Lh1VskIlYzKjNepWYbL0YssSGPVn96BEr8y+yaVNVmE86rX
-         4vhCjqZVQP+0yIeGuBlsp3JkL5UPAFJJ6kEVEW9w=
-Received: from KernelDevBox.byted.org ([180.184.49.4])
-        by newxmesmtplogicsvrszb1-0.qq.com (NewEsmtp) with SMTP
-        id B702291; Sat, 26 Aug 2023 18:02:55 +0800
-X-QQ-mid: xmsmtpt1693044175tknomh8m9
-Message-ID: <tencent_73FCC06A3D1C14EE5175253C6FB46A07B709@qq.com>
-X-QQ-XMAILINFO: NMGzQWUSIfvTZp3i9LCvKYDbI9UtNovodc1zIJP/gvVV0C9AiP/tkwAKzErV5Z
-         875prIgdlkbQpLlKuuDWJuSxiNTe9ZpBCF6bvFBCPFOYAQEqYccrDWb4p4UIUKm2SJbS2L7BCwaT
-         aoVnREjC45OyNfRG5LdTdi2S6Sj8kgyNIvuq5tdodzK1sZv+ovLK1ct+MfiqkEqQZ2F5LSgZPe7P
-         VRSTirdwNI0Xr6j6ZCEK3iE0U4PUChNDVVd26cGBOdWBh6/kjJG/URi+TIt57uVcwSg1fwZ5KGRq
-         zg4881cK67nDMhzeVGvxsq/sWPLIAv5zUrO+Zu/h4Q+xcAKy7FCBuJaBEtQux0Y2MYCCQcZ+71CO
-         49nIUnRSRUsASYy9w0tb78mXeHeSiSe75vFhx63/JDOhGY2t/jvAFioCZgg85EKQsZvcPplEKQGX
-         Dd9YGOmaibSR3xNvjFYq1mfq2X23vAp8SrMxlDvVP2LCc/wrN7R4Zb9V6BEtMEYvzrF0sc6jqwlk
-         C1hEvrPG1k7yblUPaW5Eafvgp5naHYNqr4ezrlcXyGHHZEMd0+rhi3CV0ewzxqm4/V6+WcIrihao
-         rdoY7D4lSPlCF9YPzcXm896zLv5AXU0aNfIbLaBlW7LyKJVKeG6gLVywVx3ROtFoXEFLerSX1fCY
-         NXtsngpac08po6cZhVWu8HwL33gWUOyfDP5DoOO7jZ950JRf39/DXdu/CdaT3jQykKVE2rPbXSQm
-         TTBxOU0tNz4p+LL+ovIRisVZXr1qWadcmoiVegik36K3YAoZGfM0XuJLfxh//8LoRTIhYG85P9oR
-         bpqqvbp+uzSRPUh9cfJXUkbbl2bVXBK+h5Gs+D/cKn3s1Ds+pB94TUjFOnF8fR3QJILE4axHRcKs
-         OmWWj85kO/riG3TJQ0AyGoT/r+sboldviGFALGxtnsNJ9UA4OKrbS2ViJOBG7vHkJHsm6yE+x1im
-         F8sxgLGCb1a0DMBZ82MDtEspBUhtVJ51bruqFEHr5UbCEGYe8TD2si4XQWpQizhWNDDL4OnHI=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From:   Zhang Shurong <zhang_shurong@foxmail.com>
-To:     ldewangan@nvidia.com
-Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, sumit.semwal@linaro.org,
-        christian.koenig@amd.com, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org,
-        Zhang Shurong <zhang_shurong@foxmail.com>
-Subject: [PATCH] spi: tegra: Fix missing IRQ check in tegra_slink_probe()
-Date:   Sat, 26 Aug 2023 18:02:54 +0800
-X-OQ-MSGID: <20230826100254.2197256-1-zhang_shurong@foxmail.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 28 Aug 2023 02:11:22 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0A0128
+        for <linux-tegra@vger.kernel.org>; Sun, 27 Aug 2023 23:11:19 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-68bed8de5b9so1780796b3a.3
+        for <linux-tegra@vger.kernel.org>; Sun, 27 Aug 2023 23:11:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693203078; x=1693807878;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CIYwhouQMA9l5NGpKySDWUf3dxmgZ01VIeueyPAqR8w=;
+        b=PezwnI7NG1oL1O27AcGuldbKp8UuttEC1M4HMxyj/px07uuHLrfoKqg2sY0cVvRHBV
+         YGIHzfeXPqPAYxzgZFplc7RQuYKU/6RDy+e3J66sArctrwV5K63KZ6BxkMSub+L3ILUJ
+         kUjZ37S4llFfTVHsuZ0yRUx4uNfSsfDHUbFvsv3t2JZOhfRN8Ed7mJSMnOKPqb8q6HF8
+         skngThJY2OIRtGBRIj4LcJmVr1VXg2QaF4EFxnvW7jjrUYU60qz24EzSdsn9863ojaaA
+         gYmbTqvPy9NPRiLYz+xkLNSQbta4MIxia7FAak9LK+sxJM8/W90854dixvk+KcXMi99E
+         4vtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693203078; x=1693807878;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CIYwhouQMA9l5NGpKySDWUf3dxmgZ01VIeueyPAqR8w=;
+        b=MkBfAMcNQ+OY4uqrnPknJkk6k3fibtdT2nydpBRVKiP0C81JlDEcGTQT+1kaKMf+LK
+         Iv+bBP+tMEooOW96rLti9J6ll23uMK0e7ngcOKWZwhs3lmDf7cZCurN4YE23QQkJ0s6F
+         EuR4WC0drG6kWkmjaExt9vG3uUKL9AtiktWOFWqDqP5GYY946657f+EHkk/xxRL0k/M1
+         BnofQp1Fmu7xCQoQ5C7himokKIFeuyuXIh4IY0/1kR4s+eK1STFmW04o0SfCE0wyQUFQ
+         G1Ql4DRGxTgRgfb2elXTcAeo6KZsL5YKwi8vmMd5DNTvsCitE+fZw0gEgt5XyzO/kpwB
+         ponA==
+X-Gm-Message-State: AOJu0YyKETHbbCdJ3uzXcpv0OSA+aXNaoiUAFFUfEMiN7RncpSr81KRr
+        HiqhUsaLNelNyOxVwqQEupL2Hw==
+X-Google-Smtp-Source: AGHT+IEyVv32vhFFpZcqLVmK0dwHdxb+ZLMbz8+Oc0x8XGO0RVaHmSvwijjI/RG0UopHH2iRrSZUNw==
+X-Received: by 2002:a05:6a00:1387:b0:68c:10c:1c52 with SMTP id t7-20020a056a00138700b0068c010c1c52mr7714953pfg.9.1693203078602;
+        Sun, 27 Aug 2023 23:11:18 -0700 (PDT)
+Received: from localhost ([122.172.87.195])
+        by smtp.gmail.com with ESMTPSA id g4-20020aa78184000000b0068703879d3esm5750683pfi.113.2023.08.27.23.11.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Aug 2023 23:11:18 -0700 (PDT)
+Date:   Mon, 28 Aug 2023 11:41:15 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rafael@kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bbasu@nvidia.com
+Subject: Re: [Patch v2] cpufreq: tegra194: remove opp table in exit hook
+Message-ID: <20230828061115.vsepgtexyv3hvffu@vireshk-i7>
+References: <20230825111617.8069-1-sumitg@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230825111617.8069-1-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This func misses checking for platform_get_irq()'s call and may passes the
-negative error codes to request_irq(), which takes unsigned IRQ #,
-causing it to fail with -EINVAL, overriding an original error code.
+On 25-08-23, 16:46, Sumit Gupta wrote:
+> Add exit hook and remove OPP table when the device gets unregistered.
+> This will fix the error messages when the CPU FREQ driver module is
+> removed and then re-inserted. It also fixes these messages while
+> onlining the first CPU from a policy whose all CPU's were previously
+> offlined.
+> 
+>  debugfs: File 'cpu5' in directory 'opp' already present!
+>  debugfs: File 'cpu6' in directory 'opp' already present!
+>  debugfs: File 'cpu7' in directory 'opp' already present!
+> 
+> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+> 
+> v1[1] -> v2:
+> - updated commit description.
+> 
+> [1] https://lore.kernel.org/lkml/20230809153455.29056-1-sumitg@nvidia.com/
+> 
+>  drivers/cpufreq/tegra194-cpufreq.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+> index c90b30469165..66a9c23544db 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -454,6 +454,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+>  		if (ret < 0)
+>  			return ret;
+>  
+> +		dev_pm_opp_put(opp);
+> +
 
-Fix this by stop calling request_irq() with invalid IRQ #s.
+Missed this earlier, can you please do this in a separate patch please
+?
 
-Fixes: dc4dc3605639 ("spi: tegra: add spi driver for SLINK controller")
-Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
----
- drivers/spi/spi-tegra20-slink.c | 2 ++
- 1 file changed, 2 insertions(+)
+>  		freq_table[j].driver_data = pos->driver_data;
+>  		freq_table[j].frequency = pos->frequency;
+>  		j++;
+> @@ -508,6 +510,16 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>  	return 0;
+>  }
+>  
+> +static int tegra194_cpufreq_exit(struct cpufreq_policy *policy)
+> +{
+> +	struct device *cpu_dev = get_cpu_device(policy->cpu);
+> +
+> +	dev_pm_opp_remove_all_dynamic(cpu_dev);
+> +	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
+> +
+> +	return 0;
+> +}
+> +
+>  static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>  				       unsigned int index)
+>  {
+> @@ -535,6 +547,7 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
+>  	.target_index = tegra194_cpufreq_set_target,
+>  	.get = tegra194_get_speed,
+>  	.init = tegra194_cpufreq_init,
+> +	.exit = tegra194_cpufreq_exit,
+>  	.attr = cpufreq_generic_attr,
+>  };
+>  
+> -- 
+> 2.17.1
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 4d6db6182c5e..f5cd365c913a 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1086,6 +1086,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	reset_control_deassert(tspi->rst);
- 
- 	spi_irq = platform_get_irq(pdev, 0);
-+	if (spi_irq < 0)
-+		return spi_irq;
- 	tspi->irq = spi_irq;
- 	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
- 				   tegra_slink_isr_thread, IRQF_ONESHOT,
 -- 
-2.30.2
-
+viresh
