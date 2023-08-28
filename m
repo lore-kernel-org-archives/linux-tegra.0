@@ -2,362 +2,146 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA95C83F1B
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 10:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9E5C83F15
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 12:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231418AbjH1Kas (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Aug 2023 06:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37752 "EHLO
+        id S230262AbjH1MK2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Aug 2023 08:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231372AbjH1KaR (ORCPT
+        with ESMTP id S232646AbjH1MKY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Aug 2023 06:30:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2E6A7;
-        Mon, 28 Aug 2023 03:30:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 49CC563C13;
-        Mon, 28 Aug 2023 10:30:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31A0FC433C9;
-        Mon, 28 Aug 2023 10:30:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1693218612;
-        bh=mtWcpg4pPAjZMs1U3EqtlsEKvHdweVPU8plNwlTqWWc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xviubvNfN4haFhNIF13ZY0TCFfK/W2sl/QUnVm+m3bW/JJKF8dg4hm8gqvQllkx9X
-         aUlkICu2DUCIi4wsomidiKSPp76IlPe/Hfs8FgaDFmo7dobHtoxwf8ElUSWTH7CKU2
-         XwJ7WRO2YLN13OH41lYT9PkAWhzjhYaI5207FRXI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Deepak Rawat <drawat.floss@gmail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Emma Anholt <emma@anholt.net>, Helge Deller <deller@gmx.de>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-hyperv@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 007/122] drm/aperture: Remove primary argument
-Date:   Mon, 28 Aug 2023 12:12:02 +0200
-Message-ID: <20230828101156.720830036@linuxfoundation.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230828101156.480754469@linuxfoundation.org>
-References: <20230828101156.480754469@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 28 Aug 2023 08:10:24 -0400
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2054.outbound.protection.outlook.com [40.107.96.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F173BA9;
+        Mon, 28 Aug 2023 05:10:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aLMTVAyWRd+x/4giTQLcLwD/gD1HyEBT5FACjLuIrfuXza9Qxx9EBHgSGoCwNcvL/RqhwlveqePZI+AI6z2d/yr9LoXRUuzYNziICtB4nPXmJEW1hRrbfnMwaFcsMP3zzb9MgaEUO+9z6JstvHUYtwDXRFDTRxdIO762qFrJLsiF20CdL7ZO1mJj1q7bitn6mBl+mmL5lq9rjLuQ8lWesceUU8cUSdkxOkKGtplQG3t19hF+F9gw8+zHJfbrjZGW6VptV0KhWy2l17L9OpHbNR+owC1SDq2ID8x72+q2wRLoFyht5Q+kdyrpmHtvFDvMJiIJzLWA/6xpbx/uBVwHkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NEneMGFpP7wgwjGsBhTwDDrohulnX8L7vh5k9HOd3zU=;
+ b=ZANwjrJb+CAnTXWRVfAAq/ypBCHC6et/JP+AHILTLVfOzf0+ubtGUAmdeiiaDyYWJI1tb7bXlD+KWsWgf0XhKGDPCJMlTBqkK0IqtcU8RXmQZ6yQr21cWypNC5tSljnDGWXLhUGmGxfInUiPcrkYOKFJTHpX5ccvpuQg9v+05UchghklWHXURp94uKqzicrumDeSZUhrj31CPo4GXa/XBGio2pI6W8DguDz+WTNuyAnysKfgtchynojT0no6qr+2mbwoTv/MsVpN+MIUT8m1rXHXiLy2rXSAovfPI10xA3EXbcizyI2TYD9Bxto7G7iYSszd5+Ka5mNRk9DxdMKo0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NEneMGFpP7wgwjGsBhTwDDrohulnX8L7vh5k9HOd3zU=;
+ b=un7TIXn1LD+w95YNK7wvrIzGfTOc/p5S46vK/rq8K5o5vhTSZa4CqK6sk65WOFzL10NLf5dvHLUNpnQo2XnKxGTBvf4z9a/Ef3fTdWfZ+dGpZyJHlVLoj/NImWQa8YnzUKrQbAzOs0tDNG4SGwGNJt0Gjewt9gVReO7R8nyDsxfjf8pUzf+lggJxzMDjaNEHWmb0CJzLKCzLWEfYY/gkEACZWKezsNb4H0V7dfBP0Mw3HJRFipJyBgzwROevN/8MlEj6cKQ06CYNtKk8Oooy+P3pg1sXb6hwKJb1r3Xk2TLPJjNOmLLbaOy69G3T4lOjbAI8cApFqn1NlJlF2AZi+A==
+Received: from PR3P189CA0038.EURP189.PROD.OUTLOOK.COM (2603:10a6:102:53::13)
+ by MN2PR12MB4343.namprd12.prod.outlook.com (2603:10b6:208:26f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.34; Mon, 28 Aug
+ 2023 12:10:19 +0000
+Received: from SA2PEPF00001507.namprd04.prod.outlook.com
+ (2603:10a6:102:53:cafe::76) by PR3P189CA0038.outlook.office365.com
+ (2603:10a6:102:53::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.34 via Frontend
+ Transport; Mon, 28 Aug 2023 12:10:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SA2PEPF00001507.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6745.16 via Frontend Transport; Mon, 28 Aug 2023 12:10:17 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 28 Aug 2023
+ 05:10:04 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Mon, 28 Aug 2023 05:10:04 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Mon, 28 Aug 2023 05:10:01 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [Patch] cpufreq: tegra194: fix warning due to missing opp_put
+Date:   Mon, 28 Aug 2023 17:39:59 +0530
+Message-ID: <20230828120959.24680-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001507:EE_|MN2PR12MB4343:EE_
+X-MS-Office365-Filtering-Correlation-Id: e289bd8a-9230-48f7-79bf-08dba7bfbe5a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0F64nWUA64Phu4DCwR6LAv24KeSLKH0f1O9d0/bfOBLibQMZpJZLs+Rs+JdhHrabMyYDRj5RDGoJhFUxZAPdzLgtfrCYlvv81iRN9ClFY4EUah/2cSyIS1qqlXtq1kM7wbe5bfAWvfsr2C252H4Y21V+8Vfn00ybNqrpl4mkHPONsTFfVnvN0H3VX0W8K+WOnqZrS+ETqhac/B4d+zkF7cIbpK3g8a9qz6L0mkKmTKrlYIHR6cMYqqvRciD3THyiUtSrPR0o1kQe14FMZH6UQwsNpgDi8IP07mAA6xFdNmXfFSCM7XToLMnF9/Q3Ws97NoTjhkMhUo5U8MYjoPKIg8Jyl4bCQcIyUf/cpZVTnm4UdUWSZ+5hv/rv95ipz1VxREilwx22Fk1OyDqHmNxr7b1NKuuc+9iGttqJa5RZb8jLPMzQkpLWx8dFkWy93o8ogfn2+SGB4X29HmWfaqcFU8pHirAcwC5JVcLihftMdjwlbJlKoWF1U2mA+lmIlYQM9IALO87Ba4h4XFPdje2uNir0gyyLU5/RP8W2CiePLcq1oba7m/xGSl2fc+V5NrGuLCfPj+9+0oSlB7NrmV/F5mnKNM07QII4+HtzYTmSlQus4MN5ogfXCz84tybSfxuzYyxKyK8BP9q7CgZOK03ngp4D6ffd4YpGEvdtZ+OGw1ZIJF1BWdx1oVFT1NKigTn5C5FaSYOKSK5p/9XlkJgCDgRL81wE2+x84fWJhKQD96s=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(396003)(136003)(39860400002)(376002)(451199024)(1800799009)(82310400011)(186009)(36840700001)(46966006)(40470700004)(83380400001)(478600001)(7636003)(356005)(82740400003)(26005)(426003)(336012)(47076005)(36860700001)(107886003)(1076003)(2616005)(40480700001)(7696005)(110136005)(86362001)(2906002)(316002)(4326008)(70206006)(8676002)(70586007)(41300700001)(8936002)(54906003)(36756003)(5660300002)(40460700003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2023 12:10:17.5999
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e289bd8a-9230-48f7-79bf-08dba7bfbe5a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00001507.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4343
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+Fix the warning due to missing dev_pm_opp_put() call and hence
+wrong refcount value. This causes below warning message when
+trying to remove the module.
 
-------------------
+ Call trace:
+  dev_pm_opp_put_opp_table+0x154/0x15c
+  dev_pm_opp_remove_table+0x34/0xa0
+  _dev_pm_opp_cpumask_remove_table+0x7c/0xbc
+  dev_pm_opp_of_cpumask_remove_table+0x10/0x18
+  tegra194_cpufreq_exit+0x24/0x34 [tegra194_cpufreq]
+  cpufreq_remove_dev+0xa8/0xf8
+  subsys_interface_unregister+0x90/0xe8
+  cpufreq_unregister_driver+0x54/0x9c
+  tegra194_cpufreq_remove+0x18/0x2c [tegra194_cpufreq]
+  platform_remove+0x24/0x74
+  device_remove+0x48/0x78
+  device_release_driver_internal+0xc8/0x160
+  driver_detach+0x4c/0x90
+  bus_remove_driver+0x68/0xb8
+  driver_unregister+0x2c/0x58
+  platform_driver_unregister+0x10/0x18
+  tegra194_ccplex_driver_exit+0x14/0x1e0 [tegra194_cpufreq]
+  __arm64_sys_delete_module+0x184/0x270
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-[ Upstream commit 62aeaeaa1b267c5149abee6b45967a5df3feed58 ]
-
-Only really pci devices have a business setting this - it's for
-figuring out whether the legacy vga stuff should be nuked too. And
-with the preceding two patches those are all using the pci version of
-this.
-
-Which means for all other callers primary == false and we can remove
-it now.
-
-v2:
-- Reorder to avoid compile fail (Thomas)
-- Include gma500, which retained it's called to the non-pci version.
-
-v4:
-- fix Daniel's S-o-b address
-
-v5:
-- add back an S-o-b tag with Daniel's Intel address
-
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Deepak Rawat <drawat.floss@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Emma Anholt <emma@anholt.net>
-Cc: Helge Deller <deller@gmx.de>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-hyperv@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-fbdev@vger.kernel.org
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20230406132109.32050-4-tzimmermann@suse.de
-Stable-dep-of: 5ae3716cfdcd ("video/aperture: Only remove sysfb on the default vga pci device")
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- drivers/gpu/drm/arm/hdlcd_drv.c             |  2 +-
- drivers/gpu/drm/armada/armada_drv.c         |  2 +-
- drivers/gpu/drm/drm_aperture.c              | 11 +++--------
- drivers/gpu/drm/gma500/psb_drv.c            |  2 +-
- drivers/gpu/drm/hyperv/hyperv_drm_drv.c     |  1 -
- drivers/gpu/drm/meson/meson_drv.c           |  2 +-
- drivers/gpu/drm/msm/msm_fbdev.c             |  2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  2 +-
- drivers/gpu/drm/stm/drv.c                   |  2 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c           |  2 +-
- drivers/gpu/drm/tegra/drm.c                 |  2 +-
- drivers/gpu/drm/vc4/vc4_drv.c               |  2 +-
- include/drm/drm_aperture.h                  |  7 +++----
- 13 files changed, 16 insertions(+), 23 deletions(-)
+ drivers/cpufreq/tegra194-cpufreq.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/arm/hdlcd_drv.c b/drivers/gpu/drm/arm/hdlcd_drv.c
-index a032003c340cc..d6ea47873627f 100644
---- a/drivers/gpu/drm/arm/hdlcd_drv.c
-+++ b/drivers/gpu/drm/arm/hdlcd_drv.c
-@@ -290,7 +290,7 @@ static int hdlcd_drm_bind(struct device *dev)
- 	 */
- 	if (hdlcd_read(hdlcd, HDLCD_REG_COMMAND)) {
- 		hdlcd_write(hdlcd, HDLCD_REG_COMMAND, 0);
--		drm_aperture_remove_framebuffers(false, &hdlcd_driver);
-+		drm_aperture_remove_framebuffers(&hdlcd_driver);
- 	}
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index 88ef5e57ccd0..f63f7a6c2034 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -454,6 +454,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+ 		if (ret < 0)
+ 			return ret;
  
- 	drm_mode_config_reset(drm);
-diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/armada/armada_drv.c
-index 142668cd6d7cd..688ba358f5319 100644
---- a/drivers/gpu/drm/armada/armada_drv.c
-+++ b/drivers/gpu/drm/armada/armada_drv.c
-@@ -95,7 +95,7 @@ static int armada_drm_bind(struct device *dev)
- 	}
- 
- 	/* Remove early framebuffers */
--	ret = drm_aperture_remove_framebuffers(false, &armada_drm_driver);
-+	ret = drm_aperture_remove_framebuffers(&armada_drm_driver);
- 	if (ret) {
- 		dev_err(dev, "[" DRM_NAME ":%s] can't kick out simple-fb: %d\n",
- 			__func__, ret);
-diff --git a/drivers/gpu/drm/drm_aperture.c b/drivers/gpu/drm/drm_aperture.c
-index 3b8fdeeafd53a..697cffbfd6037 100644
---- a/drivers/gpu/drm/drm_aperture.c
-+++ b/drivers/gpu/drm/drm_aperture.c
-@@ -32,17 +32,13 @@
-  *
-  *	static int remove_conflicting_framebuffers(struct pci_dev *pdev)
-  *	{
-- *		bool primary = false;
-  *		resource_size_t base, size;
-  *		int ret;
-  *
-  *		base = pci_resource_start(pdev, 0);
-  *		size = pci_resource_len(pdev, 0);
-- *	#ifdef CONFIG_X86
-- *		primary = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
-- *	#endif
-  *
-- *		return drm_aperture_remove_conflicting_framebuffers(base, size, primary,
-+ *		return drm_aperture_remove_conflicting_framebuffers(base, size,
-  *		                                                    &example_driver);
-  *	}
-  *
-@@ -161,7 +157,6 @@ EXPORT_SYMBOL(devm_aperture_acquire_from_firmware);
-  * drm_aperture_remove_conflicting_framebuffers - remove existing framebuffers in the given range
-  * @base: the aperture's base address in physical memory
-  * @size: aperture size in bytes
-- * @primary: also kick vga16fb if present
-  * @req_driver: requesting DRM driver
-  *
-  * This function removes graphics device drivers which use the memory range described by
-@@ -171,9 +166,9 @@ EXPORT_SYMBOL(devm_aperture_acquire_from_firmware);
-  * 0 on success, or a negative errno code otherwise
-  */
- int drm_aperture_remove_conflicting_framebuffers(resource_size_t base, resource_size_t size,
--						 bool primary, const struct drm_driver *req_driver)
-+						 const struct drm_driver *req_driver)
- {
--	return aperture_remove_conflicting_devices(base, size, primary, req_driver->name);
-+	return aperture_remove_conflicting_devices(base, size, false, req_driver->name);
- }
- EXPORT_SYMBOL(drm_aperture_remove_conflicting_framebuffers);
- 
-diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-index 000e6704e3c75..738eb558a97e9 100644
---- a/drivers/gpu/drm/gma500/psb_drv.c
-+++ b/drivers/gpu/drm/gma500/psb_drv.c
-@@ -430,7 +430,7 @@ static int psb_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	 * TODO: Refactor psb_driver_load() to map vdc_reg earlier. Then we
- 	 *       might be able to read the framebuffer range from the device.
- 	 */
--	ret = drm_aperture_remove_framebuffers(false, &driver);
-+	ret = drm_aperture_remove_framebuffers(&driver);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/gpu/drm/hyperv/hyperv_drm_drv.c b/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
-index ca127ff797f75..29ee0814bccc8 100644
---- a/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
-+++ b/drivers/gpu/drm/hyperv/hyperv_drm_drv.c
-@@ -74,7 +74,6 @@ static int hyperv_setup_vram(struct hyperv_drm_device *hv,
- 
- 	drm_aperture_remove_conflicting_framebuffers(screen_info.lfb_base,
- 						     screen_info.lfb_size,
--						     false,
- 						     &hyperv_driver);
- 
- 	hv->fb_size = (unsigned long)hv->mmio_megabytes * 1024 * 1024;
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index eea433ade79d0..119544d88b586 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -285,7 +285,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	 * Remove early framebuffers (ie. simplefb). The framebuffer can be
- 	 * located anywhere in RAM
- 	 */
--	ret = drm_aperture_remove_framebuffers(false, &meson_driver);
-+	ret = drm_aperture_remove_framebuffers(&meson_driver);
- 	if (ret)
- 		goto free_drm;
- 
-diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-index 46168eccfac4a..d4a9b501e1bcc 100644
---- a/drivers/gpu/drm/msm/msm_fbdev.c
-+++ b/drivers/gpu/drm/msm/msm_fbdev.c
-@@ -157,7 +157,7 @@ struct drm_fb_helper *msm_fbdev_init(struct drm_device *dev)
- 	}
- 
- 	/* the fw fb could be anywhere in memory */
--	ret = drm_aperture_remove_framebuffers(false, dev->driver);
-+	ret = drm_aperture_remove_framebuffers(dev->driver);
- 	if (ret)
- 		goto fini;
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 813f9f8c86982..8e12053a220b0 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -140,7 +140,7 @@ static int rockchip_drm_bind(struct device *dev)
- 	int ret;
- 
- 	/* Remove existing drivers that may own the framebuffer memory. */
--	ret = drm_aperture_remove_framebuffers(false, &rockchip_drm_driver);
-+	ret = drm_aperture_remove_framebuffers(&rockchip_drm_driver);
- 	if (ret) {
- 		DRM_DEV_ERROR(dev,
- 			      "Failed to remove existing framebuffers - %d.\n",
-diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
-index d7914f5122dff..0a09a85ac9d69 100644
---- a/drivers/gpu/drm/stm/drv.c
-+++ b/drivers/gpu/drm/stm/drv.c
-@@ -185,7 +185,7 @@ static int stm_drm_platform_probe(struct platform_device *pdev)
- 
- 	DRM_DEBUG("%s\n", __func__);
- 
--	ret = drm_aperture_remove_framebuffers(false, &drv_driver);
-+	ret = drm_aperture_remove_framebuffers(&drv_driver);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 7910c5853f0a8..5c483bbccbbbc 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -98,7 +98,7 @@ static int sun4i_drv_bind(struct device *dev)
- 		goto unbind_all;
- 
- 	/* Remove early framebuffers (ie. simplefb) */
--	ret = drm_aperture_remove_framebuffers(false, &sun4i_drv_driver);
-+	ret = drm_aperture_remove_framebuffers(&sun4i_drv_driver);
- 	if (ret)
- 		goto unbind_all;
- 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index a1f909dac89a7..5fc55b9777cbf 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1252,7 +1252,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 
- 	drm_mode_config_reset(drm);
- 
--	err = drm_aperture_remove_framebuffers(false, &tegra_drm_driver);
-+	err = drm_aperture_remove_framebuffers(&tegra_drm_driver);
- 	if (err < 0)
- 		goto hub;
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 8c329c071c62d..b6384a5dfdbc1 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -351,7 +351,7 @@ static int vc4_drm_bind(struct device *dev)
- 			return -EPROBE_DEFER;
- 	}
- 
--	ret = drm_aperture_remove_framebuffers(false, driver);
-+	ret = drm_aperture_remove_framebuffers(driver);
- 	if (ret)
- 		return ret;
- 
-diff --git a/include/drm/drm_aperture.h b/include/drm/drm_aperture.h
-index 7096703c39493..cbe33b49fd5dc 100644
---- a/include/drm/drm_aperture.h
-+++ b/include/drm/drm_aperture.h
-@@ -13,14 +13,13 @@ int devm_aperture_acquire_from_firmware(struct drm_device *dev, resource_size_t
- 					resource_size_t size);
- 
- int drm_aperture_remove_conflicting_framebuffers(resource_size_t base, resource_size_t size,
--						 bool primary, const struct drm_driver *req_driver);
-+						 const struct drm_driver *req_driver);
- 
- int drm_aperture_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
- 						     const struct drm_driver *req_driver);
- 
- /**
-  * drm_aperture_remove_framebuffers - remove all existing framebuffers
-- * @primary: also kick vga16fb if present
-  * @req_driver: requesting DRM driver
-  *
-  * This function removes all graphics device drivers. Use this function on systems
-@@ -30,9 +29,9 @@ int drm_aperture_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
-  * 0 on success, or a negative errno code otherwise
-  */
- static inline int
--drm_aperture_remove_framebuffers(bool primary, const struct drm_driver *req_driver)
-+drm_aperture_remove_framebuffers(const struct drm_driver *req_driver)
- {
--	return drm_aperture_remove_conflicting_framebuffers(0, (resource_size_t)-1, primary,
-+	return drm_aperture_remove_conflicting_framebuffers(0, (resource_size_t)-1,
- 							    req_driver);
- }
- 
++		dev_pm_opp_put(opp);
++
+ 		freq_table[j].driver_data = pos->driver_data;
+ 		freq_table[j].frequency = pos->frequency;
+ 		j++;
 -- 
-2.40.1
-
-
+2.17.1
 
