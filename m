@@ -2,119 +2,145 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F31C71153
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Aug 2023 06:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D875C83F16
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Aug 2023 08:44:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231131AbjH2GAC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Aug 2023 02:00:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45888 "EHLO
+        id S230136AbjH2IoD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Aug 2023 04:44:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233663AbjH2F7i (ORCPT
+        with ESMTP id S231292AbjH2Inx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Aug 2023 01:59:38 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B45C610E
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 22:59:34 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1c0bae4da38so26751645ad.0
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 22:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693288774; x=1693893574; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uw7aXMxiE8vTFTPymrMp+MvNaW+lEP6ixS9BnwKSDuM=;
-        b=vT5lY24HH66FH/JjN17T6am4JNeOJDWVS4kpVRwOz3KOHDo5CWyoQfNy4PWUYzji/s
-         4iaRVwDhxuZ8cjS4Wq/9bP6QLYLSTGR0qp5yZRZpCLBVwswgsJUxOrCbd/hMswZQJruG
-         /lonPdI0Vj3xxWRd4jI7fjwgXymxM1PP8e3Ebt2rv2YbF9W/GT5hLcEY6B0vLnSPBf3c
-         3IxygHrGdord+J8WHoZkDYx2WWQH0Foj+c1SFkRmA/18r7gd9HCm1V1UAVK9b0aDFT9M
-         5+23Q2+oOlKwpBH4UMEdvuPCMGy5T/qDZlFGQ51zUAwb9goSF6uIHw1zEs2D32d+ugwK
-         tn9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693288774; x=1693893574;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uw7aXMxiE8vTFTPymrMp+MvNaW+lEP6ixS9BnwKSDuM=;
-        b=BbVDYbYF8UweeRerP198X4Cp5aXfYKpcf/hSToE92OuIf5n770jJa+oefCif3rzUDQ
-         0y2OO4yzGOb3ek/r8w5+ZVNgQOZISNPROqVadfUoo0GKnp7eSvAkcIeZ9/UuBHNHFaNE
-         BdzcUTzfdcEc7yxJ0z7GvLhyW1J3EZmCLyIqOPZ6hu3OCuV69cItc9wKVPkVdwvAAWL/
-         UAr7LSw0mbtzuyTL98tfj9KbBsgkZzk/kXzsxHHAA9bjWyMAvlDPuhnaXfO4DZm3SE56
-         JZwNwn7cNBZoTROxTEYY+GjbeViH2v4IrsCjsudSeASjvoM0U4lbUcFJkTEbEMBTklSj
-         OBdw==
-X-Gm-Message-State: AOJu0YyPn/8WoVCJC4SDCln31TtURldsuV8GggaaqlQk44UN2uJpr6ay
-        tUcWSVl0LOidw6lupfu2UpX1Pw==
-X-Google-Smtp-Source: AGHT+IHZsexYBSOXCaMDIndYB6MxZkA9lTswJOf40JwCBZROwG+VB0VO+dmFeJSWvWhXpOTthlEp9A==
-X-Received: by 2002:a17:903:22cc:b0:1bb:fcb9:f85 with SMTP id y12-20020a17090322cc00b001bbfcb90f85mr2331114plg.32.1693288774027;
-        Mon, 28 Aug 2023 22:59:34 -0700 (PDT)
-Received: from localhost ([122.172.87.195])
-        by smtp.gmail.com with ESMTPSA id x19-20020a170902821300b001bdd68b3f4bsm8365105pln.295.2023.08.28.22.59.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Aug 2023 22:59:32 -0700 (PDT)
-Date:   Tue, 29 Aug 2023 11:29:30 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rafael@kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bbasu@nvidia.com
-Subject: Re: [Patch] cpufreq: tegra194: fix warning due to missing opp_put
-Message-ID: <20230829055930.csddryecm72ehz3o@vireshk-i7>
-References: <20230828120959.24680-1-sumitg@nvidia.com>
+        Tue, 29 Aug 2023 04:43:53 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2080.outbound.protection.outlook.com [40.107.220.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE94DAD;
+        Tue, 29 Aug 2023 01:43:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BqAnRFiJAvgSinnxkt9ZLeESHv0j5232fmvmhTeoS5H3vmqleWbbVjwD51XjydwCHUOY3jslCXqc4fsqp1lgq7alA5FLA1Njcf2sidMxISp33Fc29NbLoSYmbE/KL9VaW7xPO92fQ4X7seObPLFUHDPyesSuq7pPBpSFvApkpZcRldX/tRWfTucUB0Kx6yOudE+MJDDbZwtrZCv6WODYSHrnbzpJMK2t6vuA2spnHvSuPkLX1of7dMF8NO88vlV0HTIXMapU+jyXCbe+GZcbkekPEL6J0jnLVJCVVz2GlfL4k0icLc1eFQtt6rG2/H7UAuztxGPOumIyTRbDjb0AUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CnUigKOqD6XqO606esSg1381KmsLvK4vrtXMs1cFWUU=;
+ b=Hm6XGIyu2eTqNJlBprr+FV2y7MSz2qZeKw3oy3EBO5aJYO5qfXcVfx1wZXJLHx7zgOhzRdT6HzxdNEATiSe/VGGCKk3t3Fi9Xy4TCyXlKLLkBA8f0t87qUSY9cyHS0dr0gtqHRyLSqgiV1V6mtxIzRxESVeCgETDIchrc+1E2gnB4eydRZETdiL4VpYFBF1h8ptsCQ/IkjpMJUFSuI+dtrT+Ed1PpmzBDezKXddeAkdvlFqcgsKAwpLlfJtmOuOZjO0fyj50g5hQx3BYlmqye7C6WlVmexlxBOl1/o0wo1PD0cgie2/+ox6ucjCEkGcSgjnRwN4eXgEmhVkRV2Bg/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CnUigKOqD6XqO606esSg1381KmsLvK4vrtXMs1cFWUU=;
+ b=NaaK9mIGxfhAZx8Zd4CLC+8fPguMiA3BRDZ8lWY82nuSc3HstbglvW1VBhfgP2PsNN1Uwc/dg48qnEhfdK5GZ5S2MLaqT9OVUXYgE0V1BYhJFpfXdD37SKX0YmS+z/eaPrkuLc9SXA2mO1kxIRKUWk1n8wq5R4MSdPgUUC0WXnIU+2h9thELdXvHEurcDjcV8pcQvYZpgPvxBsINsd4FUJ8KNeAjYVvNd9x7leKW9sBA5TkRd+oiV7c/j2Gup0sdktm4xRUD9jcNdOQRNACpHxuh4rOeESlrpq2gl1Eg2NLM+SatZsmHQxMwzeugfvuQHmZ5aVl27W+O5QYwcvqh9Q==
+Received: from MW4PR04CA0378.namprd04.prod.outlook.com (2603:10b6:303:81::23)
+ by MW4PR12MB7030.namprd12.prod.outlook.com (2603:10b6:303:20a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.35; Tue, 29 Aug
+ 2023 08:43:46 +0000
+Received: from CO1PEPF000044F0.namprd05.prod.outlook.com
+ (2603:10b6:303:81:cafe::4) by MW4PR04CA0378.outlook.office365.com
+ (2603:10b6:303:81::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.18 via Frontend
+ Transport; Tue, 29 Aug 2023 08:43:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000044F0.mail.protection.outlook.com (10.167.241.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6745.16 via Frontend Transport; Tue, 29 Aug 2023 08:43:46 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 29 Aug 2023
+ 01:43:30 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Tue, 29 Aug
+ 2023 01:43:30 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Tue, 29 Aug 2023 01:43:27 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>,
+        <sumitg@nvidia.com>
+Subject: [Patch v2] cpufreq: tegra194: fix warning due to missing opp_put
+Date:   Tue, 29 Aug 2023 14:13:22 +0530
+Message-ID: <20230829084322.30558-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230828120959.24680-1-sumitg@nvidia.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F0:EE_|MW4PR12MB7030:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9800d66-6e9e-4305-d94b-08dba86c0ee2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: lW6q9AasPlnXWhb0czsAjvqJA64pmYgQoFadP7n7yY8t5Ma1XskjtYHb6xvNaljx01TqIiFKTgpUXJkGaXEyrWtwtI39S5ynJHYVC40NyJOnJFxNVx7YSI8VCxFcmILsl+wqzP8nVNumVQigyoGiTuvOrv+oXAOn9iMvUpqWcpI4BEVHxAre3OXhGTTj3hL+fwi/qfqnEXtKGlKsKELlSdjl4Qx7QQOKTQBdixJcNi6O39bJd7/7Zmem3WOyR8LhsaaCUExTtnRvFhwfSdZmjYiRepgN9qFfpSifTz51B2rnRRX+rJXFnPkosUFYXOZMRbCE7MEBIlunjGIsJMXjz+hzNq3A/voymVq1cYDxngUHy5ujrnjpIgJOB/eG9v/+giAziR2p8VsoFfJluGEM93lp/+/MzIeD+tngrZv3Cd9qr7AFPpjV18P5IW/p+wpBkDn+1kHe+xwOgMobvae0gadaZs59pGOSRMT0RX+fo8qb39fRb9wJvEFo0oCF6w6dMEu514IVOTc9NgfgQ2AZjCiUk0xJyOy43DSzv5Yrl/omNn/I05CmNynR6Qwx3/tQeUEVrHNkC6QVRdMnhXt0eu+auR47FQz7IzTBbt9BLXmzmI+jM2/gk4PsCcTSFN6hpwh6NzHfYWbFuxkHEOGmxhCjTveafGsccZmVgO+2FmKlXs79uodiYbAgINNWsbZ9be29UxpfFmcQm3H/RlFAp2f3VYUv3qtrrJ/ZwdwJHw8=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(136003)(396003)(39860400002)(376002)(451199024)(1800799009)(186009)(82310400011)(46966006)(36840700001)(40470700004)(82740400003)(6666004)(7696005)(36756003)(40460700003)(86362001)(7636003)(356005)(40480700001)(36860700001)(47076005)(2616005)(107886003)(1076003)(2906002)(336012)(426003)(26005)(83380400001)(478600001)(110136005)(41300700001)(70586007)(54906003)(70206006)(8936002)(8676002)(4326008)(5660300002)(316002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2023 08:43:46.1801
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9800d66-6e9e-4305-d94b-08dba86c0ee2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044F0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7030
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28-08-23, 17:39, Sumit Gupta wrote:
-> Fix the warning due to missing dev_pm_opp_put() call and hence
-> wrong refcount value. This causes below warning message when
-> trying to remove the module.
-> 
->  Call trace:
->   dev_pm_opp_put_opp_table+0x154/0x15c
->   dev_pm_opp_remove_table+0x34/0xa0
->   _dev_pm_opp_cpumask_remove_table+0x7c/0xbc
->   dev_pm_opp_of_cpumask_remove_table+0x10/0x18
->   tegra194_cpufreq_exit+0x24/0x34 [tegra194_cpufreq]
->   cpufreq_remove_dev+0xa8/0xf8
->   subsys_interface_unregister+0x90/0xe8
->   cpufreq_unregister_driver+0x54/0x9c
->   tegra194_cpufreq_remove+0x18/0x2c [tegra194_cpufreq]
->   platform_remove+0x24/0x74
->   device_remove+0x48/0x78
->   device_release_driver_internal+0xc8/0x160
->   driver_detach+0x4c/0x90
->   bus_remove_driver+0x68/0xb8
->   driver_unregister+0x2c/0x58
->   platform_driver_unregister+0x10/0x18
->   tegra194_ccplex_driver_exit+0x14/0x1e0 [tegra194_cpufreq]
->   __arm64_sys_delete_module+0x184/0x270
-> 
-> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  drivers/cpufreq/tegra194-cpufreq.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-> index 88ef5e57ccd0..f63f7a6c2034 100644
-> --- a/drivers/cpufreq/tegra194-cpufreq.c
-> +++ b/drivers/cpufreq/tegra194-cpufreq.c
-> @@ -454,6 +454,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+Fix the warning due to missing dev_pm_opp_put() call and hence
+wrong refcount value. This causes below warning message when
+trying to remove the module.
 
-You need to put the OPP here, even if this fails.
+ Call trace:
+  dev_pm_opp_put_opp_table+0x154/0x15c
+  dev_pm_opp_remove_table+0x34/0xa0
+  _dev_pm_opp_cpumask_remove_table+0x7c/0xbc
+  dev_pm_opp_of_cpumask_remove_table+0x10/0x18
+  tegra194_cpufreq_exit+0x24/0x34 [tegra194_cpufreq]
+  cpufreq_remove_dev+0xa8/0xf8
+  subsys_interface_unregister+0x90/0xe8
+  cpufreq_unregister_driver+0x54/0x9c
+  tegra194_cpufreq_remove+0x18/0x2c [tegra194_cpufreq]
+  platform_remove+0x24/0x74
+  device_remove+0x48/0x78
+  device_release_driver_internal+0xc8/0x160
+  driver_detach+0x4c/0x90
+  bus_remove_driver+0x68/0xb8
+  driver_unregister+0x2c/0x58
+  platform_driver_unregister+0x10/0x18
+  tegra194_ccplex_driver_exit+0x14/0x1e0 [tegra194_cpufreq]
+  __arm64_sys_delete_module+0x184/0x270
 
->  		if (ret < 0)
->  			return ret;
->  
-> +		dev_pm_opp_put(opp);
-> +
->  		freq_table[j].driver_data = pos->driver_data;
->  		freq_table[j].frequency = pos->frequency;
->  		j++;
-> -- 
-> 2.17.1
+Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/cpufreq/tegra194-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index 88ef5e57ccd0..9d7e1d58f6e5 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -450,6 +450,7 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+ 		if (IS_ERR(opp))
+ 			continue;
+ 
++		dev_pm_opp_put(opp);
+ 		ret = dev_pm_opp_enable(cpu_dev, pos->frequency * KHZ);
+ 		if (ret < 0)
+ 			return ret;
 -- 
-viresh
+2.17.1
+
