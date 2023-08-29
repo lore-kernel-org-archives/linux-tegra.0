@@ -2,150 +2,252 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B8EC83F19
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Aug 2023 12:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3719BC83F19
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Aug 2023 13:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235605AbjH2MxM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Aug 2023 08:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39738 "EHLO
+        id S236006AbjH2N2R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Aug 2023 09:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235797AbjH2Mw7 (ORCPT
+        with ESMTP id S236136AbjH2N17 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Aug 2023 08:52:59 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62FA1BD;
-        Tue, 29 Aug 2023 05:52:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gfZVwBVYsIEVH++KgArJ7PEM0I61NxJeJ0lFU1GqLfuEoM/3MgGyLQ6UHW39NVEVcsVxOxv3Ji4n8zu/FwXnioqLRK1qdNm5RKAElxeF4suLSCiTsKW89pvGjJ9rVOsHoLHMjbaqjfTY2WgswRuW3Lv3pM0LkwSEpktywaRg2BC3jMAEbKXDb3KM9rRgDQC1PR7y9b0u9ejIzd9o3cbXSS6OmNTZov80C7ypnFQ9gOugFyBWHv/avgmSytYt1BG6QkxxQQSF+3nZb8u/fk8IVWvxKURVzyR9e6ohfJOsnR4BalpqDBV06S2y65J7bXrgRBS2Yl5e5dM72qxXlG3uVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1KuH1X/ijEDlVCUydDWQzNtfL8rNA5T1aHw3XUL1lW8=;
- b=lnL+YHGgGBO1sQ506EZCWaictYWijI3pM3+AzYbnLs1d4ujfrXNjHin7ePdacVzYs+UXuwUzI4wnd+6QBEeVhAmCyHwJmPILEJmeRE6HU7xAswEbVEAb5iXBgIfyt+XSmOHUIDudNFsua41PNdIS4INVvpNqeC8L7a/aDanV2iFlBKMTKdZODGntvcq+DHPbcw/obcreJ0CvlqZLZ4ij5NMLaECMYT8ojM/fHTC/o3mQ+hagEXVEQuPS5H35Mut5pA6+tm9t0C9Jf4E0jowAqpOGWnk1Xz/wAXfu4vBk12xe+suVuPbzr7pZ9CseRCbSVtXBSGYF0EaGr8vtKxR8ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1KuH1X/ijEDlVCUydDWQzNtfL8rNA5T1aHw3XUL1lW8=;
- b=bJZ/q1OV0xCbE+0n+U6nt7ozYsG72p7ZnjEJ0zFnMKXztmk9O9MjBJUaYD+3KMf6+7hshfr8Or6m8WR0cQG+/y820VqOkG9mptDBvR/ovLHsLlVIQpUntY+k4YzEc2HYu0ndUg1df3xfKJf6XczG44MCKX+R3NJwf2aFUREEuq55d1kXKX2TsuyjtYhMFnEQ3frHRs43bmjqoHKm2uEkso1b3QaiXlNttEQGGBeOn8uUw/u7nD8aw0+PmpoPqYu8++sYOnow6sNo6EVwXLtnKpXgsjHEp145kgZvQeYC9+cx5DOOGN7W8yH/5kxJI6K5btMIEwki3tqBvu8abLT8VA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- SA3PR12MB9227.namprd12.prod.outlook.com (2603:10b6:806:398::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.34; Tue, 29 Aug
- 2023 12:52:51 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::1d1b:2ca4:1600:a865]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::1d1b:2ca4:1600:a865%4]) with mapi id 15.20.6699.035; Tue, 29 Aug 2023
- 12:52:51 +0000
-Message-ID: <b6ca9be7-49b2-f72e-b51f-b778786e0646@nvidia.com>
-Date:   Tue, 29 Aug 2023 13:52:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH V2 0/4] hwmon: ina3221: Add selective summation support
-Content-Language: en-US
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Ninad Malwade <nmalwade@nvidia.com>
+        Tue, 29 Aug 2023 09:27:59 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61EEE1BB;
+        Tue, 29 Aug 2023 06:27:56 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1bf6ea270b2so26878315ad.0;
+        Tue, 29 Aug 2023 06:27:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1693315676; x=1693920476;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KZdC0qkZ5z6tjDALZF8Uye7Xemxb62imgRWO87UTMUk=;
+        b=ssZZUzKZL9fdA5DErd5YFknCsswcvJz6I5/0w5BD3TnAc06bmreosNaj92J+aHMWW3
+         BFO0uz4pmu2NSjHW7TKYaF8QLD7hf/mefNKDMtgJqRU/w33552jqAWxeSlC8/HGaUUCX
+         B1eaHogYioTPsaW3IkDUl/mpP0RXv69ySuToPE6Kgw4tTh4Z2ciaEfJGyseEJyPS1ybl
+         DAZMt7wi6nQTmKsDlOpq+X3Z4qmQtB6a9gbixxH35O+/2Q1McHPorKtJqRUgZ/G5OqG+
+         iHD3/TjX5GjElxoU6GgzDsS05nx1UgXNTVldl5cWhPhIet/x1LYeQ4lOEg5xPTqskXNP
+         GUqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693315676; x=1693920476;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KZdC0qkZ5z6tjDALZF8Uye7Xemxb62imgRWO87UTMUk=;
+        b=g/Mdr36UcL32+TSHgy5FpK1iVE5P1RO2FsgQYq/3v9Vb48H0y2X+BpQVEF546MOev3
+         oC9UtGfSY/AGJJr3wnVVxJyJEMZyz7f/LadsdzgHvhEJwenrJDfy/eiAAyCc4H+4bBMO
+         h449TtKBVNrBrsY9fV/evgD3LvnHDZBfumoxucHpOvLahOkIRX3e0VjlC3i2DKw2GQdG
+         VeSI4gun4fzOvdtJM/XgPB3NsKPWAvpOaCprv0W3bhQX+RmNTTuSW0MiFV+YH4RZ+CZ5
+         pA6AhaFFFnneFDwb2lYjW4V/mat4vZGFdtKp91qnCpgwmALHFAc+FATgTVd9fZl4lSZk
+         4JPA==
+X-Gm-Message-State: AOJu0YyIhf8iN/fsk5n6cMyj9akQ3A9AtampqjGB4R5Nt40f1Bph4Ko8
+        DGyKWZM3vuIwoJV2EttgX58=
+X-Google-Smtp-Source: AGHT+IGSw9CjWFGZ/PIdZRDXukv7MXzSaqzYnrVZbhrW3L010Op/nnF9OhcpBvdyuVos3xn8N0ZoJQ==
+X-Received: by 2002:a17:903:11cc:b0:1bf:3c10:1d72 with SMTP id q12-20020a17090311cc00b001bf3c101d72mr28313286plh.66.1693315675608;
+        Tue, 29 Aug 2023 06:27:55 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id ix5-20020a170902f80500b001bde65894d5sm9301145plb.109.2023.08.29.06.27.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Aug 2023 06:27:54 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 29 Aug 2023 06:27:53 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ninad Malwade <nmalwade@nvidia.com>
 Cc:     jdelvare@suse.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        thierry.reding@gmail.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Rajkumar Kasirajan <rkasirajan@nvidia.com>
+Subject: Re: [PATCH V2 3/4] hwmon: ina3221: add support for summation channel
+ control
+Message-ID: <035044de-be6f-45c9-911f-44799ddf2fff@roeck-us.net>
 References: <20230825164249.22860-1-nmalwade@nvidia.com>
- <482ac044-e163-478c-8e67-5f03d7dc7820@roeck-us.net>
-From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <482ac044-e163-478c-8e67-5f03d7dc7820@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO3P123CA0014.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:ba::19) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+ <20230825164249.22860-4-nmalwade@nvidia.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|SA3PR12MB9227:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31f4b545-78cc-46da-45cd-08dba88edaa0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: S+ntCnvRSEFJLymuMG9FPgyn0qr4DEGLrzIGdYQTO4l8lbCUM/me7/DuVVHDi5v/HfHMYIIICH2VgAhNtkNTgqDyApt0v/nEIz2mVrZUf7BNAU9S69YDpksol89v/RR1edhfe4rowCaM8xdL526kojdJ25pnUTTTFC0JHpELcUje2TrvukJ5qaORhPFmgTlsBZT7nvVY0ahHLQ1o4RgjfcHb01RJ0tz6I2tJTrzGtox41o4BWXJJAa0eH0GGI5JAablLpGXw/6gH3t8doPgg8EBmzeO3xxvLJgA0oVSJrapqGf8TPIR1eMMO8/ROVoS2yIDYtm82Xx0pyZ7uAUB8VvfI8u4PfxjRK0QQdchoAiOEjt6SSjhXyLhS2v+RlGpaehZlzSGVC9CcCGX1oW9OXmKkWe8Td5z2hYT+zJoxpdlzgtUHeeBMRQ73YkbXPfMXRt3Y326GG6i0X90MQvRhaFq3wqRja3ICJPL33mLEndbXmu2Qv9wsjQDSmd9tLzl6P5sInDahkNasr0DvUVo/spH9XHdJ73KvKZ3FJ3cMo+teXpW+TzpJuTB+pU5IZA72ELxWGDsRSY5CXe1OqdS48Z9DjD+USLwnvn5DqftKzymKa2Je5iXMrHqlCGnEJq1F3ikZjLSbPTAcqGZW4uWq5w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(366004)(376002)(39860400002)(136003)(1800799009)(451199024)(186009)(478600001)(83380400001)(31686004)(26005)(2616005)(6486002)(6512007)(53546011)(55236004)(6506007)(6666004)(31696002)(86362001)(2906002)(4744005)(316002)(110136005)(6636002)(8936002)(5660300002)(66946007)(38100700002)(4326008)(8676002)(66556008)(41300700001)(36756003)(66476007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T3pOKzNCU1lpd2Vkdm5XNTNoSGhnWlhFNVJlVkN3U0ZMc1ZnQThzZS9vVEp5?=
- =?utf-8?B?K3BXcHNoZHpaMmdMdkg1dlVldkpLTWlLR28yaXR6anBzL1BnZVFyQ0dzbTVp?=
- =?utf-8?B?aHIrWmhOajZuQUF6RGVVMWJqRzJVMHAwejNJb0lmVlBJMTBnRTg1K3ZXcnFI?=
- =?utf-8?B?Q0RlZnc3R0pjTFVJaWYwdTBybG9Db1Z4d2RKQnAydUlUR2NPVjdlWmZ5WTJF?=
- =?utf-8?B?bWJuUkJkOHBvRGhCTXF5dEN3UTM3SHk1SUhNRE8ydktQbWpheTB2c2F0aVl1?=
- =?utf-8?B?SmZ1TEZKcU9GZHRENExCcEluOWlMWWRZZlU2bGNIYU9ZM2t3WFZWbUxNT3E1?=
- =?utf-8?B?dXA1a3NqYnRLSEYwZG1adnA4Uy9wYzlRTzJkV3Vpd3paamIzZEtqR21NQi95?=
- =?utf-8?B?QWJzS1VERGtyM2JzQ0xuWWw4bHZnc3ZBOUZiNWNOWERnUkNEU2QwN1c1aW5X?=
- =?utf-8?B?UFIyeEIvVld6eVpyNWMzcUw1WGVUS2FpM2Z1cVl4L3cwUnVnbklUYU1ySndu?=
- =?utf-8?B?eU1uWXdVTXNFVTBINHZac1JFRGJoNU53NDA1anhSWlRFeVpMREdpdVB1OElo?=
- =?utf-8?B?T0lZVmFFQkRIWkdPd1I1Uk1kNVBERGQxQ2VqNFh6U2VQcmFzdTM1d2pVWVpM?=
- =?utf-8?B?Z0EvMnUvcUpyK2xxV1FST0E5WGl4Q2hTVmt3MG51WjJHYnFxSHJRQkczTHFr?=
- =?utf-8?B?RkNFb01yeVQ2K0taTWRwZGJXVDBZR0FPNFgyVUZWNTlKMHQxYkZoeG9NR0pw?=
- =?utf-8?B?cWdqQWM2cU9SU2pLcWpWZWNQVmxDSnBLd3NLb1R3bjE3UUl3cTBrMzdTTkFv?=
- =?utf-8?B?K0Y5cFgwYXJsSlNOZ2phTTkzVmpZTFhTT2QvVXJlb0lMM0F6RkNuMmZ0ZUhl?=
- =?utf-8?B?aDBUWVZUamVXWTRpK3hTTnMxYWZraGtUQjNxbk44N0Z6bWo4QUFKakZFcTIw?=
- =?utf-8?B?SzExQnpTVDdBTzFnUHREWEFHaHJXekJ3bHFzTzQ1UmgwM3FucHIzTXVwN2ww?=
- =?utf-8?B?Rnl0OEtrbEpuUDI1a29UenJDOG0rNUFSbnZaY21qazFBNXhDWWovMjJBeXFC?=
- =?utf-8?B?bmZ1b0Era1pWN0w4NCsxUXZZWGsyOTVFTE11L2FwR2pQQ3JTeWdtZjZlS1ZU?=
- =?utf-8?B?V1BzU3pQaTMxelBQcC9hazl2UUhJRkVMV0R4WWVTanZIaDlJNkRQRHFIRzZ1?=
- =?utf-8?B?OEZId09ZVEhIVm5Tc3hCaFFGcm9qNmhTWWI3ZUVBT2FCaEN3TnRCc2ZrajZ6?=
- =?utf-8?B?eGZ2U0tOWUh6RHJVdzQ5NzJsUFBxT01nZUREV29lK2J1TEpyL3lQS0dTa2xz?=
- =?utf-8?B?SmgxUmRFdHZFTzk2MXBTbFdBOFlORUJXaG5QMFdtbm5yK2lSRk92QlFjTndQ?=
- =?utf-8?B?MFVkT1hiWlBwYUpPV0RLdXphTG56ZTdDR1pmZ1RURXVqczMxcVV4ZE1pRnVI?=
- =?utf-8?B?RWVpNUxBTzFHcEVoNzAvN1kraE1lZUNwZ2x5NjRsR1BZTkxveU9DODZmRG0r?=
- =?utf-8?B?anR5dXdBWjd3ajl2N015QXphekszZFpYSW56Q2VJWEJFZFRGUVBuNUwxUHRG?=
- =?utf-8?B?MVhjMlhRMVV2ZkFOczBHc1dBNGRJdkZzYjQ5UzZ0N3ArOFlrQ1o5MGgvNDBz?=
- =?utf-8?B?SkpuMlpEMWtScForaWpuVjNYU0wzZkJzWVFGMFBSUXo5ekdWUXBsRW1HQ29X?=
- =?utf-8?B?S3dRMVVJdmRjblVhbEFhNmZzSys5d2ZpNXJMTEFhcEVXbGlKaTlHZEc1VkRH?=
- =?utf-8?B?dW5aNWxuWGpZcnRRN3NzUFRPMk1BRk9hUmc2TzJKdTFWK1VBNGJwOE9Vd21m?=
- =?utf-8?B?Y2ozY3FtZ3RidW56N2c1YlVRY3lqbGRtUzVKQVBpREZFVXNsSXFlQUZsbExF?=
- =?utf-8?B?VUsvVFdRQ1NKVEpKWjNBcFVTUFp1aXdFeFE1c0xTZUxnZCtyT2dGTXBKOEkv?=
- =?utf-8?B?cnBqQU80TVRLVFVoUUN2MlhuZUN0UFZ5RWY0c3UzSWRKUDI1WGNGeU1WeGdR?=
- =?utf-8?B?L0REUUcyVThCOUliV3BkcTVhMnd4TnlvWDlZM2kzdU5FMzVjNXcvSmdPMk9O?=
- =?utf-8?B?N1UwcStDT21GZFRNaUdNUStJNlFkUDQrSzZwZk0xMHZKdm9wYUFZbWxXWGRZ?=
- =?utf-8?B?a3FOamNOaUdwQml4RXhrdjlRNktjUXdnV2MxWGN0M0F4R3doMjRKSGI5R1pj?=
- =?utf-8?B?emc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31f4b545-78cc-46da-45cd-08dba88edaa0
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2023 12:52:51.3894
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M9TycDvc1+Wgf6bhDppCYu8vYWXeGAjecIps7WWLQK+VYqwO2v64Ogts7RiC8bF+/IzHm1B6cpiwK2CdRLi2Bg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9227
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230825164249.22860-4-nmalwade@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 25/08/2023 18:11, Guenter Roeck wrote:
-> On Sat, Aug 26, 2023 at 12:42:45AM +0800, Ninad Malwade wrote:
->> The current INA3221 driver always sums the shunt voltage for all enabled
->> channels regardless of the shunt-resistor used for each channel. Summing
->> the shunt-voltage for channels is only meaningful if the shunt resistor
->> is the same for each channel. This series adds device-tree support to
->> allow which channels are summed in device-tree.
->>
+On Sat, Aug 26, 2023 at 12:42:48AM +0800, Ninad Malwade wrote:
+> The INA3221 allows the Critical alert pin to be controlled
+> by the summation control function. This function adds the
+> single shunt-voltage conversions for the desired channels
+> in order to compare the combined sum to the programmed limit.
+> The Shunt-Voltage Sum Limit register contains the programmed
+> value that is compared to the value in the Shunt-Voltage Sum
+> register in order to determine if the total summed limit is
+> exceeded. If the shunt-voltage sum limit value is exceeded,
+> the Critical alert pin pulls low.
 > 
-> V2, but no change log. I am not going to review this series.
+> For the summation limit to have a meaningful value,
+> we have to use the same shunt-resistor value on all included
+> channels. Unless equal shunt-resistor values are used for
+> each channel, we can't use summation control function to add
+> the individual conversion values directly together in the
+> Shunt-Voltage Sum register to report the total current.
+> 
+> To address this we add support to BYPASS channels
+> via kernel device tree property "summation-bypass".
+> 
+> The channel which has this property would be excluded from
+> the calculation of summation control function, so we can easily
+> exclude the one which uses different shunt-resistor value or
+> bus voltage.
+> 
+> For example, summation control function calculates
+> Shunt-Voltage Sum like
+> - input_shunt_voltage_summaion = input_shunt_voltage_channel1
 
-Sorry about that the changelog is ...
+summation
 
-Changes since V1:
-- Added patch to convert dt-binding to json
-- Added patch to add new dt property for bypassing/disabling summation
-   support for a channel
-- Added patch to populate ina3221 devices for Tegra234 boards
-- Updated summation bypass patch to display summation status via sysfs
+>                                + input_shunt_voltage_channel2
+>                                + input_shunt_voltage_channel3
+> 
+> But if we want the summation to consider only channel1
+> and channel3, we can add 'summation-bypass' property
+> in device tree node of channel2.
+> 
+> Then the calculation will skip channel2.
+> - input_shunt_voltage_summaion = input_shunt_voltage_channel1
+>                                + input_shunt_voltage_channel3
+> 
+summation
 
-Jon
+> Please note that we only want the channel to be skipped
+> for summation control function rather than completely disabled.
+> Therefore, even if we add the device tree node, the functionality
+> of the single channel would still be retained.
+> 
+> The below sysfs nodes are added to check if the channel is included
+> or excluded from the summation control function.
+> 
+> in*_sum_bypass = 0 --> channel voltage is included for sum of
+>                        shunt voltages.
+> 
+> in*_sum_bypass = 1 --> channel voltage is excluded for sum
+>                        of shunt voltages.
+> 
+This is not an acceptable sysfs attribute. Use debugfs.
 
--- 
-nvpublic
+> Signed-off-by: Rajkumar Kasirajan <rkasirajan@nvidia.com>
+> Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
+> ---
+>  drivers/hwmon/ina3221.c | 39 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+> index 5ab944056ec0..093ebf9f1f8d 100644
+> --- a/drivers/hwmon/ina3221.c
+> +++ b/drivers/hwmon/ina3221.c
+> @@ -104,6 +104,7 @@ struct ina3221_input {
+>  	const char *label;
+>  	int shunt_resistor;
+>  	bool disconnected;
+> +	bool summation_bypass;
+>  };
+>  
+>  /**
+> @@ -125,6 +126,7 @@ struct ina3221_data {
+>  	struct mutex lock;
+>  	u32 reg_config;
+>  	int summation_shunt_resistor;
+> +	u32 summation_channel_control;
+>  
+>  	bool single_shot;
+>  };
+> @@ -154,7 +156,8 @@ static inline int ina3221_summation_shunt_resistor(struct ina3221_data *ina)
+>  	int i, shunt_resistor = 0;
+>  
+>  	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
+> -		if (input[i].disconnected || !input[i].shunt_resistor)
+> +		if (input[i].disconnected || !input[i].shunt_resistor ||
+> +		    input[i].summation_bypass)
+>  			continue;
+>  		if (!shunt_resistor) {
+>  			/* Found the reference shunt resistor value */
+> @@ -731,10 +734,29 @@ static SENSOR_DEVICE_ATTR_RW(shunt1_resistor, ina3221_shunt, INA3221_CHANNEL1);
+>  static SENSOR_DEVICE_ATTR_RW(shunt2_resistor, ina3221_shunt, INA3221_CHANNEL2);
+>  static SENSOR_DEVICE_ATTR_RW(shunt3_resistor, ina3221_shunt, INA3221_CHANNEL3);
+>  
+> +static ssize_t ina3221_summation_bypass_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+> +	struct ina3221_data *ina = dev_get_drvdata(dev);
+> +	unsigned int channel = sd_attr->index;
+> +	struct ina3221_input *input = &ina->inputs[channel];
+> +
+> +	return sysfs_emit(buf, "%d\n", input->summation_bypass);
+> +}
+> +
+> +/* summation bypass */
+> +static SENSOR_DEVICE_ATTR_RO(in1_sum_bypass, ina3221_summation_bypass, INA3221_CHANNEL1);
+> +static SENSOR_DEVICE_ATTR_RO(in2_sum_bypass, ina3221_summation_bypass, INA3221_CHANNEL2);
+> +static SENSOR_DEVICE_ATTR_RO(in3_sum_bypass, ina3221_summation_bypass, INA3221_CHANNEL3);
+> +
+
+As mentioned, use debugfs to display this information.
+
+>  static struct attribute *ina3221_attrs[] = {
+>  	&sensor_dev_attr_shunt1_resistor.dev_attr.attr,
+>  	&sensor_dev_attr_shunt2_resistor.dev_attr.attr,
+>  	&sensor_dev_attr_shunt3_resistor.dev_attr.attr,
+> +	&sensor_dev_attr_in1_sum_bypass.dev_attr.attr,
+> +	&sensor_dev_attr_in2_sum_bypass.dev_attr.attr,
+> +	&sensor_dev_attr_in3_sum_bypass.dev_attr.attr,
+>  	NULL,
+>  };
+>  ATTRIBUTE_GROUPS(ina3221);
+> @@ -786,6 +808,9 @@ static int ina3221_probe_child_from_dt(struct device *dev,
+>  	/* Save the connected input label if available */
+>  	of_property_read_string(child, "label", &input->label);
+>  
+> +	/* summation channel control */
+> +	input->summation_bypass = of_property_read_bool(child, "summation-bypass");
+> +
+>  	/* Overwrite default shunt resistor value optionally */
+>  	if (!of_property_read_u32(child, "shunt-resistor-micro-ohms", &val)) {
+>  		if (val < 1 || val > INT_MAX) {
+> @@ -873,6 +898,10 @@ static int ina3221_probe(struct i2c_client *client)
+>  
+>  	/* Initialize summation_shunt_resistor for summation channel control */
+>  	ina->summation_shunt_resistor = ina3221_summation_shunt_resistor(ina);
+> +	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
+> +		if (!ina->inputs[i].summation_bypass)
+> +			ina->summation_channel_control |= (BIT(14 - i));
+
+Unnecessary ( ) around BIT().
+
+> +	}
+>  
+>  	ina->pm_dev = dev;
+>  	mutex_init(&ina->lock);
+> @@ -978,13 +1007,13 @@ static int ina3221_resume(struct device *dev)
+>  	/* Initialize summation channel control */
+>  	if (ina->summation_shunt_resistor) {
+>  		/*
+> -		 * Take all three channels into summation by default
+> -		 * Shunt measurements of disconnected channels should
+> -		 * be 0, so it does not matter for summation.
+> +		 * Sum only channels that are not 'bypassed' for summation
+> +		 * by default. Shunt measurements of disconnected channels
+
+Drop "by default".
+
+> +		 * should be 0, so it does not matter for summation.
+>  		 */
+>  		ret = regmap_update_bits(ina->regmap, INA3221_MASK_ENABLE,
+>  					 INA3221_MASK_ENABLE_SCC_MASK,
+> -					 INA3221_MASK_ENABLE_SCC_MASK);
+> +					 ina->summation_channel_control);
+>  		if (ret) {
+>  			dev_err(dev, "Unable to control summation channel\n");
+>  			return ret;
+> -- 
+> 2.17.1
+> 
