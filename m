@@ -2,143 +2,119 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A559C71153
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Aug 2023 23:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F31C71153
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Aug 2023 06:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234339AbjH1XZI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Aug 2023 19:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36924 "EHLO
+        id S231131AbjH2GAC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Aug 2023 02:00:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234346AbjH1XYz (ORCPT
+        with ESMTP id S233663AbjH2F7i (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Aug 2023 19:24:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A04E811C
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 16:24:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693265048;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xTlRxnsNejmw67GltYX+utAoy4aZnJxgNkm5+nl9i5c=;
-        b=Bi3gKJd+g2cFzeUb3xoWBbqg3PReQO0xy4NAvDXlAGc7wy/Z1J0u5hHt8AKbj/LmEAU4Ql
-        5vZHLAxJf4eGIZZMHr6QdpxqwPRNdfNBQPkf3OZrXnIn0w+ubYSYKE4O7j912j/47F/UVD
-        dyzXjZuQZb32WGy4M7dt97lVrPsVv4Q=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-110-Om1fuVwSNiyiluldIhKhBg-1; Mon, 28 Aug 2023 19:24:07 -0400
-X-MC-Unique: Om1fuVwSNiyiluldIhKhBg-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-56f75e70190so2849709a12.3
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 16:24:07 -0700 (PDT)
+        Tue, 29 Aug 2023 01:59:38 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B45C610E
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 22:59:34 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1c0bae4da38so26751645ad.0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Aug 2023 22:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693288774; x=1693893574; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uw7aXMxiE8vTFTPymrMp+MvNaW+lEP6ixS9BnwKSDuM=;
+        b=vT5lY24HH66FH/JjN17T6am4JNeOJDWVS4kpVRwOz3KOHDo5CWyoQfNy4PWUYzji/s
+         4iaRVwDhxuZ8cjS4Wq/9bP6QLYLSTGR0qp5yZRZpCLBVwswgsJUxOrCbd/hMswZQJruG
+         /lonPdI0Vj3xxWRd4jI7fjwgXymxM1PP8e3Ebt2rv2YbF9W/GT5hLcEY6B0vLnSPBf3c
+         3IxygHrGdord+J8WHoZkDYx2WWQH0Foj+c1SFkRmA/18r7gd9HCm1V1UAVK9b0aDFT9M
+         5+23Q2+oOlKwpBH4UMEdvuPCMGy5T/qDZlFGQ51zUAwb9goSF6uIHw1zEs2D32d+ugwK
+         tn9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693265046; x=1693869846;
+        d=1e100.net; s=20221208; t=1693288774; x=1693893574;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xTlRxnsNejmw67GltYX+utAoy4aZnJxgNkm5+nl9i5c=;
-        b=I/oQ/GrWO9m7r15OutqSn94oAvzVz3BgmLsem7rwip+W/P3/BEQ69snkAzn8Ho/oKL
-         mMDCATrbLwUmraaiAJzWyhvdUnhhAd7Kr+muudXKpsBuEy4heZM+AVwd8AvjNsRlGptb
-         VOtmDi2+FjfJZjR+pfRKOmqffWkFPBI3iHvBcblDDZKgb1+yNn/9uy3xDsIFHz6HrRsH
-         C+hH+xGWpaVCCnOY4vfOSMOS1QljN9BefUq/aojcUgeefucxlg1mZ6h/yJ72jkUT9ZEG
-         LnR95Zii6RLTwChPF7xhvenlF5QQPkM9ALpXUoKW9u2oPkbo09IrBGM3PTVjQN6WEbWJ
-         c13Q==
-X-Gm-Message-State: AOJu0YwNQwlDwukhinAvQ7txgKuz5mj4SOsLybfBAtFHfFlJxezZfWab
-        45hj/AjKyZ1Tn/qJW7yVZgqm5rKNBdNCZPn0UMV5yVUl9Kem/E2Ydx5QHC77R/heIYT5jJP2BkX
-        jtqUhIMO7yT6Q9NKO8lp28jTW3py8RRURBw==
-X-Received: by 2002:a05:6a20:138f:b0:10c:7c72:bdf9 with SMTP id hn15-20020a056a20138f00b0010c7c72bdf9mr18329543pzc.29.1693265045858;
-        Mon, 28 Aug 2023 16:24:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8Ty56TNbGFuBUAvk0gJFhf9IoSXDvKLMofXm6bHW4BVTeieXHXsUmxMoZ3DKq2KwFtbABPg==
-X-Received: by 2002:a05:6a20:138f:b0:10c:7c72:bdf9 with SMTP id hn15-20020a056a20138f00b0010c7c72bdf9mr18329511pzc.29.1693265045554;
-        Mon, 28 Aug 2023 16:24:05 -0700 (PDT)
-Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id v12-20020a170902b7cc00b001993a1fce7bsm7913930plz.196.2023.08.28.16.24.04
+        bh=uw7aXMxiE8vTFTPymrMp+MvNaW+lEP6ixS9BnwKSDuM=;
+        b=BbVDYbYF8UweeRerP198X4Cp5aXfYKpcf/hSToE92OuIf5n770jJa+oefCif3rzUDQ
+         0y2OO4yzGOb3ek/r8w5+ZVNgQOZISNPROqVadfUoo0GKnp7eSvAkcIeZ9/UuBHNHFaNE
+         BdzcUTzfdcEc7yxJ0z7GvLhyW1J3EZmCLyIqOPZ6hu3OCuV69cItc9wKVPkVdwvAAWL/
+         UAr7LSw0mbtzuyTL98tfj9KbBsgkZzk/kXzsxHHAA9bjWyMAvlDPuhnaXfO4DZm3SE56
+         JZwNwn7cNBZoTROxTEYY+GjbeViH2v4IrsCjsudSeASjvoM0U4lbUcFJkTEbEMBTklSj
+         OBdw==
+X-Gm-Message-State: AOJu0YyPn/8WoVCJC4SDCln31TtURldsuV8GggaaqlQk44UN2uJpr6ay
+        tUcWSVl0LOidw6lupfu2UpX1Pw==
+X-Google-Smtp-Source: AGHT+IHZsexYBSOXCaMDIndYB6MxZkA9lTswJOf40JwCBZROwG+VB0VO+dmFeJSWvWhXpOTthlEp9A==
+X-Received: by 2002:a17:903:22cc:b0:1bb:fcb9:f85 with SMTP id y12-20020a17090322cc00b001bbfcb90f85mr2331114plg.32.1693288774027;
+        Mon, 28 Aug 2023 22:59:34 -0700 (PDT)
+Received: from localhost ([122.172.87.195])
+        by smtp.gmail.com with ESMTPSA id x19-20020a170902821300b001bdd68b3f4bsm8365105pln.295.2023.08.28.22.59.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Aug 2023 16:24:05 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 16:24:04 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v7 24/24] iommu: Convert remaining simple drivers to
- domain_alloc_paging()
-Message-ID: <4pidxw6zc2sk2sypjdobusdrdbpwa7gddifxwnm2c2sdtfsp7t@yg3hup2mhpbr>
-References: <0-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
- <24-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+        Mon, 28 Aug 2023 22:59:32 -0700 (PDT)
+Date:   Tue, 29 Aug 2023 11:29:30 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rafael@kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bbasu@nvidia.com
+Subject: Re: [Patch] cpufreq: tegra194: fix warning due to missing opp_put
+Message-ID: <20230829055930.csddryecm72ehz3o@vireshk-i7>
+References: <20230828120959.24680-1-sumitg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <24-v7-de04a3217c48+15055-iommu_all_defdom_jgg@nvidia.com>
+In-Reply-To: <20230828120959.24680-1-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 01:47:38PM -0300, Jason Gunthorpe wrote:
-> These drivers don't support IOMMU_DOMAIN_DMA, so this commit effectively
-> allows them to support that mode.
+On 28-08-23, 17:39, Sumit Gupta wrote:
+> Fix the warning due to missing dev_pm_opp_put() call and hence
+> wrong refcount value. This causes below warning message when
+> trying to remove the module.
 > 
-> The prior work to require default_domains makes this safe because every
-> one of these drivers is either compilation incompatible with dma-iommu.c,
-> or already establishing a default_domain. In both cases alloc_domain()
-> will never be called with IOMMU_DOMAIN_DMA for these drivers so it is safe
-> to drop the test.
+>  Call trace:
+>   dev_pm_opp_put_opp_table+0x154/0x15c
+>   dev_pm_opp_remove_table+0x34/0xa0
+>   _dev_pm_opp_cpumask_remove_table+0x7c/0xbc
+>   dev_pm_opp_of_cpumask_remove_table+0x10/0x18
+>   tegra194_cpufreq_exit+0x24/0x34 [tegra194_cpufreq]
+>   cpufreq_remove_dev+0xa8/0xf8
+>   subsys_interface_unregister+0x90/0xe8
+>   cpufreq_unregister_driver+0x54/0x9c
+>   tegra194_cpufreq_remove+0x18/0x2c [tegra194_cpufreq]
+>   platform_remove+0x24/0x74
+>   device_remove+0x48/0x78
+>   device_release_driver_internal+0xc8/0x160
+>   driver_detach+0x4c/0x90
+>   bus_remove_driver+0x68/0xb8
+>   driver_unregister+0x2c/0x58
+>   platform_driver_unregister+0x10/0x18
+>   tegra194_ccplex_driver_exit+0x14/0x1e0 [tegra194_cpufreq]
+>   __arm64_sys_delete_module+0x184/0x270
 > 
-> Removing these tests clarifies that the domain allocation path is only
-> about the functionality of a paging domain and has nothing to do with
-> policy of how the paging domain is used for UNMANAGED/DMA/DMA_FQ.
-> 
-> Tested-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Tested-by: Steven Price <steven.price@arm.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Nicolin Chen <nicolinc@nvidia.com>
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  drivers/iommu/msm_iommu.c    | 7 ++-----
->  drivers/iommu/mtk_iommu_v1.c | 7 ++-----
->  drivers/iommu/omap-iommu.c   | 7 ++-----
->  drivers/iommu/s390-iommu.c   | 7 ++-----
->  4 files changed, 8 insertions(+), 20 deletions(-)
+>  drivers/cpufreq/tegra194-cpufreq.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+> index 88ef5e57ccd0..f63f7a6c2034 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -454,6 +454,8 @@ static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+You need to put the OPP here, even if this fails.
 
+>  		if (ret < 0)
+>  			return ret;
+>  
+> +		dev_pm_opp_put(opp);
+> +
+>  		freq_table[j].driver_data = pos->driver_data;
+>  		freq_table[j].frequency = pos->frequency;
+>  		j++;
+> -- 
+> 2.17.1
+
+-- 
+viresh
