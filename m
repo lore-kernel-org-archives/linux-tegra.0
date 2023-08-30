@@ -2,138 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC866C83F2A
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3089CC83F1A
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243191AbjH3SsH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55034 "EHLO
+        id S243031AbjH3SsL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243202AbjH3KTU (ORCPT
+        with ESMTP id S243225AbjH3KYb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Aug 2023 06:19:20 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E7D1B3
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Aug 2023 03:19:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 6C875211E1;
-        Wed, 30 Aug 2023 10:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1693390756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=toqwyklWOWN1twCI0rz0QfBr2dRaSgpJM3m6BuSWSfc=;
-        b=1kunkhzC9CsTBBoZZXPWfMCL0JX7OBObe+54gSygUBxvw0a+ZM4xDEt7+IiF+g5xUrZS3Y
-        AVWWnVykxZsMbAlqrmXp31YP+HAa2SakM0FVqp2l2Gc9tjwgZX4fdNBlL15RZcizPf4CfB
-        g8oG4D/hu4D8oDRWkpuOMs5Ogo38s2w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1693390756;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=toqwyklWOWN1twCI0rz0QfBr2dRaSgpJM3m6BuSWSfc=;
-        b=56GlcYI28lksVSjn9gcItvjI+C16wJ86BKhPwIU6TSN1VjfTEc8sX2dYQMJGlmCMRhIZIp
-        otlQ9DtjfK3oFXAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4F88B1353E;
-        Wed, 30 Aug 2023 10:19:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id xnhLEqQX72QzQwAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 30 Aug 2023 10:19:16 +0000
-Message-ID: <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de>
-Date:   Wed, 30 Aug 2023 12:19:15 +0200
+        Wed, 30 Aug 2023 06:24:31 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2083.outbound.protection.outlook.com [40.107.101.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7FBC0;
+        Wed, 30 Aug 2023 03:24:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L5eFqbNfey8GFcmM8iJFTA27RvQgX3wL+m987+gNdzZYciYg3z59mEhmUwzbkFHnC/dCHfA4A9ysn4gPvWKgg24Yg2iwPtQrWBSOuvaYyZX4RrLQ7hzqTh2lhfyz5cuR4VzI1O4CxvIznYp29HKQafwcg6dSgT5Ff+vO28z9aJv4HXn/UolMyGWr2wwOftE1uJYuWINWiosJZLUMFLIkx3S5926sQJjNlwx/ECnCjnWbU6j/Nt2BtPSsNeF1ofUQX5HgPVkItTNeNhEDmppfpmHm/ucH8ZVTRvm+UzSTKDfkES75g09pP27duwMUWFfSZmNXNPm256TMLVecwRBcVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1GC4Whf3kcKa4Q8DsFJyc5VCHSPZDL6BnQHnYBF63rA=;
+ b=OF94MESakvRgVfnZOLd6n9vHpVpru9Q8kKIEevHrFSGjK9svuEiSqKxPGvBJmhbkl16FO9/tJ0RbugNsInvGUHpyRK16ixYB2cNEFkncQIRfxsqmclmKryb0/lQTBTnD5AnMasH7wsIZttttWePk3PMG8APaQ0pzQuDKOohpApxgEbisT9RrHv+pAhyCtW/fCWIf14Q9wAW8+qaCKX9ecd3E5VSjBof6dZmzjPJB0PO7LpQo+qA4azrUr8P6HGnxr6Yj53BxpClwKPl1Vv+JH4ImoBvzfMaANbXl50N+CRKnNRoJkMulWF0t9jsGZtIkkOPMNTu+J9VYotUXjVx7/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1GC4Whf3kcKa4Q8DsFJyc5VCHSPZDL6BnQHnYBF63rA=;
+ b=kMdMyx11KJXi4I5rFz47hQOn0v2q/aaE/SUHoRJ5LrMBO6Vbo1WpEovY92IzLKyK4srg9jOHVN0mnocTH9vrDhGt+YB8+jTQxwKc8RBfx/JTK5NPOEWXmUDsJ9scxbrrXZad9gx0lDVjHj679NiIVCyi7w5Wr030uJj3hIhzCA7FBK01NjdiU/r3r4sUoUtsjuKboF7ll8v8ARmFbNFmJvcRP5UqJ+ZX352o6mAwIn20XImXbyXjwgNdu4L6AhjPUc15uEORV/r8iLrf9tO9AEhF6+sGLMXojekgFo6Cb7apDdxLqQxCXX+pSLcqaBsPpvL2Df4VTHIWuPmVEplEDw==
+Received: from DM6PR12CA0031.namprd12.prod.outlook.com (2603:10b6:5:1c0::44)
+ by SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.20; Wed, 30 Aug
+ 2023 10:24:27 +0000
+Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
+ (2603:10b6:5:1c0:cafe::6) by DM6PR12CA0031.outlook.office365.com
+ (2603:10b6:5:1c0::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.20 via Frontend
+ Transport; Wed, 30 Aug 2023 10:24:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6745.17 via Frontend Transport; Wed, 30 Aug 2023 10:24:26 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 30 Aug 2023
+ 03:24:14 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 30 Aug
+ 2023 03:24:14 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37 via Frontend
+ Transport; Wed, 30 Aug 2023 03:24:13 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/122] 6.1.50-rc1 review
+In-Reply-To: <20230828101156.480754469@linuxfoundation.org>
+References: <20230828101156.480754469@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we support
- display
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Jon Hunter <jonathanh@nvidia.com>
-References: <20230825132229.1109445-1-thierry.reding@gmail.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20230825132229.1109445-1-thierry.reding@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------7RHQerklSkVMX6YLdQrdZGvy"
+Message-ID: <c2cf0ab4-c8d0-4023-831d-bda6ab46183e@rnnvmail205.nvidia.com>
+Date:   Wed, 30 Aug 2023 03:24:13 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|SJ2PR12MB8109:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b4c0a07-bec0-4a95-9ced-08dba94349ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9IdRN6t6TZXDQOFnTAouRcNgQMPVfhfcLlxKp/3AEX6GPHlfwVnZ10ZBvQ1g1PCi5f8NYe5IkpOA/sfqU1d8ddirqV2XmaFgt5YYG3qqrMLyUmzYYbXGuoVmZPMsbFyxMimsofV5xZPG+G9IyNJIRmaDycTcPYSyY7vlQmdX8NTDcaBj6BgjfatxAL3tWsYotjpBQoKPQiIdJg+zMgVf4m58NIsgnZj8/gIwCHp2T70ZNdT8gDNyOT3sv9QOpeQpUAyy9saQYlvKlVdbS7jslAQ6BNPnfPqw77zb0P7YhuK2Lm5LRkvg9/IV5+E/97sWNtbEcJYG5mbfHNwYPAzwEj+Yx6AaiHPZv5wZG3I2Q/sXdf8S4ESOND3uenDZtAAQoaKAV/Xj0ZxZolLupcuZ6PNzG7ex3q0v8F8/6VWSjimLrzMEjrUdPI/V8la40MtEN1veZItLT8fLN92oUT+900EEyt2MKp+NzwGa6pSPBpxRGk0dSbVtFuFAMrDzoK8XvzSq9YTPvMgwLZhnPe1CIUs8wWzVTHGzDMB/WdZ0eYfvtza/5CXttTQg2ir/1m1gIEvUKJzLKiwsqbDUpqy8fGP87Nnp9pQLL+WgNLCzxRJvdQ0V2LijZ67Oz3PSCBLwrzezH8d9NisSS9vu/f2/NCnPZvDQGjKVsY2c2gUnXClgQ486uVVqzOTs4GpsN7v3sJ329Bh9r58anRCQsESeCdyHoKQTfaCa0Q/IxxD3WugeeYGPUN6aTwcYU9+0Y4Ux3JQcDS+Ij1GendsLBi43TlJklWOqVPoDV8Dhn8ly3kw=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(396003)(39860400002)(136003)(376002)(82310400011)(451199024)(1800799009)(186009)(40470700004)(36840700001)(46966006)(31686004)(40460700003)(40480700001)(8676002)(31696002)(86362001)(7416002)(5660300002)(41300700001)(4326008)(8936002)(26005)(426003)(336012)(36860700001)(47076005)(82740400003)(478600001)(7636003)(2906002)(966005)(356005)(54906003)(70586007)(70206006)(6916009)(316002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2023 10:24:26.5602
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b4c0a07-bec0-4a95-9ced-08dba94349ac
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EE30.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8109
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------7RHQerklSkVMX6YLdQrdZGvy
-Content-Type: multipart/mixed; boundary="------------03h35u5cEKNKWkFhSUqw5yfq";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de>
-Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we support
- display
-References: <20230825132229.1109445-1-thierry.reding@gmail.com>
-In-Reply-To: <20230825132229.1109445-1-thierry.reding@gmail.com>
+On Mon, 28 Aug 2023 12:11:55 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.50 release.
+> There are 122 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 30 Aug 2023 10:11:30 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.50-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---------------03h35u5cEKNKWkFhSUqw5yfq
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+All tests passing for Tegra ...
 
-SGkNCg0KQW0gMjUuMDguMjMgdW0gMTU6MjIgc2NocmllYiBUaGllcnJ5IFJlZGluZzoNCj4g
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4gDQo+IFRlZ3Jh
-IERSTSBkb2Vzbid0IHN1cHBvcnQgZGlzcGxheSBvbiBUZWdyYTIzNCBhbmQgbGF0ZXIsIHNv
-IG1ha2Ugc3VyZQ0KPiBub3QgdG8gcmVtb3ZlIGFueSBleGlzdGluZyBmcmFtZWJ1ZmZlcnMg
-aW4gdGhhdCBjYXNlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
-ZWRpbmdAbnZpZGlhLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
-bS5jIHwgOCArKysrKy0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyks
-IDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jDQo+IGluZGV4IGIxZTFh
-NzhlMzBjNi4uN2EzOGRhZGJjMjY0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jDQo+IEBA
-IC0xMjIwLDkgKzEyMjAsMTEgQEAgc3RhdGljIGludCBob3N0MXhfZHJtX3Byb2JlKHN0cnVj
-dCBob3N0MXhfZGV2aWNlICpkZXYpDQo+ICAgDQo+ICAgCWRybV9tb2RlX2NvbmZpZ19yZXNl
-dChkcm0pOw0KPiAgIA0KPiAtCWVyciA9IGRybV9hcGVydHVyZV9yZW1vdmVfZnJhbWVidWZm
-ZXJzKCZ0ZWdyYV9kcm1fZHJpdmVyKTsNCj4gLQlpZiAoZXJyIDwgMCkNCj4gLQkJZ290byBo
-dWI7DQo+ICsJaWYgKGRybS0+bW9kZV9jb25maWcubnVtX2NydGMgPiAwKSB7DQoNCklmIHlv
-dSBkb24ndCBzdXBwb3J0IHRoZSBoYXJkd2FyZSwgd291bGRuJ3QgaXQgYmUgYmV0dGVyIHRv
-IHJldHVybiANCi1FTk9ERVYgaWYgIW51bV9jcnRjPw0KDQpCZXN0IHJlZ2FyZHMNClRob21h
-cw0KDQo+ICsJCWVyciA9IGRybV9hcGVydHVyZV9yZW1vdmVfZnJhbWVidWZmZXJzKCZ0ZWdy
-YV9kcm1fZHJpdmVyKTsNCj4gKwkJaWYgKGVyciA8IDApDQo+ICsJCQlnb3RvIGh1YjsNCj4g
-Kwl9DQo+ICAgDQo+ICAgCWVyciA9IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAwKTsNCj4gICAJ
-aWYgKGVyciA8IDApDQoNCi0tIA0KVGhvbWFzIFppbW1lcm1hbm4NCkdyYXBoaWNzIERyaXZl
-ciBEZXZlbG9wZXINClNVU0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KRnJh
-bmtlbnN0cmFzc2UgMTQ2LCA5MDQ2MSBOdWVybmJlcmcsIEdlcm1hbnkNCkdGOiBJdm8gVG90
-ZXYsIEFuZHJldyBNeWVycywgQW5kcmV3IE1jRG9uYWxkLCBCb3VkaWVuIE1vZXJtYW4NCkhS
-QiAzNjgwOSAoQUcgTnVlcm5iZXJnKQ0K
+Test results for stable-v6.1:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
---------------03h35u5cEKNKWkFhSUqw5yfq--
+Linux version:	6.1.50-rc1-g1aa86af84d82
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
---------------7RHQerklSkVMX6YLdQrdZGvy
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmTvF6MFAwAAAAAACgkQlh/E3EQov+BD
-Vg//ewtzXwGNI9bE5uJrwYjbwk6z5gfrbGWfpCd6ifzbvbeGKSTqjGtdZFcmDUfl0HozCqyPuex+
-r1Y+Zlr4zcHwCklAtwbCuSfk094tfbVgYWTRpm0mWfliiViK0b/hO6H+Ee5iGkW0ozkztuy5Wh1V
-vgSqqkT3MdvheI8hz5Rxr533kWEq+mAgsDWXThLFEJvxHlwAQ6qessKTHrnXOEzxwUBYYZfHb1U2
-V3jBEbZVGCb6wQuBaHLV586acNp0Ff02pYnsT7WtZLI/ItVky9HJV9MEHtNDe63t4e5Oqd+CyI4l
-57duoUdYh25JoO5spiEMHTyv2bLvwg1J7UjZg0x9DDn58l2e25YVW26gC5+VAcc6+lTPmhHTATjW
-wEVKlAtFIpyK83YxMPClB7x6Undfw+e21SZkb8TfrIgR5sbC/BG6MTmzhHR/xWNq0r2k59HZC4SY
-ROZpSLue1b0zV/1/KWbCBjTqTTnSW2zOS6I0rfS6W/uJ6+XvVRTW/gjn64Qnpd67rzWgcFigPDp5
-JgUwn6+bv8eow8AFLAXzKo17P/ii7UDxVDtbQ8FuAgfoAz461H6NCIUJ1I+Enr6Hn5hPNPOEDJiN
-xXPZXa+p4GfgOLBMsWSnaeoR35rG/6XHrgQ4Xbprxm8rNRmNcZi0VgznxYcuAYtzH958jDJTf2EI
-6dQ=
-=ZuNC
------END PGP SIGNATURE-----
-
---------------7RHQerklSkVMX6YLdQrdZGvy--
+Jon
