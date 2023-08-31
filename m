@@ -2,126 +2,71 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFA2C83F2E
-	for <linux-tegra@archiver.kernel.org>; Thu, 31 Aug 2023 08:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DAFC83F01
+	for <linux-tegra@archiver.kernel.org>; Thu, 31 Aug 2023 12:38:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229594AbjHaIEq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 31 Aug 2023 04:04:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55292 "EHLO
+        id S231710AbjHaMjA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 31 Aug 2023 08:39:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234729AbjHaIEp (ORCPT
+        with ESMTP id S229593AbjHaMi7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 31 Aug 2023 04:04:45 -0400
-Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF8D1A4
-        for <linux-tegra@vger.kernel.org>; Thu, 31 Aug 2023 01:04:42 -0700 (PDT)
-Received: by mail-oo1-xc31.google.com with SMTP id 006d021491bc7-5711d5dac14so139711eaf.0
-        for <linux-tegra@vger.kernel.org>; Thu, 31 Aug 2023 01:04:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1693469081; x=1694073881; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eVDMUJusfvGNMe6U/cv080svMtDMV7FPoLJOG6+JEFs=;
-        b=CtqTcQXUCYvseTqQZaWtNj09s5DEdkrW95V+eqb6KRYmLY5UpRLlBXtK2Y8ATUhlgN
-         AFP5T+Q1ZUJfLZsAEIDyFeAQ3UaMAcXi7TKXI2JkVnIULCg/3yS8SYcJMxfvqpbZUVAJ
-         T/bCgE8yvQ1xYWbHIbk1K3T+JPTaAlDYvpoBA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693469081; x=1694073881;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eVDMUJusfvGNMe6U/cv080svMtDMV7FPoLJOG6+JEFs=;
-        b=lM+vMOc8/9Z9+GcVHoRkbnVEhPzZ8OzIwy8NfUt6ePef9lbGFidOZz1OhwHIFV1C9R
-         bO414YpIsPl0QdPS+jMCA+pkQfh3e2M27FduXDSYr5OMQBBOVQ1H1MqHqz10kz7TnpbP
-         GL9YJ5joxlWZghut/fjjfPBGLTtNMDlV6Ae3d2MYXYOM4GJJgYGsIOrcu0EUD9WV7z8d
-         F+YkvSMjTx+KagMW2CH4zlg9OVNNI/+gaWi7l763T/4x5iTiyYwU5L/JgVH5CaLlv3m+
-         zEXAaOlO70Qs14/khVLNsEqZhgv+D73wS0EzJuhYIqVjjuhj7QPwEjL4UFN3xKNVuHiD
-         Nl+A==
-X-Gm-Message-State: AOJu0Yy73rfaNUUwnDjp9q9I73WK2CEQSwD0fQkrmE0Aaoz0IKdojZFY
-        7qBe8W81lFdE0em/K45VVkHMLOUdXC8C3MMQSlamjQ==
-X-Google-Smtp-Source: AGHT+IGWkMZOGIbYg6RTVpBdYwZ0wSp1dixetG9/GzXcL6XTQaOyBZFg8pRUTYx0QUQCxznHWIEgBIXfNBI6sha82yQ=
-X-Received: by 2002:a05:6808:3c45:b0:3a9:e85d:b689 with SMTP id
- gl5-20020a0568083c4500b003a9e85db689mr5038337oib.0.1693469081676; Thu, 31 Aug
- 2023 01:04:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230825132229.1109445-1-thierry.reding@gmail.com>
- <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de> <5f1bca1b-8deb-e677-521d-87d3848e22df@kapsi.fi>
-In-Reply-To: <5f1bca1b-8deb-e677-521d-87d3848e22df@kapsi.fi>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Thu, 31 Aug 2023 10:04:29 +0200
-Message-ID: <CAKMK7uFDn_R+c=YErf7gEHVW4pg+odYKVjrs0EofvpG544Po6Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we support display
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Thu, 31 Aug 2023 08:38:59 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C41C2CDB
+        for <linux-tegra@vger.kernel.org>; Thu, 31 Aug 2023 05:38:56 -0700 (PDT)
+Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.53])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Rc0zZ3xVKz1L9Fs;
+        Thu, 31 Aug 2023 20:37:14 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
+ (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Thu, 31 Aug
+ 2023 20:38:53 +0800
+From:   Jinjie Ruan <ruanjinjie@huawei.com>
+To:     <linux-tegra@vger.kernel.org>, <iommu@lists.linux.dev>,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     <ruanjinjie@huawei.com>
+Subject: [PATCH] iommu/tegra-smmu: Fix the NULL vs IS_ERR() bug for debugfs_create_dir()
+Date:   Thu, 31 Aug 2023 20:38:46 +0800
+Message-ID: <20230831123846.3137304-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.73]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 31 Aug 2023 at 08:33, Mikko Perttunen <cyndis@kapsi.fi> wrote:
->
-> On 8/30/23 13:19, Thomas Zimmermann wrote:
-> > Hi
-> >
-> > Am 25.08.23 um 15:22 schrieb Thierry Reding:
-> >> From: Thierry Reding <treding@nvidia.com>
-> >>
-> >> Tegra DRM doesn't support display on Tegra234 and later, so make sure
-> >> not to remove any existing framebuffers in that case.
-> >>
-> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> >> ---
-> >>   drivers/gpu/drm/tegra/drm.c | 8 +++++---
-> >>   1 file changed, 5 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> >> index b1e1a78e30c6..7a38dadbc264 100644
-> >> --- a/drivers/gpu/drm/tegra/drm.c
-> >> +++ b/drivers/gpu/drm/tegra/drm.c
-> >> @@ -1220,9 +1220,11 @@ static int host1x_drm_probe(struct
-> >> host1x_device *dev)
-> >>       drm_mode_config_reset(drm);
-> >> -    err = drm_aperture_remove_framebuffers(&tegra_drm_driver);
-> >> -    if (err < 0)
-> >> -        goto hub;
-> >> +    if (drm->mode_config.num_crtc > 0) {
-> >
-> > If you don't support the hardware, wouldn't it be better to return
-> > -ENODEV if !num_crtc?
->
-> While display is not supported through TegraDRM on Tegra234+, certain
-> multimedia accelerators are supported, so we need to finish probe for those.
+The debugfs_create_dir() function returns error pointers.
+It never returns NULL. So use IS_ERR() to check it.
 
-Ideally you also register the tegra driver without DRIVER_MODESET |
-DRIVER_ATOMIC in that case, to avoid unecessary userspace confusion.
-Most userspace can cope with a display driver without any crtc, but I
-think xorg-modesettting actually falls over. Or at least I've seen
-some hacks that the agx people added to make sure X doesn't
-accidentally open the wrong driver.
--Sima
+Fixes: d1313e7896e9 ("iommu/tegra-smmu: Add debugfs support")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/iommu/tegra-smmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Cheers,
-> Mikko
->
-> >
-> > Best regards
-> > Thomas
-> >
-> >> +        err = drm_aperture_remove_framebuffers(&tegra_drm_driver);
-> >> +        if (err < 0)
-> >> +            goto hub;
-> >> +    }
-> >>       err = drm_dev_register(drm, 0);
-> >>       if (err < 0)
-> >
->
-
-
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index e445f80d0226..cd1d80c4c673 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -1056,7 +1056,7 @@ DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
+ static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
+ {
+ 	smmu->debugfs = debugfs_create_dir("smmu", NULL);
+-	if (!smmu->debugfs)
++	if (IS_ERR(smmu->debugfs))
+ 		return;
+ 
+ 	debugfs_create_file("swgroups", S_IRUGO, smmu->debugfs, smmu,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.34.1
+
