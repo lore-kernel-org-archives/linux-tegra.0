@@ -2,293 +2,117 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A78CA0FE4
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Sep 2023 16:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC24BCA0FE4
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Sep 2023 16:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348167AbjIAQmG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Sep 2023 12:42:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34726 "EHLO
+        id S240775AbjIAQo0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Sep 2023 12:44:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348028AbjIAQmF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Sep 2023 12:42:05 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2050.outbound.protection.outlook.com [40.107.220.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAACB1722;
-        Fri,  1 Sep 2023 09:41:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=abTDcvFFk3mHAJUcRUAyuoJw9mKGTe73WJgYEgJtJnNFjlubgWmWc9tf+dWQ0p4J02MXTqRIEThO+cnmEMJyj14Wj4X+uG11ZdleyADmz4B55BDQoCDabpmq97gQ0IKaYNFpfQ6RRZeBLCgd96hTO2fVnJt7hciaSmHTkg3+3wIGChYIizglKOp/tUEk0OnpHxKd9dvQI4IktMz+FyS6fqiITSTAllEkJKEljSAu1rnH90ivRtSIYNbdM2qzdysQfSeZfet9ZNwG5sJrJ07XfORYV6CrkI8oimQbFNY5nw5vHiKXpAjVKbAsQPUIM1/d3AktvKHZZ+dwEi4rJsVjSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pIE/QiD/Y3t9g39o+y+qgmXG7yX4XpAu4qS8K1NrhoI=;
- b=jGCs/a8/mbRHSa8Ru7ff0BCNn5vLhrSwg9FpgnQ8DkE3Jj2OXOI3mZF6UF+yge9YawC0ucuRnUIHXOClnlWUaO1oM7dGiHjCoyG8OiGrbXCHqhgjXgN2NwYY/xI7UcMyg+v4Vb5MMcIz6JX7ONSsPiG0yKZgZ49ZxONXEmWNIuW1f9gOK09Py/T4sCnm32EmJld7i6wUV8yXfl7xWEYlpuvxF8z9Bnd6DH12zYr+cRrJezCZk98pRlubL3yrLHnP+a/7z2CVlpLNtimkJF5JqkRvfRxEXfvuxfZ5aM7RhGL+aXijCnHwRdwBxUy2Xbab2DBUjiRzMew6UWr//KooCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pIE/QiD/Y3t9g39o+y+qgmXG7yX4XpAu4qS8K1NrhoI=;
- b=egOzEDsH/yu+AFqPpLnHJRxpPNvbZasj9zT01XDAXQbQuHjr+CNF670Xwx8dRyRCmUn2Kx44D+/mpGlYXG/gkZNsYiUaSi2iCWrIKYWexUN+hmuw5tiZDzCv0qPgTKimGHJiO6Ov53k57FpT0ZsEfV4RJubrEvMWWPX9FUlDgn4QJZW+ZCJ2HfZnHs9cJetS74hKMKtXfvyRwBa6qMLAVFR58GBLvSE1DdZGXBXOsBx2kqsaG+msgOsShwhL8DDKb7lKEDlUNGAaZlqeprZPJqXsB8CfAX0ykAETWdVa4TY1fz6ZEf/blJg0G7fRdVBr0t0IrM35F5iMfqWn6nVcWw==
-Received: from DS7PR03CA0328.namprd03.prod.outlook.com (2603:10b6:8:2b::30) by
- PH7PR12MB6666.namprd12.prod.outlook.com (2603:10b6:510:1a8::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.35; Fri, 1 Sep 2023 16:41:46 +0000
-Received: from DS2PEPF00003446.namprd04.prod.outlook.com
- (2603:10b6:8:2b:cafe::9f) by DS7PR03CA0328.outlook.office365.com
- (2603:10b6:8:2b::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.26 via Frontend
- Transport; Fri, 1 Sep 2023 16:41:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- DS2PEPF00003446.mail.protection.outlook.com (10.167.17.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6745.20 via Frontend Transport; Fri, 1 Sep 2023 16:41:46 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 1 Sep 2023
- 09:41:33 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Fri, 1 Sep 2023 09:41:33 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Fri, 1 Sep 2023 09:41:30 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>,
-        <sumitg@nvidia.com>, <amiettinen@nvidia.com>
-Subject: [Patch v2 1/2] cpufreq: tegra194: save CPU data to avoid repeated SMP calls
-Date:   Fri, 1 Sep 2023 22:11:12 +0530
-Message-ID: <20230901164113.29139-2-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230901164113.29139-1-sumitg@nvidia.com>
-References: <20230901164113.29139-1-sumitg@nvidia.com>
-X-NVConfidentiality: public
+        with ESMTP id S238689AbjIAQo0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Sep 2023 12:44:26 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703B3E70;
+        Fri,  1 Sep 2023 09:44:23 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-68c3ec0578bso1851354b3a.2;
+        Fri, 01 Sep 2023 09:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1693586663; x=1694191463; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/T9AmD8qqBO/NrQRXARywcj3uq+wOvs9bAK3ZixdG8=;
+        b=oONmvlQgM4JLPeUxfBxEk2ZcOQgP5KOHYOc0DXfv24cLYjoMgOqePry+59lY4tm/5C
+         RvLxxVjLBipXMddK0QZwut+ul6QnCniJF9KcVxpGTgytKvQee2vuGrYq2LW0p8aI/9Cv
+         ChFqrmFYvIMEXQ+ovzk06mQvpuQzCI21G+hnTDxOhfaDmawPk934+YeNREss8sFlbLYX
+         SHxOviPAm1c/MDL2kcRmukrvuDh0ld3S2gwCwLbKnowyX8qbazccEZF4R0wIUWAdWe5P
+         O4Q4q2Yuf5MGj3sFosluio7VnCQD4vUljgxgrE4QG0+SNmbOQfo1Dubb/cQdESbDDxfc
+         /7bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693586663; x=1694191463;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g/T9AmD8qqBO/NrQRXARywcj3uq+wOvs9bAK3ZixdG8=;
+        b=JBImJskW2pqbsGjJexjD2JYf19faBiyA6my3CacL4937MrwjWaJgCJc5LZG8CWEmRZ
+         R1FyTEVArb1JyzEoK7UsW7ajBm8SoJvz23xzA07sXamvsRlPoj6UMD1ahG2Kl6ooWrHF
+         k4ZQnZTnKSjofVSQiBb76JwIaoxckt23eVGwbAmEjjawV/7nbIXK29x1Gi2MLE1k8AKe
+         0tMc4UKGSFujNGKmYhqKfaJWX2m8MjOC6buNFfQFq5nnIaQ3O8nnVaz71Y13Q0D1h4om
+         FIiD1KFxcig9pzG1Vm0FFkq+TksDFRAxQcAO7jsRob0j1XJZmvikNWIS9+2AdrVqf8LK
+         Qkog==
+X-Gm-Message-State: AOJu0YwjM/dpKHsDjdKzak1TeldBTZfYKfA12fxzy/faGPAv0tkFK0vk
+        AoWAz77r8b3zwb8R8wTy6UQ=
+X-Google-Smtp-Source: AGHT+IEOrXizclrkZrPq3b/RMV23H9t8Zew7gG/2OI6huzWldlMLUdP2z501grd+r+XXRz7ufJQUCg==
+X-Received: by 2002:a05:6a20:9744:b0:14d:446f:7211 with SMTP id hs4-20020a056a20974400b0014d446f7211mr3507150pzc.53.1693586662780;
+        Fri, 01 Sep 2023 09:44:22 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id z8-20020aa791c8000000b006870ed427b2sm3242014pfa.94.2023.09.01.09.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Sep 2023 09:44:21 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Fri, 1 Sep 2023 09:44:20 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Ninad Malwade <nmalwade@nvidia.com>, jdelvare@suse.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, thierry.reding@gmail.com,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH V2 1/4] dt-bindings: hwmon: ina3221: Convert to
+ json-schema
+Message-ID: <20f55b16-f4df-4bdf-ba60-0c6c64efadee@roeck-us.net>
+References: <20230825164249.22860-1-nmalwade@nvidia.com>
+ <20230825164249.22860-2-nmalwade@nvidia.com>
+ <05c115cc-ce7a-747a-2f91-045bb87db706@linaro.org>
+ <00faf6d0-e84b-20f6-1c8b-8e0e8d610f16@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003446:EE_|PH7PR12MB6666:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43ef6b7a-d7a2-4721-71bc-08dbab0a54c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: F3e+eqvGU/4V7juBzjs2tO8F1vb3zSrX36Ekn7CWIT9SBcREgF0P82ozHVextnjHnBsm2wC5qkopKmpKn8Y0FQHrLYTFCrW8L9/TWWkLKLZ6WEWkv7TjlKEvELLAVLswvLxZ8uLBP25YedmhlK9fwJxOGINtiPLXo9zeuSncgXtHWpamMT0M9FqIwU4xyxRSTLAX1diZWqUho/OlWZzqriX3TpJw/Rv1ajGJo7S/mTR+wI6shYEz6rAWtpeQLEs+cBnwskl7n0DHZgTXmjpR+yF+RhqVDEGe4ylvr4FSm/l8Xk62ur4LntQ1gVqDTkhxF+HM7ZDHlQeht4sUX2V2N0WbcNFt/WZamuPeMPASOKAwb7BToeOQz7tOaDIUZzh3RYNhOPd2Y0s3ioA+4P5i/2+iMWkd77mlcjSitB+6ATASKZU9VLhVDi0dAzV/2ZAXQO6RIMuVrFCJkpLnbSSd0NF9Sh6K/AYQg1iwAsmLZtRwHCrlaz/h3SU7sDXtjUSxVxhXGktQhaq0CVjF8AOCk7nIw6Vels1LY9zkSjLprKEo6Xoedl9+Nf19HT0KOBQj4kzzkcwoekAXzH9LbxSdTStyFY4mGSMMuQQZh7Ii8bigaMtlPyABcQB9eh50e5Qm9kChQAQhUiKhDZ7mfvr6rPmMuS9OeJWvOEIGd+x9oEhxbINlaBypLE/MIUbmtjwrbyMeY2jPYIJdMvWuaXdqTnKm03imuj1jZXKFePaLCu7/g53Un5LHxe/vKbZCPq3v
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(376002)(346002)(396003)(451199024)(1800799009)(186009)(82310400011)(40470700004)(36840700001)(46966006)(4326008)(7696005)(6666004)(83380400001)(110136005)(41300700001)(478600001)(1076003)(54906003)(26005)(336012)(8676002)(70206006)(2616005)(316002)(70586007)(5660300002)(36756003)(40460700003)(40480700001)(47076005)(7636003)(356005)(36860700001)(107886003)(2906002)(86362001)(426003)(8936002)(82740400003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2023 16:41:46.1768
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43ef6b7a-d7a2-4721-71bc-08dbab0a54c3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS2PEPF00003446.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6666
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00faf6d0-e84b-20f6-1c8b-8e0e8d610f16@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Currently, we make SMP call on every frequency set request to get the
-physical 'CPU ID' and 'CLUSTER ID' for the target CPU. This change
-optimizes the repeated calls by storing the physical IDs and the per
-core frequency register offset for all CPUs during boot. Later this
-info is used directly when required to set the frequency or read it
-from ACTMON counters.
+On Fri, Sep 01, 2023 at 05:34:00PM +0100, Jon Hunter wrote:
+> 
+> On 26/08/2023 09:53, Krzysztof Kozlowski wrote:
+> > On 25/08/2023 18:42, Ninad Malwade wrote:
+> > > Convert the TI INA3221 bindings from the free-form text format to
+> > > json-schema.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
+> 
+> ...
+> 
+> > > +            compatible = "ti,ina3221";
+> > > +            reg = <0x40>;
+> > > +            #address-cells = <1>;
+> > > +            #size-cells = <0>;
+> > > +
+> > > +            input@0 {
+> > > +                reg = <0x0>;
+> > > +                status = "disabled";
+> > 
+> > Why is this node present? Binding said nodes are optional, so I assume
+> > it can be just skipped. If all children must be there, then you should
+> > actually require them in the binding (and mention it briefly in commit msg).
+> 
+> 
+> I have taken a look at this and if the 'input@0' is omitted above the driver
+> still enables it. It only disables it or marks as disconnected if the node
+> is present but no enabled. So we can mark these as required.
+> 
+> Is there a better way to mark them as required apart from listing all input
+> channels under required?
+> 
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 79 +++++++++++++++++++-----------
- 1 file changed, 51 insertions(+), 28 deletions(-)
+Channels should by default be enabled because they are enabled by default
+in the chip. Requiring that all nodes be listed in devicetree just to
+select the default behavior would be overkill.
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 386aed3637b4..0d0893cf7f18 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -39,6 +39,12 @@
- /* cpufreq transisition latency */
- #define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanoseconds */
- 
-+struct tegra_cpu_data {
-+	u32 cpuid;
-+	u32 clusterid;
-+	void __iomem *freq_core_reg;
-+};
-+
- struct tegra_cpu_ctr {
- 	u32 cpu;
- 	u32 coreclk_cnt, last_coreclk_cnt;
-@@ -69,6 +75,7 @@ struct tegra194_cpufreq_data {
- 	struct cpufreq_frequency_table **bpmp_luts;
- 	const struct tegra_cpufreq_soc *soc;
- 	bool icc_dram_bw_scaling;
-+	struct tegra_cpu_data *cpu_data;
- };
- 
- static struct workqueue_struct *read_counters_wq;
-@@ -116,14 +123,8 @@ static void tegra234_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
- static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
--	void __iomem *freq_core_reg;
--	u64 mpidr_id;
--
--	/* use physical id to get address of per core frequency register */
--	mpidr_id = (clusterid * data->soc->maxcpus_per_cluster) + cpuid;
--	freq_core_reg = SCRATCH_FREQ_CORE_REG(data, mpidr_id);
- 
--	*ndiv = readl(freq_core_reg) & NDIV_MASK;
-+	*ndiv = readl(data->cpu_data[cpu].freq_core_reg) & NDIV_MASK;
- 
- 	return 0;
- }
-@@ -131,19 +132,10 @@ static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
- static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
--	void __iomem *freq_core_reg;
--	u32 cpu, cpuid, clusterid;
--	u64 mpidr_id;
--
--	for_each_cpu_and(cpu, policy->cpus, cpu_online_mask) {
--		data->soc->ops->get_cpu_cluster_id(cpu, &cpuid, &clusterid);
--
--		/* use physical id to get address of per core frequency register */
--		mpidr_id = (clusterid * data->soc->maxcpus_per_cluster) + cpuid;
--		freq_core_reg = SCRATCH_FREQ_CORE_REG(data, mpidr_id);
-+	u32 cpu;
- 
--		writel(ndiv, freq_core_reg);
--	}
-+	for_each_cpu_and(cpu, policy->cpus, cpu_online_mask)
-+		writel(ndiv, data->cpu_data[cpu].freq_core_reg);
- }
- 
- /*
-@@ -157,11 +149,10 @@ static void tegra234_read_counters(struct tegra_cpu_ctr *c)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
- 	void __iomem *actmon_reg;
--	u32 cpuid, clusterid;
- 	u64 val;
- 
--	data->soc->ops->get_cpu_cluster_id(c->cpu, &cpuid, &clusterid);
--	actmon_reg = CORE_ACTMON_CNTR_REG(data, clusterid, cpuid);
-+	actmon_reg = CORE_ACTMON_CNTR_REG(data, data->cpu_data[c->cpu].clusterid,
-+					  data->cpu_data[c->cpu].cpuid);
- 
- 	val = readq(actmon_reg);
- 	c->last_refclk_cnt = upper_32_bits(val);
-@@ -357,19 +348,17 @@ static void tegra194_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
- static unsigned int tegra194_get_speed(u32 cpu)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-+	u32 clusterid = data->cpu_data[cpu].clusterid;
- 	struct cpufreq_frequency_table *pos;
--	u32 cpuid, clusterid;
- 	unsigned int rate;
- 	u64 ndiv;
- 	int ret;
- 
--	data->soc->ops->get_cpu_cluster_id(cpu, &cpuid, &clusterid);
--
- 	/* reconstruct actual cpu freq using counters */
- 	rate = tegra194_calculate_speed(cpu);
- 
- 	/* get last written ndiv value */
--	ret = data->soc->ops->get_cpu_ndiv(cpu, cpuid, clusterid, &ndiv);
-+	ret = data->soc->ops->get_cpu_ndiv(cpu, data->cpu_data[cpu].cpuid, clusterid, &ndiv);
- 	if (WARN_ON_ONCE(ret))
- 		return rate;
- 
-@@ -475,13 +464,12 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
- 	int maxcpus_per_cluster = data->soc->maxcpus_per_cluster;
-+	u32 clusterid = data->cpu_data[policy->cpu].clusterid;
- 	struct cpufreq_frequency_table *freq_table;
- 	struct cpufreq_frequency_table *bpmp_lut;
- 	u32 start_cpu, cpu;
--	u32 clusterid;
- 	int ret;
- 
--	data->soc->ops->get_cpu_cluster_id(policy->cpu, NULL, &clusterid);
- 	if (clusterid >= data->soc->num_clusters || !data->bpmp_luts[clusterid])
- 		return -EINVAL;
- 
-@@ -659,6 +647,28 @@ tegra_cpufreq_bpmp_read_lut(struct platform_device *pdev, struct tegra_bpmp *bpm
- 	return freq_table;
- }
- 
-+static int tegra194_cpufreq_store_physids(unsigned int cpu, struct tegra194_cpufreq_data *data)
-+{
-+	int num_cpus = data->soc->maxcpus_per_cluster * data->soc->num_clusters;
-+	u32 cpuid, clusterid;
-+	u64 mpidr_id;
-+
-+	if (cpu > (num_cpus - 1)) {
-+		pr_err("cpufreq: wrong num of cpus or clusters in soc data\n");
-+		return -EINVAL;
-+	}
-+
-+	data->soc->ops->get_cpu_cluster_id(cpu, &cpuid, &clusterid);
-+
-+	mpidr_id = (clusterid * data->soc->maxcpus_per_cluster) + cpuid;
-+
-+	data->cpu_data[cpu].cpuid = cpuid;
-+	data->cpu_data[cpu].clusterid = clusterid;
-+	data->cpu_data[cpu].freq_core_reg = SCRATCH_FREQ_CORE_REG(data, mpidr_id);
-+
-+	return 0;
-+}
-+
- static int tegra194_cpufreq_probe(struct platform_device *pdev)
- {
- 	const struct tegra_cpufreq_soc *soc;
-@@ -666,6 +676,7 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 	struct tegra_bpmp *bpmp;
- 	struct device *cpu_dev;
- 	int err, i;
-+	u32 cpu;
- 
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -692,6 +703,12 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 			return PTR_ERR(data->regs);
- 	}
- 
-+	data->cpu_data = devm_kcalloc(&pdev->dev, data->soc->num_clusters *
-+				      data->soc->maxcpus_per_cluster,
-+				      sizeof(struct tegra_cpu_data), GFP_KERNEL);
-+	if (!data->cpu_data)
-+		return -ENOMEM;
-+
- 	platform_set_drvdata(pdev, data);
- 
- 	bpmp = tegra_bpmp_get(&pdev->dev);
-@@ -713,6 +730,12 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	for_each_possible_cpu(cpu) {
-+		err = tegra194_cpufreq_store_physids(cpu, data);
-+		if (err)
-+			goto err_free_res;
-+	}
-+
- 	tegra194_cpufreq_driver.driver_data = data;
- 
- 	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
--- 
-2.17.1
+Jusat because the chip has the ability to disable channels, that should
+really not be made the default.
 
+Guenter
