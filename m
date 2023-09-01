@@ -2,117 +2,133 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC24BCA0FE4
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Sep 2023 16:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6A8CA0FEB
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Sep 2023 16:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240775AbjIAQo0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Sep 2023 12:44:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47422 "EHLO
+        id S239317AbjIAQuK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Sep 2023 12:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238689AbjIAQo0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Sep 2023 12:44:26 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703B3E70;
-        Fri,  1 Sep 2023 09:44:23 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-68c3ec0578bso1851354b3a.2;
-        Fri, 01 Sep 2023 09:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693586663; x=1694191463; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g/T9AmD8qqBO/NrQRXARywcj3uq+wOvs9bAK3ZixdG8=;
-        b=oONmvlQgM4JLPeUxfBxEk2ZcOQgP5KOHYOc0DXfv24cLYjoMgOqePry+59lY4tm/5C
-         RvLxxVjLBipXMddK0QZwut+ul6QnCniJF9KcVxpGTgytKvQee2vuGrYq2LW0p8aI/9Cv
-         ChFqrmFYvIMEXQ+ovzk06mQvpuQzCI21G+hnTDxOhfaDmawPk934+YeNREss8sFlbLYX
-         SHxOviPAm1c/MDL2kcRmukrvuDh0ld3S2gwCwLbKnowyX8qbazccEZF4R0wIUWAdWe5P
-         O4Q4q2Yuf5MGj3sFosluio7VnCQD4vUljgxgrE4QG0+SNmbOQfo1Dubb/cQdESbDDxfc
-         /7bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693586663; x=1694191463;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g/T9AmD8qqBO/NrQRXARywcj3uq+wOvs9bAK3ZixdG8=;
-        b=JBImJskW2pqbsGjJexjD2JYf19faBiyA6my3CacL4937MrwjWaJgCJc5LZG8CWEmRZ
-         R1FyTEVArb1JyzEoK7UsW7ajBm8SoJvz23xzA07sXamvsRlPoj6UMD1ahG2Kl6ooWrHF
-         k4ZQnZTnKSjofVSQiBb76JwIaoxckt23eVGwbAmEjjawV/7nbIXK29x1Gi2MLE1k8AKe
-         0tMc4UKGSFujNGKmYhqKfaJWX2m8MjOC6buNFfQFq5nnIaQ3O8nnVaz71Y13Q0D1h4om
-         FIiD1KFxcig9pzG1Vm0FFkq+TksDFRAxQcAO7jsRob0j1XJZmvikNWIS9+2AdrVqf8LK
-         Qkog==
-X-Gm-Message-State: AOJu0YwjM/dpKHsDjdKzak1TeldBTZfYKfA12fxzy/faGPAv0tkFK0vk
-        AoWAz77r8b3zwb8R8wTy6UQ=
-X-Google-Smtp-Source: AGHT+IEOrXizclrkZrPq3b/RMV23H9t8Zew7gG/2OI6huzWldlMLUdP2z501grd+r+XXRz7ufJQUCg==
-X-Received: by 2002:a05:6a20:9744:b0:14d:446f:7211 with SMTP id hs4-20020a056a20974400b0014d446f7211mr3507150pzc.53.1693586662780;
-        Fri, 01 Sep 2023 09:44:22 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id z8-20020aa791c8000000b006870ed427b2sm3242014pfa.94.2023.09.01.09.44.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Sep 2023 09:44:21 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Fri, 1 Sep 2023 09:44:20 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Ninad Malwade <nmalwade@nvidia.com>, jdelvare@suse.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, thierry.reding@gmail.com,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH V2 1/4] dt-bindings: hwmon: ina3221: Convert to
- json-schema
-Message-ID: <20f55b16-f4df-4bdf-ba60-0c6c64efadee@roeck-us.net>
-References: <20230825164249.22860-1-nmalwade@nvidia.com>
- <20230825164249.22860-2-nmalwade@nvidia.com>
- <05c115cc-ce7a-747a-2f91-045bb87db706@linaro.org>
- <00faf6d0-e84b-20f6-1c8b-8e0e8d610f16@nvidia.com>
+        with ESMTP id S233629AbjIAQuK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Sep 2023 12:50:10 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92E510F0;
+        Fri,  1 Sep 2023 09:50:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZvtOwAr0qvFT89bEfi1JPxh+yqQKLneAznNo34oReFKdoysCvNonL+VDrwsJEQ/D0T6c3dn/zzGaKd3PMR4araF/Bvbt+4vtn8IdVAEdVwcQVL4AOasyk7YDl/O3Vky9YmtE2fEi0Z9CqOY6br/NX33eAxJgi4EyhMxXihb5bs2rH12I80zhxXdZjyqqVC+pKz0f8jEXUcM4kt172pOP4yJZaZcXZdXY5d1A+0aYbHNJ0sLBLVgyWCbX2b0oPbg85OjuObNMT30RyzBUM2h2hHBFWnrFE1Ro2f7k2qqoP+wSorpiEuyIzD4rPRfqgYg9VtwmBPMDCiQp2e/s69UYug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7ys8GrsxOJlCStgUdmcsYOC+HqGjJCYt/qI1zipvoK4=;
+ b=IiymGNRjQuzSQKJtbT0r3+66+VBpUbNB+gQOcIBq8CQQUM6d1UAlk7NLroMEHo10HbUWuWX58VGap3AWtbmCw9QKlFL+B9EH6iaXUZ7WzLufOLkWE/BOJX3id5ai/Ll9sQPfaAPCQhRdJZqO7/kyt7srJiwRnntOXNOAcLtqEgwstUJNdi0Xvyny9kA1GrzqW4UHU/vZ1pLGBvCd/ibXWNcY19QoSNE36Lvy/pXj3PeNRFuomtXNuiG0HmCmnttM6jbulDPXqj6xsYujWLdaNALvoJJGNj/xr6sSncRAJ8dn9fPN9tq3NPzunPAuNIlPz6Y2Xzc+5OndL3Scalbkow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7ys8GrsxOJlCStgUdmcsYOC+HqGjJCYt/qI1zipvoK4=;
+ b=gjV7lmkC567hr8Xrcm/kucYssSQvCp/KKsSrDG6HXWI9lR8uTokQc3ehk/xUtcF1I44TFp6lnOp5QfZJzbdwAS9HXOEIGoVcx059FsMIN/QLXcqT2Er6jMdk+rNbLnf/LGcps0zfW9RS72F2/kcW8VNQZ5l/3x8Q8oB1GSpCeM9bR5rJvTn4POj0Jo/5OWRQ2Hkmy//E6quNPiEINs0PCZIx4oP0KGTxgJAMgantgIDI0X1plCCdrr8S2/+P7cdcFyeA1vuoWvUgDCuVP7ysqJYgvtYK31z8LvqH/100VH2tPiG8ojIzIFLd8h25IttFxZyQqHuJrOx8xMaKrWp/CQ==
+Received: from CH2PR03CA0006.namprd03.prod.outlook.com (2603:10b6:610:59::16)
+ by DS0PR12MB8344.namprd12.prod.outlook.com (2603:10b6:8:fe::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6745.20; Fri, 1 Sep 2023 16:50:04 +0000
+Received: from DS3PEPF000099DD.namprd04.prod.outlook.com
+ (2603:10b6:610:59:cafe::c2) by CH2PR03CA0006.outlook.office365.com
+ (2603:10b6:610:59::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.25 via Frontend
+ Transport; Fri, 1 Sep 2023 16:50:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS3PEPF000099DD.mail.protection.outlook.com (10.167.17.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6745.20 via Frontend Transport; Fri, 1 Sep 2023 16:50:04 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 1 Sep 2023
+ 09:49:52 -0700
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 1 Sep 2023
+ 09:49:50 -0700
+Message-ID: <f0059dd9-e258-80e9-bc4d-c8ee0c72a754@nvidia.com>
+Date:   Fri, 1 Sep 2023 22:19:46 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00faf6d0-e84b-20f6-1c8b-8e0e8d610f16@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch] driver: cpufreq: use refclk delta based loop instead of
+ udelay
+Content-Language: en-US
+To:     Jon Hunter <jonathanh@nvidia.com>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <treding@nvidia.com>, <bbasu@nvidia.com>
+References: <20230901152046.25662-1-sumitg@nvidia.com>
+ <c2bc6447-d8de-4f0f-d735-df377ab40f1c@nvidia.com>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <c2bc6447-d8de-4f0f-d735-df377ab40f1c@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099DD:EE_|DS0PR12MB8344:EE_
+X-MS-Office365-Filtering-Correlation-Id: c32c6e00-c31d-4e4a-3023-08dbab0b7dd0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: j9Mw824b24Fn/e2kv9X4asS/BdLMJbIC3gRNT492nVdn4+iVdch8NAmIs/x5qw+4UOWLJzy/jwgoav7p5gsPqaJMq7nWlv4MDPaszCdIxb5ZF/UHiJfLcolZ4HPWI1pfG/5Nz5oeSgljuhfaN7Qnrl/67UJlhI5RcbnJntxpID5j6of9mB6HOoyC5oQhALk0sUv6R7M/acrOSMhYWv4UAxdZmxXIweqtusRQVai6QE9epfGiZSdZaNGmzee5Zj/K6U/mQ3+ELAgiJWu75fgNZMqwdr6hrISEBjejb5kS/GhVzx7N7Xl+3uPjpOx/aZGOYWu1vtifwtgzv4WNsAUrmkW/MD+DyY0Z0Z7N0D03pgnaSFWRQhbvFd/FNoS8XEWDYqrSVs9qTsUzinkGYIui3B1fY4adCsU3Lo9CNljQ3s3JJJ+ti/NEGDvIXhCRcVjPbX5KfBecyHEjKuNJVJhXxqPdFnryXN8OzqCDxj508fmxzDkOlvIC/DYGfBbIsaYvbnVNOdKbCsXzKQdzWRQDPfXJlRBGLL3aWZSZgby61rylCEU/XmbZi/eUNtftJs9F9oUvHMrW5QLmNw+7bkHV4gNC9/56C+lmqxFVUMDfw+por8Hy0hZtBi2y33awPSDTABB0zw8EoHzaiToRQyuygTf/83vMrhwPzSK0/4+cJAkNZU5Eyr1gv1YFWZgT9uPnyLpqS0VHzr67bvulwr+tTKndzw5BO3/pQ7jeFIcQCeL6NWKC9b71ygln+fy2gKV/n7/PJq+dO1LUE9EjjNYJzIEZbfyy37JGgI8O92SVlU4ZmDU9dXVHW8F7VX+phPHx
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(396003)(136003)(39860400002)(376002)(1800799009)(451199024)(82310400011)(186009)(36840700001)(46966006)(40470700004)(31686004)(36756003)(40460700003)(40480700001)(7636003)(8676002)(53546011)(86362001)(5660300002)(41300700001)(4326008)(8936002)(426003)(336012)(26005)(16526019)(47076005)(6666004)(36860700001)(83380400001)(31696002)(107886003)(2616005)(82740400003)(54906003)(110136005)(356005)(966005)(478600001)(4744005)(2906002)(70586007)(16576012)(70206006)(316002)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2023 16:50:04.5436
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c32c6e00-c31d-4e4a-3023-08dbab0b7dd0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF000099DD.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8344
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 01, 2023 at 05:34:00PM +0100, Jon Hunter wrote:
-> 
-> On 26/08/2023 09:53, Krzysztof Kozlowski wrote:
-> > On 25/08/2023 18:42, Ninad Malwade wrote:
-> > > Convert the TI INA3221 bindings from the free-form text format to
-> > > json-schema.
-> > > 
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
-> 
-> ...
-> 
-> > > +            compatible = "ti,ina3221";
-> > > +            reg = <0x40>;
-> > > +            #address-cells = <1>;
-> > > +            #size-cells = <0>;
-> > > +
-> > > +            input@0 {
-> > > +                reg = <0x0>;
-> > > +                status = "disabled";
-> > 
-> > Why is this node present? Binding said nodes are optional, so I assume
-> > it can be just skipped. If all children must be there, then you should
-> > actually require them in the binding (and mention it briefly in commit msg).
+
+
+On 01/09/23 21:28, Jon Hunter wrote:
 > 
 > 
-> I have taken a look at this and if the 'input@0' is omitted above the driver
-> still enables it. It only disables it or marks as disconnected if the node
-> is present but no enabled. So we can mark these as required.
+> On 01/09/2023 16:20, Sumit Gupta wrote:
+>> Use reference clock count based loop instead of "udelay()" for
+>> sampling of counters to improve the accuracy of re-generated CPU
+>> frequency. "udelay()" internally calls "WFE" which stops the
+>> counters and results in bigger delta between the last set freq
+>> and the re-generated value from counters. The counter sampling
+>> window used in loop is the minimum number of reference clock
+>> cycles which is known to give a stable value of CPU frequency.
+>> The change also helps to reduce the sampling window from "500us"
+>> to "<50us".
+>>
+>> Suggested-by: Antti Miettinen <amiettinen@nvidia.com>
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > 
-> Is there a better way to mark them as required apart from listing all input
-> channels under required?
+> 
+> Please can you correct the subject and drop the 'driver:'.
+> 
+> Jon
 > 
 
-Channels should by default be enabled because they are enabled by default
-in the chip. Requiring that all nodes be listed in devicetree just to
-select the default behavior would be overkill.
+Corrected subject and added another patch in v2 at [1].
 
-Jusat because the chip has the ability to disable channels, that should
-really not be made the default.
+[1] https://lore.kernel.org/lkml/20230901164113.29139-1-sumitg@nvidia.com/
 
-Guenter
+Thank you,
+Sumit Gupta
