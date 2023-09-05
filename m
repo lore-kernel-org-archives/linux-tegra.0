@@ -2,151 +2,155 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7235CCA0FFD
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 18:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A105CA0FFB
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 18:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239315AbjIESLc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Sep 2023 14:11:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50714 "EHLO
+        id S238880AbjIESy4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Sep 2023 14:54:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240910AbjIESLS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 14:11:18 -0400
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2051.outbound.protection.outlook.com [40.107.95.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4614B12D60;
-        Tue,  5 Sep 2023 10:10:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EtHvh1eNLsQ9/Xjro1IDTdDCcFkezpGajOZYlMvZjaoF+eUfqNOc6z5UwFGjzxyJ38n7BoU+p8C6qce76Dg6yELLdz7KqgU/qgVCdVrXd2MF2pCVnp7kbTmoDf0ABCHOXa8H+2dZFhU0adBQwjR+7RL59LUzqBG6F1P4RyNDAz/7FYBs5uotUpF5KnLbhInyle8s8ceDqQDjrIfceryQS+lPyIiKuRxXEmmSEr1qF1+muS3hBi+CfSCfS3x92kR6vtb+TH9U6nbUESPxXAdmjdgDJM1faOH7au4xJYhgIhj8R3W+IfB1lGuN5EUXmq1/fDZvajfBmVKwzyNz3b/Thw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rpPhWbb/nfGXXUk0YuEb2FBgC/PBXKwxEfQ6BWTcMks=;
- b=XAt+3ZAPnBtan51Ot0VkorYUfQD09JDKRKQU+BpjyKSiaaM+aDkeEeFzdH0d4/czUXowflNMgFZke6p/7iqfXNmcvvpKj91A+0M/1trSYuI11XvZEABLFquyCT4a5uYBp7xa4729Ww5AXxl5PuEIdAMuVh3ySCHB94Q9aHXKrlwLMiL6a4IvHh2628Imyw5MfAEA6PPrRljYr17Z0EISoBPbDCWtKPlrMtST8SnNFTkaA/9H68zqN9fHLu9htIi9ivWMXilr7t1vAP+u1aZNybYKP/ncvPqCdoyjaj/3V/gIe+DqhT3pYIayCVXGPpG+athL/SxznDIgKXhVflJSwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rpPhWbb/nfGXXUk0YuEb2FBgC/PBXKwxEfQ6BWTcMks=;
- b=Gqq0zFIniXDPaX5nx1FuOwATOPVduydOwp9ftuSDDsUjZU8jK/5Dw40yCovXdZNef0ukOtVsYlMCfcJqwsn0LyNay3xaOJnmSm+CYr6o/kg3OSO1dOLLlll3X5DpQ8QsosfwrkPVzANX3JjZ1ZJwiXGrsmq8+oLPenM87S/XDbBIQs2miPpAau8rh4PCjsHZ2HWIldwv/nEsC1H//bCYSc0yL09bll9XaJhEuzEMANDxSbb2fJUVtDIJslbwE/n9NfFuS2CGnKdHs4dWMXag10vBFAXf2vHBuh8KqslWovfQYDspCx2RXcyLU8llaD6p5eupQ4aC6lbPvYinUMh9Cg==
-Received: from SA0PR12CA0003.namprd12.prod.outlook.com (2603:10b6:806:6f::8)
- by SJ0PR12MB5611.namprd12.prod.outlook.com (2603:10b6:a03:426::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.33; Tue, 5 Sep
- 2023 16:36:52 +0000
-Received: from SA2PEPF0000150B.namprd04.prod.outlook.com
- (2603:10b6:806:6f:cafe::3b) by SA0PR12CA0003.outlook.office365.com
- (2603:10b6:806:6f::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.33 via Frontend
- Transport; Tue, 5 Sep 2023 16:36:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SA2PEPF0000150B.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6768.25 via Frontend Transport; Tue, 5 Sep 2023 16:36:50 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Tue, 5 Sep 2023
- 09:36:37 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Tue, 5 Sep 2023 09:36:36 -0700
-Received: from localhost.localdomain (10.127.8.12) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Tue, 5 Sep 2023 09:36:31 -0700
-From:   Kartik <kkartik@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <sumitg@nvidia.com>, <arnd@arndb.de>, <pshete@nvidia.com>,
-        <andriy.shevchenko@linux.intel.com>, <kkartik@nvidia.com>,
-        <digetx@gmail.com>, <petlozup@nvidia.com>, <windhl@126.com>,
-        <frank.li@vivo.com>, <robh@kernel.org>, <stefank@nvidia.com>,
-        <pdeschrijver@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/6] soc/tegra: fuse: Add function to print SKU info
-Date:   Tue, 5 Sep 2023 18:28:22 +0530
-Message-ID: <20230905125824.2947-5-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230905125824.2947-1-kkartik@nvidia.com>
-References: <20230905125824.2947-1-kkartik@nvidia.com>
+        with ESMTP id S231596AbjIESyz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 14:54:55 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E6211738
+        for <linux-tegra@vger.kernel.org>; Tue,  5 Sep 2023 11:54:24 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40037db2fe7so28204975e9.0
+        for <linux-tegra@vger.kernel.org>; Tue, 05 Sep 2023 11:54:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940006; x=1694544806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zm8uw+f5LvxPs16TrhkfvENCN1+QZz7s8rxXSoottC8=;
+        b=A7UpjwfdbJKhRaEWbwhKYlgzouLcNfgEEMmEJ1LGo0vRVMyAmNFuvr77wNzIKJfI8A
+         zATRShOgFPIRzZgChhys5vhQQ6/NndEmYZB19RGfcA6IH8d+RHmmb3PjJv/Vd7uscdtS
+         /iYAui9lJcOUzAxnsPdv1HoW7GouEnyuVIv3Xr5japB+GUySazZG+e90Wncqu0qqFCuG
+         YAqfDT5o9OIe4ZIq8Y0nvq4hYPQ2RN8KLeoTK7UbAgIk5RXAaszQ6WgQ6mB/yHCcKV/x
+         GU55rAldx9EQL3hDnxRWafrWv5RlgA2nQUWKMcL22gdkjxqPrRDnQuOp0U3iixUJnxAn
+         qEDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693940006; x=1694544806;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zm8uw+f5LvxPs16TrhkfvENCN1+QZz7s8rxXSoottC8=;
+        b=JLpeMr70KpiM6ip8j4BJhltDP466avX43sYYzXQr2fHioz9YMnbBg7DZKkB9JyRzHN
+         59deDuw10RnaJmnOtGg8LBd2p/PJah7+AtJwK30/CW1S0peeTLE4rc5yio8xOVVJ8Bwx
+         5KqZtMqKK5R8dCIrd8YbmFbuKpAAW3+GRARYKk4T5f6SZpf5NdAwr0y9gJmbHSOCa5IC
+         e7Ej2zM3MRyJnzScaKWEdQnzoUnlVQnOVncLNBUG7cRmRYH/qFwGx5wFrv/UWvyp71/+
+         Ligqz5oPfeft9xs5KZD3VZNf0jmVgrUjqrXLeW6kFZnSeQNtYPGpqvxqokndoHAH8XEz
+         GcQg==
+X-Gm-Message-State: AOJu0YzB2B5PNAb0GjuTGD06uetrxpnbRdJCaCI/83dHjlskOoRtc6S0
+        3X5kaKuNjuK0budMT2/UfQ/7mg==
+X-Google-Smtp-Source: AGHT+IFg7Vm2Cmqv15Sqv5calroUVFxizFJ5aDOZ0cNR6d+rt5FAt8Ucbl9e61HcahWOBMsw3jlYSQ==
+X-Received: by 2002:a7b:cb8a:0:b0:401:bf62:9456 with SMTP id m10-20020a7bcb8a000000b00401bf629456mr490236wmi.8.1693940006065;
+        Tue, 05 Sep 2023 11:53:26 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7a54:5dbc:6d09:48b7])
+        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Sep 2023 11:53:25 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 00/21] gpio: convert users to gpio_device_find() and remove gpiochip_find()
+Date:   Tue,  5 Sep 2023 20:52:48 +0200
+Message-Id: <20230905185309.131295-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF0000150B:EE_|SJ0PR12MB5611:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19bdab84-cacc-4d2b-b2c3-08dbae2e4e1e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: E+y1XkzesM1eGgZrEwS8pk3rNK9lwerjSEi3WDUSKPEOHGpuBZ2uMr/yY8Uv8uh26Z73Shx2DqZCl5+Aj9ErM8FoYIZw7v7Q5DraTXJVwCYA8UcdPKr0Ydwc/3gZaoiK+Y0+Uoh9F3OuFrtSYiiWv0hOAE/rlMhTlV6wVniCjA4qStdyAt4uUysCFYgTEQ+2x7t9g7Txv8J3E98i5NMQAkBWK5fFzHi0YIVjl2TxI+i9gn48JGyinOrbyLUwtjbNek0VLtViYBHT7FDbvdZUhePLi/UWOKJhsi5UDBvv7yuOpFRFmDNDDLk6lQSRIxv26BTOoRF9oYh8e7tmCevpBG/YhBHpLuKj1yDrf7LXYAYG1UyChP0+eUmgd+zTF42+sNVwtdv517G0A+ttPJKikc2PcljKAeHvgl9YqcbocHGxHvYJ2FU0v3dlVtAHha8ZRWfH9/BmvoNvzhpWiwU8uMRSlsktcD3a6GRmBoLLZtRBt3hnAVZSe6wlb4vmQuN0aF6BrTNtY4sSL1Fv9BHGMVWB11ZqmWah52m2mLjBbZtP49HvmlAKVGZYHYHh8XoGhTmiw3JRku7NdQVuTEBWRLzhq9gQOmuc2I9jlhdISI7/vvl4s06gxGmf+Mg3VrwpSeJjVY350CStgZRnFThAQC7fG9TrCMWsGPf07/E9joFFVZku//jqKDacMsBod5UhUpkES6RuB0jKGKEwrfE4grxqMtEqPCzWcpyNzsDakQOkgWU9bTBz80lcwb0lWHuJHIy4vowzA190OeRSRUVePQ==
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(136003)(346002)(39860400002)(396003)(451199024)(82310400011)(1800799009)(186009)(40470700004)(46966006)(36840700001)(41300700001)(40480700001)(82740400003)(36860700001)(70206006)(70586007)(6666004)(47076005)(316002)(110136005)(26005)(2616005)(5660300002)(1076003)(86362001)(478600001)(8936002)(8676002)(336012)(426003)(36756003)(83380400001)(40460700003)(2906002)(921005)(7636003)(356005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2023 16:36:50.4170
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19bdab84-cacc-4d2b-b2c3-08dbae2e4e1e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF0000150B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5611
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add helper function tegra_fuse_print_sku_info() to print Tegra SKU
-information. So, it can be shared between tegra_fuse_init() and
-ACPI probe which is to be introduced later.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Kartik <kkartik@nvidia.com>
----
- drivers/soc/tegra/fuse/fuse-tegra.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+The GPIO subsystem does not handle hot-unplug events very well. We have
+recently patched the user-space part of it so that at least a rouge user
+cannot crash the kernel but in-kernel users are still affected by a lot of
+issues: from incorrect locking or lack thereof to using structures that are
+private to GPIO drivers. Since almost all GPIO controllers can be unbound,
+not to mention that we have USB devices registering GPIO expanders as well as
+I2C-on-USB HID devices on which I2C GPIO expanders can live, various media
+gadgets etc., we really need to make GPIO hotplug/unplug friendly.
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 821bb485ec45..64f7001823ce 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -113,6 +113,16 @@ static void tegra_fuse_restore(void *base)
- 	fuse->clk = NULL;
- }
- 
-+static void tegra_fuse_print_sku_info(struct tegra_sku_info *tegra_sku_info)
-+{
-+	pr_info("Tegra Revision: %s SKU: %d CPU Process: %d SoC Process: %d\n",
-+		tegra_revision_name[tegra_sku_info->revision],
-+		tegra_sku_info->sku_id, tegra_sku_info->cpu_process_id,
-+		tegra_sku_info->soc_process_id);
-+	pr_debug("Tegra CPU Speedo ID %d, SoC Speedo ID %d\n",
-+		tegra_sku_info->cpu_speedo_id, tegra_sku_info->soc_speedo_id);
-+}
-+
- static int tegra_fuse_add_lookups(struct tegra_fuse *fuse)
- {
- 	size_t size;
-@@ -516,12 +526,7 @@ static int __init tegra_init_fuse(void)
- 
- 	fuse->soc->init(fuse);
- 
--	pr_info("Tegra Revision: %s SKU: %d CPU Process: %d SoC Process: %d\n",
--		tegra_revision_name[tegra_sku_info.revision],
--		tegra_sku_info.sku_id, tegra_sku_info.cpu_process_id,
--		tegra_sku_info.soc_process_id);
--	pr_debug("Tegra CPU Speedo ID %d, SoC Speedo ID %d\n",
--		 tegra_sku_info.cpu_speedo_id, tegra_sku_info.soc_speedo_id);
-+	tegra_fuse_print_sku_info(&tegra_sku_info);
- 
- 	err = tegra_fuse_add_lookups(fuse);
- 	if (err) {
+Before we can even get to fixing the locking, we need to address a serious
+abuse of the GPIO driver API - accessing struct gpio_chip by anyone who isn't
+the driver owning this object. This structure is owned by the GPIO provider
+and its lifetime is tied to that of that provider. It is destroyed when the
+device is unregistered and this may happen at any moment. struct gpio_device
+is the opaque, reference counted interface to struct gpio_chip (which is the
+low-level implementation) and all access should pass through it.
+
+The end-goal is to make all gpio_device manipulators check the existence of
+gdev->chip and then lock it for the duration of any of the calls using SRCU.
+Before we can get there, we need to first provide a set of functions that will
+replace any gpio_chip functions and convert all in-kernel users.
+
+This series starts the process by replacing gpiochip_find() with
+gpio_device_find(). This is in line with other device_find type interfaces and
+returns a reference to the GPIO device that is guaranteed to remain valid
+until it is put.
+
+Note that this does not make everything correct just yet. Especially the
+GPIOLIB internal users release the reference returned by the lookup function
+after getting the descriptor of interest but before requesting it. This will
+eventually be addressed. This is not a regression either.
+
+First we add a bunch of new APIs that are needed to start replacing calls
+to gpiochip_find. We then use them first in external users and then locally in
+GPIOLIB core. Finally we remove gpiochip_find().
+
+Bartosz Golaszewski (21):
+  gpiolib: make gpio_device_get() and gpio_device_put() public
+  gpiolib: provide gpio_device_find()
+  gpiolib: provide gpio_device_find_by_label()
+  gpiolib: provide gpio_device_get_desc()
+  gpiolib: add support for scope-based management to gpio_device
+  gpiolib: provide gpiod_to_device()
+  gpiolib: provide gpio_device_get_base()
+  gpio: acpi: provide acpi_gpio_device_free_interrupts()
+  gpiolib: reluctantly provide gpio_device_get_chip()
+  gpiolib: replace find_chip_by_name() with gpio_device_find_by_label()
+  platform: x86: android-tablets: don't access GPIOLIB private members
+  hte: allow building modules with COMPILE_TEST enabled
+  hte: tegra194: improve the GPIO-related comment
+  hte: tegra194: don't access struct gpio_chip
+  arm: omap1: ams-delta: stop using gpiochip_find()
+  gpio: of: correct notifier return codes
+  gpio: of: replace gpiochip_find_* with gpio_device_find_*
+  gpio: acpi: replace gpiochip_find() with gpio_device_find()
+  gpio: swnode: replace gpiochip_find() with gpio_device_find_by_label()
+  gpio: sysfs: drop the mention of gpiochip_find() from sysfs code
+  gpiolib: remove gpiochip_find()
+
+ arch/arm/mach-omap1/board-ams-delta.c         |  36 ++--
+ drivers/gpio/gpiolib-acpi.c                   |  37 +++-
+ drivers/gpio/gpiolib-of.c                     |  48 ++---
+ drivers/gpio/gpiolib-swnode.c                 |  29 ++-
+ drivers/gpio/gpiolib-sysfs.c                  |   2 +-
+ drivers/gpio/gpiolib.c                        | 203 +++++++++++++-----
+ drivers/gpio/gpiolib.h                        |  10 -
+ drivers/hte/Kconfig                           |   4 +-
+ drivers/hte/hte-tegra194.c                    |  49 +++--
+ .../platform/x86/x86-android-tablets/core.c   |  38 ++--
+ include/linux/gpio/driver.h                   |  30 ++-
+ 11 files changed, 316 insertions(+), 170 deletions(-)
+
 -- 
-2.34.1
+2.39.2
 
