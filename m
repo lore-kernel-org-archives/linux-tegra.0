@@ -2,107 +2,165 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3946ECA1006
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 19:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4C4CA100C
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 20:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242606AbjIETct (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Sep 2023 15:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55606 "EHLO
+        id S243380AbjIEUXn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Sep 2023 16:23:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243110AbjIETcr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 15:32:47 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 068711719;
-        Tue,  5 Sep 2023 12:32:23 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6CB8106F;
-        Tue,  5 Sep 2023 09:10:04 -0700 (PDT)
-Received: from [10.1.36.15] (010265703453.arm.com [10.1.36.15])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AFCF3F64C;
-        Tue,  5 Sep 2023 09:09:19 -0700 (PDT)
-Message-ID: <e949a91f-88b3-681e-6e0e-d5d1e8922284@arm.com>
-Date:   Tue, 5 Sep 2023 17:09:15 +0100
+        with ESMTP id S231629AbjIEUXm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 16:23:42 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1428E;
+        Tue,  5 Sep 2023 13:23:39 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-991c786369cso459288666b.1;
+        Tue, 05 Sep 2023 13:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1693945417; x=1694550217; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=W7FEvRnQff1RFIy6G/Scp5VfoqVl8Fl9R26EpZ41ssQ=;
+        b=lWrFnxMWH56mAAYRBqSP80rEP7abc/BGdgchUTeroB66ZQO1qonI0wom7R1AWUsWa5
+         x+3YlFyh0k32JBmjrSqBLoDg8QFoGzsk+28ELUekaM28Ka1llyut0lzXjHxaqc/cGV3X
+         iFzT+0mMogIfBdvY17+qZS3u3/Glf5q0Je6H6mN+w1aq123H3UPuj7wlul70WX0A4bBj
+         MxXkRx4XmuePuFw26OU1qHTDCBhNYjTaEvCGEhqJu0sy+QgHhIeGWLae7clGHPyQS/J3
+         jITdYSo04bZYQPxFnm49UeJ1iWxVfn6XXj60YlAgoPi08nrKZI13MC29XQxhQcl9tkwI
+         ixEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693945417; x=1694550217;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W7FEvRnQff1RFIy6G/Scp5VfoqVl8Fl9R26EpZ41ssQ=;
+        b=QsJMO1b/znkhmMmCeMQm6WA7987qkVqKn5btexOM3i5tA2jZViO16219urPVmkW2o3
+         JInlp+8hPwOHcmQ/+vACM06boWHN8RdHbZlgi8Gw5ZDSDNXaSp4Z6ZbYe9ycFBTgWTeG
+         Fm8p3GDrA6+ET/DqSdD0q2lAfaqykj1QVNumuyd45JKjIDK0U39/N3Av9vQbOz/6inMG
+         fmdIgCU4H51s7t1lrV8czmXhccqdZ3vfDRdxxYE2xFUf5iucJglj2kVA2XmtxTqC64q/
+         v7QXvVBydbkddPkRSae4O79WxJGwPv9CTloyGeJtRkhVdxOzwtew/RGXyFWXJciuS4RL
+         TEMg==
+X-Gm-Message-State: AOJu0YwJ70+pPW4ZQ2FtIU7MnXVc1O+cP3aVSrLO/1ugwTgJUvZXKIFU
+        WY+dsMwn9e0hfya6JyH2jVbgEdXRNBCSgA==
+X-Google-Smtp-Source: AGHT+IG2mFnmzU6dZ1Lll+hMk7JV4ZmDPpxt54hgKUw+BKq9w4jCarie89LEsaJFEj3D1lcN6wDTcA==
+X-Received: by 2002:a17:907:b0a:b0:9a1:b705:75d1 with SMTP id h10-20020a1709070b0a00b009a1b70575d1mr579098ejl.51.1693945417163;
+        Tue, 05 Sep 2023 13:23:37 -0700 (PDT)
+Received: from ?IPV6:2a02:908:8b3:1840:5b7b:492a:c913:71fb? ([2a02:908:8b3:1840:5b7b:492a:c913:71fb])
+        by smtp.gmail.com with ESMTPSA id l18-20020a1709066b9200b0099bc08862b6sm8166003ejr.171.2023.09.05.13.23.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Sep 2023 13:23:26 -0700 (PDT)
+Message-ID: <755a2be4-6947-d756-2eee-0ba14086d781@gmail.com>
+Date:   Tue, 5 Sep 2023 22:23:16 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH v12 0/6] iommu/dma: s390 DMA API conversion and optimized
- IOTLB flushing
-Content-Language: en-GB
-To:     Matthew Rosato <mjrosato@linux.ibm.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
+From:   Maxim Schwalm <maxim.schwalm@gmail.com>
+Subject: Re: [PATCH v3 2/5] dt-bindings: display: tegra: nvidia,tegra20-dc:
+ Add parallel RGB output port node
+To:     Rob Herring <robh@kernel.org>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20230825-dma_iommu-v12-0-4134455994a7@linux.ibm.com>
- <240c26d3-b821-8410-3142-62e9a8656146@linux.ibm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <240c26d3-b821-8410-3142-62e9a8656146@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230807143515.7882-1-clamor95@gmail.com>
+ <20230807143515.7882-3-clamor95@gmail.com>
+ <20230821161441.GA1743870-robh@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20230821161441.GA1743870-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2023-08-25 19:26, Matthew Rosato wrote:
-> On 8/25/23 6:11 AM, Niklas Schnelle wrote:
->> Hi All,
->>
->> This patch series converts s390's PCI support from its platform specific DMA
->> API implementation in arch/s390/pci/pci_dma.c to the common DMA IOMMU layer.
->> The conversion itself is done in patches 3-4 with patch 2 providing the final
->> necessary IOMMU driver improvement to handle s390's special IOTLB flush
->> out-of-resource indication in virtualized environments. The conversion
->> itself only touches the s390 IOMMU driver and s390 arch code moving over
->> remaining functions from the s390 DMA API implementation. No changes to
->> common code are necessary.
->>
-> 
-> I also picked up this latest version and ran various tests with ISM, mlx5 and some NVMe drives.  FWIW, I have been including versions of this series in my s390 dev environments for a number of months now and have also been building my s390 pci iommufd nested translation series on top of this, so it's seen quite a bit of testing from me at least.
-> 
-> So as far as I'm concerned anyway, this series is ready for -next (after the merge window).
+Hi Rob,
 
-Agreed; I'll trust your reviews for the s390-specific parts, so indeed 
-it looks like this should have all it needs now and is ready for a nice 
-long soak in -next once Joerg opens the tree for 6.7 material.
+On 21.08.23 18:14, Rob Herring wrote:
+> On Mon, Aug 07, 2023 at 05:35:12PM +0300, Svyatoslav Ryhel wrote:
+>> From: Maxim Schwalm <maxim.schwalm@gmail.com>
+>>
+>> Either this node, which is optional, or the nvidia,panel property can be
+>> present.
+>>
+>> Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
+>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>> ---
+>>  .../display/tegra/nvidia,tegra20-dc.yaml      | 31 +++++++++++++++++++
+>>  1 file changed, 31 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+>> index 69be95afd562..102304703062 100644
+>> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+>> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+>> @@ -127,6 +127,37 @@ allOf:
+>>                $ref: /schemas/types.yaml#/definitions/phandle
+>>                description: phandle of a display panel
+>>  
+>> +            port:
+>> +              $ref: /schemas/graph.yaml#/$defs/port-base
+>> +              description: Parallel RGB output port
+>> +
+>> +              properties:
+>> +                endpoint:
+>> +                  $ref: /schemas/media/video-interfaces.yaml#
+> 
+> Just to make sure, what properties are you using from this? Usually 
+> we'll list them though not a hard requirement. If none, then you just 
+> need to ref graph.yaml#/properties/port instead and can drop the rest.
 
-Cheers,
-Robin.
+currently, just bus-width is used in devicetrees, but I don't think that
+it is needed at the moment. So perhaps the property can be dropped.
+
+>> +                  unevaluatedProperties: false
+>> +
+>> +              unevaluatedProperties: false
+> 
+> In the indented cases, it's easier to read if this is before 
+> properties/patternProperties.
+> 
+>> +
+>> +          anyOf:
+>> +            - if:
+>> +                not:
+>> +                  properties:
+>> +                    nvidia,panel: false
+>> +              then:
+>> +                not:
+>> +                  properties:
+>> +                    port: true
+>> +            - if:
+>> +                not:
+>> +                  properties:
+>> +                    port: false
+>> +              then:
+>> +                not:
+>> +                  properties:
+>> +                    nvidia,panel: true
+> 
+> I would prefer to drop this and mark "nvidia,panel" as deprecated. 
+> Eventually I plan to add a mode to the tools to warn on using deprecated 
+> properties. Having both could be perfectly fine too. You have the 
+> "nvidia,panel" for compatibility with an old OS version and 'port' to 
+> work with newer users.
+
+The reason for adding this was that just one of them can be utilized at
+the same time. Having both could potentially break the display output.
+I think that all the other nvidia,* properties could marked as
+deprecated as well because they don't seem to be doing much since commit
+d9f980ebcd01 ("drm/tegra: output: rgb: Wrap directly-connected panel
+into DRM bridge").
+
+>> +
+>> +          additionalProperties: false
+> 
+> Move this up too.
+> 
+
+Best regards,
+Maxim
