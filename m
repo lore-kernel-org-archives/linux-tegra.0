@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE96CA0FFE
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 18:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2CECA0FFE
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 19:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235332AbjIES4Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Sep 2023 14:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42886 "EHLO
+        id S240138AbjIETA1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Sep 2023 15:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234819AbjIES4A (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 14:56:00 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A452E74
-        for <linux-tegra@vger.kernel.org>; Tue,  5 Sep 2023 11:55:33 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-401f503b529so28407145e9.0
-        for <linux-tegra@vger.kernel.org>; Tue, 05 Sep 2023 11:55:33 -0700 (PDT)
+        with ESMTP id S240979AbjIETAP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 15:00:15 -0400
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20A6E1989
+        for <linux-tegra@vger.kernel.org>; Tue,  5 Sep 2023 11:59:48 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-401d80f4ef8so28606475e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 05 Sep 2023 11:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940028; x=1694544828; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940025; x=1694544825; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v8EoAIqFLJCxUpfLhsvBV4jgy9F1vQzmq/NZ2XWmhPM=;
-        b=irz10VKbMLeng4ZixyOOnJHEJAzNeWz1hov/KxB8mF+k6rj/LQ4LAwTJXFhhjVRS+v
-         itGQh4ai1wChP2p+/8C9JtUg02LiGYOfDxcdW5O3LioyfITZUYuSuAM4wGSdy+m9aHWe
-         OJ0DMDGxzizoIA3TQmIH8RPQJbNYAe07CptoIisJrARNxlWdRSmlWDiIQKqCXv4ki4TX
-         UizmzI3ALpp0DyF2NBMebnW73rdXk+BLG+JhHrDFs6YUrUgvQfj/MHaN8T0IAKv2NCHS
-         mloZENvz5tLe34I78lRzZwlzbxe6zzsBL9TBGG05EkDn+iuybKcqTwTqhnhLRUTWjxdC
-         m0rw==
+        bh=ENyvcqOYq6piL9aYNsmVNToV9MKgtDTkh/A8a81eQKQ=;
+        b=wLF/IwuEZaNRhh2E3/xt/nSiyTZHzQKlC4MNsG09JH9slQUQ9O2NsNImMGhv4h//g0
+         YEMxlsm1Bx38dkPllQT8ChSaEBCgv6hQ3kxzVexa6VZze2mt3pjwPpiouVhouaRqK4za
+         UiU22b89BycZDDkGpIHbKp0fbmkN7nYkmvStAL3mf8YIWItd69cNWUDxfxuIwaYHNWlH
+         dhmfNTZotkkwvKfeKefYi7C1X7LVrq3AeLJGYGexWOJ13dFmP5nSkT/F4TOx2KjRktDt
+         g8F+Q8HjEeQX3yUw388jirqsF1Ygy3icAQY8MNDFF7XNHXzD1XpusHnnqNW0fztRWcWE
+         77jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693940028; x=1694544828;
+        d=1e100.net; s=20221208; t=1693940025; x=1694544825;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v8EoAIqFLJCxUpfLhsvBV4jgy9F1vQzmq/NZ2XWmhPM=;
-        b=IaFjQ6G8bqrbta8+1NDkiOsJ9xaRk2xL33mbSY80yONUybNrnaMw8wdGnOytxUZ9IV
-         hHuHUlpP3XB1HbCjvd4bighTXqcUlbmvjUxzuUJ0mg/R4ibxZQDPWx53cNev8deSD50g
-         8qcIWF71DVsHjruhfYZEYGJ9KJRdmuJ6B3XD+Icm5zTh5KOrVlKCDhhbvFfHNPNIL/qt
-         mtWE+boKVdKGEl+LCNN87mpDVc6JlNBqc/3e4bAYOBpQCn8+hlNzuC3Ho2Ppq+pFIDln
-         eBlwJB9fAfABot1CBWsO4+U0oDK154/M2u1IPbAPki2fzJimH2hjgdAOLZfvixg2nA4M
-         dBLg==
-X-Gm-Message-State: AOJu0YywjDOEZ4xtf6tkkykhdW/2BwVYrMfUBW4IyuHiwiIwYeCLak32
-        JLMDLmShrd5COUSU+xi0L+16Yw==
-X-Google-Smtp-Source: AGHT+IGdmweLsvxMkviAD6X4Rb7LNMdeCjqz2Ypd3y+SG6ZL6d4+T9L7pYZxfgxQTgv+RGIUJmtJEw==
-X-Received: by 2002:a05:600c:2809:b0:3fe:dcd0:2e10 with SMTP id m9-20020a05600c280900b003fedcd02e10mr472155wmb.17.1693940027944;
-        Tue, 05 Sep 2023 11:53:47 -0700 (PDT)
+        bh=ENyvcqOYq6piL9aYNsmVNToV9MKgtDTkh/A8a81eQKQ=;
+        b=OrsWwQRLplIFStgRrFRbXfr9RkpviCpGYILNZjb2oBp/wd0TtS/uODYV2DuOtMJ4NR
+         WKLG3HASJil48AmPv3M7NiGNgQCKkBJOnCngMQMrQEEIgqk8Vbq1lyIKih6HMSnjqmuK
+         vhJDgNMuGqVg9cJWS1vcTSfNeZ+fQ1KXNTVsYF4boTBU6Ad34/L9PtAXbCBft63+BGp1
+         GxQBMTBhooWbS4px5w77iwPFzblFlEitwTkKX3rjOBsLVs3Do7xRru9yOQ4/fUw7OJ6n
+         k7FgchUfdKeiF6WatvZ8f/wMYjhO/aiiyM2um56XMDd+15oeZ8Qh4TrTw1K692ixQKmP
+         2nOQ==
+X-Gm-Message-State: AOJu0Yw9U5eww2fvoJWMFsQ7F1GXTqqudmpmhPjerCGANmwThF4t7YRp
+        bqxFbTOlekFtOEl5evSauzN43Q==
+X-Google-Smtp-Source: AGHT+IETzIspKoYp23peY3Mtm+8LIAaFcti4lea83HydZgiIlGoA8ysWTU5DS/F06PC8tJEHYtDSiA==
+X-Received: by 2002:a1c:7410:0:b0:401:d1a3:d7f7 with SMTP id p16-20020a1c7410000000b00401d1a3d7f7mr407237wmc.30.1693940025441;
+        Tue, 05 Sep 2023 11:53:45 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7a54:5dbc:6d09:48b7])
-        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.46
+        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 11:53:47 -0700 (PDT)
+        Tue, 05 Sep 2023 11:53:45 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
         linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 18/21] gpio: acpi: replace gpiochip_find() with gpio_device_find()
-Date:   Tue,  5 Sep 2023 20:53:06 +0200
-Message-Id: <20230905185309.131295-19-brgl@bgdev.pl>
+Subject: [PATCH 16/21] gpio: of: correct notifier return codes
+Date:   Tue,  5 Sep 2023 20:53:04 +0200
+Message-Id: <20230905185309.131295-17-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230905185309.131295-1-brgl@bgdev.pl>
 References: <20230905185309.131295-1-brgl@bgdev.pl>
@@ -82,42 +82,64 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We're porting all users of gpiochip_find() to using gpio_device_find().
-Update the ACPI GPIO code.
+According to the comments in linux/notifier.h, the code to return when a
+notifications is "not for us" is NOTIFY_DONE, not NOTIFY_OK.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-acpi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib-of.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 5633e39396bc..15d3350123d9 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -143,7 +143,7 @@ static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
-  */
- static struct gpio_desc *acpi_get_gpiod(char *path, unsigned int pin)
- {
--	struct gpio_chip *chip;
-+	struct gpio_device *gdev __free(gpio_device_put) = NULL;
- 	acpi_handle handle;
- 	acpi_status status;
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 531faabead0f..5515f32cf19b 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -834,14 +834,14 @@ static int of_gpio_notify(struct notifier_block *nb, unsigned long action,
+ 	switch (of_reconfig_get_state_change(action, arg)) {
+ 	case OF_RECONFIG_CHANGE_ADD:
+ 		if (!of_property_read_bool(rd->dn, "gpio-hog"))
+-			return NOTIFY_OK;	/* not for us */
++			return NOTIFY_DONE;	/* not for us */
  
-@@ -151,11 +151,11 @@ static struct gpio_desc *acpi_get_gpiod(char *path, unsigned int pin)
- 	if (ACPI_FAILURE(status))
- 		return ERR_PTR(-ENODEV);
+ 		if (of_node_test_and_set_flag(rd->dn, OF_POPULATED))
+-			return NOTIFY_OK;
++			return NOTIFY_DONE;
  
--	chip = gpiochip_find(handle, acpi_gpiochip_find);
--	if (!chip)
-+	gdev = gpio_device_find(handle, acpi_gpiochip_find);
-+	if (!gdev)
- 		return ERR_PTR(-EPROBE_DEFER);
+ 		chip = of_find_gpiochip_by_node(rd->dn->parent);
+ 		if (chip == NULL)
+-			return NOTIFY_OK;	/* not for us */
++			return NOTIFY_DONE;	/* not for us */
  
--	return gpiochip_get_desc(chip, pin);
-+	return gpiochip_get_desc(gdev->chip, pin);
+ 		ret = of_gpiochip_add_hog(chip, rd->dn);
+ 		if (ret < 0) {
+@@ -850,22 +850,22 @@ static int of_gpio_notify(struct notifier_block *nb, unsigned long action,
+ 			of_node_clear_flag(rd->dn, OF_POPULATED);
+ 			return notifier_from_errno(ret);
+ 		}
+-		break;
++		return NOTIFY_OK;
+ 
+ 	case OF_RECONFIG_CHANGE_REMOVE:
+ 		if (!of_node_check_flag(rd->dn, OF_POPULATED))
+-			return NOTIFY_OK;	/* already depopulated */
++			return NOTIFY_DONE;	/* already depopulated */
+ 
+ 		chip = of_find_gpiochip_by_node(rd->dn->parent);
+ 		if (chip == NULL)
+-			return NOTIFY_OK;	/* not for us */
++			return NOTIFY_DONE;	/* not for us */
+ 
+ 		of_gpiochip_remove_hog(chip, rd->dn);
+ 		of_node_clear_flag(rd->dn, OF_POPULATED);
+-		break;
++		return NOTIFY_OK;
+ 	}
+ 
+-	return NOTIFY_OK;
++	return NOTIFY_DONE;
  }
  
- /**
+ struct notifier_block gpio_of_notifier = {
 -- 
 2.39.2
 
