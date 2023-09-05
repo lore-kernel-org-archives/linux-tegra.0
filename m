@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2918CA0FFF
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 19:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEFBC83F3E
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 19:11:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241915AbjIETLl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Sep 2023 15:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36952 "EHLO
+        id S241868AbjIETLv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Sep 2023 15:11:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241938AbjIETLi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 15:11:38 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6555E63
-        for <linux-tegra@vger.kernel.org>; Tue,  5 Sep 2023 12:11:08 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-500a398cda5so4981016e87.0
-        for <linux-tegra@vger.kernel.org>; Tue, 05 Sep 2023 12:11:08 -0700 (PDT)
+        with ESMTP id S230502AbjIETLr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 15:11:47 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB6F71B4
+        for <linux-tegra@vger.kernel.org>; Tue,  5 Sep 2023 12:11:18 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-402c1407139so30139235e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 05 Sep 2023 12:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693941014; x=1694545814; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693941023; x=1694545823; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=32AzIakwES8QNoZ2moYEZisZgGIsr9B20l41KqZ1PII=;
-        b=IXXiUJ4PR7iEgTMw7T/t1rFHWql4O8BEghFACd1ojCOxkoDBK9BJdLNeY8rUmo1x0/
-         8+yh5C8YkT1WQN/jczmlWJEqjP6UZS3RPurkP8WZuz1lnoImrGsKHDP6DBxOdf8WWVcC
-         Pvrr+CBmPM8FzpDSo6Orl+7Q8TJbHlqCyOD1r7sFKz32VzMXBO12Dfvpkz5GqMF447hQ
-         sQ97dB61uii6sUIgK3jnVa3cLi0zz0BZXuS+LUEOsLigX/xwO+a1slHtTfVr3Oc6gEqC
-         7T4vbRrmjizgHI8BeVPg4S2OYsmvJJ0OQhMJYL+bZnq+tBLPJd0iXA5apNVdugbbpt+C
-         Kelw==
+        bh=fLtpoodGmmx9hsi2x1jr+x7uccK8YI9bvvMsLPIMWWk=;
+        b=BSqW+uBZLJvbS4roFK/1Yqe2Blfx9RZglVzT3agqx6FMYiX6q6sRz+WuQust+3hzTM
+         aA+3p5zLTLhB1AC0kpDfbagirbIwxCJcXpswkBX3U1OK8cldFjsLlp/0IV9AvtOFwzPR
+         ivL5OOp1q4knu/SOA0m5G7zBUJyDVgzo2e42SgUI71YizBRsVXoSgf2FVNWG3mSZrgB4
+         6KrIMyLS58XWwrViUlXK5pUBBiK3Xh3xZr7kcyirHPbmCoCPJGtbRLQIbaHzfWt2dY0w
+         DusEH6tRXstsOU3lT4nmFfEDyVVVIo9hji+KRhViYetAoQqHpaWujCL0VVE26xghclvN
+         NxUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693941014; x=1694545814;
+        d=1e100.net; s=20221208; t=1693941023; x=1694545823;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=32AzIakwES8QNoZ2moYEZisZgGIsr9B20l41KqZ1PII=;
-        b=MwtkOBX//1t+Go/PTDhlsm73+k3sT8yIRPDB8JNS/vOWUDzPvADOp8fB8CRVG6ZlKe
-         cuqW4vxPiXvGrOH3RwD5p0WVIPFANWWpCBu+kOIEkjdaugRQeigLlX0LFsCg5hA4aJT0
-         6nzhfA1J0MTcvG6jBCstMir5ttSPRp1Rc2Z4lJFHlZhKwKE7dQzFdXbeRiTgJ4cnFhoX
-         0EnWZLyMWOEZqJ6WI+N6xLuvQJ7uXG0y7Dbxa0PlwXToKu1XRZHK0ppOqlstTZ/edoTI
-         UqkfZhEdmtyAY9eW1KRTdBFckE1+OXiH6U6+loGgZo9YjUHU4V1Ah4uBZ7Qz4cW/6lCc
-         NrGw==
-X-Gm-Message-State: AOJu0Yw8GpdvLA0SOlvekU+QS9AXNp23s0N23Y2gAC0P2YFfNNw699sY
-        i0kShy+bCmB/0uhQhYVN/gOzrpJDkFbujvSFInI=
-X-Google-Smtp-Source: AGHT+IEMA7O/G04+pJVQEX0HMhuZh3/G19j9j9xyba1JCXjHsE+92yNux09q4RWquXB9Fm3Wgf4zQw==
-X-Received: by 2002:a7b:c7d9:0:b0:3fe:207c:1aea with SMTP id z25-20020a7bc7d9000000b003fe207c1aeamr433332wmk.23.1693940008588;
-        Tue, 05 Sep 2023 11:53:28 -0700 (PDT)
+        bh=fLtpoodGmmx9hsi2x1jr+x7uccK8YI9bvvMsLPIMWWk=;
+        b=azRgth87UeL2Pyjpz9212+DzukXLyZwu9Nua0bfknFS1DJV3b8IRsE3HCeDMUKI9TY
+         UBNHkVrBiQw7YTyy4CawTlnm6daUrR5JLjZ6Is7Nvxe1I70NJjDwDrNNRvyBkxUfyzSr
+         i6l0hhHywvt3opNs1vF1dipw4EbAbHgPrztou/J/PbuEIkYVoRPd1TvCdZTRuIiJ8KFM
+         DzqDSeBUHYLZFCZ09G6AoeTi9epCW0PQMGgPXPZJJAgDDp8ebUPrZPFADLDqcWgcPNea
+         Q1E4lZwxr+Dht5fVBnSh/t1bVQL+14qBTKhkDR2b0Mjd8w890E3UxNMtErMmG5qyXckQ
+         9K1g==
+X-Gm-Message-State: AOJu0YyOgtl15KLmUWSLRaKPHGg/UamT6/j4l+Kma/CIUSGcLm7FjEl+
+        W8phCuCORujzHMhNnHtagFZk0tIJWZo+8tXiiVo=
+X-Google-Smtp-Source: AGHT+IFpB/13m0/nwakUzQdaNfC4LZV+lJxvCkU4V9X8PY52XKoEKpYjuE+lOSYCuwIRrrXtGPQ9RA==
+X-Received: by 2002:a2e:9f04:0:b0:2b9:ecab:d924 with SMTP id u4-20020a2e9f04000000b002b9ecabd924mr463291ljk.18.1693940010976;
+        Tue, 05 Sep 2023 11:53:30 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7a54:5dbc:6d09:48b7])
-        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.27
+        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 11:53:28 -0700 (PDT)
+        Tue, 05 Sep 2023 11:53:30 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
         linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 02/21] gpiolib: provide gpio_device_find()
-Date:   Tue,  5 Sep 2023 20:52:50 +0200
-Message-Id: <20230905185309.131295-3-brgl@bgdev.pl>
+Subject: [PATCH 04/21] gpiolib: provide gpio_device_get_desc()
+Date:   Tue,  5 Sep 2023 20:52:52 +0200
+Message-Id: <20230905185309.131295-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230905185309.131295-1-brgl@bgdev.pl>
 References: <20230905185309.131295-1-brgl@bgdev.pl>
@@ -82,125 +82,95 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-gpiochip_find() is wrong and its kernel doc is misleading as the
-function doesn't return a reference to the gpio_chip but just a raw
-pointer. The chip itself is not guaranteed to stay alive, in fact it can
-be deleted at any point. Also: other than GPIO drivers themselves,
-nobody else has any business accessing gpio_chip structs.
-
-Provide a new gpio_device_find() function that returns a real reference
-to the opaque gpio_device structure that is guaranteed to stay alive for
-as long as there are active users of it.
+Getting the GPIO descriptor directly from the gpio_chip struct is
+dangerous as we don't take the reference to the underlying GPIO device.
+In order to start working towards removing gpiochip_get_desc(), let's
+provide a safer variant that works with an existing reference to struct
+gpio_device.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib.c      | 64 ++++++++++++++++++++++++++-----------
- include/linux/gpio/driver.h |  4 +++
- 2 files changed, 50 insertions(+), 18 deletions(-)
+ drivers/gpio/gpiolib.c      | 45 +++++++++++++++++++++++++++----------
+ include/linux/gpio/driver.h |  2 ++
+ 2 files changed, 35 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f84ad54d8dbd..9e083ecb8df0 100644
+index 74b837671d30..4a9af6bfc6d4 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -1014,16 +1014,10 @@ void gpiochip_remove(struct gpio_chip *gc)
+@@ -147,27 +147,48 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
  }
- EXPORT_SYMBOL_GPL(gpiochip_remove);
+ EXPORT_SYMBOL_GPL(gpio_to_desc);
  
 -/**
-- * gpiochip_find() - iterator for locating a specific gpio_chip
-- * @data: data to pass to match function
-- * @match: Callback function to check gpio_chip
-+/*
-+ * FIXME: This will be removed soon.
-  *
-- * Similar to bus_find_device.  It returns a reference to a gpio_chip as
-- * determined by a user supplied @match callback.  The callback should return
-- * 0 if the device doesn't match and non-zero if it does.  If the callback is
-- * non-zero, this function will return to the caller and not iterate over any
-- * more gpio_chips.
-+ * This function is depracated, don't use.
-  */
- struct gpio_chip *gpiochip_find(void *data,
- 				int (*match)(struct gpio_chip *gc,
-@@ -1031,21 +1025,55 @@ struct gpio_chip *gpiochip_find(void *data,
+- * gpiochip_get_desc - get the GPIO descriptor corresponding to the given
+- *                     hardware number for this chip
+- * @gc: GPIO chip
+- * @hwnum: hardware number of the GPIO for this chip
+- *
+- * Returns:
+- * A pointer to the GPIO descriptor or ``ERR_PTR(-EINVAL)`` if no GPIO exists
+- * in the given chip for the specified hardware number.
+- */
++/* This function is deprecated and will be removed soon, don't use. */
+ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc,
+ 				    unsigned int hwnum)
  {
- 	struct gpio_device *gdev;
- 	struct gpio_chip *gc = NULL;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&gpio_lock, flags);
--	list_for_each_entry(gdev, &gpio_devices, list)
--		if (gdev->chip && match(gdev->chip, data)) {
--			gc = gdev->chip;
--			break;
--		}
--
--	spin_unlock_irqrestore(&gpio_lock, flags);
-+	gdev = gpio_device_find(data, match);
-+	if (gdev) {
-+		gc = gdev->chip;
-+		gpio_device_put(gdev);
-+	}
- 
- 	return gc;
- }
- EXPORT_SYMBOL_GPL(gpiochip_find);
- 
+-	struct gpio_device *gdev = gc->gpiodev;
++	return gpio_device_get_desc(gc->gpiodev, hwnum);
++}
++EXPORT_SYMBOL_GPL(gpiochip_get_desc);
++
 +/**
-+ * gpio_device_find() - find a specific GPIO device
-+ * @data: data to pass to match function
-+ * @match: Callback function to check gpio_chip
++ * gpio_device_get_desc() - get the GPIO descriptor corresponding to the given
++ *                          hardware number for this GPIO device
++ * @gdev: GPIO device to get the descriptor from
++ * @hwnum: hardware number of the GPIO for this chip
 + *
 + * Returns:
-+ * New reference to struct gpio_device.
++ * A pointer to the GPIO descriptor or ``ERR_PTR(-EINVAL)`` if no GPIO exists
++ * in the given chip for the specified hardware number or ``ERR_PTR(-ENODEV)``
++ * if the underlying chip already vanished.
 + *
-+ * Similar to bus_find_device(). It returns a reference to a gpio_device as
-+ * determined by a user supplied @match callback. The callback should return
-+ * 0 if the device doesn't match and non-zero if it does. If the callback
-+ * returns non-zero, this function will return to the caller and not iterate
-+ * over any more gpio_devices.
-+ *
-+ * The callback takes the GPIO chip structure as argument. During the execution
-+ * of the callback function the chip is protected from being freed. TODO: This
-+ * actually has yet to be implemented.
-+ *
-+ * If the function returns non-NULL, the returned reference must be freed by
-+ * the caller using gpio_device_put().
++ * The reference count of struct gpio_device is *NOT* increased like when the
++ * GPIO is being requested for exclusive usage. It's up to the caller to make
++ * sure the GPIO device will stay alive together with the descriptor returned
++ * by this function.
 + */
-+struct gpio_device *gpio_device_find(void *data,
-+				     int (*match)(struct gpio_chip *gc,
-+						  void *data))
++struct gpio_desc *
++gpio_device_get_desc(struct gpio_device *gdev, unsigned int hwnum)
 +{
-+	struct gpio_device *gdev;
++	struct gpio_chip *gc = gdev->chip;
 +
-+	guard(spinlock_irqsave)(&gpio_lock);
-+
-+	list_for_each_entry(gdev, &gpio_devices, list) {
-+		if (gdev->chip && match(gdev->chip, data))
-+			return gpio_device_get(gdev);
-+	}
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(gpio_device_find);
-+
- static int gpiochip_match_name(struct gpio_chip *gc, void *data)
- {
- 	const char *name = data;
++	/*
++	 * FIXME: This will be locked once we protect gdev->chip everywhere
++	 * with SRCU.
++	 */
++	if (!gc)
++		return ERR_PTR(-ENODEV);
+ 
+ 	if (hwnum >= gdev->ngpio)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	return &gdev->descs[hwnum];
+ }
+-EXPORT_SYMBOL_GPL(gpiochip_get_desc);
++EXPORT_SYMBOL_GPL(gpio_device_get_desc);
+ 
+ /**
+  * desc_to_gpio - convert a GPIO descriptor to the integer namespace
 diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index a2060dc3344b..5c5029cec226 100644
+index 92f7143bad3e..a769baf3d731 100644
 --- a/include/linux/gpio/driver.h
 +++ b/include/linux/gpio/driver.h
-@@ -606,6 +606,10 @@ int devm_gpiochip_add_data_with_key(struct device *dev, struct gpio_chip *gc,
- struct gpio_chip *gpiochip_find(void *data,
- 				int (*match)(struct gpio_chip *gc, void *data));
+@@ -766,6 +766,8 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
+ void gpiochip_free_own_desc(struct gpio_desc *desc);
  
-+struct gpio_device *gpio_device_find(void *data,
-+				     int (*match)(struct gpio_chip *gc,
-+						  void *data));
-+
- struct gpio_device *gpio_device_get(struct gpio_device *gdev);
- void gpio_device_put(struct gpio_device *gdev);
+ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
++struct gpio_desc *
++gpio_device_get_desc(struct gpio_device *gdev, unsigned int hwnum);
+ 
+ #ifdef CONFIG_GPIOLIB
  
 -- 
 2.39.2
