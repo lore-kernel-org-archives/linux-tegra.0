@@ -2,165 +2,183 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4C4CA100C
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Sep 2023 20:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ED5EB8FB6
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Sep 2023 07:10:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243380AbjIEUXn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Sep 2023 16:23:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35302 "EHLO
+        id S230223AbjIFHKp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Sep 2023 03:10:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231629AbjIEUXm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Sep 2023 16:23:42 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1428E;
-        Tue,  5 Sep 2023 13:23:39 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-991c786369cso459288666b.1;
-        Tue, 05 Sep 2023 13:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693945417; x=1694550217; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=W7FEvRnQff1RFIy6G/Scp5VfoqVl8Fl9R26EpZ41ssQ=;
-        b=lWrFnxMWH56mAAYRBqSP80rEP7abc/BGdgchUTeroB66ZQO1qonI0wom7R1AWUsWa5
-         x+3YlFyh0k32JBmjrSqBLoDg8QFoGzsk+28ELUekaM28Ka1llyut0lzXjHxaqc/cGV3X
-         iFzT+0mMogIfBdvY17+qZS3u3/Glf5q0Je6H6mN+w1aq123H3UPuj7wlul70WX0A4bBj
-         MxXkRx4XmuePuFw26OU1qHTDCBhNYjTaEvCGEhqJu0sy+QgHhIeGWLae7clGHPyQS/J3
-         jITdYSo04bZYQPxFnm49UeJ1iWxVfn6XXj60YlAgoPi08nrKZI13MC29XQxhQcl9tkwI
-         ixEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693945417; x=1694550217;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W7FEvRnQff1RFIy6G/Scp5VfoqVl8Fl9R26EpZ41ssQ=;
-        b=QsJMO1b/znkhmMmCeMQm6WA7987qkVqKn5btexOM3i5tA2jZViO16219urPVmkW2o3
-         JInlp+8hPwOHcmQ/+vACM06boWHN8RdHbZlgi8Gw5ZDSDNXaSp4Z6ZbYe9ycFBTgWTeG
-         Fm8p3GDrA6+ET/DqSdD0q2lAfaqykj1QVNumuyd45JKjIDK0U39/N3Av9vQbOz/6inMG
-         fmdIgCU4H51s7t1lrV8czmXhccqdZ3vfDRdxxYE2xFUf5iucJglj2kVA2XmtxTqC64q/
-         v7QXvVBydbkddPkRSae4O79WxJGwPv9CTloyGeJtRkhVdxOzwtew/RGXyFWXJciuS4RL
-         TEMg==
-X-Gm-Message-State: AOJu0YwJ70+pPW4ZQ2FtIU7MnXVc1O+cP3aVSrLO/1ugwTgJUvZXKIFU
-        WY+dsMwn9e0hfya6JyH2jVbgEdXRNBCSgA==
-X-Google-Smtp-Source: AGHT+IG2mFnmzU6dZ1Lll+hMk7JV4ZmDPpxt54hgKUw+BKq9w4jCarie89LEsaJFEj3D1lcN6wDTcA==
-X-Received: by 2002:a17:907:b0a:b0:9a1:b705:75d1 with SMTP id h10-20020a1709070b0a00b009a1b70575d1mr579098ejl.51.1693945417163;
-        Tue, 05 Sep 2023 13:23:37 -0700 (PDT)
-Received: from ?IPV6:2a02:908:8b3:1840:5b7b:492a:c913:71fb? ([2a02:908:8b3:1840:5b7b:492a:c913:71fb])
-        by smtp.gmail.com with ESMTPSA id l18-20020a1709066b9200b0099bc08862b6sm8166003ejr.171.2023.09.05.13.23.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Sep 2023 13:23:26 -0700 (PDT)
-Message-ID: <755a2be4-6947-d756-2eee-0ba14086d781@gmail.com>
-Date:   Tue, 5 Sep 2023 22:23:16 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-From:   Maxim Schwalm <maxim.schwalm@gmail.com>
-Subject: Re: [PATCH v3 2/5] dt-bindings: display: tegra: nvidia,tegra20-dc:
- Add parallel RGB output port node
-To:     Rob Herring <robh@kernel.org>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        with ESMTP id S230155AbjIFHKp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Sep 2023 03:10:45 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63CDDE4F;
+        Wed,  6 Sep 2023 00:10:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1693984240; x=1725520240;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CzVsvBBCQyE6nmVgfBDTPc4IJEBFPNuhlR6CIA56RSY=;
+  b=jh/OGLjnnh+SnvwGZL7DuwN60omR4cuAf2PX0vJQ7p/CET3lBGgpZJR5
+   7rjsb1HNryP1TBaRL/jk98Y422kNMsKrOVWp7KOOZosizmmytsIDyYmxf
+   UQqbe0mltBJ4CM564EqEsMh/4fubF0TZ//RsrvAFbfgjKcdz6h9N0R/an
+   F+lCVtfGBuzhnmh6DLJ/3+26qxG9Jx7cjiK4hSrVR9l2C+C3lY/wmowZb
+   HuzC2ExpL/6BzIntGnhIca6vkn6qCvVoaU9XJTDTIrgVzcYKik44HxU+B
+   vA0UOJgeBpPVy7bFaVQmyIT9RYibrXr1qW++ahSFmQ5ksD3eYTVpfLkRC
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="407993429"
+X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
+   d="scan'208";a="407993429"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 00:10:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="734933655"
+X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
+   d="scan'208";a="734933655"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 06 Sep 2023 00:10:33 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 1DF7F30D; Wed,  6 Sep 2023 10:10:32 +0300 (EEST)
+Date:   Wed, 6 Sep 2023 10:10:32 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230807143515.7882-1-clamor95@gmail.com>
- <20230807143515.7882-3-clamor95@gmail.com>
- <20230821161441.GA1743870-robh@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20230821161441.GA1743870-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 08/21] gpio: acpi: provide
+ acpi_gpio_device_free_interrupts()
+Message-ID: <20230906071032.GA1599918@black.fi.intel.com>
+References: <20230905185309.131295-1-brgl@bgdev.pl>
+ <20230905185309.131295-9-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230905185309.131295-9-brgl@bgdev.pl>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Rob,
+Hi,
 
-On 21.08.23 18:14, Rob Herring wrote:
-> On Mon, Aug 07, 2023 at 05:35:12PM +0300, Svyatoslav Ryhel wrote:
->> From: Maxim Schwalm <maxim.schwalm@gmail.com>
->>
->> Either this node, which is optional, or the nvidia,panel property can be
->> present.
->>
->> Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
->> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->> ---
->>  .../display/tegra/nvidia,tegra20-dc.yaml      | 31 +++++++++++++++++++
->>  1 file changed, 31 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
->> index 69be95afd562..102304703062 100644
->> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
->> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
->> @@ -127,6 +127,37 @@ allOf:
->>                $ref: /schemas/types.yaml#/definitions/phandle
->>                description: phandle of a display panel
->>  
->> +            port:
->> +              $ref: /schemas/graph.yaml#/$defs/port-base
->> +              description: Parallel RGB output port
->> +
->> +              properties:
->> +                endpoint:
->> +                  $ref: /schemas/media/video-interfaces.yaml#
+On Tue, Sep 05, 2023 at 08:52:56PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Just to make sure, what properties are you using from this? Usually 
-> we'll list them though not a hard requirement. If none, then you just 
-> need to ref graph.yaml#/properties/port instead and can drop the rest.
+> We're moving away from public functions that take struct gpio_chip as
+> argument as the chip - unlike struct gpio_device - is owned by its
+> provider and tied to its lifetime.
+> 
+> Provide an alternative to acpi_gpiochip_free_interrupts().
 
-currently, just bus-width is used in devicetrees, but I don't think that
-it is needed at the moment. So perhaps the property can be dropped.
+Looks good to me, few minor comments below.
 
->> +                  unevaluatedProperties: false
->> +
->> +              unevaluatedProperties: false
 > 
-> In the indented cases, it's easier to read if this is before 
-> properties/patternProperties.
-> 
->> +
->> +          anyOf:
->> +            - if:
->> +                not:
->> +                  properties:
->> +                    nvidia,panel: false
->> +              then:
->> +                not:
->> +                  properties:
->> +                    port: true
->> +            - if:
->> +                not:
->> +                  properties:
->> +                    port: false
->> +              then:
->> +                not:
->> +                  properties:
->> +                    nvidia,panel: true
-> 
-> I would prefer to drop this and mark "nvidia,panel" as deprecated. 
-> Eventually I plan to add a mode to the tools to warn on using deprecated 
-> properties. Having both could be perfectly fine too. You have the 
-> "nvidia,panel" for compatibility with an old OS version and 'port' to 
-> work with newer users.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The reason for adding this was that just one of them can be utilized at
-the same time. Having both could potentially break the display output.
-I think that all the other nvidia,* properties could marked as
-deprecated as well because they don't seem to be doing much since commit
-d9f980ebcd01 ("drm/tegra: output: rgb: Wrap directly-connected panel
-into DRM bridge").
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
->> +
->> +          additionalProperties: false
+> ---
+>  drivers/gpio/gpiolib-acpi.c | 29 +++++++++++++++++++++++------
+>  include/linux/gpio/driver.h | 12 ++++++++++++
+>  2 files changed, 35 insertions(+), 6 deletions(-)
 > 
-> Move this up too.
-> 
+> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> index fbda452fb4d6..5633e39396bc 100644
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@ -558,12 +558,9 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
+>  
+> -/**
+> - * acpi_gpiochip_free_interrupts() - Free GPIO ACPI event interrupts.
+> - * @chip:      GPIO chip
+> - *
+> - * Free interrupts associated with GPIO ACPI event method for the given
+> - * GPIO chip.
+> +/*
+> + * This function is deprecated, use acpi_gpio_device_free_interrupts()
+> + * instead.
+>   */
+>  void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
+>  {
+> @@ -604,6 +601,26 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_gpiochip_free_interrupts);
+>  
+> +/**
+> + * acpi_gpio_device_free_interrupts() - Free GPIO ACPI event interrupts.
+> + * @chip	GPIO device
 
-Best regards,
-Maxim
+Should be:
+
+@chip: GPIO device
+
+> + *
+> + * Free interrupts associated with GPIO ACPI event method for the given
+> + * GPIO device.
+> + */
+> +void acpi_gpio_device_free_interrupts(struct gpio_device *gdev)
+> +{
+> +	struct gpio_chip *gc;
+> +
+> +	/* TODO: protect gdev->chip once SRCU is in place in GPIOLIB. */
+> +	gc = gdev->chip;
+> +	if (!gc)
+> +		return;
+> +
+> +	acpi_gpiochip_free_interrupts(gc);
+> +}
+> +EXPORT_SYMBOL_GPL(acpi_gpio_device_free_interrupts);
+> +
+>  int acpi_dev_add_driver_gpios(struct acpi_device *adev,
+>  			      const struct acpi_gpio_mapping *gpios)
+>  {
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index b68b3493b29d..47906bc56b3d 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -835,4 +835,16 @@ static inline struct fwnode_handle *gpiochip_node_get_first(struct device *dev)
+>  	return NULL;
+>  }
+>  
+> +/*
+> + * FIXME: Remove this once the only driver that uses it - android tablets -
+> + * becomes a good citizen and stops abusing GPIOLIB.
+
+There are a acouple of more when grepping for acpi_gpiochip_free_interrupts().
+
+I'm not entirely sure why these functions are exposed to the drivers in
+the first place. IMHO GPIOLIB should deal with these but perhaps there
+is some good reason these drivers do it...
+
+> + */
+> +#ifdef CONFIG_ACPI
+> +void acpi_gpio_device_free_interrupts(struct gpio_device *gdev);
+> +#else
+> +static inline void acpi_gpio_device_free_interrupts(struct gpio_device *gdev)
+> +{
+> +}
+
+I would put these {} to the same line:
+
+static inline void acpi_gpio_device_free_interrupts(struct gpio_device *gdev) { }
+
+> +#endif
+> +
+>  #endif /* __LINUX_GPIO_DRIVER_H */
+> -- 
+> 2.39.2
