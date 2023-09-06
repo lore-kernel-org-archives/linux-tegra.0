@@ -2,183 +2,302 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ED5EB8FB6
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Sep 2023 07:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7293FEB8FAF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Sep 2023 13:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbjIFHKp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Sep 2023 03:10:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
+        id S230272AbjIFNB7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Sep 2023 09:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230155AbjIFHKp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Sep 2023 03:10:45 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63CDDE4F;
-        Wed,  6 Sep 2023 00:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693984240; x=1725520240;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CzVsvBBCQyE6nmVgfBDTPc4IJEBFPNuhlR6CIA56RSY=;
-  b=jh/OGLjnnh+SnvwGZL7DuwN60omR4cuAf2PX0vJQ7p/CET3lBGgpZJR5
-   7rjsb1HNryP1TBaRL/jk98Y422kNMsKrOVWp7KOOZosizmmytsIDyYmxf
-   UQqbe0mltBJ4CM564EqEsMh/4fubF0TZ//RsrvAFbfgjKcdz6h9N0R/an
-   F+lCVtfGBuzhnmh6DLJ/3+26qxG9Jx7cjiK4hSrVR9l2C+C3lY/wmowZb
-   HuzC2ExpL/6BzIntGnhIca6vkn6qCvVoaU9XJTDTIrgVzcYKik44HxU+B
-   vA0UOJgeBpPVy7bFaVQmyIT9RYibrXr1qW++ahSFmQ5ksD3eYTVpfLkRC
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="407993429"
-X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
-   d="scan'208";a="407993429"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 00:10:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10824"; a="734933655"
-X-IronPort-AV: E=Sophos;i="6.02,231,1688454000"; 
-   d="scan'208";a="734933655"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 06 Sep 2023 00:10:33 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 1DF7F30D; Wed,  6 Sep 2023 10:10:32 +0300 (EEST)
-Date:   Wed, 6 Sep 2023 10:10:32 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        with ESMTP id S240977AbjIFNB7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Sep 2023 09:01:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8F610CC
+        for <linux-tegra@vger.kernel.org>; Wed,  6 Sep 2023 06:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694005266;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jq+8PcpSaMIH109h2ms6Ch2qLkD8AvXLZTAK4J2Qqds=;
+        b=W50Z09loNTqxO4obFv0lPPoYB+A3W6m48BRHOeeVBzdpYRkP49W439WOoq30PjnhBw8WM2
+        hudCXcWLGpMK+1+MDWm+qUfwqvi9FJmKcJQrX2vSLgv+VJsJqdtSMHWD5iWaf9P6b1APl3
+        pEs+rZkeRLRFcxIpQsolhGQPrGJWKxk=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-335-CubKsJxAOVu74dTgZk3bsQ-1; Wed, 06 Sep 2023 09:01:04 -0400
+X-MC-Unique: CubKsJxAOVu74dTgZk3bsQ-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2bd09fdec5cso41831001fa.1
+        for <linux-tegra@vger.kernel.org>; Wed, 06 Sep 2023 06:01:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694005262; x=1694610062;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jq+8PcpSaMIH109h2ms6Ch2qLkD8AvXLZTAK4J2Qqds=;
+        b=B7g42tjxjsYZlNLHXY/m6MEss0mYZ5Rx0ipAoqEboAjXzaGt1VTIpE2I0E1v5bEl3G
+         tXiFP5InDElD5hDWzUoO7YSNRJI2NYJK+1L7LGaI4+o6ydewnSsgrdwGdC7FWcrwzeA8
+         MFVc9zbu8RqaA7UFlkXsivtFWXuj0VkdaTKtEYTXJWtQvp50IxprZ4N4sPX1v8pu1eLY
+         7SjY5XZNY70BadxDiO1YHSodKk3gEzSI+fUzytDRYuVH9NkDII5tAvC1HXWeoe7k5qAO
+         eBch8OiENISvoqHjLSKKhu1mMUStY/zgemmVhWc/31UvXB6xOcz2HT5Ja+It531UymEt
+         8hDA==
+X-Gm-Message-State: AOJu0YyJIazUE3hahXCklcJtdrnmxpDY2nxfPh4mpMNvz9YNJO/e+i+K
+        0GzkhHk5OcVuo+qCcpXhyKj9VIxCu5M7w8qfBL3xK9f1HxB/2ARUpP7M90wpg2tjNJgLrNzqfiV
+        KAmyv4MHcrSKjpK/+V+gnYLQ=
+X-Received: by 2002:a2e:a177:0:b0:2b9:f27f:e491 with SMTP id u23-20020a2ea177000000b002b9f27fe491mr2127403ljl.42.1694005262178;
+        Wed, 06 Sep 2023 06:01:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoCrhgQkmlwcuKUAbvs9N0/AF1rSZUAm6EpcuVxlW1DjMIUJBTwNx+XHFiQUv6PYKtfefkVg==
+X-Received: by 2002:a2e:a177:0:b0:2b9:f27f:e491 with SMTP id u23-20020a2ea177000000b002b9f27fe491mr2127375ljl.42.1694005261682;
+        Wed, 06 Sep 2023 06:01:01 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id t1-20020a170906268100b00993150e5325sm9058355ejc.60.2023.09.06.06.01.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Sep 2023 06:01:01 -0700 (PDT)
+Message-ID: <8f51b4a8-bb9c-4918-61a8-4ab402da1ed0@redhat.com>
+Date:   Wed, 6 Sep 2023 15:01:00 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFT PATCH 11/21] platform: x86: android-tablets: don't access
+ GPIOLIB private members
+Content-Language: en-US, nl
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
         Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Dipen Patel <dipenp@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Mark Gross <markgross@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
         linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 08/21] gpio: acpi: provide
- acpi_gpio_device_free_interrupts()
-Message-ID: <20230906071032.GA1599918@black.fi.intel.com>
 References: <20230905185309.131295-1-brgl@bgdev.pl>
- <20230905185309.131295-9-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230905185309.131295-9-brgl@bgdev.pl>
+ <20230905185309.131295-12-brgl@bgdev.pl>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20230905185309.131295-12-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Hi Bartosz,
 
-On Tue, Sep 05, 2023 at 08:52:56PM +0200, Bartosz Golaszewski wrote:
+On 9/5/23 20:52, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> We're moving away from public functions that take struct gpio_chip as
-> argument as the chip - unlike struct gpio_device - is owned by its
-> provider and tied to its lifetime.
+> We're slowly removing cases of abuse of the GPIOLIB public API. One of
+> the biggest issues is looking up and accessing struct gpio_chip whose
+> life-time is tied to the provider and which can disappear from under any
+> user at any given moment. We have provided new interfaces that use the
+> opaque struct gpio_device which is reference counted and will soon be
+> thorougly protected with appropriate locking.
 > 
-> Provide an alternative to acpi_gpiochip_free_interrupts().
-
-Looks good to me, few minor comments below.
-
+> Stop using old interfaces in this driver and switch to safer
+> alternatives.
 > 
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+First of all sorry for the issues this hack-ish kernel module
+is causing for cleaning up gpiolib APIs.
+
+I don't know how close a look you took at the code, so first of
+all let me try to briefly explain what this hackish kernel module
+is for:
+
+There are some x86_64/ACPI tablets which shipped with Android as
+factory OS. On these tablets the device-specific (BSP style)
+kernel has things like the touchscreen driver simply having
+a hardcoded I2C bus-number + I2C client address. Combined
+with also hardcoded GPIO numbers (using the old number base APIs)
+for any GPIOs it needs.
+
+So the original Android kernels do not need the devices
+to be properly described in ACPI and the ACPI tables are
+just one big copy and paste job from some BSP which do
+not accurately describe the hardware at all.
+
+x86-android-tablets.ko identifies affected models by their
+DMI strings and then manually instantiates things like
+i2c-clients for the touchscreen, accelerometer and also
+other stuff. Yes this is ugly but it allows mainline kernels
+to run pretty well on these devices since other then
+the messed up ACPI tables these are pretty standard x86/ACPI
+tablets.
+
+I hope this explains the hacks, now on to the problems
+these are causing:
 
 > ---
->  drivers/gpio/gpiolib-acpi.c | 29 +++++++++++++++++++++++------
->  include/linux/gpio/driver.h | 12 ++++++++++++
->  2 files changed, 35 insertions(+), 6 deletions(-)
+>  .../platform/x86/x86-android-tablets/core.c   | 38 ++++++++++---------
+>  1 file changed, 20 insertions(+), 18 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index fbda452fb4d6..5633e39396bc 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -558,12 +558,9 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
->  }
->  EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
+> diff --git a/drivers/platform/x86/x86-android-tablets/core.c b/drivers/platform/x86/x86-android-tablets/core.c
+> index 2fd6060a31bb..687f84cd193c 100644
+> --- a/drivers/platform/x86/x86-android-tablets/core.c
+> +++ b/drivers/platform/x86/x86-android-tablets/core.c
+> @@ -12,6 +12,7 @@
 >  
-> -/**
-> - * acpi_gpiochip_free_interrupts() - Free GPIO ACPI event interrupts.
-> - * @chip:      GPIO chip
-> - *
-> - * Free interrupts associated with GPIO ACPI event method for the given
-> - * GPIO chip.
-> +/*
-> + * This function is deprecated, use acpi_gpio_device_free_interrupts()
-> + * instead.
->   */
->  void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
+>  #include <linux/acpi.h>
+>  #include <linux/dmi.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/gpio/machine.h>
+>  #include <linux/irq.h>
+> @@ -21,27 +22,28 @@
+>  #include <linux/string.h>
+>  
+>  #include "x86-android-tablets.h"
+> -/* For gpiochip_get_desc() which is EXPORT_SYMBOL_GPL() */
+> -#include "../../../gpio/gpiolib.h"
+> -#include "../../../gpio/gpiolib-acpi.h"
+> -
+> -static int gpiochip_find_match_label(struct gpio_chip *gc, void *data)
+> -{
+> -	return gc->label && !strcmp(gc->label, data);
+> -}
+>  
+>  int x86_android_tablet_get_gpiod(const char *label, int pin, struct gpio_desc **desc)
 >  {
-> @@ -604,6 +601,26 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
->  }
->  EXPORT_SYMBOL_GPL(acpi_gpiochip_free_interrupts);
+> +	struct gpio_device *gdev;
+>  	struct gpio_desc *gpiod;
+> -	struct gpio_chip *chip;
 >  
-> +/**
-> + * acpi_gpio_device_free_interrupts() - Free GPIO ACPI event interrupts.
-> + * @chip	GPIO device
+> -	chip = gpiochip_find((void *)label, gpiochip_find_match_label);
+> -	if (!chip) {
+> -		pr_err("error cannot find GPIO chip %s\n", label);
+> +	/*
+> +	 * FIXME: handle GPIOs correctly! This driver should really use struct
+> +	 * device and GPIO lookup tables.
+> +	 *
+> +	 * WONTDO: We do leak this reference, but the whole approach to getting
+> +	 * GPIOs in this driver is such an abuse of the GPIOLIB API that it
+> +	 * doesn't make it much worse and it's the only way to keep the
+> +	 * interrupt requested later functional...
+> +	 */
+> +	gdev = gpio_device_find_by_label(label);
+> +	if (!gdev) {
+> +		pr_err("error cannot find GPIO device %s\n", label);
+>  		return -ENODEV;
+>  	}
+>  
+> -	gpiod = gpiochip_get_desc(chip, pin);
+> +	gpiod = gpio_device_get_desc(gdev, pin);
+>  	if (IS_ERR(gpiod)) {
+>  		pr_err("error %ld getting GPIO %s %d\n", PTR_ERR(gpiod), label, pin);
+>  		return PTR_ERR(gpiod);
 
-Should be:
 
-@chip: GPIO device
+So rather then the above I think what needs to happen here
+(and I can hopefully make some time for that this weekend) is:
 
-> + *
-> + * Free interrupts associated with GPIO ACPI event method for the given
-> + * GPIO device.
-> + */
-> +void acpi_gpio_device_free_interrupts(struct gpio_device *gdev)
-> +{
-> +	struct gpio_chip *gc;
-> +
-> +	/* TODO: protect gdev->chip once SRCU is in place in GPIOLIB. */
-> +	gc = gdev->chip;
-> +	if (!gc)
-> +		return;
-> +
-> +	acpi_gpiochip_free_interrupts(gc);
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_gpio_device_free_interrupts);
-> +
->  int acpi_dev_add_driver_gpios(struct acpi_device *adev,
->  			      const struct acpi_gpio_mapping *gpios)
+1. Have the x86-android-tablets code instantiate a
+   "x86-android-tablets" platform-dev
+2. Have the code generate a gpiod_lookup_table for all GPIOs
+   for which it currently uses x86_android_tablet_get_gpiod()
+   with the .dev_id set to "x86-android-tablets"
+3. Use regular gpiod_get() on the "x86-android-tablets" pdev
+   to get the desc.
+
+I think this should solve all the issues with 
+x86_android_tablet_get_gpiod() poking inside
+gpiolib external since now it is only using
+public gpiolib APIs, right ?
+
+One question about 2. there are 2 ways to do this:
+
+i. Have the module_init() function loop over all
+x86_dev_info members which will result in calling
+x86_android_tablet_get_gpiod() and have it generate
+one big gpiod_lookup_table for all GPIOs needed
+in one go. At which point x86_android_tablet_get_gpiod()
+goes away and can be directly replaced with gpiod_get()
+calls on the pdev.
+
+ii. Keep x86_android_tablet_get_gpiod() and have it
+generate a gpiod_lookup_table with just 1 entry for
+the GPIO which its caller wants. Register the lookup
+table, do the gpiod_get() and then immediately
+unregister the lookup table again.
+
+ii. Would be easier for me to implement, especially
+since there is also some custom (board specific)
+init code calling x86_android_tablet_get_gpiod()
+which would require some special handling for i.
+
+OTOH I guess some people will consider ii. somewhat
+ugly, although AFAICT it is perfectly ok to use
+the gpiolib lookup APIs this way.
+
+Can you please let me known if you are ok with ii,
+or if you would prefer me going with solution i. ?
+
+That way when I can make some time to start working
+on this I can pick the preferred solution right away.
+
+
+
+> @@ -257,9 +259,9 @@ static void x86_android_tablet_cleanup(void)
+>  
+>  static __init int x86_android_tablet_init(void)
 >  {
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index b68b3493b29d..47906bc56b3d 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -835,4 +835,16 @@ static inline struct fwnode_handle *gpiochip_node_get_first(struct device *dev)
->  	return NULL;
->  }
+> +	struct gpio_device *gdev __free(gpio_device_put) = NULL;
+>  	const struct x86_dev_info *dev_info;
+>  	const struct dmi_system_id *id;
+> -	struct gpio_chip *chip;
+>  	int i, ret = 0;
 >  
-> +/*
-> + * FIXME: Remove this once the only driver that uses it - android tablets -
-> + * becomes a good citizen and stops abusing GPIOLIB.
+>  	id = dmi_first_match(x86_android_tablet_ids);
+> @@ -273,13 +275,13 @@ static __init int x86_android_tablet_init(void)
+>  	 * _AEI (ACPI Event Interrupt) handlers, disable these.
+>  	 */
+>  	if (dev_info->invalid_aei_gpiochip) {
+> -		chip = gpiochip_find(dev_info->invalid_aei_gpiochip,
+> -				     gpiochip_find_match_label);
+> -		if (!chip) {
+> +		gdev = gpio_device_find_by_label(
+> +				dev_info->invalid_aei_gpiochip);
+> +		if (!gdev) {
+>  			pr_err("error cannot find GPIO chip %s\n", dev_info->invalid_aei_gpiochip);
+>  			return -ENODEV;
+>  		}
+> -		acpi_gpiochip_free_interrupts(chip);
+> +		acpi_gpio_device_free_interrupts(gdev);
+>  	}
+>  
+>  	/*
 
-There are a acouple of more when grepping for acpi_gpiochip_free_interrupts().
+After some recent improvements there is only 1 board left which sets
+dev_info->invalid_aei_gpiochip and that can easily be replaced with
+with adding 1 extra entry to gpiolib_acpi_quirks[] inside
+drivers/gpio/gpiolib-acpi.c .
 
-I'm not entirely sure why these functions are exposed to the drivers in
-the first place. IMHO GPIOLIB should deal with these but perhaps there
-is some good reason these drivers do it...
+So I believe the right solution here is to just remove
+dev_info->invalid_aei_gpiochip support for x86-android-tablets
+all together and then at least x86-android-tablets will no
+longer be making any hackish acpi_gpiochip_free_interrupts() calls.
 
-> + */
-> +#ifdef CONFIG_ACPI
-> +void acpi_gpio_device_free_interrupts(struct gpio_device *gdev);
-> +#else
-> +static inline void acpi_gpio_device_free_interrupts(struct gpio_device *gdev)
-> +{
-> +}
+I don't want to make any promises wrt the timing, but I should
+be able to prepare a set of patches which simply removes all
+the private gpiolib API use from x86-android-tablets, so that
+you don't need to workaround that in this patch series.
 
-I would put these {} to the same line:
+With some luck I can have an immutable branch with 6.6-rc1 +
+such a patch-series ready for you soon after 6.6-rc1 is
+released.
 
-static inline void acpi_gpio_device_free_interrupts(struct gpio_device *gdev) { }
+Regards,
 
-> +#endif
-> +
->  #endif /* __LINUX_GPIO_DRIVER_H */
-> -- 
-> 2.39.2
+Hans
+
+
+
