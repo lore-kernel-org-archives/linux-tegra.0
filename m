@@ -2,100 +2,150 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B596EB8FB3
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Sep 2023 13:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7CDEB8FD8
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Sep 2023 14:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241198AbjIFNpH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Sep 2023 09:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36268 "EHLO
+        id S241502AbjIFOKl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Sep 2023 10:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238703AbjIFNpH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Sep 2023 09:45:07 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0442810E2
-        for <linux-tegra@vger.kernel.org>; Wed,  6 Sep 2023 06:44:52 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-56c2e882416so2252432a12.3
-        for <linux-tegra@vger.kernel.org>; Wed, 06 Sep 2023 06:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1694007891; x=1694612691; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjmXiVfaEDODvjU2FievJvSdcMcGvy4WGcnM9/YFUIw=;
-        b=F2TWW2AGgy/XiUiplFRyOKTcHJNiUGCOtsNbYU4dz7K9IwxfevsGKmAV+7eCL/7/Jf
-         UDljFcLl3y9hSdKZHWTU0VU1Q59OF7UjnqMh7MpLYhmmh4LJ3Typ2fn8i1jxSTnRUTCo
-         BpFrFyTjerDBfZ94BTpuX1Xa/iY6UDvQGWmDYUT9H2t+qNSt6Kyzn61Q1GBGKTiGHmhI
-         HNZJdafZ9twHDFriAv3sR8HviEyMhvMp5fARx6khCql5LxRszYTNhz2IuLNizQyjLMWt
-         ucxcHfIYqL74wKyN5MhHbpoMErdgxty+SQCkxT05+5Y72M+u7a6O+SxBT9PKvGlXjUPM
-         BDDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694007891; x=1694612691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vjmXiVfaEDODvjU2FievJvSdcMcGvy4WGcnM9/YFUIw=;
-        b=hAlV/Xfhybm3+/AfuDHJydFcmul41NDtkT5a/RMCHsxqd4XuuqAtmH7xXkcEIfSO2J
-         ZbL3lTeAufl3OKqDr9dx/nYNBKObM3xp9LbQu010lOOaFfXPyYCagZRRwkZePg5dAH4T
-         mKsxoji9t3ADf4S20zPAqeHkYc3gb4shaGU7T39cdSyzHTwOXk8h4KXKktDHcc1HMjnW
-         61WoNnoRUiQAf2Ab5BNvQhJqmu2WuFfdw5/uz6GdxWWTyfHebr3W7QfRAjtgoUUzRxhi
-         GVXO70wg2pW3yOLEfAKPX5UbT6qyjOXl5SxPHKOh2nJIPkUmitT/LYyVmY+X6R7Na4Bu
-         2tFg==
-X-Gm-Message-State: AOJu0YyE33z/ckrbJbO9Iz4d7KnQXjZESVxkoqV6IQGklrGHFWFbiOaa
-        rxb0jw37V7Cb0+0rC0WpFfTNxQ==
-X-Google-Smtp-Source: AGHT+IEL+RpSURCPPA5o67iyCeVVmbxChqKlkrpULXGfrkmSIXOBkNGq1NxIr8VMJglhyURY9OigNQ==
-X-Received: by 2002:a05:6a20:12cd:b0:153:556e:a78d with SMTP id v13-20020a056a2012cd00b00153556ea78dmr2617805pzg.43.1694007891529;
-        Wed, 06 Sep 2023 06:44:51 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
-        by smtp.gmail.com with ESMTPSA id e14-20020a62aa0e000000b0065980654baasm10950757pff.130.2023.09.06.06.44.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Sep 2023 06:44:50 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1qdspt-000yLt-Ck;
-        Wed, 06 Sep 2023 10:44:49 -0300
-Date:   Wed, 6 Sep 2023 10:44:49 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jinjie Ruan <ruanjinjie@huawei.com>
-Cc:     linux-tegra@vger.kernel.org, iommu@lists.linux.dev,
-        baolu.lu@linux.intel.com,
+        with ESMTP id S233888AbjIFOKk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Sep 2023 10:10:40 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 639B51726;
+        Wed,  6 Sep 2023 07:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694009427; x=1725545427;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=F7bl2h3DX3KJUesLeL2e/fpx9L5jnQCY/nK4NgE/LN8=;
+  b=g3TfX+F5c9xs045JV9UkPGwPcOsj25+u2hqakhIJSlX5rsF/Xnj+2PbX
+   GFOUeqZxs1Omg3vIbqQoir+ARc9lysQGgTbH1lgVFKuzr2wIE3LQF5Dkl
+   LVPw/mEiJWCmdAR4HCu/aP9PXgiWO/3JSdpmPo/OaqRJcAyB+/2dFLsy4
+   fJ+zadFSrAZsoP2M8E4LWE7t6OvVY9G7h+fg3Z8loUTRNpqBR2VRVWPRh
+   gKhXFt91pM8pzQFuyWtfVd3rHmUWpC0yGL3FdxgGlD8yWVFGfkUdypJ9K
+   EQfqvoL8PafH9Q1XCCFqblVCAkFqmy9VY3mDMUPokCMjvYcGcMiit++O3
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="441049792"
+X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
+   d="scan'208";a="441049792"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 07:10:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="735068521"
+X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
+   d="scan'208";a="735068521"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 07:10:21 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qdtEY-006xYP-12;
+        Wed, 06 Sep 2023 17:10:18 +0300
+Date:   Wed, 6 Sep 2023 17:10:18 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2] iommu/tegra-smmu: Drop unnecessary error check for
- for debugfs_create_dir()
-Message-ID: <ZPiCUcxaftqCi4UJ@ziepe.ca>
-References: <20230901073056.1364755-1-ruanjinjie@huawei.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 02/21] gpiolib: provide gpio_device_find()
+Message-ID: <ZPiISpLoVx35PuYc@smile.fi.intel.com>
+References: <20230905185309.131295-1-brgl@bgdev.pl>
+ <20230905185309.131295-3-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230901073056.1364755-1-ruanjinjie@huawei.com>
+In-Reply-To: <20230905185309.131295-3-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 01, 2023 at 03:30:56PM +0800, Jinjie Ruan wrote:
-> The debugfs_create_dir() function returns error pointers.
-> It never returns NULL.
+On Tue, Sep 05, 2023 at 08:52:50PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> As Baolu suggested, this patch removes the error checking for
-> debugfs_create_dir in tegra-smmu.c. This is because the DebugFS kernel API
-> is developed in a way that the caller can safely ignore the errors that
-> occur during the creation of DebugFS nodes. The debugfs APIs have
-> a IS_ERR() judge in start_creating() which can handle it gracefully. So
-> these checks are unnecessary.
+> gpiochip_find() is wrong and its kernel doc is misleading as the
+> function doesn't return a reference to the gpio_chip but just a raw
+> pointer. The chip itself is not guaranteed to stay alive, in fact it can
+> be deleted at any point. Also: other than GPIO drivers themselves,
+> nobody else has any business accessing gpio_chip structs.
 > 
-> Fixes: d1313e7896e9 ("iommu/tegra-smmu: Add debugfs support")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Suggested-by: Baolu Lu <baolu.lu@linux.intel.com>
-> ---
-> v2:
-> - Remove the err check instead of using IS_ERR to replace NULL check.
-> - Update the commit message and title.
-> ---
->  drivers/iommu/tegra-smmu.c | 2 --
->  1 file changed, 2 deletions(-)
+> Provide a new gpio_device_find() function that returns a real reference
+> to the opaque gpio_device structure that is guaranteed to stay alive for
+> as long as there are active users of it.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+...
 
-Jason
+> +/**
+> + * gpio_device_find() - find a specific GPIO device
+> + * @data: data to pass to match function
+> + * @match: Callback function to check gpio_chip
+
+> + * Returns:
+> + * New reference to struct gpio_device.
+
+I believe this is wrong location of the Return section.
+AFAIU how kernel doc uses section markers, this entire description becomes
+a Return(s) section. Have you tried to render man/html/pdf and see this?
+
+> + * Similar to bus_find_device(). It returns a reference to a gpio_device as
+> + * determined by a user supplied @match callback. The callback should return
+> + * 0 if the device doesn't match and non-zero if it does. If the callback
+> + * returns non-zero, this function will return to the caller and not iterate
+> + * over any more gpio_devices.
+> + *
+> + * The callback takes the GPIO chip structure as argument. During the execution
+> + * of the callback function the chip is protected from being freed. TODO: This
+> + * actually has yet to be implemented.
+> + *
+> + * If the function returns non-NULL, the returned reference must be freed by
+> + * the caller using gpio_device_put().
+> + */
+> +struct gpio_device *gpio_device_find(void *data,
+
+> +				     int (*match)(struct gpio_chip *gc,
+> +						  void *data))
+
+One line?
+Or maybe a type for it? (gpio_match_fn, for example)
+
+> +{
+> +	struct gpio_device *gdev;
+> +
+> +	guard(spinlock_irqsave)(&gpio_lock);
+> +
+> +	list_for_each_entry(gdev, &gpio_devices, list) {
+> +		if (gdev->chip && match(gdev->chip, data))
+> +			return gpio_device_get(gdev);
+> +	}
+> +
+> +	return NULL;
+> +}
+
+...
+
+> +struct gpio_device *gpio_device_find(void *data,
+> +				     int (*match)(struct gpio_chip *gc,
+> +						  void *data));
+
+Ditto.
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
