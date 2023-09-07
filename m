@@ -2,179 +2,179 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C65AEC873A
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC687EC873A
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:54:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbjIGPyI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:54:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55436 "EHLO
+        id S232303AbjIGPyt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:54:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236496AbjIGPsQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:48:16 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on20628.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e89::628])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6BE4686;
-        Thu,  7 Sep 2023 08:39:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RvqsA5f8HgYFyfNYutaIuqy4lRLBQBaSKTeX7Nt8jUsV6owu6dS3a3osS3I+J5iuneiZ35kCd55uWrkNOgUtaZM04ClE217i6t3+Ag6PQmUhQqSu2cWW3gPztgFokN1/qUTGP9HQRymGZD5aeH40lNtuXBBeEE0SwiS4D/h+3wkJ871DPNLcRIsNfsZaG6Iom+6HkQDVL1tTOO0ewtY9CJUJzSdDGJmszV/gZkjDB1SRbxfKCV4tmD0DvpC9YZpl7rfYbUkSR32eiCkQsaUCnDJW223E2SuUlljTGx7MJCMZrSrk9kVaq1Lt99S/SpI6GJ2dRKdrYGGv5rM8rWxzqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=axdESzzeTc41Elo5Pnv2l4RWQNQI4WWmDV3IaB2H/BY=;
- b=ZMyoWIRBdYB0D6VuB9+EjgJKjY9hiN4shIV4wv8L6+5FUn3alz8EpB8HOpAOPTFA/LMX879TSq2YqK7JhIQh11GtTZ3Jhrz7fBqccjd7FjzBu4yZf3v5RRN57QZzo7z+X7TjeJrba0Y01uNBfi3tT3lX0CPyppCumCYFOrZZ+j0GZboY2iukWTpDb7773bHBOgzbQ6UnakxnDyQI6vc+V8z2k4ELXWLJ5xnDq6MhiOFx89E0Eq6Xdh1wkfv/pValUiWD2OMdXWpMAEjaVMb35hTNGkwnIQwp+bD+YJ6p5txFB7o98e8gXcLSXPtzIOib6piWNyacL3ujRQJktVmtlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=axdESzzeTc41Elo5Pnv2l4RWQNQI4WWmDV3IaB2H/BY=;
- b=FJxOMtv7Qda0KomSl6bStJpFVoSXwWkwMwTZiFQHm9gHQlkhslDhHGn466gQAtC2EvS1lbpF003kD31Gft2s6n4nyzmEs1CDsIOK2t0gr7FjRTd9S/0RGSy06+sgWWVu0vKwvmfpNCr5SZfIeGpQAGfJr38DNl7rZPyr6GwxyIbC1ImlytYI+YWm9IBJYH/8M06Gs/6VW8uclwIGSuoft6qgNPv0g+aYFryE3iIpCnFbcbfe6a4etxVVoAp+NdpL+QuLId3R6iN/CRU9vQjo8p0Oi8dPFof89zn7caHFUuaMzsRLOm72slRedZ0/uDhtmdy6+xM1sT7NZsG5KhxGJA==
-Received: from SN7PR04CA0205.namprd04.prod.outlook.com (2603:10b6:806:126::30)
- by BL1PR12MB5240.namprd12.prod.outlook.com (2603:10b6:208:319::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Thu, 7 Sep
- 2023 15:03:15 +0000
-Received: from SN1PEPF0002BA4F.namprd03.prod.outlook.com
- (2603:10b6:806:126:cafe::cc) by SN7PR04CA0205.outlook.office365.com
- (2603:10b6:806:126::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.30 via Frontend
- Transport; Thu, 7 Sep 2023 15:03:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SN1PEPF0002BA4F.mail.protection.outlook.com (10.167.242.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6768.26 via Frontend Transport; Thu, 7 Sep 2023 15:03:14 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 7 Sep 2023
- 08:03:00 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 7 Sep 2023
- 08:02:59 -0700
-Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server id 15.2.986.37 via Frontend Transport; Thu, 7 Sep
- 2023 08:02:56 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <spujar@nvidia.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v2 2/2] ASoC: tegra: Fix redundant PLLA and PLLA_OUT0 updates
-Date:   Thu, 7 Sep 2023 20:32:25 +0530
-Message-ID: <1694098945-32760-3-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1694098945-32760-1-git-send-email-spujar@nvidia.com>
-References: <1694098945-32760-1-git-send-email-spujar@nvidia.com>
+        with ESMTP id S240662AbjIGPxX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:53:23 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F0847EC3
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 08:43:29 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7A22A21862;
+        Thu,  7 Sep 2023 08:35:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1694075756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0rFn44AIm2HsPQJSCh9y4NhrNnMiKMMHFylbijlpr74=;
+        b=fZZ6lxmEHRIXC+4bZsmuuleGSB6QnZxjuahXtO4RMu/wMnxP2Uvi/AInIAdiGGpgdnRAtN
+        w0dE7l88KuMZ9fa7/B74kM7URkn58gsdkT2kw5rHH3GvSrQdZMhvu0b4l7kbAIGflY2Mbi
+        DoRz+xHEE27OaMqpl1c49rYgst4u4SY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1694075756;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0rFn44AIm2HsPQJSCh9y4NhrNnMiKMMHFylbijlpr74=;
+        b=1pjSBHeiF41sYtaMDUSFc3KHMSZpywc1jAGH7X+yAkoYXMaKcnUu/jNvsXKrSBaCbUEkOe
+        mUN/WKdz5635HrAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 568E9138FA;
+        Thu,  7 Sep 2023 08:35:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 9I0kFGyL+WSEHAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Thu, 07 Sep 2023 08:35:56 +0000
+Message-ID: <dd898338-813f-df63-4255-986903aa7cb6@suse.de>
+Date:   Thu, 7 Sep 2023 10:35:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4F:EE_|BL1PR12MB5240:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4895460d-4933-4667-75bc-08dbafb38fe3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nFZYEaBfWc7Ic/iKE42wbvKUuxyCqWwDrJpKE2Ah+zjf7DXqsR6A48mH6MZgOPts7oEOSf8Xbwyyg63Ho+6WeLP7DP2djvdax5dM9x5q2s0S6O0MBm70+bfNEU0RSN3Q2TrQQgAX//Od9zL0279nAg525OCQBzzy4hpjRE7Y5WGADZAX2YY8B7NyZGR8xs4kBBZDPcb02BEzsAIiANo5vuNkkWGTS/NOT3GbPTjo0sKrQp8Q46zFx1zx9nc9UGkwj6xM3gEwBqxrB+iAZ++wG1UdqscDTI0W6CzieDjszpTh2QqKmSzp6BZFTYAeoFWW8diz+tLbeU/UTfpcAzjChl1uvnLFUmgS9yn3BJa2QQngUuwRWwi+Q9Y2kSBVtTCc+xx5BcMukenglvFx+QSFEQ3SN+b6fpYw0oSUl98BuyyYKpbiUn8AVnjBBsSJiGTU0RgWg7O6gWEJ3hWsKCBD8SfFE+ojRVTRstTVmOgtcFuJYSkI/A4X7JgLDofoz29P/JRv42oOVOt6k6e/utQPyQh3oMCFHqpQyFDx8GCo5JlFGslW2PsZhz5XGXBlZogdkRhdl55OQqJHiJ2y6s4tA/PcvAG1ACCAcjJ6vq0LQeaQmfL/fNEAN3K8nGBnRd48uITgcVz4jcjQHfJH7iw4jt0VOfHvlDqIj8wD5CRAK/T6mUlzbkAw4ohNRk44GBX64ywNcUPFFnKUcpr4N+Ujj2YQNIfiVl84/p24cnBfcMnTfNUTeCRNeMRgP/bMlQKH
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(396003)(39860400002)(346002)(136003)(451199024)(186009)(82310400011)(1800799009)(40470700004)(36840700001)(46966006)(15650500001)(8936002)(8676002)(478600001)(4326008)(110136005)(70206006)(70586007)(5660300002)(40480700001)(83380400001)(2906002)(41300700001)(6666004)(316002)(54906003)(86362001)(7696005)(40460700003)(82740400003)(36860700001)(2616005)(356005)(26005)(7636003)(426003)(336012)(47076005)(36756003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2023 15:03:14.9706
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4895460d-4933-4667-75bc-08dbafb38fe3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF0002BA4F.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5240
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we support
+ display
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>,
+        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+References: <20230825132229.1109445-1-thierry.reding@gmail.com>
+ <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de>
+ <5f1bca1b-8deb-e677-521d-87d3848e22df@kapsi.fi>
+ <CAKMK7uFDn_R+c=YErf7gEHVW4pg+odYKVjrs0EofvpG544Po6Q@mail.gmail.com>
+ <ZPmD5WNZzz279qZ7@orome>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <ZPmD5WNZzz279qZ7@orome>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------XbJwvbe96UzrF5hJWzfl03Nt"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra audio graph card has many DAI links which connects internal
-AHUB modules and external audio codecs. Since these are DPCM links,
-hw_params() call in the machine driver happens for each connected
-BE link and PLLA is updated every time. This is not really needed
-for all links as only I/O link DAIs derive respective clocks from
-PLLA_OUT0 and thus from PLLA. Hence add checks to limit the clock
-updates to DAIs over I/O links.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------XbJwvbe96UzrF5hJWzfl03Nt
+Content-Type: multipart/mixed; boundary="------------AfJPVNc8LkZzMyTF6XPV9OxB";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>,
+ dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <dd898338-813f-df63-4255-986903aa7cb6@suse.de>
+Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we support
+ display
+References: <20230825132229.1109445-1-thierry.reding@gmail.com>
+ <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de>
+ <5f1bca1b-8deb-e677-521d-87d3848e22df@kapsi.fi>
+ <CAKMK7uFDn_R+c=YErf7gEHVW4pg+odYKVjrs0EofvpG544Po6Q@mail.gmail.com>
+ <ZPmD5WNZzz279qZ7@orome>
+In-Reply-To: <ZPmD5WNZzz279qZ7@orome>
 
-This found to be fixing a DMIC clock discrepancy which is suspected
-to happen because of back to back quick PLLA and PLLA_OUT0 rate
-updates. This was observed on Jetson TX2 platform where DMIC clock
-ended up with unexpected value.
+--------------AfJPVNc8LkZzMyTF6XPV9OxB
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Fixes: 202e2f774543 ("ASoC: tegra: Add audio graph based card driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- sound/soc/tegra/tegra_audio_graph_card.c | 30 ++++++++++++++----------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+SGkNCg0KQW0gMDcuMDkuMjMgdW0gMTA6MDMgc2NocmllYiBUaGllcnJ5IFJlZGluZzoNCj4g
+T24gVGh1LCBBdWcgMzEsIDIwMjMgYXQgMTA6MDQ6MjlBTSArMDIwMCwgRGFuaWVsIFZldHRl
+ciB3cm90ZToNCj4+IE9uIFRodSwgMzEgQXVnIDIwMjMgYXQgMDg6MzMsIE1pa2tvIFBlcnR0
+dW5lbiA8Y3luZGlzQGthcHNpLmZpPiB3cm90ZToNCj4+Pg0KPj4+IE9uIDgvMzAvMjMgMTM6
+MTksIFRob21hcyBaaW1tZXJtYW5uIHdyb3RlOg0KPj4+PiBIaQ0KPj4+Pg0KPj4+PiBBbSAy
+NS4wOC4yMyB1bSAxNToyMiBzY2hyaWViIFRoaWVycnkgUmVkaW5nOg0KPj4+Pj4gRnJvbTog
+VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4+Pj4+DQo+Pj4+PiBUZWdy
+YSBEUk0gZG9lc24ndCBzdXBwb3J0IGRpc3BsYXkgb24gVGVncmEyMzQgYW5kIGxhdGVyLCBz
+byBtYWtlIHN1cmUNCj4+Pj4+IG5vdCB0byByZW1vdmUgYW55IGV4aXN0aW5nIGZyYW1lYnVm
+ZmVycyBpbiB0aGF0IGNhc2UuDQo+Pj4+Pg0KPj4+Pj4gU2lnbmVkLW9mZi1ieTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4+Pj4+IC0tLQ0KPj4+Pj4gICAgZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgOCArKysrKy0tLQ0KPj4+Pj4gICAgMSBmaWxl
+IGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4+Pj4+DQo+Pj4+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2RybS5jDQo+Pj4+PiBpbmRleCBiMWUxYTc4ZTMwYzYuLjdhMzhkYWRi
+YzI2NCAxMDA2NDQNCj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYw0K
+Pj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jDQo+Pj4+PiBAQCAtMTIy
+MCw5ICsxMjIwLDExIEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3QNCj4+
+Pj4+IGhvc3QxeF9kZXZpY2UgKmRldikNCj4+Pj4+ICAgICAgICBkcm1fbW9kZV9jb25maWdf
+cmVzZXQoZHJtKTsNCj4+Pj4+IC0gICAgZXJyID0gZHJtX2FwZXJ0dXJlX3JlbW92ZV9mcmFt
+ZWJ1ZmZlcnMoJnRlZ3JhX2RybV9kcml2ZXIpOw0KPj4+Pj4gLSAgICBpZiAoZXJyIDwgMCkN
+Cj4+Pj4+IC0gICAgICAgIGdvdG8gaHViOw0KPj4+Pj4gKyAgICBpZiAoZHJtLT5tb2RlX2Nv
+bmZpZy5udW1fY3J0YyA+IDApIHsNCj4+Pj4NCj4+Pj4gSWYgeW91IGRvbid0IHN1cHBvcnQg
+dGhlIGhhcmR3YXJlLCB3b3VsZG4ndCBpdCBiZSBiZXR0ZXIgdG8gcmV0dXJuDQo+Pj4+IC1F
+Tk9ERVYgaWYgIW51bV9jcnRjPw0KPj4+DQo+Pj4gV2hpbGUgZGlzcGxheSBpcyBub3Qgc3Vw
+cG9ydGVkIHRocm91Z2ggVGVncmFEUk0gb24gVGVncmEyMzQrLCBjZXJ0YWluDQo+Pj4gbXVs
+dGltZWRpYSBhY2NlbGVyYXRvcnMgYXJlIHN1cHBvcnRlZCwgc28gd2UgbmVlZCB0byBmaW5p
+c2ggcHJvYmUgZm9yIHRob3NlLg0KPj4NCj4+IElkZWFsbHkgeW91IGFsc28gcmVnaXN0ZXIg
+dGhlIHRlZ3JhIGRyaXZlciB3aXRob3V0IERSSVZFUl9NT0RFU0VUIHwNCj4+IERSSVZFUl9B
+VE9NSUMgaW4gdGhhdCBjYXNlLCB0byBhdm9pZCB1bmVjZXNzYXJ5IHVzZXJzcGFjZSBjb25m
+dXNpb24uDQo+PiBNb3N0IHVzZXJzcGFjZSBjYW4gY29wZSB3aXRoIGEgZGlzcGxheSBkcml2
+ZXIgd2l0aG91dCBhbnkgY3J0YywgYnV0IEkNCj4+IHRoaW5rIHhvcmctbW9kZXNldHR0aW5n
+IGFjdHVhbGx5IGZhbGxzIG92ZXIuIE9yIGF0IGxlYXN0IEkndmUgc2Vlbg0KPj4gc29tZSBo
+YWNrcyB0aGF0IHRoZSBhZ3ggcGVvcGxlIGFkZGVkIHRvIG1ha2Ugc3VyZSBYIGRvZXNuJ3QN
+Cj4+IGFjY2lkZW50YWxseSBvcGVuIHRoZSB3cm9uZyBkcml2ZXIuDQo+IA0KPiBUaGF0J3Mg
+YSBnb29kIHBvaW50LiBIb3dldmVyIEkgcmVjYWxsIGZyb20gZWFybGllciBhdHRlbXB0cyBh
+dCBkb2luZw0KPiBzb21ldGhpbmcgbGlrZSB0aGlzIGluIE5vdXZlYXUgKGFsdGhvdWdoIHRo
+aXMgaXMgbm93IHZlcnkgbG9uZyBhZ28pIHRoYXQNCj4gaXQncyBub3QgdmVyeSBlYXN5LiBU
+aGUgcHJvYmxlbSwgYXMgSSByZWNhbGwsIGlzIHRoYXQgdGhlIGRyaXZlciBpcyBhDQo+IHNp
+bmdsZXRvbiwgc28gd2Ugd291bGQgZXNzZW50aWFsbHkgYmUgc3VwcG9ydGluZyBlaXRoZXIg
+bW9kZXNldHRpbmcgb3INCj4gbm90LCBmb3IgYW55IGRldmljZSBpbiB0aGUgc3lzdGVtLg0K
+DQpUYWtlIGEgbG9vayBhdCBzdHJ1Y3QgZHJtX2RldmljZS5kcml2ZXJfZmVhdHVyZXMuIEl0
+IGxldCdzIHlvdSBjbGVhciB0aGUgDQpmbGFncyB0aGF0IHlvdXIgZGV2aWNlIGRvZXNuJ3Qg
+c3VwcG9ydC4NCg0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYuNS9zb3Vy
+Y2UvaW5jbHVkZS9kcm0vZHJtX2RldmljZS5oI0wxMjgNCg0KQmVzdCByZWdhcmRzDQpUaG9t
+YXMNCg0KPiANCj4gTm93LCBpdCdzIHVubGlrZWx5IHRoYXQgd2UnZCBoYXZlIGEgbWl4IG9m
+IG9uZSBUZWdyYSBEUk0gZHJpdmVyIHdpdGgNCj4gZGlzcGxheSBzdXBwb3J0IGFuZCBhbm90
+aGVyIHdpdGhvdXQsIGJ1dCBpdCdzIHNvbWV0aGluZyB0aGF0IEkgcmVjYWxsDQo+IGJhY2sg
+YXQgdGhlIHRpbWUgd2l0aCBOb3V2ZWF1IHdhcyBwcm9ibGVtYXRpYyBiZWNhdXNlIHlvdSBj
+b3VsZCBoYXZlIHRoZQ0KPiBUZWdyYSBpbnRlZ3JhdGVkIGdyYXBoaWNzICh3aXRob3V0IGRp
+c3BsYXkgc3VwcG9ydCkgYW5kIGEgUENJLWNvbm5lY3RlZA0KPiBkaXNjcmV0ZSBHUFUgKHdp
+dGggZGlzcGxheSBzdXBwb3J0KSB3aXRoaW4gdGhlIHNhbWUgc3lzdGVtLg0KPiANCj4gSSBu
+ZWVkIHRvIGxvb2sgaW50byBpdCBhIGJpdCBtb3JlIHRvIHNlZSBpZiBJIGNhbiBjb21lIHVw
+IHdpdGggc29tZXRoaW5nDQo+IGdvb2QgdG8gYWNjb3VudCBmb3IgdGhpcy4NCj4gDQo+IFRo
+aWVycnkNCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVs
+b3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpGcmFua2Vuc3Ry
+YXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2byBUb3RldiwgQW5k
+cmV3IE15ZXJzLCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1hbg0KSFJCIDM2ODA5
+IChBRyBOdWVybmJlcmcpDQo=
 
-diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
-index 1f2c5018bf5a..4737e776d383 100644
---- a/sound/soc/tegra/tegra_audio_graph_card.c
-+++ b/sound/soc/tegra/tegra_audio_graph_card.c
-@@ -10,6 +10,7 @@
- #include <linux/platform_device.h>
- #include <sound/graph_card.h>
- #include <sound/pcm_params.h>
-+#include <sound/soc-dai.h>
- 
- #define MAX_PLLA_OUT0_DIV 128
- 
-@@ -44,6 +45,21 @@ struct tegra_audio_cdata {
- 	unsigned int plla_out0_rates[NUM_RATE_TYPE];
- };
- 
-+static bool need_clk_update(struct snd_soc_dai *dai)
-+{
-+	if (snd_soc_dai_is_dummy(dai) ||
-+	    !dai->driver->ops ||
-+	    !dai->driver->name)
-+		return false;
-+
-+	if (strstr(dai->driver->name, "I2S") ||
-+	    strstr(dai->driver->name, "DMIC") ||
-+	    strstr(dai->driver->name, "DSPK"))
-+		return true;
-+
-+	return false;
-+}
-+
- /* Setup PLL clock as per the given sample rate */
- static int tegra_audio_graph_update_pll(struct snd_pcm_substream *substream,
- 					struct snd_pcm_hw_params *params)
-@@ -140,19 +156,7 @@ static int tegra_audio_graph_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_soc_dai *cpu_dai = asoc_rtd_to_cpu(rtd, 0);
- 	int err;
- 
--	/*
--	 * This gets called for each DAI link (FE or BE) when DPCM is used.
--	 * We may not want to update PLLA rate for each call. So PLLA update
--	 * must be restricted to external I/O links (I2S, DMIC or DSPK) since
--	 * they actually depend on it. I/O modules update their clocks in
--	 * hw_param() of their respective component driver and PLLA rate
--	 * update here helps them to derive appropriate rates.
--	 *
--	 * TODO: When more HW accelerators get added (like sample rate
--	 * converter, volume gain controller etc., which don't really
--	 * depend on PLLA) we need a better way to filter here.
--	 */
--	if (cpu_dai->driver->ops && rtd->dai_link->no_pcm) {
-+	if (need_clk_update(cpu_dai)) {
- 		err = tegra_audio_graph_update_pll(substream, params);
- 		if (err)
- 			return err;
--- 
-2.17.1
+--------------AfJPVNc8LkZzMyTF6XPV9OxB--
 
+--------------XbJwvbe96UzrF5hJWzfl03Nt
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmT5i2sFAwAAAAAACgkQlh/E3EQov+CN
+KhAAgDnVn+JWXkR4znfhRMMq33jieCG3KvClEG4FpHKRGvVuwwjKEGYvW+GDhdpDaIJzjHqfsYht
+O12Pfs8KK/4bF3d+GvKwaCElZfjd+k8no2oxl9s27qLtKpSJHpW4Y4+tIRKe7cRPXAmE8gGbEsFJ
+so8nLc+GkZIFDphG/o74v8497dTMPnBWLGWxPRJg+f6nfCylXPEXtO5KW5TZd7B6POJYT7JNbUSQ
+yFHEjHyZvTHcmHkBlC9TA2sM6A+0F4Mwc5FN/FuZ8j+3xBkCHCgGIfc43MzNGBXV/bUJZ6Haq5aN
+aPqhIuNyBdUQdrYsjI7+McJTAvRrHb/p0BTn/6CPIJXJzjM/U9UV21DsqGyGJGiD3GEqgq/mYTCM
+JEQmWFSODZ4GSFbHW2B+sfBwbb4ccXvmrGsYbdBEkOg4Yq8h7rqAJ7d1TTyLEsiAXsTgyCULx9a7
+V3rlX6YBfvhry6VSjzhx2w7xe1BEtL+H2tLNvzZ/d7q69t+3ZtSYO4IGS2VmZbk8RC7XBATz3qHJ
+0gVzmprFN+2wwoojg86KbflAwFhfNuYAnfcdtOrXiR67MZIjzMf2D+rnDrGTS33xJfLf+95HNN+v
+DnykldVkZdK757EOiNpKvUQGEZJs6V9R9BTGZSPeQlwBjUmqCFDOLDkOyB9cAmVEaikYRuysigKM
+iaI=
+=+rNB
+-----END PGP SIGNATURE-----
+
+--------------XbJwvbe96UzrF5hJWzfl03Nt--
