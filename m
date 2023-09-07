@@ -2,59 +2,58 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C20AEC8743
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 17:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6034EC8726
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 17:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243677AbjIGR2i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:28:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57678 "EHLO
+        id S244455AbjIGRlN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 13:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243770AbjIGR2g (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 13:28:36 -0400
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326C91FD3
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 10:28:07 -0700 (PDT)
-Received: by mail-oi1-x232.google.com with SMTP id 5614622812f47-3a88ff732aeso1251778b6e.0
-        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 10:28:07 -0700 (PDT)
+        with ESMTP id S245258AbjIGRlD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 13:41:03 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE7EA211E
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 10:40:39 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id 006d021491bc7-573429f5874so672569eaf.0
+        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 10:40:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694107601; x=1694712401; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694108426; x=1694713226; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EM9vERMeF0RyymslElMGVcmFN1ITJOkS0HhbR6rj4eY=;
-        b=idg5Vv8AtgNmyCl9jyaaMSqKrmf7js2xvi5wbvrtWxb9vu5Yoxrii+0pCZWztigLAY
-         JR1+B2uZhdYIG7GSzXJg9xWZEfuhXu8MIPjan00YDjLGvDbWeL3uuIxOCZaGnln2sGm1
-         hb8if6gq9joT3q5u9ejhuYmdrEgubw0s5szhrtTsrZ0Wr5XvFnZBZQEVtLQ4EdMutian
-         CMo/rL6B9m+uIfa+tWRuofd0G4U6nfnc20iJ6qvdJ9KSUk18eCgxO5Hyknz8B+PT2tAg
-         imNykCw+TMLBMzW0v5zByd6Ymq0XyOwOpW+Hqt7mGkmYK9kb9+90Vvx+XqLMgXx+KtiZ
-         vxfQ==
+        bh=9VX520/JAjo5YxFEs6vhZtWf0iQa736VrN0vgqzfoO4=;
+        b=FhmMo5gViPGeubaYQ7MvfipM6Bzbgbeh1y95x0Bf/yXqKuJ4Vx9I29u9pRuhN+ts0o
+         80b8/rDB57odaKyZYWWrz+udWKR4A/AK9rcsNv2P7G08KPjJdwC8EPP7JA7BbsRABVxh
+         Ny78rOr+A6VPGA459ID8dd7MlNN8EwQ5kyOCb7Y/cGj31PQVh2Y5a5IG6BUhgWwvOHz/
+         PM/Djo+QkFq+qKzjN5F/4JzehXL37izUoow+2jieGzkAyPmE4uVbIw72w5bISejFUVOh
+         l7EplIJxSSR8h+RVy2Z/stlGVGopxXsCPX1itksarhfquUeKurh+M8keLyU/+w3YgmYS
+         FYCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694107601; x=1694712401;
+        d=1e100.net; s=20230601; t=1694108426; x=1694713226;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EM9vERMeF0RyymslElMGVcmFN1ITJOkS0HhbR6rj4eY=;
-        b=V/DpA6tb9ula3U600S7WuBU9naWQZKvbimfE3vJl/xOrUDoNanhiwL3vmh5SXG7JJs
-         zmcsj7BGtihBpuGygr9EYCAzACsvd0N7twUrNUEe4undg9EXXMRw6TL+loRgL5ANwvql
-         rzNyj+VwGDYPQLcdt8D1d1PDwv9EIoYJctWO/zq+D9oUlchJVBveLkD8kyrinst5pgZw
-         8Y5ba8dZX0ykeHVusdBPwmJOYyWr01ioZls2AN7GTHpb3BTDPElICIKHs+EMzwB8Qc95
-         jDftUWKtwW65jtL6vjzL4dolFo3uZ6KrVOyhUKizhqzmuTmDO51bh88pRvzS7tU6C9oP
-         JkSw==
-X-Gm-Message-State: AOJu0YwROgYJfl9y9sF+tc6qzoryCSGjNeAyTeDBXJrKYIrnaCEbqbW0
-        3mhzcGNTVpczY6SWcRrIRrS6VP9vyMl2Lso+UNwlYoHfni82fEqI
-X-Google-Smtp-Source: AGHT+IE8anPJZAGlVEtdUDBvfZSj/6PcDMAuKXqvs+G37inCYN9bOlMGcS0/NNLAQtkZM5qKA1KbbaOuVnGUeMyCl78=
-X-Received: by 2002:a05:6102:2408:b0:447:9339:a5f with SMTP id
- j8-20020a056102240800b0044793390a5fmr1416739vsi.0.1694073488292; Thu, 07 Sep
- 2023 00:58:08 -0700 (PDT)
+        bh=9VX520/JAjo5YxFEs6vhZtWf0iQa736VrN0vgqzfoO4=;
+        b=r8xjL+p6rgfcFgR6GzeQu8t6NCLJdBrMw6BnpUzLrUrqXj1DQhmSz2rGjkHvMwByn7
+         Zp85PqbCj+Jt9eCIN55veKDiBkO5kT9etg4kLSKEUNu1QKC6zo+1d6YrkUjd7nzzfKgs
+         3v3QJXcDqbeflkCOGNo51H1IorLtespLg02ip/HRy5TbivQ0aiYmA7ltGJjGgA4m5qhj
+         hm0Ft5lGEJ+ulN/rlsjj6kwz+SABJGsIXjK4CRzPpy4iI8EMFL6OdzTLdWJD87Oi19D2
+         IrhIrX0MjgeLTgVvKJojNpo3ytpLE92NGP2fqQMhqgisnA17ctjH9xMStz2XnDGWwEeP
+         V4kA==
+X-Gm-Message-State: AOJu0Yx72Dx6AnXob8PTYOd8L+9Qj32+41ILPEpF0v11V7yQgTEuPnD6
+        fE6Aid7UyL3jOGdNcPQhEZg9H1Te91tJ/eowPOj8WA+DEOXOm/n/
+X-Google-Smtp-Source: AGHT+IGsG5hJJbLxB8MJ18cSL64AbAsKmU8HUkb1gvXKq17Y/8ZLDXSkKoAPtcsGb/CfUJGklHIiazXnZYlmi1tiRYs=
+X-Received: by 2002:a25:d78a:0:b0:d78:47a:d76e with SMTP id
+ o132-20020a25d78a000000b00d78047ad76emr19559951ybg.49.1694072224500; Thu, 07
+ Sep 2023 00:37:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-16-brgl@bgdev.pl>
- <CACRpkdaLKqNM1xMCo9jz1Pe_18A=GJodbaTHL+VmoRZa5jJbjQ@mail.gmail.com>
-In-Reply-To: <CACRpkdaLKqNM1xMCo9jz1Pe_18A=GJodbaTHL+VmoRZa5jJbjQ@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 7 Sep 2023 09:57:57 +0200
-Message-ID: <CAMRc=McBMTrcVpjWr2Qo2N5Z6+BEAWr6kLG_bPDmmuO=OFTtfg@mail.gmail.com>
-Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
-To:     Linus Walleij <linus.walleij@linaro.org>
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-17-brgl@bgdev.pl>
+In-Reply-To: <20230905185309.131295-17-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 7 Sep 2023 09:36:53 +0200
+Message-ID: <CACRpkdap-AFmVFG_gtYeGuR5JFLgHQ6i7w6HRwKP4+pu=nd66A@mail.gmail.com>
+Subject: Re: [PATCH 16/21] gpio: of: correct notifier return codes
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
         Tony Lindgren <tony@atomide.com>,
@@ -77,35 +76,21 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 7, 2023 at 9:35=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
-org> wrote:
->
-> Oops one more note:
->
-> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > gpiochip_find() is going away as it's not hot-unplug safe. This platfor=
-m
-> > is not affected by any of the related problems as this GPIO controller
-> > cannot really go away but in order to finally remove this function, we
-> > need to convert it to using gpio_device_find() as well.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> (...)
-> > +       struct gpio_device *gdev;
-> (...)
-> > +       gdev =3D gpio_device_find_by_label(OMAP_GPIO_LABEL);
->
-> This leaves a reference to the gdev right? No scoped guard?
->
-> If you leave a dangling reference intentionally I think it warrants
-> a comment ("leaving a ref here so the device will never be
-> free:ed").
->
+On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
 
-It's right there in the comment. :)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> According to the comments in linux/notifier.h, the code to return when a
+> notifications is "not for us" is NOTIFY_DONE, not NOTIFY_OK.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Bart
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+This should just be applied, right? If the notifiers already
+went upstream (sorry for my ignorance) then it should be
+a Fixes: even.
+
+Yours,
+Linus Walleij
