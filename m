@@ -2,111 +2,94 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 376A1EC8742
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA84EC8746
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:37:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbjIGPhD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:37:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48704 "EHLO
+        id S236812AbjIGPhH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:37:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232677AbjIGPWV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:22:21 -0400
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2087.outbound.protection.outlook.com [40.107.95.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D071BF1;
-        Thu,  7 Sep 2023 08:21:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SAJkTDaKLVuTf7shhWLu8hw26FoNkdsR2naogKRu46R6/31o8Gcg317zP3wpObOZb85k4ZGkdq2uVT5EYzKl7dcUtxh4RNkAfvE5KlfNZbyugqo5Si4f7iN9kbp1BIYktvsLiTNCPZriXRVYbsZsdYeY/EFK9JDXpW1bftMXLiC1zD0PMI6Ccv1lj86/TewRUDw1XervDCMQr7I8T/z7Kb4RxJTMRvid2q5y8jxE/84aPeDrJC5mrkfX1svNhmd/rKAC4Azf5F6Hhb763f3oetMHpywfxZSsUonrJTnQ5HRWoLiZHxxKTYAp6JnYkjz0Rz98c127zTwSJWrLl63CZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n4HTjBlf/dGPLtfz/FqV8I/iXAwVCZjiX/zFi79vsA8=;
- b=if3c8NjFn8ls0PhSD82LsXAFE8osEa5MXkSCFZ17/yA4P4+nscCQ06k6Q4ahHtX3dO8/8X7wWqd0/TFQQdsXmBwbuIdtSTWhH0UzjChkCO2WCh+ee0aL3JsQbIf7LvmbX6+6noWZYavlC/5IoTiO8rVrOhSszXgSXp90cJpCRjz7oaTv9gE99gy+zn+Cqx3M9CMvSMNmwoKvwBOgepEu+9XI2Bli7obaodnMYxn4Zcuc+WkqWrNFTGH3xtzohRuTDIzImbCHsVNhI7jQ9z1c+/CMtHu5Z049AbmGJm76JmykQvfOKWB+Z2yZopNs9xfLmSJlUU6u63gtT9M+YWp97Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n4HTjBlf/dGPLtfz/FqV8I/iXAwVCZjiX/zFi79vsA8=;
- b=iRGjqQ/PdhZoHVg8khnuQUs8pAUIjqMk2ssLsxZzYy/GUEQnQFeZtoo3EGUFM7qJydQit51xC4rLDppaaKfMLAG39qOqnPbzIdlV7FovXLUtcqoE3AjVVjduEeNC5ZykFP0K3iydzbwNI4YvXajVt/fMdpgGTUQweK6KiOrY1vOkLtI2DM3K9jg+JqWHhhe/RnczUM4XKk1CfLaOIrrQPWWM6GFmrfh2KBP95e7mS5JFhebODIiR2Filyp3dRCdVZNkjMdGHwgT+sj9dHaxqGGb+iwy+ljPqVKZkoqxUDuC1MbueKYBB97YgSGc1gb48XuQZ38BRSLVwK6UAjyqMzg==
-Received: from DM5PR07CA0111.namprd07.prod.outlook.com (2603:10b6:4:ae::40) by
- LV8PR12MB9184.namprd12.prod.outlook.com (2603:10b6:408:18f::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6745.33; Thu, 7 Sep 2023 06:53:11 +0000
-Received: from CY4PEPF0000FCC4.namprd03.prod.outlook.com
- (2603:10b6:4:ae:cafe::d) by DM5PR07CA0111.outlook.office365.com
- (2603:10b6:4:ae::40) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.30 via Frontend
- Transport; Thu, 7 Sep 2023 06:53:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000FCC4.mail.protection.outlook.com (10.167.242.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6768.25 via Frontend Transport; Thu, 7 Sep 2023 06:53:10 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 6 Sep 2023
- 23:52:58 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 6 Sep 2023
- 23:52:57 -0700
-Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server id 15.2.986.37 via Frontend Transport; Wed, 6 Sep
- 2023 23:52:54 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <spujar@nvidia.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH 0/2] Fix redundant PLLA update
-Date:   Thu, 7 Sep 2023 12:22:11 +0530
-Message-ID: <1694069533-7832-1-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S242293AbjIGPYo (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:24:44 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E108ECE7
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 08:24:27 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id ada2fe7eead31-44e8ddf1f1aso1317541137.1
+        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 08:24:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694100267; x=1694705067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f20OVJZsVkvgr12m2GLQpGE6nkKLjOApm9F1D76ZYu4=;
+        b=qNw+KBuRa5T4RU7jWsTRbq3MQsf0L3IuL1uOqgd8xLI59OJB9kCxpZgZ8LACYRjC/m
+         Czqbzv5v4AAp/P2bHTwpGWmj7yHKvdrYsS99rioA+QH2rXrvLnSm7cw0Hhyid18XR/yq
+         ls260KQfBmq0KWBwbVTxPElWopZzmOJ0y3jL4gSmNcKq5n7PxETnJwQPDWAnEx+4+qo/
+         54Ge1SdNI6CFOku0/ngFiDDqf9MuBezMd9yP9GQnTzGv44MNJh3iF7d1iAljv3z4fdBV
+         gofrUCJ1RcvMerx6DGwDhXsNLFS+y+jh9HXDrMIENlsTF49yYtBUbU6/CFKt9j7oPTo2
+         UR9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694100267; x=1694705067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f20OVJZsVkvgr12m2GLQpGE6nkKLjOApm9F1D76ZYu4=;
+        b=c7MUFlrSOMKpX6X2i9Rfj/Hztf/p2WKllEtJvncrbuW4zbyCRYSObdvxySz/qKOQ+V
+         h30wseKixyauCzdaFW1DCeq+Yb319UL3JWuMFd7V4xsXu4kDWxAFX185K+c2NudlgqmW
+         2pLaKm57ScLFtNmFOGl2cqyI1IyRfpDJVY5qT79oo8KenvyYbEl5fviC1CtXfisII+da
+         aqTmNZamy5N91TuSTpLpdppyDe2HndVGm2TAueid+cux7vlhty3nO560cn+8QxbShBDM
+         u+QKtW+Cl792zu5GiVmS4q/sGXg7t+sjdZ5rHYAaGVRD2zDlblNZevLPj+MjCaohEyZd
+         5/mw==
+X-Gm-Message-State: AOJu0Yy1FuUtLYSmfoLzKEGUe+9Ylj0GI+O85BKnzRJEdboDrxcYP9q5
+        5EPzSlCXnAskx3ZqMMDCLQQvFr1Aq2JI1hmMVTHR3MpC0inMfZLxfyU=
+X-Google-Smtp-Source: AGHT+IHeVaENuEkywllarylsoaxFtkX8+wcxLmOt1RC5WvBdIS3BKktFFG9wSU0jnwmUX/wjU0B+ttekv3ZROcdPEGQ=
+X-Received: by 2002:a25:f414:0:b0:d73:ed30:1162 with SMTP id
+ q20-20020a25f414000000b00d73ed301162mr1939775ybd.28.1694072320536; Thu, 07
+ Sep 2023 00:38:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC4:EE_|LV8PR12MB9184:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44b9c142-d0e9-44d7-1e67-08dbaf6f19a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5PfBbBH12rZJF3FCJJ8mgJmtwv3ovlsr/JPctYh65rRBmObgsvjE9ulloCNxAvh20CmjPVLlY0tAezVSazd6fB41PX9QCO+HqrDXbuoB2gMURK0gsY5L2fHCPlLx8L4ulSLYmCh0f9CvOVUUx0lm0z36nxHITyPB6NEExUhl7F6d1oLcZzEvh1dlW8zz5gRnnGhOTatODO351eGI7Nu2QTgU55dnlQJAj4VTZdR14NwjxRwAKmz3C46e8XTxXCgUSc8Oj3hqLnYpkprk21YXiyQ+IXtoO9PmRrtibPNzkGHP/H97RuzOZQo+EPWnRLJ4Xq3YQhP+/nxq/sLCoka02FMeoEib9/Kbuxmxsidyqa9HZDod6vx0WpGaPqC39M6GOJ1R58+/I+zNpUXnFXLRVLiL+WEIqSTo9z/LiUVEzLbCB0VeaYTUQL7zttc5QXmzqHbP5/U3v5UKq8MxcgYsi1M8iHMpflElw0j8k1f3v3ykiqI1kZ44Y6FduMmJZRFI9wO13ttAM1CeQNGBlL2mDsBXaMR4kfOysPYAnbibf3E8q+hGknoR2lInf/jQi8ruyKQtCr7PLv+QKLqfExfjb/cRGscxnZ8kTCcOYJ/zXTa/WnD3ehL2jwA5R9rgYvkip4VKHc0KQD3APb0ETLgyJ2nErpUcMUasXP3eAESPP3HGemHwbB2nJS0MP/U8UO24jmbDMF7TVk+x04bL8vJcSu2xy3QYtP/QnPR1b3CKwi0=
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(346002)(136003)(396003)(376002)(451199024)(1800799009)(82310400011)(186009)(46966006)(36840700001)(40470700004)(4744005)(15650500001)(41300700001)(40480700001)(8936002)(83380400001)(70206006)(478600001)(6666004)(2906002)(5660300002)(8676002)(4326008)(54906003)(316002)(110136005)(70586007)(40460700003)(7696005)(26005)(36860700001)(2616005)(336012)(426003)(7636003)(47076005)(356005)(36756003)(86362001)(82740400003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2023 06:53:10.8536
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44b9c142-d0e9-44d7-1e67-08dbaf6f19a4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000FCC4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9184
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-18-brgl@bgdev.pl>
+In-Reply-To: <20230905185309.131295-18-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 7 Sep 2023 09:38:29 +0200
+Message-ID: <CACRpkdZbCjFMytzsF6Sb-6V54J+owk+zJ3oB9ZGCzAdsGwcFOQ@mail.gmail.com>
+Subject: Re: [PATCH 17/21] gpio: of: replace gpiochip_find_* with gpio_device_find_*
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This small series fixes redundant PLLA updates that happen for
-each DAI link in the audio path.
+(Sorry for fatfinger reply)
 
-Sameer Pujar (2):
-  ASoC: soc-utils: Export snd_soc_dai_is_dummy() symbol
-  ASoC: tegra: Fix redundant PLLA and PLLA_OUT0 updates
+On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
 
- sound/soc/soc-utils.c                    |  1 +
- sound/soc/tegra/tegra_audio_graph_card.c | 30 ++++++++++++++----------
- 2 files changed, 18 insertions(+), 13 deletions(-)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> We're porting all users of gpiochip_find() to using gpio_device_find().
+> Update the OF GPIO code.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
--- 
-2.17.1
+Scoped guards, nice!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
