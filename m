@@ -2,67 +2,89 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 207F2EC8738
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 16:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12650EC873E
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 16:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236919AbjIGQSw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:18:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40032 "EHLO
+        id S242054AbjIGQWk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 12:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241560AbjIGQR7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 12:17:59 -0400
-Received: from mail.venturelinkbiz.com (mail.venturelinkbiz.com [51.195.119.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C00A1401C
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 09:04:21 -0700 (PDT)
-Received: by mail.venturelinkbiz.com (Postfix, from userid 1002)
-        id 2112C46A59; Thu,  7 Sep 2023 07:45:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelinkbiz.com;
-        s=mail; t=1694072725;
-        bh=JBV4b8UUo1MSngn/QBoedt1Dv52bT8rWeq4R22MtJMs=;
-        h=Date:From:To:Subject:From;
-        b=Oh3ByBzbHYL0qofbZV6RZFtXDGl+narDDQTcxoCEdMEhmNIwyByMreGpqyPVRgiRD
-         MFF14uu0PeQuHn+Y8zVmEXG5zdK6E+PRIYzKcTPOrTa5EzI71+E3AYg4cH8j8Q4q05
-         sjoIxRvHwrwyLP5LDnTHKtgfUTWY1R/Ib94g6K7+EwfCpacz+9BpttoY+QKRt4pPPf
-         gZH0AE2xrUVe3h58F7ePmgzgXqFdNI2dunAmi8l9HjfhHa3+ZwAP6dYDTpbnHkA+VA
-         5YG8jQyk6gN6X2RvRF/lshiM8/B0R4FGefCOgh296oi6uw5t9Bk+FWS9MnigpyJc7q
-         AaupPMz4PfO0A==
-Received: by mail.venturelinkbiz.com for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 07:45:24 GMT
-Message-ID: <20230907064500-0.1.29.62m0.0.cp01j65ohs@venturelinkbiz.com>
-Date:   Thu,  7 Sep 2023 07:45:24 GMT
-From:   "Michal Rmoutil" <michal.rmoutil@venturelinkbiz.com>
-To:     <linux-tegra@vger.kernel.org>
-Subject: =?UTF-8?Q?Efektivn=C3=AD_sledov=C3=A1n=C3=AD_a_optimalizace_v=C3=BDroby_pro_va=C5=A1i_spole=C4=8Dnost?=
-X-Mailer: mail.venturelinkbiz.com
+        with ESMTP id S242278AbjIGQWC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 12:22:02 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BBC1901C;
+        Thu,  7 Sep 2023 09:19:35 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D23E2C32792;
+        Thu,  7 Sep 2023 14:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694097344;
+        bh=GY6/oA7SpWwIF/ML9jHKi31Aw6dDj+gK/Pfk0CzMgqw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=meYesdsY2uNTDb5EWe4281EIPUqP+ejVqDZt9LCkSfXPg4Irrz3V+aN6tNCzOlgc2
+         ahh8dLGQQAnbuiFUv6CfwEQdgMoQh2Us23Bv55rnXFCgCOLrOmRgckQmB49BCwBfNT
+         F3vJeT816sWqUt+PmdBvRs2D4bFdqQfjc1DO7pMD099Ku5mwQT/QLbNiAWJ/KW2x1x
+         2ft6mNiLln57pjQduAluykFZGPrhx+sfNSVVZRVaXjbIdi+4wugfRr70TqxfCMPe1l
+         Gbt/aytSPZ6Z7sQtswCgUTVlJunB/G6M+lsApHXzAaRfDmEyiemOTyTCnbq+vrNOO9
+         r6MAC/pLNbtjg==
+Date:   Thu, 7 Sep 2023 15:35:38 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: tegra: Fix redundant PLLA and PLLA_OUT0 updates
+Message-ID: <262708f6-d25c-4734-834e-6a3959ad6c07@sirena.org.uk>
+References: <1694069533-7832-1-git-send-email-spujar@nvidia.com>
+ <1694069533-7832-3-git-send-email-spujar@nvidia.com>
+ <2c3371b7-3dae-48d7-8cc8-1acfd5bd267c@sirena.org.uk>
+ <61ca531e-6138-7abe-74d1-357369134748@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1d4+VEBxjo3mBMnm"
+Content-Disposition: inline
+In-Reply-To: <61ca531e-6138-7abe-74d1-357369134748@nvidia.com>
+X-Cookie: In the next world, you're on your own.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dobr=C3=A9 r=C3=A1no,
 
-m=C3=A1te mo=C5=BEnost sledovat stav ka=C5=BEd=C3=A9ho stroje a v=C3=BDro=
-bn=C3=ADho procesu z kancel=C3=A1=C5=99e, konferen=C4=8Dn=C3=AD m=C3=ADst=
-nosti nebo dokonce z domova =C4=8Di na cest=C3=A1ch =E2=80=93 na va=C5=A1=
-em telefonu?
+--1d4+VEBxjo3mBMnm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Poskytujeme rychle implementovateln=C3=BD a snadno pou=C5=BEiteln=C3=BD n=
-=C3=A1stroj, kter=C3=BD zachyt=C3=AD i n=C4=9Bkolikasekundov=C3=BD mikrop=
-rostoj a okam=C5=BEit=C4=9B p=C5=99epo=C4=8D=C3=ADt=C3=A1 vyu=C5=BEit=C3=AD=
- stroje v kontextu dan=C3=A9 v=C3=BDrobn=C3=AD zak=C3=A1zky.
+On Thu, Sep 07, 2023 at 07:51:13PM +0530, Sameer Pujar wrote:
+> On 07-09-2023 17:21, Mark Brown wrote:
+> > On Thu, Sep 07, 2023 at 12:22:13PM +0530, Sameer Pujar wrote:
 
-Kdykoli vid=C3=ADte stav objedn=C3=A1vky a jste informov=C3=A1ni o p=C5=99=
-=C3=ADpadn=C3=A9m sn=C3=AD=C5=BEen=C3=AD efektivity. Syst=C3=A9m s=C3=A1m=
- analyzuje data a p=C5=99ipravuje cenn=C3=A9 reporty, co=C5=BE oper=C3=A1=
-tor=C5=AFm umo=C5=BE=C5=88uje soust=C5=99edit se na v=C3=BDrobn=C3=AD c=C3=
-=ADl.
+> > > Fixes: 202e2f774543 ("ASoC: tegra: Add audio graph based card driver")
+> > > Cc: stable@vger.kernel.org
 
-C=C3=ADl je jednoduch=C3=BD: jeden pohled =E2=80=93 cel=C3=A1 tov=C3=A1rn=
-a. =C4=8Cek=C3=A1m na odpov=C4=9B=C4=8F, jestli vid=C3=ADte mo=C5=BEnost =
-vyu=C5=BEit=C3=AD takov=C3=A9ho n=C3=A1stroje ve va=C5=A1=C3=AD firm=C4=9B=
-=2E
+> > This is just a performance improvement rather than a correctness fix as
+> > far as I can tell?
 
+> This was supposed to be a performance improvement. However this is found to
+> be resolving a DMIC clock discrepancy and suspect is it happens because of
+> back to back quick PLLA updates. Thought it would be safer to have this fix
+> in stable releases. May be I should mention these points to justify the
+> 'Fixes' and 'stable' tag?
 
-Pozdravy
-Michal Rmoutil
+Yes, please - that does make sense as a fix.
+
+--1d4+VEBxjo3mBMnm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmT537kACgkQJNaLcl1U
+h9Aybwf+PTHcefnbcaqpdAilafzxlBkq71oJqgpR14bRtbQXU4jEgToFVRwoEe2r
+eh7710aUYzNQatW+EVTp6OlxujcL/CmTLyjzdmVZDRViDZvVTtq1BwnEMBPVoDnm
+VQd2uTPqMq05uopzbCnq2s3Mv5gEcw1PPMnqAYvGBOJ+e1XvlBC4h7t3svkcHHku
+Y8QCOwyGF+Akq3Dl7WFvenZ0rGJ7z2/NXP//rD2TXeKorRSID19tupKL+i4KJPFV
+9RLhqpX/8CpXvo2EwlOSuWvtvN1Waqego6zmQ511uj90I1K24+dY9sgXk8JEE/6L
+gsWaQE4XT7wbfut/xeALndmOVrDk0g==
+=Ei6H
+-----END PGP SIGNATURE-----
+
+--1d4+VEBxjo3mBMnm--
