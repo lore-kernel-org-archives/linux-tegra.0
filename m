@@ -2,95 +2,77 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92A4EC873E
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 16:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190ACEC873D
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 16:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236164AbjIGQYT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:24:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56134 "EHLO
+        id S230426AbjIGQ1A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 12:27:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239059AbjIGQMs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 12:12:48 -0400
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779A759F2
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 09:10:05 -0700 (PDT)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-1d53ab187e8so879187fac.1
-        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 09:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694102614; x=1694707414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h2UPY8Ad0JyZ552HHQpe1k1G4pRk3wLhmWob6nvmGZM=;
-        b=fS80Va+eDm4EGjjucqbGmbYPl0fQOQOVIjWi/mxsc5gERXIObbvj8b5GOF91ge/ESm
-         35UAv9FqF+2WyVS+w4lE3Jubqs4QMqNyK58OXDNQUYyyPMpF2D5qPQ27SGkKn1i2grx8
-         pvF2XUrswpB9NMdn+hx28zbsGN4VK/3PBr9fIO2tI78Q7QxVomJgEkGrc2PtnKnUIoxk
-         uNzxdENYqMQYVI9g1abhGBiXSXHTxy4KkVexwwmBn+gdx2jy/tvXcRkk+FYIXCniH9XM
-         f6rRVg7Vnw3CXpIG9jKhK/+EseoidONMh8WI5aEWbBearga/xmY4H7zYcs6K9P8g/GK3
-         2XjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694102614; x=1694707414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h2UPY8Ad0JyZ552HHQpe1k1G4pRk3wLhmWob6nvmGZM=;
-        b=NxYdQmUs6B3fXrZctpNxDKFO1Xls9EGIy+uM1k+IIB1tB+xb5Lzme0B9MCVX+x9fVz
-         LIjFHZM37WpeKZvZVyrxN4c/xu+YuRihXnj3W6YeOosLzVQltI36o3dfL8IW0HA7/Q7Y
-         6FrDb5TYsmPfsCGqGpB7v7qiJFptOsvIa7tuIChyczEIZlp8d7nJbUngQhtLAi7sQMo5
-         DALh86GLbT+mLLwyvTWEI38vg+n69VicZ4RXcyETVjJjaE6KM4TWtTdbL6+ChULry6tW
-         FWuPRCokGzh4BgDLUqVSltAqGLDX7sux7x+98ZH2nMl+lerNBQFavlhHA2w+axHRisy2
-         ZPTg==
-X-Gm-Message-State: AOJu0YyrpvOemmmNeTWct1wdEoKDYP5DDcIwZjELqh5lbUMvMKzQKIbq
-        2dI9pFJG124oQ/C2OpYiVGI4csxC73xkWiIXigewzvX7itBo16QoAYU=
-X-Google-Smtp-Source: AGHT+IFxuGmnz6UhP+iDHBaAUw7EFN+gVZSw6nwdZwmmFMJ3XnkMU5k7fxCuPngY53Trr0s6Te5MkJ1CXk5K8y+Rwo4=
-X-Received: by 2002:a25:ce47:0:b0:d1d:514e:27c6 with SMTP id
- x68-20020a25ce47000000b00d1d514e27c6mr18577035ybe.6.1694070485563; Thu, 07
- Sep 2023 00:08:05 -0700 (PDT)
+        with ESMTP id S238953AbjIGQ0J (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 12:26:09 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A9716A7D;
+        Thu,  7 Sep 2023 09:22:20 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2430EC3277F;
+        Thu,  7 Sep 2023 11:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694087504;
+        bh=zjCLSVlz5LdCpC8IOpacCvdlUauv1FO+yJco6i36Oic=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SqUytxf6zXbzBIIkpjtKMhcFfrmJPqHiIboWOlhpunBvqIjcLazGaEq1guZ+y0hRI
+         Bu0087gvzOUJwwaOADCNRZLmNLQIVmFe/BX/T/SFl+5+Xg9HD+L/e0JJFX2l6i/koq
+         WnvGt5s1VGrabaFiyZ2/CdJRL4+7a8WixhRxQULr7OzK3B+E3k1Gw3pOz1CKu+2GZq
+         Sd1AlnviH2HtKpNHVOrpwl1YcMdI7rdW+LctE8YH6Q8Vpd0XBFFLqXXb4754DnoLAo
+         zh61V47/eh7v3+V61IOdpGE180+ykPp2csE0qn8tlopWLb4A7wVOKOxR6VW9xMwyzz
+         nBBCZDDex/VoQ==
+Date:   Thu, 7 Sep 2023 12:51:38 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: tegra: Fix redundant PLLA and PLLA_OUT0 updates
+Message-ID: <2c3371b7-3dae-48d7-8cc8-1acfd5bd267c@sirena.org.uk>
+References: <1694069533-7832-1-git-send-email-spujar@nvidia.com>
+ <1694069533-7832-3-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-5-brgl@bgdev.pl>
-In-Reply-To: <20230905185309.131295-5-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Sep 2023 09:07:53 +0200
-Message-ID: <CACRpkdYCOVJZ6TUMQQHSaKZHMCx8tE8=3z=1BogYTkr52mFr8Q@mail.gmail.com>
-Subject: Re: [PATCH 04/21] gpiolib: provide gpio_device_get_desc()
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HG1UHo7ZQGFGM8s+"
+Content-Disposition: inline
+In-Reply-To: <1694069533-7832-3-git-send-email-spujar@nvidia.com>
+X-Cookie: In the next world, you're on your own.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Getting the GPIO descriptor directly from the gpio_chip struct is
-> dangerous as we don't take the reference to the underlying GPIO device.
-> In order to start working towards removing gpiochip_get_desc(), let's
-> provide a safer variant that works with an existing reference to struct
-> gpio_device.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+--HG1UHo7ZQGFGM8s+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Andy had some good doc comments, with these addressed:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On Thu, Sep 07, 2023 at 12:22:13PM +0530, Sameer Pujar wrote:
 
-Yours,
-Linus Walleij
+> Fixes: 202e2f774543 ("ASoC: tegra: Add audio graph based card driver")
+> Cc: stable@vger.kernel.org
+
+This is just a performance improvement rather than a correctness fix as
+far as I can tell?
+
+--HG1UHo7ZQGFGM8s+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmT5uUoACgkQJNaLcl1U
+h9CANgf/U94AHJ9kaYX/llz+gCrnDPZiKF6ybEtAU8/FafiAXB1qqhJXgW7rYlOv
+w1oreyoLvt7fSSDilpCBjkB95pwSzAsqtuoGj1jvwfszhZtNuKBAILsU3TEQYuyh
+ZJ9sSzvEiWM3QAYyIqSfQuPGbkQ0vZ0uHk3jE/M3t2MB6XvTzijC5HAU5lSqKf5q
+KB+sHqqvMZDdQHADUKo7kgd6CqMEDriZAkoL4OSpYpBQN45gU5qDGzpZi9E9qIz8
+9M5cGuEnzj4Z6Bh8KrFf4xEQOp/rKx47iz3KfkXpVJaBWASm+vqeFfSCR7DGxaKq
+n/GTqlWdCZjilEbg9YapCRGiljEkVA==
+=D621
+-----END PGP SIGNATURE-----
+
+--HG1UHo7ZQGFGM8s+--
