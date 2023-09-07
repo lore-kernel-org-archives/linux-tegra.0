@@ -2,179 +2,105 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC687EC873A
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35810EC8738
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 16:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232303AbjIGPyt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:54:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50078 "EHLO
+        id S236314AbjIGQBr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 12:01:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240662AbjIGPxX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:53:23 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F0847EC3
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 08:43:29 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7A22A21862;
-        Thu,  7 Sep 2023 08:35:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1694075756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0rFn44AIm2HsPQJSCh9y4NhrNnMiKMMHFylbijlpr74=;
-        b=fZZ6lxmEHRIXC+4bZsmuuleGSB6QnZxjuahXtO4RMu/wMnxP2Uvi/AInIAdiGGpgdnRAtN
-        w0dE7l88KuMZ9fa7/B74kM7URkn58gsdkT2kw5rHH3GvSrQdZMhvu0b4l7kbAIGflY2Mbi
-        DoRz+xHEE27OaMqpl1c49rYgst4u4SY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1694075756;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0rFn44AIm2HsPQJSCh9y4NhrNnMiKMMHFylbijlpr74=;
-        b=1pjSBHeiF41sYtaMDUSFc3KHMSZpywc1jAGH7X+yAkoYXMaKcnUu/jNvsXKrSBaCbUEkOe
-        mUN/WKdz5635HrAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 568E9138FA;
-        Thu,  7 Sep 2023 08:35:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 9I0kFGyL+WSEHAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 07 Sep 2023 08:35:56 +0000
-Message-ID: <dd898338-813f-df63-4255-986903aa7cb6@suse.de>
-Date:   Thu, 7 Sep 2023 10:35:55 +0200
+        with ESMTP id S236317AbjIGQA3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 12:00:29 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 969D155A8
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 08:50:51 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 41be03b00d2f7-573f722b86eso837255a12.1
+        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 08:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694101804; x=1694706604; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RuYVBuRk1qSk/vysKkYAGZLoaF4hP5KwSrbdU9HLCHc=;
+        b=NpKoRxprZ9gEBXtpi6WOd33EqFmNn26T87yu0FKnlDanwvkaIBte5rpiqP0QRCCQnW
+         iLwIdX55olbyIM46lKSlQdulBTpRG171EygvXFKIpZg5IAq5PUwBBHoZ2J6C9ffjugfF
+         wrS7cTnvmpM96MoNf9xn1dESyxT1a2i5pPvDDUAP8mXmoknEqTmHuizlM5NO18d5ZPMg
+         D8CU6yt+4mUc77eBQwFXmeoSyI7RuJiGuAEE6PxX43XaxDOVlCYq31UoGIRPibqr0zk4
+         whCvaJ67210Eb7qyWv/2ETiws+YbZjan0ZgjbvCLGcyv45u+FI645IGcNcpTMY6DLulC
+         Og7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694101804; x=1694706604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RuYVBuRk1qSk/vysKkYAGZLoaF4hP5KwSrbdU9HLCHc=;
+        b=X3oG5KBzWJEMCMceEKrFJbJS+GEfXjKtZLY2X09RIbMgDDRDCQhxjzGiiPGpWKipbw
+         beWSJrnkFNp8ByOJZaIm3qDlKfyXEmypSL5PmDGzcsBQn4X+lUCYiMP0h37e2L4vWHR0
+         Ks3rKc1S8BnFwBHpQvyGlU+OqPoP5XlU+9t5ehb/Lu2RahIRSyi0WZ9xhjf65HRfPYXi
+         8FaE/coIc4QTEHEwZ6MTejpY+UvkAFNAPx/GKZj4W8dg0rpOPbr+VjaDMWIplpUqpVX/
+         q6cv/KJSGlmm0gEznRtZewEPYxlVFzXoscSHFo+6maT/LyR+1tLKCPShQrGQRGdTpTDB
+         q1ug==
+X-Gm-Message-State: AOJu0Ywia+p9SCc04PhHP5AyELDPSmBEd4ucW9rSp8slCjwSQpoyGNEz
+        vPuaOM7CYIn6dBBNN0el1BZsFaplp1jzZMnhRDwlC2mfTnjHA2NL
+X-Google-Smtp-Source: AGHT+IFH+TTCwwws89F7SNPi0GGOZFWp/OkGv5hkCV0kl2J1CUqPAY/iOB9bwWhCU9n1g7MoTzaR/hVwP1cetSs2hGI=
+X-Received: by 2002:a67:ebd9:0:b0:44e:a3e9:68d1 with SMTP id
+ y25-20020a67ebd9000000b0044ea3e968d1mr5642709vso.1.1694071890893; Thu, 07 Sep
+ 2023 00:31:30 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we support
- display
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>,
-        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
-References: <20230825132229.1109445-1-thierry.reding@gmail.com>
- <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de>
- <5f1bca1b-8deb-e677-521d-87d3848e22df@kapsi.fi>
- <CAKMK7uFDn_R+c=YErf7gEHVW4pg+odYKVjrs0EofvpG544Po6Q@mail.gmail.com>
- <ZPmD5WNZzz279qZ7@orome>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <ZPmD5WNZzz279qZ7@orome>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------XbJwvbe96UzrF5hJWzfl03Nt"
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-13-brgl@bgdev.pl>
+ <CACRpkdYJhP5otaFXbn49sK_33GJMy85MszyD9rqoQT1-fqd9dA@mail.gmail.com>
+In-Reply-To: <CACRpkdYJhP5otaFXbn49sK_33GJMy85MszyD9rqoQT1-fqd9dA@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 7 Sep 2023 09:31:19 +0200
+Message-ID: <CAMRc=MdXU_EiG4iYhHJd7faRPEQ21hXHhRpPAqTa-TiMiraZpw@mail.gmail.com>
+Subject: Re: [PATCH 12/21] hte: allow building modules with COMPILE_TEST enabled
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------XbJwvbe96UzrF5hJWzfl03Nt
-Content-Type: multipart/mixed; boundary="------------AfJPVNc8LkZzMyTF6XPV9OxB";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>,
- dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <dd898338-813f-df63-4255-986903aa7cb6@suse.de>
-Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we support
- display
-References: <20230825132229.1109445-1-thierry.reding@gmail.com>
- <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de>
- <5f1bca1b-8deb-e677-521d-87d3848e22df@kapsi.fi>
- <CAKMK7uFDn_R+c=YErf7gEHVW4pg+odYKVjrs0EofvpG544Po6Q@mail.gmail.com>
- <ZPmD5WNZzz279qZ7@orome>
-In-Reply-To: <ZPmD5WNZzz279qZ7@orome>
+On Thu, Sep 7, 2023 at 9:22=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
+org> wrote:
+>
+> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Allow building all HTE modules with COMPILE_TEST Kconfig option enabled=
+.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> This should be a separate patch should it not?
+> Just send it separately to Dipen so he can merge it.
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Yours,
+> Linus Walleij
 
---------------AfJPVNc8LkZzMyTF6XPV9OxB
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Dipen,
 
-SGkNCg0KQW0gMDcuMDkuMjMgdW0gMTA6MDMgc2NocmllYiBUaGllcnJ5IFJlZGluZzoNCj4g
-T24gVGh1LCBBdWcgMzEsIDIwMjMgYXQgMTA6MDQ6MjlBTSArMDIwMCwgRGFuaWVsIFZldHRl
-ciB3cm90ZToNCj4+IE9uIFRodSwgMzEgQXVnIDIwMjMgYXQgMDg6MzMsIE1pa2tvIFBlcnR0
-dW5lbiA8Y3luZGlzQGthcHNpLmZpPiB3cm90ZToNCj4+Pg0KPj4+IE9uIDgvMzAvMjMgMTM6
-MTksIFRob21hcyBaaW1tZXJtYW5uIHdyb3RlOg0KPj4+PiBIaQ0KPj4+Pg0KPj4+PiBBbSAy
-NS4wOC4yMyB1bSAxNToyMiBzY2hyaWViIFRoaWVycnkgUmVkaW5nOg0KPj4+Pj4gRnJvbTog
-VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4+Pj4+DQo+Pj4+PiBUZWdy
-YSBEUk0gZG9lc24ndCBzdXBwb3J0IGRpc3BsYXkgb24gVGVncmEyMzQgYW5kIGxhdGVyLCBz
-byBtYWtlIHN1cmUNCj4+Pj4+IG5vdCB0byByZW1vdmUgYW55IGV4aXN0aW5nIGZyYW1lYnVm
-ZmVycyBpbiB0aGF0IGNhc2UuDQo+Pj4+Pg0KPj4+Pj4gU2lnbmVkLW9mZi1ieTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCj4+Pj4+IC0tLQ0KPj4+Pj4gICAgZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIHwgOCArKysrKy0tLQ0KPj4+Pj4gICAgMSBmaWxl
-IGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4+Pj4+DQo+Pj4+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2RybS5jDQo+Pj4+PiBpbmRleCBiMWUxYTc4ZTMwYzYuLjdhMzhkYWRi
-YzI2NCAxMDA2NDQNCj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYw0K
-Pj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jDQo+Pj4+PiBAQCAtMTIy
-MCw5ICsxMjIwLDExIEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3QNCj4+
-Pj4+IGhvc3QxeF9kZXZpY2UgKmRldikNCj4+Pj4+ICAgICAgICBkcm1fbW9kZV9jb25maWdf
-cmVzZXQoZHJtKTsNCj4+Pj4+IC0gICAgZXJyID0gZHJtX2FwZXJ0dXJlX3JlbW92ZV9mcmFt
-ZWJ1ZmZlcnMoJnRlZ3JhX2RybV9kcml2ZXIpOw0KPj4+Pj4gLSAgICBpZiAoZXJyIDwgMCkN
-Cj4+Pj4+IC0gICAgICAgIGdvdG8gaHViOw0KPj4+Pj4gKyAgICBpZiAoZHJtLT5tb2RlX2Nv
-bmZpZy5udW1fY3J0YyA+IDApIHsNCj4+Pj4NCj4+Pj4gSWYgeW91IGRvbid0IHN1cHBvcnQg
-dGhlIGhhcmR3YXJlLCB3b3VsZG4ndCBpdCBiZSBiZXR0ZXIgdG8gcmV0dXJuDQo+Pj4+IC1F
-Tk9ERVYgaWYgIW51bV9jcnRjPw0KPj4+DQo+Pj4gV2hpbGUgZGlzcGxheSBpcyBub3Qgc3Vw
-cG9ydGVkIHRocm91Z2ggVGVncmFEUk0gb24gVGVncmEyMzQrLCBjZXJ0YWluDQo+Pj4gbXVs
-dGltZWRpYSBhY2NlbGVyYXRvcnMgYXJlIHN1cHBvcnRlZCwgc28gd2UgbmVlZCB0byBmaW5p
-c2ggcHJvYmUgZm9yIHRob3NlLg0KPj4NCj4+IElkZWFsbHkgeW91IGFsc28gcmVnaXN0ZXIg
-dGhlIHRlZ3JhIGRyaXZlciB3aXRob3V0IERSSVZFUl9NT0RFU0VUIHwNCj4+IERSSVZFUl9B
-VE9NSUMgaW4gdGhhdCBjYXNlLCB0byBhdm9pZCB1bmVjZXNzYXJ5IHVzZXJzcGFjZSBjb25m
-dXNpb24uDQo+PiBNb3N0IHVzZXJzcGFjZSBjYW4gY29wZSB3aXRoIGEgZGlzcGxheSBkcml2
-ZXIgd2l0aG91dCBhbnkgY3J0YywgYnV0IEkNCj4+IHRoaW5rIHhvcmctbW9kZXNldHR0aW5n
-IGFjdHVhbGx5IGZhbGxzIG92ZXIuIE9yIGF0IGxlYXN0IEkndmUgc2Vlbg0KPj4gc29tZSBo
-YWNrcyB0aGF0IHRoZSBhZ3ggcGVvcGxlIGFkZGVkIHRvIG1ha2Ugc3VyZSBYIGRvZXNuJ3QN
-Cj4+IGFjY2lkZW50YWxseSBvcGVuIHRoZSB3cm9uZyBkcml2ZXIuDQo+IA0KPiBUaGF0J3Mg
-YSBnb29kIHBvaW50LiBIb3dldmVyIEkgcmVjYWxsIGZyb20gZWFybGllciBhdHRlbXB0cyBh
-dCBkb2luZw0KPiBzb21ldGhpbmcgbGlrZSB0aGlzIGluIE5vdXZlYXUgKGFsdGhvdWdoIHRo
-aXMgaXMgbm93IHZlcnkgbG9uZyBhZ28pIHRoYXQNCj4gaXQncyBub3QgdmVyeSBlYXN5LiBU
-aGUgcHJvYmxlbSwgYXMgSSByZWNhbGwsIGlzIHRoYXQgdGhlIGRyaXZlciBpcyBhDQo+IHNp
-bmdsZXRvbiwgc28gd2Ugd291bGQgZXNzZW50aWFsbHkgYmUgc3VwcG9ydGluZyBlaXRoZXIg
-bW9kZXNldHRpbmcgb3INCj4gbm90LCBmb3IgYW55IGRldmljZSBpbiB0aGUgc3lzdGVtLg0K
-DQpUYWtlIGEgbG9vayBhdCBzdHJ1Y3QgZHJtX2RldmljZS5kcml2ZXJfZmVhdHVyZXMuIEl0
-IGxldCdzIHlvdSBjbGVhciB0aGUgDQpmbGFncyB0aGF0IHlvdXIgZGV2aWNlIGRvZXNuJ3Qg
-c3VwcG9ydC4NCg0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYuNS9zb3Vy
-Y2UvaW5jbHVkZS9kcm0vZHJtX2RldmljZS5oI0wxMjgNCg0KQmVzdCByZWdhcmRzDQpUaG9t
-YXMNCg0KPiANCj4gTm93LCBpdCdzIHVubGlrZWx5IHRoYXQgd2UnZCBoYXZlIGEgbWl4IG9m
-IG9uZSBUZWdyYSBEUk0gZHJpdmVyIHdpdGgNCj4gZGlzcGxheSBzdXBwb3J0IGFuZCBhbm90
-aGVyIHdpdGhvdXQsIGJ1dCBpdCdzIHNvbWV0aGluZyB0aGF0IEkgcmVjYWxsDQo+IGJhY2sg
-YXQgdGhlIHRpbWUgd2l0aCBOb3V2ZWF1IHdhcyBwcm9ibGVtYXRpYyBiZWNhdXNlIHlvdSBj
-b3VsZCBoYXZlIHRoZQ0KPiBUZWdyYSBpbnRlZ3JhdGVkIGdyYXBoaWNzICh3aXRob3V0IGRp
-c3BsYXkgc3VwcG9ydCkgYW5kIGEgUENJLWNvbm5lY3RlZA0KPiBkaXNjcmV0ZSBHUFUgKHdp
-dGggZGlzcGxheSBzdXBwb3J0KSB3aXRoaW4gdGhlIHNhbWUgc3lzdGVtLg0KPiANCj4gSSBu
-ZWVkIHRvIGxvb2sgaW50byBpdCBhIGJpdCBtb3JlIHRvIHNlZSBpZiBJIGNhbiBjb21lIHVw
-IHdpdGggc29tZXRoaW5nDQo+IGdvb2QgdG8gYWNjb3VudCBmb3IgdGhpcy4NCj4gDQo+IFRo
-aWVycnkNCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERldmVs
-b3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpGcmFua2Vuc3Ry
-YXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2byBUb3RldiwgQW5k
-cmV3IE15ZXJzLCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1hbg0KSFJCIDM2ODA5
-IChBRyBOdWVybmJlcmcpDQo=
+Can you just pick this up and the other patch addressing a comment in
+a HTE driver separately? Would spare a resend to the list and I'd drop
+it from the series.
 
---------------AfJPVNc8LkZzMyTF6XPV9OxB--
-
---------------XbJwvbe96UzrF5hJWzfl03Nt
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmT5i2sFAwAAAAAACgkQlh/E3EQov+CN
-KhAAgDnVn+JWXkR4znfhRMMq33jieCG3KvClEG4FpHKRGvVuwwjKEGYvW+GDhdpDaIJzjHqfsYht
-O12Pfs8KK/4bF3d+GvKwaCElZfjd+k8no2oxl9s27qLtKpSJHpW4Y4+tIRKe7cRPXAmE8gGbEsFJ
-so8nLc+GkZIFDphG/o74v8497dTMPnBWLGWxPRJg+f6nfCylXPEXtO5KW5TZd7B6POJYT7JNbUSQ
-yFHEjHyZvTHcmHkBlC9TA2sM6A+0F4Mwc5FN/FuZ8j+3xBkCHCgGIfc43MzNGBXV/bUJZ6Haq5aN
-aPqhIuNyBdUQdrYsjI7+McJTAvRrHb/p0BTn/6CPIJXJzjM/U9UV21DsqGyGJGiD3GEqgq/mYTCM
-JEQmWFSODZ4GSFbHW2B+sfBwbb4ccXvmrGsYbdBEkOg4Yq8h7rqAJ7d1TTyLEsiAXsTgyCULx9a7
-V3rlX6YBfvhry6VSjzhx2w7xe1BEtL+H2tLNvzZ/d7q69t+3ZtSYO4IGS2VmZbk8RC7XBATz3qHJ
-0gVzmprFN+2wwoojg86KbflAwFhfNuYAnfcdtOrXiR67MZIjzMf2D+rnDrGTS33xJfLf+95HNN+v
-DnykldVkZdK757EOiNpKvUQGEZJs6V9R9BTGZSPeQlwBjUmqCFDOLDkOyB9cAmVEaikYRuysigKM
-iaI=
-=+rNB
------END PGP SIGNATURE-----
-
---------------XbJwvbe96UzrF5hJWzfl03Nt--
+Bart
