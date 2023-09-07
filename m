@@ -2,107 +2,120 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B0EEE14BC
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Sep 2023 17:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30285EC873B
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:36:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240518AbjIFRbv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Sep 2023 13:31:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38890 "EHLO
+        id S233199AbjIGPg3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbjIFRbv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Sep 2023 13:31:51 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BEA219A0;
-        Wed,  6 Sep 2023 10:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694021507; x=1725557507;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P7Ojj2nkB1I7IVeMxWzMpXw+Jr2i7iyNnkbN3p4MMTs=;
-  b=kFYoNuGYXLu+bwvf1KfBW0CQQqI3Nyvcd/iGNd3q5I5NV6JVbCSdEmDe
-   JcPMdqeqTAEOApzJdMnpyyfVJW16+sxVq076WhZHlvuczIv+RRsZxA8EB
-   kWzplGu0kZ05d+ryGk/9Y+OKfweIpMT2OaPcCGapWs3T6tQnU1p8bneVT
-   VNQvJw4jb/sQJ+lMU/qcC5iSfHQCS2lw7ypvR9Yvu5TXkbjodRq+9damE
-   uFTDLJ3QHXmzGv800U5ua0KUNz7VeWd1vTCAitrlY+HeYDzidedpkGbod
-   mg5+/QcVb87kKTB0lFEKTXJWc6WFzqiDE9pN1WW9hP+58MIk+JiEwFliB
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="441111882"
-X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
-   d="scan'208";a="441111882"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 10:31:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="741642648"
-X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
-   d="scan'208";a="741642648"
-Received: from lkp-server01.sh.intel.com (HELO 59b3c6e06877) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 06 Sep 2023 10:31:42 -0700
-Received: from kbuild by 59b3c6e06877 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qdwNQ-0000Rh-1F;
-        Wed, 06 Sep 2023 17:31:40 +0000
-Date:   Thu, 7 Sep 2023 01:31:09 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Kartik <kkartik@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, sumitg@nvidia.com, arnd@arndb.de,
-        pshete@nvidia.com, andriy.shevchenko@linux.intel.com,
-        digetx@gmail.com, petlozup@nvidia.com, windhl@126.com,
-        frank.li@vivo.com, robh@kernel.org, stefank@nvidia.com,
-        pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 2/6] soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
-Message-ID: <202309070129.gFw1OFMp-lkp@intel.com>
-References: <20230905125824.2947-3-kkartik@nvidia.com>
+        with ESMTP id S1343927AbjIGPbl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:31:41 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E6C1FD3;
+        Thu,  7 Sep 2023 08:31:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=h7W9IaYz0n+Fi5k+ILT1wsRO3jGn2UGyfBJ7t8lDjUNnmMI1EJpgI1KgqZc/5uwmpeBuaAk362d2f6Y/VBZTpvV2B6lrjuJ/e9u5dHySk8GixxpXhDj45Q5pnMiWc2QtdUo8nRbc3H+1Bzf6u6lw9szE7mktUv5H3U0Mw7PdukBTwmllDxgkDHYLaAjPBgDWGq4gvtxBb/XhUjQ91eQJVF8kAZgLjRbiSrNX3xASwjUnKlYULOjMljWGx3dZFBqeAgbyENFHe16sKfUObb4txzpGWbilz7ZKVvyFdx83E3cf4io1ruMZLFCuoJxSMu3Y8RavpkwwDuXXOTxpw+XU8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=khmazL8FMs5x5kHt879GALiZFyoiqcR+DbnF6JEhzBk=;
+ b=e860lL00grJMDuhr/8fd7fPp/5Y9Ym+xCrO+RctZ3CV6GqP/fWNL/8Z9Z1d/Q3Tzbukhv1h0KCdiDoUCQ/g0sUVnHF1/21xAK7c8UD2J6cAQBNElfyIGajxSJFc7cI2YthvF4kSUZQabxXU2/Es0vCTeRd7YIK7+J9o0OxeggGeKHwGA0waXu+G94Vnbmbi0dSbVotu9ZxPgKDFa+ANvF07JILDbQnZkrqtJSye5/NBsz8EOQxyyHuZ25va9Pcm1O5mryohviOhXE+sbJ0PGJN12edI+oUyeYeKSIAyBo+gqvaqJtOL3Owd9J/5mhl/HrwbWUFkDNE/yi48fCbfETw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=khmazL8FMs5x5kHt879GALiZFyoiqcR+DbnF6JEhzBk=;
+ b=QLBFR87bkAUcjj5YDxD08yiuvVormiONTuN0/5kvtz3PcB+5w5Yylj+R0DL4FJh6l/EqHlHKszsT2yPlKRjAvcXmRlzf88cu3tTNVRS18pCwGjUnppReJ6hHLpTppxI385J1K4hvB2zrvHOquX0huugD7wsPBPKTPAy8jbk2X5Hpj6OBkqLtR/DXqajy6Zy26/gT1OKjFEw9XUvrrVlRd5VMfIRTLDAfsWRH4ru/cTir5wcv74Qz+ZwfWqQ/Wtxa9nTqpPah6JIL1ijFHOJbqn9BXukT5uC5i2WL/vkWny1NJT3D9ah507o8Pv5Rz0027IiWH0/0iVqbOQI1vzL9uA==
+Received: from SA9PR11CA0025.namprd11.prod.outlook.com (2603:10b6:806:6e::30)
+ by MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Thu, 7 Sep
+ 2023 07:11:59 +0000
+Received: from SN1PEPF0002BA4F.namprd03.prod.outlook.com
+ (2603:10b6:806:6e:cafe::42) by SA9PR11CA0025.outlook.office365.com
+ (2603:10b6:806:6e::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.36 via Frontend
+ Transport; Thu, 7 Sep 2023 07:11:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SN1PEPF0002BA4F.mail.protection.outlook.com (10.167.242.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6768.26 via Frontend Transport; Thu, 7 Sep 2023 07:11:58 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 7 Sep 2023
+ 00:11:45 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.37; Thu, 7 Sep 2023 00:11:44 -0700
+Received: from localhost.localdomain (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Thu, 7 Sep 2023 00:11:40 -0700
+From:   Kartik <kkartik@nvidia.com>
+To:     <andriy.shevchenko@linux.intel.com>
+CC:     <arnd@arndb.de>, <digetx@gmail.com>, <frank.li@vivo.com>,
+        <jonathanh@nvidia.com>, <kkartik@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <pdeschrijver@nvidia.com>, <petlozup@nvidia.com>,
+        <pshete@nvidia.com>, <robh@kernel.org>, <stefank@nvidia.com>,
+        <sumitg@nvidia.com>, <thierry.reding@gmail.com>, <windhl@126.com>
+Subject: Re: [PATCH v2 0/6] soc/tegra: fuse: Add ACPI support
+Date:   Thu, 7 Sep 2023 12:41:33 +0530
+Message-ID: <20230907071133.3936-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZPiTFXa0/D2UN1SE@smile.fi.intel.com>
+References: <ZPiTFXa0/D2UN1SE@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230905125824.2947-3-kkartik@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4F:EE_|MN2PR12MB4192:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53d44317-9f0c-410f-975d-08dbaf71b9f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: eLtnNzHxUXzss6JUvgdj7wzwmDtb/1vbG9Mf2OBnRKOsn4QzYNEZt05enSHjj5h4jRcaIFhB0uiNx6VgKLii1hrWVJ18tXHqqbtiNonf3X0CrIe8aDAPFsgDaisyes9IMMHrwJrQe/uiP6TciqVP5XrrNPLPwfLJuIbYVYUEeS4VH5pGGAJcMZBg86bW1vn12acliAFLLUCVlDO0RBVDOA0l3fM7PhuAwA3bzBs6SfG/bJsZnxJyuVPpGU9OzKDsxHcS5Bz+gZgX1l7XOBnQHs2P2t7q9/1Z3bTTsvV9FNgVubj+XWbCXKB3imuCM1Ra3UjHpxoamiys8FQO6txpz61yhXMDcDr0s5R2QGCtEc0MAljsiJZ+qWkQ3zxbNrT4Fw+qJuYjlqNmvMy2tMIJK/zhPEOOmXzJ9B6L5igMvnorbApjve9MpseaTdgxQUnbTDsypujXp1T5sGq+3+T6DwY6kHyZ8m884W1YBoSIt3Xv2dLpfjyA9oL4jSzkRFppL/qeBDUMOuqou0frbqy5S/6YJlpk+d8PSlt/LvRFnbZzPvnfnKCp+vrMaqGKJLDmk5uvjt+L0ViHfeBEggziXW59vpDFW4HlrrYbfxmYUzkD6yz7jYNpSh5vIkkEoHi2BcJiwfk9rz2J6MOaxuShUQVLq0VpT6lraFQ/0bc5urEEWjsE0pAabEkWB0INQ6jt/gw+Yvlwlurw1QhpI2ipqceN+ePPslZWRdh48nkXIp4ov2gnFraMJiOT2cp93hKP
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(39860400002)(136003)(376002)(346002)(186009)(451199024)(1800799009)(82310400011)(40470700004)(36840700001)(46966006)(36756003)(316002)(2906002)(41300700001)(4744005)(40460700003)(82740400003)(86362001)(40480700001)(356005)(5660300002)(7636003)(2616005)(36860700001)(426003)(8936002)(4326008)(8676002)(47076005)(26005)(1076003)(336012)(6666004)(54906003)(478600001)(70206006)(70586007)(6916009);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2023 07:11:58.7983
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53d44317-9f0c-410f-975d-08dbaf71b9f7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF0002BA4F.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4192
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Kartik,
+On Wed, 2023-09-06 at 17:56 +0300, Andy Shevchenko wrote:
+>On Tue, Sep 05, 2023 at 06:28:18PM +0530, Kartik wrote:
+>> This series of patches add ACPI support for Tegra194 and Tegra234 in
+>> Tegra fuse and apbmisc drivers. It also adds support for Tegra241
+>> which uses ACPI boot.
+>
+>Neither here, nor in the individual patches I do _not_ see the changelog.
+>What's going on?
+>
+>--
+>With Best Regards,
+>Andy Shevchenko
 
-kernel test robot noticed the following build warnings:
+Apologies for the confusion. I've posted v3 of this series with changelogs.
 
-[auto build test WARNING on tegra/for-next]
-[also build test WARNING on linus/master v6.5 next-20230906]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kartik/soc-tegra-fuse-Refactor-resource-mapping/20230906-032546
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20230905125824.2947-3-kkartik%40nvidia.com
-patch subject: [PATCH v2 2/6] soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
-config: arm64-randconfig-r023-20230906 (https://download.01.org/0day-ci/archive/20230907/202309070129.gFw1OFMp-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project.git f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230907/202309070129.gFw1OFMp-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309070129.gFw1OFMp-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/soc/tegra/fuse/tegra-apbmisc.c:133:36: warning: unused variable 'apbmisc_acpi_match' [-Wunused-const-variable]
-   static const struct acpi_device_id apbmisc_acpi_match[] = {
-                                      ^
-   1 warning generated.
-
-
-vim +/apbmisc_acpi_match +133 drivers/soc/tegra/fuse/tegra-apbmisc.c
-
-   132	
- > 133	static const struct acpi_device_id apbmisc_acpi_match[] = {
-   134		{ "NVDA2010" },
-   135		{ /* sentinel */ }
-   136	};
-   137	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Kartik
