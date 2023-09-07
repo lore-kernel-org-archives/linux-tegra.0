@@ -2,65 +2,66 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF800EC8742
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 16:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC92EC8743
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 17:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234432AbjIGQ6k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:58:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37878 "EHLO
+        id S241480AbjIGRLW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 13:11:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245023AbjIGQ6j (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 12:58:39 -0400
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059FB19B4
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 09:58:05 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-58fb8963617so12333477b3.3
-        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 09:58:04 -0700 (PDT)
+        with ESMTP id S241570AbjIGRLV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 13:11:21 -0400
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 025551717
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 10:10:54 -0700 (PDT)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-1ccc0d2e697so840887fac.0
+        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 10:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694105767; x=1694710567; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694106599; x=1694711399; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RoLVfI/Qa17hM0LLGxXlqleEL6Bcc6ph7u/GtpOctOM=;
-        b=kYyMXDfnrI/u/WUw57zd4ITIKSJ5OfTBmM4JFS+7LW0D7U5jgW+2EvQ3dlFOXJkWBX
-         Gt+mLH5EgHXcGv7W6/+/cMAJQVE7iFvEOwbEBEl18fMRbQCJeEyDynnmTu60ZAeIQdJc
-         BM9nh4Zw4PrihKUi6q49jYaWqL9zkoXQkcg4BRGMnMIVWlED1zqUXX2P8NlfLL75MwSi
-         UpYTP5c+HsaktB3lgrbREuRrYVXtOdsxtFlZhesEJD7WPfj1VyZNILJY8j+sBpedL+O5
-         Xkpz14T6rwRX3iPWb6qxtJQiR5+01m0EwLw243JDHzzOXzQwEw6EvdGEBim9Kx1e1yTf
-         PFlQ==
+        bh=BYCw6MjcMH0VBXX64k2n7JI1Ap28j06fLMRRfYT33EM=;
+        b=jtl6zH6Zin8a3BQDiGyZm/45rVOjLeCk7lji4xFmhw4EtiFzz+PuGfogGoL45xX2Pf
+         3tBguL8qPbmuoAWdGL8TheYVPIRC8RLr9VL1uwMh0YNYPWZbNBXMOaCPsXPOtqWyNZXr
+         6GhQJvqgqIiewJf/lyh1XgkTqwuSUpDSZVtJtzGBXHSxmZ+DeDFCU2kiQONTgWJzbJNv
+         GWYZ7gOKuY+HdgOh/71CDrluFLloVyskmnHqd/ATbqpTMjo4Fx6y+TVH+eqTAusv9QWx
+         gaeSAg2tsqyUgENZklEZtJAYMxqW9HTPTyDQ48I1fn3C/ckfMPu/yw+uhyeqWJoclxnU
+         6RGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694105767; x=1694710567;
+        d=1e100.net; s=20221208; t=1694106599; x=1694711399;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RoLVfI/Qa17hM0LLGxXlqleEL6Bcc6ph7u/GtpOctOM=;
-        b=mcBpM4IifYtC37BEQrQLpJLxNIXMZrpojZoh0RTrgLE7p7nkd2dfF2ysJnHhGHSpKO
-         140AIPS69SrJ6oBuj7AkTvH5BrgdLHSD90B0TagVr1OJ4+X6KtS97cWTx6n9a1bPH6W6
-         bAaegEacZCTvs7b4mLQKxjT/mt78H1PU1nqnLUAgsbDf3rl/yMwRQKnxBhDI6oB2qJYt
-         scwHFR6s0HJgzbiFWdem+KdcGO7o6HsqJZJh87e3ngMfQdN9GJIzcNssUe9EO0rXG+n0
-         4xL2tnenMsjtQmPniYWsUEy/beIxPNXzKxm6zoQTR8nxmidpOI6ELqhHCTvdgri3Af7K
-         MdGg==
-X-Gm-Message-State: AOJu0YzPyY8cZSiYfXTIY1FydABARwkfjCNcljdfcpVw7tDW7kKiN1nf
-        ImfmrTO8mAFEUyIzBMssQSKiYd40kfn5mIbuWSfzomevocVmD+Ux
-X-Google-Smtp-Source: AGHT+IHG0TBlmxyoTQFIa7FFpqQqYMcVr4pyVQslrpSztqetV//HxeApegU4hZ/YXLQ350AtIlPtITxSVFId9gOqRWY=
-X-Received: by 2002:a25:40a:0:b0:d7f:7690:d865 with SMTP id
- 10-20020a25040a000000b00d7f7690d865mr6786114ybe.6.1694072130152; Thu, 07 Sep
- 2023 00:35:30 -0700 (PDT)
+        bh=BYCw6MjcMH0VBXX64k2n7JI1Ap28j06fLMRRfYT33EM=;
+        b=MF2LeISEvMrE8ES5Z38m4WTmnwoeKYpIZFFR+ln4pLNVudQCUt2dzp4RCgWLjwzrNc
+         fqvZOdJHPGdwyRCMxJql7lmVJyVdlrB7YWFDR2WH5f3FqQCGzAzRvekh+3axZXusgNBz
+         tEtB4hYP6xRIwaNiJcDnDR87ppMDLA39ilAaV82Pxm8k3ZRbnmDCotYpiClJZED6cT6Y
+         QQt1aIeNJhP6zvueCK5gfK8Jprr8izn40iG6py5McP2+ykBdEwr6AXTYTVyb8pUphtLI
+         9krn8tiyNu37A0SiCXTQO1TVwkjYeHXmnFfVvN1o2Jc+fweFqsy5QGWUUv7c3i+oJkIJ
+         wMsQ==
+X-Gm-Message-State: AOJu0YyHbe0nr/vc/OTDIOKMLGGJPF0nUETBEtxI6zdxsm9OFzGi4U3p
+        JytI/MM26bvOXUh7Ehy38MXfq4agKktXQb0inlrgtMI046YN2VAY
+X-Google-Smtp-Source: AGHT+IEKK3pIZHt2QRqcId7nWRc2DLGZhZ7BIVl+nPAXJnwX2Sf45+9R0pQFVmMx9pkduIAsjCSxAhDM52WNmcfhZPQ=
+X-Received: by 2002:a67:fa11:0:b0:44d:6290:e422 with SMTP id
+ i17-20020a67fa11000000b0044d6290e422mr4850316vsq.35.1694073434785; Thu, 07
+ Sep 2023 00:57:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-16-brgl@bgdev.pl>
-In-Reply-To: <20230905185309.131295-16-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Sep 2023 09:35:18 +0200
-Message-ID: <CACRpkdaLKqNM1xMCo9jz1Pe_18A=GJodbaTHL+VmoRZa5jJbjQ@mail.gmail.com>
-Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-8-brgl@bgdev.pl>
+ <CACRpkdbdcPv1LHL2W-enKBJ2OARpduoOJkQ64oL6GSOfmmD3qQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbdcPv1LHL2W-enKBJ2OARpduoOJkQ64oL6GSOfmmD3qQ@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 7 Sep 2023 09:57:03 +0200
+Message-ID: <CAMRc=McSBBeHi5jDVYOF6s1etfQzYRNLo25LeY+DWG_2tEf7=w@mail.gmail.com>
+Subject: Re: [PATCH 07/21] gpiolib: provide gpio_device_get_base()
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>
 Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
         Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dipen Patel <dipenp@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Hans de Goede <hdegoede@redhat.com>,
@@ -76,29 +77,48 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Oops one more note:
-
-On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
-
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Sep 7, 2023 at 9:17=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
+org> wrote:
 >
-> gpiochip_find() is going away as it's not hot-unplug safe. This platform
-> is not affected by any of the related problems as this GPIO controller
-> cannot really go away but in order to finally remove this function, we
-> need to convert it to using gpio_device_find() as well.
+> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-(...)
-> +       struct gpio_device *gdev;
-(...)
-> +       gdev =3D gpio_device_find_by_label(OMAP_GPIO_LABEL);
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Let's start adding getters for the opaque struct gpio_device. Start wit=
+h
+> > a function allowing to retrieve the base GPIO number.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> I guess you have a solid usecase for drivers needing to do this
+> crazy thing, because I suppose you feel as much as me that
+> this should rather be gpiolib-internal and confined to
+> drivers/gpio/gpiolib.h?
+>
+> If you add a valid reason for making this globally visible outside
+> of drivers/[gpio|pinctrl] to the commit message I guess I can live
+> with it because we need to think of the bigger picture:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> It brings to mind the now confusing "base" inside of
+> struct gpio_chip. We all know it should go away, but since it
+> is never used during the lifetime of the gpio_chip - or SHOULD
+> never be used - it should rather be an argument to
+> [devm_]gpiochip_add_data( .... int base);...
+>
+> Maybe something we should add to our TODO file.
+>
+> Yours,
+> Linus Walleij
 
-This leaves a reference to the gdev right? No scoped guard?
+For this series it's the HTE driver that uses it and I don't have a
+good idea about how to change it. Dipen?
 
-If you leave a dangling reference intentionally I think it warrants
-a comment ("leaving a ref here so the device will never be
-free:ed").
+I would also love to make pinctrl not use the internal GPIOLIB header
+so it'll be another user, unless you can figure out a way to not use
+gc->base? :)
 
-Yours,
-Linus Walleij
+I think we're stuck with it for now.
+
+Bart
