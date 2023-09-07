@@ -2,25 +2,25 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF42EC8748
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6781EC873E
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 15:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245086AbjIGPhM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:37:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43212 "EHLO
+        id S245093AbjIGPhO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:37:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343778AbjIGPbP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:31:15 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on20618.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8a::618])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B10161FDC;
-        Thu,  7 Sep 2023 08:30:47 -0700 (PDT)
+        with ESMTP id S1343715AbjIGPa5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 11:30:57 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on20600.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eae::600])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4474A1BF4;
+        Thu,  7 Sep 2023 08:30:35 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GTMd4ocH+6XHXrM9DGm0ailRrk20qqyKrDmw+UfpqMPtCQ+9bjxvNbSN/Rs67dpqfAFH1jdwUzu06J3+0yP0o3OKGWPdUYSQCzWLAXwgyl9aJ6mmwEhZdJekKpkRstHYGInOO4dB1Nlnct5tOdWW1MYFxbihu+bxoMAJvW5g5fXJozSfz3cMwUF+z7CHQ2I/P0eZtDBHfhWDzj0BvhyLmELr44NNxqE7294bgvX0C7C5kS3a42v/cXcIwSfjkEcURtQ32lwWCaI/rSMQTek78P94U7uy6Yq3ZjvqGNx+PbHTZ+wd2rO4md1TPL3e55LT88DmPn763i57rCJbvUDPow==
+ b=HqU4fRZ8f1krhHIV5xjAHNFnxavQVXHEPA6xVgDtT31Kluiq94DVsLzWjbJG9pXj77Uwr8K9vwoL5uJm6heAqfh/Rtcll1wUF0jZqAcKno5vJjWVCvu2Q/4EU+GT6ktHSkIO6j2h7jTEx8inXUJTp6JVdssA8P1gcxYKlCa+XmH55FmYel1UyFKqe2GCW0ltvOmYYbl/xnOVR52aj5siQCymECCk2SgD26GB0Cv/XGZxqDvdju5Y9F8oJT8nWw/lHRhwQK4PqZe+IKD23YmcjHM98btp48U2FRQMO6ZosD9PfYmYote2aFnyQzafuAGDNsSnqxtUt6uAdSUVFyjJWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lljyv2F95CF7BnmLdyyZVTvI5083DfMTY3dwl/C/pBw=;
- b=iT/hwook3gedUr9tRaQhMOIG6n/IgVRtKlsOSAvuncRdy9xODkAIehVi3RPuz9n2kruPcWVEjD3oFB0E511VlMkhdLrdwpeQ8tYibyWl6a1Y0wCMG0mQH/OtnCF+S8Kb4fkBLc2ZvM6HM/2yHKSnEpkIkDg75YaTG1q9lXhhyCRJ1pdDkZcNY0Fsl/xPCDifzgB75F24lGAwpJZ2bQGJEs7fk3iTO7P7eMMrl/eKoe/v5/F1J3ETUYX/6suyRVy2RsVzKZe6plj/09Tz5Hlv8XUi+oweHpWsAad+wkkVq6Sx8EDbIwt+SiYCReLlAc3yTmvR+rqf+YlKlB6VKo9VpA==
+ bh=Re29ps3AiOSg4y0WBx8YIBQJTME/7AeggREHZrD4b44=;
+ b=PBZC/rJs46a5hd13wsPAFAs97MUqAgIDLKEaDEHaEJEP45BjJQZtQWqHGEFkMwTg0t8kwaAwALXfAMnxW0QJzFfk4pxCTwe6bnkjB50iZzCXOoGiVhhLLr1trnzRIvcbCXkOwUg2UK2GRH+1eL0/MmKNiXwrld5wFTSib1Hk47MtGtRnYblXDOQ5Sy5zZUcIFyihUvDEcP5+nowe+RtiScfVogUtXvYRbms+Qmv6jEoiEc/YCjLRq2m+vw/i2jv0rTDPsQf8mw+S2zlA89BF/kKZH+Ri6FZrT5U/pCJs5vj3iIn+3WxaHjrtTaIHjf6mn2ppGuHoryuRn6F4eG64kw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -28,18 +28,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lljyv2F95CF7BnmLdyyZVTvI5083DfMTY3dwl/C/pBw=;
- b=t3mJfTvf8tTEyOOAgpfc4dQXSm9bGsmNykV3UvzO2yzD+hYGnuKLoyW980EZXSbSmISPPUjPzPO2u331iO70LZupqSzDPkMNBgkooYIPhzbxDSjKcYiNA+UWBvTgQTDRuAeHpzZBI9/IXkZ0fxwva28ENxctYJQ/zkqApiWzHYYvXBDlcfCihV9kEH7IWvPbpNU2xnT3PHW7JF4zj4LZmCjkqMWA5cBhgtQvljoAkzxr4D0jYv4fFd5/mbaLbGjaiXE4TtvsEDNZzOC+RkzqVr2/S0/vd8OxI2evjE7aQH5kux+SwvEgYMMMMj0rW3Jgeww821xnEVF43Exl993uzw==
-Received: from MW4PR03CA0249.namprd03.prod.outlook.com (2603:10b6:303:b4::14)
- by DS0PR12MB8525.namprd12.prod.outlook.com (2603:10b6:8:159::12) with
+ bh=Re29ps3AiOSg4y0WBx8YIBQJTME/7AeggREHZrD4b44=;
+ b=PvJow/Si+HdYK2tQ0Sm+AznTclWummtYTV9F9OdDG0dwHIW/5WOsSCqf0JyeeG7oDcilz1H1JhH4QwiXPtv7R0JsZ6mZrqa3tjRG/1VtEbr2kg6jisgKz2UXPU7036bLDwnu1Q5zFuhZWR8UWsS9E2itkUFGRUXYzdaJQ2owfY0FPUxYATDXRGGHC7aYVVbrpaAgnyrevmuyghXH1fDoVIUdkt+Gxz0xkSw9vlhFwS929XKCgu19wAyk73kC0hLPc4yU3jX83TOqWviOjZzH/2BWJHUqXsa1GiTmG0bksV/owbYR+tDAZYjAwZYOfSzDfQ+Vpc6ImJBu2mRXKjqzkg==
+Received: from MW4PR04CA0358.namprd04.prod.outlook.com (2603:10b6:303:8a::33)
+ by LV2PR12MB5848.namprd12.prod.outlook.com (2603:10b6:408:173::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.36; Thu, 7 Sep
- 2023 07:11:41 +0000
-Received: from CO1PEPF000044F8.namprd21.prod.outlook.com
- (2603:10b6:303:b4:cafe::8f) by MW4PR03CA0249.outlook.office365.com
- (2603:10b6:303:b4::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Thu, 7 Sep
+ 2023 07:11:22 +0000
+Received: from CO1PEPF000044FD.namprd21.prod.outlook.com
+ (2603:10b6:303:8a:cafe::cb) by MW4PR04CA0358.outlook.office365.com
+ (2603:10b6:303:8a::33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.36 via Frontend
- Transport; Thu, 7 Sep 2023 07:11:40 +0000
+ Transport; Thu, 7 Sep 2023 07:11:22 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -47,20 +47,20 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000044F8.mail.protection.outlook.com (10.167.241.198) with Microsoft
+ CO1PEPF000044FD.mail.protection.outlook.com (10.167.241.203) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6792.1 via Frontend Transport; Thu, 7 Sep 2023 07:11:40 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ 15.20.6792.1 via Frontend Transport; Thu, 7 Sep 2023 07:11:22 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 7 Sep 2023
- 00:11:24 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ 00:11:09 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 7 Sep 2023
- 00:11:23 -0700
+ 00:11:09 -0700
 Received: from localhost.localdomain (10.127.8.10) by mail.nvidia.com
  (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Thu, 7 Sep 2023 00:11:19 -0700
+ Transport; Thu, 7 Sep 2023 00:11:04 -0700
 From:   Kartik <kkartik@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <sumitg@nvidia.com>, <arnd@arndb.de>, <pshete@nvidia.com>,
@@ -69,88 +69,109 @@ To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <frank.li@vivo.com>, <robh@kernel.org>, <stefank@nvidia.com>,
         <pdeschrijver@nvidia.com>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/6] soc/tegra: fuse: Add function to print SKU info
-Date:   Thu, 7 Sep 2023 12:40:50 +0530
-Message-ID: <20230907071052.3906-5-kkartik@nvidia.com>
+Subject: [PATCH v3 1/6] soc/tegra: fuse: Refactor resource mapping
+Date:   Thu, 7 Sep 2023 12:40:47 +0530
+Message-ID: <20230907071052.3906-2-kkartik@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230907071052.3906-1-kkartik@nvidia.com>
 References: <20230907071052.3906-1-kkartik@nvidia.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F8:EE_|DS0PR12MB8525:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6bf9c358-ce01-443a-dde8-08dbaf71af40
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FD:EE_|LV2PR12MB5848:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ca7ce1d-c3f9-4770-f496-08dbaf71a422
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2k04lPAj0usnCbUtB+4YxVDNHLr37g/C1tQtC9RVDlk0rWT4Mg87BR7J/XnQygDqz5OSniLtss4jtUakQK8yUAEGlBFVFREkScMqwQvgfxeT5H3e1W1lJtdPJNarVVewj6SfWFIkw2Vn/Sr2RIM6ZJFVDakwW+xabIBizTmi4aEMnFFkXK+TIXh2TZ/6V25LoIHNY02jQd8IiFqTImKpi8hSnC6OiJJYBdRw7vcsv+nvgY5fOPw8wmUlHPcj4ILxVvYqU4pDv3hbxG5XodvT4/dCzd+hhGzdWMcR6+C4DGsXcJXVQvMoewLDqk6bBjUV3AtPgeYSB1wOw5LDGlUJuCrgPpFLgzVSBLF7Mrk4h/hqMDzzTZHmJtNZtk1/lI9ve55emgiqUj0mkdkoIJbGiluORUfwCjji9vR6QWDULUFCvJrtA3FkG29fvStX0/Ox+5BSD0/Fzu6sP4DrkWWkRUTiTQJ/0jcQqACRS8QJzgnSBR0t54aIHiEMcqZQ7Nuozkbtxeme6lyNJz+Dg6I6RBRDAlMhBay717yTb6AOQMGaGXXxfeKMmndON5KZZ54y6E//IIpblVSNEOXhk0VR3QWgY9EgFAuZEXHfLgfA7NUM3SdAAOKMMt4G6culJ7bpeEVldmsUUZ+60BLhQENbsfMbsWYT4sJeswj5NmCdxQAjdfEtBj9OBs38ZIMfR5EA+xV0ZJ07GxwtRnb5CTyiyvaSZVQHnw6iz7tN60qOuF8B+2+pqZB57UZpjWCtrc71
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(136003)(346002)(376002)(39860400002)(82310400011)(1800799009)(186009)(451199024)(36840700001)(40470700004)(46966006)(6666004)(478600001)(83380400001)(1076003)(2616005)(26005)(426003)(336012)(2906002)(316002)(70586007)(110136005)(41300700001)(5660300002)(8936002)(8676002)(40460700003)(40480700001)(47076005)(36860700001)(36756003)(86362001)(70206006)(356005)(921005)(7636003)(82740400003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 925nd17JBPO//ArRLMuE9xtO1k0zUnvgD0hV78svJrx2tknjPFkPXxQSAvcb5oC0nx2OvTQTomVNKQ8SreA2cc/9HYtuGnaqt161bsCo3V3om+FWEG+UWnVPxMTy3A7tsoyHYiOXOsD/AQH6AeVSDHXMF12GHCJxEx0fGZ2Fc4UyILK+axkVyi/hdlDJQFGmqfR6qQ4qMzzYcgGN4Kx7i7/6Gs1JT5NBn1qto7iD0e+gViJ9pIWoswM1qW+97HcKMAqqglvEd9BoMZatO0Mg5A6i/wEJ8o5NRuDe7yFLkHLFVKje6Hsp+UScgxb39tmgpmwetXdejVK+97yRRBO+7DphmfKxmkxqLWxLGdQjkCRRhYHljPuLr/BmYCnuY6ZlSmGZ3WcvZnuH5YdqK7eEgGC/DPJOyJMw6arpaE5FNlGAWcl07ctszk79sRhkYGSIWkBh/XWjbYaXK8zuX/gmYt/6dyB4sZQCqUo9gJrSkdTA4cqm6LRqBpmZqp6DjiDhqwRaUNMEiCKS3AtPq4phT1rGneef6PYX02NHf1YvxhjokhFDaFHO698jDH1z9uGuY9toK8ewJNsROvQ8o+Q1A2Jwr85saJCYNbcP83B7WW7Vy5UdYITeb46SUJTEndtsymA10E/J/IwFMOGc4DaCBM3H+eGSNnbcN1iyfxMZm5MDK2COLSblYon3tbyI3wClWOYzC18hGASXs3GhGzOpIivunDcuQ8bj3kZ1C82taR834TiJXKznYKpqCtTALvqkiHh0bfkj018Lya+VVrSd4Q==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(39860400002)(376002)(396003)(136003)(186009)(451199024)(1800799009)(82310400011)(46966006)(40470700004)(36840700001)(356005)(7636003)(921005)(6666004)(40460700003)(86362001)(36756003)(36860700001)(82740400003)(40480700001)(47076005)(1076003)(2616005)(2906002)(336012)(426003)(26005)(83380400001)(478600001)(70586007)(110136005)(70206006)(41300700001)(8936002)(5660300002)(8676002)(316002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2023 07:11:40.7767
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2023 07:11:22.1570
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bf9c358-ce01-443a-dde8-08dbaf71af40
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ca7ce1d-c3f9-4770-f496-08dbaf71a422
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044F8.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044FD.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8525
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5848
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add helper function tegra_fuse_print_sku_info() to print Tegra SKU
-information. So, it can be shared between tegra_fuse_init() and
-ACPI probe which is to be introduced later.
+To prepare for adding ACPI support to the tegra-apbmisc driver,
+relocate the code responsible for mapping memory resources from
+the function ‘tegra_init_apbmisc’ to the function
+‘tegra_init_apbmisc_resources.’ This adjustment will allow the
+code to be shared between ‘tegra_init_apbmisc’ and the upcoming
+‘tegra_acpi_init_apbmisc’ function.
 
 Signed-off-by: Kartik <kkartik@nvidia.com>
 ---
-v1 -> v2:
-	* Renamed tegra_fuse_pr_sku_info() as
-	  tegra_fuse_print_sku_info().
----
- drivers/soc/tegra/fuse/fuse-tegra.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 37 +++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 821bb485ec45..64f7001823ce 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -113,6 +113,16 @@ static void tegra_fuse_restore(void *base)
- 	fuse->clk = NULL;
+diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+index da970f3dbf35..06c1b3a2c7ec 100644
+--- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
++++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+@@ -160,9 +160,28 @@ void __init tegra_init_revision(void)
+ 	tegra_sku_info.platform = tegra_get_platform();
  }
  
-+static void tegra_fuse_print_sku_info(struct tegra_sku_info *tegra_sku_info)
-+{
-+	pr_info("Tegra Revision: %s SKU: %d CPU Process: %d SoC Process: %d\n",
-+		tegra_revision_name[tegra_sku_info->revision],
-+		tegra_sku_info->sku_id, tegra_sku_info->cpu_process_id,
-+		tegra_sku_info->soc_process_id);
-+	pr_debug("Tegra CPU Speedo ID %d, SoC Speedo ID %d\n",
-+		tegra_sku_info->cpu_speedo_id, tegra_sku_info->soc_speedo_id);
+-void __init tegra_init_apbmisc(void)
++static void tegra_init_apbmisc_resources(struct resource *apbmisc,
++					 struct resource *straps)
+ {
+ 	void __iomem *strapping_base;
++
++	apbmisc_base = ioremap(apbmisc->start, resource_size(apbmisc));
++	if (apbmisc_base)
++		chipid = readl_relaxed(apbmisc_base + 4);
++	else
++		pr_err("failed to map APBMISC registers\n");
++
++	strapping_base = ioremap(straps->start, resource_size(straps));
++	if (strapping_base) {
++		strapping = readl_relaxed(strapping_base);
++		iounmap(strapping_base);
++	} else {
++		pr_err("failed to map strapping options registers\n");
++	}
 +}
 +
- static int tegra_fuse_add_lookups(struct tegra_fuse *fuse)
- {
- 	size_t size;
-@@ -516,12 +526,7 @@ static int __init tegra_init_fuse(void)
++void __init tegra_init_apbmisc(void)
++{
+ 	struct resource apbmisc, straps;
+ 	struct device_node *np;
  
- 	fuse->soc->init(fuse);
+@@ -219,21 +238,7 @@ void __init tegra_init_apbmisc(void)
+ 		}
+ 	}
  
--	pr_info("Tegra Revision: %s SKU: %d CPU Process: %d SoC Process: %d\n",
--		tegra_revision_name[tegra_sku_info.revision],
--		tegra_sku_info.sku_id, tegra_sku_info.cpu_process_id,
--		tegra_sku_info.soc_process_id);
--	pr_debug("Tegra CPU Speedo ID %d, SoC Speedo ID %d\n",
--		 tegra_sku_info.cpu_speedo_id, tegra_sku_info.soc_speedo_id);
-+	tegra_fuse_print_sku_info(&tegra_sku_info);
+-	apbmisc_base = ioremap(apbmisc.start, resource_size(&apbmisc));
+-	if (!apbmisc_base) {
+-		pr_err("failed to map APBMISC registers\n");
+-	} else {
+-		chipid = readl_relaxed(apbmisc_base + 4);
+-	}
+-
+-	strapping_base = ioremap(straps.start, resource_size(&straps));
+-	if (!strapping_base) {
+-		pr_err("failed to map strapping options registers\n");
+-	} else {
+-		strapping = readl_relaxed(strapping_base);
+-		iounmap(strapping_base);
+-	}
+-
++	tegra_init_apbmisc_resources(&apbmisc, &straps);
+ 	long_ram_code = of_property_read_bool(np, "nvidia,long-ram-code");
  
- 	err = tegra_fuse_add_lookups(fuse);
- 	if (err) {
+ put:
 -- 
 2.34.1
 
