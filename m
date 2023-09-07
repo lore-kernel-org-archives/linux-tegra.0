@@ -2,95 +2,107 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6034EC8726
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 17:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3E0EC874D
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 18:18:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244455AbjIGRlN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36408 "EHLO
+        id S232999AbjIGSSc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Sep 2023 14:18:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245258AbjIGRlD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 13:41:03 -0400
-Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE7EA211E
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 10:40:39 -0700 (PDT)
-Received: by mail-oo1-xc29.google.com with SMTP id 006d021491bc7-573429f5874so672569eaf.0
-        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 10:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694108426; x=1694713226; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9VX520/JAjo5YxFEs6vhZtWf0iQa736VrN0vgqzfoO4=;
-        b=FhmMo5gViPGeubaYQ7MvfipM6Bzbgbeh1y95x0Bf/yXqKuJ4Vx9I29u9pRuhN+ts0o
-         80b8/rDB57odaKyZYWWrz+udWKR4A/AK9rcsNv2P7G08KPjJdwC8EPP7JA7BbsRABVxh
-         Ny78rOr+A6VPGA459ID8dd7MlNN8EwQ5kyOCb7Y/cGj31PQVh2Y5a5IG6BUhgWwvOHz/
-         PM/Djo+QkFq+qKzjN5F/4JzehXL37izUoow+2jieGzkAyPmE4uVbIw72w5bISejFUVOh
-         l7EplIJxSSR8h+RVy2Z/stlGVGopxXsCPX1itksarhfquUeKurh+M8keLyU/+w3YgmYS
-         FYCQ==
+        with ESMTP id S233934AbjIGSSa (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 14:18:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8D11BD7
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Sep 2023 11:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694110617;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kF37Os6pT1PJ2aRTeP1aQHaXwH+prUD3dlnj+MQOFCE=;
+        b=UDdr6zF6jPT0RkX3n4W6pxLC1aw8uBD9oSjd/NIJHi+Akg6PDefVuzkCpiy2Odt/rZFgRB
+        3QSPj7NWDxSwt7dBmGMP9O69gUq1Xizt9Nxo9oRS/NUQkiu9SC5w+WY3mICWlImcLAtxyz
+        noqViSQlICO0ubq7DXaF8wdz4igfXbM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-34-zs7HAThvOXGT-uM5IBvOUg-1; Thu, 07 Sep 2023 04:47:51 -0400
+X-MC-Unique: zs7HAThvOXGT-uM5IBvOUg-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-2f2981b8364so504089f8f.1
+        for <linux-tegra@vger.kernel.org>; Thu, 07 Sep 2023 01:47:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694108426; x=1694713226;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9VX520/JAjo5YxFEs6vhZtWf0iQa736VrN0vgqzfoO4=;
-        b=r8xjL+p6rgfcFgR6GzeQu8t6NCLJdBrMw6BnpUzLrUrqXj1DQhmSz2rGjkHvMwByn7
-         Zp85PqbCj+Jt9eCIN55veKDiBkO5kT9etg4kLSKEUNu1QKC6zo+1d6YrkUjd7nzzfKgs
-         3v3QJXcDqbeflkCOGNo51H1IorLtespLg02ip/HRy5TbivQ0aiYmA7ltGJjGgA4m5qhj
-         hm0Ft5lGEJ+ulN/rlsjj6kwz+SABJGsIXjK4CRzPpy4iI8EMFL6OdzTLdWJD87Oi19D2
-         IrhIrX0MjgeLTgVvKJojNpo3ytpLE92NGP2fqQMhqgisnA17ctjH9xMStz2XnDGWwEeP
-         V4kA==
-X-Gm-Message-State: AOJu0Yx72Dx6AnXob8PTYOd8L+9Qj32+41ILPEpF0v11V7yQgTEuPnD6
-        fE6Aid7UyL3jOGdNcPQhEZg9H1Te91tJ/eowPOj8WA+DEOXOm/n/
-X-Google-Smtp-Source: AGHT+IGsG5hJJbLxB8MJ18cSL64AbAsKmU8HUkb1gvXKq17Y/8ZLDXSkKoAPtcsGb/CfUJGklHIiazXnZYlmi1tiRYs=
-X-Received: by 2002:a25:d78a:0:b0:d78:47a:d76e with SMTP id
- o132-20020a25d78a000000b00d78047ad76emr19559951ybg.49.1694072224500; Thu, 07
- Sep 2023 00:37:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-17-brgl@bgdev.pl>
-In-Reply-To: <20230905185309.131295-17-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Sep 2023 09:36:53 +0200
-Message-ID: <CACRpkdap-AFmVFG_gtYeGuR5JFLgHQ6i7w6HRwKP4+pu=nd66A@mail.gmail.com>
-Subject: Re: [PATCH 16/21] gpio: of: correct notifier return codes
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dipen Patel <dipenp@nvidia.com>,
+        d=1e100.net; s=20221208; t=1694076470; x=1694681270;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kF37Os6pT1PJ2aRTeP1aQHaXwH+prUD3dlnj+MQOFCE=;
+        b=jB0g95GinpsW9FhdXJn+LODCPZlYlhj0eB9JVe4JyKLV0VioDs4JdojS4TTM/U/m0j
+         tyaKtBWcfM0gVGtGeF8feY3ngrWExsU8HK2EkHgbvG90hXnSCIhJqEgVmc+wlYVRqte2
+         8uGczSxL4CLbDxjANUTbhpjK05SObLAeReJrmYdp7fGU7lIc6hPNQgvlUY2nuYD4a5gg
+         4rKzGfZVLBoqMz95Zju1+aYmTf9Mi6czJPRPgTeWc6l6ellL2K82wiWU7hUD7POMWOUS
+         ApgNF1TgN+P/zekqqIU3VqGpJdNCAbklIlxRpwIDBiBQVWhHKZlL2QZUMeuLJWgisJy2
+         bIpQ==
+X-Gm-Message-State: AOJu0YzNfYgjmahA3cEoh62yrXeNhLRX8ZwdR8dLBOCGroNQHgVyyi1u
+        uhF5lI4VlcnSkHgzS9omzGA7xu2R22eMUD+SEBRj9V4pc/9ykW/OecOTl1EKOTfVVZwCNoUgNxc
+        h3aRLevvrLt6P84pNEIrnQaE=
+X-Received: by 2002:a5d:4f0a:0:b0:31a:d7fc:28f with SMTP id c10-20020a5d4f0a000000b0031ad7fc028fmr4236731wru.19.1694076470446;
+        Thu, 07 Sep 2023 01:47:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaR5bvde5g0wWiq6Fboo20IBKUE4ldGPwfZnLzZV0LVIQJIY8kyRGcYcYOIxdDbryuK0GDog==
+X-Received: by 2002:a5d:4f0a:0:b0:31a:d7fc:28f with SMTP id c10-20020a5d4f0a000000b0031ad7fc028fmr4236720wru.19.1694076470110;
+        Thu, 07 Sep 2023 01:47:50 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id o4-20020a5d6844000000b003197b85bad2sm22782849wrw.79.2023.09.07.01.47.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Sep 2023 01:47:49 -0700 (PDT)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-tegra@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>,
+        dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] drm/tegra: Remove existing framebuffer only if we
+ support display
+In-Reply-To: <dd898338-813f-df63-4255-986903aa7cb6@suse.de>
+References: <20230825132229.1109445-1-thierry.reding@gmail.com>
+ <f5ce7a77-ee3e-5186-dd8a-76c0bd794de0@suse.de>
+ <5f1bca1b-8deb-e677-521d-87d3848e22df@kapsi.fi>
+ <CAKMK7uFDn_R+c=YErf7gEHVW4pg+odYKVjrs0EofvpG544Po6Q@mail.gmail.com>
+ <ZPmD5WNZzz279qZ7@orome> <dd898338-813f-df63-4255-986903aa7cb6@suse.de>
+Date:   Thu, 07 Sep 2023 10:47:49 +0200
+Message-ID: <87tts62wui.fsf@minerva.mail-host-address-is-not-set>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+[...]
+
+>> That's a good point. However I recall from earlier attempts at doing
+>> something like this in Nouveau (although this is now very long ago) that
+>> it's not very easy. The problem, as I recall, is that the driver is a
+>> singleton, so we would essentially be supporting either modesetting or
+>> not, for any device in the system.
 >
-> According to the comments in linux/notifier.h, the code to return when a
-> notifications is "not for us" is NOTIFY_DONE, not NOTIFY_OK.
+> Take a look at struct drm_device.driver_features. It let's you clear the 
+> flags that your device doesn't support.
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> https://elixir.bootlin.com/linux/v6.5/source/include/drm/drm_device.h#L128
+>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+That sounds indeed as the best approach and I see that at least i915 does it:
 
-This should just be applied, right? If the notifiers already
-went upstream (sorry for my ignorance) then it should be
-a Fixes: even.
+https://elixir.bootlin.com/linux/v6.5/source/drivers/gpu/drm/i915/intel_device_info.c#L418
 
-Yours,
-Linus Walleij
+> Best regards
+> Thomas
+>
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
