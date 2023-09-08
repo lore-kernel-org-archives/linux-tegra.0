@@ -2,105 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B56EC875C
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Sep 2023 19:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38521EEB560
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Sep 2023 18:08:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237830AbjIGTbb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Sep 2023 15:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34114 "EHLO
+        id S235891AbjIHSI5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Sep 2023 14:08:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244281AbjIGR15 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Sep 2023 13:27:57 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 491731710;
-        Thu,  7 Sep 2023 10:27:26 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-31f737b8b69so645300f8f.3;
-        Thu, 07 Sep 2023 10:27:26 -0700 (PDT)
+        with ESMTP id S230334AbjIHSIz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Sep 2023 14:08:55 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F17F210B;
+        Fri,  8 Sep 2023 11:08:25 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99bf3f59905so286402866b.3;
+        Fri, 08 Sep 2023 11:08:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694107597; x=1694712397; darn=vger.kernel.org;
+        d=gmail.com; s=20221208; t=1694196434; x=1694801234; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=26DcFGzDOHLTIiLeHWKpfXHidOy7/CEGyz2eAxmSs7g=;
-        b=qQONLOK4TWURG9P9wA/Zu6HpecZhSeybNYUZnJf65mlMjDs9nijGzryCayf1uDoyb6
-         rQWmt9rE/KgGvQ7Y95E7QyIIZUp29GEl9JcbRiO6CRyc7raEXdHnATlDl53RyqLKqWOA
-         OxPWIPJ6Xux9wMRpNXmD0KoZ+DGfwmJCksPIlh7VhS2NrlwSjKdI5ansB02iQBlQx2YI
-         m1d2imOEWwmlywCBI/uk9JVy2uFz/sCSNSsv1icrXqu1/4NjR3JVzaMxwX54uBdGGSyO
-         xyhx3gRAb8zVCSdG6ehhYUF0S0PwjxRkYs8TELezXumz53XwfTB8myIcQOcyaixCj8Gt
-         06Mw==
+        bh=subAUO9E8mZRv/6RLgXHnMS5iBnCJy0fu3qM36GnA0o=;
+        b=CApMUrWNj1LJz/M+5QH5Q95FFnWo1dONbvDW4lH3AKtSBbHEeuzejFksWR/qleSFFy
+         htLdpgmhGuTXCmPp3FGLiNj8P2at56+neqqiA9W5pJg5K0KBr5aaFaiKQAtjgB3yrnlh
+         QUBsUwDnKo/slFHdzFb6/q8eQF4qgBPtp25Uv/BeojQIoXYiHWPlr3MTh1LeBQUU/Hsq
+         b0aTlVZYu+gDUcrZhEFp45KsO81lhg+K6kkOuh8LJRwBthvIhpANC3uRkFLxw2K38+ed
+         kFMCfMuxrD+zl+XWN7M3AeDvYVn/JAYkyHgKWH9647GOWz9l8XIXLrvlAAisieNMt6IY
+         jCCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694107597; x=1694712397;
+        d=1e100.net; s=20230601; t=1694196434; x=1694801234;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=26DcFGzDOHLTIiLeHWKpfXHidOy7/CEGyz2eAxmSs7g=;
-        b=NdY2Cv79lXqVtXyZIhlMe/9G5iRkqytQfbmaTrz5ST2V4IJ0H6nYCL77di6xcvX2lh
-         MoJlwa8T1BKP8T7Aeg8JBRjEj5YGUbjMpDgi2axWNMBiohWe0pRv0Jyk65Gse/0FrmYu
-         RcE68UdW/7zmslz/iPXyLmI9bEv+WYZZA7MbI8Q85QMi+ut0MjJjY/I2UGVI7bfX2pw5
-         wRBD+KvEvV+79KQ9uOBw6pUpnHWw4IvXvtheizg1cLQWyh1Xo79ACbE1scwJ2sXfBn8b
-         BfHpW1UejoW2nuhWwtjSxu2R9YY8GB9ZXB14l1nMJAYmrlWlsv2Qz3W9ZeVZpmQjiMCL
-         LN/Q==
-X-Gm-Message-State: AOJu0YyE8LfaX5DnyCVS6EYxySSJRVqbG0yk4a82Br//jfzYlO6aTPwV
-        ZvK2Cp9GOuPoD6O27X1owm7gx7eaJfyKMK9s
-X-Google-Smtp-Source: AGHT+IGmdbnP2IiRkh2YShm8FU8AlrM8Iy3LYwqc2f08IbVFyuZjViTL76t1BpmUinhyYoKIpv2l/g==
-X-Received: by 2002:adf:dd86:0:b0:317:5e55:f06f with SMTP id x6-20020adfdd86000000b003175e55f06fmr4617335wrl.10.1694074839361;
-        Thu, 07 Sep 2023 01:20:39 -0700 (PDT)
-Received: from PCBABN.skidata.net ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id n10-20020adfe78a000000b0031aca6cc69csm22772438wrm.2.2023.09.07.01.20.38
+        bh=subAUO9E8mZRv/6RLgXHnMS5iBnCJy0fu3qM36GnA0o=;
+        b=KQ2c19MJ8zh6CMIciHxloT6HZoD8gCVnY2yXys1W8CbAQ8YaLIiglBsER4oSFAE/JF
+         thi8lHayvg5aUdePvH6g7XON4qVU70BgQ+ZHovY0kRD82zP4/yzY4JhyI6PqS6p6vztn
+         nCfcVUbmRP65++XvUuVkdbMnNwAD+ZVJbnhasnIpSQTPhk7FTllUpbrkAjAgfqtUjrkl
+         2STfmZ6DyQdKZujHiSJxkWxoCuEj/zGFAzBVEGhgAZEvRDSnv1w6SsxPhM8jFEFFTtKZ
+         bW4LEADhFrenmWCCT/kCRCkLXPbp8JcewSJXKiYhmdTVTNtB1XGKzHKLBFuG1O8Zn3Xt
+         4dpw==
+X-Gm-Message-State: AOJu0YzJ0i/2Vp2HXsY6JPcPCCeL18oP6EDFxsYPGjOb1PeVc7Nea7Io
+        dXTdZ0tMyjXjZ8hOcryWOxxWPbAopgBv+u6k
+X-Google-Smtp-Source: AGHT+IEBdgr1xof7hnEAV6QqzBERHOL9Ak0Vp3bXRIwbgu6y3tDfH9aHIemt2jhAqyAqEOA3aPEmIQ==
+X-Received: by 2002:a17:906:2d0:b0:9a1:bd53:b23 with SMTP id 16-20020a17090602d000b009a1bd530b23mr2467057ejk.14.1694196433411;
+        Fri, 08 Sep 2023 11:07:13 -0700 (PDT)
+Received: from dell.localnet (77-255-201-154.dynamic.inetia.pl. [77.255.201.154])
+        by smtp.gmail.com with ESMTPSA id a5-20020a17090682c500b00993664a9987sm1312081ejy.103.2023.09.08.11.07.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Sep 2023 01:20:38 -0700 (PDT)
-From:   Benjamin Bara <bbara93@gmail.com>
-To:     lee@kernel.org
-Cc:     bbara93@gmail.com, benjamin.bara@skidata.com,
-        dmitry.osipenko@collabora.com, jonathanh@nvidia.com,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, nm@ti.com, peterz@infradead.org,
-        rafael.j.wysocki@intel.com, richard.leitner@linux.dev,
-        stable@vger.kernel.org, treding@nvidia.com,
-        wsa+renesas@sang-engineering.com, wsa@kernel.org
-Subject: Re: [PATCH v7 0/5] mfd: tps6586x: register restart handler
-Date:   Thu,  7 Sep 2023 10:20:32 +0200
-Message-Id: <20230907082032.478027-1-bbara93@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230728103446.GK8175@google.com>
-References: <20230728103446.GK8175@google.com>
+        Fri, 08 Sep 2023 11:07:12 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
+Date:   Fri, 08 Sep 2023 20:07:09 +0200
+Message-ID: <6555932.G0QQBjFxQf@dell>
+In-Reply-To: <CACRpkdaVUPNYVjAi2XsNKVhwmtk2qpVp62Lke4xeDOwhhBXLtg@mail.gmail.com>
+References: <20230905185309.131295-1-brgl@bgdev.pl>
+ <20230905185309.131295-16-brgl@bgdev.pl>
+ <CACRpkdaVUPNYVjAi2XsNKVhwmtk2qpVp62Lke4xeDOwhhBXLtg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Lee,
-
-On Fri, 28 Jul 2023 at 12:34, Lee Jones <lee@kernel.org> wrote:
-> On Fri, 28 Jul 2023, Lee Jones wrote:
-> > On Sat, 15 Jul 2023 09:53:22 +0200, Benjamin Bara wrote:
-> > > The Tegra20 requires an enabled VDE power domain during startup. As the
-> > > VDE is currently not used, it is disabled during runtime.
-> > > Since 8f0c714ad9be, there is a workaround for the "normal restart path"
-> > > which enables the VDE before doing PMC's warm reboot. This workaround is
-> > > not executed in the "emergency restart path", leading to a hang-up
-> > > during start.
-> > >
-> > > [...]
+Dnia czwartek, 7 wrze=C5=9Bnia 2023 09:31:01 CEST Linus Walleij pisze:
+> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>=20
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > >
-> > Applied, thanks!
+> > gpiochip_find() is going away as it's not hot-unplug safe. This platform
+> > is not affected by any of the related problems as this GPIO controller
+> > cannot really go away but in order to finally remove this function, we
+> > need to convert it to using gpio_device_find() as well.
 > >
-> > [1/5] kernel/reboot: emergency_restart: set correct system_state
-> >       commit: 60466c067927abbcaff299845abd4b7069963139
-> > [2/5] i2c: core: run atomic i2c xfer when !preemptible
-> >       commit: aa49c90894d06e18a1ee7c095edbd2f37c232d02
-> > [3/5] kernel/reboot: add device to sys_off_handler
-> >       commit: db2d6038c5e795cab4f0a8d3e86b4f7e33338629
-> > [4/5] mfd: tps6586x: use devm-based power off handler
-> >       commit: 8bd141b17cedcbcb7d336df6e0462e4f4a528ab1
-> > [5/5] mfd: tps6586x: register restart handler
-> >       commit: 510f276df2b91efd73f6c53be62b7e692ff533c1
->
-> Pull-request to follow after built tests have completed.
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> I was cleaning this one just some merge cycle ago, now it
+> looks even better!
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-What's the current state of this series?
+Acked-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Thanks & regards
-Benjamin
+Thanks,
+Janusz
+
+>=20
+> Yours,
+> Linus Walleij
+>=20
+
+
+
+
