@@ -2,202 +2,110 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556F5CA0ECF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655FECA0ED1
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Sep 2023 21:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236514AbjIKV4g (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50702 "EHLO
+        id S237126AbjIKV4i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Sep 2023 17:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237175AbjIKMLS (ORCPT
+        with ESMTP id S235878AbjIKJo6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Sep 2023 08:11:18 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F8AB193;
-        Mon, 11 Sep 2023 05:11:13 -0700 (PDT)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BBcf8k020281;
-        Mon, 11 Sep 2023 12:09:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=HGXHlyuW7tI3KkroRX3EwubPO1mf8HTAk2ndjhHoNFs=;
- b=PWIIEP2lmDUfa1mp9pmw/oaZwzdtcpnlqzQ75hk9+FpJGvJYDU60r9trS5Z/VtLyDHft
- 9WX+n5snuJJ5jbu5vUpOHlKrmCud7gkjCafXw2JlLlwDtpuM9LO25/9hM4ZNnK9/vKhf
- l1qU1LZtGDxzxdwXmQxEa86eJVFAmwBgVfDVbQFx2Nm1Almhe4faCXCK8QzNT1ejl8yF
- QR+nEvWye7K6HENvui0bkEIhPwedV8GX8xMoeAVJHxAzGF7xr7/nFp13TH8Xj3KOQHcr
- h7xH4BM63pjFCbfz/lLveE+A3kojVUwJbk8xCa7Q1WSyEsQ7FXyRLhW42+3i3S8xCX16 Ug== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t1wuq0aj0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 12:09:50 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38BBedp6028128;
-        Mon, 11 Sep 2023 12:07:02 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t1wuq08ya-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 12:07:02 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38BBOZ8H002318;
-        Mon, 11 Sep 2023 12:06:36 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3t158jsvr1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 12:06:35 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38BC6XqU66978064
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Sep 2023 12:06:33 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E64F02004B;
-        Mon, 11 Sep 2023 12:06:32 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D9F220043;
-        Mon, 11 Sep 2023 12:06:30 +0000 (GMT)
-Received: from [9.171.58.134] (unknown [9.171.58.134])
-        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Sep 2023 12:06:30 +0000 (GMT)
-Message-ID: <c5ac1459d2967c17e472d1c51d5017beb39e4714.camel@linux.ibm.com>
-Subject: Re: [PATCH v12 5/6] iommu/dma: Allow a single FQ in addition to
- per-CPU FQs
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
+        Mon, 11 Sep 2023 05:44:58 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78091E44
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Sep 2023 02:44:52 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-401ec23be82so47234015e9.0
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Sep 2023 02:44:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694425491; x=1695030291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R0/rqbO9zdTuj+XkCrDufr//URbhGp0n8nPQ9514Kz8=;
+        b=PUTTscD58RX1mh/d1df8HZM2ilvxGzeYUcpXbZZn0KeldCLUphJTNhPJCBQL6PpAAs
+         kN9OZntU1pYI1L+jwHustC+6iegUCtzvlcuw4PmfM0dPEK2DGXzFKuCSo4nHHZDdkbQv
+         BOTNuFACAT4tdRuEudWgB86+1GBTiOtlUNuxFGYuHFQOEdu0ToUcmbBc1ftWafOaSfRi
+         8k/0TqjeGe6Vkw5noos2QB63990ZS80O1DDa3MRP1yv81+g6iLJZahFrmoWE06COc/CX
+         a6E+K13Go1iUeT7mNhpAaIoTuoswIsMagmZZGm5YrMBniPbsSd2tZumjseZT4Ld4r5Mh
+         wPgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694425491; x=1695030291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R0/rqbO9zdTuj+XkCrDufr//URbhGp0n8nPQ9514Kz8=;
+        b=lDPUVXb7iIpAr2ARN+mdVl17Qcxq4/F33yaemjGDFmsu3BeTCJjinlg/R728TUfB2p
+         WeA+uvE/l4edNo3OBHbHuWK1ZsznJzO/Vkhvmw9erOu9yGLC4vOpDs2HOf1q17+NSBpI
+         0FW+aQhVpdfDof9nAL/51O9JNkSc4Lc7lab0eIrqr5Kr7FX6+ZoY9y63+WevqYz9d3n5
+         kCAZWQoGFR1PXbkYASPdF4XUZx07xPzTrcBdBDBEjdJA1fvqq61Q9v2jwwM8g2CHw2VE
+         uG++2wKx58BB7Mi4FWCJeztu2Cwyn9qFI32i9/t1yH4J9VzWVdGSyj9yme9V9nzyjSTK
+         vo6w==
+X-Gm-Message-State: AOJu0YxQKIRoVpzL5huYCH5g6lr5otFGYjbbHhTelajxzRcC2pUj+hj0
+        cmcX/H+fxcMazcspnuA6uUS7AEjg0nPiiQbKv1o=
+X-Google-Smtp-Source: AGHT+IFoi4Dei8OscALHdqZx2NassPsp3aooQcZ1UAgjVrAk+Jw6ryGdd0bnraeWRUOWi1pzfF528Q==
+X-Received: by 2002:a1c:7508:0:b0:3fe:d1e9:e6b8 with SMTP id o8-20020a1c7508000000b003fed1e9e6b8mr8066631wmc.12.1694425490282;
+        Mon, 11 Sep 2023 02:44:50 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:c2b1:675e:119e:2497])
+        by smtp.gmail.com with ESMTPSA id c26-20020a7bc01a000000b003feeb082a9fsm9627985wmb.3.2023.09.11.02.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 02:44:49 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Dipen Patel <dipenp@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Date:   Mon, 11 Sep 2023 14:06:29 +0200
-In-Reply-To: <20230825-dma_iommu-v12-5-4134455994a7@linux.ibm.com>
-References: <20230825-dma_iommu-v12-0-4134455994a7@linux.ibm.com>
-         <20230825-dma_iommu-v12-5-4134455994a7@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 36tUcYWsI3-kwg7TjwTB82g2_ly-u1Zp
-X-Proofpoint-ORIG-GUID: CMa4t0Ot4oG8TuboxO12mxpMT2o-4HQO
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     timestamp@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] hte: tegra194: improve the GPIO-related comment
+Date:   Mon, 11 Sep 2023 11:44:43 +0200
+Message-Id: <20230911094443.14040-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- priorityscore=1501 clxscore=1011 impostorscore=0 suspectscore=0
- adultscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=957
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309110110
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 2023-08-25 at 12:11 +0200, Niklas Schnelle wrote:
-> In some virtualized environments, including s390 paged memory guests,
-> IOTLB flushes are used to update IOMMU shadow tables. Due to this, they
-> are much more expensive than in typical bare metal environments or
-> non-paged s390 guests. In addition they may parallelize poorly in
-> virtualized environments. This changes the trade off for flushing IOVAs
-> such that minimizing the number of IOTLB flushes trumps any benefit of
-> cheaper queuing operations or increased paralellism.
->=20
-> In this scenario per-CPU flush queues pose several problems. Firstly
-> per-CPU memory is often quite limited prohibiting larger queues.
-> Secondly collecting IOVAs per-CPU but flushing via a global timeout
-> reduces the number of IOVAs flushed for each timeout especially on s390
-> where PCI interrupts may not be bound to a specific CPU.
->=20
-> Let's introduce a single flush queue mode that reuses the same queue
-> logic but only allocates a single global queue. This mode is selected by
-> dma-iommu if a newly introduced .shadow_on_flush flag is set in struct
-> dev_iommu. As a first user the s390 IOMMU driver sets this flag during
-> probe_device. With the unchanged small FQ size and timeouts this setting
-> is worse than per-CPU queues but a follow up patch will make the FQ size
-> and timeout variable. Together this allows the common IOVA flushing code
-> to more closely resemble the global flush behavior used on s390's
-> previous internal DMA API implementation.
->=20
-> Link: https://lore.kernel.org/all/9a466109-01c5-96b0-bf03-304123f435ee@ar=
-m.com/
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
-> Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com> #s390
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->  drivers/iommu/dma-iommu.c  | 168 ++++++++++++++++++++++++++++++++++-----=
-------
->  drivers/iommu/s390-iommu.c |   3 +
->  include/linux/iommu.h      |   2 +
->  3 files changed, 134 insertions(+), 39 deletions(-)
->=20
->=20
----8<---
->=20=20
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 182cc4c71e62..c3687e066ed7 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -409,6 +409,7 @@ struct iommu_fault_param {
->   * @priv:	 IOMMU Driver private data
->   * @max_pasids:  number of PASIDs this device can consume
->   * @attach_deferred: the dma domain attachment is deferred
-> + * @shadow_on_flush: IOTLB flushes are used to sync shadow tables
->   *
->   * TODO: migrate other per device data pointers under iommu_dev_data, e.=
-g.
->   *	struct iommu_group	*iommu_group;
-> @@ -422,6 +423,7 @@ struct dev_iommu {
->  	void				*priv;
->  	u32				max_pasids;
->  	u32				attach_deferred:1;
-> +	u32				shadow_on_flush:1;
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This causes a merge conflict with a48ce36e2786f ("iommu: Prevent
-RESV_DIRECT devices from blocking domains"), The resolution is trivial
-though in that shadow_on_flush:1 can just be added after (or before)
-require_direct:1. @Joro do you want me to sent a version with this
-resolution regardless or will you resolve this when applying?
+Using any of the GPIO interfaces using the global numberspace is
+deprecated. Make it clear in the comment.
 
->  };
->=20=20
->  int iommu_device_register(struct iommu_device *iommu,
->=20
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+This was part of a wider series but since this is independent, I'm sending
+it separately.
+
+ drivers/hte/hte-tegra194.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+index 6fe6897047ac..9fd3c00ff695 100644
+--- a/drivers/hte/hte-tegra194.c
++++ b/drivers/hte/hte-tegra194.c
+@@ -407,12 +407,15 @@ static int tegra_hte_line_xlate(struct hte_chip *gc,
+ 		return -EINVAL;
+ 
+ 	/*
++	 * GPIO consumers can access GPIOs in two ways:
+ 	 *
+-	 * There are two paths GPIO consumers can take as follows:
+-	 * 1) The consumer (gpiolib-cdev for example) which uses GPIO global
+-	 * number which gets assigned run time.
+-	 * 2) The consumer passing GPIO from the DT which is assigned
+-	 * statically for example by using TEGRA194_AON_GPIO gpio DT binding.
++	 * 1) Using the global GPIO numberspace.
++	 *
++	 * This is the old, now DEPRECATED method and should not be used in
++	 * new code. TODO: Check if tegra is even concerned by this.
++	 *
++	 * 2) Using GPIO descriptors that can be assigned to consumer devices
++	 * using device-tree, ACPI or lookup tables.
+ 	 *
+ 	 * The code below addresses both the consumer use cases and maps into
+ 	 * HTE/GTE namespace.
+-- 
+2.39.2
 
