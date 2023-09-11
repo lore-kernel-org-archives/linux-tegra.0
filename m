@@ -2,122 +2,166 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2D6CA0EC3
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Sep 2023 21:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C413CA0ECE
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Sep 2023 21:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236022AbjIKV4d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Sep 2023 17:56:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42022 "EHLO
+        id S236300AbjIKV4f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Sep 2023 17:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236498AbjIKKqv (ORCPT
+        with ESMTP id S243529AbjIKRR2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:46:51 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8FE4EB;
-        Mon, 11 Sep 2023 03:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694429206; x=1725965206;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BcQ7+itQRZMJfkS1e/SgGehbRfqJ8zd0OXNPrAjfyYY=;
-  b=gySb9ArUmv2KqyX0J3DKSp8Wf3bBddQOSbtXCUbWjkXTaDbXMMVUT9zk
-   /GoTPelC8xHo0rJ6KT4Xu13IqR6jdUi15NTWxkPs7384m+B4JFQW5CgbS
-   kVrcFBigm67TPeVZifd00pji3Ydk2tKCN+zX6mT3o7XVoFSBzAiGT8QkS
-   JTjVovr0gmf7zkgIaL3vGifVYS4IRlLVJIy2nL2lSVacgQhoxmr4thCsq
-   nIw2QvpVj6HX8arhWSW25cBr4DRpIqcbT72h0YbNevwva7tmmxJXNaIZj
-   bTH/YF2iI1EwdnD32JuhJQkA5iSXdRXiF1uVuWeSWXV4xR8bFzfjcebsf
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="381849633"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="381849633"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 03:46:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="778345396"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="778345396"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 03:46:42 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qfeRD-008INp-1N;
-        Mon, 11 Sep 2023 13:46:39 +0300
-Date:   Mon, 11 Sep 2023 13:46:38 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Kartik <kkartik@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com,
-        arnd@arndb.de, pshete@nvidia.com, digetx@gmail.com,
-        petlozup@nvidia.com, windhl@126.com, frank.li@vivo.com,
-        robh@kernel.org, stefank@nvidia.com, pdeschrijver@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] soc/tegra: fuse: Add ACPI support for Tegra194
- and Tegra234
-Message-ID: <ZP7wDm5w/b5RIlIq@smile.fi.intel.com>
-References: <20230907071052.3906-1-kkartik@nvidia.com>
- <20230907071052.3906-6-kkartik@nvidia.com>
+        Mon, 11 Sep 2023 13:17:28 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9692F1AD;
+        Mon, 11 Sep 2023 10:17:23 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-502153ae36cso7506619e87.3;
+        Mon, 11 Sep 2023 10:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1694452642; x=1695057442; darn=vger.kernel.org;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SI5vlgRKYRNHM1C+DkX5FIATlpw7hyOP/MciW4qezs4=;
+        b=CEG/GNZEFcoigcN1/Kzcm/xxVTvQTJ6YQIALk5DtwB/w/ZC7GjMaHXHBQb3jvYgdAJ
+         19LsGJaWP38DQYGHjRgcOdm1Biwcvkdm4PgRfHwzZQNEDCXI7T6vFK3OTdpGlhwx7qHw
+         MaNlrzZxHGBEZ/0FX1Wz5JpIXkHaAzwELbdOKgASxwfTlNwqI2h3p83QnOQi2fHVvs8d
+         1l/EvaFum7f74bcC2zJy8BECdumI4LfJ7xPhI6X9XqaiKlSP5R/davcWPbWTNhlfyVKF
+         GEgeJXFQZf9DJ28L8ozEYoCLGrpeJ/pzT2NdT0BaUIVv2SlNuoHtkeZ9JhZvO2r0gOSr
+         /oag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694452642; x=1695057442;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SI5vlgRKYRNHM1C+DkX5FIATlpw7hyOP/MciW4qezs4=;
+        b=k9+wLAlyboTMEMFzMVC1Fhw+TMdGmjAmgvlfJwvbDH+m1mFCDeBuZ74ZCFLh0C3ou3
+         GBZ6mOeeEqijviTQ/UNpSdy/hE5F1RbtQrGju2iiMZDh0XYmh8ikp97e94fOXjx6Wuny
+         /3JB8MqabhZCYETuaxUYcrPwRdWcuZQNBAt7hVmNYNuR9zQvg/UqHRivZIs8a+D1xmt3
+         7788tsZiSrpueMeuWpbqlZAHtSBC+0p3i9MwZ+TuiQeiIjZmq2ayG2eqt09LyaRWSkVV
+         MJLKew/nFRPXubFlS5RGhb0sdt5OqmpSvHUbnNtVp1T77EkVq56fiYt4uVtMeeOVSDLR
+         ThEw==
+X-Gm-Message-State: AOJu0Yz4Lxy8HsQqqxO99KU/mboIShSoxlL17mbV0agY6L4o23VzmKDO
+        XBIiYplsdp0uFzXV15nwKjc=
+X-Google-Smtp-Source: AGHT+IGQJHojqhRwH0OQBhk3JhUu00YPa6S2W1S/m1cP6oA0/UCR4y1XMC4AB9LxZ3CXkImsKxpW4Q==
+X-Received: by 2002:a05:6512:108d:b0:500:97e4:587e with SMTP id j13-20020a056512108d00b0050097e4587emr9273543lfg.44.1694452641413;
+        Mon, 11 Sep 2023 10:17:21 -0700 (PDT)
+Received: from dell.localnet (77-255-201-154.dynamic.inetia.pl. [77.255.201.154])
+        by smtp.gmail.com with ESMTPSA id kj13-20020a170907764d00b009a1b857e3a5sm5622150ejc.54.2023.09.11.10.17.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 10:17:20 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
+Date:   Mon, 11 Sep 2023 19:17:18 +0200
+Message-ID: <4001581.3daJWjYHZt@dell>
+In-Reply-To: <CAMRc=Mfrk9q6fJyEAuxDXYPpbjVHeLJaTjHEcKiYHzrE3r+_7A@mail.gmail.com>
+References: <20230905185309.131295-1-brgl@bgdev.pl> <6555932.G0QQBjFxQf@dell>
+ <CAMRc=Mfrk9q6fJyEAuxDXYPpbjVHeLJaTjHEcKiYHzrE3r+_7A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230907071052.3906-6-kkartik@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: multipart/signed; boundary="nextPart6408794.j6PcuT4dK6";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 07, 2023 at 12:40:51PM +0530, Kartik wrote:
-> Add ACPI support for Tegra194 & Tegra243 SoC's. This requires
-> following modifications to the probe when ACPI boot is used:
->  - Initialize soc data.
->  - Add nvmem lookups.
->  - Register soc device.
->  - use devm_clk_get_optional() instead of devm_clk_get() to get
->    fuse->clk, as fuse clocks are not required when using ACPI boot.
-> 
-> Also, drop '__init' keyword for tegra_soc_device_register() as this is also
-> used by tegra_fuse_probe() and use dev_err_probe() wherever applicable.
+--nextPart6408794.j6PcuT4dK6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"; protected-headers="v1"
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 11 Sep 2023 19:17:18 +0200
+Message-ID: <4001581.3daJWjYHZt@dell>
+MIME-Version: 1.0
 
-...
+Hi Bartosz,
 
-> +static const struct acpi_device_id tegra_fuse_acpi_match[] = {
-> +	{ "NVDA200F" },
-> +	{ /* sentinel */ }
-> +};
+Dnia poniedzia=C5=82ek, 11 wrze=C5=9Bnia 2023 13:09:56 CEST Bartosz Golasze=
+wski pisze:
+> On Fri, Sep 8, 2023 at 8:07=E2=80=AFPM Janusz Krzysztofik <jmkrzyszt@gmai=
+l.com> wrote:
+> >
+> > Dnia czwartek, 7 wrze=C5=9Bnia 2023 09:31:01 CEST Linus Walleij pisze:
+> > > On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgde=
+v.pl> wrote:
+> > >
+> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > >
+> > > > gpiochip_find() is going away as it's not hot-unplug safe. This pla=
+tform
+> > > > is not affected by any of the related problems as this GPIO control=
+ler
+> > > > cannot really go away but in order to finally remove this function,=
+ we
+> > > > need to convert it to using gpio_device_find() as well.
+> > > >
+> > > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > I was cleaning this one just some merge cycle ago, now it
+> > > looks even better!
+> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >
+> > Acked-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> >
+>=20
+> Janusz,
+>=20
+> Is it fine if I take it through the GPIO tree?
 
-Where is NODULE_DEVICE_TABLE() for it? And why it's located here and not
-at the its first user's location?
+Yes, should be fine, I believe.  Tony, Aaro, any doubts?
 
-...
+Thanks,
+Janusz
 
-> +	if (is_acpi_node(pdev->dev.fwnode) && !fuse->soc) {
+>=20
+> Bartosz
+>=20
+> > Thanks,
+> > Janusz
+> >
+> > >
+> > > Yours,
+> > > Linus Walleij
+> > >
+> >
+> >
+> >
+> >
+>=20
 
-We do not dereference fwnode in struct device, use dev_fwnode() for that.
 
-...
+--nextPart6408794.j6PcuT4dK6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(fuse->clk), "failed to get FUSE clock\n");
+-----BEGIN PGP SIGNATURE-----
 
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(fuse->rst), "failed to get FUSE reset");
+iQEzBAABCAAdFiEEnyr6IsGnTYAeAkHJ2WqSnltsjBoFAmT/S54ACgkQ2WqSnlts
+jBqfwggAkqeTBmvDijSA5oujmDfSsAwfI3pBy3VlWvEHNLW4jys50C18KyynuMPa
+QyvA9s4AZQjeusGTcGaGzSJ7KtMFCmTba/RuaP1mHrH/D9aXB0QlAhdaSoKEWpFl
+2ClWbPt6nnGyMQ17eFTpip9HD4ylxRY/wT748JaWqWBQPsOaSDsq1ghsuQy/6Dy2
+aos/iIizgrK5rhgxxBYmxHi7mm0Pa0sMkr6h8nqash55cMpCEMQeZmSV+GpDZ+vz
+BevtWk7pY+j5WGhOYJNulyih6cdVOVU8J6LqpUCkvKDwK2DzjKFsPSxJ2g1qA7/C
+B/sE4gkeNsH/dCnyiX/Rv1Kd3ak3YA==
+=/Mjl
+-----END PGP SIGNATURE-----
 
-This requires a separate patch.
+--nextPart6408794.j6PcuT4dK6--
 
-...
-
-> +	/*
-> +	 * Wait for fuse->clk to be initialized if device-tree boot is used.
-> +	 */
-
-> +	if (is_of_node(fuse->dev->fwnode) && !fuse->clk)
-
-dev_fwnode()
-
-The second check is questionable. If you get it NULL, it won't ever appear.
-Did I miss anything?
-
-> +		return -EPROBE_DEFER;
-
--- 
-With Best Regards,
-Andy Shevchenko
 
 
