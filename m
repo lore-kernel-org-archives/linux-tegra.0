@@ -2,60 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498D2CA0ECA
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Sep 2023 10:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5D6CA0EC3
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Sep 2023 10:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234088AbjILKhD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Sep 2023 06:37:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
+        id S234360AbjILKhK convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Sep 2023 06:37:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234129AbjILKgw (ORCPT
+        with ESMTP id S234380AbjILKg6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Sep 2023 06:36:52 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B49D42D4B
-        for <linux-tegra@vger.kernel.org>; Tue, 12 Sep 2023 03:35:31 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6043BC0006;
-        Tue, 12 Sep 2023 10:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1694514930;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PfNKUEe1V8KEfVBvwqyAc2BJuRiSsvuYo2fkPdeAuyE=;
-        b=NLMouHSTBIAOeOHMgnmjPhhBBPCzQwTzrjQN03cYB4UQihuzTlgc8C781HPPx2gabnznG0
-        FCUTIq+F+ICFMDQoGsOfch7Nx33YpYd9je+4DbXzpN54iIy4gIuCMesViV2RVP4MMR1bbL
-        x9q3cDzm4Vz/v9Uu2ltIdjHKcp3Zv/27DbzZQhS6npFznhsDY5NhoIEazKefY/M7S07uga
-        y6/+LHjoaNjIDEzsUR8FYmQjpe1C4wrf4BtFzVgy4BpA9zRh7wBn2W4Y2GU5l7jFV0fBFn
-        GoXPg1dtvsQ/y1yqZjLq8hAZmS+VEV/6WRS8Vyhc9m6amPTk7PFkHRKzEyEEPw==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Yi Yang <yiyang13@huawei.com>, stefan@agner.ch, dev@lynxeye.de,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: tegra: add missing check for platform_get_irq()
-Date:   Tue, 12 Sep 2023 12:35:28 +0200
-Message-Id: <20230912103528.936288-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230821084046.217025-1-yiyang13@huawei.com>
-References: 
+        Tue, 12 Sep 2023 06:36:58 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43D7CC3;
+        Tue, 12 Sep 2023 03:35:55 -0700 (PDT)
+Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4RlKjR4qCNz6K6lQ;
+        Tue, 12 Sep 2023 18:35:23 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Tue, 12 Sep
+ 2023 11:35:52 +0100
+Date:   Tue, 12 Sep 2023 11:35:52 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC:     <linux-pci@vger.kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+        "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+        Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/8] PCI: tegra194: Use FIELD_GET()/FIELD_PREP() with
+ Link Width fields
+Message-ID: <20230912113552.00000087@Huawei.com>
+In-Reply-To: <20230911121501.21910-5-ilpo.jarvinen@linux.intel.com>
+References: <20230911121501.21910-1-ilpo.jarvinen@linux.intel.com>
+        <20230911121501.21910-5-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'0a1166c27d4e53186e6bf9147ea6db9cd1d65847'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.227.76]
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 2023-08-21 at 08:40:46 UTC, Yi Yang wrote:
-> Add the missing check for platform_get_irq() and return error code
-> if it fails.
+On Mon, 11 Sep 2023 15:14:57 +0300
+Ilpo Järvinen <ilpo.jarvinen@linux.intel.com> wrote:
+
+> Use FIELD_GET() to extract PCIe Negotiated Link Width field instead of
+> custom masking and shifting.
 > 
-> Fixes: d7d9f8ec77fe ("mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver")
-> Signed-off-by: Yi Yang <yiyang13@huawei.com>
+> Similarly, change custom code that misleadingly used
+> PCI_EXP_LNKSTA_NLW_SHIFT to prepare value for PCI_EXP_LNKCAP write
+> to use FIELD_PREP() with correct field define (PCI_EXP_LNKCAP_MLW).
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+Excellent example for why this changes is a good cleanup beyond
+reducing line lengths.  Harder to use the wrong define if you
+are using one rather that two :)
 
-Miquel
+Jonathan
+
+> 
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 4bba31502ce1..248cd9347e8f 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -9,6 +9,7 @@
+>   * Author: Vidya Sagar <vidyas@nvidia.com>
+>   */
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/clk.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+> @@ -346,8 +347,7 @@ static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
+>  	 */
+>  	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
+>  	if (val & PCI_EXP_LNKSTA_LBMS) {
+> -		current_link_width = (val & PCI_EXP_LNKSTA_NLW) >>
+> -				     PCI_EXP_LNKSTA_NLW_SHIFT;
+> +		current_link_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
+>  		if (pcie->init_link_width > current_link_width) {
+>  			dev_warn(pci->dev, "PCIe link is bad, width reduced\n");
+>  			val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+> @@ -760,8 +760,7 @@ static void tegra_pcie_enable_system_interrupts(struct dw_pcie_rp *pp)
+>  
+>  	val_w = dw_pcie_readw_dbi(&pcie->pci, pcie->pcie_cap_base +
+>  				  PCI_EXP_LNKSTA);
+> -	pcie->init_link_width = (val_w & PCI_EXP_LNKSTA_NLW) >>
+> -				PCI_EXP_LNKSTA_NLW_SHIFT;
+> +	pcie->init_link_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val_w);
+>  
+>  	val_w = dw_pcie_readw_dbi(&pcie->pci, pcie->pcie_cap_base +
+>  				  PCI_EXP_LNKCTL);
+> @@ -920,7 +919,7 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+>  	/* Configure Max lane width from DT */
+>  	val = dw_pcie_readl_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP);
+>  	val &= ~PCI_EXP_LNKCAP_MLW;
+> -	val |= (pcie->num_lanes << PCI_EXP_LNKSTA_NLW_SHIFT);
+> +	val |= FIELD_PREP(PCI_EXP_LNKCAP_MLW, pcie->num_lanes);
+>  	dw_pcie_writel_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP, val);
+>  
+>  	/* Clear Slot Clock Configuration bit if SRNS configuration */
+
