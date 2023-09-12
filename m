@@ -2,88 +2,60 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFF4CA0ECB
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Sep 2023 02:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 498D2CA0ECA
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Sep 2023 10:37:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241212AbjILC5S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Sep 2023 22:57:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56552 "EHLO
+        id S234088AbjILKhD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Sep 2023 06:37:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240891AbjILC5I (ORCPT
+        with ESMTP id S234129AbjILKgw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Sep 2023 22:57:08 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C202A256;
-        Mon, 11 Sep 2023 19:27:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCECC433BD;
-        Tue, 12 Sep 2023 00:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694476913;
-        bh=XmvvSnPPZfJmsrUyZ/7/dR8/drInjaaG1l50K2Joi1E=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=J0Rk2Gsw9fmnC318IRR7A9MwTuYhIUXoxBG/mV08+o+a9NMDng3RLoWLdjqDSbyj6
-         T7Trxr8PMmaa+NyAoxw1FbB/8CMFZfypZzHMxJkHe7rYA5r3OfEVEjgdviBY6qB7V+
-         VmWcqFOHxxHKLkziEo4zjmpWs8NlKQ7PqWTJ3L+sAJqbNh6gG8SH+Pe/az3z/BOzz8
-         ajXfxuTAGfgEK4sZrCJxiiuvsYDBCIlIpuIDi5um+azat7+RPw09UPts++GnRP7112
-         jpFRygQisPn4UE+mP2iZcsD7E+NxrvBEuppmLYhz6i0Ioomnnn9P3TUQil0Q/sTtfX
-         Tt/1YPvx4itFQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        Sameer Pujar <spujar@nvidia.com>
+        Tue, 12 Sep 2023 06:36:52 -0400
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B49D42D4B
+        for <linux-tegra@vger.kernel.org>; Tue, 12 Sep 2023 03:35:31 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6043BC0006;
+        Tue, 12 Sep 2023 10:35:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1694514930;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PfNKUEe1V8KEfVBvwqyAc2BJuRiSsvuYo2fkPdeAuyE=;
+        b=NLMouHSTBIAOeOHMgnmjPhhBBPCzQwTzrjQN03cYB4UQihuzTlgc8C781HPPx2gabnznG0
+        FCUTIq+F+ICFMDQoGsOfch7Nx33YpYd9je+4DbXzpN54iIy4gIuCMesViV2RVP4MMR1bbL
+        x9q3cDzm4Vz/v9Uu2ltIdjHKcp3Zv/27DbzZQhS6npFznhsDY5NhoIEazKefY/M7S07uga
+        y6/+LHjoaNjIDEzsUR8FYmQjpe1C4wrf4BtFzVgy4BpA9zRh7wBn2W4Y2GU5l7jFV0fBFn
+        GoXPg1dtvsQ/y1yqZjLq8hAZmS+VEV/6WRS8Vyhc9m6amPTk7PFkHRKzEyEEPw==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Yi Yang <yiyang13@huawei.com>, stefan@agner.ch, dev@lynxeye.de,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com
 Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <1694098945-32760-1-git-send-email-spujar@nvidia.com>
-References: <1694098945-32760-1-git-send-email-spujar@nvidia.com>
-Subject: Re: [PATCH v2 0/2] Fix redundant PLLA update
-Message-Id: <169447691068.2390116.10518505217580469969.b4-ty@kernel.org>
-Date:   Tue, 12 Sep 2023 01:01:50 +0100
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: tegra: add missing check for platform_get_irq()
+Date:   Tue, 12 Sep 2023 12:35:28 +0200
+Message-Id: <20230912103528.936288-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230821084046.217025-1-yiyang13@huawei.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-099c9
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'0a1166c27d4e53186e6bf9147ea6db9cd1d65847'
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: miquel.raynal@bootlin.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 07 Sep 2023 20:32:23 +0530, Sameer Pujar wrote:
-> This small series fixes redundant PLLA updates that happen for
-> each DAI link in the audio path. This helps to resolve DMIC clock
-> issue seen on Jetson TX2 platform.
+On Mon, 2023-08-21 at 08:40:46 UTC, Yi Yang wrote:
+> Add the missing check for platform_get_irq() and return error code
+> if it fails.
 > 
-> Sameer Pujar (2):
->   ASoC: soc-utils: Export snd_soc_dai_is_dummy() symbol
->   ASoC: tegra: Fix redundant PLLA and PLLA_OUT0 updates
-> 
-> [...]
+> Fixes: d7d9f8ec77fe ("mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver")
+> Signed-off-by: Yi Yang <yiyang13@huawei.com>
 
-Applied to
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/2] ASoC: soc-utils: Export snd_soc_dai_is_dummy() symbol
-      commit: f101583fa9f8c3f372d4feb61d67da0ccbf4d9a5
-[2/2] ASoC: tegra: Fix redundant PLLA and PLLA_OUT0 updates
-      commit: e765886249c533e1bb5cbc3cd741bad677417312
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Miquel
