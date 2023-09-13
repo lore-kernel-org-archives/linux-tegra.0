@@ -2,199 +2,122 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE6EEE01E7
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Sep 2023 16:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8D0EE020A
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Sep 2023 19:38:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231633AbjIMQsp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Sep 2023 12:48:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
+        id S232481AbjIMTit (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Sep 2023 15:38:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231364AbjIMQsU (ORCPT
+        with ESMTP id S230475AbjIMTit (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Sep 2023 12:48:20 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2046.outbound.protection.outlook.com [40.107.102.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D7AF359D;
-        Wed, 13 Sep 2023 09:47:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Cqw5Ue7C7uSeYW0xJYq/rqwUXY8PYnVTjqVlx7RfFzi4RxvQYclP1k1SAgfgVMgg8jgkdjhCDb5uZCCRW/GGHrXvFuNVockoJbOUyxf4jusbOOSgwuoeiV4k1jSo8xYMpxBIxx+RqZFUXHH3pXN7BG1nACDHJFwXYLFI/JaBynStccykX12qROSjwIy1zkbEMK++XF1DmmmOCDsrwYxzP5/NXzWROEd2iqZDWUDOPABJ/2KBX3clSn+//vrB4qZsdUP+0TT2V3u+Hv7Pf+RYjAo28oE7PkAS0NjrlId9h9yH3hVzZBPckXpmNpIohZ0cYx7N3+8wER/KNYPejOhcZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kwzzw8138+YZ3/lmiNY9SOdnltHoR4qUADwwJh2D/Qg=;
- b=SDF78mzj+zBVoN8WWIlpCM25g9kO/O9K43y4APD4gXx6ZRfGaL/2gYwNt4kLl7P/udXvu61fHIvwyoYtNrCdxU7FD1h+KUXgiB1FK1ubhOcgECp+7sIxIYmDtHJrNu37+KzTEbzTpDjdAlCtVUEOwr2B5jTLZoxzlRvRTOpnZsSMOz4gXEKmt4+KYZrKhovDztU4t87/7lRr2fNdtxMhkC5WLp8IJsb65FH/hTvNa2o8EequCBfUA8od1hbG9grHbhkjn2EfTxgjSb9lYsbIiItJh/xE45NFuGkykT0tcDFTfVzQnki4/b5pnNoJFOSSHdotZabd4R8/iHvbjtvjZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kwzzw8138+YZ3/lmiNY9SOdnltHoR4qUADwwJh2D/Qg=;
- b=M9opHYfTO7FGalLZFSiN2Po/h0LBqnBuYysO5vLRmfYNidxG7jWzr/NcxYSjRr/7Rquiu+sb6kbFTpEybJZLDIkYW2yc/aybd5zvPhkHNpwChdAHquuxHPbrC9utkTnWYYfGVSSxKccez+Il0oFAhic+ccAB1y/8mjZMf6PJZSt2bls45DoiH6dX+wMKGgARvh6JRr59rUK1PUhoZykYSPeGmDGq3LnQWiXiYPvwDBw91iAt9KLF5y8tp15yb52IdPVGgRgb9E2u/A2Cj531BxMJQi5ukSTdS6aoXJY+rmvgG6eNhfREEnL8OGT5G7ISMUH4Uno0WcvF2cLh0ZzInQ==
-Received: from BL1PR13CA0169.namprd13.prod.outlook.com (2603:10b6:208:2bd::24)
- by DS7PR12MB6119.namprd12.prod.outlook.com (2603:10b6:8:99::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6745.34; Wed, 13 Sep 2023 16:47:36 +0000
-Received: from BL02EPF0001A0FC.namprd03.prod.outlook.com
- (2603:10b6:208:2bd:cafe::5) by BL1PR13CA0169.outlook.office365.com
- (2603:10b6:208:2bd::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.19 via Frontend
- Transport; Wed, 13 Sep 2023 16:47:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BL02EPF0001A0FC.mail.protection.outlook.com (10.167.242.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6792.20 via Frontend Transport; Wed, 13 Sep 2023 16:47:35 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 13 Sep 2023
- 09:47:24 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Wed, 13 Sep 2023 09:47:24 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.41 via Frontend
- Transport; Wed, 13 Sep 2023 09:47:20 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <rafael@kernel.org>, <rui.zhang@intel.com>, <lenb@kernel.org>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-CC:     <sumitg@nvidia.com>, <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>,
-        <srikars@nvidia.com>, <jbrasen@nvidia.com>, <bbasu@nvidia.com>
-Subject: [Patch v2 2/2] ACPI: processor: reduce CPUFREQ thermal reduction pctg for Tegra241
-Date:   Wed, 13 Sep 2023 22:16:59 +0530
-Message-ID: <20230913164659.9345-3-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230913164659.9345-1-sumitg@nvidia.com>
-References: <20230913164659.9345-1-sumitg@nvidia.com>
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FC:EE_|DS7PR12MB6119:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3af7ba26-6a74-4522-d959-08dbb4792230
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vVjwhxMc48mYqxMqUlmxx49NW/ivPnab5yh9M4ZZbtCjLg48FjY0t9Aey00MgJFGnS7FWbxukhrUbSvSgb/tPE5Hq2z0HqdP0MSYKxdnaJUtQKkmBjT7dBaSwnFU9dH2zRNNFosaEY/SxFV+24NxjcY/hGWuFgGu4lgDbuDpoRBUQIbecSTy3cpHBB512tf2JWkxpVZoJiu/bqe6OrvwWZsLkJEgisXcT7l9BvOgwJOL2pd4ZT2TpzrTZdOGMzeAxMYC/3xmmd3q1XJwapW1N/PGOiV12BMuuLoNS8s7wq9OvuSN03XsE6VNin3gx36A56pB6d/MZB0JIRyD6aCUH7SYmw2uFwhDMiTzaSSHEipuDzn5LBmfO8AaZlFhvhItLInIGWF+jK7H3/5gVrUSznfiZTvEnxukWd1JBtPThmNMwQyQTa43EJpOqavNZBW3a8lws/L2aPEpllo+XUM2gvZm2V/XriiNL5XQupb1S5QqsB5xCWcMHTyndI4gtUjeOdYyy5HEgWw9asVstS2QLqs/XdB/T3JTpnZrxvPpuah9Rn3AAygnRAOCGmk94hfoXfpIel/o2YBUaYQFTBBShpGoa4Qgiq/yP7jmh7Qy4dLP4ZSRuIxyLZCE3XBVa1rnOgRjRvNlzGDYX95d0bYwBH/ZrTnEugvPGl3L6arVrbxHC+RO2/86nXUpC3tY3U0tnXKHyi8/TVvETAlS8Cd/p9FMhsbiI/BBHGSRDSL/iAl7+F8h5KrlYapf8paxpQzx/ajb+smdflHUUrtU6Vq72w==
-X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(39860400002)(136003)(376002)(346002)(186009)(1800799009)(451199024)(82310400011)(40470700004)(46966006)(36840700001)(316002)(41300700001)(26005)(1076003)(426003)(40480700001)(107886003)(336012)(4326008)(2906002)(70586007)(8676002)(54906003)(70206006)(8936002)(478600001)(5660300002)(110136005)(6666004)(40460700003)(7696005)(36756003)(36860700001)(2616005)(83380400001)(47076005)(86362001)(7636003)(82740400003)(356005)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2023 16:47:35.8851
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3af7ba26-6a74-4522-d959-08dbb4792230
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0001A0FC.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6119
+        Wed, 13 Sep 2023 15:38:49 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48BD7B7
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Sep 2023 12:38:45 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-d81503de9c9so227668276.3
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Sep 2023 12:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1694633924; x=1695238724; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5D9cmGNnxZclEaUPRp7dDRkIa3NaBWA/5YbPgcSOdlU=;
+        b=FLlzdeFavhqlzy4MC1JUgkhtQCIAqORJqP4YlKTbXRHHW4SDPUKHATV5MG7sWtoqyw
+         JlOk3w3zl5eiGAfXS3M3FGmu4NefugskyB0wyPlnHqKdpRKDM9trNLQkOF5sP1b9JFfp
+         KwMvVJWqug/Q7aEmu8arEKEGdzhl2pRpVZ/twXErX9CSaUC7i1cx9nhoJvZanZM8Vb4E
+         eWt8veY6YDfVS8EGtK3LT0OLIddNGlWCJBnW8Y1DF/dCIe0tIpMHRgOLRj//eQCr55jy
+         yrEW/Qadkl2zT1V/439SdGxhci5KOcuulo7OIwwAgw0Bb6+75oyxGOXn6GjYg6FPqhlc
+         Nd5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694633924; x=1695238724;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5D9cmGNnxZclEaUPRp7dDRkIa3NaBWA/5YbPgcSOdlU=;
+        b=V+GMtntSVPOLVwtxEA6gqttm3Cwuj3Mb4bJaBGErnymd+BGa+Jr4nRMdJQqJXu7+jR
+         38ZoyGQ5LeVOcNaLfjdd8zUOo51phHAZboVjotPS6SjJyZdQyxpVwOfmi/29VcYdN3RN
+         oYjTNolxk/DGL9TYI7ezCllgSuBdqzNGr6xVLZB7ZfR4K+fQsNeePwzItBbY5LvUYGi1
+         +30ol6RBwuaOSWrI1Kaj5O9sR/eDEQ56O7puKFnV6Fv1qhtg0XxGZtOaZWNjHgURrZkL
+         QJYCOR+wouK3n8Iek7yxw+z9mkFeUro4n4TdWdVbZ8v0het4CI6SEuWDj6cH4LWKu79M
+         uIew==
+X-Gm-Message-State: AOJu0YwVXRCbUFdximxtP5GbVvdnqXh0nGlTYlHgcR5aj/bcMpHW5BVQ
+        nH7zBLKBHgZnd7UF42WW+W4qA64RFz5IAXDtFQ==
+X-Google-Smtp-Source: AGHT+IH31Zv0S2pEtOg8E5M6+3MG2ReqXhMlUlaKfNdDCbhIRCrg8Sj/H6HMaMvc1v62WHB41McV9U9S28iHMvwAYA==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a25:41ca:0:b0:d77:f6f9:159 with SMTP
+ id o193-20020a2541ca000000b00d77f6f90159mr78122yba.9.1694633924538; Wed, 13
+ Sep 2023 12:38:44 -0700 (PDT)
+Date:   Wed, 13 Sep 2023 19:38:44 +0000
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAMMPAmUC/x3NPQ7CMAxA4atUnrGUJkUIroIY8uMEDw2RXQqo6
+ t0bMX7LexsoCZPCbdhAaGXlV+0YTwPEp6+FkFM3WGOduY4OdZEa2w+T8EqimFnmjxfChYp4DG1 umCi8S1aMeJ7yJXifnY0GerMJZf7+f/fHvh9c242qfwAAAA==
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1694633923; l=1807;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=tFl2PNzqL8STywNv0UTNztdqinU7Ek8sPp6wO3F9Txw=; b=Qx9x2TQmkLa2oDNyG2+vl9LZXozyDkyNECZv70nQl8TbYysev2y1AlZud6Hv+kgnjZSkpklKS
+ SwXrDu/ddO6AXv7TOSpT/PXQeIdImLO9VBF1J2iLFHssovmlcAAlMxf
+X-Mailer: b4 0.12.3
+Message-ID: <20230913-strncpy-drivers-firmware-tegra-bpmp-debugfs-c-v1-1-828b0a8914b5@google.com>
+Subject: [PATCH] firmware: tegra: bpmp: refactor deprecated strncpy
+From:   Justin Stitt <justinstitt@google.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Srikar Srimath Tirumala <srikars@nvidia.com>
+`strncpy` is deprecated for use on NUL-terminated destination strings [1].
 
-Current implementation of processor_thermal performs software throttling
-in fixed steps of "20%" which can be too coarse for some platforms.
-We observed some performance gain after reducing the throttle percentage.
-Change the CPUFREQ thermal reduction percentage and maximum thermal steps
-to be configurable. Also, update the default values of both for Nvidia
-Tegra241 (Grace) SoC. The thermal reduction percentage is reduced to "5%"
-and accordingly the maximum number of thermal steps are increased as they
-are derived from the reduction percentage.
+We should prefer more robust and less ambiguous string interfaces.
 
-Signed-off-by: Srikar Srimath Tirumala <srikars@nvidia.com>
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+It seems like the filename stored at `namevirt` is expected to be
+NUL-terminated.
+
+A suitable replacement is `strscpy_pad` due to the fact that it
+guarantees NUL-termination on the destination buffer whilst maintaining
+the NUL-padding behavior that strncpy provides.
+
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
 ---
- drivers/acpi/processor_thermal.c | 41 +++++++++++++++++++++++++++++---
- 1 file changed, 38 insertions(+), 3 deletions(-)
+Note: compile tested only.
+---
+ drivers/firmware/tegra/bpmp-debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_thermal.c
-index b7c6287eccca..30f2801abce6 100644
---- a/drivers/acpi/processor_thermal.c
-+++ b/drivers/acpi/processor_thermal.c
-@@ -26,7 +26,16 @@
-  */
+diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
+index 6dfe3d34109e..bbcdd9fed3fb 100644
+--- a/drivers/firmware/tegra/bpmp-debugfs.c
++++ b/drivers/firmware/tegra/bpmp-debugfs.c
+@@ -610,7 +610,7 @@ static int debugfs_show(struct seq_file *m, void *p)
+ 	}
  
- #define CPUFREQ_THERMAL_MIN_STEP 0
--#define CPUFREQ_THERMAL_MAX_STEP 3
-+
-+static int cpufreq_thermal_max_step = 3;
-+
-+/*
-+ * Minimum throttle percentage for processor_thermal cooling device.
-+ * The processor_thermal driver uses it to calculate the percentage amount by
-+ * which cpu frequency must be reduced for each cooling state. This is also used
-+ * to calculate the maximum number of throttling steps or cooling states.
-+ */
-+static int cpufreq_thermal_pctg = 20;
+ 	len = strlen(filename);
+-	strncpy(namevirt, filename, namesize);
++	strscpy_pad(namevirt, filename, namesize);
  
- static DEFINE_PER_CPU(unsigned int, cpufreq_thermal_reduction_pctg);
+ 	err = mrq_debugfs_read(bpmp, namephys, len, dataphys, datasize,
+ 			       &nbytes);
+@@ -661,7 +661,7 @@ static ssize_t debugfs_store(struct file *file, const char __user *buf,
+ 	}
  
-@@ -71,7 +80,7 @@ static int cpufreq_get_max_state(unsigned int cpu)
- 	if (!cpu_has_cpufreq(cpu))
- 		return 0;
+ 	len = strlen(filename);
+-	strncpy(namevirt, filename, namesize);
++	strscpy_pad(namevirt, filename, namesize);
  
--	return CPUFREQ_THERMAL_MAX_STEP;
-+	return cpufreq_thermal_max_step;
- }
- 
- static int cpufreq_get_cur_state(unsigned int cpu)
-@@ -113,7 +122,8 @@ static int cpufreq_set_cur_state(unsigned int cpu, int state)
- 		if (!policy)
- 			return -EINVAL;
- 
--		max_freq = (policy->cpuinfo.max_freq * (100 - reduction_pctg(i) * 20)) / 100;
-+		max_freq = (policy->cpuinfo.max_freq *
-+			    (100 - reduction_pctg(i) * cpufreq_thermal_pctg)) / 100;
- 
- 		cpufreq_cpu_put(policy);
- 
-@@ -126,10 +136,35 @@ static int cpufreq_set_cur_state(unsigned int cpu, int state)
- 	return 0;
- }
- 
-+#define SMCCC_SOC_ID_T241	0x036b0241
-+
-+void acpi_thermal_cpufreq_config_nvidia(void)
-+{
-+#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
-+	s32 soc_id = arm_smccc_get_soc_id_version();
-+
-+	/* Check JEP106 code for NVIDIA Tegra241 chip (036b:0241) */
-+	if ((soc_id < 0) || (soc_id != SMCCC_SOC_ID_T241))
-+		return;
-+
-+	/* Reduce the CPUFREQ Thermal reduction percentage to 5% */
-+	cpufreq_thermal_pctg = 5;
-+
-+	/*
-+	 * Derive the MAX_STEP from minimum throttle percentage so that the reduction
-+	 * percentage doesn't end up becoming negative. Also, cap the MAX_STEP so that
-+	 * the CPU performance doesn't become 0.
-+	 */
-+	cpufreq_thermal_max_step = ((100 / cpufreq_thermal_pctg) - 1);
-+#endif
-+}
-+
- void acpi_thermal_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	unsigned int cpu;
- 
-+	acpi_thermal_cpufreq_config_nvidia();
-+
- 	for_each_cpu(cpu, policy->related_cpus) {
- 		struct acpi_processor *pr = per_cpu(processors, cpu);
- 		int ret;
--- 
-2.17.1
+ 	if (copy_from_user(datavirt, buf, count)) {
+ 		err = -EFAULT;
+
+---
+base-commit: 3669558bdf354cd352be955ef2764cde6a9bf5ec
+change-id: 20230913-strncpy-drivers-firmware-tegra-bpmp-debugfs-c-54f7baaf32c0
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
 
