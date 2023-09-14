@@ -2,94 +2,90 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2096CA0EF6
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Sep 2023 04:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA74EDE99C
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Sep 2023 10:17:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233209AbjINEkH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Sep 2023 00:40:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56898 "EHLO
+        id S238055AbjINKRq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Sep 2023 06:17:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbjINEkG (ORCPT
+        with ESMTP id S236902AbjINKRq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Sep 2023 00:40:06 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87A971985;
-        Wed, 13 Sep 2023 21:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694666401; x=1726202401;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TKi52rvlfIoGcPmcOL9hgF/Ozj/+C1T6xU6PAFOkPHA=;
-  b=TiiKIr2/s/8H2y11/8cl1ZMeVGCHlYK/NydpkXN+uyCSBDtPxvWuasqv
-   2DXNxfH6ekDTB+qkvX4E8aniWDJjP8J9xdk+FmMndR0aqCRuZKAGSxVbJ
-   7kDwsEiRf+D0riW3surGx+jU5rAAHXf8jBUqhTpxy1yTRVIZnimi3Wi3f
-   ed4ydZoSDOI83ElzDgD+v8azoZFcbvUT1WSVQKU6bdT0oFfj+IWSFlzaA
-   TFZt4MABr1W3ElBJoSDEuMwaRjars5WFGe/AA5wUAltVbYlojEQIse1sV
-   o6V0mkKljRlimfluh0VqrIWhyMrlibdYHvCXKuMb1ULU2pHfvSjufiAuh
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="369123211"
-X-IronPort-AV: E=Sophos;i="6.02,145,1688454000"; 
-   d="scan'208";a="369123211"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2023 21:40:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10832"; a="868097149"
-X-IronPort-AV: E=Sophos;i="6.02,145,1688454000"; 
-   d="scan'208";a="868097149"
-Received: from lkp-server02.sh.intel.com (HELO 9ef86b2655e5) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 13 Sep 2023 21:39:57 -0700
-Received: from kbuild by 9ef86b2655e5 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qge8w-0001AD-35;
-        Thu, 14 Sep 2023 04:39:54 +0000
-Date:   Thu, 14 Sep 2023 12:39:31 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
-        rui.zhang@intel.com, lenb@kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, sumitg@nvidia.com,
-        sanjayc@nvidia.com, ksitaraman@nvidia.com, srikars@nvidia.com,
-        jbrasen@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v2 2/2] ACPI: processor: reduce CPUFREQ thermal reduction
- pctg for Tegra241
-Message-ID: <202309141242.CUDGcSdC-lkp@intel.com>
-References: <20230913164659.9345-3-sumitg@nvidia.com>
+        Thu, 14 Sep 2023 06:17:46 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B351BE9;
+        Thu, 14 Sep 2023 03:17:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670BAC433C8;
+        Thu, 14 Sep 2023 10:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694686662;
+        bh=cvtU3pIiXOKkkLhPCgWUEUlS+9q5X3ztWTBwoalM5Rc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cHW9TPRizQhFbx9iLfVRbTuidi4zCsBWyWneYsuYYv7h6n6YBvy5l5Q376dvOC6g7
+         RJw/OIVfjgkGqCcVCR+2VRVya3agt5Mn4Vn67DXJDxi2DmrJwcIvA3C8te6WLm4GHh
+         qBOZgXGEY/7Ed8mvcm7ujVkEl3QFU2WI5NGhvn3LKksWFcSAzWLc97xh7GCVG1jo1V
+         +Bw7QuSjVtDUwS6rsr6ra5nwgjMsB/8SkzNqqjzjfj9BOfF6RlegOPk1N9Vf1CsuOz
+         oZ4QIo+tkOh39Ug/unv5Dm49wuUSafyezpMz6H0HBip+qVBKv/RTOn250RVR/VwJBg
+         3VF1zcu2iCXTw==
+Date:   Thu, 14 Sep 2023 11:17:34 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
+        jonathanh@nvidia.com, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        nm@ti.com, peterz@infradead.org, rafael.j.wysocki@intel.com,
+        richard.leitner@linux.dev, stable@vger.kernel.org,
+        treding@nvidia.com, wsa+renesas@sang-engineering.com,
+        wsa@kernel.org
+Subject: Re: [PATCH v7 0/5] mfd: tps6586x: register restart handler
+Message-ID: <20230914100744.GL13143@google.com>
+References: <20230728103446.GK8175@google.com>
+ <20230907082032.478027-1-bbara93@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230913164659.9345-3-sumitg@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230907082032.478027-1-bbara93@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Sumit,
+On Thu, 07 Sep 2023, Benjamin Bara wrote:
 
-kernel test robot noticed the following build warnings:
+> Hi Lee,
+> 
+> On Fri, 28 Jul 2023 at 12:34, Lee Jones <lee@kernel.org> wrote:
+> > On Fri, 28 Jul 2023, Lee Jones wrote:
+> > > On Sat, 15 Jul 2023 09:53:22 +0200, Benjamin Bara wrote:
+> > > > The Tegra20 requires an enabled VDE power domain during startup. As the
+> > > > VDE is currently not used, it is disabled during runtime.
+> > > > Since 8f0c714ad9be, there is a workaround for the "normal restart path"
+> > > > which enables the VDE before doing PMC's warm reboot. This workaround is
+> > > > not executed in the "emergency restart path", leading to a hang-up
+> > > > during start.
+> > > >
+> > > > [...]
+> > >
+> > > Applied, thanks!
+> > >
+> > > [1/5] kernel/reboot: emergency_restart: set correct system_state
+> > >       commit: 60466c067927abbcaff299845abd4b7069963139
+> > > [2/5] i2c: core: run atomic i2c xfer when !preemptible
+> > >       commit: aa49c90894d06e18a1ee7c095edbd2f37c232d02
+> > > [3/5] kernel/reboot: add device to sys_off_handler
+> > >       commit: db2d6038c5e795cab4f0a8d3e86b4f7e33338629
+> > > [4/5] mfd: tps6586x: use devm-based power off handler
+> > >       commit: 8bd141b17cedcbcb7d336df6e0462e4f4a528ab1
+> > > [5/5] mfd: tps6586x: register restart handler
+> > >       commit: 510f276df2b91efd73f6c53be62b7e692ff533c1
+> >
+> > Pull-request to follow after built tests have completed.
+> 
+> What's the current state of this series?
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on linus/master v6.6-rc1 next-20230913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Gupta/ACPI-thermal-Add-Thermal-fast-Sampling-Period-_TFP-support/20230914-004929
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20230913164659.9345-3-sumitg%40nvidia.com
-patch subject: [Patch v2 2/2] ACPI: processor: reduce CPUFREQ thermal reduction pctg for Tegra241
-config: i386-randconfig-062-20230914 (https://download.01.org/0day-ci/archive/20230914/202309141242.CUDGcSdC-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230914/202309141242.CUDGcSdC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202309141242.CUDGcSdC-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/acpi/processor_thermal.c:141:6: sparse: sparse: symbol 'acpi_thermal_cpufreq_config_nvidia' was not declared. Should it be static?
+Looks like the build-tests didn't complete properly, so they stayed on
+one of my development branches.  I'll re-submit them for testing and get
+back to you about merging for this cycle.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Lee Jones [李琼斯]
