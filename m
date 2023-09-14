@@ -2,232 +2,163 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C89CEEAA5D
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Sep 2023 18:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0BFEEAA68
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Sep 2023 19:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242003AbjINSl6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Sep 2023 14:41:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37778 "EHLO
+        id S241745AbjINTCC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Sep 2023 15:02:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241998AbjINSj6 (ORCPT
+        with ESMTP id S241762AbjINTBu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Sep 2023 14:39:58 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0CF2719;
-        Thu, 14 Sep 2023 11:39:04 -0700 (PDT)
-From:   John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1694716742;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xOwhgnLO7hOBwv7Kh3brBH5G3zRUgo+W3NYhrK110nQ=;
-        b=MQF5Uzr7EmKQx14r1E/RhX/umHkyltViumcqQtzYlRu/cdZA5N1RelnJ4iu3xdbYGsublf
-        AesvLXS2l1vgjY/3lJjgy3oS9Fa9CNIR9FdCDxd3xGmG0PqFn6mYkcJSIXcskbHkN10xH7
-        fjf6/nHuFw7FFrO4gx/WSOB8n7ykjp9NGoMsoeoOBZCgXHT+OEqemMupp1sBuPMJwRsuxf
-        nU/nGrLUIfKTsfa4sHRdVUDDytrxtrfa0bYiOJQclsPYDWetbS6woG0hXVe80c083ykC0o
-        LnHq5GziKgk/yioSaLz/v2WQTMBmpy3Te2MAeI6u0OokLmagDAUK+U749FyAYQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1694716742;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xOwhgnLO7hOBwv7Kh3brBH5G3zRUgo+W3NYhrK110nQ=;
-        b=y4UPC3ayiwCpK2wUuae2l5tlzv/vgSHZnGxCpQZEdOHfUE6peDdmI2DaPnIbsoJ+GKOrLW
-        l/Me65oUdGiBduAQ==
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>,
+        Thu, 14 Sep 2023 15:01:50 -0400
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [IPv6:2001:4190:8020::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C8C8E2127;
+        Thu, 14 Sep 2023 12:01:05 -0700 (PDT)
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+        id AF2EC92009C; Thu, 14 Sep 2023 21:01:01 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by angie.orcam.me.uk (Postfix) with ESMTP id A78F392009B;
+        Thu, 14 Sep 2023 20:01:01 +0100 (BST)
+Date:   Thu, 14 Sep 2023 20:01:01 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
+To:     John Ogness <john.ogness@linutronix.de>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>,
+        Thierry Reding <treding@nvidia.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, Al Cooper <alcooperx@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Davis <afd@ti.com>,
+        Matthew Howell <matthew.howell@sealevel.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Johan Hovold <johan@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        linux-mediatek@lists.infradead.org, Lukas Wunner <lukas@wunner.de>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+        Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Hongyu Xie <xiehongyu1@kylinos.cn>,
+        Jiamei Xie <jiamei.xie@arm.com>, Rob Herring <robh@kernel.org>,
+        delisun <delisun@pateo.com.cn>,
+        Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+        Yangtao Li <frank.li@vivo.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        linux-snps-arc@lists.infradead.org,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Sherry Sun <sherry.sun@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sergey Organov <sorganov@gmail.com>, Tom Rix <trix@redhat.com>,
+        Marek Vasut <marex@denx.de>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Jacky Huang <ychuang3@nuvoton.com>,
+        Shan-Chun Hung <schung@nuvoton.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        Lucas Tanure <tanure@linux.com>,
+        linux-amlogic@lists.infradead.org,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-actions@lists.infradead.org,
+        Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+        Yuan Can <yuancan@huawei.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-unisoc@lists.infradead.org,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Lech Perczak <lech.perczak@camlingroup.com>,
+        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Isaac True <isaac.true@canonical.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH tty v1 56/74] serial: tegra: Use port lock wrappers
-Date:   Thu, 14 Sep 2023 20:44:13 +0206
-Message-Id: <20230914183831.587273-57-john.ogness@linutronix.de>
+        linux-tegra@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Nick Hu <nick.hu@sifive.com>,
+        Ruan Jinjie <ruanjinjie@huawei.com>,
+        Samuel Holland <samuel.holland@sifive.com>,
+        linux-riscv@lists.infradead.org, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Valentin Caron <valentin.caron@foss.st.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "David S. Miller" <davem@davemloft.net>,
+        sparclinux@vger.kernel.org, Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Michal Simek <michal.simek@amd.com>
+Subject: Re: [PATCH tty v1 00/74] serial: wrappers for uart port lock
 In-Reply-To: <20230914183831.587273-1-john.ogness@linutronix.de>
+Message-ID: <alpine.DEB.2.21.2309141959100.57368@angie.orcam.me.uk>
 References: <20230914183831.587273-1-john.ogness@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Thu, 14 Sep 2023, John Ogness wrote:
 
-When a serial port is used for kernel console output, then all
-modifications to the UART registers which are done from other contexts,
-e.g. getty, termios, are interference points for the kernel console.
+> Patches 2-74 switch all uart port locking call sites to use the new
+> wrappers. These patches were automatically generated using coccinelle.
 
-So far this has been ignored and the printk output is based on the
-principle of hope. The rework of the console infrastructure which aims to
-support threaded and atomic consoles, requires to mark sections which
-modify the UART registers as unsafe. This allows the atomic write function
-to make informed decisions and eventually to restore operational state. It
-also allows to prevent the regular UART code from modifying UART registers
-while printk output is in progress.
+ Hmm, no need to do this for drivers/tty/serial/zs.c?
 
-All modifications of UART registers are guarded by the UART port lock,
-which provides an obvious synchronization point with the console
-infrastructure.
-
-To avoid adding this functionality to all UART drivers, wrap the
-spin_[un]lock*() invocations for uart_port::lock into helper functions
-which just contain the spin_[un]lock*() invocations for now. In a
-subsequent step these helpers will gain the console synchronization
-mechanisms.
-
-Converted with coccinelle. No functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/tty/serial/serial-tegra.c | 32 +++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index d4ec943cb8e9..6d4006b41975 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -411,7 +411,7 @@ static int tegra_set_baudrate(struct tegra_uart_port *tup, unsigned int baud)
- 		divisor = DIV_ROUND_CLOSEST(rate, baud * 16);
- 	}
- 
--	spin_lock_irqsave(&tup->uport.lock, flags);
-+	uart_port_lock_irqsave(&tup->uport, &flags);
- 	lcr = tup->lcr_shadow;
- 	lcr |= UART_LCR_DLAB;
- 	tegra_uart_write(tup, lcr, UART_LCR);
-@@ -424,7 +424,7 @@ static int tegra_set_baudrate(struct tegra_uart_port *tup, unsigned int baud)
- 
- 	/* Dummy read to ensure the write is posted */
- 	tegra_uart_read(tup, UART_SCR);
--	spin_unlock_irqrestore(&tup->uport.lock, flags);
-+	uart_port_unlock_irqrestore(&tup->uport, flags);
- 
- 	tup->current_baud = baud;
- 
-@@ -522,13 +522,13 @@ static void tegra_uart_tx_dma_complete(void *args)
- 	dmaengine_tx_status(tup->tx_dma_chan, tup->tx_cookie, &state);
- 	count = tup->tx_bytes_requested - state.residue;
- 	async_tx_ack(tup->tx_dma_desc);
--	spin_lock_irqsave(&tup->uport.lock, flags);
-+	uart_port_lock_irqsave(&tup->uport, &flags);
- 	uart_xmit_advance(&tup->uport, count);
- 	tup->tx_in_progress = 0;
- 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(&tup->uport);
- 	tegra_uart_start_next_tx(tup);
--	spin_unlock_irqrestore(&tup->uport.lock, flags);
-+	uart_port_unlock_irqrestore(&tup->uport, flags);
- }
- 
- static int tegra_uart_start_tx_dma(struct tegra_uart_port *tup,
-@@ -598,13 +598,13 @@ static unsigned int tegra_uart_tx_empty(struct uart_port *u)
- 	unsigned int ret = 0;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&u->lock, flags);
-+	uart_port_lock_irqsave(u, &flags);
- 	if (!tup->tx_in_progress) {
- 		unsigned long lsr = tegra_uart_read(tup, UART_LSR);
- 		if ((lsr & TX_EMPTY_STATUS) == TX_EMPTY_STATUS)
- 			ret = TIOCSER_TEMT;
- 	}
--	spin_unlock_irqrestore(&u->lock, flags);
-+	uart_port_unlock_irqrestore(u, flags);
- 	return ret;
- }
- 
-@@ -727,7 +727,7 @@ static void tegra_uart_rx_dma_complete(void *args)
- 	struct dma_tx_state state;
- 	enum dma_status status;
- 
--	spin_lock_irqsave(&u->lock, flags);
-+	uart_port_lock_irqsave(u, &flags);
- 
- 	status = dmaengine_tx_status(tup->rx_dma_chan, tup->rx_cookie, &state);
- 
-@@ -749,7 +749,7 @@ static void tegra_uart_rx_dma_complete(void *args)
- 		set_rts(tup, true);
- 
- done:
--	spin_unlock_irqrestore(&u->lock, flags);
-+	uart_port_unlock_irqrestore(u, flags);
- }
- 
- static void tegra_uart_terminate_rx_dma(struct tegra_uart_port *tup)
-@@ -836,7 +836,7 @@ static irqreturn_t tegra_uart_isr(int irq, void *data)
- 	bool is_rx_int = false;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&u->lock, flags);
-+	uart_port_lock_irqsave(u, &flags);
- 	while (1) {
- 		iir = tegra_uart_read(tup, UART_IIR);
- 		if (iir & UART_IIR_NO_INT) {
-@@ -852,7 +852,7 @@ static irqreturn_t tegra_uart_isr(int irq, void *data)
- 			} else if (is_rx_start) {
- 				tegra_uart_start_rx_dma(tup);
- 			}
--			spin_unlock_irqrestore(&u->lock, flags);
-+			uart_port_unlock_irqrestore(u, flags);
- 			return IRQ_HANDLED;
- 		}
- 
-@@ -969,11 +969,11 @@ static void tegra_uart_hw_deinit(struct tegra_uart_port *tup)
- 		}
- 	}
- 
--	spin_lock_irqsave(&tup->uport.lock, flags);
-+	uart_port_lock_irqsave(&tup->uport, &flags);
- 	/* Reset the Rx and Tx FIFOs */
- 	tegra_uart_fifo_reset(tup, UART_FCR_CLEAR_XMIT | UART_FCR_CLEAR_RCVR);
- 	tup->current_baud = 0;
--	spin_unlock_irqrestore(&tup->uport.lock, flags);
-+	uart_port_unlock_irqrestore(&tup->uport, flags);
- 
- 	tup->rx_in_progress = 0;
- 	tup->tx_in_progress = 0;
-@@ -1292,7 +1292,7 @@ static void tegra_uart_set_termios(struct uart_port *u,
- 	int ret;
- 
- 	max_divider *= 16;
--	spin_lock_irqsave(&u->lock, flags);
-+	uart_port_lock_irqsave(u, &flags);
- 
- 	/* Changing configuration, it is safe to stop any rx now */
- 	if (tup->rts_active)
-@@ -1341,7 +1341,7 @@ static void tegra_uart_set_termios(struct uart_port *u,
- 	baud = uart_get_baud_rate(u, termios, oldtermios,
- 			parent_clk_rate/max_divider,
- 			parent_clk_rate/16);
--	spin_unlock_irqrestore(&u->lock, flags);
-+	uart_port_unlock_irqrestore(u, flags);
- 	ret = tegra_set_baudrate(tup, baud);
- 	if (ret < 0) {
- 		dev_err(tup->uport.dev, "Failed to set baud rate\n");
-@@ -1349,7 +1349,7 @@ static void tegra_uart_set_termios(struct uart_port *u,
- 	}
- 	if (tty_termios_baud_rate(termios))
- 		tty_termios_encode_baud_rate(termios, baud, baud);
--	spin_lock_irqsave(&u->lock, flags);
-+	uart_port_lock_irqsave(u, &flags);
- 
- 	/* Flow control */
- 	if (termios->c_cflag & CRTSCTS)	{
-@@ -1382,7 +1382,7 @@ static void tegra_uart_set_termios(struct uart_port *u,
- 	if (termios->c_iflag & IGNBRK)
- 		tup->uport.ignore_status_mask |= UART_LSR_BI;
- 
--	spin_unlock_irqrestore(&u->lock, flags);
-+	uart_port_unlock_irqrestore(u, flags);
- }
- 
- static const char *tegra_uart_type(struct uart_port *u)
--- 
-2.39.2
-
+  Maciej
