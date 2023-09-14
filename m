@@ -2,90 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA74EDE99C
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Sep 2023 10:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D914EDE9A5
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Sep 2023 11:19:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238055AbjINKRq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Sep 2023 06:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52650 "EHLO
+        id S237304AbjINLTa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Sep 2023 07:19:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236902AbjINKRq (ORCPT
+        with ESMTP id S237316AbjINLT2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Sep 2023 06:17:46 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B351BE9;
-        Thu, 14 Sep 2023 03:17:42 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670BAC433C8;
-        Thu, 14 Sep 2023 10:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694686662;
-        bh=cvtU3pIiXOKkkLhPCgWUEUlS+9q5X3ztWTBwoalM5Rc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cHW9TPRizQhFbx9iLfVRbTuidi4zCsBWyWneYsuYYv7h6n6YBvy5l5Q376dvOC6g7
-         RJw/OIVfjgkGqCcVCR+2VRVya3agt5Mn4Vn67DXJDxi2DmrJwcIvA3C8te6WLm4GHh
-         qBOZgXGEY/7Ed8mvcm7ujVkEl3QFU2WI5NGhvn3LKksWFcSAzWLc97xh7GCVG1jo1V
-         +Bw7QuSjVtDUwS6rsr6ra5nwgjMsB/8SkzNqqjzjfj9BOfF6RlegOPk1N9Vf1CsuOz
-         oZ4QIo+tkOh39Ug/unv5Dm49wuUSafyezpMz6H0HBip+qVBKv/RTOn250RVR/VwJBg
-         3VF1zcu2iCXTw==
-Date:   Thu, 14 Sep 2023 11:17:34 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Benjamin Bara <bbara93@gmail.com>
-Cc:     benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
-        jonathanh@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        nm@ti.com, peterz@infradead.org, rafael.j.wysocki@intel.com,
-        richard.leitner@linux.dev, stable@vger.kernel.org,
-        treding@nvidia.com, wsa+renesas@sang-engineering.com,
-        wsa@kernel.org
-Subject: Re: [PATCH v7 0/5] mfd: tps6586x: register restart handler
-Message-ID: <20230914100744.GL13143@google.com>
-References: <20230728103446.GK8175@google.com>
- <20230907082032.478027-1-bbara93@gmail.com>
+        Thu, 14 Sep 2023 07:19:28 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E0E91FDD
+        for <linux-tegra@vger.kernel.org>; Thu, 14 Sep 2023 04:19:24 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-501be2d45e0so1434181e87.3
+        for <linux-tegra@vger.kernel.org>; Thu, 14 Sep 2023 04:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694690363; x=1695295163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVq5zLi24ZjH2OBzcFU65XomWHmUtYcghlhLwRhU2bo=;
+        b=vhOgmzhifgFSWfL9HAibpY55pIQoA2n7U3cebe7lpR5TwuatE18gZqulXK0/qQcH05
+         aqciOiGhJRrPUt4iNvLNwZSo2/NVF3xJWI37xigaJFSRdDCkJx7TjScGoJRyuAf7rhMn
+         J8m9QigCdjAwTxl2cBh2dvzhGpxoY3KGHEAiz/c0PEnDLn9iUqiuYBog+AzbnHFp1gPd
+         7DNPPBoYlmt6R7pMtyCefKnie0QMvaw9TTwGny3cMNQWCnZtiZXYPosKhA7oQgGOlTw+
+         VIYOx2cLG/UpJxlKySbMuET18ABnxudJyx9NFwiyji7xzOkS2l1vxbSKhYccokdc0yj4
+         kyXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694690363; x=1695295163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MVq5zLi24ZjH2OBzcFU65XomWHmUtYcghlhLwRhU2bo=;
+        b=BmPmaviFh4kF/APmMu/o5L2U72rx+AJwVsym5GrRlkE1k+yPDHnebTvn+rPJbXcL+i
+         etGFJdql1XvQyr2h1mDidz4ZheFcMvrcdwfinodC4H131nSqCWMVVj6zB6gdm1fUQMWe
+         QXXFjCshBxfuSINiqjKWcwGaEjA+mXK+x4X9YSBz0mdl5Y5aCL8S62W11Vd+jdnEfsn3
+         0hnwoOW1dgPhpzPSnDkLQy3B3ga3BgBWE+HjkI9BJIp+EaipH0flaOgkKBiT4dPsjA1E
+         HqkgGPw8FyiEj52+MhFBZbrYjrmmKOf+Au5w1fOCuVFByAgASskJlzU9r+VpNofCO9wv
+         EIng==
+X-Gm-Message-State: AOJu0YyDCv3HBq01xX7LUM0uvk9gnI83E8oUzSSLBQg5Vli5qbIm2zH+
+        qGxUnmGRD/P70W7JXUD2TxtoLA==
+X-Google-Smtp-Source: AGHT+IEKoLQ14tXcZedXg+7ur2HyspF1KFVJqKExrXMlRMnh2zk12sEOw6eQcPmi901vqUO7zuS5Qw==
+X-Received: by 2002:ac2:4c54:0:b0:500:7e70:ddf5 with SMTP id o20-20020ac24c54000000b005007e70ddf5mr5312397lfk.43.1694690362925;
+        Thu, 14 Sep 2023 04:19:22 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-94-254-63-18.NA.cust.bahnhof.se. [94.254.63.18])
+        by smtp.gmail.com with ESMTPSA id p14-20020ac246ce000000b004fdc0e37ecfsm232938lfo.227.2023.09.14.04.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Sep 2023 04:19:22 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 15/17] pmdomain: tegra: Move Kconfig option to the pmdomain subsystem
+Date:   Thu, 14 Sep 2023 13:19:19 +0200
+Message-Id: <20230914111919.586784-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230907082032.478027-1-bbara93@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 07 Sep 2023, Benjamin Bara wrote:
+The Kconfig option belongs closer to the corresponding implementation,
+hence let's move it from the soc subsystem to the pmdomain subsystem.
 
-> Hi Lee,
-> 
-> On Fri, 28 Jul 2023 at 12:34, Lee Jones <lee@kernel.org> wrote:
-> > On Fri, 28 Jul 2023, Lee Jones wrote:
-> > > On Sat, 15 Jul 2023 09:53:22 +0200, Benjamin Bara wrote:
-> > > > The Tegra20 requires an enabled VDE power domain during startup. As the
-> > > > VDE is currently not used, it is disabled during runtime.
-> > > > Since 8f0c714ad9be, there is a workaround for the "normal restart path"
-> > > > which enables the VDE before doing PMC's warm reboot. This workaround is
-> > > > not executed in the "emergency restart path", leading to a hang-up
-> > > > during start.
-> > > >
-> > > > [...]
-> > >
-> > > Applied, thanks!
-> > >
-> > > [1/5] kernel/reboot: emergency_restart: set correct system_state
-> > >       commit: 60466c067927abbcaff299845abd4b7069963139
-> > > [2/5] i2c: core: run atomic i2c xfer when !preemptible
-> > >       commit: aa49c90894d06e18a1ee7c095edbd2f37c232d02
-> > > [3/5] kernel/reboot: add device to sys_off_handler
-> > >       commit: db2d6038c5e795cab4f0a8d3e86b4f7e33338629
-> > > [4/5] mfd: tps6586x: use devm-based power off handler
-> > >       commit: 8bd141b17cedcbcb7d336df6e0462e4f4a528ab1
-> > > [5/5] mfd: tps6586x: register restart handler
-> > >       commit: 510f276df2b91efd73f6c53be62b7e692ff533c1
-> >
-> > Pull-request to follow after built tests have completed.
-> 
-> What's the current state of this series?
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: <linux-tegra@vger.kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/pmdomain/Kconfig       | 1 +
+ drivers/pmdomain/tegra/Kconfig | 6 ++++++
+ drivers/soc/tegra/Kconfig      | 5 -----
+ 3 files changed, 7 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/pmdomain/tegra/Kconfig
 
-Looks like the build-tests didn't complete properly, so they stayed on
-one of my development branches.  I'll re-submit them for testing and get
-back to you about merging for this cycle.
-
+diff --git a/drivers/pmdomain/Kconfig b/drivers/pmdomain/Kconfig
+index 39f358f27f2e..08a7d43cb884 100644
+--- a/drivers/pmdomain/Kconfig
++++ b/drivers/pmdomain/Kconfig
+@@ -14,5 +14,6 @@ source "drivers/pmdomain/samsung/Kconfig"
+ source "drivers/pmdomain/st/Kconfig"
+ source "drivers/pmdomain/starfive/Kconfig"
+ source "drivers/pmdomain/sunxi/Kconfig"
++source "drivers/pmdomain/tegra/Kconfig"
+ 
+ endmenu
+diff --git a/drivers/pmdomain/tegra/Kconfig b/drivers/pmdomain/tegra/Kconfig
+new file mode 100644
+index 000000000000..13ade6d84696
+--- /dev/null
++++ b/drivers/pmdomain/tegra/Kconfig
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config SOC_TEGRA_POWERGATE_BPMP
++	def_bool y
++	depends on PM_GENERIC_DOMAINS
++	depends on TEGRA_BPMP
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 6f3098822969..f16beeabaa92 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -152,11 +152,6 @@ config SOC_TEGRA_PMC
+ 	select PM_GENERIC_DOMAINS
+ 	select REGMAP
+ 
+-config SOC_TEGRA_POWERGATE_BPMP
+-	def_bool y
+-	depends on PM_GENERIC_DOMAINS
+-	depends on TEGRA_BPMP
+-
+ config SOC_TEGRA20_VOLTAGE_COUPLER
+ 	bool "Voltage scaling support for Tegra20 SoCs"
+ 	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
 -- 
-Lee Jones [李琼斯]
+2.34.1
+
