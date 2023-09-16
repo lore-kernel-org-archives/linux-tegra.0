@@ -2,31 +2,31 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01925CD37B6
-	for <linux-tegra@archiver.kernel.org>; Sat, 16 Sep 2023 08:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7FBCD37B6
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Sep 2023 08:14:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231489AbjIPINM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Sep 2023 04:13:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54420 "EHLO
+        id S231482AbjIPINo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Sep 2023 04:13:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232518AbjIPIM7 (ORCPT
+        with ESMTP id S229866AbjIPINS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Sep 2023 04:12:59 -0400
+        Sat, 16 Sep 2023 04:13:18 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B9EB19AD
-        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:12:54 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733EAC433CB;
-        Sat, 16 Sep 2023 08:12:47 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E24DE19AD
+        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:13:13 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 754C6C43391;
+        Sat, 16 Sep 2023 08:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694851973;
-        bh=KSe7NuuTmvNFUfkVlgyIp0m+TWXLJzpYZqE/n8ra5Ws=;
+        s=k20201202; t=1694851993;
+        bh=SbggMlwJmGCB60uPWKaRi5TsR0G979nd8MU9xOIf0lo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rnDqtul2beGLFRSZ/OiQBcgCaJeOxva6GCnQCtR2em+MPpVlkpcK/TGM7Hvmdr0S6
-         JnJ4RxRcSwV/5iPCEPMGQSTXMLMNagH2FY5rkJ+j0/ApgIio2H5vVhaiJ2MgNz798r
-         u12j/JAJM498uaSEzRXKfcL995+xhFZy7998UZPYjTPCdJI38pIJuYY1VYhlm7+Ufb
-         MLZhYLL2igKv3/oCrQMmW6DJt/vcuUBJqQ+m4lsMocN3quCJCSjPgE3j+1SwahqyBq
-         Lu4NyCu4pVmEl+TsMNh5e+kT+7xx4jMP2MhAYKAu6nEW+6xFvM/V3ByDPG1zS/dMf3
-         cM97RocNCB/0w==
+        b=uXSdb0bhIxN0kQMA76OEwrbI8wVWljqxCRLq7WOcHzQBXC/VR9SL7OiaBND9bS8Ql
+         UCugoEdaqhd0REzK1bwto/i5rtvyfhl8jQI1CDtt6dEbsk0yNu4edCMJz9Gdvkgq9+
+         +kF2rbFNV1v7YcKqKtLORvAiNQSdiT9wvY7PfB85hCgpefuSM5cKL6xfGvcpMvZtkn
+         uD3l0NZRsXjdlgmwkZgH/Sz9IloouFroW6TE8xiAfi8o0GynY8rrnPLj3N5vKLui1n
+         ZZXzIHJWxCq1WDxT7bwirT80KL2/joCYGfPGGsbNespTMauW6p1LPvxAbgBjGCtTRz
+         Njkq0gUGcXwBg==
 From:   Jisheng Zhang <jszhang@kernel.org>
 To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
@@ -61,9 +61,9 @@ Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH net-next v2 20/23] net: stmmac: dwmac-tegra: use devm_stmmac_probe_config_dt()
-Date:   Sat, 16 Sep 2023 15:58:26 +0800
-Message-Id: <20230916075829.1560-21-jszhang@kernel.org>
+Subject: [PATCH net-next v2 23/23] net: stmmac: make stmmac_{probe|remove}_config_dt static
+Date:   Sat, 16 Sep 2023 15:58:29 +0800
+Message-Id: <20230916075829.1560-24-jszhang@kernel.org>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230916075829.1560-1-jszhang@kernel.org>
 References: <20230916075829.1560-1-jszhang@kernel.org>
@@ -73,71 +73,115 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Simplify the driver's probe() function by using the devres
-variant of stmmac_probe_config_dt().
+Now there's no external users of these two functions, make them static
+so that there aren't any new usages of stmmac_probe_config_dt().
 
-The calling of stmmac_pltfr_remove() now needs to be switched to
-stmmac_pltfr_remove_no_dt().
+To avoid forward declaration, move stmmac_remove_config_dt() location.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Suggested-by: Russell King <linux@armlinux.org.uk>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ .../ethernet/stmicro/stmmac/stmmac_platform.c | 47 +++++++------------
+ .../ethernet/stmicro/stmmac/stmmac_platform.h |  4 --
+ 2 files changed, 17 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-index e0f3cbd36852..7e512c0762ea 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-@@ -284,7 +284,7 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		goto disable_clks;
- 
--	plat = stmmac_probe_config_dt(pdev, res.mac);
-+	plat = devm_stmmac_probe_config_dt(pdev, res.mac);
- 	if (IS_ERR(plat)) {
- 		err = PTR_ERR(plat);
- 		goto disable_clks;
-@@ -303,7 +303,7 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
- 						   GFP_KERNEL);
- 		if (!plat->mdio_bus_data) {
- 			err = -ENOMEM;
--			goto remove;
-+			goto disable_clks;
- 		}
- 	}
- 
-@@ -321,7 +321,7 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
- 				 500, 500 * 2000);
- 	if (err < 0) {
- 		dev_err(mgbe->dev, "timeout waiting for TX lane to become enabled\n");
--		goto remove;
-+		goto disable_clks;
- 	}
- 
- 	plat->serdes_powerup = mgbe_uphy_lane_bringup_serdes_up;
-@@ -342,12 +342,10 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
- 
- 	err = stmmac_dvr_probe(&pdev->dev, plat, &res);
- 	if (err < 0)
--		goto remove;
-+		goto disable_clks;
- 
- 	return 0;
- 
--remove:
--	stmmac_remove_config_dt(pdev, plat);
- disable_clks:
- 	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
- 
-@@ -360,7 +358,7 @@ static void tegra_mgbe_remove(struct platform_device *pdev)
- 
- 	clk_bulk_disable_unprepare(ARRAY_SIZE(mgbe_clks), mgbe->clks);
- 
--	stmmac_pltfr_remove(pdev);
-+	stmmac_pltfr_remove_no_dt(pdev);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 716434b58321..2063de1683b2 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -384,6 +384,22 @@ static int stmmac_of_get_mac_mode(struct device_node *np)
+ 	return -ENODEV;
  }
  
- static const struct of_device_id tegra_mgbe_match[] = {
++/**
++ * stmmac_remove_config_dt - undo the effects of stmmac_probe_config_dt()
++ * @pdev: platform_device structure
++ * @plat: driver data platform structure
++ *
++ * Release resources claimed by stmmac_probe_config_dt().
++ */
++static void stmmac_remove_config_dt(struct platform_device *pdev,
++				    struct plat_stmmacenet_data *plat)
++{
++	clk_disable_unprepare(plat->stmmac_clk);
++	clk_disable_unprepare(plat->pclk);
++	of_node_put(plat->phy_node);
++	of_node_put(plat->mdio_node);
++}
++
+ /**
+  * stmmac_probe_config_dt - parse device-tree driver parameters
+  * @pdev: platform_device structure
+@@ -392,7 +408,7 @@ static int stmmac_of_get_mac_mode(struct device_node *np)
+  * this function is to read the driver parameters from device-tree and
+  * set some private fields that will be used by the main at runtime.
+  */
+-struct plat_stmmacenet_data *
++static struct plat_stmmacenet_data *
+ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -662,43 +678,14 @@ devm_stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 
+ 	return plat;
+ }
+-
+-/**
+- * stmmac_remove_config_dt - undo the effects of stmmac_probe_config_dt()
+- * @pdev: platform_device structure
+- * @plat: driver data platform structure
+- *
+- * Release resources claimed by stmmac_probe_config_dt().
+- */
+-void stmmac_remove_config_dt(struct platform_device *pdev,
+-			     struct plat_stmmacenet_data *plat)
+-{
+-	clk_disable_unprepare(plat->stmmac_clk);
+-	clk_disable_unprepare(plat->pclk);
+-	of_node_put(plat->phy_node);
+-	of_node_put(plat->mdio_node);
+-}
+ #else
+-struct plat_stmmacenet_data *
+-stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+-{
+-	return ERR_PTR(-EINVAL);
+-}
+-
+ struct plat_stmmacenet_data *
+ devm_stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ {
+ 	return ERR_PTR(-EINVAL);
+ }
+-
+-void stmmac_remove_config_dt(struct platform_device *pdev,
+-			     struct plat_stmmacenet_data *plat)
+-{
+-}
+ #endif /* CONFIG_OF */
+-EXPORT_SYMBOL_GPL(stmmac_probe_config_dt);
+ EXPORT_SYMBOL_GPL(devm_stmmac_probe_config_dt);
+-EXPORT_SYMBOL_GPL(stmmac_remove_config_dt);
+ 
+ int stmmac_get_platform_resources(struct platform_device *pdev,
+ 				  struct stmmac_resources *stmmac_res)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h
+index bb07a99e1248..bb6fc7e59aed 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h
+@@ -11,12 +11,8 @@
+ 
+ #include "stmmac.h"
+ 
+-struct plat_stmmacenet_data *
+-stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac);
+ struct plat_stmmacenet_data *
+ devm_stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac);
+-void stmmac_remove_config_dt(struct platform_device *pdev,
+-			     struct plat_stmmacenet_data *plat);
+ 
+ int stmmac_get_platform_resources(struct platform_device *pdev,
+ 				  struct stmmac_resources *stmmac_res);
 -- 
 2.40.1
 
