@@ -2,31 +2,31 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87ED8CD37B8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983A7C46CA1
 	for <linux-tegra@archiver.kernel.org>; Sat, 16 Sep 2023 08:11:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbjIPILD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Sep 2023 04:11:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38736 "EHLO
+        id S231489AbjIPILE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Sep 2023 04:11:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbjIPIKn (ORCPT
+        with ESMTP id S231482AbjIPIK5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Sep 2023 04:10:43 -0400
+        Sat, 16 Sep 2023 04:10:57 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CBDF19A8
-        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:10:38 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385F3C433CA;
-        Sat, 16 Sep 2023 08:10:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E5819AD
+        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:10:52 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A202C433C9;
+        Sat, 16 Sep 2023 08:10:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694851838;
-        bh=OTXCsvCc3TTe8yvZj3iGweMMXsRHTGyqZXpD3RGqgpM=;
+        s=k20201202; t=1694851852;
+        bh=R5nkuuiNFkrWBoIZMqvZG0C7QkTrSVA812AJPM93YC4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZMhh2lw+vln8G8IB4k3d/8NLqMICTmGuIlEbqSsPIXpB0PtK9WqdngXbHvulXIV/V
-         SuIXWXvhdOSgrmZ+wbGqqdWBNFE6CgSxXY12CuSjN0MsiWtN/2mesoPvfNzpUEXRw4
-         po6sbI5W3IXMUbUQPIuKC/LTSob9SbBb5UUbYQCI06EGOKz5unKAp3g7FEW91/jzbX
-         TVApQIZCoO3FhNksOmH1RcGK8zqZO4QREXQwT9B6B5uTSyOIOXYfzASwtqoegVeAz7
-         EAnAmlNNMMdQgn42fHz3p2bDykIJO4MUV/LCQ0xtqSqvOfskWulUHjGdJoXg3eK5gV
-         0jMjLsQP3eTTA==
+        b=T/H1dwtuKgkjIYunzM9xo/2q+uyUSMCcCmfrGmFm0GqlpLd05n0eoiu37nqU9B14F
+         ZDdwZp+HFLlYofBUYbFRlSmxg/Vi7yg3Fc0VnC7u0EF89aj8D8hRE2OU5yP6yQRQBv
+         A90KjCUCDlyi+wbVJQRI/BPvgb0oRRv9lH4UGAT4wAW5UeZLqxrwzLkTUxZFrC6R0T
+         6HEQ6WyCBGHJ+VBEiXNSCu651TrgKkzjevCH7ZUnCPm13PQVuWXWMb72h8bI4sbSxl
+         eQ3Extw4R+KwnNGTEZ3NssrkTVnJ/jd7UPN8ph6gKMB9ygkBDdzyUC4QTHUqn5Mnki
+         QAOXOCrf8hnpQ==
 From:   Jisheng Zhang <jszhang@kernel.org>
 To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
@@ -61,9 +61,9 @@ Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH net-next v2 01/23] net: stmmac: dwmac-anarion: use devm_stmmac_probe_config_dt()
-Date:   Sat, 16 Sep 2023 15:58:07 +0800
-Message-Id: <20230916075829.1560-2-jszhang@kernel.org>
+Subject: [PATCH net-next v2 03/23] net: stmmac: dwmac-generic: use devm_stmmac_probe_config_dt()
+Date:   Sat, 16 Sep 2023 15:58:09 +0800
+Message-Id: <20230916075829.1560-4-jszhang@kernel.org>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230916075829.1560-1-jszhang@kernel.org>
 References: <20230916075829.1560-1-jszhang@kernel.org>
@@ -81,45 +81,49 @@ stmmac_pltfr_remove_no_dt().
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ .../net/ethernet/stmicro/stmmac/dwmac-generic.c  | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
-index 58a7f08e8d78..0df3a2ad0986 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
-@@ -115,7 +115,7 @@ static int anarion_dwmac_probe(struct platform_device *pdev)
- 	if (IS_ERR(gmac))
- 		return PTR_ERR(gmac);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
+index 20fc455b3337..84582fc04d2e 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
+@@ -27,7 +27,7 @@ static int dwmac_generic_probe(struct platform_device *pdev)
+ 		return ret;
  
--	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
-+	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
+ 	if (pdev->dev.of_node) {
+-		plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
++		plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+ 		if (IS_ERR(plat_dat)) {
+ 			dev_err(&pdev->dev, "dt configuration failed\n");
+ 			return PTR_ERR(plat_dat);
+@@ -46,17 +46,7 @@ static int dwmac_generic_probe(struct platform_device *pdev)
+ 		plat_dat->unicast_filter_entries = 1;
+ 	}
  
-@@ -124,13 +124,7 @@ static int anarion_dwmac_probe(struct platform_device *pdev)
- 	anarion_gmac_init(pdev, gmac);
- 	plat_dat->bsp_priv = gmac;
- 
--	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
--	if (ret) {
--		stmmac_remove_config_dt(pdev, plat_dat);
--		return ret;
--	}
+-	ret = stmmac_pltfr_probe(pdev, plat_dat, &stmmac_res);
+-	if (ret)
+-		goto err_remove_config_dt;
 -
 -	return 0;
-+	return stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+-
+-err_remove_config_dt:
+-	if (pdev->dev.of_node)
+-		stmmac_remove_config_dt(pdev, plat_dat);
+-
+-	return ret;
++	return stmmac_pltfr_probe(pdev, plat_dat, &stmmac_res);
  }
  
- static const struct of_device_id anarion_dwmac_match[] = {
-@@ -141,7 +135,7 @@ MODULE_DEVICE_TABLE(of, anarion_dwmac_match);
+ static const struct of_device_id dwmac_generic_match[] = {
+@@ -77,7 +67,7 @@ MODULE_DEVICE_TABLE(of, dwmac_generic_match);
  
- static struct platform_driver anarion_dwmac_driver = {
- 	.probe  = anarion_dwmac_probe,
+ static struct platform_driver dwmac_generic_driver = {
+ 	.probe  = dwmac_generic_probe,
 -	.remove_new = stmmac_pltfr_remove,
 +	.remove_new = stmmac_pltfr_remove_no_dt,
  	.driver = {
- 		.name           = "anarion-dwmac",
+ 		.name           = STMMAC_RESOURCE_NAME,
  		.pm		= &stmmac_pltfr_pm_ops,
 -- 
 2.40.1
