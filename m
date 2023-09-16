@@ -2,31 +2,31 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931B2CD37B9
-	for <linux-tegra@archiver.kernel.org>; Sat, 16 Sep 2023 08:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF31CD37B8
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Sep 2023 08:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231672AbjIPILg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Sep 2023 04:11:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34168 "EHLO
+        id S231489AbjIPIMI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Sep 2023 04:12:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232190AbjIPIL0 (ORCPT
+        with ESMTP id S233324AbjIPILs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Sep 2023 04:11:26 -0400
+        Sat, 16 Sep 2023 04:11:48 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C0819AD
-        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:11:21 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29C86C433CB;
-        Sat, 16 Sep 2023 08:11:14 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5D219AD
+        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:11:43 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8EAC433CB;
+        Sat, 16 Sep 2023 08:11:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694851881;
-        bh=oTujxMOHFGRuGKFiieFc6dhpH7GYKf8q7WqlAEbZzVU=;
+        s=k20201202; t=1694851903;
+        bh=suO+8eIztFCZlwSD7uqirMgAu/b9k2nFDN75QHwxBD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JmxWxAvQ9UJkjuq8H1uiO7GEaoC5WjEDdnkpggAIHHjS/RCKj+q3y6EondR7Zk1E9
-         g8wg5HTU8zlVHZezJyEyVq2j/2OTm/XahnDNqQdxoBChPySTEB8vs4xQ+9vc+x3nEY
-         LmGqQQy/8bIRXmcZZkMa6kGZqrPvTsGO0XLvzOicIclNT9luPVKo99/g1i0HvAyHVn
-         eX1o1AZnvJYbH5m8qQgzQgUHRruCBUcDCTKDvqO7vuTXtMr0epbTqJLk9HEroLZAKy
-         yRlg4TCzJNKp/4z8vmcyhAuTeHA6HhxQiuYUZnFnIXr1QnydHuFUNDDOG+/rvs/FqL
-         yy0teDzDICxBw==
+        b=MGeoc3XoBZL8cc3sfZZH/HKjz3P8JT7A7MD9eBbBq8uuOhwjSVLoYoCr3q1VEdLYX
+         W9heWbbUKiqMPN4cviVdUNYpFAU8F5GAL1YOe/GVFJOFqxfD0Aptk5cNgfnL/NcL/8
+         UIicHoxn0GQujien1GTKeUk0olmirGcx6cuswT4l/Fu9LMV/W7HFt8sYpYlj+ffA7v
+         84PUFRZgd5yeYpl5hyByQdjPi6tPTHr0iLJlvmcUZdNeIHJBNouiWlUX3XQmXjnrmI
+         RvnW3jKyuN4Kswgu9CYCRLrv6sIYDY5T5LCZ8jwvQ7reocrGfs4Wnp5W4s5XYj3Z5n
+         bxzx2RkLNzkJg==
 From:   Jisheng Zhang <jszhang@kernel.org>
 To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
@@ -61,9 +61,9 @@ Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH net-next v2 07/23] net: stmmac: dwmac-intel-plat: use devm_stmmac_probe_config_dt()
-Date:   Sat, 16 Sep 2023 15:58:13 +0800
-Message-Id: <20230916075829.1560-8-jszhang@kernel.org>
+Subject: [PATCH net-next v2 10/23] net: stmmac: dwmac-mediatek: use devm_stmmac_probe_config_dt()
+Date:   Sat, 16 Sep 2023 15:58:16 +0800
+Message-Id: <20230916075829.1560-11-jszhang@kernel.org>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230916075829.1560-1-jszhang@kernel.org>
 References: <20230916075829.1560-1-jszhang@kernel.org>
@@ -81,88 +81,47 @@ stmmac_pltfr_remove_no_dt().
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- .../stmicro/stmmac/dwmac-intel-plat.c         | 27 +++++++------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-index d352a14f9d48..d1aec2ca2b42 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-@@ -85,17 +85,15 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+index cd796ec04132..11976a854240 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+@@ -656,7 +656,7 @@ static int mediatek_dwmac_probe(struct platform_device *pdev)
  	if (ret)
  		return ret;
  
 -	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
 +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat)) {
- 		dev_err(&pdev->dev, "dt configuration failed\n");
+ 	if (IS_ERR(plat_dat))
  		return PTR_ERR(plat_dat);
- 	}
  
- 	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
--	if (!dwmac) {
--		ret = -ENOMEM;
--		goto err_remove_config_dt;
--	}
-+	if (!dwmac)
-+		return -ENOMEM;
+@@ -665,7 +665,7 @@ static int mediatek_dwmac_probe(struct platform_device *pdev)
  
- 	dwmac->dev = &pdev->dev;
- 	dwmac->tx_clk = NULL;
-@@ -110,10 +108,8 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
- 		/* Enable TX clock */
- 		if (dwmac->data->tx_clk_en) {
- 			dwmac->tx_clk = devm_clk_get(&pdev->dev, "tx_clk");
--			if (IS_ERR(dwmac->tx_clk)) {
--				ret = PTR_ERR(dwmac->tx_clk);
--				goto err_remove_config_dt;
--			}
-+			if (IS_ERR(dwmac->tx_clk))
-+				return PTR_ERR(dwmac->tx_clk);
- 
- 			clk_prepare_enable(dwmac->tx_clk);
- 
-@@ -126,7 +122,7 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
- 				if (ret) {
- 					dev_err(&pdev->dev,
- 						"Failed to set tx_clk\n");
--					goto err_remove_config_dt;
-+					return ret;
- 				}
- 			}
- 		}
-@@ -140,7 +136,7 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
- 			if (ret) {
- 				dev_err(&pdev->dev,
- 					"Failed to set clk_ptp_ref\n");
--				goto err_remove_config_dt;
-+				return ret;
- 			}
- 		}
- 	}
-@@ -158,22 +154,17 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
- 	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
- 	if (ret) {
- 		clk_disable_unprepare(dwmac->tx_clk);
+ 	ret = mediatek_dwmac_clks_config(priv_plat, true);
+ 	if (ret)
 -		goto err_remove_config_dt;
 +		return ret;
- 	}
  
- 	return 0;
--
+ 	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+ 	if (ret)
+@@ -675,8 +675,6 @@ static int mediatek_dwmac_probe(struct platform_device *pdev)
+ 
+ err_drv_probe:
+ 	mediatek_dwmac_clks_config(priv_plat, false);
 -err_remove_config_dt:
 -	stmmac_remove_config_dt(pdev, plat_dat);
--
--	return ret;
- }
  
- static void intel_eth_plat_remove(struct platform_device *pdev)
+ 	return ret;
+ }
+@@ -685,7 +683,7 @@ static void mediatek_dwmac_remove(struct platform_device *pdev)
  {
- 	struct intel_dwmac *dwmac = get_stmmac_bsp_priv(&pdev->dev);
+ 	struct mediatek_dwmac_plat_data *priv_plat = get_stmmac_bsp_priv(&pdev->dev);
  
 -	stmmac_pltfr_remove(pdev);
 +	stmmac_pltfr_remove_no_dt(pdev);
- 	clk_disable_unprepare(dwmac->tx_clk);
+ 	mediatek_dwmac_clks_config(priv_plat, false);
  }
  
 -- 
