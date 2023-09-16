@@ -2,31 +2,31 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F23ACD37B8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFB1CD37B9
 	for <linux-tegra@archiver.kernel.org>; Sat, 16 Sep 2023 08:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbjIPIMj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Sep 2023 04:12:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48924 "EHLO
+        id S231482AbjIPIMk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Sep 2023 04:12:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232190AbjIPIMI (ORCPT
+        with ESMTP id S231998AbjIPIMX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Sep 2023 04:12:08 -0400
+        Sat, 16 Sep 2023 04:12:23 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071C819AD
-        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:12:04 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E3AC43391;
-        Sat, 16 Sep 2023 08:11:56 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95EF419AE
+        for <linux-tegra@vger.kernel.org>; Sat, 16 Sep 2023 01:12:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7670C433CC;
+        Sat, 16 Sep 2023 08:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694851923;
-        bh=QnUj2UcWjwSt/r3IooG168fCs/+hvc8TMJRfrlPuAhc=;
+        s=k20201202; t=1694851938;
+        bh=DKEvP3IapJYTsAbn033GPqYVOiEf5sbsPE67h+G6Mqk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CzD1kc6YyYKRCxIo6So1taAA0DUd7gek1Y3uNl0Z2NgX/pa3f+ymKB2uPvloicRQb
-         lzwKMNpWXNCWSB+f0LUEFEK4ZF4blpGPX9fx558wrMhcL10muodo5lfLnE8jSPYyN3
-         XP/MAnsO/Ec5a67YaeQ9ofa1vQRlMs9SLJ5kQbB5IhbFGq2aW4TLqJa7y4D0gIzO7S
-         pvHWGsbbh8oWEhZgvG+hhctY8ZZRZqO1umeKhFeD2WA4l4LxwSN/Wmz+z0mCIPp2Xf
-         NDzO378fgWsjoU6boFTP5GZcD5js+6NhVVjF7i6diewBSkii96uIwkz5yTBcjfnuGT
-         AxywFClOptu6w==
+        b=rMur2taxkAcQGcr/Nn3XDMCGpecz6RS6VoYgg4Deagg84YSPeo41Gc2Uo0fLn6xpf
+         9z8sC4/VNHpCivd2zB8pqggwYd911uKpf/cVt1Jsy3D4uHqD3ytevG8b/Y1fx4qeXw
+         qhnaDvpQ4UwUegJ28+CSRnvj+OeDVr09S8QVRp1vflARUU7EF0lID3UG+H40XOKmQD
+         NolZtcM9MDO0mTRW0TXg4yyTQTZWQ5ggFJLLnAoUb7sBY8Pwhf514q3GE0AlIvExqc
+         xuSo68Ee7mxPoSmn0seGpVJBQfm8wafAEOoU4/FupoAGuAsFvQybj4Wt6r7KE7uMuf
+         zRx2TMsWJBJAw==
 From:   Jisheng Zhang <jszhang@kernel.org>
 To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
@@ -61,9 +61,9 @@ Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH net-next v2 13/23] net: stmmac: dwmac-rk: use devm_stmmac_probe_config_dt()
-Date:   Sat, 16 Sep 2023 15:58:19 +0800
-Message-Id: <20230916075829.1560-14-jszhang@kernel.org>
+Subject: [PATCH net-next v2 15/23] net: stmmac: dwmac-starfive: use devm_stmmac_probe_config_dt()
+Date:   Sat, 16 Sep 2023 15:58:21 +0800
+Message-Id: <20230916075829.1560-16-jszhang@kernel.org>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230916075829.1560-1-jszhang@kernel.org>
 References: <20230916075829.1560-1-jszhang@kernel.org>
@@ -76,56 +76,51 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 Simplify the driver's probe() function by using the devres
 variant of stmmac_probe_config_dt().
 
+The remove_new() callback now needs to be switched to
+stmmac_pltfr_remove_no_dt().
+
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index d920a50dd16c..382e8de1255d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1824,7 +1824,7 @@ static int rk_gmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
+index 9289bb87c3e3..e87b4d335c72 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
+@@ -105,7 +105,7 @@ static int starfive_dwmac_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, err,
+ 				     "failed to get resources\n");
  
 -	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
 +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
  	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat),
+ 				     "dt configuration failed\n");
+@@ -141,13 +141,7 @@ static int starfive_dwmac_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
  
-@@ -1836,18 +1836,16 @@ static int rk_gmac_probe(struct platform_device *pdev)
- 	plat_dat->fix_mac_speed = rk_fix_speed;
- 
- 	plat_dat->bsp_priv = rk_gmac_setup(pdev, plat_dat, data);
--	if (IS_ERR(plat_dat->bsp_priv)) {
--		ret = PTR_ERR(plat_dat->bsp_priv);
--		goto err_remove_config_dt;
+-	err = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+-	if (err) {
+-		stmmac_remove_config_dt(pdev, plat_dat);
+-		return err;
 -	}
-+	if (IS_ERR(plat_dat->bsp_priv))
-+		return PTR_ERR(plat_dat->bsp_priv);
- 
- 	ret = rk_gmac_clk_init(plat_dat);
- 	if (ret)
--		goto err_remove_config_dt;
-+		return ret;
- 
- 	ret = rk_gmac_powerup(plat_dat->bsp_priv);
- 	if (ret)
--		goto err_remove_config_dt;
-+		return ret;
- 
- 	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
- 	if (ret)
-@@ -1857,8 +1855,6 @@ static int rk_gmac_probe(struct platform_device *pdev)
- 
- err_gmac_powerdown:
- 	rk_gmac_powerdown(plat_dat->bsp_priv);
--err_remove_config_dt:
--	stmmac_remove_config_dt(pdev, plat_dat);
- 
- 	return ret;
+-
+-	return 0;
++	return stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
  }
+ 
+ static const struct of_device_id starfive_dwmac_match[] = {
+@@ -158,7 +152,7 @@ MODULE_DEVICE_TABLE(of, starfive_dwmac_match);
+ 
+ static struct platform_driver starfive_dwmac_driver = {
+ 	.probe  = starfive_dwmac_probe,
+-	.remove_new = stmmac_pltfr_remove,
++	.remove_new = stmmac_pltfr_remove_no_dt,
+ 	.driver = {
+ 		.name = "starfive-dwmac",
+ 		.pm = &stmmac_pltfr_pm_ops,
 -- 
 2.40.1
 
