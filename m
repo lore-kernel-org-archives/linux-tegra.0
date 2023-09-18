@@ -2,176 +2,131 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E67DCD13D1
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Sep 2023 08:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEE7C46CA1
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Sep 2023 11:51:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240601AbjIRI1u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Sep 2023 04:27:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
+        id S237827AbjIRLu6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Sep 2023 07:50:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240770AbjIRI1E (ORCPT
+        with ESMTP id S241761AbjIRLui (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Sep 2023 04:27:04 -0400
+        Mon, 18 Sep 2023 07:50:38 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90BA11B6;
-        Mon, 18 Sep 2023 01:26:43 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1362EC433C7;
-        Mon, 18 Sep 2023 08:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1695025603;
-        bh=sMXA/6fEari6gFcvN4K1t3oFk4UFIEvXkCv0bTqIj5w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z2XvmWcozWHkSw/N8sb8Ry+NwN7vHjaQPDv3sxyalk6XldCahUkcj1cgGARw0kkHz
-         yKR/pNFJ9fM2gO4iQ63iJwfyjudX+nJreWAHWO/Y0KD87L4PsdK8/ClAb9aCu4qrBz
-         XIHRzKPc76RORYHeobe15Z6xsHb2TSzbLBEp9zlA=
-Date:   Mon, 18 Sep 2023 10:26:38 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>,
-        Thierry Reding <treding@nvidia.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, Al Cooper <alcooperx@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Davis <afd@ti.com>,
-        Matthew Howell <matthew.howell@sealevel.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        linux-mediatek@lists.infradead.org, Lukas Wunner <lukas@wunner.de>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-        Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "Maciej W. Rozycki" <macro@orcam.me.uk>,
-        Hongyu Xie <xiehongyu1@kylinos.cn>,
-        Jiamei Xie <jiamei.xie@arm.com>, Rob Herring <robh@kernel.org>,
-        delisun <delisun@pateo.com.cn>,
-        Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-        Yangtao Li <frank.li@vivo.com>,
-        Vineet Gupta <vgupta@kernel.org>,
-        linux-snps-arc@lists.infradead.org,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Sherry Sun <sherry.sun@nxp.com>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sergey Organov <sorganov@gmail.com>, Tom Rix <trix@redhat.com>,
-        Marek Vasut <marex@denx.de>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Jacky Huang <ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        Lucas Tanure <tanure@linux.com>,
-        linux-amlogic@lists.infradead.org,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-actions@lists.infradead.org,
-        Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        Yuan Can <yuancan@huawei.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-unisoc@lists.infradead.org,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Lech Perczak <lech.perczak@camlingroup.com>,
-        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Isaac True <isaac.true@canonical.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Nick Hu <nick.hu@sifive.com>,
-        Ruan Jinjie <ruanjinjie@huawei.com>,
-        Samuel Holland <samuel.holland@sifive.com>,
-        linux-riscv@lists.infradead.org, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Valentin Caron <valentin.caron@foss.st.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "David S. Miller" <davem@davemloft.net>,
-        sparclinux@vger.kernel.org, Hammer Hsieh <hammerh0314@gmail.com>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>,
-        Mukesh Ojha <quic_mojha@quicinc.com>,
-        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        Michal Simek <michal.simek@amd.com>
-Subject: Re: [PATCH tty v1 00/74] serial: wrappers for uart port lock
-Message-ID: <2023091826-seventy-opium-17b8@gregkh>
-References: <20230914183831.587273-1-john.ogness@linutronix.de>
- <87y1h3lwjh.fsf@jogness.linutronix.de>
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D503E6
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Sep 2023 04:50:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CAD37C433C7;
+        Mon, 18 Sep 2023 11:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695037829;
+        bh=oT5snbuM6TfIDJhxJsWR/PSxNRbw+iiiuFc7Xp3a8+I=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=uZ7FGpqOOOW4QGMAG4E31OhORIcesAUkf7+AMd+dsPzh46DiEGuFjAIIhigCjpVJL
+         DwbZLMUVDePIq6nrbjOfTbzXtettFFgIyY2rnnqxkUb/zAQgp+ndayV41JWxb1zLMo
+         AbI3ombnz9obEikffx68Z0fVqGGNkZQKYCDV1P39O8JxfbAfmD/97IyEGrtWpqGfsP
+         5sR9Uc4vWEZJBRM/S+0t5Q8N7s9KRKP6pCpKx6h60qwQV1CKH3ulLO4OQM8TnaNqdb
+         K5zs590+yp6+YrY9ggF3Ph/91j0zolaKDFIYLi5JTOTbhB+mIXrp/jkzKzlYTTCB0Q
+         EXB1uzYcbpgnw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B4871E11F41;
+        Mon, 18 Sep 2023 11:50:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y1h3lwjh.fsf@jogness.linutronix.de>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 00/22] convert to devm_stmmac_probe_config_dt
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <169503782973.2272.13506822186977436052.git-patchwork-notify@kernel.org>
+Date:   Mon, 18 Sep 2023 11:50:29 +0000
+References: <20230916075829.1560-1-jszhang@kernel.org>
+In-Reply-To: <20230916075829.1560-1-jszhang@kernel.org>
+To:     Jisheng Zhang <jszhang@kernel.org>
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
+        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, vz@mleia.com,
+        neil.armstrong@linaro.org, khilman@baylibre.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        kernel@esmil.dk, samin.guo@starfivetech.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        thierry.reding@gmail.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        linux@armlinux.org.uk, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Sep 18, 2023 at 10:29:30AM +0206, John Ogness wrote:
-> On 2023-09-14, John Ogness <john.ogness@linutronix.de> wrote:
-> > Provide and use wrapper functions for spin_[un]lock*(port->lock)
-> > invocations so that the console mechanics can be applied later on at a
-> > single place and does not require to copy the same logic all over the
-> > drivers.
-> 
-> For the full 74-patch series:
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> 
-> Sorry that my SoB was missing from the initial posting.
+Hello:
 
-Thanks for this, I'll rebuild my tree with this added.
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-greg k-h
+On Sat, 16 Sep 2023 15:58:06 +0800 you wrote:
+> Russell pointed out there's a new devm_stmmac_probe_config_dt()
+> helper now when reviewing my starfive gmac error handling patch[1].
+> After greping the code, this nice helper was introduced by Bartosz in
+> [2], I think it's time to convert all dwmac users to this helper and
+> finally complete the TODO in [2] "but once all users of the old
+> stmmac_pltfr_remove() are converted to the devres helper, it will be
+> renamed back to stmmac_pltfr_remove() and the no_dt function removed."
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,01/23] net: stmmac: dwmac-anarion: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/6f799fd9dda7
+  - [net-next,v2,02/23] net: stmmac: dwmac-dwc-qos-eth: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/0485825dd6a8
+  - [net-next,v2,03/23] net: stmmac: dwmac-generic: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/d53b19d2a1a8
+  - [net-next,v2,04/23] net: stmmac: dwmac-generic: use devm_stmmac_pltfr_probe()
+    https://git.kernel.org/netdev/net-next/c/14ec0fc582c5
+  - [net-next,v2,05/23] net: stmmac: dwmac-imx: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/115c9248b19b
+  - [net-next,v2,06/23] net: stmmac: dwmac-ingenic: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/6bb53b2abf30
+  - [net-next,v2,07/23] net: stmmac: dwmac-intel-plat: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/abea8fd5e801
+  - [net-next,v2,08/23] net: stmmac: dwmac-ipq806x: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/72ab86c27d4e
+  - [net-next,v2,09/23] net: stmmac: dwmac-lpc18xx: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/d30c08a3b001
+  - [net-next,v2,10/23] net: stmmac: dwmac-mediatek: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/d7209c056a49
+  - [net-next,v2,11/23] net: stmmac: dwmac-meson: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/780b63ae208e
+  - [net-next,v2,12/23] net: stmmac: dwmac-meson8b: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/551022d680ec
+  - [net-next,v2,13/23] net: stmmac: dwmac-rk: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/8eee20e10d6f
+  - [net-next,v2,14/23] net: stmmac: dwmac-socfpga: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/9086d3f2b560
+  - [net-next,v2,15/23] net: stmmac: dwmac-starfive: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/6d6c11937359
+  - [net-next,v2,16/23] net: stmmac: dwmac-sti: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/c9445e0bd729
+  - [net-next,v2,17/23] net: stmmac: dwmac-stm32: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/373845154618
+  - [net-next,v2,18/23] net: stmmac: dwmac-sun8i: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/9bdf6909877c
+  - [net-next,v2,19/23] net: stmmac: dwmac-sunxi: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/291595337626
+  - [net-next,v2,20/23] net: stmmac: dwmac-tegra: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/acf73ccff08e
+  - [net-next,v2,21/23] net: stmmac: dwmac-visconti: use devm_stmmac_probe_config_dt()
+    https://git.kernel.org/netdev/net-next/c/d336a117b593
+  - [net-next,v2,22/23] net: stmmac: rename stmmac_pltfr_remove_no_dt to stmmac_pltfr_remove
+    https://git.kernel.org/netdev/net-next/c/2c9fc838067b
+  - [net-next,v2,23/23] net: stmmac: make stmmac_{probe|remove}_config_dt static
+    https://git.kernel.org/netdev/net-next/c/b2504f649bda
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
