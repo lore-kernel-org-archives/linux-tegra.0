@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF6DC46CA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Sep 2023 19:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CC3CD37B0
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Sep 2023 19:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229770AbjIRTM3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Sep 2023 15:12:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48274 "EHLO
+        id S229554AbjIRT2F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Sep 2023 15:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjIRTM2 (ORCPT
+        with ESMTP id S229458AbjIRT2E (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Sep 2023 15:12:28 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD91510D;
-        Mon, 18 Sep 2023 12:12:22 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b9338e4695so77945711fa.2;
-        Mon, 18 Sep 2023 12:12:22 -0700 (PDT)
+        Mon, 18 Sep 2023 15:28:04 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2295B10E;
+        Mon, 18 Sep 2023 12:27:57 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-502fdfeb1d9so4091533e87.2;
+        Mon, 18 Sep 2023 12:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695064341; x=1695669141; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1695065275; x=1695670075; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ymg444KdzoYqbAJJDaXLrEYL/H+uXP42VM/AMIopDrc=;
-        b=Yx8Ufs3vzVJTed3Y87G+yI/k1G9v3oHfv7TRHXJTQZoVAt+Hqy/GeXHRP1M2YvSuie
-         842ZkigvRbnT3Vohk9tmDFV4hxCaXZtmT+yQAWtSp05HxwwjfEkfJtc4f7zNp/apEEYJ
-         CPRQdNywnDE/lfjf+zOHGoiiQuPPnwyfJs7VdQMT8xWiCWD2tLhy86uPHRCrQyvr/rI6
-         EjW3KRydcHDh14Mvl/LEs15roQmP7VA4wBkPaTB0cwXYdWPPpEHgt3Zh1TeolmSY7GN5
-         Sf8NNKCJ2g7ksrALD0j6nvKgVCHaFGBb/2K14kldg+dI+i+iUBaRHNNj/C2Nto9rz2Mt
-         PLKQ==
+        bh=YUNA23giNsy9yXBhE6+Kf6gNULsVNoBVOIJ8OFSJNNc=;
+        b=cWVOHtCHFyHDOe6XeSopEQ2U/XYbsMqT4sb+3BDpQIh6ZKwF+YXySse9GDNu/DwgcV
+         6Bi1HWtBWddmNbjCabWwvz8AdiP1kidwRlsLtB9DLskixdATD192pIlbz+CLAWlq9aIY
+         Y+lBN5yDwmS+rHtAo0H7iCPlBIRJWYhGNp3COLsGXe0er58bzfmDOCBX+skWpvo4x4gQ
+         Pch/0Ie809SmvNlEXJNEk2icMYhSMKrODsrxLGJQTFr5Ig6sc5R/RD4hUuzk4fwzWq8Y
+         kMYz3nP4HiaEmctUjsKNJW4sCv2E2PPHaUL8lBKzO0ygh6x0ekf7vA0sURzIBTJRkYmc
+         6m5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695064341; x=1695669141;
+        d=1e100.net; s=20230601; t=1695065275; x=1695670075;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ymg444KdzoYqbAJJDaXLrEYL/H+uXP42VM/AMIopDrc=;
-        b=LRMnuQgGbf71L8WK/acy9ZSkBoiQ++ZQBmlAoYn+dYaLIbTLafpb+OD+P2dIkjstc6
-         nch6GvpwHKpBurzbnFT55WhsibUXbe8oAY7hUXCKssFmUOXrPMj2f7ueDWZMe5KhEmmi
-         /2y/+fcQZDkx2mn38nSDv7OBC+gYWE5oWcqgR3me0n5d0Rakqdgn1FGtO8qnwVDfpQkZ
-         2TDJtIvQaxta2TG3sainQfNCfWCLou9Qbr4kNtp114Uu4kreCA0Kaxlwsb4+VswhnaE3
-         DytcQD88KdkdcFr0glEiANq1945wsOulGLpc0NJp38Zn82s7FOl2INpt/SN5T9tqLUD+
-         /u8Q==
-X-Gm-Message-State: AOJu0Yzk7DcoiH9sLAZ1N4r17k0w0pPL3lTrXNShzghY5xdJbHlFzLNc
-        iAcW4odgHH1Gr6aD+28gZDb/Cg1sm4lwlg==
-X-Google-Smtp-Source: AGHT+IFjg/ob0U+8PEhUDzZxfqbyJQBZc1GsvUR1GE+uNr8GDm+7qXSDDyadXaGQKQJr0ryj693ksg==
-X-Received: by 2002:a2e:700d:0:b0:2bf:6852:9339 with SMTP id l13-20020a2e700d000000b002bf68529339mr8798200ljc.3.1695064340742;
-        Mon, 18 Sep 2023 12:12:20 -0700 (PDT)
+        bh=YUNA23giNsy9yXBhE6+Kf6gNULsVNoBVOIJ8OFSJNNc=;
+        b=NKb/H+p2meMsfSbPw2nZRCbRjx36KZtUzzkpo7fXXwpi527CapCp8qZs/Fp/yTRsI0
+         HRRmy+cUXGoCuzeM1bnNIVE9pDmwK+HthucYwmzqT8OeD9uS/4GckpZYwxmD9MyIcwgL
+         lpiVFghrbkzd5vhYPP0nHEEEGjbpMCelp7koLeF/lynw5x9+2glGp/nLN3tj24a/tqlY
+         2F3yp7aPq7g3J0CJD8TZQLvirSirK3cO7koziEnBomw8nXU5fiHXLxmnZtBgnws1GZRj
+         ZYguv+zK9qNbGnj3A6DwCk6lIWmDfUimeR/YcxOqKSRZmjmfwt+rwbO2udTVEWz8HMdv
+         MC5Q==
+X-Gm-Message-State: AOJu0Yx80+0CoHAoNZQbTQJmvUFa+JD4gkBVjbecZ5u8Vawtnsp6gwAe
+        /d/Kk4IwhVT1+UmQgvnUdiw=
+X-Google-Smtp-Source: AGHT+IHj4oSlgl2LSDqV5ANHoqz74jHZgqunRahPHglIvps97t3ij8W0vmwiuA1EgpsdIxEnzqZXEg==
+X-Received: by 2002:a05:6512:962:b0:501:c3ee:62ec with SMTP id v2-20020a056512096200b00501c3ee62ecmr7844316lft.12.1695065275122;
+        Mon, 18 Sep 2023 12:27:55 -0700 (PDT)
 Received: from mobilestation ([85.140.3.118])
-        by smtp.gmail.com with ESMTPSA id y15-20020a2e978f000000b002bce38190a3sm2221659lji.34.2023.09.18.12.11.42
+        by smtp.gmail.com with ESMTPSA id v22-20020ac25936000000b005009920b6afsm1941264lfi.9.2023.09.18.12.27.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Sep 2023 12:12:20 -0700 (PDT)
-Date:   Mon, 18 Sep 2023 22:11:26 +0300
+        Mon, 18 Sep 2023 12:27:54 -0700 (PDT)
+Date:   Mon, 18 Sep 2023 22:27:50 +0300
 From:   Serge Semin <fancer.lancer@gmail.com>
 To:     Jisheng Zhang <jszhang@kernel.org>
 Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
@@ -85,85 +85,84 @@ Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next v2 02/23] net: stmmac: dwmac-dwc-qos-eth: use
+Subject: Re: [PATCH net-next v2 01/23] net: stmmac: dwmac-anarion: use
  devm_stmmac_probe_config_dt()
-Message-ID: <d3vpg5jcgfoe5qpreh2hnworsa2ly3ufrgqi4mcxx2yzfs7eoy@w2hgimsg64hp>
+Message-ID: <3zzbxnzkhlucscfx5h4h6k3lyhqln2nwmcsgb3dvzn6xqkhhdw@nrpekwfahkua>
 References: <20230916075829.1560-1-jszhang@kernel.org>
- <20230916075829.1560-3-jszhang@kernel.org>
+ <20230916075829.1560-2-jszhang@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230916075829.1560-3-jszhang@kernel.org>
+In-Reply-To: <20230916075829.1560-2-jszhang@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jisheng
-
-On Sat, Sep 16, 2023 at 03:58:08PM +0800, Jisheng Zhang wrote:
+On Sat, Sep 16, 2023 at 03:58:07PM +0800, Jisheng Zhang wrote:
 > Simplify the driver's probe() function by using the devres
 > variant of stmmac_probe_config_dt().
 > 
+> The remove_new() callback now needs to be switched to
+> stmmac_pltfr_remove_no_dt().
+> 
 > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 > ---
->  .../ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c   | 15 +++------------
->  1 file changed, 3 insertions(+), 12 deletions(-)
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> index 61ebf36da13d..ec924c6c76c6 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> @@ -435,15 +435,14 @@ static int dwc_eth_dwmac_probe(struct platform_device *pdev)
->  	if (IS_ERR(stmmac_res.addr))
->  		return PTR_ERR(stmmac_res.addr);
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
+> index 58a7f08e8d78..0df3a2ad0986 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
+> @@ -115,7 +115,7 @@ static int anarion_dwmac_probe(struct platform_device *pdev)
+>  	if (IS_ERR(gmac))
+>  		return PTR_ERR(gmac);
 >  
 > -	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
 > +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
 >  	if (IS_ERR(plat_dat))
 >  		return PTR_ERR(plat_dat);
 >  
->  	ret = data->probe(pdev, plat_dat, &stmmac_res);
->  	if (ret < 0) {
-
->  		dev_err_probe(&pdev->dev, ret, "failed to probe subdriver\n");
+> @@ -124,13 +124,7 @@ static int anarion_dwmac_probe(struct platform_device *pdev)
+>  	anarion_gmac_init(pdev, gmac);
+>  	plat_dat->bsp_priv = gmac;
+>  
+> -	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+> -	if (ret) {
+> -		stmmac_remove_config_dt(pdev, plat_dat);
+> -		return ret;
+> -	}
 > -
-> -		goto remove_config;
-> +		return ret;
+> -	return 0;
+> +	return stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
 
-just "return dev_err_probe()".
+Just a general note, IMO it's better from maintainability point of
+view to use the pattern:
+
+	ret = func();
+	if (ret)
+		return ret;
+
+	return 0;
+
+Thus should you need to add any functions call after or before the
+func() method invocation with possible clean-up-on-error code the
+change patch will look a bit simpler and more readable.
 
 -Serge(y)
 
->  	}
->  
->  	ret = dwc_eth_dwmac_config_dt(pdev, plat_dat);
-> @@ -458,25 +457,17 @@ static int dwc_eth_dwmac_probe(struct platform_device *pdev)
->  
->  remove:
->  	data->remove(pdev);
-> -remove_config:
-> -	stmmac_remove_config_dt(pdev, plat_dat);
->  
->  	return ret;
 >  }
 >  
->  static void dwc_eth_dwmac_remove(struct platform_device *pdev)
->  {
-> -	struct net_device *ndev = platform_get_drvdata(pdev);
-> -	struct stmmac_priv *priv = netdev_priv(ndev);
-> -	const struct dwc_eth_dwmac_data *data;
-> -
-> -	data = device_get_match_data(&pdev->dev);
-> +	const struct dwc_eth_dwmac_data *data = device_get_match_data(&pdev->dev);
+>  static const struct of_device_id anarion_dwmac_match[] = {
+> @@ -141,7 +135,7 @@ MODULE_DEVICE_TABLE(of, anarion_dwmac_match);
 >  
->  	stmmac_dvr_remove(&pdev->dev);
->  
->  	data->remove(pdev);
-> -
-> -	stmmac_remove_config_dt(pdev, priv->plat);
->  }
->  
->  static const struct of_device_id dwc_eth_dwmac_match[] = {
+>  static struct platform_driver anarion_dwmac_driver = {
+>  	.probe  = anarion_dwmac_probe,
+> -	.remove_new = stmmac_pltfr_remove,
+> +	.remove_new = stmmac_pltfr_remove_no_dt,
+>  	.driver = {
+>  		.name           = "anarion-dwmac",
+>  		.pm		= &stmmac_pltfr_pm_ops,
 > -- 
 > 2.40.1
 > 
