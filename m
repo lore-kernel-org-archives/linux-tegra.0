@@ -2,131 +2,143 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEE7C46CA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Sep 2023 11:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16E2C46CA1
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Sep 2023 12:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237827AbjIRLu6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Sep 2023 07:50:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
+        id S241474AbjIRMrU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Sep 2023 08:47:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241761AbjIRLui (ORCPT
+        with ESMTP id S242008AbjIRMrK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Sep 2023 07:50:38 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D503E6
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Sep 2023 04:50:30 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CAD37C433C7;
-        Mon, 18 Sep 2023 11:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695037829;
-        bh=oT5snbuM6TfIDJhxJsWR/PSxNRbw+iiiuFc7Xp3a8+I=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=uZ7FGpqOOOW4QGMAG4E31OhORIcesAUkf7+AMd+dsPzh46DiEGuFjAIIhigCjpVJL
-         DwbZLMUVDePIq6nrbjOfTbzXtettFFgIyY2rnnqxkUb/zAQgp+ndayV41JWxb1zLMo
-         AbI3ombnz9obEikffx68Z0fVqGGNkZQKYCDV1P39O8JxfbAfmD/97IyEGrtWpqGfsP
-         5sR9Uc4vWEZJBRM/S+0t5Q8N7s9KRKP6pCpKx6h60qwQV1CKH3ulLO4OQM8TnaNqdb
-         K5zs590+yp6+YrY9ggF3Ph/91j0zolaKDFIYLi5JTOTbhB+mIXrp/jkzKzlYTTCB0Q
-         EXB1uzYcbpgnw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B4871E11F41;
-        Mon, 18 Sep 2023 11:50:29 +0000 (UTC)
+        Mon, 18 Sep 2023 08:47:10 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3AF106;
+        Mon, 18 Sep 2023 05:46:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hI31fhfoG9Wc2ecJpeVou8AENT/Mn2vqmVP/sSO8fu234MJcD9gnLu+flEIUp8+/LsXCQGjriwz5mnDPzICdlD9qJahYP56fOrb4lGcvCpuHO40skQMJnsL1nsZASJ4OfzGrbHCjB/Z49VyKcHC11muCO4gW+kAHfTC0IK/jcpbQTlB3qfkMWmBBEmTdDrU7sHs9rCi/dRBbaQDDMshQl45ATxZlnuaX4Yah5O0a0UPiYQU5Vut5/dfusuk2En5mN3dh2ml3Tzrisqj2MzG8pXYjTAIQiIYvOwhOFC/0/lyIIkrDpdhUy6JEN1Us6SoC/H3t/vKlhAiscDppC6pwTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B4Qt0qilhsjaRGaLYks3Muhi5Dj/h3lL2suZzwSrtz4=;
+ b=SCIPj86XnsuqoxT3kcf0Pi22sch+yvgli5O4fgNvw3A9Nz2+BleoAA3zzNAGUWxtP65vfsKpY4o6lGmh9jg2oKzX4y9AuFcyyTA9sPS59YcqQQFW//LJjVEcMezHrV2oTS9zYCKl/S2dYBTtGNurSb33byxfAPm/dBqLug7Dlpn25THcXnFyXh5RaZCmILhi7sq7In2PQD/1bC6+QjIMrjEqEKW+5hMS0yEdwV7eZrffXDU6ZUhkPR4Pt00q+ciC0MrI5fxTVcoxGR3W5PmPuX8XA84cG42jO2sTXCMXijXMCGA9S0rYJzBvWLxtVwv6DXqm65y/dleT1ANd0PmtLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B4Qt0qilhsjaRGaLYks3Muhi5Dj/h3lL2suZzwSrtz4=;
+ b=DL7kBAxIh7PBubbyknWobphYK4HQq4jFbQS85m29SUyEZ9bDn0ont6tYZegoy8jnbyNrXkFqOkip240YiOE1/Dd4LzuG+ODrc+hXIrEJRLhGu8zeHd++0unMEsQNbgOdCRvJ2llltmwyOdi1TiQk5ZcHZ2Anyg09bSpTn/QITjTpor8ZcfaC6Z8osYiXl/eYA0TU9sM9iFHqpsX8PO0E3/FfI64Wr8LTCqNLp8fYws5UrH72u2BieH4D2WE/fVt9t7RmcgzCP9nM2/NCF6CqQZlzdDPxKKj1dOD6lQSk5nbbOkNyujbzgpOcLt6AEfMq3QwJR6BzUbljv75e6b8CSg==
+Received: from BL0PR0102CA0020.prod.exchangelabs.com (2603:10b6:207:18::33) by
+ MN0PR12MB6224.namprd12.prod.outlook.com (2603:10b6:208:3c0::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27; Mon, 18 Sep
+ 2023 12:46:35 +0000
+Received: from MN1PEPF0000ECD4.namprd02.prod.outlook.com
+ (2603:10b6:207:18:cafe::4b) by BL0PR0102CA0020.outlook.office365.com
+ (2603:10b6:207:18::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.20 via Frontend
+ Transport; Mon, 18 Sep 2023 12:46:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MN1PEPF0000ECD4.mail.protection.outlook.com (10.167.242.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6792.20 via Frontend Transport; Mon, 18 Sep 2023 12:46:35 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 18 Sep
+ 2023 05:46:21 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Mon, 18 Sep 2023 05:46:21 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Mon, 18 Sep 2023 05:46:21 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/406] 5.10.195-rc1 review
+In-Reply-To: <20230917191101.035638219@linuxfoundation.org>
+References: <20230917191101.035638219@linuxfoundation.org>
+X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 00/22] convert to devm_stmmac_probe_config_dt
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <169503782973.2272.13506822186977436052.git-patchwork-notify@kernel.org>
-Date:   Mon, 18 Sep 2023 11:50:29 +0000
-References: <20230916075829.1560-1-jszhang@kernel.org>
-In-Reply-To: <20230916075829.1560-1-jszhang@kernel.org>
-To:     Jisheng Zhang <jszhang@kernel.org>
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, vz@mleia.com,
-        neil.armstrong@linaro.org, khilman@baylibre.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        kernel@esmil.dk, samin.guo@starfivetech.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        thierry.reding@gmail.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-        linux@armlinux.org.uk, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+Message-ID: <d3e3f3f0-c0bd-4a75-a218-a3068d5ff95a@drhqmail201.nvidia.com>
+Date:   Mon, 18 Sep 2023 05:46:21 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD4:EE_|MN0PR12MB6224:EE_
+X-MS-Office365-Filtering-Correlation-Id: 875c61a7-a850-4c7c-1a95-08dbb8454b4a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xw1TQHmVw+Jvku2/5YrBFfmvU7jgJMo9dgwVrJxhcx6sLqU5MejP6C0qwgS/2IDVSrtYTZBlx2EKABzBlFyfM5v+0Y5dVDTx0q2A76rtJAit+Hq+kbANDbOBzSvhQlKoxBNxh1LEYH8GVlHDGaU/kIq1u/HBUlKsYiUenGy1PG76DvIypQlFjaaQk1dF4GGYI06Q0FYZQhUlQ9uCLhrwU2+FuO/0i4X3a/z7o6j/zTT2m3E22u2BsxUOwp82sifJTrYB7XchOaK+svSN4a+tyffsJVJFesqMzV1dawICFkUJ1/VckWJjK+A+YiYJIm8j1tcssOGlznYwjTlllBZHgcEmqc8XKIxzI86mdZChD5KI1JsVxWxIvTdNnUwzetNznYpSISpVmVPZ2YOP+g4WiO2Iw+abRGDaOOJsXm01frTOHsrkRj4E5CtKKGY6Tfgx1/j8qFxK0+9pePpSiPlEPalOQJOSh5EXVHz6Uq5QIWibvzvVn21dXNZE3Crqw7uMhm6bhIfPVrjlcU3dm9OWXi06NgPguj8pMK90BWhcY4Fd11SpRI/EpFRGhDjSTyo8Cz1WkhaQvAvaMR7k4N+H0uZJCB74miQCSDjRFrf4fYtR4c6HKTdyPRk0nBhSj25nBB84+rAnoWGXMubD9LkJwbglCzQ1eLCf0U4mGPTve4I9ho1hJOEO8mZ8WBB3oXTZRG4lam5lC5HX7Inihj1kJuPHQYcYR+KV8zhr4hx8ANV5cecDRO7WUd8nZx6cYrSTQlqN1IddVKR+uJX1xWh36Un410WYSDIpmVAxziOvg0w=
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(376002)(346002)(136003)(396003)(186009)(451199024)(1800799009)(82310400011)(36840700001)(40470700004)(46966006)(4326008)(26005)(40480700001)(426003)(336012)(40460700003)(8676002)(8936002)(82740400003)(356005)(7636003)(2906002)(36860700001)(41300700001)(86362001)(70586007)(70206006)(54906003)(316002)(6916009)(31686004)(31696002)(5660300002)(7416002)(966005)(47076005)(478600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 12:46:35.5959
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 875c61a7-a850-4c7c-1a95-08dbb8454b4a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF0000ECD4.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6224
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Sat, 16 Sep 2023 15:58:06 +0800 you wrote:
-> Russell pointed out there's a new devm_stmmac_probe_config_dt()
-> helper now when reviewing my starfive gmac error handling patch[1].
-> After greping the code, this nice helper was introduced by Bartosz in
-> [2], I think it's time to convert all dwmac users to this helper and
-> finally complete the TODO in [2] "but once all users of the old
-> stmmac_pltfr_remove() are converted to the devres helper, it will be
-> renamed back to stmmac_pltfr_remove() and the no_dt function removed."
+On Sun, 17 Sep 2023 21:07:34 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.195 release.
+> There are 406 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> [...]
+> Responses should be made by Tue, 19 Sep 2023 19:10:04 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.195-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Here is the summary with links:
-  - [net-next,v2,01/23] net: stmmac: dwmac-anarion: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/6f799fd9dda7
-  - [net-next,v2,02/23] net: stmmac: dwmac-dwc-qos-eth: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/0485825dd6a8
-  - [net-next,v2,03/23] net: stmmac: dwmac-generic: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/d53b19d2a1a8
-  - [net-next,v2,04/23] net: stmmac: dwmac-generic: use devm_stmmac_pltfr_probe()
-    https://git.kernel.org/netdev/net-next/c/14ec0fc582c5
-  - [net-next,v2,05/23] net: stmmac: dwmac-imx: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/115c9248b19b
-  - [net-next,v2,06/23] net: stmmac: dwmac-ingenic: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/6bb53b2abf30
-  - [net-next,v2,07/23] net: stmmac: dwmac-intel-plat: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/abea8fd5e801
-  - [net-next,v2,08/23] net: stmmac: dwmac-ipq806x: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/72ab86c27d4e
-  - [net-next,v2,09/23] net: stmmac: dwmac-lpc18xx: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/d30c08a3b001
-  - [net-next,v2,10/23] net: stmmac: dwmac-mediatek: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/d7209c056a49
-  - [net-next,v2,11/23] net: stmmac: dwmac-meson: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/780b63ae208e
-  - [net-next,v2,12/23] net: stmmac: dwmac-meson8b: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/551022d680ec
-  - [net-next,v2,13/23] net: stmmac: dwmac-rk: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/8eee20e10d6f
-  - [net-next,v2,14/23] net: stmmac: dwmac-socfpga: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/9086d3f2b560
-  - [net-next,v2,15/23] net: stmmac: dwmac-starfive: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/6d6c11937359
-  - [net-next,v2,16/23] net: stmmac: dwmac-sti: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/c9445e0bd729
-  - [net-next,v2,17/23] net: stmmac: dwmac-stm32: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/373845154618
-  - [net-next,v2,18/23] net: stmmac: dwmac-sun8i: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/9bdf6909877c
-  - [net-next,v2,19/23] net: stmmac: dwmac-sunxi: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/291595337626
-  - [net-next,v2,20/23] net: stmmac: dwmac-tegra: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/acf73ccff08e
-  - [net-next,v2,21/23] net: stmmac: dwmac-visconti: use devm_stmmac_probe_config_dt()
-    https://git.kernel.org/netdev/net-next/c/d336a117b593
-  - [net-next,v2,22/23] net: stmmac: rename stmmac_pltfr_remove_no_dt to stmmac_pltfr_remove
-    https://git.kernel.org/netdev/net-next/c/2c9fc838067b
-  - [net-next,v2,23/23] net: stmmac: make stmmac_{probe|remove}_config_dt static
-    https://git.kernel.org/netdev/net-next/c/b2504f649bda
+All tests passing for Tegra ...
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Test results for stable-v5.10:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    75 tests:	75 pass, 0 fail
 
+Linux version:	5.10.195-rc1-g95379666b7a6
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
