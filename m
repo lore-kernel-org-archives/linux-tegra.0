@@ -2,120 +2,107 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497C2CD5BB4
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 12:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 339D9CD5BC3
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 13:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232303AbjISM5k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Sep 2023 08:57:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57512 "EHLO
+        id S232392AbjISNcl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Sep 2023 09:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232367AbjISM5f (ORCPT
+        with ESMTP id S232425AbjISNcj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Sep 2023 08:57:35 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E761A6;
-        Tue, 19 Sep 2023 05:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695128247; x=1726664247;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+p2qHcmN288VJTNmarM516bgZohk8ZtzFjtp/gNHNio=;
-  b=Q+06Nb1gOivsLToeTTbcYaxN6uINIcM64dT377MheCeE3ZZq1HXZlzdK
-   BgtbAmkZRNNfEGbFr1Db9G5ArEaJysEN4OL9gf6coGsaQsBR3KTdcOCAY
-   QMa5tz1S9C+SZsOd4HsDUlt1A6zpWzVwILDZzRjB4w2VLP/WwPcUNLq4I
-   74R+VLgPGKRdb0d9SM//zh20PD/nw8+LuOZrNrMZ4Tmv/kGXODRTE4zoo
-   fm8ACGAy6MAYjNgEswqdxGS/6nFavAOxli3O9kWV0qN5xy8TYZ6TPuCY4
-   gGbO0RcRwblAX6YWhNroD6LDIRuB2y9bxoT9GddWnyjD0MPVNz1z6J4uy
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10838"; a="359324675"
-X-IronPort-AV: E=Sophos;i="6.02,159,1688454000"; 
-   d="scan'208";a="359324675"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2023 05:57:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10838"; a="746228802"
-X-IronPort-AV: E=Sophos;i="6.02,159,1688454000"; 
-   d="scan'208";a="746228802"
-Received: from vdesserx-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.249.32.31])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2023 05:57:20 -0700
-From:   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
+        Tue, 19 Sep 2023 09:32:39 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B65133
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Sep 2023 06:32:32 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qiapz-0005H3-TO; Tue, 19 Sep 2023 15:32:23 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qiapx-007T5g-Nj; Tue, 19 Sep 2023 15:32:21 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qiapx-0030ga-BN; Tue, 19 Sep 2023 15:32:21 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v3 4/8] PCI: tegra194: Use FIELD_GET()/FIELD_PREP() with Link Width fields
-Date:   Tue, 19 Sep 2023 15:56:44 +0300
-Message-Id: <20230919125648.1920-5-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230919125648.1920-1-ilpo.jarvinen@linux.intel.com>
-References: <20230919125648.1920-1-ilpo.jarvinen@linux.intel.com>
+        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 48/59] dma: tegra20-apb-dma: Convert to platform remove callback returning void
+Date:   Tue, 19 Sep 2023 15:31:56 +0200
+Message-Id: <20230919133207.1400430-49-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230919133207.1400430-1-u.kleine-koenig@pengutronix.de>
+References: <20230919133207.1400430-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1895; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=p0YNfNQ6rouQIshDwy8m+PHxQVDwpmwbI3Nov3/BeKg=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlCaHmPBHdEjzWGISv2of5x1I1zzP3z3ZxeIr9d VobHEa/ZveJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZQmh5gAKCRCPgPtYfRL+ TiexB/wN8AWTLCtkpJhI4/E5XP7DAQZay6Uj2FoPcfiY4HPZXfooQ8tf2bOEj28C55B1Q5rf8R+ NKqhZ+8eWlaLzIPo52WhuJg2g0P7r1tvUNwQV2zIi66mV6Ix6KdW/yRjvn6vFHVb7leg/H2vc35 7PPBXJk0LtP3dMGMxPhL1pND0zO+dv0m6cDVGPXoJG61ygMFSwltlX7xBejuT+35dgdCbtHbi5J iDJmpqKKf0pcPkChfOA+eEMYTB1cUcdl1xbxbUqWU/smyI27EL3l4cWGVarMTiT7mETGMuC95y8 IoRDYtYblRChC5+uR1Rfxtfu1OM1l1GdYG8haATzrBjKhI7+
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use FIELD_GET() to extract PCIe Negotiated Link Width field instead of
-custom masking and shifting.
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new() which already returns void. Eventually after all drivers
+are converted, .remove_new() is renamed to .remove().
 
-Similarly, change custom code that misleadingly used
-PCI_EXP_LNKSTA_NLW_SHIFT to prepare value for PCI_EXP_LNKCAP write
-to use FIELD_PREP() with correct field define (PCI_EXP_LNKCAP_MLW).
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4bba31502ce1..248cd9347e8f 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -9,6 +9,7 @@
-  * Author: Vidya Sagar <vidyas@nvidia.com>
-  */
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 063022f9df76..ac69778827f2 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1581,7 +1581,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	return ret;
+ }
  
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
-@@ -346,8 +347,7 @@ static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
- 	 */
- 	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
- 	if (val & PCI_EXP_LNKSTA_LBMS) {
--		current_link_width = (val & PCI_EXP_LNKSTA_NLW) >>
--				     PCI_EXP_LNKSTA_NLW_SHIFT;
-+		current_link_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
- 		if (pcie->init_link_width > current_link_width) {
- 			dev_warn(pci->dev, "PCIe link is bad, width reduced\n");
- 			val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
-@@ -760,8 +760,7 @@ static void tegra_pcie_enable_system_interrupts(struct dw_pcie_rp *pp)
+-static int tegra_dma_remove(struct platform_device *pdev)
++static void tegra_dma_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dma *tdma = platform_get_drvdata(pdev);
  
- 	val_w = dw_pcie_readw_dbi(&pcie->pci, pcie->pcie_cap_base +
- 				  PCI_EXP_LNKSTA);
--	pcie->init_link_width = (val_w & PCI_EXP_LNKSTA_NLW) >>
--				PCI_EXP_LNKSTA_NLW_SHIFT;
-+	pcie->init_link_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val_w);
+@@ -1589,8 +1589,6 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ 	dma_async_device_unregister(&tdma->dma_dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	clk_unprepare(tdma->dma_clk);
+-
+-	return 0;
+ }
  
- 	val_w = dw_pcie_readw_dbi(&pcie->pci, pcie->pcie_cap_base +
- 				  PCI_EXP_LNKCTL);
-@@ -920,7 +919,7 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 	/* Configure Max lane width from DT */
- 	val = dw_pcie_readl_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP);
- 	val &= ~PCI_EXP_LNKCAP_MLW;
--	val |= (pcie->num_lanes << PCI_EXP_LNKSTA_NLW_SHIFT);
-+	val |= FIELD_PREP(PCI_EXP_LNKCAP_MLW, pcie->num_lanes);
- 	dw_pcie_writel_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP, val);
+ static int __maybe_unused tegra_dma_runtime_suspend(struct device *dev)
+@@ -1677,7 +1675,7 @@ static struct platform_driver tegra_dmac_driver = {
+ 		.of_match_table = tegra_dma_of_match,
+ 	},
+ 	.probe		= tegra_dma_probe,
+-	.remove		= tegra_dma_remove,
++	.remove_new	= tegra_dma_remove,
+ };
  
- 	/* Clear Slot Clock Configuration bit if SRNS configuration */
+ module_platform_driver(tegra_dmac_driver);
 -- 
-2.30.2
+2.40.1
 
