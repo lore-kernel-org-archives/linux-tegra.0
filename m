@@ -2,110 +2,85 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FC9CD5BC2
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 13:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B88E7CD5BD0
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 14:46:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbjISNy3 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Sep 2023 09:54:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59152 "EHLO
+        id S232894AbjISOq4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Sep 2023 10:46:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232442AbjISNy2 (ORCPT
+        with ESMTP id S232832AbjISOqz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Sep 2023 09:54:28 -0400
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3691783;
-        Tue, 19 Sep 2023 06:54:22 -0700 (PDT)
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5711d5dac14so1416763eaf.0;
-        Tue, 19 Sep 2023 06:54:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695131661; x=1695736461;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LGZwcNp/BDkTKowBUFhaDEFH4i6kTTCF8Ze198+CeFs=;
-        b=Efu8ZKIsTDMNR/N1Lv0RT8Vcl5iQbu6Dl2s+AETx4tzXfHtpYVfHvUUNi1i/R/26yz
-         ep/pbjbmunLL/V3fnd0Zu16GyBUuirrPN/taMe6KQbeNSm3XAnfSSG5l4B3sCppKEHEF
-         CsGnLokx+ZCZM05iuqoJiMad5DOmQmRLucHcRKAV+9OHVQ1qAUHnHIqd3K729Yo5oMNY
-         tqELaF/81UyCnutj7IE6CRPQ0g0HA7kODdb/4Jd4YD+eiFEMizJRo0DM+NcH1hgj8eJv
-         NPiWC16b+jUb7BznxStM6pPS30r4j5VCaH0LNZ57VTwF2vnjKgIKY+i9fQQcSrgQE52r
-         qNBg==
-X-Gm-Message-State: AOJu0Yws7G6dXw3lHdo/9AomrSBqwHZCC3GaRaGQ1jRy/l6ebOBb2p9K
-        w7ezPkqmExpLn/FvHJsm71f6MrjZzAEYC4PtejqyVgDz
-X-Google-Smtp-Source: AGHT+IFQB7YxuOS88mI54AX4AvOgSEg4or2jItYtcrjeKPDUXY02dmKR/Z7d/TdkCkis8oHfOuq35bTUnaTOZnZphFM=
-X-Received: by 2002:a4a:d88d:0:b0:573:2a32:6567 with SMTP id
- b13-20020a4ad88d000000b005732a326567mr11216372oov.0.1695131661262; Tue, 19
- Sep 2023 06:54:21 -0700 (PDT)
+        Tue, 19 Sep 2023 10:46:55 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75412BF;
+        Tue, 19 Sep 2023 07:46:50 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22CD7C433C7;
+        Tue, 19 Sep 2023 14:46:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695134810;
+        bh=kNiCJsCewFz4TLCsqksrAT4cC3PggEcrjWbgkKxvCjE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PYqk1G+jPr5zv/QpaLp4AA6V9a4GL1VwF37uS6Xrbc8ReE7oRYrubpdPFOjJM8K3+
+         hRS1IKB4RXa9s8nGXa6u/pOsUdxWBlOdYHlGhFeCm1Gpp3jxKzEFzwi4a9xZ0wslNY
+         Nb7xVfEUKVR6L1I2j5A4H2rDkBtTuYw/rR63P5djPMVPiHVfrNGC441JpFyumuwhtR
+         39JtOgpjOmcPqbz9VbPJYEMJCQx+WWsYPiRfd7k0ymOXIxfen89DpdaYpjyhfUiIyP
+         Q0fkCmOIhipggzdJjgk6wih18EH+KsVvbMOyfu5GLtNTz/6Ps5yA1ysWadfr3/WZa2
+         xpWAcQZ2DMKNw==
+Date:   Tue, 19 Sep 2023 15:46:44 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     Wolfram Sang <wsa@kernel.org>, rafael.j.wysocki@intel.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        dmitry.osipenko@collabora.com, peterz@infradead.org,
+        jonathanh@nvidia.com, richard.leitner@linux.dev,
+        treding@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Benjamin Bara <benjamin.bara@skidata.com>,
+        stable@vger.kernel.org, Nishanth Menon <nm@ti.com>
+Subject: [GIT PULL] Immutable branch between MFD, I2C and Reboot due for the
+ v6.7 merge window
+Message-ID: <20230919144644.GX13143@google.com>
+References: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
 MIME-Version: 1.0
-References: <20230913164659.9345-3-sumitg@nvidia.com> <202309140915.2J9OzWIZ-lkp@intel.com>
- <c180c1e9-c15c-b4e2-678a-35a388a4a613@nvidia.com>
-In-Reply-To: <c180c1e9-c15c-b4e2-678a-35a388a4a613@nvidia.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 19 Sep 2023 15:54:09 +0200
-Message-ID: <CAJZ5v0iJYb3cAq6VMY8s+AOmuMdCBY9KvshM8rcGnCT-tn8CmQ@mail.gmail.com>
-Subject: Re: [Patch v2 2/2] ACPI: processor: reduce CPUFREQ thermal reduction
- pctg for Tegra241
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     kernel test robot <lkp@intel.com>, rafael@kernel.org,
-        rui.zhang@intel.com, lenb@kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        oe-kbuild-all@lists.linux.dev, sanjayc@nvidia.com,
-        ksitaraman@nvidia.com, srikars@nvidia.com, jbrasen@nvidia.com,
-        bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 1:27 PM Sumit Gupta <sumitg@nvidia.com> wrote:
->
->
->
-> > Hi Sumit,
-> >
-> > kernel test robot noticed the following build warnings:
-> >
-> > [auto build test WARNING on rafael-pm/linux-next]
-> > [also build test WARNING on linus/master v6.6-rc1 next-20230913]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Gupta/ACPI-thermal-Add-Thermal-fast-Sampling-Period-_TFP-support/20230914-004929
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-> > patch link:    https://lore.kernel.org/r/20230913164659.9345-3-sumitg%40nvidia.com
-> > patch subject: [Patch v2 2/2] ACPI: processor: reduce CPUFREQ thermal reduction pctg for Tegra241
-> > config: i386-defconfig (https://download.01.org/0day-ci/archive/20230914/202309140915.2J9OzWIZ-lkp@intel.com/config)
-> > compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230914/202309140915.2J9OzWIZ-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202309140915.2J9OzWIZ-lkp@intel.com/
-> >
-> > All warnings (new ones prefixed by >>):
-> >
-> >>> drivers/acpi/processor_thermal.c:141:6: warning: no previous declaration for 'acpi_thermal_cpufreq_config_nvidia' [-Wmissing-declarations]
-> >      void acpi_thermal_cpufreq_config_nvidia(void)
-> >           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >
->
-> Thank you for the report.
-> The below change fixes the warning for me.
->
->   -void acpi_thermal_cpufreq_config_nvidia(void)
->   +static void acpi_thermal_cpufreq_config_nvidia(void)
->
->
-> Hi Rafael,
-> If there is no other comment. Could you please add the change while
-> applying or you prefer me sending new version ?
+Enjoy!
 
-Please update.
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
 
-Besides, I haven't said that I will apply it without changes yet.
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
 
-Thanks!
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-i2c-reboot-v6.7
+
+for you to fetch changes up to 510f276df2b91efd73f6c53be62b7e692ff533c1:
+
+  mfd: tps6586x: Register restart handler (2023-07-28 11:33:20 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, I2C and Reboot due for the v6.7 merge window
+
+----------------------------------------------------------------
+Benjamin Bara (5):
+      kernel/reboot: emergency_restart: Set correct system_state
+      i2c: core: Run atomic i2c xfer when !preemptible
+      kernel/reboot: Add device to sys_off_handler
+      mfd: tps6586x: Use devm-based power off handler
+      mfd: tps6586x: Register restart handler
+
+ drivers/i2c/i2c-core.h |  2 +-
+ drivers/mfd/tps6586x.c | 50 ++++++++++++++++++++++++++++++++++++++++++--------
+ include/linux/reboot.h |  3 +++
+ kernel/reboot.c        |  4 ++++
+ 4 files changed, 50 insertions(+), 9 deletions(-)
+
+-- 
+Lee Jones [李琼斯]
