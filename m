@@ -2,51 +2,87 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1F2CD548F
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 07:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2300DCD549E
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 07:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbjISHnG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Sep 2023 03:43:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46720 "EHLO
+        id S231453AbjISHzF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Sep 2023 03:55:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231817AbjISHnF (ORCPT
+        with ESMTP id S230021AbjISHzD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Sep 2023 03:43:05 -0400
-X-Greylist: delayed 447 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 19 Sep 2023 00:42:58 PDT
-Received: from mail.leeswilly.pl (mail.leeswilly.pl [89.116.26.225])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A15119
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Sep 2023 00:42:58 -0700 (PDT)
-Received: by mail.leeswilly.pl (Postfix, from userid 1001)
-        id 106E476149A; Tue, 19 Sep 2023 09:35:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leeswilly.pl; s=mail;
-        t=1695108930; bh=qCQG4c3C0tvkuSSy6okg6Td4OKi9mrw7rI9pE9SwJ9g=;
-        h=Date:From:To:Subject:From;
-        b=a/1hrpO1AnoD76hmR7TqNBhyEeVqVT+CkvyUvI6IAHAmDDPiD3xo0MMATma3fcX+e
-         2cUineSTBqYASpgFCApoMlcTu0pUnN5j0auuBXvkt9lUf2xtkCcDqA7dfou9VF8PVd
-         CIYf549LxqQvTvcrbzFI5xze2K1D94MqTyk9Xrwn4u96abcYarKEJKQ+IIbCbMVx4Q
-         Q9xnfazigtQW9TDcfUV4z+x+U+VSyvI7NxugKaP383E8VsIESBDU0geeO1KuU2HJj7
-         LpKlSX+HmS3TFqfyNHrgSpiDpJPTQCCSLCHOkRdmlOaJ0jq/J8ARPGGvt6ebs4uHf3
-         6RBExbKsKb71g==
-Received: by mail.leeswilly.pl for <linux-tegra@vger.kernel.org>; Tue, 19 Sep 2023 07:35:17 GMT
-Message-ID: <20230919084500-0.1.3z.bclp.0.mi5z6dbnhc@leeswilly.pl>
-Date:   Tue, 19 Sep 2023 07:35:17 GMT
-From:   "Jakub Lemczak" <jakub.lemczak@leeswilly.pl>
-To:     <linux-tegra@vger.kernel.org>
-Subject: =?UTF-8?Q?Pytanie_o_samoch=C3=B3d?=
-X-Mailer: mail.leeswilly.pl
+        Tue, 19 Sep 2023 03:55:03 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08043118;
+        Tue, 19 Sep 2023 00:54:58 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F797C433C7;
+        Tue, 19 Sep 2023 07:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1695110097;
+        bh=PUJkB42ik+SiuCnw2by9lvSJgzapvGCwCqWwmHvjqis=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nkk1ivXrYQ/ECBDel95hmsSHR+SOq1ykR6CvXaBoO9WqpEU5ATfsnfJsLNATXPDfB
+         DCvn2AyKsHSotCvw8Re26NveFLK2RA6vyg1xVuAX3ExmWUoe+0cyD0VSKuOWbrhRWS
+         RHpwFYsl5vNyf2hANA7CPu76MMKxdyYA8n1Ui19o=
+Date:   Tue, 19 Sep 2023 09:54:51 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     stable@vger.kernel.org, patches@lists.linux.dev,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+        srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+        Sameer Pujar <spujar@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 6.5 000/285] 6.5.4-rc1 review
+Message-ID: <2023091941-sprain-unmovable-ca22@gregkh>
+References: <20230917191051.639202302@linuxfoundation.org>
+ <dfe78c1a-8322-413b-f1b7-3a6a307a831c@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfe78c1a-8322-413b-f1b7-3a6a307a831c@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Mon, Sep 18, 2023 at 01:52:10PM +0100, Jon Hunter wrote:
+> Hi Greg,
+> 
+> On 17/09/2023 20:10, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.5.4 release.
+> > There are 285 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Tue, 19 Sep 2023 19:10:04 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.5.4-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.5.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> > Pseudo-Shortlog of commits:
+> 
+> ...
+> 
+> > Sameer Pujar <spujar@nvidia.com>
+> >      arm64: tegra: Update AHUB clock parent and rate
+> 
+> 
+> Unfortunately, the above change is causing a regression in one of our audio
+> tests and we are looking into why this is.
+> 
+> Can we drop this from stable for now?
 
-Czy interesuje Pa=C5=84stwa rozwi=C4=85zanie umo=C5=BCliwiaj=C4=85ce moni=
-torowanie samochod=C3=B3w firmowych oraz optymalizacj=C4=99 koszt=C3=B3w =
-ich utrzymania?=20
+Ok, now dropped, thanks all for the report.
 
-
-Pozdrawiam
-Jakub Lemczak
+greg k-h
