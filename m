@@ -2,45 +2,45 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1258ACE79AA
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 16:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC44CE79A9
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Sep 2023 22:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjISQ7p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Sep 2023 12:59:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34528 "EHLO
+        id S229748AbjISWrc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Sep 2023 18:47:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbjISQ7o (ORCPT
+        with ESMTP id S233355AbjISWrb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Sep 2023 12:59:44 -0400
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2077.outbound.protection.outlook.com [40.107.96.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3254BC6;
-        Tue, 19 Sep 2023 09:59:38 -0700 (PDT)
+        Tue, 19 Sep 2023 18:47:31 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2057.outbound.protection.outlook.com [40.107.94.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C9EBF;
+        Tue, 19 Sep 2023 15:47:24 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i3qvwqNA9r0SBZFk8JbRkcQBwv7NKZz8KlVULW8jJMLaFJoyNfIJBXyU202iJMR4GW6dbGMlkedndhwWYm58En3HRaSJIDp7S1nn0dnuIWIX1MT/GSXdiGeD0LOhZnEHK/kgTOn9G9ZUOV2B7SJcA4Cc80JE7evIkusQRHx0YXxvFrYeRarqE6srOeUk4BI5qXmeylR4A7EG1uNEvn0OxcjsNQklB2rIYIDvorZnX1q4VnfoHgC9TxHnxOYi91Kvrg9cHBtrrMSpnlCR/bVUCRoRIEdcPP2dGVVaEbOMKxWC+5ZFImVOLoA+gSslkPsh/EriDOTFx5AB+pnBX36sgA==
+ b=Um/V/09nVGOLFF4oJTCDr89kjrWF9a3knxx3pU0ppSQt2e5TnpRSz4XRqvofFCo/Kki/ughprU6nvy9zKW2m5dWpyza5EowIQVk4gxJpZhxMRS7WMDLucB8B1ci0KmyNARwG/Ep5oiy3lMUiMuQPzvxCUJdjl9WL5LIZiOq2kFO1IhVKTgJY2EyNmTXnO0NVOWHzuxjd5Eu+Y2sQvryKDO0m6hOMCiV5kzdnMgEnL6puiIurAgnDGo0SKnqI54vQ0NocBpqFVrQyDQLhGYZv7f6jujOrM7G6ZyyviWv5rwKM6NjyJThTF2g2r6vFsRNcD3UNx4lvsvLMRENVPcxAYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=61v4ImtPAcJllvrsMxies3NFHOMZP8kosdyMMr8ADaQ=;
- b=hz1C1mkv5e7U3TqDegjSYkyWg8ZMIKg81aQqw7F0fVUyUpa5k3pDA+VKdtb9hItI1qlLYpev5ebkda6P5j0yAOtmxk14gP5ZnfFmzGt2s6kxiBru2ijyIKMk1g8kJRc3xD982QW7zbB0//E5kcDoVeHBBAbPRRTO4IMovqDRLChw6dW1/5ZducbC4cT+1k4oNe+NX/y6gMbmRDOVWt0k9k0PSQVWqDfzkCpqvLMJxByU2bATykliFrSp0TvOx0CljuL/jTAXL76s7cUOWMdyP0bLqzmg+E5Rt5XV3XYkqgtF5pQo1WtgGnlq6PwMWwG1I/T9WpV5X400dcS0dpZF8A==
+ bh=ZpW9TPyfQooHmaoPEEmYVGGjfw7sUoJs7bANEef4YXs=;
+ b=ciQ+GSvhodAR+HgpyLquxDIp609IVBLFfHB3D1HKPLCc0ECUi3dWPElP8/iL86sj7iw8i7dyJifQJBin6DZdyufkfNP3buD7SUzDDziRsajI5og6StZkotoEDphT+cejMUZYJRI7tyuDyMlctnIPGp/RWOoAVMCvX1xcYo9Wgeb7J05NcWIcjmZJrZz2gmVk8Ec1xe4vE3n/yAD5+gS3ZZIygYD2m6tR+NmZL1MrOYozSt8kjF4kMglwFREAiHO0NetAawp3IHtnH4KzOfKJW2xzwQ5X8Ysop+L7wNZTi8Mw6PIBMf3u9SZlp5Ls/LkWiVVbwbqAeMIVwmpVtQjRpw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=61v4ImtPAcJllvrsMxies3NFHOMZP8kosdyMMr8ADaQ=;
- b=CBpjDguDc/7+HemOGSIrdGlp9/Bw3BYyipJ3OweOui0MA8N1aGcRZ97+qThjeFnWdUHVwmIUyyksfh6TZbJORuycOu3K1RDH36EO9UjwbOupxRgjzc+3zIB6fnhxvjrPFsG1KLQXrJC/OiK4A7r6kb2vZzV5an0xwrzFiU+7CUaB/uG1hzB9qpuDZdUB7cj9IxYB406K4NdZ/ITFhDDZs0z2Fpsl48wa5TkewKzUglFp1j8jGnLtufIRyjzc0cEmbJ3itfnvSHPCzoK/AyRJgk4Cw8ixhNZDRzlCLs38qtA5UfJ89bu875EF16Ie/GugP6wjsYFm2pCnUhRx04tjbg==
-Received: from BY5PR04CA0002.namprd04.prod.outlook.com (2603:10b6:a03:1d0::12)
- by PH7PR12MB6763.namprd12.prod.outlook.com (2603:10b6:510:1ad::8) with
+ bh=ZpW9TPyfQooHmaoPEEmYVGGjfw7sUoJs7bANEef4YXs=;
+ b=li8cGAuf3ShxzzCblso0sG+7p8zqIkwkdb7weZm4dxVLtlCq4xdHAVm6Q9TQzfYdP9lRU2zqfGmsh0cyXpN/+4lAQmZg4tBUOHTCOsjGKSltfT7We5hUKf9ugX//QIRYfdE7hV9aKDHkVI8CJTFfcnyus4O0A57+HvZ6qHeaRXGxzc/svnDFhY356VKwpupZVUWpu7Q7kQHrKGEk4PSYwc5H9tEIHqU05sleNs2P0/wrdLes+lEb8DTL3W0ZFmdD4dKVaDQDfG2omntmc/0f4eF4tQEXMew3bks4lu/02o7L+ECq5Lp7kSxKYboE8G0trdQ0i20JFxGG8m3S8DpCdw==
+Received: from MW4PR03CA0058.namprd03.prod.outlook.com (2603:10b6:303:8e::33)
+ by DM6PR12MB4388.namprd12.prod.outlook.com (2603:10b6:5:2a9::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27; Tue, 19 Sep
- 2023 16:59:35 +0000
-Received: from MWH0EPF000971E4.namprd02.prod.outlook.com
- (2603:10b6:a03:1d0:cafe::84) by BY5PR04CA0002.outlook.office365.com
- (2603:10b6:a03:1d0::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.28; Tue, 19 Sep
+ 2023 22:47:18 +0000
+Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
+ (2603:10b6:303:8e:cafe::91) by MW4PR03CA0058.outlook.office365.com
+ (2603:10b6:303:8e::33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.28 via Frontend
- Transport; Tue, 19 Sep 2023 16:59:35 +0000
+ Transport; Tue, 19 Sep 2023 22:47:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,118 +48,271 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- MWH0EPF000971E4.mail.protection.outlook.com (10.167.243.72) with Microsoft
+ MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6792.20 via Frontend Transport; Tue, 19 Sep 2023 16:59:35 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ 15.20.6792.19 via Frontend Transport; Tue, 19 Sep 2023 22:47:18 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 19 Sep
- 2023 09:59:21 -0700
-Received: from [10.41.21.79] (10.126.231.35) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 15:47:05 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 19 Sep
- 2023 09:59:16 -0700
-Message-ID: <ca89aeb5-bdb6-96ba-5bd6-bc9cc23b9093@nvidia.com>
-Date:   Tue, 19 Sep 2023 22:29:13 +0530
+ 2023 15:47:05 -0700
+Received: from msst-build.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Tue, 19 Sep 2023 15:47:04 -0700
+From:   Besar Wicaksono <bwicaksono@nvidia.com>
+To:     <james.clark@arm.com>, <mike.leach@linaro.org>,
+        <suzuki.poulose@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
+        <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <vsethi@nvidia.com>, <rwiley@nvidia.com>,
+        <ywan@nvidia.com>, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: [PATCH] perf cs-etm: Fix missing decoder for per-process trace
+Date:   Tue, 19 Sep 2023 17:45:53 -0500
+Message-ID: <20230919224553.1658-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [Patch v2 2/2] ACPI: processor: reduce CPUFREQ thermal reduction
- pctg for Tegra241
-Content-Language: en-US
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-CC:     kernel test robot <lkp@intel.com>, <rui.zhang@intel.com>,
-        <lenb@kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
-        <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>,
-        <srikars@nvidia.com>, <jbrasen@nvidia.com>, <bbasu@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>
-References: <20230913164659.9345-3-sumitg@nvidia.com>
- <202309140915.2J9OzWIZ-lkp@intel.com>
- <c180c1e9-c15c-b4e2-678a-35a388a4a613@nvidia.com>
- <CAJZ5v0iJYb3cAq6VMY8s+AOmuMdCBY9KvshM8rcGnCT-tn8CmQ@mail.gmail.com>
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <CAJZ5v0iJYb3cAq6VMY8s+AOmuMdCBY9KvshM8rcGnCT-tn8CmQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail202.nvidia.com (10.129.68.7)
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E4:EE_|PH7PR12MB6763:EE_
-X-MS-Office365-Filtering-Correlation-Id: 321f9bd4-a0aa-42fb-b53c-08dbb931cd87
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|DM6PR12MB4388:EE_
+X-MS-Office365-Filtering-Correlation-Id: c75578e1-4b71-4fcd-6374-08dbb96260b0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: vTzpcYSiMlOxfbiN90WNKtUm3NFvdxi1CMRD0+Kv5gaeFfIpVgsstneGSHNIjmQIk7qrTaFYkjCxeW94J3vuYWfmIHNdTWNdJ2E8elL58pEKp7iZ7KZSx//v8Y1xiOzmQaA2/QIUNBKLtjxCeJ90qHCAFs4UqSSeP1CZkRKTiCDqXgVb9SEeLCC6Sn+C8y/yzhSInTXsQXhzkxgk5Xp7ZlGFnuQP8OKLpILiD6SNQkYjlcYwsWdaC7SpwnwvsX2YdynmC3oMQ5RZwfuJSxsY1eWSByeWO5Nd1+PkykwvM6Tx2ehXz4rIodtxlt2AAkIJbH9Homrexe/syqlKD8b+Q0Rayzt/2PDRkcN81ewfRm8JqsXrSfUV7FPDYclV1S2NGSbnuTiUP6LugUf9ceBtK9J2Y50apZkh2hT2R4Z0mkSL/kdbbnnVd1s+2/HUBUzWB2TAAqW1Jtvf6cDCfOGfemhtoZvo9YVmKA4OZDkhfXAA32HjckkpJRqRSiIH7KHNEgW+hZZD9T72/EuhJ/cKq4qd0RAb/3Gn8c+pcBLuRRGtaS6j+7U4qsBmw3Z9o1KUamXbNN//o9piPeggyr699L9KQzTpVTwzsP99ck1zSnr8DfvDPGX/rksIvSQ9iYEcuxa2NeyKHvUPLeL2sS3oTHJo4o/5ydOeRQ5ertFqVBi0uqb7NKOEV6aHlBcNl2sRbpzfpSQcGtreWCBBcQ2Q4C1Pklty8kHgiPw8W69nol/OyTdSePDKoAbLjtbb7rZI03h+D7/+Vfvw7B1zvp48SsbLGB2E8yatjV3UGH1rPgHEOf5pXHtmHslaSEgXv62t
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(136003)(376002)(396003)(39860400002)(451199024)(82310400011)(1800799009)(186009)(46966006)(40470700004)(36840700001)(70586007)(6916009)(16576012)(70206006)(54906003)(316002)(5660300002)(83380400001)(8936002)(31686004)(4326008)(40480700001)(478600001)(8676002)(966005)(2906002)(41300700001)(6666004)(2616005)(40460700003)(26005)(16526019)(107886003)(336012)(426003)(36860700001)(47076005)(36756003)(356005)(7636003)(31696002)(86362001)(82740400003)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: +jjmvPppSMbDORE+Oe8Nd37XAsg6DU9lMVlt5Nhu7xRLORyWoer0PJaaVA7pVLJSeij8rSN46wy94ISvsob0Y7JSA7t25H7E8QDhhuy6SlnBGcUisNOCB2E16EKaSTNo8qA8aaW1TJ7g+mRm37gM1PdfigVQnxxapm3+Qmk/QO/uwv/RuKO/VLetkqZAsoLQRY+q5QGicr/3DFIIJMG6ic0aE8WuhEe37eyWptu6rvtumWRyX49VM891jF9fiy1vS96jdl7CW1FzeF7+BUDGXEQKfiSmTnQrdTijikUg87o0jfeXmMIeOWPTEn+4PCCxGRGRQKbFoxRDpOGfz6v4yUZ7VBSVrhUx1i9XBN9jf9zAVR5P71TR2Irg0lIR3kUzPmdI5+SOndcgGWFOOTfPta/dvoytz6PIT1UqHaUqce6uU3vogQ11RzeHz1oBK6cuyRxIKEyudzawf6nLFGbb2M8bBHU/M4kjE+NWnRjpz4UUvdYEB7Ar+jhtuKADSQZgcIdNH5qJdQQ1GUiLVGCEEuDxMSW4EThvJC2ywU3qcHyojwK9YxyNvdnnYWiHw8OgL0BO2Yb3xgzlco73cVZqtj4QFwqHh3h0t3BM5NST4Y8eS/nDJ7NNfwHM9TNILWj9n59VIAwUTEJ34znC9C/t81Hwvtoj5n+D3YtGnnCZNk3mzV+FoaMs866Fh3hYXoxC5nt89wti96MX5lGEgHmsc06gjujGrPQZkT80nmRqQoxc+06z9fY8ofJvw/6rGdLA
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(39860400002)(346002)(396003)(136003)(186009)(82310400011)(451199024)(1800799009)(46966006)(36840700001)(40470700004)(40480700001)(40460700003)(4326008)(54906003)(316002)(110136005)(478600001)(70206006)(70586007)(2906002)(8676002)(8936002)(41300700001)(86362001)(7636003)(5660300002)(83380400001)(36860700001)(2616005)(47076005)(7696005)(6666004)(356005)(82740400003)(1076003)(426003)(336012)(107886003)(26005)(36756003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2023 16:59:35.4722
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2023 22:47:18.1600
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 321f9bd4-a0aa-42fb-b53c-08dbb931cd87
+X-MS-Exchange-CrossTenant-Network-Message-Id: c75578e1-4b71-4fcd-6374-08dbb96260b0
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: MWH0EPF000971E4.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MWH0EPF000971E3.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6763
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4388
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+The decoder creation for raw trace uses metadata from the first CPU.
+On per-process/per-thread traces, the first CPU is CPU0. If CPU0 trace
+is not enabled, its metadata will be marked unused and the decoder is
+not created. Perf report dump skips the decoding part because the
+decoder is missing.
 
+To fix this, use metadata of the CPU associated with sample object.
 
->>
->>> Hi Sumit,
->>>
->>> kernel test robot noticed the following build warnings:
->>>
->>> [auto build test WARNING on rafael-pm/linux-next]
->>> [also build test WARNING on linus/master v6.6-rc1 next-20230913]
->>> [If your patch is applied to the wrong git tree, kindly drop us a note.
->>> And when submitting patch, we suggest to use '--base' as documented in
->>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>>
->>> url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Gupta/ACPI-thermal-Add-Thermal-fast-Sampling-Period-_TFP-support/20230914-004929
->>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
->>> patch link:    https://lore.kernel.org/r/20230913164659.9345-3-sumitg%40nvidia.com
->>> patch subject: [Patch v2 2/2] ACPI: processor: reduce CPUFREQ thermal reduction pctg for Tegra241
->>> config: i386-defconfig (https://download.01.org/0day-ci/archive/20230914/202309140915.2J9OzWIZ-lkp@intel.com/config)
->>> compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
->>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230914/202309140915.2J9OzWIZ-lkp@intel.com/reproduce)
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <lkp@intel.com>
->>> | Closes: https://lore.kernel.org/oe-kbuild-all/202309140915.2J9OzWIZ-lkp@intel.com/
->>>
->>> All warnings (new ones prefixed by >>):
->>>
->>>>> drivers/acpi/processor_thermal.c:141:6: warning: no previous declaration for 'acpi_thermal_cpufreq_config_nvidia' [-Wmissing-declarations]
->>>       void acpi_thermal_cpufreq_config_nvidia(void)
->>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>
->>
->> Thank you for the report.
->> The below change fixes the warning for me.
->>
->>    -void acpi_thermal_cpufreq_config_nvidia(void)
->>    +static void acpi_thermal_cpufreq_config_nvidia(void)
->>
->>
->> Hi Rafael,
->> If there is no other comment. Could you please add the change while
->> applying or you prefer me sending new version ?
-> 
-> Please update.
-> 
-> Besides, I haven't said that I will apply it without changes yet.
-> 
-> Thanks!
+Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+---
+ tools/perf/util/cs-etm.c | 130 +++++++++++++++++++++++----------------
+ 1 file changed, 77 insertions(+), 53 deletions(-)
 
-Sure, will wait for more comments and add this change in v2.
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 9729d006550d..3c3179a5eac6 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -640,71 +640,94 @@ static void cs_etm__packet_dump(const char *pkt_string)
+ 	fflush(stdout);
+ }
+ 
+-static void cs_etm__set_trace_param_etmv3(struct cs_etm_trace_params *t_params,
+-					  struct cs_etm_auxtrace *etm, int idx,
+-					  u32 etmidr)
++static void cs_etm__set_trace_param_etmv3(struct cs_etm_trace_params *t_param,
++					  u64 *metadata, u32 etmidr)
+ {
+-	u64 **metadata = etm->metadata;
+-
+-	t_params[idx].protocol = cs_etm__get_v7_protocol_version(etmidr);
+-	t_params[idx].etmv3.reg_ctrl = metadata[idx][CS_ETM_ETMCR];
+-	t_params[idx].etmv3.reg_trc_id = metadata[idx][CS_ETM_ETMTRACEIDR];
++	t_param->protocol = cs_etm__get_v7_protocol_version(etmidr);
++	t_param->etmv3.reg_ctrl = metadata[CS_ETM_ETMCR];
++	t_param->etmv3.reg_trc_id = metadata[CS_ETM_ETMTRACEIDR];
+ }
+ 
+-static void cs_etm__set_trace_param_etmv4(struct cs_etm_trace_params *t_params,
+-					  struct cs_etm_auxtrace *etm, int idx)
++static void cs_etm__set_trace_param_etmv4(struct cs_etm_trace_params *t_param,
++					  u64 *metadata)
+ {
+-	u64 **metadata = etm->metadata;
++	t_param->protocol = CS_ETM_PROTO_ETMV4i;
++	t_param->etmv4.reg_idr0 = metadata[CS_ETMV4_TRCIDR0];
++	t_param->etmv4.reg_idr1 = metadata[CS_ETMV4_TRCIDR1];
++	t_param->etmv4.reg_idr2 = metadata[CS_ETMV4_TRCIDR2];
++	t_param->etmv4.reg_idr8 = metadata[CS_ETMV4_TRCIDR8];
++	t_param->etmv4.reg_configr = metadata[CS_ETMV4_TRCCONFIGR];
++	t_param->etmv4.reg_traceidr = metadata[CS_ETMV4_TRCTRACEIDR];
++}
+ 
+-	t_params[idx].protocol = CS_ETM_PROTO_ETMV4i;
+-	t_params[idx].etmv4.reg_idr0 = metadata[idx][CS_ETMV4_TRCIDR0];
+-	t_params[idx].etmv4.reg_idr1 = metadata[idx][CS_ETMV4_TRCIDR1];
+-	t_params[idx].etmv4.reg_idr2 = metadata[idx][CS_ETMV4_TRCIDR2];
+-	t_params[idx].etmv4.reg_idr8 = metadata[idx][CS_ETMV4_TRCIDR8];
+-	t_params[idx].etmv4.reg_configr = metadata[idx][CS_ETMV4_TRCCONFIGR];
+-	t_params[idx].etmv4.reg_traceidr = metadata[idx][CS_ETMV4_TRCTRACEIDR];
++static void cs_etm__set_trace_param_ete(struct cs_etm_trace_params *t_param,
++					u64 *metadata)
++{
++	t_param->protocol = CS_ETM_PROTO_ETE;
++	t_param->ete.reg_idr0 = metadata[CS_ETE_TRCIDR0];
++	t_param->ete.reg_idr1 = metadata[CS_ETE_TRCIDR1];
++	t_param->ete.reg_idr2 = metadata[CS_ETE_TRCIDR2];
++	t_param->ete.reg_idr8 = metadata[CS_ETE_TRCIDR8];
++	t_param->ete.reg_configr = metadata[CS_ETE_TRCCONFIGR];
++	t_param->ete.reg_traceidr = metadata[CS_ETE_TRCTRACEIDR];
++	t_param->ete.reg_devarch = metadata[CS_ETE_TRCDEVARCH];
+ }
+ 
+-static void cs_etm__set_trace_param_ete(struct cs_etm_trace_params *t_params,
+-					  struct cs_etm_auxtrace *etm, int idx)
++static int cs_etm__set_trace_param(struct cs_etm_trace_params *t_param,
++				   u64 *metadata)
+ {
+-	u64 **metadata = etm->metadata;
++	u32 etmidr;
++	u64 architecture = metadata[CS_ETM_MAGIC];
++
++	switch (architecture) {
++	case __perf_cs_etmv3_magic:
++		etmidr = metadata[CS_ETM_ETMIDR];
++		cs_etm__set_trace_param_etmv3(t_param, metadata, etmidr);
++		break;
++	case __perf_cs_etmv4_magic:
++		cs_etm__set_trace_param_etmv4(t_param, metadata);
++		break;
++	case __perf_cs_ete_magic:
++		cs_etm__set_trace_param_ete(t_param, metadata);
++		break;
++	default:
++		return -EINVAL;
++	}
+ 
+-	t_params[idx].protocol = CS_ETM_PROTO_ETE;
+-	t_params[idx].ete.reg_idr0 = metadata[idx][CS_ETE_TRCIDR0];
+-	t_params[idx].ete.reg_idr1 = metadata[idx][CS_ETE_TRCIDR1];
+-	t_params[idx].ete.reg_idr2 = metadata[idx][CS_ETE_TRCIDR2];
+-	t_params[idx].ete.reg_idr8 = metadata[idx][CS_ETE_TRCIDR8];
+-	t_params[idx].ete.reg_configr = metadata[idx][CS_ETE_TRCCONFIGR];
+-	t_params[idx].ete.reg_traceidr = metadata[idx][CS_ETE_TRCTRACEIDR];
+-	t_params[idx].ete.reg_devarch = metadata[idx][CS_ETE_TRCDEVARCH];
++	return 0;
+ }
+ 
+ static int cs_etm__init_trace_params(struct cs_etm_trace_params *t_params,
+ 				     struct cs_etm_auxtrace *etm,
++				     bool formatted,
++				     int sample_cpu,
+ 				     int decoders)
+ {
+-	int i;
+-	u32 etmidr;
+-	u64 architecture;
+-
+-	for (i = 0; i < decoders; i++) {
+-		architecture = etm->metadata[i][CS_ETM_MAGIC];
++	int i, ret;
++	struct cs_etm_trace_params *t_param;
++	u64 *metadata;
+ 
+-		switch (architecture) {
+-		case __perf_cs_etmv3_magic:
+-			etmidr = etm->metadata[i][CS_ETM_ETMIDR];
+-			cs_etm__set_trace_param_etmv3(t_params, etm, i, etmidr);
+-			break;
+-		case __perf_cs_etmv4_magic:
+-			cs_etm__set_trace_param_etmv4(t_params, etm, i);
+-			break;
+-		case __perf_cs_ete_magic:
+-			cs_etm__set_trace_param_ete(t_params, etm, i);
+-			break;
+-		default:
++	if (!formatted) {
++		/*
++		 * There is only one decoder when unformatted. Use metadata of
++		 * sample AUX cpu.
++		 */
++		t_param = t_params;
++		metadata = get_cpu_data(etm, sample_cpu);
++		if (!metadata) {
++			pr_err("CS_ETM: invalid sample CPU: %d\n", sample_cpu);
+ 			return -EINVAL;
+ 		}
++
++		return cs_etm__set_trace_param(t_param, metadata);
++	}
++
++	for (i = 0; i < decoders; i++) {
++		t_param = &t_params[i];
++		metadata = etm->metadata[i];
++		ret = cs_etm__set_trace_param(t_param, metadata);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return 0;
+@@ -1016,7 +1039,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u8 trace_chan_id,
+ }
+ 
+ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+-						bool formatted)
++						bool formatted, int sample_cpu)
+ {
+ 	struct cs_etm_decoder_params d_params;
+ 	struct cs_etm_trace_params  *t_params = NULL;
+@@ -1041,7 +1064,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ 	if (!t_params)
+ 		goto out_free;
+ 
+-	if (cs_etm__init_trace_params(t_params, etm, decoders))
++	if (cs_etm__init_trace_params(t_params, etm, formatted, sample_cpu, decoders))
+ 		goto out_free;
+ 
+ 	/* Set decoder parameters to decode trace packets */
+@@ -1081,14 +1104,15 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ static int cs_etm__setup_queue(struct cs_etm_auxtrace *etm,
+ 			       struct auxtrace_queue *queue,
+ 			       unsigned int queue_nr,
+-			       bool formatted)
++			       bool formatted,
++			       int sample_cpu)
+ {
+ 	struct cs_etm_queue *etmq = queue->priv;
+ 
+ 	if (list_empty(&queue->head) || etmq)
+ 		return 0;
+ 
+-	etmq = cs_etm__alloc_queue(etm, formatted);
++	etmq = cs_etm__alloc_queue(etm, formatted, sample_cpu);
+ 
+ 	if (!etmq)
+ 		return -ENOMEM;
+@@ -2816,7 +2840,7 @@ static int cs_etm__process_auxtrace_event(struct perf_session *session,
+ 		 * formatted in piped mode (true).
+ 		 */
+ 		err = cs_etm__setup_queue(etm, &etm->queues.queue_array[idx],
+-					  idx, true);
++					  idx, true, -1);
+ 		if (err)
+ 			return err;
+ 
+@@ -3022,7 +3046,7 @@ static int cs_etm__queue_aux_fragment(struct perf_session *session, off_t file_o
+ 		idx = auxtrace_event->idx;
+ 		formatted = !(aux_event->flags & PERF_AUX_FLAG_CORESIGHT_FORMAT_RAW);
+ 		return cs_etm__setup_queue(etm, &etm->queues.queue_array[idx],
+-					   idx, formatted);
++					   idx, formatted, sample->cpu);
+ 	}
+ 
+ 	/* Wasn't inside this buffer, but there were no parse errors. 1 == 'not found' */
+-- 
+2.34.1
 
-Thank you,
-Sumit Gupta
