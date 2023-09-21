@@ -2,257 +2,145 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6091BE7D0AF
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Sep 2023 21:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61187E7D0AB
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Sep 2023 21:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232539AbjIUVUw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Sep 2023 17:20:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37576 "EHLO
+        id S232636AbjIUVg1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Sep 2023 17:36:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232700AbjIUVOo (ORCPT
+        with ESMTP id S231381AbjIUVgP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Sep 2023 17:14:44 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B18A12453;
-        Thu, 21 Sep 2023 10:06:54 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4CF1A338A4;
-        Thu, 21 Sep 2023 11:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1695294669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=ahSDka+ud/ArrkTUsJLPgqW+LRcwqhCWgbQCB+rwDsI=;
-        b=KI+WiC/Jkz8t6aYBX30t3uf2bg2qpPW9bvtpwE7nBDHP21bpqpUSClRyFN0inVFn3ON1ZD
-        ZMDfZGX7HSnUL9pPw11xVml2HJ+d8Q+aNkwvc0takFHOIWzIW2Mx8NnFjXfdbuLwS8+O+H
-        mhtUp4Up2uCcyFUShwNrms+djOAHuzA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1695294669;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=ahSDka+ud/ArrkTUsJLPgqW+LRcwqhCWgbQCB+rwDsI=;
-        b=bvuq9gZEONaEtkfHUBLEz9zRL0BlI7KNzEMEkX9fv0WVf2+EMyt5X86nT8G6GNkXIFb2ib
-        0gs+QT04NU8eHMBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8E451134B0;
-        Thu, 21 Sep 2023 11:11:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id PQ6gIcwkDGXHbgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 21 Sep 2023 11:11:08 +0000
-Message-ID: <f6413268-5fa5-440e-b35b-98195df150b3@suse.de>
-Date:   Thu, 21 Sep 2023 13:11:07 +0200
+        Thu, 21 Sep 2023 17:36:15 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 645601FFD;
+        Thu, 21 Sep 2023 14:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695330696; x=1726866696;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3+eI3UgLms590aA+oWQf7NdcqV5rfD94OQLXjXGtl2c=;
+  b=h9T4dD49rl0pcFqa3FiFUxodBFD679CGr3Kqn1JaamQzPBRRkLNOZvbx
+   tK248atdPqm8qyZqxILFA/HKIdgn+tthFb7xIN/eolpQYV/cMm9Djxr1X
+   us8WWNYrZqT13LtzIDKMMPkQOD8QelsU3YawgTq7y31g6K7iaXuUK73+c
+   120EJ2RlaUfgsUIn1NrIGTJYWCpz39UKN/xX/kIQcj5U9SXUQHXgUqMu9
+   R5yreM6dn6g8b+t0kmOsFc21UC0AORVA7NvudYZQp/+vIU8LeGrOYIu8K
+   t9zowhHgrBZh6BaLZSSdWr4+Wg3XUmUfAXtjO1s6eZ/FefdMGCDIBSDzh
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10840"; a="447144823"
+X-IronPort-AV: E=Sophos;i="6.03,166,1694761200"; 
+   d="scan'208";a="447144823"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2023 14:11:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10840"; a="870992745"
+X-IronPort-AV: E=Sophos;i="6.03,166,1694761200"; 
+   d="scan'208";a="870992745"
+Received: from lkp-server02.sh.intel.com (HELO b77866e22201) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 21 Sep 2023 14:11:31 -0700
+Received: from kbuild by b77866e22201 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qjQxM-0000PY-2M;
+        Thu, 21 Sep 2023 21:11:28 +0000
+Date:   Fri, 22 Sep 2023 05:11:22 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     oe-kbuild-all@lists.linux.dev, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Ninad Malwade <nmalwade@nvidia.com>,
+        Rajkumar Kasirajan <rkasirajan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 3/4] hwmon: ina3221: Add support for channel summation
+ disable
+Message-ID: <202309220454.kCi2xD48-lkp@intel.com>
+References: <20230921130818.21247-4-jonathanh@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MAINTAINERS: Update drm-misc entry to match all
- drivers
-Content-Language: en-US
-To:     Maxime Ripard <mripard@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc:     Karol Herbst <kherbst@redhat.com>, nouveau@lists.freedesktop.org,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        dri-devel@lists.freedesktop.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Russell King <linux@armlinux.org.uk>,
-        amd-gfx@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        etnaviv@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        linux-tegra@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sean Paul <sean@poorly.run>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-References: <20230921105743.2611263-1-mripard@kernel.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20230921105743.2611263-1-mripard@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------dSxprB7Srgjr0Bp5MLVnm0oc"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230921130818.21247-4-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------dSxprB7Srgjr0Bp5MLVnm0oc
-Content-Type: multipart/mixed; boundary="------------tN9WGv9Sm3bW15FJqXQwj9oC";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Maxime Ripard <mripard@kernel.org>,
- Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Karol Herbst <kherbst@redhat.com>, nouveau@lists.freedesktop.org,
- Edmund Dea <edmund.j.dea@intel.com>, dri-devel@lists.freedesktop.org,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Russell King <linux@armlinux.org.uk>, amd-gfx@lists.freedesktop.org,
- Ben Skeggs <bskeggs@redhat.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, Jani Nikula
- <jani.nikula@intel.com>, intel-gfx@lists.freedesktop.org,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, etnaviv@lists.freedesktop.org,
- Alex Deucher <alexander.deucher@amd.com>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, linux-tegra@vger.kernel.org,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Sean Paul <sean@poorly.run>,
- Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- linux-renesas-soc@vger.kernel.org,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Message-ID: <f6413268-5fa5-440e-b35b-98195df150b3@suse.de>
-Subject: Re: [PATCH v2] MAINTAINERS: Update drm-misc entry to match all
- drivers
-References: <20230921105743.2611263-1-mripard@kernel.org>
-In-Reply-To: <20230921105743.2611263-1-mripard@kernel.org>
+Hi Jon,
 
---------------tN9WGv9Sm3bW15FJqXQwj9oC
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+kernel test robot noticed the following build warnings:
 
-DQoNCkFtIDIxLjA5LjIzIHVtIDEyOjU3IHNjaHJpZWIgTWF4aW1lIFJpcGFyZDoNCj4gV2Un
-dmUgaGFkIGEgbnVtYmVyIG9mIHRpbWVzIHdoZW4gYSBwYXRjaCBzbGlwcGVkIHRocm91Z2gg
-YW5kIHdlIGNvdWxkbid0DQo+IHBpY2sgdGhlbSB1cCBlaXRoZXIgYmVjYXVzZSBvdXIgTUFJ
-TlRBSU5FUlMgZW50cnkgb25seSBjb3ZlcnMgdGhlDQo+IGZyYW1ld29yayBhbmQgdGh1cyB3
-ZSB3ZXJlbid0IENjJ2QuDQo+IA0KPiBMZXQncyB0YWtlIGFub3RoZXIgYXBwcm9hY2ggd2hl
-cmUgd2UgbWF0Y2ggZXZlcnl0aGluZywgYW5kIHJlbW92ZSBhbGwNCj4gdGhlIGRyaXZlcnMg
-dGhhdCBhcmUgbm90IG1haW50YWluZWQgdGhyb3VnaCBkcm0tbWlzYy4NCj4gDQo+IEFja2Vk
-LWJ5OiBKYW5pIE5pa3VsYSA8amFuaS5uaWt1bGFAaW50ZWwuY29tPg0KPiBTaWduZWQtb2Zm
-LWJ5OiBNYXhpbWUgUmlwYXJkIDxtcmlwYXJkQGtlcm5lbC5vcmc+DQoNCkFja2VkLWJ5OiBU
-aG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5Ac3VzZS5kZT4NCg0KPiANCj4gLS0tDQo+
-IA0KPiBDYzogQWxleCBEZXVjaGVyIDxhbGV4YW5kZXIuZGV1Y2hlckBhbWQuY29tPg0KPiBD
-YzogQ2hyaXN0aWFuIEvDtm5pZyA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQuY29tPg0KPiBDYzog
-IlBhbiwgWGluaHVpIiA8WGluaHVpLlBhbkBhbWQuY29tPg0KPiBDYzogUnVzc2VsbCBLaW5n
-IDxsaW51eEBhcm1saW51eC5vcmcudWs+DQo+IENjOiBMdWNhcyBTdGFjaCA8bC5zdGFjaEBw
-ZW5ndXRyb25peC5kZT4NCj4gQ2M6IENocmlzdGlhbiBHbWVpbmVyIDxjaHJpc3RpYW4uZ21l
-aW5lckBnbWFpbC5jb20+DQo+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+
-DQo+IENjOiBTZXVuZy1Xb28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPg0KPiBDYzog
-S3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4NCj4gQ2M6IEphbmkg
-TmlrdWxhIDxqYW5pLm5pa3VsYUBsaW51eC5pbnRlbC5jb20+DQo+IENjOiBKb29uYXMgTGFo
-dGluZW4gPGpvb25hcy5sYWh0aW5lbkBsaW51eC5pbnRlbC5jb20+DQo+IENjOiBSb2RyaWdv
-IFZpdmkgPHJvZHJpZ28udml2aUBpbnRlbC5jb20+DQo+IENjOiBUdnJ0a28gVXJzdWxpbiA8
-dHZydGtvLnVyc3VsaW5AbGludXguaW50ZWwuY29tPg0KPiBDYzogUGhpbGlwcCBaYWJlbCA8
-cC56YWJlbEBwZW5ndXRyb25peC5kZT4NCj4gQ2M6IExhdXJlbnRpdSBQYWxjdSA8bGF1cmVu
-dGl1LnBhbGN1QG9zcy5ueHAuY29tPg0KPiBDYzogQW5pdGhhIENocmlzYW50aHVzIDxhbml0
-aGEuY2hyaXNhbnRodXNAaW50ZWwuY29tPg0KPiBDYzogRWRtdW5kIERlYSA8ZWRtdW5kLmou
-ZGVhQGludGVsLmNvbT4NCj4gQ2M6IENodW4tS3VhbmcgSHUgPGNodW5rdWFuZy5odUBrZXJu
-ZWwub3JnPg0KPiBDYzogUm9iIENsYXJrIDxyb2JkY2xhcmtAZ21haWwuY29tPg0KPiBDYzog
-QWJoaW5hdiBLdW1hciA8cXVpY19hYmhpbmF2a0BxdWljaW5jLmNvbT4NCj4gQ2M6IERtaXRy
-eSBCYXJ5c2hrb3YgPGRtaXRyeS5iYXJ5c2hrb3ZAbGluYXJvLm9yZz4NCj4gQ2M6IFNlYW4g
-UGF1bCA8c2VhbkBwb29ybHkucnVuPg0KPiBDYzogTWFyaWpuIFN1aWp0ZW4gPG1hcmlqbi5z
-dWlqdGVuQHNvbWFpbmxpbmUub3JnPg0KPiBDYzogQmVuIFNrZWdncyA8YnNrZWdnc0ByZWRo
-YXQuY29tPg0KPiBDYzogS2Fyb2wgSGVyYnN0IDxraGVyYnN0QHJlZGhhdC5jb20+DQo+IENj
-OiBMeXVkZSBQYXVsIDxseXVkZUByZWRoYXQuY29tPg0KPiBDYzogTGF1cmVudCBQaW5jaGFy
-dCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPg0KPiBDYzogS2llcmFuIEJp
-bmdoYW0gPGtpZXJhbi5iaW5naGFtK3JlbmVzYXNAaWRlYXNvbmJvYXJkLmNvbT4NCj4gQ2M6
-IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+DQo+IENjOiBNaWtr
-byBQZXJ0dHVuZW4gPG1wZXJ0dHVuZW5AbnZpZGlhLmNvbT4NCj4gQ2M6IGRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcNCj4gQ2M6IGFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnDQo+IENjOiBldG5hdml2QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiBDYzogaW50ZWwt
-Z2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiBDYzogbm91dmVhdUBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcNCj4gQ2M6IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZw0KPiBD
-YzogbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnDQo+IA0KPiBDaGFuZ2VzIGZyb20gdjE6
-DQo+IC0gUmVtb3ZlIGluZ2VuaWMgYW5kIGdtYTUwMCBmcm9tIHRoZSBleGNsdWRlZCBsaXN0
-DQo+IC0tLQ0KPiAgIE1BSU5UQUlORVJTIHwgMjEgKysrKysrKysrKysrKysrKysrLS0tDQo+
-ICAgMSBmaWxlIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+
-IA0KPiBkaWZmIC0tZ2l0IGEvTUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVSUw0KPiBpbmRleCA5
-MGYxMzI4MWQyOTcuLjEwMTI0MDJkYWRhNSAxMDA2NDQNCj4gLS0tIGEvTUFJTlRBSU5FUlMN
-Cj4gKysrIGIvTUFJTlRBSU5FUlMNCj4gQEAgLTY4NjAsMTIgKzY4NjAsMjcgQEAgTToJVGhv
-bWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+DQo+ICAgUzoJTWFpbnRhaW5l
-ZA0KPiAgIFc6CWh0dHBzOi8vMDEub3JnL2xpbnV4Z3JhcGhpY3MvZ2Z4LWRvY3MvbWFpbnRh
-aW5lci10b29scy9kcm0tbWlzYy5odG1sDQo+ICAgVDoJZ2l0IGdpdDovL2Fub25naXQuZnJl
-ZWRlc2t0b3Aub3JnL2RybS9kcm0tbWlzYw0KPiArRjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvDQo+ICtGOglEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvZ3B1Lw0KPiAgIEY6CURvY3VtZW50YXRpb24vZ3B1Lw0KPiAtRjoJZHJpdmVy
-cy9ncHUvZHJtLyoNCj4gK0Y6CWRyaXZlcnMvZ3B1L2RybS8NCj4gICBGOglkcml2ZXJzL2dw
-dS92Z2EvDQo+IC1GOglpbmNsdWRlL2RybS9kcm0qDQo+ICtGOglpbmNsdWRlL2RybS9kcm0N
-Cj4gICBGOglpbmNsdWRlL2xpbnV4L3ZnYSoNCj4gLUY6CWluY2x1ZGUvdWFwaS9kcm0vZHJt
-Kg0KPiArRjoJaW5jbHVkZS91YXBpL2RybS8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS9hbWQv
-DQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vYXJtYWRhLw0KPiArWDoJZHJpdmVycy9ncHUvZHJt
-L2V0bmF2aXYvDQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vZXh5bm9zLw0KPiArWDoJZHJpdmVy
-cy9ncHUvZHJtL2k5MTUvDQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vaW14Lw0KPiArWDoJZHJp
-dmVycy9ncHUvZHJtL2ttYi8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay8NCj4g
-K1g6CWRyaXZlcnMvZ3B1L2RybS9tc20vDQo+ICtYOglkcml2ZXJzL2dwdS9kcm0vbm91dmVh
-dS8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS9yYWRlb24vDQo+ICtYOglkcml2ZXJzL2dwdS9k
-cm0vcmVuZXNhcy8NCj4gK1g6CWRyaXZlcnMvZ3B1L2RybS90ZWdyYS8NCj4gICANCj4gICBE
-Uk0gRFJJVkVSUyBGT1IgQUxMV0lOTkVSIEExMA0KPiAgIE06CU1heGltZSBSaXBhcmQgPG1y
-aXBhcmRAa2VybmVsLm9yZz4NCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3Mg
-RHJpdmVyIERldmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJI
-DQpGcmFua2Vuc3RyYXNzZSAxNDYsIDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KR0Y6IEl2
-byBUb3RldiwgQW5kcmV3IE15ZXJzLCBBbmRyZXcgTWNEb25hbGQsIEJvdWRpZW4gTW9lcm1h
-bg0KSFJCIDM2ODA5IChBRyBOdWVybmJlcmcpDQo=
+[auto build test WARNING on groeck-staging/hwmon-next]
+[also build test WARNING on robh/for-next linus/master v6.6-rc2 next-20230921]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---------------tN9WGv9Sm3bW15FJqXQwj9oC--
+url:    https://github.com/intel-lab-lkp/linux/commits/Jon-Hunter/dt-bindings-hwmon-ina3221-Add-ti-summation-disable/20230922-011119
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20230921130818.21247-4-jonathanh%40nvidia.com
+patch subject: [PATCH V3 3/4] hwmon: ina3221: Add support for channel summation disable
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230922/202309220454.kCi2xD48-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20230922/202309220454.kCi2xD48-lkp@intel.com/reproduce)
 
---------------dSxprB7Srgjr0Bp5MLVnm0oc
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202309220454.kCi2xD48-lkp@intel.com/
 
------BEGIN PGP SIGNATURE-----
+All warnings (new ones prefixed by >>):
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmUMJMwFAwAAAAAACgkQlh/E3EQov+BH
-2BAA0LTZSFZq+OJZiKl/+R8oepbkvZ/YaNFEU74lc3D+RIvllgrlIP9+j8eyt4SXHLeoX19RTPU8
-KB5HM0rSezTANhqPiNO5rb96Bzk/yFmrKXhrLJfRUcFBYrprGlmTcXrDrjtTNEGTB9CE50bcLjeR
-XcOuz7VRyuUbq2gtLv9SI7gWQIuMpfDaTaO10Xt034fad7wI+aFbvB7vWuC2cST8f2zDDpzR799l
-R5k6CHGFSad12dlO0DaXJ2f6jGmj2b5icRKLzYFYt+A3cuTJKKbATQ5Fkl6/3T3Oij2R/q1Y2qZc
-Ojgd5+b7nlC05oartvMGihHyGwHVLnJqbjXCzkJgah8eLZXaW10TnNsLt7EY+4FGI9DfRfQSmBvu
-Fap/MWzMqVdbhSEePpkA5nuPMN0KkzjrLg5yExrYCboj6/YJoVeaWn0qXjVlwJeb4CVahVnxQs0I
-1+rAZ8vpWqhM0GR/6s1kjpzB6SEv8J+NDArsvOC/0nwxxiT9T9KaLAfGRSWU0UFRmZ/ezO9CdHHA
-oD0zFJG4Mhs/yKLo9976evNdoi8EEmmMkyMdsqsyCzP98c+gOuTYrKGvz0lCNzujzk9aeHP8H5SZ
-8W2V7MFPOhaaJJgFdCDv9U+uwxKMOm1K9o2qDqQ1kjXcJhKkBoATfptOou431V2fazE1RMGssLcq
-A/s=
-=AdlW
------END PGP SIGNATURE-----
+>> drivers/hwmon/ina3221.c:109: warning: Function parameter or member 'summation_disable' not described in 'ina3221_input'
+>> drivers/hwmon/ina3221.c:134: warning: Function parameter or member 'debugfs' not described in 'ina3221_data'
+>> drivers/hwmon/ina3221.c:134: warning: Function parameter or member 'summation_channel_control' not described in 'ina3221_data'
 
---------------dSxprB7Srgjr0Bp5MLVnm0oc--
+
+vim +109 drivers/hwmon/ina3221.c
+
+7cb6dcff1956ec Andrew F. Davis 2016-06-10   97  
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01   98  /**
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01   99   * struct ina3221_input - channel input source specific information
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  100   * @label: label of channel input source
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  101   * @shunt_resistor: shunt resistor value of channel input source
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  102   * @disconnected: connection status of channel input source
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  103   */
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  104  struct ina3221_input {
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  105  	const char *label;
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  106  	int shunt_resistor;
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  107  	bool disconnected;
+ac0a832fd3617c Ninad Malwade   2023-09-21  108  	bool summation_disable;
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01 @109  };
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  110  
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  111  /**
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  112   * struct ina3221_data - device specific information
+323aeb0eb5d9a6 Nicolin Chen    2018-11-05  113   * @pm_dev: Device pointer for pm runtime
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  114   * @regmap: Register map of the device
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  115   * @fields: Register fields of the device
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  116   * @inputs: Array of channel input source specific structures
+87625b24986bc2 Nicolin Chen    2018-11-05  117   * @lock: mutex lock to serialize sysfs attribute accesses
+59d608e152e582 Nicolin Chen    2018-09-29  118   * @reg_config: Register value of INA3221_CONFIG
+2057bdfb7184e9 Nicolin Chen    2019-10-16  119   * @summation_shunt_resistor: equivalent shunt resistor value for summation
+43dece162de047 Nicolin Chen    2019-01-17  120   * @single_shot: running in single-shot operating mode
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  121   */
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  122  struct ina3221_data {
+323aeb0eb5d9a6 Nicolin Chen    2018-11-05  123  	struct device *pm_dev;
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  124  	struct regmap *regmap;
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  125  	struct regmap_field *fields[F_MAX_FIELDS];
+a9e9dd9c6de5d8 Nicolin Chen    2018-10-01  126  	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
+87625b24986bc2 Nicolin Chen    2018-11-05  127  	struct mutex lock;
+ac0a832fd3617c Ninad Malwade   2023-09-21  128  	struct dentry *debugfs;
+59d608e152e582 Nicolin Chen    2018-09-29  129  	u32 reg_config;
+2057bdfb7184e9 Nicolin Chen    2019-10-16  130  	int summation_shunt_resistor;
+ac0a832fd3617c Ninad Malwade   2023-09-21  131  	u32 summation_channel_control;
+43dece162de047 Nicolin Chen    2019-01-17  132  
+43dece162de047 Nicolin Chen    2019-01-17  133  	bool single_shot;
+7cb6dcff1956ec Andrew F. Davis 2016-06-10 @134  };
+7cb6dcff1956ec Andrew F. Davis 2016-06-10  135  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
