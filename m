@@ -2,153 +2,201 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C82BE7D0A0
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Sep 2023 17:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD5AE7D0A6
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Sep 2023 19:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbjIUR1o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:27:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55088 "EHLO
+        id S230180AbjIUTqu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Sep 2023 15:46:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbjIUR1J (ORCPT
+        with ESMTP id S230169AbjIUTqj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Sep 2023 13:27:09 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on20603.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e89::603])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C41119AC;
-        Thu, 21 Sep 2023 10:02:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UtqY1PC8AeKKFOxZ9nQRkHk6R3pCZf1WQAsQaD/3SxsGuKnKQfrZ11FboZkvCjhw0HQWI9xkZhlGnpi3jlXoJiTgGdkli4DMsZq4c+fg0d3psGaS9+v1kqHpgJebNbt8S3kw5jXO+lysBNKMBrop2gV6RwrGmRVFUr6ZViLGVhCMyiVJhUgVf/sjwU0UNm00cW2K1yS/fghTLT0gFqO1Bq9AMjWJumilr16mUlSJIFm6t3NSJrP+jNBAWRpMGK2OpQwLNkISEmVuNjzSvO19FjWqX2Z4LiVeE/gM+nFXX15KECzY7tjGMEsPZkjczuhHsSfmnYFLMMpkE0kloffJgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wc0r/elJ4ch61SNrDZj4Q+lGDrvlTpYAGek6Kp7Mowo=;
- b=cu5V7I632UY+Pmdg1k8OBMzrXMpI1s75A0FCim6lBuoPE/06mMg/lqbAkZ6vimBOEvwLeOhiYj8ZbRXBeqidJevL44BAoVFxFlepKghtMXejfZGeTxoFpaNcVprUaTaeITjOczKZ/wVJPacJDE5EHHjgZsWlxo//TGZYqDD40JV/Cr/vf7jALSalSzkjh/wOY2CO9ucZsyJPjiwFGdPUSdxbUMQF48TLtOYCZxWwPzvA9sXY4uvfFYmnNxJeLVbezR9GpWPQ4gg+/C4Ls9aM/mZwsmD66Y5jiZGo2Ct1gczYEO3HA0UFpDi3fXez+qU2T5XQGU7cBRaof+H8Qs64Fw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=suse.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wc0r/elJ4ch61SNrDZj4Q+lGDrvlTpYAGek6Kp7Mowo=;
- b=KiW+9CCiov27xOMZomdh/gwJRtFK66nMRD61lzgKyLXFrlFVOVtHfLrjWPkA+aovDqk4m8/w6visxBHxokTusBzmoz8FXzWIKlprDEAAcOOdfj34Nr2aUTeA6gfAX7OcIcb1Fgnw2KH9bvyVLFIV3OH4hoRr9Jqp6WIO4i33H01b+nl3cJhv6dx0mu0dsFR5hdvjrCOkIlahK2VPVAe2CxVd5ssuqbMPlEsvxcRZrQcc0z1ddWgxe271Ev94DeoC4ng+6DQ3AFKhWSSPdS+q8u3fWrvWtgzq8lFysDw4mbTPn7qy0L30PNUBIKjKMKLHSW1dVLrp1DRMO4cZdvY6TQ==
-Received: from PR3P251CA0021.EURP251.PROD.OUTLOOK.COM (2603:10a6:102:b5::20)
- by CY8PR12MB7415.namprd12.prod.outlook.com (2603:10b6:930:5d::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.27; Thu, 21 Sep
- 2023 13:12:07 +0000
-Received: from SN1PEPF000252A4.namprd05.prod.outlook.com
- (2603:10a6:102:b5:cafe::c6) by PR3P251CA0021.outlook.office365.com
- (2603:10a6:102:b5::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.31 via Frontend
- Transport; Thu, 21 Sep 2023 13:12:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SN1PEPF000252A4.mail.protection.outlook.com (10.167.242.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6792.20 via Frontend Transport; Thu, 21 Sep 2023 13:12:05 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 21 Sep
- 2023 06:11:33 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 21 Sep
- 2023 06:11:32 -0700
-Received: from moonraker.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.986.41 via Frontend
- Transport; Thu, 21 Sep 2023 06:11:31 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-hwmon@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3 0/4] hwmon: ina3221: Add selective summation support
-Date:   Thu, 21 Sep 2023 14:08:14 +0100
-Message-ID: <20230921130818.21247-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 21 Sep 2023 15:46:39 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625B4D8D75
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Sep 2023 12:28:15 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-690bfd4f3ebso1139831b3a.3
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Sep 2023 12:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1695324495; x=1695929295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TaaYKX/WzN2yAJiXuwCzXo10Y+Z2eYCI0rB7JbtaKbk=;
+        b=jtVmpnRIDN8TiFRUC7vxoAkApDBnuY+DFs1EZtRPnVdSQbWt0X1XuHm9VtOmjLG8zK
+         /E/Qr3pUtZLN6BJO0FVKBBCD5wmT1ceRfFbMQfDS98RknkOQWo7LmuO93spe61s0SKHs
+         K5IlxdqepbOYRS+AnEFxfEPdwVym6Kr4qrzHY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695324495; x=1695929295;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TaaYKX/WzN2yAJiXuwCzXo10Y+Z2eYCI0rB7JbtaKbk=;
+        b=THTR8tGrNW/lN0y6FICHjhnW8yf8pl2phpWiwF0hrvDSW1eyGs7M+usFA++/sv4Inx
+         phjs/vL2wVGBKKFHdiV6SejjQ4EojaCtHfooajmlTcmU2F1XZmWJ6qU7e4fqJyGm8cVY
+         Ssuswve+UUHtdjFIbKNS7uJc5O3bpDzLzyclSa04qywZMNADjKK/0UCbEaeziNqeQijp
+         Q78qfm/pWgpG6+OpsKsE2TslCkdw9eNRyZ0/S6waMs8qz38uMnuT7IGEEWGzyW0Ef0S2
+         ORCQlD2tFWLZTriUblyANIjGE092OC9vZMtPQ+shPtXQu/xAMWbpW6cd5CzgyjJ5yw36
+         DNlQ==
+X-Gm-Message-State: AOJu0YzvqR0o0hlTS+2w2kfYpzi/WJbWLp4qhMJbWlawU2WdEgsx5CR3
+        UkwFRwLxpfLx8xdSrjO8QaF2tg==
+X-Google-Smtp-Source: AGHT+IEMW+st7pK1ERCOwxwoalcSvIpW84hrr+4hW9zDszK+PkTuQiJ5+HlDQX/MBJ7tT52BBQ4d4g==
+X-Received: by 2002:a05:6a21:4985:b0:151:991c:84b6 with SMTP id ax5-20020a056a21498500b00151991c84b6mr6676548pzc.59.1695324494675;
+        Thu, 21 Sep 2023 12:28:14 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:e6ed:6d49:f262:8041])
+        by smtp.gmail.com with ESMTPSA id w8-20020a1709029a8800b001b9f032bb3dsm1892875plp.3.2023.09.21.12.28.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Sep 2023 12:28:13 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Bokun.Zhang@amd.com, Hawking.Zhang@amd.com, James.Zhu@amd.com,
+        Sascha Hauer <s.hauer@pengutronix.de>, Victor.Zhao@amd.com,
+        Xinhui.Pan@amd.com, abrodkin@synopsys.com, airlied@gmail.com,
+        alexander.deucher@amd.com, alim.akhtar@samsung.com,
+        amd-gfx@lists.freedesktop.org,
+        angelogioacchino.delregno@collabora.com,
+        anitha.chrisanthus@intel.com, biju.das.jz@bp.renesas.com,
+        bskeggs@redhat.com, christian.koenig@amd.com,
+        chunkuang.hu@kernel.org, daniel@ffwll.ch, edmund.j.dea@intel.com,
+        felix.kuehling@amd.com, festevam@gmail.com,
+        geert+renesas@glider.be, inki.dae@samsung.com,
+        jim.cromie@gmail.com, jonathanh@nvidia.com, kernel@pengutronix.de,
+        kherbst@redhat.com, kieran.bingham+renesas@ideasonboard.com,
+        krzysztof.kozlowski@linaro.org, kyungmin.park@samsung.com,
+        l.stach@pengutronix.de, laurent.pinchart@ideasonboard.com,
+        laurentiu.palcu@oss.nxp.com, le.ma@amd.com, lijo.lazar@amd.com,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        lyude@redhat.com, maarten.lankhorst@linux.intel.com,
+        mario.limonciello@amd.com, matthias.bgg@gmail.com,
+        mdaenzer@redhat.com, mperttunen@nvidia.com,
+        nouveau@lists.freedesktop.org, orsonzhai@gmail.com,
+        p.zabel@pengutronix.de, patrik.r.jakobsson@gmail.com,
+        paul@crapouillou.net, robh@kernel.org, sam@ravnborg.org,
+        shawnguo@kernel.org, shiwu.zhang@amd.com,
+        srinivasan.shanmugam@amd.com, steven.price@arm.com,
+        sw0312.kim@samsung.com, thierry.reding@gmail.com,
+        tzimmermann@suse.de, zhang.lyra@gmail.com
+Subject: [RFT PATCH v2 00/12] drm: call drm_atomic_helper_shutdown() at the right times
+Date:   Thu, 21 Sep 2023 12:26:43 -0700
+Message-ID: <20230921192749.1542462-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.42.0.515.g380fc7ccd1-goog
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A4:EE_|CY8PR12MB7415:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebb4948f-82cf-4b44-39be-08dbbaa45a91
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7iGxtZzsqbBZTO+6Kjf0lKVMSRZ2qQygZk2dYrQBexK7xCHw+x8BU60BTzqh4XvUXiSgMwVD6u5cO2y1yR7n7wLOZhzCfKGjA0KCxnYu0K3BEtqQXVsjRI2Ci6ddZm/PTZoSBbyIDhOIZGgcHdKbzOevAI5Vu8ieqOH1Lz7e+PpMW0dOvuvJWAHOCyLM0rBIzXSsm0wkZUTFSj5trQSRgwqdxFdy72I4vNl1YnEKl4KJFonizfn7BnmToiYdw/gHVw1Fhk6g4TkNmKpzjM+faDIjGug5FyCryXNnxBW6f92RkqY005NB64dISH8Yb0iZatdWNtC2qiQTyP08bXY3iMl+yCo6tkGeCpzTDWLJn5mXRkWLxAxTMCGlQOty8HAuiangSmyLD3RGTb/qiz4q/JCtJQKtqlenlD2o5V4aG1UZ2EGCfVrLYdq3sZm9q8r/xzYzOEHroempi97e3qur9Vz+CxOliVeR0QRKtxl+tpMVhY0aBNXeWVo7wMigQU11OkBFIlyyQhwqSPJhzaTmEBYyn2qmATGCgNU6YNJ+ssnPoSgDAuZBxnjVwT6bbcpxwiJjdmI9V2TkSgki0wK3zhm91M7zhzynKztAI3gFu9KxDi99JdNFxuV+c/VOCSlCZt1afXb6P8h3DH7EuqGhsotZeAB3HJjhzoFoLKHm3dqHOxB8adljBJm9/oPIw4EqG31tz9bwiiD1vjYHMz3Nu6HqpxxHoX1wpabuHX5KGHGLXizYYx8B4tY44LCV1aO6
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(136003)(346002)(39860400002)(376002)(82310400011)(186009)(451199024)(1800799009)(46966006)(40470700004)(36840700001)(54906003)(316002)(70586007)(86362001)(6666004)(110136005)(7636003)(2906002)(82740400003)(356005)(41300700001)(36756003)(36860700001)(5660300002)(47076005)(478600001)(70206006)(7696005)(40460700003)(4326008)(1076003)(8936002)(8676002)(107886003)(83380400001)(426003)(26005)(2616005)(336012)(40480700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2023 13:12:05.8520
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebb4948f-82cf-4b44-39be-08dbbaa45a91
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF000252A4.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7415
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The current INA3221 driver always sums the shunt voltage for all enabled
-channels regardless of the shunt-resistor used for each channel. Summing
-the shunt-voltage for channels is only meaningful if the shunt resistor
-is the same for each channel. This series adds device-tree support to
-allow which channels are summed in device-tree.
 
-Changes since V2:
-- Added note to binding-doc to indicate that input channels must be
-  explicitly disabled.
-- Corrected ordering of properties in the binding-doc
-- Updated license for the binding-doc to be dual licensed.
-- Changed newly added property from 'summation-bypass' to
-  summation-disable'.
-- Documented type for the new 'summation-disable' property.
-- Corrected spelling and comments as per the feedback received.
-- Used debugfs instead of sysfs for exposing the 'summation-disable'
-  status for each input channel.
-- Populated missing instances for the ina3221 device for Tegra234
-  boards.
-- Populated ina219 device for the NVIDIA IGX board (not strictly
-  related to this series but related to populating all
-  power-sensors for Tegra234 boards)
+This patch series came about after a _long_ discussion between me and
+Maxime Ripard in response to a different patch I sent out [1]. As part
+of that discussion, we realized that it would be good if DRM drivers
+consistently called drm_atomic_helper_shutdown() properly at shutdown
+and driver remove time as it's documented that they should do. The
+eventual goal of this would be to enable removing some hacky code from
+panel drivers where they had to hook into shutdown themselves because
+the DRM driver wasn't calling them.
 
-Changes since V1:
-- Added yaml conversion patch for binding-doc
-- Added binding-doc documentation patch for new property
-- Added patch to populate ina3221 devices for Tegra234.
+It turns out that quite a lot of drivers seemed to be missing
+drm_atomic_helper_shutdown() in one or both places that it was
+supposed to be. This patch series attempts to fix all the drivers that
+I was able to identify.
 
-Jon Hunter (2):
-  dt-bindings: hwmon: ina3221: Add ti,summation-disable
-  arm64: tegra: Add power-sensors for Tegra234 boards
+NOTE: fixing this wasn't exactly cookie cutter. Each driver has its
+own unique way of setting itself up and tearing itself down. Some
+drivers also use the component model, which adds extra fun. I've made
+my best guess at solving this and I've run a bunch of compile tests
+(specifically, allmodconfig for amd64, arm64, and powerpc). That being
+said, these code changes are not totally trivial and I've done zero
+real testing on them. Making these patches was also a little mind
+numbing and I'm certain my eyes glazed over at several points when
+writing them. What I'm trying to say is to please double-check that I
+didn't do anything too silly, like cast your driver's drvdata to the
+wrong type. Even better, test these patches!
 
-Ninad Malwade (2):
-  dt-bindings: hwmon: ina3221: Convert to json-schema
-  hwmon: ina3221: Add support for channel summation disable
+I've labeled this patch series as RFT (request for testing) to help
+call attention to the fact that I didn't personally test any of these
+patches.
 
- .../devicetree/bindings/hwmon/ina3221.txt     |  54 --------
- .../devicetree/bindings/hwmon/ti,ina3221.yaml | 117 ++++++++++++++++++
- .../boot/dts/nvidia/tegra234-p3701-0008.dtsi  |  33 +++++
- .../arm64/boot/dts/nvidia/tegra234-p3701.dtsi |  53 ++++++++
- .../arm64/boot/dts/nvidia/tegra234-p3767.dtsi |  29 +++++
- drivers/hwmon/ina3221.c                       |  30 ++++-
- 6 files changed, 259 insertions(+), 57 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.txt
- create mode 100644 Documentation/devicetree/bindings/hwmon/ti,ina3221.yaml
+I'd like to call out a few drivers that I _didn't_ fix in this series
+and why. If any of these drivers should be fixed then please yell.
+- DRM drivers backed by usb_driver (like gud, gm12u320, udl): I didn't
+  add the call to drm_atomic_helper_shutdown() at shutdown time
+  because there's no ".shutdown" callback for them USB drivers. Given
+  that USB is hotpluggable, I'm assuming that they are robust against
+  this and the special shutdown callback isn't needed.
+- ofdrm and simpledrm: These didn't have drm_atomic_helper_shutdown()
+  in either shutdown or remove, but I didn't add it. I think that's OK
+  since they're sorta special and not really directly controlling
+  hardware power sequencing.
+- virtio, vkms, vmwgfx, xen: I believe these are all virtual (thus
+  they wouldn't directly drive a panel) and adding the shutdown
+  didn't look straightforward, so I skipped them.
+
+I've let each patch in the series get CCed straight from
+get_maintainer. That means not everyone will have received every patch
+but everyone should be on the cover letter. I know some people dislike
+this but when touching this many drivers there's not much
+choice. dri-devel and lkml have been CCed and lore/lei exist, so
+hopefully that's enough for folks. I'm happy to add people to the
+whole series for future posts.
+
+NOTE: I landed everything I could from v1 of the patch series [2] [3]
+to drm-misc. This v2 is everyone that is still left. If you'd like me
+to land one of the patches here to drm-misc for you, please say
+so. Otherwise I will assume maintainers will pick patches for their
+particular driver and land them. There are no dependencies.
+
+[1] https://lore.kernel.org/lkml/20230804140605.RFC.4.I930069a32baab6faf46d6b234f89613b5cec0f14@changeid
+[2] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium.org
+[3] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
+
+Changes in v2:
+- Rebased and resolved conflicts.
+
+Douglas Anderson (12):
+  drm/imx/dcss: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/kmb: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/mediatek: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/nouveau: Call drm_atomic_helper_shutdown() or equiv at shutdown
+    time
+  drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/arcpgu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/amdgpu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/sprd: Call drm_atomic_helper_shutdown() at remove time
+  drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
+  drm/gma500: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/radeon: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/renesas/shmobile: Call drm_helper_force_disable_all() at
+    shutdown/remove time
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h              |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       | 10 ++++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c          |  2 ++
+ drivers/gpu/drm/exynos/exynos_drm_drv.c          | 11 +++++++++++
+ drivers/gpu/drm/gma500/psb_drv.c                 |  8 ++++++++
+ drivers/gpu/drm/imx/dcss/dcss-drv.c              |  8 ++++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.c              |  7 +++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.h              |  1 +
+ drivers/gpu/drm/kmb/kmb_drv.c                    |  6 ++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c           |  9 +++++++++
+ drivers/gpu/drm/nouveau/nouveau_display.c        |  9 +++++++++
+ drivers/gpu/drm/nouveau/nouveau_display.h        |  1 +
+ drivers/gpu/drm/nouveau/nouveau_drm.c            | 13 +++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_drv.h            |  1 +
+ drivers/gpu/drm/nouveau/nouveau_platform.c       |  6 ++++++
+ drivers/gpu/drm/radeon/radeon_drv.c              |  7 ++++++-
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c | 10 ++++++++++
+ drivers/gpu/drm/sprd/sprd_drm.c                  |  4 +++-
+ drivers/gpu/drm/tegra/drm.c                      |  6 ++++++
+ drivers/gpu/drm/tiny/arcpgu.c                    |  6 ++++++
+ 20 files changed, 124 insertions(+), 2 deletions(-)
 
 -- 
-2.34.1
+2.42.0.515.g380fc7ccd1-goog
 
