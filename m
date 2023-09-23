@@ -2,76 +2,174 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3909CCE7A88
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Sep 2023 21:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 207F7CE7A88
+	for <linux-tegra@archiver.kernel.org>; Sat, 23 Sep 2023 19:49:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbjIVVGk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Sep 2023 17:06:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53080 "EHLO
+        id S229592AbjIWTte (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 23 Sep 2023 15:49:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjIVVGj (ORCPT
+        with ESMTP id S229458AbjIWTte (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Sep 2023 17:06:39 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E18AC;
-        Fri, 22 Sep 2023 14:06:34 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E40C433C8;
-        Fri, 22 Sep 2023 21:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695416793;
-        bh=oeSNGT5vCeLS0tK5r0KuFqwwS5mmgSj+Xv6+izXXJKY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eLt6MevgEBW3Z4+5Z8SmfiOWQovihSSaExBMeCLCIYBRWnlFSXQ5ShsVRjWDnK2hg
-         KuXc1TrMJAuofUqH7yW/NtIsN1z7C1m9SThRO3JHYN+9QBoITy5V+wFxvYLRsI2bDy
-         A8E+Lc4xe99m0HAYGVfrIvB71Ug+EiTj5j75YSX4RKFvU5p4iqnADSm6+2Sgek6tf3
-         e0ibQy0x4lUEuh7S7pIqA9jPgmwXL37y9cMSSpwkJHugxoP+MXQLsiabF87rsn0Lgk
-         z9qhVH/tM7x3hTcocBZso/tSXc53NLZ3/x5nR7iEcsOw4E0NTLpIHLEa1G7bZVgHmy
-         m0HonfAwQBSKQ==
-Received: (nullmailer pid 3599452 invoked by uid 1000);
-        Fri, 22 Sep 2023 21:06:31 -0000
-Date:   Fri, 22 Sep 2023 16:06:31 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Ninad Malwade <nmalwade@nvidia.com>
-Subject: Re: [PATCH V3 2/4] dt-bindings: hwmon: ina3221: Add
- ti,summation-disable
-Message-ID: <20230922210631.GA3569506-robh@kernel.org>
-References: <20230921130818.21247-1-jonathanh@nvidia.com>
- <20230921130818.21247-3-jonathanh@nvidia.com>
+        Sat, 23 Sep 2023 15:49:34 -0400
+Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B455194;
+        Sat, 23 Sep 2023 12:49:27 -0700 (PDT)
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RtKK032ZRz8x;
+        Sat, 23 Sep 2023 21:41:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1695498116; bh=gJMERvxnLVOKYH/aIEsRWMYnuo69cEYR+2/lalyD1xE=;
+        h=Date:In-Reply-To:References:Subject:From:To:Cc:From;
+        b=MJuNiuzH8doJjg97Ydt1b6Jds+XcAFNp5S5+Al2adhMcTFVkB9yZrs8cokY211KmR
+         5GzIKsM8OJw0oJDHgRtdPQoaqheKXNxpQSF++hdh6rNNBTPXYdKQb1rzIC66Kjlv4+
+         foEaT5YOo10U6dP55bHhPwHJga5fu2aatPNgH4u/8AnaAaRu8k4e2x/m1nw/n4b8F7
+         QpaiphDrn0J16aMzFyzzNNPt42xsPBS7FyjYmXiZ4r+Z4FLbxW2ZCzu3XNPeA/9QTv
+         eejy122ovLyxIB1rRVnh5mfsdgb8w0y9DeWndZ39V6UJzFtLNhI3ESnPjDtnai97GK
+         ZH3Bf8hMA7gWg==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.8 at mail
+Date:   Sat, 23 Sep 2023 21:41:56 +0200
+Message-Id: <c45f534025322b9613d4955de4cc6763a57f518d.1695497666.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <cover.1695497666.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1695497666.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 2/3] usb: chipidea: Simplify Tegra DMA alignment code
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230921130818.21247-3-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+To:     Peter Chen <peter.chen@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 02:08:16PM +0100, Jon Hunter wrote:
-> The INA3221 has a critical alert pin that can be controlled by the
-> summation control function. This function adds the single
-> shunt-voltage conversions for the desired channels in order to
-> compare the combined sum to the programmed limit. The Shunt-Voltage
-> Sum Limit register contains the programmed value that is compared
-> to the value in the Shunt-Voltage Sum register in order to
-> determine if the total summed limit is exceeded. If the
-> shunt-voltage sum limit value is exceeded, the critical alert pin
-> pulls low.
-> 
-> For the summation limit to have a meaningful value, it is necessary
-> to use the same shunt-resistor value on all included channels. Add a new
-> vendor specific property, 'ti,summation-disable', to allow specific
-> channels to be excluded from the summation control function if the shunt
-> resistor is different to other channels or the channel should not be
-> considered for triggering the critical alert pin.
+The USB host on Tegra3 works with DWORD alignment. Previous code tried
+to align the buffer, but it did align the wrapper struct instead, so
+the buffer was at a constant offset of 8 bytes (two pointers) from
+assumed alignment.  Since kmalloc() guarantees at least 8-byte
+alignment, the alignment-extending is removed.
 
-You are adding this feature to the driver, but requiring a new property 
-to disable it. So what happens with an existing user (old DT) and a 
-kernel with the new feature?
+Fixes: fc53d5279094 ("usb: chipidea: tegra: Support host mode")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ drivers/usb/chipidea/host.c | 45 +++++++++++++++----------------------
+ 1 file changed, 18 insertions(+), 27 deletions(-)
 
-Rob
+diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+index abddd39d1ff1..0cce19208370 100644
+--- a/drivers/usb/chipidea/host.c
++++ b/drivers/usb/chipidea/host.c
+@@ -30,8 +30,7 @@ struct ehci_ci_priv {
+ };
+ 
+ struct ci_hdrc_dma_aligned_buffer {
+-	void *kmalloc_ptr;
+-	void *old_xfer_buffer;
++	void *original_buffer;
+ 	u8 data[];
+ };
+ 
+@@ -380,60 +379,52 @@ static int ci_ehci_bus_suspend(struct usb_hcd *hcd)
+ 	return 0;
+ }
+ 
+-static void ci_hdrc_free_dma_aligned_buffer(struct urb *urb)
++static void ci_hdrc_free_dma_aligned_buffer(struct urb *urb, bool copy_back)
+ {
+ 	struct ci_hdrc_dma_aligned_buffer *temp;
+-	size_t length;
+ 
+ 	if (!(urb->transfer_flags & URB_ALIGNED_TEMP_BUFFER))
+ 		return;
++	urb->transfer_flags &= ~URB_ALIGNED_TEMP_BUFFER;
+ 
+ 	temp = container_of(urb->transfer_buffer,
+ 			    struct ci_hdrc_dma_aligned_buffer, data);
++	urb->transfer_buffer = temp->original_buffer;
++
++	if (copy_back && usb_urb_dir_in(urb)) {
++		size_t length;
+ 
+-	if (usb_urb_dir_in(urb)) {
+ 		if (usb_pipeisoc(urb->pipe))
+ 			length = urb->transfer_buffer_length;
+ 		else
+ 			length = urb->actual_length;
+ 
+-		memcpy(temp->old_xfer_buffer, temp->data, length);
++		memcpy(temp->original_buffer, temp->data, length);
+ 	}
+-	urb->transfer_buffer = temp->old_xfer_buffer;
+-	kfree(temp->kmalloc_ptr);
+ 
+-	urb->transfer_flags &= ~URB_ALIGNED_TEMP_BUFFER;
++	kfree(temp);
+ }
+ 
+ static int ci_hdrc_alloc_dma_aligned_buffer(struct urb *urb, gfp_t mem_flags)
+ {
+-	struct ci_hdrc_dma_aligned_buffer *temp, *kmalloc_ptr;
+-	const unsigned int ci_hdrc_usb_dma_align = 32;
+-	size_t kmalloc_size;
++	struct ci_hdrc_dma_aligned_buffer *temp;
+ 
+ 	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0)
+ 		return 0;
+-	if (!((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)) && !(urb->transfer_buffer_length & 3))
++	if (IS_ALIGNED((uintptr_t)urb->transfer_buffer, 4)
++	    && IS_ALIGNED(urb->transfer_buffer_length, 4))
+ 		return 0;
+ 
+-	/* Allocate a buffer with enough padding for alignment */
+-	kmalloc_size = ALIGN(urb->transfer_buffer_length, 4) +
+-		       sizeof(struct ci_hdrc_dma_aligned_buffer) +
+-		       ci_hdrc_usb_dma_align - 1;
+-
+-	kmalloc_ptr = kmalloc(kmalloc_size, mem_flags);
+-	if (!kmalloc_ptr)
++	temp = kmalloc(sizeof(*temp) + ALIGN(urb->transfer_buffer_length, 4), mem_flags);
++	if (!temp)
+ 		return -ENOMEM;
+ 
+-	/* Position our struct dma_aligned_buffer such that data is aligned */
+-	temp = PTR_ALIGN(kmalloc_ptr + 1, ci_hdrc_usb_dma_align) - 1;
+-	temp->kmalloc_ptr = kmalloc_ptr;
+-	temp->old_xfer_buffer = urb->transfer_buffer;
+ 	if (usb_urb_dir_out(urb))
+ 		memcpy(temp->data, urb->transfer_buffer,
+ 		       urb->transfer_buffer_length);
++
++	temp->original_buffer = urb->transfer_buffer;
+ 	urb->transfer_buffer = temp->data;
+-
+ 	urb->transfer_flags |= URB_ALIGNED_TEMP_BUFFER;
+ 
+ 	return 0;
+@@ -450,7 +441,7 @@ static int ci_hdrc_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
+ 
+ 	ret = usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
+ 	if (ret)
+-		ci_hdrc_free_dma_aligned_buffer(urb);
++		ci_hdrc_free_dma_aligned_buffer(urb, false);
+ 
+ 	return ret;
+ }
+@@ -458,7 +449,7 @@ static int ci_hdrc_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
+ static void ci_hdrc_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
+ {
+ 	usb_hcd_unmap_urb_for_dma(hcd, urb);
+-	ci_hdrc_free_dma_aligned_buffer(urb);
++	ci_hdrc_free_dma_aligned_buffer(urb, true);
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-- 
+2.39.2
+
