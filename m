@@ -2,115 +2,137 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56536CE7AA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Sep 2023 16:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0342CE79A5
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Sep 2023 21:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbjIYQbB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Sep 2023 12:31:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57330 "EHLO
+        id S229523AbjIYV0b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Sep 2023 17:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbjIYQbB (ORCPT
+        with ESMTP id S229513AbjIYV0a (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Sep 2023 12:31:01 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EBF3BE;
-        Mon, 25 Sep 2023 09:30:53 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D4A7C0007;
-        Mon, 25 Sep 2023 16:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695659452;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RQ/JBsKhQfvBa0JgvkSbVZg5pomj/M1197UlLRWvkpc=;
-        b=Cnp9yQ8kw8KZx+WPmqR9wTQzYRJBkOQd6iu+uB/RJtKhpcGYZZPJhJ9cywYNQYtoiX9Ztn
-        UlKCdOMHC4jwgQNTKsqeWHDa+z53q9w//AvFJqvUZl9EWhruViK9FmDQ/hBDTlQ/0XEiaS
-        s/vGHvCab+q0zIyW1ss0HhfaMunwrUnN5AXXyPFUmZ5rggImetWY1/W0rfkTb/6v2q0o4l
-        f2rfCARRSMthwfAXNN4F8xJ8SFMmFICbhOE26lkgmmQw9mbZtX6tQ2wP4TOmoW++3TZZCZ
-        7vbz1ecCTvAdF3jMJAiW8rMVElS+GGIz1sLNQOnMzu/8AkJ2bDQeciRnel7rwg==
-Date:   Mon, 25 Sep 2023 18:30:49 +0200
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     <linus.walleij@linaro.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-gpio@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] pinctrl: tegra: Add support to display pin function
-Message-ID: <20230925183049.10a40546@booty>
-In-Reply-To: <20230714113547.15384-1-pshete@nvidia.com>
-References: <0cf720bf-ae4b-5780-bda4-5c9bbb2d1d67@nvidia.com>
-        <20230714113547.15384-1-pshete@nvidia.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Mon, 25 Sep 2023 17:26:30 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37879109;
+        Mon, 25 Sep 2023 14:26:24 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 955D5C433C7;
+        Mon, 25 Sep 2023 21:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695677183;
+        bh=1PB/pYP1liA58pkSr90IN5P1R7dQ0eEBwcs0MZq2wKI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aWOVKf74D/+9i6FAzCEu4Ko/aqpoIRb5K2HZCEc+9dbhXlMfAWCAxvkvWdcvCCUvt
+         okgUSr6sC1B9XgQ6HMREHhFNnNhxaZLdcWV2EtlMBswYnUMK1jjSGAev2l8hi5tW5q
+         ApUuxPb+2NSqs2Eg7Ky7yQG6NbDu4/Tnhb40QeBZxxkEhsq2dbibhctiqYgv6LmbX4
+         7mUqnZSOC/TgIR6TVollDXugCNm0fa1Qw2rkEf1UuEkv+xBpIAXG7dQLwWf7WH3lUe
+         f4oBOqFFBv7CYZBtjbNCPte72Nm0Wk/LE+Ri9aHyYL8I4LRB0O2Nb5DxhJIpkmfgSR
+         rIW2a/dVvX0Iw==
+Received: (nullmailer pid 1974640 invoked by uid 1000);
+        Mon, 25 Sep 2023 21:26:18 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Mark Brown <broonie@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chris Morgan <macromorgan@hotmail.com>
+Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH] spi: dt-bindings: Make "additionalProperties: true" explicit
+Date:   Mon, 25 Sep 2023 16:26:00 -0500
+Message-Id: <20230925212614.1974243-1-robh@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Prathamesh Shete,
+Make it explicit that child nodes have additional properties and the
+child node schema is not complete. The complete schemas are applied
+separately based the compatible strings.
 
-On Fri, 14 Jul 2023 17:05:47 +0530
-Prathamesh Shete <pshete@nvidia.com> wrote:
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml        | 2 ++
+ .../devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml        | 2 ++
+ Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 1 +
+ Documentation/devicetree/bindings/spi/rockchip-sfc.yaml         | 2 ++
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml      | 2 ++
+ 5 files changed, 9 insertions(+)
 
-> The current function for a given pin is not displayed via the debugfs.
-> Add support to display the current function that is set for each pin.
-> 
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-While testing a Tegra20-based custom board I found a regression which
-according to my bisecting appears starting with this patch (commit
-d1cd5b51bc91 upstream).
-
-The symptom is that i2c3 is not working anymore, the I2C lines being
-always high. No other known issues at the moment.
-
-The board is built around an Avionic Design Tamonten SOM:
-arch/arm/boot/dts/nvidia/tegra20-tamonten.dtsi, which has in the
-&state_default node:
-
-    dtf {
-        nvidia,pins = "dtf";
-        nvidia,function = "i2c3";
-    };
-
-But on top of that the board dts has:
+diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
+index a6f34bdd1d3c..e1ab3f523ad6 100644
+--- a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
++++ b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
+@@ -46,6 +46,8 @@ properties:
+ patternProperties:
+   "^.*@[0-9a-f]+":
+     type: object
++    additionalProperties: true
++
+     properties:
+       reg:
+         items:
+diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
+index 28b8ace63044..3b47b68b92cb 100644
+--- a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
++++ b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
+@@ -68,6 +68,8 @@ properties:
+ patternProperties:
+   "^.*@[0-9a-f]+":
+     type: object
++    additionalProperties: true
++
+     properties:
+       reg:
+         items:
+diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+index 9ae1611175f2..48e97e240265 100644
+--- a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
++++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+@@ -50,6 +50,7 @@ properties:
+ patternProperties:
+   "@[0-9a-f]+$":
+     type: object
++    additionalProperties: true
  
-&state_default {
-       dtf {
-               nvidia,pins = "dtf";
-               nvidia,function = "i2c3";
-               nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-               nvidia,tristate = <TEGRA_PIN_DISABLE>;
-       };
-};
-
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 4547cf66d03b..cb1d67239cd0 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -96,6 +96,7 @@ static const struct cfg_param {
->  	{"nvidia,slew-rate-falling",	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING},
->  	{"nvidia,slew-rate-rising",	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING},
->  	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
-> +	{"nvidia,function",		TEGRA_PINCONF_PARAM_FUNCTION},
-
-FYI, I reduced your patch to only this line plus the one in the
-pinctrl-tegra.h and the problem appears as well.
-
-This is all the info I have at the moment. Can you provide more info on
-what could be going on or how to investigate?
-
-I am available to share more info as needed.
-
-Best regards,
-Luca
-
+     properties:
+       spi-rx-bus-width:
+diff --git a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+index 339fb39529f3..ac1503de0478 100644
+--- a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
++++ b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+@@ -47,6 +47,8 @@ properties:
+ patternProperties:
+   "^flash@[0-3]$":
+     type: object
++    additionalProperties: true
++
+     properties:
+       reg:
+         minimum: 0
+diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+index a47cb144b09f..6348a387a21c 100644
+--- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
++++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
+@@ -160,6 +160,8 @@ properties:
+ patternProperties:
+   "^.*@[0-9a-f]+$":
+     type: object
++    additionalProperties: true
++
+     properties:
+       reg:
+         minimum: 0
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.40.1
+
