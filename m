@@ -2,136 +2,116 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEE7CE7A8F
-	for <linux-tegra@archiver.kernel.org>; Sat, 23 Sep 2023 19:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D795CCE7A95
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Sep 2023 09:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbjIWTtg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 23 Sep 2023 15:49:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53566 "EHLO
+        id S229705AbjIYJlu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Sep 2023 05:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjIWTte (ORCPT
+        with ESMTP id S229503AbjIYJlt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 23 Sep 2023 15:49:34 -0400
-Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D41B197;
-        Sat, 23 Sep 2023 12:49:27 -0700 (PDT)
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RtKK00TJlz60;
-        Sat, 23 Sep 2023 21:41:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1695498116; bh=WaDURwgyluIiB2ax3Az3mbDHSET8J7MRawjhvJmqpZA=;
-        h=Date:In-Reply-To:References:Subject:From:To:Cc:From;
-        b=ic8BdKHd+GgVXvHbYqYYUs7XzSZBKxinHfSk6MtTdjWQoJmw4eXeXYbndLRpmZX/S
-         squnyW39iLb1PsF2C7Ql2tuC5ZJ60A74FIzoAkAq3jup/HKr7DaB9K7VWbwMG0ZtIJ
-         WJmYzk4LxUbJ1qU6wys9LbaBuiR30x8eLTcG3NCpMf90IAesfp00mdck0QRCl9dc1L
-         zGTHWI6lbPILTAeiaa5Eqpo8RkbGsawa5LDD/fNlfkXCsBOC2JZHZltgaRJLgs/Nbl
-         djv5uxjcreuMmq4zv/ZMkPnxOSvNxQ1K0H/1F5+hmjrs5AOgELiOel1aW+0AupcD1y
-         A5weuzbJiwmjQ==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.8 at mail
-Date:   Sat, 23 Sep 2023 21:41:55 +0200
-Message-Id: <d93fc79f2fcc8da5166ccb99c5703ff3fdb46259.1695497666.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <cover.1695497666.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1695497666.git.mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 1/3] usb: chipidea: Fix DMA overwrite for Tegra
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-To:     Peter Chen <peter.chen@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <treding@nvidia.com>,
+        Mon, 25 Sep 2023 05:41:49 -0400
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CB2C39C;
+        Mon, 25 Sep 2023 02:41:42 -0700 (PDT)
+Received: from 8bytes.org (pd9fe9df8.dip0.t-ipconnect.de [217.254.157.248])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 77E231A21FF;
+        Mon, 25 Sep 2023 11:41:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1695634900;
+        bh=NxrKhr6WG806XBJKBm2IQBKy1pD2rNt9qo9c3PhenPs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GA2roFK14T/HQ96iZoC9nQCcCo2VMXnhAiD8ufn22sBjj4nGQjiI9eN19UQ841ll3
+         tvmwuAznroYnlkDSX8YTdeSVvZ5KpTzjXvuSOcVi3oi86ErBR5VUYuyHP/MA5BOWAU
+         2wX/3AeQvi06bRFniHUSbxMlOYWJVwrevTN+8G/rCRuZXK0/Oah1SMzErVPnQM/e2T
+         NUJCJaJ6P7HXKFeguW86oDlRl/R1XGiBrT/L/fsslL6xPva/C12AXKWxwIS06iDf1G
+         mjJRMv3x6qjDMx6PAdu3wlyXUnjfaKVtb3KqzO0YfjGfzBDGWx9Kyiat+OEkROq8qK
+         VOyZFET5SBvfw==
+Date:   Mon, 25 Sep 2023 11:41:38 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
         Dmitry Osipenko <digetx@gmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v8 00/24] iommu: Make default_domain's mandatory
+Message-ID: <ZRFV0vxoexLu-CWJ@8bytes.org>
+References: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra USB controllers seem to issue DMA in doubleword-sized chunks and thus
-may write past the buffer provided. This is detected by SLUB:
+On Wed, Sep 13, 2023 at 10:43:33AM -0300, Jason Gunthorpe wrote:
+> Jason Gunthorpe (24):
+>   iommu: Add iommu_ops->identity_domain
+>   iommu: Add IOMMU_DOMAIN_PLATFORM
+>   powerpc/iommu: Setup a default domain and remove set_platform_dma_ops
+>   iommu: Add IOMMU_DOMAIN_PLATFORM for S390
+>   iommu/fsl_pamu: Implement a PLATFORM domain
+>   iommu/tegra-gart: Remove tegra-gart
+>   iommu/mtk_iommu_v1: Implement an IDENTITY domain
+>   iommu: Reorganize iommu_get_default_domain_type() to respect
+>     def_domain_type()
+>   iommu: Allow an IDENTITY domain as the default_domain in ARM32
+>   iommu/exynos: Implement an IDENTITY domain
+>   iommu/tegra-smmu: Implement an IDENTITY domain
+>   iommu/tegra-smmu: Support DMA domains in tegra
+>   iommu/omap: Implement an IDENTITY domain
+>   iommu/msm: Implement an IDENTITY domain
+>   iommu: Remove ops->set_platform_dma_ops()
+>   iommu/qcom_iommu: Add an IOMMU_IDENTITIY_DOMAIN
+>   iommu/ipmmu: Add an IOMMU_IDENTITIY_DOMAIN
+>   iommu/mtk_iommu: Add an IOMMU_IDENTITIY_DOMAIN
+>   iommu/sun50i: Add an IOMMU_IDENTITIY_DOMAIN
+>   iommu: Require a default_domain for all iommu drivers
+>   iommu: Add __iommu_group_domain_alloc()
+>   iommu: Add ops->domain_alloc_paging()
+>   iommu: Convert simple drivers with DOMAIN_DMA to domain_alloc_paging()
+>   iommu: Convert remaining simple drivers to domain_alloc_paging()
 
-=============================================================================
-BUG kmalloc-64 (Tainted: G    B             ): kmalloc Redzone overwritten
------------------------------------------------------------------------------
-
-0x8555cd02-0x8555cd03 @offset=3330. First byte 0x0 instead of 0xcc
-Allocated in usb_get_status+0x2b/0xac age=1 cpu=3 pid=41
- __kmem_cache_alloc_node+0x12f/0x1e4
- __kmalloc+0x33/0x8c
- usb_get_status+0x2b/0xac
- hub_probe+0x5e9/0xcec
- usb_probe_interface+0xbf/0x21c
- really_probe+0xa5/0x2c4
- __driver_probe_device+0x75/0x174
- driver_probe_device+0x31/0x94
- __device_attach_driver+0x65/0xc0
- bus_for_each_drv+0x4b/0x74
- __device_attach+0x69/0x120
- bus_probe_device+0x65/0x6c
- device_add+0x48b/0x5f8
- usb_set_configuration+0x37b/0x6b4
- usb_generic_driver_probe+0x37/0x68
- usb_probe_device+0x35/0xb4
-Slab 0xbf622b80 objects=21 used=18 fp=0x8555cdc0 flags=0x800(slab|zone=0)
-Object 0x8555cd00 @offset=3328 fp=0x00000000
-
-Redzone  8555ccc0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555ccd0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555cce0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555ccf0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd00: 01 00 00 00 cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd10: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd20: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd30: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555cd40: cc cc cc cc                                      ....
-Padding  8555cd74: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a              ZZZZZZZZZZZZ
-CPU: 3 PID: 41 Comm: kworker/3:1 Tainted: G    B              6.6.0-rc1mq-00118-g59786f827ea1 #1115
-Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-Workqueue: usb_hub_wq hub_event
-[<8010ca28>] (unwind_backtrace) from [<801090a5>] (show_stack+0x11/0x14)
-[<801090a5>] (show_stack) from [<805da2fb>] (dump_stack_lvl+0x4d/0x7c)
-[<805da2fb>] (dump_stack_lvl) from [<8026464f>] (check_bytes_and_report+0xb3/0xe4)
-[<8026464f>] (check_bytes_and_report) from [<802648e1>] (check_object+0x261/0x290)
-[<802648e1>] (check_object) from [<802671b1>] (free_to_partial_list+0x105/0x3f8)
-[<802671b1>] (free_to_partial_list) from [<80268613>] (__kmem_cache_free+0x103/0x128)
-[<80268613>] (__kmem_cache_free) from [<80425a67>] (usb_get_status+0x73/0xac)
-[<80425a67>] (usb_get_status) from [<80421b31>] (hub_probe+0x5e9/0xcec)
-[<80421b31>] (hub_probe) from [<80428bbb>] (usb_probe_interface+0xbf/0x21c)
-[<80428bbb>] (usb_probe_interface) from [<803ee13d>] (really_probe+0xa5/0x2c4)
-[<803ee13d>] (really_probe) from [<803ee3d1>] (__driver_probe_device+0x75/0x174)
-[<803ee3d1>] (__driver_probe_device) from [<803ee501>] (driver_probe_device+0x31/0x94)
-usb 1-1: device descriptor read/8, error -71
-
-Fixes: fc53d5279094 ("usb: chipidea: tegra: Support host mode")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- drivers/usb/chipidea/host.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
-index 08af26b762a2..abddd39d1ff1 100644
---- a/drivers/usb/chipidea/host.c
-+++ b/drivers/usb/chipidea/host.c
-@@ -411,12 +411,13 @@ static int ci_hdrc_alloc_dma_aligned_buffer(struct urb *urb, gfp_t mem_flags)
- 	const unsigned int ci_hdrc_usb_dma_align = 32;
- 	size_t kmalloc_size;
- 
--	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0 ||
--	    !((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)))
-+	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0)
-+		return 0;
-+	if (!((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)) && !(urb->transfer_buffer_length & 3))
- 		return 0;
- 
- 	/* Allocate a buffer with enough padding for alignment */
--	kmalloc_size = urb->transfer_buffer_length +
-+	kmalloc_size = ALIGN(urb->transfer_buffer_length, 4) +
- 		       sizeof(struct ci_hdrc_dma_aligned_buffer) +
- 		       ci_hdrc_usb_dma_align - 1;
- 
--- 
-2.39.2
-
+Applied, thanks.
