@@ -2,116 +2,110 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6328CE7E635
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 13:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E35E7E648
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 15:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231362AbjIZNlc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Sep 2023 09:41:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54898 "EHLO
+        id S235179AbjIZPFT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Sep 2023 11:05:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbjIZNla (ORCPT
+        with ESMTP id S234991AbjIZPFA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Sep 2023 09:41:30 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0085795;
-        Tue, 26 Sep 2023 06:41:23 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2bffd6c1460so137833251fa.3;
-        Tue, 26 Sep 2023 06:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695735682; x=1696340482; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bNLkBZL0rptK8jKeUGKxByFO6I6oW3HmWWY23t4bNw0=;
-        b=kuWYwtj0rz3tUaWSIjdHZs2/hGTo8XWoeC/n7Ym4A7x1cZ52rnfsWhhEitZfNRUFIu
-         7zmeB42XSraj3a1sf3hJe3oNehmstFhQ/uei039kCreu1nVmREluWbo/O1sFwj+h3PTl
-         T0sIgmICsr7QTfA6iTeFy7nnFD+etZa0luP8AQC+km9n3DPqoohTiNp+iuVJxQBgTOPi
-         m3YBWnZWTaJk2T/SxlUXFRbGZmlHB33R5w3SA1aGcwrgLPg/ExIgRiQFg7m1U1Gl/D/2
-         ht8Zm/Nr+RdKD635ckxXrISjdORhamBD6IoQRDgksUJhS78OT3ulbRoYKx57VfMeeyO6
-         F9nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695735682; x=1696340482;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bNLkBZL0rptK8jKeUGKxByFO6I6oW3HmWWY23t4bNw0=;
-        b=L3Axd4TB6RY9tUIWEOb7Xsi0zJ6K9+mNGmCkIHCftUs7eHTEtv8q+8hhGwtKmn9GfC
-         nyqrYANx62nfrkFYrLEEDD+sQYpwjv+irbsFk3uoCDm5HovHR3/FaN67BTCIyEiX1Gia
-         eu1G1EoA4NMvWihcs6tQkPFdT8gd8ZPL7/dj3KHnrTA3VXSVSReE2DehTvrx9b2YNudR
-         MejpA9u5iX3ggfACV9skUW1nxuJf09sbnhMCHLpKbpi1RgevyG6obxW5QfOy+NlrLKvZ
-         1RZLzNqF6B7VorZ75S/c7/WZQRiEcjPGu3PXMXzSSV1MxnM1j+NUq6ijVaZ2DoZtBT6D
-         ZMMQ==
-X-Gm-Message-State: AOJu0Ywx6HqSVEel7e+nhEH1Ulh6Qw2uYeSv/J+v8TgtaT+IfhZrnlDA
-        KJVB7HjiHCF+XVJthevYqaA=
-X-Google-Smtp-Source: AGHT+IFpzA175jENXwY647KdaoVZvXZq0i04+ef7ayW8jsXSkPkooCJWUorQVuRxt8AGPA/TgmYOdQ==
-X-Received: by 2002:a2e:9510:0:b0:2b9:f13b:6139 with SMTP id f16-20020a2e9510000000b002b9f13b6139mr8395537ljh.20.1695735681806;
-        Tue, 26 Sep 2023 06:41:21 -0700 (PDT)
-Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id d19-20020a17090692d300b009ae69c303aasm7290247ejx.137.2023.09.26.06.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Sep 2023 06:41:21 -0700 (PDT)
-Date:   Tue, 26 Sep 2023 15:41:19 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Tue, 26 Sep 2023 11:05:00 -0400
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 62F3FCCA;
+        Tue, 26 Sep 2023 08:04:32 -0700 (PDT)
+Received: from 8bytes.org (pd9fe9df8.dip0.t-ipconnect.de [217.254.157.248])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id CA82A1A21CC;
+        Tue, 26 Sep 2023 17:04:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1695740670;
+        bh=o8oWUCyKGLr6aRpJEcyERxcIW3a0GD0rf9gmZgpvK2A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=6TpFhndRPNvIgt7yzA2/aJMoYkdnS16cebzf4UtP23CQlpQ+Gak1eYrm6l6OjKYEx
+         6ov9MN4xTFyWr54bLnOpm430Hupplf8W0SxvaQlB6FgmJn2Bupf3Brid8BS/nZqAQO
+         hvu4Svos9D+f462V9LsyrLj63TJ5HQrEH7+hL9EoBYr83zCI6QFPn3sNZtjggMsFkX
+         51VP71UAzDGONwXr20Y36QdQJVa+iP+T27lz3G41fM7pXzHksLzD0rpLSvyCctLemD
+         t/LuaiNXAWO/0BIuVB8b3mYUK3IzpvwsvgMpvM9qZ4RAN8ZffK3kqVvFnLVTK8C6cL
+         klQPepXng8EOg==
+Date:   Tue, 26 Sep 2023 17:04:28 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Niklas Schnelle <schnelle@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Matthew Rosato <mjrosato@linux.ibm.com>,
+        Will Deacon <will@kernel.org>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] pinctrl: tegra: add OF node when logging OF parsing
- errors
-Message-ID: <ZRLff1v-dta7EZGO@orome.fritz.box>
-References: <20230926103938.334055-1-luca.ceresoli@bootlin.com>
+        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v12 0/6] iommu/dma: s390 DMA API conversion and optimized
+ IOTLB flushing
+Message-ID: <ZRLy_AaJiXxZ2AfK@8bytes.org>
+References: <20230825-dma_iommu-v12-0-4134455994a7@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MAiZd4Qo4mVreNpi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230926103938.334055-1-luca.ceresoli@bootlin.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20230825-dma_iommu-v12-0-4134455994a7@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Niklas,
 
---MAiZd4Qo4mVreNpi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 25, 2023 at 12:11:15PM +0200, Niklas Schnelle wrote:
+> Niklas Schnelle (6):
+>       iommu: Allow .iotlb_sync_map to fail and handle s390's -ENOMEM return
+>       s390/pci: prepare is_passed_through() for dma-iommu
+>       s390/pci: Use dma-iommu layer
+>       iommu/s390: Disable deferred flush for ISM devices
+>       iommu/dma: Allow a single FQ in addition to per-CPU FQs
+>       iommu/dma: Use a large flush queue and timeout for shadow_on_flush
 
-On Tue, Sep 26, 2023 at 12:39:38PM +0200, Luca Ceresoli wrote:
-> These errors are not quite clear without also logging they device tree no=
-de
-> being parsed, especially when the pinmux node has lots of subnodes. Adding
-> the node name helps a lot in finding the node that triggers the error.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Turned out this series has non-trivial conflicts with Jasons
+default-domain work so I had to remove it from the IOMMU tree for now.
+Can you please rebase it to the latest iommu/core branch and re-send? I
+will take it into the tree again then.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Thanks,
 
---MAiZd4Qo4mVreNpi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUS33wACgkQ3SOs138+
-s6GNvRAAp9rjy7ooTlvjwNMO8jUufTQ1wCgDALf+JRz9TY2bD31vmfEBuxkRkLJ1
-io3HK9mwE5nc/2bhprhxOxMS3JgXbEXJ8vhYDjowL8UhNBKMW7iR+9UWzhAmGyKe
-+g8Sjhhmsk4o538F6buVpJsy8D7j0EtMTWE0MYYiA9ImFi5jsyAVPW7++he3ytl7
-iDFxcUWWh+DxGjIwBwu7qEy1x24tZ1d1PT4lC/NdauJrKzNpjUabtCgTsDcteHQu
-BHe+RVyNE3rOA2HjVDKwHpcxGtZ5kAhX2/Nd8wMF5biytuTkym3Y8r6ngvjRUQLP
-ab/3vMojTpgVP8vU84dk87fBlsqOKjvCE4YgKUgPVxF9wrTx00VJw0eNr3RITQ0B
-G8YdwyEElr4J3cY5M5jZS24QByCjDx6y+1MB9F6jxnXdD9HgEvv7/D0GCnGi36MT
-RY3YOzC/fhNIfb+RhV3yIiIEf2LjRzgrBaLr7w7SRff9pJbZb4K6mLExf8mUPYwu
-gJFwcvN5I36QcW5TL7aTcX48IzqdOlnUnhW3AVB7uNXzfKowKt3fVFdfbbvF2pjI
-zpKyB9sRb57mO93MhwRRAg0M3vMGlw0v2XatSJLl4UhrDYAJWVTapJOG/6UNuv/+
-FHauMsHzkZbGnwuVGskmlLhSBb34QC7w4K2QciAw68HZZJnhO6E=
-=Pd1B
------END PGP SIGNATURE-----
-
---MAiZd4Qo4mVreNpi--
+	Joerg
