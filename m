@@ -2,167 +2,132 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6ACE7D26B
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 08:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6537E7D26E
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 09:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234047AbjIZI7o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Sep 2023 04:59:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50356 "EHLO
+        id S234122AbjIZJSu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Sep 2023 05:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234082AbjIZI7m (ORCPT
+        with ESMTP id S234030AbjIZJSt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Sep 2023 04:59:42 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5239193;
-        Tue, 26 Sep 2023 01:59:33 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c16757987fso50187731fa.3;
-        Tue, 26 Sep 2023 01:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695718772; x=1696323572; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RDxyIanx1EgUP6RwXNa3/gfvrl1yPz037Py9AOoQmr8=;
-        b=WKi7/ymGOFSWaZbuwrF6EHR6WhETnz/bGYJgOSYxHtlypivwVwqYiMtvFjR9gmsjNk
-         zUGlmLcrkJgMYE5qtl3tYTNa3UcZTchG5P10MaXoojUNyXhc7XwLZWttJhXWZ3rLch4p
-         yyhraT1I+kAMG8d5vELgUXJUq0BcR1XS2dnijOslOF2qDsJCgt4kRmU0RTr2deGShmwi
-         I3WLuPUSwNKEWDqWYKqhWQrrmuXCm68tyEby1XbHuaO6cheCLMaS5pAirnYbmN+FrvcG
-         O5ComA2dn1/0TEiuVU2o754fICcUmjgDZdIYFmEQYFRunVTvIKNrn69yezxfWSxttRL6
-         HfMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695718772; x=1696323572;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RDxyIanx1EgUP6RwXNa3/gfvrl1yPz037Py9AOoQmr8=;
-        b=C9TEGqZ3W7mn8S38KMqIRpJpud5nW7f2nUPxC74osztYX1LGSlUJ9/8E1QbmXVDbkJ
-         SNg2TEg8AmVKfln2oy1VJG88BFhGXHmlXZ2dGsdjy7VBq8Z5ty1oht5EGs9rIC0PD+P0
-         7/b9Ugh3Gq7QvIWtkg91RaV6kVLFq4AP4Ex8+LqVLsdfiYfZ3biONIlT7rUbei1AJtlc
-         ivW+6/QHwv1Et0ezehu+KoZmqwg2DJyQEMWodcIYiKCt5g+n+oI+sQvTzyL4HMNnTzvd
-         E1G7n2cHF+/zSmkCNsWPPfYTa81p+0hS9VjOa+hrmZydQTxFMqJ6Jz7r6ThYVKWIsu9B
-         TVhw==
-X-Gm-Message-State: AOJu0Yw74xbnlnrGC0F6SYTMMmfNKnwuJCBbjAhlcFsv0+dARDtFdCJN
-        h9+HZncJ1yg7FYDd480ls5U=
-X-Google-Smtp-Source: AGHT+IFcY99Qsw63+nqFSyAl4/ZRgH21dvMnWnaxUZA3NccBZXaLNtFD9rYkablw31Fpuvzev55HJA==
-X-Received: by 2002:a2e:964d:0:b0:2bf:f9b3:d335 with SMTP id z13-20020a2e964d000000b002bff9b3d335mr7914172ljh.15.1695718771564;
-        Tue, 26 Sep 2023 01:59:31 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id t6-20020a2e9c46000000b002bcda31af28sm2552580ljj.42.2023.09.26.01.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Sep 2023 01:59:31 -0700 (PDT)
-Date:   Tue, 26 Sep 2023 11:59:28 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>,
+        Tue, 26 Sep 2023 05:18:49 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5CB116;
+        Tue, 26 Sep 2023 02:18:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74BF3C433C8;
+        Tue, 26 Sep 2023 09:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695719922;
+        bh=mlwG5wTGIlk+oeIJXV5mNozKoyrhncfuc0jgKxRBWzM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T3S8kaOmXQ8FsN5083g0llW5eIovcu9kopK2DSymPv33VasNg76uU6RDfujD2zvMT
+         lsYnOPIJ2K4xO6Dh2QDaq3lOjo61mnEaDVPIimXMb/AEvkuKO2OYRgOm5HcsibrY98
+         UELjcG8tDoHEyeTaQ/bvyX4QqAXbVoP+9y08QqgshIfDlTDS1Dh0EMN+644cBjxO9o
+         SPBQlKkRrN50VO8Hw3hLdufDe1Up9Q1INpDIVH9l1bVDRFarfu1GgVi34TBQcIhxTz
+         nb0SlbqbMrfGna9Mk03r/CBR9DhOMTTYc45FrongNwTNiXYWiK6paesvAtetzzKE/i
+         JjAQsgM+1C8eg==
+Date:   Tue, 26 Sep 2023 10:18:37 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Rob Herring <robh@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] spi: dt-bindings: Make "additionalProperties: true"
- explicit
-Message-ID: <666tt3bztep2zapk7o7h2psx32z53leitd4sm6xicxlhxhf4pv@vm6e32xszxq2>
-References: <20230925212614.1974243-1-robh@kernel.org>
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Ninad Malwade <nmalwade@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: Re: [PATCH V3 1/4] dt-bindings: hwmon: ina3221: Convert to
+ json-schema
+Message-ID: <20230926-caretaker-raging-0fe380cd1232@spud>
+References: <20230921130818.21247-1-jonathanh@nvidia.com>
+ <20230921130818.21247-2-jonathanh@nvidia.com>
+ <20230922210101.GA3562325-robh@kernel.org>
+ <c2a5a199-2297-d0ca-515c-64b1dd267509@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t5SaNNLRZ2Jhwil1"
 Content-Disposition: inline
-In-Reply-To: <20230925212614.1974243-1-robh@kernel.org>
+In-Reply-To: <c2a5a199-2297-d0ca-515c-64b1dd267509@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Sep 25, 2023 at 04:26:00PM -0500, Rob Herring wrote:
-> Make it explicit that child nodes have additional properties and the
-> child node schema is not complete. The complete schemas are applied
-> separately based the compatible strings.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
 
-For the DW APB/AHB SSI bindings:
-Acked-by: Serge Semin <fancer.lancer@gmail.com>
+--t5SaNNLRZ2Jhwil1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Serge(y)
+On Mon, Sep 25, 2023 at 11:46:58AM +0100, Jon Hunter wrote:
+>=20
+>=20
+> On 22/09/2023 22:01, Rob Herring wrote:
+> > On Thu, Sep 21, 2023 at 02:08:15PM +0100, Jon Hunter wrote:
+> > > From: Ninad Malwade <nmalwade@nvidia.com>
+> > >=20
+> > > Convert the TI INA3221 bindings from the free-form text format to
+> > > json-schema.
+> > >=20
+> > > Note that the INA3221 input channels default to enabled in the chip.
+> > > Unless channels are explicitly disabled in device-tree, input
+> > > channels will be enabled.
+> > >=20
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
+> > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > > ---
+> > >   .../devicetree/bindings/hwmon/ina3221.txt     | 54 ----------
+> > >   .../devicetree/bindings/hwmon/ti,ina3221.yaml | 98 ++++++++++++++++=
++++
+> > >   2 files changed, 98 insertions(+), 54 deletions(-)
+> > >   delete mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.=
+txt
+> > >   create mode 100644 Documentation/devicetree/bindings/hwmon/ti,ina32=
+21.yaml
+>=20
+>=20
+> ...
+>=20
+> > > +examples:
+> > > +  - |
+> > > +    i2c {
+> > > +        #address-cells =3D <1>;
+> > > +        #size-cells =3D <0>;
+> > > +
+> > > +        power-sensor@40 {
+> > > +            compatible =3D "ti,ina3221";
+> > > +            reg =3D <0x40>;
+> > > +            #address-cells =3D <1>;
+> > > +            #size-cells =3D <0>;
+> > > +
+> > > +            input@0 {
+> > > +                reg =3D <0x0>;
+> > > +                status =3D "disabled";
+> >=20
+> > Examples should be enabled.
+>=20
+>=20
+> Yes normally that would be the case. However, per the discussion with
+> Guenter and the comment in the changelog, for this device channels are
+> enabled in the chip by default. And so to disable them, we need to
+> explicitly disable in device-tree.
 
-> ---
->  .../devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml        | 2 ++
->  .../devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml        | 2 ++
->  Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 1 +
->  Documentation/devicetree/bindings/spi/rockchip-sfc.yaml         | 2 ++
->  Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml      | 2 ++
->  5 files changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
-> index a6f34bdd1d3c..e1ab3f523ad6 100644
-> --- a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
-> @@ -46,6 +46,8 @@ properties:
->  patternProperties:
->    "^.*@[0-9a-f]+":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          items:
-> diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
-> index 28b8ace63044..3b47b68b92cb 100644
-> --- a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
-> @@ -68,6 +68,8 @@ properties:
->  patternProperties:
->    "^.*@[0-9a-f]+":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          items:
-> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> index 9ae1611175f2..48e97e240265 100644
-> --- a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> @@ -50,6 +50,7 @@ properties:
->  patternProperties:
->    "@[0-9a-f]+$":
->      type: object
-> +    additionalProperties: true
->  
->      properties:
->        spi-rx-bus-width:
-> diff --git a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> index 339fb39529f3..ac1503de0478 100644
-> --- a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> +++ b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> @@ -47,6 +47,8 @@ properties:
->  patternProperties:
->    "^flash@[0-3]$":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          minimum: 0
-> diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> index a47cb144b09f..6348a387a21c 100644
-> --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> @@ -160,6 +160,8 @@ properties:
->  patternProperties:
->    "^.*@[0-9a-f]+$":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          minimum: 0
-> -- 
-> 2.40.1
-> 
+Maybe a comment at this location would be good then, to point out that
+this is what you are trying to demonstrate with this example?
+
+
+--t5SaNNLRZ2Jhwil1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZRKh7QAKCRB4tDGHoIJi
+0p6zAP9IDPIlYXKh1b6yTrS2dz8pjd5jzbbeXViPKKFPs5v8FgD/W5j59c0Z9HxS
+NecwcJZBhTXgt/Ro2/fPA2mvhz1agws=
+=NJQ8
+-----END PGP SIGNATURE-----
+
+--t5SaNNLRZ2Jhwil1--
