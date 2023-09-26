@@ -2,171 +2,116 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682ECE7E62F
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 12:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6328CE7E635
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 13:41:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234754AbjIZM7w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Sep 2023 08:59:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56228 "EHLO
+        id S231362AbjIZNlc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Sep 2023 09:41:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234776AbjIZM7p (ORCPT
+        with ESMTP id S229726AbjIZNla (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Sep 2023 08:59:45 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E21116;
-        Tue, 26 Sep 2023 05:59:39 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E522BC433CA;
-        Tue, 26 Sep 2023 12:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695733178;
-        bh=TLCs3n5dqhYri+xLFFn0lVxrMbmnBABrauc91osBr80=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tDgZ1AXh5tSnQkMwmmaCnqn5Rvz2rENT+ec1NjUFuAaNbmgX+GyHvU4VA6P3/7e2e
-         mzgX3vFxRtOk+V9Zi2Bztld21I76DY2BwipbDIAGB1Y8VdRmW8hdDzoS+k/x3F8Hct
-         niNCytjBZUrooSbnoJ0hwfQ1JjdlTKNXI0QV97f+USnImIKJgPwao+LRHMEDmcRoKv
-         HzknT1JKeDkymq3M1ELizbz7/sRezbNc2Hfj75o4k9eAIlKye3dUdxRlqS5iq7kJFt
-         0cAqNbCd8sJNM46cGca8koFuN4xUdJo++gH0eqDXn8SKopMi0KBWSBBNBzWvh+qcns
-         99ms6z6ZKeeGA==
-Date:   Tue, 26 Sep 2023 13:59:32 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Tue, 26 Sep 2023 09:41:30 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0085795;
+        Tue, 26 Sep 2023 06:41:23 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2bffd6c1460so137833251fa.3;
+        Tue, 26 Sep 2023 06:41:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1695735682; x=1696340482; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bNLkBZL0rptK8jKeUGKxByFO6I6oW3HmWWY23t4bNw0=;
+        b=kuWYwtj0rz3tUaWSIjdHZs2/hGTo8XWoeC/n7Ym4A7x1cZ52rnfsWhhEitZfNRUFIu
+         7zmeB42XSraj3a1sf3hJe3oNehmstFhQ/uei039kCreu1nVmREluWbo/O1sFwj+h3PTl
+         T0sIgmICsr7QTfA6iTeFy7nnFD+etZa0luP8AQC+km9n3DPqoohTiNp+iuVJxQBgTOPi
+         m3YBWnZWTaJk2T/SxlUXFRbGZmlHB33R5w3SA1aGcwrgLPg/ExIgRiQFg7m1U1Gl/D/2
+         ht8Zm/Nr+RdKD635ckxXrISjdORhamBD6IoQRDgksUJhS78OT3ulbRoYKx57VfMeeyO6
+         F9nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695735682; x=1696340482;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bNLkBZL0rptK8jKeUGKxByFO6I6oW3HmWWY23t4bNw0=;
+        b=L3Axd4TB6RY9tUIWEOb7Xsi0zJ6K9+mNGmCkIHCftUs7eHTEtv8q+8hhGwtKmn9GfC
+         nyqrYANx62nfrkFYrLEEDD+sQYpwjv+irbsFk3uoCDm5HovHR3/FaN67BTCIyEiX1Gia
+         eu1G1EoA4NMvWihcs6tQkPFdT8gd8ZPL7/dj3KHnrTA3VXSVSReE2DehTvrx9b2YNudR
+         MejpA9u5iX3ggfACV9skUW1nxuJf09sbnhMCHLpKbpi1RgevyG6obxW5QfOy+NlrLKvZ
+         1RZLzNqF6B7VorZ75S/c7/WZQRiEcjPGu3PXMXzSSV1MxnM1j+NUq6ijVaZ2DoZtBT6D
+         ZMMQ==
+X-Gm-Message-State: AOJu0Ywx6HqSVEel7e+nhEH1Ulh6Qw2uYeSv/J+v8TgtaT+IfhZrnlDA
+        KJVB7HjiHCF+XVJthevYqaA=
+X-Google-Smtp-Source: AGHT+IFpzA175jENXwY647KdaoVZvXZq0i04+ef7ayW8jsXSkPkooCJWUorQVuRxt8AGPA/TgmYOdQ==
+X-Received: by 2002:a2e:9510:0:b0:2b9:f13b:6139 with SMTP id f16-20020a2e9510000000b002b9f13b6139mr8395537ljh.20.1695735681806;
+        Tue, 26 Sep 2023 06:41:21 -0700 (PDT)
+Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id d19-20020a17090692d300b009ae69c303aasm7290247ejx.137.2023.09.26.06.41.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Sep 2023 06:41:21 -0700 (PDT)
+Date:   Tue, 26 Sep 2023 15:41:19 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     linux-tegra@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] spi: dt-bindings: Make "additionalProperties: true"
- explicit
-Message-ID: <20230926-swung-duplex-b01be7f91e58@spud>
-References: <20230925212614.1974243-1-robh@kernel.org>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] pinctrl: tegra: add OF node when logging OF parsing
+ errors
+Message-ID: <ZRLff1v-dta7EZGO@orome.fritz.box>
+References: <20230926103938.334055-1-luca.ceresoli@bootlin.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gCWkt9qgvYzcx0LY"
+        protocol="application/pgp-signature"; boundary="MAiZd4Qo4mVreNpi"
 Content-Disposition: inline
-In-Reply-To: <20230925212614.1974243-1-robh@kernel.org>
+In-Reply-To: <20230926103938.334055-1-luca.ceresoli@bootlin.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---gCWkt9qgvYzcx0LY
+--MAiZd4Qo4mVreNpi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 25, 2023 at 04:26:00PM -0500, Rob Herring wrote:
-> Make it explicit that child nodes have additional properties and the
-> child node schema is not complete. The complete schemas are applied
-> separately based the compatible strings.
+On Tue, Sep 26, 2023 at 12:39:38PM +0200, Luca Ceresoli wrote:
+> These errors are not quite clear without also logging they device tree no=
+de
+> being parsed, especially when the pinmux node has lots of subnodes. Adding
+> the node name helps a lot in finding the node that triggers the error.
 >=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks,
-Conor.
-
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > ---
->  .../devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml        | 2 ++
->  .../devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml        | 2 ++
->  Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 1 +
->  Documentation/devicetree/bindings/spi/rockchip-sfc.yaml         | 2 ++
->  Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml      | 2 ++
->  5 files changed, 9 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-sp=
-i.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
-> index a6f34bdd1d3c..e1ab3f523ad6 100644
-> --- a/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml
-> @@ -46,6 +46,8 @@ properties:
->  patternProperties:
->    "^.*@[0-9a-f]+":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          items:
-> diff --git a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-sp=
-i.yaml b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
-> index 28b8ace63044..3b47b68b92cb 100644
-> --- a/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml
-> @@ -68,6 +68,8 @@ properties:
->  patternProperties:
->    "^.*@[0-9a-f]+":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          items:
-> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.y=
-aml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> index 9ae1611175f2..48e97e240265 100644
-> --- a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> @@ -50,6 +50,7 @@ properties:
->  patternProperties:
->    "@[0-9a-f]+$":
->      type: object
-> +    additionalProperties: true
-> =20
->      properties:
->        spi-rx-bus-width:
-> diff --git a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml b/Do=
-cumentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> index 339fb39529f3..ac1503de0478 100644
-> --- a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> +++ b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
-> @@ -47,6 +47,8 @@ properties:
->  patternProperties:
->    "^flash@[0-3]$":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          minimum: 0
-> diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b=
-/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> index a47cb144b09f..6348a387a21c 100644
-> --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> @@ -160,6 +160,8 @@ properties:
->  patternProperties:
->    "^.*@[0-9a-f]+$":
->      type: object
-> +    additionalProperties: true
-> +
->      properties:
->        reg:
->          minimum: 0
-> --=20
-> 2.40.1
->=20
+>  drivers/pinctrl/tegra/pinctrl-tegra.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
---gCWkt9qgvYzcx0LY
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--MAiZd4Qo4mVreNpi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZRLVtAAKCRB4tDGHoIJi
-0hR8AP9Ava8cYYj5GVL2Hut1w6uRkN/b4Faq6JdqruwkatygOAEAiy5idBiTw+di
-gDi3f58ACPRbv1uC/Zp+MwgXWqAZWgc=
-=hqIu
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUS33wACgkQ3SOs138+
+s6GNvRAAp9rjy7ooTlvjwNMO8jUufTQ1wCgDALf+JRz9TY2bD31vmfEBuxkRkLJ1
+io3HK9mwE5nc/2bhprhxOxMS3JgXbEXJ8vhYDjowL8UhNBKMW7iR+9UWzhAmGyKe
++g8Sjhhmsk4o538F6buVpJsy8D7j0EtMTWE0MYYiA9ImFi5jsyAVPW7++he3ytl7
+iDFxcUWWh+DxGjIwBwu7qEy1x24tZ1d1PT4lC/NdauJrKzNpjUabtCgTsDcteHQu
+BHe+RVyNE3rOA2HjVDKwHpcxGtZ5kAhX2/Nd8wMF5biytuTkym3Y8r6ngvjRUQLP
+ab/3vMojTpgVP8vU84dk87fBlsqOKjvCE4YgKUgPVxF9wrTx00VJw0eNr3RITQ0B
+G8YdwyEElr4J3cY5M5jZS24QByCjDx6y+1MB9F6jxnXdD9HgEvv7/D0GCnGi36MT
+RY3YOzC/fhNIfb+RhV3yIiIEf2LjRzgrBaLr7w7SRff9pJbZb4K6mLExf8mUPYwu
+gJFwcvN5I36QcW5TL7aTcX48IzqdOlnUnhW3AVB7uNXzfKowKt3fVFdfbbvF2pjI
+zpKyB9sRb57mO93MhwRRAg0M3vMGlw0v2XatSJLl4UhrDYAJWVTapJOG/6UNuv/+
+FHauMsHzkZbGnwuVGskmlLhSBb34QC7w4K2QciAw68HZZJnhO6E=
+=Pd1B
 -----END PGP SIGNATURE-----
 
---gCWkt9qgvYzcx0LY--
+--MAiZd4Qo4mVreNpi--
