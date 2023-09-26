@@ -2,96 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE23DE7D27B
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 10:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EDBE7D27D
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 10:56:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234383AbjIZKjw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Sep 2023 06:39:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45214 "EHLO
+        id S234140AbjIZK4v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Sep 2023 06:56:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234381AbjIZKjw (ORCPT
+        with ESMTP id S233842AbjIZK4u (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Sep 2023 06:39:52 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F55710C;
-        Tue, 26 Sep 2023 03:39:44 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 4FF9E240009;
-        Tue, 26 Sep 2023 10:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695724782;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=94FNtphCbsWf6wCGl8UYRRa0JtnR+dm/mDW23d094II=;
-        b=WRyxdFvXLksA6Pezj20twQfdaS+eTI02SlJ4ynpJJBSt5GJ/AEj9SwrqaPcq8Nu5dOdMuo
-        0gHsRIrdhFnlBX9Bzf9OAi2SGOOyMjeqkKP3MONwTOgLIH3mDbu8TjiOCwwPfy6v+owRe+
-        J9mWIWlv9g7qOoTI/7sIIoNQtxUwnD26w5qLEBqVCgxFXs4UdrZmmnSQLRahEMTMVaGVb0
-        xccXrdEfOcDETefUKbXE3888YuFjvFP4dlIDlqqs0lcnZgcw7w4Sqavlgx1LWWODQThzPT
-        FkFBN0IjzvQr+gB9fu40G8Cdyvv/6KT0VFW7IOATuidFhbDm74aDqI6AZIz0PA==
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     linux-tegra@vger.kernel.org
-Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH] pinctrl: tegra: add OF node when logging OF parsing errors
-Date:   Tue, 26 Sep 2023 12:39:38 +0200
-Message-Id: <20230926103938.334055-1-luca.ceresoli@bootlin.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 26 Sep 2023 06:56:50 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 23C8495;
+        Tue, 26 Sep 2023 03:56:44 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AD1E1FB;
+        Tue, 26 Sep 2023 03:57:22 -0700 (PDT)
+Received: from [10.57.95.200] (unknown [10.57.95.200])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54FD33F6C4;
+        Tue, 26 Sep 2023 03:56:42 -0700 (PDT)
+Message-ID: <71403f39-5894-154d-022a-f42fb344e488@arm.com>
+Date:   Tue, 26 Sep 2023 11:56:37 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] perf cs-etm: Fix missing decoder for per-process trace
+Content-Language: en-US
+To:     Besar Wicaksono <bwicaksono@nvidia.com>, mike.leach@linaro.org,
+        suzuki.poulose@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        coresight@lists.linaro.org, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+        rwiley@nvidia.com, ywan@nvidia.com
+References: <20230919224553.1658-1-bwicaksono@nvidia.com>
+From:   James Clark <james.clark@arm.com>
+In-Reply-To: <20230919224553.1658-1-bwicaksono@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-These errors are not quite clear without also logging they device tree node
-being parsed, especially when the pinmux node has lots of subnodes. Adding
-the node name helps a lot in finding the node that triggers the error.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 734c71ef005b..6bf8db424bec 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -120,7 +120,7 @@ static int tegra_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		/* EINVAL=missing, which is fine since it's optional */
- 		if (ret != -EINVAL)
- 			dev_err(dev,
--				"could not parse property nvidia,function\n");
-+				"%pOF: could not parse property nvidia,function\n", np);
- 		function = NULL;
- 	}
- 
-@@ -134,8 +134,8 @@ static int tegra_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 				goto exit;
- 		/* EINVAL=missing, which is fine since it's optional */
- 		} else if (ret != -EINVAL) {
--			dev_err(dev, "could not parse property %s\n",
--				cfg_params[i].property);
-+			dev_err(dev, "%pOF: could not parse property %s\n",
-+				np, cfg_params[i].property);
- 		}
- 	}
- 
-@@ -146,7 +146,7 @@ static int tegra_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		reserve++;
- 	ret = of_property_count_strings(np, "nvidia,pins");
- 	if (ret < 0) {
--		dev_err(dev, "could not parse property nvidia,pins\n");
-+		dev_err(dev, "%pOF: could not parse property nvidia,pins\n", np);
- 		goto exit;
- 	}
- 	reserve *= ret;
--- 
-2.34.1
+On 19/09/2023 23:45, Besar Wicaksono wrote:
+> The decoder creation for raw trace uses metadata from the first CPU.
+> On per-process/per-thread traces, the first CPU is CPU0. If CPU0 trace
+> is not enabled, its metadata will be marked unused and the decoder is
+> not created. Perf report dump skips the decoding part because the
+> decoder is missing.
+> 
+
+Hi Besar,
+
+It's not just per-process trace, the bug is also in per-cpu mode but it
+means that the metadata from CPU 0 is used for every decoder which is
+wrong. Although your change also fixes this issue.
+
+> To fix this, use metadata of the CPU associated with sample object.
+> 
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> ---
+>  tools/perf/util/cs-etm.c | 130 +++++++++++++++++++++++----------------
+>  1 file changed, 77 insertions(+), 53 deletions(-)
+> 
+
+[...]
+
+> +	if (!formatted) {
+> +		/*
+> +		 * There is only one decoder when unformatted. Use metadata of
+> +		 * sample AUX cpu.
+> +		 */
+> +		t_param = t_params;
+> +		metadata = get_cpu_data(etm, sample_cpu);
+> +		if (!metadata) {
+> +			pr_err("CS_ETM: invalid sample CPU: %d\n", sample_cpu);
+>  			return -EINVAL;
+>  		}
+
+Apart from Mike's comments, this looks ok. Thanks for fixing this it has
+been on our list for a while.
+
+One issue with calling get_cpu_data() with the sample CPU ID is that it
+won't work with old files that don't have the CPU sample flag set. Mike
+added the sample flag fairly recently, and I don't think that was a
+breaking change for old files at that time. It should be easy to avoid
+that by still returning the metadata from CPU 0 when CPU = -1 (Which
+isn't correct but is 99% likely to work).
+
+I checked the Coresight tests and they're all passing, at least on a
+system without ETE. If you could make sure they're all passing for you
+as well that would be great:
+
+  sudo ./perf test coresight
+
+I think they currently only work from an in source build, if you get
+stuck there.
+
+Thanks
+James
 
