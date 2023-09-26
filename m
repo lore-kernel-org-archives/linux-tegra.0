@@ -2,132 +2,177 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6537E7D26E
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 09:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 731A7E7D273
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 10:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234122AbjIZJSu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Sep 2023 05:18:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33966 "EHLO
+        id S233494AbjIZKEP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Sep 2023 06:04:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234030AbjIZJSt (ORCPT
+        with ESMTP id S234369AbjIZKEM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Sep 2023 05:18:49 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5CB116;
-        Tue, 26 Sep 2023 02:18:42 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74BF3C433C8;
-        Tue, 26 Sep 2023 09:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695719922;
-        bh=mlwG5wTGIlk+oeIJXV5mNozKoyrhncfuc0jgKxRBWzM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T3S8kaOmXQ8FsN5083g0llW5eIovcu9kopK2DSymPv33VasNg76uU6RDfujD2zvMT
-         lsYnOPIJ2K4xO6Dh2QDaq3lOjo61mnEaDVPIimXMb/AEvkuKO2OYRgOm5HcsibrY98
-         UELjcG8tDoHEyeTaQ/bvyX4QqAXbVoP+9y08QqgshIfDlTDS1Dh0EMN+644cBjxO9o
-         SPBQlKkRrN50VO8Hw3hLdufDe1Up9Q1INpDIVH9l1bVDRFarfu1GgVi34TBQcIhxTz
-         nb0SlbqbMrfGna9Mk03r/CBR9DhOMTTYc45FrongNwTNiXYWiK6paesvAtetzzKE/i
-         JjAQsgM+1C8eg==
-Date:   Tue, 26 Sep 2023 10:18:37 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Rob Herring <robh@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        Tue, 26 Sep 2023 06:04:12 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B127196;
+        Tue, 26 Sep 2023 03:04:02 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 944CA1C0007;
+        Tue, 26 Sep 2023 10:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1695722640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=jRVKs6180ifIX9yx3k8bI6+Vilp7tEKq0AX18VzwduA=;
+        b=FFAWjOYe+pVWpCDMEGbgw/Z2TxQy4MycS2ZMziVKj1uoipI2meXU5CnOxGOijwJyWds4NH
+        vdUXPD9QnpkLgjOYZfLTI1p9vA3mgO8xXDnxf1L5cvCi9WOepCjXM5z9z7rrwQvOUripYz
+        9MAROhuEcW3o/sjOyrPp0SEO5aZWNEYimaf+CmS00QAt76G0DCgeF0a2nE4gAdaUZlmPvs
+        Rf53gcjLsYEc/V3pLwS68Yz6WeUiCmbXew5xGyLg5Zhju7jlKXnvOSb7EjaZfE27nt1xnm
+        sqkE2HiwwprgEz1b2hwxXyIhiCOqNpRRyjShpkEOaE4sgHeyAUHp8ORBUy3Iog==
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     linux-media@vger.kernel.org
+Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Ninad Malwade <nmalwade@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: Re: [PATCH V3 1/4] dt-bindings: hwmon: ina3221: Convert to
- json-schema
-Message-ID: <20230926-caretaker-raging-0fe380cd1232@spud>
-References: <20230921130818.21247-1-jonathanh@nvidia.com>
- <20230921130818.21247-2-jonathanh@nvidia.com>
- <20230922210101.GA3562325-robh@kernel.org>
- <c2a5a199-2297-d0ca-515c-64b1dd267509@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH] staging: media: tegra-video: fix infinite recursion regression
+Date:   Tue, 26 Sep 2023 12:03:53 +0200
+Message-Id: <20230926100353.328001-1-luca.ceresoli@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t5SaNNLRZ2Jhwil1"
-Content-Disposition: inline
-In-Reply-To: <c2a5a199-2297-d0ca-515c-64b1dd267509@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Since commit 9bf19fbf0c8b ("media: v4l: async: Rework internal lists"), aka
+v6.6-rc1~97^2~198, probing the tegra-video VI driver causes infinite
+recursion due tegra_vi_graph_parse_one() calling itself until:
 
---t5SaNNLRZ2Jhwil1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[    1.571168] Insufficient stack space to handle exception!
+...
+[    1.591416] Internal error: kernel stack overflow: 0 [#1] PREEMPT SMP ARM
+...
+[    3.861013]  of_phandle_iterator_init from __of_parse_phandle_with_args+0x40/0xf0
+[    3.868497]  __of_parse_phandle_with_args from of_fwnode_graph_get_remote_endpoint+0x68/0xa8
+[    3.876938]  of_fwnode_graph_get_remote_endpoint from fwnode_graph_get_remote_port_parent+0x30/0x7c
+[    3.885984]  fwnode_graph_get_remote_port_parent from tegra_vi_graph_parse_one+0x7c/0x224
+[    3.894158]  tegra_vi_graph_parse_one from tegra_vi_graph_parse_one+0x144/0x224
+[    3.901459]  tegra_vi_graph_parse_one from tegra_vi_graph_parse_one+0x144/0x224
+[    3.908760]  tegra_vi_graph_parse_one from tegra_vi_graph_parse_one+0x144/0x224
+[    3.916061]  tegra_vi_graph_parse_one from tegra_vi_graph_parse_one+0x144/0x224
+...
+[    4.857892]  tegra_vi_graph_parse_one from tegra_vi_graph_parse_one+0x144/0x224
+[    4.865193]  tegra_vi_graph_parse_one from tegra_vi_graph_parse_one+0x144/0x224
+[    4.872494]  tegra_vi_graph_parse_one from tegra_vi_init+0x574/0x6d4
+[    4.878842]  tegra_vi_init from host1x_device_init+0x84/0x15c
+[    4.884594]  host1x_device_init from host1x_video_probe+0xa0/0x114
+[    4.890770]  host1x_video_probe from really_probe+0xe0/0x400
 
-On Mon, Sep 25, 2023 at 11:46:58AM +0100, Jon Hunter wrote:
->=20
->=20
-> On 22/09/2023 22:01, Rob Herring wrote:
-> > On Thu, Sep 21, 2023 at 02:08:15PM +0100, Jon Hunter wrote:
-> > > From: Ninad Malwade <nmalwade@nvidia.com>
-> > >=20
-> > > Convert the TI INA3221 bindings from the free-form text format to
-> > > json-schema.
-> > >=20
-> > > Note that the INA3221 input channels default to enabled in the chip.
-> > > Unless channels are explicitly disabled in device-tree, input
-> > > channels will be enabled.
-> > >=20
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
-> > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > > ---
-> > >   .../devicetree/bindings/hwmon/ina3221.txt     | 54 ----------
-> > >   .../devicetree/bindings/hwmon/ti,ina3221.yaml | 98 ++++++++++++++++=
-+++
-> > >   2 files changed, 98 insertions(+), 54 deletions(-)
-> > >   delete mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.=
-txt
-> > >   create mode 100644 Documentation/devicetree/bindings/hwmon/ti,ina32=
-21.yaml
->=20
->=20
-> ...
->=20
-> > > +examples:
-> > > +  - |
-> > > +    i2c {
-> > > +        #address-cells =3D <1>;
-> > > +        #size-cells =3D <0>;
-> > > +
-> > > +        power-sensor@40 {
-> > > +            compatible =3D "ti,ina3221";
-> > > +            reg =3D <0x40>;
-> > > +            #address-cells =3D <1>;
-> > > +            #size-cells =3D <0>;
-> > > +
-> > > +            input@0 {
-> > > +                reg =3D <0x0>;
-> > > +                status =3D "disabled";
-> >=20
-> > Examples should be enabled.
->=20
->=20
-> Yes normally that would be the case. However, per the discussion with
-> Guenter and the comment in the changelog, for this device channels are
-> enabled in the chip by default. And so to disable them, we need to
-> explicitly disable in device-tree.
+The reason is the mentioned commit changed tegra_vi_graph_find_entity() to
+search for an entity in the done notifier list:
 
-Maybe a comment at this location would be good then, to point out that
-this is what you are trying to demonstrate with this example?
+> @@ -1464,7 +1464,7 @@ tegra_vi_graph_find_entity(struct tegra_vi_channel *chan,
+>  	struct tegra_vi_graph_entity *entity;
+>  	struct v4l2_async_connection *asd;
+>
+> -	list_for_each_entry(asd, &chan->notifier.asc_list, asc_entry) {
+> +	list_for_each_entry(asd, &chan->notifier.done_list, asc_entry) {
+>  		entity = to_tegra_vi_graph_entity(asd);
+>  		if (entity->asd.match.fwnode == fwnode)
+>  			return entity;
 
+This is not always correct, being tegra_vi_graph_find_entity() called in
+three locations, in this order:
 
---t5SaNNLRZ2Jhwil1
-Content-Type: application/pgp-signature; name="signature.asc"
+ 1. tegra_vi_graph_parse_one()    -- called while probing
+ 2. tegra_vi_graph_notify_bound() -- the .bound notifier op
+ 3. tegra_vi_graph_build()        -- called in the .complete notifier op
 
------BEGIN PGP SIGNATURE-----
+Locations 1 and 2 are called before moving the entity from waiting_list to
+done_list, thus they won't find what they are looking for in
+done_list. Location 3 happens afterwards and thus it is not broken, however
+it means tegra_vi_graph_find_entity() should not search in the same list
+every time.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZRKh7QAKCRB4tDGHoIJi
-0p6zAP9IDPIlYXKh1b6yTrS2dz8pjd5jzbbeXViPKKFPs5v8FgD/W5j59c0Z9HxS
-NecwcJZBhTXgt/Ro2/fPA2mvhz1agws=
-=NJQ8
------END PGP SIGNATURE-----
+The error appears at step 1: tegra_vi_graph_parse_one() iterates
+recursively until it finds the entity already notified, which now never
+happens.
 
---t5SaNNLRZ2Jhwil1--
+Fix by passing the specific notifier list pointer to
+tegra_vi_graph_find_entity() instead of the channel, so each caller can
+search in whatever list is correct.
+
+Also improve the tegra_vi_graph_find_entity() comment.
+
+Fixes: 9bf19fbf0c8b ("media: v4l: async: Rework internal lists")
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ drivers/staging/media/tegra-video/vi.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index e98b3010520e..d9a6d5b2aa84 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1455,17 +1455,18 @@ static int __maybe_unused vi_runtime_suspend(struct device *dev)
+ }
+ 
+ /*
+- * Graph Management
++ * Find the entity matching a given fwnode in an v4l2_async_notifier list
+  */
+ static struct tegra_vi_graph_entity *
+-tegra_vi_graph_find_entity(struct tegra_vi_channel *chan,
++tegra_vi_graph_find_entity(struct list_head *list,
+ 			   const struct fwnode_handle *fwnode)
+ {
+ 	struct tegra_vi_graph_entity *entity;
+ 	struct v4l2_async_connection *asd;
+ 
+-	list_for_each_entry(asd, &chan->notifier.done_list, asc_entry) {
++	list_for_each_entry(asd, list, asc_entry) {
+ 		entity = to_tegra_vi_graph_entity(asd);
++
+ 		if (entity->asd.match.fwnode == fwnode)
+ 			return entity;
+ 	}
+@@ -1532,7 +1533,7 @@ static int tegra_vi_graph_build(struct tegra_vi_channel *chan,
+ 		}
+ 
+ 		/* find the remote entity from notifier list */
+-		ent = tegra_vi_graph_find_entity(chan, link.remote_node);
++		ent = tegra_vi_graph_find_entity(&chan->notifier.done_list, link.remote_node);
+ 		if (!ent) {
+ 			dev_err(vi->dev, "no entity found for %pOF\n",
+ 				to_of_node(link.remote_node));
+@@ -1664,7 +1665,7 @@ static int tegra_vi_graph_notify_bound(struct v4l2_async_notifier *notifier,
+ 	 * Locate the entity corresponding to the bound subdev and store the
+ 	 * subdev pointer.
+ 	 */
+-	entity = tegra_vi_graph_find_entity(chan, subdev->fwnode);
++	entity = tegra_vi_graph_find_entity(&chan->notifier.waiting_list, subdev->fwnode);
+ 	if (!entity) {
+ 		dev_err(vi->dev, "no entity for subdev %s\n", subdev->name);
+ 		return -EINVAL;
+@@ -1713,7 +1714,7 @@ static int tegra_vi_graph_parse_one(struct tegra_vi_channel *chan,
+ 
+ 		/* skip entities that are already processed */
+ 		if (device_match_fwnode(vi->dev, remote) ||
+-		    tegra_vi_graph_find_entity(chan, remote)) {
++		    tegra_vi_graph_find_entity(&chan->notifier.waiting_list, remote)) {
+ 			fwnode_handle_put(remote);
+ 			continue;
+ 		}
+-- 
+2.34.1
+
