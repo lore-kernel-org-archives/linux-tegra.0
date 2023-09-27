@@ -2,84 +2,132 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 897D6E7E653
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Sep 2023 16:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8D3E80A82
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Sep 2023 04:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235370AbjIZQpQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Sep 2023 12:45:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35286 "EHLO
+        id S229849AbjI0EhR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Sep 2023 00:37:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235188AbjIZQpP (ORCPT
+        with ESMTP id S229872AbjI0Efw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Sep 2023 12:45:15 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EE80E5;
-        Tue, 26 Sep 2023 09:45:09 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66410C433C7;
-        Tue, 26 Sep 2023 16:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695746709;
-        bh=NLDXpZvaFQNHIhUvBJFKAVrrZdic9lys/WgPWvzaSa8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=awUPCHvX89TNdhiQI/PIhXg0GM/ClTHd8530cIF+XNPJEepM9m3LsaOT7s1saJ5Kr
-         kJU/V/ODgcGbK86avt6X+rCfStP/6DQApu4bOGXI+PCZxycD+iccBeTi9t5I8X0RQ3
-         oc6YL5CvJcDr8BkZrvZyBxqkUGNJUsutl9DiOVBpuxWWlGJXzrdx/MvuViSFAk922N
-         lVYEBd7ZXkpMlvDV9jx7XlFScPhzTdXMX74sFjvufktD8RZH9PzjA0Bwtzpdpc5inF
-         LXkwycxA2eXJliKYIjJOoLbaIgOgh0g7Mkqd1mB9oZkxdLfSmNx8MW6xrWCrrQqu6H
-         HtTcmtF3ndZGA==
-Received: (nullmailer pid 101904 invoked by uid 1000);
-        Tue, 26 Sep 2023 16:45:05 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: thermal: nvidia,tegra124-soctherm: Add missing unevaluatedProperties on child node schemas
-Date:   Tue, 26 Sep 2023 11:44:52 -0500
-Message-Id: <20230926164500.101593-1-robh@kernel.org>
-X-Mailer: git-send-email 2.40.1
+        Wed, 27 Sep 2023 00:35:52 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E718D2713;
+        Tue, 26 Sep 2023 19:26:09 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-530bc7c5bc3so12180973a12.1;
+        Tue, 26 Sep 2023 19:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google; t=1695781568; x=1696386368; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=emIKXtRIs/yM2DWwZD9zMtoiHVTkPPbqlVWgbeCiXyc=;
+        b=DP/bBc/dIpsB5DhQVva+sSfLpN0+1lOOg6nw/SsMTCAoznpTyh/EmfVcCUW5vnRf8X
+         y6U7KmkFWqEnq+yopqQRYjYHf5IXaL871jHrOBdU6c1hCFitnO6UX2keP1DxAy3WzvqE
+         BNTCYAUgOm4xvMcYU54DuHaFc7cibNsT2aq4w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695781568; x=1696386368;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=emIKXtRIs/yM2DWwZD9zMtoiHVTkPPbqlVWgbeCiXyc=;
+        b=Z/lhA+NBoh7LDNvHpth6LRGwpEDf5KCsQk9bBS5XEzr6oji/wkmnSxBYeWoq8KkAFX
+         aJOBHe7IQV/414fi0zed1yJOT4rw8e7aFnr1i40X28kSuVse1Je4OPQpAxfaejQww1Tl
+         /TqBycF8ebV3lPgQJRjDeQk0vmYnajRRn3vkVaTYZVmT4mQVaoPX5gopSqomvxw0HALF
+         NrQiY1V/zYTHIqmMuGBgM4ZX8x5hlWrambpkTJT289WgIJcHMzBN+YNDxpejhs4+YiFO
+         XmGueOm8ZA351yetc5xIocwGz6Ora/Q4qJcjCz2fyCpRPs7RCbRWSjcAql0tM9CQYQtF
+         y2iw==
+X-Gm-Message-State: AOJu0YwTyFFQjV5eAbgVdFs3WiTRE7jFlcoomv990c4+0Lu/PybOB6J9
+        Ekpna/RJNbfMls62SYIGX85yeaArvFqSSUGLFGY=
+X-Google-Smtp-Source: AGHT+IHCCOjXb8+6pc5O9HOXdlXxVDhFBKsFiifAI3BglZZL/BL8JlMYEB/1h28CGguKKA8HQFS3La5RDl0OFTUHTbc=
+X-Received: by 2002:a17:906:9a:b0:9b2:9d6f:2949 with SMTP id
+ 26-20020a170906009a00b009b29d6f2949mr400624ejc.57.1695781568293; Tue, 26 Sep
+ 2023 19:26:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 27 Sep 2023 02:25:56 +0000
+Message-ID: <CACPK8XeROYz_XaB3TvUhdXm7Vm8fjC8yU+mfvA58=_FiDrBy-g@mail.gmail.com>
+Subject: Re: [PATCH 00/40] soc: Convert to platform remove callback returning void
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Li Yang <leoyang.li@nxp.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Huisong Li <lihuisong@huawei.com>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Zev Weiss <zev@bewilderbeest.net>,
+        linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-mediatek@lists.infradead.org,
+        linux-riscv@lists.infradead.org,
+        zhang songyi <zhang.songyi@zte.com.cn>,
+        Lubomir Rintel <lkundrak@v3.sk>, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Nick Alcock <nick.alcock@oracle.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ruan Jinjie <ruanjinjie@huawei.com>, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Just as unevaluatedProperties or additionalProperties are required at
-the top level of schemas, they should (and will) also be required for
-child node schemas. That ensures only documented properties are
-present for any node.
+On Mon, 25 Sept 2023 at 09:55, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello,
+>
+> this series converts all platform drivers below drivers/soc to use
+> .remove_new(). The motivation is to get rid of an integer return code
+> that is (mostly) ignored by the platform driver core and error prone on
+> the driver side.
+>
+> See commit 5c5a7680e67b ("platform: Provide a remove callback that
+> returns no value") for an extended explanation and the eventual goal.
+>
+> As there is no single maintainer team for drivers/soc, I suggest the
+> individual maintainers to pick up "their" patches.
 
-Add unevaluatedProperties as needed, and then add any missing properties
-flagged by the addition.
+I'd be happy if Arnd merged the lot at once. Arnd, what do you think?
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../bindings/thermal/nvidia,tegra124-soctherm.yaml           | 5 +++++
- 1 file changed, 5 insertions(+)
+If that will be too messy then I understand. I have queued the aspeed
+ones locally and will push that out if we decide that's the best way
+to go.
 
-diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-index 04a2ba1aa946..b0237d236021 100644
---- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-+++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
-@@ -68,7 +68,12 @@ properties:
-     patternProperties:
-       "^(light|heavy|oc1)$":
-         type: object
-+        additionalProperties: false
-+
-         properties:
-+          "#cooling-cells":
-+            const: 2
-+
-           nvidia,priority:
-             $ref: /schemas/types.yaml#/definitions/uint32
-             minimum: 1
--- 
-2.40.1
+Thanks for doing this cleanup Uwe.
 
+Cheers,
+
+Joel
