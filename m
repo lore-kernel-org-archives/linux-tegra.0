@@ -2,123 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ABDE82CAE
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Sep 2023 16:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F70E82CCF
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Sep 2023 19:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjI0QQh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Sep 2023 12:16:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33498 "EHLO
+        id S229761AbjI0TiD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Sep 2023 15:38:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbjI0QQh (ORCPT
+        with ESMTP id S229796AbjI0TiC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Sep 2023 12:16:37 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6D67392;
-        Wed, 27 Sep 2023 09:16:35 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1F6B1FB;
-        Wed, 27 Sep 2023 09:17:11 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C3893F59C;
-        Wed, 27 Sep 2023 09:16:28 -0700 (PDT)
-Message-ID: <96c0892f-20e6-db1f-f310-9b09d419aa6a@arm.com>
-Date:   Wed, 27 Sep 2023 17:16:23 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v12 0/6] iommu/dma: s390 DMA API conversion and optimized
- IOTLB flushing
-Content-Language: en-GB
-To:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Niklas Schnelle <schnelle@linux.ibm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
+        Wed, 27 Sep 2023 15:38:02 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 699D0121
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Sep 2023 12:38:01 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qlaM1-0002a1-Tt; Wed, 27 Sep 2023 21:37:49 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qlaM0-009Pat-VH; Wed, 27 Sep 2023 21:37:48 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qlaM0-005Rh8-Lj; Wed, 27 Sep 2023 21:37:48 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20230825-dma_iommu-v12-0-4134455994a7@linux.ibm.com>
- <ZRLy_AaJiXxZ2AfK@8bytes.org> <20230926160832.GM13795@ziepe.ca>
- <cfc9e9128ed5571d2e36421e347301057662a09e.camel@linux.ibm.com>
- <ZRP8CiBui7suB5D6@8bytes.org>
- <b06a14de270a63050b0d027c24b333dba25001a4.camel@linux.ibm.com>
- <e1efbbd827e34800bd7fb0ea687645cc6c65e1ab.camel@linux.ibm.com>
- <6dab29f58ac1ccd58caaee031f98f4d0d382cbcd.camel@linux.ibm.com>
- <a672b6b122c7a5f708614346885c190a6960aaea.camel@linux.ibm.com>
- <20230927154009.GN13795@ziepe.ca>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20230927154009.GN13795@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        =?utf-8?q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 28/31] thermal: soctherm: Convert to platform remove callback returning void
+Date:   Wed, 27 Sep 2023 21:37:33 +0200
+Message-Id: <20230927193736.2236447-29-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
+References: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1900; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=uHVcHD4muj48wU7dFB0AW5fmvDkHoBh8EbeZlIdklcc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFIR4xNQwDwkSqNP7b56y0F7eEi1bDNdpRSghz NJgZg2wpVmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRSEeAAKCRCPgPtYfRL+ TrFmB/9BVMH7cwlUzWiCs3E/AO0ZbkTeUc/Hba5ZmDaXAk2Gj9mL3vN/R3YTC2VmBxrbvEuNUei kwt8uqP6X20RpF1gt5v1/oZj6xad5EOV/r714xDPOXGWvA6HmUUc+HtAkceK/BfuIlnkV+4aUPw CSiAjZ4rcS9z0l95D6PgMRk5jbkpeWe+cG/e8DlQUOybEqpR6wCbC1URj6tPNaVdCG10A1m/qGb Z3X57BFZKwjfnqnZNBq4UwZPytqYO3X5odTjnuIlYgluIJXiu50i0btXQw34wjWgYj6CJwYP3oq UeOAIgS3ys5F0M/585zfX281+ZdiUBelwLlVZhQFIFpf8p7Z
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27/09/2023 4:40 pm, Jason Gunthorpe wrote:
-> On Wed, Sep 27, 2023 at 05:24:20PM +0200, Niklas Schnelle wrote:
-> 
->> Ok, another update. On trying it out again this problem actually also
->> occurs when applying this v12 on top of v6.6-rc3 too. Also I guess
->> unlike my prior thinking it probably doesn't occur with
->> iommu.forcedac=1 since that still allows IOVAs below 4 GiB and we might
->> be the only ones who don't support those. From my point of view this
->> sounds like a mlx5_core issue they really should call
->> dma_set_mask_and_coherent() before their first call to
->> dma_alloc_coherent() not after. So I guess I'll send a v13 of this
->> series rebased on iommu/core and with an additional mlx5 patch and then
->> let's hope we can get that merged in a way that doesn't leave us with
->> broken ConnectX VFs for too long.
-> 
-> Yes, OK. It definitely sounds wrong that mlx5 is doing dma allocations before
-> setting it's dma_set_mask_and_coherent(). Please link to this thread
-> and we can get Leon or Saeed to ack it for Joerg.
-> 
-> (though wondering why s390 is the only case that ever hit this?)
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-Probably because most systems happen to be able to satisfy the 
-allocation within the default 32-bit mask - the whole bottom 4GB of IOVA 
-space being reserved is pretty atypical.
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
-TBH it makes me wonder the opposite - how this ever worked on s390 
-before? And I think the answer to that is "by pure chance", since upon 
-inspection the existing s390_pci_dma_ops implementation appears to pay 
-absolutely no attention to the device's DMA masks whatsoever :(
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Robin.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/thermal/tegra/soctherm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index ea66cba09e56..e7fe8683bfc5 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -2219,15 +2219,13 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
+-static int tegra_soctherm_remove(struct platform_device *pdev)
++static void tegra_soctherm_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_soctherm *tegra = platform_get_drvdata(pdev);
+ 
+ 	debugfs_remove_recursive(tegra->debugfs_dir);
+ 
+ 	soctherm_clk_enable(pdev, false);
+-
+-	return 0;
+ }
+ 
+ static int __maybe_unused soctherm_suspend(struct device *dev)
+@@ -2274,7 +2272,7 @@ static SIMPLE_DEV_PM_OPS(tegra_soctherm_pm, soctherm_suspend, soctherm_resume);
+ 
+ static struct platform_driver tegra_soctherm_driver = {
+ 	.probe = tegra_soctherm_probe,
+-	.remove = tegra_soctherm_remove,
++	.remove_new = tegra_soctherm_remove,
+ 	.driver = {
+ 		.name = "tegra_soctherm",
+ 		.pm = &tegra_soctherm_pm,
+-- 
+2.40.1
+
