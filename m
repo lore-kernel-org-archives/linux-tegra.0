@@ -2,65 +2,39 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D46FE82CA5
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Sep 2023 15:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ABDE82CAE
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Sep 2023 16:16:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232603AbjI0PwG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Sep 2023 11:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48774 "EHLO
+        id S229880AbjI0QQh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Sep 2023 12:16:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232622AbjI0Pvm (ORCPT
+        with ESMTP id S229901AbjI0QQh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Sep 2023 11:51:42 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5463549E3
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Sep 2023 08:40:12 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id 6a1803df08f44-65af7e20f39so49081216d6.2
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Sep 2023 08:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1695829211; x=1696434011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t9oIEXPNWkoSP0yICfThZznT48YRRSxNiQbO+UpaNXk=;
-        b=REPvhS0od8YGeIuF8pH6xO7Z6Nm5hZjrPlyVdh7k+7W57+wslImmwmFDpr9Si1InPQ
-         v9MKY4koSdpGP9mGG1NiWxhdKQqDUG7D5oDSypk78gCbbiG0P67vj0AzPT/AxcKejuoG
-         8jdjFvm4LXJ4bZqorrR3X66+ui3ZaiaEsEa96mHzBIl5EzTTpygaN1VywN/JTi966tvF
-         RFZZ4jSkT71tem9hdvKNonJ5b/2pZXxsTznO30rtUPo5hqep55nUvnsMjhyl8hI/Iy5n
-         jPHsWwKXRTzW/KOFjoC9Y7qzBFFdHd1ktdahzs6YfoT5jKaqsI7/Bh5cHg5CzMLkx6Y9
-         ItgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695829211; x=1696434011;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t9oIEXPNWkoSP0yICfThZznT48YRRSxNiQbO+UpaNXk=;
-        b=EH1qS4QA8ki/HI2mECULzitVhuL7DgAhmc+oDPNVXo0C+io5thAXha6/e3wVXFsKTx
-         Y3bKwpgYoTTh1StDHyqCyXrTbXm0qvuaSIknwYU4qazR9sWC1dOv+Ee05OiKuUkJA37g
-         0v/PuUi2ZrvRwAbNQipTA2k79LV4OQ0rbpSJDNCo0SYYfnj3E0m0oiS+gQ/7xcU5YjpV
-         SmcbcqATn91l2cIew2rQ3eVPK1NuEiD/qlt+g7aZbLIvlMVFWGtRyB7mEl0uO2Mji9tg
-         GCNBIGYZN78TiFCnnDpOsrwX/a30OpJUJRoNVwdXySYVBH7vQxm0PzqEd2mNeSJf0jC3
-         fuwA==
-X-Gm-Message-State: AOJu0YwsvpuhkTADRVXRojDNsrt2n6uclHtRcG5Y60Fk/GpXieZlZUWC
-        f9siVRJC4B7lQ0FLssV4peywAQ==
-X-Google-Smtp-Source: AGHT+IEBIEK8bL4oC9/JbUXAJTo9b7yotL8eHtI4zGCh9Ar0J6VaF2Vk0l+zBuzNRh2jU30sxMvEWQ==
-X-Received: by 2002:a0c:de03:0:b0:64f:8d4c:1c0b with SMTP id t3-20020a0cde03000000b0064f8d4c1c0bmr2581322qvk.43.1695829210841;
-        Wed, 27 Sep 2023 08:40:10 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-26-201.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.26.201])
-        by smtp.gmail.com with ESMTPSA id i11-20020a0cab4b000000b00655e4f57732sm3474144qvb.35.2023.09.27.08.40.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Sep 2023 08:40:10 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1qlWe1-001Qtr-JG;
-        Wed, 27 Sep 2023 12:40:09 -0300
-Date:   Wed, 27 Sep 2023 12:40:09 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Niklas Schnelle <schnelle@linux.ibm.com>
+        Wed, 27 Sep 2023 12:16:37 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6D67392;
+        Wed, 27 Sep 2023 09:16:35 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1F6B1FB;
+        Wed, 27 Sep 2023 09:17:11 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C3893F59C;
+        Wed, 27 Sep 2023 09:16:28 -0700 (PDT)
+Message-ID: <96c0892f-20e6-db1f-f310-9b09d419aa6a@arm.com>
+Date:   Wed, 27 Sep 2023 17:16:23 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v12 0/6] iommu/dma: s390 DMA API conversion and optimized
+ IOTLB flushing
+Content-Language: en-GB
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Niklas Schnelle <schnelle@linux.ibm.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
         Matthew Rosato <mjrosato@linux.ibm.com>,
         Will Deacon <will@kernel.org>,
         Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
         Gerd Bayer <gbayer@linux.ibm.com>,
         Julian Ruess <julianr@linux.ibm.com>,
         Pierre Morel <pmorel@linux.ibm.com>,
@@ -100,44 +74,51 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         linux-doc@vger.kernel.org
-Subject: Re: [PATCH v12 0/6] iommu/dma: s390 DMA API conversion and optimized
- IOTLB flushing
-Message-ID: <20230927154009.GN13795@ziepe.ca>
 References: <20230825-dma_iommu-v12-0-4134455994a7@linux.ibm.com>
- <ZRLy_AaJiXxZ2AfK@8bytes.org>
- <20230926160832.GM13795@ziepe.ca>
+ <ZRLy_AaJiXxZ2AfK@8bytes.org> <20230926160832.GM13795@ziepe.ca>
  <cfc9e9128ed5571d2e36421e347301057662a09e.camel@linux.ibm.com>
  <ZRP8CiBui7suB5D6@8bytes.org>
  <b06a14de270a63050b0d027c24b333dba25001a4.camel@linux.ibm.com>
  <e1efbbd827e34800bd7fb0ea687645cc6c65e1ab.camel@linux.ibm.com>
  <6dab29f58ac1ccd58caaee031f98f4d0d382cbcd.camel@linux.ibm.com>
  <a672b6b122c7a5f708614346885c190a6960aaea.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a672b6b122c7a5f708614346885c190a6960aaea.camel@linux.ibm.com>
+ <20230927154009.GN13795@ziepe.ca>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20230927154009.GN13795@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 05:24:20PM +0200, Niklas Schnelle wrote:
+On 27/09/2023 4:40 pm, Jason Gunthorpe wrote:
+> On Wed, Sep 27, 2023 at 05:24:20PM +0200, Niklas Schnelle wrote:
+> 
+>> Ok, another update. On trying it out again this problem actually also
+>> occurs when applying this v12 on top of v6.6-rc3 too. Also I guess
+>> unlike my prior thinking it probably doesn't occur with
+>> iommu.forcedac=1 since that still allows IOVAs below 4 GiB and we might
+>> be the only ones who don't support those. From my point of view this
+>> sounds like a mlx5_core issue they really should call
+>> dma_set_mask_and_coherent() before their first call to
+>> dma_alloc_coherent() not after. So I guess I'll send a v13 of this
+>> series rebased on iommu/core and with an additional mlx5 patch and then
+>> let's hope we can get that merged in a way that doesn't leave us with
+>> broken ConnectX VFs for too long.
+> 
+> Yes, OK. It definitely sounds wrong that mlx5 is doing dma allocations before
+> setting it's dma_set_mask_and_coherent(). Please link to this thread
+> and we can get Leon or Saeed to ack it for Joerg.
+> 
+> (though wondering why s390 is the only case that ever hit this?)
 
-> Ok, another update. On trying it out again this problem actually also
-> occurs when applying this v12 on top of v6.6-rc3 too. Also I guess
-> unlike my prior thinking it probably doesn't occur with
-> iommu.forcedac=1 since that still allows IOVAs below 4 GiB and we might
-> be the only ones who don't support those. From my point of view this
-> sounds like a mlx5_core issue they really should call
-> dma_set_mask_and_coherent() before their first call to
-> dma_alloc_coherent() not after. So I guess I'll send a v13 of this
-> series rebased on iommu/core and with an additional mlx5 patch and then
-> let's hope we can get that merged in a way that doesn't leave us with
-> broken ConnectX VFs for too long.
+Probably because most systems happen to be able to satisfy the 
+allocation within the default 32-bit mask - the whole bottom 4GB of IOVA 
+space being reserved is pretty atypical.
 
-Yes, OK. It definitely sounds wrong that mlx5 is doing dma allocations before
-setting it's dma_set_mask_and_coherent(). Please link to this thread
-and we can get Leon or Saeed to ack it for Joerg.
+TBH it makes me wonder the opposite - how this ever worked on s390 
+before? And I think the answer to that is "by pure chance", since upon 
+inspection the existing s390_pci_dma_ops implementation appears to pay 
+absolutely no attention to the device's DMA masks whatsoever :(
 
-(though wondering why s390 is the only case that ever hit this?)
-
-Jason
+Robin.
