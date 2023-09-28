@@ -2,137 +2,119 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032C6E743C2
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Sep 2023 21:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0BEE743CE
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Sep 2023 23:42:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232364AbjI1VGP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Sep 2023 17:06:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54908 "EHLO
+        id S229972AbjI1XmO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Sep 2023 19:42:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232367AbjI1VGO (ORCPT
+        with ESMTP id S229541AbjI1XmN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Sep 2023 17:06:14 -0400
-Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA301B6;
-        Thu, 28 Sep 2023 14:06:06 -0700 (PDT)
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RxQxl49rkzFZ;
-        Thu, 28 Sep 2023 23:06:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1695935163; bh=iiQS8kMeezpTy3iMeiyaI+cO7grb0g3SKJXNiRAc2Yo=;
-        h=Date:In-Reply-To:References:Subject:From:To:Cc:From;
-        b=EvGqQJm2Fyuc6VcP9qxCVZVQK/cLRarleYOJ+9lLdM/DS92y4ah+/eXQHWlM4n/74
-         UR5/vv0oPPhZl1v1RZNJHpQ/rUq/FGfLATQ0WR6FjnHXIJS3wXpKKYtcshC9U11u/+
-         MSvWDkDyXZu0EtRjlKFZmqT74SBetfi1/j0OYB5H7EukJRUhQyH5nE0K5+wIKrHAt/
-         75417JEt2t5SmuQJuQpBCJL/NA9LT61TXI3SXiYMnpdAKoZmm1o++g9Oiik6Z0ti8j
-         2fLVbfD+Wv1F4QZyH/CGk7ceOizdQdJr1bXkfrYFENR/Kvq0W1ZNaiHyndM6d4xW77
-         Z0YiJw0AVbdZw==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.10 at mail
-Date:   Thu, 28 Sep 2023 23:06:03 +0200
-Message-Id: <ef8466b834c1726f5404c95c3e192e90460146f8.1695934946.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 1/3] usb: chipidea: Fix DMA overwrite for Tegra
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-To:     Peter Chen <peter.chen@kernel.org>,
+        Thu, 28 Sep 2023 19:42:13 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77219199
+        for <linux-tegra@vger.kernel.org>; Thu, 28 Sep 2023 16:42:12 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id 006d021491bc7-57bce354d94so3728738eaf.2
+        for <linux-tegra@vger.kernel.org>; Thu, 28 Sep 2023 16:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1695944532; x=1696549332; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3RV2WVrYFvmUIy/kF4sgLaI/igSwAmnqnqr5+CNVDt8=;
+        b=eIm0Tr3UrWUjzJ4jN6/2IK7vGtk83w/aM+dkwIMq+AwB2ci1Gu09xf9F9GMwaILj70
+         n4QvEnSrxRKunYK7/hD7XS4qnfKHiKUaPe20ZtTX7CsoKDMIVZZO8CFpNReTVXNSUq67
+         RXlmxi/OVy4WJv6gtNUzW8faa2GmV5dV2N214=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695944532; x=1696549332;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3RV2WVrYFvmUIy/kF4sgLaI/igSwAmnqnqr5+CNVDt8=;
+        b=rB8dcfY8dd4/QtcS4BMg9CITL1Xp/Gp8/C7FH55jhldtoI4UynBh/nF+F+JsQ0Z38W
+         ZV5rI8Q7CWmECglKiPbFvXS58d5QfXp48axdfc4IHRDvHKH2qurymkzYYyt8Y/25wmPL
+         oO9m3R8lWv84o5gE+4pOuDZ7SuyxFhBY6MoTKp7auIvsP/7Nd9ZezoJ0foDZXwwgpldU
+         1X0IBvWbXHBvNnVMgljhvUHVYkbRj57AQmLf18+ySjFbu88+KkHS80ETACzneta1fSrN
+         DW+OwvXsnNdMdLYltBt85wrL1hD7s83LJO7nIEP+qduvOWTo+C/ZI36jYx5GlRgqAxeE
+         Dk+w==
+X-Gm-Message-State: AOJu0YwhIjeOCDuCom7TJHTPemJ0LVN+hqUA9btMQBz4pVyeK+fsbE/z
+        zg96/o6z57QWNIb8WVCd3dMeOA==
+X-Google-Smtp-Source: AGHT+IHBsCldxysDZTajanQY+g4dIkq4a5ohe3XveIhxwgWt0zJyzNyJaoBdNbO8ZXRuiDiGJefhMw==
+X-Received: by 2002:a05:6358:2808:b0:13e:ea2a:40aa with SMTP id k8-20020a056358280800b0013eea2a40aamr1895209rwb.8.1695944531707;
+        Thu, 28 Sep 2023 16:42:11 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id t6-20020a639546000000b0057a868900a9sm13316234pgn.67.2023.09.28.16.42.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 16:42:10 -0700 (PDT)
+Date:   Thu, 28 Sep 2023 16:42:09 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Tudor Ambarus <tudor.ambarus@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Jie Hai <haijie1@huawei.com>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Green Wan <green.wan@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Yu Kuai <yukuai3@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
+        Jordy Zomer <jordy@pwning.systems>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        dmaengine@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 00/21] dmaengine: Annotate with __counted_by
+Message-ID: <202309281641.47911CC@keescook>
+References: <20230817235428.never.111-kees@kernel.org>
+ <169590216841.152265.1942803099201042070.b4-ty@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <169590216841.152265.1942803099201042070.b4-ty@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra USB controllers seem to issue DMA in full 32-bit words only and thus
-may overwrite unevenly-sized buffers.  One such occurrence is detected by
-SLUB when receiving a reply to a 1-byte buffer (below).  Fix this by
-allocating a bounce buffer also for buffers with sizes not a multiple of 4.
+On Thu, Sep 28, 2023 at 05:26:08PM +0530, Vinod Koul wrote:
+> 
+> On Thu, 17 Aug 2023 16:58:37 -0700, Kees Cook wrote:
+> > This annotates several structures with the coming __counted_by attribute
+> > for bounds checking of flexible arrays at run-time. For more details, see
+> > commit dd06e72e68bc ("Compiler Attributes: Add __counted_by macro").
+> > 
+> > Thanks!
+> > 
+> > -Kees
+> > 
+> > [...]
+> 
+> Applied, thanks!
 
-=============================================================================
-BUG kmalloc-64 (Tainted: G    B             ): kmalloc Redzone overwritten
------------------------------------------------------------------------------
+Thanks! I've dropped them from my tree. :)
 
-0x8555cd02-0x8555cd03 @offset=3330. First byte 0x0 instead of 0xcc
-Allocated in usb_get_status+0x2b/0xac age=1 cpu=3 pid=41
- __kmem_cache_alloc_node+0x12f/0x1e4
- __kmalloc+0x33/0x8c
- usb_get_status+0x2b/0xac
- hub_probe+0x5e9/0xcec
- usb_probe_interface+0xbf/0x21c
- really_probe+0xa5/0x2c4
- __driver_probe_device+0x75/0x174
- driver_probe_device+0x31/0x94
- __device_attach_driver+0x65/0xc0
- bus_for_each_drv+0x4b/0x74
- __device_attach+0x69/0x120
- bus_probe_device+0x65/0x6c
- device_add+0x48b/0x5f8
- usb_set_configuration+0x37b/0x6b4
- usb_generic_driver_probe+0x37/0x68
- usb_probe_device+0x35/0xb4
-Slab 0xbf622b80 objects=21 used=18 fp=0x8555cdc0 flags=0x800(slab|zone=0)
-Object 0x8555cd00 @offset=3328 fp=0x00000000
+Also, I found 1 more, which I'll send separately.
 
-Redzone  8555ccc0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555ccd0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555cce0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555ccf0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd00: 01 00 00 00 cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd10: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd20: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Object   8555cd30: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-Redzone  8555cd40: cc cc cc cc                                      ....
-Padding  8555cd74: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a              ZZZZZZZZZZZZ
-CPU: 3 PID: 41 Comm: kworker/3:1 Tainted: G    B              6.6.0-rc1mq-00118-g59786f827ea1 #1115
-Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-Workqueue: usb_hub_wq hub_event
-[<8010ca28>] (unwind_backtrace) from [<801090a5>] (show_stack+0x11/0x14)
-[<801090a5>] (show_stack) from [<805da2fb>] (dump_stack_lvl+0x4d/0x7c)
-[<805da2fb>] (dump_stack_lvl) from [<8026464f>] (check_bytes_and_report+0xb3/0xe4)
-[<8026464f>] (check_bytes_and_report) from [<802648e1>] (check_object+0x261/0x290)
-[<802648e1>] (check_object) from [<802671b1>] (free_to_partial_list+0x105/0x3f8)
-[<802671b1>] (free_to_partial_list) from [<80268613>] (__kmem_cache_free+0x103/0x128)
-[<80268613>] (__kmem_cache_free) from [<80425a67>] (usb_get_status+0x73/0xac)
-[<80425a67>] (usb_get_status) from [<80421b31>] (hub_probe+0x5e9/0xcec)
-[<80421b31>] (hub_probe) from [<80428bbb>] (usb_probe_interface+0xbf/0x21c)
-[<80428bbb>] (usb_probe_interface) from [<803ee13d>] (really_probe+0xa5/0x2c4)
-[<803ee13d>] (really_probe) from [<803ee3d1>] (__driver_probe_device+0x75/0x174)
-[<803ee3d1>] (__driver_probe_device) from [<803ee501>] (driver_probe_device+0x31/0x94)
-usb 1-1: device descriptor read/8, error -71
+-Kees
 
-Fixes: fc53d5279094 ("usb: chipidea: tegra: Support host mode")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- drivers/usb/chipidea/host.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
-index 08af26b762a2..abddd39d1ff1 100644
---- a/drivers/usb/chipidea/host.c
-+++ b/drivers/usb/chipidea/host.c
-@@ -411,12 +411,13 @@ static int ci_hdrc_alloc_dma_aligned_buffer(struct urb *urb, gfp_t mem_flags)
- 	const unsigned int ci_hdrc_usb_dma_align = 32;
- 	size_t kmalloc_size;
- 
--	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0 ||
--	    !((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)))
-+	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0)
-+		return 0;
-+	if (!((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)) && !(urb->transfer_buffer_length & 3))
- 		return 0;
- 
- 	/* Allocate a buffer with enough padding for alignment */
--	kmalloc_size = urb->transfer_buffer_length +
-+	kmalloc_size = ALIGN(urb->transfer_buffer_length, 4) +
- 		       sizeof(struct ci_hdrc_dma_aligned_buffer) +
- 		       ci_hdrc_usb_dma_align - 1;
- 
 -- 
-2.39.2
-
+Kees Cook
