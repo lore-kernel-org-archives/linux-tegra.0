@@ -2,66 +2,104 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC00E743C3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690A5E743C4
 	for <linux-tegra@archiver.kernel.org>; Thu, 28 Sep 2023 21:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230523AbjI1VGO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Sep 2023 17:06:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54850 "EHLO
+        id S232416AbjI1VGP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Sep 2023 17:06:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232215AbjI1VGN (ORCPT
+        with ESMTP id S232294AbjI1VGO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Sep 2023 17:06:13 -0400
+        Thu, 28 Sep 2023 17:06:14 -0400
 Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CB51B4;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09AAF1B3;
         Thu, 28 Sep 2023 14:06:06 -0700 (PDT)
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RxQxl0yqczBf;
-        Thu, 28 Sep 2023 23:06:03 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RxQxm2mFBzHw;
+        Thu, 28 Sep 2023 23:06:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1695935163; bh=55XpWhNKMX1xJec8+ShthJVwuaVBpCPUQ0HDAw6jCkg=;
-        h=Date:Subject:From:To:Cc:From;
-        b=WA3voBpiNjLNFqPEg2TF9J2XkWbjHG91hI2h8oawyNxRVzVQHuWCtnAh18TuDyso6
-         W0xy4zUUtbnGN+xUQG6ywnK1cewkRa7DcvWpGOLcXDLiGJ9L+pkAvyRK/xVduw/YiE
-         oNqOMmXUAjg8LWAQFPVcxsXXpOg8NWTY2PD4PAUkajg/yk/EfHBne2vhZ4/0N/6Iql
-         /8osQLy72ReWUk+rGMwD7ye/tjPkD8UvwTO5sX9XRgw1ZT3bf3rkB5OKhLsWZ2N/to
-         m0BW11VrJd7GRkpGfAEdPnZKYkAj4w39kHZAvjL4Wpey6xbtDIkQ5qwuxz8Ei7S3JI
-         Zv1wprVlqaNfA==
+        t=1695935164; bh=fNP2q8TKBOP90zAoPZo4VQ/VCwhK8Oy/8pLuJIyccf0=;
+        h=Date:In-Reply-To:References:Subject:From:To:Cc:From;
+        b=WaBXonGgsNPQmrfIt3nHJF4TgqENLz9f14w4yIl7lcqAHNZJA1dsMu/ZdBLrqNcn0
+         nE+I1dLwYbj+aMlvoICURqeHbw2lOb8Iq1zElAvGHJfVcX6dDDMUb3iXHHiQ32y2y4
+         OUkpz8ZRyvgn6TC1c6chsUdm4QHf/9UFl6MqVFjtAV4SHccSj1qjq/ZvSFJxI4jKxe
+         3Z3Fg9St1RxKoPqWnaCOafu/HkU3oJdQiuoZpVfvpTZ5a/lywxfY6s4a1t7ViJW9xw
+         XNjKyhcK4Hau7uoQGaHMMJSWEIL5SLA5p5vR2rdADcixZ9qf1GeqEqAvj7o9A1QRb+
+         4cJJ1zotJWMuQ==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.103.10 at mail
-Date:   Thu, 28 Sep 2023 23:06:02 +0200
-Message-Id: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 0/3] usb: chipidea: An USB DMA fix + cleanups for Tegra
+Date:   Thu, 28 Sep 2023 23:06:04 +0200
+Message-Id: <43d03aad1c394d9995f69d13ca1176f9ff8a8dab.1695934946.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2 3/3] usb: chipidea: tegra: Consistently use dev_err_probe()
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Chen <peter.chen@kernel.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Thierry Reding <treding@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org
+Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This series contains a fix for a DMA buffer overflow in Tegra USB driver
-followed by a cleanup of the DMA bounce buffer code and another cleanup
-to make probe() consistently use dev_err_probe() for error printk()s.
+Convert all error exits from probe() to dev_err_probe().
 
-v2: reworded the commit message in patch #1
+Acked-by: Peter Chen <peter.chen@kernel.org>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-Michał Mirosław (3):
-  usb: chipidea: Fix DMA overwrite for Tegra
-  usb: chipidea: Simplify Tegra DMA alignment code
-  usb: chipidea: tegra: Consistently use dev_err_probe()
-
- drivers/usb/chipidea/ci_hdrc_tegra.c | 16 ++++------
- drivers/usb/chipidea/host.c          | 48 ++++++++++++----------------
- 2 files changed, 27 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index 8e78bf643e25..2cc305803217 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -293,14 +293,12 @@ static int tegra_usb_probe(struct platform_device *pdev)
+ 	usb->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
+ 	if (IS_ERR(usb->phy))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(usb->phy),
+-				     "failed to get PHY\n");
++				     "failed to get PHY");
+ 
+ 	usb->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(usb->clk)) {
+-		err = PTR_ERR(usb->clk);
+-		dev_err(&pdev->dev, "failed to get clock: %d\n", err);
+-		return err;
+-	}
++	if (IS_ERR(usb->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(usb->clk),
++				     "failed to get clock");
+ 
+ 	err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+ 	if (err)
+@@ -316,7 +314,7 @@ static int tegra_usb_probe(struct platform_device *pdev)
+ 
+ 	err = tegra_usb_reset_controller(&pdev->dev);
+ 	if (err) {
+-		dev_err(&pdev->dev, "failed to reset controller: %d\n", err);
++		dev_err_probe(&pdev->dev, err, "failed to reset controller");
+ 		goto fail_power_off;
+ 	}
+ 
+@@ -347,8 +345,8 @@ static int tegra_usb_probe(struct platform_device *pdev)
+ 	usb->dev = ci_hdrc_add_device(&pdev->dev, pdev->resource,
+ 				      pdev->num_resources, &usb->data);
+ 	if (IS_ERR(usb->dev)) {
+-		err = PTR_ERR(usb->dev);
+-		dev_err(&pdev->dev, "failed to add HDRC device: %d\n", err);
++		err = dev_err_probe(&pdev->dev, PTR_ERR(usb->dev),
++				    "failed to add HDRC device");
+ 		goto phy_shutdown;
+ 	}
+ 
 -- 
 2.39.2
 
