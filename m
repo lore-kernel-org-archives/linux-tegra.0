@@ -2,173 +2,91 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E325ECE7B07
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Sep 2023 07:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAC7CE7B07
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Sep 2023 07:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230316AbjI1HFa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41746 "EHLO
+        id S230246AbjI1HFv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:05:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230293AbjI1HF3 (ORCPT
+        with ESMTP id S230207AbjI1HFu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Sep 2023 03:05:29 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5ACC0
-        for <linux-tegra@vger.kernel.org>; Thu, 28 Sep 2023 00:05:25 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3231df68584so8521058f8f.1
-        for <linux-tegra@vger.kernel.org>; Thu, 28 Sep 2023 00:05:24 -0700 (PDT)
+        Thu, 28 Sep 2023 03:05:50 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156F7B7
+        for <linux-tegra@vger.kernel.org>; Thu, 28 Sep 2023 00:05:49 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-692b2bdfce9so9739818b3a.3
+        for <linux-tegra@vger.kernel.org>; Thu, 28 Sep 2023 00:05:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695884723; x=1696489523; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JK5FKcmSKFk/poFkH6WaIiPHJq3+6nK77MGlhBlv5xc=;
-        b=eMabU90bnM4dFTt5f8JHuzgfBY/en3tQqKF4Kyc1cADJDDJyL/JlrMz6oDwWn4w0n1
-         KvmDxZSpD3c8I2zwFi4kb1IgaLIkYod90qxoriKKlmIAFeVFRmu0ZLR4L4goNGCH0uwg
-         FNkT6/RjOx6tua2r4wJzKDXFn8avoK8jQhkRxQGAAfP2YqQ96G9CT0vA9FOvAD5fwrcL
-         DJn1rJWcRSkY5w+YLdmqtZRTM1qbpU3klvi9UwZBY87CW+AJMt/3ABHiKC6jt9a+0L9P
-         5d5LbrEyTRGp2IQ7jmWZ/QYJjSCCZOkQ8AmqiFHPnzxrAu6Li0E3pc/nU4313SerGrfH
-         un8g==
+        d=linaro.org; s=google; t=1695884748; x=1696489548; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qrlIZw5qja4JqqyR+qcaKYLNZ4ub2lqDzG6RTlB/DIQ=;
+        b=VXgfD9XaxeF/63XgRHFT/wxooGGjwigre/IKZ3thmGDBWqHMRj8WJbQZ+FJFMKrzRz
+         1xGgpJeL/3zgeH7cwGGfAEQ0tj6R8CDLy3aLQmOywDHM88lGZmNWpZv8Jbs/tWgRL+Fb
+         Scshc0vJcZQ7G1oFlkoFgV9mbd73ladCvyHws7+XZItsoNkkH8CJg8OXCCOs88kZrCqn
+         oVuSNMb4DNJ858GCovzDcO4wLQjyPeEZ79kYZ8msTytispHzsj/b9MRIr7K36DV+ENUO
+         cPrqJ4vgCY5/DS6A0dsZCn67isYWGdlgm8bMWBt5dVNGvMZIFFvm6G2Pn3kWs1lPD2Ak
+         3TtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695884723; x=1696489523;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JK5FKcmSKFk/poFkH6WaIiPHJq3+6nK77MGlhBlv5xc=;
-        b=fFYh9WRs6CLhW9Hq8tq8FzKVQ5J2qQmiVe5Jz1GwDtc8W8aC7IWZjWKfX9NjUNzF7N
-         JTEhuBsh89nVymCY9+qnPcjuRpdBl4rqno+1lDUMfLdM+KKFHE0y+TDq4UpjdxcyeAe0
-         FvpjI8YS5sk/2IBJOp/V3dz3HP0WEchyiceIS4bUP0xrvf6BO167XQ80mpYUpkJ+tBLt
-         1Fk7jQMZDZiW4ra4GYrOkl2dmCdZIjn9NyRVXPz32rNmn+OmMLZGftZDMCOHz4VzAa75
-         jgh09WX1AcbBsTyLKq6nXSJiPrRczbsxLP+FNSaDFoTkxlcW87EJYBOUr2PsX93aDYk7
-         4G0g==
-X-Gm-Message-State: AOJu0YxQlmpMR0qvevczm9yHa9KI/BI6a2g5lzeHXpb5snBDqhXJHc1u
-        UGCNQRTTMDkWpdqwipUbZfRyvQ==
-X-Google-Smtp-Source: AGHT+IHtRxKk7CXcPNdMQTTEBVfCDemBFx4pebeQoAgF8nP7IxdEu3s1ozmEdmztrqIM2F97b6iYUw==
-X-Received: by 2002:a5d:5b17:0:b0:31f:a4fa:130a with SMTP id bx23-20020a5d5b17000000b0031fa4fa130amr465227wrb.14.1695884723076;
-        Thu, 28 Sep 2023 00:05:23 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
-        by smtp.googlemail.com with ESMTPSA id bv19-20020a0560001f1300b0032327b70ef6sm10037825wrb.70.2023.09.28.00.05.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Sep 2023 00:05:22 -0700 (PDT)
-Message-ID: <d8515a00-4d41-2d23-09ca-30f474fcbabd@linaro.org>
-Date:   Thu, 28 Sep 2023 09:05:20 +0200
+        d=1e100.net; s=20230601; t=1695884748; x=1696489548;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qrlIZw5qja4JqqyR+qcaKYLNZ4ub2lqDzG6RTlB/DIQ=;
+        b=jFhhvjjv0PHUIEHVrrQ5oweMF1qh+KY88Q7XfNdaxdk7NuutsQ7yQ1lcmFmh0xd0up
+         CPEjgX3XGzvnfnrSvpQlpkoHF0O05F0kDimDoO2323+S40Ub25q6MFi5tsG69ECsb7BG
+         p0ihkAOOLxytRpEZenDSq+SuWvdbE6VDE+Fe94im8vdlUhdE0RXc/bVMR1YM5DymyYnz
+         3+SHRnyIruwSmYQjyT3b1UwP8b96o4I/+ZLsC24eSGDRDClcukGMocsvnPnbZw8BlPvi
+         yTZFhvst4C4/Gf+wbAb2ScZTbAYA6vXRwyb2IqJkkSvvEkVhbYKVzNCBliib8bcga7K0
+         HqIw==
+X-Gm-Message-State: AOJu0YzholeMCjPJSv0YmSK9MnuFnH7TjYwQxodVnFVVaSLzxuS1ZDKm
+        bNs9kLpqOhS7ra7yHy5tjQlXLCB4F0aG/6OcAgI=
+X-Google-Smtp-Source: AGHT+IFkhgWod0clEQ5v67I4kF7osyGMadaETWiWbfHAflJHTZy3NiF4g4a1a+48SnTo7y0HALWaTw==
+X-Received: by 2002:a05:6a00:22c6:b0:68a:59c6:c0a6 with SMTP id f6-20020a056a0022c600b0068a59c6c0a6mr472441pfj.24.1695884748490;
+        Thu, 28 Sep 2023 00:05:48 -0700 (PDT)
+Received: from localhost ([122.172.81.92])
+        by smtp.gmail.com with ESMTPSA id y19-20020aa78053000000b006889348ba6esm7162087pfm.127.2023.09.28.00.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Sep 2023 00:05:47 -0700 (PDT)
+Date:   Thu, 28 Sep 2023 12:35:45 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, bbasu@nvidia.com,
+        amiettinen@nvidia.com
+Subject: Re: [Patch v2 1/2] cpufreq: tegra194: save CPU data to avoid
+ repeated SMP calls
+Message-ID: <20230928070545.b7l367qi2q4rynji@vireshk-i7>
+References: <20230901164113.29139-1-sumitg@nvidia.com>
+ <20230901164113.29139-2-sumitg@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 00/31] thermal: Convert to platform remove callback
- returning void
-Content-Language: en-US
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Guillaume La Roque <glaroque@baylibre.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, kernel@pengutronix.de,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Balsam CHIHI <bchihi@baylibre.com>,
-        Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Chen Jiahao <chenjiahao16@huawei.com>,
-        linux-mediatek@lists.infradead.org,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20230927193736.2236447-1-u.kleine-koenig@pengutronix.de>
- <CAJZ5v0guyQ-SpNHXYBG2F_WyCSvgjXocGBy61Ep1Cy5-H-MOsQ@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAJZ5v0guyQ-SpNHXYBG2F_WyCSvgjXocGBy61Ep1Cy5-H-MOsQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230901164113.29139-2-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27/09/2023 21:45, Rafael J. Wysocki wrote:
-> Hi,
-> 
-> On Wed, Sep 27, 2023 at 9:38 PM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
->>
->> Hello,
->>
->> this series converts all platform drivers below drivers/thermal to use
->> .remove_new(). The motivation is to get rid of an integer return code
->> that is (mostly) ignored by the platform driver core and error prone on
->> the driver side.
->>
->> See commit 5c5a7680e67b ("platform: Provide a remove callback that
->> returns no value") for an extended explanation and the eventual goal.
->>
->> There are no interdependencies between the patches. As there are still
->> quite a few drivers to convert, I'm happy about every patch that makes
->> it in. So even if there is a merge conflict with one patch until you
->> apply or a subject prefix is suboptimal, please apply the remainder of
->> this series anyhow.
-> 
-> I think I'll go ahead and apply all of this in one go (for 6.7).
-> 
-> Daniel, any objections?
+On 01-09-23, 22:11, Sumit Gupta wrote:
+> @@ -131,19 +132,10 @@ static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
+>  static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
+>  {
 
-No objection, for the series:
+> +	for_each_cpu_and(cpu, policy->cpus, cpu_online_mask)
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+(Yes this is existing code, but ..) you don't need to perform AND with
+cpu_online_mask as policy->cpus should only contain currently online CPUs.
+
+Please check if you ever see it differently.
+
+> +	data->cpu_data = devm_kcalloc(&pdev->dev, data->soc->num_clusters *
+> +				      data->soc->maxcpus_per_cluster,
+> +				      sizeof(struct tegra_cpu_data), GFP_KERNEL);
+
+This should be: sizeof(*data->cpu_data) instead. Didn't checkpatch complain
+about it ?
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+viresh
