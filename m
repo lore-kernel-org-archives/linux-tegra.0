@@ -2,123 +2,93 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A17DCE7B11
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Sep 2023 08:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF52E732C0
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Sep 2023 11:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbjI1IzO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Sep 2023 04:55:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48882 "EHLO
+        id S232341AbjI1LQV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Sep 2023 07:16:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231420AbjI1IzN (ORCPT
+        with ESMTP id S232029AbjI1LQK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Sep 2023 04:55:13 -0400
+        Thu, 28 Sep 2023 07:16:10 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F236AC;
-        Thu, 28 Sep 2023 01:55:12 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE99C433C9;
-        Thu, 28 Sep 2023 08:55:11 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260172A2F3;
+        Thu, 28 Sep 2023 04:12:14 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293FDC433C7;
+        Thu, 28 Sep 2023 11:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695891312;
-        bh=xa6vvaBHlOk8UEtDQ/qumgt8/oG5MrDN6yqv+rveHfA=;
+        s=k20201202; t=1695899496;
+        bh=Z72NaU1k+yn8VH2KLYdJDMnZnUKhBkDyH6n6KvVEpYY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p1PY+GG3b6sYjxjelG0+JL215yj4GYrBZPKDacGZ255ZosUUSwRanMycZXmoWf5+r
-         o/QT+rpcWQyCJd+2tM5SXTt2P0tR+isIoHJeYw998upipUShznj+Bf5ZNmXBNGnNyW
-         PRWqvWmlVWJ1kZtdyoWK9LP6X/2v7rlnkYeLQH+8f9POG7z9vkFtI/M7qLC+kJtxNn
-         mA0W4el2g7aDWARx7SYohHOC7GZZxenwH0uyicTA4gBrNT7Rlfpq+IPa52sr0hXNIu
-         2LTEwa6Kq3W7p1HiXer3jXIa8s7naOGsxBWwrZ5GYk90jPjb5KGwbHlog1TYOgLtRs
-         bYIWbKRFLC9ww==
-Date:   Thu, 28 Sep 2023 10:55:09 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Jani Nikula <jani.nikula@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        b=Ou0HLEYeDRVJuqY0rrG0SmdACv18zyLqyFfvqTO08uOxosewXkrdnUsKZDt4by03d
+         HoyzUC8RESyHsElFy2zn11j09IfZUt6WzHuA2oqO21Ha42SO+KKjXgm6IjLM41ZaXH
+         ZwhiFHQ85UyL+kbBBWakHtQDlKvxSMcDdKQpxgpwCi9X21uHcAKc3G/bOFNdpEQoHk
+         WsdW7mwVvcDmZgiZTnsgMjtrxUa+KpRrLwckKsmw0eTY9s/J352bE6VAvbfbcH27CW
+         a0Gd96itZ8C/fo/0yF0lAtKeo0IL63XfzQLgdegH0q4vvzaFAgyWcriGEs8NCPla5Q
+         foBo5T0e+9G9w==
+Date:   Thu, 28 Sep 2023 16:41:31 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Tudor Ambarus <tudor.ambarus@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Jie Hai <haijie1@huawei.com>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Green Wan <green.wan@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] MAINTAINERS: Update drm-misc entry to match all
- drivers
-Message-ID: <2f5o6om7zcs5zndhxlmxp5bjdvemwijriewm4of3ktouuwsrtt@h2w6m3uzcvya>
-References: <20230921105743.2611263-1-mripard@kernel.org>
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Yu Kuai <yukuai3@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jordy Zomer <jordy@pwning.systems>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        dmaengine@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, llvm@lists.linux.dev,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 00/21] dmaengine: Annotate with __counted_by
+Message-ID: <ZRVfYzrdAOrXJUcI@matsya>
+References: <20230817235428.never.111-kees@kernel.org>
+ <202309151307.F3341BD5A@keescook>
+ <202309221015.AB63726@keescook>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="usopfd3hfhg2tjuk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230921105743.2611263-1-mripard@kernel.org>
+In-Reply-To: <202309221015.AB63726@keescook>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 22-09-23, 10:16, Kees Cook wrote:
+> On Fri, Sep 15, 2023 at 01:08:30PM -0700, Kees Cook wrote:
+> > Just a ping on the series... how do these look to you, Vinod?
+> > 
+> > If you want I can carry them in my tree. Please let me know.
+> 
+> I'm now carrying this in my for-next/hardening tree. Let me know if
+> you'd prefer I drop it.
 
---usopfd3hfhg2tjuk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry was busy in travel etc, it should be in dmaengine/next tomorrow.
+You can drop it
 
-Hi,
-
-On Thu, Sep 21, 2023 at 12:57:43PM +0200, Maxime Ripard wrote:
-> We've had a number of times when a patch slipped through and we couldn't
-> pick them up either because our MAINTAINERS entry only covers the
-> framework and thus we weren't Cc'd.
->=20
-> Let's take another approach where we match everything, and remove all
-> the drivers that are not maintained through drm-misc.
->=20
-> Acked-by: Jani Nikula <jani.nikula@intel.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-
-Applied with Dave's Acked-by given on IRC.
-
-This was conflicting with
-https://lore.kernel.org/r/20230925154929.1.I3287e895ce8e68d41b458494a49a1b5=
-ec5c71013@changeid
-
-So I removed the imx exclusion from that list while applying.
-
-Maxime
-
---usopfd3hfhg2tjuk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZRU/bQAKCRDj7w1vZxhR
-xe83APwN1o0Jh3tdI+KSLA0NHED3fMGIHdyRsqt2aHdCbHIyBQD7B49jUKpcY4K8
-lWNF/Y+Q5bEHNDXGZCGyRairFyB/mwY=
-=lA7w
------END PGP SIGNATURE-----
-
---usopfd3hfhg2tjuk--
+Thanks
+-- 
+~Vinod
