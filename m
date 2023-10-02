@@ -2,100 +2,73 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FE1E784A4
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Oct 2023 06:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A21E784A4
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Oct 2023 08:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235596AbjJBG77 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Oct 2023 02:59:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52400 "EHLO
+        id S235849AbjJBIZx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Oct 2023 04:25:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235580AbjJBG77 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Oct 2023 02:59:59 -0400
-Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C1175A4;
-        Sun,  1 Oct 2023 23:59:55 -0700 (PDT)
-Received: from 8bytes.org (pd9fe9df8.dip0.t-ipconnect.de [217.254.157.248])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.8bytes.org (Postfix) with ESMTPSA id ECDA51A2626;
-        Mon,  2 Oct 2023 08:59:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-        s=default; t=1696229994;
-        bh=AIFVwF7V2yCwhyWe75DvT7fYSBhwm/fBmqB8nOMomrQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qpnLCwzk2x1keRMkLPeYurvT7r9OO8YOJ6/7Vx/qRYBDxYBtaFczM0bl0X3CwM+Z8
-         JjZ2S2KL1yCjIcyOYKVBFX3TnYJH3DgXndhq33RdOr06+/f4P6g8ed5YusHJpPxKBf
-         /cC8uVfAa/rk6Wr3PPtDNHTnxEpzpMy8C+fcOb8G29mwxCh4jTTbUwvHTKVDKKREHN
-         XKS42S0qW6PWzXZYxLGalC73IDOoglQpj2vweIfb/B9jDLMPy04LKeueQ7Vtaof2m0
-         /U/pjbpVoAN9ULRqOfwjMT62szxrFLqy3anLaW4GIZc388p9f5N34fWI0GM1KG2Gfs
-         vlKBpUHgqfWmA==
-Date:   Mon, 2 Oct 2023 08:59:52 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Niklas Schnelle <schnelle@linux.ibm.com>
-Cc:     Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v13 0/6] iommu/dma: s390 DMA API conversion and optimized
- IOTLB flushing
-Message-ID: <ZRpqaJEQLRDp5b1L@8bytes.org>
-References: <20230928-dma_iommu-v13-0-9e5fc4dacc36@linux.ibm.com>
+        with ESMTP id S235845AbjJBIZs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Oct 2023 04:25:48 -0400
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07874C4;
+        Mon,  2 Oct 2023 01:25:44 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D9DEF60017;
+        Mon,  2 Oct 2023 08:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1696235143;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RNHnqB4N/sFo3MdfMP59guhAXP0/erOIPWf4ZjX7S+0=;
+        b=OxUfIdUzPTlw3wqOKKfq69BnqhdnPbSQ2ry+WhusFq3EvqOfEiv9SvObfv01HSUlisG2xV
+        nOPOAcvS6H5hs3FTjVttLncRwMaMqMlOkRNQq0rApnC2DqftwN/wCG3Cl8Y7MTlc1N+1J2
+        hNTGbDHBTvqppsJ+n0DNE2qeqtEUGFSagsB2KFJBXCIsnVSk2ylCBJgekoWW2Z4PYzbpAT
+        Ov/wWE4EgfH5y+S9mivlHT76rX2s8DpNzgeUkaQbP05GbKuto4/rcFxlgG87fMwfQJwRkM
+        IJdzRoENhqSmQO+g3XTOoz8wSuzryOni23wnAxV1PRNeHZkQDxxqMcqsqEeYBg==
+Date:   Mon, 2 Oct 2023 10:25:41 +0200
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: tegra: Display pin function in pinconf-groups
+Message-ID: <20231002102541.426371e8@booty>
+In-Reply-To: <20230929122101.466266-1-thierry.reding@gmail.com>
+References: <20230929122101.466266-1-thierry.reding@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230928-dma_iommu-v13-0-9e5fc4dacc36@linux.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 28, 2023 at 04:31:34PM +0200, Niklas Schnelle wrote:
-> Niklas Schnelle (6):
->       iommu: Allow .iotlb_sync_map to fail and handle s390's -ENOMEM return
->       s390/pci: prepare is_passed_through() for dma-iommu
->       s390/pci: Use dma-iommu layer
->       iommu/s390: Disable deferred flush for ISM devices
->       iommu/dma: Allow a single FQ in addition to per-CPU FQs
->       iommu/dma: Use a large flush queue and timeout for shadow_on_flush
+Hello Thierry,
 
-Applied, thanks Niklas.
+On Fri, 29 Sep 2023 14:21:01 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
+
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The function that a pin is muxed to can be read from the top-level
+> pinctrl-maps debugfs file. However, this only reflects the values that
+> were specified in device tree, so they will only show deviations from
+> the hardware default setting. Display the current pinmux setting in the
+> per-controller pinconf-groups debugfs file along with the rest of the
+> per-pin configuration settings.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+[On Tegra20]
+Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
