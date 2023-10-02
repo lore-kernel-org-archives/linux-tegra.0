@@ -2,77 +2,86 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0A0E748FC
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Oct 2023 17:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7B2E74901
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Oct 2023 17:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237784AbjJBRTK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Oct 2023 13:19:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38680 "EHLO
+        id S238714AbjJBRUb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Oct 2023 13:20:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237954AbjJBRTJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Oct 2023 13:19:09 -0400
+        with ESMTP id S238706AbjJBRU3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Oct 2023 13:20:29 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E5BEA4;
-        Mon,  2 Oct 2023 10:19:04 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A34AC433C8;
-        Mon,  2 Oct 2023 17:19:02 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB9FDBD;
+        Mon,  2 Oct 2023 10:20:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8534FC433C8;
+        Mon,  2 Oct 2023 17:20:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696267144;
-        bh=88t4OjXZc51C0kAFUiyZuz+p9QqkBW4TTymGySGL8hM=;
+        s=k20201202; t=1696267225;
+        bh=Kv4fB7qSfaekw9eYfeovDld/AAw6t2uVKyOZDgT3d+w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mZz/G8G2cCmjBjDTxvwY+v3UITEye5iTWR1oqlw9njlUvHnWLgapUCUZ/T4BGRwD6
-         zRPyXEbo97/QPyAbgdmexwg0XWm3w/J9asAnDT+w9+jjTI3hPSYFkgR8/2NN5ECOEH
-         DEP24KdlohfaKrIiwmDA1v0iGIFbvGh9wA+BRxJK77vWG25NzZkLWGUA3rt+qR5ImK
-         gt8pKhBAMRX41g/ueZCgj+83h6KHOpvFAIgW+O8ed3qx8uimmu+xrOhpJlvoD8hSwu
-         eMkWPwddT7e78qqoYoBpw2iXqy6Xx+qKUlcOPQWjZxpHdwexi6kARHO1EG0/hNAZLU
-         LEPsHkxk04PzA==
-Received: (nullmailer pid 2034391 invoked by uid 1000);
-        Mon, 02 Oct 2023 17:19:01 -0000
-Date:   Mon, 2 Oct 2023 12:19:01 -0500
+        b=AeTPGaKjPcFv6C5Sc/XRNaMaDyjXQ35Ni8CYIbj1/Dnpr+XC6nNMWSCf+i6pqAwOW
+         H9sTIV0hzvKOZhQRaY+MsdnnXG84dVpv/sjH879P50ahxbzJmdzxbZllnucBlCqolW
+         8JaOvTXoV3LYBMcKUWDk/0d9sJn/S3PfzVpiCJOPsMYmmZyIAsDpVtOjjqqrECxFfA
+         KdjB7T8pcdH0ZDN+iwq0ixYm2rCBLYBqYbXBphgwoqdUucFU+w1W+bDsNe5CiFkQMr
+         p5FAiQJIIpT5+QpLg7S3EZJ4p6K/xp6qYBhYfn5CCR/irBpeUmkX9FOQtl3o/+VAaL
+         xP4ylxeEbsuYQ==
+Received: (nullmailer pid 2035950 invoked by uid 1000);
+        Mon, 02 Oct 2023 17:20:23 -0000
+Date:   Mon, 2 Oct 2023 12:20:23 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Conor Dooley <conor+dt@kernel.org>,
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         Guenter Roeck <linux@roeck-us.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Ninad Malwade <nmalwade@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH V5 1/4] dt-bindings: hwmon: ina3221: Convert to
- json-schema
-Message-ID: <169626714151.2034330.4248654905752564697.robh@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH V5 2/4] dt-bindings: hwmon: ina3221: Add
+ ti,summation-disable
+Message-ID: <169626722278.2035896.8671218369009022609.robh@kernel.org>
 References: <20230929103650.86074-1-jonathanh@nvidia.com>
- <20230929103650.86074-2-jonathanh@nvidia.com>
+ <20230929103650.86074-3-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230929103650.86074-2-jonathanh@nvidia.com>
+In-Reply-To: <20230929103650.86074-3-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On Fri, 29 Sep 2023 11:36:47 +0100, Jon Hunter wrote:
-> From: Ninad Malwade <nmalwade@nvidia.com>
+On Fri, 29 Sep 2023 11:36:48 +0100, Jon Hunter wrote:
+> The INA3221 has a critical alert pin that can be controlled by the
+> summation control function. This function adds the single
+> shunt-voltage conversions for the desired channels in order to
+> compare the combined sum to the programmed limit. The Shunt-Voltage
+> Sum Limit register contains the programmed value that is compared
+> to the value in the Shunt-Voltage Sum register in order to
+> determine if the total summed limit is exceeded. If the
+> shunt-voltage sum limit value is exceeded, the critical alert pin
+> pulls low.
 > 
-> Convert the TI INA3221 bindings from the free-form text format to
-> json-schema.
+> For the summation limit to have a meaningful value, it is necessary
+> to use the same shunt-resistor value on all included channels. Add a new
+> vendor specific property, 'ti,summation-disable', to allow specific
+> channels to be excluded from the summation control function if the shunt
+> resistor is different to other channels or the channel should not be
+> considered for triggering the critical alert pin.
 > 
-> Note that the INA3221 input channels default to enabled in the chip.
-> Unless channels are explicitly disabled in device-tree, input
-> channels will be enabled.
+> Note that the ina3221 has always supported summing the various input
+> channels and summation is enabled by default if the shunt-resistor
+> values are the same. This change simply provides a way to exclude
+> inputs from the summation. If this property is not populated, then the
+> functionality of the driver does not change.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
 > ---
->  .../devicetree/bindings/hwmon/ina3221.txt     |  54 ----------
->  .../devicetree/bindings/hwmon/ti,ina3221.yaml | 102 ++++++++++++++++++
->  2 files changed, 102 insertions(+), 54 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.txt
->  create mode 100644 Documentation/devicetree/bindings/hwmon/ti,ina3221.yaml
+>  .../devicetree/bindings/hwmon/ti,ina3221.yaml | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
