@@ -2,98 +2,164 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DF7E75423
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 05:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C546E75433
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 08:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbjJCFA2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Oct 2023 01:00:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45876 "EHLO
+        id S231134AbjJCIeZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 Oct 2023 04:34:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230101AbjJCFA1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Oct 2023 01:00:27 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EE3B0
-        for <linux-tegra@vger.kernel.org>; Mon,  2 Oct 2023 22:00:23 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1c3cbfa40d6so3803405ad.1
-        for <linux-tegra@vger.kernel.org>; Mon, 02 Oct 2023 22:00:23 -0700 (PDT)
+        with ESMTP id S230188AbjJCIeY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Oct 2023 04:34:24 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE4891
+        for <linux-tegra@vger.kernel.org>; Tue,  3 Oct 2023 01:34:21 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a229ac185aso8076417b3.1
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Oct 2023 01:34:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696309223; x=1696914023; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+nfCohsf0IBpk4VGOH7juW9pyfIB5x24Be0mmL+VZE=;
-        b=a+fY2aLy6vOKPsj6iMlnwP/J6zcbY57TL7Pg7gAEtL3UEGTMkjeXTdJxeUwR6eYC9H
-         C4tmjdgQCYpou4LPaYj2yXcZ1W+lj0p63JiuvU8QY4PpRmyd34C7AH1npV2hGpNo661z
-         /YcmqHyEaPEMUEHn23WSViob3ARbRHn33v79mDr30K09EdnyeW4V2SePkeKSVh8yXvxa
-         10VnQxzpaz56hzRVG6x9qepOucrqNaIXgy1y0scv9BzwCJGuvPaIv5UN315vPubDBZDT
-         r49MEqv3vKT0+CrrqwIsRtIi+96oytN6PQlXJVLHa9aXPX5YLpQEx1H1zNkCYGo16eIX
-         WcFg==
+        d=linaro.org; s=google; t=1696322061; x=1696926861; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bitTTBesOlX5jNs0WrntjlIVBf0r6k8vUqdJl07s2a4=;
+        b=Nnyho37JLe/shXs59RWxP0LFbzenNiR7+5J+u4OAHOuBBKhQn1bK3OeFbKaCNYd6z+
+         ve2ZdPw882VgiWs9bqNMe7MmlrKBvyPeaFeU+Y6HmdCxarKB+Y6yMgCFv1mv9R6lnP8h
+         G8SBMa316LXAo4KbAezbxDHhVuZfO/O7ohK5Vjd8qld5xA3ea604mL/48FE5FeUNJ6le
+         YW6TQz4u89BmIde+aETFaEPCSvhUNfD1xzrcE9riCiWQIZbnLsDzWqTgcgFE4wLV+CQx
+         XfLYhOsNt57SLwhwyA41vZ2pmtff3203+Hq/OZnPPuJNbUl1iX1V2bJK9JvCtnTzs8et
+         O+wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696309223; x=1696914023;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+nfCohsf0IBpk4VGOH7juW9pyfIB5x24Be0mmL+VZE=;
-        b=wmx+WjvHz002ZLpFMKqlm77fZBud7E94ivuWR2iiDgPshtYnALNhFstt6rXtiqU8Dj
-         HQmvt80U+CG231S+Yl+4jcX65n4PBc/6ra1V5G9HIB8AmPE0GJk7BOO27UKFd/neiUZw
-         yiske+lrsYA475Rtot0hxg4fLr+nxkRQOY69J1oN0iTQSTVEy16Jy6EJqSz2dbWGkk/W
-         bnhqoOJQ1bZZ5tUpwQvM9I6cwE2rezTRTySjqfByYxoGqSOLPRQ65pclV28SZX5erO9/
-         +3aj+J7XSFV/ZWGD/5nDu8aqGl4VP+K/Di3FwmtLf/D7fK+GdHm4Z5JKQ9QG3Wn9DhUt
-         HQlQ==
-X-Gm-Message-State: AOJu0Yz8Sy5zos+isqbMQuF2Efu3OCh+c02FcTI6+AWvsHu4QXfWQaMc
-        Bv2+7/KIC2QUKnW8kWIfoWWt4Q==
-X-Google-Smtp-Source: AGHT+IGV8BafNbY23Sj91HQExmnOCTvnlpXWNS0/VLWcWWpENSZR05eOYIfmerdwQTZsWs4wrSMLBA==
-X-Received: by 2002:a17:902:c408:b0:1c5:f0fd:51b5 with SMTP id k8-20020a170902c40800b001c5f0fd51b5mr17458750plk.40.1696309222686;
-        Mon, 02 Oct 2023 22:00:22 -0700 (PDT)
-Received: from localhost ([122.172.81.92])
-        by smtp.gmail.com with ESMTPSA id o19-20020a170902779300b001bc675068e2sm388299pll.111.2023.10.02.22.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Oct 2023 22:00:21 -0700 (PDT)
-Date:   Tue, 3 Oct 2023 10:30:19 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        treding@nvidia.com, jonathanh@nvidia.com, bbasu@nvidia.com,
-        amiettinen@nvidia.com
-Subject: Re: [Patch v2 1/2] cpufreq: tegra194: save CPU data to avoid
- repeated SMP calls
-Message-ID: <20231003050019.a6mcchw2o2z2wkrh@vireshk-i7>
-References: <20230901164113.29139-1-sumitg@nvidia.com>
- <20230901164113.29139-2-sumitg@nvidia.com>
- <20230928070545.b7l367qi2q4rynji@vireshk-i7>
- <8cb33679-5056-8983-9334-3ab3d170568a@nvidia.com>
+        d=1e100.net; s=20230601; t=1696322061; x=1696926861;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bitTTBesOlX5jNs0WrntjlIVBf0r6k8vUqdJl07s2a4=;
+        b=Vou4SuSjxRiv4qWpTQY/ff3MQCD7f3IePRX/dLCfWyA2NB6zV/8bBF9xR2PNb7Amfx
+         ZsMKs0B6PCdS07xpShbnEqpDkrPxjn1cl/L0I3DEPMwbiEQ1tedyN8B9+j4OzQjIeeNK
+         Lg9t/XzBxBLlOdtK8Cu62kvFcXhdgG/vLd4QkCwXD/IIuEBl7qGwuR3GwjgexwlUQk0f
+         vn6I51AyuaMfbSq2b5rjJz/kk0/TcYWBEKfj/gOfOGb8QB8sMFfc7FKkuLJskJ/Sh4q9
+         ryHHeqtVACZR4SybwpxcCiNNn3/bdnMKCGpt2Xqwsn7thzs7/iL2QcBm/sHlZJqLY4IQ
+         c3xA==
+X-Gm-Message-State: AOJu0YyYRsPJeoqJA5usXFG1ueeaK/UCaMoouwfO8ltrYsL+4XggHk5J
+        2d/vY7v8bOmEVObXzWJj3KIXbBAzT+e2N0qvv/6Anw==
+X-Google-Smtp-Source: AGHT+IFDzIQLW0laXGE7JKd6lbdhFAMnDeThlxxmtoO8UChMspJgCI8sx/aRikQspuJgbcSRJHW6nrx+DUBW3F7ngjs=
+X-Received: by 2002:a0d:f685:0:b0:59e:8f6d:92e with SMTP id
+ g127-20020a0df685000000b0059e8f6d092emr14665847ywf.49.1696322060718; Tue, 03
+ Oct 2023 01:34:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cb33679-5056-8983-9334-3ab3d170568a@nvidia.com>
+References: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
+ <20-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com> <CAA8EJprz7VVmBG68U9zLuqPd0UdSRHYoLDJSP6tCj6H6qanuTQ@mail.gmail.com>
+ <20231002230000.GA682044@nvidia.com>
+In-Reply-To: <20231002230000.GA682044@nvidia.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Tue, 3 Oct 2023 11:34:08 +0300
+Message-ID: <CAA8EJpr-CpgTVipd_t1uj7iHHq6__pj3mrm4Mn-pdZwhpS8aDA@mail.gmail.com>
+Subject: Re: [PATCH v8 20/24] iommu: Require a default_domain for all iommu drivers
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Rob Clark <robdclark@gmail.com>, Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
+        Yong Wu <yong.wu@mediatek.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 29-09-23, 19:47, Sumit Gupta wrote:
-> 
-> 
-> On 28/09/23 12:35, Viresh Kumar wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On 01-09-23, 22:11, Sumit Gupta wrote:
-> > > @@ -131,19 +132,10 @@ static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
-> > >   static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
-> > >   {
-> > 
-> > > +     for_each_cpu_and(cpu, policy->cpus, cpu_online_mask)
-> > 
-> > (Yes this is existing code, but ..) you don't need to perform AND with
-> > cpu_online_mask as policy->cpus should only contain currently online CPUs.
-> > 
-> > Please check if you ever see it differently.
-> > 
-> 
-> I think this was kept to be safe.
-> Should I removed the AND in v3 or send separate patch?
+On Tue, 3 Oct 2023 at 02:00, Jason Gunthorpe <jgg@nvidia.com> wrote:
+>
+> On Tue, Oct 03, 2023 at 12:21:59AM +0300, Dmitry Baryshkov wrote:
+> > On Wed, 13 Sept 2023 at 16:45, Jason Gunthorpe <jgg@nvidia.com> wrote:
+> > >
+> > > At this point every iommu driver will cause a default_domain to be
+> > > selected, so we can finally remove this gap from the core code.
+> > >
+> > > The following table explains what each driver supports and what the
+> > > resulting default_domain will be:
+> > >
+> > >                                         ops->defaut_domain
+> > >                     IDENTITY   DMA  PLATFORM    v      ARM32          dma-iommu  ARCH
+> > > amd/iommu.c             Y       Y                       N/A             either
+> > > apple-dart.c            Y       Y                       N/A             either
+> > > arm-smmu.c              Y       Y                       IDENTITY        either
+> > > qcom_iommu.c            G       Y                       IDENTITY        either
+> > > arm-smmu-v3.c           Y       Y                       N/A             either
+> > > exynos-iommu.c          G       Y                       IDENTITY        either
+> > > fsl_pamu_domain.c                       Y       Y       N/A             N/A     PLATFORM
+> > > intel/iommu.c           Y       Y                       N/A             either
+> > > ipmmu-vmsa.c            G       Y                       IDENTITY        either
+> > > msm_iommu.c             G                               IDENTITY        N/A
+> >
+> > Unfortunately this patch breaks msm_iommu platforms. This driver
+> > doesn't select ARM_DMA_USE_IOMMU, so iommu_get_default_domain_type()
+> > returns 0, bus_iommu_probe() fails with -ENODEV.
+> > If I make MSM_IOMMU select ARM_DMA_USE_IOMMU, then GPU probing fails
+> > with -EBUSY.
+>
+> Oh, OK.
+>
+> Does this fix it?
 
-Sending it separately would be ideal.
+It indeed fixes the issue, so could you please post it, adding:
+Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+> index cdc7b730192a35..f7ef081c33dcb2 100644
+> --- a/drivers/iommu/msm_iommu.c
+> +++ b/drivers/iommu/msm_iommu.c
+> @@ -685,10 +685,16 @@ irqreturn_t msm_iommu_fault_handler(int irq, void *dev_id)
+>         return 0;
+>  }
+>
+> +static int msm_iommu_def_domain_type(struct device *dev)
+> +{
+> +       return IOMMU_DOMAIN_IDENTITY;
+> +}
+> +
+>  static struct iommu_ops msm_iommu_ops = {
+>         .identity_domain = &msm_iommu_identity_domain,
+>         .domain_alloc_paging = msm_iommu_domain_alloc_paging,
+>         .probe_device = msm_iommu_probe_device,
+> +       .def_domain_type = msm_iommu_def_domain_type,
+>         .device_group = generic_device_group,
+>         .pgsize_bitmap = MSM_IOMMU_PGSIZES,
+>         .of_xlate = qcom_iommu_of_xlate,
 
 -- 
-viresh
+With best wishes
+Dmitry
