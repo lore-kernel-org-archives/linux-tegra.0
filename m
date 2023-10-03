@@ -2,123 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2D6E7AD66
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 14:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3C5E7AD78
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 16:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240189AbjJCOvc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Oct 2023 10:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34436 "EHLO
+        id S231752AbjJCQkB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 Oct 2023 12:40:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240176AbjJCOvb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Oct 2023 10:51:31 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2EAAA1
-        for <linux-tegra@vger.kernel.org>; Tue,  3 Oct 2023 07:51:28 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-406618d0991so9905085e9.2
-        for <linux-tegra@vger.kernel.org>; Tue, 03 Oct 2023 07:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696344687; x=1696949487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJlcPxZYJ+2xOtgJ5lT3aANbc/q/A7LyEHQjQgc784Q=;
-        b=mhvYEiRo+bhT1rWAYnR8WLllDeWvqTbzz/90S2v0hSmggFXzFQNY/fdLu7EfFwgWKx
-         ckFLG0P4Xe+4JJIlUtJ9k7B3O4TpolDGUx2uoPQySc9rDixQgqaJKVR7vshb4UsyG54r
-         naM82a4Y4sJ+OUDHvYDsYRudrErD+xbhh79mWENSWeBayfyd72JwUGQl1jiDmOE0FiBO
-         bByHJu72Nje06GfvJmkQZ9ir5qBF62p6I5ARxKuxyDZRH+KTDCQQrDDDsJ0O0UpOWeze
-         AfD7uoBrdri/LL4YoC/CyOg+0LSrxa35GujlBRTtSqZqBq92NiyyNPn9WwLq2SFtOM7y
-         5JvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696344687; x=1696949487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJlcPxZYJ+2xOtgJ5lT3aANbc/q/A7LyEHQjQgc784Q=;
-        b=I4+9HAGgMpd+s1TG5RdLEimy9QI3jNdoXh+hDkP70an0AOkAPdgp/ypgodTFwcB8Pm
-         Jk3o8B9TM4IdLIbZslj3NLMTJXZKKD8VS/Rz3UWHj6ByjuQG7+RRomXkOPEIEFPeepmP
-         quxdJForqoslAOGzfb8IDo2JwDjwvMBjDmgunVdUAzxbYSEuwjfssvdWGWxAtQ5nA7qk
-         vz8XzDWGrMkufFF4v66QeAQ19ixi8s/HVntGJjE1m781qhOykYBeBkdObxWxTkvjXCU/
-         xAd0aQnBuOAxUiN73l5mHQjIxrrePVumgLyXS6YdPpte2G17g6GW+365gEBkx8rPcKcA
-         t+UQ==
-X-Gm-Message-State: AOJu0Yza5kUMppb/tfZuZUUj0kwvrZPPKNAFrWtq0WdsQTaO7Hz98voF
-        L2Po65abLOC+sPE2/V5AWHURvjAw6/RpgA/o43I=
-X-Google-Smtp-Source: AGHT+IFsfE5BRcM1HG+HIE2wDfPZ0fpZlZ9UKyEA+cdTptLNLKiA+uRGC9DiZYq9vd5rAGQ8WiCVYQ==
-X-Received: by 2002:a05:600c:2948:b0:405:3f06:c07e with SMTP id n8-20020a05600c294800b004053f06c07emr12250441wmd.15.1696344687198;
-        Tue, 03 Oct 2023 07:51:27 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:1f2d:3479:a5de:fa35])
-        by smtp.gmail.com with ESMTPSA id c15-20020a05600c0acf00b003fe29f6b61bsm1462773wmr.46.2023.10.03.07.51.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Oct 2023 07:51:26 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 06/36] gpio: tegra: use new pinctrl GPIO helpers
-Date:   Tue,  3 Oct 2023 16:50:44 +0200
-Message-Id: <20231003145114.21637-7-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231003145114.21637-1-brgl@bgdev.pl>
-References: <20231003145114.21637-1-brgl@bgdev.pl>
+        with ESMTP id S231592AbjJCQkA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Oct 2023 12:40:00 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5CE04A7;
+        Tue,  3 Oct 2023 09:39:57 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AFC06C15;
+        Tue,  3 Oct 2023 09:40:35 -0700 (PDT)
+Received: from [10.57.2.226] (unknown [10.57.2.226])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5060A3F762;
+        Tue,  3 Oct 2023 09:39:55 -0700 (PDT)
+Message-ID: <df7ba4b1-791c-fd46-18d4-db35f2472fc1@arm.com>
+Date:   Tue, 3 Oct 2023 17:39:53 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.1
+Subject: Re: [PATCH v6] perf: arm_cspmu: Separate Arm and vendor module
+To:     Besar Wicaksono <bwicaksono@nvidia.com>,
+        Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vikram Sethi <vsethi@nvidia.com>,
+        Richard Wiley <rwiley@nvidia.com>,
+        Eric Funsten <efunsten@nvidia.com>
+References: <20230821231608.50911-1-bwicaksono@nvidia.com>
+ <f3784fae-154e-784b-bbf2-72dc6ecaf9e9@os.amperecomputing.com>
+ <SJ0PR12MB5676E06544970DD8D139F9B5A0C4A@SJ0PR12MB5676.namprd12.prod.outlook.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <SJ0PR12MB5676E06544970DD8D139F9B5A0C4A@SJ0PR12MB5676.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Besar
 
-Replace the pinctrl helpers taking the global GPIO number as argument
-with the improved variants that instead take a pointer to the GPIO chip
-and the controller-relative offset.
+On 03/10/2023 15:20, Besar Wicaksono wrote:
+> Thanks Ilkka.
+> Suzuki/Robin, can we have someone from Arm to review this patch ? It's been a while.
+> 
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-tegra.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Apologies for the delay.
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index ea715582bcf3..08951ddcd294 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -139,14 +139,14 @@ static void tegra_gpio_disable(struct tegra_gpio_info *tgi, unsigned int gpio)
- 
- static int tegra_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
--	return pinctrl_gpio_request(chip->base + offset);
-+	return pinctrl_gpio_request_new(chip, offset);
- }
- 
- static void tegra_gpio_free(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
- 
--	pinctrl_gpio_free(chip->base + offset);
-+	pinctrl_gpio_free_new(chip, offset);
- 	tegra_gpio_disable(tgi, offset);
- }
- 
-@@ -179,7 +179,7 @@ static int tegra_gpio_direction_input(struct gpio_chip *chip,
- 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, offset), offset, 0);
- 	tegra_gpio_enable(tgi, offset);
- 
--	ret = pinctrl_gpio_direction_input(chip->base + offset);
-+	ret = pinctrl_gpio_direction_input_new(chip, offset);
- 	if (ret < 0)
- 		dev_err(tgi->dev,
- 			"Failed to set pinctrl input direction of GPIO %d: %d",
-@@ -199,7 +199,7 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip,
- 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, offset), offset, 1);
- 	tegra_gpio_enable(tgi, offset);
- 
--	ret = pinctrl_gpio_direction_output(chip->base + offset);
-+	ret = pinctrl_gpio_direction_output_new(chip, offset);
- 	if (ret < 0)
- 		dev_err(tgi->dev,
- 			"Failed to set pinctrl output direction of GPIO %d: %d",
--- 
-2.39.2
+> Regards,
+> Besar
+> 
+>> -----Original Message-----
+>> From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+>> Sent: Thursday, September 14, 2023 1:19 PM
+>> To: Besar Wicaksono <bwicaksono@nvidia.com>
+>> Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
+>> ilkka@os.amperecomputing.com; catalin.marinas@arm.com; will@kernel.org;
+>> mark.rutland@arm.com; linux-arm-kernel@lists.infradead.org; linux-
+>> kernel@vger.kernel.org; linux-tegra@vger.kernel.org; Thierry Reding
+>> <treding@nvidia.com>; Jonathan Hunter <jonathanh@nvidia.com>; Vikram
+>> Sethi <vsethi@nvidia.com>; Richard Wiley <rwiley@nvidia.com>; Eric Funsten
+>> <efunsten@nvidia.com>
+>> Subject: Re: [PATCH v6] perf: arm_cspmu: Separate Arm and vendor module
+>>
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> Hi Besar,
+>>
+>> On Mon, 21 Aug 2023, Besar Wicaksono wrote:
+>>> Arm Coresight PMU driver consists of main standard code and
+>>> vendor backend code. Both are currently built as a single module.
+>>> This patch adds vendor registration API to separate the two to
+>>> keep things modular. The main driver requests each known backend
+>>> module during initialization and defer device binding process.
+>>> The backend module then registers an init callback to the main
+>>> driver and continue the device driver binding process.
+>>>
+>>> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+>>
+>> I tested the patch with AmpereOne patchset on top of it and it seemed to
+>> work fine. In addition, the patch looks good to me.
+>>
+>> Reviewed-and-tested-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+>>
+>>
+>> Cheers, Ilkka
+>>
+>>> ---
+>>>
+>>> Changes from v5:
+>>> * Incorporate review comments.
+>>> * Fix arm_cspmu_impl_match_get not returning NULL if no matching impl.
+>>> * Fix impl_match.module may reset when registering PMU.
+>>> * Maintain backend module ref count until PMU registration is done.
+>>> Thanks to Will, Suzuki, and Robin for the feedback.
+>>> v5: https://lore.kernel.org/linux-arm-kernel/20230705104745.52255-1-
+>> bwicaksono@nvidia.com/T/#u
+
+The changes to address the comments from v5, looks good to me. Thanks
+for fixing them.
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
