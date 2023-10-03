@@ -2,164 +2,182 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C546E75433
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 08:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DBFE75433
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 08:58:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbjJCIeZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Oct 2023 04:34:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33756 "EHLO
+        id S231320AbjJCI6z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 Oct 2023 04:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbjJCIeY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Oct 2023 04:34:24 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE4891
-        for <linux-tegra@vger.kernel.org>; Tue,  3 Oct 2023 01:34:21 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5a229ac185aso8076417b3.1
-        for <linux-tegra@vger.kernel.org>; Tue, 03 Oct 2023 01:34:21 -0700 (PDT)
+        with ESMTP id S231298AbjJCI6z (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Oct 2023 04:58:55 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DBE9AD
+        for <linux-tegra@vger.kernel.org>; Tue,  3 Oct 2023 01:58:51 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id ada2fe7eead31-4527d436ddfso350404137.1
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Oct 2023 01:58:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696322061; x=1696926861; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bitTTBesOlX5jNs0WrntjlIVBf0r6k8vUqdJl07s2a4=;
-        b=Nnyho37JLe/shXs59RWxP0LFbzenNiR7+5J+u4OAHOuBBKhQn1bK3OeFbKaCNYd6z+
-         ve2ZdPw882VgiWs9bqNMe7MmlrKBvyPeaFeU+Y6HmdCxarKB+Y6yMgCFv1mv9R6lnP8h
-         G8SBMa316LXAo4KbAezbxDHhVuZfO/O7ohK5Vjd8qld5xA3ea604mL/48FE5FeUNJ6le
-         YW6TQz4u89BmIde+aETFaEPCSvhUNfD1xzrcE9riCiWQIZbnLsDzWqTgcgFE4wLV+CQx
-         XfLYhOsNt57SLwhwyA41vZ2pmtff3203+Hq/OZnPPuJNbUl1iX1V2bJK9JvCtnTzs8et
-         O+wg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696323530; x=1696928330; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E9grnBhGYN4tR3F3kBytOzLLS9fG/VwUgoWRG+MN0q8=;
+        b=mlfE1G9UP/AxOktBZJT5eErItR/jDkslCgpZfJpEmVJrtfmR+FU+n+RxCk4eG3o1ZI
+         FSkygiLsdmTQ0JAs3iPnKtMLoGQEK4Q9+a0JHdyNbpHF5IAvkSXC/Q9X9Cr2o5SXAihi
+         4HSNOqCK16uogqmp1SnJ1cFlQRfunOXSVY43eMrvVpuE9HnulxaPd2YMO6WKtINU9EYV
+         EXTl/yaWUR81UDeFqsWN0MbGCb//3lFiuco9dyYBCF87nY36lgtsMJ49HqYqWjZFcxr2
+         3PKlvq5TzyoJS6H+iVW6EPKl+KOh/UmCIXUzL9W7/G2CXghptvtlSvR/JVpf9Hn2Yk+l
+         dFbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696322061; x=1696926861;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bitTTBesOlX5jNs0WrntjlIVBf0r6k8vUqdJl07s2a4=;
-        b=Vou4SuSjxRiv4qWpTQY/ff3MQCD7f3IePRX/dLCfWyA2NB6zV/8bBF9xR2PNb7Amfx
-         ZsMKs0B6PCdS07xpShbnEqpDkrPxjn1cl/L0I3DEPMwbiEQ1tedyN8B9+j4OzQjIeeNK
-         Lg9t/XzBxBLlOdtK8Cu62kvFcXhdgG/vLd4QkCwXD/IIuEBl7qGwuR3GwjgexwlUQk0f
-         vn6I51AyuaMfbSq2b5rjJz/kk0/TcYWBEKfj/gOfOGb8QB8sMFfc7FKkuLJskJ/Sh4q9
-         ryHHeqtVACZR4SybwpxcCiNNn3/bdnMKCGpt2Xqwsn7thzs7/iL2QcBm/sHlZJqLY4IQ
-         c3xA==
-X-Gm-Message-State: AOJu0YyYRsPJeoqJA5usXFG1ueeaK/UCaMoouwfO8ltrYsL+4XggHk5J
-        2d/vY7v8bOmEVObXzWJj3KIXbBAzT+e2N0qvv/6Anw==
-X-Google-Smtp-Source: AGHT+IFDzIQLW0laXGE7JKd6lbdhFAMnDeThlxxmtoO8UChMspJgCI8sx/aRikQspuJgbcSRJHW6nrx+DUBW3F7ngjs=
-X-Received: by 2002:a0d:f685:0:b0:59e:8f6d:92e with SMTP id
- g127-20020a0df685000000b0059e8f6d092emr14665847ywf.49.1696322060718; Tue, 03
- Oct 2023 01:34:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696323530; x=1696928330;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E9grnBhGYN4tR3F3kBytOzLLS9fG/VwUgoWRG+MN0q8=;
+        b=W1murOGzq2/oGm7lRlKP6BPNgFndVs+R4x7d9ed0WJwFFO+Cpj93d47OAxEy5XmX0k
+         Z/LvBPKZCJATHnavcjbB+4IUWBUVy3x4OAKqc1eRgs/5DA3Y1zRtyidQQdvtnxVgJpYm
+         Zw8pvKYbO1iazXxOFgxyIppVbZVXlGpooi5xQs7DL6X1A89MPj5wqEK7a7i4App1IJHa
+         Xjufy1wtZgbL41NbdcvU0/0ITlfx4mzbub8WAWe2glOGtl/M8CHPX/4ymX0Bg9BDkK15
+         KqHuqHlHejnCRFm80+6Eib5bkp7I6ESr2DKIYfuEVoTX/2yexDTl2topJP8SedI793/A
+         +GOw==
+X-Gm-Message-State: AOJu0YwUVEU2IOIWcosmCjO5wYchXxXQHA5L6wtSbKkGO86BgBxvCa1W
+        Q+m88klVNw69U3ri5zTsJujQ6/ba/Ia1oCtnLEX/WUMus1wTyfnV
+X-Google-Smtp-Source: AGHT+IEYqBcuujG8F8yRDX0mMz4fUo5Zqz+FnZMiLO+cfJoEKOTmOKZqVO6LlvB9IX90o4lBKbnpAWh2fFaPLAbLtl0=
+X-Received: by 2002:a05:6102:34c8:b0:44e:d6c3:51d6 with SMTP id
+ a8-20020a05610234c800b0044ed6c351d6mr12516312vst.14.1696323530367; Tue, 03
+ Oct 2023 01:58:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <0-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com>
- <20-v8-81230027b2fa+9d-iommu_all_defdom_jgg@nvidia.com> <CAA8EJprz7VVmBG68U9zLuqPd0UdSRHYoLDJSP6tCj6H6qanuTQ@mail.gmail.com>
- <20231002230000.GA682044@nvidia.com>
-In-Reply-To: <20231002230000.GA682044@nvidia.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 3 Oct 2023 11:34:08 +0300
-Message-ID: <CAA8EJpr-CpgTVipd_t1uj7iHHq6__pj3mrm4Mn-pdZwhpS8aDA@mail.gmail.com>
-Subject: Re: [PATCH v8 20/24] iommu: Require a default_domain for all iommu drivers
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Rob Clark <robdclark@gmail.com>, Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
+References: <20230911094443.14040-1-brgl@bgdev.pl> <cd4df23c-cc02-6723-e36d-34ca03409e6e@nvidia.com>
+ <CAMRc=MeWXapho1bsX9Si5uSx7MWVhpT2cqrv5S+qPo51Ko=Vtg@mail.gmail.com> <7766de61-a046-3e17-1322-28bd7f1e61da@nvidia.com>
+In-Reply-To: <7766de61-a046-3e17-1322-28bd7f1e61da@nvidia.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 3 Oct 2023 10:58:39 +0200
+Message-ID: <CAMRc=Mfbt0iUbM42zR0ZrBWgbQkctQm3LxwiFFP5dXNuQC-EqA@mail.gmail.com>
+Subject: Re: [PATCH] hte: tegra194: improve the GPIO-related comment
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Steven Price <steven.price@arm.com>,
-        Thierry Reding <treding@nvidia.com>
+        timestamp@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 3 Oct 2023 at 02:00, Jason Gunthorpe <jgg@nvidia.com> wrote:
+On Mon, Oct 2, 2023 at 6:27=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> wrot=
+e:
 >
-> On Tue, Oct 03, 2023 at 12:21:59AM +0300, Dmitry Baryshkov wrote:
-> > On Wed, 13 Sept 2023 at 16:45, Jason Gunthorpe <jgg@nvidia.com> wrote:
-> > >
-> > > At this point every iommu driver will cause a default_domain to be
-> > > selected, so we can finally remove this gap from the core code.
-> > >
-> > > The following table explains what each driver supports and what the
-> > > resulting default_domain will be:
-> > >
-> > >                                         ops->defaut_domain
-> > >                     IDENTITY   DMA  PLATFORM    v      ARM32          dma-iommu  ARCH
-> > > amd/iommu.c             Y       Y                       N/A             either
-> > > apple-dart.c            Y       Y                       N/A             either
-> > > arm-smmu.c              Y       Y                       IDENTITY        either
-> > > qcom_iommu.c            G       Y                       IDENTITY        either
-> > > arm-smmu-v3.c           Y       Y                       N/A             either
-> > > exynos-iommu.c          G       Y                       IDENTITY        either
-> > > fsl_pamu_domain.c                       Y       Y       N/A             N/A     PLATFORM
-> > > intel/iommu.c           Y       Y                       N/A             either
-> > > ipmmu-vmsa.c            G       Y                       IDENTITY        either
-> > > msm_iommu.c             G                               IDENTITY        N/A
+> On 10/2/23 1:33 AM, Bartosz Golaszewski wrote:
+> > On Fri, Sep 29, 2023 at 11:38=E2=80=AFPM Dipen Patel <dipenp@nvidia.com=
+> wrote:
+> >>
+> >> On 9/11/23 2:44 AM, Bartosz Golaszewski wrote:
+> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>
+> >>> Using any of the GPIO interfaces using the global numberspace is
+> >>> deprecated. Make it clear in the comment.
+> >>>
+> >>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> >>> ---
+> >>> This was part of a wider series but since this is independent, I'm se=
+nding
+> >>> it separately.
+> >>>
+> >>>  drivers/hte/hte-tegra194.c | 13 ++++++++-----
+> >>>  1 file changed, 8 insertions(+), 5 deletions(-)
+> >>>
+> >>> diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+> >>> index 6fe6897047ac..9fd3c00ff695 100644
+> >>> --- a/drivers/hte/hte-tegra194.c
+> >>> +++ b/drivers/hte/hte-tegra194.c
+> >>> @@ -407,12 +407,15 @@ static int tegra_hte_line_xlate(struct hte_chip=
+ *gc,
+> >>>               return -EINVAL;
+> >>>
+> >>>       /*
+> >>> +      * GPIO consumers can access GPIOs in two ways:
+> >>>        *
+> >>> -      * There are two paths GPIO consumers can take as follows:
+> >>> -      * 1) The consumer (gpiolib-cdev for example) which uses GPIO g=
+lobal
+> >>> -      * number which gets assigned run time.
+> >>> -      * 2) The consumer passing GPIO from the DT which is assigned
+> >>> -      * statically for example by using TEGRA194_AON_GPIO gpio DT bi=
+nding.
+> >>> +      * 1) Using the global GPIO numberspace.
+> >>> +      *
+> >>> +      * This is the old, now DEPRECATED method and should not be use=
+d in
+> >>> +      * new code. TODO: Check if tegra is even concerned by this.
+> >> This use case is to do namespace mapping from gpio subsystem to hte. F=
+ew doubts:
+> >> 1. What does deprecate mean here? Does gpio subsys not use global spac=
+e anymore?
 > >
-> > Unfortunately this patch breaks msm_iommu platforms. This driver
-> > doesn't select ARM_DMA_USE_IOMMU, so iommu_get_default_domain_type()
-> > returns 0, bus_iommu_probe() fails with -ENODEV.
-> > If I make MSM_IOMMU select ARM_DMA_USE_IOMMU, then GPU probing fails
-> > with -EBUSY.
+> > It does but we don't want to expose this to external users in any way
+> > anymore (and haven't to for years). This is what deprecated means.
+> > Users should deal with opaque GPIO descriptors not global GPIO
+> > numberspace.
+> >
+> >> 2. If yes, what GPIO number is set when it comes from gpiolib-cdev, as=
+ based on that I may have to
+> >> reflect in the mapping, tegra194_aon_gpio_map for example.
+> >
+> > Why DO you have to use a GPIO number though? If HTE needs just a
+> > number from some HTE numberspace (which in itself may be unnecessary)
+> > then why not just keep a local IDA for it? Do you have to know the
+> > GPIOs internal numbering scheme to make it work?
 >
-> Oh, OK.
+
+Dipen,
+
+Please set your mailer to wrap lines around at 80 characters as is
+customary on the mailing list.
+
+> humm, overall, I just need to know which GPIO it is, for example, GPIO co=
+ntroller X Port A GPIO number 3
+> to do proper mapping.
+> Continuing from above example, the hte driver gets:
+> - GPIO Controller X from DT node
+> - the rest details in current code gets it from [1] and [2]
 >
-> Does this fix it?
-
-It indeed fixes the issue, so could you please post it, adding:
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-> index cdc7b730192a35..f7ef081c33dcb2 100644
-> --- a/drivers/iommu/msm_iommu.c
-> +++ b/drivers/iommu/msm_iommu.c
-> @@ -685,10 +685,16 @@ irqreturn_t msm_iommu_fault_handler(int irq, void *dev_id)
->         return 0;
->  }
+> If there is alternate method exists, I would like to explore. I think IDA=
+ will not help in this case as ID assigned
+> does not hold meaning in this context.
 >
-> +static int msm_iommu_def_domain_type(struct device *dev)
-> +{
-> +       return IOMMU_DOMAIN_IDENTITY;
-> +}
-> +
->  static struct iommu_ops msm_iommu_ops = {
->         .identity_domain = &msm_iommu_identity_domain,
->         .domain_alloc_paging = msm_iommu_domain_alloc_paging,
->         .probe_device = msm_iommu_probe_device,
-> +       .def_domain_type = msm_iommu_def_domain_type,
->         .device_group = generic_device_group,
->         .pgsize_bitmap = MSM_IOMMU_PGSIZES,
->         .of_xlate = qcom_iommu_of_xlate,
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/drivers/gpio/gpiolib-cdev.c?h=3Dv6.6-rc3#n760
 
--- 
-With best wishes
-Dmitry
+Here: any reason why we have to translate the desc to the global GPIO
+numberspace? Can we just pass the descriptor pointer directly to the
+HTE subsystem?
+
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/drivers/hte/hte-tegra194.c?h=3Dv6.6-rc3#n421
+
+I still don't understand why you need to know the GPIO base? I'm not
+quite sure what the role of line_id is in this driver. Is it only to
+index the array?
+
+Please bear with me, I don't know this subsystem very well.
+
+Bart
+
+>
+> >
+> > Bart
+> >
+> >>> +      *
+> >>> +      * 2) Using GPIO descriptors that can be assigned to consumer d=
+evices
+> >>> +      * using device-tree, ACPI or lookup tables.
+> >>>        *
+> >>>        * The code below addresses both the consumer use cases and map=
+s into
+> >>>        * HTE/GTE namespace.
+> >>
+>
