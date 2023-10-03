@@ -2,129 +2,98 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE3DE776F0
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 01:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DF7E75423
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Oct 2023 05:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238700AbjJCBGH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Oct 2023 21:06:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54580 "EHLO
+        id S230164AbjJCFA2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 Oct 2023 01:00:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbjJCBGH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Oct 2023 21:06:07 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5830FB4;
-        Mon,  2 Oct 2023 18:06:02 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EB4C433C8;
-        Tue,  3 Oct 2023 01:05:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696295161;
-        bh=F4f0krFznweIk4taQ98VjdjNBbxdo6qbxD3mNrr0nSM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qjo96mCWqTKW7xGjcbugvTHPxzMEDCajwcw1va4Y2FbcHxO3ZcGKJhTfC83106ARL
-         tU6n9aOW7ZWhDLjnQiboRRQ82EVD3td822hvni2XK2g9yNk3HSm2Ur7Z555ck5rG+o
-         12dhoHDmpsg6GbUi7vFsQpePSjmL7y7isIq5rL6cYanqyxddTPGOhvh9UX6i8cVIA7
-         ZNczfsHMS606tgeAt9grrKxT2FqCR0UULw6bIjRTIClFh9JhkLAVjJWQ9lZKETlzhR
-         YTYWmLkKqRpNbxBQIivk0G2e/6Y+0MGkQudKU03TMbdV9ij8lvPLibuVE8O1+k6oVB
-         UoMFwMLszD8rA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Joel Stanley <joel@jms.id.au>, Li Yang <leoyang.li@nxp.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Huisong Li <lihuisong@huawei.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Yinbo Zhu <zhuyinbo@loongson.cn>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Michal Simek <michal.simek@amd.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Zev Weiss <zev@bewilderbeest.net>,
-        linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        zhang songyi <zhang.songyi@zte.com.cn>,
-        Lubomir Rintel <lkundrak@v3.sk>, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Nick Alcock <nick.alcock@oracle.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ruan Jinjie <ruanjinjie@huawei.com>, kernel@pengutronix.de
-Subject: Re: (subset) [PATCH 00/40] soc: Convert to platform remove callback returning void
-Date:   Mon,  2 Oct 2023 18:10:02 -0700
-Message-ID: <169629539848.1944895.16954663145011378401.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
-References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S230101AbjJCFA1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Oct 2023 01:00:27 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EE3B0
+        for <linux-tegra@vger.kernel.org>; Mon,  2 Oct 2023 22:00:23 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1c3cbfa40d6so3803405ad.1
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Oct 2023 22:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696309223; x=1696914023; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b+nfCohsf0IBpk4VGOH7juW9pyfIB5x24Be0mmL+VZE=;
+        b=a+fY2aLy6vOKPsj6iMlnwP/J6zcbY57TL7Pg7gAEtL3UEGTMkjeXTdJxeUwR6eYC9H
+         C4tmjdgQCYpou4LPaYj2yXcZ1W+lj0p63JiuvU8QY4PpRmyd34C7AH1npV2hGpNo661z
+         /YcmqHyEaPEMUEHn23WSViob3ARbRHn33v79mDr30K09EdnyeW4V2SePkeKSVh8yXvxa
+         10VnQxzpaz56hzRVG6x9qepOucrqNaIXgy1y0scv9BzwCJGuvPaIv5UN315vPubDBZDT
+         r49MEqv3vKT0+CrrqwIsRtIi+96oytN6PQlXJVLHa9aXPX5YLpQEx1H1zNkCYGo16eIX
+         WcFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696309223; x=1696914023;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b+nfCohsf0IBpk4VGOH7juW9pyfIB5x24Be0mmL+VZE=;
+        b=wmx+WjvHz002ZLpFMKqlm77fZBud7E94ivuWR2iiDgPshtYnALNhFstt6rXtiqU8Dj
+         HQmvt80U+CG231S+Yl+4jcX65n4PBc/6ra1V5G9HIB8AmPE0GJk7BOO27UKFd/neiUZw
+         yiske+lrsYA475Rtot0hxg4fLr+nxkRQOY69J1oN0iTQSTVEy16Jy6EJqSz2dbWGkk/W
+         bnhqoOJQ1bZZ5tUpwQvM9I6cwE2rezTRTySjqfByYxoGqSOLPRQ65pclV28SZX5erO9/
+         +3aj+J7XSFV/ZWGD/5nDu8aqGl4VP+K/Di3FwmtLf/D7fK+GdHm4Z5JKQ9QG3Wn9DhUt
+         HQlQ==
+X-Gm-Message-State: AOJu0Yz8Sy5zos+isqbMQuF2Efu3OCh+c02FcTI6+AWvsHu4QXfWQaMc
+        Bv2+7/KIC2QUKnW8kWIfoWWt4Q==
+X-Google-Smtp-Source: AGHT+IGV8BafNbY23Sj91HQExmnOCTvnlpXWNS0/VLWcWWpENSZR05eOYIfmerdwQTZsWs4wrSMLBA==
+X-Received: by 2002:a17:902:c408:b0:1c5:f0fd:51b5 with SMTP id k8-20020a170902c40800b001c5f0fd51b5mr17458750plk.40.1696309222686;
+        Mon, 02 Oct 2023 22:00:22 -0700 (PDT)
+Received: from localhost ([122.172.81.92])
+        by smtp.gmail.com with ESMTPSA id o19-20020a170902779300b001bc675068e2sm388299pll.111.2023.10.02.22.00.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 22:00:21 -0700 (PDT)
+Date:   Tue, 3 Oct 2023 10:30:19 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, bbasu@nvidia.com,
+        amiettinen@nvidia.com
+Subject: Re: [Patch v2 1/2] cpufreq: tegra194: save CPU data to avoid
+ repeated SMP calls
+Message-ID: <20231003050019.a6mcchw2o2z2wkrh@vireshk-i7>
+References: <20230901164113.29139-1-sumitg@nvidia.com>
+ <20230901164113.29139-2-sumitg@nvidia.com>
+ <20230928070545.b7l367qi2q4rynji@vireshk-i7>
+ <8cb33679-5056-8983-9334-3ab3d170568a@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8cb33679-5056-8983-9334-3ab3d170568a@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On Mon, 25 Sep 2023 11:54:51 +0200, Uwe Kleine-König wrote:
-> this series converts all platform drivers below drivers/soc to use
-> .remove_new(). The motivation is to get rid of an integer return code
-> that is (mostly) ignored by the platform driver core and error prone on
-> the driver side.
+On 29-09-23, 19:47, Sumit Gupta wrote:
 > 
-> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> returns no value") for an extended explanation and the eventual goal.
 > 
-> [...]
+> On 28/09/23 12:35, Viresh Kumar wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On 01-09-23, 22:11, Sumit Gupta wrote:
+> > > @@ -131,19 +132,10 @@ static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
+> > >   static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
+> > >   {
+> > 
+> > > +     for_each_cpu_and(cpu, policy->cpus, cpu_online_mask)
+> > 
+> > (Yes this is existing code, but ..) you don't need to perform AND with
+> > cpu_online_mask as policy->cpus should only contain currently online CPUs.
+> > 
+> > Please check if you ever see it differently.
+> > 
+> 
+> I think this was kept to be safe.
+> Should I removed the AND in v3 or send separate patch?
 
-Applied, thanks!
+Sending it separately would be ideal.
 
-[18/40] soc/qcom: icc-bwmon: Convert to platform remove callback returning void
-        commit: dd714c568ed4e6f79017be45077de71e9908af03
-[19/40] soc/qcom: llcc-qcom: Convert to platform remove callback returning void
-        commit: d85a9d18a58156fc8b5ab185e00e078adaaeefde
-[20/40] soc/qcom: ocmem: Convert to platform remove callback returning void
-        commit: 0b742c498bcd7d215501b10fe9df72a16237735a
-[21/40] soc/qcom: pmic_glink: Convert to platform remove callback returning void
-        commit: 4b3373e42dc2caa34394ac090c8c70bed49badd6
-[22/40] soc/qcom: qcom_aoss: Convert to platform remove callback returning void
-        commit: ffbe84a514f863a46a85c1e47b2b6d930b1b463e
-[23/40] soc/qcom: qcom_gsbi: Convert to platform remove callback returning void
-        commit: 57b31729bd2c72b00d400106e18db91e9d95d3c3
-[24/40] soc/qcom: qcom_stats: Convert to platform remove callback returning void
-        commit: a47ff90bf2f93ce4ca99858948a74a0c10a2bc45
-[25/40] soc/qcom: rmtfs_mem: Convert to platform remove callback returning void
-        commit: 7c93da5b8b69d4e4e7270c33ba3206af43930e1d
-[26/40] soc/qcom: smem: Convert to platform remove callback returning void
-        commit: 4b8dee9a34d51a61f60add996fae6a7140a20ae5
-[27/40] soc/qcom: smp2p: Convert to platform remove callback returning void
-        commit: 1cd966c2dc19654ed08c843e5c933db8c1349636
-[28/40] soc/qcom: smsm: Convert to platform remove callback returning void
-        commit: bdd7cc62cf69fe989557445d65d6c8cb2f956518
-[29/40] soc/qcom: socinfo: Convert to platform remove callback returning void
-        commit: c0989f7d1264b2b1885345a28a32fd5e1e61f9c7
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+viresh
