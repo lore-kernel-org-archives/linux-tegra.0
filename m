@@ -2,234 +2,169 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB233E7B5E1
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 10:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4281CE7B5FF
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 11:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241906AbjJDKE4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Oct 2023 06:04:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
+        id S233043AbjJDL7s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Oct 2023 07:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241777AbjJDKEz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 06:04:55 -0400
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D459E
-        for <linux-tegra@vger.kernel.org>; Wed,  4 Oct 2023 03:04:51 -0700 (PDT)
-Received: by mail-ua1-x935.google.com with SMTP id a1e0cc1a2514c-7b0ec7417bdso851683241.2
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Oct 2023 03:04:51 -0700 (PDT)
+        with ESMTP id S232936AbjJDL7s (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 07:59:48 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03FFDBF
+        for <linux-tegra@vger.kernel.org>; Wed,  4 Oct 2023 04:59:43 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-45269fe9d6bso1021155137.2
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Oct 2023 04:59:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696413890; x=1697018690; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696420782; x=1697025582; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oMELFoOHqrq2qjYrgWfDqbUH1J8YwQQlpJkVwboYtS0=;
-        b=XuuBaoFkQdLbxJJZ0i9HMDnu+u6PHO/9qCMM0mH9iqz6yiDGx9IQfrHS7B0J8qq4/S
-         fTgMio5dQdrW6BdyZVABjfc7sw3776gjfEnGPiKfwvYZKNBdc3hAEMcALDoxg+j+8mg+
-         1owFrQajbMLLagS6ecVsu1MM+yCLNFGdj0S995R4J4joqmMHVVBgdPkWQ1GbnhMVg4z3
-         Ssv2RYZQhYuf+jYcQDc/qaMIK31L64UsasbPX+IT9RYnVxKuyBdo05W0NynpxEWK/d4+
-         vVSO8XxsNtFPEwOLE7QCR0FCkqUP6566MG7pJ+QMW/+scvSIWgreJQnvvAS9+VRbVewG
-         KhPA==
+        bh=6AACATPPHgIuz8FxZ7eCyvrDEuOEhlDx+Kvd4JOYuOA=;
+        b=mAQOrt8gTZi0vq7sO1Xt+yd+As6o+i0usTWDB+j7z0PqkPrl5peGoHXfK+Mr/tWL9G
+         FHtVkskJtcJbXsyxZ+V04CiyWyZgEo/WNozbtjd/7sjL5/f+iagaILqHbv8TJaFtlfVL
+         P9PPfqJ5pV489Cz0iNVmumBfhlYlbRC5/WnnxDUfjSpnw+A2pC7hmFGVy4pzKIjhYfCB
+         Ai7ymdGxKduCjHdvM4J7LvVkrdgcBUNMI5GVj0YxqFq4mIJAhVHbrlt4n+fCGQLtvMTN
+         7JIbIsOPRF5yMci2nmdSF8FN82PecXEaZ13QnRAXiaM3Eiq9Q8zxtfqkQSjBeDJ9VMig
+         22Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696413890; x=1697018690;
+        d=1e100.net; s=20230601; t=1696420782; x=1697025582;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oMELFoOHqrq2qjYrgWfDqbUH1J8YwQQlpJkVwboYtS0=;
-        b=JwjXgVz8pfUxGVVGcXSILIU5Hphc5oFMpS+i616CQUNAdW23aJZ56ilkxTOjiID9wa
-         Z1RgcQfpwE3U0Nqx+skK5UF7+DQ1Cp3oEXbaArrNs5btJjEqdIjACXMWn7hvfObpnVXP
-         d6pKsd2E90B9HAytw7ACvEDH144+oo3CibWKgG7GMpj9pOtoMMPSpylRhSFOuFc+3GFU
-         0ZhzUmxpmXv3PJK5S5GUyeH9bl+Hi/vzEwifni+TOvRoULWJXeZDnvY6+Drgqp74UTLJ
-         sk18w3Cu3METiPhnHgt2INsimu162ernAReFVVFHGP2k9UVm0gpibQB4XfuzjRgRuEeu
-         jexQ==
-X-Gm-Message-State: AOJu0YxYNSAYpTvaLRwPelIKmWf3r/oXlQwNLPRxnKHYgdzj/L1s+vkW
-        OxY2XTSldxQ7rcBkOT4Vu6TFtZilxHKRg8hdnMM6FQ==
-X-Google-Smtp-Source: AGHT+IHfzt5HM1Sbq001SWA0TWSGaVAUdcRdztDff9M5pbaXeVHCX8GGkCvQYu5thG2Jy/NVEx6Y4cUxfv1FL+aDnw4=
-X-Received: by 2002:a67:f4d3:0:b0:452:66a7:1ac with SMTP id
- s19-20020a67f4d3000000b0045266a701acmr1671784vsn.6.1696413890436; Wed, 04 Oct
- 2023 03:04:50 -0700 (PDT)
+        bh=6AACATPPHgIuz8FxZ7eCyvrDEuOEhlDx+Kvd4JOYuOA=;
+        b=diod/hBSjflXnKtKsAcSU9mgt/spDfBPeprP/drxlhr8moRG2IIiqSb5Ft5CgKKGpB
+         pcsTiZGzpABzNYu5LTG1DJ7DlZ7K6gAZ5jeMv0t8R7GLiJUXp3O72pwRe/4Xh8kGBG8f
+         WhQXURvGcLvWczYjHeLHpdicNGoOT63rFdRDhwEtSANbyQWzc6fRsLKS/SRsPYBogWGQ
+         E5q7+oNtuBxIy8+d9Hd7W5r1j0ZckCcY4MlaDK5ovLcfmaJZmRJ5XkBpThj6p4tBEdCk
+         QSWK/LJF+op0CwE1YEJDu8pR6J4Rf+e7ForWcfwWbSuLGUsppoV1MxQ5kjRAnQoVXU6F
+         L8pg==
+X-Gm-Message-State: AOJu0Yw39Ngwfos1HtmCSWBNP6RW3YDjOWnXoAuuekqmeC6INSkQwvRP
+        8xBOh634UYR/BAkjzpH0NDr3K3XtsYlWuvu3BRUa6g==
+X-Google-Smtp-Source: AGHT+IHumK2wxKHooMcCivaS2pM5etsFaTr9cIpwm6I5vcIaNG/mZmLCE1Sz7hn/phh+XU0GX2azNlHCgSET25mhNNk=
+X-Received: by 2002:a67:e3ab:0:b0:452:5798:64bd with SMTP id
+ j11-20020a67e3ab000000b00452579864bdmr1197006vsm.35.1696420782057; Wed, 04
+ Oct 2023 04:59:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230911094443.14040-1-brgl@bgdev.pl> <cd4df23c-cc02-6723-e36d-34ca03409e6e@nvidia.com>
- <CAMRc=MeWXapho1bsX9Si5uSx7MWVhpT2cqrv5S+qPo51Ko=Vtg@mail.gmail.com>
- <7766de61-a046-3e17-1322-28bd7f1e61da@nvidia.com> <CAMRc=Mfbt0iUbM42zR0ZrBWgbQkctQm3LxwiFFP5dXNuQC-EqA@mail.gmail.com>
- <59ea74ba-b951-cf89-9d7f-bc7212ddb08a@nvidia.com>
-In-Reply-To: <59ea74ba-b951-cf89-9d7f-bc7212ddb08a@nvidia.com>
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-16-brgl@bgdev.pl>
+In-Reply-To: <20230905185309.131295-16-brgl@bgdev.pl>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 4 Oct 2023 12:04:39 +0200
-Message-ID: <CAMRc=MeuMkExMef1fsEV9pPHyshGTLJLSHpT2vjLVXgEm6CD3A@mail.gmail.com>
-Subject: Re: [PATCH] hte: tegra194: improve the GPIO-related comment
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+Date:   Wed, 4 Oct 2023 13:59:31 +0200
+Message-ID: <CAMRc=MeBKovkC-VbvWNJWk_UjU4FGguEW7gy=L-2saA7kiPijQ@mail.gmail.com>
+Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        timestamp@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 3, 2023 at 6:42=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> wrot=
-e:
->
-> On 10/3/23 1:58 AM, Bartosz Golaszewski wrote:
-> > On Mon, Oct 2, 2023 at 6:27=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> =
+On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
 wrote:
-> >>
-> >> On 10/2/23 1:33 AM, Bartosz Golaszewski wrote:
-> >>> On Fri, Sep 29, 2023 at 11:38=E2=80=AFPM Dipen Patel <dipenp@nvidia.c=
-om> wrote:
-> >>>>
-> >>>> On 9/11/23 2:44 AM, Bartosz Golaszewski wrote:
-> >>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>>>
-> >>>>> Using any of the GPIO interfaces using the global numberspace is
-> >>>>> deprecated. Make it clear in the comment.
-> >>>>>
-> >>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> >>>>> ---
-> >>>>> This was part of a wider series but since this is independent, I'm =
-sending
-> >>>>> it separately.
-> >>>>>
-> >>>>>  drivers/hte/hte-tegra194.c | 13 ++++++++-----
-> >>>>>  1 file changed, 8 insertions(+), 5 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.=
-c
-> >>>>> index 6fe6897047ac..9fd3c00ff695 100644
-> >>>>> --- a/drivers/hte/hte-tegra194.c
-> >>>>> +++ b/drivers/hte/hte-tegra194.c
-> >>>>> @@ -407,12 +407,15 @@ static int tegra_hte_line_xlate(struct hte_ch=
-ip *gc,
-> >>>>>               return -EINVAL;
-> >>>>>
-> >>>>>       /*
-> >>>>> +      * GPIO consumers can access GPIOs in two ways:
-> >>>>>        *
-> >>>>> -      * There are two paths GPIO consumers can take as follows:
-> >>>>> -      * 1) The consumer (gpiolib-cdev for example) which uses GPIO=
- global
-> >>>>> -      * number which gets assigned run time.
-> >>>>> -      * 2) The consumer passing GPIO from the DT which is assigned
-> >>>>> -      * statically for example by using TEGRA194_AON_GPIO gpio DT =
-binding.
-> >>>>> +      * 1) Using the global GPIO numberspace.
-> >>>>> +      *
-> >>>>> +      * This is the old, now DEPRECATED method and should not be u=
-sed in
-> >>>>> +      * new code. TODO: Check if tegra is even concerned by this.
-> >>>> This use case is to do namespace mapping from gpio subsystem to hte.=
- Few doubts:
-> >>>> 1. What does deprecate mean here? Does gpio subsys not use global sp=
-ace anymore?
-> >>>
-> >>> It does but we don't want to expose this to external users in any way
-> >>> anymore (and haven't to for years). This is what deprecated means.
-> >>> Users should deal with opaque GPIO descriptors not global GPIO
-> >>> numberspace.
-> >>>
-> >>>> 2. If yes, what GPIO number is set when it comes from gpiolib-cdev, =
-as based on that I may have to
-> >>>> reflect in the mapping, tegra194_aon_gpio_map for example.
-> >>>
-> >>> Why DO you have to use a GPIO number though? If HTE needs just a
-> >>> number from some HTE numberspace (which in itself may be unnecessary)
-> >>> then why not just keep a local IDA for it? Do you have to know the
-> >>> GPIOs internal numbering scheme to make it work?
-> >>
-> >
-> > Dipen,
-> >
-> > Please set your mailer to wrap lines around at 80 characters as is
-> > customary on the mailing list.
 >
-> my email client misfired, will make sure. Thanks.
-> >
-> >> humm, overall, I just need to know which GPIO it is, for example, GPIO=
- controller X Port A GPIO number 3
-> >> to do proper mapping.
-> >> Continuing from above example, the hte driver gets:
-> >> - GPIO Controller X from DT node
-> >> - the rest details in current code gets it from [1] and [2]
-> >>
-> >> If there is alternate method exists, I would like to explore. I think =
-IDA will not help in this case as ID assigned
-> >> does not hold meaning in this context.
-> >>
-> >> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
-/tree/drivers/gpio/gpiolib-cdev.c?h=3Dv6.6-rc3#n760
-> >
-> > Here: any reason why we have to translate the desc to the global GPIO
-> > numberspace? Can we just pass the descriptor pointer directly to the
-> > HTE subsystem?
-> Sure, if from GPIO descriptor with combination of any helper APIs from
-> the GPIO subsystem can help identify the GPIO pin, we can eliminate the n=
-eed
-> to pass global number (I assume gpio desc
-> can be only accessed/manipulated using GPIO subsystem APIs)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> >
-> >> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
-/tree/drivers/hte/hte-tegra194.c?h=3Dv6.6-rc3#n421
-> >
-> > I still don't understand why you need to know the GPIO base? I'm not
-> > quite sure what the role of line_id is in this driver. Is it only to
-> > index the array?
-> >
-> > Please bear with me, I don't know this subsystem very well.
+> gpiochip_find() is going away as it's not hot-unplug safe. This platform
+> is not affected by any of the related problems as this GPIO controller
+> cannot really go away but in order to finally remove this function, we
+> need to convert it to using gpio_device_find() as well.
 >
-> Sure, no problem. Let me see if I am able to elaborate:
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  arch/arm/mach-omap1/board-ams-delta.c | 36 +++++++++++++--------------
+>  1 file changed, 17 insertions(+), 19 deletions(-)
 >
-> 1. Map arrays' indexes are GPIO offsets so to avoid having
-> the extra field for the GPIO numbers.
+> diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/=
+board-ams-delta.c
+> index 9808cd27e2cf..a28ea6ac1eba 100644
+> --- a/arch/arm/mach-omap1/board-ams-delta.c
+> +++ b/arch/arm/mach-omap1/board-ams-delta.c
+> @@ -560,22 +560,6 @@ static struct gpiod_lookup_table *ams_delta_gpio_tab=
+les[] __initdata =3D {
+>         &ams_delta_nand_gpio_table,
+>  };
 >
-> 2. The HTE driver needs to know exact GPIO to enable corresponding bits
-> in its registers. For example, hte register bit 3 would correspond to
-> GPIO 6 of GPIO controller X. If gpio descriptor is passed here, I think
-> I would need to do some conversions to identify the GPIO to enable
-> corresponding register bits. In the current scheme of things,
-> I though it was easier to identify passing the output of the desc_to_gpio=
-* API.
+> -/*
+> - * Some drivers may not use GPIO lookup tables but need to be provided
+> - * with GPIO numbers.  The same applies to GPIO based IRQ lines - some
+> - * drivers may even not use GPIO layer but expect just IRQ numbers.
+> - * We could either define GPIO lookup tables then use them on behalf
+> - * of those devices, or we can use GPIO driver level methods for
+> - * identification of GPIO and IRQ numbers. For the purpose of the latter=
+,
+> - * defina a helper function which identifies GPIO chips by their labels.
+> - */
+> -static int gpiochip_match_by_label(struct gpio_chip *chip, void *data)
+> -{
+> -       char *label =3D data;
+> -
+> -       return !strcmp(label, chip->label);
+> -}
+> -
+>  static struct gpiod_hog ams_delta_gpio_hogs[] =3D {
+>         GPIO_HOG(LATCH2_LABEL, LATCH2_PIN_KEYBRD_DATAOUT, "keybrd_dataout=
+",
+>                  GPIO_ACTIVE_HIGH, GPIOD_OUT_LOW),
+> @@ -615,14 +599,28 @@ static void __init modem_assign_irq(struct gpio_chi=
+p *chip)
+>   */
+>  static void __init omap_gpio_deps_init(void)
+>  {
+> +       struct gpio_device *gdev;
+>         struct gpio_chip *chip;
 >
-> 3. Since GPIO global space is runtime, need base to calculate the offset
-> where offset does not change. So in the above example, gpio cdev would pa=
-ss
-> 306 and HTE does simple conversion from the base, ie. 306 - 300 =3D 6.
-> Now 6 will serve as pin number as map array index to find the register.
+> -       chip =3D gpiochip_find(OMAP_GPIO_LABEL, gpiochip_match_by_label);
+> -       if (!chip) {
+> -               pr_err("%s: OMAP GPIO chip not found\n", __func__);
+> +       /*
+> +        * Some drivers may not use GPIO lookup tables but need to be pro=
+vided
+> +        * with GPIO numbers. The same applies to GPIO based IRQ lines - =
+some
+> +        * drivers may even not use GPIO layer but expect just IRQ number=
+s.
+> +        * We could either define GPIO lookup tables then use them on beh=
+alf
+> +        * of those devices, or we can use GPIO driver level methods for
+> +        * identification of GPIO and IRQ numbers.
+> +        *
+> +        * This reference will be leaked but that's alright as this devic=
+e
+> +        * never goes down.
+> +        */
+> +       gdev =3D gpio_device_find_by_label(OMAP_GPIO_LABEL);
+> +       if (!gdev) {
+> +               pr_err("%s: OMAP GPIO device not found\n", __func__);
+>                 return;
+>         }
 >
-> 4. Overall, I rely on base + global number to do namespace conversion
-> between gpio and hte subsys as far as gpio-cdev use case is concerned.
+> +       chip =3D gpio_device_get_chip(gdev);
+> +
+>         /*
+>          * Start with FIQ initialization as it may have to request
+>          * and release successfully each OMAP GPIO pin in turn.
+> --
+> 2.39.2
 >
 
-Ok, so you *don't* need the global numbers, just controller-relative
-offsets. This makes sense. This ties nicely into my plan for removing
-all accesses to gpio_chip except for GPIO providers.
-
-Looking at the tegra dts I'm surprised that the GPIO controllers that
-use the HTE don't take the hte_lic or hte_aon phandles as arguments.
-How exactly do they resolve the HTE device to use for timestamping?
-
-In any case, I think this commit is still correct.
+Patch applied, thanks!
 
 Bart
-
-> >
-> > Bart
-> >
-> >>
-> >>>
-> >>> Bart
-> >>>
-> >>>>> +      *
-> >>>>> +      * 2) Using GPIO descriptors that can be assigned to consumer=
- devices
-> >>>>> +      * using device-tree, ACPI or lookup tables.
-> >>>>>        *
-> >>>>>        * The code below addresses both the consumer use cases and m=
-aps into
-> >>>>>        * HTE/GTE namespace.
-> >>>>
-> >>
->
