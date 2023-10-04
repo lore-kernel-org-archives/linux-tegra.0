@@ -2,125 +2,146 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFB1E7B61E
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 14:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832D9E7B61B
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 14:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242696AbjJDOLL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Oct 2023 10:11:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53818 "EHLO
+        id S242780AbjJDOMB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Oct 2023 10:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233121AbjJDOLK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 10:11:10 -0400
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72D92C4
-        for <linux-tegra@vger.kernel.org>; Wed,  4 Oct 2023 07:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1696428661;
-        bh=IFCQ36qNYlflTBGjiB1GM2HwJb7GMQotoPrkQGvpdeg=;
-        h=From:To:Cc:Subject:Date;
-        b=Ed75rZf6M+IpUoq5l/7eDz/2l/PFWZOFwxrsqe8QpNOoA0ka8cywnByqou3fsDFvc
-         8YEzUxgf6y8PmwywuXQeCjP7JKOapMbwYQ+F+Id7ZczFXfZ2LCP8/WtyNXYDit1XAF
-         m9zc5KtGI7Se5d+1wxkzsqQYjW18L7cp7Bvrnr44=
-Received: from KernelDevBox.byted.org ([180.184.49.4])
-        by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
-        id 2B994C3D; Wed, 04 Oct 2023 22:10:57 +0800
-X-QQ-mid: xmsmtpt1696428657tu2n08duz
-Message-ID: <tencent_B13DB7F6C0023C46157250A524966F326A09@qq.com>
-X-QQ-XMAILINFO: N1rJBQiDRgEyuI+t+UbeNj+Wm8g6/mII93pNgmgQXgZB0grYJnsuHkWW150X/k
-         21GnTcWuJzWLUqL8jZqdpOxpfpF6FU1hvRJVCLIRev+ZCgBZ26meJNtlueLs2atXChSz/wu8Uhdi
-         1zfLBk6z/TKYpUs1BTpNJ1q8BtuzYOcupt1BvWYF0xFIE0W1XZoFXgXmqSzaRPNrRwfPnR7Cj0AX
-         49UJtPqoxp06Y2YAPp48Dk13TNOqGe3QfnSFpjkkiQuALxDjCs4xkJpnEFt6opK4+dFlKDjJTg4n
-         /BciY+2ggHBHYTJ+3G6yzl7p/a5nV12/seqZI1BWIncNZK1jWw6GTU97fUOUtmb2we2pYTQ/mS87
-         eRIGzLReScHJklIuHkXJeKqya3oZ5fvn2b7hIPASKamKGLjk8/zxtufVn50zffSG7gm6+U4hfOac
-         QvRW4+m9bmCD0C3kC/mdf464elnxrcVc8V7bC+ulZljbNYEjlnyaqXpHXphNAia9TV3ehVciUX88
-         +hceXyGGaIcmEfX/QiI2A8YzgB2LTOk3eUT+B5o7duNc14v1rcJ5NNri37Ov9VogiuoKZJ9dqRzE
-         fPUUHV9G8HRRlp6UDAnpgwPQoDD/R3uJWY+1keSOtjusyk7xHhFFYFO/ZlsrGZa6gtK9rtr73Z7X
-         8Ml0ikoD+oy7XOP4TuSn9/3t6tGG4jZeIBkqktbi7D9o4v8hH2oID+uNvRiwr9UNRDLRmZtwengf
-         EdswQUo0x47ZX+wdK69OoMk/KReFb8Gw1+JkptQu5nagvWa4pLPzLo/GaBB0TOwMFSZn/deSuCMN
-         FbvNdS9PTFiSGWqOBWPUKT+nqoDhFl+PjL1z7FRFREk3+pxZ5hKBpwn7hERWOx0BaRjN0uamYTXv
-         cz2XiaCiUgKc53/Q652LG7tOFeV0MH+ZKQJuT9CtuwrdyXITavWIJog4vreckh1kvdAnOaPYLmnL
-         Ne7En2TrRiI9wYk9AaeG/mFx81ROVXo3v5v+GJMemlCHx4WzH0CBbBviykDHvckCGb+oNwyEsn1r
-         8FxM0qpaL3V0OLf7Am
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From:   Zhang Shurong <zhang_shurong@foxmail.com>
-To:     thierry.reding@gmail.com
-Cc:     mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
-        jonathanh@nvidia.com, p.zabel@pengutronix.de, lgirdwood@gmail.com,
-        broonie@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zhang Shurong <zhang_shurong@foxmail.com>
-Subject: [PATCH] drm/tegra: dpaux: Fix PM disable depth imbalance in tegra_dpaux_probe
-Date:   Wed,  4 Oct 2023 22:10:55 +0800
-X-OQ-MSGID: <20231004141055.242982-1-zhang_shurong@foxmail.com>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S242797AbjJDOMA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 10:12:00 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2061.outbound.protection.outlook.com [40.107.102.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E434CC6;
+        Wed,  4 Oct 2023 07:11:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gvYHsxfPDv3kAc77jhMerCO4TW/EDcTuJMpHnh2zh7N9FtOlPI+G5Giyr1xVz49uCcXKxqeOTh8n7O6xYOwZx+MOPexua09xHg3RC3594m37i6IugtJ3RZwcAL0eoTHgQ2XPKbdCL7SzAyiAR94G1D5uB4TiZtN4TWIzkK9qZalp0RlocHsbgndxHGIFbqP+wz3FClp/3nAhnFB6GPzyfhAqwChpEdhBiE/jCEZFXLfWp7KjdVAl7rpXsSLjKcPhFZj392WviHeMyvKvrj42rAJbMbhVUNPstdzkZ2vgrJkrwDiEBwQupX93bptRBM/qTLvky9iVf4wDCr5Cb+r6TA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6WQ9eLoLKyAzSGLIOGGz9WVm0ntya8Sg5Ennj8VGnBM=;
+ b=mTaq7KHltqyMOnATXHXMkRs7LBWnNSgcFnoodMavAkYlbnUdsNcjhTJbuTJdLAN2JaQcDGLhtQKfp4NFI/OTQhBZj+DItThRwk35wV8WJhfWUqfXneP5uFoBnI7LAE6qdHEU8s/XS0idi3gDqgemJrT+QXW9lssKdqZSghEBae8ahEHhAOhmMM5EmR+9QWi2SQjIQfp8d41kPDdFhgo4N4TgiF6G2L/KfoWr7RYi1ueVLDNQQi2AsS2qkq+BM2OUkpHK+c52mLnQuKcJ25EV/FIb18g4ecft8gNCJ+f3dY/mc5sb8sKIGUYVr8867mCv2FIP0ebyXTHg9ZURW7m/sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6WQ9eLoLKyAzSGLIOGGz9WVm0ntya8Sg5Ennj8VGnBM=;
+ b=J9Oy1tJCMrsIJ87xH0u1FRI5yO63mGZMzU6oko8KHDWVqVhM0vOH9iesOwFI8N80rfdA1Z1Xqy80zZsSaU33kT98mxJGEAGTaGUtNc0b5DaDpIBY6g2ghHZNLGv19n9Ou0q412RT/D7F9YaFjzXn4uEFIt4f5zjQfckhCu0QjAcU2a3JnozkXNYwIE7Ev657YhNh/o6yBvOE/s0eHzSFvp5MaxHMI6P3Glm2GxGldMFS0CTR3zuc+ExRVEMYjcAoUOfXYuFs2ztKo5XkIrFlOmfhBpoIwfenarXpjU7JUe1bawZF6bS+0mw5QBSj9p+uQKxt4VZI7Hz4Ao+4Q9Gd0g==
+Received: from CY5PR19CA0043.namprd19.prod.outlook.com (2603:10b6:930:1a::33)
+ by DM6PR12MB5005.namprd12.prod.outlook.com (2603:10b6:5:1be::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.34; Wed, 4 Oct
+ 2023 14:11:51 +0000
+Received: from CY4PEPF0000E9DA.namprd05.prod.outlook.com
+ (2603:10b6:930:1a:cafe::d9) by CY5PR19CA0043.outlook.office365.com
+ (2603:10b6:930:1a::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.34 via Frontend
+ Transport; Wed, 4 Oct 2023 14:11:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000E9DA.mail.protection.outlook.com (10.167.241.79) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.14 via Frontend Transport; Wed, 4 Oct 2023 14:11:51 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 4 Oct 2023
+ 07:11:36 -0700
+Received: from [10.41.21.79] (10.126.230.35) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 4 Oct 2023
+ 07:11:32 -0700
+Message-ID: <379ee551-c2ef-72ca-9372-c812373a1e0c@nvidia.com>
+Date:   Wed, 4 Oct 2023 19:41:30 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch v2 1/2] cpufreq: tegra194: save CPU data to avoid repeated
+ SMP calls
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <rafael@kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>,
+        <amiettinen@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <20230901164113.29139-1-sumitg@nvidia.com>
+ <20230901164113.29139-2-sumitg@nvidia.com>
+ <20230928070545.b7l367qi2q4rynji@vireshk-i7>
+ <8cb33679-5056-8983-9334-3ab3d170568a@nvidia.com>
+ <20231003050019.a6mcchw2o2z2wkrh@vireshk-i7>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <20231003050019.a6mcchw2o2z2wkrh@vireshk-i7>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail202.nvidia.com (10.129.68.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DA:EE_|DM6PR12MB5005:EE_
+X-MS-Office365-Filtering-Correlation-Id: 245a9602-6287-4594-ed7e-08dbc4e3db2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yPiz9o3BQF4mQ8ntqFHrod7X5FECqaf+nu9yY5KB4OcCOCRBhTqrSqrK8W8KKb7ZYjzr8wdrDk0pK7vt1L+eY+duPviOYgI55pgw54RzSQCtzheXx1+3yMYyzwq1H+RFfjXBAKTBfLxq2CUAnavaF5Z9sec++ffs8IvMI5fIZBBaDYOmjoNw1FHlmK0NSjy1fddDQ4aU5bBLke9WH4EKljHKFqncHWpIdHimOOPEULIwMhxM9VVV0119LuU6XLO1n4hlLYa2l7r4DTUiajnCEDznrHluMDZp9C7aTlKRFAcohBG811WN7i5kPd6V3QPXRmKMBgTQDJcQkcmeInrpl/PCvs7mmEL480IzhdMMC5bVOFYxGdsyjqbUt+gCJ+FToZLCpEioFAierSV/sbI2LL2hVMHrWa8hvhGuXMkHtfVQ00MZmL6pvP2Jg5734sCu3tVxjhJpDKcap1dxVF/dIq94+bD6Ql8LDRXUBFtAHspSfxM7O8pSI++ktCfXAc24K+uhcE3v0ahelCMd96ZhgIggqTEMF3/rpQtSzUfYw+GHnfnC1/6/CuFyg5Tw7f3S8dLP96kL1pxX7UdbFuOYcpFOWcJ6Xr5QcpZRf/QwdfpmRGR8iXErso/1CWq+zPKowXpakudXN2OD9l6++l2ggQEmhd3JR1gCac6PanqWH/w4W82NcKbABEd88ePsbn4pJxhLOoSC4nj86BknWjKVLXqIBzC8BVsCE6x7Fs9JUz2lA7/zgeFwp6ZB3n1TgJOIvhmmMXoc1xCKwyIL7QOJXQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(136003)(39860400002)(376002)(396003)(346002)(230922051799003)(64100799003)(82310400011)(186009)(451199024)(1800799009)(40470700004)(46966006)(36840700001)(31686004)(66899024)(53546011)(2616005)(107886003)(40480700001)(36756003)(31696002)(86362001)(7636003)(356005)(36860700001)(82740400003)(426003)(336012)(26005)(2906002)(54906003)(47076005)(4326008)(478600001)(83380400001)(316002)(8936002)(8676002)(41300700001)(16526019)(70586007)(16576012)(6916009)(70206006)(5660300002)(40460700003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2023 14:11:51.5138
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 245a9602-6287-4594-ed7e-08dbc4e3db2a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9DA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB5005
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The pm_runtime_enable function increases the power disable depth,
-which means that we must perform a matching decrement on the error
-handling path to maintain balance within the given context.
-Additionally, we need to address the same issue for pm_runtime_get_sync.
-We fix this by invoking pm_runtime_disable and pm_runtime_put_sync
-when error returns.
 
-Fixes: 82b81b3ec1a7 ("drm/tegra: dpaux: Implement runtime PM")
-Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
----
- drivers/gpu/drm/tegra/dpaux.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index ef02d530f78d..ae12d001a04b 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -522,7 +522,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	if (err < 0) {
- 		dev_err(dpaux->dev, "failed to request IRQ#%u: %d\n",
- 			dpaux->irq, err);
--		return err;
-+		goto err_pm_disable;
- 	}
- 
- 	disable_irq(dpaux->irq);
-@@ -542,7 +542,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	 */
- 	err = tegra_dpaux_pad_config(dpaux, DPAUX_PADCTL_FUNC_I2C);
- 	if (err < 0)
--		return err;
-+		goto err_pm_disable;
- 
- #ifdef CONFIG_GENERIC_PINCONF
- 	dpaux->desc.name = dev_name(&pdev->dev);
-@@ -555,7 +555,8 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	dpaux->pinctrl = devm_pinctrl_register(&pdev->dev, &dpaux->desc, dpaux);
- 	if (IS_ERR(dpaux->pinctrl)) {
- 		dev_err(&pdev->dev, "failed to register pincontrol\n");
--		return PTR_ERR(dpaux->pinctrl);
-+		err = PTR_ERR(dpaux->pinctrl);
-+		goto err_pm_disable;
- 	}
- #endif
- 	/* enable and clear all interrupts */
-@@ -571,10 +572,15 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	err = devm_of_dp_aux_populate_ep_devices(&dpaux->aux);
- 	if (err < 0) {
- 		dev_err(dpaux->dev, "failed to populate AUX bus: %d\n", err);
--		return err;
-+		goto err_pm_disable;
- 	}
- 
- 	return 0;
-+
-+err_pm_disable:
-+	pm_runtime_put_sync(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+	return err;
- }
- 
- static void tegra_dpaux_remove(struct platform_device *pdev)
--- 
-2.30.2
+On 03/10/23 10:30, Viresh Kumar wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 29-09-23, 19:47, Sumit Gupta wrote:
+>>
+>>
+>> On 28/09/23 12:35, Viresh Kumar wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> On 01-09-23, 22:11, Sumit Gupta wrote:
+>>>> @@ -131,19 +132,10 @@ static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
+>>>>    static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
+>>>>    {
+>>>
+>>>> +     for_each_cpu_and(cpu, policy->cpus, cpu_online_mask)
+>>>
+>>> (Yes this is existing code, but ..) you don't need to perform AND with
+>>> cpu_online_mask as policy->cpus should only contain currently online CPUs.
+>>>
+>>> Please check if you ever see it differently.
+>>>
+>>
+>> I think this was kept to be safe.
+>> Should I removed the AND in v3 or send separate patch?
+> 
+> Sending it separately would be ideal.
+> 
+> --
+> viresh
 
+Sent v3 with the "sizeof(*data->cpu_data)" change.
+Will send a separate patch with change to remove AND with mask as suggested.
+
+Thank you,
+Sumit Gupta
