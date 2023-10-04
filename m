@@ -2,146 +2,283 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 832D9E7B61B
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 14:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC76E936E1
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 20:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242780AbjJDOMB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Oct 2023 10:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33464 "EHLO
+        id S244979AbjJDUZd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Oct 2023 16:25:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242797AbjJDOMA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 10:12:00 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2061.outbound.protection.outlook.com [40.107.102.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E434CC6;
-        Wed,  4 Oct 2023 07:11:53 -0700 (PDT)
+        with ESMTP id S245156AbjJDUYw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 16:24:52 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3002F4;
+        Wed,  4 Oct 2023 13:24:31 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gvYHsxfPDv3kAc77jhMerCO4TW/EDcTuJMpHnh2zh7N9FtOlPI+G5Giyr1xVz49uCcXKxqeOTh8n7O6xYOwZx+MOPexua09xHg3RC3594m37i6IugtJ3RZwcAL0eoTHgQ2XPKbdCL7SzAyiAR94G1D5uB4TiZtN4TWIzkK9qZalp0RlocHsbgndxHGIFbqP+wz3FClp/3nAhnFB6GPzyfhAqwChpEdhBiE/jCEZFXLfWp7KjdVAl7rpXsSLjKcPhFZj392WviHeMyvKvrj42rAJbMbhVUNPstdzkZ2vgrJkrwDiEBwQupX93bptRBM/qTLvky9iVf4wDCr5Cb+r6TA==
+ b=USONhZteA3O+zVPNIBnstTDcvHJ67u+DiCuuO5GDGuHafrekBaWUER3wAyOe17TK1OYtliBsHGNvtH5HztE4XXP3pdqxM+qAtLpJZ4VW6lAMB1dfbQvkkJOv+kD7toVZV9Gvz6dCIusBW5dyIPG83UxhvubnX4733PbQlPo4aCTLWbcsaqZIkVqCF9d+sqQ6Djn+1CGnVhSSo3qx06rNVYVVgjr5SC0ZYC0fIuoXdMlc28KIaPmNsIZjK0e/ctO2L/7RcO8X7mG9SY26x+a9joZZjZnhybXc/TerD8V9sPEWAzwKeJsko3s8pYsUiVDXJ0sx2JWVDnoR4Hjz/TUcqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6WQ9eLoLKyAzSGLIOGGz9WVm0ntya8Sg5Ennj8VGnBM=;
- b=mTaq7KHltqyMOnATXHXMkRs7LBWnNSgcFnoodMavAkYlbnUdsNcjhTJbuTJdLAN2JaQcDGLhtQKfp4NFI/OTQhBZj+DItThRwk35wV8WJhfWUqfXneP5uFoBnI7LAE6qdHEU8s/XS0idi3gDqgemJrT+QXW9lssKdqZSghEBae8ahEHhAOhmMM5EmR+9QWi2SQjIQfp8d41kPDdFhgo4N4TgiF6G2L/KfoWr7RYi1ueVLDNQQi2AsS2qkq+BM2OUkpHK+c52mLnQuKcJ25EV/FIb18g4ecft8gNCJ+f3dY/mc5sb8sKIGUYVr8867mCv2FIP0ebyXTHg9ZURW7m/sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=ITqe9wv494UA6QSf9eMTOooAEg3I3g2AQ6X9x7s/OW8=;
+ b=oPXJOyvVL54DUBhsEzPbJWJS7mqyij3dYPPHnBBZXyVBMQRiUwv0fpRfJP+Y/A/pag7J5Xtnx8hyNA1GjFYMrwGgpsHbcTTcAzfh3fWRu5qVTYTivLOeo72JksWO6M+Z/l0dY8P/S3jppQo9+JMl3US04bxLtVNkPr0uegfTriuC4Njy1EWkRncv7Y+dHneEClfpUWqQB/r+Quzf/lOsbixLzhKN91l5Ztrr3YPPednQY0h5M2htvEKiTKkqPJlvw7IN9Pre/WmUD8l/610XFwi3wJwkJaXXr/pSc79BREf4xXY+8SC3fY6uz+zwqBmMbKBkG3tgOZNcrFoPTjp3Tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6WQ9eLoLKyAzSGLIOGGz9WVm0ntya8Sg5Ennj8VGnBM=;
- b=J9Oy1tJCMrsIJ87xH0u1FRI5yO63mGZMzU6oko8KHDWVqVhM0vOH9iesOwFI8N80rfdA1Z1Xqy80zZsSaU33kT98mxJGEAGTaGUtNc0b5DaDpIBY6g2ghHZNLGv19n9Ou0q412RT/D7F9YaFjzXn4uEFIt4f5zjQfckhCu0QjAcU2a3JnozkXNYwIE7Ev657YhNh/o6yBvOE/s0eHzSFvp5MaxHMI6P3Glm2GxGldMFS0CTR3zuc+ExRVEMYjcAoUOfXYuFs2ztKo5XkIrFlOmfhBpoIwfenarXpjU7JUe1bawZF6bS+0mw5QBSj9p+uQKxt4VZI7Hz4Ao+4Q9Gd0g==
-Received: from CY5PR19CA0043.namprd19.prod.outlook.com (2603:10b6:930:1a::33)
- by DM6PR12MB5005.namprd12.prod.outlook.com (2603:10b6:5:1be::23) with
+ bh=ITqe9wv494UA6QSf9eMTOooAEg3I3g2AQ6X9x7s/OW8=;
+ b=m5ygioxG+cw8AjFzTbphg41RC355he5KJJa4zBLbWXj5h8pH9tLl8le+VdB+4mcSjT+3/HKuZ6mBDNM8KVptERaXmewnrRiBPEh5v9KHXhjO7B7fyN6t5WsvLFXLCLhR3NQdArcxtQxTk/BPqVCTjee2Zd5ejK47pyL4GpHziU60adYUUSimzqmUWE5xRX4hJOiEmDuX7pronpCBbzeT4AgYYB+vHu64DhuQPsGHraINOeC80tzeVVPlSKHamCHKbJpggIipEgqSNplOHc2PSyTgiI/C7nMwfEX4XONKt2oSnfJS+939gYFRf8jMps4wXalscHsXg3QZvWigMM2EtQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com (2603:10b6:208:3a0::7)
+ by BL1PR12MB5946.namprd12.prod.outlook.com (2603:10b6:208:399::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.34; Wed, 4 Oct
- 2023 14:11:51 +0000
-Received: from CY4PEPF0000E9DA.namprd05.prod.outlook.com
- (2603:10b6:930:1a:cafe::d9) by CY5PR19CA0043.outlook.office365.com
- (2603:10b6:930:1a::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.34 via Frontend
- Transport; Wed, 4 Oct 2023 14:11:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000E9DA.mail.protection.outlook.com (10.167.241.79) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6838.14 via Frontend Transport; Wed, 4 Oct 2023 14:11:51 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 4 Oct 2023
- 07:11:36 -0700
-Received: from [10.41.21.79] (10.126.230.35) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 4 Oct 2023
- 07:11:32 -0700
-Message-ID: <379ee551-c2ef-72ca-9372-c812373a1e0c@nvidia.com>
-Date:   Wed, 4 Oct 2023 19:41:30 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [Patch v2 1/2] cpufreq: tegra194: save CPU data to avoid repeated
- SMP calls
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.33; Wed, 4 Oct
+ 2023 20:24:27 +0000
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::8814:146:e28e:6eea]) by IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::8814:146:e28e:6eea%4]) with mapi id 15.20.6838.016; Wed, 4 Oct 2023
+ 20:24:27 +0000
+Message-ID: <7956eb81-014e-74cf-6630-b347a0b9d919@nvidia.com>
+Date:   Wed, 4 Oct 2023 13:24:22 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.1
+Subject: Re: [PATCH] hte: tegra194: improve the GPIO-related comment
 Content-Language: en-US
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     <rafael@kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>,
-        <amiettinen@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <20230901164113.29139-1-sumitg@nvidia.com>
- <20230901164113.29139-2-sumitg@nvidia.com>
- <20230928070545.b7l367qi2q4rynji@vireshk-i7>
- <8cb33679-5056-8983-9334-3ab3d170568a@nvidia.com>
- <20231003050019.a6mcchw2o2z2wkrh@vireshk-i7>
-From:   Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <20231003050019.a6mcchw2o2z2wkrh@vireshk-i7>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail202.nvidia.com (10.129.68.7)
-X-EOPAttributedMessage: 0
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        timestamp@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <20230911094443.14040-1-brgl@bgdev.pl>
+ <cd4df23c-cc02-6723-e36d-34ca03409e6e@nvidia.com>
+ <CAMRc=MeWXapho1bsX9Si5uSx7MWVhpT2cqrv5S+qPo51Ko=Vtg@mail.gmail.com>
+ <7766de61-a046-3e17-1322-28bd7f1e61da@nvidia.com>
+ <CAMRc=Mfbt0iUbM42zR0ZrBWgbQkctQm3LxwiFFP5dXNuQC-EqA@mail.gmail.com>
+ <59ea74ba-b951-cf89-9d7f-bc7212ddb08a@nvidia.com>
+ <CAMRc=MeuMkExMef1fsEV9pPHyshGTLJLSHpT2vjLVXgEm6CD3A@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   Dipen Patel <dipenp@nvidia.com>
+In-Reply-To: <CAMRc=MeuMkExMef1fsEV9pPHyshGTLJLSHpT2vjLVXgEm6CD3A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0264.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a0::29) To IA1PR12MB6604.namprd12.prod.outlook.com
+ (2603:10b6:208:3a0::7)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DA:EE_|DM6PR12MB5005:EE_
-X-MS-Office365-Filtering-Correlation-Id: 245a9602-6287-4594-ed7e-08dbc4e3db2a
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|BL1PR12MB5946:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e91ec89-5606-49ff-1eff-08dbc517e804
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: yPiz9o3BQF4mQ8ntqFHrod7X5FECqaf+nu9yY5KB4OcCOCRBhTqrSqrK8W8KKb7ZYjzr8wdrDk0pK7vt1L+eY+duPviOYgI55pgw54RzSQCtzheXx1+3yMYyzwq1H+RFfjXBAKTBfLxq2CUAnavaF5Z9sec++ffs8IvMI5fIZBBaDYOmjoNw1FHlmK0NSjy1fddDQ4aU5bBLke9WH4EKljHKFqncHWpIdHimOOPEULIwMhxM9VVV0119LuU6XLO1n4hlLYa2l7r4DTUiajnCEDznrHluMDZp9C7aTlKRFAcohBG811WN7i5kPd6V3QPXRmKMBgTQDJcQkcmeInrpl/PCvs7mmEL480IzhdMMC5bVOFYxGdsyjqbUt+gCJ+FToZLCpEioFAierSV/sbI2LL2hVMHrWa8hvhGuXMkHtfVQ00MZmL6pvP2Jg5734sCu3tVxjhJpDKcap1dxVF/dIq94+bD6Ql8LDRXUBFtAHspSfxM7O8pSI++ktCfXAc24K+uhcE3v0ahelCMd96ZhgIggqTEMF3/rpQtSzUfYw+GHnfnC1/6/CuFyg5Tw7f3S8dLP96kL1pxX7UdbFuOYcpFOWcJ6Xr5QcpZRf/QwdfpmRGR8iXErso/1CWq+zPKowXpakudXN2OD9l6++l2ggQEmhd3JR1gCac6PanqWH/w4W82NcKbABEd88ePsbn4pJxhLOoSC4nj86BknWjKVLXqIBzC8BVsCE6x7Fs9JUz2lA7/zgeFwp6ZB3n1TgJOIvhmmMXoc1xCKwyIL7QOJXQ==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(136003)(39860400002)(376002)(396003)(346002)(230922051799003)(64100799003)(82310400011)(186009)(451199024)(1800799009)(40470700004)(46966006)(36840700001)(31686004)(66899024)(53546011)(2616005)(107886003)(40480700001)(36756003)(31696002)(86362001)(7636003)(356005)(36860700001)(82740400003)(426003)(336012)(26005)(2906002)(54906003)(47076005)(4326008)(478600001)(83380400001)(316002)(8936002)(8676002)(41300700001)(16526019)(70586007)(16576012)(6916009)(70206006)(5660300002)(40460700003)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: K5GaokJtX+00ECDkHbuEYTgElw6kUfdqEudeQJi4mmQazYhv5ME+iy1SajVzWswSTdrl7PkoFghGNYqg5PGmLFT8n8MNqtPWf7nToRFDMhbYPajlARHfo1yeI6J76LW8BftleLlvbOuxc0mlJNfcDx9u3XX8LR1nSQzFjzqmulfo+GxfCkdxe7JJYO5niDH9xnXyeJssZeOomYZnC/lOdVUHjbVgpY5tiHzEhKCz04/S4HujT2O06peFwtBt0FQouedjt6XA0QNtJKPwAxumsSWCUjvpxft7Qu5VEPP5hn6xe7yctAJAYC5uBK/TnPOULpUY0QY8AjfDdc9kL+hiuO4+3VnOVvTxCVIGS++hMILiCuwENW6tvA8lavpTvw1ZEgG16mcYINczcgIP+LnEPDp8FO/McArCZ5cETSLSnFp04qmJPNDwgoVBCiSZC9eR003qTXQc+Wau+fGH/JSC+ofvlZ8Zuf6ViyHo/dtmAUBuIZnOIq70VQHQ/EUMXS6cH8yylrBZM8Oad9kDxlIs+lC3tVRXIqOMkThrZcwQM56Kg4E9+ymEcayntOyy6ICUSGkSh6+1vcoRa0Cnj62DIiE+WCFDHR1kXKJ/WWclwoXX6GfS4dMwYYS/hje3vB4ehgBFQ3D9Ey3EJWfo++iJma6KjK5tjgH5X69UXEyPDX+eX37PRKWQDCYH30lA5Tvv
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(39860400002)(136003)(396003)(376002)(230922051799003)(64100799003)(1800799009)(186009)(451199024)(8676002)(38100700002)(4326008)(8936002)(83380400001)(5660300002)(41300700001)(6512007)(54906003)(6666004)(316002)(478600001)(966005)(66476007)(66946007)(66556008)(6486002)(2616005)(2906002)(26005)(6506007)(53546011)(6916009)(31696002)(86362001)(36756003)(66899024)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ekZhMG5zSldDWjlEY3R3d2ZFOGRkVXpUVFg2V2hIUVphdXAwSGUwRW5hVnIx?=
+ =?utf-8?B?a3Z0L3BtR0QrckxZRFZSeXE2Mi9NbFQ5NG94OGE3R3E5KzNHSWY4c3k3YVlo?=
+ =?utf-8?B?N0hqdklPYnR4MjdSYjdZTjU4aDJZcGVmbjJ1U2ZvVFJNZjh4SWh6VVNVSjdl?=
+ =?utf-8?B?YjdHQ0c0VG5wSW11U3ViQVlVRmRyMzFYMFFQVGxhUDUrNmphaFA0dEVWdkc4?=
+ =?utf-8?B?dG9VRkFVVUdxQlZadi80K2NBWXRremFkYlFXcFk4RnBIRGtSR2xidjRxdzYz?=
+ =?utf-8?B?Q0hES3dyQURWMWU1SkR2N0tFYTRMUmF1NnhJdTlrTFNGNlJrcndrc3FkcExE?=
+ =?utf-8?B?T0RVeldnbW9rQis3d3BUcmtSWU9Ob2phZDdYT0o0clhmRVBsZmxrbkNhNWtz?=
+ =?utf-8?B?MGV0aFllcUQrajdiZkhwQk8rK2FmQ2F5eVllK1hXN0lnN0VObjgxdGdTeGgx?=
+ =?utf-8?B?djZuV2dqMkE4YTczYUt5ajI2UnN6Q3AwZFN0RVdCbXd4clhiMVRpL2N5QUpW?=
+ =?utf-8?B?ZEdXQThkem1QQ3N2eElQL2U1TFRoalNocTdaWS9xL0Z4OVdtZDhJT3JYOEZk?=
+ =?utf-8?B?WUlYVVNlMnl0ajEzbVpmNjFvNzVPV09jcHYyellzZ3IrcG1iZkQ1OVgyYnAz?=
+ =?utf-8?B?YkZTbVdhZzd6ZGpwL0NnT3JPYWhZeWRONytHOENqdFlXODZsL3dSdmk2Ulo0?=
+ =?utf-8?B?YzVKdTh0TXJheXYvN3gzUlcvY3FtSDlTQjRXVkVic1l5dks3RmJCdE02TU1s?=
+ =?utf-8?B?QlRxOVVaaDg1MzZKMUxoUE85K3d4M2kxemd4emowV3VlT2N4R200WkROWTRM?=
+ =?utf-8?B?ekhFYzI0R1JMQ3FBejArbXoxY0wzWXlXWktOZlQ4VDlIN0tncHNtY3VCSDRy?=
+ =?utf-8?B?anJWMEdJai84WnZHd1hCbFVxV2tCUlE5WlY1eXVteUxGYzNLNEJtUitjNG1Y?=
+ =?utf-8?B?RG1NRFpXaFhuc3dDZ2xrSElxN0VoOUR1SWxEeWUyc3puUzF3d1E0Q1lFY0VL?=
+ =?utf-8?B?bUc4UDlZU2RVQjd2NTFEcWRCQXNYa2ZnaWdqNmlxRk5jQ2QzeERPWDl1dGM1?=
+ =?utf-8?B?bnhMUFM1RzVGYTd2M25uTXR5ZU1SSk9reGNDWjdDMUx3SnZiMnNBSkF3K2dp?=
+ =?utf-8?B?MmpXRTVRQmdqMzJmMk9wRzNrMDM3RUFXRC9RRlJvdkpIemJHSk5iVU12SDZa?=
+ =?utf-8?B?Vjlvd2dvQzFnenF3V1d5NGJVSjFsUHVEOVdnMVZzNFVWakd3S1hNQnhLaThy?=
+ =?utf-8?B?NUlWMnBCTmJTYUxVNXNpaU8yeHNQUTlBRE5nR29SVHl0SFN6b1RUQ3hWMno5?=
+ =?utf-8?B?UTVLN2x5VmlXSVBzeDZpU3ZDenJLM0pQOTByQ2JFSUsyU1NpU3p0dU0wWHZo?=
+ =?utf-8?B?eGRxTlUxeFFmc3liSE5Mc1BlV1JCdVRwM3pQT2FnL3Rsa0V0R0NJRkI2czhR?=
+ =?utf-8?B?RlBZa2hUQllsck9xTTNuUnVLR1lCNWZYL3I0SGNYbDVFRndBQW54WGVKcFVm?=
+ =?utf-8?B?MFZnUHRWSkNnL3U2OGxoSGFRRTVBbEpTTklTMXR6akZheHZjZFlORG1jVGdu?=
+ =?utf-8?B?WjZ0WWxONzBIQVAxRFcrbWVrcGsxOVlCWVVNbTVNMktFczVJa0R3Zjgya3l2?=
+ =?utf-8?B?Y2IwZFoyZFJ3ZlhTVk84UlNYZUlkbStOckR3RlVTbkphcndwaWFWNHVkVjI2?=
+ =?utf-8?B?bTdya3VtV2pGc2xtL0tkRGtwcGVoZndJaEdMUGtTa1Z1dVFQcm5tOGZXZ3Z1?=
+ =?utf-8?B?YmFTSm9ZbDM4SUR4SlhPU1JldUl1dk9UNHppdUVGYUs2MFBFVUp4RlA0S1RD?=
+ =?utf-8?B?YjhjaW1kdHVaYlNsWExNQ3VyZE81NlY2Ykk5d2YwRzBidVJPQjhuRDZwbUs4?=
+ =?utf-8?B?Q1pNemsvL3VZY2FyaXY4TzVUL2cwR0UrM0s3MEh1SnVWQXhmS3p5R0VtRTVH?=
+ =?utf-8?B?VHU4aENWcjdOS20rSDVOWCttbDVxcEg5TGI0U0JPa0xwNnNuMFo4WlpDcGFI?=
+ =?utf-8?B?OEdQdXZkcVNOcm5qNnBmNEZpT2FTL2hQeER0Q2ROa0dVMVlMczJBcVdQUzlG?=
+ =?utf-8?B?ajVzaDhNdUhkTUxkaWUyN2l5VER1ME9HNmNzZyt5R1JRdU9RZUVjMGxnY0dL?=
+ =?utf-8?Q?mRvbmKsDmX0dHzfcOamUya5Rb?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2023 14:11:51.5138
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e91ec89-5606-49ff-1eff-08dbc517e804
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6604.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2023 20:24:27.2405
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 245a9602-6287-4594-ed7e-08dbc4e3db2a
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9DA.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB5005
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iArQrPXebdGOl7s4867cgdj6PE6EaOagffv6Fg9BoL1dYGBq6Nua4VOM06F0nerL7ab/i3L0TbXBu5UoTNd3cg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5946
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-
-On 03/10/23 10:30, Viresh Kumar wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 29-09-23, 19:47, Sumit Gupta wrote:
+On 10/4/23 3:04 AM, Bartosz Golaszewski wrote:
+> On Tue, Oct 3, 2023 at 6:42 PM Dipen Patel <dipenp@nvidia.com> wrote:
 >>
+>> On 10/3/23 1:58 AM, Bartosz Golaszewski wrote:
+>>> On Mon, Oct 2, 2023 at 6:27 PM Dipen Patel <dipenp@nvidia.com> wrote:
+>>>>
+>>>> On 10/2/23 1:33 AM, Bartosz Golaszewski wrote:
+>>>>> On Fri, Sep 29, 2023 at 11:38 PM Dipen Patel <dipenp@nvidia.com> wrote:
+>>>>>>
+>>>>>> On 9/11/23 2:44 AM, Bartosz Golaszewski wrote:
+>>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>>
+>>>>>>> Using any of the GPIO interfaces using the global numberspace is
+>>>>>>> deprecated. Make it clear in the comment.
+>>>>>>>
+>>>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>>>>>> ---
+>>>>>>> This was part of a wider series but since this is independent, I'm sending
+>>>>>>> it separately.
+>>>>>>>
+>>>>>>>  drivers/hte/hte-tegra194.c | 13 ++++++++-----
+>>>>>>>  1 file changed, 8 insertions(+), 5 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+>>>>>>> index 6fe6897047ac..9fd3c00ff695 100644
+>>>>>>> --- a/drivers/hte/hte-tegra194.c
+>>>>>>> +++ b/drivers/hte/hte-tegra194.c
+>>>>>>> @@ -407,12 +407,15 @@ static int tegra_hte_line_xlate(struct hte_chip *gc,
+>>>>>>>               return -EINVAL;
+>>>>>>>
+>>>>>>>       /*
+>>>>>>> +      * GPIO consumers can access GPIOs in two ways:
+>>>>>>>        *
+>>>>>>> -      * There are two paths GPIO consumers can take as follows:
+>>>>>>> -      * 1) The consumer (gpiolib-cdev for example) which uses GPIO global
+>>>>>>> -      * number which gets assigned run time.
+>>>>>>> -      * 2) The consumer passing GPIO from the DT which is assigned
+>>>>>>> -      * statically for example by using TEGRA194_AON_GPIO gpio DT binding.
+>>>>>>> +      * 1) Using the global GPIO numberspace.
+>>>>>>> +      *
+>>>>>>> +      * This is the old, now DEPRECATED method and should not be used in
+>>>>>>> +      * new code. TODO: Check if tegra is even concerned by this.
+>>>>>> This use case is to do namespace mapping from gpio subsystem to hte. Few doubts:
+>>>>>> 1. What does deprecate mean here? Does gpio subsys not use global space anymore?
+>>>>>
+>>>>> It does but we don't want to expose this to external users in any way
+>>>>> anymore (and haven't to for years). This is what deprecated means.
+>>>>> Users should deal with opaque GPIO descriptors not global GPIO
+>>>>> numberspace.
+>>>>>
+>>>>>> 2. If yes, what GPIO number is set when it comes from gpiolib-cdev, as based on that I may have to
+>>>>>> reflect in the mapping, tegra194_aon_gpio_map for example.
+>>>>>
+>>>>> Why DO you have to use a GPIO number though? If HTE needs just a
+>>>>> number from some HTE numberspace (which in itself may be unnecessary)
+>>>>> then why not just keep a local IDA for it? Do you have to know the
+>>>>> GPIOs internal numbering scheme to make it work?
+>>>>
+>>>
+>>> Dipen,
+>>>
+>>> Please set your mailer to wrap lines around at 80 characters as is
+>>> customary on the mailing list.
 >>
->> On 28/09/23 12:35, Viresh Kumar wrote:
->>> External email: Use caution opening links or attachments
+>> my email client misfired, will make sure. Thanks.
 >>>
+>>>> humm, overall, I just need to know which GPIO it is, for example, GPIO controller X Port A GPIO number 3
+>>>> to do proper mapping.
+>>>> Continuing from above example, the hte driver gets:
+>>>> - GPIO Controller X from DT node
+>>>> - the rest details in current code gets it from [1] and [2]
+>>>>
+>>>> If there is alternate method exists, I would like to explore. I think IDA will not help in this case as ID assigned
+>>>> does not hold meaning in this context.
+>>>>
+>>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpiolib-cdev.c?h=v6.6-rc3#n760
 >>>
->>> On 01-09-23, 22:11, Sumit Gupta wrote:
->>>> @@ -131,19 +132,10 @@ static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
->>>>    static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
->>>>    {
->>>
->>>> +     for_each_cpu_and(cpu, policy->cpus, cpu_online_mask)
->>>
->>> (Yes this is existing code, but ..) you don't need to perform AND with
->>> cpu_online_mask as policy->cpus should only contain currently online CPUs.
->>>
->>> Please check if you ever see it differently.
->>>
+>>> Here: any reason why we have to translate the desc to the global GPIO
+>>> numberspace? Can we just pass the descriptor pointer directly to the
+>>> HTE subsystem?
+>> Sure, if from GPIO descriptor with combination of any helper APIs from
+>> the GPIO subsystem can help identify the GPIO pin, we can eliminate the need
+>> to pass global number (I assume gpio desc
+>> can be only accessed/manipulated using GPIO subsystem APIs)
 >>
->> I think this was kept to be safe.
->> Should I removed the AND in v3 or send separate patch?
+>>>
+>>>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/hte/hte-tegra194.c?h=v6.6-rc3#n421
+>>>
+>>> I still don't understand why you need to know the GPIO base? I'm not
+>>> quite sure what the role of line_id is in this driver. Is it only to
+>>> index the array?
+>>>
+>>> Please bear with me, I don't know this subsystem very well.
+>>
+>> Sure, no problem. Let me see if I am able to elaborate:
+>>
+>> 1. Map arrays' indexes are GPIO offsets so to avoid having
+>> the extra field for the GPIO numbers.
+>>
+>> 2. The HTE driver needs to know exact GPIO to enable corresponding bits
+>> in its registers. For example, hte register bit 3 would correspond to
+>> GPIO 6 of GPIO controller X. If gpio descriptor is passed here, I think
+>> I would need to do some conversions to identify the GPIO to enable
+>> corresponding register bits. In the current scheme of things,
+>> I though it was easier to identify passing the output of the desc_to_gpio* API.
+>>
+>> 3. Since GPIO global space is runtime, need base to calculate the offset
+>> where offset does not change. So in the above example, gpio cdev would pass
+>> 306 and HTE does simple conversion from the base, ie. 306 - 300 = 6.
+>> Now 6 will serve as pin number as map array index to find the register.
+>>
+>> 4. Overall, I rely on base + global number to do namespace conversion
+>> between gpio and hte subsys as far as gpio-cdev use case is concerned.
+>>
 > 
-> Sending it separately would be ideal.
+> Ok, so you *don't* need the global numbers, just controller-relative
+
+Thats correct....
+
+> offsets. This makes sense. This ties nicely into my plan for removing
+> all accesses to gpio_chip except for GPIO providers.
 > 
-> --
-> viresh
+> Looking at the tegra dts I'm surprised that the GPIO controllers that
+> use the HTE don't take the hte_lic or hte_aon phandles as arguments.
+> How exactly do they resolve the HTE device to use for timestamping?
+gpiochip added few callbacks during hte subsystem patch series to manipulate
+gpio line that needs hte. So it does not need any handle as of now for the
+tegra series of gpio controllers at least.
 
-Sent v3 with the "sizeof(*data->cpu_data)" change.
-Will send a separate patch with change to remove AND with mask as suggested.
-
-Thank you,
-Sumit Gupta
+> 
+> In any case, I think this commit is still correct.
+Agreed.
+> 
+> Bart
+> 
+>>>
+>>> Bart
+>>>
+>>>>
+>>>>>
+>>>>> Bart
+>>>>>
+>>>>>>> +      *
+>>>>>>> +      * 2) Using GPIO descriptors that can be assigned to consumer devices
+>>>>>>> +      * using device-tree, ACPI or lookup tables.
+>>>>>>>        *
+>>>>>>>        * The code below addresses both the consumer use cases and maps into
+>>>>>>>        * HTE/GTE namespace.
+>>>>>>
+>>>>
+>>
+Reviewed-by: Dipen Patel <dipenp@nvidia.com>
