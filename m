@@ -2,152 +2,234 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAC6E8FDDD
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 08:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB233E7B5E1
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Oct 2023 10:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241827AbjJDI4D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Oct 2023 04:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57804 "EHLO
+        id S241906AbjJDKE4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Oct 2023 06:04:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241844AbjJDI4C (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 04:56:02 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2831CA6;
-        Wed,  4 Oct 2023 01:55:58 -0700 (PDT)
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3947iwHF012341;
-        Wed, 4 Oct 2023 08:55:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=G3eu+o+jYD03B/2vSJeSyHMaPAmhLz8sTDvwliqmwig=;
- b=nrDyw1lemn6qjWyVMj3sPDfdFNS9l7wW/iKCjClC7OUsa6+ht2ViFRM8NGyb9gcdm2//
- blnHtikqM0XjxwPNAT2iessUtljLlrysFBeKvvUUarAYKOMzkLKSWKCBLgxxglF3pTTy
- FGjYxK8svlZEBvT3aB+ns6eDfy1v8+xdb/tusDYFgSjIWOZ0cWjVcu3fKofAfRjxubVJ
- 3lIvgwdbeRqBOnJKkA3u2/M3L4WSD1qkXlS2xmjALMcSHdLiS12Q4YwDX/i+veXLzrt2
- jh35/Bej0beB3jfo2p+W4AeivIvNZZAIbipIuNgSrwiItrO3JfM54xctCClt6bCrcFNB 9A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3th3f4aejd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Oct 2023 08:55:07 +0000
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39480Iv9021327;
-        Wed, 4 Oct 2023 08:55:06 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3th3f4aehx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Oct 2023 08:55:06 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3948oUL2025047;
-        Wed, 4 Oct 2023 08:55:05 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3texcyad4s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Oct 2023 08:55:04 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3948t17r7471696
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Oct 2023 08:55:01 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA9A62004B;
-        Wed,  4 Oct 2023 08:55:01 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8AA820040;
-        Wed,  4 Oct 2023 08:54:58 +0000 (GMT)
-Received: from [9.171.77.142] (unknown [9.171.77.142])
-        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Oct 2023 08:54:58 +0000 (GMT)
-Message-ID: <dec2767815f6f765c452a025ccec1ce6d3635cdd.camel@linux.ibm.com>
-Subject: Re: [PATCH v13 0/6] iommu/dma: s390 DMA API conversion and
- optimized IOTLB flushing
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Matthew Rosato <mjrosato@linux.ibm.com>,
-        Will Deacon <will@kernel.org>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
+        with ESMTP id S241777AbjJDKEz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Oct 2023 06:04:55 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D459E
+        for <linux-tegra@vger.kernel.org>; Wed,  4 Oct 2023 03:04:51 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id a1e0cc1a2514c-7b0ec7417bdso851683241.2
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Oct 2023 03:04:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696413890; x=1697018690; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oMELFoOHqrq2qjYrgWfDqbUH1J8YwQQlpJkVwboYtS0=;
+        b=XuuBaoFkQdLbxJJZ0i9HMDnu+u6PHO/9qCMM0mH9iqz6yiDGx9IQfrHS7B0J8qq4/S
+         fTgMio5dQdrW6BdyZVABjfc7sw3776gjfEnGPiKfwvYZKNBdc3hAEMcALDoxg+j+8mg+
+         1owFrQajbMLLagS6ecVsu1MM+yCLNFGdj0S995R4J4joqmMHVVBgdPkWQ1GbnhMVg4z3
+         Ssv2RYZQhYuf+jYcQDc/qaMIK31L64UsasbPX+IT9RYnVxKuyBdo05W0NynpxEWK/d4+
+         vVSO8XxsNtFPEwOLE7QCR0FCkqUP6566MG7pJ+QMW/+scvSIWgreJQnvvAS9+VRbVewG
+         KhPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696413890; x=1697018690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oMELFoOHqrq2qjYrgWfDqbUH1J8YwQQlpJkVwboYtS0=;
+        b=JwjXgVz8pfUxGVVGcXSILIU5Hphc5oFMpS+i616CQUNAdW23aJZ56ilkxTOjiID9wa
+         Z1RgcQfpwE3U0Nqx+skK5UF7+DQ1Cp3oEXbaArrNs5btJjEqdIjACXMWn7hvfObpnVXP
+         d6pKsd2E90B9HAytw7ACvEDH144+oo3CibWKgG7GMpj9pOtoMMPSpylRhSFOuFc+3GFU
+         0ZhzUmxpmXv3PJK5S5GUyeH9bl+Hi/vzEwifni+TOvRoULWJXeZDnvY6+Drgqp74UTLJ
+         sk18w3Cu3METiPhnHgt2INsimu162ernAReFVVFHGP2k9UVm0gpibQB4XfuzjRgRuEeu
+         jexQ==
+X-Gm-Message-State: AOJu0YxYNSAYpTvaLRwPelIKmWf3r/oXlQwNLPRxnKHYgdzj/L1s+vkW
+        OxY2XTSldxQ7rcBkOT4Vu6TFtZilxHKRg8hdnMM6FQ==
+X-Google-Smtp-Source: AGHT+IHfzt5HM1Sbq001SWA0TWSGaVAUdcRdztDff9M5pbaXeVHCX8GGkCvQYu5thG2Jy/NVEx6Y4cUxfv1FL+aDnw4=
+X-Received: by 2002:a67:f4d3:0:b0:452:66a7:1ac with SMTP id
+ s19-20020a67f4d3000000b0045266a701acmr1671784vsn.6.1696413890436; Wed, 04 Oct
+ 2023 03:04:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230911094443.14040-1-brgl@bgdev.pl> <cd4df23c-cc02-6723-e36d-34ca03409e6e@nvidia.com>
+ <CAMRc=MeWXapho1bsX9Si5uSx7MWVhpT2cqrv5S+qPo51Ko=Vtg@mail.gmail.com>
+ <7766de61-a046-3e17-1322-28bd7f1e61da@nvidia.com> <CAMRc=Mfbt0iUbM42zR0ZrBWgbQkctQm3LxwiFFP5dXNuQC-EqA@mail.gmail.com>
+ <59ea74ba-b951-cf89-9d7f-bc7212ddb08a@nvidia.com>
+In-Reply-To: <59ea74ba-b951-cf89-9d7f-bc7212ddb08a@nvidia.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 4 Oct 2023 12:04:39 +0200
+Message-ID: <CAMRc=MeuMkExMef1fsEV9pPHyshGTLJLSHpT2vjLVXgEm6CD3A@mail.gmail.com>
+Subject: Re: [PATCH] hte: tegra194: improve the GPIO-related comment
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, asahi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Date:   Wed, 04 Oct 2023 10:54:58 +0200
-In-Reply-To: <ZRpqaJEQLRDp5b1L@8bytes.org>
-References: <20230928-dma_iommu-v13-0-9e5fc4dacc36@linux.ibm.com>
-         <ZRpqaJEQLRDp5b1L@8bytes.org>
+        timestamp@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -eMPc60Y5y2woUrjzjpWax0AtUM-alm0
-X-Proofpoint-GUID: ubAyYZVvTV1Zj6WBmrCFf5U92Rsidz7u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-04_01,2023-10-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 spamscore=0 phishscore=0 mlxlogscore=501 mlxscore=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2309180000 definitions=main-2310040049
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 2023-10-02 at 08:59 +0200, Joerg Roedel wrote:
-> On Thu, Sep 28, 2023 at 04:31:34PM +0200, Niklas Schnelle wrote:
-> > Niklas Schnelle (6):
-> >       iommu: Allow .iotlb_sync_map to fail and handle s390's -ENOMEM re=
-turn
-> >       s390/pci: prepare is_passed_through() for dma-iommu
-> >       s390/pci: Use dma-iommu layer
-> >       iommu/s390: Disable deferred flush for ISM devices
-> >       iommu/dma: Allow a single FQ in addition to per-CPU FQs
-> >       iommu/dma: Use a large flush queue and timeout for shadow_on_flus=
-h
->=20
-> Applied, thanks Niklas.
->=20
+On Tue, Oct 3, 2023 at 6:42=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> wrot=
+e:
+>
+> On 10/3/23 1:58 AM, Bartosz Golaszewski wrote:
+> > On Mon, Oct 2, 2023 at 6:27=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> =
+wrote:
+> >>
+> >> On 10/2/23 1:33 AM, Bartosz Golaszewski wrote:
+> >>> On Fri, Sep 29, 2023 at 11:38=E2=80=AFPM Dipen Patel <dipenp@nvidia.c=
+om> wrote:
+> >>>>
+> >>>> On 9/11/23 2:44 AM, Bartosz Golaszewski wrote:
+> >>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>>>
+> >>>>> Using any of the GPIO interfaces using the global numberspace is
+> >>>>> deprecated. Make it clear in the comment.
+> >>>>>
+> >>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> >>>>> ---
+> >>>>> This was part of a wider series but since this is independent, I'm =
+sending
+> >>>>> it separately.
+> >>>>>
+> >>>>>  drivers/hte/hte-tegra194.c | 13 ++++++++-----
+> >>>>>  1 file changed, 8 insertions(+), 5 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.=
+c
+> >>>>> index 6fe6897047ac..9fd3c00ff695 100644
+> >>>>> --- a/drivers/hte/hte-tegra194.c
+> >>>>> +++ b/drivers/hte/hte-tegra194.c
+> >>>>> @@ -407,12 +407,15 @@ static int tegra_hte_line_xlate(struct hte_ch=
+ip *gc,
+> >>>>>               return -EINVAL;
+> >>>>>
+> >>>>>       /*
+> >>>>> +      * GPIO consumers can access GPIOs in two ways:
+> >>>>>        *
+> >>>>> -      * There are two paths GPIO consumers can take as follows:
+> >>>>> -      * 1) The consumer (gpiolib-cdev for example) which uses GPIO=
+ global
+> >>>>> -      * number which gets assigned run time.
+> >>>>> -      * 2) The consumer passing GPIO from the DT which is assigned
+> >>>>> -      * statically for example by using TEGRA194_AON_GPIO gpio DT =
+binding.
+> >>>>> +      * 1) Using the global GPIO numberspace.
+> >>>>> +      *
+> >>>>> +      * This is the old, now DEPRECATED method and should not be u=
+sed in
+> >>>>> +      * new code. TODO: Check if tegra is even concerned by this.
+> >>>> This use case is to do namespace mapping from gpio subsystem to hte.=
+ Few doubts:
+> >>>> 1. What does deprecate mean here? Does gpio subsys not use global sp=
+ace anymore?
+> >>>
+> >>> It does but we don't want to expose this to external users in any way
+> >>> anymore (and haven't to for years). This is what deprecated means.
+> >>> Users should deal with opaque GPIO descriptors not global GPIO
+> >>> numberspace.
+> >>>
+> >>>> 2. If yes, what GPIO number is set when it comes from gpiolib-cdev, =
+as based on that I may have to
+> >>>> reflect in the mapping, tegra194_aon_gpio_map for example.
+> >>>
+> >>> Why DO you have to use a GPIO number though? If HTE needs just a
+> >>> number from some HTE numberspace (which in itself may be unnecessary)
+> >>> then why not just keep a local IDA for it? Do you have to know the
+> >>> GPIOs internal numbering scheme to make it work?
+> >>
+> >
+> > Dipen,
+> >
+> > Please set your mailer to wrap lines around at 80 characters as is
+> > customary on the mailing list.
+>
+> my email client misfired, will make sure. Thanks.
+> >
+> >> humm, overall, I just need to know which GPIO it is, for example, GPIO=
+ controller X Port A GPIO number 3
+> >> to do proper mapping.
+> >> Continuing from above example, the hte driver gets:
+> >> - GPIO Controller X from DT node
+> >> - the rest details in current code gets it from [1] and [2]
+> >>
+> >> If there is alternate method exists, I would like to explore. I think =
+IDA will not help in this case as ID assigned
+> >> does not hold meaning in this context.
+> >>
+> >> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+/tree/drivers/gpio/gpiolib-cdev.c?h=3Dv6.6-rc3#n760
+> >
+> > Here: any reason why we have to translate the desc to the global GPIO
+> > numberspace? Can we just pass the descriptor pointer directly to the
+> > HTE subsystem?
+> Sure, if from GPIO descriptor with combination of any helper APIs from
+> the GPIO subsystem can help identify the GPIO pin, we can eliminate the n=
+eed
+> to pass global number (I assume gpio desc
+> can be only accessed/manipulated using GPIO subsystem APIs)
+>
+> >
+> >> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+/tree/drivers/hte/hte-tegra194.c?h=3Dv6.6-rc3#n421
+> >
+> > I still don't understand why you need to know the GPIO base? I'm not
+> > quite sure what the role of line_id is in this driver. Is it only to
+> > index the array?
+> >
+> > Please bear with me, I don't know this subsystem very well.
+>
+> Sure, no problem. Let me see if I am able to elaborate:
+>
+> 1. Map arrays' indexes are GPIO offsets so to avoid having
+> the extra field for the GPIO numbers.
+>
+> 2. The HTE driver needs to know exact GPIO to enable corresponding bits
+> in its registers. For example, hte register bit 3 would correspond to
+> GPIO 6 of GPIO controller X. If gpio descriptor is passed here, I think
+> I would need to do some conversions to identify the GPIO to enable
+> corresponding register bits. In the current scheme of things,
+> I though it was easier to identify passing the output of the desc_to_gpio=
+* API.
+>
+> 3. Since GPIO global space is runtime, need base to calculate the offset
+> where offset does not change. So in the above example, gpio cdev would pa=
+ss
+> 306 and HTE does simple conversion from the base, ie. 306 - 300 =3D 6.
+> Now 6 will serve as pin number as map array index to find the register.
+>
+> 4. Overall, I rely on base + global number to do namespace conversion
+> between gpio and hte subsys as far as gpio-cdev use case is concerned.
+>
 
-Thank you Joerg. During some more testing I've found a minor issue
-where resetting the debug statistics still used the now obsolete
-counters that should have been removed. So I'll send a follow up patch,
-sorry for not noticing this sooner.
+Ok, so you *don't* need the global numbers, just controller-relative
+offsets. This makes sense. This ties nicely into my plan for removing
+all accesses to gpio_chip except for GPIO providers.
 
-Thanks,
-Niklas
+Looking at the tegra dts I'm surprised that the GPIO controllers that
+use the HTE don't take the hte_lic or hte_aon phandles as arguments.
+How exactly do they resolve the HTE device to use for timestamping?
+
+In any case, I think this commit is still correct.
+
+Bart
+
+> >
+> > Bart
+> >
+> >>
+> >>>
+> >>> Bart
+> >>>
+> >>>>> +      *
+> >>>>> +      * 2) Using GPIO descriptors that can be assigned to consumer=
+ devices
+> >>>>> +      * using device-tree, ACPI or lookup tables.
+> >>>>>        *
+> >>>>>        * The code below addresses both the consumer use cases and m=
+aps into
+> >>>>>        * HTE/GTE namespace.
+> >>>>
+> >>
+>
