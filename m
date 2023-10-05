@@ -2,287 +2,76 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C47E92728
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Oct 2023 14:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53594E92727
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Oct 2023 16:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236878AbjJEOnE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:43:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48738 "EHLO
+        id S240983AbjJEQNh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:13:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236545AbjJEOhU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Oct 2023 10:37:20 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4968983F6;
-        Thu,  5 Oct 2023 07:03:18 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CFC57150C;
-        Thu,  5 Oct 2023 02:15:49 -0700 (PDT)
-Received: from [192.168.1.3] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A82223F5A1;
-        Thu,  5 Oct 2023 02:15:09 -0700 (PDT)
-Message-ID: <762f44d3-5dff-21c1-720c-3b5d43eb1fd4@arm.com>
-Date:   Thu, 5 Oct 2023 10:15:09 +0100
+        with ESMTP id S235725AbjJEQMY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Oct 2023 12:12:24 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D35720E4D;
+        Thu,  5 Oct 2023 08:30:45 -0700 (PDT)
+Received: from i53875a3c.versanet.de ([83.135.90.60] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1qoL6X-00048u-Tp; Thu, 05 Oct 2023 11:57:13 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Mark Brown <broonie@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chris Morgan <macromorgan@hotmail.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] spi: dt-bindings: Make "additionalProperties: true" explicit
+Date:   Thu, 05 Oct 2023 11:57:12 +0200
+Message-ID: <2612304.7s5MMGUR32@diego>
+In-Reply-To: <20230925212614.1974243-1-robh@kernel.org>
+References: <20230925212614.1974243-1-robh@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2] perf cs-etm: Fix incorrect or missing decoder for raw
- trace
-Content-Language: en-US
-To:     Besar Wicaksono <bwicaksono@nvidia.com>, mike.leach@linaro.org,
-        suzuki.poulose@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        coresight@lists.linaro.org, linux-tegra@vger.kernel.org,
-        treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-        rwiley@nvidia.com, ywan@nvidia.com,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>
-References: <20231004003212.31554-1-bwicaksono@nvidia.com>
-From:   James Clark <james.clark@arm.com>
-In-Reply-To: <20231004003212.31554-1-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-
-On 04/10/2023 01:32, Besar Wicaksono wrote:
-> The decoder creation for raw trace uses metadata from the first CPU.
-> On per-cpu mode, this metadata is incorrectly used for every decoder.
-> On per-process/per-thread traces, the first CPU is CPU0. If CPU0 trace
-> is not enabled, its metadata will be marked unused and the decoder is
-> not created. Perf report dump skips the decoding part because the
-> decoder is missing.
+Am Montag, 25. September 2023, 23:26:00 CEST schrieb Rob Herring:
+> Make it explicit that child nodes have additional properties and the
+> child node schema is not complete. The complete schemas are applied
+> separately based the compatible strings.
 > 
-> To fix this, use metadata of the CPU associated with sample object.
-> 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
-> 
-> Changes from v1:
->  * Update commit message
->  * Add fallback to CPU-0 metadata if sample CPU id is not available
->  * Preserve cs_etm__set_trace_param_* arguments and just breakdown the index
->    parameter into trace-param and metadata indexes
-> Thanks to Mike and James for the feedback.
-> v1: https://lore.kernel.org/lkml/20230919224553.1658-1-bwicaksono@nvidia.com/T/#u
-> 
-> ---
->  tools/perf/util/cs-etm.c | 106 ++++++++++++++++++++++++---------------
->  1 file changed, 65 insertions(+), 41 deletions(-)
-> 
+>  Documentation/devicetree/bindings/spi/rockchip-sfc.yaml         | 2 ++
 
-There is a trivial conflict on the perf-tools-next repo that it's
-probably worth rebasing for, otherwise:
-
-Reviewed-by: James Clark <james.clark@arm.com>
-
-Also should probably include linux-perf-users@vger.kernel.org as tools
-changes actually go through the perf tree rather than the coresight one.
-
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 1419b40dfbe8..3abe68a9981e 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -293,22 +293,31 @@ static int cs_etm__metadata_set_trace_id(u8 trace_chan_id, u64 *cpu_metadata)
->  	})
->  
->  /*
-> - * Get a metadata for a specific cpu from an array.
-> + * Get a metadata index for a specific cpu from an array.
->   *
->   */
-> -static u64 *get_cpu_data(struct cs_etm_auxtrace *etm, int cpu)
-> +static int get_cpu_data_idx(struct cs_etm_auxtrace *etm, int cpu)
->  {
->  	int i;
-> -	u64 *metadata = NULL;
->  
->  	for (i = 0; i < etm->num_cpu; i++) {
->  		if (etm->metadata[i][CS_ETM_CPU] == (u64)cpu) {
-> -			metadata = etm->metadata[i];
-> -			break;
-> +			return i;
->  		}
->  	}
->  
-> -	return metadata;
-> +	return -1;
-> +}
+> diff --git a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+> index 339fb39529f3..ac1503de0478 100644
+> --- a/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+> +++ b/Documentation/devicetree/bindings/spi/rockchip-sfc.yaml
+> @@ -47,6 +47,8 @@ properties:
+>  patternProperties:
+>    "^flash@[0-3]$":
+>      type: object
+> +    additionalProperties: true
 > +
-> +/*
-> + * Get a metadata for a specific cpu from an array.
-> + *
-> + */
-> +static u64 *get_cpu_data(struct cs_etm_auxtrace *etm, int cpu)
-> +{
-> +	int idx = get_cpu_data_idx(etm, cpu);
-> +
-> +	return (idx != -1) ? etm->metadata[idx] : NULL;
->  }
->  
->  /*
-> @@ -651,66 +660,80 @@ static void cs_etm__packet_dump(const char *pkt_string)
->  }
->  
->  static void cs_etm__set_trace_param_etmv3(struct cs_etm_trace_params *t_params,
-> -					  struct cs_etm_auxtrace *etm, int idx,
-> -					  u32 etmidr)
-> +					  struct cs_etm_auxtrace *etm, int t_idx,
-> +					  int m_idx, u32 etmidr)
->  {
->  	u64 **metadata = etm->metadata;
->  
-> -	t_params[idx].protocol = cs_etm__get_v7_protocol_version(etmidr);
-> -	t_params[idx].etmv3.reg_ctrl = metadata[idx][CS_ETM_ETMCR];
-> -	t_params[idx].etmv3.reg_trc_id = metadata[idx][CS_ETM_ETMTRACEIDR];
-> +	t_params[t_idx].protocol = cs_etm__get_v7_protocol_version(etmidr);
-> +	t_params[t_idx].etmv3.reg_ctrl = metadata[m_idx][CS_ETM_ETMCR];
-> +	t_params[t_idx].etmv3.reg_trc_id = metadata[m_idx][CS_ETM_ETMTRACEIDR];
->  }
->  
->  static void cs_etm__set_trace_param_etmv4(struct cs_etm_trace_params *t_params,
-> -					  struct cs_etm_auxtrace *etm, int idx)
-> +					  struct cs_etm_auxtrace *etm, int t_idx,
-> +					  int m_idx)
->  {
->  	u64 **metadata = etm->metadata;
->  
-> -	t_params[idx].protocol = CS_ETM_PROTO_ETMV4i;
-> -	t_params[idx].etmv4.reg_idr0 = metadata[idx][CS_ETMV4_TRCIDR0];
-> -	t_params[idx].etmv4.reg_idr1 = metadata[idx][CS_ETMV4_TRCIDR1];
-> -	t_params[idx].etmv4.reg_idr2 = metadata[idx][CS_ETMV4_TRCIDR2];
-> -	t_params[idx].etmv4.reg_idr8 = metadata[idx][CS_ETMV4_TRCIDR8];
-> -	t_params[idx].etmv4.reg_configr = metadata[idx][CS_ETMV4_TRCCONFIGR];
-> -	t_params[idx].etmv4.reg_traceidr = metadata[idx][CS_ETMV4_TRCTRACEIDR];
-> +	t_params[t_idx].protocol = CS_ETM_PROTO_ETMV4i;
-> +	t_params[t_idx].etmv4.reg_idr0 = metadata[m_idx][CS_ETMV4_TRCIDR0];
-> +	t_params[t_idx].etmv4.reg_idr1 = metadata[m_idx][CS_ETMV4_TRCIDR1];
-> +	t_params[t_idx].etmv4.reg_idr2 = metadata[m_idx][CS_ETMV4_TRCIDR2];
-> +	t_params[t_idx].etmv4.reg_idr8 = metadata[m_idx][CS_ETMV4_TRCIDR8];
-> +	t_params[t_idx].etmv4.reg_configr = metadata[m_idx][CS_ETMV4_TRCCONFIGR];
-> +	t_params[t_idx].etmv4.reg_traceidr = metadata[m_idx][CS_ETMV4_TRCTRACEIDR];
->  }
->  
->  static void cs_etm__set_trace_param_ete(struct cs_etm_trace_params *t_params,
-> -					  struct cs_etm_auxtrace *etm, int idx)
-> +					  struct cs_etm_auxtrace *etm, int t_idx,
-> +					  int m_idx)
->  {
->  	u64 **metadata = etm->metadata;
->  
-> -	t_params[idx].protocol = CS_ETM_PROTO_ETE;
-> -	t_params[idx].ete.reg_idr0 = metadata[idx][CS_ETE_TRCIDR0];
-> -	t_params[idx].ete.reg_idr1 = metadata[idx][CS_ETE_TRCIDR1];
-> -	t_params[idx].ete.reg_idr2 = metadata[idx][CS_ETE_TRCIDR2];
-> -	t_params[idx].ete.reg_idr8 = metadata[idx][CS_ETE_TRCIDR8];
-> -	t_params[idx].ete.reg_configr = metadata[idx][CS_ETE_TRCCONFIGR];
-> -	t_params[idx].ete.reg_traceidr = metadata[idx][CS_ETE_TRCTRACEIDR];
-> -	t_params[idx].ete.reg_devarch = metadata[idx][CS_ETE_TRCDEVARCH];
-> +	t_params[t_idx].protocol = CS_ETM_PROTO_ETE;
-> +	t_params[t_idx].ete.reg_idr0 = metadata[m_idx][CS_ETE_TRCIDR0];
-> +	t_params[t_idx].ete.reg_idr1 = metadata[m_idx][CS_ETE_TRCIDR1];
-> +	t_params[t_idx].ete.reg_idr2 = metadata[m_idx][CS_ETE_TRCIDR2];
-> +	t_params[t_idx].ete.reg_idr8 = metadata[m_idx][CS_ETE_TRCIDR8];
-> +	t_params[t_idx].ete.reg_configr = metadata[m_idx][CS_ETE_TRCCONFIGR];
-> +	t_params[t_idx].ete.reg_traceidr = metadata[m_idx][CS_ETE_TRCTRACEIDR];
-> +	t_params[t_idx].ete.reg_devarch = metadata[m_idx][CS_ETE_TRCDEVARCH];
->  }
->  
->  static int cs_etm__init_trace_params(struct cs_etm_trace_params *t_params,
->  				     struct cs_etm_auxtrace *etm,
-> +				     bool formatted,
-> +				     int sample_cpu,
->  				     int decoders)
->  {
-> -	int i;
-> +	int t_idx, m_idx;
->  	u32 etmidr;
->  	u64 architecture;
->  
-> -	for (i = 0; i < decoders; i++) {
-> -		architecture = etm->metadata[i][CS_ETM_MAGIC];
-> +	for (t_idx = 0; t_idx < decoders; t_idx++) {
-> +		if (formatted)
-> +			m_idx = t_idx;
-> +		else {
-> +			m_idx = get_cpu_data_idx(etm, sample_cpu);
-> +			if (m_idx == -1) {
-> +				pr_warning("CS_ETM: unknown CPU, falling back to first metadata\n");
-> +				m_idx = 0;
-> +			}
-> +		}
-> +
-> +		architecture = etm->metadata[m_idx][CS_ETM_MAGIC];
->  
->  		switch (architecture) {
->  		case __perf_cs_etmv3_magic:
-> -			etmidr = etm->metadata[i][CS_ETM_ETMIDR];
-> -			cs_etm__set_trace_param_etmv3(t_params, etm, i, etmidr);
-> +			etmidr = etm->metadata[m_idx][CS_ETM_ETMIDR];
-> +			cs_etm__set_trace_param_etmv3(t_params, etm, t_idx, m_idx, etmidr);
->  			break;
->  		case __perf_cs_etmv4_magic:
-> -			cs_etm__set_trace_param_etmv4(t_params, etm, i);
-> +			cs_etm__set_trace_param_etmv4(t_params, etm, t_idx, m_idx);
->  			break;
->  		case __perf_cs_ete_magic:
-> -			cs_etm__set_trace_param_ete(t_params, etm, i);
-> +			cs_etm__set_trace_param_ete(t_params, etm, t_idx, m_idx);
->  			break;
->  		default:
->  			return -EINVAL;
-> @@ -1026,7 +1049,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u8 trace_chan_id,
->  }
->  
->  static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
-> -						bool formatted)
-> +						bool formatted, int sample_cpu)
->  {
->  	struct cs_etm_decoder_params d_params;
->  	struct cs_etm_trace_params  *t_params = NULL;
-> @@ -1051,7 +1074,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
->  	if (!t_params)
->  		goto out_free;
->  
-> -	if (cs_etm__init_trace_params(t_params, etm, decoders))
-> +	if (cs_etm__init_trace_params(t_params, etm, formatted, sample_cpu, decoders))
->  		goto out_free;
->  
->  	/* Set decoder parameters to decode trace packets */
-> @@ -1091,14 +1114,15 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
->  static int cs_etm__setup_queue(struct cs_etm_auxtrace *etm,
->  			       struct auxtrace_queue *queue,
->  			       unsigned int queue_nr,
-> -			       bool formatted)
-> +			       bool formatted,
-> +			       int sample_cpu)
->  {
->  	struct cs_etm_queue *etmq = queue->priv;
->  
->  	if (list_empty(&queue->head) || etmq)
->  		return 0;
->  
-> -	etmq = cs_etm__alloc_queue(etm, formatted);
-> +	etmq = cs_etm__alloc_queue(etm, formatted, sample_cpu);
->  
->  	if (!etmq)
->  		return -ENOMEM;
-> @@ -2826,7 +2850,7 @@ static int cs_etm__process_auxtrace_event(struct perf_session *session,
->  		 * formatted in piped mode (true).
->  		 */
->  		err = cs_etm__setup_queue(etm, &etm->queues.queue_array[idx],
-> -					  idx, true);
-> +					  idx, true, -1);
->  		if (err)
->  			return err;
->  
-> @@ -3032,7 +3056,7 @@ static int cs_etm__queue_aux_fragment(struct perf_session *session, off_t file_o
->  		idx = auxtrace_event->idx;
->  		formatted = !(aux_event->flags & PERF_AUX_FLAG_CORESIGHT_FORMAT_RAW);
->  		return cs_etm__setup_queue(etm, &etm->queues.queue_array[idx],
-> -					   idx, formatted);
-> +					   idx, formatted, sample->cpu);
->  	}
->  
->  	/* Wasn't inside this buffer, but there were no parse errors. 1 == 'not found' */
+>      properties:
+>        reg:
+>          minimum: 0
+
+For rockchip-sfc:
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+
