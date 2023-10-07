@@ -2,90 +2,73 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD27E94136
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Oct 2023 22:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABC0E95A63
+	for <linux-tegra@archiver.kernel.org>; Sat,  7 Oct 2023 13:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233806AbjJFWoo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 Oct 2023 18:44:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56198 "EHLO
+        id S1343936AbjJGNuS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 7 Oct 2023 09:50:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233802AbjJFWon (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Oct 2023 18:44:43 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B2F93;
-        Fri,  6 Oct 2023 15:44:40 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90726C433C7;
-        Fri,  6 Oct 2023 22:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696632279;
-        bh=YoE+IETji8jPLWdxvOTSBPuvIy3CWy3/W00cFbvaZVA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sfdwVhXLnB5x0G2GMOhFQwyi7aN8LrsurzCp6eDI5oRAo6KLVOBCnf0ffzW8ch4s7
-         bT6XjnaWuoUAMtF57vrHlOOlnAYKSj49vR79/mRVfVLTNBg25KIRdFZhQNX2UTGJ+l
-         YUI45j/EvJbJ3R6bxXYg4oKVS3e7I2W+nLgoswk8ovhmY4eFtqKU/4khwbdS96LsZN
-         CaeH3D0FrfS9hqb4lg0jBwdUsir6f6SMDeJevG2TH8JrxndS0JTQ8h06Eoe4zefKSK
-         4X3XyaF4XMeyV4/9s9f7lfYYHWuVGEzqPxSK3z0oxLtzwLKJILE65qKnsMg4LYFyFP
-         vAoRGjMAneU6g==
-Received: (nullmailer pid 442832 invoked by uid 1000);
-        Fri, 06 Oct 2023 22:44:37 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        with ESMTP id S1343627AbjJGNuR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 7 Oct 2023 09:50:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA79CC6
+        for <linux-tegra@vger.kernel.org>; Sat,  7 Oct 2023 06:50:14 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id p7h0qpPqZqToTp7h0qy9q1; Sat, 07 Oct 2023 15:50:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1696686612;
+        bh=+NsrC/kMBjP5jYS5nCk9DfFO8Yn5kcVnJ7NUbypxWEE=;
+        h=From:To:Cc:Subject:Date;
+        b=S/BuIu22dvKaQZVcytkPFaooazzGdz6iVKPujBs6N8X9Uu+z4UbmAnryyDm8S4qTi
+         /tslWKj4umgblAYL000xKgNdUbZF3ReR7cg8t1LtjGq7K9C8rHLXiSBaIqr0tX4ajY
+         1IZdGZSeVlT5bDdZET+U0jRVhDD8YXIkg+PoPd+IxRBpE4WXztn4p88MCqBEZUxagO
+         O3Z4llfIe3LOG/3i+k/j9RSOS4IfazIdbV3srp82iDeUHRZHw9REoeuJsSZ1Cp/Tc8
+         w4islVbqKYeLJfgGsoAdVKT5VctLwFS42DqXs9YLwUkMpc6p6zPwlqH/iN/JxHyZ+9
+         krAqU6VFsdHEA==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 07 Oct 2023 15:50:12 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-input@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: tegra: Use device_get_match_data()
-Date:   Fri,  6 Oct 2023 17:44:32 -0500
-Message-Id: <20231006224432.442709-1-robh@kernel.org>
-X-Mailer: git-send-email 2.40.1
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] media: vde: Use struct_size()
+Date:   Sat,  7 Oct 2023 15:50:02 +0200
+Message-Id: <bb201c3f0e7d2ca5cd222d9bb4c78ded8fded54e.1696686558.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use preferred device_get_match_data() instead of of_match_device() to
-get the driver match data. With this, adjust the includes to explicitly
-include the correct headers.
+Use struct_size() which is much more common than this offsetof().
 
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/input/keyboard/tegra-kbc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/media/platform/nvidia/tegra-vde/v4l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index c9a823ea45d0..a1765ed8c825 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -14,7 +14,7 @@
- #include <linux/io.h>
- #include <linux/interrupt.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
-+#include <linux/property.h>
- #include <linux/clk.h>
- #include <linux/slab.h>
- #include <linux/input/matrix_keypad.h>
-@@ -602,9 +602,6 @@ static int tegra_kbc_probe(struct platform_device *pdev)
- 	unsigned int debounce_cnt;
- 	unsigned int scan_time_rows;
- 	unsigned int keymap_rows;
--	const struct of_device_id *match;
--
--	match = of_match_device(tegra_kbc_of_match, &pdev->dev);
+diff --git a/drivers/media/platform/nvidia/tegra-vde/v4l2.c b/drivers/media/platform/nvidia/tegra-vde/v4l2.c
+index bd8c207d5b54..0f48ce6f243e 100644
+--- a/drivers/media/platform/nvidia/tegra-vde/v4l2.c
++++ b/drivers/media/platform/nvidia/tegra-vde/v4l2.c
+@@ -813,7 +813,7 @@ static int tegra_open(struct file *file)
+ 	struct tegra_ctx *ctx;
+ 	int err;
  
- 	kbc = devm_kzalloc(&pdev->dev, sizeof(*kbc), GFP_KERNEL);
- 	if (!kbc) {
-@@ -613,7 +610,7 @@ static int tegra_kbc_probe(struct platform_device *pdev)
- 	}
- 
- 	kbc->dev = &pdev->dev;
--	kbc->hw_support = match->data;
-+	kbc->hw_support = device_get_match_data(&pdev->dev);
- 	kbc->max_keys = kbc->hw_support->max_rows *
- 				kbc->hw_support->max_columns;
- 	kbc->num_rows_and_columns = kbc->hw_support->max_rows +
+-	ctx = kzalloc(offsetof(struct tegra_ctx, ctrls[ARRAY_SIZE(ctrl_cfgs)]),
++	ctx = kzalloc(struct_size(ctx, ctrls, ARRAY_SIZE(ctrl_cfgs)),
+ 		      GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
 -- 
-2.40.1
+2.34.1
 
