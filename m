@@ -2,72 +2,152 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0149FCD6110
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Oct 2023 16:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4EDCD6112
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Oct 2023 17:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377341AbjJIQ4v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Oct 2023 12:56:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37004 "EHLO
+        id S1377516AbjJIRTG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Oct 2023 13:19:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377337AbjJIQ4v (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Oct 2023 12:56:51 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 559CE92;
-        Mon,  9 Oct 2023 09:56:50 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E95C433C7;
-        Mon,  9 Oct 2023 16:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696870610;
-        bh=8ycG04wbCqlnptoLLTJF+C5YoZDvUS/8Mrka+S8Q4mE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r9Ros/+95QAn36f+SI8XTQXHbEgsUsrlPEF7PjU46S/0NMcWdech7qsSi0YjzRFwI
-         szIbJ3YGYxN4TTzx0UpmMNqDPXreDwJ0oBW6kwrBZIWx7GaL/wHKTNDMOKDK1mOFjK
-         lH9Lrk49oYKlCqngUeUQ6X63AvtvryHhouCjwMFh+MpmgP4VRNExOFEXeHbjkYKAvK
-         +0YXOoqJbY3B7speTEgtHzQggK81xR5LycRakzbWDAxZBJ0Ku1Ww1rwtq/9firb1iT
-         dgum5t/34F1U2+dO8+tyi1jdzIlqFkV0XdvABy8fIkxi+hnOF8VKIvn0cbzYIXRWg/
-         Yn0DmAdRA0Hxg==
-From:   Will Deacon <will@kernel.org>
-To:     robin.murphy@arm.com, catalin.marinas@arm.com,
-        suzuki.poulose@arm.com, ilkka@os.amperecomputing.com,
-        Besar Wicaksono <bwicaksono@nvidia.com>, mark.rutland@arm.com
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        jonathanh@nvidia.com, rwiley@nvidia.com,
-        linux-arm-kernel@lists.infradead.org, efunsten@nvidia.com,
-        linux-kernel@vger.kernel.org, treding@nvidia.com,
-        linux-tegra@vger.kernel.org, vsethi@nvidia.com
-Subject: Re: [PATCH v6] perf: arm_cspmu: Separate Arm and vendor module
-Date:   Mon,  9 Oct 2023 17:56:42 +0100
-Message-Id: <169651070763.1133315.8714234562874350620.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230821231608.50911-1-bwicaksono@nvidia.com>
-References: <20230821231608.50911-1-bwicaksono@nvidia.com>
+        with ESMTP id S1377495AbjJIRTF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Oct 2023 13:19:05 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2063.outbound.protection.outlook.com [40.107.237.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D4794;
+        Mon,  9 Oct 2023 10:19:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KHUL70zGivipWn7hXOcEtxd6yr3eVN8QSrgR+OTC2OTQdNbSHOd02L0yIsfm+zyjoS7bZjsS37IzGfqjW+nrL3mbgjYUkuIpcDYGYFq5naXBBDj4YAMfTum3p8aEpqLATOhlnI8qjsZfurvxH8QvTp8u+WVE2norFIZJrwhbRUFuttSAaxLziNqmRsTzEw+t6sMPOte+PGa1fTMMNQQNNFvwJTjnGDHuK9jhSMPUU5EeBdOoJYmdPAnCXxZlXiyhk8cXQ4QWp0TYcaScjefJZGJfug3Vx4CbaGI7tKac2n9CIWcdxKNM1HXR1dkakcCEjPO6liDA/0utWI/AcSkY8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cy5I2jucoEMzyo6VymD6meBrAITop+xJ7h9KkdPX/3U=;
+ b=JVHKDbP4JGa2XudTl6TqzOvmvJEtdoGEKdKfi8h8MdhsegDEo91zPiAlyaI7zZ3vEe42z5QrpURfleOEePdHQRbHShIH1R9rOqXffx1xktZ55aEak22L0Z7bX6sWAMI3vPbofHTtem0AOcGVw1czEgvKo+alf99lt8UxHywC61sAwqk+MyIrEsfiPrj7vj9vpVz3eW7gO610AXU4++eaz2zqPwV8LuV6ZSJaWxjIVSIfpvspIdA7I/NVvgATfXfLwbArKO3pwVgaYgKe9nDcy/lV1WEvp080qD+R1DQTaJo5H2g43VvQXBKUZbvsKTXX+bG7q1jKH/fp2ZG7hL+PoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cy5I2jucoEMzyo6VymD6meBrAITop+xJ7h9KkdPX/3U=;
+ b=jGyRaUR5WR4aqnXjVXq8f6/pEksdboqshW0DkeRYvE1F8sNG29ptcR3RZxPxo++WThVFHenAiYD3Ke2R234WyDwYCLc+vVOhOtsfuk+z425/0/bRVUfWXPW8kgBPEwgf6n1++SKp6Nd3aITbq/nxupzvx1WUpF01MJYi0ZbrDNS5yECQoksS7g+nV4o1rp08ZDb2dKU6+3S7jaLQ6t5hNuGN7XnsWFiS6bSB8+hLI8ChYE3HGzNTp2l+ScXoPWIshRKX+zFRtWsQXtbvybCjTUmjc3epf2nQoDyk4CkKp3vjosdi5xqj3zdW5BQYfRt43Zg80SKaloH2x2HDYlvRjA==
+Received: from CY5PR22CA0102.namprd22.prod.outlook.com (2603:10b6:930:65::29)
+ by SN7PR12MB6766.namprd12.prod.outlook.com (2603:10b6:806:26a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6838.41; Mon, 9 Oct
+ 2023 17:19:02 +0000
+Received: from CY4PEPF0000E9D0.namprd03.prod.outlook.com
+ (2603:10b6:930:65:cafe::70) by CY5PR22CA0102.outlook.office365.com
+ (2603:10b6:930:65::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.38 via Frontend
+ Transport; Mon, 9 Oct 2023 17:19:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000E9D0.mail.protection.outlook.com (10.167.241.143) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.22 via Frontend Transport; Mon, 9 Oct 2023 17:19:01 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 9 Oct 2023
+ 10:18:46 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 9 Oct 2023
+ 10:18:46 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Mon, 9 Oct 2023 10:18:42 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <rafael@kernel.org>, <rui.zhang@intel.com>, <lenb@kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>,
+        <sumitg@nvidia.com>, <sanjayc@nvidia.com>, <ksitaraman@nvidia.com>,
+        <srikars@nvidia.com>, <jbrasen@nvidia.com>
+Subject: [Patch v4 0/2] Add support for _TFP and change throttle pctg
+Date:   Mon, 9 Oct 2023 22:48:37 +0530
+Message-ID: <20231009171839.12267-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D0:EE_|SN7PR12MB6766:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8fbb2967-7262-43a3-2d09-08dbc8ebd4f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: IIxoPLM4H2+qZzMxDrc0yoZRLsUIH7UJBE48bAwMHaudTKfNABHZG7TESct/4xfX998V/ALVaS9OBtPIoZJfRt9esLg3AC+XXeGFMOvmkR1rjojmy6h8iIHcKdAGgaj6EVPDFbUCXjUhcbbMp8qJa73S/yyNeR92THDEGjx/jryhRQp4mhZhT6fa5J2L1uZGO3wLGRDZoIWc4F0LYEtNuoTt2QiFCnHC4m+W9BiWw6VzQmAlg3aJxji6CLCr3Iy+qs6UX8ffX/fB3p5GXpk9TJQCboBJThcoXehnQ/NHCSYwfTOrPDfUNxpcj3V1TmCfetDqzTJarobwHUxckT1cIwJcdAj2Hf0ccP4UTooavgn/L7MER1vbMBcy0Zi/Uw54h4oP6iXsOuzKdNKs7VIX9YKAZ1hdkka01kAoHW0OWcQgfuat6IwqiBluYNDT1OiP6EApWoTa1ExLLxoWSmS5gNilHKSw7Fjn7awefhUdvQTqsOegjsS5ImtDtDYBE6b8csq4lftkIbrVg27T5+HiEEGxqeQmr1FuaMSeqp0EfouMbjzFg2dn3iW+J4fb+Li+0GJwS6la2vdGGcFkxKI5RV8xUJfSceI+NFTZvgB9Bx2vD0NbCG675Dx0YcBBtWyx/z5BHu/jt0aJ3r+D7+HqW8JULM8G4/R9antvcLHvhKc69v1lXgAnltK+h+XMSk9/ncbhe1Dbpfjl1rVltfijqAiXkJefD0CujiFTqN34HpZAIfRugLlV5GdtNUKnTu3FqhGxx5CCeIVrFHLteDtDc4jUgopFHEBI2zqBkWuqy5FL6pswMBAN8eCh6+TWonE1FPn4v1Bw8Zn/m9EZtMqTUA==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(136003)(346002)(376002)(39860400002)(230922051799003)(451199024)(1800799009)(64100799003)(186009)(82310400011)(40470700004)(46966006)(36840700001)(966005)(40460700003)(107886003)(6666004)(336012)(26005)(426003)(70586007)(86362001)(7696005)(1076003)(70206006)(478600001)(36860700001)(54906003)(47076005)(82740400003)(83380400001)(40480700001)(8936002)(41300700001)(7636003)(356005)(2906002)(36756003)(110136005)(4326008)(8676002)(5660300002)(316002)(2616005)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2023 17:19:01.7030
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fbb2967-7262-43a3-2d09-08dbc8ebd4f0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D0.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6766
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 21 Aug 2023 18:16:08 -0500, Besar Wicaksono wrote:
-> Arm Coresight PMU driver consists of main standard code and
-> vendor backend code. Both are currently built as a single module.
-> This patch adds vendor registration API to separate the two to
-> keep things modular. The main driver requests each known backend
-> module during initialization and defer device binding process.
-> The backend module then registers an init callback to the main
-> driver and continue the device driver binding process.
-> 
-> [...]
+This patch set adds two improvements to get a finer control over the
+impact of thermal throttling on performance.
 
-Applied to will (for-next/perf), thanks!
+ 1) Patch 1: Adds support to read "Thermal fast Sampling Period (_TFP)"
+    ACPI object and use it over "Thermal Sampling Period (_TSP)" for
+    Passive cooling if both are present.
 
-[1/1] perf: arm_cspmu: Separate Arm and vendor module
-      https://git.kernel.org/will/c/bfc653aa89cb
+ 2) Patch 2: Adds support to reduce the CPUFREQ reduction percentage
+    and not always cause throttling in steps of "20%" for Tegra241 SoC.
 
-Cheers,
+Both patches can be applied independently.
+
+---
+v3[3] -> 4:
+- Patch 2: move ARM code from generic to new file 'thermal_cpufreq.c'.
+         : get 'cpufreq_thermal_pctg' value for Tegra241 from new file. 
+         : move dummy/null function to 'acpi.h'.
+
+v2[2] -> v3:
+- Patch1: rebased on top of linux-next.
+- Patch2: use __read_mostly for the cpufreq_thermal_* variables.
+        : add static to new function acpi_thermal_cpufreq_config_nvidia.
+        : add null function if CONFIG_HAVE_ARM_SMCCC_DISCOVERY undefined
+        : removed redundant parenthesis.
+
+v1[1] -> v2:
+- Patch1: add ACPI spec section info in commit description and rebased.
+- Patch2: add info about hardware in the commit description.
+        : switched CPUFREQ THERMAL tuning macros to static variables.
+        : update the tunings for Tegra241 SoC only using soc_id check.
+
+Jeff Brasen (1):
+  ACPI: thermal: Add Thermal fast Sampling Period (_TFP) support
+
+Srikar Srimath Tirumala (1):
+  ACPI: processor: reduce CPUFREQ thermal reduction pctg for Tegra241
+
+ drivers/acpi/arm64/Makefile          |  1 +
+ drivers/acpi/arm64/thermal_cpufreq.c | 20 ++++++++++++++++
+ drivers/acpi/processor_thermal.c     | 35 +++++++++++++++++++++++++---
+ drivers/acpi/thermal.c               | 17 +++++++++-----
+ include/linux/acpi.h                 |  9 +++++++
+ 5 files changed, 73 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/acpi/arm64/thermal_cpufreq.c
+
+[3] https://lore.kernel.org/linux-acpi/20231006153612.5851-1-sumitg@nvidia.com/ 
+[2] https://lore.kernel.org/lkml/20230913164659.9345-1-sumitg@nvidia.com/
+[1] https://lore.kernel.org/lkml/20230817093011.1378-1-sumitg@nvidia.com/
+
 -- 
-Will
+2.17.1
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
