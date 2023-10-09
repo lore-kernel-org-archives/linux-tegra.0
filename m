@@ -2,282 +2,125 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DA6E95A8E
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Oct 2023 06:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D142CE95A8E
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Oct 2023 08:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345298AbjJIGtM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Oct 2023 02:49:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58036 "EHLO
+        id S234382AbjJIIYv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Oct 2023 04:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234285AbjJIGtL (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Oct 2023 02:49:11 -0400
-Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4E17CF
-        for <linux-tegra@vger.kernel.org>; Sun,  8 Oct 2023 23:49:08 -0700 (PDT)
-Received: by mail-vk1-xa35.google.com with SMTP id 71dfb90a1353d-49ad8b76003so1464041e0c.3
-        for <linux-tegra@vger.kernel.org>; Sun, 08 Oct 2023 23:49:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696834148; x=1697438948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R8R3SEvkCEq8q6EEM7nd/KgJCNBdPF2LFQh/jnLNGpw=;
-        b=Xrv6PB9ymitTxL57PllfSNTci68Tu/yQTEiDEdwUFAfKouYhfY4JMUBkfmZKkaPY7Q
-         G/14J6e29ve8QF/1jt8Fh8KBwNR3SSIfrSikb35ucraoaFNsZKVHIyey+QJYfmRPUQ7v
-         +iejWkRcm700zJnNDpRg+GtOAOJaP0Ih9BOj05tvT7fZ89rcS+cdxltnuk94swA9xWSA
-         bgv0y89cLuuhGveXTMkY5uHcXYWJeCPGTN8tK2ZRXYpJ2TVDjei0NILja11ke6raeuUF
-         YJc2tBJbw3mcUSZQYnNitUphdgFstPGFHWi/7ylOvd9Nk4okQMtmfJ0QAuffoH/nM+F0
-         Ktlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696834148; x=1697438948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R8R3SEvkCEq8q6EEM7nd/KgJCNBdPF2LFQh/jnLNGpw=;
-        b=gPoEbutBwp/C0Gg+cPVrmxtPxMUZBgKiTK7HAwcwArP5ex5zlMx46Mk3R4QQSiS4U8
-         fEwZcSHWqTtOu2dmocH5MJVzjZBdn1epdbNL1cQ4txCUm265oZf9FyvJlLJf45MDgSGc
-         s1hPKPRDodwEdyrimcCwiQr3alHpd0qx2KhBr9SBy9oHKYMI7cilTxQAXncNve+df2vl
-         GErfRwra6Dss0PkuRvdrSKrQ7zk1kdjMvfIHnHjsoYNY1Dq4QlXlrEuKU5W0/6FnWJ80
-         W/pm2Lq57pHYPhfpAUv/9iQd6gfApjTZDHUkS2TaoOGDfyCfsupBLLt626wMv/pbhUpB
-         R4Fg==
-X-Gm-Message-State: AOJu0YzZpAS4il7EUHc/OI4sdWPwpwR0SpyHSakk3T2/IPRj47FhN5We
-        4zswAegMKobgzxHsaHFxsFpAJMUSNjGR1k6cV9zDkg==
-X-Google-Smtp-Source: AGHT+IGLJ/Kir7ut6JZrJcqUdoiq1uSu4D5pTXVqnjxvbtP52e+bm7khorXZzvc3cATfPWACjFwqc/2EjUYFIU5UStE=
-X-Received: by 2002:a1f:4e46:0:b0:4a1:58e0:a0db with SMTP id
- c67-20020a1f4e46000000b004a158e0a0dbmr988925vkb.11.1696834147762; Sun, 08 Oct
- 2023 23:49:07 -0700 (PDT)
+        with ESMTP id S234375AbjJIIYu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Oct 2023 04:24:50 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2080.outbound.protection.outlook.com [40.107.220.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9F7A3;
+        Mon,  9 Oct 2023 01:24:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C57cHAAdOJ4BTEE9vPUPQLjXT08xGreAhkaT78f2PGplhre0vYGPGp5xhr/ndw+IWqsuwT7Cfe5YpCEFhJDPbM/y4kvqrB6dyZjUety+xS+54vxlUeUF+5Cshg2c1FBqfrPBWQUXR7KqVKipp1B+Qvg2gYkZJJXlw7XRHoTfFREOU70kOVNoz4202iH7ipjO7ABxRnKBVLuueFvJ2gKwR+RTFGet4sEXE9d3p1klFkzg4NAJlHX6Rgg7DdSsT4/erOatArlvKLouyDPr+k9ZU0w+rSGaFXA13d85jPFRXn2MdCPf6geOO2LP0TW1SO58pO+a2iW3aD6sR2kIHHQLdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6/g7A8r3Z+OC2nUcVQ/ZkMvyBNgd+TIO6VflJhEGTdI=;
+ b=fQ1hcEL/FIt36kIurtpSLCLOz57NyBlWkRpRvA5wmIaihASGV76quqEQZ04mN7nTdAEBGGYVirNbtZ0qo23ijeJAwHUhtBgHPKxRuaMTTsFblLrmkCBDpEJhsUUgl+96ACDkpr8/cMLtTj0GsDSbkRMht7e+418VmymLxERmhq5ngYAy8qygOz3QdqRz3OXFVGp42s4VEJyh7NqNlyIFCIQIO2b8o+j8NmIIKJD0UvO5CEt831zk7TtJeKFdlvs3rf2Yeye1t/nPhgNDCdMfJrHHcTkjVwnQwoBRHqL7Zf2RLn5qaoYqTv5lgbCrhxLhDmFm0nIJr6FBgdOOwF9OMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6/g7A8r3Z+OC2nUcVQ/ZkMvyBNgd+TIO6VflJhEGTdI=;
+ b=JQAJaOMOqiraBUGRSGWZCrp5awFnXqVDR7fMyIYlTfxOy40Ce4lh0iwFmUbwsvJOspDPNl56G1EPIG0kLZGY+UR4OjfjOJYZDqqP6yqqJCQBnUhnXZbHroZ0JG9xWPG0E8IKZEFrsiOvV7lq1MrWX9ZeiiyPj2hi9tWnXjEP4lNr0hrFsSeS87TEPxCA0w3HByaH2/lh9J7DV9DcvnU0rMOR5+GyPRIMIpfFfSTnWP/FhVzTMza3A/bPt1gR6/y8KeKjM4loAj834PVjsh8RED/YrPjmI9BxwsJ2yLOgqybZjDMJaHR7qTAmc6PAYg8te5BOxK9MAvEnPXqoL8mlhQ==
+Received: from SN1PR12CA0083.namprd12.prod.outlook.com (2603:10b6:802:21::18)
+ by DM6PR12MB4298.namprd12.prod.outlook.com (2603:10b6:5:21e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.38; Mon, 9 Oct
+ 2023 08:24:45 +0000
+Received: from SA2PEPF00001505.namprd04.prod.outlook.com
+ (2603:10b6:802:21:cafe::20) by SN1PR12CA0083.outlook.office365.com
+ (2603:10b6:802:21::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.36 via Frontend
+ Transport; Mon, 9 Oct 2023 08:24:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF00001505.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.14 via Frontend Transport; Mon, 9 Oct 2023 08:24:44 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 9 Oct 2023
+ 01:24:32 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 9 Oct 2023
+ 01:24:31 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Mon, 9 Oct 2023 01:24:29 -0700
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <treding@nvidia.com>, <jonathanh@nvidia.com>, <bbasu@nvidia.com>,
+        <sumitg@nvidia.com>
+Subject: [Patch] cpufreq: tegra194: remove redundant AND with cpu_online_mask
+Date:   Mon, 9 Oct 2023 13:54:23 +0530
+Message-ID: <20231009082423.16714-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-15-brgl@bgdev.pl>
- <CACRpkda9=VULj4Cy_sit-UpUQnVEbS-RJKAeULVCw8ZCRTq1sw@mail.gmail.com>
- <CAMRc=MdTk1B4MEh9C624Upm_EcaQgJd9OU-AGfU0G-DU1+qk6A@mail.gmail.com>
- <36b17290-c643-8d8e-e82b-49afa6b34fbb@nvidia.com> <3624e973-d09a-d211-c6d0-d0ffb8c20c4b@nvidia.com>
- <90b5f887-8af4-a80d-ea4d-cf2199752de4@nvidia.com> <0e7cae42-0b81-c038-8beb-49102feea8a6@nvidia.com>
- <CAMRc=McSG6qajxt6P3vWQEeT63Pk5tggD05pUoMD1zd5ApZxgA@mail.gmail.com>
- <647d3b52-1daf-175d-d5c2-45653dd2604c@nvidia.com> <CAMRc=Mc_+LxcbV+=KPwAh4DinJAAetHrK+W3jbNp4AZBzg63TA@mail.gmail.com>
- <b0f37601-39d6-618e-fa16-3b1c9e7c0e2c@nvidia.com>
-In-Reply-To: <b0f37601-39d6-618e-fa16-3b1c9e7c0e2c@nvidia.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 9 Oct 2023 08:48:56 +0200
-Message-ID: <CAMRc=MfSGY691-sFhx8GeP43g0xGk1JzNa=9q5oemQoHHAM-5Q@mail.gmail.com>
-Subject: Re: [RFT PATCH 14/21] hte: tegra194: don't access struct gpio_chip
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001505:EE_|DM6PR12MB4298:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74c67fe4-e270-4c33-c925-08dbc8a1317a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9nN/U1pBiQaAneo+A6JY96R/qcz0r2YsinK2AOSoEqiLFrEiY4jZTwwPwyNkG3Ei6gFcZOCFPfwFiFKQnK1ApltEgg6GWqFNP1EE0drfiJKsIFKvZMRp6Ys//6wHOAVqQ9R01741JTxkr+wOaf64MQXMkNOyci9ipzceiQpwddwJoyOmk0NPNBveYuolqbFJrBCUoax65HaZwpiNf0qo0yWf6qdYhbS/7duenSkeA801hHkttDvooP9OgAQNBURhyySXMFuXmA/yRH8mWn1rmRGnikBv5rXldvURyt0DbaqNRoWqyCeqoV2kYBSKpHLh0uAyd2UbWtkV4K2Pi7OPI0ngQiN6JXNJQQfFoiwboz/G5MW0dT8gAK0z1+/Eg1GQblcx/52/e4cajjNgkpBwiuke+pftT6s94C/B30s+u90Xd4rhShxtv1WDtYn8YFp6ZsbcfrgaxuayDeFKIvPeiVAnV10mXhqFQxhUobriveoCWvxd2Y5MnmG8MqtlWAUdXT8yEAmyexdKLfNPIcjHbaH3MRvzO1B9aClcow80gugHoOGYCj+4h6le4/EGsOoMV8ZBp00Fz1WuxReVxsMKVLN3Pl8Y4SqE+vzEokJGiPHIzz1yu/eccbESR04v8A3OfXi0UnF7C81XwPm6Y1UuIRzn16G44UQfOSxi2MgfBp4M7hJCBswhRiD3zllALj5975jhPABzOfOTSfvTc6nWjcF+P2SIrFuSK4iYN8Rtjv2DQszqnV1T2ZZXCvQwEIhMx1bHYDmep77t+jnDtmeZHg==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(136003)(396003)(346002)(39860400002)(230922051799003)(451199024)(186009)(1800799009)(82310400011)(64100799003)(46966006)(36840700001)(40470700004)(2906002)(4744005)(40460700003)(426003)(336012)(26005)(2616005)(107886003)(86362001)(1076003)(6666004)(7696005)(36756003)(478600001)(36860700001)(47076005)(83380400001)(356005)(7636003)(82740400003)(40480700001)(966005)(54906003)(316002)(70206006)(70586007)(110136005)(5660300002)(4326008)(8676002)(8936002)(41300700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2023 08:24:44.7227
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74c67fe4-e270-4c33-c925-08dbc8a1317a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00001505.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4298
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Oct 5, 2023 at 9:43=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> wrot=
-e:
->
-> On 10/5/23 12:05 PM, Bartosz Golaszewski wrote:
-> > On Thu, Oct 5, 2023 at 8:12=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> =
-wrote:
-> >>
-> >> On 10/5/23 6:48 AM, Bartosz Golaszewski wrote:
-> >>> On Thu, Oct 5, 2023 at 1:52=E2=80=AFAM Dipen Patel <dipenp@nvidia.com=
-> wrote:
-> >>>>
-> >>>> On 10/4/23 3:54 PM, Dipen Patel wrote:
-> >>>>> On 10/4/23 1:33 PM, Dipen Patel wrote:
-> >>>>>> On 10/4/23 1:30 PM, Dipen Patel wrote:
-> >>>>>>> On 10/4/23 5:00 AM, Bartosz Golaszewski wrote:
-> >>>>>>>> On Thu, Sep 7, 2023 at 9:28=E2=80=AFAM Linus Walleij <linus.wall=
-eij@linaro.org> wrote:
-> >>>>>>>>>
-> >>>>>>>>> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brg=
-l@bgdev.pl> wrote:
-> >>>>>>>>>
-> >>>>>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>>>>>>>>
-> >>>>>>>>>> Using struct gpio_chip is not safe as it will disappear if the
-> >>>>>>>>>> underlying driver is unbound for any reason. Switch to using r=
-eference
-> >>>>>>>>>> counted struct gpio_device and its dedicated accessors.
-> >>>>>>>>>>
-> >>>>>>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro=
-.org>
-> >>>>>>>>>
-> >>>>>>>>> As Andy points out add <linux/cleanup.h>, with that fixed:
-> >>>>>>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >>>>>>>>>
-> >>>>>>>>> I think this can be merged into the gpio tree after leaving som=
-e
-> >>>>>>>>> slack for the HTE maintainer to look at it, things look so much
-> >>>>>>>>> better after this.
-> >>>>>>>>>
-> >>>>>>>>> Yours,
-> >>>>>>>>> Linus Walleij
-> >>>>>>>>
-> >>>>>>>> Dipen,
-> >>>>>>>>
-> >>>>>>>> if you could give this patch a test and possibly ack it for me t=
-o take
-> >>>>>>>> it through the GPIO tree (or go the immutable tag from HTE route=
-) then
-> >>>>>>>> it would be great. This is the last user of gpiochip_find() tree=
-wide,
-> >>>>>>>> so with it we could remove it entirely for v6.7.
-> >>>>>>>
-> >>>>>>> Progress so far for the RFT...
-> >>>>>>>
-> >>>>>>> I tried applying the patch series on 6.6-rc1 and it did not apply=
- cleanly,
-> >>>>>>> some patches I needed to manually apply and correct. With all thi=
-s, it failed
-> >>>>>>> compilation at some spi/spi-bcm2835 driver. I disabled that and w=
-as able to
-> >>>>>>> compile. I thought I should let you know this part.
-> >>>>>>>
-> >>>>>>> Now, I tried to test the hte and it seems to fail finding the gpi=
-o device,
-> >>>>>>> roughly around this place [1]. I thought it would be your patch s=
-eries so
-> >>>>>>> tried to just use 6.6rc1 without your patches and it still failed=
- at the
-> >>>>>>> same place. I have to trace back now from which kernel version it=
- broke.
-> >>>>>>
-> >>>>>> [1].
-> >>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/pateldipen1984/lin=
-ux.git/tree/drivers/hte/hte-tegra194.c?h=3Dfor-next#n781
-> >>>>>>
-> >>>>>> of course with your patches it would fail for the gdev instead of =
-the chip.
-> >>>>>
-> >>>>> Small update:
-> >>>>>
-> >>>>> I put some debugging prints in the gpio match function in the hte-t=
-egra194.c as
-> >>>>> below:
-> >>>>>
-> >>>>> static int tegra_gpiochip_match(struct gpio_chip *chip, void *data)
-> >>>>>  {
-> >>>>> +       struct device_node *node =3D data;
-> >>>>> +       struct fwnode_handle *fw =3D of_node_to_fwnode(data);
-> >>>>> +       if (!fw || !chip->fwnode)
-> >>>>> +               pr_err("dipen patel: fw is null\n");
-> >>>>>
-> >>>>> -       pr_err("%s:%d\n", __func__, __LINE__);
-> >>>>> +       pr_err("dipen patel, %s:%d: %s, %s, %s, match?:%d, fwnode n=
-ame:%s\n",
-> >>>>> __func__, __LINE__, chip->label, node->name, node->full_name, (chip=
-->fwnode =3D=3D
-> >>>>> fw), fw->dev->init_name);
-> >>>>>         return chip->fwnode =3D=3D of_node_to_fwnode(data);
-> >>>>>  }
-> >>>>>
-> >>>>> The output of the printfs looks like below:
-> >>>>> [    3.955194] dipen patel: fw is null -----> this message started =
-appearing
-> >>>>> when I added !chip->fwnode test in the if condition line.
-> >>>>>
-> >>>>> [    3.958864] dipen patel, tegra_gpiochip_match:689: tegra234-gpio=
-, gpio,
-> >>>>> gpio@c2f0000, match?:0, fwnode name:(null)
-> >>>>>
-> >>>>> I conclude that chip->fwnode is empty. Any idea in which conditions=
- that node
-> >>>>> would be empty?
-> >>>>
-> >>>> sorry for spamming, one last message before I sign off for the day..=
-..
-> >>>>
-> >>>> Seems, adding below in the tegra gpio driver resolved the issue I am=
- facing, I
-> >>>> was able to verify your patch series.
-> >>>>
-> >>>> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra1=
-86.c
-> >>>> index d87dd06db40d..a56c159d7136 100644
-> >>>> --- a/drivers/gpio/gpio-tegra186.c
-> >>>> +++ b/drivers/gpio/gpio-tegra186.c
-> >>>> @@ -989,6 +989,8 @@ static int tegra186_gpio_probe(struct platform_d=
-evice *pdev)
-> >>>>                 offset +=3D port->pins;
-> >>>>         }
-> >>>>
-> >>>> +       gpio->gpio.fwnode =3D of_node_to_fwnode(pdev->dev.of_node);
-> >>>> +
-> >>>>         return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio)=
-;
-> >>>>  }
-> >>>>
-> >>>> Now, few follow up questions:
-> >>>> 1) is this the correct way of setting the chip fwnode in the gpio dr=
-iver?
-> >>>
-> >>> You shouldn't need this. This driver already does:
-> >>>
-> >>>     gpio->gpio.parent =3D &pdev->dev;
-> >>>
-> >>> so fwnode should be assigned in gpiochip_add_data_with_key(). Can you
-> >>> check why this doesn't happen?
-> >>
-> >> I do not see anywhere chip->fwnode being set in the gpiochip_add_* fun=
-ction.
-> >> The only reference I see is here [1]. Does it mean I need to change my=
- match
-> >> function from:
-> >>
-> >> chip->fwnode =3D=3D of_node_to_fwnode(data)
-> >>
-> >> to:
-> >> dev_fwnode(chip->parent) =3D=3D of_node_to_fwnode(data)?
-> >
-> > No! chip->fwnode is only used to let GPIOLIB know which fwnode to
-> > assign to the GPIO device (struct gpio_device).
-> What do you suggest I should use for the match as I do not see chip->fwno=
-de
-> being set?
->
+Remove redundant 'AND' with cpu_online_mask as the policy->cpus always
+contains only the currently online CPUs.
 
-This is most likely going to be a longer discussion. I suggest that in
-the meantime you just assign the gc->fwnode pointer explicitly from
-the platform device in the tegra GPIO driver and use it in the lookup
-function. Note that this is NOT wrong or a hack. It's just that most
-devices don't need to be looked up using gpio_device_find().
+Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+Link: https://lore.kernel.org/lkml/20231003050019.a6mcchw2o2z2wkrh@vireshk-i7/
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
+ drivers/cpufreq/tegra194-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bart
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index 386aed3637b4..607e699b3d84 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -135,7 +135,7 @@ static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
+ 	u32 cpu, cpuid, clusterid;
+ 	u64 mpidr_id;
+ 
+-	for_each_cpu_and(cpu, policy->cpus, cpu_online_mask) {
++	for_each_cpu(cpu, policy->cpus) {
+ 		data->soc->ops->get_cpu_cluster_id(cpu, &cpuid, &clusterid);
+ 
+ 		/* use physical id to get address of per core frequency register */
+-- 
+2.17.1
 
-> >
-> > Bart
-> >
-> >>
-> >> [1]:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/drivers/gpio/gpiolib.c?h=3Dv6.6-rc1#n767
-> >>
-> >>>
-> >>> Bart
-> >>>
-> >>>> 2) Or should I use something else in hte matching function instead o=
-f fwnode so
-> >>>> to avoid adding above line in the gpio driver?
-> >>>>
-> >>>>>
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> Bart
-> >>>>>>>
-> >>>>>>
-> >>>>>
-> >>>>
-> >>
->
