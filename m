@@ -2,99 +2,121 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9E8CD8CA5
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 15:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6922CD8CA5
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 15:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231911AbjJJPSO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Oct 2023 11:18:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
+        id S232958AbjJJPSu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Oct 2023 11:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231578AbjJJPSN (ORCPT
+        with ESMTP id S232771AbjJJPSu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Oct 2023 11:18:13 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F428AC;
-        Tue, 10 Oct 2023 08:18:11 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="363771718"
+        Tue, 10 Oct 2023 11:18:50 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3226AA7;
+        Tue, 10 Oct 2023 08:18:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696951129; x=1728487129;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=w1u+oz+TxHGbO6VqcwI4Fu7bojupIN05OR98eU3NVvk=;
+  b=k6YKOrzTcWraLLYtcZGaCknOPXiLRdTgnEN3Q+PiVGgJnLSnl4ra4Keu
+   k2aU3hWbjAsQl8xvd2lAkuiOJXm2xycJwwn+ScK76Gh61g1j9rqONSoyD
+   8m42ZYcErBooFAora60pJE6C+/Gac134ueCZYCw++Uw9xnYp8wHwlTCtX
+   rvTcOmEOcYU+4L7l0lR35aNpgDQ7h2zWnr623cawIlAGJs1CUz5MEfPjS
+   Q4KunvwkPsqdYBG51ta0c/kErq/UC5JQiGjH9GH9yEL4+S5lE2x/M4EbK
+   zUSMb0v4OwtFRlY6fM1gO8htLNsztS20wQP4K41lR9TPpzZ6HmciRsQ4G
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="415439396"
 X-IronPort-AV: E=Sophos;i="6.03,213,1694761200"; 
-   d="scan'208";a="363771718"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 08:18:11 -0700
+   d="scan'208";a="415439396"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 08:17:14 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="823812908"
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="1084830070"
 X-IronPort-AV: E=Sophos;i="6.03,213,1694761200"; 
-   d="scan'208";a="823812908"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 08:18:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC1)
-        (envelope-from <andy@kernel.org>)
-        id 1qqEUn-00000004NJZ-3tXk;
-        Tue, 10 Oct 2023 18:18:05 +0300
-Date:   Tue, 10 Oct 2023 18:18:05 +0300
-From:   Andy Shevchenko <andy@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Dipen Patel <dipenp@nvidia.com>, linus.walleij@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] gpio: tegra186: Set fwnode of the GPIO chip
-Message-ID: <ZSVrLZyB278Q0A7I@smile.fi.intel.com>
-References: <20231009173858.723686-1-dipenp@nvidia.com>
- <ZSVN73ffDkGBzmmI@smile.fi.intel.com>
- <ZSVWKSVNsBqDcOFS@smile.fi.intel.com>
- <ZSVcFo2sDVbMCW3Z@smile.fi.intel.com>
- <ZSVewh61i8JzwxQQ@smile.fi.intel.com>
- <CAMRc=MdBGf7g1xcGid+AuWaLhm3AJEAvFjK4PFOhs2dUF35QdQ@mail.gmail.com>
+   d="scan'208";a="1084830070"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 10 Oct 2023 08:17:10 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 33E8D93; Tue, 10 Oct 2023 18:17:10 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v1 1/4] gpiolib: provide gpio_device_find_by_fwnode()
+Date:   Tue, 10 Oct 2023 18:17:06 +0300
+Message-Id: <20231010151709.4104747-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20231010151709.4104747-1-andriy.shevchenko@linux.intel.com>
+References: <20231010151709.4104747-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdBGf7g1xcGid+AuWaLhm3AJEAvFjK4PFOhs2dUF35QdQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 05:10:08PM +0200, Bartosz Golaszewski wrote:
-> On Tue, Oct 10, 2023 at 4:25 PM Andy Shevchenko <andy@kernel.org> wrote:
-> > On Tue, Oct 10, 2023 at 05:13:42PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Oct 10, 2023 at 04:48:25PM +0300, Andy Shevchenko wrote:
-> > > > On Tue, Oct 10, 2023 at 04:13:19PM +0300, Andy Shevchenko wrote:
-> > > > > On Mon, Oct 09, 2023 at 10:38:58AM -0700, Dipen Patel wrote:
+One of the ways of looking up GPIO devices is using their fwnode.
+Provide a helper for that to avoid every user implementing their
+own matching function.
 
-...
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c      | 20 ++++++++++++++++++++
+ include/linux/gpio/driver.h |  1 +
+ 2 files changed, 21 insertions(+)
 
-> > > > > > +       /*
-> > > > > > +        * This is needed for driver using gpio device matching where it
-> > > > > > +        * has to use gpio_chip fwnode to match the gpio controller.
-> > > > > > +        */
-> > > > > > +       gpio->gpio.fwnode = of_node_to_fwnode(pdev->dev.of_node);
-> > > > >
-> > > > > of_node_to_fwnode() is specific to IRQ, in other places we use generic
-> > > > > of_fwnode_handle(). That's why better just to use dev_fwnode().
-> > > >
-> > > > On the second thought is there any parent assigned?
-> > > > At least I see that in tegra186_gpio_probe(). Are you saying
-> > > > it is not working? Or is it (matching) called _before_ we
-> > > > add a GPIO device?
-> > >
-> > > Okay, I think I got it. There is a function called tegra_gpiochip_match()
-> > > in drivers/hte/hte-tegra194.c which fails after my patch. Yeah, if provider
-> > > doesn't set fwnode, it can't match. But, since the driver sets the parent
-> > > properly it means that the matching function should be done against the
-> > > device.
-> > >
-> > > Seems to me that in HTE code the matching function is broken.
-> >
-> > I'll send a patch soon. Please, test it.
-> 
-> I'll have you know that if it is about to add any new "#include
-> ../gpio/gpiolib.h", then it's a preemptive NAK from me. :)
-
-Nope, see I just sent it.
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 7b4d12b714a3..31c06a32cb8a 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1142,6 +1142,26 @@ struct gpio_device *gpio_device_find_by_label(const char *label)
+ }
+ EXPORT_SYMBOL_GPL(gpio_device_find_by_label);
+ 
++static int gpio_chip_match_by_fwnode(struct gpio_chip *gc, void *fwnode)
++{
++	return device_match_fwnode(&gc->gpiodev->dev, fwnode);
++}
++
++/**
++ * gpio_device_find_by_fwnode() - wrapper around gpio_device_find() finding
++ *                                the GPIO device by its fwnode
++ * @fwnode: Firmware node to lookup
++ *
++ * Returns:
++ * Reference to the GPIO device or NULL. Reference must be released with
++ * gpio_device_put().
++ */
++struct gpio_device *gpio_device_find_by_fwnode(const struct fwnode_handle *fwnode)
++{
++	return gpio_device_find((void *)fwnode, gpio_chip_match_by_fwnode);
++}
++EXPORT_SYMBOL_GPL(gpio_device_find_by_fwnode);
++
+ /**
+  * gpio_device_get() - Increase the reference count of this GPIO device
+  * @gdev: GPIO device to increase the refcount for
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index f8ad7f40100c..ae4162d3f1d3 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -611,6 +611,7 @@ struct gpio_chip *gpiochip_find(void *data,
+ struct gpio_device *gpio_device_find(void *data,
+ 				int (*match)(struct gpio_chip *gc, void *data));
+ struct gpio_device *gpio_device_find_by_label(const char *label);
++struct gpio_device *gpio_device_find_by_fwnode(const struct fwnode_handle *fwnode);
+ 
+ struct gpio_device *gpio_device_get(struct gpio_device *gdev);
+ void gpio_device_put(struct gpio_device *gdev);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.40.0.1.gaa8946217a0b
 
