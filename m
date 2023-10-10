@@ -2,195 +2,110 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C69CD8CA2
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 15:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA53CD8CA5
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 15:33:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233395AbjJJPbm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Oct 2023 11:31:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38982 "EHLO
+        id S232740AbjJJPdK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Oct 2023 11:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233379AbjJJPbk (ORCPT
+        with ESMTP id S230448AbjJJPdJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Oct 2023 11:31:40 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68CC1B8;
-        Tue, 10 Oct 2023 08:31:38 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-53b8f8c6b1fso5207050a12.0;
-        Tue, 10 Oct 2023 08:31:38 -0700 (PDT)
+        Tue, 10 Oct 2023 11:33:09 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCAB97
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Oct 2023 08:33:07 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99c1c66876aso1053610366b.2
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Oct 2023 08:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696951897; x=1697556697; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696951986; x=1697556786; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p6BYB1gCd5puXrl5LhZGEIzQSxrp+C2PnhtSQqSgeLo=;
-        b=dgCLsMazv44uCivDIHZTsuFwkZsQ+NZABQT+fgmUUvORpFa4FXgrOVgwAvrDKpvzIk
-         LqXf78jHpM40SERd4bZV0QMonZ75CmHoIz8dsNRBOXDAU3eq9njtaUjrSzYMylPlA23o
-         faraTu19L6j5oC/ajHOx/RSzkyk1GVcykOCjkviHpRgpuE5OBDvJyqb3ZQ/Nr2gYGHWW
-         KbTCcjV8Jztht59IN9bmNB5t/P9qanLdv6eeHHWWKy4nhymIfjqoLLP9GpQ/RqxW2bHn
-         E8PfJaLlSrq/oKiQaHXtPJJrpT9fEetrQrPxzSJVwb4JrWx/whtrp3saTh3EczRF63DD
-         7XCg==
+        bh=uA30MYl9QHPBHFzDvcPwyw2o41gOUerdhZVk4I6+4pw=;
+        b=D1X3PsAGnlSGmAEggOpa9rwY6n7sj6LejPU5HceWggn1d48HHdZtW1XRxWPfPMezan
+         g0TOE2jlHiML8vQUwajmRlbB+7wZWPog1f3ROWdnPzNi/UWUYym6yFv1OO+chM8tskxC
+         M66p6QowUEVo3mcKsf5SGXwkaGvlm89iz+w+h4coyrs5xdu6CTmXsuQjJNorzaOG59n6
+         TzDDr/pTrvQ7oxaaXqFrHSx/adm8y8HqKAI7dYLxYpC51IDQgA1zRlH3ZUsGTZom3lf1
+         c/MU6JWHS/tsNgGgdKQrB4biWP4mG1N1HM3oyFqiKkgxL0PQ6eCrV0kqt1ynxDQ4UahA
+         BHxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696951897; x=1697556697;
+        d=1e100.net; s=20230601; t=1696951986; x=1697556786;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=p6BYB1gCd5puXrl5LhZGEIzQSxrp+C2PnhtSQqSgeLo=;
-        b=iljhMjVWacHyQrPpqv4fjPWFT7v3WQXxErpZeYJeMzz3oxpwI4ExKVrdVWb83A8ZqP
-         GwFiNOCkVgTCZ6kwhbEGmscdCrVS6iRc2K5iAQPTIAGeB7nm0w7AdPjdVvUhubhqAZ20
-         YLCpAY1mo+FPb8cNhRocdSFxoGWMmO5NhBNexuAcPftdthy2OUxYPJ+Q5tw+5XOnVODm
-         c+LKriOaSN8SiVKi8jjBltCIBjmCv0Gm3HG0jIJ/0fOUIK7zddKPwkDbJWPtvra7Dfx4
-         +5I2rOmf6WKqIRd4RLiTFtNvdpt96RQCVnEQ8CM+8Tdcxl8mOxP0BhpntIvdcn3Kv6NT
-         0zQw==
-X-Gm-Message-State: AOJu0Yzjxo6P2SDFj+Rk8uYt5h9Yomxw2/1/dqccLQjIFD8ztU6cPPEk
-        29sNLwtSzJirJu+Wk64Ip20=
-X-Google-Smtp-Source: AGHT+IHvfsnQ7+i3iZ3Zvae/Raj7PBddxMUZ6kGbLtTloPkfNG2VNrs83wD0dZZP1pi7ZcA5IWPCDw==
-X-Received: by 2002:a05:6402:50b:b0:523:18db:e3ab with SMTP id m11-20020a056402050b00b0052318dbe3abmr15352125edv.39.1696951896561;
-        Tue, 10 Oct 2023 08:31:36 -0700 (PDT)
+        bh=uA30MYl9QHPBHFzDvcPwyw2o41gOUerdhZVk4I6+4pw=;
+        b=K4YcEkm9eSa+70JOjVpZ4ge49ID3nMpj5JMXOdYstro4Zn1hFzvy9LdVRkX5d6AUvV
+         Z98cbGFdxBmHItNTHvMLAyrQFOZ40UMq2s3R2VAPQq4RDFAJrwqtiUaRXa/GPh444II3
+         EC+uu9XOqp6GRoHmXH7mYazmDpuPaWw9wxaMP3P4N0SIXNgjmr9J/6LbmbMVItdTxadk
+         8fx5Cp9ZZKv2Izd5qh7CrLNLTJmddDMk3Srn4EMALg1cwdxQY2x90yHun8D3crWPmf8Z
+         jIH6uDVaBSwCQckpqx/ibb9DIQRTBmSwmnFurmN3ANI27meKELp5abSlQw3TQprGR+B6
+         EuJQ==
+X-Gm-Message-State: AOJu0YzMQOANyP7M9pa0OAnhAQMgPXujr79fjKFJMwQn4truxNx/VVyl
+        c57wtEfG+WbJM3dqe8+dSzk=
+X-Google-Smtp-Source: AGHT+IFdHuk7XbZCiSFl/ZQnmMM5FBKExgsZqn43R/kXm7e2RMTM9Xy02X8OMD7DuvpntTVJu5svYA==
+X-Received: by 2002:a17:907:770c:b0:9b9:eb30:b5ea with SMTP id kw12-20020a170907770c00b009b9eb30b5eamr14797437ejc.31.1696951985967;
+        Tue, 10 Oct 2023 08:33:05 -0700 (PDT)
 Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id l25-20020aa7c319000000b0053441519ed5sm7749685edq.88.2023.10.10.08.31.35
+        by smtp.gmail.com with ESMTPSA id p26-20020a1709060dda00b0098921e1b064sm8611133eji.181.2023.10.10.08.33.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 08:31:35 -0700 (PDT)
-Date:   Tue, 10 Oct 2023 17:31:33 +0200
+        Tue, 10 Oct 2023 08:33:05 -0700 (PDT)
+Date:   Tue, 10 Oct 2023 17:33:03 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sui Jingfeng <suijingfeng@loongson.cn>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/tegra: Return an error code if fails
-Message-ID: <ZSVuVcqdGfGtQIQj@orome.fritz.box>
-References: <20230626143331.640454-1-suijingfeng@loongson.cn>
- <ZSVQMPuRnXzC0lgf@orome.fritz.box>
+To:     Yue Haibing <yuehaibing@huawei.com>
+Cc:     mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
+        jonathanh@nvidia.com, tzimmermann@suse.de,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH -next] drm/tegra: Remove two unused function declarations
+Message-ID: <ZSVur4CNQD3woL0o@orome.fritz.box>
+References: <20230809030226.3412-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vvxnvHZb1NK8XLPt"
+        protocol="application/pgp-signature"; boundary="g8HowzIengH1BfT5"
 Content-Disposition: inline
-In-Reply-To: <ZSVQMPuRnXzC0lgf@orome.fritz.box>
+In-Reply-To: <20230809030226.3412-1-yuehaibing@huawei.com>
 User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---vvxnvHZb1NK8XLPt
-Content-Type: multipart/mixed; boundary="r4Kogl6ypPFjzAmq"
-Content-Disposition: inline
-
-
---r4Kogl6ypPFjzAmq
+--g8HowzIengH1BfT5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 10, 2023 at 03:22:56PM +0200, Thierry Reding wrote:
-> On Mon, Jun 26, 2023 at 10:33:30PM +0800, Sui Jingfeng wrote:
-> > Return -ENOMEM if tegra_bo_mmap() fails.
-> >=20
-> > Signed-off-by: Sui Jingfeng <suijingfeng@loongson.cn>
-> > ---
-> >  drivers/gpu/drm/tegra/gem.c | 2 ++
-> >  1 file changed, 2 insertions(+)
+On Wed, Aug 09, 2023 at 11:02:26AM +0800, Yue Haibing wrote:
+> Commit 776dc3840367 ("drm/tegra: Move subdevice infrastructure to host1x")
+> removed the implementation but not the declaration.
 >=20
-> Sorry, this fell through the cracks. I think it'd be better if
-> tegra_bo_mmap() were to be improved to always return either an ERR_PTR()
-> encoded error code or a valid pointer. Throwing NULL into the mix isn't
-> useful because it typically means something like -ENOMEM anyway. Error
-> codes are more explicit, so since we're already using them for some
-> cases, might as well return them for all.
->=20
-> Actually, looks like tegra_bo_mmap() never actually returns an ERR_PTR()
-> encoded error code. It's either obj->vaddr, the return value of vmap()
-> (which is either NULL or the address of the mapping), or the address
-> obtained from dma_buf_vmap_unlocked() (i.e. map.vaddr) or NULL on
-> failure. So I think it would equally make sense to keep your patch and
-> to remove the IS_ERR() check below it.
->=20
-> I would slightly prefer the first option, but either is fine.
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  drivers/gpu/drm/tegra/drm.h | 3 ---
+>  1 file changed, 3 deletions(-)
 
-How about the attached patch?
+Applied, thanks.
 
 Thierry
 
---r4Kogl6ypPFjzAmq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline;
-	filename="0001-drm-tegra-gem-Do-not-return-NULL-in-tegra_bo_mmap.patch"
-Content-Transfer-Encoding: quoted-printable
-
-=46rom b34a09efcf7b1d2c25d3baf8c6d91c5ca09b4e0f Mon Sep 17 00:00:00 2001
-=46rom: Thierry Reding <treding@nvidia.com>
-Date: Tue, 10 Oct 2023 17:26:14 +0200
-Subject: [PATCH] drm/tegra: gem: Do not return NULL in tegra_bo_mmap()
-
-It's confusing for a function to return NULL and ERR_PTR()-encoded error
-codes on failure. Make sure we only ever return the latter since that's
-what callers already expect.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpu/drm/tegra/gem.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 11296de59c5a..679460e05c05 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -178,6 +178,7 @@ static void *tegra_bo_mmap(struct host1x_bo *bo)
- {
- 	struct tegra_bo *obj =3D host1x_to_tegra_bo(bo);
- 	struct iosys_map map;
-+	void *vaddr;
- 	int ret;
-=20
- 	if (obj->vaddr)
-@@ -185,10 +186,18 @@ static void *tegra_bo_mmap(struct host1x_bo *bo)
-=20
- 	if (obj->gem.import_attach) {
- 		ret =3D dma_buf_vmap_unlocked(obj->gem.import_attach->dmabuf, &map);
--		return ret ? NULL : map.vaddr;
-+		if (ret < 0)
-+			return ERR_PTR(ret);
-+
-+		return map.vaddr;
- 	}
-=20
--	return vmap(obj->pages, obj->num_pages, VM_MAP, pgprot_writecombine(PAGE_=
-KERNEL));
-+	vaddr =3D vmap(obj->pages, obj->num_pages, VM_MAP,
-+		     pgprot_writecombine(PAGE_KERNEL));
-+	if (!vaddr)
-+		return -ENOMEM;
-+
-+	return vaddr;
- }
-=20
- static void tegra_bo_munmap(struct host1x_bo *bo, void *addr)
---=20
-2.42.0
-
-
---r4Kogl6ypPFjzAmq--
-
---vvxnvHZb1NK8XLPt
+--g8HowzIengH1BfT5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUlblUACgkQ3SOs138+
-s6HbFQ//bsnt3abbnn17U1TAa/8MQJFfsftjgYFRxI694IYsPODox18L3gAonHIq
-SdJHBJG6oOFxS+iZG5FIj7xvrC58ZmpzRe7I6eo34ofsY9R0ay6nBPS8SIFSoyRl
-Q9GLgycc5c+wAJi6TuPJRWRn/JKo4hsOwdd5TXJmAGXGrF5QbLW0NPAH5tZMg0hv
-VauiIqZInTUq8RcbrpFqVhCGGICxZ/WVmTSl5FiAXCD+ZbBkP8ZXj7+uY8pjoZXu
-D1bXer2kUktVUethMZOYQpwhCv+L/Uo6YSMB+328oXvI5AXcX8DFx3tp3ZASwCOp
-u7lveGKHWfXTMW94k0+zoYT3DZHENEnYe0VMqB4W49Uon/vMtJcq4VXS3SkWB0oI
-plfE2HUFW1ACvMSt9aJpEyVcqhw99aoRKCJuCaEHG+X/3ZbfWSHYGSqphv0P526d
-rVsZSx6tHy6F+/gevcYN3Zf2c6dWWYNqzorip3wgs732jIjidQ64Sp6EiO8UXFgW
-fwi1l4FTuWhex34lfVdzs+jhcFIAf5d8AjIYvkayRKHOB+2GZlwllwcH1g7AT2AH
-CaFdIw6sjTm3yqH8tiwLTeDIKP//JDJq1T6Mu3VZ3q9oDaYEcGNGkkdbAzCd8Su7
-jcUYGR9wCyin91tD5DkkAwtqDqApzQCo5xWCDxVl6cp3agz5Z7U=
-=4DyQ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUlbq8ACgkQ3SOs138+
+s6GTsBAAvV1qiOB/3BT01lO45vvHM0fJ41zlyp8bXQhNreL832hpVqmrSpotDNU7
+ScPX8DteFgnRjvfa+oSbHs6Y4khC1FrdNSwqdcSG6LfltGFBMVDnhrEPmWmHX+pR
+rGhd5MwCtg93BHAcYmuahwyTIj15INWAagxSs4JZ6MsUQRsTDDGdwm90v0gWMqmW
+kNLeV2eMeKiQ7GLWpke3iXEXF+hM5x5CVcZadtJngNa7gdDCMak1OrSrt1OhKwnr
+gDjY1cyusBKdgBE5+gCK9hZcf3vgCt84B6Ly4FNdah5kXZrwgzi4/2EBFDpZy3FU
+d+iLrc0ykdAl7OMdXai1r9O6vvu4MQlt6q9WKJbrf0EUVTpA2SGdXGeII1mSMHnb
+rXo2U7JwnkN3TTaYaGd/04ugxTAi0z+ec7M4AF4fQdyoE648Iz7VZ6KO3yYWV+Jk
+h93AhLrbB1MXu5NTqrh3C0pe0fBjXYd4LLZCG4N9+cbCGFPWhmUm52n2vR+l5RxG
+lXIcuwjr7tghwlnU9t4+TD8IfeNOl6a+YZJMsy9suZjBxbH4guPqvgoQkrSgVbUP
+GkhTXEBG9mKqfcKWaexmkWBRBDdFD/DyW4yfOJtoM9uKrzGKsR5U5ZXXhjiQQU5I
+Aiw4sbt7KIGvlRlAcBiwkck/7AbD8ZbiExFrt82RKZJGqB3IEd0=
+=j69Z
 -----END PGP SIGNATURE-----
 
---vvxnvHZb1NK8XLPt--
+--g8HowzIengH1BfT5--
