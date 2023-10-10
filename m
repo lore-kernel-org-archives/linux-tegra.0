@@ -2,111 +2,115 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 387C0CD8CA7
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 16:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1683CD8CA6
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 16:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231722AbjJJQIl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Oct 2023 12:08:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33198 "EHLO
+        id S233719AbjJJQNd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Oct 2023 12:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233576AbjJJQIh (ORCPT
+        with ESMTP id S233668AbjJJQN3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Oct 2023 12:08:37 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA49EB;
-        Tue, 10 Oct 2023 09:08:34 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-323ef9a8b59so5554234f8f.3;
-        Tue, 10 Oct 2023 09:08:34 -0700 (PDT)
+        Tue, 10 Oct 2023 12:13:29 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC3DD7;
+        Tue, 10 Oct 2023 09:13:24 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40572aeb73cso54331145e9.3;
+        Tue, 10 Oct 2023 09:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696954113; x=1697558913; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1696954403; x=1697559203; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KciAMRf813ZegYwZo69Zen20WMwLpOEWtLW30hTwQtw=;
-        b=gZ0jBAZmtKHz47NTuUb3CGZSoIN4kD3c98+vOEEvTIZn6venfJ/EZNxe5WD0zYhiHy
-         OhEUvWiwqNuOjrmT/so74sHmOnhz0IJzLNudBMNsd1+VJY6uNbyVFXaScOnt47PnB9m8
-         ysOLWk8Y7/mT1wxc6DQk4BYSw7jg2DzjRXElQ+MjIJeBDc+B9+P1nQwMO4yDEV+lcn3v
-         4kvUHfl1GZQUiGfO0UCIwFn5p5ClFxsQmyzL3En+DdK1cORK8Nb1l4d7/G32B7ILYq1G
-         tucowJt9zmpgHN7gxG6R+WOD9ursOA5kKTguRbwet0MdMW0mM1X2ZHu/9pEvV9edXUj2
-         EH3w==
+        bh=Ap+ERWrbz8gWnQjcESvO2qjRnXglMjuwKN0/PSGnFg0=;
+        b=FvYq9FOIBqu/MLZGCdXQK/MANbg7nEmQSNq8nSGmdm9M0ta0zHi5OfO3K0Jsx28vbO
+         PY/qi3o6+6/O9i6mKH30cMM9e/dcfyH8VgRGaE53+8K2VDnO9DQa01ZM77tpWrCLPn3S
+         B9407kf+bg9xDUkCLoLoZ3aBldNcKkSCvLKkoxc86TeWiiSMvTtH3dDxdDrCmQNnCD10
+         LlbfpZewDXIIfYdQAQBCyr0dRr50C98n409EXurJ5DZU5MehLS9/PIWmmfQptl3WwbPW
+         yXLQmqWeaFboZHpffDMqAV2OeJGvApixXzOr0uhe3BOyNuwQyvG2iA9bSgonygFPeN7O
+         03pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696954113; x=1697558913;
+        d=1e100.net; s=20230601; t=1696954403; x=1697559203;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KciAMRf813ZegYwZo69Zen20WMwLpOEWtLW30hTwQtw=;
-        b=BKqOqstseGhN4epLVMq/j7zCvQp23jpCfawV+9Ic6YwnQI6jT6d/0pt3ZXzSXUtXQK
-         j/8NjLd2Xi3aKTEKh3qtplPeZqxV1lATG2k97MDXl8doNnjYznsixa6Bchr3Va44i9Q/
-         ommaXIcoqo3ibLpgqi7oUpZ+5vwKhxnHJwQGssSXyxH2i1wsQRxaTPs4Rd17a+SdotGi
-         QFNzfzbfPwt5wMa2C7dMa1zri/ImGcdZF7FUeOlRjFeSZNEp23fWYNwyDJ4ZDzFd1bcO
-         3YXFDsm/Mg4/jEiRI21WqWnrW43LnsB+9Ez37mjiDa/yKG2xOzMfOMShzC6dnmbYc3T0
-         X56w==
-X-Gm-Message-State: AOJu0Yx/9PZZIFtOy5/z9qVhSZnM7PsGBJ4dzZVLr0YhRjQ2DBbvGbMY
-        gldqarqA43EzPrzbNVO+58xiMKi9/Hk=
-X-Google-Smtp-Source: AGHT+IEE2T7NF36+dgYtxgB14/X2M+xHn7SEBZckZhElz1nk/AZwAyK4cN8rfIcPlOEOvM1qMada/g==
-X-Received: by 2002:a05:6000:cce:b0:32d:2489:911f with SMTP id dq14-20020a0560000cce00b0032d2489911fmr1702976wrb.15.1696954113090;
-        Tue, 10 Oct 2023 09:08:33 -0700 (PDT)
+        bh=Ap+ERWrbz8gWnQjcESvO2qjRnXglMjuwKN0/PSGnFg0=;
+        b=honRKDmiNEMymhCTsOLg7NpZLyWuUCCvc0Af5SLSDFGUpDJoNouAqey5lCNWWG4db9
+         rAT5y6PlOty+x59rd/Pd2knePTmx+rM+nu9T1iRrG4rpBXFJ9aV7D8/HMcT4fUYWSHg6
+         j0u8CYPdni5QFX1NtUJ1MC4A460yyvEWQlm+vu8FE+7SPBarA8lTl8p7Izc6OwKuE/gi
+         tv8njhOQ8X3PJKwuRHI0zXdlKpzIz6AnMVrrc9oHexZL7JT5oFAzYlh8xd8pInLKf2ch
+         cOmJD0eQMDBiusNgISV3QJw3ZAIgBaDMNxy2PO0+zlMUFW07qWcAE7e8f0m+tdW2ex7T
+         62KQ==
+X-Gm-Message-State: AOJu0YxQb6Hrb5+OqqUjeNC4QIi9rTDfBfA1vflo0PJmmm+B0ngKehH7
+        vKzP9Qcg2xR0/xDOvfCENOs=
+X-Google-Smtp-Source: AGHT+IEypkUu60r/7M4MteaQGqYfpQ2I976+ro3MbRwmSKjVUz1bIssOulFjRMi9z/oK/sOWSHAQtg==
+X-Received: by 2002:a05:600c:21d1:b0:405:3ae6:2413 with SMTP id x17-20020a05600c21d100b004053ae62413mr16441550wmj.25.1696954402610;
+        Tue, 10 Oct 2023 09:13:22 -0700 (PDT)
 Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id k1-20020adff5c1000000b003258934a4bcsm13056556wrp.42.2023.10.10.09.08.32
+        by smtp.gmail.com with ESMTPSA id 9-20020a05600c020900b003feea62440bsm14455869wmi.43.2023.10.10.09.13.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Oct 2023 09:08:32 -0700 (PDT)
-Date:   Tue, 10 Oct 2023 18:08:30 +0200
+        Tue, 10 Oct 2023 09:13:22 -0700 (PDT)
+Date:   Tue, 10 Oct 2023 18:13:20 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Ruan Jinjie <ruanjinjie@huawei.com>
-Cc:     hverkuil-cisco@xs4all.nl, mchehab@kernel.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH -next] media: tegra_cec: fix the return value handle for
- platform_get_irq()
-Message-ID: <ZSV2_hVbUSrYGA8X@orome.fritz.box>
-References: <20230801135253.456322-1-ruanjinjie@huawei.com>
+To:     Andrei Coardos <aboutphysycs@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, ac100@lists.launchpad.net,
+        gregkh@linuxfoundation.org, marvin24@gmx.de, alex@shruggie.ro
+Subject: Re: [PATCH] staging: nvec: paz00: remove unneeded call to
+ platform_set_drvdata()
+Message-ID: <ZSV4ICULpZ0jSGGW@orome.fritz.box>
+References: <20230809154211.15741-1-aboutphysycs@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lZ2kD5tAJbjEJdaD"
+        protocol="application/pgp-signature"; boundary="xXFtpkf/V8blOu7n"
 Content-Disposition: inline
-In-Reply-To: <20230801135253.456322-1-ruanjinjie@huawei.com>
+In-Reply-To: <20230809154211.15741-1-aboutphysycs@gmail.com>
 User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---lZ2kD5tAJbjEJdaD
+--xXFtpkf/V8blOu7n
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 01, 2023 at 09:52:53PM +0800, Ruan Jinjie wrote:
-> There is no possible for platform_get_irq() to return 0,
-> and the return value of platform_get_irq() is more sensible
-> to show the error reason.
+On Wed, Aug 09, 2023 at 06:42:11PM +0300, Andrei Coardos wrote:
+> This function call was found to be unnecessary as there is no equivalent
+> platform_get_drvdata() call to access the private data of the driver. Als=
+o,
+> the private data is defined in this driver, so there is no risk of it bei=
+ng
+> accessed outside of this driver file.
 >=20
-> Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
+> Signed-off-by: Andrei Coardos <aboutphysycs@gmail.com>
 > ---
->  drivers/media/cec/platform/tegra/tegra_cec.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/staging/nvec/nvec_paz00.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Doesn't look like this has been applied yet. For the record:
+Seems fine, and if Marc has tested it, that's good enough for me:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---lZ2kD5tAJbjEJdaD
+--xXFtpkf/V8blOu7n
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUldvwACgkQ3SOs138+
-s6FdUQ//bmStVG5f3XXFmrJOaQtmBb/AxfvuNT0s4cUQ046r2Xw7s0dqcIQOVsuG
-kOdDoaybiJYKdoasHXmt76Okwfxa0qEgL2Gq7r7GBYr004uqllxmxK3RcRwKl5rF
-JwGYwvP9rFqAFUUH2N3DkTziT+n0U3cHaQh2PYcv2AMGx1QNP/VLVeGyDDstb0rn
-d+ruWj7mAdoJzg6IFiFGN+6eFZFKnh6jdoochTvnBUNEphXw1RKnov4IpabX+UGA
-UOziyKOhPLt1yRh1VaT2OfppoiYMfIylr23IPH4ou+FUnK9jXdveHMaVf3dAL1Fx
-+H+Me5DQUmyAdNJNpab3STNrmExkWOQw89YHsVJQkFxjVNyI/0O6Ik8/H/z8wpab
-e+IbWmO3P0Zp5Ko1Gau+71sTfwX7zJv2i+u3sqvWpwRyyVKSf6aMtfjChUoURv+4
-1qDptxi4+0Sszt/JeyXBhd8tIimqM7J9s8M5LbtUWDYwbGVoBWlGVWRMQ2FWxY0t
-hmTsNAgT8+Zdz8tFVUkwC350Ds8rfUZ1DSC1oxGfssYiXnvaIDFl5yEcZwrhFpHb
-1iC9lS2qATa14AbLZyk54lfLM1cC8bGCIQ7QPLznOKOVIAMd4bp6HbJWQLDV7PbT
-Wxb+bWDkOXdMnaxH0dn9v8RU3oV+AVYUixuBewXU3pB25Y5HzHI=
-=QD2J
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUleCAACgkQ3SOs138+
+s6Fwcg//dbOT+ITHbevm6Ruz8/p44G6Loe2ygmnkQ9V0VXcuLpF1u5+IlXy5Kiqu
+8eRdplUrng9qkDBKLl7OtsPgbM4hF3pOZmyQf8wep+f7f/8/dP1ERtPE8gFpMlfN
+RUZorVq5Ds8r8HMycIzUf7iNOLYM7gzVLjkWdzChjmC7pjsvcjFZ7kJuEwtNq7X/
+FNDgfedUA0J1bx+QzNzW4hP9IgukUzipPxMc9P6DE+bRhFTIVOHjsYaIRDs7xHg2
++KCUBNo2ok6hz7Z3k5JGgQc3i5fceRjVCYjKI8QXSUXg81pXJXmW8YI15wP22lKg
+eDKnvY20EgIDfLSYKKn+L4EsuX1qruyWn30rmY3gIJMaZR4wrXnaPsnht08AUuSh
+pSOihARTyhOA6GuwJPtF5yUGKnsgT+wpKPBQHYSpaB2MtLFM6PqQ45+nh1WMw2CE
+PURvns5vlfT2YnmOw32NR8QZf5MiAXS/K1aFfE51x6OvkNQyqZICO6m31UUZgYB+
+loZLWXS7IlV0PI0PBsR+lPVdDyTdIXYoFO6iWHTL5fi+qsZn5cYAZ2ZzcJjxyEm4
+2ZhdcAro3zpKa9Qb03RoVJwslzoo9uQiDEv1dUSytemeQGex9+YoWhpeODVikhaQ
+3n0fliQGSr35dPgJqUmza/f+0KeMQMnch5tw/Qeg4c/iBtqJ9k4=
+=rvpO
 -----END PGP SIGNATURE-----
 
---lZ2kD5tAJbjEJdaD--
+--xXFtpkf/V8blOu7n--
