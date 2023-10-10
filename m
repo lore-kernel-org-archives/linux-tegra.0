@@ -2,113 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D89CD8CA5
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 15:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED60FCD8CA5
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 15:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233300AbjJJPKY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Oct 2023 11:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52538 "EHLO
+        id S232476AbjJJPRR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Oct 2023 11:17:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233242AbjJJPKX (ORCPT
+        with ESMTP id S232667AbjJJPRQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Oct 2023 11:10:23 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDEAAB9
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Oct 2023 08:10:20 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d9a64ca9cedso689684276.1
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Oct 2023 08:10:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696950620; x=1697555420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bNVRgyFvWum2hRFmlW92z1wg/5s9UkkY7tvKtWeRi8Q=;
-        b=SVSLCKj5dikkLNk6DOuRJHon/PhbCOdxZuJBsZD4Y0GPVDcJcDiTRsqmSsKO4VeCPg
-         3sFgYZ0wL3MXOhi1/jAGpDGQlq7g53JVhK+J34QCeJqxsiucw0O3zIyqrgCKMzxksVin
-         rRsSzRuA0cch3Ipy3RQC5EIqilhjpkXsfWwKD3cX2kL6WcW/mRwCQIuxedkIw4ZzJ9MW
-         CJwXqXUNEVyvUXRq7Pxg3BhEsvPmfwQB+qwW5Ju+Cm9M7jYztfW4bx0TI44udUItWZFX
-         G5VcxkkxP22eMj64OhfAbs6iy8SRebmx7OAl29iQDD0ztKZXDFRmQQ1Gr3TFflBHmFpw
-         P4RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696950620; x=1697555420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bNVRgyFvWum2hRFmlW92z1wg/5s9UkkY7tvKtWeRi8Q=;
-        b=ME5+tYnrFCRn/8xxo3mPXIOiJKH/cq0WFaHQ+1rkEV03EbgVfdfVbzDA7FRLkwJVEQ
-         nVyqB/rOmXORK0w4PVZG1SqcYlQVhVPwoWYEpP61rxQHzzqFjZq7cSx4R6zFHZMlXB65
-         +/EP7c/xNEJY8TM2MuTYYM/kzR+UKMTNJsrIYT2d1tuEpYlV0oCs2er3yLiEvjaRv+U4
-         jBC0BeagMPlkdBjyYNTD3QOki3Fk+1VjlAuOIOzh32ICitKCyn+hSa6szd5FEo21hOZU
-         F1EQvV7GLg9qdWfuGZhEFyG7l6/cBOjjIEpqdhD0C3rMw9GE2f0IXMSrMxHPyIH/wD2q
-         p/zg==
-X-Gm-Message-State: AOJu0Yw5d549QVcdk9W/YAl+vbTfVpzOiW7xX7EXnGC9l23XrbNdpL6p
-        T4PYpKhuarp49AjGtIV3UMriBi7RX2XlhVg7B1Jy5A==
-X-Google-Smtp-Source: AGHT+IHfvy8QBycFXs2pUxVfYETVBPejg2TIRQTJu6G07uZHpYTTeTyT86wgocW2zL5M6/OjRH6H1VYO28y8QHYa0Dk=
-X-Received: by 2002:a25:ac9d:0:b0:d86:53cb:1eee with SMTP id
- x29-20020a25ac9d000000b00d8653cb1eeemr16293192ybi.2.1696950619976; Tue, 10
- Oct 2023 08:10:19 -0700 (PDT)
+        Tue, 10 Oct 2023 11:17:16 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F780B0;
+        Tue, 10 Oct 2023 08:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696951035; x=1728487035;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=b+eQ/uwdz+URzIJFW2ABqaZbfeJbxTuJSgGGfs7US3E=;
+  b=LsU22sFTfH8FUie4sWiAbw/3z91MMYKZPy5IxgvFFZLr4QYBFQNrdViS
+   VOC7a0gTtM6F33qpsnY17vr0oZPBte9ig6DnKrdLighZTSLvKT3Z/UR4D
+   9ucQdg09FGp3mjMGSbDKdErP61Ld4RRR0yZbvRJ3bDKzObfuC91/vTzTJ
+   2a6Vc/946DuDI3oBAEB+138JSzq2jpr1rTSRwaW8uCUbXQDRDyOiZzn5t
+   gtiGdq0peMJmLvXhcE5HY8sHxjUSpQ9h3OD/9c1eiylrSs3FzdX3SByND
+   uoDGIKhpMg3YT7Tgi/uMFE/nPrrlVt9vlTpE5gHpFsoD5uG06JCDwS034
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="363771580"
+X-IronPort-AV: E=Sophos;i="6.03,213,1694761200"; 
+   d="scan'208";a="363771580"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 08:17:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="823812775"
+X-IronPort-AV: E=Sophos;i="6.03,213,1694761200"; 
+   d="scan'208";a="823812775"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 10 Oct 2023 08:17:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 524C671B; Tue, 10 Oct 2023 18:17:10 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v1 4/4] hte: tegra194: Switch to LATE_SIMPLE_DEV_PM_OPS()
+Date:   Tue, 10 Oct 2023 18:17:09 +0300
+Message-Id: <20231010151709.4104747-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20231010151709.4104747-1-andriy.shevchenko@linux.intel.com>
+References: <20231010151709.4104747-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20231009173858.723686-1-dipenp@nvidia.com> <ZSVN73ffDkGBzmmI@smile.fi.intel.com>
- <ZSVWKSVNsBqDcOFS@smile.fi.intel.com> <ZSVcFo2sDVbMCW3Z@smile.fi.intel.com> <ZSVewh61i8JzwxQQ@smile.fi.intel.com>
-In-Reply-To: <ZSVewh61i8JzwxQQ@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 10 Oct 2023 17:10:08 +0200
-Message-ID: <CAMRc=MdBGf7g1xcGid+AuWaLhm3AJEAvFjK4PFOhs2dUF35QdQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] gpio: tegra186: Set fwnode of the GPIO chip
-To:     Andy Shevchenko <andy@kernel.org>
-Cc:     Dipen Patel <dipenp@nvidia.com>, linus.walleij@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 4:25=E2=80=AFPM Andy Shevchenko <andy@kernel.org> w=
-rote:
->
-> On Tue, Oct 10, 2023 at 05:13:42PM +0300, Andy Shevchenko wrote:
-> > On Tue, Oct 10, 2023 at 04:48:25PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Oct 10, 2023 at 04:13:19PM +0300, Andy Shevchenko wrote:
-> > > > On Mon, Oct 09, 2023 at 10:38:58AM -0700, Dipen Patel wrote:
->
-> ...
->
-> > > > > +       /*
-> > > > > +        * This is needed for driver using gpio device matching w=
-here it
-> > > > > +        * has to use gpio_chip fwnode to match the gpio controll=
-er.
-> > > > > +        */
-> > > > > +       gpio->gpio.fwnode =3D of_node_to_fwnode(pdev->dev.of_node=
-);
-> > > >
-> > > > of_node_to_fwnode() is specific to IRQ, in other places we use gene=
-ric
-> > > > of_fwnode_handle(). That's why better just to use dev_fwnode().
-> > >
-> > > On the second thought is there any parent assigned?
-> > > At least I see that in tegra186_gpio_probe(). Are you saying
-> > > it is not working? Or is it (matching) called _before_ we
-> > > add a GPIO device?
-> >
-> > Okay, I think I got it. There is a function called tegra_gpiochip_match=
-()
-> > in drivers/hte/hte-tegra194.c which fails after my patch. Yeah, if prov=
-ider
-> > doesn't set fwnode, it can't match. But, since the driver sets the pare=
-nt
-> > properly it means that the matching function should be done against the
-> > device.
-> >
-> > Seems to me that in HTE code the matching function is broken.
->
-> I'll send a patch soon. Please, test it.
->
+SET_LATE_SYSTEM_SLEEP_PM_OPS is deprecated, replace it with
+LATE_SYSTEM_SLEEP_PM_OPS() and use pm_sleep_ptr() for setting
+the driver's pm routines. We can now remove the __maybe_unused
+qualifier in the suspend and resume functions.
 
-I'll have you know that if it is about to add any new "#include
-../gpio/gpiolib.h", then it's a preemptive NAK from me. :)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/hte/hte-tegra194.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Bart
+diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+index 30ef1750a9fa..30fa7c0a555e 100644
+--- a/drivers/hte/hte-tegra194.c
++++ b/drivers/hte/hte-tegra194.c
+@@ -815,7 +815,7 @@ static int tegra_hte_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused tegra_hte_resume_early(struct device *dev)
++static int tegra_hte_resume_early(struct device *dev)
+ {
+ 	u32 i;
+ 	struct tegra_hte_soc *gs = dev_get_drvdata(dev);
+@@ -836,7 +836,7 @@ static int __maybe_unused tegra_hte_resume_early(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused tegra_hte_suspend_late(struct device *dev)
++static int tegra_hte_suspend_late(struct device *dev)
+ {
+ 	u32 i;
+ 	struct tegra_hte_soc *gs = dev_get_drvdata(dev);
+@@ -856,15 +856,14 @@ static int __maybe_unused tegra_hte_suspend_late(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops tegra_hte_pm = {
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(tegra_hte_suspend_late,
+-				     tegra_hte_resume_early)
++	LATE_SYSTEM_SLEEP_PM_OPS(tegra_hte_suspend_late, tegra_hte_resume_early)
+ };
+ 
+ static struct platform_driver tegra_hte_driver = {
+ 	.probe = tegra_hte_probe,
+ 	.driver = {
+ 		.name = "tegra_hte",
+-		.pm = &tegra_hte_pm,
++		.pm = pm_slee_ptr(&tegra_hte_pm),
+ 		.of_match_table = tegra_hte_of_match,
+ 	},
+ };
+-- 
+2.40.0.1.gaa8946217a0b
+
