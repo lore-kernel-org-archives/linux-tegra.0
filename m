@@ -2,127 +2,141 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C349CD691B
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 09:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E133CD6135
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Oct 2023 09:57:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbjJJJn6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Oct 2023 05:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60582 "EHLO
+        id S230096AbjJJJ5U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Oct 2023 05:57:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbjJJJn4 (ORCPT
+        with ESMTP id S229805AbjJJJ5T (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Oct 2023 05:43:56 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1952F94;
-        Tue, 10 Oct 2023 02:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696931034; x=1728467034;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ABVJ/HsrIXFckFMfaqVuY7HMZK5cmb/9vsBsVL3RHYs=;
-  b=W96m1l9n++shi4kt77FVrzChWWCbJlRDax8I1u+xHCEm/m+zzfDn21cu
-   P2AE7/tgLK4AGfoV0xX0Lqnzn0iDCMzz+NuUXltV+YuPLGic2yntU8lna
-   h0Vd54Xil3X8cZWRxFXsdOVEwdf9dMBf9GDKqCyfWzKTK5bhOy+XOLlDZ
-   Rj+GnhzW6I+0+WYK+iBPHTStE09V1URbTgV0ROpr1nncV9wLf3mf/X2sR
-   ysGu5gQsBW6giEqy0dY5YmoMVF/OGfgziGNlO2HCUceN32FJpcO4BAkD5
-   c4B/uqH7jxUxbsdUNrj/AUZxBijrZVOuPMdc8Jl0hoYACqvBWd7youvbm
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10858"; a="388220620"
-X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
-   d="scan'208";a="388220620"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 02:43:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10858"; a="730020342"
-X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
-   d="scan'208";a="730020342"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 10 Oct 2023 02:43:32 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qq9H0-0000Es-1F;
-        Tue, 10 Oct 2023 09:43:30 +0000
-Date:   Tue, 10 Oct 2023 17:42:31 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
-        rui.zhang@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, treding@nvidia.com,
-        jonathanh@nvidia.com, bbasu@nvidia.com, sumitg@nvidia.com,
-        sanjayc@nvidia.com, ksitaraman@nvidia.com, srikars@nvidia.com,
-        jbrasen@nvidia.com
-Subject: Re: [Patch v4 2/2] ACPI: processor: reduce CPUFREQ thermal reduction
- pctg for Tegra241
-Message-ID: <202310101725.z21V2yNG-lkp@intel.com>
-References: <20231009171839.12267-3-sumitg@nvidia.com>
+        Tue, 10 Oct 2023 05:57:19 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2043.outbound.protection.outlook.com [40.107.243.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0D693;
+        Tue, 10 Oct 2023 02:57:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZDcBjr5hVTxDlWOm4GseSsj2lZR7zw/hWSYpjmwNIVcRME8bSjbMFseMF0Q9JG3xia3cLNsxkACT49+txLLJ3cgKw0PweyJq4PerR/tFqWxrc43vbWDaenQDXKwWZ01PD81vPh/ZW9BFpdX+inFSq76TkOwECDpyNQY+FTQax+Qd53EphPmuC+wEO3nhXbmAYTDSc7vOU6pcmJA9MBuiSfY6yQ+LqKocSQ8U7DycrqgLphzNbtRwrYesM+5bqHikdG+vOaBeulkO1deBXBLFVrqyi53DGhO2DivM3noEZt/C8q/V88qSTDtXZDvsJBfuRC/sasfyk9VIxHPUofoIKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6iH50IbryKRaM4K49GBd/IgKkxAeoy0lEhNZSkgL0eQ=;
+ b=F9FXb3P2AptDIse5cPtspNf31k2jbVo8ywqMJ+sa9RaSWX00wUIO+EaEUbqZs1/MDIkVzLDJtMXeHWKjekl/+QTQZ28GksBeOwP0b1K+f0LVKNaBIO8CC6G8S59Bvp7Rr8wpBZqeOP5cL23snCtoa/UVbVTHYRFq+lrMkpR+K9b3XDWZ7JgW13OSYRj7gyrykEkuv2AlxSLehXBEAY7SJLHiPeu2leuYT9tnE3oWe1MWPZmdl8Xy/vZh0PhWXO9GtOGkAU1sXd894VOHrsYM53SmY60RFtXLUt8bWjuGf5o5KeBxRAiClz5aSqkVuFEAirmFwDjQD6hdmKDxP5jKuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6iH50IbryKRaM4K49GBd/IgKkxAeoy0lEhNZSkgL0eQ=;
+ b=nFR6WGdZ1O2YpqSi/WvyiVPZx+Yrpl71weXsfG6Sr3EjgOATSmhaReSZf6fzZFaPTFVkOM6Zz/g+G8xQFov/RYyB++brYmj2SRSQbNoX56E4+GfMoQgrxucsEbvxX1kEPtst5gLoz8HBdILxZiuuhqwnbEfG7Ae2la9+k5TT3WXL5yA0LENl0gETyFRYtsPKczOqBTLkfhfx7ptYWfUWbrLzCgWztEUOMlJDVVkaxrjRCgSgshe6Zjg9ccTtl3cocqP+62Q1fKsMWwVadoJW9S1XB6PyR6nZvH9qR9AOSJVc6XcsCqeZSi1hZXBpkpPKwe8HEJlIlLuGVLqs+FocEQ==
+Received: from CY5PR17CA0049.namprd17.prod.outlook.com (2603:10b6:930:12::33)
+ by PH7PR12MB8177.namprd12.prod.outlook.com (2603:10b6:510:2b4::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.38; Tue, 10 Oct
+ 2023 09:57:13 +0000
+Received: from CY4PEPF0000E9D5.namprd05.prod.outlook.com
+ (2603:10b6:930:12:cafe::3c) by CY5PR17CA0049.outlook.office365.com
+ (2603:10b6:930:12::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.38 via Frontend
+ Transport; Tue, 10 Oct 2023 09:57:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000E9D5.mail.protection.outlook.com (10.167.241.76) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.22 via Frontend Transport; Tue, 10 Oct 2023 09:57:13 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 10 Oct
+ 2023 02:57:06 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 10 Oct
+ 2023 02:57:06 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Tue, 10 Oct 2023 02:57:06 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/55] 4.14.327-rc1 review
+In-Reply-To: <20231009130107.717692466@linuxfoundation.org>
+References: <20231009130107.717692466@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231009171839.12267-3-sumitg@nvidia.com>
+Message-ID: <93ee1473-19d1-46eb-a32b-57da0e51e24d@rnnvmail201.nvidia.com>
+Date:   Tue, 10 Oct 2023 02:57:06 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D5:EE_|PH7PR12MB8177:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37b3047b-2c99-4dd4-edc3-08dbc9774718
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: +cVYEKyzuq9B6C8tUhI9Ve31Sx0/asfrXhBvwG9AludeYdlr0Y/D2Wdn1Y9smgTlK72/y+XDNGHp/Xm3D9VJ5EXNLCF3c7JXUm9U6hhDTlHdNGuCxXTGqGWFZAnfDYD0aCZyvL2ksWSMy5OmfuF6fJuoERJRL5otQU2D2kux5IhIZRdjmzwp4ul0AN2KSgvCJY8tj9FS82rM84K8Ohl/KLLRuebQcmBWrpK2sDwTJ+eWMP5onkCRkA59dSnG/DqYvtXBXHQGgN0YF5DzgX1R24Df0NSvF38cwRoJcb8gvUtJzQj+KJq8mQkkTxBlvAqZc9qszYAdIyso3+nb+94FLmgrByAQi2L+6ATy9i7ZPoY5Lh3QIz2wpGh+B7aoVY2RUb0lvmn5vU0idCPN74tccy5384PXO9zqcGZjyDNma/EFxVq89PT4kdngkH/C3oOpKmi6F73ogkTamSean+qydemhmNTy0x7zlz9EaNTHsLKv94ID9jLD41QjBqRfmIllLQwo3Xv/TVwAlqQTYF7XLxXXEMs2/EB8PcvfxzdnUwHDyO2Ehpuv56kgoTx2RXf6jxLHyFSWI8SAVI7JiysPXZYaQR+G7r1S8MT2X5JSCbo2pL2iXkZnJF+FYex3f1+VYREOOf4gOCduYYq4v+Zv+BmiRqcjt397FA8Cm4+C12kqCTit/hfeCKN5frjgowGhpiPrOZD+5NXXJRAEoG2TuqYHCwisFjrSfrJgucBsgG9eOnmlg7u3F2jnhAeAk8lq+tRfqPD8/0Zr0c325heXd5nqBpwvZNkqT0Ju4LczWYU=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(396003)(376002)(346002)(230922051799003)(451199024)(186009)(1800799009)(82310400011)(64100799003)(36840700001)(46966006)(40470700004)(40460700003)(36860700001)(70586007)(316002)(40480700001)(6916009)(70206006)(7636003)(54906003)(82740400003)(356005)(426003)(336012)(26005)(966005)(47076005)(478600001)(86362001)(2906002)(7416002)(31696002)(41300700001)(5660300002)(8936002)(8676002)(4326008)(31686004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2023 09:57:13.3226
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37b3047b-2c99-4dd4-edc3-08dbc9774718
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D5.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8177
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Sumit,
+On Mon, 09 Oct 2023 15:05:59 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.327 release.
+> There are 55 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 11 Oct 2023 13:00:55 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.327-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-kernel test robot noticed the following build errors:
+All tests passing for Tegra ...
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on next-20231010]
-[cannot apply to linus/master v6.6-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Test results for stable-v4.14:
+    10 builds:	10 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sumit-Gupta/ACPI-thermal-Add-Thermal-fast-Sampling-Period-_TFP-support/20231010-012229
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20231009171839.12267-3-sumitg%40nvidia.com
-patch subject: [Patch v4 2/2] ACPI: processor: reduce CPUFREQ thermal reduction pctg for Tegra241
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20231010/202310101725.z21V2yNG-lkp@intel.com/config)
-compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231010/202310101725.z21V2yNG-lkp@intel.com/reproduce)
+Linux version:	4.14.327-rc1-gbb6db074be99
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310101725.z21V2yNG-lkp@intel.com/
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-All errors (new ones prefixed by >>):
-
-   ld: kernel/sysctl.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: kernel/power/main.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: drivers/base/core.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: drivers/base/platform.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: drivers/base/cpu.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: drivers/base/property.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: drivers/base/cacheinfo.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: drivers/base/power/common.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-   ld: drivers/input/mouse/synaptics.o: in function `acpi_thermal_cpufreq_pctg':
->> include/linux/acpi.h:1546: multiple definition of `acpi_thermal_cpufreq_pctg'; init/main.o:include/linux/acpi.h:1546: first defined here
-
-
-vim +1546 include/linux/acpi.h
-
-  1541	
-  1542	#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
-  1543	int acpi_thermal_cpufreq_pctg(void);
-  1544	#else
-  1545	inline int acpi_thermal_cpufreq_pctg(void)
-> 1546	{
-  1547		return 0;
-  1548	}
-  1549	#endif
-  1550	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jon
