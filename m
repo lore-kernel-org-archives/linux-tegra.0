@@ -2,116 +2,84 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF58CDB482
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179E0CDB47E
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 21:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235246AbjJKUoy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Oct 2023 16:44:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60190 "EHLO
+        id S233278AbjJKVEQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 17:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235242AbjJKUox (ORCPT
+        with ESMTP id S233133AbjJKVEQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Oct 2023 16:44:53 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89380C0;
-        Wed, 11 Oct 2023 13:44:43 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9b95622c620so44851766b.0;
-        Wed, 11 Oct 2023 13:44:43 -0700 (PDT)
+        Wed, 11 Oct 2023 17:04:16 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C93B7;
+        Wed, 11 Oct 2023 14:04:14 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9b2cee40de8so46259766b.1;
+        Wed, 11 Oct 2023 14:04:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697057082; x=1697661882; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1697058253; x=1697663053; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ekSd27xlwThNX/Q4Rmy9BVkLLGiyelkBChOxdtoZaAU=;
-        b=FGVm9aVVUYugQjczLngQUfeoly+pGzzyiO3dWpkw0RVKHDeAVlAwEKFU2i9w/i6j9J
-         GvUM3qq0z/ngbY5EBYEWMhUgQLHu3sy4CMdv6i9+cnJMbcEjTdAQlE8LSU0MOGmMJlo1
-         Cj7rDXeBBKt3gv/6T7ymmrB3r4VB2w7yRh6spcHlN9NEEgdS+v7d1PjqxakbUCQ3QmVk
-         Eb4HaJ8qDD52zDWb8cIV+d5qh1v96qXhiQ7EfVWZE6NkFkE44OeDAxcu9jq61PPrr2y9
-         4+beA32k0qRIvFQSh6okhgzuEusAGQ6aJBfn8f6nrHZ0NSzWzhcF0u6EUPdjdfvpkBTG
-         A3Dw==
+        bh=85+BYQFRFSvmZdXHyKa4CY/JoC3Hipg8cZZ4vbffeSE=;
+        b=FVLQFioCf5NYWP30pIUB4JRGNo1Me5z1rYfrnytKrxMI/N5AbgOkewtl7ZwEX9bMF5
+         w89KGG+paw7rIX9CKOJXSQACY6A9nbsVbcfQPkxuF5BfoujiMd4Sx//OzPcMxuPq+aEB
+         LmMdyVli9WqSATcFama0dmUdKxTuxfG9JzJWXCGwEgzF6+HsgOTcDDDASoq7EzAzjYHN
+         4hYt13MjZH3jHycpbTvFaAXbXBWPGoq5fhoV92hJL/nDDoUBmgFtDcMWwDFtSXk+Ncqk
+         SpHPELLipaQsanj6okofczqaKQRn4xqATpkia55nq3Qv8PHCU0hQ+NW+KjOEfTTgEQEM
+         KQDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697057082; x=1697661882;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1697058253; x=1697663053;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ekSd27xlwThNX/Q4Rmy9BVkLLGiyelkBChOxdtoZaAU=;
-        b=AQRwhGiR9dezXsKGaIEKHhxoW4Cv7hbM4T7Ljg7LrWK+4XUbOWi/T/O44Hu1iUEYYL
-         0lo9fU1UUCijhfqXa+WfiIZrU0vLI4iU2IvxofVosN16Eb7bGMhmH3mo1k0pjM8M8M3S
-         Q/r/25I+e0PRHSiXWV3I4KR0AONXCAQYr6ErIh8UqQFOdnjLOw77k0kQW25P0ewOt7WZ
-         6oG5/N0sqwnhVN81TArS8AEI26sSZGxS6TU+/iLzmauDr8h3go7ch5pA8KZTLvP7v9KC
-         9IulX+SyPzFzOONz9qP8Ub1P7JQTt8LXakRZResGbdV/PX5O0Ay6Zau+0HnE7HAhBoBW
-         C0Kg==
-X-Gm-Message-State: AOJu0YxHcPePw4uIrrXRl7lSyaYFRX5XC1sMy5NZvFg1AIU5IZbEptI2
-        r5a1HR3jRFRYDq7J4iddC18=
-X-Google-Smtp-Source: AGHT+IGs+QPMwkJTsynUOVn4VkRAiWxZMwrR441kv446Bslzb6MbVsgant46R2AnlsPNf3FCwukPnQ==
-X-Received: by 2002:a17:906:5a6b:b0:9a9:e3a9:af02 with SMTP id my43-20020a1709065a6b00b009a9e3a9af02mr20192152ejc.8.1697057081631;
-        Wed, 11 Oct 2023 13:44:41 -0700 (PDT)
-Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ov19-20020a170906fc1300b009a193a5acffsm10125559ejb.121.2023.10.11.13.44.40
+        bh=85+BYQFRFSvmZdXHyKa4CY/JoC3Hipg8cZZ4vbffeSE=;
+        b=Mbk4b5ApQAcXoifZcnWMpQX8gFG4sPdrl2UbLlbWm/VsO8ITEmeMHqtprZTYw+HswJ
+         iBzIC7/d58/OweR0zY3E1kEI7LYBYTBnui5lXz3UoPdEuVe03Z/P957ml7tSQv9SaCqA
+         UJ5bXT4kA1yZnb+L5GlPNozD555xOONCeHcJv+O5OcFGvn3zCf5I5ITqymoTfyxUQJTe
+         XqT+6WyXSYc9xSiLD/AhZGId6x4JbRaFE9eSxRFn8M0C8pUkOzJeF4lFYayCYzIp/sWe
+         7C64rvKh0/0wXjbua7T0S0tu6I4aaB/LvuHkCik836VFBHi3/PHYnbYJ5CswF8n3N3qt
+         B+TA==
+X-Gm-Message-State: AOJu0Yzre9kCjBjmlny4k45e1GFXiStXGjqtkuPziN1U35Vl+UM8ax7h
+        04eY8y6OfMMWq2HMlWsDXqY=
+X-Google-Smtp-Source: AGHT+IGYaWlBmZ4iitWU8HxMcch2DlFXQK5FbRl5zPCnhC6n5R7/if7Ci2j0Cffbx+l9VuXPfCVrhA==
+X-Received: by 2002:a17:907:9491:b0:9a5:962c:cb6c with SMTP id dm17-20020a170907949100b009a5962ccb6cmr18457404ejc.31.1697058252720;
+        Wed, 11 Oct 2023 14:04:12 -0700 (PDT)
+Received: from localhost (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 17-20020a170906059100b009929ab17be0sm10169412ejn.162.2023.10.11.14.04.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 13:44:41 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 22:44:39 +0200
+        Wed, 11 Oct 2023 14:04:11 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Johnny Liu <johnliu@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] gpu: host1x: Correct allocated size for contexts
-Message-ID: <ZScJN6I2zdO5Jeum@orome.fritz.box>
-References: <20230901115910.701518-1-cyndis@kapsi.fi>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        Deming Wang <wangdeming@inspur.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: tegra: Fix a typo
+Date:   Wed, 11 Oct 2023 23:04:08 +0200
+Message-ID: <169705815168.1498101.14814421385743433176.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230912121030.1759-1-wangdeming@inspur.com>
+References: <20230912121030.1759-1-wangdeming@inspur.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zsqpP2XHutRMmF6h"
-Content-Disposition: inline
-In-Reply-To: <20230901115910.701518-1-cyndis@kapsi.fi>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---zsqpP2XHutRMmF6h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 01, 2023 at 02:59:09PM +0300, Mikko Perttunen wrote:
-> From: Johnny Liu <johnliu@nvidia.com>
->=20
-> Original implementation over allocates the memory size for the
-> contexts list. The size of memory for the contexts list is based
-> on the number of iommu groups specified in the device tree.
->=20
-> Fixes: 8aa5bcb61612 ("gpu: host1x: Add context device management code")
-> Signed-off-by: Johnny Liu <johnliu@nvidia.com>
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/host1x/context.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, 12 Sep 2023 08:10:30 -0400, Deming Wang wrote:
+> successfully, not 'succesfully'
+> 
+> 
 
-Both patches applied, thanks.
+Applied, thanks!
 
-Thierry
+[1/1] firmware: tegra: Fix a typo
+      commit: bde3ce7257ca68120f0d8db96b3df5bc14f8245d
 
---zsqpP2XHutRMmF6h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnCTcACgkQ3SOs138+
-s6GZEA/9EdvqUmfzSRbzjrdgiT88qxR7YL/IsDRoy2WAc4H+VIn5GdsUOrrhhvOy
-417AETxf+XE82vrtEJtLDcrDCO96pyt0BvKySl1nuD1VS/67s4c6gAS5xXd4tn+/
-Az7rKc0h/7Ut15oo991yUldkqNZG1CNJvLdBfeeALQQswxEPQmwtJpxK4I8ze2HD
-UOU5i6QRJDPhq8F+yD6mzX86Sb+yAplPw9dLDDzE7k+KIX2ccgLjtwy0D03fpHq0
-dnjfJiSiPdhZNaD6rWBtqtLOz4+rg9ADtwJxG0mWnTfZopfdUe3Od8LCibBmcaiM
-d6sCnC9WG2PtKc1+dfscs/LRq7yvQh35K0Jh5Y8NY4/YoQh4rZB1MtvP7HknFes3
-arm3dLaQjNYXOJxY2IQBAuniATwtxxp61aS+vO/hgiTShXwiPTz8ZRm5rAxwX8Xj
-Zb2xPOwQiBD8HzAwuddwqFuQ//0byWE6HkJXm7L5cEK3d9yvSedIEau4uYilT8aw
-/NaCme/LVVs1YTrMUtwkGgj9zxs5fikzfNE3ErTZZXFLJPUxJknrVPN9VZ8NcHsh
-N/wDrikDp0bE9GujnEgaWMhfkaOGcEOsHewtFZkB+rN9TeZ2KY1G8eJMqV15MWrS
-dksIMqcpjU0d9Oc8M9GzIANN1dgS8GTNieAOnWtwLHrj4fDGGcs=
-=cyGi
------END PGP SIGNATURE-----
-
---zsqpP2XHutRMmF6h--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
