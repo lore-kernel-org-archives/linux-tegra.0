@@ -2,106 +2,111 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C064CCDB47E
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787F1CDB47E
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231226AbjJKUWO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Oct 2023 16:22:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40008 "EHLO
+        id S233417AbjJKUYp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 16:24:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231163AbjJKUWN (ORCPT
+        with ESMTP id S233279AbjJKUYo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Oct 2023 16:22:13 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7BE93
-        for <linux-tegra@vger.kernel.org>; Wed, 11 Oct 2023 13:22:09 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE1E7C433C7;
-        Wed, 11 Oct 2023 20:22:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697055729;
-        bh=oEPFEr69GOFnlvxRi+OQJiP0bTLBwUD6RP2Enyu8lR0=;
-        h=From:Date:Subject:To:Cc:From;
-        b=peocWnSImSksa62GSPAn85I3k+ZvLdOPgLVoQt5Vuy/sPj9YK66RvBb43iKxBOHw3
-         cTYd37njxwYGCpuF/kg+f3j13Ac7nBoaxAPKxrwoxX3sjmEn6nNRqGEvJS7KinK40l
-         /Jupky0h+QKMjw3UNe41uZ5qN/0C/xdymc0SIB+ijTje5xbC0zb9h8uwmOi6hy2Lyf
-         m1QSEDD3/AMXmF5nRmsoTUoYtmF2e10dVbo/NkvAjZMH4Sx+ygoFrNajvGY1KVjYhB
-         XW6GNOoURwhir5Ko3mFOsF3A2/IOixOk0bRvqiezLMVcyJ27s4npOofcwqAANBZz/g
-         o8Wrxk/tqXgFA==
-From:   Nathan Chancellor <nathan@kernel.org>
-Date:   Wed, 11 Oct 2023 13:21:51 -0700
-Subject: [PATCH] ASoC: tegra: Fix -Wuninitialized in
- tegra210_amx_platform_probe()
+        Wed, 11 Oct 2023 16:24:44 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE0891;
+        Wed, 11 Oct 2023 13:24:43 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso38372366b.1;
+        Wed, 11 Oct 2023 13:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697055881; x=1697660681; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uzvkbhkLaMUPqU7HMTRyBjb4pmEB3My0Qu8sb0+YfiQ=;
+        b=RnomGxJ3ysZqyBOEQ8DbLeXEJaLOvy3pQaObqvM0J/UwOgZoP/KujThEwd2QlBie1w
+         XhTsFHyN6bk6Q7PRSxsqTMJX4qDb9T0ppdYjiPk8+O9oVapFKST9e5WvYiFvVTrnpnYh
+         da2rCsthDyJP39X16ElauiJuXuWxbhAxbOWqe5r77NAxts01GPJK0DuLoUl9nGDiQc5U
+         M5rl+qhKvfRPbMBRaTcgPj+CFXZsFFrBfZiE4tZ7LeN3EchCwk3vLdQJK/0H1olEOeQL
+         6ymN6bXsZeThwckyjjXTz3AT2yGBdpLXmQDN5DOpa6nzH+EETesFZpjeFGZKQAbhZKdO
+         /r2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697055881; x=1697660681;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uzvkbhkLaMUPqU7HMTRyBjb4pmEB3My0Qu8sb0+YfiQ=;
+        b=t+Scl7bHeD/9nGTAEfLll34SLc7YNl5MulEiUuH+beM0ILoJF4PKUky1U+yk9G0Sjq
+         /iOSEal2NdO/Iv+9Tx76D9l+6bxOkAIuzY/n8VtQjT3Fpi+MdSaiGDaUbaVt4lLfJZs3
+         nCriWCwWFkYHC3IffBndpzU7k1iGrlZz31ayNpjfVATeLToMatAse9YfZD52vZ/NDrRg
+         93WC3aRwe9b9Hh849Q2IkBJn6dv9GF1EflwzftqX2WDFKQEhpJKYeX52klLENmPwh2Rg
+         pWeWMF9xxhu2DZdecphkvwN6EoWKq/oTln1wzTpgwBDWIMk2/yTdpsvvHfEdGXjEL+uD
+         fQMQ==
+X-Gm-Message-State: AOJu0YzWxZzhgjf0+CPKHjGIpBux+vbWO9fKiHHM2br7oXiKC1gSaD8F
+        TZYrP7EYiQyQHUH7HBHe5PI=
+X-Google-Smtp-Source: AGHT+IGygcDlYEvQCHkHqj9FwQIkNeS15ycoNc0YrqsIvUTmjvBthYTots46Xd0hRCc9tkEJT5LYaQ==
+X-Received: by 2002:a17:906:53c6:b0:9ae:6ad0:f6cd with SMTP id p6-20020a17090653c600b009ae6ad0f6cdmr19804679ejo.24.1697055881232;
+        Wed, 11 Oct 2023 13:24:41 -0700 (PDT)
+Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id lf8-20020a170906ae4800b009b27d4153c0sm10326077ejb.178.2023.10.11.13.24.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Oct 2023 13:24:40 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 22:24:39 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-input@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: tegra: Use device_get_match_data()
+Message-ID: <ZScEh0j0SlOZFcWv@orome.fritz.box>
+References: <20231006224432.442709-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231011-asoc-tegra-fix-uninit-soc_data-v1-1-0ef0ab44cf48@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAN4DJ2UC/x2NQQqAMAwEvyI5G2grIvgVEYlt1FyqtFUE8e8Gj
- zMssw9kTsIZ+uqBxJdk2aOCrSvwG8WVUYIyOOMaa6xFyrvHwmsiXOTGM0qUgiqnQEWdD2ZeWkN
- d40AjR2Kd/QfD+L4fw2s7k3AAAAA=
-To:     broonie@kernel.org, robh@kernel.org
-Cc:     lgirdwood@gmail.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, ndesaulniers@google.com, trix@redhat.com,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        llvm@lists.linux.dev, patches@lists.linux.dev,
-        Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1815; i=nathan@kernel.org;
- h=from:subject:message-id; bh=oEPFEr69GOFnlvxRi+OQJiP0bTLBwUD6RP2Enyu8lR0=;
- b=owGbwMvMwCEmm602sfCA1DTG02pJDKnqzB88WXaLHs65y1J1srv9tdnW2KAIqa2lLzVmTw+t/
- aXNcU2go5SFQYyDQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAEzkVQ0jw4/wh6eyfp06I+s8
- L1XEO+GPR/N+s5y60A0X2YoMwxjeizD893I9Hef6XIDJYtaaUOO7zObp1vWV/Esu6ua4v7UT91J
- jAAA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EpZWWdJP6+/QOGEM"
+Content-Disposition: inline
+In-Reply-To: <20231006224432.442709-1-robh@kernel.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Clang warns (or errors with CONFIG_WERROR=y):
 
-  sound/soc/tegra/tegra210_amx.c:553:10: error: variable 'soc_data' is uninitialized when used here [-Werror,-Wuninitialized]
-    553 |                                             soc_data->regmap_conf);
-        |                                             ^~~~~~~~
+--EpZWWdJP6+/QOGEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-A refactoring removed the initialization of this variable but its use
-was not updated. Use the soc_data value in the amx variable to resolve
-the warning and remove the soc_data variable, as it is now entirely
-unused.
+On Fri, Oct 06, 2023 at 05:44:32PM -0500, Rob Herring wrote:
+> Use preferred device_get_match_data() instead of of_match_device() to
+> get the driver match data. With this, adjust the includes to explicitly
+> include the correct headers.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/input/keyboard/tegra-kbc.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 
-Closes: https://github.com/ClangBuiltLinux/linux/issues/1943
-Fixes: 9958d85968ed ("ASoC: Use device_get_match_data()")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- sound/soc/tegra/tegra210_amx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/sound/soc/tegra/tegra210_amx.c b/sound/soc/tegra/tegra210_amx.c
-index dd1a2c77c6ea..91e405909e0f 100644
---- a/sound/soc/tegra/tegra210_amx.c
-+++ b/sound/soc/tegra/tegra210_amx.c
-@@ -535,7 +535,6 @@ static int tegra210_amx_platform_probe(struct platform_device *pdev)
- 	struct tegra210_amx *amx;
- 	void __iomem *regs;
- 	int err;
--	struct tegra210_amx_soc_data *soc_data;
- 
- 	amx = devm_kzalloc(dev, sizeof(*amx), GFP_KERNEL);
- 	if (!amx)
-@@ -550,7 +549,7 @@ static int tegra210_amx_platform_probe(struct platform_device *pdev)
- 		return PTR_ERR(regs);
- 
- 	amx->regmap = devm_regmap_init_mmio(dev, regs,
--					    soc_data->regmap_conf);
-+					    amx->soc_data->regmap_conf);
- 	if (IS_ERR(amx->regmap)) {
- 		dev_err(dev, "regmap init failed\n");
- 		return PTR_ERR(amx->regmap);
+--EpZWWdJP6+/QOGEM
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-base-commit: 59825951707eccf92782e109c04772d34fc07eb6
-change-id: 20231011-asoc-tegra-fix-uninit-soc_data-fcd0bf50a732
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnBIcACgkQ3SOs138+
+s6HPEQ//WdVN2OUKGkF3D1pmcNQrs+kbsWE+RlouD5B/2En6FyPJuCy4nTBaWJhU
+4PvIIpCvEm7YD+vaO/D01a8cw/pC4bHTgsgsiGvRaJPnaX9ypzldeWjS8FW5hIgc
+zLaUbk0pDfw85Nix0Ru0/ApueorU4PkpNc93LrTwsggpDAuqjTMXZuzHtr9z6Bqb
+82IDUE5qEl8dE4kDdoX4oGWMZEKIrCSvGDUOPwNsLtF8nV2EUXRkW9PdNQAcj3Ty
+e+zk3mje2GDpsy38aXfOZcSXNWt2Jk6sVppa8T0PE9e/BNY6Vp4eo6fLJh3RJdjZ
+601g6oX+It3yBhm+4OrORgMuDu0IniMlABX636LYVS+oopQr9VXG6+QDTHkjcgE+
+1lU8HxlJ+/V+/Tk6aEwztHl42i3BcbNqGlwpiAc6ZtCHXOGcoYklfvVjMPY9kKzN
+JZevK8qnzDdG9xiwOwWBGhBsiY0jfaKeOyrRVdR4/aHFC4JtITrLyhbYVxG4u0uI
+vCLe/VQbrztt21lLz4lm4yekglOvupPH3NNPBf5aXdycRuZRrkFetf2I2aU9NpB3
+weiM8Pb0sHqYdwRCNxwKHrTh3vquAPiqe3ZZD9uKI93Bv0FTcu4iw1W/dq1A/NIH
+DWiop4xR28fsqhxZw+MUxpKXwA2vmeInmRz+FOTtPUuGLbNFejE=
+=LrBo
+-----END PGP SIGNATURE-----
 
+--EpZWWdJP6+/QOGEM--
