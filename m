@@ -2,90 +2,137 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFCBCD6E7D
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 15:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD6FE92FD2
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 16:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232691AbjJKPgu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Oct 2023 11:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38128 "EHLO
+        id S232830AbjJKQOc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 12:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbjJKPgu (ORCPT
+        with ESMTP id S232467AbjJKQOb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Oct 2023 11:36:50 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0F792;
-        Wed, 11 Oct 2023 08:36:48 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-66afd39c8edso31199586d6.2;
-        Wed, 11 Oct 2023 08:36:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697038607; x=1697643407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3d70RV8D3q4Lw0yJT/tGgP8JEXxsa+Fuj9xKAysUS94=;
-        b=GJJ3GkeJIbVcj9S9gKeyxcUcrTIrt4F1xmKIMCuR6iFFiZCuSkCVy/+0YXx6q8Wn5C
-         ikMekwNuV3AKCUx1pvpedym6dq6WxYDDYcsAcspRLvTFu/T4rf4JogLiN4PAPiAvGXJH
-         oCf1lV1mdCIII3qKo6DmBlowhkZqoSz7JOMfht9hsLPD+aw4NvjM8ELB61wZrMXb9NeE
-         6tGobG8pCHld4xtK4mAzJPM6+VehgGLQCffcSUOuw6cwj569M3hW3kutJfW1hC80vylD
-         3ciM7YKfqSLRFeydfvaSIuuLscCOdvwgE8g8RSEdpTgcZH9K/BxsaPxq9qG1URYGG5CO
-         juFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697038607; x=1697643407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3d70RV8D3q4Lw0yJT/tGgP8JEXxsa+Fuj9xKAysUS94=;
-        b=jSAF6r36VpUHXY4SUwTATGRw5ViHh1UGILlEQFlb3i5sqt3v4s1ZnR9wczo5UAY82w
-         JC3Ztv90dJgwTFDsmn9e9o6lTPMTQ6r9qgvlD9K/BJpu1IN8mTfpYnWSDoQQIfoCp4P5
-         iFMRCUxEuIR5Dggh5zpJRzP/zIaMa1DbvLzgdochGXy4iHRuYXuuNnL7oSXV4ZXVAc3q
-         fVqw1EB8wgNmkAqj6uBf913Lfumz036cnxihX8Y3oKJNbMDAiQSsaf8iORRELvwullwC
-         LcrnuXayK2/Tsbs1XdUqokpFcvrp2dyzf1S1PAh8pgb6+q/z2Kd470B/gX9lwJnE/qFR
-         /VfQ==
-X-Gm-Message-State: AOJu0Yx0VDA7rnCLLSGjDQfSfoU5x5RVrMyGKBX/mR4moxI8pWpHgULD
-        9uM/Sg3qMtULDmSllxcpQPSMvSyY/KHl25iteFrtQVWzTYGqvA==
-X-Google-Smtp-Source: AGHT+IFU1SyCP9HwZEqNMLh2P+CII7WW5qTkTr5uJLytAwl8ChOtAUnXs0neArcgm7RUqu0fppbZXGkflHXFbWQDwrI=
-X-Received: by 2002:a0c:8cca:0:b0:65b:1802:4f3c with SMTP id
- q10-20020a0c8cca000000b0065b18024f3cmr18358578qvb.21.1697038607513; Wed, 11
- Oct 2023 08:36:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20231011093412.7994-1-kkartik@nvidia.com> <20231011093412.7994-2-kkartik@nvidia.com>
-In-Reply-To: <20231011093412.7994-2-kkartik@nvidia.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 11 Oct 2023 18:36:11 +0300
-Message-ID: <CAHp75VdBh0k_XU3GG99EvgLOztOFWn87QXknpokcDy=29yu=Aw@mail.gmail.com>
+        Wed, 11 Oct 2023 12:14:31 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2085.outbound.protection.outlook.com [40.107.244.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C5CB0;
+        Wed, 11 Oct 2023 09:14:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fHE2HzGWq4IKZAp9wpMoE+PH6V39kqAvcSqEkwUoix1qbyS4IfSEOTec7Urf7bHtBbg3ivRSspbp0jdmICQiUEYJFLqyxJ3pZplvzl5UTiO2JjqzHvTTyBN1No3YuvRuKFefpimVU5d50ZkIz02gGzx7Z03vGA0zs+m540siHQeVmmPpz00r44NiStWxLhwUp3YFna+lQmn29QOY7BLMJwzctnL8ufKh6o8H37XnhmzeoKVvSbNtuslNqF1IcuzOk5WWOQFB1DD6Gj8uzwwbfCpEOrvRafVFWDWUSszsv56nvv++PncWOUhHELSugxGK/vCrrun0uaPBeNomjL4Zvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DxAr48jZWSkVW5eya7hY1V7YgwubjvBsjmNdEpK6cL8=;
+ b=nx0JSRlEQRJ0qgMJFw/D7KulhhaV/K7eh2e9XP1INWlecIiZBQTUgmD0TB9EC3np3KWWtjfFnHaTjUoHfGjAal/5hL3k5d54wgSUOMp0FOHz1GPt6+hinKw6dQYUoAo4ngQ6t6kI8nSiiwh1kpZlJtpJlTMvbRdbuRc2g7SviLEVFmIyB2bQr+FF0W26hmowBdrALD3YuIJcXt2Ic/28wTK3mUyL9VHWu9hJC/5yxGViAtnirqQkBsYWpi8ucQNoOMWvxW0U9VBp69/X8rsR55qn0fMDrmVisq3VnJve4UCQvsE7hDQhvVnKgKm5N3fgmB2ZZxrW4S7X/ujOj9Bp8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DxAr48jZWSkVW5eya7hY1V7YgwubjvBsjmNdEpK6cL8=;
+ b=kSqrEGZ9KjFWRnA6Y9Ei5qUBgUteRwNEkm2VZ8oc2aI78QE2fI780QsMLJeDv+e5qPd+JuzqK57+KDA5+XGhLvswzUHOP43pGp1R4aUBUJxbWJoMdyZsl8icHiUrLeAMqUaG8EewA3Bz7z2kAmv2Il6wqo97P4lBom/SCByhjKVQJ/CeI9HtzeE1SSWrve4SMj9s3Q3hS78gaog5qhunJDGGoTRh067M5jPGlZGHNNwCr3M6G8hfPRQn16k14LRKrRZRRxEkWNm5Q4Dm8X4N/BolrJc4xjAzfvzO+VfjwTST90DxmOvZHFFPHeTxTqC4rCWCWclCsYvkbgil2dt4Cg==
+Received: from BL0PR03CA0030.namprd03.prod.outlook.com (2603:10b6:208:2d::43)
+ by DM6PR12MB4299.namprd12.prod.outlook.com (2603:10b6:5:223::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.37; Wed, 11 Oct
+ 2023 16:14:25 +0000
+Received: from BL6PEPF0001AB56.namprd02.prod.outlook.com
+ (2603:10b6:208:2d:cafe::6f) by BL0PR03CA0030.outlook.office365.com
+ (2603:10b6:208:2d::43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.28 via Frontend
+ Transport; Wed, 11 Oct 2023 16:14:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF0001AB56.mail.protection.outlook.com (10.167.241.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.22 via Frontend Transport; Wed, 11 Oct 2023 16:14:25 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 11 Oct
+ 2023 09:14:10 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 11 Oct
+ 2023 09:14:09 -0700
+Received: from localhost.localdomain (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Wed, 11 Oct 2023 09:14:03 -0700
+From:   Kartik <kkartik@nvidia.com>
+To:     <andy.shevchenko@gmail.com>
+CC:     <akpm@linux-foundation.org>, <andy@kernel.org>, <arnd@arndb.de>,
+        <frank.li@vivo.com>, <jonathanh@nvidia.com>,
+        <keescook@chromium.org>, <kkartik@nvidia.com>,
+        <linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-tegra@vger.kernel.org>,
+        <pdeschrijver@nvidia.com>, <petlozup@nvidia.com>,
+        <pshete@nvidia.com>, <robh@kernel.org>, <stefank@nvidia.com>,
+        <thierry.reding@gmail.com>, <ulf.hansson@linaro.org>
 Subject: Re: [PATCH v4 1/8] mm/util: Introduce kmemdup_array() to duplicate an array
-To:     Kartik <kkartik@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        keescook@chromium.org, andy@kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, petlozup@nvidia.com, pshete@nvidia.com,
-        ulf.hansson@linaro.org, frank.li@vivo.com, robh@kernel.org,
-        stefank@nvidia.com, pdeschrijver@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-mm@kvack.org
+Date:   Wed, 11 Oct 2023 21:43:59 +0530
+Message-ID: <20231011161359.1368-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAHp75VdBh0k_XU3GG99EvgLOztOFWn87QXknpokcDy=29yu=Aw@mail.gmail.com>
+References: <CAHp75VdBh0k_XU3GG99EvgLOztOFWn87QXknpokcDy=29yu=Aw@mail.gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB56:EE_|DM6PR12MB4299:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15bf3596-9416-450e-7a91-08dbca752328
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: WSGWuG7PN5iPck+UH+SeUUhs1vsv4Tm7LECToTuhFu46e5E8aJZjmaVIPF4v+q3OzldgJFxl9ErEQdlWIEOU8y6Ka6VPL4GmCEzVrCQSJqCNe0oS/9fQGHi51aVKnlZfHlD/RtY0w5PBUQbidz6/jzDmMrqxAVg2ZKJqib30VnlLxpmQXuTqGon/+QAHftlMUDXnOmzw+F7DYX6+R1CPl9BqjAAyfVptLZKkv1XQ1cDNToJsgkmgG41iO4r4VYlK+TkwGr20sH/hoiSLXlkCmobw5lghJlMjLR/bZ6vUnjzUmjJQ8fcmsNM87PZ13e90FLQ5WPoDKTnMwepXOXuGuUYIpzytZLwJ/rs03kEKV+Zf5YsQAdUNfhxywgZ2aNCWlNcuZOodSCQM5Mqp60qxRNBGPRzAoN7l7/9cpLuJsc73KgdMmPlLBccp6+jYdNsJWCG2havEgs8BP/Qt/MTIvwx1Bod0Z80MEpj7k+6p9pK3VqpUY/AptEr4cr8K8rK4uFkjeqhW1JjAkFOV0ib6gpgWDuosBTN6LJag0Io2Vxs0f9+nYOiVP/DfgdHUANxsyhZJw3qhk334jvGnivQoSgYZCBgVfjvSFv1f89nrjUXD7vbp8WNiydWQ1Vdgvb6eTA4cLmUzIsqIiPF7yHOTNeTzot21hR2+wjcOOVdYz0kFvwYOWzbkjIr/FWOsVK9BZreoKajMr3DF9y+hkBaYGdINjRzi9wSZ6AbqC+2YrJo+HchaBYfn42r1NlZcq7lO
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(376002)(396003)(136003)(39860400002)(230922051799003)(64100799003)(186009)(1800799009)(82310400011)(451199024)(46966006)(36840700001)(40470700004)(40480700001)(4001150100001)(478600001)(40460700003)(426003)(336012)(2616005)(83380400001)(36860700001)(47076005)(1076003)(26005)(70586007)(54906003)(316002)(6916009)(70206006)(7416002)(4326008)(8676002)(5660300002)(41300700001)(53546011)(2906002)(4744005)(8936002)(6666004)(36756003)(356005)(7636003)(86362001)(82740400003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2023 16:14:25.0709
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15bf3596-9416-450e-7a91-08dbca752328
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB56.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4299
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 11, 2023 at 2:17=E2=80=AFPM Kartik <kkartik@nvidia.com> wrote:
->
-> Introduce function kmemdup_array(), that will copy `n` number of
-> elements from a given array `src` to `dst`.
->
-> On success, kmemdup_array() returns 0 and copy the elements from `src`
-> to newly allocated array `dst`, it also stores number of elements
-> copied from `src` array to `dst_count` parameter. On failure, this
-> returns a negative integer value containing the error value.
+On Wed, 2023-10-11 at 18:36:11 +0300, Andy Shevchenko wrote:
+> On Wed, Oct 11, 2023 at 2:17 PM Kartik <kkartik@nvidia.com> wrote:
+> >
+> > Introduce function kmemdup_array(), that will copy `n` number of
+> > elements from a given array `src` to `dst`.
+> >
+> > On success, kmemdup_array() returns 0 and copy the elements from `src`
+> > to newly allocated array `dst`, it also stores number of elements
+> > copied from `src` array to `dst_count` parameter. On failure, this
+> > returns a negative integer value containing the error value.
+> 
+> Hmm... Why is it so complicated?
+> 
+> Can it be as simple as
+> 
+>   return kmemdup(size_mul());
+> 
+> ?
+> 
+> --
+> With Best Regards,
+> Andy Shevchenko
 
-Hmm... Why is it so complicated?
+The idea was to validate the arguments that are passed to kmemdup_array().
+But I agree doing so complicates things here.
 
-Can it be as simple as
+I will update this in the next patchset.
 
-  return kmemdup(size_mul());
-
-?
-
---
-With Best Regards,
-Andy Shevchenko
+Thanks & Regards,
+Kartik
