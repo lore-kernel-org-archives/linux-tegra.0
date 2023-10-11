@@ -2,192 +2,243 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B91CDB483
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 21:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F60CCDB482
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 21:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233476AbjJKVwF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Oct 2023 17:52:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55862 "EHLO
+        id S233743AbjJKVxf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 17:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233451AbjJKVwE (ORCPT
+        with ESMTP id S233451AbjJKVxe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Oct 2023 17:52:04 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FE7B6;
-        Wed, 11 Oct 2023 14:52:02 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-53b8f8c6b1fso636736a12.0;
-        Wed, 11 Oct 2023 14:52:02 -0700 (PDT)
+        Wed, 11 Oct 2023 17:53:34 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9CD5A9;
+        Wed, 11 Oct 2023 14:53:32 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-99de884ad25so44563866b.3;
+        Wed, 11 Oct 2023 14:53:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697061121; x=1697665921; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697061211; x=1697666011; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RGWAGi9aMCPyuKeoJaWLmL66Fz2iEdlNcFmwJ40bl5A=;
-        b=ehSEptr096Rhb1gyrHcfBZyV3OQ8VFxomxpUqMHv8UAHu5j68hXyjAWf6HbM5R+Ztl
-         AxUhr+qnmI9vtYnOHD58HZBvYRcgoujkhbjum0vAWJHAybklDkMqvVF9DqOAar/kbF8a
-         V5SI+VQ4q34qoYHbu7sZP9WsqyALLJj3wes58Ll4siNdDLvPGq9JFwfbhgniSWjzPgN5
-         q0nYi8Su7nGk/Ve2uY689LVxNHbXIv4+SDqipTwWBE6XiLIW67VIawm0O7IXh1xwXT6N
-         teGJ8UIjRPedAj959GNT0RIQUjvMnOiiPPAEcMwTFZj6mBqQAcWObq0SFPkiNFECCNk1
-         SehA==
+        bh=Wk61Oui34cYd2D497FSomUJuk6Ez3oD0g+MbS48c0OI=;
+        b=FFAvW+Agz6iXrjmajmZ9N5OHh8wiqGQOkhbdkbrpSPd8jKBFSLjKZcHcKsNEZ8snc2
+         MmmPuUbJDsXGLpT5982UyU+L7T+f4OG/LzXbS0apf6WEfPBZ+WSqTV1Z+uRT+3iYFj4F
+         3kVgb/3exz0YUP/2e/pePY5EalOxBf1r/aT8wPsytQVp63Ey5EAhR8pESGpts/HIGyB9
+         Vc5NSqOB1bIx6BwyIZCJfg6a1c+lGhGm8fDvU9pnM+o13+kJfZT+d1HZnfI2t4JtCmIM
+         1I1JKyEMN3CLa5kV2JNzltpYjVZHMmomBbNCVfZv6cUAvp8DHZHHShFitHHFzpcgbS3d
+         2iyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697061121; x=1697665921;
+        d=1e100.net; s=20230601; t=1697061211; x=1697666011;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RGWAGi9aMCPyuKeoJaWLmL66Fz2iEdlNcFmwJ40bl5A=;
-        b=SnWkrixnKYF6nA7U+PO7VZKhgv0ElZbkiRJTUfGRuWF8pZl39r0fOjAIb4dgUHHRhc
-         geQV1lnVk7qMJMHmOSh4bCqaJD/FTu7+LtfvQ3epEkEXFWjc1N5NwcjrJusUgyj4s3mw
-         fIz+z2dzrLtWGt+FH0dYT0foT4+6poBSYG+/3pq+hB5hR1R0b2A2ApuG+HpJQMBpYLOD
-         62swZkh52BIX80eGVeDZj3tDjohLs9uBSx0rMsLP3ZUcZI33zVB7AMLAW9U0TrQpSM8S
-         bSS0ksWBX7mJrA/a8Yabe6+lSDeNuDEAnOc1L9K3doD5OnymLlMSu5merwqAFSi0j7Aj
-         cZtw==
-X-Gm-Message-State: AOJu0Yw6g8HrkbM+zfe0De4M75EHZTu0Hby20roNV6gQHjocMwxKjxCA
-        GjQ9abSxU7He9B8+hF/cMlY=
-X-Google-Smtp-Source: AGHT+IHzPJnBdOAuLleYma3VV+2TfQ4keMK3bhCuRcQNi5bPwAPsmhyQc0Ajn85f19/pczj64Mrsbg==
-X-Received: by 2002:a05:6402:22d4:b0:53d:bc68:632e with SMTP id dm20-20020a05640222d400b0053dbc68632emr2933667edb.4.1697061120717;
-        Wed, 11 Oct 2023 14:52:00 -0700 (PDT)
+        bh=Wk61Oui34cYd2D497FSomUJuk6Ez3oD0g+MbS48c0OI=;
+        b=icRN00sgWneHMFR2LY5T70Jfepu5EF9vKE7LBrBN3OL92Md2i7l6R7p9Rc4Co6OiDe
+         GBdUiy7wwJs6rqvliy/xR9q6oubSU7ZfymOPDnB092ys6HUAFx1JxO3S1Szr0WiyiIQh
+         UDl4ptTWw7C6d9YJEdOhgmbnnLWAnJwTmXwv1p6L3gPrjwrCd0sa1KTCxxghoasc6pRr
+         Okv8jJIw6A0tvbfPlRk3y0gpnA8hSKpHAUgzGF/BGpxE9mGMpnlpf38ijELpi3Ex6q3B
+         q376gdy7K2uz/NIz0GxOuxZI+uBD1+19Jpl67Q0UDFrgiOH75hcS9mR/hKwseb5fK+hr
+         29yA==
+X-Gm-Message-State: AOJu0YzFiCGnj/XWKfUjkJlFnCdFSSFdqDjRjnneuya5MPmrI9pDWyPv
+        BnwC3lDIf5mnf+kkLnXAQCQ=
+X-Google-Smtp-Source: AGHT+IGVnAq29JMbxyfSmfj4SDVv6KVOlkj+3dLI16KTIn3E3zl7iFe7YS/QTndQsKuTvjp+QDrNwQ==
+X-Received: by 2002:a17:906:209a:b0:9ae:3f69:9b89 with SMTP id 26-20020a170906209a00b009ae3f699b89mr21354779ejq.7.1697061210928;
+        Wed, 11 Oct 2023 14:53:30 -0700 (PDT)
 Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id fd10-20020a056402388a00b0053db0df6970sm1763333edb.54.2023.10.11.14.51.59
+        by smtp.gmail.com with ESMTPSA id lc16-20020a170906dff000b0099c53c44083sm10185272ejc.79.2023.10.11.14.53.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 14:52:00 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 23:51:58 +0200
+        Wed, 11 Oct 2023 14:53:30 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 23:53:28 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Peter Chen <peter.chen@kernel.org>,
+Cc:     Peter Geis <pgwipeout@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Geis <pgwipeout@gmail.com>,
+        Peter Chen <peter.chen@kernel.org>,
         Thierry Reding <treding@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] usb: chipidea: Fix DMA overwrite for Tegra
-Message-ID: <ZScY_uXsxamjnfPC@orome.fritz.box>
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] usb: chipidea: Simplify Tegra DMA alignment code
+Message-ID: <ZScZWFJCCMr7oWwX@orome.fritz.box>
 References: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
- <ef8466b834c1726f5404c95c3e192e90460146f8.1695934946.git.mirq-linux@rere.qmqm.pl>
+ <a0d917d492b1f91ee0019e68b8e8bca9c585393f.1695934946.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sglXe+Dqwf9Z+IJZ"
+        protocol="application/pgp-signature"; boundary="/ARsLMUmfva5Ak1M"
 Content-Disposition: inline
-In-Reply-To: <ef8466b834c1726f5404c95c3e192e90460146f8.1695934946.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <a0d917d492b1f91ee0019e68b8e8bca9c585393f.1695934946.git.mirq-linux@rere.qmqm.pl>
 User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---sglXe+Dqwf9Z+IJZ
+--/ARsLMUmfva5Ak1M
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 On Thu, Sep 28, 2023 at 11:06:03PM +0200, Micha=C5=82 Miros=C5=82aw wrote:
-> Tegra USB controllers seem to issue DMA in full 32-bit words only and thus
-> may overwrite unevenly-sized buffers.  One such occurrence is detected by
-> SLUB when receiving a reply to a 1-byte buffer (below).  Fix this by
-> allocating a bounce buffer also for buffers with sizes not a multiple of =
-4.
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> BUG kmalloc-64 (Tainted: G    B             ): kmalloc Redzone overwritten
-> -------------------------------------------------------------------------=
-----
->=20
-> 0x8555cd02-0x8555cd03 @offset=3D3330. First byte 0x0 instead of 0xcc
-> Allocated in usb_get_status+0x2b/0xac age=3D1 cpu=3D3 pid=3D41
->  __kmem_cache_alloc_node+0x12f/0x1e4
->  __kmalloc+0x33/0x8c
->  usb_get_status+0x2b/0xac
->  hub_probe+0x5e9/0xcec
->  usb_probe_interface+0xbf/0x21c
->  really_probe+0xa5/0x2c4
->  __driver_probe_device+0x75/0x174
->  driver_probe_device+0x31/0x94
->  __device_attach_driver+0x65/0xc0
->  bus_for_each_drv+0x4b/0x74
->  __device_attach+0x69/0x120
->  bus_probe_device+0x65/0x6c
->  device_add+0x48b/0x5f8
->  usb_set_configuration+0x37b/0x6b4
->  usb_generic_driver_probe+0x37/0x68
->  usb_probe_device+0x35/0xb4
-> Slab 0xbf622b80 objects=3D21 used=3D18 fp=3D0x8555cdc0 flags=3D0x800(slab=
-|zone=3D0)
-> Object 0x8555cd00 @offset=3D3328 fp=3D0x00000000
->=20
-> Redzone  8555ccc0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Redzone  8555ccd0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Redzone  8555cce0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Redzone  8555ccf0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Object   8555cd00: 01 00 00 00 cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Object   8555cd10: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Object   8555cd20: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Object   8555cd30: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  .....=
-=2E..........
-> Redzone  8555cd40: cc cc cc cc                                      ....
-> Padding  8555cd74: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a              ZZZZZ=
-ZZZZZZZ
-> CPU: 3 PID: 41 Comm: kworker/3:1 Tainted: G    B              6.6.0-rc1mq=
--00118-g59786f827ea1 #1115
-> Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> Workqueue: usb_hub_wq hub_event
-> [<8010ca28>] (unwind_backtrace) from [<801090a5>] (show_stack+0x11/0x14)
-> [<801090a5>] (show_stack) from [<805da2fb>] (dump_stack_lvl+0x4d/0x7c)
-> [<805da2fb>] (dump_stack_lvl) from [<8026464f>] (check_bytes_and_report+0=
-xb3/0xe4)
-> [<8026464f>] (check_bytes_and_report) from [<802648e1>] (check_object+0x2=
-61/0x290)
-> [<802648e1>] (check_object) from [<802671b1>] (free_to_partial_list+0x105=
-/0x3f8)
-> [<802671b1>] (free_to_partial_list) from [<80268613>] (__kmem_cache_free+=
-0x103/0x128)
-> [<80268613>] (__kmem_cache_free) from [<80425a67>] (usb_get_status+0x73/0=
-xac)
-> [<80425a67>] (usb_get_status) from [<80421b31>] (hub_probe+0x5e9/0xcec)
-> [<80421b31>] (hub_probe) from [<80428bbb>] (usb_probe_interface+0xbf/0x21=
-c)
-> [<80428bbb>] (usb_probe_interface) from [<803ee13d>] (really_probe+0xa5/0=
-x2c4)
-> [<803ee13d>] (really_probe) from [<803ee3d1>] (__driver_probe_device+0x75=
-/0x174)
-> [<803ee3d1>] (__driver_probe_device) from [<803ee501>] (driver_probe_devi=
-ce+0x31/0x94)
-> usb 1-1: device descriptor read/8, error -71
+> The USB host on Tegra3 works with 32-bit alignment. Previous code tried
+> to align the buffer, but it did align the wrapper struct instead, so
+> the buffer was at a constant offset of 8 bytes (two pointers) from
+> expected alignment.  Since kmalloc() guarantees at least 8-byte
+> alignment already, the alignment-extending is removed.
 >=20
 > Fixes: fc53d5279094 ("usb: chipidea: tegra: Support host mode")
 > Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 > ---
->  drivers/usb/chipidea/host.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>  drivers/usb/chipidea/host.c | 45 +++++++++++++++----------------------
+>  1 file changed, 18 insertions(+), 27 deletions(-)
+>=20
+> diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+> index abddd39d1ff1..0cce19208370 100644
+> --- a/drivers/usb/chipidea/host.c
+> +++ b/drivers/usb/chipidea/host.c
+> @@ -30,8 +30,7 @@ struct ehci_ci_priv {
+>  };
+> =20
+>  struct ci_hdrc_dma_aligned_buffer {
+> -	void *kmalloc_ptr;
+> -	void *old_xfer_buffer;
+> +	void *original_buffer;
+>  	u8 data[];
+>  };
+> =20
+> @@ -380,60 +379,52 @@ static int ci_ehci_bus_suspend(struct usb_hcd *hcd)
+>  	return 0;
+>  }
+> =20
+> -static void ci_hdrc_free_dma_aligned_buffer(struct urb *urb)
+> +static void ci_hdrc_free_dma_aligned_buffer(struct urb *urb, bool copy_b=
+ack)
+>  {
+>  	struct ci_hdrc_dma_aligned_buffer *temp;
+> -	size_t length;
+> =20
+>  	if (!(urb->transfer_flags & URB_ALIGNED_TEMP_BUFFER))
+>  		return;
+> +	urb->transfer_flags &=3D ~URB_ALIGNED_TEMP_BUFFER;
+
+This threw me off a bit until I realized it was already there
+previously, just in a different place. Is there a particular reason why
+this is moved?
+
+Regardless, this looks fine, so:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---sglXe+Dqwf9Z+IJZ
+> =20
+>  	temp =3D container_of(urb->transfer_buffer,
+>  			    struct ci_hdrc_dma_aligned_buffer, data);
+> +	urb->transfer_buffer =3D temp->original_buffer;
+> +
+> +	if (copy_back && usb_urb_dir_in(urb)) {
+> +		size_t length;
+> =20
+> -	if (usb_urb_dir_in(urb)) {
+>  		if (usb_pipeisoc(urb->pipe))
+>  			length =3D urb->transfer_buffer_length;
+>  		else
+>  			length =3D urb->actual_length;
+> =20
+> -		memcpy(temp->old_xfer_buffer, temp->data, length);
+> +		memcpy(temp->original_buffer, temp->data, length);
+>  	}
+> -	urb->transfer_buffer =3D temp->old_xfer_buffer;
+> -	kfree(temp->kmalloc_ptr);
+> =20
+> -	urb->transfer_flags &=3D ~URB_ALIGNED_TEMP_BUFFER;
+> +	kfree(temp);
+>  }
+> =20
+>  static int ci_hdrc_alloc_dma_aligned_buffer(struct urb *urb, gfp_t mem_f=
+lags)
+>  {
+> -	struct ci_hdrc_dma_aligned_buffer *temp, *kmalloc_ptr;
+> -	const unsigned int ci_hdrc_usb_dma_align =3D 32;
+> -	size_t kmalloc_size;
+> +	struct ci_hdrc_dma_aligned_buffer *temp;
+> =20
+>  	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length =3D=3D 0)
+>  		return 0;
+> -	if (!((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)) &&=
+ !(urb->transfer_buffer_length & 3))
+> +	if (IS_ALIGNED((uintptr_t)urb->transfer_buffer, 4)
+> +	    && IS_ALIGNED(urb->transfer_buffer_length, 4))
+>  		return 0;
+> =20
+> -	/* Allocate a buffer with enough padding for alignment */
+> -	kmalloc_size =3D ALIGN(urb->transfer_buffer_length, 4) +
+> -		       sizeof(struct ci_hdrc_dma_aligned_buffer) +
+> -		       ci_hdrc_usb_dma_align - 1;
+> -
+> -	kmalloc_ptr =3D kmalloc(kmalloc_size, mem_flags);
+> -	if (!kmalloc_ptr)
+> +	temp =3D kmalloc(sizeof(*temp) + ALIGN(urb->transfer_buffer_length, 4),=
+ mem_flags);
+> +	if (!temp)
+>  		return -ENOMEM;
+> =20
+> -	/* Position our struct dma_aligned_buffer such that data is aligned */
+> -	temp =3D PTR_ALIGN(kmalloc_ptr + 1, ci_hdrc_usb_dma_align) - 1;
+> -	temp->kmalloc_ptr =3D kmalloc_ptr;
+> -	temp->old_xfer_buffer =3D urb->transfer_buffer;
+>  	if (usb_urb_dir_out(urb))
+>  		memcpy(temp->data, urb->transfer_buffer,
+>  		       urb->transfer_buffer_length);
+> +
+> +	temp->original_buffer =3D urb->transfer_buffer;
+>  	urb->transfer_buffer =3D temp->data;
+> -
+>  	urb->transfer_flags |=3D URB_ALIGNED_TEMP_BUFFER;
+> =20
+>  	return 0;
+> @@ -450,7 +441,7 @@ static int ci_hdrc_map_urb_for_dma(struct usb_hcd *hc=
+d, struct urb *urb,
+> =20
+>  	ret =3D usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
+>  	if (ret)
+> -		ci_hdrc_free_dma_aligned_buffer(urb);
+> +		ci_hdrc_free_dma_aligned_buffer(urb, false);
+> =20
+>  	return ret;
+>  }
+> @@ -458,7 +449,7 @@ static int ci_hdrc_map_urb_for_dma(struct usb_hcd *hc=
+d, struct urb *urb,
+>  static void ci_hdrc_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *u=
+rb)
+>  {
+>  	usb_hcd_unmap_urb_for_dma(hcd, urb);
+> -	ci_hdrc_free_dma_aligned_buffer(urb);
+> +	ci_hdrc_free_dma_aligned_buffer(urb, true);
+>  }
+> =20
+>  #ifdef CONFIG_PM_SLEEP
+> --=20
+> 2.39.2
+>=20
+
+--/ARsLMUmfva5Ak1M
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnGPsACgkQ3SOs138+
-s6GYow//R+s/b6fhumEI29E9pNwezoNjdeR5ahN/rQjsuIIn+tvrXNqWlBJLKMsi
-S3EJoX4Pu4imyiQeMaaqnPRFrS4nIH7TybPo3HU5OucvQd1Gm6GaPPfZrGTu2eBr
-UsCyEYa6jDoYZ5LX9wCW/HXFAYqTBFQ4kzZ0BD0uiaBK7+0I7hw1wpvwKV9BxJnq
-q6AbB3cR0zJ0hJxiaDay0ucuDUNBfeepxFaS/R5hLA2xMNT7r4PR5/OIWduwEcki
-LzEG5gE68lmeGDcggHN7SQBtVnjCeVP1fx1P6lj0u8EBuoGvnNA1tKMwPZz2tOdV
-QPYJvlQCFS79K+MxwKwsFJMfPLeeOogsR2W3ck3qLGV4uqBsB3gBSk0u9jBQWMYN
-+w2E76xiBgizpGsqeai2lzh0ue0nCbfq6DvvHuJRtxM8FPRyH211DcRml2momKAD
-PNNkp/j8PSs+lKncw3Wxxn4gFzwjvZLAPHY39sRVQalwwtSO19vFzwgB42EJF9iL
-Cf9jFeopUYzZsXRqpnkfgCtiES/JHcHsddf5SA/uLRCJJ2u6e4pHjVAnQj7B9qKo
-B2PvhtoDhXfDY4xHGurprHMfIKDVnso/sYfmVMzZRMfC35oRG0ManiqU4cg2PZtB
-XllVU7SBcN7gNxwK/toSgbZLdoHiXG4Bn9e2fegjPaqBQjrmZmc=
-=oFX6
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnGVgACgkQ3SOs138+
+s6GlQxAAs20l59FM+iP1WLLvyZghQ+/JR+8K027PE1dn0I5fXFgEopON1ZJeAPgO
+SaCW6ZWeCUYSaGwrBhmaKrs6cgRIVu4UuIdpAnErTsztL7eZIz5+uEP0/gFAJHrn
+8VNQG4Pe22rvRZkaKlGgN5G5sD8E+amQdVWJH/8gLGefjybKP7xwOYKGB0itjx78
+wnaKT/2Av3Kjqdm2JIA1WzmSYPvDGl5OSmImtw6Plpi7OYrjfElX0ena+ONR75YR
+utcL/LJmDvQ54vUiYqjW4E16nInpeMEYfTyS5ohP7HucLZMPIJEbSAPeFIDf2ONV
+LQfA7Fo3QDcrc1H5q3Q1Hecv/LRE3DJMQ2e7JCNFfmvs1qcZ8uj63xf/2aiPqeaO
+Hpw4AV/StGUjbuz/swkA3bodcJkxfGdja8DNKGZOGTwu6kRW2g/donM8cclgEYpz
+Y6Dw62w7exHf+1n/fGnBYomLJW8LviX7kKzeXQCFl6iWRDjHrElmhK/5x4k/HeeL
+FGIpyO29RU7FvvNYKT6rCnPHEXDlyvv/qPIgW1/JMvTcOFZHlhRy1FTB5b919Oc+
+lfo9Elh4YwELcUrlT+Dz3P0GsNwmegbTw+SpsayEXVdtpCXF0Nfl3F716ws0j9wg
+a2ZVTwrpnUC9q/fA8OYLW4+8lIxXI6u8LLjsQfAOm8spclhaXYY=
+=go0n
 -----END PGP SIGNATURE-----
 
---sglXe+Dqwf9Z+IJZ--
+--/ARsLMUmfva5Ak1M--
