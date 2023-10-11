@@ -2,176 +2,159 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E92FBCDB483
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4781C46CA1
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376431AbjJKU0y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Oct 2023 16:26:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54958 "EHLO
+        id S233427AbjJKU20 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 16:28:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376378AbjJKU0u (ORCPT
+        with ESMTP id S233308AbjJKU2Z (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Oct 2023 16:26:50 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E785290;
-        Wed, 11 Oct 2023 13:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697056008; x=1728592008;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8PEWN3Jey64dbzw0CESM+jaomdEbjI2kq05LEDXsXnw=;
-  b=Md6+37kZL+YEc+wDJjrsD3yGI95vhyUeK7gvtOq+RCdup+NDZq93J9u/
-   jWHikFi0XyK6HzCkVrlJd2M9LDADmslTGKe9fW8hqkkfhyF7bU5hT3qwu
-   Uyeg0l1M8Brl9pNHQ4mGjmxEuOZomom07EDRuI+8/ArI0PQbT7KuXbFHG
-   Iu613O1M+IoPIyxWuil4PCEzp24hbwbTkedGkRtDZLatbFKWFyMM6N0CR
-   drzrOMq4ooizmpQrasBL77OafXFnTpKW6o73RteuOhTgTL1LNbBDwHXnJ
-   t55maB1BqPlZ2/69OOlB9yf+9RqDSQiRRcR5PDV6SKaI7WLUoSVmTXnDn
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="471015131"
-X-IronPort-AV: E=Sophos;i="6.03,217,1694761200"; 
-   d="scan'208";a="471015131"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2023 13:26:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="783393502"
-X-IronPort-AV: E=Sophos;i="6.03,217,1694761200"; 
-   d="scan'208";a="783393502"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 11 Oct 2023 13:26:43 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 1C4B96CB; Wed, 11 Oct 2023 23:26:42 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dipen Patel <dipenp@nvidia.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
+        Wed, 11 Oct 2023 16:28:25 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836B891;
+        Wed, 11 Oct 2023 13:28:24 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9ad8a822508so41229766b.0;
+        Wed, 11 Oct 2023 13:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697056103; x=1697660903; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ajiQCZsbPOI0YVqPS5NSWxeb5/T72xImtw2yRB9hN9k=;
+        b=WzoWJ/4m1DH6nOHkQheDn5r/b2dKJa3Ovi1inoyw0t8++90GehjF/W4ZV2QuBY2tJM
+         C85ztAaamM23j5qXEsO411iKJMUioDkzBK6iRXyI3eWQxUvV30lNHRwnbrZK+a5M1Gb3
+         lAZj0QdsbVliohR+QdQnFtlMiMQ3krneoxTL5/0oBUvXcGt7FfIn6r5+5RpKJP6+1t31
+         699x9XwT7xQ5klPVPgwBqIbVEkjkINAt0LMhrPRywUeVLvRhVppx0R3ijGZJr6dFD7Nd
+         U081D1DPi4dbpFm8Z0RbrXVUlMCuBomligPrjacF//3DM55SsvtiZDfVa1UAnLs5p4BG
+         pznQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697056103; x=1697660903;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ajiQCZsbPOI0YVqPS5NSWxeb5/T72xImtw2yRB9hN9k=;
+        b=CoPb5AThpLG3IoXsrO5LUngOtbx1oHvOya4y4XOEjVHT8lVTujUWxXUFWtnIgVCW/S
+         isO8VxB3RlHXsmmlbSRFAdjW9Fq4MOOLnwryhtzdbaChL2o4uprt/FKjhvDEDZaSmDb0
+         v86TjhAASJjs+UuUlC9YjY7ZMtCT8IXUqRfxi0B2JbXADFnjJArSyMCEGzWML3T6QCva
+         7NfCBpFFMXQ9lsYdJRR0TzuonJ/p3csAFnUPFdBHTeIzHYwQg6imFH/wOXd9Sn00YYEr
+         Jp2h9t+wPljhgamglXzpuYEfyJdKWVGIq8Bq18x9Pxt5JQ6/hknogp5sIr5XuDVBd4io
+         zNAw==
+X-Gm-Message-State: AOJu0YwkKF9Szr575F1XseW1N4y5nFqUlb653TKkIMzY/vo3fXFf1jBK
+        kr0R4vF5eEIoz00BowyBHDs=
+X-Google-Smtp-Source: AGHT+IFFQ8ncd4Z5mbljFmPQ7aeVjaaJ6rr4oIOM3eHCQt79sUIbGntX4Z20sf1OIwTbFuY8d23Zqw==
+X-Received: by 2002:a17:906:3116:b0:9a9:e4ba:2da7 with SMTP id 22-20020a170906311600b009a9e4ba2da7mr20212190ejx.49.1697056102522;
+        Wed, 11 Oct 2023 13:28:22 -0700 (PDT)
+Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id kb4-20020a1709070f8400b009adc81bb544sm10192307ejc.106.2023.10.11.13.28.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Oct 2023 13:28:22 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 22:28:20 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v2 2/4] hte: tegra194: don't access struct gpio_chip
-Date:   Wed, 11 Oct 2023 23:26:36 +0300
-Message-Id: <20231011202638.372382-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
-In-Reply-To: <20231011202638.372382-1-andriy.shevchenko@linux.intel.com>
-References: <20231011202638.372382-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH V5 0/4] hwmon: ina3221: Add selective summation support
+Message-ID: <ZScFZDZlTcqwjEJP@orome.fritz.box>
+References: <20230929103650.86074-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CiujI+6zDegS36sT"
+Content-Disposition: inline
+In-Reply-To: <20230929103650.86074-1-jonathanh@nvidia.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Using struct gpio_chip is not safe as it will disappear if the
-underlying driver is unbound for any reason. Switch to using reference
-counted struct gpio_device and its dedicated accessors.
+--CiujI+6zDegS36sT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Tested-by: Dipen Patel <dipenp@nvidia.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-[andy: used gpio_device_find_by_fwnode()]
-Reviewed-by: Dipen Patel <dipenp@nvidia.com>
-Link: https://lore.kernel.org/r/20231010151709.4104747-3-andriy.shevchenko@linux.intel.com
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/hte/hte-tegra194.c | 33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+On Fri, Sep 29, 2023 at 11:36:46AM +0100, Jon Hunter wrote:
+> The current INA3221 driver always sums the shunt voltage for all enabled
+> channels regardless of the shunt-resistor used for each channel. Summing
+> the shunt-voltage for channels is only meaningful if the shunt resistor
+> is the same for each channel. This series adds device-tree support to
+> allow which channels are summed in device-tree.
+>=20
+> Changes since V4:
+> - Moved dt-binding comment added in V4 from patch #2 to patch #1.
+>=20
+> Changes since V3:
+> - Added missing descriptions for new structure members that was reported
+>   by the kernel-test-bot.
+> - Added comment in the ina3221 dt-binding doc example to explain why we
+>   need to explicitly disable channels.
+> - Added more commentary in the commit message for the new DT property
+>   to explain that this property does not change the behaviour of the
+>   driver unless it is populated.
+>=20
+> Changes since V2:
+> - Added note to binding-doc to indicate that input channels must be
+>   explicitly disabled.
+> - Corrected ordering of properties in the binding-doc
+> - Updated license for the binding-doc to be dual licensed.
+> - Changed newly added property from 'summation-bypass' to
+>   summation-disable'.
+> - Documented type for the new 'summation-disable' property.
+> - Corrected spelling and comments as per the feedback received.
+> - Used debugfs instead of sysfs for exposing the 'summation-disable'
+>   status for each input channel.
+> - Populated missing instances for the ina3221 device for Tegra234
+>   boards.
+> - Populated ina219 device for the NVIDIA IGX board (not strictly
+>   related to this series but related to populating all
+>   power-sensors for Tegra234 boards)
+>=20
+> Changes since V1:
+> - Added yaml conversion patch for binding-doc
+> - Added binding-doc documentation patch for new property
+> - Added patch to populate ina3221 devices for Tegra234.
+>=20
+> Jon Hunter (2):
+>   dt-bindings: hwmon: ina3221: Add ti,summation-disable
+>   arm64: tegra: Add power-sensors for Tegra234 boards
+>=20
+> Ninad Malwade (2):
+>   dt-bindings: hwmon: ina3221: Convert to json-schema
+>   hwmon: ina3221: Add support for channel summation disable
 
-diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
-index 9fd3c00ff695..f6c2dbcd0aca 100644
---- a/drivers/hte/hte-tegra194.c
-+++ b/drivers/hte/hte-tegra194.c
-@@ -132,7 +132,7 @@ struct tegra_hte_soc {
- 	const struct tegra_hte_data *prov_data;
- 	struct tegra_hte_line_data *line_data;
- 	struct hte_chip *chip;
--	struct gpio_chip *c;
-+	struct gpio_device *gdev;
- 	void __iomem *regs;
- };
- 
-@@ -421,7 +421,7 @@ static int tegra_hte_line_xlate(struct hte_chip *gc,
- 	 * HTE/GTE namespace.
- 	 */
- 	if (gs->prov_data->type == HTE_TEGRA_TYPE_GPIO && !args) {
--		line_id = desc->attr.line_id - gs->c->base;
-+		line_id = desc->attr.line_id - gpio_device_get_base(gs->gdev);
- 		map = gs->prov_data->map;
- 		map_sz = gs->prov_data->map_sz;
- 	} else if (gs->prov_data->type == HTE_TEGRA_TYPE_GPIO && args) {
-@@ -643,12 +643,15 @@ static irqreturn_t tegra_hte_isr(int irq, void *dev_id)
- static bool tegra_hte_match_from_linedata(const struct hte_chip *chip,
- 					  const struct hte_ts_desc *hdesc)
- {
-+	struct gpio_device *gdev __free(gpio_device_put) = NULL;
- 	struct tegra_hte_soc *hte_dev = chip->data;
- 
- 	if (!hte_dev || (hte_dev->prov_data->type != HTE_TEGRA_TYPE_GPIO))
- 		return false;
- 
--	return hte_dev->c == gpiod_to_chip(hdesc->attr.line_data);
-+	gdev = gpiod_to_device(hdesc->attr.line_data);
-+
-+	return hte_dev->gdev == gdev;
- }
- 
- static const struct of_device_id tegra_hte_of_match[] = {
-@@ -676,14 +679,11 @@ static void tegra_gte_disable(void *data)
- 	tegra_hte_writel(gs, HTE_TECTRL, 0);
- }
- 
--static int tegra_get_gpiochip_from_name(struct gpio_chip *chip, void *data)
-+static void tegra_hte_put_gpio_device(void *data)
- {
--	return !strcmp(chip->label, data);
--}
-+	struct gpio_device *gdev = data;
- 
--static int tegra_gpiochip_match(struct gpio_chip *chip, void *data)
--{
--	return chip->fwnode == of_node_to_fwnode(data);
-+	gpio_device_put(gdev);
- }
- 
- static int tegra_hte_probe(struct platform_device *pdev)
-@@ -763,8 +763,8 @@ static int tegra_hte_probe(struct platform_device *pdev)
- 
- 		if (of_device_is_compatible(dev->of_node,
- 					    "nvidia,tegra194-gte-aon")) {
--			hte_dev->c = gpiochip_find("tegra194-gpio-aon",
--						tegra_get_gpiochip_from_name);
-+			hte_dev->gdev =
-+				gpio_device_find_by_label("tegra194-gpio-aon");
- 		} else {
- 			gpio_ctrl = of_parse_phandle(dev->of_node,
- 						     "nvidia,gpio-controller",
-@@ -775,14 +775,19 @@ static int tegra_hte_probe(struct platform_device *pdev)
- 				return -ENODEV;
- 			}
- 
--			hte_dev->c = gpiochip_find(gpio_ctrl,
--						   tegra_gpiochip_match);
-+			hte_dev->gdev =
-+				gpio_device_find_by_fwnode(of_fwnode_handle(gpio_ctrl));
- 			of_node_put(gpio_ctrl);
- 		}
- 
--		if (!hte_dev->c)
-+		if (!hte_dev->gdev)
- 			return dev_err_probe(dev, -EPROBE_DEFER,
- 					     "wait for gpio controller\n");
-+
-+		ret = devm_add_action_or_reset(dev, tegra_hte_put_gpio_device,
-+					       hte_dev->gdev);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	hte_dev->chip = gc;
--- 
-2.40.0.1.gaa8946217a0b
+Jean, Guenter,
 
+do you mind if I pick up patches 1, 2 and 4 into the Tegra tree? It's
+usually convenient to keep the DT bindings and DT additions in the same
+tree for validation.
+
+Thanks,
+Thierry
+
+--CiujI+6zDegS36sT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnBWQACgkQ3SOs138+
+s6H2Iw//b21u/DRkKk+i/7IngdxzNLH0SzEnEPuQED1vF2TjviBmHCOC2PWh6v3K
+JQEePa77FmCG6L46tHZ+kMpnh3mqe+Fce4GhxvsYAHIga8sBGHkM2Kzjpt1/P/a9
+OgpHYh/UJoBxRst+dBqgD3ajG8iokGbezr3kDorHX7Lcc7JBdJeai72La8oky62v
+kLrCPCOYGYBqFDYa/dMqX5tlsS/U1q5bRijNZXxD5miBb3sk2dW30r8BdfDKR0mQ
+SRXdeJYjFTaM1HmrzvoYeZjXMGJxrDXl3akZCA8tTwkPb7S8L/vcHE2ywpVb8IKH
+Wx4aB81qMwOJy8/zUs8RdrLe7vAauPn89cnPtxJmg1X4enKrj5PGmMu056eLTQCH
+MjdfCpj1tW6COX1iXU0lYLCPyGPEeMAmrxvS7FqhMKm6Az8s3EB9fOJgE5BQcBgl
+jxWPPmQWC35EHGIh1U30VP1ZrOsZyn5xJiDOtnf4Ksy0MeyU9m+9IDgJYCx7zL3U
+4rf5fXXWRZU1HdgNs9VoDSfEeMF9Iv+5jFow1A94x1M9F7mjpbkMpkLkmFQGKth7
+aMnwc/pHoTi9KnmEZRzOynA3tvjKfozQLCc1/LxqDey5NycqGn+iMnTL7qz+FXld
+fjZURu2bo7k8i38nAScMFY0aS3WBqUYqu3N2RcoMSNmYIOHJxuk=
+=WDbc
+-----END PGP SIGNATURE-----
+
+--CiujI+6zDegS36sT--
