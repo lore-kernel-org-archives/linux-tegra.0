@@ -2,102 +2,89 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB58CD98E6
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 03:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0BBCD98F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 05:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344929AbjJKDGc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Oct 2023 23:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37846 "EHLO
+        id S1344175AbjJKFyt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 01:54:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344895AbjJKDGb (ORCPT
+        with ESMTP id S1344167AbjJKFys (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Oct 2023 23:06:31 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DE28992;
-        Tue, 10 Oct 2023 20:06:27 -0700 (PDT)
-Received: from loongson.cn (unknown [10.20.42.43])
-        by gateway (Coremail) with SMTP id _____8DxRvEyESZlE+EwAA--.28559S3;
-        Wed, 11 Oct 2023 11:06:26 +0800 (CST)
-Received: from [10.20.42.43] (unknown [10.20.42.43])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Cx7y8jESZlHqUfAA--.395S3;
-        Wed, 11 Oct 2023 11:06:25 +0800 (CST)
-Message-ID: <03a7a1be-a78a-3380-4b65-091bef0914b6@loongson.cn>
-Date:   Wed, 11 Oct 2023 11:06:11 +0800
+        Wed, 11 Oct 2023 01:54:48 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B795F94;
+        Tue, 10 Oct 2023 22:54:46 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-4527d436ddfso2473018137.1;
+        Tue, 10 Oct 2023 22:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697003686; x=1697608486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DiBJtKSXozbM0r46s6SPSgE4x00q8wuaRms3SXA5/DM=;
+        b=GD1bzNVTm6EgK1eEEzL4tYSV0pe3Kf9MNyz/czGLnxM4im///+MEi7i/wxhxPMeyAT
+         +gIyTgobrl1jukAECl1f5FSqpNMI1QLglM0jdQHnoGJzWmkX6disbSw79tZYF1pW99yB
+         tcSa1VTU7Igonhn9MO1UuA4lffZu0pQjmNPP4dlHRFbbJiE7Y1Qgkmpq5aM2+qczgxXY
+         FOP2IR9fQsgax03lXhjxCZha1Kb2F0I0iPBglv9TsCYfdTxeXlk4406ZecnDIaOrrUvb
+         BeVBXO6nkMoAnGYX/IfLvmoxVt4ys5D7py5XR902VHExjPGEp03aLaOqVW1AdTwJudAE
+         v/Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697003686; x=1697608486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DiBJtKSXozbM0r46s6SPSgE4x00q8wuaRms3SXA5/DM=;
+        b=RCCHi3kE+0vkywnF6bPkbFOD58Yilm26yFJ8OQp9qsFBrcCwLjO2IX8aUvhrW5oUNl
+         xzNLsnzWNusljoJs+36MFR5bWogum0kW4kvDIFnP88QYAFrUClaXQ1q52/bFiXy//k/L
+         dMpSbyctNhz+hzpwN+H6enJSdfoHWWD5708eQv8p5KAsDwVk53nzxocZWNtm23s42UAx
+         o/MoVWtDXgTaqh3TX0cJagpqULFQVXxNLZuNrUXD+Gb16/+bGShfk7JivqLpCMdc92Py
+         f59SoYWQ5W4Se3vn1j4CsQ6/3nxETshdIcW96Lr62FQLS72apVXACxCprIKFs6tbGWw3
+         Offw==
+X-Gm-Message-State: AOJu0YyNGebjOXzQv+ugPqsu+O1hrYS+DliNAgbzH0BwsGqgr0pZ9NjS
+        Xlg1BGJ1Ae5BKVCypLseQ5migzlKYIzpRZWoEeJBn5KJ1FQ=
+X-Google-Smtp-Source: AGHT+IHA9B34pMhcmDUBfDewbK1peGnr0ieNQbmb7QYwL7I9suY7sO1Vkh0n8/Iorr3X+CjyMV9ta3PrINSdPOu6mrE=
+X-Received: by 2002:a67:fe88:0:b0:44e:9313:b045 with SMTP id
+ b8-20020a67fe88000000b0044e9313b045mr19458526vsr.7.1697003685723; Tue, 10 Oct
+ 2023 22:54:45 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/2] drm/tegra: Return an error code if fails
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230626143331.640454-1-suijingfeng@loongson.cn>
- <ZSVQMPuRnXzC0lgf@orome.fritz.box> <ZSVuVcqdGfGtQIQj@orome.fritz.box>
-Content-Language: en-US
-From:   Sui Jingfeng <suijingfeng@loongson.cn>
-In-Reply-To: <ZSVuVcqdGfGtQIQj@orome.fritz.box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf8Cx7y8jESZlHqUfAA--.395S3
-X-CM-SenderInfo: xvxlyxpqjiv03j6o00pqjv00gofq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Cw15Gw43tw17WryxCw47ZFc_yoW8XrWxpr
-        y3Gas8KF1kW39xtFn7X34fAF1rtw4ftFykGF9Y9ryqkr1qqF12yr129wsI9F17Zr4Fkaya
-        yF45Cw13C3WqvFcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-        sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-        0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-        IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-        e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-        0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-        xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-        1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-        67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-        AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-        F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-        ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-        1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
-        Z7UUUUU==
+References: <20231010151709.4104747-1-andriy.shevchenko@linux.intel.com>
+ <20231010151709.4104747-3-andriy.shevchenko@linux.intel.com>
+ <3e1e6acf-5862-9f35-cbe6-72bb17cf3851@nvidia.com> <147fe15c-13d3-60dc-bd49-cd0cb40126e9@nvidia.com>
+In-Reply-To: <147fe15c-13d3-60dc-bd49-cd0cb40126e9@nvidia.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 11 Oct 2023 08:54:09 +0300
+Message-ID: <CAHp75VdgM0riV6Y2PHnU14ZTN_4-eiXevFhi-gsbQPwrkicArw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] hte: tegra194: don't access struct gpio_chip
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        timestamp@lists.linux.dev, linux-tegra@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On Tue, Oct 10, 2023 at 10:31=E2=80=AFPM Dipen Patel <dipenp@nvidia.com> wr=
+ote:
+> On 10/10/23 9:19 AM, Dipen Patel wrote:
+> > On 10/10/23 8:17 AM, Andy Shevchenko wrote:
 
+> >> +                    hte_dev->gdev =3D
+> >> +                            gpio_device_find_by_fwnode(of_fnode_handl=
+e(gpio_ctrl));
+>
+> I think there is typo for of_fnode*. Should it be of_fwnode*?
 
-On 2023/10/10 23:31, Thierry Reding wrote:
-> On Tue, Oct 10, 2023 at 03:22:56PM +0200, Thierry Reding wrote:
->> On Mon, Jun 26, 2023 at 10:33:30PM +0800, Sui Jingfeng wrote:
->>> Return -ENOMEM if tegra_bo_mmap() fails.
->>>
->>> Signed-off-by: Sui Jingfeng <suijingfeng@loongson.cn>
->>> ---
->>>   drivers/gpu/drm/tegra/gem.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->> Sorry, this fell through the cracks. I think it'd be better if
->> tegra_bo_mmap() were to be improved to always return either an ERR_PTR()
->> encoded error code or a valid pointer. Throwing NULL into the mix isn't
->> useful because it typically means something like -ENOMEM anyway. Error
->> codes are more explicit, so since we're already using them for some
->> cases, might as well return them for all.
->>
->> Actually, looks like tegra_bo_mmap() never actually returns an ERR_PTR()
->> encoded error code. It's either obj->vaddr, the return value of vmap()
->> (which is either NULL or the address of the mapping), or the address
->> obtained from dma_buf_vmap_unlocked() (i.e. map.vaddr) or NULL on
->> failure. So I think it would equally make sense to keep your patch and
->> to remove the IS_ERR() check below it.
->>
->> I would slightly prefer the first option, but either is fine.
-> How about the attached patch?
+Yep, it's a typo, can you. fix manually for the test, please?
 
-
-I also prefer the prefer the first option.
-The attached patch is more better, because it solve the problem at lower level.
-
-Reviewed-by: Sui Jingfeng <suijingfeng@loongson.cn>
-
-> Thierry
-
+--=20
+With Best Regards,
+Andy Shevchenko
