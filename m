@@ -2,159 +2,112 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4781C46CA1
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 953D2CDB485
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:44:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233427AbjJKU20 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Oct 2023 16:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57588 "EHLO
+        id S235178AbjJKUoI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 16:44:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233308AbjJKU2Z (ORCPT
+        with ESMTP id S233501AbjJKUoH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Oct 2023 16:28:25 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836B891;
-        Wed, 11 Oct 2023 13:28:24 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9ad8a822508so41229766b.0;
-        Wed, 11 Oct 2023 13:28:24 -0700 (PDT)
+        Wed, 11 Oct 2023 16:44:07 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B40291;
+        Wed, 11 Oct 2023 13:44:06 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2bffa8578feso3065531fa.2;
+        Wed, 11 Oct 2023 13:44:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697056103; x=1697660903; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697057044; x=1697661844; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ajiQCZsbPOI0YVqPS5NSWxeb5/T72xImtw2yRB9hN9k=;
-        b=WzoWJ/4m1DH6nOHkQheDn5r/b2dKJa3Ovi1inoyw0t8++90GehjF/W4ZV2QuBY2tJM
-         C85ztAaamM23j5qXEsO411iKJMUioDkzBK6iRXyI3eWQxUvV30lNHRwnbrZK+a5M1Gb3
-         lAZj0QdsbVliohR+QdQnFtlMiMQ3krneoxTL5/0oBUvXcGt7FfIn6r5+5RpKJP6+1t31
-         699x9XwT7xQ5klPVPgwBqIbVEkjkINAt0LMhrPRywUeVLvRhVppx0R3ijGZJr6dFD7Nd
-         U081D1DPi4dbpFm8Z0RbrXVUlMCuBomligPrjacF//3DM55SsvtiZDfVa1UAnLs5p4BG
-         pznQ==
+        bh=P31EaSRln5Y8qXIhPg5k92XnAsV91qhf1ea5PLnQlac=;
+        b=XIvtI/nq89ozpt/HKMWYaLpsyb/orPMH5VPrsE22xSWlZ+wxUvZ6gpgw8ZqilNwXgT
+         IqND8bevZjnzxD1RWu5XuDkbxQMD45YOUSNbhrRgrdys5vBFCA3ULJlrK4QV56B5faUZ
+         oJoAAuOZxdz5Q/ZQQQ2VmVnl6VvwEI4SdTY+jMKR+Pvv8B1i9ZTUM6/ISwyjp2Tu7pf0
+         dyEJ0GZtVZXulhVyvJ3gypMwCZT9z8ENYRZy/jYFHNoMYajibznrkvjNmd6MC0pV7ExK
+         XMJmvZwOnu+zhnO2DbZo/TSGXx5qx98haNiqKAerctPbY8WCYshPcU1V/r7Qww1MvemJ
+         OVWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697056103; x=1697660903;
+        d=1e100.net; s=20230601; t=1697057044; x=1697661844;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ajiQCZsbPOI0YVqPS5NSWxeb5/T72xImtw2yRB9hN9k=;
-        b=CoPb5AThpLG3IoXsrO5LUngOtbx1oHvOya4y4XOEjVHT8lVTujUWxXUFWtnIgVCW/S
-         isO8VxB3RlHXsmmlbSRFAdjW9Fq4MOOLnwryhtzdbaChL2o4uprt/FKjhvDEDZaSmDb0
-         v86TjhAASJjs+UuUlC9YjY7ZMtCT8IXUqRfxi0B2JbXADFnjJArSyMCEGzWML3T6QCva
-         7NfCBpFFMXQ9lsYdJRR0TzuonJ/p3csAFnUPFdBHTeIzHYwQg6imFH/wOXd9Sn00YYEr
-         Jp2h9t+wPljhgamglXzpuYEfyJdKWVGIq8Bq18x9Pxt5JQ6/hknogp5sIr5XuDVBd4io
-         zNAw==
-X-Gm-Message-State: AOJu0YwkKF9Szr575F1XseW1N4y5nFqUlb653TKkIMzY/vo3fXFf1jBK
-        kr0R4vF5eEIoz00BowyBHDs=
-X-Google-Smtp-Source: AGHT+IFFQ8ncd4Z5mbljFmPQ7aeVjaaJ6rr4oIOM3eHCQt79sUIbGntX4Z20sf1OIwTbFuY8d23Zqw==
-X-Received: by 2002:a17:906:3116:b0:9a9:e4ba:2da7 with SMTP id 22-20020a170906311600b009a9e4ba2da7mr20212190ejx.49.1697056102522;
-        Wed, 11 Oct 2023 13:28:22 -0700 (PDT)
+        bh=P31EaSRln5Y8qXIhPg5k92XnAsV91qhf1ea5PLnQlac=;
+        b=k9w+7ThAYLGFmtohJlJXMs0o0A37w11xIoJyL8JCJOzGAi1WlQ3ddy83FcYH9oTBVC
+         p1Wht/VxO/JAHOU/PnVancxzFKDPQ0c9qmCVI7Y1JGyx/zL7qGoN+G/twI0K9ZEhHdwe
+         GjWGcpvpAQj69eGLy0W5fVG5CzTRseykMTE08eO1TBgNNYoPZbUWBVQpG1VaXzE1YHWZ
+         zY1ZCO0jmpY+bbKkVTuPV/yXtgp5cAE4mLDsGi0iCpxUIn8n7WBiUyyJSYhZrR/056SZ
+         9m4MTZYFBf6ez6BfIEDk2zfoXykKz9KZK93puOIu6Xc9CIOMj8L14gxe9qhvFa7vFtLH
+         nh5A==
+X-Gm-Message-State: AOJu0YwsBgW2E0goV6l50DHeSFhihh2XgzmfApbS8oVvCwWgK2NCAti2
+        YQJQ5uAIznwwiLGImAEybyA=
+X-Google-Smtp-Source: AGHT+IFQxx5VCl8KKjK9TQ9WjcRa0ePH4vtXFloK3iDhSbfTnnC5mV9npmHSp/URant9nZFf6rq5pQ==
+X-Received: by 2002:a19:2d14:0:b0:505:84c8:c640 with SMTP id k20-20020a192d14000000b0050584c8c640mr19445254lfj.48.1697057044063;
+        Wed, 11 Oct 2023 13:44:04 -0700 (PDT)
 Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id kb4-20020a1709070f8400b009adc81bb544sm10192307ejc.106.2023.10.11.13.28.21
+        by smtp.gmail.com with ESMTPSA id i16-20020a1709064ed000b0099bd0b5a2bcsm10267065ejv.101.2023.10.11.13.44.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 13:28:22 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 22:28:20 +0200
+        Wed, 11 Oct 2023 13:44:03 -0700 (PDT)
+Date:   Wed, 11 Oct 2023 22:44:01 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V5 0/4] hwmon: ina3221: Add selective summation support
-Message-ID: <ZScFZDZlTcqwjEJP@orome.fritz.box>
-References: <20230929103650.86074-1-jonathanh@nvidia.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] gpu: host1x: Add locking in channel allocation
+Message-ID: <ZScJEcoHQvi22Tg4@orome.fritz.box>
+References: <20230901111510.663401-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CiujI+6zDegS36sT"
+        protocol="application/pgp-signature"; boundary="EHUtb8eUTGdPEKmK"
 Content-Disposition: inline
-In-Reply-To: <20230929103650.86074-1-jonathanh@nvidia.com>
+In-Reply-To: <20230901111510.663401-1-cyndis@kapsi.fi>
 User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---CiujI+6zDegS36sT
+--EHUtb8eUTGdPEKmK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 29, 2023 at 11:36:46AM +0100, Jon Hunter wrote:
-> The current INA3221 driver always sums the shunt voltage for all enabled
-> channels regardless of the shunt-resistor used for each channel. Summing
-> the shunt-voltage for channels is only meaningful if the shunt resistor
-> is the same for each channel. This series adds device-tree support to
-> allow which channels are summed in device-tree.
+On Fri, Sep 01, 2023 at 02:15:07PM +0300, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
 >=20
-> Changes since V4:
-> - Moved dt-binding comment added in V4 from patch #2 to patch #1.
+> Add locking around channel allocation to avoid race conditions.
 >=20
-> Changes since V3:
-> - Added missing descriptions for new structure members that was reported
->   by the kernel-test-bot.
-> - Added comment in the ina3221 dt-binding doc example to explain why we
->   need to explicitly disable channels.
-> - Added more commentary in the commit message for the new DT property
->   to explain that this property does not change the behaviour of the
->   driver unless it is populated.
->=20
-> Changes since V2:
-> - Added note to binding-doc to indicate that input channels must be
->   explicitly disabled.
-> - Corrected ordering of properties in the binding-doc
-> - Updated license for the binding-doc to be dual licensed.
-> - Changed newly added property from 'summation-bypass' to
->   summation-disable'.
-> - Documented type for the new 'summation-disable' property.
-> - Corrected spelling and comments as per the feedback received.
-> - Used debugfs instead of sysfs for exposing the 'summation-disable'
->   status for each input channel.
-> - Populated missing instances for the ina3221 device for Tegra234
->   boards.
-> - Populated ina219 device for the NVIDIA IGX board (not strictly
->   related to this series but related to populating all
->   power-sensors for Tegra234 boards)
->=20
-> Changes since V1:
-> - Added yaml conversion patch for binding-doc
-> - Added binding-doc documentation patch for new property
-> - Added patch to populate ina3221 devices for Tegra234.
->=20
-> Jon Hunter (2):
->   dt-bindings: hwmon: ina3221: Add ti,summation-disable
->   arm64: tegra: Add power-sensors for Tegra234 boards
->=20
-> Ninad Malwade (2):
->   dt-bindings: hwmon: ina3221: Convert to json-schema
->   hwmon: ina3221: Add support for channel summation disable
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/gpu/host1x/channel.c | 7 +++++++
+>  drivers/gpu/host1x/channel.h | 3 +++
+>  2 files changed, 10 insertions(+)
 
-Jean, Guenter,
+All three patches applied, thanks.
 
-do you mind if I pick up patches 1, 2 and 4 into the Tegra tree? It's
-usually convenient to keep the DT bindings and DT additions in the same
-tree for validation.
-
-Thanks,
 Thierry
 
---CiujI+6zDegS36sT
+--EHUtb8eUTGdPEKmK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnBWQACgkQ3SOs138+
-s6H2Iw//b21u/DRkKk+i/7IngdxzNLH0SzEnEPuQED1vF2TjviBmHCOC2PWh6v3K
-JQEePa77FmCG6L46tHZ+kMpnh3mqe+Fce4GhxvsYAHIga8sBGHkM2Kzjpt1/P/a9
-OgpHYh/UJoBxRst+dBqgD3ajG8iokGbezr3kDorHX7Lcc7JBdJeai72La8oky62v
-kLrCPCOYGYBqFDYa/dMqX5tlsS/U1q5bRijNZXxD5miBb3sk2dW30r8BdfDKR0mQ
-SRXdeJYjFTaM1HmrzvoYeZjXMGJxrDXl3akZCA8tTwkPb7S8L/vcHE2ywpVb8IKH
-Wx4aB81qMwOJy8/zUs8RdrLe7vAauPn89cnPtxJmg1X4enKrj5PGmMu056eLTQCH
-MjdfCpj1tW6COX1iXU0lYLCPyGPEeMAmrxvS7FqhMKm6Az8s3EB9fOJgE5BQcBgl
-jxWPPmQWC35EHGIh1U30VP1ZrOsZyn5xJiDOtnf4Ksy0MeyU9m+9IDgJYCx7zL3U
-4rf5fXXWRZU1HdgNs9VoDSfEeMF9Iv+5jFow1A94x1M9F7mjpbkMpkLkmFQGKth7
-aMnwc/pHoTi9KnmEZRzOynA3tvjKfozQLCc1/LxqDey5NycqGn+iMnTL7qz+FXld
-fjZURu2bo7k8i38nAScMFY0aS3WBqUYqu3N2RcoMSNmYIOHJxuk=
-=WDbc
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnCREACgkQ3SOs138+
+s6GH+A//QmJ4c3RRvMjnASjZz/n6FJB1QRhFqjrBtygOt+15mW6zqGaL1XUoTR/c
+q9PV84sXYyooWoVAp3IKa/hXrNhRxjsEwkxDTEetnvIi+ANSMe0I5gjIJDq40rdg
+RClG6XT1sh9zD6ez8Uy++Ge5qOd2Kx8zMKZ56gsZ97pG15bXLjSMfbtGrT0Iq0R6
+CdpKkDAQcKB1z+rikxt0pd+J36ibF+usXOM0HRz5Xfcz5Ssfy1c5Thp98MLYgaKu
+i9akppvkAmWU7CPv/DzFDXdewtRfKA6FjGvWUMjY8oHJ8xHgiFpY/5DG+eD7DftT
+lI4ngk4U4Vt+BfBgAooD5BfDEDgGAU0LSz7yK6WTAI3UZyPCw9moYw5LD3n2WtfO
+LUI7I5IOiQKfvRGVxMY2t2EYNbRSb9Ti8gNUMobmoEmd2ZEPDOQh5Vv4O5yEs7El
+R32rNJlaz+AoL3ojbNwu570XvDJL1H5sgzHG4Oo+DSP8Id4zEx4KIDcu8MevFhXh
+UETZvCd4DkQaLRxuw65IgRwr+PdO3IpQWP4LbVzEFlLHmEeZaUqU0E9C5aA3E90t
+fykEqYDr9BA79V2lox+KamGcq2ZeCrGZ62JCM3boB7y2zmFFulHTgIuA7rmZo0Iu
+dHrlYhTNsHMg4059Ty7qQwSr4Ez5I3Fwa2BC2W5Db5sb1LbnHqg=
+=8Scw
 -----END PGP SIGNATURE-----
 
---CiujI+6zDegS36sT--
+--EHUtb8eUTGdPEKmK--
