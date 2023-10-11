@@ -2,111 +2,97 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 787F1CDB47E
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B48DCDB484
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Oct 2023 20:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233417AbjJKUYp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Oct 2023 16:24:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38046 "EHLO
+        id S1376315AbjJKU0s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Oct 2023 16:26:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233279AbjJKUYo (ORCPT
+        with ESMTP id S233360AbjJKU0s (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Oct 2023 16:24:44 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE0891;
-        Wed, 11 Oct 2023 13:24:43 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso38372366b.1;
-        Wed, 11 Oct 2023 13:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697055881; x=1697660681; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uzvkbhkLaMUPqU7HMTRyBjb4pmEB3My0Qu8sb0+YfiQ=;
-        b=RnomGxJ3ysZqyBOEQ8DbLeXEJaLOvy3pQaObqvM0J/UwOgZoP/KujThEwd2QlBie1w
-         XhTsFHyN6bk6Q7PRSxsqTMJX4qDb9T0ppdYjiPk8+O9oVapFKST9e5WvYiFvVTrnpnYh
-         da2rCsthDyJP39X16ElauiJuXuWxbhAxbOWqe5r77NAxts01GPJK0DuLoUl9nGDiQc5U
-         M5rl+qhKvfRPbMBRaTcgPj+CFXZsFFrBfZiE4tZ7LeN3EchCwk3vLdQJK/0H1olEOeQL
-         6ymN6bXsZeThwckyjjXTz3AT2yGBdpLXmQDN5DOpa6nzH+EETesFZpjeFGZKQAbhZKdO
-         /r2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697055881; x=1697660681;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uzvkbhkLaMUPqU7HMTRyBjb4pmEB3My0Qu8sb0+YfiQ=;
-        b=t+Scl7bHeD/9nGTAEfLll34SLc7YNl5MulEiUuH+beM0ILoJF4PKUky1U+yk9G0Sjq
-         /iOSEal2NdO/Iv+9Tx76D9l+6bxOkAIuzY/n8VtQjT3Fpi+MdSaiGDaUbaVt4lLfJZs3
-         nCriWCwWFkYHC3IffBndpzU7k1iGrlZz31ayNpjfVATeLToMatAse9YfZD52vZ/NDrRg
-         93WC3aRwe9b9Hh849Q2IkBJn6dv9GF1EflwzftqX2WDFKQEhpJKYeX52klLENmPwh2Rg
-         pWeWMF9xxhu2DZdecphkvwN6EoWKq/oTln1wzTpgwBDWIMk2/yTdpsvvHfEdGXjEL+uD
-         fQMQ==
-X-Gm-Message-State: AOJu0YzWxZzhgjf0+CPKHjGIpBux+vbWO9fKiHHM2br7oXiKC1gSaD8F
-        TZYrP7EYiQyQHUH7HBHe5PI=
-X-Google-Smtp-Source: AGHT+IGygcDlYEvQCHkHqj9FwQIkNeS15ycoNc0YrqsIvUTmjvBthYTots46Xd0hRCc9tkEJT5LYaQ==
-X-Received: by 2002:a17:906:53c6:b0:9ae:6ad0:f6cd with SMTP id p6-20020a17090653c600b009ae6ad0f6cdmr19804679ejo.24.1697055881232;
-        Wed, 11 Oct 2023 13:24:41 -0700 (PDT)
-Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id lf8-20020a170906ae4800b009b27d4153c0sm10326077ejb.178.2023.10.11.13.24.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 13:24:40 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 22:24:39 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-input@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: tegra: Use device_get_match_data()
-Message-ID: <ZScEh0j0SlOZFcWv@orome.fritz.box>
-References: <20231006224432.442709-1-robh@kernel.org>
+        Wed, 11 Oct 2023 16:26:48 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2533290;
+        Wed, 11 Oct 2023 13:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697056007; x=1728592007;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ZRhu6GBogXEtacyQpk9MfPzZjieYt+h/X2GsbW/ugqU=;
+  b=PbGQqUkCHfWl/z39Hmo2Pe/omc4YEB2mtpxEjtTP8w66A2mqWcIEG1H4
+   VPujcZH1QHdTrRcImoQXkhKo0NwITKDjhAmv+X0TIYDVj79i5dcEAHsTF
+   KQYXvGP+IZ61Y+u82ZMtVJeHEG6w4eoEZuEAPNNDpcndvo/Pp5aAY8a0G
+   D6AIeBQJnUOBnQrRPA1IUQn3dzCdXsUWWtbZGPhKtAR3rGQkFwNJhniVm
+   LzRf9sRj2FrLL2CuH1XR0+aqXYf0e5H3f0lw287mearjip1T2+gMtdW0d
+   sY3RIpJekKDOC2/Cx1OQNabSKbyEiq0zptK4Q1hE7+cIhRqru8s0ZyB0U
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="471015120"
+X-IronPort-AV: E=Sophos;i="6.03,217,1694761200"; 
+   d="scan'208";a="471015120"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2023 13:26:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="783393503"
+X-IronPort-AV: E=Sophos;i="6.03,217,1694761200"; 
+   d="scan'208";a="783393503"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 11 Oct 2023 13:26:43 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 2C8766DA; Wed, 11 Oct 2023 23:26:42 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v2 3/4] hte: tegra194: Remove redundant dev_err()
+Date:   Wed, 11 Oct 2023 23:26:37 +0300
+Message-Id: <20231011202638.372382-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20231011202638.372382-1-andriy.shevchenko@linux.intel.com>
+References: <20231011202638.372382-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EpZWWdJP6+/QOGEM"
-Content-Disposition: inline
-In-Reply-To: <20231006224432.442709-1-robh@kernel.org>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+There is no need to call the dev_err() function directly to print a custom
+message when handling an error from platform_get_irq() function as it is
+going to display an appropriate error message in case of a failure.
 
---EpZWWdJP6+/QOGEM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Dipen Patel <dipenp@nvidia.com>
+Tested-by: Dipen Patel <dipenp@nvidia.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20231010151709.4104747-4-andriy.shevchenko@linux.intel.com
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/hte/hte-tegra194.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-On Fri, Oct 06, 2023 at 05:44:32PM -0500, Rob Herring wrote:
-> Use preferred device_get_match_data() instead of of_match_device() to
-> get the driver match data. With this, adjust the includes to explicitly
-> include the correct headers.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/input/keyboard/tegra-kbc.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+index f6c2dbcd0aca..cf6058193403 100644
+--- a/drivers/hte/hte-tegra194.c
++++ b/drivers/hte/hte-tegra194.c
+@@ -731,10 +731,8 @@ static int tegra_hte_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		dev_err_probe(dev, ret, "failed to get irq\n");
++	if (ret < 0)
+ 		return ret;
+-	}
+ 	hte_dev->hte_irq = ret;
+ 	ret = devm_request_irq(dev, hte_dev->hte_irq, tegra_hte_isr, 0,
+ 			       dev_name(dev), hte_dev);
+-- 
+2.40.0.1.gaa8946217a0b
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---EpZWWdJP6+/QOGEM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUnBIcACgkQ3SOs138+
-s6HPEQ//WdVN2OUKGkF3D1pmcNQrs+kbsWE+RlouD5B/2En6FyPJuCy4nTBaWJhU
-4PvIIpCvEm7YD+vaO/D01a8cw/pC4bHTgsgsiGvRaJPnaX9ypzldeWjS8FW5hIgc
-zLaUbk0pDfw85Nix0Ru0/ApueorU4PkpNc93LrTwsggpDAuqjTMXZuzHtr9z6Bqb
-82IDUE5qEl8dE4kDdoX4oGWMZEKIrCSvGDUOPwNsLtF8nV2EUXRkW9PdNQAcj3Ty
-e+zk3mje2GDpsy38aXfOZcSXNWt2Jk6sVppa8T0PE9e/BNY6Vp4eo6fLJh3RJdjZ
-601g6oX+It3yBhm+4OrORgMuDu0IniMlABX636LYVS+oopQr9VXG6+QDTHkjcgE+
-1lU8HxlJ+/V+/Tk6aEwztHl42i3BcbNqGlwpiAc6ZtCHXOGcoYklfvVjMPY9kKzN
-JZevK8qnzDdG9xiwOwWBGhBsiY0jfaKeOyrRVdR4/aHFC4JtITrLyhbYVxG4u0uI
-vCLe/VQbrztt21lLz4lm4yekglOvupPH3NNPBf5aXdycRuZRrkFetf2I2aU9NpB3
-weiM8Pb0sHqYdwRCNxwKHrTh3vquAPiqe3ZZD9uKI93Bv0FTcu4iw1W/dq1A/NIH
-DWiop4xR28fsqhxZw+MUxpKXwA2vmeInmRz+FOTtPUuGLbNFejE=
-=LrBo
------END PGP SIGNATURE-----
-
---EpZWWdJP6+/QOGEM--
