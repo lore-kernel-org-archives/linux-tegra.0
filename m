@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4AECDB482
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 17:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0492CDB483
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 17:59:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441911AbjJLR7A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Oct 2023 13:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59154 "EHLO
+        id S1442107AbjJLR7B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Oct 2023 13:59:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1441944AbjJLR6x (ORCPT
+        with ESMTP id S1442046AbjJLR64 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Oct 2023 13:58:53 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34D00D8;
-        Thu, 12 Oct 2023 10:58:52 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-98377c5d53eso196194666b.0;
-        Thu, 12 Oct 2023 10:58:52 -0700 (PDT)
+        Thu, 12 Oct 2023 13:58:56 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9611AB8;
+        Thu, 12 Oct 2023 10:58:54 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9ae7383b7ecso514250066b.0;
+        Thu, 12 Oct 2023 10:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697133530; x=1697738330; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1697133533; x=1697738333; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VUzeKB1yCFHbHpy/R/DeukJyJ6pBoEQylMQ/XA8sQ4U=;
-        b=fphUbuP55o+wa/a6FvD0yF8Ys1nS0HJHhNeMIbvREYnreg96Blv1VXgeMMwcEJLEU6
-         zBsE0trI00fKSxwTHM3H1m2o25hvisUeER7KJRTkK9IdHkNz3zvo6K9iRrvUxtzMsa1K
-         zzs2DrFts85eU7qrSMPjfl+wOcv/nhNpXGSDpTpLWWZniSKGS1+sbayqCpWh0kXEItW6
-         4IRJUOSttfOrAj368ymg2mq68X0d9VOvDXdhmICzcPJN2zZmpUKR39GntFguqZLRA+jb
-         pGEAHctoNpcOvEyLOHImTfRgRspPsbl0Vpco7+EaPv5emtw4/NN6Yx113/6dBmfWrlod
-         NzuA==
+        bh=suA2GBuE0EXCDow+nw+BwHpE/bwHpzrny/kQXeENrx0=;
+        b=D3a/tBiLlrA5xxFo3P+D8d3OojjsMS/glAHnXu7A9sczbboQaZHHVscdkntmlPCIWT
+         8PiKcS1XVEAr8Ox0sh5TWj3fzabztteEJQdhrbSEqHY0UtvFwfIV6+m+qV3NfxapNnfo
+         j1Z11cK6n8i/Wz1g5jC5l541Tw4ToAxFaawPKMlgpNE2gIlGZPr1eWKQFqPQZDeRuBDd
+         U0KeXc/lwY+LkP8tR8dr1t8EuYtnRU8HU8deMDwA3wRBcJ+DLJD80O9DxZlwZ20BegMM
+         DqvW43vbXcEiN5YTEvsPkjf3z1yD/l6f7+e1BY0/UBNaGNOcc2A4LNrR1juo01itLvMY
+         NrhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697133530; x=1697738330;
+        d=1e100.net; s=20230601; t=1697133533; x=1697738333;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VUzeKB1yCFHbHpy/R/DeukJyJ6pBoEQylMQ/XA8sQ4U=;
-        b=YpBaUSwXq0hqpZ5UqB7cqbgIHwA210C2v7cDq8PRLiJRAFBMFdw06T+k2+ilkQrnxh
-         s1E0Zd/krK7rOFDX+4lSqJbFKrVMN2LsSv4WGr+4KAlSxr8uKTpXyC5iC3Ukm7nSnpsh
-         E9MrK6vP9071MeXhO76iBpZTgtn2n1pShxb4sXyz4isjvROC9AaMpNSqFHNYf9WWRIVK
-         z9gmzZUs4fmisHfMargGWNzgib6JmqDycZj4FPYMLVlf7qfVDHwj6vmMjnanAKwhk4RQ
-         1TxKx/V6YZUWWiZ0GAfT7MhIkJHhivcH+GGKee0mEgj2Z4pyVcNbIR5I9WImYytdoYit
-         YtAQ==
-X-Gm-Message-State: AOJu0Yx5bwcTXzjOHM7y6OkFGHfrhWbmbfjvM+XopVkU5MIxyFkc2L/U
-        WFeOrjGHI0NF9U+pFakxtYk=
-X-Google-Smtp-Source: AGHT+IHaxIhtOujcEyPSq8wJRA+tkkWT7e+x3qFSajkRsuhGygsn9qYqURFra05J/HY7qpW3au+qaQ==
-X-Received: by 2002:a17:906:3081:b0:9ae:73ca:bbad with SMTP id 1-20020a170906308100b009ae73cabbadmr22046397ejv.43.1697133530282;
-        Thu, 12 Oct 2023 10:58:50 -0700 (PDT)
+        bh=suA2GBuE0EXCDow+nw+BwHpE/bwHpzrny/kQXeENrx0=;
+        b=NMaWDgZnDsjBA2KTtgM8x0S2AzdN3pyFDwOBdDrmCWge9zGz6HbBtQ7yF4H33tgPMs
+         sR9Pb0YME5xBm3IoPFA6v+Phm6/N9pE7N5n7JGWxmZfa1EMpirkmWyETgl5HpkNxDkOn
+         6WrHW89/WOevHrKXTrs1MRGMd/cU+l1pnrEeC0uT3DJgb/k3bZid4NKK5emP7+B1Qfn+
+         gIEfyfJvaMSJkGbDqE9QbLQeChngKcYQxekUyMyWn38awGqvDx3Y81cJ/hyiEtjEioLn
+         xLqrk2LlDBB9o4LZoAtEec8RH/8YBlMP9Jj3W/+gHex86Yaz/P9CPVbejUM18BtBFPLi
+         oVeQ==
+X-Gm-Message-State: AOJu0Yyq/ednwPK5VdsGcHjYAu7WV5X0U0fJXeCCHuVh7QhO8f1yNQOe
+        xa9SULTcjuHa06TrCSzAOIc=
+X-Google-Smtp-Source: AGHT+IGv+nXgp3Pb3lI5hrfvA7a/uR53U/STjJOQIoIERiRQ4CjFHuLTYXUMOIqGxlTXsyVJrF6zJw==
+X-Received: by 2002:a17:906:1005:b0:9ad:f60c:7287 with SMTP id 5-20020a170906100500b009adf60c7287mr20872676ejm.28.1697133532741;
+        Thu, 12 Oct 2023 10:58:52 -0700 (PDT)
 Received: from localhost (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id rp19-20020a170906d97300b009b95b46bbd1sm11323217ejb.133.2023.10.12.10.58.49
+        by smtp.gmail.com with ESMTPSA id u2-20020a17090617c200b009ad8084e08asm11175901eje.0.2023.10.12.10.58.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 10:58:50 -0700 (PDT)
+        Thu, 12 Oct 2023 10:58:52 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
@@ -60,9 +60,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
 Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 07/13] thermal: tegra: Use unsigned int where appropriate
-Date:   Thu, 12 Oct 2023 19:58:28 +0200
-Message-ID: <20231012175836.3408077-8-thierry.reding@gmail.com>
+Subject: [PATCH v2 09/13] thermal: tegra: Remove gratuitous error assignment
+Date:   Thu, 12 Oct 2023 19:58:30 +0200
+Message-ID: <20231012175836.3408077-10-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20231012175836.3408077-1-thierry.reding@gmail.com>
 References: <20231012175836.3408077-1-thierry.reding@gmail.com>
@@ -74,102 +74,30 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Use unsigned integers more consistently, which helps to make it more
-explicit about what values can be expected.
+Interrupts are optional, so errors during their initialization are
+ignored. However, the code confusingly stores the error code and makes
+it looks like it is somehow relevant. Remove the gratuitous assignment
+to make it clearer that these errors are being purposefully ignored.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/thermal/tegra/soctherm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 105ec20d509d..c7f8e36cbeab 100644
+index 88ceeb8491cc..77051d08e69f 100644
 --- a/drivers/thermal/tegra/soctherm.c
 +++ b/drivers/thermal/tegra/soctherm.c
-@@ -591,8 +591,9 @@ find_throttle_cfg_by_name(struct tegra_soctherm *ts, const char *name)
- 
- static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
- {
--	int i, temp = min_low_temp;
- 	struct tsensor_group_thermtrips *tt = ts->soc->thermtrips;
-+	int temp = min_low_temp;
-+	unsigned int i;
- 
- 	if (id >= TEGRA124_SOCTHERM_SENSOR_NUM)
- 		return temp;
-@@ -1469,33 +1470,34 @@ static int soctherm_thermtrips_parse(struct tegra_soctherm *ts)
- {
- 	struct tsensor_group_thermtrips *tt = ts->soc->thermtrips;
- 	const int max_num_prop = ts->soc->num_ttgs * 2;
-+	unsigned int i, j, count;
- 	u32 *tlb;
--	int i, j, n, ret;
-+	int ret;
- 
- 	if (!tt)
- 		return -ENOMEM;
- 
--	n = of_property_count_u32_elems(ts->dev->of_node, "nvidia,thermtrips");
--	if (n <= 0) {
-+	ret = of_property_count_u32_elems(ts->dev->of_node, "nvidia,thermtrips");
-+	if (ret <= 0) {
- 		dev_info(ts->dev,
--			 "missing thermtrips, will use critical trips as shut down temp\n");
--		return n;
-+			 "missing thermtrips, will use critical trips as shut down temperature\n");
-+		return ret;
+@@ -2135,8 +2135,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
  	}
  
--	n = min(max_num_prop, n);
-+	count = min_t(unsigned int, ret, ts->soc->num_ttgs * 2);
+ 	soctherm_enable_hw_throttling(tegra);
+-	err = soctherm_interrupts_init(tegra);
+-
++	soctherm_interrupts_init(tegra);
+ 	soctherm_debug_init(tegra);
  
- 	tlb = devm_kcalloc(ts->dev, max_num_prop, sizeof(u32), GFP_KERNEL);
- 	if (!tlb)
- 		return -ENOMEM;
-+
- 	ret = of_property_read_u32_array(ts->dev->of_node, "nvidia,thermtrips",
--					 tlb, n);
-+					 tlb, count);
- 	if (ret) {
- 		dev_err(ts->dev, "invalid num ele: thermtrips:%d\n", ret);
- 		return ret;
- 	}
- 
--	i = 0;
--	for (j = 0; j < n; j = j + 2) {
-+	for (i = 0, j = 0; j < count; j = j + 2) {
- 		if (tlb[j] >= TEGRA124_SOCTHERM_SENSOR_NUM)
- 			continue;
- 
-@@ -1612,7 +1614,7 @@ static int soctherm_throt_cfg_parse(struct tegra_soctherm *ts,
- static void soctherm_init_hw_throttling(struct tegra_soctherm *tegra)
- {
- 	struct device_node *np_stc, *np_stcc;
--	int i;
-+	unsigned int i;
- 
- 	for (i = 0; i < THROTTLE_SIZE; i++) {
- 		tegra->throt_cfgs[i].name = throt_names[i];
-@@ -1875,8 +1877,8 @@ static void soctherm_throttle_program(struct tegra_soctherm *ts,
- 
- static void tegra_soctherm_throttle(struct tegra_soctherm *ts)
- {
-+	unsigned int i;
- 	u32 v;
--	int i;
- 
- 	/* configure LOW, MED and HIGH levels for CCROC NV_THERM */
- 	if (ts->soc->use_ccroc) {
-@@ -1950,8 +1952,8 @@ static int soctherm_interrupts_init(struct tegra_soctherm *tegra)
- static void soctherm_init(struct tegra_soctherm *tegra)
- {
- 	const struct tegra_tsensor_group **ttgs = tegra->soc->ttgs;
--	int i;
- 	u32 pdiv, hotspot;
-+	unsigned int i;
- 
- 	/* Initialize raw sensors */
- 	for (i = 0; i < tegra->soc->num_tsensors; ++i)
+ 	return 0;
 -- 
 2.42.0
 
