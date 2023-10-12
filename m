@@ -2,146 +2,144 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6118ACDB46E
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 13:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98456CDB46E
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 14:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343952AbjJLNct (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Oct 2023 09:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42698 "EHLO
+        id S233710AbjJLO2O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Oct 2023 10:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343724AbjJLNcs (ORCPT
+        with ESMTP id S235747AbjJLO2N (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Oct 2023 09:32:48 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D8F91
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 06:32:46 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c12ae20a5cso11230641fa.2
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 06:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697117565; x=1697722365; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k+Zt1DBOvbjWyM5nZyPvW6b5FstKOmZXoPjpZ0uP9fI=;
-        b=JV7ZHqiskua2NKFPMIXx5iv9sC4FHshVCmZk21ovx3+W9SDbfIouSWZLz01P2Tahuw
-         8+Gw1oeCWRNqf3lT+VhoPBwnj33wjly2PEIgB1vxlf1RyO1KweE9fZGi8HQgYVHIZ8f+
-         kEMIzyVrDCFCwi8rPmIntt20eCbgFTKGzWokhjU3eQwNf02Ol7/Pt0pqooZ+Tfin5fFD
-         CJpPOm0aPu9k6RN/8L4bdBXm8pL9fYwJQPbi3/B3Z/DNPn7uOGoVYvuE6Zv1J8E57Q1i
-         tH+/4+PrcZ1cfKwsWD/xwTwz3RN+96UT9Uu0QuaDZEwZErAPvFgUE7Q8qnbbU9SN/WYs
-         M4jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697117565; x=1697722365;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+Zt1DBOvbjWyM5nZyPvW6b5FstKOmZXoPjpZ0uP9fI=;
-        b=cTczbUwb4+sl9GFGKt/vVBtqfDBmHbTXVAbuDuj9PyGmCcEdWzQctU3VwjYtdMGTCO
-         S09UDjYZaWscMW6HqF1MdjWgfJ9R9IX2LkFOJbhSsWcha6orUdcf63oqAyNswy5bSEwC
-         hzOhLn/Fp2CmG+MdgYjPHi1tKoiLwWF46EHld9VlRm4dv5pXBNn+/RkddYsFHFqaZqj9
-         MqocTtwBpcnCO1xq5CmKMzA7DBVOxlWqE/XrYsFjycXuFUmU1rbKRHaZ0DB/JsVTpMtx
-         H4lYQT6wGkqbw+wuts7NvNnlwJ66qo+R8SX36TKI0GbPMJL/rf9Wzq1sYuIfNapK0Xee
-         Jccg==
-X-Gm-Message-State: AOJu0YxbCefMKd1px4yUABtECeixu2rdlPoeVskJPPTfk1qvtjcZIZTe
-        FR1fV01ifJC/DGsoDLVs0ex/xg==
-X-Google-Smtp-Source: AGHT+IFPs/bLlnKI5rV0riktgZMew+HNuaQ17fiNlXKQMllkX9NsO4fVC7EE3ckESMzjyHW7bqIJ/g==
-X-Received: by 2002:a2e:b0ee:0:b0:2bc:d0f8:fb4f with SMTP id h14-20020a2eb0ee000000b002bcd0f8fb4fmr21576574ljl.7.1697117564601;
-        Thu, 12 Oct 2023 06:32:44 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.100])
-        by smtp.gmail.com with ESMTPSA id lf1-20020a170907174100b00992b2c55c67sm11094161ejc.156.2023.10.12.06.32.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 06:32:44 -0700 (PDT)
-Message-ID: <8bdeefb0-4a62-4bcb-be84-1efbc2e18377@linaro.org>
-Date:   Thu, 12 Oct 2023 15:32:42 +0200
+        Thu, 12 Oct 2023 10:28:13 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93B3491;
+        Thu, 12 Oct 2023 07:28:10 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C0BCC433C8;
+        Thu, 12 Oct 2023 14:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697120890;
+        bh=9NRzGriIdVw7J/qyLb/puVHqGx9a7Bn3c8C+RlHyPJ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jcd4XL1kHu4ZxukZiedKOO9vymcQSdsub7HU+XzAdVwAHHgHAOktFo5kS0VC6K/sD
+         7Pz2bGGBSXuz8RRlzkpQbdFFN0Xu4pR5g9EbKkWQikKFsUIa9Qchbk1XuvA8hUUyHW
+         vcrC3QhqN3L7C8E+Bwd5XIZexWkZiZExpL5Sq8FCU8jEHxpuM6inTl9FSh5RofZF8a
+         hIBuT22XFHVvySvFuiNXPjFZSq9wf8d/Uy1RuH3NOU4E2CLABBime600XHUZDMe0XQ
+         xa3NFI9JmOLZzFGALVkO5jbICC3eG2IENFPUWMXni63pQyRpp88VPQGY5w+9cntOf+
+         SZsz5/QgjpQmQ==
+Date:   Thu, 12 Oct 2023 22:28:00 +0800
+From:   Peter Chen <peter.chen@kernel.org>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] usb: chipidea: Fix DMA overwrite for Tegra
+Message-ID: <20231012142800.GB1010588@nchen-desktop>
+References: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
+ <ef8466b834c1726f5404c95c3e192e90460146f8.1695934946.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 2/2] memory: tegra: set BPMP msg flags to reset IPC
- channels
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sumit Gupta <sumitg@nvidia.com>
-Cc:     treding@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bbasu@nvidia.com
-References: <20231009100557.18224-1-sumitg@nvidia.com>
- <20231009100557.18224-3-sumitg@nvidia.com> <ZSfR1l3lHMScTyL9@orome.fritz.box>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <ZSfR1l3lHMScTyL9@orome.fritz.box>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef8466b834c1726f5404c95c3e192e90460146f8.1695934946.git.mirq-linux@rere.qmqm.pl>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 12/10/2023 13:00, Thierry Reding wrote:
-> On Mon, Oct 09, 2023 at 03:35:57PM +0530, Sumit Gupta wrote:
->> From: Thierry Reding <treding@nvidia.com>
->>
->> Set the 'TEGRA_BPMP_MESSAGE_RESET' bit in newly added 'flags' field
->> of 'struct tegra_bpmp_message' to request for the reset of BPMP IPC
->> channels. This is used along with the 'suspended' check in BPMP driver
->> for handling early bandwidth requests due to the hotplug of CPU's
->> during system resume before the driver gets resumed.
->>
->> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
->> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->> ---
->>  drivers/memory/tegra/tegra234.c | 4 ++++
->>  1 file changed, 4 insertions(+)
+On 23-09-28 23:06:03, Michał Mirosław wrote:
+> Tegra USB controllers seem to issue DMA in full 32-bit words only and thus
+> may overwrite unevenly-sized buffers.  One such occurrence is detected by
+> SLUB when receiving a reply to a 1-byte buffer (below).  Fix this by
+> allocating a bounce buffer also for buffers with sizes not a multiple of 4.
 > 
-> Krzysztof,
+> =============================================================================
+> BUG kmalloc-64 (Tainted: G    B             ): kmalloc Redzone overwritten
+> -----------------------------------------------------------------------------
 > 
-> this one has a build-time dependency on patch 1/2, so it'd make sense
-> for me to pick this up into the Tegra tree along with patch 1/2. That
-> is slightly easier because I already have a BPMP patch in the tree.
+> 0x8555cd02-0x8555cd03 @offset=3330. First byte 0x0 instead of 0xcc
+> Allocated in usb_get_status+0x2b/0xac age=1 cpu=3 pid=41
+>  __kmem_cache_alloc_node+0x12f/0x1e4
+>  __kmalloc+0x33/0x8c
+>  usb_get_status+0x2b/0xac
+>  hub_probe+0x5e9/0xcec
+>  usb_probe_interface+0xbf/0x21c
+>  really_probe+0xa5/0x2c4
+>  __driver_probe_device+0x75/0x174
+>  driver_probe_device+0x31/0x94
+>  __device_attach_driver+0x65/0xc0
+>  bus_for_each_drv+0x4b/0x74
+>  __device_attach+0x69/0x120
+>  bus_probe_device+0x65/0x6c
+>  device_add+0x48b/0x5f8
+>  usb_set_configuration+0x37b/0x6b4
+>  usb_generic_driver_probe+0x37/0x68
+>  usb_probe_device+0x35/0xb4
+> Slab 0xbf622b80 objects=21 used=18 fp=0x8555cdc0 flags=0x800(slab|zone=0)
+> Object 0x8555cd00 @offset=3328 fp=0x00000000
+> 
+> Redzone  8555ccc0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Redzone  8555ccd0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Redzone  8555cce0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Redzone  8555ccf0: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Object   8555cd00: 01 00 00 00 cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Object   8555cd10: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Object   8555cd20: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Object   8555cd30: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+> Redzone  8555cd40: cc cc cc cc                                      ....
+> Padding  8555cd74: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a              ZZZZZZZZZZZZ
+> CPU: 3 PID: 41 Comm: kworker/3:1 Tainted: G    B              6.6.0-rc1mq-00118-g59786f827ea1 #1115
+> Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> Workqueue: usb_hub_wq hub_event
+> [<8010ca28>] (unwind_backtrace) from [<801090a5>] (show_stack+0x11/0x14)
+> [<801090a5>] (show_stack) from [<805da2fb>] (dump_stack_lvl+0x4d/0x7c)
+> [<805da2fb>] (dump_stack_lvl) from [<8026464f>] (check_bytes_and_report+0xb3/0xe4)
+> [<8026464f>] (check_bytes_and_report) from [<802648e1>] (check_object+0x261/0x290)
+> [<802648e1>] (check_object) from [<802671b1>] (free_to_partial_list+0x105/0x3f8)
+> [<802671b1>] (free_to_partial_list) from [<80268613>] (__kmem_cache_free+0x103/0x128)
+> [<80268613>] (__kmem_cache_free) from [<80425a67>] (usb_get_status+0x73/0xac)
+> [<80425a67>] (usb_get_status) from [<80421b31>] (hub_probe+0x5e9/0xcec)
+> [<80421b31>] (hub_probe) from [<80428bbb>] (usb_probe_interface+0xbf/0x21c)
+> [<80428bbb>] (usb_probe_interface) from [<803ee13d>] (really_probe+0xa5/0x2c4)
+> [<803ee13d>] (really_probe) from [<803ee3d1>] (__driver_probe_device+0x75/0x174)
+> [<803ee3d1>] (__driver_probe_device) from [<803ee501>] (driver_probe_device+0x31/0x94)
+> usb 1-1: device descriptor read/8, error -71
+> 
+> Fixes: fc53d5279094 ("usb: chipidea: tegra: Support host mode")
+> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-Sounds good.
+Acked-by: Peter Chen <peter.chen@kernel.org>
+> ---
+>  drivers/usb/chipidea/host.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+> index 08af26b762a2..abddd39d1ff1 100644
+> --- a/drivers/usb/chipidea/host.c
+> +++ b/drivers/usb/chipidea/host.c
+> @@ -411,12 +411,13 @@ static int ci_hdrc_alloc_dma_aligned_buffer(struct urb *urb, gfp_t mem_flags)
+>  	const unsigned int ci_hdrc_usb_dma_align = 32;
+>  	size_t kmalloc_size;
+>  
+> -	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0 ||
+> -	    !((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)))
+> +	if (urb->num_sgs || urb->sg || urb->transfer_buffer_length == 0)
+> +		return 0;
+> +	if (!((uintptr_t)urb->transfer_buffer & (ci_hdrc_usb_dma_align - 1)) && !(urb->transfer_buffer_length & 3))
+>  		return 0;
+>  
+>  	/* Allocate a buffer with enough padding for alignment */
+> -	kmalloc_size = urb->transfer_buffer_length +
+> +	kmalloc_size = ALIGN(urb->transfer_buffer_length, 4) +
+>  		       sizeof(struct ci_hdrc_dma_aligned_buffer) +
+>  		       ci_hdrc_usb_dma_align - 1;
+>  
+> -- 
+> 2.39.2
+> 
 
-Best regards,
-Krzysztof
+-- 
 
+Thanks,
+Peter Chen
