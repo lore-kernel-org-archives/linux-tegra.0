@@ -2,197 +2,151 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D197FCDB47E
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 10:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEA1CDB46E
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 11:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347135AbjJLKt3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Oct 2023 06:49:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
+        id S1347153AbjJLLAp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Oct 2023 07:00:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377702AbjJLKt2 (ORCPT
+        with ESMTP id S1347133AbjJLLAo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Oct 2023 06:49:28 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2080.outbound.protection.outlook.com [40.107.244.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FBABC4;
-        Thu, 12 Oct 2023 03:49:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Db7TL8TF779bSr1XucJgdkq+GduQbAZcKSPNauxeSb7hgEOU7LieTnyUbrDLsDuBsfGAc07k5LfyMWQ5ES8dFOFiOMYKo7qNovrQKmbg88AV5t9D5xIv4q3hQhQWIIjf7SjLhPfYJc3BD27Q3KuRVe+f6zTQKIhS9dHt/GpEGSY/SmQNm0F8z8qc41kyG1oWPppTH+UFzihqtngqXETgeuBDkgncSuJW8MfiSp0tGZWYzkGMTyJwg6AGvcmRJASL7jjSSerdS/ScGYueORLoNN/tjlhugoVcsmthc08fh0TOYLZUWTc7EWjpfGTztVMnJtxTPI6ttI5YrgYUbWohWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JCXyCAN+Z9iaXkCKs07MgaSMxgqw/GNeOGLQ5RSx8Lk=;
- b=K7V3eACpk0sPQvszs6jldXPJjQ/XhZBbj9xOCT9OoPzY3nDNeRljvOkyNx7+E1ridAbhvI/y751murSB/e5lkS+ZPHIrrY3DwgBN6WRPeuR4ElfsUiAmDgIAOvA3/ZCa9wLFDydUtRMoyx7+UIk0tqgq8IE+cVCsj2b1+XHOSzS+Baz+aK60rWnQfSNNka6WHL+t9fys3OrwIQOu5hWZ3A+IEqgmFh8emmOiWOCdfX8mCBOl0QiRJgddiZcE5xSPL27tjMjkWwU+ExXZRkgObEzu7Krntug1K44HvhiaKxEoSeAVffTPF3rUQyz9B8cO9MdyBheKl95vh4v1Wfj2iw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JCXyCAN+Z9iaXkCKs07MgaSMxgqw/GNeOGLQ5RSx8Lk=;
- b=PXkj5eIIDQpULIHHjnkOEV9Wdkxb9hE5jbtV4/kVo0EJzK9f/KW6xMoYRnajmd3PCFuGiux2Q/3PGpNjzXZsMv6JJuKkgSK2egFZPhXSruW9TDIEZNXjPP3h0ybOwLY3J4eNpJLIGbJtaRpsiE5xqzuXUIY7hCBjjVmUEZ0S5jCyDdVcpwp51RvIcxOnMoFsdVQBo/4EVbmqRyJwuaEHuLwfXt5xI4wZgNERM4P1vPff8diIaCX10/1w+nJxst9b/g21nsRiZxuMOp2uVbDgAuwW01zZpUXjSx21sLMgl4/j1hcAc1dvIz+rBY4bGWx37ebm10klRdNCgzaWZjbxjw==
-Received: from CY5PR19CA0052.namprd19.prod.outlook.com (2603:10b6:930:1a::17)
- by DS0PR12MB8069.namprd12.prod.outlook.com (2603:10b6:8:f0::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6863.45; Thu, 12 Oct 2023 10:49:25 +0000
-Received: from CY4PEPF0000E9CF.namprd03.prod.outlook.com
- (2603:10b6:930:1a:cafe::a6) by CY5PR19CA0052.outlook.office365.com
- (2603:10b6:930:1a::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.27 via Frontend
- Transport; Thu, 12 Oct 2023 10:49:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000E9CF.mail.protection.outlook.com (10.167.241.142) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6838.22 via Frontend Transport; Thu, 12 Oct 2023 10:49:24 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 12 Oct
- 2023 03:49:14 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 12 Oct
- 2023 03:49:14 -0700
-Received: from moonraker.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.41 via Frontend
- Transport; Thu, 12 Oct 2023 03:49:12 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Johnny Liu <johnliu@nvidia.com>,
-        Ankur Pawar <ankurp@nvidia.com>
-Subject: [PATCH] memory: tegra: Add Tegra234 clients for RCE and VI
-Date:   Thu, 12 Oct 2023 11:49:09 +0100
-Message-ID: <20231012104909.48518-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 12 Oct 2023 07:00:44 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E39890;
+        Thu, 12 Oct 2023 04:00:42 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-52bd9ddb741so1518852a12.0;
+        Thu, 12 Oct 2023 04:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697108441; x=1697713241; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+n0rDebU7jwVFK5ki1gAR/HtMEdxOBbeUN20t9TKm6E=;
+        b=Vr1j6tqGc5pygRemjB2ER7H/ACaxhfyKAQD1kW8a8CU2BSbN7KL+yOarzh9kye933c
+         ++mGvu9+YBDLdcLfY9MyW+bO0RUll+k4TS2tvkk/Lr7af3Hl7KJ+BReHsPxAfLcw7/7g
+         wlws4vUFjIh9sgNyOBHumcVgUNly/4BP2dKHJ9p7o6f7BPu8WHvH8UgjpoGd92gJ9c6r
+         B78iAMYiiuAMD5jqDhZACCaEMxbCu483s2QNyr+H/6SRHYKwXipxKn3Pcy/dFbhP3IGu
+         iOHixnRKvPrJn5EQnK1ksPR9EWIyqXy8jq1BBn4aZaRCBxOWiiON87U1K/3P//T5mqGe
+         8+Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697108441; x=1697713241;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+n0rDebU7jwVFK5ki1gAR/HtMEdxOBbeUN20t9TKm6E=;
+        b=fonC7zE4NsnKDYXDSOZ5hHw2Zz2naR1sGTGHmTIPqvP3LhIuk60xoMuCaPHWMKcuVD
+         Zu5iVcvd+ORcfIhfK8NSgDTSULGVFjCW9KOM75CxQFzC3Kj4Pl30KRYYb5kCW/gNkj5M
+         EBTcFLPbNAhi+96SpIDTritYRrCz3/D5aKwbmCrwKjtHccqULNj83aMDeCibjc4S1x1k
+         pRtKxg5rnX6vKS0N+mOk+VsFNT+nEidie4ixOJ6xeEHuFYIrnxGrTwm7Lpq8eWwS2o4r
+         GrmKozgKBjTEVF7nO3FZmFB/Ew498lqaze2OOdfcQpQcWxjvGsxwZIrH3/M9J60ppemS
+         w8yA==
+X-Gm-Message-State: AOJu0YwX03ONs+ThTVqkyOuIdRqef/tqwzrUOiJqwoh1GYyftJCzz039
+        E3itVgGZvFde3095b0DuGdw=
+X-Google-Smtp-Source: AGHT+IFNgdQuwLRLte7wITCWAxB6YO3wXSsPCORafCEsv1MGDCfcHENZmH7CQZGsWHlgI28pTWC3yA==
+X-Received: by 2002:a17:906:2921:b0:9b9:faee:4228 with SMTP id v1-20020a170906292100b009b9faee4228mr15291259ejd.56.1697108440390;
+        Thu, 12 Oct 2023 04:00:40 -0700 (PDT)
+Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id q15-20020a170906360f00b0099d804da2e9sm11045142ejb.225.2023.10.12.04.00.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Oct 2023 04:00:39 -0700 (PDT)
+Date:   Thu, 12 Oct 2023 13:00:38 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sumit Gupta <sumitg@nvidia.com>, krzysztof.kozlowski@linaro.org
+Cc:     treding@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bbasu@nvidia.com
+Subject: Re: [Patch v2 2/2] memory: tegra: set BPMP msg flags to reset IPC
+ channels
+Message-ID: <ZSfR1l3lHMScTyL9@orome.fritz.box>
+References: <20231009100557.18224-1-sumitg@nvidia.com>
+ <20231009100557.18224-3-sumitg@nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CF:EE_|DS0PR12MB8069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2599ab24-bd66-4ff5-b53d-08dbcb10e676
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mdJb9xs3S5CEmBMtOVMW/4xshvXLVeBIvKx4HMqEjHwodtk8yLg4qGJiB0AKujqwY5rW0GYozHtJIsZfBPPhpkZXu2P5hrQ2wSjVNav22p+4He6kufiSvButBEf+0f3c2iwd87UelIkvizzClrCYsbyXyjaB8xu06scegfW+YcTsp7q12gRZHTzeTuuSI0RpqWMSJJPrYZCWYCMcfPRMpsczH8FhaX0IzLa68HX3Tc0qBghuZzoJUexn27JWQnTyN0elz3kg2IzD7KDYxKLcRQ4u2Fqg4iIKw0SWmW6BGD42l5BlsHWyPBCE6ICrLipPvjnB8MhxwYD73lntZetwcc7Pcmcoq4NtOTRzyeAm7rWuALUHBYddh9ZLeqS9k8PnQMAijbpYpd2RHtrfNndBhkO6GQ5c6UGvwSaVQbG23FHdh+zUJGhDCqpsT4tKRxU/tVCEcgOX99DIg7p9fV/5BZJGUceeuzIr72M4cYMF9qjn4PsG2KJdiyFRyq74ieSrOORnpJzj6XeSwSe54csHhXcZRGsaAv4sLaC34/Xn/G2WH/Gi98UjcWlEvntEpS9thmvIUKqPQcoTmc5gOrnZoWpBWOf20UkvKUxEDDpH4yBvuK6skQGTwbj/FztulL1FlhdrX2lckrxnmew9MEv+GQirHfG4y7WmDiBPLz2qkkjR15uFU1Pet5jUW6Rex45n8eqkl1IR5KjqOi0Hymgco9K4fWJ128ScMP4Iro5Lb2t61OlCMyAz6AY08c+lsBWE
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(346002)(376002)(136003)(39860400002)(230922051799003)(451199024)(186009)(1800799009)(82310400011)(64100799003)(46966006)(40470700004)(36840700001)(8676002)(8936002)(4326008)(41300700001)(5660300002)(40460700003)(83380400001)(2906002)(36756003)(47076005)(86362001)(7636003)(356005)(36860700001)(426003)(26005)(2616005)(1076003)(336012)(40480700001)(107886003)(82740400003)(316002)(478600001)(70206006)(70586007)(54906003)(110136005)(7049001)(7696005)(6666004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2023 10:49:24.8261
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2599ab24-bd66-4ff5-b53d-08dbcb10e676
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9CF.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8069
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r7Jhz+PyVOcqXRlM"
+Content-Disposition: inline
+In-Reply-To: <20231009100557.18224-3-sumitg@nvidia.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the Tegra234 memory client entries for the Real-time Camera Engine
-(RCE) and Video Input (VI) devices.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/memory/tegra/tegra234.c | 60 +++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+--r7Jhz+PyVOcqXRlM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
-index 9e5b5dbd9c8d..42c79f9a70af 100644
---- a/drivers/memory/tegra/tegra234.c
-+++ b/drivers/memory/tegra/tegra234.c
-@@ -449,6 +449,18 @@ static const struct tegra_mc_client tegra234_mc_clients[] = {
- 				.security = 0x38c,
- 			},
- 		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_VIW,
-+		.name = "viw",
-+		.bpmp_id = TEGRA_ICC_BPMP_VI,
-+		.type = TEGRA_ICC_ISO_VI,
-+		.sid = TEGRA234_SID_ISO_VI,
-+		.regs = {
-+			.sid = {
-+				.override = 0x390,
-+				.security = 0x394,
-+			},
-+		},
- 	}, {
- 		.id = TEGRA234_MEMORY_CLIENT_NVDECSRD,
- 		.name = "nvdecsrd",
-@@ -621,6 +633,30 @@ static const struct tegra_mc_client tegra234_mc_clients[] = {
- 				.security = 0x50c,
- 			},
- 		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_VIFALR,
-+		.name = "vifalr",
-+		.bpmp_id = TEGRA_ICC_BPMP_VIFAL,
-+		.type = TEGRA_ICC_ISO_VIFAL,
-+		.sid = TEGRA234_SID_ISO_VIFALC,
-+		.regs = {
-+			.sid = {
-+				.override = 0x5e0,
-+				.security = 0x5e4,
-+			},
-+		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_VIFALW,
-+		.name = "vifalw",
-+		.bpmp_id = TEGRA_ICC_BPMP_VIFAL,
-+		.type = TEGRA_ICC_ISO_VIFAL,
-+		.sid = TEGRA234_SID_ISO_VIFALC,
-+		.regs = {
-+			.sid = {
-+				.override = 0x5e8,
-+				.security = 0x5ec,
-+			},
-+		},
- 	}, {
- 		.id = TEGRA234_MEMORY_CLIENT_DLA0RDA,
- 		.name = "dla0rda",
-@@ -701,6 +737,30 @@ static const struct tegra_mc_client tegra234_mc_clients[] = {
- 				.security = 0x62c,
- 			},
- 		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_RCER,
-+		.name = "rcer",
-+		.bpmp_id = TEGRA_ICC_BPMP_RCE,
-+		.type = TEGRA_ICC_NISO,
-+		.sid = TEGRA234_SID_RCE,
-+		.regs = {
-+			.sid = {
-+				.override = 0x690,
-+				.security = 0x694,
-+			},
-+		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_RCEW,
-+		.name = "rcew",
-+		.bpmp_id = TEGRA_ICC_BPMP_RCE,
-+		.type = TEGRA_ICC_NISO,
-+		.sid = TEGRA234_SID_RCE,
-+		.regs = {
-+			.sid = {
-+				.override = 0x698,
-+				.security = 0x69c,
-+			},
-+		},
- 	}, {
- 		.id = TEGRA234_MEMORY_CLIENT_PCIE0R,
- 		.name = "pcie0r",
--- 
-2.34.1
+On Mon, Oct 09, 2023 at 03:35:57PM +0530, Sumit Gupta wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Set the 'TEGRA_BPMP_MESSAGE_RESET' bit in newly added 'flags' field
+> of 'struct tegra_bpmp_message' to request for the reset of BPMP IPC
+> channels. This is used along with the 'suspended' check in BPMP driver
+> for handling early bandwidth requests due to the hotplug of CPU's
+> during system resume before the driver gets resumed.
+>=20
+> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidt=
+h")
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/memory/tegra/tegra234.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
+Krzysztof,
+
+this one has a build-time dependency on patch 1/2, so it'd make sense
+for me to pick this up into the Tegra tree along with patch 1/2. That
+is slightly easier because I already have a BPMP patch in the tree.
+
+There should be no conflict between this and the Tegra tree, though,
+so if you feel strongly about it, you could also pick up both patches,
+in which case:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+>=20
+> diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra=
+234.c
+> index 9e5b5dbd9c8d..2845041f32d6 100644
+> --- a/drivers/memory/tegra/tegra234.c
+> +++ b/drivers/memory/tegra/tegra234.c
+> @@ -986,6 +986,10 @@ static int tegra234_mc_icc_set(struct icc_node *src,=
+ struct icc_node *dst)
+>  	msg.rx.data =3D &bwmgr_resp;
+>  	msg.rx.size =3D sizeof(bwmgr_resp);
+> =20
+> +	if (pclient->bpmp_id >=3D TEGRA_ICC_BPMP_CPU_CLUSTER0 &&
+> +	    pclient->bpmp_id <=3D TEGRA_ICC_BPMP_CPU_CLUSTER2)
+> +		msg.flags =3D TEGRA_BPMP_MESSAGE_RESET;
+> +
+>  	ret =3D tegra_bpmp_transfer(mc->bpmp, &msg);
+>  	if (ret < 0) {
+>  		dev_err(mc->dev, "BPMP transfer failed: %d\n", ret);
+> --=20
+> 2.17.1
+>=20
+
+--r7Jhz+PyVOcqXRlM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUn0dMACgkQ3SOs138+
+s6HkqQ/+OpWQXncgqcn9vEN7Qu10eafaP//XzRWKSSbQOj0+b7uO3EMELiJYhmSR
+3ZJfb+7rJ+MKEXmJf76dIbjT8U1FvcG1RmgjMMDQLIKgQ69pYLyVGHSfnMbJkkkA
+FVrxe0lL6BUDQytS7UnNQhAw+VeM08RZr2yySo1/VXNF6JAeXsc3lSbFC7T5pw3G
+8SU7Lt/XAzYFRyMflJga+IkPeZXAoEMGUE614Wt8hMd5VkYrwFBO7x5RE1EOPDtj
+Yk1N6Kb8pp40ODfZn/cFFpEiXHv8klgxtwiZjCdhU6ZBbMqaa2nDdghRkcM/ShJv
+DD4RkDdjp2PmruwmgBbQGfTxL09HAyEM6Qlbhaewq5LCdYHRtY9J3Au//NyeRKLW
+aSP50/ZCgOrOKxyU+uWhMwESKM1xMbKHoaKBCAXvJLvby1lBIx4Exu7kPmMqc9Ol
+2slA689tUJGukxOY7A8ApS0ynlxHhOchQR6gkumOnM5qWKr9CgEPCTXOdex7aaDZ
+CtXrEoV2CY2/UabFCtHhWPQ1SCGWAhyetUeKasZM8pPW3eGIZhrjj7Vz3e7kirmu
+97h39JjE0ZcdAKIJXfGOvnfGJ60Q1d1WXmMahZxhrau+JUb6mSevuiC7gPyCC6/e
+JbMxn8gW5lhXhh4ICEoxWuvOomAMG6hxyTIxQYHeOhwoL1f1ML4=
+=nVs5
+-----END PGP SIGNATURE-----
+
+--r7Jhz+PyVOcqXRlM--
